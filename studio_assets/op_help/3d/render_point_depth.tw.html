@@ -8,7 +8,7 @@
 <p style="margin:2px 0 2px 12px">• 1 點 = 1 像素,因此稀疏的點雲會滿是空洞(先以 <code style="color:#22d3bf">mesh_to_points</code> 加密)。沒有 splat 半徑。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> 為 numpy (3,3),<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> 可省略。</p>
 <p>後續: 以 <code style="color:#22d3bf">depth_to_points</code> 還原,以 <code style="color:#22d3bf">normals_from_depth</code> 求法線,<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
-<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由:影像大小由 <code style="color:#22d3bf">size</code> 決定,沒有點的影格很常見。所有像素為 0(無效)的深度圖就是正確答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

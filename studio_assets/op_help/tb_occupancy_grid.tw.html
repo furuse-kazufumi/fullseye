@@ -16,7 +16,7 @@
 <p>點雲 (N,3) → 三維佔據體素柵格,bool(點落入的體素記為佔據)。</p>
 <p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 為網格所張成的體積，<code style="color:#22d3bf">res</code> 為各軸的體素數(純量 = 立方 res³，或長度 3 的逐軸值)。體素為半開區間 [lo+i/res*span, lo+(i+1)/res*span)，上端 (frac==1) 的點歸入最後一個體素。<b>bounds 外的點被丟棄</b>(若 clamp 到端格，邊界上會堆積虛假障礙物)。match3d.points_to_voxel 產生密度(float)，而這裡產生用於 planning 的佔據(bool)，這是其特有之處。</p>
 <p>當 res&lt;=0、points 不是 (N,3) 或 bounds 退化時拋出 ValueError。</p>
-<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由:範圍和解析度由其他參數決定,沒有點的區域很常見(例如依高度篩選後的空帶)。所有體素都空閒的網格就是正確答案)。</p>
 <p>橋接到 2-D 演化註冊表的 3d op <code style="color:#22d3bf">occupancy_grid</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

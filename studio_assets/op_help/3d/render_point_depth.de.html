@@ -8,7 +8,7 @@
 <p style="margin:2px 0 2px 12px">• 1 Punkt = 1 Pixel, daher werden spärliche Punktwolken voller Löcher (vorher mit <code style="color:#22d3bf">mesh_to_points</code> verdichten). Es gibt keinen splat- Radius.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> ist numpy (3,3), <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> können weggelassen werden.</p>
 <p>Nachgelagert: mit <code style="color:#22d3bf">depth_to_points</code> zurück, Normalen mit <code style="color:#22d3bf">normals_from_depth</code>, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
-<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: die Bildgröße ist durch <code style="color:#22d3bf">size</code> festgelegt, und Frames ohne Punkte sind üblich. Ein Tiefenbild mit lauter Pixeln 0 (ungültig) ist die Antwort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

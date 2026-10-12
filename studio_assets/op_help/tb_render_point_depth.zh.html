@@ -17,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• 1 点 = 1 像素,因此稀疏点云会满是空洞(先用 <code style="color:#22d3bf">mesh_to_points</code> 加密)。没有 splat 半径。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> 为 numpy (3,3),<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> 可省略。</p>
 <p>后级: 用 <code style="color:#22d3bf">depth_to_points</code> 还原,用 <code style="color:#22d3bf">normals_from_depth</code> 求法线,<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
-<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:图像大小由 <code style="color:#22d3bf">size</code> 决定,没有点的帧很常见。所有像素为 0(无效)的深度图就是正确答案)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">render_point_depth</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调点,<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

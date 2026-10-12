@@ -17,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, so sparse point clouds end up full of holes (densify first with <code style="color:#22d3bf">mesh_to_points</code>). There is no splat radius.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> is numpy (3,3); <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> are optional.</p>
 <p>Downstream: back with <code style="color:#22d3bf">depth_to_points</code>, normals with <code style="color:#22d3bf">normals_from_depth</code>, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
-<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: the image size is fixed by <code style="color:#22d3bf">size</code>, and frames with no points are common. A depth image with every pixel 0 (invalid) is the answer).</p>
 <p>The 3d op <code style="color:#22d3bf">render_point_depth</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. This op has no tuning points; neither <code style="color:#22d3bf">a</code> nor <code style="color:#22d3bf">b</code> is used.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

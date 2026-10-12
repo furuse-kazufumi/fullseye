@@ -6,7 +6,7 @@
 <p>点云 (N,3) → 三维占据体素栅格,bool(点落入的体素记为占据)。</p>
 <p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 是网格张成的体积,<code style="color:#22d3bf">res</code> 是各轴的体素数(标量 = 立方 res³,或长度 3 的逐轴值)。体素为半开区间 [lo+i/res*span, lo+(i+1)/res*span), 上端 (frac==1) 的点归入最后一个体素。<b>bounds 之外的点被丢弃</b>(若 clamp 到边缘单元, 边界上会堆积虚假障碍物)。match3d.points_to_voxel 生成密度(float), 而本函数生成用于 planning 的占据(bool),这是其特有之处。</p>
 <p>res&lt;=0、points 不是 (N,3) 或 bounds 退化时抛出 ValueError。</p>
-<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:范围和分辨率由其他参数决定,没有点的区域很常见(例如按高度筛选后的空带)。所有体素都空闲的网格就是正确答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -47,7 +47,7 @@ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_v
 
 Raises ValueError for res<=0, non-(N,3) points, or degenerate bounds.
 
-空の入力(``points`` が 0 要素)は ValueError。
+空の入力(``points`` が 0 要素)は空を返す(理由: 範囲と解像度は別の引数で決まっていて、点の無い領域は普通にある(高さで絞った後の空の帯など)。全ボクセルが空きの格子が正しい答え)。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``occupancy_grid``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

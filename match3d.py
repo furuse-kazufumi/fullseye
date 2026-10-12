@@ -3378,11 +3378,11 @@ def render_point_depth(points, K, size, R=None, t=None):
     - ``K`` は numpy (3,3)、``R``/``t`` は省略可。
     後段: ``depth_to_points`` で戻す、``normals_from_depth`` で法線、``tsdf_from_depth``。
 
-    空の入力(``points`` が 0 要素)は ValueError。
+    空の入力(``points`` が 0 要素)は空を返す(理由: 像の大きさは ``size`` で決まっていて、点の無いフレームは普通にある。全画素が 0(無効)の深度画像が正しい答え)。
     """
-    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
-        raise ValueError("render_point_depth: points is empty — pass at least one element")
     H, W = size
+    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力は拒否しない: 点の無いフレーム → 全画素 0(無効)の深度画像
+        return np.zeros((H, W))
     uv, z = project_points(points, K, R, t)
     ui = np.round(uv[:, 0]).astype(int); vi = np.round(uv[:, 1]).astype(int)
     ok = (ui >= 0) & (ui < W) & (vi >= 0) & (vi < H) & (z > 0)

@@ -6,7 +6,7 @@
 <p>point cloud (N,3) → 3-D occupancy voxel grid bool (जिस voxel में point गिरता है वह occupied)।</p>
 <p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> grid द्वारा घेरा गया volume है, और <code style="color:#22d3bf">res</code> हर axis पर voxels की संख्या है (scalar = cube res³, या लंबाई 3 का हर axis के लिए)। Voxels half-open intervals [lo+i/res*span, lo+(i+1)/res*span) हैं, और ऊपरी सिरे (frac==1) के points अंतिम voxel में शामिल होते हैं। <b>bounds के बाहर के points छोड़ दिए जाते हैं</b> (उन्हें किनारे की cells पर clamp करने से सीमा पर नकली obstacles जमा हो जाते)। match3d.points_to_voxel जहाँ density (float) बनाता है, वहीं इसकी ख़ासियत यह है कि यह planning के लिए occupancy (bool) बनाता है।</p>
 <p>res&lt;=0, (N,3) न होने वाले points, या degenerate bounds पर ValueError उठाता है।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: सीमा और विभेदन अन्य तर्कों से तय होते हैं, और बिना बिंदुओं वाले क्षेत्र आम हैं, जैसे ऊँचाई से छानने के बाद खाली पट्टी। सभी वॉक्सेल खाली वाला ग्रिड ही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

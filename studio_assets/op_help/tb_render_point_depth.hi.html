@@ -17,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, इसलिए sparse point clouds में बहुत छेद रह जाते हैं (पहले <code style="color:#22d3bf">mesh_to_points</code> से dense करें)। splat radius नहीं है।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> numpy (3,3) है, <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> छोड़े जा सकते हैं।</p>
 <p>आगे: <code style="color:#22d3bf">depth_to_points</code> से वापस, <code style="color:#22d3bf">normals_from_depth</code> से normals, <code style="color:#22d3bf">tsdf_from_depth</code>।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: छवि का आकार <code style="color:#22d3bf">size</code> से तय होता है, और बिना बिंदुओं वाले फ़्रेम आम हैं। हर पिक्सेल 0 (अमान्य) वाली गहराई छवि ही उत्तर है)।</p>
 <p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">render_point_depth</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

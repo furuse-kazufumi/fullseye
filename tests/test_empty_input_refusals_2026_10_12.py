@@ -5,9 +5,9 @@
 213 本、生の例外(KeyError 75・torch の RuntimeError 23・FileNotFoundError 5)で落ちる op が 103 本
 あった。持ち主の方針 A で、
 
-* 273 本は入口で ``ValueError("<op>: <引数> is empty — …")`` を投げ、docstring に
+* 271 本は入口で ``ValueError("<op>: <引数> is empty — …")`` を投げ、docstring に
   「空の入力(``引数`` が 0 要素)は ValueError」と書いた(台帳の門が約束として読む)。
-* 43 本は「空は値の範囲の内側」で、空を返すのが正しい答え(点群フィルタの連鎖・funct_1d・
+* 45 本は「空は値の範囲の内側」で、空を返すのが正しい答え(点群フィルタの連鎖・funct_1d・
   施設の無い道路 …)。拒否せず、docstring に「空の入力(``引数`` …)は空を返す(理由: …)」と
   名指し・理由つきで書いた。
 
@@ -70,7 +70,7 @@ REFUSED = (
     "membrane_shear_field", "mindlin_fit", "mindlin_fit_vector", "mindlin_model",
     "mindlin_traction", "moment_axes", "morph_blackhat3d", "morph_close3d", "morph_dilate3d",
     "morph_erode3d", "morph_gradient3d", "morph_open3d", "morph_tophat3d", "naive_execute",
-    "normalize", "occlusion_edges", "occlusion_safe_speed", "occupancy_grid", "oren_nayar",
+    "normalize", "occlusion_edges", "occlusion_safe_speed", "oren_nayar",
     "osm_road_graph", "osm_road_loops", "osm_road_mask", "osm_route", "peg_tip_from_rgbd",
     "plan_command", "plan_cost", "plane_sdf", "potential_flow_cylinder",
     "preston_track_profile", "prism_min_deviation_deg", "project", "project_points",
@@ -78,7 +78,7 @@ REFUSED = (
     "puck_render_frame", "puck_scene_mjcf", "puck_state_at", "puck_synth_frames",
     "puck_world_to_pixel", "punch_surface_uz", "quantize", "radon_volume", "rally_simulate",
     "read_audio", "read_wav", "reconstruct", "refine_lm", "refine_peak_newton",
-    "refine_translation_lk", "reflect_points", "render_lambertian", "render_point_depth",
+    "refine_translation_lk", "reflect_points", "render_lambertian",
     "render_shaded", "render_volume_projection", "reproject", "resample_uniform", "rgb_to_lab",
     "rgb_to_xyz", "ritter_dam_break", "rms", "road_eval", "road_row_distance",
     "rough_transmission", "scatter_offroad", "sdf_offset", "sdf_to_occupancy", "sensor_capture",
@@ -110,6 +110,11 @@ ACCEPTED = {
     ),
     "cplx": (
         "cplx_rational_field",
+    ),
+    # 2026-10-12 統括の見直しで拒否から移した: 出力の形は別の引数(bounds・res / size)が決め、
+    # 高さで絞った後の空の帯・点の無いフレームは普通に来る(poc_bev_sensor_fusion の to_bev)
+    "frame": (
+        "occupancy_grid", "render_point_depth",
     ),
     "f1d": (
         "abs_funct_1d", "create_funct_1d_array", "funct_1d_to_pairs", "invert_funct_1d",
@@ -217,7 +222,7 @@ def _names(fn):
 
 def test_the_two_lists_do_not_overlap_and_cover_the_count():
     assert not set(REFUSED) & set(ACCEPTED_NAMES)
-    assert len(REFUSED) == 273 and len(ACCEPTED_NAMES) == 43
+    assert len(REFUSED) == 271 and len(ACCEPTED_NAMES) == 45
 
 
 @pytest.mark.parametrize("name", REFUSED)
@@ -247,3 +252,17 @@ def test_empty_first_input_returns_with_a_stated_reason(bound, name):
     doc = fn.__doc__ or ""
     assert lg.documents_empty_result(doc, first), name
     assert not lg.promises_empty_refusal(doc, first, others), name
+
+
+def test_empty_points_give_the_all_free_grid_and_the_all_invalid_depth():
+    """空の点群の答えは「形はそのまま・中身は全部空き/全部 0(無効)」。形が崩れたら拒否より悪い。"""
+    import match3d
+    import occupancy
+    occ = np.asarray(occupancy.occupancy_grid(np.zeros((0, 3)), ((0, 1), (0, 2), (0, 1)), (4, 8, 2)))
+    assert occ.shape == (4, 8, 2) and occ.dtype == bool and not occ.any()
+    K = np.array([[50.0, 0, 16], [0, 50.0, 12], [0, 0, 1]])
+    dep = match3d.render_point_depth(np.zeros((0, 3)), K, (24, 32))
+    assert dep.shape == (24, 32) and not dep.any()
+    # 空でない入力は従来どおり(1 点 → 1 セル / 1 画素)
+    assert np.asarray(occupancy.occupancy_grid([[0.1, 0.1, 0.1]], ((0, 1), (0, 2), (0, 1)), (4, 8, 2))).sum() == 1
+    assert (match3d.render_point_depth(np.array([[0.0, 0.0, 2.0]]), K, (24, 32)) > 0).sum() == 1

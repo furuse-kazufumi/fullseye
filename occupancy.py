@@ -218,11 +218,11 @@ def occupancy_grid(points, bounds, res):
 
     Raises ValueError for res<=0, non-(N,3) points, or degenerate bounds.
 
-    空の入力(``points`` が 0 要素)は ValueError。
+    空の入力(``points`` が 0 要素)は空を返す(理由: 範囲と解像度は別の引数で決まっていて、点の無い領域は普通にある(高さで絞った後の空の帯など)。全ボクセルが空きの格子が正しい答え)。
     """
-    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
-        raise ValueError("occupancy_grid: points is empty — pass at least one element")
     P = np.asarray(points, np.float64)
+    if P.size == 0:   # ★2026-10-12 空入力は拒否しない: 絞り込んだ後の空の点群 → 全部空きの格子(格子の形は bounds・res が決める)
+        P = P.reshape(0, 3)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
     # ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。立方限定だと
