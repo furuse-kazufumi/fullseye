@@ -33,6 +33,7 @@ from a fresh probe.  Use it only to SHRINK the debt after fixing ops: the gate
 """
 from __future__ import annotations
 
+import contextlib
 import copy
 import importlib
 import json
@@ -40,6 +41,7 @@ import numbers
 import os
 import random
 import sys
+import tempfile
 import time
 import warnings
 import zlib
@@ -838,8 +840,26 @@ def run(ops=None, verbose=False, hooks=None):
     return verdict
 
 
+@contextlib.contextmanager
+def _fresh_cwd():
+    """捨て場の中に**空の**フォルダを作ってそこへ移り、終わったら消す。
+
+    ★2026-10-13: 捨て場(``chain_fuzz._scratch_cwd``)はプロセスごとに 1 つで、消されない。
+    同じ xdist ワーカーで先に走った連鎖ファズの ``write_3mf`` が探針の文字列
+    (``"ラベル 5"``)の名で 3MF を置いていくと、探針の ``read_3mf`` がそれを読んで
+    「拒否のはずが成功」になり、全量スイートの順序しだいで台帳の門が赤になった。
+    """
+    prev = os.getcwd()
+    with tempfile.TemporaryDirectory(prefix="ledger_probe_", dir=prev) as d:
+        os.chdir(d)
+        try:
+            yield d
+        finally:
+            os.chdir(prev)
+
+
 def _run(ops, cf, gens, extra, verdict, verbose, hooks=None):
-    with cf._scratch_cwd():
+    with cf._scratch_cwd(), _fresh_cwd():
         base = np.random.default_rng(_SEED)
         pool = {t: [g(base)] for t, g in sorted(gens.items())}
         recipe = cf.type_recipes(list(ops), gens)
