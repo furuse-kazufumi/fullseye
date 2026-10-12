@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사각형 안 씨앗의 보로노이 분할을 다각형(넓이·내부 변 길이 포함)으로 반환(반평면 완전탐색, O(n^2))(voronoi_cells).</p>
 <p>반환값: <code style="color:#22d3bf">polygons</code>(다각형의 열, 각 (k, 2) [y, x]), <code style="color:#22d3bf">areas</code>(신발끈 공식), <code style="color:#22d3bf">edge_length_total</code>(내부 변 길이의 합), <code style="color:#22d3bf">n_edges</code>(내부 변의 수), <code style="color:#22d3bf">perimeter_internal</code> (n,)(각 셀의 내부 변 길이).</p>
+<p><code style="color:#22d3bf">size</code> 는 (H, W)이며, 이 층의 다른 세계와 마찬가지로 16 × 16 이상(미만이면 ValueError).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

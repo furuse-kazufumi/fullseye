@@ -11927,13 +11927,13 @@
    "hi": "*offset*: S16 table negative pixel value को look up करने के लिए बीच में 0 रखती है (VX_LUT_OFFSET, आम तौर पर 32768)। U8 के लिए 0।\n★ अगर कोई pixel table के बाहर look up करे तो रुक जाता है (चुपचाप किनारे पर clamp नहीं करता)।\n\n**Raises** ``ValueError``: image 2-D U8/S16 नहीं है / table 1-D नहीं है या ख़ाली है / कोई pixel table के बाहर look up करता है।"
   },
   "vx/vx_histogram": {
-   "fp": "ab6eaf75e82e",
-   "en": "Returns the pairs ``(num_bins, 2)``: column 0 = pixel value at the lower edge of the bin (offset + i·range/numBins), column 1 = count.\n\n**Raises** ``ValueError``: not a 2-D U8 / num_bins or range_ not positive / num_bins > range_ / offset negative.",
-   "zh": "返回值为 ``(num_bins, 2)`` 的 pairs: 列 0 = 箱下端的像素值(offset + i·range/numBins),列 1 = 计数。\n\n**Raises** ``ValueError``: 不是 U8 的 2-D / num_bins、range_ 不为正 / num_bins > range_ / offset 为负。",
-   "tw": "回傳值為 ``(num_bins, 2)`` 的 pairs: 行 0 = 箱下端的像素值(offset + i·range/numBins),行 1 = 計數。\n\n**Raises** ``ValueError``: 不是 U8 的 2-D / num_bins、range_ 不為正 / num_bins > range_ / offset 為負。",
-   "ko": "반환값 ``(num_bins, 2)`` 의 pairs: 열 0 = 빈 하단의 화소값(offset + i·range/numBins), 열 1 = 개수.\n\n**Raises** ``ValueError``: U8 의 2-D 가 아니다 / num_bins · range_ 가 양수가 아니다 / num_bins > range_ / offset 이 음수.",
-   "de": "Rückgabewert sind die pairs ``(num_bins, 2)``: Spalte 0 = Pixelwert an der Unterkante des Bins (offset + i·range/numBins), Spalte 1 = Anzahl.\n\n**Raises** ``ValueError``: kein 2-D-U8 / num_bins oder range_ nicht positiv / num_bins > range_ / offset negativ.",
-   "hi": "return value ``(num_bins, 2)`` के pairs: column 0 = bin के निचले किनारे का pixel value (offset + i·range/numBins), column 1 = गिनती।\n\n**Raises** ``ValueError``: 2-D U8 नहीं है / num_bins या range_ positive नहीं है / num_bins > range_ / offset negative है।"
+   "fp": "969d4ef8a880",
+   "en": "Returns the float64 pairs ``(num_bins, 2)``: column 0 = pixel value at the lower edge of the bin (offset + i·range/numBins), column 1 = count.\n\n**Raises** ``ValueError``: not a 2-D U8 / num_bins or range_ not positive / num_bins > range_ / offset negative.",
+   "zh": "返回值为 ``(num_bins, 2)`` 的 float64 pairs: 列 0 = 箱下端的像素值(offset + i·range/numBins),列 1 = 计数。\n\n**Raises** ``ValueError``: 不是 U8 的 2-D / num_bins、range_ 不为正 / num_bins > range_ / offset 为负。",
+   "tw": "回傳值為 ``(num_bins, 2)`` 的 float64 pairs: 行 0 = 箱下端的像素值(offset + i·range/numBins),行 1 = 計數。\n\n**Raises** ``ValueError``: 不是 U8 的 2-D / num_bins、range_ 不為正 / num_bins > range_ / offset 為負。",
+   "ko": "반환값 ``(num_bins, 2)`` 의 float64 pairs: 열 0 = 빈 하단의 화소값(offset + i·range/numBins), 열 1 = 개수.\n\n**Raises** ``ValueError``: U8 의 2-D 가 아니다 / num_bins · range_ 가 양수가 아니다 / num_bins > range_ / offset 이 음수.",
+   "de": "Rückgabewert sind die float64-pairs ``(num_bins, 2)``: Spalte 0 = Pixelwert an der Unterkante des Bins (offset + i·range/numBins), Spalte 1 = Anzahl.\n\n**Raises** ``ValueError``: kein 2-D-U8 / num_bins oder range_ nicht positiv / num_bins > range_ / offset negativ.",
+   "hi": "return value ``(num_bins, 2)`` के float64 pairs: column 0 = bin के निचले किनारे का pixel value (offset + i·range/numBins), column 1 = गिनती।\n\n**Raises** ``ValueError``: 2-D U8 नहीं है / num_bins या range_ positive नहीं है / num_bins > range_ / offset negative है।"
   },
   "vx/vx_nonmax_suppression": {
    "fp": "9a9e5234c565",
@@ -13106,13 +13106,13 @@
    "hi": "``seed < 0`` होने पर **बीच के 1 बिंदु** से शुरू होता है (rule 90 से Sierpinski,\nrule 30 से pseudo-random, rule 110 से universal computation)।\n\ninvariant (rule 90, 1 बिंदु से शुरुआत): row n का cell k **C(n,k) mod 2** है।"
   },
   "generative/perpetual_langtons_ant": {
-   "fp": "01bb5e387d8b",
-   "en": "Invariant: once on the highway, it **advances diagonally by (-2,-2) with period 104**.\n\n★The shading is \"the time that cell spent black\". The highway forms last, so it is light, and\nthe initial chaos is dark -- **the order of time shows in the picture**.",
-   "zh": "不变量:进入高速公路后,**以周期 104 斜向前进 (-2,-2)**。\n\n★着色是“该格保持黑色的时间”。高速公路最后才形成所以颜色浅,\n最初的混沌颜色深 —— **时间的先后顺序呈现在图上**。",
-   "tw": "不變量:進入高速公路後,**以週期 104 斜向前進 (-2,-2)**。\n\n★著色是「該格保持黑色的時間」。高速公路最後才形成所以顏色淺,\n最初的混沌顏色深 —— **時間的先後順序呈現在圖上**。",
-   "ko": "불변량: 고속도로에 들어선 뒤에는 **주기 104로 비스듬히 (-2,-2) 나아간다**.\n\n★칠하기는 \"그 칸이 검은색이었던 시간\". 고속도로는 마지막에 생기므로 옅고,\n처음의 혼돈은 짙다 -- **시간의 순서가 그림에 나타난다**.",
-   "de": "Invariante: nach Erreichen der Autobahn **bewegt sie sich mit Periode 104 diagonal um (-2,-2)**.\n\n★Die Färbung ist \"die Zeit, die die Zelle schwarz war\". Die Autobahn entsteht zuletzt und ist daher hell,\ndas anfängliche Chaos dunkel -- **die zeitliche Reihenfolge zeigt sich im Bild**.",
-   "hi": "invariant: highway में पहुँचने के बाद यह **period 104 के साथ तिरछा (-2,-2) बढ़ती है**।\n\n★रंग \"वह cell कितने समय काली रही\" दिखाता है। highway सबसे अंत में बनता है इसलिए हल्का है, और\nशुरुआती अराजकता गहरी है -- **समय का क्रम चित्र में दिखता है**।"
+   "fp": "cdcc2c4845ed",
+   "en": "Invariant: once on the highway, it **repeats the same diagonal displacement (magnitude 2 both vertically and horizontally) with period 104**.\nThe sign of the direction depends on the rotation convention -- on this implementation's grid it is (row, col) = (+2, −2).\n\n★The shading is \"the time that cell spent black\". The highway forms last, so it is light, and\nthe initial chaos is dark -- **the order of time shows in the picture**.",
+   "zh": "不变量:进入高速公路后,**以周期 104 重复同样的斜向位移(纵横大小均为 2)**。\n方向的符号取决于旋转的约定 —— 在本实现的网格上为 (行, 列) = (+2, −2)。\n\n★着色是“该格保持黑色的时间”。高速公路最后才形成所以颜色浅,\n最初的混沌颜色深 —— **时间的先后顺序呈现在图上**。",
+   "tw": "不變量:進入高速公路後,**以週期 104 重複同樣的斜向位移(縱橫大小均為 2)**。\n方向的符號取決於旋轉的約定 —— 在本實作的網格上為 (列, 行) = (+2, −2)。\n\n★著色是「該格保持黑色的時間」。高速公路最後才形成所以顏色淺,\n最初的混沌顏色深 —— **時間的先後順序呈現在圖上**。",
+   "ko": "불변량: 고속도로에 들어선 뒤에는 **주기 104로 같은 대각선 변위(세로·가로 모두 크기 2)를 반복한다**.\n방향의 부호는 회전 규약에 따라 바뀐다 —— 이 구현의 격자에서는 (행, 열) = (+2, −2).\n\n★칠하기는 \"그 칸이 검은색이었던 시간\". 고속도로는 마지막에 생기므로 옅고,\n처음의 혼돈은 짙다 -- **시간의 순서가 그림에 나타난다**.",
+   "de": "Invariante: nach Erreichen der Autobahn **wiederholt sie mit Periode 104 dieselbe diagonale Verschiebung (Betrag 2 senkrecht wie waagerecht)**.\nDas Vorzeichen der Richtung hängt von der Drehkonvention ab -- auf dem Gitter dieser Implementierung ist es (Zeile, Spalte) = (+2, −2).\n\n★Die Färbung ist \"die Zeit, die die Zelle schwarz war\". Die Autobahn entsteht zuletzt und ist daher hell,\ndas anfängliche Chaos dunkel -- **die zeitliche Reihenfolge zeigt sich im Bild**.",
+   "hi": "invariant: highway में पहुँचने के बाद यह **period 104 के साथ वही तिरछा विस्थापन (ऊर्ध्व और क्षैतिज दोनों में परिमाण 2) दोहराती है**।\nदिशा का चिह्न rotation की convention पर निर्भर है —— इस implementation के grid पर यह (row, col) = (+2, −2) है।\n\n★रंग \"वह cell कितने समय काली रही\" दिखाता है। highway सबसे अंत में बनता है इसलिए हल्का है, और\nशुरुआती अराजकता गहरी है -- **समय का क्रम चित्र में दिखता है**।"
   },
   "generative/perpetual_chaos_game": {
    "fp": "7b93f5430fd8",
@@ -15095,13 +15095,13 @@
    "hi": "structure k बारी-बारी से सीधी रेखा (2 points) और polyline (7 points का random walk) होता है, और चौड़ाई क्रम से ``widths`` से ली जाती है। pixel की centerline से दूरी\n≤ w/2 हो तो वह structure है। Image = चमकीले background (0.82 + हल्का gradient) पर गहरी रेखाएँ, जो जितनी पतली उतनी फीकी (w = 1: 0.5, 2: 0.38, 3: 0.26),\nकिनारे दूरी से anti-aliased, हल्का blur + noise।\nReturns: ``image``, ``labels``, ``distance`` (हर pixel से सबसे नज़दीकी centerline तक की दूरी), ``truth`` = {``n``, ``kinds``, ``widths``,\n``lengths`` (Σ segments), ``length_total``, ``polylines`` ((m, 2) [y, x] की सूची), ``areas_stadium`` (L w + π w²/4)}।"
   },
   "segmentation/voronoi_cells": {
-   "fp": "5e1c555d9868",
-   "en": "Returns: ``polygons`` (list of polygons, each (k, 2) [y, x]), ``areas`` (shoelace), ``edge_length_total`` (sum of internal edge lengths),\n``n_edges`` (number of internal edges), ``perimeter_internal`` (n,) (internal edge length of each cell).",
-   "zh": "返回值: ``polygons``(多边形的列表,各为 (k, 2) [y, x])、``areas``(鞋带公式)、``edge_length_total``(内部边长之和)、\n``n_edges``(内部边的数量)、``perimeter_internal`` (n,)(各单元的内部边长)。",
-   "tw": "回傳值: ``polygons``(多邊形的串列,各為 (k, 2) [y, x])、``areas``(鞋帶公式)、``edge_length_total``(內部邊長之和)、\n``n_edges``(內部邊的數量)、``perimeter_internal`` (n,)(各單元的內部邊長)。",
-   "ko": "반환값: ``polygons``(다각형의 열, 각 (k, 2) [y, x]), ``areas``(신발끈 공식), ``edge_length_total``(내부 변 길이의 합),\n``n_edges``(내부 변의 수), ``perimeter_internal`` (n,)(각 셀의 내부 변 길이).",
-   "de": "Rückgabewert: ``polygons`` (Liste von Polygonen, jeweils (k, 2) [y, x]), ``areas`` (Gaußsche Trapezformel), ``edge_length_total`` (Summe der inneren Kantenlängen),\n``n_edges`` (Anzahl innerer Kanten), ``perimeter_internal`` (n,) (innere Kantenlänge jeder Zelle).",
-   "hi": "Returns: ``polygons`` (polygons की सूची, हर एक (k, 2) [y, x]), ``areas`` (shoelace formula), ``edge_length_total`` (भीतरी edges की लंबाइयों का योग),\n``n_edges`` (भीतरी edges की संख्या), ``perimeter_internal`` (n,) (हर cell के भीतरी edges की लंबाई)।"
+   "fp": "4eee1a8108fc",
+   "en": "Returns: ``polygons`` (list of polygons, each (k, 2) [y, x]), ``areas`` (shoelace), ``edge_length_total`` (sum of internal edge lengths),\n``n_edges`` (number of internal edges), ``perimeter_internal`` (n,) (internal edge length of each cell).\n\n``size`` is (H, W) and, like the other worlds in this layer, at least 16 × 16 (smaller raises ValueError).",
+   "zh": "返回值: ``polygons``(多边形的列表,各为 (k, 2) [y, x])、``areas``(鞋带公式)、``edge_length_total``(内部边长之和)、\n``n_edges``(内部边的数量)、``perimeter_internal`` (n,)(各单元的内部边长)。\n\n``size`` 为 (H, W),与本层其他世界相同,至少 16 × 16(更小则 ValueError)。",
+   "tw": "回傳值: ``polygons``(多邊形的串列,各為 (k, 2) [y, x])、``areas``(鞋帶公式)、``edge_length_total``(內部邊長之和)、\n``n_edges``(內部邊的數量)、``perimeter_internal`` (n,)(各單元的內部邊長)。\n\n``size`` 為 (H, W),與本層其他世界相同,至少 16 × 16(更小則 ValueError)。",
+   "ko": "반환값: ``polygons``(다각형의 열, 각 (k, 2) [y, x]), ``areas``(신발끈 공식), ``edge_length_total``(내부 변 길이의 합),\n``n_edges``(내부 변의 수), ``perimeter_internal`` (n,)(각 셀의 내부 변 길이).\n\n``size`` 는 (H, W)이며, 이 층의 다른 세계와 마찬가지로 16 × 16 이상(미만이면 ValueError).",
+   "de": "Rückgabewert: ``polygons`` (Liste von Polygonen, jeweils (k, 2) [y, x]), ``areas`` (Gaußsche Trapezformel), ``edge_length_total`` (Summe der inneren Kantenlängen),\n``n_edges`` (Anzahl innerer Kanten), ``perimeter_internal`` (n,) (innere Kantenlänge jeder Zelle).\n\n``size`` ist (H, W) und, wie die anderen Welten dieser Schicht, mindestens 16 × 16 (kleiner löst ValueError aus).",
+   "hi": "Returns: ``polygons`` (polygons की सूची, हर एक (k, 2) [y, x]), ``areas`` (shoelace formula), ``edge_length_total`` (भीतरी edges की लंबाइयों का योग),\n``n_edges`` (भीतरी edges की संख्या), ``perimeter_internal`` (n,) (हर cell के भीतरी edges की लंबाई)।\n\n``size`` (H, W) है और इस layer की बाकी worlds की तरह कम से कम 16 × 16 (छोटा होने पर ValueError)।"
   },
   "segmentation/snake_evolve": {
    "fp": "8805542db233",

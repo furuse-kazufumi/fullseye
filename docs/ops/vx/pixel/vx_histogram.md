@@ -20,7 +20,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ヒストグラム(3.26 節): 画素値 I は ``i = (I − offset) × numBins / range`` の升に入る(offset ≤ I < offset + range、REQ-0230)。
 範囲外の画素は数えない。整数の割り算(切り捨て)で升を決める。
 
-返り値 ``(num_bins, 2)`` の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。
+返り値 ``(num_bins, 2)`` の float64 の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。
 
 **Raises** ``ValueError``: U8 の 2-D でない / num_bins・range_ が正でない / num_bins > range_ / offset が負。
 

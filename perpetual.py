@@ -305,7 +305,8 @@ LANGTON_HIGHWAY_PERIOD = 104
 def perpetual_langtons_ant(steps: int = 12_000, size: int = 301) -> np.ndarray:
     """ラングトンの蟻 ―― 2 つの規則だけで、1 万歩後に「高速道路」を作り続ける。
 
-    不変量: 高速道路に入ったあとは **周期 104 で斜めに (-2,-2) 進む**。
+    不変量: 高速道路に入ったあとは **周期 104 で同じ斜めの変位(縦横とも大きさ 2)を繰り返す**。
+    向きの符号は回転の規約で変わる —— この実装の盤では (行, 列) = (+2, −2)。
 
     ★塗りは「そのマスが黒でいた時間」。高速道路は最後にできるので薄く、
     最初の混沌は濃い —— **時間の順序が絵に出る**。
@@ -884,7 +885,7 @@ def perpetual_identities(which: str = "") -> dict:
         st = tbl[idx]
     rows.append(("elementary_ca_rule90", "row_n == C(n,k) mod 2", worst))
 
-    # (2) ラングトンの蟻: 高速道路は周期 104 で (-2,-2) 進む
+    # (2) ラングトンの蟻: 高速道路は周期 104 で縦横とも 2 ずつ斜めに進む(この盤では (行, 列) = (+2, −2))
     s = perpetual_state("langtons_ant", size=401)
     s = perpetual_step(s, 12_000)
     d = []

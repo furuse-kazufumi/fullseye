@@ -352,7 +352,8 @@ def compose_funct_1d(y1, y2):
     """Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
     (HALCON ``compose_funct_1d``).
 
-    Each ``y2[i]`` is rounded to the nearest integer and **clamped** into
+    Each ``y2[i]`` is rounded to the nearest integer (``np.round``: an exact .5 goes
+    to the even neighbour, so 2.5 -> 2 and 4.5 -> 4) and **clamped** into
     ``[0, len(y1) - 1]``, then ``out[i] = y1[that index]``. Nearest-neighbour
     lookup, no interpolation.
 

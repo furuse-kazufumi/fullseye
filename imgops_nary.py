@@ -159,7 +159,7 @@ _DEFS = [
     ("bit_or", "bit_or", 2, (IMG, IMG), IMG, _or_img, 
      "2 枚の画像のビット単位 OR。HALCON の ``bit_or`` に相当。★``bit_and`` と同じく 8bit へ量子化してから演算するため階調が落ちる。``a``, ``b`` は未使用。"),
     ("convol_image", "convol_image", 2, (IMG, IMG), IMG, _convol, 
-     "第 2 入力をフィルタマスクとして畳み込む。HALCON の ``convol_image`` に相当。★HALCON と同じく**相関**(マスクを書いたまま重ねる)で計算する —— scipy の ``convolve`` はマスクを反転するので、非対称なマスクだと画像が逆向きにずれる。マスクは絶対値の総和で正規化し、端は ``reflect``。``a``, ``b`` は未使用。"),
+     "第 2 入力をフィルタマスクとして畳み込む。HALCON の ``convol_image`` に相当。★HALCON と同じく**相関**(マスクを書いたまま重ねる)で計算する —— scipy の ``convolve`` はマスクを反転するので、非対称なマスクだと画像が逆向きにずれる。マスクは画像より小さくてよく(形の一致は要らない)、絶対値の総和 + 1e-8 で割って正規化する(総和が 0 のマスクで割り算が爆発しないため。出力は相対 1e-8 だけ小さくなる)。端は ``reflect``。``a``, ``b`` は未使用。"),
     ("union2", "union2", 2, (REG, REG), REG, _union2, 
      "2 つの領域の和(どちらかに入る画素)。HALCON の ``union2`` に相当。入力は ``> 0.5`` で二値化する。``a``, ``b`` は未使用。"),
     ("intersection", "intersection", 2, (REG, REG), REG, _intersection, 

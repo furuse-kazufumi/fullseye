@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 返り値: ``polygons``(多角形の列、各 (k, 2) [y, x])、``areas``(靴紐)、``edge_length_total``(内部の辺の長さの和)、
 ``n_edges``(内部の辺の数)、``perimeter_internal`` (n,)(各セルの内部の辺の長さ)。
 
+``size`` は (H, W) で、この層の他の世界と同じく 16 × 16 以上(未満は ValueError)。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

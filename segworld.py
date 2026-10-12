@@ -224,7 +224,9 @@ def voronoi_cells(seeds, size) -> Dict[str, object]:
     """矩形 [−0.5, W − 0.5] × [−0.5, H − 0.5] の中の種のボロノイ分割を多角形で返す(半平面の総当たり、O(n²))。
 
     返り値: ``polygons``(多角形の列、各 (k, 2) [y, x])、``areas``(靴紐)、``edge_length_total``(内部の辺の長さの和)、
-    ``n_edges``(内部の辺の数)、``perimeter_internal`` (n,)(各セルの内部の辺の長さ)。"""
+    ``n_edges``(内部の辺の数)、``perimeter_internal`` (n,)(各セルの内部の辺の長さ)。
+
+    ``size`` は (H, W) で、この層の他の世界と同じく 16 × 16 以上(未満は ValueError)。"""
     op = "voronoi_cells"
     h, w = _size(size, op)
     S = np.asarray(seeds, np.float64)

@@ -2279,6 +2279,10 @@ def _unwrap_image(v):
     return v
 
 
+#: 第 2 入力が畳み込みの核(マスク)である n-ary op。形の一致を要求しない。
+_NARY_KERNEL_SECOND = frozenset({"convol_image"})
+
+
 def _reject_untyped(v, op_or_sort) -> None:
     """数値として読めない配列と、実数 sort への複素配列を **方針に依らず** TypeError で止める。
 
@@ -2659,8 +2663,11 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         # 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が
         # そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には
         # 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+        # ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを
+        # 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の
+        # 付与で発見)。核を取る op だけ名指しで外す。
         shapes = [x.shape for x in inputs if isinstance(x, np.ndarray)]
-        if (len(shapes) == len(inputs) and len(set(shapes)) > 1
+        if (len(shapes) == len(inputs) and len(set(shapes)) > 1 and name not in _NARY_KERNEL_SECOND
                 and all(s in _REAL_RASTER_SORTS for s in nop.in_sorts)):
             err = ValueError("%r: its %d raster inputs must share one shape, got %s — crop, pad or "
                              "resize explicitly first (e.g. fullseye.apply(x, 'crop_rectangle1') or "

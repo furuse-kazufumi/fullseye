@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1366. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1367. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -56,13 +56,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1691** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
 - **L1986** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
 - **L2017** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
-- **L2301** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2337** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2658** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2966** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2970** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3091** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3101** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L2305** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2341** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2662** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2666** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L2973** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2977** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3098** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3108** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1682,20 +1683,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L115** _(ja)_ — 密度の配色(暗い紺 → 橙 → 生成り)。★赤と緑は対にしない
 - **L149** _(ja)_ — ★`np.add.at` は同じことをするが桁違いに遅い(散らばった加算)。 1 次元に畳んで `bincount` で積むと CI の予算に収まる。
-- **L314** _(ja)_ — ★色を**黒でいた時間**に結びつける。途中で通っただけのマスと、早くから 黒いままのマスが同じ濃さになるのが「白黒の点」の正体だった。 高速道路は最後にできるので薄く、最初の混沌は濃く出る。
-- **L325** _(ja)_ — ★構図 —— 蟻が触った範囲は盤の一部しかない(既定では 1/3 ほど)。 埋まった範囲の外接箱で切り出さないと、絵の大半が余白になる。
-- **L340** _(ja)_ — ★切り出すと 100 画素角ほどになる。**最近傍**で伸ばす —— これはセル オートマトンなので、補間すると存在しない中間値を作ってしまう。
-- **L363** _(ja)_ — ★外接**箱**で枠を使い切る(外接円だと三角形が上下に余白を残す)
-- **L375** _(ja)_ — ★密度をそのまま色に —— 双一次で積み、asinh で暗部を伸ばす
-- **L469** _(ja)_ — ★★平方根には**枝が 2 つ**あり、片方は「親 3 円に接しない円」を返す。 最初は主値だけを使っていて、絵の左上に**外円の外へ逃げる円の鎖**が 出た —— 絵としては「フラクタルっぽい」ので、見ただけでは欠陥と 分からない。接することを**数で確かめて**枝を選ぶ。
-- **L490** _(ja)_ — 持ち上げる。★「順位で正規化すれば配り直される」と読んだが**外れ**で、 極小円が多数派なので大きい円が全部下端に潰れ、前より悪くなった。
-- **L559** _(ja)_ — ★点群の外接箱で枠を使い切る(式の定数で決め打ちにしない)
-- **L581** _(ja)_ — ★正規化する前の速さ。色と太さをこれに結びつける(飾りでなく量)。
-- **L635** _(ja)_ — ★色は濃度 v に結びつける(単調な配色なので順位が保たれる)
-- **L876** _(ja)_ — ★二項係数そのものを積むと C(62,31)*31 が int64 を**黙って溢れる**。 要るのは偶奇だけなので、リュカの定理の帰結 「C(n,k) が奇 ⟺ (n & k) == k」を使う(桁あふれの余地が無い)。
-- **L896** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
-- **L903** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
-- **L920** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
+- **L315** _(ja)_ — ★色を**黒でいた時間**に結びつける。途中で通っただけのマスと、早くから 黒いままのマスが同じ濃さになるのが「白黒の点」の正体だった。 高速道路は最後にできるので薄く、最初の混沌は濃く出る。
+- **L326** _(ja)_ — ★構図 —— 蟻が触った範囲は盤の一部しかない(既定では 1/3 ほど)。 埋まった範囲の外接箱で切り出さないと、絵の大半が余白になる。
+- **L341** _(ja)_ — ★切り出すと 100 画素角ほどになる。**最近傍**で伸ばす —— これはセル オートマトンなので、補間すると存在しない中間値を作ってしまう。
+- **L364** _(ja)_ — ★外接**箱**で枠を使い切る(外接円だと三角形が上下に余白を残す)
+- **L376** _(ja)_ — ★密度をそのまま色に —— 双一次で積み、asinh で暗部を伸ばす
+- **L470** _(ja)_ — ★★平方根には**枝が 2 つ**あり、片方は「親 3 円に接しない円」を返す。 最初は主値だけを使っていて、絵の左上に**外円の外へ逃げる円の鎖**が 出た —— 絵としては「フラクタルっぽい」ので、見ただけでは欠陥と 分からない。接することを**数で確かめて**枝を選ぶ。
+- **L491** _(ja)_ — 持ち上げる。★「順位で正規化すれば配り直される」と読んだが**外れ**で、 極小円が多数派なので大きい円が全部下端に潰れ、前より悪くなった。
+- **L560** _(ja)_ — ★点群の外接箱で枠を使い切る(式の定数で決め打ちにしない)
+- **L582** _(ja)_ — ★正規化する前の速さ。色と太さをこれに結びつける(飾りでなく量)。
+- **L636** _(ja)_ — ★色は濃度 v に結びつける(単調な配色なので順位が保たれる)
+- **L877** _(ja)_ — ★二項係数そのものを積むと C(62,31)*31 が int64 を**黙って溢れる**。 要るのは偶奇だけなので、リュカの定理の帰結 「C(n,k) が奇 ⟺ (n & k) == k」を使う(桁あふれの余地が無い)。
+- **L897** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
+- **L904** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
+- **L921** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
 
 ## `photometric.py`
 

@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Voronoi partition of seeds inside a rectangle, returned as polygons with areas and internal edge lengths (brute-force half-planes, O(n^2)) (voronoi_cells).</p>
 <p>Returns: <code style="color:#22d3bf">polygons</code> (list of polygons, each (k, 2) [y, x]), <code style="color:#22d3bf">areas</code> (shoelace), <code style="color:#22d3bf">edge_length_total</code> (sum of internal edge lengths), <code style="color:#22d3bf">n_edges</code> (number of internal edges), <code style="color:#22d3bf">perimeter_internal</code> (n,) (internal edge length of each cell).</p>
+<p><code style="color:#22d3bf">size</code> is (H, W) and, like the other worlds in this layer, at least 16 × 16 (smaller raises ValueError).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
