@@ -19,9 +19,7 @@
 <p>noise_rel : float</p>
 <p>加法ガウス雑音の σ(欠陥なしの地 1 に対する相対値)。0 で決定論。</p>
 <p>seed : int</p>
-<p>雑音の種。</p>
-<p>tol : float</p>
-<p>反復解法(大きい像)の相対許容誤差。</p>
+<p>雑音の種。直接解に収まらない像(160,000 画素超)は共役勾配(相対残差 1e-10 固定)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
 <p><code style="color:#22d3bf">(H, W)</code> の float64。欠陥なし・一様励起なら厳密に 1。<code style="color:#22d3bf">u = Δn/(G₀τ)</code>。</p>

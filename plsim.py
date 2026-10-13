@@ -209,9 +209,7 @@ def pl_image_simulate(generation, sink=None, *, diffusion_length_px: float = 8.0
     noise_rel : float
         加法ガウス雑音の σ(欠陥なしの地 1 に対する相対値)。0 で決定論。
     seed : int
-        雑音の種。
-    tol : float
-        反復解法(大きい像)の相対許容誤差。
+        雑音の種。直接解に収まらない像(160,000 画素超)は共役勾配(相対残差 1e-10 固定)。
 
     Returns
     -------
