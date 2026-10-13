@@ -9,6 +9,69 @@
   "hi"
  ],
  "summaries": {
+  "acoustics/acoustic_material_table": {
+   "fp": "43c867b32287",
+   "ja": "組み込みの音響材料表: 密度・縦波音速・インピーダンス Z = ρc・減衰 α0·f^n と、値ごとの出典と確かめたかどうかの印(``table``)。",
+   "zh": "内置声学材料表:密度、纵波声速、声阻抗 Z = ρc、衰减 α0·f^n,每项附出处与是否已核实的标记(``table``)。",
+   "tw": "內建聲學材料表:密度、縱波聲速、聲阻抗 Z = ρc、衰減 α0·f^n,每項附出處與是否已查證的標記(``table``)。",
+   "ko": "내장 음향 재료 표: 밀도, 종파 음속, 임피던스 Z = ρc, 감쇠 α0·f^n 와 항목별 출처 및 검증 여부 표시 (``table``).",
+   "de": "Eingebaute akustische Materialtabelle: Dichte, Longitudinalschallgeschwindigkeit, Impedanz Z = ρc, Dämpfung α0·f^n, je Eintrag mit Quelle und Verifiziert-Kennzeichen (``table``).",
+   "hi": "अंतर्निहित ध्वनिक सामग्री तालिका: घनत्व, अनुदैर्ध्य ध्वनि-वेग, impedance Z = ρc, क्षीणन α0·f^n, हर प्रविष्टि के साथ स्रोत और सत्यापित-चिह्न (``table``)।"
+  },
+  "acoustics/acoustic_layer_stack": {
+   "fp": "5cf35aadddc2",
+   "ja": "垂直入射のパルスエコー用の積層: 結合液、上からの層(材料, 厚さ [m])、半無限の基板(``table``)。",
+   "zh": "用于垂直入射脉冲回波的层叠结构:耦合液、自上而下的各层(材料, 厚度 [m])以及半无限基底(``table``)。",
+   "tw": "用於垂直入射脈衝回波的疊層結構:耦合液、由上而下的各層(材料, 厚度 [m])以及半無限基底(``table``)。",
+   "ko": "수직 입사 펄스 에코용 적층: 결합액, 위에서부터의 층(재료, 두께 [m]), 반무한 기판 (``table``).",
+   "de": "Schichtstapel für Puls-Echo bei senkrechtem Einfall: Koppelmedium, Schichten (Material, Dicke in m) von oben und ein halbunendliches Substrat (``table``).",
+   "hi": "लंबवत आपतन pulse-echo के लिए परत-ढेर: couplant, ऊपर से परतें (सामग्री, मोटाई m में) और अर्ध-अनंत substrate (``table``)।"
+  },
+  "acoustics/acoustic_interface_coefficients": {
+   "fp": "9e16097268dc",
+   "ja": "積層の各界面の圧力の反射・透過係数、エネルギー保存 R² + (Z1/Z2)T² = 1 の検算、Z2 < Z1 で立つ位相反転の印(``table``)。",
+   "zh": "层叠结构每个界面的压力反射/透射系数、能量守恒 R² + (Z1/Z2)T² = 1 的校验,以及 Z2 < Z1 时的相位反转标记(``table``)。",
+   "tw": "疊層結構每個界面的壓力反射/透射係數、能量守恆 R² + (Z1/Z2)T² = 1 的驗算,以及 Z2 < Z1 時的相位反轉標記(``table``)。",
+   "ko": "적층의 각 계면에서의 압력 반사·투과 계수, 에너지 보존 R² + (Z1/Z2)T² = 1 검산, Z2 < Z1 일 때의 위상 반전 표시 (``table``).",
+   "de": "Druck-Reflexions- und Transmissionsfaktoren an jeder Grenzfläche eines Stapels, Energieprüfung R² + (Z1/Z2)T² = 1 und das Phasenumkehr-Kennzeichen Z2 < Z1 (``table``).",
+   "hi": "परत-ढेर की हर सीमा पर दाब का परावर्तन/पारगमन गुणांक, ऊर्जा-जाँच R² + (Z1/Z2)T² = 1 और Z2 < Z1 पर phase-उलटने का चिह्न (``table``)।"
+  },
+  "acoustics/pulse_echo_ascan": {
+   "fp": "a8968f864344",
+   "ja": "垂直入射の広帯域パルスに対する積層の RF の A スキャン: 伝達行列の積層応答、水の経路、べき乗則の減衰(``table``)。",
+   "zh": "层叠结构对垂直入射宽带脉冲的射频 A 扫描:传递矩阵的层叠响应、水路程与幂律衰减(``table``)。",
+   "tw": "疊層結構對垂直入射寬頻脈衝的射頻 A 掃描:傳遞矩陣的疊層響應、水路程與冪律衰減(``table``)。",
+   "ko": "수직 입사 광대역 펄스에 대한 적층의 RF A-스캔: 전달 행렬 적층 응답, 수중 경로, 거듭제곱 법칙 감쇠 (``table``).",
+   "de": "HF-A-Bild eines Schichtstapels für einen Breitbandpuls bei senkrechtem Einfall: Stapelantwort per Transfermatrix, Wasserstrecke und Potenzgesetz-Dämpfung (``table``).",
+   "hi": "लंबवत आपतन पर wideband pulse के लिए परत-ढेर का RF A-scan: transfer-matrix से ढेर की प्रतिक्रिया, पानी का पथ और घात-नियम क्षीणन (``table``)।"
+  },
+  "acoustics/sam_cscan": {
+   "fp": "ffd02a331f21",
+   "ja": "接合面の 2-D の地図の集束探触子 C スキャン: 周波数ごとのガウスの横 PSF、界面での時間ゲート、振幅・位相・同相(符号つき)・符号つき山の像(``table``)。",
+   "zh": "对二维键合面图进行聚焦探头 C 扫描:逐频率的高斯横向 PSF、界面处的时间门,输出幅值、相位、同相(带符号)与带符号峰值图像(``table``)。",
+   "tw": "對二維鍵合面圖進行聚焦探頭 C 掃描:逐頻率的高斯橫向 PSF、界面處的時間閘,輸出振幅、相位、同相(帶符號)與帶符號峰值影像(``table``)。",
+   "ko": "2-D 접합면 지도의 집속 탐촉자 C-스캔: 주파수별 가우스 횡방향 PSF, 계면의 시간 게이트, 진폭·위상·동상(부호)·부호 피크 영상 (``table``).",
+   "de": "C-Bild eines fokussierten Prüfkopfs über einer 2-D-Bondkarte: frequenzweise Gaußsche laterale PSF, Zeitblende an einer Grenzfläche, Amplituden-, Phasen-, Inphase- (vorzeichenbehaftet) und Vorzeichen-Spitzenbilder (``table``).",
+   "hi": "2-D bond map का focused-transducer C-scan: हर आवृत्ति पर Gaussian पार्श्व PSF, सीमा पर time gate, आयाम, phase, in-phase (चिह्नित) और signed-peak चित्र (``table``)।"
+  },
+  "acoustics/echo_phase_polarity": {
+   "fp": "b2521cde909c",
+   "ja": "界面のエコーを表面エコーに対する位相で分ける: 同相(Z が上がる)・反転(Z が下がる)・直交(薄い層。符号に意味が無い)(``table``)。",
+   "zh": "按相对于表面回波的相位对界面回波分类:同相(Z 增大)、反相(Z 减小)或正交(薄层,符号无意义)(``table``)。",
+   "tw": "按相對於表面回波的相位對界面回波分類:同相(Z 增大)、反相(Z 減小)或正交(薄層,符號無意義)(``table``)。",
+   "ko": "계면 에코를 표면 에코 대비 위상으로 분류: 동상(Z 증가), 반전(Z 감소), 직교(얇은 층, 부호가 의미 없음) (``table``).",
+   "de": "Ordnet ein Grenzflächenecho nach seiner Phase relativ zum Oberflächenecho ein: gleichphasig (Z steigt), invertiert (Z fällt) oder in Quadratur (dünne Schicht, Vorzeichen bedeutungslos) (``table``).",
+   "hi": "सतह-echo के सापेक्ष phase से सीमा-echo का वर्गीकरण: समान phase (Z बढ़ता है), उलटा (Z घटता है) या quadrature (पतली परत, चिह्न अर्थहीन) (``table``)।"
+  },
+  "acoustics/sam_frequency_tradeoff": {
+   "fp": "b54d870135dc",
+   "ja": "埋もれた界面の大きさ a のボイドに最適な SAM の周波数: 横の充填率 1 − 2^−(a/w)²(w = k_res·λ_w·F#)と往復減衰の取引。減衰がすべて f² なら閉形式(``table``)。",
+   "zh": "埋藏界面上给定尺寸空洞的最佳 SAM 频率:横向填充率 1 − 2^−(a/w)²(w = k_res·λ_w·F#)与往返衰减的权衡;衰减均按 f² 时有闭式解(``table``)。",
+   "tw": "埋藏界面上給定尺寸空洞的最佳 SAM 頻率:橫向填充率 1 − 2^−(a/w)²(w = k_res·λ_w·F#)與往返衰減的權衡;衰減均按 f² 時有閉式解(``table``)。",
+   "ko": "묻힌 계면의 크기 a 보이드에 대한 최적 SAM 주파수: 횡방향 충전율 1 − 2^−(a/w)² (w = k_res·λ_w·F#) 대 왕복 감쇠의 절충, 감쇠가 모두 f² 이면 닫힌 형식 (``table``).",
+   "de": "Optimale SAM-Frequenz für einen Hohlraum gegebener Größe an einer verborgenen Grenzfläche: laterale Füllung 1 − 2^−(a/w)² (w = k_res·λ_w·F#) gegen Hin-und-Rück-Dämpfung; geschlossene Form, wenn alle Verluste mit f² gehen (``table``).",
+   "hi": "दबी सीमा पर दिए आकार के void के लिए इष्टतम SAM आवृत्ति: पार्श्व भराव 1 − 2^−(a/w)² (w = k_res·λ_w·F#) बनाम आने-जाने का क्षीणन; सभी हानियाँ f² हों तो बंद रूप (``table``)।"
+  },
   "2d/abs_image": {
    "fp": "aaba3b87919d",
    "en": "Takes the absolute value of pixel values (``np.abs``). Since fullseye's ``image`` already follows the [0,1] contract (non-negative), this acts as an identity mapping that changes nothing for a normal image. It only has an effect when a signed intermediate result, such as a difference image, is passed in directly. Stands in for HALCON's ``abs_image`` (Calculate the absolute value (modulus) of an image.).",

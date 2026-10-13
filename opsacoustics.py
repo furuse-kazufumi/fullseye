@@ -25,6 +25,15 @@
 
 本レジストリはその台帳(acoustics.py、19 op / 6 カテゴリ)。
 
+ultrasonic(ultrasound.py、2026-10-13 追加)— **積層の中のボイドを超音波の位相で見つける**。
+パルスエコーの A スキャン(垂直入射の平面波、層の伝達行列、水の経路と f^n の減衰)と、
+走査型音響顕微鏡(SAM)の C スキャン(周波数ごとのガウスの横 PSF、時間ゲート、振幅像と
+表面エコーに対する位相像)。ハイブリッド接合の小さなボイドは振幅では Cu パッドと同じ明るさに
+写るが、Z が下がる界面のエコーは反転するので位相では分かれる。最適周波数(横分解能 ∝ 1/f と
+往復減衰 ∝ exp(−β f²) の取引)は閉形式。repo にはそれまで超音波の op が 1 つも無かった
+(grep: ultrason / transducer / a-scan / c-scan / acoustic impedance は op 実装で 0 件)。
+単一素子の集束探触子なので、アレイのビームフォーマは置いていない(下の rangedoppler の注記)。
+
 来歴は公開文献のみ(docs/PROVENANCE.md の naming rule に従い、特定の製品・
 企業を動機にも名前にも使わない):Allen & Rabiner, Proc. IEEE 65(11) 1977 +
 Griffin & Lim, IEEE TASSP 32(2) 1984(STFT と重み付き重畳加算の厳密逆)/
@@ -74,8 +83,9 @@ IEEE TAE 15(2) 1967 + Bendat & Piersol, *Random Data*(Welch 平均・H1/H2・
     opsacoustics.get("envelope_spectrum")(x, 25600.0, 2000.0, 4000.0)["peak_freq"]
 """
 import acoustics
+import ultrasound
 
-_MOD = {"acoustics": acoustics}
+_MOD = {"acoustics": acoustics, "ultrasound": ultrasound}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用のみ: signal / table / measurement
@@ -180,6 +190,28 @@ _CATALOG = {
         # 漏水位置決めと設備保全の PoC が 3-D の correlation_score を (1,1,N) に
         # reshape して使っていた(KNOWN_ISSUES §41.14)。返りは (delay, table)。
         ("gcc_delay", "acoustics", ["signal", "signal"], "measurement"),
+    ],
+    # ultrasonic(ultrasound、2026-10-13 追加): 積層のパルスエコーと SAM の C スキャン。
+    # ★新しい型の語は作らない。積層・A スキャン・C スキャンは kind の印つきの dict(table)で、
+    #   印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を積層として
+    #   黙って読む経路が無い。
+    # ★A スキャンを素の signal にしない理由: 超音波で測る量は**時刻**(深さ = 往復時間)で、
+    #   素の 1-D 配列は時刻の原点(表面エコーの手前の窓の始まり)と rate を失う。上の rate の
+    #   注記と同じ「例外も NaN も無しに深さが狂う」経路になるので、t と rate を同じ dict に
+    #   入れて流通させる(dict の ``rf`` を取り出して acoustics の op に渡すのは呼び手の明示的な行為)。
+    # ★C スキャンの RF の立方体(画素 × 時刻)は返さない: 返すのはゲートの中で読んだ像だけ
+    #   (振幅・位相・同相・符号つき山・到達時刻)。立方体を image / volume として流せば
+    #   「時間の軸を空間の軸として」読む経路ができる(混ぜると黙って嘘をつく)。
+    # ★接合面の地図は既存の labels2d(整数ラベル = 積層の種類)。2 入力なので 2-D の橋は
+    #   架からず、1 入力の op の in はすべて table か無し(TYPE_TO_SORT に無い)。
+    "ultrasonic": [
+        ("acoustic_material_table", "ultrasound", [], "table"),
+        ("acoustic_layer_stack", "ultrasound", [], "table"),
+        ("acoustic_interface_coefficients", "ultrasound", ["table"], "table"),
+        ("pulse_echo_ascan", "ultrasound", ["table"], "table"),
+        ("sam_cscan", "ultrasound", ["labels2d", "table"], "table"),
+        ("echo_phase_polarity", "ultrasound", ["table"], "table"),
+        ("sam_frequency_tradeoff", "ultrasound", ["table"], "table"),
     ],
 }
 

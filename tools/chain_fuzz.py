@@ -4570,6 +4570,55 @@ def _b_tof_transport_depth(pool, rng):
     return (_lt.transport_matrix_radiosity(pr, 0.8),), {"camera_xz": (0.2, 0.6), "modulation_hz": 20e6}
 
 
+def _us_stack(rng, void=False):
+    """超音波の種: 厚さを振った Si のダイ + 接合層の積層(プールの table は印が無く拒まれる)。"""
+    import ultrasound as _us
+    die = float(rng.uniform(80e-6, 150e-6))
+    bond = [("sio2", 1e-6), ("air", 0.1e-6), ("sio2", 1e-6)] if void else [("copper", 1e-6), ("copper", 1e-6)]
+    return _us.acoustic_layer_stack([("silicon", die)] + bond)
+
+
+def _b_acoustic_material_table(pool, rng):
+    return (), {}
+
+
+def _b_acoustic_layer_stack(pool, rng):
+    return (), {"layers": [("silicon", float(rng.uniform(50e-6, 150e-6))), ("sio2", 2e-6)],
+                "substrate": "silicon"}
+
+
+def _b_acoustic_interface_coefficients(pool, rng):
+    return (_us_stack(rng),), {}
+
+
+def _b_pulse_echo_ascan(pool, rng):
+    return (_us_stack(rng, void=bool(rng.integers(2))),), {"f0": float(rng.uniform(120e6, 250e6)),
+                                                           "water_path": 0.5e-3}
+
+
+def _b_sam_cscan(pool, rng):
+    """誘電体の地にボイドの円(ラベル 1)。積層の dict は種のラベルと同じ鍵で組む。"""
+    import ultrasound as _us
+    m = np.zeros((24, 24), dtype=np.int64)
+    yy, xx = np.mgrid[:24, :24]
+    m[(yy - 12) ** 2 + (xx - 12) ** 2 <= int(rng.integers(4, 30))] = 1
+    die = [("silicon", 100e-6)]
+    stacks = {0: _us.acoustic_layer_stack(die + [("sio2", 2e-6)]),
+              1: _us.acoustic_layer_stack(die + [("sio2", 1e-6), ("air", 0.1e-6), ("sio2", 1e-6)])}
+    return (m, stacks), {"pixel_size": 2e-6, "f0": 200e6, "water_path": 0.5e-3, "noise_rms": 1e-4,
+                         "seed": int(rng.integers(1000))}
+
+
+def _b_echo_phase_polarity(pool, rng):
+    import ultrasound as _us
+    return (_us.pulse_echo_ascan(_us_stack(rng, void=True), f0=200e6, water_path=0.5e-3),), {"interface": 1}
+
+
+def _b_sam_frequency_tradeoff(pool, rng):
+    return (_us_stack(rng),), {"void_diameter": float(rng.uniform(3e-6, 40e-6)), "water_path": 1e-3,
+                               "interface": 1}
+
+
 def _b_perpetual_state(pool, rng):
     """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
 
@@ -6253,6 +6302,14 @@ OP_ARG_BUILDERS = {
     "micro_phase_decode": _b_micro_phase_decode,
     "tof_multipath_phase": _b_tof_multipath_phase,
     "tof_transport_depth": _b_tof_transport_depth,
+    # --- 超音波の積層と SAM(Si のダイ + 接合層の積層から組む。プールの table は印が無く拒まれる) --- #
+    "acoustic_material_table": _b_acoustic_material_table,
+    "acoustic_layer_stack": _b_acoustic_layer_stack,
+    "acoustic_interface_coefficients": _b_acoustic_interface_coefficients,
+    "pulse_echo_ascan": _b_pulse_echo_ascan,
+    "sam_cscan": _b_sam_cscan,
+    "echo_phase_polarity": _b_echo_phase_polarity,
+    "sam_frequency_tradeoff": _b_sam_frequency_tradeoff,
     # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
     "pod_ahat_fit": _b_pod_ahat_fit,
     "pod_from_ahat": _b_pod_from_ahat,

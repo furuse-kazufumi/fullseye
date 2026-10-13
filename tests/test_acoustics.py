@@ -765,13 +765,18 @@ def test_ledger_is_complete_and_declares_real_types():
     # 2026-09-08: 19 -> 20(`gcc_delay` を追加。1-D の相互相関 / GCC / 到達時間差の
     # 口がどの層にも無く、漏水位置決めと設備保全の PoC が 3-D の op を (1,1,N) に
     # reshape して使っていた)。
-    assert len(opsacoustics.OPSACOUSTICS) == 20
+    # 2026-10-13: 20 -> 27(新カテゴリ ultrasonic = ultrasound.py の 7 op。積層のパルスエコーと
+    # SAM の C スキャン。門は tests/test_ultrasound.py)。
+    assert len(opsacoustics.OPSACOUSTICS) == 27
+    assert len(opsacoustics.list_ops("ultrasonic")) == 7
     for name in opsacoustics.list_ops():
         m = opsacoustics.info(name)
         assert m["out"] in ("signal", "table", "measurement")
         # only existing sorts are used — no new type vocabulary was introduced
-        assert all(i in ("signal", "table") for i in m["in"])
+        # (sam_cscan takes the existing labels2d bond map; see the ultrasonic comment)
+        assert all(i in ("signal", "table", "labels2d") for i in m["in"])
         assert m["doc"], name
+    assert [n for n in opsacoustics.list_ops() if "labels2d" in opsacoustics.info(n)["in"]] == ["sam_cscan"]
     # istft is the one op that consumes a table: an invertible transform cannot
     # be a bare array, and complex_steerable_reconstruct sets the precedent
     assert opsacoustics.info("istft")["in"] == ["table"]
@@ -813,6 +818,8 @@ def test_ledger_declared_output_types_are_the_actual_types():
         "measurement": lambda v: isinstance(v, (int, float, np.floating,
                                                 np.integer)),
     }
+    # ultrasonic の 7 op の出力型は tests/test_ultrasound.py の連鎖ファザーの門が確かめる
+    assert set(produced) <= set(opsacoustics.list_ops()) - set(opsacoustics.list_ops("ultrasonic"))
     for name, value in produced.items():
         out = opsacoustics.info(name)["out"]
         assert checks[out](value), (name, out, type(value).__name__)
