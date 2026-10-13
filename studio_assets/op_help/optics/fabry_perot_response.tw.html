@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fabry_perot_response — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fabry_perot_response(length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, etm_transmittance: &#x27;float&#x27; = 5e-06, itm_loss: &#x27;float&#x27; = 0.0, etm_loss: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cavityoptics; cavityoptics.fabry_perot_response(length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, etm_transmittance: &#x27;float&#x27; = 5e-06, itm_loss: &#x27;float&#x27; = 0.0, etm_loss: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;fabry_perot_response&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>以閉式返回 Fabry-Perot 腔的設計量（自由光譜範圍、精細度、線寬、極點、功率增益、儲能時間）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>length_m : float</p>
+<p>共振器長 L [m]。既定は aLIGO の腕(3994.5 m)。</p>
+<p>wavelength_nm : float</p>
+<p>レーザー波長 [nm]。既定 1064 nm(Nd:YAG)。</p>
+<p>itm_transmittance, etm_transmittance : float</p>
+<p>入力鏡・終端鏡の<b>強度</b>透過率(0 ≤ T &lt; 1)。既定は aLIGO(1.4 % / 5 ppm)。</p>
+<p>itm_loss, etm_loss : float</p>
+<p>各鏡の強度損失(吸収 + 散乱)。<code style="color:#22d3bf">T + ℓ &lt; 1</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">fsr_hz</code> = c/2L、<code style="color:#22d3bf">finesse</code> = π√(r₁r₂)/(1 − r₁r₂)、</p>
+<p><code style="color:#22d3bf">linewidth_hz</code>(半値全幅、厳密に <code style="color:#22d3bf">FSR·(2/π)·asin(π/2F)</code>)、</p>
+<p><code style="color:#22d3bf">linewidth_approx_hz</code> = FSR/F、<code style="color:#22d3bf">pole_hz</code> = 線幅の半分(共振器の極)、</p>
+<p><code style="color:#22d3bf">storage_time_s</code> = 1/(2π·pole)、<code style="color:#22d3bf">power_gain</code> = 共振での循環光量/入射光量</p>
+<p>= T₁/(1 − r₁r₂)²、<code style="color:#22d3bf">transmission_max</code> = T₁T₂/(1 − r₁r₂)²、</p>
+<p><code style="color:#22d3bf">reflection_min</code> = 共振での反射率 <code style="color:#22d3bf">((r₁ − r₂(1−ℓ₁... ))/(1 − r₁r₂))²</code> の</p>
+<p>損失なし形 <code style="color:#22d3bf">((r₁ − r₂)/(1 − r₁r₂))²</code>、<code style="color:#22d3bf">r1</code> / <code style="color:#22d3bf">r2</code>、<code style="color:#22d3bf">round_trip_phase_per_hz</code></p>
+<p>= 4πL/c、<code style="color:#22d3bf">free_spectral_range_mode_number</code> = 2L/λ(共振の次数、参考値)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>aLIGO の既定値で F ≈ 445、FSR 37.5 kHz、線幅 84 Hz、極 42 Hz、循環光量 ≈ 280 倍(入力鏡の透過 1.4 % に対して)。<code style="color:#22d3bf">linewidth_hz</code> と <code style="color:#22d3bf">pole_hz</code> は Airy 関数の半値を <b>厳密に</b>与える(<code style="color:#22d3bf">asin</code> 形)ので、<code style="color:#22d3bf">tests</code> では透過曲線を細かく標本化して半値の交点を独立に探し、この値と突き合わせる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:pdh_error_signal">pdh_error_signal</a> · <a style="color:#22d3bf" href="opoptics:quantum_noise_budget">quantum_noise_budget</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pdh_error_signal — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">pairs</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cavityoptics; cavityoptics.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;pdh_error_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>resonance से detuning δ [Hz] के function के रूप में Pound-Drever-Hall error signal ε(δ) (pairs)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>length_m : float</p>
+<p>共振器長 L [m]。</p>
+<p>itm_transmittance, etm_transmittance : float</p>
+<p>鏡の強度透過率(損失なし)。</p>
+<p>mod_freq_hz : float</p>
+<p>位相変調周波数 Ω/2π [Hz]。線幅より十分大きいと傾きが Black の式 15 に乗る。</p>
+<p>mod_depth : float</p>
+<p>変調指数 β。搬送波 <code style="color:#22d3bf">P_c = J₀(β)²P</code>、側帯波 <code style="color:#22d3bf">P_s = J₁(β)²P</code>(β = 1.08 で <code style="color:#22d3bf">P_c·P_s</code> 最大)。</p>
+<p>power_w : float</p>
+<p>入射光量 P [W]。</p>
+<p>span_linewidths : float</p>
+<p>表示する離調の範囲(線幅の何倍まで、±)。</p>
+<p>n_points : int</p>
+<p>点数(奇数なら δ = 0 を含む)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(n_points, 2)</code>: 列 0 = 離調 δ [Hz]、列 1 = ε [W]</p>
+<p><code style="color:#22d3bf">= 2√(P_c P_s)·Im[F(δ)F*(δ+Ω) − F*(δ)F(δ−Ω)]</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>門(<code style="color:#22d3bf">tests</code>): 反対称 <code style="color:#22d3bf">ε(−δ) = −ε(δ)</code>(1e-12)、<code style="color:#22d3bf">ε(0) = 0</code>、対称共振器(T₁ = T₂)で Ω ≫ δν のとき共振近傍の傾き <code style="color:#22d3bf">dε/dδ = −8√(P_c P_s)/δν</code>(Black 2001 式 15)に 1 % 以内。側帯波が共振に乗る <code style="color:#22d3bf">δ = ±Ω</code> 付近の小さな山も含めて返す(表示範囲が届けば)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>
+<p style="margin:2px 0 2px 12px">• <b>String से <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> सफल हो जाता है, इसलिए बिना parse किया config value length के रूप में निकल जाता (मापा गया: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> सही दिखने वाला 66.667 mm लौटा रहा था)। bool को भी <code style="color:#22d3bf">True == 1</code> वाले implicit promotion के रूप में अस्वीकार किया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array से <code style="color:#22d3bf">ValueError</code></b> (केवल real-valued slots; imaginary part को चुपचाप छोड़ना या mask हटाना अस्वीकार)। <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b>।</p>
+<p style="margin:2px 0 2px 12px">• <b>शून्य से भाग और उससे जुड़े मामलों को नाम लेकर अस्वीकार किया जाता है</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, पूरी तरह opaque aperture (सब 0, इसलिए normalisation 0/0), ऐसा PSF जिसका योग &lt;= 0 हो, S0 = 0 वाला Stokes vector, और front focal point पर रखा object (image अनंत पर)।</p>
+<p style="margin:2px 0 2px 12px">• <b>केवल 2 ops non-finite value लौटाते हैं, और वह भी contract के रूप में लिखा हुआ</b>: <code style="color:#22d3bf">depth_of_field</code> hyperfocal distance से आगे <code style="color:#22d3bf">far_mm = inf</code> (hyperfocal distance की परिभाषा यही है) और <code style="color:#22d3bf">gaussian_beam</code> waist पर <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (plane wavefront की radius of curvature)। दोनों साथ में एक finite साथी (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>) भी लौटाते हैं। <b>इसके अलावा कोई भी चुपचाप आया NaN/Inf अंदर ही पकड़ा जाता है और <code style="color:#22d3bf">ValueError</code> देता है</b> — &quot;float64 overflow हुआ&quot; और &quot;उत्तर अनंत है&quot; अलग-अलग दावे हैं, इसलिए पहले को दूसरे का चेहरा पहनाकर नहीं लौटाया जाता।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: generate होने वाले grid के लिए <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), दिए गए field/PSF/aperture के लिए <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD element chain के लिए <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike के लिए <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25)। छोटे argument से बहुत बड़ा internal allocation होने वाले रास्तों (मापा गया: n_max=40 × 4096² पर 108 GB) को fail-closed ढंग से बंद किया गया है।</p>
+<p style="margin:2px 0 2px 12px">• <b>भौतिक रूप से असंभव states भी अस्वीकार</b>: degree of polarisation &gt; 1 वाला Stokes vector, ऋणात्मक transmittance, ऋणात्मक intensity, और n-|m| odd जैसे अमान्य Zernike indices।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fabry_perot_response">fabry_perot_response</a> · <a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:quantum_noise_budget">quantum_noise_budget</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

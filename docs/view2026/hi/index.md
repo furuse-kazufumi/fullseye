@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-44 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+45 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Array से दिशा मापना, range और velocity अलग करना: [explanation](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · examples [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - एक ही beat (membrane modes, fringes, diffraction orders, print moiré, tone से ink): [explanation](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · examples [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- interferometer की cavity, quantum-noise budget और coloured noise में known waveform को closed form में design करना (gravitational-wave detector के समीकरण inspection interferometer, vibrometer और AE के लिए): [explanation](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · examples [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - Vibration और आवाज़ से faults का निदान: [explanation](../../capabilities/vibration-and-acoustics.md) _(ja)_ · examples [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **Reconstruct और correct करना**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-227 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+228 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -401,8 +402,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomy और environment</b> (21)</summary>
+<details class="vall"><summary><b>Astronomy और environment</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="gravitational-wave detector का closed-form pseudo-simulation" width="200" height="200"><b>&#9654;</b><span>gravitational-wave detector का closed-form pseudo-simulation</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="All-sky cloud cover" width="200" height="200"><span>All-sky cloud cover</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="Star photometry" width="200" height="200"><span>Star photometry</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="Change detection" width="200" height="200"><span>Change detection</span></a>

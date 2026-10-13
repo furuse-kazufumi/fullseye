@@ -19,8 +19,9 @@ import numpy as np
 
 import dsp
 import funct1d
+import gwsearch
 
-_MOD = {"funct1d": funct1d, "dsp": dsp}
+_MOD = {"funct1d": funct1d, "dsp": dsp, "gwsearch": gwsearch}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: signal(1-D array)/ pairs((x,y))/ indices / measurement / file
@@ -77,6 +78,15 @@ _CATALOG = {
         ("peak_subbin", "dsp", ["signal", "indices"], "signal"),   # indices (k,) → 位置 (k,) float(scalar in scalar out だが台帳は配列経路。fuzz TYPEMISS 2026-09-20)
         ("point_spectrum", "dsp", ["positions"], "table"),
         ("signal_features", "dsp", ["signal"], "table"),
+    ],
+    "matched": [  # 色つき雑音の中の既知波形(重力波の整合フィルタ = 振動・AE・超音波にも)
+        ("psd_welch", "gwsearch", ["signal"], "pairs"),
+        ("whiten_by_psd", "gwsearch", ["signal", "pairs"], "signal"),
+        ("chirp_newtonian", "gwsearch", [], "signal"),
+        ("chirp_mass_from_track", "gwsearch", ["pairs"], "table"),
+        ("matched_filter_snr", "gwsearch", ["signal", "signal", "pairs"], "signal"),
+        ("optimal_snr", "gwsearch", ["signal", "pairs"], "measurement"),
+        ("coincidence_delay", "gwsearch", ["signal", "signal"], "table"),
     ],
     "io": [  # 音声/波形の入出力
         ("read_wav", "dsp", ["file"], "signal"),

@@ -97,8 +97,9 @@ import metalfinish
 import surfacelib
 import optics
 import raytrace
+import cavityoptics
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -419,6 +420,13 @@ _CATALOG = {
     # ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の
     #   image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない
     #   (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+    "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
+        ("fabry_perot_response", "cavityoptics", [], "table"),
+        ("cavity_strain_transfer", "cavityoptics", [], "pairs"),
+        ("michelson_dc_readout", "cavityoptics", [], "table"),
+        ("pdh_error_signal", "cavityoptics", [], "pairs"),
+        ("quantum_noise_budget", "cavityoptics", [], "table"),
+    ],
     "coherent": [
         ("coherent_image", "coherent", ["image2d", "image2d"], "image2d"),
         ("speckle_field", "coherent", [], "image2d"),

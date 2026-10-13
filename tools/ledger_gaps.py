@@ -414,9 +414,14 @@ def _differs(base, r):
         return True
     if np.any(a[~fin] != b[~fin]) and not np.all(np.isnan(a[~fin]) & np.isnan(b[~fin])):
         return True
-    if np.allclose(a[fin], b[fin], rtol=1e-9, atol=1e-12):
+    # ★2026-10-14: 絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ ``chirp_newtonian``)だと
+    # どのノブも「変化なし」にする。出力の最大絶対値が 1 より小さいときは、その大きさで許容差を縮める
+    # (1 以上の出力では以前と同じ)。
+    scale = float(max(np.max(np.abs(a[fin])), np.max(np.abs(b[fin])))) if fin.any() else 1.0
+    shrink = min(1.0, scale) if scale > 0.0 else 1.0
+    if np.allclose(a[fin], b[fin], rtol=1e-9, atol=1e-12 * shrink):
         return False
-    if not np.allclose(a[fin], b[fin], rtol=1e-6, atol=1e-9):
+    if not np.allclose(a[fin], b[fin], rtol=1e-6, atol=1e-9 * shrink):
         return True
     return None
 

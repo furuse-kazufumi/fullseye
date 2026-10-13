@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 44 项,每项都有说明页(用法与限制)和可运行的示例。
+共 45 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 用阵列测方向,分离距离与速度: [说明](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · 示例 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - 拍频只有一个(膜的模态、干涉条纹、衍射级、印刷莫尔纹、落到墨上): [说明](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · 示例 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 用闭式设计干涉仪的腔、量子噪声预算与有色噪声中的已知波形（把引力波探测器的公式用于检测干涉仪、振动计与声发射）: [说明](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · 示例 [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - 从振动与声音诊断异常: [说明](../../capabilities/vibration-and-acoustics.md) _(ja)_ · 示例 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **重建与校正**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 227 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 228 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -401,8 +402,9 @@ PoC 227 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>天文与环境</b> (21)</summary>
+<details class="vall"><summary><b>天文与环境</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="引力波探测器的伪仿真" width="200" height="200"><b>&#9654;</b><span>引力波探测器的伪仿真</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天相机云量" width="200" height="200"><span>全天相机云量</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="恒星测光精度" width="200" height="200"><span>恒星测光精度</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="变化检测" width="200" height="200"><span>变化检测</span></a>

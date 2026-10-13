@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">coincidence_delay — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coincidence_delay(snr_a, snr_b, rate: &#x27;float&#x27; = 4096.0, *, max_delay_s: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gwsearch; gwsearch.coincidence_delay(snr_a, snr_b, rate: &#x27;float&#x27; = 4096.0, *, max_delay_s: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;coincidence_delay&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 本の SNR 時系列の山の時刻差(b − a)を副標本精度で返す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>snr_a, snr_b : array_like</p>
+<p><code style="color:#22d3bf">matched_filter_snr</code> の返り(同じ長さ・同じ標本化)。</p>
+<p>rate : float</p>
+<p>標本化周波数 [Hz]。</p>
+<p>max_delay_s : float</p>
+<p>a の山から b の山を探す窓(±)[s]。LIGO H1–L1 は光の走行時間 10 ms。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">delay_s</code>(副標本、放物線)、<code style="color:#22d3bf">delay_samples</code>(整数)、<code style="color:#22d3bf">peak_a</code> / <code style="color:#22d3bf">peak_b</code>(山の高さ)、</p>
+<p><code style="color:#22d3bf">index_a</code> / <code style="color:#22d3bf">index_b</code>、<code style="color:#22d3bf">network_snr</code> = √(peak_a² + peak_b²)、<code style="color:#22d3bf">window_samples</code></p>
+<p>(探した窓の片側の標本数 = round(max_delay_s·rate))。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:psd_welch">psd_welch</a> · <a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

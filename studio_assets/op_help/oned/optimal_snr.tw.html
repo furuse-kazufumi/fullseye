@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">optimal_snr — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × pairs</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optimal_snr(template, psd, rate: &#x27;float&#x27; = 4096.0, *, f_low_hz: &#x27;float | None&#x27; = 20.0, f_high_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gwsearch; gwsearch.optimal_snr(template, psd, rate: &#x27;float&#x27; = 4096.0, *, f_low_hz: &#x27;float | None&#x27; = 20.0, f_high_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;optimal_snr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>模板的最佳訊噪比 σ = √(4∫|h̃|²/S df)（measurement）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>template : array_like</p>
+<p>波形(1-D)。</p>
+<p>psd : array_like</p>
+<p>片側 PSD の <code style="color:#22d3bf">pairs</code>。</p>
+<p>rate : float</p>
+<p>標本化周波数 [Hz]。</p>
+<p>f_low_hz, f_high_hz : float or None</p>
+<p>内積を取る帯域(None は端まで)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>float</p>
+<p>この PSD の雑音に対し、位相・時刻が既知のときに期待される SNR。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurement</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:psd_welch">psd_welch</a> · <a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:coincidence_delay">coincidence_delay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

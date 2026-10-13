@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**123 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**124 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -3298,7 +3298,7 @@ Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/popul
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 
-Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 21 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
+Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 22 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
 
 The shared finding is that the same object reads differently depending on where it is: the same cloud counts 1.45x more at the horizon than at the zenith; clouds of equal optical thickness are detected or not depending on their angular distance from the sun; the same reflection makes one detector read quietly low and another stop silently.
 
@@ -4003,6 +4003,46 @@ Source: [examples/poc_gravitational_lens_invariants.py](https://github.com/furus
 This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gravitational_lens_invariants)
 
 Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html)
+
+## No.2026.228 —— A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data
+
+[![A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl.png)
+
+*↑ **A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data** ―― How much of a km-scale Michelson interferometer reading a strain of 1e-21 can be reproduced in closed form, scored on the public GW150914 data (GWOSC) and the published numbers. Twelve new ops: the arm cavity (`fabry_perot_response` gives finesse 445 and a 42 Hz pole from the public aLIGO design values, `cavity_strain_transfer`, `michelson_dc_readout`, `pdh_error_signal` with the slope of Black 2001 to 0.9999), the quantum-noise budget (`quantum_noise_budget`: shot x radiation pressure = SQL^2/2 as an identity, and the second implementation gwinc 0.6.2 agrees within 0.96 to 1.12 at eight frequencies) and the signal side (`psd_welch` -> `whiten_by_psd` -> `matched_filter_snr` / `optimal_snr`, `chirp_newtonian`, `chirp_mass_from_track`, `coincidence_delay`). On the real data, whitening plus a 35-350 Hz band correlates at 0.959 / 0.935 with the published Fig. 1 of PRL 116, 061102; the matched filter with the numerical-relativity waveform gives SNR 19.0 (H1) / 13.1 (L1) against the published ~20 / 13, a network SNR of 23.1 against 24, and L1 leading by 7.1 ms against 6.9 ms. The Newtonian chirp reaches only 9.1 / 5.6 (no merger or ringdown). The ratio to the design curve (T1800044) is 0.42 at 20 Hz, 1.99 at 100 Hz and 0.33 at 1 kHz, which the table attributes to signal recycling and thermal noise. The take-home for inspection: a known waveform in 1/f^2 coloured noise is recovered by the whitened matched filter at the injected height, while plain correlation keeps 0.98 for a narrowband tone but only 0.50 for a chirp and 0.37 for a ring-down. The real-data stage runs when the files are placed and says 'not placed' otherwise. Nothing is learned, nothing is calibrated.*
+
+[![単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer.png)
+
+*↑ The measurement ―― 単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。 (figure labels are in Japanese; the numbers are the same)*
+
+[![反対称で共振で零。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/02_pdh_error_signal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/02_pdh_error_signal.png)
+
+*↑ 反対称で共振で零。*
+
+[![通常干渉計(信号再利用なし)の量子雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/03_quantum_noise_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/03_quantum_noise_budget.png)
+
+*↑ 通常干渉計(信号再利用なし)の量子雑音。*
+
+[![数値相対論の波形は公表どおりの山を立て、ニュートン近似(合体・リングダウン無し)は半分以下。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/06_matched_filter_snr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/06_matched_filter_snr.png)
+
+*↑ 数値相対論の波形は公表どおりの山を立て、ニュートン近似(合体・リングダウン無し)は半分以下。*
+
+[![雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/07_burst_in_coloured_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/07_burst_in_coloured_noise.png)
+
+*↑ 雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。*
+
+[![入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)
+
+*↑ The animation ―― 入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。*
+
+```
+FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
+```
+
+Source: [examples/poc_gw_detector_pseudo_simulation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation)
+
+Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html) · [`cavity_strain_transfer`](https://furuse.work/ops/optics/cavity/cavity_strain_transfer.html) · [`chirp_mass_from_track`](https://furuse.work/ops/oned/matched/chirp_mass_from_track.html) · [`chirp_newtonian`](https://furuse.work/ops/oned/matched/chirp_newtonian.html) · [`coincidence_delay`](https://furuse.work/ops/oned/matched/coincidence_delay.html) · [`fabry_perot_response`](https://furuse.work/ops/optics/cavity/fabry_perot_response.html) · [`matched_filter_snr`](https://furuse.work/ops/oned/matched/matched_filter_snr.html) · [`michelson_dc_readout`](https://furuse.work/ops/optics/cavity/michelson_dc_readout.html) · [`optimal_snr`](https://furuse.work/ops/oned/matched/optimal_snr.html) · [`pdh_error_signal`](https://furuse.work/ops/optics/cavity/pdh_error_signal.html) · [`psd_welch`](https://furuse.work/ops/oned/matched/psd_welch.html) · [`quantum_noise_budget`](https://furuse.work/ops/optics/cavity/quantum_noise_budget.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`whiten_by_psd`](https://furuse.work/ops/oned/matched/whiten_by_psd.html)
 
 
 

@@ -41,7 +41,7 @@ index -3 returns pair 0, asking past the end returns the last pair.
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-—
+[whiten_by_psd](../matched/whiten_by_psd.md) · [chirp_mass_from_track](../matched/chirp_mass_from_track.md) · [matched_filter_snr](../matched/matched_filter_snr.md) · [optimal_snr](../matched/optimal_snr.md)
 
 ## 同カテゴリ(`function`)
 

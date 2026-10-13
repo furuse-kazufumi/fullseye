@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 44 capabilities**
+**Currently 45 capabilities**
 
 ## Measure (16)
 
@@ -251,7 +251,7 @@ Operators: `raw_black_level`, `raw_dead_pixel_mask`, `raw_dead_pixel_correct`, `
 
 Runnable: `raw_to_display_isp`
 
-## Waves and signals (3)
+## Waves and signals (4)
 
 ### [Beamform for direction, separate range from velocity](capabilities/beamforming-and-range-doppler.md)
 
@@ -268,6 +268,14 @@ Build membrane eigenmodes and nodal lines, two-slit fringes, grating orders, and
 Operators: `wave_membrane_mode`, `wave_mode_frequencies`, `wave_nodal_lines`, `wave_two_slit`, `wave_fringe_period`, `wave_grating_orders`, `halftone_screen`, `halftone_moire_period`, `engrave_lines`, `hatch_field`, `mosaic_tiles_sites`, `mosaic_tiles_render`
 
 Runnable: `poc_beats_fringes_and_screens`
+
+### [Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md)
+
+Twelve ops in two ledgers. Optics (`opsoptics`, category `cavity`): `fabry_perot_response` (FSR, finesse, linewidth, pole and power gain from mirror transmittances; the public aLIGO design values give F ≈ 445 and a 42 Hz pole), `cavity_strain_transfer` (single pole times the round-trip sinc), `michelson_dc_readout` (DC-readout power, strain slope and the shot-noise limit (1/2L)√(ħcλ/πP)), `pdh_error_signal` (Pound-Drever-Hall, antisymmetric, slope of Black 2001 eq. 15) and `quantum_noise_budget` (Kimble et al. 2001: shot, radiation pressure and the SQL, with the identity shot × rp = SQL²/2). Signals (`ops1d`, category `matched`): `psd_welch`, `whiten_by_psd`, `matched_filter_snr`, `optimal_snr`, `chirp_newtonian`, `chirp_mass_from_track`, `coincidence_delay`. The PoC runs the pipeline on the public GW150914 data and reproduces the published figure (correlation 0.96 / 0.94), the SNRs 19.0 / 13.1 against ≈ 20 / 13 and the 7 ms arrival delay; the second implementation gwinc agrees within 4–12 %.
+
+Operators: `fabry_perot_response`, `cavity_strain_transfer`, `michelson_dc_readout`, `pdh_error_signal`, `quantum_noise_budget`, `psd_welch`, `whiten_by_psd`, `chirp_newtonian`, `chirp_mass_from_track`, `matched_filter_snr`, `optimal_snr`, `coincidence_delay`
+
+Runnable: `poc_gw_detector_pseudo_simulation`
 
 ### [Diagnose faults from vibration and sound](capabilities/vibration-and-acoustics.md)
 

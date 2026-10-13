@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-44 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+45 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -134,6 +134,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 配列で方向を測り、距離と速度を分ける: [説明](../capabilities/beamforming-and-range-doppler.md) · 例 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす): [説明](../capabilities/beats-fringes-and-screens.md) · 例 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に): [説明](../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) · 例 [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - 振動と音から異常を診断する: [説明](../capabilities/vibration-and-acoustics.md) · 例 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **形にする**
@@ -170,7 +171,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 227 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 228 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -416,8 +417,9 @@ PoC 227 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>天文・環境</b> (21)</summary>
+<details class="vall"><summary><b>天文・環境</b> (22)</summary>
 <div class="vg vs">
+<a href="../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="重力波望遠鏡の擬似シミュレーション" width="200" height="200"><b>&#9654;</b><span>重力波望遠鏡の擬似シミュレーション</span></a>
 <a href="../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天カメラの雲量" width="200" height="200"><span>全天カメラの雲量</span></a>
 <a href="../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_astro_photometry.jpg" alt="星の測光精度" width="200" height="200"><span>星の測光精度</span></a>
 <a href="../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_change_detection_misreg.jpg" alt="変化検出" width="200" height="200"><span>変化検出</span></a>

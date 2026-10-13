@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## What it can do
 
-44 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+45 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Beamform for direction, separate range from velocity: [explanation](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · examples [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - One beat (membrane modes, fringes, diffraction orders, print moire, and turning tone into ink): [explanation](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · examples [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE): [explanation](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · examples [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - Diagnose faults from vibration and sound: [explanation](../../capabilities/vibration-and-acoustics.md) _(ja)_ · examples [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **Reconstruct and correct**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## See everything
 
-227 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+228 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -401,8 +402,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomy and environment</b> (21)</summary>
+<details class="vall"><summary><b>Astronomy and environment</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="A gravitational-wave detector in closed form" width="200" height="200"><b>&#9654;</b><span>A gravitational-wave detector in closed form</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="All-sky cloud cover" width="200" height="200"><span>All-sky cloud cover</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="Star photometry" width="200" height="200"><span>Star photometry</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="Change detection" width="200" height="200"><span>Change detection</span></a>

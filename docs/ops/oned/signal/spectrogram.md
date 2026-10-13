@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: image2d
-examples: [acoustic_condition_monitoring, poc_emva1288_sensor]
+examples: [acoustic_condition_monitoring, poc_emva1288_sensor, poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ Empty input (``x`` with 0 elements) raises ``ValueError``.
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
+- [poc_gw_detector_pseudo_simulation](../../../../examples/poc_gw_detector_pseudo_simulation.py) — `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

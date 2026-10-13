@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 重力波望遠鏡の擬似シミュレーション(cavityoptics 5 op + gwsearch 7 op + PoC)
+
+- **新 op 12 本**。光学側 `cavityoptics.py`(`opsoptics` の新カテゴリ `cavity`): `fabry_perot_response`(鏡の透過率と長さから FSR・フィネス・線幅(asin 形で厳密)・極・循環光量・蓄積時間。aLIGO の公表設計値でフィネス 445.5・極 42.1 Hz)、`cavity_strain_transfer`(単極 × 往復伝搬の sinc、極で 1/√2・FSR で零)、`michelson_dc_readout`(暗縞からのオフセットの光量・傾き・散射雑音限界、φ₀ → 0 で (1/2L)√(ħcλ/πP))、`pdh_error_signal`(Pound-Drever-Hall、反対称・共振で零・傾きは Black 2001 式 15 に 1 % 以内)、`quantum_noise_budget`(Kimble ら 2001 の通常干渉計。恒等式 散射 × 輻射圧 = SQL⁴/4、総和 ≥ SQL で等号は K = 1)。信号側 `gwsearch.py`(`ops1d` の新カテゴリ `matched`): `psd_welch`(片側 PSD、白色雑音で 2σ²/fs、median 平均も)、`whiten_by_psd`(色つきガウス雑音を分散 1 の平らな雑音へ)、`chirp_newtonian`(0PN のインスパイラル、f_ISCO で止める)、`chirp_mass_from_track`(f^{−8/3} の直線からチャープ質量と合体時刻、上がらない軌跡は None)、`matched_filter_snr`(⟨d|h⟩/σ を位相で最大化、折り返し領域は 0、端の taper)、`optimal_snr`、`coincidence_delay`(副標本の到達時間差)。門は `tests/test_cavityoptics.py`(21)と `tests/test_gwsearch.py`(32)。12 本とも `_OP_BRIDGE_SKIP`(引数だけで描く側、または入口が時系列 + PSD)。
+- **PoC `poc_gw_detector_pseudo_simulation`**(収蔵は `tools/gen_exhibit_numbers.py` が発行): 4 章(腕共振器 / 量子雑音の予算と第二実装 gwinc 0.6.2(比 0.96〜1.12)/ GW150914 の実データ(PRL 図 1 と相関 0.959 / 0.935、NR 波形の整合フィルタで SNR 19.0 / 13.1、L1 が 7.1 ms 先)/ 1/f² 雑音の中の既知波形)。実データは `FULLSEYE_GWOSC_DATA` に置けば走り(sha256 固定)、無ければ「未配置」と明示。図 6 枚 + GIF 1 本。能力ノート `docs/capabilities/gw-interferometer-quantum-noise-and-matched-filter.md`。
+- **探針の修正** `tools/ledger_gaps.py`: 効かないノブの判定の絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ)だとどのノブも「変化なし」にしていた → 出力の最大絶対値が 1 より小さいときはその大きさで許容差を縮める。これで `finish_shade.patchiness` / `finish_shade.strength` / `gcc_delay.rate` の 3 本が「効く」と判定され、`docs/LEDGER_GAP_DEBT.json` から落ちた(台帳は縮むしかない)。
+
 ### Added — 縞に近づくハエの眼 + フィボナッチ複眼(flyvision に 6 op + PoC)
 
 - **新 op 6 本**(`flyvision` 台帳、新カテゴリ `alias` / `trajectory`): `fly_view_plane_texture`(正面の周期面を六角個眼格子 + ガウス受容角で解析的に積分、画像を再標本化しない。門: 中心個眼の振幅 = c μ exp(−π²Δρ²(D/P)²/4ln2)、方位 θ の角周波数 = D/(P cos²θ)、1e-9)、`sampling_alias_distance`(周期 P が格子ピッチ Δφ で折り返す距離 P cos²θ/(√3 Δφ)(六角)/ (2Δφ)(正方)の閉形式 —— 検査カメラの作動距離の設計規則)、`fly_expansion_readout`(眼全体の流れの放射当てはめと発散から τ。真の平面流れは τ を 1e-9 で、縦縞のアパーチャ効果は厳密に 2τ)、`traj_tau_dot`(実測 3-D 軌跡の距離・接近速度・τ・τ̇、Lee 1976 の等速 −1 / 等減速 −0.5 を 1e-9)、`fly_vogel_lattice`(同じ個眼数・同じ平均最近傍角のフィボナッチ(Vogel 螺旋)の眼。六角の近傍を要る op は拒否)、`lattice_moire_peak`(非一様 DFT のピーク/背景中央値 = モアレの尖り)。門は `tests/test_fly_zebra_ops.py`(30)。`tools/chain_fuzz.py` に種 5、`api.py` に import。

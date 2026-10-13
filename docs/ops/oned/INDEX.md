@@ -1,4 +1,4 @@
-# ONED operator help — 42 ops in 3 categories
+# ONED operator help — 49 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/oned/<category>/<op>.md` を走査。
 
@@ -11,6 +11,10 @@
 ### io (3)
 
 [read_audio](io/read_audio.md) · [read_wav](io/read_wav.md) · [write_wav](io/write_wav.md)
+
+### matched (7)
+
+[chirp_mass_from_track](matched/chirp_mass_from_track.md) · [chirp_newtonian](matched/chirp_newtonian.md) · [coincidence_delay](matched/coincidence_delay.md) · [matched_filter_snr](matched/matched_filter_snr.md) · [optimal_snr](matched/optimal_snr.md) · [psd_welch](matched/psd_welch.md) · [whiten_by_psd](matched/whiten_by_psd.md)
 
 ### signal (16)
 

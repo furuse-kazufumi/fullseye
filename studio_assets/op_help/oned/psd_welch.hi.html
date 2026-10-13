@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psd_welch — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gwsearch; gwsearch.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;psd_welch&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Welch विधि का one-sided PSD, pairs (frequency [Hz], S [1/Hz]) के रूप में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>x : array_like</p>
+<p>時系列(1-D)。</p>
+<p>rate : float</p>
+<p>標本化周波数 fs [Hz]。</p>
+<p>segment_s : float or None</p>
+<p>1 区間の長さ [s] (周波数分解能 = 1/segment_s)。<code style="color:#22d3bf">None</code> なら <b>4 s と信号長の 1/8 の短い方</b></p>
+<p>(重力波の慣例 4 s、短い信号でも 8 区間は取る)。信号より長ければ信号全長に切り詰める。</p>
+<p>overlap : float</p>
+<p>区間の重なり(0 ≤ overlap &lt; 1)。</p>
+<p>window : str</p>
+<p>窓(&quot;hann&quot; / &quot;hamming&quot; / &quot;blackman&quot; / &quot;boxcar&quot;、scipy の名前)。</p>
+<p>average : str</p>
+<p>区間の平均 &quot;mean&quot; か &quot;median&quot;(グリッチに強い。scipy は median の偏り補正つき)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(n_freq, 2)</code>。白色ガウス雑音(分散 σ²)で <code style="color:#22d3bf">S = 2σ²/fs</code>(片側)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>重力波の標準手順(GWOSC の例題)と同じ <code style="color:#22d3bf">scaling=&quot;density&quot;</code>。分解能 1/segment_s より細い線(60 Hz の電源線など)は幅がこの分解能に広がる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a> · <a style="color:#22d3bf" href="oponed:coincidence_delay">coincidence_delay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

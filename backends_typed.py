@@ -189,6 +189,14 @@ _OP_BRIDGE_SKIP = {
     "sun_pixel_position", "skyline_extract",
     # 2026-09-21 実データ回の 2 本: 模様の探針には飽和塊も時刻つきの候補列も無い。
     "sun_bloom_fit", "camera_orientation_from_sun_candidates",
+    # 2026-10-14 重力波の 12 本。cavityoptics の 5 本は引数だけで描く側(画像を受けない)。
+    # gwsearch の 7 本は入口が「標本化周波数つきの時系列 + 雑音の PSD(pairs)」で、橋が渡す
+    # 256 点の正弦 1 本と点の対では走っても意味が無い(「走った」≠「意味のある出力」)。
+    # 台帳(`fullseye.ledger.psd_welch` …)からは本物の時系列を渡して使える。
+    "fabry_perot_response", "cavity_strain_transfer", "michelson_dc_readout",
+    "pdh_error_signal", "quantum_noise_budget",
+    "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
+    "matched_filter_snr", "optimal_snr", "coincidence_delay",
     # 2026-09-22 視覚後段と回路: 入口は「行が時刻の個眼動画」「方向別応答」
     # 「配線 + 駆動」で、2-D 画像を渡すと走りはするが意味が無い(探針の
     # 1 枚は時系列ではない)。橋は架けない。

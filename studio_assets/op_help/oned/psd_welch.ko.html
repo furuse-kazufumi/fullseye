@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psd_welch — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gwsearch; gwsearch.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;psd_welch&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>Welch 법의 단측 PSD를 pairs(주파수 [Hz], S [1/Hz])로 반환.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>x : array_like</p>
+<p>時系列(1-D)。</p>
+<p>rate : float</p>
+<p>標本化周波数 fs [Hz]。</p>
+<p>segment_s : float or None</p>
+<p>1 区間の長さ [s] (周波数分解能 = 1/segment_s)。<code style="color:#22d3bf">None</code> なら <b>4 s と信号長の 1/8 の短い方</b></p>
+<p>(重力波の慣例 4 s、短い信号でも 8 区間は取る)。信号より長ければ信号全長に切り詰める。</p>
+<p>overlap : float</p>
+<p>区間の重なり(0 ≤ overlap &lt; 1)。</p>
+<p>window : str</p>
+<p>窓(&quot;hann&quot; / &quot;hamming&quot; / &quot;blackman&quot; / &quot;boxcar&quot;、scipy の名前)。</p>
+<p>average : str</p>
+<p>区間の平均 &quot;mean&quot; か &quot;median&quot;(グリッチに強い。scipy は median の偏り補正つき)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(n_freq, 2)</code>。白色ガウス雑音(分散 σ²)で <code style="color:#22d3bf">S = 2σ²/fs</code>(片側)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>重力波の標準手順(GWOSC の例題)と同じ <code style="color:#22d3bf">scaling=&quot;density&quot;</code>。分解能 1/segment_s より細い線(60 Hz の電源線など)は幅がこの分解能に広がる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">pairs</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a> · <a style="color:#22d3bf" href="oponed:coincidence_delay">coincidence_delay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

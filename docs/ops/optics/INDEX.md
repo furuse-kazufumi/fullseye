@@ -1,4 +1,4 @@
-# OPTICS operator help — 184 ops in 21 categories
+# OPTICS operator help — 189 ops in 22 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -21,6 +21,10 @@
 ### appearance (7)
 
 [cie_xyz_from_wavelength](appearance/cie_xyz_from_wavelength.md) · [grating_rgb](appearance/grating_rgb.md) · [grating_wavelengths](appearance/grating_wavelengths.md) · [spectrum_to_srgb](appearance/spectrum_to_srgb.md) · [thin_film_reflectance](appearance/thin_film_reflectance.md) · [thin_film_rgb](appearance/thin_film_rgb.md) · [ward_anisotropic](appearance/ward_anisotropic.md)
+
+### cavity (5)
+
+[cavity_strain_transfer](cavity/cavity_strain_transfer.md) · [fabry_perot_response](cavity/fabry_perot_response.md) · [michelson_dc_readout](cavity/michelson_dc_readout.md) · [pdh_error_signal](cavity/pdh_error_signal.md) · [quantum_noise_budget](cavity/quantum_noise_budget.md)
 
 ### coherent (6)
 

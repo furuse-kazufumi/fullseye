@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">matched_filter_snr — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × pairs</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matched_filter_snr(data, template, psd, rate: &#x27;float&#x27; = 4096.0, *, f_low_hz: &#x27;float | None&#x27; = 20.0, f_high_hz: &#x27;float | None&#x27; = None, template_ref_index: &#x27;int | None&#x27; = None, taper_s: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import gwsearch; gwsearch.matched_filter_snr(data, template, psd, rate: &#x27;float&#x27; = 4096.0, *, f_low_hz: &#x27;float | None&#x27; = 20.0, f_high_hz: &#x27;float | None&#x27; = None, template_ref_index: &#x27;int | None&#x27; = None, taper_s: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;matched_filter_snr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>匹配滤波的信噪比时间序列 |ρ(t)|（对相位取最大），以 signal 返回。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>data : array_like</p>
+<p>観測時系列(1-D)。</p>
+<p>template : array_like</p>
+<p>テンプレート(data 以下の長さ。末尾を 0 で埋めて同じ長さにする)。</p>
+<p>psd : array_like</p>
+<p>雑音の片側 PSD の <code style="color:#22d3bf">pairs</code>(<code style="color:#22d3bf">psd_welch</code>)。</p>
+<p>rate : float</p>
+<p>標本化周波数 [Hz]。</p>
+<p>f_low_hz, f_high_hz : float or None</p>
+<p>内積の帯域。</p>
+<p>template_ref_index : int or None</p>
+<p>テンプレート内の「事象の時刻」の標本番号(None なら <code style="color:#22d3bf">argmax |h|</code>)。返り値はこの分だけ</p>
+<p>回してあり、<b>|ρ| の山の標本番号 = data 内の事象の時刻</b>になる。</p>
+<p>taper_s : float</p>
+<p>data の両端を余弦で 0 へ落とす長さ [s] (Tukey 窓の端)。実データの端の不連続が</p>
+<p>FFT の循環で全体に漏れるのを抑える(GWOSC の例題は 32 s に対し 2 s)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p>data と同じ長さの非負配列。<code style="color:#22d3bf">ρ(t) = ⟨d|h_t⟩/σ</code>、<code style="color:#22d3bf">⟨a|b⟩ = 4Re∫ÃB̃*/S df</code>、</p>
+<p><code style="color:#22d3bf">σ = optimal_snr</code>。位相は解析信号で最大化する(<code style="color:#22d3bf">|z|</code>)。テンプレートが data の外へ</p>
+<p>はみ出す時刻(先頭の <code style="color:#22d3bf">ref</code> 標本と末尾の <code style="color:#22d3bf">len(template) − ref</code> 標本)は循環の折り返し</p>
+<p>なので <b>0</b> にしてある(山の探索に混じらない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>白色ガウス雑音だけなら |ρ| の典型値は ~1.25(レイリー)、閾値 8 が重力波探索の慣例。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:psd_welch">psd_welch</a> · <a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:chirp_mass_from_track">chirp_mass_from_track</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a> · <a style="color:#22d3bf" href="oponed:coincidence_delay">coincidence_delay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

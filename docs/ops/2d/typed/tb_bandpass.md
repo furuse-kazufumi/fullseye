@@ -57,6 +57,7 @@ tb_bandpass 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `bandpass` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [poc_gw_detector_pseudo_simulation](../../../../examples/poc_gw_detector_pseudo_simulation.py) — `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 - [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3142,
- "n_notes": 3148,
+ "n_ops": 3154,
+ "n_notes": 3160,
  "notes": {
   "vol_dilate": [
    {
@@ -26364,6 +26364,75 @@
     "path": "docs/ops/oned/io/write_wav.md"
    }
   ],
+  "chirp_mass_from_track": [
+   {
+    "op": "chirp_mass_from_track",
+    "dim": "oned",
+    "category": "matched",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/oned/matched/chirp_mass_from_track.md"
+   }
+  ],
+  "chirp_newtonian": [
+   {
+    "op": "chirp_newtonian",
+    "dim": "oned",
+    "category": "matched",
+    "out": "signal",
+    "path": "docs/ops/oned/matched/chirp_newtonian.md"
+   }
+  ],
+  "coincidence_delay": [
+   {
+    "op": "coincidence_delay",
+    "dim": "oned",
+    "category": "matched",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/oned/matched/coincidence_delay.md"
+   }
+  ],
+  "matched_filter_snr": [
+   {
+    "op": "matched_filter_snr",
+    "dim": "oned",
+    "category": "matched",
+    "in": "signal × signal × pairs",
+    "out": "signal",
+    "path": "docs/ops/oned/matched/matched_filter_snr.md"
+   }
+  ],
+  "optimal_snr": [
+   {
+    "op": "optimal_snr",
+    "dim": "oned",
+    "category": "matched",
+    "in": "signal × pairs",
+    "out": "measurement",
+    "path": "docs/ops/oned/matched/optimal_snr.md"
+   }
+  ],
+  "psd_welch": [
+   {
+    "op": "psd_welch",
+    "dim": "oned",
+    "category": "matched",
+    "in": "signal",
+    "out": "pairs",
+    "path": "docs/ops/oned/matched/psd_welch.md"
+   }
+  ],
+  "whiten_by_psd": [
+   {
+    "op": "whiten_by_psd",
+    "dim": "oned",
+    "category": "matched",
+    "in": "signal × pairs",
+    "out": "signal",
+    "path": "docs/ops/oned/matched/whiten_by_psd.md"
+   }
+  ],
   "bandpass": [
    {
     "op": "bandpass",
@@ -26551,6 +26620,51 @@
     "in": "normalmap",
     "out": "image2d",
     "path": "docs/ops/optics/appearance/ward_anisotropic.md"
+   }
+  ],
+  "cavity_strain_transfer": [
+   {
+    "op": "cavity_strain_transfer",
+    "dim": "optics",
+    "category": "cavity",
+    "out": "pairs",
+    "path": "docs/ops/optics/cavity/cavity_strain_transfer.md"
+   }
+  ],
+  "fabry_perot_response": [
+   {
+    "op": "fabry_perot_response",
+    "dim": "optics",
+    "category": "cavity",
+    "out": "table",
+    "path": "docs/ops/optics/cavity/fabry_perot_response.md"
+   }
+  ],
+  "michelson_dc_readout": [
+   {
+    "op": "michelson_dc_readout",
+    "dim": "optics",
+    "category": "cavity",
+    "out": "table",
+    "path": "docs/ops/optics/cavity/michelson_dc_readout.md"
+   }
+  ],
+  "pdh_error_signal": [
+   {
+    "op": "pdh_error_signal",
+    "dim": "optics",
+    "category": "cavity",
+    "out": "pairs",
+    "path": "docs/ops/optics/cavity/pdh_error_signal.md"
+   }
+  ],
+  "quantum_noise_budget": [
+   {
+    "op": "quantum_noise_budget",
+    "dim": "optics",
+    "category": "cavity",
+    "out": "table",
+    "path": "docs/ops/optics/cavity/quantum_noise_budget.md"
    }
   ],
   "coherent_image": [

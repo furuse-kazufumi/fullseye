@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_cavity_transfer.png",
+  "name": "cavity_transfer",
+  "caption": "単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。",
+  "shape": [
+   360,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "02_pdh_error_signal.png",
+  "name": "pdh_error_signal",
+  "caption": "反対称で共振で零。共振近傍の傾き −8√(P_c P_s)/δν が共振器の長さを合わせる誤差信号になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_quantum_noise_budget.png",
+  "name": "quantum_noise_budget",
+  "caption": "通常干渉計(信号再利用なし)の量子雑音。設計曲線は信号再利用と熱雑音を含むので 20 Hz と 500 Hz 以上で形が違う。",
+  "shape": [
+   360,
+   810,
+   3
+  ]
+ },
+ {
+  "file": "04_power_sweep.gif",
+  "name": "power_sweep",
+  "caption": "入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 2.0
+ },
+ {
+  "file": "05_gw150914_whitened_vs_prl.png",
+  "name": "gw150914_whitened_vs_prl",
+  "caption": "Welch の PSD で白色化し 35〜350 Hz を通しただけで、公表図 1 の曲線(帯域通過 + 線の除去)と 0.9 以上で重なる。",
+  "shape": [
+   360,
+   787,
+   3
+  ]
+ },
+ {
+  "file": "06_matched_filter_snr.png",
+  "name": "matched_filter_snr",
+  "caption": "数値相対論の波形は公表どおりの山を立て、ニュートン近似(合体・リングダウン無し)は半分以下。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_burst_in_coloured_noise.png",
+  "name": "burst_in_coloured_noise",
+  "caption": "雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。",
+  "shape": [
+   360,
+   863,
+   3
+  ]
+ }
+]

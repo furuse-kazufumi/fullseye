@@ -3082,6 +3082,22 @@
    }
   },
   {
+   "id": "poc_gw_detector_pseudo_simulation",
+   "group": "wing_astroenv",
+   "media": "04_power_sweep.gif",
+   "motion": true,
+   "thumb_src": "06_matched_filter_snr.png",
+   "label": {
+    "ja": "重力波望遠鏡の擬似シミュレーション",
+    "en": "A gravitational-wave detector in closed form",
+    "zh": "引力波探测器的伪仿真",
+    "tw": "重力波探測器的偽模擬",
+    "ko": "중력파 망원경의 의사 시뮬레이션",
+    "de": "Ein Gravitationswellendetektor in geschlossener Form",
+    "hi": "gravitational-wave detector का closed-form pseudo-simulation"
+   }
+  },
+  {
    "id": "poc_zebra_stripes_fly_eye",
    "group": "wing_imaging",
    "media": "02_reversal_ring.gif",
@@ -5582,6 +5598,13 @@
     "ko": "주기 패턴이 표본화 격자에서 접히는 거리와 줄무늬가 어지럽히는 충돌 시간을 닫힌 형식으로 측정(겹눈·검사 카메라)",
     "de": "Die Distanz, ab der ein periodisches Muster auf einem Abtastgitter aliast, und die von Streifen verfälschte Zeit bis zum Kontakt — in geschlossener Form (Komplexaugen und Prüfkameras)",
     "hi": "वह दूरी जिस पर periodic pattern sampling lattice पर alias करता है, और धारियों से बिगड़ा time-to-contact — closed form में (compound eye और inspection camera)"
+   },
+   "gw-interferometer-quantum-noise-and-matched-filter": {
+    "zh": "用闭式设计干涉仪的腔、量子噪声预算与有色噪声中的已知波形（把引力波探测器的公式用于检测干涉仪、振动计与声发射）",
+    "tw": "用閉式設計干涉儀的腔、量子雜訊預算與有色雜訊中的已知波形（把重力波探測器的公式用於檢測干涉儀、振動計與聲發射）",
+    "ko": "간섭계의 공진기·양자잡음 예산·색잡음 속의 기지 파형을 닫힌 형식으로 설계(중력파 망원경의 식을 검사 간섭계·진동계·AE에)",
+    "de": "Resonator, Quantenrausch-Budget und eine bekannte Wellenform in farbigem Rauschen in geschlossener Form (die Gleichungen des Gravitationswellendetektors für Prüfinterferometer, Vibrometer und Schallemission)",
+    "hi": "interferometer की cavity, quantum-noise budget और coloured noise में known waveform को closed form में design करना (gravitational-wave detector के समीकरण inspection interferometer, vibrometer और AE के लिए)"
    },
    "pl-carrier-diffusion-visibility": {
     "zh": "用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）",

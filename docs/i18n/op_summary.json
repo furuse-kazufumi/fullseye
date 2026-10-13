@@ -14022,6 +14022,114 @@
    "de": "Absolutwert der y-Werte (HALCON ``abs_funct_1d``).",
    "hi": "y-मानों का absolute value (HALCON ``abs_funct_1d``)।"
   },
+  "optics/fabry_perot_response": {
+   "fp": "18bb02b631fc",
+   "en": "Design quantities of a Fabry-Perot cavity (FSR, finesse, linewidth, pole, power gain, storage time) in closed form.",
+   "zh": "以闭式返回 Fabry-Perot 腔的设计量（自由光谱范围、精细度、线宽、极点、功率增益、储能时间）。",
+   "tw": "以閉式返回 Fabry-Perot 腔的設計量（自由光譜範圍、精細度、線寬、極點、功率增益、儲能時間）。",
+   "ko": "Fabry-Perot 공진기의 설계량(FSR·피네스·선폭·극·증폭률·저장 시간)을 닫힌 형식으로 반환.",
+   "de": "Entwurfsgrößen eines Fabry-Pérot-Resonators (FSR, Finesse, Linienbreite, Pol, Leistungsüberhöhung, Speicherzeit) in geschlossener Form.",
+   "hi": "Fabry-Perot cavity की design मात्राएँ (FSR, finesse, linewidth, pole, power gain, storage time) closed form में।"
+  },
+  "optics/cavity_strain_transfer": {
+   "fp": "63adaa476469",
+   "en": "Magnitude |H(f)| of the arm-cavity transfer function from strain h(f) to output phase (pairs).",
+   "zh": "臂腔把应变 h(f) 映射到输出相位的传递函数幅值 |H(f)|（pairs）。",
+   "tw": "臂腔把應變 h(f) 映射到輸出相位的傳遞函數幅值 |H(f)|（pairs）。",
+   "ko": "팔 공진기가 변형률 h(f)를 출력 위상으로 옮기는 전달함수의 크기 |H(f)| (pairs).",
+   "de": "Betrag |H(f)| der Übertragungsfunktion des Armresonators von der Dehnung h(f) zur Ausgangsphase (pairs).",
+   "hi": "arm cavity का strain h(f) से output phase तक के transfer function का परिमाण |H(f)| (pairs)।"
+  },
+  "optics/michelson_dc_readout": {
+   "fp": "3e569713f88a",
+   "en": "Antisymmetric-port power, strain sensitivity and shot-noise limit of a Michelson offset by φ₀ from the dark fringe.",
+   "zh": "从暗条纹偏移 φ₀ 的 Michelson 干涉仪：反对称端口光功率、应变灵敏度与散粒噪声极限。",
+   "tw": "從暗條紋偏移 φ₀ 的 Michelson 干涉儀：反對稱埠光功率、應變靈敏度與散粒雜訊極限。",
+   "ko": "어두운 무늬에서 φ₀만큼 벗어난 Michelson의 반대칭 포트 광량·변형률 감도·산탄잡음 한계.",
+   "de": "Leistung am antisymmetrischen Port, Dehnungsempfindlichkeit und Schrotrauschgrenze eines um φ₀ vom Dunkelstreifen versetzten Michelson-Interferometers.",
+   "hi": "dark fringe से φ₀ हटाए Michelson का antisymmetric-port power, strain sensitivity और shot-noise limit।"
+  },
+  "optics/pdh_error_signal": {
+   "fp": "20433b964888",
+   "en": "Pound-Drever-Hall error signal ε(δ) as a function of the detuning δ [Hz] from resonance (pairs).",
+   "zh": "Pound-Drever-Hall 误差信号 ε(δ)，作为失谐 δ [Hz] 的函数（pairs）。",
+   "tw": "Pound-Drever-Hall 誤差訊號 ε(δ)，作為失諧 δ [Hz] 的函數（pairs）。",
+   "ko": "공진에서의 이조 δ [Hz]의 함수로 본 Pound-Drever-Hall 오차 신호 ε(δ) (pairs).",
+   "de": "Pound-Drever-Hall-Fehlersignal ε(δ) als Funktion der Verstimmung δ [Hz] von der Resonanz (pairs).",
+   "hi": "resonance से detuning δ [Hz] के function के रूप में Pound-Drever-Hall error signal ε(δ) (pairs)।"
+  },
+  "optics/quantum_noise_budget": {
+   "fp": "948a01e40b06",
+   "en": "Quantum noise of a conventional (no signal recycling) Fabry-Perot Michelson — shot, radiation pressure and the standard quantum limit.",
+   "zh": "常规（无信号回收）Fabry-Perot Michelson 的量子噪声：散粒噪声、辐射压噪声与标准量子极限。",
+   "tw": "常規（無訊號回收）Fabry-Perot Michelson 的量子雜訊：散粒雜訊、輻射壓雜訊與標準量子極限。",
+   "ko": "통상(신호 재활용 없음) Fabry-Perot Michelson의 양자잡음 —— 산탄·복사압·표준양자한계.",
+   "de": "Quantenrauschen eines konventionellen Fabry-Pérot-Michelson (ohne Signal-Recycling): Schrot-, Strahlungsdruckrauschen und Standard-Quantenlimit.",
+   "hi": "conventional (signal recycling रहित) Fabry-Perot Michelson का quantum noise — shot, radiation pressure और standard quantum limit।"
+  },
+  "oned/psd_welch": {
+   "fp": "74a9b6dcfef0",
+   "en": "One-sided Welch PSD as pairs (frequency [Hz], S [1/Hz]).",
+   "zh": "Welch 法单边功率谱密度，以 pairs（频率 [Hz]，S [1/Hz]）返回。",
+   "tw": "Welch 法單邊功率譜密度，以 pairs（頻率 [Hz]，S [1/Hz]）返回。",
+   "ko": "Welch 법의 단측 PSD를 pairs(주파수 [Hz], S [1/Hz])로 반환.",
+   "de": "Einseitige Welch-PSD als pairs (Frequenz [Hz], S [1/Hz]).",
+   "hi": "Welch विधि का one-sided PSD, pairs (frequency [Hz], S [1/Hz]) के रूप में।"
+  },
+  "oned/whiten_by_psd": {
+   "fp": "63e4b7789776",
+   "en": "Whiten by the noise PSD (x_w = irfft(rfft(x)·√(2Δt/S(f)))).",
+   "zh": "用噪声 PSD 做白化（x_w = irfft(rfft(x)·√(2Δt/S(f)))）。",
+   "tw": "用雜訊 PSD 做白化（x_w = irfft(rfft(x)·√(2Δt/S(f)))）。",
+   "ko": "잡음 PSD로 나누어 백색화(x_w = irfft(rfft(x)·√(2Δt/S(f)))).",
+   "de": "Weißung mit der Rausch-PSD (x_w = irfft(rfft(x)·√(2Δt/S(f)))).",
+   "hi": "noise PSD से भाग देकर whitening (x_w = irfft(rfft(x)·√(2Δt/S(f))))।"
+  },
+  "oned/chirp_newtonian": {
+   "fp": "ccf30c14e672",
+   "en": "Newtonian (0PN) inspiral waveform h₊(t) as a signal, with coalescence at the end of the array.",
+   "zh": "牛顿近似（0PN）旋近波形 h₊(t)，以 signal 返回（并合在数组末尾）。",
+   "tw": "牛頓近似（0PN）旋近波形 h₊(t)，以 signal 返回（併合在陣列末尾）。",
+   "ko": "뉴턴 근사(0PN) 인스파이럴 파형 h₊(t)를 signal로 반환(합체가 배열 끝).",
+   "de": "Newtonsche (0PN) Inspiral-Wellenform h₊(t) als signal, die Verschmelzung am Ende des Arrays.",
+   "hi": "Newtonian (0PN) inspiral waveform h₊(t) signal के रूप में (coalescence array के अंत में)।"
+  },
+  "oned/chirp_mass_from_track": {
+   "fp": "7ddd53caf31b",
+   "en": "Chirp mass and coalescence time from a gravitational-wave frequency track (t, f) by least squares.",
+   "zh": "由引力波频率轨迹 (t, f) 最小二乘求啁啾质量与并合时刻。",
+   "tw": "由重力波頻率軌跡 (t, f) 最小平方求啁啾質量與併合時刻。",
+   "ko": "중력파 주파수 궤적 (t, f)에서 최소제곱으로 처프 질량과 합체 시각.",
+   "de": "Chirp-Masse und Verschmelzungszeit aus der Frequenzspur (t, f) einer Gravitationswelle per kleinster Quadrate.",
+   "hi": "gravitational-wave frequency track (t, f) से least squares द्वारा chirp mass और coalescence time।"
+  },
+  "oned/optimal_snr": {
+   "fp": "8a6c72e4f10b",
+   "en": "Optimal SNR of a template, σ = √(4∫|h̃|²/S df) (measurement).",
+   "zh": "模板的最优信噪比 σ = √(4∫|h̃|²/S df)（measurement）。",
+   "tw": "模板的最佳訊噪比 σ = √(4∫|h̃|²/S df)（measurement）。",
+   "ko": "템플릿의 최적 SNR σ = √(4∫|h̃|²/S df) (measurement).",
+   "de": "Optimales SNR einer Vorlage, σ = √(4∫|h̃|²/S df) (measurement).",
+   "hi": "template का optimal SNR σ = √(4∫|h̃|²/S df) (measurement)।"
+  },
+  "oned/matched_filter_snr": {
+   "fp": "f77c0cd42ee5",
+   "en": "Matched-filter SNR time series |ρ(t)|, maximised over phase, as a signal.",
+   "zh": "匹配滤波的信噪比时间序列 |ρ(t)|（对相位取最大），以 signal 返回。",
+   "tw": "匹配濾波的訊噪比時間序列 |ρ(t)|（對相位取最大），以 signal 返回。",
+   "ko": "정합 필터의 SNR 시계열 |ρ(t)|(위상으로 최대화)을 signal로 반환.",
+   "de": "SNR-Zeitreihe |ρ(t)| des Matched-Filters, über die Phase maximiert, als signal.",
+   "hi": "matched filter की SNR time series |ρ(t)| (phase पर maximised) signal के रूप में।"
+  },
+  "oned/coincidence_delay": {
+   "fp": "1e28470fe3e2",
+   "en": "Time difference (b − a) between the peaks of two SNR time series, to sub-sample precision.",
+   "zh": "两条信噪比时间序列峰值的时刻差（b − a），亚采样精度。",
+   "tw": "兩條訊噪比時間序列峰值的時刻差（b − a），次取樣精度。",
+   "ko": "두 SNR 시계열의 봉우리 시각차(b − a)를 부표본 정밀도로.",
+   "de": "Zeitdifferenz (b − a) zwischen den Maxima zweier SNR-Zeitreihen mit Subsample-Genauigkeit.",
+   "hi": "दो SNR time series के peaks का समय अंतर (b − a), sub-sample precision में।"
+  },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",

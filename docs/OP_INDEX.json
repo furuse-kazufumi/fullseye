@@ -1,8 +1,8 @@
 {
- "n_ops": 3142,
+ "n_ops": 3154,
  "tiers": {
   "color": 12,
-  "ledger": 2189,
+  "ledger": 2201,
   "nary": 17,
   "registry": 924
  },
@@ -3085,6 +3085,17 @@
    ]
   },
   {
+   "name": "cavity_strain_transfer",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "cavity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "central_moments",
    "halcon": "",
    "in_sort": "points",
@@ -3259,6 +3270,30 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "chirp_mass_from_track",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "chirp_newtonian",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": []
   },
   {
    "name": "chromatic_aberration",
@@ -3518,6 +3553,20 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "coincidence_delay",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal",
+    "signal"
    ]
   },
   {
@@ -7724,6 +7773,17 @@
    "in_sorts": [
     "sdf"
    ]
+  },
+  {
+   "name": "fabry_perot_response",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "cavity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "face_areas",
@@ -13989,6 +14049,21 @@
    ]
   },
   {
+   "name": "matched_filter_snr",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "pairs"
+   ]
+  },
+  {
    "name": "material_catalog",
    "halcon": "",
    "in_sort": null,
@@ -14746,6 +14821,17 @@
    "in_sorts": [
     "metrics"
    ]
+  },
+  {
+   "name": "michelson_dc_readout",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "cavity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "micro_normals",
@@ -16134,6 +16220,20 @@
    ]
   },
   {
+   "name": "optimal_snr",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "measurement",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal",
+    "pairs"
+   ]
+  },
+  {
    "name": "optimize_lens",
    "halcon": "",
    "in_sort": "table",
@@ -16895,6 +16995,17 @@
     "points",
     "points"
    ]
+  },
+  {
+   "name": "pdh_error_signal",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "cavity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "peak_subbin",
@@ -19131,6 +19242,19 @@
    "in_sorts": []
   },
   {
+   "name": "psd_welch",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "pairs",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "psf_fit",
    "halcon": "",
    "in_sort": "image2d",
@@ -19579,6 +19703,17 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "quantum_noise_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "cavity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "quasi_flat_zones",
@@ -28755,6 +28890,20 @@
     "scalar",
     "table",
     "any"
+   ]
+  },
+  {
+   "name": "whiten_by_psd",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "matched",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal",
+    "pairs"
    ]
   },
   {

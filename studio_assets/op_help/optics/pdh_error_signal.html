@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pdh_error_signal — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cavityoptics; cavityoptics.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;pdh_error_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Pound-Drever-Hall 誤差信号 ε(δ) を、共振からの離調 δ [Hz] の関数として <code style="color:#22d3bf">pairs</code> で返す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>length_m : float</p>
+<p>共振器長 L [m]。</p>
+<p>itm_transmittance, etm_transmittance : float</p>
+<p>鏡の強度透過率(損失なし)。</p>
+<p>mod_freq_hz : float</p>
+<p>位相変調周波数 Ω/2π [Hz]。線幅より十分大きいと傾きが Black の式 15 に乗る。</p>
+<p>mod_depth : float</p>
+<p>変調指数 β。搬送波 <code style="color:#22d3bf">P_c = J₀(β)²P</code>、側帯波 <code style="color:#22d3bf">P_s = J₁(β)²P</code>(β = 1.08 で <code style="color:#22d3bf">P_c·P_s</code> 最大)。</p>
+<p>power_w : float</p>
+<p>入射光量 P [W]。</p>
+<p>span_linewidths : float</p>
+<p>表示する離調の範囲(線幅の何倍まで、±)。</p>
+<p>n_points : int</p>
+<p>点数(奇数なら δ = 0 を含む)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(n_points, 2)</code>: 列 0 = 離調 δ [Hz]、列 1 = ε [W]</p>
+<p><code style="color:#22d3bf">= 2√(P_c P_s)·Im[F(δ)F*(δ+Ω) − F*(δ)F(δ−Ω)]</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>門(<code style="color:#22d3bf">tests</code>): 反対称 <code style="color:#22d3bf">ε(−δ) = −ε(δ)</code>(1e-12)、<code style="color:#22d3bf">ε(0) = 0</code>、対称共振器(T₁ = T₂)で Ω ≫ δν のとき共振近傍の傾き <code style="color:#22d3bf">dε/dδ = −8√(P_c P_s)/δν</code>(Black 2001 式 15)に 1 % 以内。側帯波が共振に乗る <code style="color:#22d3bf">δ = ±Ω</code> 付近の小さな山も含めて返す(表示範囲が届けば)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>文字列は <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array は <code style="color:#22d3bf">ValueError</code></b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。<b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。<b>それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code></b> —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fabry_perot_response">fabry_perot_response</a> · <a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:quantum_noise_budget">quantum_noise_budget</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

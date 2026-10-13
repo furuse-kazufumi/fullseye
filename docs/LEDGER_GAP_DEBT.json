@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 603
+  "dead_knob": 600
  },
  "debt": {
   "description": {},
@@ -216,8 +216,6 @@
    "exponential_foreground.alpha": "degenerate_output",
    "filled_polygon.alpha": "smoothing_or_threshold",
    "finish_shade.angle_deg": "other",
-   "finish_shade.patchiness": "other",
-   "finish_shade.strength": "other",
    "fit_spin.omega_max": "size_or_count",
    "fivebar_workspace.tol": "tolerance_or_iterations",
    "flight_fit.dt": "other",
@@ -240,7 +238,6 @@
    "fraunhofer_pattern.distance_mm": "other",
    "fraunhofer_pattern.pixel_pitch_um": "other",
    "fsimc.data_range": "other",
-   "gcc_delay.rate": "other",
    "generalized_procrustes.max_iter": "tolerance_or_iterations",
    "generalized_procrustes.tol": "tolerance_or_iterations",
    "gicp.max_iter": "tolerance_or_iterations",

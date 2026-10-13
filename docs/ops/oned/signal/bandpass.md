@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
-examples: [poc_leak_localization]
+examples: [poc_gw_detector_pseudo_simulation, poc_leak_localization]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -28,6 +28,7 @@ Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_gw_detector_pseudo_simulation](../../../../examples/poc_gw_detector_pseudo_simulation.py) — `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 - [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-44 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+45 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Richtung per Array messen, Entfernung und Geschwindigkeit trennen: [Erklärung](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · Beispiele [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - Eine Schwebung (Membranmoden, Interferenzstreifen, Beugungsordnungen, Druckmoiré, Ton zu Tinte): [Erklärung](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · Beispiele [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- Resonator, Quantenrausch-Budget und eine bekannte Wellenform in farbigem Rauschen in geschlossener Form (die Gleichungen des Gravitationswellendetektors für Prüfinterferometer, Vibrometer und Schallemission): [Erklärung](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · Beispiele [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - Fehler aus Schwingung und Schall diagnostizieren: [Erklärung](../../capabilities/vibration-and-acoustics.md) _(ja)_ · Beispiele [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **Rekonstruieren und korrigieren**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-227 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+228 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -401,8 +402,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomie und Umwelt</b> (21)</summary>
+<details class="vall"><summary><b>Astronomie und Umwelt</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="Ein Gravitationswellendetektor in geschlossener Form" width="200" height="200"><b>&#9654;</b><span>Ein Gravitationswellendetektor in geschlossener Form</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="Bewölkung Allsky" width="200" height="200"><span>Bewölkung Allsky</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="Sternphotometrie" width="200" height="200"><span>Sternphotometrie</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="Änderungserkennung" width="200" height="200"><span>Änderungserkennung</span></a>

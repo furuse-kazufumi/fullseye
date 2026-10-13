@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-44개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+45개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 배열로 방향을 재고 거리와 속도를 분리: [설명](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · 예제 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - 맥놀이는 하나(막의 모드·간섭무늬·회절 차수·인쇄 무아레·잉크로 옮기기): [설명](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · 예제 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 간섭계의 공진기·양자잡음 예산·색잡음 속의 기지 파형을 닫힌 형식으로 설계(중력파 망원경의 식을 검사 간섭계·진동계·AE에): [설명](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · 예제 [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - 진동과 소리로 이상 진단: [설명](../../capabilities/vibration-and-acoustics.md) _(ja)_ · 예제 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **재구성·보정**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 227개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 228개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -401,8 +402,9 @@ PoC 227개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>천문·환경</b> (21)</summary>
+<details class="vall"><summary><b>천문·환경</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="중력파 망원경의 의사 시뮬레이션" width="200" height="200"><b>&#9654;</b><span>중력파 망원경의 의사 시뮬레이션</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="전천 카메라 운량" width="200" height="200"><span>전천 카메라 운량</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="별 측광 정밀도" width="200" height="200"><span>별 측광 정밀도</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="변화 검출" width="200" height="200"><span>변화 검출</span></a>

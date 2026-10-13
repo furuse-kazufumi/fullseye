@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quantum_noise_budget — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quantum_noise_budget(power_w: &#x27;float&#x27; = 5200.0, mirror_mass_kg: &#x27;float&#x27; = 40.0, length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, f_min_hz: &#x27;float&#x27; = 5.0, f_max_hz: &#x27;float&#x27; = 5000.0, n_points: &#x27;int&#x27; = 400) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cavityoptics; cavityoptics.quantum_noise_budget(power_w: &#x27;float&#x27; = 5200.0, mirror_mass_kg: &#x27;float&#x27; = 40.0, length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, f_min_hz: &#x27;float&#x27; = 5.0, f_max_hz: &#x27;float&#x27; = 5000.0, n_points: &#x27;int&#x27; = 400) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;quantum_noise_budget&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>conventional (signal recycling रहित) Fabry-Perot Michelson का quantum noise — shot, radiation pressure और standard quantum limit।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>power_w : float</p>
+<p>ビームスプリッタに入る光量 I₀ [W] (aLIGO 設計: 125 W × 出力再利用 ≈ 5.2 kW)。</p>
+<p>mirror_mass_kg : float</p>
+<p>試験質量 m [kg] (aLIGO 40 kg)。</p>
+<p>length_m : float</p>
+<p>腕の長さ L [m]。</p>
+<p>wavelength_nm : float</p>
+<p>波長 [nm]。</p>
+<p>itm_transmittance : float</p>
+<p>入力鏡の強度透過率 T(腕共振器の半値半幅 <code style="color:#22d3bf">γ = Tc/4L</code> [rad/s] を決める)。</p>
+<p>f_min_hz, f_max_hz : float</p>
+<p>周波数範囲(対数等間隔)。</p>
+<p>n_points : int</p>
+<p>点数。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">f_hz</code>(配列)、振幅スペクトル密度 [1/√Hz] の配列 <code style="color:#22d3bf">shot</code> / <code style="color:#22d3bf">radiation_pressure</code> /</p>
+<p><code style="color:#22d3bf">sql</code> / <code style="color:#22d3bf">total</code>(<code style="color:#22d3bf">√(S_shot + S_rp)</code>)、<code style="color:#22d3bf">kappa</code>(Kimble の K(Ω))、</p>
+<p>スカラ <code style="color:#22d3bf">gamma_rad_s</code> / <code style="color:#22d3bf">pole_hz</code> / <code style="color:#22d3bf">i_sql_w</code>(<code style="color:#22d3bf">I_SQL = mL²γ⁴/4ω₀</code>)/</p>
+<p><code style="color:#22d3bf">power_ratio</code> = I₀/I_SQL / <code style="color:#22d3bf">f_sql_touch_hz</code>(K = 1 で総和が SQL に触れる周波数、</p>
+<p>無ければ <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">arm_power_w</code>(循環光量 ≈ <code style="color:#22d3bf">I₀·2/T</code> の目安)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>Kimble, Levin, Matsko, Thorne &amp; Vyatchanin, *Phys. Rev. D* 65, 022002 (2001) 式 (16)–(20):</p>
+<p><code style="color:#22d3bf">h_SQL² = 8ħ/(mΩ²L²)</code>、<code style="color:#22d3bf">K = 2(I₀/I_SQL)γ⁴/(Ω²(γ²+Ω²))</code>、<code style="color:#22d3bf">S_shot = h_SQL²/2K</code>、<code style="color:#22d3bf">S_rp = K h_SQL²/2</code>。門: <code style="color:#22d3bf">S_shot·S_rp = h_SQL⁴/4</code>(光量に依らない恒等式)、<code style="color:#22d3bf">S_total ≥ h_SQL²</code> で等号は K = 1 だけ。I₀ = I_SQL のとき K(γ) = 1 なので <code style="color:#22d3bf">f_sql_touch_hz</code> = γ/2π。aLIGO の設計感度は信号再利用と熱雑音を含むのでこの曲線とは形が違う —— <code style="color:#22d3bf">examples/poc_gw_detector_pseudo_simulation.py</code> が設計曲線と第二実装(gwinc)に当てる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>
+<p style="margin:2px 0 2px 12px">• <b>String से <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> सफल हो जाता है, इसलिए बिना parse किया config value length के रूप में निकल जाता (मापा गया: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> सही दिखने वाला 66.667 mm लौटा रहा था)। bool को भी <code style="color:#22d3bf">True == 1</code> वाले implicit promotion के रूप में अस्वीकार किया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array से <code style="color:#22d3bf">ValueError</code></b> (केवल real-valued slots; imaginary part को चुपचाप छोड़ना या mask हटाना अस्वीकार)। <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b>।</p>
+<p style="margin:2px 0 2px 12px">• <b>शून्य से भाग और उससे जुड़े मामलों को नाम लेकर अस्वीकार किया जाता है</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, पूरी तरह opaque aperture (सब 0, इसलिए normalisation 0/0), ऐसा PSF जिसका योग &lt;= 0 हो, S0 = 0 वाला Stokes vector, और front focal point पर रखा object (image अनंत पर)।</p>
+<p style="margin:2px 0 2px 12px">• <b>केवल 2 ops non-finite value लौटाते हैं, और वह भी contract के रूप में लिखा हुआ</b>: <code style="color:#22d3bf">depth_of_field</code> hyperfocal distance से आगे <code style="color:#22d3bf">far_mm = inf</code> (hyperfocal distance की परिभाषा यही है) और <code style="color:#22d3bf">gaussian_beam</code> waist पर <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (plane wavefront की radius of curvature)। दोनों साथ में एक finite साथी (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>) भी लौटाते हैं। <b>इसके अलावा कोई भी चुपचाप आया NaN/Inf अंदर ही पकड़ा जाता है और <code style="color:#22d3bf">ValueError</code> देता है</b> — &quot;float64 overflow हुआ&quot; और &quot;उत्तर अनंत है&quot; अलग-अलग दावे हैं, इसलिए पहले को दूसरे का चेहरा पहनाकर नहीं लौटाया जाता।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: generate होने वाले grid के लिए <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), दिए गए field/PSF/aperture के लिए <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD element chain के लिए <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike के लिए <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25)। छोटे argument से बहुत बड़ा internal allocation होने वाले रास्तों (मापा गया: n_max=40 × 4096² पर 108 GB) को fail-closed ढंग से बंद किया गया है।</p>
+<p style="margin:2px 0 2px 12px">• <b>भौतिक रूप से असंभव states भी अस्वीकार</b>: degree of polarisation &gt; 1 वाला Stokes vector, ऋणात्मक transmittance, ऋणात्मक intensity, और n-|m| odd जैसे अमान्य Zernike indices।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fabry_perot_response">fabry_perot_response</a> · <a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:pdh_error_signal">pdh_error_signal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

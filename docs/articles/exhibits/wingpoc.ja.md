@@ -3290,7 +3290,7 @@ py -3.11 examples/poc_worm_core_persists.py
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 
-星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 21 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
+星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 22 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
 
 共通して出てきたのは「同じ物が、どこにあるかで違って読める」ことです。同じ雲が天頂と地平線で 1.45 倍、同じ厚さの雲が太陽からの角距離で検出されたりされなかったり、同じ反射が検出器によって「静かに低く読む」か「黙って止まる」か。
 
@@ -3995,6 +3995,46 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gravitational_lens_invariants)
 
 使用 op(ノートへ): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html)
+
+## No.2026.228 —— 重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点
+
+[![重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl.png)
+
+*↑ **重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点** ―― km 級の Michelson 干渉計が 1e-21 のひずみを読む仕組みを閉じた式で再現し、GW150914 の実データ(GWOSC)と公表値で採点する。新 op 12 本: 腕共振器(`fabry_perot_response` は aLIGO の公表設計値でフィネス 445・極 42 Hz、`cavity_strain_transfer`、`michelson_dc_readout`、`pdh_error_signal` は Black 2001 の傾きと 0.9999 倍)、量子雑音の予算(`quantum_noise_budget`、散射 × 輻射圧 = SQL²/2 の恒等式、第二実装 gwinc 0.6.2 と 8 周波数で比 0.96〜1.12)、信号側(`psd_welch` → `whiten_by_psd` → `matched_filter_snr` / `optimal_snr`、`chirp_newtonian`、`chirp_mass_from_track`、`coincidence_delay`)。実データでは白色化 + 35〜350 Hz が PRL 116, 061102 図 1 の公表曲線と相関 0.959 / 0.935、数値相対論の波形の整合フィルタで SNR H1 19.0 / L1 13.1(公表 ≈ 20 / 13)、ネットワーク 23.1(公表 24)、L1 が 7.1 ms 先(公表 6.9 ms)。ニュートン近似のチャープは 9.1 / 5.6(合体・リングダウンが無い分だけ損)。設計曲線(T1800044)との比は 20 Hz 0.42・100 Hz 1.99・1 kHz 0.33 で、信号再利用と熱雑音の分だけ形が違うことを表で明示。持ち帰りは 1/f² の色つき雑音の中の既知波形: 白色化した整合フィルタは埋めた高さどおり、素の相関はトーンで 0.98・チャープで 0.50・減衰振動で 0.37。実データは環境変数に置けば走り、無ければ「未配置」と明示。学習 0、較正 0。*
+
+[![単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/01_cavity_transfer.png)
+
+*↑ 測定の図 ―― 単極 1/√(1+(f/f_p)²) × 往復伝搬の sinc(2πfL/c)。極で 1/√2、FSR = c/2L で零。*
+
+[![反対称で共振で零。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/02_pdh_error_signal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/02_pdh_error_signal.png)
+
+*↑ 反対称で共振で零。*
+
+[![通常干渉計(信号再利用なし)の量子雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/03_quantum_noise_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/03_quantum_noise_budget.png)
+
+*↑ 通常干渉計(信号再利用なし)の量子雑音。*
+
+[![数値相対論の波形は公表どおりの山を立て、ニュートン近似(合体・リングダウン無し)は半分以下。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/06_matched_filter_snr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/06_matched_filter_snr.png)
+
+*↑ 数値相対論の波形は公表どおりの山を立て、ニュートン近似(合体・リングダウン無し)は半分以下。*
+
+[![雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/07_burst_in_coloured_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/07_burst_in_coloured_noise.png)
+
+*↑ 雑音が 1/f² のとき、波形が低周波を含むほど素の相関は損をし、白色化した整合フィルタは最適 SNR どおりに拾う。*
+
+[![入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif)
+
+*↑ 動く図 ―― 入射光量 100 W → 100 kW: 散射雑音は 1/√P で下がり、輻射圧雑音は √P で上がる。総和は K = 1 の周波数で SQL に触れ、その点が光量とともに高い周波数へ動く。*
+
+```
+FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
+```
+
+ソース: [examples/poc_gw_detector_pseudo_simulation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation)
+
+使用 op(ノートへ): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html) · [`cavity_strain_transfer`](https://furuse.work/ops/optics/cavity/cavity_strain_transfer.html) · [`chirp_mass_from_track`](https://furuse.work/ops/oned/matched/chirp_mass_from_track.html) · [`chirp_newtonian`](https://furuse.work/ops/oned/matched/chirp_newtonian.html) · [`coincidence_delay`](https://furuse.work/ops/oned/matched/coincidence_delay.html) · [`fabry_perot_response`](https://furuse.work/ops/optics/cavity/fabry_perot_response.html) · [`matched_filter_snr`](https://furuse.work/ops/oned/matched/matched_filter_snr.html) · [`michelson_dc_readout`](https://furuse.work/ops/optics/cavity/michelson_dc_readout.html) · [`optimal_snr`](https://furuse.work/ops/oned/matched/optimal_snr.html) · [`pdh_error_signal`](https://furuse.work/ops/optics/cavity/pdh_error_signal.html) · [`psd_welch`](https://furuse.work/ops/oned/matched/psd_welch.html) · [`quantum_noise_budget`](https://furuse.work/ops/optics/cavity/quantum_noise_budget.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`whiten_by_psd`](https://furuse.work/ops/oned/matched/whiten_by_psd.html)
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 

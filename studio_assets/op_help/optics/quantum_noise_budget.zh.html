@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quantum_noise_budget — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quantum_noise_budget(power_w: &#x27;float&#x27; = 5200.0, mirror_mass_kg: &#x27;float&#x27; = 40.0, length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, f_min_hz: &#x27;float&#x27; = 5.0, f_max_hz: &#x27;float&#x27; = 5000.0, n_points: &#x27;int&#x27; = 400) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cavityoptics; cavityoptics.quantum_noise_budget(power_w: &#x27;float&#x27; = 5200.0, mirror_mass_kg: &#x27;float&#x27; = 40.0, length_m: &#x27;float&#x27; = 3994.5, wavelength_nm: &#x27;float&#x27; = 1064.0, *, itm_transmittance: &#x27;float&#x27; = 0.014, f_min_hz: &#x27;float&#x27; = 5.0, f_max_hz: &#x27;float&#x27; = 5000.0, n_points: &#x27;int&#x27; = 400) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;quantum_noise_budget&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>常规（无信号回收）Fabry-Perot Michelson 的量子噪声：散粒噪声、辐射压噪声与标准量子极限。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>power_w : float</p>
+<p>ビームスプリッタに入る光量 I₀ [W] (aLIGO 設計: 125 W × 出力再利用 ≈ 5.2 kW)。</p>
+<p>mirror_mass_kg : float</p>
+<p>試験質量 m [kg] (aLIGO 40 kg)。</p>
+<p>length_m : float</p>
+<p>腕の長さ L [m]。</p>
+<p>wavelength_nm : float</p>
+<p>波長 [nm]。</p>
+<p>itm_transmittance : float</p>
+<p>入力鏡の強度透過率 T(腕共振器の半値半幅 <code style="color:#22d3bf">γ = Tc/4L</code> [rad/s] を決める)。</p>
+<p>f_min_hz, f_max_hz : float</p>
+<p>周波数範囲(対数等間隔)。</p>
+<p>n_points : int</p>
+<p>点数。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">f_hz</code>(配列)、振幅スペクトル密度 [1/√Hz] の配列 <code style="color:#22d3bf">shot</code> / <code style="color:#22d3bf">radiation_pressure</code> /</p>
+<p><code style="color:#22d3bf">sql</code> / <code style="color:#22d3bf">total</code>(<code style="color:#22d3bf">√(S_shot + S_rp)</code>)、<code style="color:#22d3bf">kappa</code>(Kimble の K(Ω))、</p>
+<p>スカラ <code style="color:#22d3bf">gamma_rad_s</code> / <code style="color:#22d3bf">pole_hz</code> / <code style="color:#22d3bf">i_sql_w</code>(<code style="color:#22d3bf">I_SQL = mL²γ⁴/4ω₀</code>)/</p>
+<p><code style="color:#22d3bf">power_ratio</code> = I₀/I_SQL / <code style="color:#22d3bf">f_sql_touch_hz</code>(K = 1 で総和が SQL に触れる周波数、</p>
+<p>無ければ <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">arm_power_w</code>(循環光量 ≈ <code style="color:#22d3bf">I₀·2/T</code> の目安)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>Kimble, Levin, Matsko, Thorne &amp; Vyatchanin, *Phys. Rev. D* 65, 022002 (2001) 式 (16)–(20):</p>
+<p><code style="color:#22d3bf">h_SQL² = 8ħ/(mΩ²L²)</code>、<code style="color:#22d3bf">K = 2(I₀/I_SQL)γ⁴/(Ω²(γ²+Ω²))</code>、<code style="color:#22d3bf">S_shot = h_SQL²/2K</code>、<code style="color:#22d3bf">S_rp = K h_SQL²/2</code>。門: <code style="color:#22d3bf">S_shot·S_rp = h_SQL⁴/4</code>(光量に依らない恒等式)、<code style="color:#22d3bf">S_total ≥ h_SQL²</code> で等号は K = 1 だけ。I₀ = I_SQL のとき K(γ) = 1 なので <code style="color:#22d3bf">f_sql_touch_hz</code> = γ/2π。aLIGO の設計感度は信号再利用と熱雑音を含むのでこの曲線とは形が違う —— <code style="color:#22d3bf">examples/poc_gw_detector_pseudo_simulation.py</code> が設計曲線と第二実装(gwinc)に当てる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字符串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。<b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fabry_perot_response">fabry_perot_response</a> · <a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:pdh_error_signal">pdh_error_signal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

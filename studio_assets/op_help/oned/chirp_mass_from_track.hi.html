@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chirp_mass_from_track — ONED <code style="color:#22d3bf">matched</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chirp_mass_from_track(track) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gwsearch; gwsearch.chirp_mass_from_track(track) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;chirp_mass_from_track&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>gravitational-wave frequency track (t, f) से least squares द्वारा chirp mass और coalescence time।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>track : array_like</p>
+<p><code style="color:#22d3bf">(N, 2)</code> の <code style="color:#22d3bf">pairs</code>: 列 0 = 時刻 [s]、列 1 = 重力波周波数 [Hz] (正)。N ≥ 3。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">chirp_mass_msun</code>、<code style="color:#22d3bf">coalescence_time_s</code>(t_c = a/b)、<code style="color:#22d3bf">slope</code>(b)、</p>
+<p><code style="color:#22d3bf">residual_rms</code>(<code style="color:#22d3bf">f^{−8/3}</code> の当てはめ残差)、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">rising</code>(周波数が</p>
+<p>時間とともに上がる軌跡か)。<b>上がらない軌跡はインスパイラルではない</b>ので</p>
+<p><code style="color:#22d3bf">rising = False</code> とし、<code style="color:#22d3bf">chirp_mass_msun</code> と <code style="color:#22d3bf">coalescence_time_s</code> は <code style="color:#22d3bf">None</code></p>
+<p>(例外にはしない —— 「鳴いていない」は正しい答え)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><code style="color:#22d3bf">f^{−8/3} = a − b·t</code>、<code style="color:#22d3bf">b = (8/3)(96/5)π^{8/3}(GM_c/c³)^{5/3}</code>。PRL 116, 061102 の式 (1) の積分形。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">matched</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:psd_welch">psd_welch</a> · <a style="color:#22d3bf" href="oponed:whiten_by_psd">whiten_by_psd</a> · <a style="color:#22d3bf" href="oponed:chirp_newtonian">chirp_newtonian</a> · <a style="color:#22d3bf" href="oponed:matched_filter_snr">matched_filter_snr</a> · <a style="color:#22d3bf" href="oponed:optimal_snr">optimal_snr</a> · <a style="color:#22d3bf" href="oponed:coincidence_delay">coincidence_delay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gwsearch.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

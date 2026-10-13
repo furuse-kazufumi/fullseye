@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(361 例)
+### 2-D 画像/信号/幾何(362 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -63,6 +63,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **光弾性(縞から応力。壊れるのは応力が大きい所ではない)** — 円板の直径圧縮は閉形式の応力場を持ち、偏光系は fullseye の `mueller_element` で組める(教科書の I=sin²(δ/2) と 125 通りで最大差 2.2e-16、水平直径の力の積分は誤差 0.000 %)。位相シフトで δ は復元できるが **(δ,θ) ↔ (-δ,θ+90°) の二義性で 2.7 % の画素は符号が反転**する。巻き戻しが壊れる場所は 2 つ(1 縞 2 画素未満・変調が落ちる等方点)で、どちらも撮る前に予測できてマスクで外せる。 `py -3.11 examples/poc_photoelasticity.py`
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
 - **断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)** — 既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みになること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。 `py -3.11 examples/profile_frame_tour.py`
+- **重力波望遠鏡の擬似シミュレーション —— 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点** — km 級の Michelson 干渉計が 1e-21 のひずみを読む仕組みを、どこまで**閉じた式**で再現できるか。検査装置の干渉計(エタロン・レーザー共振器・白色干渉・振動計)と同じ式なので、再現できた分だけ Fullseye の設計規則になる。新 op 12 本(`opsoptics` の `cavity` 5 本 + `ops1d` の `matched` 7 本)。★腕共振器: aLIGO の公表設計値(L 3994.5 m、T_ITM 1.4 %、T_ETM 5 ppm)で フィネス 445.5・極 42.1 Hz・循環光量 284 倍、伝達関数は極で 1/√2・FSR で零、Pound-Drever-Hall の傾きは Black 2001 の式 15 と 0.9999 倍。★量子雑音の予算(Kimble ら 2001): 散射 × 輻射圧 = SQL²/2 の恒等式が 1e-10、総和は K = 1 で SQL に触れ、**第二実装 gwinc 0.6.2**(信号再利用鏡を外した aLIGO)と 8 周波数で比 0.96〜1.12。公開設計曲線(LIGO-T1800044)との比は 20 Hz で 0.42・100 Hz で 1.99・1 kHz で 0.33 —— 信号再利用と熱雑音の分だけ形が違う(表で明示)。★★実データ(GWOSC の GW150914、CC BY 4.0、環境変数 FULLSEYE_GWOSC_DATA に置けば走り、無ければ「未配置」と明示): Welch の PSD → 白色化 → 35〜350 Hz で **PRL 116, 061102 図 1 の公表曲線と相関 0.959 / 0.935**(白色化なしなら 0.47 / 0.38)、数値相対論の波形の整合フィルタで **SNR H1 19.0 / L1 13.1(公表 ≈ 20 / 13)、ネットワーク 23.1(公表 24)、L1 が 7.1 ms 先(公表 6.9 +0.5/−0.4 ms)**。ニュートン近似のチャープは SNR 9.1 / 5.6(合体・リングダウンが無い分だけ損、それでも検出)。O1 の実測 ASD は設計曲線の 2〜7 倍(2015 年の装置は設計未達)。NR 波形の軌跡から式 1 でチャープ質量 38 M☉(公表 ≈ 31、1 周期に 7 % 上がる帯域では式 1 が高めに出る)、H1 の白色化データの尾根からは 42 M☉(NR 軌跡と 10 % 差)。★持ち帰り: 1/f² の色つき雑音に埋めた既知波形で、白色化した整合フィルタは埋めた高さどおり拾い、素の相互相関は狭帯域のトーンでは差が無く(0.98)、広帯域のチャープ 0.50・減衰振動 0.37 —— 白色化が効くのは波形が雑音の色を跨ぐとき。学習した数 0、較正 0、CI は合成と閉形式だけで図なし 4 秒。 `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 - **SEM の明るい縁が寸法をどれだけ太らせるか(公開ウェハ欠陥データで採点)** — SEM 像では二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、その明るい縁ごとしきい値を超えて拾うと寸法・面積が系統的に太る。この太りを**真値つき**で切り分ける多段 PoC。新 op `sem_render`(二次電子の縁効果 sec θ + ビーム PSF + ポアソン雑音 + 帯電)は 3 本の閉形式の門をもつ: 平面で一様 / 斜面で平面比 = sec θ(誤差 0e+00)/ 段差の明るい縁の幅 = PSF 幅。★★合成(真値の面積が厳密)では **Dice は高い(中央 0.885 = 形はよく合う)のに面積は系統的に太り(比 1.09〜1.70)**、太りは閉形式 **ΔA ≈ 周囲長 × 有効縁幅**(有効縁幅/PSF の中央 1.01)でよく説明できる。★既知のビーム PSF 幅で面積を引くと偏りは 0.261 → 0.008 に消える(物理による補正)。埋め込み POD(`pod_hitmiss_fit`)で a90/95 が出る。★実データ(Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427)で採点すると: 段 0 のマスク規約検査で勾配の峰はマスク境界の cm = -1.3 px(**専門家マスクは明るい縁まで含む**)、クラス別 Dice 中央は 0.51 / 0.70 / 0.79(クラス 3/4/5、クラス 5 は全 4 枚)、面積比 1.70 / 1.22 / 1.42。★実データの欠陥は背景より 0.13 暗い穴で、合成の明るい塊と**極性が逆**であることも正直に印字する。実データ段は環境変数 FULLSEYE_CARINTHIA_DATA があるときだけ走り、無ければ合成のみ(CI は合成のみ、図なし既定で 60 秒未満)。 `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
 - **結晶粒度 G(面積法と切片法は別の崖で落ちる)** — Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。 `py -3.11 examples/poc_metal_grain_size.py`
 - **ねじのピッチ・フランク角・有効径(傾きは左右フランクに逆符号)** — ★列幅の FFT はピッチを**半分**と答える(単条ねじの上下輪郭は P/2 ずれる)。★★軸の傾き 3 度で左右フランク角は 33.18 / 26.74 度 ―― 半和が真のフランク角、半差が傾き。片側フランクのピッチは 1 次で ±3 % 狂い、頂点間隔は 2 次(-0.12 %)。★ぼけ σ=4 px で壊れるのは d2(-0.06 %)でなく α(-0.57 度)。★標本化の崖は α(8 px/山)→ d2(4 px/山)→ FFT の P(2 px/山 まで当たり、1.5 px/山 は 3.0 px に折り返す)の順。 `py -3.11 examples/poc_screw_thread_metrology.py`
@@ -2251,7 +2252,7 @@ _計 936 ops / 48 categories。_
 - `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
 
 ## 1-D operators(ops1d)by category
-_計 42 ops / 3 categories。_
+_計 49 ops / 4 categories。_
 
 
 プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
@@ -2285,6 +2286,15 @@ _計 42 ops / 3 categories。_
 - `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
 - `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
 - `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
+
+### matched(7)
+- `psd_welch` (`signal → pairs`) — Welch 法の片側 PSD を ``pairs``(周波数 [Hz], S [1/Hz])で返す。
+- `whiten_by_psd` (`signal, pairs → signal`) — 雑音の PSD で割って白色化する(``x_w = irfft(rfft(x)·√(2Δt/S(f)))``)。
+- `chirp_newtonian` (` → signal`) — ニュートン近似(0PN)のインスパイラル波形 h₊(t) を ``signal`` で返す(合体が配列の末尾)。
+- `chirp_mass_from_track` (`pairs → table`) — 重力波周波数の軌跡 (t, f) からチャープ質量と合体時刻を最小二乗で返す。
+- `matched_filter_snr` (`signal, signal, pairs → signal`) — 整合フィルタの SNR 時系列 |ρ(t)|(位相で最大化)を ``signal`` で返す。
+- `optimal_snr` (`signal, pairs → measurement`) — テンプレートの最適 SNR ``σ = √(4∫|h̃|²/S df)``(``measurement``)。
+- `coincidence_delay` (`signal, signal → table`) — 2 本の SNR 時系列の山の時刻差(b − a)を副標本精度で返す。
 
 ### signal(16)
 - `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
@@ -2449,7 +2459,7 @@ _計 114 ops / 12 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 184 ops / 21 categories。_
+_計 189 ops / 22 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2462,6 +2472,13 @@ _計 184 ops / 21 categories。_
 - `grating_rgb` (`normalmap → rgbimage`) — 法線マップ + 光源 + 視線 → **回折による虹色** (H, W, 3) の線形 sRGB。
 - `thin_film_rgb` (`normalmap → rgbimage`) — 法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。
 - `ward_anisotropic` (`normalmap → image2d`) — Ward の異方性反射(楕円ガウス微小面)。ヘアライン仕上げの**伸びたハイライト**。
+
+### cavity(5)
+- `fabry_perot_response` (` → table`) — Fabry-Perot 共振器の設計量(FSR・フィネス・線幅・極・増幅率・蓄積時間)を閉形式で返す。
+- `cavity_strain_transfer` (` → pairs`) — 腕共振器がひずみ h(f) を出力の位相へ写す伝達関数の大きさ |H(f)| を ``pairs`` で返す。
+- `michelson_dc_readout` (` → table`) — 暗縞から φ₀ だけずらした Michelson の反対称ポート光量・ひずみ感度・散射雑音限界。
+- `pdh_error_signal` (` → pairs`) — Pound-Drever-Hall 誤差信号 ε(δ) を、共振からの離調 δ [Hz] の関数として ``pairs`` で返す。
+- `quantum_noise_budget` (` → table`) — 通常の(信号再利用なし)Fabry-Perot Michelson の量子雑音 —— 散射・輻射圧・標準量子限界。
 
 ### coherent(6)
 - `coherent_image` (`image2d, image2d → image2d`) — Coherent image intensity of an amplitude/phase object through a pupil (``image2d``).

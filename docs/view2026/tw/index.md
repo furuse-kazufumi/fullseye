@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 44 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 45 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 用陣列測方向,分離距離與速度: [說明](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · 範例 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
 - 拍頻只有一個(膜的模態、干涉條紋、繞射級、印刷疊紋、落到墨上): [說明](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · 範例 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 用閉式設計干涉儀的腔、量子雜訊預算與有色雜訊中的已知波形（把重力波探測器的公式用於檢測干涉儀、振動計與聲發射）: [說明](../../capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) _(ja)_ · 範例 [poc_gw_detector_pseudo_simulation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_gw_detector_pseudo_simulation.py)
 - 從振動與聲音診斷異常: [說明](../../capabilities/vibration-and-acoustics.md) _(ja)_ · 範例 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
 
 **重建與校正**
@@ -155,7 +156,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 227 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 228 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -401,8 +402,9 @@ PoC 227 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>天文與環境</b> (21)</summary>
+<details class="vall"><summary><b>天文與環境</b> (22)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="重力波探測器的偽模擬" width="200" height="200"><b>&#9654;</b><span>重力波探測器的偽模擬</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天相機雲量" width="200" height="200"><span>全天相機雲量</span></a>
 <a href="../../articles/assets/poc/poc_astro_photometry/01_stack_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_astro_photometry.jpg" alt="恆星測光精度" width="200" height="200"><span>恆星測光精度</span></a>
 <a href="../../articles/assets/poc/poc_change_detection_misreg/01_plot_fp_vs_shift.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_change_detection_misreg.jpg" alt="變化偵測" width="200" height="200"><span>變化偵測</span></a>

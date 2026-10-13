@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 44 項目**
+**収録 45 項目**
 
 ## 測る (16)
 
@@ -250,7 +250,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `raw_to_display_isp`
 
-## 波と信号 (3)
+## 波と信号 (4)
 
 ### [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md)
 
@@ -267,6 +267,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `wave_membrane_mode`, `wave_mode_frequencies`, `wave_nodal_lines`, `wave_two_slit`, `wave_fringe_period`, `wave_grating_orders`, `halftone_screen`, `halftone_moire_period`, `engrave_lines`, `hatch_field`, `mosaic_tiles_sites`, `mosaic_tiles_render`
 
 動く例: `poc_beats_fringes_and_screens`
+
+### [干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md)
+
+重力波望遠鏡は km 級の Michelson 干渉計の両腕に Fabry-Perot 共振器を置き、腕の長さの差を光量で読む装置です。その設計の式は、検査装置のエタロン(波長フィルタ)・レーザー共振器・白色干渉計・振動計の式と同じで、Fullseye にはこれまで共振器そのものと量子雑音の予算、そして**雑音の PSD で割る整合フィルタ**が 1 本もありませんでした。この回は 12 本を 2 つの台帳に足しました。
+
+使う op: `fabry_perot_response`, `cavity_strain_transfer`, `michelson_dc_readout`, `pdh_error_signal`, `quantum_noise_budget`, `psd_welch`, `whiten_by_psd`, `chirp_newtonian`, `chirp_mass_from_track`, `matched_filter_snr`, `optimal_snr`, `coincidence_delay`
+
+動く例: `poc_gw_detector_pseudo_simulation`
 
 ### [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md)
 

@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pdh_error_signal — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">pairs</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import cavityoptics; cavityoptics.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;pdh_error_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Pound-Drever-Hall error signal ε(δ) as a function of the detuning δ [Hz] from resonance (pairs).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>length_m : float</p>
+<p>共振器長 L [m]。</p>
+<p>itm_transmittance, etm_transmittance : float</p>
+<p>鏡の強度透過率(損失なし)。</p>
+<p>mod_freq_hz : float</p>
+<p>位相変調周波数 Ω/2π [Hz]。線幅より十分大きいと傾きが Black の式 15 に乗る。</p>
+<p>mod_depth : float</p>
+<p>変調指数 β。搬送波 <code style="color:#22d3bf">P_c = J₀(β)²P</code>、側帯波 <code style="color:#22d3bf">P_s = J₁(β)²P</code>(β = 1.08 で <code style="color:#22d3bf">P_c·P_s</code> 最大)。</p>
+<p>power_w : float</p>
+<p>入射光量 P [W]。</p>
+<p>span_linewidths : float</p>
+<p>表示する離調の範囲(線幅の何倍まで、±)。</p>
+<p>n_points : int</p>
+<p>点数(奇数なら δ = 0 を含む)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(n_points, 2)</code>: 列 0 = 離調 δ [Hz]、列 1 = ε [W]</p>
+<p><code style="color:#22d3bf">= 2√(P_c P_s)·Im[F(δ)F*(δ+Ω) − F*(δ)F(δ−Ω)]</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>門(<code style="color:#22d3bf">tests</code>): 反対称 <code style="color:#22d3bf">ε(−δ) = −ε(δ)</code>(1e-12)、<code style="color:#22d3bf">ε(0) = 0</code>、対称共振器(T₁ = T₂)で Ω ≫ δν のとき共振近傍の傾き <code style="color:#22d3bf">dε/dδ = −8√(P_c P_s)/δν</code>(Black 2001 式 15)に 1 % 以内。側帯波が共振に乗る <code style="color:#22d3bf">δ = ±Ω</code> 付近の小さな山も含めて返す(表示範囲が届けば)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• <b>Strings raise <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked arrays raise <code style="color:#22d3bf">ValueError</code></b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.</b></p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). <b>Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code></b> — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gw_detector_pseudo_simulation">poc_gw_detector_pseudo_simulation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gw_detector_pseudo_simulation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">pairs</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">cavity</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fabry_perot_response">fabry_perot_response</a> · <a style="color:#22d3bf" href="opoptics:cavity_strain_transfer">cavity_strain_transfer</a> · <a style="color:#22d3bf" href="opoptics:michelson_dc_readout">michelson_dc_readout</a> · <a style="color:#22d3bf" href="opoptics:quantum_noise_budget">quantum_noise_budget</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cavityoptics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
