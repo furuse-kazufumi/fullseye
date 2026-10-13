@@ -4,7 +4,7 @@ dim: optics
 category: sensorchar
 in: image2d
 out: table
-examples: [poc_emva1288_sensor]
+examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -23,7 +23,9 @@ version: 0.6.0  # fullseye lib version this note was generated for
 *threshold*(必須)[DN]: 平均からの絶対偏差がこれを**越える**画素を数える(用途の「止め帯」)。
 
 返り値 ``{"hist_centers": 平均からの偏差, "hist_counts", "accum_x": 絶対偏差, "accum_percent": その偏差以上の画素の %,
-"n_above": 数, "mu"}``。
+"accum_bin_centers", "accum_counts", "accum_counts_percent", "n_above": 数, "mu"}``。``accum_*`` の 3 つは式 (78)〜(81) の
+升(幅 I/L)の積算ヒストグラム、``accum_x`` / ``accum_percent`` は 257 点の細かい格子の同じ量(図用)。
+★8.8 節は**高域フィルタをかけた**平均画像で求めると書く(:func:`emva_highpass` を先に通す)。
 
 **Raises** ``ValueError``: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。
 
@@ -51,6 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_emva1288_in_camera_processing](../../../../examples/poc_emva1288_in_camera_processing.py) — `py -3.11 examples/poc_emva1288_in_camera_processing.py`
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

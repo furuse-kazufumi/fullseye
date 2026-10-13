@@ -30,6 +30,21 @@ list / dict・空文字列)のものを渡したときの扱いを 1 つに揃�
   (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
   空入力の負債は 0 本。
 
+### 追加 — EMVA 1288 の残りの式(Linear)と Release 4.0 General、カメラの中の前処理が数を動かす量
+
+- `sensorchar`(Linear)に 9 op: `emva_highpass`(8.1 節の高域フィルタ / 付録 C.5 の旧版)・`emva_spectrogram`(式 70〜72)・
+  `emva_total_snr`(式 68・69)・`emva_exposure_for_snr`(式 25)・`emva_photon_exposure`(式 3・4)・`emva_bspline_regression`
+  (General 式 44〜49)・`emva_ptc_linearity_check`(式 51)・`emva_noise_whiteness` / `emva_filter_distortion`(前提 3 の検査と線形な
+  前処理の閉形式。**規格の数ではない**と docstring に明記)。`emva_spatial_nonuniformity` に `highpass=`(既定 None で従来どおり)、
+  `emva_defect_pixels` の返りに式 78〜81 の升の積算ヒストグラム(追加の鍵だけ、既存の鍵は不変)。
+- 新モジュール `sensorgeneral`(台帳 `opsoptics` の新カテゴリ)に 3 op: `emva_general_sensitivity` / `emva_general_nonuniformity` /
+  `emva_general_relative_qe`。線形でないカメラを特性曲線の B-スプラインの傾きで入力へ戻して測り、η と K は「測れない」と報告する。
+- 本文の食い違い 5 か所(General 式 49 の符号・式 48 の 1/Δ・Linear 式 86/87 の 0.92/0.64・式 51 の平均と和・General 式 74 の
+  光子数の比の向き)は導き直した式で実装し、門で確かめた。ISO 24942 は本文を読んでいないので「= ISO 24942」の記述を消した。
+- 門 `tests/test_sensorchar_r4.py`(23 件)・`tests/test_sensorgeneral.py`(8 件)。例 `examples/poc_emva1288_sensor.py` に
+  8.1 節・8.6 節・式 51・式 3/4/25/69 の節を足し、続編 `examples/poc_emva1288_in_camera_processing.py`(前処理 6 つで η が
+  0 / +83 / −53 / +87 / 0 / +156 %、閉形式の予測と 3 % 以内、General は圧伸を取り戻すが雑音除去の嘘は消さない)。合成センサ。
+
 ### 追加 — パルスエコー超音波と走査型音響顕微鏡(ハイブリッド接合のボイドを位相で見つける)
 
 - 新モジュール `ultrasound.py`(numpy + scipy のみ)と台帳 `opsacoustics` の新カテゴリ `ultrasonic` に 7 op:

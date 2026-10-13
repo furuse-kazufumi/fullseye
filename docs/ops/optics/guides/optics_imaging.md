@@ -133,7 +133,9 @@ print(round(E.veiling_glare_index(0.8 * spot + 0.2, dark, white)["vgi"], 4))   #
 
 ## カメラを測る(sensorchar)—— EMVA 1288 の手順
 
-カメラのデータシートの量子効率・システムゲイン K・暗雑音・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で出した数です。``sensorchar`` の 10 op はその手順そのもの: 同じ露光で 2 枚ずつ撮って平均と時間分散を出し(式 16・18)、photon transfer の傾きで K、暗画像から σ_d(式 53 —— **切片からではない**)、応答の傾きで η を出します。暗画像の分散が 0.24 DN² 未満だと σ_d は推定せず上限を返します(式 54)。合成センサ(``sensor_capture``)が「作る」側、この族が「測る」側です(`examples/poc_emva1288_sensor.py`)。
+カメラのデータシートの量子効率・システムゲイン K・暗雑音・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear の手順で出した数です。``sensorchar`` の 19 op はその手順そのもの: 同じ露光で 2 枚ずつ撮って平均と時間分散を出し(式 16・18)、photon transfer の傾きで K、暗画像から σ_d(式 53 —— **切片からではない**)、応答の傾きで η を出します。暗画像の分散が 0.24 DN² 未満だと σ_d は推定せず上限を返します(式 54)。合成センサ(``sensor_capture``)が「作る」側、この族が「測る」側です(`examples/poc_emva1288_sensor.py`)。
+
+規格の残りの式も op にしてあります: 照明のむらを除く 8.1 節の高域フィルタ ``emva_highpass``(DSNU・PRNU は ``emva_spatial_nonuniformity(..., highpass="r4")``)、8.6 節のスペクトログラム ``emva_spectrogram``(式 70〜72)、photon transfer が直線かの検査 ``emva_ptc_linearity_check``(式 51)。線形でないカメラ(圧伸・HDR・カメラの中の前処理)は Release 4.0 General の``sensorgeneral``(``emva_general_sensitivity`` ほか 3 op)で、特性曲線の傾きを使って入力の光子の単位へ戻して測ります。カメラの中の雑音除去や輪郭強調が η・K をどれだけ動かすかは ``emva_filter_distortion`` の閉形式、それを画像から見破るのは ``emva_noise_whiteness``(どちらも規格の数ではない)—— `examples/poc_emva1288_in_camera_processing.py`。
 
 ```python
 import numpy as np

@@ -4,7 +4,7 @@ dim: optics
 category: sensorchar
 in: volume × volume
 out: table
-examples: [poc_emva1288_sensor]
+examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,21 +13,27 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # emva_spatial_nonuniformity — OPTICS `sensorchar` op
 
 - **データ種**: `volume × volume` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K)`、台帳から引くなら `opsoptics.get("emva_spatial_nonuniformity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)`、台帳から引くなら `opsoptics.get("emva_spatial_nonuniformity")`)
 
 ## 使い方
 
-DSNU と PRNU(式 33〜42・66・67)。
+DSNU と PRNU(式 33〜42・65〜67)。
 
 *dark_stack*, *bright_stack*: 同じ露光で撮った L 枚(``(L, M, N)``、L ≥ 2)。bright は飽和の約 50 % で撮る。
 平均画像の空間分散から時間雑音の残り σ²_y/L を引き(式 36)、列・行・画素に分け(式 42)、
 DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67、比)。
-★規格は 8.1 節の高域フィルタ(照明のむら除去)をかけた画像で求める —— この op は渡された画像をそのまま使う
-(照明のむらを除いた画像を渡すこと)。
 
-返り値 ``{"dark": {...}, "bright": {...}, "DSNU1288_e", "PRNU1288", "var_temporal_dark", "var_temporal_bright", "L"}``。
+*highpass*: None(既定、渡された画像をそのまま使う —— 互換のため)/ ``"r4"``(8.1 節。規格は式 66・67 を
+**高域フィルタをかけた画像から**求めると書く)/ ``"r3.1"``(付録 C.5 の旧版)。フィルタをかけると端の 9 画素
+(r3.1 は 2 画素)を落とし、時間雑音の残りの引き算にはフィルタの白い雑音の利得を掛ける(導出: 平均画像の時間雑音も
+同じフィルタを通る)。★白い模様の分散そのものも利得 ``highpass["white_variance_gain"]`` 倍になる。4.0 の本文は
+この補正を書いていないので、**補正しない**(付録 C.5 の旧版は 0.96 で割れと書いていた)。
 
-**Raises** ``ValueError``: 3-D でない / L < 2 / 形が違う / K が正でない / bright の平均が dark 以下 / s²_y.50 < s²_y.dark。
+返り値 ``{"dark": {...}, "bright": {...}, "DSNU1288_e", "PRNU1288", "var_temporal_dark", "var_temporal_bright", "L",
+"highpass"}``(``highpass`` はフィルタの情報か None)。
+
+**Raises** ``ValueError``: 3-D でない / L < 2 / 形が違う / K が正でない / bright の平均が dark 以下 / s²_y.50 < s²_y.dark /
+highpass の名前が違う / フィルタをかけるには画像が小さい。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -53,6 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_emva1288_in_camera_processing](../../../../examples/poc_emva1288_in_camera_processing.py) — `py -3.11 examples/poc_emva1288_in_camera_processing.py`
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

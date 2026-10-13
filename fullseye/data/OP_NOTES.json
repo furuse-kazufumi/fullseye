@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3120,
- "n_notes": 3126,
+ "n_ops": 3132,
+ "n_notes": 3138,
  "notes": {
   "vol_dilate": [
    {
@@ -27740,6 +27740,16 @@
     "path": "docs/ops/optics/scene/vision_layout.md"
    }
   ],
+  "emva_bspline_regression": [
+   {
+    "op": "emva_bspline_regression",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_bspline_regression.md"
+   }
+  ],
   "emva_dark_current": [
    {
     "op": "emva_dark_current",
@@ -27769,6 +27779,36 @@
     "path": "docs/ops/optics/sensorchar/emva_dynamic_range.md"
    }
   ],
+  "emva_exposure_for_snr": [
+   {
+    "op": "emva_exposure_for_snr",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/optics/sensorchar/emva_exposure_for_snr.md"
+   }
+  ],
+  "emva_filter_distortion": [
+   {
+    "op": "emva_filter_distortion",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_filter_distortion.md"
+   }
+  ],
+  "emva_highpass": [
+   {
+    "op": "emva_highpass",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_highpass.md"
+   }
+  ],
   "emva_linearity_error": [
    {
     "op": "emva_linearity_error",
@@ -27777,6 +27817,16 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/optics/sensorchar/emva_linearity_error.md"
+   }
+  ],
+  "emva_noise_whiteness": [
+   {
+    "op": "emva_noise_whiteness",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_noise_whiteness.md"
    }
   ],
   "emva_pair_statistics": [
@@ -27789,6 +27839,16 @@
     "path": "docs/ops/optics/sensorchar/emva_pair_statistics.md"
    }
   ],
+  "emva_photon_exposure": [
+   {
+    "op": "emva_photon_exposure",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/optics/sensorchar/emva_photon_exposure.md"
+   }
+  ],
   "emva_photon_transfer": [
    {
     "op": "emva_photon_transfer",
@@ -27797,6 +27857,16 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/optics/sensorchar/emva_photon_transfer.md"
+   }
+  ],
+  "emva_ptc_linearity_check": [
+   {
+    "op": "emva_ptc_linearity_check",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_ptc_linearity_check.md"
    }
   ],
   "emva_quantum_efficiency": [
@@ -27836,6 +27906,56 @@
     "in": "volume × volume",
     "out": "table",
     "path": "docs/ops/optics/sensorchar/emva_spatial_nonuniformity.md"
+   }
+  ],
+  "emva_spectrogram": [
+   {
+    "op": "emva_spectrogram",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_spectrogram.md"
+   }
+  ],
+  "emva_total_snr": [
+   {
+    "op": "emva_total_snr",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal",
+    "out": "matrix",
+    "path": "docs/ops/optics/sensorchar/emva_total_snr.md"
+   }
+  ],
+  "emva_general_nonuniformity": [
+   {
+    "op": "emva_general_nonuniformity",
+    "dim": "optics",
+    "category": "sensorgeneral",
+    "in": "volume × volume",
+    "out": "table",
+    "path": "docs/ops/optics/sensorgeneral/emva_general_nonuniformity.md"
+   }
+  ],
+  "emva_general_relative_qe": [
+   {
+    "op": "emva_general_relative_qe",
+    "dim": "optics",
+    "category": "sensorgeneral",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorgeneral/emva_general_relative_qe.md"
+   }
+  ],
+  "emva_general_sensitivity": [
+   {
+    "op": "emva_general_sensitivity",
+    "dim": "optics",
+    "category": "sensorgeneral",
+    "in": "signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorgeneral/emva_general_sensitivity.md"
    }
   ],
   "aolp_to_azimuth": [

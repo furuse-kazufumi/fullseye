@@ -1,0 +1,54 @@
+[
+ {
+  "file": "01_datasheet_lies.png",
+  "name": "datasheet_lies",
+  "caption": "同じセンサに前処理を 1 つずつかけ、規格 Linear の手順で測った数を真値で割る(0 = 正しい、1 = 2 倍)。雑音除去は η を +83 %、時間の雑音除去は +87 % 膨らませる。どちらも η はまだ 1 以下でもっともらしい。",
+  "shape": [
+   380,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "02_datasheet_numbers.png",
+  "name": "datasheet_numbers",
+  "caption": "拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。DSNU・PRNU は照明が一様なので高域フィルタなし。",
+  "shape": [
+   272,
+   1035,
+   3
+  ],
+  "csv": "02_datasheet_numbers.csv",
+  "tsv": "02_datasheet_numbers.tsv"
+ },
+ {
+  "file": "03_noise_fingerprint.png",
+  "name": "noise_fingerprint",
+  "caption": "前処理なしの差は白い砂嵐。雑音除去はまだら(隣と似る、ρ_h > 0)、輪郭強調は細かいざらつき(隣と逆、ρ_h < 0)。時間の雑音除去は画素どうしは白いままで、1 枚おきの画像との相関 ρ_t = 1 − α = 0.2 だけが残る。",
+  "shape": [
+   477,
+   1586,
+   3
+  ]
+ },
+ {
+  "file": "04_photon_transfer.png",
+  "name": "photon_transfer",
+  "caption": "傾きがシステムゲイン K。雑音除去は直線のまま傾きが 0.55 倍に寝る —— 式 51(直線性)は通り、η = R/K が膨らむ。対数の圧伸は曲がるので式 51 が落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_general_input_snr.png",
+  "name": "general_input_snr",
+  "caption": "General は出力の雑音を特性曲線の傾きで入力へ戻す(式 9・10)。圧伸したカメラでも圧伸の前のセンサの SNR に重なる。Linear の数(η 1.15)から引いた式 21 の曲線は別物。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -124,7 +124,7 @@ def emva_general_nonuniformity(dark_stack, bright_stack, slope_50, mu_p_50, Rd, 
 
     General は不均一を特性曲線の傾きで入力へ戻す(式 55: 不均一は信号の幅より小さいので曲線を局所的に直線とみなす)。
     分散は傾きの二乗で割る(式 56)。暗画像の傾きは R_d(式 25)、明るい画像(飽和の約 50 %)の傾きは *slope_50*。
-    DSNU1288 = s_y.dark/R_d [光子](式 58)、PRNU1288 = √(s²_p.50 − s²_p.dark)/μ_p.50(式 59、比)。
+    DSNU1288 = s_y.dark/R_d [光子] (式 58)、PRNU1288 = √(s²_p.50 − s²_p.dark)/μ_p.50(式 59、比)。
     列・行・画素の成分(式 37〜39)にも同じ式を当てる(8.3 節の最後の段落)。成分の差が雑音で負になるときは 0 とする。
     *highpass*: 既定 ``"r4"``(General 8.1 節も Linear と同じフィルタ)、``"r3.1"``、None。
 

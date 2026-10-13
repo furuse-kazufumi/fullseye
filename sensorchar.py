@@ -352,7 +352,7 @@ def emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None):
 
     *dark_stack*, *bright_stack*: 同じ露光で撮った L 枚(``(L, M, N)``、L ≥ 2)。bright は飽和の約 50 % で撮る。
     平均画像の空間分散から時間雑音の残り σ²_y/L を引き(式 36)、列・行・画素に分け(式 42)、
-    DSNU1288 = s_y.dark / K [e⁻](式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67、比)。
+    DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67、比)。
 
     *highpass*: None(既定、渡された画像をそのまま使う —— 互換のため)/ ``"r4"``(8.1 節。規格は式 66・67 を
     **高域フィルタをかけた画像から**求めると書く)/ ``"r3.1"``(付録 C.5 の旧版)。フィルタをかけると端の 9 画素
@@ -621,8 +621,8 @@ def emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um):
     """センサ面の放射照度から画素あたりの平均光子数 μ_p = A E t_exp/(hc/λ)(式 3)を、規格の便利な単位で(式 4)。
 
     μ_p = c₀ · A[µm²] · t_exp[ms] · λ[µm] · E[µW/cm²]、c₀ = 10⁻²³/(h c) = 50.34(式 4。h・c は 2.1 節に書かれた値)。
-    *irradiance* [µW/cm²](スカラか 1-D)。ビニングなら A に縦横のビニング係数を、TDI なら t_exp に段数を掛ける(6.4 節)。
-    返り値: μ_p [光子/画素](signal)。
+    *irradiance* [µW/cm²] (スカラか 1-D)。ビニングなら A に縦横のビニング係数を、TDI なら t_exp に段数を掛ける(6.4 節)。
+    返り値: μ_p [光子/画素] (signal)。
 
     **Raises** ``ValueError``: 放射照度が負・非有限 / A・t_exp・λ が正でない。
     """

@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_eye_to_brain, poc_powder_grinding_ae, poc_registration_basin, poc_wound_area_tracking]
+examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_emva1288_in_camera_processing, poc_eye_to_brain, poc_powder_grinding_ae, poc_registration_basin, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ log 0.40 0.50
 - [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
 - [poc_dehazing](../../../../examples/poc_dehazing.py) — `py -3.11 examples/poc_dehazing.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
+- [poc_emva1288_in_camera_processing](../../../../examples/poc_emva1288_in_camera_processing.py) — `py -3.11 examples/poc_emva1288_in_camera_processing.py`
 - [poc_eye_to_brain](../../../../examples/poc_eye_to_brain.py) — `py -3.11 examples/poc_eye_to_brain.py`
 - [poc_powder_grinding_ae](../../../../examples/poc_powder_grinding_ae.py) — `py -3.11 examples/poc_powder_grinding_ae.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`

@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 40 項目**
+**収録 41 項目**
 
-## 測る (13)
+## 測る (14)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -35,6 +35,14 @@
 使う op: `cplx_plane_grid`, `cplx_rational_field`, `cplx_domain_colour`, `cplx_newton_basins`, `cplx_escape_time`, `mandelbrot_interior`, `potential_flow_joukowski`, `joukowski_circulation`
 
 動く例: `poc_complex_plane_fields`
+
+### [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md)
+
+画像センサ・カメラのデータシートの量子効率 η・システムゲイン K・暗雑音・飽和容量・最大 SNR・ダイナミックレンジ・DSNU・PRNU は、 EMVA 1288 Release 4.0 の手順で測った数です。ここではその手順を op にし、**値を仕込んだ合成センサ**で手順そのものを確かめます。 式は Release 4.0 Linear / General(2021-06-16、無償で公開されている本文)から写し、docstring に節と式の番号を書いてあります。
+
+使う op: `emva_pair_statistics`, `emva_photon_transfer`, `emva_quantum_efficiency`, `emva_spatial_nonuniformity`, `emva_highpass`, `emva_spectrogram`, `emva_ptc_linearity_check`, `emva_bspline_regression`, `emva_noise_whiteness`, `emva_filter_distortion`, `emva_general_sensitivity`, `emva_general_nonuniformity`, `emva_general_relative_qe`
+
+動く例: `poc_emva1288_sensor`, `poc_emva1288_in_camera_processing`
 
 ### [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md)
 

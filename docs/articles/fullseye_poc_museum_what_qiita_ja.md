@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **120 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **121 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 33 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 34 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -724,7 +724,7 @@ py -3.11 examples/poc_veiling_glare.py
 
 [![カメラを買わずにカメラを測る ―― EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_photon_transfer.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_photon_transfer.gif)
 
-*↑ **カメラを買わずにカメラを測る ―― EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す** ―― カメラのデータシートにある量子効率 η・システムゲイン K・暗雑音 σ_d・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で出した数である。この展示は**物理モデルでセンサを合成**し(光子のポアソン → 電子 → 暗雑音・暗電流 → K 倍 → 量子化・飽和、列・行・画素の DSNU と PRNU の模様つき)、新しい op 族 sensorchar(10 op)の**規格の推定手順**で仕込んだ値を取り戻す。合成と推定は別の式。門: 復元 —— 同じ露光で 2 枚ずつ撮った平均と時間分散(式 16・18)の photon transfer(式 50)から K -0.66 %、暗画像から σ_d +0.13 %(式 53)、応答の傾きから η +0.67 %(式 52)、暗電流 +0.6 %、列・行・画素の空間分散(式 42)と DSNU +0.6 %・PRNU -0.1 % / 恒等式 —— SNR(μ_p.min) = 1(式 26 と 21 は独立)・理想センサ = √μ_p(式 23)を機械精度、傾き 1 → 1/2(式 22)/ 適用範囲 —— 暗画像の分散が 0.24 DN² 未満では σ_d を推定しない(式 53・54)が、平らなセンサでは本当に推定の壊れる境界 / 公表値 —— メーカーが公表した EMVA 1288 データ 38 型番で最大 SNR = √μ_e.sat(式 55)が全型番 0.49 dB 以内 / 直線性 —— 直線性の誤差(式 58〜63)の閉形式が独立の重みつき最小二乗と 3.9e-13 / 欠陥画素 —— 仕込んだ 9 個を数え直す。見つけたこと: σ_d を photon transfer の**切片**から出すと +53.5 %(規格は暗画像から直接)。DSNU の模様があると画素ごとの暗レベルのずれが量子化のディザになり、規格が「推定できない」とする K = 0.10 でも 0.7 %(平ら 29.8 %)—— 規格の境界は保守側。台帳の IMX287 は飽和 21.0 ke⁻・暗雑音 7 e⁻ からは DR 68.9 dB なのに台帳は 74 dB —— どちらかの欄が別条件の値と見られる(未確認、台帳は直さず門で名指し)。正直に: 合成センサ、高域フィルタ(8.1 節)と直線性の B-スプライン検査(式 51)は入れていない、公表値は整数に丸めた値で K が無いので DR の検算は量子化雑音を 0 とみなす。8 門、0.1 s。*
+*↑ **カメラを買わずにカメラを測る ―― EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す** ―― カメラのデータシートにある量子効率 η・システムゲイン K・暗雑音 σ_d・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear の手順で出した数である。この展示は**物理モデルでセンサを合成**し(光子のポアソン → 電子 → 暗雑音・暗電流 → K 倍 → 量子化・飽和、列・行・画素の DSNU と PRNU の模様つき)、新しい op 族 sensorchar(10 op)の**規格の推定手順**で仕込んだ値を取り戻す。合成と推定は別の式。門: 復元 —— 同じ露光で 2 枚ずつ撮った平均と時間分散(式 16・18)の photon transfer(式 50)から K -0.66 %、暗画像から σ_d +0.13 %(式 53)、応答の傾きから η +0.67 %(式 52)、暗電流 +0.6 %、列・行・画素の空間分散(式 42)と DSNU +0.6 %・PRNU -0.1 % / 恒等式 —— SNR(μ_p.min) = 1(式 26 と 21 は独立)・理想センサ = √μ_p(式 23)を機械精度、傾き 1 → 1/2(式 22)/ 適用範囲 —— 暗画像の分散が 0.24 DN² 未満では σ_d を推定しない(式 53・54)が、平らなセンサでは本当に推定の壊れる境界 / 公表値 —— メーカーが公表した EMVA 1288 データ 38 型番で最大 SNR = √μ_e.sat(式 55)が全型番 0.49 dB 以内 / 直線性 —— 直線性の誤差(式 58〜63)の閉形式が独立の重みつき最小二乗と 3.9e-13 / 欠陥画素 —— 仕込んだ 9 個を数え直す。見つけたこと: σ_d を photon transfer の**切片**から出すと +53.5 %(規格は暗画像から直接)。DSNU の模様があると画素ごとの暗レベルのずれが量子化のディザになり、規格が「推定できない」とする K = 0.10 でも 0.7 %(平ら 29.8 %)—— 規格の境界は保守側。台帳の IMX287 は飽和 21.0 ke⁻・暗雑音 7 e⁻ からは DR 68.9 dB なのに台帳は 74 dB —— どちらかの欄が別条件の値と見られる(未確認、台帳は直さず門で名指し)。★★規格の残りの式(2026-10-13): 規格 5 節の模擬カメラ(640 × 480、DSNU に振幅 1.5 DN の正弦 2 本、照明が端へ 3 % 落ちる)で、8.1 節の高域フィルタをかけないと PRNU は 0.831 %(仕込み 0.5 %、+66 %)、かけると 0.497 %(白い利得 0.9885 の分だけ低い)。DSNU は波長 25 画素の正弦が 38 % に減るぶん 21.25 → 18.83 e⁻ で、伝達関数からの予測と一致。8.6 節のスペクトログラムの式 72 で正弦の振幅 1.46 / 1.50 DN を取り戻す。付録 C.5 の式 86 が書く 0.92 は実測 0.960(Parseval 1 − 1/25)と合わない。★式 51(photon transfer の直線性、局所の傾きの相対偏差の平均 < 3 %)は画素数が要る: 線形なセンサでも 128 × 160 では 6 回中 1 回落ち、512 × 640 では落ちない。正直に: 合成センサ、1〜7 節の照明は一様、公表値は整数に丸めた値で K が無いので DR の検算は量子化雑音を 0 とみなす。前処理が数をどう動かすかは続編 poc_emva1288_in_camera_processing。14 門、約 4 秒。*
 
 [![SNR は暗い側で傾き 1(暗雑音が支配)、明るい側で傾き 1/2(光子雑音が支配)。SNR = 1 になる露光が絶対感度しきい値 μ_p.min = 6.8 光子。量子化雑音の分だけ μ_e.min = 4.20 e⁻ は暗雑音 3.4 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_snr_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_snr_curve.png)
 
@@ -738,15 +738,55 @@ py -3.11 examples/poc_veiling_glare.py
 
 *↑ メーカーが公表した EMVA 1288 データ 38 型番の飽和容量・暗雑音・量子効率から式 (28) で DR を出し直す。*
 
+[![白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_spectrogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_spectrogram.png)
+
+*↑ 白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。*
+
+[![Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_highpass_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_highpass_transfer.png)
+
+*↑ Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。*
+
 ```
 py -3.11 examples/poc_emva1288_sensor.py
 ```
 
 ソース: [examples/poc_emva1288_sensor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py)
 
-この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_emva1288_sensor)
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_emva1288_sensor)
 
-使用 op(ノートへ): [`emva_dark_current`](https://furuse.work/ops/optics/sensorchar/emva_dark_current.html) · [`emva_defect_pixels`](https://furuse.work/ops/optics/sensorchar/emva_defect_pixels.html) · [`emva_dynamic_range`](https://furuse.work/ops/optics/sensorchar/emva_dynamic_range.html) · [`emva_linearity_error`](https://furuse.work/ops/optics/sensorchar/emva_linearity_error.html) · [`emva_pair_statistics`](https://furuse.work/ops/optics/sensorchar/emva_pair_statistics.html) · [`emva_photon_transfer`](https://furuse.work/ops/optics/sensorchar/emva_photon_transfer.html) · [`emva_quantum_efficiency`](https://furuse.work/ops/optics/sensorchar/emva_quantum_efficiency.html) · [`emva_sensitivity_threshold`](https://furuse.work/ops/optics/sensorchar/emva_sensitivity_threshold.html) · [`emva_snr_curve`](https://furuse.work/ops/optics/sensorchar/emva_snr_curve.html) · [`emva_spatial_nonuniformity`](https://furuse.work/ops/optics/sensorchar/emva_spatial_nonuniformity.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+使用 op(ノートへ): [`emva_dark_current`](https://furuse.work/ops/optics/sensorchar/emva_dark_current.html) · [`emva_defect_pixels`](https://furuse.work/ops/optics/sensorchar/emva_defect_pixels.html) · [`emva_dynamic_range`](https://furuse.work/ops/optics/sensorchar/emva_dynamic_range.html) · [`emva_exposure_for_snr`](https://furuse.work/ops/optics/sensorchar/emva_exposure_for_snr.html) · [`emva_highpass`](https://furuse.work/ops/optics/sensorchar/emva_highpass.html) · [`emva_linearity_error`](https://furuse.work/ops/optics/sensorchar/emva_linearity_error.html) · [`emva_pair_statistics`](https://furuse.work/ops/optics/sensorchar/emva_pair_statistics.html) · [`emva_photon_exposure`](https://furuse.work/ops/optics/sensorchar/emva_photon_exposure.html) · [`emva_photon_transfer`](https://furuse.work/ops/optics/sensorchar/emva_photon_transfer.html) · [`emva_ptc_linearity_check`](https://furuse.work/ops/optics/sensorchar/emva_ptc_linearity_check.html) · [`emva_quantum_efficiency`](https://furuse.work/ops/optics/sensorchar/emva_quantum_efficiency.html) · [`emva_sensitivity_threshold`](https://furuse.work/ops/optics/sensorchar/emva_sensitivity_threshold.html) · [`emva_snr_curve`](https://furuse.work/ops/optics/sensorchar/emva_snr_curve.html) · [`emva_spatial_nonuniformity`](https://furuse.work/ops/optics/sensorchar/emva_spatial_nonuniformity.html) · [`emva_spectrogram`](https://furuse.work/ops/optics/sensorchar/emva_spectrogram.html) · [`emva_total_snr`](https://furuse.work/ops/optics/sensorchar/emva_total_snr.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.224 —— カメラの中の前処理はデータシートの数をもっともらしく嘘にする ―― 雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る
+
+[![カメラの中の前処理はデータシートの数をもっともらしく嘘にする ―― 雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies.png)
+
+*↑ **カメラの中の前処理はデータシートの数をもっともらしく嘘にする ―― 雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る** ―― 値を仕込んだ同じ合成センサ(η 0.45・K 0.25 DN/e⁻・暗雑音 6 e⁻・12 bit・640 × 512、列と画素の DSNU・PRNU、熱画素 30 個)に、カメラの中の前処理を 1 つずつかけて EMVA 1288 Release 4.0 Linear の手順で測り直し、仕込んだ真値に対するずれを出す。★★η はデジタルゲイン ×2 で 0 %(K が +100 %、飽和容量 −51 %)、3 × 3 の平均を 3 割混ぜる雑音除去で +83 %(0.825 —— まだ 1 以下でもっともらしい、飽和容量 +89 %、最大 SNR +2.8 dB)、輪郭強調で −53 %、時間方向の雑音除去(α = 0.8)で +87 %、工場の地図の欠陥画素の補正で 0 %(DSNU −10 %、欠陥 29 → 0 個)、対数の圧伸で +156 %(η > 1 なので絶対感度しきい値の op が拒む)。★★線形な前処理は閉形式で予測できる: S = Σw²/(Σw)² · α²/(2 − α) として K' = (Σw) S K、η' = η/S。予測と実測は K・η・σ_d で 3 % 以内(σ_d は生の量子化雑音もフィルタを通る厳密な式)、DSNU・PRNU は画素と列の成分ごとの利得で 4 % 以内。★★規格の式 51(photon transfer の直線性)が見破るのは圧伸だけ(局所の傾きの偏差 171 %)—— 雑音除去・輪郭強調・時間の雑音除去では photon transfer は直線のまま傾きだけが寝る(0.4〜1.2 %)。前提 3(時間雑音は画素どうし・画像どうしで独立)を直接確かめる検査(この族の検査で規格の数ではない)は、2 枚の差の隣の画素との相関(雑音除去 +0.098・輪郭強調 −0.072、閉形式の予測と一致)と 1 枚おきの画像との相関(時間の雑音除去 0.199 = 1 − α)で 3 つを見破る。欠陥画素の補正はどの検査にも掛からない。★★Release 4.0 General(特性曲線の B-スプラインの傾きで入力へ戻す)は圧伸の後ろのセンサの入力 SNR を 5 %、PRNU を 5 %、波長を振った相対量子効率を 2 % で取り戻す(Linear の PRNU は −39 %、印刷どおりの式 74 は光子数が波長で違うと 589 % 外れる —— 本文は割る向きであるべき)が、雑音除去の嘘は消さない —— 入力 SNR は真値の 1/√S = 1.35 倍のまま。★雑音除去のカメラでは General の SNRmax が 217(飽和の露光での真値 127 の 1.71 倍): 飽和は前処理の後の値で決まるが、生の画素はそれより先に 4095 で切れて分散が潰れる。8.1 節の高域フィルタは端 9 画素を捨てるので、端の熱画素 1 個は 8.8 節で数えられない。合成センサ・単純化した前処理・照明は一様(DSNU・PRNU は高域フィルタなし)であることは docstring に明記。検査 27 件・約 31 秒。*
+
+[![拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。DSNU・PRNU は照明が一様なので高域フィルタなし。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/02_datasheet_numbers.png)
+
+*↑ 測定の図 ―― 拒否 = η > 1 で絶対感度しきい値(式 26)の op が拒んだ。DSNU・PRNU は照明が一様なので高域フィルタなし。*
+
+[![前処理なしの差は白い砂嵐。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/03_noise_fingerprint_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/03_noise_fingerprint.png)
+
+*↑ 前処理なしの差は白い砂嵐。*
+
+[![傾きがシステムゲイン K。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/04_photon_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/04_photon_transfer.png)
+
+*↑ 傾きがシステムゲイン K。*
+
+[![General は出力の雑音を特性曲線の傾きで入力へ戻す(式 9・10)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/05_general_input_snr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/05_general_input_snr.png)
+
+*↑ General は出力の雑音を特性曲線の傾きで入力へ戻す(式 9・10)。*
+
+```
+py -3.11 examples/poc_emva1288_in_camera_processing.py
+```
+
+ソース: [examples/poc_emva1288_in_camera_processing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing)
+
+使用 op(ノートへ): [`emva_bspline_regression`](https://furuse.work/ops/optics/sensorchar/emva_bspline_regression.html) · [`emva_defect_pixels`](https://furuse.work/ops/optics/sensorchar/emva_defect_pixels.html) · [`emva_dynamic_range`](https://furuse.work/ops/optics/sensorchar/emva_dynamic_range.html) · [`emva_filter_distortion`](https://furuse.work/ops/optics/sensorchar/emva_filter_distortion.html) · [`emva_general_nonuniformity`](https://furuse.work/ops/optics/sensorgeneral/emva_general_nonuniformity.html) · [`emva_general_relative_qe`](https://furuse.work/ops/optics/sensorgeneral/emva_general_relative_qe.html) · [`emva_general_sensitivity`](https://furuse.work/ops/optics/sensorgeneral/emva_general_sensitivity.html) · [`emva_highpass`](https://furuse.work/ops/optics/sensorchar/emva_highpass.html) · [`emva_linearity_error`](https://furuse.work/ops/optics/sensorchar/emva_linearity_error.html) · [`emva_noise_whiteness`](https://furuse.work/ops/optics/sensorchar/emva_noise_whiteness.html) · [`emva_pair_statistics`](https://furuse.work/ops/optics/sensorchar/emva_pair_statistics.html) · [`emva_photon_transfer`](https://furuse.work/ops/optics/sensorchar/emva_photon_transfer.html) · [`emva_ptc_linearity_check`](https://furuse.work/ops/optics/sensorchar/emva_ptc_linearity_check.html) · [`emva_quantum_efficiency`](https://furuse.work/ops/optics/sensorchar/emva_quantum_efficiency.html) · [`emva_sensitivity_threshold`](https://furuse.work/ops/optics/sensorchar/emva_sensitivity_threshold.html) · [`emva_snr_curve`](https://furuse.work/ops/optics/sensorchar/emva_snr_curve.html) · [`emva_spatial_nonuniformity`](https://furuse.work/ops/optics/sensorchar/emva_spatial_nonuniformity.html)
 
 ## No.2026.114 —— 搬送ロールの傷を周期から名指しする ―― 崖に着く前に、何も言えなくなる
 

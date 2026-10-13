@@ -4,7 +4,7 @@ dim: optics
 category: sensorchar
 in: signal
 out: matrix
-examples: [poc_emva1288_sensor]
+examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -48,11 +48,12 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_emva1288_in_camera_processing](../../../../examples/poc_emva1288_in_camera_processing.py) — `py -3.11 examples/poc_emva1288_in_camera_processing.py`
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[abcd_trace](../geometric/abcd_trace.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md)
+[abcd_trace](../geometric/abcd_trace.md) · [emva_filter_distortion](emva_filter_distortion.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md)
 
 ## 同カテゴリ(`sensorchar`)
 

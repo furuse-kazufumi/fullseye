@@ -62,7 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[emva_photon_transfer](../sensorchar/emva_photon_transfer.md) · [emva_quantum_efficiency](../sensorchar/emva_quantum_efficiency.md) · [emva_linearity_error](../sensorchar/emva_linearity_error.md) · [emva_snr_curve](../sensorchar/emva_snr_curve.md) · [emva_dark_current](../sensorchar/emva_dark_current.md) · [cie_xyz_from_wavelength](../appearance/cie_xyz_from_wavelength.md) · [spectrum_to_srgb](../appearance/spectrum_to_srgb.md) · [thin_film_reflectance](../appearance/thin_film_reflectance.md)
+[emva_photon_transfer](../sensorchar/emva_photon_transfer.md) · [emva_quantum_efficiency](../sensorchar/emva_quantum_efficiency.md) · [emva_linearity_error](../sensorchar/emva_linearity_error.md) · [emva_snr_curve](../sensorchar/emva_snr_curve.md) · [emva_dark_current](../sensorchar/emva_dark_current.md) · [emva_total_snr](../sensorchar/emva_total_snr.md) · [emva_exposure_for_snr](../sensorchar/emva_exposure_for_snr.md) · [emva_photon_exposure](../sensorchar/emva_photon_exposure.md)
 
 ## 同カテゴリ(`glassbody`)
 

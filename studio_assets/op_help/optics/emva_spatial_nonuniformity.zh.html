@@ -1,12 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_spatial_nonuniformity — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volume × volume</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>DSNU 与 PRNU(式 33〜42、66、67)。</p>
-<p>*dark_stack*, *bright_stack*：以相同曝光拍摄的 L 帧(<code style="color:#22d3bf">(L, M, N)</code>，L ≥ 2)。bright 在饱和的约 50 % 处拍摄。从平均图像的空间方差中减去时间噪声的残余 σ²_y/L(式 36)，分解为列、行、像素(式 42)，DSNU1288 = s_y.dark / K [e⁻] (式 66)，PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67，比值)。★标准是在经过 8.1 节高通滤波(去除照明不均)的图像上求取 —— 本 op 直接使用传入的图像(请传入已去除照明不均的图像)。</p>
-<p>返回值 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：不是 3-D / L &lt; 2 / 形状不同 / K 不为正 / bright 的平均不大于 dark / s²_y.50 &lt; s²_y.dark。</p>
+<p>DSNU 与 PRNU(式 33〜42、65〜67)。</p>
+<p>*dark_stack*, *bright_stack*: 同一曝光下拍摄的 L 张(<code style="color:#22d3bf">(L, M, N)</code>,L ≥ 2)。bright 在约 50 % 饱和处拍摄。从平均图像的空间方差中减去残余的时间噪声 σ²_y/L(式 36),分解为列、行、像素分量(式 42), DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67,比值)。</p>
+<p>*highpass*: None(默认,直接使用传入的图像——为保持兼容)/ <code style="color:#22d3bf">&quot;r4&quot;</code>(8.1 节。标准规定式 66、67 <b>由经高通滤波的图像</b>求出)/ <code style="color:#22d3bf">&quot;r3.1&quot;</code>(附录 C.5 的旧版)。滤波时舍去边缘 9 像素(r3.1 为 2 像素),减去残余时间噪声时乘以滤波器的白噪声增益(推导:平均图像的时间噪声也经过同一滤波器)。★白色图案本身的方差也会乘以增益 <code style="color:#22d3bf">highpass[&quot;white_variance_gain&quot;]</code>。4.0 的正文没有写这一校正,因此<b>不校正</b>(旧版附录 C.5 写的是除以 0.96)。</p>
+<p>返回 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;, &quot;highpass&quot;}</code>(<code style="color:#22d3bf">highpass</code> 为滤波器信息或 None)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 3-D / L &lt; 2 / 形状不同 / K 不为正 / bright 的均值不大于 dark / s²_y.50 &lt; s²_y.dark / highpass 名称不对 / 图像太小无法滤波。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
@@ -23,6 +24,7 @@
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_emva1288_in_camera_processing">poc_emva1288_in_camera_processing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_emva1288_in_camera_processing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_emva1288_sensor">poc_emva1288_sensor</a> — <code style="color:#22d3bf">py -3.11 examples/poc_emva1288_sensor.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>

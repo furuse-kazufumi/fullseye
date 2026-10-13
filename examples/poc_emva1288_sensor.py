@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: カメラを買わずにカメラを測る —— EMVA 1288(ISO 24942)の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す。
+"""PoC: カメラを買わずにカメラを測る —— EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す。
 
 カメラのデータシートに並ぶ「量子効率 η・システムゲイン K・暗雑音 σ_d・飽和容量・SNR・ダイナミックレンジ・DSNU・PRNU」は、
 EMVA 1288 Release 4.0 Linear の手順で出した数である。この PoC は**物理モデルでセンサを合成**し(光子のポアソン → 電子 → 暗雑音・
@@ -14,9 +14,16 @@ EMVA 1288 Release 4.0 Linear の手順で出した数である。この PoC は*
   4. **公表値**: メーカーが公表した EMVA 1288 データ(optscene の台帳、38 型番)で、最大 SNR = √μ_e.sat(式 55)と DR(式 28)を検算。
   5. **直線性**: 直線性の誤差(式 58〜63)の閉形式が numpy の重みつき最小二乗(第 2 実装)と一致し、線形に合成したセンサで 1 % 未満。
   6. **欠陥画素**: 仕込んだ熱画素の数を、平均からの偏差のしきい値で数え直す(8.8 節の積算ヒストグラム)。
+  7. **規格の模擬カメラ**(Linear 5 節の最後の段落: 640 × 480、DSNU に正弦 2 本、照明が端へ 3 % 落ちる): 8.1 節の高域フィルタで
+     照明のむらが PRNU から消え、DSNU は伝達関数どおりに減る。8.6 節のスペクトログラム(式 70〜72)で正弦の振幅を取り戻す。
+     付録 C.5 の式 86 の 0.92 は実測の 0.96(Parseval)と合わない。
+  8. **式 51**(photon transfer の直線性、General の B-スプラインの局所の傾き): 512 × 640 の線形なセンサは通るが、128 × 160 では
+     線形でも落ちることがある —— 2 枚の差の分散の揺れが局所の傾きの揺れになる(画素数が要る)。
+  9. **式 3・4・25・69**: 光子数の定数 50.34、SNR の逆関数の SNR = 1 が式 26、総合 SNR の頭打ちが 1/PRNU。
 
-正直に書くこと: 合成センサ(実機の画像ではない)。高域フィルタ(8.1 節、照明のむら除去)はかけていない —— 照明は一様に作った。
-直線性の B-スプライン検査(式 51)は入れていない。公表値の台帳は整数に丸めた値で、K が公表されないので DR の検算は量子化雑音を 0 とみなす。
+正直に書くこと: 合成センサ(実機の画像ではない)。1〜7 節の照明は一様に作った(高域フィルタは 7 節の模擬カメラで見る)。
+公表値の台帳は整数に丸めた値で、K が公表されないので DR の検算は量子化雑音を 0 とみなす。前処理(雑音除去・圧伸など)が数を
+どう動かすかと、Release 4.0 General の手順は続編 ``poc_emva1288_in_camera_processing.py``。
 
 Run: py -3.11 examples/poc_emva1288_sensor.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。MP4 は extras [video] があるときだけ)
 """
@@ -208,10 +215,73 @@ def main() -> int:
     print("  仕込み 9 個 → しきい値 15 DN を越える画素 %d 個(仕込む前 %d 個)、ヒストグラム %d 本の升" % (dp["n_above"], dp0["n_above"], len(dp["hist_counts"])))
     gate("欠陥画素: 仕込んだ数を数え直す(仕込む前は 0)", dp["n_above"] == 9 and dp0["n_above"] == 0)
 
+    # ─────────────────────────────── 8. 規格の残りの式 ─────────────────────────────
+    print("== 8. 規格 5 節の模擬カメラ(640 × 480、η 0.5、K 0.1、σ_d 30 e⁻、DSNU 白 1.5 DN + 振幅 1.5 DN の正弦 2 本、PRNU 白 0.5 %、"
+          "照明が端へ 3 % 落ちる)で 8.1 節の高域フィルタと 8.6 節のスペクトログラム")
+    ex = _standard_example_camera(np.random.default_rng(530))
+    L8 = 16
+    ex_dark = np.stack([ex(0.0) for _ in range(L8)])
+    ex_bright = np.stack([ex(0.5 * (MAXDN - 29.4) / (0.1 * 0.5)) for _ in range(L8)])
+    nu = {hp: SC.emva_spatial_nonuniformity(ex_dark, ex_bright, 0.1, highpass=hp) for hp in (None, "r4", "r3.1")}
+    g2 = nu["r4"]["highpass"]["white_variance_gain"]
+    hp_ref = SC.emva_highpass(np.zeros((40, 40)))
+    Tk = lambda k: float(np.interp(k, hp_ref["transfer_k"], hp_ref["transfer"]))    # noqa: E731
+    print("  PRNU: 高域フィルタなし %.3f %% / 8.1 節 %.3f %% / 付録 C.5(旧版) %.3f %%  —— 仕込み 0.5 %%(8.1 節の白い利得 %.4f をかけると %.3f %%)" % (
+        100 * nu[None]["PRNU1288"], 100 * nu["r4"]["PRNU1288"], 100 * nu["r3.1"]["PRNU1288"], g2, 100 * 0.005 * math.sqrt(g2)))
+    gate("8.1 節: 照明のむらは PRNU を +%.0f %% 膨らませ、高域フィルタで仕込み × √(白い利得) に 3 %% 以内で戻る" % (
+        100 * (nu[None]["PRNU1288"] / 0.005 - 1)),
+         nu[None]["PRNU1288"] > 1.4 * 0.005 and abs(nu["r4"]["PRNU1288"] / (0.005 * math.sqrt(g2)) - 1) < 0.03)
+    dsnu_pred = math.sqrt(g2 * 1.5 ** 2 + 1.5 ** 2 / 2 * Tk(0.08) ** 2 + 1.5 ** 2 / 2 * Tk(0.4) ** 2) / 0.1
+    print("  DSNU: フィルタなし %.2f e⁻(仕込み %.2f)/ 8.1 節 %.2f e⁻ —— 伝達関数からの予測 %.2f(波長 25 画素の正弦は %.0f %% に減る)" % (
+        nu[None]["DSNU1288_e"], math.sqrt(1.5 ** 2 * 2) / 0.1, nu["r4"]["DSNU1288_e"], dsnu_pred, 100 * Tk(0.08)))
+    gate("8.1 節: 高域フィルタの DSNU = 白い利得と伝達関数からの予測(2 %)", abs(nu["r4"]["DSNU1288_e"] / dsnu_pred - 1) < 0.02)
+    avg_d = ex_dark.mean(axis=0)
+    hp_d = SC.emva_highpass(avg_d)["image"]
+    sh = SC.emva_spectrogram(avg_d, band=(0.035, 0.045))
+    sv = SC.emva_spectrogram(avg_d, axis="vertical", band=(0.195, 0.205))
+    shh = SC.emva_spectrogram(hp_d, band=(0.035, 0.045))
+    svh = SC.emva_spectrogram(hp_d, axis="vertical", band=(0.195, 0.205))
+    print("  式 72 の振幅(白い床を引く): 横 0.04 c/px %.3f DN・縦 0.2 c/px %.3f DN(仕込み 1.5)。8.6 節どおり高域フィルタの後では %.3f / %.3f"
+          "(伝達関数の予測 %.3f / %.3f)" % (sh["amplitude_above_floor"], sv["amplitude_above_floor"], shh["amplitude_above_floor"],
+                                           svh["amplitude_above_floor"], 1.5 * Tk(0.08), 1.5 * Tk(0.4)))
+    print("  (式 72 そのまま = 帯の中の白い雑音も足した値: %.3f / %.3f)" % (sh["amplitude"], sv["amplitude"]))
+    gate("8.6 節: 周期模様の振幅を式 72 で 5 % 以内に取り戻す(高域フィルタの後は伝達関数どおり 10 %)",
+         abs(sh["amplitude_above_floor"] / 1.5 - 1) < 0.05 and abs(sv["amplitude_above_floor"] / 1.5 - 1) < 0.05
+         and abs(shh["amplitude_above_floor"] / (1.5 * Tk(0.08)) - 1) < 0.10 and abs(svh["amplitude_above_floor"] / (1.5 * Tk(0.4)) - 1) < 0.10)
+    old = SC.emva_highpass(np.random.default_rng(3).standard_normal((400, 400)), method="r3.1")
+    v_old = float(old["image"].var())
+    print("  付録 C.5(旧版の 5 × 5 の箱): 白い雑音の分散は %.4f 倍(Parseval 1 − 1/25 = 0.96)。本文の式 86 は (1 − 1/P²)² = 0.92 と書く" % v_old)
+    gate("付録 C.5 の式 86 の 0.92 は実測と合わない(0.96 ± 0.01)", abs(v_old - 0.96) < 0.01 and abs(v_old - 0.92) > 0.03)
+
+    print("== 9. 式 51(photon transfer の直線性、局所の傾きの相対偏差の平均 < 3 %)は画素数が要る —— 線形なセンサで測る")
+    res = {}
+    for (hh, ww), seeds in (((128, 160), range(6)), ((512, 640), range(2))):
+        vals = []
+        for sd_ in seeds:
+            vals.append(_eq51_linear(hh, ww, 9000 + sd_))
+        res[(hh, ww)] = vals
+        print("  %d × %d: 式 51 = %s(3 %% 以上で「線形でない」と判定 %d / %d)" % (
+            ww, hh, " / ".join("%.3f" % v for v in vals), sum(v >= 0.03 for v in vals), len(vals)))
+    small, big = res[(128, 160)], res[(512, 640)]
+    gate("式 51: 512 × 640 の線形なセンサは通り、128 × 160 では線形でも落ちることがある(2 枚の差の分散の揺れ √(2/NM))",
+         all(v < 0.03 for v in big) and any(v >= 0.03 for v in small) and np.median(small) > 2 * np.median(big))
+    ok51 = SC.emva_ptc_linearity_check(mu[1:], var[1:], mu[0], var[0], mu_sat)
+    print("  (1 節のセンサ 128 × 96 では式 51 = %.3f —— 同じ理由で数字は読まない)" % ok51["mean_rel_dev"])
+
+    print("== 10. 式 3・4(光子数)・式 25(SNR の逆)・式 69(総合 SNR)")
+    c0 = SC.emva_photon_exposure(1.0, 1.0, 1.0, 1.0)[0]
+    inv1 = SC.emva_exposure_for_snr(1.0, ETA, SD, K)[0]
+    tot = SC.emva_total_snr([1e9], ETA, SD, K, sn["DSNU1288_e"], sn["PRNU1288"])[0, 2]
+    print("  式 4 の定数 %.4f(本文 50.34)、μ_p(SNR = 1) = %.4f = 式 26 の %.4f、総合 SNR の頭打ち %.1f = 1/PRNU %.1f" % (
+        c0, inv1, th["mu_p_min"], tot, 1.0 / sn["PRNU1288"]))
+    gate("式 4 の 50.34・式 25 の SNR = 1 が式 26・式 69 の頭打ち = 1/PRNU",
+         round(c0, 2) == 50.34 and abs(inv1 / th["mu_p_min"] - 1) < 1e-12 and abs(tot * sn["PRNU1288"] - 1) < 1e-3)
+
     if figs.enabled():
-        print("== 8. 図と動画")
+        print("== 11. 図と動画")
         t_f = time.time()
         _figures(pairs, mp, mu, var, ptc, mu_sat, th, bnd, Ks, rows, bad_dr)
+        _figures_r4(ex_bright, ex_dark, nu, sh, sv, shh, svh, hp_ref, res)
         print("  図と動画(%.1f s)" % (time.time() - t_f))
         if figs.errors():
             print("図の書き出しで失敗:", "; ".join(figs.errors()))
@@ -220,6 +290,41 @@ def main() -> int:
     print("SUMMARY: %d / %d gates PASS" % (sum(OK), len(OK)))
     print("PASS" if all(OK) else "FAIL")
     return 0 if all(OK) else 1
+
+
+def _standard_example_camera(rng, H8=480, W8=640):
+    """Linear 5 節の最後の段落に書かれた模擬カメラ(本文の図 5〜16 はこの模擬データ)。
+
+    12 bit・640 × 480・η 0.5・暗の値 29.4 DN・K 0.1・σ_d 30 e⁻・DSNU は白 1.5 DN + 振幅 1.5 DN の正弦(横 0.04・縦 0.2 c/px)・
+    PRNU 白 0.5 %・照明は端へ向かって約 3 % の 2 次の落ち。「わずかに線形でない特性」は本文に量が無いので入れない。
+    """
+    n, m = np.arange(W8), np.arange(H8)
+    dsnu = 1.5 * rng.standard_normal((H8, W8)) + 1.5 * np.sin(2 * np.pi * 0.04 * n + 0.7)[None, :] \
+        + 1.5 * np.sin(2 * np.pi * 0.2 * m + 0.2)[:, None]
+    prnu = 1.0 + 0.005 * rng.standard_normal((H8, W8))
+    yy, xx = np.mgrid[0:H8, 0:W8]
+    r2 = ((xx - (W8 - 1) / 2) ** 2 + (yy - (H8 - 1) / 2) ** 2) / (((W8 - 1) / 2) ** 2 + ((H8 - 1) / 2) ** 2)
+    illum = 1.0 - 0.03 * r2
+
+    def shot8(mp):
+        e = rng.poisson(0.5 * mp * prnu * illum)
+        return np.clip(np.round(0.1 * (e + rng.normal(0.0, 30.0, (H8, W8))) + 29.4 + dsnu), 0, MAXDN)
+    return shot8
+
+
+def _eq51_linear(hh, ww, seed):
+    """線形なセンサ(η 0.45・K 0.25・σ_d 6 e⁻)を 50 段で撮り、式 51 の値を返す。"""
+    rng = np.random.default_rng(seed)
+    prnu = 1.0 + 0.008 * rng.standard_normal((hh, ww))
+    dsnu = 1.0 * rng.standard_normal((hh, ww))
+
+    def s(mp):
+        return np.clip(np.round(0.25 * (rng.poisson(0.45 * mp * prnu) + rng.normal(0.0, 6.0, (hh, ww))) + 64.0 + dsnu), 0, MAXDN)
+    mp_ = np.linspace(0.0, (MAXDN - 64.0) / (0.25 * 0.45), 50)
+    st = [SC.emva_pair_statistics(s(m), s(m)) for m in mp_]
+    mu_ = np.array([x["mu"] for x in st])
+    var_ = np.array([x["var_temporal"] for x in st])
+    return SC.emva_ptc_linearity_check(mu_[1:], var_[1:], mu_[0], var_[0], float(mu_[int(np.argmax(var_))]))["mean_rel_dev"]
 
 
 # ─────────────────────────────── 図 ─────────────────────────────
@@ -350,6 +455,38 @@ def _figures(pairs, mp, mu, var, ptc, mu_sat, th, bnd, Ks, rows, bad_dr):
                            "(暗雑音が整数に丸めてあるぶん)、%s だけが外れる —— 暗雑音か DR の欄のどちらかが別条件の値と見られる。" % (
                                len(rows), int(ok.sum()), ", ".join(bad_dr)))
 
+
+
+def _figures_r4(ex_bright, ex_dark, nu, sh, sv, shh, svh, hp_ref, res):
+    avg_b = ex_bright.mean(axis=0) - ex_dark.mean(axis=0)
+    hp_b = SC.emva_highpass(avg_b)["image"]
+    figs.save_grid("highpass_prnu", [avg_b, hp_b], captions=["PRNU 画像 = 明るい平均画像 − 暗い平均画像(照明が端へ 3 % 落ちる)",
+                                                            "8.1 節の高域フィルタの後(端 9 画素を落とす)"],
+                   title="照明のむらを除く(8.1 節)", ncols=2,
+                   caption="規格の模擬カメラ。高域フィルタなしの PRNU は %.3f %%(仕込み 0.5 %%)、フィルタの後は %.3f %%。" % (
+                       100 * nu[None]["PRNU1288"], 100 * nu["r4"]["PRNU1288"]))
+    figs.save_plot("spectrogram", [("暗画像 横(式 71)", sh["freq"][1:], np.sqrt(sh["power"][1:])),
+                                   ("暗画像 縦", sv["freq"][1:], np.sqrt(sv["power"][1:])),
+                                   ("高域フィルタの後 横", shh["freq"][1:], np.sqrt(shh["power"][1:]))],
+                   kinds=["line", "line", "line"], styles=[None, None, "dashed"], xlabel="空間周波数 [cycles/pixel]",
+                   ylabel="√P [DN]", title="スペクトログラム(8.6 節)",
+                   caption="白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。式 72 で山の帯を足すと"
+                           "振幅 %.2f / %.2f DN(仕込み 1.5)。高域フィルタの後は波長 25 画素の山が伝達関数どおりに低くなる。"
+                           "周波数 0 の升(行・列の平均 = もう一方の向きの模様が入る)は描いていない。" % (
+                               sh["amplitude_above_floor"], sv["amplitude_above_floor"]))
+    figs.save_plot("highpass_transfer", [("8.1 節(Release 4.0)", hp_ref["transfer_k"], hp_ref["transfer"]),
+                                         ("付録 C.5(Release 3.1、5 × 5 の箱)", SC.emva_highpass(np.zeros((40, 40)), method="r3.1")["transfer_k"],
+                                          SC.emva_highpass(np.zeros((40, 40)), method="r3.1")["transfer"])],
+                   kinds=["line", "line"], xlabel="波数(ナイキストで 1)", ylabel="伝達関数", title="高域フィルタの伝達関数",
+                   caption="Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。旧版の 5 × 5 の箱は 0.80〜1.25 で揺れる。")
+    s128, s512 = res[(128, 160)], res[(512, 640)]
+    figs.save_plot("eq51_pixels", [("128 × 160", [128 * 160] * len(s128), [100 * v for v in s128]),
+                                   ("512 × 640", [512 * 640] * len(s512), [100 * v for v in s512]),
+                                   ("規格の上限 3 %", [1e4, 4e5], [3.0, 3.0])],
+                   kinds=["scatter", "scatter", "line"], styles=[None, None, "dashed"], xlabel="画素数", ylabel="式 51 [%]",
+                   title="式 51 は画素数が要る",
+                   caption="線形なセンサを乱数を変えて撮り、式 51(局所の傾きの相対偏差の平均)を出す。小さい画像では 2 枚の差の分散の揺れが"
+                           "局所の傾きを揺らし、線形なのに 3 % を越えることがある。")
 
 if __name__ == "__main__":
     sys.exit(main())

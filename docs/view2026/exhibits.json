@@ -2250,6 +2250,22 @@
    }
   },
   {
+   "id": "poc_emva1288_in_camera_processing",
+   "group": "wing_industrial",
+   "media": "01_datasheet_lies.png",
+   "motion": false,
+   "thumb_src": "01_datasheet_lies_720.jpg",
+   "label": {
+    "ja": "前処理がデータシートを嘘にする",
+    "en": "In-camera processing vs datasheets",
+    "zh": "相机内处理让规格书数值失真",
+    "tw": "相機內處理讓規格書數值失真",
+    "ko": "카메라 내부 처리가 데이터시트를 속인다",
+    "de": "Kamerainterne Verarbeitung vs. Datenblatt",
+    "hi": "camera के भीतर processing और datasheet"
+   }
+  },
+  {
    "id": "poc_web_roll_periodicity",
    "group": "wing_industrial",
    "media": "01_scene_web.png",
@@ -5791,6 +5807,13 @@
     "ko": "초음파 에코의 밝기가 아니라 위상으로 하이브리드 접합의 보이드를 찾는다(주사 음향 현미경 C-스캔, 주파수 절충, 검출 확률)",
     "de": "Hohlräume in Hybridbonds über die Phase statt die Helligkeit des Ultraschallechos finden (C-Bild des akustischen Rastermikroskops, Frequenzabwägung, Detektionswahrscheinlichkeit)",
     "hi": "hybrid bond के voids को ultrasound echo की चमक नहीं, phase से खोजना (scanning acoustic microscope का C-scan, आवृत्ति का समझौता, detection की प्रायिकता)"
+   },
+   "emva1288-camera-datasheets": {
+    "zh": "用 EMVA 1288 的步骤重新测量相机规格书上的数值,并看相机内部的预处理会使这些数值偏移多少(Linear 与 General)",
+    "tw": "用 EMVA 1288 的步驟重新量測相機規格書上的數值,並看相機內部的前處理會使這些數值偏移多少(Linear 與 General)",
+    "ko": "카메라 데이터시트의 수치를 EMVA 1288 절차로 다시 재고, 카메라 내부 전처리가 그 수치를 얼마나 움직이는지 본다(Linear와 General)",
+    "de": "Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General)",
+    "hi": "camera datasheet की संख्याएँ EMVA 1288 की विधि से फिर मापना, और देखना कि camera के भीतर का preprocessing उन्हें कितना बदलता है (Linear और General)"
    }
   }
  }
