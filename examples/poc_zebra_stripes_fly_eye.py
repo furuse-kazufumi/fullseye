@@ -2,9 +2,11 @@
 """PoC: 縞に近づくハエの眼 ―― シマウマの縞は複眼の距離感を本当に狂わせるのか、
 そして複眼がフィボナッチ(Vogel 螺旋)の並びならもっと優秀か
 
-    py -3.11 examples/poc_zebra_stripes_fly_eye.py                   # 図なし・約 30 秒
+    py -3.11 examples/poc_zebra_stripes_fly_eye.py                   # 図なし(full 予算、数秒)
     py -3.11 examples/poc_zebra_stripes_fly_eye.py --figures         # GIF 2 本 + 図 + 表
     py -3.11 examples/poc_zebra_stripes_fly_eye.py --trajectories <dir>   # 外部真値(Dryad)を読む
+    FULLSEYE_POC_BUDGET=reduced|full(CI では reduced が既定)。reduced は第 2 章の距離の刻み・
+    第 3 章の HR の窓の歩幅・第 4 章の周波数格子を粗くするだけで、門は両方で同じ。
 
 【問い】アブ(tabanid)はシマウマの縞の手前で制御された減速ができず(Caro ら 2019)、縞・市松の
 近くでは速く飛び・寄らず・着地しない(How ら 2020)。「縞で距離感が狂う」という俗説は、複眼と
@@ -76,6 +78,7 @@ import time
 import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+import annotate as AN  # noqa: E402
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 
@@ -94,6 +97,12 @@ SPECIES = {
 DPHI, DRHO = SPECIES["アブ(急峻帯)"][:2]
 DT = 0.005                             # 200 Hz
 TAU_HR = 0.02                          # 相関器の時定数 [s]
+#: 予算(CI は reduced が既定)。門は両方で同じ —— 変わるのは距離の刻み・HR の窓の歩幅・周波数格子の密さだけ。
+REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
+                         "reduced" if os.environ.get("CI") else "full") == "reduced"
+N_DIST2 = 11 if REDUCED else 21        # 第 2 章: 横滑りの快照の距離の数(1.95 → 1.45 m)
+STEP3 = 25 if REDUCED else 10          # 第 3 章: HR 経路の窓の歩幅 [フレーム](窓は 50)
+N_FREQ4 = 48 if REDUCED else 96        # 第 4 章: lattice_moire_peak の周波数格子の一辺
 
 
 def centre_index(lat):
@@ -346,8 +355,8 @@ def main(argv=None):
     t_start = time.time()
     checks, rows = [], []
     np.set_printoptions(precision=4, suppress=True)
-    print("縞に近づくハエの眼 —— 周期 P = %.0f cm、アブ Δφ = %.1f° / Δρ = %.1f°(弱い定数、掃引あり)"
-          % (P * 100, DPHI, DRHO))
+    print("縞に近づくハエの眼 —— 周期 P = %.0f cm、アブ Δφ = %.1f° / Δρ = %.1f°(弱い定数、掃引あり)、予算 %s"
+          % (P * 100, DPHI, DRHO, "reduced" if REDUCED else "full"))
 
     # ================================================================ 1. ナイキスト距離
     print()
@@ -403,7 +412,7 @@ def main(argv=None):
     tt = np.arange(T_slip) * DT
     snaps = []                                             # (d, flow (n,2), R0 (n,))
     agree = []
-    for d in np.linspace(1.95, 1.45, 11):
+    for d in np.linspace(1.95, 1.45, N_DIST2):
         movie = render_movie(eye, np.full(T_slip, d), "vertical", DRHO, lateral=u_slip * tt)
         field, flow = hr_flow(movie, eye)
         R0 = field[0]                                      # 方位の隣(step (0, 1))との HR
@@ -419,7 +428,7 @@ def main(argv=None):
             print("   d = %.2f m: 反転の予測 |az| > %s、測定との一致 %.1f %%(境界 ±0.2 rad と縁を除く)"
                   % (d, ("%.1f°" % np.degrees(np.arccos(np.sqrt(min(1.0, 2 * np.deg2rad(DPHI) * d / P)))))
                      if 2 * np.deg2rad(DPHI) * d / P < 1.0 else "全視野", 100 * ag))
-    checks.append(("反転帯は閉形式と 97 % 以上一致(11 距離)", min(agree) >= 0.97))
+    checks.append(("反転帯は閉形式と 97 %% 以上一致(%d 距離)" % N_DIST2, min(agree) >= 0.97))
     frac = [float(np.mean(s[3])) for s in snaps]
     checks.append(("接近すると反転帯は周辺へ逃げる(反転する個眼の割合が単調に減る)",
                    bool(np.all(np.diff(frac) <= 0.0)) and frac[0] > 0.9 and frac[-1] < 0.3))
@@ -505,7 +514,7 @@ def main(argv=None):
     d0, d1 = 1.2, 0.4
     n_t = int((d0 - d1) / 0.5 / DT)
     d_path3 = d0 - 0.5 * np.arange(n_t) * DT
-    W3, step3 = 50, 25
+    W3, step3 = 50, STEP3
     results = {}
     for sp_name, (dphi, drho, _note) in (("アブ(急峻帯)", SPECIES["アブ(急峻帯)"]),
                                          ("ショウジョウバエ", SPECIES["ショウジョウバエ"])):
@@ -580,7 +589,7 @@ def main(argv=None):
         for tag, frac in (("above", 0.8), ("below", 1.1)):
             D = P / (frac * floor)
             sig = L.fly_view_plane_texture(lat, D, P, "sine", drho_deg=DRHO)
-            r = L.lattice_moire_peak(sig, lat)
+            r = L.lattice_moire_peak(sig, lat, n_freq=N_FREQ4)
             row["peak_" + tag] = r["peak_ratio"]
             row["fpeak_" + tag] = r["peak_cycles_per_deg"]
             # (c) コントラスト再現率(真の周波数での当てはめ)と残差
@@ -649,7 +658,8 @@ def main(argv=None):
         nn_in = float(np.degrees(vv["nn_rad"][inner]).mean())
         d_in = L.sampling_alias_distance(P, nn_in)["distance_m"]
         sig = L.fly_view_plane_texture(vv, D_ab, P, "sine", drho_deg=DRHO)
-        r_in = L.lattice_moire_peak(sig[inner], sub_eye(vv, inner), fmax_cycles_per_deg=2.0 * f_true4)
+        r_in = L.lattice_moire_peak(sig[inner], sub_eye(vv, inner), fmax_cycles_per_deg=2.0 * f_true4,
+                                    n_freq=N_FREQ4)
         found = abs(abs(r_in["peak_cycles_per_deg"][0]) - f_true4) < 0.06 * f_true4
         fov_rows.append((pw, nn_in, d_in, found, r_in["peak_ratio"]))
         print("     p = %.2f: 中心 5° の間隔 %.2f°(中心のナイキスト距離 %.2f m、縞は %.2f m)、"
@@ -683,18 +693,29 @@ def main(argv=None):
         vmax_flow = max(float(np.abs(s[2]).max()) for s in snaps)
         for d, flow, R0, pred_flip in snaps:
             img = L.fly_view_plane_texture(eye, d, P, "vertical", drho_deg=DRHO)
-            left, _xs, _ys = hex_raster(eye, img, step_deg=0.5)
-            right, xs, ys = hex_raster(eye, R0, step_deg=0.5)
+            left, _xs, _ys = hex_raster(eye, img, step_deg=0.25)
+            right, xs, ys = hex_raster(eye, R0, step_deg=0.25)
             rgb_l = to_rgb(left, False, vmax=1.0)
             rgb_r = to_rgb(right, True, vmax=vmax_flow)
             lim = 2 * np.deg2rad(DPHI) * d / P
-            if lim < 1.0:
+            az_max = float(np.degrees(np.asarray(eye["az_rad"])).max())
+            if lim < 1.0 and np.degrees(np.arccos(np.sqrt(lim))) <= az_max:
                 azb = np.degrees(np.arccos(np.sqrt(lim)))
                 for xb in (-azb, azb):
                     col = int(np.argmin(np.abs(xs - xb)))
                     rgb_r[:, max(col - 1, 0):col + 2] = 0.0
-            frames.append(np.concatenate([rgb_l, np.ones((rgb_l.shape[0], 6, 3)), rgb_r], axis=1))
-        assert all(np.isfinite(f).all() and f.std() > 0.05 for f in frames)
+                label = "d = %.2f m: 反転帯 |az| > %.1f°(黒線の外側が逆向き)" % (d, azb)
+            elif lim < 1.0:
+                label = "d = %.2f m: 反転帯 |az| > %.1f° は視野 ±%.1f° の外 —— 全視野が正しい向き" % (
+                    d, np.degrees(np.arccos(np.sqrt(lim))), az_max)
+            else:
+                label = "d = %.2f m: 全視野が逆向きを報告" % d
+            frame = np.concatenate([rgb_l, np.ones((rgb_l.shape[0], 12, 3)), rgb_r], axis=1)
+            frame = np.repeat(np.repeat(frame, 2, axis=0), 2, axis=1)       # 0.125°/px、約 290 × 600
+            frame = np.concatenate([np.ones((40, frame.shape[1], 3)), frame], axis=0)
+            frame = AN.text_box(frame, label, (8, 6), font_size=16)
+            frames.append(np.asarray(frame, float))
+        assert all(np.isfinite(f).all() and f.std() > 0.05 and f.shape[0] >= 240 for f in frames)
         figs.save_gif("reversal_ring", frames, fps=3.0,
                       caption="left: what the 1027 ommatidia of a 1.1-degree eye see of 7 cm stripes at the distance "
                               "shown (1.95 m down to 1.45 m); right: the HR correlator between azimuthal neighbours "
@@ -703,25 +724,33 @@ def main(argv=None):
                               "the stripes moving the wrong way; as the eye closes in the correct report grows from the "
                               "centre and the reversal retreats to the periphery")
         # GIF 2: 推定 τ と真 τ の時系列(窓が増えていく)
-        ts_c, _r, _e = tab["checker"]
-        series = {pat: ratio[pat] * ts_c for pat in ("vertical", "checker", "pink")}
+        ts_c, _r, _e, _iso_c = tab["checker"]
+        # 1/f は載せない: 利得 1 つでは τ̂/τ が 14〜28(流れのエネルギーが市松の 1/1000 で、相関器は
+        # 速度計でなく対比つきの運動計)なので軸の外に出る。数は上の表と「numbers」の表にある。
+        series = {pat: ratio[pat] * ts_c for pat in ("vertical", "checker")}
+        pink_lo, pink_hi = float(np.nanmin(ratio["pink"])), float(np.nanmax(ratio["pink"]))
         frames2 = []
         for k in range(2, len(ts_c) + 1):
             img = figs.render_plot(
                 [("縦縞", ts_c[:k], series["vertical"][:k]), ("市松", ts_c[:k], series["checker"][:k]),
-                 ("1/f", ts_c[:k], series["pink"][:k]), ("真値 τ", ts_c, ts_c), ("2τ", ts_c, 2 * ts_c)],
+                 ("真値 τ", ts_c, ts_c), ("2τ", ts_c, 2 * ts_c)],
                 xlabel="真の τ [s](接近 0.5 m/s、1.2 → 0.4 m)", ylabel="HR 経路の τ̂ [s]",
-                title="縞の上では τ が 2 倍に読める(較正は市松の最初の窓 1 つ)",
-                styles=[None, None, None, "dashed", "dotted"],
-                colors=["wrong", "right", "neutral", "reference", "reference"],
+                title="縞の上では τ が長く読める(較正は市松の最初の窓 1 つ)",
+                styles=[None, None, "dashed", "dotted"],
+                colors=["wrong", "right", "reference", "reference"],
                 xlim=(float(ts_c.min()) - 0.1, float(ts_c.max()) + 0.1), ylim=(0.0, float(2.6 * ts_c.max())))
             frames2.append(img)
         assert all(np.isfinite(f).all() for f in frames2) and len({f.shape for f in frames2}) == 1
+        assert float(np.abs(frames2[-1].astype(float) - frames2[0].astype(float)).mean()) > 1e-3, "GIF 2 が動いていない"
         figs.save_gif("tau_readout", frames2, fps=3.0,
                       caption="the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one "
                               "gain calibrated on the first checkerboard window) against the true tau during an "
-                              "approach at 0.5 m/s: over vertical stripes it runs near 2 tau — the aperture effect — "
-                              "and over a checkerboard it tracks tau")
+                              "approach at 0.5 m/s: over vertical stripes it reads longer than over a checkerboard "
+                              "(median ratio %.2f; the closed-form aperture effect says 2) while the checkerboard "
+                              "itself drifts from tau as the correlator's phase moves with distance. The 1/f texture "
+                              "is left off the axes: with the same single gain it reads %.0f to %.0f tau, because its "
+                              "flow energy is a thousandth of the checkerboard's — a correlator is not a speedometer"
+                              % (vc, pink_lo, pink_hi))
         figs.save_table("lattices",
                         ["格子", "モアレ尖り(超え)", "尖り(直下)", "偽フロー比/一貫性(超え)", "偽フロー比/一貫性(直下)",
                          "再現率(直下)", "残差(直下)"],
@@ -733,6 +762,21 @@ def main(argv=None):
         figs.save_table("numbers", ["項目", "値 1", "値 2", "値 3", "注"], rows,
                         title="縞に近づくハエの眼: 測った数")
 
+    # ================================================================ 6. まとめ
+    print()
+    print("6. まとめ(予算 %s、地 = 座標から解析的に描いた周期面で画像は 1 枚も無い、アブ Δφ %.1f°/Δρ %.1f° は弱い定数、"
+          "Dryad の軌跡は%s)" % ("reduced" if REDUCED else "full", DPHI, DRHO,
+                                  "配置済み" if a.trajectories else "未配置(第 5 章は飛ばした)"))
+    print("   ナイキスト距離(7 cm の縞): アブ 正面 %.3f m / 60° %.3f m(MTF@Nyq %.3f)、ショウジョウバエ %.3f / %.3f m(%.3f)"
+          % (tb[0], tb[1], tb[2], dm[0], dm[1], dm[2]))
+    print("   HR の方位の対が「遠ざかる」→「近づく」へ切り替わる距離 %.2f m(閉形式 %.2f〜%.2f m)。6 方向を束ねた流れは反転しない"
+          % (d_cross, d_pred[0], d_pred[1]))
+    print("   τ: 真の流れ %.6f s(真値 %.1f)、縦縞のアパーチャで %.3f 倍(閉形式 2)、HR 経路の縦縞/市松 %.2f、"
+          "ショウジョウバエの流れはアブの %.1e 倍" % (full["tau_s"], tau_true, aper["tau_s"] / tau_true, vc, e_ratio))
+    print("   3 つの眼(721 個眼・平均 %.1f°): モアレ尖り(超え) 六角 %.0f / Vogel %.1f / ジッタ %.1f、"
+          "残差(直下) %.3f / %.3f / %.3f、中心窩の尖り p 0.5 → 0.8 で %.1f → %.1f"
+          % (DPHI, h["peak_above"], v["peak_above"], j["peak_above"], h["resid_below"], v["resid_below"],
+             j["resid_below"], fov_rows[0][4], fov_rows[2][4]))
     print()
     print("走行 %.1f 秒。学習した数: 0。較正した数: 1(市松の最初の窓の利得)" % (time.time() - t_start))
     bad = [n for n, ok in checks if not ok]

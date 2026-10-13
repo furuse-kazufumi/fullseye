@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_nyquist_sweep.png",
+  "name": "nyquist_sweep",
+  "caption": "the alias distance P/(sqrt3 dphi) for a 7 cm period against the inter-ommatidial angle; the acceptance ratio changes only the contrast left at Nyquist, not the distance",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_reversal_ring.gif",
+  "name": "reversal_ring",
+  "caption": "left: what the 1027 ommatidia of a 1.1-degree eye see of 7 cm stripes at the distance shown (1.95 m down to 1.45 m); right: the HR correlator between azimuthal neighbours during a sideways slip (orange = one way, blue = the other) with the closed-form reversal boundary |az| = acos(sqrt(2 dphi d / P)) drawn in black. Far away the whole eye reports the stripes moving the wrong way; as the eye closes in the correct report grows from the centre and the reversal retreats to the periphery",
+  "shape": [
+   332,
+   692,
+   3
+  ],
+  "animated": true,
+  "frames": 21,
+  "frames_written": 21,
+  "fps": 3.0
+ },
+ {
+  "file": "03_tau_readout.gif",
+  "name": "tau_readout",
+  "caption": "the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one gain calibrated on the first checkerboard window) against the true tau during an approach at 0.5 m/s: over vertical stripes it reads longer than over a checkerboard (median ratio 1.52; the closed-form aperture effect says 2) while the checkerboard itself drifts from tau as the correlator's phase moves with distance. The 1/f texture is left off the axes: with the same single gain it reads 14 to 28 tau, because its flow energy is a thousandth of the checkerboard's — a correlator is not a speedometer",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 3.0
+ },
+ {
+  "file": "04_lattices.png",
+  "name": "lattices",
+  "caption": "moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pair responses with the wrong sign / total, and the coherence (+1 all right, -1 all wrong); reproduction = fitted amplitude at the true frequency / analytic amplitude, and the rms residual relative to it",
+  "shape": [
+   224,
+   851,
+   3
+  ],
+  "csv": "04_lattices.csv",
+  "tsv": "04_lattices.tsv"
+ },
+ {
+  "file": "05_numbers.png",
+  "name": "numbers",
+  "caption": "",
+  "shape": [
+   320,
+   692,
+   3
+  ],
+  "csv": "05_numbers.csv",
+  "tsv": "05_numbers.tsv"
+ }
+]
