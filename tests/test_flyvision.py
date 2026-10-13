@@ -352,7 +352,7 @@ class TestKnownLimits:
 class TestLedger:
     def test_every_op_has_an_implementation(self):
         assert opsflyvision.missing() == []
-        assert len(opsflyvision.OPSFLYVISION) == len(fv.FLYVISION) == 16
+        assert len(opsflyvision.OPSFLYVISION) == len(fv.FLYVISION) == 22
 
     def test_declared_out_types_are_what_the_ops_return(self):
         lat = fv.fly_hex_lattice(radius=3)

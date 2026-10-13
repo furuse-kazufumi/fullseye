@@ -4,7 +4,7 @@
 動機(2026-09-13): fullseye は視覚系の**設計**側(optics / visiondesign)と
 点群・姿勢・シーンフローの**処理**側を持つが、「広視野・低解像度の複眼と
 少数のニューロンから運動・衝突時間・進行方向を出す」昆虫視葉の**処理経路**が
-1 本も無かった。本レジストリはその経路(flyvision.py、8 op / 7 カテゴリ)で、
+1 本も無かった。本レジストリはその経路(flyvision.py、2026-10-13 で 22 op / 13 カテゴリ)で、
 どれも学習網ではなく**閉形式の教科書モデル**であり、それぞれ突き合わせる
 厳密な恒等式を持つ(下記の各ガイド閾値)。
 
@@ -58,6 +58,8 @@ _MOD = {"flyvision": flyvision}
 #     ではなく既存の matrix(opsmath の一般行列)に載せる。列数が格子と食い違えば
 #     fail-closed する。
 #   * measurement — `fly_hs_readout` は単一の opponent 比(実スカラ)。
+#   * points  — `traj_tau_dot` が食う実測の 3-D 軌跡 (N, 3)。既存の点群の語で、
+#     新語は作らない(2026-10-13)。
 #
 # ★ 重みは公開しない: `fly_hex_resample` の個眼×画素の重み行列は
 #   `functools.lru_cache` で**内部にだけ**保持し、op の入出力型には現さない ——
@@ -91,9 +93,14 @@ _CATALOG = {
     ],
     "lattice": [
         ("fly_hex_lattice", "flyvision", [], "table"),
+        # 2026-10-13: the Fibonacci eye — same count and mean spacing, no lattice.
+        ("fly_vogel_lattice", "flyvision", [], "table"),
     ],
     "stimulus": [
         ("fly_sky_1f", "flyvision", [], "image2d"),
+        # 2026-10-13: a periodic frontal plane integrated analytically under the
+        #   acceptance — no image in between, so no pixel grid to alias on.
+        ("fly_view_plane_texture", "flyvision", ["table"], "signal"),
     ],
     "sample": [
         ("fly_hex_resample", "flyvision", ["image2d", "table"], "signal"),
@@ -105,6 +112,22 @@ _CATALOG = {
     "looming": [
         ("fly_lgmd_eta", "flyvision", ["signal"], "signal"),
         ("fly_tau_from_expansion", "flyvision", ["signal"], "signal"),
+        # 2026-10-13: tau from the (n, 2) flow over the whole eye; the aperture
+        #   effect's 2 tau is its ground truth.
+        ("fly_expansion_readout", "flyvision", ["matrix", "table"], "table"),
+    ],
+    # 2026-10-13: aliasing — the closed-form distance beyond which a period folds
+    #   (no input: a design rule), and the sharpness of the fold on a lattice.
+    #   Both are general: a pixel IFOV is an inter-ommatidial angle.
+    "alias": [
+        ("sampling_alias_distance", "flyvision", [], "table"),
+        ("lattice_moire_peak", "flyvision", ["signal", "table"], "table"),
+    ],
+    # 2026-10-13: the external truth — a measured 3-D path (N, 3) = existing
+    #   `points` sort, its time stamps a `signal`; distance / speed / tau / tau-dot
+    #   as a table of columns.
+    "trajectory": [
+        ("traj_tau_dot", "flyvision", ["points", "signal"], "table"),
     ],
     "integrate": [
         ("fly_hs_readout", "flyvision", ["matrix", "table"], "measurement"),

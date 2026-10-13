@@ -82,6 +82,17 @@ Provenance — textbook and cited public literature only (see ``docs/PROVENANCE.
     activity across the fly visual system", *Nature* 634:1132, 2024 — the
     hexagonal photoreceptor lattice and its ``boxeye`` pixel distortion.
 
+An eleventh family (2026-10-13) asks what a **periodic eye makes of a periodic
+surface** — the zebra-stripe question: :func:`fly_view_plane_texture` integrates
+a striped / checked / 1/f plane under the Gaussian acceptance analytically,
+:func:`sampling_alias_distance` is the closed-form distance beyond which the
+lattice aliases it (also the working-distance rule of an inspection camera),
+:func:`fly_expansion_readout` reads a time-to-contact out of the flow over the
+whole eye and shows the aperture effect's exact ``2 tau``, :func:`traj_tau_dot`
+scores all of it against a measured 3-D trajectory, and :func:`fly_vogel_lattice`
+/ :func:`lattice_moire_peak` ask whether a Fibonacci (Vogel-spiral) eye would
+alias less — it trades one sharp moire for a ring of noise.
+
 Units are in every parameter name — ``_deg`` / ``_s`` / ``_rad`` — because an
 angle mixed between degrees and radians, or a time between seconds and
 milliseconds, is a plausible-wrong number rather than a crash. ``float("4.63")``
@@ -158,6 +169,12 @@ __all__ = [
     "fly_lamina_filter", "fly_onoff_split", "fly_t4t5_field",
     "fly_flow_from_directions", "fly_matched_filter",
     "fly_egomotion_from_flow",
+    # 2026-10-13 — a periodic surface seen by a periodic eye (zebra stripes,
+    # the aperture effect's 2 tau, and the Fibonacci eye).
+    "fly_view_plane_texture", "sampling_alias_distance", "fly_expansion_readout",
+    "traj_tau_dot", "fly_vogel_lattice", "lattice_moire_peak",
+    "PLANE_PATTERNS", "SAMPLING_LATTICES", "OBLIQUITIES", "MOIRE_WINDOWS",
+    "VOGEL_ANGLE_DEG", "MAX_HARMONIC", "MAX_TRAJ_POINTS", "MAX_MOIRE_FREQ",
     "LAMINA_MODES", "T4_MODELS", "T4_REDUCTIONS", "MOTION_KINDS", "HEX_STEPS",
     "MAX_MOVIE_ELEMENTS",
     "FLYVISION", "GEOMETRIES", "LN2", "QUANTIZE_MODES",
@@ -174,6 +191,8 @@ FLYVISION = [
     "fly_lamina_filter", "fly_onoff_split", "fly_t4t5_field",
     "fly_flow_from_directions", "fly_matched_filter",
     "fly_egomotion_from_flow", "fly_eye_merge",
+    "fly_view_plane_texture", "sampling_alias_distance", "fly_expansion_readout",
+    "traj_tau_dot", "fly_vogel_lattice", "lattice_moire_peak",
 ]
 
 #: Lattice geometries accepted by :func:`fly_hex_lattice`.
@@ -371,7 +390,8 @@ _LATTICE_KEYS = ("uv", "az_rad", "el_rad", "dirs", "dphi_rad", "geometry")
 
 
 def _as_lattice(lattice, op: str):
-    """Validate a lattice dict (the return of :func:`fly_hex_lattice`).
+    """Validate a lattice dict (the return of :func:`fly_hex_lattice` or
+    :func:`fly_vogel_lattice` — only the keys and shapes are checked here).
 
     Returns ``(dirs (n,3) float64, el_rad (n,) float64, dphi_rad float,
     axis (3,) float64)`` where *axis* is the optical axis = the direction of the
@@ -1244,6 +1264,7 @@ def _refuse_merged(lattice, op: str) -> None:
     plausible field measured against the wrong neighbours. Refusing is the only
     honest answer — run the per-patch ops per patch, and merge afterwards for the
     fit, which is the one step that needs nothing but viewing directions."""
+    _refuse_non_hex(lattice, op)
     if isinstance(lattice, dict) and "eye" in lattice:
         raise ValueError(
             "%s: this is a fly_eye_merge result (%d patches). Its (u, v) "
@@ -1725,6 +1746,692 @@ def fly_eye_merge(lattice_a, lattice_b, *more):
         "geometry": geom0,
         "eye": eye,
     }
+
+# --------------------------------------------------------------------------- #
+# 11. zebra — a periodic surface seen by a periodic eye (2026-10-13)            #
+#                                                                              #
+# Six operators written for the question "does a striped surface break a fly's #
+# sense of distance?" (Caro et al. 2019; How et al. 2020; Caro et al. 2023)    #
+# and its follow-up "would a Fibonacci (Vogel-spiral) eye do better?". They    #
+# are general: a camera pixel pitch is an inter-ommatidial angle, a display or #
+# a woven mesh is a zebra, and the same closed forms set the working distance  #
+# of an inspection camera (sampling_alias_distance) and explain why a          #
+# correlation-type motion detector loses distance over a periodic texture.     #
+# --------------------------------------------------------------------------- #
+
+#: Textures :func:`fly_view_plane_texture` can paint on the frontal plane.
+PLANE_PATTERNS = ("grey", "sine", "vertical", "horizontal", "checker", "pink")
+
+#: Sampling lattices :func:`sampling_alias_distance` knows the Nyquist limit of.
+SAMPLING_LATTICES = ("hex", "square")
+
+#: How the viewing obliquity compresses a period in :func:`sampling_alias_distance`.
+OBLIQUITIES = ("along", "across")
+
+#: Windows of :func:`lattice_moire_peak`.
+MOIRE_WINDOWS = ("hann", "none")
+
+#: The golden angle, degrees — the divergence of Vogel's spiral.
+VOGEL_ANGLE_DEG = 180.0 * (3.0 - np.sqrt(5.0))
+
+#: Highest odd harmonic kept when a square wave is integrated analytically.
+MAX_HARMONIC = 199
+
+#: Largest number of samples in a 3-D trajectory handed to :func:`traj_tau_dot`.
+MAX_TRAJ_POINTS = 1 << 20
+
+#: Largest frequency grid side of :func:`lattice_moire_peak` (n_freq^2 x n).
+MAX_MOIRE_FREQ = 256
+
+
+def _refuse_non_hex(lattice, op: str) -> None:
+    """Refuse a lattice whose ``uv`` are not hexagonal axial coordinates.
+
+    :func:`fly_vogel_lattice` stores the spiral index in ``uv`` so that every
+    lattice consumer sees the same keys; an op that looks a *neighbour* up by
+    ``uv`` would then pair spiral-consecutive ommatidia, which sit 137.5 degrees
+    apart around the axis, and report a plausible field measured between the
+    wrong pairs. Refusing is the only honest answer."""
+    if isinstance(lattice, dict) and lattice.get("geometry") not in GEOMETRIES:
+        raise ValueError(
+            "%s: lattice geometry %r has no hexagonal neighbourhood (its 'uv' is "
+            "not an axial coordinate), so a neighbour cannot be looked up. Build "
+            "the pairs from directions instead (Delaunay / nearest neighbours), "
+            "which is what the zebra PoC does for irregular eyes."
+            % (op, lattice.get("geometry")))
+
+
+def _plane_geometry(dirs: np.ndarray, az: np.ndarray, el: np.ndarray,
+                    distance: float):
+    """Where each line of sight meets the frontal plane ``x = distance`` and how
+    an angular step moves that point.
+
+    Returns ``(visible (n,) bool, p (n, 2) metres (y, z), J (n, 2, 2))`` where
+    ``J`` maps a small angular displacement ``(d_az, d_el)`` on the tangent plane
+    to a displacement ``(dy, dz)`` on the surface. Exact: ``p = D (d_y, d_z)/d_x``
+    and ``J`` is its derivative along the tangent basis, so a surface sinusoid of
+    wave vector ``k`` has the angular wave vector ``J^T k`` at that ommatidium —
+    ``D/(P cos^2 theta)`` straight along the azimuth, which is the cos^2 in the
+    Nyquist distance."""
+    e_az, e_el = _tangent_basis(az, el)
+    dx = dirs[:, 0]
+    visible = dx > 1e-6
+    safe = np.where(visible, dx, 1.0)
+    p = distance * np.stack([dirs[:, 1] / safe, dirs[:, 2] / safe], axis=1)
+    J = np.empty((dirs.shape[0], 2, 2))
+    for col, e in enumerate((e_az, e_el)):
+        J[:, 0, col] = distance * (e[:, 1] * dx - dirs[:, 1] * e[:, 0]) / (safe * safe)
+        J[:, 1, col] = distance * (e[:, 2] * dx - dirs[:, 2] * e[:, 0]) / (safe * safe)
+    return visible, p, J
+
+
+def _square_wave_terms(p_axis: int, period: float, m_max: int):
+    """Odd-harmonic cosine terms of ``sign(sin(2 pi u / period))`` along one axis:
+    ``(amplitude, k (2,), phase)`` with ``sin x = cos(x - pi/2)``."""
+    out = []
+    for m in range(1, m_max + 1, 2):
+        k = np.zeros(2)
+        k[p_axis] = m / period
+        out.append((4.0 / (np.pi * m), k, -0.5 * np.pi))
+    return out
+
+
+def _texture_terms(pattern: str, period: float, m_max: int):
+    """The cosine series of a unit-contrast texture ``s(y, z)`` in ``[-1, 1]``."""
+    if pattern == "grey":
+        return []
+    if pattern == "sine":
+        return [(1.0, np.array([1.0 / period, 0.0]), -0.5 * np.pi)]
+    if pattern == "vertical":
+        return _square_wave_terms(0, period, m_max)
+    if pattern == "horizontal":
+        return _square_wave_terms(1, period, m_max)
+    if pattern == "checker":
+        out = []
+        for m in range(1, m_max + 1, 2):
+            for n in range(1, m_max + 1, 2):
+                a = 8.0 / (np.pi * np.pi * m * n)
+                out.append((a, np.array([m / period, -n / period]), 0.0))
+                out.append((-a, np.array([m / period, n / period]), 0.0))
+        return out
+    # pink: 24 plane waves, directions on the golden angle, |k| log-spaced from
+    # 1/period (the longest wavelength) to 16/period, amplitude 1/|k| normalised
+    # to sum to 1 (so |s| <= 1 holds everywhere; the rms of s is then 0.18),
+    # phases from the fractional parts of j*sqrt(2) — deterministic, no seed.
+    out = []
+    n_waves = 24
+    freqs = np.geomspace(1.0 / period, 16.0 / period, n_waves)
+    amps = 1.0 / freqs
+    amps = amps / np.sum(amps)
+    for j in range(n_waves):
+        th = np.deg2rad(VOGEL_ANGLE_DEG) * j
+        ph = 2.0 * np.pi * ((j * np.sqrt(2.0)) % 1.0)
+        out.append((float(amps[j]), freqs[j] * np.array([np.cos(th), np.sin(th)]), ph))
+    return out
+
+
+def fly_view_plane_texture(lattice, distance_m, period_m, pattern="vertical",
+                           drho_deg=8.23, contrast=1.0, mean=0.5,
+                           lateral_m=(0.0, 0.0), phase_deg=0.0):
+    """What each ommatidium sees of a periodic frontal surface — integrated analytically.
+
+    A plane at *distance_m* ahead of the eye (``x = distance_m`` in body
+    coordinates, texture in ``(y, z)``) carries a reflectance
+    ``mean * (1 + contrast * s(y, z))`` with ``s`` in ``[-1, 1]``: stripes of
+    period *period_m* (``"vertical"`` modulates along y, ``"horizontal"`` along
+    z), a ``"checker"`` of that period, a pure ``"sine"``, a deterministic 1/f
+    ``"pink"`` texture whose longest wavelength is *period_m* (24 plane waves
+    with amplitudes summing to 1, so its rms contrast is 0.18 of *contrast*),
+    or ``"grey"``.
+    Each ommatidium integrates the surface under a Gaussian acceptance of FWHM
+    *drho_deg* — **without rendering or resampling an image**. The texture is a
+    cosine series; a surface wave vector ``k`` becomes the angular wave vector
+    ``J^T k`` at the ommatidium (``J`` the exact derivative of the line-of-sight
+    intercept), and a Gaussian acceptance multiplies each term by
+    ``exp(-pi^2 drho^2 |J^T k|^2 / (4 ln2))``. That is the small-footprint
+    approximation :func:`fly_hex_resample` documents, applied term by term, with
+    no pixel grid in between.
+
+    lattice:   a :func:`fly_hex_lattice` or :func:`fly_vogel_lattice` result.
+    distance_m / period_m: the plane's distance and the texture period, metres.
+    pattern:   one of :data:`PLANE_PATTERNS`.
+    drho_deg:  the acceptance FWHM, degrees.
+    contrast:  the Michelson contrast of the texture, ``0 <= contrast <= 1``.
+    mean:      the mean reflectance (> 0).
+    lateral_m: the eye's ``(y, z)`` offset from the texture origin, metres — the
+               fly's sideways position, which shifts the stripe phase.
+    phase_deg: an extra texture shift, in degrees of one period.
+
+    Returns a 1-D float64 signal of ``n`` ommatidial intensities (>= 0). An
+    ommatidium whose line of sight does not reach the plane (``d_x <= 0``) reads
+    *mean* — the surface is not in its field, and a texture at an infinite
+    distance has zero modulation anyway.
+
+    Square waves keep their odd harmonics up to where the acceptance has
+    attenuated them below 1e-6 (at most :data:`MAX_HARMONIC`); a checkerboard is
+    the product of two such series. The partial sum is then already smoothed, so
+    there is no Gibbs overshoot to clip; a ``maximum(., 0)`` guards rounding.
+
+    Ground truth (pinned in the tests): for ``pattern="sine"`` the amplitude at
+    the central ommatidium is ``contrast * mean * exp(-pi^2 drho^2 (D/P)^2 /
+    (4 ln2))`` with ``drho`` in radians, and at an ommatidium at azimuth
+    ``theta`` the angular frequency is ``D/(P cos^2 theta)`` — both to 1e-9.
+
+    **Raises** ``ValueError``: a malformed *lattice* (an empty dict is refused —
+    it has none of the lattice keys), a non-positive *distance_m* / *period_m* /
+    *drho_deg* / *mean*, a *contrast* outside ``[0, 1]``, a *lateral_m* that is
+    not two finite numbers, a non-finite *phase_deg*, and an unknown *pattern*.
+    """
+    op = "fly_view_plane_texture"
+    dirs, el, _dphi, _axis = _as_lattice(lattice, op)
+    D = _positive(distance_m, "distance_m")
+    P = _positive(period_m, "period_m")
+    pat = _one_of(pattern, "pattern", PLANE_PATTERNS, op)
+    drho = _positive(drho_deg, "drho_deg")
+    c = _nonneg(contrast, "contrast")
+    if c > 1.0:
+        raise ValueError("%s: contrast must be <= 1 (Michelson), got %g — a larger "
+                         "value makes the surface emit negative light" % (op, c))
+    mu = _positive(mean, "mean")
+    lat = _as_float_array(lateral_m, "lateral_m", 2, op).ravel()
+    if lat.size != 2:
+        raise ValueError("%s: lateral_m must be two numbers (y, z), got %d"
+                         % (op, lat.size))
+    ph = _finite_scalar(phase_deg, "phase_deg")
+    az = np.asarray(lattice["az_rad"], dtype=np.float64)
+    visible, p, J = _plane_geometry(dirs, az, el, D)
+    out = np.full(dirs.shape[0], mu, dtype=np.float64)
+    if c == 0.0 or pat == "grey" or not visible.any():
+        return out
+    drho_rad = np.deg2rad(drho)
+    catt = np.pi * np.pi * drho_rad * drho_rad / (4.0 * LN2)
+    pv, Jv = p[visible], J[visible]
+    # the texture is anchored to the world; the eye sits at lateral_m and the
+    # phase shift moves the texture by phase/360 of a period along both axes
+    pv = pv + lat[None, :] + P * ph / 360.0
+    # harmonic cut-off from the lowest angular fundamental over the field
+    # J^T k for k along y is row 0 of J, for k along z row 1; the lowest
+    # fundamental over the field and over both axes needs the most harmonics
+    f_fund = min(np.linalg.norm(Jv[:, 0, :], axis=1).min(),
+                 np.linalg.norm(Jv[:, 1, :], axis=1).min()) / P
+    f_cut = np.sqrt(np.log(1e6) / catt)
+    m_max = int(min(MAX_HARMONIC, max(1, np.ceil(f_cut / max(f_fund, 1e-12)))))
+    s = np.zeros(int(visible.sum()))
+    for amp, k, phase0 in _texture_terms(pat, P, m_max):
+        k_ang = Jv[:, 0, :] * k[0] + Jv[:, 1, :] * k[1]              # J^T k, (n, 2)
+        att = np.exp(-catt * (k_ang * k_ang).sum(axis=1))
+        s += amp * att * np.cos(2.0 * np.pi * (pv @ k) + phase0)
+    out[visible] = mu * (1.0 + c * s)
+    return np.ascontiguousarray(np.maximum(out, 0.0))
+
+
+def sampling_alias_distance(period_m, pitch_deg, lattice="hex", view_angle_deg=0.0,
+                            acceptance_deg=0.0, obliquity="along"):
+    """The distance beyond which a periodic target aliases on a sampling lattice.
+
+    A period *period_m* seen from distance ``d`` at viewing angle ``theta`` has
+    the angular period ``P cos^2(theta)/d`` (the cos^2 is the derivative of the
+    line-of-sight intercept; ``obliquity="across"`` — the period runs
+    perpendicular to the plane of obliquity — makes it a single cos). A lattice
+    of pitch *pitch_deg* resolves angular periods down to ``sqrt(3) * pitch``
+    (hexagonal: the inscribed circle of its Brillouin zone) or ``2 * pitch``
+    (square), so the target aliases once::
+
+        d > period_m * cos^2(theta) / (sqrt(3) * pitch)      (hex)
+        d > period_m * cos^2(theta) / (2 * pitch)            (square)
+
+    The same number is the **working-distance rule of an inspection camera**:
+    *pitch_deg* is the pixel's instantaneous field of view, *period_m* the pitch
+    of the display, mesh, weave or halftone being inspected, and beyond the
+    returned distance the picture carries a moire that is not in the part
+    (Petersen & Middleton 1962 for the lattice Nyquist regions).
+
+    period_m:  the target's spatial period, metres.
+    pitch_deg: the sample spacing — inter-ommatidial angle or pixel IFOV, degrees.
+    lattice:   one of :data:`SAMPLING_LATTICES`.
+    view_angle_deg: the obliquity of the line of sight, ``|theta| < 90``.
+    acceptance_deg: the FWHM of the Gaussian acceptance (or pixel blur), degrees;
+               ``0`` means a delta sampler.
+    obliquity: one of :data:`OBLIQUITIES`.
+
+    Returns a dict ``{"distance_m", "nyquist_cycles_per_rad", "period_floor_deg",
+    "mtf_at_nyquist", "lattice", "view_angle_deg"}`` — the alias distance, the
+    lattice's Nyquist frequency, the smallest angular period it resolves, and the
+    acceptance's modulation transfer at that limit (1.0 for a delta sampler).
+
+    Ground truth (pinned in the tests): a 7 cm period on a 1.1-degree hexagonal
+    eye aliases beyond 2.105 m head-on and 0.526 m at 60 degrees; on a
+    4.63-degree eye beyond 0.500 m and 0.125 m; with a 1-degree acceptance the
+    hexagonal 1.1-degree eye keeps 0.375 of the contrast at Nyquist, the
+    8.23-degree acceptance of a 4.63-degree eye keeps 0.024.
+
+    **Raises** ``ValueError``: a non-positive *period_m* / *pitch_deg* (an empty
+    *period_m* is refused as not a number), a negative *acceptance_deg*, a
+    *view_angle_deg* at or beyond 90, and an unknown *lattice* / *obliquity*.
+    """
+    op = "sampling_alias_distance"
+    P = _positive(period_m, "period_m")
+    pitch = _positive(pitch_deg, "pitch_deg")
+    kind = _one_of(lattice, "lattice", SAMPLING_LATTICES, op)
+    theta = _finite_scalar(view_angle_deg, "view_angle_deg")
+    acc = _nonneg(acceptance_deg, "acceptance_deg")
+    obl = _one_of(obliquity, "obliquity", OBLIQUITIES, op)
+    if abs(theta) >= 90.0:
+        raise ValueError("%s: view_angle_deg = %g must be inside (-90, 90) — at 90 "
+                         "degrees the line of sight never meets the surface"
+                         % (op, theta))
+    pitch_rad = np.deg2rad(pitch)
+    floor_rad = (np.sqrt(3.0) if kind == "hex" else 2.0) * pitch_rad
+    ct = np.cos(np.deg2rad(theta))
+    factor = ct * ct if obl == "along" else ct
+    f_nyq = 1.0 / floor_rad
+    acc_rad = np.deg2rad(acc)
+    mtf = float(np.exp(-np.pi * np.pi * acc_rad * acc_rad * f_nyq * f_nyq / (4.0 * LN2)))
+    return {"distance_m": float(P * factor / floor_rad),
+            "nyquist_cycles_per_rad": float(f_nyq),
+            "period_floor_deg": float(np.degrees(floor_rad)),
+            "mtf_at_nyquist": mtf,
+            "lattice": kind,
+            "view_angle_deg": float(theta)}
+
+
+def _axis_frame(lattice, dirs: np.ndarray, el: np.ndarray, axis, op: str):
+    """The polar angle of each ommatidium from *axis*, the outward radial unit
+    vector in its own tangent basis, and its gnomonic coordinates (rad) in the
+    tangent plane at the axis."""
+    a = np.asarray(axis, dtype=np.float64).ravel()
+    nrm = float(np.linalg.norm(a))
+    if a.size != 3 or not np.isfinite(a).all() or nrm <= 0.0:
+        raise ValueError("%s: axis must be three finite numbers, not all zero" % (op,))
+    a = a / nrm
+    az = np.asarray(lattice["az_rad"], dtype=np.float64)
+    e_az, e_el = _tangent_basis(az, el)
+    cosang = np.clip(dirs @ a, -1.0, 1.0)
+    theta = np.arccos(cosang)
+    # outward radial direction at d: the part of -a perpendicular to d
+    r = -(a[None, :] - cosang[:, None] * dirs)
+    rn = np.linalg.norm(r, axis=1)
+    ok = rn > 1e-12
+    r[ok] /= rn[ok, None]
+    r[~ok] = 0.0
+    radial = np.stack([(r * e_az).sum(axis=1), (r * e_el).sum(axis=1)], axis=1)
+    el0 = float(np.arcsin(np.clip(a[2], -1.0, 1.0)))
+    az0 = float(np.arctan2(a[1], a[0]))
+    b_az, b_el = _tangent_basis(np.array([az0]), np.array([el0]))
+    denom = np.where(cosang > 1e-9, cosang, np.nan)
+    gnomonic = np.stack([(dirs @ b_az[0]) / denom, (dirs @ b_el[0]) / denom], axis=1)
+    return theta, radial, gnomonic
+
+
+def fly_expansion_readout(flow, lattice, axis=None, weights=None):
+    """Time-to-contact from the flow over the whole eye — and the aperture effect's 2x.
+
+    A fronto-parallel surface approached at speed ``v`` from distance ``d`` moves
+    the line of sight at polar angle ``theta`` outward at ``sin theta cos theta /
+    tau`` with ``tau = d/v``. This op projects the measured flow onto the outward
+    radial direction and fits that one number, ``1/tau``, by weighted least
+    squares::
+
+        1/tau = sum w f_r sin cos / sum w (sin cos)^2
+
+    and, independently, fits a linear field ``f = A x + b`` on the gnomonic plane
+    and reads the divergence ``tr A``, which :mod:`sceneflow` converts the same
+    way (``ttc = 2/div``).
+
+    The reason to have both: a correlation-type detector only sees the motion
+    component **across** a contrast edge. Over vertical stripes every edge is
+    vertical, so the elevation component of the flow is lost (the aperture
+    problem), the radial projection keeps on average half the expansion, and
+    both readouts return **2 tau** — the surface looks twice as far as it is.
+    A checkerboard has edges in both directions and returns tau. That is the
+    identity How et al. (2020) argued from, written as a number.
+
+    flow:    ``(n, 2)`` azimuth/elevation flow per ommatidium (radians per
+             second), the return of :func:`fly_flow_from_directions`.
+    lattice: the eye it was measured on (hexagonal or Vogel).
+    axis:    the direction of travel = focus of expansion, body coordinates;
+             ``None`` = the lattice's optical axis.
+    weights: ``None`` or ``(n,)`` non-negative weights (e.g. 0 on the rim, where
+             :func:`fly_flow_from_directions` reports nothing).
+
+    Returns a dict ``{"tau_s", "rate_1_s", "tau_div_s", "divergence_1_s",
+    "aperture_ratio", "residual_rms", "n_ommatidia"}`` — the radial-fit
+    time-to-contact and its rate, the divergence-fit time-to-contact and the
+    divergence, the ratio of the smaller to the larger diagonal of ``A`` (1 for
+    isotropic expansion, 0 under a pure aperture effect), the rms of the radial
+    residual and how many ommatidia voted. A non-expanding field (rate <= 0)
+    returns ``NaN`` for the time-to-contact — a documented non-finite, as in
+    :func:`fly_tau_from_expansion`: a receding surface has no time-to-contact.
+
+    Ground truth (pinned in the tests): the exact plane flow returns
+    ``tau_s == tau`` and ``tau_div_s == tau`` to 1e-9 (the divergence is fitted
+    on gnomonic velocities, where a plane approach is exactly linear); the same
+    flow with its elevation component removed returns ``2 tau`` from both
+    readouts within 1% on a 10-degree field (``aperture_ratio`` 0) — a
+    hexagonal lattice is 6-fold symmetric, so ``sum cos^2 phi = sum sin^2 phi``
+    over it, and the residual is the sphere's departure from that plane.
+
+    **Raises** ``ValueError``: a *flow* that is not ``(n, 2)`` for this lattice
+    (an empty *flow* is refused), non-finite entries, a malformed *lattice* /
+    *axis* / *weights*, all-zero weights, and fewer than 6 voting ommatidia.
+    """
+    op = "fly_expansion_readout"
+    f = _as_float_array(flow, "flow", MAX_MOVIE_ELEMENTS, op)
+    dirs, el, _dphi, ax0 = _as_lattice(lattice, op)
+    n = dirs.shape[0]
+    if f.ndim != 2 or f.shape != (n, 2):
+        raise ValueError("%s: flow must be (n, 2) for the %d ommatidia of this "
+                         "lattice, got shape %r%s" % (op, n, f.shape,
+                                                       " (flow is empty)" if f.size == 0 else ""))
+    if weights is None:
+        w = np.ones(n)
+    else:
+        w = _as_float_array(weights, "weights", MAX_MOVIE_ELEMENTS, op).ravel()
+        if w.size != n:
+            raise ValueError("%s: weights has %d entries but the lattice has %d "
+                             "ommatidia" % (op, w.size, n))
+        if (w < 0.0).any():
+            raise ValueError("%s: weights has a negative entry" % (op,))
+        if float(w.sum()) <= 0.0:
+            raise ValueError("%s: all weights are zero, so nothing votes" % (op,))
+    theta, radial, gn = _axis_frame(lattice, dirs, el, ax0 if axis is None else axis, op)
+    sc = np.sin(theta) * np.cos(theta)
+    f_r = (f * radial).sum(axis=1)
+    use = (w > 0.0) & np.isfinite(gn).all(axis=1)
+    if int(use.sum()) < 6:
+        raise ValueError("%s: only %d ommatidia can vote (positive weight and in "
+                         "front of the axis); a 2-D linear fit needs at least 6"
+                         % (op, int(use.sum())))
+    ww, scu, fru = w[use], sc[use], f_r[use]
+    denom = float(np.sum(ww * scu * scu))
+    rate = float(np.sum(ww * fru * scu) / denom) if denom > 0.0 else 0.0
+    resid = float(np.sqrt(np.sum(ww * (fru - rate * scu) ** 2) / np.sum(ww)))
+    # angular flow (rad/s, local tangent basis) -> gnomonic velocity: with
+    # x = tan(theta) the radial rate scales by sec^2(theta) and the tangential
+    # one by sec(theta), so a plane approach is exactly x-dot = x / tau and
+    # the linear fit's divergence is exactly 2 / tau (first probe: 8% low on a
+    # 20-degree field when fitted on the angular flow)
+    g = gn[use]
+    gl = np.linalg.norm(g, axis=1)
+    fu, ru = f[use], radial[use]
+    tu = np.stack([-ru[:, 1], ru[:, 0]], axis=1)
+    fr_u = (fu * ru).sum(axis=1)
+    ft_u = (fu * tu).sum(axis=1)
+    sec = 1.0 / np.cos(theta[use])
+    centre = gl <= 1e-12
+    gr = g / np.where(centre, 1.0, gl)[:, None]
+    gt = np.stack([-gr[:, 1], gr[:, 0]], axis=1)
+    xdot = (sec * sec * fr_u)[:, None] * gr + (sec * ft_u)[:, None] * gt
+    xdot[centre] = fu[centre]
+    X = np.concatenate([g, np.ones((int(use.sum()), 1))], axis=1)
+    sw = np.sqrt(ww)[:, None]
+    coef, *_ = np.linalg.lstsq(X * sw, xdot * sw, rcond=None)         # (3, 2)
+    A = coef[:2, :].T                                                  # f = A x + b
+    div = float(np.trace(A))
+    d1, d2 = abs(float(A[0, 0])), abs(float(A[1, 1]))
+    big = max(d1, d2)
+    return {"tau_s": float(1.0 / rate) if rate > 0.0 else float("nan"),
+            "rate_1_s": rate,
+            "tau_div_s": float(2.0 / div) if div > 0.0 else float("nan"),
+            "divergence_1_s": div,
+            "aperture_ratio": float(min(d1, d2) / big) if big > 0.0 else 0.0,
+            "residual_rms": resid,
+            "n_ommatidia": int(use.sum())}
+
+
+def traj_tau_dot(points, t_s, target=(0.0, 0.0, 0.0), normal=None):
+    """Distance, approach speed, tau and tau-dot along a measured 3-D trajectory.
+
+    The quantity a looming detector is supposed to deliver, computed from the
+    **true** path so that an eye's estimate can be scored against it. With
+    ``d(t)`` the distance to *target* (a point, or — with *normal* — the signed
+    distance to the plane through *target*), the approach speed is ``v = -dd/dt``,
+    the time-to-contact ``tau = d/v`` and its rate ``tau-dot = d tau/dt``.
+    Lee's (1976) sign convention: ``tau-dot = -1`` at constant speed,
+    ``tau-dot = -0.5`` under the constant deceleration that stops exactly at the
+    target (the braking law), and a value between them means the agent is
+    braking enough to stop short.
+
+    points: ``(N, 3)`` positions, metres, ``N >= 3``.
+    t_s:    ``(N,)`` strictly increasing sample times, seconds.
+    target: the point approached (3,), metres.
+    normal: ``None`` for the Euclidean distance to *target*, or a (3,) plane
+            normal: the distance is then ``(p - target) . normal / |normal|``.
+
+    Returns a dict ``{"t_s", "distance_m", "speed_m_s", "tau_s", "tau_dot",
+    "closest_m", "t_closest_s", "n"}``. Samples where the agent is not
+    approaching (``v <= 0``) carry ``NaN`` in ``tau_s`` and ``tau_dot`` — a
+    documented non-finite: a receding agent has no time-to-contact.
+
+    Ground truth (pinned in the tests): for ``d = v0 t`` toward the target at
+    constant speed ``tau-dot == -1``, and for ``d = v0 t - a t^2 / 2`` with
+    ``v0^2 = 2 a d0`` (stops exactly at the target) ``tau-dot == -0.5`` — both to
+    1e-9 on a uniform grid, where central differences are exact for a quadratic.
+
+    **Raises** ``ValueError``: *points* not ``(N, 3)`` with ``N >= 3`` (an empty
+    *points* is refused), a *t_s* that is not ``(N,)`` strictly increasing,
+    non-finite entries, a malformed *target* / *normal*, and a zero *normal*.
+    """
+    op = "traj_tau_dot"
+    p = _as_float_array(points, "points", 3 * MAX_TRAJ_POINTS, op)
+    if p.ndim != 2 or p.shape[1] != 3 or p.shape[0] < 3:
+        raise ValueError("%s: points must be (N, 3) with N >= 3, got shape %r%s"
+                         % (op, p.shape, " (points is empty)" if p.size == 0 else ""))
+    t = _as_float_array(t_s, "t_s", MAX_TRAJ_POINTS, op).ravel()
+    if t.shape != (p.shape[0],):
+        raise ValueError("%s: t_s must have one time per point (%d), got %d"
+                         % (op, p.shape[0], t.size))
+    if not (np.diff(t) > 0.0).all():
+        raise ValueError("%s: t_s must be strictly increasing (a repeated or "
+                         "reversed time stamp makes the speed infinite or "
+                         "backwards)" % (op,))
+    tg = _as_float_array(target, "target", 3, op).ravel()
+    if tg.size != 3:
+        raise ValueError("%s: target must be three numbers, got %d" % (op, tg.size))
+    rel = p - tg[None, :]
+    if normal is None:
+        d = np.linalg.norm(rel, axis=1)
+        mode = "point"
+    else:
+        nv = _as_float_array(normal, "normal", 3, op).ravel()
+        if nv.size != 3 or float(np.linalg.norm(nv)) <= 0.0:
+            raise ValueError("%s: normal must be three numbers, not all zero" % (op,))
+        d = rel @ (nv / np.linalg.norm(nv))
+        mode = "plane"
+    # edge_order=2: the one-sided end formulas are then exact for a quadratic
+    # too (with the default they are first order and tau-dot reads -0.625
+    # instead of -0.5 at the ends of a constant-deceleration run)
+    v = -np.gradient(d, t, edge_order=2)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tau = np.where(v > 0.0, d / v, np.nan)
+        tau_dot = np.gradient(tau, t, edge_order=2)
+    k = int(np.argmin(np.abs(d)))
+    return {"t_s": np.ascontiguousarray(t), "distance_m": np.ascontiguousarray(d),
+            "speed_m_s": np.ascontiguousarray(v), "tau_s": np.ascontiguousarray(tau),
+            "tau_dot": np.ascontiguousarray(tau_dot),
+            "closest_m": float(abs(d[k])), "t_closest_s": float(t[k]),
+            "n": int(p.shape[0]), "mode": mode}
+
+
+def _nn_angles(dirs: np.ndarray) -> np.ndarray:
+    """Angular distance (rad) from each direction to its nearest other direction."""
+    from scipy.spatial import cKDTree
+    tree = cKDTree(dirs)
+    dist, _ = tree.query(dirs, k=2)
+    chord = np.clip(dist[:, 1], 0.0, 2.0)
+    return 2.0 * np.arcsin(0.5 * chord)
+
+
+def fly_vogel_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0,
+                      density_power=0.5, angle_deg=VOGEL_ANGLE_DEG):
+    """A Fibonacci (Vogel-spiral) compound eye: the same ommatidia count and the
+    same mean spacing as the hexagonal eye, no lattice at all.
+
+    Point ``k`` sits at the angular radius ``rho_k = rho_max ((k + 1/2)/n)^p`` from
+    the optical axis and at the position angle ``k * angle_deg`` around it — the
+    arrangement of sunflower florets (Vogel 1979), here on the sphere. The
+    ommatidia count is the hexagon's ``n = 3 radius (radius + 1) + 1`` and
+    ``rho_max`` is solved so that the **mean nearest-neighbour angle equals
+    dphi_deg**, which makes the two eyes directly comparable: same number of
+    samples, same average density, and only the *arrangement* differs. The
+    reciprocal of a hexagonal lattice is six sharp points, so a texture past its
+    Nyquist limit folds into one sharp false stripe (moire); the Vogel spiral
+    has no reciprocal lattice, so the same texture folds into a ring of weak
+    noise — the question the zebra PoC asks is which an eye would rather have.
+
+    radius / dphi_deg / az0_deg / el0_deg: as :func:`fly_hex_lattice`.
+    density_power: ``p`` in ``(0, 1]``. ``0.5`` is uniform density; above it the
+        centre is denser (a fovea / acute zone: density ∝ k^(1 - 2p)), below it
+        the rim is.
+    angle_deg: the divergence angle, the golden angle by default.
+
+    Returns a lattice dict with the keys of :func:`fly_hex_lattice` — ``"uv"``
+    holds ``(k, 0)``, the spiral index, so ``(0, 0)`` is still the ommatidium
+    nearest the axis — plus ``"geometry": "vogel"``, ``"rho_rad"`` (the angular
+    radius of each ommatidium), ``"nn_rad"`` (its nearest-neighbour angle) and
+    ``"density_power"``. The ops that need a *hexagonal neighbour*
+    (:func:`fly_t4t5_field`, :func:`fly_flow_from_directions`) refuse it; the
+    ops that need only directions (:func:`fly_view_plane_texture`,
+    :func:`fly_expansion_readout`, :func:`lattice_moire_peak`,
+    :func:`fly_matched_filter`, :func:`fly_egomotion_from_flow`) take it.
+
+    Ground truth (pinned in the tests): ``n == 3 radius (radius + 1) + 1``, every
+    direction is a unit vector, ``mean(nn_rad) == dphi`` to 1e-6, the
+    coefficient of variation of the nearest-neighbour angle at ``p = 0.5`` is
+    0.012 (below 0.03; a hexagon's is 0, and ``p = 0.65`` gives 0.14), and the
+    Delaunay triangulation of the gnomonic projection has a mean degree within
+    0.5 of 6 (5.85 for 721 ommatidia; the deficit is the rim).
+
+    **Raises** ``ValueError``: a *radius* outside ``[2, MAX_LATTICE_RADIUS]``, a
+    non-positive *dphi_deg*, a *density_power* outside ``(0, 1]``, a non-finite
+    angle, and a divergence angle that is a multiple of 360 (all points on one
+    ray).
+    """
+    op = "fly_vogel_lattice"
+    R = _count(radius, "radius", 2, MAX_LATTICE_RADIUS)
+    dphi = np.deg2rad(_positive(dphi_deg, "dphi_deg"))
+    az0 = np.deg2rad(_finite_scalar(az0_deg, "az0_deg"))
+    el0 = np.deg2rad(_finite_scalar(el0_deg, "el0_deg"))
+    pw = _positive(density_power, "density_power")
+    if pw > 1.0:
+        raise ValueError("%s: density_power must be in (0, 1], got %g — above 1 the "
+                         "density keeps falling outward faster than any eye's"
+                         % (op, pw))
+    ang = np.deg2rad(_finite_scalar(angle_deg, "angle_deg"))
+    if abs(np.sin(0.5 * ang)) < 1e-9:
+        raise ValueError("%s: angle_deg %g is a multiple of 360 — every ommatidium "
+                         "would lie on one ray" % (op, float(angle_deg)))
+    n = 3 * R * (R + 1) + 1
+    k = np.arange(n, dtype=np.float64)
+    unit_rho = ((k + 0.5) / n) ** pw
+    th = ang * k
+    a = _dirs_from_azel(np.array([az0]), np.array([el0]))[0]
+    b_az, b_el = _tangent_basis(np.array([az0]), np.array([el0]))
+    u = np.cos(th)[:, None] * b_az + np.sin(th)[:, None] * b_el
+
+    def place(rho_max):
+        rho = rho_max * unit_rho
+        return np.cos(rho)[:, None] * a[None, :] + np.sin(rho)[:, None] * u, rho
+
+    # planar start (mean nn of the unit spiral), then correct on the sphere
+    rho_max = dphi / float(np.mean(_nn_angles(place(1e-3)[0])) / 1e-3)
+    for _ in range(4):
+        dirs, rho = place(rho_max)
+        rho_max *= dphi / float(np.mean(_nn_angles(dirs)))
+    dirs, rho = place(rho_max)
+    dirs = dirs / np.linalg.norm(dirs, axis=1, keepdims=True)
+    nn = _nn_angles(dirs)
+    az = np.arctan2(dirs[:, 1], dirs[:, 0])
+    el = np.arcsin(np.clip(dirs[:, 2], -1.0, 1.0))
+    uv = np.zeros((n, 2), dtype=np.int64)
+    uv[:, 0] = np.arange(n)
+    return {"uv": np.ascontiguousarray(uv),
+            "az_rad": np.ascontiguousarray(az), "el_rad": np.ascontiguousarray(el),
+            "dirs": np.ascontiguousarray(dirs), "dphi_rad": float(dphi),
+            "geometry": "vogel", "rho_rad": np.ascontiguousarray(rho),
+            "nn_rad": np.ascontiguousarray(nn), "density_power": float(pw)}
+
+
+def lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48,
+                       window="hann"):
+    """How sharp the strongest low-frequency component of a sampled signal is —
+    the moire a lattice makes of a texture it cannot resolve.
+
+    Sampling a texture above the lattice's Nyquist limit does not lose it; it
+    folds it to a lower frequency. On a regular lattice the fold is a single
+    sharp peak — a false stripe the next stage reads as a real one — and on an
+    irregular arrangement the same energy spreads into a ring. This op measures
+    that difference as a number: the non-uniform discrete Fourier transform of
+    the ommatidial signal (mean removed, radially windowed) at the gnomonic
+    positions of the ommatidia, over a grid of ``n_freq x n_freq`` frequencies
+    up to *fmax_cycles_per_deg* (``0`` = the lattice's own hexagonal Nyquist
+    ``1/(sqrt 3 dphi)``, the band the eye can represent), and the ratio of the
+    highest amplitude on that grid to the median amplitude.
+
+    signal:  ``(n,)`` ommatidial values (:func:`fly_view_plane_texture`).
+    lattice: the eye they were sampled on — any geometry; only directions are used.
+    fmax_cycles_per_deg: the half-width of the frequency grid, cycles/degree.
+    n_freq:  grid side, ``8 <= n_freq <= MAX_MOIRE_FREQ``.
+    window:  one of :data:`MOIRE_WINDOWS` — a radial Hann taper over the field
+             (default: the field edge is a step and would leak everywhere).
+
+    Returns a dict ``{"peak_ratio", "peak_cycles_per_deg", "peak_amplitude",
+    "background_median", "nyquist_cycles_per_deg", "n_freq"}``.
+
+    Ground truth (pinned in the tests): a sinusoid just below Nyquist sampled on
+    the hexagonal eye gives a peak ratio above 30; the same sinusoid on a Vogel
+    eye of the same count and mean spacing gives a peak ratio at least 2.5x
+    smaller — the energy that was one peak is now a ring.
+
+    **Raises** ``ValueError``: a *signal* that is not ``(n,)`` for this lattice
+    (an empty *signal* is refused), non-finite entries, a constant signal (there
+    is no spectrum to rank — its ratio would be 0/0), a negative *fmax*, an
+    *n_freq* outside its range, an unknown *window*, and a malformed *lattice*.
+    """
+    op = "lattice_moire_peak"
+    s = _as_float_array(signal, "signal", MAX_SIGNAL_POINTS, op)
+    dirs, el, dphi, ax0 = _as_lattice(lattice, op)
+    n = dirs.shape[0]
+    if s.ndim != 1 or s.size != n:
+        raise ValueError("%s: signal must be (n,) for the %d ommatidia of this "
+                         "lattice, got shape %r%s" % (op, n, s.shape,
+                                                       " (signal is empty)" if s.size == 0 else ""))
+    fmax = _nonneg(fmax_cycles_per_deg, "fmax_cycles_per_deg")
+    nf = _count(n_freq, "n_freq", 8, MAX_MOIRE_FREQ)
+    win = _one_of(window, "window", MOIRE_WINDOWS, op)
+    theta, _radial, gn = _axis_frame(lattice, dirs, el, ax0, op)
+    ok = np.isfinite(gn).all(axis=1)
+    x = np.degrees(gn[ok])
+    w = np.ones(int(ok.sum()))
+    if win == "hann":
+        rho = theta[ok]
+        w = 0.5 * (1.0 + np.cos(np.pi * rho / max(float(rho.max()), 1e-12)))
+    wsum = float(w.sum())
+    v = w * (s[ok] - float(np.sum(w * s[ok]) / wsum))
+    if float(np.abs(v).max()) <= 1e-12 * max(float(np.abs(s).max()), 1e-300):
+        raise ValueError("%s: the signal is constant over the eye — there is no "
+                         "modulation to rank, and a peak-to-background ratio of "
+                         "0/0 would be fabricated" % (op,))
+    nyq = 1.0 / (np.sqrt(3.0) * np.degrees(dphi))
+    f_half = fmax if fmax > 0.0 else nyq
+    fr = np.linspace(-f_half, f_half, nf)
+    FX, FY = np.meshgrid(fr, fr, indexing="xy")
+    F = np.stack([FX.ravel(), FY.ravel()], axis=1)                     # (nf^2, 2)
+    spec = np.abs(np.exp(-2j * np.pi * (F @ x.T)) @ v) / wsum           # (nf^2,)
+    k = int(np.argmax(spec))
+    med = float(np.median(spec))
+    if med <= 0.0:
+        raise ValueError("%s: the median spectral amplitude is 0 — more than "
+                         "half the grid is exactly silent, which no measured "
+                         "signal does; refusing a 0/0 ratio" % (op,))
+    return {"peak_ratio": float(spec[k] / med),
+            "peak_cycles_per_deg": (float(F[k, 0]), float(F[k, 1])),
+            "peak_amplitude": float(spec[k]),
+            "background_median": med,
+            "nyquist_cycles_per_deg": float(nyq),
+            "n_freq": int(nf)}
+
+
 
 if __name__ == "__main__":                                # pragma: no cover
     lat = fly_hex_lattice()

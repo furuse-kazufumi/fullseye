@@ -1211,6 +1211,39 @@ def _b_fly_dsi(pool, rng):
     return (resp, ang), {}
 
 
+# 2026-10-13 縞に近づくハエの眼の 5 op。格子(table)はプールから引かず自分で作る
+# (上と同じ理由: プールの table には格子でない dict が混ざる)。
+def _b_fly_plane(pool, rng):
+    fv = __import__("flyvision")
+    lat = fv.fly_hex_lattice(radius=4, dphi_deg=1.1)
+    return (lat, 0.8, 0.07), {"pattern": "vertical", "drho_deg": 1.0}
+
+
+def _b_alias_distance(pool, rng):
+    return (0.07, 1.1), {"lattice": "hex", "view_angle_deg": 30.0}
+
+
+def _b_fly_expansion(pool, rng):
+    fv = __import__("flyvision")
+    lat = fv.fly_hex_lattice(radius=4, dphi_deg=4.63)
+    tmpl = fv.fly_matched_filter(lat, axis=(1.0, 0.0, 0.0), motion="translation",
+                                 depth_m=1.0)
+    return (tmpl, lat), {}
+
+
+def _b_traj_tau(pool, rng):
+    t = np.arange(0.0, 1.0, 0.01)
+    pts = np.stack([1.5 - 0.5 * t, 0.1 * np.sin(t), np.full_like(t, 0.3)], axis=1)
+    return (pts, t), {"target": (0.0, 0.0, 0.3)}
+
+
+def _b_moire_peak(pool, rng):
+    fv = __import__("flyvision")
+    lat = fv.fly_hex_lattice(radius=6, dphi_deg=1.1)
+    sig = fv.fly_view_plane_texture(lat, 1.2, 0.07, pattern="sine", drho_deg=1.0)
+    return (sig, lat), {"n_freq": 24}
+
+
 # --- SPC(統計的工程管理)。形の制約(部分群 2..10 列 / 観測 m>=p+1)を満たす --- #
 def _b_spc_xbar_r(pool, rng):
     return (rng.normal(10.0, 1.0, size=(20, 5)),), {}
@@ -6399,6 +6432,11 @@ OP_ARG_BUILDERS = {
     "fly_tau_from_expansion": _b_fly_tau,
     "fly_hs_readout": _b_fly_hs,
     "fly_dsi": _b_fly_dsi,
+    "fly_view_plane_texture": _b_fly_plane,
+    "sampling_alias_distance": _b_alias_distance,
+    "fly_expansion_readout": _b_fly_expansion,
+    "traj_tau_dot": _b_traj_tau,
+    "lattice_moire_peak": _b_moire_peak,
     # --- SPC(統計的工程管理)の 4 op(形の噛み合う入力を組む) --------------- #
     "spc_xbar_r": _b_spc_xbar_r,
     "spc_cusum": _b_spc_cusum,

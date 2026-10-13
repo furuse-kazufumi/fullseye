@@ -545,6 +545,10 @@ from flyvision import (  # noqa: E402,F401
     fly_hex_lattice, fly_hex_resample, fly_emd_response,
     fly_lgmd_eta, fly_tau_from_expansion,
     fly_hs_readout, fly_sky_1f, fly_dsi,
+    # 2026-10-13 縞に近づくハエの眼: 周期面の解析的な標本化・エイリアスの距離・
+    # 眼全体の流れからの τ・実測軌跡の τ̇・フィボナッチの眼・モアレの尖り
+    fly_view_plane_texture, sampling_alias_distance, fly_expansion_readout,
+    traj_tau_dot, fly_vogel_lattice, lattice_moire_peak,
 )
 # 統計的工程管理: マシンビジョンの計測(measure1d/shapestat/imgmetrics/blob)に
 # 「工程が管理下か・能力があるか」の判定を足す。管理図・CUSUM・工程能力・多変量 T²。
