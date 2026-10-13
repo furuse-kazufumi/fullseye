@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **121 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **122 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1084,7 +1084,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 40 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 41 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2503,6 +2503,26 @@ py -3.11 examples/poc_residue_crt.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_residue_crt)
 
 使用 op(ノートへ): [`crt_displacement`](https://furuse.work/ops/residue/image/crt_displacement.html) · [`harmonic_rotation`](https://furuse.work/ops/residue/image/harmonic_rotation.html) · [`residue_crt`](https://furuse.work/ops/residue/robust/residue_crt.html) · [`residue_fault_locate`](https://furuse.work/ops/residue/robust/residue_fault_locate.html) · [`residue_integer_crt`](https://furuse.work/ops/residue/theorem/residue_integer_crt.html)
+
+## No.2026.225 —— SEM の明るい縁が寸法をどれだけ太らせるか ―― 形は合うのに面積が太る
+
+[![SEM の明るい縁が寸法をどれだけ太らせるか ―― 形は合うのに面積が太る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png)
+
+*↑ **SEM の明るい縁が寸法をどれだけ太らせるか ―― 形は合うのに面積が太る** ―― 走査電子顕微鏡(SEM)像では二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、ビームの有限径(PSF)がその縁を広げる。新 op `sem_render` はこの像を閉形式の真値つきで作る ―― 平面で一様、斜面で平面比はちょうど sec θ(誤差 0e+00)、段差の明るい縁の幅は PSF 幅に一致する。合成(真値の面積が厳密)でしきい値 → 連結成分 → 特徴量で測ると、形の一致 Dice は高い(中央 0.885)のに面積は系統的に太る(比 1.09〜1.70)。太りは閉形式 ΔA ≈ 周囲長 × 有効縁幅(有効縁幅/PSF の中央 1.01)でよく説明でき、既知のビーム PSF 幅で引くと偏りは 0.261 → 0.008 に消える。合否を 1 つの指標に畳めない典型 ―― 形の一致と寸法の偏りは別に数える。公開ウェハ欠陥データ(Carinthia-S、CC BY 4.0、DOI 10.5281/zenodo.16895427、6 クラス + 専門家マスク、4591 枚、クラス 5 は 4 枚)で採点すると、段 0 のマスク規約検査で勾配の峰はマスク境界の内 cm ≈ -1.3 px(専門家マスクは明るい縁まで含む)、クラス別 Dice 中央は0.51 / 0.70 / 0.79。実データの欠陥は背景より暗い穴で、合成の明るい塊と極性が逆であることも正直に印字する。埋め込み POD で a90/95 を出す。実データ段は環境変数があるときだけ走り、repo にデータは同梱しない。*
+
+[![面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size.png)
+
+*↑ 測定の図 ―― 面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。*
+
+```
+py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
+```
+
+ソース: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
+
+使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

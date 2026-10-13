@@ -56,6 +56,7 @@
 | [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md) | Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A) | 測る | `verified-synthetic` | 7/7 | `poc_pod_lighting` synthetic → tests/test_poc_scripts_run.py |
 | [Bayer の生フレームを、段ごとに説明できる式で表示画像にする](capabilities/raw-to-display-isp.md) | Turn a Bayer raw frame into a display image, one explainable stage at a time | 光と色 | `verified-synthetic` | 13/14 | `raw_to_display_isp` synthetic → tests/test_example_scripts_run.py |
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
+| [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
 | [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md) | Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index) | 測る | `verified-synthetic` | 8/8 | `poc_shape_from_polarization` synthetic → tests/test_poc_scripts_run.py |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | Measure dimensions from an image, below the pixel | 測る | `verified-synthetic` | 4/4 | `poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_screw_thread_metrology` synthetic → tests/test_poc_scripts_run.py<br>`poc_calipers_under_illusion` synthetic → tests/test_poc_scripts_run.py |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | Slope, flow and line of sight on a terrain | 測る | `verified-synthetic` | 4/4 | `poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py<br>`dem_terrain_analysis_tour` synthetic → tests/test_example_scripts_run.py |
@@ -79,8 +80,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 358 |
-| `tests/test_poc_scripts_run.py` が走らせる | 224 |
+| 2-D 台帳の例 | 359 |
+| `tests/test_poc_scripts_run.py` が走らせる | 225 |
 | `tests/test_example_scripts_run.py` が走らせる | 134 |
 | **どの門も走らせていない** | **0** |
 

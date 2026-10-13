@@ -3050,6 +3050,22 @@
    }
   },
   {
+   "id": "poc_sem_wafer_defect_edge_bias",
+   "group": "wing_metrology",
+   "media": "01_sem_edge_inflation.png",
+   "motion": false,
+   "thumb_src": "01_sem_edge_inflation.png",
+   "label": {
+    "ja": "SEM の縁の太り",
+    "en": "SEM edge inflation",
+    "zh": "SEM 边缘变粗",
+    "tw": "SEM 邊緣變粗",
+    "ko": "SEM 가장자리 부풀림",
+    "de": "SEM-Kantenaufblähung",
+    "hi": "SEM edge inflation"
+   }
+  },
+  {
    "id": "poc_battery_ct_degradation",
    "group": "wing_threed",
    "media": "01_xray_projection.png",
@@ -5528,6 +5544,13 @@
    }
   ],
   "titles": {
+   "sem-edge-effect-metrology": {
+    "zh": "测量 SEM 明亮边缘把尺寸放大了多少（带真值）",
+    "tw": "量測 SEM 明亮邊緣把尺寸放大了多少（帶真值）",
+    "ko": "SEM의 밝은 가장자리가 치수를 얼마나 부풀리는지 참값과 함께 측정",
+    "de": "Messen, wie stark die helle SEM-Kante eine Abmessung aufbläht (mit Grundwahrheit)",
+    "hi": "SEM की bright edge किसी dimension को कितना बढ़ाती है, ground truth के साथ मापना"
+   },
    "align-and-stack": {
     "zh": "对齐并叠加",
     "tw": "對齊並疊加",

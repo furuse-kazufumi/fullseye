@@ -1,8 +1,8 @@
 {
- "n_ops": 3132,
+ "n_ops": 3133,
  "tiers": {
   "color": 12,
-  "ledger": 2179,
+  "ledger": 2180,
   "nary": 17,
   "registry": 924
  },
@@ -22364,6 +22364,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "sem_render",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "sensor_capture",

@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_render — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_render(height, *, pixel_nm: &#x27;float&#x27; = 1.0, psf_px: &#x27;float&#x27; = 1.5, edge_gain: &#x27;float&#x27; = 1.0, base: &#x27;float&#x27; = 0.25, dose: &#x27;float&#x27; = 0.0, charging: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, tilt_max_deg: &#x27;float&#x27; = 80.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import sem; sem.sem_render(height, *, pixel_nm: &#x27;float&#x27; = 1.0, psf_px: &#x27;float&#x27; = 1.5, edge_gain: &#x27;float&#x27; = 1.0, base: &#x27;float&#x27; = 0.25, dose: &#x27;float&#x27; = 0.0, charging: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, tilt_max_deg: &#x27;float&#x27; = 80.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;sem_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Erzeugt ein SEM-Bild aus einem Höhenfeld: Sekundärelektronen-Kanteneffekt (sec θ) + gaußsche Strahl-PSF + Poisson-Schrotrauschen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>height : array_like</p>
+<p>2-D の高さ場[同じ単位は <code style="color:#22d3bf">pixel_nm</code>]。欠陥の形そのもの。</p>
+<p>pixel_nm : float</p>
+<p>画素 1 個の一辺[nm]。傾きは <code style="color:#22d3bf">arctan(|∇h| / pixel_nm)</code> で測る。</p>
+<p>psf_px : float</p>
+<p>ビーム PSF のガウシアン σ[px]。段差の明るい縁はこの幅に広がる。</p>
+<p>edge_gain : float</p>
+<p>縁効果の強さの指数。<code style="color:#22d3bf">sec(θ) ** edge_gain</code>。既定 1.0 が sec θ の素のモデル。</p>
+<p>base : float</p>
+<p>平らな面(θ=0)の明るさ[0,1]。斜面は <code style="color:#22d3bf">base·sec θ</code> に乗る(飽和で 1 に頭打ち)。</p>
+<p>dose : float</p>
+<p>画素あたりの電子数。<code style="color:#22d3bf">&gt; 0</code> でポアソン雑音を載せる。<code style="color:#22d3bf">0</code> は雑音なし(決定論)。</p>
+<p>charging : float</p>
+<p>帯電による緩い横方向の輝度勾配(0 で無効)。収差でなく系統的な明暗。</p>
+<p>seed : int</p>
+<p>ポアソン雑音の種(<code style="color:#22d3bf">dose &gt; 0</code> のときだけ効く)。</p>
+<p>tilt_max_deg : float</p>
+<p>sec θ が発散しないよう θ を頭打ちにする角度[度]。既定 80 度(sec ≈ 5.76)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(H, W)</code> の float64、[0,1]。平らな面は <code style="color:#22d3bf">base</code>、斜面は <code style="color:#22d3bf">base·sec θ</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>正規化は<b>画素ごとでなく固定の線形写像</b>(<code style="color:#22d3bf">·base</code> と [0,1] クリップ)。1 枚ごとに min/max で正規化すると平面に対する比が壊れ、sec θ の真値を測れなくなる(<code style="color:#22d3bf">poc_real_defect_floor</code> が <code style="color:#22d3bf">colorize_depth</code> の per-image 正規化で踏んだ罠と同じ)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; flat = np.zeros((16, 16))</p>
+<p>&gt;&gt;&gt; img = sem_render(flat)</p>
+<p>&gt;&gt;&gt; float(np.ptp(img))            # 平らな面は一様</p>
+<p>0.0</p>
+<p>&gt;&gt;&gt; ramp = np.tile(np.linspace(0, 15, 16), (16, 1))   # 一様斜面</p>
+<p>&gt;&gt;&gt; r = sem_render(ramp, pixel_nm=1.0)</p>
+<p>&gt;&gt;&gt; theta = np.arctan(1.0)                            # 勾配 1 → 45 度</p>
+<p>&gt;&gt;&gt; abs(float(r[8, 8]) / 0.25 - 1.0 / np.cos(theta)) &lt; 1e-6</p>
+<p>True</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">Leitfaden zur Familie generative_art</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_wafer_defect_edge_bias">poc_sem_wafer_defect_edge_bias</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_wafer_defect_edge_bias.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">sem</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

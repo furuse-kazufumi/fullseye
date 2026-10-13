@@ -722,6 +722,27 @@
    ]
   },
   {
+   "id": "sem-edge-effect-metrology",
+   "title": "SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る",
+   "title_en": "Measure how much the bright SEM edge inflates a dimension, with ground truth",
+   "category": "測る",
+   "note": "docs/capabilities/sem-edge-effect-metrology.md",
+   "status": "validated-public-real-data",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_sem_wafer_defect_edge_bias",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "shape-from-polarization",
    "title": "黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)",
    "title_en": "Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)",
@@ -1047,8 +1068,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 358,
-  "run_by_the_poc_gate": 224,
+  "examples2d_total": 359,
+  "run_by_the_poc_gate": 225,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [

@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — SEM ウェハ欠陥の縁効果(`sem_render` + 多段 PoC)
+
+- **新 op `sem_render`**(`generative` 台帳の `sem` カテゴリ): 高さ場から走査電子顕微鏡像を物理モデルで描く —— 二次電子の縁効果(放出 ∝ sec θ)+ ガウシアンのビーム PSF + ポアソンのショット雑音 + 緩い帯電。3 本の閉形式の真値(平面で一様 / 斜面で平面比 = sec θ / 段差の明るい縁の幅 = PSF 幅)を `tests/test_semsim.py` が確かめる。入出力は既存の `image2d`(新しい型語彙は作らない)。作った像は真値つきの合成入力として他の PoC にも使える。
+- **PoC `poc_sem_wafer_defect_edge_bias`**: SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきの合成と公開実データ(Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427)で測る多段 PoC。合成では Dice は高いのに面積が系統的に太り(比 1.09〜1.70、ΔA ≈ 周囲長 × PSF 幅)、既知の PSF 幅で引くと偏りが消える(0.261 → 0.008)。埋め込み POD で a90/95 を出す。実データでは専門家マスクの規約(勾配の峰がマスク境界の内 ≈ −1.3 px = 明るい縁を含む)、クラス別 Dice / 面積比、欠陥が背景より暗い(合成と極性が逆)ことを正直に印字する。実データ段は `FULLSEYE_CARINTHIA_DATA` があるときだけ走り、repo にデータは同梱しない(CI は合成のみ、図なし既定で 60 秒未満)。
+
 ### Changed (behaviour) — 空の入力の扱い(方針 A)
 
 **PyPI の利用者にとって振る舞いの変更。** 型付き台帳の op に、第 1 引数が空(0 要素の配列・空の

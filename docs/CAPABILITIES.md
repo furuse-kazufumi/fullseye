@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 41 項目**
+**収録 42 項目**
 
-## 測る (14)
+## 測る (15)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -91,6 +91,14 @@
 使う op: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 動く例: `poc_pod_lighting`
+
+### [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md)
+
+走査電子顕微鏡(SEM)像では、二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、ビームの有限径(PSF)がその縁を広げます。`sem_render` は高さ場からこの SEM 像を**閉形式の真値つき**で作ります(平面で一様 / 斜面で平面比 = sec θ / 段差の明るい縁の幅 = PSF 幅)。作った像をしきい値 → `blob_label` → `blob_features` で測ると、明るい縁ごと拾って面積が系統的に太ること、その太りが **周囲長 × PSF 幅** でよく説明でき、既知の PSF 幅で引くと消えることが数で示せます。`seg_dice_jaccard` / `seg_boundary_f` で専門家マスクと採点し、`pod_hitmiss_fit` で埋め込み欠陥の検出確率 a90/95 を出します。
+
+使う op: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
+
+動く例: `poc_sem_wafer_defect_edge_bias`
 
 ### [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md)
 

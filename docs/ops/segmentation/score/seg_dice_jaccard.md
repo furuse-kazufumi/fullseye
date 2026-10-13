@@ -4,7 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
-examples: [poc_active_contours, poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet]
+examples: [poc_active_contours, poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet, poc_sem_wafer_defect_edge_bias]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無い�
 - [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_graph_hierarchy_segmentation](../../../../examples/poc_graph_hierarchy_segmentation.py) — `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
+- [poc_sem_wafer_defect_edge_bias](../../../../examples/poc_sem_wafer_defect_edge_bias.py) — `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

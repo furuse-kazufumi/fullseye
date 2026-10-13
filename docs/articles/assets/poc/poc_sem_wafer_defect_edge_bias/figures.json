@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_sem_edge_inflation.png",
+  "name": "sem_edge_inflation",
+  "caption": "合成 SEM 像(半径 22 px の円錐欠陥、PSF σ=3)。緑 = 真の縁、赤 = しきい値で測った縁。明るい縁ごと拾うので赤が緑の外に出る = 面積の太り。形(Dice)は高いまま、寸法だけが系統的に太る。",
+  "shape": [
+   200,
+   200,
+   3
+  ]
+ },
+ {
+  "file": "02_sem_area_bias_vs_size.png",
+  "name": "sem_area_bias_vs_size",
+  "caption": "面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

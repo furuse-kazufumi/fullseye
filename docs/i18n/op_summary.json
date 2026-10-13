@@ -25596,6 +25596,15 @@
    "de": "Gibt ein Bild (image2d) zurück: zeichnet einen tabulatorgetrennten String als **Tabelle** (mit halbtransparenter Hinterlegung).",
    "hi": "image (image2d) लौटाता है: tab से अलग की गई string को **table** के रूप में बनाता है (अर्ध-पारदर्शी backing plate सहित)।"
   },
+  "generative/sem_render": {
+   "fp": "0275bd0d986d",
+   "en": "Render a SEM image from a height field: secondary-electron edge effect (sec θ) + Gaussian beam PSF + Poisson shot noise.",
+   "zh": "从高度场生成 SEM 图像：二次电子边缘效应（sec θ）+ 高斯束斑 PSF + 泊松散粒噪声。",
+   "tw": "從高度場生成 SEM 影像：二次電子邊緣效應（sec θ）+ 高斯束斑 PSF + 卜瓦松散粒雜訊。",
+   "ko": "높이 장에서 SEM 영상을 생성: 이차전자 가장자리 효과(sec θ) + 가우시안 빔 PSF + 푸아송 산탄 잡음.",
+   "de": "Erzeugt ein SEM-Bild aus einem Höhenfeld: Sekundärelektronen-Kanteneffekt (sec θ) + gaußsche Strahl-PSF + Poisson-Schrotrauschen.",
+   "hi": "height field से SEM image बनाता है: secondary-electron edge effect (sec θ) + Gaussian beam PSF + Poisson shot noise।"
+  },
   "generative/illusion_cafe_wall": {
    "fp": "194d1ef7cd89",
    "en": "Café wall illusion. Although **the mortar lines are exactly horizontal**, they look tilted.",

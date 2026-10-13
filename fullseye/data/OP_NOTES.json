@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3132,
- "n_notes": 3138,
+ "n_ops": 3133,
+ "n_notes": 3139,
  "notes": {
   "vol_dilate": [
    {
@@ -22842,6 +22842,16 @@
     "category": "perpetual",
     "out": "rgb",
     "path": "docs/ops/generative/perpetual/perpetual_truchet.md"
+   }
+  ],
+  "sem_render": [
+   {
+    "op": "sem_render",
+    "dim": "generative",
+    "category": "sem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/generative/sem/sem_render.md"
    }
   ],
   "perpetual_render": [

@@ -232,13 +232,15 @@ def test_loop_rejects_something_that_is_not_a_video():
 # --------------------------------------------------------------------------- #
 def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import opsgenerative as og
+    import semsim as SM
 
     assert og.missing() == []
-    public = {n for n in (list(IL.__all__) + list(PP.__all__))
-              if callable(getattr(IL, n, None) or getattr(PP, n, None))}
+    public = {n for n in (list(IL.__all__) + list(PP.__all__) + list(SM.__all__))
+              if callable(getattr(IL, n, None) or getattr(PP, n, None)
+                          or getattr(SM, n, None))}
     assert set(og.OPSGENERATIVE) == public
-    assert len(og.OPSGENERATIVE) == 30
-    assert set(og.categories()) == {"illusion", "perpetual", "stream", "loop"}
+    assert len(og.OPSGENERATIVE) == 31
+    assert set(og.categories()) == {"illusion", "perpetual", "stream", "loop", "sem"}
 
 
 def test_every_op_is_reachable_from_the_public_tier():
@@ -260,8 +262,8 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "generative"]
-    assert len(rows) == 30
-    assert {r[3] for r in rows} == {"rgb", "rgbvideo", "table"}
+    assert len(rows) == 31
+    assert {r[3] for r in rows} == {"rgb", "rgbvideo", "table", "image2d"}
 
 
 def test_the_fuzzer_can_actually_compute_the_state_ops():

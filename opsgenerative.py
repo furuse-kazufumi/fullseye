@@ -43,8 +43,9 @@
 """
 import illusion
 import perpetual
+import semsim
 
-_MOD = {"illusion": illusion, "perpetual": perpetual}
+_MOD = {"illusion": illusion, "perpetual": perpetual, "sem": semsim}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -85,6 +86,12 @@ _CATALOG = {
     "loop": [
         ("perpetual_loop", "perpetual", [], "rgbvideo"),
         ("perpetual_loop_seam", "perpetual", ["rgbvideo"], "table"),
+    ],
+    # 半導体 SEM の縁効果(sem: 高さ場から二次電子像を物理モデルで作る。平らな
+    # 面で一様、斜面で sec θ、段差の明るい縁の幅が PSF 幅 —— 3 本とも閉形式の
+    # 真値つき。作った像は真値つきの合成入力になり、既存の 2-D op がそのまま掛かる)。
+    "sem": [
+        ("sem_render", "sem", ["image2d"], "image2d"),
     ],
 }
 

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-41 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+42 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -99,6 +99,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Vor dem Messen vorhersagen, wie weit Interreflexion in konkaven Teilen Streifenprojektion und ToF verfälscht (globaler Lichttransport, Trennung direkt/global, Micro Phase Shifting): [Erklärung](../../capabilities/light-transport.md) _(ja)_ · Beispiele [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - Wie viel dieser Zahl ist das Messen und nicht der Prozess (Gauge R&R und Messunsicherheit): [Erklärung](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · Beispiele [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Welche Fehlergröße wird tatsächlich gefunden (Auffindwahrscheinlichkeit POD und a90/95, MIL-HDBK-1823A): [Erklärung](../../capabilities/probability-of-detection.md) _(ja)_ · Beispiele [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+- Messen, wie stark die helle SEM-Kante eine Abmessung aufbläht (mit Grundwahrheit): [Erklärung](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · Beispiele [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - Die Form schwarz glänzender und gläserner Teile aus der Polarisation messen (Shape from Polarization, die Mehrdeutigkeitsmenge, Brechungsindex): [Erklärung](../../capabilities/shape-from-polarization.md) _(ja)_ · Beispiele [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Maße aus dem Bild subpixelgenau messen: [Erklärung](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · Beispiele [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
@@ -152,7 +153,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-224 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+225 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -210,7 +211,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (40)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (41)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -252,6 +253,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zernike_aberrations.jpg" alt="Zernike-Aberrationen" width="200" height="200"><b>&#9654;</b><span>Zernike-Aberrationen</span></a>
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="Attention-Identitäten" width="200" height="200"><span>Attention-Identitäten</span></a>
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="Phasen-CRT" width="200" height="200"><b>&#9654;</b><span>Phasen-CRT</span></a>
+<a href="../../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM-Kantenaufblähung" width="200" height="200"><span>SEM-Kantenaufblähung</span></a>
 </div>
 </details>
 

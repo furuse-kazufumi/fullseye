@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 41 capabilities**
+**Currently 42 capabilities**
 
-## Measure (14)
+## Measure (15)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -92,6 +92,14 @@ Probability of detection per MIL-HDBK-1823A: â-vs-a regression with left and ri
 Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 Runnable: `poc_pod_lighting`
+
+### [Measure how much the bright SEM edge inflates a dimension, with ground truth](capabilities/sem-edge-effect-metrology.md)
+
+Render a ground-truth SEM image from a height field with `sem_render` (secondary-electron edge effect sec θ + Gaussian beam PSF + Poisson shot noise), then segment it with the classic chain and show that the bright edge inflates the measured area by about perimeter × PSF width — and that subtracting the known beam PSF width removes the bias. Score against expert masks with `seg_dice_jaccard` / `seg_boundary_f`, and fit the probability of detection (a90/95) of embedded defects with `pod_hitmiss_fit`.
+
+Operators: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
+
+Runnable: `poc_sem_wafer_defect_edge_bias`
 
 ### [Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)](capabilities/shape-from-polarization.md)
 

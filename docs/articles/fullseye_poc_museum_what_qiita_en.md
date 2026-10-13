@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**121 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**122 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1084,7 +1084,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 40 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 41 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2503,6 +2503,26 @@ Source: [examples/poc_residue_crt.py](https://github.com/furuse-kazufumi/fullsey
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_residue_crt)
 
 Ops used (notes): [`crt_displacement`](https://furuse.work/ops/residue/image/crt_displacement.html) · [`harmonic_rotation`](https://furuse.work/ops/residue/image/harmonic_rotation.html) · [`residue_crt`](https://furuse.work/ops/residue/robust/residue_crt.html) · [`residue_fault_locate`](https://furuse.work/ops/residue/robust/residue_fault_locate.html) · [`residue_integer_crt`](https://furuse.work/ops/residue/theorem/residue_integer_crt.html)
+
+## No.2026.225 —— How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows
+
+[![How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png)
+
+*↑ **How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows** ―― In SEM images secondary electrons are emitted more on slopes (yield proportional to sec theta), so step edges are rimmed bright and the finite beam (PSF) widens that rim. The new op `sem_render` builds this image with closed-form ground truth: flat surfaces render uniform, a uniform slope is exactly sec theta brighter (error 0e+00), and the bright-edge width equals the PSF width. On synthetic data (exact true area), threshold to connected components to features shows the shape agrees (median Dice 0.885) while the area is systematically inflated (ratio 1.09 to 1.70). The inflation follows the closed form area excess roughly perimeter times effective edge width (effective width over PSF median 1.01), and subtracting the known beam PSF width removes the bias (0.261 to 0.008). A textbook case where pass and fail cannot be folded into one number: count shape agreement and dimensional bias separately. Scored on public wafer-defect data (Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427; 6 classes with expert masks, 4591 images, class 5 has 4), the stage-0 mask-convention check finds the gradient peak sits inside the mask boundary (cm about -1.3 px: the expert masks include the bright edge), with per-class median Dice 0.51 / 0.70 / 0.79. The real defects are dark pits, opposite in polarity to the synthetic bright mounds, which the run prints honestly. An embedded-defect POD yields a90/95. The real-data stage runs only when the environment variable is set; no data is bundled in the repo.*
+
+[![面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size.png)
+
+*↑ The measurement ―― 面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
+```
+
+Source: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
+
+Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
