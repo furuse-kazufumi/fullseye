@@ -6260,6 +6260,70 @@ def _b_rs_risk(pool, rng):
     return (f["path"], f["Z"], 1.0, f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
 
 
+# --- EMVA 1288(2026-10-13): 規格の残りの式・General・前処理の閉形式。露光段の列は線形なカメラから作る --- #
+def _emva_linear_series():
+    mp = np.concatenate([np.geomspace(1.0, 200.0, 12), np.linspace(0.0, 4.0e4, 31)[1:]])
+    mu = 64.0 + 0.1125 * mp                                   # K = 0.25 DN/e⁻、η = 0.45
+    var = 2.33 + 0.25 * 0.1125 * mp
+    return mp, mu, var
+
+
+def _b_emva_highpass(pool, rng):
+    return (100.0 + rng.standard_normal((32, 40)),), {}
+
+
+def _b_emva_spectrogram(pool, rng):
+    return (rng.standard_normal((16, 32)),), {"band": (0.1, 0.2)}
+
+
+def _b_emva_total_snr(pool, rng):
+    return (np.linspace(1.0, 1e4, 20), 0.6, 3.0, 0.5, 2.0, 0.01), {}
+
+
+def _b_emva_exposure_for_snr(pool, rng):
+    return (np.linspace(0.5, 100.0, 20), 0.6, 3.0, 0.5), {}
+
+
+def _b_emva_photon_exposure(pool, rng):
+    return (np.linspace(0.0, 10.0, 8), 12.0, 1.0, 0.53), {}
+
+
+def _b_emva_bspline_regression(pool, rng):
+    x = np.sort(rng.uniform(0.0, 10.0, 40))
+    return (x, np.sin(x)), {"n_intervals": 6}
+
+
+def _b_emva_ptc_linearity_check(pool, rng):
+    mp, mu, var = _emva_linear_series()
+    return (mu, var + 0.01 * rng.standard_normal(mu.size), 64.0, 2.33, float(mu[-1]) * 1.02), {}
+
+
+def _b_emva_noise_whiteness(pool, rng):
+    return (rng.normal(100.0, 2.0, (32, 32)), rng.normal(100.0, 2.0, (32, 32))), {}
+
+
+def _b_emva_filter_distortion(pool, rng):
+    return (np.full((3, 3), 1.0 / 9.0),), {}
+
+
+def _b_emva_general_sensitivity(pool, rng):
+    mp, mu, var = _emva_linear_series()
+    return (mp, mu, var, 64.0, 2.33, 4.0e4), {"n_intervals": 6}
+
+
+def _b_emva_general_nonuniformity(pool, rng):
+    fixed = 3.0 * np.random.default_rng(7).standard_normal((32, 32))
+    dark = 10.0 + rng.standard_normal((4, 32, 32))
+    bright = 200.0 + fixed + rng.standard_normal((4, 32, 32))
+    return (dark, bright, 0.1, 1900.0, 0.1), {}
+
+
+def _b_emva_general_relative_qe(pool, rng):
+    mp, mu, var = _emva_linear_series()
+    mps = np.array([1.0e4, 2.0e4])
+    return (mp, mu, 64.0, 64.0 + 0.1125 * mps * np.array([1.0, 0.7]), mps, 0), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6310,6 +6374,18 @@ OP_ARG_BUILDERS = {
     "sam_cscan": _b_sam_cscan,
     "echo_phase_polarity": _b_echo_phase_polarity,
     "sam_frequency_tradeoff": _b_sam_frequency_tradeoff,
+    "emva_highpass": _b_emva_highpass,
+    "emva_spectrogram": _b_emva_spectrogram,
+    "emva_total_snr": _b_emva_total_snr,
+    "emva_exposure_for_snr": _b_emva_exposure_for_snr,
+    "emva_photon_exposure": _b_emva_photon_exposure,
+    "emva_bspline_regression": _b_emva_bspline_regression,
+    "emva_ptc_linearity_check": _b_emva_ptc_linearity_check,
+    "emva_noise_whiteness": _b_emva_noise_whiteness,
+    "emva_filter_distortion": _b_emva_filter_distortion,
+    "emva_general_sensitivity": _b_emva_general_sensitivity,
+    "emva_general_nonuniformity": _b_emva_general_nonuniformity,
+    "emva_general_relative_qe": _b_emva_general_relative_qe,
     # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
     "pod_ahat_fit": _b_pod_ahat_fit,
     "pod_from_ahat": _b_pod_from_ahat,

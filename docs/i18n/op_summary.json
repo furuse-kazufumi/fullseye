@@ -25317,15 +25317,6 @@
    "de": "Dunkelstrom (Abschnitt 7.1): Steigung einer Geradenanpassung des Mittelwerts (und der Varianz) der Dunkelbilder an die Belichtungszeit.",
    "hi": "dark current (खंड 7.1): dark images के mean (और variance) को exposure time पर सीधी रेखा से fit करने का slope।"
   },
-  "optics/emva_spatial_nonuniformity": {
-   "fp": "1b94d009c15d",
-   "en": "DSNU and PRNU (Eqs. 33–42, 66, 67).",
-   "zh": "DSNU 与 PRNU(式 33〜42、66、67)。",
-   "tw": "DSNU 與 PRNU(式 33〜42、66、67)。",
-   "ko": "DSNU와 PRNU(식 33~42·66·67).",
-   "de": "DSNU und PRNU (Gl. 33–42, 66, 67).",
-   "hi": "DSNU और PRNU (समीकरण 33 से 42, 66, 67)।"
-  },
   "optics/emva_defect_pixels": {
    "fp": "9da167aea085",
    "en": "Characterization of defect pixels (Section 8.8): logarithmic histogram (Eqs. 73–75) and accumulated histogram (Eq. 77), and the number of pixels exceeding a threshold.",
@@ -25334,6 +25325,123 @@
    "ko": "결함 화소의 특성화(8.8절): 로그 히스토그램(식 73~75)과 누적 히스토그램(식 77), 임계값을 넘는 화소의 수.",
    "de": "Charakterisierung defekter Pixel (Abschnitt 8.8): logarithmisches Histogramm (Gl. 73–75) und kumuliertes Histogramm (Gl. 77) sowie die Anzahl der Pixel oberhalb einer Schwelle.",
    "hi": "defect pixels का characterization (खंड 8.8): logarithmic histogram (समीकरण 73 से 75) और accumulated histogram (समीकरण 77), threshold पार करने वाले pixels की संख्या।"
+  },
+  "optics/emva_spatial_nonuniformity": {
+   "fp": "ae070e225369",
+   "en": "DSNU and PRNU (Eqs. 33-42, 65-67).",
+   "zh": "DSNU 与 PRNU(式 33〜42、65〜67)。",
+   "tw": "DSNU 與 PRNU(式 33〜42、65〜67)。",
+   "ko": "DSNU와 PRNU(식 33~42·65~67).",
+   "de": "DSNU und PRNU (Gl. 33-42, 65-67).",
+   "hi": "DSNU और PRNU (समीकरण 33-42, 65-67)।"
+  },
+  "optics/emva_highpass": {
+   "fp": "7f8507816201",
+   "en": "Highpass filter that removes uneven illumination (section 8.1; the older version is appendix C.5, Eqs. 84-87).",
+   "zh": "去除照明不均的高通滤波器(8.1 节;旧版为附录 C.5 的式 84〜87)。",
+   "tw": "去除照明不均的高通濾波器(8.1 節;舊版為附錄 C.5 的式 84〜87)。",
+   "ko": "조명 불균일을 제거하는 고역 통과 필터(8.1절. 이전 판은 부록 C.5의 식 84~87).",
+   "de": "Hochpassfilter, das ungleichmäßige Beleuchtung entfernt (Abschnitt 8.1; die ältere Fassung ist Anhang C.5, Gl. 84-87).",
+   "hi": "असमान प्रकाश को हटाने वाला highpass filter (खंड 8.1; पुराना रूप परिशिष्ट C.5, समीकरण 84-87)।"
+  },
+  "optics/emva_spectrogram": {
+   "fp": "1668e69963e1",
+   "en": "Horizontal and vertical spectrograms (section 8.6, Eqs. 70-72).",
+   "zh": "水平与垂直频谱图(8.6 节,式 70〜72)。",
+   "tw": "水平與垂直頻譜圖(8.6 節,式 70〜72)。",
+   "ko": "수평·수직 스펙트로그램(8.6절, 식 70~72).",
+   "de": "Horizontale und vertikale Spektrogramme (Abschnitt 8.6, Gl. 70-72).",
+   "hi": "क्षैतिज और ऊर्ध्वाधर spectrogram (खंड 8.6, समीकरण 70-72)।"
+  },
+  "optics/emva_total_snr": {
+   "fp": "c3d1f6e8555a",
+   "en": "Total SNR including the spatial nonuniformity (section 8.5, Eqs. 68, 69).",
+   "zh": "包含空间不均匀性的总 SNR(8.5 节,式 68、69)。",
+   "tw": "包含空間不均勻性的總 SNR(8.5 節,式 68、69)。",
+   "ko": "공간 불균일을 포함한 총 SNR(8.5절, 식 68·69).",
+   "de": "Gesamt-SNR einschließlich der räumlichen Ungleichförmigkeit (Abschnitt 8.5, Gl. 68, 69).",
+   "hi": "spatial nonuniformity सहित कुल SNR (खंड 8.5, समीकरण 68, 69)।"
+  },
+  "optics/emva_exposure_for_snr": {
+   "fp": "515588f83f94",
+   "en": "Exposure needed for a given SNR, μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²)) (Eq. 25, the inverse of Eq. 21).",
+   "zh": "达到给定 SNR 所需的曝光 μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(式 25,式 21 的逆)。",
+   "tw": "達到給定 SNR 所需的曝光 μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(式 25,式 21 的逆)。",
+   "ko": "주어진 SNR에 필요한 노출 μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(식 25, 식 21의 역).",
+   "de": "Für ein gegebenes SNR nötige Belichtung μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²)) (Gl. 25, Umkehrung von Gl. 21).",
+   "hi": "किसी दिए गए SNR के लिए आवश्यक exposure μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²)) (समीकरण 25, समीकरण 21 का व्युत्क्रम)।"
+  },
+  "optics/emva_photon_exposure": {
+   "fp": "1fb9f62f2ca5",
+   "en": "Mean photons per pixel from the sensor-plane irradiance, μ_p = A E t_exp/(hc/λ) (Eq. 3), in the standard's handy units (Eq. 4).",
+   "zh": "由传感器面辐照度求每像素平均光子数 μ_p = A E t_exp/(hc/λ)(式 3),采用标准的便捷单位(式 4)。",
+   "tw": "由感測器面輻照度求每像素平均光子數 μ_p = A E t_exp/(hc/λ)(式 3),採用標準的便捷單位(式 4)。",
+   "ko": "센서 면의 방사 조도로부터 화소당 평균 광자 수 μ_p = A E t_exp/(hc/λ)(식 3)를 규격의 편리한 단위로(식 4).",
+   "de": "Mittlere Photonenzahl pro Pixel aus der Bestrahlungsstärke in der Sensorebene, μ_p = A E t_exp/(hc/λ) (Gl. 3), in den handlichen Einheiten der Norm (Gl. 4).",
+   "hi": "sensor-तल के irradiance से प्रति pixel औसत photon संख्या μ_p = A E t_exp/(hc/λ) (समीकरण 3), मानक की सुविधाजनक इकाइयों में (समीकरण 4)।"
+  },
+  "optics/emva_bspline_regression": {
+   "fp": "52412273502e",
+   "en": "Least-squares cubic B-spline fit and its slope (General section 6.6, Eqs. 44-49).",
+   "zh": "三次 B 样条的最小二乘拟合及其斜率(General 6.6 节,式 44〜49)。",
+   "tw": "三次 B 樣條的最小平方擬合及其斜率(General 6.6 節,式 44〜49)。",
+   "ko": "3차 B-스플라인의 최소제곱 적합과 그 기울기(General 6.6절, 식 44~49).",
+   "de": "Kubische B-Spline-Regression nach kleinsten Quadraten und ihre Steigung (General Abschnitt 6.6, Gl. 44-49).",
+   "hi": "least-squares cubic B-spline fit और उसकी ढलान (General खंड 6.6, समीकरण 44-49)।"
+  },
+  "optics/emva_ptc_linearity_check": {
+   "fp": "54f0523d998b",
+   "en": "Is the photon transfer curve straight (section 6.6, Eq. 51)? The check for whether the Linear K may be used.",
+   "zh": "光子转移曲线是否为直线(6.6 节,式 51)——判断能否使用 Linear 的 K 的检查。",
+   "tw": "光子轉移曲線是否為直線(6.6 節,式 51)——判斷能否使用 Linear 的 K 的檢查。",
+   "ko": "photon transfer 곡선은 직선인가(6.6절, 식 51) —— Linear의 K를 써도 되는지의 검사.",
+   "de": "Ist die Photon-Transfer-Kurve gerade (Abschnitt 6.6, Gl. 51)? Die Prüfung, ob das K des Linear-Modells verwendet werden darf.",
+   "hi": "क्या photon transfer वक्र सीधा है (खंड 6.6, समीकरण 51)? यह जाँच कि Linear का K इस्तेमाल किया जा सकता है या नहीं।"
+  },
+  "optics/emva_noise_whiteness": {
+   "fp": "1c1dc3f3bbdc",
+   "en": "Is the temporal noise independent between pixels (assumption 3 of Linear section 1.2) and between consecutive images (assumption 3 of Linear and General)?",
+   "zh": "时间噪声在像素之间是否独立(Linear 1.2 节前提 3),在连续拍摄的图像之间是否独立(Linear 与 General 的前提 3)。",
+   "tw": "時間雜訊在像素之間是否獨立(Linear 1.2 節前提 3),在連續拍攝的影像之間是否獨立(Linear 與 General 的前提 3)。",
+   "ko": "시간 잡음은 화소 사이에서 독립인가(Linear 1.2절의 전제 3), 연속으로 찍은 영상 사이에서 독립인가(Linear·General의 전제 3).",
+   "de": "Ist das zeitliche Rauschen zwischen Pixeln unabhängig (Annahme 3 in Linear Abschnitt 1.2) und zwischen aufeinanderfolgenden Bildern (Annahme 3 von Linear und General)?",
+   "hi": "क्या temporal noise pixels के बीच स्वतंत्र है (Linear खंड 1.2 की धारणा 3), और लगातार ली गई images के बीच स्वतंत्र है (Linear और General की धारणा 3)?"
+  },
+  "optics/emva_filter_distortion": {
+   "fp": "22e64aabc6d9",
+   "en": "How much in-camera linear preprocessing moves the EMVA 1288 Linear numbers: closed forms (this family's derivation, not equations of the standard).",
+   "zh": "相机内部的线性预处理使 EMVA 1288 Linear 的数值偏移多少——闭式(本族的推导,并非标准中的公式)。",
+   "tw": "相機內部的線性預處理使 EMVA 1288 Linear 的數值偏移多少——閉式(本族的推導,並非標準中的公式)。",
+   "ko": "카메라 내부의 선형 전처리가 EMVA 1288 Linear의 수치를 얼마나 움직이는가 —— 닫힌 형식(이 계열의 유도이며 규격의 식이 아님).",
+   "de": "Wie stark lineare Vorverarbeitung in der Kamera die Kennzahlen von EMVA 1288 Linear verschiebt: geschlossene Formeln (Herleitung dieser Familie, keine Gleichungen der Norm).",
+   "hi": "camera के भीतर का linear preprocessing EMVA 1288 Linear की संख्याओं को कितना बदलता है: closed form (इस family की व्युत्पत्ति, मानक के समीकरण नहीं)।"
+  },
+  "optics/emva_general_sensitivity": {
+   "fp": "826081a36689",
+   "en": "Characteristic curve, input SNR, absolute sensitivity threshold, DR and dark noise in photons (General sections 2.1-2.4, 6.6-6.8).",
+   "zh": "特性曲线、输入 SNR、绝对灵敏度阈值、DR 与以光子为单位的暗噪声(General 2.1〜2.4、6.6〜6.8 节)。",
+   "tw": "特性曲線、輸入 SNR、絕對靈敏度閾值、DR 與以光子為單位的暗雜訊(General 2.1〜2.4、6.6〜6.8 節)。",
+   "ko": "특성 곡선·입력 SNR·절대 감도 임계값·DR·광자 단위의 암잡음(General 2.1~2.4·6.6~6.8절).",
+   "de": "Kennlinie, Eingangs-SNR, absolute Empfindlichkeitsschwelle, DR und Dunkelrauschen in Photonen (General Abschnitte 2.1-2.4, 6.6-6.8).",
+   "hi": "characteristic curve, input SNR, absolute sensitivity threshold, DR और photons में dark noise (General खंड 2.1-2.4, 6.6-6.8)।"
+  },
+  "optics/emva_general_nonuniformity": {
+   "fp": "4bd7b5032d8f",
+   "en": "DSNU and PRNU in input (photon) units (General section 8, Eqs. 55, 56, 58, 59).",
+   "zh": "以输入(光子)为单位的 DSNU 与 PRNU(General 8 节,式 55、56、58、59)。",
+   "tw": "以輸入(光子)為單位的 DSNU 與 PRNU(General 8 節,式 55、56、58、59)。",
+   "ko": "입력(광자) 단위의 DSNU와 PRNU(General 8절, 식 55·56·58·59).",
+   "de": "DSNU und PRNU in Eingangseinheiten (Photonen) (General Abschnitt 8, Gl. 55, 56, 58, 59).",
+   "hi": "input (photon) इकाइयों में DSNU और PRNU (General खंड 8, समीकरण 55, 56, 58, 59)।"
+  },
+  "optics/emva_general_relative_qe": {
+   "fp": "5519a2efc1d7",
+   "en": "Quantum efficiency relative to the reference wavelength, η(λ)/η(λ_ref) (General section 9.4, Eqs. 73, 74).",
+   "zh": "相对于参考波长的相对量子效率 η(λ)/η(λ_ref)(General 9.4 节,式 73、74)。",
+   "tw": "相對於參考波長的相對量子效率 η(λ)/η(λ_ref)(General 9.4 節,式 73、74)。",
+   "ko": "기준 파장에 대한 상대 양자 효율 η(λ)/η(λ_ref)(General 9.4절, 식 73·74).",
+   "de": "Quanteneffizienz relativ zur Referenzwellenlänge, η(λ)/η(λ_ref) (General Abschnitt 9.4, Gl. 73, 74).",
+   "hi": "संदर्भ तरंगदैर्ध्य के सापेक्ष quantum efficiency η(λ)/η(λ_ref) (General खंड 9.4, समीकरण 73, 74)।"
   },
   "acoustics/gcc_delay": {
    "fp": "52564b9846cf",

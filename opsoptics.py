@@ -84,6 +84,7 @@ import edgesfr
 import sfpolar
 import lighttransport
 import sensorchar
+import sensorgeneral
 import illumdesign
 import optscene
 import lensimage
@@ -100,7 +101,7 @@ import raytrace
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
-        "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar,
+        "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
         "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar,
         "lighttransport": lighttransport}
 
@@ -175,8 +176,11 @@ _CATALOG = {
         ("mtf50", "edgesfr", ["pairs"], "measurement"),
         ("veiling_glare_index", "edgesfr", ["image2d", "image2d", "image2d"], "table"),
     ],
-    # sensorchar(2026-10-01): カメラを EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で測る。データシートの η・K・σ_d・
+    # sensorchar(2026-10-01): カメラを EMVA 1288 Release 4.0 Linear の手順で測る。データシートの η・K・σ_d・
     # 飽和・SNR・DR・DSNU・PRNU を出す側。合成センサ(sensor_capture)が「作る」側、この族が「測る」側。
+    # 2026-10-13: 規格の残りの式(8.1 節の高域フィルタ・8.6 節のスペクトログラム・式 25・69・3/4・式 51 と
+    # B-スプライン)と、前提 3 を確かめる道具・線形な前処理の閉形式を足した。新しい型の語は作らない
+    # (画像は image2d、露光段の列は signal、カーネルは matrix、結果は kind つきでない素の dict = table)。
     "sensorchar": [
         ("emva_pair_statistics", "sensorchar", ["image2d", "image2d"], "table"),
         ("emva_photon_transfer", "sensorchar", ["signal", "signal"], "table"),
@@ -188,6 +192,22 @@ _CATALOG = {
         ("emva_dark_current", "sensorchar", ["signal", "signal"], "table"),
         ("emva_spatial_nonuniformity", "sensorchar", ["volume", "volume"], "table"),
         ("emva_defect_pixels", "sensorchar", ["image2d"], "table"),
+        ("emva_highpass", "sensorchar", ["image2d"], "table"),
+        ("emva_spectrogram", "sensorchar", ["image2d"], "table"),
+        ("emva_total_snr", "sensorchar", ["signal"], "matrix"),
+        ("emva_exposure_for_snr", "sensorchar", ["signal"], "signal"),
+        ("emva_photon_exposure", "sensorchar", ["signal"], "signal"),
+        ("emva_bspline_regression", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_ptc_linearity_check", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_noise_whiteness", "sensorchar", ["image2d", "image2d"], "table"),
+        ("emva_filter_distortion", "sensorchar", ["matrix"], "table"),
+    ],
+    # sensorgeneral(2026-10-13): EMVA 1288 Release 4.0 General —— 線形でないカメラ(圧伸・対数・HDR・カメラ内の
+    # 前処理)を、特性曲線の B-スプラインの傾きで入力(光子)の単位へ戻して測る。η と K は「測れない」と報告する側。
+    "sensorgeneral": [
+        ("emva_general_sensitivity", "sensorgeneral", ["signal", "signal", "signal"], "table"),
+        ("emva_general_nonuniformity", "sensorgeneral", ["volume", "volume"], "table"),
+        ("emva_general_relative_qe", "sensorgeneral", ["signal", "signal"], "table"),
     ],
     # appearance(matappear): 微細構造の見え方を**波長から**作る族。回折格子・薄膜干渉・
     # 異方性微小面。入口 2 op(等色関数・分光→sRGB)は波長格子だけで呼べ、残り 3 op は
