@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_pl_groove_vs_diffusion_length.png",
+  "name": "pl_groove_vs_diffusion_length",
+  "caption": "同じ幅 3 µm の溝を拡散長 L = 4 / 16 / 64 µm で描いた PL 像(雑音 1 %)。上段 = 影の溝(励起の欠け): L が長いほど拡散が埋めて消える。下段 = 沈みの溝(再結合の線): L が長いほど深く・広く見える。良質なウェハで隠れるのは影だけ。",
+  "shape": [
+   327,
+   904,
+   3
+  ]
+ },
+ {
+  "file": "02_pl_contrast_vs_diffusion_length.png",
+  "name": "pl_contrast_vs_diffusion_length",
+  "caption": "幅 5 µm の溝の中心コントラスト対拡散長(閉形式)。影は L と共に消え、沈みは L と共に深くなる。雑音 1 % の線を切る L が見える/見えないの境界。",
+  "shape": [
+   360,
+   738,
+   3
+  ]
+ },
+ {
+  "file": "03_pl_real_groove_after_hf.png",
+  "name": "pl_real_groove_after_hf",
+  "caption": "公開実データ(Sutinen ほか 2026、Zenodo 10.5281/zenodo.19603335、CC BY 4.0)の Figure 6a: 同じ 220 µm 深の溝を HF 処理後 0 min / 55 min / 1 week に走査した線(背景で割った)。HF 直後ほど深く広い —— 沈み型の向き。",
+  "shape": [
+   360,
+   846,
+   3
+  ]
+ }
+]

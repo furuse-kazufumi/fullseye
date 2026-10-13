@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pl_image_simulate — GENERATIVE <code style="color:#22d3bf">pl</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pl_image_simulate(generation, sink=None, *, diffusion_length_px: &#x27;float&#x27; = 8.0, optical_psf_px: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, tol: &#x27;float&#x27; = 1e-10) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pl; pl.pl_image_simulate(generation, sink=None, *, diffusion_length_px: &#x27;float&#x27; = 8.0, optical_psf_px: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, tol: &#x27;float&#x27; = 1e-10) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;pl_image_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Erzeugt ein PL-Bild aus Anregungs- und Rekombinationsfeld (exakte Lösung der stationären Diffusionsgleichung + optische PSF + Rauschen).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>generation : array_like</p>
+<p>励起(生成)の場 <code style="color:#22d3bf">g = G/G₀</code>(H×W、≥ 0)。一様 1 が「欠陥なしの地」。影の溝は</p>
+<p>ここを 0 にして作る(生成が欠けるだけで再結合は増えない)。</p>
+<p>sink : array_like or None</p>
+<p>追加の再結合率の場 <code style="color:#22d3bf">k = στ</code>(H×W、≥ 0、無次元)。<code style="color:#22d3bf">None</code> は 0。沈みの溝・転位・</p>
+<p>粒界はここを正にして作る。再結合速度 S[長さ/時間]の線なら <code style="color:#22d3bf">k·w = S·L²/D</code>(画素</p>
+<p>単位)。</p>
+<p>diffusion_length_px : float</p>
+<p>拡散長 <code style="color:#22d3bf">L = √(Dτ)</code>[px]。</p>
+<p>optical_psf_px : float</p>
+<p>光学系の PSF(ガウシアン σ[px])。0 で無効。拡散 PSF の<b>後</b>に掛かる。</p>
+<p>noise_rel : float</p>
+<p>加法ガウス雑音の σ(欠陥なしの地 1 に対する相対値)。0 で決定論。</p>
+<p>seed : int</p>
+<p>雑音の種。</p>
+<p>tol : float</p>
+<p>反復解法(大きい像)の相対許容誤差。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(H, W)</code> の float64。欠陥なし・一様励起なら厳密に 1。<code style="color:#22d3bf">u = Δn/(G₀τ)</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>境界は流束 0(Neumann)。だから一様な励起は端まで厳密に一様で、溝の採点に境界の暗化が混ざらない。方程式が線形なので <code style="color:#22d3bf">generation</code> の重ね合わせは像の重ね合わせ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; g = np.ones((1, 201)); g[0, 100] = 0.0            # 幅 1 px の影の溝</p>
+<p>&gt;&gt;&gt; u = pl_image_simulate(g, diffusion_length_px=10.0)</p>
+<p>&gt;&gt;&gt; rho = 1 + 0.5 / 100 - ((1 + 0.5 / 100) ** 2 - 1) ** 0.5</p>
+<p>&gt;&gt;&gt; abs(float(1 - u[0, 100]) - (1 - 2 * rho / (1 + rho))) &lt; 1e-9   # 格子の閉形式</p>
+<p>True</p>
+<p>&gt;&gt;&gt; round(float(pl_image_simulate(np.ones((8, 8)))[3, 3]), 12)  # 一様 → 1(解法の丸めまで)</p>
+<p>1.0</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">Leitfaden zur Familie generative_art</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_si_wafer_pl_defect_visibility">poc_si_wafer_pl_defect_visibility</a> — <code style="color:#22d3bf">py -3.11 examples/poc_si_wafer_pl_defect_visibility.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pl</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:pl_diffusion_psf">pl_diffusion_psf</a> · <a style="color:#22d3bf" href="opgenerative:pl_groove_visibility">pl_groove_visibility</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pl.py — GENERATIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

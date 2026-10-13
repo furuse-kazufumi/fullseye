@@ -81,7 +81,7 @@ True
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-—
+[pl_image_simulate](../pl/pl_image_simulate.md)
 
 ## 同カテゴリ(`sem`)
 

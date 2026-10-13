@@ -43,9 +43,10 @@
 """
 import illusion
 import perpetual
+import plsim
 import semsim
 
-_MOD = {"illusion": illusion, "perpetual": perpetual, "sem": semsim}
+_MOD = {"illusion": illusion, "perpetual": perpetual, "sem": semsim, "pl": plsim}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -92,6 +93,14 @@ _CATALOG = {
     # 真値つき。作った像は真値つきの合成入力になり、既存の 2-D op がそのまま掛かる)。
     "sem": [
         ("sem_render", "sem", ["image2d"], "image2d"),
+    ],
+    # 半導体 PL 像のキャリア拡散(pl: 励起と再結合の場から PL 像を定常拡散方程式の
+    # 厳密解で作る。拡散 PSF = K₀(r/L)/2πL² で総和 1、一様で厳密に一様、影の溝は
+    # 1 − e^{−w/2L} で消え、沈みの溝は SL/(SL+2D) で L と共に深くなる —— 全部閉形式)。
+    "pl": [
+        ("pl_diffusion_psf", "pl", [], "image2d"),
+        ("pl_image_simulate", "pl", ["image2d"], "image2d"),
+        ("pl_groove_visibility", "pl", [], "table"),
     ],
 }
 

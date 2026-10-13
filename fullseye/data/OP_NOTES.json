@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3133,
- "n_notes": 3139,
+ "n_ops": 3136,
+ "n_notes": 3142,
  "notes": {
   "vol_dilate": [
    {
@@ -22842,6 +22842,34 @@
     "category": "perpetual",
     "out": "rgb",
     "path": "docs/ops/generative/perpetual/perpetual_truchet.md"
+   }
+  ],
+  "pl_diffusion_psf": [
+   {
+    "op": "pl_diffusion_psf",
+    "dim": "generative",
+    "category": "pl",
+    "out": "image2d",
+    "path": "docs/ops/generative/pl/pl_diffusion_psf.md"
+   }
+  ],
+  "pl_groove_visibility": [
+   {
+    "op": "pl_groove_visibility",
+    "dim": "generative",
+    "category": "pl",
+    "out": "table",
+    "path": "docs/ops/generative/pl/pl_groove_visibility.md"
+   }
+  ],
+  "pl_image_simulate": [
+   {
+    "op": "pl_image_simulate",
+    "dim": "generative",
+    "category": "pl",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/generative/pl/pl_image_simulate.md"
    }
   ],
   "sem_render": [

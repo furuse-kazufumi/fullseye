@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — Si ウェハ PL のキャリア拡散(`pl_diffusion_psf` / `pl_image_simulate` / `pl_groove_visibility` + 多段 PoC)
+
+- **新 op 3 本**(`generative` 台帳の `pl` カテゴリ、実装 `plsim.py`): `pl_diffusion_psf` はキャリア拡散の PSF(2 次元のグリーン関数 K₀(r/L)/2πL²、総和 1)を画像で返す。`pl_image_simulate` は励起の場と再結合の場から定常拡散方程式 (1 + k)u − L²Δu = g を Neumann 境界で厳密に解き、光学 PSF と雑音を任意で掛けて PL 像を作る。`pl_groove_visibility` は溝の幅・拡散長・雑音から、影の溝(1 − e^{−w/2L})と沈みの溝(Donolato 型 SL/(SL+2D))のコントラスト・CNR・見える境界 L* を閉形式で返す(`table`)。閉形式の門(総和 1 / 半質量半径 ∝ L / 一様は厳密に一様 / 格子の閉形式と 1e-10)は `tests/test_plsim.py`。入出力は既存の `image2d` / `table`(新しい型語彙は作らない)。
+- **PoC `poc_si_wafer_pl_defect_visibility`**: PL 像で細い溝が見えなくなる理由を、閉形式の真値と公開実データ(Si ウェハのレーザー溝、HF 処理後の時間変化、CC BY 4.0、DOI 10.5281/zenodo.19603335)で切り分ける多段 PoC。予想「拡散長が長い良質なウェハほど隠れる」は影の溝にだけ当てはまり、沈みの溝は逆に深く広くなる。実データは生画像から論文図を再現(ヒストグラム L1 0、線走査 RMS ≤ 1.1 %)したうえで数え、HF 直後ほど溝が深く広い(沈み型)ことを示す。埋め込み POD(`pod_hitmiss_fit`)で a90/95。実データ段は `FULLSEYE_SI_PL_DATA` があるときだけ走り、repo にデータは同梱しない(CI は合成のみ)。能力ノート `docs/capabilities/pl-carrier-diffusion-visibility.md`。
+
 ### Added — SEM ウェハ欠陥の縁効果(`sem_render` + 多段 PoC)
 
 - **新 op `sem_render`**(`generative` 台帳の `sem` カテゴリ): 高さ場から走査電子顕微鏡像を物理モデルで描く —— 二次電子の縁効果(放出 ∝ sec θ)+ ガウシアンのビーム PSF + ポアソンのショット雑音 + 緩い帯電。3 本の閉形式の真値(平面で一様 / 斜面で平面比 = sec θ / 段差の明るい縁の幅 = PSF 幅)を `tests/test_semsim.py` が確かめる。入出力は既存の `image2d`(新しい型語彙は作らない)。作った像は真値つきの合成入力として他の PoC にも使える。

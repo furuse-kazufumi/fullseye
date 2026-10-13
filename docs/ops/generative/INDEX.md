@@ -1,4 +1,4 @@
-# GENERATIVE operator help — 31 ops in 5 categories
+# GENERATIVE operator help — 34 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/generative/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### perpetual (12)
 
 [perpetual_apollonian](perpetual/perpetual_apollonian.md) · [perpetual_chaos_game](perpetual/perpetual_chaos_game.md) · [perpetual_elementary_ca](perpetual/perpetual_elementary_ca.md) · [perpetual_flow_field](perpetual/perpetual_flow_field.md) · [perpetual_harmonograph](perpetual/perpetual_harmonograph.md) · [perpetual_identities](perpetual/perpetual_identities.md) · [perpetual_ifs_attractor](perpetual/perpetual_ifs_attractor.md) · [perpetual_langtons_ant](perpetual/perpetual_langtons_ant.md) · [perpetual_plasma](perpetual/perpetual_plasma.md) · [perpetual_reaction_diffusion](perpetual/perpetual_reaction_diffusion.md) · [perpetual_ten_print](perpetual/perpetual_ten_print.md) · [perpetual_truchet](perpetual/perpetual_truchet.md)
+
+### pl (3)
+
+[pl_diffusion_psf](pl/pl_diffusion_psf.md) · [pl_groove_visibility](pl/pl_groove_visibility.md) · [pl_image_simulate](pl/pl_image_simulate.md)
 
 ### sem (1)
 

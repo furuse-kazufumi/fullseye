@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pl_groove_visibility — GENERATIVE <code style="color:#22d3bf">pl</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pl_groove_visibility(width_px: &#x27;float&#x27; = 3.0, diffusion_length_px: &#x27;float&#x27; = 8.0, *, sink_velocity: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.01, cnr_min: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pl; pl.pl_groove_visibility(width_px: &#x27;float&#x27; = 3.0, diffusion_length_px: &#x27;float&#x27; = 8.0, *, sink_velocity: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.01, cnr_min: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;pl_groove_visibility&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由沟槽宽度、扩散长度与噪声，以闭式给出阴影沟槽与复合沟槽的对比度和 CNR（table）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>width_px : float</p>
+<p>溝の幅 w[px]。</p>
+<p>diffusion_length_px : float</p>
+<p>拡散長 L[px]。</p>
+<p>sink_velocity : float</p>
+<p>沈みの溝の再結合速度 <code style="color:#22d3bf">s = S·px/D</code>(無次元、1 画素あたり)。0 なら沈みの項は 0。</p>
+<p>noise_rel : float</p>
+<p>像の雑音 σ(地 1 に対する相対値)。CNR = コントラスト / σ。</p>
+<p>cnr_min : float</p>
+<p>「見える」とする CNR の下限(既定 1 = 雑音と同じ深さ)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">contrast_shadow</code>(連続 <code style="color:#22d3bf">1 − e^{−w/2L}</code>)/ <code style="color:#22d3bf">contrast_shadow_grid</code>(w が奇数の</p>
+<p>整数なら格子の厳密値、そうでなければ <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">contrast_sink</code>(<code style="color:#22d3bf">sL/(sL+2)</code>)/</p>
+<p><code style="color:#22d3bf">fwhm_shadow_px</code> / <code style="color:#22d3bf">fwhm_sink_px</code>(<code style="color:#22d3bf">2L·ln2</code>)/ <code style="color:#22d3bf">cnr_shadow</code> / <code style="color:#22d3bf">cnr_sink</code> /</p>
+<p><code style="color:#22d3bf">visible_shadow</code> / <code style="color:#22d3bf">visible_sink</code> / <code style="color:#22d3bf">L_star_shadow_px</code>(この L <b>より長いと</b></p>
+<p>影は CNR &lt; cnr_min で消える)/ <code style="color:#22d3bf">L_star_sink_px</code>(この L <b>より短いと</b>沈みは</p>
+<p>消える)/ <code style="color:#22d3bf">deficit_shadow_px</code>(影の欠け量の積分 = w、L によらない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>影は <code style="color:#22d3bf">w ≪ L</code> で <code style="color:#22d3bf">≈ w/2L</code> と消え、沈みは L と共に深く広くなる。欠陥の種類で向きが逆なので、「拡散長が長いほど欠陥が隠れる」は影にだけ当てはまる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; t = pl_groove_visibility(2.0, 20.0, sink_velocity=0.5, noise_rel=0.02)</p>
+<p>&gt;&gt;&gt; round(t[&quot;contrast_shadow&quot;], 4)</p>
+<p>0.0488</p>
+<p>&gt;&gt;&gt; round(t[&quot;contrast_sink&quot;], 4)</p>
+<p>0.8333</p>
+<p>&gt;&gt;&gt; t[&quot;visible_shadow&quot;], t[&quot;visible_sink&quot;]</p>
+<p>(True, True)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_si_wafer_pl_defect_visibility">poc_si_wafer_pl_defect_visibility</a> — <code style="color:#22d3bf">py -3.11 examples/poc_si_wafer_pl_defect_visibility.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_step">perpetual_step</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_render">perpetual_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pl</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:pl_diffusion_psf">pl_diffusion_psf</a> · <a style="color:#22d3bf" href="opgenerative:pl_image_simulate">pl_image_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pl.py — GENERATIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

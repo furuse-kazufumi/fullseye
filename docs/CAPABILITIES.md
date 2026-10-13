@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 42 項目**
+**収録 43 項目**
 
 ## 測る (15)
 
@@ -140,7 +140,7 @@
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (4)
+## 見つける (5)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -157,6 +157,14 @@
 使う op: `glyph_correct_spec`, `glyph_make_spec`, `glyph_find_text_lines`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
 
 動く例: `fix_text_in_image`, `poc_glyph_typo_detection`
+
+### [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md)
+
+フォトルミネッセンス(PL)像は、励起で作った過剰キャリアが**拡散してから**光ります。だから像には光学の PSF のほかに、拡散長 L = √(Dτ) で決まる**もう 1 つの PSF**(2 次元のグリーン関数 K₀(r/L)/2πL²)が掛かります。`pl_diffusion_psf` はその核を総和 1 で返し、`pl_image_simulate` は励起の場と追加再結合の場から定常拡散方程式を格子で厳密に解いて PL 像を作ります(光学 PSF と雑音は任意)。`pl_groove_visibility` は溝の幅・拡散長・雑音から、**影の溝**(励起や発光の欠け、コントラスト 1 − e^{−w/2L})と**沈みの溝**(再結合の線、Donolato 型 SL/(SL+2D))のコントラスト・CNR・見える/見えないの境界 L* を閉形式で返します。
+
+使う op: `pl_diffusion_psf`, `pl_image_simulate`, `pl_groove_visibility`, `pod_hitmiss_fit`
+
+動く例: `poc_si_wafer_pl_defect_visibility`
 
 ### [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md)
 

@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 42 capabilities**
+**Currently 43 capabilities**
 
 ## Measure (15)
 
@@ -141,7 +141,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (4)
+## Detect (5)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -158,6 +158,14 @@ Fix the text inside an image against the string it should read, without regenera
 Operators: `glyph_correct_spec`, `glyph_make_spec`, `glyph_find_text_lines`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
 
 Runnable: `fix_text_in_image`, `poc_glyph_typo_detection`
+
+### [Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells)](capabilities/pl-carrier-diffusion-visibility.md)
+
+A PL image glows only after the excess carriers have diffused, so a second PSF — the 2-D Green function K₀(r/L)/2πL², L = √(Dτ) — sits on top of the optical one. `pl_diffusion_psf` returns that kernel (sum 1); `pl_image_simulate` solves the steady-state diffusion equation exactly on the grid from an excitation map and an extra-recombination map (optional optical PSF and noise); `pl_groove_visibility` gives the closed-form contrast, CNR and visibility boundary L* of a shadow groove (missing excitation, 1 − e^{−w/2L}) and a sink groove (a recombination line, Donolato's SL/(SL+2D)). The two move in opposite directions with L: a longer diffusion length hides shadows and reveals sinks. Embedded-groove detection feeds `pod_hitmiss_fit` for a90/95.
+
+Operators: `pl_diffusion_psf`, `pl_image_simulate`, `pl_groove_visibility`, `pod_hitmiss_fit`
+
+Runnable: `poc_si_wafer_pl_defect_visibility`
 
 ### [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md)
 

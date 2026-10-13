@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pl_groove_visibility — GENERATIVE <code style="color:#22d3bf">pl</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pl_groove_visibility(width_px: &#x27;float&#x27; = 3.0, diffusion_length_px: &#x27;float&#x27; = 8.0, *, sink_velocity: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.01, cnr_min: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pl; pl.pl_groove_visibility(width_px: &#x27;float&#x27; = 3.0, diffusion_length_px: &#x27;float&#x27; = 8.0, *, sink_velocity: &#x27;float&#x27; = 0.0, noise_rel: &#x27;float&#x27; = 0.01, cnr_min: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;pl_groove_visibility&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>溝の幅・拡散長・雑音から、影の溝と沈みの溝のコントラストと CNR を閉形式で返す(<code style="color:#22d3bf">table</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>width_px : float</p>
+<p>溝の幅 w[px]。</p>
+<p>diffusion_length_px : float</p>
+<p>拡散長 L[px]。</p>
+<p>sink_velocity : float</p>
+<p>沈みの溝の再結合速度 <code style="color:#22d3bf">s = S·px/D</code>(無次元、1 画素あたり)。0 なら沈みの項は 0。</p>
+<p>noise_rel : float</p>
+<p>像の雑音 σ(地 1 に対する相対値)。CNR = コントラスト / σ。</p>
+<p>cnr_min : float</p>
+<p>「見える」とする CNR の下限(既定 1 = 雑音と同じ深さ)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">contrast_shadow</code>(連続 <code style="color:#22d3bf">1 − e^{−w/2L}</code>)/ <code style="color:#22d3bf">contrast_shadow_grid</code>(w が奇数の</p>
+<p>整数なら格子の厳密値、そうでなければ <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">contrast_sink</code>(<code style="color:#22d3bf">sL/(sL+2)</code>)/</p>
+<p><code style="color:#22d3bf">fwhm_shadow_px</code> / <code style="color:#22d3bf">fwhm_sink_px</code>(<code style="color:#22d3bf">2L·ln2</code>)/ <code style="color:#22d3bf">cnr_shadow</code> / <code style="color:#22d3bf">cnr_sink</code> /</p>
+<p><code style="color:#22d3bf">visible_shadow</code> / <code style="color:#22d3bf">visible_sink</code> / <code style="color:#22d3bf">L_star_shadow_px</code>(この L <b>より長いと</b></p>
+<p>影は CNR &lt; cnr_min で消える)/ <code style="color:#22d3bf">L_star_sink_px</code>(この L <b>より短いと</b>沈みは</p>
+<p>消える)/ <code style="color:#22d3bf">deficit_shadow_px</code>(影の欠け量の積分 = w、L によらない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>影は <code style="color:#22d3bf">w ≪ L</code> で <code style="color:#22d3bf">≈ w/2L</code> と消え、沈みは L と共に深く広くなる。欠陥の種類で向きが逆なので、「拡散長が長いほど欠陥が隠れる」は影にだけ当てはまる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; t = pl_groove_visibility(2.0, 20.0, sink_velocity=0.5, noise_rel=0.02)</p>
+<p>&gt;&gt;&gt; round(t[&quot;contrast_shadow&quot;], 4)</p>
+<p>0.0488</p>
+<p>&gt;&gt;&gt; round(t[&quot;contrast_sink&quot;], 4)</p>
+<p>0.8333</p>
+<p>&gt;&gt;&gt; t[&quot;visible_shadow&quot;], t[&quot;visible_sink&quot;]</p>
+<p>(True, True)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_si_wafer_pl_defect_visibility">poc_si_wafer_pl_defect_visibility</a> — <code style="color:#22d3bf">py -3.11 examples/poc_si_wafer_pl_defect_visibility.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_step">perpetual_step</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_render">perpetual_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pl</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:pl_diffusion_psf">pl_diffusion_psf</a> · <a style="color:#22d3bf" href="opgenerative:pl_image_simulate">pl_image_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pl.py — GENERATIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

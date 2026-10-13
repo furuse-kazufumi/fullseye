@@ -3066,6 +3066,22 @@
    }
   },
   {
+   "id": "poc_si_wafer_pl_defect_visibility",
+   "group": "wing_industrial",
+   "media": "01_pl_groove_vs_diffusion_length.png",
+   "motion": false,
+   "thumb_src": "01_pl_groove_vs_diffusion_length.png",
+   "label": {
+    "ja": "PL 像の溝と拡散長",
+    "en": "PL groove vs diffusion length",
+    "zh": "PL 像中的沟槽与扩散长度",
+    "tw": "PL 影像中的溝槽與擴散長度",
+    "ko": "PL 영상의 홈과 확산 길이",
+    "de": "PL-Rille gegen Diffusionslänge",
+    "hi": "PL image में groove बनाम diffusion length"
+   }
+  },
+  {
    "id": "poc_battery_ct_degradation",
    "group": "wing_threed",
    "media": "01_xray_projection.png",
@@ -5544,6 +5560,13 @@
    }
   ],
   "titles": {
+   "pl-carrier-diffusion-visibility": {
+    "zh": "用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）",
+    "tw": "用載子擴散 PSF 與缺陷類型區分 PL 影像中細溝槽消失的原因（Si 晶圓·太陽能電池的 PL/EL 檢測）",
+    "ko": "PL 영상에서 가는 홈이 사라지는 이유를 캐리어 확산 PSF와 결함의 종류로 구분(Si 웨이퍼·태양전지의 PL/EL 검사)",
+    "de": "Warum eine dünne Rille im PL-Bild verschwindet — Ladungsträger-Diffusions-PSF und Defektart trennen (PL/EL-Prüfung von Si-Wafern und Solarzellen)",
+    "hi": "PL image में पतली groove क्यों गायब होती है — carrier-diffusion PSF और defect के प्रकार से अलग करना (Si wafer और solar cell की PL/EL inspection)"
+   },
    "sem-edge-effect-metrology": {
     "zh": "测量 SEM 明亮边缘把尺寸放大了多少（带真值）",
     "tw": "量測 SEM 明亮邊緣把尺寸放大了多少（帶真值）",
