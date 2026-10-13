@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 39 項目**
+**収録 40 項目**
 
 ## 測る (13)
 
@@ -124,7 +124,7 @@
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (3)
+## 見つける (4)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -149,6 +149,14 @@
 使う op: `star_detect`, `peak_subbin`, `find_peaks`, `noise_sigma`
 
 動く例: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md)
+
+貼り合わせた積層(Si のダイ + SiO2 と Cu パッドの接合層)を、水の中の集束探触子で上から 1 点ずつ測る走査型音響顕微鏡(SAM)を、層の物理から組み立てます。接合面の**空洞(ボイド)**は空気なので、そこで音響インピーダンスが約 4 万分の 1 に落ち、エコーが**反転**します。符号はボイドがビームより小さくても薄まりません。
+
+使う op: `acoustic_material_table`, `acoustic_layer_stack`, `acoustic_interface_coefficients`, `pulse_echo_ascan`, `sam_cscan`, `echo_phase_polarity`, `sam_frequency_tradeoff`
+
+動く例: `poc_sam_hybrid_bonding_voids`
 
 ## 形にする (3)
 

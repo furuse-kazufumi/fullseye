@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3113,
- "n_notes": 3119,
+ "n_ops": 3120,
+ "n_notes": 3126,
  "notes": {
   "vol_dilate": [
    {
@@ -13998,6 +13998,74 @@
     "category": "transform",
     "out": "table",
     "path": "docs/ops/acoustics/transform/stft_cola_check.md"
+   }
+  ],
+  "acoustic_interface_coefficients": [
+   {
+    "op": "acoustic_interface_coefficients",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/acoustic_interface_coefficients.md"
+   }
+  ],
+  "acoustic_layer_stack": [
+   {
+    "op": "acoustic_layer_stack",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/acoustic_layer_stack.md"
+   }
+  ],
+  "acoustic_material_table": [
+   {
+    "op": "acoustic_material_table",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/acoustic_material_table.md"
+   }
+  ],
+  "echo_phase_polarity": [
+   {
+    "op": "echo_phase_polarity",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/echo_phase_polarity.md"
+   }
+  ],
+  "pulse_echo_ascan": [
+   {
+    "op": "pulse_echo_ascan",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/pulse_echo_ascan.md"
+   }
+  ],
+  "sam_cscan": [
+   {
+    "op": "sam_cscan",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "in": "labels2d × table",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/sam_cscan.md"
+   }
+  ],
+  "sam_frequency_tradeoff": [
+   {
+    "op": "sam_frequency_tradeoff",
+    "dim": "acoustics",
+    "category": "ultrasonic",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acoustics/ultrasonic/sam_frequency_tradeoff.md"
    }
   ],
   "compare_frame": [

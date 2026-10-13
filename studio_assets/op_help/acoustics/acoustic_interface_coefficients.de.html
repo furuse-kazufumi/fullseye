@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_interface_coefficients — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_interface_coefficients(stack)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_interface_coefficients(stack)</code>; aus dem Register: <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_interface_coefficients&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Druck-Reflexions- und Transmissionsfaktoren an jeder Grenzfläche eines Stapels, Energieprüfung R² + (Z1/Z2)T² = 1 und das Phasenumkehr-Kennzeichen Z2 &lt; Z1 (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">R = (Z2 − Z1)/(Z2 + Z1)</code>(圧力)、<code style="color:#22d3bf">T = 2 Z2/(Z1 + Z2)</code>。<code style="color:#22d3bf">R &lt; 0</code> ⇔ <code style="color:#22d3bf">Z2 &lt; Z1</code> (エコーの反転)。半無限どうしの界面の値で、薄い層の多重反射は入らない(それは <code style="color:#22d3bf">pulse_echo_ascan</code>)。返り: <code style="color:#22d3bf">names</code> <code style="color:#22d3bf">z1</code> <code style="color:#22d3bf">z2</code> <code style="color:#22d3bf">R</code> <code style="color:#22d3bf">T</code> <code style="color:#22d3bf">energy</code> <code style="color:#22d3bf">inverted</code> <code style="color:#22d3bf">t_interfaces</code> <code style="color:#22d3bf">depth</code>。Raises ValueError: 印(kind=&#x27;acoustic_stack&#x27;)の無い table。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">Leitfaden zur Familie acoustic_condition_monitoring</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sam_hybrid_bonding_voids">poc_sam_hybrid_bonding_voids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sam_hybrid_bonding_voids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_material_table">acoustic_material_table</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_layer_stack">acoustic_layer_stack</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

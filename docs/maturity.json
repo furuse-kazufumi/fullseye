@@ -673,6 +673,27 @@
    ]
   },
   {
+   "id": "sam-bond-voids",
+   "title": "ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)",
+   "title_en": "Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD)",
+   "category": "見つける",
+   "note": "docs/capabilities/sam-bond-voids.md",
+   "status": "verified-synthetic",
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_sam_hybrid_bonding_voids",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "shape-from-polarization",
    "title": "黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)",
    "title_en": "Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)",
@@ -998,8 +1019,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 356,
-  "run_by_the_poc_gate": 222,
+  "examples2d_total": 357,
+  "run_by_the_poc_gate": 223,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [

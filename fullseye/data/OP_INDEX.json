@@ -1,8 +1,8 @@
 {
- "n_ops": 3113,
+ "n_ops": 3120,
  "tiers": {
   "color": 12,
-  "ledger": 2160,
+  "ledger": 2167,
   "nary": 17,
   "registry": 924
  },
@@ -394,6 +394,41 @@
    "in_sorts": [
     "any"
    ]
+  },
+  {
+   "name": "acoustic_interface_coefficients",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "acoustic_layer_stack",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": []
+  },
+  {
+   "name": "acoustic_material_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": []
   },
   {
    "name": "add_ball",
@@ -6759,6 +6794,19 @@
    "tier": "ledger",
    "ledger": "opsmath",
    "dim": "math",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "echo_phase_polarity",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
    "in_sorts": [
     "table"
    ]
@@ -19160,6 +19208,19 @@
    ]
   },
   {
+   "name": "pulse_echo_ascan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "punch_pressure",
    "halcon": "",
    "in_sort": "matrix",
@@ -21327,6 +21388,33 @@
    "dim": "videostream",
    "in_sorts": [
     "video"
+   ]
+  },
+  {
+   "name": "sam_cscan",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": [
+    "labels2d",
+    "table"
+   ]
+  },
+  {
+   "name": "sam_frequency_tradeoff",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ultrasonic",
+   "tier": "ledger",
+   "ledger": "opsacoustics",
+   "dim": "acoustics",
+   "in_sorts": [
+    "table"
    ]
   },
   {

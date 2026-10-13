@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_interface_coefficients — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_interface_coefficients(stack)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_interface_coefficients(stack)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_interface_coefficients&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>적층의 각 계면에서의 압력 반사·투과 계수, 에너지 보존 R² + (Z1/Z2)T² = 1 검산, Z2 &lt; Z1 일 때의 위상 반전 표시 (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">R = (Z2 − Z1)/(Z2 + Z1)</code>(圧力)、<code style="color:#22d3bf">T = 2 Z2/(Z1 + Z2)</code>。<code style="color:#22d3bf">R &lt; 0</code> ⇔ <code style="color:#22d3bf">Z2 &lt; Z1</code> (エコーの反転)。半無限どうしの界面の値で、薄い層の多重反射は入らない(それは <code style="color:#22d3bf">pulse_echo_ascan</code>)。返り: <code style="color:#22d3bf">names</code> <code style="color:#22d3bf">z1</code> <code style="color:#22d3bf">z2</code> <code style="color:#22d3bf">R</code> <code style="color:#22d3bf">T</code> <code style="color:#22d3bf">energy</code> <code style="color:#22d3bf">inverted</code> <code style="color:#22d3bf">t_interfaces</code> <code style="color:#22d3bf">depth</code>。Raises ValueError: 印(kind=&#x27;acoustic_stack&#x27;)の無い table。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sam_hybrid_bonding_voids">poc_sam_hybrid_bonding_voids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sam_hybrid_bonding_voids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_material_table">acoustic_material_table</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_layer_stack">acoustic_layer_stack</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

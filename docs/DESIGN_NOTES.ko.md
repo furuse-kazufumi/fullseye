@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 1380 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 1384 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -1581,6 +1581,13 @@
 - **L934** — ★axis=1. `pairs` 의 정전은 **(N,2)**(실측: 소비 쪽 6 op 가 (2,N) 을 명시적으로 거부한다). 술어가 `lambda v: True` 였던 동안, 여기는 (2,n) 을 만들고 있어 '어떤 소비 쪽도 받을 수 없는 형태'를 선언 타입으로 자처하고 있었다
 - **L972** — ★position 의 정전은 **[z, y, x] 의 3 성분**. 다수결이 아니라 **소비 쪽을 실행하여** 정했다: refine_translation_lk / refine_lm 은 4 성분을 넘기면 "init_pos must have exactly 3 components [z, y, x] (got 4)" 로 fail-closed 한다(실측). 생성기도 (8.0, 8.0, 8.0) 의 3 성분. 그런데 match_* 계열은 docstring 대로 **[score, d, h, w] 의 4 성분**을 반환하고 있어, 선언 out 이 "position" 인 채로 흘리면 후단의 정밀화 op 가 전멸한다 = 타입의 거짓말. score 자체는 정직한 정보이므로 **함수 쪽은 깎지 않고**(get() 은 4 성분 그대로), 대장의 타입을 자처하는 call() 쪽에서 좌표만 꺼낸다(project_points 와 같은 취급).
 
+## `opsacoustics.py`
+
+- **L195** _(ja)_ — ★新しい型の語は作らない。積層・A スキャン・C スキャンは kind の印つきの dict(table)で、 印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を積層として 黙って読む経路が無い。
+- **L198** _(ja)_ — ★A スキャンを素の signal にしない理由: 超音波で測る量は**時刻**(深さ = 往復時間)で、 素の 1-D 配列は時刻の原点(表面エコーの手前の窓の始まり)と rate を失う。上の rate の 注記と同じ「例外も NaN も無しに深さが狂う」経路になるので、t と rate を同じ dict に 入れて流通させる(dict の ``rf`` を取り出して acoustics の op に渡すのは呼び手の明示的な行為)。
+- **L202** _(ja)_ — ★C スキャンの RF の立方体(画素 × 時刻)は返さない: 返すのはゲートの中で読んだ像だけ (振幅・位相・同相・符号つき山・到達時刻)。立方体を image / volume として流せば 「時間の軸を空間の軸として」読む経路ができる(混ぜると黙って嘘をつく)。
+- **L205** _(ja)_ — ★接合面の地図は既存の labels2d(整数ラベル = 積層の種類)。2 入力なので 2-D の橋は 架からず、1 入力の op の in はすべて table か無し(TYPE_TO_SORT に無い)。
+
 ## `opsastrostack.py`
 
 - **L85** — ★ 대신 **원시 (N,H,W) ndarray를 명시적으로 거부**했다. 3-D 배열은 video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan 어느 것이든 동일한 구조 검사를 통과하므로, 잘못 넣어도 예외가 나지 않고 "그럴듯하게 틀린 합성 결과"를 반환한다 —— photon 족이 histcube를 voxel에서 분리한 것과 **완전히 같은 위험**이다. 다만 여기서는 타입을 늘리는 것이 아니라 "list일 것"을 요구함으로써 같은 방어를 얻었다. list(volume)라고 쓴 순간, 호출하는 쪽이 "선두 축이 프레임 축이다"라고 선언한 것이 된다. * image2d —— 합성 결과, drizzle 출력, 단일 프레임. 모두 2-D float64로, 기존 2-D op(필터·임계값·morphology·psf_to_mtf)가 의미를 유지한 채 쓸 수 있다. **비음수도 아니**며(κ-σ 합성의 잔차나 스플라인 보간의 음의 가장자리가 나타난다), counts를 자칭하는 것은 오히려 거짓이 된다. * keypoints —— ``star_detect``의 반환값은 (N, 2)의 (row, col)이다. TYPE_CHECKS의 keypoints는 "(N,3) 또는 임의의 2-D 배열"이므로 그대로 해당되어 ``psf_fit`` / ``aperture_photometry``가 소비한다.
@@ -2400,12 +2407,12 @@
 - **L305** — 사건 위치(점 과정) -- point_spectrum 의 진입점. ★**균일 난수만 쓰지 않는다**: 주기 성분이 없으면 「주기를 찾는 op」의 의미 있는 동작을 한 번도 밟지 않으므로, 주기 17.0 의 열에 12 개의 무관한 사건을 섞은 **구조 데이터**를 씨앗으로 삼는다(난수만의 시험은 구조적 결함을 숨긴다는 이 repo 의 규율).
 - **L922** — ★비유한 값이 섞인 점군은 **KD 트리 구축 자체가 날것의 ValueError 로 죽는다**(scipy: "data must be finite"). 풀은 NONFINITE 를 기록한 뒤 값을 남기는 설계이므로, 더러운 점군이 여기에 오는 것은 상정 내 -- 만드는 쪽이 막는다. 2026-09-06 에 실제로 밟았다: 새로운 족이 늘어 연쇄의 걸음이 바뀌었고, seed 3_000_0xx 에서 이 경로에 걸려 fuzzer 자신이 정지했다(op 의 결함이 아니라 **도구의 결함**. 속박할 수 없는 입력은 예외가 아니라 스킵이 약속).
 - **L1241** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L6950** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7072** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
-- **L7190** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
-- **L7399** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7420** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7528** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7007** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7129** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
+- **L7247** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
+- **L7456** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7477** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7585** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

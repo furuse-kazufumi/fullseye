@@ -333,6 +333,21 @@ def test_psf_frequency_nodes_converge():
     assert np.max(np.abs(a["amplitude"] - b["amplitude"])) < 1e-3 * a["amplitude"].max()
 
 
+def test_receiver_noise_has_the_stated_rms_in_both_quadratures():
+    """雑音は RF の実部の RMS = noise_rms として入る。期待時刻で読んだ同相・直交の成分の画素間の
+    標準偏差はどちらも noise_rms(±5 %)、平均は一面の値(雑音なし)から動かない。
+    ★包絡線の山の時刻で位相を読んでいた版では、山の時刻の揺れが位相を回し、同相成分の
+    ばらつきが雑音の数倍になっていた(POD の閾値がそれで決まってしまう)。"""
+    s = us.acoustic_layer_stack([("silicon", 100e-6), ("sio2", 1e-6), ("sio2", 1e-6)])
+    for nz in (1e-3, 3e-3):
+        c = us.sam_cscan(np.zeros((48, 48), dtype=np.int64), {0: s}, f0=200e6, water_path=1e-3,
+                         gate_interface=2, noise_rms=nz, seed=3)
+        q = c["amplitude_at_t"] * np.sin(c["phase"])
+        assert abs(c["inphase"].std() / nz - 1) < 0.05
+        assert abs(q.std() / nz - 1) < 0.05
+        assert abs(c["inphase"].mean() - c["plane_phasor"][0].real) < 0.05 * nz
+
+
 def test_aperture_beyond_the_critical_angle_is_refused():
     s = us.acoustic_layer_stack()
     m = np.zeros((8, 8), dtype=np.int64)

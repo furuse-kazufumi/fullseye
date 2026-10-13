@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_material_table — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_material_table()</code>(要直接呼叫實作,<code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_material_table()</code>;從台帳取用則 <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_material_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>內建聲學材料表:密度、縱波聲速、聲阻抗 Z = ρc、衰減 α0·f^n,每項附出處與是否已查證的標記(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>返り: <code style="color:#22d3bf">{&quot;kind&quot;: &quot;acoustic_materials&quot;, &quot;materials&quot;: {name: {rho, c, Z, alpha0, alpha_n, verified, source, uncertainty}}}</code>。<code style="color:#22d3bf">verified</code> が False の材料は代表値の置き場で、<code style="color:#22d3bf">acoustic_layer_stack</code> は <code style="color:#22d3bf">allow_unverified=True</code> が無い限り拒む。</p>
+<p>単位: rho [kg/m³]、c [m/s]、Z [Rayl]、alpha0 [Np/m/Hz^n]。</p>
+<p>Raises: 何も拒まない(引数が無い)。返す dict は毎回の複製で、書き換えても表は変わらない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sam_hybrid_bonding_voids">poc_sam_hybrid_bonding_voids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sam_hybrid_bonding_voids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_layer_stack">acoustic_layer_stack</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

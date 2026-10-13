@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_layer_stack — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_layer_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>लंबवत आपतन pulse-echo के लिए परत-ढेर: couplant, ऊपर से परतें (सामग्री, मोटाई m में) और अर्ध-अनंत substrate (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">layers</code> は <code style="color:#22d3bf">[(材料, 厚さ [m]), ...]</code>(上から)。材料は表の名前(<code style="color:#22d3bf">acoustic_material_table</code>)か <code style="color:#22d3bf">{&quot;rho&quot;, &quot;c&quot;, &quot;alpha0&quot;, &quot;alpha_n&quot;, &quot;name&quot;}</code> の dict。層は 0 枚でもよい(結合液と基板の 1 界面)。返りの <code style="color:#22d3bf">interfaces</code> は上から <code style="color:#22d3bf">couplant|layer0</code>, <code style="color:#22d3bf">layer0|layer1</code>, …, <code style="color:#22d3bf">layerN-1|substrate</code> の名前、<code style="color:#22d3bf">t_interfaces</code> は最初の界面からの往復時間 [s] で <code style="color:#22d3bf">2 Σ d_j / c_j</code>、<code style="color:#22d3bf">depth</code> はその深さ [m]。</p>
+<p>Raises ValueError: 厚さが 0 以下・1 m 超・非有限、未知の材料、確かめていない材料(<code style="color:#22d3bf">allow_unverified</code> 無し)、ρ・c が 0 以下、減衰が負、層が 256 枚超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_material_table">acoustic_material_table</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

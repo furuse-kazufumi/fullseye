@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 39 capabilities**
+**Currently 40 capabilities**
 
 ## Measure (13)
 
@@ -125,7 +125,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (3)
+## Detect (4)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -150,6 +150,14 @@ Pick local maxima above a robustly estimated background plus k sigma, and return
 Operators: `star_detect`, `peak_subbin`, `find_peaks`, `noise_sigma`
 
 Runnable: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD)](capabilities/sam-bond-voids.md)
+
+Pulse-echo ultrasound in layered stacks and scanning-acoustic-microscope C-scans, built from first principles: a material table that carries a source and a verified flag per value (unverified placeholders are refused unless asked for), interface coefficients with the energy check R² + (Z1/Z2)T² = 1 and the sign flip exactly where Z drops, a normal-incidence longitudinal transfer-matrix A-scan with water path and power-law attenuation (checked against a bottom-up Airy recursion, a time-domain ray sum and the optical thin-film formula to 1e-12), and a focused C-scan with a per-frequency Gaussian lateral PSF (FWHM 1.02 λ_water F#) that returns amplitude, phase, in-phase and single-sample-polarity images. Phase is read at the expected time of the bond plane relative to the front-surface echo: thin Cu and SiO2 layers give quadrature echoes, voids are inverted, so a small void adds at right angles to the background and barely changes the amplitude. A closed-form optimal frequency balances lateral resolution against water attenuation, with the front-echo time floor and the critical-angle F-number floor alongside; C-scan statistics feed the existing POD operators.
+
+Operators: `acoustic_material_table`, `acoustic_layer_stack`, `acoustic_interface_coefficients`, `pulse_echo_ascan`, `sam_cscan`, `echo_phase_polarity`, `sam_frequency_tradeoff`
+
+Runnable: `poc_sam_hybrid_bonding_voids`
 
 ## Shape (3)
 

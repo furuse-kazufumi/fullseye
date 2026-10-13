@@ -82,7 +82,7 @@ not 2 or 10, non-positive or non-finite ``f_min`` / ``f_max``,
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[istft](../transform/istft.md)
+[istft](../transform/istft.md) · [acoustic_interface_coefficients](../ultrasonic/acoustic_interface_coefficients.md) · [pulse_echo_ascan](../ultrasonic/pulse_echo_ascan.md) · [sam_cscan](../ultrasonic/sam_cscan.md) · [echo_phase_polarity](../ultrasonic/echo_phase_polarity.md) · [sam_frequency_tradeoff](../ultrasonic/sam_frequency_tradeoff.md)
 
 ## 同カテゴリ(`level`)
 

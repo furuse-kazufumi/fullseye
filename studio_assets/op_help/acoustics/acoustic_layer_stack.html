@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_layer_stack — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_layer_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Layered stack for normal-incidence pulse-echo: couplant, layers (material, thickness in m) from the top, and a half-space substrate (<code style="color:#22d3bf">table</code>).</p>
+<p><code style="color:#22d3bf">layers</code> は <code style="color:#22d3bf">[(材料, 厚さ [m]), ...]</code>(上から)。材料は表の名前(<code style="color:#22d3bf">acoustic_material_table</code>)か <code style="color:#22d3bf">{&quot;rho&quot;, &quot;c&quot;, &quot;alpha0&quot;, &quot;alpha_n&quot;, &quot;name&quot;}</code> の dict。層は 0 枚でもよい(結合液と基板の 1 界面)。返りの <code style="color:#22d3bf">interfaces</code> は上から <code style="color:#22d3bf">couplant|layer0</code>, <code style="color:#22d3bf">layer0|layer1</code>, …, <code style="color:#22d3bf">layerN-1|substrate</code> の名前、<code style="color:#22d3bf">t_interfaces</code> は最初の界面からの往復時間 [s] で <code style="color:#22d3bf">2 Σ d_j / c_j</code>、<code style="color:#22d3bf">depth</code> はその深さ [m]。</p>
+<p>Raises ValueError: 厚さが 0 以下・1 m 超・非有限、未知の材料、確かめていない材料(<code style="color:#22d3bf">allow_unverified</code> 無し)、ρ・c が 0 以下、減衰が負、層が 256 枚超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_material_table">acoustic_material_table</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:pulse_echo_ascan">pulse_echo_ascan</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -2970,6 +2970,22 @@
    }
   },
   {
+   "id": "poc_sam_hybrid_bonding_voids",
+   "group": "wing_industrial",
+   "media": "03_amplitude_vs_phase.png",
+   "motion": false,
+   "thumb_src": "03_amplitude_vs_phase_720.jpg",
+   "label": {
+    "ja": "ハイブリッド接合のボイドを位相で",
+    "en": "Hybrid-bond voids by echo phase",
+    "zh": "用回波相位找混合键合空洞",
+    "tw": "用回波相位找混合鍵合空洞",
+    "ko": "에코 위상으로 하이브리드 접합 보이드 찾기",
+    "de": "Hybridbond-Hohlräume über die Echophase",
+    "hi": "echo phase से hybrid-bond voids"
+   }
+  },
+  {
    "id": "poc_zernike_aberrations",
    "group": "wing_metrology",
    "media": "06_through_focus.gif",
@@ -5768,6 +5784,13 @@
     "ko": "오목한 부품의 상호 반사가 줄무늬 투영과 ToF를 얼마나 어긋나게 하는지 측정 전에 예측한다(전역 광 수송, 직접·전역 분리, 마이크로 위상 이동)",
     "de": "Vor dem Messen vorhersagen, wie weit Interreflexion in konkaven Teilen Streifenprojektion und ToF verfälscht (globaler Lichttransport, Trennung direkt/global, Micro Phase Shifting)",
     "hi": "मापने से पहले अनुमान लगाना कि अवतल हिस्सों का interreflection fringe projection और ToF को कितना भटकाता है (global light transport, direct/global पृथक्करण, micro phase shifting)"
+   },
+   "sam-bond-voids": {
+    "zh": "用超声回波的相位而不是亮度找出混合键合中的空洞(扫描声学显微镜的 C 扫描、频率权衡、检出概率)",
+    "tw": "用超音波回波的相位而不是亮度找出混合鍵合中的空洞(掃描聲學顯微鏡的 C 掃描、頻率權衡、檢出機率)",
+    "ko": "초음파 에코의 밝기가 아니라 위상으로 하이브리드 접합의 보이드를 찾는다(주사 음향 현미경 C-스캔, 주파수 절충, 검출 확률)",
+    "de": "Hohlräume in Hybridbonds über die Phase statt die Helligkeit des Ultraschallechos finden (C-Bild des akustischen Rastermikroskops, Frequenzabwägung, Detektionswahrscheinlichkeit)",
+    "hi": "hybrid bond के voids को ultrasound echo की चमक नहीं, phase से खोजना (scanning acoustic microscope का C-scan, आवृत्ति का समझौता, detection की प्रायिकता)"
    }
   }
  }

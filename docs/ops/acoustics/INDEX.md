@@ -1,4 +1,4 @@
-# ACOUSTICS operator help — 20 ops in 6 categories
+# ACOUSTICS operator help — 27 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/acoustics/<category>/<op>.md` を走査。
 
@@ -31,6 +31,10 @@
 ### transform (3)
 
 [istft](transform/istft.md) · [stft](transform/stft.md) · [stft_cola_check](transform/stft_cola_check.md)
+
+### ultrasonic (7)
+
+[acoustic_interface_coefficients](ultrasonic/acoustic_interface_coefficients.md) · [acoustic_layer_stack](ultrasonic/acoustic_layer_stack.md) · [acoustic_material_table](ultrasonic/acoustic_material_table.md) · [echo_phase_polarity](ultrasonic/echo_phase_polarity.md) · [pulse_echo_ascan](ultrasonic/pulse_echo_ascan.md) · [sam_cscan](ultrasonic/sam_cscan.md) · [sam_frequency_tradeoff](ultrasonic/sam_frequency_tradeoff.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

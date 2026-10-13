@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pulse_echo_ascan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>;從台帳取用則 <code style="color:#22d3bf">opsacoustics.get(&quot;pulse_echo_ascan&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>疊層結構對垂直入射寬頻脈衝的射頻 A 掃描:傳遞矩陣的疊層響應、水路程與冪律衰減(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>パルスはガウス型スペクトル(中心 <code style="color:#22d3bf">f0</code> [Hz]、−6 dB の比帯域 <code style="color:#22d3bf">bandwidth</code>)。応答 <code style="color:#22d3bf">S(f) = w(f) · exp(−2ik_w z_w) · R_stack(f)</code>、<code style="color:#22d3bf">k = 2πf/c − iα(f)</code>。振幅の単位は「焦点の完全反射体・水の損失なし」の包絡線の山 = 1。時間窓は表面エコーの手前から始まり、<code style="color:#22d3bf">n_reverb</code> 回分の積層の往復(残響)を含む。FFT の周期で窓の外の残響が先頭へ折り返すので、長い残響の積層は <code style="color:#22d3bf">duration</code> を伸ばす。</p>
+<p>返り: <code style="color:#22d3bf">t</code> [s] <code style="color:#22d3bf">rf</code> <code style="color:#22d3bf">analytic</code>(複素)<code style="color:#22d3bf">envelope</code> <code style="color:#22d3bf">rate</code> <code style="color:#22d3bf">f0</code> <code style="color:#22d3bf">bandwidth</code> <code style="color:#22d3bf">sigma_t</code>(包絡線の標準偏差)<code style="color:#22d3bf">water_path</code> <code style="color:#22d3bf">t_front</code>(表面エコーの時刻) <code style="color:#22d3bf">t_interfaces</code>(各界面のエコーの時刻 = 表面 + 層の往復)<code style="color:#22d3bf">freqs</code> <code style="color:#22d3bf">weights</code> <code style="color:#22d3bf">response</code>(各周波数の水の経路込みの複素応答)<code style="color:#22d3bf">names</code>。Raises ValueError: 印の無い table、f0 ≤ 0 / 10 GHz 超、比帯域 0.02–1.5 の外、水の経路 ≤ 0、サンプリングが帯域の 2 倍未満、サンプル数が上限超え。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sam_hybrid_bonding_voids">poc_sam_hybrid_bonding_voids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sam_hybrid_bonding_voids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">ultrasonic</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:acoustic_material_table">acoustic_material_table</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_layer_stack">acoustic_layer_stack</a> · <a style="color:#22d3bf" href="opacoustics:acoustic_interface_coefficients">acoustic_interface_coefficients</a> · <a style="color:#22d3bf" href="opacoustics:sam_cscan">sam_cscan</a> · <a style="color:#22d3bf" href="opacoustics:echo_phase_polarity">echo_phase_polarity</a> · <a style="color:#22d3bf" href="opacoustics:sam_frequency_tradeoff">sam_frequency_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ultrasound.py — ACOUSTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

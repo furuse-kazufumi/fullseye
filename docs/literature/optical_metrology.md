@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータの主題側 **1,264 本**(分野違い・重複を落とした後)を、取得クエリの軸 **6 クラスタ**で持つ生のコーパス(LLM による階層化・要約はしていない、2026-10-13)。この層は**人が厳選した層**で、軸ごとの概観は人が抄録を読んで自分の言葉で書いたもの、論文は古典と 2020 年以降の有用なものを手で選んだもの(目録 `docs/literature/curated/optical_metrology.json`)。載せるのは題名・著者・年・DOI だけ(メタデータは CC0。抄録は出版社の権利なので写さない —— 目録の手書き文はコーパスの全抄録と 8 語の並びで突き合わせ、一致があれば生成を止める)。軸の本数は語彙で当たった本数で、2 軸以上に当たる文献は両方で数える。
 
-**使い方(op に落とす)**: 各軸の「**使う op**」は目録に人が書いた対応で、op 名は生成時に出荷ノート 3,113 本の一覧と突き合わせる(無ければ止まる)。op の後ろはなぜ使うかと型。「Fullseye に無いもの」は op に落ちていない部分を正直に書いたもの。読む順: 話題 → 軸の概観 → 使う op → op ノート(型の契約・実行できる例)→ 厳選した文献。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各軸の「**使う op**」は目録に人が書いた対応で、op 名は生成時に出荷ノート 3,120 本の一覧と突き合わせる(無ければ止まる)。op の後ろはなぜ使うかと型。「Fullseye に無いもの」は op に落ちていない部分を正直に書いたもの。読む順: 話題 → 軸の概観 → 使う op → op ノート(型の契約・実行できる例)→ 厳選した文献。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -38,6 +38,8 @@ POD(a) は、検査が大きさ a の欠陥をどの確率で見つけるかを�
 - [`pod_decision_tradeoff`](../ops/spc/pod/pod_decision_tradeoff.md)(閾値を振ったときの a90/95 と誤検出の取引表、table × signal → table)
 - [`msa_attribute_agreement`](../ops/spc/msa/msa_attribute_agreement.md)(人が合否を判定する検査の一致度(検査員どうしのカッパ)、table → table)
 - [`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件ごとの欠陥コントラスト(画像検査の â の物理的な元)、table → table)
+- [`sam_cscan`](../ops/acoustics/ultrasonic/sam_cscan.md)(走査型音響顕微鏡の C スキャン。接合のボイドの â を振幅・位相・同相成分で出す(超音波検査の â の物理的な元)、labels2d × table → table)
+- [`sam_frequency_tradeoff`](../ops/acoustics/ultrasonic/sam_frequency_tradeoff.md)(横分解能と減衰の取引から、ボイドの大きさごとに信号が最大になる周波数(POD を良くする周波数の見当)、table → table)
 - **Fullseye に無いもの**: 試験に要る欠陥の数を事前に決める標本設計の op は無い。
 
 ### 厳選した文献(10 本、古い順)
@@ -317,6 +319,8 @@ POD の側からは、少ない実欠陥と模擬した応答から hit/miss の
 | [`ransac_sphere`](../ops/3d/robust_fit/ransac_sphere.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`render_optscene`](../ops/optics/scene/render_optscene.md) | T6 検査計画と合成データ |
 | [`render_transport`](../ops/optics/light_transport/render_transport.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`sam_cscan`](../ops/acoustics/ultrasonic/sam_cscan.md) | T1 検出確率(POD)と NDE の信頼性 |
+| [`sam_frequency_tradeoff`](../ops/acoustics/ultrasonic/sam_frequency_tradeoff.md) | T1 検出確率(POD)と NDE の信頼性 |
 | [`separate_direct_global`](../ops/optics/light_transport/separate_direct_global.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`sfp_disambiguate`](../ops/optics/shape_from_polarization/sfp_disambiguate.md) | T3 偏光からの形状復元 |
 | [`sfp_dolp_model`](../ops/optics/shape_from_polarization/sfp_dolp_model.md) | T3 偏光からの形状復元 |

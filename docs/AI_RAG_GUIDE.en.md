@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 0b9c9a14ae9b -->
+<!-- i18n-source-sha: d3f6c36a609b -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -79,7 +79,7 @@ instructions for the AI". To install it by hand, just copy `skills/fullseye-ops`
 
 ## Tier 2 (optional): a clustered corpus — an advanced form with external tools
 
-You can also build a "navigable corpus" that hierarchically clusters the **3,119 notes** into topic
+You can also build a "navigable corpus" that hierarchically clusters the **3,126 notes** into topic
 clusters with an LLM summary per cluster. Internally we use the `corpus2skill` of a
 [RAPTOR](https://github.com/gadievron/raptor) fork (TF-IDF + k-means + LLM summary), but **this is
 an optional optimization, not a requirement**. The only requirement is "take `docs/ops` as input and

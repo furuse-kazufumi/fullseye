@@ -1,0 +1,88 @@
+[
+ {
+  "file": "01_ascan.png",
+  "name": "ascan",
+  "caption": "接合面のエコーは表面エコーの 1 割未満。ボイドのエコーは反転、誘電体とパッドは直交(微分形)。",
+  "shape": [
+   360,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "02_ascan_gate.png",
+  "name": "ascan_gate",
+  "caption": "期待時刻(24.1 ns)で読んだ位相は、誘電体 -91°、Cu パッド +84°、ボイド(誘電体) -175°、ボイド(パッドの上) +159°。",
+  "shape": [
+   360,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "03_amplitude_vs_phase.png",
+  "name": "amplitude_vs_phase",
+  "caption": "150 MHz、受信雑音 1.5e-3。誘電体の中の小さなボイドは振幅の像で背景と同じ明るさ(直交の背景に反転のエコーが直角に足される)。位相の像ではボイドだけが +1 側に光り、無傷のパッドと誘電体は 0 付近(±90°)。パッドの縁の逆向きの輪は、+80° のパッドと −90° の誘電体のエコーが PSF の中で打ち消し合って位相が 0° 付近へ回ったもの(振幅の像でパッドの縁が暗い輪になるのも同じ理由)。",
+  "shape": [
+   646,
+   510,
+   3
+  ]
+ },
+ {
+  "file": "04_frequency_sweep.gif",
+  "name": "frequency_sweep",
+  "caption": "150 → 350 MHz。左 = 振幅(各コマで正規化)、右 = cos(位相)。周波数を上げると像は締まるが、水の減衰で雑音に沈んでいく。",
+  "shape": [
+   240,
+   484,
+   3
+  ],
+  "animated": true,
+  "frames": 5,
+  "frames_written": 5,
+  "fps": 1.5
+ },
+ {
+  "file": "05_tradeoff.png",
+  "name": "tradeoff",
+  "caption": "S(f) = (1 − 2^−(a/w)²) exp(−β f²)。最適 141 / 139 / 133 MHz(閉形式)。表面エコーの裾がゲートに入らない下限は 130 MHz。",
+  "shape": [
+   380,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "06_resolution_and_loss.png",
+  "name": "resolution_and_loss",
+  "caption": "FWHM = 1.02 λ_w F#(F# 3)、水の経路 1 mm(2.17e-3 dB/(cm MHz²))。",
+  "shape": [
+   360,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "07_pod.png",
+  "name": "pod",
+  "caption": "閾値は同じ規則(良品の部位の平均 + 3.09σ、パッドと誘電体の厳しい方)。",
+  "shape": [
+   400,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "08_pod_numbers.png",
+  "name": "pod_numbers",
+  "caption": "(外挿)= a90/95 が試した大きさ(4〜36 µm)の外。",
+  "shape": [
+   152,
+   632,
+   3
+  ],
+  "csv": "08_pod_numbers.csv",
+  "tsv": "08_pod_numbers.tsv"
+ }
+]
