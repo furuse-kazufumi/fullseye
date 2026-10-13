@@ -243,6 +243,7 @@ def rel(a, b):
 
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     sensor = make_sensor()
     rng = np.random.default_rng(2026)
     cams = [
@@ -425,7 +426,10 @@ def main():
     check(worst < 1e-12, "Σw²/(Σw)² = 周波数領域の値", "(最大のずれ %.1e)" % worst)
 
     elapsed = time.time() - t0
-    check(elapsed < 60.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★壁時計でなく CPU 時間で掛ける: スイートが PoC を 6 本並べて走らせると、単独 31 秒が壁時計 115 秒になった(2026-10-13 の全量)。
+    #   この PoC が自分で使う計算量を見るのが目的なので、他のプロセスの混み具合で揺れない量にする。
+    check(cpu < 60.0, "所要 CPU 時間(CI の上限に余裕を残す)", "%.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
     if figs.enabled():
         t_f = time.time()
         _figures(cams, R, T, rows, keys, pred, tru, pu, g)
