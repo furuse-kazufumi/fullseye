@@ -184,13 +184,13 @@ This instalment produced **5** figures in all — [see them all](https://github.
 
 #### The remaining figure of this instalment
 
-[![Ground-truth scatter](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths.png)
+[![Ground-truth scatter](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths.png?v=2)
 
 *↑ All 11 ground truths: 6 from the second implementation, 3 aligned goals, 2 empty grids. Every point sits on the diagonal.*
 
 ## 2. The driving school opens — build the world that carries its own truth first
 
-![Waiting at a red light, threading the crank, merging onto the loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif?v=3)
+![Waiting at a red light, threading the crank, merging onto the loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif?v=4)
 
 *↑ A chase camera with the LiDAR (16 beams) points overlaid. Grey = road, yellow = kerb, red = car, green = signal, white = crosswalk. The box at the top right is the in-car camera's ROI and its verdict — the car waits at the stop line while it reads `red` and moves on the frame after it reads `green` (closed loop). Red light → intersection → crank (with reversing) → link road → loop. That the car **drove** is visible. How many centimetres its corners crossed the kerb line, and which face every LiDAR point came from, is not — but the world knows, so it can be counted.*
 
@@ -220,11 +220,11 @@ regulation sizes → one polygon per element (crank, S-curve, slope, parallel pa
 
 The new ops live in three modules. **drivecourse** (regulation-size 2-D polygons; truth = closed-form areas), **driveworld** (the 3-D world; CC0 Kenney Car Kit / City Kit Roads meshes for cars, street lights and cones scaled to real dimensions, and signals and signs from **roadjp**, generated procedurally to Japanese standards: a horizontal three-lamp head with green, yellow, red from the driver's left, hung from an arm on a pole at the far side of the intersection with the lamp bottom at 5.0 m; signs as a 600 mm circle, a 600 mm inverted triangle, a 450 mm warning diamond, plate bottom at 1.8 m; the camera image is looked up from triangle ids), and **lidarsim** (Möller–Trumbore ray–triangle intersection, accelerated by binning every triangle by the azimuth and elevation intervals it subtends from the sensor; 80 k triangles × 58 k rays in under a second).
 
-[![Plan of the school](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png?v=3)
+[![Plan of the school](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png?v=4)
 
 *↑ From above. The loop (80 m straights, 8 m wide, R 30 semicircles) with the cross of main roads inside (four signals, a crosswalk on each arm and a stop line 2 m before it). Crank to the north-east, S-curve south-west, slope south-east (the dark patch is the ramp), parallel parking and turnaround north-west, level crossing on the eastern main road. The exits rejoin the loop through link roads, so you can circulate.*
 
-[![The same world at an angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png?v=3)
+[![The same world at an angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png?v=4)
 
 *↑ The 3-D world. Kerbs (0.15 m) and lane paint follow the polygon edges and are left out at the joints. Cars, street lights and cones are CC0 meshes; the signals (horizontal three-lamp heads on arms over the lane, from the far-side pole) and signs (stop, slow, speed limit, crosswalk, level crossing ahead) are generated procedurally to Japanese standard dimensions. Every face has a label and a colour.*
 
@@ -244,11 +244,11 @@ Three kinds of truth: **closed forms derived from the regulation sizes, closed-f
 | The camera reads the signal (image processing) | The lamps' map positions are projected into the in-car camera; a chromaticity detector searches the ROI (± 24 px) for lit discs. Red → `red`, green → `green`, lamps off → `unknown`. No ground-truth face ids are used | The world's own state |
 | No motion until it reads green (closed loop) | From the stop line the camera is read every frame and the car moves on the frame after it reads `green`. During the **6** red frames it does not move a millimetre; the 11 readings from 10 m out all match the world's state. Zero point: with the lamps off it keeps reading `unknown` and does not start in 8 frames | The world's own state |
 
-[![One LiDAR sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png?v=3)
+[![One LiDAR sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png?v=4)
 
 *↑ A sweep 10 m before the stop line (32 beams, −25° to +15°, 0.5°; 10,903 points on the road). Points are coloured by the label of the face they hit — that this is generation-time truth rather than human labelling is the whole value of the world.*
 
-[![LiDAR over the in-car camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png?v=3)
+[![LiDAR over the in-car camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png?v=4)
 
 *↑ The same instant from the in-car camera (60°, 640 × 400) with the LiDAR points projected onto it. Point depth vs pixel depth and point label vs pixel label agreeing is the "two sensors, one world" gate. The signal is red.*
 
@@ -323,7 +323,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figure of this part
 
-[![Truth scatter](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png?v=2)
+[![Truth scatter](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png?v=3)
 
 *↑ Areas of the 8 element kinds (shoelace vs closed form) and 200 road ranges (measured vs h/(−sin e)). Everything sits on the diagonal.*
 
@@ -331,7 +331,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ## 3. Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth
 
-![An oncoming car approaches, passes, and RSS stops the ego car in front of a parked one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif?v=3)
+![An oncoming car approaches, passes, and RSS stops the ego car in front of a parked one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif?v=4)
 
 *↑ In-car camera, 0 → 10 s. While the oncoming car is in view its pixels carry the optical flow (arrows) and the true focus of expansion (cross), with the "true τ" and the "τ from flow" side by side at the top. After it passes, RSS flags the parked car in the ego lane as dangerous (t = 6.0 s), the ego brakes and stops 10.25 m short. **The numbers move** because the world holds the truth — τ and gap are not estimates, they are fixed at generation time.*
 
@@ -358,7 +358,7 @@ Part 2's loop course (south straight, 80 m, left-hand traffic) → ego 8 m/s (no
 
 Two new modules. **drivettc** derives, per pixel and in closed form, the true flow and the true τ from the depth image and the rigid motion; the flow-based τ wraps the existing `time_to_contact` and converts it to seconds. **rsssafety** holds the RSS closed forms for same-direction, opposite-direction and lateral distances, the worst-case time integration, and the verdicts. All three τ values are aligned to **the time of the first frame** — there is a one-frame trap here, described below.
 
-[![In-car camera and flow at t = 4 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png?v=3)
+[![In-car camera and flow at t = 4 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png?v=4)
 
 *↑ t = 4 s. The flow on the oncoming car's pixels (arrows ×3) points outward from the focus of expansion (cross); its radial speed gives τ = 0.84 s (truth 0.84 s). The road has no texture, so flow exists only on the car and the lamp post.*
 
@@ -378,11 +378,11 @@ Three kinds of truth: **closed forms from the depth image and the rigid motion**
 | τ shouts, RSS does not | For the car in the other lane true τ falls to **0.30 s**, yet the lateral safe distance is **0.725 m** < the 2.2 m lane gap, and RSS never flags danger | Closed form |
 | Drift over and it is dangerous | If the oncoming car drifts sideways at 0.6 m/s the lateral safe distance jumps to **2.45 m** and danger starts at t = 1 s; the longitudinal gap of 58.25 m is then already inside the **82.9 m** opposite-direction distance, and the worst case collides (minimum gap −24.7 m) | Second implementation |
 
-[![The four τ curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png?v=3)
+[![The four τ curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png?v=4)
 
 *↑ The two truth lines (overlapping) fall from 5 s at slope −1. Flow-based τ (light blue) sits on the truth from t ≥ 2 s and scatters at range where the flow is below one pixel. Size-based τ (orange) stays close throughout.*
 
-[![RSS stops before the parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction.png)
+[![RSS stops before the parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction.png?v=2)
 
 *↑ The gap to the parked car (blue) drops below the safe distance (orange, 26.28 m at v = 8) at t = 6.0 s: danger. Speed held for one second, then 4 m/s². The safe distance falls with v during braking.*
 
@@ -458,11 +458,11 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figures of this part
 
-[![Plan view](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png?v=3)
+[![Plan view](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png?v=4)
 
 *↑ The 80 m south straight from above (t = 3 s): ego (north lane, eastbound), oncoming car (south lane, westbound), parked car (x = 40).*
 
-[![Lateral safe distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral.png)
+[![Lateral safe distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral.png?v=2)
 
 *↑ In their lanes the lateral gap of 2.2 m exceeds the 0.725 m safe distance, so falling τ (grey) never becomes danger. Once the oncoming car drifts at 0.6 m/s the safe distance jumps to 2.45 m and danger starts at t = 1 s.*
 
@@ -470,7 +470,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ## 4. Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow
 
-![Driving the loop up and down through rolling terrain while the focus of expansion is estimated from road flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif?v=3)
+![Driving the loop up and down through rolling terrain while the focus of expansion is estimated from road flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif?v=4)
 
 *↑ In-car camera, 0 → 10 s (51 frames, 6 m/s). Arrows are Lucas–Kanade flow (×4), the orange cross is the focus of expansion estimated from flow, green is the truth. The road carries grain, puddles and worn lane paint, a pedestrian crosses at the crosswalk, and outside the road there is fBm relief with trees. The numbers at the top are the road grade and the FoE error (all pixels / road only). **The focus of expansion that missed by 62 px in part 3 lands within 1–2 px once the road has texture** — and because every grain of that texture is a world-coordinate formula, the error can be counted in pixels.*
 
@@ -506,7 +506,7 @@ The new ops live in one module, **driveterrain** (fBm, Perlin, distance field, t
 
 There are only four formulas and all are readable. **(1) Relief**: h(x, y) = Σ_k A_k cos(2π f_k (x cos θ_k + y sin θ_k) + φ_k). Draw the frequencies f_k log-uniformly and their density in the 2-D frequency plane is ∝ 1/f²; with amplitudes A_k ∝ f^{−H} the power is A² × density ∝ f^{−(2H+2)} — the theorem's β = 2H + 2 falls out directly. The gradient is the sum of the term-wise derivatives. **(2) Terrain**: z = h · w(d) + undulation, where w is a smoothstep that is 0 up to 2 m from the road and reaches 1 over the next 12 m. The product rule ∇(h·w) = w∇h + h·w′(d)·∇d, with ∇d the normal of the distance field, keeps the gradient closed form. **(3) Materials**: back-project the rendered depth to recover each pixel's world (x, y) and evaluate Perlin noise there. A puddle is where the noise exceeds a level (label 11); with wear ∈ [0, 1] the paint colour is white · (1 − wear) + road · wear. **(4) FoE**: under pure translation the flow radiates from the FoE (Longuet-Higgins and Prazdny 1980), so the line through each pixel along its flow direction — its flow line — must pass through the FoE. The FoE is the point minimising Σ w_i · dist(F, flow line_i)², a 2 × 2 normal equation; the weights fall with distance (a direction error at a far pixel moves the estimate most) and an angular residual rejects outliers.
 
-[![The loop course in rolling terrain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png?v=3)
+[![The loop course in rolling terrain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png?v=4)
 
 *↑ The world from the south-west, from above (t = 6 s). The fBm relief (H = 0.8, periods 6–120 m, RMS set to 2.5 m) is flat within 2 m of the road and blends in over 12 m. The road carries a long-wave undulation (amplitude 0.8 m). 70 trees are scattered at least 4 m from the road and 5 m from each other. The world extends 40 m beyond the course (8 m in part 3).*
 
@@ -529,11 +529,11 @@ Three kinds of truth: **theorems** (Perlin, the fBm spectrum, eikonal, divergenc
 
 Side by side on the same frames (road-only error in px at t = 0, 1, …, 10 s): textured 2.0 / 0.7 / 1.7 / 2.4 / 4.3 / 3.1 / 25.9 / 0.6 / 1.3 / 0.6 / 1.4, untextured 59.2 / 70.0 / 57.2 / 45.4 / 60.0 / 62.1 / 44.4 / 43.2 / 27.2 / 3.6 / 107.3. The untextured road has one frame (t = 9 s) at 3.6 px and the textured road has one frame (t = 6 s) at 25.9 px. The gate is on medians, and the ratio was not "at least 2×" but more than 20×.
 
-[![One in-car frame and its truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png?v=2)
+[![One in-car frame and its truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png?v=3)
 
 *↑ One in-car frame (60°, 640 × 400, t = 6 s) and its per-pixel truth. (a) colour, (b) labels (road, terrain, kerb, paint, crosswalk, puddle, tree, pedestrian), (c) paint wear (0 = white, 1 = road), (d) the truth fields (red = stain, blue = puddle, green = wear). The materials are evaluated at world coordinates recovered from the rendered depth, so label, wear, puddle and stain are exact per pixel. Worn paint and puddles cannot be separated by a brightness threshold better than a 25 % error rate.*
 
-[![The focus of expansion from flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png?v=2)
+[![The focus of expansion from flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png?v=3)
 
 *↑ t = 1.2 s (the frame whose road-only error is closest to the median), 480 × 300, two frames at 30 fps. The focus of expansion is found by least squares from the LK flow of the road pixels alone (arrows ×4); orange = estimate, green = truth. (a) Textured road: 1.9 px from the truth. (b) Same terrain and trees with a plain road: flow survives only at the paint and kerb edges, and the estimate misses by 91.5 px.*
 
@@ -614,11 +614,11 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figures of this part
 
-[![Spectrum of the relief](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum.png)
+[![Spectrum of the relief](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum.png?v=2)
 
 *↑ The radial periodogram of the fBm surface (H = 0.8) is a straight line in log–log: slope β̂ = 3.59, theorem (β = 2H + E, E = 2) 3.6. Fitted over the 12 bins in the band [1/100, 1/10] cycles/m.*
 
-[![FoE error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png?v=3)
+[![FoE error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg?v=4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png?v=4)
 
 *↑ Error of the estimated focus of expansion (distance to the truth, px). Median 1.9 px from the textured road pixels alone, 1.2 px from all pixels, 57.2 px on the plain road (dots, one per second). The ego drives up and then down (grade −1.5 to +1.5 %, crest at t = 5 s), so the true FoE also moves in the image.*
 
@@ -626,7 +626,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ## 5. Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back
 
-![Driving the school with a clock](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)
+![Driving the school with a clock](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif?v=2)
 
 *↑ Driving with a clock, speed, distance to the stop line, brake stage and the in-car camera's signal reading. On reading amber the car covers the reaction distance, brakes in two stages and stops 0.50 m before the line; it does not move on red and starts after reading green. The second half is the slope course: stop and start. Bottom left: the longitudinal profile; bottom right: the speedometer.*
 
@@ -644,7 +644,7 @@ Scoring : National Police Agency notice No. 12 (2022) deductions — improper st
 
 **In plain words**: the distance to stop has two parts: the distance covered **at the same speed** before the brake is pressed (reaction distance = speed × reaction time) and the distance covered **while slowing** (braking distance = speed² ÷ (2 × deceleration)). Uphill, gravity helps stop the car; downhill it gets in the way. So at the same speed a car needs more room to stop going downhill.
 
-[![Stopping distance: closed form and integrator](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png)
+[![Stopping distance: closed form and integrator](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png?v=2)
 
 *↑ Speed and stopping distance on flat, uphill and downhill: the closed form (lines) and the integrator (dots) coincide.*
 
@@ -667,7 +667,7 @@ Scoring : National Police Agency notice No. 12 (2022) deductions — improper st
 | 13 | Knob: grade | roll-back closed form | a start with a 1 s pedal change: small at 9 %, medium at 10–11 %, large (test stopped) at 12.5 % and up |
 | 14 | Zero point | lamps off | stays 'unknown', stops and does not start (fail-closed) |
 
-[![Reaction-time knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png)
+[![Reaction-time knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png?v=2)
 
 *↑ Reaction time and stopping position: past the closed-form threshold of 2.546 s the car ends beyond the line.*
 
@@ -734,11 +734,11 @@ This part produced **5 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figures of this part
 
-[![Speed and distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png)
+[![Speed and distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png?v=2)
 
 *↑ Speed over the whole drive, with the stop line and the slope.*
 
-[![Grade knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png)
+[![Grade knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png?v=2)
 
 *↑ Grade and hill-start roll-back (1 s pedal change): closed form (line), integrator (dots) and the roll-back deduction bands.*
 
@@ -746,7 +746,7 @@ This part produced **5 figures** in all — [see them all](https://github.com/fu
 
 ## 6. Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night
 
-![An equinox day](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif)
+![An equinox day](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif?v=2)
 
 *↑ Tokyo on the March equinox (2026-03-20), 5:15 to 20:15 every 15 minutes. Left: the in-car camera of an eastbound car (15 m before the stop line) and its signal reading; right: a view from above. Shadows point away from the sun, shorten at noon and lengthen again. In the morning, while the sun is low behind the signal, the image processing cannot read red. After sunset the headlamps come on.*
 
@@ -767,7 +767,7 @@ Decision : from the distance at which a lamp's colour can be read, the speed tha
 
 **In plain words**: to read a signal the camera looks at the **colour ratio** of the lamp pixels (how red they are). Glare and fog **add white light** to the image. Adding white pushes the ratio toward grey, and past some amount it is no longer "red". That amount (W*) follows from the pixel equation alone, so "how close the sun may come" and "how far a lamp can be read in fog" can be computed before rendering.
 
-[![Backlight threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)
+[![Backlight threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png?v=2)
 
 *↑ Horizontal: angle θ between the sun and the line of sight to the lamp; vertical: the threshold θ* computed beforehand from the pixel equation. Below the diagonal it reads, above it does not. Red is the weakest.*
 
@@ -789,7 +789,7 @@ Decision : from the distance at which a lamp's colour can be read, the speed tha
 | 12 | Night closed loop | speed that can stop after detection v* = 81 km/h (low beam) | at 0.85× it stops 15 m before the pedestrian, at 1.3× it cannot |
 | 13 | Zero point | lamps off | 'unknown' in clear, fog, rain and night (fail-closed) |
 
-[![Reading distance in fog](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)
+[![Reading distance in fog](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png?v=2)
 
 *↑ Distance at which a lamp's colour can be read in fog: closed form d* = ln(1 + W*/L_h)/β (lines) and the rendered reading (dots).*
 
@@ -858,19 +858,19 @@ This part produced **7 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figures of this part
 
-[![Sun elevation and NAOJ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)
+[![Sun elevation and NAOJ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png?v=2)
 
 *↑ Sun elevation in Tokyo (lines) and the NAOJ published values (dots).*
 
-[![Fog views](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
+[![Fog views](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png?v=2)
 
 *↑ In-car camera in fog (15 m before the stop line). The lamp is across the intersection, about 26 m past the line.*
 
-[![Fog density from the image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)
+[![Fog density from the image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png?v=2)
 
 *↑ Road luminance in the lane, row by row (dots), and the Koschmieder fit that recovers the visibility.*
 
-[![Rain and night](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)
+[![Rain and night](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png?v=2)
 
 *↑ Rain (red reflected on the road), night (lamps emit), and a pedestrian under low and high beams.*
 
@@ -878,7 +878,7 @@ This part produced **7 figures** in all — [see them all](https://github.com/fu
 
 ## 7. An endless map — tiles made around the car, far tiles dropped, 50 km without a break
 
-![Tiles streaming around the car, from above](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)
+![Tiles streaming around the car, from above](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif?v=2)
 
 *↑ Red = the car. Only the 5 × 5 tiles around it (200 m each, 1 km square) are held; when the car crosses into a new tile, 5 tiles are made ahead and the 5 behind are dropped. Colour bands show relief, grey bands are roads. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.mp4)*
 
@@ -894,7 +894,7 @@ This part splits the world into tiles and **makes each tile's contents from noth
 4. **Positions are held as (tile, coordinates inside the tile).** A global floating-point coordinate gets coarser the farther you go, but coordinates inside a tile always stay in [0, 200) m. Drawing also uses the car's tile as the origin and offsets the other tiles (a floating origin).
 5. Only the 5 × 5 tiles around the car are held; tiles that fall outside are dropped (`tile_stream`).
 
-![Chase camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.gif)
+![Chase camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.gif?v=2)
 
 *↑ Chase camera (red = the car). Even starting 1,000 km away, the vertex coordinates being drawn stay within ±600 m. Roads and ground do not break at tile seams. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.mp4)*
 
@@ -909,7 +909,7 @@ This part splits the world into tiles and **makes each tile's contents from noth
 | Stays on the road | distance to the road centreline | at most 2.1 × 10⁻¹¹ m over 50 km, including across seams |
 | Long-distance precision | the same steps summed as rationals (no rounding) | starting 1,000 km away and driving 50 km, tile coordinates are off by 2.1 × 10⁻¹¹ m; a float32 global coordinate drifts by **33.4 m** |
 
-![The route driven](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/03_route.png)
+![The route driven](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/03_route.png?v=2)
 
 *↑ 50 km following the road network with an eastward bias. 956 tiles were visited, never more than 25 held at once.*
 
@@ -962,7 +962,7 @@ The whole PoC: `py -3.11 examples/poc_driving_endless_map.py` (figures and video
 
 ## 8. Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing
 
-![Dashcam: a child runs out from behind a parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)
+![Dashcam: a child runs out from behind a parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif?v=2)
 
 *↑ Dashcam. A child is hidden behind the white parked car. The car slows to the "fastest speed that can still stop", 10.7 km/h, before the blind spot, passes alongside, detects the child running out by background subtraction 0.133 s late, and stops short (red box = difference from the map background; bottom right = 3× zoom). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.mp4)*
 
@@ -985,11 +985,11 @@ A new module `drivetraffic` (18 ops) and PoC ㉙ build eight scenes.
 | Rare run-outs | count of a non-homogeneous Poisson process = ∫λ | mean = variance = ∫λ; importance sampling agrees with both the closed form and naive MC with 1/25.7 the per-trial variance |
 | Overtaking a cyclist (S053) | lateral clearance (1.5 m is a value this PoC chose, not a legal figure) | adding a margin from the measured wobble keeps ≥ 1.5 m in all 300 trials; without it 234 trials go under |
 
-![Overhead](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.gif)
+![Overhead](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.gif?v=2)
 
 *↑ Overhead view of the full run (86 s, 335 m). Blue = our car, white = parked cars, purple shadow = blind spot, orange = a sloppy oncoming driver, purple = cyclist, yellow = child. It reaches the end without touching any parked car, child, oncoming car, cyclist or bus. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.mp4)*
 
-![Space-time plot of the platoon](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/03_platoon_spacetime.png)
+![Space-time plot of the platoon](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/03_platoon_spacetime.png?v=2)
 
 *↑ The lead car only drops from 10 to 8 m/s, yet the sloppy platoon (right) grows a wave backwards and crashes (×). Careful (left) and normal (middle) settle at the equilibrium gap.*
 
@@ -1049,7 +1049,7 @@ The whole PoC: `py -3.11 examples/poc_driving_traffic.py` (figures and videos wh
 
 ## 9. Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out
 
-![Dashcam: spotting a cyclist in the mirror before a left turn; an ambulance from behind](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)
+![Dashcam: spotting a cyclist in the mirror before a left turn; an ambulance from behind](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif?v=2)
 
 *↑ Dashcam (top right = rear-view and door mirrors). Scene 1: signal 30 m before a left turn, having first checked the rear left in the door mirror; a cyclist coming along the kerb strip is spotted and allowed through first. Scene 2: an ambulance from behind. The car notices it by the siren "approaching" and the flashing light in the mirror, pulls to the left and stops short of the junction (1 m before the stop line), then moves off after it has passed. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.mp4)*
 
@@ -1071,17 +1071,17 @@ A new module `drivedecide` (18 ops) and PoC ㉚.
 | Giving way to an ambulance (S026, S027) | Road Traffic Act art. 40(1) (near a junction: avoid it, pull to the left and stop) and 40(2) (pull to the left and give way) | our car: no violation; a version that stops without pulling left and one that stops inside the junction each fail on their violation |
 | A bus pulling out (S029) | art. 31-2 "do not obstruct, unless giving way would need sudden braking or steering" → closed form of the deceleration needed | default is to wait until it leaves (no violation, closest gap to the bus 3.18 m); at 40 m the deceleration needed is 2.2957 m/s² = braking simulated at 0.1 ms steps + bisection |
 
-![Predicting the signal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/02_signal_prediction.gif)
+![Predicting the signal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/02_signal_prediction.gif?v=2)
 
 *↑ The first frame where the parallel pedestrian light's green goes out (top right, 4× zoom) says "flashing green has started", and the vehicle amber is predicted from it. The strips below show the position relative to the stop line and the dilemma zone for each car's current speed and braking state (orange = GHM reading, red = stop-line reading). The predicting car (blue) slows early; the non-predicting car (black) is inside the dilemma zone when amber comes on. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_decisions/02_signal_prediction.mp4)*
 
-![Dilemma zone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/03_dilemma_zone.png)
+![Dilemma zone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/03_dilemma_zone.png?v=2)
 
 *↑ (speed, distance to the stop line) at the moment amber comes on. Black = the stopping boundary, orange = clearing the junction (GHM), red = crossing the stop line.*
 
-![Door-mirror blind spot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/05_mirror_blind_zone.png)
+![Door-mirror blind spot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/05_mirror_blind_zone.png?v=2)
 
-![Siren spectrogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/04_siren_spectrogram.png)
+![Siren spectrogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/04_siren_spectrogram.png?v=2)
 
 *↑ Spectrogram of the synthesised siren at the left microphone. White dots = the true frequency from geometry. Higher while approaching, lower once it has passed.*
 
@@ -1139,7 +1139,7 @@ The whole PoC: `py -3.11 examples/poc_driving_decisions.py` (figures and videos 
 
 ## 10. Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel
 
-![Dashcam: slowing before a bend and staying in the lane; keeping left before a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.gif)
+![Dashcam: slowing before a bend and staying in the lane; keeping left before a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.gif?v=2)
 
 *↑ Dashcam (top right = friction-circle inset with the usage point). The car slows to a speed set by the curvature before the bend and stays in its lane through it. For the left turn, a version that keeps left first is set beside one that turns from the middle of the lane and lets a following cyclist slip in. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.mp4)*
 
@@ -1163,15 +1163,15 @@ A new module `drivelateral` (20 ops) and PoC ㉛.
 | A following cyclist slipping in | cyclist position (truth) and importance-weighted counts | keeping left: no collision (grid, naive MC and importance sampling alike). Not keeping left leaves some: importance sampling p = 0.00024; naive MC 12 hits in 24,000 trials (expected 5.8, two-sided p = 0.03). Per-trial standard deviation about 1/50 |
 | Right turn (S093) | the Rules' "keep to the centre and go slowly just inside the centre of the junction" | the plan has no violation (1.41 m from the centre); a wide turn fails as "outside the centre" and an early cut fails as "not just inside" |
 
-![Two cars from above: planned and unplanned](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.gif)
+![Two cars from above: planned and unplanned](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.gif?v=2)
 
 *↑ From above. Left = planned, right = unplanned (50 km/h throughout). Bottom strip = the speed plans of 120 drivers, bottom right = the friction circle. At the tight corner the unplanned car reaches usage 1.74, outside the circle (the model is linear, so tyre saturation is not drawn; the verdict is the usage). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.mp4)*
 
-![Off-tracking in a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png)
+![Off-tracking in a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png?v=2)
 
 *↑ Off-tracking in a left turn (from above, 1 m equal scale). Blue / green = front and rear left wheels on the keep-left circle; red / orange = the version that follows the corner with the front wheel. Tracing the corner with the front wheel brings the rear wheel into the cyclist (yellow) waiting there.*
 
-![Sample gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/07_sample_gate.png)
+![Sample gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/07_sample_gate.png?v=2)
 
 *↑ The sample gate. Blue = sampled cyclist speeds, line = reference distribution, black verticals = two-sided 0.1 % points. Red = 2,000 values with a unit error. The one-by-one gate catches only 277 of them; the population KS test catches the rest.*
 
@@ -1220,7 +1220,7 @@ The whole PoC: `py -3.11 examples/poc_driving_lateral.py` (figures and videos wh
 
 ## 11. Level crossings and right of way — stop just before and look both ways, never enter while the alarm sounds or when the far side is blocked, give way to the wider road
 
-![Dashcam: stopping before a level crossing, waiting out the alarm, looking both ways and crossing in one go](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)
+![Dashcam: stopping before a level crossing, waiting out the alarm, looking both ways and crossing in one go](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif?v=2)
 
 *↑ Dashcam (top right = overhead inset). The car stops just before the stop line, looks both ways and moves off — and the alarm starts just then, so it stops again short of the crossing. The barrier comes down, the train (80 km/h) passes, and once the barrier is fully up the car looks both ways and crosses in one go. The second half shows a version that enters although the far side is blocked and ends up stopped on the crossing (room on the far side 2.5 m < 6.0 m needed, Road Traffic Act art. 50(2)). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.mp4)*
 
@@ -1242,15 +1242,15 @@ A new module `drivecrossing` (17 ops) and PoC ㉜.
 | No-stopping zones (S105–S109) | art. 44(1) distances painted directly on a 1 mm grid | the zones match on 340,001 grid points. Stopping exactly where one wants violates 476 / 1000 times (all 6 kinds); the rule (nearest legal place) 0, walking 3.5 m further on average |
 | Reading the alarm lamps from pixels | alternating flashes (50 per minute) and the aliasing formula for the camera's fps | 0.833 Hz, phase difference 3.14 rad between the two lamps (alternating). Decimated to 1 frame in 3 it reads 0.500 Hz = the aliasing formula |
 
-![The crossing from above, three policies](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.gif)
+![The crossing from above, three policies](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.gif?v=2)
 
 *↑ From above. Left = the rule, middle = entering although the far side is blocked, right = entering during the alarm. In this particular run the violating cars clear the track before the train, but 23 of the 240 drivers who entered during the alarm were on the track when the train arrived. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.mp4)*
 
-![Right of way](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.gif)
+![Right of way](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.gif?v=2)
 
 *↑ Joining a wider road. Left = the rule (slow down and give way; the crossing car needs 0 m/s² of braking), right = naive (30 km/h throughout, forcing the crossing car to brake at 5.1 m/s²; red = sudden braking). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.mp4)*
 
-![A car stopped before a pedestrian crossing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.gif)
+![A car stopped before a pedestrian crossing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.gif?v=2)
 
 *↑ The car stops before passing an SUV stopped just short of the crossing, and waits for the pedestrian who crosses from behind it (art. 38(2)). The second half passes at 40 km/h and touches the pedestrian despite braking once they appear. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.mp4)*
 
@@ -1305,7 +1305,7 @@ The whole PoC: `py -3.11 examples/poc_driving_crossing.py` (figures and videos w
 
 ## 12. Overtaking and what you cannot see — wait while the sight distance is short, return once the car shows in the rear-view mirror, do not obstruct the ring, and curve mirrors make cars look far away
 
-![A curve mirror seen from the driver's seat: the car in the mirror looks more than 130 m away, but it is about 30 m](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.gif)
+![A curve mirror seen from the driver's seat: the car in the mirror looks more than 130 m away, but it is about 30 m](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.gif?v=2)
 
 *↑ A curve mirror at a blind T-junction (convex, R 3 m, diameter 0.8 m — assumed). Left = the mirror seen from the driver's seat (the inside of the mirror is ray-traced), top right = the driver's view, bottom right = true positions and mirror coverage from above. Read from its image size as if the mirror were flat, the red car looks more than 130 m away; it is really about 30 m from the mirror. Because the mirror is seen obliquely, the vertical reading (k_s = 4.75) and the horizontal reading (k_t = 8.58) differ. At the end the car comes into direct view from behind the wall. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.mp4)*
 
@@ -1326,11 +1326,11 @@ A new module `drivepass` (17 ops) and PoC ㉝.
 | Crest (S065, S081) | Road Structure Ordinance (eye 1.2 m, object 10 cm, crest curve radii) and the sight-distance table of art. 19 | reproduces three table rows (20.0 / 20, 161.0 / 160, 209.4 / 210 m). The PoC road's crest: closed form 89.28 m / sight-line scan 89.25 m. The stretch where sight distance is short of D* is 522 m, and the "vicinity" of art. 30 (30 m, assumed) covers only 60 m of it — the rest is stopped by the art. 28(4) judgement |
 | Curve mirror (S064) | closed-form convex-mirror imaging vs exact 3-D ray tracing | seen head-on, the distance read from image size is k·a (k = 1 + 2e/R). Looking at an R 3 m mirror from 8 m, a car 30 m away looks 190.0 m away (ray tracing 190.04 m). At 45° the readings split as Coddington's equations say: 142 m vertically, 257 m horizontally. The near blind stretch the mirror does not show on the road is 8.16 m (scan of 20,001 rays) |
 
-![Overtaking: rule and naive with the same driver and the same oncoming traffic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)
+![Overtaking: rule and naive with the same driver and the same oncoming traffic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif?v=2)
 
 *↑ The same driver (#114) and the same oncoming traffic. First half = naive: 144 m before the crest, with no oncoming car in the visible range, it pulls out and cuts back in right after passing (gap 0.1 m) — PET 0.8 s with the oncoming car that the hill was hiding. Second half = rule: it waits while sight distance is short of D* = 467 m, pulls out 30 m past the crest, and returns at a gap of 19.7 m, where the whole lead car shows in the rear-view mirror — PET 31.1 s. Top = rear-view mirror, bottom = side view of the profile (height exaggerated). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.mp4)*
 
-![Roundabout](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.gif)
+![Roundabout](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.gif?v=2)
 
 *↑ Turning right at a roundabout (passing two exits). Left = rule (waits for the ring traffic, enters slowly, and signals left at the yellow dot, after passing the exit before its own); right = naive (enters at speed, forcing a ring car to brake hard, signals right, and signals left only at the exit). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.mp4)*
 
@@ -1383,7 +1383,7 @@ The whole PoC: `py -3.11 examples/poc_driving_pass.py` (figures and videos when 
 
 ## 13. Humanoids on the crosswalk — keep the car's physics exact, draw the walkers cheaply
 
-![Seven humanoid models crossing (pre-rendered impostors with masks)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)
+![Seven humanoid models crossing (pre-rendered impostors with masks)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif?v=2)
 
 *↑ Seven real robots from MuJoCo Menagerie (Unitree G1 and H1, Booster T1, Berkeley Humanoid, Fourier N1, PAL TALOS, Apptronik Apollo) crossing at a pedestrian crossing, seen from the car camera. Each body is drawn in advance from 16 directions × 12 gait phases; every frame scales that picture and pastes it, comparing depth with whatever stands in front. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
 
@@ -1405,11 +1405,11 @@ New module `drivehumanoid` (4 ledger ops plus `fs.humanoid_walk_clip`) and PoC �
 | Pre-rendered impostors | the same pose drawn directly from the mesh | when direction and phase fall exactly on the steps, IoU 0.984, 0.991, 0.990, 1.000 at 6–12 m; a wall in front takes 612 pixels to 0 |
 | Cost per frame (640 × 400, 10 bodies) | time to draw the ground alone | impostors 1.02×, decimated mesh 1.23×, fine mesh (30,000 triangles each) 4.50× |
 
-![The same pose drawn three ways](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png)
+![The same pose drawn three ways](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png?v=2)
 
 *↑ G1 in one pose, drawn three ways: fine mesh (left), mesh decimated to 1,497 triangles (middle), impostor (right). In the middle the neck collapses into the grid and disappears, so the head floats (IoU 0.77). The impostor keeps the look even with direction and phase rounded to the steps (IoU 0.85).*
 
-![Decimation table for the seven models](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
+![Decimation table for the seven models](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png?v=2)
 
 *↑ The visual meshes of the seven models decimated to a budget of 1,500 triangles each. Apollo starts at 1.55 million triangles, so its cell grows to 16.2 cm and its largest shift is 14.1 cm.*
 
