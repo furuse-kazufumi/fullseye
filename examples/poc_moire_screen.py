@@ -643,12 +643,16 @@ def section8_tool_gaps():
     for q in ("aliasing", "notch"):
         named = [r["op"] for r in fs.op_find(q) if q in r["op"].lower()]
         assert not named, (q, named)
-    moire_hits = [r["op"] for r in fs.op_find("moire")]
-    assert moire_hits == ["halftone_moire_period"], moire_hits
+    # ★2026-10-13: `lattice_moire_peak`(flyvision、標本化格子がナイキストを超えた模様から作る
+    #   モアレの尖り = ピーク/背景中央値)も引けるようになった。網点の 2 版のうなりとは別の
+    #   モアレ(格子×周期面)で、ディスプレイ・メッシュ・織物の検査カメラ側の語。
+    moire_hits = sorted(r["op"] for r in fs.op_find("moire"))
+    assert moire_hits == ["halftone_moire_period", "lattice_moire_peak"], moire_hits
     print("  (e) `fs.op_find(\"aliasing\")` / `(\"notch\")` は依然として空。")
     print("      ★`fs.op_find(\"moire\")` は **2026-09-23 に埋まった** ——")
     print("      この PoC の提案(「族の名前か docstring に入れておくと遠回りが")
     print("      減る」)がそのまま実装され、`halftone_moire_period` で引ける。")
+    print("      2026-10-13 からは格子×周期面のモアレの尖り `lattice_moire_peak` も並ぶ(%d 件)。" % len(moire_hits))
     print("      ディスプレイ検査・印刷検査で最初に引く語はあと 2 語。")
     print()
     print("  次にやるべきこと: (b) の `notch_filter` と (c) の方向別スペクトルを")

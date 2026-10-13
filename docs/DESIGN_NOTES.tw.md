@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1385 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1388 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -758,6 +758,7 @@
 - **L586** _(ja)_ — ★2026-09-23: 語の網を ("notch", "destripe", "mura") に狭めた。npr 族が入って 'moire' と 'periodic' が引っかかるようになったが、`halftone_moire_period` は **うなりの周期を予言する** op であって**落とす** op ではない —— 穴は残っている。 「語で引く穴の固定」は、別の意味で同じ語を使う族が来た瞬間に偽陽性になる (この PoC は (a) で `fly_hex_lattice` の例を既に書いている)。**穴の主張は 語でなく「何ができないか」で書くこと**: ここで無いのは「特定の (fx, fy) を 落とす」op であって、「モアレという語を含む op」ではない。
 - **L636** _(ja)_ — ★2026-09-23: **"moire" はここから外した** —— この PoC が「族の名前か docstring に入れておけ」と書いた提案がそのまま実装され、`halftone_moire_period` が 引けるようになったため。穴の記録は**埋まったら埋まったと書く**(消さない): 消すと「昔から在った」ことになり、何が効いたのかが記録から落ちる。
 - **L640** _(ja)_ — ★元の判定は「名前にその語を持つ op が返らないこと」(docstring 一致は数えない)。 `op_find` は docstring も語幹も拾うので、素の `== []` にすると `edge_alias_energy` のような無関係の族で必ず鳴る(一度そう書いて落ちた)。
+- **L646** _(ja)_ — ★2026-10-13: `lattice_moire_peak`(flyvision、標本化格子がナイキストを超えた模様から作る モアレの尖り = ピーク/背景中央値)も引けるようになった。網点の 2 版のうなりとは別の モアレ(格子×周期面)で、ディスプレイ・メッシュ・織物の検査カメラ側の語。
 
 ## `examples/poc_multibeam_bathymetry.py`
 
@@ -851,9 +852,10 @@
 - **L855** — ★FM 一側**不收窄**搜尋範圍（收窄也不改變結果，但為了堵住「AM 的折返是因為搜尋範圍」這種藉口）。
 - **L1242** — ★兩級失效的點，必定是粗略值超過單元半徑的點（固定包含關係）
 - **L1277** _(ja)_ — ★2026-09-13: 'lattice' だけ例外を 1 つ許す。flyvision 族の `fly_hex_lattice`(複眼の六角格子)が この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は 残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。 「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
-- **L1283** _(ja)_ — ★2026-09-23: **'halftone' / 'screen' / 'moire' の 3 語は埋まった**。npr 族の `halftone_screen`(回転網点の合成)と `halftone_moire_period`(2 版のうなりの 周期と向きを閉形式で)が入り、この PoC が「入口が 1 つも無い」と書いていた うちの合成とモアレ予言はファサードから引ける。**穴の記録は消さずに、埋まった 語を「在ることの検査」に裏返す** —— 消すと「昔から在った」ことになる。 残っている穴は 'rosette' / 'misregist' / 'lpi' / 'trapping'(版ずれの測定、 スクリーン角/線数の推定、トラッピング)で、そちらが印刷検査の本丸。
-- **L1327** — ★基準也加入雜訊 —— 零雜訊影像會讓 star_detect 因「0 顆星」而拋出 ValueError（這本身就是正確的 fail-closed）。
-- **L1350** — ★2026-09-08：因本 PoC 的指摘而修正了 op 一側。在 docstring 中帶實測數字寫明「不能用於重複結構」，並讓它把投票的**第二高峰 / 最高峰**作為 `vote_margin` 返回。用贊成率無法區分的兩者，用這個數就能區分。
+- **L1281** _(ja)_ — ★2026-10-13: 縞に近づくハエの眼(poc_zebra_stripes_fly_eye)の `fly_vogel_lattice`(フィボナッチ の複眼)と `lattice_moire_peak`(標本化格子のモアレの尖り)も同じ語を含む。どちらも複眼の 標本化格子で、網点の格子ではない —— 名指しで足し、印刷の穴は残ったまま。
+- **L1286** _(ja)_ — ★2026-09-23: **'halftone' / 'screen' / 'moire' の 3 語は埋まった**。npr 族の `halftone_screen`(回転網点の合成)と `halftone_moire_period`(2 版のうなりの 周期と向きを閉形式で)が入り、この PoC が「入口が 1 つも無い」と書いていた うちの合成とモアレ予言はファサードから引ける。**穴の記録は消さずに、埋まった 語を「在ることの検査」に裏返す** —— 消すと「昔から在った」ことになる。 残っている穴は 'rosette' / 'misregist' / 'lpi' / 'trapping'(版ずれの測定、 スクリーン角/線数の推定、トラッピング)で、そちらが印刷検査の本丸。
+- **L1330** — ★基準也加入雜訊 —— 零雜訊影像會讓 star_detect 因「0 顆星」而拋出 ValueError（這本身就是正確的 fail-closed）。
+- **L1353** — ★2026-09-08：因本 PoC 的指摘而修正了 op 一側。在 docstring 中帶實測數字寫明「不能用於重複結構」，並讓它把投票的**第二高峰 / 最高峰**作為 `vote_margin` 返回。用贊成率無法區分的兩者，用這個數就能區分。
 
 ## `examples/poc_print_warpage_risk.py`
 
@@ -2409,14 +2411,15 @@
 - **L45** — ★目錄、提示和轉接器以出貨模組 ``typed_catalog`` 為正本（2026-09-05）。以前它們住在這裡，backends_typed 把 tools/ 加進 sys.path 來讀取 -- 結果在 wheel 中 tb_* 143 op 悄然消失。把方向反了過來。
 - **L284** _(ja)_ — llmcore(2026-09-24): tokens は**画像パッチ**を種にする。★一様乱数だと どの行も似た向きになり、注意の重みが全行ほぼ一様になって「走ったが 意味のある出力でない」側に落ちる。滑らかな画像を 8x8 で切ると、 近い場所のパッチが近い向きを向く = 注意が構造を持つ。
 - **L305** — 事件位置（點過程）-- point_spectrum 的入口。★**不要只用均勻隨機**：沒有週期成分就一次也不會觸及「尋找週期的 op」的有意義行為，所以用把 12 個無關事件混入週期 17.0 序列的**結構化資料**作種子（隨機-only 的測試會隱藏結構缺陷，是本 repo 的規律）。
-- **L922** — ★混有非有限值的點雲會**讓 KD 樹的建構本身以生的 ValueError 崩潰**（scipy："data must be finite"）。池的設計是記錄 NONFINITE 後仍保留值，所以髒點雲來到這裡是預期之內 -- 由建構方防範。2026-09-06 實際踩到：新的族增加後連鎖的走法變了，在 seed 3_000_0xx 命中這條路徑，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。無法綁定的輸入約定為跳過而非拋出例外）。
-- **L1274** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L7121** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7243** — ★到 2026-09-02 為止一直是 ``lambda v: True`` = **因為述詞被計為「有」，反而比沒有更糟**（點檢腳本也會把它計為「有述詞」）。實測下它連 None / 42 / 字串 / dict 都放行。正典是透過**全部執行**消費側 6 個 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）來確定的：6 個 op 都只接受上面兩種形狀，其餘的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 變成指名的 fail-closed（實測）。因為**不接受 (2,N)**，把 2-tuple 用 np.stack 壓成 (2,N) 的 3 個 adapter 改成了 axis=1。長度不同的兩條（histogram 的 counts/edges）也不是「對」，予以拒絕。
-- **L7361** — ★「恰好 2 個元素」與 pose（用 `len >= 2` 允許 info）**是刻意不同的**。實測 2026-09-02：把 mesh 作為單個引數接收的 4 個既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）對 3-tuple 會送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 個元素。也就是說 **本 repo 的 mesh sort 正典是 2-tuple**，多餘的元素不是「資訊更多」，而是讓下游全滅的型別層面的謊言。唯一的例外 `voxel_to_mesh`（回傳 (v, f, n)）現在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（與 gicp / vol_label 同樣處理）。
-- **L7570** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7591** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7699** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L795** _(ja)_ — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
+- **L928** — ★混有非有限值的點雲會**讓 KD 樹的建構本身以生的 ValueError 崩潰**（scipy："data must be finite"）。池的設計是記錄 NONFINITE 後仍保留值，所以髒點雲來到這裡是預期之內 -- 由建構方防範。2026-09-06 實際踩到：新的族增加後連鎖的走法變了，在 seed 3_000_0xx 命中這條路徑，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。無法綁定的輸入約定為跳過而非拋出例外）。
+- **L1280** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
+- **L7127** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7249** — ★到 2026-09-02 為止一直是 ``lambda v: True`` = **因為述詞被計為「有」，反而比沒有更糟**（點檢腳本也會把它計為「有述詞」）。實測下它連 None / 42 / 字串 / dict 都放行。正典是透過**全部執行**消費側 6 個 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）來確定的：6 個 op 都只接受上面兩種形狀，其餘的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 變成指名的 fail-closed（實測）。因為**不接受 (2,N)**，把 2-tuple 用 np.stack 壓成 (2,N) 的 3 個 adapter 改成了 axis=1。長度不同的兩條（histogram 的 counts/edges）也不是「對」，予以拒絕。
+- **L7367** — ★「恰好 2 個元素」與 pose（用 `len >= 2` 允許 info）**是刻意不同的**。實測 2026-09-02：把 mesh 作為單個引數接收的 4 個既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）對 3-tuple 會送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 個元素。也就是說 **本 repo 的 mesh sort 正典是 2-tuple**，多餘的元素不是「資訊更多」，而是讓下游全滅的型別層面的謊言。唯一的例外 `voxel_to_mesh`（回傳 (v, f, n)）現在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（與 gicp / vol_label 同樣處理）。
+- **L7576** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7597** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7705** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

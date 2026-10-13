@@ -1278,7 +1278,10 @@ def section9_tool_gaps():
     #   この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は
     #   残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。
     #   「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
-    allowed_names = {"lattice": {"fly_hex_lattice"}}          # 名前に語を含んでよい op(名指し)
+    # ★2026-10-13: 縞に近づくハエの眼(poc_zebra_stripes_fly_eye)の `fly_vogel_lattice`(フィボナッチ
+    #   の複眼)と `lattice_moire_peak`(標本化格子のモアレの尖り)も同じ語を含む。どちらも複眼の
+    #   標本化格子で、網点の格子ではない —— 名指しで足し、印刷の穴は残ったまま。
+    allowed_names = {"lattice": {"fly_hex_lattice", "fly_vogel_lattice", "lattice_moire_peak"}}   # 名前に語を含んでよい op(名指し)
     allowed_ledger = {"lattice": "opsflyvision"}              # op_find が拾ってよい台帳(docstring が語を含む)
     # ★2026-09-23: **'halftone' / 'screen' / 'moire' の 3 語は埋まった**。npr 族の
     #   `halftone_screen`(回転網点の合成)と `halftone_moire_period`(2 版のうなりの

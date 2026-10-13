@@ -792,8 +792,14 @@ def _b_pose_error(pool, rng):
     ps = pool.get("pose")
     if not ps:
         return None
-    r1, t1 = ps[rng.integers(len(ps))]
-    r2, t2 = ps[rng.integers(len(ps))]
+    # ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す
+    #   (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに
+    #   展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく
+    #   ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
+    p1 = ps[rng.integers(len(ps))]
+    p2 = ps[rng.integers(len(ps))]
+    r1, t1 = p1[0], p1[1]
+    r2, t2 = p2[0], p2[1]
     return ([r1, t1, r2, t2], {})
 
 

@@ -4,7 +4,7 @@ dim: flyvision
 category: alias
 in: signal × table
 out: table
-examples: [poc_zebra_stripes_fly_eye]
+examples: [poc_moire_screen, poc_print_registration, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -63,6 +63,8 @@ is no spectrum to rank — its ratio would be 0/0), a negative *fmax*, an
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_moire_screen](../../../../examples/poc_moire_screen.py) — `py -3.11 examples/poc_moire_screen.py`
+- [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 - [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
