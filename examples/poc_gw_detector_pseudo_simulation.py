@@ -473,6 +473,7 @@ def main():
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))
         sys.exit(1)
+    assert not figs.errors(), figs.errors()
     print("PASS")
 
 

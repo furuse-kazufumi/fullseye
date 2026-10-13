@@ -886,7 +886,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-13: shape_from_polarization(偏光からの形状復元)8 op を新しい族として追加(153 → 161)。
     # 2026-10-13: light_transport(相互反射・直接/大域の分離・縞と ToF の多経路)11 op を新しい族として追加(161 → 172)。
     # 2026-10-13: sensorchar に EMVA 1288 Linear の残りの式など 9 op、新しい族 sensorgeneral(General)3 op(172 → 184)。
-    assert len(opsoptics.OPSOPTICS) == 184
+    # 2026-10-14: cavity(Fabry-Perot・Michelson・PDH・量子雑音、重力波望遠鏡の式)5 op を新しい族として追加(184 → 189)。
+    assert len(opsoptics.OPSOPTICS) == 189
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
@@ -895,7 +896,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "cavity", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "material", "mirror", "optimization",
         "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
