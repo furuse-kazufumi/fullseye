@@ -265,8 +265,13 @@ def main() -> int:
     small, big = res[(128, 160)], res[(512, 640)]
     gate("式 51: 512 × 640 の線形なセンサは通り、128 × 160 では線形でも落ちることがある(2 枚の差の分散の揺れ √(2/NM))",
          all(v < 0.03 for v in big) and any(v >= 0.03 for v in small) and np.median(small) > 2 * np.median(big))
-    ok51 = SC.emva_ptc_linearity_check(mu[1:], var[1:], mu[0], var[0], mu_sat)
-    print("  (1 節のセンサ 128 × 96 では式 51 = %.3f —— 同じ理由で数字は読まない)" % ok51["mean_rel_dev"])
+    # 区間の数は 0〜70 % に入った点の数から(式 47 は Q > P + 3 点を要る)。CI の reduced 予算は露光 16 段で
+    # 0〜70 % に 9 点しか入らず、既定の 6 区間(係数 9)では当てはめが立たない(2026-10-13 に CI だけ赤)。
+    n_used = int(ptc["used"].sum())
+    n_int = max(1, min(6, n_used - 4))
+    ok51 = SC.emva_ptc_linearity_check(mu[1:], var[1:], mu[0], var[0], mu_sat, n_intervals=n_int)
+    print("  (1 節のセンサ 128 × 96 では式 51 = %.3f(%d 点・%d 区間)—— 同じ理由で数字は読まない)" % (
+        ok51["mean_rel_dev"], ok51["n_points"], n_int))
 
     print("== 10. 式 3・4(光子数)・式 25(SNR の逆)・式 69(総合 SNR)")
     c0 = SC.emva_photon_exposure(1.0, 1.0, 1.0, 1.0)[0]
