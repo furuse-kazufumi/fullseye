@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1384. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1385. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -570,6 +570,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_em_second_opinion.py`
 
 - **L115** _(ja)_ — ★面積で揃える: 仕込んだ融合は「min_area 以上の 2 ラベルの和」なので必ず大きい。負例をそのまま 使うと「大きいラベル = 怪しい」だけで AUC が出てしまう(最初の実測: 弦 0.86 に対し面積だけで 0.87)。 負例は正例と同じ下限(2 × merge_area)以上の成分に限り、基準の「面積だけ」も同じ集合で測る。
+
+## `examples/poc_emva1288_in_camera_processing.py`
+
+- **L430** _(ja)_ — ★壁時計でなく CPU 時間で掛ける: スイートが PoC を 6 本並べて走らせると、単独 31 秒が壁時計 115 秒になった(2026-10-13 の全量)。 この PoC が自分で使う計算量を見るのが目的なので、他のプロセスの混み具合で揺れない量にする。
 
 ## `examples/poc_endless_zoom_and_turning_solids.py`
 

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1384. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1385. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -570,6 +570,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_em_second_opinion.py`
 
 - **L115** _(ja)_ — ★面積で揃える: 仕込んだ融合は「min_area 以上の 2 ラベルの和」なので必ず大きい。負例をそのまま 使うと「大きいラベル = 怪しい」だけで AUC が出てしまう(最初の実測: 弦 0.86 に対し面積だけで 0.87)。 負例は正例と同じ下限(2 × merge_area)以上の成分に限り、基準の「面積だけ」も同じ集合で測る。
+
+## `examples/poc_emva1288_in_camera_processing.py`
+
+- **L430** _(ja)_ — ★壁時計でなく CPU 時間で掛ける: スイートが PoC を 6 本並べて走らせると、単独 31 秒が壁時計 115 秒になった(2026-10-13 の全量)。 この PoC が自分で使う計算量を見るのが目的なので、他のプロセスの混み具合で揺れない量にする。
 
 ## `examples/poc_endless_zoom_and_turning_solids.py`
 
