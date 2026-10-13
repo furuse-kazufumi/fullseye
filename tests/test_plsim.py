@@ -149,7 +149,9 @@ def test_visibility_table_closed_forms_and_boundaries():
     # 沈みの速度 0 には境界が無い: inf でなく None(探針の nonfinite 契約、2026-10-13)
     t0 = P.pl_groove_visibility(2.0, 20.0, noise_rel=0.02)
     assert t0["L_star_sink_px"] is None and t0["contrast_sink"] == 0.0 and t0["visible_sink"] is False
-    assert all(np.isfinite(v) for v in t0.values() if isinstance(v, float))
+    finite_vals = [v for v in t0.values() if isinstance(v, float)]
+    assert len(finite_vals) >= 10                                    # 空の all() で通らないよう件数を先に
+    assert all(np.isfinite(v) for v in finite_vals)
     # 影の FWHM は w ≪ L で 2L·ln2 に近づく
     f = P.pl_groove_visibility(1.0, 50.0)["fwhm_shadow_px"]
     assert f == pytest.approx(2 * 50 * np.log(2), rel=0.02)
