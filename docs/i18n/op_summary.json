@@ -12267,6 +12267,60 @@
    "de": "Sechs Richtungsantworten pro Ommatidium hinein, ein lokaler Flussvektor heraus.",
    "hi": "हर ommatidium के लिए छह directional responses इनपुट, एक local flow vector आउटपुट।"
   },
+  "flyvision/fly_view_plane_texture": {
+   "fp": "e6a5ba47e3da",
+   "ja": "正面の周期面を各個眼がどう見るか —— 解析的に積分する(画像を再標本化しない)。",
+   "zh": "每个小眼如何看到正面的周期性表面——解析积分（不重采样图像）。",
+   "tw": "每個小眼如何看到正面的週期性表面——解析積分（不重取樣影像）。",
+   "ko": "정면의 주기 표면을 각 낱눈이 어떻게 보는가 —— 해석적으로 적분(영상을 재표본화하지 않음).",
+   "de": "Was jedes Ommatidium von einer periodischen Frontalfläche sieht — analytisch integriert (ohne Bild-Resampling).",
+   "hi": "सामने की periodic surface को हर ommatidium कैसे देखता है — analytic integration (image resampling नहीं)।"
+  },
+  "flyvision/sampling_alias_distance": {
+   "fp": "7b8939fe96f2",
+   "ja": "周期パターンが標本化格子で折り返す(エイリアスになる)距離 —— 検査カメラの作動距離の規則。",
+   "zh": "周期性目标在采样晶格上发生混叠的距离——检测相机工作距离的规则。",
+   "tw": "週期性目標在取樣晶格上發生混疊的距離——檢測相機工作距離的規則。",
+   "ko": "주기 패턴이 표본화 격자에서 접혀(에일리어싱) 보이기 시작하는 거리 —— 검사 카메라 작동 거리의 규칙.",
+   "de": "Die Distanz, ab der ein periodisches Ziel auf einem Abtastgitter aliast — die Arbeitsabstandsregel einer Prüfkamera.",
+   "hi": "वह दूरी जिसके आगे periodic target sampling lattice पर alias करता है — inspection camera के working distance का नियम।"
+  },
+  "flyvision/fly_expansion_readout": {
+   "fp": "837128f68fb4",
+   "ja": "眼全体の流れから衝突時間 τ を読む —— 縦縞のアパーチャ効果は厳密に 2τ。",
+   "zh": "由整个眼的光流读出碰撞时间——孔径效应给出恰好 2 倍。",
+   "tw": "由整個眼的光流讀出碰撞時間——孔徑效應給出恰好 2 倍。",
+   "ko": "눈 전체의 흐름에서 충돌까지의 시간을 읽음 —— 조리개 효과는 정확히 2배.",
+   "de": "Zeit bis zum Kontakt aus dem Fluss über das ganze Auge — und das Zweifache des Aperturproblems.",
+   "hi": "पूरी आँख के flow से time-to-contact — और aperture effect का ठीक 2 गुना।"
+  },
+  "flyvision/traj_tau_dot": {
+   "fp": "3c1865f418f6",
+   "ja": "実測の 3-D 軌跡に沿った距離・接近速度・τ・τ̇(Lee 1976)。",
+   "zh": "沿实测 3-D 轨迹的距离、接近速度、tau 与 tau 的导数。",
+   "tw": "沿實測 3-D 軌跡的距離、接近速度、tau 與 tau 的導數。",
+   "ko": "실측 3-D 궤적을 따른 거리·접근 속도·tau·tau의 미분.",
+   "de": "Abstand, Annäherungsgeschwindigkeit, Tau und Tau-Punkt entlang einer gemessenen 3-D-Trajektorie.",
+   "hi": "मापी गई 3-D trajectory के साथ distance, approach speed, tau और tau-dot।"
+  },
+  "flyvision/fly_vogel_lattice": {
+   "fp": "ec16d102b6f8",
+   "ja": "フィボナッチ(Vogel 螺旋)の複眼 —— 六角の眼と同じ個眼数・同じ平均間隔で、格子を持たない。",
+   "zh": "斐波那契（Vogel 螺旋）复眼：与六角眼相同的小眼数和平均间距，但没有晶格。",
+   "tw": "費波那契（Vogel 螺旋）複眼：與六角眼相同的小眼數和平均間距，但沒有晶格。",
+   "ko": "피보나치(Vogel 나선) 겹눈 —— 육각 눈과 같은 낱눈 수·같은 평균 간격이지만 격자가 없음.",
+   "de": "Ein Fibonacci-Komplexauge (Vogel-Spirale): gleiche Ommatidienzahl und gleicher mittlerer Abstand wie das hexagonale Auge, aber kein Gitter.",
+   "hi": "Fibonacci (Vogel spiral) compound eye — hexagonal आँख जितनी ही ommatidia और औसत दूरी, पर कोई lattice नहीं।"
+  },
+  "flyvision/lattice_moire_peak": {
+   "fp": "bbc3f4493589",
+   "ja": "標本化した信号の最強の低周波成分がどれだけ鋭いか —— 格子が解像できない模様から作るモアレの尖り。",
+   "zh": "采样信号中最强低频成分的尖锐程度——晶格对无法分辨的纹理所产生的莫尔条纹。",
+   "tw": "取樣訊號中最強低頻成分的尖銳程度——晶格對無法分辨的紋理所產生的莫爾條紋。",
+   "ko": "표본화된 신호의 가장 강한 저주파 성분이 얼마나 날카로운가 —— 격자가 분해하지 못하는 무늬에서 생기는 무아레.",
+   "de": "Wie scharf die stärkste niederfrequente Komponente eines abgetasteten Signals ist — der Moiré, den ein Gitter aus einer nicht auflösbaren Textur macht.",
+   "hi": "sampled signal के सबसे मज़बूत low-frequency component की तीक्ष्णता — वह moiré जो lattice एक अविभेद्य texture से बनाता है।"
+  },
   "flyvision/fly_hex_lattice": {
    "fp": "6ebc935312b8",
    "ja": "複眼の六角個眼格子 —— 各個眼の方位・仰角と体座標の視線単位ベクトル。",

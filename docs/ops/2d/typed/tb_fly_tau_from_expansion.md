@@ -88,6 +88,7 @@ tb_fly_tau_from_expansion 0.50 0.50
 
 次の例は元の台帳 op `fly_tau_from_expansion` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
+- [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

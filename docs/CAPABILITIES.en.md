@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 43 capabilities**
+**Currently 44 capabilities**
 
-## Measure (15)
+## Measure (16)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -36,6 +36,14 @@ Draw complex analysis as an area rather than a curve: the value field of a ratio
 Operators: `cplx_plane_grid`, `cplx_rational_field`, `cplx_domain_colour`, `cplx_newton_basins`, `cplx_escape_time`, `mandelbrot_interior`, `potential_flow_joukowski`, `joukowski_circulation`
 
 Runnable: `poc_complex_plane_fields`
+
+### [The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras)](capabilities/compound-eye-aliasing-and-ttc.md)
+
+`sampling_alias_distance` gives the closed-form distance beyond which a period P aliases on a lattice of pitch Δφ (P cos²θ/(√3 Δφ) for hexagonal, 2Δφ for square) and the contrast left at Nyquist — the working-distance rule of an inspection camera once Δφ is read as the pixel IFOV. `fly_view_plane_texture` integrates a periodic frontal surface analytically under the hexagonal ommatidial lattice and a Gaussian acceptance function (no resampling); fed to the HR correlator it shows where the sign flips. `fly_expansion_readout` reads τ from the flow over the whole eye and shows the aperture effect of vertical stripes returns exactly 2τ. `traj_tau_dot` gives distance, closing speed, τ and τ̇ along a measured 3-D trajectory. `fly_vogel_lattice` and `lattice_moire_peak` compare a Fibonacci (Vogel-spiral) eye with the hexagonal one at the same count and mean spacing: sharp moire versus diffuse noise, best sub-Nyquist resolution for the hexagon, and false flow set by pair spacing rather than by lattice regularity.
+
+Operators: `sampling_alias_distance`, `fly_view_plane_texture`, `fly_expansion_readout`, `fly_vogel_lattice`, `lattice_moire_peak`, `traj_tau_dot`, `fly_t4t5_field`, `fly_tau_from_expansion`
+
+Runnable: `poc_zebra_stripes_fly_eye`
 
 ### [Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)](capabilities/emva1288-camera-datasheets.md)
 

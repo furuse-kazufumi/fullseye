@@ -76,7 +76,7 @@ negative or all-zero movie.
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[fly_onoff_split](fly_onoff_split.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_onoff_split](fly_onoff_split.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
 
 ## 同カテゴリ(`lamina`)
 

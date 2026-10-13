@@ -3082,6 +3082,22 @@
    }
   },
   {
+   "id": "poc_zebra_stripes_fly_eye",
+   "group": "wing_imaging",
+   "media": "02_reversal_ring.gif",
+   "motion": true,
+   "thumb_src": "02_reversal_ring.gif",
+   "label": {
+    "ja": "縞に近づくハエの眼",
+    "en": "A fly's eye closing in on stripes",
+    "zh": "逼近条纹的蝇眼",
+    "tw": "逼近條紋的蠅眼",
+    "ko": "줄무늬에 다가가는 파리의 눈",
+    "de": "Ein Fliegenauge nähert sich Streifen",
+    "hi": "धारियों की ओर बढ़ती मक्खी की आँख"
+   }
+  },
+  {
    "id": "poc_battery_ct_degradation",
    "group": "wing_threed",
    "media": "01_xray_projection.png",
@@ -5560,6 +5576,13 @@
    }
   ],
   "titles": {
+   "compound-eye-aliasing-and-ttc": {
+    "zh": "以闭式求周期图案在采样晶格上混叠的距离，以及条纹所扰乱的碰撞时间（复眼与检测相机）",
+    "tw": "以閉式求週期圖案在取樣晶格上混疊的距離，以及條紋所擾亂的碰撞時間（複眼與檢測相機）",
+    "ko": "주기 패턴이 표본화 격자에서 접히는 거리와 줄무늬가 어지럽히는 충돌 시간을 닫힌 형식으로 측정(겹눈·검사 카메라)",
+    "de": "Die Distanz, ab der ein periodisches Muster auf einem Abtastgitter aliast, und die von Streifen verfälschte Zeit bis zum Kontakt — in geschlossener Form (Komplexaugen und Prüfkameras)",
+    "hi": "वह दूरी जिस पर periodic pattern sampling lattice पर alias करता है, और धारियों से बिगड़ा time-to-contact — closed form में (compound eye और inspection camera)"
+   },
    "pl-carrier-diffusion-visibility": {
     "zh": "用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）",
     "tw": "用載子擴散 PSF 與缺陷類型區分 PL 影像中細溝槽消失的原因（Si 晶圓·太陽能電池的 PL/EL 檢測）",

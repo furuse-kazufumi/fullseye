@@ -4,7 +4,7 @@ dim: flyvision
 category: lattice
 in: 
 out: table
-examples: [poc_fly_optomotor_steering, poc_fly_vision, poc_print_registration]
+examples: [poc_fly_optomotor_steering, poc_fly_vision, poc_print_registration, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -64,14 +64,15 @@ unknown *geometry*.
 - [poc_fly_optomotor_steering](../../../../examples/poc_fly_optomotor_steering.py) — `py -3.11 examples/poc_fly_optomotor_steering.py`
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
 - [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
+- [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_matched_filter](../selfmotion/fly_matched_filter.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_eye_merge](../selfmotion/fly_eye_merge.md) · [fly_hex_resample](../sample/fly_hex_resample.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_matched_filter](../selfmotion/fly_matched_filter.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_eye_merge](../selfmotion/fly_eye_merge.md) · [fly_view_plane_texture](../stimulus/fly_view_plane_texture.md) · [fly_hex_resample](../sample/fly_hex_resample.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md)
 
 ## 同カテゴリ(`lattice`)
 
-—
+[fly_vogel_lattice](fly_vogel_lattice.md)
 
 ---
 *Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

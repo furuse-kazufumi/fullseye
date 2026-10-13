@@ -74,7 +74,7 @@ finite numbers or is zero-length, an unknown *motion*, and a non-positive
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[fly_lamina_filter](../lamina/fly_lamina_filter.md) · [fly_onoff_split](../lamina/fly_onoff_split.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](fly_egomotion_from_flow.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_lamina_filter](../lamina/fly_lamina_filter.md) · [fly_onoff_split](../lamina/fly_onoff_split.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](fly_egomotion_from_flow.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
 
 ## 同カテゴリ(`selfmotion`)
 

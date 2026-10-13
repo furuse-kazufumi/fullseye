@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-43 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+44 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -93,6 +93,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Kameramatrix K aus mehreren Ansichten einer Ebene schätzen (Zhang): [Erklärung](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · Beispiele [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
 - Die komplexe Ebene als Fläche sehen (Domain Colouring, Einzugsgebiete, Fluchtzeit, Umströmung): [Erklärung](../../capabilities/complex-plane-fields.md) _(ja)_ · Beispiele [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- Die Distanz, ab der ein periodisches Muster auf einem Abtastgitter aliast, und die von Streifen verfälschte Zeit bis zum Kontakt — in geschlossener Form (Komplexaugen und Prüfkameras): [Erklärung](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · Beispiele [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General): [Erklärung](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · Beispiele [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - Verzeichnungskoeffizienten aus geraden Linien schätzen (Plumb-Line, ohne Schachbrett): [Erklärung](../../capabilities/estimate-lens-distortion.md) _(ja)_ · Beispiele [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - Messungen auf die Erde bringen (ECEF, Höhenbezug, lokales ENU): [Erklärung](../../capabilities/geodetic-frames.md) _(ja)_ · Beispiele [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
@@ -154,7 +155,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-226 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+227 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -305,8 +306,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (16)</summary>
+<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (17)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="Ein Fliegenauge nähert sich Streifen" width="200" height="200"><b>&#9654;</b><span>Ein Fliegenauge nähert sich Streifen</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Verwacklung entfernen" width="200" height="200"><b>&#9654;</b><span>Verwacklung entfernen</span></a>
 <a href="../../articles/assets/poc/poc_colormap_readability/01_gain_profile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_colormap_readability.jpg" alt="Farbskalen-Lesbarkeit" width="200" height="200"><span>Farbskalen-Lesbarkeit</span></a>
 <a href="../../articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_compound_eye.jpg" alt="Fliegen-Facettenauge" width="200" height="200"><span>Fliegen-Facettenauge</span></a>

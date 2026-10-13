@@ -209,6 +209,27 @@
    ]
   },
   {
+   "id": "compound-eye-aliasing-and-ttc",
+   "title": "周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)",
+   "title_en": "The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras)",
+   "category": "測る",
+   "note": "docs/capabilities/compound-eye-aliasing-and-ttc.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_zebra_stripes_fly_eye",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "emva1288-camera-datasheets",
    "title": "カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)",
    "title_en": "Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)",
@@ -1089,8 +1110,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 360,
-  "run_by_the_poc_gate": 226,
+  "examples2d_total": 361,
+  "run_by_the_poc_gate": 227,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [

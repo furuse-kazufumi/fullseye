@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 43 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 44 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -93,6 +93,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 從平面標定板的多視角估計內參矩陣 K(張正友法): [說明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 範例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
 - 把複數平面當作面來看(域著色、吸引域、逃逸時間、繞翼流動): [說明](../../capabilities/complex-plane-fields.md) _(ja)_ · 範例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- 以閉式求週期圖案在取樣晶格上混疊的距離，以及條紋所擾亂的碰撞時間（複眼與檢測相機）: [說明](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · 範例 [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - 用 EMVA 1288 的步驟重新量測相機規格書上的數值,並看相機內部的前處理會使這些數值偏移多少(Linear 與 General): [說明](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · 範例 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - 從本應筆直的線估計畸變係數(鉛垂線法,不需棋盤格): [說明](../../capabilities/estimate-lens-distortion.md) _(ja)_ · 範例 [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - 放到地球尺度座標上(ECEF、高程基準、局部 ENU): [說明](../../capabilities/geodetic-frames.md) _(ja)_ · 範例 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
@@ -154,7 +155,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 226 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 227 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -305,8 +306,9 @@ PoC 226 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (16)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (17)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
 <a href="../../articles/assets/poc/poc_colormap_readability/01_gain_profile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_colormap_readability.jpg" alt="偽色可讀性" width="200" height="200"><span>偽色可讀性</span></a>
 <a href="../../articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_compound_eye.jpg" alt="蒼蠅複眼" width="200" height="200"><span>蒼蠅複眼</span></a>

@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **83 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **84 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 18 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 19 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -651,6 +651,38 @@ py -3.11 examples/poc_graph_hierarchy_segmentation.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation)
 
 使用 op(ノートへ): [`alpha_expansion`](https://furuse.work/ops/segmentation/graph/alpha_expansion.html) · [`alpha_tree`](https://furuse.work/ops/segmentation/graph/alpha_tree.html) · [`area_opening_attr`](https://furuse.work/ops/segmentation/graph/area_opening_attr.html) · [`graph_cut_binary`](https://furuse.work/ops/segmentation/graph/graph_cut_binary.html) · [`hierarchical_watershed`](https://furuse.work/ops/segmentation/graph/hierarchical_watershed.html) · [`quasi_flat_zones`](https://furuse.work/ops/segmentation/graph/quasi_flat_zones.html) · [`quickshift`](https://furuse.work/ops/segmentation/graph/quickshift.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_object_counts_match`](https://furuse.work/ops/segmentation/score/seg_object_counts_match.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`seg_under_over_segmentation`](https://furuse.work/ops/segmentation/score/seg_under_over_segmentation.html) · [`snic_superpixels`](https://furuse.work/ops/segmentation/graph/snic_superpixels.html) · [`statistical_region_merging`](https://furuse.work/ops/segmentation/graph/statistical_region_merging.html) · [`superpixel_quality`](https://furuse.work/ops/segmentation/graph/superpixel_quality.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`threshold_isodata`](https://furuse.work/ops/segmentation/threshold/threshold_isodata.html) · [`threshold_kapur`](https://furuse.work/ops/segmentation/threshold/threshold_kapur.html) · [`threshold_kittler`](https://furuse.work/ops/segmentation/threshold/threshold_kittler.html) · [`threshold_triangle`](https://furuse.work/ops/segmentation/threshold/threshold_triangle.html) · [`ultrametric_contour_map`](https://furuse.work/ops/segmentation/graph/ultrametric_contour_map.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_grains_voronoi`](https://furuse.work/ops/segmentation/world/world_grains_voronoi.html) …(他 3)
+
+## No.2026.227 —— 縞に近づくハエの眼 ―― シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か
+
+[![縞に近づくハエの眼 ―― シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)
+
+*↑ **縞に近づくハエの眼 ―― シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か** ―― アブはシマウマの縞の手前で制御された減速ができず(Caro ら 2019)、縞・市松の近くでは速く飛び・寄らず・着地しない(How ら 2020)。「縞で距離感が狂う」という俗説を、複眼と相関型運動検出器(Hassenstein–Reichardt)の閉じた式でどこまで説明できるか数える。新 op 6 本: 正面の周期面を六角格子 + ガウス受容角で解析的に標本化する `fly_view_plane_texture`(画像を再標本化しない、閉形式と 1e-9)、周期 P が格子ピッチ Δφ で折り返す距離 P cos²θ/(√3 Δφ) を返す `sampling_alias_distance`(検査カメラの作動距離の設計規則でもある)、眼全体の流れから τ を読む `fly_expansion_readout`、実測軌跡の τ・τ̇ `traj_tau_dot`、フィボナッチ(Vogel 螺旋)の眼 `fly_vogel_lattice`、モアレの尖り `lattice_moire_peak`。7 cm の縞はアブ(Δφ 1.1°)の眼で正面 2.105 m / 60° で 0.526 m から折り返し、ショウジョウバエ(4.63° / 8.23°)では MTF 0.024 でぼけが縞を消して守る。HR 相関器の符号反転は閉形式と 97 % 以上一致し、接近すると反転帯は周辺へ逃げ、方位の対が「遠ざかる」→「近づく」へ切り替わる距離 1.71 m は予測 1.65〜1.77 m に入る。縦縞のアパーチャ効果は放射当てはめ・発散とも厳密に 2τ(閉形式 2、測定 1.992)を返し、市松では τ に戻る ―― How ら 2020 の「市松でも避けた → アパーチャ効果説は棄却」の論理を数で再現する。接近中の時間周波数 v tanθ/P は距離に依らない(HR は距離情報を失う)。フィボナッチ複眼(同じ 721 個眼・同じ平均間隔)は、ナイキストを超えた縞のモアレの尖りが六角 2521 / Vogel 4.3 / ジッタ六角 5.2 で拡散に勝ち、ナイキスト直下の解像は六角が最良(残差 0.021 / 0.035 / 0.022)、偽フローは格子の規則性でなく対の間隔で決まり(六角の方位の対は全部逆向き、斜めの対は全部正しい)、中心窩(密度指数 p 0.5 → 0.8)は真の周波数のピークを 5.2 → 11.0 に鋭くする。外部真値(How ら 2020 の Dryad の 3-D 軌跡、CC0)は配置すれば走り、省略時は「未配置」と明示して飛ばす。Dettlaff 2026(arXiv:2605.17049、査読前・単著・コード非公開)のモアレ説は比較対象として明記。学習した数 0、較正 1。*
+
+[![the alias distance P/(sqrt3 dphi) for a 7 cm period against the inter-ommatidial angle; the acceptance ratio changes onl](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep.png)
+
+*↑ 測定の図 ―― the alias distance P/(sqrt3 dphi) for a 7 cm period against the inter-ommatidial angle; the acceptance ratio changes only the contrast left at Nyquist, not the distance*
+
+[![moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pai](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices.png)
+
+*↑ moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pair responses with the wrong sign / total, and the c…*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers.png)
+
+*↑ この回の図*
+
+[![the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one gain calibrated on the first checke](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)
+
+*↑ 動く図 ―― the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one gain calibrated on the first checkerboard window) against the true tau during an approach at 0.5 m/s: over vertical stripes it reads longer than over a checkerboard (median ratio 1.52; the closed-form aperture effect says 2) while the checkerboard itself drifts from tau as the correlator's phase moves with distance. The 1/f texture is left off the axes: with the same single gain it reads 14 to 28 tau, because its flow energy is a thousandth of the checkerboard's — a correlator is not a speedometer*
+
+```
+py -3.11 examples/poc_zebra_stripes_fly_eye.py
+```
+
+ソース: [examples/poc_zebra_stripes_fly_eye.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye)
+
+使用 op(ノートへ): [`coherence`](https://furuse.work/ops/acoustics/dual/coherence.html) · [`fly_emd_response`](https://furuse.work/ops/flyvision/motion/fly_emd_response.html) · [`fly_expansion_readout`](https://furuse.work/ops/flyvision/looming/fly_expansion_readout.html) · [`fly_flow_from_directions`](https://furuse.work/ops/flyvision/direction/fly_flow_from_directions.html) · [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) · [`fly_t4t5_field`](https://furuse.work/ops/flyvision/direction/fly_t4t5_field.html) · [`fly_tau_from_expansion`](https://furuse.work/ops/flyvision/looming/fly_tau_from_expansion.html) · [`fly_view_plane_texture`](https://furuse.work/ops/flyvision/stimulus/fly_view_plane_texture.html) · [`fly_vogel_lattice`](https://furuse.work/ops/flyvision/lattice/fly_vogel_lattice.html) · [`jitter`](https://furuse.work/ops/3d/augment/jitter.html) · [`lattice_moire_peak`](https://furuse.work/ops/flyvision/alias/lattice_moire_peak.html) · [`sampling_alias_distance`](https://furuse.work/ops/flyvision/alias/sampling_alias_distance.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`traj_tau_dot`](https://furuse.work/ops/flyvision/trajectory/traj_tau_dot.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 

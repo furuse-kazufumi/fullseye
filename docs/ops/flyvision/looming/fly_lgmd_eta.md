@@ -59,11 +59,11 @@ al. Eq. 5), where the subtended angle is exactly ``2*atan(1/alpha)`` (Eq. 6;
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_emd_response](../motion/fly_emd_response.md) · [fly_tau_from_expansion](fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_emd_response](../motion/fly_emd_response.md) · [fly_tau_from_expansion](fly_tau_from_expansion.md) · [lattice_moire_peak](../alias/lattice_moire_peak.md) · [traj_tau_dot](../trajectory/traj_tau_dot.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`looming`)
 
-[fly_tau_from_expansion](fly_tau_from_expansion.md)
+[fly_tau_from_expansion](fly_tau_from_expansion.md) · [fly_expansion_readout](fly_expansion_readout.md)
 
 ---
 *Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

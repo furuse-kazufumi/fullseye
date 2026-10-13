@@ -4,7 +4,7 @@ dim: flyvision
 category: motion
 in: signal × signal
 out: signal
-examples: [poc_fly_vision]
+examples: [poc_fly_vision, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -57,10 +57,11 @@ which is zero at ``lambda = 2 dphi`` (``psi = pi``) and maximal at
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
+- [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [lattice_moire_peak](../alias/lattice_moire_peak.md) · [traj_tau_dot](../trajectory/traj_tau_dot.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`motion`)
 

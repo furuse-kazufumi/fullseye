@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-43 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+44 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -93,6 +93,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Planar target के कई views से intrinsic matrix K का अनुमान (Zhang): [explanation](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · examples [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
 - Complex plane को area की तरह देखना (domain colouring, basins, escape time, flow): [explanation](../../capabilities/complex-plane-fields.md) _(ja)_ · examples [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- वह दूरी जिस पर periodic pattern sampling lattice पर alias करता है, और धारियों से बिगड़ा time-to-contact — closed form में (compound eye और inspection camera): [explanation](../../capabilities/compound-eye-aliasing-and-ttc.md) _(ja)_ · examples [poc_zebra_stripes_fly_eye](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py)
 - camera datasheet की संख्याएँ EMVA 1288 की विधि से फिर मापना, और देखना कि camera के भीतर का preprocessing उन्हें कितना बदलता है (Linear और General): [explanation](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · examples [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - सीधी रेखाओं से lens distortion coefficients का अनुमान (plumb-line, board की ज़रूरत नहीं): [explanation](../../capabilities/estimate-lens-distortion.md) _(ja)_ · examples [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - Measurements को पृथ्वी पर रखना (ECEF, height frames, local ENU): [explanation](../../capabilities/geodetic-frames.md) _(ja)_ · examples [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
@@ -154,7 +155,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-226 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+227 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -305,8 +306,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality और restoration</b> (16)</summary>
+<details class="vall"><summary><b>Image quality और restoration</b> (17)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="धारियों की ओर बढ़ती मक्खी की आँख" width="200" height="200"><b>&#9654;</b><span>धारियों की ओर बढ़ती मक्खी की आँख</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
 <a href="../../articles/assets/poc/poc_colormap_readability/01_gain_profile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_colormap_readability.jpg" alt="Colormap पढ़ना" width="200" height="200"><span>Colormap पढ़ना</span></a>
 <a href="../../articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_compound_eye.jpg" alt="Fly compound eye" width="200" height="200"><span>Fly compound eye</span></a>

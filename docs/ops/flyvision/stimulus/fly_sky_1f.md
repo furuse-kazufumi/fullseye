@@ -67,7 +67,7 @@ band that does not satisfy ``-90 <= band_lo_deg < band_hi_deg <= 90``.
 
 ## 同カテゴリ(`stimulus`)
 
-—
+[fly_view_plane_texture](fly_view_plane_texture.md)
 
 ---
 *Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 43 項目**
+**収録 44 項目**
 
-## 測る (15)
+## 測る (16)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -35,6 +35,14 @@
 使う op: `cplx_plane_grid`, `cplx_rational_field`, `cplx_domain_colour`, `cplx_newton_basins`, `cplx_escape_time`, `mandelbrot_interior`, `potential_flow_joukowski`, `joukowski_circulation`
 
 動く例: `poc_complex_plane_fields`
+
+### [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md)
+
+周期 P の縞を間隔 Δφ の格子で標本化すると、距離 d > P cos²θ/(√3 Δφ)(六角、正方は 2Δφ)で縞は折り返してモアレになります。`sampling_alias_distance` はこの距離と、ナイキストに残るコントラスト(MTF)を閉形式で返します —— Δφ を画素の瞬時視野、P を検査対象(ディスプレイ・メッシュ・織物・網点)のピッチと読めば、**検査カメラの作動距離の設計規則**です。`fly_view_plane_texture` は正面の周期面を六角個眼格子 + ガウス受容角の下で**解析的に**積分し(画像を再標本化しない)、`fly_t4t5_field(model="hr")` に渡すと相関型運動検出器(Hassenstein–Reichardt)の符号反転 sin(2πΔφ/λ) がどの個眼で起きるかを数えられます。`fly_expansion_readout` は眼全体の流れから衝突時間 τ を読み、縦縞のアパーチャ効果が放射当てはめ・発散とも**厳密に 2τ** を返すことを示します。`traj_tau_dot` は実測の 3-D 軌跡から距離・接近速度・τ・τ̇(Lee 1976)を出します。
+
+使う op: `sampling_alias_distance`, `fly_view_plane_texture`, `fly_expansion_readout`, `fly_vogel_lattice`, `lattice_moire_peak`, `traj_tau_dot`, `fly_t4t5_field`, `fly_tau_from_expansion`
+
+動く例: `poc_zebra_stripes_fly_eye`
 
 ### [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md)
 

@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_view_plane_texture — FLYVISION <code style="color:#22d3bf">stimulus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_view_plane_texture(lattice, distance_m, period_m, pattern=&#x27;vertical&#x27;, drho_deg=8.23, contrast=1.0, mean=0.5, lateral_m=(0.0, 0.0), phase_deg=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_view_plane_texture(lattice, distance_m, period_m, pattern=&#x27;vertical&#x27;, drho_deg=8.23, contrast=1.0, mean=0.5, lateral_m=(0.0, 0.0), phase_deg=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_view_plane_texture&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>What each ommatidium sees of a periodic frontal surface — integrated analytically.</p>
+<p>A plane at *distance_m* ahead of the eye (<code style="color:#22d3bf">x = distance_m</code> in body coordinates, texture in <code style="color:#22d3bf">(y, z)</code>) carries a reflectance <code style="color:#22d3bf">mean * (1 + contrast * s(y, z))</code> with <code style="color:#22d3bf">s</code> in <code style="color:#22d3bf">[-1, 1]</code>: stripes of period *period_m* (<code style="color:#22d3bf">&quot;vertical&quot;</code> modulates along y, <code style="color:#22d3bf">&quot;horizontal&quot;</code> along z), a <code style="color:#22d3bf">&quot;checker&quot;</code> of that period, a pure <code style="color:#22d3bf">&quot;sine&quot;</code>, a deterministic 1/f <code style="color:#22d3bf">&quot;pink&quot;</code> texture whose longest wavelength is *period_m* (24 plane waves with amplitudes summing to 1, so its rms contrast is 0.18 of *contrast*), or <code style="color:#22d3bf">&quot;grey&quot;</code>. Each ommatidium integrates the surface under a Gaussian acceptance of FWHM *drho_deg* — <b>without rendering or resampling an image</b>. The texture is a cosine series; a surface wave vector <code style="color:#22d3bf">k</code> becomes the angular wave vector <code style="color:#22d3bf">J^T k</code> at the ommatidium (<code style="color:#22d3bf">J</code> the exact derivative of the line-of-sight intercept), and a Gaussian acceptance multiplies each term by <code style="color:#22d3bf">exp(-pi^2 drho^2 |J^T k|^2 / (4 ln2))</code>. That is the small-footprint</p>
+<p>approximation <code style="color:#22d3bf">fly_hex_resample</code> documents, applied term by term, with no pixel grid in between.</p>
+<p>lattice:   a <code style="color:#22d3bf">fly_hex_lattice</code> or <code style="color:#22d3bf">fly_vogel_lattice</code> result.</p>
+<p>distance_m / period_m: the plane&#x27;s distance and the texture period, metres.</p>
+<p>pattern:   one of <code style="color:#22d3bf">PLANE_PATTERNS</code>.</p>
+<p>drho_deg:  the acceptance FWHM, degrees.</p>
+<p>contrast:  the Michelson contrast of the texture, <code style="color:#22d3bf">0 &lt;= contrast &lt;= 1</code>.</p>
+<p>mean:      the mean reflectance (&gt; 0).</p>
+<p>lateral_m: the eye&#x27;s <code style="color:#22d3bf">(y, z)</code> offset from the texture origin, metres — the</p>
+<p>fly&#x27;s sideways position, which shifts the stripe phase.</p>
+<p>phase_deg: an extra texture shift, in degrees of one period.</p>
+<p>Returns a 1-D float64 signal of <code style="color:#22d3bf">n</code> ommatidial intensities (&gt;= 0). An ommatidium whose line of sight does not reach the plane (<code style="color:#22d3bf">d_x &lt;= 0</code>) reads *mean* — the surface is not in its field, and a texture at an infinite distance has zero modulation anyway.</p>
+<p>Square waves keep their odd harmonics up to where the acceptance has attenuated them below 1e-6 (at most <code style="color:#22d3bf">MAX_HARMONIC</code>); a checkerboard is the product of two such series. The partial sum is then already smoothed, so there is no Gibbs overshoot to clip; a <code style="color:#22d3bf">maximum(., 0)</code> guards rounding.</p>
+<p>Ground truth (pinned in the tests): for <code style="color:#22d3bf">pattern=&quot;sine&quot;</code> the amplitude at the central ommatidium is <code style="color:#22d3bf">contrast * mean * exp(-pi^2 drho^2 (D/P)^2 / (4 ln2))</code> with <code style="color:#22d3bf">drho</code> in radians, and at an ommatidium at azimuth <code style="color:#22d3bf">theta</code> the angular frequency is <code style="color:#22d3bf">D/(P cos^2 theta)</code> — both to 1e-9.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a malformed *lattice* (an empty dict is refused — it has none of the lattice keys), a non-positive *distance_m* / *period_m* / *drho_deg* / *mean*, a *contrast* outside <code style="color:#22d3bf">[0, 1]</code>, a *lateral_m* that is not two finite numbers, a non-finite *phase_deg*, and an unknown *pattern*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_zebra_stripes_fly_eye">poc_zebra_stripes_fly_eye</a> — <code style="color:#22d3bf">py -3.11 examples/poc_zebra_stripes_fly_eye.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_quantize">fly_hex_quantize</a> · <a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:lattice_moire_peak">lattice_moire_peak</a> · <a style="color:#22d3bf" href="opflyvision:traj_tau_dot">traj_tau_dot</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">stimulus</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_sky_1f">fly_sky_1f</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

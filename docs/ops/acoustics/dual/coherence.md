@@ -4,7 +4,7 @@ dim: acoustics
 category: dual
 in: signal × signal
 out: table
-examples: [acoustic_condition_monitoring]
+examples: [acoustic_condition_monitoring, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -72,6 +72,7 @@ the record, an unknown window.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
+- [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

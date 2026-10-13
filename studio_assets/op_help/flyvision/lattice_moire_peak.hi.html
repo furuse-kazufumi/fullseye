@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lattice_moire_peak — FLYVISION <code style="color:#22d3bf">alias</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window=&#x27;hann&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import flyvision; flyvision.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window=&#x27;hann&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsflyvision.get(&quot;lattice_moire_peak&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>sampled signal के सबसे मज़बूत low-frequency component की तीक्ष्णता — वह moiré जो lattice एक अविभेद्य texture से बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Sampling a texture above the lattice&#x27;s Nyquist limit does not lose it; it folds it to a lower frequency. On a regular lattice the fold is a single sharp peak — a false stripe the next stage reads as a real one — and on an irregular arrangement the same energy spreads into a ring. This op measures that difference as a number: the non-uniform discrete Fourier transform of the ommatidial signal (mean removed, radially windowed) at the gnomonic positions of the ommatidia, over a grid of <code style="color:#22d3bf">n_freq x n_freq</code> frequencies up to *fmax_cycles_per_deg* (<code style="color:#22d3bf">0</code> = the lattice&#x27;s own hexagonal Nyquist <code style="color:#22d3bf">1/(sqrt 3 dphi)</code>, the band the eye can represent), and the ratio of the highest amplitude on that grid to the median amplitude.</p>
+<p>signal:  <code style="color:#22d3bf">(n,)</code> ommatidial values (<code style="color:#22d3bf">fly_view_plane_texture</code>).</p>
+<p>lattice: the eye they were sampled on — any geometry; only directions are used. fmax_cycles_per_deg: the half-width of the frequency grid, cycles/degree.</p>
+<p>n_freq:  grid side, <code style="color:#22d3bf">8 &lt;= n_freq &lt;= MAX_MOIRE_FREQ</code>.</p>
+<p>window:  one of <code style="color:#22d3bf">MOIRE_WINDOWS</code> — a radial Hann taper over the field</p>
+<p>(default: the field edge is a step and would leak everywhere).</p>
+<p>Returns a dict <code style="color:#22d3bf">{&quot;peak_ratio&quot;, &quot;peak_cycles_per_deg&quot;, &quot;peak_amplitude&quot;, &quot;background_median&quot;, &quot;nyquist_cycles_per_deg&quot;, &quot;n_freq&quot;}</code>.</p>
+<p>Ground truth (pinned in the tests): a sinusoid just below Nyquist sampled on the hexagonal eye gives a peak ratio above 30; the same sinusoid on a Vogel eye of the same count and mean spacing gives a peak ratio at least 2.5x smaller — the energy that was one peak is now a ring.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a *signal* that is not <code style="color:#22d3bf">(n,)</code> for this lattice (an empty *signal* is refused), non-finite entries, a constant signal (there is no spectrum to rank — its ratio would be 0/0), a negative *fmax*, an *n_freq* outside its range, an unknown *window*, and a malformed *lattice*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_zebra_stripes_fly_eye">poc_zebra_stripes_fly_eye</a> — <code style="color:#22d3bf">py -3.11 examples/poc_zebra_stripes_fly_eye.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_matched_filter">fly_matched_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a> · <a style="color:#22d3bf" href="opflyvision:fly_view_plane_texture">fly_view_plane_texture</a> · <a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_expansion_readout">fly_expansion_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">alias</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:sampling_alias_distance">sampling_alias_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

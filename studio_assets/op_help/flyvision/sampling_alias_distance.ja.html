@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sampling_alias_distance — FLYVISION <code style="color:#22d3bf">alias</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sampling_alias_distance(period_m, pitch_deg, lattice=&#x27;hex&#x27;, view_angle_deg=0.0, acceptance_deg=0.0, obliquity=&#x27;along&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.sampling_alias_distance(period_m, pitch_deg, lattice=&#x27;hex&#x27;, view_angle_deg=0.0, acceptance_deg=0.0, obliquity=&#x27;along&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;sampling_alias_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>周期パターンが標本化格子で折り返す(エイリアスになる)距離 —— 検査カメラの作動距離の規則。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>A period *period_m* seen from distance <code style="color:#22d3bf">d</code> at viewing angle <code style="color:#22d3bf">theta</code> has the angular period <code style="color:#22d3bf">P cos^2(theta)/d</code> (the cos^2 is the derivative of the line-of-sight intercept; <code style="color:#22d3bf">obliquity=&quot;across&quot;</code> — the period runs perpendicular to the plane of obliquity — makes it a single cos). A lattice of pitch *pitch_deg* resolves angular periods down to <code style="color:#22d3bf">sqrt(3) * pitch</code> (hexagonal: the inscribed circle of its Brillouin zone) or <code style="color:#22d3bf">2 * pitch</code> (square), so the target aliases once::</p>
+<p>d &gt; period_m * cos^2(theta) / (sqrt(3) * pitch)      (hex)</p>
+<p>d &gt; period_m * cos^2(theta) / (2 * pitch)            (square)</p>
+<p>The same number is the <b>working-distance rule of an inspection camera</b>:</p>
+<p>*pitch_deg* is the pixel&#x27;s instantaneous field of view, *period_m* the pitch of the display, mesh, weave or halftone being inspected, and beyond the returned distance the picture carries a moire that is not in the part (Petersen &amp; Middleton 1962 for the lattice Nyquist regions).</p>
+<p>period_m:  the target&#x27;s spatial period, metres.</p>
+<p>pitch_deg: the sample spacing — inter-ommatidial angle or pixel IFOV, degrees.</p>
+<p>lattice:   one of <code style="color:#22d3bf">SAMPLING_LATTICES</code>.</p>
+<p>view_angle_deg: the obliquity of the line of sight, <code style="color:#22d3bf">|theta| &lt; 90</code>.</p>
+<p>acceptance_deg: the FWHM of the Gaussian acceptance (or pixel blur), degrees;</p>
+<p><code style="color:#22d3bf">0</code> means a delta sampler.</p>
+<p>obliquity: one of <code style="color:#22d3bf">OBLIQUITIES</code>.</p>
+<p>Returns a dict <code style="color:#22d3bf">{&quot;distance_m&quot;, &quot;nyquist_cycles_per_rad&quot;, &quot;period_floor_deg&quot;, &quot;mtf_at_nyquist&quot;, &quot;lattice&quot;, &quot;view_angle_deg&quot;}</code> — the alias distance, the lattice&#x27;s Nyquist frequency, the smallest angular period it resolves, and the acceptance&#x27;s modulation transfer at that limit (1.0 for a delta sampler).</p>
+<p>Ground truth (pinned in the tests): a 7 cm period on a 1.1-degree hexagonal eye aliases beyond 2.105 m head-on and 0.526 m at 60 degrees; on a 4.63-degree eye beyond 0.500 m and 0.125 m; with a 1-degree acceptance the hexagonal 1.1-degree eye keeps 0.375 of the contrast at Nyquist, the 8.23-degree acceptance of a 4.63-degree eye keeps 0.024.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-positive *period_m* / *pitch_deg* (an empty *period_m* is refused as not a number), a negative *acceptance_deg*, a *view_angle_deg* at or beyond 90, and an unknown *lattice* / *obliquity*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_zebra_stripes_fly_eye">poc_zebra_stripes_fly_eye</a> — <code style="color:#22d3bf">py -3.11 examples/poc_zebra_stripes_fly_eye.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_matched_filter">fly_matched_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a> · <a style="color:#22d3bf" href="opflyvision:fly_view_plane_texture">fly_view_plane_texture</a> · <a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_expansion_readout">fly_expansion_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">alias</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:lattice_moire_peak">lattice_moire_peak</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

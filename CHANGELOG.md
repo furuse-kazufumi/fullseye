@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 縞に近づくハエの眼 + フィボナッチ複眼(flyvision に 6 op + PoC)
+
+- **新 op 6 本**(`flyvision` 台帳、新カテゴリ `alias` / `trajectory`): `fly_view_plane_texture`(正面の周期面を六角個眼格子 + ガウス受容角で解析的に積分、画像を再標本化しない。門: 中心個眼の振幅 = c μ exp(−π²Δρ²(D/P)²/4ln2)、方位 θ の角周波数 = D/(P cos²θ)、1e-9)、`sampling_alias_distance`(周期 P が格子ピッチ Δφ で折り返す距離 P cos²θ/(√3 Δφ)(六角)/ (2Δφ)(正方)の閉形式 —— 検査カメラの作動距離の設計規則)、`fly_expansion_readout`(眼全体の流れの放射当てはめと発散から τ。真の平面流れは τ を 1e-9 で、縦縞のアパーチャ効果は厳密に 2τ)、`traj_tau_dot`(実測 3-D 軌跡の距離・接近速度・τ・τ̇、Lee 1976 の等速 −1 / 等減速 −0.5 を 1e-9)、`fly_vogel_lattice`(同じ個眼数・同じ平均最近傍角のフィボナッチ(Vogel 螺旋)の眼。六角の近傍を要る op は拒否)、`lattice_moire_peak`(非一様 DFT のピーク/背景中央値 = モアレの尖り)。門は `tests/test_fly_zebra_ops.py`(30)。`tools/chain_fuzz.py` に種 5、`api.py` に import。
+- **PoC `poc_zebra_stripes_fly_eye`**: シマウマの縞は複眼の距離感を本当に狂わせるのか、複眼がフィボナッチの並びならもっと優秀か。5 章(ナイキスト距離と MTF / HR の符号反転 / τ の読み出しと 2τ の恒等式 / 六角・Vogel・ジッタ六角の比較と中心窩 / How ら 2020 の Dryad 軌跡との照合段(配置すれば走る))。GIF 2 本(反転の輪、縞の上の τ̂)。予算 `FULLSEYE_POC_BUDGET=reduced|full` で門は同じ。Dettlaff 2026(arXiv:2605.17049、査読前)は比較対象として明記。能力ノート `docs/capabilities/compound-eye-aliasing-and-ttc.md`。
+
 ### Added — Si ウェハ PL のキャリア拡散(`pl_diffusion_psf` / `pl_image_simulate` / `pl_groove_visibility` + 多段 PoC)
 
 - **新 op 3 本**(`generative` 台帳の `pl` カテゴリ、実装 `plsim.py`): `pl_diffusion_psf` はキャリア拡散の PSF(2 次元のグリーン関数 K₀(r/L)/2πL²、総和 1)を画像で返す。`pl_image_simulate` は励起の場と再結合の場から定常拡散方程式 (1 + k)u − L²Δu = g を Neumann 境界で厳密に解き、光学 PSF と雑音を任意で掛けて PL 像を作る。`pl_groove_visibility` は溝の幅・拡散長・雑音から、影の溝(1 − e^{−w/2L})と沈みの溝(Donolato 型 SL/(SL+2D))のコントラスト・CNR・見える境界 L* を閉形式で返す(`table`)。閉形式の門(総和 1 / 半質量半径 ∝ L / 一様は厳密に一様 / 格子の閉形式と 1e-10)は `tests/test_plsim.py`。入出力は既存の `image2d` / `table`(新しい型語彙は作らない)。

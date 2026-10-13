@@ -1,8 +1,8 @@
 {
- "n_ops": 3136,
+ "n_ops": 3142,
  "tiers": {
   "color": 12,
-  "ledger": 2183,
+  "ledger": 2189,
   "nary": 17,
   "registry": 924
  },
@@ -8573,6 +8573,20 @@
    ]
   },
   {
+   "name": "fly_expansion_readout",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "looming",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix",
+    "table"
+   ]
+  },
+  {
    "name": "fly_eye_merge",
    "halcon": "",
    "in_sort": "table",
@@ -8741,6 +8755,30 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "fly_view_plane_texture",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "signal",
+   "category": "stimulus",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "fly_vogel_lattice",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lattice",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": []
   },
   {
    "name": "fmcw_beat_simulate",
@@ -12701,6 +12739,20 @@
    "in_sorts": [
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "lattice_moire_peak",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "alias",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "signal",
+    "table"
    ]
   },
   {
@@ -21642,6 +21694,17 @@
    ]
   },
   {
+   "name": "sampling_alias_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "alias",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": []
+  },
+  {
    "name": "sampson_distance",
    "halcon": "",
    "in_sort": "image2d",
@@ -26479,6 +26542,20 @@
     "table",
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "traj_tau_dot",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "trajectory",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "points",
+    "signal"
    ]
   },
   {

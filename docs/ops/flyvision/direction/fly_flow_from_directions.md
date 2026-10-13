@@ -4,7 +4,7 @@ dim: flyvision
 category: direction
 in: matrix × table
 out: matrix
-examples: [poc_fly_optomotor_steering]
+examples: [poc_fly_optomotor_steering, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -69,10 +69,11 @@ malformed *lattice*.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_fly_optomotor_steering](../../../../examples/poc_fly_optomotor_steering.py) — `py -3.11 examples/poc_fly_optomotor_steering.py`
+- [poc_zebra_stripes_fly_eye](../../../../examples/poc_zebra_stripes_fly_eye.py) — `py -3.11 examples/poc_zebra_stripes_fly_eye.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[fly_lamina_filter](../lamina/fly_lamina_filter.md) · [fly_onoff_split](../lamina/fly_onoff_split.md) · [fly_t4t5_field](fly_t4t5_field.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_lamina_filter](../lamina/fly_lamina_filter.md) · [fly_onoff_split](../lamina/fly_onoff_split.md) · [fly_t4t5_field](fly_t4t5_field.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
 
 ## 同カテゴリ(`direction`)
 

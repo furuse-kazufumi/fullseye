@@ -67,7 +67,7 @@ Non-finite or negative inputs are refused. A constant signal quantizes to all-ze
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [lattice_moire_peak](../alias/lattice_moire_peak.md) · [traj_tau_dot](../trajectory/traj_tau_dot.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`sample`)
 

@@ -25,7 +25,7 @@
   "comm.protocols": 23,
   "device.drivers": 12,
   "poc_exhibits": 189,
-  "capabilities": 35,
+  "capabilities": 44,
   "hardening_findings": 36
  }
 }

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3136,
- "n_notes": 3142,
+ "n_ops": 3142,
+ "n_notes": 3148,
  "notes": {
   "vol_dilate": [
    {
@@ -22442,6 +22442,25 @@
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
    }
   ],
+  "lattice_moire_peak": [
+   {
+    "op": "lattice_moire_peak",
+    "dim": "flyvision",
+    "category": "alias",
+    "in": "signal × table",
+    "out": "table",
+    "path": "docs/ops/flyvision/alias/lattice_moire_peak.md"
+   }
+  ],
+  "sampling_alias_distance": [
+   {
+    "op": "sampling_alias_distance",
+    "dim": "flyvision",
+    "category": "alias",
+    "out": "table",
+    "path": "docs/ops/flyvision/alias/sampling_alias_distance.md"
+   }
+  ],
   "fly_flow_from_directions": [
    {
     "op": "fly_flow_from_directions",
@@ -22499,6 +22518,25 @@
     "category": "lattice",
     "out": "table",
     "path": "docs/ops/flyvision/lattice/fly_hex_lattice.md"
+   }
+  ],
+  "fly_vogel_lattice": [
+   {
+    "op": "fly_vogel_lattice",
+    "dim": "flyvision",
+    "category": "lattice",
+    "out": "table",
+    "path": "docs/ops/flyvision/lattice/fly_vogel_lattice.md"
+   }
+  ],
+  "fly_expansion_readout": [
+   {
+    "op": "fly_expansion_readout",
+    "dim": "flyvision",
+    "category": "looming",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/flyvision/looming/fly_expansion_readout.md"
    }
   ],
   "fly_lgmd_eta": [
@@ -22588,6 +22626,26 @@
     "category": "stimulus",
     "out": "image2d",
     "path": "docs/ops/flyvision/stimulus/fly_sky_1f.md"
+   }
+  ],
+  "fly_view_plane_texture": [
+   {
+    "op": "fly_view_plane_texture",
+    "dim": "flyvision",
+    "category": "stimulus",
+    "in": "table",
+    "out": "signal",
+    "path": "docs/ops/flyvision/stimulus/fly_view_plane_texture.md"
+   }
+  ],
+  "traj_tau_dot": [
+   {
+    "op": "traj_tau_dot",
+    "dim": "flyvision",
+    "category": "trajectory",
+    "in": "points × signal",
+    "out": "table",
+    "path": "docs/ops/flyvision/trajectory/traj_tau_dot.md"
    }
   ],
   "fly_dsi": [

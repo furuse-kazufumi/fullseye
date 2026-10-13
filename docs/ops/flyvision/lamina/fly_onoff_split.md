@@ -67,7 +67,7 @@ over :data:`MAX_MOVIE_ELEMENTS`, and a non-positive *dt_s* / *tau_on_s* /
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[fly_lamina_filter](fly_lamina_filter.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_lamina_filter](fly_lamina_filter.md) · [fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
 
 ## 同カテゴリ(`lamina`)
 

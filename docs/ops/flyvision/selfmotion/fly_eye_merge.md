@@ -65,7 +65,7 @@ and a direction that appears twice.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_matched_filter](fly_matched_filter.md) · [fly_egomotion_from_flow](fly_egomotion_from_flow.md) · [fly_hex_resample](../sample/fly_hex_resample.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_matched_filter](fly_matched_filter.md) · [fly_egomotion_from_flow](fly_egomotion_from_flow.md) · [fly_view_plane_texture](../stimulus/fly_view_plane_texture.md) · [fly_hex_resample](../sample/fly_hex_resample.md) · [fly_expansion_readout](../looming/fly_expansion_readout.md) · [lattice_moire_peak](../alias/lattice_moire_peak.md)
 
 ## 同カテゴリ(`selfmotion`)
 

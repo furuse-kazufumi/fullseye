@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_expansion_readout — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_expansion_readout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>眼全体の流れから衝突時間 τ を読む —— 縦縞のアパーチャ効果は厳密に 2τ。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>A fronto-parallel surface approached at speed <code style="color:#22d3bf">v</code> from distance <code style="color:#22d3bf">d</code> moves the line of sight at polar angle <code style="color:#22d3bf">theta</code> outward at <code style="color:#22d3bf">sin theta cos theta / tau</code> with <code style="color:#22d3bf">tau = d/v</code>. This op projects the measured flow onto the outward radial direction and fits that one number, <code style="color:#22d3bf">1/tau</code>, by weighted least</p>
+<p>squares::</p>
+<p>1/tau = sum w f_r sin cos / sum w (sin cos)^2</p>
+<p>and, independently, fits a linear field <code style="color:#22d3bf">f = A x + b</code> on the gnomonic plane and reads the divergence <code style="color:#22d3bf">tr A</code>, which <code style="color:#22d3bf">sceneflow</code> converts the same way (<code style="color:#22d3bf">ttc = 2/div</code>).</p>
+<p>The reason to have both: a correlation-type detector only sees the motion component <b>across</b> a contrast edge. Over vertical stripes every edge is vertical, so the elevation component of the flow is lost (the aperture problem), the radial projection keeps on average half the expansion, and both readouts return <b>2 tau</b> — the surface looks twice as far as it is. A checkerboard has edges in both directions and returns tau. That is the identity How et al. (2020) argued from, written as a number.</p>
+<p>flow:    <code style="color:#22d3bf">(n, 2)</code> azimuth/elevation flow per ommatidium (radians per</p>
+<p>second), the return of <code style="color:#22d3bf">fly_flow_from_directions</code>.</p>
+<p>lattice: the eye it was measured on (hexagonal or Vogel).</p>
+<p>axis:    the direction of travel = focus of expansion, body coordinates;</p>
+<p><code style="color:#22d3bf">None</code> = the lattice&#x27;s optical axis.</p>
+<p>weights: <code style="color:#22d3bf">None</code> or <code style="color:#22d3bf">(n,)</code> non-negative weights (e.g. 0 on the rim, where</p>
+<p><code style="color:#22d3bf">fly_flow_from_directions</code> reports nothing).</p>
+<p>Returns a dict <code style="color:#22d3bf">{&quot;tau_s&quot;, &quot;rate_1_s&quot;, &quot;tau_div_s&quot;, &quot;divergence_1_s&quot;, &quot;aperture_ratio&quot;, &quot;residual_rms&quot;, &quot;n_ommatidia&quot;}</code> — the radial-fit time-to-contact and its rate, the divergence-fit time-to-contact and the divergence, the ratio of the smaller to the larger diagonal of <code style="color:#22d3bf">A</code> (1 for isotropic expansion, 0 under a pure aperture effect), the rms of the radial residual and how many ommatidia voted. A non-expanding field (rate &lt;= 0) returns <code style="color:#22d3bf">NaN</code> for the time-to-contact — a documented non-finite, as in <code style="color:#22d3bf">fly_tau_from_expansion</code>: a receding surface has no time-to-contact.</p>
+<p>Ground truth (pinned in the tests): the exact plane flow returns <code style="color:#22d3bf">tau_s == tau</code> and <code style="color:#22d3bf">tau_div_s == tau</code> to 1e-9 (the divergence is fitted on gnomonic velocities, where a plane approach is exactly linear); the same flow with its elevation component removed returns <code style="color:#22d3bf">2 tau</code> from both readouts within 1% on a 10-degree field (<code style="color:#22d3bf">aperture_ratio</code> 0) — a hexagonal lattice is 6-fold symmetric, so <code style="color:#22d3bf">sum cos^2 phi = sum sin^2 phi</code> over it, and the residual is the sphere&#x27;s departure from that plane.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a *flow* that is not <code style="color:#22d3bf">(n, 2)</code> for this lattice (an empty *flow* is refused), non-finite entries, a malformed *lattice* / *axis* / *weights*, all-zero weights, and fewer than 6 voting ommatidia.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_zebra_stripes_fly_eye">poc_zebra_stripes_fly_eye</a> — <code style="color:#22d3bf">py -3.11 examples/poc_zebra_stripes_fly_eye.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_matched_filter">fly_matched_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a> · <a style="color:#22d3bf" href="opflyvision:fly_view_plane_texture">fly_view_plane_texture</a> · <a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:lattice_moire_peak">lattice_moire_peak</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">looming</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
