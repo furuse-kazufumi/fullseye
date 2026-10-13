@@ -51,6 +51,9 @@ HALF_MASS_RADIUS_OVER_L = 1.2571513906775700
 
 #: ``spsolve``(直接法)で解く未知数の上限。超えたら共役勾配法(対角前処理)。
 _DIRECT_MAX = 160_000
+#: 直接解に収まらない像の共役勾配の相対残差。公開のノブにはしない —— 直接解の像では
+#: 何も変えない死にノブになる(2026-10-13 の探針で出た)。
+_CG_RTOL = 1e-10
 
 
 # --------------------------------------------------------------------------- #
@@ -186,8 +189,8 @@ def _solve_diffusion(g: np.ndarray, k: np.ndarray, L: float, tol: float) -> np.n
 
 
 def pl_image_simulate(generation, sink=None, *, diffusion_length_px: float = 8.0,
-                      optical_psf_px: float = 0.0, noise_rel: float = 0.0, seed: int = 0,
-                      tol: float = 1e-10) -> np.ndarray:
+                      optical_psf_px: float = 0.0, noise_rel: float = 0.0,
+                      seed: int = 0) -> np.ndarray:
     """励起の場と再結合の場から PL 像を作る(定常拡散方程式の厳密解 + 光学 PSF + 雑音)。
 
     Parameters
@@ -243,9 +246,8 @@ def pl_image_simulate(generation, sink=None, *, diffusion_length_px: float = 8.0
     L = _positive(diffusion_length_px, "diffusion_length_px", op)
     psf = _nonneg(optical_psf_px, "optical_psf_px", op)
     nz = _nonneg(noise_rel, "noise_rel", op)
-    tol = _positive(tol, "tol", op)
 
-    u = _solve_diffusion(g, k, L, tol)
+    u = _solve_diffusion(g, k, L, _CG_RTOL)
     if psf > 0.0:
         from scipy import ndimage as _ndi
         u = _ndi.gaussian_filter(u, psf, mode="nearest")
@@ -284,7 +286,9 @@ def pl_groove_visibility(width_px: float = 3.0, diffusion_length_px: float = 8.0
         ``fwhm_shadow_px`` / ``fwhm_sink_px``(``2L·ln2``)/ ``cnr_shadow`` / ``cnr_sink`` /
         ``visible_shadow`` / ``visible_sink`` / ``L_star_shadow_px``(この L **より長いと**
         影は CNR < cnr_min で消える)/ ``L_star_sink_px``(この L **より短いと**沈みは
-        消える)/ ``deficit_shadow_px``(影の欠け量の積分 = w、L によらない)。
+        消える。``sink_velocity = 0`` か ``cnr_min·noise_rel ≥ 1`` なら境界が無いので
+        ``None`` = どの L でも見えない)/ ``deficit_shadow_px``(影の欠け量の積分 = w、
+        L によらない)。
 
     Notes
     -----
@@ -324,9 +328,9 @@ def pl_groove_visibility(width_px: float = 3.0, diffusion_length_px: float = 8.0
     thr = cmin * sig
     if thr < 1.0:
         L_sh = -w / (2.0 * np.log(1.0 - thr))                 # 1 − e^{−w/2L} = thr
-        L_sk = (2.0 * thr / (s * (1.0 - thr))) if s > 0.0 else float("inf")   # sL/(sL+2) = thr
+        L_sk = (2.0 * thr / (s * (1.0 - thr))) if s > 0.0 else None   # sL/(sL+2) = thr
     else:
-        L_sh, L_sk = 0.0, float("inf")
+        L_sh, L_sk = 0.0, None
     return {
         "width_px": w, "diffusion_length_px": L, "sink_velocity": s, "noise_rel": sig,
         "contrast_shadow": float(c_sh), "contrast_shadow_grid": (None if grid is None else float(grid)),
@@ -335,6 +339,6 @@ def pl_groove_visibility(width_px: float = 3.0, diffusion_length_px: float = 8.0
         "half_depth_shadow": float(half),
         "cnr_shadow": float(cnr_sh), "cnr_sink": float(cnr_sk),
         "visible_shadow": bool(cnr_sh >= cmin), "visible_sink": bool(cnr_sk >= cmin),
-        "L_star_shadow_px": float(L_sh), "L_star_sink_px": float(L_sk),
+        "L_star_shadow_px": float(L_sh), "L_star_sink_px": (None if L_sk is None else float(L_sk)),
         "deficit_shadow_px": float(w),
     }

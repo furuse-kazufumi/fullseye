@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # pl_image_simulate — GENERATIVE `pl` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.pl_image_simulate(generation, sink=None, *, diffusion_length_px: 'float' = 8.0, optical_psf_px: 'float' = 0.0, noise_rel: 'float' = 0.0, seed: 'int' = 0, tol: 'float' = 1e-10) -> 'np.ndarray'` (実装を直接呼ぶなら `import pl; pl.pl_image_simulate(generation, sink=None, *, diffusion_length_px: 'float' = 8.0, optical_psf_px: 'float' = 0.0, noise_rel: 'float' = 0.0, seed: 'int' = 0, tol: 'float' = 1e-10) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("pl_image_simulate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pl_image_simulate(generation, sink=None, *, diffusion_length_px: 'float' = 8.0, optical_psf_px: 'float' = 0.0, noise_rel: 'float' = 0.0, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import pl; pl.pl_image_simulate(generation, sink=None, *, diffusion_length_px: 'float' = 8.0, optical_psf_px: 'float' = 0.0, noise_rel: 'float' = 0.0, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("pl_image_simulate")`)
 
 ## 使い方
 

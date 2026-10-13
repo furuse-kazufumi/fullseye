@@ -40,7 +40,9 @@ dict
     ``fwhm_shadow_px`` / ``fwhm_sink_px``(``2L·ln2``)/ ``cnr_shadow`` / ``cnr_sink`` /
     ``visible_shadow`` / ``visible_sink`` / ``L_star_shadow_px``(この L **より長いと**
     影は CNR < cnr_min で消える)/ ``L_star_sink_px``(この L **より短いと**沈みは
-    消える)/ ``deficit_shadow_px``(影の欠け量の積分 = w、L によらない)。
+    消える。``sink_velocity = 0`` か ``cnr_min·noise_rel ≥ 1`` なら境界が無いので
+    ``None`` = どの L でも見えない)/ ``deficit_shadow_px``(影の欠け量の積分 = w、
+    L によらない)。
 
 Notes
 -----

@@ -22,7 +22,9 @@
 <p><code style="color:#22d3bf">fwhm_shadow_px</code> / <code style="color:#22d3bf">fwhm_sink_px</code>(<code style="color:#22d3bf">2L·ln2</code>)/ <code style="color:#22d3bf">cnr_shadow</code> / <code style="color:#22d3bf">cnr_sink</code> /</p>
 <p><code style="color:#22d3bf">visible_shadow</code> / <code style="color:#22d3bf">visible_sink</code> / <code style="color:#22d3bf">L_star_shadow_px</code>(この L <b>より長いと</b></p>
 <p>影は CNR &lt; cnr_min で消える)/ <code style="color:#22d3bf">L_star_sink_px</code>(この L <b>より短いと</b>沈みは</p>
-<p>消える)/ <code style="color:#22d3bf">deficit_shadow_px</code>(影の欠け量の積分 = w、L によらない)。</p>
+<p>消える。<code style="color:#22d3bf">sink_velocity = 0</code> か <code style="color:#22d3bf">cnr_min·noise_rel ≥ 1</code> なら境界が無いので</p>
+<p><code style="color:#22d3bf">None</code> = どの L でも見えない)/ <code style="color:#22d3bf">deficit_shadow_px</code>(影の欠け量の積分 = w、</p>
+<p>L によらない)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>影は <code style="color:#22d3bf">w ≪ L</code> で <code style="color:#22d3bf">≈ w/2L</code> と消え、沈みは L と共に深く広くなる。欠陥の種類で向きが逆なので、「拡散長が長いほど欠陥が隠れる」は影にだけ当てはまる。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
