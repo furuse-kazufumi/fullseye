@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — lens_system が知らない面の鍵を拒否 + 透過率に追加の吸収(ドープ)を足す口
+- `raytrace.lens_system`: 知らない面の鍵(例 "sag_map")を黙って捨て、6 要素以上のタプル面を zip が黙って切っていた → ValueError(受ける鍵を名指し)。出力の面を戻す `with_wavelength` の経路(n_value / dn)はそのまま通る。
+- `materials.material_transmittance(..., extra_absorption=pairs)`: 材料の表に無い吸収(λ nm, α 1/cm)を足す。ドープした Si は `silicon_free_carrier_absorption` の出力をそのまま渡す(1e19 cm⁻³ の 775 µm は 1.3 µm で ×0.27)。範囲の足りない曲線・負の α は ValueError。
+- 発見は非公開の研磨 PoC(研磨後の面を sag_map で渡すと黙って捨てられた)と Si 光弾性 PoC(ドープの吸収を自前で書き直していた)。
+
 ### Fixed — 材料表の見直し: Ge と SiC を結晶の表に、2 つの出典の継ぎ目を混ぜる
 - ★`materials_data.py`: Ge は Amotchkina(e-beam 蒸着の膜に近い値、n(0.6 µm) 3.07・n(10 µm) 3.96)を結晶の Burnett に継いでいた → Nunley(結晶、0.19〜2.48 µm)+ Burnett。SiC は 6H の Singh とスパッタ膜の Larruquert(n が 0.7 高い)を継いでいた → Wang の 4H 常光線(0.40〜5 µm)。どちらも継ぎ目で n が 0.044 / 0.66 跳び、別の物質を 1 本につないでいた。
 - `materials._nk`: 2 つの n の出典が重なる所で、前の出典の範囲の最後の 3 % を線形に混ぜる(Si の 1.45 µm で +0.0018 の段差 = 隣の 1 nm 刻みの 18 倍 → 混ぜた後は 2 倍)。区間の内側は各一次文献の値のまま。

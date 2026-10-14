@@ -389,3 +389,14 @@ def test_rotationally_symmetric_singlet_has_no_non_rotational_terms():
     assert len(z) == 28
     assert max(abs(v) for (n, m), v in z.items() if m != 0) < 1e-4
     assert abs(w["rms_waves"] / w["rms_opd_direct"] - 1.0) < 0.03     # was −10 %
+
+
+def test_lens_system_refuses_unknown_surface_keys_and_long_tuples():
+    """2026-10-14: 知らない鍵(例 sag_map)を黙って捨てていた / 6 要素のタプル面を zip が黙って切っていた。"""
+    good = [{"R": 50.0, "t": 4.0, "n": "N-BK7", "ap": 8}, {"R": -50.0, "t": None, "n": 1.0}]
+    s = RT.lens_system(good)
+    assert len(RT.with_wavelength(s, RT.WL_F)["surfaces"]) == 2       # output surfaces fed back in still pass
+    with pytest.raises(ValueError, match="unknown key"):
+        RT.lens_system([dict(good[0], sag_map=np.zeros((4, 4))), good[1]])
+    with pytest.raises(ValueError, match="tuple surface"):
+        RT.lens_system([(50.0, 4.0, 1.5, 0.0, 8.0, 99.0), (-50.0, None, 1.0)])

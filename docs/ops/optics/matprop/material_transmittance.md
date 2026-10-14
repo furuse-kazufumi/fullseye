@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # material_transmittance — OPTICS `matprop` op
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_transmittance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_transmittance")`)
 
 ## 使い方
 
@@ -23,6 +23,10 @@ T = (1 − R)² e^{−αt} / (1 − R² e^{−2αt})(両面の多重反射を足
 R は垂直入射の |(m − 1)/(m + 1)|²、α = 4πk/λ)。``include_fresnel=False`` で内部透過率
 e^{−αt} だけにする(硝材カタログの「内部透過率」と同じ量)。
 厚さ 0 は T = 1 になるが、負や非有限は ValueError。
+
+``extra_absorption``: 材料の表に無い吸収を足す ``pairs``(λ [nm], α [1/cm])。例: ドープした Si の自由キャリア吸収
+``silicon_free_carrier_absorption(1e19, "n", ...)`` をそのまま渡す。格子の全波長を覆わなければ ValueError
+(外挿しない)、負の α も ValueError。表面の反射 R は材料の n,k のまま(自由キャリアの n の変化は小さいので無視)。
 
 ## ファミリ共通の入力契約(fail-closed)
 

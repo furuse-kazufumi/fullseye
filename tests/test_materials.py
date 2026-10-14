@@ -380,3 +380,18 @@ def test_two_index_sources_meet_without_a_step():
         n = M._nk(M._record(name, "t"), lam, "t")[0]
         d = np.abs(np.diff(n))
         assert d.max() < 3.0 * np.median(d) + 1e-12, (name, d.max(), np.median(d))
+
+
+def test_transmittance_takes_extra_absorption_such_as_free_carriers():
+    """2026-10-14: ドープの吸収を足す口。内部透過率は e^{-(α_k + α_fc) t} の閉形式、範囲の足りない曲線は拒否。"""
+    clean = M.material_transmittance("SI", 0.775, 1100.0, 1500.0, 41, include_fresnel=False)
+    fc = M.silicon_free_carrier_absorption(1e19, "n", 1100.0, 1500.0, 41)
+    doped = M.material_transmittance("SI", 0.775, 1100.0, 1500.0, 41, include_fresnel=False, extra_absorption=fc)
+    assert doped.shape == (41, 2)
+    assert np.allclose(doped[:, 1], clean[:, 1] * np.exp(-fc[:, 1] * 0.0775), rtol=1e-12)
+    T13 = float(np.interp(1300.0, doped[:, 0], doped[:, 1]) / np.interp(1300.0, clean[:, 0], clean[:, 1]))
+    assert abs(T13 - np.exp(-1e-18 * 1e19 * 1.3 ** 2 * 0.0775)) < 1e-12        # ×0.27 at 1.3 µm
+    with pytest.raises(ValueError, match="not extrapolated"):
+        M.material_transmittance("SI", 0.775, 1000.0, 1500.0, 41, extra_absorption=fc)
+    with pytest.raises(ValueError, match=">= 0"):
+        M.material_transmittance("SI", 0.775, 1100.0, 1500.0, 41, extra_absorption=fc * np.array([1.0, -1.0]))

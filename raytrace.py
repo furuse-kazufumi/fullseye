@@ -344,6 +344,11 @@ def _index_offset(medium, delta):
 # --------------------------------------------------------------------------- #
 # prescription
 # --------------------------------------------------------------------------- #
+#: 面の dict が受ける鍵。後ろの 2 つ(n_value / dn)は lens_system 自身が書き足す値で、
+#: ``with_wavelength`` などが出力の面をそのまま入力に戻すので受ける(読み直して上書きする)。
+_SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn"))
+
+
 def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
                 index_object=1.0, image_mm=None, field=None):
     """Build a validated sequential prescription (the ``table`` every other op consumes).
@@ -383,9 +388,16 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
     for i, s in enumerate(surfaces):
         if isinstance(s, (tuple, list)):
             keys = ("R", "t", "n", "k", "ap")
+            if len(s) > len(keys):                        # ★zip は余りを黙って捨てる
+                raise ValueError("surface %d: a tuple surface is (R, t, n[, k[, ap]]) — got %d values; use a dict "
+                                 "for mirror / decenter / tilt / asph" % (i, len(s)))
             s = {k: v for k, v in zip(keys, s)}
         if not isinstance(s, dict) or "R" not in s or "n" not in s:
             raise ValueError("surface %d must have at least R, t and n (got %r)" % (i, s))
+        unknown = sorted(set(s) - _SURFACE_KEYS)
+        if unknown:                                       # ★2026-10-14: 以前は黙って捨てていた(例 "sag_map")
+            raise ValueError("surface %d: unknown key(s) %s — a surface takes %s (a measured or polished "
+                             "surface has to be fitted to R / k / asph first)" % (i, unknown, sorted(_SURFACE_KEYS)))
         R = _radius(s.get("R"), "surface %d R" % i)
         t = s.get("t", None)
         t = None if t is None else _finite(t, "surface %d t" % i, nonneg=True)
