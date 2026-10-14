@@ -23,7 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。
 
 normals / view: (H,W,3) 法線マップ / 面から視点への方向。
-thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ。
+thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ(複素数・材料名も可。材料名は
+    380〜720 nm を覆う表に限る —— 例 基板 "TI" / "AL")。
 strength: 全体の強さ。
 
 空の入力(``normals`` が 0 要素)は ValueError。

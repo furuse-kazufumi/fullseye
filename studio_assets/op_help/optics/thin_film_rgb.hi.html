@@ -6,6 +6,7 @@
 <p>normal map + line of sight → <b>thin-film interference का रंग</b> (H, W, 3) linear sRGB।</p>
 <p>surface दृष्टि रेखा से जितनी अधिक झुकी हो, film के अंदर optical path उतना लंबा होता है, और रंग छोटी wavelengths की ओर खिसकता है ―― इसीलिए साबुन के बुलबुलों और गर्मी से रंगे titanium के रंग किनारों पर बदलते हैं। कोण पर निर्भरता cosθ = |n·v| से आती है।</p>
 <p>normals / view: (H,W,3) normal map / surface से viewpoint की दिशा। thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> के समान।</p>
+<p>(complex संख्या और material का नाम भी चलेगा; material के नाम के लिए 380–720 nm को ढकने वाली table चाहिए —— जैसे substrate &quot;TI&quot; / &quot;AL&quot;)</p>
 <p>strength: कुल तीव्रता।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">normals</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

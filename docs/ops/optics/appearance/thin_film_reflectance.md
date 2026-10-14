@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # thin_film_reflectance — OPTICS `appearance` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_reflectance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized') -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_reflectance")`)
 
 ## 使い方
 
@@ -21,15 +21,23 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 nm:           波長 [nm] (配列可)。
 thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。
-n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。
+n_film/n_sub: 膜 / 基板の屈折率。実数・**複素数 n + ik**(k ≥ 0、金属の基板や吸収膜)・
+              **材料名**(共通の材料表 ``materials``、例 "TI" / "AL" / "SI" —— その波長の n,k を引く)・
+              nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
+n_out:        入射側の屈折率(実数か材料名、吸収なし)。
 cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。
+polarization: "unpolarized"(既定、s と p の平均)/ "s" / "p"。
 
 返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。
 
-物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数
-(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。
-λ/4 の奇数倍で反射が極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のが
-シャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。
+物理: 膜内の伝搬による位相 β = 2π ñ_film d cosθ̃_film / λ(複素の Snell で層の中の cosθ̃ を出す)。
+境界のフレネル係数を r1, r2 として R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²。λ/4 の奇数倍で反射が
+極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。膜厚 0 では R が
+基板単体のフレネル反射に一致する(テストで確認)。
+
+★2026-10-14: 以前は 3 つの屈折率を実数に限っていた(複素数は TypeError)。金属の基板を実数で近似すると
+(焼けたチタン 90 nm を n_sub = 2.6 で)反射率が 0.15〜0.19 と出て、Ti の n,k なら 0.35〜0.61(380〜780 nm)
+—— 色が別物になる、黙った誤り。いまは基板に "TI" と書けば材料表の n,k が入る。
 
 ## ファミリ共通の入力契約(fail-closed)
 

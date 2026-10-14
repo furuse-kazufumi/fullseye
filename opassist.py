@@ -137,13 +137,13 @@ PRESETS: dict[str, dict[str, dict[str, Any]]] = {
     },
     "thin_film_reflectance": {
         "シャボン膜 (水 380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
-        "陽極酸化被膜 (150 nm)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": 1.5},
+        "陽極酸化被膜 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
         "反射防止 (λ/4 MgF2)": {"thickness_nm": 550.0 / (4 * 1.38), "n_film": 1.38, "n_sub": 1.52},
-        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": 2.4, "n_sub": 2.6},
+        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": 2.4, "n_sub": "TI"},
     },
     "thin_film_rgb": {
         "シャボン膜 (380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
-        "陽極酸化 (150 nm)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": 1.5},
+        "陽極酸化 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
     },
     "fresnel_dielectric": {
         "空気 → 水": {"n1": 1.0, "n2": 1.333},

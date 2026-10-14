@@ -6,6 +6,7 @@
 <p>法线图 + 视线 → <b>薄膜干涉的颜色</b> (H, W, 3) 线性 sRGB。</p>
 <p>面相对视线越倾斜，膜内光程越长，颜色向短波长侧移动 ―― 肥皂泡和烧过的钛的颜色在边缘处变化就是这个原因。角度依赖由 cosθ = |n·v| 求出。</p>
 <p>normals / view：(H,W,3) 法线贴图 / 从面到视点的方向。thickness_nm / n_film / n_sub：与 <code style="color:#22d3bf">thin_film_reflectance</code> 相同。</p>
+<p>(也可为复数、材料名。材料名限于覆盖 380–720 nm 的表 —— 例 基底 &quot;TI&quot; / &quot;AL&quot;)</p>
 <p>strength：整体强度。</p>
 <p>空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

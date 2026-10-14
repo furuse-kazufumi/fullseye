@@ -1441,8 +1441,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `matappear.py`
 
 - **L167** — ★Das Uebergeben eines 0-dimensionalen (skalaren) Werts liess `r.shape[-1]` einen **nackten IndexError** werfen (im adversarialen Audit vom 2026-09-04 aufgedeckt). Ein spektraler Reflexionsgrad hat mindestens eine Wellenlaengenachse -- ein Skalar ist kein 'Wert pro Wellenlaenge', daher weist der Waechter ihn ausdruecklich ab.
-- **L217** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
-- **L305** — ★Ein reales Gitter beugt auf **beiden Seiten** (bei symmetrischen Furchen sind die +/-m-Effizienzen nahezu gleich). Bindet man hier nicht beide +/- ein, koennen je nach Geometrie von Lichtquelle und Blickrichtung alle Loesungen negativ werden, und der Filter 'nur positives lambda behalten' **verwirft alles und wird pechschwarz**. Gemessen: eine senkrecht zu den Furchen beleuchtete CD (delta-sin = -0.55) hatte m=+1,+2 bei lambda<0 komplett verschwunden, und die 440 nm von m=-2 waren die eigentliche Loesung.
+- **L253** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
+- **L335** — ★Ein reales Gitter beugt auf **beiden Seiten** (bei symmetrischen Furchen sind die +/-m-Effizienzen nahezu gleich). Bindet man hier nicht beide +/- ein, koennen je nach Geometrie von Lichtquelle und Blickrichtung alle Loesungen negativ werden, und der Filter 'nur positives lambda behalten' **verwirft alles und wird pechschwarz**. Gemessen: eine senkrecht zu den Furchen beleuchtete CD (delta-sin = -0.55) hatte m=+1,+2 bei lambda<0 komplett verschwunden, und die 440 nm von m=-2 waren die eigentliche Loesung.
 
 ## `match3d.py`
 

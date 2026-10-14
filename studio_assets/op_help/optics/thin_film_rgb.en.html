@@ -5,7 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normal map + view → the <b>colour of thin-film interference</b>, (H, W, 3) in linear sRGB.</p>
 <p>The more the surface is tilted away from the line of sight, the longer the optical path inside the film, and the colour shifts toward shorter wavelengths ―― this is why the colours of soap bubbles and heat-tinted titanium change at the rims. The angle dependence comes from cosθ = |n·v|.</p>
-<p>normals / view: (H,W,3) normal map / direction from the surface to the viewpoint. thickness_nm / n_film / n_sub: same as <code style="color:#22d3bf">thin_film_reflectance</code>.</p>
+<p>normals / view: (H,W,3) normal map / direction from the surface to the viewpoint. thickness_nm / n_film / n_sub: same as <code style="color:#22d3bf">thin_film_reflectance</code> (complex numbers and material names allowed; a material name must have</p>
+<p>a table covering 380–720 nm —— e.g. substrate &quot;TI&quot; / &quot;AL&quot;).</p>
 <p>strength: overall strength.</p>
 <p>Empty input (<code style="color:#22d3bf">normals</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

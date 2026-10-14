@@ -6,6 +6,7 @@
 <p>法線圖 + 視線 → <b>薄膜干涉的顏色</b> (H, W, 3) 線性 sRGB。</p>
 <p>面相對視線越傾斜，膜內光程越長，顏色向短波長側移動 ―― 肥皂泡和燒過的鈦的顏色在邊緣處變化就是這個原因。角度依賴由 cosθ = |n·v| 求出。</p>
 <p>normals / view：(H,W,3) 法線貼圖 / 從面到視點的方向。thickness_nm / n_film / n_sub：與 <code style="color:#22d3bf">thin_film_reflectance</code> 相同。</p>
+<p>(也可為複數、材料名。材料名限於覆蓋 380–720 nm 的表 —— 例 基板 &quot;TI&quot; / &quot;AL&quot;)</p>
 <p>strength：整體強度。</p>
 <p>空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>

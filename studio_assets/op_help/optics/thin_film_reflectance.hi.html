@@ -1,14 +1,20 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_reflectance — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>thin film (मोटाई d, refractive index n_film) की spectral reflectance। Airy (multiple reflection) का closed form।</p>
-<p>nm:           wavelength [nm] (array अनुमत)।</p>
-<p>thickness_nm: film की मोटाई [nm]। साबुन के बुलबुले के लिए 200–800, anodized coating के लिए 50–300। n_film/n_sub/n_out: film / substrate / incident side का refractive index (real, कोई absorption नहीं)।</p>
-<p>cos_theta:    incident side पर angle of incidence का cos (array अनुमत, nm के साथ broadcast होने योग्य shape में)।</p>
-<p>Returns: reflectance R (0–1), nm और cos_theta के broadcast shape में।</p>
-<p>Physics: film में propagation से phase अंतर δ = 2π·(2 n_film d cosθ_film)/λ। interfaces के Fresnel coefficients (s और p polarization का mean = unpolarized) को r1, r2 लेकर, R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²। Reflection, λ/4 के विषम गुणजों पर peak करता है (जब n_film &gt; n_sub), और <b>मोटाई बदलने पर रंग खिसकता है</b> —— यही साबुन के बुलबुले का रंग है। film मोटाई 0 पर, R नंगे substrate के Fresnel reflection से मेल खाता है (tests में सत्यापित)।</p>
+<p>nm:           तरंगदैर्घ्य [nm] (array भी चलेगा)।</p>
+<p>thickness_nm: film की मोटाई [nm]। साबुन के बुलबुले के लिए 200–800, anodized परत के लिए 50–300।</p>
+<p>n_film/n_sub: film / substrate का अपवर्तनांक। इनमें से कोई भी: वास्तविक संख्या, <b>complex n + ik</b> (k ≥ 0; धातु के substrate</p>
+<p>और अवशोषी film), <b>material का नाम</b> (साझा material table <code style="color:#22d3bf">materials</code>, जैसे &quot;TI&quot; / &quot;AL&quot; / &quot;SI&quot; —— उस</p>
+<p>तरंगदैर्घ्य का n,k), या nm के साथ broadcast होने वाला <b>हर तरंगदैर्घ्य का array</b> (film का dispersion)।</p>
+<p>n_out:        आपतन वाली ओर का अपवर्तनांक (वास्तविक संख्या या material का नाम, अवशोषण नहीं)।</p>
+<p>cos_theta:    आपतन वाली ओर आपतन कोण का cos (array भी चलेगा, nm के साथ broadcast होने वाले आकार में)।</p>
+<p>polarization: &quot;unpolarized&quot; (डिफ़ॉल्ट, s और p का औसत) / &quot;s&quot; / &quot;p&quot;।</p>
+<p>Returns: परावर्तकता R (0–1), nm और cos_theta के broadcast आकार में।</p>
+<p>भौतिकी: film के भीतर प्रसार का phase β = 2π ñ_film d cosθ̃_film / λ (complex Snell नियम हर परत के भीतर cosθ̃ देता है)। सीमाओं के Fresnel गुणांकों को r1, r2 मानें तो R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²। λ/4 के विषम गुणजों पर परावर्तन अधिकतम होता है (जब n_film &gt; n_sub), और <b>मोटाई बदलने पर रंग खिसकता है</b> —— यही साबुन के बुलबुले का रंग है। film की मोटाई 0 पर R अकेले substrate के Fresnel परावर्तन से मेल खाता है (tests में जाँचा गया)।</p>
+<p>★2026-10-14: पहले तीनों अपवर्तनांक केवल वास्तविक हो सकते थे (complex संख्या पर TypeError)। धातु के substrate को वास्तविक संख्या से अनुमानित करने पर (90 nm का tempered titanium, n_sub = 2.6) परावर्तकता 0.15–0.19 आती थी, जबकि Ti के n,k से 0.35–0.61 (380–780 nm) —— रंग को बिल्कुल अलग बना देने वाली, चुपचाप होने वाली गलती। अब substrate में &quot;TI&quot; लिखने पर material table का n,k आ जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

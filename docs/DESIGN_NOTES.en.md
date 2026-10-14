@@ -1441,8 +1441,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `matappear.py`
 
 - **L167** — ★Passing a 0-dimensional (scalar) value made `r.shape[-1]` throw a **bare IndexError** (caught in the adversarial audit of 2026-09-04). A spectral reflectance has at least a wavelength axis -- a scalar is not 'a value per wavelength', so the guard explicitly refuses it.
-- **L217** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
-- **L305** — ★A real grating diffracts on **both sides** (if the grooves are symmetric, the +/-m efficiencies are nearly equal). If you do not include both +/-, then depending on the geometry of light source and line of sight all solutions can be negative, and the 'keep only positive lambda' filter **drops everything and goes pitch black**. Measured: a CD illuminated perpendicular to the grooves (delta-sin = -0.55) had m=+1,+2 all vanish at lambda<0, and the 440 nm of m=-2 was the real answer.
+- **L253** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
+- **L335** — ★A real grating diffracts on **both sides** (if the grooves are symmetric, the +/-m efficiencies are nearly equal). If you do not include both +/-, then depending on the geometry of light source and line of sight all solutions can be negative, and the 'keep only positive lambda' filter **drops everything and goes pitch black**. Measured: a CD illuminated perpendicular to the grooves (delta-sin = -0.55) had m=+1,+2 all vanish at lambda<0, and the 440 nm of m=-2 was the real answer.
 
 ## `match3d.py`
 

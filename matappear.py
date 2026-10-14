@@ -189,57 +189,87 @@ def spectrum_to_srgb(nm, reflectance, illuminant=None) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 2. 薄膜干渉                                                                   #
 # --------------------------------------------------------------------------- #
+def _film_index(v, w, name, op):
+    """屈折率の指定(実数・複素数 n + ik・材料名・波長ごとの配列)を、波長 w [nm] での複素数の配列にする。"""
+    if isinstance(v, str):
+        import materials as _mat
+        rec = _mat._record(v, op)
+        flat = np.asarray(w, dtype=np.float64).ravel()
+        n, k = _mat._nk(rec, flat / 1000.0, op)[:2]
+        return (n + 1j * k).reshape(np.shape(w))
+    a = np.asarray(v)
+    if a.dtype.kind not in "biufc":
+        raise ValueError(f"{op}: {name} must be a number, a complex n + ik, a material name or an array: got {v!r}")
+    a = a.astype(np.complex128)
+    if not np.all(np.isfinite(a)) or np.any(a.real <= 0.0) or np.any(a.imag < 0.0):
+        raise ValueError(f"{op}: {name} must have a positive real part and k >= 0 (n + ik): got {v!r}")
+    return a
+
+
+def _cos_in(n_layer, n0_sin0):
+    """層の中の複素の cosθ̃ = √(1 − (n₀ sinθ₀ / ñ)²)(減衰する枝 = Im(ñ cosθ̃) ≥ 0 を選ぶ)。"""
+    c = np.sqrt(1.0 - (n0_sin0 / n_layer) ** 2 + 0j)
+    flip = (n_layer * c).imag < 0.0
+    return np.where(flip, -c, c)
+
+
 def thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0,
-                          cos_theta=1.0, n_out=1.0) -> np.ndarray:
+                          cos_theta=1.0, n_out=1.0, polarization="unpolarized") -> np.ndarray:
     """薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。
 
     nm:           波長 [nm] (配列可)。
     thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。
-    n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。
+    n_film/n_sub: 膜 / 基板の屈折率。実数・**複素数 n + ik**(k ≥ 0、金属の基板や吸収膜)・
+                  **材料名**(共通の材料表 ``materials``、例 "TI" / "AL" / "SI" —— その波長の n,k を引く)・
+                  nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
+    n_out:        入射側の屈折率(実数か材料名、吸収なし)。
     cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。
+    polarization: "unpolarized"(既定、s と p の平均)/ "s" / "p"。
 
     返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。
 
-    物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数
-    (s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。
-    λ/4 の奇数倍で反射が極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のが
-    シャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。
+    物理: 膜内の伝搬による位相 β = 2π ñ_film d cosθ̃_film / λ(複素の Snell で層の中の cosθ̃ を出す)。
+    境界のフレネル係数を r1, r2 として R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²。λ/4 の奇数倍で反射が
+    極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。膜厚 0 では R が
+    基板単体のフレネル反射に一致する(テストで確認)。
+
+    ★2026-10-14: 以前は 3 つの屈折率を実数に限っていた(複素数は TypeError)。金属の基板を実数で近似すると
+    (焼けたチタン 90 nm を n_sub = 2.6 で)反射率が 0.15〜0.19 と出て、Ti の n,k なら 0.35〜0.61(380〜780 nm)
+    —— 色が別物になる、黙った誤り。いまは基板に "TI" と書けば材料表の n,k が入る。
     """
-    w = _as_nm(nm, "thin_film_reflectance")
+    op = "thin_film_reflectance"
+    w = _as_nm(nm, op)
     d = float(thickness_nm)
     if d < 0.0 or not np.isfinite(d):
         raise ValueError(f"thin_film_reflectance: thickness_nm must be >= 0: got {thickness_nm}")
-    n0, n1, n2 = float(n_out), float(n_film), float(n_sub)
-    for nm_, v in (("n_out", n0), ("n_film", n1), ("n_sub", n2)):
-        if not np.isfinite(v) or v <= 0.0:
-            raise ValueError(f"thin_film_reflectance: {nm_} must be a positive real index: got {v}")
+    if polarization not in ("unpolarized", "s", "p"):
+        raise ValueError(f"{op}: polarization must be 'unpolarized', 's' or 'p': got {polarization!r}")
+    n0 = _film_index(n_out, w, "n_out", op)
+    if np.any(np.abs(n0.imag) > 0.0):
+        raise ValueError(f"{op}: n_out must be non-absorbing (the incident medium): got {n_out!r}")
+    n1 = _film_index(n_film, w, "n_film", op)
+    n2 = _film_index(n_sub, w, "n_sub", op)
     c0 = np.asarray(cos_theta, dtype=np.float64)
     # ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。
     #   丸めの屑(1 + 1e-15 など)だけは許す。
     if not np.all(np.isfinite(c0)) or np.any(c0 < -1e-9) or np.any(c0 > 1.0 + 1e-9):
         raise ValueError("thin_film_reflectance: cos_theta must be finite and lie in [0, 1]")
     c0 = np.clip(c0, 1e-9, 1.0)
-    sin0 = np.sqrt(np.maximum(1.0 - c0 ** 2, 0.0))
-    sin1 = np.clip(n0 * sin0 / n1, 0.0, 1.0)             # Snell
-    c1 = np.sqrt(np.maximum(1.0 - sin1 ** 2, 0.0))
-    sin2 = np.clip(n0 * sin0 / n2, 0.0, 1.0)
-    c2 = np.sqrt(np.maximum(1.0 - sin2 ** 2, 0.0))
+    n0_sin0 = n0 * np.sqrt(np.maximum(1.0 - c0 ** 2, 0.0))  # Snell の不変量(実数)
+    c1 = _cos_in(n1, n0_sin0)
+    c2 = _cos_in(n2, n0_sin0)
 
     def fresnel(na, ca, nb, cb):
-        rs = (na * ca - nb * cb) / np.maximum(na * ca + nb * cb, 1e-30)
-        rp = (nb * ca - na * cb) / np.maximum(nb * ca + na * cb, 1e-30)
-        return rs, rp
+        return (na * ca - nb * cb) / (na * ca + nb * cb), (nb * ca - na * cb) / (nb * ca + na * cb)
 
     r1s, r1p = fresnel(n0, c0, n1, c1)
     r2s, r2p = fresnel(n1, c1, n2, c2)
-    delta = 4.0 * np.pi * n1 * d * c1 / w                # 2·(2π n d cosθ)/λ
-    ph = np.exp(-1j * delta)
+    ph = np.exp(4j * np.pi * n1 * d * c1 / w)            # e^{2iβ}、Im ≥ 0 の枝で吸収膜は減衰する
+    pairs = {"s": ((r1s, r2s),), "p": ((r1p, r2p),), "unpolarized": ((r1s, r2s), (r1p, r2p))}[polarization]
     out = 0.0
-    for r1, r2 in ((r1s, r2s), (r1p, r2p)):
-        num = r1 + r2 * ph
-        den = 1.0 + r1 * r2 * ph
-        out = out + np.abs(num / den) ** 2
-    return 0.5 * out                                     # 無偏光 = s と p の平均
+    for r1, r2 in pairs:
+        out = out + np.abs((r1 + r2 * ph) / (1.0 + r1 * r2 * ph)) ** 2
+    return np.real(out / len(pairs))                     # 無偏光 = s と p の平均
 
 
 # --------------------------------------------------------------------------- #
@@ -330,7 +360,8 @@ def thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33
     焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。
 
     normals / view: (H,W,3) 法線マップ / 面から視点への方向。
-    thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ。
+    thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ(複素数・材料名も可。材料名は
+        380〜720 nm を覆う表に限る —— 例 基板 "TI" / "AL")。
     strength: 全体の強さ。
 
     空の入力(``normals`` が 0 要素)は ValueError。

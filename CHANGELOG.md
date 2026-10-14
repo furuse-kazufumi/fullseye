@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 薄膜の反射が金属の基板・膜の分散・偏光を受ける(焼き色・陽極酸化のプリセットが基板を誘電体扱いしていた)
+- `matappear.thin_film_reflectance`: n_film / n_sub が実数だけだった(複素数は TypeError)。複素数 n + ik(k ≥ 0)・材料名(共通の材料表、例 "TI" / "AL")・波長ごとの配列(膜の分散)を受け、`polarization="unpolarized" | "s" | "p"`。複素の Snell と Fresnel、位相は e^{2iβ} —— 実数の入力では旧式と 1e-15 で同じ。`thin_film_rgb` も材料名を通す。
+- ★`opassist` のプリセット「焼き色(チタン 90 nm)」は基板 n_sub = 2.6、「陽極酸化(150 nm)」は n_sub = 1.5 の**誘電体**で、反射率が 0.15〜0.19(Ti の n,k なら 0.35〜0.61)と黙って別の色になっていた → 基板を "TI" / "AL" に。
+- 門 tests/test_thin_film_absorbing.py: 第二実装の特性行列法(s/p、Ti 基板・吸収膜)と 1e-12、膜厚 0 = 金属の Fresnel、半波長膜は消える、厚い吸収膜 = その表面の反射、旧式との一致。発見は非公開の薄膜の PoC。
+
 ### Fixed — Zernike の当てはめ(fit_zernike の面積の重み、wavefront_from_opd は瞳の標本で直接)
 - `raytrace.wavefront_from_opd`: 瞳の標本を画像に焼いて `fit_zernike` で読み直していたので、瞳の半径(32 を 31.5)と瞳の外の 0 で係数が歪んでいた(合成 Z20 1 + Z40 0.5 が 0.903 / 0.427、回転対称な単レンズに Z(4,4) = −0.063 波、RMS が直接の値より 10 % 低い)。標本の上で直接最小二乗する(`match3d._fit_zernike_points`)→ 1e-9 で戻り、Z(4,4) は −7e-6、RMS の比は +1.4 %。
 - `match3d.fit_zernike`: 極座標の格子を重みなしで解いていたので中心が過大に効き、打ち切った高次が低次へ漏れた(Z80 + 0.3 Z20 を n_max=4 で Z40 = 0.39)。ρ を Gauss–Legendre の節・重み ρ dρ にした → Z20 0.304、Z40 0.006。瞳の外が 0 の絵の既定の漏れも 0.098 → 0.021。

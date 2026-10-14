@@ -5,7 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>法線マップ + 視線 → <b>薄膜干渉の色</b> (H, W, 3) の線形 sRGB。</p>
 <p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
-<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ。</p>
+<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ(複素数・材料名も可。材料名は</p>
+<p>380〜720 nm を覆う表に限る —— 例 基板 &quot;TI&quot; / &quot;AL&quot;)。</p>
 <p>strength: 全体の強さ。</p>
 <p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
