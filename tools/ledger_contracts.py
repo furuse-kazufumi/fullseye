@@ -447,6 +447,31 @@ def _array_builders():
     }
 
 
+_CCF_CACHE: dict = {}
+
+
+def _ccf_probe():
+    """既定の対物レンズの較正表(chromconf)。1 回だけ作り、呼ぶたびに深いコピーを渡す。"""
+    if "probe" not in _CCF_CACHE:
+        import chromconf
+        _CCF_CACHE["probe"] = chromconf.chromatic_confocal_probe()
+    return copy.deepcopy(_CCF_CACHE["probe"])
+
+
+def _ccf_plate_spectrum(substrate=1.0):
+    """厚さ 500 µm のホウケイ酸クラウン(n_d 1.517)の板の戻りスペクトル(表裏の 2 ピーク、雑音なし)。
+
+    下が空気(1.0)なら 2 ピークはほぼ同じ高さ。下が Si なら裏のピークが表の約 4 倍になり、
+    ``min_prominence`` と ``max_peaks`` の両方が結果を変える入力になる(効かないノブの探針用)。
+    """
+    key = ("plate", substrate)
+    if key not in _CCF_CACHE:
+        import chromconf
+        _CCF_CACHE[key] = chromconf.chromatic_confocal_spectrum(
+            _ccf_probe(), 300.0, stack=((chromconf.GLASS_CROWN, 500.0),), substrate=substrate)
+    return _CCF_CACHE[key].copy()
+
+
 def _batch2_builders():
     """Second batch (2026-10-11): one-line inputs in the units / ranges the docstrings state."""
     nm = lambda: np.linspace(400.0, 700.0, 31)                       # noqa: E731
@@ -510,6 +535,14 @@ def _batch2_builders():
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
+        # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
+        #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
+        #   max_peaks のノブが効かない入力になる)。
+        "chromatic_confocal_spectrum": lambda pool, rng: ([_ccf_probe()], {"surface_um": 300.0 + 400.0 * rng.random()}),
+        "chromatic_confocal_peaks": lambda pool, rng: ([_ccf_plate_spectrum("SI")], {}),
+        "chromatic_confocal_readout": lambda pool, rng: (
+            [__import__("chromconf").chromatic_confocal_peaks(_ccf_plate_spectrum()), _ccf_probe()], {"layer_material": __import__("chromconf").GLASS_CROWN}),
+        "chromatic_confocal_limits": lambda pool, rng: ([_ccf_probe()], {}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (

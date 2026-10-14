@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 48 capabilities**
+**Currently 49 capabilities**
 
 ## Measure (16)
 
@@ -217,7 +217,15 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (7)
+## Light and colour (8)
+
+### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
+
+Six ops in `chromconf` (category `confocal`): the probe calibration from a lens prescription and the glass dispersion of the material table (paraxial focus, image-side NA and longitudinal spherical aberration per wavelength, and the mirror-peak calibration), the confocal axial response (mirror and point, with spherical aberration), the return spectrum of a surface and a layer stack (Fresnel reflectance from the material table, tilt, roughness, source, spectrometer, noise), peak picking with white-reference correction, readout of heights and transparent-plate thickness with an NA correction, and closed-form limits (range, resolution, tilt, minimum film). Gates: thick-lens focus, sinc² width ∝ λ/NA², pupil-overlap Monte Carlo for tilt, plate thickness to 0.1 %, and the gold bias predicted by the reflectance slope over the response curvature.
+
+Operators: `chromatic_confocal_probe`, `confocal_axial_response`, `chromatic_confocal_spectrum`, `chromatic_confocal_peaks`, `chromatic_confocal_readout`, `chromatic_confocal_limits`
+
+Runnable: `poc_chromatic_confocal`
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 

@@ -100,9 +100,10 @@ import raytrace
 import cavityoptics
 import materials
 import spectralrad
+import chromconf
 import fiberoptics
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -457,6 +458,16 @@ _CATALOG = {
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
+    ],
+    "confocal": [  # クロマティック共焦点(白色共焦点)変位センサ(chromconf、2026-10-15)
+        # ★レンズの処方(raytrace)と硝材の分散(materials)→ 波長ごとの焦点位置の較正表 → 戻りスペクトル → ピーク →
+        #   高さ・透明板の厚さ。観察対象(透明板・金属)の反射率も同じ材料表から。画像を受けないので 2-D の橋は架けない。
+        ("chromatic_confocal_probe", "chromconf", [], "table"),
+        ("confocal_axial_response", "chromconf", [], "pairs"),
+        ("chromatic_confocal_spectrum", "chromconf", ["table"], "pairs"),
+        ("chromatic_confocal_peaks", "chromconf", ["pairs"], "table"),
+        ("chromatic_confocal_readout", "chromconf", ["table", "table"], "table"),
+        ("chromatic_confocal_limits", "chromconf", ["table"], "table"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。

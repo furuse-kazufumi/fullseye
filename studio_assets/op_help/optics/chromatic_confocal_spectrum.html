@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_spectrum — OPTICS <code style="color:#22d3bf">confocal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_confocal_spectrum(probe, surface_um: &#x27;float&#x27; = 500.0, stack=(), substrate=&#x27;AL&#x27;, source=None, detector=None, wl_step_nm: &#x27;float&#x27; = 0.5, tilt_deg: &#x27;float&#x27; = 0.0, roughness_nm: &#x27;float&#x27; = 0.0, spectrometer_fwhm_nm: &#x27;float&#x27; = 0.0, photons_per_peak: &#x27;float&#x27; = 0.0, read_noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import chromconf; chromconf.chromatic_confocal_spectrum(probe, surface_um: &#x27;float&#x27; = 500.0, stack=(), substrate=&#x27;AL&#x27;, source=None, detector=None, wl_step_nm: &#x27;float&#x27; = 0.5, tilt_deg: &#x27;float&#x27; = 0.0, roughness_nm: &#x27;float&#x27; = 0.0, spectrometer_fwhm_nm: &#x27;float&#x27; = 0.0, photons_per_peak: &#x27;float&#x27; = 0.0, read_noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_confocal_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>面の位置と層構成から、クロマティック共焦点の戻りスペクトルを合成する(順モデル)。</p>
+<p>戻りスペクトル S(λ) = 光源(λ) × 検出器(λ) × Σ_界面 [反射率 × 往復の透過 × 傾き・粗さ × 共焦点の軸応答(界面の見かけの位置 − 近軸焦点(λ); λ, NA(λ), LSA(λ))]、それを分光器の応答(ガウス、FWHM)でぼかし、光子のショット雑音と読出し雑音を足す。</p>
+<p>probe: <code style="color:#22d3bf">chromatic_confocal_probe</code> の dict。波長の格子は較正の帯域を *wl_step_nm* で刻む。</p>
+<p>surface_um: 最上面の位置(較正表の z、µm)。</p>
+<p>stack: 最上面の下の透明な層の列 <code style="color:#22d3bf">((材料, 厚さ µm), ...)</code>。材料は材料表の名前(<code style="color:#22d3bf">GLASS_CROWN</code> /</p>
+<p><code style="color:#22d3bf">&quot;PMMA&quot;</code> / <code style="color:#22d3bf">&quot;WATER&quot;</code> …)か屈折率の数。k があれば往復の吸収 exp(−4πk·2t/λ) が入る。</p>
+<p>substrate: 最下層の下の媒質(材料表の名前 —— <code style="color:#22d3bf">&quot;AL&quot;</code> / <code style="color:#22d3bf">&quot;AU&quot;</code> / <code style="color:#22d3bf">&quot;CU&quot;</code> / <code style="color:#22d3bf">&quot;SI&quot;</code> … —— か数、</p>
+<p>空気なら 1.0)。界面の反射率は両側の複素屈折率から垂直入射の Fresnel |(m₁ − m₂)/(m₁ + m₂)|²。</p>
+<p>source / detector: 光源の分光分布と検出器の分光感度(pairs、帯域を覆うこと)。None は平坦。</p>
+<p>tilt_deg: 面の傾き(全界面に共通)。鏡面成分は瞳との重なりの割合だけ戻る(sin 2θ ≥ 2NA で 0)。</p>
+<p>roughness_nm: 面の粗さ σ(RMS)。最上面の鏡面成分は exp(−(4πσ/λ)²)、残りは Lambert で NA² だけ</p>
+<p>戻り、点物体の応答で広がる。</p>
+<p>spectrometer_fwhm_nm: 分光器の線幅(0 は理想)。</p>
+<p>photons_per_peak: 0 なら雑音なしの期待値(最大を 1 に規格化)。正なら最大が平均この光子数になる</p>
+<p>ように拡大し、Poisson のショット雑音を足す。read_noise: 読出し雑音(光子数の単位の σ)。</p>
+<p>seed: 雑音の乱数の種(整数)。</p>
+<p>返り値: pairs(λ [nm], 強度)。負は 0 に切る(分光器は負の光を読まない)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: probe の形の誤り、帯域を覆わない source / detector、層の厚さ ≤ 0、材料表の区間外の波長、どの界面にも焦点が合わない(全部の界面が較正の範囲外)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>文字列は <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array は <code style="color:#22d3bf">ValueError</code></b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。<b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。<b>それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code></b> —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_chromatic_confocal">poc_chromatic_confocal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_chromatic_confocal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:chromatic_confocal_peaks">chromatic_confocal_peaks</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">confocal</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:chromatic_confocal_probe">chromatic_confocal_probe</a> · <a style="color:#22d3bf" href="opoptics:confocal_axial_response">confocal_axial_response</a> · <a style="color:#22d3bf" href="opoptics:chromatic_confocal_peaks">chromatic_confocal_peaks</a> · <a style="color:#22d3bf" href="opoptics:chromatic_confocal_readout">chromatic_confocal_readout</a> · <a style="color:#22d3bf" href="opoptics:chromatic_confocal_limits">chromatic_confocal_limits</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: chromconf.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

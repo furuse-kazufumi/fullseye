@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3186,
- "n_notes": 3192,
+ "n_ops": 3192,
+ "n_notes": 3198,
  "notes": {
   "vol_dilate": [
    {
@@ -26721,6 +26721,64 @@
     "category": "coherent",
     "out": "table",
     "path": "docs/ops/optics/coherent/triangulation_speckle_limit.md"
+   }
+  ],
+  "chromatic_confocal_limits": [
+   {
+    "op": "chromatic_confocal_limits",
+    "dim": "optics",
+    "category": "confocal",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/confocal/chromatic_confocal_limits.md"
+   }
+  ],
+  "chromatic_confocal_peaks": [
+   {
+    "op": "chromatic_confocal_peaks",
+    "dim": "optics",
+    "category": "confocal",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/confocal/chromatic_confocal_peaks.md"
+   }
+  ],
+  "chromatic_confocal_probe": [
+   {
+    "op": "chromatic_confocal_probe",
+    "dim": "optics",
+    "category": "confocal",
+    "out": "table",
+    "path": "docs/ops/optics/confocal/chromatic_confocal_probe.md"
+   }
+  ],
+  "chromatic_confocal_readout": [
+   {
+    "op": "chromatic_confocal_readout",
+    "dim": "optics",
+    "category": "confocal",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/optics/confocal/chromatic_confocal_readout.md"
+   }
+  ],
+  "chromatic_confocal_spectrum": [
+   {
+    "op": "chromatic_confocal_spectrum",
+    "dim": "optics",
+    "category": "confocal",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/optics/confocal/chromatic_confocal_spectrum.md"
+   }
+  ],
+  "confocal_axial_response": [
+   {
+    "op": "confocal_axial_response",
+    "dim": "optics",
+    "category": "confocal",
+    "out": "pairs",
+    "path": "docs/ops/optics/confocal/confocal_axial_response.md"
    }
   ],
   "chromatic_shift": [

@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — クロマティック共焦点変位センサ(chromconf 6 op + PoC)
+- `chromconf`(`opsoptics` の新カテゴリ `confocal`、6 op): `chromatic_confocal_probe`(レンズの処方と材料表の硝材の分散、硝材は n_d・V_d で指す `GLASS_*` → 波長ごとの焦点位置・NA・縦球面収差と、鏡で較正したピーク位置)、`confocal_axial_response`(鏡面 sinc²(u/2)・点 sinc⁴(u/4)、縦球面収差は瞳の数値積分)、`chromatic_confocal_spectrum`(面と層構成 → 戻りスペクトル、Fresnel・往復の透過・傾き・粗さ・光源・分光器・雑音)、`chromatic_confocal_peaks`(4 推定法、白色参照で光源のむらを補正)、`chromatic_confocal_readout`(高さと透明板の厚さ、NA の補正)、`chromatic_confocal_limits`(範囲・分解能・傾き・Sparrow の最小膜厚)。全部 _OP_BRIDGE_SKIP、探針(ledger_contracts)には既定の較正表と透明板のスペクトルを種に。
+- PoC `poc_chromatic_confocal`: 高分散の重フリント(V_d 20.9)の非球面単レンズで 450〜700 nm の焦点が 1,191 µm。焦点は厚肉レンズの閉形式と 4e-12 µm、軸応答の幅は 0.443 λ/(1 − cos α)。★色球面収差(450 nm で −40 µm)が較正のピークを半分ずらす。★「鏡を動かす較正」はガウスの偏り(0.060 → 0.014 µm)を消すが放物線(ビンで振れる偏り)は消せない。★ホウケイ酸クラウン 500 µm の厚さは近軸の補正で −1.23 µm、NA の補正で −0.07 µm、n_d を使うと −2.18 µm。金は 509 nm 付近で 0.15 µm 遠く読める(反射率の傾き / 応答の曲率の閉形式が予言)。
+- 実画像の段(`FULLSEYE_CCF_REAL_DIR`、図は同梱しない): Qin ほか, Sensors 24(20):6649 (2024, CC BY 4.0) の図 6(b) から標準溝の深さ 66.095 µm(基準 66.14 µm と −0.045 µm、論文の当てはめと −0.149 µm、図の 1 画素 0.33 µm)、図 3(a) の生の分光画像は列ごとのピークで段差 4.0 画素(µm の換算は図に無い)。パラメータごとの出典と「模型」の区別の表を `chromconf` の docstring に。
+- 能力ノート `docs/capabilities/chromatic-confocal-sensor.md`、op 要約 6 言語、展示(wing_metrology)。
+
 ### Fixed — psf_from_opd の波長の上書き・瞳の幅の数え方・PSF の窓
 - `lensimage.psf_from_opd(wavelength_um=…)`(と `raytrace.opd_samples` / `ray_bundle` / `ray_fan` / `chief_ray` / `spot_stats` の波長の上書き): 屈折は指定の波長で計算するのに、光線の狙い(入射瞳・射出瞳)と PSF の標本間隔(F 値)は系の波長のままだった → 新しい `raytrace._para_at` で指定の波長の近軸量を使う(撮像面は系のまま)。上書きの結果は、その波長で組み直した系と一致する(差 0、旧版は PSF の頂点の 2 %、絞りが 2 面目の系では PSF の大きさ自体が違った)。`psf_field_grid` の `fno` / `rms_spot_mm` も指定の波長で計算する。
 - `psf_from_opd` の自動の瞳格子: 位相の条件(0.4 波/標本)だけで決めていたので、PSF の窓が幾何的なぼけの 1.25 倍しかなく、エネルギーの 1〜2 % が窓の内側に折り返していた → 窓 ≥ ぼけの直径の 2 倍も満たし、下限を 64 → 128 に上げた(瞳の縁の階段の誤差)。3 倍細かい瞳との全変動距離は 1.2〜2.7 % → 0.5〜0.8 %。f/4 の単レンズの自動格子は 194 → 310(Strehl は 0.0106 のまま)。

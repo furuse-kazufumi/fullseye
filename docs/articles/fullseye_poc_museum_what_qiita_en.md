@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**124 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**125 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1108,7 +1108,7 @@ Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 41 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 42 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2547,6 +2547,46 @@ Source: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-k
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
 
 Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
+
+## No.2026.232 —— Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back
+
+[![Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler.png)
+
+*↑ **Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back** ―― Focusing white light with a lens of strong axial colour puts each wavelength's focus at a different height; only the colour in focus on the surface returns through the pinhole to the spectrometer, so the colour that comes back is the height (Molesini 1984). The sensor is assembled from the objective's prescription (`raytrace`) and the glass dispersion of the material table (`materials`), and the measured objects (a borosilicate-crown plate, gold, aluminium, silicon) come from the same table. Six new ops (`chromconf`, category `confocal` of `opsoptics`): the probe calibration (prescription to focus position per wavelength), the confocal axial response (mirror sinc²(u/2), point sinc⁴(u/4), with longitudinal spherical aberration), the return spectrum of a surface and layer stack (Fresnel, tilt, roughness, spectrometer, noise), peak picking, readout of heights and plate thickness, and the closed-form limits. An aspheric dense-flint singlet (V_d 20.9; f 16 mm, NA 0.16) spreads the 450-700 nm foci over 1,191 µm; the paraxial focus matches the thick-lens closed form to 4e-12 µm and the axial response width matches 0.443 λ/(1 − cos α) (∝ λ/NA²). The asphere cancels spherical aberration at 575 nm only: at 450 nm the marginal focus is 40 µm short and the calibrated peak moves by half of that, at 0.74 of the height. A spherical singlet of the same focal length smears the response 29-fold; a hyperchromat (negative fluor crown + positive dense flint) gives 1.63 times the range per focal length. With the design calibration the estimators are biased by 0.060 (Gaussian), 0.108 (parabolic), 0.293 (centroid) and 2.04 µm (peak bin); calibrating by moving a mirror, as a real instrument does, removes the Gaussian bias (0.014 µm) but not the parabolic one (0.090 µm, it oscillates with the bin grid). Under noise the ranking flips: the centroid scales as √N and the Gaussian scatters 4.4 times more. A 500 µm borosilicate-crown plate reads −1.23 µm thin with the paraxial index correction, −0.07 µm with the NA correction and −2.18 µm with the catalogue n_d; four plates (including sapphire and PMMA) are within 0.1 %. Nothing returns from a mirror tilted beyond 8.8-9.5°; gold pulls the reading 0.15 µm far near 509 nm, as the reflectance-slope / response-curvature closed form predicts (dividing by gold's reflectance brings it to 0.005 µm); films under 32 µm merge into one peak (Sparrow: 30.6 µm) and the readout refuses them; a white LED's spectrum biases by 0.93 µm until divided by a white reference (0.014 µm). Real images: from Fig. 6(b) of Qin et al., Sensors 24(20):6649 (2024, CC BY 4.0) the standard groove reads 66.095 µm against the 66.14 µm reference (−0.045 µm) and the paper's own fit of 66.244 µm (−0.149 µm), one figure pixel being 0.33 µm; the raw spectral image of Fig. 3(a) shows the step as 4.0 pixels but carries no µm scale, so this re-reads the paper's result rather than validating the sensor model. Nothing learned, one synthetic mirror calibration, 33 gates (+6 with the real figures).*
+
+[![左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve.png)
+
+*↑ The measurement ―― 左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450 nm で -20.0 µm。575 nm では 0(非球面で消した色)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![鏡面の応答は sinc²(u/2)、FWHM = 0.443 λ/(1 − cos α)(∝ λ/NA²)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/03_axial_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/03_axial_response.png)
+
+*↑ 鏡面の応答は sinc²(u/2)、FWHM = 0.443 λ/(1 − cos α)(∝ λ/NA²)。*
+
+[![段差は 49.959 µm と読める(RMS 誤差 0.276 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/05_step_and_tilt_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/05_step_and_tilt.png)
+
+*↑ 段差は 49.959 µm と読める(RMS 誤差 0.276 µm)。*
+
+[![左: 透明な板は表と裏の 2 ピーク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/06_plate_and_gold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/06_plate_and_gold.png)
+
+*↑ 左: 透明な板は表と裏の 2 ピーク。*
+
+[![(a) 鏡面の傾きが 8.8°(sin 2θ = 2NA)を超えると何も戻らない(瞳の光線のモンテカルロと一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/07_failure_modes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/07_failure_modes.png)
+
+*↑ (a) 鏡面の傾きが 8.8°(sin 2θ = 2NA)を超えると何も戻らない(瞳の光線のモンテカルロと一致)。*
+
+[![上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)
+
+*↑ The animation ―― 上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引くと高さになる。*
+
+```
+py -3.11 examples/poc_chromatic_confocal.py
+```
+
+Source: [examples/poc_chromatic_confocal.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_chromatic_confocal.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_chromatic_confocal)
+
+Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`chromatic_confocal_limits`](https://furuse.work/ops/optics/confocal/chromatic_confocal_limits.html) · [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/confocal/chromatic_confocal_peaks.html) · [`chromatic_confocal_probe`](https://furuse.work/ops/optics/confocal/chromatic_confocal_probe.html) · [`chromatic_confocal_readout`](https://furuse.work/ops/optics/confocal/chromatic_confocal_readout.html) · [`chromatic_confocal_spectrum`](https://furuse.work/ops/optics/confocal/chromatic_confocal_spectrum.html) · [`cie_xyz_from_wavelength`](https://furuse.work/ops/optics/appearance/cie_xyz_from_wavelength.html) · [`confocal_axial_response`](https://furuse.work/ops/optics/confocal/confocal_axial_response.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

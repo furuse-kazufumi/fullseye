@@ -14355,6 +14355,60 @@
    "de": "Zusammenfassung einer Kurve: Peakwellenlänge und -wert, Schwerpunktwellenlänge, Halbwertsbreite (Schnittpunkte linear interpoliert), Integral.",
    "hi": "curve का सारांश: peak तरंगदैर्घ्य और मान, centroid तरंगदैर्घ्य, full width at half maximum (रैखिक interpolation से प्रतिच्छेद), integral।"
   },
+  "optics/chromatic_confocal_probe": {
+   "fp": "77cc003a80a2",
+   "en": "Build the wavelength → focus-position calibration table (the ticks of the rainbow ruler) from an objective lens prescription.",
+   "zh": "由物镜的处方生成波长 → 焦点位置的标定表(彩虹标尺的刻度)。",
+   "tw": "由物鏡的處方產生波長 → 焦點位置的校正表(彩虹尺的刻度)。",
+   "ko": "대물렌즈 처방으로부터 파장 → 초점 위치의 보정표(무지개 자의 눈금)를 만든다.",
+   "de": "Erstellt aus dem Rezept des Objektivs die Kalibriertabelle Wellenlänge → Fokuslage (die Teilung des Regenbogen-Maßstabs).",
+   "hi": "objective lens के prescription से wavelength → focus स्थिति की calibration table (इंद्रधनुषी पैमाने के निशान) बनाता है।"
+  },
+  "optics/confocal_axial_response": {
+   "fp": "31865b2f9155",
+   "en": "Axial response I(z) of a confocal microscope (detected intensity against the defocus z [µm]) as pairs.",
+   "zh": "以 pairs 返回共焦显微镜的轴向响应 I(z)(相对离焦量 z [µm] 的检测强度)。",
+   "tw": "以 pairs 傳回共焦顯微鏡的軸向響應 I(z)(相對離焦量 z [µm] 的偵測強度)。",
+   "ko": "공초점 현미경의 축 방향 응답 I(z)(초점에서 벗어난 거리 z [µm]에 대한 검출 강도)를 pairs로 반환한다.",
+   "de": "Axiale Antwort I(z) eines konfokalen Mikroskops (detektierte Intensität über der Defokussierung z [µm]) als pairs.",
+   "hi": "confocal microscope की axial response I(z) (focus से विचलन z [µm] के सापेक्ष detected intensity) को pairs के रूप में लौटाता है।"
+  },
+  "optics/chromatic_confocal_spectrum": {
+   "fp": "bdffda95b0e7",
+   "en": "Synthesise the chromatic confocal return spectrum from the surface position and the layer stack (forward model).",
+   "zh": "由表面位置和层结构合成彩色共焦的返回光谱(正向模型)。",
+   "tw": "由表面位置與層結構合成彩色共焦的返回光譜(正向模型)。",
+   "ko": "면의 위치와 층 구성으로부터 크로매틱 공초점의 귀환 스펙트럼을 합성한다(순방향 모델).",
+   "de": "Synthetisiert das zurückkehrende Spektrum eines chromatisch-konfokalen Sensors aus Oberflächenlage und Schichtaufbau (Vorwärtsmodell).",
+   "hi": "surface की स्थिति और layer संरचना से chromatic confocal का लौटने वाला spectrum बनाता है (forward model)।"
+  },
+  "optics/chromatic_confocal_peaks": {
+   "fp": "dff4758fed76",
+   "en": "Pick the peak wavelengths of a return spectrum (one, or the two faces of a transparent body) to sub-bin precision.",
+   "zh": "以优于一个采样间隔的精度提取返回光谱的峰值波长(一条,或透明体正反两面的两条)。",
+   "tw": "以優於一個取樣間隔的精度擷取返回光譜的峰值波長(一條,或透明體正反兩面的兩條)。",
+   "ko": "귀환 스펙트럼의 피크 파장(1개, 또는 투명체 앞뒷면의 2개)을 bin 이하의 정밀도로 찾는다.",
+   "de": "Bestimmt die Peakwellenlängen eines zurückkehrenden Spektrums (einer, oder Vorder- und Rückseite eines transparenten Körpers) genauer als ein Spektralbin.",
+   "hi": "लौटे spectrum की peak wavelengths (एक, या पारदर्शी वस्तु की आगे-पीछे की दो) को एक bin से सूक्ष्म शुद्धता से निकालता है।"
+  },
+  "optics/chromatic_confocal_readout": {
+   "fp": "70738ef43b37",
+   "en": "Map peak wavelengths back to heights (z) through the calibration table and, for two peaks, give the thickness of the transparent layer.",
+   "zh": "通过标定表把峰值波长换算回高度(z),若有两个峰则给出透明层的厚度。",
+   "tw": "透過校正表把峰值波長換算回高度(z),若有兩個峰則給出透明層的厚度。",
+   "ko": "피크 파장을 보정표로 높이(z)로 되돌리고, 피크가 2개이면 투명층의 두께를 구한다.",
+   "de": "Rechnet Peakwellenlängen über die Kalibriertabelle in Höhen (z) um und liefert bei zwei Peaks die Dicke der transparenten Schicht.",
+   "hi": "peak wavelengths को calibration table से ऊँचाई (z) में बदलता है, और दो peaks हों तो पारदर्शी परत की मोटाई देता है।"
+  },
+  "optics/chromatic_confocal_limits": {
+   "fp": "cbf78ba768c3",
+   "en": "From the calibration table, give in closed form the measuring range, axial resolution, largest tilt that still returns light and minimum film thickness.",
+   "zh": "由标定表以闭式给出测量范围、轴向分辨率、仍能返回光的最大倾角和最小膜厚。",
+   "tw": "由校正表以閉式給出量測範圍、軸向解析度、仍能返回光的最大傾角與最小膜厚。",
+   "ko": "보정표로부터 측정 범위, 축 방향 분해능, 빛이 돌아오는 최대 기울기, 최소 막 두께를 닫힌 형식으로 구한다.",
+   "de": "Gibt aus der Kalibriertabelle Messbereich, axiale Auflösung, größte noch zurückkehrende Neigung und kleinste Schichtdicke in geschlossener Form an.",
+   "hi": "calibration table से measuring range, axial resolution, प्रकाश लौटाने वाला अधिकतम tilt और न्यूनतम film मोटाई closed form में देता है।"
+  },
   "optics/material_group_index": {
    "fp": "8cc8d2fe3af3",
    "en": "Group index n_g(λ) = n − λ dn/dλ as ``pairs`` (λ [nm], n_g) (the material is a name in ``materials``).",

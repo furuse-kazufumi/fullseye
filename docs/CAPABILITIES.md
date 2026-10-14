@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 48 項目**
+**収録 49 項目**
 
 ## 測る (16)
 
@@ -216,7 +216,15 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (7)
+## 光と色 (8)
+
+### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
+
+白色光を軸上色収差の大きい対物レンズで集光すると、波長ごとに焦点の高さが変わります。面で反射してピンホールを通って分光器へ戻るのは面にピントの合った色だけなので、戻りスペクトルのピーク波長が高さになります(Molesini 1984)。`chromconf` の 6 本は、このセンサを**対物レンズの処方(`raytrace`)と硝材の分散(`materials`)から**組み立てます。観察対象(透明板・金属・Si)の反射率と屈折率も同じ材料表から引きます。
+
+使う op: `chromatic_confocal_probe`, `confocal_axial_response`, `chromatic_confocal_spectrum`, `chromatic_confocal_peaks`, `chromatic_confocal_readout`, `chromatic_confocal_limits`
+
+動く例: `poc_chromatic_confocal`
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
