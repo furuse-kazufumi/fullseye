@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 62 capabilities**
+**Currently 63 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -28,6 +28,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Align and stack](capabilities/align-and-stack.md) | `align_frames` → `drizzle_resample` → `frame_quality` | `poc_astro_photometry` |
 | [Beamform for direction, separate range from velocity](capabilities/beamforming-and-range-doppler.md) | `beamform_doa` → `range_doppler_map` → `range_doppler_peaks` | `poc_multibeam_bathymetry` |
 | [Segment regions, select them, and count](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
+| [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
@@ -396,7 +397,19 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (11)
+## Light and colour (12)
+
+### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
+
+Six ops in `chromconf` (category `confocal`): the probe calibration from a lens prescription and the glass dispersion of the material table (paraxial focus, image-side NA and longitudinal spherical aberration per wavelength, and the mirror-peak calibration), the confocal axial response (mirror and point, with spherical aberration), the return spectrum of a surface and a layer stack (Fresnel reflectance from the material table, tilt, roughness, source, spectrometer, noise), peak picking with white-reference correction, readout of heights and transparent-plate thickness with an NA correction, and closed-form limits (range, resolution, tilt, minimum film). Gates: thick-lens focus, sinc² width ∝ λ/NA², pupil-overlap Monte Carlo for tilt, plate thickness to 0.1 %, and the gold bias predicted by the reflectance slope over the response curvature.
+
+Operators: `chromatic_confocal_probe`, `confocal_axial_response`, `chromatic_confocal_spectrum`, `chromatic_confocal_peaks`, `chromatic_confocal_readout`, `chromatic_confocal_limits`
+
+Pipeline: [`chromatic_confocal_probe`](ops/optics/confocal/chromatic_confocal_probe.md) → [`chromatic_confocal_spectrum`](ops/optics/confocal/chromatic_confocal_spectrum.md) → [`chromatic_confocal_peaks`](ops/optics/confocal/chromatic_confocal_peaks.md) → [`chromatic_confocal_readout`](ops/optics/confocal/chromatic_confocal_readout.md)
+
+Alternatives: [`confocal_axial_response`](ops/optics/confocal/confocal_axial_response.md), [`chromatic_confocal_limits`](ops/optics/confocal/chromatic_confocal_limits.md)
+
+Runnable: `poc_chromatic_confocal`
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 

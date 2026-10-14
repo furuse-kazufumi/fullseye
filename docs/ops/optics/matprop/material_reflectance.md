@@ -4,7 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: pairs
-examples: [poc_material_optical_library]
+examples: [poc_chromatic_confocal, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -49,11 +49,12 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [film_thickness_fft](../film/film_thickness_fft.md) · [film_thickness_fit](../film/film_thickness_fit.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [film_thickness_fft](../film/film_thickness_fft.md) · [film_thickness_fit](../film/film_thickness_fit.md) · [chromatic_confocal_peaks](../confocal/chromatic_confocal_peaks.md)
 
 ## 同カテゴリ(`matprop`)
 

@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, poc_material_optical_library, poc_tdi_linescan, poc_telecentric_metrology]
+examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, poc_chromatic_confocal, poc_material_optical_library, poc_tdi_linescan, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -72,6 +72,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
+- [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [poc_tdi_linescan](../../../../examples/poc_tdi_linescan.py) — `py -3.11 examples/poc_tdi_linescan.py`
 - [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`

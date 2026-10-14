@@ -3098,6 +3098,22 @@
    }
   },
   {
+   "id": "poc_chromatic_confocal",
+   "group": "wing_metrology",
+   "media": "04_spectrum_vs_height.gif",
+   "motion": true,
+   "thumb_src": "01_rainbow_ruler.png",
+   "label": {
+    "ja": "クロマティック共焦点(色で高さを読む)",
+    "en": "Chromatic confocal sensor (reading height from colour)",
+    "zh": "彩色共焦传感器(由颜色读出高度)",
+    "tw": "彩色共焦感測器(由顏色讀出高度)",
+    "ko": "크로매틱 공초점 센서(색으로 높이 읽기)",
+    "de": "Chromatisch-konfokaler Sensor (Höhe aus der Farbe)",
+    "hi": "chromatic confocal sensor (रंग से ऊँचाई पढ़ना)"
+   }
+  },
+  {
    "id": "poc_fiber_light_guide",
    "group": "wing_color",
    "media": "03_lp_b_v_diagram.png",
@@ -5798,6 +5814,13 @@
     "ko": "주기 패턴이 표본화 격자에서 접히는 거리와 줄무늬가 어지럽히는 충돌 시간을 닫힌 형식으로 측정(겹눈·검사 카메라)",
     "de": "Die Distanz, ab der ein periodisches Muster auf einem Abtastgitter aliast, und die von Streifen verfälschte Zeit bis zum Kontakt — in geschlossener Form (Komplexaugen und Prüfkameras)",
     "hi": "वह दूरी जिस पर periodic pattern sampling lattice पर alias करता है, और धारियों से बिगड़ा time-to-contact — closed form में (compound eye और inspection camera)"
+   },
+   "chromatic-confocal-sensor": {
+    "zh": "彩色共焦位移传感器(玻璃色散 → 标定表 → 返回光谱 → 高度与厚度)",
+    "tw": "彩色共焦位移感測器(玻璃色散 → 校正表 → 返回光譜 → 高度與厚度)",
+    "ko": "크로매틱 공초점 변위 센서(유리의 분산 → 보정표 → 귀환 스펙트럼 → 높이와 두께)",
+    "de": "Chromatisch-konfokaler Wegsensor (Glasdispersion, Kalibriertabelle, Rückkehrspektrum, Höhe und Dicke)",
+    "hi": "chromatic confocal displacement sensor (glass dispersion → calibration table → लौटा spectrum → ऊँचाई और मोटाई)"
    },
    "fiber-and-light-guide": {
     "zh": "光纤与光导(玻璃色散 → LP 模 → 模场直径 → 照明效率)",

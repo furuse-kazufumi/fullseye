@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-62 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+63 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **Licht und Farbe**
 
+- Chromatisch-konfokaler Wegsensor (Glasdispersion, Kalibriertabelle, Rückkehrspektrum, Höhe und Dicke): [Erklärung](../../capabilities/chromatic-confocal-sensor.md) _(ja)_ · Beispiele [poc_chromatic_confocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_chromatic_confocal.py)
 - Farbe messen (XYZ / Lab / Farbabstand): [Erklärung](../../capabilities/colour-and-delta-e.md) _(ja)_ · Beispiele [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz): [Erklärung](../../capabilities/fiber-and-light-guide.md) _(ja)_ · Beispiele [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - Eine Tabelle optischer Materialkonstanten (83 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import): [Erklärung](../../capabilities/material-optical-property-library.md) _(ja)_ · Beispiele [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
@@ -173,7 +174,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-237 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+238 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -233,7 +234,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (44)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -277,6 +278,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="Attention-Identitäten" width="200" height="200"><span>Attention-Identitäten</span></a>
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="Phasen-CRT" width="200" height="200"><b>&#9654;</b><span>Phasen-CRT</span></a>
 <a href="../../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM-Kantenaufblähung" width="200" height="200"><span>SEM-Kantenaufblähung</span></a>
+<a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="Chromatisch-konfokaler Sensor (Höhe aus der Farbe)" width="200" height="200"><b>&#9654;</b><span>Chromatisch-konfokaler Sensor (Höhe aus der Farbe)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)" width="200" height="200"><b>&#9654;</b><span>Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telezentrische Messobjektive" width="200" height="200"><b>&#9654;</b><span>Telezentrische Messobjektive</span></a>
 </div>

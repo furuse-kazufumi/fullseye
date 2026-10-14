@@ -1136,7 +1136,7 @@ py -3.11 examples/poc_tdi_linescan.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 44 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 45 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2695,6 +2695,46 @@ py -3.11 examples/poc_phase_measuring_deflectometry.py
 この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry)
 
 使用 op(ノートへ): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`deflectometry_phase_to_slope`](https://furuse.work/ops/specular/deflectometry/deflectometry_phase_to_slope.html) · [`deflectometry_render`](https://furuse.work/ops/specular/deflectometry/deflectometry_render.html) · [`deflectometry_rig`](https://furuse.work/ops/specular/deflectometry/deflectometry_rig.html) · [`deflectometry_screen_pattern`](https://furuse.work/ops/specular/deflectometry/deflectometry_screen_pattern.html) · [`deflectometry_sensitivity`](https://furuse.work/ops/specular/deflectometry/deflectometry_sensitivity.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`integrate`](https://furuse.work/ops/3d/tsdf_fusion/integrate.html) · [`sfp_height`](https://furuse.work/ops/optics/shape_from_polarization/sfp_height.html) · [`slope_to_curvature`](https://furuse.work/ops/specular/deflectometry/slope_to_curvature.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
+
+## No.2026.238 —— クロマティック共焦点変位センサ ―― 硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む
+
+[![クロマティック共焦点変位センサ ―― 硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler.png)
+
+*↑ **クロマティック共焦点変位センサ ―― 硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む** ―― 白色光を軸上色収差の大きいレンズで集光すると、波長ごとに焦点の高さが変わる。面で反射してピンホールを通って分光器へ戻るのは面にピントの合った色だけなので、戻ってきた光の色が高さになる(Molesini 1984)。そのセンサを、対物レンズの処方(`raytrace`)と硝材の分散(材料表 `materials`)から組み立て、観察対象(ホウケイ酸クラウンの板・金・アルミ・Si)も同じ材料表から引いた。新 op 6 本(`chromconf`、`opsoptics` の `confocal`): `chromatic_confocal_probe`(処方 → 波長ごとの焦点位置の較正表)/ `confocal_axial_response`(共焦点の軸応答、鏡面 sinc²(u/2)・点 sinc⁴(u/4)、縦球面収差つき)/ `chromatic_confocal_spectrum`(面と層 → 戻りスペクトル、Fresnel・傾き・粗さ・分光器・雑音)/ `chromatic_confocal_peaks` / `chromatic_confocal_readout`(高さと透明板の厚さ)/ `chromatic_confocal_limits`(範囲・分解能・傾き・最小膜厚)。★虹のものさし: 高分散の重フリント(n_d 1.923・V_d 20.9)の非球面単レンズ(f 16 mm、NA 0.16)で 450〜700 nm の焦点が 1,191 µm にわたって並び、近軸焦点は厚肉レンズの閉形式と 4e-12 µm、軸応答の幅は 0.443 λ/(1 − cos α) と一致(∝ λ/NA²)。非球面は 575 nm でしか球面収差を消さず、450 nm では縦収差 −40 µm、較正のピークはその半分 −20 µm ずれて高さは 0.74 に落ちる。同じ f の球面の単レンズは縦収差 −863 µm で応答の幅が 29 倍に崩れ、ハイパークロマート(フッ素クラウン V_d 90.9 の負 + 重フリントの正)は焦点距離あたりの範囲が 1.63 倍。★読み: 設計値の較正表のままだと推定法の偏りがガウス 0.060・放物線 0.108・重心 0.293・最大ビン 2.04 µm。実機と同じ「鏡を動かして読む較正」でガウスは 0.014 µm に消えるが、放物線は 0.090 µm 残る(ビンの刻みで振れる偏りは滑らかな表で消せない)。雑音では順位が入れ替わり、重心の再現性は光子 4 倍で 1/2.1(√N)、3 点のガウスは重心の 4.4 倍ばらつく。50 µm の段差は 49.96 µm。★透明な板: ホウケイ酸クラウン 500 µm は見かけの厚さ × n(λ₂) の近軸の補正で −1.23 µm(平板の球面収差)、NA の補正で −0.07 µm、カタログの n_d を使うと −2.18 µm。サファイア・PMMA を含む 4 枚で 0.1 % 以内。★失敗条件: 鏡面が 8.8°(赤)〜9.5°(青)を超えて傾くと何も戻らない(瞳の重なりはモンテカルロと 0.004)。金は反射率の立ち上がる509 nm 付近で読みが 0.15 µm 遠くなり、反射率の傾き / 応答の曲率の閉形式が予言する(材料表の金の反射率で割ると 0.005 µm)。32 µm より薄いホウケイ酸クラウンの膜は 2 ピークに分かれず(Sparrow の閉形式 30.6 µm)、readout は厚さを当て推量せず拒否する。白色 LED のむらは 0.93 µm の偏り、白色参照で割ると 0.014 µm。粗さの偏りは閉形式どおり小さい(σ 60 nm で 0.06 µm)。★実画像: 公開論文(Qin ほか, Sensors 24(20):6649, 2024, CC BY 4.0)の図 6(b) の目盛と印から標準溝の深さを 66.095 µm と読み、基準 66.14 µm と −0.045 µm、論文自身の当てはめ 66.244 µm と −0.149 µm(図の 1 画素 = 0.33 µm、読みの目安の内)。図 3(a) の生の分光画像は列ごとのピークで溝の段差を 4.0 画素と読めるが µm への換算は図に無い —— 論文の結果を図から読み直す検査で、センサの模型の実機検証ではない(図は同梱せず `FULLSEYE_CCF_REAL_DIR`)。範囲の式・軸応答の幅・傾きの上限・推定法の系統誤差・透明板に n と NA が要ることは一次文献で確かめ、NA の補正式と金・粗さ・光源による偏りの大きさは模型と明記した。学習 0、較正は合成データで鏡を動かす 1 回だけ、門 33 件(実画像の段 +6)。*
+
+[![左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/02_calibration_curve.png)
+
+*↑ 測定の図 ―― 左: 単レンズの範囲 1191 µm、ハイパークロマート 1842 µm(焦点距離あたり 1.63 倍)。近軸焦点は閉形式と 4e-12 µm で一致(点)。右: 鏡で較正したピークは近軸焦点から縦球面収差のほぼ半分だけずれる —— 450 nm で -20.0 µm。575 nm では 0(非球面で消した色)。*
+
+[![鏡面の応答は sinc²(u/2)、FWHM = 0.443 λ/(1 − cos α)(∝ λ/NA²)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/03_axial_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/03_axial_response.png)
+
+*↑ 鏡面の応答は sinc²(u/2)、FWHM = 0.443 λ/(1 − cos α)(∝ λ/NA²)。*
+
+[![段差は 49.959 µm と読める(RMS 誤差 0.276 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/05_step_and_tilt_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/05_step_and_tilt.png)
+
+*↑ 段差は 49.959 µm と読める(RMS 誤差 0.276 µm)。*
+
+[![左: 透明な板は表と裏の 2 ピーク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/06_plate_and_gold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/06_plate_and_gold.png)
+
+*↑ 左: 透明な板は表と裏の 2 ピーク。*
+
+[![(a) 鏡面の傾きが 8.8°(sin 2θ = 2NA)を超えると何も戻らない(瞳の光線のモンテカルロと一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/07_failure_modes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/07_failure_modes.png)
+
+*↑ (a) 鏡面の傾きが 8.8°(sin 2θ = 2NA)を超えると何も戻らない(瞳の光線のモンテカルロと一致)。*
+
+[![上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif)
+
+*↑ 動く図 ―― 上: 虹のものさし(焦点付近の光線)と面(灰色の縦線)。下: ピンホールへ戻るスペクトル(棒の色はその波長の色、ピーク 3000 光子 + 読出し雑音)。面を遠ざけると、ピントの合う色が青から赤へ移り、戻る色が変わる。ピーク波長を較正表で引くと高さになる。*
+
+```
+py -3.11 examples/poc_chromatic_confocal.py
+```
+
+ソース: [examples/poc_chromatic_confocal.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_chromatic_confocal.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_chromatic_confocal)
+
+使用 op(ノートへ): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`chromatic_confocal_limits`](https://furuse.work/ops/optics/confocal/chromatic_confocal_limits.html) · [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/confocal/chromatic_confocal_peaks.html) · [`chromatic_confocal_probe`](https://furuse.work/ops/optics/confocal/chromatic_confocal_probe.html) · [`chromatic_confocal_readout`](https://furuse.work/ops/optics/confocal/chromatic_confocal_readout.html) · [`chromatic_confocal_spectrum`](https://furuse.work/ops/optics/confocal/chromatic_confocal_spectrum.html) · [`cie_xyz_from_wavelength`](https://furuse.work/ops/optics/appearance/cie_xyz_from_wavelength.html) · [`confocal_axial_response`](https://furuse.work/ops/optics/confocal/confocal_axial_response.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

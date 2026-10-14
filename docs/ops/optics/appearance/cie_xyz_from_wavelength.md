@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: points
-examples: [appearance_structural_colour]
+examples: [appearance_structural_colour, poc_chromatic_confocal]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [appearance_structural_colour](../../../../examples/appearance_structural_colour.py) — `py -3.11 examples/appearance_structural_colour.py`
+- [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 

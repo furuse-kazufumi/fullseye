@@ -33,6 +33,7 @@
 | [うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす)](capabilities/beats-fringes-and-screens.md) | One beat (membrane modes, fringes, diffraction orders, print moire, and turning tone into ink) | 波と信号 | `verified-synthetic` | 12/12 | `poc_beats_fringes_and_screens` synthetic → tests/test_poc_scripts_run.py |
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 3/4 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py |
+| [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness) | 光と色 | `verified-synthetic` | 6/6 | `poc_chromatic_confocal` synthetic → tests/test_poc_scripts_run.py |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
 | [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md) | Seeing the complex plane as an area (domain colouring, basins, escape time, flow) | 測る | `verified-synthetic` | 8/8 | `poc_complex_plane_fields` synthetic → tests/test_poc_scripts_run.py |
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
@@ -100,8 +101,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 374 |
-| `tests/test_poc_scripts_run.py` が走らせる | 237 |
+| 2-D 台帳の例 | 375 |
+| `tests/test_poc_scripts_run.py` が走らせる | 238 |
 | `tests/test_example_scripts_run.py` が走らせる | 137 |
 | **どの門も走らせていない** | **0** |
 

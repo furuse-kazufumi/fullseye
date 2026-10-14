@@ -233,6 +233,14 @@ _OP_BRIDGE_SKIP = {
     "moire_differential_shift",
     "moire_mark_read",
     "moire_phase_crlb",
+    # 2026-10-15 クロマティック共焦点 6 本(chromconf、confocal): レンズの処方・較正表・スペクトル(pairs)を受ける側で、
+    # 画像を受けない。台帳(`fullseye.ledger.chromatic_confocal_probe` …)から使う。
+    "chromatic_confocal_probe",
+    "confocal_axial_response",
+    "chromatic_confocal_spectrum",
+    "chromatic_confocal_peaks",
+    "chromatic_confocal_readout",
+    "chromatic_confocal_limits",
     # 2026-10-14 光源・フィルタ・センサの分光曲線 9 本(spectralrad、spectral): 曲線(pairs)を作るか掛けるか積む側で、
     # 画像を受けない。台帳(`fullseye.ledger.led_spectrum` …)から使う。
     "blackbody_spectrum",

@@ -51,7 +51,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [film_thickness_fft](../film/film_thickness_fft.md) · [film_thickness_fit](../film/film_thickness_fit.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [film_thickness_fft](../film/film_thickness_fft.md) · [film_thickness_fit](../film/film_thickness_fit.md) · [chromatic_confocal_peaks](../confocal/chromatic_confocal_peaks.md)
 
 ## 同カテゴリ(`spectral`)
 

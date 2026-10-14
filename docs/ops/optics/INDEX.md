@@ -1,4 +1,4 @@
-# OPTICS operator help — 253 ops in 30 categories
+# OPTICS operator help — 259 ops in 31 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -29,6 +29,10 @@
 ### coherent (6)
 
 [coherent_image](coherent/coherent_image.md) · [laser_line_coherent](coherent/laser_line_coherent.md) · [speckle_field](coherent/speckle_field.md) · [speckle_reduction](coherent/speckle_reduction.md) · [speckle_statistics](coherent/speckle_statistics.md) · [triangulation_speckle_limit](coherent/triangulation_speckle_limit.md)
+
+### confocal (6)
+
+[chromatic_confocal_limits](confocal/chromatic_confocal_limits.md) · [chromatic_confocal_peaks](confocal/chromatic_confocal_peaks.md) · [chromatic_confocal_probe](confocal/chromatic_confocal_probe.md) · [chromatic_confocal_readout](confocal/chromatic_confocal_readout.md) · [chromatic_confocal_spectrum](confocal/chromatic_confocal_spectrum.md) · [confocal_axial_response](confocal/confocal_axial_response.md)
 
 ### design (15)
 

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 62 項目**
+**収録 63 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -27,6 +27,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [位置を合わせて重ねる](capabilities/align-and-stack.md) | `align_frames` → `drizzle_resample` → `frame_quality` | `poc_astro_photometry` |
 | [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md) | `beamform_doa` → `range_doppler_map` → `range_doppler_peaks` | `poc_multibeam_bathymetry` |
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
+| [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
@@ -463,7 +464,23 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (11)
+## 光と色 (12)
+
+### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
+
+白色光を軸上色収差の大きい対物レンズで集光すると、波長ごとに焦点の高さが変わります。面で反射してピンホールを通って分光器へ戻るのは面にピントの合った色だけなので、戻りスペクトルのピーク波長が高さになります(Molesini 1984)。`chromconf` の 6 本は、このセンサを**対物レンズの処方(`raytrace`)と硝材の分散(`materials`)から**組み立てます。観察対象(透明板・金属・Si)の反射率と屈折率も同じ材料表から引きます。
+
+使う op: `chromatic_confocal_probe`, `confocal_axial_response`, `chromatic_confocal_spectrum`, `chromatic_confocal_peaks`, `chromatic_confocal_readout`, `chromatic_confocal_limits`
+
+推奨パイプライン: [`chromatic_confocal_probe`](ops/optics/confocal/chromatic_confocal_probe.md) → [`chromatic_confocal_spectrum`](ops/optics/confocal/chromatic_confocal_spectrum.md) → [`chromatic_confocal_peaks`](ops/optics/confocal/chromatic_confocal_peaks.md) → [`chromatic_confocal_readout`](ops/optics/confocal/chromatic_confocal_readout.md)
+
+代替: [`confocal_axial_response`](ops/optics/confocal/confocal_axial_response.md), [`chromatic_confocal_limits`](ops/optics/confocal/chromatic_confocal_limits.md)
+
+限界: 層のあいだの干渉は入れない(反射を強度で足す)ので数 µm の薄膜のチャネルドスペクトルは再現しない。縦球面収差は 3 次の 1 項だけ。NA の補正式・金や粗さや光源のむらによる偏りの大きさ・薄膜の限界は模型の値。
+
+実寸校正: 較正表は合成データで鏡を動かして作る(ピーク波長 → 高さ)。滑らかな推定の偏りはこの較正で消え、ビンの刻みの振れは残る。実機では実測の較正表に差し替える。
+
+動く例: `poc_chromatic_confocal`
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 

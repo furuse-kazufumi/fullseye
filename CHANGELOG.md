@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — クロマティック共焦点変位センサ(chromconf 6 op + PoC)
+- `chromconf`(`opsoptics` の新カテゴリ `confocal`、6 op): `chromatic_confocal_probe`(レンズの処方と材料表の硝材の分散、硝材は n_d・V_d で指す `GLASS_*` → 波長ごとの焦点位置・NA・縦球面収差と、鏡で較正したピーク位置)、`confocal_axial_response`(鏡面 sinc²(u/2)・点 sinc⁴(u/4)、縦球面収差は瞳の数値積分)、`chromatic_confocal_spectrum`(面と層構成 → 戻りスペクトル、Fresnel・往復の透過・傾き・粗さ・光源・分光器・雑音)、`chromatic_confocal_peaks`(4 推定法、白色参照で光源のむらを補正)、`chromatic_confocal_readout`(高さと透明板の厚さ、NA の補正)、`chromatic_confocal_limits`(範囲・分解能・傾き・Sparrow の最小膜厚)。全部 _OP_BRIDGE_SKIP、探針(ledger_contracts)には既定の較正表と透明板のスペクトルを種に。
+- PoC `poc_chromatic_confocal`: 高分散の重フリント(V_d 20.9)の非球面単レンズで 450〜700 nm の焦点が 1,191 µm。焦点は厚肉レンズの閉形式と 4e-12 µm、軸応答の幅は 0.443 λ/(1 − cos α)。★色球面収差(450 nm で −40 µm)が較正のピークを半分ずらす。★「鏡を動かす較正」はガウスの偏り(0.060 → 0.014 µm)を消すが放物線(ビンで振れる偏り)は消せない。★ホウケイ酸クラウン 500 µm の厚さは近軸の補正で −1.23 µm、NA の補正で −0.07 µm、n_d を使うと −2.18 µm。金は 509 nm 付近で 0.15 µm 遠く読める(反射率の傾き / 応答の曲率の閉形式が予言)。
+- 実画像の段(`FULLSEYE_CCF_REAL_DIR`、図は同梱しない): Qin ほか, Sensors 24(20):6649 (2024, CC BY 4.0) の図 6(b) から標準溝の深さ 66.095 µm(基準 66.14 µm と −0.045 µm、論文の当てはめと −0.149 µm、図の 1 画素 0.33 µm)、図 3(a) の生の分光画像は列ごとのピークで段差 4.0 画素(µm の換算は図に無い)。パラメータごとの出典と「模型」の区別の表を `chromconf` の docstring に。
+- 能力ノート `docs/capabilities/chromatic-confocal-sensor.md`、op 要約 6 言語、展示(wing_metrology)。
+
 ### Added — 分光反射率による薄膜の膜厚測定(filmoptics 5 op + PoC、公開の実測データで採点)
 - `filmoptics`(`opsoptics` の新カテゴリ `film`、5 op): `multilayer_reflectance`(特性行列 = 転送行列。斜入射・s/p・対物の NA の角度平均・共形な粗さ、R/T/A を pairs で)、`film_color`(膜厚 → 干渉色、D65 か任意の照明)、`film_thickness_fft`(縞の周期 → 膜厚、分散補正、下限の閉形式 2/Δx)、`film_thickness_fit`(転送行列の非線形最小二乗、局所解の候補を全部)、`film_thickness_map`(分光・RGB の画素ごとの膜厚と候補の数、明るさ未校正の照合も)。膜も基板も材料表の鍵(知らない鍵・範囲外・負の膜厚は ValueError)。
 - PoC `poc_thin_film_reflectometry`(37 門、図 12 + GIF)。★主役は公開の実測データ(CC BY 4.0、`data/thin_film_real/` に抜き出しと出典・改変の表示): Schwarz ら 2024(doi:10.1002/adom.202402502、Zenodo 13753754)の顕微分光で SiO₂ 92.9 nm(基準 98.5 nm と −5.7 %、NA 0.5 で −2.7 %)、裸の Si は材料表と 0.4 %、実物の顕微鏡写真から画素ごとに中央値 87.4 nm。Sánchez-Arriaga ら 2023(doi:10.3390/s23115326)の標準 476.3 nm は 2 % 以内、198.7 nm は +6.6 %。合成の章のスピンコート欠陥は文献表(Knápek ら 2020 doi:10.47011/13.2.1、Birnie、レジスト販売元の応用ノート、Shepherd ら 2024 JFM ほか)に量を結びつけ、無いものは模型と明記。
