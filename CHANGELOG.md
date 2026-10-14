@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — psf_from_opd の波長の上書き・瞳の幅の数え方・PSF の窓
+- `lensimage.psf_from_opd(wavelength_um=…)`(と `raytrace.opd_samples` / `ray_bundle` / `ray_fan` / `chief_ray` / `spot_stats` の波長の上書き): 屈折は指定の波長で計算するのに、光線の狙い(入射瞳・射出瞳)と PSF の標本間隔(F 値)は系の波長のままだった → 新しい `raytrace._para_at` で指定の波長の近軸量を使う(撮像面は系のまま)。上書きの結果は、その波長で組み直した系と一致する(差 0、旧版は PSF の頂点の 2 %、絞りが 2 面目の系では PSF の大きさ自体が違った)。`psf_field_grid` の `fno` / `rms_spot_mm` も指定の波長で計算する。
+- `psf_from_opd` の自動の瞳格子: 位相の条件(0.4 波/標本)だけで決めていたので、PSF の窓が幾何的なぼけの 1.25 倍しかなく、エネルギーの 1〜2 % が窓の内側に折り返していた → 窓 ≥ ぼけの直径の 2 倍も満たし、下限を 64 → 128 に上げた(瞳の縁の階段の誤差)。3 倍細かい瞳との全変動距離は 1.2〜2.7 % → 0.5〜0.8 %。f/4 の単レンズの自動格子は 194 → 310(Strehl は 0.0106 のまま)。
+- `opd_samples` の格子は瞳径を n−1 セルで数え、`optics.pupil_psf` は n セルで数える → 両方の docstring に約束を明記(`pupil_psf` に `opd_samples` の地図を渡すときは `f_number = N·(n−1)/n`)。
+- 門 tests/test_psf_wavelength_and_window.py: 上書き = 組み直し(絞り 2 か所 × 軸上・軸外)、2 経路の RMS 半径の比 = 1 ± 1e-3(補正なしは n/(n−1))、自動格子と 3 倍細かい格子の TV < 1 %(旧規則は > 1 % で落ちることも確かめる)。発見は非公開の「収差を奥行き手がかりに」の PoC。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。

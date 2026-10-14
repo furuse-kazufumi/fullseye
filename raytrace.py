@@ -920,7 +920,7 @@ def chief_ray(system, field=None, wavelength_um=None, image_mm=None):
     """
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
-    para = paraxial_trace(system)
+    para = _para_at(system, wavelength_um)
     dpx, dpy = _chief_offset(system, field, para, wavelength_um)
     P, D, opl0 = _launch(system, np.array([dpx]), np.array([dpy]), field, para)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
@@ -929,6 +929,21 @@ def chief_ray(system, field=None, wavelength_um=None, image_mm=None):
             "image_y": float(tr["points"][0, -1, 1]) if ok else float("nan"),
             "valid": ok, "points": tr["points"][0], "dirs": tr["dirs"][0],
             "opl": float(tr["opl"][0] - opl0[0]) if ok else float("nan"), "field": field}
+
+
+def _para_at(system, wavelength_um=None):
+    """First-order properties at *wavelength_um* (the system's own when None or equal).
+
+    Added 2026-10-15: the traces below take a ``wavelength_um`` override and
+    refract at it, but aimed their rays with the pupils of the *system*
+    wavelength (and ``lensimage.psf_from_opd`` scaled the PSF with that
+    wavelength's f-number), so an override differed from rebuilding the system
+    at that wavelength by 2 % of the PSF peak. The image plane is not taken from
+    here — the sensor stays where the system puts it.
+    """
+    if wavelength_um is None or float(wavelength_um) == float(system["wavelength_um"]):
+        return paraxial_trace(system)
+    return paraxial_trace(with_wavelength(system, wavelength_um))
 
 
 def _chief_offset(system, field, para, wavelength_um=None):
@@ -1017,7 +1032,7 @@ def ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, k
     and ``opl0`` (start-of-ray optical path offsets)."""
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
-    para = paraxial_trace(system)
+    para = _para_at(system, wavelength_um)
     px, py = _pupil_grid(rings, kind)
     dpx, dpy = _chief_offset(system, field, para, wavelength_um)   # centre the bundle on the real chief ray
     P, D, opl0 = _launch(system, px + dpx, py + dpy, field, para, pupil_fill)
@@ -1040,7 +1055,7 @@ def ray_fan(system, field=None, n=21, axis="y", wavelength_um=None, image_mm=Non
     """
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
-    para = paraxial_trace(system)
+    para = _para_at(system, wavelength_um)
     q = np.linspace(-1.0, 1.0, int(n))
     if axis == "y":
         px, py = np.zeros_like(q), q
@@ -1091,11 +1106,19 @@ def opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill
 
 
 def opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None):
-    """OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``."""
+    """OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``.
+
+    The grid is ``linspace(-1, 1, size)`` in each pupil coordinate, so the
+    outermost sample *centres* sit on the pupil edge (``rho = ±1``): the pupil
+    diameter spans ``size − 1`` sample spacings. ``optics.pupil_psf`` counts
+    the other way (its grid's full width of ``size`` cells is the diameter), so
+    feeding it this map needs ``f_number = N·(size−1)/size`` for the same PSF
+    scale (``lensimage.psf_from_opd`` does the bookkeeping for you).
+    """
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
     wl = system["wavelength_um"] if wavelength_um is None else _finite(wavelength_um, "wavelength_um", positive=True)
-    para = paraxial_trace(system)
+    para = _para_at(system, wavelength_um)
     g = np.linspace(-1.0, 1.0, int(size))
     gx, gy = np.meshgrid(g, g)
     px, py = gx.ravel(), gy.ravel()

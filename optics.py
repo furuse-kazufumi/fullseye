@@ -1141,7 +1141,10 @@ def pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6,
     is the pupil's clear diameter** ``D`` — so a circle filling the grid is a
     conventional round stop, a W-shaped band or an off-axis hole inside the
     grid is just a different mask, and ``f_number = f / D`` refers to that
-    full width in every case. The wavefront over the grid is
+    full width in every case. (A map from ``raytrace.opd_samples``, whose
+    ``linspace(-1, 1, n)`` grid puts the outer sample *centres* on the pupil
+    edge, spans ``n − 1`` cells instead: pass ``f_number = N·(n−1)/n`` for the
+    same PSF scale, or use ``lensimage.psf_from_opd``, which does this.) The wavefront over the grid is
     ``W(rho) = defocus_waves * rho^2 (+ opd_waves)`` with ``rho`` the radius
     from the grid centre normalised to ``1`` at the grid half-width (the Seidel
     defocus ``W20``; :func:`defocus_from_shift` converts an axial shift to it),

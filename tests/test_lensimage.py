@@ -87,7 +87,9 @@ def test_psf_from_opd_sums_to_one_and_pixel_integration_conserves_energy():
 def test_f4_singlet_has_strehl_below_0_05_and_auto_sampling_avoids_aliasing():
     sg = RT.lens_system()
     psf, ref, dx, n = LI._psf_core(sg, 0.0, None, None, 4)
-    assert n == 194                                           # auto: 44 waves/rho at 0.4 waves/sample
+    # auto: 38.6 waves/rho -> 194 for 0.4 waves/sample, 310 for a PSF window twice the geometric
+    # spot (2026-10-15; the 194 grid folded part of the halo back into the window)
+    assert n == 310
     assert psf.max() / ref.max() == pytest.approx(0.0106, abs=2e-3)
     assert psf.max() / ref.max() < 0.05
     with pytest.raises(ValueError, match="aliased"):

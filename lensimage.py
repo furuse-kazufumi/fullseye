@@ -59,6 +59,8 @@ MAX_PUPIL_SAMPLES = 512
 MAX_IMAGE_PIXELS = 1 << 24
 #: Nyquist rule for the pupil phase: at most this many waves between neighbours
 _MAX_WAVES_PER_SAMPLE = 0.4
+_WINDOW_SPOT_RATIO = 2.0      # auto size: PSF window / geometric spot diameter
+_MIN_AUTO_PUPIL = 128         # auto size floor (pupil-edge staircase)
 _MODEL_CACHE: dict = {}
 
 
@@ -158,13 +160,23 @@ def _max_phase_step(mask, W):
 
 
 def _auto_size(system, field, wavelength_um):
-    """Pupil grid size that samples the phase at <= 0.4 waves per step."""
+    """Pupil grid size: phase <= 0.4 waves per step, and a PSF window >= 2x the geometric spot.
+
+    The PSF window is ``λ·F#·(size−1)`` wide whatever *oversample* is, and the
+    geometric blur diameter is ``4·λ·F#·g`` for a maximum OPD slope of *g*
+    waves per unit pupil radius, so the phase rule alone (``size−1 = 5g``) left
+    a window only 1.25x the spot and folded 1-2 % of the energy back in
+    (2026-10-15). ``size−1 >= 8g`` makes it 2x. The floor of 128 (was 64)
+    bounds the staircase error of the round pupil edge: the total-variation
+    distance to a PSF from a 3x finer pupil fell from 1.2-2.7 % to 0.5-0.8 %.
+    """
     n0 = 32
     mask, W = _pupil(system, field, n0, wavelength_um)
     step = _max_phase_step(mask, W)                      # waves per (2/(n0-1)) of rho
     grad = step * (n0 - 1) / 2.0                          # waves per unit rho
     need = int(math.ceil(grad * 2.0 / _MAX_WAVES_PER_SAMPLE)) + 1
-    return int(min(MAX_PUPIL_SAMPLES, max(64, need)))
+    need_window = int(math.ceil(_WINDOW_SPOT_RATIO * 4.0 * grad)) + 1
+    return int(min(MAX_PUPIL_SAMPLES, max(_MIN_AUTO_PUPIL, need, need_window)))
 
 
 def _psf_core(system, field=None, size=None, wavelength_um=None, oversample=4):
@@ -186,7 +198,7 @@ def _psf_core(system, field=None, size=None, wavelength_um=None, oversample=4):
         M += 1
     if M > 8192:
         raise ValueError("FFT grid %d too large; reduce size or oversample" % M)
-    para = RT.paraxial_trace(system)
+    para = RT._para_at(system, wl)                       # 2026-10-15: the f-number at the PSF's wavelength
     fno = _working_fno(para)
     dx_um = wl * fno * (size - 1) / M                     # image-plane sample spacing
     P = mask * np.exp(2j * math.pi * W)
@@ -222,9 +234,12 @@ def psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_
 
     The pupil function ``P = mask · exp(i·2π·W)`` comes from
     :func:`raytrace.opd_samples` (*W* in waves on a ``size × size`` grid over the
-    exit pupil; ``size=None`` picks a grid that keeps the phase below 0.4 waves
-    per sample, up to :data:`MAX_PUPIL_SAMPLES`; an explicit *size* that aliases
-    is refused). The PSF is ``|FFT(P)|²`` on a zero-padded grid whose sample
+    exit pupil; ``size=None`` picks a grid of at least 128 that keeps the phase
+    below 0.4 waves per sample **and** makes the PSF window at least twice the
+    geometric spot, up to :data:`MAX_PUPIL_SAMPLES`; an explicit *size* that
+    aliases is refused). *wavelength_um* re-evaluates the pupils and the
+    f-number at that wavelength too (the sensor stays put), so it equals
+    rebuilding the system at that wavelength with the same image plane. The PSF is ``|FFT(P)|²`` on a zero-padded grid whose sample
     spacing is ``λ·F#·(size−1)/M ≈ λ·F#/oversample`` with the working
     f-number ``F# = 1/(2·NA_image)`` from :func:`raytrace.paraxial_trace`.
     With *pixel_pitch_um* the fine PSF is **area-integrated** onto detector
@@ -259,13 +274,13 @@ def psf_field_grid(system, fields=(0.0, 2.0, 4.0), size=None, wavelength_um=None
         raise ValueError("fields must not be empty")
     pitch = None if pixel_pitch_um is None else _num(pixel_pitch_um, "pixel_pitch_um", lo=1e-6)
     out = {"fields": fl, "psfs": [], "strehl": [], "sample_um": [], "rms_spot_mm": [],
-           "fno": _working_fno(RT.paraxial_trace(system))}
+           "fno": _working_fno(RT._para_at(system, wavelength_um))}
     for f in fl:
         psf, ref, dx, _n = _psf_core(system, f, size, wavelength_um, oversample)
         out["strehl"].append(float(psf.max() / ref.max()))
         out["sample_um"].append(float(dx))
         out["psfs"].append(psf / psf.sum() if pitch is None else _integrate_pixels(psf, dx, pitch))
-        out["rms_spot_mm"].append(float(RT.spot_stats(system, field=f)["rms_radius"]))
+        out["rms_spot_mm"].append(float(RT.spot_stats(system, field=f, wavelength_um=wavelength_um)["rms_radius"]))
     return out
 
 
