@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 45 項目**
+**収録 46 項目**
 
 ## 測る (16)
 
@@ -216,7 +216,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (4)
+## 光と色 (5)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -225,6 +225,14 @@
 使う op: `rgb_to_lab`, `xyz_to_lab`, `delta_e_2000`, `cie_xyz_from_wavelength`
 
 動く例: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
+
+観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まります。これまで Fullseye は硝材 20 種の Sellmeier(`raytrace`)、金属 5 種の 5 点の n,k(`glassmirror`)、見た目のカタログ(`surfacelib` / `metalfinish`)が別々の名前空間にあり、同じ材料を光学系側と対象側で引く口がありませんでした。この回は**1 材料 = 1 レコード**の材料表を `materials` に作り、`opsoptics` の新カテゴリ `matprop` に 16 本を足しました。
+
+使う op: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
+
+動く例: `poc_material_optical_library`
 
 ### [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md)
 

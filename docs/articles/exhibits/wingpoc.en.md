@@ -622,7 +622,7 @@ Source: [examples/poc_thermal_drift_metrology.py](https://github.com/furuse-kazu
 
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermal_drift_metrology)
 
-Ops used (notes): [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html)
+Ops used (notes): [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`thermo_optic_coefficient`](https://furuse.work/ops/optics/matprop/thermo_optic_coefficient.html)
 
 ## No.2026.113 —— A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add
 
@@ -6118,7 +6118,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 4 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 5 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -6235,6 +6235,46 @@ Source: [examples/poc_white_balance.py](https://github.com/furuse-kazufumi/fulls
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_white_balance)
 
 Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/delta_e_map.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`illuminant_from_dichromatic_planes`](https://furuse.work/ops/specular/dichromatic/illuminant_from_dichromatic_planes.html) · [`laplace`](https://furuse.work/ops/2d/edges/laplace.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`mean_image`](https://furuse.work/ops/2d/smoothing/mean_image.html) · [`prewitt_amp`](https://furuse.work/ops/2d/edges/prewitt_amp.html) · [`roberts`](https://furuse.work/ops/2d/edges/roberts.html) · [`sobel_amp`](https://furuse.work/ops/2d/edges/sobel_amp.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html)
+
+## No.2026.229 —— A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation
+
+[![A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram.png)
+
+*↑ **A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation** ―― So that the observing optics (lenses, windows, mirrors, films) and the observed object (wafer, mould, solder) can read the same material table, 83 glasses, crystals, semiconductors, metals, liquids and plastics are put into one record type. Sixteen new ops (`materials`, category `matprop` of `opsoptics`): `material_table` / `material_record`, `material_optical_constants` (n, k, α, ε and normal reflectance at one wavelength, with the source), `material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance` / `material_reflectance` (all as pairs (λ nm, value), the same shape as source and QE curves), `abbe_number` / `glass_map`, `thermo_optic_coefficient` (catalogue formula A), `plate_focus_shift` (focus shift and longitudinal spherical aberration of a plane-parallel plate), `silicon_free_carrier_absorption` (Schroder 1978), `material_from_sellmeier` / `material_from_curves` and `read_glass_catalog_agf` (the user's own .agf, all 13 Zemax formulas). The numbers are the primary literature of the refractiveindex.info database (CC0) only; vendor catalogues are not bundled. The n_d / V_d of all 46 glasses agree with the catalogue values to 4e-6 / 0.005, and the second implementation optiland 0.6.3 agrees at 23 points to 5e-10. Silicon (Green 2008) reproduces the three-decade drop k(1.0 µm) 5.09e-4 to k(1.2 µm) 2.1e-7, so a 775 µm wafer transmits 0.3 % at 1.0 µm and 52 % at 1.2 µm (closed form to 1e-9). Silver reflects 0.982 at 500 nm, aluminium dips to 0.866 at 820 nm, gold rises from 0.475 at 500 nm to 0.971 at 700 nm, and the colours come from the colour-matching functions, not from paint. Polycarbonate disperses 2.3 times more than N-BK7; N-BK7 has dn/dT 1.62e-6 /K at the e line. Nothing learned, nothing calibrated, 38 gates.*
+
+[![4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue.png)
+
+*↑ The measurement ―― 4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。 (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ一次文献を optiland(MIT)が別のコードで評価した値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation.png)
+
+*↑ 同じ一次文献を optiland(MIT)が別のコードで評価した値。*
+
+[![k(1.0 µm) = 5.1e-4 → k(1.2 µm) = 2.1e-7。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/05_silicon_extinction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/05_silicon_extinction.png)
+
+*↑ k(1.0 µm) = 5.1e-4 → k(1.2 µm) = 2.1e-7。*
+
+[![平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/09_plate_focus_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/09_plate_focus_shift.png)
+
+*↑ 平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。*
+
+[![n,k → 分光反射率 → CIE 等色関数 → sRGB。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours.png)
+
+*↑ n,k → 分光反射率 → CIE 等色関数 → sRGB。*
+
+[![厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)
+
+*↑ The animation ―― 厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。*
+
+```
+py -3.11 examples/poc_material_optical_library.py
+```
+
+Source: [examples/poc_material_optical_library.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
+
+This run produced **13 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_material_optical_library)
+
+Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`material_absorption`](https://furuse.work/ops/optics/matprop/material_absorption.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_extinction`](https://furuse.work/ops/optics/matprop/material_extinction.html) · [`material_from_curves`](https://furuse.work/ops/optics/matprop/material_from_curves.html) · [`material_from_sellmeier`](https://furuse.work/ops/optics/matprop/material_from_sellmeier.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_record`](https://furuse.work/ops/optics/matprop/material_record.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`material_table`](https://furuse.work/ops/optics/matprop/material_table.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`read_glass_catalog_agf`](https://furuse.work/ops/optics/matprop/read_glass_catalog_agf.html) · [`silicon_free_carrier_absorption`](https://furuse.work/ops/optics/matprop/silicon_free_carrier_absorption.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`thermo_optic_coefficient`](https://furuse.work/ops/optics/matprop/thermo_optic_coefficient.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 

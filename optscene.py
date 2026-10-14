@@ -2351,10 +2351,10 @@ def sensor_catalog(status: str = None, maker: str = None) -> dict:
         if maker is not None and not gen.lower().startswith(maker.lower()) \
                 and not (maker.lower() == "sony" and name.startswith("IMX")):
             continue
-        maker = ("Sony" if name.startswith("IMX")
-                 else gen.split()[0] if gen else "unknown")
+        mk = ("Sony" if name.startswith("IMX")
+              else gen.split()[0] if gen else "unknown")      # ★引数の maker を上書きしない(2026-10-14: 上書きで無引数が 38 中 19 になっていた)
         out[name] = {"width": w, "height": h, "pixel_um": px, "shutter": sh,
-                     "generation": gen, "status": st, "maker": maker,
+                     "generation": gen, "status": st, "maker": mk,
                      "megapixels": round(w * h / 1e6, 2),
                      "quantum_efficiency": qe / 100.0, "read_noise_e": float(dn),
                      "full_well_e": sat * 1e3, "dynamic_range_db": float(dr),

@@ -98,8 +98,9 @@ import surfacelib
 import optics
 import raytrace
 import cavityoptics
+import materials
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -420,6 +421,27 @@ _CATALOG = {
     # ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の
     #   image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない
     #   (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+    "matprop": [  # 材料の物性ライブラリ(硝材・結晶・半導体・金属・液体・プラスチック 83 種、refractiveindex.info の一次文献、CC0)
+        # ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・
+        #   ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで
+        #   描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+        ("material_table", "materials", [], "table"),
+        ("material_record", "materials", [], "table"),
+        ("material_optical_constants", "materials", [], "table"),
+        ("material_dispersion", "materials", [], "pairs"),
+        ("material_extinction", "materials", [], "pairs"),
+        ("material_absorption", "materials", [], "pairs"),
+        ("material_transmittance", "materials", [], "pairs"),
+        ("material_reflectance", "materials", [], "pairs"),
+        ("abbe_number", "materials", [], "table"),
+        ("glass_map", "materials", [], "table"),
+        ("thermo_optic_coefficient", "materials", [], "table"),
+        ("plate_focus_shift", "materials", [], "table"),
+        ("silicon_free_carrier_absorption", "materials", [], "pairs"),
+        ("material_from_sellmeier", "materials", [], "table"),
+        ("material_from_curves", "materials", [], "table"),
+        ("read_glass_catalog_agf", "materials", [], "table"),
+    ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),
         ("cavity_strain_transfer", "cavityoptics", [], "pairs"),

@@ -630,7 +630,7 @@ Source: [examples/poc_thermal_drift_metrology.py](https://github.com/furuse-kazu
 
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermal_drift_metrology)
 
-Ops used (notes): [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html)
+Ops used (notes): [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`thermo_optic_coefficient`](https://furuse.work/ops/optics/matprop/thermo_optic_coefficient.html)
 
 ## No.2026.113 —— A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add
 

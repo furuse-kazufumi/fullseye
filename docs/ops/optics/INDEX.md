@@ -1,4 +1,4 @@
-# OPTICS operator help — 189 ops in 22 categories
+# OPTICS operator help — 205 ops in 23 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -69,6 +69,10 @@
 ### material (6)
 
 [clearcoat_shade](material/clearcoat_shade.md) · [material_catalog](material/material_catalog.md) · [oren_nayar](material/oren_nayar.md) · [sheen_shade](material/sheen_shade.md) · [subsurface_approx](material/subsurface_approx.md) · [wetness](material/wetness.md)
+
+### matprop (16)
+
+[abbe_number](matprop/abbe_number.md) · [glass_map](matprop/glass_map.md) · [material_absorption](matprop/material_absorption.md) · [material_dispersion](matprop/material_dispersion.md) · [material_extinction](matprop/material_extinction.md) · [material_from_curves](matprop/material_from_curves.md) · [material_from_sellmeier](matprop/material_from_sellmeier.md) · [material_optical_constants](matprop/material_optical_constants.md) · [material_record](matprop/material_record.md) · [material_reflectance](matprop/material_reflectance.md) · [material_table](matprop/material_table.md) · [material_transmittance](matprop/material_transmittance.md) · [plate_focus_shift](matprop/plate_focus_shift.md) · [read_glass_catalog_agf](matprop/read_glass_catalog_agf.md) · [silicon_free_carrier_absorption](matprop/silicon_free_carrier_absorption.md) · [thermo_optic_coefficient](matprop/thermo_optic_coefficient.md)
 
 ### mirror (2)
 

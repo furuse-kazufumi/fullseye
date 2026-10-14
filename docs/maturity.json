@@ -549,6 +549,29 @@
    ]
   },
   {
+   "id": "material-optical-property-library",
+   "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)",
+   "title_en": "One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
+   "category": "光と色",
+   "note": "docs/capabilities/material-optical-property-library.md",
+   "status": "validated-public-real-data",
+   "ops_total": 16,
+   "ops_named_in_tests": 15,
+   "ops_not_named_in_tests": [
+    "material_absorption"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_material_optical_library",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "measurement-system-and-uncertainty",
    "title": "その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)",
    "title_en": "How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty)",
@@ -1131,8 +1154,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 362,
-  "run_by_the_poc_gate": 228,
+  "examples2d_total": 363,
+  "run_by_the_poc_gate": 229,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [

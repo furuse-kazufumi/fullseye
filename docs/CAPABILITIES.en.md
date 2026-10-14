@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 45 capabilities**
+**Currently 46 capabilities**
 
 ## Measure (16)
 
@@ -217,7 +217,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (4)
+## Light and colour (5)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -226,6 +226,14 @@ From spectral reflectance or RGB, compute CIE XYZ and Lab, then colour differenc
 Operators: `rgb_to_lab`, `xyz_to_lab`, `delta_e_2000`, `cie_xyz_from_wavelength`
 
 Runnable: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)](capabilities/material-optical-property-library.md)
+
+Sixteen ops in the new `matprop` category of `opsoptics`, backed by one record per material in `materials_data.py` (generated from the refractiveindex.info database, CC0: primary-literature coefficients and tables with their citation on every wavelength segment). 46 catalogue glasses from four makers, 12 crystals and IR materials, 6 semiconductors (Si with Green 2008 n,k and the Salzberg IR Sellmeier), 4 films, 10 metals, water and 4 plastics. Every curve comes back as `pairs` (λ nm, value) so sources, optics, targets and sensor QE share one shape. `read_glass_catalog_agf` reads the user's own .agf catalogues (all 13 Zemax dispersion formulas, k from internal-transmittance lines); vendor catalogues are not bundled. Gates: catalogue n_d / V_d of all 46 glasses within 4e-6 / 0.005, the published Green 2008 and Johnson & Christy points, slab transmittance against the closed form, and optiland 0.6.3 as a second implementation at 23 points.
+
+Operators: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
+
+Runnable: `poc_material_optical_library`
 
 ### [Compute reflection, refraction and interference](capabilities/optics-and-materials.md)
 

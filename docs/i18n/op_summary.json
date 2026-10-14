@@ -14130,6 +14130,150 @@
    "de": "Zeitdifferenz (b − a) zwischen den Maxima zweier SNR-Zeitreihen mit Subsample-Genauigkeit.",
    "hi": "दो SNR time series के peaks का समय अंतर (b − a), sub-sample precision में।"
   },
+  "optics/material_table": {
+   "fp": "362dd4ea1cf3",
+   "en": "List the bundled material table (name, class, wavelength range, n_d, V_d, source).",
+   "zh": "列出同捆的材料表（名称、分类、波长范围、n_d、V_d、出处）。",
+   "tw": "列出同捆的材料表（名稱、分類、波長範圍、n_d、V_d、出處）。",
+   "ko": "동봉된 재료표(이름·분류·파장 범위·n_d·V_d·출처)의 목록을 반환.",
+   "de": "Listet die mitgelieferte Materialtabelle (Name, Klasse, Wellenlängenbereich, n_d, V_d, Quelle).",
+   "hi": "bundled material table (name, class, wavelength range, n_d, V_d, source) की सूची।"
+  },
+  "optics/material_record": {
+   "fp": "490ba5b0586f",
+   "en": "The record of one material (class, aliases, primary sources per wavelength segment, catalogue values).",
+   "zh": "返回一种材料的记录（分类、别名、各波长区间的一次文献、目录公布值）。",
+   "tw": "返回一種材料的記錄（分類、別名、各波長區間的一次文獻、目錄公布值）。",
+   "ko": "재료 하나의 레코드(분류·별명·파장 구간별 1차 문헌·카탈로그 공표값)를 반환.",
+   "de": "Der Datensatz eines Materials (Klasse, Aliasse, Primärquellen je Wellenlängenabschnitt, Katalogwerte).",
+   "hi": "एक material का record (class, aliases, wavelength segment-wise primary sources, catalogue values)।"
+  },
+  "optics/material_optical_constants": {
+   "fp": "1731304983ca",
+   "en": "Optical constants n, k at one wavelength, with the absorption coefficient, complex permittivity and normal-incidence reflectance.",
+   "zh": "单一波长的光学常数 n、k，以及由此得到的吸收系数、复介电常数与垂直入射反射率。",
+   "tw": "單一波長的光學常數 n、k，以及由此得到的吸收係數、複介電常數與垂直入射反射率。",
+   "ko": "한 파장의 광학 상수 n, k와 그로부터 정해지는 흡수계수·복소 유전율·수직 입사 반사율을 반환.",
+   "de": "Optische Konstanten n, k bei einer Wellenlänge samt Absorptionskoeffizient, komplexer Permittivität und Reflexionsgrad bei senkrechtem Einfall.",
+   "hi": "एक wavelength पर optical constants n, k और उनसे मिलने वाले absorption coefficient, complex permittivity और normal-incidence reflectance।"
+  },
+  "optics/material_dispersion": {
+   "fp": "38bdeb76db6a",
+   "en": "Dispersion curve n(λ) as pairs (λ [nm], n), evenly spaced n_points.",
+   "zh": "折射率色散曲线 n(λ)，以 pairs（λ [nm]，n）返回（等间隔 n_points 点）。",
+   "tw": "折射率色散曲線 n(λ)，以 pairs（λ [nm]，n）返回（等間隔 n_points 點）。",
+   "ko": "굴절률의 분산 곡선 n(λ)을 pairs(λ [nm], n)로 반환(등간격 n_points 점).",
+   "de": "Dispersionskurve n(λ) als pairs (λ [nm], n), gleichmäßig verteilte n_points.",
+   "hi": "refractive index की dispersion curve n(λ) pairs (λ [nm], n) के रूप में (equal-spaced n_points)।"
+  },
+  "optics/material_extinction": {
+   "fp": "11ac90c2d0a3",
+   "en": "Extinction-coefficient curve k(λ) as pairs (λ [nm], k); 0 where no k table exists.",
+   "zh": "消光系数曲线 k(λ)，以 pairs（λ [nm]，k）返回；无 k 表的区间为 0。",
+   "tw": "消光係數曲線 k(λ)，以 pairs（λ [nm]，k）返回；無 k 表的區間為 0。",
+   "ko": "소쇠계수 곡선 k(λ)을 pairs(λ [nm], k)로 반환. k 표가 없는 구간은 0.",
+   "de": "Kurve des Extinktionskoeffizienten k(λ) als pairs (λ [nm], k); 0, wo keine k-Tabelle vorliegt.",
+   "hi": "extinction coefficient की curve k(λ) pairs (λ [nm], k) के रूप में; जहाँ k table नहीं वहाँ 0।"
+  },
+  "optics/material_absorption": {
+   "fp": "af5361bc40c7",
+   "en": "Absorption-coefficient curve α(λ) = 4πk/λ [1/cm] as pairs (λ [nm], α).",
+   "zh": "吸收系数曲线 α(λ) = 4πk/λ [1/cm]，以 pairs（λ [nm]，α）返回。",
+   "tw": "吸收係數曲線 α(λ) = 4πk/λ [1/cm]，以 pairs（λ [nm]，α）返回。",
+   "ko": "흡수계수 곡선 α(λ) = 4πk/λ [1/cm]을 pairs(λ [nm], α)로 반환.",
+   "de": "Kurve des Absorptionskoeffizienten α(λ) = 4πk/λ [1/cm] als pairs (λ [nm], α).",
+   "hi": "absorption coefficient की curve α(λ) = 4πk/λ [1/cm] pairs (λ [nm], α) के रूप में।"
+  },
+  "optics/material_transmittance": {
+   "fp": "17829135722a",
+   "en": "Transmittance T(λ) of a plane-parallel plate of thickness thickness_mm as pairs (λ [nm], T).",
+   "zh": "厚度 thickness_mm 的平行平板透射率 T(λ)，以 pairs（λ [nm]，T）返回。",
+   "tw": "厚度 thickness_mm 的平行平板透射率 T(λ)，以 pairs（λ [nm]，T）返回。",
+   "ko": "두께 thickness_mm의 평행 평판 투과율 T(λ)을 pairs(λ [nm], T)로 반환.",
+   "de": "Transmissionsgrad T(λ) einer planparallelen Platte der Dicke thickness_mm als pairs (λ [nm], T).",
+   "hi": "thickness_mm मोटाई की plane-parallel plate की transmittance T(λ) pairs (λ [nm], T) के रूप में।"
+  },
+  "optics/material_reflectance": {
+   "fp": "7ff0460f1e63",
+   "en": "Reflectance R(λ) of an air-to-material interface as pairs (λ [nm], R) (Fresnel, complex index).",
+   "zh": "空气到材料界面的反射率 R(λ)，以 pairs（λ [nm]，R）返回（Fresnel，复折射率）。",
+   "tw": "空氣到材料介面的反射率 R(λ)，以 pairs（λ [nm]，R）返回（Fresnel，複折射率）。",
+   "ko": "공기에서 재료 면으로의 반사율 R(λ)을 pairs(λ [nm], R)로 반환(Fresnel, 복소 굴절률).",
+   "de": "Reflexionsgrad R(λ) der Grenzfläche Luft–Material als pairs (λ [nm], R) (Fresnel, komplexer Index).",
+   "hi": "air-से-material interface की reflectance R(λ) pairs (λ [nm], R) के रूप में (Fresnel, complex index)।"
+  },
+  "optics/abbe_number": {
+   "fp": "12d31951577d",
+   "en": "Refractive indices at the Fraunhofer lines, Abbe numbers (d and e systems) and partial dispersion P_g,F.",
+   "zh": "夫琅禾费线处的折射率、Abbe 数（d 线系与 e 线系）以及部分色散 P_g,F。",
+   "tw": "夫朗和斐線處的折射率、Abbe 數（d 線系與 e 線系）以及部分色散 P_g,F。",
+   "ko": "프라운호퍼선의 굴절률과 아베수(d선계·e선계), 부분 분산 P_g,F를 반환.",
+   "de": "Brechzahlen an den Fraunhofer-Linien, Abbe-Zahlen (d- und e-System) und Teildispersion P_g,F.",
+   "hi": "Fraunhofer lines पर refractive indices, Abbe numbers (d और e system) और partial dispersion P_g,F।"
+  },
+  "optics/glass_map": {
+   "fp": "7d11ae3e4fd5",
+   "en": "Points of the Abbe diagram (V_d vs n_d): name / class / nd / vd / PgF for every visibly transparent material.",
+   "zh": "Abbe 图（V_d 对 n_d）的点列：每种可见光透明材料的 name / class / nd / vd / PgF。",
+   "tw": "Abbe 圖（V_d 對 n_d）的點列：每種可見光透明材料的 name / class / nd / vd / PgF。",
+   "ko": "아베 도표(V_d 대 n_d)의 점 목록: 가시광에서 투명한 재료마다 name / class / nd / vd / PgF.",
+   "de": "Punkte des Abbe-Diagramms (V_d gegen n_d): name / class / nd / vd / PgF je sichtbar transparentem Material.",
+   "hi": "Abbe diagram (V_d बनाम n_d) के points: हर visibly transparent material का name / class / nd / vd / PgF।"
+  },
+  "optics/thermo_optic_coefficient": {
+   "fp": "45242f39b6fd",
+   "en": "dn/dT (absolute, in vacuum) of a glass and the index change Δn from the reference temperature, by the catalogue formula A.",
+   "zh": "玻璃的 dn/dT（绝对、真空中）以及相对基准温度的折射率变化 Δn，按目录的公式 A。",
+   "tw": "玻璃的 dn/dT（絕對、真空中）以及相對基準溫度的折射率變化 Δn，按目錄的公式 A。",
+   "ko": "유리의 dn/dT(절대, 진공 중)와 기준 온도로부터의 굴절률 변화 Δn을 카탈로그의 식 A로 반환.",
+   "de": "dn/dT (absolut, im Vakuum) eines Glases und die Indexänderung Δn gegenüber der Referenztemperatur nach Katalogformel A.",
+   "hi": "glass का dn/dT (absolute, vacuum में) और reference temperature से index change Δn, catalogue के formula A से।"
+  },
+  "optics/plate_focus_shift": {
+   "fp": "7659689bf01e",
+   "en": "Focus shift and spherical aberration of imaging through a plane-parallel plate (wafer, window, cover glass), in closed form.",
+   "zh": "透过平行平板（晶圆、窗口、盖玻片）成像时的焦点偏移与球差，闭式。",
+   "tw": "透過平行平板（晶圓、窗口、蓋玻片）成像時的焦點偏移與球差，閉式。",
+   "ko": "평행 평판(웨이퍼·창·커버글라스)을 통해 볼 때의 초점 이동과 구면수차를 닫힌 형식으로 반환.",
+   "de": "Fokusverschiebung und sphärische Aberration beim Abbilden durch eine planparallele Platte (Wafer, Fenster, Deckglas) in geschlossener Form.",
+   "hi": "plane-parallel plate (wafer, window, cover glass) के through imaging का focus shift और spherical aberration, closed form में।"
+  },
+  "optics/silicon_free_carrier_absorption": {
+   "fp": "ee2ce91d3893",
+   "en": "Free-carrier absorption α_fc(λ) [1/cm] of doped silicon as pairs (λ [nm], α).",
+   "zh": "掺杂硅的自由载流子吸收 α_fc(λ) [1/cm]，以 pairs（λ [nm]，α）返回。",
+   "tw": "摻雜矽的自由載子吸收 α_fc(λ) [1/cm]，以 pairs（λ [nm]，α）返回。",
+   "ko": "도핑된 Si의 자유 캐리어 흡수 α_fc(λ) [1/cm]을 pairs(λ [nm], α)로 반환.",
+   "de": "Freie-Ladungsträger-Absorption α_fc(λ) [1/cm] von dotiertem Silizium als pairs (λ [nm], α).",
+   "hi": "doped silicon का free-carrier absorption α_fc(λ) [1/cm] pairs (λ [nm], α) के रूप में।"
+  },
+  "optics/material_from_sellmeier": {
+   "fp": "607d5f11eb42",
+   "en": "Build a material record from Sellmeier coefficients (n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ), λ in µm, Cᵢ in µm²).",
+   "zh": "由 Sellmeier 系数（n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)，λ 为 µm，Cᵢ 为 µm²）建立材料记录。",
+   "tw": "由 Sellmeier 係數（n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)，λ 為 µm，Cᵢ 為 µm²）建立材料記錄。",
+   "ko": "Sellmeier 계수(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ), λ는 µm, Cᵢ는 µm²)로 재료 레코드를 만든다.",
+   "de": "Erzeugt einen Materialdatensatz aus Sellmeier-Koeffizienten (n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ), λ in µm, Cᵢ in µm²).",
+   "hi": "Sellmeier coefficients (n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ), λ µm में, Cᵢ µm² में) से material record बनाता है।"
+  },
+  "optics/material_from_curves": {
+   "fp": "2d6c928fbe86",
+   "en": "Build a material record from measured n(λ) (and k(λ)) given as pairs (λ [nm], value).",
+   "zh": "由测得的 n(λ)（以及 k(λ)）的 pairs（λ [nm]，值）建立材料记录。",
+   "tw": "由測得的 n(λ)（以及 k(λ)）的 pairs（λ [nm]，值）建立材料記錄。",
+   "ko": "측정한 n(λ)(와 k(λ))의 pairs(λ [nm], 값)로 재료 레코드를 만든다.",
+   "de": "Erzeugt einen Materialdatensatz aus gemessenen n(λ) (und k(λ)) als pairs (λ [nm], Wert).",
+   "hi": "measured n(λ) (और k(λ)) की pairs (λ [nm], value) से material record बनाता है।"
+  },
+  "optics/read_glass_catalog_agf": {
+   "fp": "f2c625be3e5a",
+   "en": "Read a glass catalogue (Zemax .agf form) into a list of material records (table).",
+   "zh": "读取玻璃目录（Zemax .agf 格式）为材料记录的列表（table）。",
+   "tw": "讀取玻璃目錄（Zemax .agf 格式）為材料記錄的列表（table）。",
+   "ko": "유리 카탈로그(Zemax .agf 형식)를 읽어 재료 레코드의 목록(table)으로 만든다.",
+   "de": "Liest einen Glaskatalog (Zemax-.agf-Form) in eine Liste von Materialdatensätzen (table).",
+   "hi": "glass catalogue (Zemax .agf form) को पढ़कर material records की list (table) बनाता है।"
+  },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",

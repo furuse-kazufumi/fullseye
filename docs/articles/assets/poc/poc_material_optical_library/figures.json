@@ -1,0 +1,140 @@
+[
+ {
+  "file": "01_abbe_diagram.png",
+  "name": "abbe_diagram",
+  "caption": "分散式(refractiveindex.info の一次文献、CC0)から計算した n_d と V_d。プラスチックは同じ n_d の硝子より左(分散が大きい)、CaF2 と石英は右端。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_glass_catalogue.png",
+  "name": "glass_catalogue",
+  "caption": "4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。",
+  "shape": [
+   1184,
+   528,
+   3
+  ],
+  "csv": "02_glass_catalogue.csv",
+  "tsv": "02_glass_catalogue.tsv"
+ },
+ {
+  "file": "03_second_implementation.png",
+  "name": "second_implementation",
+  "caption": "同じ一次文献を optiland(MIT)が別のコードで評価した値。式 1〜5 と数表の補間が同じ答えを返す。",
+  "shape": [
+   632,
+   553,
+   3
+  ],
+  "csv": "03_second_implementation.csv",
+  "tsv": "03_second_implementation.tsv"
+ },
+ {
+  "file": "04_silicon_index.png",
+  "name": "silicon_index",
+  "caption": "紫外の 370 nm 付近で n ≈ 6.9 の峰(直接遷移)、NIR で 3.5。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_silicon_extinction.png",
+  "name": "silicon_extinction",
+  "caption": "k(1.0 µm) = 5.1e-4 → k(1.2 µm) = 2.1e-7。NIR 透過検査が 1.1 µm より長い波長を使う理由。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_silicon_transmittance.png",
+  "name": "silicon_transmittance",
+  "caption": "吸収端の上は厚さに関わらず 0、下は (1−R)²/(1−R²) ≈ 0.53 に漸近(n ≈ 3.5 の Fresnel 損失)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_silicon_window_thickness.gif",
+  "name": "silicon_window_thickness",
+  "caption": "厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 20,
+  "frames_written": 20,
+  "fps": 4.0
+ },
+ {
+  "file": "08_silicon_free_carrier.png",
+  "name": "silicon_free_carrier",
+  "caption": "1e18 cm⁻³ を超える基板は吸収端の下でも暗くなり、長波長ほど(λ²)早く落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_plate_focus_shift.png",
+  "name": "plate_focus_shift",
+  "caption": "平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。ウェハ越しの結像で NA を抑える理由。",
+  "shape": [
+   360,
+   753,
+   3
+  ]
+ },
+ {
+  "file": "10_mirror_reflectance.png",
+  "name": "mirror_reflectance",
+  "caption": "銀は可視〜NIR で最も明るく 400 nm 以下で落ちる。アルミは 815 nm に谷。金・銅は 500 nm 以下で暗い(黄・赤)。",
+  "shape": [
+   360,
+   638,
+   3
+  ]
+ },
+ {
+  "file": "11_mirror_colours.png",
+  "name": "mirror_colours",
+  "caption": "n,k → 分光反射率 → CIE 等色関数 → sRGB。色は塗っていない: 金と銅が暖色で銀が中性なのは表の n,k から出る。",
+  "shape": [
+   180,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "12_dispersion_glass_vs_plastic.png",
+  "name": "dispersion_glass_vs_plastic",
+  "caption": "ポリカーボネートは N-BK7 の 2 倍以上の落ち(V_d ≈ 30)。CaF2 と石英はほぼ平ら。",
+  "shape": [
+   360,
+   716,
+   3
+  ]
+ },
+ {
+  "file": "13_thermo_optic.png",
+  "name": "thermo_optic",
+  "caption": "FD60 のような重フリントは低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。",
+  "shape": [
+   360,
+   669,
+   3
+  ]
+ }
+]

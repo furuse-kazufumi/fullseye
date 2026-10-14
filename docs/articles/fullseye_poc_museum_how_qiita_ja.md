@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **84 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **85 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2090,7 +2090,7 @@ py -3.11 examples/poc_public_camera_heading_real.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 4 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 5 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -2207,6 +2207,46 @@ py -3.11 examples/poc_white_balance.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_white_balance)
 
 使用 op(ノートへ): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/delta_e_map.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`illuminant_from_dichromatic_planes`](https://furuse.work/ops/specular/dichromatic/illuminant_from_dichromatic_planes.html) · [`laplace`](https://furuse.work/ops/2d/edges/laplace.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`mean_image`](https://furuse.work/ops/2d/smoothing/mean_image.html) · [`prewitt_amp`](https://furuse.work/ops/2d/edges/prewitt_amp.html) · [`roberts`](https://furuse.work/ops/2d/edges/roberts.html) · [`sobel_amp`](https://furuse.work/ops/2d/edges/sobel_amp.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html)
+
+## No.2026.229 —— 材料の光学物性ライブラリ ―― 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点
+
+[![材料の光学物性ライブラリ ―― 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram.png)
+
+*↑ **材料の光学物性ライブラリ ―― 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点** ―― 観察用の光学系(レンズ・窓・鏡・膜)と観察対象(ウェハ・モールド・はんだ)が同じ材料表を引けるように、硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つのレコード型に載せた。新 op 16 本(`materials`、`opsoptics` の `matprop`): `material_table` / `material_record`、`material_optical_constants`(1 波長の n・k・α・ε・垂直反射率と出典)、`material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance` / `material_reflectance`(すべて pairs(λ nm, 値)= 光源・QE の曲線と同じ形)、`abbe_number` / `glass_map`、`thermo_optic_coefficient`(カタログの式 A)、`plate_focus_shift`(平行平板の焦点ずれと縦球面収差)、`silicon_free_carrier_absorption`(Schroder 1978)、`material_from_sellmeier` / `material_from_curves`、`read_glass_catalog_agf`(ユーザーの .agf、Zemax の式 1〜13)。数値は refractiveindex.info database(CC0)の一次文献だけで、メーカーのカタログ本体は同梱しない。硝材 46 種の n_d / V_d はカタログ公表値と最大 4e-6 / 0.005、第二実装 optiland 0.6.3 と 23 点で 5e-10。Si(Green 2008)は k(1.0 µm) 5.09e-4 → k(1.2 µm) 2.1e-7 の 3 桁の落差を再現し、775 µm のウェハは 1.0 µm で 0.3 %・1.2 µm で 52 % 透ける(閉形式と 1e-9)。銀は 500 nm で 0.982、アルミの谷は 820 nm、金は 500 nm 0.475 → 700 nm 0.971 で、色は等色関数から出る(塗っていない)。ポリカーボネートの分散は N-BK7 の 2.3 倍、N-BK7 の dn/dT は e 線で 1.62e-6 /K。学習 0、較正 0、門 38 件。*
+
+[![4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue.png)
+
+*↑ 測定の図 ―― 4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。*
+
+[![同じ一次文献を optiland(MIT)が別のコードで評価した値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation.png)
+
+*↑ 同じ一次文献を optiland(MIT)が別のコードで評価した値。*
+
+[![k(1.0 µm) = 5.1e-4 → k(1.2 µm) = 2.1e-7。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/05_silicon_extinction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/05_silicon_extinction.png)
+
+*↑ k(1.0 µm) = 5.1e-4 → k(1.2 µm) = 2.1e-7。*
+
+[![平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/09_plate_focus_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/09_plate_focus_shift.png)
+
+*↑ 平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。*
+
+[![n,k → 分光反射率 → CIE 等色関数 → sRGB。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours.png)
+
+*↑ n,k → 分光反射率 → CIE 等色関数 → sRGB。*
+
+[![厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)
+
+*↑ 動く図 ―― 厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。*
+
+```
+py -3.11 examples/poc_material_optical_library.py
+```
+
+ソース: [examples/poc_material_optical_library.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
+
+この回が作った図は全部で **13 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_material_optical_library)
+
+使用 op(ノートへ): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`material_absorption`](https://furuse.work/ops/optics/matprop/material_absorption.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_extinction`](https://furuse.work/ops/optics/matprop/material_extinction.html) · [`material_from_curves`](https://furuse.work/ops/optics/matprop/material_from_curves.html) · [`material_from_sellmeier`](https://furuse.work/ops/optics/matprop/material_from_sellmeier.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_record`](https://furuse.work/ops/optics/matprop/material_record.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`material_table`](https://furuse.work/ops/optics/matprop/material_table.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`read_glass_catalog_agf`](https://furuse.work/ops/optics/matprop/read_glass_catalog_agf.html) · [`silicon_free_carrier_absorption`](https://furuse.work/ops/optics/matprop/silicon_free_carrier_absorption.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`thermo_optic_coefficient`](https://furuse.work/ops/optics/matprop/thermo_optic_coefficient.html)
 
 ### 法科学・文書ウィング ―― 1 枚の成功例は証拠にならない
 

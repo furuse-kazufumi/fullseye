@@ -197,6 +197,24 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-14 材料の物性ライブラリ 16 本(materials、matprop): 全部が材料名と波長の引数だけで
+    # 表か曲線(pairs)を返す側で、画像を受けない。台帳(`fullseye.ledger.material_transmittance` …)から使う。
+    "material_table",
+    "material_record",
+    "material_optical_constants",
+    "material_dispersion",
+    "material_extinction",
+    "material_absorption",
+    "material_transmittance",
+    "material_reflectance",
+    "abbe_number",
+    "glass_map",
+    "thermo_optic_coefficient",
+    "plate_focus_shift",
+    "silicon_free_carrier_absorption",
+    "material_from_sellmeier",
+    "material_from_curves",
+    "read_glass_catalog_agf",
     # 2026-09-22 視覚後段と回路: 入口は「行が時刻の個眼動画」「方向別応答」
     # 「配線 + 駆動」で、2-D 画像を渡すと走りはするが意味が無い(探針の
     # 1 枚は時系列ではない)。橋は架けない。

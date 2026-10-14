@@ -717,3 +717,14 @@ def test_covers_sensor_refuses_a_lens_without_an_image_circle_by_name():
         OS.covers_sensor(OS.lens_spec(f_number=4.0), OS.sensor_spec())
     r = OS.covers_sensor(OS.lens_spec(f_number=4.0, image_circle_mm=16.0), OS.sensor_spec())
     assert r["image_circle_mm"] == 16.0 and isinstance(r["covers"], bool)
+
+
+def test_sensor_catalog_without_a_filter_returns_every_sensor():
+    """2026-10-14: ループの中で引数 ``maker`` を上書きしていたので、無引数でも 2 行目以降が
+    最初の 1 社に絞られ、38 中 19 しか返らなかった。全件・各社の件数・絞りの和で固定する。"""
+    allc = OS.sensor_catalog()
+    assert len(allc) == len(OS._SENSOR_CATALOG)
+    makers = {v["maker"] for v in allc.values()}
+    assert len(makers) >= 3
+    assert sum(len(OS.sensor_catalog(maker=m)) for m in makers) == len(allc)
+    assert set(OS.sensor_catalog(maker="Sony")) == {n for n in allc if n.startswith("IMX")}

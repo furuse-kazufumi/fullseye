@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(362 例)
+### 2-D 画像/信号/幾何(363 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -419,6 +419,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **光沢面の外観検査(specularity 13 op)** — Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。 `py -3.11 examples/specular_photometric.py`
 - **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
 - **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/events_from_frames.py`
+- **材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点** — 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まる。両方が**同じ材料表**を引けるように、硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つのレコード型に載せ、波長曲線をすべて同じ形(λ [nm], 値)で返す新 op 16 本(`opsoptics` の `matprop`、実装 `materials`)。数値は refractiveindex.info database(CC0)の一次文献の係数と数表だけ(`tools/gen_material_tables.py` が生成、出典を各区間に残す)。★硝材 46 種(4 社のカタログ、Sellmeier 2 と Schott 多項式): 分散式から計算した n_d / V_d が**カタログ公表値と最大 4e-6 / 0.005**(門は 1e-4 / 0.3)。Abbe 図に 67 材料(プラスチックは同じ n_d の硝子より左、CaF₂ と石英は右端)。**第二実装 optiland 0.6.3**(同じ一次文献を別のコードで評価)と 23 点で最大 5e-10。★Si の NIR 窓(Green 2008): 公表の表の点 n(1.0 µm) 3.572 / k 5.09e-4、k(1.2 µm) 2.1e-7 を再現、吸収係数は 1.0 → 1.2 µm で 64 → 0.022 /cm(3 桁)、775 µm のウェハの透過率は 1.0 µm で 0.3 %・1.2 µm で 52 %(閉形式 (1−R)²e^{−αt}/(1−R²e^{−2αt}) と 1e-9、R = 0.31 の多重反射込み)。自由キャリア吸収(Schroder 1978)は λ² 則と p/n = 2.7 を 1e-9 で、1e19 cm⁻³ の基板は 1.3 µm でそれだけで ×0.27 に暗くなる。平行平板の焦点ずれ t(1 − 1/n) = 556 µm、縦球面収差は NA 0.1 で 1.0 µm・NA の 2 乗。★鏡の材料 10 種(Johnson & Christy / Rakić / Weaver / Werner): 銀は 500 nm で 0.982、アルミの谷は 820 nm で 0.866、金は 500 nm 0.475 → 700 nm 0.971。色は CIE 等色関数から出し、金と銅は R > G > B・銀は 3 成分が 1 % 以内で中性(塗っていない)。斜入射 60° で s 0.953 > p 0.829。★硝子とプラスチック: ポリカーボネートの分散は N-BK7 の 2.3 倍、dn/dT はカタログの式 A で基準温度(20 ℃ / 25 ℃)で Δn = 0、有限差分と 4e-8、N-BK7 の e 線で 1.62e-6 /K。係数の無い材料(PMMA・水)は ValueError で黙って 0 にしない。★取り込み口: .agf(硝材カタログ、Zemax の分散式 1〜13 全部)の雛形を読むと同梱レコードと 0、内部透過率の行から k を復元、自前の Sellmeier 係数と測った曲線(pairs)からもレコードを作れ、区間外は外挿しない。ユーザーのカタログは `FULLSEYE_GLASS_DIR` に置けば同名硝材を照合(無ければ「未配置」と明示)。学習した数 0、較正 0、門 38 件、図なしで 1 秒未満。 `py -3.11 examples/poc_material_optical_library.py`
 
 **appearance**
 - **構造色を波長から作る(回折・薄膜干渉・異方性)** — 色を塗らず分光反射率→CIE等色関数→線形sRGB。等色関数ȳピーク554nm、反射率1が白(1,1,1)、膜厚0が基板フレネルに厳密一致、λ/4が解析値0.077113、CD 1.6µm・Δsin0.35の1次が560nm、異方性ローブの伸び39:5。同条件でBD 0.32µmは可視域に届かず総量が1/3以下。 `py -3.11 examples/appearance_structural_colour.py`
@@ -2459,7 +2460,7 @@ _計 114 ops / 12 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 189 ops / 22 categories。_
+_計 205 ops / 23 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2575,6 +2576,24 @@ _計 189 ops / 22 categories。_
 - `sheen_shade` (`normalmap → image2d`) — 布の**縁の光沢**(ベルベット・サテン)。視線に対して寝た所ほど明るい。
 - `subsurface_approx` (`normalmap → image2d`) — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。
 - `wetness` (`rgbimage → rgbimage`) — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
+
+### matprop(16)
+- `material_table` (` → table`) — 同梱の材料表の一覧(名前・分類・波長範囲・n_d・V_d・出典)を返す。
+- `material_record` (` → table`) — 材料 1 つのレコード(分類・別名・データ区間ごとの一次文献・カタログ公表値)を返す。
+- `material_optical_constants` (` → table`) — 1 波長の光学定数 n, k と、そこから決まる吸収係数・複素誘電率・垂直入射反射率を返す。
+- `material_dispersion` (` → pairs`) — 屈折率の分散曲線 n(λ) を ``pairs``(λ [nm], n)で返す(等間隔 ``n_points`` 点)。
+- `material_extinction` (` → pairs`) — 消衰係数の曲線 k(λ) を ``pairs``(λ [nm], k)で返す。k の表が無い区間は 0。
+- `material_absorption` (` → pairs`) — 吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を ``pairs``(λ [nm], α)で返す。
+- `material_transmittance` (` → pairs`) — 平行平板(厚さ ``thickness_mm``)の透過率 T(λ) を ``pairs``(λ [nm], T)で返す。
+- `material_reflectance` (` → pairs`) — 空気から材料の面への反射率 R(λ) を ``pairs``(λ [nm], R)で返す(Fresnel、複素屈折率)。
+- `abbe_number` (` → table`) — フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。
+- `glass_map` (` → table`) — Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。
+- `thermo_optic_coefficient` (` → table`) — 硝材の dn/dT(絶対、真空中)と基準温度からの屈折率変化 Δn をカタログの式 A で返す。
+- `plate_focus_shift` (` → table`) — 平行平板(ウェハ・窓・カバーガラス)を通して見たときの焦点ずれと球面収差を閉じた式で返す。
+- `silicon_free_carrier_absorption` (` → pairs`) — ドープした Si の自由キャリア吸収 α_fc(λ) [1/cm] を ``pairs``(λ [nm], α)で返す。
+- `material_from_sellmeier` (` → table`) — Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。
+- `material_from_curves` (` → table`) — 測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。
+- `read_glass_catalog_agf` (` → table`) — 硝材カタログ(Zemax .agf 形式)を読んで材料レコードの列(``table``)にする。
 
 ### mirror(2)
 - `metal_optical_constants` (`signal → pairs`) — 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。

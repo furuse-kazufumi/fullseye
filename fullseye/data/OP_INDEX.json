@@ -1,8 +1,8 @@
 {
- "n_ops": 3154,
+ "n_ops": 3170,
  "tiers": {
   "color": 12,
-  "ledger": 2201,
+  "ledger": 2217,
   "nary": 17,
   "registry": 924
  },
@@ -276,6 +276,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "abbe_number",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "abcd_matrix",
@@ -9684,6 +9695,17 @@
    "in_sorts": []
   },
   {
+   "name": "glass_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "global_to_tile",
    "halcon": "",
    "in_sort": null,
@@ -14064,11 +14086,77 @@
    ]
   },
   {
+   "name": "material_absorption",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "material_catalog",
    "halcon": "",
    "in_sort": null,
    "out_sort": "table",
    "category": "material",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_dispersion",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_extinction",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_from_curves",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_from_sellmeier",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_optical_constants",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -14083,6 +14171,50 @@
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "material_record",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_reflectance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_transmittance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": []
   },
   {
@@ -18127,6 +18259,17 @@
    ]
   },
   {
+   "name": "plate_focus_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "plate_mesh_from_image",
    "halcon": "",
    "in_sort": "rgba",
@@ -20345,6 +20488,17 @@
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "read_glass_catalog_agf",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": []
   },
   {
@@ -23191,6 +23345,17 @@
    ]
   },
   {
+   "name": "silicon_free_carrier_absorption",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "sinkhorn",
    "halcon": "",
    "in_sort": "signal",
@@ -25854,6 +26019,17 @@
     "signal",
     "signal"
    ]
+  },
+  {
+   "name": "thermo_optic_coefficient",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "thick_lens",

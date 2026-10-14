@@ -539,12 +539,17 @@ def section8_tool_gaps():
     import ops as _ops
     allnames = set(dir(fs)) | set(dir(fs.ledger)) | {o.name for o in _ops.REGISTRY}
 
-    # (a) 熱モデルが無い
+    # (a) 熱モデルが無い。2026-10-14 に materials.thermo_optic_coefficient(硝材の dn/dT、カタログの式 A)が
+    #     入ったので 'thermo' は 1 件になった —— それは**硝子の屈折率の温度係数**であって、カメラの K が時間と
+    #     ともに動く熱モデルではない。穴の半分(硝材側)が塞がった所見として名指しで除き、残りは 0 件のまま固定する。
+    known = {"thermo_optic_coefficient"}
     for kw in ("thermal", "temperature", "thermo", "drift"):
-        hit = [n for n in allnames if kw in n.lower()]
+        hit = [n for n in allnames if kw in n.lower() and n not in known]
         assert not hit, (kw, hit)
+    assert "thermo_optic_coefficient" in allnames, "materials の dn/dT op が消えた(所見を書き直すこと)"
     print("  (a) ★**カメラの熱モデルが 3 層のどこにも無い**('thermal'/'temperature'/")
-    print("      'thermo'/'drift' で 0 件)。校正 op は「ある時点の K」を返すだけで、")
+    print("      'thermo'/'drift' で 0 件。例外は 2026-10-14 の thermo_optic_coefficient = 硝材の dn/dT で、")
+    print("      レンズの焦点移動の材料側だけ)。校正 op は「ある時点の K」を返すだけで、")
     print("      **K が時間とともに動く**ことを表す型が無い。")
     print("      `thermal_intrinsics(K0, dT, beta, gamma)` のような 1 本があれば、")
     print("      6 節の対策 C はそれを呼ぶだけになる。")

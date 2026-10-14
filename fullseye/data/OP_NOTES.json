@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3154,
- "n_notes": 3160,
+ "n_ops": 3170,
+ "n_notes": 3176,
  "notes": {
   "vol_dilate": [
    {
@@ -27378,6 +27378,150 @@
     "in": "rgbimage",
     "out": "rgbimage",
     "path": "docs/ops/optics/material/wetness.md"
+   }
+  ],
+  "abbe_number": [
+   {
+    "op": "abbe_number",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/abbe_number.md"
+   }
+  ],
+  "glass_map": [
+   {
+    "op": "glass_map",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/glass_map.md"
+   }
+  ],
+  "material_absorption": [
+   {
+    "op": "material_absorption",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_absorption.md"
+   }
+  ],
+  "material_dispersion": [
+   {
+    "op": "material_dispersion",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_dispersion.md"
+   }
+  ],
+  "material_extinction": [
+   {
+    "op": "material_extinction",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_extinction.md"
+   }
+  ],
+  "material_from_curves": [
+   {
+    "op": "material_from_curves",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_from_curves.md"
+   }
+  ],
+  "material_from_sellmeier": [
+   {
+    "op": "material_from_sellmeier",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_from_sellmeier.md"
+   }
+  ],
+  "material_optical_constants": [
+   {
+    "op": "material_optical_constants",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_optical_constants.md"
+   }
+  ],
+  "material_record": [
+   {
+    "op": "material_record",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_record.md"
+   }
+  ],
+  "material_reflectance": [
+   {
+    "op": "material_reflectance",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_reflectance.md"
+   }
+  ],
+  "material_table": [
+   {
+    "op": "material_table",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_table.md"
+   }
+  ],
+  "material_transmittance": [
+   {
+    "op": "material_transmittance",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_transmittance.md"
+   }
+  ],
+  "plate_focus_shift": [
+   {
+    "op": "plate_focus_shift",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/plate_focus_shift.md"
+   }
+  ],
+  "read_glass_catalog_agf": [
+   {
+    "op": "read_glass_catalog_agf",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/read_glass_catalog_agf.md"
+   }
+  ],
+  "silicon_free_carrier_absorption": [
+   {
+    "op": "silicon_free_carrier_absorption",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/silicon_free_carrier_absorption.md"
+   }
+  ],
+  "thermo_optic_coefficient": [
+   {
+    "op": "thermo_optic_coefficient",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/thermo_optic_coefficient.md"
    }
   ],
   "metal_mirror_rgb": [
