@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>線狀結構(脊線)偵測。將 <code style="color:#22d3bf">skimage.filters.frangi</code>(類血管脊線強化濾波器)的回應以閾值(<code style="color:#22d3bf">0.1+0.4*a</code>)二值化,並將連通成分作為輪廓點集回傳。這是簡化為對脊線強化影像做閾值化,而非 HALCON 的 <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)原本所做的「線的中心線+寬度估計」(不回傳線寬資訊的近似)。</p>
 <p><code style="color:#22d3bf">a</code> 調整脊線偵測的閾值。<code style="color:#22d3bf">b</code> 未使用。在沒有 skimage 的環境中無法呼叫此分支。</p>
+<p><b>也不回傳極性</b>(2026-09-15 實測):亮底上的暗線(0.6 的底上 0.1,寬 2 px)與暗底上的亮線(0.6 的底上 1.0)用相同的 <code style="color:#22d3bf">a</code> 處理,兩者都會輸出輪廓(a=0.5 時 3 條 / 280 點與 3 條 / 276 點),從回傳值無法區分。只要暗線時先用 <code style="color:#22d3bf">bothat</code>(白頂帽 <code style="color:#22d3bf">tophat</code> 對暗線回傳 0),只要亮線時先用 <code style="color:#22d3bf">tophat</code>。<b>量寬要用別的 op</b>:用 <code style="color:#22d3bf">gen_measure_rectangle2</code> 布置與線正交的量測線,再用 <code style="color:#22d3bf">measure_pairs</code>(measure1d 族)取兩側邊緣。但寬 1〜3 px 是該 op 的危險區(邊緣間距 / PSF 寬度 &lt; 3.09 時偏大),次像素寬度請用亮度虧損的積分來量(<code style="color:#22d3bf">examples/example_scratch_width.py</code>、<code style="color:#22d3bf">poc_crack_width</code>)。選用表見 2d/guides/gallery2d_contour_measure.md。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
@@ -24,6 +25,7 @@
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lines_gauss 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:lines_gauss%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:lines_gauss%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_el_inspection">poc_solar_el_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_el_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_bead_scan_angle">poc_weld_bead_scan_angle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_bead_scan_angle.py</code></p>

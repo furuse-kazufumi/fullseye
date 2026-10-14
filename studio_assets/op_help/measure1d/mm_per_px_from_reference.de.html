@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code> (die Implementierung direkt: <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>; aus dem Register: <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Bestimmt den Pixelabstand in mm/px aus einem Ziel bekannter Größe (Maßstab, Referenzbohrung, Lehre) — der Kalibrierschritt.</p>
+<p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>. Als <code style="color:#22d3bf">measured_px</code> einen Wert übergeben, den <b>ein Op dieser Familie tatsächlich gemessen hat</b> — mit derselben Optik im selben Arbeitsabstand (<code style="color:#22d3bf">width</code> aus <code style="color:#22d3bf">measure_pairs</code>, das Doppelte von <code style="color:#22d3bf">radius</code> aus <code style="color:#22d3bf">apply_metrology_model</code> …). Wer ihn aus Zeichnungsmaßen oder der Nennvergrößerung setzt, verschiebt bei 10 % Abweichung im Arbeitsabstand alle Maße um 10 %.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measured_px</code>, <code style="color:#22d3bf">known_mm</code>: endliche positive Skalare (sonst <code style="color:#22d3bf">ValueError</code>).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe: mm/px (float, Sorte <code style="color:#22d3bf">measurement</code>). An <code style="color:#22d3bf">pixel_to_world</code> / <code style="color:#22d3bf">table_px_to_mm</code> weitergeben.</p>
+<p style="margin:2px 0 2px 12px">• Bei perspektivischen Schrägaufnahmen ändert sich mm/px mit dem Ort. Dieser Op setzt <b>senkrechte Ansicht mit konstanter Vergrößerung</b> voraus, gibt einen Wert zurück und prüft die Annahme nicht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">Leitfaden zur Familie subpixel_measuring</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a> · <a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

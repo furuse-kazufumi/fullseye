@@ -9,6 +9,18 @@ Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베�
 
 > **PyPI를 통한 사용**: `pip install fullseye`를 실행한 환경에서는 콘솔 스크립트 **`fullseye-rag`**를 사용할 수 있습니다. checkout(clone / `pip install -e .`)인 경우 `docs/ops`의 전체 코퍼스를 스킬에 고정하고, wheel만 설치한 경우에는 동봉된 `OP_CATALOG.md`(AI를 위한 전체 op 카탈로그)를 스킬에 고정합니다(완전한 개별 op 노트가 필요해지면 저장소를 clone하여 다시 실행하면 됩니다). 업데이트는 `py -3.11 tools/update_fullseye.py`로 수행합니다(dirty 트리 거부 · `--ff-only` · 스킬은 백업 후 업데이트 · Studio 설정은 건드리지 않음 — 환경을 망가뜨리지 않도록 설계됨).
 
+## 입구는 하나가 아니다(먼저 읽기)
+
+문서만 받은 Codex / Copilot 은 둘 다 첫 시도에서 **용도로 찾는 색인을 찾지 못했다**(2026-09-15). 이 가이드에 안내가 없었기 때문입니다. 입구는 5 개입니다:
+
+1. **용도로** → [`docs/CAPABILITIES.md`](CAPABILITIES.md). 과제 하나에 파일 하나(`docs/capabilities/`)로 **권장 파이프라인(순서 있는 op)/ 대안 / 한계 / 실측 보정**을 가지며, op 이름이 실제로 있는지와 **타입(in → out)이 앞 단계에서 뒷 단계로 이어지는지**를 `tests/test_capabilities.py` 가 검사합니다.
+2. **하고 싶은 일의 말로** → `fullseye-rag search` / `fullseye.search_ops`(다음 절).
+3. **op 이름·개념으로** → [`docs/ops/INDEX.md`](ops/INDEX.ko.md) → 계열 목차 → op 노트.
+4. **기계로 찾기** → `fs.op_find(query)`(자유어·어간)/ `fs.op_assist(op)`(사양·프리셋·다음에 이을 곳)/ `fs.op_path(from_sort, to_sort)`(타입 A → 타입 B 를 잇는 op 열)/ `fs.op_producers(sort)`(그 타입을 만드는 op)/ `fs.op_accepts(op)`(실측으로 받아들이는 타입), CLI 는 `fullseye has <op>`(HALCON 이름으로도 찾을 수 있음).
+5. **색인 파일** → [`docs/OP_INDEX.json`](OP_INDEX.json)(전 op 의 타입 계약), wheel 에 동봉된 `OP_CATALOG.md`.
+
+**Windows 셸에서 읽을 때는 UTF-8 을 명시한다** —— 노트는 BOM 없는 UTF-8 이라 기본 코드 페이지로 열면 일본어가 깨지고, AI 가 "읽지 못한" 것을 "없다"고 판단합니다(Codex 에서 실제로 일어남). PowerShell 은 `Get-Content -Encoding utf8`, Python 은 `PYTHONUTF8=1`.
+
 ---
 
 ## 여기서 시작: 하고 싶은 일을 말로 써서 op 찾기(모든 Tier에서 사용 가능)

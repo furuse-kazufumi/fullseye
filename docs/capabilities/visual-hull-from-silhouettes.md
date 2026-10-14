@@ -6,6 +6,11 @@ category: 形にする
 ops: [synthesize_silhouette, carve, visual_hull, carve_look_at]
 examples: [space_carving, poc_livestock_body_volume]
 version: 0.1.11
+inputs: [points, images]
+pipeline: [synthesize_silhouette, visual_hull, vol_rle_components, vol_rle_volume]
+alternatives: [carve, carve_look_at, mesh_volume]
+limits: 視体積交差は**必ず上界**。くぼみはカメラを増やしても残る(12 倍で 3.8 ポイント)。平行投影では偶数台の半分が無駄で 13 台が 16 台に勝つ。姿勢は OpenCV 規約(`carve_look_at`)。
+calibration: K [px] と外部姿勢 [m] は校正済みのものを渡す。体積はボクセルピッチの 3 乗。シルエット 1 px の膨らみで体積 +3.21 %/px。
 ---
 
 # シルエットから立体を彫り出す(視体積交差)
@@ -36,6 +41,24 @@ R, t = fs.ledger.carve_look_at((3.0, 0.0, 0.0), (0.0, 0.0, 0.0))
 sil = fs.ledger.synthesize_silhouette(pts, K, R, t, (480, 640))
 print('前景画素 =', int(np.asarray(sil).sum()))
 ```
+
+## 推奨パイプライン
+
+`synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume`
+
+`synthesize_silhouette` で校正済みカメラの前景マスク(検証用)→ `visual_hull` で彫り出し → `vol_rle_components` → `vol_rle_volume` で体積。
+
+## 代替
+
+1 台ずつ彫るなら `carve`、姿勢は `carve_look_at`(`fs.look_at` は OpenGL 規約の別物)。メッシュにしてからなら `mesh_volume`。
+
+## 限界
+
+視体積交差は**必ず上界**。くぼみはカメラを増やしても残る(12 倍で 3.8 ポイント)。平行投影では偶数台の半分が無駄で 13 台が 16 台に勝つ。姿勢は OpenCV 規約(`carve_look_at`)。
+
+## 実寸校正
+
+K [px] と外部姿勢 [m] は校正済みのものを渡す。体積はボクセルピッチの 3 乗。シルエット 1 px の膨らみで体積 +3.21 %/px。
 
 ## 裏づけ
 

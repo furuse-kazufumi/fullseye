@@ -9,6 +9,18 @@ Fullseye 建議的用法是「**作為 AI 程式設計助理的知識庫（RAG�
 
 > **從 PyPI 使用**：在執行過 `pip install fullseye` 的環境中，可以使用主控台指令 **`fullseye-rag`**。若是 checkout（clone / `pip install -e .`），會將 `docs/ops` 的完整語料庫固定到技能中；若僅為 wheel 安裝，則會將隨附的 `OP_CATALOG.md`（面向 AI 的全 op 目錄）固定為技能（之後若需要完整的逐 op 筆記，只要 clone 儲存庫後重新執行即可）。更新方式為 `py -3.11 tools/update_fullseye.py`（拒絕在 dirty 樹上執行 · `--ff-only` · 在備份基礎上更新技能 · 不觸碰 Studio 設定——設計上不會破壞你的環境）。
 
+## 入口不只一個(請先讀)
+
+只拿到文件的 Codex / Copilot 第一次都**沒能找到依用途查找的索引**(2026-09-15),原因是本指南沒有指向它。入口共有 5 個:
+
+1. **依用途** → [`docs/CAPABILITIES.md`](CAPABILITIES.md)。每個課題一個檔案(`docs/capabilities/`),給出**建議流程(有序 op)/ 替代 / 限制 / 實際尺寸校正**;`tests/test_capabilities.py` 檢查 op 名確實存在,且**型別(in → out)從前一步銜接到後一步**。
+2. **用想做的事的說法** → `fullseye-rag search` / `fullseye.search_ops`(下一節)。
+3. **依 op 名或概念** → [`docs/ops/INDEX.md`](ops/INDEX.tw.md) → 族目錄 → op 筆記。
+4. **用程式查** → `fs.op_find(query)`(自由詞、詞幹)/ `fs.op_assist(op)`(規格、預設、下一步可接的 op)/ `fs.op_path(from_sort, to_sort)`(連接型別 A → 型別 B 的 op 序列)/ `fs.op_producers(sort)`(產生該型別的 op)/ `fs.op_accepts(op)`(實測可接受的型別);命令列為 `fullseye has <op>`(也可用 HALCON 名)。
+5. **索引檔** → [`docs/OP_INDEX.json`](OP_INDEX.json)(全部 op 的型別契約)、wheel 附帶的 `OP_CATALOG.md`。
+
+**在 Windows 的 shell 中讀取時請明確指定 UTF-8** —— 筆記是無 BOM 的 UTF-8,用預設字碼頁開啟會亂碼,AI 會在「讀不懂」的情況下判斷為「沒有」(Codex 實際發生過)。PowerShell 用 `Get-Content -Encoding utf8`,Python 用 `PYTHONUTF8=1`。
+
 ---
 
 ## 從這裡開始：用「想做的事」查找 op(適用於所有 Tier)

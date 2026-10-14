@@ -6,6 +6,11 @@ category: 見せる
 ops: [annotate_invert, annotate_invert_path, annotate_invert_visibility]
 examples: [annotate_paper_tour]
 version: 0.1.11
+inputs: [image2d, mask, pairs]
+pipeline: [annotate_invert_visibility, annotate_invert, annotate_invert_path]
+alternatives: [annotate_legend, text_box]
+limits: 中間調で消える(8bit グレー `v ∈ [113, 142]` の 30/256 階調、`v=128` で比 1.014)。測るのは WCAG **輝度**比だけ。`alpha` を落とすと答えが変わる。地がグレーなら彩度のある色のほうが確実。
+calibration: 描画のみ。実寸校正は不要。
 ---
 
 # 地の色を知らずに線と領域を描く(反転色)
@@ -39,6 +44,24 @@ safe = fs.annotate_invert_path(img, [(4.0, 16.0), (59.0, 16.0)],
                                width=2.0, mode='contrast')
 print('逃げ道で描いた図', np.asarray(safe).shape)
 ```
+
+## 推奨パイプライン
+
+`annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path`
+
+`annotate_invert_visibility` で描く前に最悪のコントラスト比を測り → `annotate_invert` で領域(fill / margin)→ `annotate_invert_path` で折れ線を反転色で重ねる(見えなければ `mode="contrast"` へ)。
+
+## 代替
+
+役割色で描けるなら `annotate_legend` / `text_box` のほうが確実(地がグレーのとき)。
+
+## 限界
+
+中間調で消える(8bit グレー `v ∈ [113, 142]` の 30/256 階調、`v=128` で比 1.014)。測るのは WCAG **輝度**比だけ。`alpha` を落とすと答えが変わる。地がグレーなら彩度のある色のほうが確実。
+
+## 実寸校正
+
+描画のみ。実寸校正は不要。
 
 ## 裏づけ
 

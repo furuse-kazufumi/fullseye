@@ -1768,8 +1768,11 @@ SEED: list[tuple] = [
     #   名前を満たせないため、`ncc_locate` と同じ **match sort の 1-D ベクトル**
     #   にして (面積比, 行, 列) を返す。match / feature はどちらも終端 sort
     #   (候補は identity のみ)なので、ゲノム→op の写像は動かない。
+    #   ★2026-09-26 から 3 成分とも**画素**(面積 [画素数], 行 [px], 列 [px])。説明文が
+    #   正規化のまま 3 週間残り、それを読んだ例が座標を (H-1) 倍して壊れた(2026-10-15)。
+    #   説明と挙動の一致は tests/test_feature_units_doc_2026_10_15.py が見る。
     ("area_center", "features", REG, MAT, "region_feat", {"metric": "area_center"},
-     '領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル\n(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1\nスカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元\nベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。\n領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft\n仕様。HALCON の ``area_center``（Area and center of regions.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '領域の面積と重心を ``(面積 [画素数], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center``（Area and center of regions.）と同じ 3 値・同じ単位。\n\n1 スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元\nベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。\n領域が空のときは ``(0, (H-1)/2, (W-1)/2)``(面積ゼロ・中心 = 画像中心の画素座標)を\n返す fail-soft 仕様。\n\n★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値(面積比・正規化重心)を\n返していた。いまは画素(``docs/hardening/dimensional-features-were-normalised.md``)。\n正規化が要るなら面積を ``H*W``、行を ``H-1``、列を ``W-1`` で割る。\n\n``a``, ``b`` は未使用。'),
     ("count_obj", "features", REG, FEA, "region_feat", {"metric": "count"},
      '連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の\n``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに\n接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例\n=セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の\n``count_obj``（Number of objects in a tuple.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
@@ -1787,7 +1790,7 @@ SEED: list[tuple] = [
     ("roundness", "features", REG, FEA, "region_feat", {"metric": "roundness"},
      '真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と\n標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の\n``roundness``（Shape factors from contour.）**と同じ式**。\n\n★2026-09-26 まで ``4・面積/(π・長軸長²)`` という別の量を返していた\n(16x64 の矩形で 0.239 対 0.577)。``circularity`` が「面積が最大距離の円を\nどれだけ埋めるか」を見るのに対し、こちらは**縁の凸凹**を見る。\n\n``a``, ``b`` は未使用。'),
     ("diameter_region", "features", REG, FEA, "region_feat", {"metric": "diameter"},
-     '等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値\n(``regionprops`` の ``equivalent_diameter_area``)。HALCON の\n``diameter_region``（Maximal distance between two boundary points of a\nregion.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標\n(等価円直径による近似)。\n\n``a``, ``b`` は未使用。'),
+     '領域の直径 [px] = 境界上の 2 点間の最大距離(最大弦)。HALCON の ``diameter_region``（Maximal distance between two boundary points of a region.）と同じ量・同じ単位。\n\n境界画素の全対から最大距離を取る(画素が多いときは凸包に落としてから)。\n輪郭版 ``diameter_xld`` と同じ量。\n\n★2026-09-26 まで等価直径(面積が等しい円の直径)を最大辺長で割った**別の量**を\n返していた(30x70 の矩形で 0.2585、いまは 74.85)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
     ("euler_number", "features", REG, FEA, "region_feat", {"metric": "euler"},
      'オイラー数(``skimage.measure.euler_number``、連結成分数から穴の数を\n引いた位相不変量)。値が小さい(負に近い)ほど穴が多いことを示す。HALCON の\n``euler_number``（Calculate the Euler number.）に相当。\n\n``a``, ``b`` は未使用。'),
     # ---- Image: gray-value statistics ------------------------------------
@@ -1803,7 +1806,7 @@ SEED: list[tuple] = [
     ("edges_sub_pix", "contour", IMG, CON, "xld", {"kind": "edges_sub_pix"},
      'サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した\n後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。'),
     ("lines_gauss", "contour", IMG, CON, "xld", {"kind": "lines_gauss"},
-     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境\nではこの分岐は呼べない。'),
+     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境\nではこの分岐は呼べない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
     ("select_contours_xld", "contour", CON, CON, "xld", {"kind": "select_contours"},
      '既存の輪郭(XLD contour)集合から、点数が閾値(``3+40*a``)以上のものだけ\nを残すフィルタ。HALCON の ``select_contours_xld``（Select XLD contours\naccording to several features.）は面積・円形度など任意の特徴で選別できる\n汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に\n固定している(近似)。\n\n``a`` が点数のしきい値を振る。``b`` は未使用。'),
     ("smooth_contours_xld", "contour", CON, CON, "xld", {"kind": "smooth_contours"},
@@ -1815,7 +1818,7 @@ SEED: list[tuple] = [
     # ---- v11b increment: newly-enabled genuine families ------------------
     # region measurements
     ("contlength", "features", REG, FEA, "region_feat", {"metric": "perimeter"},
-     '領域の周囲長(``regionprops`` の ``perimeter``)を画像の外周長\n``2*(H+W)`` で正規化した値。HALCON の ``contlength``（Contour length of a\nregion.）に相当。\n\n``a``, ``b`` は未使用。1.0 でクリップされるため、外周長より極端に長い\n複雑な境界(フラクタル的な形状など)では情報が飽和する。'),
+     '領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。\n\n★2026-09-26 まで画像の外周長 ``2*(H+W)`` で割って 1.0 で頭打ちにした値を返していた\n(30x70 の矩形で 0.2450、いまは 196.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
     ("area_holes", "features", REG, FEA, "region_feat", {"metric": "area_holes"},
      '領域内の穴が占める面積比 ``(穴埋め後面積 - 元面積) / 穴埋め後面積``。\n0 に近いほど穴が無く、1 に近いほど大半が穴という極端な形状を示す。HALCON\nの ``area_holes``（Compute the area of holes of regions.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("height_width_ratio", "features", REG, FEA, "region_feat", {"metric": "aspect"},
@@ -1850,7 +1853,7 @@ SEED: list[tuple] = [
     # ---- v11d increment: XLD contour ops + region moments + misc ----------
     # XLD contour -> feature
     ("area_center_xld", "features", CON, MAT, "xld", {"kind": "area"},
-     '最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で\n多角形面積を求め、画像の全画素数で正規化して返す。HALCON の\n``area_center_xld``（Area and center of gravity (centroid) of contours and\npolygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを\n返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである\n契約上の制約)。\n\n``a``, ``b`` は未使用。輪郭が無ければ 0 を返す。'),
+     '最大の点数を持つ輪郭 1 本が囲む多角形の面積と重心を ``(面積 [px²], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）の 4 値のうち、向きの印 PointOrder を除く 3 値。\n\n面積はシューレース公式(靴紐公式)、重心は点の平均ではなく**囲まれた面積の重心**。\n``match`` ソートの 1 次元ベクトルで返す(``area_center`` と同じ形)。\n\n★2026-09-26 まで面積だけを画像の全画素数で割った 1 スカラーを返していた\n(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 3 個以上の輪郭が無いときは 0(スカラー)を返す。'),
     ("circularity_xld", "features", CON, FEA, "xld", {"kind": "circularity"},
      '最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から\n輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する\n(領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld``\n（Shape factor for the circularity (similarity to a circle) of contours or\npolygons.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という別の量だった。重心は点の\n平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。\n\n``a``, ``b`` は未使用。'),
     ("compactness_xld", "features", CON, FEA, "xld", {"kind": "compactness"},
@@ -1897,9 +1900,9 @@ SEED: list[tuple] = [
     ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"},
      '楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で\n折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("elliptic_axis_xld", "features", CON, MAT, "xld", {"kind": "elliptic_axis"},
-     '楕円フィットした輪郭の短軸/長軸の比。値が 1 に近いほど真円に近く、\n0 に近いほど細長い。HALCON の ``elliptic_axis_xld``（Parameters of the\nequivalent ellipse of contours or polygons.）が返す(長軸, 短軸, 角度)の\n組のうち、比 1 個のスカラーだけを返す近似。\n\n``a``, ``b`` は未使用。'),
+     '最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から反時計回り、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。\n\n領域版 ``elliptic_axis`` と同じ形。輪郭点への最小二乗当てはめなので、領域の\nモーメントからの値とは一致しない(30x70 の矩形で region (40.41, 17.31, 0.0) 対\nxld (44.53, 16.99, 0.0018))。\n\n★2026-09-26 まで短軸/長軸の比 1 スカラーを返していた\n(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0(スカラー)を返す。\ncv2 が要る。'),
     ("diameter_xld", "features", CON, FEA, "xld", {"kind": "diameter"},
-     '輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の\n最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance\nbetween two contour or polygon points.）が定義する「輪郭上の 2 点間の\n最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は\n必ずしも最遠 2 点を結ぶ直径と一致しない)。\n\n``a``, ``b`` は未使用。'),
+     '最大の点数を持つ輪郭の直径 [px] = 輪郭点 2 点間の最大距離(最大弦)。HALCON の ``diameter_xld``（Maximum distance between two contour or polygon points.）と同じ量・同じ単位。\n\n領域版 ``diameter_region`` と同じ量(30x70 の矩形で 75.77 対 74.85)。\n\n★2026-09-26 まで最小外接円(``cv2.minEnclosingCircle``)の直径を画像の最大辺長で\n割った値を返していた(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0 を返す。cv2 が要る。'),
     ("rectangularity_xld", "features", CON, FEA, "xld", {"kind": "rectangularity"},
      '矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との\n差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の\n``rectangularity_xld``（Shape factor for the rectangularity of contours or\npolygons.）**と同じ定義**。\n\n★2026-09-26 まで**最小外接回転矩形**(``cv2.minAreaRect``)との比だった ——\n似てはいるが別の測り方で、凹んだ形で系統的にずれる。\n\n``a``, ``b`` は未使用。'),
     ("moments_xld", "features", CON, FEA, "xld", {"kind": "moment_xld"},
@@ -1926,7 +1929,7 @@ SEED: list[tuple] = [
     ("junctions_skeleton", "region", REG, REG, "region_trans", {"kind": "junctions_skeleton"},
      '骨格化した領域のうち、3x3 近傍に 3 つ以上の骨格画素を持つ画素(分岐点・\n交差点)だけを残す。骨格の端点(``pruning`` が削る対象)ではなく、枝分かれ\nする結節点を検出する。HALCON の ``junctions_skeleton``（Find junctions and\nend points in a skeleton.）に相当(HALCON は端点も同時に返すが、ここでは\n分岐点のみを検出する近似)。\n\n``a``, ``b`` は未使用。'),
     ("get_region_thickness", "features", REG, FEA, "region_feat", {"metric": "thickness"},
-     '領域の太さの近似値 ``2 × 最大内接円半径 / 最大辺長``\n(``distance_transform_edt`` の最大値の 2 倍を画像サイズで正規化)。HALCON\nの ``get_region_thickness``（Access the thickness of a region along the\nmain axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、\n方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は\n失われる)。\n\n``a``, ``b`` は未使用。'),
+     '領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。\n\nHALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する\n「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径\nだけを見る単純化(主軸方向の情報は失われる)。\n\n★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は\n全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
 ]
 
 

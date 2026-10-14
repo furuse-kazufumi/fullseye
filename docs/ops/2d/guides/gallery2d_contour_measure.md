@@ -104,6 +104,37 @@ flowchart LR
 - **ncc_locate** — 正規化相互相関(NCC)の最大位置を `[score, row, col]` で返す。`row, col` はテンプレート中心(*HALCON: find_ncc_model*)。`ops.set_match_template(t); fullseye.apply(img, "ncc_locate", 0.5, 0.5)`
 - **shape_locate** — テンプレートを 30° 刻みで回して各回転の NCC 最大を取り、最良の `[score, row, col, angle]` を返す(回転不変)(*HALCON: find_shape_model*)。`ops.set_match_template(t); fullseye.apply(img, "shape_locate", 0.5, 0.5)`
 
+## 線状欠陥の op の使い分け(tophat / bothat / laplace_of_gauss / lines_gauss / measure_pairs)
+
+文書だけを渡した AI は「傷の幅」で `lines_gauss` に辿り着いて止まった(幅を返さない op)。
+同じ「線状のもの」に見える 5 つの op は**返すものが違う**。合成の暗い傷(地 0.6、傷 0.1、
+幅 w、ぼけ σ=0.7 px)で実測した表(`examples/example_scratch_width.py`、2026-09-15):
+
+| op | 型 | 返すもの | 暗線 | 明線 | 幅 | 使いどころ |
+|---|---|---|---|---|---|---|
+| `tophat`(白トップハット) | image → image | 地より**明るい**細部だけ | **0**(応答なし) | 応答 | 返さない | 明るい傷・輝点を浮かせる前処理 |
+| `bothat`(黒トップハット) | image → image | 地より**暗い**細部だけ | 応答 | 0 | 返さない | 暗い傷・溝を浮かせる前処理 |
+| `laplace_of_gauss` | image → image | 2 階微分(0.5 がゼロ交差) | 0.92(正) | 負側 | 返さない(σ の目安だけ) | ブロブ・線の**スケール**の当たり、ゼロ交差の下地 |
+| `lines_gauss` | image → contour | Frangi 応答を二値化した**輪郭** | 3 輪郭 | 3 輪郭 | **返さない** | 「どこに線があるか」。極性は区別しない(HALCON の同名 op と違う) |
+| `measure_pairs`(measure1d 族) | image2d × measurehandle → table | 測定線上の極性の違うエッジ対と**幅 [px]** | 対 | 対 | **返す** | 線に直交する測定線を張ってから。極性の順序は問わない |
+
+幅の偏り(真値 w に対する `measure_pairs` の返り、σ は平滑化):
+
+| 真値 w [px] | w / σ_psf | σ=1.0 | σ=0.5 | 輝度欠損の積分 |
+|---|---|---|---|---|
+| 1.0 | 1.43 | 3.251(**+2.251**) | 2.671(+1.671) | 1.0000 |
+| 1.5 | 2.14 | 3.249(+1.749) | 2.667(+1.167) | 1.5000 |
+| 2.0 | 2.86 | 3.329(+1.329) | 2.745(+0.745) | 2.0000 |
+| 3.0 | 4.29 | 3.784(+0.784) | 3.348(+0.348) | 3.0000 |
+| 5.0 | 7.14 | 5.058(+0.058) | 5.005(+0.005) | 5.0000 |
+
+読み方: **検出と計測は別の op**。検出は `lines_gauss`(または極性を決めて `bothat` / `tophat`)、
+幅 ≳ 5 px は `measure_pairs`、それより細い幅は輝度欠損の積分(`poc_crack_width`)。
+`measure_pairs` はどの幅でも「対が見つかった」と答える(失敗を返さない —— 
+[`measure1d/guides/subpixel_measuring.md` §2](../../measure1d/guides/subpixel_measuring.md))。
+mm にするのは校正値(`mm_per_px_from_reference`)を `table_px_to_mm` に通すだけ。
+用途からの導線は [`docs/capabilities/scratch-detection-and-width.md`](../../../capabilities/scratch-detection-and-width.md)。
+
 ## 動く最小例(検証済み gallery2d_contour_measure から)
 
 repo 直下で `py -3.11` で実行すると `PASS` を出力します(輪郭パイプライン・計測・照合の 3 系統を、既知の真値で確認する自己完結テスト)。

@@ -1183,18 +1183,19 @@ def subject_blob_select(log=print) -> dict:
         m = (lab == i).astype(np.float64)
         # ★2026-09-02: `area_center` は名前どおり (面積比, 行, 列) の 3 成分を返す
         #   ようになった (それまでは面積比 1 スカラだけで、**中心を返していなかった**)。
-        #   3 成分とも解像度に依らないよう [0,1] 正規化されているので、画素に戻すには
-        #   行 ×(H-1) / 列 ×(W-1)。ここでは戻した中心を絵に打って、返り値が本当に
-        #   中心であることを見て分かる形にする。
+        #   ★2026-09-26 から 3 成分とも**画素**(面積 [画素数], 行 [px], 列 [px])。
+        #   それまでは [0,1] 正規化で、ここで ×(H-1) / ×(W-1) して画素に戻していた
+        #   (2026-10-15 に直すまで、画素の値をさらに (H-1) 倍していた)。返した中心を
+        #   絵に打って、返り値が本当に中心であることを見て分かる形にする。
         ac = np.asarray(fs.apply(m, "area_center", 0.5), np.float64)
         ys, xs = np.nonzero(m > 0.5)
         feats.append({
             "id": i, "px": int(m.sum()),
-            "area_frac": float(ac[0]),
-            "row": float(ac[1]) * (H - 1), "col": float(ac[2]) * (W - 1),
+            "area_frac": float(ac[0]) / float(H * W),
+            "row": float(ac[1]), "col": float(ac[2]),
             # 独立に計算した重心と突き合わせる (op の返り値を鵜呑みにしない)
-            "row_err_px": float(ac[1]) * (H - 1) - float(ys.mean()),
-            "col_err_px": float(ac[2]) * (W - 1) - float(xs.mean()),
+            "row_err_px": float(ac[1]) - float(ys.mean()),
+            "col_err_px": float(ac[2]) - float(xs.mean()),
             "circ": float(fs.apply(m, "circularity", 0.5)),
             "ecc": float(fs.apply(m, "eccentricity", 0.5)),
             "rect": float(fs.apply(m, "rectangularity", 0.5))})
@@ -1263,7 +1264,7 @@ def subject_blob_select(log=print) -> dict:
             "accepted": len(keep), "rejected": n - len(keep),
             "circularity_accepted": circ_keep,
             "circularity_rejected": circ_rej,
-            "area_center_returns": "(面積比, 行/(H-1), 列/(W-1)) の 3 成分",
+            "area_center_returns": "(面積 [画素数], 行 [px], 列 [px]) の 3 成分",
             "area_center_max_centroid_error_px": round(ctr_err, 4),
             "per_blob": [{k: (round(v, 4) if isinstance(v, float) else v)
                           for k, v in f.items()} for f in feats],
@@ -1274,8 +1275,8 @@ def subject_blob_select(log=print) -> dict:
             "しきい値にすると採用 %d 個 (真円度 %.3f〜%.3f)、不採用 %d 個 "
             "(%.3f〜%.3f) にきれいに割れる —— 特徴空間の散布図でも 2 つの群が"
             "しきい値をまたいで重なっていない。5 コマ目の十字は `area_center` が"
-            "返した中心で、この op は (面積比, 行, 列) の 3 成分を [0,1] 正規化して"
-            "返す —— 画素に戻して独立に計算した重心と比べると差は最大 %.3f px、"
+            "返した中心で、この op は (面積, 行, 列) の 3 成分を画素で"
+            "返す —— 独立に計算した重心と比べると差は最大 %.3f px、"
             "%d 個すべてが自分の粒の上に乗った。"
             % (n_blobs, len(keep), circ_keep[0], circ_keep[-1], n - len(keep),
                circ_rej[0], circ_rej[-1], ctr_err, n)),

@@ -4187,12 +4187,26 @@
    "ko": "★_panel_grid 의 라벨은 줄바꿈되지 않아, 폭을 넘으면 옆과 부딪혀 읽을 수 없게 된다(tile 262px / font 19-17px 이므로 한 줄 ≈ 전각 12 글자가 한계). 배율의 의미는 제목과 부제로 빼내고, 패널에는 짧은 이름과 숫자만 둔다.",
    "de": "★Die Labels von _panel_grid brechen nicht um, und sobald sie die Breite ueberschreiten, stossen sie mit dem Nachbarn zusammen und werden unlesbar (bei tile 262px / font 19-17px sind pro Zeile ≈ 12 Vollbreiten-Zeichen das Maximum). Verlagere die Bedeutung des Skalierungsfaktors in Titel und Untertitel und platziere auf dem Panel nur einen kurzen Namen und Zahlen."
   },
-  "★2026-09-02: `area_center` は名前どおり (面積比, 行, 列) の 3 成分を返す ようになった (それまでは面積比 1 スカラだけで、**中心を返していなかった**)。 3 成分とも解像度に依らないよう [0,1] 正規化されているので、画素に戻すには 行 ×(H-1) / 列 ×(W-1)。ここでは戻した中心を絵に打って、返り値が本当に 中心であることを見て分かる形にする。": {
-   "en": "★2026-09-02: `area_center` now returns, as its name says, the 3 components (area ratio, row, column) (until then it was just the single scalar area ratio and **didn't return the center**). All 3 components are [0,1]-normalized so as not to depend on resolution, so to get back to pixels: row ×(H-1) / column ×(W-1). Here we plot the restored center onto the picture so you can see that the return value really is the center.",
-   "zh": "★2026-09-02：`area_center` 现在如其名返回 (面积比, 行, 列) 3 个分量（此前只有面积比 1 个标量，**不返回中心**）。3 个分量都做了 [0,1] 归一化以不依赖分辨率，所以要还原到像素：行 ×(H-1) / 列 ×(W-1)。这里把还原后的中心打到图上，做成能一眼看出返回值确实是中心的形式。",
-   "tw": "★2026-09-02：`area_center` 現在如其名回傳 (面積比, 行, 列) 3 個分量（此前只有面積比 1 個純量，**不回傳中心**）。3 個分量都做了 [0,1] 正規化以不依賴解析度，所以要還原到像素：行 ×(H-1) / 列 ×(W-1)。這裡把還原後的中心打到圖上，做成能一眼看出回傳值確實是中心的形式。",
-   "ko": "★2026-09-02: `area_center` 는 이름대로 (면적비, 행, 열) 의 3 성분을 반환하게 되었다(그때까지는 면적비 1 스칼라뿐, **중심을 반환하지 않았다**). 3 성분 모두 해상도에 의존하지 않도록 [0,1] 정규화되어 있으므로, 픽셀로 되돌리려면 행 ×(H-1) / 열 ×(W-1). 여기서는 되돌린 중심을 그림에 찍어, 반환값이 정말 중심임을 보고 알 수 있는 형태로 한다.",
-   "de": "★2026-09-02: `area_center` gibt nun, wie der Name sagt, die 3 Komponenten (Flaechenverhaeltnis, Zeile, Spalte) zurueck (bis dahin war es nur der einzelne Skalar Flaechenverhaeltnis und **gab das Zentrum nicht zurueck**). Alle 3 Komponenten sind [0,1]-normiert, um nicht von der Aufloesung abzuhaengen, also zum Zurueckrechnen in Pixel: Zeile ×(H-1) / Spalte ×(W-1). Hier zeichnen wir das zurueckgerechnete Zentrum in das Bild ein, sodass sichtbar wird, dass der Rueckgabewert wirklich das Zentrum ist."
+  "★2026-09-02: `area_center` は名前どおり (面積比, 行, 列) の 3 成分を返す ようになった (それまでは面積比 1 スカラだけで、**中心を返していなかった**)。": {
+   "en": "★2026-09-02: `area_center` now returns, as its name says, the 3 components (area ratio, row, column) (until then it was just the single scalar area ratio and **didn't return the centre**).",
+   "zh": "★2026-09-02:`area_center` 现在如其名返回 (面积比, 行, 列) 3 个分量(此前只有面积比 1 个标量,**不返回中心**)。",
+   "tw": "★2026-09-02:`area_center` 現在如其名回傳 (面積比, 列, 欄) 3 個分量(此前只有面積比 1 個純量,**不回傳中心**)。",
+   "ko": "★2026-09-02: `area_center` 는 이름대로 (면적비, 행, 열) 의 3 성분을 반환하게 되었다(그때까지는 면적비 1 스칼라뿐, **중심을 반환하지 않았다**).",
+   "de": "★2026-09-02: `area_center` gibt nun, wie der Name sagt, die 3 Komponenten (Flaechenverhaeltnis, Zeile, Spalte) zurueck (bis dahin war es nur der einzelne Skalar Flaechenverhaeltnis, und **das Zentrum wurde nicht zurueckgegeben**)."
+  },
+  "★2026-09-26 から 3 成分とも**画素**(面積 [画素数], 行 [px], 列 [px])。 それまでは [0,1] 正規化で、ここで ×(H-1) / ×(W-1) して画素に戻していた (2026-10-15 に直すまで、画素の値をさらに (H-1) 倍していた)。返した中心を 絵に打って、返り値が本当に中心であることを見て分かる形にする。": {
+   "en": "★Since 2026-09-26 all 3 components are in **pixels** (area [pixel count], row [px], column [px]). Before that they were normalised to [0,1], and this code multiplied by (H-1) / (W-1) to get back to pixels (until the 2026-10-15 fix it went on multiplying the pixel values by (H-1)). The returned centre is drawn on the picture so you can see that it really is the centre.",
+   "zh": "★自 2026-09-26 起 3 个分量都以**像素**表示(面积 [像素数], 行 [px], 列 [px])。此前为 [0,1] 归一化,这里乘以 (H-1) / (W-1) 还原为像素(直到 2026-10-15 修正前,一直把像素值再乘以 (H-1))。把返回的中心画在图上,让人一眼看出返回值确实是中心。",
+   "tw": "★自 2026-09-26 起 3 個分量都以**像素**表示(面積 [像素數], 列 [px], 欄 [px])。此前為 [0,1] 正規化,這裡乘以 (H-1) / (W-1) 還原為像素(直到 2026-10-15 修正前,一直把像素值再乘以 (H-1))。把回傳的中心畫在圖上,讓人一眼看出回傳值確實是中心。",
+   "ko": "★2026-09-26 부터 3 성분 모두 **화소**(면적 [화소 수], 행 [px], 열 [px]). 그 전에는 [0,1] 정규화여서 여기서 (H-1) / (W-1) 을 곱해 화소로 되돌렸다(2026-10-15 에 고치기 전까지 화소 값에 다시 (H-1) 을 곱하고 있었다). 돌려받은 중심을 그림에 찍어 반환값이 정말 중심인지 눈으로 알 수 있게 한다.",
+   "de": "★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Vorher waren sie auf [0,1] normiert, und hier wurde mit (H-1) / (W-1) multipliziert, um zu Pixeln zurueckzukehren (bis zur Korrektur am 2026-10-15 wurden die Pixelwerte erneut mit (H-1) multipliziert). Das zurueckgegebene Zentrum wird ins Bild gezeichnet, damit man sieht, dass es wirklich das Zentrum ist."
+  },
+  "★2026-09-26 から 3 成分とも**画素**(面積 [画素数], 行 [px], 列 [px])。説明文が 正規化のまま 3 週間残り、それを読んだ例が座標を (H-1) 倍して壊れた(2026-10-15)。 説明と挙動の一致は tests/test_feature_units_doc_2026_10_15.py が見る。": {
+   "en": "★Since 2026-09-26 all 3 components are in **pixels** (area [pixel count], row [px], column [px]). The description stayed \"normalised\" for three weeks, and an example written from it broke by multiplying the coordinates by (H-1) (2026-10-15). tests/test_feature_units_doc_2026_10_15.py checks that the description matches the behaviour.",
+   "zh": "★自 2026-09-26 起 3 个分量都以**像素**表示(面积 [像素数], 行 [px], 列 [px])。说明文仍写着归一化长达 3 周,照着它写的例子把坐标乘以 (H-1) 而出错(2026-10-15)。说明与行为的一致由 tests/test_feature_units_doc_2026_10_15.py 检查。",
+   "tw": "★自 2026-09-26 起 3 個分量都以**像素**表示(面積 [像素數], 列 [px], 欄 [px])。說明文仍寫著正規化長達 3 週,照著它寫的範例把座標乘以 (H-1) 而出錯(2026-10-15)。說明與行為的一致由 tests/test_feature_units_doc_2026_10_15.py 檢查。",
+   "ko": "★2026-09-26 부터 3 성분 모두 **화소**(면적 [화소 수], 행 [px], 열 [px]). 설명문이 3 주 동안 정규화인 채로 남아, 그것을 읽고 쓴 예제가 좌표에 (H-1) 을 곱해 깨졌다(2026-10-15). 설명과 동작의 일치는 tests/test_feature_units_doc_2026_10_15.py 가 본다.",
+   "de": "★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Die Beschreibung blieb drei Wochen lang „normiert“, und ein danach geschriebenes Beispiel ging kaputt, weil es die Koordinaten mit (H-1) multiplizierte (2026-10-15). tests/test_feature_units_doc_2026_10_15.py prueft, dass Beschreibung und Verhalten uebereinstimmen."
   },
   "★1 点ずつ apply_cmap を呼ぶと、その 1 点の中で正規化されて全部同じ色になる。 0..1 を張った LUT を 1 回だけ作り、そこから引く。": {
    "en": "★Calling apply_cmap point by point normalizes within that single point so everything comes out the same color. Build a LUT spanning 0..1 once and look up from it.",

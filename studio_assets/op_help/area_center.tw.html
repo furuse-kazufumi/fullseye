@@ -10,7 +10,9 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>以與解析度無關的正規化 3 分量向量(面積比 = 面積/影像像素數、正規化重心列、正規化重心欄)回傳區域的面積與重心。由於單一純量無法表示 (Area, Row, Column),因此與其他區域特徵 op 不同,以 <code style="color:#22d3bf">match</code> 排序(一維向量,與 <code style="color:#22d3bf">ncc_locate</code> 相同形式)回傳。區域為空時回傳 (0, 0.5, 0.5)(面積為零、中心=影像中心)的 fail-soft 規格。相當於 HALCON 的 <code style="color:#22d3bf">area_center</code>(Area and center of regions.)。</p>
+<p>以 3 分量向量 <code style="color:#22d3bf">(面積 [像素數], 重心列 [px], 重心欄 [px])</code> 回傳區域的面積與重心。與 HALCON 的 <code style="color:#22d3bf">area_center</code>（Area and center of regions.）為相同的 3 個值、相同的單位。</p>
+<p>由於單一純量無法表示 (Area, Row, Column),本 op 以 <code style="color:#22d3bf">match</code> 型別(一維向量,與 <code style="color:#22d3bf">ncc_locate</code> 同形)回傳,這一點與其他 region 特徵 op 不同。區域為空時回傳 <code style="color:#22d3bf">(0, (H-1)/2, (W-1)/2)</code>(面積為零、中心 = 影像中心的像素座標),為 fail-soft 規格。</p>
+<p>★直到 2026-09-26,3 個分量都除以影像尺寸,回傳 0〜1 的值(面積比、正規化重心)。現在為像素單位(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。若需要正規化值,把面積除以 <code style="color:#22d3bf">H*W</code>、列除以 <code style="color:#22d3bf">H-1</code>、欄除以 <code style="color:#22d3bf">W-1</code>。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
@@ -23,6 +25,7 @@
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aarea_center%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aarea_center%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">match</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>

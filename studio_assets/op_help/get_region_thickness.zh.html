@@ -10,7 +10,9 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_thickness.chain.jpg">get_region_thickness: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>区域粗细的近似值：<code style="color:#22d3bf">2 × 最大内接圆半径 / 最大边长</code>（<code style="color:#22d3bf">distance_transform_edt</code> 最大值的 2 倍，按图像尺寸归一化）。与 HALCON 的 <code style="color:#22d3bf">get_region_thickness</code>（Access the thickness of a region along the main axis.）所定义的「沿主轴方向的粗细剖面」不同，这里是一种简化：只看与方向无关的全局最大内接半径（主轴方向的信息会丢失）。</p>
+<p>区域粗细 [px] 的近似值 <code style="color:#22d3bf">2 × 最大内切圆半径</code>(<code style="color:#22d3bf">distance_transform_edt</code> 最大值的 2 倍)。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">get_region_thickness</code>（Access the thickness of a region along the main axis.）所定义的“沿主轴的粗细剖面”不同,这是只看与方向无关的全局最大内切半径的简化(主轴方向的信息会丢失)。</p>
+<p>★直到 2026-09-26 都除以图像的最大边长,粗细超过图像长边一半的区域全部截顶为 1.0(30x70 的矩形为 0.1500,现在为 30.0)。<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

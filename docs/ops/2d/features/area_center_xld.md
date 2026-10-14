@@ -31,14 +31,15 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で
-多角形面積を求め、画像の全画素数で正規化して返す。HALCON の
-``area_center_xld``（Area and center of gravity (centroid) of contours and
-polygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを
-返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである
-契約上の制約)。
+最大の点数を持つ輪郭 1 本が囲む多角形の面積と重心を ``(面積 [px²], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）の 4 値のうち、向きの印 PointOrder を除く 3 値。
 
-``a``, ``b`` は未使用。輪郭が無ければ 0 を返す。
+面積はシューレース公式(靴紐公式)、重心は点の平均ではなく**囲まれた面積の重心**。
+``match`` ソートの 1 次元ベクトルで返す(``area_center`` と同じ形)。
+
+★2026-09-26 まで面積だけを画像の全画素数で割った 1 スカラーを返していた
+(``docs/hardening/dimensional-features-were-normalised.md``)。
+
+``a``, ``b`` は未使用。点が 3 個以上の輪郭が無いときは 0(スカラー)を返す。
 
 ## 詳しい使い方ガイド
 

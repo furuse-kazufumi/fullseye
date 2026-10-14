@@ -6,6 +6,11 @@ category: 波と信号
 ops: [signal_features, envelope_spectrum, bearing_defect_frequencies, octave_spectrum, spectrum]
 examples: [poc_bearing_diagnosis, poc_rail_corrugation]
 version: 0.1.11
+inputs: [signal]
+pipeline: [bandpass, envelope, envelope_spectrum, find_peaks, bearing_defect_frequencies]
+alternatives: [signal_features, octave_spectrum, spectrum, cepstrum, order_spectrum, rms]
+limits: 弦(versine)で測る波状摩耗のように伝達関数が 0 になる波長は「欠陥なし」と出る(`poc_rail_corrugation`)。束ねても情報が増えない条件がある(`poc_machine_condition_fusion`)。
+calibration: サンプル率 `rate` [Hz] を必ず渡す。軸受の特徴周波数は回転数 [rpm] と幾何から `bearing_defect_frequencies` が先に出す。
 ---
 
 # 振動と音から異常を診断する
@@ -35,6 +40,24 @@ x = np.sin(2 * np.pi * 120 * t) + 0.05 * np.random.default_rng(0).normal(size=t.
 f, p = fs.spectrum(x, 4096.0)
 print('主ピーク =', float(f[int(np.argmax(p))]), 'Hz')
 ```
+
+## 推奨パイプライン
+
+`bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies`
+
+`bandpass` で共振帯を切り → `envelope` で包絡 → `envelope_spectrum` で包絡スペクトル → `find_peaks` で峰 → `bearing_defect_frequencies` の予測値と突き合わせる。
+
+## 代替
+
+要約統計は `signal_features`、帯域別は `octave_spectrum`、生スペクトルは `spectrum`、周期の族は `cepstrum`、回転次数は `order_spectrum`。
+
+## 限界
+
+弦(versine)で測る波状摩耗のように伝達関数が 0 になる波長は「欠陥なし」と出る(`poc_rail_corrugation`)。束ねても情報が増えない条件がある(`poc_machine_condition_fusion`)。
+
+## 実寸校正
+
+サンプル率 `rate` [Hz] を必ず渡す。軸受の特徴周波数は回転数 [rpm] と幾何から `bearing_defect_frequencies` が先に出す。
 
 ## 裏づけ
 

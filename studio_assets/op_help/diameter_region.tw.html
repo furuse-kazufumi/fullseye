@@ -10,7 +10,9 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_region.chain.jpg">diameter_region: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>將等效直徑(面積相等的圓之直徑)以區域最長邊長正規化後的值(<code style="color:#22d3bf">regionprops</code> 的 <code style="color:#22d3bf">equivalent_diameter_area</code>)。嚴格來說,這與 HALCON 的 <code style="color:#22d3bf">diameter_region</code>(Maximal distance between two boundary points of a region.)所定義的「邊界上兩點間的最大距離」是不同的指標(以等效圓直徑做的近似)。</p>
+<p>區域的直徑 [px] = 邊界上兩點間的最大距離(最長弦)。與 HALCON 的 <code style="color:#22d3bf">diameter_region</code>（Maximal distance between two boundary points of a region.）為相同的量、相同的單位。</p>
+<p>在所有邊界像素對中取最大距離(像素多時先歸約到凸包)。與輪廓版 <code style="color:#22d3bf">diameter_xld</code> 為同一個量。</p>
+<p>★直到 2026-09-26,回傳的是等效直徑(面積相等的圓的直徑)除以最大邊長的<b>另一個量</b>(30x70 的矩形為 0.2585,現在為 74.85)。<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

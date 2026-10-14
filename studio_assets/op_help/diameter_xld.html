@@ -10,8 +10,10 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>輪郭を包含する最小外接円(<code style="color:#22d3bf">cv2.minEnclosingCircle</code>)の直径を画像の最大辺長で正規化した値。HALCON の <code style="color:#22d3bf">diameter_xld</code>（Maximum distance between two contour or polygon points.）が定義する「輪郭上の 2 点間の最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は必ずしも最遠 2 点を結ぶ直径と一致しない)。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>最大の点数を持つ輪郭の直径 [px] = 輪郭点 2 点間の最大距離(最大弦)。HALCON の <code style="color:#22d3bf">diameter_xld</code>（Maximum distance between two contour or polygon points.）と同じ量・同じ単位。</p>
+<p>領域版 <code style="color:#22d3bf">diameter_region</code> と同じ量(30x70 の矩形で 75.77 対 74.85)。</p>
+<p>★2026-09-26 まで最小外接円(<code style="color:#22d3bf">cv2.minEnclosingCircle</code>)の直径を画像の最大辺長で割った値を返していた(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。点が 5 個以上の輪郭が無いときは 0 を返す。cv2 が要る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

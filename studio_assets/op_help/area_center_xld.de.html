@@ -10,8 +10,10 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center_xld.chain.jpg">area_center_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Für die einzelne Kontur mit der größten Punktanzahl wird die Polygonfläche mit der Gaußschen Trapezformel (Schnürsenkelformel) berechnet und normiert durch die Gesamtpixelzahl des Bildes zurückgegeben. HALCONs <code style="color:#22d3bf">area_center_xld</code> (Area and center of gravity (centroid) of contours and polygons.) ist ein Operator, der zusätzlich zur Fläche auch den Schwerpunkt zurückgibt, aber dieser Ersatz liefert nur die Fläche (die Schwerpunktinformation geht bei dieser Annäherung verloren — eine vertragliche Einschränkung dadurch, dass die <code style="color:#22d3bf">feature</code>-Sortierung ein einzelner Skalar ist).</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Gibt es keine Kontur, wird 0 zurückgegeben.</p>
+<p>Gibt Fläche und Schwerpunkt des Polygons, das die Kontur mit den meisten Punkten umschließt, als 3-Komponenten-Vektor <code style="color:#22d3bf">(Fläche [px²], Schwerpunkt-Zeile [px], Schwerpunkt-Spalte [px])</code> zurück — drei der vier Werte von HALCONs <code style="color:#22d3bf">area_center_xld</code> (Area and center of gravity (centroid) of contours and polygons.), ohne die Orientierungsmarke PointOrder.</p>
+<p>Die Fläche stammt aus der Gaußschen Trapezformel; der Schwerpunkt ist der <b>Schwerpunkt der umschlossenen Fläche</b>, nicht der Mittelwert der Punkte. Rückgabe als 1-D-Vektor der Sorte <code style="color:#22d3bf">match</code> (dieselbe Form wie <code style="color:#22d3bf">area_center</code>).</p>
+<p>★Bis 2026-09-26 wurde nur die Fläche, geteilt durch die Gesamtzahl der Bildpixel, als ein Skalar zurückgegeben (<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>).</p>
+<p><code style="color:#22d3bf">a</code> und <code style="color:#22d3bf">b</code> werden nicht verwendet. Hat keine Kontur 3 oder mehr Punkte, wird 0 (ein Skalar) zurückgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

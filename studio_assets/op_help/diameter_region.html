@@ -10,7 +10,9 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_region.chain.jpg">diameter_region: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値(<code style="color:#22d3bf">regionprops</code> の <code style="color:#22d3bf">equivalent_diameter_area</code>)。HALCON の <code style="color:#22d3bf">diameter_region</code>（Maximal distance between two boundary points of a region.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標(等価円直径による近似)。</p>
+<p>領域の直径 [px] = 境界上の 2 点間の最大距離(最大弦)。HALCON の <code style="color:#22d3bf">diameter_region</code>（Maximal distance between two boundary points of a region.）と同じ量・同じ単位。</p>
+<p>境界画素の全対から最大距離を取る(画素が多いときは凸包に落としてから)。輪郭版 <code style="color:#22d3bf">diameter_xld</code> と同じ量。</p>
+<p>★2026-09-26 まで等価直径(面積が等しい円の直径)を最大辺長で割った<b>別の量</b>を返していた(30x70 の矩形で 0.2585、いまは 74.85)。<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>。</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>

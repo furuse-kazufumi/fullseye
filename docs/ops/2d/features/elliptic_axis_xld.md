@@ -31,12 +31,17 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-楕円フィットした輪郭の短軸/長軸の比。値が 1 に近いほど真円に近く、
-0 に近いほど細長い。HALCON の ``elliptic_axis_xld``（Parameters of the
-equivalent ellipse of contours or polygons.）が返す(長軸, 短軸, 角度)の
-組のうち、比 1 個のスカラーだけを返す近似。
+最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から反時計回り、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。
 
-``a``, ``b`` は未使用。
+領域版 ``elliptic_axis`` と同じ形。輪郭点への最小二乗当てはめなので、領域の
+モーメントからの値とは一致しない(30x70 の矩形で region (40.41, 17.31, 0.0) 対
+xld (44.53, 16.99, 0.0018))。
+
+★2026-09-26 まで短軸/長軸の比 1 スカラーを返していた
+(``docs/hardening/dimensional-features-were-normalised.md``)。
+
+``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0(スカラー)を返す。
+cv2 が要る。
 
 ## 詳しい使い方ガイド
 

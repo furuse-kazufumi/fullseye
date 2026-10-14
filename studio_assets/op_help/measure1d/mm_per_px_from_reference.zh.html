@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由已知尺寸的标准物(比例尺、基准孔、量规)求出像素间距 mm/px(标定)。</p>
+<p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>。<code style="color:#22d3bf">measured_px</code> 应传入在同一光学系统、同一工作距离下<b>由本族 op 实际测得</b>的值(<code style="color:#22d3bf">measure_pairs</code> 的 <code style="color:#22d3bf">width</code>、<code style="color:#22d3bf">apply_metrology_model</code> 的 <code style="color:#22d3bf">radius</code> 的 2 倍等)。若按图纸值或标称倍率设定,工作距离偏差 10 % 时所有尺寸都会偏差 10 %。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measured_px</code>, <code style="color:#22d3bf">known_mm</code>:有限的正标量(否则 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值:mm/px(float,<code style="color:#22d3bf">measurement</code> 型)。传给 <code style="color:#22d3bf">pixel_to_world</code> / <code style="color:#22d3bf">table_px_to_mm</code>。</p>
+<p style="margin:2px 0 2px 12px">• 透视明显的斜向拍摄中 mm/px 随位置变化。本 op 以<b>正视、倍率恒定</b>为前提只返回 1 个值,不对此进行验证。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a> · <a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -10,8 +10,10 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis_xld.chain.jpg">elliptic_axis_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>拟合到轮廓的椭圆的短轴/长轴之比。数值越接近 1 越接近正圆，越接近 0 越细长。是从 HALCON <code style="color:#22d3bf">elliptic_axis_xld</code>（Parameters of the equivalent ellipse of contours or polygons.）返回的（长轴、短轴、角度）三元组中，只取比值这一个标量的近似。</p>
-<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>对点数最多的那条轮廓拟合椭圆(<code style="color:#22d3bf">cv2.fitEllipse</code>),以 <code style="color:#22d3bf">match</code> 类型的 3 分量向量返回 <code style="color:#22d3bf">(Ra, Rb, Phi)</code> —— <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> 为长半轴、短半轴 [px],<code style="color:#22d3bf">Phi</code> 为主轴角(弧度,从列轴逆时针,大于 -π/2 且不超过 π/2)。与 HALCON 的 <code style="color:#22d3bf">elliptic_axis_xld</code>（Parameters of the equivalent ellipse of contours or polygons.）为相同的 3 个值。</p>
+<p>与区域版 <code style="color:#22d3bf">elliptic_axis</code> 同形。由于是对轮廓点的最小二乘拟合,与由区域矩得到的值不一致(30x70 的矩形:region (40.41, 17.31, 0.0) 对 xld (44.53, 16.99, 0.0018))。</p>
+<p>★直到 2026-09-26,返回的是短轴/长轴之比这 1 个标量(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。没有 5 点以上的轮廓时返回 0(标量)。需要 cv2。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

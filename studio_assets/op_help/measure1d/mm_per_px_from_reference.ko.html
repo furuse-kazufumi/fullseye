@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>치수를 아는 기준물(스케일 바, 기준 구멍, 게이지)로부터 화소 피치 mm/px 를 구한다(보정).</p>
+<p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>. <code style="color:#22d3bf">measured_px</code> 에는 같은 광학계, 같은 작동 거리에서 <b>이 계열의 op 가 실제로 잰</b> 값(<code style="color:#22d3bf">measure_pairs</code> 의 <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">apply_metrology_model</code> 의 <code style="color:#22d3bf">radius</code> 의 2 배 등)을 넘긴다. 도면 값이나 공칭 배율로 정하면 작동 거리가 10 % 어긋날 때 모든 치수가 10 % 어긋난다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measured_px</code>, <code style="color:#22d3bf">known_mm</code>: 유한한 양의 스칼라(그 밖에는 <code style="color:#22d3bf">ValueError</code>).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: mm/px(float, <code style="color:#22d3bf">measurement</code> 형). <code style="color:#22d3bf">pixel_to_world</code> / <code style="color:#22d3bf">table_px_to_mm</code> 에 넘긴다.</p>
+<p style="margin:2px 0 2px 12px">• 원근이 작용하는 비스듬한 촬영에서는 위치마다 mm/px 가 바뀐다. 이 op 는 <b>정면 촬영·일정 배율</b>을 전제로 값 하나를 돌려줄 뿐 그 전제를 검증하지 않는다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">measurement</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a> · <a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

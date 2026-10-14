@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ज्ञात माप वाले target (scale bar, reference hole, gauge) से pixel pitch mm/px निकालता है (calibration)।</p>
+<p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>। <code style="color:#22d3bf">measured_px</code> में वही value दें जो उसी optics और उसी working distance पर <b>इसी family के op ने सच में मापी</b> हो (<code style="color:#22d3bf">measure_pairs</code> का <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">apply_metrology_model</code> के <code style="color:#22d3bf">radius</code> का दोगुना आदि)। drawing value या nominal magnification से रखने पर working distance 10 % हटे तो हर माप 10 % हट जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measured_px</code>, <code style="color:#22d3bf">known_mm</code>: finite धनात्मक scalar (अन्यथा <code style="color:#22d3bf">ValueError</code>)।</p>
+<p style="margin:2px 0 2px 12px">• return value: mm/px (float, <code style="color:#22d3bf">measurement</code> sort)। इसे <code style="color:#22d3bf">pixel_to_world</code> / <code style="color:#22d3bf">table_px_to_mm</code> को दें।</p>
+<p style="margin:2px 0 2px 12px">• perspective वाले तिरछे shot में mm/px जगह के साथ बदलता है। यह op <b>सामने से देखे गए, स्थिर magnification</b> को मानकर एक value लौटाता है और इस मान्यता की जाँच नहीं करता।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a> · <a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

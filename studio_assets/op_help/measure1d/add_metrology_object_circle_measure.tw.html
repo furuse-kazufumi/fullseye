@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 參數在此不做驗證(0 以下的半徑也能堆疊，但沒有意義)。</p>
 <p style="margin:2px 0 2px 12px">• 回傳值: 新增位置的 index(從 0 開始)。<code style="color:#22d3bf">apply</code> 結果的 <code style="color:#22d3bf">params</code> 為 <code style="color:#22d3bf">row / col / radius</code>,<code style="color:#22d3bf">rms</code> 為距圓的徑向殘差 [px]。</p>
 <p>用於孔徑、銷徑的檢查以及圓形零件的定心。</p>
+<p><b><code style="color:#22d3bf">n</code> 的參考值(2026-09-15 實測,模糊 σ=1 px 的合成圓盤)</b>:偏差與 n 無關(R=8〜128 px、n=6〜240 時固定在 ±0.005 px 以內。偏差本身因邊緣圓化隨 R 變化,−0.09 → −0.006 px)。n 影響的是離散:雜訊 σ=0.03 時,只要圓周上的取樣間隔 2πR/n <b>約 3 px 以上</b>,std·√n 就保持固定(= 樣本獨立,std ∝ 1/√n),再加密也不再下降(R=16:n=40 時 0.0174,n=240 時 0.0164 px)。因此超過 <code style="color:#22d3bf">n ≈ 2πR / 3</code>(R=20 時 40 = 預設值,R=64 時 130,R=128 時 270)只會增加時間(n=1000 時 22 ms)。圓周缺 25 % 時增大 n 也修不好偏差(−0.005 → −0.020 px)。若只是缺口一側找不到邊緣,<code style="color:#22d3bf">rms</code> 反而下降(0.051 → 0.018);若在缺口邊界拾取了假邊緣,rms 會跳升 —— <b>缺口僅憑 rms 看不出</b>,所以也要把 <code style="color:#22d3bf">edge_points</code> 的個數作為門(<code style="color:#22d3bf">examples/example_inner_diameter_mm.py</code>)。參考半徑的偏差以 <code style="color:#22d3bf">measure_length</code>(預設 ±6 px)為上限,+5.5 px 可通過,+6.5 px 時 <code style="color:#22d3bf">params=None</code>。</p>
 <p>空輸入(<code style="color:#22d3bf">model</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
@@ -18,6 +19,7 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calipers_under_illusion">poc_calipers_under_illusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calipers_under_illusion.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_telecentric_metrology">poc_telecentric_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_telecentric_metrology.py</code></p>

@@ -31,13 +31,14 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の
-最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance
-between two contour or polygon points.）が定義する「輪郭上の 2 点間の
-最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は
-必ずしも最遠 2 点を結ぶ直径と一致しない)。
+最大の点数を持つ輪郭の直径 [px] = 輪郭点 2 点間の最大距離(最大弦)。HALCON の ``diameter_xld``（Maximum distance between two contour or polygon points.）と同じ量・同じ単位。
 
-``a``, ``b`` は未使用。
+領域版 ``diameter_region`` と同じ量(30x70 の矩形で 75.77 対 74.85)。
+
+★2026-09-26 まで最小外接円(``cv2.minEnclosingCircle``)の直径を画像の最大辺長で
+割った値を返していた(``docs/hardening/dimensional-features-were-normalised.md``)。
+
+``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0 を返す。cv2 が要る。
 
 ## 詳しい使い方ガイド
 

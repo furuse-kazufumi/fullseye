@@ -31,11 +31,14 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値
-(``regionprops`` の ``equivalent_diameter_area``)。HALCON の
-``diameter_region``（Maximal distance between two boundary points of a
-region.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標
-(等価円直径による近似)。
+領域の直径 [px] = 境界上の 2 点間の最大距離(最大弦)。HALCON の ``diameter_region``（Maximal distance between two boundary points of a region.）と同じ量・同じ単位。
+
+境界画素の全対から最大距離を取る(画素が多いときは凸包に落としてから)。
+輪郭版 ``diameter_xld`` と同じ量。
+
+★2026-09-26 まで等価直径(面積が等しい円の直径)を最大辺長で割った**別の量**を
+返していた(30x70 の矩形で 0.2585、いまは 74.85)。
+``docs/hardening/dimensional-features-were-normalised.md``。
 
 ``a``, ``b`` は未使用。
 

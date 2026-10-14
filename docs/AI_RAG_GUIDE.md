@@ -13,6 +13,18 @@ Fullseye の推奨運用は「**AI コーディングアシスタントの知識
 > `py -3.11 tools/update_fullseye.py`(dirty ツリー拒否・--ff-only・スキルはバックアップの上
 > 更新・Studio 設定には触れない=環境をつぶさない設計)。
 
+## 入口は 1 つではない(最初に読む)
+
+文書だけを渡した Codex / Copilot は、どちらも 1 回目に**用途から引く索引を見つけられなかった**(2026-09-15)。このガイドに導線が無かったからです。入口は 5 つあります:
+
+1. **用途から** → [`docs/CAPABILITIES.md`](CAPABILITIES.md)。課題 → **推奨パイプライン(順序つき op)/ 代替 / 限界 / 実寸校正** を 1 課題 1 ファイル(`docs/capabilities/`)で持ち、op 名の実在と**型(in → out)が前段から後段へ繋がる**ことを `tests/test_capabilities.py` が検査します。
+2. **やりたいことの言葉で** → `fullseye-rag search` / `fullseye.search_ops`(次の節)。
+3. **op 名・概念から** → [`docs/ops/INDEX.md`](ops/INDEX.md) → 族の目次 → op ノート。
+4. **機械で引く** → `fs.op_find(query)`(自由語・語幹)/ `fs.op_assist(op)`(仕様・プリセット・次に繋げる先)/ `fs.op_path(from_sort, to_sort)`(型 A → 型 B を繋ぐ op 列)/ `fs.op_producers(sort)`(その型を産む op)/ `fs.op_accepts(op)`(実測の受理型)、CLI は `fullseye has <op>`(HALCON 名でも引ける)。
+5. **索引ファイル** → [`docs/OP_INDEX.json`](OP_INDEX.json)(全 op の型契約)、wheel 同梱の `OP_CATALOG.md`。
+
+**Windows のシェルから読むときは UTF-8 を明示する** —— ノートは BOM 無しの UTF-8 で、既定のコードページで開くと日本語が文字化けし、AI が「読めていない」のに「無い」と判断します(Codex で実際に起きた)。PowerShell は `Get-Content -Encoding utf8`、Python は `PYTHONUTF8=1`。
+
 ---
 
 ## まず探す: やりたいことの言葉で op を引く(どの Tier でも使える)

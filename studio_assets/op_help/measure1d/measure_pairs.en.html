@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts pairs of rising/falling edges (the width of a structure) (measure_pairs). <code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = <code style="color:#22d3bf">pos</code> of each edge, <code style="color:#22d3bf">width</code> = width [px], <code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col).</p>
+<p><b>It returns neither failure nor confidence</b> (an empty list when no pair is found, and pairs even in the danger zone). Once edge spacing / PSF width drops below 3.09 the width is always biased upward (+2.43 px at 2.06), and it keeps answering &quot;pair found&quot; down to 1.58 — measurements and how to watch for this are in &quot;Pitfall 2&quot; of <code style="color:#22d3bf">docs/ops/measure1d/guides/subpixel_measuring.md</code>. The polarity order is not checked either (the width of a dark structure can come back; same guide §4). Units are px; when you need mm, pass the result to <code style="color:#22d3bf">table_px_to_mm</code> / <code style="color:#22d3bf">pixel_to_world</code>.</p>
 <p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
@@ -12,11 +13,12 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calipers_under_illusion">poc_calipers_under_illusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calipers_under_illusion.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
-<p>—</p>
+<p><a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">caliper</code>)</h3>
 <p><a style="color:#22d3bf" href="opmeasure1d:gen_measure_rectangle2">gen_measure_rectangle2</a> · <a style="color:#22d3bf" href="opmeasure1d:gen_measure_arc">gen_measure_arc</a> · <a style="color:#22d3bf" href="opmeasure1d:translate_measure">translate_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pos">measure_pos</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
