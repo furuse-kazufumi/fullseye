@@ -509,6 +509,26 @@ def _batch2_builders():
         import spectralrad
         return spectralrad.led_spectrum(1000.0 + 100.0 * rng.random(), 40.0 + 40.0 * rng.random(), lo, hi, 61)
 
+    def _ps_nom():
+        import pixelshift
+        return pixelshift.pixel_shift_pattern("4shot")
+
+    def _ps_scene(rng):
+        # 画素より細かい模様(画素ごとに一定だと、開口率を変えても値が動かず fill_factor が死んで見える)
+        return rng.random((56, 56, 3))
+
+    def _ps_raw(rng):
+        # 白い部品が 2 px/枚 で動く(静止だけだと動き検出の noise_sigma が効く場面が無い)
+        import pixelshift
+        base = np.repeat(np.repeat(rng.random((14, 14, 3)), 4, 0), 4, 1)
+        scenes = []
+        for i in range(4):
+            sc = base.copy()
+            sc[16:32, 8 + 8 * i:24 + 8 * i] = 0.95
+            scenes.append(sc)
+        raw = pixelshift.pixel_shift_capture(np.stack(scenes), 4, _ps_nom(), "RGGB", per_frame=True)
+        return raw + 0.01 * rng.standard_normal(raw.shape)
+
     def ula(rng):
         import mathspectral
         return mathspectral.ula_snapshots((10.0, -20.0), n_elements=8, n_snapshots=64)
@@ -535,6 +555,11 @@ def _batch2_builders():
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
+        # pixelshift(2026-10-15): 細かく描いた RGB のシーン(1 センサ画素 = 4 × 4 標本)と、公称のシフト列
+        "pixel_shift_capture": lambda pool, rng: ([_ps_scene(rng), 4, _ps_nom()], {}),
+        "pixel_shift_merge": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {"motion_threshold": 4.0}),
+        "pixel_shift_motion_mask": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {}),
+        "pixel_shift_resolution_budget": lambda pool, rng: ([3.45, 2.8], {}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (

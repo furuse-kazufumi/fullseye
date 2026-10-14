@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — ピクセルシフト撮像(pixelshift 6 op + PoC)
+- `pixelshift`(`opsoptics` の新カテゴリ `pixelshift`、6 op): `pixel_shift_pattern`(公称のシフト列 + アクチュエータの誤差)、`pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒、枚ごとのシーンで動く被写体)、`pixel_shift_merge`(公称のシフトで格子へ、補間なし、埋められないシフト列は拒否、動き検出で 1 枚のデモザイクに差し戻し)、`pixel_shift_motion_mask`、`false_color_metric`、`pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。
+- PoC `poc_pixel_shift`(28 門、図 10 枚 + GIF): 1 画素 4 枚で偽色 0(定義上)、半画素で折り返しの山が f₀ に戻る、★MTF50 は 1 枚とシフトで同じ、レンズ律速(Q* = 1.47 で得が尽きる)、シフト誤差の閉形式、動く被写体の分かれ目(0.25 px/枚 は 4 枚が勝ち、0.5 px/枚 から逆転)、√N と動きの裏返し。★drizzle の `shifts` はセンサのシフトと符号が逆(門で固定)。
+- 能力ノート `docs/capabilities/pixel-shift-imaging.md`、op 要約 6 言語。
 ### Added — TDI ラインスキャンとラインスキャン用レンズ(linescan 6 op + PoC)
 - `linescan`(`opsoptics` の新カテゴリ `linescan`、6 op): `tdi_snr`(EMVA 1288 の式 21 を段数倍、電荷加算 / デジタル加算)、`tdi_sync_mtf`(同期ずれ N·ε とヨー N·sin θ の |sinc|)、`linescan_acquire`(反射率の地図を搬送して撮る: 速度誤差・ヨー・蛇行・エンコーダ同期・列ごとのレンズ・EMVA 1288 の雑音・画素の開口)、`lens_field_profile`(有限距離の処方を光線追跡し、像高ごとの照度を cos⁴ × 瞳 × 歪曲に厳密に分解、サジタル / タンジェンシャルの MTF)、`linescan_lens_columns`、`linescan_lens_example`(同じ三枚玉を 57 mm の像円用 f 90 と 2/3 型用 f 35 に最適化した模型)。
 - PoC `poc_tdi_linescan`(19 門、図 10 枚): SNR が式 21 と 1.2 % 以内(デジタル加算は ×8.09 = √64、電荷加算は ×26.9)、欠陥の検出 1 段 0/3 → 64 段 3/3、同期ずれの MTF が |sinc(f N ε)| と 45 条件で 0.0035、エンコーダ同期で速度のうねりが消えヨーは消えない、C マウントの流用は像高 19.7 mm から光が届かず、シェーディング補正で照度は揃うが MTF と CNR は戻らない。

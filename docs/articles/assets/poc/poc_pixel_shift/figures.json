@@ -1,0 +1,128 @@
+[
+ {
+  "file": "01_four_shot_false_color.png",
+  "name": "four_shot_false_color",
+  "caption": "基板の配線・織物・網点・解像チャート(上から)。左 = 3 色を各画素で取る理想センサ、中 = Bayer 1 枚 + 双線形デモザイク、右 = 1 画素シフト 4 枚。44 × 44 画素を最近傍で 5 倍。静止・誤差 0 では 4 枚の偽色は定義上 0(4・5 章が壊れる条件)。",
+  "shape": [
+   1099,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "02_star_split.png",
+  "name": "star_split",
+  "caption": "解像チャートの Siemens スター(48 × 48 画素を 6 倍)。左半分 = Bayer 1 枚 + 双線形デモザイク(色のモアレ)、右半分 = 1 画素シフト 4 枚(偽色 0)。",
+  "shape": [
+   288,
+   288,
+   3
+  ]
+ },
+ {
+  "file": "03_false_color_table.png",
+  "name": "false_color_table",
+  "caption": "偽色は 0〜1 の階調の色差(0.004 ≈ 8 bit の 1 階調)。",
+  "shape": [
+   176,
+   549,
+   3
+  ],
+  "csv": "03_false_color_table.csv",
+  "tsv": "03_false_color_table.tsv"
+ },
+ {
+  "file": "04_grating_spectrum.png",
+  "name": "grating_spectrum",
+  "caption": "1 枚(ナイキスト 0.5)では縞が 1 − f₀ = 0.3 に折り返り、本物と同じ高さの偽の縞(モアレ)になる。半画素シフトでナイキストが 1.0 に上がり、山は正しい位置へ。高さは 0.4·sinc(0.7) = 0.147。",
+  "shape": [
+   360,
+   714,
+   3
+  ]
+ },
+ {
+  "file": "05_grating_crops.png",
+  "name": "grating_crops",
+  "caption": "左は画素 1 つ = 8 × 8、右は出力画素 1 つ(= ½ センサ画素)= 4 × 4 で表示。左の太い縞は存在しない。",
+  "shape": [
+   285,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "06_edge_mtf.png",
+  "name": "edge_mtf",
+  "caption": "傾いたエッジの手順(ISO 12233)は 1 枚でも画素より細かく ESF を作るので、開口の sinc とレンズの MTF の積をそのまま測る。半画素シフトが変えるのは折り返しで、MTF ではない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_sixteen_shot_wedge.png",
+  "name": "sixteen_shot_wedge",
+  "caption": "16 枚 = 半画素 4 位相 × 1 画素 4 枚。半画素の格子の各点に R・G・G・B が揃い、1 枚では色の付いたモアレになる 1.1〜1.5 px 周期の線が、無彩色の正しい細さで出る。",
+  "shape": [
+   291,
+   510,
+   3
+  ]
+ },
+ {
+  "file": "08_lens_vs_pixel.png",
+  "name": "lens_vs_pixel",
+  "caption": "画素 3.45 µm、λ 0.55 µm で F 1.4〜22。Q > 1.43 で回折の MTF が 0.7 cyc/px で 0 になり、半画素シフトの像にも縞は残らない。Q ≥ 2 では 0.5 cyc/px より上に信号が無く、シフトの得は 1.0 倍。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_shift_error.png",
+  "name": "shift_error",
+  "caption": "基板の配線、乱数の誤差 8 通りの平均。誤差が無ければ 0、σ が大きいと細い配線の縁に色が付く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_motion_fallback.png",
+  "name": "motion_fallback",
+  "caption": "動き検出は同じ点の 2 つの G の食い違い(4σ)。動いた所だけ 1 枚目のデモザイクに戻すので、そこはピクセルシフトしなかった画質になるが、櫛と色の縁は消える。",
+  "shape": [
+   487,
+   568,
+   3
+  ]
+ },
+ {
+  "file": "11_noise_sqrt_n.png",
+  "name": "noise_sqrt_n",
+  "caption": "4 枚のピクセルシフトは雑音を下げるためのものではない(R・B は 1 枚と同じ)。下げるには周を重ねるが、動く被写体では枚数とともに誤差が増える(0.081 → 0.161 → 0.273)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_four_shot_capture.gif",
+  "name": "four_shot_capture",
+  "caption": "左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。",
+  "shape": [
+   333,
+   510,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 5,
+  "fps": 1.5
+ }
+]

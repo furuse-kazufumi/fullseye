@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d
 out: rgb
-examples: [raw_to_display_isp]
+examples: [poc_pixel_shift, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ zipper artefacts; edge-directed methods are not provided here.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
 - [raw_to_display_isp](../../../../examples/raw_to_display_isp.py) — `py -3.11 examples/raw_to_display_isp.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)

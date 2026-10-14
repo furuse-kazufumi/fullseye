@@ -111,10 +111,12 @@ import fiberoptics
 import moirealign
 import telecentric
 import linescan
+import pixelshift
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "linescan": linescan,
+        "pixelshift": pixelshift,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -509,6 +511,15 @@ _CATALOG = {
         ("lens_field_profile", "linescan", ["table"], "table"),
         ("linescan_lens_columns", "linescan", ["table"], "table"),
         ("linescan_lens_example", "linescan", [], "table"),
+    ],
+    "pixelshift": [  # ピクセルシフト撮像(pixelshift、2026-10-15): センサを 1 画素 / 半画素動かして撮り、格子へ合わせる
+        # ★1 画素 4 枚 = 各画素で R・G・B(偽色が消える、解像はそのまま)/ 半画素 = 折り返しが消える(開口の MTF は上がらない)。
+        ("pixel_shift_pattern", "pixelshift", [], "matrix"),
+        ("pixel_shift_capture", "pixelshift", ["rgbimage", "matrix"], "video"),      # 枚 × 行 × 列
+        ("pixel_shift_merge", "pixelshift", ["video", "matrix"], "rgbimage"),
+        ("pixel_shift_motion_mask", "pixelshift", ["video", "matrix"], "image2d"),
+        ("false_color_metric", "pixelshift", ["rgbimage"], "table"),
+        ("pixel_shift_resolution_budget", "pixelshift", [], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

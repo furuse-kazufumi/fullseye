@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [image_quality_metrics, poc_camera_shake_deblur, poc_dehazing, poc_focus_stacking, poc_iqa_tid2013, poc_real_deblur_honesty, poc_superresolution_limits]
+examples: [image_quality_metrics, poc_camera_shake_deblur, poc_dehazing, poc_focus_stacking, poc_iqa_tid2013, poc_pixel_shift, poc_real_deblur_honesty, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 - [poc_dehazing](../../../../examples/poc_dehazing.py) — `py -3.11 examples/poc_dehazing.py`
 - [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 - [poc_iqa_tid2013](../../../../examples/poc_iqa_tid2013.py) — `py -3.11 examples/poc_iqa_tid2013.py`
+- [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
 - [poc_real_deblur_honesty](../../../../examples/poc_real_deblur_honesty.py) — `py -3.11 examples/poc_real_deblur_honesty.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 

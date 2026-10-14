@@ -4058,6 +4058,22 @@
    }
   },
   {
+   "id": "poc_pixel_shift",
+   "group": "wing_imaging",
+   "media": "12_four_shot_capture.gif",
+   "motion": true,
+   "thumb_src": "02_star_split.png",
+   "label": {
+    "ja": "ピクセルシフト(偽色と折り返し)",
+    "en": "Pixel shift (false colour, aliasing)",
+    "zh": "像素位移(伪色与混叠)",
+    "tw": "像素位移(偽色與混疊)",
+    "ko": "픽셀 시프트(위색과 에일리어싱)",
+    "de": "Pixel-Shift (Falschfarben, Aliasing)",
+    "hi": "pixel shift (false colour, aliasing)"
+   }
+  },
+  {
    "id": "poc_pigment_unmixing",
    "group": "wing_color",
    "media": "01_per_field_auc.png",
@@ -6067,6 +6083,13 @@
     "ko": "TDI 라인 스캔과 라인 스캔용 렌즈(단수와 SNR, 동기 오차의 MTF, 상고별 조도와 MTF)",
     "de": "TDI-Zeilenkameras und Zeilenobjektive (Stufen und SNR, MTF bei Synchronfehlern, Beleuchtung und MTF über die Bildhöhe)",
     "hi": "TDI line scan और line-scan lens (stages और SNR, synchronisation error का MTF, image height के अनुसार illumination और MTF)"
+   },
+   "pixel-shift-imaging": {
+    "zh": "像素位移成像(1 像素位移得全色、半像素位移消除混叠,以及失效条件)",
+    "tw": "像素位移成像(1 像素位移得全色、半像素位移消除混疊,以及失效條件)",
+    "ko": "픽셀 시프트 촬상(1 화소 시프트로 전색, 반 화소 시프트로 에일리어싱 제거, 깨지는 조건까지)",
+    "de": "Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht)",
+    "hi": "pixel-shift imaging (1-pixel shift से पूरा रंग, half-pixel shift से aliasing खत्म, और कहाँ टूटता है)"
    }
   }
  }
