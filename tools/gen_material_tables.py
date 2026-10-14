@@ -102,7 +102,9 @@ SELECTION += [
     ("TI", "metal", [("main/Ti/nk/Johnson.yml", "")], ["TITANIUM"]),
     ("PT", "metal", [("main/Pt/nk/Tselin.yml", "")], ["PLATINUM"]),
     # 液体
-    ("WATER", "liquid", [("main/H2O/nk/Daimon-20.0C.yml", "20 C, visible"), ("main/H2O/nk/Hale.yml", "25 C, 0.2-200 um")], ["H2O"]),
+    ("WATER", "liquid", [("main/H2O/nk/Daimon-20.0C.yml", "20 C, visible"),
+      ("main/H2O/nk/Segelstein.yml", "25 C, k only (Segelstein 1981 resolves the 1.45 / 1.94 um bands)", "k"),
+      ("main/H2O/nk/Hale.yml", "25 C, 0.2-200 um")], ["H2O"]),
     # プラスチック
     ("PMMA", "polymer", [("organic/(C5H8O2)n - poly(methyl methacrylate)/nk/Sultanova.yml", "")], ["ACRYLIC"]),
     ("POLYCARBONATE", "polymer", [("organic/(C16H14O3)n - polycarbonate/nk/Sultanova.yml", "")], ["PC"]),
@@ -189,7 +191,9 @@ def build(rii_dir):
         datasets = []
         props = {}
         cites = []
-        for rel, note in pages:
+        for entry in pages:
+            rel, note = entry[0], entry[1]
+            only = entry[2] if len(entry) > 2 else None
             path = os.path.join(data_dir, rel)
             with io.open(path, encoding="utf-8") as f:
                 head = f.read()
@@ -201,6 +205,13 @@ def build(rii_dir):
                     ds = _dataset(d)
                 except SystemExit as exc:
                     raise SystemExit("%s: %s" % (rel, exc))
+                if only == "k":
+                    # ★k だけを取る区間(n は次の出典のまま)。2026-10-15: RII の Hale & Querry の水は NIR を
+                    # 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を線形補間で 1/3 に潰していた。n は滑らか
+                    # なので Hale のまま、k だけ Segelstein 1981(同じ研究室の続き、細かい刻み)から取る。
+                    if ds["type"] != "nk":
+                        raise SystemExit("%s: k-only entry needs tabulated nk data" % rel)
+                    ds = {"type": "k", "range_um": ds["range_um"], "rows": tuple((r[0], r[2]) for r in ds["rows"])}
                 ds["page"] = rel
                 ds["reference"] = _plain(y.get("REFERENCES"))
                 if note:
