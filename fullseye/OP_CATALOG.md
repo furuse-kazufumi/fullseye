@@ -4115,7 +4115,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_outline` `image2d × mask → image2d` — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。 · 例: `paper_figure`, `poc_rotation_invariance_audit`
 - `annotate_outline_layout` `mask → table` — table(dict)を返す: 2 値マスクの境界ループ(画素の辺に沿う閉多角形)と重心。 · 例: `paper_figure`
 - `annotate_panel_label` `image2d → image2d` — 画像(image2d)を返す: パネル文字 ``(a)``/``(b)`` を隅に置く。 · 例: `annotate_paper_tour`
-- `annotate_scale_bar` `image2d → image2d` — 画像(image2d)を返す: 隅に置く切りのよい長さのスケールバー(値と単位つき)。 · 例: `paper_figure`
+- `annotate_scale_bar` `image2d → image2d` — 画像(image2d)を返す: 隅に置く切りのよい長さのスケールバー(値と単位つき)。 · 例: `paper_figure`, `poc_telecentric_metrology`
 - `annotate_scale_bar_layout` `入力なし → table` — table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。 · 例: `paper_figure`
 - `annotate_table` `image2d × text → image2d` — 画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。 · 例: `annotate_paper_tour`, `poc_rotation_invariance_audit`
 - `annotate_table_layout` `text → table` — table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。 · 例: `annotate_paper_tour`
@@ -4554,8 +4554,8 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 #### measure1d / caliper(6)
 - `fuzzy_measure_pairing` `image2d × measurehandle → table` — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 - `gen_measure_arc` `入力なし → measurehandle` — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
-- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
-- `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
+- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`, `poc_weld_radiograph_porosity`
 - `measure_pos` `image2d × measurehandle → table` — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
 - `translate_measure` `measurehandle → measurehandle` — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
 

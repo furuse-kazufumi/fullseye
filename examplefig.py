@@ -222,8 +222,11 @@ def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
 
 
 def save(name: str, image, caption: str = "", signed: bool = False,
-         gray: bool = False) -> Path | None:
+         gray: bool = False, source: str = "") -> Path | None:
     """図を 1 枚書く。``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。
+
+    ``source`` は他人の画像・データを使った図の出典(著者・題・誌・DOI/URL・ライセンス・改変の有無)。空でなければ
+    ``figures.json`` の項目に ``"source"`` として載る(2026-10-15、実画像の章を足したとき。CC BY の表示を図の台帳に残す)。
 
     ``signed=True`` は 0 を中心に塗る(ひずみ・残差・位相差のような符号つきの量)。
     ``gray=True`` は疑似カラーにせずグレースケールで塗る(強度そのものを絵として
@@ -242,8 +245,10 @@ def save(name: str, image, caption: str = "", signed: bool = False,
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
         fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
         _note_unique(path, name)
-        _manifest.append({"file": path.name, "name": name, "caption": caption,
-                          "shape": list(np.shape(image))})
+        entry = {"file": path.name, "name": name, "caption": caption, "shape": list(np.shape(image))}
+        if source:
+            entry["source"] = source
+        _manifest.append(entry)
         (d / "figures.json").write_text(
             json.dumps(_manifest, ensure_ascii=False, indent=1), encoding="utf-8")
         return path
@@ -555,8 +560,8 @@ def _upscale(imgs, factor):
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
-              kinds=None, styles=None, colors=None, aspect=None) -> Path | None:
-    """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。
+              kinds=None, styles=None, colors=None, aspect=None, source: str = "") -> Path | None:
+    """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。``source`` は :func:`save` と同じ(出典)。
 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
     —— 実線どうしが重なると、データと参照の区別がつかない(2026-10-03、傾きの参照線で踏んだ)。
@@ -574,7 +579,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         img = render_plot(series, xlabel=xlabel, ylabel=ylabel, title=title or name, size=size,
                           xlim=xlim, ylim=ylim, kinds=kinds, styles=styles, colors=colors,
                           aspect=aspect)
-        return save(name, img, caption)
+        return save(name, img, caption, source=source)
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(plot): %s: %s" % (name, type(exc).__name__, exc))
         return None

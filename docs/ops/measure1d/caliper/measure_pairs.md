@@ -4,7 +4,7 @@ dim: measure1d
 category: caliper
 in: image2d × measurehandle
 out: table
-examples: [example_scratch_width, poc_calipers_under_illusion, poc_dimensional_inspection, poc_weld_radiograph_porosity]
+examples: [example_scratch_width, poc_calipers_under_illusion, poc_dimensional_inspection, poc_telecentric_metrology, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ mm が要るときは ``table_px_to_mm`` / ``pixel_to_world`` に渡す。
 - [example_scratch_width](../../../../examples/example_scratch_width.py) — `py -3.11 examples/example_scratch_width.py`
 - [poc_calipers_under_illusion](../../../../examples/poc_calipers_under_illusion.py) — `py -3.11 examples/poc_calipers_under_illusion.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
+- [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
