@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-47 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+48 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -126,6 +126,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **光と色**
 
 - 色を測る(XYZ / Lab / 色差): [説明](../capabilities/colour-and-delta-e.md) · 例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- 光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率): [説明](../capabilities/fiber-and-light-guide.md) · 例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口): [説明](../capabilities/material-optical-property-library.md) · 例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 光の反射・屈折・干渉を計算する: [説明](../capabilities/optics-and-materials.md) · 例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - 偏光カメラの生フレームを Stokes・DoLP・Mueller に読む: [説明](../capabilities/polarization-imaging.md) · 例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
@@ -173,7 +174,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 230 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 231 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -346,8 +347,9 @@ PoC 230 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>色・分離</b> (6)</summary>
+<details class="vall"><summary><b>色・分離</b> (7)</summary>
 <div class="vg vs">
+<a href="../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_light_guide.jpg" alt="光ファイバとライトガイド(モード・分散・モード径)" width="200" height="200"><span>光ファイバとライトガイド(モード・分散・モード径)</span></a>
 <a href="../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_nir_silicon_transmission.jpg" alt="Si ウェハ越しの近赤外透過(LED の波長を選ぶ)" width="200" height="200"><b>&#9654;</b><span>Si ウェハ越しの近赤外透過(LED の波長を選ぶ)</span></a>
 <a href="../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_material_optical_library.jpg" alt="材料の光学物性ライブラリ(83 種が同じ表から)" width="200" height="200"><b>&#9654;</b><span>材料の光学物性ライブラリ(83 種が同じ表から)</span></a>
 <a href="../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pigment_unmixing.jpg" alt="顔料の層を分離" width="200" height="200"><span>顔料の層を分離</span></a>

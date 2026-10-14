@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_silica_dispersion.png",
+  "name": "silica_dispersion",
+  "caption": "パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_silica_gvd.png",
+  "name": "silica_gvd",
+  "caption": "零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。単一モードファイバの零分散 1.3 µm の大半はこの材料分散。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_lp_b_v_diagram.png",
+  "name": "lp_b_v_diagram",
+  "caption": "各モードは Bessel の零点(LP11 = 2.405、LP21 と LP02 = 3.832 …)で b = 0 から立ち上がる。V < 2.405 なら LP01 だけ —— 単一モード。",
+  "shape": [
+   360,
+   649,
+   3
+  ]
+ },
+ {
+  "file": "04_mode_field_diameter.png",
+  "name": "mode_field_diameter",
+  "caption": "V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_lp01_field.png",
+  "name": "lp01_field",
+  "caption": "コアの中は J0、外は K0。ガウスとの差は主に裾(r/a > 1.5)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_light_guide_acceptance.png",
+  "name": "light_guide_acceptance",
+  "caption": "光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。全体の効率 = 充填率 × 端面 × 受け入れ × 減衰。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

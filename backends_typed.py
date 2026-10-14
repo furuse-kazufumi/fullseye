@@ -197,6 +197,14 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-14 ステップ型ファイバとライトガイド 7 本(fiberoptics、fiber): 引数だけで表か曲線を返す側で、画像を受けない。
+    "material_group_index",
+    "material_gvd",
+    "fiber_numerical_aperture",
+    "fiber_v_number",
+    "fiber_lp_modes",
+    "fiber_mode_field_diameter",
+    "fiber_bundle_coupling",
     # 2026-10-14 光源・フィルタ・センサの分光曲線 9 本(spectralrad、spectral): 曲線(pairs)を作るか掛けるか積む側で、
     # 画像を受けない。台帳(`fullseye.ledger.led_spectrum` …)から使う。
     "blackbody_spectrum",

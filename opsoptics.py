@@ -100,8 +100,9 @@ import raytrace
 import cavityoptics
 import materials
 import spectralrad
+import fiberoptics
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -456,6 +457,16 @@ _CATALOG = {
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
+    ],
+    "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
+        # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
+        ("material_group_index", "fiberoptics", [], "pairs"),
+        ("material_gvd", "fiberoptics", [], "pairs"),
+        ("fiber_numerical_aperture", "fiberoptics", [], "table"),
+        ("fiber_v_number", "fiberoptics", [], "table"),
+        ("fiber_lp_modes", "fiberoptics", [], "table"),
+        ("fiber_mode_field_diameter", "fiberoptics", [], "table"),
+        ("fiber_bundle_coupling", "fiberoptics", [], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

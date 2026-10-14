@@ -889,7 +889,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-14: cavity(Fabry-Perot・Michelson・PDH・量子雑音、重力波望遠鏡の式)5 op を新しい族として追加(184 → 189)。
     # 2026-10-14: matprop(材料の物性ライブラリ、硝材・結晶・半導体・金属・液体・プラスチック 83 種)16 op を新しい族として追加(189 → 205)。
     # 2026-10-14: spectral(光源・フィルタ・センサの分光曲線、spectralrad)9 op を新しい族として追加(205 → 214)。
-    assert len(opsoptics.OPSOPTICS) == 214
+    # 2026-10-14: fiber(ステップ型ファイバとライトガイド、fiberoptics)7 op を新しい族として追加(214 → 221)。
+    assert len(opsoptics.OPSOPTICS) == 221
+    assert len(opsoptics.list_ops("fiber")) == 7
     assert len(opsoptics.list_ops("matprop")) == 16
     assert len(opsoptics.list_ops("spectral")) == 9
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
@@ -900,7 +902,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "cavity", "coherent", "design", "fiber", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "material", "matprop", "mirror", "optimization",
         "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44

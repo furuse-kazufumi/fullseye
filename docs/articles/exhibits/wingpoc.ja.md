@@ -6118,7 +6118,7 @@ py -3.11 examples/poc_public_camera_heading_real.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 6 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 7 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -6307,6 +6307,42 @@ py -3.11 examples/poc_nir_silicon_transmission.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_nir_silicon_transmission)
 
 使用 op(ノートへ): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`cie_illuminant_a`](https://furuse.work/ops/optics/spectral/cie_illuminant_a.html) · [`defocus_from_shift`](https://furuse.work/ops/optics/wave/defocus_from_shift.html) · [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html) · [`spectral_stats`](https://furuse.work/ops/optics/spectral/spectral_stats.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.231 —— 光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで
+
+[![光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png)
+
+*↑ **光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで** ―― 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運ぶ。どちらもガラスの分散(材料表 `materials`)と導波の式で決まる。新 op 7 本(`fiberoptics`、`opsoptics` の `fiber`): `material_group_index` / `material_gvd` / `fiber_numerical_aperture` / `fiber_v_number` / `fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で)/ `fiber_mode_field_diameter` / `fiber_bundle_coupling`。溶融石英の群屈折率は 1.55 µm で 1.4626、材料分散の零点は 1272.8 nm、D(1.55 µm) は 21.9 ps/(nm·km) と公表値の幅に入る。遮断は Bessel の零点(LP11 = 2.4048)の 0.001 上下でモード数が 2 → 6 と切り替わり、V = 30 でモード数 456 は V²/2 = 450 と 1.3 %、LP01 の b(V) は Rudolph–Neumann の近似と 0.24 %。★LP02 は遮断の直上で束縛が指数関数的に弱く、浮動小数で解けるのは遮断の 0.05 上から(op の docstring に限界として明記)。モード径は Marcuse 1977 の近似式と 0.8 % 以内、2 次モーメントの定義に変えると V = 1.2 で 11 % 大きい —— 「MFD」は定義を書かないと比べられない。コア半径 4.1 µm・NA 0.12 の設計は遮断 1285 nm、1310 nm の MFD 9.06 µm で ITU-T G.652 の 8.6〜9.5 µm に入る。Lambert の LED を NA の違う束に入れる割合は (NA_束/NA_光源)² の閉形式どおりで、LED → ライトガイド 2 m → Si ウェハ 775 µm → Si センサの鎖は光子 1 個あたり 2.2e-4 電子。学習 0、較正 0、門 17 件。*
+
+[![パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion.png)
+
+*↑ 測定の図 ―― パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。*
+
+[![零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd.png)
+
+*↑ 零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。*
+
+[![V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter.png)
+
+*↑ V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。*
+
+[![コアの中は J0、外は K0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field.png)
+
+*↑ コアの中は J0、外は K0。*
+
+[![光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance.png)
+
+*↑ 光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。*
+
+```
+py -3.11 examples/poc_fiber_light_guide.py
+```
+
+ソース: [examples/poc_fiber_light_guide.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fiber_light_guide)
+
+使用 op(ノートへ): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`fiber_bundle_coupling`](https://furuse.work/ops/optics/fiber/fiber_bundle_coupling.html) · [`fiber_lp_modes`](https://furuse.work/ops/optics/fiber/fiber_lp_modes.html) · [`fiber_mode_field_diameter`](https://furuse.work/ops/optics/fiber/fiber_mode_field_diameter.html) · [`fiber_numerical_aperture`](https://furuse.work/ops/optics/fiber/fiber_numerical_aperture.html) · [`fiber_v_number`](https://furuse.work/ops/optics/fiber/fiber_v_number.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_group_index`](https://furuse.work/ops/optics/fiber/material_group_index.html) · [`material_gvd`](https://furuse.work/ops/optics/fiber/material_gvd.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html)
 
 ### 法科学・文書ウィング ―― 1 枚の成功例は証拠にならない
 

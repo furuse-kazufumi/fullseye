@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 47 capabilities**
+**Currently 48 capabilities**
 
 ## Measure (16)
 
@@ -217,7 +217,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (6)
+## Light and colour (7)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -226,6 +226,14 @@ From spectral reflectance or RGB, compute CIE XYZ and Lab, then colour differenc
 Operators: `rgb_to_lab`, `xyz_to_lab`, `delta_e_2000`, `cie_xyz_from_wavelength`
 
 Runnable: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency)](capabilities/fiber-and-light-guide.md)
+
+Seven ops in `fiberoptics` (category `fiber`): group index and material dispersion D(λ) from the material table, numerical aperture, V number and cutoff wavelength, LP_lm modes by solving the weakly guiding characteristic equation, the mode field diameter of LP01 (best-overlap Gaussian, with the Marcuse fit and the second-moment definition alongside), and the efficiency of a light guide (packing fraction, end-face Fresnel, NA acceptance, attenuation). Gates: Bessel-zero cutoffs, V²/2 mode count, the Rudolph–Neumann b(V) and Marcuse MFD fits, the 1.27 µm zero of silica's material dispersion, and the ITU-T G.652 MFD range.
+
+Operators: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
+
+Runnable: `poc_fiber_light_guide`
 
 ### [One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)](capabilities/material-optical-property-library.md)
 

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-47 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+48 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -111,6 +111,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **Licht und Farbe**
 
 - Farbe messen (XYZ / Lab / Farbabstand): [Erklärung](../../capabilities/colour-and-delta-e.md) _(ja)_ · Beispiele [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz): [Erklärung](../../capabilities/fiber-and-light-guide.md) _(ja)_ · Beispiele [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - Eine Tabelle optischer Materialkonstanten (83 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import): [Erklärung](../../capabilities/material-optical-property-library.md) _(ja)_ · Beispiele [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - Reflexion, Brechung und Interferenz berechnen: [Erklärung](../../capabilities/optics-and-materials.md) _(ja)_ · Beispiele [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - Rohbild einer Polarisationskamera in Stokes, DoLP und Mueller umrechnen: [Erklärung](../../capabilities/polarization-imaging.md) _(ja)_ · Beispiele [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
@@ -158,7 +159,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-230 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+231 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -331,8 +332,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Farbe und Trennung</b> (6)</summary>
+<details class="vall"><summary><b>Farbe und Trennung</b> (7)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)" width="200" height="200"><span>Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="Nahinfrarot durch einen Siliziumwafer (Wahl der LED)" width="200" height="200"><b>&#9654;</b><span>Nahinfrarot durch einen Siliziumwafer (Wahl der LED)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="Eine Bibliothek optischer Materialeigenschaften (83 Materialien, eine Tabelle)" width="200" height="200"><b>&#9654;</b><span>Eine Bibliothek optischer Materialeigenschaften (83 Materialien, eine Tabelle)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="Pigmentschichten" width="200" height="200"><span>Pigmentschichten</span></a>

@@ -1,4 +1,4 @@
-# OPTICS operator help — 214 ops in 24 categories
+# OPTICS operator help — 221 ops in 25 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -33,6 +33,10 @@
 ### design (15)
 
 [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md)
+
+### fiber (7)
+
+[fiber_bundle_coupling](fiber/fiber_bundle_coupling.md) · [fiber_lp_modes](fiber/fiber_lp_modes.md) · [fiber_mode_field_diameter](fiber/fiber_mode_field_diameter.md) · [fiber_numerical_aperture](fiber/fiber_numerical_aperture.md) · [fiber_v_number](fiber/fiber_v_number.md) · [material_group_index](fiber/material_group_index.md) · [material_gvd](fiber/material_gvd.md)
 
 ### finish (5)
 

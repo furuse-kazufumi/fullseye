@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 光ファイバとライトガイド(fiberoptics 7 op + PoC)
+- `fiberoptics`(`opsoptics` の新カテゴリ `fiber`、7 op): `material_group_index` / `material_gvd`(材料表のガラスの群屈折率と材料分散)、`fiber_numerical_aperture` / `fiber_v_number`、`fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で、縮退込みのモード数)、`fiber_mode_field_diameter`(重なり最大のガウス + Marcuse + 2 次モーメント)、`fiber_bundle_coupling`(ライトガイドの効率)。
+- PoC `poc_fiber_light_guide`(17 門、図 6 枚): 遮断 = Bessel の零点、V²/2、Rudolph–Neumann、Marcuse、溶融石英の零分散 1272.8 nm、ITU-T G.652 の MFD の範囲。★LP0m は遮断の直上で束縛が指数関数的に弱く、遮断の 0.05 以内は数えない(限界を docstring と門に明記)。
+- 能力ノート `docs/capabilities/fiber-and-light-guide.md`、op 要約 6 言語、手書き件数 +7。
+
 ### Fixed — lens_system が知らない面の鍵を拒否 + 透過率に追加の吸収(ドープ)を足す口
 - `raytrace.lens_system`: 知らない面の鍵(例 "sag_map")を黙って捨て、6 要素以上のタプル面を zip が黙って切っていた → ValueError(受ける鍵を名指し)。出力の面を戻す `with_wavelength` の経路(n_value / dn)はそのまま通る。
 - `materials.material_transmittance(..., extra_absorption=pairs)`: 材料の表に無い吸収(λ nm, α 1/cm)を足す。ドープした Si は `silicon_free_carrier_absorption` の出力をそのまま渡す(1e19 cm⁻³ の 775 µm は 1.3 µm で ×0.27)。範囲の足りない曲線・負の α は ValueError。

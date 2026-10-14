@@ -1,8 +1,8 @@
 {
- "n_ops": 3179,
+ "n_ops": 3186,
  "tiers": {
   "color": 12,
-  "ledger": 2226,
+  "ledger": 2233,
   "nary": 17,
   "registry": 924
  },
@@ -7978,6 +7978,61 @@
    ]
   },
   {
+   "name": "fiber_bundle_coupling",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "fiber_lp_modes",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "fiber_mode_field_diameter",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "fiber_numerical_aperture",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "fiber_v_number",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "field_position_sweep",
    "halcon": "",
    "in_sort": "matrix",
@@ -14203,6 +14258,28 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_group_index",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_gvd",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "fiber",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

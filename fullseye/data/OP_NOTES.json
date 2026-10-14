@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3179,
- "n_notes": 3185,
+ "n_ops": 3186,
+ "n_notes": 3192,
  "notes": {
   "vol_dilate": [
    {
@@ -26865,6 +26865,69 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/wavefront_from_opd.md"
+   }
+  ],
+  "fiber_bundle_coupling": [
+   {
+    "op": "fiber_bundle_coupling",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "table",
+    "path": "docs/ops/optics/fiber/fiber_bundle_coupling.md"
+   }
+  ],
+  "fiber_lp_modes": [
+   {
+    "op": "fiber_lp_modes",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "table",
+    "path": "docs/ops/optics/fiber/fiber_lp_modes.md"
+   }
+  ],
+  "fiber_mode_field_diameter": [
+   {
+    "op": "fiber_mode_field_diameter",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "table",
+    "path": "docs/ops/optics/fiber/fiber_mode_field_diameter.md"
+   }
+  ],
+  "fiber_numerical_aperture": [
+   {
+    "op": "fiber_numerical_aperture",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "table",
+    "path": "docs/ops/optics/fiber/fiber_numerical_aperture.md"
+   }
+  ],
+  "fiber_v_number": [
+   {
+    "op": "fiber_v_number",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "table",
+    "path": "docs/ops/optics/fiber/fiber_v_number.md"
+   }
+  ],
+  "material_group_index": [
+   {
+    "op": "material_group_index",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "pairs",
+    "path": "docs/ops/optics/fiber/material_group_index.md"
+   }
+  ],
+  "material_gvd": [
+   {
+    "op": "material_gvd",
+    "dim": "optics",
+    "category": "fiber",
+    "out": "pairs",
+    "path": "docs/ops/optics/fiber/material_gvd.md"
    }
   ],
   "blast_normals": [

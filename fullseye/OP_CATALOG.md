@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(364 例)
+### 2-D 画像/信号/幾何(365 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -419,6 +419,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **光沢面の外観検査(specularity 13 op)** — Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。 `py -3.11 examples/specular_photometric.py`
 - **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
 - **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/events_from_frames.py`
+- **光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで** — 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運ぶ。どちらもガラスの分散(材料表 `materials`)と導波の式で決まる。新 op 7 本(`fiberoptics`、`opsoptics` の `fiber`): `material_group_index` / `material_gvd` / `fiber_numerical_aperture` / `fiber_v_number` / `fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で)/ `fiber_mode_field_diameter` / `fiber_bundle_coupling`。溶融石英の群屈折率は 1.55 µm で 1.4626、材料分散の零点は 1272.8 nm、D(1.55 µm) は 21.9 ps/(nm·km) と公表値の幅に入る。遮断は Bessel の零点(LP11 = 2.4048)の 0.001 上下でモード数が 2 → 6 と切り替わり、V = 30 でモード数 456 は V²/2 = 450 と 1.3 %、LP01 の b(V) は Rudolph–Neumann の近似と 0.24 %。★LP02 は遮断の直上で束縛が指数関数的に弱く、浮動小数で解けるのは遮断の 0.05 上から(op の docstring に限界として明記)。モード径は Marcuse 1977 の近似式と 0.8 % 以内、2 次モーメントの定義に変えると V = 1.2 で 11 % 大きい —— 「MFD」は定義を書かないと比べられない。コア半径 4.1 µm・NA 0.12 の設計は遮断 1285 nm、1310 nm の MFD 9.06 µm で ITU-T G.652 の 8.6〜9.5 µm に入る。Lambert の LED を NA の違う束に入れる割合は (NA_束/NA_光源)² の閉形式どおりで、LED → ライトガイド 2 m → Si ウェハ 775 µm → Si センサの鎖は光子 1 個あたり 2.2e-4 電子。学習 0、較正 0、門 17 件。 `py -3.11 examples/poc_fiber_light_guide.py`
 - **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** — Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。学習 0、較正 0、門 20 件。 `py -3.11 examples/poc_nir_silicon_transmission.py`
 - **材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点** — 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まる。両方が**同じ材料表**を引けるように、硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つのレコード型に載せ、波長曲線をすべて同じ形(λ [nm], 値)で返す新 op 16 本(`opsoptics` の `matprop`、実装 `materials`)。数値は refractiveindex.info database(CC0)の一次文献の係数と数表だけ(`tools/gen_material_tables.py` が生成、出典を各区間に残す)。★硝材 46 種(4 社のカタログ、Sellmeier 2 と Schott 多項式): 分散式から計算した n_d / V_d が**カタログ公表値と最大 4e-6 / 0.005**(門は 1e-4 / 0.3)。Abbe 図に 67 材料(プラスチックは同じ n_d の硝子より左、CaF₂ と石英は右端)。**第二実装 optiland 0.6.3**(同じ一次文献を別のコードで評価)と 23 点で最大 5e-10。★Si の NIR 窓(Green 2008): 公表の表の点 n(1.0 µm) 3.572 / k 5.09e-4、k(1.2 µm) 2.1e-7 を再現、吸収係数は 1.0 → 1.2 µm で 64 → 0.022 /cm(3 桁)、775 µm のウェハの透過率は 1.0 µm で 0.3 %・1.2 µm で 52 %(閉形式 (1−R)²e^{−αt}/(1−R²e^{−2αt}) と 1e-9、R = 0.31 の多重反射込み)。自由キャリア吸収(Schroder 1978)は λ² 則と p/n = 2.7 を 1e-9 で、1e19 cm⁻³ の基板は 1.3 µm でそれだけで ×0.27 に暗くなる。平行平板の焦点ずれ t(1 − 1/n) = 556 µm、縦球面収差は NA 0.1 で 1.0 µm・NA の 2 乗。★鏡の材料 10 種(Johnson & Christy / Rakić / Weaver / Werner): 銀は 500 nm で 0.982、アルミの谷は 820 nm で 0.866、金は 500 nm 0.475 → 700 nm 0.971。色は CIE 等色関数から出し、金と銅は R > G > B・銀は 3 成分が 1 % 以内で中性(塗っていない)。斜入射 60° で s 0.953 > p 0.829。★硝子とプラスチック: ポリカーボネートの分散は N-BK7 の 2.3 倍、dn/dT はカタログの式 A で基準温度(20 ℃ / 25 ℃)で Δn = 0、有限差分と 4e-8、N-BK7 の e 線で 1.62e-6 /K。係数の無い材料(PMMA・水)は ValueError で黙って 0 にしない。★取り込み口: .agf(硝材カタログ、Zemax の分散式 1〜13 全部)の雛形を読むと同梱レコードと 0、内部透過率の行から k を復元、自前の Sellmeier 係数と測った曲線(pairs)からもレコードを作れ、区間外は外挿しない。ユーザーのカタログは `FULLSEYE_GLASS_DIR` に置けば同名硝材を照合(無ければ「未配置」と明示)。学習した数 0、較正 0、門 38 件、図なしで 1 秒未満。 `py -3.11 examples/poc_material_optical_library.py`
 
@@ -2461,7 +2462,7 @@ _計 114 ops / 12 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 214 ops / 24 categories。_
+_計 221 ops / 25 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2506,6 +2507,15 @@ _計 214 ops / 24 categories。_
 - `ray_fan` (`table → pairs`) — Transverse ray aberration along one pupil diameter (``pairs``).
 - `opd_map` (`table → image2d`) — Optical path difference over the exit pupil, in waves (``image2d``).
 - `chromatic_shift` (`table → table`) — Focal shift, image-height shift and spot size versus wavelength (``table``).
+
+### fiber(7)
+- `material_group_index` (` → pairs`) — 群屈折率 n_g(λ) = n − λ dn/dλ を ``pairs``(λ [nm], n_g)で(材料は ``materials`` の名前)。
+- `material_gvd` (` → pairs`) — 材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。
+- `fiber_numerical_aperture` (` → table`) — 開口数 NA = √(n_core² − n_clad²) と受け入れ半角(度)、比屈折率差 Δ。屈折率は数か材料名。
+- `fiber_v_number` (` → table`) — 規格化周波数 V = 2π a NA / λ と、単一モードかどうか(V < 2.4048 = J0 の最初の零点)。
+- `fiber_lp_modes` (` → table`) — 弱導波のステップ型ファイバの LP_lm モード: 特性方程式を解き、各モードの u・w・規格化伝搬定数 b を返す(``table``)。
+- `fiber_mode_field_diameter` (` → table`) — LP01 の場の直径(MFD)[µm] —— 厳密な場に**重なりが最大のガウス**を当てたときの 1/e² 直径。
+- `fiber_bundle_coupling` (` → table`) — ライトガイド(ファイバの束)に入って出る光の割合。
 
 ### finish(5)
 - `finish_catalog` (` → table`) — 仕上げ名 → 既定パラメータの表(αx, αy, grain)。

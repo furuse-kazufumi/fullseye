@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 47 項目**
+**収録 48 項目**
 
 ## 測る (16)
 
@@ -216,7 +216,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (6)
+## 光と色 (7)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -225,6 +225,14 @@
 使う op: `rgb_to_lab`, `xyz_to_lab`, `delta_e_2000`, `cie_xyz_from_wavelength`
 
 動く例: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md)
+
+検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運びます。どちらもガラスの分散と導波の式で決まるので、`fiberoptics` の 7 本は材料表(`materials`)のガラスを名前で受けます。
+
+使う op: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
+
+動く例: `poc_fiber_light_guide`
 
 ### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 

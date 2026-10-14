@@ -14355,6 +14355,69 @@
    "de": "Zusammenfassung einer Kurve: Peakwellenlänge und -wert, Schwerpunktwellenlänge, Halbwertsbreite (Schnittpunkte linear interpoliert), Integral.",
    "hi": "curve का सारांश: peak तरंगदैर्घ्य और मान, centroid तरंगदैर्घ्य, full width at half maximum (रैखिक interpolation से प्रतिच्छेद), integral।"
   },
+  "optics/material_group_index": {
+   "fp": "8cc8d2fe3af3",
+   "en": "Group index n_g(λ) = n − λ dn/dλ as ``pairs`` (λ [nm], n_g) (the material is a name in ``materials``).",
+   "zh": "群折射率 n_g(λ) = n − λ dn/dλ,以 ``pairs``(λ [nm],n_g)返回(材料为 ``materials`` 中的名称)。",
+   "tw": "群折射率 n_g(λ) = n − λ dn/dλ,以 ``pairs``(λ [nm],n_g)回傳(材料為 ``materials`` 中的名稱)。",
+   "ko": "군굴절률 n_g(λ) = n − λ dn/dλ를 ``pairs``(λ [nm], n_g)로 반환(재료는 ``materials``의 이름).",
+   "de": "Gruppenindex n_g(λ) = n − λ dn/dλ als ``pairs`` (λ [nm], n_g) (das Material ist ein Name in ``materials``).",
+   "hi": "group index n_g(λ) = n − λ dn/dλ को ``pairs`` (λ [nm], n_g) के रूप में (material, ``materials`` का नाम)।"
+  },
+  "optics/material_gvd": {
+   "fp": "8be4d305ef1f",
+   "en": "Material dispersion parameter D(λ) = −(λ/c) d²n/dλ² in ps/(nm·km), as ``pairs`` (λ [nm], D).",
+   "zh": "材料色散参数 D(λ) = −(λ/c) d²n/dλ²,单位 ps/(nm·km),以 ``pairs``(λ [nm],D)返回。",
+   "tw": "材料色散參數 D(λ) = −(λ/c) d²n/dλ²,單位 ps/(nm·km),以 ``pairs``(λ [nm],D)回傳。",
+   "ko": "재료 분산 파라미터 D(λ) = −(λ/c) d²n/dλ², 단위 ps/(nm·km), ``pairs``(λ [nm], D)로 반환.",
+   "de": "Materialdispersionsparameter D(λ) = −(λ/c) d²n/dλ² in ps/(nm·km) als ``pairs`` (λ [nm], D).",
+   "hi": "material dispersion parameter D(λ) = −(λ/c) d²n/dλ², इकाई ps/(nm·km), ``pairs`` (λ [nm], D) के रूप में।"
+  },
+  "optics/fiber_numerical_aperture": {
+   "fp": "424f33d1affb",
+   "en": "Numerical aperture NA = √(n_core² − n_clad²), the acceptance half-angle (degrees) and the relative index difference Δ. Indices are numbers or material names.",
+   "zh": "数值孔径 NA = √(n_core² − n_clad²)、接收半角(度)与相对折射率差 Δ。折射率为数值或材料名。",
+   "tw": "數值孔徑 NA = √(n_core² − n_clad²)、接收半角(度)與相對折射率差 Δ。折射率為數值或材料名。",
+   "ko": "개구수 NA = √(n_core² − n_clad²)와 수광 반각(도), 비굴절률차 Δ. 굴절률은 수 또는 재료 이름.",
+   "de": "Numerische Apertur NA = √(n_core² − n_clad²), Akzeptanzhalbwinkel (Grad) und relativer Brechzahlunterschied Δ. Brechzahlen als Zahl oder Materialname.",
+   "hi": "numerical aperture NA = √(n_core² − n_clad²), acceptance अर्ध-कोण (डिग्री) और सापेक्ष अपवर्तनांक अंतर Δ। अपवर्तनांक संख्या या material का नाम।"
+  },
+  "optics/fiber_v_number": {
+   "fp": "6906c75053a4",
+   "en": "Normalised frequency V = 2π a NA / λ and whether the fibre is single-mode (V < 2.4048, the first zero of J0).",
+   "zh": "归一化频率 V = 2π a NA / λ,以及是否为单模(V < 2.4048 = J0 的第一个零点)。",
+   "tw": "歸一化頻率 V = 2π a NA / λ,以及是否為單模(V < 2.4048 = J0 的第一個零點)。",
+   "ko": "규격화 주파수 V = 2π a NA / λ와 단일 모드인지 여부(V < 2.4048 = J0의 첫 영점).",
+   "de": "Normierte Frequenz V = 2π a NA / λ und ob die Faser einmodig ist (V < 2.4048, die erste Nullstelle von J0).",
+   "hi": "normalised frequency V = 2π a NA / λ और क्या fibre single-mode है (V < 2.4048, J0 का पहला शून्य)।"
+  },
+  "optics/fiber_lp_modes": {
+   "fp": "e3b7f25eb77c",
+   "en": "LP_lm modes of a weakly guiding step-index fibre: solves the characteristic equation and returns u, w and the normalised propagation constant b of each mode (``table``).",
+   "zh": "弱导波阶跃型光纤的 LP_lm 模:求解特征方程,返回各模的 u、w 与归一化传播常数 b(``table``)。",
+   "tw": "弱導波步階型光纖的 LP_lm 模:求解特徵方程,回傳各模的 u、w 與歸一化傳播常數 b(``table``)。",
+   "ko": "약도파 계단형 파이버의 LP_lm 모드: 특성 방정식을 풀어 각 모드의 u·w·규격화 전파 상수 b를 반환(``table``).",
+   "de": "LP_lm-Moden einer schwach führenden Stufenindexfaser: löst die charakteristische Gleichung und gibt u, w und die normierte Ausbreitungskonstante b jeder Mode zurück (``table``).",
+   "hi": "weakly guiding step-index fibre के LP_lm modes: characteristic equation हल करके हर mode के u, w और normalised propagation constant b लौटाता है (``table``)।"
+  },
+  "optics/fiber_mode_field_diameter": {
+   "fp": "e3f91931b093",
+   "en": "Mode field diameter (MFD) of LP01 in µm —— the 1/e² diameter of the Gaussian with the **largest overlap** with the exact field.",
+   "zh": "LP01 的模场直径(MFD,µm)—— 与精确场**重叠最大的高斯**的 1/e² 直径。",
+   "tw": "LP01 的模場直徑(MFD,µm)—— 與精確場**重疊最大的高斯**的 1/e² 直徑。",
+   "ko": "LP01의 모드 필드 직경(MFD, µm) —— 엄밀한 장에 **겹침이 최대인 가우스**를 맞췄을 때의 1/e² 직경.",
+   "de": "Modenfelddurchmesser (MFD) von LP01 in µm —— der 1/e²-Durchmesser des Gaußprofils mit der **größten Überlappung** mit dem exakten Feld.",
+   "hi": "LP01 का mode field diameter (MFD, µm) —— सटीक field से **सबसे अधिक overlap** वाले Gaussian का 1/e² व्यास।"
+  },
+  "optics/fiber_bundle_coupling": {
+   "fp": "43d76ce99872",
+   "en": "Fraction of light that enters a light guide (fibre bundle) and comes out.",
+   "zh": "进入光导(光纤束)并射出的光的比例。",
+   "tw": "進入光導(光纖束)並射出的光的比例。",
+   "ko": "라이트 가이드(파이버 다발)에 들어가 나오는 빛의 비율.",
+   "de": "Anteil des Lichts, der in einen Lichtleiter (Faserbündel) eintritt und wieder austritt.",
+   "hi": "light guide (fibre bundle) में जाकर बाहर निकलने वाले प्रकाश का अंश।"
+  },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",

@@ -38,6 +38,7 @@
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
 | [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md) | Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General) | 測る | `verified-synthetic` | 13/13 | `poc_emva1288_sensor` synthetic → tests/test_poc_scripts_run.py<br>`poc_emva1288_in_camera_processing` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
+| [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md) | Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency) | 光と色 | `verified-synthetic` | 7/7 | `poc_fiber_light_guide` synthetic → tests/test_poc_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
@@ -85,8 +86,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 364 |
-| `tests/test_poc_scripts_run.py` が走らせる | 230 |
+| 2-D 台帳の例 | 365 |
+| `tests/test_poc_scripts_run.py` が走らせる | 231 |
 | `tests/test_example_scripts_run.py` が走らせる | 134 |
 | **どの門も走らせていない** | **0** |
 

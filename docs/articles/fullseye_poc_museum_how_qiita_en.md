@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**86 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**87 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -2090,7 +2090,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 6 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 7 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -2279,6 +2279,42 @@ Source: [examples/poc_nir_silicon_transmission.py](https://github.com/furuse-kaz
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_nir_silicon_transmission)
 
 Ops used (notes): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`cie_illuminant_a`](https://furuse.work/ops/optics/spectral/cie_illuminant_a.html) · [`defocus_from_shift`](https://furuse.work/ops/optics/wave/defocus_from_shift.html) · [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html) · [`spectral_stats`](https://furuse.work/ops/optics/spectral/spectral_stats.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.231 —— Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency
+
+[![Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png)
+
+*↑ **Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency** ―― Inspection light travels in light guides (fibre bundles) and interferometric or spectroscopic light in single-mode fibre; both are set by the dispersion of the glass (the material table) and the guiding equations. Seven new ops (`fiberoptics`, category `fiber` of `opsoptics`): group index, material dispersion, numerical aperture, V number, LP_lm modes from the weakly guiding characteristic equation, the LP01 mode field diameter and light-guide efficiency. Fused silica has group index 1.4626 at 1.55 µm, its material-dispersion zero at 1272.8 nm and D = 21.9 ps/(nm km) at 1.55 µm, all within the published ranges. The mode count switches from 2 to 6 within 0.001 of the Bessel zero 2.4048, reaches 456 at V = 30 against V²/2 = 450, and the LP01 b(V) agrees with the Rudolph-Neumann fit to 0.24 %. LP02 is bound only exponentially weakly just above its cutoff and becomes resolvable in floating point about 0.05 above it, a limit now written into the operator. The mode field diameter agrees with Marcuse's 1977 fit to 0.8 %, while the second-moment definition is 11 % larger at V = 1.2, so an MFD means nothing without its definition. A core radius of 4.1 µm and NA 0.12 give a cutoff of 1285 nm and an MFD of 9.06 µm at 1310 nm, inside the ITU-T G.652 range of 8.6 to 9.5 µm. A Lambertian LED fills a bundle of smaller NA as (NA_bundle/NA_source)², and the chain LED, 2 m light guide, 775 µm silicon wafer and silicon sensor yields 2.2e-4 electrons per photon. Nothing learned, nothing calibrated, 17 gates.*
+
+[![パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion.png)
+
+*↑ The measurement ―― パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。 (figure labels are in Japanese; the numbers are the same)*
+
+[![零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd.png)
+
+*↑ 零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。*
+
+[![V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter.png)
+
+*↑ V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。*
+
+[![コアの中は J0、外は K0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field.png)
+
+*↑ コアの中は J0、外は K0。*
+
+[![光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance.png)
+
+*↑ 光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。*
+
+```
+py -3.11 examples/poc_fiber_light_guide.py
+```
+
+Source: [examples/poc_fiber_light_guide.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fiber_light_guide)
+
+Ops used (notes): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`fiber_bundle_coupling`](https://furuse.work/ops/optics/fiber/fiber_bundle_coupling.html) · [`fiber_lp_modes`](https://furuse.work/ops/optics/fiber/fiber_lp_modes.html) · [`fiber_mode_field_diameter`](https://furuse.work/ops/optics/fiber/fiber_mode_field_diameter.html) · [`fiber_numerical_aperture`](https://furuse.work/ops/optics/fiber/fiber_numerical_aperture.html) · [`fiber_v_number`](https://furuse.work/ops/optics/fiber/fiber_v_number.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_group_index`](https://furuse.work/ops/optics/fiber/material_group_index.html) · [`material_gvd`](https://furuse.work/ops/optics/fiber/material_gvd.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 
