@@ -94,6 +94,17 @@ def test_water_daimon_20c_and_hale_ir():
     assert abs(M.material_optical_constants("WATER", 589.0)["n"] - 1.3330) < 5e-4
     a = M.material_optical_constants("WATER", 1500.0)
     assert a["n_source"].endswith("Hale.yml") and 1e-5 < a["k"] < 1e-3
+    assert a["k_source"].endswith("Segelstein.yml")                # k だけ細かい表(2026-10-15)
+
+
+def test_water_nir_bands_are_resolved():
+    """2026-10-15: RII の Hale & Querry の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の帯を
+    線形補間で 1/3 に潰していた。k だけ Segelstein 1981 の表にして α(1450) ≈ 31 /cm、α(1940) ≈ 124 /cm
+    (Kou ら 1993 の実測 32.8 / 135 /cm と 10 % 以内)。"""
+    for wl, kou_per_cm in ((1453.0, 32.8), (1930.0, 136.7)):
+        k = M.material_optical_constants("WATER", wl)["k"]
+        alpha_per_cm = 4.0 * np.pi * k / (wl * 1e-7)
+        assert abs(alpha_per_cm / kou_per_cm - 1.0) < 0.10, (wl, alpha_per_cm)
 
 
 def test_aliases_and_record_summary():
@@ -317,8 +328,8 @@ def test_custom_records_round_trip_and_refuse_empty():
 def test_ledger_registration():
     import opsoptics
     names = [r[0] for r in opsoptics._CATALOG["matprop"]]
-    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE"))
-    assert len(names) == 16
+    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS"))
+    assert len(names) == 19                                   # + 近赤外の吸収帯 3 op(2026-10-15)
     for n in names:
         assert opsoptics.get(n) is getattr(M, n)
     import fullseye as fs

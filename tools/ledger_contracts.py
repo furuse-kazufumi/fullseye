@@ -510,6 +510,11 @@ def _batch2_builders():
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
+        # 2026-10-15 近赤外の分光撮像: 吸収係数の曲線(材料表)と反射率の曲線(Kubelka–Munk)を種に
+        "kubelka_munk_reflectance": lambda pool, rng: ([__import__("materials").material_nir_absorption(
+            ("PE", "PP", "NUT_KERNEL")[int(rng.integers(3))], 900.0, 2500.0, 161)], {}),
+        "hyperspectral_capture": lambda pool, rng: ([__import__("spectralrad").spectral_reflectance_from_material(
+            ("PE", "NUT_SHELL", "NUT_KERNEL")[int(rng.integers(3))], wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)], {}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (

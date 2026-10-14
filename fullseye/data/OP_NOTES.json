@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3186,
- "n_notes": 3192,
+ "n_ops": 3194,
+ "n_notes": 3200,
  "notes": {
   "vol_dilate": [
    {
@@ -27452,6 +27452,15 @@
     "path": "docs/ops/optics/matprop/abbe_number.md"
    }
   ],
+  "carbon_black_absorption": [
+   {
+    "op": "carbon_black_absorption",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/carbon_black_absorption.md"
+   }
+  ],
   "glass_map": [
    {
     "op": "glass_map",
@@ -27506,6 +27515,15 @@
     "path": "docs/ops/optics/matprop/material_from_sellmeier.md"
    }
   ],
+  "material_nir_absorption": [
+   {
+    "op": "material_nir_absorption",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "pairs",
+    "path": "docs/ops/optics/matprop/material_nir_absorption.md"
+   }
+  ],
   "material_optical_constants": [
    {
     "op": "material_optical_constants",
@@ -27549,6 +27567,15 @@
     "category": "matprop",
     "out": "pairs",
     "path": "docs/ops/optics/matprop/material_transmittance.md"
+   }
+  ],
+  "nir_model_info": [
+   {
+    "op": "nir_model_info",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/nir_model_info.md"
    }
   ],
   "plate_focus_shift": [
@@ -28492,6 +28519,44 @@
     "path": "docs/ops/optics/spectral/energy_to_photons.md"
    }
   ],
+  "hyperspectral_band_weights": [
+   {
+    "op": "hyperspectral_band_weights",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "matrix",
+    "path": "docs/ops/optics/spectral/hyperspectral_band_weights.md"
+   }
+  ],
+  "hyperspectral_capture": [
+   {
+    "op": "hyperspectral_capture",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/spectral/hyperspectral_capture.md"
+   }
+  ],
+  "ingaas_photodiode_qe": [
+   {
+    "op": "ingaas_photodiode_qe",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/ingaas_photodiode_qe.md"
+   }
+  ],
+  "kubelka_munk_reflectance": [
+   {
+    "op": "kubelka_munk_reflectance",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/kubelka_munk_reflectance.md"
+   }
+  ],
   "led_spectrum": [
    {
     "op": "led_spectrum",
@@ -28528,6 +28593,15 @@
     "in": "pairs × pairs",
     "out": "pairs",
     "path": "docs/ops/optics/spectral/spectral_product.md"
+   }
+  ],
+  "spectral_reflectance_from_material": [
+   {
+    "op": "spectral_reflectance_from_material",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/spectral_reflectance_from_material.md"
    }
   ],
   "spectral_stats": [

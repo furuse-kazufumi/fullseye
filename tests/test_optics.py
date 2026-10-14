@@ -890,10 +890,11 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-14: matprop(材料の物性ライブラリ、硝材・結晶・半導体・金属・液体・プラスチック 83 種)16 op を新しい族として追加(189 → 205)。
     # 2026-10-14: spectral(光源・フィルタ・センサの分光曲線、spectralrad)9 op を新しい族として追加(205 → 214)。
     # 2026-10-14: fiber(ステップ型ファイバとライトガイド、fiberoptics)7 op を新しい族として追加(214 → 221)。
-    assert len(opsoptics.OPSOPTICS) == 221
+    # 2026-10-15: 近赤外の分光撮像(食品の異物・樹脂の選別)で matprop に 3 op、spectral に 5 op(221 → 229)。
+    assert len(opsoptics.OPSOPTICS) == 229
     assert len(opsoptics.list_ops("fiber")) == 7
-    assert len(opsoptics.list_ops("matprop")) == 16
-    assert len(opsoptics.list_ops("spectral")) == 9
+    assert len(opsoptics.list_ops("matprop")) == 19
+    assert len(opsoptics.list_ops("spectral")) == 14
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。

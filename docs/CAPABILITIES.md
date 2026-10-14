@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 48 項目**
+**収録 49 項目**
 
 ## 測る (16)
 
@@ -216,7 +216,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (7)
+## 光と色 (8)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -241,6 +241,14 @@
 使う op: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
 
 動く例: `poc_material_optical_library`
+
+### [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md)
+
+食品のライン(ナッツ・茶葉・米)に混じる殻・木片・樹脂片や、リサイクルの PET / PP / PE / PS は、色を合わせられると RGB のカメラでは分かりません。近赤外(0.9〜2.5 µm)では C-H の倍音・結合音と O-H の吸収帯が材料ごとに違うので、分光で分けられます。ここはその鎖を、観察対象と光学系が**同じ材料表**を引く形で組む 8 本です。
+
+使う op: `material_nir_absorption`, `carbon_black_absorption`, `nir_model_info`, `ingaas_photodiode_qe`, `kubelka_munk_reflectance`, `spectral_reflectance_from_material`, `hyperspectral_band_weights`, `hyperspectral_capture`
+
+動く例: `poc_hyperspectral_foreign_matter`
 
 ### [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md)
 

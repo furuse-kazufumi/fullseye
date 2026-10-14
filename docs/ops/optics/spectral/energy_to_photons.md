@@ -51,7 +51,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md)
+[mtf50](../imaging/mtf50.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md)
 
 ## 同カテゴリ(`spectral`)
 

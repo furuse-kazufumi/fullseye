@@ -443,6 +443,11 @@ _CATALOG = {
         ("material_from_sellmeier", "materials", [], "table"),
         ("material_from_curves", "materials", [], "table"),
         ("read_glass_catalog_agf", "materials", [], "table"),
+        # 2026-10-15 近赤外の吸収帯(食品の異物・樹脂の選別): 樹脂の表は 1.05 µm までで k が無かった。
+        #   帯の重ね合わせ(中心は一次文献、幅と強さは推定 —— NIR_BAND_MODELS の注)、水は表の Segelstein。
+        ("material_nir_absorption", "materials", [], "pairs"),
+        ("carbon_black_absorption", "materials", [], "pairs"),
+        ("nir_model_info", "materials", [], "table"),
     ],
     "spectral": [  # 光源・フィルタ・センサの分光曲線と、その積と積分(spectralrad、2026-10-14)
         # ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を
@@ -457,6 +462,14 @@ _CATALOG = {
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
+        # 2026-10-15 近赤外の分光撮像(ハイパースペクトル): InGaAs の QE、散乱層の反射(Kubelka–Munk)、
+        #   材料表 → 反射率、反射率 → 帯域ごとの電子数(ハロゲン × ガラス × 帯域 × QE)。画像(キューブ)は
+        #   hyperspectral_capture_cube(同じ線形写像 hyperspectral_band_weights を画素ごとに掛ける)。
+        ("ingaas_photodiode_qe", "spectralrad", [], "pairs"),
+        ("kubelka_munk_reflectance", "spectralrad", ["pairs"], "pairs"),
+        ("spectral_reflectance_from_material", "spectralrad", [], "pairs"),
+        ("hyperspectral_band_weights", "spectralrad", [], "matrix"),
+        ("hyperspectral_capture", "spectralrad", ["pairs"], "table"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。

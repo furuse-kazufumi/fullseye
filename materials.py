@@ -56,6 +56,7 @@ __all__ = [
     "material_transmittance", "material_reflectance", "abbe_number", "glass_map",
     "thermo_optic_coefficient", "plate_focus_shift", "silicon_free_carrier_absorption",
     "material_from_sellmeier", "material_from_curves", "read_glass_catalog_agf",
+    "NIR_BAND_MODELS", "material_nir_absorption", "carbon_black_absorption", "nir_model_info",
 ]
 
 #: フラウンホーファー線 [µm](硝材カタログの定義どおり)。
@@ -816,3 +817,217 @@ def _agf_finish(g: dict, label: str, op: str) -> dict:
     rec = {"name": _key(g["name"]), "class": "glass", "aliases": (), "datasets": datasets, "properties": props}
     _nk(rec, np.array([g["ld"][0], g["ld"][1]]), op)
     return rec
+
+
+# --------------------------------------------------------------------------- #
+# 近赤外(NIR/SWIR)の吸収帯モデル —— 食品の異物・樹脂の選別で観察対象の側が引く表        #
+# --------------------------------------------------------------------------- #
+#: 吸収帯の重ね合わせで近赤外の吸収係数 α(λ) [1/mm] (自然対数の底)を作る材料。
+#:
+#: 2026-10-15(PoC ``poc_hyperspectral_foreign_matter``): 樹脂のレコード(PMMA / PC / PS / COP)は
+#: Sultanova 2009 の分散式だけで、範囲は 0.437〜1.052 µm、k は無い。食品の異物や樹脂の選別が見る
+#: 1.2〜2.4 µm の C-H・O-H の倍音・結合音はどこにも無かった。ここはその穴を埋める**簡易モデル**で、
+#: 各帯は ``(中心 nm, 半値全幅 nm, ピークの α 1/mm)`` の Gauss。
+#:
+#: 印(``"grade"``): **U** = USGS の実測スペクトル(splib05a / splib07、public domain)の連続体除去した
+#: 吸収の谷で中心を確かめた帯(PE: HDPE / LDPE 4 試料 GDS351/391/393/402、PET: GDS379/380/383)、
+#: **L** = 論文の実測(Vázquez-Guardado ら 2015、Rani ら 2019)、**H** = 教科書で知られた帰属(Workman &
+#: Weyer 2007、Schwanninger ら 2011)で中心は概数、**E** = 推定。**幅と強さはすべて模型**: PE の強さは
+#: USGS の薄膜(LDPE 0.2 mm・HDPE 0.1 mm)の谷の深さから逆算した桁(1215 nm 0.1〜0.3、1730 nm 0.4〜1、
+#: 2310 nm 1.5〜1.7 /mm。測定時の背景が記録に無いので桁の目安)に合わせ、PP・PS・脂質はそれに倣って
+#: CH の密度で比例させた。2026-10-15 の一次情報の照合で初版の PE 1730 / 2310 nm(2 / 5 /mm)が 2〜3 倍
+#: 過大と分かって下げ、PE の 2387 nm と PET の最も深い 2 帯(2258 / 2334 nm)と 1715 nm の肩を足した。
+#: **実測スペクトルに合わせた値ではない** —— 分光器の実測で置き換えること
+#: (``material_nir_absorption(..., bands=...)`` で上書きできる)。
+#:
+#: 水だけは表の一次文献を使う: ``WATER`` の k(Hale & Querry 1973)から α = 4πk/λ。食品・木材の
+#: ``"water"`` は水の質量分率で、その水の α を分率で足す(混合は体積分率の線形和で近似)。
+#: ``"components"`` を持つ材料は成分(脂質・タンパク質・炭水化物・リグニン)の分率で帯を足す。
+#:
+#: 出典: R. N. Clark ら, USGS Digital Spectral Library splib05a, USGS Open-File Report 03-395 (2003) と
+#: R. F. Kokaly ら, splib07, USGS Data Series 1035 (2017)(public domain、樹脂の実測反射)/
+#: M. Rani ら, Materials 12, 2740 (2019)(PP 1190 / 1400、PS 1140 / 1205 / 1675 nm)/
+#: A. Vázquez-Guardado, M. Money, N. McKinney, D. Chanda, Appl. Opt. 54, 7396 (2015)
+#: (PET 1664 / 1910、HDPE 1733 / 1767、PP 1709 / 1727、PS 1682 nm、黒い試料は NIR に反応しない)/
+#: G. M. Hale, M. R. Querry, Appl. Opt. 12, 555 (1973)(水)/ M. Schwanninger, J. C. Rodrigues,
+#: K. Fackler, J. Near Infrared Spectrosc. 19, 287 (2011)(木材・リグノセルロースの帯)/
+#: J. Workman, L. Weyer, Practical Guide to Interpretive Near-Infrared Spectroscopy, CRC (2007)。
+NIR_BAND_MODELS = {
+    # ---- 成分(食品・木材の材料が分率で足す) ----
+    "LIPID": {"class": "component", "aliases": ("FAT", "TRIGLYCERIDE"), "n_nir": 1.47,
+              "bands": ((1210.0, 40.0, 0.08, "H"), (1728.0, 35.0, 0.6, "H"), (1765.0, 35.0, 0.5, "H"),
+                        (2140.0, 40.0, 0.3, "H"), (2310.0, 40.0, 1.3, "H"), (2350.0, 40.0, 1.1, "H")),
+              "baseline_per_mm": 0.002, "note": "triglyceride CH2 overtones and combinations; cis C=CH at 2140 nm"},
+    "PROTEIN": {"class": "component", "aliases": (), "n_nir": 1.53,
+                "bands": ((1510.0, 60.0, 0.15, "H"), (2050.0, 60.0, 0.4, "H"), (2180.0, 50.0, 0.4, "H")),
+                "baseline_per_mm": 0.003, "note": "N-H overtone 1510 nm, N-H combinations 2050 / 2180 nm"},
+    "CARBOHYDRATE": {"class": "component", "aliases": ("CELLULOSE", "STARCH"), "n_nir": 1.53,
+                     "bands": ((1490.0, 80.0, 0.4, "H"), (1590.0, 60.0, 0.2, "H"), (2100.0, 60.0, 0.8, "H"),
+                               (2270.0, 40.0, 0.4, "H"), (2330.0, 50.0, 0.5, "H")),
+                     "baseline_per_mm": 0.003, "note": "O-H first overtone 1490 nm, O-H + C-O combination 2100 nm"},
+    "LIGNIN": {"class": "component", "aliases": (), "n_nir": 1.6,
+               "bands": ((1420.0, 50.0, 0.2, "H"), (1680.0, 40.0, 0.3, "H"), (2270.0, 40.0, 0.4, "H"),
+                         (2330.0, 50.0, 0.4, "H")),
+               "baseline_per_mm": 0.02, "note": "aromatic C-H 1680 nm, phenolic O-H 1420 nm"},
+    # ---- 樹脂(リサイクルの選別、食品ラインの異物) ----
+    "POLYETHYLENE": {"class": "polymer", "aliases": ("PE", "HDPE", "LDPE"), "n_nir": 1.51,
+                     "bands": ((1215.0, 40.0, 0.15, "U"), (1395.0, 40.0, 0.10, "U"), (1731.0, 25.0, 0.8, "U"),
+                               (1765.0, 25.0, 0.65, "U"), (2310.0, 35.0, 1.6, "U"), (2350.0, 28.0, 1.3, "U"),
+                               (2387.0, 20.0, 0.6, "U")),
+                     "baseline_per_mm": 0.002, "scattering_per_mm": 8.0, "reference_um": 500.0,
+                     "note": "CH2 troughs of four USGS splib05a HDPE / LDPE samples (1215, 1395, 1731, 1765, 2310, 2350, 2387 nm)"},
+    "POLYPROPYLENE": {"class": "polymer", "aliases": ("PP",), "n_nir": 1.49,
+                      "bands": ((1195.0, 40.0, 0.12, "L"), (1395.0, 40.0, 0.10, "L"), (1709.0, 14.0, 0.6, "L"),
+                                (1727.0, 14.0, 0.75, "L"), (2310.0, 45.0, 1.5, "H")),
+                      "baseline_per_mm": 0.002, "scattering_per_mm": 8.0, "reference_um": 500.0,
+                      "note": "CH3 + CH2: 1190 / 1400 nm (Rani 2019), 1709 / 1727 nm (Vazquez-Guardado 2015, not re-verified)"},
+    "PET": {"class": "polymer", "aliases": ("POLYETHYLENE_TEREPHTHALATE",), "n_nir": 1.57,
+            "bands": ((1130.0, 40.0, 0.05, "U"), (1662.0, 20.0, 0.6, "U"), (1715.0, 25.0, 0.2, "U"),
+                      (1907.0, 30.0, 0.3, "U"), (2131.0, 40.0, 0.5, "U"), (2258.0, 35.0, 1.2, "U"),
+                      (2334.0, 35.0, 0.9, "U")),
+            "baseline_per_mm": 0.002, "scattering_per_mm": 8.0, "reference_um": 500.0,
+            "note": "USGS splib05a PET troughs; the deepest are 2258 and 2334 nm (GDS379/380/383)"},
+    "POLYSTYRENE": {"class": "polymer", "aliases": ("PS",), "n_nir": 1.57,
+                    "bands": ((1145.0, 30.0, 0.06, "L"), (1682.0, 20.0, 0.6, "L"), (2170.0, 35.0, 0.8, "E"),
+                              (2310.0, 40.0, 0.8, "E")),
+                    "baseline_per_mm": 0.002, "scattering_per_mm": 8.0, "reference_um": 500.0,
+                    "note": "aromatic C-H 1682 nm measured trough (Vazquez-Guardado 2015); n record: Sultanova 2009"},
+    # ---- 食品と、食品ラインに混じる植物の破片 ----
+    "NUT_KERNEL": {"class": "food", "aliases": ("ALMOND_KERNEL", "KERNEL"), "n_nir": 1.5,
+                   "components": (("LIPID", 0.50), ("PROTEIN", 0.21), ("CARBOHYDRATE", 0.22)), "water": 0.045,
+                   "baseline_per_mm": 0.003, "scattering_per_mm": 1.5, "reference_um": 1000.0,
+                   "note": "almond-like composition (USDA order of magnitude): lipid 50 %, protein 21 %, "
+                           "carbohydrate 22 %, water 4.5 %"},
+    "NUT_SHELL": {"class": "food", "aliases": ("SHELL", "HULL"), "n_nir": 1.55,
+                  "components": (("CARBOHYDRATE", 0.60), ("LIGNIN", 0.30)), "water": 0.08,
+                  "baseline_per_mm": 0.01, "scattering_per_mm": 6.0, "reference_um": 500.0,
+                  "note": "lignocellulose: cellulose + hemicellulose 60 %, lignin 30 %, water 8 % (estimate)"},
+    "WOOD": {"class": "food", "aliases": ("WOOD_CHIP",), "n_nir": 1.55,
+             "components": (("CARBOHYDRATE", 0.70), ("LIGNIN", 0.25)), "water": 0.12,
+             "baseline_per_mm": 0.008, "scattering_per_mm": 4.0, "reference_um": 500.0,
+             "note": "cellulose + hemicellulose 70 %, lignin 25 %, water 12 % (estimate)"},
+}
+_NIR_ALIASES = {a: k for k, v in NIR_BAND_MODELS.items() for a in v["aliases"]}
+
+#: カーボンブラックの質量吸収断面積 [m²/g] at 550 nm と、その波長依存の指数(Bond & Bergstrom,
+#: Aerosol Sci. Technol. 40, 27 (2006): MAC 7.5 ± 1.2 m²/g、吸収 Ångström 指数 ≈ 1)。
+CARBON_BLACK_MAC_550 = 7.5
+CARBON_BLACK_AAE = 1.0
+
+
+def _nir_key(material, op):
+    if not isinstance(material, str):
+        raise ValueError("%s: material must be a name, got %r" % (op, type(material).__name__))
+    key = _key(material)
+    if key in NIR_BAND_MODELS:
+        return key
+    if key in _NIR_ALIASES:
+        return _NIR_ALIASES[key]
+    if key == "WATER" or _ALIASES.get(key) == "WATER":
+        return "WATER"
+    raise ValueError("%s: no near-infrared absorption model for %r (models: %s, and WATER from the n,k table)"
+                     % (op, material, ", ".join(sorted(NIR_BAND_MODELS))))
+
+
+def _band_sum(bands, wl):
+    a = np.zeros_like(wl)
+    for b in bands:
+        c, fwhm, peak = float(b[0]), float(b[1]), float(b[2])
+        if not (c > 0.0 and fwhm > 0.0 and peak >= 0.0 and all(map(np.isfinite, (c, fwhm, peak)))):
+            raise ValueError("material_nir_absorption: a band needs centre > 0, FWHM > 0, peak >= 0, got %r" % (b,))
+        sig = fwhm / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        a += peak * np.exp(-0.5 * ((wl - c) / sig) ** 2)
+    return a
+
+
+def _water_alpha_per_mm(wl, op):
+    n, k, _, k_src = _nk(_RECORDS["WATER"], wl / 1000.0, op)
+    if any(s is None for s in k_src):
+        raise ValueError("%s: the WATER table has no extinction coefficient over the requested range" % op)
+    return 4.0 * np.pi * k / (wl * 1e-6)                     # λ in mm → α in 1/mm
+
+
+def material_nir_absorption(material="POLYETHYLENE", wl_min_nm: float = 900.0, wl_max_nm: float = 2500.0,
+                            n_points: int = 321, water_fraction=None, bands=None):
+    """近赤外(0.9〜2.5 µm)の吸収係数 α(λ) [1/mm] (自然対数の底)を、吸収帯の重ね合わせで。
+
+    *material* は :data:`NIR_BAND_MODELS` の名前か別名(``PE`` / ``PP`` / ``PET`` / ``PS`` /
+    ``NUT_KERNEL`` / ``NUT_SHELL`` / ``WOOD`` / 成分 ``LIPID`` …)、または ``WATER``(この時だけ帯の
+    モデルでなく表の k(Hale & Querry 1973)から α = 4πk/λ)。成分を持つ食品・木材は
+    α = Σ fᵢ αᵢ + w α_水 + 基線。*water_fraction* を与えると表の水分率 w を上書きする(湿り・含水率の
+    掃引)。*bands* に ``((中心 nm, 半値全幅 nm, α /mm), ...)`` を与えると帯の表を丸ごと差し替える
+    (実測で合わせた帯を持ち込む口)。
+
+    ★帯の幅と強さは**推定**(:data:`NIR_BAND_MODELS` の注)。中心は一次文献の実測(L 印)か
+    教科書の帰属(H 印)。区間外の外挿はしない(水の表の範囲外は ValueError)。
+
+    返り値: pairs(λ nm, α 1/mm)。光源・QE と同じ形なので :func:`spectralrad.kubelka_munk_reflectance`
+    にそのまま渡せる。
+    """
+    op = "material_nir_absorption"
+    wl = _grid_nm(wl_min_nm, wl_max_nm, n_points, op)
+    key = _nir_key(material, op)
+    if key == "WATER":
+        if bands is not None or water_fraction is not None:
+            raise ValueError("%s: WATER comes from the n,k table; bands / water_fraction do not apply" % op)
+        return _pairs(wl, _water_alpha_per_mm(wl, op))
+    m = NIR_BAND_MODELS[key]
+    if bands is not None:
+        alpha = _band_sum(bands, wl)
+    elif "components" in m:
+        alpha = np.zeros_like(wl)
+        for comp, frac in m["components"]:
+            alpha += float(frac) * _band_sum(NIR_BAND_MODELS[comp]["bands"], wl)
+    else:
+        alpha = _band_sum(m["bands"], wl)
+    alpha = alpha + float(m.get("baseline_per_mm", 0.0))
+    w = m.get("water", 0.0) if water_fraction is None else water_fraction
+    w = float(w)
+    if not (np.isfinite(w) and 0.0 <= w <= 1.0):
+        raise ValueError("%s: water_fraction must lie in [0, 1], got %r" % (op, water_fraction))
+    if w > 0.0:
+        alpha = (1.0 - w) * alpha + w * _water_alpha_per_mm(wl, op)
+    return _pairs(wl, alpha)
+
+
+def carbon_black_absorption(fraction_by_mass: float = 0.005, wl_min_nm: float = 900.0,
+                            wl_max_nm: float = 2500.0, n_points: int = 321, density_g_cm3: float = 1.0):
+    """カーボンブラック(黒い樹脂の顔料)が足す吸収係数 α [1/mm]。
+
+    α = MAC(λ)·ρ·w、MAC(λ) = 7.5 m²/g × (550/λ)^1(Bond & Bergstrom 2006 の黒色炭素の質量吸収断面積と
+    吸収 Ångström 指数)。0.5 wt % の樹脂(ρ ≈ 1 g/cm³)で 1.6 µm に約 13 /mm —— どの樹脂の C-H の帯
+    (1〜5 /mm)より強く、しかも平坦なので、帯の形が見えなくなる(黒い樹脂が NIR で選別できない理由)。
+
+    返り値: pairs(λ nm, α 1/mm)。
+    """
+    op = "carbon_black_absorption"
+    wl = _grid_nm(wl_min_nm, wl_max_nm, n_points, op)
+    w, rho = float(fraction_by_mass), float(density_g_cm3)
+    if not (np.isfinite(w) and 0.0 <= w <= 1.0):
+        raise ValueError("%s: fraction_by_mass must lie in [0, 1], got %r" % (op, fraction_by_mass))
+    if not (np.isfinite(rho) and rho > 0.0):
+        raise ValueError("%s: density_g_cm3 must be finite and > 0, got %r" % (op, density_g_cm3))
+    mac_m2_g = CARBON_BLACK_MAC_550 * (550.0 / wl) ** CARBON_BLACK_AAE
+    alpha_per_m = mac_m2_g * (rho * 1e6) * w                     # g/cm³ → g/m³
+    return _pairs(wl, alpha_per_m * 1e-3)
+
+
+def nir_model_info(material="POLYETHYLENE") -> dict:
+    """:data:`NIR_BAND_MODELS` の 1 材料を、出典の印つきで表にして返す(帯・成分・水・散乱・屈折率)。
+
+    返り値: dict(name, class, bands [(中心, 幅, α, 印)] — 成分を持つ材料は成分ごとに分率を掛けた帯,
+    components, water, scattering_per_mm, reference_um, n_nir, note)。
+    """
+    op = "nir_model_info"
+    key = _nir_key(material, op)
+    if key == "WATER":
+        return {"name": "WATER", "class": "liquid", "bands": [], "components": (), "water": 1.0,
+                "note": "alpha = 4 pi k / lambda from Hale & Querry 1973 (the n,k table)"}
+    m = NIR_BAND_MODELS[key]
+    if "components" in m:
+        bands = [(c, f, a * frac, g) for comp, frac in m["components"] for (c, f, a, g) in NIR_BAND_MODELS[comp]["bands"]]
+    else:
+        bands = list(m["bands"])
+    return {"name": key, "class": m["class"], "bands": bands, "components": tuple(m.get("components", ())),
+            "water": float(m.get("water", 0.0)), "scattering_per_mm": m.get("scattering_per_mm"),
+            "reference_um": m.get("reference_um"), "n_nir": m["n_nir"], "note": m.get("note", "")}

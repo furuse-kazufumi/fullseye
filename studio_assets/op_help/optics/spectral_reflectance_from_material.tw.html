@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spectral_reflectance_from_material — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_reflectance_from_material(material=&#x27;NUT_KERNEL&#x27;, particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spectralrad; spectralrad.spectral_reflectance_from_material(material=&#x27;NUT_KERNEL&#x27;, particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spectral_reflectance_from_material&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由材料表的近紅外吸收帶產生顆粒(碎片)的漫反射光譜(被觀察對象一側)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p style="margin:2px 0 2px 12px">1. α(λ) = <code style="color:#22d3bf">materials.material_nir_absorption</code>(帯の重ね合わせ、水は表の Hale &amp; Querry) + カーボンブラック(<code style="color:#22d3bf">materials.carbon_black_absorption</code>、*carbon_black_fraction* 質量分率)。</p>
+<p style="margin:2px 0 2px 12px">2. S = S_ref · (d_ref / *particle_um*)(散乱は粒径に反比例、S_ref と d_ref は材料の表の値)。</p>
+<p style="margin:2px 0 2px 12px">3. 層の拡散反射 R_KM = <code style="color:#22d3bf">kubelka_munk_reflectance</code>(既定は厚さ 10 mm の粒が *background_reflectance* の上に載る —— 薄い破片ほどベルトが透ける。None なら無限厚で、背景は効かない)。</p>
+<p style="margin:2px 0 2px 12px">4. 界面: Saunderson (1942) の補正 R = r_s + (1 − r_s)(1 − r_i) R_KM / (1 − r_i R_KM)、r_s = ((n − 1)/(n + 1))²(表の n_nir の垂直入射 Fresnel)、r_i = *internal_reflectance* (中から見た拡散光の内部反射、0.4〜0.6 が典型)。鏡面の光沢は<b>波長に平坦</b>なので、黒い樹脂でも 4〜5 % の平らな反射が残り、帯の形が消える。</p>
+<p>返り値: pairs(λ nm, R)。粒が粗い・厚いほど暗く帯が深く、細かいほど明るく浅い(Kubelka–Munk の S 依存)。</p>
+<p>出典: Kubelka (1948)、J. L. Saunderson, J. Opt. Soc. Am. 32, 727 (1942)、帯の表は <code style="color:#22d3bf">materials.NIR_BAND_MODELS</code> の注。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_hyperspectral_foreign_matter">poc_hyperspectral_foreign_matter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_hyperspectral_foreign_matter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">spectral</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:blackbody_spectrum">blackbody_spectrum</a> · <a style="color:#22d3bf" href="opoptics:cie_illuminant_a">cie_illuminant_a</a> · <a style="color:#22d3bf" href="opoptics:led_spectrum">led_spectrum</a> · <a style="color:#22d3bf" href="opoptics:bandpass_spectrum">bandpass_spectrum</a> · <a style="color:#22d3bf" href="opoptics:silicon_photodiode_qe">silicon_photodiode_qe</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spectralrad.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

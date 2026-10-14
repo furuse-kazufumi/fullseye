@@ -1,4 +1,4 @@
-# OPTICS operator help — 221 ops in 25 categories
+# OPTICS operator help — 229 ops in 25 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -74,9 +74,9 @@
 
 [clearcoat_shade](material/clearcoat_shade.md) · [material_catalog](material/material_catalog.md) · [oren_nayar](material/oren_nayar.md) · [sheen_shade](material/sheen_shade.md) · [subsurface_approx](material/subsurface_approx.md) · [wetness](material/wetness.md)
 
-### matprop (16)
+### matprop (19)
 
-[abbe_number](matprop/abbe_number.md) · [glass_map](matprop/glass_map.md) · [material_absorption](matprop/material_absorption.md) · [material_dispersion](matprop/material_dispersion.md) · [material_extinction](matprop/material_extinction.md) · [material_from_curves](matprop/material_from_curves.md) · [material_from_sellmeier](matprop/material_from_sellmeier.md) · [material_optical_constants](matprop/material_optical_constants.md) · [material_record](matprop/material_record.md) · [material_reflectance](matprop/material_reflectance.md) · [material_table](matprop/material_table.md) · [material_transmittance](matprop/material_transmittance.md) · [plate_focus_shift](matprop/plate_focus_shift.md) · [read_glass_catalog_agf](matprop/read_glass_catalog_agf.md) · [silicon_free_carrier_absorption](matprop/silicon_free_carrier_absorption.md) · [thermo_optic_coefficient](matprop/thermo_optic_coefficient.md)
+[abbe_number](matprop/abbe_number.md) · [carbon_black_absorption](matprop/carbon_black_absorption.md) · [glass_map](matprop/glass_map.md) · [material_absorption](matprop/material_absorption.md) · [material_dispersion](matprop/material_dispersion.md) · [material_extinction](matprop/material_extinction.md) · [material_from_curves](matprop/material_from_curves.md) · [material_from_sellmeier](matprop/material_from_sellmeier.md) · [material_nir_absorption](matprop/material_nir_absorption.md) · [material_optical_constants](matprop/material_optical_constants.md) · [material_record](matprop/material_record.md) · [material_reflectance](matprop/material_reflectance.md) · [material_table](matprop/material_table.md) · [material_transmittance](matprop/material_transmittance.md) · [nir_model_info](matprop/nir_model_info.md) · [plate_focus_shift](matprop/plate_focus_shift.md) · [read_glass_catalog_agf](matprop/read_glass_catalog_agf.md) · [silicon_free_carrier_absorption](matprop/silicon_free_carrier_absorption.md) · [thermo_optic_coefficient](matprop/thermo_optic_coefficient.md)
 
 ### mirror (2)
 
@@ -106,9 +106,9 @@
 
 [aolp_to_azimuth](shape_from_polarization/aolp_to_azimuth.md) · [dolp_to_zenith](shape_from_polarization/dolp_to_zenith.md) · [sfp_disambiguate](shape_from_polarization/sfp_disambiguate.md) · [sfp_dolp_model](shape_from_polarization/sfp_dolp_model.md) · [sfp_estimate_index](shape_from_polarization/sfp_estimate_index.md) · [sfp_height](shape_from_polarization/sfp_height.md) · [sfp_normals](shape_from_polarization/sfp_normals.md) · [sfp_render](shape_from_polarization/sfp_render.md)
 
-### spectral (9)
+### spectral (14)
 
-[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_stats](spectral/spectral_stats.md)
+[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
 
 ### surface (5)
 

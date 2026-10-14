@@ -28736,6 +28736,78 @@
    "ko": "상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (``table``).",
    "de": "AMCW-Laufzeittiefe eines konkaven Lambert-Querschnitts (einer Raumecke), bei der jede Interreflexion um ihre Weglänge verzögert ist: komplexe Radiosität, Tiefenabweichung je Pixel (``table``).",
    "hi": "अवतल Lambertian अनुप्रस्थ-काट (कमरे का कोना) की AMCW time-of-flight गहराई, जहाँ हर interreflection अपनी पथ-लंबाई से विलंबित है: complex radiosity, हर pixel का गहराई bias (``table``)।"
+  },
+  "optics/material_nir_absorption": {
+   "fp": "096ae485321e",
+   "en": "Near-infrared (0.9–2.5 µm) absorption coefficient α(λ) [1/mm] (natural log) as a sum of absorption bands.",
+   "zh": "近红外(0.9〜2.5 µm)的吸收系数 α(λ) [1/mm] (自然对数),由吸收带叠加而成。",
+   "tw": "近紅外(0.9〜2.5 µm)的吸收係數 α(λ) [1/mm] (自然對數),由吸收帶疊加而成。",
+   "ko": "근적외(0.9〜2.5 µm)의 흡수계수 α(λ) [1/mm] (자연로그)를 흡수대의 중첩으로.",
+   "de": "Absorptionskoeffizient α(λ) [1/mm] (natürlicher Logarithmus) im nahen Infrarot (0,9–2,5 µm) als Summe von Absorptionsbanden.",
+   "hi": "near-infrared (0.9–2.5 µm) का absorption coefficient α(λ) [1/mm] (natural log), absorption bands के जोड़ से।"
+  },
+  "optics/carbon_black_absorption": {
+   "fp": "24a066535b1a",
+   "en": "Absorption coefficient α [1/mm] added by carbon black (the pigment of black plastics).",
+   "zh": "炭黑(黑色塑料的颜料)增加的吸收系数 α [1/mm]。",
+   "tw": "碳黑(黑色塑膠的顏料)增加的吸收係數 α [1/mm]。",
+   "ko": "카본블랙(검은 수지의 안료)이 더하는 흡수계수 α [1/mm].",
+   "de": "Absorptionskoeffizient α [1/mm], den Ruß (das Pigment schwarzer Kunststoffe) beiträgt.",
+   "hi": "carbon black (काले plastic का pigment) द्वारा जोड़ा गया absorption coefficient α [1/mm]।"
+  },
+  "optics/nir_model_info": {
+   "fp": "0c4f73553fdb",
+   "en": "One material of NIR_BAND_MODELS as a table with source grades (bands, components, water, scattering, refractive index).",
+   "zh": "将 NIR_BAND_MODELS 中的一种材料连同出处标记以表格返回(吸收带、成分、水、散射、折射率)。",
+   "tw": "將 NIR_BAND_MODELS 中的一種材料連同出處標記以表格返回(吸收帶、成分、水、散射、折射率)。",
+   "ko": "NIR_BAND_MODELS의 한 재료를 출처 표시와 함께 표로 반환(흡수대, 성분, 물, 산란, 굴절률).",
+   "de": "Ein Material aus NIR_BAND_MODELS als Tabelle mit Quellenkennzeichnung (Banden, Komponenten, Wasser, Streuung, Brechzahl).",
+   "hi": "NIR_BAND_MODELS का एक material, स्रोत के निशान के साथ table के रूप में (bands, components, पानी, scattering, refractive index)।"
+  },
+  "optics/ingaas_photodiode_qe": {
+   "fp": "24327dea9a3a",
+   "en": "External quantum efficiency (electrons per photon) of an InGaAs photodiode from the direct-gap absorption edges of the absorber and the window.",
+   "zh": "由吸收层与窗口层的直接跃迁吸收边计算 InGaAs 光电二极管的外量子效率(电子/光子)。",
+   "tw": "由吸收層與窗口層的直接躍遷吸收邊計算 InGaAs 光電二極體的外部量子效率(電子/光子)。",
+   "ko": "흡수층과 창층의 직접 천이 흡수단으로부터 InGaAs 포토다이오드의 외부 양자효율(전자/광자).",
+   "de": "Externe Quanteneffizienz (Elektronen pro Photon) einer InGaAs-Photodiode aus den direkten Absorptionskanten von Absorber und Fenster.",
+   "hi": "absorber और window की direct-gap absorption edges से InGaAs photodiode की external quantum efficiency (electrons प्रति photon)।"
+  },
+  "optics/kubelka_munk_reflectance": {
+   "fp": "cd774f887cb0",
+   "en": "Diffuse reflectance of a scattering layer in the Kubelka–Munk closed form (from an absorption-coefficient curve).",
+   "zh": "用 Kubelka–Munk 闭式求散射层的漫反射率(由吸收系数曲线)。",
+   "tw": "用 Kubelka–Munk 閉式求散射層的漫反射率(由吸收係數曲線)。",
+   "ko": "산란층의 확산 반사율을 Kubelka–Munk 닫힌 형식으로(흡수계수 곡선에서).",
+   "de": "Diffuser Reflexionsgrad einer streuenden Schicht in geschlossener Kubelka–Munk-Form (aus einer Absorptionskoeffizienten-Kurve).",
+   "hi": "Kubelka–Munk के closed form में scattering layer की diffuse reflectance (absorption coefficient की curve से)।"
+  },
+  "optics/spectral_reflectance_from_material": {
+   "fp": "c29158bdf3fb",
+   "en": "Diffuse reflectance spectrum of a grain or fragment from the material table's near-infrared absorption bands (the observed-object side).",
+   "zh": "由材料表的近红外吸收带生成颗粒(碎片)的漫反射光谱(被观察对象一侧)。",
+   "tw": "由材料表的近紅外吸收帶產生顆粒(碎片)的漫反射光譜(被觀察對象一側)。",
+   "ko": "재료표의 근적외 흡수대로부터 입자(파편)의 확산 반사 스펙트럼을 만든다(관찰 대상 측).",
+   "de": "Diffuses Reflexionsspektrum eines Korns oder Bruchstücks aus den Nahinfrarot-Absorptionsbanden der Materialtabelle (Seite des Objekts).",
+   "hi": "material table की near-infrared absorption bands से कण (टुकड़े) का diffuse reflectance spectrum (देखी जाने वाली वस्तु की ओर)।"
+  },
+  "optics/hyperspectral_band_weights": {
+   "fp": "d255e9791277",
+   "en": "Linear map W (B × L) from reflectance to electrons per band; electrons = W @ R(λ) (before noise).",
+   "zh": "从反射率到各波段电子数的线性映射 W(B × L)。电子数 = W @ R(λ)(加噪声前)。",
+   "tw": "從反射率到各波段電子數的線性映射 W(B × L)。電子數 = W @ R(λ)(加雜訊前)。",
+   "ko": "반사율 → 대역별 전자 수의 선형 사상 W(B × L). 전자 수 = W @ R(λ)(잡음 전).",
+   "de": "Lineare Abbildung W (B × L) vom Reflexionsgrad auf Elektronen pro Band; Elektronen = W @ R(λ) (vor dem Rauschen).",
+   "hi": "reflectance से हर band के electrons तक linear map W (B × L); electrons = W @ R(λ) (noise से पहले)।"
+  },
+  "optics/hyperspectral_capture": {
+   "fp": "dfe4bd6edc92",
+   "en": "Electrons and noise per band when one reflectance spectrum is imaged through a halogen lamp × optics × bands × InGaAs.",
+   "zh": "一条反射光谱经卤素灯 × 光学系统 × 波段 × InGaAs 成像时各波段的电子数与噪声。",
+   "tw": "一條反射光譜經鹵素燈 × 光學系統 × 波段 × InGaAs 成像時各波段的電子數與雜訊。",
+   "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
+   "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
+   "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
   }
  }
 }

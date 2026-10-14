@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -76,6 +76,7 @@ median 0.50 0.50
 - [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
 - [poc_geodetic_height_frames](../../../../examples/poc_geodetic_height_frames.py) — `py -3.11 examples/poc_geodetic_height_frames.py`
+- [poc_hyperspectral_foreign_matter](../../../../examples/poc_hyperspectral_foreign_matter.py) — `py -3.11 examples/poc_hyperspectral_foreign_matter.py`
 - [poc_lidar_terrain_change](../../../../examples/poc_lidar_terrain_change.py) — `py -3.11 examples/poc_lidar_terrain_change.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`

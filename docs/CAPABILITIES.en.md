@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 48 capabilities**
+**Currently 49 capabilities**
 
 ## Measure (16)
 
@@ -217,7 +217,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (7)
+## Light and colour (8)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -242,6 +242,14 @@ Sixteen ops in the new `matprop` category of `opsoptics`, backed by one record p
 Operators: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
 
 Runnable: `poc_material_optical_library`
+
+### [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md)
+
+Eight ops build the NIR sorting chain with the object and the optics reading the same material table: absorption bands for polymers, lipids, proteins, carbohydrates and lignin (and nut kernels, shells and wood as mixtures; water from the table's n,k), carbon black, the Kubelka–Munk reflectance of a scattering layer, reflectance from a material name with grain-size scattering and the Saunderson surface correction, an InGaAs QE from the direct-gap absorption edges, and the linear map from reflectance to electrons per band through a halogen lamp, the lens glass, the band filters and the QE. Gates: the Kubelka–Munk limits and inverse, measured polymer trough positions within 5 nm, water absorption within 10 % of Kou 1993, linearity and the EMVA variance of the captured cube, and the Fisher ratio's two-class closed form.
+
+Operators: `material_nir_absorption`, `carbon_black_absorption`, `nir_model_info`, `ingaas_photodiode_qe`, `kubelka_munk_reflectance`, `spectral_reflectance_from_material`, `hyperspectral_band_weights`, `hyperspectral_capture`
+
+Runnable: `poc_hyperspectral_foreign_matter`
 
 ### [Compute reflection, refraction and interference](capabilities/optics-and-materials.md)
 
