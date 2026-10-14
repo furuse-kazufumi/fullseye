@@ -21,9 +21,12 @@ Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1).
 
 The pupil function ``P = mask · exp(i·2π·W)`` comes from
 :func:`raytrace.opd_samples` (*W* in waves on a ``size × size`` grid over the
-exit pupil; ``size=None`` picks a grid that keeps the phase below 0.4 waves
-per sample, up to :data:`MAX_PUPIL_SAMPLES`; an explicit *size* that aliases
-is refused). The PSF is ``|FFT(P)|²`` on a zero-padded grid whose sample
+exit pupil; ``size=None`` picks a grid of at least 128 that keeps the phase
+below 0.4 waves per sample **and** makes the PSF window at least twice the
+geometric spot, up to :data:`MAX_PUPIL_SAMPLES`; an explicit *size* that
+aliases is refused). *wavelength_um* re-evaluates the pupils and the
+f-number at that wavelength too (the sensor stays put), so it equals
+rebuilding the system at that wavelength with the same image plane. The PSF is ``|FFT(P)|²`` on a zero-padded grid whose sample
 spacing is ``λ·F#·(size−1)/M ≈ λ·F#/oversample`` with the working
 f-number ``F# = 1/(2·NA_image)`` from :func:`raytrace.paraxial_trace`.
 With *pixel_pitch_um* the fine PSF is **area-integrated** onto detector
