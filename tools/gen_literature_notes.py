@@ -123,7 +123,10 @@ DRIVE_THEMES: list[dict] = [
     {"keys": ("simulator", "simulators", "simulation", "simulations", "autoware", "carla", "virtual", "digital", "twin", "twins", "sim2real", "interaction", "automation"),
      "theme": "自前の世界(真値つきの描画とセンサー)",
      "ops": [("world_build", "コースから 3-D の世界"), ("world_camera", "色・ラベル・深度・面番号を一度に"), ("world_move", "物体を動かす"),
-             ("lidar_scan", "同じ世界の LiDAR"), ("env_render", "太陽・霧・雨・夜"), ("tile_stream", "終わらない地図"), ("gs_from_world", "世界 → 3DGS")]},
+             ("lidar_scan", "同じ世界の LiDAR"), ("env_render", "太陽・霧・雨・夜"), ("tile_stream", "終わらない地図"), ("gs_from_world", "世界 → 3DGS"),
+             ("carla_scene_world", "CARLA の場面を自前の世界に(同じ場面を両方で)"), ("carla_depth_decode", "CARLA の深度画像(RGB 符号)を m に"),
+             ("carla_transform_matrix", "CARLA の座標系(左手・度)↔ 自前の行列"), ("cr_read", "CommonRoad のシナリオ XML を読む"),
+             ("cr_drive", "CommonRoad のシナリオを運転して採点"), ("osm_road_graph", "OSM の道路網から地図")]},
     {"keys": ("weather", "adverse", "fog", "rain", "snow", "snowfall", "precipitation", "ice", "icing", "cloud", "clouds", "conditions", "wind", "drop", "realweather"),
      "theme": "天候と視程(閉形式で根拠づける)",
      "ops": [("koschmieder", "視程と消散係数(Koschmieder)"), ("beta_from_mor", "気象光学距離 → 消散係数"), ("fog_beta_from_profile", "画像の明るさの縦断から霧の濃さ"),
@@ -131,7 +134,8 @@ DRIVE_THEMES: list[dict] = [
     {"keys": ("lidar", "lidars", "laser", "intensity", "incidence", "angle", "point", "hsl", "railway"),
      "theme": "LiDAR(距離・強度・幾何)",
      "ops": [("lidar_spec", "走査の仕様"), ("lidar_scan", "世界を走査"), ("ray_plane_range", "平面までの距離(閉形式)"), ("ray_box_ranges", "箱までの距離(閉形式)"),
-             ("project_spherical", "球面投影")]},
+             ("project_spherical", "球面投影"), ("tof_multipath_phase", "凹みの多重反射で ToF の位相がずれる量(閉形式)"),
+             ("tof_transport_depth", "輸送行列で多重反射を入れた ToF の深度")]},
     {"keys": ("radar", "fmcw", "doppler", "propagation", "ray"),
      "theme": "レーダー・ドップラー・音の到来方向",
      "ops": [("fmcw_range_profile", "FMCW の距離"), ("range_doppler_map", "距離・速度の地図"), ("doppler_shift", "ドップラーの閉形式"),
@@ -139,7 +143,8 @@ DRIVE_THEMES: list[dict] = [
     {"keys": ("synthetic", "domain", "adaptation", "real", "realistic", "detection", "translation"),
      "theme": "sim-to-real の比較(同じ場面を対で測る)",
      "ops": [("psnr", "画素の差"), ("ssim", "構造の類似"), ("ms_ssim", "多段の構造類似"), ("ssim_map", "どこが違うかの地図"),
-             ("world_camera", "真値つきの対の描画")]},
+             ("fsim", "位相一致と勾配の知覚的類似(FSIM)"), ("gmsd", "勾配の類似の偏差(GMSD)"), ("vifp", "情報忠実度(VIFp)"),
+             ("tid2013_evaluate", "指標を人の評価(TID2013)と順位相関で採点"), ("world_camera", "真値つきの対の描画")]},
     {"keys": ("nerf", "radiance", "neural", "gaussian", "splatting", "reconstruction", "reconstruct", "view", "views", "synthesis", "rendering", "occlusions", "fields"),
      "theme": "ニューラル再構成と 3DGS",
      "ops": [("gs_from_world", "メッシュの世界 → ガウス"), ("gs_render", "ガウスの描画"), ("gs_update", "ガウスの更新"), ("gs_read_file", "3DGS の読み込み"),
@@ -155,6 +160,8 @@ DRIVE_THEMES: list[dict] = [
     {"keys": ("isp", "signal", "noise", "camera", "sensors", "imaging", "cis", "scmos", "microscopy", "fluorescence", "measurement", "image", "images"),
      "theme": "カメラの雑音と ISP(EMVA 1288)",
      "ops": [("aug_shot_noise", "光子の雑音"), ("aug_read_noise", "読み出し雑音"), ("emva_snr_curve", "EMVA 1288 の SNR 曲線"),
+             ("emva_photon_transfer", "光子伝達曲線(PTC)から利得と読み出し雑音"), ("emva_dark_current", "暗電流(露光時間の傾き)"),
+             ("emva_spatial_nonuniformity", "DSNU / PRNU(固定パターン雑音)"), ("emva_dynamic_range", "ダイナミックレンジ"),
              ("raw_demosaic_bilinear", "デモザイク"), ("tone_map", "階調"), ("estimate_noise", "雑音の推定"), ("noise_sigma", "雑音の標準偏差")]},
     {"keys": ("hdr", "exposure", "flicker", "p2020", "lighting"),
      "theme": "HDR と LED のちらつき",
@@ -162,7 +169,7 @@ DRIVE_THEMES: list[dict] = [
     {"keys": ("flare", "lens", "vignetting", "correction", "calibration", "optical", "oblique", "surfaces"),
      "theme": "レンズ(周辺減光・歪み・フレア・MTF)",
      "ops": [("aug_vignette", "cos⁴ の周辺減光"), ("vignette", "周辺減光"), ("distortion_map", "歪みの地図"), ("psf_to_mtf", "PSF → MTF"),
-             ("mtf50", "解像の指標"), ("veiling_glare_index", "ベールグレアの指数")]},
+             ("sfr_from_edge", "斜めエッジから SFR(ISO 12233)"), ("mtf50", "解像の指標"), ("veiling_glare_index", "ベールグレアの指数")]},
     {"keys": ("communication", "wireless", "vlc", "positioning", "v2x", "nlos", "ultraviolet"),
      "theme": "通信(V2X・可視光通信)", "ops": []},
     {"keys": ("language", "video", "diffusion", "videos", "action", "future", "avatar", "continual", "intelligence", "learning"),
@@ -212,7 +219,8 @@ THEME_OPS: list[dict] = [
      "theme": "外観欠陥の検出(成形・表面)",
      "ops": [("dc_local_contrast_norm", "照明むらを除いた局所コントラスト"), ("dc_rpca_sparse", "背景から外れる疎な欠陥"), ("defect_contrast", "照明条件での欠陥コントラスト"),
              ("illumination_design", "欠陥が出る照明の設計"), ("lighting_sweep", "照明を振って最良を探す"), ("auto_threshold", "二値化"),
-             ("blob_count", "欠陥の数"), ("circularity", "形の記述")]},
+             ("blob_count", "欠陥の数"), ("circularity", "形の記述"), ("sfp_normals", "黒光沢・透明部品の法線を偏光から"),
+             ("pod_hitmiss_fit", "欠陥の大きさごとの検出確率(POD)")]},
     {"keys": ("sheet", "bending", "springback", "forming", "drawing", "stamping", "friction", "rolling"), "theme": "板金・成形(曲げ角・ひずみ)",
      "ops": [("strain_from_displacement", "DIC の変位 → ひずみ"), ("piv_deform_pass", "変形を追う相関"), ("correlation_quality", "相関の信頼度"),
              ("speckle_quality", "スペックルの良さ"), ("angle_between_planes", "曲げ角"), ("ransac_plane", "フランジ面"),
@@ -225,6 +233,7 @@ THEME_OPS: list[dict] = [
     {"keys": ("weld", "welding", "welds", "bead", "penetration", "arc"), "theme": "溶接(ビード形状・溶け込み)",
      "ops": [("decode_fringe", "構造化光の縞を復号"), ("unwrap_phase_2d", "位相のアンラップ"), ("triangulate_column", "三角測量 → ビードの高さ"),
              ("fit_poly_surface", "母材面"), ("surface_form_error", "ビードの形状誤差"), ("specular_free_transform", "アークの映り込みを除く"),
+             ("predict_fringe_phase_error", "溝の相互反射で縞の位相が外れる量を事前に"), ("triangulation_speckle_limit", "レーザ光切断の高さの床(スペックル)"),
              ("vol_wall_thickness", "CT の溶け込み深さ"), ("beam_hardening_correct", "金属 CT のアーチファクト")]},
     {"keys": ("casting", "cast", "solidification", "forging", "extrusion", "porosity", "void", "voids", "sintering", "metallurgy"), "theme": "鋳造・塑性加工・焼結(内部欠陥の CT)",
      "ops": [("filtered_backprojection", "CT 再構成"), ("sart_reconstruct", "少数投影の再構成"), ("beam_hardening_correct", "カッピングの補正"),
@@ -235,10 +244,12 @@ THEME_OPS: list[dict] = [
      "ops": [("surface_filter", "粗さのフィルタ(うねりと分ける)"), ("surface_form_remove", "形状の除去"), ("profile_params", "Ra / Rz など"),
              ("surface_params", "Sa / Sq など"), ("surface_psd", "面のパワースペクトル"), ("stft", "びびりの時間周波数"),
              ("spectral_kurtosis", "衝撃性(工具欠損)"), ("order_spectrum", "回転次数のスペクトル"), ("angular_resample", "回転同期の再標本化"),
+             ("cut_force_fit", "切断力の模型(Atkins)を力の列に当てはめる"), ("cut_surface_roughness", "切り口の粗さ"),
              ("gcode_read", "CNC の G-code も同じ語彙で読む")]},
     {"keys": ("laser", "discharge", "edm", "beam", "ablation", "plasma"), "theme": "レーザ・放電加工(光学)",
      "ops": [("gaussian_beam", "ビームの伝搬"), ("airy_pattern", "集光スポット"), ("depth_of_field", "焦点深度"),
-             ("beer_lambert_transmittance", "透過率"), ("fresnel_dielectric", "反射率"), ("irradiance_map", "照度分布")]},
+             ("beer_lambert_transmittance", "透過率"), ("fresnel_dielectric", "反射率"), ("irradiance_map", "照度分布"),
+             ("material_optical_constants", "加工材の n, k(材料表)"), ("speckle_statistics", "レーザ照明のスペックルの統計")]},
     {"keys": ("solder", "soldering", "reflow", "pcb", "smt", "aoi", "circuit", "board", "boards", "electronic"), "theme": "PCB / SMT の検査",
      "ops": [("ncc_locate", "部品の位置決め"), ("shape_locate", "形状マッチング"), ("edges_sub_pix", "はんだフィレットの輪郭"),
              ("illumination_design", "多方向照明の設計"), ("defect_contrast", "欠陥コントラスト"), ("dc_rpca_sparse", "異物・欠け"),
@@ -247,13 +258,17 @@ THEME_OPS: list[dict] = [
      "theme": "半導体工程(ウェハ・薄膜)",
      "ops": [("csi_height_map", "白色干渉の高さ"), ("csi_envelope", "干渉包絡"), ("chromatic_confocal_height", "クロマティック共焦点"),
              ("surface_psd", "研磨面のスペクトル"), ("thin_film_reflectance", "薄膜の反射率"), ("dc_rpca_sparse", "パターン欠陥"),
-             ("ncc_locate", "ダイの位置"), ("mtf_diffraction", "光学系の解像限界"), ("wavefront_stats", "波面収差")]},
-    {"keys": ("spc", "statistical", "capability", "cpk", "quality", "chart", "charts"), "theme": "SPC(管理図・工程能力)",
+             ("ncc_locate", "ダイの位置"), ("mtf_diffraction", "光学系の解像限界"), ("wavefront_stats", "波面収差"),
+             ("preston_removal_map", "CMP・研磨の除去深さ(Preston の式)"), ("silicon_free_carrier_absorption", "ドープした Si の近赤外の吸収"),
+             ("pl_image_simulate", "ウェハの PL 像(キャリア拡散で欠陥がどう見えるか)"), ("sem_render", "SEM 像の縁効果(Dice は高いのに面積が太る)"),
+             ("sam_cscan", "接合のボイドを超音波(SAM)の位相で")]},
+    {"keys": ("spc", "statistical", "capability", "cpk", "quality", "chart", "charts", "variability", "taguchi"), "theme": "SPC(管理図・工程能力)",
      "ops": [("spc_xbar_r", "X̄-R 管理図"), ("spc_cusum", "小さなずれの累積検出"), ("spc_ewma", "指数平滑の管理図"),
              ("spc_capability", "Cp / Cpk"), ("spc_hotelling_t2", "多変量の管理"), ("null_distribution", "帰無分布"), ("evidence_quantile", "証拠量の位置")]},
     {"keys": ("twin", "predictive", "maintenance", "prognostic", "prognostics", "bearing", "bearings", "vibration", "vibrations", "condition", "health", "diagnosis", "fault diagnosis"),
      "theme": "予知保全(振動・軸受)",
      "ops": [("bearing_defect_frequencies", "軸受の欠陥周波数"), ("envelope_spectrum", "包絡スペクトル"), ("spectral_kurtosis", "衝撃の帯域"),
+             ("ae_band_power", "アコースティック・エミッションの帯域パワー"),
              ("cepstrum", "ケプストラム"), ("order_spectrum", "次数スペクトル"), ("stft", "時間周波数"), ("spc_ewma", "劣化の監視"),
              ("motion_magnify", "動画からの振動"), ("phase_displacement", "位相ベースの変位")]},
     {"keys": ("sensor", "sensors", "sensing", "imu", "lidar", "tof", "time-of-flight", "camera", "cameras", "encoder", "calibration", "fusion", "inertial", "navigation", "localization", "slam", "odometry"),
@@ -262,10 +277,16 @@ THEME_OPS: list[dict] = [
      "ops": [("calibration_views", "校正板の合成ビュー"), ("distortion_map", "歪みの地図"), ("pnp_ransac", "外部パラメータ"), ("bundle_adjust", "多視点の同時最適化"),
              ("project_spherical", "LiDAR の球面投影"), ("depth_to_points", "深度 → 点群"), ("normals_from_depth", "深度 → 法線"),
              ("dtof_depth", "dToF の距離"), ("fmcw_range_profile", "FMCW レーダの距離"), ("range_doppler_map", "距離・速度の地図"),
-             ("lf_depth_from_focus", "ライトフィールドの深度"), ("photon_uncertainty", "光子計数の誤差棒"), ("spad_deadtime_correct", "SPAD の不感時間補正")]},
+             ("lf_depth_from_focus", "ライトフィールドの深度"), ("photon_uncertainty", "光子計数の誤差棒"), ("spad_deadtime_correct", "SPAD の不感時間補正"),
+             ("emva_photon_transfer", "カメラの利得と雑音(EMVA 1288 の光子伝達)"), ("emva_quantum_efficiency", "量子効率"),
+             ("silicon_photodiode_qe", "Si フォトダイオードの分光感度"), ("spectral_integral", "光源 × 対象 × センサの波長積分")]},
     {"keys": ("tactile", "haptic", "haptics", "soft", "skin", "grasp", "grasping"), "theme": "触覚センサ(接触・圧力・ずれ)",
      "ops": [("tac_contact_mask", "接触域"), ("tac_pressure_proxy", "圧力の代理量"), ("tac_shear_field", "ずれ場"),
-             ("tac_surface_normal", "接触面の法線"), ("tac_height_from_shading", "陰影からの高さ")]},
+             ("tac_surface_normal", "接触面の法線"), ("tac_height_from_shading", "陰影からの高さ"),
+             ("hertz_force", "Hertz 接触の力と押し込み(閉形式)"), ("contact_radius_fit", "接触半径から押し込み力"),
+             ("mindlin_partial_slip", "部分すべり(Mindlin)の固着域"), ("marker_track", "膜のマーカーを追う"),
+             ("membrane_shear_field", "マーカーの変位 → ずれ場"), ("torque_decompose", "ねじりと傾きのトルクを分ける"),
+             ("gradient_lut_invert", "GelSight 型の色 → 法線の表引き"), ("large_deformation_inverse", "大変形の接触の逆問題")]},
     {"keys": ("motor", "motors", "actuator", "actuators", "actuation", "servo", "stepper", "brushless", "foc", "drive", "drives", "hydraulic", "pneumatic", "piezoelectric", "piezo", "electric", "control", "controller"),
      "theme": "アクチュエータ(制御は外、動きを画像で測る側)",
      "ops": [("displacement_series", "変位の時系列"), ("phase_displacement", "位相ベースの微小変位"), ("riesz_displacement_series", "Riesz 変換の変位"),
@@ -280,12 +301,18 @@ THEME_OPS: list[dict] = [
      "doc": "`docs/PERCEPTION_PHYSICAL_AI.md`",
      "ops": [("pnp_ransac", "カメラから物体の姿勢"), ("dlt_pose", "姿勢の直接解"), ("reprojection_error", "姿勢の検証"), ("optimize_pose_graph", "軌跡の整合"),
              ("relative_pose", "相対姿勢"), ("register_cpd_rigid", "剛体の位置合わせ"), ("icp_point2plane", "ICP"), ("estimate_flow", "3D の流れ"),
-             ("segment_rigid_motions", "動く部品の分離"), ("fit_rigid", "剛体運動の当てはめ")]},
+             ("segment_rigid_motions", "動く部品の分離"), ("fit_rigid", "剛体運動の当てはめ"),
+             ("peg_offset_from_rgbd", "peg-in-hole: 手首カメラの RGB-D からずれ"), ("hole_centre_from_rgbd", "穴の中心"),
+             ("jamming_diagram", "かじり(jamming)の図(Whitney)"), ("insertion_failure_classify", "挿入の失敗の分類"),
+             ("spiral_search_points", "穴探しのらせん探索"), ("slip_predict", "不整地の車輪の滑りの予測")]},
     {"keys": ("material", "materials", "coating", "coatings", "treatment", "microstructure", "composite", "composites", "polymer", "polymers", "alloy", "alloys", "ceramic", "ceramics", "steel", "corrosion"),
      "theme": "材料(見え方・組織・表面)",
      "ops": [("spectrum_to_srgb", "分光 → 色"), ("thin_film_reflectance", "薄膜の干渉色"), ("material_catalog", "材質の外観表"), ("oren_nayar", "粗い面の反射"),
              ("brdf_microfacet", "微小面の反射"), ("metallic_flake_normals", "メタリック塗装"), ("corrosion_mask", "腐食域"),
-             ("cooc_feature_matrix", "組織のテクスチャ"), ("gabor", "方向性のテクスチャ"), ("vol_granulometry", "CT の空隙分布"), ("entropy_image", "組織の乱れ")]},
+             ("cooc_feature_matrix", "組織のテクスチャ"), ("gabor", "方向性のテクスチャ"), ("vol_granulometry", "CT の空隙分布"), ("entropy_image", "組織の乱れ"),
+             ("material_table", "材料の光学物性表(83 種、光学系と観察対象が同じ表を引く)"), ("material_optical_constants", "波長ごとの n, k"),
+             ("material_transmittance", "厚さ d の透過率"), ("thermo_optic_coefficient", "温度で変わる屈折率"),
+             ("phase_fractions", "粉末 X 線回折から相の割合"), ("scherrer_size", "回折線の幅から結晶子の大きさ(Scherrer)")]},
     {"keys": ("event", "events", "time", "timing", "network", "networks", "wireless", "iot", "synchronization"), "theme": "時間・イベント(高速・非同期)",
      "ops": [("video_spacetime_cube", "時空間の立方体"), ("photon_sample", "光子到達の標本化"), ("tcspc_stats", "時間相関の統計"),
              ("temporal_bandpass", "時間帯域")]},
@@ -293,7 +320,26 @@ THEME_OPS: list[dict] = [
      "doc": "`docs/CONNECTIVITY.md`(産業プロトコルの対応表)", "ops": []},
     {"keys": ("fmea", "reliability", "failure", "failures", "risk", "safety", "hazard"), "theme": "信頼性・FMEA(判定の根拠)",
      "doc": "`docs/HARDENING.md`(PoC が上げた堅牢性)・検査ワークフロー層の Verdict",
-     "ops": [("null_distribution", "帰無分布(誤報率)"), ("evidence_quantile", "証拠量の位置"), ("spc_capability", "工程能力")]},
+     "ops": [("null_distribution", "帰無分布(誤報率)"), ("evidence_quantile", "証拠量の位置"), ("spc_capability", "工程能力"),
+             ("pod_ahat_fit", "検出確率(POD)の â–a 回帰と a90/95"), ("pod_decision_tradeoff", "見逃しと誤検出の取引")]},
+    # ★2026-10-15: 10 月に足した op の系列(研磨・粉体・粉末 X 線)は、既存のテーマの語に当たらず文献層から 1 本も
+    #   指されていなかった。語はクラスタ名に実際に出るものだけを置く(当たらない語は当てない)。
+    {"keys": ("polishing", "polish", "lapping", "abrasive", "wiping", "deburring", "grinding", "finishing"), "theme": "研磨・拭き取り(除去量の地図)",
+     "ops": [("preston_pressure_kernel", "工具の下の圧力分布"), ("preston_removal_map", "軌跡と力から除去深さの地図(Preston の式)"),
+             ("preston_track_profile", "1 本の軌跡の除去の断面"), ("preston_coefficient_fit", "測った除去から Preston 係数 k_p"),
+             ("removal_depth_from_heights", "前後の高さから除去深さ"), ("wipe_coverage", "拭けた面積の割合"),
+             ("coat_thickness_from_image", "残った膜の厚さを画像から(Beer–Lambert)"), ("surface_params", "仕上げ面の Sa / Sq")]},
+    {"keys": ("powder", "powders", "particle", "particles", "granular", "comminution", "flowability", "hopper", "bulk"),
+     "theme": "粉体(粒度・流動性・粉砕)",
+     "ops": [("particle_size_dx", "粒度分布の Dx(D10 / D50 / D90)"), ("particle_image_d50", "粒の画像から D50"),
+             ("comminution_law_fit", "粉砕のエネルギー則(Bond ほか)の当てはめ"), ("powder_flowability_class", "安息角から流動性の区分"),
+             ("repose_angle_heightmap", "高さ地図から安息角"), ("hopper_discharge_rate", "ホッパの排出流量(Beverloo)"),
+             ("blob_count", "粒の数"), ("vol_granulometry", "CT の粒・空隙の大きさ分布")]},
+    {"keys": ("diffraction", "xrd", "crystalline", "crystallite", "crystallography", "metallurgy", "microstructure", "alloy", "alloys", "residual"),
+     "theme": "回折と結晶(粉末 X 線回折)",
+     "ops": [("debye_ring_image", "検出器の Debye 環"), ("detector_calibrate", "検出器の幾何の較正"), ("azimuthal_integrate", "環を 2θ の 1-D に"),
+             ("diffraction_peaks", "回折ピーク"), ("phase_fractions", "相の割合"), ("scherrer_size", "結晶子の大きさ(Scherrer)"),
+             ("cif_read", "CIF の結晶構造を読む")]},
     {"keys": ("gear", "gears", "screw", "screws", "bolt", "bolts", "spring", "springs", "cam", "linkage", "linkages", "mechanism", "mechanisms", "compliant", "transmission", "reducer"),
      "theme": "機械要素(歯車・ねじ・機構)",
      "ops": [("polar_unwrap", "歯車の極座標展開(歯形)"), ("cylinder_unwrap", "円筒面の展開(ねじ山)"), ("m1_measure_pairs", "歯厚・ピッチ"),
@@ -302,12 +348,16 @@ THEME_OPS: list[dict] = [
     {"keys": ("scattering", "sar", "radar", "antenna", "antennas", "electromagnetic", "microwave", "acoustic", "acoustics", "ultrasonic", "ultrasound", "wave", "waves"),
      "theme": "波(レーダ・音・超音波)",
      "ops": [("fmcw_range_profile", "FMCW の距離"), ("beamform_delay_sum", "ビームフォーミング"), ("range_doppler_map", "距離・速度"),
-             ("angular_spectrum_propagate", "波の伝搬"), ("stft", "時間周波数"), ("gcc_delay", "到達時間差")]},
+             ("angular_spectrum_propagate", "波の伝搬"), ("stft", "時間周波数"), ("gcc_delay", "到達時間差"),
+             ("pulse_echo_ascan", "超音波のパルスエコー(A スキャン)"), ("acoustic_layer_stack", "積層の反射と透過(音響インピーダンス)"),
+             ("echo_phase_polarity", "エコーの位相の反転でボイドを見分ける"), ("matched_filter_snr", "既知の波形の整合フィルタ")]},
     {"keys": ("optical", "optics", "imaging", "lens", "lenses", "photonic", "photonics", "vision", "illumination", "lighting", "spectral", "spectroscopy"),
      "theme": "光学・照明・撮像系",
      "ops": [("lens_system", "レンズ系の定義"), ("paraxial_trace", "近軸追跡"), ("mtf_diffraction", "MTF"), ("depth_of_field", "焦点深度"),
              ("illumination_design", "照明設計"), ("illumination_uniformity", "照明の均一性"), ("render_through_lens", "設計レンズ越しの像"),
-             ("spectrum_to_srgb", "分光 → 色")]},
+             ("spectrum_to_srgb", "分光 → 色"), ("material_dispersion", "ガラスの分散(材料表)"), ("abbe_number", "アッベ数"),
+             ("fiber_lp_modes", "光ファイバの伝搬モード"), ("fiber_bundle_coupling", "ライトガイドの照明効率"),
+             ("separate_direct_global", "直接光と大域光を分ける(高周波照明)")]},
     {"keys": ("education", "students", "courses", "journal", "publishes", "review", "reviews", "abstract", "survey", "curriculum", "teaching", "learning"),
      "theme": "文献のメタ議論(教育・レビュー)", "ops": []},
 ]
@@ -357,6 +407,8 @@ class OpIndex:
                                           "out": n.get("out", ""), "rel": rel.split("docs/ops/", 1)[-1]})
         if not self.ops:
             raise SystemExit("no op notes listed (fail-closed)")
+        #: 出荷ノートの枚数。名前の数(``len(self.ops)``)とは違う —— 同じ名前が 2 つの族に在る op がある。
+        self.n_notes = len(flat)
         missing = sorted({op for table in THEME_TABLES.values() for th in table for op, _why in th["ops"]
                           if op not in self.ops})
         if missing:
@@ -487,6 +539,7 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
         out.append("- [%s](#%s)(%s 本)" % (t["name"], _slug(t["name"]), t["n"]))
     out.append("")
     n_leaf = n_paper = n_oplink = n_uncovered = 0
+    themes_hit: set[str] = set()
     for t in tops:
         tdir = os.path.join(cdir, t["dir"])
         md = _read(os.path.join(tdir, "SKILL.md"))
@@ -527,11 +580,18 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
                     out.append("- %s —— op なし(Fullseye の外)" % th["theme"])
                 continue
             any_ops = True
-            out.append("- %s: " % th["theme"] + "、".join(_fmt_op(idx, op, why) for op, why in items[:8]))
-            for op, _why in items[:8]:
+            # ★2026-10-15: ここはテーマごとに先頭 8 本で**黙って切っていた**。表の後ろに足した op(10 月の研磨・材料表・
+            #   ファイバ・触覚・peg-in-hole …)は対応表に在るのに文献層のどこにも出ず、表に書いたことが嘘になっていた
+            #   (2026-10-15 時点の表 251 op のうち 21 本。うち 3 本は SPC のテーマの鍵がどのクラスタ名にも当たらなかった分)。
+            #   テーマは多くても 17 本なので全部出し、当たらないテーマは INDEX に名指しする(dead_themes)。
+            themes_hit.add(th["theme"])
+            out.append("- %s: " % th["theme"] + "、".join(_fmt_op(idx, op, why) for op, why in items))
+            for op, _why in items:
                 seen.add(op)
                 reverse[op].append(t["name"])
                 n_oplink += 1
+        for th in themes:
+            themes_hit.add(th["theme"])
         if not any_ops:
             n_uncovered += 1
             out.append("- **op に落ちていない**(テーマの対応表に無い —— Fullseye の外か、未整備)")
@@ -553,9 +613,11 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
                 for op, why in th["ops"]:
                     if all(op != o for o, _w in lops):
                         lops.append((op, why))
+            rest = lops[6:]
             lops = lops[:6]
             if lops:
-                out.append("- 使う op: " + "、".join(_fmt_op(idx, op, why) for op, why in lops))
+                out.append("- 使う op: " + "、".join(_fmt_op(idx, op, why) for op, why in lops)
+                           + (("、ほか %d 個: " % len(rest)) + "、".join("`%s`" % op for op, _w in rest) if rest else ""))
                 for op, _why in lops:
                     tag = t["name"] + " › " + nv["name"]
                     if t["name"] not in reverse[op] and tag not in reverse[op]:
@@ -572,7 +634,8 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
         out.append("| [`%s`](../ops/%s) | %s |" % (op, idx.ops[op]["rel"], "; ".join(reverse[op][:6]) + (" …" if len(reverse[op]) > 6 else "")))
     out.append("")
     row = {"documents": stats.get("documents", 0), "clusters": stats.get("clusters", 0), "tops": len(tops), "leaves": n_leaf,
-           "papers": n_paper, "oplinks": n_oplink, "ops": len(reverse), "uncovered": n_uncovered, "built": built}
+           "papers": n_paper, "oplinks": n_oplink, "ops": len(reverse), "uncovered": n_uncovered, "built": built,
+           "themes_hit": sorted(themes_hit), "table": CORPORA[name].get("themes", "default")}
     return "\n".join(out) + "\n", row
 
 
@@ -748,7 +811,22 @@ def _title(repo: str, name: str) -> str:
     return load_manifest(repo, name)["title"]
 
 
-def build_index(rows: dict[str, dict], n_notes: int, titles: dict[str, str] | None = None) -> str:
+def dead_themes(rows: dict[str, dict]) -> list[tuple[str, str]] | None:
+    """どのコーパスのクラスタ名・葉の名前にも当たらなかったテーマ ``[(表, テーマ)]``。
+
+    当たらないテーマの op は、表に書いてあっても文献層のどこからも指されない。全部のコーパスを組んだ回でしか
+    数えられない(一部だけ組んだ回は ``None``)。
+    """
+    if not all(n in rows and "themes_hit" in rows[n] for n in CORPORA):
+        return None
+    hit: dict[str, set[str]] = defaultdict(set)
+    for n in CORPORA:
+        hit[rows[n]["table"]].update(rows[n]["themes_hit"])
+    return [(tname, th["theme"]) for tname, table in THEME_TABLES.items() for th in table if th["theme"] not in hit[tname]]
+
+
+def build_index(rows: dict[str, dict], n_notes: int, titles: dict[str, str] | None = None,
+                dead: list[tuple[str, str]] | None = None) -> str:
     out = ["# 文献層 —— RAD コーパスからの、op に繋がる来歴つき要約\n",
            "<!-- generated by tools/gen_literature_notes.py; do not edit by hand -->\n",
            "Fullseye の RAG(`docs/ops` の op ノート %s 本)は **op を有効に使うための土台**。この層は周辺分野の知識 —— 製造"
@@ -771,6 +849,10 @@ def build_index(rows: dict[str, dict], n_notes: int, titles: dict[str, str] | No
                "当たらないクラスタは「op に落ちていない」と数える(上の列)—— そこが Fullseye に無い領域か、表の未整備。"
                "テーマ表は分野ごとに分けてある(運転の「digital twin」が製造の予知保全に当たらないように)。"
                "語の一致(BM25)で op を引く案は、一般語で無関係の op が並んだので捨てた。\n")
+    if dead is not None:
+        out.append("**どのクラスタにも当たらなかったテーマ**(表に書いた op でも、ここに挙がるテーマのものは文献層から指されない。"
+                   "コーパスの語に合わせて鍵を直すか、分野のコーパスを足す): "
+                   + ("、".join("%s(%s)" % (th, tn) for tn, th in dead) if dead else "なし") + "\n")
     return "\n".join(out) + "\n"
 
 
@@ -822,7 +904,10 @@ def main(argv=None) -> int:
                               "oplinks": len(re.findall(r"\]\(\.\./ops/", md.split("## op → クラスタ")[0])), "ops": md.count("\n| [`"),
                               "uncovered": md.count("**op に落ちていない**"), "built": m.group(1) if m else ""}
     with open(os.path.join(out_dir, "INDEX.md"), "w", encoding="utf-8", newline="\n") as f:
-        f.write(build_index(existing, len(idx.ops), {n: _title(a.repo, n) for n in existing}))
+        f.write(build_index(existing, idx.n_notes, {n: _title(a.repo, n) for n in existing}, dead_themes(rows)))
+    _dead = dead_themes(rows)
+    if _dead:
+        print("literature: %d theme(s) matched no cluster: %s" % (len(_dead), "; ".join(th for _t, th in _dead)))
     print("literature INDEX: %d corpora (%s)" % (len(existing), _dt.date.today().isoformat()))
     return 0
 
