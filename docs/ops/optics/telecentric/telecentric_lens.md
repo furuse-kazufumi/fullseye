@@ -31,6 +31,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 −f²/δ)。レンズは *glass* の等凸単レンズで、縁の厚さが 1 mm 残る中心厚を選ぶ。像面は近軸の像の位置に固定する。
 
 返り値は ``lens_system`` の dict に ``"design"``(種別・焦点距離・絞りの半径・物体距離・面の役割)を足したもの。
+絞りの面は平面なので、その ``R`` は ``lens_system`` の規約どおり ``inf``(非有限は契約)。
 ``raytrace`` のどの op にもそのまま渡せる(ただし入射瞳が無限遠の処方は ``raytrace.chief_ray`` では
 狙えないので、主光線は :func:`chief_ray_angle` を使う)。
 

@@ -7574,7 +7574,9 @@ TYPE_CHECKS = {
 #: 3 件はすべてこの 1 つの inf、replay で確認)。
 NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_singlet",
                                       # ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-                                      "optimize_lens"}
+                                      "optimize_lens",
+                                      # ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+                                      "telecentric_lens"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

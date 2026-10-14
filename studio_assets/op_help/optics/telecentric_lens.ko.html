@@ -9,7 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind=&quot;object&quot;</code> —— 物体側テレセン。絞りを<b>後側焦点</b>に置く。入射瞳は無限遠、物体側の主光線は光軸に平行。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind=&quot;bi&quot;</code> —— 両側テレセン。後側焦点の絞りの後ろに、前側焦点が絞りに来る 2 枚目のレンズ(焦点距離 <code style="color:#22d3bf">|magnification| × focal_mm</code>)を置く。物体は 1 枚目の前側焦点、倍率は −f₂/f₁。</p>
 <p>*magnification* は横倍率(実像なので負)、*na_object* は物体側の開口数(絞りの半径を近軸の周辺光線から決める)、*front_aperture_mm* は前玉の半口径(テレセンの視野はこれで決まる)。*stop_shift_mm* は絞りを設計位置から光軸方向へずらす量(正 = 像側)で、テレセン度の崩れを再現する(Newton の式で入射瞳は前側焦点から −f²/δ)。レンズは *glass* の等凸単レンズで、縁の厚さが 1 mm 残る中心厚を選ぶ。像面は近軸の像の位置に固定する。</p>
-<p>返り値は <code style="color:#22d3bf">lens_system</code> の dict に <code style="color:#22d3bf">&quot;design&quot;</code>(種別・焦点距離・絞りの半径・物体距離・面の役割)を足したもの。<code style="color:#22d3bf">raytrace</code> のどの op にもそのまま渡せる(ただし入射瞳が無限遠の処方は <code style="color:#22d3bf">raytrace.chief_ray</code> では</p>
+<p>返り値は <code style="color:#22d3bf">lens_system</code> の dict に <code style="color:#22d3bf">&quot;design&quot;</code>(種別・焦点距離・絞りの半径・物体距離・面の役割)を足したもの。絞りの面は平面なので、その <code style="color:#22d3bf">R</code> は <code style="color:#22d3bf">lens_system</code> の規約どおり <code style="color:#22d3bf">inf</code>(非有限は契約)。<code style="color:#22d3bf">raytrace</code> のどの op にもそのまま渡せる(ただし入射瞳が無限遠の処方は <code style="color:#22d3bf">raytrace.chief_ray</code> では</p>
 <p>狙えないので、主光線は <code style="color:#22d3bf">chief_ray_angle</code> を使う)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
