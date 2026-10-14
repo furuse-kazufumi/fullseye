@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d × image2d
 out: image2d
-examples: [raw_to_display_isp]
+examples: [poc_tdi_linescan, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -28,6 +28,7 @@ Multiply a frame by a lens-shading gain map and clip to ``[0, 1]``.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_tdi_linescan](../../../../examples/poc_tdi_linescan.py) — `py -3.11 examples/poc_tdi_linescan.py`
 - [raw_to_display_isp](../../../../examples/raw_to_display_isp.py) — `py -3.11 examples/raw_to_display_isp.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

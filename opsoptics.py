@@ -101,8 +101,9 @@ import cavityoptics
 import materials
 import spectralrad
 import fiberoptics
+import linescan
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "linescan": linescan,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -467,6 +468,15 @@ _CATALOG = {
         ("fiber_lp_modes", "fiberoptics", [], "table"),
         ("fiber_mode_field_diameter", "fiberoptics", [], "table"),
         ("fiber_bundle_coupling", "fiberoptics", [], "table"),
+    ],
+    "linescan": [  # TDI ラインスキャンカメラとラインスキャン用レンズ(linescan、2026-10-15): 段数と SNR(EMVA 1288 の式 21 を段数倍)、
+        # 同期ずれ・ヨーの閉形式 MTF、反射率の地図を搬送して撮る撮像、像高ごとの照度(cos⁴ × 瞳 × 歪曲)と MTF(光線追跡)。
+        ("tdi_snr", "linescan", [], "table"),
+        ("tdi_sync_mtf", "linescan", [], "table"),
+        ("linescan_acquire", "linescan", ["image2d"], "table"),
+        ("lens_field_profile", "linescan", ["table"], "table"),
+        ("linescan_lens_columns", "linescan", ["table"], "table"),
+        ("linescan_lens_example", "linescan", [], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

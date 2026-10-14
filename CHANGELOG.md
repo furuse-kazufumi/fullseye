@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — TDI ラインスキャンとラインスキャン用レンズ(linescan 6 op + PoC)
+- `linescan`(`opsoptics` の新カテゴリ `linescan`、6 op): `tdi_snr`(EMVA 1288 の式 21 を段数倍、電荷加算 / デジタル加算)、`tdi_sync_mtf`(同期ずれ N·ε とヨー N·sin θ の |sinc|)、`linescan_acquire`(反射率の地図を搬送して撮る: 速度誤差・ヨー・蛇行・エンコーダ同期・列ごとのレンズ・EMVA 1288 の雑音・画素の開口)、`lens_field_profile`(有限距離の処方を光線追跡し、像高ごとの照度を cos⁴ × 瞳 × 歪曲に厳密に分解、サジタル / タンジェンシャルの MTF)、`linescan_lens_columns`、`linescan_lens_example`(同じ三枚玉を 57 mm の像円用 f 90 と 2/3 型用 f 35 に最適化した模型)。
+- PoC `poc_tdi_linescan`(19 門、図 10 枚): SNR が式 21 と 1.2 % 以内(デジタル加算は ×8.09 = √64、電荷加算は ×26.9)、欠陥の検出 1 段 0/3 → 64 段 3/3、同期ずれの MTF が |sinc(f N ε)| と 45 条件で 0.0035、エンコーダ同期で速度のうねりが消えヨーは消えない、C マウントの流用は像高 19.7 mm から光が届かず、シェーディング補正で照度は揃うが MTF と CNR は戻らない。
+- 能力ノート `docs/capabilities/tdi-linescan-and-lens.md`、op 要約 6 言語、手書き件数 +6。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。

@@ -297,6 +297,11 @@ def _lens(name="singlet"):
     return raytrace.example_system(name)
 
 
+def _ls():
+    import linescan
+    return linescan
+
+
 def _labels3d():
     lab = np.zeros((12, 12, 12), np.int64)
     lab[1:5, 1:5, 1:5] = 1
@@ -362,6 +367,14 @@ def _optics_builders():
         "optscene_instances": os_call(lambda OS, cam, sc, li, rng: ([sc, cam], {})),
         "render_studio": os_call(lambda OS, cam, sc, li, rng: ([sc, cam], {"samples": 2, "depth": 1})),
         "linescan_capture": os_call(lambda OS, cam, sc, li, rng: ([sc, cam, [li]], {"lines": 8})),
+        # TDI ラインスキャン(linescan): 動きのある条件で呼ぶ(完全同期だと標本数・蛇行の周期が効かない)
+        "linescan_acquire": lambda pool, rng: ([0.2 + 0.6 * rng.random((48, 40))],
+                                               {"stages": 4, "lines": 20, "sync_error": 0.02, "weave_px": 1.0,
+                                                "weave_period_lines": 30.0}),
+        "lens_field_profile": lambda pool, rng: ([_ls().linescan_lens_example("linescan")],
+                                                 {"image_heights_mm": [0.0, 14.0, 28.0], "grid": 32}),
+        "linescan_lens_columns": lambda pool, rng: (
+            [_ls().lens_field_profile(None, [0.0, 10.0, 20.0, 28.672], grid=32)], {"width": 512, "pixel_um": 100.0}),
         "inspection_dataset": os_call(lambda OS, cam, sc, li, rng: ([sc, cam, [li]], {"n": 2})),
         "dataset_throughput": os_call(lambda OS, cam, sc, li, rng: (
             [OS.inspection_dataset(sc, cam, [li], n=2)], {})),

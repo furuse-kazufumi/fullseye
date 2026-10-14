@@ -1,4 +1,4 @@
-# OPTICS operator help — 221 ops in 25 categories
+# OPTICS operator help — 227 ops in 26 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -69,6 +69,10 @@
 ### light_transport (11)
 
 [form_factors_2d](light_transport/form_factors_2d.md) · [fringe_multipath_phase_error](light_transport/fringe_multipath_phase_error.md) · [groove_profile](light_transport/groove_profile.md) · [high_frequency_patterns](light_transport/high_frequency_patterns.md) · [micro_phase_decode](light_transport/micro_phase_decode.md) · [predict_fringe_phase_error](light_transport/predict_fringe_phase_error.md) · [render_transport](light_transport/render_transport.md) · [separate_direct_global](light_transport/separate_direct_global.md) · [tof_multipath_phase](light_transport/tof_multipath_phase.md) · [tof_transport_depth](light_transport/tof_transport_depth.md) · [transport_matrix_radiosity](light_transport/transport_matrix_radiosity.md)
+
+### linescan (6)
+
+[lens_field_profile](linescan/lens_field_profile.md) · [linescan_acquire](linescan/linescan_acquire.md) · [linescan_lens_columns](linescan/linescan_lens_columns.md) · [linescan_lens_example](linescan/linescan_lens_example.md) · [tdi_snr](linescan/tdi_snr.md) · [tdi_sync_mtf](linescan/tdi_sync_mtf.md)
 
 ### material (6)
 

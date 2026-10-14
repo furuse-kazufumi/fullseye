@@ -1,8 +1,8 @@
 {
- "n_ops": 3186,
+ "n_ops": 3192,
  "tiers": {
   "color": 12,
-  "ledger": 2233,
+  "ledger": 2239,
   "nary": 17,
   "registry": 924
  },
@@ -13080,6 +13080,19 @@
    "in_sorts": []
   },
   {
+   "name": "lens_field_profile",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_shading_correct",
    "halcon": "",
    "in_sort": "image2d",
@@ -13522,6 +13535,19 @@
    ]
   },
   {
+   "name": "linescan_acquire",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "linescan_capture",
    "halcon": "",
    "in_sort": "table",
@@ -13535,6 +13561,30 @@
     "table",
     "table"
    ]
+  },
+  {
+   "name": "linescan_lens_columns",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "linescan_lens_example",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "link_edges",
@@ -25924,6 +25974,28 @@
    "in_sorts": [
     "counts"
    ]
+  },
+  {
+   "name": "tdi_snr",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tdi_sync_mtf",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "tdoa_bearing",
