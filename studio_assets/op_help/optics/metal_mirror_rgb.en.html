@@ -1,11 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_mirror_rgb — OPTICS <code style="color:#22d3bf">mirror</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">vector</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;metal_mirror_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61, source=&#x27;table&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61, source=&#x27;table&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;metal_mirror_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>colour</b> of a metal mirror (linear sRGB). n,k → spectral reflectance → CIE colour-matching functions → sRGB.</p>
 <p>metal: one of <code style="color:#22d3bf">METALS</code>. cos_i: cos of the angle of incidence (scalar or array).</p>
 <p>samples: number of points sampling 380–780 nm.</p>
+<p>source: where n,k come from (as in <code style="color:#22d3bf">metal_optical_constants</code>; default the coarse table). With source=&quot;materials&quot;, metal is one of <code style="color:#22d3bf">MEASURED_METALS</code>.</p>
 <p>Returns: linear sRGB with the shape of cos_i + a trailing 3. <b>No colour is painted on</b>, so gold being yellow and silver being neutral both come out of the n,k of the table (tests fix the order R&gt;G&gt;B and the neutrality of silver).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
@@ -24,6 +25,7 @@
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:glass_and_mirror_optics">glass_and_mirror_optics</a> — <code style="color:#22d3bf">py -3.11 examples/glass_and_mirror_optics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">vector</code> as input)</h3>
 <p>—</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">mirror</code>)</h3>

@@ -115,7 +115,8 @@ def _safe_unit(v):
 # --------------------------------------------------------------------------- #
 def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
                    finish: str = "random", glass: str = "N-BK7",
-                   sigma_per_mm: float = 0.0, roughness_um: float = 0.05) -> dict:
+                   sigma_per_mm: float = 0.0, roughness_um: float = 0.05,
+                   metal_source: str = "table") -> dict:
     """材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。
 
     3 種しか無いのは**混ぜると黙って間違う**からで、増やすなら型を分ける
@@ -128,8 +129,12 @@ def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
         exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、
         鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。
         **波長が式に入る**ので、同じ面でも光源の波長で見え方が変わる。
+        ``metal_source`` は n,k の出どころ: "table"(既定、5 点の粗い表)か "materials"
+        (共通の材料表の実測の数表。``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti /
+        W / Rh もここで選べる)。レンズの硝材と同じ表を観察対象も引く。
     dielectric: ``glass``(``raytrace.glass_catalog()``)の Sellmeier 分散で屈折し、
-        ``sigma_per_mm`` の Beer–Lambert で吸収する。
+        ``sigma_per_mm`` の Beer–Lambert で吸収する。硝材名は共通の材料表の透過材
+        (他社の硝材・結晶・樹脂・水)まで引ける。
 
     返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。
     """
@@ -146,15 +151,19 @@ def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
             raise ValueError("albedo must lie in [0, 1] (energy conservation)")
         m["albedo"] = a
     elif kind == "conductor":
-        if metal not in _gm.METALS:
-            raise ValueError(f"metal must be one of {tuple(_gm.METALS)}, got {metal!r}")
+        if metal_source not in ("table", "materials"):
+            raise ValueError(f"metal_source must be 'table' or 'materials', got {metal_source!r}")
+        known = _gm.METALS if metal_source == "table" else _gm.MEASURED_METALS
+        if metal not in known:
+            raise ValueError(f"metal must be one of {tuple(known)} (metal_source={metal_source!r}), "
+                             f"got {metal!r}")
         if finish not in _mf.FINISHES:
             raise ValueError(f"finish must be one of {tuple(_mf.FINISHES)}, got {finish!r}")
         rq = float(roughness_um)
         if not np.isfinite(rq) or rq < 0.0:
             raise ValueError(f"roughness_um must be finite and >= 0, got {roughness_um!r}")
         cat = _mf.finish_catalog()[finish]
-        m.update(metal=metal, finish=finish, roughness_um=rq,
+        m.update(metal=metal, metal_source=metal_source, finish=finish, roughness_um=rq,
                  alpha_x=float(cat["alpha_x"]), alpha_y=float(cat["alpha_y"]))
     else:
         sig = float(sigma_per_mm)
@@ -1252,7 +1261,7 @@ def _specular_fixtures(scene, p, n, v, mat, lights, shadows, samples=24):
         acc += lit
     acc /= len(gx)
     cos_v = np.clip((n * v).sum(-1), 0.0, 1.0)
-    return acc[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v)
+    return acc[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
 
 
 def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
@@ -1302,7 +1311,7 @@ def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
                 lobe = _ward(nm, ldir, vm, t, b, ax, ay)
                 cos_v = np.clip((nm * vm).sum(-1), 0.0, 1.0)
                 diffuse = 1.0 - _specular_fraction(mat, cos_v, wavelength_nm, extra_rq)
-                col += (E * lobe * diffuse)[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v)
+                col += (E * lobe * diffuse)[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
             else:
                 cos_i = np.clip((nm * vm).sum(-1), 0.0, 1.0)
                 R = np.asarray(_gm.fresnel_dielectric(cos_i, 1.0, float(mat["n_rgb"][1])), float)
@@ -1994,7 +2003,7 @@ def _studio_metal(scene, p, n, d, mat, depth, samples, env):
                 else _studio(scene, p + 1e-4 * n, rd, depth - 1, max(int(samples) // 4, 1), env))
     acc /= ns
     cos_v = np.clip(-(d * n).sum(-1), 0.0, 1.0)
-    return acc * _gm.metal_mirror_rgb(mat["metal"], cos_v)
+    return acc * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
 
 
 def _studio_glass(scene, obj, p, n, d, mat, depth, samples, env):

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_material — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;table&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;table&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재질을 하나 만듭니다. <code style="color:#22d3bf">kind</code> 는 lambert / conductor / dielectric 세 가지.</p>
 <p>3종밖에 없는 것은 <b>섞으면 조용히 틀리기</b> 때문이며, 늘린다면 형을 나눈다(확산인가·금속인가·투명인가로 광선의 행선지가 근본적으로 바뀐다).</p>
@@ -12,8 +12,10 @@
 <p>exp(-(4πσcosθ/λ)²)로 정해지므로(Davies 1954 / Bennett-Porteus 1961),</p>
 <p>경면(0.01 = 연마)인가 확산 쪽(1.0 = 새틴 마감)인가는 이 1개로 정해진다.</p>
 <p><b>파장이 식에 들어가므로</b>, 같은 면이라도 광원의 파장에 따라 보이는 모습이 바뀐다.</p>
+<p><code style="color:#22d3bf">metal_source</code>는 n,k의 출처: &quot;table&quot;(기본값, 5점의 거친 표) 또는 &quot;materials&quot;(공통 재료표의 실측 수표. <code style="color:#22d3bf">glassmirror.MEASURED_METALS</code>의 10종 —— Ni / Pt / Ti / W / Rh도 여기서 고를 수 있다). 관찰 대상도 렌즈의 유리와 같은 표를 참조한다.</p>
 <p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)의 Sellmeier 분산으로 굴절하고,</p>
 <p><code style="color:#22d3bf">sigma_per_mm</code>의 Beer–Lambert로 흡수한다.</p>
+<p>유리 이름은 공통 재료표의 투과재(타사 유리・결정・수지・물)까지 참조할 수 있다.</p>
 <p>반환값: 위의 내용을 검증한 뒤 저장한 dict(다른 scene_* op에 그대로 넘긴다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
@@ -37,6 +39,7 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:studio_raytrace_scene">studio_raytrace_scene</a> — <code style="color:#22d3bf">py -3.11 examples/studio_raytrace_scene.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:virtual_machine_vision">virtual_machine_vision</a> — <code style="color:#22d3bf">py -3.11 examples/virtual_machine_vision.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>

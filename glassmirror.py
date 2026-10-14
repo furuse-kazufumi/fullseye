@@ -58,6 +58,27 @@ _METAL_NK = {
 
 METALS = tuple(sorted(_METAL_NK))
 
+#: ``source="materials"`` で引ける金属(共通の材料表 ``materials`` の metal 部類、小文字)。
+#: こちらは一次文献の数表そのもの(Ag/Au/Cu/Cr/Ni/Ti = Johnson & Christy 1972/1974、
+#: Al = Rakić 1995、Rh = Weaver ほか、W/Pt = Werner ほか 2009)を線形補間する。
+#: 粗い表(``_METAL_NK``)と同じ名前の 5 種は、どちらの経路でも引ける —— 違いは
+#: PoC ``poc_material_optical_library`` の第 6 章が数える。
+MEASURED_METALS = ("ag", "al", "au", "cr", "cu", "ni", "pt", "rh", "ti", "w")
+_SOURCES = ("table", "materials")
+
+
+def _measured_nk(metal, w_nm, op):
+    """materials の実測表から (n, k)。表の範囲外は ValueError(外挿しない)。"""
+    import materials as _mat
+    rec = _mat._record(str(metal), op)
+    if rec["class"] != "metal":
+        raise ValueError(f"{op}: {metal!r} is a {rec['class']} in the material table, not a metal; "
+                         f"metals: {MEASURED_METALS}")
+    flat = np.asarray(w_nm, dtype=np.float64).reshape(-1)
+    n, k = _mat._nk(rec, flat / 1000.0, op)[:2]
+    shape = np.shape(w_nm)
+    return n.reshape(shape), k.reshape(shape)
+
 
 def _arr(v, name: str, op: str) -> np.ndarray:
     a = np.asarray(v, dtype=np.float64)
@@ -192,16 +213,25 @@ def critical_angle_deg(n1=1.5, n2=1.0) -> float:
 # --------------------------------------------------------------------------- #
 # 2. 金属鏡の色                                                                 #
 # --------------------------------------------------------------------------- #
-def metal_optical_constants(metal="ag", wavelength_nm=550.0):
+def metal_optical_constants(metal="ag", wavelength_nm=550.0, source="table"):
     """金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。
 
     metal: "ag" / "au" / "al" / "cu" / "cr"(`METALS`)。
     wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。
+    source: "table"(既定、5 点の粗い表)/ "materials"(共通の材料表 ``materials`` の実測の数表。
+        金属は `MEASURED_METALS` の 10 種、表の範囲外は ValueError)。
 
     返り値: (n, k) の 2 要素タプル(入力と同形の配列)。
     出典は表の定義(`_METAL_NK`)を参照 — 5 点の粗い表であることを隠さない。
     """
     op = "metal_optical_constants"
+    if source not in _SOURCES:
+        raise ValueError(f"{op}: source must be one of {_SOURCES}, got {source!r}")
+    if source == "materials":
+        w = _arr(wavelength_nm, "wavelength_nm", op)
+        if np.any(w <= 0):
+            raise ValueError(f"{op}: wavelength_nm must be positive")
+        return _measured_nk(metal, w, op)
     key = str(metal).lower()
     if key not in _METAL_NK:
         raise ValueError(f"{op}: unknown metal {metal!r}; known: {METALS}")
@@ -214,11 +244,13 @@ def metal_optical_constants(metal="ag", wavelength_nm=550.0):
     return n, k
 
 
-def metal_mirror_rgb(metal="ag", cos_i=1.0, samples=61) -> np.ndarray:
+def metal_mirror_rgb(metal="ag", cos_i=1.0, samples=61, source="table") -> np.ndarray:
     """金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
 
-    metal: `METALS` のいずれか。cos_i: 入射角の cos(スカラまたは配列)。
+    metal: `METALS` のいずれか(source="materials" なら `MEASURED_METALS`)。
+    cos_i: 入射角の cos(スカラまたは配列)。
     samples: 380–780 nm を刻む点数。
+    source: n,k の出どころ(`metal_optical_constants` と同じ。既定は粗い表)。
 
     返り値: cos_i の形 + 末尾 3 の線形 sRGB。**色を塗っていない**ので、金が黄色いのも
     銀が中性なのも表の n,k から出る(テストで R>G>B の順序と銀の中性を固定)。
@@ -226,7 +258,7 @@ def metal_mirror_rgb(metal="ag", cos_i=1.0, samples=61) -> np.ndarray:
     op = "metal_mirror_rgb"
     ci = _cos(cos_i, op)
     grid = np.linspace(380.0, 780.0, int(samples))
-    n, k = metal_optical_constants(metal, grid)
+    n, k = metal_optical_constants(metal, grid, source=source)
     R = fresnel_conductor(ci[..., None], n, k)
     return matappear.spectrum_to_srgb(grid, R)
 

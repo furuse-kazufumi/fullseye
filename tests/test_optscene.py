@@ -728,3 +728,16 @@ def test_sensor_catalog_without_a_filter_returns_every_sensor():
     assert len(makers) >= 3
     assert sum(len(OS.sensor_catalog(maker=m)) for m in makers) == len(allc)
     assert set(OS.sensor_catalog(maker="Sony")) == {n for n in allc if n.startswith("IMX")}
+
+
+def test_scene_material_conductor_can_use_the_measured_metal_table():
+    """2026-10-14: 観察対象の金属もレンズの硝材と同じ共通の材料表(materials)から引ける。"""
+    m = OS.scene_material("conductor", metal="ni", metal_source="materials")
+    assert m["metal"] == "ni" and m["metal_source"] == "materials"
+    assert OS.scene_material("conductor", metal="al")["metal_source"] == "table"   # default unchanged
+    with pytest.raises(ValueError, match="metal_source"):
+        OS.scene_material("conductor", metal="al", metal_source="palik")
+    with pytest.raises(ValueError, match="metal must be one of"):
+        OS.scene_material("conductor", metal="ni")                                 # not in the coarse table
+    d = OS.scene_material("dielectric", glass="S-LAH58")                          # another maker's glass
+    assert float(d["n_rgb"][2]) > float(d["n_rgb"][0]) > 1.85

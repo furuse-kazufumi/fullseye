@@ -136,5 +136,47 @@
    669,
    3
   ]
+ },
+ {
+  "file": "14_lens_axial_colour.png",
+  "name": "lens_axial_colour",
+  "caption": "R = ±50 mm・厚さ 4 mm の両凸レンズ。硝材名を変えるだけで、他社の硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は N-BK7 の 1.2 倍、S-LAH58 は 1.6 倍、ポリカーボネートと H-ZF52A は 2.3〜2.7 倍。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "15_metal_table_vs_measured.png",
+  "name": "metal_table_vs_measured",
+  "caption": "既定は従来どおり粗い表(既存の図と値を変えない)。source=\"materials\" で一次文献の数表になる。差が大きいのは銅の 565 nm の肩(0.13)と銀の 400 nm(0.10)。",
+  "shape": [
+   360,
+   707,
+   3
+  ]
+ },
+ {
+  "file": "16_mirror_colours_two_tables.png",
+  "name": "mirror_colours_two_tables",
+  "caption": "同じ等色関数で、n,k の出どころだけを変えた。Ni・Pt・Ti・W・Rh は実測の表で初めて選べる。W と Pt が灰色なのは REELS 逆算の表を外したから(初版は Pt が 0.93 で銀に近かった)。",
+  "shape": [
+   300,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "17_metal_dataset_choice.png",
+  "name": "metal_dataset_choice",
+  "caption": "同じ金属でも一次文献で反射率が 0.3 違う。表を 1 本に決めるなら、別の測定と突き合わせる門が要る。",
+  "shape": [
+   128,
+   629,
+   3
+  ],
+  "csv": "17_metal_dataset_choice.csv",
+  "tsv": "17_metal_dataset_choice.tsv"
  }
 ]

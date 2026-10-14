@@ -4,7 +4,7 @@ dim: optics
 category: mirror
 in: 
 out: vector
-examples: [glass_and_mirror_optics]
+examples: [glass_and_mirror_optics, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,14 +13,16 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # metal_mirror_rgb — OPTICS `mirror` op
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='table') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='table') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
 
 ## 使い方
 
 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
 
-metal: `METALS` のいずれか。cos_i: 入射角の cos(スカラまたは配列)。
+metal: `METALS` のいずれか(source="materials" なら `MEASURED_METALS`)。
+cos_i: 入射角の cos(スカラまたは配列)。
 samples: 380–780 nm を刻む点数。
+source: n,k の出どころ(`metal_optical_constants` と同じ。既定は粗い表)。
 
 返り値: cos_i の形 + 末尾 3 の線形 sRGB。**色を塗っていない**ので、金が黄色いのも
 銀が中性なのも表の n,k から出る(テストで R>G>B の順序と銀の中性を固定)。
@@ -50,6 +52,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [glass_and_mirror_optics](../../../../examples/glass_and_mirror_optics.py) — `py -3.11 examples/glass_and_mirror_optics.py`
+- [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 
 ## 型が繋がる次の op(`vector` を入力に取れる)
 

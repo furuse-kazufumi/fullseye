@@ -175,3 +175,34 @@ def test_prism_rejects_bad_apex():
         # ★ 波長を第 1 引数にした理由(台帳の「先頭がデータ」規約)。配列を頂角へ
         #   渡すと以前は素の TypeError が出ていた。
         G.prism_min_deviation_deg(550.0, np.array([60.0, 30.0]))
+
+
+# --------------------------------------------------------------------------- #
+# 2026-10-14 金属の n,k を共通の材料表(materials)の実測の数表からも引く
+# --------------------------------------------------------------------------- #
+def test_default_metal_source_is_still_the_coarse_table():
+    n, k = G.metal_optical_constants("ag", 500.0)
+    assert float(n) == pytest.approx(0.130) and float(k) == pytest.approx(2.920)
+    assert np.array_equal(G.metal_mirror_rgb("au"), G.metal_mirror_rgb("au", source="table"))
+
+
+def test_measured_metals_come_from_the_material_table():
+    import materials as M
+    assert len(G.MEASURED_METALS) == 10
+    assert set(G.METALS) <= set(G.MEASURED_METALS)
+    w = np.array([450.0, 550.0, 650.0])
+    for m in G.MEASURED_METALS:
+        n, k = G.metal_optical_constants(m, w, source="materials")
+        n2, k2 = M._nk(M._record(m, "test"), w / 1000.0, "test")[:2]
+        assert np.array_equal(n, n2) and np.array_equal(k, k2), m
+    rgb = G.metal_mirror_rgb("ni", source="materials")
+    assert rgb.shape == (3,) and 0.4 < float(rgb.min()) < float(rgb.max()) < 0.8
+
+
+def test_measured_metal_source_is_fail_closed():
+    with pytest.raises(ValueError, match="source must be"):
+        G.metal_optical_constants("ag", 500.0, source="palik")
+    with pytest.raises(ValueError, match="not a metal"):
+        G.metal_optical_constants("N-BK7", 500.0, source="materials")
+    with pytest.raises(ValueError, match="not extrapolated"):
+        G.metal_optical_constants("ag", 2500.0, source="materials")  # Johnson & Christy ends at 1.937 um

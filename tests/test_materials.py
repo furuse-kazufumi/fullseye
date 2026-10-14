@@ -323,3 +323,22 @@ def test_ledger_registration():
         assert opsoptics.get(n) is getattr(M, n)
     import fullseye as fs
     assert fs.ledger.material_optical_constants("SI", 1000.0)["k"] == pytest.approx(5.093e-4, rel=1e-3)
+
+
+#: 550 nm の垂直反射率の、**別の一次文献**の値(refractiveindex.info database の別ページを
+#: 2026-10-14 に読んだもの)。材料表に選んだ表がこの幅から外れたら、選定を疑う。
+#: 初版は W / Pt に Werner 2009 の REELS 逆算を選んでいて 0.84 / 0.93 —— この門で落ちる。
+INDEPENDENT_R550 = {
+    "W": (0.496, 0.537),    # Rakić 1998 LD / Werner 2009 DFT
+    "PT": (0.641, 0.734),   # Rakić 1998 LD / Werner 2009 DFT(選んだ表 = Tselin 2024)
+    "AG": (0.96, 0.99),
+    "AL": (0.90, 0.93),
+}
+
+
+def test_metal_reflectance_agrees_with_an_independent_dataset():
+    assert len(INDEPENDENT_R550) == 4
+    for name, (lo, hi) in INDEPENDENT_R550.items():
+        c = M.material_optical_constants(name, 550.0)
+        r = c["reflectance_normal"]
+        assert lo - 0.03 <= r <= hi + 0.03, (name, r, lo, hi)

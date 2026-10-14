@@ -16,6 +16,12 @@
 半導体・金属・液体・プラスチック・膜は「検査光学で実際に使う材料」。1 材料に複数の
 データ区間(例 Si: Green 2008 の n,k 0.25–1.45 µm と Salzberg の Sellmeier 1.36–11 µm)を
 持てる。生成物は Python の literal だけ(実行時に YAML も I/O も要らない)。
+
+**金属は測定値(または測定値に合わせた模型)から選ぶ**(2026-10-14): 初版は W と Pt に
+Werner 2009 の REELS(電子エネルギー損失)逆算の表を選んでいて、可視の垂直反射率が
+Pt 0.93 / W 0.84(550 nm)と、別の測定(Pt 0.64〜0.73 / W 0.50)から大きく外れていた。
+いまは W = Weaver(測定)、Pt = Tselin 2024(分光エリプソメトリ、Phys. Rev. B 110, 195130)。
+``tests/test_materials.py`` が 550 nm の反射率を別の測定の表の値と突き合わせる。
 """
 from __future__ import annotations
 
@@ -86,9 +92,9 @@ SELECTION += [
     ("CR", "metal", [("main/Cr/nk/Johnson.yml", "")], ["CHROMIUM"]),
     ("NI", "metal", [("main/Ni/nk/Johnson.yml", "")], ["NICKEL"]),
     ("RH", "metal", [("main/Rh/nk/Weaver.yml", "")], ["RHODIUM"]),
-    ("W", "metal", [("main/W/nk/Werner.yml", "")], ["TUNGSTEN"]),
+    ("W", "metal", [("main/W/nk/Weaver.yml", "")], ["TUNGSTEN"]),
     ("TI", "metal", [("main/Ti/nk/Johnson.yml", "")], ["TITANIUM"]),
-    ("PT", "metal", [("main/Pt/nk/Werner.yml", "")], ["PLATINUM"]),
+    ("PT", "metal", [("main/Pt/nk/Tselin.yml", "")], ["PLATINUM"]),
     # 液体
     ("WATER", "liquid", [("main/H2O/nk/Daimon-20.0C.yml", "20 C, visible"), ("main/H2O/nk/Hale.yml", "25 C, 0.2-200 um")], ["H2O"]),
     # プラスチック

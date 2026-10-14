@@ -153,14 +153,63 @@ _GLASS_ALIASES = {"BK7": "N-BK7", "FUSED_SILICA": "SILICA", "SIO2": "SILICA", "F
                   "AL2O3": "SAPPHIRE", "SF11": "N-SF11", "SF2": "N-SF2", "F2": "N-F2", "SK16": "N-SK16"}
 
 
+#: materials の表のうち、レンズの媒質として引ける部類(金属・半導体・膜は引かない ——
+#: 可視で吸収が強く、実数の屈折率で光線を曲げると嘘になる)。
+_MATERIAL_CLASSES = ("glass", "crystal", "polymer", "liquid")
+
+
+def _material_names():
+    """materials の透過材の名前(手元の 20 種と重なるものを除く)。"""
+    import materials as _mat
+    return sorted(k for k in _mat.MATERIALS
+                  if _mat._record(k, "glass_catalog")["class"] in _MATERIAL_CLASSES and k not in _SELLMEIER)
+
+
+def _material_key(name):
+    """*name* が materials の透過材なら正規名、そうでなければ None。"""
+    import materials as _mat
+    try:
+        rec = _mat._record(name, "glass_catalog")
+    except ValueError:
+        return None
+    if rec["class"] not in _MATERIAL_CLASSES:
+        raise ValueError("%r is a %s in the material table, not a lens medium (classes: %s)"
+                         % (name, rec["class"], ", ".join(_MATERIAL_CLASSES)))
+    return rec["name"]
+
+
 def _catalog_key(name):
     if not isinstance(name, str):
         raise ValueError("a glass name must be a string, got %r" % type(name).__name__)
     key = "_".join(name.strip().upper().split())
     key = _GLASS_ALIASES.get(key, key)
     if key not in _SELLMEIER:
-        raise ValueError("unknown glass %r (catalogue: %s)" % (name, ", ".join(sorted(_SELLMEIER))))
+        mk = _material_key(name)
+        if mk is not None and mk in _SELLMEIER:
+            return mk
+        if mk is not None:
+            return "material:" + mk
+        raise ValueError("unknown glass %r (catalogue: %s, plus the transparent materials of "
+                         "materials.material_table())" % (name, ", ".join(sorted(_SELLMEIER))))
     return key
+
+
+def _material_medium(key):
+    """materials のレコードを、raytrace の媒質 dict にする(``{"name", "material", "nd", "vd",
+    "offset", "range_um"}``)。nd / vd は表から**評価した値**で、F/d/C 線が表の範囲外なら None。"""
+    import materials as _mat
+    rec = _mat._record(key, "glass_catalog")
+    ivs = _mat._intervals([d for d in rec["datasets"] if d["type"] in ("formula", "nk", "n")])
+    g = {"name": rec["name"], "material": rec["name"], "offset": 0.0,
+         "range_um": (float(min(a for a, _ in ivs)), float(max(b for _, b in ivs))),
+         "nd": None, "vd": None}
+    try:
+        n = _mat._nk(rec, [WL_F, WL_D, WL_C], "glass_catalog")[0]
+    except ValueError:
+        return g
+    g["nd"] = float(n[1])
+    g["vd"] = float((n[1] - 1.0) / (n[0] - n[2])) if n[0] > n[2] else None
+    return g
 
 
 def sellmeier(B1, B2, B3, C1, C2, C3, name="custom"):
@@ -195,10 +244,22 @@ def glass_catalog(name=None):
     ``"fused_silica"``, ``"fluorite"``). Any surface's ``n`` may simply be the
     name — ``lens_system`` resolves it. The returned dict is the
     :func:`sellmeier` form with the evaluated ``nd`` / ``vd``.
+
+    Every other transparent material of the shared material table
+    (``materials.material_table()``: the other glasses of four makers, crystals
+    such as ``"ZNSE"`` / ``"YAG"``, the plastics ``"PMMA"`` / ``"POLYCARBONATE"``
+    and ``"WATER"``) resolves too, as ``{"name", "material", "nd", "vd",
+    "offset", "range_um"}``: the index then comes from that table, inside the
+    table's own wavelength range (outside it is a ValueError, never an
+    extrapolation). The listing (*name* None) gives both, the 20 above first.
+    Metals, semiconductors and films are refused — a real index would bend rays
+    through an absorber.
     """
     if name is None:
-        return sorted(_SELLMEIER)
+        return sorted(_SELLMEIER) + _material_names()
     key = _catalog_key(name)
+    if key.startswith("material:"):
+        return _material_medium(key[len("material:"):])
     g = sellmeier(*_SELLMEIER[key], name=key)
     return g
 
@@ -207,12 +268,21 @@ def refractive_index(medium, wavelength_um=WL_D):
     """Index of *medium* at *wavelength_um*.
 
     *medium* is a number (dispersion-free), a ``(nd, vd)`` pair, a dict from
-    :func:`glass` or :func:`sellmeier`, or a catalogue name (:func:`glass_catalog`).
+    :func:`glass` or :func:`sellmeier`, or a catalogue name (:func:`glass_catalog`,
+    which also reaches every transparent material of ``materials``).
     Air (1.0) and vacuum are returned unchanged.
     """
     wl = _finite(wavelength_um, "wavelength_um", positive=True)
     if isinstance(medium, str):
         medium = glass_catalog(medium)
+    if isinstance(medium, dict) and "material" in medium:
+        import materials as _mat
+        rec = _mat._record(medium["material"], "refractive_index")
+        off = _finite(medium.get("offset", 0.0), "index offset")
+        n = float(_mat._nk(rec, wl, "refractive_index")[0][0]) + off
+        if not (math.isfinite(n) and n >= 1.0):
+            raise ValueError("%s index %.4g at %.4g um is below 1 or non-finite" % (rec["name"], n, wl))
+        return n
     if isinstance(medium, dict) and "sellmeier" in medium:
         if not (_SELLMEIER_RANGE[0] <= wl <= _SELLMEIER_RANGE[1]):
             raise ValueError("wavelength %.4g um is outside the Sellmeier fit range %s" % (wl, _SELLMEIER_RANGE))
@@ -244,7 +314,7 @@ def refractive_index(medium, wavelength_um=WL_D):
 
 def _dispersion(medium):
     """``n_F - n_C`` of *medium* (0 for a dispersion-free index)."""
-    if isinstance(medium, str) or (isinstance(medium, dict) and "sellmeier" in medium):
+    if isinstance(medium, str) or (isinstance(medium, dict) and ("sellmeier" in medium or "material" in medium)):
         return refractive_index(medium, WL_F) - refractive_index(medium, WL_C)
     if isinstance(medium, dict) and "A" in medium:
         return float(medium["B"] * (1.0 / WL_F ** 2 - 1.0 / WL_C ** 2))
@@ -257,7 +327,7 @@ def _index_offset(medium, delta):
     """*medium* with its index shifted by *delta* at every wavelength (tolerancing)."""
     if isinstance(medium, str):
         medium = glass_catalog(medium)
-    if isinstance(medium, dict) and "sellmeier" in medium:
+    if isinstance(medium, dict) and ("sellmeier" in medium or "material" in medium):
         q = dict(medium); q["offset"] = float(medium.get("offset", 0.0)) + delta
         return q
     if isinstance(medium, dict) and "A" in medium:

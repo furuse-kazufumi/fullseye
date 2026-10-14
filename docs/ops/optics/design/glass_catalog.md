@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_optimize_demo]
+examples: [lens_optimize_demo, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -27,6 +27,16 @@ Names: Schott ``"N-BK7"``, ``"N-K5"``, ``"N-BAK4"``, ``"N-SK16"``, ``"N-SSK5"``,
 ``"fused_silica"``, ``"fluorite"``). Any surface's ``n`` may simply be the
 name — ``lens_system`` resolves it. The returned dict is the
 :func:`sellmeier` form with the evaluated ``nd`` / ``vd``.
+
+Every other transparent material of the shared material table
+(``materials.material_table()``: the other glasses of four makers, crystals
+such as ``"ZNSE"`` / ``"YAG"``, the plastics ``"PMMA"`` / ``"POLYCARBONATE"``
+and ``"WATER"``) resolves too, as ``{"name", "material", "nd", "vd",
+"offset", "range_um"}``: the index then comes from that table, inside the
+table's own wavelength range (outside it is a ValueError, never an
+extrapolation). The listing (*name* None) gives both, the 20 above first.
+Metals, semiconductors and films are refused — a real index would bend rays
+through an absorber.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -53,6 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
+- [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -1,12 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_optical_constants — OPTICS <code style="color:#22d3bf">mirror</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>metal का complex refractive index (n, k) wavelength से निकालता है (visible range, linear interpolation)।</p>
 <p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; (<code style="color:#22d3bf">METALS</code>)।</p>
 <p>wavelength_nm: scalar या array [nm]। table के बाहर, सिरे के मानों पर clamp (कोई extrapolation नहीं)।</p>
+<p>source: &quot;table&quot; (डिफ़ॉल्ट, मोटी 5-point table) / &quot;materials&quot; (साझा material table <code style="color:#22d3bf">materials</code> की मापी गई tables; <code style="color:#22d3bf">MEASURED_METALS</code> के 10 धातु, table की सीमा के बाहर ValueError)।</p>
 <p>Returns: 2-element tuple (n, k) (इनपुट जैसे shape के arrays)। स्रोतों के लिए table की परिभाषा (<code style="color:#22d3bf">_METAL_NK</code>) देखें — यह नहीं छिपाता कि यह एक मोटी 5-point table है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
@@ -25,6 +26,7 @@
 <p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:glass_and_mirror_optics">glass_and_mirror_optics</a> — <code style="color:#22d3bf">py -3.11 examples/glass_and_mirror_optics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">mirror</code>)</h3>

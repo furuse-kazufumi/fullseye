@@ -52,7 +52,10 @@ def test_catalog_glass_reproduces_the_data_sheet_nd_and_vd(name):
 
 def test_catalog_listing_aliases_and_errors():
     names = RT.glass_catalog()
-    assert set(CATALOG_ND_VD) == set(names)
+    assert len(CATALOG_ND_VD) == 20
+    assert names[:20] == sorted(CATALOG_ND_VD)                  # the 20 local curves come first
+    assert len(names) == len(set(names))                        # no name listed twice
+    assert len(names) >= 60                                     # + the transparent materials of materials.py
     assert RT.glass_catalog("bk7")["name"] == "N-BK7"
     assert RT.glass_catalog("fused silica")["name"] == "SILICA"
     with pytest.raises(ValueError):
@@ -216,3 +219,50 @@ def test_with_wavelength_keeps_everything_but_the_index():
     assert w["wavelength_um"] == RT.WL_F
     assert w["surfaces"][0]["n_value"] > s["surfaces"][0]["n_value"]
     assert [q["R"] for q in w["surfaces"]] == [q["R"] for q in s["surfaces"]]
+
+
+# --------------------------------------------------------------------------- #
+# 2026-10-14 共通の材料表(materials)への接続
+# --------------------------------------------------------------------------- #
+def test_the_20_local_curves_are_the_same_curves_as_the_material_table():
+    """raytrace の 20 種と materials の同名レコードは別々に写した係数 —— 曲線が一致すること。"""
+    import materials as M
+    lam = np.linspace(0.40, 0.95, 56)
+    names = RT.glass_catalog()[:20]
+    assert len(names) == 20
+    worst = 0.0
+    for name in names:
+        a = np.array([RT.refractive_index(name, w) for w in lam])
+        b = M._nk(M._record(name, "test"), lam, "test")[0]
+        worst = max(worst, float(np.max(np.abs(a - b))))
+    assert worst < 1e-12, worst
+
+
+def test_catalog_reaches_other_makers_crystals_and_plastics():
+    g = RT.glass_catalog("S-LAH58")                             # Ohara: nd 1.88300, vd 40.76
+    assert g["material"] == "S-LAH58"
+    assert abs(g["nd"] - 1.88300) < 1e-4 and abs(g["vd"] - 40.76) < 0.3
+    assert abs(RT.glass_catalog("pmma")["nd"] - 1.4906) < 1e-3  # alias / case-insensitive
+    z = RT.glass_catalog("ZNSE")                                # data start at 0.54 um: no F line
+    assert z["nd"] is None and z["vd"] is None
+    assert 2.4 < RT.refractive_index("ZNSE", 1.0) < 2.5
+    with pytest.raises(ValueError, match="not extrapolated"):
+        RT.refractive_index("ZNSE", 0.5)
+    with pytest.raises(ValueError, match="not a lens medium"):
+        RT.glass_catalog("AG")                                  # a metal is not a lens medium
+    with pytest.raises(ValueError, match="unknown glass"):
+        RT.glass_catalog("UNOBTAINIUM")
+
+
+def test_a_lens_of_a_material_table_glass_has_the_thick_lens_focal_length_at_every_line():
+    """S-LAH58 の両凸レンズ: F/d/C 線の efl が厚肉レンズの閉形式(その線の n)と一致する。"""
+    s = RT.lens_system([{"R": 50.0, "t": 4.0, "n": "S-LAH58", "ap": 8}, {"R": -50.0, "t": None, "n": 1.0}])
+    cs = RT.chromatic_shift(s)
+    rows = cs["per_wavelength"]
+    assert len(rows) == 3
+    for row in rows:
+        n = RT.refractive_index("S-LAH58", row["wavelength_um"])
+        assert abs(row["efl"] - RT.thick_lens(50.0, -50.0, 4.0, n)["efl"]) < 1e-9
+    assert rows[0]["efl"] < rows[1]["efl"] < rows[2]["efl"]     # blue focuses short
+    t = RT.tolerance_analysis(s, trials=3)                      # the index offset reaches material media
+    assert t["failed"] == 0

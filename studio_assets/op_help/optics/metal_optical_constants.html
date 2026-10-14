@@ -1,12 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_optical_constants — OPTICS <code style="color:#22d3bf">mirror</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code>、または <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。</p>
 <p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot;(<code style="color:#22d3bf">METALS</code>)。</p>
 <p>wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。</p>
+<p>source: &quot;table&quot;(既定、5 点の粗い表)/ &quot;materials&quot;(共通の材料表 <code style="color:#22d3bf">materials</code> の実測の数表。</p>
+<p>金属は <code style="color:#22d3bf">MEASURED_METALS</code> の 10 種、表の範囲外は ValueError)。</p>
 <p>返り値: (n, k) の 2 要素タプル(入力と同形の配列)。出典は表の定義(<code style="color:#22d3bf">_METAL_NK</code>)を参照 — 5 点の粗い表であることを隠さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
@@ -25,6 +27,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:glass_and_mirror_optics">glass_and_mirror_optics</a> — <code style="color:#22d3bf">py -3.11 examples/glass_and_mirror_optics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">mirror</code>)</h3>

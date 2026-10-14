@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
+examples: [poc_material_optical_library, studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # scene_material — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsoptics.get("scene_material")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'table') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'table') -> 'dict'`、台帳から引くなら `opsoptics.get("scene_material")`)
 
 ## 使い方
 
@@ -29,8 +29,12 @@ conductor: ``metal``(``glassmirror.METALS``)の複素屈折率で色が決まり
     exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、
     鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。
     **波長が式に入る**ので、同じ面でも光源の波長で見え方が変わる。
+    ``metal_source`` は n,k の出どころ: "table"(既定、5 点の粗い表)か "materials"
+    (共通の材料表の実測の数表。``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti /
+    W / Rh もここで選べる)。レンズの硝材と同じ表を観察対象も引く。
 dielectric: ``glass``(``raytrace.glass_catalog()``)の Sellmeier 分散で屈折し、
-    ``sigma_per_mm`` の Beer–Lambert で吸収する。
+    ``sigma_per_mm`` の Beer–Lambert で吸収する。硝材名は共通の材料表の透過材
+    (他社の硝材・結晶・樹脂・水)まで引ける。
 
 返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。
 
@@ -66,6 +70,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
 - [virtual_machine_vision](../../../../examples/virtual_machine_vision.py) — `py -3.11 examples/virtual_machine_vision.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`

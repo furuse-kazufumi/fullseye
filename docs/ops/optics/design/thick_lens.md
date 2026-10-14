@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_design_demo]
+examples: [lens_design_demo, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

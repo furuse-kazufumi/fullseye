@@ -5,7 +5,7 @@
 【問い】観察用の光学系(レンズ・窓・鏡・膜)と観察対象(ウェハ・モールド・はんだ)は、どちらも材料の
 光学特性で見え方が決まる。両方が**同じ材料表**を引けるか —— 硝材カタログの分散式、半導体の n,k の表、
 金属の複素屈折率、液体とプラスチックを 1 つのレコード型に載せ、波長曲線をすべて同じ形(λ [nm], 値)で
-返す。新 op 16 本(`materials`)。5 章:
+返す。新 op 16 本(`materials`)。6 章:
 
   1. **硝材 46 種の Abbe 図**(4 社のカタログ、CC0 の refractiveindex.info database から): 分散式から計算した
      n_d / V_d が**カタログの公表値と 1e-4 / 0.3 以内**(46 種全部)。プラスチック・結晶・液体を同じ図に。
@@ -13,13 +13,19 @@
   2. **Si の NIR 窓**(Green 2008): 公表の点 k(1.0 µm) = 5.09e-4、k(1.2 µm) = 2.1e-7 を再現、吸収端を跨ぐ
      3 桁の落差、平行平板の透過率は閉形式(1−R)²e^{−αt}/(1−R²e^{−2αt})と 1e-9、自由キャリア吸収は
      Schroder 1978 の λ² 則、平行平板の焦点ずれ t(1 − 1/n) と縦球面収差(NA²)は閉形式。
-  3. **鏡の材料**(Johnson & Christy / Rakić / Weaver / Werner): 10 金属の反射率。門: 銀は 500 nm で ≥ 0.97、
+  3. **鏡の材料**(Johnson & Christy / Rakić / Weaver): 10 金属の反射率。門: 銀は 500 nm で ≥ 0.97、
      アルミの谷は 750〜900 nm(≈ 0.87)、金は 500 nm で < 0.6・700 nm で > 0.95。色は CIE 等色関数から
      (金は R > G > B、銀はほぼ中性)。
   4. **硝子とプラスチック**: 分散曲線と dn/dT(カタログの式 A)。門: 基準温度で Δn = 0、dn/dT は Δn の
      有限差分と 1e-3、プラスチックの V_d は硝子の同じ n_d より小さい。
   5. **取り込み口**: .agf(硝材カタログ)の雛形を読んで同梱レコードと 1e-12、環境変数 ``FULLSEYE_GLASS_DIR``
      にユーザーのカタログがあれば同名の硝材を照合(無ければ「未配置」と明示)。
+  6. **同じ表を引く**(第 2 段、2026-10-14): レンズ(`raytrace`)・鏡(`glassmirror`)・観察対象
+     (`optscene.scene_material`)が `materials` の同じレコードを引く。門: raytrace が手で写していた 20 種の
+     係数は materials と 1e-12 で同じ曲線、他社硝材・樹脂のレンズの F/d/C 線の焦点距離は厚肉レンズの
+     閉形式と 1e-9、軸上色収差 Δf/f は 1/V_d と 4 % 以内(5 材料)、金属の実測経路は第二実装 optiland の
+     n と 1e-6(k は写した有効数字まで)。**所見**: 初版の材料表は W と Pt に REELS 逆算の表を選んでいて、可視の反射率が
+     0.84 / 0.93 と別の測定(W 0.50・Pt 0.64〜0.73)から外れていた —— 独立の表と突き合わせる門を足して差し替えた。
 
 【外部真値】refractiveindex.info database(CC0 1.0、Polyanskiy, Sci. Data 11, 94 (2024))の一次文献と
 カタログ公表値、Green, Sol. Energy Mater. Sol. Cells 92, 1305 (2008)、Johnson & Christy, Phys. Rev. B 6,
@@ -296,10 +302,110 @@ def chapter_import():
     return recs
 
 
+#: 550 nm の垂直反射率。materials に選んだ表と、refractiveindex.info database の別の一次文献
+#: (2026-10-14 に読んだ値)。"REELS" は初版が選んでいた Werner 2009 の電子エネルギー損失からの逆算。
+DATASET_R550 = {
+    "W": {"REELS": 0.836, "independent": {"Rakić 1998 LD": 0.496, "Werner 2009 DFT": 0.537}},
+    "PT": {"REELS": 0.934, "independent": {"Rakić 1998 LD": 0.641, "Werner 2009 DFT": 0.734}},
+}
+
+#: レンズの材料(4 社の硝材・樹脂)。焦点距離の色収差を閉形式と比べる。
+LENS_MEDIA = ["N-BK7", "S-LAH58", "H-ZF52A", "PMMA", "POLYCARBONATE"]
+
+
+def chapter_shared():
+    """6. レンズ・鏡・観察対象が同じ材料表を引く。"""
+    print("\n6. 同じ表を引く(raytrace / glassmirror / optscene → materials)")
+    import glassmirror as GM
+    import optscene as OS
+    import raytrace as RT
+    names = RT.glass_catalog()
+    local = names[:20]
+    lam = np.linspace(0.40, 0.95, 56)
+    worst = 0.0
+    for nm in local:
+        a = np.array([RT.refractive_index(nm, w) for w in lam])
+        b = MT.material_dispersion(nm, 400, 950, 56)[:, 1]
+        worst = max(worst, float(np.max(np.abs(a - b))))
+    NUMBERS["local_vs_table"] = worst
+    gate("raytrace が手で写していた 20 種の Sellmeier 係数は materials と同じ曲線(400〜950 nm で 1e-12)",
+         len(local) == 20 and worst < 1e-12, "最大 %.1e" % worst)
+    transparent = [m for m in MT.MATERIALS if MT.material_record(m)["class"] in ("glass", "crystal", "polymer", "liquid")]
+    gate("レンズの媒質の一覧 = 透過材 %d 種(硝材・結晶・樹脂・水)、金属はレンズに使えない" % len(transparent),
+         sorted(names) == sorted(transparent) and _refuses(lambda: RT.glass_catalog("AU")), "%d 種" % len(names))
+    lens = {}
+    worst_f, worst_v = 0.0, 0.0
+    for g in LENS_MEDIA:
+        sysd = RT.lens_system([{"R": 50.0, "t": 4.0, "n": g, "ap": 8}, {"R": -50.0, "t": None, "n": 1.0}])
+        rows = RT.chromatic_shift(sysd)["per_wavelength"]
+        for r in rows:
+            n = RT.refractive_index(g, r["wavelength_um"])
+            worst_f = max(worst_f, abs(r["efl"] - RT.thick_lens(50.0, -50.0, 4.0, n)["efl"]))
+        f = [r["efl"] for r in rows]
+        vd = RT.glass_catalog(g)["vd"]
+        ratio = (f[2] - f[0]) / f[1] * vd
+        worst_v = max(worst_v, abs(ratio - 1.0))
+        lens[g] = (vd, f, ratio)
+    NUMBERS["lens_efl_worst"], NUMBERS["lens_colour_worst"] = worst_f, worst_v
+    gate("他社硝材・樹脂のレンズ(%d 種)の F/d/C 線の焦点距離 = 厚肉レンズの閉形式(その線の n)と 1e-9" % len(LENS_MEDIA),
+         worst_f < 1e-9, "最大 %.1e mm" % worst_f)
+    gate("軸上色収差 (f_C − f_F)/f_d は 1/V_d と 4 %% 以内(薄肉レンズの式、%d 種)" % len(LENS_MEDIA), worst_v < 0.04,
+         " / ".join("%s %.3f" % (g, v[2]) for g, v in lens.items()))
+    w = np.linspace(400.0, 800.0, 81)
+    pinned = [("AG", 500), ("AU", 600)]
+    worst_n, worst_k = 0.0, 0.0
+    for m, wl in pinned:
+        n, k = GM.metal_optical_constants(m.lower(), float(wl), source="materials")
+        n2, k2 = OPTILAND[(m, wl)]
+        worst_n = max(worst_n, abs(float(n) - n2))
+        worst_k = max(worst_k, abs(float(k) - k2) / k2)
+    # 写した optiland の k は有効数字 5 桁(3.1309 など)なので、k の門はその丸め幅 2e-5 まで
+    gate("鏡の op の実測経路(source=\"materials\")は第二実装 optiland と n で 1e-6、k で写した桁(相対 2e-5)まで一致",
+         worst_n < 1e-6 and worst_k < 2e-5, "n 最大 %.1e・k 相対 %.1e" % (worst_n, worst_k))
+    coarse, measured, dmax = {}, {}, {}
+    for m in GM.METALS:
+        n1, k1 = GM.metal_optical_constants(m, w)
+        n2, k2 = GM.metal_optical_constants(m, w, source="materials")
+        coarse[m] = np.asarray(GM.fresnel_conductor(1.0, n1, k1), dtype=np.float64)
+        measured[m] = np.asarray(GM.fresnel_conductor(1.0, n2, k2), dtype=np.float64)
+        i = int(np.argmax(np.abs(coarse[m] - measured[m])))
+        dmax[m] = (float(abs(coarse[m][i] - measured[m][i])), float(w[i]))
+    NUMBERS["coarse_worst"] = max(v[0] for v in dmax.values())
+    rgb_t = {m: np.asarray(GM.metal_mirror_rgb(m), dtype=np.float64) for m in GM.METALS}
+    rgb_m = {m: np.asarray(GM.metal_mirror_rgb(m, source="materials"), dtype=np.float64) for m in GM.MEASURED_METALS}
+    warm = all(c["au"][0] > c["au"][1] > c["au"][2] and c["cu"][0] > c["cu"][1] > c["cu"][2] for c in (rgb_t, rgb_m))
+    gate("粗い表(5 点)と実測の表で、金・銅は両方とも R > G > B(色の順序は表の粗さに依らない)", warm,
+         "粗い表と実測の差は最大 %.3f(%s)" % (NUMBERS["coarse_worst"],
+                                              " / ".join("%s %.3f at %.0f nm" % (m, d, x) for m, (d, x) in dmax.items())))
+    r550 = {m: MT.material_optical_constants(m, 550.0)["reflectance_normal"] for m in DATASET_R550}
+    ok = True
+    for m, d in DATASET_R550.items():
+        ind = list(d["independent"].values())
+        lo, hi = min(ind) - 0.03, max(ind) + 0.03
+        ok &= lo <= r550[m] <= hi and not (lo <= d["REELS"] <= hi)
+    gate("W と Pt の 550 nm 反射率は別の測定 2 本の幅に入り、初版の REELS 逆算(0.84 / 0.93)は入らない", ok,
+         "W %.3f・Pt %.3f" % (r550["W"], r550["PT"]))
+    mat = OS.scene_material("dielectric", glass="S-LAH58")
+    nrgb = np.array([RT.refractive_index("S-LAH58", u) for u in OS._RGB_UM])
+    met = OS.scene_material("conductor", metal="pt", metal_source="materials")
+    gate("観察対象の材質(optscene)も同じ表: 他社硝材の n_RGB は raytrace と一致、Pt の材質は実測の表で作れる",
+         np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials" and _refuses(
+             lambda: OS.scene_material("conductor", metal="pt")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
+    return lens, coarse, measured, w, rgb_t, rgb_m, r550
+
+
+def _refuses(fn) -> bool:
+    try:
+        fn()
+    except ValueError:
+        return True
+    return False
+
+
 # --------------------------------------------------------------------------- #
 # 図                                                                            #
 # --------------------------------------------------------------------------- #
-def make_figures(glass, si, mirror, plastic, agf):
+def make_figures(glass, si, mirror, plastic, agf, shared):
     import matappear  # noqa: F401
     rows, gm = glass
     T, Ti, fc = si
@@ -372,7 +478,7 @@ def make_figures(glass, si, mirror, plastic, agf):
                    caption="平行平板は像を t(1−1/n) 奥へ動かし、NA の 2 乗で縦球面収差(波面では 4 乗)を足す。ウェハ越しの結像で NA を抑える理由。")
     # 3. 鏡
     figs.save_plot("mirror_reflectance", [(m, R[m][:, 0], R[m][:, 1]) for m in METALS], xlabel="波長 [nm]", ylabel="垂直入射の反射率",
-                   title="鏡の材料 10 種(Johnson & Christy / Rakić / Weaver / Werner)", ylim=(0.0, 1.0),
+                   title="鏡の材料 10 種(Johnson & Christy / Rakić / Weaver)", ylim=(0.0, 1.0),
                    caption="銀は可視〜NIR で最も明るく 400 nm 以下で落ちる。アルミは 815 nm に谷。金・銅は 500 nm 以下で暗い(黄・赤)。")
     sw = np.ones((180, 100 * len(METALS), 3))
     for i, m in enumerate(METALS):
@@ -387,6 +493,44 @@ def make_figures(glass, si, mirror, plastic, agf):
     figs.save_plot("thermo_optic", [(n, temps, th[n] * 1e6) for n in th], xlabel="温度 [℃]", ylabel="Δn × 1e6(e 線、真空中)",
                    title="硝材の温度による屈折率変化(カタログの式 A)",
                    caption="FD60 のような重フリントは低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。")
+    # 6. 同じ表を引く
+    lens, coarse, measured, w, rgb_t, rgb_m, r550 = shared
+    import raytrace as RT
+    lam = np.linspace(440.0, 1000.0, 57)                 # PMMA の表は 436.8 nm から
+    curves = []
+    for g in LENS_MEDIA:
+        sysd = RT.lens_system([{"R": 50.0, "t": 4.0, "n": g, "ap": 8}, {"R": -50.0, "t": None, "n": 1.0}])
+        fd = lens[g][1][1]
+        efl = [RT.paraxial_trace(RT.with_wavelength(sysd, float(x) / 1000.0))["efl"] / fd for x in lam]
+        curves.append(("%s(V_d %.1f)" % (g, lens[g][0]), lam, (np.array(efl) - 1.0) * 100.0))
+    figs.save_plot("lens_axial_colour", curves, xlabel="波長 [nm]", ylabel="焦点距離の変化 [%](d 線基準)",
+                   title="同じ形のレンズを材料表の 5 材料で: 色収差は 1/V_d(閉形式と最大 %.1e mm)" % NUMBERS["lens_efl_worst"],
+                   caption="R = ±50 mm・厚さ 4 mm の両凸レンズ。硝材名を変えるだけで、他社の硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は N-BK7 の 1.2 倍、S-LAH58 は 1.6 倍、ポリカーボネートと H-ZF52A は 2.3〜2.7 倍。")
+    import glassmirror as GM
+    series, styles, colors = [], [], []
+    palette = {"ag": "neutral", "al": "reference", "au": "emphasis", "cr": "wrong", "cu": "right"}
+    for m in GM.METALS:
+        series += [("%s 実測の表" % m.upper(), w, measured[m]), ("%s 5 点の粗い表" % m.upper(), w, coarse[m])]
+        styles += [None, "dashed"]
+        colors += [palette[m], palette[m]]
+    figs.save_plot("metal_table_vs_measured", series, xlabel="波長 [nm]", ylabel="垂直入射の反射率", styles=styles, colors=colors,
+                   title="鏡の op の 2 つの経路: 5 点の粗い表(既定)と実測の数表(最大差 %.3f)" % NUMBERS["coarse_worst"], ylim=(0.3, 1.0),
+                   caption="既定は従来どおり粗い表(既存の図と値を変えない)。source=\"materials\" で一次文献の数表になる。差が大きいのは銅の 565 nm の肩(0.13)と銀の 400 nm(0.10)。")
+    names = list(GM.MEASURED_METALS)
+    sw = np.ones((300, 100 * len(names), 3))
+    for i, m in enumerate(names):
+        if m in rgb_t:
+            sw[10:95, i * 100 + 5:i * 100 + 95] = np.clip(rgb_t[m], 0.0, 1.0) ** (1 / 2.2)
+        sw[150:240, i * 100 + 5:i * 100 + 95] = np.clip(rgb_m[m], 0.0, 1.0) ** (1 / 2.2)
+        sw = np.asarray(fs.text_box(sw, m.upper(), (i * 100 + 50, 250), anchor="ct", font_size=12))
+    sw = np.asarray(fs.text_box(sw, "上: 5 点の粗い表(5 種)  下: 実測の数表(10 種)", (10, 104), anchor="lt", font_size=12))
+    figs.save("mirror_colours_two_tables", sw,
+              caption="同じ等色関数で、n,k の出どころだけを変えた。Ni・Pt・Ti・W・Rh は実測の表で初めて選べる。W と Pt が灰色なのは REELS 逆算の表を外したから(初版は Pt が 0.93 で銀に近かった)。")
+    figs.save_table("metal_dataset_choice", ["金属", "選んだ表の R(550 nm)", "初版(REELS 逆算)", "別の測定 1", "別の測定 2"],
+                    [[m, "%.3f" % r550[m], "%.3f" % d["REELS"]] + ["%s %.3f" % kv for kv in d["independent"].items()]
+                     for m, d in DATASET_R550.items()],
+                    title="材料表の選定の誤り: W と Pt",
+                    caption="同じ金属でも一次文献で反射率が 0.3 違う。表を 1 本に決めるなら、別の測定と突き合わせる門が要る。")
 
 
 def main():
@@ -397,8 +541,9 @@ def main():
     mirror = chapter_mirror()
     plastic = chapter_plastic()
     agf = chapter_import()
+    shared = chapter_shared()
     if not REDUCED and figs.target_dir() is not None:
-        make_figures(glass, si, mirror, plastic, agf)
+        make_figures(glass, si, mirror, plastic, agf, shared)
     print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))

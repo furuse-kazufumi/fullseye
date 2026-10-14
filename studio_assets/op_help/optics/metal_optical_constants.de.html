@@ -1,12 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_optical_constants — OPTICS <code style="color:#22d3bf">mirror</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code> oder rufe <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schlägt den komplexen Brechungsindex (n, k) eines Metalls über die Wellenlänge nach (sichtbarer Bereich, lineare Interpolation).</p>
 <p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; (<code style="color:#22d3bf">METALS</code>).</p>
 <p>wavelength_nm: Skalar oder Array [nm]. Außerhalb der Tabelle auf die Randwerte begrenzt (keine Extrapolation).</p>
+<p>source: &quot;table&quot; (Standard, die grobe 5-Punkt-Tabelle) / &quot;materials&quot; (die gemessenen Tabellen der gemeinsamen Materialtabelle <code style="color:#22d3bf">materials</code>; 10 Metalle in <code style="color:#22d3bf">MEASURED_METALS</code>, ValueError außerhalb des Tabellenbereichs).</p>
 <p>Rückgabewert: 2-elementiges Tupel (n, k) (Arrays derselben Form wie die Eingabe). Quellen siehe Tabellendefinition (<code style="color:#22d3bf">_METAL_NK</code>) — es wird nicht verschwiegen, dass es eine grobe Tabelle mit 5 Punkten ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
@@ -25,6 +26,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:glass_and_mirror_optics">glass_and_mirror_optics</a> — <code style="color:#22d3bf">py -3.11 examples/glass_and_mirror_optics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">mirror</code>)</h3>

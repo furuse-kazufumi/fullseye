@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Changed — 材料表の第 2 段: レンズ・鏡・観察対象が同じ表を引く + W / Pt の表を差し替え
+- `raytrace.glass_catalog` / `refractive_index` / `lens_system`: 手元の 20 種に加えて `materials` の透過材 63 種(他社硝材・結晶・樹脂・水)を名前で引く(表の範囲外は ValueError、金属・半導体・膜はレンズの媒質として拒否)。一覧は 20 種が先頭のまま。
+- `glassmirror.metal_optical_constants` / `metal_mirror_rgb` に `source="materials"`(10 金属の実測の数表、`MEASURED_METALS`)、`optscene.scene_material` に `metal_source`。既定は従来の 5 点の粗い表のまま(既存の図と値は不変)。
+- ★`materials_data.py`: W を Werner 2009(REELS 逆算)→ Weaver、Pt を Werner 2009 → Tselin 2024 に差し替え。550 nm の反射率が 0.84 / 0.93 と別の測定から外れていた。`tests/test_materials.py` が独立の表と突き合わせる。
+- PoC `poc_material_optical_library` に第 6 章(8 門、計 46 門)と図 4 枚(色収差・粗い表と実測・2 つの表の色見本・選定の誤り)。
+
 ### Added — 材料の光学物性ライブラリ(materials 16 op + PoC)
 
 - **新 op 16 本** `materials.py`(`opsoptics` の新カテゴリ `matprop`)。**1 材料 = 1 レコード**で硝材 46 種(4 社のカタログ、Sellmeier 2 / Schott 多項式、n_d・V_d・密度・熱膨張・dn/dT の式 A)、結晶と IR 材 12、半導体 6(Si は Green 2008 の n,k と Salzberg の IR Sellmeier)、膜 4、金属 10(n,k の表)、水、プラスチック 4 の 83 種。数値は refractiveindex.info database(CC0 1.0)の一次文献だけで、`tools/gen_material_tables.py --rii <database dir>` が `materials_data.py` を生成する(`--check` で drift 検査。メーカーの .agf は同梱しない)。op は材料を名前(別名可)かレコードで受け、波長曲線はすべて `pairs`(λ [nm], 値)で返す: `material_table` / `material_record` / `material_optical_constants`(n・k・α・ε・垂直反射率と出典)/ `material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance`(平行平板、多重反射込み)/ `material_reflectance`(Fresnel、角度・偏光)/ `abbe_number` / `glass_map` / `thermo_optic_coefficient`(式 A の dn/dT と Δn、基準温度は 20 ℃ / 25 ℃)/ `plate_focus_shift`(t(1 − 1/n) と縦球面収差 ∝ NA²)/ `silicon_free_carrier_absorption`(Schroder 1978 の λ² 則)/ `material_from_sellmeier` / `material_from_curves` / `read_glass_catalog_agf`(Zemax の分散式 1〜13、IT 行から k)。区間外は外挿せず ValueError、k の表が無い区間は `k_source = None`。門は `tests/test_materials.py`(硝材 46 種の公表値 1e-4 / 0.3、Green 2008・Johnson & Christy・Malitson の点、9 本の分散式の恒等、閉形式、.agf の 13 式)。16 本とも `_OP_BRIDGE_SKIP`(引数だけで表と曲線を返す側)。
