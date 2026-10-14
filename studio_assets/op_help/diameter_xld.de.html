@@ -10,8 +10,10 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Durchmesser des minimal umschließenden Kreises (<code style="color:#22d3bf">cv2.minEnclosingCircle</code>), der die Kontur enthält, normiert durch die längste Seitenlänge des Bildes. Eine Metrik, die sich streng genommen von der &quot;maximalen Distanz zwischen zwei Konturpunkten&quot; unterscheidet, die HALCONs <code style="color:#22d3bf">diameter_xld</code> (Maximum distance between two contour or polygon points.) definiert (eine Annäherung über den Durchmesser des umschließenden Kreises; der minimal umschließende Kreis stimmt nicht zwangsläufig mit dem Durchmesser überein, der die beiden am weitesten entfernten Punkte verbindet).</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p>Der Durchmesser der Kontur mit den meisten Punkten in Pixeln = der größte Abstand zweier Konturpunkte (die längste Sehne) — dieselbe Größe in derselben Einheit wie HALCONs <code style="color:#22d3bf">diameter_xld</code> (Maximum distance between two contour or polygon points.).</p>
+<p>Dieselbe Größe wie die Regionsversion <code style="color:#22d3bf">diameter_region</code> (75,77 gegenüber 74,85 für ein 30x70-Rechteck).</p>
+<p>★Bis 2026-09-26 wurde der Durchmesser des kleinsten umschließenden Kreises (<code style="color:#22d3bf">cv2.minEnclosingCircle</code>) geteilt durch die längste Bildseite zurückgegeben (<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>).</p>
+<p><code style="color:#22d3bf">a</code> und <code style="color:#22d3bf">b</code> werden nicht verwendet. Hat keine Kontur 5 oder mehr Punkte, wird 0 zurückgegeben. Benötigt cv2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

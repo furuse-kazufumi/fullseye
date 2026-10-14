@@ -31,12 +31,16 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル
-(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1
-スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元
+領域の面積と重心を ``(面積 [画素数], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center``（Area and center of regions.）と同じ 3 値・同じ単位。
+
+1 スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元
 ベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。
-領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft
-仕様。HALCON の ``area_center``（Area and center of regions.）に相当。
+領域が空のときは ``(0, (H-1)/2, (W-1)/2)``(面積ゼロ・中心 = 画像中心の画素座標)を
+返す fail-soft 仕様。
+
+★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値(面積比・正規化重心)を
+返していた。いまは画素(``docs/hardening/dimensional-features-were-normalised.md``)。
+正規化が要るなら面積を ``H*W``、行を ``H-1``、列を ``W-1`` で割る。
 
 ``a``, ``b`` は未使用。
 

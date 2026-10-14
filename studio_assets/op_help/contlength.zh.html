@@ -10,8 +10,9 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contlength.chain.jpg">contlength: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>将区域的周长(<code style="color:#22d3bf">regionprops</code> 的 <code style="color:#22d3bf">perimeter</code>)以图像外周长 <code style="color:#22d3bf">2*(H+W)</code> 归一化后的值。相当于 HALCON 的 <code style="color:#22d3bf">contlength</code>(Contour length of a region.)。</p>
-<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。由于在 1.0 处裁剪,对于比外周长极端长的复杂边界(分形状的形状等),信息会饱和。</p>
+<p>区域的周长 [px] (<code style="color:#22d3bf">regionprops</code> 的 <code style="color:#22d3bf">perimeter</code>)。与 HALCON 的 <code style="color:#22d3bf">contlength</code>（Contour length of a region.）为相同的量、相同的单位。</p>
+<p>★直到 2026-09-26,返回的是除以图像外周长 <code style="color:#22d3bf">2*(H+W)</code> 并在 1.0 处截顶的值(30x70 的矩形为 0.2450,现在为 196.0)。<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

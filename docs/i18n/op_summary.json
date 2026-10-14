@@ -298,22 +298,22 @@
    "hi": "Perona-Malik प्रकार का anisotropic diffusion। ऊपर-नीचे-बाएँ-दाएँ 4 दिशाओं के pixel अंतर पर Gaussian प्रकार का conductance function ``exp(-(Δ/K)^2)`` लगाकर बार-बार जोड़ता है ―― जिस दिशा में अंतर threshold K से बड़ा (= edge) है वहाँ diffusion नहीं होने देता, केवल छोटे अंतर (= समतल) वाली दिशा को smooth करता है; यह edge बचाने वाली smoothing है। HALCON के ``anisotropic_diffusion`` (Perform an anisotropic diffusion of an image.) के समकक्ष है।"
   },
   "2d/area_center": {
-   "fp": "9fc2f0c605be",
-   "en": "Returns the area and centroid of a region as a resolution-independent normalized 3-component vector (area ratio = area / number of image pixels, normalized centroid row, normalized centroid column). Since a single scalar cannot represent (Area, Row, Column), it differs from other region-feature ops by returning a ``match``-sort value (a 1-D vector, the same shape as ``ncc_locate``). It has a fail-soft specification: when the region is empty it returns (0, 0.5, 0.5) -- zero area, center = image center. Equivalent to HALCON's ``area_center`` (Area and center of regions.).",
-   "zh": "以与分辨率无关的归一化 3 分量向量(面积比 = 面积/图像像素数、归一化重心行、归一化重心列)返回区域的面积和重心。由于单个标量无法表示 (Area, Row, Column),因此与其他区域特征 op 不同,它以 ``match`` 排序(一维向量,与 ``ncc_locate`` 相同的形式)返回。区域为空时返回 (0, 0.5, 0.5)(面积为零、中心=图像中心)的 fail-soft 规格。相当于 HALCON 的 ``area_center``(Area and center of regions.)。",
-   "tw": "以與解析度無關的正規化 3 分量向量(面積比 = 面積/影像像素數、正規化重心列、正規化重心欄)回傳區域的面積與重心。由於單一純量無法表示 (Area, Row, Column),因此與其他區域特徵 op 不同,以 ``match`` 排序(一維向量,與 ``ncc_locate`` 相同形式)回傳。區域為空時回傳 (0, 0.5, 0.5)(面積為零、中心=影像中心)的 fail-soft 規格。相當於 HALCON 的 ``area_center``(Area and center of regions.)。",
-   "ko": "영역의 면적과 무게중심을 해상도에 무관한 정규화된 3성분 벡터(면적비 = 면적/이미지 픽셀 수, 정규화된 무게중심 행, 정규화된 무게중심 열)로 반환한다. 스칼라 하나로는 (Area, Row, Column)을 표현할 수 없으므로, ``match`` 정렬(1차원 벡터, ``ncc_locate``와 같은 형태)로 반환한다는 점이 다른 영역 특징 op와 다르다. 영역이 비어 있을 때는 (0, 0.5, 0.5)(면적 0, 중심=이미지 중심)를 반환하는 fail-soft 사양이다. HALCON의 ``area_center``(Area and center of regions.)에 해당.",
-   "de": "Gibt Fläche und Schwerpunkt einer Region als auflösungsunabhängigen, normierten 3-Komponenten-Vektor zurück (Flächenanteil = Fläche / Anzahl Bildpixel, normierte Schwerpunktzeile, normierte Schwerpunktspalte). Da ein einzelner Skalar (Area, Row, Column) nicht darstellen kann, unterscheidet sich diese Op von anderen Region-Feature-Ops dadurch, dass sie im ``match``-Sortformat (ein 1-D-Vektor, dieselbe Form wie bei ``ncc_locate``) zurückgegeben wird. Sie hat eine Fail-Soft-Spezifikation: Ist die Region leer, wird (0, 0.5, 0.5) zurückgegeben -- Fläche null, Zentrum = Bildmitte. Entspricht HALCONs ``area_center`` (Area and center of regions.).",
-   "hi": "Region का क्षेत्रफल और centroid, resolution से स्वतंत्र normalised 3-component vector (area ratio = क्षेत्रफल/image के pixels की संख्या, normalised centroid row, normalised centroid column) के रूप में लौटाता है। 1 scalar से (Area, Row, Column) नहीं दर्शाया जा सकता, इसलिए यह ``match`` sort (1-dimensional vector, ``ncc_locate`` जैसा ही रूप) में लौटाता है; यही इसे दूसरे region feature ops से अलग बनाता है। Region खाली हो तो (0, 0.5, 0.5) (क्षेत्रफल शून्य, केंद्र = image का केंद्र) लौटाने वाला fail-soft व्यवहार। HALCON के ``area_center`` (Area and center of regions.) के समकक्ष है।"
+   "fp": "63cf8216033e",
+   "en": "Returns the area and centroid of a region as the 3-component vector ``(area [pixel count], centroid row [px], centroid column [px])`` — the same three values in the same units as HALCON's ``area_center`` (Area and center of regions.).",
+   "zh": "以 3 分量向量 ``(面积 [像素数], 质心行 [px], 质心列 [px])`` 返回区域的面积与质心。与 HALCON 的 ``area_center``（Area and center of regions.）为相同的 3 个值、相同的单位。",
+   "tw": "以 3 分量向量 ``(面積 [像素數], 重心列 [px], 重心欄 [px])`` 回傳區域的面積與重心。與 HALCON 的 ``area_center``（Area and center of regions.）為相同的 3 個值、相同的單位。",
+   "ko": "영역의 면적과 무게중심을 3 성분 벡터 ``(면적 [화소 수], 무게중심 행 [px], 무게중심 열 [px])`` 로 돌려준다. HALCON 의 ``area_center``（Area and center of regions.）와 같은 3 값·같은 단위.",
+   "de": "Gibt Fläche und Schwerpunkt einer Region als 3-Komponenten-Vektor ``(Fläche [Pixelanzahl], Schwerpunkt-Zeile [px], Schwerpunkt-Spalte [px])`` zurück — dieselben drei Werte in denselben Einheiten wie HALCONs ``area_center`` (Area and center of regions.).",
+   "hi": "Region का क्षेत्रफल और centroid 3-component vector ``(क्षेत्रफल [pixel संख्या], centroid row [px], centroid column [px])`` के रूप में लौटाता है — HALCON के ``area_center`` (Area and center of regions.) जैसे ही 3 मान, उन्हीं units में।"
   },
   "2d/area_center_xld": {
-   "fp": "b5b852fba99b",
-   "en": "For the single contour with the largest number of points, computes the polygon area using the shoelace formula and returns it normalized by the total pixel count of the image. HALCON's ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.) is an operator that returns the centroid in addition to the area, but this stand-in returns only the area (the centroid information is lost in this approximation — a contractual constraint arising from the ``feature`` sort being a single scalar).",
-   "zh": "针对点数最多的一条轮廓，用鞋带公式计算多边形面积，并以图像总像素数归一化后返回。HALCON 的 ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）除了面积外还会返回重心，而此替代实现只返回面积（重心信息在这一近似中丢失——这是 ``feature`` 排序为单一标量所带来的契约限制）。",
-   "tw": "針對點數最多的一條輪廓，用鞋帶公式計算多邊形面積，並以影像總像素數歸一化後回傳。HALCON 的 ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）除了面積外還會回傳重心，而此替代實作僅回傳面積（重心資訊在此近似中遺失——這是 ``feature`` 排序為單一純量所帶來的契約限制）。",
-   "ko": "점 개수가 가장 많은 윤곽선 하나에 대해 신발끈 공식(슈레이스 공식)으로 다각형 면적을 구하고, 이미지 전체 화소 수로 정규화하여 반환한다. HALCON의 ``area_center_xld``(Area and center of gravity (centroid) of contours and polygons.)는 면적에 더해 무게중심도 반환하는 연산자이지만, 이 대역은 면적만 반환한다(무게중심 정보는 손실되는 근사 — ``feature`` 정렬이 스칼라 하나라는 계약상의 제약).",
-   "de": "Für die einzelne Kontur mit der größten Punktanzahl wird die Polygonfläche mit der Gaußschen Trapezformel (Schnürsenkelformel) berechnet und normiert durch die Gesamtpixelzahl des Bildes zurückgegeben. HALCONs ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.) ist ein Operator, der zusätzlich zur Fläche auch den Schwerpunkt zurückgibt, aber dieser Ersatz liefert nur die Fläche (die Schwerpunktinformation geht bei dieser Annäherung verloren — eine vertragliche Einschränkung dadurch, dass die ``feature``-Sortierung ein einzelner Skalar ist).",
-   "hi": "सबसे ज़्यादा points वाले 1 contour के लिए shoelace formula से polygon का क्षेत्रफल निकालता है और image के कुल pixels से normalise करके लौटाता है। HALCON का ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.) क्षेत्रफल के साथ centroid भी लौटाने वाला operator है, लेकिन यह विकल्प केवल क्षेत्रफल लौटाता है (centroid की जानकारी खोने वाला सन्निकटन ―― ``feature`` sort 1 scalar है, इस contract की सीमा)।"
+   "fp": "23791c3fa289",
+   "en": "Returns the area and centroid of the polygon enclosed by the contour with the most points as the 3-component vector ``(area [px²], centroid row [px], centroid column [px])`` — three of the four values of HALCON's ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.), leaving out the orientation flag PointOrder.",
+   "zh": "以 3 分量向量 ``(面积 [px²], 质心行 [px], 质心列 [px])`` 返回点数最多的那条轮廓所围多边形的面积与质心。为 HALCON 的 ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）4 个值中去掉方向标记 PointOrder 的 3 个值。",
+   "tw": "以 3 分量向量 ``(面積 [px²], 重心列 [px], 重心欄 [px])`` 回傳點數最多的那條輪廓所圍多邊形的面積與重心。為 HALCON 的 ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）4 個值中去掉方向標記 PointOrder 的 3 個值。",
+   "ko": "점이 가장 많은 윤곽 하나가 둘러싸는 다각형의 면적과 무게중심을 3 성분 벡터 ``(면적 [px²], 무게중심 행 [px], 무게중심 열 [px])`` 로 돌려준다. HALCON 의 ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）4 값 가운데 방향 표시 PointOrder 를 뺀 3 값.",
+   "de": "Gibt Fläche und Schwerpunkt des Polygons, das die Kontur mit den meisten Punkten umschließt, als 3-Komponenten-Vektor ``(Fläche [px²], Schwerpunkt-Zeile [px], Schwerpunkt-Spalte [px])`` zurück — drei der vier Werte von HALCONs ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.), ohne die Orientierungsmarke PointOrder.",
+   "hi": "सबसे अधिक points वाले contour से घिरे polygon का क्षेत्रफल और centroid 3-component vector ``(क्षेत्रफल [px²], centroid row [px], centroid column [px])`` के रूप में लौटाता है — HALCON के ``area_center_xld`` (Area and center of gravity (centroid) of contours and polygons.) के 4 मानों में से, orientation flag PointOrder को छोड़कर 3 मान।"
   },
   "2d/area_frac": {
    "fp": "e05d10fc4977",
@@ -676,13 +676,13 @@
    "hi": "Region के connected components की संख्या गिनता है (8-connectivity, ``count_obj`` वाली ही ``_sh_region_feat`` की ``count`` branch)। a, b इस्तेमाल नहीं होते।"
   },
   "2d/contlength": {
-   "fp": "a511cb3fe5fa",
-   "en": "The perimeter of a region (``regionprops``'s ``perimeter``) normalized by the image's outer perimeter ``2*(H+W)``. Equivalent to HALCON's ``contlength`` (Contour length of a region.).",
-   "zh": "将区域的周长(``regionprops`` 的 ``perimeter``)以图像外周长 ``2*(H+W)`` 归一化后的值。相当于 HALCON 的 ``contlength``(Contour length of a region.)。",
-   "tw": "將區域的周長(``regionprops`` 的 ``perimeter``)以影像外周長 ``2*(H+W)`` 正規化後的值。相當於 HALCON 的 ``contlength``(Contour length of a region.)。",
-   "ko": "영역의 둘레(``regionprops``의 ``perimeter``)를 이미지 외곽 길이 ``2*(H+W)``로 정규화한 값. HALCON의 ``contlength``(Contour length of a region.)에 해당.",
-   "de": "Der Umfang einer Region (``perimeter`` von ``regionprops``), normiert auf den äußeren Umfang des Bildes ``2*(H+W)``. Entspricht HALCONs ``contlength`` (Contour length of a region.).",
-   "hi": "Region की परिधि (``regionprops`` का ``perimeter``) को image की बाहरी परिधि ``2*(H+W)`` से normalise किया गया मान। HALCON के ``contlength`` (Contour length of a region.) के समकक्ष है।"
+   "fp": "d3e3741dc7dc",
+   "en": "The perimeter of a region in pixels (``perimeter`` from ``regionprops``) — the same quantity in the same unit as HALCON's ``contlength`` (Contour length of a region.).",
+   "zh": "区域的周长 [px] (``regionprops`` 的 ``perimeter``)。与 HALCON 的 ``contlength``（Contour length of a region.）为相同的量、相同的单位。",
+   "tw": "區域的周長 [px] (``regionprops`` 的 ``perimeter``)。與 HALCON 的 ``contlength``（Contour length of a region.）為相同的量、相同的單位。",
+   "ko": "영역의 둘레 길이 [px] (``regionprops`` 의 ``perimeter``). HALCON 의 ``contlength``（Contour length of a region.）와 같은 양·같은 단위.",
+   "de": "Der Umfang einer Region in Pixeln (``perimeter`` aus ``regionprops``) — dieselbe Größe in derselben Einheit wie HALCONs ``contlength`` (Contour length of a region.).",
+   "hi": "Region की परिधि pixels में (``regionprops`` का ``perimeter``) — HALCON के ``contlength`` (Contour length of a region.) जैसी ही मात्रा, उसी unit में।"
   },
   "2d/contour_point_num_xld": {
    "fp": "dda6e1542503",
@@ -1162,22 +1162,22 @@
    "hi": "आयताकार window के अंदर pixel मानों के standard deviation (local standard deviation, ``E[x^2]-E[x]^2`` का square root) को normalise की गई image। Texture का local बिखराव (खुरदरापन) दिखाता है। HALCON के ``deviation_image`` (Calculate the standard deviation of gray values within rectangular windows.) के समकक्ष है।"
   },
   "2d/diameter_region": {
-   "fp": "f21db4a38dca",
-   "en": "The equivalent diameter (the diameter of a circle with the same area) normalized by the region's longest side length (``regionprops``'s ``equivalent_diameter_area``). Strictly speaking, this is a different metric from the \"maximum distance between two boundary points\" defined by HALCON's ``diameter_region`` (Maximal distance between two boundary points of a region.) -- an approximation using the equivalent-circle diameter.",
-   "zh": "将等效直径(面积相等的圆的直径)以区域最长边长归一化后的值(``regionprops`` 的 ``equivalent_diameter_area``)。严格来说,这与 HALCON 的 ``diameter_region``(Maximal distance between two boundary points of a region.)所定义的「边界上两点间的最大距离」是不同的指标(用等效圆直径做的近似)。",
-   "tw": "將等效直徑(面積相等的圓之直徑)以區域最長邊長正規化後的值(``regionprops`` 的 ``equivalent_diameter_area``)。嚴格來說,這與 HALCON 的 ``diameter_region``(Maximal distance between two boundary points of a region.)所定義的「邊界上兩點間的最大距離」是不同的指標(以等效圓直徑做的近似)。",
-   "ko": "등가 지름(면적이 같은 원의 지름)을 영역의 최장 변 길이로 정규화한 값(``regionprops``의 ``equivalent_diameter_area``). 엄밀히 말하면 HALCON의 ``diameter_region``(Maximal distance between two boundary points of a region.)이 정의하는 '경계 위 두 점 간의 최대 거리'와는 다른 지표다(등가 원 지름에 의한 근사).",
-   "de": "Der äquivalente Durchmesser (der Durchmesser eines Kreises mit gleicher Fläche), normiert auf die längste Seitenlänge der Region (``equivalent_diameter_area`` von ``regionprops``). Streng genommen ein anderes Maß als der von HALCONs ``diameter_region`` (Maximal distance between two boundary points of a region.) definierte 'maximale Abstand zwischen zwei Randpunkten' -- eine Approximation über den Durchmesser des äquivalenten Kreises.",
-   "hi": "Equivalent diameter (समान क्षेत्रफल वाले वृत्त का व्यास) को region की सबसे लंबी भुजा से normalise किया गया मान (``regionprops`` का ``equivalent_diameter_area``)। HALCON के ``diameter_region`` (Maximal distance between two boundary points of a region.) द्वारा परिभाषित \"सीमा पर 2 points के बीच की अधिकतम दूरी\" से सख्ती से अलग संकेतक (equivalent circle diameter वाला सन्निकटन)।"
+   "fp": "8beb05da188d",
+   "en": "The diameter of a region in pixels = the maximum distance between two boundary points (the longest chord) — the same quantity in the same unit as HALCON's ``diameter_region`` (Maximal distance between two boundary points of a region.).",
+   "zh": "区域的直径 [px] = 边界上两点间的最大距离(最长弦)。与 HALCON 的 ``diameter_region``（Maximal distance between two boundary points of a region.）为相同的量、相同的单位。",
+   "tw": "區域的直徑 [px] = 邊界上兩點間的最大距離(最長弦)。與 HALCON 的 ``diameter_region``（Maximal distance between two boundary points of a region.）為相同的量、相同的單位。",
+   "ko": "영역의 지름 [px] = 경계 위 두 점 사이의 최대 거리(최장 현). HALCON 의 ``diameter_region``（Maximal distance between two boundary points of a region.）와 같은 양·같은 단위.",
+   "de": "Der Durchmesser einer Region in Pixeln = der größte Abstand zweier Randpunkte (die längste Sehne) — dieselbe Größe in derselben Einheit wie HALCONs ``diameter_region`` (Maximal distance between two boundary points of a region.).",
+   "hi": "Region का व्यास pixels में = boundary के दो points के बीच की अधिकतम दूरी (सबसे लंबी chord) — HALCON के ``diameter_region`` (Maximal distance between two boundary points of a region.) जैसी ही मात्रा, उसी unit में।"
   },
   "2d/diameter_xld": {
-   "fp": "8346dfce5b87",
-   "en": "The diameter of the minimum enclosing circle (``cv2.minEnclosingCircle``) containing the contour, normalized by the image's longest side length. A metric that is strictly different from the \"maximum distance between two contour points\" defined by HALCON's ``diameter_xld`` (Maximum distance between two contour or polygon points.) (an approximation using the diameter of the enclosing circle; the minimum enclosing circle does not necessarily coincide with the diameter connecting the two farthest points).",
-   "zh": "包含轮廓的最小外接圆（``cv2.minEnclosingCircle``）的直径，以图像最长边长归一化后的值。这与 HALCON ``diameter_xld``（Maximum distance between two contour or polygon points.）所定义的“轮廓上两点间的最大距离”严格来说是不同的指标（是以外接圆直径做的近似，最小外接圆未必与连接最远两点的直径重合）。",
-   "tw": "包含輪廓的最小外接圓（``cv2.minEnclosingCircle``）的直徑，以影像最長邊長歸一化後的值。這與 HALCON ``diameter_xld``（Maximum distance between two contour or polygon points.）所定義的「輪廓上兩點間的最大距離」嚴格來說是不同的指標（是以外接圓直徑做的近似，最小外接圓未必與連接最遠兩點的直徑重合）。",
-   "ko": "윤곽선을 포함하는 최소 외접원(``cv2.minEnclosingCircle``)의 지름을 이미지의 최대 변 길이로 정규화한 값. HALCON의 ``diameter_xld``(Maximum distance between two contour or polygon points.)가 정의하는 \"윤곽선 위 두 점 사이의 최대 거리\"와는 엄밀히 다른 지표이다(외접원 지름에 의한 근사이며, 최소 외접원이 반드시 가장 먼 두 점을 잇는 지름과 일치하지는 않는다).",
-   "de": "Der Durchmesser des minimal umschließenden Kreises (``cv2.minEnclosingCircle``), der die Kontur enthält, normiert durch die längste Seitenlänge des Bildes. Eine Metrik, die sich streng genommen von der \"maximalen Distanz zwischen zwei Konturpunkten\" unterscheidet, die HALCONs ``diameter_xld`` (Maximum distance between two contour or polygon points.) definiert (eine Annäherung über den Durchmesser des umschließenden Kreises; der minimal umschließende Kreis stimmt nicht zwangsläufig mit dem Durchmesser überein, der die beiden am weitesten entfernten Punkte verbindet).",
-   "hi": "Contour को घेरने वाले सबसे छोटे enclosing circle (``cv2.minEnclosingCircle``) के व्यास को image की सबसे लंबी भुजा से normalise किया गया मान। HALCON के ``diameter_xld`` (Maximum distance between two contour or polygon points.) द्वारा परिभाषित \"contour पर 2 points के बीच की अधिकतम दूरी\" से सख्ती से अलग संकेतक (enclosing circle के व्यास वाला सन्निकटन; सबसे छोटा enclosing circle ज़रूरी नहीं कि सबसे दूर के 2 points को जोड़ने वाले व्यास से मेल खाए)।"
+   "fp": "ae272cdc4255",
+   "en": "The diameter of the contour with the most points in pixels = the maximum distance between two contour points (the longest chord) — the same quantity in the same unit as HALCON's ``diameter_xld`` (Maximum distance between two contour or polygon points.).",
+   "zh": "点数最多的那条轮廓的直径 [px] = 轮廓点两点间的最大距离(最长弦)。与 HALCON 的 ``diameter_xld``（Maximum distance between two contour or polygon points.）为相同的量、相同的单位。",
+   "tw": "點數最多的那條輪廓的直徑 [px] = 輪廓點兩點間的最大距離(最長弦)。與 HALCON 的 ``diameter_xld``（Maximum distance between two contour or polygon points.）為相同的量、相同的單位。",
+   "ko": "점이 가장 많은 윤곽의 지름 [px] = 윤곽점 두 점 사이의 최대 거리(최장 현). HALCON 의 ``diameter_xld``（Maximum distance between two contour or polygon points.）와 같은 양·같은 단위.",
+   "de": "Der Durchmesser der Kontur mit den meisten Punkten in Pixeln = der größte Abstand zweier Konturpunkte (die längste Sehne) — dieselbe Größe in derselben Einheit wie HALCONs ``diameter_xld`` (Maximum distance between two contour or polygon points.).",
+   "hi": "सबसे अधिक points वाले contour का व्यास pixels में = दो contour points के बीच की अधिकतम दूरी (सबसे लंबी chord) — HALCON के ``diameter_xld`` (Maximum distance between two contour or polygon points.) जैसी ही मात्रा, उसी unit में।"
   },
   "2d/diff_of_gauss": {
    "fp": "681db58ba11a",
@@ -1387,13 +1387,13 @@
    "hi": "Region के equivalent ellipse (जिसका moment of inertia मेल खाता है) के ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है —— ``Ra``/``Rb`` major radius और minor radius (**pixels** में) हैं, ``Phi`` principal axis का कोण है (radians, column axis से anticlockwise)। HALCON के ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.) वाले ही 3 मान।"
   },
   "2d/elliptic_axis_xld": {
-   "fp": "1e1e4cae560d",
-   "en": "The ratio of minor to major axis of the ellipse fitted to the contour. A value close to 1 indicates near-circular, close to 0 indicates elongated. An approximation that returns only the single scalar ratio, out of the (major axis, minor axis, angle) triple that HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) returns.",
-   "zh": "拟合到轮廓的椭圆的短轴/长轴之比。数值越接近 1 越接近正圆，越接近 0 越细长。是从 HALCON ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）返回的（长轴、短轴、角度）三元组中，只取比值这一个标量的近似。",
-   "tw": "擬合到輪廓的橢圓短軸/長軸之比。數值越接近 1 越接近正圓，越接近 0 越細長。是從 HALCON ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）回傳的（長軸、短軸、角度）三元組中，只取比值這一個純量的近似。",
-   "ko": "윤곽선에 타원을 맞춘 결과의 단축/장축 비율. 값이 1에 가까울수록 진원에 가깝고 0에 가까울수록 가늘고 길다. HALCON의 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)가 반환하는 (장축, 단축, 각도) 조합 중 비율 하나의 스칼라만 반환하는 근사.",
-   "de": "Das Verhältnis von kleiner zu großer Achse der an die Kontur angepassten Ellipse. Ein Wert nahe 1 zeigt annähernde Kreisform an, nahe 0 zeigt Länglichkeit an. Eine Annäherung, die von dem Tripel (große Achse, kleine Achse, Winkel), das HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) zurückgibt, nur den einzelnen skalaren Verhältniswert liefert.",
-   "hi": "Ellipse fit किए गए contour के minor axis/major axis का अनुपात। मान 1 के जितना करीब, उतना सही वृत्त के करीब; 0 के जितना करीब, उतना लंबा-पतला। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) द्वारा लौटाए गए (major axis, minor axis, कोण) की जोड़ी में से केवल 1 अनुपात वाला scalar लौटाने वाला सन्निकटन।"
+   "fp": "b946a3135d1f",
+   "en": "Fits an ellipse to the contour with the most points (``cv2.fitEllipse``) and returns ``(Ra, Rb, Phi)`` as a 3-component ``match`` sort vector — ``Ra``/``Rb`` are the semi-major and semi-minor axes [px], ``Phi`` the main-axis angle (radians, counter-clockwise from the column axis, greater than -π/2 and at most π/2). The same three values as HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "zh": "对点数最多的那条轮廓拟合椭圆(``cv2.fitEllipse``),以 ``match`` 类型的 3 分量向量返回 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 为长半轴、短半轴 [px],``Phi`` 为主轴角(弧度,从列轴逆时针,大于 -π/2 且不超过 π/2)。与 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）为相同的 3 个值。",
+   "tw": "對點數最多的那條輪廓擬合橢圓(``cv2.fitEllipse``),以 ``match`` 型別的 3 分量向量回傳 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 為長半軸、短半軸 [px],``Phi`` 為主軸角(弧度,從欄軸逆時針,大於 -π/2 且不超過 π/2)。與 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）為相同的 3 個值。",
+   "ko": "점이 가장 많은 윤곽에 타원을 맞추고(``cv2.fitEllipse``) ``(Ra, Rb, Phi)`` 를 ``match`` 형 3 성분 벡터로 돌려준다 —— ``Ra``/``Rb`` 는 장반경·단반경 [px], ``Phi`` 는 주축 각(라디안, 열 축에서 반시계 방향, -π/2 보다 크고 π/2 이하). HALCON 의 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）와 같은 3 값.",
+   "de": "Passt eine Ellipse an die Kontur mit den meisten Punkten an (``cv2.fitEllipse``) und gibt ``(Ra, Rb, Phi)`` als 3-Komponenten-Vektor der Sorte ``match`` zurück — ``Ra``/``Rb`` sind große und kleine Halbachse [px], ``Phi`` der Hauptachsenwinkel (Radiant, gegen den Uhrzeigersinn von der Spaltenachse, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "hi": "सबसे अधिक points वाले contour पर ellipse fit करता है (``cv2.fitEllipse``) और ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है — ``Ra``/``Rb`` semi-major और semi-minor axes [px] हैं, ``Phi`` main axis का कोण (radians, column axis से वामावर्त, -π/2 से बड़ा और π/2 तक)। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) जैसे ही 3 मान।"
   },
   "2d/em_skeleton": {
    "fp": "2386e20fa264",
@@ -1828,13 +1828,13 @@
    "hi": "Region के convex hull को भरे हुए region के रूप में लौटाता है (``skimage.morphology.convex_hull_image``)। a, b इस्तेमाल नहीं होते। ``shape_trans`` (convex hull में shape बदलने वाला seed op) जैसा ही implementation।"
   },
   "2d/get_region_thickness": {
-   "fp": "49ff315f5afa",
-   "en": "An approximation of region thickness: ``2 x max inscribed circle radius / max side length`` (twice the maximum of ``distance_transform_edt``, normalized by the image size). Unlike HALCON's ``get_region_thickness`` (Access the thickness of a region along the main axis.), which defines a 'thickness profile along the main axis,' this is a simplification that only looks at the direction-independent, global maximum inscribed radius (information about the main-axis direction is lost).",
-   "zh": "区域粗细的近似值：``2 × 最大内接圆半径 / 最大边长``（``distance_transform_edt`` 最大值的 2 倍，按图像尺寸归一化）。与 HALCON 的 ``get_region_thickness``（Access the thickness of a region along the main axis.）所定义的「沿主轴方向的粗细剖面」不同，这里是一种简化：只看与方向无关的全局最大内接半径（主轴方向的信息会丢失）。",
-   "tw": "區域粗細的近似值：``2 × 最大內切圓半徑 / 最大邊長``（``distance_transform_edt`` 最大值的 2 倍，以影像尺寸正規化）。與 HALCON 的 ``get_region_thickness``（Access the thickness of a region along the main axis.）所定義的「沿主軸方向的粗細剖面」不同，此處是一種簡化：只看與方向無關的全域最大內切半徑（主軸方向的資訊會遺失）。",
-   "ko": "영역 두께의 근사값 ``2 × 최대 내접원 반지름 / 최대 변 길이``(``distance_transform_edt`` 최댓값의 2배를 이미지 크기로 정규화). HALCON의 ``get_region_thickness``(Access the thickness of a region along the main axis.)가 정의하는 \"주축을 따른 두께 프로파일\"과는 달리, 방향에 무관한 전역 최대 내접 반지름만 보는 단순화(주축 방향 정보는 손실됨).",
-   "de": "Eine Näherung der Bereichsdicke: ``2 x maximaler Inkreisradius / maximale Seitenlänge`` (das Doppelte des Maximums von ``distance_transform_edt``, normiert auf die Bildgröße). Im Unterschied zu HALCONs ``get_region_thickness`` (Access the thickness of a region along the main axis.), das ein 'Dickenprofil entlang der Hauptachse' definiert, handelt es sich hier um eine Vereinfachung, die nur den richtungsunabhängigen, globalen maximalen Inkreisradius betrachtet (Informationen zur Hauptachsenrichtung gehen verloren).",
-   "hi": "Region की मोटाई का अनुमानित मान ``2 x max inscribed circle radius / max side length`` (``distance_transform_edt`` के अधिकतम मान के 2 गुना को image के आकार से normalise)। HALCON के ``get_region_thickness`` (Access the thickness of a region along the main axis.) द्वारा परिभाषित \"principal axis के साथ मोटाई का profile\" से अलग, यह दिशा की परवाह किए बिना केवल global अधिकतम inscribed radius देखने वाला सरलीकरण है (principal axis दिशा की जानकारी खो जाती है)।"
+   "fp": "a83d99dfa81a",
+   "en": "An approximation of a region's thickness in pixels, ``2 × largest inscribed radius`` (twice the maximum of ``distance_transform_edt``).",
+   "zh": "区域粗细 [px] 的近似值 ``2 × 最大内切圆半径``(``distance_transform_edt`` 最大值的 2 倍)。",
+   "tw": "區域粗細 [px] 的近似值 ``2 × 最大內切圓半徑``(``distance_transform_edt`` 最大值的 2 倍)。",
+   "ko": "영역 두께 [px] 의 근삿값 ``2 × 최대 내접원 반지름``(``distance_transform_edt`` 최댓값의 2 배).",
+   "de": "Eine Näherung der Dicke einer Region in Pixeln, ``2 × größter Inkreisradius`` (das Doppelte des Maximums von ``distance_transform_edt``).",
+   "hi": "Region की मोटाई का pixels में अनुमान, ``2 × सबसे बड़ी inscribed radius`` (``distance_transform_edt`` के अधिकतम का दोगुना)।"
   },
   "2d/gopen": {
    "fp": "e3016c160604",

@@ -10,8 +10,10 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The diameter of the minimum enclosing circle (<code style="color:#22d3bf">cv2.minEnclosingCircle</code>) containing the contour, normalized by the image&#x27;s longest side length. A metric that is strictly different from the &quot;maximum distance between two contour points&quot; defined by HALCON&#x27;s <code style="color:#22d3bf">diameter_xld</code> (Maximum distance between two contour or polygon points.) (an approximation using the diameter of the enclosing circle; the minimum enclosing circle does not necessarily coincide with the diameter connecting the two farthest points).</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p>The diameter of the contour with the most points in pixels = the maximum distance between two contour points (the longest chord) — the same quantity in the same unit as HALCON&#x27;s <code style="color:#22d3bf">diameter_xld</code> (Maximum distance between two contour or polygon points.).</p>
+<p>The same quantity as the region version <code style="color:#22d3bf">diameter_region</code> (75.77 vs 74.85 for a 30x70 rectangle).</p>
+<p>★Until 2026-09-26 it returned the diameter of the minimum enclosing circle (<code style="color:#22d3bf">cv2.minEnclosingCircle</code>) divided by the image&#x27;s longest side (<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>).</p>
+<p><code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused. If no contour has 5 or more points it returns 0. Requires cv2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

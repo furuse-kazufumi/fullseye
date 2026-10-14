@@ -48,24 +48,24 @@ flowchart LR
 - `euler_number` / `sk_euler` — オイラー数（連結成分数 − 穴の数、`skimage.measure.euler_number`）。呼び出し: `fullseye.apply(region, "euler_number")`
 - `area_holes` — 穴の面積比 `(穴埋め面積 − 面積)/穴埋め面積`。呼び出し: `fullseye.apply(region, "area_holes")`
 - `area_frac` — マスクの面積比（前景画素の割合 = `mean(mask)`、`feature` の 1 スカラ）。呼び出し: `fullseye.apply(region, "area_frac")`
-- `area_center` — HALCON と同じ **(面積, 行, 列)** の 3 成分を返す（`region → match` の 1-D ベクトル）。3 成分とも解像度に依らないよう正規化してある: `[0]=面積/画像画素数`、`[1]=重心行/(H-1)`、`[2]=重心列/(W-1)`。空領域は `(0, 0.5, 0.5)`。呼び出し: `fullseye.apply(region, "area_center")`  
+- `area_center` — HALCON と同じ **(面積 [画素数], 重心の行 [px], 重心の列 [px])** の 3 成分を返す(`region → match` の 1-D ベクトル)。空領域は `(0, (H-1)/2, (W-1)/2)`。★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値だった(`docs/hardening/dimensional-features-were-normalised.md`)。正規化が要るなら面積を `H*W`、行を `H-1`、列を `W-1` で割る。呼び出し: `fullseye.apply(region, "area_center")`  
   <br>★2026-09-02 まではこの op は `mean(mask)` の 1 スカラだけを返しており、名前にある **中心を返していなかった**（面積も画素数ではなく比率で、解像度依存だった）。1 スカラでは HALCON の 3 値を表せないため、`ncc_locate` と同じ `match` sort に移した。
 - `count_contours` — 輪郭リスト `cs` の本数。呼び出し: `fullseye.apply(contour, "count_contours")`
 - `vol_count` — 3-D ボリューム内の連結成分数（`> 0.5` を 3-D ラベリング）。呼び出し: `fullseye.apply(volume, "vol_count")`
 
 ### 2. 形の丸み・細長さ（region → feature、`skimage.regionprops` ベース、最大領域について測る）
-- `circularity` — 円形度 `min(1, 4πA/P²)`（円盤 ≈ 1、細長い棒は桁違いに小さい）。呼び出し: `fullseye.apply(region, "circularity")`
-- `compactness` — コンパクトさ `min(1, (P²/4πA)/10)`（`circularity` の逆向き指標、1/10 に正規化）。呼び出し: `fullseye.apply(region, "compactness")`
+- `circularity` — 円形度 `min(1, 面積/(π·max²))`(`max` は重心から輪郭画素までの最大距離。円 = 1)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "circularity")`
+- `compactness` — コンパクトさ `周囲長²/(4π·面積)`(円で 1、上限なし)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "compactness")`
 - `convexity` — 凸性 `面積 / 凸包面積`（≤1、凸なら 1）。呼び出し: `fullseye.apply(region, "convexity")`
-- `rectangularity` — 矩形度 `extent = 面積 / bbox 面積`。呼び出し: `fullseye.apply(region, "rectangularity")`
-- `roundness` — 真円度 `min(1, 4A/(π·長軸²))`。呼び出し: `fullseye.apply(region, "roundness")`
-- `eccentricity` — 離心率 `√(1−(短軸/長軸)²)`（円=0、細長いほど→1）。呼び出し: `fullseye.apply(region, "eccentricity")`
+- `rectangularity` — 矩形度 `1 − |領域 XOR 同じモーメントの矩形| / |矩形|`(矩形 = 1、向きにほぼ依らない)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "rectangularity")`
+- `roundness` — 真円度 `1 − σ/μ`(重心→輪郭画素の距離の平均 μ と標準偏差 σ)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "roundness")`
+- `eccentricity` — `(Anisometry, Bulkiness, StructureFactor)` の 3 成分(`region → match`。円で `(1, 1, 0)`)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "eccentricity")`
 - `orientation_region` — 長軸の向きを `[0,1]` に正規化（`(θ+π/2)/π`）。呼び出し: `fullseye.apply(region, "orientation_region")`
-- `elliptic_axis` — 異方度 `長軸/短軸/10`（近似楕円の軸比）。呼び出し: `fullseye.apply(region, "elliptic_axis")`
-- `diameter_region` — 等価円直径を画像サイズで正規化。呼び出し: `fullseye.apply(region, "diameter_region")`
-- `height_width_ratio` — bbox の縦横比 `min(1, 高さ/幅)`。呼び出し: `fullseye.apply(region, "height_width_ratio")`
-- `contlength` — 周長を `2(H+W)` で正規化。呼び出し: `fullseye.apply(region, "contlength")`
-- `get_region_thickness` — 最大内接距離の 2 倍（EDT の最大値×2）を正規化。呼び出し: `fullseye.apply(region, "get_region_thickness")`
+- `elliptic_axis` — 等価楕円の `(Ra, Rb, Phi)`(長半径・短半径 [px]、主軸の角 [rad]。`region → match`)(★2026-09-26 に HALCON と同じ式へ —— `docs/hardening/halcon-named-shape-factors.md`)。呼び出し: `fullseye.apply(region, "elliptic_axis")`
+- `diameter_region` — 境界上の 2 点間の最大距離(最大弦)(画素。★2026-09-26 まで画像サイズで割った 0〜1 の値 —— `docs/hardening/dimensional-features-were-normalised.md`)。呼び出し: `fullseye.apply(region, "diameter_region")`
+- `height_width_ratio` — 軸平行外接矩形の縦横比 `高さ/幅`(上限なし。★2026-09-26 まで `min(1, ·)` で縦長が全部 1.0)。呼び出し: `fullseye.apply(region, "height_width_ratio")`
+- `contlength` — 周囲長(画素。★2026-09-26 まで画像サイズで割った 0〜1 の値 —— `docs/hardening/dimensional-features-were-normalised.md`)。呼び出し: `fullseye.apply(region, "contlength")`
+- `get_region_thickness` — 最大内接距離の 2 倍(EDT の最大値 ×2)(画素。★2026-09-26 まで画像サイズで割った 0〜1 の値 —— `docs/hardening/dimensional-features-were-normalised.md`)。呼び出し: `fullseye.apply(region, "get_region_thickness")`
 
 ### 3. モーメント（region → feature、正規化中心モーメント／Hu 不変量）
 - `classify_shape` — 最大領域の円形度 `min(1, 4πA/P²)`（形の“丸さ”による簡易分類量）。呼び出し: `fullseye.apply(region, "classify_shape")`
@@ -80,15 +80,15 @@ flowchart LR
 
 ### 4. 輪郭（XLD）計測（contour → feature、最長輪郭について測る）
 - `total_length` / `length_xld` — 折れ線の総長 `Σ√(Δx²+Δy²)`（閉じる最終辺は加えない。円輪郭で ≈ 2πR）。呼び出し: `fullseye.apply(contour, "total_length")`
-- `area_center_xld` — シューレース公式の面積を画像面積で正規化。呼び出し: `fullseye.apply(contour, "area_center_xld")`
-- `circularity_xld` — 輪郭の円形度 `min(1, 4πA/P²)`（円 ≈ 1 > 正方形）。呼び出し: `fullseye.apply(contour, "circularity_xld")`
-- `compactness_xld` — 輪郭コンパクトさ（`circularity_xld` の逆向き、1/10 正規化）。
+- `area_center_xld` — シューレース公式の面積と囲まれた面積の重心 **(面積 [px²], 行 [px], 列 [px])**(`contour → match`)(画素。★2026-09-26 まで画像サイズで割った 0〜1 の値 —— `docs/hardening/dimensional-features-were-normalised.md`)。呼び出し: `fullseye.apply(contour, "area_center_xld")`
+- `circularity_xld` — 輪郭の円形度 `min(1, F/(π·max²))`(領域版と同じ式)。呼び出し: `fullseye.apply(contour, "circularity_xld")`
+- `compactness_xld` — 輪郭のコンパクトさ `max(1, 周囲長²/(4π·面積))`(上限なし)。
 - `convexity_xld` — 輪郭面積 / 凸包面積（cv2 が要る、無ければ 1.0）。
-- `eccentricity_xld` — 当てはめ楕円の離心率 `√(1−(b/a)²)`（cv2 `fitEllipse`、要 5 点以上）。呼び出し: `fullseye.apply(contour, "eccentricity_xld")`
+- `eccentricity_xld` — 領域版と同じ `(Anisometry, Bulkiness, StructureFactor)`(囲まれた面積のモーメントから、cv2 が要る)。呼び出し: `fullseye.apply(contour, "eccentricity_xld")`
 - `orientation_xld` — 当てはめ楕円の角度 `(θ mod 180)/180`。
-- `elliptic_axis_xld` — 楕円の軸比 `短軸/長軸`。
-- `diameter_xld` — 最小外接円の直径を正規化（`minEnclosingCircle`）。
-- `rectangularity_xld` — 面積 / 最小外接矩形面積（`minAreaRect`）。
+- `elliptic_axis_xld` — 当てはめ楕円の `(Ra, Rb, Phi)`([px] と [rad]、`contour → match`、cv2 `fitEllipse`)。★2026-09-26 まで軸比 1 スカラー。
+- `diameter_xld` — 輪郭点 2 点間の最大距離(最大弦。領域版と同じ量)(画素。★2026-09-26 まで画像サイズで割った 0〜1 の値 —— `docs/hardening/dimensional-features-were-normalised.md`)。
+- `rectangularity_xld` — 輪郭を塗りつぶし、同じモーメントの矩形との差で測る矩形度(領域版と同じ定義)。
 - `moments_xld` — `(μ₂₀+μ₀₂)/m₀₀²`（cv2 `moments`）。
 - （`*_xld` の楕円・矩形・凸包系は OpenCV があるときのみ genuine 計算、無ければ 0.0/1.0 に degrade する）
 

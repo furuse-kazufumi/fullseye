@@ -10,8 +10,10 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis_xld.chain.jpg">elliptic_axis_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Das Verhältnis von kleiner zu großer Achse der an die Kontur angepassten Ellipse. Ein Wert nahe 1 zeigt annähernde Kreisform an, nahe 0 zeigt Länglichkeit an. Eine Annäherung, die von dem Tripel (große Achse, kleine Achse, Winkel), das HALCONs <code style="color:#22d3bf">elliptic_axis_xld</code> (Parameters of the equivalent ellipse of contours or polygons.) zurückgibt, nur den einzelnen skalaren Verhältniswert liefert.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p>Passt eine Ellipse an die Kontur mit den meisten Punkten an (<code style="color:#22d3bf">cv2.fitEllipse</code>) und gibt <code style="color:#22d3bf">(Ra, Rb, Phi)</code> als 3-Komponenten-Vektor der Sorte <code style="color:#22d3bf">match</code> zurück — <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> sind große und kleine Halbachse [px], <code style="color:#22d3bf">Phi</code> der Hauptachsenwinkel (Radiant, gegen den Uhrzeigersinn von der Spaltenachse, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs <code style="color:#22d3bf">elliptic_axis_xld</code> (Parameters of the equivalent ellipse of contours or polygons.).</p>
+<p>Dieselbe Form wie die Regionsversion <code style="color:#22d3bf">elliptic_axis</code>. Da es eine Kleinste-Quadrate-Anpassung an die Konturpunkte ist, stimmt sie nicht mit den Werten aus den Regionsmomenten überein (30x70-Rechteck: region (40,41, 17,31, 0,0) gegenüber xld (44,53, 16,99, 0,0018)).</p>
+<p>★Bis 2026-09-26 wurde ein einzelner Skalar zurückgegeben, das Verhältnis kleine/große Achse (<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>).</p>
+<p><code style="color:#22d3bf">a</code> und <code style="color:#22d3bf">b</code> werden nicht verwendet. Hat keine Kontur 5 oder mehr Punkte, wird 0 (ein Skalar) zurückgegeben. Benötigt cv2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

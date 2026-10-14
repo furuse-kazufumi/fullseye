@@ -10,8 +10,10 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center_xld.chain.jpg">area_center_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>針對點數最多的一條輪廓，用鞋帶公式計算多邊形面積，並以影像總像素數歸一化後回傳。HALCON 的 <code style="color:#22d3bf">area_center_xld</code>（Area and center of gravity (centroid) of contours and polygons.）除了面積外還會回傳重心，而此替代實作僅回傳面積（重心資訊在此近似中遺失——這是 <code style="color:#22d3bf">feature</code> 排序為單一純量所帶來的契約限制）。</p>
-<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。若沒有輪廓則回傳 0。</p>
+<p>以 3 分量向量 <code style="color:#22d3bf">(面積 [px²], 重心列 [px], 重心欄 [px])</code> 回傳點數最多的那條輪廓所圍多邊形的面積與重心。為 HALCON 的 <code style="color:#22d3bf">area_center_xld</code>（Area and center of gravity (centroid) of contours and polygons.）4 個值中去掉方向標記 PointOrder 的 3 個值。</p>
+<p>面積用鞋帶公式,重心不是點的平均,而是<b>所圍面積的重心</b>。以 <code style="color:#22d3bf">match</code> 型別的一維向量回傳(與 <code style="color:#22d3bf">area_center</code> 同形)。</p>
+<p>★直到 2026-09-26,只回傳面積除以影像總像素數的 1 個純量(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。沒有 3 點以上的輪廓時回傳 0(純量)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -10,8 +10,10 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>包含轮廓的最小外接圆（<code style="color:#22d3bf">cv2.minEnclosingCircle</code>）的直径，以图像最长边长归一化后的值。这与 HALCON <code style="color:#22d3bf">diameter_xld</code>（Maximum distance between two contour or polygon points.）所定义的“轮廓上两点间的最大距离”严格来说是不同的指标（是以外接圆直径做的近似，最小外接圆未必与连接最远两点的直径重合）。</p>
-<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>点数最多的那条轮廓的直径 [px] = 轮廓点两点间的最大距离(最长弦)。与 HALCON 的 <code style="color:#22d3bf">diameter_xld</code>（Maximum distance between two contour or polygon points.）为相同的量、相同的单位。</p>
+<p>与区域版 <code style="color:#22d3bf">diameter_region</code> 为同一个量(30x70 的矩形为 75.77 对 74.85)。</p>
+<p>★直到 2026-09-26,返回的是最小外接圆(<code style="color:#22d3bf">cv2.minEnclosingCircle</code>)的直径除以图像最大边长的值(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。没有 5 点以上的轮廓时返回 0。需要 cv2。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

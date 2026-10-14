@@ -5249,13 +5249,13 @@
    "hi": "``a``, ``b`` का उपयोग नहीं होता।"
   },
   "2d/area_center": {
-   "fp": "c9fc98cc04bd",
-   "en": "``a``, ``b`` are unused.",
-   "zh": "``a``、``b`` 未使用。",
-   "tw": "``a``、``b`` 未使用。",
-   "ko": "``a``, ``b``는 사용하지 않는다.",
-   "de": "``a``, ``b`` werden nicht verwendet.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता।"
+   "fp": "71b0504f6317",
+   "en": "Because a single scalar cannot carry (Area, Row, Column), it returns a ``match`` sort (a 1-D vector, the same shape as ``ncc_locate``), unlike the other region feature ops. An empty region gives ``(0, (H-1)/2, (W-1)/2)`` (zero area, centre = the pixel coordinates of the image centre) — fail-soft.\n\n★Until 2026-09-26 all three components were divided by the image size into 0–1 values (area ratio, normalised centroid). They are now in pixels (``docs/hardening/dimensional-features-were-normalised.md``). If you need normalised values, divide the area by ``H*W``, the row by ``H-1`` and the column by ``W-1``.\n\n``a`` and ``b`` are unused.",
+   "zh": "由于单个标量无法表示 (Area, Row, Column),本 op 以 ``match`` 类型(一维向量,与 ``ncc_locate`` 同形)返回,这一点与其他 region 特征 op 不同。区域为空时返回 ``(0, (H-1)/2, (W-1)/2)``(面积为零、中心 = 图像中心的像素坐标),为 fail-soft 规格。\n\n★直到 2026-09-26,3 个分量都除以图像尺寸,返回 0〜1 的值(面积比、归一化质心)。现在为像素单位(``docs/hardening/dimensional-features-were-normalised.md``)。若需要归一化值,把面积除以 ``H*W``、行除以 ``H-1``、列除以 ``W-1``。\n\n``a``、``b`` 未使用。",
+   "tw": "由於單一純量無法表示 (Area, Row, Column),本 op 以 ``match`` 型別(一維向量,與 ``ncc_locate`` 同形)回傳,這一點與其他 region 特徵 op 不同。區域為空時回傳 ``(0, (H-1)/2, (W-1)/2)``(面積為零、中心 = 影像中心的像素座標),為 fail-soft 規格。\n\n★直到 2026-09-26,3 個分量都除以影像尺寸,回傳 0〜1 的值(面積比、正規化重心)。現在為像素單位(``docs/hardening/dimensional-features-were-normalised.md``)。若需要正規化值,把面積除以 ``H*W``、列除以 ``H-1``、欄除以 ``W-1``。\n\n``a``、``b`` 未使用。",
+   "ko": "스칼라 하나로는 (Area, Row, Column) 을 나타낼 수 없으므로 ``match`` 형(1 차원 벡터, ``ncc_locate`` 와 같은 모양)으로 돌려주는 점이 다른 region 특징 op 와 다르다. 영역이 비어 있으면 ``(0, (H-1)/2, (W-1)/2)``(면적 0·중심 = 영상 중심의 화소 좌표)를 돌려주는 fail-soft 사양.\n\n★2026-09-26 까지는 3 성분 모두 영상 크기로 나눈 0〜1 값(면적비·정규화 무게중심)을 돌려주었다. 지금은 화소 단위(``docs/hardening/dimensional-features-were-normalised.md``). 정규화가 필요하면 면적을 ``H*W``, 행을 ``H-1``, 열을 ``W-1`` 로 나눈다.\n\n``a``, ``b`` 는 사용하지 않는다.",
+   "de": "Da ein einzelner Skalar (Area, Row, Column) nicht tragen kann, liefert der Op — anders als die übrigen Region-Merkmals-Ops — die Sorte ``match`` (ein 1-D-Vektor, dieselbe Form wie ``ncc_locate``). Eine leere Region ergibt ``(0, (H-1)/2, (W-1)/2)`` (Fläche null, Mitte = Pixelkoordinaten der Bildmitte) — fail-soft.\n\n★Bis 2026-09-26 wurden alle drei Komponenten durch die Bildgröße auf Werte zwischen 0 und 1 geteilt (Flächenanteil, normierter Schwerpunkt). Jetzt sind es Pixel (``docs/hardening/dimensional-features-were-normalised.md``). Wer normierte Werte braucht, teilt die Fläche durch ``H*W``, die Zeile durch ``H-1`` und die Spalte durch ``W-1``.\n\n``a`` und ``b`` werden nicht verwendet.",
+   "hi": "एक scalar (Area, Row, Column) नहीं ढो सकता, इसलिए यह ``match`` sort (1-D vector, ``ncc_locate`` जैसा आकार) लौटाता है — बाकी region feature ops से यही अंतर है। Region खाली हो तो ``(0, (H-1)/2, (W-1)/2)`` (क्षेत्रफल शून्य, केंद्र = image केंद्र के pixel coordinates) लौटता है — fail-soft।\n\n★2026-09-26 तक तीनों components image size से भाग देकर 0–1 के मान (area ratio, normalised centroid) थे। अब pixels में हैं (``docs/hardening/dimensional-features-were-normalised.md``)। Normalised मान चाहिए तो क्षेत्रफल को ``H*W``, row को ``H-1`` और column को ``W-1`` से भाग दें।\n\n``a`` और ``b`` उपयोग नहीं होते।"
   },
   "2d/count_obj": {
    "fp": "c9fc98cc04bd",
@@ -5330,13 +5330,13 @@
    "hi": "★2026-09-26 तक यह ``4·area/(π·major_axis_length²)`` नाम की एक अलग मात्रा लौटाता था\n(16x64 के rectangle पर 0.239 बनाम 0.577)। जहाँ ``circularity`` यह देखता है कि \"क्षेत्रफल अधिकतम दूरी वाले circle को\nकितना भरता है\", वहीं यह **किनारे के उतार-चढ़ाव** को देखता है।\n\n``a``, ``b`` का उपयोग नहीं होता।"
   },
   "2d/diameter_region": {
-   "fp": "c9fc98cc04bd",
-   "en": "``a``, ``b`` are unused.",
-   "zh": "``a``、``b`` 未使用。",
-   "tw": "``a``、``b`` 未使用。",
-   "ko": "``a``, ``b``는 사용하지 않는다.",
-   "de": "``a``, ``b`` werden nicht verwendet.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता।"
+   "fp": "b4a1613a59b0",
+   "en": "It takes the maximum over all pairs of boundary pixels (reducing to the convex hull first when there are many). The same quantity as the contour version ``diameter_xld``.\n\n★Until 2026-09-26 it returned a **different quantity**, the equivalent diameter (diameter of the circle of equal area) divided by the longest side (0.2585 for a 30x70 rectangle; now 74.85). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` and ``b`` are unused.",
+   "zh": "在所有边界像素对中取最大距离(像素多时先归约到凸包)。与轮廓版 ``diameter_xld`` 为同一个量。\n\n★直到 2026-09-26,返回的是等效直径(面积相等的圆的直径)除以最大边长的**另一个量**(30x70 的矩形为 0.2585,现在为 74.85)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "tw": "在所有邊界像素對中取最大距離(像素多時先歸約到凸包)。與輪廓版 ``diameter_xld`` 為同一個量。\n\n★直到 2026-09-26,回傳的是等效直徑(面積相等的圓的直徑)除以最大邊長的**另一個量**(30x70 的矩形為 0.2585,現在為 74.85)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "ko": "경계 화소의 모든 쌍에서 최대 거리를 잡는다(화소가 많으면 먼저 볼록 껍질로 줄인다). 윤곽판 ``diameter_xld`` 와 같은 양.\n\n★2026-09-26 까지는 등가 지름(면적이 같은 원의 지름)을 최대 변 길이로 나눈 **다른 양**을 돌려주었다(30x70 직사각형에서 0.2585, 지금은 74.85). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a``, ``b`` 는 사용하지 않는다.",
+   "de": "Das Maximum wird über alle Paare von Randpixeln genommen (bei vielen Pixeln zuerst auf die konvexe Hülle reduziert). Dieselbe Größe wie die Konturversion ``diameter_xld``.\n\n★Bis 2026-09-26 wurde eine **andere Größe** zurückgegeben: der Äquivalentdurchmesser (Durchmesser des flächengleichen Kreises) geteilt durch die längste Seite (0,2585 für ein 30x70-Rechteck; jetzt 74,85). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` und ``b`` werden nicht verwendet.",
+   "hi": "सभी boundary pixel जोड़ों में अधिकतम दूरी ली जाती है (pixels अधिक हों तो पहले convex hull पर घटाकर)। Contour संस्करण ``diameter_xld`` जैसी ही मात्रा।\n\n★2026-09-26 तक यह एक **अलग मात्रा** लौटाता था: equivalent diameter (बराबर क्षेत्रफल वाले वृत्त का व्यास) को सबसे लंबी भुजा से भाग देकर (30x70 आयत पर 0.2585, अब 74.85)। ``docs/hardening/dimensional-features-were-normalised.md``।\n\n``a`` और ``b`` उपयोग नहीं होते।"
   },
   "2d/euler_number": {
    "fp": "c9fc98cc04bd",
@@ -5438,13 +5438,13 @@
    "hi": "``a``, ``b`` का उपयोग नहीं होता।"
   },
   "2d/contlength": {
-   "fp": "67d32301e481",
-   "en": "``a``, ``b`` are unused. Because it is clipped at 1.0, for complex boundaries that are extremely long compared with the outer perimeter\n(fractal-like shapes, etc.) the information saturates.",
-   "zh": "``a``、``b`` 未使用。由于在 1.0 处裁剪,对于比外周长极端长的\n复杂边界(分形状的形状等),信息会饱和。",
-   "tw": "``a``、``b`` 未使用。由於在 1.0 處截斷,對於比外周長極端長的\n複雜邊界(碎形狀的形狀等),資訊會飽和。",
-   "ko": "``a``, ``b``는 사용하지 않는다. 1.0에서 클립되므로 외곽 길이보다 극단적으로 긴\n복잡한 경계(프랙털 같은 형상 등)에서는 정보가 포화된다.",
-   "de": "``a``, ``b`` werden nicht verwendet. Da bei 1.0 geclippt wird, sättigt die Information bei komplexen Grenzen, die extrem viel länger als der Außenumfang sind\n(fraktalartige Formen usw.).",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता। 1.0 पर clip होने के कारण, बाहरी परिधि से बहुत अधिक लंबी\nजटिल सीमाओं (fractal जैसे आकार आदि) में जानकारी saturate हो जाती है।"
+   "fp": "10bacf1a0851",
+   "en": "★Until 2026-09-26 it was divided by the image border length ``2*(H+W)`` and clipped at 1.0 (0.2450 for a 30x70 rectangle; now 196.0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` and ``b`` are unused.",
+   "zh": "★直到 2026-09-26,返回的是除以图像外周长 ``2*(H+W)`` 并在 1.0 处截顶的值(30x70 的矩形为 0.2450,现在为 196.0)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "tw": "★直到 2026-09-26,回傳的是除以影像外周長 ``2*(H+W)`` 並在 1.0 處截頂的值(30x70 的矩形為 0.2450,現在為 196.0)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "ko": "★2026-09-26 까지는 영상의 외곽 길이 ``2*(H+W)`` 로 나누고 1.0 에서 잘라낸 값을 돌려주었다(30x70 직사각형에서 0.2450, 지금은 196.0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a``, ``b`` 는 사용하지 않는다.",
+   "de": "★Bis 2026-09-26 wurde er durch die Bildrandlänge ``2*(H+W)`` geteilt und bei 1,0 abgeschnitten (0,2450 für ein 30x70-Rechteck; jetzt 196,0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` und ``b`` werden nicht verwendet.",
+   "hi": "★2026-09-26 तक इसे image की बाहरी परिधि ``2*(H+W)`` से भाग देकर 1.0 पर काट दिया जाता था (30x70 आयत पर 0.2450, अब 196.0)। ``docs/hardening/dimensional-features-were-normalised.md``।\n\n``a`` और ``b`` उपयोग नहीं होते।"
   },
   "2d/area_holes": {
    "fp": "c9fc98cc04bd",
@@ -5555,13 +5555,13 @@
    "hi": "``a`` random seed (= noise का pattern) को, और ``b`` noise की ताकत (standard deviation)\nको बदलता है। दोनों का उपयोग होता है, लेकिन ``a`` का अर्थ \"ताकत\" नहीं बल्कि \"pattern\"\nहै, यह बात इसे अन्य ops से अलग करती है।"
   },
   "2d/area_center_xld": {
-   "fp": "ab59ba81a547",
-   "en": "``a``, ``b`` are unused. If there is no contour, it returns 0.",
-   "zh": "``a``、``b`` 未使用。若没有轮廓则返回 0。",
-   "tw": "``a``、``b`` 未使用。若沒有輪廓則回傳 0。",
-   "ko": "``a``, ``b``는 사용하지 않는다. 윤곽이 없으면 0을 반환한다.",
-   "de": "``a``, ``b`` werden nicht verwendet. Gibt es keine Kontur, wird 0 zurückgegeben.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता। contour न होने पर 0 लौटाता है।"
+   "fp": "3d2d54954bf1",
+   "en": "The area comes from the shoelace formula; the centroid is the **centroid of the enclosed area**, not the mean of the points. Returned as a ``match`` sort 1-D vector (the same shape as ``area_center``).\n\n★Until 2026-09-26 it returned only the area, divided by the total number of image pixels, as one scalar (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` and ``b`` are unused. If no contour has 3 or more points it returns 0 (a scalar).",
+   "zh": "面积用鞋带公式,质心不是点的平均,而是**所围面积的质心**。以 ``match`` 类型的一维向量返回(与 ``area_center`` 同形)。\n\n★直到 2026-09-26,只返回面积除以图像总像素数的 1 个标量(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。没有 3 点以上的轮廓时返回 0(标量)。",
+   "tw": "面積用鞋帶公式,重心不是點的平均,而是**所圍面積的重心**。以 ``match`` 型別的一維向量回傳(與 ``area_center`` 同形)。\n\n★直到 2026-09-26,只回傳面積除以影像總像素數的 1 個純量(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。沒有 3 點以上的輪廓時回傳 0(純量)。",
+   "ko": "면적은 신발끈 공식, 무게중심은 점의 평균이 아니라 **둘러싸인 면적의 무게중심**. ``match`` 형의 1 차원 벡터로 돌려준다(``area_center`` 와 같은 모양).\n\n★2026-09-26 까지는 면적만 영상의 전체 화소 수로 나눈 스칼라 하나를 돌려주었다(``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a``, ``b`` 는 사용하지 않는다. 점이 3 개 이상인 윤곽이 없으면 0(스칼라)을 돌려준다.",
+   "de": "Die Fläche stammt aus der Gaußschen Trapezformel; der Schwerpunkt ist der **Schwerpunkt der umschlossenen Fläche**, nicht der Mittelwert der Punkte. Rückgabe als 1-D-Vektor der Sorte ``match`` (dieselbe Form wie ``area_center``).\n\n★Bis 2026-09-26 wurde nur die Fläche, geteilt durch die Gesamtzahl der Bildpixel, als ein Skalar zurückgegeben (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` und ``b`` werden nicht verwendet. Hat keine Kontur 3 oder mehr Punkte, wird 0 (ein Skalar) zurückgegeben.",
+   "hi": "क्षेत्रफल shoelace formula से, और centroid points का औसत नहीं बल्कि **घिरे हुए क्षेत्रफल का centroid** है। ``match`` sort के 1-D vector के रूप में लौटता है (``area_center`` जैसा आकार)।\n\n★2026-09-26 तक केवल क्षेत्रफल, image के कुल pixels से भाग देकर, एक scalar के रूप में लौटता था (``docs/hardening/dimensional-features-were-normalised.md``)।\n\n``a`` और ``b`` उपयोग नहीं होते। 3 या अधिक points वाला कोई contour न हो तो 0 (scalar) लौटता है।"
   },
   "2d/circularity_xld": {
    "fp": "81fbf500cd05",
@@ -5699,22 +5699,22 @@
    "hi": "``a``, ``b`` का उपयोग नहीं होता।"
   },
   "2d/elliptic_axis_xld": {
-   "fp": "c9fc98cc04bd",
-   "en": "``a``, ``b`` are unused.",
-   "zh": "``a``、``b`` 未使用。",
-   "tw": "``a``、``b`` 未使用。",
-   "ko": "``a``, ``b``는 사용하지 않는다.",
-   "de": "``a``, ``b`` werden nicht verwendet.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता।"
+   "fp": "8063e241558b",
+   "en": "The same shape as the region version ``elliptic_axis``. Because it is a least-squares fit to the contour points, it does not match the values from the region moments (30x70 rectangle: region (40.41, 17.31, 0.0) vs xld (44.53, 16.99, 0.0018)).\n\n★Until 2026-09-26 it returned a single scalar, the minor/major axis ratio (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` and ``b`` are unused. If no contour has 5 or more points it returns 0 (a scalar). Requires cv2.",
+   "zh": "与区域版 ``elliptic_axis`` 同形。由于是对轮廓点的最小二乘拟合,与由区域矩得到的值不一致(30x70 的矩形:region (40.41, 17.31, 0.0) 对 xld (44.53, 16.99, 0.0018))。\n\n★直到 2026-09-26,返回的是短轴/长轴之比这 1 个标量(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。没有 5 点以上的轮廓时返回 0(标量)。需要 cv2。",
+   "tw": "與區域版 ``elliptic_axis`` 同形。由於是對輪廓點的最小二乘擬合,與由區域矩得到的值不一致(30x70 的矩形:region (40.41, 17.31, 0.0) 對 xld (44.53, 16.99, 0.0018))。\n\n★直到 2026-09-26,回傳的是短軸/長軸之比這 1 個純量(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。沒有 5 點以上的輪廓時回傳 0(純量)。需要 cv2。",
+   "ko": "영역판 ``elliptic_axis`` 와 같은 모양. 윤곽점에 대한 최소제곱 맞춤이므로 영역 모멘트에서 얻는 값과는 일치하지 않는다(30x70 직사각형: region (40.41, 17.31, 0.0) 대 xld (44.53, 16.99, 0.0018)).\n\n★2026-09-26 까지는 단축/장축 비 스칼라 하나를 돌려주었다(``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a``, ``b`` 는 사용하지 않는다. 점이 5 개 이상인 윤곽이 없으면 0(스칼라)을 돌려준다. cv2 가 필요하다.",
+   "de": "Dieselbe Form wie die Regionsversion ``elliptic_axis``. Da es eine Kleinste-Quadrate-Anpassung an die Konturpunkte ist, stimmt sie nicht mit den Werten aus den Regionsmomenten überein (30x70-Rechteck: region (40,41, 17,31, 0,0) gegenüber xld (44,53, 16,99, 0,0018)).\n\n★Bis 2026-09-26 wurde ein einzelner Skalar zurückgegeben, das Verhältnis kleine/große Achse (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` und ``b`` werden nicht verwendet. Hat keine Kontur 5 oder mehr Punkte, wird 0 (ein Skalar) zurückgegeben. Benötigt cv2.",
+   "hi": "Region संस्करण ``elliptic_axis`` जैसा आकार। यह contour points पर least-squares fit है, इसलिए region moments से मिले मानों से मेल नहीं खाता (30x70 आयत: region (40.41, 17.31, 0.0) बनाम xld (44.53, 16.99, 0.0018))।\n\n★2026-09-26 तक यह एक scalar लौटाता था, minor/major axis का अनुपात (``docs/hardening/dimensional-features-were-normalised.md``)।\n\n``a`` और ``b`` उपयोग नहीं होते। 5 या अधिक points वाला कोई contour न हो तो 0 (scalar) लौटता है। cv2 आवश्यक है।"
   },
   "2d/diameter_xld": {
-   "fp": "c9fc98cc04bd",
-   "en": "``a``, ``b`` are unused.",
-   "zh": "``a``、``b`` 未使用。",
-   "tw": "``a``、``b`` 未使用。",
-   "ko": "``a``, ``b``는 사용하지 않는다.",
-   "de": "``a``, ``b`` werden nicht verwendet.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता।"
+   "fp": "0d164ea03bf1",
+   "en": "The same quantity as the region version ``diameter_region`` (75.77 vs 74.85 for a 30x70 rectangle).\n\n★Until 2026-09-26 it returned the diameter of the minimum enclosing circle (``cv2.minEnclosingCircle``) divided by the image's longest side (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` and ``b`` are unused. If no contour has 5 or more points it returns 0. Requires cv2.",
+   "zh": "与区域版 ``diameter_region`` 为同一个量(30x70 的矩形为 75.77 对 74.85)。\n\n★直到 2026-09-26,返回的是最小外接圆(``cv2.minEnclosingCircle``)的直径除以图像最大边长的值(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。没有 5 点以上的轮廓时返回 0。需要 cv2。",
+   "tw": "與區域版 ``diameter_region`` 為同一個量(30x70 的矩形為 75.77 對 74.85)。\n\n★直到 2026-09-26,回傳的是最小外接圓(``cv2.minEnclosingCircle``)的直徑除以影像最大邊長的值(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``、``b`` 未使用。沒有 5 點以上的輪廓時回傳 0。需要 cv2。",
+   "ko": "영역판 ``diameter_region`` 과 같은 양(30x70 직사각형에서 75.77 대 74.85).\n\n★2026-09-26 까지는 최소 외접원(``cv2.minEnclosingCircle``)의 지름을 영상의 최대 변 길이로 나눈 값을 돌려주었다(``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a``, ``b`` 는 사용하지 않는다. 점이 5 개 이상인 윤곽이 없으면 0 을 돌려준다. cv2 가 필요하다.",
+   "de": "Dieselbe Größe wie die Regionsversion ``diameter_region`` (75,77 gegenüber 74,85 für ein 30x70-Rechteck).\n\n★Bis 2026-09-26 wurde der Durchmesser des kleinsten umschließenden Kreises (``cv2.minEnclosingCircle``) geteilt durch die längste Bildseite zurückgegeben (``docs/hardening/dimensional-features-were-normalised.md``).\n\n``a`` und ``b`` werden nicht verwendet. Hat keine Kontur 5 oder mehr Punkte, wird 0 zurückgegeben. Benötigt cv2.",
+   "hi": "Region संस्करण ``diameter_region`` जैसी ही मात्रा (30x70 आयत पर 75.77 बनाम 74.85)।\n\n★2026-09-26 तक यह minimum enclosing circle (``cv2.minEnclosingCircle``) के व्यास को image की सबसे लंबी भुजा से भाग देकर लौटाता था (``docs/hardening/dimensional-features-were-normalised.md``)।\n\n``a`` और ``b`` उपयोग नहीं होते। 5 या अधिक points वाला कोई contour न हो तो 0 लौटता है। cv2 आवश्यक है।"
   },
   "2d/rectangularity_xld": {
    "fp": "62dc9821c957",
@@ -5807,13 +5807,13 @@
    "hi": "``a``, ``b`` का उपयोग नहीं होता।"
   },
   "2d/get_region_thickness": {
-   "fp": "c9fc98cc04bd",
-   "en": "``a``, ``b`` are unused.",
-   "zh": "``a``、``b`` 未使用。",
-   "tw": "``a``、``b`` 未使用。",
-   "ko": "``a``, ``b``는 사용하지 않는다.",
-   "de": "``a``, ``b`` werden nicht verwendet.",
-   "hi": "``a``, ``b`` का उपयोग नहीं होता।"
+   "fp": "34b1509574f6",
+   "en": "Unlike the \"thickness profile along the main axis\" defined by HALCON's ``get_region_thickness`` (Access the thickness of a region along the main axis.), this is a simplification that looks only at the global, direction-free largest inscribed radius (the main-axis information is lost).\n\n★Until 2026-09-26 it was divided by the image's longest side, and every region thicker than half that side saturated at 1.0 (0.1500 for a 30x70 rectangle; now 30.0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` and ``b`` are unused.",
+   "zh": "与 HALCON 的 ``get_region_thickness``（Access the thickness of a region along the main axis.）所定义的“沿主轴的粗细剖面”不同,这是只看与方向无关的全局最大内切半径的简化(主轴方向的信息会丢失)。\n\n★直到 2026-09-26 都除以图像的最大边长,粗细超过图像长边一半的区域全部截顶为 1.0(30x70 的矩形为 0.1500,现在为 30.0)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "tw": "與 HALCON 的 ``get_region_thickness``（Access the thickness of a region along the main axis.）所定義的「沿主軸的粗細剖面」不同,這是只看與方向無關的全域最大內切半徑的簡化(主軸方向的資訊會遺失)。\n\n★直到 2026-09-26 都除以影像的最大邊長,粗細超過影像長邊一半的區域全部截頂為 1.0(30x70 的矩形為 0.1500,現在為 30.0)。``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``、``b`` 未使用。",
+   "ko": "HALCON 의 ``get_region_thickness``（Access the thickness of a region along the main axis.）가 정의하는 \"주축을 따른 두께 프로파일\"과 달리, 방향을 따지지 않는 전역 최대 내접 반지름만 보는 단순화(주축 방향 정보는 잃는다).\n\n★2026-09-26 까지는 영상의 최대 변 길이로 나누어, 두께가 영상 긴 변의 절반을 넘는 영역은 모두 1.0 에서 머물렀다(30x70 직사각형에서 0.1500, 지금은 30.0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a``, ``b`` 는 사용하지 않는다.",
+   "de": "Anders als das von HALCONs ``get_region_thickness`` (Access the thickness of a region along the main axis.) definierte „Dickenprofil entlang der Hauptachse“ ist dies eine Vereinfachung, die nur den globalen, richtungsunabhängigen größten Inkreisradius betrachtet (die Information der Hauptachse geht verloren).\n\n★Bis 2026-09-26 wurde durch die längste Bildseite geteilt, und jede Region, die dicker als die Hälfte dieser Seite war, blieb bei 1,0 stehen (0,1500 für ein 30x70-Rechteck; jetzt 30,0). ``docs/hardening/dimensional-features-were-normalised.md``.\n\n``a`` und ``b`` werden nicht verwendet.",
+   "hi": "HALCON के ``get_region_thickness`` (Access the thickness of a region along the main axis.) द्वारा परिभाषित \"main axis के साथ मोटाई की profile\" से अलग, यह केवल दिशा-निरपेक्ष global सबसे बड़ी inscribed radius देखने वाला सरलीकरण है (main axis की जानकारी खो जाती है)।\n\n★2026-09-26 तक इसे image की सबसे लंबी भुजा से भाग दिया जाता था, और उस भुजा के आधे से मोटी हर region 1.0 पर अटक जाती थी (30x70 आयत पर 0.1500, अब 30.0)। ``docs/hardening/dimensional-features-were-normalised.md``।\n\n``a`` और ``b`` उपयोग नहीं होते।"
   },
   "2d/tan_image": {
    "fp": "1521acb1e73b",

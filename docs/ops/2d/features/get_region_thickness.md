@@ -31,12 +31,15 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-領域の太さの近似値 ``2 × 最大内接円半径 / 最大辺長``
-(``distance_transform_edt`` の最大値の 2 倍を画像サイズで正規化)。HALCON
-の ``get_region_thickness``（Access the thickness of a region along the
-main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、
-方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は
-失われる)。
+領域の太さ [px] の近似値 ``2 × 最大内接円半径``(``distance_transform_edt`` の最大値の 2 倍)。
+
+HALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する
+「主軸に沿った太さのプロファイル」とは異なり、方向を問わないグローバルな最大内接半径
+だけを見る単純化(主軸方向の情報は失われる)。
+
+★2026-09-26 まで画像の最大辺長で割っていて、厚みが画像の長辺の半分を超える領域は
+全部 1.0 に頭打ちしていた(30x70 の矩形で 0.1500、いまは 30.0)。
+``docs/hardening/dimensional-features-were-normalised.md``。
 
 ``a``, ``b`` は未使用。
 

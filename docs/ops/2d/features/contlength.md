@@ -31,12 +31,13 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-領域の周囲長(``regionprops`` の ``perimeter``)を画像の外周長
-``2*(H+W)`` で正規化した値。HALCON の ``contlength``（Contour length of a
-region.）に相当。
+領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。
 
-``a``, ``b`` は未使用。1.0 でクリップされるため、外周長より極端に長い
-複雑な境界(フラクタル的な形状など)では情報が飽和する。
+★2026-09-26 まで画像の外周長 ``2*(H+W)`` で割って 1.0 で頭打ちにした値を返していた
+(30x70 の矩形で 0.2450、いまは 196.0)。
+``docs/hardening/dimensional-features-were-normalised.md``。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 
