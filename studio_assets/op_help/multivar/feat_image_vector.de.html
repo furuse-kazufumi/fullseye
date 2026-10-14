@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">feat_image_vector — MULTIVAR <code style="color:#22d3bf">features</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.feat_image_vector(images=None, features=(&#x27;mean&#x27;, &#x27;std&#x27;, &#x27;p01&#x27;, &#x27;p99&#x27;, &#x27;rms_contrast&#x27;, &#x27;michelson_contrast&#x27;, &#x27;grad_energy&#x27;, &#x27;laplacian_var&#x27;), data_range=None, unit=&#x27;DN&#x27;, roi=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import multivar; multivar.feat_image_vector(images=None, features=(&#x27;mean&#x27;, &#x27;std&#x27;, &#x27;p01&#x27;, &#x27;p99&#x27;, &#x27;rms_contrast&#x27;, &#x27;michelson_contrast&#x27;, &#x27;grad_energy&#x27;, &#x27;laplacian_var&#x27;), data_range=None, unit=&#x27;DN&#x27;, roi=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmultivar.get(&quot;feat_image_vector&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Bilder -&gt; Merkmalstabelle <code style="color:#22d3bf">{&quot;matrix&quot; (N, F), &quot;names&quot;, &quot;units&quot;, ...}</code>, eine Zeile pro Bild.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The bridge from pictures to the multivariate ops: each image becomes a row of named numbers with units, ready for <code style="color:#22d3bf">mv_pca</code> / <code style="color:#22d3bf">mv_pls</code> / <code style="color:#22d3bf">rsm_fit</code>. Features (see <code style="color:#22d3bf">FEATURES</code>): <code style="color:#22d3bf">mean, std, p01, p50, p99, rms_contrast, michelson_contrast, grad_energy, laplacian_var</code> need no range; <code style="color:#22d3bf">saturated_fraction, dark_fraction, entropy_bits</code> need <code style="color:#22d3bf">data_range=(lo, hi)</code> — the range of the *sensor or format* (e.g. (0, 4095) for 12-bit), which the data cannot tell: the brightest pixel of a dim image is not the white level. It is therefore <b>required, never inferred</b>, and pixels outside it are refused (the range given is then wrong).</p>
+<p><code style="color:#22d3bf">unit</code> names the grey-level unit (<code style="color:#22d3bf">&quot;DN&quot;</code> by default) used in the unit strings. <code style="color:#22d3bf">roi=(r0, r1, c0, c1)</code> restricts every feature to that window (same for all images).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">Leitfaden zur Familie design_of_experiments</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">features</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

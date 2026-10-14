@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_pls — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import multivar; multivar.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pls&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>Y 對 X 的偏最小平方迴歸，附交叉驗證 Q^2、Q^2 成分數規則與 VIP。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>PLS finds directions in X that both vary and predict Y — the tool for many correlated predictors and few runs (image features -&gt; process settings, or the reverse). <code style="color:#22d3bf">method=&quot;nipals&quot;</code> (default, Wold, Sjöström &amp; Eriksson 2001) or <code style="color:#22d3bf">&quot;simpls&quot;</code> (de Jong 1993; identical to NIPALS for a single response — a test pins it). X and Y are centred and, by default, scaled to unit variance.</p>
+<p>Q^2 is computed by <code style="color:#22d3bf">cv</code>-fold cross-validation with interleaved folds (run i in fold i mod cv, as in SIMCA&#x27;s default of 7 groups): <code style="color:#22d3bf">Q^2_a = 1 - PRESS_a / SS_{a-1}</code> per component (<code style="color:#22d3bf">SS_0</code> = total sum of squares of Y, <code style="color:#22d3bf">SS_{a-1}</code> the residual sum of squares with a-1 components), cumulative <code style="color:#22d3bf">Q^2 = 1 - PRESS_A / SS_0</code>. <code style="color:#22d3bf">n_components=None</code> keeps adding components while <code style="color:#22d3bf">Q^2_a &gt;= 0.0975</code> (= 1 - 0.95^2; Wold et al. 2001) up to <code style="color:#22d3bf">max_components</code>; if not even the first passes, one component is fitted and <code style="color:#22d3bf">significant</code> is False — the data then do not support a predictive model, and the coefficients should not be used.</p>
+<p>VIP (variable importance in projection) ranks X columns; the conventional threshold is VIP &gt; 1. <code style="color:#22d3bf">coef</code> / <code style="color:#22d3bf">intercept</code> predict Y in its original units from X in its original units.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pca">mv_pca</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

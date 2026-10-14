@@ -4,6 +4,21 @@
   "en"
  ],
  "phrases": {
+  "主効果の応答表(SN 比は参考、判断は平均と散らばり)": {
+   "en": "Main-effects response table (SN ratio for reference; decide on mean and dispersion)"
+  },
+  "応答曲面・分散分析・停留点(支えない次数は拒否)": {
+   "en": "Response surface, ANOVA, stationary point (refuses unsupported orders)"
+  },
+  "条件 ⇔ 画像の特徴量の部分最小二乗(Q² と VIP)": {
+   "en": "Partial least squares between settings and image features (Q² and VIP)"
+  },
+  "特徴量の主成分と独立な次元の数": {
+   "en": "Principal components of features and the number of independent dimensions"
+  },
+  "画像を名前と単位つきの特徴量の表に": {
+   "en": "Turn images into a feature table with names and units"
+  },
   "実験計画法・応答曲面・品質工学・感度解析(工程条件の決め方)": {
    "en": "Design of experiments, response surfaces, quality engineering, sensitivity analysis (choosing process settings)"
   },

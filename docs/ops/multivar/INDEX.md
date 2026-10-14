@@ -1,4 +1,4 @@
-# MULTIVAR operator help — 7 ops in 2 categories
+# MULTIVAR operator help — 12 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/multivar/<category>/<op>.md` を走査。
 
@@ -8,9 +8,17 @@
 
 ## カテゴリ
 
+### analysis (4)
+
+[doe_main_effects](analysis/doe_main_effects.md) · [mv_pca](analysis/mv_pca.md) · [mv_pls](analysis/mv_pls.md) · [rsm_fit](analysis/rsm_fit.md)
+
 ### coding (2)
 
 [doe_decode](coding/doe_decode.md) · [doe_encode](coding/doe_encode.md)
+
+### features (1)
+
+[feat_image_vector](features/feat_image_vector.md)
 
 ### plan (5)
 

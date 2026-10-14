@@ -9,6 +9,51 @@
   "hi"
  ],
  "summaries": {
+  "multivar/feat_image_vector": {
+   "fp": "de94df9d3ba8",
+   "ja": "画像 -> 特徴量の表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``(画像 1 枚が 1 行)。",
+   "zh": "图像 -> 特征表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``，每幅图像一行。",
+   "tw": "影像 -> 特徵表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``，每張影像一列。",
+   "ko": "영상 -> 특징량 표 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, 영상 1장이 1행.",
+   "de": "Bilder -> Merkmalstabelle ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, eine Zeile pro Bild.",
+   "hi": "images -> feature table ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, हर image की एक पंक्ति।"
+  },
+  "multivar/mv_pca": {
+   "fp": "101d75d76942",
+   "ja": "表(標本 x 変数)の主成分と、データが支える成分の数。",
+   "zh": "表（样本 x 变量）的主成分，以及数据所支持的成分个数。",
+   "tw": "表（樣本 x 變數）的主成分，以及資料所支持的成分個數。",
+   "ko": "표(표본 x 변수)의 주성분과, 데이터가 뒷받침하는 성분의 수.",
+   "de": "Hauptkomponenten einer Tabelle (Proben x Variablen) und wie viele davon die Daten stützen.",
+   "hi": "table (samples x variables) के principal components, और data कितने components का समर्थन करता है।"
+  },
+  "multivar/mv_pls": {
+   "fp": "b5185af84d4d",
+   "ja": "Y を X に回帰する部分最小二乗(交差検証の Q^2、Q^2 による成分数の規則、VIP つき)。",
+   "zh": "Y 对 X 的偏最小二乘回归，附交叉验证 Q^2、Q^2 成分数规则与 VIP。",
+   "tw": "Y 對 X 的偏最小平方迴歸，附交叉驗證 Q^2、Q^2 成分數規則與 VIP。",
+   "ko": "Y를 X에 회귀하는 부분최소제곱(교차검증 Q^2, Q^2 성분 수 규칙, VIP 포함).",
+   "de": "Partial-Least-Squares-Regression von Y auf X mit kreuzvalidiertem Q^2, der Q^2-Regel und VIP.",
+   "hi": "X पर Y का partial least squares regression, cross-validated Q^2, Q^2 नियम और VIP सहित।"
+  },
+  "multivar/rsm_fit": {
+   "fp": "8ccbf005c5cd",
+   "ja": "``design``(符号化単位)に応答曲面を当てる: 分散分析・当てはまりの悪さ・停留点。",
+   "zh": "在 ``design``（编码单位）上拟合响应曲面：方差分析、失拟检验、驻点。",
+   "tw": "在 ``design``（編碼單位）上擬合反應曲面：變異數分析、適合度不足檢定、駐點。",
+   "ko": "``design``(부호화 단위)에 반응표면을 적합: 분산분석, 적합결여, 정상점.",
+   "de": "Antwortfläche an ein ``design`` (kodierte Einheiten) anpassen: ANOVA, Lack-of-Fit, stationärer Punkt.",
+   "hi": "``design`` (coded units) पर response surface fit: ANOVA, lack of fit, stationary point।"
+  },
+  "multivar/doe_main_effects": {
+   "fp": "59757bec1374",
+   "ja": "因子ごとの水準平均(計画実験の応答表)と、散らばり・SN 比。",
+   "zh": "各因子的水平均值（设计实验的响应表），附离散度与 SN 比。",
+   "tw": "各因子的水準平均（設計實驗的反應表），附離散度與 SN 比。",
+   "ko": "인자별 수준 평균(계획 실험의 반응표)과 산포·SN 비.",
+   "de": "Stufenmittelwerte je Faktor — die Antworttabelle eines geplanten Versuchs — mit Streuung und SN-Verhältnis.",
+   "hi": "हर factor के level means — designed experiment की response table — dispersion और SN के साथ।"
+  },
   "multivar/doe_lhs": {
    "fp": "46807c805eb4",
    "ja": "ラテン超方格計画(McKay, Beckman & Conover 1979)-> ``design``。",

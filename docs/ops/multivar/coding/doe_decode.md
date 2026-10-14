@@ -4,7 +4,7 @@ dim: multivar
 category: coding
 in: design
 out: matrix
-examples: [doe_plan_tour]
+examples: [doe_plan_tour, multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -37,10 +37,11 @@ settings with the same ranges and scales.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [doe_plan_tour](../../../../examples/doe_plan_tour.py) — `py -3.11 examples/doe_plan_tour.py`
+- [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[doe_encode](doe_encode.md)
+[doe_encode](doe_encode.md) · [mv_pca](../analysis/mv_pca.md) · [mv_pls](../analysis/mv_pls.md)
 
 ## 同カテゴリ(`coding`)
 

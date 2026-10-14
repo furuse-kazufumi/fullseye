@@ -46,24 +46,24 @@
 ## `api.py`
 
 - **L165** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L852** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L868** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L923** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
-- **L1062** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1612** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1615** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
-- **L1631** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1700** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1995** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2026** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
-- **L2314** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2350** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2671** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2675** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L2982** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2986** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3107** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3117** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L853** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L869** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L924** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
+- **L1063** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1613** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1616** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1632** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1701** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1996** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2027** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
+- **L2315** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2351** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2672** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2676** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L2983** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2987** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3108** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3118** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -2450,13 +2450,13 @@
 - **L800** _(ja)_ — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
 - **L933** — ★混有非有限值的点云会**让 KD 树的构建本身以生的 ValueError 崩溃**（scipy："data must be finite"）。池的设计是记录 NONFINITE 后仍保留值，所以脏点云来到这里是预期之内 -- 由构建方防范。2026-09-06 实际踩到：新的族增加后连锁的走法变了，在 seed 3_000_0xx 命中这条路径，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。无法绑定的输入约定为跳过而非抛异常）。
 - **L1285** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L7156** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7278** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
-- **L7401** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
-- **L7610** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7612** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L7633** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7741** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7189** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7311** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
+- **L7434** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
+- **L7643** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7645** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L7666** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7774** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2532,9 +2532,9 @@
 
 - **L78** _(ja)_ — ★2026-10-03: 運転の系列の集大成と「開かれた運転基盤」のために足した 2 分野。テーマ表は製造の表と分ける (共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に、製造の「reconstruction」が 3DGS に当たる)。
 - **L273** _(ja)_ — ★2026-10-15: 実験計画・応答曲面・品質工学・感度解析(opsmultivar)。鍵は製造のクラスタ名に実際に出る語 (射出成形の「optimization」、加工の「optimization」「prediction」)—— 工程条件の最適化と予測は、文献では 直交表・応答曲面・感度解析で回す領域。
-- **L342** _(ja)_ — ★2026-10-15: 10 月に足した op の系列(研磨・粉体・粉末 X 線)は、既存のテーマの語に当たらず文献層から 1 本も 指されていなかった。語はクラスタ名に実際に出るものだけを置く(当たらない語は当てない)。
-- **L485** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
-- **L601** _(ja)_ — ★2026-10-15: ここはテーマごとに先頭 8 本で**黙って切っていた**。表の後ろに足した op(10 月の研磨・材料表・ ファイバ・触覚・peg-in-hole …)は対応表に在るのに文献層のどこにも出ず、表に書いたことが嘘になっていた (2026-10-15 時点の表 251 op のうち 21 本。うち 3 本は SPC のテーマの鍵がどのクラスタ名にも当たらなかった分)。 テーマは多くても 17 本なので全部出し、当たらないテーマは INDEX に名指しする(dead_themes)。
+- **L346** _(ja)_ — ★2026-10-15: 10 月に足した op の系列(研磨・粉体・粉末 X 線)は、既存のテーマの語に当たらず文献層から 1 本も 指されていなかった。語はクラスタ名に実際に出るものだけを置く(当たらない語は当てない)。
+- **L489** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
+- **L605** _(ja)_ — ★2026-10-15: ここはテーマごとに先頭 8 本で**黙って切っていた**。表の後ろに足した op(10 月の研磨・材料表・ ファイバ・触覚・peg-in-hole …)は対応表に在るのに文献層のどこにも出ず、表に書いたことが嘘になっていた (2026-10-15 時点の表 251 op のうち 21 本。うち 3 本は SPC のテーマの鍵がどのクラスタ名にも当たらなかった分)。 テーマは多くても 17 本なので全部出し、当たらないテーマは INDEX に名指しする(dead_themes)。
 
 ## `tools/gen_maturity.py`
 

@@ -4,7 +4,7 @@ dim: multivar
 category: coding
 in: matrix
 out: design
-examples: []
+examples: [multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -37,11 +37,11 @@ in ``meta['outside_range']``.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
 
 ## 型が繋がる次の op(`design` を入力に取れる)
 
-[doe_decode](doe_decode.md)
+[doe_decode](doe_decode.md) · [rsm_fit](../analysis/rsm_fit.md) · [doe_main_effects](../analysis/doe_main_effects.md)
 
 ## 同カテゴリ(`coding`)
 

@@ -13,11 +13,16 @@ Categories:
     arrays copied from published tables, 2^(k-p) fractions, central composite and
     Box-Behnken designs.
   * ``coding`` — natural units <-> coded −1..+1 (``doe.py``).
+  * ``analysis`` — what the runs say (``multivar.py``): table PCA with the number of
+    components judged three ways, PLS (NIPALS + SIMPLS), response surfaces with ANOVA /
+    lack of fit / stationary point, main effects with dispersion and SN ratio.
+  * ``features`` — images -> a named, unit-carrying feature table (``multivar.py``).
 
 Provenance is public literature only (docs/PROVENANCE.md naming rule): McKay, Beckman &
 Conover 1979; Taguchi 1987 / Bose & Bush 1952 (tables via the University of York and NIST
 Dataplot); Box & Hunter 1961 (fractions, NIST/SEMATECH e-Handbook Table 3.17); Box & Wilson
-1951; Box & Behnken 1960.
+1951; Box & Behnken 1960; Hotelling 1933 / Horn 1965 (PCA, parallel analysis); Wold et al.
+1984 / 2001 and de Jong 1993 (PLS); Box & Draper 1987 (response surfaces); Box 1988 (SN ratios).
 
 Usage:
     import opsmultivar
@@ -25,8 +30,9 @@ Usage:
     opsmultivar.get("doe_orthogonal_array")("L9", 4)
 """
 import doe
+import multivar
 
-_MOD = {"doe": doe}
+_MOD = {"doe": doe, "multivar": multivar}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: ONE new word, ``design``.
@@ -53,6 +59,17 @@ _CATALOG = {
     "coding": [
         ("doe_encode", "doe", ["matrix"], "design"),
         ("doe_decode", "doe", ["design"], "matrix"),
+    ],
+    # 解析: 走らせた結果が何を言うか。表(matrix、特徴量の表も可)/ 計画 + 応答 → table。
+    "analysis": [
+        ("mv_pca", "multivar", ["matrix"], "table"),
+        ("mv_pls", "multivar", ["matrix", "signal"], "table"),
+        ("rsm_fit", "multivar", ["design", "signal"], "table"),
+        ("doe_main_effects", "multivar", ["design", "signal"], "table"),
+    ],
+    # 特徴量: 画像 → 名前と単位つきの列(data_range は推測しない)。
+    "features": [
+        ("feat_image_vector", "multivar", ["images"], "table"),
     ],
 }
 

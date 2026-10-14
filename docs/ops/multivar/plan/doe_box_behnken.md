@@ -42,7 +42,7 @@ that are not reproduced here and are refused.
 
 ## 型が繋がる次の op(`design` を入力に取れる)
 
-[doe_decode](../coding/doe_decode.md)
+[doe_decode](../coding/doe_decode.md) · [rsm_fit](../analysis/rsm_fit.md) · [doe_main_effects](../analysis/doe_main_effects.md)
 
 ## 同カテゴリ(`plan`)
 

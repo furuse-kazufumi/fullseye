@@ -73,3 +73,35 @@ McKay, Beckman & Conover 1979, Technometrics 21(2):239 / Taguchi 1987(System of 
 "Orthogonal Arrays (Taguchi Designs)" と NIST Dataplot / Bose & Bush 1952, Ann. Math. Stat. 23:508 / Box & Hunter 1961,
 Technometrics 3(3):311 / Box & Wilson 1951, JRSS B 13(1):1 / Box & Behnken 1960, Technometrics 2(4):455 /
 NIST/SEMATECH e-Handbook of Statistical Methods 5.3.3.4.7, 5.3.3.6.
+
+## 解析(analysis / features)
+
+| やりたいこと | op | 真値・出典 |
+|---|---|---|
+| 画像を名前と単位つきの特徴量の表に | `feat_image_vector` | 飽和・暗部・エントロピーは `data_range`(センサや形式の範囲)を**必ず受け取る**。データの最大値は白レベルではない |
+| 特徴量の独立な次元の数 | `mv_pca` | PCA = SVD(固有値が相関/共分散行列の固有値と一致)。次元数は累積寄与・平行分析(Horn 1965)・MDL(`mathspectral.n_sources_mdl` を再利用、標準化しないときだけ)の 3 通り |
+| 条件 ⇔ 画像の特徴量の回帰 | `mv_pls` | NIPALS(Wold ら 2001)と SIMPLS(de Jong 1993)の 2 実装が 1 変数 y で一致。交差検証の Q² と、Q²_a ≥ 0.0975 の成分数の規則、VIP |
+| 最良の条件と曲面の形 | `rsm_fit` | 二次式の停留点 = 解析解、正準解析(最大・最小・鞍点・尾根)、純誤差との当てはまりの悪さの F 検定。**計画が支えない次数は、交絡する項を名指しして拒否**(2 水準の計画に二次を当てると `x1^2 = 1`) |
+| 主効果の応答表 | `doe_main_effects` | 水準ごとの平均と log s。SN 比も出すが、推奨の水準は平均と散らばりを分けて読む(Box 1988。SN 比は 1 つの数に混ぜる) |
+
+```python
+import numpy as np
+import fullseye as fs
+
+l9 = fs.ledger.doe_orthogonal_array("L9", [("angle", 15, 75, "deg"), ("power", 0.5, 1.5, "a.u."),
+                                           ("exposure", 2, 8, "ms"), ("gain", 0, 12, "dB")])
+c = l9["coded"]
+Y = np.stack([10 - 3 * c[:, 0] + 0.5 * c[:, 2] + 0.2 * s for s in (-1, 0, 1)], axis=1)   # 9 条件 x 3 回(装置の出力の代わり)
+me = fs.ledger.doe_main_effects(l9, Y, goal="larger")
+print(me["best_levels"], me["sn_agrees"])
+
+ccd = fs.ledger.doe_central_composite([("angle", 4, 20, "deg"), ("exposure", 6, 30, "ms")], center=5, inscribed=True)
+x = ccd["coded"]
+y13 = 17 - (x[:, 0] - 0.2) ** 2 - 2 * (x[:, 1] + 0.1) ** 2 + 0.01 * np.cos(np.arange(len(x)))
+rs = fs.ledger.rsm_fit(ccd, y13)
+print(rs["canonical"]["kind"], rs["stationary"]["natural"], rs["lack_of_fit"]["testable"])
+```
+
+`examples/multivar_inspection_tour.py` は検査カメラの例で、主効果(角度が 8 割、強さ・露光・ゲインは同じ山形)、
+応答曲面(当てはまりの悪さが有意 = 二次では飽和の折れを表せない、という合図)、PCA(特徴量 9 本の独立な情報は 2 次元)、
+PLS(画像から照明の角度は読めるが、露光は読めない)を出します。

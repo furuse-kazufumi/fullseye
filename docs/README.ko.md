@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 8 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 374건 중 게이트가 실제로 실행하는 것은 374건.
+예 375건 중 게이트가 실제로 실행하는 것은 375건.
 
 ### 버전별 연산자 수
 
@@ -134,11 +134,11 @@
 
 ## 연산자 찾기
 
-**3,235개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **64개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,240개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **64개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2278/2290, 한 줄 파사드 `fullseye.<이름>` 683/1432 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2283/2295, 한 줄 파사드 `fullseye.<이름>` 683/1433 — **파사드는 아직 절반**.
 
-**내용 실측**: 3235건 중 실행 가능한 예제가 붙은 것은 **3233**건(2건은 없음), 사용법이 120자 이상인 것은 **3071**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3235건 모두.
+**내용 실측**: 3240건 중 실행 가능한 예제가 붙은 것은 **3239**건(1건은 없음), 사용법이 120자 이상인 것은 **3076**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3240건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -175,6 +175,7 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
+| `multivar` | 12 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -185,7 +186,6 @@
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
-| `multivar` | 7 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 256건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,235건과 패밀리 가이드 64건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,240건과 패밀리 가이드 64건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

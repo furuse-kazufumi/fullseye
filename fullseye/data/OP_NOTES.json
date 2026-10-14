@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3229,
- "n_notes": 3235,
+ "n_ops": 3234,
+ "n_notes": 3240,
  "notes": {
   "vol_dilate": [
    {
@@ -26134,6 +26134,46 @@
     "path": "docs/ops/motionmag/temporal/temporal_bandpass.md"
    }
   ],
+  "doe_main_effects": [
+   {
+    "op": "doe_main_effects",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/doe_main_effects.md"
+   }
+  ],
+  "mv_pca": [
+   {
+    "op": "mv_pca",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/mv_pca.md"
+   }
+  ],
+  "mv_pls": [
+   {
+    "op": "mv_pls",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/mv_pls.md"
+   }
+  ],
+  "rsm_fit": [
+   {
+    "op": "rsm_fit",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/rsm_fit.md"
+   }
+  ],
   "doe_decode": [
    {
     "op": "doe_decode",
@@ -26152,6 +26192,16 @@
     "in": "matrix",
     "out": "design",
     "path": "docs/ops/multivar/coding/doe_encode.md"
+   }
+  ],
+  "feat_image_vector": [
+   {
+    "op": "feat_image_vector",
+    "dim": "multivar",
+    "category": "features",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/multivar/features/feat_image_vector.md"
    }
   ],
   "doe_box_behnken": [

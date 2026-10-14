@@ -1400,6 +1400,34 @@ def _b_doe_decode(pool, rng):
     return (__import__("doe").doe_box_behnken([("a", 0.0, 10.0), ("b", 1.0, 2.0), ("c", -5.0, 5.0)]),), {}
 
 
+def _b_mv_table(pool, rng):
+    t = rng.normal(size=(40, 2))
+    return (t @ rng.normal(size=(2, 6)) + 0.1 * rng.normal(size=(40, 6)),), {"n_parallel": 20}
+
+
+def _b_mv_pls(pool, rng):
+    # 列を 12 本にする: 列が 10 本以下だと max_components(既定 10)が列の数で頭打ちになり、ノブが効かない
+    t = rng.normal(size=(30, 2))
+    X = t @ rng.normal(size=(2, 12)) + 0.1 * rng.normal(size=(30, 12))
+    return (X, t @ np.array([1.0, -0.5]) + 0.05 * rng.normal(size=30)), {}
+
+
+def _b_rsm_fit(pool, rng):
+    d = __import__("doe").doe_central_composite(2, center=3)
+    c = d["coded"]
+    return (d, 5 - (c[:, 0] - 0.2) ** 2 - 2 * c[:, 1] ** 2 + 0.05 * rng.normal(size=len(c))), {}
+
+
+def _b_main_effects(pool, rng):
+    d = __import__("doe").doe_orthogonal_array("L9", 4)
+    return (d, 10 + d["coded"][:, 0] - 0.5 * d["coded"][:, 1] + 0.1 * rng.normal(size=9)), {}
+
+
+def _b_feat_images(pool, rng):
+    g = np.linspace(0.0, 1.0, 24)
+    return ([np.outer(g, g) * s + 0.01 * rng.random((24, 24)) for s in (0.5, 1.0, 2.0)],), {}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -6866,6 +6894,11 @@ OP_ARG_BUILDERS = {
     "text_lines": _b_text_boxes,
     "doe_encode": _b_doe_encode,
     "doe_decode": _b_doe_decode,
+    "mv_pca": _b_mv_table,
+    "mv_pls": _b_mv_pls,
+    "rsm_fit": _b_rsm_fit,
+    "doe_main_effects": _b_main_effects,
+    "feat_image_vector": _b_feat_images,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

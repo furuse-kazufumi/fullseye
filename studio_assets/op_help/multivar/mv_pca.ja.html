@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_pca — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>表(標本 x 変数)の主成分と、データが支える成分の数。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>PCA is the SVD of the centred (by default also unit-variance) matrix <code style="color:#22d3bf">Xc = U S V^T</code>: scores <code style="color:#22d3bf">U S</code>, loadings <code style="color:#22d3bf">V</code>, eigenvalues <code style="color:#22d3bf">S^2/(n-1)</code> (the covariance or correlation eigenvalues — the tests check this identity).</p>
+<p>The number of components is reported three ways, because each fails differently:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cumulative</code> — the smallest count reaching <code style="color:#22d3bf">threshold</code> of the variance (a convention, not a test: with many noisy columns it keeps noise);</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">parallel</code> — Horn&#x27;s parallel analysis (Horn 1965): keep component i while its eigenvalue exceeds the <code style="color:#22d3bf">parallel_stat</code> (<code style="color:#22d3bf">&quot;mean&quot;</code> as in Horn, or <code style="color:#22d3bf">&quot;p95&quot;</code>) of the i-th eigenvalue of <code style="color:#22d3bf">n_parallel</code> normal random tables of the same shape treated the same way;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mdl</code> — the MDL criterion of Wax &amp; Kailath 1985 (<code style="color:#22d3bf">mathspectral.n_sources_mdl</code>, reused) on the centred data; it assumes white noise of equal variance in every column, which standardising breaks, so it is computed only with <code style="color:#22d3bf">standardize=False</code> (homogeneous columns: pixels, features in one unit) and is <code style="color:#22d3bf">None</code> otherwise.</p>
+<p><code style="color:#22d3bf">n_components</code> fixes how many scores/loadings to return (default: the parallel count, at least 1). Accepts a matrix or a <code style="color:#22d3bf">feat_image_vector</code> table.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pls">mv_pls</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

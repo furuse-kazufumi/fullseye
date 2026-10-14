@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_pca — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>표(표본 x 변수)의 주성분과, 데이터가 뒷받침하는 성분의 수.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>PCA is the SVD of the centred (by default also unit-variance) matrix <code style="color:#22d3bf">Xc = U S V^T</code>: scores <code style="color:#22d3bf">U S</code>, loadings <code style="color:#22d3bf">V</code>, eigenvalues <code style="color:#22d3bf">S^2/(n-1)</code> (the covariance or correlation eigenvalues — the tests check this identity).</p>
+<p>The number of components is reported three ways, because each fails differently:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cumulative</code> — the smallest count reaching <code style="color:#22d3bf">threshold</code> of the variance (a convention, not a test: with many noisy columns it keeps noise);</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">parallel</code> — Horn&#x27;s parallel analysis (Horn 1965): keep component i while its eigenvalue exceeds the <code style="color:#22d3bf">parallel_stat</code> (<code style="color:#22d3bf">&quot;mean&quot;</code> as in Horn, or <code style="color:#22d3bf">&quot;p95&quot;</code>) of the i-th eigenvalue of <code style="color:#22d3bf">n_parallel</code> normal random tables of the same shape treated the same way;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mdl</code> — the MDL criterion of Wax &amp; Kailath 1985 (<code style="color:#22d3bf">mathspectral.n_sources_mdl</code>, reused) on the centred data; it assumes white noise of equal variance in every column, which standardising breaks, so it is computed only with <code style="color:#22d3bf">standardize=False</code> (homogeneous columns: pixels, features in one unit) and is <code style="color:#22d3bf">None</code> otherwise.</p>
+<p><code style="color:#22d3bf">n_components</code> fixes how many scores/loadings to return (default: the parallel count, at least 1). Accepts a matrix or a <code style="color:#22d3bf">feat_image_vector</code> table.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pls">mv_pls</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

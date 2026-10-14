@@ -1,8 +1,8 @@
 {
- "n_ops": 3229,
+ "n_ops": 3234,
  "tiers": {
   "color": 12,
-  "ledger": 2276,
+  "ledger": 2281,
   "nary": 17,
   "registry": 924
  },
@@ -6801,6 +6801,20 @@
    "in_sorts": []
   },
   {
+   "name": "doe_main_effects",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
+   ]
+  },
+  {
    "name": "doe_orthogonal_array",
    "halcon": "",
    "in_sort": null,
@@ -8128,6 +8142,19 @@
    "dim": "tomography",
    "in_sorts": [
     "sinostack"
+   ]
+  },
+  {
+   "name": "feat_image_vector",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "features",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -16226,6 +16253,33 @@
    ]
   },
   {
+   "name": "mv_pca",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mv_pls",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
    "name": "n_sources_mdl",
    "halcon": "",
    "in_sort": "matrix",
@@ -22336,6 +22390,20 @@
    "dim": "annotate",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "rsm_fit",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
    ]
   },
   {

@@ -40,3 +40,27 @@ print(frac[&quot;meta&quot;][&quot;resolution_roman&quot;], frac[&quot;alias&quo
 <p style="margin:2px 0 2px 12px">• <b>範囲は推測しません。</b> <code style="color:#22d3bf">doe_encode</code> は lo/hi を必ず受け取ります(データの最小・最大を範囲にすると、計画と記録で符号化がずれる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">出典(公開文献のみ)</h3>
 <p>McKay, Beckman &amp; Conover 1979, Technometrics 21(2):239 / Taguchi 1987(System of Experimental Design)、表は University of York &quot;Orthogonal Arrays (Taguchi Designs)&quot; と NIST Dataplot / Bose &amp; Bush 1952, Ann. Math. Stat. 23:508 / Box &amp; Hunter 1961, Technometrics 3(3):311 / Box &amp; Wilson 1951, JRSS B 13(1):1 / Box &amp; Behnken 1960, Technometrics 2(4):455 / NIST/SEMATECH e-Handbook of Statistical Methods 5.3.3.4.7, 5.3.3.6.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">解析(analysis / features)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 画像を名前と単位つきの特徴量の表に | <code style="color:#22d3bf">feat_image_vector</code> | 飽和・暗部・エントロピーは <code style="color:#22d3bf">data_range</code>(センサや形式の範囲)を<b>必ず受け取る</b>。データの最大値は白レベルではない |</p>
+<p>| 特徴量の独立な次元の数 | <code style="color:#22d3bf">mv_pca</code> | PCA = SVD(固有値が相関/共分散行列の固有値と一致)。次元数は累積寄与・平行分析(Horn 1965)・MDL(<code style="color:#22d3bf">mathspectral.n_sources_mdl</code> を再利用、標準化しないときだけ)の 3 通り |</p>
+<p>| 条件 ⇔ 画像の特徴量の回帰 | <code style="color:#22d3bf">mv_pls</code> | NIPALS(Wold ら 2001)と SIMPLS(de Jong 1993)の 2 実装が 1 変数 y で一致。交差検証の Q² と、Q²_a ≥ 0.0975 の成分数の規則、VIP |</p>
+<p>| 最良の条件と曲面の形 | <code style="color:#22d3bf">rsm_fit</code> | 二次式の停留点 = 解析解、正準解析(最大・最小・鞍点・尾根)、純誤差との当てはまりの悪さの F 検定。<b>計画が支えない次数は、交絡する項を名指しして拒否</b>(2 水準の計画に二次を当てると <code style="color:#22d3bf">x1^2 = 1</code>) |</p>
+<p>| 主効果の応答表 | <code style="color:#22d3bf">doe_main_effects</code> | 水準ごとの平均と log s。SN 比も出すが、推奨の水準は平均と散らばりを分けて読む(Box 1988。SN 比は 1 つの数に混ぜる) |</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+l9 = fs.ledger.doe_orthogonal_array(&quot;L9&quot;, [(&quot;angle&quot;, 15, 75, &quot;deg&quot;), (&quot;power&quot;, 0.5, 1.5, &quot;a.u.&quot;),
+                                           (&quot;exposure&quot;, 2, 8, &quot;ms&quot;), (&quot;gain&quot;, 0, 12, &quot;dB&quot;)])
+c = l9[&quot;coded&quot;]
+Y = np.stack([10 - 3 * c[:, 0] + 0.5 * c[:, 2] + 0.2 * s for s in (-1, 0, 1)], axis=1)   # 9 条件 x 3 回(装置の出力の代わり)
+me = fs.ledger.doe_main_effects(l9, Y, goal=&quot;larger&quot;)
+print(me[&quot;best_levels&quot;], me[&quot;sn_agrees&quot;])
+
+ccd = fs.ledger.doe_central_composite([(&quot;angle&quot;, 4, 20, &quot;deg&quot;), (&quot;exposure&quot;, 6, 30, &quot;ms&quot;)], center=5, inscribed=True)
+x = ccd[&quot;coded&quot;]
+y13 = 17 - (x[:, 0] - 0.2) ** 2 - 2 * (x[:, 1] + 0.1) ** 2 + 0.01 * np.cos(np.arange(len(x)))
+rs = fs.ledger.rsm_fit(ccd, y13)
+print(rs[&quot;canonical&quot;][&quot;kind&quot;], rs[&quot;stationary&quot;][&quot;natural&quot;], rs[&quot;lack_of_fit&quot;][&quot;testable&quot;])</pre>
+<p><code style="color:#22d3bf">examples/multivar_inspection_tour.py</code> は検査カメラの例で、主効果(角度が 8 割、強さ・露光・ゲインは同じ山形)、応答曲面(当てはまりの悪さが有意 = 二次では飽和の折れを表せない、という合図)、PCA(特徴量 9 本の独立な情報は 2 次元)、PLS(画像から照明の角度は読めるが、露光は読めない)を出します。</p>
