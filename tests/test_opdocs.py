@@ -378,7 +378,7 @@ def test_optics_registry_is_connected():
     # 2026-09-05: optscene "scene" 44 op を追加 → 計 124。
     # 2026-09-15: optics "wave" に瞳形状 PSF 3 op を追加 → 計 127。
     # 2026-09-18: optics "polarization" に偏光カメラ 3 op を追加 → 計 130。
-    assert len(_OPT_RECS) == 221        # + 4f 光学プロセッサ 2 op(2026-09-26)+ edgesfr 4 op + sensorchar 10 op(2026-10-01)+ cavity 5 op + matprop 16 op + spectral 9 op + fiber 7 op(2026-10-14)
+    assert len(_OPT_RECS) == 228        # + 4f 光学プロセッサ 2 op(2026-09-26)+ edgesfr 4 op + sensorchar 10 op(2026-10-01)+ cavity 5 op + matprop 16 op + spectral 9 op + fiber 7 op(2026-10-14)+ telecentric 7 op(2026-10-15)
     #                                     + coherent 6 op(2026-10-13)
     #                                     + shape_from_polarization 8 op(2026-10-13)
     #                                     + light_transport 11 op(2026-10-13)
@@ -386,7 +386,7 @@ def test_optics_registry_is_connected():
     assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
             "optimization", "illumination", "appearance", "interface", "mirror",
             "glassbody", "finish", "material", "surface",
-            "scene", "sensorchar", "sensorgeneral", "coherent", "shape_from_polarization", "light_transport", "cavity", "matprop", "spectral", "fiber"} == {r["category"] for r in _OPT_RECS}
+            "scene", "sensorchar", "sensorgeneral", "coherent", "shape_from_polarization", "light_transport", "cavity", "matprop", "spectral", "fiber", "telecentric"} == {r["category"] for r in _OPT_RECS}
     # the design / imaging_sim notes must say where their implementation lives
     for r in _OPT_RECS:
         if r["category"] == "design":

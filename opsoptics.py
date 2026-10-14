@@ -31,6 +31,13 @@ coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging
 Airy の自己相関、画素の積分)、光切断の光条をスペックル込みで描く op、三角測量の高さの
 不確かさの床 ``δz = C·λ/(2π sin u sin θ)``(Dorsch, Häusler & Herrmann 1994)と低減の閉形式。
 
+telecentric(telecentric.py、2026-10-15 追加)— **テレセントリックレンズと寸法計測**。``lens_spec`` の
+``telecentric=True`` は旗だけで、テレセンの光学系も、その旗を読む経路も無かった。しかも ``raytrace`` の光線は
+入射瞳を狙うので、入射瞳が無限遠の物体側テレセンでは ``chief_ray`` が止まる。telecentric は同じ処方(table)に
+対して光線の狙いを**絞りそのもの**に置き直し、同じ単レンズの絞りの位置だけを変えた 3 種(通常 / 物体側 /
+両側テレセン)の生成、主光線の傾き(テレセン度)、像面を固定して物体を動かしたときの倍率、段差の上下の
+寸法の誤差、ぼけの RMS、前玉で決まる視野(ケラレ)、``render3d`` へのピンホールの写しを返す。
+
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
 (曲率/間隔/円錐/非球面係数を変数に、多視野・多波長の横収差 + EFL 拘束)。
@@ -101,8 +108,10 @@ import cavityoptics
 import materials
 import spectralrad
 import fiberoptics
+import telecentric
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics,
+        "telecentric": telecentric,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -467,6 +476,16 @@ _CATALOG = {
         ("fiber_lp_modes", "fiberoptics", [], "table"),
         ("fiber_mode_field_diameter", "fiberoptics", [], "table"),
         ("fiber_bundle_coupling", "fiberoptics", [], "table"),
+    ],
+    "telecentric": [  # テレセントリックレンズと寸法計測(telecentric、2026-10-15): 絞りの位置で主光線の傾きを決め、
+        # 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
+        ("telecentric_lens", "telecentric", [], "table"),
+        ("chief_ray_angle", "telecentric", ["table"], "table"),
+        ("magnification_vs_depth", "telecentric", ["table"], "pairs"),
+        ("telecentricity_error", "telecentric", ["table"], "table"),
+        ("defocus_spot_vs_depth", "telecentric", ["table"], "pairs"),
+        ("vignetting_vs_field", "telecentric", ["table"], "pairs"),
+        ("lens_equivalent_pinhole", "telecentric", ["table"], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

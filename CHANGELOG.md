@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — テレセントリックレンズと寸法計測(telecentric 7 op + PoC)
+- `telecentric`(`opsoptics` の新カテゴリ `telecentric`、7 op): `telecentric_lens`(同じ単レンズの絞りの位置だけを変えた通常 / 物体側 / 両側テレセン、`stop_shift_mm` でテレセン度を崩す)、`chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙う —— 入射瞳が無限遠の物体側テレセンでは `raytrace.chief_ray` が止まっていた)、`magnification_vs_depth`、`telecentricity_error`、`defocus_spot_vs_depth`、`vignetting_vs_field`、`lens_equivalent_pinhole`(`render3d` のピンホールを入射瞳に)。
+- PoC `poc_telecentric_metrology`(22 門、図 6 枚 + GIF): 倍率の変化は閉形式 L/(L − Δz) と 7e-5、FA レンズ f = 25 mm は +5 mm で +6.9 %、テレセンは −0.013 %。描いた画像から測ったピン上面の径と穴の底の見える割合を閉形式と突き合わせる。★単レンズの瞳の球面収差でテレセン度 0.05° が残り、Newton の閉形式は視野の端で 11.8 % 外れ、視野の 50 % 点は近軸より 0.8 mm 手前。OSS の optiland と主光線の像の高さが 9e-8 mm(手元にあれば門、無ければ記録を印字)。
+- 能力ノート `docs/capabilities/telecentric-metrology.md`、op 要約 6 言語、手書き件数 +7、COLLECTION_SIZES。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。
