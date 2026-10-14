@@ -243,9 +243,9 @@ def chapter_differential():
     print("\n4. 差動で共通の誤差を消す")
     ref = mark(layout="differential", seed=11)
     d = 25.0
-    cases = [("マーク全体の流れ 300 nm", dict(drift_nm=300.0)),
+    cases = [("流れ 300 nm", dict(drift_nm=300.0)),
              ("照明の傾き 30 %", dict(illum_gradient=0.3)),
-             ("流れ 300 nm + 傾き 30 %", dict(drift_nm=300.0, illum_gradient=0.3))]
+             ("両方", dict(drift_nm=300.0, illum_gradient=0.3))]
     rows = []
     for label, kw in cases:
         r = MA.moire_mark_read(mark(d, seed=12, layout="differential", **kw), ref, PX, PM, PW, "differential")
@@ -363,20 +363,104 @@ def chapter_talbot():
     return gaps, ca, cb, zt
 
 
+def _dark_fringe_col(img, near, half):
+    """縞の暗い所(列の平均の最小)を near ± half の窓で探し、放物線で画素より細かく。"""
+    prof = img.mean(axis=0)
+    lo, hi = max(1, int(near - half)), min(prof.size - 2, int(near + half))
+    k = lo + int(np.argmin(prof[lo:hi + 1]))
+    a, b, c = prof[k - 1], prof[k], prof[k + 1]
+    den = a - 2 * b + c
+    return k + (0.5 * (a - c) / den if den != 0 else 0.0)
+
+
+def differential_panel(delta_nm=400.0, shape=(124, 1024), sep=8):
+    """差動のマークを 2 段(上 = 対 A、下 = 対 B)に分け、同じずれで縞が**逆向き**に流れるのを矢印で示す(RGB)。
+
+    各段は ずれ δ のときの像。破線 = ずれ 0 のときの暗い縞の位置、矢印 = その縞が δ で動いた先。
+    """
+    import fullseye as fs
+    import imagedraw
+    P = PM * PW / abs(PW - PM) / PX
+    bands, labels = [], []
+    for pair, (pm, pw) in (("A", (PM, PW)), ("B", (PW, PM))):
+        z = MA.moire_overlay_image(shape, PX, pm, pw, 0.0)
+        m = MA.moire_overlay_image(shape, PX, pm, pw, delta_nm)
+        c0 = _dark_fringe_col(z, shape[1] / 2, P / 2)
+        mm = MA.moire_magnification(pm, pw)
+        expect = c0 + mm["fringe_direction"] * mm["magnification"] * delta_nm * 1e-3 / PX
+        c1 = _dark_fringe_col(m, expect, P / 4)
+        rgb = np.repeat(np.clip(m / 0.5, 0, 1)[..., None], 3, axis=2)
+        h = shape[0]
+        rgb = np.asarray(fs.draw_line(rgb, (c0, 4), (c0, h - 5), color=(0.0, 0.45, 0.70), width=2,
+                                      style=imagedraw.DrawStyle(line_style="dashed")))
+        rgb = np.asarray(fs.draw_line(rgb, (c1, 4), (c1, h - 5), color=(0.84, 0.37, 0.0), width=2))
+        rgb = np.asarray(fs.arrow(rgb, (c0, h * 0.62), (c1, h * 0.62), color="wrong", width=4, head_len=16.0,
+                                  head_width=14.0))
+        lab = "対 %s(マスク %.2f / ウェハ %.2f µm): 縞は %s %.1f µm" % (
+            pair, pm, pw, "←" if c1 < c0 else "→", abs(c1 - c0) * PX)
+        rgb = np.asarray(fs.text_box(rgb, lab, (8, 6), anchor="lt", font_size=13))
+        bands.append(rgb)
+        labels.append((pair, (c1 - c0) * PX))
+    line = np.ones((sep, shape[1], 3))
+    line[sep // 2 - 1:sep // 2 + 1] = (0.85, 0.37, 0.0)       # A と B の境目(細い橙の線)
+    return np.vstack([bands[0], line, bands[1]]), labels
+
+
+def differential_bars(rows):
+    """条件ごとに「単一の対」と「差動」の |誤差| を横並びの棒で(値を棒に印字)。"""
+    import fullseye as fs
+    w, h = 720, 400
+    img = np.ones((h, w, 3))
+    names = [r[0] for r in rows]
+    single = np.array([abs(r[1]) for r in rows])
+    diff = np.array([abs(r[2]) for r in rows])
+    top = float(np.ceil(single.max() * 1.6))                 # 上に凡例の置き場を空ける(棒と値に重ねない)
+    rect = (72, 56, w - 96, h - 140)
+    ax = fs.axes_transform(rect, (-0.5, len(rows) - 0.5), (0.0, top))
+    yt = fs.nice_ticks(0.0, top, 5)
+    img = np.asarray(fs.grid_lines(img, ax, xticks=[], yticks=yt, alpha=0.25))
+    img = np.asarray(fs.axes_frame(img, ax, width=1))
+    img = np.asarray(fs.ticks(img, ax, xticks=[], yticks=yt, tick_len=5, font_size=11))
+    xs = np.arange(len(rows), dtype=float)
+    for off, vals, col, idx in ((-0.19, single, "wrong", 1), (0.19, diff, "emphasis", 2)):
+        img = np.asarray(fs.plot_series(img, ax, xs + off, vals, kind="bar", color=col, baseline=0.0,
+                                        bar_width=0.33))
+        for x, v, r in zip(xs + off, vals, rows):
+            px, py = fs.data_to_pixel(ax, x, v)
+            img = np.asarray(fs.text_box(img, "%+.2f nm" % r[idx], (float(px), float(py) - 4), anchor="cb",
+                                         font_size=12))
+    for x, nm in zip(xs, names):
+        px, _ = fs.data_to_pixel(ax, x, 0.0)
+        img = np.asarray(fs.text_box(img, nm, (float(px), rect[1] + rect[3] + 8), anchor="ct", font_size=12))
+    img = np.asarray(fs.legend_box(img, [("wrong", "単一の対(A だけ)"), ("emphasis", "差動の 2 対")],
+                                   (rect[0] + rect[2] - 6, rect[1] + 6), anchor="rt", markers=True,
+                                   font_size=12, swatch=12, pad=6))
+    img = np.asarray(fs.text_box(img, "差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" % (rows[0][1], rows[0][2]),
+                                 (10, 8), anchor="lt", font_size=13))
+    img = np.asarray(fs.text_box(img, "|誤差| [nm](棒の上の数は符号つきの誤差)", (10, h - 10), anchor="lb",
+                                 font_size=11))
+    return img
+
+
 def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
     steps, rm, rx, direct = steps_data
     clean = mark(noise=0.0)
     single = mark()
-    diff_img = mark(layout="differential", drift_nm=0.0)
     q0, q1 = diff_data[1], diff_data[2]
+    dpanel, dlabels = differential_panel(600.0)
+    NUMBERS["panel_shift_a_um"], NUMBERS["panel_shift_b_um"] = dlabels[0][1], dlabels[1][1]
     figs.save_grid("marks", [direct, MA.moire_overlay_image(SHAPE, PX, PM, PW, 0.0, with_mask=False, noise_sigma=SIGMA),
-                             single, diff_img],
+                             single, dpanel],
                    captions=["比べ手: 20 µm の線(直接の像)", "ウェハの 2.04 µm の格子だけ(ぼけで消え、平均 0.5 の灰色)",
-                             "マスク 2.00 + ウェハ 2.04 µm(モアレ 102 µm)", "差動: 上 A(2.00/2.04)、下 B(2.04/2.00)"],
-                   gray=True, vrange=[(0.0, 1.0), (0.0, 1.0), (0.0, 0.5), (0.0, 0.5)],
+                             "マスク 2.00 + ウェハ 2.04 µm(モアレ 102 µm)",
+                             "差動: 上 A・下 B、ずれ 600 nm で縞は逆向きに流れる"],
+                   gray=[True, True, True, False], vrange=[(0.0, 1.0), (0.0, 1.0), (0.0, 0.5), None],
                    title="見えない格子 2 枚を重ねると、縞が現れる",
-                   caption="どの像も同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、"
-                           "2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。")
+                   caption="(a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、"
+                           "2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動のマーク: 橙の線が A と B の境目、"
+                           "青の破線 = ずれ 0 の暗い縞、橙の実線と矢印 = ウェハを 600 nm 動かした後の同じ縞(A は %+.1f µm、B は %+.1f µm)。"
+                           "像全体が流れると両方が同じ向きに動くので、差を取ればずれだけが残る。"
+                           % (NUMBERS["panel_shift_a_um"], NUMBERS["panel_shift_b_um"]))
     figs.save_plot("one_nm_steps", [("真値", steps, steps), ("モアレの位相", steps, rm), ("相互相関 + 放物線", steps, rx)],
                    xlabel="与えたずれ [nm]", ylabel="読んだずれ [nm]", styles=["dashed", None, None],
                    colors=["reference", "emphasis", "wrong"], kinds=["line", "line", "line"],
@@ -401,14 +485,9 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
                    colors=["emphasis", "reference"], styles=[None, "dashed"],
                    title="モアレの読みは雑音の下限に乗る(比 %.2f〜%.2f)" % (NUMBERS["crlb_ratio_min"], NUMBERS["crlb_ratio_max"]),
                    caption="下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。")
-    rows = diff_data[0]
-    xs = np.arange(len(rows), dtype=float)
-    figs.save_plot("differential", [("単一の対", xs, np.array([r[1] for r in rows])), ("差動の 2 対", xs, np.array([r[2] for r in rows])),
-                                    ("0", xs, 0 * xs)], kinds=["scatter", "scatter", "line"],
-                   xlabel="0: 流れ 300 nm / 1: 照明の傾き 30 % / 2: 両方", ylabel="誤差 [nm]",
-                   colors=["wrong", "emphasis", "reference"], styles=[None, None, "dashed"],
-                   title="差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" % (NUMBERS["single_err_drift"], NUMBERS["diff_err_drift"]),
-                   caption="逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。差を取ると流れが消える。")
+    figs.save("differential", differential_bars(diff_data[0]),
+              caption="逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。差を取ると流れが消える。"
+                      "照明の傾きは単一の対でも小さい(0.6 nm)が、それも差動で 0.02 nm に。")
     figs.save_grid("quad_mark", [q0[::2, ::2], q1[::2, ::2]], captions=["基準(ずれ 0)", "(dx, dy) = (12, −25) nm、流れ (200, −100) nm"],
                    gray=True, vrange=(0.0, 0.5), title="2 次元の 4 象限のマーク(2 画素ごとに表示)",
                    caption="左上 A_x、右上 B_x、左下 A_y、右下 B_y。読み = (%.2f, %.2f) nm。" % (NUMBERS["quad_dx"], NUMBERS["quad_dy"]))
