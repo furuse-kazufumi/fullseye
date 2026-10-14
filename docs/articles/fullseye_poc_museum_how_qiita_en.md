@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**87 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**88 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -2090,7 +2090,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 7 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 8 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -2315,6 +2315,46 @@ Source: [examples/poc_fiber_light_guide.py](https://github.com/furuse-kazufumi/f
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fiber_light_guide)
 
 Ops used (notes): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`fiber_bundle_coupling`](https://furuse.work/ops/optics/fiber/fiber_bundle_coupling.html) · [`fiber_lp_modes`](https://furuse.work/ops/optics/fiber/fiber_lp_modes.html) · [`fiber_mode_field_diameter`](https://furuse.work/ops/optics/fiber/fiber_mode_field_diameter.html) · [`fiber_numerical_aperture`](https://furuse.work/ops/optics/fiber/fiber_numerical_aperture.html) · [`fiber_v_number`](https://furuse.work/ops/optics/fiber/fiber_v_number.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_group_index`](https://furuse.work/ops/optics/fiber/material_group_index.html) · [`material_gvd`](https://furuse.work/ops/optics/fiber/material_gvd.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html)
+
+## No.2026.232 —— Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes
+
+[![Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
+
+*↑ **Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes** ―― Two public hyperspectral datasets (both CC BY 4.0; fetched and cached, not committed) are classified with Fullseye's ops (read_envi, spec_continuum_removal, spec_angle_mapper, spec_band_selection_fisher) and scored against their own labels. Shredded plastics, six classes (RODARE 3390, 400〜2500 nm の分光カメラ): continuum removal + SAM reaches a mean class recall of 0.816 (0.439 on raw reflectance — dark flakes lose to additive baselines). A library from a separate scan of reference samples separates PP / PET / PE at 0.878; this PoC's material-table physics alone gives 0.628 (chance 0.333). Black plastic reflects 0.03 with a C-H trough one sixth as deep. The test header still carried 450 fwhm values for 360 bands and the fail-closed reader refused it; the wavelength labels were verified on the polymer troughs and only fwhm was fixed in a copy. Foreign objects on pork belly, ten classes (Zenodo 17242553, InGaAs ラインスキャン分光カメラ): split by capture, 656k test pixels; SAM gives AUC 0.92 with 10 % false alarms, LDA on all 184 bands detects 0.92 at 1.1 % false alarms, six Fisher bands give 2.1 % and three give 23 % — three bands sufficed in simulation but not on real data. The simulation (material absorption bands, Kubelka–Munk, halogen × fused-silica lens × InGaAs; eight new ops) covers the failure modes: colour-matched foreign matter at RGB AUC 0.48, kernels at 12 % moisture 98 % rejected, a 200 K lamp drift after the white reference 49 %, and carbon black at 1 wt % burying PP vs PE in single-pixel noise. The gap between simulated 1.000 and real 0.82–0.92 is the size of the inverse crime. Parameters were checked against primary sources (USGS spectra, papers, datasheets): PE band strengths cut 2–3x, PET's two deepest bands added, and the table's water k switched to Segelstein 1981.*
+
+[![実線: 実データの PP / PET / PE の画素の平均(連続体除去)。破線: この PoC の材料表(吸収帯 + Kubelka–Munk)。谷の位置は合い、深さと幅は合わない(模型の強さは推定)。物理モデルだけをライブラリにした 3](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth.png)
+
+*↑ The measurement ―― 実線: 実データの PP / PET / PE の画素の平均(連続体除去)。破線: この PoC の材料表(吸収帯 + Kubelka–Munk)。谷の位置は合い、深さと幅は合わない(模型の強さは推定)。物理モデルだけをライブラリにした 3 種の再現率 0.628、別撮影の基準試料 0.878。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。 (figure labels are in Japanese; the numbers are the same)*
+
+[![出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion.png)
+
+*↑ 出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。*
+
+[![同じトレイ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral.png)
+
+*↑ 同じトレイ。*
+
+[![行 = 真値、列 = 判定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray.png)
+
+*↑ 行 = 真値、列 = 判定。*
+
+[![露光 = 画素の長さ 0.5 mm / 搬送速度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons.png)
+
+*↑ 露光 = 画素の長さ 0.5 mm / 搬送速度。*
+
+[![0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)
+
+*↑ The animation ―― 0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。*
+
+```
+py -3.11 examples/poc_hyperspectral_foreign_matter.py
+```
+
+Source: [examples/poc_hyperspectral_foreign_matter.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
+
+This run produced **19 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter)
+
+Ops used (notes): [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`hyperspectral_capture`](https://furuse.work/ops/optics/spectral/hyperspectral_capture.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`kubelka_munk_reflectance`](https://furuse.work/ops/optics/spectral/kubelka_munk_reflectance.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`spectral_reflectance_from_material`](https://furuse.work/ops/optics/spectral/spectral_reflectance_from_material.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 

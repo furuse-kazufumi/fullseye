@@ -1,0 +1,202 @@
+[
+ {
+  "file": "01_real_polymer_flakes.png",
+  "name": "real_polymer_flakes",
+  "caption": "実データ: 破砕した樹脂片(0.3〜4 cm)を 400〜2500 nm の分光カメラで撮った場面(46 x 92 px、1100〜2400 nm)。左半分の画素のクラス平均で学び、右半分を採点: クラス平均の再現率 0.816(生の反射率の SAM は 0.439)。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
+  "shape": [
+   302,
+   1656,
+   3
+  ]
+ },
+ {
+  "file": "02_real_vs_model_band_depth.png",
+  "name": "real_vs_model_band_depth",
+  "caption": "実線: 実データの PP / PET / PE の画素の平均(連続体除去)。破線: この PoC の材料表(吸収帯 + Kubelka–Munk)。谷の位置は合い、深さと幅は合わない(模型の強さは推定)。物理モデルだけをライブラリにした 3 種の再現率 0.628、別撮影の基準試料 0.878。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
+  "shape": [
+   400,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "03_real_polymer_confusion.png",
+  "name": "real_polymer_confusion",
+  "caption": "出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
+  "shape": [
+   224,
+   507,
+   3
+  ],
+  "csv": "03_real_polymer_confusion.csv",
+  "tsv": "03_real_polymer_confusion.tsv"
+ },
+ {
+  "file": "04_real_pork_belly.png",
+  "name": "real_pork_belly",
+  "caption": "実データ: 豚バラのラインの上の異物(InGaAs ラインスキャン分光カメラ、0.47 mm/px)。学びは別の 2 回の撮影、ここは採点用の撮影。LDA(log 反射率、全帯)の画素の検出率 0.921・誤警報 0.0111(SAM は AUC 0.921・誤警報 0.101)。val のパッチを元の位置に並べ直した画像。出典: V. G. Ghimpeteanu, H. Rajani, J. Quintana, R. Garcia, A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly, Zenodo, doi:10.5281/zenodo.17242553, CC BY 4.0。改変: val の 20x16 パッチを ファイル名の位置へ並べ直した(画像の一部)。",
+  "shape": [
+   1150,
+   3216,
+   3
+  ]
+ },
+ {
+  "file": "05_real_pork_roc.png",
+  "name": "real_pork_roc",
+  "caption": "度合 = 陰性(肉・脂・ベルト)のライブラリへの最小角 − 異物のライブラリへの最小角。出典: V. G. Ghimpeteanu, H. Rajani, J. Quintana, R. Garcia, A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly, Zenodo, doi:10.5281/zenodo.17242553, CC BY 4.0。改変: val の 20x16 パッチを ファイル名の位置へ並べ直した(画像の一部)。",
+  "shape": [
+   520,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "06_real_pork_confusion.png",
+  "name": "real_pork_confusion",
+  "caption": "出典: V. G. Ghimpeteanu, H. Rajani, J. Quintana, R. Garcia, A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly, Zenodo, doi:10.5281/zenodo.17242553, CC BY 4.0。改変: val の 20x16 パッチを ファイル名の位置へ並べ直した(画像の一部)。",
+  "shape": [
+   392,
+   957,
+   3
+  ],
+  "csv": "06_real_pork_confusion.csv",
+  "tsv": "06_real_pork_confusion.tsv"
+ },
+ {
+  "file": "07_tray_rgb_vs_hyperspectral.png",
+  "name": "tray_rgb_vs_hyperspectral",
+  "caption": "同じトレイ。左は RGB(異物の殻・木片・茶色の PE / PP 片は仁と同じ色に合わせ、割れた仁も混ぜて形でも分からないようにした。黒い樹脂だけは黒)。右は 0.95〜1.65 µm の 71 帯域で、ベルトでない画素の連結成分ごとに、仁の平均スペクトルとの角(SAM)の中央値が 3.11° を超えた物体を光らせた。画素の ROC の AUC は RGB 0.48、ハイパースペクトル 1.0000(同じ真値)。",
+  "shape": [
+   506,
+   1440,
+   3
+  ]
+ },
+ {
+  "file": "08_four_views_of_one_tray.png",
+  "name": "four_views_of_one_tray",
+  "caption": "RGB / 1 帯域 / 偽色 / 分類の 4 枚。色: 仁 = 茶、殻 = 赤、木片 = 橙、PE = 青、PP = 紫、黒い樹脂 = 白、ベルト = 黒。黄色の線は真値の異物の輪郭。",
+  "shape": [
+   1012,
+   1440,
+   3
+  ]
+ },
+ {
+  "file": "09_spectra_and_sensors.png",
+  "name": "spectra_and_sensors",
+  "caption": "仁は脂質の C-H(1210 / 1730 / 2310 nm)と水(1450 / 1940 nm)、殻・木片はセルロースの O-H(1490 / 2100 nm)、樹脂は鋭い C-H の谷。標準の InGaAs は 1.7 µm で切れ、樹脂の主な谷(1.7 µm の 1 次倍音と 2.3 µm の結合音)は拡張品でないと見えない。帯の幅と強さは推定(材料表の注)。",
+  "shape": [
+   420,
+   915,
+   3
+  ]
+ },
+ {
+  "file": "10_roc_rgb_vs_hyperspectral.png",
+  "name": "roc_rgb_vs_hyperspectral",
+  "caption": "異物の度合 = 仁の平均との角(RGB は色の角、ハイパースペクトルはスペクトルの角)。境界の混合画素を除く。黒い樹脂は RGB でも見えるので除いた(同色の異物だけ)。",
+  "shape": [
+   520,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "11_confusion_food_tray.png",
+  "name": "confusion_food_tray",
+  "caption": "行 = 真値、列 = 判定。ライブラリは別の種(シード)の訓練用トレイのクラス平均。",
+  "shape": [
+   248,
+   572,
+   3
+  ],
+  "csv": "11_confusion_food_tray.csv",
+  "tsv": "11_confusion_food_tray.tsv"
+ },
+ {
+  "file": "12_fisher_ratio_by_band.png",
+  "name": "fisher_ratio_by_band",
+  "caption": "選んだ帯域(前向き選択の順): 標準 1070, 1500, 1190, 1230, 1390, 1200 nm / 拡張 1070, 2100, 1700, 1770, 1720, 1190 nm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_accuracy_vs_band_count.png",
+  "name": "accuracy_vs_band_count",
+  "caption": "Fisher 比 + 前向き選択で選んだ k 帯域の log 反射率に線形判別(LDA)。殻と木片は「植物片」にまとめ、ベルト・仁・植物片・PE・PP・黒の再現率を平均。破線は全帯域の SAM。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_failure_wet_and_drift.png",
+  "name": "failure_wet_and_drift",
+  "caption": "閾値は訓練用トレイの仁の 99.5 % 点(3.11°)で固定。濡れは水の 1.45 µm 帯が仁のスペクトルを動かす。ランプのずれは平場補正の分母のずれ —— 白板を取り直せば戻る(0.4 %)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "15_failure_photons.png",
+  "name": "failure_photons",
+  "caption": "露光 = 画素の長さ 0.5 mm / 搬送速度。点は左から 1500 m/s、800 m/s、400 m/s、200 m/s、100 m/s、20 m/s、2 m/s(右端が 2 m/s)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "16_black_plastic_spectra.png",
+  "name": "black_plastic_spectra",
+  "caption": "白い PP と PE は 8.6° 離れる。カーボンブラック 2 wt % では 0.21° に縮み、1 画素の雑音の角 0.44° に埋もれる —— 黒い樹脂を NIR で選別できない業界の既知の限界(中赤外・ラマン・LIBS が代替)。",
+  "shape": [
+   360,
+   711,
+   3
+  ]
+ },
+ {
+  "file": "17_black_plastic_loading.png",
+  "name": "black_plastic_loading",
+  "caption": "拡張 InGaAs、2 m/s。角が雑音の線を下回った所(1.0 wt %)から、PP と PE を 1 画素では分けられない。画素を N 個平均すれば雑音の角は 1/√N で下がる —— 原理の壁は帯の形そのものが消える高い wt % の側。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "18_recycling_flakes.png",
+  "name": "recycling_flakes",
+  "caption": "白い PET(橙)/ PP(紫)/ PE(青)/ PS(赤)と黒い PP(白)の破片。左が RGB、中が標準 InGaAs、右が拡張 InGaAs の SAM の分類。",
+  "shape": [
+   506,
+   2160,
+   3
+  ]
+ },
+ {
+  "file": "19_band_sweep.gif",
+  "name": "band_sweep",
+  "caption": "0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。",
+  "shape": [
+   266,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 6.0
+ }
+]

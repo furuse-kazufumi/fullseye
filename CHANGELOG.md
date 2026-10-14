@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 近赤外のハイパースペクトルで見た目が同じ異物を選別する(8 op + 帯域選択)
+- `materials`: `material_nir_absorption`(樹脂・脂質・タンパク質・炭水化物・リグニンと、ナッツの仁・殻・木片の近赤外の吸収帯。中心は一次文献の実測、幅と強さは推定、水は表の n,k)/ `carbon_black_absorption`(Bond & Bergstrom 2006)/ `nir_model_info`。
+- `spectralrad`: `ingaas_photodiode_qe`(直接遷移の吸収端 + Urbach の裾、標準 1.7 µm と拡張品)/ `kubelka_munk_reflectance`(Kubelka 1948 の閉形式)/ `spectral_reflectance_from_material`(粒径の散乱 + Saunderson の界面)/ `hyperspectral_band_weights` / `hyperspectral_capture`(と画像の `hyperspectral_capture_cube`)。`specops.spec_band_selection_fisher`(Fisher 比 + 前向き選択)。
+- PoC `poc_hyperspectral_foreign_matter`(25 門、図 12 枚 + GIF): RGB の AUC 0.48 / 標準 InGaAs 1.0000、Fisher の 3 帯域で全 71 帯と同じ、濡れ・ランプのずれ・光子・黒い樹脂(2 wt %)・逆犯罪(ライブラリが知らないゆがみ 6 % で誤排出 14 %)。
+
+### Fixed — 材料表の水の k
+- RII の Hale & Querry の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を 1/3 に潰していた。k だけ Segelstein 1981 に(Kou ら 1993 の実測と 10 % 以内)、n は Hale のまま。
+
 ### Fixed — psf_from_opd の波長の上書き・瞳の幅の数え方・PSF の窓
 - `lensimage.psf_from_opd(wavelength_um=…)`(と `raytrace.opd_samples` / `ray_bundle` / `ray_fan` / `chief_ray` / `spot_stats` の波長の上書き): 屈折は指定の波長で計算するのに、光線の狙い(入射瞳・射出瞳)と PSF の標本間隔(F 値)は系の波長のままだった → 新しい `raytrace._para_at` で指定の波長の近軸量を使う(撮像面は系のまま)。上書きの結果は、その波長で組み直した系と一致する(差 0、旧版は PSF の頂点の 2 %、絞りが 2 面目の系では PSF の大きさ自体が違った)。`psf_field_grid` の `fno` / `rms_spot_mm` も指定の波長で計算する。
 - `psf_from_opd` の自動の瞳格子: 位相の条件(0.4 波/標本)だけで決めていたので、PSF の窓が幾何的なぼけの 1.25 倍しかなく、エネルギーの 1〜2 % が窓の内側に折り返していた → 窓 ≥ ぼけの直径の 2 倍も満たし、下限を 64 → 128 に上げた(瞳の縁の階段の誤差)。3 倍細かい瞳との全変動距離は 1.2〜2.7 % → 0.5〜0.8 %。f/4 の単レンズの自動格子は 194 → 310(Strehl は 0.0106 のまま)。

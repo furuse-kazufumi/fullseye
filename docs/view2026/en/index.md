@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## What it can do
 
-48 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+49 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -113,6 +113,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Measure colour (XYZ / Lab / colour difference): [explanation](../../capabilities/colour-and-delta-e.md) _(ja)_ · examples [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency): [explanation](../../capabilities/fiber-and-light-guide.md) _(ja)_ · examples [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer): [explanation](../../capabilities/material-optical-property-library.md) _(ja)_ · examples [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
+- Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons): [explanation](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · examples [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - Compute reflection, refraction and interference: [explanation](../../capabilities/optics-and-materials.md) _(ja)_ · examples [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - Read a polarisation camera's raw frame into Stokes, DoLP and Mueller: [explanation](../../capabilities/polarization-imaging.md) _(ja)_ · examples [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Turn a Bayer raw frame into a display image, one explainable stage at a time: [explanation](../../capabilities/raw-to-display-isp.md) _(ja)_ · examples [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## See everything
 
-231 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+232 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -332,9 +333,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour and separation</b> (7)</summary>
+<details class="vall"><summary><b>Colour and separation</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Optical fibres and light guides (modes, dispersion, mode field)" width="200" height="200"><span>Optical fibres and light guides (modes, dispersion, mode field)</span></a>
+<a href="../../articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_hyperspectral_foreign_matter.jpg" alt="Sorting look-alike foreign matter with hyperspectral NIR" width="200" height="200"><b>&#9654;</b><span>Sorting look-alike foreign matter with hyperspectral NIR</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="Near-infrared through a silicon wafer (choosing the LED)" width="200" height="200"><b>&#9654;</b><span>Near-infrared through a silicon wafer (choosing the LED)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="A material optical-property library (83 materials, one table)" width="200" height="200"><b>&#9654;</b><span>A material optical-property library (83 materials, one table)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="Pigment layers" width="200" height="200"><span>Pigment layers</span></a>

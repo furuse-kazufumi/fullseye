@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-48 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+49 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -113,6 +113,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - रंग मापना (XYZ / Lab / colour difference): [explanation](../../capabilities/colour-and-delta-e.md) _(ja)_ · examples [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency): [explanation](../../capabilities/fiber-and-light-guide.md) _(ja)_ · examples [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - material optical constants की एक table (primary literature से 83 glasses, crystals, semiconductors, metals, liquids और plastics, glass-catalogue importer सहित): [explanation](../../capabilities/material-optical-property-library.md) _(ja)_ · examples [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
+- near-infrared hyperspectral से एक जैसे दिखने वाले बाहरी कण छाँटना (material table की absorption bands, scattering layer की reflectance, InGaAs के हर band के electrons): [explanation](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · examples [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - Reflection, refraction और interference की गणना: [explanation](../../capabilities/optics-and-materials.md) _(ja)_ · examples [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - Polarisation camera के raw frame को Stokes, DoLP और Mueller में पढ़ना: [explanation](../../capabilities/polarization-imaging.md) _(ja)_ · examples [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Bayer raw frame को हर stage समझाने लायक formula से display image में बदलना: [explanation](../../capabilities/raw-to-display-isp.md) _(ja)_ · examples [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-231 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+232 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -332,9 +333,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour और separation</b> (7)</summary>
+<details class="vall"><summary><b>Colour और separation</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="optical fibre और light guide (modes, dispersion, mode field)" width="200" height="200"><span>optical fibre और light guide (modes, dispersion, mode field)</span></a>
+<a href="../../articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_hyperspectral_foreign_matter.jpg" alt="एक जैसे दिखने वाले बाहरी कणों को hyperspectral NIR से छाँटना" width="200" height="200"><b>&#9654;</b><span>एक जैसे दिखने वाले बाहरी कणों को hyperspectral NIR से छाँटना</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="silicon wafer के आर-पार near-infrared (LED की wavelength चुनना)" width="200" height="200"><b>&#9654;</b><span>silicon wafer के आर-पार near-infrared (LED की wavelength चुनना)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="material optical-property library (83 materials, एक table)" width="200" height="200"><b>&#9654;</b><span>material optical-property library (83 materials, एक table)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="Pigment layers" width="200" height="200"><span>Pigment layers</span></a>

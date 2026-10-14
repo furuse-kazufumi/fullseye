@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 48 项,每项都有说明页(用法与限制)和可运行的示例。
+共 49 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -113,6 +113,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 测量颜色(XYZ / Lab / 色差): [说明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 示例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 光纤与光导(玻璃色散 → LP 模 → 模场直径 → 照明效率): [说明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 示例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）: [说明](../../capabilities/material-optical-property-library.md) _(ja)_ · 示例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
+- 用近红外高光谱分选外观相同的异物(材料表的吸收带、散射层的反射、InGaAs 各波段的电子数): [说明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 示例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 计算光的反射、折射与干涉: [说明](../../capabilities/optics-and-materials.md) _(ja)_ · 示例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - 把偏振相机的原始帧读成 Stokes、DoLP、Mueller: [说明](../../capabilities/polarization-imaging.md) _(ja)_ · 示例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - 用每一步都能解释的公式把 Bayer 原始帧变成显示图像: [说明](../../capabilities/raw-to-display-isp.md) _(ja)_ · 示例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 231 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 232 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -332,9 +333,10 @@ PoC 231 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>颜色与分离</b> (7)</summary>
+<details class="vall"><summary><b>颜色与分离</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纤与光导(模式、色散、模场直径)" width="200" height="200"><span>光纤与光导(模式、色散、模场直径)</span></a>
+<a href="../../articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_hyperspectral_foreign_matter.jpg" alt="用高光谱近红外分选外观相同的异物" width="200" height="200"><b>&#9654;</b><span>用高光谱近红外分选外观相同的异物</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="透过硅晶圆的近红外检测(选择 LED 波长)" width="200" height="200"><b>&#9654;</b><span>透过硅晶圆的近红外检测(选择 LED 波长)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="材料光学物性库（83 种材料共用一张表）" width="200" height="200"><b>&#9654;</b><span>材料光学物性库（83 种材料共用一张表）</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="颜料分层" width="200" height="200"><span>颜料分层</span></a>
