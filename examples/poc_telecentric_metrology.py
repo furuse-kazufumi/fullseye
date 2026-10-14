@@ -18,8 +18,14 @@
   3. **段差のある部品を描いて測る**: ピン(高さ 5 mm)・ダイ(0.7 mm、電極つき)・穴(深さ 5 mm)を ``render3d`` で、
      レンズの入射瞳に置いたピンホール(``lens_equivalent_pinhole``)から描き、ぼけは光線束の RMS(``defocus_spot_vs_depth``)
      で掛ける。門: 画像から測ったピン上面の径は閉形式 D·L/(L − 5 mm − Δz) と 7e-4 —— 通常 f = 25 mm は真値 1.6 mm を
-     6.9 % 大きく読み、ワークが 6 mm 上下すると読みが 8.6 % 動く。穴の底が見える割合 0.947 は 2 つの円の重なりの閉形式
-     0.947 と一致し、内壁が 2,136 画素見える。両側テレセンでは底が全部見え、内壁は 0 画素。
+     6.9 % 大きく読み、ワークが 6 mm 上下すると読みが 8.6 % 動く。穴の底が見える割合 0.948 は 2 つの円の重なりの閉形式
+     0.949 と一致し、内壁が 2,053 画素見える。両側テレセンでは底が全部見え、内壁は 0 画素。
+     部品は実物の質感で描く: アルミの治具プレート(``metalfinish`` の削り目 × ``glassmirror`` の複素屈折率の色)、
+     金めっきのピン(面取りつき)、黒い樹脂モールド(``surfacelib.clearcoat_shade``、捺印つき)と銀色のリード、
+     影(``render_shadow``)と AO(``render_ao``)。門: 照明を同軸落射・ドーム・低角リングに変えても、描いた画像だけから
+     円の計測モデル(``metrology``、HALCON 流)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f = 25 mm は
+     +8.3〜8.4 %、両側テレセンは ±0.13 % 以内(上の門は面の種類の地図なので照明に依らない —— こちらが画像の門)。
+     ★物体で 47 µm/画素に粗くすると、低角リング(暗視野)では上面の縁が弱く 2 % 外れた。
   4. **テレセンでも残る誤差**: 絞りが後側焦点から δ ずれると入射瞳は前側焦点から −f²/δ(Newton)。門: 物高 0.5 mm では
      実光線の傾きの増分が閉形式と 0.04 % —— 物高 8 mm では 11.8 % 大きく、その差は物高の 2 乗で育つ(4 → 8 mm で 4.6 倍、
      瞳の球面収差)。視野の端のテレセン度をちょうど 0.1° にする実の δ は −3.16 mm、そのとき段差 5 mm の上下で物高 8 mm の
@@ -64,7 +70,14 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import examplefig as figs  # noqa: E402
 import raytrace as RT  # noqa: E402
+import glassmirror  # noqa: E402
+import metrology  # noqa: E402
+import metalfinish  # noqa: E402
 import render3d  # noqa: E402
+import render_ao  # noqa: E402
+import render_shadow  # noqa: E402
+import render_tonemap  # noqa: E402
+import surfacelib  # noqa: E402
 import telecentric as TC  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
@@ -189,18 +202,51 @@ def chapter_depth(L):
 # 3. 段差のある部品を描いて測る
 # --------------------------------------------------------------------------- #
 HOLE_C, HOLE_R, HOLE_D = (-3.6, 2.2), 1.6, 5.0
+HOLE_CH = 0.15                           # 穴の縁の面取り [mm](内壁の半径は HOLE_R、面取りの下端が底を隠す縁)
 PIN_C, PIN_R, PIN_H = (3.4, 2.4), 0.8, 5.0
-DIE = (-2.2, 2.2, -4.6, -1.4, 0.7)
-MAT = {"plate": (0.78, 0.78, 0.76), "wall": (0.95, 0.55, 0.20), "bottom": (0.25, 0.50, 0.95),
-       "pin_side": (0.55, 0.62, 0.55), "pin_top": (1.0, 0.92, 0.35), "die_top": (0.30, 0.30, 0.42),
-       "die_side": (0.62, 0.36, 0.70)}
+PIN_CHAMFER = 0.12                       # ピン先の面取り [mm](上面の平らな円の半径は PIN_R のまま)
+DIE = (-2.2, 2.2, -4.6, -1.4, 0.7)       # 樹脂モールドの外形(x0, x1, y0, y1, 高さ)
+DIE_DRAFT = 0.10                         # モールドの抜き勾配(上面が側面より内側へ入る量 [mm])
+LEADS = 6                                # 片側のリード数(長辺の 2 辺)
+
+#: 面の種類 → 質感。金属は複素屈折率の色(glassmirror)× 仕上げの異方性ローブ(metalfinish)、
+#: 樹脂は拡散 + 上塗り(surfacelib.clearcoat_shade)。
+SURF = {
+    "plate": ("metal", "al", "linear"),        # アルミの治具プレート(フライスの送り目)
+    "wall": ("metal", "al", "linear"),         # 穴の内壁(エンドミルの削り目)
+    "bottom": ("metal", "al", "circular"),     # 平底の削り目(同心円)
+    "hole_chamfer": ("metal", "al", "circular"),
+    "pin_top": ("metal", "au", "random"),      # 金めっきのピン
+    "pin_chamfer": ("metal", "au", "random"),
+    "pin_side": ("metal", "au", "linear"),
+    "lead": ("metal", "ag", "random"),         # 銀色(錫めっき)のリード
+    "die_top": ("resin", (0.035, 0.035, 0.040), 0.30),   # 黒い樹脂モールド(梨地)
+    "die_side": ("resin", (0.030, 0.030, 0.035), 0.30),
+}
 
 
-def _plate_with_hole(half, c, r, depth, n=128, rings=8):
+def _ring(elev_deg, n, weight, phase):
+    c, s = math.cos(math.radians(elev_deg)), math.sin(math.radians(elev_deg))
+    return [((c * math.cos(a), c * math.sin(a), s), weight / n)
+            for a in np.linspace(0.0, 2 * np.pi, n, endpoint=False) + phase]
+
+
+#: 照明: (向き [世界、シーン→光源], 重み)。coax = 同軸落射 + 弱いドーム、ring = 45° のリング照明。
+LIGHTS = {
+    "coax": [((0.0, 0.0, 1.0), 0.55)] + _ring(55.0, 6, 0.45, 0.3),
+    "ring": _ring(45.0, 8, 1.0, 0.2),
+    "dome": _ring(30.0, 6, 0.5, 0.1) + _ring(65.0, 6, 0.5, 0.6),
+    "lowring": _ring(20.0, 8, 1.0, 0.2),
+}
+
+
+def _plate_with_hole(half, c, r, depth, ch=HOLE_CH, n=128, rings=8):
+    """穴あきの治具プレート: 上面 → 縁の面取り(半径 r + ch → r、深さ ch)→ 内壁 → 平底。"""
     th = np.linspace(0.0, 2 * np.pi, n, endpoint=False)
     dirs = np.stack([np.cos(th), np.sin(th)], 1)
     cc = np.asarray(c, float)
-    inner = cc + r * dirs
+    inner = cc + (r + ch) * dirs
+    rim = cc + r * dirs
     t = np.full(n, np.inf)
     for ax in (0, 1):
         with np.errstate(divide="ignore"):
@@ -219,11 +265,13 @@ def _plate_with_hole(half, c, r, depth, n=128, rings=8):
             F += [(a, b, d2), (a, d2, c2)]
             G += ["plate", "plate"]
     base = len(V)
-    V += [(x, y, 0.0) for x, y in inner] + [(x, y, -depth) for x, y in inner]
-    for j in range(n):
-        a, b = base + j, base + (j + 1) % n
-        F += [(a, b + n, b), (a, a + n, b + n)]
-        G += ["wall", "wall"]
+    V += [(x, y, 0.0) for x, y in inner] + [(x, y, -ch) for x, y in rim] + [(x, y, -depth) for x, y in rim]
+    for k, name in ((0, "hole_chamfer"), (1, "wall")):
+        for j in range(n):
+            a, b = base + k * n + j, base + k * n + (j + 1) % n
+            F += [(a, b + n, b), (a, a + n, b + n)]
+            G += [name, name]
+    base += n
     ctr = len(V)
     V.append((cc[0], cc[1], -depth))
     for j in range(n):
@@ -232,31 +280,53 @@ def _plate_with_hole(half, c, r, depth, n=128, rings=8):
     return np.array(V), np.array(F), G
 
 
-def _pin(c, r, hgt, n=96):
+def _pin(c, r, hgt, ch=PIN_CHAMFER, n=96):
+    """面取りつきのピン: 平らな上面(半径 r)→ 45° の面取り → 胴(半径 r + ch)。"""
     th = np.linspace(0.0, 2 * np.pi, n, endpoint=False)
-    ring = np.stack([c[0] + r * np.cos(th), c[1] + r * np.sin(th)], 1)
-    V = [(x, y, 0.0) for x, y in ring] + [(x, y, hgt) for x, y in ring] + [(c[0], c[1], hgt)]
+    cs, sn = np.cos(th), np.sin(th)
+    rings = [(r + ch, 0.0), (r + ch, hgt - ch), (r, hgt)]
+    V = [(c[0] + rr * a, c[1] + rr * b, z) for rr, z in rings for a, b in zip(cs, sn)] + [(c[0], c[1], hgt)]
     F, G = [], []
+    for k, name in ((0, "pin_side"), (1, "pin_chamfer")):
+        for j in range(n):
+            a, b = k * n + j, k * n + (j + 1) % n
+            F += [(a, b, b + n), (a, b + n, a + n)]
+            G += [name, name]
     for j in range(n):
-        a, b = j, (j + 1) % n
-        F += [(a, b, b + n), (a, b + n, a + n)]
-        G += ["pin_side", "pin_side"]
-        F.append((2 * n, n + j, n + b))
+        F.append((3 * n, 2 * n + j, 2 * n + (j + 1) % n))
         G.append("pin_top")
-    return np.array(V), np.array(F), G
+    return np.array(V, float), np.array(F), G
 
 
-def _box(x0, x1, y0, y1, hgt):
-    V = np.array([(x0, y0, 0), (x1, y0, 0), (x1, y1, 0), (x0, y1, 0),
-                  (x0, y0, hgt), (x1, y0, hgt), (x1, y1, hgt), (x0, y1, hgt)], float)
+def _box(x0, x1, y0, y1, z0, z1, top, side, inset=0.0):
+    """直方体(上面を *inset* だけ内側へ入れると抜き勾配のある側面になる)。"""
+    V = np.array([(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0),
+                  (x0 + inset, y0 + inset, z1), (x1 - inset, y0 + inset, z1),
+                  (x1 - inset, y1 - inset, z1), (x0 + inset, y1 - inset, z1)], float)
     F = [(4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)]
-    G = ["die_top"] * 2 + ["die_side"] * 8
-    return V, np.array(F), G
+    return V, np.array(F), [top] * 2 + [side] * 8
+
+
+def _package():
+    """黒い樹脂モールドのパッケージ + 長辺のガルウィングのリード(肩・曲げ・足)。"""
+    x0, x1, y0, y1, h = DIE
+    parts = [_box(x0, x1, y0, y1, 0.15, h, "die_top", "die_side", DIE_DRAFT)]
+    pitch = (x1 - x0) / LEADS
+    for i in range(LEADS):
+        xc = x0 + (i + 0.5) * pitch
+        for sgn, ye in ((-1, y0), (1, y1)):
+            ys = sorted((ye, ye + sgn * 0.30))
+            parts.append(_box(xc - 0.16, xc + 0.16, ys[0], ys[1], 0.30, 0.42, "lead", "lead"))       # 肩
+            yk = sorted((ye + sgn * 0.26, ye + sgn * 0.36))
+            parts.append(_box(xc - 0.16, xc + 0.16, yk[0], yk[1], 0.0, 0.42, "lead", "lead"))        # 曲げ
+            yf = sorted((ye + sgn * 0.30, ye + sgn * 0.85))
+            parts.append(_box(xc - 0.16, xc + 0.16, yf[0], yf[1], 0.0, 0.12, "lead", "lead"))        # 足
+    return parts
 
 
 def scene(dz=0.0):
     """部品の網(世界の z = 物体の高さ、z = 0 が合焦面)。*dz* はワーク全体を持ち上げる量。"""
-    parts = [_plate_with_hole(9.0, HOLE_C, HOLE_R, HOLE_D), _pin(PIN_C, PIN_R, PIN_H), _box(*DIE)]
+    parts = [_plate_with_hole(9.0, HOLE_C, HOLE_R, HOLE_D), _pin(PIN_C, PIN_R, PIN_H)] + _package()
     Vs, Fs, Gs, off = [], [], [], 0
     for V, F, G in parts:
         Vs.append(V + np.array([0.0, 0.0, dz]))
@@ -272,33 +342,150 @@ def _blur_table(sysd, pitch_um):
     return sp[:, 0], sp[:, 1] / math.sqrt(2.0) / pitch_um
 
 
-def render(sysd, dz, size, pitch_um, blur=None):
-    """レンズの入射瞳に置いたピンホールで描き、陰影とぼけを掛けた RGB と、面の種類の地図を返す。"""
+def _project(cam, xy, z):
+    """世界の点 (x, y, z) → 画素 (u, v)(ピンホール)。"""
+    K = cam["K"]
+    d = cam["pupil_distance_mm"] - z
+    return K[0, 2] + K[0, 0] * xy[0] / d, K[1, 2] - K[1, 1] * xy[1] / d
+
+
+#: 同軸の落射で平らな面が返す明るさ(線形)。仕上げのローブの大きさは種類で 1 桁違うので、ここで揃える。
+TARGET = {"al": 0.55, "au": 1.0, "ag": 0.9}
+_F0 = {}
+
+
+def _strength(fin, metal):
+    """平らな面を同軸の落射で照らしたときに TARGET[metal] になる finish_shade の強さ。"""
+    key = (fin, metal)
+    if key not in _F0:
+        n = np.zeros((9, 9, 3))
+        n[..., 2] = 1.0
+        _F0[key] = float(np.mean(metalfinish.finish_shade(n, fin, metal, light=(0.0, 0.0, 1.0), center=(4.3, 4.2))))
+    return TARGET[metal] / max(_F0[key], 1e-12) * float(np.mean(glassmirror.metal_mirror_rgb(metal, 1.0)))
+
+
+_VAO = {}
+_MARK = []
+
+
+def _marking():
+    """パッケージの捺印の文字(2 行)を白黒の小さな画像として 1 回だけ作る(fullseye の text_box)。"""
+    if not _MARK:
+        import fullseye as fs
+        img = np.zeros((90, 160, 3))
+        img = np.asarray(fs.text_box(img, "FS0715" + chr(10) + "T1C 26", (80, 45), anchor="cm", font_size=22, text_color=(1, 1, 1),
+                                     box_alpha=0.0, pad=0))
+        _MARK.append(np.clip(img.mean(-1), 0.0, 1.0))
+    return _MARK[0]
+
+
+def _vertex_ao(V, F):
+    """頂点の AO(物体空間なのでワークの平行移動で変わらない —— 1 回だけ計算して使い回す)。"""
+    key = (len(V), len(F))
+    if key not in _VAO:
+        _VAO[key] = render_ao.vertex_occlusion(V, F, n_dirs=48, max_dist=3.0)
+    return _VAO[key]
+
+
+def _shade(r, kind, cam, X, Y, lighting, V, F, dz, size, shadows=True):
+    """面の種類ごとの質感で陰影を付ける(線形の放射輝度 RGB)。仕上げの陰影は種類ごとの外接矩形だけで計算する。"""
+    N = r["normals"]
+    h, w = N.shape[:2]
+    lights = LIGHTS[lighting]
+    hu, hv = _project(cam, HOLE_C, dz - HOLE_D)
+    vis = []
+    for L, _ in lights:
+        if shadows and L[2] < 0.99:
+            vis.append(render_shadow.cast_shadow(V, F, L, pose=cam["pose"], intrinsics=cam["K"], width=w, height=h,
+                                                 penumbra=4.0, samples=6, shadow_res=768, pcf=1))
+        else:
+            vis.append(np.ones((h, w)))
+    out = np.zeros((h, w, 3))
+    pitch = max(3.0, size / 110.0)
+    for name, spec in SURF.items():
+        m = kind == name
+        if not m.any():
+            continue
+        rows, cols = np.nonzero(m)
+        r0, r1, c0, c1 = rows.min(), rows.max() + 1, cols.min(), cols.max() + 1
+        sl = (slice(r0, r1), slice(c0, c1))
+        mm = m[sl]
+        Nm = N[sl] * mm[..., None]
+        acc = np.zeros(mm.shape + (3,))
+        if spec[0] == "metal":
+            _, metal, fin = spec
+            ang = 90.0 if name in ("wall", "pin_side", "lead") else 0.0
+            ctr = (hu - c0 + 0.37, hv - r0 + 0.29)            # 中心が画素の中心に乗ると接線が 0 になる
+            if fin == "random":
+                Nf = metalfinish.blast_normals(Nm, grain=0.015, cell_px=2.5, seed=3)
+            else:
+                Nf = metalfinish.micro_normals(Nm, fin, pitch_px=pitch, depth=0.012, angle_deg=ang, center=ctr)
+            k = _strength(fin, metal)
+            for (L, wgt), sv in zip(lights, vis):
+                acc += wgt * sv[sl][..., None] * metalfinish.finish_shade(Nf, fin, metal, light=L, angle_deg=ang,
+                                                                         center=ctr, strength=k)
+            acc += glassmirror.metal_mirror_rgb(metal, 1.0)[None, None, :] * 0.12      # 周囲の映り込みの代わり
+        else:
+            _, base, rough = spec
+            for (L, wgt), sv in zip(lights, vis):
+                acc += wgt * sv[sl][..., None] * surfacelib.clearcoat_shade(np.asarray(base), Nm, light=L, coat=0.5,
+                                                                            coat_roughness=rough)
+            acc += np.asarray(base)[None, None, :] * 0.4
+        out[sl][mm] = acc[mm]
+    # AO は凹みと部品の根元だけに(平らな基板は網の放射状の三角形を補間の筋として拾うので掛けない)
+    if "face" in r:
+        vao = _vertex_ao(V, F)
+        fidx = np.clip(r["face"], 0, None)
+        ao = np.einsum("ijk,ijk->ij", vao[F[fidx]], r["bary"])
+        sel = (kind != "plate") & (kind != "")
+        out[sel] *= (0.30 + 0.70 * ao[sel])[..., None]
+    # 素材のむら: 世界座標に貼った fBm(ワークと一緒に動く)。金属は低い周波数で ±6 %、樹脂は梨地の細かいむら
+    P3 = np.stack([X.ravel(), Y.ravel(), np.zeros(X.size)], 1)
+    low = render3d.fbm_noise(P3, 1.6, octaves=4, seed=11).reshape(X.shape)
+    fine = render3d.fbm_noise(P3, 0.05, octaves=3, seed=5).reshape(X.shape)
+    metal = np.isin(kind, ["plate", "wall", "bottom", "hole_chamfer"])
+    out[metal] *= (1.0 + 0.06 * low[metal])[..., None]
+    resin = np.isin(kind, ["die_top", "die_side"])
+    out[resin] *= (1.0 + 0.25 * fine[resin])[..., None]
+    # パッケージの捺印(レーザーマーキング: 樹脂の表面が白っぽく荒れる)
+    mark = _marking()
+    x0, x1, y0, y1, _ = DIE
+    xa, xb, ya, yb = x0 + 0.9, x1 - 0.5, y0 + 0.9, y1 - 0.9
+    sel = (kind == "die_top") & (X > xa) & (X < xb) & (Y > ya) & (Y < yb)
+    if sel.any():
+        mu = ((X[sel] - xa) / (xb - xa) * (mark.shape[1] - 1)).astype(int)
+        mv = ((yb - Y[sel]) / (yb - ya) * (mark.shape[0] - 1)).astype(int)
+        a = mark[mv, mu]
+        out[sel] = out[sel] * (1 - a[:, None]) + a[:, None] * 0.10
+    # 治具プレートの刻印(0.5 mm ごとの目盛り)と、パッケージの 1 番ピンの印
+    near = np.abs(X - np.round(X * 2) / 2) < 0.03
+    major = np.abs(X - np.round(X)) < 0.03
+    tick = (kind == "plate") & near & (np.abs(X) < 6.0) & (Y > -6.75) & (Y < np.where(major, -6.05, -6.35))
+    out[tick] *= 0.18
+    x0, x1, y0, y1, _ = DIE
+    dot = (kind == "die_top") & (np.hypot(X - (x0 + 0.55), Y - (y1 - 0.55)) < 0.22)
+    out[dot] = out[dot] * 0.4 + 0.012
+    return out
+
+
+def render(sysd, dz, size, pitch_um, blur=None, lighting="coax", shadows=True, kinds_only=False):
+    """レンズの入射瞳に置いたピンホールで描き、質感・AO・影・ぼけを掛けた RGB と、面の種類の地図を返す。"""
     from scipy import ndimage
     cam = TC.lens_equivalent_pinhole(sysd, pixel_pitch_um=pitch_um, width=size, height=size)
     V, F, G = scene(dz)
     r = render3d.render_mesh(V, F, cam["pose"], cam["K"], size, size, attributes=True)
     face = r["face"]
-    nz = np.abs(r["normals"][..., 2])
-    rgb = np.zeros((size, size, 3))
-    kind = np.full((size, size), "", dtype=object)
-    # 画素の世界座標(ピンホールの逆投影): 基板の 1 mm 格子とダイの電極パッドを模様として描く
+    kind = np.where(face >= 0, G[np.clip(face, 0, None)], "").astype(object)
+    if kinds_only:                                   # 門の幾何(面の種類の地図)だけ要るとき
+        return None, kind, cam
     v, u = np.mgrid[0:size, 0:size].astype(float)
     dep = np.where(np.isfinite(r["depth"]), r["depth"], 0.0)
     K = cam["K"]
     X = (u - K[0, 2]) * dep / K[0, 0]
     Y = (K[1, 2] - v) * dep / K[1, 1]
-    for name, col in MAT.items():
-        msk = (face >= 0) & (G[np.clip(face, 0, None)] == name)
-        kind[msk] = name
-        shade = 0.45 + 0.55 * nz
-        rgb[msk] = np.asarray(col)[None, :] * shade[msk][:, None]
-    grid = (kind == "plate") & ((np.abs(X - np.round(X)) < 0.035) | (np.abs(Y - np.round(Y)) < 0.035))
-    rgb[grid] *= 0.72
-    x0, x1, y0, y1, _ = DIE
-    px = (X - x0) / (x1 - x0) * 6.0
-    pad = (kind == "die_top") & (np.abs(px - np.floor(px) - 0.5) < 0.28) &           ((np.abs(Y - (y1 - 0.45)) < 0.22) | (np.abs(Y - (y0 + 0.45)) < 0.22)) & (px > 0) & (px < 6)
-    rgb[pad] = (0.93, 0.78, 0.35)
+    hdr = _shade(r, kind, cam, X, Y, lighting, V, F, dz, size, shadows)
+    rgb = render_tonemap.tonemap_reinhard(hdr, exposure=2.2)
+    rgb = np.where(rgb <= 0.0031308, 12.92 * rgb, 1.055 * np.power(np.clip(rgb, 0.0, None), 1 / 2.4) - 0.055)
     if blur is not None:
         z = cam["pupil_distance_mm"] - r["depth"]
         z = np.where(np.isfinite(z), z, 0.0)
@@ -316,6 +503,39 @@ def render(sysd, dz, size, pitch_um, blur=None):
             wsum += ndimage.gaussian_filter(m, s)
         rgb = acc / np.maximum(wsum, 1e-9)[..., None]
     return np.clip(rgb, 0.0, 1.0), kind, cam
+
+
+def measure_pin_top(rgb, size, field):
+    """描いた画像だけからピン上面の径 [mm、公称倍率で換算] を測る(HALCON 流の円の計測モデル)。
+
+    1. 金色の領域(R − B)をピンの付近で取り、内接円(距離変換の最大)で中心と外径の当たりを付ける
+       (通常のレンズで見える胴の三日月に引っぱられない)。
+    2. 当たりの円(図面の比 上面 / 面取りの外径)を参照に ``metrology`` の円の計測モデルを 2 回当て、
+       上面と面取りの境のサブピクセルのエッジに円を当て直す(探索の半幅 3 → 2 画素)。
+    """
+    from scipy import ndimage
+    pxmm = size / field
+    c0 = (size - 1) / 2 + PIN_C[0] * pxmm
+    r0 = (size - 1) / 2 - PIN_C[1] * pxmm
+    gold = rgb[..., 0] - rgb[..., 2]
+    win = np.zeros(gold.shape, bool)
+    h = int(2.5 * pxmm)
+    win[max(0, int(r0) - h):int(r0) + h, max(0, int(c0) - h):int(c0) + h] = True
+    g = np.where(win, gold, 0.0)
+    msk = ndimage.binary_fill_holes(g > 0.5 * g.max())
+    dt = ndimage.distance_transform_edt(msk)
+    cy, cx = np.unravel_index(int(np.argmax(dt)), dt.shape)
+    rad = (float(dt.max()) + 0.5) * PIN_R / (PIN_R + PIN_CHAMFER)
+    gray = rgb.mean(-1)
+    res = None
+    for ml in (3.0, 2.0):
+        mod = metrology.create_metrology_model()
+        metrology.add_metrology_object_circle_measure(mod, float(cy), float(cx), rad, n=72)
+        res = metrology.apply_metrology_model(mod, gray, measure_length=ml, sigma=1.0, threshold=0.003)[0]
+        if res["params"] is None:
+            return float("nan"), res
+        cy, cx, rad = res["params"]["row"], res["params"]["col"], res["params"]["radius"]
+    return 2.0 * rad / pxmm, res
 
 
 def _equiv_diameter_mm(mask, pitch_um, m):
@@ -344,7 +564,7 @@ def chapter_render(L):
         pitch = field / size * m * 1000.0             # 像面の画素 [µm]
         rows = []
         for dz in (-3.0, 0.0, 3.0):
-            _, kind, cam = render(L[k], dz, size, pitch)
+            _, kind, cam = render(L[k], dz, size, pitch, kinds_only=True)
             top = _equiv_diameter_mm(kind == "pin_top", pitch, cam["magnification"])
             rows.append((dz, top))
         Lr = cam["pupil_distance_mm"]
@@ -367,16 +587,16 @@ def chapter_render(L):
          "★0 は作りの結果: 代理のピンホールは近軸の理想(入射瞳 1e7 mm)で、実光線の残り(2 章の 0.013 %%)は"
          "この画素(物体で %.0f µm)より小さい" % (field / size * 1000))
     # 穴の底: 見える割合を円の重なりで
-    _, kind, cam = render(L["fa25"], 0.0, size, res["fa25"][2])
+    _, kind, cam = render(L["fa25"], 0.0, size, res["fa25"][2], kinds_only=True)
     Lr = cam["pupil_distance_mm"]
-    kt, kb = Lr / Lr, Lr / (Lr + HOLE_D)
+    kt, kb = Lr / (Lr + HOLE_CH), Lr / (Lr + HOLE_D)          # 底を隠す縁 = 面取りの下端(深さ HOLE_CH)
     off = math.hypot(*HOLE_C)
     cf = _overlap(HOLE_R * kb, HOLE_R * kt, off * (kt - kb))
     seen = float((kind == "bottom").sum())
     full = math.pi * (HOLE_R * kb / (field / size)) ** 2
     frac = seen / full
     NUMBERS.update({"hole_bottom_fa25": frac, "hole_bottom_cf": cf})
-    _, kind_t, _ = render(L["bi"], 0.0, size, res["bi"][2])
+    _, kind_t, _ = render(L["bi"], 0.0, size, res["bi"][2], kinds_only=True)
     frac_t = float((kind_t == "bottom").sum()) / (math.pi * (HOLE_R / (field / size)) ** 2)
     wall_t = int((kind_t == "wall").sum())
     NUMBERS.update({"hole_bottom_bi": frac_t, "wall_px_bi": wall_t, "wall_px_fa25": int((kind == "wall").sum())})
@@ -384,6 +604,35 @@ def chapter_render(L):
          % (frac, cf, NUMBERS["wall_px_fa25"]), abs(frac - cf) < 0.02 and NUMBERS["wall_px_fa25"] > 50)
     gate("両側テレセンでは穴の底が %.3f 見え(差 < 0.02 で 1)、内壁は %d 画素(真上からは見えない)" % (frac_t, wall_t),
          abs(frac_t - 1) < 0.02 and wall_t == 0)
+    # 照明を変えても、描いた画像から測った寸法の読みが閉形式を追うか(上の門は面の種類の地図 = 照明に依らない)
+    msize = 400                                      # ★300 画素(物体で 47 µm/画素)では低角リングで 2 % 外れた(エッジが弱い)
+    lightings = ("coax", "lowring") if REDUCED else ("coax", "dome", "lowring")
+    worst, spreads, reads = 0.0, {}, {}
+    for k in ("fa25", "bi"):
+        m = abs(RT.paraxial_trace(L[k])["magnification"])
+        pitch = field / msize * m * 1000.0
+        blur = _blur_table(L[k], pitch)
+        for lt in lightings:
+            vals = []
+            for dz in (-3.0, 3.0) if REDUCED else (-3.0, 0.0, 3.0):
+                rgb, _, cam = render(L[k], dz, msize, pitch, blur, lighting=lt, shadows=False)
+                d, _r = measure_pin_top(rgb, msize, field)
+                Lr = cam["pupil_distance_mm"]
+                cf = 2 * PIN_R * Lr / (Lr - PIN_H - dz)
+                worst = max(worst, abs(d / cf - 1)) if math.isfinite(d) else math.inf
+                vals.append(d)
+                reads[(k, lt, dz)] = d
+            spreads[(k, lt)] = 100 * (vals[-1] / vals[0] - 1)
+    NUMBERS["meas_worst"] = worst
+    NUMBERS.update({"meas_spread_%s_%s" % kl: v for kl, v in spreads.items()})
+    print("   照明 × Δz のピン上面の読み [mm]: " + "  ".join("%s/%s/%+.0f=%.4f" % (k, lt, dz, v)
+                                                    for (k, lt, dz), v in sorted(reads.items())))
+    gate("照明を変えても(%s)、画像から円の計測モデルで測ったピン上面の径は閉形式と 1 %% 以内" % " / ".join(lightings),
+         worst < 0.01, "最大 %.2f %%" % (100 * worst))
+    gate("どの照明でも 6 mm の上下で 通常 f=25 の読みは %s %%、両側テレセンは %s %%"
+         % ("/".join("%+.2f" % spreads[("fa25", lt)] for lt in lightings),
+            "/".join("%+.2f" % spreads[("bi", lt)] for lt in lightings)),
+         all(spreads[("fa25", lt)] > 5 for lt in lightings) and all(abs(spreads[("bi", lt)]) < 0.5 for lt in lightings))
     return res, size, field
 
 
@@ -688,40 +937,50 @@ def make_figures(L, chief, depth, rend, sweep, field, dof):
                    title="高さで変わる倍率:+5 mm で通常 f=25 は +%.1f %%、テレセンは %.3f %%" % (NUMBERS["pct5_fa25"], NUMBERS["pct5_bi"]),
                    caption="像面を固定して物体だけを動かした実の主光線の像の高さ。破線は主光線の幾何の閉形式。"
                            "テレセン 2 本は 0 の線に重なる。")
-    # 3. 描画(静止)と GIF
+    # 3. 描画(静止)と GIF —— 同軸落射 + ドーム、影・AO つき(門の寸法の読みは 3 章で照明を 3 通りに変えて確かめた)
     res, size, fld = rend
     order = ("fa25", "object", "bi")
     names = {"fa25": "通常 f=25 mm", "object": "物体側テレセン", "bi": "両側テレセン"}
-    blur = {k: _blur_table(L[k], res[k][2]) for k in order}
-    ref = {}
-    for k in order:
-        _, kind, _ = render(L[k], 0.0, size, res[k][2])
-        top = kind == "pin_top"
-        hole = (kind == "wall") | (kind == "bottom")
-        from scipy import ndimage
-        ref[k] = (top ^ ndimage.binary_erosion(top)) | (hole ^ ndimage.binary_erosion(hole))
+    from scipy import ndimage
 
-    def frame(dz, gif=False):
+    def setup(sz):
+        out = {}
+        for k in order:
+            pitch = fld / sz * abs(RT.paraxial_trace(L[k])["magnification"]) * 1000.0
+            _, kind, _ = render(L[k], 0.0, sz, pitch, kinds_only=True)
+            top = kind == "pin_top"
+            hole = (kind == "hole_chamfer") | (kind == "wall") | (kind == "bottom")
+            ring = (top ^ ndimage.binary_erosion(top)) | (hole ^ ndimage.binary_erosion(hole))
+            out[k] = (pitch, _blur_table(L[k], pitch), ring)
+        return out
+
+    def frame(dz, sz, st, fsize):
         tiles = []
         for k in order:
-            rgb, _, _ = render(L[k], dz, size, res[k][2], blur[k])
+            pitch, blur, ring = st[k]
+            rgb, _, _ = render(L[k], dz, sz, pitch, blur)
             rgb = rgb.copy()
-            rgb[ref[k]] = (0.1, 0.95, 0.95)
-            rgb = np.asarray(fs.text_box(rgb, "%s  Δz=%+.1f mm" % (names[k], dz), (6, 6), anchor="lt",
-                                         font_size=14 if not gif else 12))
+            rgb[ring] = (0.1, 0.95, 0.95)
+            rgb = np.asarray(fs.text_box(rgb, "%s  Δz=%+.1f mm" % (names[k], dz), (6, 6), anchor="lt", font_size=fsize))
             tiles.append(rgb)
-            tiles.append(np.ones((size, 6, 3)))
+            tiles.append(np.ones((sz, 6, 3)))
         return np.concatenate(tiles[:-1], 1)
 
-    still = np.concatenate([frame(0.0), np.ones((6, frame(0.0).shape[1], 3)), frame(3.0)], 0)
+    st = setup(size)
+    f0 = frame(0.0, size, st, 14)
+    still = np.concatenate([f0, np.ones((6, f0.shape[1], 3)), frame(3.0, size, st, 14)], 0)
     figs.save("part_views", still,
-              "上段 = 合焦面、下段 = ワークを 3 mm 持ち上げたとき。水色の線は Δz = 0 のピン上面と穴の縁。通常のレンズ(左)は"
-              "穴の内壁(橙)が見えて底(青)が欠け、持ち上げるとピン(黄)も穴も膨らむ。テレセン(中・右)は真上から見て寸法が変わらない。")
+              "上段 = 合焦面、下段 = ワークを 3 mm 持ち上げたとき(同軸落射 + ドーム照明)。部品はアルミの治具プレート(穴は深さ 5 mm、"
+              "縁は面取り)・金めっきのピン(高さ 5 mm)・黒い樹脂モールドと銀色のリードのパッケージ。水色の線は Δz = 0 のピン上面と穴の縁。"
+              "通常のレンズ(左)は穴の内壁とピンの胴が見えて穴の底が欠け、持ち上げるとピンも穴も目盛りも膨らむ。テレセン(中・右)は"
+              "真上から見て寸法が変わらない。")
     if figs.target_dir() is not None:
-        zs = list(np.linspace(-3.0, 3.0, 13)) + list(np.linspace(3.0, -3.0, 13))[1:-1]
-        frames = [(np.clip(frame(float(dz), gif=True), 0, 1) * 255).astype(np.uint8) for dz in zs]
+        gsz = 300
+        sg = setup(gsz)
+        zs = list(np.linspace(-3.0, 3.0, 10)) + list(np.linspace(3.0, -3.0, 10))[1:-1]
+        frames = [(np.clip(frame(float(dz), gsz, sg, 12), 0, 1) * 255).astype(np.uint8) for dz in zs]
         figs.save_gif("work_up_down", frames,
-                      "ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。", fps=8)
+                      "ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。", fps=6)
     # 4. 絞りのずれ
     figs.save_plot("stop_shift_telecentricity",
                    [("実光線(単レンズの分を引いた)", sweep[:, 0], sweep[:, 1]),
