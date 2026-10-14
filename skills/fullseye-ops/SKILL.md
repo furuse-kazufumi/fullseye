@@ -63,7 +63,10 @@ in the domain's words ("weld bead", "springback", "chatter", "reflow", "wafer CM
 `docs/literature/optical_metrology.md` is curated by hand (seminal papers plus useful
 2020+ ones per axis, an overview per axis, and what Fullseye does not cover). These
 files are reachable by reading the repository (this skill); the MCP server's search
-tools and `fullseye-rag search` index op notes only. The layer never picks
+tools and `fullseye-rag search` do not return its clusters or papers, but the
+hand-written theme → op context ("theme: why this op", Japanese plus an English translation) is part of the
+meaning-search index, so a shop-floor phrasing finds the op and the hit shows that
+context in `contexts`. The layer never picks
 ops by word overlap, and clusters with no matching ops say so. Next to it,
 `docs/literature/OSS_LANDSCAPE.md` maps the existing OSS in each area (licence,
 last activity, verified against the project's API or site) and states where Fullseye

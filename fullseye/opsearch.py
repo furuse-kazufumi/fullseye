@@ -10,7 +10,9 @@
 ``docs/i18n/op_summary.json`` に en / zh / tw / ko / de の訳がある —— それを検索面にする。
 
 **何を照合するか**: op 名(``_`` で区切った語)・HALCON 名・族 / 分類・入出力の型と、
-要約の多言語訳(ja 原文 + en / zh / tw / ko / de / hi)。順位は BM25(語の希少さで重み付け)。
+要約の多言語訳(ja 原文 + en / zh / tw / ko / de / hi)、それに人が書いた**文脈**(文献層のテーマ → op の
+対応表の「テーマ: なぜ使うか」、日本語の原文 ``t`` と英訳 ``te``、2026-10-15)。順位は BM25(語の希少さで重み付け)。
+文脈は要約と同じ重み —— 現場の言い方(「溶接ビード」/ "weld bead")を、表がその op に付けたときだけ拾う。
 
 **語の切り方**(依存ゼロ・決定的): ラテン文字は語ごと(6 文字を超える語は先頭 6 文字に
 縮めて ``denoise`` / ``denoising``、``segment`` / ``segmentation`` を同じ語にする)、漢字・仮名・
@@ -38,6 +40,8 @@ _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
 _W_NAME, _W_HALCON, _W_META, _W_SUMMARY = 3, 2, 1, 1
+#: 文脈(文献層のテーマ表で人がその op に書いた行)の重み。要約と同じ。
+_W_CONTEXT = 1
 
 _LATIN = re.compile(r"[0-9a-zß-ɏ]+")
 _CJK = re.compile(r"[぀-ヿ㐀-䶿一-鿿豈-﫿]+")
@@ -192,6 +196,9 @@ def load_index(path: str | None = None) -> dict:
         for txt in (r.get("s") or {}).values():
             for tok in tokenize(txt):
                 tf[tok] += _W_SUMMARY
+        for txt in list(r.get("t") or ()) + list(r.get("te") or ()):
+            for tok in tokenize(txt):
+                tf[tok] += _W_CONTEXT
         docs.append(tf)
         df.update(tf.keys())
     lens = [sum(tf.values()) for tf in docs]
@@ -313,10 +320,14 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
     for neg, _, i in hits[:k]:
         r = rows[i]
         summ = r.get("s") or {}
-        out.append({"name": r["n"], "dim": r.get("d"), "category": r.get("c"),
-                    "in_sort": r.get("i"), "out_sort": r.get("o"), "halcon": r.get("h"),
-                    "note": r.get("p"), "summary": summ.get(show) or summ.get("en") or summ.get("ja") or "",
-                    "score": round(-neg, 3)})
+        row = {"name": r["n"], "dim": r.get("d"), "category": r.get("c"),
+               "in_sort": r.get("i"), "out_sort": r.get("o"), "halcon": r.get("h"),
+               "note": r.get("p"), "summary": summ.get(show) or summ.get("en") or summ.get("ja") or "",
+               "score": round(-neg, 3)}
+        ctx = (r.get("t") if show == "ja" else (r.get("te") or r.get("t"))) or ()
+        if ctx:                                                        # 人が書いた文脈(どの場面で使う op か)
+            row["contexts"] = list(ctx[:3])
+        out.append(row)
     hint = None
     if not out:
         known = [t for t in q if t in idf]

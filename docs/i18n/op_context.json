@@ -1,0 +1,1613 @@
+{
+ "_": "文献層のテーマ → op 表と厳選の層の軸で人が書いた文脈の句(テーマ名・「なぜ使うか」)の対訳表。キーは原文(日本語)の句そのもの —— 原文を書き換えるとキーが外れて訳なしになり、tools/gen_mcp_data.py が止まる(古い訳を黙って出さない)。句の一覧は gen_mcp_data.context_phrases()。訳は 2026-10-15 に作成(Claude のサブエージェントが訳し、主要語を照合)。使い道: OP_SEARCH.json の te(英語の文脈)= 意味で op を引く検索の英語の索引語。門 = tests/test_rag_by_ops.py。",
+ "languages": [
+  "en"
+ ],
+ "phrases": {
+  "点群 → 当てはめ → CAD(逆設計)": {
+   "en": "Point cloud -> fitting -> CAD (reverse engineering)"
+  },
+  "スキャン点群を等間隔に間引く": {
+   "en": "Uniformly downsample scanned point clouds"
+  },
+  "外れ点を落とす": {
+   "en": "Remove outliers"
+  },
+  "法線(面の向き)": {
+   "en": "Normals (surface orientation)"
+  },
+  "設計形状との位置合わせ": {
+   "en": "Alignment to the design shape"
+  },
+  "初期姿勢の無い位置合わせ": {
+   "en": "Registration without an initial pose"
+  },
+  "平面プリミティブの当てはめ": {
+   "en": "Planar primitive fitting"
+  },
+  "円筒の当てはめ(穴・軸)": {
+   "en": "Cylinder fitting (holes, axes)"
+  },
+  "円錐": {
+   "en": "Cone"
+  },
+  "点群 → メッシュ": {
+   "en": "Point cloud → mesh"
+  },
+  "設計との形状差": {
+   "en": "Shape deviation from design"
+  },
+  "最悪の形状差": {
+   "en": "Worst-case shape deviation"
+  },
+  "メッシュ・形状の計測と変換": {
+   "en": "Mesh and shape measurement and conversion"
+  },
+  "表面積": {
+   "en": "Surface area"
+  },
+  "体積": {
+   "en": "Volume"
+  },
+  "曲率(角・フィレット)": {
+   "en": "Curvature (corners, fillets)"
+  },
+  "間引き": {
+   "en": "Decimation"
+  },
+  "等方リメッシュ": {
+   "en": "Isotropic remeshing"
+  },
+  "メッシュ → 体積": {
+   "en": "Mesh -> volume"
+  },
+  "メッシュ → 点群": {
+   "en": "Mesh -> point cloud"
+  },
+  "局所形状の型": {
+   "en": "Local shape types"
+  },
+  "形状の記述子(検索・比較)": {
+   "en": "Shape descriptors (search, comparison)"
+  },
+  "位置・向き・大きさを除いた形の差": {
+   "en": "Shape difference with position, orientation and scale removed"
+  },
+  "同種部品の形のばらつき(統計形状モデル)": {
+   "en": "Shape variation of like parts (statistical shape model)"
+  },
+  "パラメトリック形状(SDF / CSG)": {
+   "en": "Parametric shapes (SDF / CSG)"
+  },
+  "直方体の SDF": {
+   "en": "Box SDF"
+  },
+  "円筒の SDF": {
+   "en": "Cylinder SDF"
+  },
+  "カプセル": {
+   "en": "Capsule"
+  },
+  "平面(切り欠き)": {
+   "en": "Plane (notch)"
+  },
+  "和": {
+   "en": "Sum"
+  },
+  "差(穴)": {
+   "en": "Difference (hole)"
+  },
+  "積": {
+   "en": "Product"
+  },
+  "フィレットつきの和": {
+   "en": "Filleted union"
+  },
+  "肉厚のオフセット": {
+   "en": "Wall-thickness offset"
+  },
+  "SDF → 占有(スライスへ)": {
+   "en": "SDF -> occupancy (to slices)"
+  },
+  "評価格子": {
+   "en": "Evaluation grid"
+  },
+  "スーパー二次曲面の当てはめ(逆設計)": {
+   "en": "Superquadric fitting (reverse engineering)"
+  },
+  "自由曲面の当てはめ": {
+   "en": "Freeform surface fitting"
+  },
+  "トポロジー最適化・格子構造の評価": {
+   "en": "Evaluation of topology optimization and lattice structures"
+  },
+  "連結性(閉じた空隙の数)": {
+   "en": "Connectivity (number of closed voids)"
+  },
+  "最小肉厚": {
+   "en": "Minimum wall thickness"
+  },
+  "距離変換(肉厚・隙間)": {
+   "en": "Distance transform (wall thickness, gaps)"
+  },
+  "空隙の大きさ分布": {
+   "en": "Void size distribution"
+  },
+  "体積(材料量)": {
+   "en": "Volume (material amount)"
+  },
+  "慣性テンソル": {
+   "en": "Inertia tensor"
+  },
+  "主慣性モーメント": {
+   "en": "Principal moments of inertia"
+  },
+  "付加製造(スライス・G-code・層検査)": {
+   "en": "Additive manufacturing (slicing, G-code, layer inspection)"
+  },
+  "メッシュを層の輪郭に": {
+   "en": "Mesh to layer contours"
+  },
+  "層マスクの積み": {
+   "en": "Layer mask stacking"
+  },
+  "輪郭 → G-code": {
+   "en": "Contour → G-code"
+  },
+  "G-code を線分の表に": {
+   "en": "G-code to a line-segment table"
+  },
+  "表 → G-code": {
+   "en": "Table → G-code"
+  },
+  "層の期待画像": {
+   "en": "Expected layer image"
+  },
+  "押し出し量": {
+   "en": "Extrusion amount"
+  },
+  "所要時間": {
+   "en": "Travel time"
+  },
+  "層画像の欠け・はみ出し": {
+   "en": "Missing/overflow in layer images"
+  },
+  "3MF 読み": {
+   "en": "3MF read"
+  },
+  "3MF 書き": {
+   "en": "3MF write"
+  },
+  "造形物 CT の肉厚": {
+   "en": "Wall thickness of additively manufactured parts from CT"
+  },
+  "in-situ 監視(メルトプール・高速動画)": {
+   "en": "In-situ monitoring (melt pool, high-speed video)"
+  },
+  "動画の時間帯域(揺らぎ)": {
+   "en": "Temporal bandwidth of video (flicker)"
+  },
+  "微小な動きの拡大": {
+   "en": "Small-motion magnification"
+  },
+  "時空間の立方体": {
+   "en": "Spatiotemporal cube"
+  },
+  "要約コマ": {
+   "en": "Summary frames"
+  },
+  "スパッタ・粒の数": {
+   "en": "Spatter and particle count"
+  },
+  "溶融池の面積と重心": {
+   "en": "Weld pool area and centroid"
+  },
+  "3D+t の拍動の拡大": {
+   "en": "3D+t pulsation magnification"
+  },
+  "焦点掃引 → 高さの時系列": {
+   "en": "Focus sweep → height time series"
+  },
+  "寸法・幾何公差の計測": {
+   "en": "Dimensional and geometric tolerance measurement"
+  },
+  "エッジ位置(1-D 計測)": {
+   "en": "Edge position (1-D measurement)"
+  },
+  "対のエッジ = 幅": {
+   "en": "Edge pair = width"
+  },
+  "サブピクセル輪郭": {
+   "en": "Subpixel contours"
+  },
+  "面の当てはめ": {
+   "en": "Surface fitting"
+  },
+  "平面度・形状誤差": {
+   "en": "Flatness / form error"
+  },
+  "基準面": {
+   "en": "Reference surface"
+  },
+  "点と面の距離(高さ)": {
+   "en": "Point-to-plane distance (height)"
+  },
+  "面の角度": {
+   "en": "Surface angle"
+  },
+  "3D の寸法の注記": {
+   "en": "3D dimension annotation"
+  },
+  "断面の粗さパラメータ": {
+   "en": "Profile roughness parameters"
+  },
+  "面の粗さパラメータ": {
+   "en": "Surface roughness parameters"
+  },
+  "測定線上のエッジ位置(サブピクセル、HALCON measure_pos)": {
+   "en": "Edge positions along a measurement line (subpixel, HALCON measure_pos)"
+  },
+  "エッジの対 = 構造の幅": {
+   "en": "Edge pair = structure width"
+  },
+  "断面の設計形状からの法線方向のずれ": {
+   "en": "Normal deviation of section from design shape"
+  },
+  "断面の厚み分布": {
+   "en": "Cross-section thickness distribution"
+  },
+  "外観欠陥の検出(成形・表面)": {
+   "en": "Visual defect detection (molding, surfaces)"
+  },
+  "照明むらを除いた局所コントラスト": {
+   "en": "Local contrast with uneven illumination removed"
+  },
+  "背景から外れる疎な欠陥": {
+   "en": "Sparse defects deviating from the background"
+  },
+  "照明条件での欠陥コントラスト": {
+   "en": "Defect contrast under an illumination condition"
+  },
+  "欠陥が出る照明の設計": {
+   "en": "Design illumination that reveals defects"
+  },
+  "照明を振って最良を探す": {
+   "en": "Sweep illumination to find the best setting"
+  },
+  "二値化": {
+   "en": "Binarization"
+  },
+  "欠陥の数": {
+   "en": "Defect count"
+  },
+  "形の記述": {
+   "en": "Shape description"
+  },
+  "黒光沢・透明部品の法線を偏光から": {
+   "en": "Normals of black glossy / transparent parts from polarization"
+  },
+  "良品(基準)画像との差が許容を超える画素": {
+   "en": "Pixels whose difference from the golden (reference) image exceeds tolerance"
+  },
+  "欠陥ごとの形の特徴量": {
+   "en": "Shape features per defect"
+  },
+  "接した粒・欠陥を分ける(watershed)": {
+   "en": "Split touching grains/defects (watershed)"
+  },
+  "欠陥の大きさごとの検出確率(POD)": {
+   "en": "Probability of detection (POD) per defect size"
+  },
+  "板金・成形(曲げ角・ひずみ)": {
+   "en": "Sheet metal and forming (bend angle, strain)"
+  },
+  "DIC の変位 → ひずみ": {
+   "en": "DIC displacement -> strain"
+  },
+  "変形を追う相関": {
+   "en": "Correlation tracking deformation"
+  },
+  "相関の信頼度": {
+   "en": "Correlation confidence"
+  },
+  "スペックルの良さ": {
+   "en": "Speckle quality"
+  },
+  "曲げ角": {
+   "en": "Bend angle"
+  },
+  "フランジ面": {
+   "en": "Flange face"
+  },
+  "曲げ線の当てはめ": {
+   "en": "Bend line fitting"
+  },
+  "曲線の曲率": {
+   "en": "Curve curvature"
+  },
+  "き裂・ひずみ・損傷の画像計測": {
+   "en": "Image-based measurement of cracks, strain and damage"
+  },
+  "全視野ひずみ": {
+   "en": "Full-field strain"
+  },
+  "多段の変位推定": {
+   "en": "Multi-scale displacement estimation"
+  },
+  "微小変形の拡大": {
+   "en": "Small-deformation magnification"
+  },
+  "変位の時系列": {
+   "en": "Displacement time series"
+  },
+  "CT 中の管状き裂の強調": {
+   "en": "Tubular crack enhancement in CT"
+  },
+  "き裂のエッジ": {
+   "en": "Crack edges"
+  },
+  "3D の線状構造": {
+   "en": "3D curvilinear structures"
+  },
+  "き裂の中心線": {
+   "en": "Crack centerline"
+  },
+  "溶接(ビード形状・溶け込み)": {
+   "en": "Welding (bead shape, penetration)"
+  },
+  "構造化光の縞を復号": {
+   "en": "Decode structured-light fringes"
+  },
+  "位相のアンラップ": {
+   "en": "Phase unwrapping"
+  },
+  "三角測量 → ビードの高さ": {
+   "en": "Triangulation -> bead height"
+  },
+  "母材面": {
+   "en": "Base metal surface"
+  },
+  "ビードの形状誤差": {
+   "en": "Bead shape error"
+  },
+  "アークの映り込みを除く": {
+   "en": "Remove arc reflections"
+  },
+  "溝の相互反射で縞の位相が外れる量を事前に": {
+   "en": "Predict fringe phase error from interreflection in grooves"
+  },
+  "レーザ光切断の高さの床(スペックル)": {
+   "en": "Laser line triangulation height floor (speckle)"
+  },
+  "CT の溶け込み深さ": {
+   "en": "CT weld penetration depth"
+  },
+  "金属 CT のアーチファクト": {
+   "en": "Metal artifacts in CT"
+  },
+  "鋳造・塑性加工・焼結(内部欠陥の CT)": {
+   "en": "Casting, plastic forming and sintering (CT of internal defects)"
+  },
+  "CT 再構成": {
+   "en": "CT reconstruction"
+  },
+  "少数投影の再構成": {
+   "en": "Sparse-view reconstruction"
+  },
+  "カッピングの補正": {
+   "en": "Cupping correction"
+  },
+  "リングアーチファクト": {
+   "en": "Ring artifacts"
+  },
+  "空隙のラベル": {
+   "en": "Void labels"
+  },
+  "空隙の性質": {
+   "en": "Void properties"
+  },
+  "大きさで選別": {
+   "en": "Size-based sorting"
+  },
+  "切削・研削(工具・面粗さ・びびり)": {
+   "en": "Cutting and grinding (tools, surface roughness, chatter)"
+  },
+  "粗さのフィルタ(うねりと分ける)": {
+   "en": "Roughness filter (separating waviness)"
+  },
+  "形状の除去": {
+   "en": "Form removal"
+  },
+  "Ra / Rz など": {
+   "en": "Ra / Rz etc."
+  },
+  "Sa / Sq など": {
+   "en": "Sa / Sq etc."
+  },
+  "面のパワースペクトル": {
+   "en": "Surface power spectrum"
+  },
+  "びびりの時間周波数": {
+   "en": "Chatter time-frequency analysis"
+  },
+  "衝撃性(工具欠損)": {
+   "en": "Impulsiveness (tool breakage)"
+  },
+  "回転次数のスペクトル": {
+   "en": "Order spectrum"
+  },
+  "回転同期の再標本化": {
+   "en": "Order-tracking resampling"
+  },
+  "切断力の模型(Atkins)を力の列に当てはめる": {
+   "en": "Fit a cutting-force model (Atkins) to a force series"
+  },
+  "切り口の粗さ": {
+   "en": "Cut-edge roughness"
+  },
+  "CNC の G-code も同じ語彙で読む": {
+   "en": "Read CNC G-code with the same vocabulary"
+  },
+  "レーザ・放電加工(光学)": {
+   "en": "Laser and EDM machining (optical)"
+  },
+  "ビームの伝搬": {
+   "en": "Beam propagation"
+  },
+  "集光スポット": {
+   "en": "Focused spot"
+  },
+  "焦点深度": {
+   "en": "Depth of focus"
+  },
+  "透過率": {
+   "en": "Transmittance"
+  },
+  "反射率": {
+   "en": "Reflectance"
+  },
+  "照度分布": {
+   "en": "Illuminance distribution"
+  },
+  "加工材の n, k(材料表)": {
+   "en": "Workpiece n, k (material table)"
+  },
+  "レーザ照明のスペックルの統計": {
+   "en": "Laser illumination speckle statistics"
+  },
+  "PCB / SMT の検査": {
+   "en": "PCB / SMT inspection"
+  },
+  "部品の位置決め": {
+   "en": "Part localization"
+  },
+  "形状マッチング": {
+   "en": "Shape matching"
+  },
+  "はんだフィレットの輪郭": {
+   "en": "Solder fillet profile"
+  },
+  "多方向照明の設計": {
+   "en": "Multi-directional lighting design"
+  },
+  "欠陥コントラスト": {
+   "en": "Defect contrast"
+  },
+  "異物・欠け": {
+   "en": "Foreign matter and chipping"
+  },
+  "X 線 CT(BGA のボイド)": {
+   "en": "X-ray CT (BGA voids)"
+  },
+  "ボイドの大きさ分布": {
+   "en": "Void size distribution"
+  },
+  "半導体工程(ウェハ・薄膜)": {
+   "en": "Semiconductor processes (wafers, thin films)"
+  },
+  "白色干渉の高さ": {
+   "en": "White-light interferometry height"
+  },
+  "干渉包絡": {
+   "en": "Interference envelope"
+  },
+  "クロマティック共焦点": {
+   "en": "Chromatic confocal"
+  },
+  "研磨面のスペクトル": {
+   "en": "Spectrum of a polished surface"
+  },
+  "薄膜の反射率": {
+   "en": "Thin-film reflectance"
+  },
+  "パターン欠陥": {
+   "en": "Pattern defects"
+  },
+  "ダイの位置": {
+   "en": "Die position"
+  },
+  "光学系の解像限界": {
+   "en": "Optical resolution limit"
+  },
+  "波面収差": {
+   "en": "Wavefront aberration"
+  },
+  "CMP・研磨の除去深さ(Preston の式)": {
+   "en": "CMP / polishing removal depth (Preston equation)"
+  },
+  "ドープした Si の近赤外の吸収": {
+   "en": "Near-infrared absorption of doped Si"
+  },
+  "ウェハの PL 像(キャリア拡散で欠陥がどう見えるか)": {
+   "en": "Wafer PL image (how defects appear under carrier diffusion)"
+  },
+  "SEM 像の縁効果(Dice は高いのに面積が太る)": {
+   "en": "SEM edge effect (high Dice yet inflated area)"
+  },
+  "接合のボイドを超音波(SAM)の位相で": {
+   "en": "Bond voids via ultrasonic (SAM) phase"
+  },
+  "SPC(管理図・工程能力)": {
+   "en": "SPC (control charts, process capability)"
+  },
+  "X̄-R 管理図": {
+   "en": "X-bar-R control chart"
+  },
+  "小さなずれの累積検出": {
+   "en": "Cumulative detection of small shifts"
+  },
+  "指数平滑の管理図": {
+   "en": "EWMA control chart"
+  },
+  "Cp / Cpk": {
+   "en": "Cp / Cpk"
+  },
+  "多変量の管理": {
+   "en": "Multivariate control"
+  },
+  "帰無分布": {
+   "en": "Null distribution"
+  },
+  "証拠量の位置": {
+   "en": "Location of evidence mass"
+  },
+  "予知保全(振動・軸受)": {
+   "en": "Predictive maintenance (vibration, bearings)"
+  },
+  "軸受の欠陥周波数": {
+   "en": "Bearing defect frequencies"
+  },
+  "包絡スペクトル": {
+   "en": "Envelope spectrum"
+  },
+  "衝撃の帯域": {
+   "en": "Impact frequency band"
+  },
+  "アコースティック・エミッションの帯域パワー": {
+   "en": "Acoustic emission band power"
+  },
+  "ケプストラム": {
+   "en": "Cepstrum"
+  },
+  "次数スペクトル": {
+   "en": "Order spectrum"
+  },
+  "時間周波数": {
+   "en": "Time-frequency"
+  },
+  "劣化の監視": {
+   "en": "Degradation monitoring"
+  },
+  "動画からの振動": {
+   "en": "Vibration from video"
+  },
+  "位相ベースの変位": {
+   "en": "Phase-based displacement"
+  },
+  "センサ(校正・深度・融合)": {
+   "en": "Sensors (calibration, depth, fusion)"
+  },
+  "校正板の合成ビュー": {
+   "en": "Synthetic views of calibration target"
+  },
+  "歪みの地図": {
+   "en": "Distortion (strain) map"
+  },
+  "外部パラメータ": {
+   "en": "Extrinsic parameters"
+  },
+  "多視点の同時最適化": {
+   "en": "Multi-view joint optimization"
+  },
+  "LiDAR の球面投影": {
+   "en": "LiDAR spherical projection"
+  },
+  "深度 → 点群": {
+   "en": "Depth → point cloud"
+  },
+  "深度 → 法線": {
+   "en": "Depth → normals"
+  },
+  "dToF の距離": {
+   "en": "dToF range"
+  },
+  "FMCW レーダの距離": {
+   "en": "FMCW radar range"
+  },
+  "距離・速度の地図": {
+   "en": "Range-velocity map"
+  },
+  "ライトフィールドの深度": {
+   "en": "Light-field depth"
+  },
+  "光子計数の誤差棒": {
+   "en": "Photon-counting error bars"
+  },
+  "SPAD の不感時間補正": {
+   "en": "SPAD dead-time correction"
+  },
+  "カメラの利得と雑音(EMVA 1288 の光子伝達)": {
+   "en": "Camera gain and noise (EMVA 1288 photon transfer)"
+  },
+  "量子効率": {
+   "en": "Quantum efficiency"
+  },
+  "Si フォトダイオードの分光感度": {
+   "en": "Si photodiode spectral responsivity"
+  },
+  "光源 × 対象 × センサの波長積分": {
+   "en": "Spectral integration of source × object × sensor"
+  },
+  "観測の欠けた軌跡を前後から(Kalman 平滑化)": {
+   "en": "Fill gaps in trajectories from both directions (Kalman smoothing)"
+  },
+  "触覚センサ(接触・圧力・ずれ)": {
+   "en": "Tactile sensors (contact, pressure, slip)"
+  },
+  "接触域": {
+   "en": "Contact area"
+  },
+  "圧力の代理量": {
+   "en": "Pressure proxy"
+  },
+  "ずれ場": {
+   "en": "Shear field"
+  },
+  "接触面の法線": {
+   "en": "Contact surface normal"
+  },
+  "陰影からの高さ": {
+   "en": "Shape from shading"
+  },
+  "Hertz 接触の力と押し込み(閉形式)": {
+   "en": "Hertz contact force and indentation (closed form)"
+  },
+  "接触半径から押し込み力": {
+   "en": "Indentation force from contact radius"
+  },
+  "部分すべり(Mindlin)の固着域": {
+   "en": "Stick region in partial slip (Mindlin)"
+  },
+  "膜のマーカーを追う": {
+   "en": "Track membrane markers"
+  },
+  "マーカーの変位 → ずれ場": {
+   "en": "Marker displacement -> shear field"
+  },
+  "ねじりと傾きのトルクを分ける": {
+   "en": "Separate twist and tilt torques"
+  },
+  "GelSight 型の色 → 法線の表引き": {
+   "en": "GelSight-style color -> normal lookup table"
+  },
+  "大変形の接触の逆問題": {
+   "en": "Inverse problem of large-deformation contact"
+  },
+  "アクチュエータ(制御は外、動きを画像で測る側)": {
+   "en": "Actuators (control is external; motion measured from images)"
+  },
+  "位相ベースの微小変位": {
+   "en": "Phase-based sub-pixel displacement"
+  },
+  "Riesz 変換の変位": {
+   "en": "Riesz transform displacement"
+  },
+  "帯域ごとの動きの量": {
+   "en": "Motion amount per band"
+  },
+  "動きの SN": {
+   "en": "Motion SNR"
+  },
+  "回転次数": {
+   "en": "Rotation order"
+  },
+  "回転同期": {
+   "en": "Synchronous to rotation"
+  },
+  "流体(油空圧)の流れ場": {
+   "en": "Flow field of hydraulic/pneumatic fluid"
+  },
+  "電源・電池(内部構造の CT)": {
+   "en": "Power supplies and batteries (CT of internal structure)"
+  },
+  "電池 CT の再構成": {
+   "en": "Battery CT reconstruction"
+  },
+  "電極・セパレータの厚み": {
+   "en": "Electrode and separator thickness"
+  },
+  "層のラベル": {
+   "en": "Layer labels"
+  },
+  "層の性質": {
+   "en": "Layer properties"
+  },
+  "金属アーチファクト": {
+   "en": "Metal artifacts"
+  },
+  "カッピング": {
+   "en": "Cupping"
+  },
+  "ロボット(姿勢・位置合わせ・動き)": {
+   "en": "Robotics (pose, registration, motion)"
+  },
+  "カメラから物体の姿勢": {
+   "en": "Object pose from camera"
+  },
+  "姿勢の直接解": {
+   "en": "Direct pose solution"
+  },
+  "姿勢の検証": {
+   "en": "Pose verification"
+  },
+  "軌跡の整合": {
+   "en": "Trajectory alignment"
+  },
+  "相対姿勢": {
+   "en": "Relative pose"
+  },
+  "剛体の位置合わせ": {
+   "en": "Rigid registration"
+  },
+  "ICP": {
+   "en": "ICP"
+  },
+  "3D の流れ": {
+   "en": "3D flow"
+  },
+  "動く部品の分離": {
+   "en": "Separating moving parts"
+  },
+  "剛体運動の当てはめ": {
+   "en": "Rigid motion fitting"
+  },
+  "peg-in-hole: 手首カメラの RGB-D からずれ": {
+   "en": "peg-in-hole: offset from wrist-camera RGB-D"
+  },
+  "穴の中心": {
+   "en": "Hole center"
+  },
+  "かじり(jamming)の図(Whitney)": {
+   "en": "Jamming diagram (Whitney)"
+  },
+  "挿入の失敗の分類": {
+   "en": "Insertion failure classification"
+  },
+  "穴探しのらせん探索": {
+   "en": "Spiral search for hole finding"
+  },
+  "不整地の車輪の滑りの予測": {
+   "en": "Wheel slip prediction on rough terrain"
+  },
+  "地形の高さ地図から傾斜": {
+   "en": "Slope from terrain heightmap"
+  },
+  "材料(見え方・組織・表面)": {
+   "en": "Materials (appearance, microstructure, surface)"
+  },
+  "分光 → 色": {
+   "en": "Spectrum -> color"
+  },
+  "薄膜の干渉色": {
+   "en": "Thin-film interference colors"
+  },
+  "材質の外観表": {
+   "en": "Material appearance table"
+  },
+  "粗い面の反射": {
+   "en": "Reflection from a rough surface"
+  },
+  "微小面の反射": {
+   "en": "Microfacet reflection"
+  },
+  "メタリック塗装": {
+   "en": "Metallic paint"
+  },
+  "腐食域": {
+   "en": "Corroded area"
+  },
+  "組織のテクスチャ": {
+   "en": "Microstructure texture"
+  },
+  "方向性のテクスチャ": {
+   "en": "Directional texture"
+  },
+  "CT の空隙分布": {
+   "en": "CT void distribution"
+  },
+  "組織の乱れ": {
+   "en": "Microstructure disorder"
+  },
+  "材料の光学物性表(83 種、光学系と観察対象が同じ表を引く)": {
+   "en": "Optical material property table (83 materials; optics and observed objects share one table)"
+  },
+  "波長ごとの n, k": {
+   "en": "n, k per wavelength"
+  },
+  "厚さ d の透過率": {
+   "en": "Transmittance at thickness d"
+  },
+  "温度で変わる屈折率": {
+   "en": "Temperature-dependent refractive index"
+  },
+  "粉末 X 線回折から相の割合": {
+   "en": "Phase fractions from powder X-ray diffraction"
+  },
+  "回折線の幅から結晶子の大きさ(Scherrer)": {
+   "en": "Crystallite size from diffraction line width (Scherrer)"
+  },
+  "時間・イベント(高速・非同期)": {
+   "en": "Time and events (high-speed, asynchronous)"
+  },
+  "光子到達の標本化": {
+   "en": "Photon arrival sampling"
+  },
+  "時間相関の統計": {
+   "en": "Temporal correlation statistics"
+  },
+  "時間帯域": {
+   "en": "Temporal bandwidth"
+  },
+  "信頼性・FMEA(判定の根拠)": {
+   "en": "Reliability and FMEA (grounds for decisions)"
+  },
+  "帰無分布(誤報率)": {
+   "en": "Null distribution (false alarm rate)"
+  },
+  "工程能力": {
+   "en": "Process capability"
+  },
+  "検出確率(POD)の â–a 回帰と a90/95": {
+   "en": "Probability of detection (POD) â–a regression and a90/95"
+  },
+  "見逃しと誤検出の取引": {
+   "en": "Miss vs false-call trade-off"
+  },
+  "研磨・拭き取り(除去量の地図)": {
+   "en": "Polishing and wiping (material removal map)"
+  },
+  "工具の下の圧力分布": {
+   "en": "Pressure distribution under the tool"
+  },
+  "軌跡と力から除去深さの地図(Preston の式)": {
+   "en": "Removal-depth map from trajectory and force (Preston equation)"
+  },
+  "1 本の軌跡の除去の断面": {
+   "en": "Material removal cross-section of a single path"
+  },
+  "測った除去から Preston 係数 k_p": {
+   "en": "Preston coefficient k_p from measured material removal"
+  },
+  "前後の高さから除去深さ": {
+   "en": "Material removal depth from before/after heights"
+  },
+  "拭けた面積の割合": {
+   "en": "Wiped area fraction"
+  },
+  "残った膜の厚さを画像から(Beer–Lambert)": {
+   "en": "Residual film thickness from images (Beer–Lambert)"
+  },
+  "仕上げ面の Sa / Sq": {
+   "en": "Machined surface Sa / Sq"
+  },
+  "粉体(粒度・流動性・粉砕)": {
+   "en": "Powders (particle size, flowability, milling)"
+  },
+  "粒度分布の Dx(D10 / D50 / D90)": {
+   "en": "Particle size distribution Dx (D10 / D50 / D90)"
+  },
+  "粒の画像から D50": {
+   "en": "D50 from particle images"
+  },
+  "粉砕のエネルギー則(Bond ほか)の当てはめ": {
+   "en": "Fit comminution energy laws (Bond, etc.)"
+  },
+  "安息角から流動性の区分": {
+   "en": "Flowability class from angle of repose"
+  },
+  "高さ地図から安息角": {
+   "en": "Angle of repose from a height map"
+  },
+  "ホッパの排出流量(Beverloo)": {
+   "en": "Hopper discharge rate (Beverloo)"
+  },
+  "粒の数": {
+   "en": "Particle count"
+  },
+  "CT の粒・空隙の大きさ分布": {
+   "en": "CT grain and void size distribution"
+  },
+  "回折と結晶(粉末 X 線回折)": {
+   "en": "Diffraction and crystals (powder X-ray diffraction)"
+  },
+  "検出器の Debye 環": {
+   "en": "Detector Debye rings"
+  },
+  "検出器の幾何の較正": {
+   "en": "Detector geometry calibration"
+  },
+  "環を 2θ の 1-D に": {
+   "en": "Integrate rings into a 1-D 2θ profile"
+  },
+  "回折ピーク": {
+   "en": "Diffraction peaks"
+  },
+  "相の割合": {
+   "en": "Phase fractions"
+  },
+  "結晶子の大きさ(Scherrer)": {
+   "en": "Crystallite size (Scherrer)"
+  },
+  "CIF の結晶構造を読む": {
+   "en": "Read CIF crystal structures"
+  },
+  "機械要素(歯車・ねじ・機構)": {
+   "en": "Machine elements (gears, screws, mechanisms)"
+  },
+  "歯車の極座標展開(歯形)": {
+   "en": "Polar unwrapping of a gear (tooth profile)"
+  },
+  "円筒面の展開(ねじ山)": {
+   "en": "Cylindrical surface unwrapping (threads)"
+  },
+  "歯厚・ピッチ": {
+   "en": "Tooth thickness and pitch"
+  },
+  "歯形の輪郭": {
+   "en": "Tooth profile contour"
+  },
+  "歯車の噛み合い振動": {
+   "en": "Gear mesh vibration"
+  },
+  "機構の動く部品の分離": {
+   "en": "Separate moving parts of a mechanism"
+  },
+  "波(レーダ・音・超音波)": {
+   "en": "Waves (radar, sound, ultrasound)"
+  },
+  "FMCW の距離": {
+   "en": "FMCW range"
+  },
+  "ビームフォーミング": {
+   "en": "Beamforming"
+  },
+  "距離・速度": {
+   "en": "Range and velocity"
+  },
+  "波の伝搬": {
+   "en": "Wave propagation"
+  },
+  "到達時間差": {
+   "en": "Time difference of arrival"
+  },
+  "超音波のパルスエコー(A スキャン)": {
+   "en": "Ultrasonic pulse-echo (A-scan)"
+  },
+  "積層の反射と透過(音響インピーダンス)": {
+   "en": "Reflection and transmission of a layer stack (acoustic impedance)"
+  },
+  "エコーの位相の反転でボイドを見分ける": {
+   "en": "Distinguish voids by echo phase inversion"
+  },
+  "既知の波形の整合フィルタ": {
+   "en": "Matched filter for known waveform"
+  },
+  "アンテナ・マイク列での到来方向(MUSIC、ビーム幅より細かく)": {
+   "en": "Direction of arrival with antenna/microphone arrays (MUSIC, finer than beamwidth)"
+  },
+  "光学・照明・撮像系": {
+   "en": "Optics, illumination and imaging systems"
+  },
+  "レンズ系の定義": {
+   "en": "Lens system definition"
+  },
+  "近軸追跡": {
+   "en": "Paraxial ray trace"
+  },
+  "MTF": {
+   "en": "MTF"
+  },
+  "照明設計": {
+   "en": "Illumination design"
+  },
+  "照明の均一性": {
+   "en": "Illumination uniformity"
+  },
+  "設計レンズ越しの像": {
+   "en": "Image through the designed lens"
+  },
+  "ガラスの分散(材料表)": {
+   "en": "Glass dispersion (material table)"
+  },
+  "アッベ数": {
+   "en": "Abbe number"
+  },
+  "光ファイバの伝搬モード": {
+   "en": "Optical fiber propagation modes"
+  },
+  "ライトガイドの照明効率": {
+   "en": "Light guide illumination efficiency"
+  },
+  "直接光と大域光を分ける(高周波照明)": {
+   "en": "Separate direct and global light (high-frequency illumination)"
+  },
+  "稀な事象の加速評価(重要度サンプリング)": {
+   "en": "Accelerated evaluation of rare events (importance sampling)"
+  },
+  "発生率を上げて走らせ、重みで本来の事故率に戻す(不偏)": {
+   "en": "Run with boosted event rates and reweight back to the true accident rate (unbiased)"
+  },
+  "稀な事象を頻度つきで置く": {
+   "en": "Place rare events with frequencies"
+  },
+  "場所と時刻で変わる発生率 λ(x, t)": {
+   "en": "Space-time varying occurrence rate λ(x, t)"
+  },
+  "停車中のバスの前後で上がる飛び出しの率": {
+   "en": "Increased pedestrian dart-out rate around a stopped bus"
+  },
+  "シナリオ試験と危険度の指標": {
+   "en": "Scenario testing and criticality metrics"
+  },
+  "衝突までの時間の真値": {
+   "en": "Ground-truth time to collision"
+  },
+  "距離の列からの TTC": {
+   "en": "TTC from a range sequence"
+  },
+  "RSS の縦の安全距離": {
+   "en": "RSS longitudinal safe distance"
+  },
+  "RSS の横の安全距離": {
+   "en": "RSS lateral safe distance"
+  },
+  "黄信号のジレンマゾーン(閉形式)": {
+   "en": "Yellow-light dilemma zone (closed form)"
+  },
+  "死角から止まれる速さ": {
+   "en": "Speed that allows stopping for hazards emerging from blind spots"
+  },
+  "右左折の採点": {
+   "en": "Turn scoring (left/right turns)"
+  },
+  "技能試験の減点": {
+   "en": "Skill test deductions"
+  },
+  "交通流と他車の振る舞い": {
+   "en": "Traffic flow and other-vehicle behavior"
+  },
+  "IDM の車列": {
+   "en": "IDM platoon"
+  },
+  "IDM の定常車間(閉形式)": {
+   "en": "IDM steady-state gap (closed form)"
+  },
+  "運転の癖を個体ごとに": {
+   "en": "Per-driver driving habits"
+  },
+  "車線内のふらつき": {
+   "en": "In-lane weaving"
+  },
+  "進路変更の可否": {
+   "en": "Lane-change feasibility"
+  },
+  "すれ違いの判断": {
+   "en": "Passing/oncoming decision"
+  },
+  "歩行者の Social Force": {
+   "en": "Pedestrian Social Force"
+  },
+  "自前の世界(真値つきの描画とセンサー)": {
+   "en": "In-house world (rendering and sensors with ground truth)"
+  },
+  "コースから 3-D の世界": {
+   "en": "3-D world from a course"
+  },
+  "色・ラベル・深度・面番号を一度に": {
+   "en": "Color, labels, depth and face IDs at once"
+  },
+  "物体を動かす": {
+   "en": "Move objects"
+  },
+  "同じ世界の LiDAR": {
+   "en": "LiDAR of the same world"
+  },
+  "太陽・霧・雨・夜": {
+   "en": "Sun, fog, rain, night"
+  },
+  "終わらない地図": {
+   "en": "Endless map"
+  },
+  "世界 → 3DGS": {
+   "en": "World -> 3DGS"
+  },
+  "CARLA の場面を自前の世界に(同じ場面を両方で)": {
+   "en": "CARLA scene into the in-house world (same scene in both)"
+  },
+  "CARLA の深度画像(RGB 符号)を m に": {
+   "en": "CARLA depth image (RGB-encoded) to meters"
+  },
+  "CARLA の座標系(左手・度)↔ 自前の行列": {
+   "en": "CARLA coordinate system (left-handed, degrees) <-> in-house matrices"
+  },
+  "CommonRoad のシナリオ XML を読む": {
+   "en": "Read CommonRoad scenario XML"
+  },
+  "CommonRoad のシナリオを運転して採点": {
+   "en": "Drive and score CommonRoad scenarios"
+  },
+  "OSM の道路網から地図": {
+   "en": "Map from OSM road network"
+  },
+  "天候と視程(閉形式で根拠づける)": {
+   "en": "Weather and visibility (grounded in closed form)"
+  },
+  "視程と消散係数(Koschmieder)": {
+   "en": "Visibility and extinction coefficient (Koschmieder)"
+  },
+  "気象光学距離 → 消散係数": {
+   "en": "Meteorological optical range → extinction coefficient"
+  },
+  "画像の明るさの縦断から霧の濃さ": {
+   "en": "Fog density from the vertical brightness profile of an image"
+  },
+  "まぶしさの光幕輝度": {
+   "en": "Glare veiling luminance"
+  },
+  "見える距離で止まれる速さ": {
+   "en": "Speed that allows stopping within the visible distance"
+  },
+  "天候の母数": {
+   "en": "Weather parameters"
+  },
+  "LiDAR(距離・強度・幾何)": {
+   "en": "LiDAR (range, intensity, geometry)"
+  },
+  "走査の仕様": {
+   "en": "Scan specification"
+  },
+  "世界を走査": {
+   "en": "Scan the world"
+  },
+  "平面までの距離(閉形式)": {
+   "en": "Distance to plane (closed form)"
+  },
+  "箱までの距離(閉形式)": {
+   "en": "Distance to a box (closed form)"
+  },
+  "球面投影": {
+   "en": "Spherical projection"
+  },
+  "凹みの多重反射で ToF の位相がずれる量(閉形式)": {
+   "en": "ToF phase shift from multipath in concavities (closed form)"
+  },
+  "輸送行列で多重反射を入れた ToF の深度": {
+   "en": "ToF depth with multipath via a transport matrix"
+  },
+  "レーダー・ドップラー・音の到来方向": {
+   "en": "Radar, Doppler and sound direction of arrival"
+  },
+  "ドップラーの閉形式": {
+   "en": "Doppler closed form"
+  },
+  "サイレンの周波数の追跡": {
+   "en": "Siren frequency tracking"
+  },
+  "到着時間差から方向": {
+   "en": "Direction from time difference of arrival"
+  },
+  "sim-to-real の比較(同じ場面を対で測る)": {
+   "en": "Sim-to-real comparison (paired measurement of the same scene)"
+  },
+  "画素の差": {
+   "en": "Pixel difference"
+  },
+  "構造の類似": {
+   "en": "Structural similarity"
+  },
+  "多段の構造類似": {
+   "en": "Multi-scale structural similarity"
+  },
+  "どこが違うかの地図": {
+   "en": "Difference map"
+  },
+  "位相一致と勾配の知覚的類似(FSIM)": {
+   "en": "Perceptual similarity from phase congruency and gradient (FSIM)"
+  },
+  "勾配の類似の偏差(GMSD)": {
+   "en": "Gradient magnitude similarity deviation (GMSD)"
+  },
+  "情報忠実度(VIFp)": {
+   "en": "Visual information fidelity (VIFp)"
+  },
+  "指標を人の評価(TID2013)と順位相関で採点": {
+   "en": "Score metrics against human ratings (TID2013) by rank correlation"
+  },
+  "真値つきの対の描画": {
+   "en": "Render pairs with ground truth"
+  },
+  "ニューラル再構成と 3DGS": {
+   "en": "Neural reconstruction and 3DGS"
+  },
+  "メッシュの世界 → ガウス": {
+   "en": "Mesh world -> Gaussians"
+  },
+  "ガウスの描画": {
+   "en": "Gaussian rendering"
+  },
+  "ガウスの更新": {
+   "en": "Gaussian update"
+  },
+  "3DGS の読み込み": {
+   "en": "3DGS loading"
+  },
+  "向き × 位相の事前描画(安い代替)": {
+   "en": "Pre-rendering over orientation × phase (cheap surrogate)"
+  },
+  "計画と制御(ルールベースの側)": {
+   "en": "Planning and control (rule-based side)"
+  },
+  "曲率から速度の計画": {
+   "en": "Speed planning from curvature"
+  },
+  "pure pursuit": {
+   "en": "pure pursuit"
+  },
+  "Stanley": {
+   "en": "Stanley"
+  },
+  "停止線までの計画": {
+   "en": "Planning to the stop line"
+  },
+  "縦の運動": {
+   "en": "Longitudinal motion"
+  },
+  "自転車モデル": {
+   "en": "Bicycle model"
+  },
+  "ローリングシャッターとブラー(閉形式)": {
+   "en": "Rolling shutter and blur (closed form)"
+  },
+  "ローリングシャッター(斜線の傾き = v·t_line)": {
+   "en": "Rolling shutter (skew slope = v·t_line)"
+  },
+  "モーションブラー(スペクトルの零点)": {
+   "en": "Motion blur (spectral zeros)"
+  },
+  "第 2 実装のブラー": {
+   "en": "Blur (second implementation)"
+  },
+  "カメラの雑音と ISP(EMVA 1288)": {
+   "en": "Camera noise and ISP (EMVA 1288)"
+  },
+  "光子の雑音": {
+   "en": "Photon noise"
+  },
+  "読み出し雑音": {
+   "en": "Read noise"
+  },
+  "EMVA 1288 の SNR 曲線": {
+   "en": "EMVA 1288 SNR curve"
+  },
+  "光子伝達曲線(PTC)から利得と読み出し雑音": {
+   "en": "Gain and read noise from the photon transfer curve (PTC)"
+  },
+  "暗電流(露光時間の傾き)": {
+   "en": "Dark current (slope vs. exposure time)"
+  },
+  "DSNU / PRNU(固定パターン雑音)": {
+   "en": "DSNU / PRNU (fixed-pattern noise)"
+  },
+  "ダイナミックレンジ": {
+   "en": "Dynamic range"
+  },
+  "デモザイク": {
+   "en": "Demosaicing"
+  },
+  "階調": {
+   "en": "Gray levels"
+  },
+  "雑音の推定": {
+   "en": "Noise estimation"
+  },
+  "雑音の標準偏差": {
+   "en": "Noise standard deviation"
+  },
+  "HDR と LED のちらつき": {
+   "en": "HDR and LED flicker"
+  },
+  "HDR の階調圧縮": {
+   "en": "HDR tone mapping"
+  },
+  "ちらつきの除去": {
+   "en": "Flicker removal"
+  },
+  "点滅の周波数": {
+   "en": "Flicker frequency"
+  },
+  "フレームレートとのエイリアシング": {
+   "en": "Aliasing with frame rate"
+  },
+  "レンズ(周辺減光・歪み・フレア・MTF)": {
+   "en": "Lens (vignetting, distortion, flare, MTF)"
+  },
+  "cos⁴ の周辺減光": {
+   "en": "cos^4 vignetting"
+  },
+  "周辺減光": {
+   "en": "Vignetting"
+  },
+  "PSF → MTF": {
+   "en": "PSF -> MTF"
+  },
+  "斜めエッジから SFR(ISO 12233)": {
+   "en": "SFR from slanted edge (ISO 12233)"
+  },
+  "解像の指標": {
+   "en": "Resolution metrics"
+  },
+  "ベールグレアの指数": {
+   "en": "Veiling glare index"
+  },
+  "検出確率(POD)と NDE の信頼性": {
+   "en": "Probability of detection (POD) and NDE reliability"
+  },
+  "2 値データから POD(a) と a90/95(Wald と尤度比の 2 通り)": {
+   "en": "POD(a) and a90/95 from binary (hit/miss) data (Wald and likelihood-ratio methods)"
+  },
+  "â vs a の回帰(左右の打ち切りつき最尤法)": {
+   "en": "a-hat vs a regression (maximum likelihood with left/right censoring)"
+  },
+  "回帰と判定閾値から POD 曲線と a90/95": {
+   "en": "POD curve and a90/95 from regression and decision threshold"
+  },
+  "無欠陥部位の応答から誤検出確率": {
+   "en": "False-call probability from responses on defect-free regions"
+  },
+  "閾値を振ったときの a90/95 と誤検出の取引表": {
+   "en": "a90/95 vs false-call trade-off table over thresholds"
+  },
+  "人が合否を判定する検査の一致度(検査員どうしのカッパ)": {
+   "en": "Inspector agreement for human pass/fail inspection (inter-rater kappa)"
+  },
+  "照明条件ごとの欠陥コントラスト(画像検査の â の物理的な元)": {
+   "en": "Defect contrast per illumination condition (physical source of â in image inspection)"
+  },
+  "走査型音響顕微鏡の C スキャン。接合のボイドの â を振幅・位相・同相成分で出す(超音波検査の â の物理的な元)": {
+   "en": "Scanning acoustic microscope C-scan: â of bond voids from amplitude, phase and in-phase component (physical source of â in ultrasonic inspection)"
+  },
+  "横分解能と減衰の取引から、ボイドの大きさごとに信号が最大になる周波数(POD を良くする周波数の見当)": {
+   "en": "Frequency maximizing signal per void size from the lateral-resolution vs attenuation trade-off (guide to the POD-improving frequency)"
+  },
+  "レーザースペックルと光切断・三角測量の不確かさ": {
+   "en": "Laser speckle and uncertainty of light sectioning / triangulation"
+  },
+  "三角測量のスペックルの床 δz(閉形式)": {
+   "en": "Triangulation speckle floor δz (closed form)"
+  },
+  "粗い面に当てたレーザー線をスペックルごと描く": {
+   "en": "Render a laser line on a rough surface including speckle"
+  },
+  "粗い面からのスペックル強度": {
+   "en": "Speckle intensity from a rough surface"
+  },
+  "スペックル画像のコントラストと粒の大きさ": {
+   "en": "Speckle image contrast and grain size"
+  },
+  "低減手段ごとのコントラストの予測": {
+   "en": "Contrast prediction per reduction method"
+  },
+  "瞳を通したコヒーレント結像": {
+   "en": "Coherent imaging through a pupil"
+  },
+  "線の中心をサブピクセルで抽出(Steger 法)": {
+   "en": "Subpixel line-center extraction (Steger method)"
+  },
+  "列ごとの断面のピークをサブビンで(線中心)": {
+   "en": "Per-column profile peak at sub-bin precision (line center)"
+  },
+  "位置から深度への三角測量": {
+   "en": "Triangulation from position to depth"
+  },
+  "センサの SNR(光子雑音の床。スペックルの床と比べる)": {
+   "en": "Sensor SNR (photon-noise floor; compare with speckle floor)"
+  },
+  "偏光からの形状復元": {
+   "en": "Shape from polarization"
+  },
+  "偏光センサのモザイクを 4 方向に分ける": {
+   "en": "Split polarization sensor mosaic into 4 orientations"
+  },
+  "カラー偏光センサのモザイク": {
+   "en": "Color polarization sensor mosaic"
+  },
+  "画素ごとの偏光度": {
+   "en": "Per-pixel degree of polarization"
+  },
+  "拡散成分と鏡面成分に分ける": {
+   "en": "Separate diffuse and specular components"
+  },
+  "天頂角と偏光度の関係(Fresnel)": {
+   "en": "Zenith angle vs. degree of polarization (Fresnel)"
+  },
+  "偏光度から天頂角の候補(拡散 1 つ・鏡面 2 つ)": {
+   "en": "Zenith angle candidates from degree of polarization (1 diffuse, 2 specular)"
+  },
+  "偏光の方位から法線の方位の候補(π の曖昧さ)": {
+   "en": "Normal azimuth candidates from polarization angle (π ambiguity)"
+  },
+  "既知の天頂角から屈折率を推定": {
+   "en": "Estimate refractive index from known zenith angle"
+  },
+  "法線の候補の集合(曖昧さを集合のまま持つ)": {
+   "en": "Set of candidate normals (keeping the ambiguity as a set)"
+  },
+  "事前知識や粗い深度で候補から 1 つ選ぶ": {
+   "en": "Pick one candidate using prior knowledge or coarse depth"
+  },
+  "法線から高さへ積分": {
+   "en": "Integrate normals to height"
+  },
+  "法線から偏光カメラの画像を作る(順モデル・真値つき)": {
+   "en": "Render polarization camera images from normals (forward model, with ground truth)"
+  },
+  "デフレクトメトリの法線(鏡面。偏光との融合の相手)": {
+   "en": "Deflectometry normals (specular; fusion partner for polarization)"
+  },
+  "能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス)": {
+   "en": "Global light transport in active 3D (interreflection, subsurface scattering, multipath)"
+  },
+  "ずらした高周波の模様の画像から直接成分と大域成分を分ける(Nayar ら 2006)": {
+   "en": "Separate direct and global components from shifted high-frequency pattern images (Nayar et al. 2006)"
+  },
+  "分離と Micro PS に使う高周波の模様(縞・市松・正弦波)": {
+   "en": "High-frequency patterns for separation and Micro PS (stripes, checkerboard, sinusoid)"
+  },
+  "狭い高周波帯の位相シフトを絶対座標に復号(Micro Phase Shifting)": {
+   "en": "Decode narrow high-frequency phase shifts to absolute coordinates (Micro Phase Shifting)"
+  },
+  "溝・すみ肉などの凹んだ断面を画素ごとの面に分ける": {
+   "en": "Segment concave cross-sections (grooves, fillets) into per-pixel faces"
+  },
+  "凹んだ断面の面どうしの形態係数(Hottel の交差線則)": {
+   "en": "View factors between faces of a concave section (Hottel's crossed-strings rule)"
+  },
+  "Lambert 面の光輸送行列(ラジオシティ。相互反射の真値の元)": {
+   "en": "Lambertian light transport matrix (radiosity; ground-truth source for interreflection)"
+  },
+  "輸送行列を通した、直接光 + 相互反射つきのカメラ画像": {
+   "en": "Camera image with direct light + interreflection via a transport matrix"
+  },
+  "相互反射が縞の位相と高さに入れる誤差を画素ごとに予測": {
+   "en": "Predict per-pixel fringe phase and height error from interreflection"
+  },
+  "直接と大域の 2 つのフェーザの和の位相と、最悪の誤差 asin(a2/a1)": {
+   "en": "Phase of the sum of direct and global phasors, and worst-case error asin(a2/a1)"
+  },
+  "連続波 ToF で複数経路が重なったときの位相と距離の偏り": {
+   "en": "Phase and range bias from overlapping multipath in continuous-wave ToF"
+  },
+  "部屋の隅のような凹みでの ToF の深度の偏り(経路長つきの輸送)": {
+   "en": "ToF depth bias in concave corners such as room corners (path-length-resolved transport)"
+  },
+  "直接光だけの縞を合成(大域光の無い基準)": {
+   "en": "Synthesize direct-only fringes (reference without global light)"
+  },
+  "N ステップの位相(大域光は位相のずれとして出る)": {
+   "en": "N-step phase (global light appears as phase error)"
+  },
+  "位相の展開": {
+   "en": "Phase unwrapping"
+  },
+  "粗い絶対位相で次数を決める": {
+   "en": "Determine fringe order from coarse absolute phase"
+  },
+  "グレイコードの次数(低周波のビットほど相互反射で誤る)": {
+   "en": "Gray code bit order (low-frequency bits err more under interreflection)"
+  },
+  "位相シフトの一括復号": {
+   "en": "Batch phase-shift decoding"
+  },
+  "ToF の距離(マルチパスで誤る側)": {
+   "en": "ToF range (the side that errs under multipath)"
+  },
+  "光学式 3D センサの受入試験と不確かさ": {
+   "en": "Acceptance testing and uncertainty of optical 3D sensors"
+  },
+  "半幅や拡張不確かさを分布の形から標準不確かさへ": {
+   "en": "Half-width or expanded uncertainty to standard uncertainty via distribution shape"
+  },
+  "伝播則(相関つき)": {
+   "en": "Propagation of uncertainty (with correlation)"
+  },
+  "有効自由度・包含係数・拡張不確かさ": {
+   "en": "Effective degrees of freedom, coverage factor, expanded uncertainty"
+  },
+  "補遺 1 のモンテカルロ伝播": {
+   "en": "Monte Carlo propagation (GUM Supplement 1)"
+  },
+  "モンテカルロで伝播則の結果を検証": {
+   "en": "Verify propagation-law results by Monte Carlo"
+  },
+  "繰り返し性と再現性(ゲージ R&R)": {
+   "en": "Repeatability and reproducibility (gauge R&R)"
+  },
+  "基準値に対する偏りと直線性": {
+   "en": "Bias and linearity against reference values"
+  },
+  "球の当てはめ(プロービング誤差と球間距離の元)": {
+   "en": "Sphere fitting (basis of probing error and sphere-spacing error)"
+  },
+  "外れ点に強い球の当てはめ": {
+   "en": "Outlier-robust sphere fitting"
+  },
+  "基準平面": {
+   "en": "Reference plane"
+  },
+  "平面の形状誤差(平面度)": {
+   "en": "Plane form error (flatness)"
+  },
+  "設計レンズ越しの校正板の合成ビュー": {
+   "en": "Synthetic view of a calibration target through the designed lens"
+  },
+  "検査計画と合成データ": {
+   "en": "Inspection planning and synthetic data"
+  },
+  "検査用の学習画像を画素完全なラベルつきで n 枚": {
+   "en": "n inspection training images with pixel-exact labels"
+  },
+  "設計レンズ越しの欠陥画像とマスク": {
+   "en": "Defect images and masks through the designed lens"
+  },
+  "部品にランダムな欠陥(傷・割れ・打痕・異物…)": {
+   "en": "Random defects on parts (scratches, cracks, dents, foreign matter, ...)"
+  },
+  "2-D の欠陥図を部品の面に貼る": {
+   "en": "Map a 2-D defect map onto the part surface"
+  },
+  "実在の照明を物理単位で置いて撮る(真値つき)": {
+   "en": "Capture with real lighting in physical units (with ground truth)"
+  },
+  "欠陥画素の真値マスク": {
+   "en": "Ground-truth mask of defect pixels"
+  },
+  "深度の真値(光軸方向の z)": {
+   "en": "Ground-truth depth (z along the optical axis)"
+  },
+  "各点から見た発光点の可視率(落ち影)": {
+   "en": "Visibility of emitters from each point (cast shadows)"
+  },
+  "面と欠陥の組合せに合う照明の順位": {
+   "en": "Illumination ranking for a surface–defect combination"
+  },
+  "照明の仰角を振った欠陥コントラスト": {
+   "en": "Defect contrast vs illumination elevation angle"
+  },
+  "光子の雑音を足す": {
+   "en": "Add photon noise"
+  },
+  "読み出し雑音を足す": {
+   "en": "Add read noise"
+  }
+ }
+}

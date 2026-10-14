@@ -704,2039 +704,4221 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_eval(model, t)` — 曲線スプライン model をパラメータ t∈[0,1] で評価し (M,D) 点を返す(D=2 or 3)。
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
-## 3-D operators(ops3d)by category
-_計 372 ops / 68 categories。_
-
-
-### annotate3d(7)
-- `annotate3d_project` (`points → table`) — table(dict)を返す: 3-D 点の画素座標・前方距離・画像内/遮蔽の判定(:func:`project_anchors`)。 · 例: `annotate3d_figure`
-- `annotate3d_arrow` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の ``p0`` から ``p1`` へ、射影した矢印を描く。 · 例: `annotate3d_figure`
-- `annotate3d_label` (`image2d, text → image2d`) — 画像(image2d)を返す: 3-D のアンカーに引き出し線つきの文字を付ける。 · 例: `annotate3d_figure`
-- `annotate3d_scale_bar` (`image2d → image2d`) — 画像(image2d)を返す: メッシュ単位で ``length`` のバーを面上に置いて射影する。 · 例: `annotate3d_figure`
-- `annotate3d_axes` (`image2d → image2d`) — 画像(image2d)を返す: object 座標(``pose`` の入力側)の 3 軸(gnomon)を ``origin`` から射影して描く。 · 例: `annotate3d_figure`
-- `annotate3d_bbox` (`image2d → image2d`) — 画像(image2d)を返す: 軸平行の 3-D 箱 ``((xmin,ymin,zmin),(xmax,ymax,zmax))`` の 12 辺を射影して描く。 · 例: `annotate3d_figure`
-- `annotate3d_measure` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の 2 点間距離(メッシュ単位)を、射影した線と値で示す。 · 例: `annotate3d_figure`
-
-### augment(6)
-- `jitter` (`points → points`) — 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。 · 例: `augment_pointcloud`
-- `random_rotation` (`points → points`) — ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。 · 例: `augment_pointcloud`, `sh_descriptor_retrieval`, `shape_retrieval`
-- `random_scale` (`points → points`) — 一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。 · 例: `augment_pointcloud`
-- `random_dropout` (`points → points`) — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。 · 例: `augment_pointcloud`
-- `elastic_deform` (`points → points`) — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: `sensor_seg`
-- `cutout` (`points → points`) — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: `sensor_seg`
-
-### boundary(2)
-- `vol_boundary` (`voxel → voxel`) — Boundary shell of a binary volume (the 3-D ``region_boundary``). · 例: `roi_domain_boundary`
-- `vol_boundary_points` (`voxel → points`) — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · 例: `roi_domain_boundary`
-
-### bounds(4)
-- `convex_hull` (`points → mesh`) — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · 例: `hull_bounds`
-- `aabb` (`points → primitive`) — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``. · 例: `hull_bounds`
-- `obb` (`points → primitive`) — Oriented bounding box by PCA. · 例: `hull_bounds`
-- `min_enclosing_sphere` (`points → primitive`) — 点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。 · 例: `hull_bounds`
-
-### bundle_adjust(3)
-- `bundle_adjust` (`pose, points → table`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
-- `mean_reprojection_error` (`pose, points → measurement`) — バンドル調整の全観測について再投影誤差の RMS(ピクセル)を返す。 · 例: `bundle_adjust`
-- `project` (`points → keypoints`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
-
-### curvature(5)
-- `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`, `minimal_surfaces`
-- `mean_curvature` (`points → signal`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`, `minimal_surfaces`
-- `gaussian_curvature` (`points → signal`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
-- `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
-- `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
-
-### curve(5)
-- `curvature_torsion` (`points → pairs`) — 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。 · 例: `space_curve`, `torus_knot_curve`
-- `frenet_frame` (`points → frame`) — Frenet 標構(接線 T, 主法線 N, 陪法線 B)を各点で。→ (T, N, B) 各 (Npts,3) 単位ベクトル。 · 例: `space_curve`, `torus_knot_curve`
-- `arc_length` (`points → measurement`) — 曲線の累積弧長と全長。→ (cumulative (N,), total float)。 · 例: `space_curve`, `torus_knot_curve`
-- `resample_uniform` (`points → points`) — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: `bspline_freeform`
-- `fit_spline_curve` (`points → points`) — 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。 · 例: `bspline_freeform`
-
-### curvilinear(3)
-- `polar_unwrap` (`image2d → image2d`) — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: `curvilinear_proj`
-- `cylinder_unwrap` (`voxel → voxel`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
-- `fit_zernike` (`image2d → table`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
-
-### deform(4)
-- `tps_fit` (`points, points → deformation`) — 3D Thin-Plate-Spline を制御点対応から当てはめる。 · 例: `nonrigid_deform`
-- `tps_warp` (`deformation, points → points`) — ``tps_fit`` で当てた薄板スプライン(TPS)の変形を点群に適用する。 · 例: `nonrigid_deform`
-- `register_nonrigid` (`points, points → points`) — 非剛体 ICP で ``src`` を ``dst`` へ寄せる。 · 例: `nonrigid_deform`
-- `register_cpd_rigid` (`points, points → pose`) — Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。 · 例: `motion_scene`
-
-### depth_denoise(3)
-- `bilateral_filter_depth` (`depth → depth`) — 深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。 · 例: `depth_denoise`
-- `joint_bilateral` (`depth, image2d → depth`) — joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。 · 例: `sensor_seg`
-- `fill_holes` (`depth → depth`) — 無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。 · 例: `depth_denoise`
-
-### describe(2)
-- `sh_descriptor` (`voxel → descriptor`) — 球面調和記述子。同心球 shell の SH 帯域エネルギー ‖f_l(r)‖ を (半径 × 周波数) で返す。 · 例: `sh_descriptor_retrieval`, `shape_descriptor`
-- `match_sh_descriptor` (`voxel, voxel → measurement`) — SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。 · 例: `sh_descriptor_retrieval`, `shape_descriptor`
-
-### detect(2)
-- `hough_plane_3d` (`voxel → primitive`) — 平面検出(2D Hough 直線の 3D リフト)。勾配=法線を使い (法線 n, 距離 d) 空間へ投票。 · 例: `detect_primitives_3d`
-- `hough_sphere_3d` (`voxel → primitive`) — 球検出(2D Hough 円の 3D リフト)。中心 = p + sgn·r·n を半径 r ごとに投票。 · 例: `detect_primitives_3d`
-
-### domain(5)
-- `vol_reduce_domain` (`voxel, voxel → voxel`) — Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise). · 例: `roi_domain_boundary`
-- `vol_bounding_box` (`voxel → primitive`) — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `rle_region_efficiency`, `roi_domain_boundary`
-- `vol_crop_domain` (`voxel → voxel`) — Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``). · 例: `roi_domain_boundary`
-- `vol_uncrop` (`voxel → voxel`) — Paste a cropped sub-volume back into the full frame (inverse of :func:`vol_crop_domain`). · 例: `roi_domain_boundary`
-- `vol_tiled_map` (`voxel → voxel`) — Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory. · 例: `rle_region_efficiency`
-
-### edges(5)
-- `gradient3d` (`voxel → gradient`) — ボリュームをガウス平滑してから中心差分で 3-D 勾配(大きさとベクトル)を求める。 · 例: `edges_3d`
-- `canny3d` (`voxel → voxel`) — 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。 · 例: `edges_3d`
-- `log_zero_crossings` (`voxel → voxel`) — Laplacian-of-Gaussian のゼロ交差エッジ。 · 例: `edges_3d`
-- `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
-- `edge_points` (`voxel → points`) — エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。 · 例: `edges_3d`
-
-### feature(15)
-- `sobel3d` (`voxel → gradient`) — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: `diff_features`
-- `hessian3d` (`voxel → hessian`) — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: `diff_features`
-- `curvature_maps` (`voxel → curvature`) — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: `diff_features`
-- `edt_jfa` (`voxel → sdf`) — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: `diff_features`
-- `edt_jfa_vector` (`voxel → flow_dense`) — 各 voxel から最近 seed への変位 ``(3, D, H, W)``(``flow_dense``、dz, dy, dx [voxel])を **GPU の JFA** で。 · 例: `nearest_seed_partition`
-- `vol_frangi` (`voxel → voxel`) — 3-D Frangi vesselness — multiscale tubular-structure enhancement. · 例: `vessel_metrology`, `volume_downsampling`
-- `vol_local_std` (`voxel → voxel`) — Unbiased local standard deviation inside a cubic window. · 例: `ct_porosity_and_fibre_morphometry`
-- `vol_local_thickness` (`voxel → voxel`) — Local thickness map: the diameter of the largest ball that covers each voxel. · 例: `ct_porosity_and_fibre_morphometry`
-- `vol_orientation_coherence` (`voxel → voxel`) — How strongly the local structure points **one way** (3-D structure tensor). · 例: `ct_porosity_and_fibre_morphometry`
-- `vol_euler_number` (`voxel → measurement`) — Euler characteristic of a binary volume, split into its three Betti numbers. · 例: `ct_porosity_and_fibre_morphometry`
-- `vol_granulometry` (`voxel → measurement`) — Pore / particle **size distribution** of a binary volume (opening series). · 例: `ct_porosity_and_fibre_morphometry`
-- `vol_sato` (`voxel → voxel`) — 3-D Sato tubeness — the simpler two-eigenvalue line filter. · 例: `vessel_metrology`
-- `vol_hessian_blobness` (`voxel → voxel`) — Blob-like (spherical) response from the Hessian eigenvalues at one *scale*. · 例: `vessel_metrology`
-- `vol_gradient_magnitude` (`voxel → voxel`) — 3-D Sobel gradient magnitude ``sqrt(gz**2 + gy**2 + gx**2)``. · 例: `vessel_metrology`
-- `vol_local_maxima` (`voxel → points`) — 3-D local-maxima (peak) detection. · 例: `molecule_atom_count`, `vessel_metrology`
-
-### feature_register(7)
-- `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
-- `iss_keypoints` (`points → indices`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
-- `compute_fpfh` (`points, normals → descriptor`) — FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。 · 例: `fpfh_correspondence`
-- `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を取る。 · 例: `feature_register`
-- `register_spin` (`points, points → pose`) — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: `feature_register`
-- `register_fpfh` (`points, points → pose`) — FPFH 記述子 + RANSAC で **初期推定なし** の剛体位置合わせ (R,t) を推定する。 · 例: `feature_register`
-- `register_shot` (`points, points → pose`) — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: `feature_register`
-
-### freeform(5)
-- `fit_bspline_surface` (`image2d, image2d, image2d → bspline_surface`) — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: `bspline_freeform`
-- `eval_bspline_surface` (`bspline_surface, image2d, image2d → image2d`) — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: `bspline_freeform`
-- `surface_residual` (`image2d, image2d, image2d, bspline_surface → measurement`) — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: `bspline_freeform`
-- `fit_bspline_curve` (`points → bspline_curve`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
-- `eval_bspline_curve` (`bspline_curve → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
-
-### frequency(3)
-- `vol_fft_lowpass` (`voxel → voxel`) — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or mm with *spacing*). · 例: `deconv_fft_restore`
-- `vol_fft_highpass` (`voxel → voxel`) — Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum to the input). · 例: `deconv_fft_restore`
-- `vol_fft_bandpass` (`voxel → voxel`) — Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure between two scales. · 例: `deconv_fft_restore`
-
-### fusion(2)
-- `register_cross` (`any, any → pose`) — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: `transforms_repr`
-- `fuse_to_voxel` (`any → voxel`) — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: `transforms_repr`
-
-### geodesic(4)
-- `geodesic_distances` (`points → signal`) — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
-- `geodesic_mesh` (`mesh → signal`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
-- `farthest_point_sampling` (`points → indices`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
-- `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
-
-### geom_transform(3)
-- `vol_resize` (`voxel → voxel`) — Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics). · 例: `vol_geometry_transform`
-- `vol_rotate` (`voxel → voxel`) — Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``). · 例: `vol_geometry_transform`
-- `vol_affine` (`voxel → voxel`) — General affine resampling (``scipy.ndimage.affine_transform``). · 例: `vol_geometry_transform`
-
-### geometry(24)
-- `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
-- `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
-- `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
-- `angle_between_lines` (`primitive → measurement`) — 2 直線の方向ベクトルがなす鋭角を度で返す(向きは区別せず 0〜90°)。 · 例: `geometry_metrology`
-- `angle_between_planes` (`primitive → measurement`) — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
-- `angle_line_plane` (`primitive → measurement`) — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: `geometry_metrology`
-- `distance_point_plane` (`points, primitive → measurement`) — 点から平面までの距離を返す(符号なし、入力座標と同じ単位)。 · 例: `geometry_metrology`
-- `distance_point_line` (`points, primitive → measurement`) — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
-- `distance_line_line` (`primitive → measurement`) — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
-- `distance_segment_segment` (`primitive → measurement`) — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
-- `intersect_line_plane` (`primitive → position`) — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
-- `intersect_planes` (`primitive → primitive`) — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
-- `fit_line_3d` (`points → primitive`) — 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。 · 例: `geometry_metrology`
-- `fit_plane_3d` (`points → primitive`) — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
-- `fit_sphere_3d` (`points → primitive`) — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
-- `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
-- `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
-- `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
-- `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
-- `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · 例: `primitive_fitting_3d`
-- `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). · 例: `oriented_bounding_box`
-- `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · 例: `oriented_bounding_box`
-- `smallest_box3` (`points → primitive`) — Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``). · 例: `oriented_bounding_box`
-- `smallest_sphere3` (`points → primitive`) — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact algorithm). · 例: `primitive_fitting_3d`
-
-### gicp(2)
-- `gicp` (`points, points → pose`) — Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。 · 例: `gicp_register`
-- `estimate_covariances` (`points → descriptor`) — 各点の局所共分散を固有値 (ε,1,1) に置換した plane-to-plane 共分散 (N,3,3)。 · 例: `gicp_register`
-
-### gray(4)
-- `vol_window_level` (`voxel → voxel`) — CT window/level (HU windowing) — the radiologist's daily linear remap. · 例: `gray_window_level`
-- `vol_equalize` (`voxel → voxel`) — Histogram equalisation of a volume (HALCON ``equ_histo_image``). · 例: `gray_window_level`
-- `vol_gamma` (`voxel → voxel`) — Gamma (power-law) correction on the volume's own range (HALCON ``pow_image``). · 例: `gray_window_level`
-- `vol_stretch` (`voxel → voxel`) — Percentile contrast stretch to ``[0, 1]`` (robust ``scale_image_max``). · 例: `gray_window_level`
-
-### lidar_projection(3)
-- `project_spherical` (`points → image2d`) — 回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。 · 例: `lidar_projection`
-- `unproject_spherical` (`image2d → points`) — 球面レンジ画像 → 3D 点 (M, 3)。range>0 のセルのみをビン中心角で逆投影。 · 例: `lidar_projection`
-- `project_cylindrical` (`points → image2d`) — 円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。 · 例: `curvilinear_proj`
-
-### match_localize(6)
-- `match_shape_3d` (`voxel, voxel → position`) — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: `matching_localize`
-- `match_chamfer_3d` (`voxel, voxel → position`) — chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。 · 例: `matching_localize`
-- `match_curvature_3d` (`voxel, voxel → position`) — 曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。 · 例: `matching_localize`
-- `match_hough_3d` (`voxel, voxel → position`) — generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。 · 例: `matching_localize`
-- `match_mip_2d` (`voxel, voxel → position`) — MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。 · 例: `matching_localize`
-- `match_points_ncc` (`points, points → position`) — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: `matching_localize`
-
-### match_pose(4)
-- `match_phase_3d` (`voxel, voxel → shift`) — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: `shape_desc_pose`
-- `match_pca` (`points, points → pose`) — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: `shape_desc_pose`
-- `moment_axes` (`points → axes`) — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
-- `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
-
-### medial(13)
-- `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
-- `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
-- `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
-- `topology_signature` (`voxel → table`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
-- `medial_match` (`voxel, voxel → measurement`) — 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。 · 例: `medial_topology`
-- `skeleton_junctions3d` (`voxel → voxel`) — 3D 骨格の分岐点(joint、26 近傍に骨格 voxel が 3 個以上)を voxel マスクで返す。 · 例: `medial_topology`
-- `skeleton_endpoints3d` (`voxel → voxel`) — 3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。 · 例: `medial_topology`
-- `skeleton_prune3d` (`voxel → voxel`) — 3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。 · 例: `medial_topology`
-- `skeleton_branches3d` (`voxel → voxel`) — 3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。 · 例: `medial_topology`
-- `skeleton_graph3d` (`voxel → table`) — 3D 骨格を **ノード(接合点・端点)と枝(長さ・半径)のグラフ**に組み立てる。 · 例: `medial_topology`
-- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `medial_topology`, `molecule_atom_count`, `nearest_seed_partition`, `vessel_metrology`
-- `vol_nearest_seed_vector` (`voxel → flow_dense`) — 各 voxel から**最近の seed voxel への変位ベクトル** ``(3, D, H, W)``(``flow_dense``、成分 dz, dy, dx [voxel])。 · 例: `nearest_seed_partition`
-- `vol_nearest_label` (`voxel → voxel`) — 零 voxel に**最近の非零ラベル**を配ったラベル体積 ``(D, H, W)``(ラベルのボロノイ分割、``voxel``)。 · 例: `nearest_seed_partition`
-
-### mesh_process(10)
-- `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
-- `taubin_smooth` (`mesh → mesh`) — Taubin λ|μ フィルタによる **非収縮** 平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
-- `decimate_qem` (`mesh → mesh`) — Quadric-error-metric edge-collapse decimation toward *target_faces*. · 例: `mesh_decimate`, `mesh_lod_download`, `mesh_resolution_demo`
-- `face_normals` (`mesh → normals`) — 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。 · 例: `mesh_props`
-- `vertex_normals` (`mesh → normals`) — 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。 · 例: `mesh_props`
-- `mesh_area` (`mesh → measurement`) — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
-- `vertex_curvature` (`mesh → curvature`) — 三角形メッシュの各頂点の**平均曲率の大きさ**(mean curvature magnitude)。→ (N,)。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
-- `face_areas` (`mesh → signal`) — 三角形メッシュの**面ごとの面積** → ``(M,)``。 · 例: `mesh_props`
-- `mesh_volume` (`mesh → measurement`) — 閉じた三角形メッシュが囲む**符号付き体積** → float。 · 例: `hull_bounds`, `mesh_props`, `minimal_surfaces`
-- `boundary_vertices` (`mesh → indices`) — 開いた縁(境界)に乗っている**頂点の index** → ``(K,)``。 · 例: `mesh_decimate`, `mesh_props`
-
-### metrics(8)
-- `chamfer_distance` (`points, points → measurement`) — 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。 · 例: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
-- `hausdorff_distance` (`points, points → measurement`) — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。 · 例: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
-- `m3c2_distance` (`points, points → signal`) — 2 時点の点群の差を**法線方向に**測る(M3C2)。→ ``(distance, lod)`` の 2 つ。 · 例: `metrics_eval`
-- `fscore` (`points, points → measurement`) — F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。 · 例: `metrics_eval`
-- `rmse_correspondence` (`points, points → measurement`) — 対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。 · 例: `metrics_eval`
-- `normal_consistency` (`points, normals → measurement`) — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: `metrics_eval`
-- `voxel_iou` (`voxel, voxel → measurement`) — voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。 · 例: `metrics_eval`
-- `pose_error` (`pose, pose → table`) — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
-
-### moment_invariant(4)
-- `moment_invariants` (`points → descriptor`) — 並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。 · 例: `moment_invariants`
-- `principal_moments` (`points → descriptor`) — 慣性テンソルの固有値(主慣性モーメント、降順ソート、回転不変)。 · 例: `shape_desc_pose`
-- `central_moments` (`points → table`) — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
-- `inertia_tensor` (`points → matrix`) — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: `moment_invariants`
-
-### morphology(7)
-- `morph_dilate3d` (`voxel → voxel`) — 3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。 · 例: `morphology_3d`
-- `morph_erode3d` (`voxel → voxel`) — 3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。 · 例: `morphology_3d`
-- `morph_open3d` (`voxel → voxel`) — 3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。 · 例: `morphology_3d`
-- `morph_close3d` (`voxel → voxel`) — 3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。 · 例: `morphology_3d`
-- `morph_gradient3d` (`voxel → voxel`) — 3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。 · 例: `morphology_3d`
-- `morph_tophat3d` (`voxel → voxel`) — 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。 · 例: `diff_features`, `morphology_3d`
-- `morph_blackhat3d` (`voxel → voxel`) — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: `diff_features`
-
-### motion(1)
-- `scene_flow_lk` (`voxel, voxel → flow_dense`) — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: `motion_scene`
-
-### motion_segment(3)
-- `segment_rigid_motions` (`points, points → labels`) — 2 点群を運動が一致する剛体ごとに分割する(反復 RANSAC による multi-body 分割)。 · 例: `motion_seg`
-- `estimate_flow` (`points, points → flow_scattered`) — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: `motion_scene`
-- `fit_rigid` (`points, points → pose`) — 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。 · 例: `motion_scene`
-
-### normals_orient(2)
-- `estimate_oriented_normals` (`points → normals`) — PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。 · 例: `oriented_normals`
-- `orient_normals` (`points, normals → normals`) — Hoppe 法で法線を**大域一貫**に向き付け(MST 伝播)。→ (N,3)。 · 例: `oriented_normals`
-
-### occupancy(4)
-- `occupancy_grid` (`points → voxel`) — 点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。 · 例: `occupancy_esdf`
-- `esdf` (`voxel → sdf`) — 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。 · 例: `occupancy_esdf`
-- `inflate` (`voxel → voxel`) — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。 · 例: `sensor_seg`
-- `query_distance` (`sdf, points → signal`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
-
-### optics(5)
-- `reflect` (`vector, normals → normals`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
-- `refract` (`vector, normals → normals`) — Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。 · 例: `snell_refraction`
-- `fresnel_reflectance` (`measurement → measurement`) — Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。 · 例: `snell_refraction`
-- `normal_from_reflection` (`vector, vector → vector`) — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: `sensor_seg`
-- `snell_angle` (`measurement → measurement`) — 入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。 · 例: `snell_refraction`
-
-### photometric(4)
-- `photometric_stereo` (`images → normalmap`) — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
-- `surface_normals` (`image2d → normalmap`) — 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。 · 例: `photometric_stereo`
-- `integrate_normals` (`normalmap → image2d`) — 法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。 · 例: `photometric_stereo`
-- `render_lambertian` (`normalmap → image2d`) — 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。 · 例: `photometric_stereo`, `render_shade`
-
-### plane_sweep_stereo(2)
-- `plane_sweep_depth` (`image2d, image2d → depth`) — plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。 · 例: `plane_sweep_depth`
-- `warp_by_plane` (`image2d → image2d`) — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: `motion_scene`
-
-### polyhedron(1)
-- `geodesic_dome` (` → mesh`) — Geodesic sphere from a subdivided icosahedron — Euler decides the shape. · 例: `geodesic_dome`
-
-### pose_estimation(3)
-- `dlt_pose` (`points, keypoints → pose`) — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `pnp_ransac` (`points, keypoints → pose`) — 外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `reprojection_error` (`points, keypoints → measurement`) — 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。 · 例: `pnp_pose_outliers`, `pose_estimation`
-
-### pose_graph(3)
-- `optimize_pose_graph` (`pose → table`) — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
-- `relative_pose` (`pose, pose → pose`) — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。 · 例: `pose_graph_slam`, `sfm_recon`
-- `mean_edge_error` (`pose → measurement`) — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。 · 例: `sfm_recon`
-
-### preprocess(5)
-- `statistical_outlier_removal` (`points → points`) — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: `pcl_geodesic`
-- `radius_outlier_removal` (`points → points`) — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: `pcl_geodesic`
-- `voxel_grid_downsample` (`points → points`) — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: `pointcloud_downsampling`
-- `mls_smooth` (`points → points`) — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: `pcl_geodesic`
-- `volume_downsample` (`voxel → voxel`) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
-
-### probe(3)
-- `vol_profile_line` (`voxel → pairs`) — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
-- `vol_edge_probe` (`voxel → table`) — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
-- `vol_wall_thickness` (`voxel → signal`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT measurement itself. · 例: `wall_thickness_probe`
-
-### range_image(4)
-- `depth_to_organized_points` (`depth → pointmap`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
-- `normals_from_depth` (`depth → normalmap`) — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
-- `occlusion_edges` (`depth → image2d`) — 深度の不連続(前景/背景境界 = 遮蔽エッジ)を検出。→ bool HxW。 · 例: `range_image`
-- `bearing_angle_image` (`depth → image2d`) — bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。 · 例: `sensor_seg`
-
-### reconstruct(4)
-- `poisson_lite` (`points → mesh`) — 点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。 · 例: `poisson_surface_recon`
-- `alpha_shape_mesh` (`points → mesh`) — alpha shapes による**表面三角形メッシュ**(点群 → (vertices, faces))。 · 例: `alpha_shape_topology`
-- `alpha_shape_boundary` (`points → indices`) — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: `sfm_recon`
-- `estimate_alpha` (`points → measurement`) — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: `alpha_shape_topology`, `sfm_recon`
-
-### refine(6)
-- `refine_peak_newton` (`score, position → position`) — スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。 · 例: `refinement`
-- `refine_translation_lk` (`voxel, voxel, position → position`) — Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。 · 例: `refinement`
-- `refine_lm` (`voxel, voxel, position → table`) — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: `refinement`
-- `refine_rotation_z` (`voxel, voxel, angle → angle`) — z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。 · 例: `refinement`
-- `icp_point2point_3d` (`points, points → pose`) — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。 · 例: `gicp_register`, `itokawa_self_register`, `itokawa_shape_match`, `partial_overlap_icp`
-- `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: `refinement`
-
-### regionprops(7)
-- `label_components` (`voxel → labels`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
-- `region_props` (`voxel → table`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
-- `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
-- `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
-- `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の 3-D 版)。 · 例: `inner_box_inspection`
-- `vol_label` (`voxel → labels`) — 3-D connected-component labelling with a selectable neighbourhood. · 例: `ct_bone_segmentation`, `molecule_atom_count`, `vessel_metrology`
-- `vol_region_props` (`labels → table`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
-
-### registration_metrics(4)
-- `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `reg_eval`
-- `rmse_inliers` (`points, points → measurement`) — inlier 対応(残差 < thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。 · 例: `reg_eval`
-- `registration_recall` (`points, points → measurement`) — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。 · 例: `reg_eval`
-- `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
-
-### render(18)
-- `project_points` (`points → keypoints`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
-- `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
-- `render_shaded` (`normalmap → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
-- `ambient_occlusion` (`mesh → image2d`) — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。 · 例: `render_ao`
-- `cast_shadow` (`mesh, vector → image2d`) — メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。 · 例: `render_beauty`, `render_shadow`
-- `phong_shade` (`normalmap → image2d`) — Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。 · 例: `render_beauty`, `render_shade`
-- `matcap_shade` (`normalmap, image2d → image2d`) — MatCap: 視空間法線を lit-sphere テクスチャに写して素材の見えを転写。→ ``(H, W[, C])``。 · 例: `render_shade`
-- `supersample_mesh` (`mesh → image2d`) — メッシュを SSAA でアンチエイリアス描画 -> float 画像 ``(H, W)`` (or ``(H, W, C)``)。 · 例: `render_ssaa`
-- `antialias` (`image2d → image2d`) — 高解像画像を整数倍 ``ss`` で縮小(area-average anti-aliasing)。 · 例: `render_ssaa`
-- `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。 · 例: `render_beauty`, `render_ssaa`
-- `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
-- `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
-- `render_beauty` (`mesh → rgbimage`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `anatomical_hand`, `render_beauty`
-- `brdf_lommel_seeliger` (`normalmap → image2d`) — Lommel-Seeliger 反射則(縁まで明るいレゴリス)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
-- `brdf_hapke` (`normalmap → image2d`) — Hapke 反射則(対向効果 + 多重散乱 + 巨視的粗さ θ̄)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
-- `shadow_raycast` (`mesh, vector → image2d`) — メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。 · 例: `itokawa_regolith_hero`
-- `render_regolith` (`mesh → rgbimage`) — 小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。 · 例: `itokawa_regolith_hero`
-
-### resolution(15)
-- `mesh_edge_stats` (`mesh → table`) — Edge-length and face-area percentiles with non-uniformity ratios (``table``). · 例: `mesh_resolution_demo`
-- `mesh_detail_map` (`mesh → table`) — Per-vertex coarseness and detail of a mesh (``table``). · 例: `mesh_resolution_demo`
-- `mesh_split_long_edges` (`mesh → mesh`) — Bisect edges longer than *max_edge* until none remains — adaptive refinement (``mesh``). · 例: `mesh_resolution_demo`
-- `mesh_isotropic_remesh` (`mesh → mesh`) — Incremental isotropic remeshing to a uniform *target_edge* (``mesh``). · 例: `mesh_resolution_demo`
-- `mesh_sample_points` (`mesh → points`) — Surface samples at a stated spacing — area-weighted random or Poisson-disk (``points``). · 例: `mesh_resolution_demo`
-- `mesh_lod_chain` (`mesh → table`) — Decimation levels with the measured geometric error of each (``table``). · 例: `mesh_resolution_demo`
-- `mesh_select_lod` (`table → table`) — The coarsest LOD level whose geometric error projects below *pixel_tolerance* (``table``). · 例: `mesh_resolution_demo`
-- `mesh_reduction_report` (`mesh, mesh → table`) — What a reduction (decimation, remesh, voxelisation) lost, in numbers (``table``). · 例: `mesh_resolution_demo`
-- `mesh_decimate_preserving` (`mesh → table`) — Decimation that keeps the detailed regions and reports what it lost (``table``). · 例: `mesh_resolution_demo`
-- `pc_density` (`points → table`) — Local spacing per point and the cloud's non-uniformity (``table``). · 例: `mesh_resolution_demo`
-- `pc_poisson_disk` (`points → points`) — Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``). · 例: `mesh_resolution_demo`
-- `pc_fill_sparse` (`points → points`) — Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``). · 例: `mesh_resolution_demo`
-- `pc_density_equalize` (`points → points`) — Fill the sparse regions, then thin the dense ones: uniform spacing (``points``). · 例: `mesh_resolution_demo`
-- `pc_lod_chain` (`points → table`) — Poisson-disk levels at doubling spacings (``table``). · 例: `mesh_resolution_demo`
-- `pc_thinning_report` (`points, points → table`) — What a point-cloud thinning removed, and whether it touched the rare points (``table``). · 例: `mesh_resolution_demo`
-
-### restoration(2)
-- `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel; *sigma* is a scalar or per-axis. · 例: `deconv_fft_restore`
-- `vol_richardson_lucy` (`voxel, voxel → voxel`) — Richardson–Lucy deconvolution of a non-negative volume by a known PSF. · 例: `deconv_fft_restore`
-
-### rle_region(9)
-- `vol_rle_encode` (`voxel → rle_region`) — Encode a binary volume as x-runs (the 3-D HALCON-region representation). · 例: `rle_region_efficiency`
-- `vol_rle_decode` (`rle_region → voxel`) — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` volume. · 例: `rle_region_efficiency`
-- `vol_rle_volume` (`rle_region → measurement`) — Voxel count of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_bbox` (`rle_region → primitive`) — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds), from the runs. · 例: `rle_region_efficiency`
-- `vol_rle_centroid` (`rle_region → position`) — Centroid ``(z, y, x)`` of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_union` (`rle_region, rle_region → rle_region`) — Union of two RLE regions, computed on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_intersect` (`rle_region, rle_region → rle_region`) — Intersection of two RLE regions on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_difference` (`rle_region, rle_region → rle_region`) — Set difference ``a \ b`` on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_components` (`voxel → rle_region`) — Split a binary volume into per-component ``VolRLE`` regions. · 例: `rle_region_efficiency`
-
-### robust_fit(7)
-- `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`
-- `ransac_sphere` (`points → primitive`) — 外れ値に頑健な RANSAC で点群に球(中心と半径)を当てる。 · 例: `ransac_prim`
-- `ransac_line` (`points → primitive`) — 外れ値に頑健な RANSAC 直線適合。 · 例: `geometry_metrology`
-- `ransac_cylinder` (`points, normals → primitive`) — 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。 · 例: `ransac_prim`
-- `fit_cone` (`points → primitive`) — 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。 · 例: `fit_primitives_ext`
-- `fit_torus` (`points → primitive`) — 点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。 · 例: `fit_primitives_ext`
-- `fit_ellipsoid` (`points → primitive`) — 点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。 · 例: `fit_primitives_ext`
-
-### scene_flow3d(3)
-- `nearest_neighbor_flow` (`points, points → flow_scattered`) — 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。 · 例: `scene_flow_rigid`
-- `rigid_flow` (`points, points → pose`) — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
-- `smooth_flow` (`points, points → flow_scattered`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
-
-### sdf_csg(12)
-- `grid_coords` (` → coordgrid`) — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
-- `sphere_sdf` (`coordgrid → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
-- `box_sdf` (`coordgrid → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
-- `plane_sdf` (`coordgrid → sdf`) — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
-- `cylinder_sdf` (`coordgrid → sdf`) — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
-- `torus_sdf` (`coordgrid → sdf`) — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
-- `capsule_sdf` (`coordgrid → sdf`) — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: `procedural_hand`, `sdf_csg`
-- `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
-- `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
-- `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
-- `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
-- `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`
-
-### segment(4)
-- `region_growing` (`points → labels`) — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: `sensor_seg`
-- `euclidean_cluster` (`points → labels`) — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。 · 例: `object_segmentation`
-- `plane_segmentation` (`points → labels`) — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: `object_segmentation`
-- `vol_watershed` (`voxel → labels`) — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**). · 例: `molecule_atom_count`
-
-### shape_descriptor(5)
-- `d2_distribution` (`points → descriptor`) — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。 · 例: `shape_desc_pose`
-- `a3_distribution` (`points → descriptor`) — ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。 · 例: `shape_desc_pose`
-- `extent_signature` (`points → descriptor`) — PCA 主軸(共分散の固有ベクトル)方向の広がりの比を返す。 · 例: `shape_desc_pose`
-- `describe` (`points → descriptor`) — D2 + A3 + extent を連結した大域形状記述子を返す。 · 例: `denoise_evolution`, `shape_desc_pose`, `shape_retrieval`
-- `shape_distance` (`descriptor, descriptor → measurement`) — 2 つの記述子間の距離。小さいほど同形状。 · 例: `moment_invariants`, `shape_desc_pose`, `shape_retrieval`
-
-### space_carving(4)
-- `carve` (`images → voxel`) — bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。 · 例: `space_carving`
-- `visual_hull` (`images → voxel`) — 多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。 · 例: `space_carving`
-- `synthesize_silhouette` (`points → image2d`) — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: `space_carving`
-- `carve_look_at` (`vector → pose`) — ``carve`` / ``synthesize_silhouette`` に渡せるカメラ姿勢 ``(R, t)`` を作る。 · 例: `space_carving`
-
-### structured_light(7)
-- `wrapped_phase` (`images → image2d`) — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`, `structured_light_scan`
-- `unwrap_phase_2d` (`image2d → image2d`) — wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。 · 例: `structured_light`
-- `graycode_decode` (`images → image2d`) — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
-- `decode_fringe` (`images → depth`) — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
-- `synthesize_fringes` (`image2d → images`) — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `structured_light`
-- `absolute_phase` (`image2d, image2d → image2d`) — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
-- `triangulate_column` (`image2d → depth`) — 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。 · 例: `structured_light_scan`
-
-### superquadric(4)
-- `fit_superquadric` (`points → primitive`) — 点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。 · 例: `superquadric_fit`
-- `sample_surface` (`vector → points`) — スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。 · 例: `mesh_lod_download`, `superquadric_fit`
-- `inside_outside` (`points → signal`) — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: `superquadric_fit`
-- `superquadric_residual` (`points → measurement`) — Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。 · 例: `superquadric_fit`
-
-### surface(5)
-- `minimal_surface` (` → mesh`) — A classical minimal surface, from its exact parametrisation. · 例: `minimal_surfaces`
-- `minimal_surface_bend` (` → mesh`) — The catenoid-helicoid bend — every member of the family is still minimal. · 例: `minimal_surfaces`
-- `gyroid_isosurface` (` → mesh`) — The gyroid — a triply periodic surface from its nodal approximation. · 例: `minimal_surfaces`
-- `gyroid_solid_mask` (` → voxel`) — The gyroid as a printable **solid**: the shell within ±*thickness* of the level set. · 例: `minimal_surfaces`
-- `curve3d_tube_mesh` (`points → mesh`) — A space curve as a tube mesh — the MATLAB ``tubeplot``, with a volume you can check. · 例: `minimal_surfaces`
-
-### surface_fit(4)
-- `fit_poly_surface` (`image2d, image2d, image2d → poly_surface`) — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
-- `eval_poly_surface` (`poly_surface, image2d, image2d → image2d`) — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
-- `surface_form_error` (`image2d → measurement`) — 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。 · 例: `geometry_metrology`
-- `background_flatten` (`image2d → image2d`) — 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。 · 例: `geometry_metrology`
-
-### symmetry(4)
-- `detect_reflection_symmetry` (`points → primitive`) — PCA 主軸を法線とする候補平面(重心通過)から最良の反射対称面を選ぶ。 · 例: `dl_mesh_symmetry`, `itokawa_symmetry_honest`, `reflection_symmetry`, `symmetry`
-- `detect_rotational_symmetry` (`points → primitive`) — PCA 主軸を候補軸として最良の回転対称(軸 × order)を選ぶ。 · 例: `rotational_symmetry_fold`, `symmetry`
-- `reflect_points` (`points → points`) — 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。 · 例: `reflection_symmetry`
-- `reflection_symmetry_score` (`points → measurement`) — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
-
-### terrain(8)
-- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
-- `terrain_region_mask` (`mesh → signal`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
-- `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
-- `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh, per vertex, per face or per unique edge. · 例: `itokawa_regolith_hero`
-- `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)`` by midpoint subdivision or adaptive tessellation. · 例: `itokawa_regolith_hero`
-- `displacement_band_weights` (`mesh → matrix`) — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]. · 例: `itokawa_regolith_hero`
-- `mesh_displace_spectrum` (`mesh → mesh`) — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited. · 例: `itokawa_regolith_hero`
-- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field. · 例: `itokawa_regolith_hero`
-
-### transform(12)
-- `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
-- `gaussians_to_voxel` (`points → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
-- `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
-- `mesh_to_points` (`mesh → points`) — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
-- `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `structured_light_scan`, `transforms_repr`
-- `voxel_to_mips` (`voxel → images`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
-- `voxel_to_mesh` (`voxel → mesh`) — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。 · 例: `mesh_smooth`
-- `tsdf_from_depth` (`depth → sdf`) — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: `transforms_repr`
-- `signed_distance_field` (`voxel → sdf`) — occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。 · 例: `transforms_repr`
-- `sdf_to_occupancy` (`sdf → voxel`) — SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。 · 例: `transforms_repr`
-- `estimate_point_normals` (`points → normals`) — 点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。 · 例: `fpfh_correspondence`
-- `to_points` (`voxel, points, mesh, depth, gaussians → points`) — 任意の 3D 構造 → 点群(共通表現)。全5構造を 1 本の入口へ統合。 · 例: `transforms_repr`
-
-### tsdf_fusion(3)
-- `fuse` (`depth → sdf`) — 深度列を new_volume + integrate で 1 つの TSDF volume に融合。返り値 (tsdf, weight)。 · 例: `tsdf_fusion_demo`
-- `integrate` (`sdf, depth → sdf`) — 深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。 · 例: `transforms_repr`
-- `extract_surface_points` (`sdf → points`) — TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。 · 例: `transforms_repr`, `tsdf_fusion_demo`
-
-### two_view(5)
-- `fundamental_8point` (`image2d, image2d → matrix`) — 正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。 · 例: `two_view_pose`
-- `essential_8point` (`image2d, image2d → matrix`) — 対応点 + K から本質行列 E を直接。→ E (3,3)。 · 例: `sfm_recon`
-- `recover_pose` (`image2d, image2d → pose`) — 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。 · 例: `two_view_pose`
-- `triangulate` (`image2d, image2d → points`) — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
-- `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
-
-## 2-D pipeline operators(ops registry)by category
-_計 936 ops / 48 categories。_
-
-
-1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
-
-### 3d(12)
-- `vol_gaussian` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_am_thermal_to_ct`
-- `vol_median` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
-- `vol_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
-- `vol_threshold` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_reg_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_reg_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_dilation_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_erosion_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-- `vol_opening_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
-- `vol_mip` `volume → image` · 例: `gallery2d_physics_alife_3d`, `poc_cold_chain_excursion`
-- `vol_slice` `volume → image` · 例: `gallery2d_physics_alife_3d`
-
-### arithmetic(10)
-- `abs_image` (halcon: `abs_image`) `image → image` · 例: `gallery2d_gray_arith`, `genspark_external_review`
-- `sqrt_image` (halcon: `sqrt_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `exp_image` (halcon: `exp_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `log_image` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_weld_radiograph_porosity`
-- `sin_image` (halcon: `sin_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `cos_image` (halcon: `cos_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `asin_image` (halcon: `asin_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `acos_image` (halcon: `acos_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `atan_image` (halcon: `atan_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `tan_image` (halcon: `tan_image`) `image → image` · 例: `gallery2d_gray_arith`
-
-### artificial-life(12)
-- `alife_gray_scott` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_turing` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `alife_life_step` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `alife_cyclic_ca` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `alife_perona_malik` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_curvature_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_dla` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `alife_reaction_bz` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `alife_wolfram1d` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_langton_ant` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_lenia` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `alife_sandpile` `image → image` · 例: `gallery2d_physics_alife_3d`
-
-### artistic(3)
-- `xcv_stylization` `image → image` · 例: `gallery2d_color_artistic`
-- `xcv_pencil_sketch` `image → image` · 例: `gallery2d_color_artistic`
-- `xpil_emboss` `image → image` · 例: `gallery2d_color_artistic`
-
-### augmentation(10)
-- `aug_shot_noise` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
-- `aug_read_noise` `image → image` · 例: `gallery2d_color_artistic`
-- `aug_fixed_pattern` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
-- `aug_motion_blur` `image → image` · 例: `gallery2d_color_artistic`
-- `aug_vignette` `image → image` · 例: `gallery2d_color_artistic`, `poc_solar_el_inspection`, `sim2real_and_alife`
-- `aug_chromatic` `image → image` · 例: `gallery2d_color_artistic`
-- `aug_rolling_shutter` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
-- `aug_jpeg_blocks` `image → image` · 例: `gallery2d_color_artistic`, `poc_prnu_camera_fingerprint`, `sim2real_and_alife`
-- `aug_cutout` `image → image` · 例: `gallery2d_color_artistic`
-- `aug_barrel` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
-
-### barcode(1)
-- `decode_barcode` (halcon: `find_bar_code`) `image → feature` · 例: `gallery2d_physics_alife_3d`, `poc_barcode_1d`
-
-### bridge(18)
-- `img_to_points` `image → points` · 例: `gallery2d_bridge`
-- `img_to_keypoints` `image → keypoints` · 例: `gallery2d_bridge`
-- `img_to_signal` `image → signal` · 例: `gallery2d_bridge`
-- `img_to_projection_profile` `image → signal` · 例: `gallery2d_bridge`
-- `img_to_counts` `image → counts` · 例: `gallery2d_bridge`
-- `img_to_matrix` `image → matrix` · 例: `gallery2d_bridge`
-- `img_to_video` `image → video` · 例: `gallery2d_bridge`
-- `img_to_volume` `image → volume` · 例: `gallery2d_bridge`
-- `img_to_lightfield` `image → lightfield` · 例: `gallery2d_bridge`
-- `img_to_rgb` `image → rgbimage` · 例: `gallery2d_bridge`
-- `img_to_cimage` `image → cimage` · 例: `gallery2d_bridge`
-- `img_to_beatcube` `image → beatcube` · 例: `gallery2d_bridge`
-- `img_to_monogenic` `image → qimage` · 例: `gallery2d_bridge`
-- `signal_to_img` `signal → image` · 例: `gallery2d_bridge`
-- `counts_to_img` `counts → image` · 例: `gallery2d_bridge`
-- `matrix_to_img` `matrix → image` · 例: `gallery2d_bridge`
-- `contour_to_img` `contour → image` · 例: `gallery2d_bridge`
-- `feature_to_img` `feature → image` · 例: `gallery2d_bridge`
-
-### classification(1)
-- `classify_shape` `region → feature` · 例: `gallery2d_features`
-
-### color(8)
-- `cfa_to_rgb` (halcon: `cfa_to_rgb`) `image → color` · 例: `gallery2d_color_artistic`
-- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` · 例: `gallery2d_color_artistic`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
-- `trans_to_rgb` (halcon: `trans_to_rgb`) `color → color` · 例: `gallery2d_color_artistic`
-- `linear_trans_color` (halcon: `linear_trans_color`) `color → color` · 例: `gallery2d_color_artistic`
-- `principal_comp` (halcon: `principal_comp`) `color → color` · 例: `gallery2d_color_artistic`
-- `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
-- `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
-- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`, `genspark_external_review`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
-
-### contour(25)
-- `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`
-- `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
-- `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`, `quickstart`
-- `sk_find_contours` `image → contour` · 例: `gallery2d_bridge`, `gallery2d_contour_measure`
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
-- `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
-- `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`
-- `close_contours_xld` (halcon: `close_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `affine_trans_contour_xld` (halcon: `affine_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `shape_trans_xld` (halcon: `shape_trans_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_peg_insertion_tactile`, `poc_screw_thread_metrology`
-- `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`
-- `lines_facet` (halcon: `lines_facet`) `image → contour` · 例: `gallery2d_contour_measure`
-- `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` · 例: `gallery2d_contour_measure`
-- `affine_trans_polygon_xld` (halcon: `affine_trans_polygon_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `gen_contour_region_xld` (halcon: `gen_contour_region_xld`) `region → contour` · 例: `gallery2d_contour_measure`
-- `select_shape_xld` (halcon: `select_shape_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `contour_point_num_xld` (halcon: `contour_point_num_xld`) `contour → feature` · 例: `gallery2d_contour_measure`
-- `edges_color_sub_pix` (halcon: `edges_color_sub_pix`) `color → contour` · 例: `gallery2d_contour_measure`
-- `lines_color` (halcon: `lines_color`) `color → contour` · 例: `gallery2d_contour_measure`
-
-### decomposition(7)
-- `dc_structure_texture` `image → image` · 例: `gallery2d_texture_freq`, `poc_fiber_orientation`
-- `dc_texture_residual` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_rpca_lowrank` `image → image` · 例: `blas_thread_budget`, `gallery2d_texture_freq`
-- `dc_rpca_sparse` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_retinex` `image → image` · 例: `gallery2d_texture_freq`, `poc_bone_trabecular_thickness`
-- `dc_local_contrast_norm` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_homomorphic` `image → image` · 例: `gallery2d_texture_freq`, `poc_document_scan`, `poc_mri_bias_field`
-
-### deformation(3)
-- `deform_tps` `image → image` · 例: `gallery2d_geometry`
-- `deform_ffd` `image → image` · 例: `gallery2d_geometry`
-- `deform_mls` `image → image` · 例: `gallery2d_geometry`
-
-### domain(2)
-- `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
-- `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
-
-### edges(58)
-- `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
-- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
-- `roberts_mag` (halcon: `roberts`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
-- `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
-- `edge_transition_width` `image → image` · 例: `gallery2d_edges`
-- `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `gallery_spectrum_signal_bridge`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_emva1288_in_camera_processing`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`
-- `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
-- `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
-- `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
-- `sk_dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
-- `sk_hessian_det` `image → image` · 例: `gallery2d_edges`
-- `sk_corner_harris` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
-- `cv_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
-- `cv_laplacian` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
-- `cv_corner_harris` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
-- `cv_min_eigen` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
-- `cv_precorner` (halcon: `corner_response`) `image → image` · 例: `gallery2d_edges`
-- `derivate_gauss` (halcon: `derivate_gauss`) `image → image` · 例: `gallery2d_edges`
-- `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_real_defect_floor`
-- `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
-- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
-- `sobel_dir` (halcon: `sobel_dir`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_fiber_orientation`
-- `prewitt_amp` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`, `poc_white_balance`
-- `prewitt_dir` (halcon: `prewitt_dir`) `image → image` · 例: `gallery2d_edges`
-- `roberts` (halcon: `roberts`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`, `poc_white_balance`
-- `kirsch_amp` (halcon: `kirsch_amp`) `image → image` · 例: `gallery2d_edges`
-- `kirsch_dir` (halcon: `kirsch_dir`) `image → image` · 例: `gallery2d_edges`
-- `frei_amp` (halcon: `frei_amp`) `image → image` · 例: `gallery2d_edges`
-- `robinson_amp` (halcon: `robinson_amp`) `image → image` · 例: `gallery2d_edges`
-- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`, `poc_focus_stacking`, `poc_search_sweep_width`, `poc_white_balance`
-- `points_foerstner` (halcon: `points_foerstner`) `image → image` · 例: `gallery2d_edges`
-- `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` · 例: `gallery2d_edges`
-- `dots_image` (halcon: `dots_image`) `image → image` · 例: `gallery2d_edges`
-- `frei_dir` (halcon: `frei_dir`) `image → image` · 例: `gallery2d_edges`
-- `robinson_dir` (halcon: `robinson_dir`) `image → image` · 例: `gallery2d_edges`
-- `edges_color` (halcon: `edges_color`) `color → image` · 例: `gallery2d_edges`
-- `xsk_hessian_eig` `image → image` · 例: `gallery2d_edges`
-- `xpil_contour` `image → image` · 例: `gallery2d_edges`
-- `xpil_find_edges` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
-- `xsp_morph_laplace` `image → image` · 例: `gallery2d_edges`
-- `xsp_gauss_grad_mag` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
-- `xsk2_corner_kr` `image → image` · 例: `gallery2d_edges`
-- `xsk2_inv_gauss_grad` `image → image` · 例: `gallery2d_edges`
-- `xwt_hf_reconstruct` `image → image` · 例: `gallery2d_edges`
-- `xwt_directional_detail` `image → image` · 例: `gallery2d_edges`
-- `xsk3_corner_moravec` `image → image` · 例: `gallery2d_edges`
-- `xsk3_corner_fast` `image → image` · 例: `gallery2d_edges`
-- `xkor_laplacian` `image → image` · 例: `gallery2d_edges`
-- `xkor_harris` `image → image` · 例: `gallery2d_edges`
-- `xkor_gftt` `image → image` · 例: `gallery2d_edges`
-- `xkor_hessian` `image → image` · 例: `gallery2d_edges`
-- `xkor_dog` `image → image` · 例: `gallery2d_edges`
-- `f2_shock` (halcon: `shock_filter`) `image → image` · 例: `gallery2d_edges`
-- `f2_shock_diffuse` `image → image` · 例: `gallery2d_edges`
-- `f2_topographic` (halcon: `topographic_sketch`) `image → image` · 例: `gallery2d_edges`
-- `tf_steerable_filter` `image → image` · 例: `gallery2d_edges`
-- `tf_phase_congruency` `image → image` · 例: `gallery2d_edges`, `poc_iqa_fsim_gmsd_vif`
-
-### extra(14)
-- `xsitk_curvature_flow` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_minmax_curv_flow` `image → image` · 例: `gallery2d_color_artistic`, `genspark_external_review`
-- `xsitk_curv_aniso_diff` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_laplacian_sharpen` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_grayscale_fillhole` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_grayscale_grindpeak` `image → image` · 例: `gallery2d_color_artistic`, `poc_weld_radiograph_porosity`
-- `xsitk_opening_by_recon` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_closing_by_recon` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_signed_maurer_dist` `region → image` · 例: `gallery2d_color_artistic`
-- `xsitk_connected_threshold` `image → region` · 例: `gallery2d_color_artistic`
-- `xsitk_confidence_connected` `image → region` · 例: `gallery2d_color_artistic`
-- `xsitk_maxentropy_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
-- `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
-- `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
-
-### features(73)
-- `effective_bit_depth` `image → feature` · 例: `gallery2d_features`
-- `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
-- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`, `threshold_family_agreement`
-- `count_contours` (halcon: `count_obj`) `contour → feature` · 例: `gallery2d_features`
-- `total_length` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`, `poc_solar_el_inspection`
-- `vol_count` `volume → feature` · 例: `gallery2d_features`
-- `sk_euler` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
-- `sk_entropy_feat` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
-- `sk_blur_effect` `image → feature` · 例: `gallery2d_features`, `poc_real_deblur_honesty`
-- `cv_cc_count` (halcon: `connection`) `region → feature` · 例: `gallery2d_features`, `genspark_external_review`
-- `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: `gallery2d_features`
-- `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: `gallery2d_features`
-- `cv_good_features` `image → feature` · 例: `gallery2d_features`
-- `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
-- `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
-- `circularity` (halcon: `circularity`) `region → feature` · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
-- `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `eccentricity` (halcon: `eccentricity`) `region → match` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
-- `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
-- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
-- `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
-- `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_multibeam_bathymetry`, `poc_pxrd_phase_peel`, `poc_solder_fillet_aoi`, `poc_video_cube`
-- `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
-- `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
-- `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
-- `contlength` (halcon: `contlength`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
-- `area_holes` (halcon: `area_holes`) `region → feature` · 例: `gallery2d_features`
-- `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` · 例: `gallery2d_features`
-- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
-- `area_center_xld` (halcon: `area_center_xld`) `contour → match` · 例: `gallery2d_features`
-- `circularity_xld` (halcon: `circularity_xld`) `contour → feature` · 例: `gallery2d_features`
-- `compactness_xld` (halcon: `compactness_xld`) `contour → feature` · 例: `gallery2d_features`
-- `convexity_xld` (halcon: `convexity_xld`) `contour → feature` · 例: `gallery2d_features`
-- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_central` (halcon: `moments_region_central`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
-- `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: `gallery2d_features`
-- `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: `gallery2d_features`
-- `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
-- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → match` · 例: `gallery2d_features`
-- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: `gallery2d_features`
-- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → match` · 例: `gallery2d_features`
-- `diameter_xld` (halcon: `diameter_xld`) `contour → feature` · 例: `gallery2d_features`
-- `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` · 例: `gallery2d_features`
-- `moments_xld` (halcon: `moments_xld`) `contour → feature` · 例: `gallery2d_features`
-- `hough_line_trans` (halcon: `hough_line_trans`) `image → image` · 例: `gallery2d_features`
-- `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` · 例: `gallery2d_features`, `poc_real_coin_metrology`
-- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
-- `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: `gallery2d_features`
-- `elliptic_axis` (halcon: `elliptic_axis`) `region → match` · 例: `gallery2d_features`
-- `count_channels` (halcon: `count_channels`) `color → feature` · 例: `gallery2d_features`
-- `xsk_blob_log` `image → feature` · 例: `gallery2d_features`, `poc_search_sweep_width`
-- `xsk_blob_dog` `image → feature` · 例: `gallery2d_features`
-- `xsk_blob_doh` `image → feature` · 例: `gallery2d_features`
-- `xsk_orb_count` `image → feature` · 例: `gallery2d_features`
-- `xcv_orb_count` `image → feature` · 例: `gallery2d_features`
-- `xcv2_lap_var` `image → feature` · 例: `gallery2d_features`, `poc_focus_stacking`
-- `xcv2_fast_count` `image → feature` · 例: `gallery2d_features`
-- `xwt_detail_energy` `image → feature` · 例: `gallery2d_features`
-- `xwt_packet_entropy` `image → feature` · 例: `gallery2d_features`
-- `xsk3_is_low_contrast` `image → feature` · 例: `gallery2d_features`
-- `xsk3_estimate_sigma` `image → feature` · 例: `gallery2d_features`
-- `xcv3_gray_hu1` `image → feature` · 例: `gallery2d_features`
-- `xcv3_sift_count` `image → feature` · 例: `gallery2d_features`
-- `xcv3_brisk_count` `image → feature` · 例: `gallery2d_features`
-- `xcv3_agast_count` `image → feature` · 例: `gallery2d_features`
-- `xcv3_lsd_count` `image → feature` · 例: `gallery2d_features`
-- `fractal_dimension` `image → feature` · 例: `gallery2d_features`, `poc_endless_zoom_and_turning_solids`, `poc_theorems_as_pictures`
-
-### filtering(1)
-- `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`
-
-### frequency(19)
-- `lowpass` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
-- `highpass` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
-- `sk_butterworth` `image → image` · 例: `gallery2d_texture_freq`
-- `fft_image` (halcon: `fft_image`) `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `poc_moire_screen`
-- `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
-- `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
-- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `gallery2d_texture_freq`
-- `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_river_surface_velocity`
-- `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
-- `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
-- `fft_generic` (halcon: `fft_generic`) `image → image` · 例: `gallery2d_texture_freq`
-- `power_ln` (halcon: `power_ln`) `image → image` · 例: `gallery2d_texture_freq`
-- `rft_generic` (halcon: `rft_generic`) `image → image` · 例: `gallery2d_texture_freq`
-- `phase_deg` (halcon: `phase_deg`) `image → image` · 例: `gallery2d_texture_freq`
-- `xsp_dct` `image → image` · 例: `gallery2d_texture_freq`
-- `xsp_dct_lowpass` `image → image` · 例: `gallery2d_texture_freq`
-- `xsk2_radon` `image → image` · 例: `gallery2d_texture_freq`
-- `xwt_subband_tile` `image → image` · 例: `gallery2d_texture_freq`
-- `xwt_mra_component` `image → image` · 例: `gallery2d_texture_freq`
-
-### geometry(29)
-- `rotate_img` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
-- `deskew` `image → image` · 例: `gallery2d_geometry`
-- `rescale_img` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
-- `affine_warp` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
-- `sk_swirl` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`
-- `mirror_image` (halcon: `mirror_image`) `image → image` · 例: `gallery2d_geometry`
-- `transpose_region` (halcon: `transpose_region`) `region → region` · 例: `gallery2d_geometry`
-- `rotate_image` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
-- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`, `poc_pv_thermal_survey`
-- `zoom_image_size` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
-- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_change_detection_misreg`
-- `polar_trans_image` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_allsky_cloud_cover`, `poc_gear_tooth_metrology`
-- `projective_trans_image` (halcon: `projective_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_water_level`
-- `projective_trans_image_size` (halcon: `projective_trans_image_size`) `image → image` · 例: `gallery2d_geometry`
-- `projective_trans_region` (halcon: `projective_trans_region`) `region → region` · 例: `gallery2d_geometry`
-- `polar_trans_image_inv` (halcon: `polar_trans_image_inv`) `image → image` · 例: `gallery2d_geometry`
-- `affine_trans_image_size` (halcon: `affine_trans_image_size`) `image → image` · 例: `gallery2d_geometry`
-- `polar_trans_image_ext` (halcon: `polar_trans_image_ext`) `image → image` · 例: `gallery2d_geometry`
-- `affine_trans_region` (halcon: `affine_trans_region`) `region → region` · 例: `gallery2d_geometry`
-- `mirror_region` (halcon: `mirror_region`) `region → region` · 例: `gallery2d_geometry`
-- `zoom_region` (halcon: `zoom_region`) `region → region` · 例: `gallery2d_geometry`
-- `polar_trans_region_inv` (halcon: `polar_trans_region_inv`) `region → region` · 例: `gallery2d_geometry`
-- `xpil_offset` `image → image` · 例: `gallery2d_geometry`
-- `xcv2_warp_logpolar` `image → image` · 例: `gallery2d_geometry`
-- `it_add_image_border` (halcon: `add_image_border`) `image → image` · 例: `gallery2d_geometry`
-- `it_crop_part` (halcon: `crop_part`) `image → image` · 例: `gallery2d_geometry`
-- `it_crop_rectangle1` (halcon: `crop_rectangle1`) `image → image` · 例: `gallery2d_geometry`
-- `it_change_format` (halcon: `change_format`) `image → image` · 例: `gallery2d_geometry`
-- `tf_log_polar` `image → image` · 例: `gallery2d_geometry`
-
-### gray(48)
-- `gamma` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `quantize_uniform` `image → image` · 例: `gallery2d_gray_arith`
-- `quantize_lloyd_max` `image → image` · 例: `gallery2d_gray_arith`
-- `quantization_error` `image → image` · 例: `gallery2d_gray_arith`
-- `dither_ordered` `image → image` · 例: `gallery2d_gray_arith`
-- `dither_floyd_steinberg` `image → image` · 例: `gallery2d_gray_arith`
-- `companding_mu_law` `image → image` · 例: `gallery2d_gray_arith`
-- `banding_map` `image → image` · 例: `gallery2d_gray_arith`
-- `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
-- `scale_clip` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `equalize` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`
-- `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`, `gallery_drive_world_io`
-- `clahe` `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`
-- `sk_adapthist` `image → image` · 例: `gallery2d_gray_arith`
-- `sk_enhance_contrast` `image → image` · 例: `gallery2d_gray_arith`
-- `sk_autolevel` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
-- `sk_adjust_log` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `cv_clahe` `image → image` · 例: `gallery2d_gray_arith`
-- `cv_trunc` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `gamma_image` (halcon: `gamma_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `pow_image` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `invert_image` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_metal_grain_size`
-- `scale_image` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `equ_histo_image` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `illuminate` (halcon: `illuminate`) `image → image` · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
-- `scale_image_max` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
-- `equ_histo_image_rect` (halcon: `equ_histo_image_rect`) `image → image` · 例: `gallery2d_gray_arith`
-- `bit_not` (halcon: `bit_not`) `image → image` · 例: `gallery2d_gray_arith`
-- `monotony` (halcon: `monotony`) `image → image` · 例: `gallery2d_gray_arith`
-- `xcv_detail_enhance` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_edge_enhance` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_detail` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_posterize` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_solarize` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_autocontrast` `image → image` · 例: `gallery2d_gray_arith`
-- `xpil_contrast` `image → image` · 例: `gallery2d_gray_arith`
-- `xsp_detrend_flatten` `image → image` · 例: `gallery2d_gray_arith`
-- `xsk3_rank_subtract_mean` `image → image` · 例: `gallery2d_gray_arith`
-- `xsk3_rank_equalize` `image → image` · 例: `gallery2d_gray_arith`
-- `xsk3_integral_image` `image → image` · 例: `gallery2d_gray_arith`
-- `xkor_clahe` `image → image` · 例: `gallery2d_gray_arith`
-- `f2_lut_trans` (halcon: `lut_trans`) `image → image` · 例: `gallery2d_gray_arith`
-- `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` · 例: `gallery2d_gray_arith`
-- `f2_bit_slice` (halcon: `bit_slice`) `image → image` · 例: `gallery2d_gray_arith`
-- `it_bit_lshift` (halcon: `bit_lshift`) `image → image` · 例: `gallery2d_gray_arith`
-- `it_bit_rshift` (halcon: `bit_rshift`) `image → image` · 例: `gallery2d_gray_arith`
-- `it_bit_mask` (halcon: `bit_mask`) `image → image` · 例: `gallery2d_gray_arith`
-- `it_convert_image_type` (halcon: `convert_image_type`) `image → image` · 例: `gallery2d_gray_arith`
-
-### halcon_ext(81)
-- `hx_gen_circle` (halcon: `gen_circle`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_ellipse` (halcon: `gen_ellipse`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_rectangle2` (halcon: `gen_rectangle2`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_checker_region` (halcon: `gen_checker_region`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_grid_region` (halcon: `gen_grid_region`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gabor` (halcon: `convol_gabor`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_fit_surface1` (halcon: `fit_surface_first_order`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_fit_surface2` (halcon: `fit_surface_second_order`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_cooc_feature` (halcon: `cooc_feature_image`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_full_domain` (halcon: `full_domain`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_mean_shape` (halcon: `mean_image_shape`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_close_edges` (halcon: `close_edges`) `image → image` · 例: `gallery2d_halcon_ext`, `poc_metal_grain_size`
-- `hx_close_edges_length` (halcon: `close_edges_length`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_expand_region` (halcon: `expand_region`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_region_to_mean` (halcon: `region_to_mean`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_nonmax_dir` (halcon: `nonmax_suppression_dir`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_char_threshold` (halcon: `char_threshold`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_histo_to_thresh` (halcon: `histo_to_thresh`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_lowpass` (halcon: `gen_lowpass`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_gen_highpass` (halcon: `gen_highpass`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_gen_bandpass` (halcon: `gen_bandpass`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_erosion1` (halcon: `erosion1`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_dilation1` (halcon: `dilation1`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_opening` (halcon: `opening`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_closing` (halcon: `closing`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_dilation2` (halcon: `dilation2`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_disc_se` (halcon: `gen_disc_se`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_circle_sector` (halcon: `gen_circle_sector`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_ellipse_sector` (halcon: `gen_ellipse_sector`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_empty_region` (halcon: `gen_empty_region`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_clip_region_rel` (halcon: `clip_region_rel`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_gen_bandfilter` (halcon: `gen_bandfilter`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_gen_derivative_filter` (halcon: `gen_derivative_filter`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_fill_interlace` (halcon: `fill_interlace`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_shade_height_field` (halcon: `shade_height_field`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_plane_deviation` (halcon: `plane_deviation`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_halcon_ext`
-- `hx_gen_image_proto` (halcon: `gen_image_proto`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_get_domain` (halcon: `get_domain`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_region_to_label` (halcon: `region_to_label`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_rectangle1_domain` (halcon: `rectangle1_domain`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_lowlands` (halcon: `lowlands`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_plateaus_center` (halcon: `plateaus_center`) `image → region` · 例: `gallery2d_halcon_ext`
-- `hx_move_region` (halcon: `move_region`) `region → region` · 例: `gallery2d_halcon_ext`
-- `hx_split_skeleton_region` (halcon: `split_skeleton_region`) `region → region` · 例: `gallery2d_halcon_ext`, `poc_fresco_craquelure`
-- `hx_test_region_point` (halcon: `test_region_point`) `region → feature` · 例: `gallery2d_halcon_ext`
-- `hx_test_region_points` (halcon: `test_region_points`) `region → feature` · 例: `gallery2d_halcon_ext`
-- `hx_sort_contours` (halcon: `sort_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_clip_contours` (halcon: `clip_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_clip_end_points` (halcon: `clip_end_points_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_smallest_circle_xld` (halcon: `smallest_circle_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_smallest_rect1_xld` (halcon: `smallest_rectangle1_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_test_closed_xld` (halcon: `test_closed_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_regress_contours` (halcon: `regress_contours_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_moments_any_xld` (halcon: `moments_any_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`, `poc_screw_thread_metrology`
-- `hx_gen_parallel_contour` (halcon: `gen_parallel_contour_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_fit_circle_contour` (halcon: `fit_circle_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_fit_ellipse_contour` (halcon: `fit_ellipse_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_fit_rectangle2_contour` (halcon: `fit_rectangle2_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_smallest_rect2_xld` (halcon: `smallest_rectangle2_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_crop_contours` (halcon: `crop_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_dist_ellipse_contour` (halcon: `dist_ellipse_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_test_self_intersect` (halcon: `test_self_intersection_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_union_adjacent` (halcon: `union_adjacent_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_polar_trans_inv` (halcon: `polar_trans_contour_xld_inv`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_select_xld_point` (halcon: `select_xld_point`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_estimate_tilt_lr` (halcon: `estimate_tilt_lr`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_estimate_tilt_zc` (halcon: `estimate_tilt_zc`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_estimate_sl_al_lr` (halcon: `estimate_sl_al_lr`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_estimate_sl_al_zc` (halcon: `estimate_sl_al_zc`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_estimate_al_am` (halcon: `estimate_al_am`) `image → feature` · 例: `gallery2d_halcon_ext`
-- `hx_add_noise_contour` (halcon: `add_noise_white_contour_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_radial_distort_contour` (halcon: `change_radial_distortion_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
-- `hx_dist_ellipse_points` (halcon: `dist_ellipse_contour_points_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_dist_rect2_points` (halcon: `dist_rectangle2_contour_points_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_distance_pc` (halcon: `distance_pc`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_disparity_to_xyz` (halcon: `disparity_image_to_xyz`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_distance_pr` (halcon: `distance_pr`) `region → feature` · 例: `gallery2d_halcon_ext`
-- `hx_distance_sc` (halcon: `distance_sc`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_fuzzy_measure_pairs` (halcon: `fuzzy_measure_pairs`) `image → feature` · 例: `gallery2d_halcon_ext`
-
-### intensity-transform(1)
-- `xmh_soft` `image → image` · 例: `gallery2d_gray_arith`
-
-### macro(4)
-- `macro_denoise` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
-- `macro_edge` `image → region` · 例: `gallery2d_physics_alife_3d`
-- `macro_binarize` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `macro_vol_denoise` `volume → volume` · 例: `gallery2d_physics_alife_3d`
-
-### matching(2)
-- `ncc_locate` (halcon: `find_ncc_model`) `image → match` · 例: `gallery2d_contour_measure`, `poc_search_sweep_width`, `poc_template_tracking`
-- `shape_locate` (halcon: `find_shape_model`) `image → match` · 例: `gallery2d_contour_measure`, `poc_template_tracking`
-
-### measure1d(5)
-- `m1_measure_projection` (halcon: `measure_projection`) `image → feature` · 例: `gallery2d_contour_measure`
-- `m1_measure_pos` (halcon: `measure_pos`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_dimensional_inspection`
-- `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` · 例: `gallery2d_contour_measure`
-- `m1_measure_pairs` (halcon: `measure_pairs`) `image → feature` · 例: `gallery2d_contour_measure`, `poc_dimensional_inspection`
-- `m1_fuzzy_measure_pos` (halcon: `fuzzy_measure_pos`) `image → contour` · 例: `gallery2d_contour_measure`
-
-### misc(1)
-- `identity` (halcon: `copy_image`) `any → any` · 例: なし
-
-### morphology(36)
-- `gerode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
-- `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
-- `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
-- `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
-- `runlength_smear` `image → image` · 例: `gallery2d_morphology`
-- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `degenerate_inputs`, `gallery2d_morphology`, `poc_search_sweep_width`
-- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
-- `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
-- `persistence_map` `image → image` · 例: `gallery2d_morphology`
-- `local_thickness` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`
-- `sk_area_opening` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
-- `cv_open` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
-- `cv_close` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
-- `cv_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
-- `cv_gradient` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
-- `cv_blackhat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_fresco_craquelure`
-- `cv_erode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
-- `cv_dilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
-- `gray_erosion` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
-- `gray_dilation` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
-- `gray_opening` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
-- `gray_closing` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
-- `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_document_scan`, `poc_real_coin_metrology`, `poc_search_sweep_width`
-- `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
-- `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_morphology`, `poc_weld_radiograph_porosity`
-- `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` · 例: `gallery2d_morphology`
-- `xsk2_reconstruction` `image → image` · 例: `gallery2d_morphology`
-- `xsk2_diameter_opening` `image → image` · 例: `gallery2d_morphology`
-- `xsk3_area_closing` `image → image` · 例: `gallery2d_morphology`
-- `xsk3_diameter_closing` `image → image` · 例: `gallery2d_morphology`
-- `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` · 例: `gallery2d_morphology`
-- `f2_gray_inside` (halcon: `gray_inside`) `image → image` · 例: `gallery2d_morphology`
-
-### morphology/markers(1)
-- `xmh_regmin` `image → region` · 例: `gallery2d_segmentation`
-
-### noise(2)
-- `add_noise_white` (halcon: `add_noise_white`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `add_noise_distribution` (halcon: `add_noise_distribution`) `image → image` · 例: `gallery2d_smoothing_rank`
-
-### physics(6)
-- `ph_perona_malik` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_coherence_enhancing_diffusion` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_reaction_diffusion` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_heat_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_mean_curvature_motion` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_total_variation_flow` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_physics_alife_3d`
-
-### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
-- `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
-- `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_median` (halcon: `median_image`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
-- `median_image` (halcon: `median_image`) `image → image` · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
-- `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
-- `median_separate` (halcon: `median_separate`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gray_dilation_rect` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gray_range_rect` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `rank_image` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_dehazing`
-- `rank_rect` (halcon: `rank_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `trimmed_mean` (halcon: `trimmed_mean`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `eliminate_min_max` (halcon: `eliminate_min_max`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `median_weighted` (halcon: `median_weighted`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `mean_sp` (halcon: `mean_sp`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `eliminate_sp` (halcon: `eliminate_sp`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `dual_rank` (halcon: `dual_rank`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `xpil_mode_filter` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsk2_rank_geomean` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xkor_median` `image → image` · 例: `gallery2d_smoothing_rank`
-
-### region(78)
-- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `degenerate_inputs`, `gallery2d_region`, `poc_colocalization_crosstalk`, `poc_leaf_disease_area`
-- `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
-- `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
-- `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_leaf_disease_area`
-- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_real_coin_metrology`, `poc_symmetry_restoration`
-- `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
-- `remove_small` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`, `quickstart`
-- `invert_region` (halcon: `complement`) `region → region` · 例: `gallery2d_region`
-- `dist_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`
-- `region_boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
-- `convex_fill` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
-- `sk_skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_solar_el_inspection`
-- `sk_medial` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
-- `sk_convex` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
-- `sk_thin` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`
-- `sk_remove_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
-- `sk_clear_border` `region → region` · 例: `gallery2d_region`
-- `sk_find_boundaries` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
-- `cv_dist` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
-- `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`, `poc_livestock_body_volume`
-- `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`, `poc_focus_stacking`
-- `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_document_scan`
-- `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
-- `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
-- `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`, `poc_complex_plane_fields`, `poc_driving_commonroad`, `voxel_labels_color`
-- `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_swc_tree_truth`, `poc_vessel_network`
-- `thinning` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
-- `shape_trans` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
-- `select_shape_std` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`
-- `select_shape` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`
-- `distance_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_particle_sizing`, `poc_vessel_network`
-- `pruning` (halcon: `pruning`) `region → region` · 例: `gallery2d_region`, `poc_fresco_craquelure`
-- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` · 例: `gallery2d_region`
-- `junctions_skeleton` (halcon: `junctions_skeleton`) `region → region` · 例: `gallery2d_region`, `poc_fresco_craquelure`
-- `erosion_golay` (halcon: `erosion_golay`) `region → region` · 例: `gallery2d_region`
-- `dilation_golay` (halcon: `dilation_golay`) `region → region` · 例: `gallery2d_region`
-- `opening_golay` (halcon: `opening_golay`) `region → region` · 例: `gallery2d_region`
-- `closing_golay` (halcon: `closing_golay`) `region → region` · 例: `gallery2d_region`
-- `erosion_seq` (halcon: `erosion_seq`) `region → region` · 例: `gallery2d_region`
-- `dilation_seq` (halcon: `dilation_seq`) `region → region` · 例: `gallery2d_region`
-- `morph_skeleton` (halcon: `morph_skeleton`) `region → region` · 例: `gallery2d_region`
-- `thinning_golay` (halcon: `thinning_golay`) `region → region` · 例: `gallery2d_region`
-- `thinning_seq` (halcon: `thinning_seq`) `region → region` · 例: `gallery2d_region`
-- `fill_up_shape` (halcon: `fill_up_shape`) `region → region` · 例: `gallery2d_region`
-- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` · 例: `find_ops_by_meaning`, `gallery2d_region`
-- `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `get_region_contour` (halcon: `get_region_contour`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`
-- `get_region_convex` (halcon: `get_region_convex`) `region → region` · 例: `gallery2d_region`
-- `xsp_chamfer_dist` `region → image` · 例: `gallery2d_region`
-- `xsk2_isotropic_close` `region → region` · 例: `gallery2d_region`
-- `xcv2_hitmiss` `region → region` · 例: `gallery2d_region`
-- `xsk3_rank_majority` `region → region` · 例: `gallery2d_region`
-- `r2_inner_circle` (halcon: `inner_circle`) `region → region` · 例: `gallery2d_region`
-- `r2_inner_rectangle1` (halcon: `inner_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `r2_smallest_rectangle1` `region → region` · 例: `gallery2d_region`
-- `r2_smallest_circle` (halcon: `smallest_circle`) `region → region` · 例: `gallery2d_region`
-- `r2_smallest_rectangle2` (halcon: `smallest_rectangle2`) `region → region` · 例: `gallery2d_region`
-- `r2_sort_region` (halcon: `sort_region`) `region → region` · 例: `gallery2d_region`
-- `r2_union1` (halcon: `union1`) `region → region` · 例: `gallery2d_region`
-- `r2_partition_rectangle` (halcon: `partition_rectangle`) `region → region` · 例: `gallery2d_region`
-- `r2_runlength_features` (halcon: `runlength_features`) `region → feature` · 例: `gallery2d_region`
-- `r2_split_skeleton_lines` (halcon: `split_skeleton_lines`) `region → region` · 例: `gallery2d_region`, `poc_vessel_network`
-- `em_skeleton` `region → region` · 例: `gallery2d_region`
-- `r2_endpoints_skeleton` `region → region` · 例: `gallery2d_region`, `poc_fresco_craquelure`
-- `r3_background_seg` (halcon: `background_seg`) `region → region` · 例: `gallery2d_region`
-- `r3_clip_region` (halcon: `clip_region`) `region → region` · 例: `gallery2d_region`
-- `r3_eliminate_runs` (halcon: `eliminate_runs`) `region → region` · 例: `gallery2d_region`
-- `r3_rank_region` (halcon: `rank_region`) `region → region` · 例: `gallery2d_region`
-- `r3_region_features` (halcon: `region_features`) `region → feature` · 例: `gallery2d_region`
-- `r3_runlength_distribution` (halcon: `runlength_distribution`) `region → feature` · 例: `gallery2d_region`
-- `r3_select_region_point` (halcon: `select_region_point`) `region → region` · 例: `gallery2d_region`
-- `r3_partition_dynamic` (halcon: `partition_dynamic`) `region → region` · 例: `gallery2d_region`
-- `r3_polar_trans_region` (halcon: `polar_trans_region`) `region → region` · 例: `gallery2d_region`
-- `r3_label_to_region` (halcon: `label_to_region`) `region → region` · 例: `gallery2d_region`
-
-### region-morphology(1)
-- `xmh_majority` `region → region` · 例: `find_ops_by_meaning`, `gallery2d_region`
-
-### region-transform(1)
-- `xmh_bwperim` `region → region` · 例: `gallery2d_region`
-
-### restoration(12)
-- `xsk_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsk_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsk_unwrap_phase` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xcv_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsk2_wiener` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xcv3_inpaint_ns` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
-- `iv_wiener_deconv_spatial` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_unsharp_deblur` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
-- `iv_motion_deblur` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
-- `iv_backproject_superres` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_gradient_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
-
-### segment(7)
-- `sg_slic_superpixels` `image → region` · 例: `gallery2d_segmentation`
-- `sg_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`
-- `sg_gmm_segment` `image → region` · 例: `gallery2d_segmentation`, `poc_nuclei_ploidy`
-- `sg_kmeans_intensity` `image → region` · 例: `gallery2d_segmentation`
-- `sg_region_growing_seeded` `image → region` · 例: `gallery2d_segmentation`
-- `sg_normalized_cut_2` `image → region` · 例: `gallery2d_segmentation`
-- `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
-
-### segmentation(54)
-- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
-- `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
-- `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
-- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_am_thermal_to_ct`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
-- `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
-- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
-- `sk_canny` (halcon: `edges_image`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`
-- `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
-- `sk_slic` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
-- `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`, `poc_active_contours`, `poc_segmentation_gauntlet`
-- `sk_local_maxima` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
-- `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_vegetation_cover`, `threshold_family_agreement`
-- `cv_adaptive_mean` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `cv_adaptive_gauss` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `cv_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
-- `h_threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`, `threshold_family_agreement`
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
-- `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_document_scan`
-- `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
-- `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
-- `edges_image` (halcon: `edges_image`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
-- `watersheds` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
-- `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `regiongrowing` (halcon: `regiongrowing`) `image → region` · 例: `gallery2d_segmentation`
-- `local_max` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
-- `dual_threshold` (halcon: `dual_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `segment_image_mser` (halcon: `segment_image_mser`) `image → region` · 例: `gallery2d_segmentation`
-- `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` · 例: `gallery2d_segmentation`
-- `zero_crossing` (halcon: `zero_crossing`) `image → region` · 例: `gallery2d_segmentation`
-- `local_min` (halcon: `local_min`) `image → region` · 例: `gallery2d_segmentation`
-- `bin_threshold` (halcon: `bin_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
-- `fast_threshold` (halcon: `fast_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` · 例: `gallery2d_segmentation`
-- `pouring` (halcon: `pouring`) `image → region` · 例: `gallery2d_segmentation`
-- `xsk_random_walker` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`, `poc_segmentation_gauntlet`
-- `xsk_flood` `image → region` · 例: `gallery2d_segmentation`
-- `xcv_grabcut` `image → region` · 例: `gallery2d_segmentation`
-- `xcv_watershed_markers` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`
-- `xsk2_multiotsu` `image → image` · 例: `gallery2d_segmentation`, `poc_mri_bias_field`
-- `xsk2_h_maxima` `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`
-- `xcv2_meanshift` `image → image` · 例: `gallery2d_segmentation`
-- `xmh_bernsen` `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `xsk3_rank_otsu` `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `xsk3_h_minima` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
-- `xsk3_threshold_local_median` `image → region` · 例: `gallery2d_segmentation`
-- `xsk3_peak_local_max` `image → region` · 例: `gallery2d_segmentation`
-- `xkor_canny` `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
-- `it_region_to_bin` (halcon: `region_to_bin`) `image → image` · 例: `gallery2d_segmentation`
-
-### self-similarity(1)
-- `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
-
-### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
-- `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
-- `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `sk_tv` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `sk_wavelet` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`
-- `sk_nlm` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `sk_tv_bregman` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
-- `cv_bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_gaussian` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_nlmeans` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
-- `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
-- `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `mean_image` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
-- `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `smooth_image` (halcon: `smooth_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `sigma_image` (halcon: `sigma_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `coherence_enhancing_diff` (halcon: `coherence_enhancing_diff`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `bilateral_filter` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `simulate_motion` (halcon: `simulate_motion`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `simulate_defocus` (halcon: `simulate_defocus`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `xcv_edge_preserving` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xpil_smooth_more` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xpil_unsharp_mask` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsp_wiener` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `xsp_savgol` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsp_dct_denoise` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `xsp_cspline_smooth` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xwt_visushrink` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xwt_firm_denoise` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
-- `xwt_lf_reconstruct` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsk3_rank_mean_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xcv3_denoise_tvl1` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
-- `xcv3_pyr_laplacian` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xkor_gaussian` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xkor_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xkor_unsharp` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xkor_motion_blur` `image → image` · 例: `gallery2d_smoothing_rank`
-- `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` · 例: `gallery2d_smoothing_rank`
-
-### subpix(6)
-- `sp_local_max_sub_pix` (halcon: `local_max_sub_pix`) `image → contour` · 例: `gallery2d_geometry`, `poc_tacsim_marker_shear`
-- `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
-- `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
-- `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
-- `sp_plateaus` (halcon: `plateaus`) `image → contour` · 例: `gallery2d_geometry`
-- `sp_lowlands_center` (halcon: `lowlands_center`) `image → contour` · 例: `gallery2d_geometry`
-
-### tactile(5)
-- `tac_contact_mask` `image → region` · 例: `poc_tacsim_elastic_membrane`, `sim2real_and_alife`
-- `tac_height_from_shading` `image → image` · 例: `sim2real_and_alife`
-- `tac_surface_normal` `image → image` · 例: `sim2real_and_alife`
-- `tac_pressure_proxy` `image → image` · 例: `sim2real_and_alife`
-- `tac_shear_field` `image → image` · 例: `poc_tacsim_marker_shear`, `sim2real_and_alife`
-
-### texture(28)
-- `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
-- `local_bimodality` `image → image` · 例: `gallery2d_texture_freq`
-- `local_std` `image → image` · 例: `gallery2d_texture_freq`
-- `scale_select_std` `image → image` · 例: `gallery2d_texture_freq`
-- `bootstrap_std_error` `image → image` · 例: `gallery2d_texture_freq`
-- `structure_tensor_orientation` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`
-- `structure_tensor_coherence` `image → image` · 例: `gallery2d_texture_freq`
-- `gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_frangi` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
-- `sk_meijering` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_hessian` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_lbp` `image → image` · 例: `gallery2d_texture_freq`, `poc_real_texture_invariance`
-- `sk_entropy` (halcon: `entropy_image`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_shape_index` `image → image` · 例: `gallery2d_texture_freq`
-- `deviation_image` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
-- `texture_laws` (halcon: `texture_laws`) `image → image` · 例: `gallery2d_texture_freq`
-- `entropy_image` (halcon: `entropy_image`) `image → image` · 例: `gallery2d_texture_freq`
-- `gen_gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
-- `cooc_feature_matrix` (halcon: `cooc_feature_matrix`) `image → feature` · 例: `gallery2d_texture_freq`, `poc_real_texture_invariance`
-- `xsk_struct_coherence` `image → image` · 例: `gallery2d_texture_freq`
-- `xsk_meijering` `image → image` · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`
-- `xsk_sato` `image → image` · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`
-- `xsp_hilbert_env` `image → image` · 例: `gallery2d_texture_freq`
-- `xsk2_hog` `image → image` · 例: `gallery2d_texture_freq`
-- `f2_symmetry` (halcon: `symmetry`) `image → image` · 例: `gallery2d_texture_freq`
-- `tf_census_transform` `image → image` · 例: `gallery2d_texture_freq`
-- `tf_rank_transform` `image → image` · 例: `gallery2d_texture_freq`
-
-### texture-feature(1)
-- `xmh_pftas` `image → feature` · 例: `gallery2d_features`
-
-### texture/shape-feature(1)
-- `xmh_zernike` `image → feature` · 例: `gallery2d_features`
-
-### tomography(5)
-- `tm_radon_forward` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `tm_fbp_reconstruct` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `tm_sart_reconstruct` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `tm_backproject_unfiltered` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `tm_sinogram_denoise` `image → image` · 例: `gallery2d_physics_alife_3d`
-
-### transform(3)
-- `xmh_haar` `image → image` · 例: `gallery2d_geometry`
-- `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
-- `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
-
-### typed(159)
-- `tb_points_to_voxel` `points → volume` · 例: なし
-- `tb_estimate_point_normals` `points → points` · 例: なし
-- `tb_iss_keypoints` `points → signal` · 例: なし
-- `tb_project_points` `points → keypoints` · 例: なし
-- `tb_render_point_depth` `points → image` · 例: なし
-- `tb_statistical_outlier_removal` `points → points` · 例: なし
-- `tb_radius_outlier_removal` `points → points` · 例: なし
-- `tb_voxel_grid_downsample` `points → points` · 例: なし
-- `tb_mls_smooth` `points → points` · 例: なし
-- `tb_alpha_shape_boundary` `points → signal` · 例: なし
-- `tb_estimate_alpha` `points → feature` · 例: なし
-- `tb_arc_length` `points → feature` · 例: なし
-- `tb_resample_uniform` `points → points` · 例: なし
-- `tb_fit_spline_curve` `points → points` · 例: なし
-- `tb_mean_curvature` `points → signal` · 例: なし
-- `tb_gaussian_curvature` `points → signal` · 例: なし
-- `tb_estimate_normals` `points → points` · 例: なし
-- `tb_inertia_tensor` `points → matrix` · 例: なし
-- `tb_geodesic_distances` `points → signal` · 例: なし
-- `tb_farthest_point_sampling` `points → signal` · 例: なし
-- `tb_synthesize_silhouette` `points → image` · 例: なし
-- `tb_inside_outside` `points → signal` · 例: なし
-- `tb_superquadric_residual` `points → feature` · 例: なし
-- `tb_project` `points → keypoints` · 例: なし
-- `tb_jitter` `points → points` · 例: なし
-- `tb_random_rotation` `points → points` · 例: なし
-- `tb_random_scale` `points → points` · 例: なし
-- `tb_random_dropout` `points → points` · 例: なし
-- `tb_elastic_deform` `points → points` · 例: なし
-- `tb_cutout` `points → points` · 例: なし
-- `tb_region_growing` `points → volume` · 例: なし
-- `tb_euclidean_cluster` `points → volume` · 例: なし
-- `tb_plane_segmentation` `points → volume` · 例: なし
-- `tb_estimate_oriented_normals` `points → points` · 例: なし
-- `tb_occupancy_grid` `points → volume` · 例: なし
-- `tb_reflect_points` `points → points` · 例: なし
-- `tb_reflection_symmetry_score` `points → feature` · 例: なし
-- `tb_project_spherical` `points → image` · 例: なし
-- `tb_project_cylindrical` `points → image` · 例: なし
-- `tb_sphere_sdf` `points → volume` · 例: なし
-- `tb_box_sdf` `points → volume` · 例: なし
-- `tb_plane_sdf` `points → volume` · 例: なし
-- `tb_cylinder_sdf` `points → volume` · 例: なし
-- `tb_torus_sdf` `points → volume` · 例: なし
-- `tb_capsule_sdf` `points → volume` · 例: なし
-- `tb_pc_poisson_disk` `points → points` · 例: なし
-- `tb_pc_fill_sparse` `points → points` · 例: なし
-- `tb_pc_density_equalize` `points → points` · 例: なし
-- `tb_create_funct_1d_array` `signal → signal` · 例: なし
-- `tb_smooth_funct_1d_gauss` `signal → signal` · 例: なし
-- `tb_smooth_funct_1d_mean` `signal → signal` · 例: なし
-- `tb_derivate_funct_1d` `signal → signal` · 例: なし
-- `tb_integrate_funct_1d` `signal → signal` · 例: なし
-- `tb_zero_crossings_funct_1d` `signal → signal` · 例: なし
-- `tb_abs_funct_1d` `signal → signal` · 例: なし
-- `tb_negate_funct_1d` `signal → signal` · 例: なし
-- `tb_scale_y_funct_1d` `signal → signal` · 例: なし
-- `tb_sample_funct_1d` `signal → signal` · 例: なし
-- `tb_num_points_funct_1d` `signal → feature` · 例: なし
-- `tb_get_y_value_funct_1d` `signal → feature` · 例: なし
-- `tb_lowpass` `signal → signal` · 例: なし
-- `tb_highpass` `signal → signal` · 例: なし
-- `tb_bandpass` `signal → signal` · 例: なし
-- `tb_envelope` `signal → signal` · 例: なし
-- `tb_rms` `signal → feature` · 例: なし
-- `tb_local_std` `signal → signal` · 例: なし
-- `tb_quantize` `signal → signal` · 例: なし
-- `tb_companding_mu_law` `signal → signal` · 例: なし
-- `tb_resample` `signal → signal` · 例: なし
-- `tb_spectrogram` `signal → image` · 例: なし
-- `tb_zero_crossing_rate` `signal → feature` · 例: なし
-- `tb_find_peaks` `signal → signal` · 例: なし
-- `tb_cx_ifft` `cimage → image` · 例: なし
-- `tb_cx_magnitude` `cimage → image` · 例: なし
-- `tb_cx_phase` `cimage → image` · 例: なし
-- `tb_cx_real` `cimage → image` · 例: なし
-- `tb_cx_imag` `cimage → image` · 例: なし
-- `tb_cx_log_magnitude` `cimage → image` · 例: なし
-- `tb_cx_apply_transfer_function` `cimage → cimage` · 例: なし
-- `tb_mat_pinv` `matrix → matrix` · 例: なし
-- `tb_mat_cond` `matrix → feature` · 例: なし
-- `tb_stat_covariance` `matrix → matrix` · 例: なし
-- `tb_stat_correlation` `matrix → matrix` · 例: なし
-- `tb_stat_zscore` `signal → signal` · 例: なし
-- `tb_cplx_cr_residual` `cimage → feature` · 例: なし
-- `tb_dynsys_correlation_dimension` `points → feature` · 例: なし
-- `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
-- `tb_wetness` `rgbimage → rgbimage` · 例: なし
-- `tb_env_studio` `points → signal` · 例: なし
-- `tb_env_lightbox` `points → signal` · 例: なし
-- `tb_sensor_capture` `rgbimage → rgbimage` · 例: なし
-- `tb_lf_to_mla` `lightfield → image` · 例: なし
-- `tb_lf_subaperture` `lightfield → image` · 例: なし
-- `tb_lf_center_view` `lightfield → image` · 例: なし
-- `tb_lf_epi` `lightfield → image` · 例: なし
-- `tb_lf_refocus` `lightfield → image` · 例: なし
-- `tb_lf_synthetic_aperture` `lightfield → image` · 例: なし
-- `tb_lf_depth_from_focus` `lightfield → image` · 例: なし
-- `tb_lf_epi_slope` `lightfield → image` · 例: なし
-- `tb_spad_deadtime_apply` `counts → counts` · 例: なし
-- `tb_spad_deadtime_correct` `counts → counts` · 例: なし
-- `tb_tcspc_coates_correct` `counts → counts` · 例: なし
-- `tb_tcspc_irf_convolve` `counts → counts` · 例: なし
-- `tb_tcspc_background_subtract` `counts → counts` · 例: なし
-- `tb_dtof_depth` `counts → feature` · 例: なし
-- `tb_specular_diffuse_split` `rgbimage → rgbimage` · 例: なし
-- `tb_specular_coefficient_map` `rgbimage → image` · 例: なし
-- `tb_specular_free_transform` `rgbimage → rgbimage` · 例: なし
-- `tb_temporal_bandpass` `video → video` · 例: なし
-- `tb_temporal_band_power` `video → image` · 例: なし
-- `tb_rgb_to_quaternion` `rgbimage → qimage` · 例: なし
-- `tb_quaternion_to_rgb` `qimage → rgbimage` · 例: なし
-- `tb_quat_norm` `qimage → image` · 例: なし
-- `tb_quat_conjugate_image` `qimage → qimage` · 例: なし
-- `tb_quat_normalize_image` `qimage → qimage` · 例: なし
-- `tb_monogenic_amplitude` `qimage → image` · 例: なし
-- `tb_monogenic_phase` `qimage → image` · 例: なし
-- `tb_monogenic_orientation` `qimage → image` · 例: なし
-- `tb_quat_color_rotate` `qimage → qimage` · 例: なし
-- `tb_quat_color_filter` `qimage → qimage` · 例: なし
-- `tb_qft2` `qimage → qimage` · 例: なし
-- `tb_iqft2` `qimage → qimage` · 例: なし
-- `tb_fmcw_window_apply` `beatcube → beatcube` · 例: なし
-- `tb_range_doppler_map` `beatcube → image` · 例: なし
-- `tb_fmcw_range_profile` `beatcube → signal` · 例: なし
-- `tb_beamform_delay_sum` `beatcube → signal` · 例: なし
-- `tb_weighting_response` `signal → signal` · 例: なし
-- `tb_apply_weighting` `signal → signal` · 例: なし
-- `tb_equivalent_level` `signal → feature` · 例: なし
-- `tb_fly_lgmd_eta` `signal → signal` · 例: なし
-- `tb_fly_tau_from_expansion` `signal → signal` · 例: なし
-- `tb_magnus_lift_coefficient` `signal → signal` · 例: なし
-- `tb_drag_coefficient_sphere` `signal → signal` · 例: なし
-- `tb_intrinsics_to_fullseye` `matrix → matrix` · 例: なし
-- `tb_intrinsics_to_carla` `matrix → matrix` · 例: なし
-- `tb_normals_to_egi` `points → image` · 例: なし
-- `tb_keypoints_uv_to_points` `keypoints → points` · 例: なし
-- `tb_points_zyx_to_keypoints_uv` `points → keypoints` · 例: なし
-- `tb_keypoints_to_image2d` `keypoints → image` · 例: なし
-- `tb_countrate_to_counts` `counts → counts` · 例: なし
-- `tb_counts_to_countrate` `counts → counts` · 例: なし
-- `tb_temporal_median_window` `video → video` · 例: なし
-- `tb_moving_average_window` `video → video` · 例: なし
-- `tb_background_subtraction_window` `video → video` · 例: なし
-- `tb_frame_difference_causal` `video → video` · 例: なし
-- `tb_exponential_background` `video → video` · 例: なし
-- `tb_exponential_foreground` `video → video` · 例: なし
-- `tb_optical_flow_magnitude_stream` `video → video` · 例: なし
-- `tb_motion_history_image` `video → video` · 例: なし
-- `tb_motion_energy_image` `video → video` · 例: なし
-- `tb_three_frame_difference` `video → video` · 例: なし
-- `tb_running_gaussian_foreground` `video → video` · 例: なし
-- `tb_running_gaussian_background` `video → video` · 例: なし
-- `tb_temporal_bilateral` `video → video` · 例: なし
-- `tb_deflicker` `video → video` · 例: なし
-- `tb_shape_perturb` `points → points` · 例: なし
-- `tb_mirror_plane_from_pairs` `points → matrix` · 例: なし
-- `tb_landmark_asymmetry` `points → signal` · 例: なし
-- `tb_dem_ecef_to_geodetic` `points → points` · 例: なし
-
-### xldgeom(10)
-- `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_area_center` (halcon: `area_center_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_eccentricity` (halcon: `eccentricity_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_elliptic_axis` (halcon: `elliptic_axis_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_height_width_ratio` (halcon: `height_width_ratio_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_regress_contours` `contour → feature` · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
-- `xg_clip_contours` `contour → contour` · 例: `gallery2d_geometry`
-- `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: `gallery2d_geometry`
-- `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
-
-## 1-D operators(ops1d)by category
-_計 49 ops / 4 categories。_
-
+## Operators by family(族 → カテゴリ、全 op)
+
+_計 3192 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 221 · **lightfield** 17 · **photon** 17 · **specular** 13 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 14 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+
+### 2d(953 ops / 49 categories)
+
+1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
+
+#### 2d / 3d(12)
+- `vol_dilate` `volume → volume` — 3D ボリュームのグレースケール膨張。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
+- `vol_dilation_ball` `volume → volume` — 球形構造要素による 3D 二値膨張。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_erode` `volume → volume` — 3D ボリュームのグレースケール侵食。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
+- `vol_erosion_ball` `volume → volume` — 球形構造要素による 3D 二値侵食。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_gaussian` `volume → volume` — 3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`, `poc_am_thermal_to_ct`
+- `vol_median` `volume → volume` — 3D ボリュームのメディアンフィルタ。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_mip` `volume → image` — 最大値投影（Maximum Intensity Projection, MIP）で 3D ボリュームを 2D 画像に潰す。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`, `poc_cold_chain_excursion`
+- `vol_opening_ball` `volume → volume` — 球形構造要素による 3D 二値オープニング（侵食してから同じ球で膨張）。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
+- `vol_reg_dilate` `volume → volume` — 3D 二値領域の膨張（region ボリュームの膨張）。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_reg_erode` `volume → volume` — 3D 二値領域の侵食（region ボリュームの侵食）。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_slice` `volume → image` — 3D ボリュームから 1 枚の 2D スライスを取り出す。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+- `vol_threshold` `volume → volume` — 3D ボリュームの大域しきい値処理（2-D の ``_threshold`` の 3D 版）。対応する HALCON op は指定されていない。 · 例: `gallery2d_physics_alife_3d`
+
+#### 2d / arithmetic(10)
+- `abs_image` (halcon: `abs_image`) `image → image` — 画素値の絶対値を取る(``np.abs``)。fullseye の ``image`` は既に [0,1] 契約 (非負)なので、通常の画像に対しては何も変えない**恒等写像**として働く。差分 画像など符号つきの中間結果を直接渡したときだけ意味を持つ。HALCON の ``abs_image``（Calculate the absolute value (modulus) of an image.）の代役。 · 例: `gallery2d_gray_arith`, `genspark_external_review`
+- `acos_image` (halcon: `acos_image`) `image → image` — ``arccos(x) / π`` で [0,1] を [0,1] に写す逆余弦 LUT。``asin_image`` を 反転させた形(単調減少)で、x=0 で最大(1)、x=1 で最小(0)になる。HALCON の ``acos_image``（Calculate the arccosine of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `asin_image` (halcon: `asin_image`) `image → image` — ``arcsin(x) / (π/2)`` で [0,1] を [0,1] に写す逆正弦 LUT。x=0 近傍と x=1 近傍で傾きが急峻になり(定義域端で導関数が発散する)、中間階調を圧縮して 両端のコントラストを強調する効果を持つ。HALCON の ``asin_image`` （Calculate the arcsine of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `atan_image` (halcon: `atan_image`) `image → image` — ``arctan(x) / (π/2)`` で [0,1] を [0,1] に写す逆正接 LUT。中心付近 (x≈0.5)で傾きが最大、両端に近づくほど傾きが緩やかになる ―― ``asin_image`` とは逆に**両端でなく中間のコントラストを強調する**S字カーブ。HALCON の ``atan_image``（Calculate the arctangent of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `cos_image` (halcon: `cos_image`) `image → image` — ``(cos(2πx) + 1) / 2`` による周期 LUT。``sin_image`` と位相が π/2 ずれた 版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の ``cos_image``（Calculate the cosine of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `exp_image` (halcon: `exp_image`) `image → image` — ``(exp(x) - 1) / (e - 1)`` という指数写像で [0,1] を [0,1] に写す(x=1 で ちょうど 1 になるよう正規化してある)。低い階調を圧縮し明部を強調する コントラスト強調で、``log_image`` とは逆向きのカーブ。HALCON の ``exp_image``（Calculate the exponentiation of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `log_image` (halcon: `log_image`) `image → image` — ``log1p(x) / log(2)`` で [0,1] を [0,1] に写す対数圧縮(x=1 で 1 になる 正規化つき)。明部を圧縮し暗部のディテールを持ち上げる、``exp_image`` と逆の トーンカーブ。HALCON の ``log_image``（Calculate the logarithm of an image.） の代役。 · 例: `gallery2d_gray_arith`, `poc_weld_radiograph_porosity`
+- `sin_image` (halcon: `sin_image`) `image → image` — ``(sin(2πx) + 1) / 2`` で階調を正弦波状に折り返す周期 LUT。x=0 と x=1 で 0.5 に戻り、x=0.25/0.75 付近で 0/1 に達する ―― 単調増加ではなく**同じ出力を 複数の入力階調が共有する**非可逆変換になる。HALCON の ``sin_image`` （Calculate the sine of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `sqrt_image` (halcon: `sqrt_image`) `image → image` — [0,1] に clip した画素値の平方根を取る。暗部を持ち上げるガンマ的な階調 圧縮になる(√x は x=0.25 を 0.5 へ、x=0.04 を 0.2 へ押し上げる)。HALCON の ``sqrt_image``（Calculate the square root of an image.）に相当。 · 例: `gallery2d_gray_arith`
+- `tan_image` (halcon: `tan_image`) `image → image` — 画素値の正接（tangent）をとる逐点（pointwise）変換。HALCON の ``tan_image``（画像の正接を計算）に相当するが正規化規約が異なる近似。 · 例: `gallery2d_gray_arith`
+
+#### 2d / artificial-life(12)
+- `alife_curvature_flow` `image → image` — Mean-curvature motion / level-set smoothing (curve-shortening flow). · 例: `gallery2d_physics_alife_3d`
+- `alife_cyclic_ca` `image → image` — Cyclic cellular automaton (Fisch-Gravner-Griffeath) -> spiral waves. · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_dla` `image → image` — Deterministic diffusion-limited-aggregation (DLA) growth proxy. · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_gray_scott` `image → image` — Gray-Scott reaction-diffusion seeded by the image. · 例: `gallery2d_physics_alife_3d`
+- `alife_langton_ant` `image → image` — Langton's ant (turmite) walking the thresholded image lattice. · 例: `gallery2d_physics_alife_3d`
+- `alife_lenia` `image → image` — Lenia continuous cellular automaton (Bert Chan, Complex Systems 2019). · 例: `gallery2d_physics_alife_3d`
+- `alife_life_step` `image → image` — Life-like totalistic cellular automaton (Conway-family B/S rules). · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_perona_malik` `image → image` — Perona-Malik anisotropic (edge-preserving) diffusion. · 例: `gallery2d_physics_alife_3d`
+- `alife_reaction_bz` `image → image` — Belousov-Zhabotinsky-like excitable medium (Greenberg-Hastings automaton). · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_sandpile` `image → image` — Abelian sandpile / self-organised criticality (Bak-Tang-Wiesenfeld 1987). · 例: `gallery2d_physics_alife_3d`
+- `alife_turing` `image → image` — Gierer-Meinhardt activator-inhibitor system (Turing morphogenesis). · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_wolfram1d` `image → image` — Wolfram elementary 1-D cellular automaton, drawn as a spacetime diagram. · 例: `gallery2d_physics_alife_3d`
+
+#### 2d / artistic(3)
+- `xcv_pencil_sketch` `image → image` — OpenCV の pencilSketch(鉛筆画風レンダリング)。 · 例: `gallery2d_color_artistic`
+- `xcv_stylization` `image → image` — OpenCV の stylization(絵画風/カートゥーン風のノンフォトリアリスティック・ レンダリング)。 · 例: `gallery2d_color_artistic`
+- `xpil_emboss` `image → image` — Pillow のエンボス（浮き彫り）フィルタ。``PIL.ImageFilter.EMBOSS`` の固定3x3 カーネルを掛ける（斜め方向の勾配を検出し、平坦部を中間グレーに落とす古典的な NPR フィルタ）。 · 例: `gallery2d_color_artistic`
+
+#### 2d / augmentation(10)
+- `aug_barrel` `image → image` — Radial lens distortion using the standard polynomial model ``r_src = r*(1 + k*r^2)`` on normalised radius ``r`` (1 = image corner): BARREL (straight lines bow outwards) when ``b < 0.5``, PINCUSHION when ``b >= 0.5``, with ``k = 0.6*a`` (a=0 -> undistorted). The destination grid is inverse-mapped and resampled bilinearly with ``ndimage.map_coordinates`` (``mode="reflect"``), so no pixel is left undefined. Output keeps HxW. · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_chromatic` `image → image` — Lateral chromatic aberration proxy for a gray image. True lateral CA magnifies the colour channels differently, so edges gain a coloured fringe; on a single channel the observable signature is a SHIFTED copy of the edge (high-pass) energy superposed on the image. Here the high-pass ``v - gaussian(v, 1)`` is shifted by ``s = 1 + int(4*a)`` px horizontally and added back with amplitude ``0.1 + 0.9*b``. Flat regions have zero high-pass, so only edges fringe -- exactly the real behaviour. · 例: `gallery2d_color_artistic`
+- `aug_cutout` `image → image` — Cutout / random-erasing occlusion (DeVries & Taylor 2017; Zhong et al. 2020): a square patch of side ``max(1, a*min(H,W))`` is erased from the image, forcing a pipeline to survive partial occlusion instead of relying on one salient blob. ``b`` selects the (deterministic, seeded-from-b) patch position AND the fill value: b <= 0.5 -> black (0.0), b > 0.5 -> mid-gray (0.5). The patch is always fully inside the frame. · 例: `gallery2d_color_artistic`
+- `aug_fixed_pattern` `image → image` — Fixed-pattern noise (FPN / photo-response non-uniformity). Unlike read noise this pattern is STATIC across frames: a per-column offset plus a per-row offset, each drawn once and held. ``a`` sets the amplitude ``0.02 + 0.2*a``; ``b`` selects WHICH fixed pattern (the generator is seeded from b alone, so sweeping a changes only the strength of one pattern). Column FPN dominates (2/3 weight) as it does in CMOS column-parallel ADCs. · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_jpeg_blocks` `image → image` — JPEG blocking / ringing artefacts. The image (scaled to 0..255) is cut into 8x8 blocks, each transformed with an orthonormal 2-D DCT-II (``scipy.fft.dctn``), quantised with the STANDARD JPEG Annex-K luminance table scaled by ``(1 + 40*a)/16`` (a=0 -> near-lossless, a=1 -> heavy quantisation), then reconstructed with the inverse DCT. ``b`` shifts the 8x8 block grid phase by ``int(7*b)`` px in both axes, i.e. moves where the block seams fall. Images that are not a multiple of 8 are edge-replicate padded and cropped back to HxW (so 4x4 inputs are handled). · 例: `gallery2d_color_artistic`, `poc_prnu_camera_fingerprint`, `sim2real_and_alife`
+- `aug_motion_blur` `image → image` — Linear motion blur: convolution with a normalised LINE (box) kernel, the point-spread function of a constant-velocity camera/scene pan during the exposure. ``a`` sets the streak length ``L = 3 + 20*a`` px (forced odd and clamped so the kernel never exceeds the image), ``b`` sets the streak angle ``b*180`` degrees. Border handling is ``reflect`` so the frame edge does not darken. Energy-preserving (kernel sums to 1). · 例: `gallery2d_color_artistic`
+- `aug_read_noise` `image → image` — Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of signal (unlike shot noise). ``sigma = 0.005 + 0.15*a``. ``b`` mixes in a row-correlated component: a per-row bias of std ``0.5*b*sigma`` shared by the whole row, which is what a shared row amplifier / row-wise ADC produces (visible as horizontal banding). Seeded from (a, b). · 例: `gallery2d_color_artistic`
+- `aug_rolling_shutter` `image → image` — Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so a scene (or camera) panning horizontally shifts each row by an amount linear in its row index -- a pure horizontal shear. ``a`` sets the peak shift ``0.25*W*a`` px (the shear is centred so the middle row is unmoved), ``b`` sets the pan direction (b < 0.5 -> shift right with increasing row, otherwise left). Resampled bilinearly with reflecting borders. · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_shot_noise` `image → image` — Photon (Poisson) shot noise -- the quantum floor of every image sensor. · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_vignette` `image → image` — Radial lens vignetting following the natural cos^4 falloff law. With ``r`` the normalised distance from the image centre and ``R = 0.35 + 1.15*b`` the falloff radius, the transmission is ``cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2`` -- the textbook cos^4 law. ``a`` blends it in: ``out = v * (1 - a + a*falloff)``, so a=0 is a no-op and a=1 is full vignetting. Centre stays brightest; strictly darkening, never amplifying. · 例: `gallery2d_color_artistic`, `poc_solar_el_inspection`, `sim2real_and_alife`
+
+#### 2d / barcode(1)
+- `decode_barcode` (halcon: `find_bar_code`) `image → feature` — 中央走査線上の明暗の切り替わり回数を数える簡易バーコード風特徴量。HALCON の ``find_bar_code``（Detect and read bar code symbols in an image.）とは似て非なるもので、シンボル体系の判定やデータのデコードは一切行わない（バー「数」を数えるだけ）。 · 例: `gallery2d_physics_alife_3d`, `poc_barcode_1d`
+
+#### 2d / bridge(18)
+- `contour_to_img` `contour → image` — XLD 輪郭を**その輪郭自身の座標系に描き戻す** —— 43 本の op が作るのに、 画像に落とせる op は 1 本も無かった。 · 例: `gallery2d_bridge`
+- `counts_to_img` `counts → image` — 非負整数の 1-D カウント列を**棒グラフ**にして画像へ戻す。 · 例: `gallery2d_bridge`
+- `feature_to_img` `feature → image` — スカラの feature を**目盛りつきの帯**にして画像へ戻す —— 2-D 台帳で **125 本の op が作るのに、画像に落とせる op が 1 本も無かった** sort。 · 例: `gallery2d_bridge`
+- `img_to_beatcube` `image → beatcube` — 画像の明点を FMCW レーダーの標的(距離 = 列、速度 = 行)として読み、複素ビート立方体 (A,C,S) にする。 · 例: `gallery2d_bridge`
+- `img_to_cimage` `image → cimage` — 画像を振幅とし、位相を画素値と傾きから与えた複素場 (H,W) complex128 にする。 · 例: `gallery2d_bridge`
+- `img_to_counts` `image → counts` — 画像の 1 行(または 1 列)を光子の期待値として読み、Poisson 標本の 1-D カウント列にする。 · 例: `gallery2d_bridge`
+- `img_to_keypoints` `image → keypoints` — 画像の局所極大を像面上の点 (u, v) = (col, row) の (N,2) にする。 · 例: `gallery2d_bridge`
+- `img_to_lightfield` `image → lightfield` — 画像を前景/背景の 2 層に分け、視差つきの 4-D ライトフィールド (V,U,H,W) にする。 · 例: `gallery2d_bridge`
+- `img_to_matrix` `image → matrix` — 画像 (H,W) をそのまま H×W の数値行列(sort ``matrix``)として扱う —— 純粋なキャスト。 · 例: `gallery2d_bridge`
+- `img_to_monogenic` `image → qimage` — 画像の単一スケールのモノジェニック信号(四元数場 (H,W,4)、sort ``qimage``)を作る。 · 例: `gallery2d_bridge`
+- `img_to_points` `image → points` — 画像を高さ場として読み、(x, y, z) の点群 (N,3) にする。 · 例: `gallery2d_bridge`
+- `img_to_projection_profile` `image → signal` — 画像を 1 方向へ潰した**射影プロファイル**を 1-D の signal にする ―― 版面解析の基本量。 · 例: `gallery2d_bridge`
+- `img_to_rgb` `image → rgbimage` — グレー画像に色相・彩度を与え、(H,W,3) の RGB 画像(sort ``rgbimage``)にする。 · 例: `gallery2d_bridge`
+- `img_to_signal` `image → signal` — 画像の 1 行(または 1 列)の濃度プロファイルを 1-D の signal にする。 · 例: `gallery2d_bridge`
+- `img_to_video` `image → video` — 画像を一定速度で平行移動させた T フレームの動画 (T,H,W) にする。 · 例: `gallery2d_bridge`
+- `img_to_volume` `image → volume` — 画像を高さ場として押し出し、(D,H,W) の体積(z 先頭)にする。 · 例: `gallery2d_bridge`
+- `matrix_to_img` `matrix → image` — 行列を**見るための濃淡**にして画像へ戻す —— キャストではない。 · 例: `gallery2d_bridge`
+- `signal_to_img` `signal → image` — 1-D の signal を**折れ線の図**にして画像へ戻す —— 「作った列を見る」入口。 · 例: `gallery2d_bridge`
+
+#### 2d / classification(1)
+- `classify_shape` `region → feature` — 最大の連結領域について円形度（circularity）を計算する形状分類の基礎特徴量。対応する単体の HALCON op は指定されていない。 · 例: `gallery2d_features`
+
+#### 2d / color(8)
+- `access_channel` (halcon: `access_channel`) `color → image` — 多チャンネル画像から 1 チャンネルを取り出す。HALCON の ``access_channel`` （多チャンネル画像の 1 チャンネルにアクセスする）に相当。 · 例: `gallery2d_color_artistic`, `genspark_external_review`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
+- `cfa_to_rgb` (halcon: `cfa_to_rgb`) `image → color` — Bayer 配列（CFA: Color Filter Array）から RGB 画像へのデモザイク処理。HALCON の ``cfa_to_rgb``（単板カラーフィルタアレイ画像を RGB 画像に変換する）に近似。 · 例: `gallery2d_color_artistic`
+- `linear_trans_color` (halcon: `linear_trans_color`) `color → color` — 3x3 の混合行列でチャンネル間を線形変換する（アフィン色変換）。HALCON の ``linear_trans_color``（多チャンネル画像の色値のアフィン変換を計算する） に相当（本実装はオフセット項なしの純粋な線形変換）。 · 例: `gallery2d_color_artistic`
+- `principal_comp` (halcon: `principal_comp`) `color → color` — 3 チャンネルの主成分分析（PCA）を行い、色空間を分散の大きい順に並べ替える。 HALCON の ``principal_comp``（多チャンネル画像の主成分を計算する）に相当。 · 例: `gallery2d_color_artistic`
+- `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` — RGB 画像を輝度（グレースケール）に変換する。HALCON の ``rgb1_to_gray`` / ``rgb3_to_gray``（RGB 画像をグレースケール画像に変換する）の両方が、 このひとつの実装に割り当てられている。 · 例: `gallery2d_color_artistic`
+- `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` — RGB 画像を輝度（グレースケール）に変換する。HALCON の ``rgb1_to_gray`` / ``rgb3_to_gray``（RGB 画像をグレースケール画像に変換する）の両方が、 このひとつの実装に割り当てられている。 · 例: `gallery2d_color_artistic`
+- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` — RGB 画像を別の色空間（HSV / Lab / YUV / XYZ）へ変換する。HALCON の ``trans_from_rgb``（RGB 色空間から任意の色空間への変換）に相当。 · 例: `gallery2d_color_artistic`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
+- `trans_to_rgb` (halcon: `trans_to_rgb`) `color → color` — 色空間から RGB へ戻す逆変換。HALCON の ``trans_to_rgb``（任意の色空間から RGB 色空間への変換）に相当するとされるが、**実装は HSV→RGB の 1 方向だけ** しか持たない。 · 例: `gallery2d_color_artistic`
+
+#### 2d / contour(25)
+- `affine_trans_contour_xld` (halcon: `affine_trans_contour_xld`) `contour → contour` — 輪郭の各点を画像中心を軸に回転(``-20°〜+20°``、``a`` で決まる)する。 HALCON の ``affine_trans_contour_xld``（Apply an arbitrary affine 2D transformation to XLD contours.）は任意のアフィン行列(平行移動・拡大縮小・ せん断を含む)を取れるが、この代役では純粋な回転のみに単純化している (近似)。 · 例: `gallery2d_contour_measure`
+- `affine_trans_polygon_xld` (halcon: `affine_trans_polygon_xld`) `contour → contour` — XLD 輪郭（多角形/曲線の頂点列）にアフィン回転を掛ける。画像中心を基準に角度 ``-20°+40a`` で回転させる（せん断・平行移動は行わない、回転のみの部分アフィン）。b は未使用。 · 例: `gallery2d_contour_measure`
+- `close_contours_xld` (halcon: `close_contours_xld`) `contour → contour` — 各輪郭の始点を末尾に複製して追加し、開いた折れ線を閉じたループにする (点数 2 以上の輪郭のみ)。HALCON の ``close_contours_xld``（Close an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
+- `contour_point_num_xld` (halcon: `contour_point_num_xld`) `contour → feature` — XLD 輪郭群のうち最も点数の多い輪郭を選び、その頂点数を 500 点で正規化して [0,1] で返す（500 点以上は 1.0 に飽和）。a, b は未使用。輪郭が無ければ 0 を返す。 · 例: `gallery2d_contour_measure`
+- `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` — XLD 輪郭をラスタ化して region に変換する。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
+- `edges_color_sub_pix` (halcon: `edges_color_sub_pix`) `color → contour` — カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の ``edges_color_sub_pix``（Deriche/Shen/Canny でサブピクセル精度のカラー エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では ない**——``_edges_color`` の勾配強度をしきい値二値化し、8 連結の ラベリング（``scipy.ndimage.label``）でつないだ画素座標をそのまま 輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。 · 例: `gallery2d_contour_measure`
+- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` — サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_ normals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した 後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_ refine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で 真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して いた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
+- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` — 各 XLD 輪郭を 1 本の直線で近似する。HALCON の ``fit_line_contour_xld``（Approximate XLD contours by line segments.）に相当。 · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
+- `gen_contour_region_xld` (halcon: `gen_contour_region_xld`) `region → contour` — region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。skimage があれば ``find_contours``（marching squares によるサブピクセル輪郭）、無ければ自前の Moore 近傍追跡（8 近傍、Jacob の停止条件）にフォールバックする。a, b は未使用。 · 例: `gallery2d_contour_measure`
+- `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` — 輪郭(点列)を画素グリッドにラスタライズしてから、``1+2*a`` 回だけ 二値膨張して太らせ、連結した領域マスクを作る(細い線のままだと ``region`` の {0,1} 契約上「線が繋がって見えない」ことがあるための補強)。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
+- `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` — XLD 輪郭（多角形の頂点列）を region（画素マスク）へ変換する。輪郭点を最近傍画素に打点したのち、``1+2a`` 回の二値膨張（dilation）で線を太らせて連結させる。b は未使用。 · 例: `gallery2d_contour_measure`
+- `lines_color` (halcon: `lines_color`) `color → contour` — カラー画像の線（リッジ）を検出する。HALCON の ``lines_color``（カラーの 線とその幅を検出する）に相当するとされるが、**線幅は推定しない**——輝度 画像上のガウシアン・ラプラシアン応答をしきい値二値化して連結成分を 輪郭として返すだけで、線幅（HALCON 側が返す値）に相当する出力は持たない。 · 例: `gallery2d_contour_measure`
+- `lines_facet` (halcon: `lines_facet`) `image → contour` — 線状構造（リッジ）を検出して輪郭（XLD contour）として返す。実装は Frangi フィルタ（``skimage.filters.frangi``、多スケール σ=1..3 のリッジ強調）で線らしさを求め、閾値 ``0.1+0.4a`` を超える連結成分の画素座標をそのまま輪郭点列として出力する。b は未使用。 · 例: `gallery2d_contour_measure`
+- `lines_gauss` (halcon: `lines_gauss`) `image → contour` — 線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調 フィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群 として返す。HALCON の ``lines_gauss``（Detect lines and their width.）が 本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に 単純化している(線幅の情報は返らない近似)。 · 例: `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
+- `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` — 輪郭の各点を画像中心からの極座標(半径・角度)に変換し、疑似的な画素 座標(半径を ``H`` or ``W`` の大きい方でスケール、角度を [0,1] に写像)へ 詰め直す。HALCON の ``polar_trans_contour_xld``（Transform a contour in an annular arc to polar coordinates.）に相当する簡易な座標変換。 · 例: `gallery2d_contour_measure`
+- `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` — 輪郭の各点に、列位置に応じた疑似的な遠近収縮(``d = 1 + 0.3*a*(col - 中心)/幅``で各点の座標を割る)を適用する。真の 3x3 ホモグラフィ行列による 射影変換ではなく、片方向だけの簡易な縮尺変化で近似している点に注意。 HALCON の ``projective_trans_contour_xld``（Apply a projective transformation to an XLD contour.）の代役。 · 例: `gallery2d_contour_measure`
+- `select_contours` (halcon: `select_contours_xld`) `contour → contour` — 点数（長さ）でフィルタして XLD 輪郭を選別する。HALCON の ``select_contours_xld``（Select XLD contours according to several features.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
+- `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` — 既存の輪郭(XLD contour)集合から、点数が閾値(``3+40*a``)以上のものだけ を残すフィルタ。HALCON の ``select_contours_xld``（Select XLD contours according to several features.）は面積・円形度など任意の特徴で選別できる 汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に 固定している(近似)。 · 例: `gallery2d_contour_measure`
+- `select_shape_xld` (halcon: `select_shape_xld`) `contour → contour` — 点数の少ない XLD 輪郭を足切りするフィルタ。輪郭の頂点数が ``3+40a`` 点未満のものを除去する。b は未使用。 · 例: `gallery2d_contour_measure`
+- `shape_trans_xld` (halcon: `shape_trans_xld`) `contour → contour` — 輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す (``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the shape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類 のみを実装している(近似)。 · 例: `gallery2d_contour_measure`
+- `sk_find_contours` `image → contour` — 等高線抽出(marching squares)。グレースケール画像上で指定したレベル値と交差する曲線を辿り、サブピクセル精度の輪郭座標列の集合として返す —— 二値画像の外周だけでなく、連続値の等高線も扱える点が二値輪郭抽出と違う。 · 例: `gallery2d_bridge`, `gallery2d_contour_measure`
+- `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` — 移動平均による XLD 輪郭の平滑化。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
+- `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` — 輪郭の座標列を移動平均(窓幅 ``2*(1+3*a)+1``)で平滑化する。輪郭の ギザギザ(画素境界由来のジグザグ)を滑らかにする。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。 · 例: `gallery2d_contour_measure`
+- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` — マーチングスクエア法(``skimage.measure.find_contours``)によるレベル クロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を サブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix`` （Extract level crossings from an image with subpixel accuracy.）に相当。 · 例: `gallery2d_contour_measure`, `poc_peg_insertion_tactile`, `poc_screw_thread_metrology`
+- `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` — LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を ``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の ``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の ``zero_crossing_sub_pix``（Extract zero crossings from an image with subpixel accuracy.）に相当。 · 例: `gallery2d_contour_measure`
+
+#### 2d / decomposition(7)
+- `dc_homomorphic` `image → image` — Homomorphic filter: high-emphasis of log(I) in the Fourier domain -> [0,1]. · 例: `gallery2d_texture_freq`, `poc_document_scan`, `poc_mri_bias_field`
+- `dc_local_contrast_norm` `image → image` — Local contrast normalisation: (I - mean_w) / (std_w + eps), centred at 0.5. · 例: `gallery2d_texture_freq`
+- `dc_retinex` `image → image` — Single-scale retinex reflectance: log(I) - log(Gauss_sigma(I)) -> [0,1]. · 例: `gallery2d_texture_freq`, `poc_bone_trabecular_thickness`
+- `dc_rpca_lowrank` `image → image` — Robust-PCA low-rank (background) part. · 例: `blas_thread_budget`, `gallery2d_texture_freq`
+- `dc_rpca_sparse` `image → image` — Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5. · 例: `gallery2d_texture_freq`
+- `dc_structure_texture` `image → image` — Structure / cartoon part of the image (TV-L2, Chambolle). · 例: `gallery2d_texture_freq`, `poc_fiber_orientation`
+- `dc_texture_residual` `image → image` — Texture / detail layer = input - structure, centred at 0.5. · 例: `gallery2d_texture_freq`
+
+#### 2d / deformation(3)
+- `deform_ffd` `image → image` — Cubic B-spline free-form deformation (Rueckert et al., IEEE TMI 1999). · 例: `gallery2d_geometry`
+- `deform_mls` `image → image` — Moving-least-squares image deformation, affine variant (Schaefer 2006). · 例: `gallery2d_geometry`
+- `deform_tps` `image → image` — Thin-plate-spline warp over a 5x5 control grid (Bookstein, TPAMI 1989). · 例: `gallery2d_geometry`
+
+#### 2d / domain(2)
+- `it_crop_domain` (halcon: `crop_domain`) `image → image` — crop_domain: restrict the image domain to the central ``a`` window, zeroing every pixel outside it (pixels outside the domain are undefined -> 0). ``a`` sets the kept window fraction; ``b`` is ignored. · 例: `gallery2d_gray_arith`
+- `it_full_domain` `image → image` — full_domain: expand the domain of the image to the full rectangle. A plain numpy array already carries a full domain, so this is the identity -- the genuine, correct behaviour of full_domain for such images. ``a``/``b`` ignored. · 例: `gallery2d_gray_arith`
+
+#### 2d / edges(58)
+- `corner_response` (halcon: `points_harris`) `image → image` — Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。 · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
+- `cv_corner_harris` (halcon: `points_harris`) `image → image` — Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。 · 例: `gallery2d_edges`
+- `cv_laplacian` (halcon: `laplace`) `image → image` — ラプラシアンフィルタ(OpenCV 実装)。2 階微分による等方的なエッジ/ブロブ検出で、輪郭のみならず孤立点にも強く反応する(ノイズにも敏感)。 · 例: `gallery2d_edges`
+- `cv_min_eigen` (halcon: `points_harris`) `image → image` — 最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。 · 例: `gallery2d_edges`
+- `cv_precorner` (halcon: `corner_response`) `image → image` — コーナー候補検出(preCornerDetect、OpenCV 実装)。1 次・2 次微分を組み合わせた特殊な式でコーナーらしさを符号付きスコア化する —— 本来は ``cv2.cornerSubPix`` によるサブピクセル精密化の前段候補検出として使う関数。 · 例: `gallery2d_edges`
+- `cv_scharr` (halcon: `edges_image`) `image → image` — Scharr 勾配の大きさ(OpenCV 実装)。水平・垂直それぞれの Scharr 微分の絶対値を足し合わせて勾配強度とする —— sk_scharr(skimage 版)と同種のエッジ検出だが、合成方法(平方和のノルムではなく絶対値の和)が異なるため同一結果にはならない。 · 例: `gallery2d_edges`
+- `derivate_gauss` (halcon: `derivate_gauss`) `image → image` — ガウス微分(``order=(1,0)`` と ``(0,1)``)の勾配強度 ``hypot`` を [0,1] に正規化したもの。ガウシアンで平滑化してから微分するので、ノイズに強い エッジ検出器として働く。HALCON の ``derivate_gauss``（Convolve an image with derivatives of the Gaussian.）に相当。 · 例: `gallery2d_edges`
+- `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` — DoG(Difference of Gaussians、2 段階の異なるシグマでぼかした画像の差) によるバンドパスエッジ/ブロブ検出。LoG の高速近似として知られる古典的手法。 HALCON の ``diff_of_gauss``（Approximate the LoG operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`
+- `dog` (halcon: `diff_of_gauss`) `image → image` — 差分ガウシアン（Difference of Gaussians, DoG）。HALCON の ``diff_of_gauss``（Approximate the LoG operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`
+- `dots_image` (halcon: `dots_image`) `image → image` — ガウシアンラプラシアン（Laplacian of Gaussian, LoG）フィルタ。σ = 0.5+2.5a のガウス核でラプラシアンを取り、signed01（符号つき値を [0,1]、0.5=応答ゼロ）で正規化する。b は未使用。円形の点状パターン（ドット）はガウシアンの等方性からくる強い LoG 応答を示すため、円形ドットの強調に使われる。 · 例: `gallery2d_edges`
+- `edge_transition_width` `image → image` — **エッジの遷移幅**(= その場の実効 PSF の広がり)を画素単位で測る。 · 例: `gallery2d_edges`
+- `edges_color` (halcon: `edges_color`) `color → image` — カラーエッジの強度を検出する。HALCON の ``edges_color``（Canny/Deriche/Shen フィルタでカラーエッジを抽出する）に相当するとされるが、**実装はフィルタ 選択式ではなく Di Zenzo のマルチチャンネル勾配法に固定**されている。 · 例: `gallery2d_edges`
+- `f2_shock` (halcon: `shock_filter`) `image → image` — Osher-Rudin shock filter: I_t = -sign(Lap I)*|grad I|, morphological form. · 例: `gallery2d_edges`
+- `f2_shock_diffuse` `image → image` — Regularised shock filter: diffuse, then shock, repeated (Alvarez-Mazorra). · 例: `gallery2d_edges`
+- `f2_topographic` (halcon: `topographic_sketch`) `image → image` — Haralick topographic primal sketch: classify every pixel from its gradient magnitude and the two Hessian eigenvalue signs into peak / pit / ridge / ravine / saddle / flat / hillside and emit the class as a gray code. · 例: `gallery2d_edges`
+- `frei_amp` (halcon: `frei_amp`) `image → image` — Frei-Chen 等方性エッジ検出。重み ``√2`` を持つ 2 本のカーネル対から ``hypot`` で振幅を求める ―― Sobel より各方向への感度差が小さい(等方的) とされる古典的カーネル。HALCON の ``frei_amp``（Detect edges (amplitude) using the Frei-Chen operator.）に相当。 · 例: `gallery2d_edges`
+- `frei_dir` (halcon: `frei_dir`) `image → image` — Frei-Chen 型カーネルによるエッジ方向（角度）マップ。水平カーネル ``_FREI[0]``（行/縦方向勾配）と垂直カーネル ``_FREI[1]``（列/横方向勾配）への畳み込み応答から ``arctan2(gy, gx)`` を計算し、``sobel_dir``/``prewitt_dir`` と同じ規約で [0,1] に写す（0/1 が -180°、0.5 が 0°）。a, b は未使用。 · 例: `gallery2d_edges`
+- `grad_dir` `image → image` — 勾配方向（エッジの向き）を画像として返す。対応する HALCON op は指定されていない（fullseye 独自）。 · 例: `gallery2d_edges`
+- `kirsch_amp` (halcon: `kirsch_amp`) `image → image` — Kirsch コンパスフィルタの振幅。8 方向に回転させたカーネル群それぞれで 畳み込み、絶対値の最大値を取ることで方向に依らない強いエッジ応答を得る。 HALCON の ``kirsch_amp``（Detect edges (amplitude) using the Kirsch operator.）に相当。 · 例: `gallery2d_edges`
+- `kirsch_dir` (halcon: `kirsch_dir`) `image → image` — Kirsch コンパスフィルタで最も強く応答した方向のインデックス(8 方向中の ``argmax``)を [0,1] に正規化して返す。``kirsch_amp`` と対になる方向成分。 HALCON の ``kirsch_dir``（Detect edges (amplitude and direction) using the Kirsch operator.）に相当。 · 例: `gallery2d_edges`
+- `laplace` (halcon: `laplace`) `image → image` — ラプラシアン(``ndimage.laplace``、有限差分による 2 階微分)の絶対値を 正規化したもの。方向性を持たない二階微分エッジ検出で、Sobel 系より高周波 ノイズに敏感。HALCON の ``laplace``（Calculate the Laplace operator by using finite differences.）に相当。 · 例: `gallery2d_edges`, `poc_focus_stacking`, `poc_search_sweep_width`, `poc_white_balance`
+- `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` — LoG(Laplacian of Gaussian、ガウス平滑化後にラプラシアンを掛けた 二階微分エッジ検出)。``signed01`` により符号つき応答を [0,1] へ写像し (0.5 がゼロ交差に相当)、ゼロ交差検出やブロブ検出の下地に使える。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`, `poc_real_defect_floor`
+- `log` (halcon: `laplace_of_gauss`) `image → image` — ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`, `gallery_spectrum_signal_bridge`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_emva1288_in_camera_processing`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`
+- `points_foerstner` (halcon: `points_foerstner`) `image → image` — Förstner 演算子によるコーナー強度マップ(``skimage.feature. corner_foerstner`` の重み ``w`` とロバスト形状指標 ``q`` の積、NaN は 0 に 置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。 HALCON の ``points_foerstner``（Detect points of interest using the Förstner operator.）に相当。 · 例: `gallery2d_edges`
+- `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` — 二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず ``b`` で 決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば ``corner_harris``、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON の ``points_harris_binomial``（Detect points of interest using the binomial approximation of the Harris operator.）に相当。 · 例: `gallery2d_edges`
+- `prewitt_amp` (halcon: `prewitt_amp`) `image → image` — Prewitt 勾配の振幅。Sobel と同じ 1 次微分だが重み付けが均一 (``[1,1,1]``)なカーネルを使う ―― Sobel よりノイズにやや弱いが計算は単純。 HALCON の ``prewitt_amp``（Detect edges (amplitude) using the Prewitt operator.）に相当。 · 例: `gallery2d_edges`, `poc_white_balance`
+- `prewitt_dir` (halcon: `prewitt_dir`) `image → image` — Prewitt 勾配の向き。``prewitt_amp`` と対になる方向成分 (``arctan2`` を [0,1] に写像)。HALCON の ``prewitt_dir``（Detect edges (amplitude and direction) using the Prewitt operator.）に相当。 · 例: `gallery2d_edges`
+- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` — Prewitt フィルタによる勾配強度（エッジ検出）。HALCON の ``prewitt_amp``（Detect edges (amplitude) using the Prewitt operator.）に相当。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `roberts` (halcon: `roberts`) `image → image` — Roberts クロス演算子。2x2 の対角差分(左上−右下、右上−左下)から ``hypot`` で振幅を求める、最小サイズのエッジ検出カーネル。斜め方向の エッジに敏感だがノイズにも敏感。HALCON の ``roberts``（Detect edges using the Roberts filter.）に相当。 · 例: `find_ops_by_meaning`, `gallery2d_edges`, `poc_white_balance`
+- `roberts_mag` (halcon: `roberts`) `image → image` — Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の ``roberts``（Detect edges using the Roberts filter.）に相当。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `robinson_amp` (halcon: `robinson_amp`) `image → image` — Robinson コンパスフィルタの振幅。基本カーネル 2 本をそれぞれ 4 回転 させた計 8 本で畳み込み、絶対値の最大を取る(Kirsch と同じ発想の コンパス法)。HALCON の ``robinson_amp``（Detect edges (amplitude) using the Robinson operator.）に相当。 · 例: `gallery2d_edges`
+- `robinson_dir` (halcon: `robinson_dir`) `image → image` — Robinson コンパス演算子によるエッジ方向マップ。8 方向（45° ずつ回転させた ``_ROBINSON[0]``/``_ROBINSON[1]`` カーネル計 8 個）それぞれへの畳み込み応答のうち最大のものを選び、そのカーネル番号を 0〜1 に正規化して返す。a, b は未使用。 · 例: `gallery2d_edges`
+- `sk_corner_harris` (halcon: `points_harris`) `image → image` — Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/コーナーを見分ける符号付きスコアを計算する古典的なコーナー検出器。 · 例: `gallery2d_edges`
+- `sk_dog` (halcon: `diff_of_gauss`) `image → image` — DoG(Difference of Gaussians、ガウス差分)フィルタ。2 つの異なる σ でぼかした画像の差分を取り、LoG(Laplacian of Gaussian)に近いバンドパス応答(特定の空間周波数帯だけを強調するエッジ/ブロブ検出)を安く得る。 · 例: `gallery2d_edges`
+- `sk_farid` (halcon: `edges_image`) `image → image` — Farid-Simoncelli 勾配の大きさ。skimage の ``filters.farid`` をそのまま呼ぶ。5 タップの最適化された微分カーネルによる勾配強度で、Sobel/Scharr よりさらに回転対称性(方向誤差)が小さいとされる。 · 例: `gallery2d_edges`
+- `sk_hessian_det` `image → image` — Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。 · 例: `gallery2d_edges`
+- `sk_scharr` (halcon: `edges_image`) `image → image` — Scharr 勾配の大きさ。skimage の ``filters.scharr`` をそのまま呼び、水平/垂直それぞれの Scharr カーネル(3x3)の応答を合成した勾配強度を返す。 · 例: `gallery2d_edges`
+- `sobel_amp` (halcon: `sobel_amp`) `image → image` — Sobel 勾配の振幅(``hypot(sobel_x, sobel_y)`` を正規化)。縦横それぞれの 1 次微分カーネルから勾配ベクトルの大きさを求める最も基本的なエッジ検出。 HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。 · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
+- `sobel_dir` (halcon: `sobel_dir`) `image → image` — Sobel 勾配の向き(``arctan2(dy, dx)`` を [0,1] に写像。0=−π, 1=+π)。 振幅を返す ``sobel_amp`` と対になる、エッジの走る方向を求める演算。HALCON の ``sobel_dir``（Detect edges (amplitude and direction) using the Sobel operator.）に相当(HALCON は振幅と方向を同時に返すが、ここでは方向のみの 別 op として分離)。 · 例: `gallery2d_edges`, `poc_document_scan`, `poc_fiber_orientation`
+- `sobel_mag` (halcon: `sobel_amp`) `image → image` — Sobel フィルタによる勾配強度（エッジ検出）。HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `tf_phase_congruency` `image → image` — phase_congruency: a simplified monogenic phase-congruency feature map. · 例: `gallery2d_edges`, `poc_iqa_fsim_gmsd_vif`
+- `tf_steerable_filter` `image → image` — steerable_filter: oriented first-derivative-of-Gaussian response. · 例: `gallery2d_edges`
+- `xkor_dog` `image → image` — DoG（Difference of Gaussians）ブロブ応答。``kornia.feature.dog_response_single``（無ければ ``dog_response`` にフォールバック）を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
+- `xkor_gftt` `image → image` — GFTT（Good Features To Track、Shi-Tomasi）コーナー応答。``kornia.feature.gftt_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
+- `xkor_harris` `image → image` — Harris コーナー応答。``kornia.feature.harris_response`` を呼び、符号付き応答を ``signed01`` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。 · 例: `gallery2d_edges`
+- `xkor_hessian` `image → image` — ヘシアン行列に基づくブロブ・コーナー応答。``kornia.feature.hessian_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
+- `xkor_laplacian` `image → image` — ラプラシアン（2 階微分）によるエッジ・ブロブ応答。 ``kornia.filters.laplacian`` を呼び、絶対値を取ってから最大絶対値で 正規化する。 · 例: `gallery2d_edges`
+- `xpil_contour` `image → image` — Pillow の輪郭抽出フィルタ。``PIL.ImageFilter.CONTOUR`` の固定カーネルで輪郭線だけを白背景に黒線で残すような効果を作る（ペン画・線画調のエフェクト）。 · 例: `gallery2d_edges`
+- `xpil_find_edges` `image → image` — Pillow のエッジ検出フィルタ。``PIL.ImageFilter.FIND_EDGES`` の固定カーネル（ラプラシアン系）でエッジを強調する。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `xsk2_corner_kr` `image → image` — Kitchen-Rosenfeld コーナー検出応答。``skimage.feature.corner_kitchen_rosenfeld`` を呼び、NaN を 0 に置き換えてから ``signed01`` で符号付き応答を [0,1] に写像する。 · 例: `gallery2d_edges`
+- `xsk2_inv_gauss_grad` `image → image` — 逆ガウシアン勾配画像（Active Contour / GAC のエッジ停止関数）。``skimage.segmentation.inverse_gaussian_gradient`` を呼ぶ。 · 例: `gallery2d_edges`
+- `xsk3_corner_fast` `image → image` — FAST コーナー検出(skimage ``feature.corner_fast``)。中心画素の周囲の円周上の画素と比較し、連続して明るい/暗い画素が一定数以上続く場所をコーナーとして検出する高速な手法。結果は最大絶対値で正規化した応答マップ。 · 例: `gallery2d_edges`
+- `xsk3_corner_moravec` `image → image` — Moravec コーナー検出(skimage ``feature.corner_moravec``)。各画素を中心とした小窓を上下左右斜めにずらしたときの画素値差の最小値をコーナー強度とする、最も古典的なコーナー検出の一つ(Harris/Shi-Tomasi の前身)。結果は最大絶対値で正規化。 · 例: `gallery2d_edges`
+- `xsk_hessian_eig` `image → image` — ヘッセ行列の最大固有値(絶対値)によるブロブ/リッジ強度。 · 例: `gallery2d_edges`
+- `xsp_gauss_grad_mag` `image → image` — ガウシアン勾配の大きさ（``scipy.ndimage.gaussian_gradient_magnitude``）によるエッジ検出。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `xsp_morph_laplace` `image → image` — 形態学的ラプラシアン（``scipy.ndimage.morphological_laplace``）によるエッジ強調。 · 例: `gallery2d_edges`
+- `xwt_directional_detail` `image → image` — 方向別エッジ検出。1 段の ``db2`` 分解から水平(cH)・垂直(cV)・対角(cD)のいずれか 1 つの詳細サブバンドを選び、絶対値を正規化してから元の解像度までブロック拡大(``kron`` で 2x2 複製)して返す。 · 例: `gallery2d_edges`
+- `xwt_hf_reconstruct` `image → image` — 高周波再構成画像。``db2`` で 2 段分解し、近似係数(低周波成分)だけを 0 に潰してから逆変換で再構成する —— 結果はハイパスフィルタをかけたような、エッジとテクスチャだけが残る画像になる。再構成後に min-max 正規化する。 · 例: `gallery2d_edges`
+
+#### 2d / extra(14)
+- `xsitk_closing_by_recon` `image → image` — 再構成によるクロージング(SimpleITK ``ClosingByReconstruction``、xsitk_opening_by_recon の双対)。膨張後の収縮をマスク付き再構成で行い、輪郭を保ったまま小さな暗い窪みだけを埋める。 · 例: `gallery2d_color_artistic`
+- `xsitk_confidence_connected` `image → region` — 信頼区間連結領域拡張(SimpleITK ``ConfidenceConnected``)。画像中心を種にし、現在の領域内の平均・標準偏差から「平均 ± multiplier * 標準偏差」の区間を作り、それを反復的に更新しながら連結領域を広げていく(xsitk_connected_threshold より統計的な閾値の決め方)。 · 例: `gallery2d_color_artistic`
+- `xsitk_connected_threshold` `image → region` — 連結閾値領域拡張(SimpleITK ``ConnectedThreshold``、region growing)。画像中心の画素を種(シード)にし、その画素値を中心とした強度区間内で中心と連結している画素だけを領域として拡張する。 · 例: `gallery2d_color_artistic`
+- `xsitk_curv_aniso_diff` `image → image` — 曲率異方性拡散(SimpleITK ``CurvatureAnisotropicDiffusion``)。Perona-Malik 型の異方性拡散の一種で、エッジ(勾配が大きい場所)では拡散を抑え、平坦な場所ではよく拡散させることでエッジを保ったまま平滑化する。 · 例: `gallery2d_color_artistic`
+- `xsitk_curvature_flow` `image → image` — 曲率流平滑化(SimpleITK ``CurvatureFlow``)。等高線の曲率に比例した速度で画像をぼかす非線形拡散で、直線的なエッジは保たれやすく、丸まった細部から先に消えていく。 · 例: `gallery2d_color_artistic`
+- `xsitk_grayscale_fillhole` `image → image` — グレースケール穴埋め(SimpleITK ``GrayscaleFillhole``)。モルフォロジー再構成により、画像の暗い孔(周囲より暗い局所的な窪み)を周囲の明るさまで埋める。二値の穴埋めのグレースケール版で、しみ抜きや欠損補完の前処理に使う。 · 例: `gallery2d_color_artistic`
+- `xsitk_grayscale_grindpeak` `image → image` — グレースケール山削り(SimpleITK ``GrayscaleGrindPeak``、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。 · 例: `gallery2d_color_artistic`, `poc_weld_radiograph_porosity`
+- `xsitk_huang_thresh` `image → region` — Huang のファジィエントロピー法による二値化(SimpleITK ``HuangThreshold``)。ファジィ集合として見た前景/背景のあいまいさ(ファジィエントロピー)が最小になる閾値を選ぶ。 · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
+- `xsitk_laplacian_sharpen` `image → image` — ラプラシアン鮮鋭化(SimpleITK ``LaplacianSharpening``)。画像からラプラシアン(2 階微分)を引くことでエッジを強調するアンシャープマスクの一種。結果を min-max 正規化して返す。 · 例: `gallery2d_color_artistic`
+- `xsitk_maxentropy_thresh` `image → region` — 最大エントロピー法による二値化(SimpleITK ``MaximumEntropyThreshold``、Kapur の方法)。ヒストグラムを前景/背景の 2 クラスに分けたときのエントロピー和が最大になる閾値を選ぶ大域二値化。 · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
+- `xsitk_minmax_curv_flow` `image → image` — Min/Max 曲率流平滑化(SimpleITK ``MinMaxCurvatureFlow``)。xsitk_curvature_flow と同じ曲率流に、近傍のミニマム/マキシマムに基づく判定を加えて小さな穴やスペックルノイズを埋めながら平滑化する変種。 · 例: `gallery2d_color_artistic`, `genspark_external_review`
+- `xsitk_moments_thresh` `image → region` — モーメント保存法による二値化(SimpleITK ``MomentsThreshold``、Tsai の方法)。二値化後のヒストグラムの統計モーメント(平均・分散など)が元のヒストグラムのものと一致するように閾値を選ぶ。 · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
+- `xsitk_opening_by_recon` `image → image` — 再構成によるオープニング(SimpleITK ``OpeningByReconstruction``)。通常のグレースケールオープニング(収縮→膨張)と異なり、収縮後の膨張をマスク付き再構成で行うため、残った領域の輪郭を歪めずに小さな明るい突起だけを除去できる。 · 例: `gallery2d_color_artistic`
+- `xsitk_signed_maurer_dist` `region → image` — 符号付き距離マップ(SimpleITK ``SignedMaurerDistanceMap``)を tanh で [0,1] に押し込んだもの。二値領域の境界からの距離(内側/外側とも)を、境界付近ほど 0.5 から離れる連続値の画像として表す。 · 例: `gallery2d_color_artistic`
+
+#### 2d / features(73)
+- `area_center` (halcon: `area_center`) `region → match` — 領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル (面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1 スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元 ベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。 領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft 仕様。HALCON の ``area_center``（Area and center of regions.）に相当。 · 例: `gallery2d_features`
+- `area_center_xld` (halcon: `area_center_xld`) `contour → match` — 最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で 多角形面積を求め、画像の全画素数で正規化して返す。HALCON の ``area_center_xld``（Area and center of gravity (centroid) of contours and polygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを 返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである 契約上の制約)。 · 例: `gallery2d_features`
+- `area_frac` (halcon: `area_center`) `region → feature` — 領域が占める画素の割合（面積率）を返す特徴量。HALCON の ``area_center``（Area and center of regions.）とは異なり、面積のみを返し重心は計算しない（機能の一部だけの対応）。 · 例: `gallery2d_features`, `shape_factors_closed_form`, `threshold_family_agreement`
+- `area_holes` (halcon: `area_holes`) `region → feature` — 領域内の穴が占める面積比 ``(穴埋め後面積 - 元面積) / 穴埋め後面積``。 0 に近いほど穴が無く、1 に近いほど大半が穴という極端な形状を示す。HALCON の ``area_holes``（Compute the area of holes of regions.）に相当。 · 例: `gallery2d_features`
+- `blob_count` (halcon: `count_obj`) `region → feature` — Number of connected components in the region (HALCON `count_obj`). · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
+- `circularity` (halcon: `circularity`) `region → feature` — 円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離** で、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある 場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for the circularity (similarity to a circle) of a region.）**と同じ式**。 · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
+- `circularity_xld` (halcon: `circularity_xld`) `contour → feature` — 最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から 輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する (領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld`` （Shape factor for the circularity (similarity to a circle) of contours or polygons.）**と同じ式**。 · 例: `gallery2d_features`
+- `compactness` (halcon: `compactness`) `region → feature` — コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど 大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the compactness of a region.）と同じ量。 · 例: `gallery2d_features`, `shape_factors_closed_form`
+- `compactness_xld` (halcon: `compactness_xld`) `contour → feature` — 最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する (``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。 HALCON の ``compactness_xld``（Shape factor for the compactness of contours or polygons.）**と同じ式**。 · 例: `gallery2d_features`
+- `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` — 領域の連結成分数を数える（8 連結、``count_obj`` と同じ ``_sh_region_feat`` の ``count`` 分岐）。a, b は未使用。 · 例: `gallery2d_features`
+- `contlength` (halcon: `contlength`) `region → feature` — 領域の周囲長(``regionprops`` の ``perimeter``)を画像の外周長 ``2*(H+W)`` で正規化した値。HALCON の ``contlength``（Contour length of a region.）に相当。 · 例: `gallery2d_features`, `scale_law_of_features`
+- `convexity` (halcon: `convexity`) `region → feature` — 凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage. measure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の ``convexity``（Shape factor for the convexity of a region.）に相当。 · 例: `gallery2d_features`, `shape_factors_closed_form`
+- `convexity_xld` (halcon: `convexity_xld`) `contour → feature` — 最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する (``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では常に 1.0 (完全凸)を返すフォールバックになる点に注意。HALCON の ``convexity_xld`` （Shape factor for the convexity of contours or polygons.）に相当。 · 例: `gallery2d_features`
+- `count_channels` (halcon: `count_channels`) `color → feature` — 画像のチャンネル数を数える。HALCON の ``count_channels``（画像のチャンネル 数を数える）に相当。 · 例: `gallery2d_features`
+- `count_contours` (halcon: `count_obj`) `contour → feature` — 輪郭（オブジェクト）の本数を返す特徴量。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。 · 例: `gallery2d_features`
+- `count_obj` (halcon: `count_obj`) `region → feature` — 連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の ``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに 接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例 =セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。 · 例: `gallery2d_features`
+- `cv_cc_count` (halcon: `connection`) `region → feature` — 連結成分数のカウント(1 スカラー特徴量、OpenCV 実装)。二値領域中の連結成分(前景の塊)の個数を数える —— 背景ラベル分の 1 を引いてから返す。 · 例: `gallery2d_features`, `genspark_external_review`
+- `cv_good_features` `image → feature` — Shi-Tomasi 法による高品質コーナー検出(1 スカラー特徴量、OpenCV 実装)。cv_min_eigen と同じ最小固有値基準でコーナーらしさを評価し、非極大抑制と最小距離フィルタで間引いた上位のコーナーを検出する —— ここでは検出できた個数だけを返す(0 個なら 0)。 · 例: `gallery2d_features`
+- `cv_hough_circles` (halcon: `hough_circles`) `image → feature` — Hough 変換による円検出(1 スカラー特徴量、OpenCV 実装)。エッジの勾配情報を使う HOUGH_GRADIENT 法で円の中心・半径を投票検出する —— ここでは検出できた円の個数だけを返す(0 個なら 0)。 · 例: `gallery2d_features`
+- `cv_hough_lines` (halcon: `hough_lines`) `image → feature` — 確率的 Hough 変換による直線(線分)検出(1 スカラー特徴量、OpenCV 実装)。まず Canny でエッジ画像を作り、そこから直線状に並ぶエッジ画素の集合を投票方式で探して線分として検出する —— ここでは検出できた線分の本数だけを返す(0 本なら 0)。 · 例: `gallery2d_features`
+- `diameter_region` (halcon: `diameter_region`) `region → feature` — 等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値 (``regionprops`` の ``equivalent_diameter_area``)。HALCON の ``diameter_region``（Maximal distance between two boundary points of a region.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標 (等価円直径による近似)。 · 例: `gallery2d_features`
+- `diameter_xld` (halcon: `diameter_xld`) `contour → feature` — 輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の 最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance between two contour or polygon points.）が定義する「輪郭上の 2 点間の 最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は 必ずしも最遠 2 点を結ぶ直径と一致しない)。 · 例: `gallery2d_features`
+- `eccentricity` (halcon: `eccentricity`) `region → match` — 楕円パラメータ由来の 3 つの形状指標 ``(Anisometry, Bulkiness, StructureFactor)`` を、``match`` ソートの 3 成分ベクトルで返す(1 スカラーでは 3 値を表せないため、 ``area_center`` と同じ形)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → match` — ``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness, StructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の ``eccentricity_xld``（Shape features derived from the ellipse parameters of contours or polygons.）**と同じ 3 値・同じ式**。 · 例: `gallery2d_features`
+- `effective_bit_depth` `image → feature` — 画像が**実際に**使っているビット数を推定して ``[0,1]`` に写して返す(feature)。 · 例: `gallery2d_features`
+- `elliptic_axis` (halcon: `elliptic_axis`) `region → match` — 領域に等価な楕円(equivalent ellipse、慣性モーメントが一致する楕円)の``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径(**画素**)、``Phi`` は主軸の角(ラジアン、列軸から反時計回り)。HALCON の ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.)と同じ 3 値。 · 例: `gallery2d_features`
+- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → match` — 楕円フィットした輪郭の短軸/長軸の比。値が 1 に近いほど真円に近く、 0 に近いほど細長い。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）が返す(長軸, 短軸, 角度)の 組のうち、比 1 個のスカラーだけを返す近似。 · 例: `gallery2d_features`
+- `entropy_gray` (halcon: `entropy_gray`) `image → feature` — グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算 し、最大値 ``log2(64)=6`` bit で正規化)。階調分布の「ばらつき/情報量」を 表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の ``entropy_gray``（Determine the entropy and anisotropy of images.）は エントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装 している。 · 例: `gallery2d_features`
+- `estimate_noise` (halcon: `estimate_noise`) `image → feature` — 加法性ノイズの標準偏差 σ をロバスト推定する(``_noise_sigma``: ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得 ``sqrt(20)`` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを 拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に 張り付く」不具合を修正済み、詳細は ``_noise_sigma`` の docstring)。HALCON の ``estimate_noise``（Estimate the image noise from a single image.）に 相当。 · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
+- `euler_number` (halcon: `euler_number`) `region → feature` — オイラー数(``skimage.measure.euler_number``、連結成分数から穴の数を 引いた位相不変量)。値が小さい(負に近い)ほど穴が多いことを示す。HALCON の ``euler_number``（Calculate the Euler number.）に相当。 · 例: `gallery2d_features`
+- `fractal_dimension` `image → feature` — テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。 · 例: `gallery2d_features`, `poc_endless_zoom_and_turning_solids`, `poc_theorems_as_pictures`
+- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` — 領域の太さの近似値 ``2 × 最大内接円半径 / 最大辺長`` (``distance_transform_edt`` の最大値の 2 倍を画像サイズで正規化)。HALCON の ``get_region_thickness``（Access the thickness of a region along the main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、 方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は 失われる)。 · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
+- `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` — 画像の階調の標準偏差(``x.std()``)を返す。HALCON の ``gray_histo_abs`` （Calculate the gray value distribution.）は本来ヒストグラム全体 (各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この パイプラインの ``feature`` ソートが 1 スカラーである契約上の制約)。 · 例: `gallery2d_features`
+- `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` — 軸平行の外接矩形の縦横比 ``高さ / 幅``。上限は無く、縦長なら 1 を超える (160x4 なら 40.0)。HALCON の ``height_width_ratio``（Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Width は 画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。 · 例: `gallery2d_features`
+- `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` — 円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の 円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での 最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans`` （Return the Hough-Transform for circles with a given radius.）に相当 (HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。 · 例: `gallery2d_features`, `poc_real_coin_metrology`
+- `hough_line_trans` (halcon: `hough_line_trans`) `image → image` — 直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ マスクを作り、``skimage.transform.hough_line`` でアキュムレータ空間 (角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す (アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の ``hough_line_trans``（Produce the Hough transform for lines within regions.）に相当。 · 例: `gallery2d_features`
+- `intensity` (halcon: `intensity`) `image → feature` — 画像の平均輝度(``x.mean()``)を返す。HALCON の ``intensity`` （Calculate the mean and deviation of gray values.）は平均と標準偏差の 組を返す演算子だが、この代役では平均のみを返す(標準偏差が欲しい場合は ``gray_histo_abs``(標準偏差 std を返す)を併用する)。 · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_multibeam_bathymetry`, `poc_pxrd_phase_peel`, `poc_solder_fillet_aoi`, `poc_video_cube`
+- `length_xld` (halcon: `length_xld`) `contour → feature` — すべての輪郭の線分長(隣接点間のユークリッド距離)を合計した総延長。 複数の輪郭がある場合はまとめて加算する。HALCON の ``length_xld``（Length of contours or polygons.）に相当。 · 例: `gallery2d_features`
+- `min_max_gray` (halcon: `min_max_gray`) `image → feature` — 画像の最大階調値のみを返す(``x.max()``)。HALCON の ``min_max_gray`` （Determine the minimum and maximum gray values within regions.）は本来 最小値と最大値の**両方**を返す演算子だが、この代役では最大値のみを実装 しており最小値の情報は失われる(データが欠落した近似 ―― 名前が示す 「min_max」の半分しか計算していない点は正直に明記しておく)。 · 例: `gallery2d_features`
+- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` — 正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage. measure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd`` （Calculate the geometric moments of regions.）は本来 M20/M02/M11 を それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純 加算した合成値で近似している(個々の方向成分は失われる)。 · 例: `gallery2d_features`, `scale_law_of_features`
+- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` — Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の ``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。 HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.） に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、 古典的な Hu モーメントで代用している)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` — Hu の第 3 不変モーメント(``hu[2]``)の絶対値。名前(2nd_rel_invar)と 実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON 独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列 から割り当てただけの近似。HALCON の ``moments_region_2nd_rel_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
+- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` — 正規化中心 3 次モーメントの和の絶対値 ``|μ30 + μ03|``。 ``moments_region_2nd`` の 3 次版で、こちらも複数成分を単純加算した合成値 による近似(個々の方向成分は失われる)。HALCON の ``moments_region_3rd``（Geometric moments of regions.）に相当。 · 例: `gallery2d_features`, `scale_law_of_features`
+- `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` — Hu の第 4 不変モーメント(``hu[3]``)の絶対値。``moments_region_*_invar`` 系列の一つとして Hu モーメント配列から順番に割り当てている(HALCON 独自の 定義との厳密な対応はない近似)。HALCON の ``moments_region_3rd_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
+- `moments_region_central` (halcon: `moments_region_central`) `region → feature` — 正規化中心モーメント(2 次まで)の和の絶対値 ``|μ20+μ11+μ02|``。 HALCON の ``moments_region_central``（Geometric moments of regions.）に 相当する、複数成分を 1 スカラーへ合成した近似。 · 例: `gallery2d_features`, `scale_law_of_features`
+- `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` — Hu の第 2 不変モーメント(``hu[1]``)の絶対値。HALCON の ``moments_region_central_invar``（Geometric moments of regions.）に相当 する近似(``moments_region_2nd_invar`` が Hu[0] を使うのに対し、こちらは Hu[1] を使う ―― どちらも HALCON 独自の相対不変モーメントの厳密な代用では ない)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `moments_xld` (halcon: `moments_xld`) `contour → feature` — 輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という 単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments M20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を 1 つに合成した近似(個々の方向成分・M11 は失われる)。 · 例: `gallery2d_features`
+- `orientation_region` (halcon: `orientation_region`) `region → feature` — 領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を [0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の ``orientation_region``（Orientation of a region.）に相当。 · 例: `gallery2d_features`
+- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` — 楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で 折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the orientation of contours or polygons.）に相当。 · 例: `gallery2d_features`
+- `rectangularity` (halcon: `rectangularity`) `region → feature` — 矩形度。**同じ 1 次・2 次モーメントを持つ矩形**を作り、領域との差の面積を その矩形の面積で正規化する(``1 - |領域 XOR 矩形| / |矩形|``)。矩形なら 1。 HALCON の ``rectangularity``（Shape factor for the rectangularity of a region.）**と同じ定義**。 · 例: `gallery2d_features`, `shape_factors_closed_form`
+- `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` — 矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との 差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の ``rectangularity_xld``（Shape factor for the rectangularity of contours or polygons.）**と同じ定義**。 · 例: `gallery2d_features`
+- `roundness` (halcon: `roundness`) `region → feature` — 真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と 標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の ``roundness``（Shape factors from contour.）**と同じ式**。 · 例: `gallery2d_features`, `shape_factors_closed_form`
+- `sk_blur_effect` `image → feature` — ぼけ具合の推定(1 スカラー特徴量)。画像を意図的に少し再ぼかしして、元と再ぼかし後でどれだけエッジの鋭さが変わるかを比較する手法で、0(ぼけ無し)〜1(最大限ぼけている)のスコアを返す —— 参照画像なしでピント/ブレを定量化できる。 · 例: `gallery2d_features`, `poc_real_deblur_honesty`
+- `sk_entropy_feat` (halcon: `entropy_gray`) `image → feature` — 画像全体のシャノンエントロピー(1 スカラー特徴量)。輝度ヒストグラムの分布の広がり・情報量を 1 個の数値で要約する —— 値が高いほど輝度分布が均一に散らばっている(情報量が多い/コントラストが豊富)ことを示す。 · 例: `gallery2d_features`
+- `sk_euler` (halcon: `euler_number`) `region → feature` — オイラー数(Euler number)。「連結成分の数 − 穴の数」で定義されるトポロジー的な特徴量で、領域の形そのもの(位置・大きさ)ではなく「繋がり方」だけを表す整数値になる。 · 例: `gallery2d_features`
+- `total_length` (halcon: `length_xld`) `contour → feature` — 全 XLD 輪郭の合計弧長を返す特徴量。HALCON の ``length_xld``（Length of contours or polygons.）に相当。 · 例: `gallery2d_features`, `poc_solar_el_inspection`
+- `vol_count` `volume → feature` — 3D ボリューム中の連結成分（ブロブ）の個数を返す特徴量。対応する HALCON op は指定されていない。 · 例: `gallery2d_features`
+- `xcv2_fast_count` `image → feature` — FAST コーナー検出器が検出したキーポイントの個数（``cv2.FastFeatureDetector``）。 · 例: `gallery2d_features`
+- `xcv2_lap_var` `image → feature` — ラプラシアン分散によるフォーカス（ボケ）指標（``cv2.Laplacian`` の分散）。 · 例: `gallery2d_features`, `poc_focus_stacking`
+- `xcv3_agast_count` `image → feature` — AGAST 特徴点数(OpenCV AGAST 検出器、FAST の適応的木構造版)。検出されたキーポイント数を feature として返す。 · 例: `gallery2d_features`
+- `xcv3_brisk_count` `image → feature` — BRISK 特徴点数(OpenCV BRISK 検出器)。二値記述子ベースの高速特徴点検出器で検出されたキーポイント数を feature として返す。 · 例: `gallery2d_features`
+- `xcv3_gray_hu1` `image → feature` — グレースケール画像の第 1 Hu 不変モーメント(OpenCV ``cv2.HuMoments(cv2.moments(...))[0,0]``)。画像を二値形状ではなく濃淡そのものを質量分布とみなしたときの、回転・拡大縮小・平行移動に不変な広がり具合を表す特徴量(2 次の中心モーメントに基づく)。1.0 で頭打ち。 · 例: `gallery2d_features`
+- `xcv3_lsd_count` `image → feature` — 検出直線分の本数(OpenCV ``cv2.createLineSegmentDetector`` による Line Segment Detector、LSD)。画像中から検出された直線セグメントの本数を feature として返す(検出 0 件のとき ``None`` が返る実装のため、その場合は 0 として扱う)。 · 例: `gallery2d_features`
+- `xcv3_sift_count` `image → feature` — SIFT 特徴点数(OpenCV ``cv2.SIFT_create().detect``)。画像から検出されたスケール不変特徴点(SIFT keypoints)の個数を feature として返す —— テクスチャの複雑さ/マッチングに使える特徴点の豊富さの指標になる。 · 例: `gallery2d_features`
+- `xcv_orb_count` `image → feature` — OpenCV 版 ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。 · 例: `gallery2d_features`
+- `xsk3_estimate_sigma` `image → feature` — ノイズ標準偏差の推定(skimage ``restoration.estimate_sigma``、ウェーブレット係数の中央絶対偏差(MAD)に基づく Donoho の推定量)。推定値を 5 倍したのち 1.0 で頭打ちにして feature として返す。 · 例: `gallery2d_features`
+- `xsk3_is_low_contrast` `image → feature` — 低コントラスト画像判定(skimage ``exposure.is_low_contrast``)。画像の輝度レンジが取りうる全レンジの ``fraction_threshold`` 未満しか使っていないかを判定する真偽値を、0.0/1.0 の feature として返す。 · 例: `gallery2d_features`
+- `xsk_blob_dog` `image → feature` — ブロブ(斑点状構造)の検出数(LoG/DoG/DoH のいずれかで検出)。 · 例: `gallery2d_features`
+- `xsk_blob_doh` `image → feature` — ブロブ(斑点状構造)の検出数(LoG/DoG/DoH のいずれかで検出)。 · 例: `gallery2d_features`
+- `xsk_blob_log` `image → feature` — ブロブ(斑点状構造)の検出数(LoG/DoG/DoH のいずれかで検出)。 · 例: `gallery2d_features`, `poc_search_sweep_width`
+- `xsk_orb_count` `image → feature` — ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。 · 例: `gallery2d_features`
+- `xwt_detail_energy` `image → feature` — ウェーブレット詳細成分のエネルギー比。``db2`` で 3 段分解し、全詳細係数(各段の水平/垂直/対角)の二乗平均の合計を、それに近似成分の二乗平均を足した全エネルギーで割った値を返す —— 高周波(テクスチャ/ノイズ/エッジ)が画像全体に占める割合の指標で、値域はおおむね [0,1)。 · 例: `gallery2d_features`
+- `xwt_packet_entropy` `image → feature` — ウェーブレットパケットのエネルギー分散度(Shannon エントロピー)。``db1`` で深さ 2 のウェーブレットパケット分解を行い、16 個の葉サブバンドそれぞれのエネルギー(係数二乗和)を正規化した分布とみなし、そのシャノンエントロピーを ``log2(16)`` で割って [0,1] に正規化する。 · 例: `gallery2d_features`
+
+#### 2d / filtering(1)
+- `tf_gradient_domain_reintegrate` `image → image` — gradient_domain_reintegrate: threshold the gradient, then Poisson-reintegrate. · 例: `gallery2d_smoothing_rank`
+
+#### 2d / frequency(19)
+- `bandpass_image` (halcon: `bandpass_image`) `image → image` — 周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を 遮断)、逆 FFT で実空間に戻す。``highpass_image`` と同様に零平均の符号つき 応答なので ``signed01`` で [0,1] に写像する。HALCON の ``bandpass_image`` （Edge extraction using bandpass filters.）に相当。 · 例: `gallery2d_texture_freq`
+- `fft_generic` (halcon: `fft_generic`) `image → image` — 画像のフーリエ変換の振幅スペクトルを対数圧縮して返す（``log1p(|F|)`` を最大値で正規化）。中心が低周波、周辺が高周波成分に対応する（``fftshift`` 済み）。a, b は未使用。 · 例: `gallery2d_texture_freq`
+- `fft_image` (halcon: `fft_image`) `image → image` — 2 次元 FFT のパワースペクトルを ``log1p(|F|)`` で圧縮し正規化した画像。 低周波(直流)成分が中心にくるよう ``fftshift`` 済み。周期的なノイズや テクスチャの空間周波数を可視化するのに使う。HALCON の ``fft_image`` （Compute the fast Fourier transform of an image.）に相当。 · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `poc_moire_screen`
+- `fft_image_inv` (halcon: `fft_image_inv`) `image → image` — 入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を ``signed01`` で [0,1] に写す(0.5 がゼロ)。本来 HALCON の ``fft_image_inv``（Compute the inverse fast Fourier transform of an image.）は ``fft_image`` が作った複素スペクトル(実部・虚部の組)を戻す 演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、 画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている (``fft_image`` の出力をそのまま渡しても意味的な往復にはならない点に注意)。 · 例: `gallery2d_texture_freq`
+- `highpass` (halcon: `highpass_image`) `image → image` — FFT による高域通過フィルタ（輪郭・高周波成分の抽出）。HALCON の ``highpass_image``（Extract high frequency components from an image.）に相当。 · 例: `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
+- `highpass_image` (halcon: `highpass_image`) `image → image` — 周波数領域で低域(半径 ``<= 0.02+0.3*a``)を遮断し、残りを逆 FFT で 実空間に戻したハイパスフィルタ。零平均の**符号つき**応答になるため ``signed01`` で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が 0.5 未満になるのが正常)。HALCON の ``highpass_image``（Extract high frequency components from an image.）に相当。 · 例: `gallery2d_texture_freq`, `poc_river_surface_velocity`
+- `lowpass` `image → image` — FFT による低域通過フィルタ（ぼかし）。HALCON に対応する単体 op は指定されていない。 · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
+- `phase_deg` (halcon: `phase_deg`) `image → image` — 複素画像の位相角マップ。``np.angle(F)``（-π〜π）を ``(angle+π)/(2π)`` で [0,1] に線形写像する。a, b は未使用。 · 例: `gallery2d_texture_freq`
+- `phase_rad` (halcon: `phase_rad`) `image → image` — FFT の位相 ``angle(F)`` をラジアンから [0,1] に線形写像したもの(0=−π, 1=+π)。パワースペクトルが失う位相情報(構造の空間的な位置情報の大半を 担う)を可視化する。HALCON の ``phase_rad``（Return the phase of a complex image in radians.）に相当。 · 例: `gallery2d_texture_freq`
+- `power_byte` (halcon: `power_byte`) `image → image` — 実装は ``fft_image`` と同じ(``kind: "fft_power"``、log1p パワース ペクトル)。HALCON では ``power_byte`` は 8bit 出力用のバイト量子化された パワースペクトルを指すが、この代役では ``power_real``/``fft_image`` と 区別せず同じ処理を返す(近似の限界)。HALCON の ``power_byte``（Return the power spectrum of a complex image.）の代役。 · 例: `gallery2d_texture_freq`
+- `power_ln` (halcon: `power_ln`) `image → image` — 複素画像のパワースペクトルの代役。実装は fft_generic と同一で、入力画像に自前で FFT をかけてから振幅の対数 ``log1p(|F|)`` を最大値正規化して返す（``_sh_freq`` の ``fft_power`` 分岐を共有）。a, b は未使用。 · 例: `gallery2d_texture_freq`
+- `power_real` (halcon: `power_real`) `image → image` — FFT の実部の絶対値 ``|Re(F)|`` を正規化した画像(``fft_image`` の対数 パワースペクトルとは異なり、対数を取らず実部だけを見る)。HALCON の ``power_real``（Return the power spectrum of a complex image.）に相当する 近似(HALCON の本来の定義は |F|² のパワーだが、ここでは実部絶対値で代用)。 · 例: `gallery2d_texture_freq`
+- `rft_generic` (halcon: `rft_generic`) `image → image` — 実数フーリエ変換（real FFT, RFFT）の代役。実装は通常の複素 FFT を計算してから実部の絶対値 ``|Re F|`` を最大値正規化して返すもので、HALCON の rft_generic が実際に計算する半分サイズの実数専用高速変換（対称性を利用したデータ量削減）ではない。a, b は未使用。 · 例: `gallery2d_texture_freq`
+- `sk_butterworth` `image → image` — Butterworth フィルタ(周波数領域)。画像を FFT した上で、指定したカットオフ周波数より高い成分だけを通すハイパスフィルタとして働く(既定 ``high_pass=True`` のまま呼んでいる)。輪郭やテクスチャの高周波成分を強調する。 · 例: `gallery2d_texture_freq`
+- `xsk2_radon` `image → image` — ラドン変換によるサイノグラム（投影データ）。 ``skimage.transform.radon`` を、画像の長辺に合わせた本数の角度 （0〜180 度、``linspace`` で等間隔）で呼び、結果を元の画像サイズに リサイズしてから最大値で正規化する。 · 例: `gallery2d_texture_freq`
+- `xsp_dct` `image → image` — 2 次元離散コサイン変換（DCT-II, ortho 正規化）のパワースペクトルを対数圧縮して表示する。 · 例: `gallery2d_texture_freq`
+- `xsp_dct_lowpass` `image → image` — DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。 · 例: `gallery2d_texture_freq`
+- `xwt_mra_component` `image → image` — 多重解像度解析(MRA、``pywt.mra2``)の 1 段分の詳細成分。``db2`` で 3 段の MRA 分解を行うと、各段の水平/垂直/対角成分が元画像と同じ解像度の画像として得られる(通常のウェーブレット分解と違い縮小されない)。ここではそのうち 1 段を選び、水平+垂直+対角を足し合わせた合成ディテール画像を min-max 正規化して返す。 · 例: `gallery2d_texture_freq`
+- `xwt_subband_tile` `image → image` — 1 段ウェーブレット分解(``pywt.dwt2``、Haar)の 4 サブバンド(近似 cA・水平 cH・垂直 cV・対角 cD)を 2x2 に敷き詰めて 1 枚の画像にし、min-max 正規化したもの。ウェーブレットピラミッド表示そのもの。 · 例: `gallery2d_texture_freq`
+
+#### 2d / geometry(29)
+- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` — 回転(``-20°〜+20°``、``a`` で決まる)とせん断(``b`` で決まる)を組み 合わせた一般的なアフィン変換。中心を基準に ``ndimage.affine_transform`` を 適用し、枠外は反射で埋める。HALCON の ``affine_trans_image``（Apply an arbitrary affine 2D transformation to images.）に相当(HALCON は任意の 2x3/3x3 変換行列を直接渡せるが、ここでは回転+せん断の 2 パラメータ化に 限定した近似)。 · 例: `gallery2d_geometry`, `poc_change_detection_misreg`
+- `affine_trans_image_size` (halcon: `affine_trans_image_size`) `image → image` — アフィン変換（回転+シアー）を画像に掛ける。実装は ``affine_trans_image`` と同じ ``_sh_geom`` の ``affine`` 分岐を共有しており、a で回転角を -20°〜+20° に、b でシアー量を振る。枠外は鏡映（reflect）で埋める。 · 例: `gallery2d_geometry`
+- `affine_trans_region` (halcon: `affine_trans_region`) `region → region` — 領域にアフィン変換（回転+シアー）を掛ける。``affine_trans_image`` と同じ ``_sh_geom`` の ``affine`` 分岐で連続値として変換したのち、``_rebinarise`` により 0.5 で二値化し直して {0,1} の領域として返す（幾何変換の補間で生じる中間値を除去するため）。a が回転角（-20°〜+20°）、b がシアー量を振る。 · 例: `gallery2d_geometry`
+- `affine_warp` (halcon: `affine_trans_image`) `image → image` — 任意のアフィン変換（回転+せん断）を画像に適用する。HALCON の ``affine_trans_image``（Apply an arbitrary affine 2D transformation to images.）に相当。 · 例: `gallery2d_geometry`
+- `deskew` `image → image` — **傾きを測って起こす**(deskew)。角度をノブで与えるのではなく、画像から推定する。 · 例: `gallery2d_geometry`
+- `it_add_image_border` (halcon: `add_image_border`) `image → image` — add_image_border: pad a reflected border of width ``w`` around the image and fit the bordered canvas back into the original HxW frame. ``a`` sets the border width w = 1 + round(a*6); ``b`` is ignored. · 例: `gallery2d_geometry`
+- `it_change_format` (halcon: `change_format`) `image → image` — change_format: change the image matrix size to a square of the maximum dimension by cropping/padding at the origin (NO resampling, exactly as HALCON change_format does). A square image is returned unchanged; a non-square image is zero-expanded to the square. ``a``/``b`` are ignored. · 例: `gallery2d_geometry`
+- `it_crop_part` (halcon: `crop_part`) `image → image` — crop_part: cut out the central a-fraction of the image and resample it back to HxW -- a genuine zoom-in on the centre. ``b`` is ignored. · 例: `gallery2d_geometry`
+- `it_crop_rectangle1` (halcon: `crop_rectangle1`) `image → image` — crop_rectangle1: cut out the centred rectangle spanning rows/cols [a .. 1-a] and resample it back to HxW. a=0 is (near) identity; larger a zooms further in. ``b`` is ignored. · 例: `gallery2d_geometry`
+- `mirror_image` (halcon: `mirror_image`) `image → image` — ``a`` の値で 3 通りの鏡映を切り替える(``a<0.34``: 上下反転、 ``a<0.67``: 左右反転、それ以外: 転置)。連続的な鏡映変換ではなく離散的な モード選択である点に注意。HALCON の ``mirror_image``（Mirror an image.）に 相当(HALCON は上下/左右/対角を明示的なモード引数で選ぶが、ここでは ``a`` の値域で疑似的に選ぶ近似)。 · 例: `gallery2d_geometry`
+- `mirror_region` (halcon: `mirror_region`) `region → region` — 領域を反転（ミラー）する。a の値で軸を切り替える: a<0.34 で上下反転（``flipud``）、0.34≤a<0.67 で左右反転（``fliplr``）、それ以外で転置（対角線反転、``x.T``）。b は未使用。フリップは値を変えない演算なので ``_rebinarise`` は実質何もしない。 · 例: `gallery2d_geometry`
+- `polar_trans_image` (halcon: `polar_trans_image`) `image → image` — 直交座標→極座標変換(``cv2.warpPolar``)。画像中心を極の中心、 ``min(H,W)/2`` を最大半径として、円環状の内容を横長の展開図に変換する。 未マッピングの画素は 0 埋め(``dst`` を事前ゼロクリアしてから、cv2 が返す 戻り値を読む ―― ``dst`` バッファ自体を読むと空になることがある実装上の 注意点がコードコメントに詳しい)。HALCON の ``polar_trans_image`` （Transform an image to polar coordinates）に相当。 · 例: `gallery2d_geometry`, `poc_allsky_cloud_cover`, `poc_gear_tooth_metrology`
+- `polar_trans_image_ext` (halcon: `polar_trans_image_ext`) `image → image` — 画像全体を極座標（半径・角度）表現へ変換する（``cv2.warpPolar``、順方向・線形補間）。中心は画像中心固定、半径の最大値は ``min(h,w)/2``。a, b は未使用（同じ ``_sh_geom`` の ``polar`` 分岐を ``polar_trans_image`` と共有）。 · 例: `gallery2d_geometry`
+- `polar_trans_image_inv` (halcon: `polar_trans_image_inv`) `image → image` — 極座標→直交座標への逆変換(``cv2.warpPolar`` + ``WARP_INVERSE_MAP``)。 ``polar_trans_image`` の逆写像で、半径 ``min(H,W)/2`` の円盤の外側は 0 で 埋める。2026-09-02 に「cv2 が書かなかった画素が未初期化のまま返る」バグを 修正済み(戻り値でなく渡した ``dst`` を読んでいたため実行毎に値が変わって いた ―― 詳細はコード内コメント)。HALCON の ``polar_trans_image_inv``（Transform an image in polar coordinates back to Cartesian coordinates）に相当。 · 例: `gallery2d_geometry`
+- `polar_trans_region_inv` (halcon: `polar_trans_region_inv`) `region → region` — 極座標表現を通常の直交座標（デカルト座標）へ逆変換する（``cv2.warpPolar`` の逆写像モード）。中心から半径 ``min(h,w)/2`` の円盤の外側は 0 で埋め、``_rebinarise`` により 0.5 しきい値で二値領域に戻す。a, b は未使用（``polar_trans_image_inv`` と同じ ``_sh_geom`` の ``polar_inv`` 分岐を共有）。 · 例: `gallery2d_geometry`
+- `projective_trans_image` (halcon: `projective_trans_image`) `image → image` — 透視(射影)変換(``cv2.warpPerspective``)。4 隅のうち上 2 隅を ``d=0.06+0.12*a`` の比率で内側に寄せることで台形(パースがかかった)歪みを 作る。枠外は反射で埋める。HALCON の ``projective_trans_image``（Apply a projective transformation to an image.）に相当(HALCON は任意のホモグラフィ 行列を渡せるが、ここでは台形歪み 1 パターンに限定した近似)。 · 例: `gallery2d_geometry`, `poc_water_level`
+- `projective_trans_image_size` (halcon: `projective_trans_image_size`) `image → image` — 実装は ``projective_trans_image`` と同一(``kind: "projective"``)。 名前は出力サイズを指定できることを示唆するが、このバックエンドでは 出力キャンバスサイズは変更されず、``projective_trans_image`` と全く同じ 台形歪みを返す(近似の限界、サイズ変更機能は再現されていない)。HALCON の ``projective_trans_image_size``（Apply a projective transformation to an image and specify the output image size.）の代役。 · 例: `gallery2d_geometry`
+- `projective_trans_region` (halcon: `projective_trans_region`) `region → region` — ``projective_trans_image`` と同じ台形歪みを領域(2 値マスク)に適用する。 ``out_sort`` が ``region`` のため ``build()`` が ``_rebinarise`` で包み、 補間で生じた小数値を ``>0.5`` で二値に戻してから返す(領域の {0,1} 契約を 壊さないための後処理)。HALCON の ``projective_trans_region``（Apply a projective transformation to a region.）に相当。 · 例: `gallery2d_geometry`
+- `rescale_img` (halcon: `zoom_image_factor`) `image → image` — Isotropic centre-preserving rescale by ``s = 0.7 + 0.6·a``, canvas kept. · 例: `gallery2d_geometry`
+- `rotate_image` (halcon: `rotate_image`) `image → image` — 画像を中心を軸に ``-45°〜+45°``(``a`` で決まる)回転する (``scipy.ndimage.rotate``、``reshape=False`` でキャンバスサイズを維持)。 枠外にはみ出す部分は反射(``mode="reflect"``)で埋めるため、四隅には元画像が 折り返して写り込む(帳票の傾き補正のように「枠外を背景色で埋めたい」用途 にはそのままでは向かない、既知の設計上の制約)。HALCON の ``rotate_image``（Rotate an image about its center.）に相当。 · 例: `gallery2d_geometry`
+- `rotate_img` (halcon: `rotate_image`) `image → image` — Rotate about the image centre by ``-45° + 90°·a`` (a=0.5 → 0°). ``b`` unused. · 例: `gallery2d_geometry`
+- `sk_swirl` (halcon: `polar_trans_image`) `image → image` — 渦巻き変形(swirl warp)。画像中心の周りで、中心に近いほど大きく回転させる非線形な幾何変換 —— 極座標変換を応用した歪みエフェクト。 · 例: `gallery2d_geometry`
+- `tf_log_polar` `image → image` — log_polar: resample the image on a log-polar grid about its centre. · 例: `gallery2d_geometry`
+- `transpose_region` (halcon: `transpose_region`) `region → region` — 領域(2 値マスク)を転置する(``x.T``、対角線に関する鏡映=行と列の 入れ替え)。カテゴリは geometry だが in/out は ``region``。幾何変換の一種 として ``_sh_geom`` で実装されているが、転置は補間を伴わないため ``build()`` の ``_rebinarise`` を通しても値は変化しない(すでに {0,1} の まま)。HALCON の ``transpose_region``（Reflect a region about a point.）に 相当(HALCON の「点に関する反転」とは厳密には別の変換で、行列の転置= 対角線に関する反転という近似)。 · 例: `gallery2d_geometry`
+- `xcv2_warp_logpolar` `image → image` — 対数極座標変換（ログポーラー変換）で画像を (半径, 角度) 平面に写像する。 · 例: `gallery2d_geometry`
+- `xpil_offset` `image → image` — 画像をトロイダル（周回・wrap-around）にシフトする。``PIL.ImageChops.offset`` を呼ぶ——画面端からはみ出た画素が反対側の端に現れる循環シフトで、通常の平行移動と違って画像端が黒くならない。 · 例: `gallery2d_geometry`
+- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` — 高さ方向・幅方向で独立な倍率(``0.7+0.6*a``, ``0.7+0.6*b``)を持つ等方 でないズーム。中心を基準にアフィン変換で拡大縮小し、キャンバスサイズは 変えない(はみ出す/余る部分は反射で埋める)。HALCON の ``zoom_image_factor``（Zoom an image by a given factor.）に相当し、 HALCON と同じく **2 つの倍率**(ScaleHeight/ScaleWidth)を取る。 · 例: `gallery2d_geometry`, `poc_pv_thermal_survey`
+- `zoom_image_size` (halcon: `zoom_image_size`) `image → image` — 目標サイズ(高さ ``H*(0.5+a)``、幅 ``W*(0.5+b)``)へリサンプルする ズーム。``zoom_image_factor`` が倍率を 2 つ取るのに対し、こちらは**サイズ** そのものを縦横独立に指定する ―― HALCON の意味論としては別物。ただし このパイプラインの ``image`` は「入力と同じキャンバスサイズで返る」契約 なので、リサンプル結果は元の解像度のキャンバス左上に置き、余白は 0、 はみ出す分は切り捨てる(実際に画像が縮小/拡大されたことは見た目で分かる が、配列の shape 自体は変わらない)。HALCON の ``zoom_image_size`` （Zoom an image to a given size.）に相当。 · 例: `gallery2d_geometry`
+- `zoom_region` (halcon: `zoom_region`) `region → region` — 領域を等方（縦横同倍率）にズームする。倍率 ``s = 0.7+0.6a``（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち ``_rebinarise`` で 0.5 しきい値により二値領域に戻す。b は未使用。 · 例: `gallery2d_geometry`
+
+#### 2d / gray(48)
+- `banding_map` `image → image` — 階調の**段差(バンディング)が見えている場所**を返す。``a`` がビット数、``b`` が窓。 · 例: `gallery2d_gray_arith`
+- `bit_not` (halcon: `bit_not`) `image → image` — 階調の反転（ネガポジ反転）。実装は ``1 - x``（[0,1] の連続値としての反転）で、a, b は未使用。 · 例: `gallery2d_gray_arith`
+- `clahe` `image → image` — Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended). · 例: `gallery2d_gray_arith`, `poc_dehazing`
+- `companding_mu_law` `image → image` — μ 則の圧伸(compand = compress + expand)。``a`` が μ、``b`` がビット数。 · 例: `gallery2d_gray_arith`
+- `cv_clahe` `image → image` — CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV 実装)。sk_adapthist と同じ考え方の局所コントラスト強調だが、OpenCV の実装・タイル分割方式を使う。 · 例: `gallery2d_gray_arith`
+- `cv_trunc` (halcon: `scale_image`) `image → image` — 階調の上側切り詰め(THRESH_TRUNC、OpenCV 実装)。指定値より明るい画素はすべてその値に丸め、それ以下の画素はそのまま —— ハイライトだけを潰す階調操作(暗部には触れない)。 · 例: `gallery2d_gray_arith`
+- `dither_floyd_steinberg` `image → image` — 誤差拡散ディザ(Floyd–Steinberg)。``a`` がビット数 1〜8、``b`` は未使用。 · 例: `gallery2d_gray_arith`
+- `dither_ordered` `image → image` — 順序ディザ(Bayer 行列)で量子化する。``a`` がビット数 1〜8、``b`` が行列の大きさ。 · 例: `gallery2d_gray_arith`
+- `equ_histo_image` (halcon: `equ_histo_image`) `image → image` — 画像全体のヒストグラム平坦化(累積分布関数によるトーンカーブ生成、256 ビン)。暗部・明部に偏った階調分布を均して見かけのコントラストを上げる古典的 な手法。HALCON の ``equ_histo_image``（Histogram linearization of images） に相当。 · 例: `gallery2d_gray_arith`
+- `equ_histo_image_rect` (halcon: `equ_histo_image_rect`) `image → image` — ブロック単位のヒストグラム平坦化。画像を ``nb x nb``(``nb=2+4*a``) 個のブロックに分割し、各ブロックごとに独立して(64 ビンの)ヒストグラム 平坦化を行う ―― 局所的な照明ムラに対して ``equ_histo_image``(画像全体を 一括処理)より頑健だが、ブロック境界に段差(ブロックアーティファクト)が 出ることがある。HALCON の ``equ_histo_image_rect``（Histogram linearization within a rectangluar mask.）に相当。 · 例: `gallery2d_gray_arith`
+- `equalize` (halcon: `equ_histo_image`) `image → image` — ヒストグラム均等化（線形化）。HALCON の ``equ_histo_image``（Histogram linearization of images）に相当。 · 例: `gallery2d_gray_arith`, `poc_dehazing`
+- `f2_bit_slice` (halcon: `bit_slice`) `image → image` — Extract one bit-plane of the image after 8-bit quantisation. ``a`` selects the plane (0 = LSB .. 7 = MSB); ``b`` is ignored. Returns a {0,1} image. · 例: `gallery2d_gray_arith`
+- `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` — Expand the domain of the image (the non-zero region) outward by a margin and set the new pixels to the nearest existing gray value. ``a`` sets the margin width (1..7 px); ``b`` is ignored. · 例: `gallery2d_gray_arith`
+- `f2_lut_trans` (halcon: `lut_trans`) `image → image` — Transform the image through a monotone (gamma-free) gray-value look-up table. The 256-entry table is a contrast sigmoid whose gain is set by ``a`` and pivot by ``b``, endpoint-normalised to span [0,1]; the image is then a genuine table lookup on its 8-bit-quantised value. · 例: `gallery2d_gray_arith`
+- `gamma` (halcon: `pow_image`) `image → image` — ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。 · 例: `gallery2d_gray_arith`
+- `gamma_image` (halcon: `gamma_image`) `image → image` — ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に 近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or decoding of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `illuminate` (halcon: `illuminate`) `image → image` — アンシャープマスク型の局所コントラスト強調。``sm`` = ガウシアンぼかし (半径 ``3+12*a``)を引いた差分 ``x - sm`` を元画像に足し戻すことで、 低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の ``illuminate``（Illuminate image.）の代役。 · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
+- `invert` (halcon: `invert_image`) `image → image` — 階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。 · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
+- `invert_image` (halcon: `invert_image`) `image → image` — 階調を反転する ``1.0 - x``(ネガポジ反転)。HALCON の ``invert_image`` （Invert an image.）にそのまま対応する、近似ではなく厳密に等価な演算。 · 例: `gallery2d_gray_arith`, `poc_metal_grain_size`
+- `it_bit_lshift` (halcon: `bit_lshift`) `image → image` — bit_lshift: 8-bit quantise, left-shift every pixel by round(a*7), mask to 8 bits (wrap-around, as HALCON does), and map back to [0,1]. ``b`` ignored. · 例: `gallery2d_gray_arith`
+- `it_bit_mask` (halcon: `bit_mask`) `image → image` — bit_mask: logical AND of the 8-bit image with the constant bit mask round(a*255). ``b`` is ignored. · 例: `gallery2d_gray_arith`
+- `it_bit_rshift` (halcon: `bit_rshift`) `image → image` — bit_rshift: 8-bit quantise then right-shift every pixel by round(a*7) (an integer divide by 2**shift -> a coarser, darker image). ``b`` ignored. · 例: `gallery2d_gray_arith`
+- `it_convert_image_type` (halcon: `convert_image_type`) `image → image` — convert_image_type: model a conversion to a lower-precision pixel type by quantising to L = round(2 + a*254) evenly spaced levels (bit-depth reduction). ``b`` is ignored. · 例: `gallery2d_gray_arith`
+- `monotony` (halcon: `monotony`) `image → image` — 画素値がその 8 近傍の中で何番目に大きいか（単調性、monotony）を [0,1] で返す。中心より小さい近傍の数を数えて 8 で割るので、値 1.0 は中心が近傍全てより大きい局所最大、0.0 は局所最小に近いことを示す。a, b は未使用。 · 例: `gallery2d_gray_arith`
+- `pow_image` (halcon: `pow_image`) `image → image` — 実装は ``gamma_image`` と**まったく同じ関数**(``_sh_lut`` の ``kind: "gamma"`` 分岐)を指す。つまり ``pow_image`` と ``gamma_image`` は このバックエンド上では計算結果が一致する ―― HALCON では別の演算子(指数を 明示的に指定する ``pow_image`` と符号化/復号を意図した ``gamma_image``) だが、ここでは代役の実体が重複している(近似の限界として明記)。 · 例: `gallery2d_gray_arith`
+- `quantization_error` `image → image` — 量子化で失われた量 ``|x - Q(x)|`` を ``Δ/2`` で割って ``[0,1]`` にした地図。 · 例: `gallery2d_gray_arith`
+- `quantize_lloyd_max` `image → image` — 入力の分布に合わせた**最適な**量子化(Lloyd–Max、1-D の k-means)。 · 例: `gallery2d_gray_arith`
+- `quantize_uniform` `image → image` — 一様量子化器(**丸め**)。``a`` がビット数 1〜8、``b`` は未使用。 · 例: `gallery2d_gray_arith`
+- `scale_clip` (halcon: `scale_image`) `image → image` — ゲインとオフセットによる線形階調変換。HALCON の ``scale_image``（Scale the gray values of an image.）に相当。 · 例: `gallery2d_gray_arith`
+- `scale_image` (halcon: `scale_image`) `image → image` — 線形の階調スケーリング ``clip((0.5 + 1.5*a) * x + (b - 0.5), 0, 1)``。 傾き(コントラスト)とオフセット(明るさ)を同時に動かすリニア LUT で、 はみ出した値は [0,1] にクリップされる。HALCON の ``scale_image``（Scale the gray values of an image.）に相当。 · 例: `gallery2d_gray_arith`
+- `scale_image_max` (halcon: `scale_image_max`) `image → image` — 画像の最小値〜最大値を [0,1] いっぱいに引き伸ばす min-max 正規化 (``(x - min) / (max - min)``、定数画像なら無変更)。HALCON の ``scale_image_max``（Maximum gray value spreading in the value range 0 to 255.）に相当(値域は 0〜255 ではなく [0,1] 契約)。 · 例: `gallery2d_gray_arith`
+- `sigmoid` (halcon: `scale_image_max`) `image → image` — ロジスティック関数（シグモイド）による S 字型のコントラスト強調。HALCON の ``scale_image_max``（Maximum gray value spreading in the value range 0 to 255.）に対応付けられているが、ダイナミックレンジを最大まで引き伸ばす ``scale_image_max`` とは処理内容が異なる（近似というより別物に近い）。 · 例: `gallery2d_gray_arith`, `gallery_drive_world_io`
+- `sk_adapthist` `image → image` — CLAHE(Contrast Limited Adaptive Histogram Equalization、コントラスト制限付き適応ヒストグラム均等化)。画像を小領域に分けて局所的にヒストグラムを均等化し、明暗差の大きい画像でも局所コントラストを底上げする。 · 例: `gallery2d_gray_arith`
+- `sk_adjust_log` (halcon: `log_image`) `image → image` — 対数階調変換(log transform)。``out = gain * log(1 + in)`` 型の対数カーブで暗部を持ち上げる階調補正 —— ガンマ補正と似た用途だが、暗部だけをより強く持ち上げる非線形カーブになる。 · 例: `gallery2d_gray_arith`
+- `sk_autolevel` (halcon: `scale_image_max`) `image → image` — 局所オートレベル。各画素周辺の局所ヒストグラムの最小〜最大値を 0〜255 いっぱいに引き伸ばす —— グローバルな階調ではなく場所ごとにコントラストを最大化する適応的なレベル補正。 · 例: `gallery2d_gray_arith`
+- `sk_enhance_contrast` `image → image` — 局所コントラスト強調。各画素を、局所近傍の最大値と最小値のどちらに近いかで判定し、近い方の値へ置き換える —— 中間的な値を持つ画素が両極端に押し出され、見かけ上のコントラストが上がる(2 値化に近い効果が出ることもある)。 · 例: `gallery2d_gray_arith`
+- `xcv_detail_enhance` `image → image` — OpenCV の detailEnhance(細部強調)。 · 例: `gallery2d_gray_arith`
+- `xkor_clahe` `image → image` — CLAHE（コントラスト制限適応ヒストグラム均等化）。 ``kornia.enhance.equalize_clahe`` を呼ぶ。 · 例: `gallery2d_gray_arith`
+- `xpil_autocontrast` `image → image` — オートコントラスト（ヒストグラムの両端を切ってフルレンジに引き伸ばす）。``PIL.ImageOps.autocontrast`` を呼ぶ。 · 例: `gallery2d_gray_arith`
+- `xpil_contrast` `image → image` — コントラスト調整（画像の平均輝度を軸にした線形伸縮）。``PIL.ImageEnhance.Contrast`` を呼ぶ。 · 例: `gallery2d_gray_arith`
+- `xpil_detail` `image → image` — Pillow のディテール強調フィルタ。``PIL.ImageFilter.DETAIL`` の固定カーネルで細部のコントラストを持ち上げる（シャープ化に近いが、エッジよりテクスチャ側を強調する係数）。 · 例: `gallery2d_gray_arith`
+- `xpil_edge_enhance` `image → image` — Pillow のエッジ強調フィルタ（強め）。``PIL.ImageFilter.EDGE_ENHANCE_MORE``の固定カーネルでエッジ付近のコントラストを持ち上げる（``EDGE_ENHANCE`` より強い版）。 · 例: `gallery2d_gray_arith`
+- `xpil_posterize` `image → image` — ポスタリゼーション（階調数の削減）。``PIL.ImageOps.posterize`` を呼び、各チャンネルの有効ビット数を減らして色数を落とす。 · 例: `gallery2d_gray_arith`
+- `xpil_solarize` `image → image` — ソラリゼーション（フィルム現像の中間反転効果）。``PIL.ImageOps.solarize``を呼び、しきい値を超える画素値を反転する。 · 例: `gallery2d_gray_arith`
+- `xsk3_integral_image` `image → image` — 積分画像(summed-area table、skimage ``transform.integral_image``)。原点から各画素までの累積和を格納した画像で、任意矩形領域の合計をたった 4 点の参照で計算できるようにする、Haar 特徴量や矩形フィルタの高速化に使う古典的な下ごしらえ。最大値で正規化して表示用に潰している。 · 例: `gallery2d_gray_arith`
+- `xsk3_rank_equalize` `image → image` — 局所ヒストグラム均等化(skimage ``filters.rank.equalize``)。円盤近傍ごとにヒストグラム均等化を行う適応的コントラスト強調で、大域的な ``equalize`` op より局所的な明暗ムラに強い。 · 例: `gallery2d_gray_arith`
+- `xsk3_rank_subtract_mean` `image → image` — 局所平均差分(skimage ``filters.rank.subtract_mean``)。各画素からその円盤近傍の平均輝度を引いた差分を返す。skimage の実装はアンダーフロー防止のため差分を 1/2 に縮小しレンジ中央へシフトする仕様になっている。大域的な明暗ムラを打ち消しローカルコントラストを強調する。 · 例: `gallery2d_gray_arith`
+- `xsp_detrend_flatten` `image → image` — 画像全体の一次トレンド（傾き）を縦横それぞれ除去してから正規化するフラット化フィルタ。 · 例: `gallery2d_gray_arith`
+
+#### 2d / halcon_ext(81)
+- `hx_add_noise_contour` (halcon: `add_noise_white_contour_xld`) `contour → contour` — contour 点に白色ガウス雑音を付加(std は a、固定 seed で決定的)。 · 例: `gallery2d_halcon_ext`
+- `hx_char_threshold` (halcon: `char_threshold`) `image → region` — 暗い文字を明るい背景から抽出(region): thresh = mean - k*std(k は a)で下側を選ぶ。 · 例: `gallery2d_halcon_ext`
+- `hx_clip_contours` (halcon: `clip_contours_xld`) `contour → contour` — contour を画像ドメイン(中央 margin a/b を残す矩形)にクリップ(範囲外点を除去)。 · 例: `gallery2d_halcon_ext`
+- `hx_clip_end_points` (halcon: `clip_end_points_contours_xld`) `contour → contour` — 各 contour の端点を k 個ずつ切り落とす(k は a)。 · 例: `gallery2d_halcon_ext`
+- `hx_clip_region_rel` (halcon: `clip_region_rel`) `region → region` — region をその外接矩形に対し相対的にクリップ(各辺から a の割合を削る)。 · 例: `gallery2d_halcon_ext`
+- `hx_close_edges` (halcon: `close_edges`) `image → image` — エッジ振幅画像の隙間を閉じる: しきい値 a で二値化 → morphological closing(半径 b)。 · 例: `gallery2d_halcon_ext`, `poc_metal_grain_size`
+- `hx_close_edges_length` (halcon: `close_edges_length`) `image → image` — close_edges に加え、長さ(画素数)が閾値未満の短いエッジ断片を除去する。 · 例: `gallery2d_halcon_ext`
+- `hx_closing` (halcon: `closing`) `region → region` — 円板構造要素で region をクロージング(膨張→収縮)する。HALCON の ``closing``(region をクローズする)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_cooc_feature` (halcon: `cooc_feature_image`) `image → feature` — 量子化して距離 d の水平共起行列を作り、Haralick contrast を返す(a=距離, b は角度選択)。 · 例: `gallery2d_halcon_ext`
+- `hx_crop_contours` (halcon: `crop_contours_xld`) `contour → contour` — contour を中央の a×b 割合の矩形に crop(範囲内の点のみ残す)。 · 例: `gallery2d_halcon_ext`
+- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` — 直線的なエッジ断片を検出: NMS で細線化 → 連結成分のうち PCA で細長い(直線状)ものを残す。 · 例: `find_ops_by_meaning`, `gallery2d_halcon_ext`
+- `hx_dilation1` (halcon: `dilation1`) `region → region` — 円板構造要素で region を膨張(dilation)する。HALCON の ``dilation1`` (region を膨張する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_dilation2` (halcon: `dilation2`) `region → region` — 参照点つき dilation: 膨張後に参照点オフセット(b で並進)。 · 例: `gallery2d_halcon_ext`
+- `hx_disparity_to_xyz` (halcon: `disparity_image_to_xyz`) `image → image` — 視差画像から深度 Z = f*baseline/disparity を計算(焦点/基線は a,b で可変)。正規化 Z。 · 例: `gallery2d_halcon_ext`
+- `hx_dist_ellipse_contour` (halcon: `dist_ellipse_contour_xld`) `contour → feature` — contour 点の当てはめ楕円境界からの平均距離を返す(小=楕円に近い、feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_dist_ellipse_points` (halcon: `dist_ellipse_contour_points_xld`) `contour → feature` — contour 各点の当てはめ楕円境界からの最大距離を返す(点別 distance の集約=max、feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_dist_rect2_points` (halcon: `dist_rectangle2_contour_points_xld`) `contour → feature` — contour 各点から最小面積外接矩形の辺までの正規化距離の平均(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_distance_pc` (halcon: `distance_pc`) `contour → feature` — クエリ点(正規化 a,b)から contour までの最小距離を返す(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_distance_pr` (halcon: `distance_pr`) `region → feature` — クエリ点(正規化 a,b)から region までの最小距離(feature)。距離変換で。 · 例: `gallery2d_halcon_ext`
+- `hx_distance_sc` (halcon: `distance_sc`) `contour → feature` — 水平線分(行 a*H)から contour までの最小距離(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_erosion1` (halcon: `erosion1`) `region → region` — 円板構造要素で region を収縮(erosion)する。HALCON の ``erosion1`` (region を収縮する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_estimate_al_am` (halcon: `estimate_al_am`) `image → feature` — albedo(反射率)と ambient(環境光)の推定: albedo ~ 輝度レンジ、ここでは albedo を返す。 · 例: `gallery2d_halcon_ext`
+- `hx_estimate_sl_al_lr` (halcon: `estimate_sl_al_lr`) `image → feature` — Lee-Rosenfeld: 光源の slant を推定(天頂角、0=正面〜pi/2=真横)。[0,1] 正規化。 · 例: `gallery2d_halcon_ext`
+- `hx_estimate_sl_al_zc` (halcon: `estimate_sl_al_zc`) `image → feature` — Zheng-Chellappa: slant を勾配エネルギーで補正して推定。 · 例: `gallery2d_halcon_ext`
+- `hx_estimate_tilt_lr` (halcon: `estimate_tilt_lr`) `image → feature` — Lee-Rosenfeld: 光源方位角 tilt = atan2(<Ey>, <Ex>)(平均勾配方向)。[0,1] 正規化。 · 例: `gallery2d_halcon_ext`
+- `hx_estimate_tilt_zc` (halcon: `estimate_tilt_zc`) `image → feature` — Zheng-Chellappa: 正規化勾配の平均方向で tilt を推定(局所コントラスト非依存)。 · 例: `gallery2d_halcon_ext`
+- `hx_expand_region` (halcon: `expand_region`) `region → region` — 領域間の隙間を埋める(region -> region): 二値領域を dilation で膨張して連結を促す。 · 例: `gallery2d_halcon_ext`
+- `hx_fill_interlace` (halcon: `fill_interlace`) `image → image` — 2 枚のビデオ半画像を補間(奇数行を隣接偶数行の平均で置換=デインターレース)。 · 例: `gallery2d_halcon_ext`
+- `hx_fit_circle_contour` (halcon: `fit_circle_contour_xld`) `contour → feature` — Kåsa 代数法で contour 点に円を当て、フィット残差(RMS)を返す(小=円に近い)。 · 例: `gallery2d_halcon_ext`
+- `hx_fit_ellipse_contour` (halcon: `fit_ellipse_contour_xld`) `contour → feature` — 2 次モーメントから楕円を当て、軸比(短/長=真円で 1、細長いほど 0)を返す。 · 例: `gallery2d_halcon_ext`
+- `hx_fit_rectangle2_contour` (halcon: `fit_rectangle2_contour_xld`) `contour → feature` — 最小面積外接矩形を当て、そのアスペクト比(短辺/長辺)を返す(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_fit_surface1` (halcon: `fit_surface_first_order`) `image → image` — gray 値を 1 次多項式面(平面)で最小二乗近似する。HALCON の ``fit_surface_first_order``(gray 値モーメントを計算し 1 次曲面で近似する) に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_fit_surface2` (halcon: `fit_surface_second_order`) `image → image` — gray 値を 2 次多項式面で最小二乗近似する。HALCON の ``fit_surface_second_order``(gray 値モーメントを計算し 2 次曲面で近似する) に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_full_domain` (halcon: `full_domain`) `image → region` — 画像の定義域を全面に広げる。HALCON の ``full_domain``(画像の定義域を 最大に拡張する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_fuzzy_measure_pairs` (halcon: `fuzzy_measure_pairs`) `image → feature` — 中央の水平プロファイルでエッジ対(明バーの立上り境界→立下り境界)を数える(1D 計測)。 · 例: `gallery2d_halcon_ext`
+- `hx_gabor` (halcon: `convol_gabor`) `image → image` — Gabor フィルタ(方位 theta=a*pi、周波数 freq=0.08+0.35b)。応答の大きさを返す。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_bandfilter` (halcon: `gen_bandfilter`) `image → image` — 理想バンドフィルタ画像(周波数円環、中心半径 a・幅 b)。gen_bandpass と別 operator。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_bandpass` (halcon: `gen_bandpass`) `image → image` — 理想バンドパス(周波数領域の円環マスク、内半径 a・帯域幅 b)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_checker_region` (halcon: `gen_checker_region`) `image → region` — 市松模様(チェッカーボード)region を生成する。HALCON の ``gen_checker_region``(チェッカー領域を生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_circle` (halcon: `gen_circle`) `image → region` — 円形の region を生成する。HALCON の ``gen_circle``(円を生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_circle_sector` (halcon: `gen_circle_sector`) `image → region` — 円のセクタ region(開始角 b*2pi、掃引 a*2pi)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_derivative_filter` (halcon: `gen_derivative_filter`) `image → image` — 周波数領域の微分フィルタ。``a`` が微分の階数、``b`` が向き。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_disc_se` (halcon: `gen_disc_se`) `image → region` — 円板構造要素を region として生成(半径 a)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_ellipse` (halcon: `gen_ellipse`) `image → region` — 軸並行の楕円 region を生成する。HALCON の ``gen_ellipse``(楕円を生成する) に相当(向き固定の近似 —— 本家は回転角パラメータも取る)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_ellipse_sector` (halcon: `gen_ellipse_sector`) `image → region` — 楕円の扇形(セクタ)region を生成する。HALCON の ``gen_ellipse_sector`` (楕円セクタを生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_empty_region` (halcon: `gen_empty_region`) `image → region` — 空(全画素 0)の region を生成する。HALCON の ``gen_empty_region`` (空 region を生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_grid_region` (halcon: `gen_grid_region`) `image → region` — 格子線 region を生成する。HALCON の ``gen_grid_region``(直線または画素から region を生成する)の格子パターンに相当する簡略版。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_highpass` (halcon: `gen_highpass`) `image → image` — 理想ハイパスフィルタの周波数マスクを生成する。HALCON の ``gen_highpass`` (理想ハイパスフィルタを生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_image_proto` (halcon: `gen_image_proto`) `image → image` — 入力と同サイズの定数グレー画像(値 a)を生成。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_lowpass` (halcon: `gen_lowpass`) `image → image` — 理想ローパスフィルタ画像(周波数領域の中心円板マスク、遮断半径 a)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_parallel_contour` (halcon: `gen_parallel_contour_xld`) `contour → contour` — 各 contour の平行(法線オフセット)contour を生成(距離は (a-0.5) で符号つき)。 · 例: `gallery2d_halcon_ext`
+- `hx_gen_rectangle2` (halcon: `gen_rectangle2`) `image → region` — 任意角度の矩形 region を生成する。HALCON の ``gen_rectangle2`` (任意方向の矩形を生成する)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_get_domain` (halcon: `get_domain`) `image → region` — 画像の定義域を region として取得(既定は全面)。 · 例: `gallery2d_halcon_ext`
+- `hx_histo_to_thresh` (halcon: `histo_to_thresh`) `image → region` — ヒストグラムの谷から閾値を決めて二値化(Otsu の分散基準でなく谷検出=別 op)。 · 例: `gallery2d_halcon_ext`
+- `hx_lowlands` (halcon: `lowlands`) `image → region` — gray 値の窪地(局所最小の平坦域)を検出: 近傍最小と一致する画素 region。 · 例: `gallery2d_halcon_ext`
+- `hx_mean_shape` (halcon: `mean_image_shape`) `image → image` — 任意マスク(円 disk)による平均平滑化。半径 r を a で可変(矩形 mean と別 op)。 · 例: `gallery2d_halcon_ext`
+- `hx_moments_any_xld` (halcon: `moments_any_xld`) `contour → feature` — 全 contour 点の 2 次中心モーメント(広がり)を返す(正規化 feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_move_region` (halcon: `move_region`) `region → region` — region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。 · 例: `gallery2d_halcon_ext`
+- `hx_nonmax_dir` (halcon: `nonmax_suppression_dir`) `image → image` — 勾配方向に沿った非最大抑制(Canny の NMS 段)。エッジを 1 画素に細線化する。 · 例: `gallery2d_halcon_ext`
+- `hx_opening` (halcon: `opening`) `region → region` — 円板構造要素で region をオープニング(収縮→膨張)する。HALCON の ``opening``(region をオープンする)に相当。 · 例: `gallery2d_halcon_ext`
+- `hx_plane_deviation` (halcon: `plane_deviation`) `image → image` — gray 値の 1 次平面近似からの偏差 |v - plane|(平坦度/欠陥検査)。 · 例: `gallery2d_halcon_ext`
+- `hx_plateaus_center` (halcon: `plateaus_center`) `image → region` — gray 値の平坦域(勾配~0)の中心を検出: 平坦連結成分の重心画素を marker region に。 · 例: `gallery2d_halcon_ext`
+- `hx_polar_trans_inv` (halcon: `polar_trans_contour_xld_inv`) `contour → contour` — contour 点を (radius, angle) とみなし直交座標へ逆変換(polar_trans の逆)。 · 例: `gallery2d_halcon_ext`
+- `hx_radial_distort_contour` (halcon: `change_radial_distortion_contours_xld`) `contour → contour` — contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。 · 例: `gallery2d_halcon_ext`
+- `hx_rectangle1_domain` (halcon: `rectangle1_domain`) `image → region` — 画像の定義域を軸並行矩形に縮小(中央の a×b の割合)region。 · 例: `gallery2d_halcon_ext`
+- `hx_region_to_label` (halcon: `region_to_label`) `image → image` — しきい値 a で二値化した領域の連結成分をラベル画像に変換(正規化)。 · 例: `gallery2d_halcon_ext`
+- `hx_region_to_mean` (halcon: `region_to_mean`) `image → image` — 各連結領域をその平均 gray 値で塗る(image -> image)。閾値 a で前景/背景を分け label 化。 · 例: `gallery2d_halcon_ext`
+- `hx_regress_contours` (halcon: `regress_contours_xld`) `contour → feature` — 各 contour に回帰直線を当て、平均残差(直線からのズレ)を返す(feature)。小=直線的。 · 例: `gallery2d_halcon_ext`
+- `hx_select_xld_point` (halcon: `select_xld_point`) `contour → contour` — クエリ点(正規化 a,b)を外接矩形に含む contour のみ選ぶ(filter)。 · 例: `gallery2d_halcon_ext`
+- `hx_shade_height_field` (halcon: `shade_height_field`) `image → image` — 高さ場 v を Lambertian 陰影で描画(法線×光源)。方位 a・仰角 b の光源。 · 例: `gallery2d_halcon_ext`
+- `hx_smallest_circle_xld` (halcon: `smallest_circle_xld`) `contour → feature` — 全 contour 点の最小包含円(近似=重心中心)の半径を返す(正規化 feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_smallest_rect1_xld` (halcon: `smallest_rectangle1_xld`) `contour → feature` — 全 contour 点の外接軸並行矩形の面積比を返す(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_smallest_rect2_xld` (halcon: `smallest_rectangle2_xld`) `contour → feature` — 最小面積外接矩形の面積比(矩形面積 / 画像面積)を返す(feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_sort_contours` (halcon: `sort_contours_xld`) `contour → contour` — contour を相対位置(重心 row→col)でソート。 · 例: `gallery2d_halcon_ext`
+- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` — 各 contour を支配点(RDP)で線分に分割する(許容 eps は a)。 · 例: `gallery2d_halcon_ext`, `poc_screw_thread_metrology`
+- `hx_split_skeleton_region` (halcon: `split_skeleton_region`) `region → region` — 1 画素幅 skeleton を分岐点で分割: 近傍数>=3 の junction を除いて連結成分に分ける。 · 例: `gallery2d_halcon_ext`, `poc_fresco_craquelure`
+- `hx_test_closed_xld` (halcon: `test_closed_xld`) `contour → feature` — 閉じている contour の割合を返す(端点間距離が閾値未満=閉、feature)。 · 例: `gallery2d_halcon_ext`
+- `hx_test_region_point` (halcon: `test_region_point`) `region → feature` — region が点(正規化 a=行, b=列)を含むか(1/0、test_region_point)。 · 例: `gallery2d_halcon_ext`
+- `hx_test_region_points` (halcon: `test_region_points`) `region → feature` — 格子状の複数点のうち region に含まれる割合(test_region_points)。 · 例: `gallery2d_halcon_ext`
+- `hx_test_self_intersect` (halcon: `test_self_intersection_xld`) `contour → feature` — 自己交差する contour の割合を返す(feature)。非隣接セグメント対を判定。 · 例: `gallery2d_halcon_ext`
+- `hx_union_adjacent` (halcon: `union_adjacent_contours_xld`) `contour → contour` — 端点が近い(閾値 a)contour を貪欲に連結する。 · 例: `gallery2d_halcon_ext`
+
+#### 2d / intensity-transform(1)
+- `xmh_soft` `image → image` — ソフト閾値処理(``mahotas.thresholding.soft_threshold``、シュリンケージ)。閾値未満の絶対値を持つ画素を 0 に潰し、それ以外は閾値分だけ 0 に近づける。ウェーブレット/スパース信号のノイズ除去でよく使う処理を画素値に直接適用する。 · 例: `gallery2d_gray_arith`
+
+#### 2d / macro(4)
+- `macro_binarize` `image → image` — 進化探索が発見した固定パイプライン: ``bilateral(a=0.06,b=0.89)`` → ``unsharp(a=0.51,b=0.34)`` → ``bilateral(a=0.04,b=0.24)`` → ``lowpass(a=0.75,b=0.59)`` → ``gopen(a=0.38,b=1.00)`` → ``unsharp(a=0.78,b=0.68)``（平滑化とアンシャープマスクを交互に重ね、ローパスとグレースケールオープニングで整えてから再度シャープ化する 6 段）。 · 例: `gallery2d_physics_alife_3d`
+- `macro_denoise` `image → image` — 進化探索（``evolve.py`` / ``robust.py``）が発見した固定パイプライン: ``bilateral(a=0.10,b=0.76)`` → ``bilateral(a=0.12,b=0.27)`` → ``bilateral(a=0.73,b=0.11)``（既存 op のバイラテラルフィルタを、強さの違うパラメータで 3 段連ねたもの）。 · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `macro_edge` `image → region` — 進化探索が発見した固定パイプライン: ``gamma(a=0.39,b=0.94)`` → ``bilateral(a=0.22,b=0.08)`` → ``sobel_mag(a=0.81,b=0.80)`` → ``scale_clip(a=1.00,b=0.90)`` → ``otsu(a=0.78,b=0.93)``（ガンマ補正 → 平滑化 → 勾配強度 → スケーリング → 大津の判別分析法（Otsu's method）による二値化、の 5 段）。 · 例: `gallery2d_physics_alife_3d`
+- `macro_vol_denoise` `volume → volume` — 進化探索が発見した固定パイプライン（3-D ボリューム版）: ``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。 · 例: `gallery2d_physics_alife_3d`
+
+#### 2d / matching(2)
+- `ncc_locate` (halcon: `find_ncc_model`) `image → match` — 正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。 · 例: `gallery2d_contour_measure`, `poc_search_sweep_width`, `poc_template_tracking`
+- `shape_locate` (halcon: `find_shape_model`) `image → match` — 回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の ``find_shape_model``（Find the best matches of a shape model in an image.）に相当。 · 例: `gallery2d_contour_measure`, `poc_template_tracking`
+
+#### 2d / measure1d(5)
+- `m1_fuzzy_measure_pos` (halcon: `fuzzy_measure_pos`) `image → contour` — 中心を通るキャリパー線上のエッジを、ファジィなメンバーシップスコアでふるいにかけて返す（HALCON ``fuzzy_measure_pos`` に相当: 矩形/円弧に垂直な直線エッジをファジィ判定で検出する）。 · 例: `gallery2d_contour_measure`
+- `m1_measure_pairs` (halcon: `measure_pairs`) `image → feature` — 中心を通るキャリパー線上で、立ち上がり→立ち下がりのエッジ対（明るい物体の両端）の個数を数える（HALCON ``measure_pairs`` に相当: 矩形/円弧に垂直な直線エッジのペアを抽出する）。 · 例: `gallery2d_contour_measure`, `poc_dimensional_inspection`
+- `m1_measure_pos` (halcon: `measure_pos`) `image → contour` — 中心を通るキャリパー線上のサブピクセルエッジ位置を抽出する（HALCON``measure_pos`` に相当: 矩形/円弧に垂直な直線エッジを検出する）。 · 例: `gallery2d_contour_measure`, `poc_dimensional_inspection`
+- `m1_measure_projection` (halcon: `measure_projection`) `image → feature` — 測定用のキャリパー線（直線）を画像に当て、垂直方向に平均した輝度プロファイルの平均値を返す（HALCON ``measure_projection`` に相当:矩形/円弧に垂直な 1 次元射影を抽出する）。 · 例: `gallery2d_contour_measure`
+- `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` — 中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。 · 例: `gallery2d_contour_measure`
+
+#### 2d / misc(1)
+- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
+
+#### 2d / morphology(36)
+- `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
+- `cv_blackhat` (halcon: `gray_bothat`) `image → image` — ブラックハット変換(black-hat、OpenCV 実装)。「閉処理結果 − 元画像」を計算し、暗い背景の上にある、構造要素より小さい暗い特徴だけを抽出する(cv_tophat の暗版)。 · 例: `gallery2d_morphology`, `poc_fresco_craquelure`
+- `cv_close` (halcon: `gray_closing`) `image → image` — グレー値モルフォロジー閉処理(closing、OpenCV 実装)。膨張してから収縮することで、構造要素より小さい暗い穴・隙間を埋める(cv_open の逆の効果)。 · 例: `gallery2d_morphology`
+- `cv_dilate` (halcon: `gray_dilation`) `image → image` — グレー値モルフォロジー膨張(dilation、OpenCV 実装)。近傍の最大値へ置き換える操作で、明るい領域を拡大・暗い領域を縮小する(cv_erode の逆)。 · 例: `gallery2d_morphology`
+- `cv_erode` (halcon: `gray_erosion`) `image → image` — グレー値モルフォロジー収縮(erosion、OpenCV 実装)。近傍の最小値へ置き換える操作で、明るい領域を縮小・暗い領域を拡大する。 · 例: `gallery2d_morphology`
+- `cv_gradient` (halcon: `gray_range_rect`) `image → image` — モルフォロジー勾配(OpenCV 実装)。「膨張結果 − 収縮結果」で、領域の輪郭(縁取り)だけを取り出す —— 通常の微分ベースのエッジ検出とは別系統の輪郭抽出。 · 例: `gallery2d_morphology`
+- `cv_open` (halcon: `gray_opening`) `image → image` — グレー値モルフォロジー開処理(opening、OpenCV 実装)。収縮してから膨張することで、構造要素より小さい明るい突起・孤立点を消す。 · 例: `gallery2d_morphology`
+- `cv_tophat` (halcon: `gray_tophat`) `image → image` — トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。 · 例: `gallery2d_morphology`
+- `f2_gray_inside` (halcon: `gray_inside`) `image → image` — Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall height; regions connected to the border stay dark. ``a`` sets the maximum fill depth h (0 = none, 1 = full); ``b`` is ignored. · 例: `gallery2d_morphology`
+- `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` — Thinning of a gray-value image: skeletonise the bright region (threshold set by ``a``) and lift the 1-px medial ridge back to the original gray values. ``b`` is ignored. · 例: `gallery2d_morphology`
+- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gdilate` (halcon: `gray_dilation`) `image → image` — グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gerode` (halcon: `gray_erosion`) `image → image` — グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gray_bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造 (穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
+- `gray_closing` (halcon: `gray_closing`) `image → image` — グレースケールクロージング(膨張の後に同じ構造要素で収縮)。暗い小さな 穴・くぼみを埋める、``gray_opening`` と対の演算。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
+- `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` — 正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。 · 例: `gallery2d_morphology`
+- `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` — 円盤形構造要素を使うグレースケールクロージング。``gray_closing`` との 違いは構造要素の形のみ。HALCON の ``gray_closing_shape``（Perform a gray value closing with a selected mask.）に相当(円形固定の近似)。 · 例: `gallery2d_morphology`
+- `gray_dilation` (halcon: `gray_dilation`) `image → image` — グレースケール膨張(``ndimage.grey_dilation``)。矩形構造要素内の最大値 で画素を置き換え、暗い細部を埋める、``gray_erosion`` と対の演算。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` — 円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール膨張（gray dilation）—— 窓内の最大値に置き換える。b は未使用。 · 例: `gallery2d_morphology`
+- `gray_erosion` (halcon: `gray_erosion`) `image → image` — グレースケール収縮(``ndimage.grey_erosion``)。矩形構造要素(既定 shape="rect")内の最小値で画素を置き換え、明るい細部を侵食する。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` — 円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール収縮（gray erosion）—— 窓内の最小値に置き換える。b は未使用。 · 例: `gallery2d_morphology`
+- `gray_opening` (halcon: `gray_opening`) `image → image` — グレースケールオープニング(収縮の後に同じ構造要素で膨張)。明るい 小突起・細線を除去しつつ、全体の明るさの分布は概ね保つ。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` — 正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・オープニング（gray opening、収縮の後に膨張）。小さな明るい突起・ノイズを除去しながら大まかな明るさは保つ。b は未使用。 · 例: `find_ops_by_meaning`, `gallery2d_morphology`, `poc_weld_radiograph_porosity`
+- `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` — 円盤形(disk)構造要素を使うグレースケールオープニング。``gray_opening`` との違いは構造要素の形だけで、演算そのもの(収縮→膨張)は同じ。HALCON の ``gray_opening_shape``（Perform a gray value opening with a selected mask.）に相当(HALCON は矩形/円/八角形などから選べるが、ここでは円形に 固定)。 · 例: `gallery2d_morphology`
+- `gray_tophat` (halcon: `gray_tophat`) `image → image` — ホワイトトップハット(元画像 − オープニング)。周囲より明るい小さな 構造(スポット・細線)だけを抽出する。``_norm`` で正規化して返すため、 絶対的な明るさではなく相対的な突出度になる。HALCON の ``gray_tophat`` （Perform a gray value top hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_document_scan`, `poc_real_coin_metrology`, `poc_search_sweep_width`
+- `local_thickness` `image → image` — 各前景画素に「そこを覆える**最大の円の直径**」を入れて返す(局所肉厚)。 · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`
+- `morph_grad` (halcon: `gray_range_rect`) `image → image` — モルフォロジー勾配（膨張 − 侵食）。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.）に相当。 · 例: `gallery2d_morphology`
+- `persistence_map` `image → image` — **閾値を選ばずに**「山の目立ち具合」を測る(0 次元パーシステンス)。 · 例: `gallery2d_morphology`
+- `runlength_smear` `image → image` — **走査長平滑化(RLSA)**。行内の字の隙間を埋めて、字を「行」の塊にまとめる。 · 例: `gallery2d_morphology`
+- `sk_area_opening` `image → image` — 面積オープニング(area opening)。通常のモルフォロジー的開処理が構造要素の形で小さい明部を削るのに対し、こちらは面積(連結画素数)だけで判定し、指定面積未満の明るい連結成分を消す —— 形状に依らず「小さい」ものを落とせる。 · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
+- `tophat` (halcon: `gray_tophat`) `image → image` — ホワイトトップハット（原画像 − オープニング）。HALCON の ``gray_tophat``（Perform a gray value top hat transformation on an image.）に相当。 · 例: `degenerate_inputs`, `gallery2d_morphology`, `poc_search_sweep_width`
+- `xsk2_diameter_opening` `image → image` — 直径オープニング（面積オープニングの直径版、微小な明るい構造の除去）。``skimage.morphology.diameter_opening`` を呼ぶ。 · 例: `gallery2d_morphology`
+- `xsk2_reconstruction` `image → image` — モルフォロジー再構成（reconstruction by dilation）。 ``skimage.morphology.reconstruction`` を method="dilation" で呼ぶ。 · 例: `gallery2d_morphology`
+- `xsk3_area_closing` `image → image` — 面積クロージング(skimage ``morphology.area_closing``)。面積が閾値未満の暗い領域(窪み)だけを埋める、サイズベースのモルフォロジー演算 —— 通常のクロージングと違い構造要素の形状ではなく連結成分の面積で対象を選ぶ。 · 例: `gallery2d_morphology`
+- `xsk3_diameter_closing` `image → image` — 直径クロージング(skimage ``morphology.diameter_closing``)。xsk3_area_closing の面積の代わりに、連結成分の外接矩形の対角線長(直径)で対象を選ぶクロージング —— 細長い構造には直径基準、丸い構造には面積基準が向く、と使い分けられる。 · 例: `gallery2d_morphology`
+
+#### 2d / morphology/markers(1)
+- `xmh_regmin` `image → region` — 領域極小点の抽出(``mahotas.regmin``)。ガウシアン平滑化した画像に対し、局所的に最も暗い谷を領域としてマークする。分水嶺分割(watershed)のマーカー生成に使う典型的な前処理。 · 例: `gallery2d_segmentation`
+
+#### 2d / nary(17)
+- `abs_diff_image` (halcon: `abs_diff_image`) `image × image → image` — 2 枚の画像の差の絶対値。HALCON の ``abs_diff_image`` に相当。``out = clip(|I1 - I2| * (0.5 + 1.5a), 0, 1)``。変化検出の基本形で、符号を捨てる代わりに明暗どちらの変化も拾う。``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `add_image` (halcon: `add_image`) `image × image → image` — 2 枚の画像を加算する。HALCON の ``add_image`` に相当。``out = clip((I1 + I2) * (0.5 + a) + (b - 0.5), 0, 1)`` —— ``a`` がゲイン(0.5〜1.5 倍)、``b`` がオフセット(-0.5〜+0.5)。飽和は 0/1 で切る。 · 例: `degenerate_inputs`, `gallery_nary_image_algebra`, `genspark_external_review`
+- `bit_and` (halcon: `bit_and`) `image × image → image` — 2 枚の画像のビット単位 AND。HALCON の ``bit_and`` に相当。★一度 8bit 整数に量子化してから演算し 255 で割って戻すので、**浮動小数の階調は失われる**(0.501 と 0.503 は同じ値になる)。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `bit_or` (halcon: `bit_or`) `image × image → image` — 2 枚の画像のビット単位 OR。HALCON の ``bit_or`` に相当。★``bit_and`` と同じく 8bit へ量子化してから演算するため階調が落ちる。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `convol_image` (halcon: `convol_image`) `image × image → image` — 第 2 入力をフィルタマスクとして畳み込む。HALCON の ``convol_image`` に相当。★HALCON と同じく**相関**(マスクを書いたまま重ねる)で計算する —— scipy の ``convolve`` はマスクを反転するので、非対称なマスクだと画像が逆向きにずれる。マスクは画像より小さくてよく(形の一致は要らない)、絶対値の総和 + 1e-8 で割って正規化する(総和が 0 のマスクで割り算が爆発しないため。出力は相対 1e-8 だけ小さくなる)。端は ``reflect``。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `difference` (halcon: `difference`) `region × region → region` — 2 つの領域の差(第 1 に入り第 2 に入らない画素)。HALCON の ``difference`` に相当。**順序が意味を持つ**(引く側と引かれる側を入れ替えると別の結果)。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`, `gfx2d_scene`, `poc_granular_heap_repose`, `poc_powder_scoop_pour`, `poc_pxrd_phase_peel`
+- `div_image` (halcon: `div_image`) `image × image → image` — 2 枚の画像を画素ごとに割る。HALCON の ``div_image`` に相当。``out = clip(I1 / max(I2, 1e-3) * (0.1 + 0.9a), 0, 1)`` —— ゼロ割を避けるため分母に下限 ``1e-3`` を敷く(そこでは商が最大 1000 倍になり飽和する)。``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `intersection` (halcon: `intersection`) `region × region → region` — 2 つの領域の積(両方に入る画素)。HALCON の ``intersection`` に相当。入力は ``> 0.5`` で二値化する。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`, `poc_connectome_across_decades`, `poc_connectome_across_worms`, `poc_driving_crossing`, `poc_driving_japan_town`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_worm_neurites_grow`
+- `max_image` (halcon: `max_image`) `image × image → image` — 2 枚の画像の画素ごとの最大値。HALCON の ``max_image`` に相当。``a``, ``b`` は未使用。明るい方を残すので、複数露光の合成や欠損の穴埋めに使う。 · 例: `gallery_nary_image_algebra`
+- `min_image` (halcon: `min_image`) `image × image → image` — 2 枚の画像の画素ごとの最小値。HALCON の ``min_image`` に相当。``a``, ``b`` は未使用。暗い方を残すので、反射ハイライトの抑制に使う。 · 例: `gallery_nary_image_algebra`
+- `mult_image` (halcon: `mult_image`) `image × image → image` — 2 枚の画像を画素ごとに掛ける。HALCON の ``mult_image`` に相当。``out = clip(I1 * I2 * (0.5 + 1.5a) + (b - 0.5), 0, 1)``。積は必ず暗くなるので ``a`` のゲイン幅を広く取ってある。 · 例: `gallery_nary_image_algebra`
+- `overpaint_region` (halcon: `overpaint_region`) `image × region → image` — 画像の領域の中を一定値で塗りつぶす。HALCON の ``overpaint_region`` に相当。塗る値は ``a``(0〜1)。``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `paint_gray` (halcon: `paint_gray`) `image × image → image` — 第 2 画像(source)の濃淡を第 1 画像へ塗り込む。HALCON の ``paint_gray`` に相当。★塗る範囲は source の**非ゼロ画素すべて**(この層の約束「定義域の外は 0」に合わせた)。2026-09-03 までは ``> 0.5`` の画素だけを塗っていたため、**暗い source が消えていた**。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `reduce_domain` (halcon: `reduce_domain`) `image × region → image` — 画像の定義域を領域で絞る。HALCON の ``reduce_domain`` に相当。この層は明示的な定義域を持たないので、**領域外を 0 にする**(画像に領域を掛ける)ことで表す。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `sub_image` (halcon: `sub_image`) `image × image → image` — 2 枚の画像を減算する。HALCON の ``sub_image`` に相当。``out = clip((I1 - I2) * (0.5 + a) + b, 0, 1)`` —— 負になる差を ``b`` で持ち上げないと 0 に潰れる(既定 ``b=0.5`` で中央値が灰色になる)。 · 例: `gallery_nary_image_algebra`
+- `symm_difference` (halcon: `symm_difference`) `region × region → region` — 2 つの領域の対称差(どちらか一方だけに入る画素)。HALCON の ``symm_difference`` に相当。重なりを消すので、2 つのマスクのずれを見るのに使う。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+- `union2` (halcon: `union2`) `region × region → region` — 2 つの領域の和(どちらかに入る画素)。HALCON の ``union2`` に相当。入力は ``> 0.5`` で二値化する。``a``, ``b`` は未使用。 · 例: `gallery_nary_image_algebra`
+
+#### 2d / noise(2)
+- `add_noise_distribution` (halcon: `add_noise_distribution`) `image → image` — 画像に加法性ノイズを加える。実装はガウス（正規分布）ノイズのみで、``add_noise_white`` と同じ ``_sh_noise`` の ``gaussian`` 分岐を共有する。乱数は a から決まる固定シード（``int(a*997)+7``）で発生させるため同じ a なら毎回同じノイズになる（決定的）。b がノイズの標準偏差を 0.02〜0.22 に振る。 · 例: `gallery2d_smoothing_rank`
+- `add_noise_white` (halcon: `add_noise_white`) `image → image` — ガウス性ホワイトノイズを加える(``np.random.default_rng`` で生成、 標準偏差 ``0.02+0.2*b``)。乱数シードは ``int(a*997)+7`` で ``a`` から 決定的に導出されるため、**同じ ``a`` なら常に同じノイズパターンが再現 される**(真にランダムではなく、``a`` を「ノイズの見え方の型」を選ぶ 擬似的なノブとして使っている点に注意)。HALCON の ``add_noise_white`` （Add noise to an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+
+#### 2d / physics(6)
+- `ph_coherence_enhancing_diffusion` `image → image` — Weickert coherence-enhancing diffusion (HALCON ``coherence_enhancing_diff``). · 例: `gallery2d_physics_alife_3d`
+- `ph_heat_flow` `image → image` — Linear heat equation / isotropic diffusion (HALCON ``isotropic_diffusion``). · 例: `gallery2d_physics_alife_3d`
+- `ph_mean_curvature_motion` `image → image` — Mean-curvature motion / curve-shortening flow (HALCON ``mean_curvature_flow``). · 例: `gallery2d_physics_alife_3d`
+- `ph_perona_malik` `image → image` — Perona-Malik anisotropic diffusion (HALCON ``anisotropic_diffusion``). · 例: `gallery2d_physics_alife_3d`
+- `ph_reaction_diffusion` `image → image` — Gray-Scott reaction-diffusion (no HALCON operator, halcon=""). · 例: `gallery2d_physics_alife_3d`
+- `ph_total_variation_flow` `image → image` — Total-variation (Rudin-Osher-Fatemi) denoising flow (no HALCON operator, ""). · 例: `find_ops_by_meaning`, `gallery2d_physics_alife_3d`
+
+#### 2d / rank(23)
+- `cv_median` (halcon: `median_image`) `image → image` — メディアンフィルタ(OpenCV 実装)。正方形近傍内の中央値に置き換える定番のノイズ除去(特に胡椒塩ノイズに強く、エッジも比較的保たれる)。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `dual_rank` (halcon: `dual_rank`) `image → image` — パーセンタイル（順位統計）フィルタ。窓内画素を昇順に並べ、b で指定した百分位（5〜95%、``rank_image``/``rank_rect`` と同じ ``_sh_rank`` の ``rank`` 分岐）の値を返す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_smoothing_rank`
+- `eliminate_min_max` (halcon: `eliminate_min_max`) `image → image` — 中央値フィルタ（median filter）による平滑化。実装は ``median_image`` などと同じ ``_sh_rank`` の median 分岐で、窓内画素の中央値に置き換えるだけ。a は窓サイズを 3/5/7/9 の 4 段階に振る（``_k(a)``）。b は未使用。 · 例: `gallery2d_smoothing_rank`
+- `eliminate_sp` (halcon: `eliminate_sp`) `image → image` — シグマフィルタ（sigma filter, Lee 型）によるノイズ抑制。窓内平均値との差が閾値（0.05〜0.4、b で振る）未満の画素だけを使って再平均化し、極端に外れた画素（ソルト&ペッパー雑音など）の影響を除く。該当画素が窓内に無ければ元の値をそのまま返す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_smoothing_rank`
+- `gray_dilation_rect` (halcon: `gray_dilation_rect`) `image → image` — 矩形窓内の最大値を返すグレースケール膨張(``ndimage.maximum_filter``)。 暗い細線・小穴を明部側から埋めて消す、``gray_erosion_rect`` と対の演算。 HALCON の ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` — 矩形窓内の最小値を返すグレースケール収縮(``ndimage.minimum_filter``)。 明るい細線・小突起を暗部側から侵食して消す。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `gray_range_rect` (halcon: `gray_range_rect`) `image → image` — 矩形窓内の最大値と最小値の差(局所レンジ)を正規化して返す。テクスチャの 局所的な起伏の激しさ(コントラスト量)を可視化する。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.） に相当。 · 例: `gallery2d_smoothing_rank`
+- `max_filter` (halcon: `gray_dilation_rect`) `image → image` — 矩形窓内の最大値フィルタ（グレースケール膨張に相当）。HALCON の ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `mean_sp` (halcon: `mean_sp`) `image → image` — ロバスト平滑化フィルタ。窓内の 20 パーセンタイルと 80 パーセンタイルの平均を返す（トリム平均、trimmed mean）ことで、極端に明るい/暗い外れ値（ソルト&ペッパー雑音など）の影響を抑える。a が窓サイズを 3/5/7/9 に振る（``_k(a)``）。b は未使用。 · 例: `gallery2d_smoothing_rank`
+- `median` (halcon: `median_image`) `image → image` — メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。 · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median_image` (halcon: `median_image`) `image → image` — メディアンフィルタ(``ndimage.median_filter``、正方窓)。窓内の中央値で 置き換えるノイズ除去で、平均フィルタと違いエッジを保ったまま塩胡椒ノイズを 除去できる。HALCON の ``median_image``（Compute a median filter with various masks.）に相当(HALCON は円形・八角形等の任意マスクを選べるが、 ここでは正方形マスクに固定)。 · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
+- `median_rect` (halcon: `median_rect`) `image → image` — 矩形メディアンフィルタ。``median_image`` と同じ ``scipy`` 実装だが、 高さと幅を独立に指定できる(``size=(k_a, k_b)``)。HALCON の ``median_rect`` （Compute a median filter with rectangular masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
+- `median_separate` (halcon: `median_separate`) `image → image` — 実装は ``median_image`` と同じ(``kind: "median"``、正方窓の 2 次元 メディアン)。HALCON の ``median_separate``（Separated median filtering with rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス 掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを 返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。 · 例: `gallery2d_smoothing_rank`
+- `median_weighted` (halcon: `median_weighted`) `image → image` — 中央値フィルタ（median filter）。実装は eliminate_min_max/median_image と同じ ``_sh_rank`` の median 分岐で、円形・八角形などマスク形状ごとの重み付けは行わず、正方形窓の単純な中央値を返す。a が窓サイズを 3/5/7/9 に振り、b は未使用。 · 例: `gallery2d_smoothing_rank`
+- `min_filter` (halcon: `gray_erosion_rect`) `image → image` — 矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `percentile` (halcon: `rank_image`) `image → image` — 任意パーセンタイルのランクフィルタ。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
+- `rank_image` (halcon: `rank_image`) `image → image` — 窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク フィルタ(``ndimage.percentile_filter``)。パーセンタイル 0 で収縮相当、 100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当 (HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。 · 例: `gallery2d_smoothing_rank`, `poc_dehazing`
+- `rank_rect` (halcon: `rank_rect`) `image → image` — 実装は ``rank_image`` と同一(``kind: "rank"``、正方窓のパーセンタイル フィルタ)。HALCON では ``rank_image``(任意マスク)と ``rank_rect``(矩形 マスク限定)は別演算子だが、この代役ではどちらも同じ正方窓実装を指す。 HALCON の ``rank_rect``（Compute a rank filter with rectangular masks.） の代役。 · 例: `gallery2d_smoothing_rank`
+- `sk_median_disk` (halcon: `median_image`) `image → image` — 円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。 · 例: `gallery2d_smoothing_rank`
+- `trimmed_mean` (halcon: `trimmed_mean`) `image → image` — 20 パーセンタイルと 80 パーセンタイルのフィルタ結果の平均を返すことで トリム平均を近似する。外れ値(最小・最大側)の影響を除いた平均に近い値になる が、真の「中央 60% を平均する」トリム平均とは計算方法が異なる近似である点に 注意。HALCON の ``trimmed_mean``（Smooth an image with an arbitrary rank mask.）の代役。 · 例: `gallery2d_smoothing_rank`
+- `xkor_median` `image → image` — メディアン（中央値）フィルタ。``kornia.filters.median_blur`` を呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xpil_mode_filter` `image → image` — 最頻値フィルタ。``PIL.ImageFilter.ModeFilter`` で窓内の最頻出画素値に置き換える（中央値でなく最頻値を取る点がメディアンフィルタと異なる）。 · 例: `gallery2d_smoothing_rank`
+- `xsk2_rank_geomean` `image → image` — ランクフィルタの一種、幾何平均フィルタ。``skimage.filters.rank.geometric_mean`` を 8bit 化した画像に円形構造要素（``skimage.morphology.disk``）で掛ける。 · 例: `gallery2d_smoothing_rank`
+
+#### 2d / region(78)
+- `boundary` (halcon: `boundary`) `region → region` — 領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の リング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。 · 例: `gallery2d_region`, `poc_complex_plane_fields`, `poc_driving_commonroad`, `voxel_labels_color`
+- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` — 領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各 画素から最も近い領域(前景)画素までの距離を表す、``distance_transform`` とは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の ``closest_point_transform``（Compute the closest-point transformation of a region.）に相当。 · 例: `gallery2d_region`
+- `closing_circle` (halcon: `closing_circle`) `region → region` — 円盤形構造要素による二値クロージング(膨張の後に収縮)。小さな穴や くびれを埋める、``opening_circle`` と対の演算。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
+- `closing_golay` (halcon: `closing_golay`) `region → region` — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値クロージング（closing、膨張の後に収縮）。小さな穴やくびれを埋める。b は未使用。 · 例: `gallery2d_region`
+- `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` — 正方形構造要素による二値クロージング。``closing_circle`` の矩形版。 HALCON の ``closing_rectangle1``（Close a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
+- `convex_fill` (halcon: `shape_trans`) `region → region` — 凸包に近い形へ穴・くびれを埋める（クロージングによる近似）。HALCON の ``shape_trans``（Transform the shape of a region.）の凸包変換に相当することを意図しているが、実装は反復回数の多いクロージングであり、厳密な凸包計算ではない（近似）。 · 例: `gallery2d_region`
+- `cv_dist` (halcon: `distance_transform`) `region → image` — 距離変換(distance transform、OpenCV 実装、L2/ユークリッド近似)。前景領域の各画素について、最も近い背景画素までの距離を計算し、画像として返す —— 領域の「太さ」や中心線抽出の下処理に使う。 · 例: `gallery2d_region`
+- `dilation_circle` (halcon: `dilation_circle`) `region → region` — 円盤形構造要素による二値膨張(``ndimage.binary_dilation``)。前景領域を 外側へ広げる、``erosion_circle`` と対の演算。HALCON の ``dilation_circle``（Dilate a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`, `poc_focus_stacking`
+- `dilation_golay` (halcon: `dilation_golay`) `region → region` — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の膨張（dilation）。b は未使用。 · 例: `gallery2d_region`
+- `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` — 正方形構造要素による二値膨張。``dilation_circle`` の矩形版。HALCON の ``dilation_rectangle1``（Dilate a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
+- `dilation_seq` (halcon: `dilation_seq`) `region → region` — 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して膨張（dilation）する逐次的膨張。b は未使用。 · 例: `gallery2d_region`
+- `dist_transform` (halcon: `distance_transform`) `region → image` — ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`
+- `distance_transform` (halcon: `distance_transform`) `region → image` — ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_particle_sizing`, `poc_vessel_network`
+- `em_skeleton` `region → region` — Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系統)。 · 例: `gallery2d_region`
+- `erosion_circle` (halcon: `erosion_circle`) `region → region` — 円盤形構造要素による二値収縮(``ndimage.binary_erosion``)。前景領域を 外周から侵食して縮める、最も基本的な二値モルフォロジー演算。HALCON の ``erosion_circle``（Erode a region with a circular structuring element.） に相当。 · 例: `gallery2d_region`, `poc_livestock_body_volume`
+- `erosion_golay` (halcon: `erosion_golay`) `region → region` — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の収縮（erosion）。b は未使用。 · 例: `gallery2d_region`
+- `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` — 正方形構造要素による二値収縮。``erosion_circle`` との違いは構造要素の 形のみ(円ではなく正方形)。HALCON の ``erosion_rectangle1``（Erode a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
+- `erosion_seq` (halcon: `erosion_seq`) `region → region` — 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して収縮（erosion）する逐次的収縮。b は未使用。反復回数を増やすほど収縮量が大きくなる（1 回あたり半径 1 画素相当）。 · 例: `gallery2d_region`
+- `fill_holes` (halcon: `fill_up`) `region → region` — 領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_real_coin_metrology`, `poc_symmetry_restoration`
+- `fill_up` (halcon: `fill_up`) `region → region` — 領域内部の穴(背景に完全に囲まれた領域)を埋める (``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが 埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
+- `fill_up_shape` (halcon: `fill_up_shape`) `region → region` — 領域内の小さな穴を埋める。``area_threshold = 16+200a`` 画素以下の穴だけを埋める（skimage の ``remove_small_holes``）。b は未使用。 · 例: `gallery2d_region`
+- `get_region_contour` (halcon: `get_region_contour`) `region → region` — 領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引いて輪郭を残す。**穴のある領域では外周だけでなく穴の輪郭も返る**（実測 2026-09-16: 8x8 の枠に 4x4 の穴を開けた入力で、穴に隣接する前景 20 画素のうち 16 画素が輪郭として立つ）。「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残すので、外周だけが欲しいなら穴を先に埋めること。a, b は未使用。``boundary`` seed op と同じ実装。 · 例: `gallery2d_region`, `poc_document_scan`
+- `get_region_convex` (halcon: `get_region_convex`) `region → region` — 領域の凸包（convex hull）を塗りつぶした領域として返す（``skimage.morphology.convex_hull_image``）。a, b は未使用。``shape_trans``（凸包への形状変換 seed op）と同じ実装。 · 例: `gallery2d_region`
+- `invert_region` (halcon: `complement`) `region → region` — 領域の補集合（前景/背景の反転）。HALCON の ``complement``（Return the complement of a region.）に相当。 · 例: `gallery2d_region`
+- `junctions_skeleton` (halcon: `junctions_skeleton`) `region → region` — 骨格化した領域のうち、3x3 近傍に 3 つ以上の骨格画素を持つ画素(分岐点・ 交差点)だけを残す。骨格の端点(``pruning`` が削る対象)ではなく、枝分かれ する結節点を検出する。HALCON の ``junctions_skeleton``（Find junctions and end points in a skeleton.）に相当(HALCON は端点も同時に返すが、ここでは 分岐点のみを検出する近似)。 · 例: `gallery2d_region`, `poc_fresco_craquelure`
+- `morph_skeleton` (halcon: `morph_skeleton`) `region → region` — 領域の骨格線（スケルトン）を抽出する。実装は skimage の ``skeletonize``（Zhang–Suen 型の反復細線化アルゴリズム）で、a, b は未使用。 · 例: `gallery2d_region`
+- `opening_circle` (halcon: `opening_circle`) `region → region` — 円盤形構造要素による二値オープニング(収縮の後に膨張)。小さな突起や 細い連結部を除去しつつ、大まかな形状は保つ。HALCON の ``opening_circle``（Open a region with a circular structuring element.） に相当。 · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_document_scan`
+- `opening_golay` (halcon: `opening_golay`) `region → region` — 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値オープニング（opening、収縮の後に膨張）。小さな突起や孤立点を除去する。b は未使用。 · 例: `gallery2d_region`
+- `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` — 正方形構造要素による二値オープニング。``opening_circle`` の矩形版。 HALCON の ``opening_rectangle1``（Open a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
+- `pruning` (halcon: `pruning`) `region → region` — 骨格化(``skeletonize``、無ければ入力をそのまま使用)の後、近傍数が 1 以下の端点画素(スパー=枝毛)を繰り返し ``1+4*a`` 回削り取ることで、 骨格から短い枝を除去する。HALCON の ``pruning``（Prune the branches of a region.）に相当(HALCON は枝の長さを指定できるが、ここでは反復回数による 近似)。 · 例: `gallery2d_region`, `poc_fresco_craquelure`
+- `r2_endpoints_skeleton` `region → region` — 骨格の端点(8 近傍にちょうど 1 個の骨格画素を持つ点)を抽出する。 · 例: `gallery2d_region`, `poc_fresco_craquelure`
+- `r2_inner_circle` (halcon: `inner_circle`) `region → region` — Largest inscribed circle drawn as a mask (a scales drawn radius; a=0.5=exact). · 例: `gallery2d_region`
+- `r2_inner_rectangle1` (halcon: `inner_rectangle1`) `region → region` — Largest axis-aligned inscribed rectangle (a shrinks the drawn rect; a=0=exact). · 例: `gallery2d_region`
+- `r2_partition_rectangle` (halcon: `partition_rectangle`) `region → region` — Split the region bbox into an NxN grid; keep cells overlapping the region. · 例: `gallery2d_region`
+- `r2_runlength_features` (halcon: `runlength_features`) `region → feature` — Region -> feature: mean length of horizontal foreground runs. · 例: `gallery2d_region`
+- `r2_smallest_circle` (halcon: `smallest_circle`) `region → region` — Minimum enclosing circle as a mask (Welzl); a inflates radius (>=0). · 例: `gallery2d_region`
+- `r2_smallest_rectangle1` `region → region` — Axis-aligned bounding box (smallest_rectangle1). · 例: `gallery2d_region`
+- `r2_smallest_rectangle2` (halcon: `smallest_rectangle2`) `region → region` — Minimum-area ORIENTED bounding rectangle as a mask (rotating calipers). · 例: `gallery2d_region`
+- `r2_sort_region` (halcon: `sort_region`) `region → region` — Keep the k-th largest connected component; k = round(a*(n-1)). · 例: `gallery2d_region`
+- `r2_split_skeleton_lines` (halcon: `split_skeleton_lines`) `region → region` — Thin the region to a skeleton, then break it at junctions (>=3 neighbours). · 例: `gallery2d_region`, `poc_vessel_network`
+- `r2_union1` (halcon: `union1`) `region → region` — Union of all connected components into a single mask (OR of labels). · 例: `gallery2d_region`
+- `r3_background_seg` (halcon: `background_seg`) `region → region` — 領域の背景（前景の補集合）を連結成分に分け、小さすぎる成分を捨てて返す（HALCON ``background_seg`` に相当）。 · 例: `gallery2d_region`
+- `r3_clip_region` (halcon: `clip_region`) `region → region` — 領域を画像中心の矩形窓でクリップする（HALCON ``clip_region`` に相当）。 · 例: `gallery2d_region`
+- `r3_eliminate_runs` (halcon: `eliminate_runs`) `region → region` — 水平方向の連結ラン（連続する前景画素の並び）のうち、指定長未満のものを消す（HALCON ``eliminate_runs`` に相当）。 · 例: `gallery2d_region`
+- `r3_label_to_region` (halcon: `label_to_region`) `region → region` — ラベル画像から 1 つのグレー値（ラベル）を持つ画素だけを抽出する（HALCON``label_to_region`` に相当）。 · 例: `gallery2d_region`
+- `r3_partition_dynamic` (halcon: `partition_dynamic`) `region → region` — 領域を、垂直方向の広がりが小さい列（くびれ）で水平に分割する（HALCON``partition_dynamic`` に相当）。 · 例: `gallery2d_region`
+- `r3_polar_trans_region` (halcon: `polar_trans_region`) `region → region` — 領域を重心中心の極座標へリマップする（HALCON ``polar_trans_region`` に相当）。 · 例: `gallery2d_region`
+- `r3_rank_region` (halcon: `rank_region`) `region → region` — 領域の形態学的ランクオペレータ（HALCON 正真正銘の ``rank_region``: 収縮でも膨張でもない一般化）。 · 例: `gallery2d_region`
+- `r3_region_features` (halcon: `region_features`) `region → feature` — 領域の形状特徴量を 1 つ返す（HALCON ``region_features`` の一部を実装）。 · 例: `gallery2d_region`
+- `r3_runlength_distribution` (halcon: `runlength_distribution`) `region → feature` — 水平方向のラン長分布の要約統計量を 1 つ返す（HALCON ``runlength_distribution`` に相当）。 · 例: `gallery2d_region`
+- `r3_select_region_point` (halcon: `select_region_point`) `region → region` — 指定した 1 点を含む連結成分だけを残す（HALCON ``select_region_point`` に相当）。 · 例: `gallery2d_region`
+- `reg_close` (halcon: `closing_circle`) `region → region` — 領域（region）の二値クロージング（膨張してから侵食）。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`, `poc_leaf_disease_area`
+- `reg_dilate` (halcon: `dilation_circle`) `region → region` — 領域（region）の二値膨張。HALCON の ``dilation_circle``（Dilate a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`
+- `reg_erode` (halcon: `erosion_circle`) `region → region` — 領域（region）の二値侵食。HALCON の ``erosion_circle``（Erode a region with a circular structuring element.）に相当。 · 例: `degenerate_inputs`, `gallery2d_region`, `poc_colocalization_crosstalk`, `poc_leaf_disease_area`
+- `reg_open` (halcon: `opening_circle`) `region → region` — 領域（region）の二値オープニング（侵食してから膨張）。HALCON の ``opening_circle``（Open a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`
+- `region_boundary` (halcon: `boundary`) `region → region` — 領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。 · 例: `gallery2d_region`
+- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` — 円形構造要素（半径 ``_rad(a)``=1〜4）による二値オープニング（opening、収縮の後に膨張）で、孤立した小さな点状ノイズを除去する。b は未使用。 · 例: `find_ops_by_meaning`, `gallery2d_region`
+- `remove_small` (halcon: `select_shape`) `region → region` — 小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。 · 例: `gallery2d_region`, `quickstart`
+- `select_largest` (halcon: `select_shape_std`) `region → region` — 最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。 · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
+- `select_shape` (halcon: `select_shape`) `region → region` — 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。 · 例: `gallery2d_region`
+- `select_shape_std` (halcon: `select_shape_std`) `region → region` — 連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で 選択)。HALCON の ``select_shape_std``（Select regions of a given shape.） は ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは 「面積最大」1 種類に固定している(近似)。 · 例: `gallery2d_region`
+- `shape_trans` (halcon: `shape_trans`) `region → region` — 領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の ``shape_trans``（Transform the shape of a region.）は本来 convex/ rectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子 だが、この代役では凸包 1 種類に固定している(近似の限界)。 · 例: `gallery2d_region`
+- `sk_clear_border` `region → region` — 画像端に接する成分の除去。前景領域のうち画像の外周に触れている連結成分をすべて背景に落とす —— 視野の端で切れた(全体像が写っていない)物体を解析対象から除外する定番の前処理。 · 例: `gallery2d_region`
+- `sk_convex` (halcon: `shape_trans`) `region → region` — 凸包(convex hull)による領域の変形。前景領域を包む最小の凸多角形を求め、その内部を塗りつぶした領域を返す —— くびれや凹みを全て埋める。 · 例: `gallery2d_region`
+- `sk_find_boundaries` (halcon: `boundary`) `region → region` — 領域境界の抽出。ラベル画像(ここでは真偽値領域)の中で、異なるラベル同士(前景/背景)が接する画素だけを True にした境界マスクを返す。 · 例: `gallery2d_region`
+- `sk_medial` (halcon: `skeleton`) `region → region` — 中心軸変換(medial axis transform)。距離変換の尾根線を抽出する方式で骨格を求める、sk_skeleton とは別アルゴリズム。輪郭からの距離情報を保った骨格になりやすい。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
+- `sk_remove_holes` (halcon: `fill_up`) `region → region` — 小さい穴埋め。前景領域の内部にある背景の孔(穴)のうち、面積がしきい値未満のものだけを塗りつぶす —— 大きな孔(意図した開口部)は残す。 · 例: `gallery2d_region`
+- `sk_skeleton` (halcon: `skeleton`) `region → region` — 領域の骨格化(skeletonization)。前景領域をトポロジー(連結関係・穴の数)を保ったまま 1 画素幅の線に細める。 · 例: `gallery2d_region`, `poc_solar_el_inspection`
+- `sk_thin` (halcon: `thinning`) `region → region` — モルフォロジー的細線化(thinning)。sk_skeleton と似た 1 画素幅化だが、アルゴリズムが異なりヒット・オア・ミス変換ベースで、骨格の枝(スパー)が出にくい傾向がある。 · 例: `gallery2d_region`
+- `skeleton` (halcon: `skeleton`) `region → region` — 位相を保ったまま領域を 1 画素幅の骨格線に細める (``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、 枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の ``skeleton``（Compute the skeleton of a region.）に相当。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_swc_tree_truth`, `poc_vessel_network`
+- `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` — 領域を囲む座標軸平行の外接矩形（axis-aligned bounding box）で塗りつぶした領域を返す。a, b は未使用。領域が空なら全ゼロを返す。 · 例: `gallery2d_region`
+- `thinning` (halcon: `thinning`) `region → region` — ``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による 1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、 分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning`` （Remove the result of a hit-or-miss operation from a region.）の代役。 · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
+- `thinning_golay` (halcon: `thinning_golay`) `region → region` — 領域を細線化する。実装は skimage の ``thin``（Guo–Hall 型の反復細線化）で完全に 1 画素幅になるまで繰り返し、a, b は未使用。 · 例: `gallery2d_region`
+- `thinning_seq` (halcon: `thinning_seq`) `region → region` — 領域を細線化する。実装は thinning_golay と同一（skimage の ``thin``、収束するまで反復する Guo–Hall 型細線化）で、a, b は未使用。 · 例: `gallery2d_region`
+- `xcv2_hitmiss` `region → region` — ヒットオアミス変換で「中心は背景・上下左右は前景」という十字パターンを 検出する（``cv2.MORPH_HITMISS``）。 · 例: `gallery2d_region`
+- `xsk2_isotropic_close` `region → region` — 等方閉じ（isotropic closing）。二値領域に対して``skimage.morphology.isotropic_closing`` を掛ける（`region` → `region`専用で、通常のモルフォロジー closing と違い距離変換ベースで等方的に働く）。 · 例: `gallery2d_region`
+- `xsk3_rank_majority` `region → region` — 局所多数決フィルタ(skimage ``filters.rank.majority``)。xmh_majority と同じ多数決平滑化の skimage 版で、円盤近傍内で過半数の画素が 1 なら 1 にする。 · 例: `gallery2d_region`
+- `xsp_chamfer_dist` `region → image` — City-block (chamfer) distance to the nearest background pixel, normalised to [0,1]. · 例: `gallery2d_region`
+
+#### 2d / region-morphology(1)
+- `xmh_majority` `region → region` — 多数決フィルタ(``mahotas.majority_filter``)。二値領域に対し、正方近傍内で 1 が過半数を占める画素だけを 1 に残す平滑化。孤立ノイズの除去や領域境界のギザギザ均しに使う。 · 例: `find_ops_by_meaning`, `gallery2d_region`
+
+#### 2d / region-transform(1)
+- `xmh_bwperim` `region → region` — 領域の輪郭抽出(``mahotas.bwperim``)。二値領域から、背景と接する境界画素だけを残した 1 画素幅の輪郭を作る。 · 例: `gallery2d_region`
+
+#### 2d / restoration(12)
+- `iv_backproject_superres` `image → image` — Single-image iterative back-projection super-resolution (Irani-Peleg). Upscale to a higher grid, simulate the low-res observation by blurring and downscaling, back-project the residual into the high grid, then downscale the consistent estimate back to HxW. Net effect: high-frequency detail is boosted (sharpening-by-consistency). ``a`` sets iterations n = 1 + round(a*4) (1..5); ``b`` sets the back-projection step gain g = 0.5 + b (0.5..1.5). · 例: `gallery2d_smoothing_rank`
+- `iv_gradient_inpaint` `image → image` — Harmonic (Laplace) inpainting of a central masked window. The interior of a centred window (side fraction from ``a``) is discarded and refilled by solving nabla^2 u = 0 with Dirichlet boundary equal to the surrounding known pixels (Jacobi relaxation = repeatedly replacing each masked pixel by its 4-neighbour mean). The recovered interior is the smoothest (minimum-gradient) fill of the hole. ``a`` sets the window size; ``b`` is ignored. · 例: `gallery2d_smoothing_rank`
+- `iv_motion_deblur` `image → image` — Wiener deconvolution of an assumed LINEAR MOTION blur. ``a`` sets the blur length L = 3 + round(a*10) (3..13 px); ``b`` sets the blur angle theta = b*180 deg (b=0 -> horizontal). The op builds that motion PSF and inverts it, narrowing a bar that was smeared along the motion direction. · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
+- `iv_richardson_lucy` `image → image` — Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma = ``RL_SIGMA``). ``a`` sets the iteration count n = 1 + round(a*14) (1..15); ``b`` is ignored. RL multiplicatively drives the estimate ``u`` so that ``u (*) psf`` matches the blurred measurement, sharpening real edges. · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
+- `iv_unsharp_deblur` `image → image` — Iterative unsharp masking as an approximate deblur. Each pass adds a scaled high-pass (image minus its Gaussian blur) back to the image. ``a`` sets the iteration count n = 1 + round(a*5) (1..6); ``b`` sets the per-pass amount amt = 0.4 + b (0.4..1.4). More iterations / larger amount -> sharper. · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
+- `iv_wiener_deconv_spatial` `image → image` — Self-contained spatial Wiener deconvolution of an assumed small Gaussian PSF. ``a`` sets the assumed blur sigma in (0, ``WIENER_SIGMA_MAX``] to invert (larger a -> stronger sharpening); ``b`` sets the noise-to-signal ratio nsr = 1e-3 + b*0.15 (larger b -> gentler, more regularized restoration). · 例: `gallery2d_smoothing_rank`
+- `xcv3_inpaint_ns` `image → image` — Navier-Stokes 法によるインペインティング(OpenCV ``cv2.inpaint``、``INPAINT_NS``)。周辺画素から流体力学的に情報を伝搬させて欠損領域を埋める修復アルゴリズム。 · 例: `gallery2d_smoothing_rank`
+- `xcv_inpaint` `image → image` — 欠損領域を推定して埋める修復(inpainting)。 · 例: `gallery2d_smoothing_rank`
+- `xsk2_wiener` `image → image` — ウィーナー逆畳み込み（既知の点拡がり関数を使ったデブラー）。 ``skimage.restoration.wiener`` を呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xsk_inpaint` `image → image` — 欠損領域を推定して埋める修復(inpainting)。 · 例: `gallery2d_smoothing_rank`
+- `xsk_richardson_lucy` `image → image` — Richardson-Lucy デコンボリューション。ぼけを 3x3 の平均カーネル(box PSF)と 仮定して反復的に鮮鋭化する(skimage.restoration.richardson_lucy をそのまま呼ぶ)。 · 例: `gallery2d_smoothing_rank`
+- `xsk_unwrap_phase` `image → image` — 位相アンラップ(phase unwrapping)。入力 [0,1] を位相 [-pi, pi] とみなし、 skimage.restoration.unwrap_phase で 2*pi の折返し(ラップ)を取り除いてから、 ``signed01`` で符号を保ったまま [0,1] へ戻す(0 -> 0.5)。 · 例: `gallery2d_smoothing_rank`
+
+#### 2d / segment(7)
+- `sg_felzenszwalb` `image → region` — Felzenszwalb のグラフベース領域分割の境界を返す（``skimage.segmentation.felzenszwalb``、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`
+- `sg_gmm_segment` `image → region` — 輝度値に対する 2 クラス・ガウス混合モデル（EM 法）で明るい方のクラスタを領域として返す（``skimage`` 非依存の自前 EM 実装、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`, `poc_nuclei_ploidy`
+- `sg_kmeans_intensity` `image → region` — 輝度値の k-means クラスタリングで最も明るいクラスタを領域として返す（自前の Lloyd 法実装、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`
+- `sg_normalized_cut_2` `image → region` — 輝度グラフの正規化カット（スペクトラル 2 分割、Shi & Malik）で画像を明暗 2 領域に分ける（HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`
+- `sg_region_growing_seeded` `image → region` — 画像中心を種として、輝度が近い画素を繋げていく領域拡張（シードグロウイング）（HALCON ``regiongrowing`` は既に別 op でカバー済みのため、重複申告を避けて ``halcon=""`` としている）。 · 例: `gallery2d_segmentation`
+- `sg_slic_superpixels` `image → region` — SLIC 法によるスーパーピクセル過分割の境界格子を返す（``skimage.segmentation.slic``、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`
+- `sg_watershed_gradient` `image → region` — 勾配画像の h-minima マーカーからのウォーターシェッド分割の境界を返す（``skimage``、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+
+#### 2d / segmentation(54)
+- `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` — ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
+- `auto_threshold` (halcon: `auto_threshold`) `image → region` — 実装は ``binary_threshold`` と同一(Otsu の判別分析法による自動 しきい値化)。HALCON の ``auto_threshold``（Segment an image using thresholds determined from its histogram.）は本来ヒストグラムの複数の谷 から**複数のしきい値**(多クラス分割)を決める演算子だが、この代役では 単一の Otsu しきい値による二値化に単純化している(近似の限界)。 · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`, `threshold_family_agreement`
+- `bin_threshold` (halcon: `bin_threshold`) `image → region` — 大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。 · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
+- `binary_threshold` (halcon: `binary_threshold`) `image → region` — 大津の判別分析法(Otsu's method)による自動しきい値二値化 (``skimage.filters.threshold_otsu``、無ければ平均値で代用)。クラス間分散 を最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に 相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `canny` (halcon: `edges_image`) `image → region` — 簡易 Canny 風エッジ検出（region を返す）。HALCON の ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.）に対応付けられているが、非極大抑制やヒステリシスしきい値処理は行わない簡略版（近似）。 · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
+- `cv_adaptive_gauss` (halcon: `local_threshold`) `image → region` — 局所ガウス重み付き平均によるしきい値二値化(adaptive threshold、Gaussian 版、OpenCV 実装)。cv_adaptive_mean と同じ枠組みだが、局所平均を単純平均ではなくガウス重み付き平均で取るため、窓の境界付近の急な変化が出にくい。 · 例: `gallery2d_segmentation`
+- `cv_adaptive_mean` (halcon: `dyn_threshold`) `image → region` — 局所平均によるしきい値二値化(adaptive threshold、mean 版、OpenCV 実装)。各画素の周辺の単純平均から定数を引いた値をしきい値として使う —— 照明ムラのある画像で大域しきい値より安定する。 · 例: `gallery2d_segmentation`
+- `cv_canny` (halcon: `edges_image`) `image → region` — Canny エッジ検出(領域版、OpenCV 実装)。sk_canny と同じアルゴリズムだが、OpenCV 版はガウス平滑化の σ ではなく 2 本のしきい値を直接指定する API になっている。 · 例: `gallery2d_segmentation`
+- `cv_otsu` (halcon: `binary_threshold`) `image → region` — 大津の判別分析法による大域しきい値二値化(OpenCV 実装)。sk_otsu と同じアルゴリズムだが、内部で 8 bit に量子化してから計算する点が異なる(結果がわずかにずれ得る)。 · 例: `gallery2d_segmentation`, `poc_vegetation_cover`, `threshold_family_agreement`
+- `dual_threshold` (halcon: `dual_threshold`) `image → region` — 符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、 ``|x - 0.5| > 0.1+0.35*a`` を満たす画素(0.5 から十分離れた画素)を前景と する ―― 正負どちらの側にも対称に反応する。HALCON の ``dual_threshold`` （Threshold operator for signed images.）に相当(HALCON は正負で別々の しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。 · 例: `gallery2d_segmentation`
+- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` — 局所しきい値処理。局所平均(窓一辺 ``_k(a)`` の ``uniform_filter``)に オフセット ``(b-0.5)*0.4`` を加えたものをしきい値として使う ―― 照明ムラの ある画像でも局所的なコントラストで前景を抽出できる。HALCON の ``dyn_threshold``（Segment an image using a local threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
+- `edges_image` (halcon: `edges_image`) `image → region` — Canny エッジ検出(``skimage.feature.canny``、シグマ ``0.5+2*a``)による 領域抽出。ガウス平滑化→勾配→非極大抑制→ヒステリシスしきい値という多段の 処理をまとめて行う、広く使われるエッジ検出法。HALCON の ``edges_image`` （Detect edges using Deriche, Lanser, Shen, or Canny filters.）に相当 (HALCON は Deriche/Lanser/Shen/Canny を選べるが、ここでは Canny 固定)。 · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
+- `fast_threshold` (halcon: `fast_threshold`) `image → region` — 固定しきい値による二値化。``x`` が ``(a, a+0.5+0.5b)`` の帯域に入る画素を前景(1)とする（``threshold`` seed op と同じ ``_sh_threshold`` の ``fixed`` 分岐）。a が下限、b が帯域幅（上限）を振る。 · 例: `gallery2d_segmentation`
+- `h_threshold` (halcon: `threshold`) `image → region` — 帯域しきい値処理(``a < x < a+0.5+0.5*b`` を満たす画素を前景とする)。 HALCON の ``threshold``(Segment an image using global threshold.)は Min/Max の 2 値を直接指定する演算子だが、この代役では下限を ``a`` から、 帯域幅を ``b`` から導出する 1 パラメータ相当の簡略化になっている。登録名は ``threshold`` が Python 側で予約語的に扱われるため ``h_threshold`` になる (spec の ``halcon`` フィールドは ``threshold`` のまま)。 · 例: `gallery2d_segmentation`
+- `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` — ヒステリシスしきい値処理(``skimage.filters.apply_hysteresis_ threshold``)。低いしきい値(``0.2+0.3*a``)を超えた画素のうち、高い しきい値(``0.5+0.3*b``)を超えた画素につながっているものだけを前景として 残す ―― Canny エッジ検出の後処理としても使われる、途切れにくいエッジ 抽出手法。HALCON の ``hysteresis_threshold``（Perform a hysteresis threshold operation on an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
+- `it_region_to_bin` (halcon: `region_to_bin`) `image → image` — region_to_bin: threshold the image at ``a`` to obtain a region, then render that region as a two-gray-level binary image -- foreground pixels get the high gray value, background pixels the low one. ``b`` sets the two levels: lo = 0.5 - 0.5*b, hi = 0.5 + 0.5*b. · 例: `gallery2d_segmentation`
+- `local_max` (halcon: `local_max`) `image → region` — 局所極大点検出。``x`` が窓内の最大値(``_k(a)``)に一致し、かつ ``x > 0.3+0.4*b`` を満たす画素だけを前景とする ―― 平坦な高原状の領域では 複数の隣接画素が同時に「極大」として残る点に注意(真の孤立点ピークだけを 残す保証はない)。HALCON の ``local_max``（Detect all local maxima in an image.）に相当。 · 例: `gallery2d_segmentation`
+- `local_min` (halcon: `local_min`) `image → region` — 局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、 かつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。 HALCON の ``local_min``（Detect all local minima in an image.）に相当。 · 例: `gallery2d_segmentation`
+- `local_threshold` (halcon: `local_threshold`) `image → region` — 局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x, 1+3*a)`` にオフセット ``(b-0.5)*0.3`` を加えたものがしきい値)。 ``dyn_threshold`` と似た発想だが、局所平均を矩形窓でなくガウシアンで 求める点が異なる。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` — 極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_segmentation`
+- `otsu` (halcon: `binary_threshold`) `image → region` — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
+- `pouring` (halcon: `pouring`) `image → region` — 分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。 · 例: `gallery2d_segmentation`
+- `regiongrowing` (halcon: `regiongrowing`) `image → region` — 領域成長の簡易近似。まず高いしきい値(``x > 0.5+0.3*a``)でシード (種)領域を作り、それを ``1+4*b`` 回だけ二値膨張して広げる ―― 真の領域成長 (隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という 軽量な代用になっている(近似の限界)。HALCON の ``regiongrowing`` （Segment an image using region growing.）の代役。 · 例: `gallery2d_segmentation`
+- `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` — 実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。 HALCON の ``regiongrowing_mean``（Perform a region growing using mean gray values.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、 この代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を 返す(近似の限界)。 · 例: `gallery2d_segmentation`
+- `segment_image_mser` (halcon: `segment_image_mser`) `image → region` — MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出 (``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る 領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に 使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally Stable Extremal Regions (MSER).）に相当。 · 例: `gallery2d_segmentation`
+- `sk_canny` (halcon: `edges_image`) `image → region` — Canny エッジ検出(領域版)。ガウス平滑化 → 勾配計算 → 非極大抑制 → ヒステリシスしきい値、という古典的な多段パイプラインでエッジ画素を求め、真偽値の領域として返す。 · 例: `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`
+- `sk_chan_vese` `image → region` — Chan-Vese セグメンテーション。レベルセット(等位集合)を輝度の分散が領域内で最小になるように反復して動かす能動輪郭モデルで、エッジがはっきりしない対象でも領域を検出できる。 · 例: `gallery2d_segmentation`, `poc_active_contours`, `poc_segmentation_gauntlet`
+- `sk_felzenszwalb` `image → region` — Felzenszwalb のグラフベース領域分割。画素をノードとする最小全域木クラスタリングで、明確な境界が無くても画像を過分割(オーバーセグメンテーション)する高速な手法。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` — ヒステリシスしきい値処理。2 段のしきい値を使い、高い方を超える画素をまず確定させ、低い方を超えつつ確定画素と連結している画素も追加で採用する —— Canny のエッジ連結ステップと同じ考え方を汎用の応答画像に適用したもの。 · 例: `gallery2d_segmentation`
+- `sk_li` (halcon: `binary_threshold`) `image → region` — Li の最小相互エントロピー法(Minimum Cross Entropy)による大域しきい値二値化。前景/背景の分布間の相互エントロピーを反復的に最小化してしきい値を決める、大津法とは別系統の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `sk_local_maxima` (halcon: `local_max`) `image → region` — 局所極大点の検出。近傍のどの画素よりも真に大きい(プラトー=同値の連結領域も許容)画素の集合を領域として返す —— ピーク検出・特徴点抽出の下処理。 · 例: `gallery2d_segmentation`
+- `sk_niblack` (halcon: `var_threshold`) `image → region` — Niblack の局所適応しきい値。Sauvola と同じく局所平均・標準偏差からしきい値を決めるが、係数の与え方がより単純(古典的)で、Sauvola より前景を広めに(=ノイズを拾いやすく)判定する傾向がある。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
+- `sk_otsu` (halcon: `binary_threshold`) `image → region` — 大津の判別分析法(Otsu's method)による大域しきい値二値化。クラス間分散を最大化するしきい値を自動で選び、画像全体を前景/背景に二分する。 · 例: `gallery2d_segmentation`, `poc_am_thermal_to_ct`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
+- `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
+- `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
+- `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
+- `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
+- `xcv2_meanshift` `image → image` — 平均値シフト（mean-shift）フィルタリングで色/輝度を領域ごとに均す （``cv2.pyrMeanShiftFiltering``）。 · 例: `gallery2d_segmentation`
+- `xcv_grabcut` `image → region` — GrabCut(反復グラフカット)による前景/背景の自動分離。 · 例: `gallery2d_segmentation`
+- `xcv_watershed_markers` (halcon: `watersheds`) `image → region` — マーカー制御ウォーターシェッドによる境界線抽出。 · 例: `gallery2d_segmentation`
+- `xkor_canny` `image → region` — Canny 法によるエッジ（二値領域）検出。``kornia.filters.canny`` を呼び、 返り値のうち二値エッジマップ（``edges``）を採用する（勾配強度側は捨てる）。 · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
+- `xmh_bernsen` `image → region` — Bernsen 局所二値化(``mahotas.thresholding.bernsen``)。近傍の最大輝度と最小輝度の中間値をローカル閾値とし、コントラストが低い領域だけ大域しきい値にフォールバックする。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `xsk2_h_maxima` `image → region` — h-maxima 変換（局所極大のうち高さ h 未満のものを消す）。 ``skimage.morphology.h_maxima`` を呼ぶ。 · 例: `gallery2d_segmentation`, `poc_cell_counting`
+- `xsk2_multiotsu` `image → image` — 大津の判別分析法（Otsu's method）を多値に拡張した多値大津法で階調を 量子化する。``skimage.filters.threshold_multiotsu`` を使う。 · 例: `gallery2d_segmentation`, `poc_mri_bias_field`
+- `xsk3_h_minima` `image → region` — h-極小変換(skimage ``morphology.h_minima``)。深さが ``h`` 未満の浅い谷(局所極小)を平坦化してから残った極小点を二値マークする —— xmh_regmin と似た谷を拾う処理だが、深さでノイズ由来の浅い谷を明示的に除外できる。 · 例: `gallery2d_segmentation`, `genspark_external_review`
+- `xsk3_peak_local_max` `image → region` — 局所極大点マップ(skimage ``feature.peak_local_max``)。互いに ``min_distance`` 画素以上離れた局所輝度極大の座標を検出し、その座標だけを 1 にした疎な二値画像(1 画素ずつの点で、面としての領域ではない)を返す。 · 例: `gallery2d_segmentation`
+- `xsk3_rank_otsu` `image → region` — 局所大津二値化(skimage ``filters.rank.otsu``)。近傍円盤内だけで大津の判別分析法(Otsu's method)の閾値を求め、画素値がその局所閾値を上回るかで二値化する —— 大域大津と違い、照明ムラのある画像でも局所的に妥当な閾値が選べる。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `xsk3_threshold_local_median` `image → region` — 局所中央値適応的二値化(skimage ``filters.threshold_local`` の ``method='median'``)。ブロックごとの中央値を局所閾値とし、画素値がそれを上回るかで二値化する。局所平均を使う版よりも外れ値(ノイズ画素)に強い。 · 例: `gallery2d_segmentation`
+- `xsk_flood` `image → region` — 塗りつぶし(flood fill)領域抽出。 · 例: `gallery2d_segmentation`
+- `xsk_random_walker` `image → region` — ランダムウォーカー法によるグラフベース領域分割。 · 例: `gallery2d_segmentation`, `genspark_external_review`, `poc_segmentation_gauntlet`
+- `zero_crossing` (halcon: `zero_crossing`) `image → region` — ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する 画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す ことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero crossings from an image.）に相当。 · 例: `gallery2d_segmentation`
+
+#### 2d / self-similarity(1)
+- `xmh_selfmatch` `image → image` — 自己相似マップ(``mahotas.template_match`` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。 · 例: `gallery2d_features`
+
+#### 2d / smoothing(48)
+- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` — Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の 伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より 大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an anisotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `bilateral` (halcon: `bilateral_filter`) `image → image` — エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`, `quickstart`
+- `bilateral_filter` (halcon: `bilateral_filter`) `image → image` — OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を 空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する 定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `binomial_filter` (halcon: `binomial_filter`) `image → image` — 二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。 ``ndimage.correlate1d`` を縦・横に順に掛けることでガウシアンを離散二項核で 近似する ―― HALCON の ``binomial_filter``（Smooth an image using the binomial filter.）が使う核と同じ発想の実装。 · 例: `gallery2d_smoothing_rank`
+- `coherence_enhancing_diff` (halcon: `coherence_enhancing_diff`) `image → image` — 実装は ``anisotropic_diffusion`` と同一(``kind: "anisotropic"``)。 本来の coherence-enhancing diffusion は構造テンソルの固有ベクトルに沿って 拡散方向を制御する(線状構造をつなげる)手法だが、この代役ではその構造 テンソル計算を行わず、単純な Perona-Malik 異方性拡散で代用している (近似の限界 ―― 線状構造の連結効果は再現されない)。HALCON の ``coherence_enhancing_diff``（Perform a coherence enhancing diffusion of an image.）の代役。 · 例: `gallery2d_smoothing_rank`
+- `cv_bilateral` (halcon: `bilateral_filter`) `image → image` — バイラテラルフィルタ(OpenCV 実装)。空間的な近さと輝度値の近さの両方を重みにしたガウス的平滑化で、エッジ(輝度差の大きい境界)をぼかさずに平坦部だけを滑らかにする。 · 例: `gallery2d_smoothing_rank`
+- `cv_box` (halcon: `mean_image`) `image → image` — 単純平均化フィルタ(box filter、OpenCV 実装)。正方形近傍内の単純平均を取るだけの最も基本的な平滑化 —— ガウス平滑化より計算は軽いが、リング状のアーティファクトが出やすい。 · 例: `gallery2d_smoothing_rank`
+- `cv_gaussian` (halcon: `gauss_filter`) `image → image` — ガウス平滑化(OpenCV 実装)。ガウスカーネルによる標準的なぼかしで、box filter よりリンギングが出にくい。 · 例: `gallery2d_smoothing_rank`
+- `cv_nlmeans` `image → image` — Non-local means ノイズ除去(OpenCV 実装、グレースケール版)。sk_nlm と同じ考え方(画像全体から似たパッチを探して平均する)を OpenCV の高速実装で行う。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `cv_sharpen` (halcon: `emphasize`) `image → image` — アンシャープ的な鮮鋭化フィルタ(3x3 カーネル畳み込み、OpenCV 実装)。中心 ``1+4a``、上下左右 ``-a`` のカーネル(a=0 では単位カーネル=無変化、a が大きいほど離散ラプラシアン的な高域強調が強くかかる)を畳み込み、エッジ付近のコントラストを持ち上げる。 · 例: `gallery2d_smoothing_rank`
+- `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` — Perona-Malik 型の異方性拡散フィルタ（torch 実装、GPU があれば GPU 上で実行）。 · 例: `gallery2d_smoothing_rank`
+- `dl_guided_filter` (halcon: `guided_filter`) `image → image` — 自己ガイド付きフィルタ（guided filter、ガイド画像=入力自身、torch 実装）。 · 例: `gallery2d_smoothing_rank`
+- `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` — Return one level of the image's Gauss pyramid, down-sampled by 2 ``level`` times (blur + decimate) and then up-sampled back to the original HxW so the result is a band-limited (low-pass) version at reduced resolution. ``a`` selects the level (1..4); ``b`` is ignored. · 例: `gallery2d_smoothing_rank`
+- `gauss_filter` (halcon: `gauss_filter`) `image → image` — ガウシアンぼかし(``scipy.ndimage.gaussian_filter``、シグマ ``0.3+2.7*a``) による平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核 の scipy 実装で、近似ではあるが結果は非常に近い。 · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
+- `gauss_image` (halcon: `gauss_image`) `image → image` — 実装は ``gauss_filter`` と同一(同じ ``kind: "gauss"`` 分岐、シグマ ``0.3+2.7*a`` のガウシアンぼかし)。HALCON では ``gauss_filter``(離散近似) と ``gauss_image``(周波数領域/連続ガウス)は別演算子だが、この代役では 区別せず同じ関数を指す。HALCON の ``gauss_image``（Smooth an image using discrete Gaussian functions.）の代役。 · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
+- `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `guided_filter` (halcon: `guided_filter`) `image → image` — 実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化) とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで 代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は 一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.） の代役。 · 例: `gallery2d_smoothing_rank`
+- `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `mean_box` (halcon: `mean_image`) `image → image` — 矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` — 小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を **近似**したスムージング。真の平均曲率 PDE(``ops`` 側の別実装が本来やる 拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が このバックエンド固有の近似の限界。HALCON の ``mean_curvature_flow`` （Apply the mean curvature flow to an image.）の代役。 · 例: `gallery2d_smoothing_rank`
+- `mean_image` (halcon: `mean_image`) `image → image` — 矩形平均フィルタ(box filter)。HALCON の ``mean_image``（Smooth by averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。 · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
+- `sigma_image` (halcon: `sigma_image`) `image → image` — シグマフィルタによる非線形平滑化。中心画素値に近い(``|x-mean|<σ``) 近傍画素だけを平均する ―― エッジ付近では反対側の階調が平均に混ざらないため、 平均フィルタよりエッジを保ちやすいノイズ除去になる。HALCON の ``sigma_image``（Non-linear smoothing with the sigma filter.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `simulate_defocus` (halcon: `simulate_defocus`) `image → image` — 一様なピンボケ（デフォーカス）をシミュレートする平滑化。実装は矩形窓の平均フィルタ（box filter, ``ndimage.uniform_filter``）で、円形絞りによる本来のボケ形状（circle-of-confusion）ではなく正方形窓で近似する。a が窓幅を 3/5/7/9 の 4 段階に振り（``_k(a)``）、b は未使用。 · 例: `gallery2d_smoothing_rank`
+- `simulate_motion` (halcon: `simulate_motion`) `image → image` — 線形の動きぼけ(モーションブラー)をシミュレートする。角度 ``π*a``(0〜180°)方向に長さ ``5+10*b`` 画素の線分カーネルを作り畳み込む。 HALCON の ``simulate_motion``（Simulation of (linearly) motion blur.）に 相当。 · 例: `gallery2d_smoothing_rank`
+- `sk_nlm` `image → image` — Non-local means(非局所平均法)ノイズ除去。近接画素だけでなく画像全体から似たパッチを探して平均する —— 反復模様やテクスチャを保ったまま平坦部のノイズだけを落とせるのが、単純な平滑化との違い。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_rolling_ball` `image → image` — ローリングボール法による背景差し引き。画像の輝度を地形と見立て、指定半径の球をその下から転がして得られる包絡面を背景と推定し、元画像から引き算する—— 照明ムラ(緩やかな輝度勾配)の除去に使う。 · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`
+- `sk_tv` `image → image` — 全変動ノイズ除去(TV denoising、Chambolle 法)。エッジを保ったまま平坦部のノイズを滑らかにする —— メディアン/ガウスぼかしと違い、輪郭のシャープさを崩しにくいのが特徴。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_tv_bregman` `image → image` — 全変動ノイズ除去(TV denoising、Split-Bregman 法)。sk_tv と同じ TV正則化の考え方だが最適化アルゴリズムが異なり(Bregman 分割法)、収束が速いとされる。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `sk_wavelet` `image → image` — ウェーブレット変換によるノイズ除去。画像をウェーブレット領域に分解し、BayesShrink 基準のしきい値処理で小さい(=ノイズとみなせる)係数を落としてから逆変換する。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `smooth_image` (halcon: `smooth_image`) `image → image` — ガウシアンぼかし(シグマ ``0.5+2.0*a``)一本で近似した汎用スムージング。 HALCON の ``smooth_image``（Smooth an image using various filters.）は Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子だが、ここでは ガウシアン 1 種類に単純化している(近似の限界)。 · 例: `gallery2d_smoothing_rank`
+- `unsharp` (halcon: `emphasize`) `image → image` — Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。 · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
+- `xcv3_denoise_tvl1` `image → image` — 全変動 L1 ノイズ除去(OpenCV ``cv2.denoise_TVL1``、Primal-Dual アルゴリズム)。エッジを保ちながらノイズを除去する全変動最小化に基づく手法で、通常のガウシアン平滑化よりエッジがシャープに残る。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `xcv3_pyr_laplacian` `image → image` — ラプラシアンピラミッドによる鮮鋭化。``pyrDown`` で縮小してから ``pyrUp`` で戻した画像(低周波成分)を元画像から引いた差分(ラプラシアンピラミッドの 1 層、バンドパス成分に相当)を、元画像に加算して強調するアンシャープマスクの一種。 · 例: `gallery2d_smoothing_rank`
+- `xcv_edge_preserving` `image → image` — OpenCV の edgePreservingFilter(エッジ保存平滑化、``flags=1`` = RECURS_FILTER = 再帰フィルタ方式)。 · 例: `gallery2d_smoothing_rank`
+- `xkor_bilateral` `image → image` — バイラテラルフィルタ（エッジ保存平滑化）。``kornia.filters.bilateral_blur`` を 5x5 カーネルで呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xkor_gaussian` `image → image` — ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で ``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。 · 例: `gallery2d_smoothing_rank`
+- `xkor_motion_blur` `image → image` — モーションブラー。``kornia.filters.motion_blur`` を呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xkor_unsharp` `image → image` — アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を 5x5 カーネルで呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xpil_smooth_more` `image → image` — Pillow の平滑化フィルタ（強め）。``PIL.ImageFilter.SMOOTH_MORE`` の固定カーネルで ``SMOOTH`` よりも強くぼかす。 · 例: `gallery2d_smoothing_rank`
+- `xpil_unsharp_mask` `image → image` — Pillow のアンシャープマスク。``PIL.ImageFilter.UnsharpMask`` を呼ぶ（kornia 版 ``xkor_unsharp`` に対応する CPU 実装）。 · 例: `gallery2d_smoothing_rank`
+- `xsk3_rank_mean_bilateral` `image → image` — 局所バイラテラル平均(skimage ``filters.rank.mean_bilateral``)。円盤近傍のうち、中心画素の値から下方 ``s0``〜上方 ``s1`` の範囲に収まる画素だけを平均する、エッジ保存型の平滑化。 · 例: `gallery2d_smoothing_rank`
+- `xsp_cspline_smooth` `image → image` — 3 次スプライン平滑化フィルタ（``scipy.signal.cspline2d``）。 · 例: `gallery2d_smoothing_rank`
+- `xsp_dct_denoise` `image → image` — DCT 係数のハード閾値処理によるノイズ除去（ウェーブレット縮退の DCT 版）。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `xsp_savgol` `image → image` — Savitzky-Golay フィルタで画像を平滑化する（列方向→行方向の順に 1 次元適用）。 · 例: `gallery2d_smoothing_rank`
+- `xsp_wiener` `image → image` — Wiener 適応フィルタ（``scipy.signal.wiener``）でノイズを抑える。 · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `xwt_firm_denoise` `image → image` — ファーム閾値処理(firm/semisoft thresholding、``pywt.threshold_firm``)によるウェーブレットノイズ除去。ソフト閾値とハード閾値の中間の特性を持ち、``sym4`` で 2 段分解した各詳細係数に適用してから再構成する。 · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `xwt_lf_reconstruct` `image → image` — 低周波再構成画像。``db2`` で分解し、全ての詳細係数を 0 に潰して近似成分だけから逆変換で再構成する —— ガウシアンぼかしに近い、多段ウェーブレットによる平滑化画像になる。 · 例: `gallery2d_smoothing_rank`
+- `xwt_visushrink` `image → image` — VisuShrink 風のウェーブレットノイズ除去。``db4`` で 2 段分解し、各段の詳細係数をソフト閾値処理してから逆変換で再構成する(VisuShrink はこの閾値をノイズ量から自動決定する手法だが、ここでは ``a`` で直接与える簡略版)。 · 例: `gallery2d_smoothing_rank`
+
+#### 2d / subpix(6)
+- `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` — 極大・極小・鞍点のサブピクセル位置をまとめて検出する（HALCON ``critical_points_sub_pix`` に相当）。 · 例: `gallery2d_geometry`
+- `sp_local_max_sub_pix` (halcon: `local_max_sub_pix`) `image → contour` — グレー値曲面の極大点をサブピクセル精度で検出する（HALCON ``local_max_sub_pix`` の代替実装。``halcon=""``: 同名の座標は既存のcore op が既にカバー済みなので二重申告しない）。 · 例: `gallery2d_geometry`, `poc_tacsim_marker_shear`
+- `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` — グレー値曲面の極小点をサブピクセル精度で検出する（HALCON ``local_min_sub_pix`` に相当）。 · 例: `gallery2d_geometry`
+- `sp_lowlands_center` (halcon: `lowlands_center`) `image → contour` — 極小の「盆地」（周囲より低い平坦領域）の重心を返す（HALCON ``lowlands_center`` に相当）。 · 例: `gallery2d_geometry`
+- `sp_plateaus` (halcon: `plateaus`) `image → contour` — 同じ（量子化した）グレー値が連結した平坦領域（プラトー）の重心をサブピクセル位置として返す（HALCON ``plateaus`` に相当）。 · 例: `gallery2d_geometry`
+- `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` — グレー値曲面の鞍点（サドルポイント）をサブピクセル精度で検出する（HALCON ``saddle_points_sub_pix`` に相当）。 · 例: `gallery2d_geometry`
+
+#### 2d / tactile(5)
+- `tac_contact_mask` `image → region` — Contact region of a tactile frame by pseudo-reference background subtraction: ``dev = |v - G_sigma(v)|`` with ``sigma = max(2, min(H,W)/6)`` (the low-frequency envelope stands in for the undeformed reference frame), thresholded at ``thr = 0.005 + 0.145*a`` gray levels, then cleaned with ``round(3*b)`` iterations of binary opening followed by binary closing (3x3, 8-connected). ``a`` = deviation threshold (sensitivity), ``b`` = morphological cleanup strength. Returns a BINARY 0/1 float64 region of the input HxW; a perfectly flat (constant) frame has zero deviation everywhere and therefore yields an EMPTY mask. · 例: `poc_tacsim_elastic_membrane`, `sim2real_and_alife`
+- `tac_height_from_shading` `image → image` — Height/relief map by Poisson integration of the shading gradients -- the integration stage of GelSight depth reconstruction (and of photometric stereo): the image gradients are read as surface slopes ``p = gain*gx``, ``q = gain*gy`` and the Poisson equation ``lap(h) = div(p,q)`` is solved spectrally, ``h_hat = div_hat / lap_hat`` with the discrete Laplacian symbol ``2cos(2*pi*u/W)+2cos(2*pi*v/H)-4`` and the (undetermined) DC mode pinned to zero. ``a`` = gradient gain (0.25..4.25x), ``b`` = pre-smoothing sigma of the gradient field (0..3). Output is min-max normalised to [0,1] and refit to HxW; a constant frame integrates to a flat (all-zero) relief. · 例: `sim2real_and_alife`
+- `tac_pressure_proxy` `image → image` — Contact-pressure proxy map: the rectified deviation from the pseudo-reference background ``dev = |v - G_sigma(v)|`` is gated to the high-deviation (contact) area -- a relative gate at ``0.15 * max(dev)`` plus an absolute floor of 0.005 -- amplified by the sensitivity gain and Gaussian-smoothed, which is the standard "indentation depth is monotone in normal force" surrogate used when a tactile pad carries no force sensor. ``a`` = sensitivity (gain 1..10x), ``b`` = smoothing radius (sigma 0.5..4.5). Output clipped to [0,1], HxW; a flat frame yields an all-zero pressure map (no contact, no force). · 例: `sim2real_and_alife`
+- `tac_shear_field` `image → image` — In-plane shear proxy from the 2-D structure tensor (Foerstner / Bigun-Granlund orientation coherence). The tensor ``J = G_sigma(grad v * grad v^T)`` has eigenvalues l1 >= l2, and the coherence ``(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)`` is 1 where the gel texture is stretched into a single dominant orientation (as it is under tangential/shear load) and 0 where it is isotropic. The result is additionally weighted by the tensor trace (gradient energy) so that texture-free, un-contacted gel stays dark instead of amplifying noise orientation. ``a`` = tensor integration sigma (0.6..4.6), ``b`` = output gain (0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient energy and yields an all-zero shear field. · 例: `poc_tacsim_marker_shear`, `sim2real_and_alife`
+- `tac_surface_normal` `image → image` — Surface-normal z-component (slope map) from the shading gradients, using Horn's shape-from-shading normal parameterisation ``n = (-p, -q, 1)/sqrt(1+p^2+q^2)`` so that ``nz = 1/sqrt(1+p^2+q^2)`` with ``p = gain*gx``, ``q = gain*gy``. Flat (uncontacted) gel gives nz = 1, steep indentation walls tend to 0, so the map is already a valid [0,1] encoding. ``a`` = gradient gain (1..21x -- how steep the shading is taken to be), ``b`` = pre-smoothing sigma of the image (0..3) to tame sensor noise. Constant input -> all-ones (perfectly flat gel). · 例: `sim2real_and_alife`
+
+#### 2d / texture(28)
+- `bootstrap_std_error` `image → image` — 局所標準偏差の**標準誤差**を、分布を仮定せずに測る(ブートストラップ)。 · 例: `gallery2d_texture_freq`
+- `cooc_feature_matrix` (halcon: `cooc_feature_matrix`) `image → feature` — グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調 に量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量 ``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算 する。HALCON の ``cooc_feature_matrix``（Calculate gray value features from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を 同時に返せるが、ここでは energy・角度 0° 固定に単純化)。 · 例: `gallery2d_texture_freq`, `poc_real_texture_invariance`
+- `deviation_image` (halcon: `deviation_image`) `image → image` — 矩形窓内の画素値の標準偏差(局所標準偏差、``E[x^2]-E[x]^2`` の平方根) を正規化した画像。テクスチャの局所的なばらつき(粗さ)を可視化する。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。 · 例: `gallery2d_texture_freq`
+- `entropy_image` (halcon: `entropy_image`) `image → image` — 円形窓内のグレースケール Shannon エントロピー(``skimage.filters.rank. entropy``、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を 測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では 高くなる。HALCON の ``entropy_image``（Calculate the entropy of gray values within a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を 使う近似)。 · 例: `gallery2d_texture_freq`
+- `f2_symmetry` (halcon: `symmetry`) `image → image` — Local reflective symmetry of gray values along a row. For each pixel the weighted asymmetry sum_d (1/d)|I(i,j-d) - I(i,j+d)| over d=1..r is measured; a low response means the neighbourhood is left-right symmetric about that column. ``a`` sets the radius r (1..6); ``b`` is ignored. Output is the asymmetry response normalised to [0,1]. · 例: `gallery2d_texture_freq`
+- `gabor` (halcon: `gen_gabor`) `image → image` — Gabor energy |v * g| — an oriented band-pass texture response. · 例: `gallery2d_texture_freq`
+- `gen_gabor` (halcon: `gen_gabor`) `image → image` — 単一の Gabor カーネル(向き ``θ=π*a``、周波数 ``0.1+0.3*b``)による 畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を 除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に 選択的に反応するバンドパステクスチャフィルタ。HALCON の ``gen_gabor`` （Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの 簡易版)。 · 例: `gallery2d_texture_freq`
+- `local_bimodality` `image → image` — **局所の二峰性**(bimodality coefficient)。閾値を 1 つも選ばずに「ここは 2 つの 値に分かれているか」だけを 0〜1 の地図で返す。 · 例: `gallery2d_texture_freq`
+- `local_std` `image → image` — 局所窓内の標準偏差を**入力と同じ単位で**返す(正規化しない)。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。 · 例: `gallery2d_texture_freq`
+- `scale_select_std` `image → image` — 画素ごとに**窓の大きさを選ぶ**局所標準偏差(Lepski / ICI 規則)。 · 例: `gallery2d_texture_freq`
+- `sk_entropy` (halcon: `entropy_image`) `image → image` — 局所エントロピー。各画素の周辺(円盤状の近傍)にあるグレー値分布のシャノンエントロピー(2 進対数)を計算し、その場所を符号化するのに必要な最小ビット数として画像化する —— テクスチャの複雑さ・情報量の指標。 · 例: `gallery2d_texture_freq`
+- `sk_frangi` (halcon: `lines_gauss`) `image → image` — Frangi の管状構造検出フィルタ(vesselness filter)。血管・しわ・川のような細長い管状構造を、Hessian 行列の固有値比から検出する。 · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
+- `sk_gabor` (halcon: `gen_gabor`) `image → image` — Gabor フィルタの応答強度。正弦波で変調したガウスカーネルを畳み込み、特定の空間周波数・方向を持つテクスチャに強く反応する古典的な特徴抽出器。 · 例: `gallery2d_texture_freq`
+- `sk_hessian` (halcon: `lines_gauss`) `image → image` — Hybrid Hessian フィルタ。Frangi とほぼ同じ管状構造検出だが、平滑化の方法が異なる(近似的に Frangi の代替として使える)。 · 例: `gallery2d_texture_freq`
+- `sk_lbp` `image → image` — LBP(Local Binary Pattern、局所二値パターン)。各画素を中心に円周上の近傍画素と大小比較して 2 進コードを作る、照明変化に強いテクスチャ記述子。 · 例: `gallery2d_texture_freq`, `poc_real_texture_invariance`
+- `sk_meijering` (halcon: `lines_gauss`) `image → image` — Meijering の神経突起検出フィルタ(neuriteness filter)。Frangi と同じく Hessian の固有値から管状構造の類似度を計算するが、正規化の方法が異なる(神経突起画像向けにチューニングされた式)。 · 例: `gallery2d_texture_freq`
+- `sk_shape_index` `image → image` — 形状指標(shape index)。Hessian 行列の固有値から、局所的な表面形状を -1(球状の窪み)〜0(鞍点)〜+1(球状の膨らみ)の 1 次元スカラーで表す —— 曲率の「向き」を要約する記述子。 · 例: `gallery2d_texture_freq`
+- `std_filter` (halcon: `deviation_image`) `image → image` — 局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。 · 例: `gallery2d_texture_freq`
+- `structure_tensor_coherence` `image → image` — 局所の**向きの揃い具合**(構造テンソルの異方度)を ``[0,1]`` で返す。 · 例: `gallery2d_texture_freq`
+- `structure_tensor_orientation` `image → image` — 局所の**縞の走る向き**(構造テンソルの主軸)を ``[0,1]`` に写して返す。 · 例: `degenerate_inputs`, `gallery2d_texture_freq`
+- `texture_laws` (halcon: `texture_laws`) `image → image` — 実装は局所分散(``deviation_image`` の分散版、窓内の ``E[x^2]-E[x]^2``)。本来の Laws' テクスチャフィルタは L5/E5/S5/W5/R5 などの 1 次元カーネル対から作る 25 種類の畳み込みバンク(エネルギー/エッジ/波状/ 斑点/波紋を捉える)だが、この代役ではその全カーネルバンクではなく単一の 局所分散で代用している(近似の限界 ―― 方向別・周波数別の情報は失われる)。 HALCON の ``texture_laws``（Filter an image using a Laws texture filter.） の代役。 · 例: `gallery2d_texture_freq`
+- `tf_census_transform` `image → image` — census_transform: the 3x3 non-parametric census bit-signature image. · 例: `gallery2d_texture_freq`
+- `tf_rank_transform` `image → image` — rank_transform: the local rank of each pixel among its neighbours. · 例: `gallery2d_texture_freq`
+- `xsk2_hog` `image → image` — HOG（Histogram of Oriented Gradients）特徴量の可視化画像。 ``skimage.feature.hog`` を ``visualize=True`` で呼び、可視化画像側を 返す（特徴ベクトル自体は捨てる）。 · 例: `gallery2d_texture_freq`
+- `xsk_meijering` `image → image` — Meijering neuriteness フィルタ。skimage.filters.meijering をスケール sigma=1,2,3 の 3 段で適用し、細い曲線状構造(血管・神経突起など)を強調する (ヘッセ行列の固有値から尾根らしさを計算する点は Frangi 系と同様だが、 Meijering は分岐点にも強く応答する)。 · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`
+- `xsk_sato` `image → image` — Sato tubeness フィルタ。skimage.filters.sato をスケール sigma=1,2,3 の 3 段で 適用し、管状構造(血管など)を強調する。ヘッセ行列の固有値比から線状/管状 らしさを計算する点は ``xsk_meijering`` と同系だが、応答の重み付けが異なり 分岐点には Meijering ほど強く応答しない。 · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`
+- `xsk_struct_coherence` `image → image` — 構造テンソルのコヒーレンス(方位の一貫性)。 · 例: `gallery2d_texture_freq`
+- `xsp_hilbert_env` `image → image` — 解析信号（ヒルベルト変換）の振幅包絡線を行方向に取り出す。 · 例: `gallery2d_texture_freq`
+
+#### 2d / texture-feature(1)
+- `xmh_pftas` `image → feature` — PFTAS(parameter-free threshold adjacency statistics、``mahotas.features.pftas``)54 次元特徴ベクトルの分散。隣接画素の濃淡関係をパラメータ無しの閾値で数えたヒストグラム群をまとめたテクスチャ特徴。 · 例: `gallery2d_features`
+
+#### 2d / texture/shape-feature(1)
+- `xmh_zernike` `image → feature` — ツェルニケモーメント(Zernike moments、``mahotas.features.zernike_moments``)の総和。単位円に写した画像の回転不変な形状/濃淡分布の特徴を 1 個の実数に潰して返す。 · 例: `gallery2d_features`
+
+#### 2d / tomography(5)
+- `tm_backproject_unfiltered` `image → image` — Plain (UN-filtered) back-projection of the input sinogram -- the classic blurry reconstruction. No ramp filter is applied, so high frequencies are suppressed and every point spreads a 1/r blur: this deliberately shows why FBP's filter is needed. ``a``/``b`` are unused (this is the fixed naive baseline). Uses ``skimage.transform.iradon`` with ``filter_name=None`` when available, else the NumPy plain back-projection. Output refit to HxW. · 例: `gallery2d_physics_alife_3d`
+- `tm_fbp_reconstruct` `image → image` — Filtered back-projection: treat ``v`` as a sinogram (rows = angles, cols = detector, angles assumed uniform over [0,180)) and reconstruct the slice. ``b`` picks the reconstruction filter -- b < 0.5 -> Ram-Lak (ramp), b >= 0.5 -> Shepp-Logan. ``a`` is unused (the filter is the meaningful knob). Uses ``skimage.transform.iradon`` when available, else the NumPy FFT-ramp-filtered back-projection. Output refit to HxW. · 例: `gallery2d_physics_alife_3d`
+- `tm_radon_forward` `image → image` — Forward Radon projection: treat ``v`` as a slice image and integrate it along parallel rays to build a sinogram (rows = angles, cols = detector), refit to the original HxW. ``a`` sets how many angles are acquired (``n = round(H*a)`` clamped to 8..360 -- the sparse-view knob), ``b`` sets the angular span (``span = 180*min(1, 0.5+b)`` deg: b < 0.5 is limited-angle CT, b >= 0.5 -- including the default b = 0.5 -- is the full [0,180) span that ``tm_fbp_reconstruct`` / ``tm_sart_reconstruct`` / ``tm_backproject_unfiltered`` assume, so the natural chain forward -> inverse round-trips at default knobs). Uses ``skimage.transform.radon`` when available, else the NumPy rotate-and-sum Radon transform. · 例: `gallery2d_physics_alife_3d`
+- `tm_sart_reconstruct` `image → image` — Algebraic reconstruction: run a few SART/SIRT sweeps on the input sinogram (rows = angles). ``a`` sets the iteration count (``round(1+a*4)`` -> 1..5), ``b`` sets the relaxation factor (``0.05 + b*0.35``). Uses ``skimage.transform.iradon_sart`` when available, else a self-contained NumPy SIRT (project -> residual -> weighted back-projection) loop. Output refit to HxW. · 例: `gallery2d_physics_alife_3d`
+- `tm_sinogram_denoise` `image → image` — Smooth the input sinogram along the ANGLE direction (rows). Neighbouring projection angles view almost the same object, so angle-direction smoothing is a genuine consistency prior that suppresses per-angle detector noise while preserving the sinusoidal traces. ``a`` sets the angle-axis Gaussian sigma (``a*4``), ``b`` adds a gentle detector-axis sigma (``b*1.5``). Output stays a same-shape sinogram in [0,1]. · 例: `gallery2d_physics_alife_3d`
+
+#### 2d / transform(3)
+- `tf_radon_sinogram` `image → image` — radon_sinogram: the Radon transform rendered as an HxW sinogram image. · 例: `gallery2d_geometry`
+- `xmh_daubechies` `image → image` — Daubechies ウェーブレット変換(``mahotas.daubechies``)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。 · 例: `gallery2d_geometry`
+- `xmh_haar` `image → image` — Haar ウェーブレット変換(``mahotas.haar``)。画像を偶数サイズに切り詰めてから変換し、結果の係数配列(近似/水平/垂直/対角の各サブバンドが元画像と同じ大きさの配列に詰め込まれた、Matlab 風の in-place レイアウト)をそのまま min-max 正規化して画像として見せる。 · 例: `gallery2d_geometry`
+
+#### 2d / typed(159)
+- `tb_abs_funct_1d` `signal → signal` — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: なし
+- `tb_alpha_shape_boundary` `points → signal` — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: なし
+- `tb_angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: なし
+- `tb_apply_weighting` `signal → signal` — Apply an A / C / Z frequency weighting to a signal, zero-phase. · 例: なし
+- `tb_arc_length` `points → feature` — 曲線の累積弧長と全長。→ (cumulative (N,), total float)。 · 例: なし
+- `tb_background_subtraction_window` `video → video` — Causal window-median background → per-frame 0/1 foreground masks ``(T, H, W)`` (``video``). · 例: なし
+- `tb_bandpass` `signal → signal` — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside ``(0, rate/2)``; same length contract as :func:`lowpass`. · 例: なし
+- `tb_beamform_delay_sum` `beatcube → signal` — Delay-and-sum (Bartlett) angle spectrum for one range-Doppler cell. · 例: なし
+- `tb_box_sdf` `points → volume` — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_capsule_sdf` `points → volume` — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: なし
+- `tb_companding_mu_law` `signal → signal` — mu-law companding — the G.711 curve, used here on any 1-D signal. · 例: なし
+- `tb_countrate_to_counts` `counts → counts` — 計数レート ``[Hz]`` → 計数 ``counts``。``countrate`` の出口(**可逆**)。 · 例: なし
+- `tb_counts_to_countrate` `counts → counts` — 計数 → 計数レート ``[Hz]``。:func:`countrate_to_counts` の逆。 · 例: なし
+- `tb_cplx_cr_residual` `cimage → feature` — Cauchy-Riemann residual of a sampled complex field — "is this field holomorphic?" as a number. · 例: なし
+- `tb_create_funct_1d_array` `signal → signal` — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``). · 例: なし
+- `tb_cutout` `points → points` — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: なし
+- `tb_cx_apply_transfer_function` `cimage → cimage` — Multiply a **centred** spectrum by a filter ``H`` -> ``(H, W)`` complex128. · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_ifft` `cimage → image` — Inverse of :func:`cx_fft`: ``ifft2(ifftshift(cx))``. · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_imag` `cimage → image` — Imaginary part of ``cx`` -> real ``(H, W)`` float64 (raw, not clamped). · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_log_magnitude` `cimage → image` — Log magnitude spectrum for **display** -> real ``(H, W)`` float64 in ``[0, 1]``. · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_magnitude` `cimage → image` — Per-pixel magnitude ``|cx|`` -> real ``(H, W)`` float64. · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_phase` `cimage → image` — Wrapped phase of ``cx`` -> real ``(H, W)`` float64. · 例: `gallery_spectrum_signal_bridge`
+- `tb_cx_real` `cimage → image` — Real part of ``cx`` -> real ``(H, W)`` float64 (raw, not clamped). · 例: `gallery_spectrum_signal_bridge`
+- `tb_cylinder_sdf` `points → volume` — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_deflicker` `video → video` — Luminance deflicker per frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_dem_ecef_to_geodetic` `points → points` — ECEF → 測地座標。返りは ``(..., 3)`` の ``(緯度[度], 経度[度], 高さ[m])``。 · 例: なし
+- `tb_derivate_funct_1d` `signal → signal` — First derivative by central differences (HALCON ``derivate_funct_1d``). · 例: なし
+- `tb_drag_coefficient_sphere` `signal → signal` — 滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。 · 例: なし
+- `tb_dtof_depth` `counts → feature` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: なし
+- `tb_dynsys_correlation_dimension` `points → feature` — Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``. · 例: なし
+- `tb_elastic_deform` `points → points` — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: なし
+- `tb_env_lightbox` `points → signal` — 撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。**無彩色**。 · 例: なし
+- `tb_env_studio` `points → signal` — スタジオ環境の放射輝度(方向 -> 明るさ)。**無彩色**。 · 例: なし
+- `tb_envelope` `signal → signal` — Amplitude envelope via the analytic (Hilbert) signal — the shape of a knock / impact / acoustic-emission burst. · 例: なし
+- `tb_equivalent_level` `signal → feature` — The energy-equivalent level of a record, in dB relative to ``ref``. · 例: なし
+- `tb_estimate_alpha` `points → feature` — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: なし
+- `tb_estimate_normals` `points → points` — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: なし
+- `tb_estimate_oriented_normals` `points → points` — PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。 · 例: なし
+- `tb_estimate_point_normals` `points → points` — 点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。 · 例: なし
+- `tb_euclidean_cluster` `points → volume` — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。 · 例: なし
+- `tb_exponential_background` `video → video` — Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_exponential_foreground` `video → video` — Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``). · 例: なし
+- `tb_farthest_point_sampling` `points → signal` — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: なし
+- `tb_find_peaks` `signal → signal` — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes. · 例: なし
+- `tb_fit_spline_curve` `points → points` — 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。 · 例: なし
+- `tb_fly_lgmd_eta` `signal → signal` — LGMD/eta looming response from an expanding subtended angle. · 例: なし
+- `tb_fly_tau_from_expansion` `signal → signal` — Time-to-contact from optical expansion — the tau margin. · 例: なし
+- `tb_fmcw_range_profile` `beatcube → signal` — Range-only profile: the fast-time FFT magnitude, averaged over the rest. · 例: なし
+- `tb_fmcw_window_apply` `beatcube → beatcube` — Apply a periodic window along the range and/or Doppler axis of a beat cube. · 例: なし
+- `tb_frame_difference_causal` `video → video` — ``|frame t − frame t−1|`` with a zero first frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_gaussian_curvature` `points → signal` — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: なし
+- `tb_geodesic_distances` `points → signal` — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: なし
+- `tb_get_y_value_funct_1d` `signal → feature` — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``). · 例: なし
+- `tb_highpass` `signal → signal` — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`. · 例: なし
+- `tb_inertia_tensor` `points → matrix` — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: なし
+- `tb_inside_outside` `points → signal` — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: なし
+- `tb_integrate_funct_1d` `signal → signal` — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``). · 例: なし
+- `tb_intrinsics_to_carla` `matrix → matrix` — :func:`intrinsics_to_fullseye` の逆(主点を 0.5 戻す)。 · 例: なし
+- `tb_intrinsics_to_fullseye` `matrix → matrix` — CARLA の K(画素の角が整数、主点 W/2)→ Fullseye / render3d の K(画素の中心が整数、主点 (W−1)/2)。主点を 0.5 ずらすだけ。 · 例: なし
+- `tb_iqft2` `qimage → qimage` — Inverse quaternion Fourier transform of a **centred** spectrum. → (H, W, 4). · 例: なし
+- `tb_iss_keypoints` `points → signal` — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。 · 例: なし
+- `tb_jitter` `points → points` — 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。 · 例: なし
+- `tb_keypoints_to_image2d` `keypoints → image` — 画像座標 ``(N,2) = (u, v)`` → 計数画像 ``(H, W)``。``keypoints`` の 2 つ目の出口。 · 例: なし
+- `tb_keypoints_uv_to_points` `keypoints → points` — 画像座標 ``(N,2) = (u, v)`` → 点群 ``(N,3) = (z, y, x)``。``keypoints`` の出口。 · 例: なし
+- `tb_landmark_asymmetry` `points → signal` — 左右の対ごとの**符号つき**非対称量。→ ``(M,)``。 · 例: なし
+- `tb_lf_center_view` `lightfield → image` — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives. · 例: なし
+- `tb_lf_depth_from_focus` `lightfield → image` — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: なし
+- `tb_lf_epi` `lightfield → image` — Epipolar-plane image — the slice whose **line slope is the disparity**. · 例: なし
+- `tb_lf_epi_slope` `lightfield → image` — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass). · 例: なし
+- `tb_lf_refocus` `lightfield → image` — Shift-and-add refocus: the synthetic-aperture image focused at *slope*. · 例: なし
+- `tb_lf_subaperture` `lightfield → image` — One sub-aperture view — the image seen through one point of the pupil. · 例: なし
+- `tb_lf_synthetic_aperture` `lightfield → image` — Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders. · 例: なし
+- `tb_lf_to_mla` `lightfield → image` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: なし
+- `tb_local_std` `signal → signal` — Rolling standard deviation with a stated error bound. · 例: なし
+- `tb_lowpass` `signal → signal` — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered. · 例: なし
+- `tb_magnus_lift_coefficient` `signal → signal` — スピン比 S = rω/|v| から揚力係数 C_L = 1 / (2 + 1/S)(S → 0 で 0、S → ∞ で 0.5。球の文献で広く使われる経験式)。 · 例: なし
+- `tb_mat_cond` `matrix → feature` — Spectral (2-norm) condition number ``s_max / s_min`` — the numerical canary of the whole linalg family. · 例: なし
+- `tb_mat_pinv` `matrix → matrix` — Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**. · 例: なし
+- `tb_mean_curvature` `points → signal` — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: なし
+- `tb_mirror_plane_from_pairs` `points → matrix` — 左右の対応ランドマークから正中面を出す。→ ``(2, 3)``(1 行目 = 点、2 行目 = 法線)。 · 例: なし
+- `tb_mls_smooth` `points → points` — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: なし
+- `tb_monogenic_amplitude` `qimage → image` — Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W). · 例: なし
+- `tb_monogenic_orientation` `qimage → image` — Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W). · 例: なし
+- `tb_monogenic_phase` `qimage → image` — Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W). · 例: なし
+- `tb_motion_energy_image` `video → video` — Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``). · 例: なし
+- `tb_motion_history_image` `video → video` — Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``). · 例: なし
+- `tb_moving_average_window` `video → video` — Causal per-pixel mean over the last *window* frames → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_negate_funct_1d` `signal → signal` — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: なし
+- `tb_normals_to_egi` `points → image` — 法線 ``(N,3)`` → 拡張ガウス像 ``(n_el, n_az)`` の ``image2d``。 · 例: なし
+- `tb_num_points_funct_1d` `signal → feature` — Number of samples (HALCON ``num_points_funct_1d``). · 例: なし
+- `tb_occupancy_grid` `points → volume` — 点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。 · 例: なし
+- `tb_optical_flow_magnitude_stream` `video → video` — Per-frame dense flow speed against the previous frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_pc_density_equalize` `points → points` — Fill the sparse regions, then thin the dense ones: uniform spacing (``points``). · 例: なし
+- `tb_pc_fill_sparse` `points → points` — Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``). · 例: なし
+- `tb_pc_poisson_disk` `points → points` — Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``). · 例: なし
+- `tb_plane_sdf` `points → volume` — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_plane_segmentation` `points → volume` — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: なし
+- `tb_points_to_voxel` `points → volume` — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: なし
+- `tb_points_zyx_to_keypoints_uv` `points → keypoints` — 点群 ``(N,3) = (z, y, x)`` → 画像座標 ``(N,2) = (u, v)``。 · 例: なし
+- `tb_project` `points → keypoints` — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: なし
+- `tb_project_cylindrical` `points → image` — 円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。 · 例: なし
+- `tb_project_points` `points → keypoints` — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: なし
+- `tb_project_spherical` `points → image` — 回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。 · 例: なし
+- `tb_qft2` `qimage → qimage` — Quaternion (hypercomplex) 2-D Fourier transform. → (H, W, 4) centred spectrum. · 例: なし
+- `tb_quantize` `signal → signal` — Scalar quantiser with the error model stated, plus optional dither. · 例: なし
+- `tb_quat_color_filter` `qimage → qimage` — Keep or remove one colour direction, exactly. → (H, W, 4). · 例: なし
+- `tb_quat_color_rotate` `qimage → qimage` — Rotate every pixel's colour about an RGB axis: ``q x conj(q)``. → (H, W, 4). · 例: なし
+- `tb_quat_conjugate_image` `qimage → qimage` — Per-pixel quaternion conjugate ``(w, -x, -y, -z)``. → (H, W, 4). · 例: なし
+- `tb_quat_norm` `qimage → image` — Per-pixel quaternion modulus ``|q| = sqrt(w^2+x^2+y^2+z^2)``. → (H, W). · 例: なし
+- `tb_quat_normalize_image` `qimage → qimage` — Per-pixel normalisation to unit modulus. → (H, W, 4). · 例: なし
+- `tb_quaternion_to_rgb` `qimage → rgbimage` — Vector part of a quaternion image, as linear RGB. → (H, W, 3). · 例: なし
+- `tb_radius_outlier_removal` `points → points` — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: なし
+- `tb_random_dropout` `points → points` — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。 · 例: なし
+- `tb_random_rotation` `points → points` — ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。 · 例: なし
+- `tb_random_scale` `points → points` — 一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。 · 例: なし
+- `tb_range_doppler_map` `beatcube → image` — The 2-D FFT of a beat cube -> a ``(n_doppler, n_range)`` magnitude map. · 例: なし
+- `tb_reflect_points` `points → points` — 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。 · 例: なし
+- `tb_reflection_symmetry_score` `points → feature` — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: なし
+- `tb_region_growing` `points → volume` — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: なし
+- `tb_render_point_depth` `points → image` — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: なし
+- `tb_resample` `signal → signal` — Resample a signal to *new_rate* (Fourier method). · 例: なし
+- `tb_resample_uniform` `points → points` — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: なし
+- `tb_rgb_to_quaternion` `rgbimage → qimage` — Embed a colour image as pure quaternions ``0 + R i + G j + B k``. → (H, W, 4). · 例: なし
+- `tb_rms` `signal → feature` — RMS level. Scalar for the whole signal, or a framewise array when *frame* is given (a vibration/energy envelope over time). · 例: なし
+- `tb_running_gaussian_background` `video → video` — Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_running_gaussian_foreground` `video → video` — Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``). · 例: なし
+- `tb_sample_funct_1d` `signal → signal` — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: なし
+- `tb_scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: なし
+- `tb_sensor_capture` `rgbimage → rgbimage` — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。 · 例: なし
+- `tb_shape_perturb` `points → points` — 形に**既知の**変形を 1 つ入れる。→ ``(N, 3)``。 · 例: なし
+- `tb_smooth_funct_1d_gauss` `signal → signal` — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: なし
+- `tb_smooth_funct_1d_mean` `signal → signal` — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: なし
+- `tb_spad_deadtime_apply` `counts → counts` — Distort a true photon rate by the detector's dead time (counts lost). · 例: なし
+- `tb_spad_deadtime_correct` `counts → counts` — Recover the true photon rate from a dead-time-distorted measured rate. · 例: なし
+- `tb_spectrogram` `signal → image` — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``. · 例: なし
+- `tb_specular_coefficient_map` `rgbimage → image` — The scalar interface (specular) coefficient of the dichromatic model. → (H, W). · 例: なし
+- `tb_specular_diffuse_split` `rgbimage → rgbimage` — Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3). · 例: なし
+- `tb_specular_free_transform` `rgbimage → rgbimage` — Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3). · 例: なし
+- `tb_sphere_sdf` `points → volume` — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: なし
+- `tb_stat_correlation` `matrix → matrix` — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``. · 例: なし
+- `tb_stat_covariance` `matrix → matrix` — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``. · 例: なし
+- `tb_stat_zscore` `signal → signal` — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``). · 例: なし
+- `tb_statistical_outlier_removal` `points → points` — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: なし
+- `tb_superquadric_residual` `points → feature` — Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。 · 例: なし
+- `tb_synthesize_silhouette` `points → image` — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: なし
+- `tb_tcspc_background_subtract` `counts → counts` — Remove the ambient-light / dark-count floor from an arrival-time histogram. · 例: なし
+- `tb_tcspc_coates_correct` `counts → counts` — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias. · 例: なし
+- `tb_tcspc_irf_convolve` `counts → counts` — Blur an arrival-time histogram by the instrument response (timing jitter). · 例: なし
+- `tb_temporal_band_power` `video → image` — Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map. · 例: なし
+- `tb_temporal_bandpass` `video → video` — Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``. · 例: なし
+- `tb_temporal_bilateral` `video → video` — Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_temporal_median_window` `video → video` — Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``). · 例: なし
+- `tb_three_frame_difference` `video → video` — Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``). · 例: なし
+- `tb_torus_sdf` `points → volume` — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_voxel_grid_downsample` `points → points` — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: なし
+- `tb_weighting_response` `signal → signal` — The A / C / Z frequency-weighting curve, in dB, at the given frequencies. · 例: なし
+- `tb_wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: なし
+- `tb_zero_crossing_rate` `signal → feature` — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue. · 例: なし
+- `tb_zero_crossings_funct_1d` `signal → signal` — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``). · 例: なし
+
+#### 2d / xldgeom(10)
+- `xg_area_center` (halcon: `area_center_points_xld`) `contour → feature` — Polygon area of the contour(s) via the shoelace formula (summed abs). · 例: `gallery2d_geometry`
+- `xg_clip_contours` `contour → contour` — Drop contours whose polyline length is below a * max-length (a in [0,1]). · 例: `gallery2d_geometry`
+- `xg_crop_contours` `contour → contour` — Keep only contour points inside the central a-fraction window of the shape. · 例: `gallery2d_geometry`
+- `xg_eccentricity` (halcon: `eccentricity_points_xld`) `contour → feature` — Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance. · 例: `gallery2d_geometry`
+- `xg_elliptic_axis` (halcon: `elliptic_axis_points_xld`) `contour → feature` — Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set. · 例: `gallery2d_geometry`
+- `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` — Douglas-Peucker polyline simplification; eps = a * contour bbox diagonal. · 例: `gallery2d_geometry`
+- `xg_height_width_ratio` (halcon: `height_width_ratio_xld`) `contour → feature` — Axis-aligned bounding-box height/width ratio of the point set. · 例: `gallery2d_geometry`
+- `xg_moments` (halcon: `moments_points_xld`) `contour → feature` — Normalized 2nd central moment of the point set: mu20 + mu02. · 例: `gallery2d_geometry`
+- `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
+- `xg_regress_contours` `contour → feature` — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
+
+### 3d(372 ops / 68 categories)
+
+点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
+
+#### 3d / annotate3d(7)
+- `annotate3d_arrow` `image2d → image2d` — 画像(image2d)を返す: 3-D の ``p0`` から ``p1`` へ、射影した矢印を描く。 · 例: `annotate3d_figure`
+- `annotate3d_axes` `image2d → image2d` — 画像(image2d)を返す: object 座標(``pose`` の入力側)の 3 軸(gnomon)を ``origin`` から射影して描く。 · 例: `annotate3d_figure`
+- `annotate3d_bbox` `image2d → image2d` — 画像(image2d)を返す: 軸平行の 3-D 箱 ``((xmin,ymin,zmin),(xmax,ymax,zmax))`` の 12 辺を射影して描く。 · 例: `annotate3d_figure`
+- `annotate3d_label` `image2d × text → image2d` — 画像(image2d)を返す: 3-D のアンカーに引き出し線つきの文字を付ける。 · 例: `annotate3d_figure`
+- `annotate3d_measure` `image2d → image2d` — 画像(image2d)を返す: 3-D の 2 点間距離(メッシュ単位)を、射影した線と値で示す。 · 例: `annotate3d_figure`
+- `annotate3d_project` `points → table` — table(dict)を返す: 3-D 点の画素座標・前方距離・画像内/遮蔽の判定(:func:`project_anchors`)。 · 例: `annotate3d_figure`
+- `annotate3d_scale_bar` `image2d → image2d` — 画像(image2d)を返す: メッシュ単位で ``length`` のバーを面上に置いて射影する。 · 例: `annotate3d_figure`
+
+#### 3d / augment(6)
+- `cutout` `points → points` — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: `sensor_seg`
+- `elastic_deform` `points → points` — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: `sensor_seg`
+- `jitter` `points → points` — 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。 · 例: `augment_pointcloud`
+- `random_dropout` `points → points` — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。 · 例: `augment_pointcloud`
+- `random_rotation` `points → points` — ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。 · 例: `augment_pointcloud`, `sh_descriptor_retrieval`, `shape_retrieval`
+- `random_scale` `points → points` — 一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。 · 例: `augment_pointcloud`
+
+#### 3d / boundary(2)
+- `vol_boundary` `voxel → voxel` — Boundary shell of a binary volume (the 3-D ``region_boundary``). · 例: `roi_domain_boundary`
+- `vol_boundary_points` `voxel → points` — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · 例: `roi_domain_boundary`
+
+#### 3d / bounds(4)
+- `aabb` `points → primitive` — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``. · 例: `hull_bounds`
+- `convex_hull` `points → mesh` — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · 例: `hull_bounds`
+- `min_enclosing_sphere` `points → primitive` — 点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。 · 例: `hull_bounds`
+- `obb` `points → primitive` — Oriented bounding box by PCA. · 例: `hull_bounds`
+
+#### 3d / bundle_adjust(3)
+- `bundle_adjust` `pose × points → table` — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
+- `mean_reprojection_error` `pose × points → measurement` — バンドル調整の全観測について再投影誤差の RMS(ピクセル)を返す。 · 例: `bundle_adjust`
+- `project` `points → keypoints` — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
+
+#### 3d / curvature(5)
+- `estimate_normals` `points → normals` — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
+- `gaussian_curvature` `points → signal` — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
+- `mean_curvature` `points → signal` — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`, `minimal_surfaces`
+- `principal_curvatures` `points → curvature` — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`, `minimal_surfaces`
+- `shape_index` `points → descriptor` — Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
+
+#### 3d / curve(5)
+- `arc_length` `points → measurement` — 曲線の累積弧長と全長。→ (cumulative (N,), total float)。 · 例: `space_curve`, `torus_knot_curve`
+- `curvature_torsion` `points → pairs` — 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。 · 例: `space_curve`, `torus_knot_curve`
+- `fit_spline_curve` `points → points` — 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。 · 例: `bspline_freeform`
+- `frenet_frame` `points → frame` — Frenet 標構(接線 T, 主法線 N, 陪法線 B)を各点で。→ (T, N, B) 各 (Npts,3) 単位ベクトル。 · 例: `space_curve`, `torus_knot_curve`
+- `resample_uniform` `points → points` — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: `bspline_freeform`
+
+#### 3d / curvilinear(3)
+- `cylinder_unwrap` `voxel → voxel` — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
+- `fit_zernike` `image2d → table` — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
+- `polar_unwrap` `image2d → image2d` — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: `curvilinear_proj`
+
+#### 3d / deform(4)
+- `register_cpd_rigid` `points × points → pose` — Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。 · 例: `motion_scene`
+- `register_nonrigid` `points × points → points` — 非剛体 ICP で ``src`` を ``dst`` へ寄せる。 · 例: `nonrigid_deform`
+- `tps_fit` `points × points → deformation` — 3D Thin-Plate-Spline を制御点対応から当てはめる。 · 例: `nonrigid_deform`
+- `tps_warp` `deformation × points → points` — ``tps_fit`` で当てた薄板スプライン(TPS)の変形を点群に適用する。 · 例: `nonrigid_deform`
+
+#### 3d / depth_denoise(3)
+- `bilateral_filter_depth` `depth → depth` — 深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。 · 例: `depth_denoise`
+- `fill_holes` `depth → depth` — 無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。 · 例: `depth_denoise`
+- `joint_bilateral` `depth × image2d → depth` — joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。 · 例: `sensor_seg`
+
+#### 3d / describe(2)
+- `match_sh_descriptor` `voxel × voxel → measurement` — SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。 · 例: `sh_descriptor_retrieval`, `shape_descriptor`
+- `sh_descriptor` `voxel → descriptor` — 球面調和記述子。同心球 shell の SH 帯域エネルギー ‖f_l(r)‖ を (半径 × 周波数) で返す。 · 例: `sh_descriptor_retrieval`, `shape_descriptor`
+
+#### 3d / detect(2)
+- `hough_plane_3d` `voxel → primitive` — 平面検出(2D Hough 直線の 3D リフト)。勾配=法線を使い (法線 n, 距離 d) 空間へ投票。 · 例: `detect_primitives_3d`
+- `hough_sphere_3d` `voxel → primitive` — 球検出(2D Hough 円の 3D リフト)。中心 = p + sgn·r·n を半径 r ごとに投票。 · 例: `detect_primitives_3d`
+
+#### 3d / domain(5)
+- `vol_bounding_box` `voxel → primitive` — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `rle_region_efficiency`, `roi_domain_boundary`
+- `vol_crop_domain` `voxel → voxel` — Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``). · 例: `roi_domain_boundary`
+- `vol_reduce_domain` `voxel × voxel → voxel` — Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise). · 例: `roi_domain_boundary`
+- `vol_tiled_map` `voxel → voxel` — Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory. · 例: `rle_region_efficiency`
+- `vol_uncrop` `voxel → voxel` — Paste a cropped sub-volume back into the full frame (inverse of :func:`vol_crop_domain`). · 例: `roi_domain_boundary`
+
+#### 3d / edges(5)
+- `canny3d` `voxel → voxel` — 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。 · 例: `edges_3d`
+- `edge_points` `voxel → points` — エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。 · 例: `edges_3d`
+- `gradient3d` `voxel → gradient` — ボリュームをガウス平滑してから中心差分で 3-D 勾配(大きさとベクトル)を求める。 · 例: `edges_3d`
+- `link_edges` `voxel → voxel` — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
+- `log_zero_crossings` `voxel → voxel` — Laplacian-of-Gaussian のゼロ交差エッジ。 · 例: `edges_3d`
+
+#### 3d / feature(15)
+- `curvature_maps` `voxel → curvature` — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: `diff_features`
+- `edt_jfa` `voxel → sdf` — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: `diff_features`
+- `edt_jfa_vector` `voxel → flow_dense` — 各 voxel から最近 seed への変位 ``(3, D, H, W)``(``flow_dense``、dz, dy, dx [voxel])を **GPU の JFA** で。 · 例: `nearest_seed_partition`
+- `hessian3d` `voxel → hessian` — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: `diff_features`
+- `sobel3d` `voxel → gradient` — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: `diff_features`
+- `vol_euler_number` `voxel → measurement` — Euler characteristic of a binary volume, split into its three Betti numbers. · 例: `ct_porosity_and_fibre_morphometry`
+- `vol_frangi` `voxel → voxel` — 3-D Frangi vesselness — multiscale tubular-structure enhancement. · 例: `vessel_metrology`, `volume_downsampling`
+- `vol_gradient_magnitude` `voxel → voxel` — 3-D Sobel gradient magnitude ``sqrt(gz**2 + gy**2 + gx**2)``. · 例: `vessel_metrology`
+- `vol_granulometry` `voxel → measurement` — Pore / particle **size distribution** of a binary volume (opening series). · 例: `ct_porosity_and_fibre_morphometry`
+- `vol_hessian_blobness` `voxel → voxel` — Blob-like (spherical) response from the Hessian eigenvalues at one *scale*. · 例: `vessel_metrology`
+- `vol_local_maxima` `voxel → points` — 3-D local-maxima (peak) detection. · 例: `molecule_atom_count`, `vessel_metrology`
+- `vol_local_std` `voxel → voxel` — Unbiased local standard deviation inside a cubic window. · 例: `ct_porosity_and_fibre_morphometry`
+- `vol_local_thickness` `voxel → voxel` — Local thickness map: the diameter of the largest ball that covers each voxel. · 例: `ct_porosity_and_fibre_morphometry`
+- `vol_orientation_coherence` `voxel → voxel` — How strongly the local structure points **one way** (3-D structure tensor). · 例: `ct_porosity_and_fibre_morphometry`
+- `vol_sato` `voxel → voxel` — 3-D Sato tubeness — the simpler two-eigenvalue line filter. · 例: `vessel_metrology`
+
+#### 3d / feature_register(7)
+- `compute_fpfh` `points × normals → descriptor` — FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。 · 例: `fpfh_correspondence`
+- `harris3d_keypoints` `voxel → keypoints` — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
+- `iss_keypoints` `points → indices` — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
+- `register_fpfh` `points × points → pose` — FPFH 記述子 + RANSAC で **初期推定なし** の剛体位置合わせ (R,t) を推定する。 · 例: `feature_register`
+- `register_shot` `points × points → pose` — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: `feature_register`
+- `register_spin` `points × points → pose` — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: `feature_register`
+- `shot_descriptor` `points × normals → descriptor` — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を取る。 · 例: `feature_register`
+
+#### 3d / freeform(5)
+- `eval_bspline_curve` `bspline_curve → points` — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
+- `eval_bspline_surface` `bspline_surface × image2d × image2d → image2d` — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: `bspline_freeform`
+- `fit_bspline_curve` `points → bspline_curve` — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
+- `fit_bspline_surface` `image2d × image2d × image2d → bspline_surface` — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: `bspline_freeform`
+- `surface_residual` `image2d × image2d × image2d × bspline_surface → measurement` — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: `bspline_freeform`
+
+#### 3d / frequency(3)
+- `vol_fft_bandpass` `voxel → voxel` — Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure between two scales. · 例: `deconv_fft_restore`
+- `vol_fft_highpass` `voxel → voxel` — Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum to the input). · 例: `deconv_fft_restore`
+- `vol_fft_lowpass` `voxel → voxel` — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or mm with *spacing*). · 例: `deconv_fft_restore`
+
+#### 3d / fusion(2)
+- `fuse_to_voxel` `any → voxel` — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: `transforms_repr`
+- `register_cross` `any × any → pose` — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: `transforms_repr`
+
+#### 3d / geodesic(4)
+- `farthest_point_sampling` `points → indices` — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
+- `geodesic_distances` `points → signal` — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
+- `geodesic_mesh` `mesh → signal` — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
+- `knn_graph` `points → graph` — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
+
+#### 3d / geom_transform(3)
+- `vol_affine` `voxel → voxel` — General affine resampling (``scipy.ndimage.affine_transform``). · 例: `vol_geometry_transform`
+- `vol_resize` `voxel → voxel` — Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics). · 例: `vol_geometry_transform`
+- `vol_rotate` `voxel → voxel` — Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``). · 例: `vol_geometry_transform`
+
+#### 3d / geometry(24)
+- `angle_3points` `points → measurement` — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
+- `angle_between_lines` `primitive → measurement` — 2 直線の方向ベクトルがなす鋭角を度で返す(向きは区別せず 0〜90°)。 · 例: `geometry_metrology`
+- `angle_between_planes` `primitive → measurement` — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
+- `angle_line_plane` `primitive → measurement` — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: `geometry_metrology`
+- `distance_line_line` `primitive → measurement` — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
+- `distance_point_line` `points × primitive → measurement` — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
+- `distance_point_plane` `points × primitive → measurement` — 点から平面までの距離を返す(符号なし、入力座標と同じ単位)。 · 例: `geometry_metrology`
+- `distance_segment_segment` `primitive → measurement` — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
+- `fit_box3` `points → primitive` — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · 例: `oriented_bounding_box`
+- `fit_circle3` `points → primitive` — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · 例: `primitive_fitting_3d`
+- `fit_circle_3d` `points → primitive` — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
+- `fit_line3` `points → primitive` — Total-least-squares 3-D line fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
+- `fit_line_3d` `points → primitive` — 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。 · 例: `geometry_metrology`
+- `fit_plane3` `points → primitive` — Least-squares 3-D plane fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
+- `fit_plane_3d` `points → primitive` — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
+- `fit_sphere3` `points → primitive` — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
+- `fit_sphere_3d` `points → primitive` — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
+- `intersect_line_plane` `primitive → position` — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
+- `intersect_planes` `primitive → primitive` — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
+- `line_from_2points` `points → primitive` — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
+- `plane_from_3points` `points → primitive` — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
+- `smallest_box3` `points → primitive` — Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``). · 例: `oriented_bounding_box`
+- `smallest_box3_axis` `points → primitive` — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). · 例: `oriented_bounding_box`
+- `smallest_sphere3` `points → primitive` — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact algorithm). · 例: `primitive_fitting_3d`
+
+#### 3d / gicp(2)
+- `estimate_covariances` `points → descriptor` — 各点の局所共分散を固有値 (ε,1,1) に置換した plane-to-plane 共分散 (N,3,3)。 · 例: `gicp_register`
+- `gicp` `points × points → pose` — Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。 · 例: `gicp_register`
+
+#### 3d / gray(4)
+- `vol_equalize` `voxel → voxel` — Histogram equalisation of a volume (HALCON ``equ_histo_image``). · 例: `gray_window_level`
+- `vol_gamma` `voxel → voxel` — Gamma (power-law) correction on the volume's own range (HALCON ``pow_image``). · 例: `gray_window_level`
+- `vol_stretch` `voxel → voxel` — Percentile contrast stretch to ``[0, 1]`` (robust ``scale_image_max``). · 例: `gray_window_level`
+- `vol_window_level` `voxel → voxel` — CT window/level (HU windowing) — the radiologist's daily linear remap. · 例: `gray_window_level`
+
+#### 3d / lidar_projection(3)
+- `project_cylindrical` `points → image2d` — 円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。 · 例: `curvilinear_proj`
+- `project_spherical` `points → image2d` — 回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。 · 例: `lidar_projection`
+- `unproject_spherical` `image2d → points` — 球面レンジ画像 → 3D 点 (M, 3)。range>0 のセルのみをビン中心角で逆投影。 · 例: `lidar_projection`
+
+#### 3d / match_localize(6)
+- `match_chamfer_3d` `voxel × voxel → position` — chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。 · 例: `matching_localize`
+- `match_curvature_3d` `voxel × voxel → position` — 曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。 · 例: `matching_localize`
+- `match_hough_3d` `voxel × voxel → position` — generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。 · 例: `matching_localize`
+- `match_mip_2d` `voxel × voxel → position` — MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。 · 例: `matching_localize`
+- `match_points_ncc` `points × points → position` — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: `matching_localize`
+- `match_shape_3d` `voxel × voxel → position` — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: `matching_localize`
+
+#### 3d / match_pose(4)
+- `match_logpolar_z` `voxel × voxel → rot_scale` — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
+- `match_pca` `points × points → pose` — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: `shape_desc_pose`
+- `match_phase_3d` `voxel × voxel → shift` — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: `shape_desc_pose`
+- `moment_axes` `points → axes` — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
+
+#### 3d / medial(13)
+- `distance_ridge` `voxel → voxel` — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
+- `medial_axis_points` `voxel → points` — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
+- `medial_match` `voxel × voxel → measurement` — 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。 · 例: `medial_topology`
+- `skeleton_branches3d` `voxel → voxel` — 3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。 · 例: `medial_topology`
+- `skeleton_endpoints3d` `voxel → voxel` — 3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。 · 例: `medial_topology`
+- `skeleton_graph3d` `voxel → table` — 3D 骨格を **ノード(接合点・端点)と枝(長さ・半径)のグラフ**に組み立てる。 · 例: `medial_topology`
+- `skeleton_junctions3d` `voxel → voxel` — 3D 骨格の分岐点(joint、26 近傍に骨格 voxel が 3 個以上)を voxel マスクで返す。 · 例: `medial_topology`
+- `skeleton_prune3d` `voxel → voxel` — 3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。 · 例: `medial_topology`
+- `skeletonize_vol` `voxel → voxel` — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
+- `topology_signature` `voxel → table` — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
+- `vol_distance_transform` `voxel → voxel` — Exact Euclidean distance transform of a binary volume. · 例: `medial_topology`, `molecule_atom_count`, `nearest_seed_partition`, `vessel_metrology`
+- `vol_nearest_label` `voxel → voxel` — 零 voxel に**最近の非零ラベル**を配ったラベル体積 ``(D, H, W)``(ラベルのボロノイ分割、``voxel``)。 · 例: `nearest_seed_partition`
+- `vol_nearest_seed_vector` `voxel → flow_dense` — 各 voxel から**最近の seed voxel への変位ベクトル** ``(3, D, H, W)``(``flow_dense``、成分 dz, dy, dx [voxel])。 · 例: `nearest_seed_partition`
+
+#### 3d / mesh_process(10)
+- `boundary_vertices` `mesh → indices` — 開いた縁(境界)に乗っている**頂点の index** → ``(K,)``。 · 例: `mesh_decimate`, `mesh_props`
+- `decimate_qem` `mesh → mesh` — Quadric-error-metric edge-collapse decimation toward *target_faces*. · 例: `mesh_decimate`, `mesh_lod_download`, `mesh_resolution_demo`
+- `face_areas` `mesh → signal` — 三角形メッシュの**面ごとの面積** → ``(M,)``。 · 例: `mesh_props`
+- `face_normals` `mesh → normals` — 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。 · 例: `mesh_props`
+- `laplacian_smooth` `mesh → mesh` — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
+- `mesh_area` `mesh → measurement` — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
+- `mesh_volume` `mesh → measurement` — 閉じた三角形メッシュが囲む**符号付き体積** → float。 · 例: `hull_bounds`, `mesh_props`, `minimal_surfaces`
+- `taubin_smooth` `mesh → mesh` — Taubin λ|μ フィルタによる **非収縮** 平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
+- `vertex_curvature` `mesh → curvature` — 三角形メッシュの各頂点の**平均曲率の大きさ**(mean curvature magnitude)。→ (N,)。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
+- `vertex_normals` `mesh → normals` — 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。 · 例: `mesh_props`
+
+#### 3d / metrics(8)
+- `chamfer_distance` `points × points → measurement` — 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。 · 例: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
+- `fscore` `points × points → measurement` — F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。 · 例: `metrics_eval`
+- `hausdorff_distance` `points × points → measurement` — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。 · 例: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
+- `m3c2_distance` `points × points → signal` — 2 時点の点群の差を**法線方向に**測る(M3C2)。→ ``(distance, lod)`` の 2 つ。 · 例: `metrics_eval`
+- `normal_consistency` `points × normals → measurement` — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: `metrics_eval`
+- `pose_error` `pose × pose → table` — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
+- `rmse_correspondence` `points × points → measurement` — 対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。 · 例: `metrics_eval`
+- `voxel_iou` `voxel × voxel → measurement` — voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。 · 例: `metrics_eval`
+
+#### 3d / moment_invariant(4)
+- `central_moments` `points → table` — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
+- `inertia_tensor` `points → matrix` — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: `moment_invariants`
+- `moment_invariants` `points → descriptor` — 並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。 · 例: `moment_invariants`
+- `principal_moments` `points → descriptor` — 慣性テンソルの固有値(主慣性モーメント、降順ソート、回転不変)。 · 例: `shape_desc_pose`
+
+#### 3d / morphology(7)
+- `morph_blackhat3d` `voxel → voxel` — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: `diff_features`
+- `morph_close3d` `voxel → voxel` — 3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。 · 例: `morphology_3d`
+- `morph_dilate3d` `voxel → voxel` — 3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。 · 例: `morphology_3d`
+- `morph_erode3d` `voxel → voxel` — 3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。 · 例: `morphology_3d`
+- `morph_gradient3d` `voxel → voxel` — 3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。 · 例: `morphology_3d`
+- `morph_open3d` `voxel → voxel` — 3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。 · 例: `morphology_3d`
+- `morph_tophat3d` `voxel → voxel` — 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。 · 例: `diff_features`, `morphology_3d`
+
+#### 3d / motion(1)
+- `scene_flow_lk` `voxel × voxel → flow_dense` — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: `motion_scene`
+
+#### 3d / motion_segment(3)
+- `estimate_flow` `points × points → flow_scattered` — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: `motion_scene`
+- `fit_rigid` `points × points → pose` — 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。 · 例: `motion_scene`
+- `segment_rigid_motions` `points × points → labels` — 2 点群を運動が一致する剛体ごとに分割する(反復 RANSAC による multi-body 分割)。 · 例: `motion_seg`
+
+#### 3d / normals_orient(2)
+- `estimate_oriented_normals` `points → normals` — PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。 · 例: `oriented_normals`
+- `orient_normals` `points × normals → normals` — Hoppe 法で法線を**大域一貫**に向き付け(MST 伝播)。→ (N,3)。 · 例: `oriented_normals`
+
+#### 3d / occupancy(4)
+- `esdf` `voxel → sdf` — 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。 · 例: `occupancy_esdf`
+- `inflate` `voxel → voxel` — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。 · 例: `sensor_seg`
+- `occupancy_grid` `points → voxel` — 点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。 · 例: `occupancy_esdf`
+- `query_distance` `sdf × points → signal` — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
+
+#### 3d / optics(5)
+- `fresnel_reflectance` `measurement → measurement` — Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。 · 例: `snell_refraction`
+- `normal_from_reflection` `vector × vector → vector` — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: `sensor_seg`
+- `reflect` `vector × normals → normals` — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
+- `refract` `vector × normals → normals` — Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。 · 例: `snell_refraction`
+- `snell_angle` `measurement → measurement` — 入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。 · 例: `snell_refraction`
+
+#### 3d / photometric(4)
+- `integrate_normals` `normalmap → image2d` — 法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。 · 例: `photometric_stereo`
+- `photometric_stereo` `images → normalmap` — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
+- `render_lambertian` `normalmap → image2d` — 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。 · 例: `photometric_stereo`, `render_shade`
+- `surface_normals` `image2d → normalmap` — 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。 · 例: `photometric_stereo`
+
+#### 3d / plane_sweep_stereo(2)
+- `plane_sweep_depth` `image2d × image2d → depth` — plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。 · 例: `plane_sweep_depth`
+- `warp_by_plane` `image2d → image2d` — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: `motion_scene`
+
+#### 3d / polyhedron(1)
+- `geodesic_dome` `入力なし → mesh` — Geodesic sphere from a subdivided icosahedron — Euler decides the shape. · 例: `geodesic_dome`
+
+#### 3d / pose_estimation(3)
+- `dlt_pose` `points × keypoints → pose` — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `pnp_ransac` `points × keypoints → pose` — 外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `reprojection_error` `points × keypoints → measurement` — 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。 · 例: `pnp_pose_outliers`, `pose_estimation`
+
+#### 3d / pose_graph(3)
+- `mean_edge_error` `pose → measurement` — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。 · 例: `sfm_recon`
+- `optimize_pose_graph` `pose → table` — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
+- `relative_pose` `pose × pose → pose` — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。 · 例: `pose_graph_slam`, `sfm_recon`
+
+#### 3d / preprocess(5)
+- `mls_smooth` `points → points` — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: `pcl_geodesic`
+- `radius_outlier_removal` `points → points` — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: `pcl_geodesic`
+- `statistical_outlier_removal` `points → points` — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: `pcl_geodesic`
+- `volume_downsample` `voxel → voxel` — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
+- `voxel_grid_downsample` `points → points` — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: `pointcloud_downsampling`
+
+#### 3d / probe(3)
+- `vol_edge_probe` `voxel → table` — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_profile_line` `voxel → pairs` — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_wall_thickness` `voxel → signal` — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT measurement itself. · 例: `wall_thickness_probe`
+
+#### 3d / range_image(4)
+- `bearing_angle_image` `depth → image2d` — bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。 · 例: `sensor_seg`
+- `depth_to_organized_points` `depth → pointmap` — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
+- `normals_from_depth` `depth → normalmap` — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
+- `occlusion_edges` `depth → image2d` — 深度の不連続(前景/背景境界 = 遮蔽エッジ)を検出。→ bool HxW。 · 例: `range_image`
+
+#### 3d / reconstruct(4)
+- `alpha_shape_boundary` `points → indices` — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: `sfm_recon`
+- `alpha_shape_mesh` `points → mesh` — alpha shapes による**表面三角形メッシュ**(点群 → (vertices, faces))。 · 例: `alpha_shape_topology`
+- `estimate_alpha` `points → measurement` — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: `alpha_shape_topology`, `sfm_recon`
+- `poisson_lite` `points → mesh` — 点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。 · 例: `poisson_surface_recon`
+
+#### 3d / refine(6)
+- `icp_point2plane` `points × points × normals → pose` — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: `refinement`
+- `icp_point2point_3d` `points × points → pose` — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。 · 例: `gicp_register`, `itokawa_self_register`, `itokawa_shape_match`, `partial_overlap_icp`
+- `refine_lm` `voxel × voxel × position → table` — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: `refinement`
+- `refine_peak_newton` `score × position → position` — スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。 · 例: `refinement`
+- `refine_rotation_z` `voxel × voxel × angle → angle` — z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。 · 例: `refinement`
+- `refine_translation_lk` `voxel × voxel × position → position` — Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。 · 例: `refinement`
+
+#### 3d / regionprops(7)
+- `filter_by_volume` `voxel → voxel` — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
+- `inner_box3` `voxel → primitive` — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の 3-D 版)。 · 例: `inner_box_inspection`
+- `label_components` `voxel → labels` — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
+- `largest_component` `voxel → voxel` — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
+- `region_props` `voxel → table` — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
+- `vol_label` `voxel → labels` — 3-D connected-component labelling with a selectable neighbourhood. · 例: `ct_bone_segmentation`, `molecule_atom_count`, `vessel_metrology`
+- `vol_region_props` `labels → table` — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
+
+#### 3d / registration_metrics(4)
+- `inlier_ratio` `points × points → measurement` — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `reg_eval`
+- `registration_recall` `points × points → measurement` — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。 · 例: `reg_eval`
+- `rmse_inliers` `points × points → measurement` — inlier 対応(残差 < thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。 · 例: `reg_eval`
+- `rotation_translation_error` `pose × pose → measurement` — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
+
+#### 3d / render(18)
+- `ambient_occlusion` `mesh → image2d` — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。 · 例: `render_ao`
+- `antialias` `image2d → image2d` — 高解像画像を整数倍 ``ss`` で縮小(area-average anti-aliasing)。 · 例: `render_ssaa`
+- `brdf_hapke` `normalmap → image2d` — Hapke 反射則(対向効果 + 多重散乱 + 巨視的粗さ θ̄)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
+- `brdf_lommel_seeliger` `normalmap → image2d` — Lommel-Seeliger 反射則(縁まで明るいレゴリス)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
+- `cast_shadow` `mesh × vector → image2d` — メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。 · 例: `render_beauty`, `render_shadow`
+- `edge_alias_energy` `image2d → measurement` — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。 · 例: `render_beauty`, `render_ssaa`
+- `matcap_shade` `normalmap × image2d → image2d` — MatCap: 視空間法線を lit-sphere テクスチャに写して素材の見えを転写。→ ``(H, W[, C])``。 · 例: `render_shade`
+- `phong_shade` `normalmap → image2d` — Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。 · 例: `render_beauty`, `render_shade`
+- `project_points` `points → keypoints` — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `render_beauty` `mesh → rgbimage` — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `anatomical_hand`, `render_beauty`
+- `render_point_depth` `points → depth` — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
+- `render_regolith` `mesh → rgbimage` — 小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。 · 例: `itokawa_regolith_hero`
+- `render_shaded` `normalmap → image2d` — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
+- `render_volume_projection` `voxel → image2d` — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
+- `shadow_raycast` `mesh × vector → image2d` — メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。 · 例: `itokawa_regolith_hero`
+- `supersample_mesh` `mesh → image2d` — メッシュを SSAA でアンチエイリアス描画 -> float 画像 ``(H, W)`` (or ``(H, W, C)``)。 · 例: `render_ssaa`
+- `tonemap_aces` `image2d → image2d` — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
+- `tonemap_reinhard` `image2d → image2d` — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
+
+#### 3d / resolution(15)
+- `mesh_decimate_preserving` `mesh → table` — Decimation that keeps the detailed regions and reports what it lost (``table``). · 例: `mesh_resolution_demo`
+- `mesh_detail_map` `mesh → table` — Per-vertex coarseness and detail of a mesh (``table``). · 例: `mesh_resolution_demo`
+- `mesh_edge_stats` `mesh → table` — Edge-length and face-area percentiles with non-uniformity ratios (``table``). · 例: `mesh_resolution_demo`
+- `mesh_isotropic_remesh` `mesh → mesh` — Incremental isotropic remeshing to a uniform *target_edge* (``mesh``). · 例: `mesh_resolution_demo`
+- `mesh_lod_chain` `mesh → table` — Decimation levels with the measured geometric error of each (``table``). · 例: `mesh_resolution_demo`
+- `mesh_reduction_report` `mesh × mesh → table` — What a reduction (decimation, remesh, voxelisation) lost, in numbers (``table``). · 例: `mesh_resolution_demo`
+- `mesh_sample_points` `mesh → points` — Surface samples at a stated spacing — area-weighted random or Poisson-disk (``points``). · 例: `mesh_resolution_demo`
+- `mesh_select_lod` `table → table` — The coarsest LOD level whose geometric error projects below *pixel_tolerance* (``table``). · 例: `mesh_resolution_demo`
+- `mesh_split_long_edges` `mesh → mesh` — Bisect edges longer than *max_edge* until none remains — adaptive refinement (``mesh``). · 例: `mesh_resolution_demo`
+- `pc_density` `points → table` — Local spacing per point and the cloud's non-uniformity (``table``). · 例: `mesh_resolution_demo`
+- `pc_density_equalize` `points → points` — Fill the sparse regions, then thin the dense ones: uniform spacing (``points``). · 例: `mesh_resolution_demo`
+- `pc_fill_sparse` `points → points` — Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``). · 例: `mesh_resolution_demo`
+- `pc_lod_chain` `points → table` — Poisson-disk levels at doubling spacings (``table``). · 例: `mesh_resolution_demo`
+- `pc_poisson_disk` `points → points` — Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``). · 例: `mesh_resolution_demo`
+- `pc_thinning_report` `points × points → table` — What a point-cloud thinning removed, and whether it touched the rare points (``table``). · 例: `mesh_resolution_demo`
+
+#### 3d / restoration(2)
+- `vol_gaussian_psf` `measurement → voxel` — A normalised (sums to 1) 3-D Gaussian PSF kernel; *sigma* is a scalar or per-axis. · 例: `deconv_fft_restore`
+- `vol_richardson_lucy` `voxel × voxel → voxel` — Richardson–Lucy deconvolution of a non-negative volume by a known PSF. · 例: `deconv_fft_restore`
+
+#### 3d / rle_region(9)
+- `vol_rle_bbox` `rle_region → primitive` — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds), from the runs. · 例: `rle_region_efficiency`
+- `vol_rle_centroid` `rle_region → position` — Centroid ``(z, y, x)`` of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_components` `voxel → rle_region` — Split a binary volume into per-component ``VolRLE`` regions. · 例: `rle_region_efficiency`
+- `vol_rle_decode` `rle_region → voxel` — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` volume. · 例: `rle_region_efficiency`
+- `vol_rle_difference` `rle_region × rle_region → rle_region` — Set difference ``a \ b`` on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_encode` `voxel → rle_region` — Encode a binary volume as x-runs (the 3-D HALCON-region representation). · 例: `rle_region_efficiency`
+- `vol_rle_intersect` `rle_region × rle_region → rle_region` — Intersection of two RLE regions on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_union` `rle_region × rle_region → rle_region` — Union of two RLE regions, computed on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_volume` `rle_region → measurement` — Voxel count of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
+
+#### 3d / robust_fit(7)
+- `fit_cone` `points → primitive` — 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。 · 例: `fit_primitives_ext`
+- `fit_ellipsoid` `points → primitive` — 点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。 · 例: `fit_primitives_ext`
+- `fit_torus` `points → primitive` — 点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。 · 例: `fit_primitives_ext`
+- `ransac_cylinder` `points × normals → primitive` — 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。 · 例: `ransac_prim`
+- `ransac_line` `points → primitive` — 外れ値に頑健な RANSAC 直線適合。 · 例: `geometry_metrology`
+- `ransac_plane` `points → primitive` — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`
+- `ransac_sphere` `points → primitive` — 外れ値に頑健な RANSAC で点群に球(中心と半径)を当てる。 · 例: `ransac_prim`
+
+#### 3d / scene_flow3d(3)
+- `nearest_neighbor_flow` `points × points → flow_scattered` — 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。 · 例: `scene_flow_rigid`
+- `rigid_flow` `points × points → pose` — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
+- `smooth_flow` `points × points → flow_scattered` — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
+
+#### 3d / sdf_csg(12)
+- `box_sdf` `coordgrid → sdf` — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `capsule_sdf` `coordgrid → sdf` — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: `procedural_hand`, `sdf_csg`
+- `cylinder_sdf` `coordgrid → sdf` — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `grid_coords` `入力なし → coordgrid` — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
+- `plane_sdf` `coordgrid → sdf` — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `sdf_intersect` `sdf × sdf → sdf` — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `sdf_offset` `sdf → sdf` — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`
+- `sdf_smooth_union` `sdf × sdf → sdf` — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
+- `sdf_subtract` `sdf × sdf → sdf` — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
+- `sdf_union` `sdf × sdf → sdf` — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `sphere_sdf` `coordgrid → sdf` — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
+- `torus_sdf` `coordgrid → sdf` — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+
+#### 3d / segment(4)
+- `euclidean_cluster` `points → labels` — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。 · 例: `object_segmentation`
+- `plane_segmentation` `points → labels` — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: `object_segmentation`
+- `region_growing` `points → labels` — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: `sensor_seg`
+- `vol_watershed` `voxel → labels` — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**). · 例: `molecule_atom_count`
+
+#### 3d / shape_descriptor(5)
+- `a3_distribution` `points → descriptor` — ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。 · 例: `shape_desc_pose`
+- `d2_distribution` `points → descriptor` — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。 · 例: `shape_desc_pose`
+- `describe` `points → descriptor` — D2 + A3 + extent を連結した大域形状記述子を返す。 · 例: `denoise_evolution`, `shape_desc_pose`, `shape_retrieval`
+- `extent_signature` `points → descriptor` — PCA 主軸(共分散の固有ベクトル)方向の広がりの比を返す。 · 例: `shape_desc_pose`
+- `shape_distance` `descriptor × descriptor → measurement` — 2 つの記述子間の距離。小さいほど同形状。 · 例: `moment_invariants`, `shape_desc_pose`, `shape_retrieval`
+
+#### 3d / space_carving(4)
+- `carve` `images → voxel` — bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。 · 例: `space_carving`
+- `carve_look_at` `vector → pose` — ``carve`` / ``synthesize_silhouette`` に渡せるカメラ姿勢 ``(R, t)`` を作る。 · 例: `space_carving`
+- `synthesize_silhouette` `points → image2d` — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: `space_carving`
+- `visual_hull` `images → voxel` — 多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。 · 例: `space_carving`
+
+#### 3d / structured_light(7)
+- `absolute_phase` `image2d × image2d → image2d` — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
+- `decode_fringe` `images → depth` — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
+- `graycode_decode` `images → image2d` — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
+- `synthesize_fringes` `image2d → images` — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `structured_light`
+- `triangulate_column` `image2d → depth` — 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。 · 例: `structured_light_scan`
+- `unwrap_phase_2d` `image2d → image2d` — wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。 · 例: `structured_light`
+- `wrapped_phase` `images → image2d` — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`, `structured_light_scan`
+
+#### 3d / superquadric(4)
+- `fit_superquadric` `points → primitive` — 点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。 · 例: `superquadric_fit`
+- `inside_outside` `points → signal` — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: `superquadric_fit`
+- `sample_surface` `vector → points` — スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。 · 例: `mesh_lod_download`, `superquadric_fit`
+- `superquadric_residual` `points → measurement` — Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。 · 例: `superquadric_fit`
+
+#### 3d / surface(5)
+- `curve3d_tube_mesh` `points → mesh` — A space curve as a tube mesh — the MATLAB ``tubeplot``, with a volume you can check. · 例: `minimal_surfaces`
+- `gyroid_isosurface` `入力なし → mesh` — The gyroid — a triply periodic surface from its nodal approximation. · 例: `minimal_surfaces`
+- `gyroid_solid_mask` `入力なし → voxel` — The gyroid as a printable **solid**: the shell within ±*thickness* of the level set. · 例: `minimal_surfaces`
+- `minimal_surface` `入力なし → mesh` — A classical minimal surface, from its exact parametrisation. · 例: `minimal_surfaces`
+- `minimal_surface_bend` `入力なし → mesh` — The catenoid-helicoid bend — every member of the family is still minimal. · 例: `minimal_surfaces`
+
+#### 3d / surface_fit(4)
+- `background_flatten` `image2d → image2d` — 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。 · 例: `geometry_metrology`
+- `eval_poly_surface` `poly_surface × image2d × image2d → image2d` — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
+- `fit_poly_surface` `image2d × image2d × image2d → poly_surface` — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
+- `surface_form_error` `image2d → measurement` — 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。 · 例: `geometry_metrology`
+
+#### 3d / symmetry(4)
+- `detect_reflection_symmetry` `points → primitive` — PCA 主軸を法線とする候補平面(重心通過)から最良の反射対称面を選ぶ。 · 例: `dl_mesh_symmetry`, `itokawa_symmetry_honest`, `reflection_symmetry`, `symmetry`
+- `detect_rotational_symmetry` `points → primitive` — PCA 主軸を候補軸として最良の回転対称(軸 × order)を選ぶ。 · 例: `rotational_symmetry_fold`, `symmetry`
+- `reflect_points` `points → points` — 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。 · 例: `reflection_symmetry`
+- `reflection_symmetry_score` `points → measurement` — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
+
+#### 3d / terrain(8)
+- `bump_normals_fbm` `normalmap × pointmap → normalmap` — Perturb a normal map with the *gradient* of a seeded multi-octave height field. · 例: `itokawa_regolith_hero`
+- `displacement_band_weights` `mesh → matrix` — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]. · 例: `itokawa_regolith_hero`
+- `mesh_displace_fbm` `mesh → mesh` — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
+- `mesh_displace_spectrum` `mesh → mesh` — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited. · 例: `itokawa_regolith_hero`
+- `mesh_edge_lengths` `mesh → signal` — Local edge length of a triangle mesh, per vertex, per face or per unique edge. · 例: `itokawa_regolith_hero`
+- `mesh_scatter_boulders` `mesh → mesh` — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
+- `mesh_subdivide` `mesh → mesh` — Refine a triangle mesh → ``(V, F)`` by midpoint subdivision or adaptive tessellation. · 例: `itokawa_regolith_hero`
+- `terrain_region_mask` `mesh → signal` — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
+
+#### 3d / transform(12)
+- `depth_to_points` `depth → points` — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `structured_light_scan`, `transforms_repr`
+- `estimate_point_normals` `points → normals` — 点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。 · 例: `fpfh_correspondence`
+- `gaussians_to_voxel` `points → voxel` — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
+- `mesh_to_points` `mesh → points` — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
+- `mesh_to_voxel` `mesh → voxel` — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
+- `points_to_voxel` `points → voxel` — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
+- `sdf_to_occupancy` `sdf → voxel` — SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。 · 例: `transforms_repr`
+- `signed_distance_field` `voxel → sdf` — occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。 · 例: `transforms_repr`
+- `to_points` `voxel × points × mesh × depth × gaussians → points` — 任意の 3D 構造 → 点群(共通表現)。全5構造を 1 本の入口へ統合。 · 例: `transforms_repr`
+- `tsdf_from_depth` `depth → sdf` — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: `transforms_repr`
+- `voxel_to_mesh` `voxel → mesh` — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。 · 例: `mesh_smooth`
+- `voxel_to_mips` `voxel → images` — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
+
+#### 3d / tsdf_fusion(3)
+- `extract_surface_points` `sdf → points` — TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。 · 例: `transforms_repr`, `tsdf_fusion_demo`
+- `fuse` `depth → sdf` — 深度列を new_volume + integrate で 1 つの TSDF volume に融合。返り値 (tsdf, weight)。 · 例: `tsdf_fusion_demo`
+- `integrate` `sdf × depth → sdf` — 深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。 · 例: `transforms_repr`
+
+#### 3d / two_view(5)
+- `essential_8point` `image2d × image2d → matrix` — 対応点 + K から本質行列 E を直接。→ E (3,3)。 · 例: `sfm_recon`
+- `fundamental_8point` `image2d × image2d → matrix` — 正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。 · 例: `two_view_pose`
+- `recover_pose` `image2d × image2d → pose` — 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。 · 例: `two_view_pose`
+- `sampson_distance` `image2d × image2d → signal` — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
+- `triangulate` `image2d × image2d → points` — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
+
+### math(114 ops / 12 categories)
+
+視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+
+#### math / complex(18)
+- `cplx_argument_principle` `cpoints × cpoints → measurement` — Argument principle: count zeros minus poles enclosed by a contour, from sampled values of ``f`` alone. · 例: `math_complex`
+- `cplx_cauchy_value` `cpoints × cpoints → cscalar` — Cauchy's integral formula: recover ``f(w)`` **inside** a contour from its values **on** the contour. · 例: `math_complex`
+- `cplx_contour_circle` `入力なし → cpoints` — Sample a circle as a closed contour — the standard integration path. · 例: `math_complex`
+- `cplx_contour_integral` `cpoints × cpoints → cscalar` — Closed contour integral ``∮ f(z) dz`` by the chordal trapezoidal rule. · 例: `math_complex`, `representation_conversion`
+- `cplx_cr_residual` `cimage → measurement` — Cauchy-Riemann residual of a sampled complex field — "is this field holomorphic?" as a number. · 例: `math_complex`, `poc_complex_plane_fields`
+- `cplx_domain_colour` `cimage → rgbimage` — Domain colouring: turn a complex field into an RGB image you can read. · 例: `poc_complex_plane_fields`
+- `cplx_escape_time` `入力なし → image2d` — How many steps of ``z -> z**2 + c`` it takes to leave the escape disc. · 例: `poc_complex_plane_fields`
+- `cplx_joukowski` `cpoints → cpoints` — Joukowski (Zhukovsky) conformal map ``w = z + c^2 / z``. · 例: `math_complex`
+- `cplx_laurent_coeffs` `cpoints × cpoints → table` — Laurent (and Taylor) coefficients on a **uniformly sampled circle** — residues included. · 例: `math_complex`
+- `cplx_mobius` `cpoints → cpoints` — Möbius (linear fractional) map ``w = (a z + b) / (c z + d)``. · 例: `math_complex`
+- `cplx_newton_basins` `signal → labels2d` — Which root of a polynomial does Newton's method fall into, from each point? · 例: `poc_complex_plane_fields`
+- `cplx_plane_grid` `入力なし → cimage` — 複素平面の矩形窓を格子にする(画像と同じ並び: 行 0 が上 = 虚部が大きい側)。 · 例: `poc_complex_plane_fields`
+- `cplx_poly_eval` `signal × cpoints → cpoints` — Evaluate a polynomial on the complex plane (Horner, complex-capable). · 例: `math_complex`
+- `cplx_rational_field` `roots × roots → cimage` — Sample a rational function ``R(z) = gain * prod(z - zeros) / prod(z - poles)``. · 例: `poc_complex_plane_fields`
+- `cplx_winding_number` `cpoints → measurement` — Winding number of a closed contour around a point (turning number). · 例: `math_complex`, `poc_complex_plane_fields`
+- `joukowski_circulation` `入力なし → measurement` — The Kutta circulation ``Gamma = 4*pi*a*U*sin(alpha + beta)`` for that section. · 例: `poc_complex_plane_fields`
+- `mandelbrot_interior` `cimage → mask` — Closed-form interior test for the main cardioid and the period-2 bulb. · 例: `poc_complex_plane_fields`
+- `potential_flow_joukowski` `入力なし → cimage` — Inviscid flow past a Joukowski aerofoil, as a complex velocity field. · 例: `poc_complex_plane_fields`
+
+#### math / construct(8)
+- `circle_packing_apollonian` `入力なし → table` — Apollonian gasket from a Descartes quadruple — every circle a theorem. · 例: `poc_theorems_as_pictures`
+- `curve_locality` `pairs → table` — Points ``k`` apart along the curve — how far apart are they on the plane? · 例: `poc_theorems_as_pictures`
+- `ford_circles` `入力なし → table` — Ford circles for the Farey fractions — tangency *is* an integer identity. · 例: `poc_theorems_as_pictures`
+- `ifs_fractal` `入力なし → pairs` — Chaos game on an iterated function system — the dimension is a closed form. · 例: `poc_theorems_as_pictures`
+- `ifs_similarity_dimension` `入力なし → measurement` — Moran's equation ``sum(r_i**d) = 1`` solved for ``d`` — from the maps alone. · 例: `poc_theorems_as_pictures`
+- `neighbour_index_gaps` `pairs → signal` — How far apart *in index* are a point's nearest neighbours — parastichy as a number. · 例: `poc_theorems_as_pictures`
+- `phyllotaxis_pattern` `入力なし → pairs` — Vogel's spiral — the angle that packs best, and the spirals it makes. · 例: `poc_theorems_as_pictures`
+- `space_filling_curve` `入力なし → pairs` — Hilbert / Moore / scan orders on a ``2**order`` square — a permutation, checked. · 例: `poc_theorems_as_pictures`
+
+#### math / dynsys(6)
+- `dynsys_bifurcation_map` `入力なし → pairs` — The orbit diagram of a 1-D map — period doubling, as points you can count. · 例: `poc_what_a_picture_cannot_check`
+- `dynsys_correlation_dimension` `points → measurement` — Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``. · 例: `poc_what_a_picture_cannot_check`
+- `dynsys_lyapunov_spectrum` `入力なし → signal` — The Lyapunov spectrum by tangent flow + QR — and the sum you can check. · 例: `poc_what_a_picture_cannot_check`
+- `dynsys_poincare_section` `table → pairs` — Where a trajectory crosses a plane — with the crossing point interpolated. · 例: `poc_what_a_picture_cannot_check`
+- `ode_flow_states` `入力なし → table` — Integrate a named vector field — the trajectory, with the order you paid for. · 例: `poc_what_a_picture_cannot_check`
+- `ode_vector_field_grid` `入力なし → flow2d` — Sample a named field on a grid — a ``flow2d`` the existing viewers take. · 例: `poc_what_a_picture_cannot_check`
+
+#### math / estimation(12)
+- `assign_hungarian` `matrix → table` — コスト行列 (n, m) の割当問題を解く(Kuhn 1955 / Munkres 1957 の Hungarian 法、scipy の実装)。 · 例: `estimation_tour`
+- `crlb_gaussian` `signal × signal → table` — 白色ガウス雑音(標準偏差 sigma)の下での Cramér–Rao 下界。 · 例: `estimation_tour`
+- `hist_distance` `signal × signal → measurement` — 2 つのヒストグラム(非負、和で正規化する)の距離・発散。 · 例: `gallery_math_stats_linalg`
+- `kalman_smooth` `matrix × matrix × matrix × matrix × matrix × signal × matrix → table` — 線形ガウス状態空間モデル x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))の Kalman フィルタ(前向き)と Rauch–Tung–Striebel 平滑化(後ろ向き)。 · 例: `estimation_tour`
+- `mat_expm` `matrix → matrix` — 行列の指数関数 e^A(Padé 近似 + scaling-and-squaring、scipy)。 · 例: `gallery_math_stats_linalg`
+- `mat_logm` `matrix → matrix` — 行列の主対数 log A(e^X = A となる X のうち固有値の虚部が (−π, π] のもの、scipy)。 · 例: `gallery_math_stats_linalg`
+- `se3_exp` `signal → matrix` — SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。 · 例: `estimation_tour`
+- `se3_log` `matrix → signal` — SE(3) の対数写像: 4×4 の剛体変換 → 6 次元のねじれ ξ = (v, ω)(回転角 < π)。門: se3_log(se3_exp(ξ)) = ξ。 · 例: `estimation_tour`
+- `stat_chi2_gof` `signal → table` — χ² 適合度検定: 度数 ``observed`` が期待度数(既定は一様)に合うか。自由度 = 区分数 − 1。 · 例: `gallery_math_stats_linalg`
+- `stat_ks_test` `signal → table` — Kolmogorov–Smirnov 検定。``y`` を与えれば 2 標本(同じ分布から来たか)、無ければ標準正規分布との適合。 · 例: `gallery_math_stats_linalg`
+- `stat_ttest_paired` `signal × signal → table` — 対応のある t 検定: 同じ対象を 2 回測った差 d = x − y の平均が 0 か。 · 例: `gallery_math_stats_linalg`
+- `stat_ttest_welch` `signal × signal → table` — Welch の t 検定: 分散が等しいと仮定しない 2 群の平均の差(自由度は Welch–Satterthwaite)。 · 例: `estimation_tour`
+
+#### math / geometry(10)
+- `angle_defect` `mesh → table` — 頂点ごとの角欠損(離散 Gauss 曲率)K_v = 2π − Σ(その頂点での三角形の角)。境界の頂点は π − Σ(測地曲率)。 · 例: `geometry_tour`
+- `delaunay_triangulate` `matrix → table` — 平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。 · 例: `geometry_tour`
+- `geodesic_heat` `mesh → table` — 熱法による曲面上の測地距離(Crane et al. 2013)。``source`` は頂点番号(または番号の列、既定は頂点 0)。 メッシュは ``(vertices, faces)`` でも mesh の組 1 つでもよい。 · 例: `geometry_tour`
+- `geodesic_heat_grid` `image2d → table` — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた測地距離を熱法で求める(Crane et al. 2013 の格子版)。 · 例: `geometry_tour`
+- `mesh_euler_characteristic` `mesh → table` — 三角形メッシュの V − E + F と、閉じた向き付け可能な曲面なら種数 g = (2 − χ)/2。 · 例: `geometry_tour`
+- `mesh_torus` `入力なし → mesh` — トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R > r > 0)。 · 例: `geometry_tour`
+- `nurbs_circle` `入力なし → table` — 円を厳密に表す 2 次 NURBS(Piegl & Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。 · 例: `geometry_tour`
+- `nurbs_curve` `matrix → table` — NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。 · 例: `geometry_tour`
+- `nurbs_revolve` `matrix → table` — 平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl & Tiller §8.5)。 · 例: `geometry_tour`
+- `nurbs_surface` `入力なし → table` — NURBS 曲面(テンソル積)を評価する。 · 例: `gallery_math_numerics_filters`
+
+#### math / interp_poly(6)
+- `interp_cubic` `signal × signal × signal → signal` — Cubic-spline interpolation (``scipy.interpolate.CubicSpline``). · 例: `math_metrology`
+- `interp_linear` `signal × signal × signal → signal` — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*. · 例: `math_metrology`, `poc_thermal_radiometry`
+- `interp_scattered` `points × signal × points → table` — Values at *query* from **scattered** samples — sensor nets, boreholes, weather. · 例: `poc_datacenter_thermal_field`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`
+- `poly_eval` `signal × signal → signal` — Evaluate a polynomial (coefficients highest-power-first) at *x*. · 例: `math_metrology`, `signal_filter`
+- `poly_fit` `signal × signal → table` — Least-squares polynomial fit with its conditioning **on the record**. · 例: `math_metrology`, `poc_strain_history`, `poc_thermal_radiometry`, `signal_filter`
+- `poly_roots` `signal → roots` — All roots of a polynomial (coefficients highest-power-first) — complex included. · 例: `math_metrology`
+
+#### math / linalg(10)
+- `mat_cholesky` `matrix → table` — Cholesky factorisation ``A = L @ Lᵀ`` of a symmetric positive-definite matrix. · 例: `gallery_math_stats_linalg`
+- `mat_cond` `matrix → measurement` — Spectral (2-norm) condition number ``s_max / s_min`` — the numerical canary of the whole linalg family. · 例: `math_metrology`
+- `mat_eig` `matrix → table` — Eigen-decomposition of a **general** square matrix ``A V = V diag(w)`` (complex in general). · 例: `gallery_math_stats_linalg`
+- `mat_eigh` `matrix → table` — Eigen-decomposition of a **symmetric** matrix (LAPACK ``syevd``). · 例: `math_metrology`, `poc_thermal_radiometry`
+- `mat_lstsq` `matrix × signal → table` — Least-squares solution of an over-determined system ``A x ≈ b`` (LAPACK ``gelsd``, SVD-based). · 例: `math_metrology`, `poc_colocalization_crosstalk`, `poc_sea_ice_concentration`, `poc_solar_limb_darkening`
+- `mat_lu` `matrix → table` — LU factorisation ``P @ A = L @ U`` (``L`` unit lower, ``U`` upper). · 例: `gallery_math_stats_linalg`
+- `mat_pinv` `matrix → matrix` — Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**. · 例: `math_metrology`, `poc_machine_condition_fusion`
+- `mat_qr` `matrix → table` — QR factorisation ``A = Q @ R`` (``Q`` with orthonormal columns, ``R`` upper triangular). · 例: `numerics_tour`
+- `mat_solve` `matrix × signal → signal` — Solve the square linear system ``A x = b`` (LAPACK ``gesv``, LU with partial pivoting). · 例: `math_metrology`, `poc_colocalization_crosstalk`
+- `mat_svd` `matrix → table` — Singular value decomposition ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``). · 例: `math_metrology`, `poc_water_level`
+
+#### math / numerics(11)
+- `bessel` `signal → signal` — Bessel 関数。``kind`` = ``"j"``(第 1 種 J)/ ``"y"``(第 2 種 Y)/ ``"i"``・``"k"``(変形)。 · 例: `gallery_math_numerics_filters`
+- `chebyshev_coeffs_nd` `image2d → table` — テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。 · 例: `numerics_tour`
+- `chebyshev_eval_nd` `table × matrix → signal` — ``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。 · 例: `numerics_tour`
+- `chebyshev_nodes` `入力なし → signal` — 区間 [a, b] の Chebyshev 点 n 個(昇順)。 · 例: `numerics_tour`
+- `erf` `signal → signal` — 誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。 · 例: `numerics_tour`, `poc_battery_electrode_breathing`, `poc_change_detection_misreg`, `poc_crack_width_timeseries`, `poc_dic_strain`, `poc_die_tilt_tsv_overlay`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fresco_craquelure`, `poc_mri_bias_field`, `poc_search_sweep_width`, `poc_settlement_significance`, `poc_star_astrometry`, `representation_roundtrip`
+- `erfc` `signal → signal` — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。 · 例: `poc_dfm_thickness_overhang`
+- `gauss_cubature` `入力なし → table` — Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。 · 例: `gallery_math_numerics_filters`
+- `gauss_quadrature` `入力なし → table` — n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。 · 例: `numerics_tour`
+- `integrate_hamiltonian` `signal × signal → table` — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。 · 例: `numerics_tour`
+- `interp_barycentric` `signal × signal × signal → signal` — 点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。 · 例: `numerics_tour`
+- `low_discrepancy` `入力なし → matrix` — [0, 1)^dim の低食い違い点列 (n, dim)。 · 例: `numerics_tour`
+
+#### math / spectral(6)
+- `esprit_doa` `matrix → table` — ESPRIT(Roy & Kailath 1989): アレイの「1 素子ずらし」の不変性から、格子を使わずに向きを解く。 · 例: `spectral_tour`
+- `hilbert_analytic` `signal → table` — 解析信号 z = x + i·H[x] (FFT で負の周波数を消す)と、そこから読む振幅・瞬時位相・瞬時周波数。 · 例: `spectral_tour`
+- `lomb_scargle` `signal × signal × signal → table` — 不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。 · 例: `spectral_tour`
+- `music_doa` `matrix → table` — MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。 · 例: `spectral_tour`
+- `n_sources_mdl` `matrix → table` — スナップショットから波源の数を MDL 基準で推定する(Wax & Kailath 1985)。 · 例: `gallery_math_numerics_filters`
+- `ula_snapshots` `signal → matrix` — 等間隔線形アレイが受ける複素スナップショット (M, K) を作る(到来方向推定の答えの決まる入力)。 · 例: `spectral_tour`
+
+#### math / stats(5)
+- `stat_correlation` `matrix → matrix` — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``. · 例: `math_metrology`, `poc_colocalization_crosstalk`, `poc_ct_fidelity`, `poc_machine_condition_fusion`, `poc_thermal_radiometry`
+- `stat_covariance` `matrix → matrix` — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``. · 例: `math_metrology`, `poc_thermal_radiometry`
+- `stat_describe` `signal → table` — Five-number-plus summary of a 1-D sample, as a plain dict. · 例: `math_metrology`, `poc_thermal_radiometry`
+- `stat_histogram` `signal → pairs` — Histogram of a 1-D sample with the binning **explicit**. · 例: `math_metrology`, `poc_thermal_radiometry`
+- `stat_zscore` `signal → signal` — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``). · 例: `math_metrology`
+
+#### math / transform(16)
+- `abel_inverse` `signal → signal` — 投影 A(y) から軸対称な分布 f(r) を戻す(逆 Abel 変換 = 軸対称物体の断層化)。 · 例: `transforms_tour`
+- `abel_inverse_image` `image2d → table` — 軸対称な物体を横から撮った**画像**(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。 · 例: `transforms_tour`
+- `abel_revolve` `image2d → voxel` — 断面 f(z, r)((H, R)、r = 0, dr, …)を対称軸のまわりに回して 3-D ボリューム (H, 2R−1, 2R−1) にする。 · 例: `transforms_tour`
+- `abel_transform` `signal → signal` — 軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。 · 例: `transforms_tour`
+- `dct_transform` `image2d → table` — 正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。 · 例: `transforms_tour`
+- `dwt_inverse` `table → image2d` — ``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。 · 例: `transforms_tour`
+- `dwt_transform` `image2d → table` — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。 · 例: `transforms_tour`
+- `hankel_image` `image2d → table` — 軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。 · 例: `transforms_tour`
+- `hankel_transform` `signal × signal → table` — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。 · 例: `transforms_tour`
+- `laplace_inverse_talbot` `signal × signal × signal → signal` — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。 · 例: `transforms_tour`
+- `tf_bilinear` `signal × signal → table` — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。 · 例: `gallery_math_numerics_filters`
+- `tf_freq_response` `signal × signal × signal → table` — 周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。 · 例: `transforms_tour`
+- `tf_impulse_response` `signal × signal × signal → signal` — インパルス応答 h(t) = L⁻¹[H(s)] (t)(厳密にプロパーな部分。直達項のデルタは返さない)。 · 例: `transforms_tour`
+- `tf_poles_zeros` `signal × signal → table` — H(s) = num/den の極・零点・直流ゲイン・安定性。 · 例: `transforms_tour`
+- `tf_step_response` `signal × signal × signal → signal` — 単位ステップ応答 y(t) = L⁻¹[H(s)/s] (t)。 · 例: `transforms_tour`
+- `wavelet_filters` `入力なし → table` — Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。 · 例: `gallery_math_numerics_filters`
+
+#### math / wave(6)
+- `wave_fringe_period` `image2d → measurement` — The period of a striped image, measured back out of it (pixels). · 例: `poc_beats_fringes_and_screens`
+- `wave_grating_orders` `入力なし → table` — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle. · 例: `poc_beats_fringes_and_screens`
+- `wave_membrane_mode` `入力なし → matrix` — One eigenmode of a vibrating **membrane** — the shape the sand draws. · 例: `poc_beats_fringes_and_screens`
+- `wave_mode_frequencies` `入力なし → signal` — The eigenvalue ladder of a membrane — a closed form you can check against. · 例: `poc_beats_fringes_and_screens`
+- `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
+- `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
+
+### optics(221 ops / 25 categories)
+
+レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
+
+#### optics / appearance(7)
+- `cie_xyz_from_wavelength` `signal → points` — 波長 [nm] → CIE 1931 2° 等色関数 (x̄, ȳ, z̄)。入力形状 + 末尾 3 の配列を返す。 · 例: `appearance_structural_colour`
+- `grating_rgb` `normalmap → rgbimage` — 法線マップ + 光源 + 視線 → **回折による虹色** (H, W, 3) の線形 sRGB。 · 例: `appearance_structural_colour`
+- `grating_wavelengths` `入力なし → vector` — 回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。 · 例: `appearance_structural_colour`, `poc_beats_fringes_and_screens`
+- `spectrum_to_srgb` `signal → vector` — 分光反射率 → **線形 sRGB**(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。 · 例: `appearance_structural_colour`, `poc_material_optical_library`, `poc_pigment_unmixing`, `poc_white_balance`
+- `thin_film_reflectance` `signal → signal` — 薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。 · 例: `appearance_structural_colour`
+- `thin_film_rgb` `normalmap → rgbimage` — 法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。 · 例: `appearance_structural_colour`
+- `ward_anisotropic` `normalmap → image2d` — Ward の異方性反射(楕円ガウス微小面)。ヘアライン仕上げの**伸びたハイライト**。 · 例: `appearance_structural_colour`
+
+#### optics / cavity(5)
+- `cavity_strain_transfer` `入力なし → pairs` — 腕共振器がひずみ h(f) を出力の位相へ写す伝達関数の大きさ |H(f)| を ``pairs`` で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `fabry_perot_response` `入力なし → table` — Fabry-Perot 共振器の設計量(FSR・フィネス・線幅・極・増幅率・蓄積時間)を閉形式で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `michelson_dc_readout` `入力なし → table` — 暗縞から φ₀ だけずらした Michelson の反対称ポート光量・ひずみ感度・散射雑音限界。 · 例: `poc_gw_detector_pseudo_simulation`
+- `pdh_error_signal` `入力なし → pairs` — Pound-Drever-Hall 誤差信号 ε(δ) を、共振からの離調 δ [Hz] の関数として ``pairs`` で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `quantum_noise_budget` `入力なし → table` — 通常の(信号再利用なし)Fabry-Perot Michelson の量子雑音 —— 散射・輻射圧・標準量子限界。 · 例: `poc_gw_detector_pseudo_simulation`
+
+#### optics / coherent(6)
+- `coherent_image` `image2d × image2d → image2d` — Coherent image intensity of an amplitude/phase object through a pupil (``image2d``). · 例: `poc_laser_line_speckle_floor`
+- `laser_line_coherent` `入力なし → image2d` — A sheet-of-light laser line on a rough surface, imaged with its speckle (``image2d``). · 例: `poc_laser_line_speckle_floor`
+- `speckle_field` `入力なし → image2d` — Laser speckle intensity from a rough surface seen through a circular pupil (``image2d``). · 例: `poc_laser_line_speckle_floor`
+- `speckle_reduction` `入力なし → table` — Predicted speckle contrast after reduction (``table``). · 例: `poc_laser_line_speckle_floor`
+- `speckle_statistics` `image2d → table` — First- and second-order statistics of a speckle intensity image (``table``). · 例: `poc_laser_line_speckle_floor`
+- `triangulation_speckle_limit` `入力なし → table` — Speckle floor of laser triangulation (``table``): ``δz = C λ / (2π sin u_obs sin θ)``. · 例: `poc_laser_line_speckle_floor`
+
+#### optics / design(15)
+- `chromatic_shift` `table → table` — Focal shift, image-height shift and spot size versus wavelength (``table``). · 例: `lens_optimize_demo`, `poc_material_optical_library`
+- `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
+- `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_material_optical_library`
+- `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`
+- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_material_optical_library`
+- `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
+- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_material_optical_library`
+- `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
+- `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`
+- `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
+- `spot_diagram` `table → pairs` — Transverse ray intersections on the image plane for one field point. · 例: `lens_design_demo`
+- `spot_stats` `table → table` — RMS / geometric spot radius (mm) and centroid for one field point (``table``). · 例: `lens_design_demo`, `lens_optimize_demo`
+- `thick_lens` `入力なし → table` — Closed-form thick lens in air: EFL, back/front focal lengths, principal points. · 例: `lens_design_demo`, `poc_material_optical_library`
+- `tolerance_analysis` `table → table` — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``). · 例: `lens_design_demo`
+- `wavefront_from_opd` `table → table` — OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``). · 例: `lens_design_demo`
+
+#### optics / fiber(7)
+- `fiber_bundle_coupling` `入力なし → table` — ライトガイド(ファイバの束)に入って出る光の割合。 · 例: `poc_fiber_light_guide`
+- `fiber_lp_modes` `入力なし → table` — 弱導波のステップ型ファイバの LP_lm モード: 特性方程式を解き、各モードの u・w・規格化伝搬定数 b を返す(``table``)。 · 例: `poc_fiber_light_guide`
+- `fiber_mode_field_diameter` `入力なし → table` — LP01 の場の直径(MFD)[µm] —— 厳密な場に**重なりが最大のガウス**を当てたときの 1/e² 直径。 · 例: `poc_fiber_light_guide`
+- `fiber_numerical_aperture` `入力なし → table` — 開口数 NA = √(n_core² − n_clad²) と受け入れ半角(度)、比屈折率差 Δ。屈折率は数か材料名。 · 例: `poc_fiber_light_guide`
+- `fiber_v_number` `入力なし → table` — 規格化周波数 V = 2π a NA / λ と、単一モードかどうか(V < 2.4048 = J0 の最初の零点)。 · 例: `poc_fiber_light_guide`
+- `material_group_index` `入力なし → pairs` — 群屈折率 n_g(λ) = n − λ dn/dλ を ``pairs``(λ [nm], n_g)で(材料は ``materials`` の名前)。 · 例: `poc_fiber_light_guide`
+- `material_gvd` `入力なし → pairs` — 材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。 · 例: `poc_fiber_light_guide`
+
+#### optics / finish(5)
+- `blast_normals` `normalmap → normalmap` — ビーズブラスト / 梨地の**無方向な微小凹凸**を法線へ載せる。 · 例: `machined_metal_and_materials`
+- `finish_catalog` `入力なし → table` — 仕上げ名 → 既定パラメータの表(αx, αy, grain)。 · 例: `machined_metal_and_materials`
+- `finish_shade` `normalmap → rgbimage` — **材質 × 仕上げ**で金属面を陰影付けする → 線形 sRGB (H, W, 3)。 · 例: `machined_metal_and_materials`
+- `micro_normals` `normalmap → normalmap` — 加工痕そのものを**法線に刻む**(旋盤の送りマーク・ローレットの山)。 · 例: `machined_metal_and_materials`
+- `tangent_field` `入力なし → normalmap` — 仕上げの**筋の向き**を (H, W, 3) の接線場として作る。 · 例: `machined_metal_and_materials`
+
+#### optics / geometric(5)
+- `abcd_matrix` `table → matrix` — Compose a paraxial system into one 2x2 ray-transfer (ABCD) matrix. · 例: `optics_imaging`
+- `abcd_trace` `matrix → table` — Propagate one paraxial ray through an ABCD matrix. · 例: `optics_imaging`
+- `depth_of_field` `入力なし → table` — Photographic depth of field: near limit, far limit and hyperfocal distance. · 例: `lightfield_depth`, `optics_imaging`
+- `relative_illumination` `入力なし → pairs` — Natural vignetting: relative image-plane illuminance versus field angle. · 例: `optics_imaging`, `poc_search_sweep_width`
+- `thin_lens` `入力なし → table` — Gaussian thin-lens imaging: where the image lands and how big it is. · 例: `lightfield_depth`, `optics_imaging`
+
+#### optics / glassbody(4)
+- `beer_lambert_transmittance` `signal → signal` — Beer–Lambert の内部透過率 T = exp(−σ·L)。色ガラス・厚いガラスの緑かぶり。 · 例: `glass_and_mirror_optics`, `poc_pv_thermal_survey`, `poc_thermal_radiometry`
+- `prism_min_deviation_deg` `signal → signal` — プリズムの最小偏角 [deg]。**実硝材の分散**で波長ごとに変わる = 虹が出る理由。 · 例: `glass_and_mirror_optics`
+- `refract_rays` `points × points → points` — Snell 屈折のベクトル版。**光線ごとに全反射を判定**して (方向, TIR マスク) を返す。 · 例: `glass_and_mirror_optics`
+- `slab_transmittance` `signal → signal` — 平行平板(窓ガラス)の透過率。**両面での多重反射**と内部吸収を含む。 · 例: `glass_and_mirror_optics`, `machined_metal_and_materials`
+
+#### optics / illumination(6)
+- `defect_contrast` `table → table` — Contrast of topographic and pigment defects under a light (``table``). · 例: `illumination_design_demo`
+- `illumination_design` `入力なし → table` — Rank the standard light families for a surface / defect pairing (``table``). · 例: `illumination_design_demo`, `poc_solder_fillet_aoi`
+- `illumination_uniformity` `image2d → table` — Uniformity figures of an irradiance map (``table``). · 例: `illumination_design_demo`
+- `irradiance_map` `table → image2d` — Irradiance on the part plane (``image2d``, units of intensity / mm²). · 例: `illumination_design_demo`
+- `light_source` `入力なし → table` — An emitter set for a standard machine-vision light family (``table``). · 例: `illumination_design_demo`, `poc_pod_lighting`, `virtual_machine_vision`
+- `lighting_sweep` `入力なし → pairs` — Defect contrast versus ring-light elevation angle (``pairs``). · 例: `illumination_design_demo`
+
+#### optics / imaging(7)
+- `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_veiling_glare`
+- `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_veiling_glare`
+- `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_veiling_glare`
+- `psf_to_mtf` `image2d → pairs` — Radially-averaged MTF of a measured point-spread function. · 例: `optics_imaging`, `poc_veiling_glare`
+- `sfr_from_edge` `table → pairs` — ESF から SFR(エッジから測る MTF)を出す。 · 例: `poc_veiling_glare`
+- `veiling_glare_index` `image2d × image2d × image2d → table` — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。 · 例: `poc_veiling_glare`
+- `wavefront_stats` `table → table` — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl. · 例: `optics_imaging`, `poc_zernike_aberrations`
+
+#### optics / imaging_sim(5)
+- `calibration_views` `table → table` — Synthetic camera-calibration views of a planar target through the designed lens (``table``). · 例: `lens_calibration_loop_demo`
+- `defect_dataset` `入力なし → table` — Synthetic defect images through a designed lens, with aligned masks (``table``). · 例: `lens_defect_dataset_demo`
+- `distortion_map` `table → table` — Real chief-ray height versus the paraxial one, and the remap grid (``table``). · 例: `lens_defect_dataset_demo`
+- `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`
+- `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`
+
+#### optics / interface(4)
+- `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `glass_and_mirror_optics`
+- `critical_angle_deg` `入力なし → measurement` — 全反射の臨界角 [deg] = asin(n2/n1)。n1 > n2 でなければ ValueError(存在しない)。 · 例: `glass_and_mirror_optics`
+- `fresnel_conductor` `signal → signal` — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
+- `fresnel_dielectric` `signal → signal` — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。 · 例: `glass_and_mirror_optics`, `poc_pv_thermal_survey`, `poc_shape_from_polarization`
+
+#### optics / light_transport(11)
+- `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`
+- `fringe_multipath_phase_error` `入力なし → table` — Phase measured when a direct fringe phasor and a global phasor add: arg(a1 e^{iφ1} + a2 e^{iφ2}), its bias against φ1, and the worst case asin(a2/a1). · 例: `poc_interreflection_fringe_error`
+- `groove_profile` `入力なし → table` — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each. · 例: `poc_interreflection_fringe_error`
+- `high_frequency_patterns` `入力なし → images` — Shifted high-frequency projector patterns: binary stripes with fill ratio α, a checkerboard, or phase-shifted sinusoids (one or several periods). · 例: `poc_interreflection_fringe_error`
+- `micro_phase_decode` `images → table` — Decode a narrow-band high-frequency fringe set (micro phase shifting, Gupta & Nayar 2012) into an absolute projector coordinate, ordering the fringes by the beat of the first two periods. · 例: `poc_interreflection_fringe_error`
+- `predict_fringe_phase_error` `table → table` — Predict, per camera pixel, the fringe-phase bias and height error that interreflection causes in phase-shifting profilometry, from the light-transport matrix. · 例: `poc_interreflection_fringe_error`
+- `render_transport` `table × images → images` — Render camera images of a concave Lambertian cross-section under projector patterns, through the light-transport matrix (direct + interreflection). · 例: `poc_interreflection_fringe_error`
+- `separate_direct_global` `images → table` — Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006). · 例: `poc_interreflection_fringe_error`
+- `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`
+- `tof_transport_depth` `table → table` — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias. · 例: `poc_interreflection_fringe_error`
+- `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`
+
+#### optics / material(6)
+- `clearcoat_shade` `rgbimage × normalmap → rgbimage` — 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。 · 例: `machined_metal_and_materials`
+- `material_catalog` `入力なし → table` — 素材名 → 既定パラメータ(拡散の粗さ / 上塗りの強さ・粗さ / 布の縁光沢)。 · 例: `machined_metal_and_materials`
+- `oren_nayar` `normalmap → image2d` — 粗い拡散面の陰影(Oren–Nayar)。紙・石膏・コンクリート・月の見え方。 · 例: `machined_metal_and_materials`
+- `sheen_shade` `normalmap → image2d` — 布の**縁の光沢**(ベルベット・サテン)。視線に対して寝た所ほど明るい。 · 例: `machined_metal_and_materials`
+- `subsurface_approx` `normalmap → image2d` — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。 · 例: `machined_metal_and_materials`
+- `wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: `machined_metal_and_materials`
+
+#### optics / matprop(16)
+- `abbe_number` `入力なし → table` — フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。 · 例: `poc_material_optical_library`
+- `glass_map` `入力なし → table` — Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。 · 例: `poc_material_optical_library`
+- `material_absorption` `入力なし → pairs` — 吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を ``pairs``(λ [nm], α)で返す。 · 例: `poc_material_optical_library`
+- `material_dispersion` `入力なし → pairs` — 屈折率の分散曲線 n(λ) を ``pairs``(λ [nm], n)で返す(等間隔 ``n_points`` 点)。 · 例: `poc_fiber_light_guide`, `poc_material_optical_library`
+- `material_extinction` `入力なし → pairs` — 消衰係数の曲線 k(λ) を ``pairs``(λ [nm], k)で返す。k の表が無い区間は 0。 · 例: `poc_material_optical_library`
+- `material_from_curves` `入力なし → table` — 測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。 · 例: `poc_material_optical_library`
+- `material_from_sellmeier` `入力なし → table` — Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。 · 例: `poc_material_optical_library`
+- `material_optical_constants` `入力なし → table` — 1 波長の光学定数 n, k と、そこから決まる吸収係数・複素誘電率・垂直入射反射率を返す。 · 例: `poc_material_optical_library`, `poc_nir_silicon_transmission`
+- `material_record` `入力なし → table` — 材料 1 つのレコード(分類・別名・データ区間ごとの一次文献・カタログ公表値)を返す。 · 例: `poc_material_optical_library`
+- `material_reflectance` `入力なし → pairs` — 空気から材料の面への反射率 R(λ) を ``pairs``(λ [nm], R)で返す(Fresnel、複素屈折率)。 · 例: `poc_material_optical_library`
+- `material_table` `入力なし → table` — 同梱の材料表の一覧(名前・分類・波長範囲・n_d・V_d・出典)を返す。 · 例: `poc_material_optical_library`
+- `material_transmittance` `入力なし → pairs` — 平行平板(厚さ ``thickness_mm``)の透過率 T(λ) を ``pairs``(λ [nm], T)で返す。 · 例: `poc_fiber_light_guide`, `poc_material_optical_library`, `poc_nir_silicon_transmission`
+- `plate_focus_shift` `入力なし → table` — 平行平板(ウェハ・窓・カバーガラス)を通して見たときの焦点ずれと球面収差を閉じた式で返す。 · 例: `poc_material_optical_library`, `poc_nir_silicon_transmission`
+- `read_glass_catalog_agf` `入力なし → table` — 硝材カタログ(Zemax .agf 形式)を読んで材料レコードの列(``table``)にする。 · 例: `poc_material_optical_library`
+- `silicon_free_carrier_absorption` `入力なし → pairs` — ドープした Si の自由キャリア吸収 α_fc(λ) [1/cm] を ``pairs``(λ [nm], α)で返す。 · 例: `poc_material_optical_library`
+- `thermo_optic_coefficient` `入力なし → table` — 硝材の dn/dT(絶対、真空中)と基準温度からの屈折率変化 Δn をカタログの式 A で返す。 · 例: `poc_material_optical_library`, `poc_thermal_drift_metrology`
+
+#### optics / mirror(2)
+- `metal_mirror_rgb` `入力なし → vector` — 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
+- `metal_optical_constants` `signal → pairs` — 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
+
+#### optics / optimization(3)
+- `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
+- `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`
+- `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`
+
+#### optics / polarization(10)
+- `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
+- `jones_element` `入力なし → cimage` — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`
+- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`
+- `mueller_checks` `matrix → table` — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and how depolarising it is. · 例: `polarization_camera_pipeline`
+- `mueller_element` `入力なし → matrix` — A 4x4 real Mueller matrix for one polarisation element. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
+- `mueller_from_intensities` `signal → matrix` — Recover a Mueller matrix from intensities measured through known generator / analyser states (polarimetric least squares). · 例: `polarization_camera_pipeline`
+- `polarization_demosaic` `image2d → polsweep` — Split a polarisation-sensor mosaic into the four analyser images. · 例: `poc_shape_from_polarization`, `polarization_camera_pipeline`
+- `polarization_demosaic_color` `image2d → rgbvolume` — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a 4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block of polarisers) into four RGB images: ``(4, H, W, 3)`` in :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB). · 例: `polarization_camera_pipeline`
+- `stokes_analyze` `stokes → table` — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`
+- `stokes_from_jones` `jones → stokes` — Jones vector -> Stokes vector (the four measurable intensities). · 例: `optics_imaging`
+
+#### optics / scene(44)
+- `airy_radius_um` `入力なし → measurement` — エアリーディスクの第 1 暗環までの半径 [µm] = 1.22 · λ · N(閉じた式)。 · 例: `vision_layout_from_catalog`
+- `camera_rays` `table → points` — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。 · 例: `studio_raytrace_scene`
+- `covers_sensor` `table × table → table` — レンズがそのセンサを覆えるか(イメージサークル 対 対角)。 · 例: `vision_layout_from_catalog`
+- `dataset_throughput` `table → table` — :func:`inspection_dataset` の結果 → 生成スループットの実測まとめ。 · 例: `virtual_machine_vision`
+- `defocus_blur` `rgbimage × image2d × table → rgbimage` — 深度の真値から**被写界深度のぼけ**を掛ける(理想ピンホール像 -> 実レンズの像)。 · 例: `poc_focus_stacking`, `virtual_machine_vision`
+- `diffraction_blur` `rgbimage × table → rgbimage` — 開口で決まる**回折ぼけ**を掛ける(エアリーディスクをガウスで近似)。 · 例: `vision_layout_from_catalog`
+- `env_lightbox` `points → signal` — 撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。**無彩色**。 · 例: `studio_raytrace_scene`
+- `env_studio` `points → signal` — スタジオ環境の放射輝度(方向 -> 明るさ)。**無彩色**。 · 例: `studio_raytrace_scene`
+- `illumination_visibility` `table × points × table → signal` — 各点から見た**発光点の可視率** [0, 1] (= 落ち影)。 · 例: `studio_raytrace_scene`
+- `inspection_dataset` `table × table × table → table` — 外観検査 AI の**学習画像を n 枚**、画素完全なラベル付きで生成する(検査用)。 · 例: `virtual_machine_vision`
+- `interface_budget` `table → table` — 伝送帯域から**帯域律速の最大フレーム / ラインレート**を返す。 · 例: `vision_layout_from_catalog`
+- `layout_capture` `table → table` — レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。 · 例: `vision_layout_from_catalog`
+- `lens_catalog` `入力なし → table` — 産業用レンズの諸元表(型番で引ける)。``maker`` / ``mount`` で絞れる。 · 例: `vision_layout_from_catalog`
+- `lens_spec` `入力なし → table` — レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。 · 例: `vision_layout_from_catalog`
+- `light_catalog` `入力なし → table` — 照明の諸元表(鍵は「メーカー 型番」)。``maker`` / ``kind`` で絞れる。 · 例: `vision_layout_from_catalog`
+- `light_spec` `入力なし → table` — 照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。 · 例: `studio_raytrace_scene`, `vision_layout_from_catalog`
+- `light_wavelengths` `table → pairs` — 光源のスペクトルを、撮像に使う数本の波長と重みに落とす。 · 例: `vision_layout_from_catalog`
+- `linescan_capture` `table × table × table → table` — **ラインスキャン / TDI** で撮る(搬送しながら 1 ラインずつ積む)。 · 例: `vision_layout_from_catalog`
+- `observe_surface` `入力なし → table` — **観察光学系を組んで、指定した素材の仕上げ面を撮る**(一行で使える入口)。 · 例: `vision_layout_from_catalog`
+- `optical_budget` `入力なし → table` — 観察光学系の**分解能バジェット**を閉じた式で出す(撮る前に成立するかを見る)。 · 例: `vision_layout_from_catalog`
+- `optical_camera` `入力なし → table` — 実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。 · 例: `poc_focus_stacking`, `studio_raytrace_scene`, `virtual_machine_vision`, `vision_layout_from_catalog`
+- `optscene_defect_mask` `table × table → image2d` — **欠陥画素の真値マスク** (H, W)。学習・評価のラベルはこれを使う。 · 例: `studio_raytrace_scene`, `virtual_machine_vision`
+- `optscene_depth` `table × table → image2d` — 深度の**真値** (H, W) [mm]。**光軸方向の z** であって視点からの斜距離ではない。 · 例: `virtual_machine_vision`
+- `optscene_instances` `table × table → table` — 欠陥を**個体ごと**に返す(クラス・画素マスク・bounding box・面積)。 · 例: `virtual_machine_vision`
+- `optscene_mask` `table × table → image2d` — ``index`` 番のプリミティブが見えている画素の**真値マスク** (H, W) の bool。 · 例: `virtual_machine_vision`
+- `random_defects` `table → table` — 部品に**ランダムな欠陥**を作る(傷・割れ・ピット・しみ・打痕・異物)。 · 例: `virtual_machine_vision`
+- `reflect_rays` `points × points → points` — 鏡面反射 d − 2(d·n)n。``glassmirror.refract_rays`` の相方(反射側が無かった)。 · 例: `studio_raytrace_scene`
+- `register_light` `入力なし → text` — 手元の照明をカタログに登録する(データシートの値をそのまま入れる)。 · 例: `vision_layout_from_catalog`
+- `render_optscene` `table × table × table → rgbimage` — **検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。 · 例: `virtual_machine_vision`
+- `render_studio` `table × table → rgbimage` — **見せる絵**を描く: 環境光・多重反射・屈折と分散つき(測光の真値は無い)。 · 例: `studio_raytrace_scene`
+- `scene_box` `入力なし → table` — 軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。 · 例: `studio_raytrace_scene`, `vision_layout_from_catalog`
+- `scene_cylinder` `入力なし → table` — z 軸に平行な有限円筒(端面つき)。**加工仕上げが実際に載る形**。 · 例: `virtual_machine_vision`
+- `scene_difference` `table × table → table` — ``solid`` から ``cavity`` をくり抜く(CSG の差集合)。**中空の部品**を作る唯一の手段。 · 例: `studio_raytrace_scene`
+- `scene_material` `入力なし → table` — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。 · 例: `poc_material_optical_library`, `studio_raytrace_scene`, `virtual_machine_vision`, `vision_layout_from_catalog`
+- `scene_plane` `入力なし → table` — z = ``z_mm`` の水平面(ステージ/コンベア)。``half_size_mm`` で有限の板にできる。 · 例: `virtual_machine_vision`
+- `scene_sphere` `入力なし → table` — 球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。 · 例: `virtual_machine_vision`
+- `sensor_capture` `rgbimage → rgbimage` — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。 · 例: `vision_layout_from_catalog`
+- `sensor_catalog` `入力なし → table` — 実在センサの諸元表(Basler の EMVA1288 実測つき)。 · 例: `vision_layout_from_catalog`
+- `sensor_diagonal_mm` `table → measurement` — センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。 · 例: `vision_layout_from_catalog`
+- `sensor_spec` `入力なし → table` — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `vision_layout_from_catalog`
+- `surface_defect` `table × image2d → table` — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。 · 例: `studio_raytrace_scene`
+- `surface_finish` `table → table` — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。 · 例: `virtual_machine_vision`
+- `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `studio_raytrace_scene`
+- `vision_layout` `table × table × table → table` — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `vision_layout_from_catalog`
+
+#### optics / sensorchar(19)
+- `emva_bspline_regression` `signal × signal → table` — 3 次 B-スプラインの最小二乗の当てはめと、その傾き(General 6.6 節、式 44〜49)。 · 例: `poc_emva1288_in_camera_processing`
+- `emva_dark_current` `signal × signal → table` — 暗電流(7.1 節): 暗画像の平均(と分散)を露光時間に直線で当てた傾き。 · 例: `poc_emva1288_sensor`
+- `emva_defect_pixels` `image2d → table` — 欠陥画素の特徴づけ(8.8 節): 対数ヒストグラム(式 73〜75)と積算ヒストグラム(式 77)、しきい値を越える画素の数。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_dynamic_range` `入力なし → table` — ダイナミックレンジ DR = μ_p.sat / μ_p.min(式 28)を倍・dB(20 log10)・bit(log2)で。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_exposure_for_snr` `signal → signal` — ある SNR に要る露光 μ_p(SNR)= SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(式 25、式 21 の逆)。 · 例: `poc_emva1288_sensor`
+- `emva_filter_distortion` `matrix → table` — カメラの中の線形な前処理が EMVA 1288 Linear の数をどれだけ動かすか —— 閉形式(この族の導出、規格の式ではない)。 · 例: `poc_emva1288_in_camera_processing`
+- `emva_highpass` `image2d → table` — 照明のむらを除く高域フィルタ(8.1 節。旧版は付録 C.5 の式 84〜87)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_linearity_error` `signal × signal → table` — 直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に**相対偏差の重み 1/y²**で当て(式 59〜61)、 飽和の 5〜95 % の点で相対偏差 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] の絶対値の平均を LE とする。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_noise_whiteness` `image2d × image2d → table` — 時間雑音は画素間で独立か(Linear 1.2 節の前提 3)、続けて撮った画像の間で独立か(Linear・General の前提 3)。 · 例: `poc_emva1288_in_camera_processing`
+- `emva_pair_statistics` `image2d × image2d → table` — 同じ露光で撮った 2 枚から、平均・時間分散・空間分散を出す(式 16・18・32)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_photon_exposure` `signal → signal` — センサ面の放射照度から画素あたりの平均光子数 μ_p = A E t_exp/(hc/λ)(式 3)を、規格の便利な単位で(式 4)。 · 例: `poc_emva1288_sensor`
+- `emva_photon_transfer` `signal × signal → table` — photon transfer 曲線からシステムゲイン K と暗雑音 σ_d を出す(式 50・53・54)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_ptc_linearity_check` `signal × signal → table` — photon transfer 曲線は直線か(6.6 節、式 51)—— Linear の K を使ってよいかの検査。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_quantum_efficiency` `signal × signal → table` — 応答(特性曲線)の傾きから量子効率 η を出す(式 49・52)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_sensitivity_threshold` `入力なし → table` — 絶対感度しきい値(SNR = 1 になる露光、式 26・27)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_snr_curve` `signal → matrix` — 線形モデルの SNR(式 21)と理想センサの SNR(式 23)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_spatial_nonuniformity` `volume × volume → table` — DSNU と PRNU(式 33〜42・65〜67)。 · 例: `poc_emva1288_in_camera_processing`, `poc_emva1288_sensor`
+- `emva_spectrogram` `image2d → table` — 水平・垂直のスペクトログラム(8.6 節、式 70〜72)。 · 例: `poc_emva1288_sensor`
+- `emva_total_snr` `signal → matrix` — 空間の不均一を含めた総合 SNR(8.5 節、式 68・69)。 · 例: `poc_emva1288_sensor`
+
+#### optics / sensorgeneral(3)
+- `emva_general_nonuniformity` `volume × volume → table` — DSNU と PRNU を入力(光子)の単位で(General 8 節、式 55・56・58・59)。 · 例: `poc_emva1288_in_camera_processing`
+- `emva_general_relative_qe` `signal × signal → table` — 基準波長に対する相対量子効率 η(λ)/η(λ_ref)(General 9.4 節、式 73・74)。 · 例: `poc_emva1288_in_camera_processing`
+- `emva_general_sensitivity` `signal × signal × signal → table` — 特性曲線・入力 SNR・絶対感度しきい値・DR・光子単位の暗雑音(General 2.1〜2.4・6.6〜6.8 節)。 · 例: `poc_emva1288_in_camera_processing`
+
+#### optics / shape_from_polarization(8)
+- `aolp_to_azimuth` `image2d → table` — Turn the angle of linear polarisation into the two candidate azimuths of the surface normal (the pi ambiguity), diffuse and specular differing by 90 degrees. · 例: `poc_shape_from_polarization`
+- `dolp_to_zenith` `image2d → table` — Invert DoLP to the set of zenith angles that produce it — one for the diffuse model, two (straddling Brewster) for the specular model. · 例: `poc_shape_from_polarization`
+- `sfp_disambiguate` `table → normalmap` — Pick one normal per pixel from the candidate set of :func:`sfp_normals`, using a stated prior — convexity with Brewster-ridge segmentation, or a coarse depth / normal map. · 例: `poc_shape_from_polarization`
+- `sfp_dolp_model` `image2d → image2d` — Degree of linear polarisation of reflected (specular) or emitted (diffuse) light versus zenith angle, from the Fresnel equations. · 例: `poc_shape_from_polarization`
+- `sfp_estimate_index` `image2d × image2d → table` — Estimate the refractive index from DoLP observed at known zenith angles — a least-squares fit of the Fresnel curve, plus Brewster's ``n = tan(theta_B)`` at the DoLP maximum for the specular model. · 例: `poc_shape_from_polarization`
+- `sfp_height` `normalmap → image2d` — Integrate a normal map to a height map with Frankot-Chellappa on a mirror-extended domain, so the periodic boundary of the FFT does not bend the result. · 例: `poc_shape_from_polarization`
+- `sfp_normals` `polsweep → table` — From a polariser sweep to the explicit set of candidate surface normals per pixel — 2 for the diffuse model, 4 for the specular model (2 zeniths x 2 azimuths). · 例: `poc_shape_from_polarization`
+- `sfp_render` `normalmap → polsweep` — Render the images a 4-direction polarisation camera records of a dielectric surface with the given normal map (the forward model of shape from polarisation). · 例: `poc_shape_from_polarization`
+
+#### optics / spectral(9)
+- `bandpass_spectrum` `入力なし → pairs` — 帯域通過フィルタの透過率(超 Gauss)。 · 例: `poc_nir_silicon_transmission`
+- `blackbody_spectrum` `入力なし → pairs` — 黒体の分光放射輝度 L(λ, T)、単位 W m⁻² sr⁻¹ nm⁻¹(Planck の式、SI 2019 の定数)。 · 例: `poc_nir_silicon_transmission`
+- `cie_illuminant_a` `入力なし → pairs` — CIE 標準イルミナント A の相対分光分布(CIE 15:2004 の定義式、560 nm で 100)。 · 例: `poc_nir_silicon_transmission`
+- `energy_to_photons` `pairs → pairs` — エネルギーの分光分布(W/nm)を光子数の分布(光子 s⁻¹ nm⁻¹)にする: λ/(hc) を掛ける。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `led_spectrum` `入力なし → pairs` — LED の相対分光分布(ピークで 1)。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `silicon_photodiode_qe` `入力なし → pairs` — Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `spectral_integral` `pairs → measurement` — 曲線の波長積分 ∫ s(λ) dλ(台形則、λ は nm)。区間を与えればその中だけ(端は線形補間)。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `spectral_product` `pairs × pairs → pairs` — 2 本の曲線の積を *a* の波長で(*b* は線形補間)。光源 × 透過率 × QE を 1 本ずつ掛ける。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `spectral_stats` `pairs → table` — 曲線の要約: ピーク波長と値、重心波長、半値全幅(線形補間で交点を取る)、積分。 · 例: `poc_nir_silicon_transmission`
+
+#### optics / surface(5)
+- `corrosion_mask` `入力なし → image2d` — 錆・緑青・汚れの**むら**(0–1 のマスク)。 · 例: `machined_metal_and_materials`
+- `metallic_flake_normals` `入力なし → normalmap` — メタリック塗装のフレーク(アルミ片)の法線場を作る。 · 例: `machined_metal_and_materials`
+- `rough_transmission` `signal → pairs` — すりガラスの透過を「直進成分」と「拡散成分」に分ける。 · 例: `machined_metal_and_materials`
+- `weave_normals` `入力なし → normalmap` — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。 · 例: `machined_metal_and_materials`
+- `wood_grain` `入力なし → image2d` — 木目(年輪)の**色の変調**と**繊維の向き**を作る。 · 例: `machined_metal_and_materials`
+
+#### optics / wave(9)
+- `airy_pattern` `入力なし → image2d` — The diffraction-limited PSF of a circular pupil (Airy pattern). · 例: `optics_imaging`, `poc_veiling_glare`
+- `angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: `optics_imaging`
+- `defocus_from_shift` `入力なし → measurement` — Defocus wavefront error (waves at the pupil edge) of an axial focus shift. · 例: `optics_imaging`, `poc_nir_silicon_transmission`
+- `four_f_filter` `cimage × cimage → cimage` — 4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。 · 例: `optics_four_f_processor`
+- `fourier_plane_filter` `入力なし → cimage` — 4f 系のフーリエ面に置く複素透過関数 ``H(fx, fy)``。 · 例: `optics_four_f_processor`
+- `fraunhofer_pattern` `image2d → image2d` — Far-field (Fraunhofer) diffraction intensity of an aperture. · 例: `optics_imaging`, `poc_beats_fringes_and_screens`
+- `gaussian_beam` `入力なし → table` — Gaussian-beam propagation: spot size, wavefront curvature and Gouy phase. · 例: `optics_imaging`
+- `pupil_blur` `image2d × image2d → image2d` — Blur an image with the PSF of a pupil shape at one wavelength band. · 例: `optics_imaging`, `poc_nir_silicon_transmission`
+- `pupil_psf` `image2d → image2d` — Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1). · 例: `optics_imaging`
+
+### lightfield(17 ops / 5 categories)
+
+#### lightfield / decode(3)
+- `lf_from_mla` `image2d → lightfield` — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field. · 例: `lightfield_depth`
+- `lf_stats` `lightfield → table` — Describe a light field: shape, angular centre, and the slope range it can carry. · 例: `lightfield_depth`
+- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`
+
+#### lightfield / depth(5)
+- `lf_all_in_focus` `lightfield × image2d → image2d` — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`
+- `lf_depth_from_focus` `lightfield → image2d` — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: `lightfield_depth`, `poc_compound_eye`, `poc_lightfield_depth`
+- `lf_disparity_to_depth` `image2d → depth` — Slope (px per angular step) -> metric depth, the camera-array model. · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_epi_slope` `lightfield → image2d` — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass). · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_plenoptic_design` `入力なし → table` — Size a plenoptic camera: what angular/spatial resolution and depth range you buy. · 例: `lightfield_depth`, `poc_compound_eye`
+
+#### lightfield / refocus(4)
+- `lf_aperture_mask` `入力なし → image2d` — Angular weighting mask — the synthetic aperture you stop down or shape. · 例: `lightfield_depth`, `poc_compound_eye`
+- `lf_focal_stack` `lightfield → images` — Refocus at every slope in *slopes* — a focal stack from one exposure. · 例: `lightfield_depth`
+- `lf_refocus` `lightfield → image2d` — Shift-and-add refocus: the synthetic-aperture image focused at *slope*. · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_synthetic_aperture` `lightfield → image2d` — Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders. · 例: `lightfield_depth`, `poc_compound_eye`
+
+#### lightfield / synthesis(1)
+- `lf_synthesize` `入力なし → lightfield` — Build a light field of textured layers at **known** slopes (the test bed). · 例: `lightfield_depth`, `poc_compound_eye`
+
+#### lightfield / views(4)
+- `lf_center_view` `lightfield → image2d` — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives. · 例: `lightfield_depth`
+- `lf_epi` `lightfield → image2d` — Epipolar-plane image — the slice whose **line slope is the disparity**. · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_subaperture` `lightfield → image2d` — One sub-aperture view — the image seen through one point of the pupil. · 例: `lightfield_depth`, `poc_compound_eye`
+- `lf_views` `lightfield → images` — The whole angular grid as a plain list of 2-D images (row-major over ``(v, u)``). · 例: `lightfield_depth`
+
+### photon(17 ops / 6 categories)
+
+#### photon / counting(3)
+- `photon_sample` `image2d → image2d` — Poisson-sample an expected-photon image into an actual photon count image. · 例: `photon_timeresolved`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`
+- `photon_statistics` `image2d → table` — Poisson statistics of a photon-count frame: is it really shot-noise limited? · 例: `photon_timeresolved`
+- `photon_uncertainty` `image2d → image2d` — Per-pixel Poisson error bar of a photon-count frame. · 例: `photon_timeresolved`, `poc_thermal_radiometry`
+
+#### photon / dtof(3)
+- `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+- `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+- `dtof_depth` `counts → measurement` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+
+#### photon / lifetime(2)
+- `lifetime_fit` `counts → table` — Mono-exponential fluorescence lifetime from a TCSPC decay histogram. · 例: `photon_timeresolved`
+- `lifetime_phasor` `counts → table` — Phasor (frequency-domain) representation of a decay — the fit-free view. · 例: `photon_timeresolved`
+
+#### photon / spad(3)
+- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`
+- `spad_deadtime_correct` `countrate → countrate` — Recover the true photon rate from a dead-time-distorted measured rate. · 例: `photon_timeresolved`
+- `tcspc_coates_correct` `counts → counts` — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+
+#### photon / tcspc(4)
+- `tcspc_background_subtract` `counts → counts` — Remove the ambient-light / dark-count floor from an arrival-time histogram. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+- `tcspc_irf_convolve` `counts → counts` — Blur an arrival-time histogram by the instrument response (timing jitter). · 例: `photon_timeresolved`
+- `tcspc_simulate` `入力なし → counts` — Synthesise a single-pixel photon arrival-time histogram with a known answer. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+- `tcspc_stats` `counts → table` — Descriptors of an arrival-time histogram: peak, centroid, width, background. · 例: `photon_timeresolved`
+
+#### photon / transform(2)
+- `anscombe_inverse` `image2d → image2d` — Invert :func:`anscombe_transform` — algebraically, or without bias. · 例: `photon_timeresolved`
+- `anscombe_transform` `image2d → image2d` — Anscombe variance-stabilising transform: Poisson counts -> ~unit-variance. · 例: `photon_timeresolved`
+
+### specular(13 ops / 4 categories)
+
+#### specular / dichromatic(4)
+- `illuminant_from_dichromatic_planes` `rgbimage × labels → vector` — Recover the illuminant colour from two or more materials. → unit 3-vector. · 例: `poc_white_balance`, `specular_photometric`
+- `specular_coefficient_map` `rgbimage → image2d` — The scalar interface (specular) coefficient of the dichromatic model. → (H, W). · 例: `specular_photometric`
+- `specular_diffuse_split` `rgbimage → rgbimage` — Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3). · 例: `specular_photometric`
+- `specular_free_transform` `rgbimage → rgbimage` — Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3). · 例: `poc_leaf_disease_area`, `specular_photometric`
+
+#### specular / photometric(2)
+- `photometric_residual` `images → image2d` — How badly the Lambertian model fails, per pixel. → (H, W) RMS residual. · 例: `specular_photometric`
+- `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
+
+#### specular / polarization(4)
+- `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `poc_polarization_specular`, `specular_photometric`
+- `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `poc_polarization_specular`, `specular_photometric`
+- `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+
+#### specular / reflectance(3)
+- `brdf_blinn_phong` `normalmap → image2d` — Blinn's half-vector specular lobe. → (H, W) in [0, 1]. · 例: `poc_shape_from_polarization`, `specular_photometric`
+- `brdf_microfacet` `normalmap → image2d` — GGX / Trowbridge-Reitz microfacet specular BRDF. → (H, W), units 1/sr. · 例: `poc_solder_fillet_aoi`, `specular_photometric`
+- `dichromatic_render` `normalmap → rgbimage` — Forward dichromatic model: render a known highlight so a separation can be checked against it. → (H, W, 3). · 例: `specular_photometric`
+
+### motionmag(9 ops / 5 categories)
+
+#### motionmag / decompose(2)
+- `complex_steerable_decompose` `image2d → table` — Complex oriented sub-band decomposition of one frame -> ``dict``. · 例: `motion_magnification`
+- `complex_steerable_reconstruct` `table → image2d` — Invert :func:`complex_steerable_decompose` -> ``(H, W)`` real image. · 例: `motion_magnification`
+
+#### motionmag / magnify(1)
+- `motion_magnify` `video → table` — Scale the in-band motion of a clip by *alpha* -> ``dict``. · 例: `motion_magnification`, `poc_motion_magnification`, `quaternion_monogenic`
+
+#### motionmag / measure(2)
+- `displacement_series` `video → pairs` — Whole-frame displacement waveform -> ``(T, 2)`` array of ``(dx, dy)``. · 例: `motion_magnification`, `poc_motion_magnification`, `quaternion_monogenic`
+- `phase_displacement` `video → table` — Sub-pixel displacement field from local phase -> ``dict``. · 例: `motion_magnification`, `poc_beam_modal_video`, `poc_motion_magnification`, `quaternion_monogenic`
+
+#### motionmag / synthesis(1)
+- `synthesize_translation` `入力なし → video` — A clip whose displacement is known in closed form -> ``(T, H, W)`` video. · 例: `motion_magnification`, `poc_motion_magnification`, `quaternion_monogenic`
+
+#### motionmag / temporal(3)
+- `band_snr` `video → table` — Measure what a clip's temporal band contains, and what it costs -> ``dict``. · 例: `motion_magnification`, `poc_motion_magnification`
+- `temporal_band_power` `video → image2d` — Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map. · 例: `motion_magnification`, `poc_motion_magnification`
+- `temporal_bandpass` `video → video` — Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``. · 例: `motion_magnification`, `poc_beam_modal_video`, `poc_motion_magnification`
+
+### quat(19 ops / 7 categories)
+
+#### quat / algebra(3)
+- `quat_conjugate_image` `qimage → qimage` — Per-pixel quaternion conjugate ``(w, -x, -y, -z)``. → (H, W, 4). · 例: `quaternion_monogenic`
+- `quat_image_multiply` `qimage × qimage → qimage` — Hamilton product of a quaternion image with a quaternion or a field. → (H, W, 4). · 例: `quaternion_monogenic`
+- `quat_normalize_image` `qimage → qimage` — Per-pixel normalisation to unit modulus. → (H, W, 4). · 例: `quaternion_monogenic`
+
+#### quat / color(2)
+- `quat_color_filter` `qimage → qimage` — Keep or remove one colour direction, exactly. → (H, W, 4). · 例: `quaternion_monogenic`
+- `quat_color_rotate` `qimage → qimage` — Rotate every pixel's colour about an RGB axis: ``q x conj(q)``. → (H, W, 4). · 例: `quaternion_monogenic`
+
+#### quat / convert(3)
+- `quat_norm` `qimage → image2d` — Per-pixel quaternion modulus ``|q| = sqrt(w^2+x^2+y^2+z^2)``. → (H, W). · 例: `quaternion_monogenic`
+- `quaternion_to_rgb` `qimage → rgbimage` — Vector part of a quaternion image, as linear RGB. → (H, W, 3). · 例: `quaternion_monogenic`
+- `rgb_to_quaternion` `rgbimage → qimage` — Embed a colour image as pure quaternions ``0 + R i + G j + B k``. → (H, W, 4). · 例: `quaternion_monogenic`
+
+#### quat / fourier(2)
+- `iqft2` `qimage → qimage` — Inverse quaternion Fourier transform of a **centred** spectrum. → (H, W, 4). · 例: `quaternion_monogenic`
+- `qft2` `qimage → qimage` — Quaternion (hypercomplex) 2-D Fourier transform. → (H, W, 4) centred spectrum. · 例: `quaternion_monogenic`
+
+#### quat / match(1)
+- `quat_correlate` `qimage × qimage → qimage` — Quaternion cross-correlation ``sum_s conj(a(s)) * b(s+t)``. → (H, W, 4). · 例: `quaternion_monogenic`
+
+#### quat / motion(3)
+- `riesz_displacement` `video → table` — Sub-pixel displacement field from the monogenic phase. → dict. · 例: `quaternion_monogenic`
+- `riesz_displacement_series` `video → pairs` — Whole-frame displacement waveform from the monogenic phase. → (T, 2). · 例: `quaternion_monogenic`
+- `riesz_motion_magnify` `video → table` — Scale a clip's in-band motion by *alpha*, by the Riesz route. → dict. · 例: `quaternion_monogenic`
+
+#### quat / riesz(5)
+- `monogenic_amplitude` `qimage → image2d` — Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
+- `monogenic_orientation` `qimage → image2d` — Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
+- `monogenic_phase` `qimage → image2d` — Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
+- `monogenic_signal` `image2d → qimage` — The monogenic signal of an image at one scale. → (H, W, 4). · 例: `quaternion_monogenic`
+- `riesz_transform` `image2d → qimage` — The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4). · 例: `quaternion_monogenic`
+
+### rangedoppler(8 ops / 4 categories)
+
+#### rangedoppler / beamform(2)
+- `beamform_delay_sum` `beatcube → signal` — Delay-and-sum (Bartlett) angle spectrum for one range-Doppler cell. · 例: `fmcw_range_doppler`, `poc_multibeam_bathymetry`
+- `beamform_doa` `beatcube → table` — Direction(s) of arrival for one range-Doppler cell, in degrees. · 例: `fmcw_range_doppler`, `poc_multibeam_bathymetry`
+
+#### rangedoppler / design(1)
+- `fmcw_design` `入力なし → table` — Bin widths, resolutions and aliasing limits of an FMCW configuration. · 例: `fmcw_range_doppler`
+
+#### rangedoppler / process(4)
+- `fmcw_range_profile` `beatcube → signal` — Range-only profile: the fast-time FFT magnitude, averaged over the rest. · 例: `fmcw_range_doppler`
+- `fmcw_window_apply` `beatcube → beatcube` — Apply a periodic window along the range and/or Doppler axis of a beat cube. · 例: `fmcw_range_doppler`
+- `range_doppler_map` `beatcube → image2d` — The 2-D FFT of a beat cube -> a ``(n_doppler, n_range)`` magnitude map. · 例: `fmcw_range_doppler`
+- `range_doppler_peaks` `image2d → table` — Detections from a range-Doppler map: bin indices back to metres and m/s. · 例: `fmcw_range_doppler`
+
+#### rangedoppler / simulate(1)
+- `fmcw_beat_simulate` `入力なし → beatcube` — Synthesise the complex ``(A, C, S)`` beat cube for known targets. · 例: `fmcw_range_doppler`
+
+### acoustics(27 ops / 7 categories)
+
+#### acoustics / bearing(4)
+- `bearing_defect_frequencies` `入力なし → table` — The four characteristic rates of a rolling-element bearing, from geometry. · 例: `acoustic_condition_monitoring`, `poc_bearing_diagnosis`, `poc_machine_condition_fusion`
+- `cepstrum` `signal → table` — The spectrum of the log spectrum — periodic structure *in frequency*. · 例: `acoustic_condition_monitoring`, `poc_web_roll_periodicity`
+- `envelope_spectrum` `signal → table` — Band-pass, demodulate, transform — where a bearing defect actually shows. · 例: `acoustic_condition_monitoring`, `poc_bearing_diagnosis`
+- `spectral_kurtosis` `signal → table` — Which frequency band is impulsive — i.e. where to demodulate. · 例: `acoustic_condition_monitoring`, `poc_bearing_diagnosis`
+
+#### acoustics / dual(3)
+- `coherence` `signal × signal → table` — Ordinary coherence: how much of ``y`` is linearly explained by ``x``. · 例: `acoustic_condition_monitoring`, `poc_zebra_stripes_fly_eye`
+- `gcc_delay` `signal × signal → measurement` — 2 チャンネルの**到達時間差**を一般化相互相関(GCC)で測る。→ ``(delay, table)``。 · 例: `acoustic_condition_monitoring`
+- `transfer_function` `signal × signal → table` — Estimate ``H(f)`` with ``x`` in and ``y`` out, with its coherence. · 例: `acoustic_condition_monitoring`, `poc_leak_localization`
+
+#### acoustics / level(6)
+- `apply_weighting` `signal → signal` — Apply an A / C / Z frequency weighting to a signal, zero-phase. · 例: `acoustic_condition_monitoring`
+- `equivalent_level` `signal → measurement` — The energy-equivalent level of a record, in dB relative to ``ref``. · 例: `acoustic_condition_monitoring`
+- `octave_bands` `入力なし → table` — Fractional-octave band centres and edges, from the defining construction. · 例: `acoustic_condition_monitoring`, `poc_rail_corrugation`
+- `octave_spectrum` `signal → table` — Band levels in dB, summed over fractional-octave bands by Parseval. · 例: `acoustic_condition_monitoring`, `poc_rail_corrugation`
+- `percentile_level` `signal → table` — Statistical levels: ``L_N`` is the level exceeded ``N`` % of the time. · 例: `acoustic_condition_monitoring`
+- `weighting_response` `signal → signal` — The A / C / Z frequency-weighting curve, in dB, at the given frequencies. · 例: `acoustic_condition_monitoring`
+
+#### acoustics / order(2)
+- `angular_resample` `signal → table` — Resample a time record onto the shaft-angle axis (computed order tracking). · 例: `acoustic_condition_monitoring`
+- `order_spectrum` `signal → table` — Amplitude against shaft order — the spectrum a run-up should be read in. · 例: `acoustic_condition_monitoring`
+
+#### acoustics / synthesis(2)
+- `synthesize_bearing_signal` `入力なし → signal` — A resonance amplitude-modulated at a known defect rate — the ground truth. · 例: `acoustic_condition_monitoring`, `poc_bearing_diagnosis`, `poc_machine_condition_fusion`
+- `synthesize_speed_ramp` `入力なし → table` — A run-up: components locked to shaft *order*, optionally one fixed in Hz. · 例: `acoustic_condition_monitoring`
+
+#### acoustics / transform(3)
+- `istft` `table → signal` — Invert :func:`stft` by weighted overlap-add — exactly. · 例: `acoustic_condition_monitoring`
+- `stft` `signal → table` — Short-time Fourier transform that keeps the phase and can be inverted. · 例: `acoustic_condition_monitoring`
+- `stft_cola_check` `入力なし → table` — Does this (window, hop) pair satisfy COLA, and how exactly? · 例: `acoustic_condition_monitoring`
+
+#### acoustics / ultrasonic(7)
+- `acoustic_interface_coefficients` `table → table` — Pressure reflection/transmission at every interface of a stack, energy check R^2 + (Z1/Z2) T^2 = 1, and the phase-inversion flag Z2 < Z1 (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+- `acoustic_layer_stack` `入力なし → table` — Layered stack for normal-incidence pulse-echo: couplant, layers (material, thickness in m) from the top, and a half-space substrate (``table``).
+- `acoustic_material_table` `入力なし → table` — Built-in acoustic material table: density, longitudinal speed, impedance Z = rho*c, attenuation alpha0*f^n, with a source and a verified flag per entry (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+- `echo_phase_polarity` `table → table` — Classify an interface echo by its phase relative to the front-surface echo: in phase (Z rises), inverted (Z drops) or quadrature (thin-layer, sign not meaningful) (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+- `pulse_echo_ascan` `table → table` — RF A-scan of a layered stack for a broadband pulse at normal incidence: transfer-matrix stack response, water path and power-law attenuation (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+- `sam_cscan` `labels2d × table → table` — Focused-transducer C-scan of a 2-D bond map: per-frequency Gaussian lateral PSF, time gate at an interface, amplitude, phase, in-phase (signed) and signed-peak images (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+- `sam_frequency_tradeoff` `table → table` — Optimal SAM frequency for a void of given size at a buried interface: lateral fill (1 - 2^-(a/w)^2, w = k_res*lambda_w*F#) against two-way attenuation; closed form when all losses go as f^2 (``table``). · 例: `poc_sam_hybrid_bonding_voids`
+
+### interferometry(9 ops / 6 categories)
+
+#### interferometry / chromatic(1)
+- `chromatic_confocal_height` `sweep → measurement` — Surface height from one confocal return spectrum — the wavelength *is* the height. · 例: `coherence_scanning`
+
+#### interferometry / design(1)
+- `csi_design` `入力なし → table` — The axial limits of a coherence-scanning setup, from the source spectrum. · 例: `coherence_scanning`, `poc_interferometry_step`
+
+#### interferometry / envelope(1)
+- `csi_envelope` `sweep → signal` — Coherence envelope of a z-scan interferogram (analytic-signal magnitude). · 例: `coherence_scanning`
+
+#### interferometry / locate(1)
+- `csi_peak_position` `sweep → measurement` — Surface height from one z-scan: the position of the coherence envelope peak. · 例: `coherence_scanning`
+
+#### interferometry / simulate(3)
+- `chromatic_confocal_simulate` `入力なし → sweep` — Synthesise the confocal return spectrum of a surface at a known height. · 例: `coherence_scanning`
+- `csi_signal_simulate` `入力なし → sweep` — Synthesise the z-scan interferogram of one pixel over a known surface height. · 例: `coherence_scanning`
+- `csi_stack_simulate` `depth → zscan` — Synthesise the ``(Z, H, W)`` scan stack an interference microscope records. · 例: `coherence_scanning`, `poc_interferometry_step`
+
+#### interferometry / surface(2)
+- `csi_contrast_map` `zscan → image2d` — Peak fringe modulation per pixel — the contrast (and validity) map. · 例: `coherence_scanning`
+- `csi_height_map` `zscan → depth` — Height map from a ``(Z, H, W)`` coherence-scanning stack — the CSI inversion. · 例: `coherence_scanning`, `poc_focus_stacking`, `poc_interferometry_step`
+
+### flyvision(22 ops / 12 categories)
+
+#### flyvision / alias(2)
+- `lattice_moire_peak` `signal × table → table` — How sharp the strongest low-frequency component of a sampled signal is — the moire a lattice makes of a texture it cannot resolve. · 例: `poc_moire_screen`, `poc_print_registration`, `poc_zebra_stripes_fly_eye`
+- `sampling_alias_distance` `入力なし → table` — The distance beyond which a periodic target aliases on a sampling lattice. · 例: `poc_zebra_stripes_fly_eye`
+
+#### flyvision / direction(2)
+- `fly_flow_from_directions` `matrix × table → matrix` — Six directional responses per ommatidium in, one local flow vector out. · 例: `poc_fly_optomotor_steering`, `poc_zebra_stripes_fly_eye`
+- `fly_t4t5_field` `matrix × table → matrix` — Direction-selective response over the whole eye, in the six hexagonal directions. · 例: `poc_fly_optomotor_steering`, `poc_zebra_stripes_fly_eye`
+
+#### flyvision / integrate(1)
+- `fly_hs_readout` `matrix × table → measurement` — Horizontal-system wide-field readout: opponent sum over the upper field. · 例: `poc_fly_vision`
+
+#### flyvision / lamina(2)
+- `fly_lamina_filter` `matrix → matrix` — Photoreceptor adaptation + the lamina's band-pass: intensities in, contrast out. · 例: `poc_fly_optomotor_steering`
+- `fly_onoff_split` `matrix → matrix` — Split a contrast movie into the ON and OFF channels the medulla carries. · 例: `poc_fly_optomotor_steering`
+
+#### flyvision / lattice(2)
+- `fly_hex_lattice` `入力なし → table` — Hexagonal ommatidial lattice: viewing directions of a compound eye. · 例: `poc_fly_optomotor_steering`, `poc_fly_vision`, `poc_print_registration`, `poc_zebra_stripes_fly_eye`
+- `fly_vogel_lattice` `入力なし → table` — A Fibonacci (Vogel-spiral) compound eye: the same ommatidia count and the same mean spacing as the hexagonal eye, no lattice at all. · 例: `poc_print_registration`, `poc_zebra_stripes_fly_eye`
+
+#### flyvision / looming(3)
+- `fly_expansion_readout` `matrix × table → table` — Time-to-contact from the flow over the whole eye — and the aperture effect's 2x. · 例: `poc_zebra_stripes_fly_eye`
+- `fly_lgmd_eta` `signal → signal` — LGMD/eta looming response from an expanding subtended angle. · 例: `poc_fly_vision`
+- `fly_tau_from_expansion` `signal → signal` — Time-to-contact from optical expansion — the tau margin. · 例: `poc_fly_vision`, `poc_zebra_stripes_fly_eye`
+
+#### flyvision / motion(1)
+- `fly_emd_response` `signal × signal → signal` — Hassenstein-Reichardt correlator between two adjacent ommatidial signals. · 例: `poc_fly_vision`, `poc_zebra_stripes_fly_eye`
+
+#### flyvision / sample(2)
+- `fly_hex_quantize` `signal → signal` — 個眼信号を眼と同じやり方で量子化する: 対数圧縮してから個眼あたり n ビット(``mode="onoff"`` は ON / OFF の 2 チャネル)。 · 例: `poc_eye_to_brain`
+- `fly_hex_resample` `image2d × table → signal` — Resample a pinhole image onto an ommatidial lattice (the eye's view). · 例: `poc_fly_optomotor_steering`, `poc_fly_vision`
+
+#### flyvision / selfmotion(3)
+- `fly_egomotion_from_flow` `matrix × table → table` — Least-squares rotation of the eye from its flow field — and how badly the eye's own shape conditions the answer. · 例: `poc_fly_optomotor_steering`
+- `fly_eye_merge` `table × table → table` — Several lattices seen as one wide eye — the viewing directions of all of them. · 例: `poc_fly_optomotor_steering`
+- `fly_matched_filter` `table → matrix` — The flow field one unit of self-motion writes on the eye — the template a wide-field neuron is matched to. · 例: `poc_fly_optomotor_steering`
+
+#### flyvision / stimulus(2)
+- `fly_sky_1f` `入力なし → image2d` — Synthetic equirectangular sky panorama with a banded 1/f azimuthal texture. · 例: `poc_fly_optomotor_steering`, `poc_fly_vision`
+- `fly_view_plane_texture` `table → signal` — What each ommatidium sees of a periodic frontal surface — integrated analytically. · 例: `poc_zebra_stripes_fly_eye`
+
+#### flyvision / trajectory(1)
+- `traj_tau_dot` `points × signal → table` — Distance, approach speed, tau and tau-dot along a measured 3-D trajectory. · 例: `poc_zebra_stripes_fly_eye`
+
+#### flyvision / tuning(1)
+- `fly_dsi` `signal → table` — Direction-selectivity index and preferred direction from tuning responses. · 例: `poc_fly_vision`
+
+### spc(22 ops / 8 categories)
+
+#### spc / capability(1)
+- `spc_capability` `signal → table` — Process capability indices Cp and Cpk from measurements and spec limits. · 例: `poc_spc`
+
+#### spc / change(2)
+- `spc_cusum` `signal → table` — Tabular CUSUM chart for individual measurements. · 例: `poc_spc`
+- `spc_ewma` `signal → table` — EWMA control chart for individual measurements (Roberts 1959). · 例: `poc_spc`
+
+#### spc / chart(1)
+- `spc_xbar_r` `matrix → table` — Shewhart Xbar-R control chart from subgroup measurements. · 例: `poc_spc`
+
+#### spc / msa(4)
+- `msa_anova_table` `table → table` — 交差 2 元配置(部品 x 測定者 x 繰り返し)の分散分析表(``table``)。 · 例: `poc_measurement_system_analysis`
+- `msa_attribute_agreement` `table → table` — 計数値(合否)検査の一致度(``table``)。 · 例: `poc_measurement_system_analysis`
+- `msa_bias_linearity` `table → table` — 基準値に対する偏りと、その基準値依存(直線性)(``table``)。 · 例: `poc_measurement_system_analysis`
+- `msa_gauge_rr` `table → table` — 分散分析法によるゲージ R&R(``table``)。 · 例: `poc_measurement_system_analysis`
+
+#### spc / mt(3)
+- `spc_mt_distance` `matrix → table` — Score observations against an MT-method unit space. · 例: `poc_mt_hidden_fault`, `poc_spc`
+- `spc_mt_sn_ratio` `signal → table` — Larger-the-better SN ratio of abnormal-sample distances, in decibels. · 例: `poc_spc`
+- `spc_mt_unit_space` `matrix → table` — Build an MT-method unit space from known-good observations. · 例: `poc_mt_hidden_fault`, `poc_spc`
+
+#### spc / multivariate(1)
+- `spc_hotelling_t2` `matrix → table` — Multivariate SPC by Hotelling's T² with an F-distributed control limit. · 例: `poc_spc`
+
+#### spc / pod(5)
+- `pod_ahat_fit` `table → table` — â vs a の回帰を、左右の打ち切りつき最尤法で当てる(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
+- `pod_decision_tradeoff` `table × signal → table` — 判定閾値 ``a_dec`` を振ったときの (a50, a90, a90/95, 誤検出確率) の取引表(``table``)。 · 例: `poc_pod_lighting`
+- `pod_false_call` `signal → table` — 無欠陥部位の応答 ``noise`` と判定閾値 ``a_dec`` から誤検出確率(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
+- `pod_from_ahat` `table → table` — â vs a の回帰と判定閾値 ``a_dec`` から POD(a) 曲線と a50 / a90 / a90/95(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
+- `pod_hitmiss_fit` `table → table` — 見つけた/見落としたの 2 値データから POD(a) を一般化線形モデルで当てる(``table``)。 · 例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
+
+#### spc / uncertainty(5)
+- `gum_expanded` `table → table` — Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。 · 例: `poc_measurement_system_analysis`
+- `gum_monte_carlo` `table → table` — GUM 補遺 1(JCGM 101)のモンテカルロ伝播(``table``)。 · 例: `poc_measurement_system_analysis`
+- `gum_propagate` `table → table` — 不確かさの伝播則(GUM 5.2、相関つき)(``table``)。 · 例: `poc_measurement_system_analysis`
+- `gum_standard_uncertainty` `table → table` — 不確かさの成分を**分布の形**から標準不確かさへ直す(``table``)。 · 例: `poc_measurement_system_analysis`
+- `gum_validate` `table × table → table` — モンテカルロの結果で伝播則の結果を**検証**する(``table``)。 · 例: `poc_measurement_system_analysis`
+
+### graph(20 ops / 9 categories)
+
+#### graph / core(2)
+- `graph_kcore` `matrix → table` — k-core (or weighted s-core) decomposition of a wiring matrix — every node's core index. · 例: `poc_worm_core_persists`
+- `graph_rich_club_curve` `matrix → table` — Rich-club coefficient φ(k) for every k, against the degree-preserving null. · 例: `poc_worm_core_persists`
+
+#### graph / degree(1)
+- `graph_degree_summary` `matrix → table` — Degrees, density and reciprocity of a directed wiring matrix. · 例: `graphinv_three_phyla`, `poc_connectome_lr_symmetry`
+
+#### graph / flow(4)
+- `graph_physarum_path` `matrix → table` — Shortest path by the slime mould's tube dynamics (Tero et al. 2010) on a weighted graph. · 例: `poc_physarum_maze`
+- `graph_physarum_transport` `matrix × signal → table` — L1 optimal transport (the Beckmann problem) on a weighted graph by the slime mould's tube dynamics. · 例: `poc_physarum_transport`
+- `physarum_route` `image2d → table` — Minimum-cost route through a cost image found by the slime mould's tube dynamics. · 例: `poc_physarum_maze`
+- `physarum_transport_image` `image2d × image2d → table` — Earth mover's distance between two mass images by the slime mould's tube dynamics. · 例: `poc_physarum_transport`
+
+#### graph / motif(1)
+- `graph_cycle3` `matrix → table` — Number of directed 3-cycles ``i -> j -> k -> i`` as ``tr(B^3) / 3``. · 例: `graphinv_three_phyla`
+
+#### graph / null(1)
+- `graph_degree_preserving_null` `matrix → table` — Compare 3-cycles and reciprocity against a degree-preserving null model. · 例: `graphinv_three_phyla`
+
+#### graph / path(3)
+- `car_dubins_path` `matrix → table` — Shortest forward-only path of a car between two poses (Dubins 1957) by the six closed-form words. · 例: `poc_car_parking`, `poc_driving_school`
+- `car_hybrid_astar` `image2d × matrix → table` — Hybrid A* (Dolgov, Thrun, Montemerlo and Diebel 2010): a car's path through an occupancy grid. · 例: `poc_car_parking`, `poc_driving_school`
+- `car_reeds_shepp_path` `matrix → table` — Shortest path of a car that may reverse, between two poses (Reeds and Shepp 1990), by closed form. · 例: `poc_car_parking`
+
+#### graph / population(3)
+- `graph_core_persistence` `table → table` — Which nodes sit in the innermost core of every individual — K wirings on one node order. · 例: `poc_worm_core_persists`
+- `graph_edge_consensus` `table → table` — How many individuals share each connection — K wiring matrices on one node order. · 例: `poc_connectome_across_decades`, `poc_connectome_across_worms`
+- `graph_strength_growth` `matrix × matrix → table` — Where the new synapses went — one wiring matrix ``a`` (earlier) against ``b`` (later). · 例: `poc_worm_synapses_vs_neurites`
+
+#### graph / symmetry(1)
+- `graph_swap_symmetry` `matrix → table` — How much of the wiring survives exchanging node pairs (a left/right test). · 例: `graphinv_three_phyla`, `poc_connectome_lr_symmetry`
+
+#### graph / tree(4)
+- `tree_from_swc` `text → table` — Parse an SWC text (or a path to a ``.swc`` file) into a checked tree table. · 例: `poc_skeleton_run_length_vs_voi`, `poc_swc_tree_truth`, `poc_worm_neurites_grow`, `poc_worm_synapses_vs_neurites`
+- `tree_morphometry` `table → table` — Counts and lengths of a tree table (from :func:`tree_from_swc`). · 例: `poc_swc_tree_truth`, `poc_worm_neurites_grow`, `poc_worm_synapses_vs_neurites`
+- `tree_run_length` `table × signal → table` — Expected run length (ERL) of a skeleton under a candidate labelling of its nodes. · 例: `poc_skeleton_run_length_vs_voi`
+- `tree_sholl` `table → table` — Sholl analysis: segments crossing spheres (3-D) or circles (a projection) around the root. · 例: `poc_swc_tree_truth`, `poc_worm_neurites_grow`
+
+### text(3 ops / 3 categories)
+
+#### text / detect(1)
+- `text_candidates` `matrix → table` — SWT の連結成分を文字候補に絞る(幅のばらつき・縦横比・大きさ)。 · 例: `poc_text_region_truth`
+
+#### text / layout(1)
+- `text_lines` `table → table` — 文字候補の矩形を行にまとめる(縦に重なり、横に近く、ストローク幅が近いものを繋ぐ)。 · 例: `poc_text_region_truth`
+
+#### text / stroke(1)
+- `swt_map` `image2d → table` — Stroke Width Transform —— 各画素に、その画素を含むストロークの幅を書く。 · 例: `poc_text_region_truth`
+
+### residue(5 ops / 3 categories)
+
+#### residue / image(2)
+- `crt_displacement` `image2d × image2d → table` — Local displacement from band phases at several wavelengths, unwrapped by CRT -> ``dict``. · 例: `poc_residue_crt`
+- `harmonic_rotation` `image2d × image2d → table` — Absolute in-plane rotation of ``image`` relative to ``reference`` over 360 degrees -> ``dict``. · 例: `poc_residue_crt`
+
+#### residue / robust(2)
+- `residue_crt` `matrix × signal → table` — Weighted robust CRT over real periods -> ``dict``. · 例: `poc_residue_crt`
+- `residue_fault_locate` `matrix × signal → table` — Which band is corrupted? (redundant residue number system) -> ``dict``. · 例: `poc_residue_crt`
+
+#### residue / theorem(1)
+- `residue_integer_crt` `signal × signal → table` — Exact integer CRT (Garner's mixed-radix algorithm) -> ``dict``. · 例: `poc_residue_crt`
+
+### vx(10 ops / 5 categories)
+
+#### vx / filter(1)
+- `vx_nonlinear_filter` `image2d × matrix → image2d` — 非線形フィルタ(3.38 節): マスクの真の画素の値の中央値 / 最小(収縮)/ 最大(膨張)(REQ-0325・0330)。 · 例: `gallery_openvx_spec_values`
+
+#### vx / geometry(3)
+- `vx_remap` `image2d × matrix × matrix → image2d` — remap(3.44 節): 出力 (x, y) = 入力 (map_x[y, x], map_y[y, x])(REQ-0392)。表は出力の形、座標は入力の画素の中心が整数。 · 例: `gallery_openvx_spec_values`
+- `vx_warp_affine` `image2d × matrix → image2d` — アフィン変換(3.56 節)。**逆写像**: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498): ``x0 = M[0,0]·x + M[0,1]·y + M[0,2]``、``y0 = M[1,0]·x + M[1,1]·y + M[1,2]``。 · 例: `gallery_openvx_spec_values`
+- `vx_warp_perspective` `image2d × matrix → image2d` — 射影変換(3.57 節)。逆写像: ``x0 = M[0]·(x, y, 1)``、``y0 = M[1]·(x, y, 1)``、``z0 = M[2]·(x, y, 1)``、 出力 (x, y) = 入力 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 の画素は外として埋める。 · 例: `gallery_openvx_spec_values`
+
+#### vx / gradient(3)
+- `vx_magnitude` `image2d × image2d → image2d` — 勾配の大きさ(3.31 節)。REQ-0270 の概念定義をそのまま: ``z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)``、 ``mag = z > 32767 ? 32767 : z``。入力・出力とも S16。 · 例: `gallery_openvx_spec_values`
+- `vx_phase` `image2d × image2d → image2d` — 勾配の位相(3.41 節): ϕ = atan2(gy, gx) を 0 ≤ ϕ < 2π に移し、0〜255 に写す(REQ-0364)。出力 U8。 · 例: `gallery_openvx_spec_values`
+- `vx_sobel3x3` `image2d → table` — Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)を相関として当てる。 · 例: `gallery_openvx_spec_values`
+
+#### vx / pixel(2)
+- `vx_histogram` `image2d → pairs` — ヒストグラム(3.26 節): 画素値 I は ``i = (I − offset) × numBins / range`` の升に入る(offset ≤ I < offset + range、REQ-0230)。 範囲外の画素は数えない。整数の割り算(切り捨て)で升を決める。 · 例: `gallery_openvx_spec_values`
+- `vx_table_lookup` `image2d × signal → image2d` — 表引き(3.47 節): 出力 = table[画素値 + offset] (REQ-0421)。U8 と S16 を受ける(REQ-0422)。出力の dtype は表の dtype。 · 例: `gallery_openvx_spec_values`
+
+#### vx / suppress(1)
+- `vx_nonmax_suppression` `image2d → image2d` — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
+
+### drive(694 ops / 51 categories)
+
+名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
+
+#### drive / agv(13)
+- `adg_build` `table → table` — 行動依存グラフ(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。 · 例: `poc_agv_fleet`
+- `adg_execute` `table → table` — ADG に従って実行する。各時刻、各車両は確率 ``delay_prob`` で止まる(滑り・人・荷役の遅れ)。 · 例: `poc_agv_fleet`
+- `grid_distances` `image2d → image2d` — ``goal`` までの格子上の最短手数(BFS、障害物は通れない)。届かないマスは ``inf``。 · 例: `gallery_drive_city_terrain`
+- `mapf_cbs` `image2d → table` — Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。総コストが最適な衝突なしの計画。 · 例: `poc_agv_fleet`
+- `mapf_ecbs` `image2d → table` — 上段を焦点探索にした CBS(ECBS の上段と同じ考え方、Barer ら 2014)。総コストが **最適の w 倍以内**。 · 例: `poc_agv_fleet`
+- `mapf_joint_astar` `image2d → table` — 全台の位置を 1 つの状態にした A*。**小さな問題専用**の最適解(CBS の門の真値)。 · 例: `poc_agv_fleet`
+- `mapf_prioritized` `image2d → table` — 優先度付き計画: 順に 1 台ずつ、先に決まった車両の通り道(予約表)を避けて計画する。 · 例: `poc_agv_fleet`
+- `naive_execute` `table → table` — 比較用の素朴な実行: 計画の**マスの列**だけを使い、次のマスが空いていれば進む(順番の約束は無い)。 · 例: `poc_agv_fleet`
+- `plan_conflicts` `table → table` — 衝突の一覧: 同じ時刻に同じマス(vertex)・すれ違い(edge)・追従(follow)。 · 例: `poc_agv_fleet`
+- `plan_cost` `table → scalar` — 総コスト(sum of costs): 各車両が**最後に**目的地へ着いた時刻の和(着いた後に動かないこと)。 · 例: `gallery_drive_city_terrain`
+- `vda5050_check` `table → table` — VDA 5050 の order の**構造の規則**を検査する(公式 JSON スキーマとは別の、自前の第 2 実装)。 · 例: `poc_agv_fleet`
+- `vda5050_order` `table → table` — 1 台の計画(マスの列)を VDA 5050 の order(dict)にする。待ちは除き、マスの中心をノードにする。 · 例: `poc_agv_fleet`
+- `warehouse_grid` `入力なし → any` — 棚の列と通路でできた倉庫の格子(True = 走れる)。 · 例: `poc_agv_fleet`
+
+#### drive / ball(26)
+- `apex_sequence` `入力なし → signal` — 落として跳ねる列の頂点高さ h_k = e^{2k} h₀(k = 0..n)。 · 例: `poc_ball_bounce`
+- `ball_params` `入力なし → table` — 球の表。既定は卓球の球(ITTF: 直径 40 mm、2.7 g、薄殻)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `bounce` `table × table → table` — 剛体球が平面に当たる瞬間の速度・角速度の更新(クーロン摩擦、Cross 2002 / Garwin 1969 の 2 領域)。 · 例: `gallery_drive_ballistics`, `poc_ball_bounce`, `poc_table_tennis_bounce`
+- `bounce_total_time` `入力なし → scalar` — 高さ h₀ から落として止まるまでの総時間 = √(2h₀/g)·(1 + e)/(1 − e)(等比級数の閉形式、e < 1)。 · 例: `poc_ball_bounce`
+- `contact_angular_momentum` `table → signal` — 接触点まわりの角運動量 L_c = I ω + m (p − p_c) × v = I ω + m r (n × v)。跳ねの前後で不変(定理)。 · 例: `poc_ball_bounce`
+- `cup_catch_check` `入力なし → table` — 玉が皿(中心・軸・半径)に入る幾何の判定: 玉の中心が皿の軸から (cup_radius − ball_radius) 以内、皿の面から玉の半径の 1.5 倍以内の 高さ(0 ≤ height ≤ 1.5 r)、速さ ≤ v_rel_max。``{"caught", "lateral", "height", "speed"}``。皿が玉より小さければ ValueError。 · 例: `gallery_drive_ballistics`
+- `drag_coefficient_sphere` `signal → signal` — 滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。 · 例: `gallery_drive_ballistics`
+- `fit_aero` `signal × points × table → table` — 軌跡から **空力係数も** 同定する: (p₀, v₀, C_d, C_L) の 8 パラメータを Gauss–Newton(ω は既知、C_L は定数として当てる)。 抗力は速さの 2 乗、マグヌスは ω × v なので、直線的でない軌跡(スピンあり・十分な長さ)でないと C_L は決まりにくい (``rms`` と一緒に ``cond`` = ヤコビアンの条件数を返すので、それで判る)。返り値 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。 真値の軌跡(C_L 定数で作った)なら 1e-6 で戻る(門)。 · 例: `gallery_drive_ballistics`
+- `fit_bounce` `table → table` — 跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n'/v_n。接線力積 J_t = m(v_t' − v_t) の大きさと J_n = m(v_n' − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら **下界**(μ ≥ |J_t|/J_n)。 どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 ``{"e", "mu", "mu_is_lower_bound", "regime", "J_n", "J_t"}``。 · 例: `gallery_drive_ballistics`
+- `fit_parabola` `signal × points → table` — 観測 (t_i, p_i) に p = p₀ + v₀ t − ½ g t² ẑ を最小二乗で当てる(線形、閉形式)。``{"p0", "v0", "g", "rms"}``。 真空の真値なら 1e-9 で戻る(門)。 · 例: `poc_ball_bounce`
+- `fit_spin` `signal × points × table → table` — **曲がり方から回転を読む**: 軌跡 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌスの運動方程式を (p₀, v₀, ω) の 9 パラメータで Gauss–Newton で当てる(空力係数は ``bp`` の値 = 既知とする)。 · 例: `poc_table_tennis_spin`
+- `flight_fit` `signal × points × table → table` — 観測 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌス(ω 既知)の運動方程式を **初期状態 (p₀, v₀) の 6 パラメータ** で Gauss–Newton(有限差分のヤコビアン)で当てる。放物線の当てはめは抗力・マグヌスを g と v₀ に吸うので予測が曲がる —— こちらは 先駆者の「空力モデルつきの追跡」に当たる。返り値 ``{"p0", "v0", "rms", "iters", "t0"}``(p₀・v₀ は t = t[0] での状態)。 真値の軌跡を入れると 1e-9 で戻る(門)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`
+- `flight_ode` `table → table` — 重力 + 抗力 + マグヌス(+ スピン減衰)の RK4。返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}`` (t = 0, dt, …, ≤ t_end)。真空(rho = 0)なら :func:`flight_vacuum` と一致(門)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `flight_simulate` `table × table → table` — 飛翔 + 卓上(z = table_z の平面、``table_xy`` = (xmin, xmax, ymin, ymax) の範囲内だけ)での跳ねを、接触時刻を 2 分法で 区間内に求めて繋ぐ。返り値 ``{"t", "p", "v", "omega" (N, 3), "contacts": [{"t", "p", "v_in", "v_out", "omega_in", "omega_out", "regime"}], "rest_t"}``。球は半径 r なので中心が table_z + r に達した所が接触。跳ねは無限に続く(Zeno)ので、 接触時の |v_n| < ``v_rest`` になったら卓上に置く(以後 z は固定、水平は摩擦無しで続く。``rest_t`` = その時刻、無ければ None)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `flight_state_at` `table → table` — 状態 (p₀, v₀, ω) を T 秒だけ運動方程式で進める(T < 0 なら **戻す**: RK4 の刻みを負にする)。``{"p", "v", "omega"}``。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`
+- `flight_vacuum` `signal → points` — 真空の放物線(閉形式): p(t) = p₀ + v₀ t − ½ g t² ẑ。``t`` はスカラか (N,)、返り値 (3,) か (N, 3)。 · 例: `gallery_drive_kendama_racket`, `poc_ball_bounce`
+- `impact_params` `入力なし → table` — 衝突の表: 法線の反発係数 e ∈ [0, 1] (数、または |v_n| → e の関数: 衝突速度で下がる実測に合わせる)、クーロン摩擦係数 μ ≥ 0。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `incline_slip_angle` `入力なし → scalar` — 静止摩擦係数 μ の斜面で滑り出す角度 θ = atan μ [rad]。 · 例: `gallery_drive_ballistics`
+- `magnus_lift_coefficient` `signal → signal` — スピン比 S = rω/|v| から揚力係数 C_L = 1 / (2 + 1/S)(S → 0 で 0、S → ∞ で 0.5。球の文献で広く使われる経験式)。 · 例: `gallery_drive_ballistics`
+- `mu_from_stop_distance` `入力なし → scalar` — 停止距離から μ = v₀² / (2 g d)。 · 例: `gallery_drive_ballistics`
+- `pendulum_period` `入力なし → scalar` — 微小振幅の振り子の周期 2π√(L/g)。 · 例: `gallery_drive_ballistics`
+- `restitution_from_apexes` `signal → table` — 頂点高さの列(≥ 2 個、正)から e を推定: log h_k は k に線形で傾き 2 log e → 最小二乗。``{"e", "h0", "residual"}``。 · 例: `poc_ball_bounce`
+- `restitution_from_intervals` `signal → table` — 接触時刻の列(≥ 3 個、増加)から e を推定: 間隔 T_{k+1} = e T_k → log T_k の傾きが log e。``{"e", "residual"}``。 · 例: `poc_ball_bounce`
+- `roll_slide_state` `table → table` — 平面上の球が転がっているか滑っているか: 接触点の滑り速度 s = v_t − r(ω × n)。``{"slip_speed", "rolling"}`` (|s| < 1e-9 なら転がり)。 · 例: `gallery_drive_ballistics`
+- `slide_stop_distance` `入力なし → scalar` — 水平面を初速 v₀ で滑る物の停止距離 = v₀² / (2μg)(μ > 0)。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
+- `tether_simulate` `入力なし → table` — 伸びないひも(長さ L)で手元 ``handle`` に繋がれた質点の運動(けん玉の玉)。 · 例: `poc_kendama`
+
+#### drive / balltrack(10)
+- `ball_detect` `image2d → table` — 画像から球の候補を出す: しきい値 → 連結成分 → 明るさ重みのサブピクセル重心・等価半径・充填率。 · 例: `poc_ball_bounce`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_track` `table → table` — コマごとの候補列 ``detections[k] = ball_detect(frame_k)`` を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、``max_jump`` px 以内)。 · 例: `poc_ball_bounce`, `poc_table_tennis_spin`
+- `bounce_detect` `signal × signal → table` — 高さの列 z(t) から接触の候補を出す: 下向きの速度が上向きに変わる局所最小(前後 ``min_gap`` 標本で最小)。 返り値 ``{"index" (M,), "t" (M,), "z" (M,)}``。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `kalman_ca` `points → table` — 等加速度モデルの Kalman フィルタ(位置の観測 (N, D)、状態 = 位置・速度・加速度 × D)。 · 例: `poc_air_hockey_intercept`, `poc_ball_bounce`
+- `marker_direction` `入力なし → signal` — 像の中の模様の位置 (col, row) → 球面上の向き(カメラ系の単位ベクトル、前半球: x 右、y 上、z 手前)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `reproject` `points × matrix × matrix → matrix` — 世界点 (N, 3) → (N, 2) の (col, row)(深度 ≤ 0 は NaN)。 · 例: `poc_ball_bounce`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `spin_from_marker_sequence` `any → table` — コマの列の模様の向き ``dirs[k]``((M_k, 3) の単位ベクトル、見つからないコマは None)から角速度を読む(2 段)。 · 例: `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `spin_from_markers` `points × points → table` — 模様の向きの組(前 (M, 3)、後 (M, 3)、単位ベクトル)から角速度ベクトル ω [rad/s] を出す。 · 例: `poc_ball_bounce`
+- `track_triangulate` `table × any × any → table` — カメラごとの軌跡(:func:`ball_track` の返り値)を三角測量して 3-D の軌跡に: ``{"frame", "p" (N, 3), "reproj_rms" (N,)}`` (2 視点以上で見えたコマだけ)。 · 例: `poc_ball_bounce`, `poc_table_tennis_spin`
+- `triangulate_dlt` `matrix × any × any → table` — 1 点の多視点三角測量(線形 DLT、SVD): ``uvs`` (C, 2)、``poses`` (C, 4, 4)、``Ks`` (C, 3, 3)。 返り値 ``{"p" (3,), "reproj_rms" px, "n_views"}``。NaN の視点は飛ばす。2 視点未満なら ValueError。 · 例: `poc_ball_bounce`, `poc_kendama`
+
+#### drive / ballworld(9)
+- `add_ball` `table × table → scalar` — 球を姿勢 (p, R) で世界に足す。面ごとのラベル(球 23 / 模様 24)はそのまま。返り値 = objects の索引。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_mesh` `入力なし → table` — 球のメッシュ(原点 = 中心)と模様。``markers`` = [(dir, angle_deg), …] で複数の模様(None なら marker_dir 1 つ)。 返り値 ``{"V", "F", "color" (M,3), "label" (M,) (23 or 24), "radius", "markers": [単位ベクトル …]}``。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_set_pose` `table × matrix → any` — 球 i の姿勢を (p, R) にする(頂点だけ書き換える)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `ball_truth` `table × table → table` — 球 i の真値の投影: 中心の (col, row)、像の半径 [px] (≈ f·r/深度)、模様の中心の (col, row)(裏側なら NaN)。 · 例: `poc_ball_bounce`
+- `camera_rig` `table → table` — 台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。 · 例: `poc_ball_bounce`, `poc_table_tennis_spin`
+- `icosphere` `入力なし → any` — 正 20 面体を ``subdiv`` 回 4 分割して球面へ射影したメッシュ (V, F)(外向き)。 · 例: `gallery_mesh_seg_sun_gains`
+- `rotation_from_omega` `入力なし → matrix` — 角速度 ω [rad/s] で dt 秒回す回転行列(Rodrigues)。R_{k+1} = R(ω dt) R_k。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `table_params` `入力なし → table` — 卓球台の表(既定 = ITTF 規格)。 · 例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `table_world` `table → table` — 台(天板 + 白線 + ネット)と床の世界。原点 = 天板の中心、x = 長手(±1.37)、y = 幅(±0.7625)、z 上。天板の上面 z = height。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+
+#### drive / carla(25)
+- `camera_pose_to_carla` `matrix → any` — render3d の world → camera 4×4 → CARLA のカメラの [x, y, z, roll, pitch, yaw]。:func:`carla_camera_pose` の逆。 · 例: `poc_carla_bridge`
+- `carla_camera_pose` `any → matrix` — CARLA のカメラの世界姿勢 → render3d / driveworld の **world → camera** 4×4(:func:`driveworld.camera_pose` と同じ型)。 CARLA のカメラは局所 +x を見て右 = +y・上 = +z、render3d は −z を見て右 = +x・上 = +y。 · 例: `poc_carla_bridge`
+- `carla_depth_decode` `rgb → image2d` — CARLA の深度カメラの生の像(R 下位・G・B 上位の 24 bit)→ 像面からの距離 [m]。d = code / (2²⁴ − 1) · 1000。 · 例: `poc_carla_bridge`
+- `carla_depth_encode` `image2d → rgb` — 像面からの距離 [m] → CARLA の生の深度像(uint8 (H,W,3))。inf と 1000 m 超は最大値、負と NaN は ValueError。 · 例: `poc_carla_bridge`
+- `carla_intrinsics` `入力なし → matrix` — CARLA のカメラの K(**水平**画角 fov、f = W / (2 tan(fov/2))、主点 (W/2, H/2))。 · 例: `gallery_drive_carla_bridge`
+- `carla_label_map` `image2d → image2d` — CARLA の意味分割(タグの uint8 像)→ Fullseye のラベル像(int、−1 = 空・未ラベル)。未知のタグは ValueError。 · 例: `poc_carla_bridge`
+- `carla_label_unmap` `image2d → image2d` — Fullseye のラベル像 → CARLA のタグ像(uint8、代表タグ)。:func:`carla_label_map` の逆(ラベル側で恒等)。 · 例: `poc_carla_bridge`
+- `carla_labels` `入力なし → table` — CARLA 0.9.16 の意味タグの表: ``[{"tag", "carla", "label", "fullseye"}, …]``(29 行、タグ順)。 · 例: `poc_carla_bridge`
+- `carla_pose_to_world` `any → matrix` — CARLA の [x, y, z, roll, pitch, yaw] → Fullseye の 4×4(world ← object、右手系: y と yaw の符号が反転)。 R_f = M R_c M、t_f = M t_c(M = diag(1, −1, 1))。物体の局所系は x 前・y 左・z 上(driveworld の車と同じ)。 · 例: `gallery_drive_carla_bridge`
+- `carla_rotation_angles` `matrix → any` — 3×3(CARLA の式)→ (roll, pitch, yaw)[度]。pitch = asin(R₂₀)、yaw = atan2(R₁₀, R₀₀)、roll = atan2(−R₂₁, R₂₂)。 |pitch| = 90° の縮退は ValueError。 · 例: `poc_carla_bridge`
+- `carla_rotation_matrix` `入力なし → matrix` — CARLA / UE4 の (roll, pitch, yaw)[度] → 3×3(``carla.Transform.get_matrix()`` の回転部と同じ式、左手系のまま)。 · 例: `gallery_drive_carla_bridge`
+- `carla_scene_check` `table → table` — 場面記録の鍵・形・型を検査して要約を返す(通らなければ ValueError)。 返り値 = ``{"width", "height", "has_lead", "has_instance", "meta"(dict), "n_tags"}``。 · 例: `gallery_drive_carla_bridge`
+- `carla_scene_load` `any → table` — 場面記録(npz)を読む → dict(``meta`` は dict に、``depth`` [m] を復号して足す)。無い・壊れている物は ValueError。 · 例: `poc_carla_bridge`
+- `carla_scene_render` `table → table` — 場面記録を自前の世界で撮り直す(同じ K・同じ取り付け高さ・同じ画角)→ driveworld.world_camera の像 (``color`` / ``label`` / ``depth`` …)+ ``pose`` + ``K``。CARLA の像と**並べて**見るための片割れ。 · 例: `gallery_drive_carla_bridge`
+- `carla_scene_save` `table → any` — 場面記録を npz に書く(検査してから)。返り値 = 書いたパス。 · 例: `poc_carla_bridge`
+- `carla_scene_synthetic` `入力なし → table` — 自前の世界(直線路 + 先行車)を **CARLA の規約の場面記録**にする(撮影記録と同じ鍵・型)。 · 例: `gallery_drive_carla_bridge`, `poc_carla_bridge`
+- `carla_scene_world` `table → table` — 場面記録 → 自前の世界(直線路 + 記録の姿勢に置いた先行車)。カメラと先行車の相対配置を保ったまま、 カメラを (20, 0) で +x 向きに正規化する(CARLA の地図の座標は使わない)。先行車なしなら道だけ。 · 例: `gallery_drive_carla_bridge`
+- `carla_transform_matrix` `any → matrix` — CARLA の [x, y, z, roll, pitch, yaw] → 4×4(world ← object、CARLA の座標のまま)= ``Transform.get_matrix()``。 · 例: `poc_carla_bridge`
+- `carla_xy_yaw` `any → any` — CARLA の姿勢 → carpath / driveworld の (x, y, yaw)(y と yaw の符号を反転、yaw はラジアン)。 · 例: `gallery_drive_carla_bridge`
+- `intrinsics_to_carla` `matrix → matrix` — :func:`intrinsics_to_fullseye` の逆(主点を 0.5 戻す)。 · 例: `gallery_drive_carla_bridge`
+- `intrinsics_to_fullseye` `matrix → matrix` — CARLA の K(画素の角が整数、主点 W/2)→ Fullseye / render3d の K(画素の中心が整数、主点 (W−1)/2)。主点を 0.5 ずらすだけ。 · 例: `gallery_drive_carla_bridge`, `poc_carla_bridge`
+- `lead_from_depth` `image2d × image2d × matrix → table` — ルールベースの先行車の距離(両方の世界に同じ式): ``depth_median`` = 画像の中央の帯(幅 band × W)にある車の画素の深度の中央値(後ろ面は像面に平行なので一定)、 ``row_distance`` = 車の最下行から平らな路面の式(driveenv.road_row_distance)で出した水平距離、 ``bbox`` = (top, bottom, left, right)、``n_pixels``、``found``。車の画素が無ければ found = False(距離は inf)。 · 例: `gallery_drive_carla_bridge`
+- `lead_truth_depth` `table → scalar` — 記録の姿勢から閉形式: 先行車の後ろ面の中心までの**像面距離** [m]。後ろ面 = 中心 − 半長 × 先行車の前方向、 像面距離 = (後ろ面 − カメラ)·カメラの前方向。先行車なしは inf。 · 例: `gallery_drive_carla_bridge`, `poc_carla_bridge`
+- `scene_pair_table` `table → table` — 1 つの場面記録を **CARLA の像**と**自前の世界の像**の両方で採点して並べる。 返り値 = ``{"truth", "carla": {...lead_from_depth}, "fullseye": {...}, "carla_error", "fullseye_error", "width", "height"}`` (誤差 = depth_median − 真値、真値は :func:`lead_truth_depth`)。 · 例: `poc_carla_bridge`
+- `world_pose_to_carla` `matrix → any` — Fullseye の 4×4(world ← object)→ CARLA の [x, y, z, roll, pitch, yaw]。:func:`carla_pose_to_world` の逆。 · 例: `gallery_drive_carla_bridge`
+
+#### drive / commonroad(10)
+- `cr_checker_result` `any → table` — WSL の公式チェッカー(tools/check_solution_json.py)が書いた JSON を読む。 · 例: `poc_driving_commonroad`
+- `cr_collision` `table × table → table` — 障害物との衝突(矩形同士の SAT、time_step ごと)と道路境界(車両 4 角が lanelet 多角形の和集合に入るか)。 · 例: `poc_driving_commonroad`
+- `cr_drive` `table → table` — 自分の運転手(縦 IDM + pure pursuit)を CommonRoad の planning problem で走らせる。 · 例: `poc_driving_commonroad`
+- `cr_drive_sweep` `table → table` — ルールベースの gap acceptance: 運転手の母数の格子を穏やかな順に試し、**最初に全部の門を通った走行** を返す。 · 例: `poc_driving_commonroad`
+- `cr_feasible` `table → table` — 運動学の実現可能性(採点器 ``solution_feasible`` と同じ考え方の第 2 実装)。 · 例: `poc_driving_commonroad`
+- `cr_read` `any → table` — CommonRoad 2020a XML(文字列 or パス)を読む。 · 例: `poc_driving_commonroad`
+- `cr_route` `table → table` — successor の BFS(hop 数最小)で lanelet の列を出し、中心線を継いで ``step`` m で再標本化する。 · 例: `poc_driving_commonroad`
+- `cr_solution_xml` `table × table → any` — 公式 solution XML(commonroad-io ``CommonRoadSolutionWriter`` と同じ形)を文字列で返す。 · 例: `poc_driving_commonroad`
+- `cr_synthetic` `入力なし → any` — テスト・CI 用の最小 CommonRoad 2020a XML を文字列で返す。 · 例: `poc_driving_commonroad`
+- `ks_step` `any × any → any` — 運動学単線(KS)モデルを区分一定入力 u = (δ̇, a) で dt だけ RK4 で進める。参照点 = 後軸中心。 · 例: `poc_driving_commonroad`
+
+#### drive / course(13)
+- `course_contains` `table × points → signal` — 点が **走れる領域**(要素の多角形、配置なら要素の和)の内側かを偶奇規則で判定した bool 配列。 · 例: `poc_driving_school`, `poc_world_terrain`
+- `course_crank` `入力なし → table` — 屈折コース(クランク、Z 形): 進入 → 左 90° → B → 右 90° → 退出。 · 例: `poc_driving_school`, `poc_driving_town`
+- `course_crossing` `入力なし → table` — 踏切: 幅 w の道路(x 軸沿い)を線路が直角に横切る。踏切面(軌間 + レール外側 2 つ = 2.6 m)の両側に ``approach`` の直線。``rails`` (2, 2, 2) はレール 2 本の線分(x = L/2 ± gauge/2、道路幅いっぱい)、 ``crossing_zone`` = (x0, x1) 踏切面、``stop_lines`` (1, 2, 2) は踏切面の ``stop_setback`` 手前の左車線。 多角形は矩形(レールはメタデータ)。規格: 軌間 1.1、レール外側 0.75 → ``params["regulation"]``。 面積 = w·(2(rail_outer + gauge/2) + 2·approach)。 · 例: `poc_driving_school`
+- `course_intersection` `入力なし → table` — 幹線コースの十字交差点: 幅 w の道路 2 本が原点で直交、各腕の長さ ``arm``(交差部の縁から)、 凹頂点 4 つを半径 ``corner_radius`` で削る。 · 例: `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`
+- `course_layout` `table × table → table` — 複数の要素を剛体運動 ``(x, y, yaw)`` で配置して 1 つの dict にする。 · 例: `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
+- `course_loop` `入力なし → table` — 周回コース(長円形): 直線 2 本 + 半円 2 つを原点中心に置いた ``{"elements": [...], "placements": [...]}`` を返す(そのまま :func:`course_layout` に渡す)。反時計回りに、南の直線(東行き, y = −R)→ 東の半円 → 北の直線 (西行き, y = +R)→ 西の半円。直線は両端を ``overlap`` だけ半円に食い込ませる(3-D 化で継ぎ目に縁石が 立たないための重なり; 面積の和はその分だけ二重に数える)。規格(普通免許): 80 m 以上の直線走行部分、幅 8 m 以上。 · 例: `poc_driving_school`, `poc_ttc_rss`, `poc_world_terrain`
+- `course_loop_bend` `入力なし → table` — 周回コースの端の半円(左へ 180° 回る): 進入 (0, 0, 0) → 中心 (0, R) の周りを回って退出 (0, 2R, π)。 多角形は外側の弧(半径 R + w/2)と内側の弧(R − w/2)で囲む環の半分。面積 = π R w(閉形式)、弧を 折線にした分だけ小さく、arc_pts を増やすと収束する。規格(周回コース): 幅 8 m 以上、おおむね長円形。 · 例: `poc_driving_school`, `poc_driving_town`
+- `course_occupancy` `table → image2d` — コース(要素または配置)を占有格子 ``(occ bool [row = y, col = x], extent)`` に落とす。 · 例: `poc_driving_school`
+- `course_parallel_parking` `入力なし → table` — 縦列駐車: 幅 ``road_width`` の道路(x ∈ [0, 2·approach + bay_length])の路側に、長さ car_length + extra (既定 7.5 m)× 幅 car_width の車室。**法令に数値なし(通達の別添は図)** —— 既定は慣行値。 · 例: `poc_driving_school`
+- `course_road` `入力なし → table` — 連絡路(幹線の一部): 幅 w・長さ L の直線。課題コースの出口を周回コースへ戻す・幹線を延ばすための要素。 規格(幹線コース): 幅 7 m 以上、周回コースと連絡すること。面積 = w·L。 · 例: `gallery_drive_city_terrain`, `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_town`, `poc_driving_weather`
+- `course_s_curve` `入力なし → table` — 曲線コース(S 字): 直線 E → 左弧(中心角 2π·f)→ 右弧(同じ)→ 直線 E。 · 例: `poc_driving_school`, `poc_driving_town`
+- `course_slope` `入力なし → table` — 坂道コース: 緩坂で高さ ``height`` まで上り、頂上平坦部 ``top``、急坂で下りる矩形の道(x 軸沿い)。 · 例: `poc_driving_longitudinal`, `poc_driving_school`
+- `course_turnaround` `入力なし → table` — 方向変換コース(T 字): 幅 w の道路(x ∈ [0, 2E + bay_width])の側方中央に車庫(道路沿いの幅 bay_width、 奥行 depth)、車庫口の両側に出入口部 E ずつ。 · 例: `poc_driving_school`
+
+#### drive / crossing(17)
+- `conflict_zone_intervals` `any → table` — 衝突の領域(交差点の中で 2 つの進路が重なる所)を車が占める時刻 [t_in, t_out] (閉形式、配列可)。 · 例: `poc_driving_crossing`
+- `crossing_clear_time` `入力なし → table` — 停止線から発進して、車の後端が踏切の向こうの端 + ``beyond`` を越えるまでの時間(閉形式)。 · 例: `poc_driving_crossing`
+- `crossing_gate_state` `signal → table` — 踏切の状態機械(警報機 + 遮断機)を時刻 t(配列)で評価する。 · 例: `poc_driving_crossing`
+- `crossing_lamp_signal` `入力なし → any` — 2 灯の赤色せん光灯の明るさ(0..1)を時刻 t(配列)で返す: 形 (n, 2)、列 0 = 左、列 1 = 右。 · 例: `poc_driving_crossing`
+- `crossing_stop_check` `table → table` — 踏切の通り方を採点する(33 条 1・2 項、50 条 2 項、教則 6-1-1(1)(3)(4)(5))。 · 例: `poc_driving_crossing`, `poc_driving_town`
+- `crossing_timing_check` `入力なし → table` — 踏切の 3 つの時刻(警報開始・遮断動作の終了・列車の到達)を解釈基準の標準と最小に照らす(配列 = 列車ごと)。 · 例: `poc_driving_crossing`
+- `crosswalk_overtake_check` `table → table` — 横断歩道等とその手前 ``zone`` m の中で、前方を進行している車の前に出たか(38 条 3 項)。 · 例: `poc_driving_crossing`
+- `crosswalk_stopped_vehicle_check` `table → table` — 横断歩道等(又はその手前の直前)で止まっている車の側方を通って前に出る前に一時停止したか(38 条 2 項)。 · 例: `poc_driving_crossing`
+- `exit_room_check` `any → table` — 踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。 · 例: `poc_driving_crossing`
+- `lamp_pair_phase` `signal × signal → table` — 2 つの明るさの時系列(2 灯の画素)から、共通の点滅の周波数と位相差を相互スペクトルで推定する。 · 例: `poc_driving_crossing`
+- `legal_stop_intervals` `any → any` — 駐停車禁止の区間(併せた (k, 2))を避けて、車体 [rear, rear + car_length] が丸ごと入る **後端の位置** の区間 (m, 2)。 · 例: `poc_driving_crossing`
+- `no_stopping_zones` `table → table` — 道に沿った施設から、44 条 1 項の駐停車禁止の区間を作る。 · 例: `poc_driving_crossing`
+- `obstruction_decel` `any → table` — 交差道路の車(領域まで dist、速さ speed)が、領域に t_free より前に入らないために要る一定の減速度(閉形式、配列可)。 · 例: `poc_driving_crossing`
+- `parking_position_check` `入力なし → table` — 車体 [rear, front] が駐停車禁止の区間に重なるか。``zones_result`` = ``no_stopping_zones`` の返り値。 · 例: `poc_driving_crossing`
+- `priority_rule` `table → table` — 交通整理の行われていない交差点で、自分(own)が交差道路(cross)の車に譲るか(36 条 1〜3 項)。 · 例: `poc_driving_crossing`
+- `sight_triangle_distance` `入力なし → scalar` — 角の建物があるとき、線路の上でどこまで見えるか(見通しの三角形)。 · 例: `poc_driving_crossing`
+- `track_sight_distance` `any → any` — 渡り切る前に列車が着かないために、線路の上で見えていなければならない距離 = v_train · (clear_time + margin)。 · 例: `poc_driving_crossing`
+
+#### drive / cutting(16)
+- `cut_depth_from_side` `rgb × table × scalar × scalar → table` — 正面像の食材の上面(彩度の縁、列ごと副画素 → 中央値)と刃先の直線から切り込み深さ(mm)。 · 例: `poc_food_cutting_measure`
+- `cut_force_atkins` `scalar × scalar → table` — 柔らかい固体の切断力の閉形式(尺度 = 靱性 R × 切っている幅 w、R と w の 1 次)。返り値 dict(N)。 · 例: `poc_food_cutting_measure`
+- `cut_force_csv_load` `any × any → table` — 有限要素の切断シミュレーションが書いた刃の力の CSV を読む(1 行目に ``Rcforc``、2 行目が列名、列 = 時刻と力の 3 成分が交互)。 · 例: `poc_food_cutting_measure`
+- `cut_force_fit` `signal × signal × scalar → table` — 切断中の力の列 F(N)と切っている幅 w_eff(mm)から靱性 R(J/m²)を原点を通る最小二乗で出す。 · 例: `poc_food_cutting_measure`
+- `cut_surface_roughness` `rgb × scalar × scalar × signal → table` — 切った後の端面のシルエット(行ごと副画素)を断面とみなし、最小二乗の直線を引いて ISO 4287 のパラメータ(µm)を出す。 · 例: `poc_food_cutting_measure`
+- `cutting_edge_render` `table × any × scalar × scalar × scalar → rgb` — 刃先方向の像(RGB)。暗い背景・食材(右側が本体)・刃(片刃、平らな面が切片側)。 · 例: `poc_food_cutting_measure`
+- `cutting_episode_synth` `入力なし → table` — 閉形式の運動で切断の 1 回分を作る(準静的、剛塑性の食材 + 縦だけ柔らかい手首)。返り値 dict(列は numpy 配列)。 · 例: `poc_food_cutting_measure`, `poc_knife_tactile_toughness`
+- `cutting_face_render` `table × scalar × scalar × scalar → rgb` — 正面像(RGB、(H, W, 3) float)。壁 → まな板 → 刃 → 食材(手前)の順に、被覆率の解析描画で重ねる。 · 例: `poc_food_cutting_measure`
+- `cutting_scene` `any → table` — 合成の場面の諸元(dict)。``kind="face"`` = 正面像(カメラは刃の面の法線方向)、``"edge"`` = 刃先方向の像。 · 例: `poc_food_cutting_measure`, `poc_knife_tactile_toughness`
+- `cutting_wrist_mjcf` `table × scalar → any` — 柔らかい手首の刃の場面(MJCF 文字列、mujoco 不要)。刃は縦のスライド関節(ばね ``k``・減衰)1 本、食材と板は見た目だけ。 · 例: `poc_food_cutting_measure`
+- `food_cut_width` `scalar × scalar × scalar × scalar → scalar` — 刃先の直線(食材の中央で高さ ``edge_z_at_xc``、傾き θ)が食材の上面より下にある x の長さ = 切っている幅(mm、閉形式)。 · 例: `poc_food_cutting_measure`, `poc_knife_tactile_toughness`
+- `force_from_wrist_displacement` `signal × signal × scalar → signal` — 柔らかい手首(縦のばね k、N/mm)なら押し力 F = k (z_meas − z_cmd): 刃が指令より上に残った分が力(N の配列)。 · 例: `poc_food_cutting_measure`
+- `knife_edge_track` `rgb → table` — 正面像から刃先の直線・峰・先端を出す(規則のみ)。 · 例: `poc_food_cutting_measure`
+- `slice_push_from_track` `scalar × signal × signal → scalar` — 刃の 1 点の軌跡 (x, z)(画像から)と刃先の傾き θ(画像から)で ξ を出す。速度は軌跡の直線当てはめの向き(ξ は比)。 · 例: `poc_food_cutting_measure`
+- `slice_push_ratio` `scalar × scalar × scalar → scalar` — 刃先の傾き θ(x-z、反時計回り)と刃の速度 (vx, −vz)(vz > 0 で下へ)から slice/push 比 ξ。 · 例: `poc_food_cutting_measure`
+- `slice_thickness_profile` `rgb × scalar × scalar → table` — 刃先方向の像で、行ごとに「食材の端面」と「刃の平らな面」の副画素位置を出し、差 = 切片の厚み(mm)。 · 例: `poc_food_cutting_measure`
+
+#### drive / cuttouch(3)
+- `knife_load_from_pads` `table × table × table × scalar → table` — 2 枚のパッドの読み(:func:`pegtactile.pad_tactile_read`)→ 刃が食材から受ける押し V・引き H・モーメント M_x と、刃の当たり位置 Ly。 · 例: `poc_knife_tactile_toughness`
+- `torsion_partial_slip` `scalar × scalar × table → table` — 球面パッド(Hertz、法線力 ``P``)に法線まわりのねじり ``M`` [N·m] を掛けたときの部分滑り: 固着半径 c、ねじれ角 β、全滑りまでの比。 · 例: `poc_knife_tactile_toughness`, `poc_tactile_dipole_torque`
+- `toughness_from_pads` `any × signal → table` — :func:`knife_load_from_pads` の列と切っている幅 w_eff [mm] (画像から、:func:`cutting.food_cut_width`)→ 靱性 R と当たり位置の要約。 · 例: `poc_knife_tactile_toughness`
+
+#### drive / decide(18)
+- `aliased_frequency` `any → any` — 周波数 ``f`` [Hz] の明滅をフレームレート ``fps`` で標本化したときの **見かけの** 周波数(閉形式)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`
+- `bus_departure_yield_check` `table → table` — 停留所から発進の合図をしたバスの進路変更を、後ろの自車が妨げたかを採点する(道路交通法 31 条の 2)。 · 例: `poc_driving_decisions`
+- `check_sequence_score` `table → table` — 進路変更・右左折の前の「安全確認 → 合図 → (約 3 秒 / 30 m)→ 行為 → 合図をやめる」を採点する。 · 例: `poc_driving_decisions`
+- `convex_mirror_fov` `入力なし → table` — 凸面鏡(球面、半径 ``radius``、開口の直径 ``aperture``)を軸上 ``eye_distance``(頂点から)の眼で見たときの視野角。 · 例: `poc_driving_decisions`
+- `dilemma_zone` `any → table` — 黄信号のジレンマゾーン(Gazis, Herman, Maradudin 1960)。 · 例: `poc_driving_decisions`
+- `doppler_shift` `any → any` — 音源が動き聞き手が止まっているときの聞こえる周波数(閉形式)。 · 例: `poc_driving_decisions`
+- `doppler_track` `signal → table` — サイレンの音から瞬時周波数を推定し、近づいている / 遠ざかっているを判定する。 · 例: `poc_driving_decisions`
+- `flash_frequency` `signal → table` — 画素(または領域の平均)の明るさの時系列から点滅の周波数を推定する(FFT のいちばん高い山)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`
+- `mirror_aim_normal` `入力なし → any` — 眼 ``eye`` から鏡の中心 ``mirror_center`` へ来た光線を方向 ``look_dir`` へ反射させる鏡の法線(2D でも 3D でも)。 · 例: `poc_driving_decisions`, `poc_driving_pass`
+- `mirror_blind_zone` `入力なし → table` — 自車の左後方で、左のドアミラーにも直接の視界にも入らない領域(2D、上から見た図)。 · 例: `poc_driving_decisions`
+- `mirror_reflection_matrix` `入力なし → any` — 平面 ``mirror_plane`` = (n_x, n_y, n_z, d)(点 X が鏡面上 ⇔ n·X = d、n は正規化する)での折り返しの 4×4 同次行列。 · 例: `gallery_drive_mirrors_crowds`
+- `mirror_virtual_camera` `any → table` — 平面鏡に映る像を撮る **仮想カメラ**。 · 例: `poc_driving_decisions`
+- `predict_amber_onset` `table → table` — 並行する歩行者信号の観測(時刻順の ``(t, state)``、state ∈ green / flash / red)から車両の黄の始まりを推定する。 · 例: `poc_driving_decisions`
+- `signal_phase_plan` `入力なし → table` — 2 現示の信号の時間割(主道路 A と、それに **並行する歩行者信号**、交差道路 B)。時刻 0 = A の青の始まり。 · 例: `poc_driving_decisions`
+- `signal_state` `table → any` — ``signal_phase_plan`` の時間割で時刻 ``t``(周期で折り返す)の状態(文字列の配列)。区間は [始, 終)。 · 例: `poc_driving_decisions`
+- `siren_signal` `入力なし → table` — 動く救急車のサイレン(二音の交互)を、止まっているマイクで聞いた音を合成する。 · 例: `poc_driving_decisions`
+- `tdoa_bearing` `signal × signal → table` — 2 本のマイク(左 = +y、右 = −y、間隔 ``mic_spacing``)の到着時間差から音源の方位(遠方近似)。 · 例: `poc_driving_decisions`
+- `yield_maneuver_check` `table → table` — 緊急自動車が近づいたときの自車の動きを道路交通法 40 条で採点する。 · 例: `poc_driving_decisions`
+
+#### drive / diabolo(16)
+- `diabolo_axis_from_image` `rgb × table × table → table` — 1 コマから手前のカップの縁の中心 ``center_rim`` と軸 ``axis``(カメラ側を向く)を出す。ディアボロの中心 ``center`` = center_rim − (L/2) axis。学習なし。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_camera` `入力なし → table` — 透視カメラ(既定 = 前 1.4 m から −x を見る、世界の z が上)。返り ``{"C", "R"(行 = 右・下・前), "K", "shape", "look_at"}``。 **Raises** ``ValueError``: 位置と注視点が重なる、視線が鉛直、画の大きさや画角が不正。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_dynamics_step` `table × matrix × matrix × scalar × table → table` — 論文の解析模型を 1 ステップ進める(ディアボロ = 質点 + 補助の回転楕円体 + 重力)。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_marker_phase` `rgb × table × table × table → table` — 1 コマのマーカーから回転の位相 ψ(体の系 e1 から、右ねじ)と回転ぶれの弧の幅 |ω|·露光 [rad] を読む。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_params` `入力なし → table` — ディアボロと糸の寸法の辞書。``kind`` = red / blue / patterned / green(論文の表 I の質量・直径・長さ・軸受)。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_render` `table × table → rgb` — ディアボロの 1 コマを光線追跡で描く(RGB float (H, W, 3)、[0, 1])。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_scene_mjcf` `table → any` — 第 2 実装の場面の MJCF 文字列(mujoco 不要): 空間テンドン 棒の先 → ディアボロ → 棒の先、長さの上限 = 糸(片側拘束 = 伸びた時だけ引く = 摩擦のない滑車の厳密模型と同じ物理を、柔らかい拘束と暗黙の速度更新という別の解法で解く)。棒の先は mocap(各ステップで位置を書き込む)。ディアボロは自由関節の剛体(質量 = 論文の表 I、慣性は仮定。回転は糸と結合しない)。 ``wrap_axle`` = True なら軸(半径 r)の円柱にテンドンを巻き付ける形(下側を通す、未検証)。 **Raises** ``ValueError``: params の形、timestep ≤ 0、solref が 2 つの正の数でない。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_simulate` `signal × signal × any × scalar × scalar × table → table` — 棒の動き ``sticks`` のもとでディアボロを ``t_end`` まで刻み ``dt`` で進める。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_spheroid` `signal × signal × scalar → table` — 棒の先 2 点(焦点)と糸の長さ → 補助の回転楕円体: a = l/2、c = |x_L − x_R|/2、b = √(a² − c²)(式 1 の正しい形)。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_spin_from_markers` `signal × signal × scalar × scalar → table` — コマごとの位相 ψ_k(mod 2π)とぶれの弧の幅 → 回転の速さ ω、単位 rad/s(軸のまわり、右ねじ)。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_state_sequence` `matrix × any × table → signal` — 位置の列 X (N, 3) と棒 (N, 2, 3) から論文の状態遷移だけを回す(観測した軌跡の分類用、力学は解かない)。有限でない行は 直前の状態を保つ(追跡が見失ったコマ)。返り (N,) の状態名。**Raises** ``ValueError``: 形・長さ・綴り。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_throw_catch_truth` `signal × signal × matrix × table → table` — 放した状態 (p0, v0) からの放物線(閉形式)が、頂点の後で、受けの棒 ``sticks``(固定の (2, 3))に対して「棒を結ぶ面より下 かつ s < c_F」に入る最初の時刻(論文の FLYING → ON_STRING の条件 + 面の規則。張りつめは呼び手が確かめる)。 · 例: `poc_diabolo_model_and_vision`
+- `diabolo_track` `any × table × table → table` — コマの列 → ディアボロの中心 (N, 3)・軸 (N, 3)・警報 ``ok`` (N,)・残差 (N,)。コマごとに :func:`diabolo_axis_from_image` (学習なし、前のコマに頼らない)。推定できないコマは NaN で ``ok = False``。**Raises** ``ValueError``: コマの列が空か列でない。 · 例: `poc_diabolo_model_and_vision`
+- `spheroid_closest` `signal × table → table` — 点 x → 回転楕円体の面の最近点 ``point``・符号つき距離 ``s``(内側 > 0、論文の s の定義)・外向きの単位法線 ``normal`` (最近点での勾配の向き)。 · 例: `poc_diabolo_model_and_vision`
+- `string_tension_from_sag` `signal × signal × signal × scalar → table` — 糸の V 字(棒の先 2 点と軸の位置)から張力を出す(摩擦のない滑車 = 両側の張力が等しい)。 · 例: `poc_diabolo_model_and_vision`
+- `string_tension_static` `scalar × table → table` — 棒が同じ高さ・間隔 2c で止まり、ディアボロが最下点で静止: 垂れ b = √(a² − c²)、張力 T = m g a / (2b)、糸の水平からの角 atan2(b, c)。**Raises** ``ValueError``: 間隔が (0, 糸) の外。 · 例: `poc_diabolo_model_and_vision`
+
+#### drive / doseunif(3)
+- `dose_cv_from_sizes` `any × scalar × scalar → table` — 測った粒径から 1 回分の含量の CV(粒の数の揺らぎだけ、Poisson)と、その偏りと区間。 · 例: `poc_dose_uniformity_from_grinding`
+- `dose_cv_lognormal` `scalar × scalar × scalar × scalar → table` — 粒径が対数正規の粉から 1 回分(薬 ``dose_mg``)を取ったときの含量の CV(粒の数の揺らぎだけ)。 · 例: `poc_dose_uniformity_from_grinding`
+- `grind_time_for_dose_cv` `signal × signal × scalar × scalar → table` — モーメント径 D63 の時間変化に粉砕則を当て、含量の CV が目標まで下がるのに要る粉砕時間を逆算する。 · 例: `poc_dose_uniformity_from_grinding`
+
+#### drive / env(16)
+- `beta_from_mor` `scalar → scalar` — 視程 → 減衰係数 β = −ln(contrast)/視程(:func:`mor_from_beta` の逆)。 · 例: `poc_driving_weather`
+- `env_params` `入力なし → table` — 描画の条件をまとめる(:func:`env_render` に渡す)。 · 例: `poc_driving_weather`
+- `env_render` `table × matrix × matrix → table` — 太陽・空・影・灯火・前照灯・霧・雨・まぶしさを物理の単位で描く。 · 例: `poc_driving_weather`
+- `fog_beta_from_profile` `any × any × scalar × scalar × scalar → table` — 路面の縦の輝度の曲線から霧の減衰係数 β を測る(Hautière ら 2006 の考え方)。 · 例: `poc_driving_weather`
+- `julian_day` `any → scalar` — ユリウス日(UT)。``when`` = タイムゾーンつきの datetime(UTC に直す)、または数(そのままユリウス日)。 · 例: `gallery_drive_lateral_env`
+- `koschmieder` `any × any × scalar × any → any` — Koschmieder の法則: 距離 d の物体の見かけの輝度 L = L₀ e^{−βd} + L_h (1 − e^{−βd})(配列可)。 · 例: `gallery_drive_lateral_env`
+- `mor_from_beta` `scalar → scalar` — 減衰係数 β [1/m] → 視程 = −ln(contrast)/β。既定 0.05 = WMO の気象光学距離(MOR ≈ 2.996/β)、0.02 = Koschmieder(3.912/β)。 · 例: `gallery_drive_lateral_env`
+- `road_row_distance` `any × scalar × scalar × scalar → any` — 平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は ``inf``。 · 例: `poc_driving_weather`
+- `sight_stop_speed` `scalar × scalar × scalar → scalar` — 見える距離 ``sight`` の中で止まれる最大の速さ v*: drivelong.stopping_distance_grade(v*) = sight。 · 例: `poc_driving_weather`
+- `sun_at` `any × scalar × scalar → table` — 日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は :func:`geocam.sun_position`(NOAA の太陽位置の式 = Meeus "Astronomical Algorithms" 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。 · 例: `poc_driving_weather`
+- `sun_events` `scalar × scalar × scalar × scalar × scalar → table` — その日(地方の暦日)の日の出・南中・日の入りの時刻と、日の出入りの方位・南中の高度。 · 例: `poc_driving_weather`
+- `sun_illuminance` `scalar → table` — 晴天(雲量 ``cloud`` ∈ [0, 1])の太陽の照度 [lx]: ``direct_normal``(太陽に正対する面)・``diffuse``(水平面の散乱)・``air_mass``。 · 例: `poc_driving_weather`
+- `sun_vector` `scalar × scalar → any` — 太陽の方向の単位ベクトル(世界系、地面から太陽へ向く)。 · 例: `poc_driving_weather`
+- `tone_map` `any × scalar → any` — HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 では線形、最大チャンネルは m = 2 でちょうど 1 に達し、それより明るい画素は最大チャンネルが 1 になるよう全体を割る(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。 · 例: `gallery_drive_lateral_env`
+- `veil_chroma_limit` `any × scalar → scalar` — 色 ``color``(RGB の比)で輝度 ``luminance`` の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離 |(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が ``tol`` に達する W* [cd/m²]。 · 例: `poc_driving_weather`
+- `veiling_luminance` `any × any → any` — 減能グレアの光幕輝度 L_v [cd/m²] (配列可)。E_glare = 目の位置での光源の照度 [lx]、θ = 光源と視線の角 [度]。 · 例: `gallery_drive_lateral_env`
+
+#### drive / granular(23)
+- `beverloo_fit` `signal × signal × scalar × scalar → table` — 排出率の列 ``W_i(D0_i)`` に ``log W = log(C ρ_b √g) + n log(D₀ − k d)`` を最小二乗で当て、指数 ``n`` と係数 ``C`` を返す(真値 n = 2.5、C ≈ 0.58)。返り: ``n``, ``C``, ``rms_log``(対数残差)。 **Raises** ``ValueError``: 点が 3 未満 / ``D0 ≤ k d`` の点がある / W ≤ 0。 · 例: `poc_granular_heap_repose`
+- `beverloo_rate` `scalar × scalar × scalar → scalar` — Beverloo の排出則 ``W = C ρ_b √g (D₀ − k d)^{5/2}`` [kg/s] (Beverloo ほか 1961; 係数 C ≈ 0.58、 k ≈ 1.4 は Nedderman 1992 の整理)。``D0`` = 円孔の直径 [m]、``d`` = 粒径 [m]、``bulk_density`` = かさ密度。 · 例: `poc_granular_heap_repose`, `poc_powder_scoop_pour`
+- `cone_profile_px` `signal × scalar × scalar → signal` — 円錐の母線の断面 ``c(u)`` [px] (``u`` = 軸からの距離 [px])。 · 例: `gallery_drive_soil_tactile`
+- `container_fill_level` `image2d → table` — 容器内側の側面像(粉の被覆率、容器の内寸 = 画像)から充填率と粉面の傾きを読む。 · 例: `poc_granular_heap_repose`
+- `container_synth` `scalar → table` — 透明な容器の内側を横から見た粉の被覆率を合成する(表面は平面、傾き可)。真値 = ``fill_frac``。 · 例: `poc_granular_heap_repose`
+- `datum_tilt_check` `table → table` — :func:`repose_angle_silhouette` の返り(左右の斜面角と地面の傾き)から **基準面が傾いていないか** を判定する。 · 例: `poc_geodetic_height_frames`, `poc_granular_heap_repose`
+- `discharge_synth` `scalar × scalar × scalar × scalar × scalar × scalar → table` — 円孔 ``D0`` から Beverloo の率で落ちた粉が、下で安息角 φ の円錐に積もっていく高さ図の列を合成する。 · 例: `poc_granular_heap_repose`
+- `dispense_mass_from_video` `any × scalar × scalar × signal → table` — 高さ図の列から出た質量と排出率 —— 各コマの山の体積 × ρ_b、時間に対する直線当て(最小二乗)。 · 例: `poc_granular_heap_repose`
+- `heap_mass` `scalar × scalar → scalar` — ``m = ρ_b V`` [kg]。``bulk_density`` はかさ密度 [kg/m³] (粒子密度ではない —— ガラス球 2500 kg/m³ の 山は充填率 ≈ 0.6 で ρ_b ≈ 1500 kg/m³)。**Raises** ``ValueError``: 体積が < 0、密度が ≤ 0。 · 例: `poc_granular_heap_repose`
+- `heap_scene_mjcf` `scalar × scalar → table` — 平底ホッパ(正方形の孔、辺 ``orifice_d``)に剛体球を積んだ場面の MJCF 文字列(**mujoco 不要**、台帳に載る)。 · 例: `poc_granular_heap_repose`
+- `heap_spheres_select` `matrix × scalar × scalar × scalar → table` — 山に属する球だけを選ぶ: ビンの底板より下(``z < floor_height − r``)で、ビン半径の 3 倍の内側。 ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: ``pos``(選んだ中心)、``n_in_bin``、 ``n_runaway``、``radius_95``(山の半径の目安)。**Raises** ``ValueError``: 残りが ``keep_min`` 未満(山になって いない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。 · 例: `poc_granular_heap_repose`
+- `heap_synth_cone` `scalar × scalar → table` — 既知の安息角の円錐の山を合成する(側面像 = 反エイリアスの被覆率、高さ図 = セル中心の高さ)。 · 例: `poc_granular_heap_repose`
+- `heap_volume_cone` `scalar × scalar → table` — 円錐の山の閉形式 —— ``R``・``H``・``phi_deg`` のうち **ちょうど 2 つ** を与えると残りと体積を返す。 · 例: `poc_granular_heap_repose`, `poc_powder_scoop_pour`
+- `heap_volume_heightmap` `image2d × scalar → scalar` — 高さ図の山の体積 ``Σ (z − z_ground) pitch²`` [m³]。``ground`` は同形の地面高さ(None = 0)。 負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。**Raises** ``ValueError``: 形・pitch。 · 例: `poc_granular_heap_repose`
+- `hopper_discharge_rate` `signal × signal × scalar → table` — 底板より下の質量の列 ``m(t)`` から排出率 [kg/s] —— 全質量の ``lo``〜``hi`` の帯だけを直線で当てる(立ち上がりと 止まり際を除く; Beverloo の定常流の仮定)。返り: ``rate``, ``n_frames``(帯のコマ数), ``t_range``, ``rms`` [kg]。 **Raises** ``ValueError``: 帯に 3 コマ未満(排出が速すぎてコマが無い —— 黙って 2 点の傾きを返さない)/ 時刻が単調でない。 · 例: `poc_granular_heap_repose`
+- `powder_flowability_class` `scalar → table` — 安息角 → 流動性区分(USP <1174> Table 1、原典 Carr 1965)。 · 例: `poc_granular_heap_repose`
+- `repose_angle_heightmap` `image2d × scalar → table` — 高さ図から安息角 φ —— ``demops.dem_slope`` の勾配のヒストグラムの最頻値。 · 例: `poc_granular_heap_repose`
+- `repose_angle_silhouette` `image2d → table` — 側面像(粉の被覆率)から安息角 φ を読む —— 左右の斜面に別々に直線を当て、裾と頂を除く。 · 例: `poc_granular_heap_repose`
+- `spheres_render_shaded` `matrix × scalar × scalar × scalar × scalar → rgb` — 横からの正射影を陰影つきで描く(numpy の z バッファ、Lambert)。GIF 用。返り ``(rows, cols, 3)`` [0, 1]。 · 例: `poc_granular_heap_repose`, `poc_powder_scoop_pour`
+- `spheres_to_heightmap` `matrix × scalar × scalar × scalar → image2d` — 球の中心列 ``pos (n, 3)`` [m] と半径から、上から見た高さ図(各セルで球面の最大高さ、無ければ 0)。 格子は ``[-extent, extent]²`` を ``pitch`` で刻む。 · 例: `poc_granular_heap_repose`
+- `spheres_to_silhouette` `matrix × scalar × scalar × scalar × scalar → image2d` — 球の中心列から、横(y 方向)から見た正射影の被覆率画像(円板の和、反エイリアス)。行 0 が上。 · 例: `poc_granular_heap_repose`, `poc_powder_scoop_pour`
+- `spoon_tilt_critical` `scalar × scalar × scalar → scalar` — スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— **自分の導出**)。 · 例: `poc_granular_heap_repose`
+- `spoon_tilt_dispense` `scalar × scalar × scalar × scalar → table` — 傾き θ で出た粉の割合(:func:`spoon_tilt_critical` と同じ 2 次元模型、厳密な ``tan(φ − θ)``)。 · 例: `poc_granular_heap_repose`
+
+#### drive / grind(13)
+- `ae_band_power` `signal × scalar → table` — AE の帯域電力を 2 通りで出す(一方は公開の解析コードの定義、他方は ``acoustics.stft`` の密度スペクトル)。 · 例: `poc_powder_grinding_ae`
+- `ae_read_csv` `any → signal` — AE の生の CSV(ヘッダ ``header_lines`` 行 + 1 行 1 標本の ADC 値)を電圧 [V] の信号にする。 · 例: `poc_powder_grinding_ae`
+- `ae_size_correspondence` `signal × signal → table` — AE の帯域電力と D50 の対応(単調性・相関・log–log の傾き α、``P ∝ D50^α``)。 · 例: `poc_powder_grinding_ae`
+- `breakage_first_order_fit` `signal × signal → table` — 一次の破砕速度 ``w(t) = w₀ exp(−S t)`` を当てる(Deniz 2004 の式 (2)、出典 Austin)。 · 例: `poc_powder_grinding_ae`
+- `comminution_energy` `scalar × scalar → table` — 粉砕則の閉形式(Reddy の式 (1)・(5)〜(7))。``x_product`` と ``energy`` の **ちょうど一方** を与える。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
+- `comminution_law_fit` `signal × signal → table` — 粒径の時間変化 ``d(t)`` に粉砕則を当てる(エネルギー ∝ ``t`` の仮定、モジュール冒頭)。誤差は **log(径)** で測る。 · 例: `poc_powder_grinding_ae`
+- `particle_image_d50` `image2d × scalar → table` — 被覆率の画像の粒子から D10 / D50 / D90 [µm]。面積は **ラベルの中の被覆率の和**(縁の部分画素を数える、閾値で太らない)。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
+- `particle_image_synth` `scalar × scalar × scalar → table` — 重ならない円板(粒子の投影)を撒いた被覆率の画像と真値(直径 [µm] の対数正規、``pitch`` µm/px)。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
+- `particle_size_dx` `table × scalar → scalar` — 体積累積 ``q`` % の径 Dq [µm] (D10 / D50 / D90 は ``q`` = 10 / 50 / 90)。 · 例: `poc_powder_grinding_ae`
+- `particle_size_oversize` `table × scalar → scalar` — 径 ``x`` [µm] より上の体積の割合(篩上 R(x)、0〜1)。端の累積を log(径) で補間(:func:`particle_size_dx` の既定と同じ約束)。 · 例: `poc_powder_grinding_ae`
+- `particle_size_read` `any → table` — レーザー回折の粒度分布 CSV(ヘッダの ``key,value`` 行 + ``SizeClasses`` で始まる表)を読む。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
+- `particle_size_synth` `scalar × scalar → table` — 対数正規の **体積** 分布を装置と同じ区間に割り付けた粒度分布(真値つき)。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
+- `replicate_compare` `any → table` — 独立試行のばらつきと、群(材料)どうしの差を同じ物差しで並べる。 · 例: `poc_powder_grinding_ae`
+
+#### drive / gsplat(5)
+- `gs_from_world` `table → table` — 世界の面にガウシアンを貼った 3DGS を返す(``world`` = driveworld の世界 dict: V, F, face_color, objects)。 · 例: `poc_kendama`
+- `gs_read_file` `入力なし → table` — 3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。 · 例: `gallery_drive_world_io`
+- `gs_render` `table × matrix → table` — 3DGS をカメラ(``pose`` = world→camera 4×4、``K`` 3×3、driveworld.world_camera と同じ規約: −Z を見る、行は上が小さい)で描く。 · 例: `poc_kendama`
+- `gs_render_fn` `table → any` — ``render_fn(world, cam) → (H, W, 3)``(:func:`kendamaworld.camera_perceiver` の描画の差し替え口)を返す: 呼ばれるたびに :func:`gs_update` で世界のいまの頂点へガウシアンを付け直し、``cam``(dict: pose, K, width, height)で :func:`gs_render` する。 ``render_kw`` は gs_render へそのまま渡す。属性 ``n_calls``・``n_pairs``(累計)を持つ。 · 例: `poc_kendama`
+- `gs_update` `table × table → table` — 世界の**いまの**頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。 · 例: `poc_kendama`
+
+#### drive / humanoid(4)
+- `humanoid_clip_mesh` `table → table` — 歩いた距離 ``distance`` [m] でのメッシュ(``{"V","F","color","label","dims"}``、原点 = 腰の真下、+x = 前)。 · 例: `gallery_drive_world_objects`, `poc_driving_humanoids`
+- `humanoid_impostors` `table → table` — クリップ(:func:`humanoid_walk_clip`)を **方位 n_yaw × 位相 n_phase** の向きから描いておく。 · 例: `poc_driving_humanoids`
+- `world_camera_impostors` `table × matrix × matrix → table` — :func:`driveworld.world_camera` で世界を撮り、``actors`` のインポスタを**深度で前後を比べて**貼る。 · 例: `poc_driving_humanoids`
+- `world_pose_humanoid` `table → any` — 世界の物体 ``i``(:func:`driveterrain.add_mesh_object` で ``humanoid_clip_mesh`` を置いたもの)を、歩いた距離 ``distance`` の姿勢にして ``(x, y, yaw)`` へ置き直す(頂点だけ書き換える。面・色・ラベル・``dims`` は不変)。 · 例: `gallery_drive_world_objects`
+
+#### drive / inf(12)
+- `global_to_tile` `入力なし → any` — 全体の座標 → (i, j, x, y)(比較用。遠い座標は既に浮動小数の刻みで丸まっている)。 · 例: `gallery_drive_world_io`
+- `pose_normalize` `入力なし → any` — (区画, 区画の中の座標) を、座標が [0, tile) に入るように区画を繰り上げ・繰り下げる。返り値 (i, j, x, y)。 ★全体の座標に足してから割り直すのでなく、区画の中の座標だけを動かす —— 刻みが距離に依らない。 · 例: `poc_driving_endless_map`
+- `tile_digest` `table → any` — 区画のメッシュの指紋(SHA-256、頂点・面・ラベル・色のバイト列)。作り直しのビット一致の門に使う。 · 例: `poc_driving_endless_map`
+- `tile_edge_crossing` `table → scalar` — 区画 (i, j) の辺を道が横切る位置(区画の中の座標、辺に沿った 0..tile)。無ければ None。 ``side`` ∈ {"E", "W", "N", "S"}。★辺の番号で決める: 区画 (i, j) の E と区画 (i+1, j) の W は同じ辺(同じハッシュ)。 · 例: `poc_driving_endless_map`
+- `tile_hash` `入力なし → scalar` — 区画(か格子点・辺)の番号 (i, j) と世界の種・用途の塩から 64 ビットの整数を出す(SplitMix64 を 4 回、整数だけ)。 負の番号も扱う(2 の補数で 64 ビットに折る)。同じ入力なら環境に依らず同じ値。 · 例: `gallery_drive_world_io`
+- `tile_height` `any × any × table → any` — 区画 (i, j) の中の点 (x, y) の地面の高さ [m]: 全体の整数格子の Perlin 雑音 × relief、道の周りは平ら (``flat`` m まで 0、``blend`` m で smoothstep)。格子の番号 = 区画の番号 × cells + 升目の番号(整数で厳密)、 補間は升目の中の小数だけ —— 継ぎ目で連続し、遠くでも桁が落ちない。 · 例: `poc_driving_endless_map`
+- `tile_mesh` `table → table` — 区画 (i, j) の地面の格子メッシュ(区画の中の座標)と道の面。返り値 ``{"V" (N, 3), "F" (M, 3), "label" (M,), "color" (M, 3), "roads" (tile_roads の返り値)}``。地面 = ラベル 0、道 = ラベル 1(道は地面の少し上の帯)。 · 例: `poc_driving_endless_map`
+- `tile_params` `入力なし → table` — 区画の表。``tile`` = 一辺 [m]、``cells`` = 区画あたりの格子の升目数(起伏の波長 ≈ tile/cells)、``relief`` = 起伏の振幅 [m]、 ``road_width`` [m]、道から ``flat`` m は平ら、そこから ``blend`` m で起伏へ戻す(★flat は地面の格子の三角形が道に掛かっても 地面が道より上に出ない幅: 道幅の半分 + 格子の対角 —— 10 m の格子で 3.5 + 14.1 ≈ 18 m。6 m では道が地面に埋もれた)、``p_road`` = 辺を道が横切る確率、 ``jitter`` = 区画の中の分岐点のずらし(区画の一辺に対する割合)、``seed`` = 世界の種。 · 例: `poc_driving_endless_map`
+- `tile_road_distance` `any × any × table → any` — 区画 (i, j) の中の点 (x, y)(区画の中の座標)から最寄りの道の中心線までの距離。★隣の 8 区画の道も見る (隣の道を区画の中の座標へずらして)—— 継ぎ目の近くで両側の区画が同じ距離を出すため。 · 例: `poc_driving_endless_map`
+- `tile_roads` `table → table` — 区画の中の道: 横切る点(区画の中の座標)と分岐点、分岐点から各点への線分。返り値 ``{"hub" (2,), "ends" [(side, (x, y))], "segments" (K, 2, 2)}``(横切る点が無ければ空)。 · 例: `poc_driving_endless_map`
+- `tile_stream` `table × table → table` — 車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(``cache`` をその場で書き換える)。 返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。 · 例: `poc_driving_endless_map`
+- `tile_uniform` `入力なし → scalar` — :func:`tile_hash` の上位 53 ビットを [0, 1) の一様な実数に(倍精度で厳密に表せる)。 · 例: `gallery_drive_world_io`
+
+#### drive / japan(22)
+- `building_prisms` `any → any` — 建物の足跡(footprint)を高さまで押し出し、1 つの三角形メッシュにまとめる。 · 例: `gallery_drive_city_terrain`
+- `buildings_in_box` `table → any` — 重心(足元頂点の平均)が箱 [xmin,xmax]×[ymin,ymax] に入る建物だけを返す。 · 例: `gallery_drive_city_terrain`
+- `citygml_synthetic` `入力なし → any` — 本物と同じ構造の最小 CityGML 2.0 文字列を作る(テスト・デモ用)。 · 例: `gallery_drive_city_terrain`, `poc_driving_japan_town`
+- `japan_stats` `table → table` — 道路網の内訳の表: 種別ごとの辺数・延長・平均幅、幅の由来の内訳、特徴のある節点の数。 · 例: `poc_driving_japan_town`
+- `japan_world` `table → table` — 道路網から日本の町の 3-D 世界(driveworld 形式)を組む。 · 例: `poc_driving_japan_town`
+- `jp_crossbuck_mesh` `入力なし → any` — 踏切警標(× 印、黄地に黒の縁)+ 柱。板は +x を向く。 · 例: `gallery_drive_japan_roads`
+- `jp_mirror_mesh` `入力なし → any` — カーブミラー(橙の柱 + 丸い鏡、鏡は +x を向く)。 · 例: `gallery_drive_japan_roads`
+- `jp_pole_mesh` `入力なし → any` — 日本の電柱(コンクリート柱 + 腕金)の三角形メッシュを作る。 · 例: `gallery_drive_japan_roads`
+- `jp_sign_stop_mesh` `入力なし → any` — 一時停止(規制標識 330-A)の標識: 赤地の逆正三角形(一辺 side = 80 cm、縁線と文字は白、縁と地は赤 —— 別表第二 備考一(三)3(8))+ 柱。 板は +x を向く(来る車の側)。角の丸み(R 5 cm)と「止まれ」の文字(字高 13 cm)は省く(字は路面文字 :func:`jp_stop_marking_mesh` で見せる)。 返り値 (V, F, colors) 面色つき。 · 例: `poc_driving_japan_town`
+- `jp_stop_marking_length` `入力なし → scalar` — 「止まれ」3 字の列の全長 [m] (= 3 × 字高 + 2 × 字間 = 9.2 m)。 · 例: `gallery_drive_japan_roads`
+- `jp_stop_marking_mesh` `入力なし → any` — 路面文字「止まれ」(法定外表示、白)。局所座標: 原点 = 字の列の手前端(車に近い側)の車線中心、+x = 進む向き、+y = 左。 · 例: `poc_driving_japan_town`
+- `latlon_to_local` `any × any → any` — 緯度経度 [deg] → 原点 origin = (lat0, lon0) まわりの等距円筒近似の平面座標 (x 東, y 北) [m]。 · 例: `poc_driving_japan_town`
+- `osm_parse` `any → table` — OSM XML(文字列かファイルパス)を読み、節点を局所平面座標 [m] に落とす。 · 例: `poc_driving_japan_town`
+- `osm_road_graph` `table → table` — OSM の読み込み結果から道路網を作る。 · 例: `poc_driving_japan_town`
+- `osm_road_loops` `table → table` — 道路の和集合の境界ループ。外側(道路の縁)と穴(街区)に分け、Douglas–Peucker で間引く。 · 例: `poc_driving_japan_town`
+- `osm_road_mask` `table → table` — 辺を幅つきの線分(端は丸)として描いた **道路の和集合** の 2 値画像。 · 例: `poc_driving_japan_town`
+- `osm_route` `table → table` — 2 節点間の最短路(Dijkstra、一方通行を守る)を車線中心の折線にし、停止線を弧長で並べる。 · 例: `poc_driving_japan_town`
+- `osm_synthetic` `入力なし → any` — テストと fuzz 用の最小の OSM XML(本物と同じ要素: bounds / node / way / tag)。 · 例: `poc_driving_japan_town`
+- `plateau_parse` `any → table` — PLATEAU CityGML から建物の足元多角形・高さ・底面標高をストリーム読みする。 · 例: `gallery_drive_city_terrain`, `poc_driving_japan_town`
+- `polygon_area` `any → scalar` — 単純多角形の符号つき面積(靴紐公式)。反時計回りで正。 · 例: `poc_driving_school`, `poc_thermal_drift_metrology`
+- `prism_mesh` `any → any` — 足元多角形を高さ ``height`` の柱に押し出す(底面なし)。 · 例: `poc_print_layer_inspection`
+- `triangulate_polygon` `any → any` — 単純多角形(凸・凹どちらも、自己交差なし)を耳切り法で三角形分割する。 · 例: `gallery_drive_city_terrain`
+
+#### drive / kendama(19)
+- `catch_plan_ballistic` `table → any` — 弛んだ玉の (p, v) から放物線の閉形式で皿の到達点を出す計画。返り値は ``plan(t, p, v, cup_state) → dict``。 · 例: `gallery_drive_kendama_racket`
+- `catch_plan_staged` `table → any` — 段階を明示した捕球の制御(大皿・小皿・中皿・ろうそくに同じ計画を使う: 皿の向きは kp の技の姿勢から)。 返り値は ``plan(t, p, v, cup_state) → dict``(:func:`kendama_simulate` の ``catch_plan``)。 · 例: `poc_kendama`
+- `catch_success_rate` `table → table` — 大皿の成功率: 初期状態を散らして n 回(玉は支点(皿胴の糸穴)の L 下に吊り、横に σ = jitter_pos、速度に σ = jitter_vel (接線成分)のガウス揺らぎ)、:func:`swing_up_plan`(手元の出発点 ``origin``)で振り上げ、:func:`catch_plan_ballistic` で皿を運ぶ。 · 例: `poc_kendama`
+- `elliptic_k_agm` `入力なし → scalar` — 第 1 種完全楕円積分 K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) を算術幾何平均で: K(k) = π / (2·AGM(1, √(1 − k²)))。 |k| < 1(それ以外は ValueError)。門: K(0) = π/2、K(0.5) = 1.685750354812596(公表値、パラメータ m = k² = 0.25)。 · 例: `poc_kendama`
+- `hole_detect` `image2d → table` — 玉の像の中の暗い円盤(けん先の穴)を探す: 玉の中心 ``ball_center`` (col, row)・像の半径 ``ball_radius`` [px] の円の内側で、 明るさ(RGB の平均)が玉の明るさの中央値の ``dark_ratio`` 倍未満、彩度 (max − min)/max ≥ ``min_sat``(灰色の糸を除く)、 かつ色度(RGB / |RGB|)が玉の色度の中央値から ``min_chroma`` 以上離れた(陰になった玉の面は明るさだけが落ちて色度は同じ —— 明るさだけで拾うと影を穴と取り違えた、測って退けた)画素の連結成分のうち最大のもの。返り値 ``{"found", "col", "row", "angle" (玉の中心 → 穴の重心の像の角度 [rad]、 atan2(Δrow, Δcol)), "offset" (距離 / ball_radius: 0 = 正面、→ 1 = 縁), "ellipticity" (短軸 / 長軸、2 次モーメントから: 1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False(他は NaN)。 正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。 img (H, W, 3)、ball_radius > 0 でなければ ValueError。 · 例: `poc_kendama`
+- `kendama_catch_check` `table → table` — 玉(半径 r_b)が皿(縁の半径 r_c < r_b、縁の中心 cup_center、軸 cup_axis、速度 v_cup)に乗る幾何の判定。 · 例: `gallery_drive_kendama_racket`
+- `kendama_combo_simulate` `table → table` — 連続技: 玉が ``sequence[0]`` の皿に乗った状態から「放つ → 飛んでいる間に持ち替え → 次の皿を着地点の真下へ運び、速さを合わせて受ける」 を ``n_catch`` 回か最初の失敗まで繰り返す(もしかめ = ("ozara", "chuzara")、3 皿 = ("ozara", "kozara", "chuzara"))。 手元 ``hand0`` = 皿胴の中心(持ち替えは手首で向きを変えるだけ、握り替えない: 仮定)。最初の皿へは :func:`kendama_simulate` の 振り上げで受けて、その手元の位置・速度を ``hand0`` / ``hand_v0`` で渡す。 · 例: `poc_kendama`
+- `kendama_params` `入力なし → table` — けん玉の表。既定 = ``preset="jka_16_2"``(玉 60 mm、横幅 70 mm、全長 180 mm は日本けん玉協会の公表値、けんの高さ 160 mm と 皿 42 / 38 / 35 mm はユーザー提供の JKA 16-2 型の説明(一次資料は未確認))。``"recommended_large_cup"`` = 大皿 49 mm・穴 24 mm。 · 例: `gallery_drive_kendama_racket`, `gallery_drive_world_objects`, `poc_kendama`
+- `kendama_simulate` `table → table` — けん玉の 2 段シミュレーション: ひもが張っている間は支点(**皿胴の糸穴** = 手元 + kp["tie_offset"])に繋がれた玉 (射影法、:func:`ballistics.tether_simulate` と同じ: 支点固定・真空なら同じ軌跡、ひもの長さ = kp["pendulum_length"])、 弛んだら自由落下(重力 + 抗力、kp["bp"]; rho = 0 で真空)。毎 step :func:`kendama_catch_check`(大皿 = 手元 + kp["cup_offset"]、 軸 kp["cup_axis"])で捕球を判定し、捕ったら終わる。 · 例: `poc_kendama`
+- `noisy_perceiver` `入力なし → any` — 知覚に等方ガウス雑音を足す ``perceive(t, p, v) → (p̂, v̂)``(位置 σ = noise_pos [m]、速度 σ = noise_vel [m/s])。 負の σ は ValueError。rng = numpy.random.Generator。 · 例: `gallery_drive_kendama_racket`
+- `parabola_fit_g` `入力なし → table` — 重力 g(−z)を既知とした放物線 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ を最小二乗で当てる(未知 6 = 位置と速度)。 · 例: `gallery_drive_kendama_racket`
+- `pendulum_launch_speed` `入力なし → scalar` — 真下でこの速さを与えると振幅 θ₀ になる(エネルギー保存): v₀ = √(2gL(1 − cos θ₀))。θ₀ ∈ [0, π]。 · 例: `poc_kendama`
+- `pendulum_period_exact` `入力なし → scalar` — 振幅 θ₀ ∈ (0, π) の振り子(棒、または弛まない範囲のひも)の周期 4√(L/g)·K(sin(θ₀/2))。θ₀ → 0 で 2π√(L/g)。 · 例: `poc_kendama`
+- `pendulum_rod_simulate` `入力なし → table` — 棒の振り子(拘束が両側に効く: 弛まない)θ̈ = −(g/L) sin θ を RK4 で。返り値 ``{"t", "theta", "omega", "energy"}`` (energy = ½L²ω² − gL cos θ、単位質量)。ひもでは弛む θ₀ > π/2 の周期の定理を確かめる比較用。 · 例: `poc_kendama`
+- `swing_up_apex` `table → table` — :func:`swing_up_plan` で真下に吊った玉(支点の L 下、静止)がどこまで昇るかの閉形式。 減速の加速度 a > g なら減速に入った瞬間(bang: T/2、trap: 2T/3)に弛み、そのときの手元の高さ z_s と速さ v_s で自由落下 → 頂点 z = tie_z + z_s − L + v_s²/(2g)(手元の出発点から測った玉の中心、L = ひもの有効長、tie_z = 支点の手元からの高さ)。 a ≤ g なら弛まず、玉は支点の L 下で止まる。返り値 ``{"accel", "flies", "slack_t", "z_slack", "v_slack", "apex", "apex_above_handle", "apex_above_cup"}``(apex_above_handle = apex − lift、apex_above_cup = それから大皿の縁の高さを引いた量: 皿に届くには ≥ h_c、皿の窓に入るには h_c ≤ … ≤ h_c + 1.5 r_b)。 · 例: `poc_kendama`
+- `swing_up_lift` `table → scalar` — 振り上げ(bang)の持ち上げ量を閉形式で: 玉の頂点が受ける皿の中心の ``apex_above_cup`` 上に来る lift(:func:`swing_up_apex` の逆)。 頂点 − lift − cup_z = tie_z + lift/2 − L + 2 lift²/(g T²) − lift − cup_z = A を lift の 2 次方程式として正の根。 既定 A = max(h_c + 0.9 r_b, (top_offset − cup_z) + r_b + 0.035): 玉の下端がけん玉のいちばん高い所を 35 mm 越える頂点 (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.03/g) = 0.17 s で皿を 横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。 · 例: `poc_kendama`
+- `swing_up_plan` `table → any` — 手元(皿胴の中心。ひもの支点と大皿はそこから kp の offset だけずれて一緒に動く)の開ループ軌道: ``origin`` から真上へ ``lift`` だけ ``T_lift`` 秒で持ち上げ、以後静止。 返り値は t → (3,) の関数(t ≤ 0 で origin、t ≥ T_lift で origin + lift·ẑ で静止)。 · 例: `poc_kendama`
+- `tether_slack_angle` `入力なし → any` — 真下で速さ v₀ = √(2gL(1 − cos θ₀)) をもつ玉(棒なら θ₀ で止まるエネルギー)のひもが弛む角 θ_s(真下から)。 · 例: `poc_kendama`
+- `tether_tension_fixed` `入力なし → scalar` — 手元固定・伸びないひもの張力 T = m(v²/L + g cos θ)(v = 速さ、θ = 真下からの角)。負なら「ひもは押せない」= 弛む。 · 例: `poc_kendama`
+
+#### drive / kendamaworld(12)
+- `add_ken` `table × table → scalar` — けんを姿勢 (p = 皿胴の中心, R) で世界に足す(面ラベル 27/28/30/31 はそのまま)。返り値 = objects の索引。 · 例: `gallery_drive_world_objects`
+- `add_string` `table → scalar` — 糸(ラベル 29、暗い灰)を世界に足す。返り値 = objects の索引。 · 例: `gallery_drive_world_objects`
+- `camera_perceiver` `table → any` — 画像だけから玉の (p̂, v̂) を出す知覚 ``perceive(t, p, v, scene) → (p̂, v̂) | None``(:func:`kendama.kendama_simulate` 用、 属性 ``observe_all = True`` で毎 step 呼ばれる)。**真値 (p, v) は世界を描くためだけに使い、v は読まない。** · 例: `poc_kendama`
+- `ken_mesh` `table → table` — けん + 皿胴(大皿・小皿)+ 中皿のメッシュ。原点 = 皿胴の中心(手元)、けん = +x(けん先が +x)、皿胴の軸 = +z(大皿が上)。 · 例: `gallery_drive_world_objects`, `poc_kendama`
+- `ken_set_pose` `table × matrix → any` — けん i の姿勢を (p, R) にする(頂点だけ書き換える)。けんでない物体は ValueError。 · 例: `gallery_drive_world_objects`
+- `ken_truth` `table × table → table` — けん i_ken の真値の投影: 受ける皿の縁の中心(anchors[kp["catch_cup"] + "_rim"] を姿勢で動かした点)の (col, row)、深度、 像での皿の半径 [px] (大皿の半径で)、 ``visible``(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。 · 例: `gallery_drive_world_objects`
+- `kendama_clearance` `table → table` — 玉の表面からけん玉(けん・皿胴の回転体)までの隙間 [m] (負 = 玉がけん玉にめり込んでいる)。kp の技の姿勢(R_ken、持つ所 grip)で 手元 ``hand``、玉の中心 ``p_ball``(どちらも (3,) か (N, 3))。回転体までの距離は子午面の輪郭までの 2-D の距離と厳密に等しい ので、メッシュの離散化によらない。返り値 ``{"gap" (N,), "ken" (N,), "cross" (N,)}``(ken / cross = 各部品までの隙間)。 物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。 ``R_ken``(19 巡目、連続技の持ち替え): 姿勢を kp["R_ken"] の代わりに (3, 3) か時刻ごとの (N, 3, 3) で渡す。``grip`` = 持つ所(局所)の 上書き。どちらも None なら今まで通り。 · 例: `poc_kendama`
+- `kendama_pose` `table → table` — けん玉の世界の状態を置く: けん(1 つの剛体。持つ所 kp["grip"] を手元 ``hand`` に、姿勢 ``R_ken`` 既定 = kp の技の姿勢 kp["R_ken"]: 皿胴の中心 = hand − R·grip)、玉(中心 ``p_ball``)、 糸(皿胴の糸穴 → 玉の糸穴)。``R_ball`` 既定 = 玉の糸穴(−HOLE_AXIS_LOCAL)が皿胴の糸穴を向く回転(玉の回転は解かない: 張っている間は正しく、飛翔中は近似)。返り値 ``{"tie", "cup" (受ける皿の縁の中心), "cup_axis", "cross" (皿胴の中心), "string_hole", "hole_axis" (大きな穴の向き、世界), "R_ball"}``。 ``world`` は :func:`kendama_world` のもの(world["kendama"] が要る)。 · 例: `poc_kendama`
+- `kendama_rig` `table → table` — 振り上げの空間(x, y ∈ ±0.4 m、z ∈ 0.55〜1.45 m: 手元 1.0 m、ひも 0.42 m、持ち上げ 0.265 m)を見るカメラの組。 n = 2: 方位 0° と 90°、n = 4: 90° ごと。全部が ``target``(既定 (0, 0, 1.0))を見る。 返り値 ``[{"pose", "K", "eye", "width", "height"}, …]``(ballworld.camera_rig と同型)。 · 例: `gallery_drive_world_objects`, `poc_kendama`
+- `kendama_world` `table → table` — 床 + けん(kp の技の姿勢 R_ken、持つ所 kp["grip"] を ``hand`` に)+ 穴のある玉 + 糸の世界。原点は床、z 上。 玉は皿胴の糸穴からひもの有効長(kp["pendulum_length"])だけ下(真下から ``hang_deg`` だけ ``hang_dir`` 側へ振れた位置 —— 斜め (1, −1) なら方位 0° と 90° の両カメラから横ずれが見える)。``p_ball`` を渡せばそこに置く。 床は 0.25 m の升に割る(1 枚の大きな四角形だとカメラの背後にかかる三角形ごと落ちて床が消える)。 返り値の world["kendama"] = ``{"ken", "ball", "string"}``(objects の索引)+ ``"kp"``。 · 例: `gallery_drive_world_objects`, `poc_kendama`
+- `string_mesh` `入力なし → any` — 2 点(玉の糸穴 p_ball と皿胴の糸穴 p_cup)を結ぶ細い角柱(4 面 + 両端、8 頂点 12 面、外向き)。断面は 2·radius 角。 両点が一致すると ValueError。 · 例: `gallery_drive_world_objects`
+- `string_set` `table → any` — 糸 i の両端を (p_ball, p_cup) に置き直す(頂点だけ書き換える)。糸でない物体は ValueError。 · 例: `gallery_drive_world_objects`
+
+#### drive / lateral(20)
+- `ackermann_steer_angles` `any → table` — アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。 · 例: `poc_driving_lateral`
+- `bicycle_model_step` `any → any` — 線形 2 輪等価モデルの 1 刻み(古典的な 4 次 Runge–Kutta、刻みの間 δ と u は一定)。 · 例: `poc_driving_lateral`
+- `clothoid_design` `入力なし → table` — 直線 → 円(半径 R)を長さ L のクロソイドで繋ぐときの量。 · 例: `poc_driving_lateral`
+- `clothoid_points` `入力なし → table` — 曲率が弧長に一次 κ(s) = κ₀ + (κ₁ − κ₀) s / length の曲線(クロソイドの一部。κ₀ = κ₁ なら円弧・直線)の点。 · 例: `poc_driving_lateral`
+- `curvature_speed_plan` `any → table` — 曲率の列から速度の上限を作り、前向き・後ろ向きの 2 パスで加減速の上限を守る速度計画(古典的な手法)。 · 例: `poc_driving_lateral`
+- `curve_speed_limit` `any → any` — 片勾配 i・横すべり摩擦係数 f の曲線(半径 R)で外へ滑らない上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。 · 例: `gallery_drive_lateral_env`
+- `design_min_radius` `any → any` — 道路構造令の解説 (3) 式の最小曲線半径 R = V² / (127 (i + f)) [m] (V は km/h)。 · 例: `gallery_drive_lateral_env`
+- `fresnel_integrals` `any → any` — フレネル積分 C(x) = ∫₀ˣ cos(π t²/2) dt、S(x) = ∫₀ˣ sin(π t²/2) dt(奇関数)。 · 例: `gallery_drive_lateral_env`
+- `friction_circle_usage` `any → any` — 摩擦円の使用率 √(a_x² + a_y²) / (μ g)(1 を超えたら摩擦円の外 = タイヤが路面から受けられる力を超える)。 · 例: `poc_driving_lateral`
+- `lateral_offset` `any → table` — 点の、折線の経路に沿った弧長 s と横ずれ n(進行方向の左が正)。最も近い区間への射影。 · 例: `poc_driving_lateral`
+- `offtracking_circle` `入力なし → table` — 内輪差の過渡(閉形式): 前車軸の中心が半径 R の円に入ってから弧長 s 進んだときの車の姿勢と内側の車輪の半径。 · 例: `poc_driving_lateral`
+- `pure_pursuit_circle_offset` `入力なし → table` — 定常円(半径 R)を pure pursuit(後車軸の中心を基準)で追うときの定常の円の半径 ρ と横ずれ ρ − R(外へ正)。 · 例: `poc_driving_lateral`
+- `pure_pursuit_curvature` `any → table` — pure pursuit: 後車軸の中心(``pose`` = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。 · 例: `poc_driving_lateral`
+- `rear_axle_path` `any → table` — 前車軸の中心の折線の軌跡から、すべりなしで引かれる後車軸の中心の軌跡(区間ごとに厳密な追跡曲線)。 · 例: `poc_driving_lateral`
+- `stanley_steer` `any → table` — Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。 · 例: `gallery_drive_lateral_env`
+- `stanley_straight_decay` `入力なし → signal` — 直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。 · 例: `gallery_drive_lateral_env`
+- `steady_cornering` `入力なし → table` — 線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。 · 例: `gallery_drive_lateral_env`
+- `time_to_line_crossing` `入力なし → scalar` — TLC: 車(の基準点)が今の曲率のまま円(または直線)を走るとして、車線の境界に届くまでの時間 [s]。 · 例: `poc_driving_lateral`
+- `turn_maneuver_check` `table → table` — 左折・右折の通り方の判定(道交法 34 条 1・2 項 / 教則 5-7-2)。数値の幅はすべて仮定(``SOURCES``)。 · 例: `poc_driving_lateral`
+- `understeer_gradient` `入力なし → table` — アンダーステア勾配 K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)] と、特性速度 / 臨界速度。 · 例: `poc_driving_lateral`
+
+#### drive / lidar(4)
+- `lidar_scan` `mesh × table × matrix → table` — メッシュ世界 ``(V, F)`` に姿勢 ``T_sensor``(world ← sensor)の LiDAR を 1 スイープ撃つ。 · 例: `poc_driving_school`
+- `lidar_spec` `入力なし → table` — 回転式 LiDAR の仕様 dict を作る(既定は 32 beam・仰角 −25…+15°・方位 0.2° = 1800 列)。 · 例: `poc_driving_school`
+- `ray_box_ranges` `points × points → signal` — 原点 ``origin`` から方向 ``dirs (...,3)`` のレイが軸平行箱に入るまでの距離(slab 法)。 · 例: `gallery_drive_city_terrain`
+- `ray_plane_range` `points × points → signal` — 原点 ``origin`` から方向 ``dirs (...,3)`` のレイが平面 ``ax+by+cz+d=0`` に当たるまでの距離。 · 例: `poc_table_tennis_bounce`
+
+#### drive / long(13)
+- `hill_hold_brake_min` `scalar → scalar` — 坂で止まっていられる最小の制動 [m/s²] = max(0, |a_creep − g sin θ| − c_rr g cos θ)(静止摩擦のつり合い)。 · 例: `poc_driving_longitudinal`
+- `hill_start_command` `scalar × scalar × scalar × scalar → any` — 坂道発進の指令。t_release までは保持(クリープ + 制動 b_hold)。 · 例: `poc_driving_longitudinal`
+- `hill_start_rollback` `scalar × scalar × scalar → table` — 上り坂(θ > 0)で止まった車がブレーキを離し、τ 秒後に駆動 a_drive が入るときのずり下がり(空気抵抗なしの閉形式)。 · 例: `poc_driving_longitudinal`
+- `long_energy_residual` `table → any` — エネルギー収支の残差(単位質量あたり [J/kg]): (½ v² + g z) − (½ v₀² + g z₀ + W_drive − W_brake − W_rr − W_drag)。 · 例: `poc_driving_longitudinal`
+- `long_params` `入力なし → table` — 縦の運動のパラメータ(既定値はすべて **仮定**。出典はモジュールの docstring)。 · 例: `poc_driving_longitudinal`, `poc_driving_town`, `poc_driving_traffic`, `poc_driving_weather`
+- `long_simulate` `scalar × scalar × any → table` — 縦の運動方程式を RK4 で積分する(事象の時刻で刻みを切る。モジュールの docstring)。 · 例: `poc_driving_longitudinal`, `poc_driving_town`, `poc_driving_traffic`, `poc_driving_weather`
+- `plan_command` `table → any` — :func:`stop_line_plan` を ``command(t, s, v)`` にする。t0 より前は ``before``(None = 速さを保つ)、react / cruise は 速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持 (制動 ``hold_brake``(None = 上限)+ クリープの駆動)。 · 例: `poc_driving_longitudinal`, `poc_driving_weather`
+- `road_eval` `table × scalar → any` — 道の縦断を弧長 l で引く: (z, sin θ, cos θ)。``road`` = None(平ら)/ 数値(一定の勾配角 θ [rad]、z = l sin θ)/ :func:`road_profile` の dict。折れ点の上ではその先の区間の値(右連続)。 · 例: `poc_driving_longitudinal`
+- `road_profile` `table → table` — 水平距離と高さの折線 (x, z)(drivecourse.course_slope の ``profile`` と同じ形)を、**路面に沿った弧長 l** の縦断にする。 · 例: `poc_driving_longitudinal`
+- `skill_test_score` `table → table` — 技能試験の減点を集計する(警察庁 丙運発第 12 号 令和 4 年の減点細目)。 · 例: `gallery_drive_lateral_env`, `poc_driving_longitudinal`, `poc_driving_weather`
+- `skill_test_thresholds` `入力なし → table` — 採点に使う数字(通達には距離・時間の数字が無い。値ごとに出どころを付ける)。 · 例: `gallery_drive_lateral_env`
+- `stop_line_plan` `scalar × scalar → table` — 知覚した瞬間(時刻 t0、前端から停止線まで ``dist_to_line``、速さ v)から、停止線の ``margin`` 手前に止まる **2 段制動** の計画。 · 例: `poc_driving_longitudinal`, `poc_driving_weather`
+- `stopping_distance_grade` `scalar × scalar × scalar → scalar` — 停止距離の閉形式 = 空走 v ρ + 制動距離 (1/(2k)) ln(1 + k v²/A)、A = brake + g sin θ + c_rr g cos θ(k = 0 で v²/(2A))。 · 例: `poc_driving_longitudinal`, `poc_driving_weather`
+
+#### drive / motion_io(3)
+- `events_to_frames` `table → voxel` — イベントを時間で n_frames に等分し、画素ごとに極性を足したコマ (T, H, W) にする(ON = +1、OFF = −1)。 · 例: `gallery_drive_world_io`
+- `read_bvh` `入力なし → table` — BVH を読み、骨格と全コマの関節の世界座標を返す。 · 例: `gallery_drive_world_io`
+- `read_events` `入力なし → table` — イベントカメラのイベント列を読む(.txt / .csv / .npy / .npz)。 · 例: `gallery_drive_world_io`
+
+#### drive / ozaki(6)
+- `cross_covariance_reproducible` `points × points → matrix` — Kabsch / ICP の相互共分散 ``H = (P − P̄)ᵀ (Q − Q̄)``(3×3)を、点の順に依らないビットで返す。 · 例: `poc_reproducible_icp`
+- `fp64_emulation_probe` `入力なし → table` — cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。 · 例: `poc_reproducible_icp`
+- `kabsch_reproducible` `points × points → table` — ``|R p + t − q|`` を最小にする剛体の ``R``・``t``(Kabsch 1976)を、点の順に依らないビットで返す。 · 例: `poc_reproducible_icp`
+- `matmul_ozaki` `matrix × matrix → matrix` — FP64 の精度の行列積 ``A @ B`` を、正確な低精度の部分積から組む(Ozaki-I / Ozaki-II)。 · 例: `poc_reproducible_icp`
+- `matmul_reproducible` `matrix × matrix → matrix` — ビット単位で再現する FP64 の精度の ``A @ B``(保証できなければ ``ValueError`` = fail-closed)。 · 例: `poc_reproducible_icp`
+- `ozaki_error_bound` `matrix × matrix × scalar → matrix` — ``matmul_ozaki(A, B, n_slices)``(Ozaki-I)の打ち切り誤差の要素ごとの保証上界(行列)。 · 例: `poc_reproducible_icp`
+
+#### drive / pass(17)
+- `convex_mirror_image` `any → table` — 凸面鏡の虚像(近軸、配列可)。場面 S064・S130。 · 例: `poc_driving_pass`
+- `convex_mirror_misjudge` `any × any → table` — 凸面鏡に映った車の距離と速さを平面鏡のつもりで読んだときの見誤り(近軸の閉形式、配列可)。場面 S064・S130。 · 例: `poc_driving_pass`
+- `crest_safe_speed` `any → table` — 見えている距離の中で止まれる上限の速さ(停止距離の逆関数、閉形式、配列可)。場面 S065。 · 例: `poc_driving_pass`
+- `crest_sight_distance` `入力なし → table` — 凸形縦断曲線(放物線)を越える最小の視距(閉形式)。場面 S065・S081(上り坂の頂上付近)。 · 例: `poc_driving_pass`
+- `hill_meeting_yield` `入力なし → table` — 坂道の狭い所での行き違い: どちらが譲るか(教則 6-2-1(6)。**法の明文なし**)。場面 S128。 · 例: `gallery_drive_mirrors_crowds`
+- `lane_change_follower_decel` `any → table` — 進路を変えた先の後続車が、自車に min_gap より近づかないために要る一定の減速度(閉形式、配列可)。場面 S072。 · 例: `poc_driving_pass`
+- `lane_change_permitted` `table → table` — 進路変更をしてよいか(条文の判定)。場面 S067・S072・S073。 · 例: `poc_driving_pass`
+- `mirror_image_side` `points → table` — カーブミラーに映る点が、鏡の中心より左右どちらに見えるか・どちらへ動いて見えるか(平面鏡の閉形式)。場面 S064・S130。 · 例: `gallery_drive_mirrors_crowds`
+- `mirror_road_coverage` `入力なし → table` — カーブミラー(凸面の円弧 or 平面)に映る道の範囲(上から見た 2 次元、閉形式)。場面 S064・S130。 · 例: `poc_driving_pass`
+- `no_overtaking_zones` `table → table` — 道に沿った施設から、30 条の追越し(のための進路変更・側方通過)の禁止区間を作る。場面 S081・S009・S130。 · 例: `poc_driving_pass`
+- `overtake_permitted` `table → table` — 追越しを始めてよいか(条文と教則の判定)。場面 S077・S078・S079・S080・S081・S083。 · 例: `poc_driving_pass`
+- `overtake_requirement` `入力なし → table` — 前車を追い越すのに要る時間・道のりと、対向車が来ない境目の距離(閉形式)。場面 S079・S086・S145(28 条 4 項)。 · 例: `poc_driving_pass`
+- `overtake_return_gap` `入力なし → table` — 追い越した前車の **全体がルームミラーに映る** ときの車間(自車の後端と前車の前端の間)。場面 S086・S145。 · 例: `poc_driving_pass`
+- `overtaken_conduct_check` `table → table` — 追い越される側の義務(27 条)。場面 S085。 · 例: `poc_driving_pass`
+- `roundabout_entry_check` `table → table` — 環状交差点に入ってよいか(37 条の 2 第 1・2 項、35 条の 2)。場面 S102。 · 例: `poc_driving_pass`
+- `roundabout_signal_check` `signal × signal → table` — 環状交差点の中の合図を採点する(53 条 2・4 項、教則 5-5-1(2))。場面 S069。 · 例: `poc_driving_pass`
+- `roundabout_signal_point` `any → table` — 環状交差点を出るときの左の合図を始める位置(右回りに進んだ角)。場面 S069。 · 例: `poc_driving_pass`
+
+#### drive / pegfail(16)
+- `failure_confusion` `any × any → table` — 混同行列と正答率: 行 = 注入(真)のクラス、列 = 分類。``classes`` の外の名は ValueError(綴り壊し)。 返り: ``matrix``(n, n) int、``classes``、``accuracy``、``n``、``per_class_recall``(真の各クラスの再現率、無い行は nan)。 · 例: `poc_peg_failure_recovery`
+- `insertion_episode_summary` `table → table` — 1 走行の記録(:func:`pegfail_episode_run` の返り、または同じ鍵の dict)を要約: 注入クラス、最初に**検出**された失敗クラス、 検出の遅れ(真の失敗の始まり ``failing_onset_tick`` → 検出の刻、刻 = 10 ms)、回復の回数と成否、最終深さ・最大力。 · 例: `poc_peg_failure_recovery`
+- `insertion_failure_classify` `table → table` — 署名を表で引く(fail-closed): 当たる行が 1 つならそのクラスと回復、0 なら ``"unknown"``(推測しない)、2 つ以上なら表の 欠陥として ``ValueError``(:func:`insertion_failure_validate` が通した表では起きない)。 · 例: `poc_peg_failure_recovery`
+- `insertion_failure_presets` `table → table` — 注入する失敗の既定(各クラス → :func:`pegfail_episode_run` の引数)。数は Whitney の境目から: missed_hole = ε₀ 2.5 mm(> W + c_r = 1.2 mm)/ wedging = μ 0.8・θ₀ 4.5°(c/μ = 2.76°)/ jamming = θ₀ 3°(μ = 0.3 ではくさびに ならない 7.35° の下)で先端が 4 mm 入ってから搬送台の横目標を傾きの側へ +3.0 mm ずらして保持(手首ばね 600 N/m → F_x ≤ 1.8 N、 ヒンジは先端から 40 mm なので M/(rF_z) が平行四辺形の斜辺を越える。実測: −3.0 mm(反対側)では滑って入る、+1.6 mm では 止まるが比は内側 = unknown)/ blocked_hole = 深さ 6 mm に栓 / wrong_hole = 26 mm 横の囮の穴へ向かう / nominal = ε₀ 0.5 mm・θ₀ 1.5°。 · 例: `poc_peg_failure_recovery`
+- `insertion_failure_table` `入力なし → table` — 失敗分類表(データ): 各行 = {``cls``, ``when``(欄 → 許す値の集合、``"*"`` = 何でも), ``recovery``, ``basis``}。 · 例: `poc_peg_failure_recovery`
+- `insertion_failure_validate` `table → table` — 表を検証する(fail-closed): 欄の語彙・クラス名・回復名の綴り、**全ペアの排他**(2 行が同じ署名に当たり得ないか = 全欄で 許す集合が交わる行の組が無い)、**到達性**(unknown 以外の全クラスに ≥ 1 行)。 · 例: `poc_peg_failure_recovery`
+- `insertion_recovery_primitive` `any → table` — 回復プリミティブの表(クラス → 動作の記述)。``name`` は表の ``recovery`` の語。 · 例: `poc_peg_failure_recovery`
+- `insertion_signature` `table × table → table` — 連続の観測を表の語彙の署名に離散化する。 · 例: `poc_peg_failure_recovery`
+- `insertion_stall_detect` `signal → table` — 深さの時系列 [m] から停滞を検出する(各刻 i で depth[i] − depth[i − window] < min_advance なら stalled)。 · 例: `poc_peg_failure_recovery`
+- `jamming_force_check` `table × scalar × scalar × scalar → table` — 計測した先端の力の比 (F_x/F_z, M/(rF_z)) が Whitney の平行四辺形の内側か(pegsim.jamming_diagram を包み、どの辺に近いか・ どちらの斜辺が今の接触配置に効くかを足す)。 · 例: `poc_peg_failure_recovery`
+- `jamming_parallelogram_planar` `table × scalar → table` — かじりの平行四辺形を **二点接触の平面静力学から導く**(pegsim.jamming_diagram の頂点 = OCW p.34 の値と突き合わせる第 2 経路)。 · 例: `poc_peg_failure_recovery`
+- `pegfail_scene_mjcf` `table → any` — 失敗注入つきの場面の MJCF 文字列(mujoco 不要): pegsim.peg_scene_mjcf を ElementTree で読み、(i) 手首の力・トルクセンサ (site ``peg_top`` = 手首原点、子 body と親の相互作用力)、(ii) ``blocked_depth`` [m] なら穴の中にその深さを上面とする栓(円柱)、 (iii) ``decoy_xy`` なら囮の穴(壁・面取り・襟を複製して平行移動、名前に ``decoy_`` を付ける。四角い枠は囮と重なるので外す)。 **Raises** ``ValueError``: 栓の深さが穴の外、囮が目標穴と重なる(中心距離 < 2(R + W) + 1 mm)。 · 例: `poc_peg_failure_recovery`
+- `tip_force_ratios` `table × signal × signal × signal → table` — 先端の荷重 (F⃗, M⃗) を Whitney の比に: x = F⃗·e_x / F_z、y = M⃗·(e_x × ẑ) / (r F_z)、F_z = −F⃗·ẑ(押し込み正)。 F_z ≤ 1e-6 N なら比は None(割れない)。``e_x`` は水平の単位ベクトル(:func:`jamming_force_check` の規約)。 **Raises** ``ValueError``: e_x に水平成分が無い。 · 例: `poc_peg_failure_recovery`
+- `vision_boundary_flip` `table × signal × scalar → table` — 「どこで壊れるか」: 真のずれ ε に標準偏差 σ の計測雑音を足したとき、offset の欄(small/large、境目 W + c_r)が真と**反転する** 確率を各 ε で数える(numpy だけ)。境目から σ の何倍離れているか(``z``)と理論値 Φ(−|z|) も返す(雑音が正規なら一致する門)。 · 例: `poc_peg_failure_recovery`
+- `wedging_risk` `table × scalar → table` — 傾き θ [rad] のくさびの危険度: 境目 c/μ(OCW p.28)に対する比 θ/(c/μ) と、余裕 ``margin_deg`` を見た 3 段(``safe`` / ``near`` / ``over``)。pegsim.wedging_check を包み、``theta_limit_deg``・``headroom_deg`` = c/μ − θ を度で足す。 μ = 0 では境目が inf で常に safe。**Raises** ``ValueError``: θ < 0、margin_deg < 0。 · 例: `poc_peg_failure_recovery`
+- `wrist_load_from_deflection` `table × signal × signal × signal × signal × signal → table` — 手首ばねのたわみから、支持(+ 重力)がペグに加える荷重を先端まわりで(numpy だけ): F⃗ = −k_t q_slide − m g ẑ、 M⃗_tip = −k_r (q_hinge − rest) + (p_hinge − p_tip) × F⃗_spring + (p_com − p_tip) × F⃗_g。 · 例: `poc_peg_failure_recovery`
+
+#### drive / pegsim(18)
+- `camera_world_to_cv` `matrix → table` — MuJoCo のカメラ姿勢(``d.cam_xmat`` 3×3 = 世界でのカメラ軸、``d.cam_xpos``)を OpenCV / Fullseye の外部パラメータに: X_cv = R X_w + t、R = diag(1, −1, −1) Rwcᵀ、t = −R p(MuJoCo は −Z を見て +Y が上、OpenCV は +Z 前で +Y 下)。 · 例: `poc_pegsim_insertion`
+- `chamfer_capture` `table → table` — 初期の横ずれ ε₀ [m] を面取りが補正なしで吸収できるか: |ε₀| ≤ W + c_r(先端の縁が面取り面の上に着地する条件、導出)。 · 例: `poc_peg_failure_recovery`, `poc_pegsim_insertion`
+- `circle_fit_known_radius` `matrix → table` — 半径 r が既知の円を 2-D 点列 (row, col) に当てる(中心だけを Gauss-Newton で解く。部分弧でも安定)。 · 例: `poc_pegsim_insertion`
+- `contact_state_predict` `table → table` — 真のペグ姿勢(先端中心と軸の向き)から、接触点の数と場所を**幾何だけで**予測する(接触計算と独立な第 2 実装)。 · 例: `poc_pegsim_insertion`
+- `coverage_edge_points` `image2d × image2d × image2d → matrix` — 反エイリアスされた境界の明るさ(被覆率)から副画素の縁の点 (u, v) を返す: inside 側の画素 p と 2 画素先が outside の対で、 縁の位置 = p から (−0.5 + f_p + f_q) 画素(f = その画素の inside 側の被覆率 = (I − I_out) / (I_in − I_out))。 · 例: `gallery_drive_peg`
+- `cylinder_fit_known_radius` `points → table` — 半径 r が既知の円柱を 3-D 点群 (N, 3) に当てる: 軸上の点(軸に垂直な 2 自由度)と軸の向き(2 自由度)を Gauss-Newton で。 · 例: `gallery_drive_peg`
+- `hole_centre_from_rgbd` `rgb × image2d × matrix → table` — 手首 RGB-D 1 枚から穴(暗い円盤)の中心を 3-D(カメラ座標)で: 板の平面を depth で当て、反エイリアスの縁を平面に持ち上げ、 平面内で円を当てる(:func:`measure.fit_circle`)。 · 例: `gallery_drive_peg`
+- `insertion_grid_summary` `table → table` — 成功率の格子を集計する: 行 = {eps_mm, tilt_deg, correct, success} の列から、補正あり/なし × ε₀ × θ₀ の成功率の表と、 「補正なしで全部成功する最大の ε₀」「補正ありの成功数 / 総数」。 · 例: `gallery_drive_peg`
+- `jamming_diagram` `table → table` — かじり(jamming)の図(OCW p.34): 二点接触の深さ l [m] で、加える力の比 (F_x/F_z, M/(rF_z)) が進める領域の平行四辺形。 · 例: `poc_peg_failure_recovery`, `poc_pegsim_insertion`
+- `peg_measure_overlay` `rgb × matrix × matrix → rgb` — 計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。 右下に真値の重心まわり ``crop`` px 四方を ``zoom`` 倍にした拡大を貼る(副画素の一致を目で見るため)。 · 例: `poc_pegsim_insertion`
+- `peg_offset_from_rgbd` `rgb × image2d × matrix × matrix → table` — 手首 RGB-D 1 枚から、穴中心に対するペグ先端の相対ずれ (dx, dy) [m] を世界(搬送台)座標で —— 視覚サーボの観測量。 · 例: `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_pegsim_insertion`
+- `peg_params` `入力なし → table` — ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。 · 例: `gallery_drive_peg`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_pegsim_insertion`
+- `peg_scene_mjcf` `table → any` — 場面の MJCF 文字列(mujoco 不要): 穴 = 内接面が半径 R の箱 n_seg 個の環 + 45° の面取りの環 + 口の面の襟 + 四角い枠、 位置制御の搬送台(x, y, z のスライド)に 6 つのばね関節の柔らかい手首、その先にペグ(円柱)。手首カメラは搬送台の 60 mm 後ろ・ 20 mm 上から 45° 下向き、側面カメラは固定。 · 例: `poc_pegsim_insertion`
+- `peg_synthetic_rgbd` `table → table` — 真値つきの合成 RGB-D(numpy だけ、mujoco 不要): 板 z = 0(灰)、穴の円盤(半径 R + W、黒、4 mm 下の面)、ペグ(半径 r の円柱 + 先端の円盤、橙)を手首カメラ(45° 下向き、MJCF と同じ向き)から解析的にレイキャストする。 · 例: `gallery_drive_peg`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_pegsim_insertion`
+- `peg_tip_from_rgbd` `rgb × image2d × matrix → table` — 手首 RGB-D 1 枚からペグ先端の中心を 3-D(カメラ座標)で: ペグの画素 → depth の点群 → PCA の軸 → 既知半径の円柱当てはめ、 先端の軸方向は影の端(副画素、被覆率)を、投影した縁の円の端と一致させる模型で決める。 · 例: `gallery_drive_peg`
+- `two_point_depth` `table → scalar` — 傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。 · 例: `gallery_drive_peg`, `poc_peg_insertion_tactile`, `poc_pegsim_insertion`
+- `wedging_check` `table → table` — 二点接触が始まる時点の傾き θ [rad] で、くさび(wedging)が起こりうるか(OCW p.28: θ > c/μ)。 · 例: `poc_peg_insertion_tactile`, `poc_pegsim_insertion`
+- `whitney_clearance` `table → table` — Whitney の無次元 clearance と、そこから決まる境目: c = (D − d)/D、c_r = R − r、θ_m = √(2c)、面取りの許容ずれ、くさびの角。 · 例: `poc_peg_failure_recovery`, `poc_pegsim_insertion`
+
+#### drive / pegsym(15)
+- `pegsym_scene_mjcf` `matrix × matrix → any` — 多角形ペグの場面の MJCF 文字列(mujoco 不要): 穴 = 辺ごとに壁の箱(最狭部より下)・45° の面取りの板・明るい襟(口の面 z = 0)、 ペグ = 凸メッシュの角柱(断面 ``peg_vertices``、ペグ系、軸が原点)。搬送台は x・y・z のスライドと yaw のヒンジ(位置制御)、 その先に 6 自由度のばねの手首(傾き ``k_rot``・ねじり ``k_yaw`` [N m/rad] は別。把持はねじりに柔らかい)。カメラは 手首(搬送台の 30 mm 横、真下向き)と、穴から ``station`` [m] の上向きカメラ(床の面、ペグの端面を下から見る)、 図のための斜め上の固定カメラ ``side``。 箱は自分の辺の外側の半平面にだけあるので、角を越えて伸ばしても穴の中に入らない(凸の穴ならどの形でも同じ作り方)。 **Raises** ValueError: 多角形が凸でない、面取り < 0、穴の深さ ≤ 面取り、摩擦 < 0、剛性 ≤ 0。 · 例: `poc_peg_symmetry_search`
+- `plane_topview` `image2d × matrix × matrix × signal → image2d` — 斜めや下からの画像を、世界の平面 z = ``z`` を真上から見た図に打ち直す(ホモグラフィ = 各格子点を投影して双線形で引く)。 カメラは世界 → OpenCV カメラの ``R``・``t``(x_c = R X + t)、内部 ``K``(画素中心が整数の規約)。格子は ``centre`` = (x, y) を中心に 一辺 ``extent`` [m]、画素 ``res`` [m]。列 = +x、行 = −y(北が上)。下から見た画像(鏡像)もこの図では同じ向きになる。カメラの後ろ・ 画像の外の格子点は ``fill``。返り = (S, S) の濃淡(カラーは輝度にする)。 **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。 · 例: `poc_peg_symmetry_search`
+- `polygon_coverage_image` `matrix → image2d` — 凸多角形(画素座標 (col, row) の頂点列)の被覆率の像 0..1((size, width)、反エイリアスは ``ss`` × ``ss`` の副標本)。真値つきの 合成の部品。**Raises** ValueError: 凸でない、size < 8、ss < 1。 · 例: `poc_peg_symmetry_search`
+- `polygon_fit_check` `matrix × matrix → table` — 点群(ペグの頂点、または傾けたペグの射影した頂点)を**平行移動だけで**凸多角形の穴に入れられるか —— 余裕 m を最大にする線形計画 max m s.t. n_j·(p + t) ≤ h_j − m(全点・全辺)を、3 本の制約が等号になる頂点の列挙で厳密に解く(辺は高々十数本、組はまとめて解く)。 返り ``fit``(m ≥ 0)、``margin`` [m] (負なら最小の食い込み)、``t``(最適な平行移動 (2,))、``active``(等号の辺の番号)。 **Raises** ValueError: 点群が (N ≥ 1, 2) でない・有限でない、穴が凸多角形でない、穴の法線が全方向を囲まない(有界でない)。 · 例: `poc_peg_symmetry_search`
+- `polygon_offset` `matrix × scalar → table` — 凸多角形の各辺を外へ ``clearance`` [m] ずらした多角形(角は尖ったまま = 穴の図面の作り方)。正多角形なら相似拡大で、向きと 対称は変わらない。返り ``vertices``・``normals``・``offsets``(n·x ≤ h)。**Raises** ValueError: 凸でない、clearance < 0 か有限でない、 ずらすと辺が消える(凹みを持つ角は無いので、ここでは起きない形だけを通す)。 · 例: `poc_peg_symmetry_search`
+- `polygon_peg` `scalar → table` — ペグの断面(反時計回りの頂点列): 正 n 角形(辺心距離 ``apothem`` [m]、面 0 の法線が ``yaw`` [rad])。``cut`` > 0 なら頂点 0 (面 0 と面 1 の間)を、その頂点の向きを法線とする直線で外接円から ``cut`` [m] 内側で落とす —— キー付き(対称は n = 1)。 返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``。 **Raises** ValueError: n < 3、apothem ≤ 0、cut < 0 か外接円と内接円の差以上(辺が消える)。 · 例: `poc_peg_symmetry_search`
+- `polygon_two_point_depth` `matrix × matrix × scalar → table` — 傾けた多角形ペグの二点接触の深さ l₂ [m] (最狭部 z = 0 から先端の中心まで)を厳密に: 深さ l で z ≤ 0 にあるペグの部分は、先端面の 頂点と側面の稜線が z = 0 を切る点の凸包。穴は鉛直な角柱なので、この頂点の水平の射影が平行移動で穴に入る(:func:`polygon_fit_check`) 間は入り、l を深くすると入らなくなる —— その境を二分法で。``tilt_dir`` = 傾ける水平の向き [rad] (世界系、ペグの断面と同じ系)。 比べる円の式(Whitney、pegsim の 3-D 円柱の厳密式 (2R − r(cos θ + sec θ))/tan θ)を、内接円(r = A、R = A + δ)と外接円 (r = A/cos(π/n)、R = (A + δ)/cos(π/n))で返す(``circle_in``・``circle_out``)。正方形を面に平行な軸で傾けた時の小角の極限は Goli ほか 2024 の式 (2.28) φ = (v − v′)/h、すなわち l₂ tan θ → 2δ(``goli_small_angle`` = 2δ/tan θ)。 奇数の n(三角形)は面の向かいが頂点なので、どの向きでも内接円の式より深い。偶数の n は面の法線の向きで内接円の式に一致する (正方形で 1e-11 m)。内接円の側に 0.03 % まで出る組がある(傾き 6°、面から 15°)。 返り ``l2``・``circle_in``・``circle_out``・``goli_small_angle``(δ は辺心距離の差の平均、n は頂点数)。 **Raises** ValueError: θ ≤ 0 か ≥ 30°、まっすぐでも入らない、depth_max まで二点接触しない。 · 例: `poc_peg_symmetry_search`
+- `polygon_yaw_read` `image2d → table` — 上から見た図(:func:`plane_topview`、列 = +x・行 = −y)の物体の輪郭(副画素の等値線、:mod:`pegtactile` と同じ ``threshold_sub_pix``) の複素フーリエ係数から、向きを**周期 2π/n を法として**読む。n 回対称なら非零の係数は k ≡ 1 (mod n) だけで、 arg(c₁₋ₙ c₁ⁿ⁻¹)/n は始点に依らない(:func:`pegtactile.symmetry_order_contour`)。``n`` を渡すと検出した n でなくその n の位相を使う (図面で n が分かっている時。実画像の縁の揺れで余分な係数が有意になっても位相は読める)。 ``polarity`` = 物体が暗い("dark"、穴)か明るい("bright"、ペグの端面)。濃淡は 2 % と 98 % の分位で 0..1 に伸ばしてから 0.5 の等値線。 返り ``n_detected``・``n_used``・``yaw``(世界の向き、像の行が −y なので符号を戻す、周期 2π/n_used の代表 [0, P))・``centroid_px`` (row, col)・``amps``。n_used = 0(円)なら yaw = nan。 **Raises** ValueError: polarity が不明、像が平ら、輪郭が無い、n < 0。 · 例: `poc_peg_symmetry_search`
+- `relative_yaw_from_images` `image2d × image2d × scalar → table` — ペグ(上向きカメラ → 先端面の平面に打ち直した図)と穴(手首カメラ → 口の平面の図)の向きの差を、n 回対称の商で: Δ = symmetry_fold(yaw_peg − yaw_hole, n)。どちらも :func:`polygon_yaw_read` で読み、形ごとの位相の定数(頂点の向きと面の向きの差)は 同じ形どうしの差で消える(穴はペグを外へずらした相似形なので)。キー付き(n = 1)は相似でないので、ずれが小さく残る(門で測る)。 返り ``delta``(ペグを −delta 回せば揃う)、``peg``・``hole``(読み)、``n``。 **Raises** ValueError: n < 1、読みが失敗した(:func:`polygon_yaw_read` の例外)。 · 例: `poc_peg_symmetry_search`
+- `rotation_search_plan` `scalar × scalar → table` — 回転の探索の候補(ペグに加える yaw の補正): 1 周期 P = 2π/n_sym を M = ⌈P/(2 phi_cap)⌉ 等分した刻み s = P/M(≤ 2 phi_cap なので 捕まえる窓が隙間なく覆う)。``order`` = "alternate"(推定値から 0, +s, −s, +2s, …)か "sweep"(0, s, 2s, …)。n_sym = 0(円)は 1 候補。 返り ``angles``(M,)、``step``、``period``、``M``。 **Raises** ValueError: n_sym < 0、phi_cap ≤ 0、order が不明。 · 例: `poc_peg_symmetry_search`
+- `rotation_window` `scalar × scalar × scalar → table` — ペグが穴(面取りがあれば口)に入る回転の窓。正 n 角形の閉形式(導出): 中心を揃えた時、頂点は面の法線から π/n ∓ φ の向きにあり、 最も外へ出る頂点の法線方向の長さ a cos(π/n − |φ|) が A + δ(+ W)以下なら入る: φ = π/n − arccos(x)、x = (A + δ + W) cos(π/n)/A(x ≥ 1 なら窓は半周期 π/n いっぱい)。 arccos は 1 の近くで丸めの床があるので atan2(√(1 − x²), x) で書く。``peg_vertices``・``hole_vertices`` を渡すと、線形計画 (:func:`polygon_fit_check`、平行移動も自由)の二分法で正・負の向きの窓も測る(第 2 実装。キー付きはこちらだけ)。 返り ``phi_fit``(口でなく最狭部)・``phi_cap``(面取りの口)・``period`` = 2π/n、``M`` = ⌈period/(2 phi_cap)⌉、 ``lp``(``plus``/``minus``: 頂点を渡した時、口に入る窓の両端 = 0 を含む連結な区間。走査は半周期を 360 刻み、端は二分法)。 · 例: `poc_peg_symmetry_search`
+- `search_expected_tries` `scalar × scalar → table` — 回転の探索の期待試行回数(未知の向きの誤差 e が 1 周期に一様のとき、厳密)。候補 c_k(:func:`rotation_search_plan`)で k 回目に 入るのは e が [c_k − φ, c_k + φ] (周期 P)に初めて入った時なので E = Σ_k (1 − |∪_{i<k} I_i|/P)。計算は区間の端で円周を割り、 小区間ごとに最初に覆う候補の番号を数える(同じ値、O(M²) のベクトル演算)。刻みが ちょうど 2φ なら E = (M + 1)/2(``closed``)。対称を知らない探索(周期 2π、M₁ = ⌈π/φ⌉)との比 ``ratio_vs_blind`` → 1/n。 ``estimate_sigma`` [rad] を渡すと、e が推定値のまわりに標準偏差 σ の正規(周期に巻いたもの)で、"alternate" の順の期待回数も返す (``expected_with_estimate``、数値積分 4,096 点)。返り ``expected``・``closed``・``M``・``blind_expected``・``ratio_vs_blind``。 **Raises** ValueError: n_sym < 1、phi_cap ≤ 0、sigma ≤ 0。 · 例: `poc_peg_symmetry_search`
+- `spiral_expected_tries` `matrix × scalar × scalar → table` — 横ずれが半径 ``rho`` の円板に一様のとき、点列 ``points`` を順に試して初めて(距離 ≤ ``capture``)捕まえるまでの期待試行回数。 ``measured`` = 円板内の格子(grid × grid、円の外は捨てる)の平均。``closed`` = 掃いた面積の近似: k 点で面積 k·p·s を掃くので、半径 r に 達するのは k = πr²/(ps)、r が円板に一様なら E = πρ²/(2ps) + 1/2(p・s は点列から推定: s = 隣の点の距離の中央値、p = 外周の点の半径の 巻きあたりの増分)。どの点でも捕まらない格子点があれば ``uncovered`` > 0(覆いの穴)。 **Raises** ValueError: 点が (N ≥ 3, 2) でない、capture・rho ≤ 0、grid < 11。 · 例: `poc_peg_symmetry_search`
+- `spiral_search_points` `scalar × scalar × scalar → table` — 横ずれの探索点: Archimedes のらせん r = p φ/(2π) を弧長 ``step`` [m] ごとに(中心から)、半径 ``r_max`` まで。隣の巻きとの間隔 = ``pitch``。面取りが捕まえる半径を c とすると、p ≤ 2c かつ step ≤ 2c で抜けなく覆う(隣の巻きの間の点の最悪の距離 √((p/2)² + (s/2)²) ≤ c が十分条件、``worst_gap`` で返す)。返り ``points``(N, 2)、``worst_gap``、``n``。 **Raises** ValueError: pitch・step・r_max ≤ 0、点が 200,000 を超える。 · 例: `poc_peg_symmetry_search`
+- `symmetry_fold` `scalar × scalar → scalar` — 角を n 回対称の商 SO(2)/C_n の代表 (−π/n, π/n] に畳む(n = 1 は (−π, π]、n = 0 = 円は 0)。群の恒等式 symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) が門。**Raises** ValueError: n < 0、角が有限でない。 · 例: `poc_peg_symmetry_search`
+
+#### drive / pegtactile(19)
+- `contact_candidates` `table × signal × signal → table` — 単一接触の候補点(世界系)と、その点が**幾何的に触れうるか**の印。``tip_rim`` = 先端の縁の円(半径 r、軸に垂直)で、縁の点が 壁(最狭部より深い: 半径 ≥ R − tol)か面取り面(半径 ≥ R + (W − 深さ) − tol)に届くものだけ有効。``mouth`` = 穴の最狭部の縁の円 (半径 R、z = −W)で、胴の表面が通る(軸の直線からの距離が r ± tol、先端が最狭部より深い)ものだけ有効。 候補を絞らないと、二点接触の合力の作用線が「壁に触れていない側の先端の縁」を通る偶然を一点と読む(試作のくさびで実測)。 ``tol`` は MuJoCo の柔らかい接触のめり込みと 36 角形の壁(頂点で +0.02 mm)ぶん。返り ``tip_rim``・``rim_ok``・``mouth``・ ``mouth_ok``・``depth``。**Raises** ValueError: tip・axis が有限の 3 成分でない、n_az < 8、tol < 0。 · 例: `gallery_drive_peg`
+- `contact_state_from_wrench` `table × signal × signal × signal × signal × signal → table` — 接触レンチ(ペグが穴から受ける F と把持点 g まわりの M、世界系)→ 接触状態(学習なしの規則)。 · 例: `poc_peg_insertion_tactile`
+- `equivariance_check` `any × any × signal × scalar × signal → table` — 同変性の門の部品: 形を角 θ だけ回して描き(``render(θ)`` → 画像)、知覚 op(``op(画像)`` → (row, col, 向き))の答えが群の作用 どおりに変わるか。期待 = 位置は ``centre`` = (row, col) まわりに θ 回る、向きは θ 進む(mod 2π/n、n = 0 なら向きは比べない)。 返り ``pos_err_px``(最大)、``ang_err_deg``(最大、mod 2π/n の最短距離、比べなければ nan)、``rows``(角ごと)。 **Raises** ValueError: render・op が呼べない、角が 1 つも無い・有限でない、n < 0、centre が 2 成分でない。 · 例: `poc_peg_insertion_tactile`
+- `friction_from_single_contact` `signal × text × any × signal → table` — 一点接触で滑っている間の接触力から壁の摩擦係数(滑りの間だけ Coulomb の限界に張り付く、固着中は下限)。 先端の縁が壁(``where="tip"``)なら法線 = 水平(穴の中心へ)、摩擦 = 鉛直 → μ̂ = |F_z|/|F_水平|。胴が最狭部の縁(``"mouth"``)なら 法線 = 軸に垂直、摩擦 = 軸方向 → μ̂ = |F·a|/|F_⊥|。``chamfer`` なら 45° の面取り面の上(法線 = (−r̂, 1)/√2、``c`` = 接触点が要る)。 ``"none"`` は None。返り ``mu``(None 可)。**Raises** ValueError: where が語彙の外、F・axis が有限の 3 成分でない、面取りで c が無い。 · 例: `poc_peg_insertion_tactile`
+- `pad_context` `table → table` — 膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。 · 例: `gallery_drive_soil_tactile`, `poc_knife_tactile_toughness`, `poc_peg_insertion_tactile`, `poc_tactile_dipole_torque`
+- `pad_loads_to_peg_wrench` `scalar × signal × scalar × signal × table → table` — :func:`peg_wrench_to_pad_loads` の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドが ペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り ``F``・``M``(3,)、``grip`` = (N_R + N_L)/2。 **Raises** ValueError: q が有限の 2 成分でない、P か torsion が有限でない。 · 例: `poc_peg_insertion_tactile`
+- `pad_marker_displacement` `scalar × signal × table → table` — 膜の表面変位をマーカー位置で(閉形式 + Cerruti 畳み込み): 向き φ のせん断 |q| は x 向きの Mindlin 場を φ だけ回したもの u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)、法線荷重の半径変位 ūr(Johnson 式 3.41b)とねじりの場を足す。 ねじりの場は ``torsion_model="partial_slip"``(既定、2026-10-06 から)なら部分滑り(:func:`cuttouch.torsion_partial_slip` の数値解、 縁の環から滑る)、``"no_slip"`` なら 0.4.0 までの無滑りの場(:func:`tactorque.torsion_stick_field`)。ねじりが全滑りを超えるときは、 膜はそれ以上のねじりを運べないので表の最後の行(固着円が環 1 本)の場で描き、``torsion_slipping`` の印を立てる。``pts`` はマーカー中心 (px、省略時は ``ctx`` の基準位置)。返り ``u_m``(N, 2)[m]、``hz``・``mp``(Hertz と Mindlin の表)、``phi``・``Q``・``torsion``・ ``torsion_model``・``torsion_ratio``・``torsion_slipping``。全滑り(|q| ≥ μP)は ``mp['slipping']`` の印(場は c = 0)。 **Raises** ValueError: P ≤ 0(パッドが離れている)、q が有限の 2 成分でない、torsion_model の綴り違い。 · 例: `gallery_drive_soil_tactile`, `poc_knife_tactile_toughness`
+- `pad_params` `入力なし → table` — 指先パッドの表: ドームの半径 R、ゲルの E・ν、パッドとペグの摩擦 μ、把持力 G₀ [N]、指の半間隔 w(ペグの平取りの半幅)、 把持点のペグ上端からの距離、膜カメラの視野と画素数、マーカー(ピッチ・半径 [px]・濃さ)、ペグの質量と重心(pegfail の既定と同じ)。 · 例: `gallery_drive_soil_tactile`, `poc_knife_tactile_toughness`, `poc_peg_insertion_tactile`, `poc_tactile_dipole_torque`
+- `pad_shear_asymmetry` `signal × signal → table` — 2 パッドの膜のせん断を共通成分(= 軸方向の力、F_z/2 の向き)と差分(= 偶力、M/(2w))に分ける: 共通 = (q_R + q_L)/2、 差分 = (q_R − q_L)/2。``ratio_v`` = |差分_v| / (|共通_v| + |差分_v|)(0 = 同じ向き、1 = 純粋な偶力)、``opposite_v`` = v 成分の 符号が左右で逆か。**Raises** ValueError: 有限の 2 成分でない。 · 例: `gallery_drive_peg`
+- `pad_tactile_frame` `scalar × signal × table → table` — パッド 1 枚の合成像: Hertz 押し込みの陰影(:func:`tacsim.membrane_render_rgb`)+ 変位で中心を移したマーカー (:func:`tacslip.membrane_render_markers`、補間で歪めない)。``noise`` は画素の正規雑音の σ。 返り ``rgb``(マーカー入り、(n, n, 3))、``shading``(マーカー無し = 力の読み取り用、実機はマーカーの除去が要る)、``pts`` (マーカー中心の真値 [px])、``truth``(P・q・φ・Q・c/a・滑りの印・a・ねじり・ねじりの模型と全滑りの印)。ねじりの場の模型は ``torsion_model``(既定 ``"partial_slip"``、:func:`pad_marker_displacement`)。**Raises** ValueError: P ≤ 0、noise < 0、綴り違い。 · 例: `poc_peg_insertion_tactile`
+- `pad_tactile_read` `table × table → table` — パッド 1 枚の像 → (P̂, q̂, ねじり)。 · 例: `poc_knife_tactile_toughness`, `poc_peg_insertion_tactile`
+- `peg_wrench_to_pad_loads` `signal × signal × table → table` — 2 つのパッドがペグに加えるレンチ(グリッパ系、把持点まわり)→ 各パッドの (法線力 P、膜が受けるせん断 q = (q_u, q_v))。 · 例: `poc_knife_tactile_toughness`, `poc_peg_insertion_tactile`
+- `stall_verdict` `table × scalar × any → table` — 二点接触で止まった時の Whitney の判定(OCW p.28): θ > c/μ̂ ならくさび(力を抜いても抜けない側)、以下ならかじり(力の向きで 解ける)。c = (R − r)/R。μ̂ は同じ挿入の滑りの区間で触覚から読んだ値(:func:`friction_from_single_contact`)、None か ≤ 0 なら 推測せず ``"unknown"``。返り ``verdict``("wedging" / "jamming" / "unknown")・``theta_limit``。**Raises** ValueError: θ が有限でないか負。 · 例: `poc_peg_insertion_tactile`
+- `symmetric_peg_shape` `text → image2d` — ペグの断面(真値つきの合成、反エイリアスの被覆率 0..1、(size, size)): 円・正三角形・正方形・正六角形(外接円半径 ``radius`` [px])・キー付きの円(D カット: 円の一部を弦で切る、n = 1)。``angle`` [rad] だけ**形を回して描く**(画像を回すと補間が入る)。 ``centre`` = (col, row)、``ss`` = 画素あたりの副標本の 1 辺。**Raises** ValueError: 未知の形、size < 16、radius ≤ 0、ss < 1。 · 例: `poc_peg_insertion_tactile`
+- `symmetry_order_contour` `matrix → table` — 閉輪郭 (N, 2) = (row, col) の複素フーリエ係数(:func:`fourierdesc.contour_fourier_complex`、弧長で打ち直し、±K 次)から n 回対称の 次数を読む: n 回対称なら非零の係数は k ≡ 1 (mod n) だけ。有意(|c_k| > rel·|c_1|、k ≠ 0, 1)な k の (k − 1) の最大公約数が n。 有意な k が無ければ円(``n`` = 0 = 連続)。向き α̂ = arg(c₁₋ₙ c₁ⁿ⁻¹)/n(始点の取り方に依らない不変量、mod 2π/n)。n = 1 は c₂ c₁⁻² から α̂ = −arg(·) —— k = −1(振幅は 3 倍)は形ごとの定数位相が違い、枝(α / α + π)を参照なしに決められない(試作で 180° 取り違えた)。返り ``n``・``angle``(rad、n = 0 は nan)・``amps``(k → |c_k|/|c_1|)・``sig``・``centroid``(c₀ = (row, col))。 2 次モーメントの向きは n ≥ 3 で慣性が等方になり使えない(PoC の罠の門)。**Raises** ValueError: 輪郭が (N ≥ 8, 2) でない、K < 6。 · 例: `poc_peg_insertion_tactile`
+- `two_point_forces` `table × signal × signal × signal × signal × signal → table` — 二点接触(Whitney)のレンチを 2 つの接触力と壁の摩擦 μ に分解する(平面、両点が下へ滑る Coulomb の仮定)。 · 例: `poc_peg_insertion_tactile`
+- `whitney_wrench` `table × text × scalar × scalar × scalar × scalar → table` — 閉形式の接触レンチ(Whitney の準静的な平面、真値つきの合成): 傾き θ(軸の上端が +x へ)・先端深さ ``depth``(口の面から)の ペグに、``state`` = ``"one_point"``(先端の縁が −x の壁)/ ``"mouth"``(胴が +x の最狭部の縁)/ ``"two_point"``(両方)で、法線力 ``fn_tip``・``fn_mouth`` と下へ滑る Coulomb 摩擦 μ を与える。二点は depth = W + l₂(θ) で胴も縁に触れる(閉形式)。``g`` は把持点 (省略時は先端から軸に沿って ペグ長 − 8 mm)。返り ``F``・``M_g``(把持点まわり)・``g``・``tip``・``axis``・``points``。 **Raises** ValueError: state が語彙の外、θ が (0, π/2) の外、depth・μ・法線力が有限でないか負。 · 例: `gallery_drive_peg`, `poc_peg_insertion_tactile`
+- `wrist_deflection_from_rgbd` `rgb × image2d × matrix × matrix × signal × signal × scalar → table` — 手首 RGB-D 1 枚から手首の並進たわみと傾き: ペグの画素(pegsim の色分類)→ depth の点群 → PCA の軸 → 既知半径の円柱当てはめ (:func:`pegsim.cylinder_fit_known_radius`)→ 世界系の軸の直線 → 搬送台の系(エンコーダで既知の位置 ``carriage_pos`` を引く)で ヒンジの高さ z = ``hinge_z`` を通る点 = (Δx, Δy)。軸の向きから傾き (θ_x, θ_y) を atan2 で。円柱の軸方向の位置は見えないので Δz は出さない(正直に: 手首の z 圧縮は k̂ と触覚の F_z で補う、:func:`pegtactile_process_episode`)。 返り ``dx``・``dy``・``axis``・``tilt_x``・``tilt_y``・``rms_cyl``・``n_pts``。 **Raises** ValueError: 形が合わない、ペグの画素が 50 未満(見えない)。 · 例: `gallery_drive_peg`
+- `wrist_stiffness_fit` `signal × signal → table` — 手首のたわみ Δx(手首カメラ)と、ペグが受ける接触力の同じ成分 F から k = Σ FΔx / ΣΔx²(原点を通る最小二乗、準静的な釣り合い F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx)。回転(角と モーメント)にも同じ式で使える。返り ``k``・``r2``・``rms_N``・``n``・``span``。 **Raises** ValueError: 点が 3 未満、形が違う、有限でない、Δx の幅が ``min_span`` 未満(悪条件: 動いていないばねの k は決まらない)。 · 例: `poc_peg_insertion_tactile`
+
+#### drive / polish(13)
+- `band_width_profile` `image2d × scalar × scalar → table` — 直線の一筆(``along`` の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を 隣の画素との線形補間で求め、その差 × res。返り ``widths``(線ごと、読めない線は NaN)、``centres``(帯の中心の位置 [m]、 地図の座標)、``valid``、``median``。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。 **Raises** ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。 · 例: `poc_polish_wipe_measure`
+- `coat_image` `image2d × scalar → image2d` — 除去の深さの地図 → 汚れ(膜)の残った板を真上から撮った画像 [0, 1]。残った厚さ t = clip(h0 − h, 0, h0)、明るさ I = bare · exp(−τ t/h0)(Beer–Lambert、τ = ``optical_depth`` は膜全体の光学的厚さ)+ 正規の雑音 ``noise``。 **Raises** ValueError: 地図が 2-D でない・非有限、coat ≤ 0、τ ≤ 0、bare が (0, 1] の外、noise < 0。 · 例: `poc_polish_wipe_measure`
+- `coat_thickness_from_image` `image2d × scalar → image2d` — :func:`coat_image` の逆: t = h0 ln(bare/I)/τ を [0, h0] に切る。**Raises** ValueError: 画像の検査、数の検査。 · 例: `poc_polish_wipe_measure`
+- `polish_scene_mjcf` `scalar → any` — 平らな板(z = 0 の平面)の上で、円柱の工具(半径 ``radius``、厚さ ``thickness``、質量 ``mass``)を x・y・z の 3 本の直動の 関節で動かす MJCF。z は位置サーボ(ゲイン ``k_z`` [N/m] = 手首の押し付けのばね)、x・y は硬いサーボ ``k_xy``。重力あり。 ばねの閉形式: 工具の底が板に載っている時の法線力 N = m g + k_z (q_surface − q_cmd)(q_surface = 底が z = 0 に来る関節値)。 接触は硬めに(solref の時定数 = 4 × timestep、solimp 0.99)して、めり込みを ばねの縮みより十分小さくする(既定の柔らかい接触では 質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は角錐(pyramidal)。 楕円の錐 + impratio = 10 では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。 **Raises** ValueError: 数の検査。 · 例: `poc_polish_wipe_measure`
+- `preston_coefficient_fit` `image2d × image2d → table` — 深さの地図 = k_p × 滞在の地図(``dwell_map`` = k_p = 1 で積分した ∫ p |v_rel| dt [Pa·m])を最小二乗で解き、Preston 係数を 返す。原点を通す当てはめ ``k_p`` と、切片つき ``k_p_affine`` / ``offset``、``r2``、``rms_residual``、``n``。``mask`` が無ければ 滞在が最大の 5 % を超える画素。**Raises** ValueError: 形が違う・非有限、画素が 3 未満、滞在が 0。 · 例: `poc_polish_wipe_measure`
+- `preston_pressure_kernel` `scalar × scalar × scalar → image2d` — 工具の下の圧力 [Pa] を画素中心で標本化した窓(奇数 × 奇数、中心の画素が工具の中心)。平板は円の内側で一様 F/(πa²)、 Hertz は p0 √(1 − r²/a²)(``radius`` = 球の半径 R、``estar`` が要る)。``normalize=True`` なら Σ p · res² = F に合わせる (画素で数えた円の面積の誤差を消す。FFT の畳み込みで体積を保つため)。 **Raises** ValueError: 力・半径・画素が正でない、kind が不明、Hertz で estar が無い、接触半径が 1 画素より小さい。 · 例: `poc_polish_wipe_measure`
+- `preston_removal_map` `matrix × scalar × scalar × scalar → image2d` — 軌跡と押す力から、Preston の式 dh/dt = k_p p |v_rel| を積分した除去の深さの地図 [m] (形 ``shape``、画素 ``res``)。 · 例: `poc_polish_wipe_measure`
+- `preston_track_profile` `signal × scalar × scalar × scalar → signal` — 長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、``y`` と同じ形)。閉形式: 平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(``spin`` = ω、``speed`` = v が要る) (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。 **Raises** ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。 · 例: `poc_polish_wipe_measure`
+- `raster_wipe_area` `scalar × scalar × scalar × scalar → table` — 半径 ``radius`` の工具で、長さ ``length`` の平行な一筆(+x へ、間隔 ``pitch`` で +y へ並べ、一筆ごとに持ち上げて戻る)を ``n_strokes`` 本引いた時、工具が触れた面積の閉形式: (2a + (N − 1) min(s, 2a)) L + N π a² − (N − 1) lens(s)。 返り ``area``、``rect_area``、``disc_union_area``、``lens``、``overlap_saving``(N 本の和 − 面積)、``path``((M, 2)、NaN で 区切った軌跡、``step`` があれば各一筆をその刻みの点列に)。**Raises** ValueError: 数の検査、n_strokes < 1、面積が溢れる、 一筆の点が 1e6 を超える。 · 例: `poc_polish_wipe_measure`
+- `removal_depth_from_heights` `image2d × image2d → image2d` — 磨く前と後の高さ図(同じ格子に置かれていること)から削れた深さ [高さの単位、正 = 削れた]。後の図は載せ直しで傾きと高さが 変わるので、差 z_before − z_after から「触れていない所」(``ref_mask``、無ければ外周の ``frame`` の割合の枠)で最小二乗の平面を 引く。**Raises** ValueError: 形が違う・2-D でない・非有限、参照の画素が 3 未満、frame が (0, 0.5) の外。 · 例: `poc_polish_wipe_measure`
+- `winkler_polish_run` `image2d × scalar × scalar × scalar × scalar × scalar → table` — 弾性床(Winkler)のパッドを平均圧 ``pressure`` で押し、相対速度 ``speed`` で磨いた時の表面の高さ図 ``z`` の時間発展。 各刻みでパッドの面の高さ z_t を Σ k_w max(0, z − z_t) = N p̄ から解き(当たっている所だけが圧を受ける)、Preston の式で z ← z − k_p v k_w max(0, z − z_t) Δt(陽解法、c Δt ≤ 0.01、c = k_p k_w v)。 返り ``z``(最後)、``t``・``rms``(平均からのずれの rms、形の除去なし)・``mean``・``contact``(当たっている割合)を ``n_record`` 点、``rate_full_contact`` = c(全面が当たる間 rms は exp(−c t) で減る —— 導出、この関数は使わない)、``dt``、 ``steps``。**Raises** ValueError: z の検査、数の検査、c Δt > 0.01。 · 例: `poc_polish_wipe_measure`
+- `wipe_band_width` `scalar × scalar × scalar × scalar → table` — 厚さ ``coat`` の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り ``width``(0 なら拭けない)、 ``half_width``、``force_min``(帯ができ始める力)、``centre_depth``(中心の除去の深さ)、``a``(接触半径)。 平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、 F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。**Raises** ValueError: 数の検査。 · 例: `poc_polish_wipe_measure`
+- `wipe_coverage` `image2d × scalar → table` — 拭けた所(明るい = 膜が消えた所)の面積を画像から読む。2 値化と連結成分は detect.segment_objects(Otsu が既定)。 返り ``area``(拭けた画素 × res² [m²])、``fraction``、``largest_area``、``n_regions``、``mask``、``threshold``(Otsu の しきい値 = 拭けた側の最小と残った側の最大の中点で推定)、``coat`` を渡せば ``residual_at_threshold``(しきい値の明るさが意味する 残った膜の厚さ —— 読んだ帯は「除去 ≥ h0 − この厚さ」の所)。**Raises** ValueError: 画像の検査、res ≤ 0、拭けた所も残った所も 無い(しきい値が決まらない)。 · 例: `poc_polish_wipe_measure`
+
+#### drive / puck(26)
+- `fivebar_fk` `signal × table → any` — 順運動学: 関節角 (q₁, q₂)(各腕の近位リンクの x 軸からの角)→ 先端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)、 E = 円(B₁, l₂) ∩ 円(B₂, l₂) の "forward"(x が大きい側)か "back"。返り値 ``{"E", "B1", "B2"}``、交わらなければ ``None``。 · 例: `poc_air_hockey_intercept`
+- `fivebar_ik` `signal × table → any` — 逆運動学: 先端 E → (q₁, q₂)。腕 i の肘 = 円(Aᵢ, l₁) ∩ 円(E, l₂)、"out" は肘が外側(腕 1 は −y 側、腕 2 は +y 側)、 "in" はその逆。届かなければ ``None``(fail-closed)。FK∘IK = 恒等になる領域が作業域(:func:`fivebar_workspace`)。 · 例: `poc_air_hockey_intercept`
+- `fivebar_link` `入力なし → table` — 平面 5 節リンク(2 本の 2 リンク腕の先端を 1 点で繋ぐ): 根元 A₁ = base + (0, −d/2)、A₂ = base + (0, +d/2)、 近位 l₁・遠位 l₂、前方 = +x。数は **仮定**(IROS 2024 の実機の寸法は原文を読めていない)。返り値 dict(``table`` sort)。 · 例: `poc_air_hockey_intercept`
+- `fivebar_reach_interval` `table × scalar → table` — 守備線 x = x_line 上で届く y の区間(格子で、FK∘IK 往復つき)。``{"y_lo","y_hi","ok"}``。 · 例: `poc_air_hockey_intercept`
+- `fivebar_trajectory` `signal × table × signal → matrix` — 計画の関節軌道 q(t): t_now から t_move の間は一定角速度、着いたら止まる。(N,2)。 · 例: `poc_air_hockey_intercept`
+- `fivebar_workspace` `table → table` — 作業域: 格子の各点で IK が解けて FK∘IK が tol で戻る所(枝 out/forward で矛盾しない所だけを「届く」とする)。 返り値 ``{"xs","ys","mask","area","x_max","x_min"}``(x_max = 届く最前の x)。 · 例: `poc_air_hockey_intercept`
+- `puck_camera` `table → table` — 真上から見た合成カメラ: 台を等倍率で画素へ写すホモグラフィ(アフィン)。 col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 ``{"H" world→(col,row), "Hinv", "shape", "px_per_m", "margin", "table"}``。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
+- `puck_crossing_point` `table × scalar → any` — 予測経路が守備線 x = ``x_line`` を最初に横切る時刻と場所(閉形式: 区間ごとに d(τ)·uₓ = 必要距離 を解く)。 · 例: `poc_air_hockey_intercept`
+- `puck_detect` `image2d × table → any` — :func:`balltrack.ball_detect` の facade: 真上のコマから円盤を 1 つ取り、ホモグラフィで台の平面 (x, y) [m] に写す。 · 例: `poc_air_hockey_intercept`
+- `puck_mirror_path` `signal × signal × table × scalar → signal` — 鏡映法(摩擦なし・e = kₜ = 1 専用): 直線 p₀ + v₀ t を壁の格子で折り返した位置を返す(第 2 実装、門の相手)。 ゴールは無視(壁として扱う)。返り値 = 終端位置 (2,)。 · 例: `poc_air_hockey_intercept`
+- `puck_mu_from_decel` `signal × matrix → table` — 向きに沿った距離 s(t) に二次式を当て、a = 2c₂ から μ = −a/g(Coulomb の等減速)。``{"mu", "a", "v0", "resid_rms"}``。N < 4 は ValueError。 · 例: `poc_air_hockey_intercept`
+- `puck_pinhole_camera` `table × scalar × scalar × signal → table` — 真上の針穴カメラ(位置 (0, 0, h)、−z を見る、up = +y、MuJoCo のカメラ規約)をホモグラフィに: col = W/2 + f x/h、 row = H/2 − f y/h、f = (H/2)/tan(fovy/2)。パック上面の高さ(≈ 0.02 m)は無視(視差 h に対して 1 % 強、残差は門で測る)。 ``shape`` = (H, W)。返り値は :func:`puck_camera` と同じ形。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
+- `puck_pixel_to_world` `table × matrix → matrix` — 画素 (col, row) (N,2) → world (N,2)(:func:`calib.image_to_world_plane` に逆行列を渡す)。 · 例: `gallery_drive_ballistics`
+- `puck_render_frame` `table × signal → image2d` — 真上の 1 コマを合成(float (H,W)、0〜1): 白い台・灰色の壁・暗いパック(1 次の反エイリアス)。 · 例: `poc_air_hockey_intercept`
+- `puck_restitution_from_wall` `signal × matrix × table → table` — 壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を :func:`puck_velocity_estimate` で 衝突時刻へ外挿。壁は衝突点に最も近い壁。``{"e", "kt", "t_hit", "wall", "n_before", "n_after", "v_in", "v_out"}``。両側 3 点未満は ValueError。 · 例: `poc_air_hockey_intercept`
+- `puck_scene_mjcf` `table → any` — 自前の最小 MJCF(Coulomb 版、mujoco 不要): 摩擦のある平面に円柱のパック(自由関節)、4 枚の壁(箱)、真上カメラ。 Challenge の台は粘性減衰なので、Coulomb の等減速を MuJoCo で確かめるにはこちらを使う。壁の反発は軟接触で e は測る。 · 例: `poc_air_hockey_intercept`
+- `puck_slide_predict` `signal × signal × table × scalar → table` — パックの経路を閉形式で繋ぐ: 区間(壁から壁)ごとに向き一定・等減速、壁で :func:`puck_wall_bounce`。 · 例: `poc_air_hockey_intercept`
+- `puck_state_at` `table × signal → table` — :func:`puck_slide_predict` の経路上の位置と速度を時刻 t(スカラーか (N,))で。終端より後は終端の状態のまま(位置は動かない、速度は終端の値 = 止まっていれば 0)。 返り値 ``{"p" (N,2), "v" (N,2)}``。 · 例: `poc_air_hockey_intercept`
+- `puck_stop_distance` `scalar × table → scalar` — 停止距離 v₀²/(2μg)(:func:`ballistics.slide_stop_distance` と同じ式、こちらは table から μ・g を取る)。 · 例: `poc_air_hockey_intercept`
+- `puck_synth_frames` `table × table × signal × signal → table` — 合成の連続コマと真値: 閉形式の経路(:func:`puck_slide_predict`)を fps で標本化し :func:`puck_render_frame` で描く。 · 例: `poc_air_hockey_intercept`
+- `puck_table` `入力なし → table` — 台とパックの数(既定は Robot Air Hockey Challenge の ``table.xml`` から読んだ値、MIT、arXiv 2411.05718)。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
+- `puck_track` `any × table → table` — コマ列 → コマごとの候補 → :func:`balltrack.ball_track`(等速予測で繋ぐ、``max_jump_px`` 超えは落とす)→ world 座標。 · 例: `poc_air_hockey_intercept`
+- `puck_velocity_estimate` `signal × matrix × table → table` — N 点の位置から速度を最小二乗で: 向き û を固定した等減速模型 p(τ) = p_ref + v_ref τ − ½ μg τ² û(τ = t − t_ref)。 · 例: `poc_air_hockey_intercept`
+- `puck_wall_bounce` `signal × signal × scalar × scalar → table` — 壁との衝突: 法線成分 vₙ' = −e vₙ、接線成分 vₜ' = kₜ vₜ(e = 法線の反発係数、kₜ = 接線の保持率 = 接線の反発係数)。 · 例: `poc_air_hockey_intercept`
+- `puck_world_to_pixel` `table × matrix → matrix` — world (N,2) → 画素 (col, row) (N,2)(:func:`calib.image_to_world_plane` に H を渡す)。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
+- `striker_plan` `any × signal × table → table` — 打点計画(規則): 予測の交点へ IK で関節角を出し、各サーボを一定角速度 ≤ ω_max で動かす。所要 = max|Δq|/ω_max。 交点の到着より先に着けば feasible。返り値 ``{"feasible","reason","q_target","dq","t_move","t_arrive","t_cross","E"}``、 reason ∈ {"ok","no_crossing","unreachable","too_late"}。``crossing`` = :func:`puck_crossing_point` の返り値(None 可)。 ω_max = 6 rad/s の既定は仮定。 · 例: `poc_air_hockey_intercept`
+
+#### drive / pxrd(14)
+- `azimuthal_integrate` `image2d × table → table` — 2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。 · 例: `poc_pxrd_phase_peel`
+- `cif_read` `any → table` — CIF(結晶構造の標準書式)を読んで、単位格子の中の全原子に展開した「相」を返す。 · 例: `poc_pxrd_phase_peel`
+- `cubic_index` `signal × scalar → table` — 立方晶として山に指数を付け、格子(P / I / F / diamond)と格子定数 a [Å] を決める。 · 例: `poc_pxrd_phase_peel`
+- `cubic_prototype` `any × scalar × any → table` — 立方晶の原型(``sc``・``bcc``・``fcc``・``diamond``・``rocksalt``・``cscl``・``zincblende``・``fluorite``)から相を作る。 · 例: `poc_pxrd_phase_peel`
+- `debye_ring_image` `any × signal × table → table` — デバイ環の 2-D 検出器像を合成する(相ごとの寄与つき)。 · 例: `poc_pxrd_phase_peel`
+- `detector_calibrate` `image2d × signal × table → table` — 既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。 · 例: `poc_pxrd_phase_peel`
+- `detector_two_theta` `any × table → table` — 検出器の各画素の 2θ・方位 χ・相対立体角(傾き・距離・中心つき)。 · 例: `poc_pxrd_phase_peel`
+- `diffraction_peaks` `signal × signal → table` — 1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。 · 例: `poc_pxrd_phase_peel`
+- `phase_dictionary` `any × signal × scalar → table` — 相の参照パターンの辞書: 2θ の格子の上に、体積分率 1 あたりの 1-D 強度を相ごとに並べる。 · 例: `poc_pxrd_phase_peel`
+- `phase_fractions` `signal × signal × table → table` — 非負の最小二乗(NNLS)で混合物の相分率を出す(背景は Chebyshev の多項式で同時に当てる)。 · 例: `poc_pxrd_phase_peel`
+- `phase_peel` `signal × signal × table → table` — 混合物から相を 1 つずつ剥がす(貪欲な前進選択)。 · 例: `poc_pxrd_phase_peel`
+- `powder_reflections` `table × scalar → table` — 相の粉末反射の一覧: 面間隔 d、Bragg の 2θ、多重度、|F|²、強度(Lorentz 因子つき、偏光なし)。 · 例: `poc_pxrd_phase_peel`
+- `scherrer_size` `scalar × scalar × scalar → scalar` — Scherrer の式で結晶子径 [Å] (``L = K λ / (β cos θ)``)。 · 例: `poc_pxrd_phase_peel`
+- `unexplained_peaks` `table → table` — 相分率の当てはめの残差から、辞書のどの相でも説明できない山を取り出す(未知相の手がかり)。 · 例: `poc_pxrd_phase_peel`
+
+#### drive / racket(10)
+- `aim_velocity` `table → table` — 点 p から時間 T で target に届く初速。真空の閉形式 v = (Δxy/T, (Δz + ½gT²)/T) を初期値に、抗力 + マグヌス(ω)の 運動方程式で ``refine`` 回 Gauss–Newton(有限差分)。``{"v", "residual"}``(residual = 到達点のずれ [m])。 · 例: `gallery_drive_kendama_racket`, `poc_table_tennis_rally_loop`
+- `racket_hit_check` `table → table` — 球の中心が板の面から ``radius`` 以内で、板の枠(幅 × 高さ + 半径)の中にあるか。``{"hit", "dist", "u", "v"}`` (u = 幅方向、v = 高さ方向の板の中心からのずれ)。 · 例: `gallery_drive_kendama_racket`
+- `racket_impact` `table × table → table` — 動くラケット(法線 n、速度 v_r)に球が当たる: ラケット系の相対速度で :func:`ballistics.bounce` → 戻す。 返り値 = bounce と同じ + ``"v_rel_in"``。n は球の側を向く(球が n と逆向きに近づく)。 · 例: `poc_table_tennis_rally_loop`
+- `racket_move` `table → any` — ラケットを target へ動かす(速さ・加速度の上限つきの bang-bang: 止まれる距離を見て減速)。返り値 (pos, vel)。 · 例: `gallery_drive_kendama_racket`
+- `racket_params` `入力なし → table` — ラケットの表: 板の幅・高さ [m]、ラバーの反発係数 e と摩擦係数 μ、動きの上限(速さ v_max [m/s]、加速度 a_max [m/s²])。 · 例: `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_rally_loop`
+- `racket_plan` `table × table → table` — 望む v_out を出すラケットの法線 n と速度 v_r(法線方向)。摩擦 0 の閉形式 n ∝ v_out − v_in、 v_r·n = |Δv|/(1+e) + v_in·n を初期値に、実際の衝突(摩擦・スピン込み)で ``refine`` 回反復。 返り値 ``{"normal", "v_racket", "v_out_actual", "omega_out", "residual"}``。Δv ≈ 0 なら ValueError。 · 例: `poc_table_tennis_rally_loop`
+- `rally_simulate` `table × table × table → table` — 2 本のラケット(x = −x_r と +x_r、板は相手を向く)で打ち合う。 · 例: `poc_ball_bounce`, `poc_table_tennis_rally_loop`
+- `shot_is_legal` `table × table × table → table` — 打球 (p, v, ω) を真の物理で先読みして、ネットを越え・相手コートに 1 度だけ落ち・相手の面 x = ∓x_r に打てる高さで 届くかを判定する。``{"legal", "reason", "p_arrive", "t_arrive"}``。 · 例: `gallery_drive_kendama_racket`
+- `strategy_attacker` `table → table` — 勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンの狙いも交互に変える。 ``ctx`` = {"opp_pos" (3,), "shot_index", "tp"}。返り値 {"target" (x, y), "T", "spin"}。 · 例: `gallery_drive_kendama_racket`
+- `strategy_feeder` `table → table` — 前回に近いがわずかにずらした位置へ返す(相手が取りやすい球): 前回の自分の狙いから ±step の一様乱数で動かし、 コートの内側(端から 12 cm)に収める。滞空時間はゆっくり 0.42 s。 · 例: `gallery_drive_kendama_racket`
+
+#### drive / roadjp(7)
+- `add_sign` `table → scalar` — 路側式の標識を立てる: 柱(円柱、灰、ラベル 6)+ 板(下端 = ``mount_height``、既定 1.8 m、ラベル 4)。 · 例: `poc_driving_school`, `poc_world_terrain`
+- `add_signal_jp` `table → scalar` — 日本式の信号機を立てる: 柱 + 水平アーム + 灯器(横型 3 灯、yaw の向きへ進んで来る車に表示面が向く)。 · 例: `gallery_drive_japan_roads`
+- `plate_mesh_from_image` `rgba → table` — RGBA 画像を、面の色を持つ薄い板のメッシュにする。 · 例: `gallery_drive_japan_roads`
+- `sign_image` `入力なし → rgba` — 標識の絵を RGBA float (H, W, 4) ∈ [0,1] で返す(板の外 = alpha 0)。幅 = ``size_px``、高さは形の比。 · 例: `gallery_drive_japan_roads`
+- `sign_mesh` `入力なし → table` — :func:`sign_image` + :func:`sign_params` + :func:`plate_mesh_from_image`。返り値に ``width``・``height``・``params`` を足す。 · 例: `gallery_drive_japan_roads`
+- `sign_params` `入力なし → table` — 標識 ``kind`` の形・寸法・色を返す(公表値、一次資料で要確認)。 · 例: `gallery_drive_japan_roads`
+- `signal_jp_mesh` `入力なし → table` — 横型の車両用灯器(日本式)。原点 = 灯器の底面の中心、表示面は −x を向く。 · 例: `gallery_drive_japan_roads`
+
+#### drive / roverslip(15)
+- `bekker_pressure` `signal × scalar × any → signal` — Bekker の圧力–沈下 ``p = (k_c / b + k_φ) zⁿ`` [kPa]。``sinkage`` [m] はスカラーか配列(≥ 0)、``width`` = b [m]。 · 例: `gallery_drive_soil_tactile`
+- `bekker_wheel_sinkage` `scalar × table × any → scalar` — Bekker の剛な車輪の沈下の近似式 [m]。接地を放物線 ``z(x) = z₀ − x²/D`` で近似し、せん断は入れない。 · 例: `poc_rover_slip_risk_path`
+- `cvar_cost_map` `image2d × scalar × any → table` — 数値標高(DTM)から、8 近傍の辺ごとの所要時間 [s] を、辺の傾き(進む向きの符号つき)の滑りの CVaR_α で割り引いて作る。 · 例: `poc_rover_slip_risk_path`
+- `ground_shift_track` `any → table` — 地面を見下ろすカメラのコマ列から、隣り合うコマの並進を、窓つきの相互相関(整数)と 並進の Lucas–Kanade(副画素)で測り、累積する。 · 例: `poc_rover_slip_risk_path`
+- `odometry_slip` `any × signal × scalar → table` — 視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 ``s = 1 − Δx / (r Δφ)``。 · 例: `poc_rover_slip_risk_path`
+- `path_slip_risk` `matrix × image2d × scalar × table → table` — 経路を辺ごとに評価する: 傾き、平均の滑り、CVaR_α の滑り、``s_max`` を越える確率(ガウス過程は正規分布、 分位点回帰は分位点の曲線の内挿)、平均の滑りでの所要時間と CVaR での所要時間。 · 例: `poc_rover_slip_risk_path`
+- `risk_aware_path` `table × any × any → table` — :func:`cvar_cost_map` の辺の所要時間の上で、8 近傍の Dijkstra(向きのある辺 —— 登りと下りで違う)。 · 例: `poc_rover_slip_risk_path`
+- `slip_cvar` `table × signal × scalar → signal` — 滑り率の CVaR_α(上側 1 − α の尾の条件付き期待値)。``sign = −1`` で −s の CVaR(下りの空走・横滑りの大きさ)。 · 例: `gallery_drive_soil_tactile`
+- `slip_gp_fit` `signal × signal → table` — 斜面の角 → 滑り率のガウス過程(RBF の核 + 一様な観測雑音)。超パラメータは対数周辺尤度の格子探索。 · 例: `gallery_drive_soil_tactile`, `poc_rover_slip_risk_path`
+- `slip_predict` `table × signal → table` — 滑り率の予測と両側 ``level`` の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。 · 例: `gallery_drive_soil_tactile`, `poc_rover_slip_risk_path`
+- `slip_quantile_fit` `signal × signal → table` — 斜面の角 → 滑り率の分位点回帰(区分線形の基底、ピンボール損失を IRLS で、2 階差分の弱い罰則)。 · 例: `poc_rover_slip_risk_path`
+- `slope_slip_curve` `signal × table × any × scalar → table` — 斜面の角(度、登りが正)ごとに、車体の重さを支えつつ斜面方向の重力成分を牽引力で釣り合わせる定常の滑り率。 · 例: `poc_rover_slip_risk_path`
+- `wheel_forces` `signal × signal × table × any → table` — 沈下 z [m] と滑り率 s で、剛な車輪が土から受ける力(Wong–Reece の応力分布の数値積分)。 · 例: `poc_rover_slip_risk_path`
+- `wheel_sinkage` `signal × table × any → signal` — 1 輪の垂直荷重 ``load`` [N] を滑り率 ``slip`` で支える沈下 z [m] (F_z(z, s) = load の二分法)。 · 例: `poc_rover_slip_risk_path`
+- `wheel_traction_curve` `scalar × table × any → table` — 1 輪の荷重 ``load`` [N] を一定に保ったときの、滑り率ごとの沈下・牽引力・トルク(牽引–滑り曲線)。 · 例: `poc_rover_slip_risk_path`
+
+#### drive / rss(10)
+- `rss_lateral` `table → scalar` — 横方向(論文 Lemma lateral / lib ``calculateSafeLateralDistance``)の最小安全距離 [m]。c_1 が左。 · 例: `gallery_drive_lateral_env`, `poc_ttc_rss`
+- `rss_lateral_check` `table → table` — 横間隔 d_lat(左車の右側面 〜 右車の左側面、≥ 0)が安全か。Returns は ``rss_longitudinal_check`` と同じ形。 · 例: `poc_ttc_rss`
+- `rss_longitudinal_check` `table → table` — 同方向の縦間隔 d(後続の前端 〜 先行の後端、≥ 0)が安全か。 · 例: `poc_ttc_rss`
+- `rss_longitudinal_opposite` `table → scalar` — 対向(論文 Lemma two_way / lib ``calculateSafeLongitudinalDistanceOppositeDirection``)の最小安全距離 [m]。 · 例: `poc_ttc_rss`
+- `rss_longitudinal_same` `table → scalar` — 同方向(論文 Lemma 2 / lib ``calculateSafeLongitudinalDistanceSameDirection``)の最小安全距離 [m]。 · 例: `poc_ttc_rss`
+- `rss_params` `入力なし → table` — RSS パラメータの dict を作る(既定 = ad-rss-lib の公表表、ρ は ego の 1 s)。 · 例: `gallery_drive_lateral_env`, `poc_ttc_rss`
+- `rss_stopping_distance` `入力なし → scalar` — ad-rss-lib の stated braking pattern による **符号つき位置オフセット**(縦・横共通の 1 つの式)。 · 例: `poc_driving_longitudinal`
+- `rss_worst_case_gap` `table → table` — 同方向の最悪ケース(論文 Definition 4)を時間で追う。 · 例: `poc_ttc_rss`
+- `rss_worst_case_gap_lateral` `table → table` — 横方向の最悪ケース: ρ の間 互いに向かって ``lat_accel_max`` → ``lat_brake_min`` で横速度 0 まで減速。 · 例: `gallery_drive_lateral_env`
+- `rss_worst_case_gap_opposite` `table → table` — 対向の最悪ケース: 両車 ρ の間 ``accel_max`` で加速 → c_1 は ``brake_min_correct``、c_2 は ``brake_min`` で停止。 · 例: `poc_ttc_rss`
+
+#### drive / scoop(15)
+- `pour_scene_mjcf` `scalar × scalar × scalar × scalar → table` — 口の開いた樋(床の長さ ``L``、幅 ``B``、奥壁と側壁の高さ ``wall``)に深さ ``h0`` まで剛体球を格子で詰めた場面の MJCF (**mujoco 不要**)。樋は mocap の body(``name="trough"``、原点 = 口の床の縁、高さ ``lip_height``)で、口を下げる向き (y 軸まわりに −θ)に回すのは :func:`scoop_mujoco_pour` が毎歩 ``mocap_quat`` を書いて行う。床は粗く(滑り摩擦 ``floor_mu``、底の層が床ごと滑り出さない —— granular の粗い台と同じ役)、側壁は ``wall_mu``。床の口の側(x < 0)が 開いていて、こぼれた球は落ちて地面(高さ 0)に届く。 返り: ``xml``, ``positions``, ``info``(L, B, h0, wall, radius, lip_height, mass_each, n, timestep, A_fill = L·h0)。 **Raises** ``ValueError``: ``h0 ≥ wall`` / ``contact_tc < 2 timestep`` / 球が 1 層も入らない / 綴り違い。 · 例: `poc_powder_scoop_pour`
+- `revolution_volume_side` `image2d × scalar → table` — 側面像 1 枚から軸対称を仮定した体積 —— Pappus の形 ``V = π Σ |x − x_axis| c(x, z) pitch³``(``c`` = 被覆率、 ``x`` = 画素の中心の列)。 · 例: `poc_powder_scoop_pour`
+- `scoop_count` `scalar × scalar × scalar → table` — 体積と充填率から粒の数 ``N = V ν / ((4/3) π r³)``(``density`` を与えれば質量 ``N m_p`` とかさ密度 ``ν ρ_p``)。 · 例: `poc_powder_scoop_pour`
+- `scoop_image_limit` `scalar × scalar × scalar × scalar → table` — 山盛りのスプーンを側面像で量るときの不確かさの目安と「画像で足りるか、秤か」(**規則**、目安)。 · 例: `poc_powder_scoop_pour`
+- `scoop_scene_mjcf` `scalar × scalar → table` — 球冠の椀(縁の半径 ``a``、深さ ``h``、縁の高さ ``rim_height``)を薄板のタイルで張り、真上から剛体球を ``n_spheres`` 個を椀の中から格子で積んで放す場面の MJCF 文字列(**mujoco 不要**、台帳に載る)。 · 例: `poc_powder_scoop_pour`
+- `scoop_synth_side` `scalar × scalar → table` — 球冠の椀の中の粉を横から見た被覆率を合成する(軸対称、真値は閉形式)。 · 例: `poc_powder_scoop_pour`
+- `scoop_volume_read` `image2d × scalar × scalar × scalar × scalar → table` — スプーンの側面像からすくった体積を読む。 · 例: `poc_powder_scoop_pour`
+- `spoon_bowl_volume` `scalar × scalar → table` — 球冠の椀(縁の半径 ``a``、深さ ``h``)の閉形式 —— すり切り・途中まで・山盛り。 · 例: `poc_powder_scoop_pour`
+- `stream_areal_density` `image2d × scalar → image2d` — 被覆率から粒の中心の面密度 [個 / px²] を Boolean 模型で逆に解く ``n = −ln(1 − c) / (π r²)``。 · 例: `gallery_drive_soil_tactile`
+- `stream_flux_read` `any × scalar × scalar → table` — 流れのコマ列から流量 [個/s] (と質量流量)を読む —— 速さは PIV(``pivops.piv_cross_correlate`` の全コマ対の中央値)、 粒の線密度は時間平均の被覆率の Boolean 模型の逆(:func:`stream_areal_density`)を横に積分した ``λ``、流量 ``λ v``。 · 例: `poc_powder_scoop_pour`
+- `stream_synth` `scalar × scalar × scalar → table` — 口から落ちる粉の流れ(横から見た薄い帯)の被覆率のコマ列を合成する。 · 例: `poc_powder_scoop_pour`
+- `tilt_pour_rate` `scalar × scalar × scalar × scalar × scalar × scalar × scalar → table` — :func:`tilt_wedge_retained` の器を角速度 ω で傾けたときの準静的な流量 ``W = ρ_b B (−dA/dθ) ω`` [kg/s] (供給で決まる流量: 口の通す力より遅く傾けている限り、流量は傾ける速さで決まる)。 · 例: `poc_powder_scoop_pour`
+- `tilt_wedge_retained` `scalar × scalar × scalar × scalar → table` — 口に壁の無い器(床の長さ ``L``、奥壁は床に垂直で十分高い)に深さ ``h0`` で平らに盛った粉を、口を下げて θ 傾けた ときに残る量(2 次元断面、準静的、**自分の導出**)。 · 例: `poc_powder_scoop_pour`
+- `tilted_surface_read` `image2d × scalar × scalar × scalar × scalar → table` — 傾いた器を横から見た像(被覆率)から、器に残る粉の断面積と奥の平らな面の高さを読む。 · 例: `poc_powder_scoop_pour`
+- `two_view_volume` `image2d × image2d × scalar → table` — 直交する 2 方向の側面像から体積 —— 行ごとの 2 つの弦 ``W_a``・``W_b`` を軸とする楕円の和 ``V = Σ f π (W_a/2)(W_b/2) pitch³``。 · 例: `poc_powder_scoop_pour`
+
+#### drive / swarmflow(12)
+- `obstacle_fit_doublet` `table → table` — 速度場に円柱まわりのポテンシャル流 u − i v = U (1 − R²/(z − z_c)²) を当てはめる(実装 2、2 次元の非線形最小二乗)。 · 例: `poc_swarm_obstacle_from_flow`
+- `potential_flow_cylinder` `signal × signal × any → table` — 円柱まわりのポテンシャル流(閉形式)。u − i v = U (1 − R²/(z − z_c)²)、円の内側は NaN。 · 例: `poc_swarm_obstacle_from_flow`
+- `ritter_dam_break` `signal × scalar × scalar → table` — Ritter のダム崩壊解(浅水方程式、乾いた床、ダムは x = 0、水は x < 0)。 · 例: `poc_swarm_obstacle_from_flow`
+- `sph_dam_break_1d` `入力なし → table` — 1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。 · 例: `poc_swarm_obstacle_from_flow`
+- `sph_density_pressure` `matrix × scalar → table` — 点の集まりの SPH 密度 ρ_i = Σ_j m W(|x_i − x_j|, h)(自分を含む)と、弱圧縮の状態方程式 p = c² (ρ − ρ₀)。 · 例: `gallery_drive_soil_tactile`
+- `sph_kernel` `signal × scalar → signal` — 3 次スプライン核 W(r, h)(M4、台の半径 2h)。``derivative=True`` で dW/dr(r の向きの微分、0 以下)。 · 例: `poc_swarm_obstacle_from_flow`
+- `stagnation_from_centerline` `table → table` — 中心線の欠損を直線化して、上流の衝突点(よどみ点)・障害物の中心・半径を読む(実装 1、上流の点だけ)。 · 例: `poc_swarm_obstacle_from_flow`
+- `swarm_field_from_piv` `any × scalar × scalar → table` — 俯瞰のコマ列 → 隣どうしの相互相関の PIV(pivops.piv_cross_correlate)→ 全部の組の平均 → 世界の速度場。 · 例: `poc_swarm_obstacle_from_flow`
+- `swarm_field_from_tracks` `any × scalar × scalar → table` — 俯瞰のコマ列 → 個体を検出(blob2d の連結成分 + 明るさの重心)→ 隣のコマと相互最近傍でつなぐ → 速度を SPH 核で格子へ。 · 例: `poc_swarm_obstacle_from_flow`
+- `swarm_render_overhead` `matrix × any × scalar → image2d` — 個体の位置 → 上から見た 1 コマ(ガウスの輝点、直径 = 標準偏差の 2 倍 = PIV の慣行、pivops と同じ)。 · 例: `poc_swarm_obstacle_from_flow`
+- `swarm_simulate` `入力なし → table` — 障害物のある周期の流路を流れる群れ(SPH の弱圧縮流体として動く個体)。障害物は個体には「ぶつかる壁」として効くだけ。 · 例: `poc_swarm_obstacle_from_flow`
+- `velocity_deficit_map` `table → table` — 速度場 → 自由流からの欠損 1 − u/U、横の振れ v/U、速さの欠損 1 − |v|/U。U は与えるか、上流の端 15 % の u の中央値。 · 例: `poc_swarm_obstacle_from_flow`
+
+#### drive / tacdome(12)
+- `contact_patch_radius` `image2d × scalar → table` — 接触の像(:func:`dome_contact_image` の型)から接触半径を読む。被覆率の線形和(面積法)で縁の副画素まで使う。 · 例: `poc_tacdome_large_deformation`
+- `dome_contact_image` `scalar × scalar → image2d` — ドームの内側から撮った接触の像(接触域が明るい、全反射の破れ型の照明の理想化)。(n, n) の float。 · 例: `poc_tacdome_large_deformation`
+- `hertz_small_strain_error` `signal × scalar → table` — 小変形の線形解(Hertz)を大変形に当てたときの誤差 [%] (d だけで決まり、L・寸法・弾性率に依らない)。 · 例: `poc_tacdome_large_deformation`
+- `large_deformation_contact` `any × scalar × table → table` — 押し込み δ(スカラーか配列)から大変形の力と接触半径(式 2・4)と、同じ δ の線形解(Hertz)との差。 · 例: `poc_tacdome_large_deformation`
+- `large_deformation_inverse` `scalar × scalar × table → table` — 測った接触半径 a から押し込みと力を逆に読む(式 4 を d について解き、式 2 で力)。センサの読み出しの本体。 · 例: `poc_tacdome_large_deformation`
+- `largedef_c1_coefficient` `scalar → scalar` — 式 (3) の 1 次の係数 c₁: ``"derived"`` = 2n/(1+n)(導出)、``"printed"`` = (4+2n)/(1+n)(原文の活字)、``"memo"`` = 2/(1+n)。 · 例: `gallery_drive_soil_tactile`
+- `largedef_correction` `signal × scalar → signal` — 大変形の補正 κₙ(d) = [1 − c₁·d + n/(2+n)·d²]/(1 − d)²(式 3、c₁ は :func:`largedef_c1_coefficient`)。F = κₙ·F_L。 · 例: `poc_tacdome_large_deformation`
+- `largedef_radius_ratio` `signal × scalar → signal` — 大変形の接触半径の比 a/a_L(式 4)= (1/p)·B_d(1/p, 3/2)·d^{−1/p}/√(1 − d) = ∫₀¹ √((1 − d·uᵖ)/(1 − d)) du。 · 例: `poc_tacdome_large_deformation`
+- `largedef_universal_correction` `signal → signal` — 普遍形の補正 κ(d) = (1 − k·d)⁻¹(式 6、k = 10/9)。**Raises** ``ValueError``: d が [0, 1) の外、k·d ≥ 1、k ≤ 0。 · 例: `poc_tacdome_large_deformation`
+- `mdr_spring_bed` `scalar × scalar × table → table` — 1D の非線形ばね列を中点則で直接積分する(閉形式 :func:`largedef_correction` / :func:`largedef_radius_ratio` の第 2 実装)。 · 例: `poc_tacdome_large_deformation`
+- `neohookean_cylinder_exact` `signal → table` — 非圧縮 neo-Hookean の円柱を摩擦なしで一軸に圧縮する厳密解(連続体の教科書の結果、模型と独立)。 · 例: `poc_tacdome_large_deformation`
+- `powerlaw_linear_contact` `text × scalar × scalar → table` — べき乗則断面 f(r) = c·rᵖ を平板で押す線形解(式 1・5): F_L = C·δⁿ、a_L = D·δ^{1/p}、n = 1 + 1/p。 · 例: `poc_tacdome_large_deformation`
+
+#### drive / tacscalib(10)
+- `calib_pack_load` `text × scalar × scalar → table` — 較正パック(npz)→ dict。キー ``f0``(背景 (H, W, 3) uint8)・``imgs``((N, H, W, 3))・``touch_center``((N, 2) = (列 x, 行 y))・ ``touch_radius``((N,) px)を必須とし、中心は (行, 列) に並べ替えて ``centers`` で返す。 · 例: `poc_tacscalib_sphere_lut`
+- `field_position_sweep` `matrix × signal × any → table` — 誤差の位置依存: 各画像の接触中心 (行, 列) と誤差(中央値など)を画像中心からの距離に対して並べ、最小二乗の傾き [誤差 / 100 px] と Spearman の順位相関(同順位は平均順位)を返す(numpy だけ)。 返り: ``dist_px``・``err``・``slope_per_100px``・``intercept``・``spearman``・``n``。 **Raises** ``ValueError``: 3 組未満 / 形の不一致 / 非有限 / image_shape の形。 · 例: `poc_tacscalib_sphere_lut`
+- `gradient_lut_build` `matrix × matrix → table` — example-based の勾配 LUT: 法線の(傾き θ, 向き φ)を bins × bins に切り、各ビンに落ちた画素の RGB の**平均**を入れる (``np.add.at`` で重複した添字も全部足す)。``rgb_rows`` (P, 3)、``normal_rows`` (P, 3)。 · 例: `poc_tacscalib_sphere_lut`
+- `gradient_lut_invert` `rgb × table × image2d → normalmap` — RGB (H, W, 3) → 法線 (H, W, 3): 中身のあるビン(count ≥ ``min_count``)のうち色が最も近いものの中心法線。位置依存版の 表(:func:`gradient_lut_build` に positions を与えたもの)は画素の位置で各ビンの色を予測してから比べる。 · 例: `poc_tacscalib_sphere_lut`
+- `lights_fit_from_sphere` `rgb × normalmap × image2d → table` — 背景差分画像(1 枚か列)と既知法線から、チャネルごとの線形 Lambertian 模型を最小二乗で解く。 · 例: `poc_tacscalib_sphere_lut`
+- `membrane_predict_rgb` `normalmap × table → rgb` — 法線 (H, W, 3) + :func:`lights_fit_from_sphere` の結果 → 背景差分 RGB の予測 (H, W, 3)(線形、クリップしない)。 order 2 の結果は画素ごとに a(x, y)・L(x, y) を作る(画像の大きさは較正時と同じであること)。 **Raises** ``ValueError``: 法線の形 / order 2 で画像の大きさが違う。 · 例: `poc_tacscalib_sphere_lut`
+- `normal_error_map` `normalmap × normalmap → image2d` — 2 つの法線場の画素ごとの角度 [度] = atan2(|a × b|, a · b)(正規化しない —— 長さは atan2 の比で消える)。 acos(a · b) は単位ベクトルの近くで丸めの床を持つ(1e-7° を 1e-4° と答える)ので使わない。 **Raises** ``ValueError``: 形が違う / 最後の軸が 3 でない。 · 例: `poc_tacscalib_sphere_lut`
+- `poly_lut_invert` `rgb × table × image2d → normalmap` — アダプタ: 外部の**位置依存**多項式 LUT(``bins`` と ``grad_r`` / ``grad_g`` / ``grad_b`` = (bins, bins, 6)、ビンごとに 6 係数 [x², y², xy, x, y, 1]・x = 列・y = 行を**画素のまま**で背景差分の各チャネルを表す書式)を、 :func:`gradient_lut_invert` と同じ逆引き(同じビン割り・同じ粗 → 細)に通す。``rgb`` は外部の手順と同じ背景処理をした差分。 外部の表は全ビンが埋まっているので全ビンを使う。 **Raises** ``ValueError``: キー欠落 / 係数の形が (bins, bins, 6) でない / 非有限。 · 例: `poc_tacscalib_sphere_lut`
+- `sphere_cap_height` `any × any × scalar × scalar × scalar → table` — 幾何学的な押し込み(弾性の裾なし)の真の高さ: 接触円の内側 h(r) = −(√(R² − r²) − √(R² − a²))、外側 0(a は min(a, R))。 · 例: `poc_tacscalib_sphere_lut`
+- `sphere_normals_known` `any × any × scalar × scalar → table` — 既知球の押し込み: 接触円(中心 ``centre`` = (行, 列)、半径 ``a_px``)の内側で法線を閉形式で返す。 · 例: `poc_tacscalib_sphere_lut`
+
+#### drive / tacsim(15)
+- `combined_modulus` `scalar × scalar → scalar` — 複合弾性率 E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。``E2=None`` は剛体の押し込み子(第 2 項 0)。 · 例: `poc_knife_tactile_toughness`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `contact_radius_fit` `normalmap × matrix × matrix × scalar × scalar → table` — 法線場の**半径方向スロープ分布**に Hertz のスロープ模型 dh/dr(r; a) を 1 パラメータ a で当てて接触半径を読む。 · 例: `poc_peg_insertion_tactile`, `poc_tacsim_elastic_membrane`
+- `contact_radius_fit_pixelwise` `normalmap × matrix × matrix × scalar × scalar → table` — 接触半径を**画素ごと**の半径方向スロープに Hertz のスロープ模型 dh/dr(r; a) を連続の a で当てて読む(:func:`contact_radius_fit` のビンを使わない版。``a0`` はその粗い値)。 · 例: `poc_peg_insertion_tactile`
+- `contact_radius_ring` `image2d × scalar → table` — 高さ場から接触半径 a を**模型なし**で読む: 接触縁 r = a は半径方向の傾き |∂h/∂r| が最大になる輪(Hertz では内側 r/R で 増え、外側は √ で急に落ちるカスプ)。方位角 ``n_az`` 本の半径線に沿って |∇h| を ``step_px`` 刻みで双線形補間し、各線の ピークを放物線補間で副画素化 → 72 点に :func:`measure.fit_circle`(第 2 実装)と半径の中央値。 · 例: `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`
+- `hertz_cylinder` `scalar × scalar × scalar → table` — 円柱(半径 R)を弾性半空間に線荷重 F/L で押す線接触(Johnson 1985 §4.2): 接触半幅 b = √(4(F/L)R/(πE*))、p0 = 2(F/L)/(πb)。 · 例: `poc_tacsim_elastic_membrane`
+- `hertz_force` `scalar × scalar → scalar` — Hertz の逆算: 接触半径 a か押し込み δ のどちらか一方から荷重 F。F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}。 · 例: `poc_peg_insertion_tactile`, `poc_tacdome_large_deformation`, `poc_tacsim_elastic_membrane`
+- `hertz_pressure` `matrix × scalar × scalar → matrix` — Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r < a)、外は 0。r と同じ形。**Raises** ``ValueError``: a, p0 ≤ 0。 · 例: `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `hertz_sphere` `scalar × scalar × scalar → table` — 剛体球(半径 R)を弾性半空間(複合弾性率 E*)に荷重 F で押し込む Hertz 接触の閉形式(Johnson 1985 §3)。 · 例: `poc_knife_tactile_toughness`, `poc_peg_insertion_tactile`, `poc_tacdome_large_deformation`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `hertz_surface_uz` `matrix × scalar × scalar × scalar → matrix` — Hertz 球接触の半空間表面の法線変位 ū_z(r)(沈む量 ≥ 0、r と同じ形の配列)。 · 例: `poc_tacsim_elastic_membrane`, `poc_tactile_dipole_torque`
+- `membrane_delta_from_normals` `normalmap × matrix × matrix × scalar → scalar` — 中心の沈み込み δ を法線場から: 半径方向スロープ s̄(r) を中心から窓の端まで 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))し、 ``tail="boussinesq"`` なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max) を足す(窓の端の最後の 3 ビンの中央値)。``tail="none"`` は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。 · 例: `poc_tacsim_elastic_membrane`
+- `membrane_indent_shape` `text × scalar → table` — 既知形状の剛体を深さ ``depth`` だけ押し込んだゲル膜の高さ場を**幾何学的な追従**で作る: h = −max(0, depth − z_ind(x, y))。 · 例: `poc_tacsim_elastic_membrane`
+- `membrane_indent_sphere` `table → table` — 球押し込みのゲル膜の高さ場 h(x, y) = −ū_z(r)[m] (:func:`hertz_sphere` の表から)と解析的な法線。 · 例: `poc_knife_tactile_toughness`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`
+- `membrane_lights` `scalar → matrix` — 多方向の色つき照明の単位方向ベクトル (N, 3)(行 k が色チャネル k の光源、既定は方位 90/210/330°・仰角 55° の 3 灯)。 · 例: `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `membrane_recover` `rgb × matrix × scalar → table` — 視触覚 RGB (H, W, 3) → 3 チャネルを 3 光源の像として :func:`photometric.photometric_stereo`(lit_only)で法線 → :func:`photometric.integrate_normals`(Frankot-Chellappa)で高さ(画素単位 × pitch = m)。 · 例: `poc_peg_insertion_tactile`, `poc_tacsim_elastic_membrane`
+- `membrane_render_rgb` `normalmap × matrix → rgb` — 法線場 (H, W, 3) + 光源 (3, 3) → 視触覚センサ風の RGB (H, W, 3) float。チャネル k = 光源 k の Lambertian 像 albedo·(max(N·L_k, 0) + ambient)(:func:`photometric.render_lambertian` を 3 回、第 2 実装)。``noise`` > 0 なら正規乱数を足す。 · 例: `poc_knife_tactile_toughness`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+
+#### drive / tacslip(21)
+- `cerruti_kernel` `scalar × scalar × scalar × scalar → table` — x 向き接線トラクション(1 画素 = pitch² に一様 1 Pa)が作る表面変位の離散核を 2n 格子(零詰めの線形畳み込み用)で作り、rfft2 済みで返す。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `cerruti_surface_displacement` `matrix × table → table` — 接線トラクション分布 qx (n, n) [Pa] → 表面変位 ``ux``・``uy``(核に ``Kzx`` があれば ``uz``)(n, n) [m]。零詰め 2n の線形畳み込み (巻き込みなし)。**Raises** ValueError: qx が (n, n) でない、kern が :func:`cerruti_kernel` の表でない。 · 例: `poc_tacsim_marker_shear`
+- `displace_markers` `matrix × matrix × matrix × scalar → matrix` — 変位場 fx, fy (n, n) [m] でマーカー中心 (N, 2) [px] を移す(場は中心位置で双線形標本化、画素に換算して足す)。 **Raises** ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `fem_nodes_load` `text × text → table` — 有限要素の表面節点テキスト(Robo-Touch/Taxim リポジトリ同梱、MIT ライセンス)を 3 本読む: ``<dirpath>/<name>_{x,y,z}.txt``、 タブ区切り・1 行ヘッダ ``Node Number / X Location (m) / Y Location (m) / Z Location (m) / Directional Deformation (m)``、単位 m。 3 本は同じ節点集合で最終列だけがその方向の変位。返り ``id``・``X``・``Y``・``Z``・``dx``・``dy``・``dz``(各 (N,))、``n``、``name``。 **Raises** FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `fem_vs_halfspace` `table × table → table` — 同じ節点集合の法線押し込み ``fz`` と斜め押し込み ``fxz``(:func:`fem_nodes_load`)を半空間解と**形だけ**比べる(荷重の大きさは不明)。 (1) r·dz を 0.5〜0.8 mm で 1 に正規化(``mids``・``rdz_n``): 半空間 Boussinesq は r ≫ 接触で一定、有限厚は落ちる。1/r から 2 倍外れる 半径 ``r_half``(無ければ None)。(2) 斜め押し込みの dx(θ) を r = 1/1.5/2/3 mm の環で A + B cos²θ に当てる(``ang``: Cerruti なら B/A = ν/(1−ν) → ``nu``、``ratio`` = (A+B)/A、``R2``)、dy を A + B sin2θ に(``dy_fit``)。``R_dome``(表面の r–z を球冠に当てた半径)、 ``dy_over_dz0``(法線だけでも出ている接線成分 = 非対称の量)、``rdx_n``、``dz0``、``dx_min_spacing``、``r``・``th``(中心相対)も返す。 **Raises** ValueError: 2 つの表の節点数が違う、節点が 10 個未満。 · 例: `poc_tacsim_marker_shear`
+- `hertz_surface_ur` `matrix × scalar × scalar × scalar × scalar → matrix` — 法線荷重(Hertz 圧 p0√(1−r²/a²))が作る半空間表面の**半径方向**変位 ūr [m] (Johnson 1985 式 3.41b を E = 2G(1+ν) で書き直し)。 負 = 中心向き。内側 −(1−2ν)p0a²/(6Gr)[1 − (1−r²/a²)^{3/2}]、外側 −(1−2ν)p0a²/(6Gr)(= 点荷重 −(1−2ν)P/(4πGr))、r → 0 で 0。 最大は縁でなく r ≈ 0.93a(ūr(a) の 1.022 倍)。ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48 で 1.6 %、ν 0.3 で 12 %)—— ほぼ非圧縮のゲルでは 法線荷重でマーカーはほとんど動かない。**Raises** ValueError: a, p0, G ≤ 0。 · 例: `gallery_drive_soil_tactile`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `hertzian_tangential_inner` `matrix × matrix × scalar × scalar × scalar × scalar → table` — Hertz 形の接線トラクション q0√(1−r²/a²) が円内 r ≤ a に作る表面変位の閉形式(Johnson 1985 式 3.91)。 ``ux`` = (πq0/32Ga)[4(2−ν)a² − (4−3ν)x² − (4−ν)y²]、``uy`` = (πq0/32Ga)·2νxy [m]。円の外では成り立たない(そこは畳み込みで)。 **Raises** ValueError: a, G ≤ 0、x と y の形が違う。 · 例: `poc_tacsim_marker_shear`
+- `marker_detect` `image2d × scalar × scalar → table` — マーカー像 m(:func:`marker_image`)→ マーカー中心。``weighted``(主、(N, 2) の (x, y) [px]): 高しきい値 0.5·dark の連結成分 (:func:`blob2d.blob_label`)を本体とし、低しきい値 0.08·dark の画素(縞)を距離変換で最近傍の本体へ割り当て、m を重みにした重心を 反復ガウス重み(σ = r_px)で精密化。``weighted_plain`` = 精密化前。``binary=True`` なら ``binary`` = :func:`blob2d.blob_features` の row/col(二値重心、周長・凸包まで計算するので 1,000 個で 0.4 s)。縁に触る成分は捨てる。``n`` = 本体の数。 縞を本体から切るのは、滑り環で隣接間隔が 8 → 6 px に縮むと低しきい値の縞が繋がって 1 成分に併合するから(実測)。 **Raises** ValueError: m が 2 次元でない、dark が (0, 1] の外、r_px ≤ 0。 · 例: `poc_tacsim_marker_shear`
+- `marker_image` `rgb × rgb → image2d` — マーカーだけの像 m = 1 − gray/gray_bg ∈ [0, 1] (H, W)。bg = マーカーの無い同じ照明の像 = 実機の参照フレーム較正に当たる。 **Raises** ValueError: 2 枚の形が違う、(H, W, 3) でない。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `marker_match_grow` `matrix × matrix × scalar → table` — 基準マーカー p0 と荷重後 p1(各 (N, 2) [px])の対応を**連続性で伸ばして**取る。返り ``i0``・``i1``(対応の index 配列)、``matched``。 · 例: `gallery_drive_soil_tactile`
+- `marker_track` `image2d × image2d × scalar × scalar × scalar → table` — 基準・荷重後のマーカー像(:func:`marker_image`)から変位ベクトル場: 検出(:func:`marker_detect`、2 枚)→ 連続性で対応 (:func:`marker_match_grow`)→ ``u`` = p1 − p0 [px]。返り ``p0``・``p1``・``u``(各 (M, 2))、``matched``、``n0``・``n1``。 ``piv=True`` なら :func:`pivops.piv_cross_correlate` の場(第 2 実装、探索 ±0.12 窓)を ``piv_flow``・``piv_info``・``piv_at``(点列で標本化する 関数)として付ける。**Raises** ValueError: 2 枚の形が違う。 · 例: `poc_tacsim_marker_shear`
+- `membrane_markers` `scalar × scalar → matrix` — n×n 画素の視野に撒くマーカー中心 (N, 2) = (x, y) [px] の規則格子(ピッチ pitch_px、副画素位相 (ox, oy))。視野の外にも 1 周だけ撒く (変位で入ってくるぶん)。**Raises** ValueError: n < 8、pitch_px < 2。 · 例: `gallery_drive_soil_tactile`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `membrane_render_markers` `rgb × matrix × scalar × scalar → rgb` — RGB (H, W, 3) に黒い円盤のマーカー(中心 pts (N, 2) [px]、半径 r_px)を描く: 画素の被覆率で rgb *= 1 − dark·coverage。 被覆率は円盤の縁の画素だけ sub² の副標本(内側 1・外側 0)。像を補間して歪めないので真値が厳密。 **Raises** ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。 · 例: `poc_knife_tactile_toughness`, `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `membrane_shear_field` `table × table × matrix × matrix × table → table` — 膜表面の変位場: Mindlin のトラクション q(r) を Cerruti 核で畳んだ接線変位 ``ux``・``uy`` と、法線荷重の半径変位 ``urx``・``ury`` (:func:`hertz_surface_ur` を x, y に分けたもの)[m]、``q``、固着/滑りのマスク ``mask_stick``(r ≤ c)・``mask_slip``(c < r ≤ a)、``r``。 X, Y は格子の座標 [m] (中心が原点)。**Raises** ValueError: X と Y の形が違う、kern の n と合わない。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `mindlin_fit` `table × matrix × matrix → table` — マーカー位置 pts_px (M, 2) [px] と変位 u_m (M, 2) [m] に (c/a, μP) を当てる: c/a を粗く走査 → 最良の周りを細かく、μP は各 c で 線形最小二乗。返り ``c_over_a``・``q_ratio`` = 1 − (c/a)³・``muP``・``Q``・``mu``(= μP/P)・``rms_m``・``shift_m``。 ``rigid=True`` は剛体シフト (tx, ty) も自由にする —— 試作では**逆効果**だった(外側 900 点の 1/r の尾と縮退して c/a が 0.028 ずれる)ので 既定は切る。実機のドリフトは接触の外の遠方マーカーで別途引くのが筋。真の変位で当てると c/a の誤差 0.001、画像からの追跡では 0.011 (重心の pixel-locking が共通モードで乗る)。**Raises** ValueError: 形の不一致、点が 3 個未満。 · 例: `poc_tacsim_marker_shear`
+- `mindlin_fit_vector` `table × matrix × matrix → table` — 向きを持つせん断の Mindlin 当てはめ(:func:`mindlin_fit` の 2 成分版): (c/a, μP, 向き φ) を一度に読む。 · 例: `gallery_drive_soil_tactile`
+- `mindlin_model` `table × matrix × matrix × table × scalar × scalar → table` — 任意の c/a の Mindlin 変位場を**相似則**で出す逆算模型(畳み込みは 1 回だけ)。 · 例: `gallery_drive_soil_tactile`, `poc_tacsim_marker_shear`
+- `mindlin_partial_slip` `scalar × table × scalar × scalar × scalar → table` — Cattaneo–Mindlin の部分滑り(Johnson 1985 §7.2): 球を法線 P で押したまま接線 Q を掛ける。 · 例: `poc_tacsim_marker_shear`, `poc_tactile_dipole_torque`
+- `mindlin_traction` `matrix × table → matrix` — 接線トラクション q(r) = q′ − q″ [Pa]: q′ = μp0√(1−r²/a²)(r < a)、q″ = μp0(c/a)√(1−r²/c²)(r < c)。滑り環 c ≤ r < a では q = μp(r) (Coulomb の限界に張り付く)、固着円では q < μp。``mp`` は :func:`mindlin_partial_slip` の表。r と同じ形。**Raises** ValueError: mp に a/c/mu/p0 が無い。 · 例: `poc_tacsim_marker_shear`
+- `slip_entropy` `signal → scalar` — 変位の大きさ |u| の列のヒストグラム(bins 本、範囲 [0, vmax] —— 省略時は最大値)の Shannon エントロピーを ln(bins) で正規化(0..1)。 Yuan 2017 の滑りの指標: 固着核が縮んで滑り環の勾配に乗るマーカーが増えると上がる。**Raises** ValueError: 点が無い、bins < 2。 · 例: `poc_tacsim_marker_shear`
+- `stick_radius_modelfree` `matrix × matrix → table` — 模型なしの固着半径: 中心からの距離順に、内側 6 点の中央値 δ̂ から |ux − δ̂| が rel·|δ̂| + abs_px を超える最初の点と、その手前の点の中点の 半径 ``c_px``(分解能 = マーカー間隔)。``core_px`` = δ̂。pts_c は中心相対 (M, 2) [px]、u_px は (M, 2) [px]。**Raises** ValueError: 点が 6 個未満。 · 例: `poc_tacsim_marker_shear`
+
+#### drive / tactorque(17)
+- `boussinesq_kernel` `scalar × scalar × scalar × scalar → table` — 法線圧(1 画素 = pitch² に一様 1 Pa)が作る表面変位の離散核(2n 格子、rfft2 済み): ``Kx`` = ū_x、``Ky`` = ū_y(接線、 −(1−2ν)/(4πG) · x/r² と y/r²、Johnson 1985 §3.2 の点荷重解)、``with_uz`` なら ``Kz`` = ū_z((1−ν)/(2πGr))。 画素平均(sub² の副標本)。中心画素: ∫□ x/r² dA = 0(奇関数)、∫□ 1/r dA = 4h ln(1+√2)(解析値)。 :func:`tacslip.cerruti_kernel`(接線 → 接線)と同じ作りの法線版。**Raises** ValueError: n < 8、pitch, G ≤ 0、ν が [0, 0.5] の外。 · 例: `poc_tactile_dipole_torque`
+- `boussinesq_surface_displacement` `matrix × table → table` — 法線圧 p (n, n) [Pa] → 表面変位 ``ux``・``uy``(核に ``Kz`` があれば ``uz``、沈む向きが正)(n, n) [m]。零詰め 2n の線形畳み込み。 **Raises** ValueError: p が (n, n) でない、kern が :func:`boussinesq_kernel` の表でない。 · 例: `poc_tactile_dipole_torque`
+- `dipole_to_torque_fit` `signal × signal → table` — 双極子の 1 成分列 D (K,) と既知のモーメント M (K,) [N·m] の線形較正 D ≈ k M(原点通過)と D ≈ k₁ M + b(切片あり)。 返り ``k``・``R2``(原点通過の決定係数 = 1 − SS_res/SS_tot)・``k1``・``b``・``R2_affine``・``rmse_M``(M に換算した残差 RMS)。 論文の較正係数 c = 1/k に当たる。**Raises** ValueError: K < 2、形が違う、M がすべて同じ。 · 例: `poc_tactile_dipole_torque`
+- `dipole_torque_resolution` `matrix × matrix × scalar × scalar × scalar × scalar × scalar → table` — マーカー重心の雑音 σ [px] を変位に足して双極子を ``trials`` 回取り直し、トルク分解能 σ_M = σ_D/|coef| [N·m] を測る。 返り ``sigma_D`` (2,)、``sigma_M`` (2,)、``D0``(雑音なし)、``snr`` = |D0|/σ_D、``trials``。σ_M ∝ σ(実測)。 **Raises** ValueError: σ < 0、trials < 2、coef = 0。 · 例: `poc_tactile_dipole_torque`
+- `ellipse_pressure_shifted` `matrix × matrix × scalar × scalar × scalar → matrix` — 半軸 a(x)・b(y)[m] の楕円 Hertz 圧 p0 √(1 − x′²/a² − y′²/b²) [Pa]、P = 2πab p0/3(Johnson 1985 式 4.24)、中心を d にずらす。 b ≫ a で円筒(稜・くさび状)の押し込みに近い形 —— 形状不変の門の 3 つ目。**Raises** ValueError: a, b, P ≤ 0、X と Y の形が違う。 · 例: `poc_tactile_dipole_torque`
+- `grasp_torque_frame` `image2d × image2d × scalar × scalar × scalar × scalar × scalar × scalar → table` — 像から 1 回で: 基準・現在のマーカー像(:func:`tacslip.marker_image`)→ :func:`tacslip.marker_track` → m 単位の場 → :func:`torque_decompose`。 ``pitch_px``・``r_px`` = マーカー格子と半径 [px]、``pitch`` = m/px、``window`` は [px] の (cx, cy, R)。マーカー 1 個あたりの面積 = (pitch_px·pitch)²、 発散の近傍半径 = 1.5 ピッチ。``P``・``mu``・``torsion_model`` はねじりの換算(:func:`torque_decompose`、既定は Hertz 接触の部分滑りで P と mu が要る、平頭押し込み子は ``"no_slip"``)。返り = torque_decompose の表 + ``track``(matched・n0・n1・p0・u [px])。 **Raises** ValueError: 追跡の対応が 9 個未満(双極子に足りない)、pitch ≤ 0、torque_decompose の ValueError。 · 例: `poc_tactile_dipole_torque`
+- `hertz_pressure_shifted` `matrix × matrix × table → matrix` — 中心を d = (dx, dy) [m] にずらした Hertz 圧 p0 √(1 − r′²/a²) [Pa] (``hz`` = :func:`tacsim.hertz_sphere` の表)。 小さな傾きトルク τ を受けた把持球は圧の中心が d = τ/P だけ寄る(準静的なモーメント釣合い)ので、ずらした Hertz 圧の元の中心まわりの 1 次モーメントは P·d = τ(厳密に線形)。**Raises** ValueError: hz に a/p0 が無い、X と Y の形が違う。 · 例: `poc_tactile_dipole_torque`
+- `marker_divergence` `matrix × matrix × scalar → table` — 散在マーカー pts (N, 2) と変位 u (N, 2) から各点の発散 ``div`` = ∂ux/∂x + ∂uy/∂y と回転 ``curl`` = ∂uy/∂x − ∂ux/∂y (単位は u の単位 ÷ pts の単位)。近傍半径 ``radius`` 内(最大 ``k_max`` 個)の点に平面 c0 + c1 x + c2 y を最小二乗で当てる (規則格子 + 半径 1.01 ピッチなら 5 点の中心差分と同値で :func:`sceneflow.flow_divergence` と 1e-15、半径 1.5 ピッチの 9 点は行平均の差分で 縁で 11 % 違う、実測)。正規方程式を点ごとに一括で解く。近傍が ``min_neighbors`` 未満、または正規方程式が特異(共線)な点は ``valid`` = False、div/curl = nan(fail-closed: 黙って 0 にしない)。FEM の散在節点にも同じ op。 **Raises** ValueError: pts/u が (N, 2) でない、形が違う、radius ≤ 0、N < min_neighbors。 · 例: `poc_tactile_dipole_torque`
+- `pressure_first_moment` `matrix × matrix × matrix × scalar → table` — 格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: ``P`` = Σ p h² [N]、``M1`` = Σ (x, y) p h² [N·m]、``tau`` = (−M1_y, M1_x) (z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。**Raises** ValueError: 形が違う、pitch ≤ 0。 · 例: `poc_tactile_dipole_torque`
+- `punch_pressure` `matrix × matrix × scalar × scalar → matrix` — 平頭円形押し込み子(半径 a [m])の圧力 [Pa]: p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r < a、外は 0)。 第 1 項 = Johnson 1985 式 3.34、第 2 項 = ∫ (x, y) p dA = M1 を満たす反対称項(導出はモジュール docstring、門で数値確認)。 ``pitch`` を渡すと画素を sub×sub の副標本で平均する(縁の 1/√ 特異点の格子誤差を減らす。4×4 で Σ p h² が P と 0.6 %、実測)。 **Raises** ValueError: a ≤ 0、P < 0、X と Y の形が違う、|M1| > Pa/3(接触が離れる: 線形の式が成り立たない、fail-closed)。 · 例: `poc_tactile_dipole_torque`
+- `punch_surface_uz` `matrix × scalar × scalar × scalar × scalar → matrix` — 平頭円形押し込み子(法線力 P)の半空間表面の法線変位 [m] (沈む向き正): 円内は一様 δ = P(1−ν)/(4Ga)、外側は (2δ/π) arcsin(a/r) (Johnson 1985 §3.4 の平頭押し込み子。式番号は本文で確認できず **unverified** —— Boussinesq 核 ``Kz`` の畳み込みと 0.35 % で一致することで 数値検証した)。**Raises** ValueError: a, P, G ≤ 0。 · 例: `poc_tactile_dipole_torque`
+- `rigid_rotation_fit` `matrix × matrix → table` — 窓内のマーカー場に剛体変位 u ≈ t + ω ẑ×r を最小二乗で当てる: ``t`` = 平均変位、``omega`` = Σ (x′u′_y − y′u′_x)/Σ r′² (′ は窓内平均を引いたもの)、``resid_rms`` = 残差 RMS、``n``。無滑りねじりでは円内が剛体回転(u_θ = βr)なので ω = β が真値 (平均 curl/2 は円の縁で当てはめが外に漏れて低くなる —— 実測 11 %)。``window`` = (cx, cy, R)。**Raises** ValueError: 点が 3 未満。 · 例: `poc_knife_tactile_toughness`, `poc_tactile_dipole_torque`
+- `surface_divergence_closed_form` `matrix × scalar × scalar → matrix` — 半空間の表面接線変位の発散の閉形式 ∇·ū = −(1−2ν) p/(2G)(本モジュールの導出: Boussinesq 点荷重 ū_r = −(1−2ν)P/(4πGr) と 2 次元の ∇·(r̂/r) = 2πδ²)。畳み込みの数値発散と比べる門(r < 0.8a で 0.2 %、実測)。**Raises** ValueError: G ≤ 0。 · 例: `poc_tactile_dipole_torque`
+- `tactile_dipole_moment` `matrix × matrix → table` — 触覚双極子モーメント D = Σ_i w ρ_i r_i(2 成分)。``form``: * ``"divergence"`` —— 論文(arXiv 2404.15626)式 4–8: ρ_i = (∇·u)_i(``rho`` を渡すか、``radius`` で :func:`marker_divergence`)。 * ``"norm_cross"`` —— 論文の基線(式 10–11、Yamaguchi & Atkeson 流): ρ_i = |u_i|(ベクトルのノルムを法線力の代わりに)。 l_i × f_i の傾き成分は (l_y|u|, −l_x|u|) で D を 90° 回したものなので、同じ「1 次モーメント」の枡で返す。零点後の対称な傾きでは |u| が M の偶関数なので恒等的に 0(符号を知らない、門)。 * ``"radial"`` —— 本モジュールの変種: ρ_i = u_i · r̂_i(放射成分)。 ``origin``: ``"midpoint"``(式 6–7、正負の重心の中点)/ ``"centre"``(pts の平均、基線の作法)/ (x0, y0)。 ``weight``: ``"area"`` = 1 点あたり面積 ``area`` [m²] を掛ける(閉形式の係数 −(1−2ν)/(2G) と比べられる、単位 m³)/ ``"mean"`` = 1/N(論文)。 ``window`` = (cx, cy, R) なら半径 R 内の点だけ使う(せん断の漏れを切る窓、根拠はモジュール docstring)。valid でない点(nan)は除く。 返り ``D`` (2,)、``tau_dir`` = (−D_y, D_x)(式 9 の向き、係数なし)、``origin``、``n``、``rho``、``form``、``keep``。 **Raises** ValueError: form/origin/weight が未知(綴り違いは fail-closed)、pts/u の形、area 無しの "area"、使える点が 3 未満。 · 例: `poc_tactile_dipole_torque`
+- `tilt_shear_field` `matrix × matrix × table → table` — 「把持後に零点を取る」論文の手順そのまま: 把持直後の圧 p_before とトルク後の圧 p_after の差 Δp を Boussinesq 核で畳み、 零点後のマーカー変位 ``ux``・``uy``(・``uz``)と ``dp`` を返す。Δp の 0 次モーメントが 0(法線力不変)なら双極子は原点に依らない。 **Raises** ValueError: 2 枚の形が違う。 · 例: `poc_tactile_dipole_torque`
+- `torque_decompose` `matrix × matrix × scalar × scalar × scalar → table` — マーカー場を 3 つの力学量に分ける: ``translation`` = 窓内の平均変位(せん断 Q、単向成分)、``omega`` = 剛体回転角 (:func:`rigid_rotation_fit`)→ ねじり ``Mz``(a が要る; ``omega_curl`` = 平均 curl/2 は参考)、 ``D`` = 発散双極子(面積重み)→ 傾き ``M1`` = D / coef(coef 既定 = 半空間の閉形式 −(1−2ν)/(2G)、実機は較正値を渡す)、``tau`` = (−M1_y, M1_x)。 発散・curl は平均変位を引いても変わらない(定数の微分は 0)ので順序に依らない。窓 (cx, cy, R) は接触円に限る(半空間では純せん断が 窓全体に発散双極子を作るため、モジュール docstring 参照)。``radius`` = 発散の近傍半径(必須)。 · 例: `poc_tactile_dipole_torque`
+- `torsion_stick_field` `matrix × matrix × scalar × scalar × table × scalar → table` — 無滑りねじり(Reissner–Sagoci、Johnson 1985 §3.9 相当、式番号は未確認 → 畳み込みで数値検証)の表面変位場: トラクション q_θ = 3M_z r/(4πa³√(a²−r²)) を :func:`tacslip.cerruti_kernel` の核で畳んだ ``ux``・``uy`` [m] と、閉形式 ``beta`` = 3M_z/(16Ga³)、 円内の剛体回転 ``ux_cf`` = −βy・``uy_cf`` = βx(r < a)、トラクション ``qx``・``qy``。畳み込みが円内で一様な u_θ/r = β を返すことで β の式を 独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。これは無滑りの場: 平頭押し込み子なら全滑りの 8/(3π) 倍まで厳密だが、Hertz 接触では 縁から必ず滑る —— Hertz 接触の部分滑りの場は :func:`cuttouch.torsion_partial_slip` の ``field=True``(モジュール docstring 参照)。 **Raises** ValueError: G ≤ 0、a ≤ 0、X と Y の形が違う、核の格子が合わない。 · 例: `poc_tactile_dipole_torque`
+
+#### drive / terrain(20)
+- `add_mesh_object` `table × table → scalar` — 手続き的なメッシュ(tree_mesh / pedestrian_mesh …、原点 = 底面中心)を姿勢に置いて世界に足す。 · 例: `gallery_drive_world_objects`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_humanoids`, `poc_driving_lateral`, `poc_driving_traffic`, `poc_world_terrain`
+- `course_distance` `table × points → table` — 点 (N, 2) からコース(走れる多角形の和)への距離と、最寄り点から外へ向く単位ベクトル。 · 例: `poc_world_terrain`
+- `crosswalk_mesh` `入力なし → table` — 横断歩道(ゼブラ): 道を横切る線分 a→b に沿って幅 ``stripe``・間隔 ``gap`` の縞を、a→b に直交する向きに ``length`` だけ伸ばす(a→b の左手側)。``{"V", "F", "color", "label" (12), "n_stripes", "area"}``。 · 例: `poc_driving_crossing`, `poc_driving_humanoids`, `poc_world_terrain`
+- `fbm_gradient` `image2d × image2d × table → any` — (∂h/∂x, ∂h/∂y) の閉形式。 · 例: `poc_world_terrain`
+- `fbm_height` `image2d × image2d × table → image2d` — fBm の高さの閉形式: h(x, y) = Σ_k A_k cos(2π f_k (x cosθ_k + y sinθ_k) + φ_k)(表は :func:`fbm_params`)。 · 例: `poc_rover_slip_risk_path`, `poc_world_terrain`
+- `fbm_params` `入力なし → table` — 乱数位相の正弦の和で fBm 面を作るための表(Saupe 1988 のスペクトル合成の連続版)。 · 例: `poc_rover_slip_risk_path`
+- `material_params` `入力なし → table` — 材質の表。puddle = Perlin(puddle_freq) > puddle_level の所(道の内側だけ、ラベル 11、色 = 写り込み refl·空 + (1−refl)·陰影つきの路面)、 stain = 同様に暗い染み(ラベルは道のまま、真値の場 "stain" に残る)、wear = 白線の摩耗率 clip(wear·(Perlin(wear_freq)·0.5+0.5)·2, 0, 1)。 · 例: `poc_world_terrain`
+- `mesh_signed_volume` `points × matrix → scalar` — 閉じたメッシュの符号つき体積(発散定理: Σ v₀·(v₁×v₂)/6、外向きで正)。 · 例: `poc_world_terrain`
+- `pedestrian_mesh` `入力なし → table` — 手続き的な歩行者: 脚 2 本(箱)、胴(箱)、頭(回転体)。原点 = 足元中心、+x が前。``stride`` [m] で脚を前後に開く。 · 例: `gallery_drive_world_objects`, `poc_driving_crossing`, `poc_driving_humanoids`, `poc_driving_traffic`, `poc_driving_weather`, `poc_world_terrain`
+- `perlin2` `image2d × image2d → table` — Perlin(2002, improved noise)の 2 次元勾配雑音を世界座標 (x, y) で評価する。 · 例: `poc_world_terrain`
+- `radial_periodogram` `image2d → table` — 格子上の高さ場 (H, W) の周期図を動径方向に平均する: ``{"f", "power", "count"}``(f は周期/m)。 · 例: `poc_world_terrain`
+- `scatter_offroad` `table → points` — 道の外に物を撒く(dart throwing): 各点はコースから ``margin`` 以上、互いに ``r_min`` 以上離れる。 · 例: `poc_world_terrain`
+- `spectral_slope` `image2d → table` — 動径周期図の log–log 直線当てはめ: ``{"beta", "intercept", "n"}``(power ∝ f^{−beta})。 · 例: `poc_world_terrain`
+- `terrain_gradient` `image2d × image2d × table → any` — (∂z/∂x, ∂z/∂y) の閉形式: ∇(h·w) = w∇h + h·w′(d)·∇d、∇d = 最寄り点から外へ向く単位ベクトル。 · 例: `poc_world_terrain`
+- `terrain_height` `image2d × image2d × table → image2d` — z = fbm(x, y)·w(d(x, y)) + うねり(x, y)。course が無ければ w = 1(起伏だけ)。 · 例: `poc_world_terrain`
+- `terrain_mesh` `table × table → table` — (xmin, xmax, ymin, ymax) を step の升に割り z = terrain_height の格子メッシュ。 · 例: `gallery_drive_city_terrain`
+- `terrain_params` `入力なし → table` — 地形の表: fBm の起伏(道から ``flat`` m は 0、そこから ``blend`` m で smoothstep)+ 路面のうねり ``road_amp·½[sin(2πx/L₁+φ₁) + sin(2πy/L₂+φ₂)]``(道にも掛かる、勾配の上限 = road_amp·π/min(L))。 · 例: `gallery_drive_city_terrain`, `poc_world_terrain`
+- `tree_mesh` `入力なし → table` — 手続き的な木: 幹 = 正 n 角柱(高さ 0.35·height)、樹冠 = 円錐(conifer)か回転楕円体(broadleaf、上下 0.65·height)。 · 例: `poc_world_terrain`
+- `world_apply_terrain` `table × table → table` — world_build の出力(平らな世界)に地形を掛ける(その場で書き換え、同じ dict を返す)。 · 例: `poc_world_terrain`
+- `world_materials` `table × table × matrix × matrix × table → table` — 描画結果 ``view``(world_camera、"shade" を含む)に路面の材質を画素ごとに掛ける。 · 例: `poc_world_terrain`
+
+#### drive / town(10)
+- `kyosoku_summary` `入力なし → table` — 教則の場面の再現台帳(docs/drive/kyosoku_scenarios.json)を読み、category × status の件数表にする。 · 例: `poc_driving_town`
+- `town_centerline` `table → any` — 継いだ中心線を弧長 ``step`` ごとに標本化する → ``(N, 4) = (s, x, y, yaw)``(終点は必ず含む)。 · 例: `poc_driving_town`
+- `town_chain` `any → table` — 要素を順に継いで配置する: 要素 k+1 の entry を要素 k の exit(の ``overlap`` 手前)に合わせる剛体配置を閉形式で求め、 :func:`drivecourse.course_layout` に渡す。 · 例: `poc_driving_town`
+- `town_checks` `table × table → table` — 通し走行の採点(閉形式の門 + 既存の踏切の採点 op)。 · 例: `poc_driving_japan_town`, `poc_driving_town`
+- `town_crossing_state` `table → table` — 時刻 t の踏切の設備を世界に書き込む(全部の踏切に同じ列車の時刻を使う)。 · 例: `poc_driving_town`
+- `town_layout` `入力なし → table` — 既定の町。``"default"`` = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) → parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。``"short"`` = road(20) → crossing → road(20) (テストの速い門)。 · 例: `poc_driving_town`
+- `town_rules` `入力なし → table` — 法規パック(:data:`RULE_PACKS` の複製)。``{"jurisdiction", "side": "left"|"right", "crossing_stop": "always"|"when_active", "intersection_stop": "signal", "hold_s", "look_required", "look_hold_s", "sources": [...], "verified", "notes"}``。 · 例: `poc_driving_town`
+- `town_run` `table → table` — 中心線に沿う縦だけの通し走行(ルールベース)。 · 例: `poc_driving_japan_town`, `poc_driving_town`
+- `town_stop_lines` `table → table` — 町の停止線を弧長順に並べる: ``[{"s", "x", "y", "yaw", "kind", "element", "crossing_zone": (s0, s1) | None, "drawn": bool}, ...]``。 · 例: `poc_driving_town`
+- `town_world` `table → table` — :func:`driveworld.world_build` の薄い包み(``props`` と残りの引数をそのまま渡す)に、停止線・信号・踏切の位置の表を ``world["town"]`` として足し、踏切の要素ごとに **遮断機つき警報機 2 基・遮断かん(上がり)・踏切の板・列車(遠くに待機)** を置く。 · 例: `poc_driving_town`
+
+#### drive / traffic(18)
+- `bus_stop_rate` `any → any` — 停車中のバスの前後で高い出現率 λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)] [件/m]。バスの陰(前端の先)と後ろから人が出てくる、という形の例(値は呼び出し側の仮定)。上限は base + 2·peak。 · 例: `poc_driving_traffic`
+- `driver_style` `入力なし → table` — 運転の癖 3 種("careful" / "normal" / "sloppy")の母数を返す。**値はすべて仮定**(出典なし)。 · 例: `poc_driving_traffic`
+- `idm_accel` `any → any` — Intelligent Driver Model の加速度(Treiber, Hennecke, Helbing 2000)。 · 例: `poc_driving_decisions`, `poc_driving_town`, `poc_driving_traffic`
+- `idm_equilibrium_gap` `any → any` — IDM の平衡車間 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v < v0)。 · 例: `poc_driving_traffic`
+- `idm_platoon_simulate` `any → table` — 先頭車の速度プロファイルに IDM の追従車列を積分する(車 0 = 先頭、1..n = 追従車)。 · 例: `poc_driving_traffic`
+- `importance_risk_estimate` `any → table` — 出現率を上げた試行(率 λ')で事故を起こしやすくし、尤度比の重みで本来の率 λ の事故確率に戻す。 · 例: `poc_driving_traffic`
+- `lateral_wobble` `入力なし → signal` — Ornstein–Uhlenbeck 過程 dX = −θ X dt + σ dW の厳密離散化(長さ n の列、刻み dt)。 · 例: `poc_driving_traffic`
+- `occlusion_reveal_distance` `any → scalar` — 路肩駐車車両(向きつきの箱)の陰にある点 ``emerge_xy`` が、自車の目から **初めて見える** ときの縦距離。 · 例: `poc_driving_traffic`
+- `occlusion_safe_speed` `any → any` — 見えた瞬間から距離 d 以内に止まれる最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。 · 例: `poc_driving_traffic`
+- `occlusion_visible_intervals` `any → any` — 自車の目が p(s) = ego_xy + s h を 0 ≤ s ≤ s_max 進む間に、点 ``emerge_xy`` が **見えている** 前進量の区間の列。 · 例: `poc_driving_traffic`
+- `ou_estimate` `signal → table` — 横ふらつき(平均 0 の OU 過程 dX = −θX dt + σ dW)の母数を、等間隔 dt の観測の列から読む。 · 例: `poc_driving_traffic`
+- `passing_decision` `入力なし → any` — 対向車までの距離 ``dist_oncoming``(判断時、自車が x_in にいるとき)で "go" か "wait" を返す。 · 例: `poc_driving_traffic`
+- `passing_gap_required` `入力なし → table` — 駐車車両を避けて対向車線にはみ出す区間を抜ける時間と、対向車がそれまでに来ない境目の距離(閉形式)。 · 例: `poc_driving_traffic`
+- `passing_simulate` `入力なし → table` — "go" にした場合を時間を進めて走らせ、PET(自車が対向車線から戻り切った時刻と、対向車がその地点に着く時刻の差)を返す。 · 例: `poc_driving_traffic`
+- `pedestrian_crossing` `入力なし → table` — 横断の意図を真値に持つ歩行者の軌跡(区分ごとの閉形式。積分しない)。 · 例: `poc_driving_traffic`
+- `poisson_events` `any → signal` — [0, x_max] の非一様ポアソン過程を thinning(Lewis & Shedler 1979)で 1 本引く(昇順の位置の配列)。 · 例: `poc_driving_traffic`
+- `poisson_events_xt` `any → any` — [0, x_max] × [0, t_max] の時空の非一様ポアソン過程(率 λ(x, t) [件/(m·s)])を thinning で 1 本引く。 · 例: `poc_driving_traffic`
+- `social_force_step` `points × points × points → any` — social force の 1 歩(単位質量あたり。Helbing & Molnár 1995 / Helbing, Farkas, Vicsek 2000 の形)。 · 例: `gallery_drive_mirrors_crowds`
+
+#### drive / ttc(9)
+- `flow_from_depth_motion` `image2d × matrix × matrix → table` — 深度像と剛体運動から **真の像の流れ**: ``{"u", "v", "valid", "depth1"}``(各 (H, W))。 · 例: `poc_ttc_rss`, `poc_world_terrain`
+- `foe_from_flow` `image2d × image2d → table` — 光学流から拡大の中心(FoE)を推定する: ``{"foe": (col, row), "n", "residual"}``。 · 例: `poc_world_terrain`
+- `foe_from_motion` `matrix × matrix → signal` — 拡大の中心(FoE)の画素 ``(col, row)``: 相対運動の並進 ``t`` を無限遠で投影した点。 · 例: `poc_ttc_rss`, `poc_world_terrain`
+- `label_extent` `labels2d → table` — ラベル像の中で値 ``value`` の画素の箱: ``{"col0", "col1", "row0", "row1", "width", "height", "n"}``。 · 例: `poc_ttc_rss`
+- `relative_motion` `matrix × matrix → matrix` — 2 コマの間の、カメラ座標で見た点の剛体運動 ``T_rel``(``P_c1 = T_rel · P_c0``)。 · 例: `poc_ttc_rss`, `poc_world_terrain`
+- `ttc_from_flow` `image2d × image2d → table` — 光学流から τ(秒): ``{"tau_map", "tau", "n", "foe"}``。 · 例: `poc_ttc_rss`
+- `ttc_from_range` `入力なし → scalar` — 距離と閉じる速さから τ = d / v(秒)。世界の姿勢から出す真値(v ≤ 0 なら ``inf``、d < 0 は ``ValueError``)。 · 例: `poc_ttc_rss`
+- `ttc_from_scale` `入力なし → scalar` — 見かけの大きさの変化から τ(秒、最初のコマの時刻で): ``τ₀ = Δt · w₁ / (w₁ − w₀)``。 · 例: `poc_ttc_rss`
+- `ttc_truth` `image2d × matrix × matrix → table` — 画素ごとの **真の τ**(秒、最初のコマの時刻で)と閉じる速さ: ``{"tau", "closing_speed", "depth1", "valid"}``。 · 例: `poc_ttc_rss`
+
+#### drive / world(4)
+- `load_asset` `入力なし → table` — 同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。 · 例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
+- `world_build` `table → table` — コース(要素か layout)から世界を組む。 · 例: `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_camera` `table × matrix × matrix → table` — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_move` `table → any` — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
+
+### tomography(17 ops / 6 categories)
+
+#### tomography / artifact(5)
+- `beam_hardening_apply` `sinogram → sinogram` — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
+- `beam_hardening_correct` `sinogram → sinogram` — Undo cupping — either the exact model inverse, or a calibrated polynomial. · 例: `ct_reconstruction`
+- `metal_trace_interpolate` `sinogram → sinogram` — Linear-interpolation metal artefact reduction (LI-MAR). · 例: `ct_reconstruction`
+- `ring_artifact_apply` `sinogram → sinogram` — Give the detector a per-bin gain error — the source of ring artefacts. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
+- `ring_artifact_remove` `sinogram → sinogram` — Remove per-detector-bin offsets by flattening the angle-averaged profile. · 例: `ct_reconstruction`
+
+#### tomography / forward(3)
+- `ellipse_phantom` `入力なし → image2d` — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
+- `ellipse_sinogram` `入力なし → sinogram` — The **closed-form** Radon transform of a sum of uniform ellipses. · 例: `ct_reconstruction`, `poc_ct_fidelity`
+- `radon_transform` `image2d → sinogram` — Forward parallel-beam projection: a slice in, a **sinogram** out. · 例: `ct_reconstruction`, `poc_ct_fidelity`
+
+#### tomography / geometry(2)
+- `sinogram_center_of_rotation` `sinogram → measurement` — Where the axis of rotation actually is, in detector bins from the centre. · 例: `ct_reconstruction`
+- `sinogram_center_shift` `sinogram → sinogram` — Re-centre a sinogram on its axis of rotation. · 例: `ct_reconstruction`
+
+#### tomography / layout(2)
+- `projection_angles` `入力なし → signal` — The angle sequence of a scan, in **degrees**, as a 1-D float64 array. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
+- `sinogram_design` `入力なし → table` — What a scan geometry can and cannot resolve — **before** anything is built. · 例: `ct_reconstruction`, `tomography_reconstruct`
+
+#### tomography / reconstruct(3)
+- `backproject_sinogram` `sinogram → image2d` — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
+- `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_ct_fidelity`
+- `sart_reconstruct` `sinogram → image2d` — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
+
+#### tomography / volume(2)
+- `fbp_volume` `sinostack → voxel` — Reconstruct every sinogram of a ``(Z, A, D)`` stack -> a ``(Z, S, S)`` volume. · 例: `poc_battery_ct_degradation`, `tomography_reconstruct`
+- `radon_volume` `voxel → sinostack` — Project every slice of a ``(Z, H, W)`` volume -> a ``(Z, A, D)`` stack. · 例: `poc_battery_ct_degradation`, `tomography_reconstruct`
+
+### volcolor(11 ops / 7 categories)
+
+#### volcolor / colorize(2)
+- `vol_colorize_labels` `labels → rgbvolume` — 3-D ラベルボリューム -> ``(D, H, W, 3)`` float64 の RGB ボリューム。 · 例: `voxel_labels_color`
+- `vol_label_overlay` `voxel × labels → rgbvolume` — 元のグレーボリュームに色ラベルを重ねた ``(D, H, W, 3)`` を返す。 · 例: `voxel_labels_color`
+
+#### volcolor / diagnose(1)
+- `vol_label_color_flicker` `voxel → table` — 「切ってから色を付ける」と「色を付けてから切る」の差を**数える**。 · 例: `voxel_labels_color`
+
+#### volcolor / measure(2)
+- `vol_label_legend` `labels → table` — 「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。 · 例: `voxel_labels_color`
+- `vol_label_shape_stats` `labels → table` — 成分ごとの**線形時間で出せる**定量値(体積・重心・箱・主成分形状指標)。 · 例: `poc_cold_chain_excursion`, `voxel_labels_color`
+
+#### volcolor / palette(1)
+- `vol_label_palette` `入力なし → matrix` — ラベル ``0..n_labels`` の RGB パレット ``(n_labels + 1, 3)`` float64。 · 例: `voxel_labels_color`
+
+#### volcolor / render(2)
+- `vol_label_volume_render` `labels → rgbimage` — 色付きラベルの**合成投影** ``(H, W, 3)`` を numpy だけで作る。 · 例: `voxel_labels_color`
+- `vol_labels_to_meshes` `labels → table` — 成分ごとに marching cubes をかけ、**色付きメッシュの集合**にする。 · 例: `voxel_labels_color`
+
+#### volcolor / select(1)
+- `vol_select_labels` `labels → labels` — 3-D の特徴で成分をふるいにかける(2-D のブロブ選別の 3-D 版)。 · 例: `voxel_labels_color`
+
+#### volcolor / slice(2)
+- `vol_label_mpr_rgb` `rgbvolume → rgbimage` — 色付きボリュームの直交 3 断面を **1 枚の RGB** に並べた図を返す。 · 例: `voxel_labels_color`
+- `vol_label_slice_rgb` `rgbvolume → rgbimage` — 色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。 · 例: `voxel_labels_color`
+
+### reprconv(42 ops / 10 categories)
+
+#### reprconv / algebra(11)
+- `angle_to_matrix` `angle → matrix` — 角度 **[度]** → z 軸まわりの回転行列 ``matrix (3,3)``。``angle`` の出口。 · 例: `representation_roundtrip`
+- `countrate_to_counts` `countrate → counts` — 計数レート ``[Hz]`` → 計数 ``counts``。``countrate`` の出口(**可逆**)。 · 例: `representation_roundtrip`
+- `counts_to_countrate` `counts → countrate` — 計数 → 計数レート ``[Hz]``。:func:`countrate_to_counts` の逆。 · 例: `representation_roundtrip`
+- `cscalar_to_polar` `cscalar → pairs` — 複素スカラ → 極形式 ``pairs (1,2) = [|z|, arg z[度]]``。``cscalar`` の出口。 · 例: `representation_conversion`
+- `deformation_to_points` `deformation → points` — TPS 変形 ``deformation`` → 制御点 ``points (N,3)``。``deformation`` の出口。 · 例: `representation_conversion`
+- `matrix_to_angle` `matrix → angle` — z 軸まわりの回転行列 → 角度 **[度]**。:func:`angle_to_matrix` の逆。 · 例: `representation_roundtrip`
+- `matrix_to_rot_scale` `matrix → rot_scale` — 2-D 相似変換 ``(2,2)`` → ``(角度[度], 倍率)``。:func:`rot_scale_to_matrix` の逆。 · 例: `representation_conversion`
+- `polar_to_cscalar` `pairs → cscalar` — 極形式 ``pairs (1,2) = [r, theta[度]]`` → 複素スカラ。:func:`cscalar_to_polar` の逆。 · 例: `representation_conversion`
+- `rot_scale_to_matrix` `rot_scale → matrix` — ``(角度[度], 倍率)`` → 2-D 相似変換 ``matrix (2,2)``。``rot_scale`` の出口。 · 例: `representation_conversion`
+- `shift_to_vector` `shift → vector` — 整数シフト ``(dz, dy, dx)`` → ``vector (3,)``。``shift`` の出口(**可逆**)。 · 例: `representation_conversion`
+- `vector_to_shift` `vector → shift` — ``vector (3,)`` → 整数シフト ``(dz, dy, dx)``。:func:`shift_to_vector` の逆向き。 · 例: `representation_conversion`
+
+#### reprconv / curvature(3)
+- `curvature_to_shape_index` `curvature → pairs` — 主曲率 ``(N,2)`` → 形状指数と曲がり ``(N,2)`` の ``pairs``。``curvature`` の出口。 · 例: `representation_roundtrip`
+- `curvature_to_table` `curvature → table` — 曲率 → 分布の要約 ``table``。**一方向**(統計は情報を捨てるのが仕事)。 · 例: `representation_conversion`
+- `shape_index_to_curvature` `pairs → curvature` — 形状指数と曲がり ``(N,2)`` → 主曲率 ``(N,2)``。:func:`curvature_to_shape_index` の逆。 · 例: `representation_roundtrip`
+
+#### reprconv / descriptor(3)
+- `descriptor_to_matrix` `descriptor → matrix` — 記述子 → ``matrix``。``descriptor`` の出口(**可逆**)。 · 例: `representation_conversion`, `representation_roundtrip`
+- `descriptor_to_table` `descriptor → table` — 記述子 → 要約 ``table``。**一方向**。 · 例: `representation_conversion`
+- `matrix_to_descriptor` `matrix → descriptor` — ``matrix`` → 記述子。:func:`descriptor_to_matrix` の逆。 · 例: `representation_conversion`
+
+#### reprconv / direction(3)
+- `angles_to_normals` `pairs → normals` — 方位・仰角の対 ``(N,2)`` **[度]** → 単位法線 ``(N,3)``。``pairs`` の出口。 · 例: `representation_roundtrip`
+- `normals_to_angles` `normals → pairs` — 法線 ``(N,3)`` → 方位・仰角の対 ``(N,2)`` **[度]**。``normals`` の出口。 · 例: `poc_tacscalib_sphere_lut`, `representation_roundtrip`
+- `normals_to_egi` `normals → image2d` — 法線 ``(N,3)`` → 拡張ガウス像 ``(n_el, n_az)`` の ``image2d``。 · 例: `representation_conversion`
+
+#### reprconv / flow(4)
+- `flow_apply` `points × flow_scattered → points` — 点群 ``(N,3)`` に散在フロー ``(N,3)`` を足す → ``points``。``flow`` の消費側。 · 例: `representation_conversion`
+- `flow_magnitude` `flow_dense → voxel` — 密なシーンフロー ``(3,D,H,W)`` → 速さの体積 ``voxel (D,H,W)``。``flow`` の出口。 · 例: `perception_on_video`, `representation_roundtrip`
+- `flow_speed` `flow_scattered → signal` — 散在フロー ``(N,3)`` → 速さの ``signal`` ``(N,)``。散在 ``flow`` の出口。 · 例: `representation_conversion`, `representation_roundtrip`
+- `flow_to_rgbimage` `flow_dense → rgbimage` — 密なシーンフローの 1 スライス → 色相=向き・明度=速さの ``rgbimage``。 · 例: `representation_conversion`
+
+#### reprconv / gaussians(3)
+- `gaussians_to_points` `gaussians → points` — ``gaussians`` → 中心の点群 ``(N,3)``。``gaussians`` の出口(**中心は可逆**)。 · 例: `representation_roundtrip`
+- `gaussians_to_voxel` `gaussians → voxel` — ``gaussians`` → 密度 ``voxel (D,H,W)``。``gaussians`` の 2 つ目の出口。 · 例: `representation_roundtrip`
+- `points_to_gaussians` `points → gaussians` — 点群 ``(N,3)`` → 等方ガウシアン ``gaussians``。**この型の唯一の入口**。 · 例: `representation_roundtrip`
+
+#### reprconv / index(3)
+- `indices_to_labels` `indices → labels` — 添字 ``(N,)`` → 選択マスク ``labels``。``indices`` の出口(**可逆**)。 · 例: `representation_conversion`
+- `labels_to_indices` `labels → indices` — ``labels`` → 非背景の添字 ``(N,)``。:func:`indices_to_labels` の逆向き。 · 例: `representation_conversion`
+- `select_points` `points × indices → points` — 点群 ``(N,3)`` と添字 ``(M,)`` → 部分点群 ``(M,3)``。``indices`` の消費側。 · 例: `representation_conversion`
+
+#### reprconv / keypoint(6)
+- `keypoints_from_image2d` `image2d → keypoints` — 計数/応答画像 ``(H, W)`` → 画像座標 ``(N,2) = (u, v)``。往復の戻り路。 · 例: `representation_roundtrip`
+- `keypoints_to_image2d` `keypoints → image2d` — 画像座標 ``(N,2) = (u, v)`` → 計数画像 ``(H, W)``。``keypoints`` の 2 つ目の出口。 · 例: `representation_roundtrip`
+- `keypoints_uv_to_points` `keypoints → points` — 画像座標 ``(N,2) = (u, v)`` → 点群 ``(N,3) = (z, y, x)``。``keypoints`` の出口。 · 例: `representation_roundtrip`
+- `points_to_position` `points → position` — 点群 ``(N,3)`` → 重心 ``(z, y, x)``。**不可逆**(分布を捨てる)。 · 例: `representation_conversion`, `representation_roundtrip`
+- `points_zyx_to_keypoints_uv` `points → keypoints` — 点群 ``(N,3) = (z, y, x)`` → 画像座標 ``(N,2) = (u, v)``。 · 例: `representation_roundtrip`
+- `position_to_points` `position → points` — 位置 ``(z, y, x)`` → 1 点の点群 ``(1, 3)``。``position`` の出口(**可逆**)。 · 例: `representation_conversion`
+
+#### reprconv / pairs(3)
+- `pairs_to_image2d` `pairs → image2d` — 対 ``(N,2)`` → 散布密度画像 ``(H, W)``。``pairs`` の 3 つ目の出口。 · 例: `representation_conversion`
+- `pairs_to_signal` `pairs → signal` — 対 ``(N,2)`` → 従属変数の ``signal`` ``(N,)``。``pairs`` の 2 つ目の出口。 · 例: `representation_conversion`, `representation_roundtrip`
+- `pairs_to_table` `pairs → table` — 対 ``(N,2)`` → 要約 ``table``。**一方向**。 · 例: `representation_conversion`
+
+#### reprconv / score(3)
+- `correlation_score` `voxel × voxel → score` — 2 つの ``voxel`` → 正規化相互相関の ``score`` volume。**この型の唯一の入口**。 · 例: `poc_leak_localization`, `representation_conversion`, `representation_roundtrip`
+- `score_to_image2d` `score → image2d` — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。 · 例: `representation_conversion`
+- `score_to_position` `score → position` — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。 · 例: `representation_conversion`
+
+### cadmap(4 ops / 4 categories)
+
+#### cadmap / defect(1)
+- `cad_defect_to_cad` `mesh × labels → table` — 2-D の欠陥ラベル画像 → **CAD 面上の表**(面 ID / 面上の面積 / 3-D 重心)。 · 例: `defect_to_cad`
+
+#### cadmap / project(1)
+- `cad_surface_to_pixel` `mesh × points → table` — 3-D 点 (N,3) → 画素 + **可視性**(遮蔽・背面・画枠外を区別して返す)。 · 例: `defect_to_cad`
+
+#### cadmap / raycast(1)
+- `cad_pixel_to_surface` `mesh × keypoints → table` — 画素 (N,2) → CAD 面上の ``(face_id, 重心座標, 3-D 点)``(閉形式)。 · 例: `defect_to_cad`
+
+#### cadmap / visibility(1)
+- `cad_visible_faces` `mesh → indices` — このカメラから**実際に見えている**面の ID(昇順、``indices`` sort)。 · 例: `defect_to_cad`
+
+### annotate(51 ops / 8 categories)
+
+#### annotate / compose(3)
+- `compare_frame` `image2d × image2d → image2d` — 2 枚を並べ、境界に**仕切り**と**ラベル**を置く。 · 例: `annotate_gallery`
+- `panel_grid` `image2d → image2d` — パネルを格子に並べ、各枠の下にラベルを敷く(montage / contact sheet)。 · 例: `annotate_gallery`, `annotate_paper_tour`
+- `zoom_inset` `image2d → image2d` — 拡大の差し込み ―― 元図に**枠**と**引き出し線**を付ける。 · 例: `annotate_gallery`, `poc_diabolo_model_and_vision`, `poc_food_cutting_measure`
+
+#### annotate / furniture(3)
+- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`
+- `legend_box` `image2d × entries → image2d` — 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。 · 例: `annotate_gallery`, `poc_driving_decisions`, `poc_measurement_system_analysis`, `poc_pxrd_phase_peel`
+- `scale_bar` `image2d → image2d` — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。 · 例: `annotate_gallery`
+
+#### annotate / overlay(5)
+- `annotate_invert` `image2d × mask → image2d` — 領域(region)を**反転色**で塗る/縁取る。 · 例: `annotate_paper_tour`
+- `annotate_invert_path` `image2d × pairs → image2d` — 折れ線(line)を**反転色**で描く。アンチエイリアスつき。 · 例: `annotate_paper_tour`
+- `annotate_invert_visibility` `image2d × mask → table` — 反転色が**その地の上で本当に見えるか**を、描く前に測る。 · 例: `annotate_paper_tour`
+- `overlay_labels` `image2d × labels → image2d` — 色ラベル図を α で重ねる。**同じラベル番号には常に同じ色**。 · 例: `annotate_gallery`, `poc_mri_bias_field`, `poc_recycling_sorting`
+- `overlay_mask` `image2d × mask → image2d` — 2 値マスクを α で重ねる。**厳密に ``a*f + (1-a)*b``**。 · 例: `annotate_gallery`, `poc_kendama`, `poc_pv_thermal_survey`
+
+#### annotate / paper(23)
+- `annotate_angle` `image2d → image2d` — 画像(image2d)を返す: 3 点のなす角を弧と値で示す(必要なら 2 本の腕も)。 · 例: `paper_figure`
+- `annotate_angle_layout` `入力なし → table` — table(dict)を返す: 3 点 ``a, vertex, b`` のなす角(小さい方)の弧と文字位置。 · 例: `paper_figure`
+- `annotate_colorbar` `image2d × image2d → image2d` — 画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。 · 例: `paper_figure`
+- `annotate_dimension` `image2d → image2d` — 画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。 · 例: `paper_figure`
+- `annotate_dimension_layout` `入力なし → table` — table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。 · 例: `paper_figure`
+- `annotate_figure_grid` `images → image2d` — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`
+- `annotate_figure_grid_layout` `入力なし → table` — table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。 · 例: `paper_figure`
+- `annotate_inset` `image2d → image2d` — 画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。 · 例: `paper_figure`, `poc_real_defect_floor`
+- `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
+- `annotate_leader` `image2d → image2d` — 画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。 · 例: `paper_figure`
+- `annotate_leader_layout` `入力なし → table` — table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。 · 例: `paper_figure`
+- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `paper_figure`, `poc_real_defect_floor`
+- `annotate_markers` `image2d → image2d` — 画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。 · 例: `paper_figure`
+- `annotate_orientation` `image2d → image2d` — 画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。 · 例: `paper_figure`
+- `annotate_outline` `image2d × mask → image2d` — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。 · 例: `paper_figure`, `poc_rotation_invariance_audit`
+- `annotate_outline_layout` `mask → table` — table(dict)を返す: 2 値マスクの境界ループ(画素の辺に沿う閉多角形)と重心。 · 例: `paper_figure`
+- `annotate_panel_label` `image2d → image2d` — 画像(image2d)を返す: パネル文字 ``(a)``/``(b)`` を隅に置く。 · 例: `annotate_paper_tour`
+- `annotate_scale_bar` `image2d → image2d` — 画像(image2d)を返す: 隅に置く切りのよい長さのスケールバー(値と単位つき)。 · 例: `paper_figure`
+- `annotate_scale_bar_layout` `入力なし → table` — table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。 · 例: `paper_figure`
+- `annotate_table` `image2d × text → image2d` — 画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。 · 例: `annotate_paper_tour`, `poc_rotation_invariance_audit`
+- `annotate_table_layout` `text → table` — table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。 · 例: `annotate_paper_tour`
+- `annotate_text_path` `image2d × text → image2d` — 画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。 · 例: `annotate_paper_tour`, `paper_figure`
+- `annotate_text_path_layout` `text → table` — table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。 · 例: `annotate_paper_tour`
+
+#### annotate / plot(7)
+- `axes_frame` `image2d × axes → image2d` — 軸の枠(``box=True`` で四辺、False で左と下の 2 辺だけ)。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `axes_transform` `入力なし → axes` — データ座標 → 画素座標の対応(**閉形式**)を作る。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `data_to_pixel` `axes × signal × signal → pairs` — :func:`axes_transform` の対応でデータ点を画素 (x,y) に写す。 · 例: `annotate_gallery`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_crack_width_timeseries`, `poc_motion_magnification`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `grid_lines` `image2d × axes → image2d` — 格子。目盛り値を渡さなければ :func:`nice_ticks` が決める。 · 例: `annotate_gallery`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_pxrd_phase_peel`
+- `nice_ticks` `入力なし → signal` — [lo, hi] を覆う「切りのよい」目盛り値(1/2/5 × 10^k、**閉形式**)。 · 例: `annotate_gallery`, `poc_dehazing`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_pxrd_phase_peel`
+- `plot_series` `image2d × axes × signal × signal → image2d` — 折れ線・散布・棒を描く。**データ座標**で受ける(画素は axes が決める)。 · 例: `annotate_gallery`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_wound_area_tracking`
+- `ticks` `image2d × axes → image2d` — 目盛りとその数値。**位置は閉形式**(:func:`data_to_pixel` そのもの)。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+
+#### annotate / pointer(4)
+- `arrow` `image2d → image2d` — ``p0`` から ``p1`` へ矢印(軸は :func:`imagedraw.draw_line`、矢じりは塗り)。 · 例: `annotate_gallery`, `poc_agv_fleet`, `poc_car_parking`, `poc_diabolo_model_and_vision`, `poc_leak_localization`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_river_surface_velocity`, `poc_ttc_rss`
+- `crosshair` `image2d → image2d` — 断面の交差線(MPR で使う)。``gap`` だけ中心を空けて視点を隠さない。 · 例: `annotate_gallery`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_ttc_rss`, `poc_world_terrain`
+- `label_points` `image2d × pairs → image2d` — 点群に番号や値を振る。**重なりを避けて置く**(避けられなければ例外)。 · 例: `annotate_gallery`
+- `leader_line` `image2d × text → image2d` — 引き出し線 —— 注記の位置(``anchor_xy``)から対象(``target_xy``)へ。 · 例: `annotate_gallery`, `poc_kendama`
+
+#### annotate / shape(4)
+- `arc` `image2d → image2d` — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
+- `ellipse` `image2d → image2d` — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_public_camera_heading_real`
+- `filled_polygon` `image2d × pairs → image2d` — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
+- `rounded_rect` `image2d → image2d` — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
+
+#### annotate / text(2)
+- `measure_text` `text → table` — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`
+- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_photoelasticity`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+
+### gfx2d(44 ops / 9 categories)
+
+#### gfx2d / camera(1)
+- `viewport` `rgb → rgb` — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``. · 例: `gfx2d_scene`
+
+#### gfx2d / colorspace(2)
+- `linear_to_srgb` `rgb → rgb` — Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`. · 例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_pigment_unmixing`, `poc_white_balance`
+- `srgb_to_linear` `rgb → rgb` — sRGB-encoded values to linear light (IEC 61966-2-1). · 例: `gfx2d_scene`, `poc_leaf_disease_area`
+
+#### gfx2d / composite(6)
+- `alpha_composite` `rgba × rgba → rgba` — Porter–Duff **over** on straight-alpha ``rgba`` (Porter & Duff 1984). · 例: `gfx2d_scene`
+- `alpha_composite_premul` `rgba_premul × rgba_premul → rgba_premul` — Porter–Duff **over** on premultiplied colour: ``src + dst*(1 - src.a)``. · 例: `gfx2d_scene`
+- `blend_mode` `rgb × rgb → rgb` — Blend two opaque ``rgb`` images with a named mode (W3C Level 1). · 例: `genspark_external_review`, `gfx2d_scene`
+- `layer_stack` `table → rgba` — Composite a z-ordered list of ``rgba`` layers, bottom first. · 例: `gfx2d_scene`
+- `premultiply` `rgba → rgba_premul` — Straight-alpha ``rgba`` to **premultiplied** ``rgba``: ``(C*A, A)``. · 例: `gfx2d_scene`
+- `unpremultiply` `rgba_premul → rgba` — **Premultiplied** ``rgba`` back to straight alpha: ``(C/A, A)``. · 例: `gfx2d_scene`
+
+#### gfx2d / isp(12)
+- `awb_gains` `rgb → vector` — Estimate white-balance gains ``(g_R, g_G, g_B)`` with ``g_G = 1``. · 例: `raw_to_display_isp`
+- `brightness_contrast` `rgb → rgb` — ``out = (rgb - 0.5) * contrast + 0.5 + brightness``, clipped to ``[0, 1]``. · 例: `raw_to_display_isp`
+- `color_correction_matrix` `rgb × matrix → rgb` — Apply a 3x3 colour-correction matrix: ``out = rgb @ ccm.T`` per pixel, clipped to ``[0, 1]``. · 例: `raw_to_display_isp`
+- `hue_saturation` `rgb → rgb` — Rotate the hue by *hue_deg* and scale the saturation by *saturation*, in BT.601 YCbCr: luma is kept, the chroma vector ``(Cb, Cr)`` is rotated and scaled. Output clipped to ``[0, 1]``. · 例: `raw_to_display_isp`
+- `lens_shading_correct` `image2d × image2d → image2d` — Multiply a frame by a lens-shading gain map and clip to ``[0, 1]``. *raw* and *gain* must have the same shape; the gain must be finite and > 0. · 例: `raw_to_display_isp`
+- `lens_shading_gain` `image2d → image2d` — The gain map that flattens a **flat-field** frame: ``gain = mean / flat`` per colour channel (or for the whole frame when *pattern* is ``None``). · 例: `raw_to_display_isp`
+- `raw_apply_gains` `image2d × vector → image2d` — Multiply a Bayer frame by per-channel gains (3 values ``R, G, B`` or 4 values ``R, G1, G2, B``) and clip to ``[0, 1]`` — white balance applied **before** demosaicing, which is where a real ISP does it (interpolating unbalanced channels smears the cast across colours). · 例: `raw_to_display_isp`
+- `raw_black_level` `image2d → image2d` — Black-level compensation on a Bayer frame: ``(raw - offset) / (white - offset)`` per colour channel, clipped to ``[0, 1]``. · 例: `raw_to_display_isp`
+- `raw_dead_pixel_correct` `image2d → image2d` — Replace every dead pixel (:func:`raw_dead_pixel_mask`) by the **median of its 8 same-colour neighbours**; every other pixel is returned bit-for-bit. · 例: `raw_to_display_isp`
+- `raw_dead_pixel_mask` `image2d → image2d` — Where the dead (stuck / hot) pixels are: ``1.0`` at a pixel that differs from **every one** of its 8 same-colour neighbours by more than *threshold* in the same direction, ``0.0`` elsewhere. ``(H, W)`` float64. · 例: `raw_to_display_isp`
+- `raw_demosaic_bilinear` `image2d → rgb` — Bayer mosaic → ``(H, W, 3)`` RGB by bilinear interpolation, in NumPy. · 例: `raw_to_display_isp`
+- `rgb_apply_gains` `rgb × vector → rgb` — Multiply the R, G, B channels by ``gains`` (3 values) and clip to ``[0, 1]``. · 例: `gallery_mesh_seg_sun_gains`
+
+#### gfx2d / light(5)
+- `light_mask` `rgb × rgb → rgb` — Modulate an ``rgb`` image by an ``rgb`` light map: ``base * (ambient + light)``. · 例: `gfx2d_scene`
+- `normal_map_decode` `rgb → normalmap` — Tangent-space normal map ``rgb`` in ``[0, 1]`` to unit vectors ``(H, W, 3)``. · 例: `gfx2d_scene`
+- `normal_map_shade` `normalmap → rgb` — Shade a 2-D normal map with one directional light (Lambert + Blinn 1977). · 例: `gfx2d_scene`
+- `radial_light` `入力なし → rgb` — A radial light map, ``rgb`` ``(H, W, 3)``, centred on ``(x, y)``. · 例: `gfx2d_scene`
+- `shadow_cast_2d` `image2d → image2d` — Visibility of every pixel from a point light at ``(x, y)``, as ``image2d``. · 例: `gfx2d_scene`
+
+#### gfx2d / particle(3)
+- `particle_emit` `入力なし → table` — Emit ``count`` particles from ``origin``, deterministically from ``seed``. · 例: `gfx2d_scene`
+- `particle_render` `table → rgba` — Splat a particle state into an ``rgba`` image. · 例: `gfx2d_scene`
+- `particle_step` `table → table` — Advance a particle state by ``dt`` seconds. Returns a **new** dict. · 例: `gfx2d_scene`
+
+#### gfx2d / post(8)
+- `bloom` `rgb → rgb` — Bleed the bright parts of an image into their neighbourhood. · 例: `gfx2d_scene`, `poc_public_camera_heading_real`
+- `chromatic_aberration` `rgb → rgb` — Scale the red and blue channels about the image centre, green fixed. · 例: `gfx2d_scene`
+- `color_grade` `rgb × lut → rgb` — Apply a 3-D colour LUT to an ``rgb`` image by trilinear interpolation. · 例: `gfx2d_scene`
+- `color_lut` `入力なし → lut` — Build a 3-D colour LUT, ``(n, n, n, 3)`` indexed ``[r, g, b]``. · 例: `genspark_external_review`, `gfx2d_scene`
+- `dither` `image2d → image2d` — Quantise to ``levels`` values per channel while preserving the local mean. · 例: `gfx2d_scene`
+- `film_grain` `rgb → rgb` — Add zero-mean Gaussian grain, deterministically from ``seed``. · 例: `gfx2d_scene`
+- `palette_quantize` `rgb → rgb` — Map every pixel to its nearest palette colour in Euclidean RGB. · 例: `gfx2d_scene`
+- `vignette` `rgb → rgb` — Darken towards the corners: ``out = rgb * (1 - strength * t**power)``. · 例: `gfx2d_scene`, `poc_search_sweep_width`, `poc_solar_el_inspection`
+
+#### gfx2d / sprite(5)
+- `nine_slice` `rgba → rgba` — Stretch a frame to a new size without deforming its corners. · 例: `gfx2d_scene`
+- `sprite_blit` `rgba × rgba → rgba` — Composite ``sprite`` onto a copy of ``dst`` at integer ``(x, y)``. · 例: `gfx2d_scene`
+- `sprite_sheet_slice` `rgba → sprites` — Cut a sprite atlas into a list of equal ``rgba`` frames, row-major. · 例: `gfx2d_scene`
+- `sprite_synthesize` `入力なし → rgba` — A deterministic anti-aliased test sprite, ``rgba`` ``(size, size, 4)``. · 例: `gfx2d_scene`
+- `sprite_transform` `rgba → rgba` — Rotate and/or scale an ``rgba`` sprite about its centre. · 例: `gfx2d_scene`
+
+#### gfx2d / tile(2)
+- `parallax_layers` `sprites → rgba` — Scroll a set of ``rgba`` layers at different rates and composite them. · 例: `gfx2d_scene`
+- `tilemap_render` `sprites → rgba` — Paint a grid of tile indices into one ``rgba`` image. · 例: `gfx2d_scene`
+
+### generative(34 ops / 6 categories)
+
+#### generative / illusion(13)
+- `illusion_cafe_wall` `入力なし → rgb` — カフェウォール錯視。**目地は厳密な水平線**なのに、傾いて見える。 · 例: `poc_calipers_under_illusion`
+- `illusion_checker_shadow` `入力なし → rgb` — チェッカーシャドウ。**印を付けた 2 マスは厳密に同じ画素値**。 · 例: `gallery_illusion_invariants`
+- `illusion_ebbinghaus` `入力なし → rgb` — エビングハウス錯視。**中央の 2 円は厳密に同じ半径**。 · 例: `poc_calipers_under_illusion`
+- `illusion_fraser_spiral` `入力なし → rgb` — フレーザー錯視。**渦に見えるが、実体は同心円**。 · 例: `gallery_illusion_invariants`
+- `illusion_ground_truth` `入力なし → table` — 錯視が守っている**厳密な不変量**を表で返す(``name`` 空で全件)。 · 例: `poc_calipers_under_illusion`
+- `illusion_hermann_grid` `入力なし → rgb` — ヘルマン格子。**交点は他の場所と厳密に同じ白**(黒い点は目が作る)。 · 例: `gallery_illusion_invariants`
+- `illusion_kanizsa` `入力なし → rgb` — カニッツァの三角形。**輪郭は 1 本も描かれていない**のに三角形が見える。 · 例: `gallery_illusion_invariants`
+- `illusion_muller_lyer` `入力なし → rgb` — ミュラー・リヤー錯視。**2 本の軸は厳密に等長**。 · 例: `poc_calipers_under_illusion`, `poc_illusions_and_perpetual_drawing`
+- `illusion_poggendorff` `入力なし → rgb` — ポッゲンドルフ錯視。**斜線は厳密に 1 本の直線**(帯で隠れているだけ)。 · 例: `poc_calipers_under_illusion`
+- `illusion_ponzo` `入力なし → rgb` — ポンゾ錯視。**2 本の横棒は厳密に等長**(遠近の手がかりが長さを変える)。 · 例: `gallery_illusion_invariants`
+- `illusion_scintillating_grid` `入力なし → rgb` — きらめき格子。ヘルマン格子の交点に白丸を置いたもの。 · 例: `gallery_illusion_invariants`
+- `illusion_simultaneous_contrast` `入力なし → rgb` — 同時対比。**2 つの灰色パッチは厳密に同じ値**(周りだけが違う)。 · 例: `gallery_illusion_invariants`
+- `illusion_zollner` `入力なし → rgb` — ツェルナー錯視。**長い線は厳密に平行**なのに、収束して見える。 · 例: `poc_calipers_under_illusion`
+
+#### generative / loop(2)
+- `perpetual_loop` `入力なし → rgbvideo` — **継ぎ目の無い循環動画**を作る → ``rgbvideo`` (T,H,W,3)。 · 例: `poc_illusions_and_perpetual_drawing`, `poc_periodic_video_boundary`
+- `perpetual_loop_seam` `rgbvideo → table` — 循環動画の**継ぎ目**を数で出す(``table``)。 · 例: `poc_endless_zoom_and_turning_solids`, `poc_illusions_and_perpetual_drawing`, `poc_periodic_video_boundary`
+
+#### generative / perpetual(12)
+- `perpetual_apollonian` `入力なし → rgb` — アポロニウスの円詰め ―― 隙間に接する円を入れ続ける(終わりが無い)。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_chaos_game` `入力なし → rgb` — カオスゲーム ―― 賽を振って半分ずつ寄るだけで、シェルピンスキーが出る。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_elementary_ca` `入力なし → rgb` — 基本セルオートマトン(Wolfram の 256 規則)を上から下へ無限に伸ばす。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_flow_field` `入力なし → rgb` — 流れ場 ―― 粒子を場に乗せて流し続ける(止めなければ終わらない)。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_harmonograph` `入力なし → rgb` — ハーモノグラフ ―― 減衰する 2 つの振り子が、閉じない曲線を描き続ける。 · 例: `gallery_illusion_invariants`
+- `perpetual_identities` `入力なし → table` — 各系が満たすべき**厳密な主張**を、実測つきで返す(``table``)。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_ifs_attractor` `入力なし → rgb` — 反復関数系の吸引子(バーンズリーのシダ)―― 4 本の式を無限に回すだけ。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_langtons_ant` `入力なし → rgb` — ラングトンの蟻 ―― 2 つの規則だけで、1 万歩後に「高速道路」を作り続ける。 · 例: `gallery_illusion_invariants`
+- `perpetual_plasma` `入力なし → rgb` — ダイヤモンド–スクエア法(1980 年代の「プラズマ」)―― 割り続ければ無限に細かい。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_reaction_diffusion` `入力なし → rgb` — グレイ–スコット反応拡散 ―― 模様が生まれ、分裂し、増え続ける。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_ten_print` `入力なし → rgb` — ``10 PRINT CHR$(205.5+RND(1)); : GOTO 10`` ―― 無限に伸びる迷路。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_truchet` `入力なし → rgb` — トルシェ・タイル ―― 4 分円 2 本の向きを振るだけで、途切れない曲線網になる。 · 例: `poc_illusions_and_perpetual_drawing`
+
+#### generative / pl(3)
+- `pl_diffusion_psf` `入力なし → image2d` — キャリア拡散の PSF(2 次元のグリーン関数 K₀(r/L)/2πL²、総和 1)を画像で返す。 · 例: `poc_si_wafer_pl_defect_visibility`
+- `pl_groove_visibility` `入力なし → table` — 溝の幅・拡散長・雑音から、影の溝と沈みの溝のコントラストと CNR を閉形式で返す(``table``)。 · 例: `poc_si_wafer_pl_defect_visibility`
+- `pl_image_simulate` `image2d → image2d` — 励起の場と再結合の場から PL 像を作る(定常拡散方程式の厳密解 + 光学 PSF + 雑音)。 · 例: `poc_si_wafer_pl_defect_visibility`
+
+#### generative / sem(1)
+- `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_wafer_defect_edge_bias`
+
+#### generative / stream(3)
+- `perpetual_render` `table → rgb` — 状態を絵にする(``rgb``)。何歩目で描いてもよい。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_state` `入力なし → table` — 無限に回せる**状態**を作る(``table``)。止めどきは呼んだ側が決める。 · 例: `poc_illusions_and_perpetual_drawing`
+- `perpetual_step` `table → table` — 状態を ``steps`` だけ進める(同じ dict を返す ―― 大きな配列を複製しない)。 · 例: `poc_illusions_and_perpetual_drawing`
+
+### imgmetrics(42 ops / 8 categories)
+
+#### imgmetrics / colordiff(3)
+- `delta_e_2000` `lab × lab → image2d` — CIEDE2000 色差(CIE 142-2001)。 · 例: `image_quality_metrics`
+- `delta_e_76` `lab × lab → image2d` — CIE76 色差 ―― Lab 空間のユークリッド距離。 · 例: `image_quality_metrics`
+- `delta_e_map` `rgbimage × rgbimage → image2d` — 2 枚の **sRGB 画像**の画素ごとの色差マップ。 · 例: `color_transport`, `image_quality_metrics`, `poc_colormap_readability`, `poc_pigment_unmixing`, `poc_white_balance`
+
+#### imgmetrics / colorspace(4)
+- `lab_to_rgb` `lab → rgbimage` — CIE L\*a\*b\* → sRGB ``[0, 1]``。**色域外は切り詰められる**ので ``rgb_to_lab`` との往復は色域内でしか一致しない(テストで固定)。 · 例: `image_quality_metrics`
+- `rgb_to_lab` `rgbimage → lab` — sRGB → CIE L\*a\*b\*(D65)。ΔE を測る前段。 · 例: `image_quality_metrics`, `poc_colormap_readability`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
+- `rgb_to_xyz` `rgbimage → rgb` — sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける。 · 例: `image_quality_metrics`
+- `xyz_to_lab` `rgb → lab` — CIE XYZ → CIE 1976 L\*a\*b\*。既定の白色点は D65 2°。 · 例: `image_quality_metrics`
+
+#### imgmetrics / compression(2)
+- `compressed_size` `image2d → scalar` — 配列を可逆圧縮したバイト数。``ncd`` の材料。 · 例: `image_quality_metrics`
+- `ncd` `image2d × image2d → scalar` — 正規化圧縮距離(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)。 · 例: `image_quality_metrics`
+
+#### imgmetrics / fidelity(6)
+- `ms_ssim` `image2d × image2d → scalar` — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 例: `image_quality_metrics`
+- `mse` `image2d × image2d → scalar` — 平均二乗誤差。``data_range`` に依らない生の量。 · 例: `image_quality_metrics`
+- `psnr` `image2d × image2d → scalar` — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
+- `rmse` `image2d × image2d → scalar` — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
+- `ssim` `image2d × image2d → scalar` — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
+- `ssim_map` `image2d × image2d → image2d` — SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で見るため。 · 例: `image_quality_metrics`, `poc_iqa_tid2013`
+
+#### imgmetrics / information(5)
+- `image_entropy` `image2d → scalar` — 1 枚のシャノンエントロピー [bit]。 · 例: `image_quality_metrics`, `poc_dehazing`
+- `joint_entropy` `image2d × image2d → scalar` — 同時エントロピー H(A, B) [bit]。 · 例: `image_quality_metrics`
+- `joint_histogram` `image2d × image2d → image2d` — 2 枚の同時ヒストグラム(正規化した同時確率)。 · 例: `image_quality_metrics`
+- `mutual_information` `image2d × image2d → scalar` — 相互情報量 I(A; B) [bit] = H(A) + H(B) - H(A, B)。 · 例: `image_quality_metrics`
+- `normalized_mutual_information` `image2d × image2d → scalar` — 正規化相互情報量 2*I(A;B) / (H(A) + H(B))。同じ絵で 1.0。 · 例: `image_quality_metrics`
+
+#### imgmetrics / iqa(11)
+- `luma_limited_u8` `any → any` — RGB (H, W, 3) uint8 → Y′ = round(16 + (65.481 R + 128.553 G + 24.966 B) / 255) の uint8 (H, W)。 · 例: `poc_iqa_tid2013`
+- `rank_data` `any → any` — 平均順位(1 始まり)。同順位は同じ値の順位の平均(scipy.stats.rankdata の 'average' と同じ定義)。 · 例: `poc_iqa_tid2013`
+- `rank_kendall_b` `any × any → scalar` — Kendall の τ_b(同順位補正あり)= (C − D) / sqrt((n0 − n1)(n0 − n2))。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `rank_spearman` `any × any → scalar` — Spearman の順位相関 ρ = 平均順位どうしの Pearson 相関(同順位があっても正しい形。古典式 1 − 6Σd²/(n(n²−1)) は 同順位が無いときだけ一致)。単調増加で 1、反転で −1。どちらかが定数なら ``nan``(順位の分散が 0、相関は定義されない)。 ±inf は順序だけ使う(完全一致の PSNR = inf を落とさない)。**Raises** ``ValueError``: 長さ不一致・2 未満・nan。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_by_distortion` `any × table → table` — 歪み種(24)ごとの、指標と MOS の順位相関。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_compare` `any × any × any → table` — 自前の値と作者の値(同じ組、同じ順)の行ごとの差と、MOS との順位相関を比べる。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_evaluate` `any × any → table` — 自前の指標 ``fn(ref, dist) -> float`` を TID2013 の組に当て、MOS との順位相関を返す。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_index` `any → table` — ``mos_with_names.txt`` を読んで組の台帳を返す。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_metric_values` `any × any → any` — 作者の計算値 ``metrics_values/<metric>.txt``(大文字小文字無視、3000 行、名前なし)を (3000,) float で返す。 行の順は :func:`tid2013_index` の ``names`` と同じ。``metric`` は :func:`tid2013_published` の鍵(psnr / psnrc / ssim / mssim …)。 **Raises** ``ValueError``: ファイルが無い、行数 ≠ 3000、非数。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_published` `入力なし → table` — 公表の順位相関表 {metric: (SROCC, KROCC)}(14 本)。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+- `tid2013_root` `入力なし → any` — 配布物の展開先。``root`` が無ければ環境変数 ``FULLSEYE_TID2013_DATA``。どちらも無い・``mos_with_names.txt`` が無ければ ``None`` (呼び手は skip する —— データは repo に無い)。 · 例: `poc_iqa_fsim_gmsd_vif`, `poc_iqa_tid2013`
+
+#### imgmetrics / perceptual(7)
+- `fsim` `image2d × image2d → scalar` — FSIM(輝度のみ、1 = 同一、**higher is better**)。TID2013 の FSIM.txt と 4 桁一致するのは **Y′ limited の灰色画像**を渡したとき (``iqatid.tid2013_evaluate(root, fsim, luma="limited_u8")``、3,000 組 max |差| 5.0e-5)。詳細 :func:`fsim_pair`。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `fsim_pair` `rgbimage × rgbimage → table` — FSIM と FSIMc を一度に(位相一致は 1 枚 1 回しか計算しない —— 評価器や PoC はこちらを呼ぶ)。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `fsimc` `rgbimage × rgbimage → scalar` — FSIMc(彩度 I / Q を含む、1 = 同一、**higher is better**)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき (``iqatid.tid2013_evaluate(root, fsimc, luma="rgb")``、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 :func:`fsim_pair`。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `gmsd` `image2d × image2d → scalar` — GMSD = GMS 地図の標準偏差(N−1、原実装の ``std2``、論文 式 5)。0 = 同一、大きいほど劣化(**lower is better** —— MOS との順位相関は負で、 公表表は |ρ| を載せる: TID2013 全体 |SROCC| 0.8038、二次資料 0.8044)。入力 (H, W) か (H, W, 3)(3-ch は Y)。 ``iqatid.tid2013_evaluate(root, gmsd, luma="rgb")``。**Raises** ``ValueError``: :func:`gmsd_map` と同じ、地図が 1 画素(分散が定義されない)。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `gmsd_map` `image2d × image2d → image2d` — GMS 地図 (2 m_r m_d + c)/(m_r² + m_d² + c) ∈ (0, 1] (論文 式 3)。m = Prewitt([1 0 −1]×3 /3)勾配の大きさ、前処理は 2×2 平均 + 2 間引き (:func:`_average_downsample`、原実装の 'same' 規約)。入力 (H, W) か (H, W, 3)(3-ch は Y = 0.299R+0.587G+0.114B、作者の慣例)。 **Raises** ``ValueError``: 形が違う、c ≤ 0、down_step < 1。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `phase_congruency_pc` `image2d → image2d` — 位相一致 PC(x) = Σ_o E_o(x) / Σ_o Σ_s A_{s,o}(x) ∈ [0, 1] (Kovesi 1999、FSIM 論文 式 4 の規約: log-Gabor 4 スケール × 4 向き)。 · 例: `poc_iqa_fsim_gmsd_vif`
+- `vifp` `image2d × image2d → scalar` — VIF の画素領域版(Sheikh & Bovik 2006 §V の scalar GSM、公開 vifp_mscale の規約)。1 = 同一、**higher is better**。 · 例: `poc_iqa_fsim_gmsd_vif`
+
+#### imgmetrics / report(4)
+- `compare_images` `image2d × image2d → metrics` — 一括で測り、**何をどう測ったかを一緒に返す**。 · 例: `image_quality_metrics`
+- `data_range_of` `image2d → scalar` — 画素値が取りうる幅を決める。**推測はしない**。 · 例: `image_quality_metrics`
+- `measure_with` `metrics × image2d × image2d → metrics` — **前の測定と厳密に同じ条件で**もう一組を測る。 · 例: `image_quality_metrics`
+- `metrics_table` `metrics → table` — 報告を ``(名前, 値)`` の表にする ―― 条件の行も**必ず一緒に**並べる。 · 例: `image_quality_metrics`
+
+### oned(49 ops / 4 categories)
 
 プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
 
-### function(23)
-- `create_funct_1d_array` (`signal → signal`) — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
-- `create_funct_1d_pairs` (`signal, signal → signal`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
-- `smooth_funct_1d_gauss` (`signal → signal`) — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
-- `smooth_funct_1d_mean` (`signal → signal`) — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
-- `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
-- `integrate_funct_1d` (`signal → signal`) — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
-- `zero_crossings_funct_1d` (`signal → indices`) — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
-- `local_min_max_funct_1d` (`signal → table`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
-- `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
-- `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
-- `invert_funct_1d` (`signal → pairs`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
-- `scale_y_funct_1d` (`signal → signal`) — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
-- `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
-- `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
-- `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
-- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by correlation
-- `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
-- `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
-- `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
-- `y_range_funct_1d` (`signal → pairs`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
-- `get_pair_funct_1d` (`signal → pairs`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
-- `get_y_value_funct_1d` (`signal → measurement`) — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
-- `funct_1d_to_pairs` (`signal → pairs`) — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``).
+#### oned / function(23)
+- `abs_funct_1d` `signal → signal` — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: `signal_funct1d`
+- `compose_funct_1d` `signal × signal → signal` — Composition ``y1(y2)``: the values of *y2* used as positions into *y1* (HALCON ``compose_funct_1d``). · 例: `gallery_oned_audio_funct`
+- `create_funct_1d_array` `signal → signal` — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``). · 例: `signal_funct1d`
+- `create_funct_1d_pairs` `signal × signal → signal` — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an equidistant grid (HALCON ``create_funct_1d_pairs``). · 例: `poc_veiling_glare`
+- `derivate_funct_1d` `signal → signal` — First derivative by central differences (HALCON ``derivate_funct_1d``). · 例: `poc_tree_ring_dendro`, `poc_veiling_glare`, `signal_funct1d`
+- `distance_funct_1d` `signal × signal → measurement` — Distance between two functions on the same grid (HALCON ``distance_funct_1d``). · 例: `signal_funct1d`
+- `funct_1d_to_pairs` `signal → pairs` — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``). · 例: `signal_funct1d`
+- `get_pair_funct_1d` `signal → pairs` — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``). · 例: `signal_funct1d`
+- `get_y_value_funct_1d` `signal → measurement` — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``). · 例: `poc_veiling_glare`, `signal_funct1d`
+- `integrate_funct_1d` `signal → signal` — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``). · 例: `poc_cold_chain_excursion`, `poc_search_sweep_width`, `signal_funct1d`
+- `invert_funct_1d` `signal → pairs` — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``). · 例: `poc_veiling_glare`
+- `local_min_max_funct_1d` `signal → table` — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``). · 例: `poc_web_roll_periodicity`, `signal_funct1d`
+- `match_funct_1d_trans` `signal × signal → table` — Best integer translation between two functions by correlation (HALCON ``match_funct_1d_trans``, translation only). · 例: `signal_funct1d`
+- `negate_funct_1d` `signal → signal` — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
+- `num_points_funct_1d` `signal → measurement` — Number of samples (HALCON ``num_points_funct_1d``). · 例: `signal_funct1d`
+- `sample_funct_1d` `signal → signal` — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: `poc_cold_chain_excursion`, `signal_funct1d`
+- `scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `signal_funct1d`
+- `smooth_funct_1d_gauss` `signal → signal` — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: `poc_fiber_orientation`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `signal_funct1d`
+- `smooth_funct_1d_mean` `signal → signal` — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: `poc_weld_bead_profile`, `signal_funct1d`
+- `transform_funct_1d` `signal → pairs` — Independent affine transform of x and y (HALCON ``transform_funct_1d``). · 例: `gallery_oned_audio_funct`
+- `x_range_funct_1d` `signal → pairs` — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``). · 例: `signal_funct1d`
+- `y_range_funct_1d` `signal → pairs` — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``). · 例: `signal_funct1d`
+- `zero_crossings_funct_1d` `signal → indices` — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``). · 例: `signal_funct1d`
 
-### io(3)
-- `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
-- `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
-- `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
+#### oned / io(3)
+- `read_audio` `file → signal` — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available (mp3/flac/ogg/…), else falls back to the stdlib WAV reader. · 例: `gallery_oned_audio_funct`
+- `read_wav` `file → signal` — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is averaged to mono. Handles 8/16/32-bit PCM. · 例: `genspark_external_review`
+- `write_wav` `signal → file` — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib). Non-finite samples raise (they would become garbage PCM). · 例: `genspark_external_review`
 
-### matched(7)
-- `psd_welch` (`signal → pairs`) — Welch 法の片側 PSD を ``pairs``(周波数 [Hz], S [1/Hz])で返す。
-- `whiten_by_psd` (`signal, pairs → signal`) — 雑音の PSD で割って白色化する(``x_w = irfft(rfft(x)·√(2Δt/S(f)))``)。
-- `chirp_newtonian` (` → signal`) — ニュートン近似(0PN)のインスパイラル波形 h₊(t) を ``signal`` で返す(合体が配列の末尾)。
-- `chirp_mass_from_track` (`pairs → table`) — 重力波周波数の軌跡 (t, f) からチャープ質量と合体時刻を最小二乗で返す。
-- `matched_filter_snr` (`signal, signal, pairs → signal`) — 整合フィルタの SNR 時系列 |ρ(t)|(位相で最大化)を ``signal`` で返す。
-- `optimal_snr` (`signal, pairs → measurement`) — テンプレートの最適 SNR ``σ = √(4∫|h̃|²/S df)``(``measurement``)。
-- `coincidence_delay` (`signal, signal → table`) — 2 本の SNR 時系列の山の時刻差(b − a)を副標本精度で返す。
+#### oned / matched(7)
+- `chirp_mass_from_track` `pairs → table` — 重力波周波数の軌跡 (t, f) からチャープ質量と合体時刻を最小二乗で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `chirp_newtonian` `入力なし → signal` — ニュートン近似(0PN)のインスパイラル波形 h₊(t) を ``signal`` で返す(合体が配列の末尾)。 · 例: `poc_gw_detector_pseudo_simulation`
+- `coincidence_delay` `signal × signal → table` — 2 本の SNR 時系列の山の時刻差(b − a)を副標本精度で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `matched_filter_snr` `signal × signal × pairs → signal` — 整合フィルタの SNR 時系列 |ρ(t)|(位相で最大化)を ``signal`` で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `optimal_snr` `signal × pairs → measurement` — テンプレートの最適 SNR ``σ = √(4∫|h̃|²/S df)``(``measurement``)。 · 例: `poc_gw_detector_pseudo_simulation`
+- `psd_welch` `signal → pairs` — Welch 法の片側 PSD を ``pairs``(周波数 [Hz], S [1/Hz])で返す。 · 例: `poc_gw_detector_pseudo_simulation`
+- `whiten_by_psd` `signal × pairs → signal` — 雑音の PSD で割って白色化する(``x_w = irfft(rfft(x)·√(2Δt/S(f)))``)。 · 例: `poc_gw_detector_pseudo_simulation`
 
-### signal(16)
-- `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
-- `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
-- `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
-- `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
-- `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
-- `local_std` (`signal → signal`) — Rolling standard deviation with a stated error bound.
-- `quantize` (`signal → signal`) — Scalar quantiser with the error model stated, plus optional dither.
-- `companding_mu_law` (`signal → signal`) — mu-law companding — the G.711 curve, used here on any 1-D signal.
-- `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
-- `spectrum` (`signal → pairs`) — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
-- `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
-- `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
-- `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
-- `peak_subbin` (`signal, indices → signal`) — Peak position **between** samples — the vertex of a fit through 3 points.
-- `point_spectrum` (`positions → table`) — Periodogram of **event positions** — defects, impacts, counts, arrivals.
-- `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
+#### oned / signal(16)
+- `bandpass` `signal → signal` — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside ``(0, rate/2)``; same length contract as :func:`lowpass`. · 例: `poc_gw_detector_pseudo_simulation`, `poc_leak_localization`
+- `companding_mu_law` `signal → signal` — mu-law companding — the G.711 curve, used here on any 1-D signal. · 例: `gallery2d_gray_arith`
+- `envelope` `signal → signal` — Amplitude envelope via the analytic (Hilbert) signal — the shape of a knock / impact / acoustic-emission burst. · 例: `coherence_scanning`, `poc_beam_modal_video`
+- `find_peaks` `signal → indices` — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes. · 例: `poc_multibeam_bathymetry`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`
+- `highpass` `signal → signal` — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`. · 例: `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
+- `local_std` `signal → signal` — Rolling standard deviation with a stated error bound. · 例: `gallery2d_texture_freq`
+- `lowpass` `signal → signal` — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered. · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
+- `peak_subbin` `signal × indices → signal` — Peak position **between** samples — the vertex of a fit through 3 points. · 例: `poc_multibeam_bathymetry`, `poc_print_registration`, `poc_web_roll_periodicity`
+- `point_spectrum` `positions → table` — Periodogram of **event positions** — defects, impacts, counts, arrivals. · 例: `poc_web_roll_periodicity`
+- `quantize` `signal → signal` — Scalar quantiser with the error model stated, plus optional dither. · 例: `poc_cold_chain_excursion`
+- `resample` `signal → signal` — Resample a signal to *new_rate* (Fourier method). · 例: `poc_driving_school`
+- `rms` `signal → measurement` — RMS level. Scalar for the whole signal, or a framewise array when *frame* is given (a vibration/energy envelope over time). · 例: `lens_design_demo`, `lightfield_depth`, `poc_battery_electrode_breathing`, `poc_bilateral_asymmetry`, `poc_bump_coplanarity`, `poc_cad_scan_deviation`, `poc_calipers_under_illusion`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fabric_defect`, `poc_focus_stacking`, `poc_panorama_drift`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_strain_history`, `poc_surface_roughness`, `poc_symmetry_restoration`, `poc_table_tennis_bounce`, `poc_tacscalib_sphere_lut`, `poc_tacsim_elastic_membrane`, `poc_tacsim_marker_shear`, `poc_thermal_radiometry`, `profile_shape_inspection`
+- `signal_features` `signal → table` — A compact acoustic/vibration feature vector for anomaly detection: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises ``ValueError`` rather than producing NaN features (an empty signal too, since 2026-10-12; it used to give zeros). · 例: `gallery_oned_audio_funct`
+- `spectrogram` `signal → image2d` — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``. · 例: `acoustic_condition_monitoring`, `poc_emva1288_sensor`, `poc_gw_detector_pseudo_simulation`
+- `spectrum` `signal → pairs` — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``). · 例: `acoustic_condition_monitoring`, `poc_bearing_diagnosis`, `poc_gear_tooth_metrology`, `poc_machine_condition_fusion`, `poc_pipe_wall_loss`, `poc_recycling_sorting`, `poc_web_roll_periodicity`
+- `zero_crossing_rate` `signal → measurement` — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue. · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
 
-## Math operators(opsmath)by category
-_計 114 ops / 12 categories。_
+### colortransport(11 ops / 4 categories)
 
+#### colortransport / blend(1)
+- `poisson_blend` `image2d × image2d × mask → image2d` — 勾配場を運ぶ継ぎ目なし合成(Pérez, Gangnet & Blake, SIGGRAPH 2003)。 · 例: `color_transport`
 
-視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+#### colortransport / matching(3)
+- `color_transfer` `rgbimage × rgbimage → rgbimage` — ``src`` の色味を ``ref`` に寄せる。 · 例: `color_transport`
+- `gaussian_transport_map` `points × points → matrix` — 2 つの点群を正規分布とみなしたときの Monge 写像 ``(A, b)``。 · 例: `color_transport`
+- `histogram_match` `image2d × image2d → image2d` — ``src`` の値分布を ``ref`` に合わせる(1 次元の厳密な最適輸送)。 · 例: `color_transport`, `poc_change_detection_misreg`
 
-### complex(18)
-- `cplx_contour_circle` (` → cpoints`) — Sample a circle as a closed contour — the standard integration path.
-- `cplx_poly_eval` (`signal, cpoints → cpoints`) — Evaluate a polynomial on the complex plane (Horner, complex-capable).
-- `cplx_contour_integral` (`cpoints, cpoints → cscalar`) — Closed contour integral ``∮ f(z) dz`` by the chordal trapezoidal rule.
-- `cplx_winding_number` (`cpoints → measurement`) — Winding number of a closed contour around a point (turning number).
-- `cplx_cauchy_value` (`cpoints, cpoints → cscalar`) — Cauchy's integral formula: recover ``f(w)`` **inside** a contour from its
-- `cplx_argument_principle` (`cpoints, cpoints → measurement`) — Argument principle: count zeros minus poles enclosed by a contour, from
-- `cplx_laurent_coeffs` (`cpoints, cpoints → table`) — Laurent (and Taylor) coefficients on a **uniformly sampled circle** —
-- `cplx_joukowski` (`cpoints → cpoints`) — Joukowski (Zhukovsky) conformal map ``w = z + c^2 / z``.
-- `cplx_mobius` (`cpoints → cpoints`) — Möbius (linear fractional) map ``w = (a z + b) / (c z + d)``.
-- `cplx_cr_residual` (`cimage → measurement`) — Cauchy-Riemann residual of a sampled complex field — "is this field
-- `cplx_plane_grid` (` → cimage`) — 複素平面の矩形窓を格子にする(画像と同じ並び: 行 0 が上 = 虚部が大きい側)。
-- `cplx_rational_field` (`roots, roots → cimage`) — Sample a rational function ``R(z) = gain * prod(z - zeros) / prod(z - poles)``.
-- `cplx_domain_colour` (`cimage → rgbimage`) — Domain colouring: turn a complex field into an RGB image you can read.
-- `cplx_newton_basins` (`signal → labels2d`) — Which root of a polynomial does Newton's method fall into, from each point?
-- `cplx_escape_time` (` → image2d`) — How many steps of ``z -> z**2 + c`` it takes to leave the escape disc.
-- `mandelbrot_interior` (`cimage → mask`) — Closed-form interior test for the main cardioid and the period-2 bulb.
-- `potential_flow_joukowski` (` → cimage`) — Inviscid flow past a Joukowski aerofoil, as a complex velocity field.
-- `joukowski_circulation` (` → measurement`) — The Kutta circulation ``Gamma = 4*pi*a*U*sin(alpha + beta)`` for that section.
+#### colortransport / plan_use(2)
+- `apply_transport` `transport_plan × signal → signal` — 輸送計画で ``target_values`` を元の点へ引き戻す(重心写像)。 · 例: `color_transport`
+- `transport_cost` `transport_plan × matrix → scalar` — 輸送計画の総費用 ``<plan, cost>``。**計画を消費する**側の op。 · 例: `color_transport`
 
-### construct(8)
-- `circle_packing_apollonian` (` → table`) — Apollonian gasket from a Descartes quadruple — every circle a theorem.
-- `ford_circles` (` → table`) — Ford circles for the Farey fractions — tangency *is* an integer identity.
-- `phyllotaxis_pattern` (` → pairs`) — Vogel's spiral — the angle that packs best, and the spirals it makes.
-- `neighbour_index_gaps` (`pairs → signal`) — How far apart *in index* are a point's nearest neighbours — parastichy as a number.
-- `ifs_fractal` (` → pairs`) — Chaos game on an iterated function system — the dimension is a closed form.
-- `ifs_similarity_dimension` (` → measurement`) — Moran's equation ``sum(r_i**d) = 1`` solved for ``d`` — from the maps alone.
-- `space_filling_curve` (` → pairs`) — Hilbert / Moore / scan orders on a ``2**order`` square — a permutation, checked.
-- `curve_locality` (`pairs → table`) — Points ``k`` apart along the curve — how far apart are they on the plane?
+#### colortransport / transport(5)
+- `sinkhorn` `signal × signal × matrix → transport_plan` — エントロピー正則化つき最適輸送の計画(Cuturi, NIPS 2013)。 · 例: `color_transport`
+- `sinkhorn_distance` `signal × signal × matrix → scalar` — 正則化つき輸送費 ``<plan, cost>``。**厳密な距離ではない**。 · 例: `color_transport`
+- `sinkhorn_divergence` `signal × signal × matrix → scalar` — **偏りを打ち消した** Sinkhorn 距離(Genevay, Peyré & Cuturi, AISTATS 2018)。 · 例: `color_transport`
+- `transport_plan_1d` `signal × signal → transport_plan` — 1 次元の厳密な輸送計画(北西隅則)。``(n, m)`` の質量行列を返す。 · 例: `color_transport`
+- `wasserstein_1d` `signal × signal → scalar` — 1 次元の p-Wasserstein 距離。**厳密解**。 · 例: `color_transport`, `poc_physarum_transport`
 
-### dynsys(6)
-- `ode_flow_states` (` → table`) — Integrate a named vector field — the trajectory, with the order you paid for.
-- `ode_vector_field_grid` (` → flow2d`) — Sample a named field on a grid — a ``flow2d`` the existing viewers take.
-- `dynsys_poincare_section` (`table → pairs`) — Where a trajectory crosses a plane — with the crossing point interpolated.
-- `dynsys_lyapunov_spectrum` (` → signal`) — The Lyapunov spectrum by tangent flow + QR — and the sum you can check.
-- `dynsys_bifurcation_map` (` → pairs`) — The orbit diagram of a 1-D map — period doubling, as points you can count.
-- `dynsys_correlation_dimension` (`points → measurement`) — Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``.
+### imgforensics(16 ops / 7 categories)
 
-### estimation(12)
-- `assign_hungarian` (`matrix → table`) — コスト行列 (n, m) の割当問題を解く(Kuhn 1955 / Munkres 1957 の Hungarian 法、scipy の実装)。
-- `hist_distance` (`signal, signal → measurement`) — 2 つのヒストグラム(非負、和で正規化する)の距離・発散。
-- `stat_ttest_paired` (`signal, signal → table`) — 対応のある t 検定: 同じ対象を 2 回測った差 d = x − y の平均が 0 か。
-- `stat_ttest_welch` (`signal, signal → table`) — Welch の t 検定: 分散が等しいと仮定しない 2 群の平均の差(自由度は Welch–Satterthwaite)。
-- `stat_ks_test` (`signal → table`) — Kolmogorov–Smirnov 検定。``y`` を与えれば 2 標本(同じ分布から来たか)、無ければ標準正規分布との適合。
-- `stat_chi2_gof` (`signal → table`) — χ² 適合度検定: 度数 ``observed`` が期待度数(既定は一様)に合うか。自由度 = 区分数 − 1。
-- `crlb_gaussian` (`signal, signal → table`) — 白色ガウス雑音(標準偏差 sigma)の下での Cramér–Rao 下界。
-- `kalman_smooth` (`matrix, matrix, matrix, matrix, matrix, signal, matrix → table`) — 線形ガウス状態空間モデル x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))の
-- `mat_expm` (`matrix → matrix`) — 行列の指数関数 e^A(Padé 近似 + scaling-and-squaring、scipy)。
-- `mat_logm` (`matrix → matrix`) — 行列の主対数 log A(e^X = A となる X のうち固有値の虚部が (−π, π] のもの、scipy)。
-- `se3_exp` (`signal → matrix`) — SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。
-- `se3_log` (`matrix → signal`) — SE(3) の対数写像: 4×4 の剛体変換 → 6 次元のねじれ ξ = (v, ω)(回転角 < π)。門: se3_log(se3_exp(ξ)) = ξ。
+#### imgforensics / calibration(2)
+- `evidence_quantile` `measurement × table → table` — 証拠量が、清浄な分布の**どのあたりに座るか**を返す。判定は返さない。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
+- `null_distribution` `signal → table` — **改竄が無い**と分かっている標本から、証拠量の帰無分布をまとめる。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
 
-### geometry(10)
-- `mesh_euler_characteristic` (`mesh → table`) — 三角形メッシュの V − E + F と、閉じた向き付け可能な曲面なら種数 g = (2 − χ)/2。
-- `angle_defect` (`mesh → table`) — 頂点ごとの角欠損(離散 Gauss 曲率)K_v = 2π − Σ(その頂点での三角形の角)。境界の頂点は π − Σ(測地曲率)。
-- `delaunay_triangulate` (`matrix → table`) — 平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。
-- `geodesic_heat` (`mesh → table`) — 熱法による曲面上の測地距離(Crane et al. 2013)。``source`` は頂点番号(または番号の列、既定は頂点 0)。
-- `geodesic_heat_grid` (`image2d → table`) — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた測地距離を熱法で求める(Crane et al. 2013 の格子版)。
-- `mesh_torus` (` → mesh`) — トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R > r > 0)。
-- `nurbs_curve` (`matrix → table`) — NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。
-- `nurbs_circle` (` → table`) — 円を厳密に表す 2 次 NURBS(Piegl & Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。
-- `nurbs_surface` (` → table`) — NURBS 曲面(テンソル積)を評価する。
-- `nurbs_revolve` (`matrix → table`) — 平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl & Tiller §8.5)。
+#### imgforensics / compression(4)
+- `error_level_map` `image2d → image2d` — ELA(誤差レベル解析)。指定品質で **再圧縮した差分**の地図を返す。``image2d``。 · 例: `image_forensics_audit`, `poc_forensics_roc`
+- `jpeg_ghost_map` `image2d → images` — JPEG ゴースト(Farid 2009)。品質を掃引した **再圧縮残差の地図の列**。``images``。 · 例: `image_forensics_audit`, `poc_forensics_roc`
+- `jpeg_ghost_quality` `images → image2d` — ゴースト地図の列 → 画素ごとに **残差が最小になる品質** の地図。``image2d``。 · 例: `image_forensics_audit`, `poc_forensics_roc`
+- `jpeg_quality_estimate` `image2d → table` — デコード済み画像から **量子化表と JPEG 品質をブラインド推定**する。``table``。 · 例: `image_forensics_audit`
 
-### interp_poly(6)
-- `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.
-- `interp_cubic` (`signal, signal, signal → signal`) — Cubic-spline interpolation (``scipy.interpolate.CubicSpline``).
-- `interp_scattered` (`points, signal, points → table`) — Values at *query* from **scattered** samples — sensor nets, boreholes, weather.
-- `poly_fit` (`signal, signal → table`) — Least-squares polynomial fit with its conditioning **on the record**.
-- `poly_eval` (`signal, signal → signal`) — Evaluate a polynomial (coefficients highest-power-first) at *x*.
-- `poly_roots` (`signal → roots`) — All roots of a polynomial (coefficients highest-power-first) — complex
+#### imgforensics / copy_move(1)
+- `copy_move_regions` `image2d → table` — 1 枚の画像の中の **コピー&ムーブ**(自己複製)領域の対を返す。``table``。 · 例: `image_forensics_audit`, `poc_forensics_roc`
 
-### linalg(10)
-- `mat_solve` (`matrix, signal → signal`) — Solve the square linear system ``A x = b`` (LAPACK ``gesv``, LU with
-- `mat_lstsq` (`matrix, signal → table`) — Least-squares solution of an over-determined system ``A x ≈ b``
-- `mat_svd` (`matrix → table`) — Singular value decomposition ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``).
-- `mat_eigh` (`matrix → table`) — Eigen-decomposition of a **symmetric** matrix (LAPACK ``syevd``).
-- `mat_pinv` (`matrix → matrix`) — Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**.
-- `mat_cond` (`matrix → measurement`) — Spectral (2-norm) condition number ``s_max / s_min`` — the numerical
-- `mat_lu` (`matrix → table`) — LU factorisation ``P @ A = L @ U`` (``L`` unit lower, ``U`` upper).
-- `mat_qr` (`matrix → table`) — QR factorisation ``A = Q @ R`` (``Q`` with orthonormal columns, ``R`` upper triangular).
-- `mat_cholesky` (`matrix → table`) — Cholesky factorisation ``A = L @ Lᵀ`` of a symmetric positive-definite matrix.
-- `mat_eig` (`matrix → table`) — Eigen-decomposition of a **general** square matrix ``A V = V diag(w)`` (complex in general).
+#### imgforensics / hash(2)
+- `hash_distance` `phash × phash → measurement` — 2 つの知覚ハッシュのハミング距離(異なるビット数)。 · 例: `image_forensics_audit`
+- `perceptual_hash` `image2d → phash` — 知覚ハッシュ(perceptual hash)。**bool の 1-D ビット列**を返す。 · 例: `image_forensics_audit`
 
-### numerics(11)
-- `erf` (`signal → signal`) — 誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。
-- `erfc` (`signal → signal`) — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ
-- `bessel` (`signal → signal`) — Bessel 関数。``kind`` = ``"j"``(第 1 種 J)/ ``"y"``(第 2 種 Y)/ ``"i"``・``"k"``(変形)。
-- `gauss_quadrature` (` → table`) — n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。
-- `gauss_cubature` (` → table`) — Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。
-- `chebyshev_coeffs_nd` (`image2d → table`) — テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。
-- `chebyshev_eval_nd` (`table, matrix → signal`) — ``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
-- `low_discrepancy` (` → matrix`) — [0, 1)^dim の低食い違い点列 (n, dim)。
-- `chebyshev_nodes` (` → signal`) — 区間 [a, b] の Chebyshev 点 n 個(昇順)。
-- `interp_barycentric` (`signal, signal, signal → signal`) — 点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。
-- `integrate_hamiltonian` (`signal, signal → table`) — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。
+#### imgforensics / noise(1)
+- `noise_inconsistency_map` `image2d → image2d` — ブロックごとの **雑音標準偏差** を並べた地図。``image2d``。 · 例: `image_forensics_audit`, `poc_forensics_roc`
 
-### spectral(6)
-- `lomb_scargle` (`signal, signal, signal → table`) — 不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。
-- `ula_snapshots` (`signal → matrix`) — 等間隔線形アレイが受ける複素スナップショット (M, K) を作る(到来方向推定の答えの決まる入力)。
-- `music_doa` (`matrix → table`) — MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。
-- `esprit_doa` (`matrix → table`) — ESPRIT(Roy & Kailath 1989): アレイの「1 素子ずらし」の不変性から、格子を使わずに向きを解く。
-- `n_sources_mdl` (`matrix → table`) — スナップショットから波源の数を MDL 基準で推定する(Wax & Kailath 1985)。
-- `hilbert_analytic` (`signal → table`) — 解析信号 z = x + i·H[x](FFT で負の周波数を消す)と、そこから読む振幅・瞬時位相・瞬時周波数。
+#### imgforensics / sensor(3)
+- `fingerprint_correlate` `image2d × fingerprint → table` — 1 枚の画像を指紋に照合する。**判定は返さない** —— 証拠量と注意書きを返す。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
+- `fingerprint_strength_map` `fingerprint → image2d` — 指紋の **ブロックごとの実効強度**(標準偏差)を並べた地図。``image2d``。 · 例: `image_forensics_audit`
+- `sensor_fingerprint` `images → fingerprint` — 複数枚から **PRNU センサ指紋** K を最尤推定する(Chen et al. 2008)。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
 
-### stats(5)
-- `stat_describe` (`signal → table`) — Five-number-plus summary of a 1-D sample, as a plain dict.
-- `stat_histogram` (`signal → pairs`) — Histogram of a 1-D sample with the binning **explicit**.
-- `stat_covariance` (`matrix → matrix`) — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
-- `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
-- `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
+#### imgforensics / watermark(3)
+- `watermark_capacity` `image2d × phash → table` — 埋め込み強度と **PSNR / BER** のトレードオフを掃引して返す。``table``。 · 例: `image_forensics_audit`
+- `watermark_embed` `image2d × phash → image2d` — DWT-DCT **電子透かし**の埋め込み。透かし入り画像 ``(H, W)`` を返す。``image2d``。 · 例: `image_forensics_audit`
+- `watermark_extract` `image2d → phash` — 透かしの **ブラインド抽出**。bool の 1-D(``phash`` 語彙)を返す。 · 例: `image_forensics_audit`
 
-### transform(16)
-- `abel_transform` (`signal → signal`) — 軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。
-- `abel_inverse` (`signal → signal`) — 投影 A(y) から軸対称な分布 f(r) を戻す(逆 Abel 変換 = 軸対称物体の断層化)。
-- `abel_inverse_image` (`image2d → table`) — 軸対称な物体を横から撮った**画像**(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。
-- `abel_revolve` (`image2d → voxel`) — 断面 f(z, r)((H, R)、r = 0, dr, …)を対称軸のまわりに回して 3-D ボリューム (H, 2R−1, 2R−1) にする。
-- `hankel_transform` (`signal, signal → table`) — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。
-- `tf_poles_zeros` (`signal, signal → table`) — H(s) = num/den の極・零点・直流ゲイン・安定性。
-- `tf_freq_response` (`signal, signal, signal → table`) — 周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。
-- `tf_impulse_response` (`signal, signal, signal → signal`) — インパルス応答 h(t) = L⁻¹[H(s)](t)(厳密にプロパーな部分。直達項のデルタは返さない)。
-- `tf_step_response` (`signal, signal, signal → signal`) — 単位ステップ応答 y(t) = L⁻¹[H(s)/s](t)。
-- `tf_bilinear` (`signal, signal → table`) — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。
-- `laplace_inverse_talbot` (`signal, signal, signal → signal`) — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。
-- `hankel_image` (`image2d → table`) — 軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
-- `dct_transform` (`image2d → table`) — 正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
-- `wavelet_filters` (` → table`) — Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。
-- `dwt_transform` (`image2d → table`) — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。
-- `dwt_inverse` (`table → image2d`) — ``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。
+### astrostack(14 ops / 6 categories)
 
-### wave(6)
-- `wave_membrane_mode` (` → matrix`) — One eigenmode of a vibrating **membrane** — the shape the sand draws.
-- `wave_mode_frequencies` (` → signal`) — The eigenvalue ladder of a membrane — a closed form you can check against.
-- `wave_nodal_lines` (`matrix → mask`) — Where a signed field changes sign — the nodal set, as a mask.
-- `wave_two_slit` (` → image2d`) — Two-slit interference on a screen — built from the physics, not the fringe formula.
-- `wave_fringe_period` (`image2d → measurement`) — The period of a striped image, measured back out of it (pixels).
-- `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
+#### astrostack / align(2)
+- `align_frames` `images → images` — フレーム列を 1 枚の基準へ重ね合わせる。 · 例: `astro_stacking`
+- `frame_align` `image2d × image2d → matrix` — 星の対応から ``frame`` → ``reference`` の 2-D 変換を推定する。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_print_registration`
 
-## Optics operators(opsoptics)by category
-_計 221 ops / 25 categories。_
+#### astrostack / cosmic(2)
+- `cosmic_ray_reject` `image2d → image2d` — 単一フレームの宇宙線除去(ラプラシアン鋭度)。 · 例: `astro_stacking`
+- `cosmic_ray_reject_stack` `images → images` — フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。 · 例: `astro_stacking`
 
+#### astrostack / photometry(3)
+- `aperture_photometry` `image2d × keypoints → table` — 円形開口 + 環状背景の測光(古典的な CCD 測光)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_nuclei_ploidy`, `poc_real_sky_photometry`
+- `psf_fit` `image2d × keypoints → table` — 星像に PSF を当てはめて中心と FWHM を出す。 · 例: `astro_stacking`, `poc_star_astrometry`
+- `star_detect` `image2d → keypoints` — 星を検出して ``(row, col)`` の重心列を返す。 · 例: `astro_stacking`, `poc_exoplanet_transit`, `poc_search_sweep_width`, `poc_star_astrometry`
 
-レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
+#### astrostack / quality(3)
+- `frame_quality` `image2d → table` — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。 · 例: `astro_stacking`
+- `lucky_select` `images → indices` — 品質点の上位 ``keep_fraction`` だけを採る —— lucky imaging の選別。 · 例: `astro_stacking`, `poc_astro_photometry`
+- `noise_sigma` `image2d → measurement` — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
-### appearance(7)
-- `cie_xyz_from_wavelength` (`signal → points`) — 波長 [nm] → CIE 1931 2° 等色関数 (x̄, ȳ, z̄)。入力形状 + 末尾 3 の配列を返す。
-- `spectrum_to_srgb` (`signal → vector`) — 分光反射率 → **線形 sRGB**(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。
-- `thin_film_reflectance` (`signal → signal`) — 薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。
-- `grating_wavelengths` (` → vector`) — 回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。
-- `grating_rgb` (`normalmap → rgbimage`) — 法線マップ + 光源 + 視線 → **回折による虹色** (H, W, 3) の線形 sRGB。
-- `thin_film_rgb` (`normalmap → rgbimage`) — 法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。
-- `ward_anisotropic` (`normalmap → image2d`) — Ward の異方性反射(楕円ガウス微小面)。ヘアライン仕上げの**伸びたハイライト**。
+#### astrostack / stack(2)
+- `drizzle_resample` `images → image2d` — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_superresolution_limits`
+- `sigma_clip_stack` `images → image2d` — フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_river_surface_velocity`
 
-### cavity(5)
-- `fabry_perot_response` (` → table`) — Fabry-Perot 共振器の設計量(FSR・フィネス・線幅・極・増幅率・蓄積時間)を閉形式で返す。
-- `cavity_strain_transfer` (` → pairs`) — 腕共振器がひずみ h(f) を出力の位相へ写す伝達関数の大きさ |H(f)| を ``pairs`` で返す。
-- `michelson_dc_readout` (` → table`) — 暗縞から φ₀ だけずらした Michelson の反対称ポート光量・ひずみ感度・散射雑音限界。
-- `pdh_error_signal` (` → pairs`) — Pound-Drever-Hall 誤差信号 ε(δ) を、共振からの離調 δ [Hz] の関数として ``pairs`` で返す。
-- `quantum_noise_budget` (` → table`) — 通常の(信号再利用なし)Fabry-Perot Michelson の量子雑音 —— 散射・輻射圧・標準量子限界。
+#### astrostack / synth(2)
+- `synth_frame_series` `入力なし → images` — 同じ星野を ``n_frames`` 枚、**別々のノイズと別々のディザ**で撮り直す。 · 例: `astro_stacking`, `poc_astro_photometry`
+- `synth_starfield` `入力なし → image2d` — 既知の星野を 1 枚合成する —— **この族の正解の供給源**。 · 例: `astro_stacking`, `poc_astro_photometry`
 
-### coherent(6)
-- `coherent_image` (`image2d, image2d → image2d`) — Coherent image intensity of an amplitude/phase object through a pupil (``image2d``).
-- `speckle_field` (` → image2d`) — Laser speckle intensity from a rough surface seen through a circular pupil (``image2d``).
-- `speckle_statistics` (`image2d → table`) — First- and second-order statistics of a speckle intensity image (``table``).
-- `laser_line_coherent` (` → image2d`) — A sheet-of-light laser line on a rough surface, imaged with its speckle (``image2d``).
-- `triangulation_speckle_limit` (` → table`) — Speckle floor of laser triangulation (``table``): ``δz = C λ / (2π sin u_obs sin θ)``.
-- `speckle_reduction` (` → table`) — Predicted speckle contrast after reduction (``table``).
+### videostream(16 ops / 8 categories)
 
-### design(15)
-- `lens_system` (` → table`) — Build a validated sequential prescription (the ``table`` every other op consumes).
-- `thick_lens` (` → table`) — Closed-form thick lens in air: EFL, back/front focal lengths, principal points.
-- `glass` (` → table`) — A dispersive medium from its d-line index *nd* and Abbe number *vd*.
-- `example_system` (` → table`) — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
-- `glass_catalog` (` → table`) — A catalogue glass by name (``table``), or the list of names when *name* is None.
-- `sellmeier` (` → table`) — A dispersive medium from three-term Sellmeier constants (``table``).
-- `paraxial_trace` (`table → table`) — First-order properties of the prescription: focal lengths, pupils, image.
-- `seidel_coefficients` (`table → table`) — Third-order (Seidel) aberration sums per surface and total (``table``).
-- `spot_stats` (`table → table`) — RMS / geometric spot radius (mm) and centroid for one field point (``table``).
-- `tolerance_analysis` (`table → table`) — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``).
-- `wavefront_from_opd` (`table → table`) — OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``).
-- `spot_diagram` (`table → pairs`) — Transverse ray intersections on the image plane for one field point.
-- `ray_fan` (`table → pairs`) — Transverse ray aberration along one pupil diameter (``pairs``).
-- `opd_map` (`table → image2d`) — Optical path difference over the exit pupil, in waves (``image2d``).
-- `chromatic_shift` (`table → table`) — Focal shift, image-height shift and spot size versus wavelength (``table``).
+#### videostream / analysis(1)
+- `scene_cut_detection` `video → table` — Shot-boundary chi-square histogram distance over a clip → ``{"distance", "cut", "n"}`` (``table``). · 例: `video_streaming`
 
-### fiber(7)
-- `material_group_index` (` → pairs`) — 群屈折率 n_g(λ) = n − λ dn/dλ を ``pairs``(λ [nm], n_g)で(材料は ``materials`` の名前)。
-- `material_gvd` (` → pairs`) — 材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。
-- `fiber_numerical_aperture` (` → table`) — 開口数 NA = √(n_core² − n_clad²) と受け入れ半角(度)、比屈折率差 Δ。屈折率は数か材料名。
-- `fiber_v_number` (` → table`) — 規格化周波数 V = 2π a NA / λ と、単一モードかどうか(V < 2.4048 = J0 の最初の零点)。
-- `fiber_lp_modes` (` → table`) — 弱導波のステップ型ファイバの LP_lm モード: 特性方程式を解き、各モードの u・w・規格化伝搬定数 b を返す(``table``)。
-- `fiber_mode_field_diameter` (` → table`) — LP01 の場の直径(MFD)[µm] —— 厳密な場に**重なりが最大のガウス**を当てたときの 1/e² 直径。
-- `fiber_bundle_coupling` (` → table`) — ライトガイド(ファイバの束)に入って出る光の割合。
+#### videostream / background(2)
+- `running_gaussian_background` `video → video` — Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `running_gaussian_foreground` `video → video` — Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``). · 例: `video_streaming`
 
-### finish(5)
-- `finish_catalog` (` → table`) — 仕上げ名 → 既定パラメータの表(αx, αy, grain)。
-- `tangent_field` (` → normalmap`) — 仕上げの**筋の向き**を (H, W, 3) の接線場として作る。
-- `micro_normals` (`normalmap → normalmap`) — 加工痕そのものを**法線に刻む**(旋盤の送りマーク・ローレットの山)。
-- `blast_normals` (`normalmap → normalmap`) — ビーズブラスト / 梨地の**無方向な微小凹凸**を法線へ載せる。
-- `finish_shade` (`normalmap → rgbimage`) — **材質 × 仕上げ**で金属面を陰影付けする → 線形 sRGB (H, W, 3)。
+#### videostream / denoise(1)
+- `temporal_bilateral` `video → video` — Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``). · 例: `find_ops_by_meaning`, `video_streaming`
 
-### geometric(5)
-- `thin_lens` (` → table`) — Gaussian thin-lens imaging: where the image lands and how big it is.
-- `abcd_matrix` (`table → matrix`) — Compose a paraxial system into one 2x2 ray-transfer (ABCD) matrix.
-- `abcd_trace` (`matrix → table`) — Propagate one paraxial ray through an ABCD matrix.
-- `depth_of_field` (` → table`) — Photographic depth of field: near limit, far limit and hyperfocal distance.
-- `relative_illumination` (` → pairs`) — Natural vignetting: relative image-plane illuminance versus field angle.
+#### videostream / flow(1)
+- `optical_flow_magnitude_stream` `video → video` — Per-frame dense flow speed against the previous frame → ``(T, H, W)`` (``video``). · 例: `video_streaming`
 
-### glassbody(4)
-- `beer_lambert_transmittance` (`signal → signal`) — Beer–Lambert の内部透過率 T = exp(−σ·L)。色ガラス・厚いガラスの緑かぶり。
-- `slab_transmittance` (`signal → signal`) — 平行平板(窓ガラス)の透過率。**両面での多重反射**と内部吸収を含む。
-- `refract_rays` (`points, points → points`) — Snell 屈折のベクトル版。**光線ごとに全反射を判定**して (方向, TIR マスク) を返す。
-- `prism_min_deviation_deg` (`signal → signal`) — プリズムの最小偏角 [deg]。**実硝材の分散**で波長ごとに変わる = 虹が出る理由。
+#### videostream / motion(3)
+- `motion_energy_image` `video → video` — Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `motion_history_image` `video → video` — Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``). · 例: `video_streaming`
+- `three_frame_difference` `video → video` — Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``). · 例: `poc_periodic_video_boundary`, `video_streaming`
 
-### illumination(6)
-- `light_source` (` → table`) — An emitter set for a standard machine-vision light family (``table``).
-- `irradiance_map` (`table → image2d`) — Irradiance on the part plane (``image2d``, units of intensity / mm²).
-- `illumination_uniformity` (`image2d → table`) — Uniformity figures of an irradiance map (``table``).
-- `defect_contrast` (`table → table`) — Contrast of topographic and pigment defects under a light (``table``).
-- `lighting_sweep` (` → pairs`) — Defect contrast versus ring-light elevation angle (``pairs``).
-- `illumination_design` (` → table`) — Rank the standard light families for a surface / defect pairing (``table``).
+#### videostream / recursive(4)
+- `exponential_background` `video → video` — Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `exponential_foreground` `video → video` — Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `frame_difference_causal` `video → video` — ``|frame t − frame t−1|`` with a zero first frame → ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `running_mean_std` `video → table` — Welford per-pixel mean / population std over the clip → ``{"mean", "std", "n"}`` (``table``). · 例: `video_streaming`
 
-### imaging(7)
-- `psf_to_mtf` (`image2d → pairs`) — Radially-averaged MTF of a measured point-spread function.
-- `mtf_diffraction` (` → pairs`) — The diffraction-limited MTF of a circular pupil (closed form).
-- `wavefront_stats` (`table → table`) — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.
-- `edge_spread` (`image2d → table`) — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。
-- `sfr_from_edge` (`table → pairs`) — ESF から SFR(エッジから測る MTF)を出す。
-- `mtf50` (`pairs → measurement`) — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError``
-- `veiling_glare_index` (`image2d, image2d, image2d → table`) — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。
+#### videostream / restore(1)
+- `deflicker` `video → video` — Luminance deflicker per frame → ``(T, H, W)`` (``video``). · 例: `video_streaming`
 
-### imaging_sim(5)
-- `psf_from_opd` (`table → image2d`) — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1).
-- `distortion_map` (`table → table`) — Real chief-ray height versus the paraxial one, and the remap grid (``table``).
-- `render_through_lens` (`image2d, table → image2d`) — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``).
-- `defect_dataset` (` → table`) — Synthetic defect images through a designed lens, with aligned masks (``table``).
-- `calibration_views` (`table → table`) — Synthetic camera-calibration views of a planar target through the designed lens (``table``).
+#### videostream / window(3)
+- `background_subtraction_window` `video → video` — Causal window-median background → per-frame 0/1 foreground masks ``(T, H, W)`` (``video``). · 例: `video_streaming`
+- `moving_average_window` `video → video` — Causal per-pixel mean over the last *window* frames → ``(T, H, W)`` (``video``). · 例: `poc_periodic_video_boundary`, `poc_strain_history`, `video_streaming`
+- `temporal_median_window` `video → video` — Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``). · 例: `video_streaming`
 
-### interface(4)
-- `fresnel_dielectric` (`signal → signal`) — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。
-- `fresnel_conductor` (`signal → signal`) — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。
-- `brewster_angle_deg` (` → measurement`) — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。
-- `critical_angle_deg` (` → measurement`) — 全反射の臨界角 [deg] = asin(n2/n1)。n1 > n2 でなければ ValueError(存在しない)。
+### profile(12 ops / 4 categories)
 
-### light_transport(11)
-- `groove_profile` (` → table`) — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each.
-- `form_factors_2d` (`table → matrix`) — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule.
-- `transport_matrix_radiosity` (`table → table`) — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ).
-- `high_frequency_patterns` (` → images`) — Shifted high-frequency projector patterns: binary stripes with fill ratio α, a checkerboard, or phase-shifted sinusoids (one or several periods).
-- `render_transport` (`table, images → images`) — Render camera images of a concave Lambertian cross-section under projector patterns, through the light-transport matrix (direct + interreflection).
-- `separate_direct_global` (`images → table`) — Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006).
-- `fringe_multipath_phase_error` (` → table`) — Phase measured when a direct fringe phasor and a global phasor add: arg(a1 e^{iφ1} + a2 e^{iφ2}), its bias against φ1, and the worst case asin(a2/a1).
-- `predict_fringe_phase_error` (`table → table`) — Predict, per camera pixel, the fringe-phase bias and height error that interreflection causes in phase-shifting profilometry, from the light-transport matrix.
-- `micro_phase_decode` (`images → table`) — Decode a narrow-band high-frequency fringe set (micro phase shifting, Gupta & Nayar 2012) into an absolute projector coordinate, ordering the fringes by the beat of the first two periods.
-- `tof_multipath_phase` (` → table`) — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path.
-- `tof_transport_depth` (`table → table`) — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias.
+#### profile / compare(2)
+- `profile_align` `pairs × pairs → pairs` — 測った輪郭を設計輪郭へ合わせる。返りは ``(aligned, info)``。 · 例: `profile_frame_tour`
+- `profile_deviation` `pairs × pairs → table` — 設計形状からの**符号つき法線方向のずれ**。返りは dict。 · 例: `profile_shape_inspection`
 
-### material(6)
-- `material_catalog` (` → table`) — 素材名 → 既定パラメータ(拡散の粗さ / 上塗りの強さ・粗さ / 布の縁光沢)。
-- `oren_nayar` (`normalmap → image2d`) — 粗い拡散面の陰影(Oren–Nayar)。紙・石膏・コンクリート・月の見え方。
-- `clearcoat_shade` (`rgbimage, normalmap → rgbimage`) — 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。
-- `sheen_shade` (`normalmap → image2d`) — 布の**縁の光沢**(ベルベット・サテン)。視線に対して寝た所ほど明るい。
-- `subsurface_approx` (`normalmap → image2d`) — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。
-- `wetness` (`rgbimage → rgbimage`) — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
+#### profile / frame(3)
+- `profile_chord_frame` `pairs → table` — 弦(最も離れた 2 点)を見つける。返りは dict。 · 例: `profile_frame_tour`, `profile_shape_inspection`
+- `profile_normalise` `pairs → pairs` — 弦長 1・前縁が原点・弦が +x になるよう回転と並進で正規化する。 · 例: `profile_frame_tour`
+- `profile_resample` `pairs → pairs` — 輪郭を等間隔に取り直す。``kind`` は ``"arclength"`` のみ(現状)。 · 例: `profile_frame_tour`
 
-### matprop(16)
-- `material_table` (` → table`) — 同梱の材料表の一覧(名前・分類・波長範囲・n_d・V_d・出典)を返す。
-- `material_record` (` → table`) — 材料 1 つのレコード(分類・別名・データ区間ごとの一次文献・カタログ公表値)を返す。
-- `material_optical_constants` (` → table`) — 1 波長の光学定数 n, k と、そこから決まる吸収係数・複素誘電率・垂直入射反射率を返す。
-- `material_dispersion` (` → pairs`) — 屈折率の分散曲線 n(λ) を ``pairs``(λ [nm], n)で返す(等間隔 ``n_points`` 点)。
-- `material_extinction` (` → pairs`) — 消衰係数の曲線 k(λ) を ``pairs``(λ [nm], k)で返す。k の表が無い区間は 0。
-- `material_absorption` (` → pairs`) — 吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を ``pairs``(λ [nm], α)で返す。
-- `material_transmittance` (` → pairs`) — 平行平板(厚さ ``thickness_mm``)の透過率 T(λ) を ``pairs``(λ [nm], T)で返す。
-- `material_reflectance` (` → pairs`) — 空気から材料の面への反射率 R(λ) を ``pairs``(λ [nm], R)で返す(Fresnel、複素屈折率)。
-- `abbe_number` (` → table`) — フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。
-- `glass_map` (` → table`) — Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。
-- `thermo_optic_coefficient` (` → table`) — 硝材の dn/dT(絶対、真空中)と基準温度からの屈折率変化 Δn をカタログの式 A で返す。
-- `plate_focus_shift` (` → table`) — 平行平板(ウェハ・窓・カバーガラス)を通して見たときの焦点ずれと球面収差を閉じた式で返す。
-- `silicon_free_carrier_absorption` (` → pairs`) — ドープした Si の自由キャリア吸収 α_fc(λ) [1/cm] を ``pairs``(λ [nm], α)で返す。
-- `material_from_sellmeier` (` → table`) — Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。
-- `material_from_curves` (` → table`) — 測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。
-- `read_glass_catalog_agf` (` → table`) — 硝材カタログ(Zemax .agf 形式)を読んで材料レコードの列(``table``)にする。
+#### profile / measure(5)
+- `profile_camber` `pairs → pairs` — キャンバー線(上下面の中線)。返りは ``(n, 2)`` の ``(x, yc)``。 · 例: `profile_shape_inspection`
+- `profile_leading_edge_radius` `pairs → measurement` — 前縁半径(翼弦比)。前縁近傍の点に円を当てはめる。 · 例: `profile_shape_inspection`
+- `profile_sides` `pairs → table` — 上面・下面を弦方向の関数として取り出す。返りは dict。 · 例: `profile_frame_tour`
+- `profile_thickness` `pairs → pairs` — 厚み分布 ``t(x)``。返りは ``(n, 2)`` の ``(x, t)``。 · 例: `profile_shape_inspection`
+- `profile_trailing_edge_gap` `pairs → measurement` — 後縁の開き(翼弦比)。上面と下面の後縁端の距離。 · 例: `profile_shape_inspection`
 
-### mirror(2)
-- `metal_optical_constants` (`signal → pairs`) — 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。
-- `metal_mirror_rgb` (` → vector`) — 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
+#### profile / synth(2)
+- `profile_perturb` `pairs → pairs` — 既知の量の欠陥を入れた輪郭を返す。:data:`PERTURB_KINDS`。 · 例: `profile_shape_inspection`
+- `profile_synth_naca4` `入力なし → pairs` — NACA 4 桁翼型を閉形式で生成する。返りは ``(N, 2)`` の一筆書き。 · 例: `profile_frame_tour`, `profile_shape_inspection`
 
-### optimization(3)
-- `optimize_lens` (`table → table`) — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``).
-- `merit_function` (`table → table`) — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
-- `bend_singlet` (` → table`) — A thin singlet of given focal length at a Coddington shape factor (``table``).
+### shapestat(16 ops / 5 categories)
 
-### polarization(10)
-- `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.
-- `jones_apply` (`cimage, jones → jones`) — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``.
-- `stokes_from_jones` (`jones → stokes`) — Jones vector -> Stokes vector (the four measurable intensities).
-- `mueller_element` (` → matrix`) — A 4x4 real Mueller matrix for one polarisation element.
-- `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
-- `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
-- `polarization_demosaic` (`image2d → polsweep`) — Split a polarisation-sensor mosaic into the four analyser images.
-- `polarization_demosaic_color` (`image2d → rgbvolume`) — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a
-- `mueller_from_intensities` (`signal → matrix`) — Recover a Mueller matrix from intensities measured through known
-- `mueller_checks` (`matrix → table`) — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and
+#### shapestat / deviation(1)
+- `signed_surface_distance` `points × points → signal` — 問い合わせ点から面までの**符号つき**距離。→ ``(N,)``。 · 例: `poc_am_thermal_to_ct`, `shapestat_landmark_tour`
 
-### scene(44)
-- `scene_material` (` → table`) — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。
-- `scene_plane` (` → table`) — z = ``z_mm`` の水平面(ステージ/コンベア)。``half_size_mm`` で有限の板にできる。
-- `scene_sphere` (` → table`) — 球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。
-- `scene_box` (` → table`) — 軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。
-- `scene_cylinder` (` → table`) — z 軸に平行な有限円筒(端面つき)。**加工仕上げが実際に載る形**。
-- `surface_defect` (`table, image2d → table`) — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。
-- `surface_finish` (`table → table`) — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。
-- `random_defects` (`table → table`) — 部品に**ランダムな欠陥**を作る(傷・割れ・ピット・しみ・打痕・異物)。
-- `scene_difference` (`table, table → table`) — ``solid`` から ``cavity`` をくり抜く(CSG の差集合)。**中空の部品**を作る唯一の手段。
-- `optical_camera` (` → table`) — 実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。
-- `camera_rays` (`table → points`) — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。
-- `reflect_rays` (`points, points → points`) — 鏡面反射 d − 2(d·n)n。``glassmirror.refract_rays`` の相方(反射側が無かった)。
-- `trace_rays` (`table, points, points → table`) — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。
-- `illumination_visibility` (`table, points, table → signal`) — 各点から見た**発光点の可視率** [0, 1] (= 落ち影)。
-- `render_optscene` (`table, table, table → rgbimage`) — **検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。
-- `optscene_depth` (`table, table → image2d`) — 深度の**真値** (H, W) [mm]。**光軸方向の z** であって視点からの斜距離ではない。
-- `optscene_mask` (`table, table → image2d`) — ``index`` 番のプリミティブが見えている画素の**真値マスク** (H, W) の bool。
-- `optscene_defect_mask` (`table, table → image2d`) — **欠陥画素の真値マスク** (H, W)。学習・評価のラベルはこれを使う。
-- `optscene_instances` (`table, table → table`) — 欠陥を**個体ごと**に返す(クラス・画素マスク・bounding box・面積)。
-- `defocus_blur` (`rgbimage, image2d, table → rgbimage`) — 深度の真値から**被写界深度のぼけ**を掛ける(理想ピンホール像 -> 実レンズの像)。
-- `diffraction_blur` (`rgbimage, table → rgbimage`) — 開口で決まる**回折ぼけ**を掛ける(エアリーディスクをガウスで近似)。
-- `airy_radius_um` (` → measurement`) — エアリーディスクの第 1 暗環までの半径 [µm] = 1.22 · λ · N(閉じた式)。
-- `sensor_catalog` (` → table`) — 実在センサの諸元表(Basler の EMVA1288 実測つき)。
-- `sensor_spec` (` → table`) — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。
-- `lens_catalog` (` → table`) — 産業用レンズの諸元表(型番で引ける)。``maker`` / ``mount`` で絞れる。
-- `sensor_diagonal_mm` (`table → measurement`) — センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。
-- `covers_sensor` (`table, table → table`) — レンズがそのセンサを覆えるか(イメージサークル 対 対角)。
-- `lens_spec` (` → table`) — レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。
-- `light_catalog` (` → table`) — 照明の諸元表(鍵は「メーカー 型番」)。``maker`` / ``kind`` で絞れる。
-- `register_light` (` → text`) — 手元の照明をカタログに登録する(データシートの値をそのまま入れる)。
-- `light_spec` (` → table`) — 照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。
-- `light_wavelengths` (`table → pairs`) — 光源のスペクトルを、撮像に使う数本の波長と重みに落とす。
-- `vision_layout` (`table, table, table → table`) — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。
-- `layout_capture` (`table → table`) — レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。
-- `linescan_capture` (`table, table, table → table`) — **ラインスキャン / TDI** で撮る(搬送しながら 1 ラインずつ積む)。
-- `interface_budget` (`table → table`) — 伝送帯域から**帯域律速の最大フレーム / ラインレート**を返す。
-- `optical_budget` (` → table`) — 観察光学系の**分解能バジェット**を閉じた式で出す(撮る前に成立するかを見る)。
-- `observe_surface` (` → table`) — **観察光学系を組んで、指定した素材の仕上げ面を撮る**(一行で使える入口)。
-- `inspection_dataset` (`table, table, table → table`) — 外観検査 AI の**学習画像を n 枚**、画素完全なラベル付きで生成する(検査用)。
-- `dataset_throughput` (`table → table`) — :func:`inspection_dataset` の結果 → 生成スループットの実測まとめ。
-- `env_studio` (`points → signal`) — スタジオ環境の放射輝度(方向 -> 明るさ)。**無彩色**。
-- `env_lightbox` (`points → signal`) — 撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。**無彩色**。
-- `render_studio` (`table, table → rgbimage`) — **見せる絵**を描く: 環境光・多重反射・屈折と分散つき(測光の真値は無い)。
-- `sensor_capture` (`rgbimage → rgbimage`) — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。
+#### shapestat / model(6)
+- `shape_explained_variance` `shapemodel → signal` — 各主成分の寄与率(合計 1)。→ ``(k,)``。 · 例: `shapestat_landmark_tour`
+- `shape_mahalanobis` `shapemodel × points → measurement` — モデルから見てその形がどれだけ**異常**か。→ float。 · 例: `shapestat_landmark_tour`
+- `shape_pca` `shapeset → shapemodel` — 形態 PCA(統計形状モデル)。→ dict(``shapemodel``)。 · 例: `shapestat_landmark_tour`
+- `shape_project` `shapemodel × points → signal` — 形をモデルの座標(主成分スコア)へ。→ ``(k,)``。 · 例: `shapestat_landmark_tour`
+- `shape_reconstruct` `shapemodel × signal → points` — スコアから形を戻す。→ ``(N, 3)``。 · 例: `shapestat_landmark_tour`
+- `shape_synthesize` `shapemodel → points` — モデルから**もっともらしい新しい形**を 1 つ作る。→ ``(N, 3)``。 · 例: `shapestat_landmark_tour`
 
-### sensorchar(19)
-- `emva_pair_statistics` (`image2d, image2d → table`) — 同じ露光で撮った 2 枚から、平均・時間分散・空間分散を出す(式 16・18・32)。
-- `emva_photon_transfer` (`signal, signal → table`) — photon transfer 曲線からシステムゲイン K と暗雑音 σ_d を出す(式 50・53・54)。
-- `emva_quantum_efficiency` (`signal, signal → table`) — 応答(特性曲線)の傾きから量子効率 η を出す(式 49・52)。
-- `emva_linearity_error` (`signal, signal → table`) — 直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に**相対偏差の重み 1/y²**で当て(式 59〜61)、
-- `emva_snr_curve` (`signal → matrix`) — 線形モデルの SNR(式 21)と理想センサの SNR(式 23)。
-- `emva_sensitivity_threshold` (` → table`) — 絶対感度しきい値(SNR = 1 になる露光、式 26・27)。
-- `emva_dynamic_range` (` → table`) — ダイナミックレンジ DR = μ_p.sat / μ_p.min(式 28)を倍・dB(20 log10)・bit(log2)で。
-- `emva_dark_current` (`signal, signal → table`) — 暗電流(7.1 節): 暗画像の平均(と分散)を露光時間に直線で当てた傾き。
-- `emva_spatial_nonuniformity` (`volume, volume → table`) — DSNU と PRNU(式 33〜42・65〜67)。
-- `emva_defect_pixels` (`image2d → table`) — 欠陥画素の特徴づけ(8.8 節): 対数ヒストグラム(式 73〜75)と積算ヒストグラム(式 77)、しきい値を越える画素の数。
-- `emva_highpass` (`image2d → table`) — 照明のむらを除く高域フィルタ(8.1 節。旧版は付録 C.5 の式 84〜87)。
-- `emva_spectrogram` (`image2d → table`) — 水平・垂直のスペクトログラム(8.6 節、式 70〜72)。
-- `emva_total_snr` (`signal → matrix`) — 空間の不均一を含めた総合 SNR(8.5 節、式 68・69)。
-- `emva_exposure_for_snr` (`signal → signal`) — ある SNR に要る露光 μ_p(SNR)= SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(式 25、式 21 の逆)。
-- `emva_photon_exposure` (`signal → signal`) — センサ面の放射照度から画素あたりの平均光子数 μ_p = A E t_exp/(hc/λ)(式 3)を、規格の便利な単位で(式 4)。
-- `emva_bspline_regression` (`signal, signal → table`) — 3 次 B-スプラインの最小二乗の当てはめと、その傾き(General 6.6 節、式 44〜49)。
-- `emva_ptc_linearity_check` (`signal, signal → table`) — photon transfer 曲線は直線か(6.6 節、式 51)—— Linear の K を使ってよいかの検査。
-- `emva_noise_whiteness` (`image2d, image2d → table`) — 時間雑音は画素間で独立か(Linear 1.2 節の前提 3)、続けて撮った画像の間で独立か(Linear・General の前提 3)。
-- `emva_filter_distortion` (`matrix → table`) — カメラの中の線形な前処理が EMVA 1288 Linear の数をどれだけ動かすか —— 閉形式(この族の導出、規格の式ではない)。
+#### shapestat / procrustes(5)
+- `generalized_procrustes` `shapeset → shapeset` — 一般化 Procrustes(GPA)。全個体を共通の枠へ。→ ``(K, N, 3)``。 · 例: `shapestat_landmark_tour`
+- `procrustes_align` `points × points → points` — *source* を *target* に重ねた点。→ ``(N, 3)``(:func:`procrustes_fit` の適用)。 · 例: `shapestat_landmark_tour`
+- `procrustes_distance` `points × points → measurement` — Procrustes 距離 = 重ねたあとの点ごと RMS。→ float。 · 例: `shapestat_landmark_tour`
+- `procrustes_fit` `points × points → matrix` — *source* を *target* へ重ねる相似変換。→ ``(4, 4)`` の同次行列。 · 例: `poc_change_detection_misreg`, `poc_die_tilt_tsv_overlay`, `shapestat_landmark_tour`
+- `shape_mean` `shapeset → points` — GPA で揃えたあとの平均形状。→ ``(N, 3)``。 · 例: `shapestat_landmark_tour`
 
-### sensorgeneral(3)
-- `emva_general_sensitivity` (`signal, signal, signal → table`) — 特性曲線・入力 SNR・絶対感度しきい値・DR・光子単位の暗雑音(General 2.1〜2.4・6.6〜6.8 節)。
-- `emva_general_nonuniformity` (`volume, volume → table`) — DSNU と PRNU を入力(光子)の単位で(General 8 節、式 55・56・58・59)。
-- `emva_general_relative_qe` (`signal, signal → table`) — 基準波長に対する相対量子効率 η(λ)/η(λ_ref)(General 9.4 節、式 73・74)。
+#### shapestat / symmetry(2)
+- `landmark_asymmetry` `points → signal` — 左右の対ごとの**符号つき**非対称量。→ ``(M,)``。 · 例: `shapestat_landmark_tour`
+- `mirror_plane_from_pairs` `points → matrix` — 左右の対応ランドマークから正中面を出す。→ ``(2, 3)``(1 行目 = 点、2 行目 = 法線)。 · 例: `shapestat_landmark_tour`
 
-### shape_from_polarization(8)
-- `sfp_dolp_model` (`image2d → image2d`) — Degree of linear polarisation of reflected (specular) or emitted (diffuse) light versus zenith angle, from the Fresnel equations.
-- `dolp_to_zenith` (`image2d → table`) — Invert DoLP to the set of zenith angles that produce it — one for the diffuse model, two (straddling Brewster) for the specular model.
-- `aolp_to_azimuth` (`image2d → table`) — Turn the angle of linear polarisation into the two candidate azimuths of the surface normal (the pi ambiguity), diffuse and specular differing by 90 degrees.
-- `sfp_render` (`normalmap → polsweep`) — Render the images a 4-direction polarisation camera records of a dielectric surface with the given normal map (the forward model of shape from polarisation).
-- `sfp_normals` (`polsweep → table`) — From a polariser sweep to the explicit set of candidate surface normals per pixel — 2 for the diffuse model, 4 for the specular model (2 zeniths x 2 azimuths).
-- `sfp_disambiguate` (`table → normalmap`) — Pick one normal per pixel from the candidate set of :func:`sfp_normals`, using a stated prior — convexity with Brewster-ridge segmentation, or a coarse depth / normal map.
-- `sfp_estimate_index` (`image2d, image2d → table`) — Estimate the refractive index from DoLP observed at known zenith angles — a least-squares fit of the Fresnel curve, plus Brewster's ``n = tan(theta_B)`` at the DoLP maximum for the specular model.
-- `sfp_height` (`normalmap → image2d`) — Integrate a normal map to a height map with Frankot-Chellappa on a mirror-extended domain, so the periodic boundary of the FFT does not bend the result.
+#### shapestat / synth(2)
+- `shape_perturb` `points → points` — 形に**既知の**変形を 1 つ入れる。→ ``(N, 3)``。 · 例: `shapestat_landmark_tour`
+- `shape_synth_family` `入力なし → shapeset` — 既知の変形モードを持つ形の群を作る。→ ``(n_shapes, n_points, 3)``。 · 例: `shapestat_landmark_tour`
 
-### spectral(9)
-- `blackbody_spectrum` (` → pairs`) — 黒体の分光放射輝度 L(λ, T)、単位 W m⁻² sr⁻¹ nm⁻¹(Planck の式、SI 2019 の定数)。
-- `cie_illuminant_a` (` → pairs`) — CIE 標準イルミナント A の相対分光分布(CIE 15:2004 の定義式、560 nm で 100)。
-- `led_spectrum` (` → pairs`) — LED の相対分光分布(ピークで 1)。
-- `bandpass_spectrum` (` → pairs`) — 帯域通過フィルタの透過率(超 Gauss)。
-- `silicon_photodiode_qe` (` → pairs`) — Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。
-- `energy_to_photons` (`pairs → pairs`) — エネルギーの分光分布(W/nm)を光子数の分布(光子 s⁻¹ nm⁻¹)にする: λ/(hc) を掛ける。
-- `spectral_product` (`pairs, pairs → pairs`) — 2 本の曲線の積を *a* の波長で(*b* は線形補間)。光源 × 透過率 × QE を 1 本ずつ掛ける。
-- `spectral_integral` (`pairs → measurement`) — 曲線の波長積分 ∫ s(λ) dλ(台形則、λ は nm)。区間を与えればその中だけ(端は線形補間)。
-- `spectral_stats` (`pairs → table`) — 曲線の要約: ピーク波長と値、重心波長、半値全幅(線形補間で交点を取る)、積分。
+### measure1d(14 ops / 3 categories)
 
-### surface(5)
-- `metallic_flake_normals` (` → normalmap`) — メタリック塗装のフレーク(アルミ片)の法線場を作る。
-- `weave_normals` (` → normalmap`) — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。
-- `wood_grain` (` → image2d`) — 木目(年輪)の**色の変調**と**繊維の向き**を作る。
-- `corrosion_mask` (` → image2d`) — 錆・緑青・汚れの**むら**(0–1 のマスク)。
-- `rough_transmission` (`signal → pairs`) — すりガラスの透過を「直進成分」と「拡散成分」に分ける。
+#### measure1d / apply(2)
+- `align_metrology_model` `metrologymodel → metrologymodel` — 計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。 · 例: `poc_dimensional_inspection`
+- `apply_metrology_model` `metrologymodel × image2d → table` — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を 再フィットして結果を返す(apply_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 
-### wave(9)
-- `airy_pattern` (` → image2d`) — The diffraction-limited PSF of a circular pupil (Airy pattern).
-- `angular_spectrum_propagate` (`cimage → cimage`) — Exact scalar free-space propagation of a complex field (angular spectrum).
-- `fraunhofer_pattern` (`image2d → image2d`) — Far-field (Fraunhofer) diffraction intensity of an aperture.
-- `fourier_plane_filter` (` → cimage`) — 4f 系のフーリエ面に置く複素透過関数 ``H(fx, fy)``。
-- `four_f_filter` (`cimage, cimage → cimage`) — 4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。
-- `gaussian_beam` (` → table`) — Gaussian-beam propagation: spot size, wavefront curvature and Gouy phase.
-- `defocus_from_shift` (` → measurement`) — Defocus wavefront error (waves at the pupil edge) of an axial focus shift.
-- `pupil_psf` (`image2d → image2d`) — Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1).
-- `pupil_blur` (`image2d, image2d → image2d`) — Blur an image with the PSF of a pupil shape at one wavelength band.
+#### measure1d / caliper(6)
+- `fuzzy_measure_pairing` `image2d × measurehandle → table` — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `gen_measure_arc` `入力なし → measurehandle` — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
+- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
+- `measure_pos` `image2d × measurehandle → table` — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `translate_measure` `measurehandle → measurehandle` — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
+
+#### measure1d / model(6)
+- `add_metrology_object_circle_measure` `metrologymodel → scalar` — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `add_metrology_object_ellipse_measure` `metrologymodel → scalar` — 楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。 ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。 · 例: `poc_dimensional_inspection`
+- `add_metrology_object_generic` `metrologymodel → scalar` — 汎用計測オブジェクトを追加(add_metrology_object_generic)。 · 例: `poc_dimensional_inspection`
+- `add_metrology_object_line_measure` `metrologymodel → scalar` — 直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `add_metrology_object_rectangle2_measure` `metrologymodel → scalar` — 矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。 ``phi`` = ``l1`` 辺の向き(col 軸から、ラジアン)、``l1``/``l2`` = 半辺長。 · 例: `poc_dimensional_inspection`
+- `create_metrology_model` `入力なし → metrologymodel` — 空の計測モデルを作る(create_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+
+### roughness(6 ops / 3 categories)
+
+#### roughness / measure(3)
+- `profile_params` `signal → table` — 断面の粗さパラメータ Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287)。 · 例: `poc_food_cutting_measure`, `poc_surface_roughness`
+- `surface_params` `depth → table` — 面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。 · 例: `poc_polish_wipe_measure`, `poc_surface_roughness`
+- `surface_psd` `depth → pairs` — 高さ場のパワースペクトル密度。``(q, C)`` を返す。**規約を引数で明示する。** · 例: `poc_surface_roughness`
+
+#### roughness / prepare(2)
+- `surface_filter` `depth → depth` — 高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。 · 例: `poc_surface_roughness`
+- `surface_form_remove` `depth → depth` — 格子のまま平面 / 二次曲面を除く。``(residual, coeffs)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`
+
+#### roughness / synth(1)
+- `surface_synth_psd` `入力なし → depth` — 指定した PSD から高さ場を合成する。``(z, sq_analytic)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_surface_roughness`
+
+### shape2d(16 ops / 2 categories)
+
+#### shape2d / descriptor(10)
+- `contour_epicycle_chain` `matrix → pairs` — 位相 ``t`` における**回る振り子の連鎖**を返す(``pairs``)。 · 例: `poc_one_stroke_epicycles`
+- `contour_fourier_complex` `pairs → matrix` — 閉輪郭を複素フーリエ級数の係数にする —— ``z(t) = Σ c_k exp(2πi k t)``。 · 例: `poc_one_stroke_epicycles`
+- `contour_fourier_truncation_energy` `matrix → table` — 打ち切り次数ごとの**予言される**誤差(``table``)—— パーセバルの厳密式。 · 例: `poc_one_stroke_epicycles`
+- `descriptor_distance` `efdmodel × efdmodel → measurement` — 2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。 · 例: `contour_fourier`, `shape2d_morph_descriptor_tour`
+- `elliptic_fourier` `pairs → efdmodel` — 閉輪郭の楕円フーリエ係数を Kuhl–Giardina 閉形式で求める。 · 例: `contour_fourier`, `shape2d_morph_descriptor_tour`
+- `fourier_smooth` `pairs → pairs` — 輪郭を複素 FFT で帯域制限して平滑化する。 · 例: `contour_fourier`
+- `from_xld` `table → pairs` — XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。 · 例: `shape2d_morph_descriptor_tour`
+- `invariants` `efdmodel → pairs` — 回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。 · 例: `shape2d_morph_descriptor_tour`
+- `normalize` `efdmodel → matrix` — EFD 係数を「正準ポーズ」の係数へ変換する(第1高調波を基準に整列)。 · 例: `piv_flow_from_particles`, `poc_exoplanet_transit`
+- `reconstruct` `efdmodel → pairs` — EFD 係数から輪郭を再構成する((M,2))。 · 例: `contour_fourier`
+
+#### shape2d / morph(6)
+- `add_frame_corners` `pairs → pairs` — 点群に画像の四隅(+辺の中点)を固定点として足す。 · 例: `shape2d_morph_descriptor_tour`
+- `blend` `image2d × image2d → image2d` — クロスディゾルブ (1-alpha)·a + alpha·b(a,b は同 shape・[0,1])。 · 例: `image_morph`, `poc_live4d`
+- `morph` `image2d × image2d × pairs × pairs → image2d` — 2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。 · 例: `image_morph`, `poc_vanishing_detail_and_morphing_area`
+- `morph_sequence` `image2d × image2d × pairs × pairs → images` — alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変わる各フレーム)。 · 例: `image_morph`
+- `warp_piecewise_affine` `image2d × pairs × pairs → image2d` — img の src_pts にある内容を dst_pts へ動かす区分アフィンワープ。 · 例: `shape2d_morph_descriptor_tour`
+- `warp_tps_image` `image2d × pairs × pairs → image2d` — 薄板スプラインで img の src_pts を dst_pts へ動かす滑らかなワープ。 · 例: `shape2d_morph_descriptor_tour`
+
+### piv(29 ops / 7 categories)
+
+#### piv / assess(4)
+- `piv_error_stats` `flow2d × flow2d → table` — 真値との差の内訳。**偏りと散らばりを分けて**返す。 · 例: `piv_field_analysis_tour`, `piv_flow_from_particles`, `poc_river_surface_velocity`, `poc_strain_history`
+- `piv_peak_locking` `flow2d → table` — ピークロッキングの強さ。小数部の分布が一様からどれだけ外れているか。 · 例: `piv_field_analysis_tour`, `poc_battery_electrode_breathing`
+- `piv_sample_at_windows` `flow2d → flow2d` — 画素ごとの場 ``(2, H, W)`` を窓中心の格子へ落とす(最近傍)。 · 例: `piv_field_analysis_tour`, `piv_flow_from_particles`, `poc_river_surface_velocity`, `poc_strain_history`
+- `piv_time_statistics` `images → table` — 画像列 → 時間平均・変動の RMS・レイノルズ応力。 · 例: `piv_field_analysis_tour`
+
+#### piv / estimate(4)
+- `piv_cross_correlate` `image2d × image2d → flow2d` — 窓ごとの相互相関で変位場を出す。返りは ``(flow, info)``。 · 例: `piv_field_analysis_tour`, `piv_flow_from_particles`, `poc_beam_modal_video`, `poc_change_detection_misreg`, `poc_dic_strain`, `poc_print_registration`, `poc_river_surface_velocity`, `poc_strain_history`, `poc_superresolution_limits`, `poc_tacsim_marker_shear`
+- `piv_deform_pass` `image2d × image2d × flow2d → flow2d` — 窓変形つきの 1 段。予測変位で**画像そのものを歪めてから**相関を取る。 · 例: `piv_field_analysis_tour`
+- `piv_ensemble_correlate` `images → flow2d` — 相関マップを**足してから**ピークを探す(アンサンブル相関)。 · 例: `piv_field_analysis_tour`, `poc_river_surface_velocity`
+- `piv_multipass` `image2d × image2d → flow2d` — 粗い窓から細かい窓へ段を下げる多段 PIV。返りは ``(flow, info)``。 · 例: `piv_field_analysis_tour`, `piv_flow_from_particles`, `poc_strain_history`
+
+#### piv / field(8)
+- `piv_divergence` `flow2d → image2d` — 発散 ``d(dy)/dy + d(dx)/dx``。**非圧縮なら 0** —— 独立な検算に使える。 · 例: `piv_flow_from_particles`, `poc_what_a_picture_cannot_check`
+- `piv_flow_magnitude` `flow2d → image2d` — ``sqrt(dy^2 + dx^2)``。向きを捨てる**一方向**の変換。 · 例: `piv_field_analysis_tour`, `poc_what_a_picture_cannot_check`
+- `piv_q_criterion` `flow2d → image2d` — Q 基準 ``-tr(J^2)/2``。**回転がひずみを上回る**場所が正になる。 · 例: `piv_field_analysis_tour`
+- `piv_strain_rate` `flow2d → image2d` — ひずみ速度の大きさ ``sqrt(2 e_ij e_ij)``。剛体回転では 0 になる。 · 例: `piv_field_analysis_tour`
+- `piv_swirling_strength` `flow2d → image2d` — 渦回転強度 λ_ci —— 速度勾配テンソルの複素固有値の虚部の大きさ。 · 例: `piv_field_analysis_tour`
+- `piv_to_velocity` `flow2d → flow2d` — 画素/フレーム → m/s。**両方とも必須引数**(既定値を置かない)。 · 例: `piv_flow_from_particles`, `poc_river_surface_velocity`
+- `piv_velocity_gradient` `flow2d → table` — 速度勾配テンソルの成分と、そこから出る量をまとめて返す。 · 例: `piv_field_analysis_tour`
+- `piv_vorticity` `flow2d → image2d` — 渦度 ``d(dx)/dy - d(dy)/dx``。**反時計回りが正**(画像座標での定義)。 · 例: `piv_flow_from_particles`, `poc_tactile_dipole_torque`, `poc_what_a_picture_cannot_check`
+
+#### piv / solid(3)
+- `correlation_quality` `image2d × image2d × flow2d → image2d` — 与えられた変位場が**どれだけ合っているか**を点ごとに返す ZNCC マップ。 · 例: `piv_field_analysis_tour`
+- `speckle_quality` `image2d → table` — 撮ったスペックルが DIC に向いているかを 4 つの数字で返す。 · 例: `piv_field_analysis_tour`
+- `strain_from_displacement` `image2d × image2d → image2d` — 変位場からひずみ場を出す。``(exx, eyy, exy)`` を返す。 · 例: `poc_dic_strain`
+
+#### piv / synth(3)
+- `piv_synth_pair` `入力なし → image2d` — 既知の変位場を持つ画像対を作る。返りは ``(image_a, image_b, truth)``。 · 例: `piv_field_analysis_tour`, `piv_flow_from_particles`, `poc_strain_history`
+- `piv_synth_particles` `入力なし → image2d` — トレーサ粒子を撒いた 1 枚を作る。返りは ``(image, positions)``。 · 例: `piv_field_analysis_tour`
+- `piv_synth_sequence` `入力なし → images` — 同じ粒子を繰り返し動かした画像列。返りは ``(frames, truth)``。 · 例: `piv_field_analysis_tour`
+
+#### piv / validate(2)
+- `piv_outlier_mask` `flow2d → mask` — 正規化中央値検定(Westerweel & Scarano 2005)で外れベクトルを見つける。 · 例: `piv_flow_from_particles`, `poc_change_detection_misreg`, `poc_river_surface_velocity`
+- `piv_replace_outliers` `flow2d × mask → flow2d` — 外れ値を近傍で埋める。``method="nan"`` なら**埋めずに欠測にする**。 · 例: `piv_flow_from_particles`, `poc_river_surface_velocity`
+
+#### piv / visualise(5)
+- `piv_flow_to_rgbimage` `flow2d → rgb` — 色相 = 向き、明度 = 速さの標準的なフロー可視化。返りは ``(h, w, 3)``。 · 例: `piv_field_analysis_tour`
+- `piv_line_integral_convolution` `flow2d → image2d` — 線積分畳み込み(LIC)—— 流れに沿って白色雑音をぼかした模様の画像。 · 例: `piv_field_analysis_tour`
+- `piv_quiver` `flow2d → rgb` — 矢印図(MATLAB の ``quiver``)。返りは ``(h*upsample, w*upsample, 3)``。 · 例: `piv_field_analysis_tour`
+- `piv_streamline_image` `flow2d → rgb` — 流線図(MATLAB の ``streamslice``)。返りは ``(h*upsample, w*upsample, 3)``。 · 例: `piv_field_analysis_tour`
+- `piv_streamlines` `flow2d → table` — 流線を RK4 でたどる(MATLAB の ``stream2`` / ``streamslice`` に当たる)。 · 例: `piv_field_analysis_tour`
+
+### blob(10 ops / 5 categories)
+
+#### blob / connect(1)
+- `blob_label` `mask → labels2d` — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。 · 例: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+
+#### blob / extract(3)
+- `blob_boundaries` `labels2d → mask` — 物体の輪郭(1 画素幅、bool)。**隣り合う物体の境目も残る**。 · 例: `poc_gear_tooth_metrology`
+- `blob_overlay` `image2d × labels2d → rgb` — 元画像の上に物体を色分けして重ね、``(H, W, 3)`` の float RGB を返す。 · 例: `poc_bump_coplanarity`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_powder_grinding_ae`, `poc_weld_radiograph_porosity`
+- `blob_region` `labels2d → mask` — 物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。 · 例: `poc_gear_tooth_metrology`, `poc_particle_sizing`
+
+#### blob / measure(1)
+- `blob_features` `labels2d → table` — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。 · 例: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+
+#### blob / select(2)
+- `blob_select` `labels2d → labels2d` — 特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。 · 例: `poc_particle_sizing`, `poc_pipe_wall_loss`, `poc_pv_thermal_survey`, `poc_solar_el_inspection`, `poc_weld_radiograph_porosity`
+- `blob_select_largest` `labels2d → labels2d` — 面積の大きい順に ``count`` 個だけ残す(**番号は面積の降順に振り直す**)。 · 例: `poc_am_thermal_to_ct`, `poc_gear_tooth_metrology`, `poc_solder_fillet_aoi`, `poc_wound_area_tracking`
+
+#### blob / split(3)
+- `blob_distance` `mask → image2d` — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。 · 例: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_segmentation_gauntlet`
+- `blob_seeds` `image2d → labels2d` — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。 · 例: `blob_split_tour`
+- `blob_split` `labels2d × labels2d × image2d → labels2d` — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。 · 例: `blob_split_tour`
+
+### dem(25 ops / 5 categories)
+
+#### dem / geodesy(12)
+- `dem_cell_size_webmercator` `入力なし → measurement` — Web メルカトルのタイルの地上分解能 [m/px]。**緯度で変わる**。 · 例: `dem_geodesy_tour`
+- `dem_datum_shift_3param` `入力なし → points` — 測地成果(datum)の乗り換え —— 地心 3 パラメータの平行移動(``points``)。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_earth_curvature_drop` `入力なし → measurement` — 見通し計算の**地球曲率落ち** [m]。``(1 - k) d^2 / (2 R)``。 · 例: `dem_geodesy_tour`, `poc_geodetic_height_frames`
+- `dem_ecef_to_geodetic` `points → points` — ECEF → 測地座標。返りは ``(..., 3)`` の ``(緯度[度], 経度[度], 高さ[m])``。 · 例: `dem_geodesy_tour`, `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_enu_from_geodetic` `入力なし → points` — 測地座標 → 基準点まわりの**局所 ENU**(東・北・上)[m] (``points``)。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_geocentric_grid` `depth → pointmap` — DEM の各セルを**地球中心から見た座標**にする。 · 例: `dem_geodesy_tour`
+- `dem_geodetic_from_enu` `points → points` — 局所 ENU → 測地座標(:func:`dem_enu_from_geodetic` の逆)。``points``。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_geodetic_slope` `depth → image2d` — **緯度経度の格子**(等角度間隔)の DEM の傾斜。セル寸法が緯度で変わる。 · 例: `dem_geodesy_tour`
+- `dem_geodetic_to_ecef` `入力なし → points` — 測地座標(緯度・経度・楕円体高)→ **地心直交座標 ECEF** [m]。 · 例: `dem_geodesy_tour`, `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_geoid_height` `depth → signal` — ジオイド高の格子を緯度・経度で**双一次補間**して ``N`` [m] を返す(``signal``)。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
+- `dem_height_frame_convert` `signal × signal → signal` — 高さの**基準**を移す: 楕円体高 ``h`` ↔ 標高 ``H``(``H = h - N``)。``signal``。 · 例: `poc_geodetic_benchmarks_real`
+- `dem_height_frame_residual` `signal × signal × signal → table` — ``h - H - N`` の残差 —— 高さの取り違えを**静かにさせない**検出器(``table``)。 · 例: `poc_geodetic_benchmarks_real`
+
+#### dem / hydrology(4)
+- `dem_fill_sinks` `depth → depth` — 窪地を埋めた DEM。Barnes, Lehman & Mulla (2014) の priority-flood。 · 例: `poc_dem_terrain`
+- `dem_flow_accumulation` `depth → image2d` — 集水セル数。各セルへ流れ込む上流セルの個数(自セルを 1 と数える)。 · 例: `dem_terrain_analysis_tour`, `poc_dem_terrain`
+- `dem_flow_direction` `depth → labels` — D8 流向。O'Callaghan & Mark (1984)。 · 例: `dem_terrain_analysis_tour`, `poc_geodetic_height_frames`
+- `dem_stream_network` `depth → image2d` — 集水量が閾値を超えたセルを河道とみなす二値マスク。 · 例: `dem_terrain_analysis_tour`
+
+#### dem / shading(1)
+- `dem_hillshade` `depth → image2d` — 陰影起伏 [0,1]。``azimuth_deg`` は光源の方位(北 0 度・東回り)。 · 例: `poc_dem_terrain`, `poc_lidar_terrain_change`, `poc_stockpile_volume`
+
+#### dem / surface(5)
+- `dem_aspect` `depth → image2d` — 斜面方位 [度]。**北 0 度・東回り**。平坦なセルは :data:`ASPECT_FLAT`。 · 例: `poc_dem_terrain`, `poc_geodetic_height_frames`
+- `dem_curvature` `depth → image2d` — 曲率 [1/m]。``kind`` は ``"profile"``(断面) / ``"planform"``(平面) / ``"total"``。 · 例: `poc_dem_terrain`
+- `dem_roughness` `depth → image2d` — 地形起伏指数 TRI —— 8 近傍との標高差の二乗平均平方根 [m]。 · 例: `dem_terrain_analysis_tour`
+- `dem_slope` `depth → image2d` — 傾斜角。``units`` は ``"degrees"`` / ``"radians"`` / ``"percent"``。 · 例: `dem_geodesy_tour`, `poc_crop_phenotyping`, `poc_dem_terrain`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`
+- `dem_tpi` `depth → image2d` — 地形位置指数 TPI —— 自セルと 8 近傍平均の差 [m]。正が尾根、負が谷。 · 例: `dem_terrain_analysis_tour`
+
+#### dem / visibility(3)
+- `dem_horizon_angle` `depth → image2d` — 指定方位の地平線仰角 [度]。0 は水平、90 は真上が塞がれている状態。 · 例: `dem_terrain_analysis_tour`
+- `dem_sky_view_factor` `depth → image2d` — 天空率 [0,1]。空がどれだけ見えているか。 · 例: `poc_dem_terrain`
+- `dem_viewshed` `depth → image2d` — 1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。 · 例: `dem_terrain_analysis_tour`, `poc_stockpile_volume`
+
+### conngraph(28 ops / 7 categories)
+
+#### conngraph / activity(3)
+- `graph_activation_latency` `matrix → labels` — 各ノードが初めて「点いた」ステップ(0 始まり)の列 (n,)、整数。点かなかったノードは −1。 · 例: `poc_malecns_activity_wave`
+- `graph_activity_spread` `matrix × points × labels → table` — 活動がどこまで広がったかの時系列の表: 列 step / mean_distance / active_fraction / source_fraction。 · 例: `poc_malecns_activity_wave`, `poc_microns_brain_wave`
+- `points_activity_video` `points × matrix → rgbvideo` — 点群に活動を載せて回す色動画 (F, H, W, 3)、値 [0, 1]。F = T × substeps、H = size、W = size × aspect。 · 例: `poc_connectome_motor_bottleneck`, `poc_em_branch_territory`, `poc_em_second_opinion`, `poc_eye_to_brain`, `poc_malecns_activity_wave`, `poc_microns_brain_wave`
+
+#### conngraph / circuit(1)
+- `graph_conductance_states` `conn_graph × matrix → matrix` — 配線 ``W`` を**そのまま回路として回した**膜電位の時系列 ``(T, n)``(``matrix``、学習なし)。 · 例: `poc_fly_optomotor_steering`
+
+#### conngraph / construct(3)
+- `graph_binarize` `conn_graph → conn_graph` — |W| > thresh の辺を 1.0、それ以外を 0.0 にした conn_graph(対角も同じ規則)。 · 例: `gallery_conngraph_closed_forms`
+- `graph_degree_preserving_shuffle` `conn_graph → conn_graph` — 次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。 · 例: `poc_larval_connectome_reservoir`, `poc_malecns_activity_wave`, `poc_microns_brain_wave`
+- `graph_from_synapses` `synapse_table → conn_graph` — シナプス表 (m, 3) = (pre_id, post_id, count) を n×n の重みつき有向隣接行列にする。 · 例: `poc_fly_optomotor_steering`, `poc_microns_brain_wave`
+
+#### conngraph / dimension(4)
+- `graph_block_shuffle` `conn_graph × labels → conn_graph` — 層(ラベル)のブロックごとに**送り手を混ぜた**対照の ``conn_graph``: 各受け手が受ける重みの多重集合と 層間の総結線量は保ったまま、「誰から」だけを壊す。 · 例: `poc_connectome_motor_bottleneck`
+- `graph_layer_propagate` `conn_graph × labels × matrix → matrix` — 層 0 の状態 ``U`` (N, n_0) を、ブロック ``W[layer a → layer a+1]`` で**前向きに一段ずつ**通した全層の状態 ``(N, n)``(``matrix``、列はノード順で層 0 の列は ``U`` そのもの)。 · 例: `poc_connectome_motor_bottleneck`
+- `states_layer_dimension` `matrix × labels → table` — 層ごとの実効次元の表: 列 layer / n / participation_ratio / ratio(= PR / n)。 · 例: `poc_connectome_motor_bottleneck`
+- `states_participation_ratio` `matrix → measurement` — 状態列 ``X`` (N, n) の**実効次元** = participation ratio ``PR = (Σλ)² / Σλ²``(λ は共分散の固有値、 Gao et al. 2017)。全列が独立で同じ分散なら n、1 本の方向に乗っていれば 1。 · 例: `poc_connectome_motor_bottleneck`
+
+#### conngraph / reservoir(5)
+- `reservoir_encode` `conn_graph × matrix → matrix` — 静的入力の一括 reservoir 符号化(分類用): X の各行を零状態から steps 回回した最終状態 (N, n)。 · 例: `poc_larval_connectome_reservoir`
+- `reservoir_from_graph` `conn_graph → conn_graph` — W をスペクトル半径が rho になるように定数倍した conn_graph(echo state の前処理)。半径 0 は拒否。 · 例: `poc_larval_connectome_reservoir`, `poc_malecns_activity_wave`
+- `reservoir_states` `conn_graph × matrix → matrix` — reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。返りは (T − washout, n)。 · 例: `poc_malecns_activity_wave`, `poc_microns_brain_wave`
+- `ridge_predict` `matrix × matrix → matrix` — 読み出し重みで予測 (T, k) = [X, 1] · Wout。Wout は ridge_readout の (d+1, k)。 · 例: `poc_larval_connectome_reservoir`
+- `ridge_readout` `matrix × matrix → matrix` — リッジ回帰の読み出し重み (d+1, k) = (X̃ᵀX̃ + αI)⁻¹ X̃ᵀY、X̃ = [X, 1] (バイアス列を付ける)。 · 例: `poc_larval_connectome_reservoir`
+
+#### conngraph / stats(9)
+- `graph_betweenness` `conn_graph → signal` — 媒介中心性(Brandes 2001、二値有向、正規化なし)。ノードごとの長さ n の配列。 · 例: `gallery_conngraph_closed_forms`
+- `graph_clustering_coefficient` `conn_graph → measurement` — 平均局所クラスタ係数(向きを畳んだ二値グラフ、Watts–Strogatz)。次数 < 2 のノードは 0 と数える。 · 例: `gallery_conngraph_closed_forms`
+- `graph_components` `conn_graph → labels` — 弱連結成分のラベル(0 始まり、ノード番号順の初出で番号づけ)。長さ n の int64。 · 例: `gallery_conngraph_closed_forms`
+- `graph_degree_table` `conn_graph → table` — ノードごとの in_degree / out_degree(二値)と in_strength / out_strength(重み和)の表。 · 例: `poc_larval_connectome_reservoir`, `poc_theorems_as_pictures`
+- `graph_laplacian_spectrum` `conn_graph → signal` — 向きを畳んだ二値グラフの Laplacian L = D − A の固有値(昇順、長さ n)。 · 例: `gallery_conngraph_closed_forms`
+- `graph_modularity` `conn_graph × labels → measurement` — 有向・重みつきモジュラリティ Q(Leicht–Newman 2008)。 · 例: `gallery_conngraph_closed_forms`
+- `graph_motif_count` `conn_graph → measurement` — 3 点モチーフの個数(二値有向、対角は除く): reciprocal / ffl / cycle3。 · 例: `gallery_conngraph_closed_forms`
+- `graph_rich_club` `conn_graph → measurement` — rich club 係数 φ(k): 総次数 (in+out、二値) > k のノードが張る部分グラフの有向密度。 · 例: `poc_worm_core_persists`
+- `graph_spectral_radius` `conn_graph → measurement` — 重みつき隣接行列 W の固有値の最大絶対値(スペクトル半径)。 · 例: `poc_larval_connectome_reservoir`
+
+#### conngraph / view(3)
+- `graph_adjacency_image` `conn_graph → image2d` — 隣接行列を [0, 1] の画像 (n, n) にする。order = none / degree(総次数の降順)/ component(成分順)。 · 例: `gallery_conngraph_closed_forms`
+- `graph_edges_as_lines` `conn_graph × points → table` — 辺を線分の表にする(Studio で点群に重ねる出口): 列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。 · 例: `gallery_conngraph_closed_forms`
+- `graph_layout_spectral` `conn_graph → points` — スペクトル配置: 向きを畳んだ Laplacian の Fiedler ベクトル(第 2..dim+1 固有ベクトル)を座標にした点群 (n, 3)、各軸 [0, 1]。 · 例: `gallery_conngraph_closed_forms`
+
+### emproof(14 ops / 6 categories)
+
+#### emproof / evaluate(1)
+- `holdout_threshold` `signal × signal × signal × signal → table` — 閾値を**訓練側で選び、評価は別の側で**測る(score が高いほど「疑わしい」)。 · 例: `poc_em_second_opinion`
+
+#### emproof / inject(3)
+- `seg_inject_merge` `labels2d → labels2d` — 評価用に**融合**を仕込む: 隣接する大きなラベル対を ``n`` 組選び、片方の id をもう片方に書き換える。 · 例: `poc_em_second_opinion`, `poc_em_split_merge_score`
+- `seg_inject_split` `labels2d → labels2d` — 評価用に**分断**を仕込む: 大きなラベルを ``n`` 個選び、画素の中央値の行(``axis="row"``)か 列(``"col"``)で 2 つに切って、片側に新しい id(既存最大 + 1, +2, …)を付ける。 · 例: `poc_em_second_opinion`, `poc_em_split_merge_score`
+- `seg_label_changes` `labels2d × labels2d → table` — 2 枚のラベル画像の差を**融合と分断の対**として返す(校正の前後、または仕込んだ誤りの答え合わせ)。 · 例: `poc_em_second_opinion`, `poc_em_split_merge_score`
+
+#### emproof / response(1)
+- `seg_membrane_response` `image2d → image2d` — EM 断面の**暗い線**(細胞膜)の応答 [0, ∞)。ガウス平滑した Hessian の固有値 λ1 ≥ λ2 から ``max(λ1 − |λ2|, 0)`` (Steger の線検出の閉形式、σ² で尺度正規化)。 · 例: `poc_em_second_opinion`, `poc_em_split_merge_score`
+
+#### emproof / score(3)
+- `seg_contingency` `labels2d × labels2d → table` — The contingency table of truth ``a`` against candidate ``b`` (sparse). · 例: `gallery_mesh_seg_sun_gains`
+- `seg_rand` `labels2d × labels2d → table` — Rand index, adjusted Rand index and the adapted Rand error (CREMI / SNEMI). · 例: `poc_em_split_merge_score`
+- `seg_variation_of_information` `labels2d × labels2d → table` — Variation of information between truth ``a`` and candidate ``b``, in bits. · 例: `poc_em_split_merge_score`, `poc_em_wiring_errors`, `poc_skeleton_run_length_vs_voi`
+
+#### emproof / suspect(2)
+- `seg_boundary_membrane_gap` `labels2d × image2d → table` — **分断の疑い**: 隣接する 2 ラベルの境界画素のうち、膜応答が ``tau`` 未満の割合。隣接対ごとに 1 行。 · 例: `poc_em_second_opinion`
+- `seg_membrane_chord_score` `labels2d × image2d → table` — **融合の疑い**: ラベルの内部を横切る膜の「弦」の長さ / ラベルの径。ラベル(連結成分)ごとに 1 行。 · 例: `poc_em_second_opinion`
+
+#### emproof / wiring(4)
+- `seg_synapse_nri` `labels2d × labels2d × table → table` — Neural reconstruction integrity (Reilly et al. 2018) of candidate ``b`` against truth ``a``. · 例: `poc_em_wiring_errors`
+- `seg_synapse_partners` `labels2d × table → table` — Read the wiring diagram a segmentation implies: which object each synapse connects. · 例: `poc_em_wiring_errors`
+- `seg_wiring_exposure` `labels2d × table → table` — How much wiring each object stakes on staying one piece — from synapse end counts alone. · 例: `poc_em_wiring_errors`
+- `seg_wiring_variation` `labels2d × labels2d × table → table` — How a candidate segmentation ``b`` corrupts the wiring diagram of truth ``a``, in bits. · 例: `poc_em_wiring_errors`
+
+### videocube(6 ops / 4 categories)
+
+#### videocube / cube(2)
+- `video_cube_cut` `video → image2d` — 立方体の断面 1 枚(``image2d``)。``"xt"`` = 行 ``position`` のスリットスキャン (T, W)、``"yt"`` = 列の (T, H)、 ``"xy"`` = 時刻 ``position`` のフレーム (H, W)。``position`` は [0, 1] の割合(行・列・時刻の何割目か)。 · 例: `poc_video_cube`
+- `video_spacetime_cube` `video → voxel` — 動画 (T, H, W) を空間 × 時間の立方体 ``(T, H, W)`` float [0, 1] にする(``voxel``)。 · 例: `poc_video_cube`
+
+#### videocube / export(1)
+- `video_write_gif` `rgbvideo → text` — フレーム列をアニメーション GIF に書く(``text`` = 書いたパス)。使い回しの出口。 · 例: `poc_video_cube`
+
+#### videocube / render(2)
+- `video_cube_orbit` `video → rgbvideo` — 立方体を回す色動画 ``(n_frames, size, size, 3)`` float [0, 1] (``rgbvideo``)。 · 例: `poc_video_cube`
+- `vol_render_transfer` `voxel → rgb` — 立方体を任意の視点から**前から後ろへの α 合成**で描く ``(size, size, 3)`` float [0, 1] (``rgb``)。 · 例: `poc_print_layer_inspection`, `poc_video_cube`
+
+#### videocube / summary(1)
+- `video_summary_keyframes` `video → indices` — 代表フレームの添字 ``(k,)`` int64、昇順(``indices``)。 · 例: `poc_video_cube`
+
+### live4d(14 ops / 5 categories)
+
+#### live4d / flow(4)
+- `vol_flow_3d` `voxel × voxel → flow_dense` — 2 つの体積の間の密な変位場 ``(3, Z, Y, X)``(``flow_dense``、成分 dz, dy, dx [voxel])。 · 例: `poc_live4d`
+- `volseq_pathline_orbit` `volseq → rgbvideo` — ``volseq_pathline_render`` の軌跡の立体を回して見る ``(n_frames, size, size, 3)``(``rgbvideo``)。 · 例: `poc_live4d`
+- `volseq_pathline_render` `volseq → rgb` — 粒子を流れに乗せて描いた**軌跡の立体** ``(size, size, 3)``(``rgb``)—— 動きを 1 枚の静止画で見せる。 · 例: `poc_live4d`
+- `volseq_speed` `volseq → volseq` — 体積時系列の隣り合うフレーム間の**速さ** ``|d|`` [voxel/frame] を ``(T − 1, Z, Y, X)`` で返す(``volseq``)。 · 例: `gallery_live4d_volseq_truth`
+
+#### live4d / render(3)
+- `focus_sweep_height_video` `volseq → video` — 焦点掃引(各フレームが z の合焦スタック)の時系列から**高さ場の動画** ``(T, Y, X)`` を起こす(``video``、 単位は z の枚数)。 · 例: `poc_live4d`
+- `focus_sweep_surface_video` `volseq → rgbvideo` — 焦点掃引(各フレームが z の合焦スタック)の時系列から**陰影つきの高さ場の動画** ``(T, Y, X, 3)`` を 起こす(``rgbvideo``)。 · 例: `poc_live4d`
+- `volseq_render_orbit` `volseq → rgbvideo` — 体積時系列を**時間を進めながら視点を回して**描く ``(n_frames, size, size, 3)``(``rgbvideo``)。 · 例: `poc_live4d`
+
+#### live4d / series(2)
+- `volseq_cut_video` `volseq → video` — 体積時系列を 1 枚の断面で切った動画 ``(T, H, W)``(``video``)。 · 例: `gallery_live4d_volseq_truth`
+- `volseq_mip_video` `volseq → video` — 体積時系列を軸 ``axis``(1 = z, 2 = y, 3 = x)の最大値投影で動画 ``(T, H, W)`` に畳む(``video``)。 · 例: `gallery_live4d_volseq_truth`
+
+#### live4d / synth(2)
+- `volseq_synth_beating` `入力なし → volseq` — 既知の半径則で拍動する殻の体積時系列 ``(T, Z, Y, X)``(``volseq``、値は [0, 1] + 雑音)。 · 例: `poc_live4d`
+- `volseq_synth_dividing` `入力なし → volseq` — 既知の速さで二つに分かれる塊の体積時系列 ``(T, Z, Y, X)``(``volseq``)。 · 例: `poc_live4d`
+
+#### live4d / time(3)
+- `video_interpolate_flow` `video → video` — 動画 ``(T, H, W)`` を流れで補間して ``(T + (T − 1)(factor − 1), H, W)`` に(``video``、時間の超解像)。 · 例: `gallery_live4d_volseq_truth`
+- `volseq_interpolate_flow` `volseq → volseq` — 体積時系列 ``(T, Z, Y, X)`` を 3 次元の流れで補間して ``(T + (T − 1)(factor − 1), Z, Y, X)`` に(``volseq``)。 · 例: `poc_live4d`
+- `volseq_magnify_motion` `volseq → volseq` — 体積時系列の**帯域内の微小な動きを alpha 倍**にする(``volseq``、Eulerian の線形拡大の 3 次元版)。 · 例: `poc_live4d`
+
+### printpath(23 ops / 6 categories)
+
+#### printpath / format(2)
+- `read_3mf` `text → mesh` — 3MF(zip の中の ``3D/3dmodel.model``、3MF Core Specification)を三角形メッシュ ``mesh`` = (V, F) に読む。 · 例: `poc_print_layer_inspection`
+- `write_3mf` `text × mesh → text` — 三角形メッシュを 3MF(最小構成: ``[Content_Types].xml`` / ``_rels/.rels`` / ``3D/3dmodel.model``、単位 mm)に書く。返りはパス(``text``)。 · 例: `poc_print_layer_inspection`
+
+#### printpath / gcode(5)
+- `gcode_extrusion_volume` `table → measurement` — 押し出したフィラメントの体積 [mm³] = Σe × π (d / 2)²(``measurement``)。重さは密度 × 体積(PLA ≈ 1.24 g/cm³)。 · 例: `poc_print_layer_inspection`
+- `gcode_layer_image` `table → image2d` — 1 層の経路を**線幅つきのラスタ** ``image2d``(0 / 1、y 下向き = 行)に描く。 · 例: `poc_print_layer_inspection`
+- `gcode_read` `text → table` — G-code(RepRap / Marlin 系)を**線分の表** ``table`` に読む: 列 ``x0 y0 z0 x1 y1 z1``(mm)、``e``(その線分で 押し出したフィラメント長 mm、移動だけなら 0)、``f``(送り mm/min)、``layer``(層番号)。 · 例: `poc_print_layer_inspection`
+- `gcode_time_estimate` `table → measurement` — 所要時間の下限 [s] = Σ(線分の長さ / 送り)(加速度・ジャークを無視、``measurement``)。送り 0 の線分は数えない。 · 例: `poc_one_stroke_epicycles`, `poc_print_layer_inspection`
+- `gcode_write` `table × text → text` — 線分の表を G-code(G21 / G90 / M82、G1 の絶対座標と絶対 E)に書く。返りは書いたパス(``text``)。 · 例: `poc_print_layer_inspection`
+
+#### printpath / inspect(1)
+- `print_layer_defect_map` `image2d × image2d → image2d` — 観測した層画像と期待の層画像(``gcode_layer_image``)を比べた**符号つきの欠陥図** ``image2d``: +1 = あるはずの所に無い(欠け・詰まり)、−1 = 無いはずの所にある(糸引き・はみ出し・spaghetti)、0 = 一致。 · 例: `poc_print_layer_inspection`
+
+#### printpath / npr(6)
+- `engrave_lines` `image2d → image2d` — Copperplate engraving — parallel lines whose **width** carries the tone. · 例: `poc_beats_fringes_and_screens`
+- `halftone_moire_period` `入力なし → table` — The beat between two halftone screens — period and direction, in closed form. · 例: `poc_beats_fringes_and_screens`, `poc_moire_screen`, `poc_print_registration`
+- `halftone_screen` `image2d → image2d` — A classic rotated halftone screen — dots whose area carries the tone. · 例: `poc_beats_fringes_and_screens`, `poc_print_registration`
+- `hatch_field` `image2d → image2d` — Cross-hatching that **follows the picture** — direction from the structure tensor. · 例: `poc_beats_fringes_and_screens`
+- `mosaic_tiles_render` `image2d × pairs → image2d` — Paint each Voronoi cell with the **mean** of the pixels it owns. · 例: `poc_beats_fringes_and_screens`
+- `mosaic_tiles_sites` `image2d → pairs` — Lloyd's iteration on an image — the tile centres of a mosaic. · 例: `poc_beats_fringes_and_screens`
+
+#### printpath / slice(3)
+- `contours_to_gcode` `table → table` — 輪郭(``mesh_slice_contours`` の表)を**周回する経路の表**に(``gcode_read`` と同じ列)。 · 例: `poc_one_stroke_epicycles`, `poc_print_layer_inspection`
+- `mesh_slice_contours` `mesh → table` — 三角形メッシュを平面 ``z`` で切った**輪郭の表** ``table``: 列 ``ring``(輪の番号)、``x``、``y``(mm)。 · 例: `poc_print_layer_inspection`
+- `mesh_slice_stack` `mesh → voxel` — メッシュを ``layer_mm`` 刻みで切った**層マスクの積み** ``voxel`` (Z, Y, X)(0 / 1、Z は下から)。 · 例: `poc_am_thermal_to_ct`, `poc_print_layer_inspection`
+
+#### printpath / stroke(6)
+- `mst_length` `pairs → measurement` — 最小全域木の長さ(Prim)。**閉じた巡回路はこれより短くなれない**(下界)。 · 例: `poc_one_stroke_epicycles`
+- `stipple_energy` `image2d × pairs → measurement` — 重みつき Lloyd のエネルギー ``Σ w(x) |x - c(x)|^2``(単調減少の検査用)。 · 例: `poc_beats_fringes_and_screens`, `poc_one_stroke_epicycles`
+- `stipple_points_from_image` `image2d → pairs` — 濃淡を**点の密度**に写す(重みつき Lloyd = 重心ボロノイ)。→ ``pairs`` · 例: `poc_one_stroke_epicycles`
+- `stroke_resample_closed` `pairs → pairs` — 閉じた線を**等弧長**に打ち直す。→ ``pairs`` · 例: `poc_one_stroke_epicycles`
+- `stroke_tone_error` `image2d × pairs → table` — 線を引いた結果の**濃淡**が目標とどれだけ違うか。→ ``table`` · 例: `poc_one_stroke_epicycles`
+- `stroke_tour_closed` `pairs → pairs` — 点を 1 回ずつ通って戻る**閉じた巡回路**に並べ替える。→ ``pairs`` · 例: `poc_one_stroke_epicycles`
+
+### geocam(9 ops / 3 categories)
+
+#### geocam / orientation(1)
+- `camera_orientation_from_skyline` `signal × table → table` — 写真のスカイライン(列ごとの行)と DEM のスカイラインから (yaw, pitch, roll) を決める → table。 · 例: `poc_public_camera_heading`
+
+#### geocam / skyline(3)
+- `dem_skyline` `depth → table` — DEM の 1 点から見た**全方位のスカイライン**(方位ごとの地平線仰角)→ table。 · 例: `poc_public_camera_heading`
+- `render_skyline_view` `table → image2d` — スカイライン table と姿勢から、その向きのカメラが見る**空のマスク**(H, W)を描く → image2d(0/1)。 · 例: `poc_public_camera_heading`
+- `skyline_extract` `image2d → signal` — 写真から**列ごとの空と地形の境界の行**を動的計画法で 1 本抜く → signal (W,)。 · 例: `poc_public_camera_heading`
+
+#### geocam / sun(5)
+- `camera_orientation_from_sun` `keypoints × signal → table` — 時刻つきの太陽の画素位置 ≥ 2 点 → カメラの (yaw, pitch, roll)(Wahba 問題の SVD 解 = Kabsch)。 · 例: `poc_public_camera_heading`
+- `camera_orientation_from_sun_candidates` `keypoints × signal × signal → table` — フレームごとに複数ある「明るい塊」の候補(太陽・白い車・標識・文字が混じる)から、**時刻どおりに動く 1 本**を RANSAC で選び、(yaw, pitch, roll) と焦点距離を同時に決める → table。固定カメラでは太陽だけが太陽の速さで動く ので、見た目で太陽を決めずに動きで決める(Fintraffic 天候カメラでは見た目の門が 24/24 誤検出だった、2026-09-21)。 · 例: `poc_public_camera_heading_real`
+- `sun_bloom_fit` `image2d → table` — 実写の太陽 = センサを飽和させる**ブルーム**(円盤より大きい、露出で大きさが変わる、画像の縁や文字の帯で切れる)。 最大の飽和塊の**縁**に円を当てて中心を返す → table。重心は塊が切れると切れた側の反対へ偏る(実測 15 px)ので、 切れた縁(画像の外周と ``ignore_top_rows`` の帯に触れる画素)を捨てた残りの弧に代数的最小二乗(Kåsa 1976)で円を当てる。 · 例: `gallery_mesh_seg_sun_gains`
+- `sun_pixel_position` `image2d → keypoints` — 画像の中の太陽(センサを**飽和**させる円盤)の重心 → keypoints (1, 2) = (u, v)。 · 例: `poc_public_camera_heading`
+- `sun_position` `signal → table` — 緯度・経度・時刻(UNIX 秒、UTC)→ 太陽の方位・仰角 [度] (NOAA の太陽位置アルゴリズム、Meeus 1998 の低精度式)。 · 例: `poc_public_camera_heading`, `poc_public_camera_heading_real`
+
+### llmcore(10 ops / 4 categories)
+
+#### llmcore / attend(4)
+- `attention_grouped` `tokens × tokens × tokens → tokens` — 頭を束ねる注意(GQA)→ tokens。**n_kv_heads == n_heads で MHA、== 1 で MQA に厳密一致**。 · 例: `poc_attention_identities`
+- `attention_linear` `tokens × tokens × tokens → tokens` — softmax を外した注意 → tokens。**(QKᵀ)V == Q(KᵀV) —— 結合則そのもの**。 · 例: `poc_attention_identities`
+- `attention_softmax` `tokens × tokens × tokens → tokens` — 一括の注意(参照実装)→ tokens。**この族の答え合わせの基準**。 · 例: `poc_attention_identities`
+- `attention_tiled` `tokens × tokens × tokens → tokens` — タイル + online softmax の注意(FlashAttention の芯)→ tokens。**近似ではない**。 · 例: `poc_attention_identities`
+
+#### llmcore / decode(1)
+- `kv_cache_decode` `tokens × tokens × tokens → tokens` — 1 トークン分だけ進める推論(KV Cache)→ tokens (1, dv)。 · 例: `poc_attention_identities`
+
+#### llmcore / prepare(2)
+- `rms_norm` `tokens → tokens` — RMS 正規化 → tokens。**既定(eps=0, weight なし)では出力の RMS が厳密に 1**。 · 例: `poc_attention_identities`
+- `rope_rotate` `tokens → tokens` — 回転による位置符号(RoPE)→ tokens。**回転なのでノルムを保つ**。 · 例: `poc_attention_identities`
+
+#### llmcore / score(3)
+- `attention_apply` `attnmap × tokens → tokens` — 注意の重みで値を混ぜる → tokens。**行和 1 なので出力は入力の凸結合**。 · 例: `poc_attention_identities`
+- `attention_scores` `tokens × tokens → attnmap` — 生の注意スコア QKᵀ/√d → attnmap (T, S)。 · 例: `poc_attention_identities`
+- `attention_weights` `attnmap → attnmap` — 行ごとの softmax(マスクつき)→ attnmap。**行和は 1、mask 位置は厳密に 0**。 · 例: `poc_attention_identities`
+
+### segmentation(54 ops / 10 categories)
+
+#### segmentation / classify(5)
+- `class_2dim_sup` `image2d × image2d × mask → mask` — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
+- `class_2dim_unsup` `image2d × image2d → labels2d` — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+- `class_ndim_norm` `images × table → mask` — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`
+- `classify_image_class_lut` `image2d × signal → labels2d` — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`
+- `learn_ndim_norm` `matrix → table` — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`
+
+#### segmentation / compare(1)
+- `check_difference` `image2d × image2d → mask` — 基準画像との差が tol を超える画素を領域として返す(check_difference)。 · 例: `halcon_segmentation_tour`
+
+#### segmentation / contour(10)
+- `chan_vese_energy` `image2d × mask → table` — Chan–Vese 2001 のエネルギー F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|²(2 相)。 · 例: `gallery_seg_measures`
+- `chan_vese_evolve` `image2d × mask → table` — Chan–Vese 2001 の 2 相のエネルギーを最小化する(既定は凸緩和の交互最小化、レベルセットの勾配降下も選べる)。 · 例: `poc_active_contours`
+- `curvature_flow` `mask → table` — 平均曲率流(曲線短縮流)のレベルセット版 φ_t = |∇φ| div(∇φ/|∇φ|)(φ < 0 が内側、凸な所から縮む)。 · 例: `poc_active_contours`
+- `drle_evolve` `image2d × mask → table` — 距離正則化レベルセット DRLSE(Li–Xu–Gui–Fox 2010)のエッジ版。再初期化しない。 · 例: `poc_active_contours`
+- `edge_stop_g` `image2d → table` — エッジ停止関数 g = 1 / (1 + |∇(G_σ * I)|² / k²)(Caselles–Kimmel–Sapiro 1997 の p = 2 の形)。 · 例: `poc_active_contours`
+- `gvf_field` `image2d → table` — 勾配ベクトル流(Xu–Prince 1998): 辺の地図 f の勾配を、辺から離れた所へ滑らかに拡散した場 (u, v)。 · 例: `poc_active_contours`
+- `level_set_reinit` `mask → table` — φ(内側 φ < 0)を同じ零等高線の符号付き距離に直す。 · 例: `poc_active_contours`
+- `morph_chan_vese` `image2d × mask → table` — 形態学的 Chan–Vese(Márquez-Neila–Baumela–Álvarez 2014 の MorphACWE)。1 反復 = データ段 + 平滑段。 · 例: `poc_active_contours`
+- `morph_geodesic_ac` `image2d × mask → table` — 形態学的な測地的 active contour(Márquez-Neila ら 2014 の MorphGAC)。``gimage`` = 縁で小さい画像(``edge_stop_g`` の g)。 · 例: `poc_active_contours`
+- `snake_evolve` `image2d × pairs → table` — 離散 snake(Kass–Witkin–Terzopoulos 1988)の半陰的な更新 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)(式 (19)(20))。 · 例: `poc_active_contours`
+
+#### segmentation / graph(12)
+- `alpha_expansion` `image2d → table` — 多ラベルの α-expansion(Boykov–Veksler–Zabih 2001): E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q)、V は計量。 · 例: `poc_graph_hierarchy_segmentation`
+- `alpha_tree` `image2d → table` — α-tree: 隣の差を重みにした格子の最小全域木(scipy の Kruskal)を作り、重み ≤ α の木の辺だけで α ごとの分割を出す。 · 例: `poc_graph_hierarchy_segmentation`
+- `area_opening_attr` `image2d → table` — 属性開放(Salembier ら 1998): 成分木の節のうち属性 < ``threshold`` を消し、各画素を「属性 ≥ 閾値の最も近い祖先」の値にする。 · 例: `poc_graph_hierarchy_segmentation`
+- `graph_cut_binary` `image2d → table` — 2 値の graph cut(Boykov–Jolly 2001): E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q] を最大フロー / 最小カットで厳密に最小化。 · 例: `poc_graph_hierarchy_segmentation`
+- `hierarchical_watershed` `image2d → table` — dynamics による階層分水嶺: 地形 ``image``(低い所が盆地)の最小全域森の辺に dynamics の saliency を付け、 saliency ≤ ``threshold`` の辺で結んだ成分を返す(``n_regions`` を与えたら、その数になる最小の閾値を使う)。 · 例: `poc_graph_hierarchy_segmentation`
+- `max_tree` `image2d → table` — 成分木(max-tree): 上位集合 {f ≥ h} の連結成分の木を Union-Find で作る(画素を値の降順に処理)。 · 例: `gallery_seg_measures`
+- `quasi_flat_zones` `image2d → table` — α-準平坦領域(Soille 2008): |f_p − f_q| ≤ α の隣接辺だけで結んだ連結成分。返す: ``labels``(1..k)、``n_zones``。 · 例: `poc_graph_hierarchy_segmentation`
+- `quickshift` `image2d → table` — quick shift(Vedaldi–Soatto 2008): 特徴 (y, x, ratio · I) で Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))(窓 3σ、σ = ``kernel_size``)を見積もり、各画素を「密度が上の点のうち最も近い点」(半径 ``search_radius`` の窓の中)に繋ぎ、 長さ > ``max_dist`` の枝を切った木の成分を領域にする。 · 例: `poc_graph_hierarchy_segmentation`
+- `snic_superpixels` `image2d → table` — SNIC(Achanta–Süsstrunk 2017 の Algorithm 1): 格子の種から優先度つき待ち行列で育てる非反復の超画素。 · 例: `poc_graph_hierarchy_segmentation`
+- `statistical_region_merging` `image2d → table` — 統計的領域併合 SRM(Nock–Nielsen 2004): 隣の画素の組を |I_p − I_q| の昇順に処理し、述語 P(R, R') が真なら併合。 · 例: `poc_graph_hierarchy_segmentation`
+- `superpixel_quality` `labels2d × labels2d → table` — 超画素の採点: 境界の再現率(``segeval.seg_boundary_f`` の recall、許容 τ)、補正つき未分割誤差 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|(Neubert–Protzel 2012、SNIC 論文の式 (2))、ASA = 1 − CUSE、Neubert–Protzel の未分割誤差 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超画素の数。真値の 0 も 1 つの領域として数える(背景も被覆の対象)。 · 例: `poc_graph_hierarchy_segmentation`
+- `ultrametric_contour_map` `image2d → table` — dynamics の階層の ultrametric contour map(UCM): 隣り合う画素 p, q の値 = 「p と q が同じ領域になる最小の閾値」。 · 例: `poc_graph_hierarchy_segmentation`
+
+#### segmentation / grow(2)
+- `expand_gray` `image2d × mask → mask` — seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。 · 例: `halcon_segmentation_tour`
+- `regiongrowing_n` `images → labels2d` — 多チャネル特徴の類似性で画像全体を領域分割(regiongrowing_n)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+
+#### segmentation / score(8)
+- `seg_boundary_f` `labels2d × labels2d → table` — 境界 F 値(許容距離 τ): 予測の境界画素のうち真の境界から τ 以内にあるものの割合 = ``precision``、逆が ``recall``。 · 例: `poc_am_thermal_to_ct`, `poc_graph_hierarchy_segmentation`, `poc_sem_wafer_defect_edge_bias`
+- `seg_confusion_table` `labels2d × labels2d → table` — ラベル対応の分割表(行 = 真、列 = 予測)と、最大重なりによる対応・対応の一意性の印。 · 例: `gallery_seg_measures`
+- `seg_dice_jaccard` `labels2d × labels2d → table` — Dice と Jaccard —— マスク(背景でない画素の和)で 1 組、``per_label`` なら真のラベルごとに最大重なりの相手と。 · 例: `poc_active_contours`, `poc_am_thermal_to_ct`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`
+- `seg_hausdorff` `labels2d × labels2d → table` — 境界画素の集合の間の Hausdorff 距離 = max(max 予測→真, max 真→予測)と、その ``percentile`` 版(HD95 など)。 · 例: `gallery_seg_measures`
+- `seg_mean_surface_distance` `labels2d × labels2d → table` — 平均表面距離(ASSD): 両方向の境界画素の距離をまとめて平均 = (Σ 予測→真 + Σ 真→予測)/(n_p + n_t)。RMS も。 · 例: `gallery_seg_measures`
+- `seg_object_counts_match` `labels2d × labels2d → table` — 物体の個数の一致: 分裂・融合・欠落・偽・一致を、「主に重なる」辺の 2 部グラフの次数で数える。 · 例: `poc_graph_hierarchy_segmentation`
+- `seg_score_card` `labels2d × labels2d → table` — 全部の物差しを 1 枚に: Dice・Jaccard(マスク)、VI・split・merge、Rand・ARI(``segcompare``)、境界 F(τ)、 Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分裂・融合・欠落・偽・一致、個数。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `seg_under_over_segmentation` `labels2d × labels2d → table` — 過分割・未分割の数を、分割表の多数決の多重度で数える(Levine & Nazif 流: 領域の数で)。 · 例: `poc_graph_hierarchy_segmentation`
+
+#### segmentation / threshold(4)
+- `threshold_isodata` `image2d → table` — isodata(Ridler–Calvard 1978): t ← (μ_≤t + μ_>t)/2 を **画素の値の上で** 分割が変わらなくなるまで反復(初期値 = 平均)。 · 例: `poc_graph_hierarchy_segmentation`
+- `threshold_kapur` `image2d → table` — 最大エントロピー閾値(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) を最大にするビン t(両側とも確率が正のビンだけ)。返す: ``threshold`` = そのビンの上端、``mask``(ビンの番号 > t)、 ``bin``、``entropy``(H、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`
+- `threshold_kittler` `image2d → table` — 最小誤差閾値(Kittler–Illingworth 1986): 各ビン t で低い側(ビン ≤ t)と高い側に分け、 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) を最小にする(σ は各側のビンの中心の標準偏差。どちらかの側の σ が 0 のビンは除く)。返す: ``threshold`` = そのビンの上端(mask はビンの番号 > t で決める = 端の値も矛盾なし)、 ``mask``、``bin``、``criterion``(J、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`
+- `threshold_triangle` `image2d → table` — 三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの (b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: ``threshold``(そのビンの中心)、 ``mask`` = image > threshold、``bin``、``distance``(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は skimage / ImageJ と同じ規約(原典は要確認)。 · 例: `poc_graph_hierarchy_segmentation`
+
+#### segmentation / watershed(1)
+- `watersheds_marker` `image2d × labels2d → labels2d` — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`
+
+#### segmentation / watershed3d(3)
+- `distance_peaks` `voxel → labels` — 前景距離変換の局所極大を ``min_distance`` NMS で間引いた int マーカ配列を返す。 · 例: `watershed3d_tour`
+- `separate_touching` `voxel → labels` — genuinely-new (B): 接触物体を 1 呼び出しで自動分離する常用ラッパ。 · 例: `watershed3d_tour`
+- `watershed_vol` `voxel → labels` — 距離変換シードの分水嶺で 3D 前景を物体ごとのラベルに分割する(公開 op の薄い合成)。 · 例: `watershed3d_tour`
+
+#### segmentation / world(8)
+- `lens_area` `入力なし → scalar` — 等しい半径 r の 2 円(中心間 d)の重なりの面積(閉形式)。d ≥ 2r なら 0。 · 例: `gallery_seg_measures`
+- `voronoi_cells` `points → table` — 矩形 [−0.5, W − 0.5] × [−0.5, H − 0.5] の中の種のボロノイ分割を多角形で返す(半平面の総当たり、O(n²))。 · 例: `gallery_seg_measures`
+- `world_blobs_touching` `入力なし → table` — 重なり合う円(細胞・粒)の世界: 鎖状に置いた等しい半径の円、各円は前の円とだけ中心間 2r(1 − overlap) で重なる。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_gradient_illumination` `入力なし → table` — 照明の勾配 + 雑音の上の暗い物体の世界(大域閾値が壊れ、局所閾値・フラットフィールドで切れる)。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_grains_voronoi` `入力なし → table` — ボロノイ結晶粒の世界: 格子の升から n 個を選んで ``jitter`` だけ揺らした種、ラベル = 最も近い種の番号(1..n)。 · 例: `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_parts_with_shadow` `入力なし → table` — 工業部品(回転した矩形 + 円の穴)と、斜めの照明による影・面の明暗・ハイライトの世界。真値 = 部品(穴は背景、影は背景)。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_texture_regions` `入力なし → table` — 平均が同じで分散・周期だけ違う 2〜4 領域の世界(閾値では切れない)。真値 = 領域ラベル(1..n、背景なし)。 · 例: `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_thin_structures` `入力なし → table` — 幅 1〜3 px の線(直線)とひび(折れ線)の世界。真値 = 中心線と幅。ラベル = 構造の番号(1..n、互いに離す)。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 
 ## References(アルゴリズムの一次情報・further reading)
 
