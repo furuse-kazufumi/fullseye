@@ -1,0 +1,86 @@
+[
+ {
+  "file": "01_marks.png",
+  "name": "marks",
+  "caption": "どの像も同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。",
+  "shape": [
+   647,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "02_one_nm_steps.png",
+  "name": "one_nm_steps",
+  "caption": "同じ雑音・同じ画素数。相互相関は 20 µm の線のマークで、放物線補間の偏り(ずれに比例)と雑音が乗る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_fringe_flow.gif",
+  "name": "fringe_flow",
+  "caption": "上: 20 µm の線を直接撮った像、下: モアレ。ずれを 1 コマ 51 nm ずつ、計 2.04 µm(ウェハのピッチ 1 つ)動かす。線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周して元に戻る(= 折り返し)。",
+  "shape": [
+   200,
+   512,
+   3
+  ],
+  "animated": true,
+  "frames": 40,
+  "frames_written": 40,
+  "fps": 10.0
+ },
+ {
+  "file": "04_crlb.png",
+  "name": "crlb",
+  "caption": "下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_differential.png",
+  "name": "differential",
+  "caption": "逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。差を取ると流れが消える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_quad_mark.png",
+  "name": "quad_mark",
+  "caption": "左上 A_x、右上 B_x、左下 A_y、右下 B_y。読み = (11.95, -25.00) nm。",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "07_ambiguity.png",
+  "name": "ambiguity",
+  "caption": "印刷の版ずれと同じ不定性。差動は捕捉範囲が p_m p_w/(p_m+p_w) と半分になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_talbot_gap.png",
+  "name": "talbot_gap",
+  "caption": "符号が反転すると縞は半周期ずれる。基準像と測定像のあいだに反転を跨ぐと読みが p/2 跳ぶ。2 対のピッチは Talbot 長が違うので、差動でもギャップの影響は消えきらない。",
+  "shape": [
+   360,
+   706,
+   3
+  ]
+ }
+]

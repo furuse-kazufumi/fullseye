@@ -1,8 +1,8 @@
 {
- "n_ops": 3186,
+ "n_ops": 3194,
  "tiers": {
   "color": 12,
-  "ledger": 2233,
+  "ledger": 2241,
   "nary": 17,
   "registry": 924
  },
@@ -15334,6 +15334,99 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "moire_differential_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "moire_magnification",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "moire_mark_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "moire_overlay_image",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "moire_phase",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "moire_phase_crlb",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "moire_phase_to_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "moire_talbot_gap",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "moire_align",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "moment_axes",

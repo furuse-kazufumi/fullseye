@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 48 項目**
+**収録 49 項目**
 
-## 測る (16)
+## 測る (17)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -91,6 +91,14 @@
 使う op: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
 
 動く例: `poc_measurement_system_analysis`
+
+### [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md)
+
+リソグラフィやナノインプリントでは、マスクとウェハを nm の精度で重ねます。マスク側にピッチ p_m、ウェハ側に僅かに違うピッチ p_w の格子を置くと、2 枚はカメラのぼけで見えなくても、重ねた像には周期 P = p_m p_w / |Δp| の縞(モアレ)が現れ、ウェハが δ 動くと縞は M = p_m / |Δp| 倍の距離を動きます(マスクが動くなら p_w / |Δp| 倍)。`moirealign` の 8 本はその設計・合成・読み取り・限界を受け持ちます。
+
+使う op: `moire_magnification`, `moire_talbot_gap`, `moire_overlay_image`, `moire_phase`, `moire_phase_to_shift`, `moire_differential_shift`, `moire_mark_read`, `moire_phase_crlb`
+
+動く例: `poc_moire_alignment`
 
 ### [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

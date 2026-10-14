@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — モアレで位置合わせ(moirealign 8 op + PoC)
+- `moirealign`(`opsoptics` の新カテゴリ `moire_align`、8 op): `moire_magnification`(縞の周期・拡大率・捕捉範囲。周期は `printpath.halftone_moire_period` を呼んで照合)/ `moire_talbot_gap`(近接ギャップの Talbot 効果、`optics.angular_spectrum_propagate`)/ `moire_overlay_image`(単一・差動・4 象限のマークの像、ぼけと画素の積分は閉形式)/ `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法 → `complexops.phase_unwrap`)/ `moire_phase_to_shift`(次数は `fringe.absolute_phase`)/ `moire_differential_shift` / `moire_mark_read` / `moire_phase_crlb`。
+- ★拡大率はどちらの格子が動くかで違う: ウェハが動けば M = p_m/|Δp|、マスクが動けば p_w/|Δp|(PoC で 50.000 / 51.000 を像から測り返す)。
+- PoC `poc_moire_alignment`(32 門、図 7 枚 + GIF 1 本): 1 nm の階段を誤差 RMS 0.08 nm、Monte-Carlo と位相の下限が比 1.00、差動で流れ 300 nm と照明の傾きを 0.03 nm 以内に消す、カメラの倍率 2 % の誤りが読みに入らない、折り返しと次数の決定、Talbot の反転で読みが半周期跳ぶ。★比べ手(相互相関 + 放物線)との差 91 倍の大半は放物線の偏りで、偶然の誤差だけなら 2.5 倍(内訳を門に)。
+- 能力ノート `docs/capabilities/moire-alignment.md`、op 要約 6 言語、手書き件数 +8。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。

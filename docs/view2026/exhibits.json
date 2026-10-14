@@ -3098,6 +3098,22 @@
    }
   },
   {
+   "id": "poc_moire_alignment",
+   "group": "wing_metrology",
+   "media": "03_fringe_flow.gif",
+   "motion": true,
+   "thumb_src": "01_marks.png",
+   "label": {
+    "ja": "モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)",
+    "en": "Moiré alignment (two invisible gratings read 1 nm)",
+    "zh": "莫尔对准(两片看不见的光栅读出 1 nm)",
+    "tw": "疊紋對準(兩片看不見的光柵讀出 1 nm)",
+    "ko": "모아레 정렬(보이지 않는 격자 두 장으로 1 nm를 읽는다)",
+    "de": "Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)",
+    "hi": "moiré alignment (दो अदृश्य gratings से 1 nm पढ़ना)"
+   }
+  },
+  {
    "id": "poc_nir_silicon_transmission",
    "group": "wing_color",
    "media": "05_best_led_sweep.gif",
@@ -5975,6 +5991,13 @@
     "ko": "카메라 데이터시트의 수치를 EMVA 1288 절차로 다시 재고, 카메라 내부 전처리가 그 수치를 얼마나 움직이는지 본다(Linear와 General)",
     "de": "Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General)",
     "hi": "camera datasheet की संख्याएँ EMVA 1288 की विधि से फिर मापना, और देखना कि camera के भीतर का preprocessing उन्हें कितना बदलता है (Linear और General)"
+   },
+   "moire-alignment": {
+    "zh": "莫尔对准(节距略异的两片光栅 → 条纹相位 → nm 位移,差动与 Talbot 间隙)",
+    "tw": "疊紋對準(節距略異的兩片光柵 → 條紋相位 → nm 位移,差動與 Talbot 間隙)",
+    "ko": "모아레 정렬(피치가 조금 다른 격자 두 장 → 줄무늬 위상 → nm 변위, 차동과 Talbot 갭)",
+    "de": "Moiré-Justierung (zwei Gitter leicht verschiedener Periode, Streifenphase, Verschiebung in nm, Differenzpaar und Talbot-Spalt)",
+    "hi": "moiré alignment (थोड़े अलग pitch के दो gratings → fringe phase → nm विस्थापन, differential और Talbot gap)"
    }
   }
  }

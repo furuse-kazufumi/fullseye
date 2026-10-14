@@ -614,6 +614,27 @@
    ]
   },
   {
+   "id": "moire-alignment",
+   "title": "モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)",
+   "title_en": "Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)",
+   "category": "測る",
+   "note": "docs/capabilities/moire-alignment.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_moire_alignment",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "one-stroke-drawing",
    "title": "写真を 1 本の線にする(点描 → 巡回路 → 回る円)",
    "title_en": "Turn a photograph into a single line (stipple, tour, rotating circles)",
@@ -1196,8 +1217,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 365,
-  "run_by_the_poc_gate": 231,
+  "examples2d_total": 366,
+  "run_by_the_poc_gate": 232,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [
