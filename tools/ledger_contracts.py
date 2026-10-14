@@ -480,6 +480,10 @@ def _batch2_builders():
         a, b, c = ot(rng)
         return colortransport.sinkhorn(a, b, c), c
 
+    def _spec_curve(rng, lo=900.0, hi=1200.0):
+        import spectralrad
+        return spectralrad.led_spectrum(1000.0 + 100.0 * rng.random(), 40.0 + 40.0 * rng.random(), lo, hi, 61)
+
     def ula(rng):
         import mathspectral
         return mathspectral.ula_snapshots((10.0, -20.0), n_elements=8, n_snapshots=64)
@@ -500,6 +504,12 @@ def _batch2_builders():
         "beer_lambert_transmittance": lambda pool, rng: ([np.linspace(0.0, 50.0, 16)], {}),
         "metal_optical_constants": lambda pool, rng: ([], {"metal": "al", "wavelength_nm": nm()}),
         "spectrum_to_srgb": lambda pool, rng: ([nm(), rng.random(31)], {}),
+        # spectralrad(2026-10-14): 曲線(pairs)を受ける 4 本は、波長が昇順の**本物の分光曲線**を種にする
+        # (汎用の pairs の種は x が昇順でなく、波長の検査で全部拒否される)。
+        "energy_to_photons": lambda pool, rng: ([_spec_curve(rng)], {}),
+        "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
+        "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
+        "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (

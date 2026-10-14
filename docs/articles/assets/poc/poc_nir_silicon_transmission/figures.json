@@ -1,0 +1,56 @@
+[
+ {
+  "file": "01_wavelength_contradiction.png",
+  "name": "wavelength_contradiction",
+  "caption": "ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。積は 1065 nm 付近で最大 4.6e-04 —— 光子 1 万個で電子 3〜4 個。1e-7 未満は図の床に置いた。",
+  "shape": [
+   360,
+   797,
+   3
+  ]
+ },
+ {
+  "file": "02_best_led_vs_thickness.png",
+  "name": "best_led_vs_thickness",
+  "caption": "最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。薄いダイは吸収端の手前の 1.0 µm 台でも透け、センサが感じる短い側が勝つ。厚いウェハは吸収端の肩まで押し出される。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_three_leds_through_wafer.png",
+  "name": "three_leds_through_wafer",
+  "caption": "775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。表示は各像の開口の平均で正規化 —— 明るさでなく雑音の粒で差が見える。1200 nm は配線が雑音に沈む。",
+  "shape": [
+   350,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "04_focus_through_wafer.png",
+  "name": "focus_through_wafer",
+  "caption": "左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。右: t(1 − 1/n) を補正した焦点。NA 0.1、画素 5 µm。",
+  "shape": [
+   350,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "05_best_led_sweep.gif",
+  "name": "best_led_sweep",
+  "caption": "ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 3.0
+ }
+]

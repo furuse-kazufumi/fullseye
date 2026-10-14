@@ -6118,7 +6118,7 @@ py -3.11 examples/poc_public_camera_heading_real.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 5 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 6 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -6275,6 +6275,38 @@ py -3.11 examples/poc_material_optical_library.py
 この回が作った図は全部で **17 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_material_optical_library)
 
 使用 op(ノートへ): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`fresnel_conductor`](https://furuse.work/ops/optics/interface/fresnel_conductor.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_catalog`](https://furuse.work/ops/optics/design/glass_catalog.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`material_absorption`](https://furuse.work/ops/optics/matprop/material_absorption.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_extinction`](https://furuse.work/ops/optics/matprop/material_extinction.html) · [`material_from_curves`](https://furuse.work/ops/optics/matprop/material_from_curves.html) · [`material_from_sellmeier`](https://furuse.work/ops/optics/matprop/material_from_sellmeier.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_record`](https://furuse.work/ops/optics/matprop/material_record.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`material_table`](https://furuse.work/ops/optics/matprop/material_table.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`metal_mirror_rgb`](https://furuse.work/ops/optics/mirror/metal_mirror_rgb.html) · [`metal_optical_constants`](https://furuse.work/ops/optics/mirror/metal_optical_constants.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`read_glass_catalog_agf`](https://furuse.work/ops/optics/matprop/read_glass_catalog_agf.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`silicon_free_carrier_absorption`](https://furuse.work/ops/optics/matprop/silicon_free_carrier_absorption.html) …(他 4)
+
+## No.2026.230 —— Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ
+
+[![Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
+
+*↑ **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** ―― Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。学習 0、較正 0、門 20 件。*
+
+[![最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。薄いダイは吸収端の手前の 1.0 µm 台でも透け、センサが感じる短い側が勝つ。厚いウェハは](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness.png)
+
+*↑ 測定の図 ―― 最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。薄いダイは吸収端の手前の 1.0 µm 台でも透け、センサが感じる短い側が勝つ。厚いウェハは吸収端の肩まで押し出される。*
+
+[![775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer.png)
+
+*↑ 775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。*
+
+[![左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer.png)
+
+*↑ 左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。*
+
+[![ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)
+
+*↑ 動く図 ―― ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。*
+
+```
+py -3.11 examples/poc_nir_silicon_transmission.py
+```
+
+ソース: [examples/poc_nir_silicon_transmission.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_nir_silicon_transmission)
+
+使用 op(ノートへ): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/bandpass_spectrum.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`cie_illuminant_a`](https://furuse.work/ops/optics/spectral/cie_illuminant_a.html) · [`defocus_from_shift`](https://furuse.work/ops/optics/wave/defocus_from_shift.html) · [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html) · [`spectral_stats`](https://furuse.work/ops/optics/spectral/spectral_stats.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 法科学・文書ウィング ―― 1 枚の成功例は証拠にならない
 

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 46 項目**
+**収録 47 項目**
 
 ## 測る (16)
 
@@ -216,7 +216,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (5)
+## 光と色 (6)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -257,6 +257,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `raw_black_level`, `raw_dead_pixel_mask`, `raw_dead_pixel_correct`, `lens_shading_gain`, `lens_shading_correct`, `awb_gains`, `raw_apply_gains`, `rgb_apply_gains`, `raw_demosaic_bilinear`, `color_correction_matrix`, `hue_saturation`, `brightness_contrast`, `cfa_to_rgb`, `gamma`
 
 動く例: `raw_to_display_isp`
+
+### [光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分)](capabilities/spectral-radiometry-chain.md)
+
+像の明るさは、光源の分光分布 × 光学系と対象の透過・反射 × センサの量子効率を波長で積分した値で決まります。材料の透過率・反射率は `materials` が pairs(λ [nm], 値)で返しますが、光源とセンサの曲線が op として無く、「この光源で、このウェハ越しに、このセンサで何電子になるか」を組めませんでした。`spectralrad` の 9 本がその残り半分で、どの曲線も同じ pairs で返します。
+
+使う op: `blackbody_spectrum`, `cie_illuminant_a`, `led_spectrum`, `bandpass_spectrum`, `silicon_photodiode_qe`, `energy_to_photons`, `spectral_product`, `spectral_integral`, `spectral_stats`
+
+動く例: `poc_nir_silicon_transmission`
 
 ## 波と信号 (4)
 

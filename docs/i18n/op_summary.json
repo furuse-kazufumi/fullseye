@@ -14274,6 +14274,87 @@
    "de": "Liest einen Glaskatalog (Zemax-.agf-Form) in eine Liste von Materialdatensätzen (table).",
    "hi": "glass catalogue (Zemax .agf form) को पढ़कर material records की list (table) बनाता है।"
   },
+  "optics/blackbody_spectrum": {
+   "fp": "3b41c0d1ecbf",
+   "en": "Spectral radiance of a blackbody L(λ, T), in W m⁻² sr⁻¹ nm⁻¹ (Planck's law, SI 2019 constants).",
+   "zh": "黑体的光谱辐亮度 L(λ, T),单位 W m⁻² sr⁻¹ nm⁻¹(普朗克公式,SI 2019 常数)。",
+   "tw": "黑體的光譜輻射亮度 L(λ, T),單位 W m⁻² sr⁻¹ nm⁻¹(普朗克公式,SI 2019 常數)。",
+   "ko": "흑체의 분광 복사휘도 L(λ, T), 단위 W m⁻² sr⁻¹ nm⁻¹(플랑크 식, SI 2019 상수).",
+   "de": "Spektrale Strahldichte eines schwarzen Körpers L(λ, T) in W m⁻² sr⁻¹ nm⁻¹ (Plancksches Gesetz, Konstanten nach SI 2019).",
+   "hi": "कृष्णिका (blackbody) की spectral radiance L(λ, T), इकाई W m⁻² sr⁻¹ nm⁻¹ (Planck का नियम, SI 2019 के स्थिरांक)।"
+  },
+  "optics/cie_illuminant_a": {
+   "fp": "32f2a8419dc9",
+   "en": "Relative spectral power distribution of CIE standard illuminant A (the CIE 15:2004 defining formula, 100 at 560 nm).",
+   "zh": "CIE 标准照明体 A 的相对光谱功率分布(CIE 15:2004 的定义式,560 nm 处为 100)。",
+   "tw": "CIE 標準照明體 A 的相對光譜功率分布(CIE 15:2004 的定義式,560 nm 處為 100)。",
+   "ko": "CIE 표준 광원 A의 상대 분광 분포(CIE 15:2004의 정의식, 560 nm에서 100).",
+   "de": "Relative spektrale Verteilung der CIE-Normlichtart A (Definitionsformel nach CIE 15:2004, 100 bei 560 nm).",
+   "hi": "CIE मानक illuminant A का सापेक्ष spectral वितरण (CIE 15:2004 का परिभाषा सूत्र, 560 nm पर 100)।"
+  },
+  "optics/led_spectrum": {
+   "fp": "77fb16da6ec3",
+   "en": "Relative spectral distribution of an LED (1 at the peak).",
+   "zh": "LED 的相对光谱分布(峰值处为 1)。",
+   "tw": "LED 的相對光譜分布(峰值處為 1)。",
+   "ko": "LED의 상대 분광 분포(피크에서 1).",
+   "de": "Relative spektrale Verteilung einer LED (1 im Maximum).",
+   "hi": "LED का सापेक्ष spectral वितरण (peak पर 1)।"
+  },
+  "optics/bandpass_spectrum": {
+   "fp": "d594dede5121",
+   "en": "Transmittance of a band-pass filter (super-Gaussian).",
+   "zh": "带通滤光片的透射率(超高斯)。",
+   "tw": "帶通濾光片的穿透率(超高斯)。",
+   "ko": "대역 통과 필터의 투과율(초가우스).",
+   "de": "Transmission eines Bandpassfilters (Super-Gauß).",
+   "hi": "band-pass filter का transmittance (super-Gaussian)।"
+  },
+  "optics/silicon_photodiode_qe": {
+   "fp": "82872921572c",
+   "en": "External quantum efficiency (electrons per photon) of a Si photodiode, from the n,k of Si.",
+   "zh": "由 Si 的 n,k 求 Si 光电二极管的外量子效率(电子/光子)。",
+   "tw": "由 Si 的 n,k 求 Si 光電二極體的外部量子效率(電子/光子)。",
+   "ko": "Si의 n,k로부터 Si 포토다이오드의 외부 양자효율(전자/광자).",
+   "de": "Externe Quanteneffizienz (Elektronen pro Photon) einer Si-Photodiode aus n,k von Si.",
+   "hi": "Si के n,k से Si photodiode की external quantum efficiency (electrons प्रति photon)।"
+  },
+  "optics/energy_to_photons": {
+   "fp": "745705166241",
+   "en": "Turn an energy spectrum (W/nm) into a photon-number spectrum (photons s⁻¹ nm⁻¹): multiply by λ/(hc).",
+   "zh": "把能量光谱分布(W/nm)换成光子数分布(光子 s⁻¹ nm⁻¹):乘以 λ/(hc)。",
+   "tw": "把能量光譜分布(W/nm)換成光子數分布(光子 s⁻¹ nm⁻¹):乘以 λ/(hc)。",
+   "ko": "에너지 분광 분포(W/nm)를 광자 수 분포(광자 s⁻¹ nm⁻¹)로 바꾼다: λ/(hc)를 곱한다.",
+   "de": "Wandelt ein Energiespektrum (W/nm) in ein Photonenzahlspektrum (Photonen s⁻¹ nm⁻¹) um: Multiplikation mit λ/(hc).",
+   "hi": "ऊर्जा spectrum (W/nm) को photon-संख्या spectrum (photons s⁻¹ nm⁻¹) में बदलें: λ/(hc) से गुणा करें।"
+  },
+  "optics/spectral_product": {
+   "fp": "a32e29fd5755",
+   "en": "Product of two curves on the wavelengths of *a* (*b* linearly interpolated). Multiply source × transmittance × QE one at a time.",
+   "zh": "在 *a* 的波长上求两条曲线的积(*b* 线性插值)。把光源 × 透射率 × QE 逐条相乘。",
+   "tw": "在 *a* 的波長上求兩條曲線的積(*b* 線性內插)。把光源 × 穿透率 × QE 逐條相乘。",
+   "ko": "*a*의 파장에서 두 곡선의 곱(*b*는 선형 보간). 광원 × 투과율 × QE를 하나씩 곱한다.",
+   "de": "Produkt zweier Kurven auf den Wellenlängen von *a* (*b* linear interpoliert). Lichtquelle × Transmission × QE nacheinander multiplizieren.",
+   "hi": "*a* की तरंगदैर्घ्यों पर दो curves का गुणनफल (*b* रैखिक interpolation)। स्रोत × transmittance × QE को एक-एक करके गुणा करें।"
+  },
+  "optics/spectral_integral": {
+   "fp": "1b195db8c095",
+   "en": "Wavelength integral of a curve ∫ s(λ) dλ (trapezoid rule, λ in nm). Given an interval, only inside it (ends linearly interpolated).",
+   "zh": "曲线的波长积分 ∫ s(λ) dλ(梯形法则,λ 以 nm 计)。给定区间时只积其内部(端点线性插值)。",
+   "tw": "曲線的波長積分 ∫ s(λ) dλ(梯形法則,λ 以 nm 計)。給定區間時只積其內部(端點線性內插)。",
+   "ko": "곡선의 파장 적분 ∫ s(λ) dλ(사다리꼴 공식, λ는 nm). 구간을 주면 그 안만(끝은 선형 보간).",
+   "de": "Wellenlängenintegral einer Kurve ∫ s(λ) dλ (Trapezregel, λ in nm). Mit Intervall nur darin (Enden linear interpoliert).",
+   "hi": "curve का तरंगदैर्घ्य integral ∫ s(λ) dλ (trapezoid नियम, λ nm में)। अंतराल देने पर केवल उसके भीतर (सिरे रैखिक interpolation)।"
+  },
+  "optics/spectral_stats": {
+   "fp": "94b60c9895d7",
+   "en": "Summary of a curve: peak wavelength and value, centroid wavelength, full width at half maximum (crossings by linear interpolation), integral.",
+   "zh": "曲线的摘要:峰值波长与峰值、重心波长、半高全宽(用线性插值求交点)、积分。",
+   "tw": "曲線的摘要:峰值波長與峰值、重心波長、半高全寬(以線性內插求交點)、積分。",
+   "ko": "곡선의 요약: 피크 파장과 값, 무게중심 파장, 반치전폭(교점은 선형 보간), 적분.",
+   "de": "Zusammenfassung einer Kurve: Peakwellenlänge und -wert, Schwerpunktwellenlänge, Halbwertsbreite (Schnittpunkte linear interpoliert), Integral.",
+   "hi": "curve का सारांश: peak तरंगदैर्घ्य और मान, centroid तरंगदैर्घ्य, full width at half maximum (रैखिक interpolation से प्रतिच्छेद), integral।"
+  },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",

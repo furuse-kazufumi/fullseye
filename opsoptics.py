@@ -99,8 +99,9 @@ import optics
 import raytrace
 import cavityoptics
 import materials
+import spectralrad
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -441,6 +442,20 @@ _CATALOG = {
         ("material_from_sellmeier", "materials", [], "table"),
         ("material_from_curves", "materials", [], "table"),
         ("read_glass_catalog_agf", "materials", [], "table"),
+    ],
+    "spectral": [  # 光源・フィルタ・センサの分光曲線と、その積と積分(spectralrad、2026-10-14)
+        # ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を
+        #   spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。
+        #   画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+        ("blackbody_spectrum", "spectralrad", [], "pairs"),
+        ("cie_illuminant_a", "spectralrad", [], "pairs"),
+        ("led_spectrum", "spectralrad", [], "pairs"),
+        ("bandpass_spectrum", "spectralrad", [], "pairs"),
+        ("silicon_photodiode_qe", "spectralrad", [], "pairs"),
+        ("energy_to_photons", "spectralrad", ["pairs"], "pairs"),
+        ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
+        ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
+        ("spectral_stats", "spectralrad", ["pairs"], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

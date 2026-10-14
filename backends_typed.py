@@ -197,6 +197,17 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-14 光源・フィルタ・センサの分光曲線 9 本(spectralrad、spectral): 曲線(pairs)を作るか掛けるか積む側で、
+    # 画像を受けない。台帳(`fullseye.ledger.led_spectrum` …)から使う。
+    "blackbody_spectrum",
+    "cie_illuminant_a",
+    "led_spectrum",
+    "bandpass_spectrum",
+    "silicon_photodiode_qe",
+    "energy_to_photons",
+    "spectral_product",
+    "spectral_integral",
+    "spectral_stats",
     # 2026-10-14 材料の物性ライブラリ 16 本(materials、matprop): 全部が材料名と波長の引数だけで
     # 表か曲線(pairs)を返す側で、画像を受けない。台帳(`fullseye.ledger.material_transmittance` …)から使う。
     "material_table",

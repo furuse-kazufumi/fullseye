@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: e2e43eb8114d -->
+<!-- i18n-source-sha: b414a3f190ef -->
 # Fullseye को AI assistant के RAG के रूप में इस्तेमाल करना (Claude Code के लिए)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · **हिन्दी**
@@ -79,7 +79,7 @@ implement करें → bundled worked example से verify करें। 
 
 ## Tier 2 (optional): clustered corpus — external tools के साथ एक advanced रूप
 
-आप एक "navigable corpus" भी बना सकते हैं, जो **3,176 notes** को hierarchical तरीके से topic
+आप एक "navigable corpus" भी बना सकते हैं, जो **3,185 notes** को hierarchical तरीके से topic
 clusters में बाँटता है और हर cluster का LLM summary देता है। अंदर हम
 [RAPTOR](https://github.com/gadievron/raptor) fork का `corpus2skill` इस्तेमाल करते हैं (TF-IDF + k-means + LLM summary), लेकिन **यह
 एक optional optimization है, ज़रूरत नहीं**। एकमात्र ज़रूरत है "`docs/ops` को input के रूप में लेना और

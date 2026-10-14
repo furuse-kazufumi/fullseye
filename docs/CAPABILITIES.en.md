@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 46 capabilities**
+**Currently 47 capabilities**
 
 ## Measure (16)
 
@@ -217,7 +217,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (5)
+## Light and colour (6)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -258,6 +258,14 @@ The classic ISP stages, each a closed form you can state: black level, dead-pixe
 Operators: `raw_black_level`, `raw_dead_pixel_mask`, `raw_dead_pixel_correct`, `lens_shading_gain`, `lens_shading_correct`, `awb_gains`, `raw_apply_gains`, `rgb_apply_gains`, `raw_demosaic_bilinear`, `color_correction_matrix`, `hue_saturation`, `brightness_contrast`, `cfa_to_rgb`, `gamma`
 
 Runnable: `raw_to_display_isp`
+
+### [The spectral chain source × object × sensor (Planck, CIE A, LEDs, filters, Si QE, curve products and integrals)](capabilities/spectral-radiometry-chain.md)
+
+Nine ops in `spectralrad` complete the spectral chain image = source × optics/object × sensor QE, all as `pairs` (λ nm, value) like the material curves: Planck blackbody (SI 2019 constants), CIE illuminant A (the defining formula), LED spectra (Ohno 2005 or Gaussian, width solved to the requested FWHM), a super-Gaussian band-pass filter, the Si photodiode QE from the material table's Si n,k, the energy-to-photon conversion, and curve product, integral and summary. Gates: the CIE A table, Wien and Stefan–Boltzmann, the QE closed form and its thick-detector limit, and Poisson statistics in the rendered images.
+
+Operators: `blackbody_spectrum`, `cie_illuminant_a`, `led_spectrum`, `bandpass_spectrum`, `silicon_photodiode_qe`, `energy_to_photons`, `spectral_product`, `spectral_integral`, `spectral_stats`
+
+Runnable: `poc_nir_silicon_transmission`
 
 ## Waves and signals (4)
 

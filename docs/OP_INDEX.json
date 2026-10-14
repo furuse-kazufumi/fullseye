@@ -1,8 +1,8 @@
 {
- "n_ops": 3170,
+ "n_ops": 3179,
  "tiers": {
   "color": 12,
-  "ledger": 2217,
+  "ledger": 2226,
   "nary": 17,
   "registry": 924
  },
@@ -1869,6 +1869,17 @@
    ]
   },
   {
+   "name": "bandpass_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "beam_hardening_apply",
    "halcon": "",
    "in_sort": "sinogram",
@@ -2080,6 +2091,17 @@
    "in_sorts": [
     "depth"
    ]
+  },
+  {
+   "name": "blackbody_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "blast_normals",
@@ -3355,6 +3377,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "cie_illuminant_a",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "cie_xyz_from_wavelength",
@@ -7331,6 +7364,19 @@
    "dim": "optics",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "energy_to_photons",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -12917,6 +12963,17 @@
    "in_sorts": [
     "matrix"
    ]
+  },
+  {
+   "name": "led_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "legal_stop_intervals",
@@ -23356,6 +23413,17 @@
    "in_sorts": []
   },
   {
+   "name": "silicon_photodiode_qe",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "sinkhorn",
    "halcon": "",
    "in_sort": "signal",
@@ -24055,6 +24123,19 @@
    ]
   },
   {
+   "name": "spectral_integral",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "measurement",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
    "name": "spectral_kurtosis",
    "halcon": "",
    "in_sort": "signal",
@@ -24068,6 +24149,20 @@
    ]
   },
   {
+   "name": "spectral_product",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs",
+    "pairs"
+   ]
+  },
+  {
    "name": "spectral_slope",
    "halcon": "",
    "in_sort": "image2d",
@@ -24078,6 +24173,19 @@
    "dim": "drive",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "spectral_stats",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {

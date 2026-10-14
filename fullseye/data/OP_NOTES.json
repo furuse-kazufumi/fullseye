@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3170,
- "n_notes": 3176,
+ "n_ops": 3179,
+ "n_notes": 3185,
  "notes": {
   "vol_dilate": [
    {
@@ -28390,6 +28390,91 @@
     "in": "normalmap",
     "out": "polsweep",
     "path": "docs/ops/optics/shape_from_polarization/sfp_render.md"
+   }
+  ],
+  "bandpass_spectrum": [
+   {
+    "op": "bandpass_spectrum",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/bandpass_spectrum.md"
+   }
+  ],
+  "blackbody_spectrum": [
+   {
+    "op": "blackbody_spectrum",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/blackbody_spectrum.md"
+   }
+  ],
+  "cie_illuminant_a": [
+   {
+    "op": "cie_illuminant_a",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/cie_illuminant_a.md"
+   }
+  ],
+  "energy_to_photons": [
+   {
+    "op": "energy_to_photons",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/energy_to_photons.md"
+   }
+  ],
+  "led_spectrum": [
+   {
+    "op": "led_spectrum",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/led_spectrum.md"
+   }
+  ],
+  "silicon_photodiode_qe": [
+   {
+    "op": "silicon_photodiode_qe",
+    "dim": "optics",
+    "category": "spectral",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/silicon_photodiode_qe.md"
+   }
+  ],
+  "spectral_integral": [
+   {
+    "op": "spectral_integral",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "measurement",
+    "path": "docs/ops/optics/spectral/spectral_integral.md"
+   }
+  ],
+  "spectral_product": [
+   {
+    "op": "spectral_product",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs × pairs",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectral/spectral_product.md"
+   }
+  ],
+  "spectral_stats": [
+   {
+    "op": "spectral_stats",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/spectral/spectral_stats.md"
    }
   ],
   "corrosion_mask": [

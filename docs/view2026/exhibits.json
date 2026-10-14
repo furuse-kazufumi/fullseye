@@ -3082,6 +3082,22 @@
    }
   },
   {
+   "id": "poc_nir_silicon_transmission",
+   "group": "wing_color",
+   "media": "05_best_led_sweep.gif",
+   "motion": true,
+   "thumb_src": "03_three_leds_through_wafer.png",
+   "label": {
+    "ja": "Si ウェハ越しの近赤外透過(LED の波長を選ぶ)",
+    "en": "Near-infrared through a silicon wafer (choosing the LED)",
+    "zh": "透过硅晶圆的近红外检测(选择 LED 波长)",
+    "tw": "透過矽晶圓的近紅外檢測(選擇 LED 波長)",
+    "ko": "Si 웨이퍼 너머의 근적외 투과 검사(LED 파장 고르기)",
+    "de": "Nahinfrarot durch einen Siliziumwafer (Wahl der LED)",
+    "hi": "silicon wafer के आर-पार near-infrared (LED की wavelength चुनना)"
+   }
+  },
+  {
    "id": "poc_material_optical_library",
    "group": "wing_color",
    "media": "07_silicon_window_thickness.gif",
@@ -5614,6 +5630,13 @@
     "ko": "주기 패턴이 표본화 격자에서 접히는 거리와 줄무늬가 어지럽히는 충돌 시간을 닫힌 형식으로 측정(겹눈·검사 카메라)",
     "de": "Die Distanz, ab der ein periodisches Muster auf einem Abtastgitter aliast, und die von Streifen verfälschte Zeit bis zum Kontakt — in geschlossener Form (Komplexaugen und Prüfkameras)",
     "hi": "वह दूरी जिस पर periodic pattern sampling lattice पर alias करता है, और धारियों से बिगड़ा time-to-contact — closed form में (compound eye और inspection camera)"
+   },
+   "spectral-radiometry-chain": {
+    "zh": "光源 × 对象 × 传感器的光谱链(普朗克・CIE A・LED・滤光片・Si 的 QE)",
+    "tw": "光源 × 對象 × 感測器的光譜鏈(普朗克・CIE A・LED・濾光片・Si 的 QE)",
+    "ko": "광원 × 대상 × 센서의 분광 사슬(플랑크・CIE A・LED・필터・Si의 QE)",
+    "de": "Die spektrale Kette Lichtquelle × Objekt × Sensor (Planck, CIE A, LED, Filter, Si-QE)",
+    "hi": "स्रोत × वस्तु × sensor की spectral श्रृंखला (Planck, CIE A, LED, filter, Si QE)"
    },
    "material-optical-property-library": {
     "zh": "用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）",

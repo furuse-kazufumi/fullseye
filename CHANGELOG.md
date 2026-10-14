@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — Si ウェハ越しの近赤外透過検査(spectralrad 9 op + PoC)
+- `spectralrad`(`opsoptics` の新カテゴリ `spectral`、9 op): 光源(`blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum`)、フィルタ(`bandpass_spectrum`)、センサ(`silicon_photodiode_qe`、材料表の Si の n,k から)、演算(`energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`)。曲線は材料と同じ pairs(λ nm, 値)、範囲の足りない曲線の積は ValueError。
+- PoC `poc_nir_silicon_transmission`(20 門、図 4 枚 + GIF): 最良の LED はウェハ厚で動く(50 µm → 935 nm、775 µm → 1065 nm)、定番 1050 nm は薄いダイで 1/3.4、1200 nm は Si センサで 1/28、集める深さ 3→50 µm で 16 倍、焦点は t(1 − 1/n) = 557 µm。
+- 能力ノート `docs/capabilities/spectral-radiometry-chain.md`、op 要約の 6 言語、手書き件数 +9。
+
 ### Changed — 材料表の第 2 段: レンズ・鏡・観察対象が同じ表を引く + W / Pt の表を差し替え
 - `raytrace.glass_catalog` / `refractive_index` / `lens_system`: 手元の 20 種に加えて `materials` の透過材 63 種(他社硝材・結晶・樹脂・水)を名前で引く(表の範囲外は ValueError、金属・半導体・膜はレンズの媒質として拒否)。一覧は 20 種が先頭のまま。
 - `glassmirror.metal_optical_constants` / `metal_mirror_rgb` に `source="materials"`(10 金属の実測の数表、`MEASURED_METALS`)、`optscene.scene_material` に `metal_source`。既定は従来の 5 点の粗い表のまま(既存の図と値は不変)。
