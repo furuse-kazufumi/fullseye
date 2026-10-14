@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 52 项,每项都有说明页(用法与限制)和可运行的示例。
+共 53 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -117,6 +117,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光纤与光导(玻璃色散 → LP 模 → 模场直径 → 照明效率): [说明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 示例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）: [说明](../../capabilities/material-optical-property-library.md) _(ja)_ · 示例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 计算光的反射、折射与干涉: [说明](../../capabilities/optics-and-materials.md) _(ja)_ · 示例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- 像素位移成像(1 像素位移得全色、半像素位移消除混叠,以及失效条件): [说明](../../capabilities/pixel-shift-imaging.md) _(ja)_ · 示例 [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - 把偏振相机的原始帧读成 Stokes、DoLP、Mueller: [说明](../../capabilities/polarization-imaging.md) _(ja)_ · 示例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - 用每一步都能解释的公式把 Bayer 原始帧变成显示图像: [说明](../../capabilities/raw-to-display-isp.md) _(ja)_ · 示例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 光源 × 对象 × 传感器的光谱链(普朗克・CIE A・LED・滤光片・Si 的 QE): [说明](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 示例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
@@ -163,7 +164,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 235 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 236 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -318,7 +319,7 @@ PoC 235 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像质量与复原</b> (17)</summary>
+<details class="vall"><summary><b>成像质量与复原</b> (18)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近条纹的蝇眼" width="200" height="200"><b>&#9654;</b><span>逼近条纹的蝇眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手抖去模糊" width="200" height="200"><b>&#9654;</b><span>手抖去模糊</span></a>
@@ -337,6 +338,7 @@ PoC 235 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_segmentation_gauntlet.jpg" alt="分割关卡" width="200" height="200"><b>&#9654;</b><span>分割关卡</span></a>
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="主动轮廓" width="200" height="200"><b>&#9654;</b><span>主动轮廓</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="图分割" width="200" height="200"><b>&#9654;</b><span>图分割</span></a>
+<a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="像素位移(伪色与混叠)" width="200" height="200"><b>&#9654;</b><span>像素位移(伪色与混叠)</span></a>
 </div>
 </details>
 

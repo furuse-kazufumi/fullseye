@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 128 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 87 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 88 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
 
@@ -64,10 +64,10 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-10-15 — No.2026.233 Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears
 - 2026-10-15 — No.2026.234 Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry
 - 2026-10-15 — No.2026.235 TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
+- 2026-10-15 — No.2026.236 Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise
 - 2026-10-14 — No.2026.228 A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data
 - 2026-10-14 — No.2026.229 A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation
 - 2026-10-14 — No.2026.230 Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral
-- 2026-10-14 — No.2026.231 Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency
 
 ## Applying it to your own problem
 

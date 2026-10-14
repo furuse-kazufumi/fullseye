@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(369 例)
+### 2-D 画像/信号/幾何(370 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -423,6 +423,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
 - **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/events_from_frames.py`
 - **TDI ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える** — フィルム・鋼板・ウェハのように流れてくるものはラインセンサで撮り、暗いラインでは TDI で N 段ぶん露光を積む。新 op 6 本(`linescan`、`opsoptics` の `linescan`): `tdi_snr`(EMVA 1288 の式 21 を段数倍、電荷加算 / デジタル加算)/ `tdi_sync_mtf`(同期ずれ・ヨーの閉形式)/ `linescan_acquire`(反射率の地図を搬送して撮る: 速度誤差・ヨー・蛇行・エンコーダ同期・レンズ・雑音)/ `lens_field_profile`(像高ごとの照度と MTF を光線追跡で)/ `linescan_lens_columns` / `linescan_lens_example`。★1 段 40 光子の暗い冷延鋼板で、2 枚撮りの時間雑音から測った SNR は式 21 と全段数で 1.2 % 以内。デジタル加算は 64 段で ×8.09(√64 = 8)、電荷加算は読み出し雑音を 1 回しか払わないので ×26.9。薄い傷・ピンホール・異物の検出は 1 段 0 / 3 → 64 段 3 / 3(誤検出 0)。★同期ずれ ε で像が N·ε 画素流れ、流れ方向の MTF は |sinc(f N ε)| —— 閉形式を先に印字し、正弦波の板で 45 条件の最大差 0.0035。速度のうねり ±3 % は自走で局所 MTF 0.64 まで落ち、エンコーダ同期で 1.000 に戻る。ヨーの幅方向のぼけ |sinc(f N sin θ)| はエンコーダでは直らない(9 条件で最大差 0.0017)。★同じ形の三枚玉を 57 mm の像円用(f 90)と 2/3 型用(f 35、C マウントの流用)に作って光線追跡: 照度は cos⁴ × 瞳 × 歪曲に厳密に分かれ(最大差 2e-16)、ラインスキャン用は端で 0.976(cos⁴ は 0.855、樽型歪曲 −2.9 % が ×1.111)、C マウントは像高 19.7 mm から光が届かない。フラットフィールド補正で照度の幅は 0.961 → 1.000 に揃うが、正弦波の変調は補正の前後で差 0.0006(MTF は直らない)、像高 14 mm の異物の CNR は C マウントで 1.52 → 1.54 のまま(ラインスキャン用 2.49)。学習 0、較正 0、門 19 件。 `py -3.11 examples/poc_tdi_linescan.py`
+- **ピクセルシフト撮像 ―― センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える。MTF は上がらない** — 撮像素子を圧電アクチュエータで 1 画素 / 半画素ずつ動かして撮る「ピクセルシフト」が、外観検査で何を増やし何を増やさないか。新 op 6 本(`pixelshift`、`opsoptics` の `pixelshift`): `pixel_shift_pattern` / `pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒)/ `pixel_shift_merge`(公称のシフトで格子へ、埋められないシフト列は拒否)/ `pixel_shift_motion_mask` / `false_color_metric` / `pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。1 画素シフト 4 枚は基板の配線・織物・網点・解像チャートで偽色を 0.043〜0.084 から 0 にする(静止・誤差 0 では定義上 0 —— 各画素の R・G・B が同じ開口で同じ点を見る)。半画素シフトでは 0.6〜0.9 cyc/px の縞の FFT の山が、1 枚の折り返し 1 − f₀ から本当の f₀ へ戻り、高さは 0.4·sinc(f₀) と 2e-14 で一致。★傾いたエッジの MTF50 は 1 枚 0.478・半画素 0.475・閉形式 0.467 cyc/px —— シフトで変わるのは折り返しで MTF ではない。drizzle(独立の実装)でも山は 0.700 に立ち、★センサのシフトをそのまま渡すと 0.300(符号の取り違えが折り返しに化ける)。画素 3.45 µm で F 1.4〜22 を振ると 0.7 cyc/px の変調は sinc·回折の閉形式と 0.0008 以内、Q > 1.43 で消え、解像の得は Q = 2 より手前の Q* = 1.47 で尽きる。開口率 0.5 なら 0.8 cyc/px の変調が 3.2 倍。壊れる条件: 1 枚だけ 0.05 px ずれた色の誤差は閉形式 2πf·a·sinc·δ/√2 と 1.2 %、乱数の誤差 σ = 0.1 px で偽色 0.012(1 枚のデモザイク 0.053)。搬送中の部品は 0.25 px/枚 までは 4 枚の破綻(0.161)が 1 枚のデモザイク(0.205)より小さく、0.5 px/枚 から逆転。動き検出で 1 枚に差し戻すと 1 枚の画質の天井に届き、静止部の誤検出 0 %。雑音は R・B が σ/√c、G が σ/√(2c) と 2.1 % 以内、動く縞では枚数を増やすほど誤差が増える(4 → 16 枚で 0.081 → 0.273)。学習 0、較正 0、門 28 件。 `py -3.11 examples/poc_pixel_shift.py`
 - **光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで** — 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運ぶ。どちらもガラスの分散(材料表 `materials`)と導波の式で決まる。新 op 7 本(`fiberoptics`、`opsoptics` の `fiber`): `material_group_index` / `material_gvd` / `fiber_numerical_aperture` / `fiber_v_number` / `fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で)/ `fiber_mode_field_diameter` / `fiber_bundle_coupling`。溶融石英の群屈折率は 1.55 µm で 1.4626、材料分散の零点は 1272.8 nm、D(1.55 µm) は 21.9 ps/(nm·km) と公表値の幅に入る。遮断は Bessel の零点(LP11 = 2.4048)の 0.001 上下でモード数が 2 → 6 と切り替わり、V = 30 でモード数 456 は V²/2 = 450 と 1.3 %、LP01 の b(V) は Rudolph–Neumann の近似と 0.24 %。★LP02 は遮断の直上で束縛が指数関数的に弱く、浮動小数で解けるのは遮断の 0.05 上から(op の docstring に限界として明記)。モード径は Marcuse 1977 の近似式と 0.8 % 以内、2 次モーメントの定義に変えると V = 1.2 で 11 % 大きい —— 「MFD」は定義を書かないと比べられない。コア半径 4.1 µm・NA 0.12 の設計は遮断 1285 nm、1310 nm の MFD 9.06 µm で ITU-T G.652 の 8.6〜9.5 µm に入る。Lambert の LED を NA の違う束に入れる割合は (NA_束/NA_光源)² の閉形式どおりで、LED → ライトガイド 2 m → Si ウェハ 775 µm → Si センサの鎖は光子 1 個あたり 2.2e-4 電子。学習 0、較正 0、門 17 件。 `py -3.11 examples/poc_fiber_light_guide.py`
 - **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** — Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。学習 0、較正 0、門 20 件。 `py -3.11 examples/poc_nir_silicon_transmission.py`
 - **材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点** — 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まる。両方が**同じ材料表**を引けるように、硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つのレコード型に載せ、波長曲線をすべて同じ形(λ [nm], 値)で返す新 op 16 本(`opsoptics` の `matprop`、実装 `materials`)。数値は refractiveindex.info database(CC0)の一次文献の係数と数表だけ(`tools/gen_material_tables.py` が生成、出典を各区間に残す)。★硝材 46 種(4 社のカタログ、Sellmeier 2 と Schott 多項式): 分散式から計算した n_d / V_d が**カタログ公表値と最大 4e-6 / 0.005**(門は 1e-4 / 0.3)。Abbe 図に 67 材料(プラスチックは同じ n_d の硝子より左、CaF₂ と石英は右端)。**第二実装 optiland 0.6.3**(同じ一次文献を別のコードで評価)と 23 点で最大 5e-10。★Si の NIR 窓(Green 2008): 公表の表の点 n(1.0 µm) 3.572 / k 5.09e-4、k(1.2 µm) 2.1e-7 を再現、吸収係数は 1.0 → 1.2 µm で 64 → 0.022 /cm(3 桁)、775 µm のウェハの透過率は 1.0 µm で 0.3 %・1.2 µm で 52 %(閉形式 (1−R)²e^{−αt}/(1−R²e^{−2αt}) と 1e-9、R = 0.31 の多重反射込み)。自由キャリア吸収(Schroder 1978)は λ² 則と p/n = 2.7 を 1e-9 で、1e19 cm⁻³ の基板は 1.3 µm でそれだけで ×0.27 に暗くなる。平行平板の焦点ずれ t(1 − 1/n) = 556 µm、縦球面収差は NA 0.1 で 1.0 µm・NA の 2 乗。★鏡の材料 10 種(Johnson & Christy / Rakić / Weaver / Werner): 銀は 500 nm で 0.982、アルミの谷は 820 nm で 0.866、金は 500 nm 0.475 → 700 nm 0.971。色は CIE 等色関数から出し、金と銅は R > G > B・銀は 3 成分が 1 % 以内で中性(塗っていない)。斜入射 60° で s 0.953 > p 0.829。★硝子とプラスチック: ポリカーボネートの分散は N-BK7 の 2.3 倍、dn/dT はカタログの式 A で基準温度(20 ℃ / 25 ℃)で Δn = 0、有限差分と 4e-8、N-BK7 の e 線で 1.62e-6 /K。係数の無い材料(PMMA・水)は ValueError で黙って 0 にしない。★取り込み口: .agf(硝材カタログ、Zemax の分散式 1〜13 全部)の雛形を読むと同梱レコードと 0、内部透過率の行から k を復元、自前の Sellmeier 係数と測った曲線(pairs)からもレコードを作れ、区間外は外挿しない。ユーザーのカタログは `FULLSEYE_GLASS_DIR` に置けば同名硝材を照合(無ければ「未配置」と明示)。学習した数 0、較正 0、門 38 件、図なしで 1 秒未満。 `py -3.11 examples/poc_material_optical_library.py`
@@ -710,9 +711,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3225 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 242 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 14 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 14 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -2423,7 +2424,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(242 ops / 28 categories)
+### optics(248 ops / 29 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2506,11 +2507,11 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lighting_sweep` `入力なし → pairs` — Defect contrast versus ring-light elevation angle (``pairs``). · 例: `illumination_design_demo`
 
 #### optics / imaging(7)
-- `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_veiling_glare`
-- `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_veiling_glare`
-- `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_veiling_glare`
+- `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
+- `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
+- `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_pixel_shift`, `poc_veiling_glare`
 - `psf_to_mtf` `image2d → pairs` — Radially-averaged MTF of a measured point-spread function. · 例: `optics_imaging`, `poc_veiling_glare`
-- `sfr_from_edge` `table → pairs` — ESF から SFR(エッジから測る MTF)を出す。 · 例: `poc_veiling_glare`
+- `sfr_from_edge` `table → pairs` — ESF から SFR(エッジから測る MTF)を出す。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
 - `veiling_glare_index` `image2d × image2d × image2d → table` — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。 · 例: `poc_veiling_glare`
 - `wavefront_stats` `table → table` — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl. · 例: `optics_imaging`, `poc_zernike_aberrations`
 
@@ -2592,6 +2593,14 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
 - `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`
 - `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`
+
+#### optics / pixelshift(6)
+- `false_color_metric` `rgbimage → table` — 偽色の量: 色差(BT.601 の Cb, Cr)の大きさの統計。 · 例: `poc_pixel_shift`
+- `pixel_shift_capture` `rgbimage × matrix → video` — シフトした撮像素子で撮る: シーンを画素の開口(正方形の箱)で**厳密に**積分し、Bayer か白黒の生の画像を返す。 · 例: `poc_pixel_shift`
+- `pixel_shift_merge` `video × matrix → rgbimage` — ピクセルシフトの枚を、**公称の**シフトで格子へ振り分けて合わせる。補間はしない(同じ格子点の標本の平均だけ)。 · 例: `poc_pixel_shift`
+- `pixel_shift_motion_mask` `video × matrix → image2d` — 動いた画素の地図 ``(H·scale, W·scale)``(1.0 = 動いた、0.0 = 静止 / 判定できない)。 · 例: `poc_pixel_shift`
+- `pixel_shift_pattern` `入力なし → matrix` — ピクセルシフトの公称のシフト列 ``(N, 2)``(dr, dc)[センサ画素]に、アクチュエータの誤差を足して返す。 · 例: `poc_pixel_shift`
+- `pixel_shift_resolution_budget` `入力なし → table` — ピクセルシフトで解像が上がるかの閉形式の予算(レンズ律速か画素律速か)。 · 例: `poc_pixel_shift`
 
 #### optics / polarization(10)
 - `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
@@ -2702,7 +2711,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `corrosion_mask` `入力なし → image2d` — 錆・緑青・汚れの**むら**(0–1 のマスク)。 · 例: `machined_metal_and_materials`
 - `metallic_flake_normals` `入力なし → normalmap` — メタリック塗装のフレーク(アルミ片)の法線場を作る。 · 例: `machined_metal_and_materials`
 - `rough_transmission` `signal → pairs` — すりガラスの透過を「直進成分」と「拡散成分」に分ける。 · 例: `machined_metal_and_materials`
-- `weave_normals` `入力なし → normalmap` — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。 · 例: `machined_metal_and_materials`
+- `weave_normals` `入力なし → normalmap` — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。 · 例: `machined_metal_and_materials`, `poc_pixel_shift`
 - `wood_grain` `入力なし → image2d` — 木目(年輪)の**色の変調**と**繊維の向き**を作る。 · 例: `machined_metal_and_materials`
 
 #### optics / telecentric(7)
@@ -2715,7 +2724,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vignetting_vs_field` `table → pairs` — 物高ごとに、像面まで届く光線束の立体角(傾きの面積)を軸上に対する割合で(ケラレ)。 · 例: `poc_telecentric_metrology`
 
 #### optics / wave(9)
-- `airy_pattern` `入力なし → image2d` — The diffraction-limited PSF of a circular pupil (Airy pattern). · 例: `optics_imaging`, `poc_veiling_glare`
+- `airy_pattern` `入力なし → image2d` — The diffraction-limited PSF of a circular pupil (Airy pattern). · 例: `optics_imaging`, `poc_pixel_shift`, `poc_veiling_glare`
 - `angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: `optics_imaging`
 - `defocus_from_shift` `入力なし → measurement` — Defocus wavefront error (waves at the pupil edge) of an axial focus shift. · 例: `optics_imaging`, `poc_nir_silicon_transmission`
 - `four_f_filter` `cimage × cimage → cimage` — 4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。 · 例: `optics_four_f_processor`
@@ -4091,7 +4100,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_colorbar` `image2d × image2d → image2d` — 画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。 · 例: `paper_figure`
 - `annotate_dimension` `image2d → image2d` — 画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。 · 例: `paper_figure`
 - `annotate_dimension_layout` `入力なし → table` — table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_figure_grid` `images → image2d` — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`
+- `annotate_figure_grid` `images → image2d` — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`, `poc_pixel_shift`
 - `annotate_figure_grid_layout` `入力なし → table` — table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。 · 例: `paper_figure`
 - `annotate_inset` `image2d → image2d` — 画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。 · 例: `paper_figure`, `poc_real_defect_floor`
 - `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
@@ -4163,7 +4172,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `raw_black_level` `image2d → image2d` — Black-level compensation on a Bayer frame: ``(raw - offset) / (white - offset)`` per colour channel, clipped to ``[0, 1]``. · 例: `raw_to_display_isp`
 - `raw_dead_pixel_correct` `image2d → image2d` — Replace every dead pixel (:func:`raw_dead_pixel_mask`) by the **median of its 8 same-colour neighbours**; every other pixel is returned bit-for-bit. · 例: `raw_to_display_isp`
 - `raw_dead_pixel_mask` `image2d → image2d` — Where the dead (stuck / hot) pixels are: ``1.0`` at a pixel that differs from **every one** of its 8 same-colour neighbours by more than *threshold* in the same direction, ``0.0`` elsewhere. ``(H, W)`` float64. · 例: `raw_to_display_isp`
-- `raw_demosaic_bilinear` `image2d → rgb` — Bayer mosaic → ``(H, W, 3)`` RGB by bilinear interpolation, in NumPy. · 例: `raw_to_display_isp`
+- `raw_demosaic_bilinear` `image2d → rgb` — Bayer mosaic → ``(H, W, 3)`` RGB by bilinear interpolation, in NumPy. · 例: `poc_pixel_shift`, `raw_to_display_isp`
 - `rgb_apply_gains` `rgb × vector → rgb` — Multiply the R, G, B channels by ``gains`` (3 values) and clip to ``[0, 1]``. · 例: `gallery_mesh_seg_sun_gains`
 
 #### gfx2d / light(5)
@@ -4267,7 +4276,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 #### imgmetrics / fidelity(6)
 - `ms_ssim` `image2d × image2d → scalar` — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 例: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` — 平均二乗誤差。``data_range`` に依らない生の量。 · 例: `image_quality_metrics`
-- `psnr` `image2d × image2d → scalar` — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
+- `psnr` `image2d × image2d → scalar` — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
 - `rmse` `image2d × image2d → scalar` — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
 - `ssim` `image2d × image2d → scalar` — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` — SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で見るため。 · 例: `image_quality_metrics`, `poc_iqa_tid2013`
@@ -4442,7 +4451,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `noise_sigma` `image2d → measurement` — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack(2)
-- `drizzle_resample` `images → image2d` — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_superresolution_limits`
+- `drizzle_resample` `images → image2d` — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`
 - `sigma_clip_stack` `images → image2d` — フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_exoplanet_transit`, `poc_river_surface_velocity`
 
 #### astrostack / synth(2)
@@ -4828,7 +4837,7 @@ _計 3219 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 #### printpath / npr(6)
 - `engrave_lines` `image2d → image2d` — Copperplate engraving — parallel lines whose **width** carries the tone. · 例: `poc_beats_fringes_and_screens`
 - `halftone_moire_period` `入力なし → table` — The beat between two halftone screens — period and direction, in closed form. · 例: `poc_beats_fringes_and_screens`, `poc_moire_screen`, `poc_print_registration`
-- `halftone_screen` `image2d → image2d` — A classic rotated halftone screen — dots whose area carries the tone. · 例: `poc_beats_fringes_and_screens`, `poc_print_registration`
+- `halftone_screen` `image2d → image2d` — A classic rotated halftone screen — dots whose area carries the tone. · 例: `poc_beats_fringes_and_screens`, `poc_pixel_shift`, `poc_print_registration`
 - `hatch_field` `image2d → image2d` — Cross-hatching that **follows the picture** — direction from the structure tensor. · 例: `poc_beats_fringes_and_screens`
 - `mosaic_tiles_render` `image2d × pairs → image2d` — Paint each Voronoi cell with the **mean** of the pixels it owns. · 例: `poc_beats_fringes_and_screens`
 - `mosaic_tiles_sites` `image2d → pairs` — Lloyd's iteration on an image — the tile centres of a mosaic. · 例: `poc_beats_fringes_and_screens`

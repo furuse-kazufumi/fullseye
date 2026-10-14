@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 52 capabilities**
+**Currently 53 capabilities**
 
 ## Measure (19)
 
@@ -241,7 +241,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (8)
+## Light and colour (9)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -274,6 +274,14 @@ Fresnel reflectance, thin-film interference colour, grating colour, and vector-f
 Operators: `fresnel_dielectric`, `thin_film_reflectance`, `grating_rgb`, `refract_rays`
 
 Runnable: `glass_and_mirror_optics`, `appearance_structural_colour`
+
+### [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md)
+
+Six ops in `pixelshift` (category `pixelshift` of `opsoptics`): nominal shift sequences with actuator error, an exact box-aperture capture of a finely drawn scene through a shifted Bayer or monochrome sensor (optionally a different scene per frame for moving objects), a grid merge with the nominal shifts that refuses sequences that cannot fill the grid, a motion mask from disagreeing green samples with fallback to a single-frame demosaic, a false-colour metric, and the closed-form resolution budget (pixel-aperture sinc times diffraction MTF, Nyquist, Q = λN/p). The PoC shows false colour vanishing with 1-pixel shifts, aliasing vanishing with half-pixel shifts while the slanted-edge MTF50 stays put, the lens-limited regime where nothing is gained, and the failure modes: shift error, moving parts and stacking more frames.
+
+Operators: `pixel_shift_pattern`, `pixel_shift_capture`, `pixel_shift_merge`, `pixel_shift_motion_mask`, `false_color_metric`, `pixel_shift_resolution_budget`
+
+Runnable: `poc_pixel_shift`
 
 ### [Read a polarisation camera's raw frame into Stokes, DoLP and Mueller](capabilities/polarization-imaging.md)
 

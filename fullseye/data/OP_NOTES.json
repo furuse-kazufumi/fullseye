@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3213,
- "n_notes": 3219,
+ "n_ops": 3219,
+ "n_notes": 3225,
  "notes": {
   "vol_dilate": [
    {
@@ -27764,6 +27764,64 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/optimization/optimize_lens.md"
+   }
+  ],
+  "false_color_metric": [
+   {
+    "op": "false_color_metric",
+    "dim": "optics",
+    "category": "pixelshift",
+    "in": "rgbimage",
+    "out": "table",
+    "path": "docs/ops/optics/pixelshift/false_color_metric.md"
+   }
+  ],
+  "pixel_shift_capture": [
+   {
+    "op": "pixel_shift_capture",
+    "dim": "optics",
+    "category": "pixelshift",
+    "in": "rgbimage × matrix",
+    "out": "video",
+    "path": "docs/ops/optics/pixelshift/pixel_shift_capture.md"
+   }
+  ],
+  "pixel_shift_merge": [
+   {
+    "op": "pixel_shift_merge",
+    "dim": "optics",
+    "category": "pixelshift",
+    "in": "video × matrix",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/pixelshift/pixel_shift_merge.md"
+   }
+  ],
+  "pixel_shift_motion_mask": [
+   {
+    "op": "pixel_shift_motion_mask",
+    "dim": "optics",
+    "category": "pixelshift",
+    "in": "video × matrix",
+    "out": "image2d",
+    "path": "docs/ops/optics/pixelshift/pixel_shift_motion_mask.md"
+   }
+  ],
+  "pixel_shift_pattern": [
+   {
+    "op": "pixel_shift_pattern",
+    "dim": "optics",
+    "category": "pixelshift",
+    "out": "matrix",
+    "path": "docs/ops/optics/pixelshift/pixel_shift_pattern.md"
+   }
+  ],
+  "pixel_shift_resolution_budget": [
+   {
+    "op": "pixel_shift_resolution_budget",
+    "dim": "optics",
+    "category": "pixelshift",
+    "out": "table",
+    "path": "docs/ops/optics/pixelshift/pixel_shift_resolution_budget.md"
    }
   ],
   "jones_apply": [

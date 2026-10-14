@@ -1,4 +1,4 @@
-# OPTICS operator help — 242 ops in 28 categories
+# OPTICS operator help — 248 ops in 29 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -93,6 +93,10 @@
 ### optimization (3)
 
 [bend_singlet](optimization/bend_singlet.md) · [merit_function](optimization/merit_function.md) · [optimize_lens](optimization/optimize_lens.md)
+
+### pixelshift (6)
+
+[false_color_metric](pixelshift/false_color_metric.md) · [pixel_shift_capture](pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](pixelshift/pixel_shift_motion_mask.md) · [pixel_shift_pattern](pixelshift/pixel_shift_pattern.md) · [pixel_shift_resolution_budget](pixelshift/pixel_shift_resolution_budget.md)
 
 ### polarization (10)
 

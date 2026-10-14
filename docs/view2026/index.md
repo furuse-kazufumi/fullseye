@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-52 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+53 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率): [説明](../capabilities/fiber-and-light-guide.md) · 例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口): [説明](../capabilities/material-optical-property-library.md) · 例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 光の反射・屈折・干渉を計算する: [説明](../capabilities/optics-and-materials.md) · 例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで): [説明](../capabilities/pixel-shift-imaging.md) · 例 [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - 偏光カメラの生フレームを Stokes・DoLP・Mueller に読む: [説明](../capabilities/polarization-imaging.md) · 例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Bayer の生フレームを、段ごとに説明できる式で表示画像にする: [説明](../capabilities/raw-to-display-isp.md) · 例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分): [説明](../capabilities/spectral-radiometry-chain.md) · 例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
@@ -178,7 +179,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 235 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 236 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -333,7 +334,7 @@ PoC 235 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>撮像品質・復元</b> (17)</summary>
+<details class="vall"><summary><b>撮像品質・復元</b> (18)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="縞に近づくハエの眼" width="200" height="200"><b>&#9654;</b><span>縞に近づくハエの眼</span></a>
 <a href="../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_shake_deblur.jpg" alt="手ブレ補正" width="200" height="200"><b>&#9654;</b><span>手ブレ補正</span></a>
@@ -352,6 +353,7 @@ PoC 235 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_segmentation_gauntlet.jpg" alt="分割の関門" width="200" height="200"><b>&#9654;</b><span>分割の関門</span></a>
 <a href="../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_active_contours.jpg" alt="動的輪郭" width="200" height="200"><b>&#9654;</b><span>動的輪郭</span></a>
 <a href="../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="グラフ分割" width="200" height="200"><b>&#9654;</b><span>グラフ分割</span></a>
+<a href="../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pixel_shift.jpg" alt="ピクセルシフト(偽色と折り返し)" width="200" height="200"><b>&#9654;</b><span>ピクセルシフト(偽色と折り返し)</span></a>
 </div>
 </details>
 

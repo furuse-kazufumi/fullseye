@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-52개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+53개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -117,6 +117,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 광파이버와 라이트 가이드(유리의 분산 → LP 모드 → 모드 필드 직경 → 조명 효율): [설명](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 예제 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 재료의 광학 물성을 하나의 표로 조회(유리·결정·반도체·금속·액체·플라스틱 83종, 1차 문헌의 계수와 수표, 유리 카탈로그 가져오기): [설명](../../capabilities/material-optical-property-library.md) _(ja)_ · 예제 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 빛의 반사·굴절·간섭 계산: [설명](../../capabilities/optics-and-materials.md) _(ja)_ · 예제 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- 픽셀 시프트 촬상(1 화소 시프트로 전색, 반 화소 시프트로 에일리어싱 제거, 깨지는 조건까지): [설명](../../capabilities/pixel-shift-imaging.md) _(ja)_ · 예제 [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - 편광 카메라의 원시 프레임을 Stokes·DoLP·Mueller로 읽기: [설명](../../capabilities/polarization-imaging.md) _(ja)_ · 예제 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Bayer 원시 프레임을 단계마다 설명 가능한 식으로 표시 이미지로: [설명](../../capabilities/raw-to-display-isp.md) _(ja)_ · 예제 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 광원 × 대상 × 센서의 분광 사슬(플랑크・CIE A・LED・필터・Si의 QE): [설명](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 예제 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
@@ -163,7 +164,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 235개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 236개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -318,7 +319,7 @@ PoC 235개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>촬상 품질·복원</b> (17)</summary>
+<details class="vall"><summary><b>촬상 품질·복원</b> (18)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="줄무늬에 다가가는 파리의 눈" width="200" height="200"><b>&#9654;</b><span>줄무늬에 다가가는 파리의 눈</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="손떨림 복원" width="200" height="200"><b>&#9654;</b><span>손떨림 복원</span></a>
@@ -337,6 +338,7 @@ PoC 235개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_segmentation_gauntlet.jpg" alt="분할의 관문" width="200" height="200"><b>&#9654;</b><span>분할의 관문</span></a>
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="능동 윤곽" width="200" height="200"><b>&#9654;</b><span>능동 윤곽</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="그래프 분할" width="200" height="200"><b>&#9654;</b><span>그래프 분할</span></a>
+<a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="픽셀 시프트(위색과 에일리어싱)" width="200" height="200"><b>&#9654;</b><span>픽셀 시프트(위색과 에일리어싱)</span></a>
 </div>
 </details>
 

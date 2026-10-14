@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 52 項目**
+**収録 53 項目**
 
 ## 測る (19)
 
@@ -240,7 +240,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (8)
+## 光と色 (9)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -273,6 +273,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `fresnel_dielectric`, `thin_film_reflectance`, `grating_rgb`, `refract_rays`
 
 動く例: `glass_and_mirror_optics`, `appearance_structural_colour`
+
+### [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md)
+
+撮像素子を圧電アクチュエータで 1 画素 / 半画素ずつ動かして複数枚撮り、格子へ合わせる撮り方を、撮る側と合わせる側の両方で再現します。`pixelshift` の 6 本は `opsoptics` の族 `pixelshift` です。
+
+使う op: `pixel_shift_pattern`, `pixel_shift_capture`, `pixel_shift_merge`, `pixel_shift_motion_mask`, `false_color_metric`, `pixel_shift_resolution_budget`
+
+動く例: `poc_pixel_shift`
 
 ### [偏光カメラの生フレームを Stokes・DoLP・Mueller に読む](capabilities/polarization-imaging.md)
 
