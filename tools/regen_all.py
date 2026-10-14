@@ -133,6 +133,8 @@ OUTPUTS = {
     "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
                                      "docs/articles/fullseye_poc_museum_qiita_*.md",
+                                     # 棟ごとの記事(fullseye_poc_museum_<棟>_qiita_<言語>.md)も同じ段が書く
+                                     "docs/articles/fullseye_poc_museum_*_qiita_*.md",
                                      "docs/articles/assets/poc/_hero_montage.jpg"],
     "tools/gen_examples_readme.py": ["examples/README.md"],
     "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
@@ -164,7 +166,7 @@ READS = {
     "tools/gen_docs_index_ops.py": [
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
-        "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md",
+        "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
         "docs/literature/OSS_LANDSCAPE.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
