@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-50 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+51 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -101,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Vor dem Messen vorhersagen, wie weit Interreflexion in konkaven Teilen Streifenprojektion und ToF verfälscht (globaler Lichttransport, Trennung direkt/global, Micro Phase Shifting): [Erklärung](../../capabilities/light-transport.md) _(ja)_ · Beispiele [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - Wie viel dieser Zahl ist das Messen und nicht der Prozess (Gauge R&R und Messunsicherheit): [Erklärung](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · Beispiele [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Moiré-Justierung (zwei Gitter leicht verschiedener Periode, Streifenphase, Verschiebung in nm, Differenzpaar und Talbot-Spalt): [Erklärung](../../capabilities/moire-alignment.md) _(ja)_ · Beispiele [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
+- Mikrometer-Dellen auf glänzenden Flächen im Spiegelbild eines Streifenbildschirms messen (phasenmessende Deflektometrie: Streifen, Phase, Neigung, Krümmung): [Erklärung](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · Beispiele [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - Welche Fehlergröße wird tatsächlich gefunden (Auffindwahrscheinlichkeit POD und a90/95, MIL-HDBK-1823A): [Erklärung](../../capabilities/probability-of-detection.md) _(ja)_ · Beispiele [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - Messen, wie stark die helle SEM-Kante eine Abmessung aufbläht (mit Grundwahrheit): [Erklärung](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · Beispiele [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - Die Form schwarz glänzender und gläserner Teile aus der Polarisation messen (Shape from Polarization, die Mehrdeutigkeitsmenge, Brechungsindex): [Erklärung](../../capabilities/shape-from-polarization.md) _(ja)_ · Beispiele [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
@@ -161,7 +162,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-233 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+234 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -220,7 +221,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (43)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (44)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -258,6 +259,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_pod_lighting/03_pod_curves.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pod_lighting.jpg" alt="POD je Beleuchtung" width="200" height="200"><span>POD je Beleuchtung</span></a>
 <a href="../../articles/assets/poc/poc_laser_line_speckle_floor/01_line.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_laser_line_speckle_floor.jpg" alt="Speckle-Grenze der Laserlinie" width="200" height="200"><span>Speckle-Grenze der Laserlinie</span></a>
 <a href="../../articles/assets/poc/poc_shape_from_polarization/05_normals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_shape_from_polarization.jpg" alt="Form aus Polarisation" width="200" height="200"><span>Form aus Polarisation</span></a>
+<a href="../../articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_phase_measuring_deflectometry.jpg" alt="Mikrometer-Dellen, die kein Foto zeigt, im Spiegelbild eines Streifenmusters (Deflektometrie)" width="200" height="200"><span>Mikrometer-Dellen, die kein Foto zeigt, im Spiegelbild eines Streifenmusters (Deflektometrie)</span></a>
 <a href="../../articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_interreflection_fringe_error.jpg" alt="Interreflexion und Streifenfehler" width="200" height="200"><span>Interreflexion und Streifenfehler</span></a>
 <a href="../../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zernike_aberrations.jpg" alt="Zernike-Aberrationen" width="200" height="200"><b>&#9654;</b><span>Zernike-Aberrationen</span></a>
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="Attention-Identitäten" width="200" height="200"><span>Attention-Identitäten</span></a>

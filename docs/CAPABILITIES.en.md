@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 50 capabilities**
+**Currently 51 capabilities**
 
-## Measure (18)
+## Measure (19)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -100,6 +100,14 @@ Eight ops in `moirealign` (category `moire_align` of `opsoptics`) for alignment 
 Operators: `moire_magnification`, `moire_talbot_gap`, `moire_overlay_image`, `moire_phase`, `moire_phase_to_shift`, `moire_differential_shift`, `moire_mark_read`, `moire_phase_crlb`
 
 Runnable: `poc_moire_alignment`
+
+### [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md)
+
+Phase-measuring deflectometry for glossy surfaces: a rig table, the screen patterns, a forward renderer from a height field to the camera's image of the screen's mirror reflection (diffuse fraction, specular-lobe scatter, the back reflection of a transparent plate, thin-lens focus by aperture integration, noise and quantisation), absolute screen phases to a normal map on the surface grid, slopes to mean or Gaussian curvature without integrating, and the closed-form sensitivity before measuring (slope noise σ_u/(2d), the height-slope coupling sin θ / d, focus blur). The PoC finds 3 µm and 1 µm dents on a painted panel that a lit photograph cannot show and scores every number against the analytic surface.
+
+Operators: `deflectometry_rig`, `deflectometry_screen_pattern`, `deflectometry_render`, `deflectometry_phase_to_slope`, `slope_to_curvature`, `deflectometry_sensitivity`
+
+Runnable: `poc_phase_measuring_deflectometry`
 
 ### [Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

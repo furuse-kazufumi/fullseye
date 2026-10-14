@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-50 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+51 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -116,6 +116,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト): [説明](../capabilities/light-transport.md) · 例 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ): [説明](../capabilities/measurement-system-and-uncertainty.md) · 例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ): [説明](../capabilities/moire-alignment.md) · 例 [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
+- 光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率): [説明](../capabilities/phase-measuring-deflectometry.md) · 例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A): [説明](../capabilities/probability-of-detection.md) · 例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る: [説明](../capabilities/sem-edge-effect-metrology.md) · 例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - 黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定): [説明](../capabilities/shape-from-polarization.md) · 例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
@@ -176,7 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 233 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 234 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -235,7 +236,7 @@ PoC 233 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (43)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (44)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工した壁の歪み" width="200" height="200"><span>竣工した壁の歪み</span></a>
@@ -273,6 +274,7 @@ PoC 233 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_pod_lighting/03_pod_curves.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pod_lighting.jpg" alt="照明ごとの検出確率" width="200" height="200"><span>照明ごとの検出確率</span></a>
 <a href="../articles/assets/poc/poc_laser_line_speckle_floor/01_line.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_laser_line_speckle_floor.jpg" alt="光切断のスペックルの床" width="200" height="200"><span>光切断のスペックルの床</span></a>
 <a href="../articles/assets/poc/poc_shape_from_polarization/05_normals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_shape_from_polarization.jpg" alt="偏光で測る黒光沢とガラス" width="200" height="200"><span>偏光で測る黒光沢とガラス</span></a>
+<a href="../articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_phase_measuring_deflectometry.jpg" alt="写真では見えない µm の凹みを縞の鏡像で(デフレクトメトリ)" width="200" height="200"><span>写真では見えない µm の凹みを縞の鏡像で(デフレクトメトリ)</span></a>
 <a href="../articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_interreflection_fringe_error.jpg" alt="白い溝の相互反射と縞の誤差" width="200" height="200"><span>白い溝の相互反射と縞の誤差</span></a>
 <a href="../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zernike_aberrations.jpg" alt="ゼルニケ収差" width="200" height="200"><b>&#9654;</b><span>ゼルニケ収差</span></a>
 <a href="../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_attention_identities.jpg" alt="注意機構の恒等式" width="200" height="200"><span>注意機構の恒等式</span></a>

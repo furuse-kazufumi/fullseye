@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-50 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+51 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -101,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - मापने से पहले अनुमान लगाना कि अवतल हिस्सों का interreflection fringe projection और ToF को कितना भटकाता है (global light transport, direct/global पृथक्करण, micro phase shifting): [explanation](../../capabilities/light-transport.md) _(ja)_ · examples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - उस संख्या में कितना हिस्सा measurement का है, process का नहीं (gauge R&R और uncertainty): [explanation](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · examples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - moiré alignment (थोड़े अलग pitch के दो gratings → fringe phase → nm विस्थापन, differential और Talbot gap): [explanation](../../capabilities/moire-alignment.md) _(ja)_ · examples [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
+- चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature): [explanation](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · examples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - किस आकार का दोष सच में मिलेगा (probability of detection और a90/95, MIL-HDBK-1823A): [explanation](../../capabilities/probability-of-detection.md) _(ja)_ · examples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - SEM की bright edge किसी dimension को कितना बढ़ाती है, ground truth के साथ मापना: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - polarisation से काले चमकदार और काँच के हिस्सों का आकार मापना (shape from polarisation, अस्पष्टता समुच्चय, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
@@ -161,7 +162,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-233 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+234 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -220,7 +221,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (43)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (44)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -258,6 +259,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_pod_lighting/03_pod_curves.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pod_lighting.jpg" alt="हर lighting का POD" width="200" height="200"><span>हर lighting का POD</span></a>
 <a href="../../articles/assets/poc/poc_laser_line_speckle_floor/01_line.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_laser_line_speckle_floor.jpg" alt="laser line की speckle सीमा" width="200" height="200"><span>laser line की speckle सीमा</span></a>
 <a href="../../articles/assets/poc/poc_shape_from_polarization/05_normals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_shape_from_polarization.jpg" alt="polarisation से आकार" width="200" height="200"><span>polarisation से आकार</span></a>
+<a href="../../articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_phase_measuring_deflectometry.jpg" alt="photo में न दिखने वाले µm गड्ढे, fringe के प्रतिबिंब में (deflectometry)" width="200" height="200"><span>photo में न दिखने वाले µm गड्ढे, fringe के प्रतिबिंब में (deflectometry)</span></a>
 <a href="../../articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_interreflection_fringe_error.jpg" alt="सफ़ेद खाँचे का interreflection और fringe त्रुटि" width="200" height="200"><span>सफ़ेद खाँचे का interreflection और fringe त्रुटि</span></a>
 <a href="../../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zernike_aberrations.jpg" alt="Zernike aberrations" width="200" height="200"><b>&#9654;</b><span>Zernike aberrations</span></a>
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="Attention identities" width="200" height="200"><span>Attention identities</span></a>

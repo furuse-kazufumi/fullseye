@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1403. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1404. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1683,6 +1683,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L71** _(ja)_ — ★単位空間の MD² の平均は **ちょうど (n-1)/n**(導出、当てはめではない)。 教科書の「単位空間の距離は平均 1」を有限標本で正確に言い直したもので、 1.0 を固定する試験はどんな標本でも間違い、(n-1)/n は全部で正しい。
 - **L100** _(ja)_ — ★新しい型の語は作らない。曲線(大きさの格子・POD・下限)も表の列として返す。
 - **L101** _(ja)_ — ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に 写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
+
+## `opsspecular.py`
+
+- **L156** _(ja)_ — ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので integrate_normals(高さ)・render_shaded へ無改造で流れる。装置の幾何は table(rig)で、他の op は rig= で受ける(既定の装置なら省略可)。順方向は高さ場(image2d)→ 縞の鏡像(images)。
 
 ## `opsvolcolor.py`
 

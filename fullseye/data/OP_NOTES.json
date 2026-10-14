@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3201,
- "n_notes": 3207,
+ "n_ops": 3207,
+ "n_notes": 3213,
  "notes": {
   "vol_dilate": [
    {
@@ -31476,6 +31476,63 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/spc/uncertainty/gum_validate.md"
+   }
+  ],
+  "deflectometry_phase_to_slope": [
+   {
+    "op": "deflectometry_phase_to_slope",
+    "dim": "specular",
+    "category": "deflectometry",
+    "in": "image2d × image2d",
+    "out": "normalmap",
+    "path": "docs/ops/specular/deflectometry/deflectometry_phase_to_slope.md"
+   }
+  ],
+  "deflectometry_render": [
+   {
+    "op": "deflectometry_render",
+    "dim": "specular",
+    "category": "deflectometry",
+    "in": "image2d",
+    "out": "images",
+    "path": "docs/ops/specular/deflectometry/deflectometry_render.md"
+   }
+  ],
+  "deflectometry_rig": [
+   {
+    "op": "deflectometry_rig",
+    "dim": "specular",
+    "category": "deflectometry",
+    "out": "table",
+    "path": "docs/ops/specular/deflectometry/deflectometry_rig.md"
+   }
+  ],
+  "deflectometry_screen_pattern": [
+   {
+    "op": "deflectometry_screen_pattern",
+    "dim": "specular",
+    "category": "deflectometry",
+    "out": "images",
+    "path": "docs/ops/specular/deflectometry/deflectometry_screen_pattern.md"
+   }
+  ],
+  "deflectometry_sensitivity": [
+   {
+    "op": "deflectometry_sensitivity",
+    "dim": "specular",
+    "category": "deflectometry",
+    "out": "table",
+    "path": "docs/ops/specular/deflectometry/deflectometry_sensitivity.md"
+   }
+  ],
+  "slope_to_curvature": [
+   {
+    "op": "slope_to_curvature",
+    "dim": "specular",
+    "category": "deflectometry",
+    "in": "normalmap",
+    "out": "image2d",
+    "path": "docs/ops/specular/deflectometry/slope_to_curvature.md"
    }
   ],
   "illuminant_from_dichromatic_planes": [
