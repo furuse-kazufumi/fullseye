@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 48 capabilities**
+**Currently 49 capabilities**
 
-## Measure (16)
+## Measure (17)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -92,6 +92,14 @@ Separate how much of a number comes from the parts and how much from the act of 
 Operators: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
 
 Runnable: `poc_measurement_system_analysis`
+
+### [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md)
+
+Eight ops in `moirealign` (category `moire_align` of `opsoptics`) for alignment by moiré: two gratings with slightly different pitches (mask p_m, wafer p_w) form fringes of period p_m p_w / |Δp| that move M = p_m / |Δp| times further than the wafer (p_w / |Δp| if the mask moves). Design (magnification, capture range, the Talbot effect of a proximity gap), a closed-form camera image of single, differential and four-quadrant marks, fringe phase by lock-in or Takeda's FFT method, phase to shift with order resolution, differential pairs that cancel drift, illumination and camera-scale errors, and the white-noise lower bound. The PoC measures both magnifications from images, reads 1 nm steps with 0.08 nm RMS, matches the lower bound with a ratio of 1.00, and breaks the gain over a cross-correlation baseline into its bias and random parts.
+
+Operators: `moire_magnification`, `moire_talbot_gap`, `moire_overlay_image`, `moire_phase`, `moire_phase_to_shift`, `moire_differential_shift`, `moire_mark_read`, `moire_phase_crlb`
+
+Runnable: `poc_moire_alignment`
 
 ### [Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

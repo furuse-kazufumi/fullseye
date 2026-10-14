@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3186,
- "n_notes": 3192,
+ "n_ops": 3194,
+ "n_notes": 3200,
  "notes": {
   "vol_dilate": [
    {
@@ -27604,6 +27604,80 @@
     "in": "signal",
     "out": "pairs",
     "path": "docs/ops/optics/mirror/metal_optical_constants.md"
+   }
+  ],
+  "moire_differential_shift": [
+   {
+    "op": "moire_differential_shift",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_differential_shift.md"
+   }
+  ],
+  "moire_magnification": [
+   {
+    "op": "moire_magnification",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_magnification.md"
+   }
+  ],
+  "moire_mark_read": [
+   {
+    "op": "moire_mark_read",
+    "dim": "optics",
+    "category": "moire_align",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_mark_read.md"
+   }
+  ],
+  "moire_overlay_image": [
+   {
+    "op": "moire_overlay_image",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "image2d",
+    "path": "docs/ops/optics/moire_align/moire_overlay_image.md"
+   }
+  ],
+  "moire_phase": [
+   {
+    "op": "moire_phase",
+    "dim": "optics",
+    "category": "moire_align",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_phase.md"
+   }
+  ],
+  "moire_phase_crlb": [
+   {
+    "op": "moire_phase_crlb",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_phase_crlb.md"
+   }
+  ],
+  "moire_phase_to_shift": [
+   {
+    "op": "moire_phase_to_shift",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_phase_to_shift.md"
+   }
+  ],
+  "moire_talbot_gap": [
+   {
+    "op": "moire_talbot_gap",
+    "dim": "optics",
+    "category": "moire_align",
+    "out": "table",
+    "path": "docs/ops/optics/moire_align/moire_talbot_gap.md"
    }
   ],
   "bend_singlet": [

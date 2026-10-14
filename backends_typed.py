@@ -205,6 +205,16 @@ _OP_BRIDGE_SKIP = {
     "fiber_lp_modes",
     "fiber_mode_field_diameter",
     "fiber_bundle_coupling",
+    # 2026-10-15 モアレによる位置合わせ 8 本(moirealign、moire_align): 表を返す設計・換算の側と、位置合わせのマークの像を
+    # 作る / 読む側。読む側(moire_phase)は縞の周期を前提にする —— 橋が渡す汎用の画像では縞が無く、意味の無い位相を返すだけ。
+    "moire_magnification",
+    "moire_talbot_gap",
+    "moire_overlay_image",
+    "moire_phase",
+    "moire_phase_to_shift",
+    "moire_differential_shift",
+    "moire_mark_read",
+    "moire_phase_crlb",
     # 2026-10-14 光源・フィルタ・センサの分光曲線 9 本(spectralrad、spectral): 曲線(pairs)を作るか掛けるか積む側で、
     # 画像を受けない。台帳(`fullseye.ledger.led_spectrum` …)から使う。
     "blackbody_spectrum",

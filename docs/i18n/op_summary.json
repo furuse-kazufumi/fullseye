@@ -14418,6 +14418,78 @@
    "de": "Anteil des Lichts, der in einen Lichtleiter (Faserbündel) eintritt und wieder austritt.",
    "hi": "light guide (fibre bundle) में जाकर बाहर निकलने वाले प्रकाश का अंश।"
   },
+  "optics/moire_magnification": {
+   "fp": "9001e3b5fd12",
+   "en": "Period and direction of the moiré fringes, the displacement magnification M and the capture range (closed form).",
+   "zh": "莫尔条纹的周期与方向、位移放大倍率 M 与捕获范围(闭式)。",
+   "tw": "疊紋條紋的週期與方向、位移放大倍率 M 與捕獲範圍(閉式)。",
+   "ko": "모아레 줄무늬의 주기와 방향, 변위 확대율 M과 포착 범위(닫힌 형식).",
+   "de": "Periode und Richtung der Moiré-Streifen, die Verschiebungsvergrößerung M und der Fangbereich (geschlossene Form).",
+   "hi": "moiré fringes की अवधि और दिशा, विस्थापन का आवर्धन M और capture range (closed form)।"
+  },
+  "optics/moire_talbot_gap": {
+   "fp": "b0c28e11417e",
+   "en": "Talbot effect of a proximity gap: how much of the mask grating's image survives across the gap, and with which sign.",
+   "zh": "接近间隙的 Talbot 效应:掩模光栅的像在间隙之后保留多少、符号为何。",
+   "tw": "近接間隙的 Talbot 效應:光罩光柵的像在間隙之後保留多少、符號為何。",
+   "ko": "근접 갭의 Talbot 효과: 마스크 격자의 상이 갭 너머에서 얼마나, 어떤 부호로 남는가.",
+   "de": "Talbot-Effekt eines Proximity-Spalts: wie viel vom Bild des Maskengitters jenseits des Spalts erhalten bleibt und mit welchem Vorzeichen.",
+   "hi": "proximity gap का Talbot प्रभाव: mask grating का प्रतिबिंब gap के पार कितना और किस चिह्न के साथ बचता है।"
+  },
+  "optics/moire_overlay_image": {
+   "fp": "efa5fe26c6ec",
+   "en": "Synthesises the camera image of two overlaid gratings (an alignment mark).",
+   "zh": "合成相机拍摄的两片重叠光栅的图像(对准标记)。",
+   "tw": "合成相機拍攝的兩片重疊光柵的影像(對準標記)。",
+   "ko": "겹친 두 장의 격자를 카메라로 찍은 상(정렬 마크)을 합성한다.",
+   "de": "Synthetisiert das Kamerabild zweier überlagerter Gitter (einer Justiermarke).",
+   "hi": "दो overlaid gratings (एक alignment mark) की camera image synthesise करता है।"
+  },
+  "optics/moire_phase": {
+   "fp": "13f57105f1a0",
+   "en": "Reads the fringe phase (referenced to the image origin x = 0), its amplitude and the number of fringes.",
+   "zh": "读取条纹的相位(以图像原点 x = 0 为基准)、振幅与条纹数。",
+   "tw": "讀取條紋的相位(以影像原點 x = 0 為基準)、振幅與條紋數。",
+   "ko": "줄무늬의 위상(상의 원점 x = 0 기준), 진폭, 줄무늬 수를 읽는다.",
+   "de": "Liest die Streifenphase (bezogen auf den Bildursprung x = 0), ihre Amplitude und die Anzahl der Streifen.",
+   "hi": "fringe की phase (image origin x = 0 के सापेक्ष), उसका amplitude और fringes की संख्या पढ़ता है।"
+  },
+  "optics/moire_phase_to_shift": {
+   "fp": "5243a9e40156",
+   "en": "Fringe phase change to displacement δ (nm): δ = Δφ / (dφ/dδ), dφ/dδ = ±2π / p of the grating that moved.",
+   "zh": "条纹相位的变化 → 位移 δ(nm):δ = Δφ / (dφ/dδ),dφ/dδ = ±2π / 移动光栅的 p。",
+   "tw": "條紋相位的變化 → 位移 δ(nm):δ = Δφ / (dφ/dδ),dφ/dδ = ±2π / 移動光柵的 p。",
+   "ko": "줄무늬 위상의 변화 → 변위 δ(nm): δ = Δφ / (dφ/dδ), dφ/dδ = ±2π / 움직인 격자의 p.",
+   "de": "Änderung der Streifenphase zu Verschiebung δ (nm): δ = Δφ / (dφ/dδ), dφ/dδ = ±2π / p des bewegten Gitters.",
+   "hi": "fringe phase का बदलाव → विस्थापन δ (nm): δ = Δφ / (dφ/dδ), dφ/dδ = ±2π / हिले हुए grating का p।"
+  },
+  "optics/moire_differential_shift": {
+   "fp": "862808f1a4e0",
+   "en": "Reads the displacement with common errors removed, from two pairs with opposite pitch differences (A = (p_m, p_w), B = (p_w, p_m)).",
+   "zh": "由节距差方向相反的两对(A = (p_m, p_w)、B = (p_w, p_m))读取消除了共同误差的位移。",
+   "tw": "由節距差方向相反的兩對(A = (p_m, p_w)、B = (p_w, p_m))讀取消除了共同誤差的位移。",
+   "ko": "피치 차가 반대인 두 쌍(A = (p_m, p_w), B = (p_w, p_m))에서 공통 오차를 없앤 변위를 읽는다.",
+   "de": "Liest die Verschiebung ohne gemeinsame Fehler aus zwei Paaren mit entgegengesetzter Periodendifferenz (A = (p_m, p_w), B = (p_w, p_m)).",
+   "hi": "विपरीत pitch अंतर वाले दो जोड़ों (A = (p_m, p_w), B = (p_w, p_m)) से साझा त्रुटियाँ हटाकर विस्थापन पढ़ता है।"
+  },
+  "optics/moire_mark_read": {
+   "fp": "830c5fab5857",
+   "en": "Reads one alignment mark from a measured image and a reference image (taken at zero displacement).",
+   "zh": "由测量图像与参考图像(位移为 0 时拍摄)读取一个对准标记。",
+   "tw": "由量測影像與參考影像(位移為 0 時拍攝)讀取一個對準標記。",
+   "ko": "측정 상과 기준 상(변위 0일 때 찍은 것)으로 정렬 마크 하나를 읽는다.",
+   "de": "Liest eine Justiermarke aus einem Messbild und einem Referenzbild (bei Verschiebung null aufgenommen).",
+   "hi": "मापी गई image और reference image (शून्य विस्थापन पर ली गई) से एक alignment mark पढ़ता है।"
+  },
+  "optics/moire_phase_crlb": {
+   "fp": "06ecc9c22c84",
+   "en": "How finely the fringe phase and the displacement can be read under white Gaussian noise (closed-form lower bound).",
+   "zh": "白高斯噪声下条纹相位与位移能读到多细(下界的闭式)。",
+   "tw": "白高斯雜訊下條紋相位與位移能讀到多細(下界的閉式)。",
+   "ko": "백색 가우스 잡음 아래에서 줄무늬 위상과 변위를 얼마나 세밀하게 읽을 수 있는가(하한의 닫힌 형식).",
+   "de": "Wie fein Streifenphase und Verschiebung unter weißem Gaußschem Rauschen lesbar sind (geschlossene untere Schranke).",
+   "hi": "white Gaussian noise में fringe phase और विस्थापन कितनी बारीकी से पढ़े जा सकते हैं (निचली सीमा, closed form)।"
+  },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",

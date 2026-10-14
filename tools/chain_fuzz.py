@@ -4387,6 +4387,15 @@ def _b_gum_budget(pool, rng):
              "dof": rng.uniform(3.0, 60.0, n)},), {}
 
 
+def _b_moire_mark(pool, rng):
+    """差動のマークの測定像と基準像(32 x 128 画素、画素 2 µm で縞の周期 51 画素 = 区画に 2.3 周期)。"""
+    import moirealign as _ma
+    kw = {"shape": (32, 128), "pixel_um": 2.0, "layout": "differential", "noise_sigma": 0.005}
+    ref = _ma.moire_overlay_image(seed=1, **kw)
+    img = _ma.moire_overlay_image(shift_nm=float(rng.uniform(-200.0, 200.0)), seed=2, **kw)
+    return (img, ref), {"pixel_um": 2.0}
+
+
 def _b_gum_mc(pool, rng):
     """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
     n = 3
@@ -6949,6 +6958,9 @@ OP_ARG_BUILDERS = {
     "distance_point_plane": _b_vectors(3),       # (p, plane_pt, n)
     "distance_point_line": _b_vectors(3),        # (p, line_pt, d)
     "distance_line_line": _b_vectors(4),         # (p1, d1, p2, d2)
+    # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
+    # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
+    "moire_mark_read": _b_moire_mark,
 }
 
 

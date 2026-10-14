@@ -1,4 +1,4 @@
-# OPTICS operator help — 221 ops in 25 categories
+# OPTICS operator help — 229 ops in 26 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -81,6 +81,10 @@
 ### mirror (2)
 
 [metal_mirror_rgb](mirror/metal_mirror_rgb.md) · [metal_optical_constants](mirror/metal_optical_constants.md)
+
+### moire_align (8)
+
+[moire_differential_shift](moire_align/moire_differential_shift.md) · [moire_magnification](moire_align/moire_magnification.md) · [moire_mark_read](moire_align/moire_mark_read.md) · [moire_overlay_image](moire_align/moire_overlay_image.md) · [moire_phase](moire_align/moire_phase.md) · [moire_phase_crlb](moire_align/moire_phase_crlb.md) · [moire_phase_to_shift](moire_align/moire_phase_to_shift.md) · [moire_talbot_gap](moire_align/moire_talbot_gap.md)
 
 ### optimization (3)
 

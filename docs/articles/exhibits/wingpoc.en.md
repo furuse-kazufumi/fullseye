@@ -314,7 +314,7 @@ Source: [examples/poc_moire_screen.py](https://github.com/furuse-kazufumi/fullse
 
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_moire_screen)
 
-Ops used (notes): [`background_flatten`](https://furuse.work/ops/3d/surface_fit/background_flatten.html) · [`fft_image`](https://furuse.work/ops/2d/frequency/fft_image.html) · [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_image.html) · [`halftone_moire_period`](https://furuse.work/ops/printpath/npr/halftone_moire_period.html) · [`lattice_moire_peak`](https://furuse.work/ops/flyvision/alias/lattice_moire_peak.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html)
+Ops used (notes): [`background_flatten`](https://furuse.work/ops/3d/surface_fit/background_flatten.html) · [`fft_image`](https://furuse.work/ops/2d/frequency/fft_image.html) · [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_image.html) · [`halftone_moire_period`](https://furuse.work/ops/printpath/npr/halftone_moire_period.html) · [`lattice_moire_peak`](https://furuse.work/ops/flyvision/alias/lattice_moire_peak.html) · [`moire_differential_shift`](https://furuse.work/ops/optics/moire_align/moire_differential_shift.html) · [`moire_magnification`](https://furuse.work/ops/optics/moire_align/moire_magnification.html) · [`moire_mark_read`](https://furuse.work/ops/optics/moire_align/moire_mark_read.html) · [`moire_overlay_image`](https://furuse.work/ops/optics/moire_align/moire_overlay_image.html) · [`moire_phase`](https://furuse.work/ops/optics/moire_align/moire_phase.html) · [`moire_phase_crlb`](https://furuse.work/ops/optics/moire_align/moire_phase_crlb.html) · [`moire_phase_to_shift`](https://furuse.work/ops/optics/moire_align/moire_phase_to_shift.html) · [`moire_talbot_gap`](https://furuse.work/ops/optics/moire_align/moire_talbot_gap.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html)
 
 ## No.2026.102 —— Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique
 
@@ -1100,7 +1100,7 @@ Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 41 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 42 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2539,6 +2539,46 @@ Source: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-k
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
 
 Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
+
+## No.2026.232 —— Moiré Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase
+
+[![Moiré Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png)
+
+*↑ **Moiré Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase** ―― Alignment in lithography and nanoimprint overlays a mask and a wafer to nanometres. Two gratings of slightly different pitch (mask 2.00 µm, wafer 2.04 µm) are each erased by the camera blur (the direct image has a standard deviation of 9e-6), yet overlaid they make 102 µm fringes that magnify the shift fiftyfold. Eight new ops (`moirealign`, category `moire_align` of `opsoptics`): magnification and capture range, the Talbot effect of the proximity gap, the synthetic mark image, the fringe phase by lock-in (least squares at the known frequency) or by Takeda's FFT method, phase to shift, the differential pair, reading a single, differential or four-quadrant 2-D mark, and the noise lower bound. The magnification depends on which grating moves: measured from the images 50.000 for the wafer and 51.000 for the mask (the often quoted M = p_w/|Δp| is the mask-moving case). Eleven 1 nm steps are read with an RMS error of 0.08 nm, and the Monte-Carlo spread matches the phase lower bound (Rife-Boorstyn times the Hann factor 1.5 times 2 for a noisy reference) with a ratio of 1.00. Against the baseline (a resolvable 20 µm bar mark read by cross-correlation and parabolic sub-pixel interpolation) the RMS error is 91 times smaller, but most of that is the parabola's bias (it reads 17 % short); the random error alone differs only 2.5-fold (0.077 vs 0.19 nm), and the breakdown is printed. With a coarser camera (0.5 to 2 µm pixels) the correlation worsens 2.3-fold while the moiré does not change. Two pairs with opposite pitch differences cancel a 300 nm drift of the whole mark (one pair alone is off by 300/M = 6.2 nm) and a 30 % illumination tilt to within 0.03 nm, and a 2 % camera-scale error moves the reading by 0.007 nm because the conversion depends only on the pitches (the correlation is off by the full 2 %). The reading wraps every pitch (1.01 µm for the differential pair); a coarse correlation fixes the order and reads 0 to 5 µm with 0.14 nm RMS. Across a proximity gap the fringes return at the Talbot length 2p²/λ = 14.5 µm and flip sign at half of it, and a flip between reference and measurement makes the reading jump by half a period (1020 nm). Honest limit: the 0.1 nm figures are a white-noise floor; published alignment accuracies of 10 to 30 nm are set by systematic errors such as mark asymmetry, gap and tilt. Nothing learned, nothing calibrated, 32 gates.*
+
+[![(a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/01_marks.png)
+
+*↑ The measurement ―― (a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動のマーク: 橙の線が A と B の境目、青の破線 = ずれ 0 の暗い縞、橙の実線と矢印 = ウェハを 600 nm 動かした後の同じ縞(A は -30.0 µm、B は +30.6 µm)。像全体が流れると両方が同じ向きに動くので、差を取ればずれだけが残る。 (figure labels are in Japanese; the numbers are the same)*
+
+[![下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/04_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/04_crlb.png)
+
+*↑ 下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。*
+
+[![逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/05_differential_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/05_differential.png)
+
+*↑ 逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。*
+
+[![左上 A_x、右上 B_x、左下 A_y、右下 B_y。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/06_quad_mark_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/06_quad_mark.png)
+
+*↑ 左上 A_x、右上 B_x、左下 A_y、右下 B_y。*
+
+[![印刷の版ずれと同じ不定性。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/07_ambiguity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/07_ambiguity.png)
+
+*↑ 印刷の版ずれと同じ不定性。*
+
+[![上: 20 µm の線を直接撮った像、下: モアレ。ずれを 1 コマ 51 nm ずつ、計 2.04 µm(ウェハのピッチ 1 つ)動かす。線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周し](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif)
+
+*↑ The animation ―― 上: 20 µm の線を直接撮った像、下: モアレ。ずれを 1 コマ 51 nm ずつ、計 2.04 µm(ウェハのピッチ 1 つ)動かす。線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周して元に戻る(= 折り返し)。*
+
+```
+py -3.11 examples/poc_moire_alignment.py
+```
+
+Source: [examples/poc_moire_alignment.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_moire_alignment)
+
+Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`moire_differential_shift`](https://furuse.work/ops/optics/moire_align/moire_differential_shift.html) · [`moire_magnification`](https://furuse.work/ops/optics/moire_align/moire_magnification.html) · [`moire_mark_read`](https://furuse.work/ops/optics/moire_align/moire_mark_read.html) · [`moire_overlay_image`](https://furuse.work/ops/optics/moire_align/moire_overlay_image.html) · [`moire_phase`](https://furuse.work/ops/optics/moire_align/moire_phase.html) · [`moire_phase_crlb`](https://furuse.work/ops/optics/moire_align/moire_phase_crlb.html) · [`moire_phase_to_shift`](https://furuse.work/ops/optics/moire_align/moire_phase_to_shift.html) · [`moire_talbot_gap`](https://furuse.work/ops/optics/moire_align/moire_talbot_gap.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

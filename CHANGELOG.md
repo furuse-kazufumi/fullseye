@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — モアレで位置合わせ(moirealign 8 op + PoC)
+- `moirealign`(`opsoptics` の新カテゴリ `moire_align`、8 op): `moire_magnification`(縞の周期・拡大率・捕捉範囲。周期は `printpath.halftone_moire_period` を呼んで照合)/ `moire_talbot_gap`(近接ギャップの Talbot 効果、`optics.angular_spectrum_propagate`)/ `moire_overlay_image`(単一・差動・4 象限のマークの像、ぼけと画素の積分は閉形式)/ `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法 → `complexops.phase_unwrap`)/ `moire_phase_to_shift`(次数は `fringe.absolute_phase`)/ `moire_differential_shift` / `moire_mark_read` / `moire_phase_crlb`。
+- ★拡大率はどちらの格子が動くかで違う: ウェハが動けば M = p_m/|Δp|、マスクが動けば p_w/|Δp|(PoC で 50.000 / 51.000 を像から測り返す)。
+- PoC `poc_moire_alignment`(32 門、図 7 枚 + GIF 1 本): 1 nm の階段を誤差 RMS 0.08 nm、Monte-Carlo と位相の下限が比 1.00、差動で流れ 300 nm と照明の傾きを 0.03 nm 以内に消す、カメラの倍率 2 % の誤りが読みに入らない、折り返しと次数の決定、Talbot の反転で読みが半周期跳ぶ。★比べ手(相互相関 + 放物線)との差 91 倍の大半は放物線の偏りで、偶然の誤差だけなら 2.5 倍(内訳を門に)。
+- 能力ノート `docs/capabilities/moire-alignment.md`、op 要約 6 言語、手書き件数 +8。
 ### Fixed — psf_from_opd の波長の上書き・瞳の幅の数え方・PSF の窓
 - `lensimage.psf_from_opd(wavelength_um=…)`(と `raytrace.opd_samples` / `ray_bundle` / `ray_fan` / `chief_ray` / `spot_stats` の波長の上書き): 屈折は指定の波長で計算するのに、光線の狙い(入射瞳・射出瞳)と PSF の標本間隔(F 値)は系の波長のままだった → 新しい `raytrace._para_at` で指定の波長の近軸量を使う(撮像面は系のまま)。上書きの結果は、その波長で組み直した系と一致する(差 0、旧版は PSF の頂点の 2 %、絞りが 2 面目の系では PSF の大きさ自体が違った)。`psf_field_grid` の `fno` / `rms_spot_mm` も指定の波長で計算する。
 - `psf_from_opd` の自動の瞳格子: 位相の条件(0.4 波/標本)だけで決めていたので、PSF の窓が幾何的なぼけの 1.25 倍しかなく、エネルギーの 1〜2 % が窓の内側に折り返していた → 窓 ≥ ぼけの直径の 2 倍も満たし、下限を 64 → 128 に上げた(瞳の縁の階段の誤差)。3 倍細かい瞳との全変動距離は 1.2〜2.7 % → 0.5〜0.8 %。f/4 の単レンズの自動格子は 194 → 310(Strehl は 0.0106 のまま)。

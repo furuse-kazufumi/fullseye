@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: image2d × axes
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, poc_beam_modal_video, poc_camera_calibration, poc_camera_shake_deblur, poc_crack_width_timeseries, poc_dehazing, poc_dic_strain, poc_driving_decisions, poc_driving_traffic, poc_focus_stacking, poc_interferometry_step, poc_measurement_system_analysis, poc_motion_magnification, poc_panorama_drift, poc_particle_tracking, poc_photoelasticity, poc_pxrd_phase_peel, poc_registration_basin, poc_river_surface_velocity, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_template_tracking, poc_timelapse_growth, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
+examples: [annotate_gallery, annotate_paper_tour, poc_beam_modal_video, poc_camera_calibration, poc_camera_shake_deblur, poc_crack_width_timeseries, poc_dehazing, poc_dic_strain, poc_driving_decisions, poc_driving_traffic, poc_focus_stacking, poc_interferometry_step, poc_measurement_system_analysis, poc_moire_alignment, poc_motion_magnification, poc_panorama_drift, poc_particle_tracking, poc_photoelasticity, poc_pxrd_phase_peel, poc_registration_basin, poc_river_surface_velocity, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_template_tracking, poc_timelapse_growth, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ ValueError
 - [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 - [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
+- [poc_moire_alignment](../../../../examples/poc_moire_alignment.py) — `py -3.11 examples/poc_moire_alignment.py`
 - [poc_motion_magnification](../../../../examples/poc_motion_magnification.py) — `py -3.11 examples/poc_motion_magnification.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
 - [poc_particle_tracking](../../../../examples/poc_particle_tracking.py) — `py -3.11 examples/poc_particle_tracking.py`

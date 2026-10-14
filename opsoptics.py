@@ -101,8 +101,9 @@ import cavityoptics
 import materials
 import spectralrad
 import fiberoptics
+import moirealign
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "moirealign": moirealign,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -467,6 +468,17 @@ _CATALOG = {
         ("fiber_lp_modes", "fiberoptics", [], "table"),
         ("fiber_mode_field_diameter", "fiberoptics", [], "table"),
         ("fiber_bundle_coupling", "fiberoptics", [], "table"),
+    ],
+    "moire_align": [  # モアレによる位置合わせ(moirealign、2026-10-15): ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ
+        # ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
+        ("moire_magnification", "moirealign", [], "table"),
+        ("moire_talbot_gap", "moirealign", [], "table"),
+        ("moire_overlay_image", "moirealign", [], "image2d"),
+        ("moire_phase", "moirealign", ["image2d"], "table"),
+        ("moire_phase_to_shift", "moirealign", [], "table"),
+        ("moire_differential_shift", "moirealign", [], "table"),
+        ("moire_mark_read", "moirealign", ["image2d", "image2d"], "table"),
+        ("moire_phase_crlb", "moirealign", [], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),
