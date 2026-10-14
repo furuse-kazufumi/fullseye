@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_fit — OPTICS <code style="color:#22d3bf">film</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>反射スペクトルに転送行列のモデルをあてはめて膜厚を出す(非線形最小二乗、大域の格子探索 → 局所の精密化)。</p>
+<p>spectrum:     <code style="color:#22d3bf">pairs</code>(λ [nm], R)。</p>
+<p>film / substrate / under: モデルの積層(材料表の鍵)。最上層 <code style="color:#22d3bf">film</code> の厚さを未知数にする。thickness_min_nm / thickness_max_nm: 探す範囲。格子は位相が λ_min で π/8 進む刻み(局所解に落ちない)。angle_deg / na / ambient / roughness_nm: 測定の条件(<code style="color:#22d3bf">multilayer_reflectance</code> と同じ)。モデル側の</p>
+<p>条件を実測と違えると膜厚が偏る —— その偏りを測るのが PoC の章。</p>
+<p>fit_scale:    True なら反射率の倍率 a も同時に(閉形式で)あてはめる(反射率の絶対値の校正が無い装置)。</p>
+<p>返り値 dict: thickness_nm / rmse / scale / candidates(局所解の [(膜厚, rmse), ...] を rmse の昇順)/</p>
+<p>second_rmse_ratio(2 番目の候補の rmse ÷ 最良。1 に近いほど一意でない)。</p>
+<p>★薄い膜(縞が 1 本未満)でも、絶対反射率の形から膜厚が決まる —— FFT 法が破綻する領域で使える。ただし材料(n)を取り違えると、光学的厚さ n d を保ったまま d が n の比だけ偏る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>文字列は <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array は <code style="color:#22d3bf">ValueError</code></b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。<b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。<b>それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code></b> —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">film</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:multilayer_reflectance">multilayer_reflectance</a> · <a style="color:#22d3bf" href="opoptics:film_color">film_color</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: filmoptics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

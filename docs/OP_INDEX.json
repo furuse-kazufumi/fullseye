@@ -1,8 +1,8 @@
 {
- "n_ops": 3222,
+ "n_ops": 3227,
  "tiers": {
   "color": 12,
-  "ledger": 2269,
+  "ledger": 2274,
   "nary": 17,
   "registry": 924
  },
@@ -8161,6 +8161,17 @@
    ]
   },
   {
+   "name": "film_color",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "film",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "film_grain",
    "halcon": "",
    "in_sort": "rgb",
@@ -8171,6 +8182,45 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "film_thickness_fft",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "film",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "film_thickness_fit",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "film",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "film_thickness_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "film",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -16115,6 +16165,17 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "multilayer_reflectance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "film",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "music_doa",

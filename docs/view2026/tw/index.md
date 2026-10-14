@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 61 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 62 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -129,6 +129,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 用每一步都能解釋的公式把 Bayer 原始幀變成顯示影像: [說明](../../capabilities/raw-to-display-isp.md) _(ja)_ · 範例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 光源 × 對象 × 感測器的光譜鏈(普朗克・CIE A・LED・濾光片・Si 的 QE): [說明](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 範例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI 線掃描與線掃描鏡頭(級數與訊噪比、同步誤差的 MTF、各像高的照度與 MTF): [說明](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 範例 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+- 以光譜反射率量測薄膜厚度(傳輸矩陣 → 干涉色 → FFT 與模型擬合 → 膜厚圖): [說明](../../capabilities/thin-film-reflectometry.md) _(ja)_ · 範例 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
 
 **波與訊號**
 
@@ -172,7 +173,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 236 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 237 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -350,9 +351,10 @@ PoC 236 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>顏色與分離</b> (7)</summary>
+<details class="vall"><summary><b>顏色與分離</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纖與光導(模態、色散、模場直徑)" width="200" height="200"><span>光纖與光導(模態、色散、模場直徑)</span></a>
+<a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)" width="200" height="200"><b>&#9654;</b><span>以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="透過矽晶圓的近紅外檢測(選擇 LED 波長)" width="200" height="200"><b>&#9654;</b><span>透過矽晶圓的近紅外檢測(選擇 LED 波長)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="材料光學物性庫（83 種材料共用一張表）" width="200" height="200"><b>&#9654;</b><span>材料光學物性庫（83 種材料共用一張表）</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="顏料分層" width="200" height="200"><span>顏料分層</span></a>

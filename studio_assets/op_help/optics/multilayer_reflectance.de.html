@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">multilayer_reflectance — OPTICS <code style="color:#22d3bf">film</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">pairs</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import filmoptics; filmoptics.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;multilayer_reflectance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Spektrale Reflexion (oder Transmission bzw. Absorption) eines Mehrschichtfilms als pairs (λ nm, Wert): exakte Lösung mit der charakteristischen Matrix (Transfermatrix).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>layers:       入射側から順の <code style="color:#22d3bf">[(材料, 厚さ nm), ...]</code>。材料は材料表の鍵(<code style="color:#22d3bf">&quot;SIO2&quot;</code> / <code style="color:#22d3bf">&quot;SI3N4&quot;</code> / <code style="color:#22d3bf">&quot;PMMA&quot;</code></p>
+<p>/ <code style="color:#22d3bf">&quot;TIO2&quot;</code> …)・材料レコード・実数・複素数 n + ik。空にすると基板だけ(裸の面の Fresnel)。</p>
+<p>substrate:    基板(半無限)。既定は材料表の Si(Green 2008、k つき)。</p>
+<p>wl_min_nm / wl_max_nm / n_points: 波長の等間隔格子。<code style="color:#22d3bf">wavelengths_nm</code> を渡せばそちらを使う(昇順)。</p>
+<p>angle_deg:    入射角(入射側の媒質の中)。</p>
+<p>polarization: &quot;unpolarized&quot;(s と p の平均)/ &quot;s&quot; / &quot;p&quot;。</p>
+<p>na:           集光の開口数(&gt; 0 なら法線まわりの円錐で角度平均。瞳を一様に満たす照明 = 重みは sin²θ に一様)。</p>
+<p>angle_deg と同時には指定できない。</p>
+<p>roughness_nm: 共形な粗さの RMS σ。R に exp(−(4π n₀ σ cos θ₀ / λ)²)(Debye–Waller)が掛かる。</p>
+<p>ambient:      入射側の媒質(実数か材料表の鍵、透明であること)。液浸なら <code style="color:#22d3bf">&quot;WATER&quot;</code>。</p>
+<p>quantity:     &quot;reflectance&quot; / &quot;transmittance&quot;(基板の中へ入る割合)/ &quot;absorptance&quot;(層での吸収 = 1 − R − T)。</p>
+<p>粗さ &gt; 0 では T と A を出さない(散乱光の行き先をこのモデルは持たない → ValueError)。</p>
+<p>返り値: (K, 2) の pairs。</p>
+<p>真値: 1 層なら <code style="color:#22d3bf">matappear.thin_film_reflectance</code>(Airy の式、別実装)と一致する。膜厚 0 は裸の基板の Fresnel、λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。吸収の無い積層では R + T = 1。</p>
+<p>&gt;&gt;&gt; p = multilayer_reflectance([(&quot;SIO2&quot;, 500.0)], &quot;SI&quot;, 400.0, 800.0, 5)</p>
+<p>&gt;&gt;&gt; p.shape</p>
+<p>(5, 2)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
+<p style="margin:2px 0 2px 12px">• <b>Strings lösen <code style="color:#22d3bf">ValueError</code> aus</b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> gelingt, sodass ein ungeparster Konfigurationswert als Länge durchrutschen würde (gemessen: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> lieferte plausible 66,667 mm). bool wird als implizite Hochstufung <code style="color:#22d3bf">True == 1</code> ebenfalls abgelehnt.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / Masked Arrays lösen <code style="color:#22d3bf">ValueError</code> aus</b> (nur reelle Slots; das stille Verwerfen des Imaginärteils bzw. Abstreifen der Maske wird abgelehnt). <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus.</b></p>
+<p style="margin:2px 0 2px 12px">• <b>Division durch null und Verwandtes wird namentlich abgelehnt</b>: Brennweite 0, Krümmungsradius 0, Brechzahl &lt;= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe &lt;= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).</p>
+<p style="margin:2px 0 2px 12px">• <b>Nur zwei Operatoren liefern einen nicht-endlichen Wert, und beide halten das vertraglich fest</b>: <code style="color:#22d3bf">depth_of_field</code> liefert jenseits der hyperfokalen Distanz <code style="color:#22d3bf">far_mm = inf</code> (genau das bedeutet die hyperfokale Distanz), und <code style="color:#22d3bf">gaussian_beam</code> liefert an der Taille <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (der Krümmungsradius einer ebenen Wellenfront). Beide liefern zusätzlich einen endlichen Partner (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). <b>Jedes andere stille NaN/Inf wird intern erkannt und löst <code style="color:#22d3bf">ValueError</code> aus</b> — &quot;float64 ist übergelaufen&quot; und &quot;die Antwort ist unendlich&quot; sind verschiedene Aussagen; die erste wird nie im Gewand der zweiten geliefert.</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenzen</b>: erzeugte Gitter durch <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), übergebene Felder/PSFs/Blenden durch <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD-Elementketten durch <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike durch <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). Damit werden Pfade fail-closed geschlossen, in denen ein kleines Argument eine riesige interne Allokation auslöst (gemessen: n_max=40 × 4096² braucht 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physikalisch unmögliche Zustände werden ebenfalls abgelehnt</b>: Stokes-Vektor mit Polarisationsgrad &gt; 1, negative Transmission, negative Intensität und ungültige Zernike-Indizes wie ungerades n-|m|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">Leitfaden zur Familie optics_imaging</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fit">film_thickness_fit</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">film</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:film_color">film_color</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fit">film_thickness_fit</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: filmoptics.py — OPTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -216,6 +216,13 @@ _OP_BRIDGE_SKIP = {
     "fiber_lp_modes",
     "fiber_mode_field_diameter",
     "fiber_bundle_coupling",
+    # 2026-10-15 薄膜の分光反射率と膜厚 5 本(filmoptics、film): 曲線(pairs)か表を返す側。map は帯域画像の列を受けるが
+    # 返すのは表(膜厚・残差・候補の数の地図の dict)で、単一画像の op ではない。
+    "multilayer_reflectance",
+    "film_color",
+    "film_thickness_fft",
+    "film_thickness_fit",
+    "film_thickness_map",
     # 2026-10-15 モアレによる位置合わせ 8 本(moirealign、moire_align): 表を返す設計・換算の側と、位置合わせのマークの像を
     # 作る / 読む側。読む側(moire_phase)は縞の周期を前提にする —— 橋が渡す汎用の画像では縞が無く、意味の無い位相を返すだけ。
     "moire_magnification",

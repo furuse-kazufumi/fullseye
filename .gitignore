@@ -14,6 +14,8 @@ data/*
 # core discovered, condensed into ops. It MUST ship or backends_macro registers
 # nothing on a fresh checkout (and tests/test_macro_ops.py fails). Not a scrape cache.
 !data/macro_champions.json
+# Public measured data for the thin-film PoC (CC BY 4.0, small extracts; source and changes in its README.md).
+!data/thin_film_real/
 
 # packaging build artifacts
 *.egg-info/

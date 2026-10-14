@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 61 capabilities**
+**Currently 62 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -50,6 +50,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Locate a part by template matching and move the measurement model with it](capabilities/template-alignment.md) | `gaussian` → `ncc_locate` → `shape_locate` → `create_metrology_model` → `add_metrology_object_circle_measure` → `align_metrology_model` → `apply_metrology_model` | `poc_template_tracking` |
 | [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
+| [Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
 | [Reconstruct slices from projections (CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [Diagnose faults from vibration and sound](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [Carve a solid out of silhouettes (visual hull)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
@@ -395,7 +396,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (10)
+## Light and colour (11)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -496,6 +497,18 @@ Pipeline: [`tdi_snr`](ops/optics/linescan/tdi_snr.md) → [`tdi_sync_mtf`](ops/o
 Alternatives: [`lens_system`](ops/optics/design/lens_system.md), [`emva_snr_curve`](ops/optics/sensorchar/emva_snr_curve.md), [`relative_illumination`](ops/optics/geometric/relative_illumination.md)
 
 Runnable: `poc_tdi_linescan`
+
+### [Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps)](capabilities/thin-film-reflectometry.md)
+
+Five ops in `filmoptics` (category `film`), with every film and substrate given by its key in the material table: the transfer-matrix reflectance, transmittance and absorptance of a multilayer stack (oblique incidence, s/p, the angular average of a focusing NA, conformal roughness), the interference colour against thickness (the wafer colour chart, in sRGB and CIELAB under D65 or any illuminant), thickness from the fringe period by FFT (dispersion-corrected, with the closed-form lower limit 2/Δx), thickness by a non-linear least-squares fit of the transfer-matrix model (global grid then golden-section refinement, all local candidates returned), and per-pixel thickness maps from a spectral or an RGB image together with a map of how many thicknesses fit equally well.
+
+Operators: `multilayer_reflectance`, `film_color`, `film_thickness_fft`, `film_thickness_fit`, `film_thickness_map`
+
+Pipeline: [`multilayer_reflectance`](ops/optics/film/multilayer_reflectance.md) → [`film_thickness_fft`](ops/optics/film/film_thickness_fft.md) → [`film_thickness_fit`](ops/optics/film/film_thickness_fit.md) → [`film_thickness_map`](ops/optics/film/film_thickness_map.md)
+
+Alternatives: [`thin_film_reflectance`](ops/optics/appearance/thin_film_reflectance.md), [`film_color`](ops/optics/film/film_color.md)
+
+Runnable: `poc_thin_film_reflectometry`
 
 ## Waves and signals (5)
 

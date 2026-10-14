@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-61 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+62 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -144,6 +144,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Bayer の生フレームを、段ごとに説明できる式で表示画像にする: [説明](../capabilities/raw-to-display-isp.md) · 例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分): [説明](../capabilities/spectral-radiometry-chain.md) · 例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF): [説明](../capabilities/tdi-linescan-and-lens.md) · 例 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+- 薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ): [説明](../capabilities/thin-film-reflectometry.md) · 例 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
 
 **波と信号**
 
@@ -187,7 +188,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 236 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 237 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -365,9 +366,10 @@ PoC 236 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>色・分離</b> (7)</summary>
+<details class="vall"><summary><b>色・分離</b> (8)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_light_guide.jpg" alt="光ファイバとライトガイド(モード・分散・モード径)" width="200" height="200"><span>光ファイバとライトガイド(モード・分散・モード径)</span></a>
+<a href="../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_thin_film_reflectometry.jpg" alt="分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)" width="200" height="200"><b>&#9654;</b><span>分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)</span></a>
 <a href="../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_nir_silicon_transmission.jpg" alt="Si ウェハ越しの近赤外透過(LED の波長を選ぶ)" width="200" height="200"><b>&#9654;</b><span>Si ウェハ越しの近赤外透過(LED の波長を選ぶ)</span></a>
 <a href="../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_material_optical_library.jpg" alt="材料の光学物性ライブラリ(83 種が同じ表から)" width="200" height="200"><b>&#9654;</b><span>材料の光学物性ライブラリ(83 種が同じ表から)</span></a>
 <a href="../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pigment_unmixing.jpg" alt="顔料の層を分離" width="200" height="200"><span>顔料の層を分離</span></a>

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-61 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+62 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -129,6 +129,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Ein Bayer-Rohbild Schritt für Schritt nachvollziehbar in ein Anzeigebild umwandeln: [Erklärung](../../capabilities/raw-to-display-isp.md) _(ja)_ · Beispiele [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - Die spektrale Kette Lichtquelle × Objekt × Sensor (Planck, CIE A, LED, Filter, Si-QE): [Erklärung](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · Beispiele [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI-Zeilenkameras und Zeilenobjektive (Stufen und SNR, MTF bei Synchronfehlern, Beleuchtung und MTF über die Bildhöhe): [Erklärung](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · Beispiele [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+- Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte): [Erklärung](../../capabilities/thin-film-reflectometry.md) _(ja)_ · Beispiele [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
 
 **Wellen und Signale**
 
@@ -172,7 +173,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-236 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+237 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -350,9 +351,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Farbe und Trennung</b> (7)</summary>
+<details class="vall"><summary><b>Farbe und Trennung</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)" width="200" height="200"><span>Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)</span></a>
+<a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)" width="200" height="200"><b>&#9654;</b><span>Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="Nahinfrarot durch einen Siliziumwafer (Wahl der LED)" width="200" height="200"><b>&#9654;</b><span>Nahinfrarot durch einen Siliziumwafer (Wahl der LED)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="Eine Bibliothek optischer Materialeigenschaften (83 Materialien, eine Tabelle)" width="200" height="200"><b>&#9654;</b><span>Eine Bibliothek optischer Materialeigenschaften (83 Materialien, eine Tabelle)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="Pigmentschichten" width="200" height="200"><span>Pigmentschichten</span></a>

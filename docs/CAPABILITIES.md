@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 61 項目**
+**収録 62 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -49,6 +49,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md) | `gaussian` → `ncc_locate` → `shape_locate` → `create_metrology_model` → `add_metrology_object_circle_measure` → `align_metrology_model` → `apply_metrology_model` | `poc_template_tracking` |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
+| [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
@@ -462,7 +463,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (10)
+## 光と色 (11)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -583,6 +584,22 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 実寸校正: 流れ方向の 1 画素は搬送速度 / ラインレートで決まるのでエンコーダ同期で取る(速度誤差 2 %・64 段で掃引 1.28 px、0.25 c/px の MTF 0.84)。幅方向は画素ピッチ / 倍率で、両方向とも既知長さの的で確かめる。
 
 動く例: `poc_tdi_linescan`
+
+### [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md)
+
+Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペクトルの干渉縞から非接触で測ります(分光干渉式の膜厚計)。`filmoptics` の 5 本は、膜も基板も材料表(`materials`)の鍵で受けます。観察用の光学系と観察対象が同じ材料表を引くので、膜の n,k をどこかで別に持つ必要がありません。
+
+使う op: `multilayer_reflectance`, `film_color`, `film_thickness_fft`, `film_thickness_fit`, `film_thickness_map`
+
+推奨パイプライン: [`multilayer_reflectance`](ops/optics/film/multilayer_reflectance.md) → [`film_thickness_fft`](ops/optics/film/film_thickness_fft.md) → [`film_thickness_fit`](ops/optics/film/film_thickness_fit.md) → [`film_thickness_map`](ops/optics/film/film_thickness_map.md)
+
+代替: [`thin_film_reflectance`](ops/optics/appearance/thin_film_reflectance.md), [`film_color`](ops/optics/film/film_color.md)
+
+限界: 直入射のモデルは顕微分光の膜を薄く読む(実測で −5.7 %、NA を入れると −2.7 %)。FFT は縞 2 本未満(400〜800 nm の SiO₂ で約 540 nm 未満)で破綻。RGB は色が周期的に似るので次数を取り違える画素が残る。
+
+実寸校正: 反射率の絶対値は裸の Si(材料表の Si の Fresnel)を基準にする(実測と中央値 0.4 % 差)。任意単位の分光器は fit_scale=True、カメラは裸の Si の領域で白を合わせる。
+
+動く例: `poc_thin_film_reflectometry`
 
 ## 波と信号 (5)
 

@@ -529,6 +529,19 @@ def _batch2_builders():
         raw = pixelshift.pixel_shift_capture(np.stack(scenes), 4, _ps_nom(), "RGGB", per_frame=True)
         return raw + 0.01 * rng.standard_normal(raw.shape)
 
+    def _film_spec(rng):
+        import filmoptics
+        return filmoptics.multilayer_reflectance([("SIO2", 300.0 + 900.0 * rng.random())], "SI", 400.0, 800.0, 81)
+
+    def _film_bands(rng):
+        # RGB(線形 sRGB)の 3 帯域・厚い側(0.6〜1.4 µm)・雑音 0.003: 色が周期的に似る範囲なので、
+        # 候補の閾 ambiguity_rms が候補の数を動かす(分光 6 帯域の無雑音では閾が効かず死にノブに見えた)。
+        import filmoptics
+        d = 600.0 + 800.0 * rng.random((8, 8))
+        col = filmoptics.film_color("SIO2", "SI", 0.0, 1500.0, 1501)
+        rgb = np.array([np.interp(d, col["thickness_nm"], col["linear_srgb"][:, k]) for k in range(3)])
+        return rgb + 0.003 * rng.standard_normal(rgb.shape)
+
     def ula(rng):
         import mathspectral
         return mathspectral.ula_snapshots((10.0, -20.0), n_elements=8, n_snapshots=64)
@@ -555,6 +568,11 @@ def _batch2_builders():
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
+        # filmoptics(2026-10-15): 膜厚の逆問題は**本物の反射スペクトル**(Si 上の SiO₂、昇順の波長)と、既定の 6 帯域に
+        # RGB の帯域画像を種にする(汎用の pairs / images の種は波長が昇順でなく、帯域の数も合わない)。
+        "film_thickness_fft": lambda pool, rng: ([_film_spec(rng)], {}),
+        "film_thickness_fit": lambda pool, rng: ([_film_spec(rng)], {}),
+        "film_thickness_map": lambda pool, rng: ([_film_bands(rng), None], {"mode": "srgb"}),
         # pixelshift(2026-10-15): 細かく描いた RGB のシーン(1 センサ画素 = 4 × 4 標本)と、公称のシフト列
         "pixel_shift_capture": lambda pool, rng: ([_ps_scene(rng), 4, _ps_nom()], {}),
         "pixel_shift_merge": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {"motion_threshold": 4.0}),
