@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 1401 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 1403 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -1641,20 +1641,21 @@
 
 ## `opsoptics.py`
 
-- **L155** _(ja)_ — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
-- **L166** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
-- **L220** — ★ normals(점군의 (N,3) 법선)가 아니라 normalmap. 둘은 형상이 비슷하지만, (N,3)을 넘기면 _normal_map이 ValueError로 튕겨낸다. 여기를 normals로 신고하면 "점군의 법선을 넘겨도 된다"는 거짓이 되고, 연쇄 퍼저는 매번 CONTRACT로 끝나 **이 족을 한 번도 실행하지 않는다**(= 발견 제로로 둔갑).
-- **L423** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
-- **L424** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
-- **L428** _(ja)_ — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L449** _(ja)_ — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L463** _(ja)_ — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
-- **L473** _(ja)_ — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
-- **L501** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
-- **L507** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
-- **L522** _(ja)_ — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
-- **L525** _(ja)_ — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
-- **L529** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
+- **L164** _(ja)_ — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
+- **L175** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+- **L229** — ★ normals(점군의 (N,3) 법선)가 아니라 normalmap. 둘은 형상이 비슷하지만, (N,3)을 넘기면 _normal_map이 ValueError로 튕겨낸다. 여기를 normals로 신고하면 "점군의 법선을 넘겨도 된다"는 거짓이 되고, 연쇄 퍼저는 매번 CONTRACT로 끝나 **이 족을 한 번도 실행하지 않는다**(= 발견 제로로 둔갑).
+- **L432** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
+- **L433** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+- **L437** _(ja)_ — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L458** _(ja)_ — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L472** _(ja)_ — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
+- **L482** _(ja)_ — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
+- **L493** _(ja)_ — 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
+- **L520** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
+- **L526** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+- **L541** _(ja)_ — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
+- **L544** _(ja)_ — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
+- **L548** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
 
 ## `opsphoton.py`
 
@@ -2432,8 +2433,9 @@
 - **L7261** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
 - **L7379** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
 - **L7588** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7609** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7717** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7590** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L7611** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7719** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2594,7 +2596,7 @@
 
 ## `tools/ledger_contracts.py`
 
-- **L492** _(ja)_ — ★探針の 32×32 だと目盛の文字幅が書体で変わり、手元(Windows の書体)は右に 3 px はみ出して 拒否・CI(代替書体)は収まって通る —— 環境で判定が割れた(2026-10-11)。余白を取って両方で通す。
+- **L504** _(ja)_ — ★探針の 32×32 だと目盛の文字幅が書体で変わり、手元(Windows の書体)は右に 3 px はみ出して 拒否・CI(代替書体)は収まって通る —— 環境で判定が割れた(2026-10-11)。余白を取って両方で通す。
 
 ## `tools/ledger_gaps.py`
 

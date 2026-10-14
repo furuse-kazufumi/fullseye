@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 49 项,每项都有说明页(用法与限制)和可运行的示例。
+共 50 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -105,6 +105,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 测量 SEM 明亮边缘把尺寸放大了多少（带真值）: [说明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 示例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - 用偏振测量黑色光泽件与玻璃的形状(偏振形状恢复、模糊解集、折射率估计): [说明](../../capabilities/shape-from-polarization.md) _(ja)_ · 示例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 以亚像素精度从图像测量尺寸: [说明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 示例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
+- 远心镜头与尺寸测量(主光线倾角 → 随高度变化的放大率 → 渐晕与模糊): [说明](../../capabilities/telecentric-metrology.md) _(ja)_ · 示例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 测量地形的坡度、水流与通视: [说明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 示例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
 - 从 3-D 扫描求体积与土方量: [说明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 示例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 图无法验证的东西(积分器阶数、李雅普诺夫指数、分岔、关联维数、极小曲面): [说明](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 示例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -160,7 +161,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 232 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 233 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -219,7 +220,7 @@ PoC 232 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (42)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (43)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -263,6 +264,7 @@ PoC 232 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="中国剩余定理相位" width="200" height="200"><b>&#9654;</b><span>中国剩余定理相位</span></a>
 <a href="../../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM 边缘变粗" width="200" height="200"><span>SEM 边缘变粗</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="莫尔对准(两片看不见的光栅读出 1 nm)" width="200" height="200"><b>&#9654;</b><span>莫尔对准(两片看不见的光栅读出 1 nm)</span></a>
+<a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="远心镜头与尺寸测量" width="200" height="200"><b>&#9654;</b><span>远心镜头与尺寸测量</span></a>
 </div>
 </details>
 

@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 49 項目**
+**収録 50 項目**
 
-## 測る (17)
+## 測る (18)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 

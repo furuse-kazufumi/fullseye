@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3194,
- "n_notes": 3200,
+ "n_ops": 3201,
+ "n_notes": 3207,
  "notes": {
   "vol_dilate": [
    {
@@ -28658,6 +28658,75 @@
     "category": "surface",
     "out": "image2d",
     "path": "docs/ops/optics/surface/wood_grain.md"
+   }
+  ],
+  "chief_ray_angle": [
+   {
+    "op": "chief_ray_angle",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/telecentric/chief_ray_angle.md"
+   }
+  ],
+  "defocus_spot_vs_depth": [
+   {
+    "op": "defocus_spot_vs_depth",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/optics/telecentric/defocus_spot_vs_depth.md"
+   }
+  ],
+  "lens_equivalent_pinhole": [
+   {
+    "op": "lens_equivalent_pinhole",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/telecentric/lens_equivalent_pinhole.md"
+   }
+  ],
+  "magnification_vs_depth": [
+   {
+    "op": "magnification_vs_depth",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/optics/telecentric/magnification_vs_depth.md"
+   }
+  ],
+  "telecentric_lens": [
+   {
+    "op": "telecentric_lens",
+    "dim": "optics",
+    "category": "telecentric",
+    "out": "table",
+    "path": "docs/ops/optics/telecentric/telecentric_lens.md"
+   }
+  ],
+  "telecentricity_error": [
+   {
+    "op": "telecentricity_error",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/telecentric/telecentricity_error.md"
+   }
+  ],
+  "vignetting_vs_field": [
+   {
+    "op": "vignetting_vs_field",
+    "dim": "optics",
+    "category": "telecentric",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/optics/telecentric/vignetting_vs_field.md"
    }
   ],
   "airy_pattern": [

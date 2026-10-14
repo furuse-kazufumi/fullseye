@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(366 例)
+### 2-D 画像/信号/幾何(367 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -64,6 +64,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
 - **断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)** — 既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みになること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。 `py -3.11 examples/profile_frame_tour.py`
 - **モアレで位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める** — リソグラフィやナノインプリントでマスクとウェハを nm で重ねる位置合わせ。ピッチの僅かに違う 2 枚の格子(マスク 2.00 µm、ウェハ 2.04 µm)はどちらもカメラのぼけで消えるが(直接の像の標準偏差 9e-6)、重ねると周期 102 µm の縞が現れ、ずれを 50 倍に拡大する。新 op 8 本(`moirealign`、`opsoptics` の `moire_align`): `moire_magnification` / `moire_talbot_gap` / `moire_overlay_image` / `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法)/ `moire_phase_to_shift` / `moire_differential_shift` / `moire_mark_read`(単一・差動・2 次元の 4 象限)/ `moire_phase_crlb`。★拡大率はどちらが動くかで違い、像から測ってウェハ 50.000・マスク 51.000(よく書かれる M = p_w/|Δp| はマスクが動く場合)。1 nm の階段 11 段をモアレは誤差 RMS 0.08 nm で読み、Monte-Carlo の標準偏差は位相の下限(Rife–Boorstyn × Hann の 1.5 × 基準像の 2 倍)と比 1.00。★比べ手(解像できる 20 µm の線の相互相関 + 放物線補間)との差は誤差 RMS で 91 倍だが、**その大半は放物線の偏り(ずれの 17 % 小さく読む)**で、偶然の誤差だけなら 0.077 対 0.19 nm の 2.5 倍しか違わない(内訳を分けて出す)。カメラを粗くすると(画素 0.5 → 2 µm)相互相関は 2.3 倍悪化しモアレは変わらない。逆向きのピッチ差の 2 対の差動は、マーク全体の流れ 300 nm(単一の対は 300/M = 6.2 nm 狂う)と照明の傾き 30 % を 0.03 nm 以内に消し、カメラの倍率を 2 % 間違えても +0.007 nm(換算はピッチだけで決まる。相互相関は 2 % そのまま狂う)。読みはピッチ 1 つ(差動は 1.01 µm)で折り返し、粗い相互相関で次数を決めると 0〜5 µm を 0.14 nm で読む。近接ギャップでは Talbot 長 2p²/λ = 14.5 µm で縞が戻り半分で符号が反転、反転を跨ぐと読みが半周期(1020 nm)跳ぶ。★正直な限界: 0.1 nm 級は白色雑音だけの床で、公表の位置合わせ精度 10〜30 nm はマークの非対称・ギャップ・傾きなどの系統誤差が決める。学習 0、較正 0、門 32 件。 `py -3.11 examples/poc_moire_alignment.py`
+- **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** — ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ N-BK7 の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.13 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ Schott の係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 24 件。 `py -3.11 examples/poc_telecentric_metrology.py`
 - **重力波望遠鏡の擬似シミュレーション —— 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点** — km 級の Michelson 干渉計が 1e-21 のひずみを読む仕組みを、どこまで**閉じた式**で再現できるか。検査装置の干渉計(エタロン・レーザー共振器・白色干渉・振動計)と同じ式なので、再現できた分だけ Fullseye の設計規則になる。新 op 12 本(`opsoptics` の `cavity` 5 本 + `ops1d` の `matched` 7 本)。★腕共振器: aLIGO の公表設計値(L 3994.5 m、T_ITM 1.4 %、T_ETM 5 ppm)で フィネス 445.5・極 42.1 Hz・循環光量 284 倍、伝達関数は極で 1/√2・FSR で零、Pound-Drever-Hall の傾きは Black 2001 の式 15 と 0.9999 倍。★量子雑音の予算(Kimble ら 2001): 散射 × 輻射圧 = SQL²/2 の恒等式が 1e-10、総和は K = 1 で SQL に触れ、**第二実装 gwinc 0.6.2**(信号再利用鏡を外した aLIGO)と 8 周波数で比 0.96〜1.12。公開設計曲線(LIGO-T1800044)との比は 20 Hz で 0.42・100 Hz で 1.99・1 kHz で 0.33 —— 信号再利用と熱雑音の分だけ形が違う(表で明示)。★★実データ(GWOSC の GW150914、CC BY 4.0、環境変数 FULLSEYE_GWOSC_DATA に置けば走り、無ければ「未配置」と明示): Welch の PSD → 白色化 → 35〜350 Hz で **PRL 116, 061102 図 1 の公表曲線と相関 0.959 / 0.935**(白色化なしなら 0.47 / 0.38)、数値相対論の波形の整合フィルタで **SNR H1 19.0 / L1 13.1(公表 ≈ 20 / 13)、ネットワーク 23.1(公表 24)、L1 が 7.1 ms 先(公表 6.9 +0.5/−0.4 ms)**。ニュートン近似のチャープは SNR 9.1 / 5.6(合体・リングダウンが無い分だけ損、それでも検出)。O1 の実測 ASD は設計曲線の 2〜7 倍(2015 年の装置は設計未達)。NR 波形の軌跡から式 1 でチャープ質量 38 M☉(公表 ≈ 31、1 周期に 7 % 上がる帯域では式 1 が高めに出る)、H1 の白色化データの尾根からは 42 M☉(NR 軌跡と 10 % 差)。★持ち帰り: 1/f² の色つき雑音に埋めた既知波形で、白色化した整合フィルタは埋めた高さどおり拾い、素の相互相関は狭帯域のトーンでは差が無く(0.98)、広帯域のチャープ 0.50・減衰振動 0.37 —— 白色化が効くのは波形が雑音の色を跨ぐとき。学習した数 0、較正 0、CI は合成と閉形式だけで図なし 4 秒。 `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 - **SEM の明るい縁が寸法をどれだけ太らせるか(公開ウェハ欠陥データで採点)** — SEM 像では二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、その明るい縁ごとしきい値を超えて拾うと寸法・面積が系統的に太る。この太りを**真値つき**で切り分ける多段 PoC。新 op `sem_render`(二次電子の縁効果 sec θ + ビーム PSF + ポアソン雑音 + 帯電)は 3 本の閉形式の門をもつ: 平面で一様 / 斜面で平面比 = sec θ(誤差 0e+00)/ 段差の明るい縁の幅 = PSF 幅。★★合成(真値の面積が厳密)では **Dice は高い(中央 0.885 = 形はよく合う)のに面積は系統的に太り(比 1.09〜1.70)**、太りは閉形式 **ΔA ≈ 周囲長 × 有効縁幅**(有効縁幅/PSF の中央 1.01)でよく説明できる。★既知のビーム PSF 幅で面積を引くと偏りは 0.261 → 0.008 に消える(物理による補正)。埋め込み POD(`pod_hitmiss_fit`)で a90/95 が出る。★実データ(Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427)で採点すると: 段 0 のマスク規約検査で勾配の峰はマスク境界の cm = -1.3 px(**専門家マスクは明るい縁まで含む**)、クラス別 Dice 中央は 0.51 / 0.70 / 0.79(クラス 3/4/5、クラス 5 は全 4 枚)、面積比 1.70 / 1.22 / 1.42。★実データの欠陥は背景より 0.13 暗い穴で、合成の明るい塊と**極性が逆**であることも正直に印字する。実データ段は環境変数 FULLSEYE_CARINTHIA_DATA があるときだけ走り、無ければ合成のみ(CI は合成のみ、図なし既定で 60 秒未満)。 `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
 - **結晶粒度 G(面積法と切片法は別の崖で落ちる)** — Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。 `py -3.11 examples/poc_metal_grain_size.py`
@@ -707,9 +708,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3207 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 229 · **lightfield** 17 · **photon** 17 · **specular** 13 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 14 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 236 · **lightfield** 17 · **photon** 17 · **specular** 13 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 14 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -2420,7 +2421,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(229 ops / 26 categories)
+### optics(236 ops / 27 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2453,9 +2454,9 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
 - `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_material_optical_library`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`
-- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_material_optical_library`
+- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
-- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_material_optical_library`
+- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
 - `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
 - `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`
 - `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
@@ -2475,10 +2476,10 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `material_gvd` `入力なし → pairs` — 材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。 · 例: `poc_fiber_light_guide`
 
 #### optics / finish(5)
-- `blast_normals` `normalmap → normalmap` — ビーズブラスト / 梨地の**無方向な微小凹凸**を法線へ載せる。 · 例: `machined_metal_and_materials`
+- `blast_normals` `normalmap → normalmap` — ビーズブラスト / 梨地の**無方向な微小凹凸**を法線へ載せる。 · 例: `machined_metal_and_materials`, `poc_telecentric_metrology`
 - `finish_catalog` `入力なし → table` — 仕上げ名 → 既定パラメータの表(αx, αy, grain)。 · 例: `machined_metal_and_materials`
-- `finish_shade` `normalmap → rgbimage` — **材質 × 仕上げ**で金属面を陰影付けする → 線形 sRGB (H, W, 3)。 · 例: `machined_metal_and_materials`
-- `micro_normals` `normalmap → normalmap` — 加工痕そのものを**法線に刻む**(旋盤の送りマーク・ローレットの山)。 · 例: `machined_metal_and_materials`
+- `finish_shade` `normalmap → rgbimage` — **材質 × 仕上げ**で金属面を陰影付けする → 線形 sRGB (H, W, 3)。 · 例: `machined_metal_and_materials`, `poc_telecentric_metrology`
+- `micro_normals` `normalmap → normalmap` — 加工痕そのものを**法線に刻む**(旋盤の送りマーク・ローレットの山)。 · 例: `machined_metal_and_materials`, `poc_telecentric_metrology`
 - `tangent_field` `入力なし → normalmap` — 仕上げの**筋の向き**を (H, W, 3) の接線場として作る。 · 例: `machined_metal_and_materials`
 
 #### optics / geometric(5)
@@ -2538,7 +2539,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`
 
 #### optics / material(6)
-- `clearcoat_shade` `rgbimage × normalmap → rgbimage` — 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。 · 例: `machined_metal_and_materials`
+- `clearcoat_shade` `rgbimage × normalmap → rgbimage` — 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。 · 例: `machined_metal_and_materials`, `poc_telecentric_metrology`
 - `material_catalog` `入力なし → table` — 素材名 → 既定パラメータ(拡散の粗さ / 上塗りの強さ・粗さ / 布の縁光沢)。 · 例: `machined_metal_and_materials`
 - `oren_nayar` `normalmap → image2d` — 粗い拡散面の陰影(Oren–Nayar)。紙・石膏・コンクリート・月の見え方。 · 例: `machined_metal_and_materials`
 - `sheen_shade` `normalmap → image2d` — 布の**縁の光沢**(ベルベット・サテン)。視線に対して寝た所ほど明るい。 · 例: `machined_metal_and_materials`
@@ -2564,7 +2565,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `thermo_optic_coefficient` `入力なし → table` — 硝材の dn/dT(絶対、真空中)と基準温度からの屈折率変化 Δn をカタログの式 A で返す。 · 例: `poc_material_optical_library`, `poc_thermal_drift_metrology`
 
 #### optics / mirror(2)
-- `metal_mirror_rgb` `入力なし → vector` — 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
+- `metal_mirror_rgb` `入力なし → vector` — 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`, `poc_telecentric_metrology`
 - `metal_optical_constants` `signal → pairs` — 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
 
 #### optics / moire_align(8)
@@ -2637,7 +2638,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sensor_spec` `入力なし → table` — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `vision_layout_from_catalog`
 - `surface_defect` `table × image2d → table` — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。 · 例: `studio_raytrace_scene`
 - `surface_finish` `table → table` — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。 · 例: `virtual_machine_vision`
-- `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `studio_raytrace_scene`
+- `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `poc_telecentric_metrology`, `studio_raytrace_scene`
 - `vision_layout` `table × table × table → table` — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `vision_layout_from_catalog`
 
 #### optics / sensorchar(19)
@@ -2693,6 +2694,15 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `rough_transmission` `signal → pairs` — すりガラスの透過を「直進成分」と「拡散成分」に分ける。 · 例: `machined_metal_and_materials`
 - `weave_normals` `入力なし → normalmap` — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。 · 例: `machined_metal_and_materials`
 - `wood_grain` `入力なし → image2d` — 木目(年輪)の**色の変調**と**繊維の向き**を作る。 · 例: `machined_metal_and_materials`
+
+#### optics / telecentric(7)
+- `chief_ray_angle` `table → table` — 物高 *field_mm* の点から絞りの中心を通る実の主光線: 物体側の傾き(= テレセン度)と像の位置。 · 例: `poc_telecentric_metrology`
+- `defocus_spot_vs_depth` `table → pairs` — 物体を ±Δz 動かしたときの像面(固定)での RMS ぼけ半径(µm、光線束を傾きの格子で総当たりに追う)。 · 例: `poc_telecentric_metrology`
+- `lens_equivalent_pinhole` `table → table` — 主光線の幾何を ``render3d.render_mesh`` のピンホールカメラ(pose, K)に写す。 · 例: `poc_telecentric_metrology`
+- `magnification_vs_depth` `table → pairs` — 物体を光軸方向に動かしたときの倍率 m(Δz)(像面は固定、実の主光線の像の高さ / 物高)。 · 例: `poc_telecentric_metrology`
+- `telecentric_lens` `入力なし → table` — 同じ単レンズで、絞りの位置だけを変えた 3 種の撮像レンズの処方(``raytrace.lens_system`` の table)。 · 例: `poc_telecentric_metrology`
+- `telecentricity_error` `table → table` — 段差 *step_height_mm* の上と下の面に同じ寸法の物があるとき、像の上で寸法がどれだけ違って見えるか。 · 例: `poc_telecentric_metrology`
+- `vignetting_vs_field` `table → pairs` — 物高ごとに、像面まで届く光線束の立体角(傾きの面積)を軸上に対する割合で(ケラレ)。 · 例: `poc_telecentric_metrology`
 
 #### optics / wave(9)
 - `airy_pattern` `入力なし → image2d` — The diffraction-limited PSF of a circular pupil (Airy pattern). · 例: `optics_imaging`, `poc_veiling_glare`
@@ -4105,7 +4115,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / text(2)
 - `measure_text` `text → table` — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`
-- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_photoelasticity`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_photoelasticity`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
 
 ### gfx2d(44 ops / 9 categories)
 
@@ -4509,7 +4519,7 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### measure1d / apply(2)
 - `align_metrology_model` `metrologymodel → metrologymodel` — 計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。 · 例: `poc_dimensional_inspection`
-- `apply_metrology_model` `metrologymodel × image2d → table` — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を 再フィットして結果を返す(apply_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `apply_metrology_model` `metrologymodel × image2d → table` — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を 再フィットして結果を返す(apply_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 #### measure1d / caliper(6)
 - `fuzzy_measure_pairing` `image2d × measurehandle → table` — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
@@ -4520,12 +4530,12 @@ _計 3200 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `translate_measure` `measurehandle → measurehandle` — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
 
 #### measure1d / model(6)
-- `add_metrology_object_circle_measure` `metrologymodel → scalar` — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `add_metrology_object_circle_measure` `metrologymodel → scalar` — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 - `add_metrology_object_ellipse_measure` `metrologymodel → scalar` — 楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。 ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。 · 例: `poc_dimensional_inspection`
 - `add_metrology_object_generic` `metrologymodel → scalar` — 汎用計測オブジェクトを追加(add_metrology_object_generic)。 · 例: `poc_dimensional_inspection`
 - `add_metrology_object_line_measure` `metrologymodel → scalar` — 直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 - `add_metrology_object_rectangle2_measure` `metrologymodel → scalar` — 矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。 ``phi`` = ``l1`` 辺の向き(col 軸から、ラジアン)、``l1``/``l2`` = 半辺長。 · 例: `poc_dimensional_inspection`
-- `create_metrology_model` `入力なし → metrologymodel` — 空の計測モデルを作る(create_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `create_metrology_model` `入力なし → metrologymodel` — 空の計測モデルを作る(create_metrology_model)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 ### roughness(6 ops / 3 categories)
 

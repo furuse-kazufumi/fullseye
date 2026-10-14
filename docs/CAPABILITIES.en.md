@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 49 capabilities**
+**Currently 50 capabilities**
 
-## Measure (17)
+## Measure (18)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-49 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+50 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -105,6 +105,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Messen, wie stark die helle SEM-Kante eine Abmessung aufbläht (mit Grundwahrheit): [Erklärung](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · Beispiele [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - Die Form schwarz glänzender und gläserner Teile aus der Polarisation messen (Shape from Polarization, die Mehrdeutigkeitsmenge, Brechungsindex): [Erklärung](../../capabilities/shape-from-polarization.md) _(ja)_ · Beispiele [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Maße aus dem Bild subpixelgenau messen: [Erklärung](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · Beispiele [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
+- Telezentrische Objektive für die Maßprüfung (Hauptstrahlwinkel, Abbildungsmaßstab über der Höhe, Vignettierung und Unschärfe): [Erklärung](../../capabilities/telecentric-metrology.md) _(ja)_ · Beispiele [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
 - Volumen und Erdmassen aus einem 3-D-Scan: [Erklärung](../../capabilities/volume-from-3d-scan.md) _(ja)_ · Beispiele [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - Was ein Bild nicht prüfen kann (Integratorordnung, Lyapunov-Spektrum, Bifurkationen, Korrelationsdimension, Minimalflächen): [Erklärung](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · Beispiele [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -160,7 +161,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-232 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+233 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -219,7 +220,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (42)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (43)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -263,6 +264,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="Phasen-CRT" width="200" height="200"><b>&#9654;</b><span>Phasen-CRT</span></a>
 <a href="../../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM-Kantenaufblähung" width="200" height="200"><span>SEM-Kantenaufblähung</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)" width="200" height="200"><b>&#9654;</b><span>Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)</span></a>
+<a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telezentrische Messobjektive" width="200" height="200"><b>&#9654;</b><span>Telezentrische Messobjektive</span></a>
 </div>
 </details>
 

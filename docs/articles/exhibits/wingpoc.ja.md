@@ -1100,7 +1100,7 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 42 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 43 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2579,6 +2579,46 @@ py -3.11 examples/poc_moire_alignment.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_moire_alignment)
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`moire_differential_shift`](https://furuse.work/ops/optics/moire_align/moire_differential_shift.html) · [`moire_magnification`](https://furuse.work/ops/optics/moire_align/moire_magnification.html) · [`moire_mark_read`](https://furuse.work/ops/optics/moire_align/moire_mark_read.html) · [`moire_overlay_image`](https://furuse.work/ops/optics/moire_align/moire_overlay_image.html) · [`moire_phase`](https://furuse.work/ops/optics/moire_align/moire_phase.html) · [`moire_phase_crlb`](https://furuse.work/ops/optics/moire_align/moire_phase_crlb.html) · [`moire_phase_to_shift`](https://furuse.work/ops/optics/moire_align/moire_phase_to_shift.html) · [`moire_talbot_gap`](https://furuse.work/ops/optics/moire_align/moire_talbot_gap.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+
+## No.2026.233 —— テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える
+
+[![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/03_part_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/03_part_views.png)
+
+*↑ **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** ―― ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ N-BK7 の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.13 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ Schott の係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 24 件。*
+
+[![同じ N-BK7 の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、通常のレンズでは絞りへ向かって傾き、絞りを後側焦点に置くと物体側で光軸に平行になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts.png)
+
+*↑ 測定の図 ―― 同じ N-BK7 の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、通常のレンズでは絞りへ向かって傾き、絞りを後側焦点に置くと物体側で光軸に平行になる。*
+
+[![像面を固定して物体だけを動かした実の主光線の像の高さ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/02_magnification_vs_height_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/02_magnification_vs_height.png)
+
+*↑ 像面を固定して物体だけを動かした実の主光線の像の高さ。*
+
+[![負 = 主光線が光軸へ寄る(通常のレンズ側)、正 = 遠い物ほど大きく写るハイパーセントリック側。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/05_stop_shift_telecentricity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/05_stop_shift_telecentricity.png)
+
+*↑ 負 = 主光線が光軸へ寄る(通常のレンズ側)、正 = 遠い物ほど大きく写るハイパーセントリック側。*
+
+[![通常のレンズは主光線がレンズの中心へ集まるので前玉より広く見える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/06_field_vs_front_lens_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/06_field_vs_front_lens.png)
+
+*↑ 通常のレンズは主光線がレンズの中心へ集まるので前玉より広く見える。*
+
+[![両側テレセンで NA だけを変えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/07_defocus_vs_na_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/07_defocus_vs_na.png)
+
+*↑ 両側テレセンで NA だけを変えた。*
+
+[![ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif)
+
+*↑ 動く図 ―― ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。*
+
+```
+py -3.11 examples/poc_telecentric_metrology.py
+```
+
+ソース: [examples/poc_telecentric_metrology.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_telecentric_metrology)
+
+使用 op(ノートへ): [`add_metrology_object_circle_measure`](https://furuse.work/ops/measure1d/model/add_metrology_object_circle_measure.html) · [`apply_metrology_model`](https://furuse.work/ops/measure1d/apply/apply_metrology_model.html) · [`blast_normals`](https://furuse.work/ops/optics/finish/blast_normals.html) · [`cast_shadow`](https://furuse.work/ops/3d/render/cast_shadow.html) · [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`clearcoat_shade`](https://furuse.work/ops/optics/material/clearcoat_shade.html) · [`create_metrology_model`](https://furuse.work/ops/measure1d/model/create_metrology_model.html) · [`defocus_spot_vs_depth`](https://furuse.work/ops/optics/telecentric/defocus_spot_vs_depth.html) · [`finish_shade`](https://furuse.work/ops/optics/finish/finish_shade.html) · [`lens_equivalent_pinhole`](https://furuse.work/ops/optics/telecentric/lens_equivalent_pinhole.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`magnification_vs_depth`](https://furuse.work/ops/optics/telecentric/magnification_vs_depth.html) · [`metal_mirror_rgb`](https://furuse.work/ops/optics/mirror/metal_mirror_rgb.html) · [`micro_normals`](https://furuse.work/ops/optics/finish/micro_normals.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`telecentricity_error`](https://furuse.work/ops/optics/telecentric/telecentricity_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tonemap_reinhard`](https://furuse.work/ops/3d/render/tonemap_reinhard.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html) · [`vignetting_vs_field`](https://furuse.work/ops/optics/telecentric/vignetting_vs_field.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

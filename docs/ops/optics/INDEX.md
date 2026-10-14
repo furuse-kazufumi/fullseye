@@ -1,4 +1,4 @@
-# OPTICS operator help — 229 ops in 26 categories
+# OPTICS operator help — 236 ops in 27 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -117,6 +117,10 @@
 ### surface (5)
 
 [corrosion_mask](surface/corrosion_mask.md) · [metallic_flake_normals](surface/metallic_flake_normals.md) · [rough_transmission](surface/rough_transmission.md) · [weave_normals](surface/weave_normals.md) · [wood_grain](surface/wood_grain.md)
+
+### telecentric (7)
+
+[chief_ray_angle](telecentric/chief_ray_angle.md) · [defocus_spot_vs_depth](telecentric/defocus_spot_vs_depth.md) · [lens_equivalent_pinhole](telecentric/lens_equivalent_pinhole.md) · [magnification_vs_depth](telecentric/magnification_vs_depth.md) · [telecentric_lens](telecentric/telecentric_lens.md) · [telecentricity_error](telecentric/telecentricity_error.md) · [vignetting_vs_field](telecentric/vignetting_vs_field.md)
 
 ### wave (9)
 

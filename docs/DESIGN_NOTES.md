@@ -1639,20 +1639,21 @@
 
 ## `opsoptics.py`
 
-- **L155** — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
-- **L166** — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
-- **L220** — ★ normals(点群の (N,3) 法線)ではなく normalmap。両者は形は似ているが、 (N,3) を渡すと _normal_map が ValueError で弾く。ここを normals と申告すると 「点群の法線を渡してよい」という嘘になり、連鎖ファザーは毎回 CONTRACT で 終わって**この族を一度も実行しない**(= 発見ゼロに化ける)。
-- **L423** — ★新しい型の語は作らない(位相も image2d、統計は table)。
-- **L424** — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
-- **L428** — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L449** — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L463** — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
-- **L473** — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
-- **L501** — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
-- **L507** — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
-- **L522** — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
-- **L525** — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
-- **L529** — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
+- **L164** — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
+- **L175** — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+- **L229** — ★ normals(点群の (N,3) 法線)ではなく normalmap。両者は形は似ているが、 (N,3) を渡すと _normal_map が ValueError で弾く。ここを normals と申告すると 「点群の法線を渡してよい」という嘘になり、連鎖ファザーは毎回 CONTRACT で 終わって**この族を一度も実行しない**(= 発見ゼロに化ける)。
+- **L432** — ★新しい型の語は作らない(位相も image2d、統計は table)。
+- **L433** — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+- **L437** — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L458** — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L472** — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
+- **L482** — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
+- **L493** — 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
+- **L520** — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
+- **L526** — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+- **L541** — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
+- **L544** — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
+- **L548** — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
 
 ## `opsphoton.py`
 
@@ -2430,8 +2431,9 @@
 - **L7261** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
 - **L7379** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
 - **L7588** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7609** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7717** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7590** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L7611** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7719** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2592,7 +2594,7 @@
 
 ## `tools/ledger_contracts.py`
 
-- **L492** — ★探針の 32×32 だと目盛の文字幅が書体で変わり、手元(Windows の書体)は右に 3 px はみ出して 拒否・CI(代替書体)は収まって通る —— 環境で判定が割れた(2026-10-11)。余白を取って両方で通す。
+- **L504** — ★探針の 32×32 だと目盛の文字幅が書体で変わり、手元(Windows の書体)は右に 3 px はみ出して 拒否・CI(代替書体)は収まって通る —— 環境で判定が割れた(2026-10-11)。余白を取って両方で通す。
 
 ## `tools/ledger_gaps.py`
 
