@@ -16,6 +16,8 @@
 * ``fullseye/data/OP_SEARCH.json`` —— 意味で op を引く検索(``fullseye.opsearch``)の索引: op ごとに名前・族・分類・
   入出力の型・HALCON 名・ノートの相対パスと、要約の 6 言語(ja 原文 = ``tools/opdocs.py`` の要約、5 訳 =
   ``docs/i18n/op_summary.json`` のうち原文の指紋が今の要約と一致するもの)。古い訳は入れない(2026-10-07)。
+  さらに op ごとの**文脈**(``t``): 文献層のテーマ → op の対応表(``tools/gen_literature_notes.py`` の ``THEME_TABLES``)と
+  厳選の層の軸(``docs/literature/curated/*.json``)で、人がその op に書いた「テーマ: なぜ使うか」(2026-10-15)。
 
 なぜ複製か: ``docs/`` はパッケージの外にあり、flat layout の wheel には乗らない。
 0.1.11 の MCP は ``docs/OP_INDEX.json`` をリポジトリ相対で読んでいたので
@@ -71,12 +73,48 @@ def build_knobs() -> list:
     return rows
 
 
+def op_contexts() -> dict:
+    """op 名 → 人が書いた文脈の行 ``["テーマ: なぜ使うか", …]``(文献層のテーマ表 + 厳選の層の軸)。
+
+    ★2026-10-15: 「溶接ビードの高さ」「研磨でどれだけ削れるか」「X 線回折で相の割合」のような**現場の言い方**は
+    op の要約(1 段落の docstring)に出てこないので、検索が 0 件か無関係の op を返していた(評価問題集で hit@5 0.52)。
+    その言い方と op の対応は文献層のテーマ表が**人の手で**既に持っている —— ただし文献層はファイルとして読む層で、
+    この検索(MCP / fullseye-rag)からは引けなかった(同じ問いに答える入口が 2 つあり、片方にだけ知識が在った)。
+    語の一致で op を引くのではない: どの op に付けるかは表が決め、検索はその文を op の索引語に足すだけ。
+    """
+    tools_dir = os.path.join(_ROOT, "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import gen_literature_notes as GL
+    ctx: dict = {}
+
+    def add(op, line):
+        lst = ctx.setdefault(op, [])
+        if line not in lst:
+            lst.append(line)
+
+    for table in GL.THEME_TABLES.values():
+        for th in table:
+            for op, why in th["ops"]:
+                add(op, "%s: %s" % (th["theme"], why))
+    for name, rel in sorted(GL.CURATED.items()):
+        with open(os.path.join(_ROOT, rel), encoding="utf-8") as f:
+            cur = json.load(f)
+        for ax in cur.get("axes") or ():
+            for op, why in ax.get("ops") or ():
+                add(op, "%s: %s" % (ax["name"], why))
+    if not ctx:
+        raise SystemExit("文献層のテーマ表から op の文脈が 0 件 —— 検索索引を書かない")
+    return ctx
+
+
 def build_search() -> dict:
     """``fullseye.opsearch`` の索引。要約は opdocs と同じ切り方(``summary_and_rest``)、訳は指紋が合うものだけ。"""
     tools_dir = os.path.join(_ROOT, "tools")
     if tools_dir not in sys.path:
         sys.path.insert(0, tools_dir)
     import opdocs as OD
+    ctx = op_contexts()
     from fullseye.opsearch import LANGS
     recs = OD._records()[0]
     si = OD.summary_i18n()
@@ -100,13 +138,17 @@ def build_search() -> dict:
                 path = fm["path"]
                 break
         row = {"n": r["name"], "d": r["dim"], "c": r.get("category"), "i": r.get("in"), "o": r.get("out"),
-               "h": r.get("halcon") or None, "p": path, "s": summ}
+               "h": r.get("halcon") or None, "p": path, "s": summ, "t": ctx.get(r["name"]) or None}
         rows.append({k: v for k, v in row.items() if v not in (None, "", {})})
     if not rows:
         raise SystemExit("opdocs の記録が 0 件 —— 検索索引を書かない")
     rows.sort(key=lambda x: (x["d"], x["n"]))
+    unknown = sorted(set(ctx) - {r["n"] for r in rows})
+    if unknown:                                        # 表が名指しする op は実在する(gen_literature_notes と同じ規約)
+        raise SystemExit("文献層の表に実在しない op: %s" % ", ".join(unknown))
     return {"generated_by": "tools/gen_mcp_data.py", "languages": list(LANGS), "n_ops": len(rows),
-            "summaries_per_language": n_tr, "ops": rows}
+            "summaries_per_language": n_tr, "ops_with_context": sum(1 for r in rows if r.get("t")),
+            "ops": rows}
 
 
 def _dump_compact(obj) -> str:
