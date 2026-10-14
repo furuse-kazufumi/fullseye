@@ -223,6 +223,7 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_material_tables.py": "材料表(materials_data.py)。入力の refractiveindex.info database(CC0、71 MB)は repo の外にあるので CI では作れない —— 生成物を commit し、手元では `--rii <database dir> --check` が drift を見る。tests/test_materials.py がカタログ公表値(n_d / V_d)と一次文献の点で中身を守る。",
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
@@ -663,8 +664,12 @@ def _trace_one(argv) -> int:
                 writing = bool((flags or 0) & _W)
             else:
                 writing = any(c in str(mode) for c in "wax+")
+            if writing and "__pycache__" in str(args[0]):
+                return   # ★import が .pyc を書くのは段の出力ではない(新しい .py を足した直後の初回だけ X.py を「書いた」と誤検出した)
             (wr if writing else rd).add(rel)
         elif ev == "os.rename":
+            if "__pycache__" in str(args[1]):
+                return   # .pyc の原子的な置き換え(os.replace)も同じく出力ではない
             src, dst = _rel_in_root(args[0]), _rel_in_root(args[1])
             wr.discard(src)
             if dst is not None:
