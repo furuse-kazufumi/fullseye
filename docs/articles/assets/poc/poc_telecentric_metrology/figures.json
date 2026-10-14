@@ -76,7 +76,7 @@
  {
   "file": "08_real_alignment_plate.png",
   "name": "real_alignment_plate",
-  "caption": "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、放射状の測定線(measure_pairs)で取ったリングの中心線へ当てた楕円を重ねた。板は 29.7° 傾いて楕円に写るが、6 本の楕円の中心は 1 点に集まる(通常のレンズなら外側ほど短軸方向へずれる)。長軸の伸びは 250.73 px/mm で、論文の K1 = 252.0 px/mm と -0.50 %。A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, \"Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans\", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。",
+  "caption": "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、中心から放射状の測定線(measure_pos)で取ったリングの中心線へ当てた、同心の相似な楕円の族を重ねた(1/2 に縮小。検分は次の等倍の図で)。板は 29.5° 傾いて楕円に写り、右上は影でリングが見えない。長軸の伸びは 252.13 px/mm で、論文の K1 = 252.0 px/mm と +0.05 %。A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, \"Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans\", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。",
   "shape": [
    1424,
    1424,
@@ -87,10 +87,10 @@
  {
   "file": "09_real_plate_crop_1to1.png",
   "name": "real_plate_crop_1to1",
-  "caption": "【実画像】等倍の切り出し(600 × 400 画素)。緑の + は測定線 1 本ごとに edge pair(明るい線の立ち上がりと立ち下がり)の中点として取った線の中心。線の幅は約 30 画素(120 µm)、背景の黒い粒の対(幅 5〜10 画素)は幅で落とした。画像: Stark et al., Sci. Rep. 15, 28690 (2025)、figshare doi:10.6084/m9.figshare.c.7652423、CC BY 4.0(改変あり)",
+  "caption": "【実画像】等倍の切り出し(700 × 500 画素、外側のリングの見えている弧の中ほど)。+ は測定線 1 本ごとの線の中心(強い立ち上がりと次の強い立ち下がりの中点)、細い線は当てた楕円の族。リングごとの点の数・弧の角度・族への残差はPoC の出力に印字する。画像: Stark et al., Sci. Rep. 15, 28690 (2025)、figshare doi:10.6084/m9.figshare.c.7652423、CC BY 4.0(改変あり)",
   "shape": [
-   400,
-   600,
+   500,
+   700,
    3
   ],
   "source": "A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, \"Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans\", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。"
@@ -98,7 +98,7 @@
  {
   "file": "10_real_ring_centres.png",
   "name": "real_ring_centres",
-  "caption": "【実画像】破線は同じ傾き・同じ倍率の板を、2 章のレンズの入射瞳の位置に置いたピンホールで写したときの中心のずれ(閉形式 x' = X·L/(L − Z) で写して同じ fit_ellipse で中心を取った)。実画像の点は 0 の線のまわりに ±3 px で並び、入射瞳は 451 mm より遠い(主光線の傾きは視野の端で 0.82° 未満)。画像: Stark et al., Sci. Rep. 15, 28690 (2025)、figshare doi:10.6084/m9.figshare.c.7652423、CC BY 4.0(改変あり)",
+  "caption": "【実画像】リングごとに形(向き・縦横比・長半径)を族の値に固定して中心だけを解き直し、短軸方向のずれを取った。破線は同じ傾き・同じ倍率の板を 2 章のレンズの入射瞳の位置に置いたピンホールで写したときの中心のずれ(閉形式 x' = X·L/(L − Z) で写して fit_ellipse で中心を取った)。入射瞳は 10.5 m より遠い(主光線の傾きは視野の端で 0.047° 未満)。画像: Stark et al., Sci. Rep. 15, 28690 (2025)、figshare doi:10.6084/m9.figshare.c.7652423、CC BY 4.0(改変あり)",
   "shape": [
    360,
    560,

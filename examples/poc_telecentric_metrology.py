@@ -8,15 +8,18 @@
 
   0. **実画像(主役)**: Stark ほか(Sci. Rep. 2025、CC BY 4.0)が figshare に置いたテレセンの生画像 3 枚(2848 × 2848)を
      取得してキャッシュし(``~/.cache/fullseye/poc_telecentric_metrology``、sha256 で確かめる。Zenodo の 2.5 GB は落とさない)、
-     Fullseye の計測 op で測る。29.7° 傾いたアライメント板(円の間隔 1 mm)の 6 本のリングを、中心から放射状の測定線
-     (``measuring1d.measure_pairs``、明るい線の立ち上がりと立ち下がりの中点)で取り、``measure.fit_ellipse`` で当てる。門:
-     長軸の伸び 250.73 ± 0.79 px/mm は論文の K1 = 252.0 px/mm と −0.50 %(論文の「1 画素 = 4 µm」とは −0.3 %)、短軸の
-     縮みは内外のリングで同じ(正射影)、★傾いた板の同心円の中心は r² に比例してずれない(β = −0.050 ± 0.095 px/mm²。
-     2 章の通常 f=25 なら 1.39 で、外側のリングの中心が 59 px ずれる)—— 入射瞳は 451 mm より遠い。★弧が 140° しか無い
-     リング 6 は中心が 10 px 動いて決まらないので中心の門から外した(入れると β = −0.272 ± 0.113 で f=100 を外せない。
-     両方を印字する)。★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値 0.015 → 0.06 で半径が 8 % 動き(陰の縁が暗い)、
-     真値にならない(2.413 / 2.465 mm)。論文の計量級の球(半径 5 mm ±1.6 µm)の生画像は公開データに無い。ネットの無い CI
-     では記録値を印字して飛ばす。下の 1〜6 章は合成で、失敗条件を掃引する補助。
+     Fullseye の計測 op で測る。29.5° 傾いたアライメント板(円の間隔 1 mm)の 8 本のリングの中心線を、中心から放射状の
+     測定線(``measuring1d.measure_pos``、強い立ち上がりと次の強い立ち下がりの中点)で取り、中心と形(向き・縦横比)を共有
+     する楕円の族で当てる。門: 長軸の伸び 252.13 ± 0.04 px/mm は論文の K1 = 252.0 px/mm と +0.05 %(★論文自身の K1・K2 が
+     ±0.25 % 散っているので、それより細かい一致とは読まない)、リングの半径は 1.50〜8.50 mm に 0.33 px 以内で並ぶ、★傾いた
+     板の同心円の中心は r² に比例してずれない(形を固定してリングごとに中心を解き直し、β = 0.0035 ± 0.0034 px/mm²。2 章の
+     通常 f=25 なら 1.40 で外側のリングの中心が 101 px ずれる)—— 入射瞳は 10.5 m より遠い。
+     ★最初の版(2026-10-15)は 250.73 px/mm と出ていた。原因は 2 つ: (1) ``measure_pairs`` の組を閾値 0.15 でそのまま使い、
+     組の位相がずれて線を落とし・線の中の粒と組んでいた、(2) リングごとに自由な楕円を当て、影で弧が短い外側のリングの
+     長半径を外挿していた(弧 36° のリングで 768 px、族では 2142 px)。元の解像度で点と楕円を重ねて見つけた。
+     ★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値 0.015 → 0.06 で半径が 8 % 動き(陰の縁が暗い)、真値にならない
+     (2.400 / 2.452 mm)。論文の計量級の球(半径 5 mm ±1.6 µm)の生画像は公開データに無い。ネットの無い CI では記録値を
+     印字して飛ばす。下の 1〜6 章は合成で、失敗条件を掃引する補助。
   1. **主光線の傾き(テレセン度)**: 同じ N-BK7 の等凸単レンズ f = 100 mm の絞りを、レンズの直後(通常)・後側焦点
      (物体側テレセン)に置き、後側焦点の後ろに 2 枚目(f = 50 mm)を足して両側テレセンを作る(倍率はどれも −0.5)。
      門: 実光線の主光線は絞りの中心を 1e-12 mm 以内で通る、通常のレンズの傾きは近軸の入射瞳 L から tanθ = h/L と一致、
@@ -1066,9 +1069,9 @@ PAPER = {"pitch_mm": 1.0,                    # レンズマウント用のアラ
          "sphere_radius_mm": 2.5}            # 樹脂の 3D プリント球の公称半径(figshare の説明)。校正された球ではない
 
 #: 2026-10-15 の実測(ネットの無い CI ではこれを印字して章を飛ばす。門には使わない)。
-REAL_RECORDED = {"px_per_mm": 250.73, "vs_K1_pct": -0.50, "rings": 6, "tilt_deg": 29.7,
-                 "beta_px_per_mm2": -0.050, "beta_se": 0.095, "pupil_min_mm": 451.0,
-                 "sphere_r_mm": (2.413, 2.465)}
+REAL_RECORDED = {"px_per_mm": 252.13, "vs_K1_pct": 0.05, "rings": 8, "tilt_deg": 29.5,
+                 "beta_px_per_mm2": 0.0035, "beta_se": 0.0034, "pupil_min_mm": 10500.0,
+                 "sphere_r_mm": (2.400, 2.452)}
 
 
 def _real_cache_dir() -> str:
@@ -1120,33 +1123,35 @@ def real_fetch():
     return paths, None
 
 
-def _ring_points(g, cy, cx, length=2000.0, step_deg=1.0):
-    """中心から放射状に測定線を張り、明るい線(リング)の中心を edge pair で取る(``measuring1d``)。
+def _ring_points(g, cy, cx, length=2000.0, step_deg=1.0, amp_min=0.3):
+    """中心から放射状に測定線を張り、明るい線(リング)の中心を取る(``measuring1d.measure_pos``)。
 
-    返り値 (M, 3): (行, 列, 線の幅 px)。線の幅は暗い背景の黒い粒の対(幅 5〜10 px)を落とすのに使う。
+    外向きの測定線の上で、強い立ち下がり(|振幅| ≥ *amp_min*)ごとに、その手前 80 px 以内で最後の強い立ち上がりと
+    組にして中点を取る。返り値 (M, 3): (行, 列, 線の幅 px)。
+
+    ★2026-10-15 に直した: 以前は ``measure_pairs``(閾値 0.15)の組をそのまま使っていた。``measure_pairs`` は隣り合う
+    極性違いのエッジを前から順に組むので、(1) 中央の穴の縁の黒い粒の 1 本で組の位相がずれると、後ろのリングが
+    「暗い隙間」の組になって丸ごと落ち、(2) 線の中の粒の弱いエッジ(振幅 0.15〜0.3)と組んで、中点が線の内側の縁へ
+    寄った(元の解像度で見ると、外側のリングの点が白い線の内側の縁に並んでいた)。(3) 傾いた板の奥の側は
+    ぼけて線が太り(45 px 超)、幅の上限で落ちていた。
     """
     import measuring1d as M1
     out = []
     for a in np.deg2rad(np.arange(0.0, 360.0, step_deg)):
         meas = M1.gen_measure_rectangle2(cy + 0.5 * length * math.sin(a), cx + 0.5 * length * math.cos(a), a,
                                          length / 2, 3, g.shape)
-        for p in M1.measure_pairs(g, meas, sigma=2.0, threshold=0.15):
-            if p["first_amplitude"] <= 0:                 # 暗い隙間の対(− → +)は線ではない
+        edges = [e for e in M1.measure_pos(g, meas, sigma=2.0, threshold=amp_min)]
+        for i, e in enumerate(edges):
+            if e["polarity"] != "negative":
                 continue
-            r = 0.5 * (np.array(p["first_point"]) + np.array(p["second_point"]))
+            rise = [q for q in edges[:i] if q["polarity"] == "positive" and 0 < e["dist"] - q["dist"] < 80]
+            if not rise:
+                continue
+            q = rise[-1]
+            r = np.array([0.5 * (q["row"] + e["row"]), 0.5 * (q["col"] + e["col"])])
             if 0 <= r[0] < g.shape[0] and 0 <= r[1] < g.shape[1]:
-                out.append((r[0], r[1], p["width"]))
+                out.append((r[0], r[1], e["dist"] - q["dist"]))
     return np.array(out, float)
-
-
-def _ellipse_geom_rms(pts, f):
-    """楕円フィットの幾何の残差 [px](中心からの方向で楕円上の点との距離)。``fit_ellipse`` の rms は代数残差。"""
-    phi = math.radians(f["angle_deg"])
-    d = pts - np.array([f["cy"], f["cx"]])
-    x = d[:, 1] * math.cos(phi) + d[:, 0] * math.sin(phi)
-    y = -d[:, 1] * math.sin(phi) + d[:, 0] * math.cos(phi)
-    t = np.arctan2(y / f["rb"], x / f["ra"])
-    return float(np.sqrt(np.mean((x - f["ra"] * np.cos(t)) ** 2 + (y - f["rb"] * np.sin(t)) ** 2)))
 
 
 def _perspective_beta(rk_mm, tilt, L_mm, px_per_mm):
@@ -1210,113 +1215,132 @@ def chapter_real(L):
     hole = metrology.apply_metrology_model(mod, g, measure_length=15, sigma=2, threshold=0.1)[0]["params"]
     cy, cx = hole["row"], hole["col"]
     print("   中央の穴: 中心 (%.1f, %.1f) px、半径 %.1f px(metrology の円)" % (cy, cx, hole["radius"]))
-    # (b) リングの中心線の点 → 同心の相似な楕円の族を周期で当てる → リングごとに楕円フィット
+    # (b) リングの中心線の点 → 同心の相似な楕円の族(共通の中心・向き・縦横比 + リングごとの長半径)を当てる
+    #   ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で
+    #   膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と
+    #   ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。
+    #   族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
+    from scipy.optimize import least_squares
     pts = _ring_points(g, cy, cx)
-    pts = pts[(pts[:, 2] > 18) & (pts[:, 2] < 45) & (np.hypot(pts[:, 0] - cy, pts[:, 1] - cx) > 200)]
+    pts = pts[(pts[:, 2] > 15) & (pts[:, 2] < 80) & (np.hypot(pts[:, 0] - cy, pts[:, 1] - cx) > 200)]
 
-    def rho(phi, q):
-        dy, dx = pts[:, 0] - cy, pts[:, 1] - cx
-        u = dx * math.cos(phi) + dy * math.sin(phi)
-        v = -dx * math.sin(phi) + dy * math.cos(phi)
-        return np.sqrt(u * u + (v / q) ** 2)
+    def rho_of(P_, c_, phi_, q_):
+        dy, dx = P_[:, 0] - c_[0], P_[:, 1] - c_[1]
+        u = dx * np.cos(phi_) + dy * np.sin(phi_)
+        v = -dx * np.sin(phi_) + dy * np.cos(phi_)
+        return np.sqrt(u * u + (v / q_) ** 2)
 
     best = None
     for phi in np.deg2rad(np.arange(-90.0, 90.0, 2.0)):
         for q in np.arange(0.70, 1.0005, 0.01):
-            rr = rho(phi, q)
+            rr = rho_of(pts, (cy, cx), phi, q)
             for s in np.arange(200.0, 300.0, 0.5):
                 R = abs(np.mean(np.exp(2j * np.pi * rr / s)))
                 if best is None or R > best[0]:
                     best = (R, phi, q, s)
     _, phi, q, s = best
-    rr = rho(phi, q)
+    rr = rho_of(pts, (cy, cx), phi, q)
     ph = float(np.angle(np.mean(np.exp(2j * np.pi * rr / s)))) / (2 * np.pi) * s
     k = np.round((rr - ph) / s).astype(int)
-    res = rr - (k * s + ph)
-    rings = []
-    for kk in np.unique(k):
-        m = (k == kk) & (np.abs(res) < 25)
-        if m.sum() < 40:
-            continue
-        cover = len(np.unique(np.round(np.degrees(np.arctan2(pts[m, 0] - cy, pts[m, 1] - cx)) / 10)))
-        if cover < 10:                                   # 弧が 100° 未満のリングは中心が決まらない
-            continue
-        f = ME.fit_ellipse(pts[m][:, :2])
-        rings.append({"k": int(kk), "n": int(m.sum()), "cover_deg": 10 * cover, "f": f,
-                      "rms_px": _ellipse_geom_rms(pts[m][:, :2], f), "pts": pts[m][:, :2]})
-    ks = np.array([r["k"] for r in rings], float)
-    ra = np.array([r["f"]["ra"] for r in rings])
-    rb = np.array([r["f"]["rb"] for r in rings])
+    keep = np.abs(rr - (k * s + ph)) < 25
+    P, K = pts[keep, :2], k[keep]
+    cnt = {int(kk): int((K == kk).sum()) for kk in np.unique(K)}
+    ks = np.array([kk for kk in sorted(cnt) if cnt[kk] >= 30])
+    sel = np.isin(K, ks)
+    P, idx = P[sel], np.searchsorted(ks, K[sel])
+
+    def fam_resid(x_, P_, i_):
+        return rho_of(P_, x_[:2], x_[2], x_[3]) - x_[4:][i_]
+
+    x = np.r_[cy, cx, phi, q, s * ks + ph]
+    inl = np.ones(len(P), bool)
+    for _ in range(3):                                   # 外れ点(十字線の交点など)は MAD の 4 倍で落として解き直す
+        fit = least_squares(fam_resid, x, args=(P[inl], idx[inl]))
+        x = fit.x
+        r_all = fam_resid(x, P, idx)
+        inl = np.abs(r_all) < 4 * 1.4826 * np.median(np.abs(r_all)) + 1e-9
+    dof = max(1, int(fit.fun.size) - len(x))
+    cov = np.linalg.inv(fit.jac.T @ fit.jac) * float(np.sum(fit.fun ** 2)) / dof
+    ccy, ccx, phi, q = (float(v) for v in x[:4])
+    ra = x[4:]
+    se_ra = np.sqrt(np.diag(cov)[4:])
+    w = 1.0 / se_ra
     A = np.c_[ks, np.ones(len(ks))]
-    sol_a, *_ = np.linalg.lstsq(A, ra, rcond=None)
-    sol_b, *_ = np.linalg.lstsq(A, rb, rcond=None)
+    sol_a, *_ = np.linalg.lstsq(A * w[:, None], ra * w, rcond=None)
     resid_a = ra - A @ sol_a
-    se_a = float(np.sqrt(resid_a @ resid_a / max(1, len(ks) - 2) / ((ks - ks.mean()) ** 2).sum()))
+    cva = np.linalg.inv((A * w[:, None]).T @ (A * w[:, None]))
+    chi2 = float(np.sum((resid_a * w) ** 2)) / max(1, len(ks) - 2)
     pxmm = float(sol_a[0])
+    se_a = float(math.sqrt(cva[0, 0] * max(1.0, chi2)))
+    tilt = math.acos(q)
+    rings = []
+    for j, kk in enumerate(ks):
+        m = (idx == j) & inl
+        rj = r_all[m]
+        ang = np.degrees(np.arctan2(P[m, 0] - ccy, P[m, 1] - ccx)) % 360.0
+        a_s = np.sort(ang)
+        span = 360.0 - float(np.diff(np.r_[a_s, a_s[0] + 360.0]).max())
+        free = ME.fit_ellipse(P[m])                     # 比較: リングごとに自由な楕円を当てた長半径
+        rings.append({"k": int(kk), "n": int(m.sum()), "arc_deg": span, "rms_px": float(np.sqrt(np.mean(rj ** 2))),
+                      "max_px": float(np.abs(rj).max()), "free_ra": float(free["ra"]), "pts": P[m],
+                      "f": {"cy": ccy, "cx": ccx, "angle_deg": math.degrees(phi), "ra": float(ra[j]),
+                            "rb": float(ra[j] * q)}})
     for r in rings:
-        print("   リング %d: 点 %3d、弧 %3d°、長半径 %.1f px(= %.3f mm)、短半径 %.1f px、中心 (%.1f, %.1f)、幾何の残差 %.2f px"
-              % (r["k"], r["n"], r["cover_deg"], r["f"]["ra"], r["f"]["ra"] / pxmm, r["f"]["rb"], r["f"]["cy"],
-                 r["f"]["cx"], r["rms_px"]))
-    gate("実画像: 中心から放射状の測定線(measure_pairs)でリング %d 本を拾い、楕円の幾何の残差は最大 %.2f px"
-         % (len(rings), max(r["rms_px"] for r in rings)),
-         len(rings) >= 5 and max(r["rms_px"] for r in rings) < 3.0)
+        print("   リング %d: 点 %3d、弧 %3.0f°、長半径 %.1f px(= %.3f mm、自由な楕円なら %.1f px)、族への残差 RMS %.2f / 最大 %.2f px"
+              % (r["k"], r["n"], r["arc_deg"], r["f"]["ra"], r["f"]["ra"] / pxmm, r["free_ra"], r["rms_px"], r["max_px"]))
+    worst = max(r["rms_px"] for r in rings)
+    gate("実画像: 中心から放射状の測定線(measure_pos の立ち上がりと立ち下がりの中点)でリング %d 本を拾い、同心の相似な"
+         "楕円の族への残差は RMS 最大 %.2f px(外れ点 %d / %d 点を落とした)" % (len(rings), worst, int((~inl).sum()), len(inl)),
+         len(rings) >= 5 and worst < 3.0)
+    free_d = np.diff([r["free_ra"] for r in rings])
     vs = 100.0 * (pxmm / PAPER["K1_px_per_mm"] - 1)
     NUMBERS.update({"real_px_per_mm": pxmm, "real_vs_K1_pct": vs, "real_um_per_px": 1000.0 / pxmm})
     gate("実画像: 円の間隔 1 mm のアライメント板の長軸の伸び = %.2f ± %.2f px/mm(%.3f µm/px)—— 論文の K1 = 252.0 px/mm"
          "(K2 = 251.8 / 253.0)と %+.2f %%(1 %% 以内)" % (pxmm, se_a, 1000.0 / pxmm, vs), abs(vs) < 1.0,
-         "論文の「1 画素 = 4 µm」とも %+.1f %%" % (100.0 * (1000.0 / pxmm / PAPER["um_per_px"] - 1)))
-    gate("実画像: 長半径は間隔の整数 + 1/2 に並ぶ(リングの半径 %s mm、直線からの残差 最大 %.1f px = %.0f µm)"
+         "論文の「1 画素 = 4 µm」(丸めた値)とは %+.1f %%。★%+.2f %% の一致を精度と読まない —— 論文自身の K1 と K2 が "
+         "251.8〜253.0 px/mm(±0.25 %%)で散っている。★リングごとに自由な楕円を当てると間隔が %.0f〜%.0f px と散る"
+         "(影で弧が短いリングの外挿)" % (100.0 * (1000.0 / pxmm / PAPER["um_per_px"] - 1), vs, free_d.min(),
+                                        free_d.max()))
+    gate("実画像: 長半径は間隔の整数 + 1/2 に並ぶ(リングの半径 %s mm、直線からの残差 最大 %.2f px = %.1f µm)"
          % (" / ".join("%.2f" % v for v in ra / pxmm), np.abs(resid_a).max(), 1000.0 * np.abs(resid_a).max() / pxmm),
-         np.abs(resid_a).max() < 5.0)
-    # (c) テレセンの性質: 板は傾いている(短軸が縮む)のに、傾きの量は板のどこでも同じ —— 正射影
-    q_ratio = float(np.median(rb / ra))
-    q_slope = float(sol_b[0] / sol_a[0])
-    tilt = math.acos(q_ratio)
+         np.abs(resid_a).max() < 2.0)
+    # (c) テレセンの性質: 傾いた板の同心円の中心は 1 点に集まる —— リングごとに形(向き・縦横比・長半径)を固定して
+    #   中心だけを解き直し、短軸方向のずれが r² に比例するか(通常のレンズなら比例する)を見る
     NUMBERS["real_tilt_deg"] = math.degrees(tilt)
-    gate("実画像: 板は %.1f° 傾いている(短軸 / 長軸 = %.4f)。縮みは内側のリングと外側のリングで同じ(間隔の比 %.4f、差 %.4f)"
-         % (math.degrees(tilt), q_ratio, q_slope, q_slope - q_ratio), abs(q_slope - q_ratio) < 0.01)
-    phi_m = math.radians(float(np.median([r["f"]["angle_deg"] for r in rings])))
-    mdir = np.array([math.cos(phi_m + math.pi / 2), math.sin(phi_m + math.pi / 2)])     # (x, y) 短軸の向き
-    # ★中心の位置は弧が短いと決まらない(弧 140° のリングで中心が 10 px 動いた)。中心の門には弧 180° 以上のリングだけを
-    #   使い、全部を使ったときの β も並べて印字する(選んだ結果だけを見せない)。
-    full = np.array([r["cover_deg"] >= 180 for r in rings])
-
-    def centre_fit(sel):
-        cen = np.array([[r["f"]["cx"], r["f"]["cy"]] for r, ok in zip(rings, sel) if ok])
-        pr = (cen - cen.mean(0)) @ mdir
-        rk_ = ra[sel] / pxmm
-        Ab = np.c_[rk_ ** 2, np.ones(len(rk_))]
-        sb, *_ = np.linalg.lstsq(Ab, pr, rcond=None)
-        rb_ = pr - Ab @ sb
-        se = float(np.sqrt(rb_ @ rb_ / max(1, len(rk_) - 2) / ((rk_ ** 2 - np.mean(rk_ ** 2)) ** 2).sum()))
-        return float(sb[0]), se, pr, rk_
-
-    beta_all, se_all, proj_all, rk_all = centre_fit(np.ones(len(rings), bool))
-    beta, se_b, proj, rk = centre_fit(full)
-    print("   中心の門に使うリング: 弧 180° 以上の %d 本(全 %d 本で β = %.3f ± %.3f px/mm²)"
-          % (int(full.sum()), len(rings), beta_all, se_all))
+    mn = np.array([math.cos(phi), -math.sin(phi)])        # 短軸の向き (行, 列)
+    off, se_off = [], []
+    for j in range(len(ks)):
+        Pj = P[(idx == j) & inl]
+        fj = least_squares(lambda c, Pj=Pj, j=j: rho_of(Pj, c, phi, q) - ra[j], np.array([ccy, ccx]))
+        cj = np.linalg.inv(fj.jac.T @ fj.jac) * float(np.sum(fj.fun ** 2)) / max(1, len(Pj) - 2)
+        off.append(float((fj.x - np.array([ccy, ccx])) @ mn))
+        se_off.append(float(math.sqrt(mn @ cj @ mn)))
+    proj, se_off = np.array(off), np.array(se_off)
+    rk = ra / pxmm
+    wb = 1.0 / se_off
+    Ab = np.c_[rk ** 2, np.ones(len(rk))]
+    sb, *_ = np.linalg.lstsq(Ab * wb[:, None], proj * wb, rcond=None)
+    cvb = np.linalg.inv((Ab * wb[:, None]).T @ (Ab * wb[:, None]))
+    chi2b = float(np.sum(((proj - Ab @ sb) * wb) ** 2)) / max(1, len(rk) - 2)
+    beta, se_b = float(sb[0]), float(math.sqrt(cvb[0, 0] * max(1.0, chi2b)))
+    print("   板の傾き %.1f°(縦横比 %.4f)。リングごとの中心の短軸方向のずれ [px]: %s(± %s)"
+          % (math.degrees(tilt), q, " / ".join("%+.2f" % v for v in proj), " / ".join("%.2f" % v for v in se_off)))
     Lfa = TC.chief_ray_angle(L["fa25"], 4.0)["pupil_distance_mm"]
     Len = TC.chief_ray_angle(L["ento"], 4.0)["pupil_distance_mm"]
     b_fa = _perspective_beta(rk, tilt, Lfa, pxmm)
     b_en = _perspective_beta(rk, tilt, Len, pxmm)
     b1 = _perspective_beta(rk, tilt, 1000.0, pxmm) * 1000.0      # β·L は L によらずほぼ一定
     lmin = b1 / (abs(beta) + 2 * se_b)
-    edge_deg = math.degrees(math.atan(rk_all.max() / lmin))
+    edge_deg = math.degrees(math.atan(rk.max() / lmin))
     NUMBERS.update({"real_beta": beta, "real_beta_se": se_b, "real_pupil_min_mm": lmin, "real_beta_fa25": b_fa,
-                    "real_beta_ento": b_en, "real_shift_fa25_px": b_fa * rk_all.max() ** 2, "real_edge_deg": edge_deg,
-                    "real_beta_all": beta_all, "real_beta_all_se": se_all})
-    print("   リングの中心の短軸方向の位置 [px]: %s(r² への傾き β = %.3f ± %.3f px/mm²)"
-          % (" / ".join("%+.1f" % v for v in proj), beta, se_b))
+                    "real_beta_ento": b_en, "real_shift_fa25_px": b_fa * rk.max() ** 2, "real_edge_deg": edge_deg})
     print("   同じ板を入射瞳 %.1f mm の通常 f=25(2 章)で写すと β = %.2f px/mm²(外側のリングで中心が %.0f px ずれる)、"
-          "通常 f=100(入射瞳 %.0f mm)で %.2f" % (Lfa, b_fa, b_fa * rk_all.max() ** 2, Len, b_en))
-    gate("★テレセンの証拠(実画像): 傾いた板の同心円の中心は r² に比例してずれない(β = %.3f ± %.3f px/mm²)。"
-         "通常 f=25 なら %.2f、f=100 でも %.2f px/mm² —— 測った β の 2σ の上限 %.2f はどちらも外す(f=25 の 1/5 未満)"
-         % (beta, se_b, b_fa, b_en, abs(beta) + 2 * se_b),
-         abs(beta) + 2 * se_b < min(abs(b_en), 0.2 * abs(b_fa)),
-         "入射瞳は %.0f mm より遠い(2σ)= 視野の端 %.1f mm の主光線の傾き < %.2f°。★全リング(弧 140° を含む)では "
-         "β = %.3f ± %.3f で、この門は%s" % (lmin, rk_all.max(), edge_deg, beta_all, se_all,
-                                          "通る" if abs(beta_all) + 2 * se_all < min(abs(b_en), 0.2 * abs(b_fa))
-                                          else "通らない(f=100 を 2σ で外せない)"))
+          "通常 f=100(入射瞳 %.0f mm)で %.2f" % (Lfa, b_fa, b_fa * rk.max() ** 2, Len, b_en))
+    gate("★テレセンの証拠(実画像): 傾いた板の同心円の中心は r² に比例してずれない(β = %.4f ± %.4f px/mm²)。"
+         "通常 f=25 なら %.2f、f=100 でも %.2f px/mm² —— 測った β の 2σ の上限 %.3f は f=100 の 1/10 未満"
+         % (beta, se_b, b_fa, b_en, abs(beta) + 2 * se_b), abs(beta) + 2 * se_b < 0.1 * abs(b_en),
+         "入射瞳は %.1f m より遠い(2σ)= 視野の端 %.1f mm の主光線の傾き < %.3f°" % (lmin / 1000.0, rk.max(), edge_deg))
+    proj_all, rk_all, full = proj, rk, np.ones(len(rk), bool)
     # (d) 樹脂の球(公称半径 2.5 mm、3D プリント)—— 輪郭の円の半径
     sph = {}
     for key in ("sphere_cam1", "sphere_cam2"):
@@ -1344,7 +1368,7 @@ def chapter_real(L):
          % (100 * span, sph["sphere_cam1"][0][2], r1, r2, 100 * (r1 / 2.5 - 1), 100 * (r2 / 2.5 - 1)),
          span > 0.05, "論文の計量級の球(半径 5 mm ±1.6 µm)の生画像は公開データに入っていない")
     return {"g": g, "rings": rings, "hole": (cy, cx), "pxmm": pxmm, "proj": proj, "rk": rk, "rk_all": rk_all, "proj_all": proj_all, "full": full, "beta": beta,
-            "se_b": se_b, "b_fa": b_fa, "b_en": b_en, "Lfa": Lfa, "Len": Len, "tilt": tilt, "phi": phi_m,
+            "se_b": se_b, "b_fa": b_fa, "b_en": b_en, "Lfa": Lfa, "Len": Len, "tilt": tilt, "phi": phi,
             "sph": sph, "paths": paths}
 
 
@@ -1372,49 +1396,55 @@ def make_real_figures(real):
                                         shape="cross", width=3))
     half = ov[::2, ::2]
     half = np.asarray(fs.annotate_scale_bar(half, 2.0 * 1000.0 / real["pxmm"], unit="µm"))
-    half = np.asarray(fs.text_box(half, "楕円 = リングごとのフィット(+ = その中心)。1/2 に縮小", (10, 10), font_size=22))
+    half = np.asarray(fs.text_box(half, "楕円 = 同心の相似な楕円の族(+ = 中心)。1/2 に縮小", (10, 10), font_size=22))
     figs.save("real_alignment_plate", half,
-              "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、放射状の測定線(measure_pairs)で取った"
-              "リングの中心線へ当てた楕円を重ねた。板は %.1f° 傾いて楕円に写るが、6 本の楕円の中心は 1 点に集まる"
-              "(通常のレンズなら外側ほど短軸方向へずれる)。長軸の伸びは %.2f px/mm で、論文の K1 = 252.0 px/mm と %+.2f %%。"
+              "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、中心から放射状の測定線(measure_pos)で"
+              "取ったリングの中心線へ当てた、同心の相似な楕円の族を重ねた(1/2 に縮小。検分は次の等倍の図で)。板は %.1f° 傾いて"
+              "楕円に写り、右上は影でリングが見えない。長軸の伸びは %.2f px/mm で、論文の K1 = 252.0 px/mm と %+.2f %%。"
               % (NUMBERS["real_tilt_deg"], real["pxmm"], NUMBERS["real_vs_K1_pct"]) + REAL_SOURCE, source=REAL_SOURCE)
-    # 1:1 の切り出し(外側のリングの線と測った点)
-    r6 = real["rings"][len(real["rings"]) // 2]          # 中ほどのリング(板の傾きでピントの外れない所)
-    pp = r6["pts"]
-    ang = np.arctan2(pp[:, 0] - r6["f"]["cy"], pp[:, 1] - r6["f"]["cx"])
+    # 等倍の切り出し: 外側のリングの見えている弧の中ほど(影の境に近く、外挿が効く所)
+    ro = real["rings"][-1]
+    pp = ro["pts"]
+    ang = np.arctan2(pp[:, 0] - ro["f"]["cy"], pp[:, 1] - ro["f"]["cx"])
     j = int(np.argmin(np.abs(ang - np.median(ang))))
-    cy0, cx0 = int(pp[j, 0]), int(pp[j, 1])
-    y0, x0 = max(0, cy0 - 200), max(0, cx0 - 300)
-    crop = rgb[y0:y0 + 400, x0:x0 + 600].copy()
-    inside = (pp[:, 0] >= y0) & (pp[:, 0] < y0 + 400) & (pp[:, 1] >= x0) & (pp[:, 1] < x0 + 600)
-    for rr_ in real["rings"]:
+    H, W = rgb.shape[:2]
+    y0 = int(min(max(0, pp[j, 0] - 250), H - 500))
+    x0 = int(min(max(0, pp[j, 1] - 350), W - 700))
+    crop = rgb[y0:y0 + 500, x0:x0 + 700].copy()
+    tt = np.linspace(0, 2 * np.pi, 4000)
+    for i, rr_ in enumerate(real["rings"]):
+        f = rr_["f"]
+        phi = math.radians(f["angle_deg"])
+        x = f["cx"] + f["ra"] * np.cos(tt) * math.cos(phi) - f["rb"] * np.sin(tt) * math.sin(phi) - x0
+        y = f["cy"] + f["ra"] * np.cos(tt) * math.sin(phi) + f["rb"] * np.sin(tt) * math.cos(phi) - y0
+        ok = (x > -5) & (x < 705) & (y > -5) & (y < 505)
+        if ok.sum() > 2:
+            crop = np.asarray(fs.draw_polyline(crop, np.c_[x[ok], y[ok]], color=pal[i % len(pal)], width=1))
         q_ = rr_["pts"]
-        mm = (q_[:, 0] >= y0) & (q_[:, 0] < y0 + 400) & (q_[:, 1] >= x0) & (q_[:, 1] < x0 + 600)
+        mm = (q_[:, 0] >= y0) & (q_[:, 0] < y0 + 500) & (q_[:, 1] >= x0) & (q_[:, 1] < x0 + 700)
         if mm.any():
-            crop = np.asarray(fs.draw_markers(crop, np.c_[q_[mm, 1] - x0, q_[mm, 0] - y0], color=(0.0, 0.62, 0.45),
-                                              size=7, shape="cross", width=2))
-    del inside
+            crop = np.asarray(fs.draw_markers(crop, np.c_[q_[mm, 1] - x0, q_[mm, 0] - y0], color=pal[i % len(pal)],
+                                              size=7, shape="cross", width=1))
     figs.save("real_plate_crop_1to1", crop,
-              "【実画像】等倍の切り出し(600 × 400 画素)。緑の + は測定線 1 本ごとに edge pair(明るい線の立ち上がりと"
-              "立ち下がり)の中点として取った線の中心。線の幅は約 30 画素(120 µm)、背景の黒い粒の対(幅 5〜10 画素)は"
-              "幅で落とした。" + REAL_SOURCE_SHORT, source=REAL_SOURCE)
+              "【実画像】等倍の切り出し(700 × 500 画素、外側のリングの見えている弧の中ほど)。+ は測定線 1 本ごとの線の中心"
+              "(強い立ち上がりと次の強い立ち下がりの中点)、細い線は当てた楕円の族。リングごとの点の数・弧の角度・族への残差は"
+              "PoC の出力に印字する。" + REAL_SOURCE_SHORT, source=REAL_SOURCE)
     rk = real["rk"]
-    xs = np.linspace(0, real["rk_all"].max() * 1.05, 50)
-    pa, fu = real["proj_all"], real["full"]
-    off = float(np.mean(pa[fu]))                    # 門に使ったリングの平均を 0 に(下の点と同じ原点)
-    ser = [("実画像(弧 180° 以上のリングの中心)", rk ** 2, pa[fu] - off),
-           ("実画像(弧の短いリング。門に使わない)", real["rk_all"][~fu] ** 2, pa[~fu] - off) if (~fu).any()
-           else ("", np.array([0.0]), np.array([0.0])),
+    xs = np.linspace(0, rk.max() * 1.05, 50)
+    pa = real["proj"]
+    ser = [("実画像(リングごとの中心。形は族で共通)", rk ** 2, pa),
            ("通常 f=25(入射瞳 %.0f mm)" % real["Lfa"], xs ** 2, real["b_fa"] * (xs ** 2 - np.mean(rk ** 2))),
            ("通常 f=100(入射瞳 %.0f mm)" % real["Len"], xs ** 2, real["b_en"] * (xs ** 2 - np.mean(rk ** 2)))]
-    figs.save_plot("real_ring_centres", ser, xlabel="リングの半径² [mm²]", ylabel="楕円の中心の短軸方向の位置 [px]",
-                   kinds=["scatter", "scatter", "line", "line"], styles=[None, None, "dashed", "dashed"],
-                   colors=["emphasis", "neutral", "wrong", "reference"],
-                   title="傾いた板の同心円: 実画像の中心はずれない(β = %.3f ± %.3f px/mm²)" % (real["beta"], real["se_b"]),
-                   caption="【実画像】破線は同じ傾き・同じ倍率の板を、2 章のレンズの入射瞳の位置に置いたピンホールで写したときの"
-                           "中心のずれ(閉形式 x' = X·L/(L − Z) で写して同じ fit_ellipse で中心を取った)。実画像の点は 0 の線の"
-                           "まわりに ±3 px で並び、入射瞳は %.0f mm より遠い(主光線の傾きは視野の端で %.2f° 未満)。"
-                           % (NUMBERS["real_pupil_min_mm"], NUMBERS["real_edge_deg"]) + REAL_SOURCE_SHORT, source=REAL_SOURCE)
+    figs.save_plot("real_ring_centres", ser, xlabel="リングの半径² [mm²]", ylabel="中心の短軸方向のずれ [px]",
+                   kinds=["scatter", "line", "line"], styles=[None, "dashed", "dashed"],
+                   colors=["emphasis", "wrong", "reference"],
+                   title="傾いた板の同心円: 実画像の中心はずれない(β = %.4f ± %.4f px/mm²)" % (real["beta"], real["se_b"]),
+                   caption="【実画像】リングごとに形(向き・縦横比・長半径)を族の値に固定して中心だけを解き直し、短軸方向のずれを"
+                           "取った。破線は同じ傾き・同じ倍率の板を 2 章のレンズの入射瞳の位置に置いたピンホールで写したときの中心の"
+                           "ずれ(閉形式 x' = X·L/(L − Z) で写して fit_ellipse で中心を取った)。入射瞳は %.1f m より遠い"
+                           "(主光線の傾きは視野の端で %.3f° 未満)。"
+                           % (NUMBERS["real_pupil_min_mm"] / 1000.0, NUMBERS["real_edge_deg"]) + REAL_SOURCE_SHORT,
+                   source=REAL_SOURCE)
     tiles = []
     for key in ("sphere_cam1", "sphere_cam2"):
         gi = np.asarray(fs_read(real["paths"][key]), float)
