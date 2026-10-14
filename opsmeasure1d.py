@@ -1,10 +1,11 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsmeasure1d —— 測定線・測定モデルによるサブピクセル計測の統一レジストリ。
 
-実体は 2 モジュール(14 op / 3 カテゴリ。numpy と scipy のみ):
+実体は 2 モジュール(17 op / 4 カテゴリ。numpy と scipy のみ):
 
 * ``measuring1d.py`` —— 測定線(矩形・円弧)に沿ってエッジをサブピクセルで取り、
-  対にして幅を出す。工業検査でいうキャリパー。
+  対にして幅を出す。工業検査でいうキャリパー。画素 → mm の換算と校正
+  (``scale`` カテゴリ、2026-09-15)もここ。
 * ``metrology.py`` —— 直線・円・矩形・楕円の当てはめをモデルとして持ち、
   1 枚の画像へまとめて適用する。
 
@@ -92,6 +93,14 @@ _CATALOG = {
     "apply": [
         ("align_metrology_model", "metrology", ["metrologymodel"], "metrologymodel"),
         ("apply_metrology_model", "metrology", ["metrologymodel", "image2d"], "table"),
+    ],
+    # 実寸 —— 画素を mm にする(2026-09-15)。文書だけを渡した AI の導線が px で
+    # 止まり、4 層のどこにも換算 op が無かった。新語は作らない(``measurement`` /
+    # ``table`` は既存)。
+    "scale": [
+        ("mm_per_px_from_reference", "measuring1d", ["measurement"], "measurement"),
+        ("pixel_to_world", "measuring1d", ["measurement"], "measurement"),
+        ("table_px_to_mm", "measuring1d", ["table"], "table"),
     ],
 }
 

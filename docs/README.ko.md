@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 7 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 365건 중 게이트가 실제로 실행하는 것은 365건.
+예 366건 중 게이트가 실제로 실행하는 것은 366건.
 
 ### 버전별 연산자 수
 
@@ -134,11 +134,11 @@
 
 ## 연산자 찾기
 
-**3,192개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,195개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2235/2247, 한 줄 파사드 `fullseye.<이름>` 683/1431 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2238/2250, 한 줄 파사드 `fullseye.<이름>` 683/1431 — **파사드는 아직 절반**.
 
-**내용 실측**: 3192건 중 실행 가능한 예제가 붙은 것은 **3191**건(1건은 없음), 사용법이 120자 이상인 것은 **3028**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3192건 모두.
+**내용 실측**: 3195건 중 실행 가능한 예제가 붙은 것은 **3194**건(1건은 없음), 사용법이 120자 이상인 것은 **3031**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3195건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -164,6 +164,7 @@
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
+| `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -173,7 +174,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
-| `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -289,7 +289,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 243건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,192건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,195건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

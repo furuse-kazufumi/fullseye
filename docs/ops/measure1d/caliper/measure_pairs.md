@@ -21,6 +21,13 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、
 ``first_point``/``second_point`` = (row, col)。
 
+**失敗と信頼度は返さない**(対が無ければ空 list、危険域でも対を返す)。
+エッジ間距離 / PSF 幅が 3.09 を切ると幅は必ず大きい側へ偏り(2.06 で +2.43 px)、
+1.58 まで「対が見つかった」と答え続ける —— 実測と見張り方は
+``docs/ops/measure1d/guides/subpixel_measuring.md`` の「落とし穴 2」。極性の
+順序も問わない(暗い構造の幅が返ることがある。同 §4)。単位は px なので、
+mm が要るときは ``table_px_to_mm`` / ``pixel_to_world`` に渡す。
+
 空の入力(``image`` が 0 要素)は ValueError。
 
 ## 詳しい使い方ガイド
@@ -41,7 +48,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[table_px_to_mm](../scale/table_px_to_mm.md)
 
 ## 同カテゴリ(`caliper`)
 

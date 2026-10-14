@@ -28736,6 +28736,33 @@
    "ko": "상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (``table``).",
    "de": "AMCW-Laufzeittiefe eines konkaven Lambert-Querschnitts (einer Raumecke), bei der jede Interreflexion um ihre Weglänge verzögert ist: komplexe Radiosität, Tiefenabweichung je Pixel (``table``).",
    "hi": "अवतल Lambertian अनुप्रस्थ-काट (कमरे का कोना) की AMCW time-of-flight गहराई, जहाँ हर interreflection अपनी पथ-लंबाई से विलंबित है: complex radiosity, हर pixel का गहराई bias (``table``)।"
+  },
+  "measure1d/mm_per_px_from_reference": {
+   "fp": "0b1dc0f71947",
+   "en": "Derives the pixel pitch in mm/px from a target of known size (scale bar, reference hole, gauge) — the calibration step.",
+   "zh": "由已知尺寸的标准物(比例尺、基准孔、量规)求出像素间距 mm/px(标定)。",
+   "tw": "由已知尺寸的標準物(比例尺、基準孔、量規)求出像素間距 mm/px(校正)。",
+   "ko": "치수를 아는 기준물(스케일 바, 기준 구멍, 게이지)로부터 화소 피치 mm/px 를 구한다(보정).",
+   "de": "Bestimmt den Pixelabstand in mm/px aus einem Ziel bekannter Größe (Maßstab, Referenzbohrung, Lehre) — der Kalibrierschritt.",
+   "hi": "ज्ञात माप वाले target (scale bar, reference hole, gauge) से pixel pitch mm/px निकालता है (calibration)।"
+  },
+  "measure1d/pixel_to_world": {
+   "fp": "5217bf9754d5",
+   "en": "Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``).",
+   "zh": "把以像素测得的一个长度换算为实际尺寸 mm(``value_px * mm_per_px``)。",
+   "tw": "把以像素量得的一個長度換算為實際尺寸 mm(``value_px * mm_per_px``)。",
+   "ko": "화소로 잰 길이 하나를 실제 치수 mm 로 바꾼다(``value_px * mm_per_px``).",
+   "de": "Rechnet eine in Pixeln gemessene Länge in reale mm um (``value_px * mm_per_px``).",
+   "hi": "pixel में मापी गई एक लंबाई को वास्तविक mm में बदलता है (``value_px * mm_per_px``)।"
+  },
+  "measure1d/table_px_to_mm": {
+   "fp": "3db08d8ba457",
+   "en": "Adds mm columns to a measurement table (the return of ``measure_pairs`` / ``apply_metrology_model``).",
+   "zh": "给测量结果表(``measure_pairs`` / ``apply_metrology_model`` 的返回值)添加 mm 列。",
+   "tw": "為量測結果表(``measure_pairs`` / ``apply_metrology_model`` 的回傳值)加上 mm 欄。",
+   "ko": "계측 결과 표(``measure_pairs`` / ``apply_metrology_model`` 의 반환값)에 mm 열을 더한다.",
+   "de": "Fügt einer Messtabelle (Rückgabe von ``measure_pairs`` / ``apply_metrology_model``) mm-Spalten hinzu.",
+   "hi": "measurement table (``measure_pairs`` / ``apply_metrology_model`` का return) में mm columns जोड़ता है।"
   }
  }
 }

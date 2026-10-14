@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1399. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1402. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -293,6 +293,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L46** — ★Unless the repository root is on the path, ``demops`` is not found (this example does not import `fullseye`, so the path hook does not kick in).
 - **L59** — ★EXTEND: cell size [m]. For real data, obtain it via dem_cell_size_webmercator(zoom, latitude).
 - **L158** — ★Honest observation: when there is a no-data cell partway down a slope, its northern neighbour, even as an outlet, does not drain into the no-data but goes south-west (the direction with a finite drop). The implementation is "drain into no-data only when there is nowhere else to descend", narrower than the docstring's "allows flow toward no-data". Here we only print and do not assert.
+
+## `examples/example_inner_diameter_mm.py`
+
+- **L67** _(ja)_ — 穴(暗い側)を前景に。★面積の大小では決めない —— 穴と地の面積がほぼ同じだと 取り違える(R=100 px の的で地の側を「穴」と取った、2026-10-15)。輝度で決める。
+- **L71** _(ja)_ — area_center は (面積 [px²], 行 [px], 列 [px])。★2026-09-26 に正規化 [0,1] から HALCON と同じ画素値に変わった(ecdaf14637)。
 
 ## `examples/gallery2d_color_artistic.py`
 
@@ -1499,6 +1504,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L3460** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
 - **L3763** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
+## `measuring1d.py`
+
+- **L375** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
+
 ## `medial.py`
 
 - **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
@@ -2659,10 +2668,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
 - **L232** _(ja)_ — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
 - **L303** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L357** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L530** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
-- **L547** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
-- **L619** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
+- **L362** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L535** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L552** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L624** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
 
 ## `unified.py`
 

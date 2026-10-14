@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_px_to_mm — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;table_px_to_mm&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>계측 결과 표(<code style="color:#22d3bf">measure_pairs</code> / <code style="color:#22d3bf">apply_metrology_model</code> 의 반환값)에 mm 열을 더한다.</p>
+<p><code style="color:#22d3bf">keys</code> 에 있는 수치 열 <code style="color:#22d3bf">k</code> 마다 <code style="color:#22d3bf">k_mm = k * mm_per_px</code> 를 <b>추가</b>한다(px 열은 남긴다. 지우면 내력이 끊긴다). <code style="color:#22d3bf">apply_metrology_model</code> 의 각 행은 <code style="color:#22d3bf">params</code> dict 안에 <code style="color:#22d3bf">radius</code> / <code style="color:#22d3bf">l1</code> … 를 가지므로 그것도 본다. 입력은 list[dict] 또는 dict 하나. <b>얕은 복사본</b>을 돌려주고 입력은 바꾸지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 수치가 아닌 열·없는 열은 조용히 건너뛴다(환산됐는지는 <code style="color:#22d3bf">k_mm</code> 의 유무로 알 수 있다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mm_per_px</code> 는 유한한 양수(<code style="color:#22d3bf">mm_per_px_from_reference</code> 의 값).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rms</code> 는 맞춤 잔차 [px] 이므로 mm 로 바꿔 두면 공차와 직접 비교할 수 있다.</p>
+<p style="margin:2px 0 2px 12px">• 빈 표(<code style="color:#22d3bf">[]</code> / <code style="color:#22d3bf">{}</code>)는 <code style="color:#22d3bf">ValueError</code>(행이 하나도 없다는 사실을 환산 뒤로 숨기지 않는다).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:mm_per_px_from_reference">mm_per_px_from_reference</a> · <a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

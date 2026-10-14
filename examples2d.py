@@ -613,6 +613,14 @@ EXAMPLES = [
                 "評価する。絵は +5.17 dB(中央のフレーム比)で勝つ。だが深度は段差帯でゼロ点比 0.94(負け)、"
                 "★**無テクスチャでは 0.16(6 倍負け)**。しかも突出度の信頼度は嘘の側が"
                 "高く出る(0.9575 対 0.9381)—— 峰の絶対値で棄却すると RMS が 0.918 → 0.817 mm。"},
+    # -- レシピ(docs/capabilities)の worked example(2026-09-15)------------------- #
+    {"id": "example_inner_diameter_mm", "task": "metrology", "data": "synthetic",
+     "name": "円形部品の内径を mm まで(校正 1 個がサブピクセル精度の 500 倍効く)",
+     "summary": "Ø10.000 mm の的(半径 100 px)と Ø6.130 mm の穴(61.3 px)を同じ画素ピッチ 0.050 mm/px で合成し、"
+                "`otsu` → `area_center` の粗い中心 → `add_metrology_object_circle_measure` → `apply_metrology_model` → "
+                "`mm_per_px_from_reference` → `pixel_to_world` で内径を mm に。★半径の偏り −0.011 px、内径 −0.4 µm。"
+                "★公称倍率(作動距離 4 % ずれ)で換算すると −246 µm。★円周の 25 % が欠けても半径は返り(−5.0 px)、"
+                "欠けは `rms`(0.067 → 1.90)と縁の点数(128 → 54)で見張る。"},
     # -- PoC 第 6 波 ------------------------------------------------------------- #
     {"id": "poc_dimensional_inspection", "task": "metrology", "data": "synthetic",
      "name": "部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)",

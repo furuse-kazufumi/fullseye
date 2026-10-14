@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rising/falling edge के जोड़े (structure की चौड़ाई) निकालता है (measure_pairs)। <code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = हर edge का <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">width</code> = चौड़ाई [px], <code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col)।</p>
+<p><b>यह failure या confidence नहीं लौटाता</b> (pair न मिले तो खाली list, और danger zone में भी pair लौटाता है)। edge spacing / PSF width 3.09 से नीचे जाते ही width हमेशा बड़ी तरफ़ झुकती है (2.06 पर +2.43 px), और 1.58 तक &quot;pair मिला&quot; कहता रहता है —— माप और निगरानी का तरीका <code style="color:#22d3bf">docs/ops/measure1d/guides/subpixel_measuring.md</code> के &quot;Pitfall 2&quot; में है। polarity का क्रम भी नहीं जाँचता (अंधेरी structure की width लौट सकती है; वही guide §4)। unit px है; mm चाहिए तो <code style="color:#22d3bf">table_px_to_mm</code> / <code style="color:#22d3bf">pixel_to_world</code> को दें।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">image</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
@@ -16,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
-<p>—</p>
+<p><a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">caliper</code>)</h3>
 <p><a style="color:#22d3bf" href="opmeasure1d:gen_measure_rectangle2">gen_measure_rectangle2</a> · <a style="color:#22d3bf" href="opmeasure1d:gen_measure_arc">gen_measure_arc</a> · <a style="color:#22d3bf" href="opmeasure1d:translate_measure">translate_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pos">measure_pos</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
