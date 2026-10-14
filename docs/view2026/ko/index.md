@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-61개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+62개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -129,6 +129,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Bayer 원시 프레임을 단계마다 설명 가능한 식으로 표시 이미지로: [설명](../../capabilities/raw-to-display-isp.md) _(ja)_ · 예제 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 광원 × 대상 × 센서의 분광 사슬(플랑크・CIE A・LED・필터・Si의 QE): [설명](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 예제 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI 라인 스캔과 라인 스캔용 렌즈(단수와 SNR, 동기 오차의 MTF, 상고별 조도와 MTF): [설명](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 예제 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+- 분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도): [설명](../../capabilities/thin-film-reflectometry.md) _(ja)_ · 예제 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
 
 **파동과 신호**
 
@@ -172,7 +173,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 236개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 237개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -350,9 +351,10 @@ PoC 236개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>색·분리</b> (7)</summary>
+<details class="vall"><summary><b>색·분리</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="광파이버와 라이트 가이드(모드, 분산, 모드 필드)" width="200" height="200"><span>광파이버와 라이트 가이드(모드, 분산, 모드 필드)</span></a>
+<a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)" width="200" height="200"><b>&#9654;</b><span>분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="Si 웨이퍼 너머의 근적외 투과 검사(LED 파장 고르기)" width="200" height="200"><b>&#9654;</b><span>Si 웨이퍼 너머의 근적외 투과 검사(LED 파장 고르기)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="재료 광학 물성 라이브러리(83종이 같은 표에서)" width="200" height="200"><b>&#9654;</b><span>재료 광학 물성 라이브러리(83종이 같은 표에서)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="안료 층 분리" width="200" height="200"><span>안료 층 분리</span></a>

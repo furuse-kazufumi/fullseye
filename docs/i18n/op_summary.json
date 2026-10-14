@@ -26182,31 +26182,31 @@
    "hi": "height field से SEM image बनाता है: secondary-electron edge effect (sec θ) + Gaussian beam PSF + Poisson shot noise।"
   },
   "generative/pl_diffusion_psf": {
-     "fp": "0d7e1850a5a5",
-     "en": "Return the carrier-diffusion PSF (the 2-D Green function K0(r/L)/2πL², summing to 1) as an image.",
-     "zh": "以图像形式返回载流子扩散 PSF（二维格林函数 K0(r/L)/2πL²，总和为 1）。",
-     "tw": "以影像形式回傳載子擴散 PSF（二維格林函數 K0(r/L)/2πL²，總和為 1）。",
-     "ko": "캐리어 확산 PSF(2차원 그린 함수 K0(r/L)/2πL², 합 1)를 영상으로 반환.",
-     "de": "Gibt die Ladungsträger-Diffusions-PSF (2-D-Greensche Funktion K0(r/L)/2πL², Summe 1) als Bild zurück.",
-     "hi": "carrier-diffusion PSF (2-D Green function K0(r/L)/2πL², योग 1) को image के रूप में लौटाता है।"
+   "fp": "0d7e1850a5a5",
+   "en": "Return the carrier-diffusion PSF (the 2-D Green function K0(r/L)/2πL², summing to 1) as an image.",
+   "zh": "以图像形式返回载流子扩散 PSF（二维格林函数 K0(r/L)/2πL²，总和为 1）。",
+   "tw": "以影像形式回傳載子擴散 PSF（二維格林函數 K0(r/L)/2πL²，總和為 1）。",
+   "ko": "캐리어 확산 PSF(2차원 그린 함수 K0(r/L)/2πL², 합 1)를 영상으로 반환.",
+   "de": "Gibt die Ladungsträger-Diffusions-PSF (2-D-Greensche Funktion K0(r/L)/2πL², Summe 1) als Bild zurück.",
+   "hi": "carrier-diffusion PSF (2-D Green function K0(r/L)/2πL², योग 1) को image के रूप में लौटाता है।"
   },
   "generative/pl_image_simulate": {
-     "fp": "053b5cca47f6",
-     "en": "Build a PL image from an excitation map and a recombination map (exact steady-state diffusion solve + optical PSF + noise).",
-     "zh": "由激发场和复合场生成 PL 图像（稳态扩散方程的精确解 + 光学 PSF + 噪声）。",
-     "tw": "由激發場與復合場生成 PL 影像（穩態擴散方程的精確解 + 光學 PSF + 雜訊）。",
-     "ko": "여기 장과 재결합 장에서 PL 영상을 생성(정상 상태 확산 방정식의 엄밀해 + 광학 PSF + 잡음).",
-     "de": "Erzeugt ein PL-Bild aus Anregungs- und Rekombinationsfeld (exakte Lösung der stationären Diffusionsgleichung + optische PSF + Rauschen).",
-     "hi": "excitation field और recombination field से PL image बनाता है (steady-state diffusion equation का exact solution + optical PSF + noise)।"
+   "fp": "053b5cca47f6",
+   "en": "Build a PL image from an excitation map and a recombination map (exact steady-state diffusion solve + optical PSF + noise).",
+   "zh": "由激发场和复合场生成 PL 图像（稳态扩散方程的精确解 + 光学 PSF + 噪声）。",
+   "tw": "由激發場與復合場生成 PL 影像（穩態擴散方程的精確解 + 光學 PSF + 雜訊）。",
+   "ko": "여기 장과 재결합 장에서 PL 영상을 생성(정상 상태 확산 방정식의 엄밀해 + 광학 PSF + 잡음).",
+   "de": "Erzeugt ein PL-Bild aus Anregungs- und Rekombinationsfeld (exakte Lösung der stationären Diffusionsgleichung + optische PSF + Rauschen).",
+   "hi": "excitation field और recombination field से PL image बनाता है (steady-state diffusion equation का exact solution + optical PSF + noise)।"
   },
   "generative/pl_groove_visibility": {
-     "fp": "900dc0853c11",
-     "en": "Closed-form contrast and CNR of a shadow groove and a sink groove from groove width, diffusion length and noise (table).",
-     "zh": "由沟槽宽度、扩散长度与噪声，以闭式给出阴影沟槽与复合沟槽的对比度和 CNR（table）。",
-     "tw": "由溝槽寬度、擴散長度與雜訊，以閉式給出陰影溝槽與復合溝槽的對比度和 CNR（table）。",
-     "ko": "홈 폭·확산 길이·잡음에서 그림자 홈과 싱크 홈의 대비와 CNR을 닫힌 형식으로 반환(table).",
-     "de": "Kontrast und CNR einer Schatten- und einer Senken-Rille in geschlossener Form aus Rillenbreite, Diffusionslänge und Rauschen (table).",
-     "hi": "groove की चौड़ाई, diffusion length और noise से shadow groove और sink groove का contrast और CNR closed form में (table)।"
+   "fp": "900dc0853c11",
+   "en": "Closed-form contrast and CNR of a shadow groove and a sink groove from groove width, diffusion length and noise (table).",
+   "zh": "由沟槽宽度、扩散长度与噪声，以闭式给出阴影沟槽与复合沟槽的对比度和 CNR（table）。",
+   "tw": "由溝槽寬度、擴散長度與雜訊，以閉式給出陰影溝槽與復合溝槽的對比度和 CNR（table）。",
+   "ko": "홈 폭·확산 길이·잡음에서 그림자 홈과 싱크 홈의 대비와 CNR을 닫힌 형식으로 반환(table).",
+   "de": "Kontrast und CNR einer Schatten- und einer Senken-Rille in geschlossener Form aus Rillenbreite, Diffusionslänge und Rauschen (table).",
+   "hi": "groove की चौड़ाई, diffusion length और noise से shadow groove और sink groove का contrast और CNR closed form में (table)।"
   },
   "generative/illusion_cafe_wall": {
    "fp": "194d1ef7cd89",
@@ -29060,6 +29060,51 @@
    "ko": "계측 결과 표(``measure_pairs`` / ``apply_metrology_model`` 의 반환값)에 mm 열을 더한다.",
    "de": "Fügt einer Messtabelle (Rückgabe von ``measure_pairs`` / ``apply_metrology_model``) mm-Spalten hinzu.",
    "hi": "measurement table (``measure_pairs`` / ``apply_metrology_model`` का return) में mm columns जोड़ता है।"
+  },
+  "optics/multilayer_reflectance": {
+   "fp": "0e2baa03067f",
+   "en": "Spectral reflectance (or transmittance / absorptance) of a multilayer film as pairs (λ nm, value): the exact characteristic-matrix (transfer-matrix) solution.",
+   "zh": "多层膜的光谱反射率(或透射率、吸收率),以 pairs(λ nm, 值)返回。特性矩阵(传输矩阵)的精确解。",
+   "tw": "多層膜的光譜反射率(或穿透率、吸收率),以 pairs(λ nm, 值)回傳。特性矩陣(傳輸矩陣)的精確解。",
+   "ko": "다층막의 분광 반사율(또는 투과율, 흡수율)을 pairs(λ nm, 값)로 반환한다. 특성 행렬(전달 행렬)의 엄밀해.",
+   "de": "Spektrale Reflexion (oder Transmission bzw. Absorption) eines Mehrschichtfilms als pairs (λ nm, Wert): exakte Lösung mit der charakteristischen Matrix (Transfermatrix).",
+   "hi": "multilayer film की spectral reflectance (या transmittance / absorptance) को pairs (λ nm, मान) के रूप में देता है: characteristic matrix (transfer matrix) का सटीक हल।"
+  },
+  "optics/film_color": {
+   "fp": "e1761c442553",
+   "en": "Interference colour as the film thickness varies (the wafer colour chart), seen under D65 with the CIE 1931 colour-matching functions.",
+   "zh": "膜厚变化时的干涉色(晶圆色卡),以 D65 照明和 CIE 1931 配色函数观察的颜色。",
+   "tw": "膜厚變化時的干涉色(晶圓色卡),以 D65 照明與 CIE 1931 配色函數觀察的顏色。",
+   "ko": "막 두께를 바꿀 때의 간섭색(웨이퍼 색 견본). D65 조명과 CIE 1931 등색 함수로 본 색을 반환한다.",
+   "de": "Interferenzfarbe in Abhängigkeit von der Schichtdicke (die Wafer-Farbtafel), gesehen unter D65 mit den CIE-1931-Normspektralwertfunktionen.",
+   "hi": "film की मोटाई बदलने पर interference colour (wafer colour chart), D65 प्रकाश और CIE 1931 colour-matching functions से देखा गया रंग।"
+  },
+  "optics/film_thickness_fft": {
+   "fp": "e6dae1e0ae3f",
+   "en": "Film thickness from the period of the interference fringes in a reflectance spectrum (FFT method), with dispersion corrected from the material table's n(λ).",
+   "zh": "由反射光谱干涉条纹的周期求膜厚(FFT 法)。色散用材料表的 n(λ) 校正。",
+   "tw": "由反射光譜干涉條紋的週期求膜厚(FFT 法)。色散以材料表的 n(λ) 校正。",
+   "ko": "반사 스펙트럼 간섭 줄무늬의 주기로부터 막 두께를 구한다(FFT 법). 분산은 재료표의 n(λ)로 보정한다.",
+   "de": "Schichtdicke aus der Periode der Interferenzstreifen eines Reflexionsspektrums (FFT-Methode); die Dispersion wird mit n(λ) aus der Materialtabelle korrigiert.",
+   "hi": "reflectance spectrum की interference fringes की अवधि से film की मोटाई (FFT विधि); dispersion को material table के n(λ) से सुधारा जाता है।"
+  },
+  "optics/film_thickness_fit": {
+   "fp": "a8e0d15c3037",
+   "en": "Film thickness by fitting the transfer-matrix model to a reflectance spectrum (non-linear least squares: a global grid search, then local refinement).",
+   "zh": "将传输矩阵模型拟合到反射光谱以求膜厚(非线性最小二乘:全局网格搜索后局部精化)。",
+   "tw": "將傳輸矩陣模型擬合到反射光譜以求膜厚(非線性最小平方:全域格點搜尋後局部精化)。",
+   "ko": "반사 스펙트럼에 전달 행렬 모델을 맞춰 막 두께를 구한다(비선형 최소제곱: 전역 격자 탐색 후 국소 정밀화).",
+   "de": "Schichtdicke durch Anpassen des Transfermatrix-Modells an ein Reflexionsspektrum (nichtlineare kleinste Quadrate: globale Gittersuche, dann lokale Verfeinerung).",
+   "hi": "reflectance spectrum पर transfer-matrix model fit करके film की मोटाई (non-linear least squares: global grid search, फिर local refinement)।"
+  },
+  "optics/film_thickness_map": {
+   "fp": "c10971be7b79",
+   "en": "Per-pixel film thickness from a spectral image (reflectance per band) or an RGB image (look-up table plus parabolic refinement).",
+   "zh": "由光谱图像(各波段反射率)或 RGB 图像求逐像素膜厚(查找表 + 抛物线精化)。",
+   "tw": "由光譜影像(各波段反射率)或 RGB 影像求逐像素膜厚(查找表 + 拋物線精化)。",
+   "ko": "분광 영상(대역별 반사율) 또는 RGB 영상으로부터 화소별 막 두께를 구한다(조견표 + 포물선 정밀화).",
+   "de": "Schichtdicke pro Pixel aus einem Spektralbild (Reflexion je Band) oder einem RGB-Bild (Nachschlagetabelle plus parabolische Verfeinerung).",
+   "hi": "spectral image (हर band की reflectance) या RGB image से हर pixel की film मोटाई (look-up table और parabolic refinement)।"
   }
  }
 }

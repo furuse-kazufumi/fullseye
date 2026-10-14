@@ -68,7 +68,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[separate_direct_global](separate_direct_global.md) · [micro_phase_decode](micro_phase_decode.md)
+[film_thickness_map](../film/film_thickness_map.md) · [separate_direct_global](separate_direct_global.md) · [micro_phase_decode](micro_phase_decode.md)
 
 ## 同カテゴリ(`light_transport`)
 

@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">film_color — OPTICS <code style="color:#22d3bf">film</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code>(要直接调用实现,<code style="color:#22d3bf">import filmoptics; filmoptics.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;film_color&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>膜厚变化时的干涉色(晶圆色卡),以 D65 照明和 CIE 1931 配色函数观察的颜色。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>film:       膜の材料(材料表の鍵など)。<code style="color:#22d3bf">under</code> があればその上に乗る最上層。</p>
+<p>substrate:  基板。thickness_min_nm / thickness_max_nm / n_points: 膜厚の格子。</p>
+<p>under:      膜と基板の間の層 <code style="color:#22d3bf">[(材料, 厚さ nm), ...]</code>(入射側から順)。</p>
+<p>angle_deg / na / ambient: <code style="color:#22d3bf">multilayer_reflectance</code> と同じ。wl_min_nm / wl_max_nm: 色を積む波長の範囲(既定 380〜780 nm。材料表の範囲が足りなければ ValueError)。</p>
+<p>exposure:   線形 sRGB に掛ける露出(見本を明るく見せたいとき。CIELAB と色相は露出 1 の値)。</p>
+<p>illuminant: 照明の分光分布 <code style="color:#22d3bf">pairs</code>(λ [nm], 相対値)。None は D65(<code style="color:#22d3bf">matappear</code> の平滑近似)。</p>
+<p>白(反射率 1)が sRGB の白に落ちるよう同じ照明で正規化する(白色順応)。輝線の多い蛍光灯では</p>
+<p>厚い膜の色が残る —— 連続光では縞が帯域内で平均されて灰色に近づく。</p>
+<p>返り値 dict:</p>
+<p>thickness_nm (N,) / reflectance (N, K) と wavelength_nm (K,) / linear_srgb (N, 3)(白 = 1、負は色域外)/</p>
+<p>srgb (N, 3)(ガンマ済み・0〜1 に切った表示用)/ lab (N, 3)(CIELAB、白 = D65)/ hue_deg (N,)(a*b* の色相角)/</p>
+<p>chroma (N,)。</p>
+<p>★色は膜厚について<b>周期的に繰り返す</b>(SiO₂ on Si では光学的厚さ n d が約 λ/2 ≈ 190 nm 進むごとに似た色に戻る) —— 色だけでは膜厚が一意に決まらない(<code style="color:#22d3bf">film_thickness_map</code> の <code style="color:#22d3bf">n_candidates</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字符串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。<b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">film</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:multilayer_reflectance">multilayer_reflectance</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fit">film_thickness_fit</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: filmoptics.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

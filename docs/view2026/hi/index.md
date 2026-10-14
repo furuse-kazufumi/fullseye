@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-61 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+62 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -129,6 +129,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Bayer raw frame को हर stage समझाने लायक formula से display image में बदलना: [explanation](../../capabilities/raw-to-display-isp.md) _(ja)_ · examples [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - स्रोत × वस्तु × sensor की spectral श्रृंखला (Planck, CIE A, LED, filter, Si QE): [explanation](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · examples [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI line scan और line-scan lens (stages और SNR, synchronisation error का MTF, image height के अनुसार illumination और MTF): [explanation](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · examples [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+- spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map): [explanation](../../capabilities/thin-film-reflectometry.md) _(ja)_ · examples [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
 
 **Waves और signals**
 
@@ -172,7 +173,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-236 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+237 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -350,9 +351,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour और separation</b> (7)</summary>
+<details class="vall"><summary><b>Colour और separation</b> (8)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="optical fibre और light guide (modes, dispersion, mode field)" width="200" height="200"><span>optical fibre और light guide (modes, dispersion, mode field)</span></a>
+<a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)" width="200" height="200"><b>&#9654;</b><span>spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="silicon wafer के आर-पार near-infrared (LED की wavelength चुनना)" width="200" height="200"><b>&#9654;</b><span>silicon wafer के आर-पार near-infrared (LED की wavelength चुनना)</span></a>
 <a href="../../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_material_optical_library.jpg" alt="material optical-property library (83 materials, एक table)" width="200" height="200"><b>&#9654;</b><span>material optical-property library (83 materials, एक table)</span></a>
 <a href="../../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pigment_unmixing.jpg" alt="Pigment layers" width="200" height="200"><span>Pigment layers</span></a>

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3227,
+ "n_notes": 3233,
  "notes": {
   "vol_dilate": [
    {
@@ -26958,6 +26958,54 @@
     "category": "fiber",
     "out": "pairs",
     "path": "docs/ops/optics/fiber/material_gvd.md"
+   }
+  ],
+  "film_color": [
+   {
+    "op": "film_color",
+    "dim": "optics",
+    "category": "film",
+    "out": "table",
+    "path": "docs/ops/optics/film/film_color.md"
+   }
+  ],
+  "film_thickness_fft": [
+   {
+    "op": "film_thickness_fft",
+    "dim": "optics",
+    "category": "film",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/film/film_thickness_fft.md"
+   }
+  ],
+  "film_thickness_fit": [
+   {
+    "op": "film_thickness_fit",
+    "dim": "optics",
+    "category": "film",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/film/film_thickness_fit.md"
+   }
+  ],
+  "film_thickness_map": [
+   {
+    "op": "film_thickness_map",
+    "dim": "optics",
+    "category": "film",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/film/film_thickness_map.md"
+   }
+  ],
+  "multilayer_reflectance": [
+   {
+    "op": "multilayer_reflectance",
+    "dim": "optics",
+    "category": "film",
+    "out": "pairs",
+    "path": "docs/ops/optics/film/multilayer_reflectance.md"
    }
   ],
   "blast_normals": [

@@ -1,4 +1,4 @@
-# OPTICS operator help — 248 ops in 29 categories
+# OPTICS operator help — 253 ops in 30 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -37,6 +37,10 @@
 ### fiber (7)
 
 [fiber_bundle_coupling](fiber/fiber_bundle_coupling.md) · [fiber_lp_modes](fiber/fiber_lp_modes.md) · [fiber_mode_field_diameter](fiber/fiber_mode_field_diameter.md) · [fiber_numerical_aperture](fiber/fiber_numerical_aperture.md) · [fiber_v_number](fiber/fiber_v_number.md) · [material_group_index](fiber/material_group_index.md) · [material_gvd](fiber/material_gvd.md)
+
+### film (5)
+
+[film_color](film/film_color.md) · [film_thickness_fft](film/film_thickness_fft.md) · [film_thickness_fit](film/film_thickness_fit.md) · [film_thickness_map](film/film_thickness_map.md) · [multilayer_reflectance](film/multilayer_reflectance.md)
 
 ### finish (5)
 

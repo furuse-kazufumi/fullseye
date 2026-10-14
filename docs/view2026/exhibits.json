@@ -3114,6 +3114,22 @@
    }
   },
   {
+   "id": "poc_thin_film_reflectometry",
+   "group": "wing_color",
+   "media": "12_thickness_sweep.gif",
+   "motion": true,
+   "thumb_src": "09_wafer_rgb_camera.png",
+   "label": {
+    "ja": "分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)",
+    "en": "Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)",
+    "zh": "用光谱反射率测薄膜厚度(用公开实测数据评分、晶圆干涉色)",
+    "tw": "以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)",
+    "ko": "분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)",
+    "de": "Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)",
+    "hi": "spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)"
+   }
+  },
+  {
    "id": "poc_moire_alignment",
    "group": "wing_metrology",
    "media": "03_fringe_flow.gif",
@@ -6146,6 +6162,13 @@
     "ko": "픽셀 시프트 촬상(1 화소 시프트로 전색, 반 화소 시프트로 에일리어싱 제거, 깨지는 조건까지)",
     "de": "Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht)",
     "hi": "pixel-shift imaging (1-pixel shift से पूरा रंग, half-pixel shift से aliasing खत्म, और कहाँ टूटता है)"
+   },
+   "thin-film-reflectometry": {
+    "zh": "用光谱反射率测薄膜厚度(传输矩阵 → 干涉色 → FFT 与模型拟合 → 膜厚图)",
+    "tw": "以光譜反射率量測薄膜厚度(傳輸矩陣 → 干涉色 → FFT 與模型擬合 → 膜厚圖)",
+    "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
+    "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
+    "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
    }
   }
  }

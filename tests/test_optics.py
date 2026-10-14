@@ -891,7 +891,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-14: spectral(光源・フィルタ・センサの分光曲線、spectralrad)9 op を新しい族として追加(205 → 214)。
     # 2026-10-14: fiber(ステップ型ファイバとライトガイド、fiberoptics)7 op を新しい族として追加(214 → 221)。
     # 2026-10-15: moire_align(モアレによる位置合わせ、moirealign)8 op を新しい族として追加(221 → 229)、telecentric(テレセントリックレンズと寸法計測)7 op(229 → 236)、linescan(TDI ラインスキャンとラインスキャン用レンズ)6 op(236 → 242)、pixelshift(ピクセルシフト撮像)6 op(242 → 248)。
-    assert len(opsoptics.OPSOPTICS) == 248
+    # 2026-10-15: film(多層膜の分光反射率と膜厚、filmoptics)5 op を新しい族として追加(248 → 253)。
+    assert len(opsoptics.OPSOPTICS) == 253
+    assert len(opsoptics.list_ops("film")) == 5
     assert len(opsoptics.list_ops("moire_align")) == 8
     assert len(opsoptics.list_ops("telecentric")) == 7
     assert len(opsoptics.list_ops("fiber")) == 7
@@ -908,7 +910,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "design", "fiber", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "cavity", "coherent", "design", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "optimization",
         "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44

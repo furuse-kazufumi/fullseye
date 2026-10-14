@@ -1,0 +1,136 @@
+[
+ {
+  "file": "01_real_micrograph_thickness.png",
+  "name": "real_micrograph_thickness",
+  "caption": "実物の顕微鏡のカラー写真(左が裸の Si、右が Si 上の SiO₂)から、裸の Si の領域で色を材料表の Si に合わせ、film_thickness_map(RGB)で画素ごとの膜厚を出した。SiO₂ 側の中央値 87.4 nm、基準 98.5 nm(-11 %)。カメラの分光感度は不明で、CIE の等色関数で代用している。視野の周辺減光(-9 %)は裸の Si の側だけで当てはめて割った(SiO₂ 側の明るさの傾き -11 % → -1 %)。Si 側は中央値 0.0 nm だが 95 パーセンタイル 12 nm —— 0 nm 付近では反射率が膜厚の 2 乗でしか変わらないので、写真の明るさの揺れが数 nm に化ける(補正前は減光で Si 側が 2 段に分かれていた)。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 1920×1080 → 640×360 に縮小し JPEG で保存、右に計算した膜厚の図を並べた。",
+  "shape": [
+   400,
+   1400,
+   3
+  ]
+ },
+ {
+  "file": "02_real_spectra.png",
+  "name": "real_spectra",
+  "caption": "実測の反射スペクトルに film_thickness_fit を当てた。直入射のモデルは 92.9 nm、残差が最小の NA 0.5 で 95.8 nm。裸の Si は材料表の Si と中央値 -0.4 % 差。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 表から 2 本を選び、モデルの曲線を重ねた。",
+  "shape": [
+   360,
+   758,
+   3
+  ]
+ },
+ {
+  "file": "03_real_standards.png",
+  "name": "real_standards",
+  "caption": "476.3 nm は最大 1.2 %、198.7 nm は中央値 6.6 % 厚めに読み、1 本は最良の候補が 51 nm に外れた(正しい膜厚は 2 番目の候補)。出典: Sánchez-Arriaga ら, Sensors 23, 5326 (2023) doi:10.3390/s23115326、データ 10.15131/shef.data.23285603(CC BY 4.0)。改変: 繰り返しの平均を取りあてはめた結果だけを描いた。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_fringes_vs_thickness.png",
+  "name": "fringes_vs_thickness",
+  "caption": "縦が膜厚 0〜2 µm、横が波長 400〜800 nm の反射率(転送行列、材料表の SiO₂ と Si)。膜が厚いほど縞の本数が d·Δx で増え、右の帯(D65 で見た色)は 1 µm を過ぎると縞が帯域内で平均されて淡くなる。",
+  "shape": [
+   501,
+   559,
+   3
+  ]
+ },
+ {
+  "file": "05_spectra.png",
+  "name": "spectra",
+  "caption": "100 nm は縞が 1 本未満、2 µm は 7 本余り。FFT 法は縞の周期を読み、モデルあてはめは形そのものを読む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_wafer_color_chart.png",
+  "name": "wafer_color_chart",
+  "caption": "上: 材料表の n,k と転送行列から計算した干渉色(D65)。中: 同じ膜を輝線の照明で(厚い膜の色が残る)。下: 公表の色表の色名(CSS の名前つき色で塗った目安。色名の彩度は実物より高い)。1〜3 次の色相は 59 % の行で ±36° 以内。",
+  "shape": [
+   350,
+   1220,
+   3
+  ]
+ },
+ {
+  "file": "07_fft_vs_fit_error.png",
+  "name": "fft_vs_fit_error",
+  "caption": "雑音 0.003。FFT の窓の主ローブ(DC の山)にピークが埋もれる薄さは閉形式 2/Δx で先に分かる。あてはめの誤差の小ささは逆犯罪(モデルが同じ)の分を含む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_na_apparent_thickness.png",
+  "name": "na_apparent_thickness",
+  "caption": "顕微分光の対物は斜めの光も入れる。膜の中の光路は cos θ_膜 で縮むので、直入射のモデルで読むと薄く出る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_wafer_rgb_camera.png",
+  "name": "wafer_rgb_camera",
+  "caption": "RGB カメラ(CIE 1931 の等色関数、D65)で撮った SiO₂ 膜(公称 470 nm)のウェハ。芯ずれの干渉の輪(+4 %、模型)・粒子の彗星(縁まで半径方向、−80 nm)・端の盛り上がり(+260 nm、幅 2.5 mm)の色むら。量は PoC の docstring の文献表に結びつけた(出典の無い量は模型)。",
+  "shape": [
+   480,
+   480,
+   3
+  ]
+ },
+ {
+  "file": "10_thickness_maps.png",
+  "name": "thickness_maps",
+  "caption": "分光カメラは全画素で真値と RMS 0.17 nm。RGB 3 色は候補が 2 つ以上の画素が 14 % で、周期 ≈ λ/(2n) ごとに似た色に戻るので次数を取り違える。",
+  "shape": [
+   1054,
+   1480,
+   3
+  ]
+ },
+ {
+  "file": "11_rgb_identifiability.png",
+  "name": "rgb_identifiability",
+  "caption": "厚い膜ほど色が淡く周期的に似るので、色だけでは次数を取り違える。明るさが分からない(照明のむら)と色の向きだけで照合するので、薄い側でも候補が増える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_thickness_sweep.gif",
+  "name": "thickness_sweep",
+  "caption": "膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。",
+  "shape": [
+   280,
+   566,
+   3
+  ],
+  "animated": true,
+  "frames": 46,
+  "frames_written": 46,
+  "fps": 8.0
+ },
+ {
+  "file": "13_comet_microscope.png",
+  "name": "comet_microscope",
+  "caption": "Si 上の SiO₂ 470 nm に粒子が乗ったときの模型を、ハロゲン(3200 K)照明の顕微鏡で見た色(左)と膜厚(右)。上: 細長い不透明な粒子の頭、頭の際の急な盛り上がり(+450 nm、縞 3 本)、下流へ扇形に開く尾(-80 nm、900 µm で減衰)。下: 焼き付いたレジストの薄片の円形の暈(+55 nm、縞 1 周)。形は Knápek 2020 の記述と写真に合わせた模型で、★模型: 膜厚変化の大きさは原典に数値が無く、写真の縞の次数からの推定(PoC の docstring の文献表)。",
+  "shape": [
+   1050,
+   970,
+   3
+  ]
+ }
+]

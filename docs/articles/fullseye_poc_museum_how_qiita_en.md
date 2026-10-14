@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**88 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**89 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -2130,7 +2130,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 7 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 8 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -2355,6 +2355,46 @@ Source: [examples/poc_fiber_light_guide.py](https://github.com/furuse-kazufumi/f
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fiber_light_guide)
 
 Ops used (notes): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`fiber_bundle_coupling`](https://furuse.work/ops/optics/fiber/fiber_bundle_coupling.html) · [`fiber_lp_modes`](https://furuse.work/ops/optics/fiber/fiber_lp_modes.html) · [`fiber_mode_field_diameter`](https://furuse.work/ops/optics/fiber/fiber_mode_field_diameter.html) · [`fiber_numerical_aperture`](https://furuse.work/ops/optics/fiber/fiber_numerical_aperture.html) · [`fiber_v_number`](https://furuse.work/ops/optics/fiber/fiber_v_number.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_group_index`](https://furuse.work/ops/optics/fiber/material_group_index.html) · [`material_gvd`](https://furuse.work/ops/optics/fiber/material_gvd.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html)
+
+## No.2026.237 —— Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps
+
+[![Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
+
+*↑ **Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps** ―― Five ops (`filmoptics`, category `film` of `opsoptics`) measure the thickness of SiO₂ on silicon from the interference fringes of its reflectance; films and substrates are keys of the material table. The core is scoring on other people's measured data (both CC BY 4.0). In the microspectroscopy of Schwarz et al. (2024) the measured reflectance of bare silicon agrees with the table's silicon to 0.4 % (median); a normal-incidence fit gives 92.9 nm against the 98.5 nm reference (−5.7 %), and choosing the NA by the residual (0.5) gives 95.8 nm (−2.7 %); the coverage of the measurement spot is read back over 11 spectra with a mean error of 0.6 points. From the real colour micrograph of the same sample, a white balance on the bare silicon alone gives a per-pixel thickness map with a median of 87.4 nm (−11 %, camera sensitivities unknown). With the low-cost spectrometers of Sánchez-Arriaga et al. (2023) the 476.3 nm standard is within 2 % in all five spectra; the 198.7 nm standard reads a median of 6.6 % thick, and in one spectrum the best candidate is 51 nm while the right value is the second candidate. The FFT method flags the 98 nm film as unreliable (closed-form limit 554 nm). Synthetic chapters: Airy agreement 3e-15, fringe count within one, FFT limit 538 nm closed form versus 525 nm measured, closed-form biases for wrong index, angle and NA, 59 % hue agreement with the published colour chart in the first three orders (a weak gate), and a modelled wafer (radial comet to the edge, edge bead, off-centre rings, each tied to the literature or labelled a model) mapped within 0.17 nm RMS by a 31-band camera while 14 % of RGB pixels keep several candidates. Nothing learned, 37 gates.*
+
+[![実測の反射スペクトルに film_thickness_fit を当てた。直入射のモデルは 92.9 nm、残差が最小の NA 0.5 で 95.8 nm。裸の Si は材料表の Si と中央値 -0.4 % 差。出典: Schwarz ら,](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/02_real_spectra.png)
+
+*↑ The measurement ―― 実測の反射スペクトルに film_thickness_fit を当てた。直入射のモデルは 92.9 nm、残差が最小の NA 0.5 で 95.8 nm。裸の Si は材料表の Si と中央値 -0.4 % 差。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 表から 2 本を選び、モデルの曲線を重ねた。 (figure labels are in Japanese; the numbers are the same)*
+
+[![476.3 nm は最大 1.2 %、198.7 nm は中央値 6.6 % 厚めに読み、1 本は最良の候補が 51 nm に外れた(正しい膜厚は 2 番目の候補)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/03_real_standards_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/03_real_standards.png)
+
+*↑ 476.3 nm は最大 1.2 %、198.7 nm は中央値 6.6 % 厚めに読み、1 本は最良の候補が 51 nm に外れた(正しい膜厚は 2 番目の候補)。*
+
+[![100 nm は縞が 1 本未満、2 µm は 7 本余り。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/05_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/05_spectra.png)
+
+*↑ 100 nm は縞が 1 本未満、2 µm は 7 本余り。*
+
+[![顕微分光の対物は斜めの光も入れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/08_na_apparent_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/08_na_apparent_thickness.png)
+
+*↑ 顕微分光の対物は斜めの光も入れる。*
+
+[![分光カメラは全画素で真値と RMS 0.17 nm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/10_thickness_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/10_thickness_maps.png)
+
+*↑ 分光カメラは全画素で真値と RMS 0.17 nm。*
+
+[![膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif)
+
+*↑ The animation ―― 膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。*
+
+```
+py -3.11 examples/poc_thin_film_reflectometry.py
+```
+
+Source: [examples/poc_thin_film_reflectometry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
+
+This run produced **13 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thin_film_reflectometry)
+
+Ops used (notes): [`annotate_colorbar`](https://furuse.work/ops/annotate/paper/annotate_colorbar.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`film_color`](https://furuse.work/ops/optics/film/film_color.html) · [`film_thickness_fft`](https://furuse.work/ops/optics/film/film_thickness_fft.html) · [`film_thickness_fit`](https://furuse.work/ops/optics/film/film_thickness_fit.html) · [`film_thickness_map`](https://furuse.work/ops/optics/film/film_thickness_map.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`thin_film_reflectance`](https://furuse.work/ops/optics/appearance/thin_film_reflectance.html) · [`thinning`](https://furuse.work/ops/2d/region/thinning.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 

@@ -108,12 +108,13 @@ import cavityoptics
 import materials
 import spectralrad
 import fiberoptics
+import filmoptics
 import moirealign
 import telecentric
 import linescan
 import pixelshift
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "linescan": linescan,
         "pixelshift": pixelshift,
@@ -471,6 +472,14 @@ _CATALOG = {
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
+    ],
+    "film": [  # 薄膜(filmoptics、2026-10-15): 多層膜の分光反射率(転送行列)→ 干渉色 → 膜厚(FFT・モデルあてはめ・画素ごと)
+        # ★膜も基板も材料表(materials)の鍵で指定する。画像(分光の帯域画像)を受ける map も表を返すので 2-D の橋は架けない。
+        ("multilayer_reflectance", "filmoptics", [], "pairs"),
+        ("film_color", "filmoptics", [], "table"),
+        ("film_thickness_fft", "filmoptics", ["pairs"], "table"),
+        ("film_thickness_fit", "filmoptics", ["pairs"], "table"),
+        ("film_thickness_map", "filmoptics", ["images"], "table"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
