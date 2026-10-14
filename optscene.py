@@ -2113,7 +2113,7 @@ def defocus_blur(image, depth_mm, camera, f_number: float = 5.6,
         sel = (zz >= edges[i]) & (zz <= edges[i + 1])
         if not sel.any():
             continue
-        sigma = float(np.median(coc_px[sel])) / 2.0       # 直径 -> 標準偏差の目安
+        sigma = float(np.median(coc_px[sel])) / 4.0       # ★直径 D の一様な円板の各軸の標準偏差は D/4(2026-10-14 まで D/2 で 2 倍広かった)
         layer = flat * sel[..., None]
         w = sel.astype(np.float64)[..., None]
         if sigma > 0.3:

@@ -847,7 +847,9 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         if surf[-1]["t"] is not None:
             image_mm = surf[-1]["t"]
         else:
-            image_mm = paraxial_trace(system)["bfl"]
+            # ★2026-10-14: 以前は bfl(無限遠の物体の焦点)を使い、有限物体でも像面を無限遠の焦点に置いていた
+            #   (700 mm の物体で像は 51.39 mm なのに 47.71 mm、W20 −18 波の偽のぼけ)。近軸の像距離は無限遠なら bfl と同じ。
+            image_mm = paraxial_trace(system)["image_mm"]
     z_img = z_last + dirn * image_mm
     with np.errstate(divide="ignore", invalid="ignore"):
         tt = (z_img - P[:, 2]) / D[:, 2]

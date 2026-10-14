@@ -173,7 +173,13 @@ CAMERA = fs.ledger.optical_camera(focal_mm=25.0, pixel_um=3.45,
                                   resolution=(SIZE, SIZE), working_distance_mm=200.0)
 
 
-def focal_stack(tex, depth, focus_mm, f_number=5.6, layers=24):
+#: 絞り。★2026-10-14: defocus_blur のぼけが 2 倍広かった(σ = 錯乱円の直径/2、正しくは /4)のを直したら、F 5.6 では
+#: 被写界深度が 2 倍深くなり、0.42 mm 間隔の像で奥行きが区別できなくなった(テクスチャ有の RMS 0.47 → 0.91 mm)。
+#: 旧版の結果は「F 5.6 と書いて実質 F 2.8 のぼけ」の上に立っていた —— 書いた値と効いていた値を揃えて F 2.8 にする。
+F_NUMBER = 2.8
+
+
+def focal_stack(tex, depth, focus_mm, f_number=F_NUMBER, layers=24):
     """焦点位置ごとに 1 枚ずつ、被写界深度のぼけを掛けた画像列を作る。"""
     return np.stack([fs.ledger.defocus_blur(tex, depth, CAMERA, f_number=f_number,
                                             focus_mm=float(f), layers=layers)
@@ -367,9 +373,9 @@ def main():
     print("=== 1. 真値と画像列 ===")
     print(f"  深度 {depth.min():.2f} .. {depth.max():.2f} mm / 画像 {SIZE}x{SIZE}"
           f" / フレーム {n_frames} 枚(間隔 {focus_mm[1] - focus_mm[0]:.3f} mm)")
-    print(f"  カメラ 焦点距離 {CAMERA['focal_mm']:.0f} mm / F 5.6 / 画素 "
+    print(f"  カメラ 焦点距離 {CAMERA['focal_mm']:.0f} mm / F {F_NUMBER:g} / 画素 "
           f"{1e3 * CAMERA['pixel_mm']:.2f} um / 作動距離 {CAMERA['working_distance_mm']:.0f} mm")
-    f, N, zf = CAMERA["focal_mm"], 5.6, 200.0
+    f, N, zf = CAMERA["focal_mm"], F_NUMBER, 200.0
     for dz in (1.0, 4.0, 8.0):
         coc = (f * f / (N * (zf - f))) * dz / (zf + dz)
         print(f"  合焦距離 200 mm、そこから {dz:>4.1f} mm 外れた面の錯乱円 = {coc:.4f} mm"
@@ -559,7 +565,7 @@ def main():
     t2 = 0.2 + 0.6 * (((xx // 4).astype(int)) % 2)
     cam2 = fs.ledger.optical_camera(focal_mm=25.0, pixel_um=3.45,
                                     resolution=(prof_w, prof_h), working_distance_mm=200.0)
-    near = fs.ledger.defocus_blur(t2, d2, cam2, f_number=5.6, focus_mm=190.0, layers=2)
+    near = fs.ledger.defocus_blur(t2, d2, cam2, f_number=F_NUMBER, focus_mm=190.0, layers=2)
     print("  手前(190 mm)に合焦。手前側は境界からどこまで汚染されるか:")
     print(f"  {'境界からの距離 [px]':>20}{'縞の σ 実測':>14}{'理想':>8}")
     for dpx in (5, 15, 30, 60):

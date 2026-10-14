@@ -741,3 +741,18 @@ def test_scene_material_conductor_can_use_the_measured_metal_table():
         OS.scene_material("conductor", metal="ni")                                 # not in the coarse table
     d = OS.scene_material("dielectric", glass="S-LAH58")                          # another maker's glass
     assert float(d["n_rgb"][2]) > float(d["n_rgb"][0]) > 1.85
+
+
+def test_defocus_blur_width_is_a_quarter_of_the_blur_circle_diameter():
+    """2026-10-14: 錯乱円(直径 D の一様な円板)の各軸の標準偏差は D/4。以前は D/2 のガウスで 2 倍広かった。"""
+    cam = OS.optical_camera()
+    img = np.zeros((161, 161))
+    img[80, 80] = 1.0
+    f, zf, N, z = float(cam["focal_mm"]), float(cam["working_distance_mm"]), 5.6, float(cam["working_distance_mm"]) * 0.6
+    coc_px = (f * f / (N * (zf - f))) * abs(z - zf) / z / float(cam["pixel_mm"])
+    out = OS.defocus_blur(img, np.full(img.shape, z), cam, f_number=N, layers=1)
+    yy, xx = np.mgrid[0:161, 0:161]
+    w = out / out.sum()
+    sx = float(np.sqrt(np.sum(w * (xx - 80) ** 2)))
+    assert coc_px > 8.0
+    assert abs(sx / (coc_px / 4.0) - 1.0) < 0.05, (sx, coc_px)

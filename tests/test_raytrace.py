@@ -400,3 +400,17 @@ def test_lens_system_refuses_unknown_surface_keys_and_long_tuples():
         RT.lens_system([dict(good[0], sag_map=np.zeros((4, 4))), good[1]])
     with pytest.raises(ValueError, match="tuple surface"):
         RT.lens_system([(50.0, 4.0, 1.5, 0.0, 8.0, 99.0), (-50.0, None, 1.0)])
+
+
+def test_finite_object_puts_the_image_at_the_paraxial_conjugate():
+    """2026-10-14: 最後の面が t=None なら像面は bfl(無限遠の焦点)に置かれ、700 mm の物体で W20 が −18 波の偽のぼけだった。"""
+    surf = [{"R": 50.0, "t": 4.0, "n": "N-BK7", "ap": 6}, {"R": -50.0, "t": None, "n": 1.0}]
+    s = RT.lens_system(surf, object_mm=700.0)
+    p = RT.paraxial_trace(s)
+    tr = RT.trace_rays(s, [[0.0, 0.0, 0.0]], [[0.0, 0.0, 1.0]])
+    assert abs(tr["image_z"] - p["image_mm"]) < 1e-12 and abs(p["image_mm"] - p["bfl"]) > 3.0
+    inf = RT.lens_system(surf)
+    z_fin = RT.wavefront_from_opd(s)["zernike"][(2, 0)]
+    z_inf = RT.wavefront_from_opd(inf)["zernike"][(2, 0)]                # the spherical-aberration balance only
+    assert abs(z_fin - z_inf) < 2.0, (z_fin, z_inf)                       # was −18.2 vs +3.4 waves
+    assert abs(RT.trace_rays(inf, [[0.0, 0.0, -1.0]], [[0.0, 0.0, 1.0]])["image_z"] - RT.paraxial_trace(inf)["bfl"]) < 1e-12

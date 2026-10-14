@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
+- `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
+- `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。
+- `examples/poc_focus_stacking.py`: 旧版は「F 5.6」と書きながら 2 倍広いぼけ = 実質 F 2.8 で計算していた。ぼけを直すと F 5.6 では被写界深度が倍になり奥行き(テクスチャ有の RMS)が 0.47 → 0.91 mm に崩れる → 絞りを効いていた値 F 2.8 に揃えて明記(数値は旧版と同じ)。
+- 門: tests/test_raytrace.py(像面 = 近軸の共役、有限と無限遠の Z20 の差 < 2 波)、tests/test_optscene.py(点像の 2 次モーメント = D/4 を 5 % 以内)。発見は非公開の「収差を奥行き手がかりに」の PoC。
 ### Added — 光ファイバとライトガイド(fiberoptics 7 op + PoC)
 - `fiberoptics`(`opsoptics` の新カテゴリ `fiber`、7 op): `material_group_index` / `material_gvd`(材料表のガラスの群屈折率と材料分散)、`fiber_numerical_aperture` / `fiber_v_number`、`fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で、縮退込みのモード数)、`fiber_mode_field_diameter`(重なり最大のガウス + Marcuse + 2 次モーメント)、`fiber_bundle_coupling`(ライトガイドの効率)。
 - PoC `poc_fiber_light_guide`(17 門、図 6 枚): 遮断 = Bessel の零点、V²/2、Rudolph–Neumann、Marcuse、溶融石英の零分散 1272.8 nm、ITU-T G.652 の MFD の範囲。★LP0m は遮断の直上で束縛が指数関数的に弱く、遮断の 0.05 以内は数えない(限界を docstring と門に明記)。
