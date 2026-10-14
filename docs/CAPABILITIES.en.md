@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 51 capabilities**
+**Currently 52 capabilities**
 
 ## Measure (19)
 
@@ -241,7 +241,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (7)
+## Light and colour (8)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -298,6 +298,14 @@ Nine ops in `spectralrad` complete the spectral chain image = source × optics/o
 Operators: `blackbody_spectrum`, `cie_illuminant_a`, `led_spectrum`, `bandpass_spectrum`, `silicon_photodiode_qe`, `energy_to_photons`, `spectral_product`, `spectral_integral`, `spectral_stats`
 
 Runnable: `poc_nir_silicon_transmission`
+
+### [TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height)](capabilities/tdi-linescan-and-lens.md)
+
+Six ops in `linescan`: the SNR of an N-stage TDI sensor from the EMVA 1288 linear model (charge-domain and digital-domain summation), the closed-form MTF of a synchronisation error and of a yawed web, an acquisition that transports a reflectance map past a TDI line sensor (speed error, yaw, weave, encoder sync, per-column lens illumination and blur, EMVA 1288 noise), and a ray-traced profile of a finite-conjugate lens across the image height whose relative illumination splits exactly into cos⁴ × pupil × distortion, with sagittal and tangential MTF. Two example lenses (the same triplet optimised for a 57 mm line and for a 2/3-inch format) show why a C-mount lens on a long line sensor goes dark and soft at the ends, and that flat-field correction restores the brightness but not the MTF.
+
+Operators: `tdi_snr`, `tdi_sync_mtf`, `linescan_acquire`, `lens_field_profile`, `linescan_lens_columns`, `linescan_lens_example`
+
+Runnable: `poc_tdi_linescan`
 
 ## Waves and signals (4)
 

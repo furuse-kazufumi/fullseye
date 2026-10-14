@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3207,
- "n_notes": 3213,
+ "n_ops": 3213,
+ "n_notes": 3219,
  "notes": {
   "vol_dilate": [
    {
@@ -27382,6 +27382,63 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/light_transport/transport_matrix_radiosity.md"
+   }
+  ],
+  "lens_field_profile": [
+   {
+    "op": "lens_field_profile",
+    "dim": "optics",
+    "category": "linescan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/lens_field_profile.md"
+   }
+  ],
+  "linescan_acquire": [
+   {
+    "op": "linescan_acquire",
+    "dim": "optics",
+    "category": "linescan",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/linescan_acquire.md"
+   }
+  ],
+  "linescan_lens_columns": [
+   {
+    "op": "linescan_lens_columns",
+    "dim": "optics",
+    "category": "linescan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/linescan_lens_columns.md"
+   }
+  ],
+  "linescan_lens_example": [
+   {
+    "op": "linescan_lens_example",
+    "dim": "optics",
+    "category": "linescan",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/linescan_lens_example.md"
+   }
+  ],
+  "tdi_snr": [
+   {
+    "op": "tdi_snr",
+    "dim": "optics",
+    "category": "linescan",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/tdi_snr.md"
+   }
+  ],
+  "tdi_sync_mtf": [
+   {
+    "op": "tdi_sync_mtf",
+    "dim": "optics",
+    "category": "linescan",
+    "out": "table",
+    "path": "docs/ops/optics/linescan/tdi_sync_mtf.md"
    }
   ],
   "clearcoat_shade": [

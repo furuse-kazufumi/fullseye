@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 51 項目**
+**収録 52 項目**
 
 ## 測る (19)
 
@@ -240,7 +240,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (7)
+## 光と色 (8)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -297,6 +297,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `blackbody_spectrum`, `cie_illuminant_a`, `led_spectrum`, `bandpass_spectrum`, `silicon_photodiode_qe`, `energy_to_photons`, `spectral_product`, `spectral_integral`, `spectral_stats`
 
 動く例: `poc_nir_silicon_transmission`
+
+### [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md)
+
+フィルム・鋼板・ガラス・印刷物・ウェハのように流れてくるものはラインセンサで撮ります。暗いラインでは TDI(時間遅延積分)で N 段ぶん露光を積み、その代わりに搬送とラインレートの同期が画質を決めます。長いラインセンサ(8k × 7 µm = 57 mm など)は普通の C マウントレンズの像円に収まらないので、ラインスキャン用のレンズを使います。`linescan` の 6 本はこの 3 つを数で扱います。
+
+使う op: `tdi_snr`, `tdi_sync_mtf`, `linescan_acquire`, `lens_field_profile`, `linescan_lens_columns`, `linescan_lens_example`
+
+動く例: `poc_tdi_linescan`
 
 ## 波と信号 (4)
 

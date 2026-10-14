@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**127 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**128 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 35 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 36 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1103,6 +1103,42 @@ Source: [examples/poc_si_wafer_pl_defect_visibility.py](https://github.com/furus
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility)
 
 Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_diffusion_psf.html) · [`pl_groove_visibility`](https://furuse.work/ops/generative/pl/pl_groove_visibility.html) · [`pl_image_simulate`](https://furuse.work/ops/generative/pl/pl_image_simulate.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
+
+## No.2026.235 —— TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
+
+[![TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
+
+*↑ **TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor** ―― Moving material (film, steel strip, wafers) is imaged with line sensors, and on a dark line TDI adds N stages of exposure. Six new ops (`linescan`, category `linescan` of `opsoptics`): TDI SNR from the EMVA 1288 linear model (charge-domain and digital summation), the closed-form MTF of a synchronisation error and of yaw, an acquisition that transports a reflectance map past the sensor (speed error, yaw, weave, encoder sync, lens, noise), a ray-traced profile of illumination and MTF across the image height, per-column lens maps and two example lenses. On a dark cold-rolled steel strip at 40 photons per stage, the SNR measured from the temporal noise of image pairs matches equation 21 within 1.2 % at every stage count. Digital summation gains exactly √N (×8.09 at 64 stages), charge summation pays the read noise once and gains ×26.9. Detection of a faint scratch, pinholes and an inclusion goes from 0 of 3 at one stage to 3 of 3 at 64 stages with no false alarms. A speed error ε smears the image by N·ε pixels and the scan MTF follows |sinc(f N ε)|, printed first and then measured on a sine chart: largest difference 0.0035 over 45 conditions. A ±3 % speed ripple drops the local MTF to 0.64 when free-running and is fully removed by encoder sync; the cross-direction blur of yaw, |sinc(f N sin θ)|, is not (largest difference 0.0017). The same triplet optimised for a 57 mm line (f 90) and for a 2/3-inch format (f 35, a C-mount lens reused) was ray-traced: illumination splits exactly into cos⁴ × pupil × distortion (2e-16), the line-scan lens keeps 0.976 at the end of the sensor (cos⁴ alone gives 0.855; barrel distortion of −2.9 % adds ×1.111), and the C-mount lens delivers no light beyond 19.7 mm. Flat-field correction evens the brightness (0.961 to 1.000) but leaves the sine modulation unchanged (difference 0.0006), and the CNR of an inclusion at 14 mm stays at 1.52 to 1.54 with the C-mount lens against 2.49 with the line-scan lens. Nothing learned, nothing calibrated, 19 gates.*
+
+[![EMVA 1288 の 2 枚撮り(時間雑音)で測った SNR と、式 21 を段数倍した閉形式。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/02_snr_vs_stages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/02_snr_vs_stages.png)
+
+*↑ The measurement ―― EMVA 1288 の 2 枚撮り(時間雑音)で測った SNR と、式 21 を段数倍した閉形式。 (figure labels are in Japanese; the numbers are the same)*
+
+[![ε は搬送速度とラインレートの相対誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/03_sync_error_mtf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/03_sync_error_mtf.png)
+
+*↑ ε は搬送速度とラインレートの相対誤差。*
+
+[![web が走査軸から θ 傾くと、64 段の間に幅方向へ 64·sin θ 画素ずれる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/05_yaw_cross_mtf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/05_yaw_cross_mtf.png)
+
+*↑ web が走査軸から θ 傾くと、64 段の間に幅方向へ 64·sin θ 画素ずれる。*
+
+[![光線追跡(射影立体角の一様格子)で数えた照度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/07_lens_relative_illumination_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/07_lens_relative_illumination.png)
+
+*↑ 光線追跡(射影立体角の一様格子)で数えた照度。*
+
+[![同じ明るさの尺度で表示。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/09_full_width_shading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/09_full_width_shading.png)
+
+*↑ 同じ明るさの尺度で表示。*
+
+```
+py -3.11 examples/poc_tdi_linescan.py
+```
+
+Source: [examples/poc_tdi_linescan.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tdi_linescan)
+
+Ops used (notes): [`emva_pair_statistics`](https://furuse.work/ops/optics/sensorchar/emva_pair_statistics.html) · [`lens_field_profile`](https://furuse.work/ops/optics/linescan/lens_field_profile.html) · [`lens_shading_correct`](https://furuse.work/ops/gfx2d/isp/lens_shading_correct.html) · [`lens_shading_gain`](https://furuse.work/ops/gfx2d/isp/lens_shading_gain.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`linescan_acquire`](https://furuse.work/ops/optics/linescan/linescan_acquire.html) · [`linescan_lens_columns`](https://furuse.work/ops/optics/linescan/linescan_lens_columns.html) · [`linescan_lens_example`](https://furuse.work/ops/optics/linescan/linescan_lens_example.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`tdi_snr`](https://furuse.work/ops/optics/linescan/tdi_snr.html) · [`tdi_sync_mtf`](https://furuse.work/ops/optics/linescan/tdi_sync_mtf.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

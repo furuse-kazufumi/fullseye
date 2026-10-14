@@ -1096,7 +1096,7 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 使用 op(ノートへ): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_diffusion_psf.html) · [`pl_groove_visibility`](https://furuse.work/ops/generative/pl/pl_groove_visibility.html) · [`pl_image_simulate`](https://furuse.work/ops/generative/pl/pl_image_simulate.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
 
-## No.2026.232 —— TDI ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える
+## No.2026.235 —— TDI ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える
 
 [![TDI ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
 

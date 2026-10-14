@@ -969,6 +969,27 @@
    ]
   },
   {
+   "id": "tdi-linescan-and-lens",
+   "title": "TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)",
+   "title_en": "TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height)",
+   "category": "光と色",
+   "note": "docs/capabilities/tdi-linescan-and-lens.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tdi_linescan",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "telecentric-metrology",
    "title": "テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)",
    "title_en": "Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur)",
@@ -1259,8 +1280,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 368,
-  "run_by_the_poc_gate": 234,
+  "examples2d_total": 369,
+  "run_by_the_poc_gate": 235,
   "run_by_the_example_gate": 134,
   "not_run_by_any_gate": 0,
   "gates": [

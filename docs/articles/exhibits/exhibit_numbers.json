@@ -809,13 +809,13 @@
    "accessioned": "2026-10-04",
    "no": "2026.199"
   },
-  "poc_telecentric_metrology": {
-   "accessioned": "2026-10-15",
-   "no": "2026.233"
-  },
   "poc_tdi_linescan": {
    "accessioned": "2026-10-15",
    "no": "2026.235"
+  },
+  "poc_telecentric_metrology": {
+   "accessioned": "2026-10-15",
+   "no": "2026.233"
   },
   "poc_template_tracking": {
    "accessioned": "2026-09-06",

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 51 项,每项都有说明页(用法与限制)和可运行的示例。
+共 52 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -120,6 +120,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 把偏振相机的原始帧读成 Stokes、DoLP、Mueller: [说明](../../capabilities/polarization-imaging.md) _(ja)_ · 示例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - 用每一步都能解释的公式把 Bayer 原始帧变成显示图像: [说明](../../capabilities/raw-to-display-isp.md) _(ja)_ · 示例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - 光源 × 对象 × 传感器的光谱链(普朗克・CIE A・LED・滤光片・Si 的 QE): [说明](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 示例 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
+- TDI 线扫描与线扫描镜头(级数与信噪比、同步误差的 MTF、各像高的照度与 MTF): [说明](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 示例 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 
 **波与信号**
 
@@ -162,7 +163,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 234 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 235 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -181,7 +182,7 @@ PoC 234 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>工业检测</b> (35)</summary>
+<details class="vall"><summary><b>工业检测</b> (36)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一维条码" width="200" height="200"><span>一维条码</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="电极曲折度" width="200" height="200"><span>电极曲折度</span></a>
@@ -218,6 +219,7 @@ PoC 234 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_am_thermal_to_ct.jpg" alt="增材制造与 CT" width="200" height="200"><b>&#9654;</b><span>增材制造与 CT</span></a>
 <a href="../../articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sam_hybrid_bonding_voids.jpg" alt="用回波相位找混合键合空洞" width="200" height="200"><span>用回波相位找混合键合空洞</span></a>
 <a href="../../articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_si_wafer_pl_defect_visibility.jpg" alt="PL 像中的沟槽与扩散长度" width="200" height="200"><span>PL 像中的沟槽与扩散长度</span></a>
+<a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 线扫描相机与线扫描镜头" width="200" height="200"><span>TDI 线扫描相机与线扫描镜头</span></a>
 </div>
 </details>
 

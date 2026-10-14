@@ -1096,7 +1096,7 @@ This run produced **3 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_diffusion_psf.html) · [`pl_groove_visibility`](https://furuse.work/ops/generative/pl/pl_groove_visibility.html) · [`pl_image_simulate`](https://furuse.work/ops/generative/pl/pl_image_simulate.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
 
-## No.2026.232 —— TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
+## No.2026.235 —— TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
 
 [![TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
 
