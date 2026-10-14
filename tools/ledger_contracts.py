@@ -599,6 +599,12 @@ def _knob_builders():
       as documented). Here: lit_only on, Lambertian sphere with attached shadows + noise.
     * ``gs_render`` -- the probe's splats are smaller than 32 px, so the radius cap 64 (and
       its x0.5 / x2) never bit. Here: a cap of 3 px, which the splats exceed.
+    * ``slope_to_curvature`` (2026-10-15, deflectometry) -- the pool's normals had no curvature,
+      so ``spacing`` (1 / length) and ``sigma_px`` (smoothing) scaled / smoothed zero. Here: the
+      normals of a bowl z = r^2 / 2R with a little noise.
+    * ``deflectometry_render`` (2026-10-15) -- ``refractive_index`` only acts on the back-surface
+      reflection of a cover glass, which is off by default (``back_thickness_mm=None``, as
+      documented). Here: a 1 mm plate over a shallow dimple.
     """
     def oblique(pool, rng):
         th = np.deg2rad(np.linspace(10.0, 60.0, 12))
@@ -631,8 +637,21 @@ def _knob_builders():
         args, kw = b
         return list(args), dict(kw, max_radius=3)
 
+    def bowl_normals(pool, rng):
+        yy, xx = np.mgrid[-1:1:24j, -1:1:24j]
+        p, q = xx / 2.0, yy / 2.0                     # z = r^2 / 4 -> slopes x/2, y/2
+        p = p + np.random.default_rng(12).normal(0.0, 1e-2, p.shape)
+        n = np.stack([-p, -q, np.ones_like(p)], -1)
+        return [n / np.linalg.norm(n, axis=-1, keepdims=True)], {"sigma_px": 1.0}
+
+    def plate(pool, rng):
+        yy, xx = np.mgrid[-1:1:24j, -1:1:24j]
+        h = -0.02 * np.exp(-(xx ** 2 + yy ** 2) / 0.1)
+        return [h], {"back_thickness_mm": 1.0}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
-            "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs}
+            "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
+            "slope_to_curvature": bowl_normals, "deflectometry_render": plate}
 
 
 def probe_builders():
