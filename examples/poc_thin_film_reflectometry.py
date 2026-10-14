@@ -271,16 +271,42 @@ def chapter_real():
     from PIL import Image
     im = np.asarray(Image.open(os.path.join(REAL, "schwarz2024_micrograph_sio2_edge_640.jpg")).convert("RGB"), float) / 255.0
     lin = np.where(im <= 0.04045, im / 12.92, ((im + 0.055) / 1.055) ** 2.4)
-    w = lin.shape[1]
-    bare_rgb = lin[30:-30, 30:w // 2 - 50].reshape(-1, 3).mean(0)
+    h, w = lin.shape[:2]
+    yy, xx = np.mgrid[0:h, 0:w]
+    si = (xx >= 20) & (xx < w // 2 - 40) & (yy >= 20) & (yy < h - 20)          # 裸の Si(左)
+    fi = (xx >= w // 2 + 50) & (xx < w - 20) & (yy >= 20) & (yy < h - 20)       # SiO₂(右)
+    # ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい
+    #   周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の
+    #   暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、
+    #   明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、
+    #   視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
+    r2 = ((xx - w / 2) ** 2 + (yy - h / 2) ** 2) / (w / 2) ** 2
+    lum = lin.mean(2)
+    c0, c1 = np.linalg.lstsq(np.column_stack([np.ones(int(si.sum())), r2[si]]), lum[si], rcond=None)[0]
+    flat = lin / (1.0 + (c1 / c0) * r2)[..., None]
+
+    def _tilt(img, m_):
+        return float(np.polyfit(xx[m_], img.mean(2)[m_], 1)[0] * (w / 2) / img.mean(2)[m_].mean())
+
+    bare_rgb = flat[si].mean(0)
     col0 = FO.film_color("SIO2", "SI", 0.0, 1.0, 2)["linear_srgb"][0]
-    balanced = lin / bare_rgb * col0                           # 裸の Si が材料表の Si の色になるよう、チャンネルごとに合わせる
+    balanced = flat / bare_rgb * col0                          # 裸の Si が材料表の Si の色になるよう、チャンネルごとに合わせる
     m = FO.film_thickness_map(np.moveaxis(balanced, -1, 0), None, "SIO2", "SI", 0.0, 400.0, mode="srgb", step_nm=0.5,
                               ambiguity_rms=0.01)
-    film_px = m["thickness"][30:-30, w // 2 + 60:w - 30]
-    bare_px = m["thickness"][30:-30, 30:w // 2 - 50]
+    film_px, bare_px = m["thickness"][fi], m["thickness"][si]
     NUMBERS.update({"real_rgb_film": float(np.median(film_px)), "real_rgb_bare": float(np.median(bare_px)),
-                    "real_rgb_cands": float(np.median(m["n_candidates"][30:-30, w // 2 + 60:w - 30]))})
+                    "real_rgb_bare_p95": float(np.percentile(bare_px, 95)),
+                    "real_rgb_film_p5": float(np.percentile(film_px, 5)), "real_rgb_film_p95": float(np.percentile(film_px, 95)),
+                    "real_vignette": float(c1 / c0), "real_tilt_before": _tilt(lin, fi), "real_tilt_after": _tilt(flat, fi),
+                    "real_rgb_cands": float(np.median(m["n_candidates"][fi]))})
+    print("      周辺減光(裸の Si だけで当てはめ)%.1f %%(視野の端)、SiO₂ 側の明るさの傾き %+.1f %% → %+.1f %%(当てはめに未使用 = 独立の検算)"
+          % (100 * NUMBERS["real_vignette"], 100 * NUMBERS["real_tilt_before"], 100 * NUMBERS["real_tilt_after"]))
+    print("      Si 側の膜厚 中央値 %.1f nm・95 パーセンタイル %.1f nm(0 nm 付近は R が膜厚の 2 乗でしか動かず、雑音が数 nm に化ける)、"
+          "SiO₂ 側 5〜95 パーセンタイル %.1f〜%.1f nm" % (NUMBERS["real_rgb_bare"], NUMBERS["real_rgb_bare_p95"],
+                                                   NUMBERS["real_rgb_film_p5"], NUMBERS["real_rgb_film_p95"]))
+    gate("フラット補正: 裸の Si で当てはめた周辺減光で割ると、SiO₂ 側の明るさの傾きが 1/5 以下に(%+.1f %% → %+.1f %%)"
+         % (100 * NUMBERS["real_tilt_before"], 100 * NUMBERS["real_tilt_after"]),
+         abs(NUMBERS["real_tilt_after"]) < 0.2 * abs(NUMBERS["real_tilt_before"]))
     out["photo"] = (im, m)
     gate("★実物の写真(カメラ不明・JPEG)から: SiO₂ 側の膜厚の中央値 %.1f nm(基準 %.1f nm と %+.0f %%)、裸の Si 側 %.1f nm、"
          "0〜400 nm で候補 %.0f 個 —— 次数は合うが、分光より %.0f 倍粗い"
@@ -759,9 +785,19 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
     im, m = real["photo"]
     h, w = im.shape[:2]
     tm = _cmap(m["thickness"], (0.0, 140.0))
+    import fullseye as fs
+    ramp = np.asarray(_cmap(np.linspace(0.0, 1.0, 256)[None, :], (0.0, 1.0)))[0]
+    pane = np.ones((h, w + 110, 3))
+    pane[:, :w] = tm
+    field = np.zeros((h, w + 110))
+    field[:, :w] = m["thickness"]
+    mk = np.zeros((h, w + 110), bool)
+    mk[:, :w] = True
+    pane = np.asarray(fs.annotate_colorbar(pane, field, (w + 16, 20, 18, h - 40), lut=ramp, vmin=0.0, vmax=140.0,
+                                           alpha=0.0, mask=mk, unit="nm", label_fmt="{:.0f}", font_size=12))[..., :3]
     gap = np.ones((h, 10, 3))
-    canvas = np.ones((h + 40, 2 * w + 10, 3))
-    canvas[34:34 + h] = np.concatenate([im, gap, tm], axis=1)
+    canvas = np.ones((h + 40, 2 * w + 120, 3))
+    canvas[34:34 + h] = np.concatenate([im, gap, pane], axis=1)
     canvas = _lab_text(canvas, "実物の顕微鏡写真(左 Si、右 SiO₂)", (4, 4), 13)
     canvas = _lab_text(canvas, "film_thickness_map の膜厚 0〜140 nm", (w + 14, 4), 13)
     canvas = _lab_text(canvas, "SiO₂ 側の中央値 %.1f nm(基準 %.1f nm)" % (NUMBERS["real_rgb_film"], NUMBERS["real_ref"]),
@@ -769,8 +805,12 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
     figs.save("real_micrograph_thickness", canvas,
               "実物の顕微鏡のカラー写真(左が裸の Si、右が Si 上の SiO₂)から、裸の Si の領域で色を材料表の Si に合わせ、"
               "film_thickness_map(RGB)で画素ごとの膜厚を出した。SiO₂ 側の中央値 %.1f nm、基準 %.1f nm(%+.0f %%)。カメラの"
-              "分光感度は不明で、CIE の等色関数で代用している。" % (NUMBERS["real_rgb_film"], NUMBERS["real_ref"],
-                                                     100 * (NUMBERS["real_rgb_film"] / NUMBERS["real_ref"] - 1))
+              "分光感度は不明で、CIE の等色関数で代用している。視野の周辺減光(%.0f %%)は裸の Si の側だけで当てはめて割った"
+              "(SiO₂ 側の明るさの傾き %+.0f %% → %+.0f %%)。Si 側は中央値 %.1f nm だが 95 パーセンタイル %.0f nm —— 0 nm 付近では"
+              "反射率が膜厚の 2 乗でしか変わらないので、写真の明るさの揺れが数 nm に化ける(補正前は減光で Si 側が 2 段に分かれていた)。"
+              % (NUMBERS["real_rgb_film"], NUMBERS["real_ref"], 100 * (NUMBERS["real_rgb_film"] / NUMBERS["real_ref"] - 1),
+                 100 * NUMBERS["real_vignette"], 100 * NUMBERS["real_tilt_before"], 100 * NUMBERS["real_tilt_after"],
+                 NUMBERS["real_rgb_bare"], NUMBERS["real_rgb_bare_p95"])
               + "出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 1920×1080 → 640×360 に縮小し JPEG で保存、右に計算した膜厚の図を並べた。")
     lamr = real["lam"]
     na_b, fit_b = real["fit_na"]
