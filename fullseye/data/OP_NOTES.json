@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3229,
+ "n_notes": 3235,
  "notes": {
   "vol_dilate": [
    {
@@ -26132,6 +26132,71 @@
     "in": "video",
     "out": "video",
     "path": "docs/ops/motionmag/temporal/temporal_bandpass.md"
+   }
+  ],
+  "doe_decode": [
+   {
+    "op": "doe_decode",
+    "dim": "multivar",
+    "category": "coding",
+    "in": "design",
+    "out": "matrix",
+    "path": "docs/ops/multivar/coding/doe_decode.md"
+   }
+  ],
+  "doe_encode": [
+   {
+    "op": "doe_encode",
+    "dim": "multivar",
+    "category": "coding",
+    "in": "matrix",
+    "out": "design",
+    "path": "docs/ops/multivar/coding/doe_encode.md"
+   }
+  ],
+  "doe_box_behnken": [
+   {
+    "op": "doe_box_behnken",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_box_behnken.md"
+   }
+  ],
+  "doe_central_composite": [
+   {
+    "op": "doe_central_composite",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_central_composite.md"
+   }
+  ],
+  "doe_fractional_factorial": [
+   {
+    "op": "doe_fractional_factorial",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_fractional_factorial.md"
+   }
+  ],
+  "doe_lhs": [
+   {
+    "op": "doe_lhs",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_lhs.md"
+   }
+  ],
+  "doe_orthogonal_array": [
+   {
+    "op": "doe_orthogonal_array",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_orthogonal_array.md"
    }
   ],
   "abs_funct_1d": [

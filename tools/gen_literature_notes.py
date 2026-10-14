@@ -270,6 +270,16 @@ THEME_OPS: list[dict] = [
     {"keys": ("spc", "statistical", "capability", "cpk", "quality", "chart", "charts", "variability", "taguchi"), "theme": "SPC(管理図・工程能力)",
      "ops": [("spc_xbar_r", "X̄-R 管理図"), ("spc_cusum", "小さなずれの累積検出"), ("spc_ewma", "指数平滑の管理図"),
              ("spc_capability", "Cp / Cpk"), ("spc_hotelling_t2", "多変量の管理"), ("null_distribution", "帰無分布"), ("evidence_quantile", "証拠量の位置")]},
+    # ★2026-10-15: 実験計画・応答曲面・品質工学・感度解析(opsmultivar)。鍵は製造のクラスタ名に実際に出る語
+    #   (射出成形の「optimization」、加工の「optimization」「prediction」)—— 工程条件の最適化と予測は、文献では
+    #   直交表・応答曲面・感度解析で回す領域。
+    {"keys": ("optimization", "optimisation", "prediction", "doe", "experiments", "experimental", "taguchi", "sensitivity"),
+     "theme": "実験計画法・応答曲面・品質工学・感度解析(工程条件の決め方)",
+     "ops": [("doe_orthogonal_array", "直交表(L4〜L27、公表された表)で条件を少ない回数で振る"),
+             ("doe_fractional_factorial", "一部実施要因計画(分解能と交絡表つき)"),
+             ("doe_central_composite", "応答曲面のための中心複合計画"), ("doe_box_behnken", "角を踏まない応答曲面の計画"),
+             ("doe_lhs", "シミュレーションの入力をラテン超方格で埋める"),
+             ("doe_encode", "条件の記録を符号化(−1..+1)へ"), ("doe_decode", "計画を装置の設定値へ戻す")]},
     {"keys": ("twin", "predictive", "maintenance", "prognostic", "prognostics", "bearing", "bearings", "vibration", "vibrations", "condition", "health", "diagnosis", "fault diagnosis"),
      "theme": "予知保全(振動・軸受)",
      "ops": [("bearing_defect_frequencies", "軸受の欠陥周波数"), ("envelope_spectrum", "包絡スペクトル"), ("spectral_kurtosis", "衝撃の帯域"),

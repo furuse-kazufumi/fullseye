@@ -1,0 +1,541 @@
+{
+ "_": "NIST/SEMATECH e-Handbook of Statistical Methods (public domain, US Government work), copied 2026-10-15. fractional_factorial: section 5.3.3.4.7 Table 3.17 (https://www.itl.nist.gov/div898/handbook/pri/section3/pri3347.htm), letters A..H J K ... (no I). ccd_alpha: section 5.3.3.6.1 Table 3.23 (https://www.itl.nist.gov/div898/handbook/pri/section3/pri3361.htm). box_behnken_3: section 5.3.3.6.3 Table 3.24 (https://www.itl.nist.gov/div898/handbook/pri/section3/pri3363.htm).",
+ "fractional_factorial": [
+  {
+   "k": 3,
+   "p": 1,
+   "runs": 4,
+   "resolution": 3,
+   "generators": [
+    "C=AB"
+   ]
+  },
+  {
+   "k": 4,
+   "p": 1,
+   "runs": 8,
+   "resolution": 4,
+   "generators": [
+    "D=ABC"
+   ]
+  },
+  {
+   "k": 5,
+   "p": 1,
+   "runs": 16,
+   "resolution": 5,
+   "generators": [
+    "E=ABCD"
+   ]
+  },
+  {
+   "k": 5,
+   "p": 2,
+   "runs": 8,
+   "resolution": 3,
+   "generators": [
+    "D=AB",
+    "E=AC"
+   ]
+  },
+  {
+   "k": 6,
+   "p": 1,
+   "runs": 32,
+   "resolution": 6,
+   "generators": [
+    "F=ABCDE"
+   ]
+  },
+  {
+   "k": 6,
+   "p": 2,
+   "runs": 16,
+   "resolution": 4,
+   "generators": [
+    "E=ABC",
+    "F=BCD"
+   ]
+  },
+  {
+   "k": 6,
+   "p": 3,
+   "runs": 8,
+   "resolution": 3,
+   "generators": [
+    "D=AB",
+    "E=AC",
+    "F=BC"
+   ]
+  },
+  {
+   "k": 7,
+   "p": 1,
+   "runs": 64,
+   "resolution": 7,
+   "generators": [
+    "G=ABCDEF"
+   ]
+  },
+  {
+   "k": 7,
+   "p": 2,
+   "runs": 32,
+   "resolution": 4,
+   "generators": [
+    "F=ABCD",
+    "G=ABDE"
+   ]
+  },
+  {
+   "k": 7,
+   "p": 3,
+   "runs": 16,
+   "resolution": 4,
+   "generators": [
+    "E=ABC",
+    "F=BCD",
+    "G=ACD"
+   ]
+  },
+  {
+   "k": 7,
+   "p": 4,
+   "runs": 8,
+   "resolution": 3,
+   "generators": [
+    "D=AB",
+    "E=AC",
+    "F=BC",
+    "G=ABC"
+   ]
+  },
+  {
+   "k": 8,
+   "p": 1,
+   "runs": 128,
+   "resolution": 8,
+   "generators": [
+    "H=ABCDEFG"
+   ]
+  },
+  {
+   "k": 8,
+   "p": 2,
+   "runs": 64,
+   "resolution": 5,
+   "generators": [
+    "G=ABCD",
+    "H=ABEF"
+   ]
+  },
+  {
+   "k": 8,
+   "p": 3,
+   "runs": 32,
+   "resolution": 4,
+   "generators": [
+    "F=ABC",
+    "G=ABD",
+    "H=BCDE"
+   ]
+  },
+  {
+   "k": 8,
+   "p": 4,
+   "runs": 16,
+   "resolution": 4,
+   "generators": [
+    "E=BCD",
+    "F=ACD",
+    "G=ABC",
+    "H=ABD"
+   ]
+  },
+  {
+   "k": 9,
+   "p": 2,
+   "runs": 128,
+   "resolution": 6,
+   "generators": [
+    "H=ACDFG",
+    "J=BCEFG"
+   ]
+  },
+  {
+   "k": 9,
+   "p": 3,
+   "runs": 64,
+   "resolution": 4,
+   "generators": [
+    "G=ABCD",
+    "H=ACEF",
+    "J=CDEF"
+   ]
+  },
+  {
+   "k": 9,
+   "p": 4,
+   "runs": 32,
+   "resolution": 4,
+   "generators": [
+    "F=BCDE",
+    "G=ACDE",
+    "H=ABDE",
+    "J=ABCE"
+   ]
+  },
+  {
+   "k": 9,
+   "p": 5,
+   "runs": 16,
+   "resolution": 3,
+   "generators": [
+    "E=ABC",
+    "F=BCD",
+    "G=ACD",
+    "H=ABD",
+    "J=ABCD"
+   ]
+  },
+  {
+   "k": 10,
+   "p": 3,
+   "runs": 128,
+   "resolution": 5,
+   "generators": [
+    "H=ABCG",
+    "J=BCDE",
+    "K=ACDF"
+   ]
+  },
+  {
+   "k": 10,
+   "p": 4,
+   "runs": 64,
+   "resolution": 4,
+   "generators": [
+    "G=BCDF",
+    "H=ACDF",
+    "J=ABDE",
+    "K=ABCE"
+   ]
+  },
+  {
+   "k": 10,
+   "p": 5,
+   "runs": 32,
+   "resolution": 4,
+   "generators": [
+    "F=ABCD",
+    "G=ABCE",
+    "H=ABDE",
+    "J=ACDE",
+    "K=BCDE"
+   ]
+  },
+  {
+   "k": 10,
+   "p": 6,
+   "runs": 16,
+   "resolution": 3,
+   "generators": [
+    "E=ABC",
+    "F=BCD",
+    "G=ACD",
+    "H=ABD",
+    "J=ABCD",
+    "K=AB"
+   ]
+  },
+  {
+   "k": 11,
+   "p": 4,
+   "runs": 128,
+   "resolution": 5,
+   "generators": [
+    "H=ABCG",
+    "J=BCDE",
+    "K=ACDF",
+    "L=ABCDEFG"
+   ]
+  },
+  {
+   "k": 11,
+   "p": 5,
+   "runs": 64,
+   "resolution": 4,
+   "generators": [
+    "G=CDE",
+    "H=ABCD",
+    "J=ABF",
+    "K=BDEF",
+    "L=ADEF"
+   ]
+  },
+  {
+   "k": 11,
+   "p": 6,
+   "runs": 32,
+   "resolution": 4,
+   "generators": [
+    "F=ABC",
+    "G=BCD",
+    "H=CDE",
+    "J=ACD",
+    "K=ADE",
+    "L=BDE"
+   ]
+  },
+  {
+   "k": 11,
+   "p": 7,
+   "runs": 16,
+   "resolution": 3,
+   "generators": [
+    "E=ABC",
+    "F=BCD",
+    "G=ACD",
+    "H=ABD",
+    "J=ABCD",
+    "K=AB",
+    "L=AC"
+   ]
+  },
+  {
+   "k": 15,
+   "p": 11,
+   "runs": 16,
+   "resolution": 3,
+   "generators": [
+    "E=AB",
+    "F=AC",
+    "G=AD",
+    "H=BC",
+    "J=BD",
+    "K=CD",
+    "L=ABC",
+    "M=ABD",
+    "N=ACD",
+    "O=BCD",
+    "P=ABCD"
+   ]
+  }
+ ],
+ "ccd_alpha": [
+  {
+   "k": 2,
+   "factorial_runs": 4,
+   "alpha": 1.414
+  },
+  {
+   "k": 3,
+   "factorial_runs": 8,
+   "alpha": 1.682
+  },
+  {
+   "k": 4,
+   "factorial_runs": 16,
+   "alpha": 2.0
+  },
+  {
+   "k": 5,
+   "factorial_runs": 16,
+   "alpha": 2.0
+  },
+  {
+   "k": 5,
+   "factorial_runs": 32,
+   "alpha": 2.378
+  },
+  {
+   "k": 6,
+   "factorial_runs": 32,
+   "alpha": 2.378
+  },
+  {
+   "k": 6,
+   "factorial_runs": 64,
+   "alpha": 2.828
+  }
+ ],
+ "ccc_3": [
+  [
+   -1.0,
+   -1.0,
+   -1.0
+  ],
+  [
+   1.0,
+   -1.0,
+   -1.0
+  ],
+  [
+   -1.0,
+   1.0,
+   -1.0
+  ],
+  [
+   1.0,
+   1.0,
+   -1.0
+  ],
+  [
+   -1.0,
+   -1.0,
+   1.0
+  ],
+  [
+   1.0,
+   -1.0,
+   1.0
+  ],
+  [
+   -1.0,
+   1.0,
+   1.0
+  ],
+  [
+   1.0,
+   1.0,
+   1.0
+  ],
+  [
+   -1.682,
+   0.0,
+   0.0
+  ],
+  [
+   1.682,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   -1.682,
+   0.0
+  ],
+  [
+   0.0,
+   1.682,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   -1.682
+  ],
+  [
+   0.0,
+   0.0,
+   1.682
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ]
+ ],
+ "box_behnken_3": [
+  [
+   -1.0,
+   -1.0,
+   0.0
+  ],
+  [
+   1.0,
+   -1.0,
+   0.0
+  ],
+  [
+   -1.0,
+   1.0,
+   0.0
+  ],
+  [
+   1.0,
+   1.0,
+   0.0
+  ],
+  [
+   -1.0,
+   0.0,
+   -1.0
+  ],
+  [
+   1.0,
+   0.0,
+   -1.0
+  ],
+  [
+   -1.0,
+   0.0,
+   1.0
+  ],
+  [
+   1.0,
+   0.0,
+   1.0
+  ],
+  [
+   0.0,
+   -1.0,
+   -1.0
+  ],
+  [
+   0.0,
+   1.0,
+   -1.0
+  ],
+  [
+   0.0,
+   -1.0,
+   1.0
+  ],
+  [
+   0.0,
+   1.0,
+   1.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0
+  ]
+ ]
+}

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_fractional_factorial — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">design</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import doe; doe.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmultivar.get(&quot;doe_fractional_factorial&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由生成元建構的二水準正則部分因子設計 2^(k-p)（Box 與 Hunter 1961）-&gt; <code style="color:#22d3bf">design</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>The first <code style="color:#22d3bf">k - p</code> factors (letters A, B, C ... skipping I) form a full factorial in standard (Yates) order, A changing fastest. Each generator <code style="color:#22d3bf">&quot;D=ABC&quot;</code> sets an added factor&#x27;s column to the product of base columns (<code style="color:#22d3bf">&quot;E=-ABD&quot;</code> for the other half). <code style="color:#22d3bf">generators=None</code> takes the recommended generators for (k, p) from the NIST/SEMATECH e-Handbook table (<code style="color:#22d3bf">FF_NIST</code>, 5.3.3.4.7 Table 3.17, after Box, Hunter &amp; Hunter); <code style="color:#22d3bf">p=0</code> or <code style="color:#22d3bf">generators=()</code> gives the full factorial 2^k.</p>
+<p>The defining relation (every product of generator words <code style="color:#22d3bf">I = ABCD = ...</code>), the <b>resolution</b> (length of the shortest word: III = main effects aliased with two-factor interactions, IV = main effects clear but 2fi aliased with each other, V = 2fi clear) and the alias table of main effects and two-factor interactions are returned in <code style="color:#22d3bf">meta</code> and <code style="color:#22d3bf">alias</code>. They are computed from the generators, and the returned matrix is checked against them (each aliased pair of columns is identical up to sign).</p>
+<p><code style="color:#22d3bf">center</code> adds centre runs (coded 0) for a curvature check; they do not change the alias structure.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">design</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

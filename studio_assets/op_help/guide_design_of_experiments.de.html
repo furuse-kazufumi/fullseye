@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">実験計画・多変量解析・感度解析 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>実物の画像から物理モデルの係数を合わせたい(ユーザーの言葉では「誤差をフィードバックして係数を自動で調整したい」)。その前に答えておくべき問いが 3 つあります。</p>
+<p style="margin:2px 0 2px 12px">1. <b>どの条件で撮る(計算する)か。</b> 条件を 1 つずつ振ると、組み合わせの効果(照明を寝かせたら露光を減らす、のような)が見えません。4 条件 x 3 水準を全部撮ると 81 回。直交表 L9 なら 9 回で、どの 2 条件の組も均等に出ます。</p>
+<p style="margin:2px 0 2px 12px">2. <b>何が効いたか。</b> 効かないつまみは合わせても意味が無く、交互作用でしか効かないつまみは 1 つずつ見ても見落とします。</p>
+<p style="margin:2px 0 2px 12px">3. <b>データから決まるのはどれか。</b> 2 つのつまみが絵を同じように動かすなら、決まるのは片方ずつではなく組み合わせ(例: 屈折率 x 膜厚)だけです。</p>
+<p>この族はその道具箱です。台帳は <code style="color:#22d3bf">opsmultivar.py</code>、計画は <code style="color:#22d3bf">doe.py</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">計画(plan / coding)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 少ない回数で多くの条件を振る(田口の直交表) | <code style="color:#22d3bf">doe_orthogonal_array</code> | L4・L8・L9・L12・L16・L18・L27 を<b>公表された表から写した</b>(York 大学の公開表)。NIST Dataplot の L*.DAT と行まで一致することをテストが毎回確かめる |</p>
+<p>| 2 水準の一部実施(どれとどれが交絡するかつき) | <code style="color:#22d3bf">doe_fractional_factorial</code> | 生成子は NIST/SEMATECH e-Handbook Table 3.17。分解能と交絡表は生成子から計算し、表の分解能と一致 |</p>
+<p>| 二次の応答曲面を当てるための計画 | <code style="color:#22d3bf">doe_central_composite</code> / <code style="color:#22d3bf">doe_box_behnken</code> | 回転可能な α = F^{1/4}(NIST Table 3.23)、3 因子の点は NIST Table 3.24 と一致 |</p>
+<p>| シミュレーションの入力を偏りなく埋める | <code style="color:#22d3bf">doe_lhs</code> | 各条件の n 区間にちょうど 1 点(McKay ら 1979 の定義を返り値で検査) |</p>
+<p>| 記録した条件を計画と同じ座標へ / 計画を装置の設定値へ | <code style="color:#22d3bf">doe_encode</code> / <code style="color:#22d3bf">doe_decode</code> | 線形と対数(条件ごと) |</p>
+<p>返り値は新しい型 <code style="color:#22d3bf">design</code> です。<b>符号化(−1..+1)の行列と自然単位の行列を両方</b>、因子名・単位・範囲・尺度・交絡表と一緒に持ちます。<code style="color:#22d3bf">matrix</code> と分けた理由: 2 つの行列は形も dtype も同じで、取り違えた二次の当てはめは例外なしに別の中心の曲面を返すからです。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  F[&quot;条件と範囲&lt;br/&gt;(名前, lo, hi, 単位, 尺度)&quot;] --&gt; P[&quot;doe_orthogonal_array / doe_fractional_factorial&lt;br/&gt;doe_central_composite / doe_box_behnken / doe_lhs&quot;]
+  P --&gt; D[&quot;design&lt;br/&gt;coded + natural + alias&quot;]
+  D --&gt; N[&quot;doe_decode → 装置の設定値&quot;]
+  N --&gt; R[&quot;撮る / シミュレーションする&quot;]
+  R --&gt; Y[&quot;応答(画像の特徴量)&quot;]
+  D --&gt; A[&quot;解析(主効果・応答曲面・感度)&quot;]
+  Y --&gt; A</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+plan = fs.ledger.doe_orthogonal_array(&quot;L9&quot;, [(&quot;angle&quot;, 15, 75, &quot;deg&quot;), (&quot;power&quot;, 0.5, 1.5, &quot;a.u.&quot;),
+                                             (&quot;exposure&quot;, 2, 8, &quot;ms&quot;), (&quot;gain&quot;, 0, 12, &quot;dB&quot;)])
+settings = fs.ledger.doe_decode(plan)        # 9 x 4、自然単位
+print(plan[&quot;alias&quot;][:2])                     # どの交互作用がどの列に乗るか
+
+frac = fs.ledger.doe_fractional_factorial([&quot;gain&quot;, &quot;light&quot;, &quot;exp&quot;, &quot;angle&quot;, &quot;filter&quot;], 2)
+print(frac[&quot;meta&quot;][&quot;resolution_roman&quot;], frac[&quot;alias&quot;][0])   # III  gain = light*angle = exp*filter</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴(計画を選ぶ前に読む)</h3>
+<p style="margin:2px 0 2px 12px">• <b>分解能 III の一部実施では、主効果と 2 因子交互作用が同じ列になる。</b> <code style="color:#22d3bf">examples/doe_plan_tour.py</code> は、ゲインが何もしていないのに 2^(5-2) の 8 回が「ゲインの効果 6」と答える場面を再現します(全 32 回では 0)。<code style="color:#22d3bf">alias</code> に事前に書いてあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>L12・L18 は非正則</b>: 交互作用は 1 列に乗らず、他の列に薄く広がります(L12 は残り 9 列に 1/9 ずつ)。交互作用を見たいなら L8・L16・L27 のような正則な表で、<code style="color:#22d3bf">alias</code> が空になる列に割り付けます(L18 の 1 列目 x 2 列目だけは例外的に他の列に乗りません)。</p>
+<p style="margin:2px 0 2px 12px">• <b>回転可能な中心複合計画の軸の点は範囲の外に出ます。</b> <code style="color:#22d3bf">meta[&quot;outside_range&quot;]</code> が名指しします。装置がそこまで振れないなら <code style="color:#22d3bf">inscribed=True</code> で全体を縮めるか、<code style="color:#22d3bf">alpha=&quot;face&quot;</code>(3 水準)にします。</p>
+<p style="margin:2px 0 2px 12px">• <b>範囲は推測しません。</b> <code style="color:#22d3bf">doe_encode</code> は lo/hi を必ず受け取ります(データの最小・最大を範囲にすると、計画と記録で符号化がずれる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典(公開文献のみ)</h3>
+<p>McKay, Beckman &amp; Conover 1979, Technometrics 21(2):239 / Taguchi 1987(System of Experimental Design)、表は University of York &quot;Orthogonal Arrays (Taguchi Designs)&quot; と NIST Dataplot / Bose &amp; Bush 1952, Ann. Math. Stat. 23:508 / Box &amp; Hunter 1961, Technometrics 3(3):311 / Box &amp; Wilson 1951, JRSS B 13(1):1 / Box &amp; Behnken 1960, Technometrics 2(4):455 / NIST/SEMATECH e-Handbook of Statistical Methods 5.3.3.4.7, 5.3.3.6.</p>

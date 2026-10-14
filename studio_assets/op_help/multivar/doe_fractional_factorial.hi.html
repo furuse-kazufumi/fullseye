@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_fractional_factorial — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">design</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import doe; doe.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmultivar.get(&quot;doe_fractional_factorial&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>generators से बना regular दो-स्तरीय fractional factorial 2^(k-p) (Box व Hunter 1961) -&gt; <code style="color:#22d3bf">design</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The first <code style="color:#22d3bf">k - p</code> factors (letters A, B, C ... skipping I) form a full factorial in standard (Yates) order, A changing fastest. Each generator <code style="color:#22d3bf">&quot;D=ABC&quot;</code> sets an added factor&#x27;s column to the product of base columns (<code style="color:#22d3bf">&quot;E=-ABD&quot;</code> for the other half). <code style="color:#22d3bf">generators=None</code> takes the recommended generators for (k, p) from the NIST/SEMATECH e-Handbook table (<code style="color:#22d3bf">FF_NIST</code>, 5.3.3.4.7 Table 3.17, after Box, Hunter &amp; Hunter); <code style="color:#22d3bf">p=0</code> or <code style="color:#22d3bf">generators=()</code> gives the full factorial 2^k.</p>
+<p>The defining relation (every product of generator words <code style="color:#22d3bf">I = ABCD = ...</code>), the <b>resolution</b> (length of the shortest word: III = main effects aliased with two-factor interactions, IV = main effects clear but 2fi aliased with each other, V = 2fi clear) and the alias table of main effects and two-factor interactions are returned in <code style="color:#22d3bf">meta</code> and <code style="color:#22d3bf">alias</code>. They are computed from the generators, and the returned matrix is checked against them (each aliased pair of columns is identical up to sign).</p>
+<p><code style="color:#22d3bf">center</code> adds centre runs (coded 0) for a curvature check; they do not change the alias structure.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">design</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

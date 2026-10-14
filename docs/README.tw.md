@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 8 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-373 個範例中,檢查實際執行的有 373 個。
+374 個範例中,檢查實際執行的有 374 個。
 
 ### 各版本的運算子數
 
@@ -134,11 +134,11 @@
 
 ## 尋找運算子
 
-共有 **3,228 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **63 篇族群指南**。依維度的入口:
+共有 **3,235 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **64 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 936/936、型別台帳 2271/2283、單行門面 `fullseye.<名稱>` 683/1431 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 936/936、型別台帳 2278/2290、單行門面 `fullseye.<名稱>` 683/1432 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3228 篇中，附有可執行範例的 **3227** 篇(1 篇沒有)，用法說明 120 字以上的 **3064** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3228 篇全有。
+**內容實測**: 3235 篇中，附有可執行範例的 **3233** 篇(2 篇沒有)，用法說明 120 字以上的 **3071** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3235 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -185,6 +185,7 @@
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
+| `multivar` | 7 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -289,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 256 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,228 篇運算子說明與 63 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,235 篇運算子說明與 64 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

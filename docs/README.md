@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 8 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 373 本のうち、門が実際に走らせるもの 373 本。
+例 374 本のうち、門が実際に走らせるもの 374 本。
 
 ### 版ごとの op の数
 
@@ -136,11 +136,11 @@
 
 ## オペレータを探す
 
-**3,228 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **63 本の族ガイド**があります。次元ごとの入口:
+**3,235 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **64 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 936/936、型つき台帳 2271/2283、1 行ファサード `fullseye.<名前>` 683/1431。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 936/936、型つき台帳 2278/2290、1 行ファサード `fullseye.<名前>` 683/1432。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3228 本のうち、実行できる例が付いているのは **3227 本**(1 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3064 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3228 本すべてにある。
+**ノートの中身の実測**: 3235 本のうち、実行できる例が付いているのは **3233 本**(2 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3071 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3235 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -187,6 +187,7 @@
 | `interferometry` — 干渉計 | 9 | [INDEX](ops/interferometry/INDEX.md) · [ガイド](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` — モーション拡大 | 9 | [INDEX](ops/motionmag/INDEX.md) · [ガイド](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` — FMCW レンジドップラー | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [ガイド](ops/rangedoppler/guides/fmcw_range_doppler.md) |
+| `multivar` | 7 | [INDEX](ops/multivar/INDEX.md) · [ガイド](ops/multivar/guides/design_of_experiments.md) |
 | `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -291,7 +292,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 256 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,228 本と族ガイド 63 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,235 本と族ガイド 64 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

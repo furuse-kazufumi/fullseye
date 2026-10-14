@@ -1,8 +1,8 @@
 {
- "n_ops": 3222,
+ "n_ops": 3229,
  "tiers": {
   "color": 12,
-  "ledger": 2269,
+  "ledger": 2276,
   "nary": 17,
   "registry": 924
  },
@@ -27,6 +27,7 @@
   "deformation",
   "depth",
   "descriptor",
+  "design",
   "efdmodel",
   "feature",
   "file",
@@ -6728,6 +6729,87 @@
     "points",
     "keypoints"
    ]
+  },
+  {
+   "name": "doe_box_behnken",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_central_composite",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_decode",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "matrix",
+   "category": "coding",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design"
+   ]
+  },
+  {
+   "name": "doe_encode",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "design",
+   "category": "coding",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "doe_fractional_factorial",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_lhs",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_orthogonal_array",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
   },
   {
    "name": "dolp_to_zenith",

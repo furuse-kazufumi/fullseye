@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_lhs — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">design</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import doe; doe.doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;doe_lhs&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ラテン超方格計画(McKay, Beckman &amp; Conover 1979)-&gt; <code style="color:#22d3bf">design</code>。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Each factor&#x27;s range is cut into <code style="color:#22d3bf">n</code> equal strata and every stratum holds exactly one run, so each factor is sampled evenly however many factors there are (a random design of the same size leaves strata empty). Construction (McKay et al. 1979, section 2): for factor j draw an independent random permutation <code style="color:#22d3bf">pi_j</code> of <code style="color:#22d3bf">0..n-1</code> and put run i at <code style="color:#22d3bf">u_ij = (pi_j(i) + U_ij) / n</code> with <code style="color:#22d3bf">U_ij ~ Uniform[0, 1)</code> (<code style="color:#22d3bf">centered=True</code> uses the stratum mid-point, <code style="color:#22d3bf">U = 1/2</code>). Coded value = <code style="color:#22d3bf">2u - 1</code>.</p>
+<p><code style="color:#22d3bf">maximin=m</code> (m &gt;= 2) draws m independent hypercubes and keeps the one with the largest smallest inter-point distance (each candidate is still a Latin hypercube, so the stratum property is never traded away); <code style="color:#22d3bf">0</code> or <code style="color:#22d3bf">1</code> = one plain draw.</p>
+<p>Parameters: <code style="color:#22d3bf">n</code> runs (2..1e6), <code style="color:#22d3bf">factors</code> (int or factor list, see module docstring), <code style="color:#22d3bf">seed</code> (int, reproducible), <code style="color:#22d3bf">maximin</code> (0..1000 candidates), <code style="color:#22d3bf">centered</code>.</p>
+<p>Returns a <code style="color:#22d3bf">design</code> whose <code style="color:#22d3bf">meta</code> holds <code style="color:#22d3bf">strata_ok</code> (every factor has one point per stratum — the defining property, checked on the returned matrix) and <code style="color:#22d3bf">min_distance</code> (in the unit cube).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">design</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

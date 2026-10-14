@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_central_composite — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">design</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import doe; doe.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmultivar.get(&quot;doe_central_composite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Zentral zusammengesetzter Versuchsplan (Box &amp; Wilson 1951) -&gt; <code style="color:#22d3bf">design</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Three parts: the two-level factorial (full 2^k, or a fraction from <code style="color:#22d3bf">generators</code> as in <code style="color:#22d3bf">doe_fractional_factorial</code> — it must be resolution V or better so that every two-factor interaction of the quadratic model stays estimable), 2k axial points at ±alpha on each axis, and <code style="color:#22d3bf">center</code> centre points.</p>
+<p><code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">&quot;rotatable&quot;</code> — alpha = F^(1/4) with F the number of factorial points (the prediction variance then depends only on the distance from the centre; Box &amp; Hunter 1957), <code style="color:#22d3bf">&quot;face&quot;</code> — alpha = 1 (face-centred, three levels only), <code style="color:#22d3bf">&quot;spherical&quot;</code> — alpha = sqrt(k), or a number &gt; 0.</p>
+<p><code style="color:#22d3bf">inscribed=True</code> shrinks the whole design by 1/alpha so that the axial points sit at the ends of the range (lo/hi) and the factorial points inside it; otherwise the factorial points sit at lo/hi and the axial points go <b>outside</b> the range — <code style="color:#22d3bf">meta[&#x27;outside_range&#x27;]</code> then names the factors whose natural values leave lo..hi (check that the bench can be set there).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">Leitfaden zur Familie design_of_experiments</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">design</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -499,6 +499,11 @@ def make_generators():
         "phash": lambda rng: __import__("imgforensics").perceptual_hash(rng.random((32, 32))),
         "fingerprint": lambda rng: __import__("imgforensics").sensor_fingerprint(
             [rng.random((32, 32)) * 0.4 + 0.3 for _ in range(4)]),
+        # design(2026-10-15、opsmultivar): 3 因子の回転可能な中心複合計画(二次まで当てられる)。
+        #   ★rng を 1 つも引かない —— 探針(ledger_contracts)は種を型名の順に同じ乱数列から作るので、
+        #   ここで乱数を引くと型名が後ろの種(image2d / matrix / signal …)が全部ずれ、他族の op の判定が
+        #   動く(2026-10-15 に実測: 無関係な 6 op が「拒否」に、11 個のノブの判定が入れ替わった)。
+        "design": lambda rng: __import__("doe").doe_central_composite(3),
     }
 
 
@@ -1383,6 +1388,16 @@ def _b_residue_part(pool, rng):
         return (((r > 8) & (r < 14) & (np.cos(3 * (a - t)) > 0.3)).astype(float)
                 + ((r > 18) & (r < 24) & (np.cos(4 * (a - t)) > 0)).astype(float))
     return (part(0.7), part(0.0)), {"orders": (3, 4), "rings": ((8, 14), (18, 24))}
+
+
+# --- 実験計画(opsmultivar)。自然単位の表は範囲つきで符号化 / 計画は自然単位へ戻す。 --- #
+def _b_doe_encode(pool, rng):
+    nat = np.column_stack([rng.uniform(150.0, 200.0, 12), 10.0 ** rng.uniform(0.0, 2.0, 12)])
+    return (nat,), {"factors": [("temp", 150.0, 200.0, "C"), ("time", 1.0, 100.0, "s", "log")]}
+
+
+def _b_doe_decode(pool, rng):
+    return (__import__("doe").doe_box_behnken([("a", 0.0, 10.0), ("b", 1.0, 2.0), ("c", -5.0, 5.0)]),), {}
 
 
 def _b_graph_adj(pool, rng):
@@ -6849,6 +6864,8 @@ OP_ARG_BUILDERS = {
     "vx_nonlinear_filter": _b_vx_nonlinear,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,
+    "doe_encode": _b_doe_encode,
+    "doe_decode": _b_doe_decode,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,
@@ -7306,6 +7323,11 @@ TYPE_CHECKS = {
     and v.dtype.kind == "f" and v.shape[0] >= 3
     and v.shape[1] >= 2 and v.shape[2] >= 2,
     # sweep = 非負の 1-D 掃引(干渉信号 or 戻りスペクトル)
+    # design(2026-10-15)= 符号化と自然単位の行列を両方持つ計画。両方が同じ形で、列数が因子の数。
+    "design": lambda v: isinstance(v, dict) and v.get("sort") == "design"
+    and isinstance(v.get("coded"), np.ndarray) and isinstance(v.get("natural"), np.ndarray)
+    and v["coded"].ndim == 2 and v["coded"].shape == v["natural"].shape
+    and v["coded"].shape[1] == len(v.get("factors") or ()),
     "sweep": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
     and v.dtype.kind == "f" and v.size >= 16 and (v >= 0.0).all(),
     # beatcube = (アンテナ, チャープ, サンプル) の**複素**立方体。3-D complex の

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_fractional_factorial — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">design</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import doe; doe.doe_fractional_factorial(factors=5, p=2, generators=None, center=0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;doe_fractional_factorial&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>생성자로 만드는 2수준 정칙 일부실시 요인설계 2^(k-p)(Box &amp; Hunter 1961) -&gt; <code style="color:#22d3bf">design</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>The first <code style="color:#22d3bf">k - p</code> factors (letters A, B, C ... skipping I) form a full factorial in standard (Yates) order, A changing fastest. Each generator <code style="color:#22d3bf">&quot;D=ABC&quot;</code> sets an added factor&#x27;s column to the product of base columns (<code style="color:#22d3bf">&quot;E=-ABD&quot;</code> for the other half). <code style="color:#22d3bf">generators=None</code> takes the recommended generators for (k, p) from the NIST/SEMATECH e-Handbook table (<code style="color:#22d3bf">FF_NIST</code>, 5.3.3.4.7 Table 3.17, after Box, Hunter &amp; Hunter); <code style="color:#22d3bf">p=0</code> or <code style="color:#22d3bf">generators=()</code> gives the full factorial 2^k.</p>
+<p>The defining relation (every product of generator words <code style="color:#22d3bf">I = ABCD = ...</code>), the <b>resolution</b> (length of the shortest word: III = main effects aliased with two-factor interactions, IV = main effects clear but 2fi aliased with each other, V = 2fi clear) and the alias table of main effects and two-factor interactions are returned in <code style="color:#22d3bf">meta</code> and <code style="color:#22d3bf">alias</code>. They are computed from the generators, and the returned matrix is checked against them (each aliased pair of columns is identical up to sign).</p>
+<p><code style="color:#22d3bf">center</code> adds centre runs (coded 0) for a curvature check; they do not change the alias structure.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">design</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

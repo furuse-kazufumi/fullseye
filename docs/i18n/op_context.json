@@ -4,6 +4,30 @@
   "en"
  ],
  "phrases": {
+  "実験計画法・応答曲面・品質工学・感度解析(工程条件の決め方)": {
+   "en": "Design of experiments, response surfaces, quality engineering, sensitivity analysis (choosing process settings)"
+  },
+  "直交表(L4〜L27、公表された表)で条件を少ない回数で振る": {
+   "en": "Vary settings in few runs with orthogonal arrays (L4 to L27, published tables)"
+  },
+  "一部実施要因計画(分解能と交絡表つき)": {
+   "en": "Fractional factorial design (with resolution and alias table)"
+  },
+  "応答曲面のための中心複合計画": {
+   "en": "Central composite design for response surfaces"
+  },
+  "角を踏まない応答曲面の計画": {
+   "en": "Response-surface design that avoids the corners"
+  },
+  "シミュレーションの入力をラテン超方格で埋める": {
+   "en": "Fill simulation inputs with a Latin hypercube"
+  },
+  "条件の記録を符号化(−1..+1)へ": {
+   "en": "Encode recorded settings to coded units (-1..+1)"
+  },
+  "計画を装置の設定値へ戻す": {
+   "en": "Decode a design back to equipment settings"
+  },
   "点群 → 当てはめ → CAD(逆設計)": {
    "en": "Point cloud -> fitting -> CAD (reverse engineering)"
   },

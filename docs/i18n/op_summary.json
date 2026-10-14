@@ -9,6 +9,69 @@
   "hi"
  ],
  "summaries": {
+  "multivar/doe_lhs": {
+   "fp": "46807c805eb4",
+   "ja": "ラテン超方格計画(McKay, Beckman & Conover 1979)-> ``design``。",
+   "zh": "拉丁超立方设计（McKay、Beckman 与 Conover 1979）-> ``design``。",
+   "tw": "拉丁超立方設計（McKay、Beckman 與 Conover 1979）-> ``design``。",
+   "ko": "라틴 하이퍼큐브 설계(McKay, Beckman & Conover 1979) -> ``design``.",
+   "de": "Latin-Hypercube-Versuchsplan (McKay, Beckman & Conover 1979) -> ``design``.",
+   "hi": "Latin hypercube design (McKay, Beckman व Conover 1979) -> ``design``।"
+  },
+  "multivar/doe_orthogonal_array": {
+   "fp": "544f2053cc1e",
+   "ja": "直交表 L4 / L8 / L9 / L12 / L16 / L18 / L27(公表された表から写したもの)-> ``design``。",
+   "zh": "正交表 L4 / L8 / L9 / L12 / L16 / L18 / L27（照录自公开发表的表）-> ``design``。",
+   "tw": "直交表 L4 / L8 / L9 / L12 / L16 / L18 / L27（照錄自公開發表的表）-> ``design``。",
+   "ko": "직교표 L4 / L8 / L9 / L12 / L16 / L18 / L27(공표된 표에서 옮긴 것) -> ``design``.",
+   "de": "Orthogonales Feld L4 / L8 / L9 / L12 / L16 / L18 / L27 aus einer veröffentlichten Tabelle -> ``design``.",
+   "hi": "प्रकाशित तालिका से लिया गया orthogonal array L4 / L8 / L9 / L12 / L16 / L18 / L27 -> ``design``।"
+  },
+  "multivar/doe_fractional_factorial": {
+   "fp": "506a519039c5",
+   "ja": "生成子から作る 2 水準の正則な一部実施要因計画 2^(k-p)(Box & Hunter 1961)-> ``design``。",
+   "zh": "由生成元构造的二水平正则部分因子设计 2^(k-p)（Box 与 Hunter 1961）-> ``design``。",
+   "tw": "由生成元建構的二水準正則部分因子設計 2^(k-p)（Box 與 Hunter 1961）-> ``design``。",
+   "ko": "생성자로 만드는 2수준 정칙 일부실시 요인설계 2^(k-p)(Box & Hunter 1961) -> ``design``.",
+   "de": "Regulärer zweistufiger teilfaktorieller Versuchsplan 2^(k-p) aus Generatoren (Box & Hunter 1961) -> ``design``.",
+   "hi": "generators से बना regular दो-स्तरीय fractional factorial 2^(k-p) (Box व Hunter 1961) -> ``design``।"
+  },
+  "multivar/doe_central_composite": {
+   "fp": "09d3d359073b",
+   "ja": "中心複合計画(Box & Wilson 1951)-> ``design``。",
+   "zh": "中心复合设计（Box 与 Wilson 1951）-> ``design``。",
+   "tw": "中心複合設計（Box 與 Wilson 1951）-> ``design``。",
+   "ko": "중심 합성 설계(Box & Wilson 1951) -> ``design``.",
+   "de": "Zentral zusammengesetzter Versuchsplan (Box & Wilson 1951) -> ``design``.",
+   "hi": "Central composite design (Box व Wilson 1951) -> ``design``।"
+  },
+  "multivar/doe_box_behnken": {
+   "fp": "92c57a428ced",
+   "ja": "Box-Behnken 計画(Box & Behnken 1960、3・4・5 因子)-> ``design``。",
+   "zh": "Box-Behnken 设计（Box 与 Behnken 1960，3、4 或 5 个因子）-> ``design``。",
+   "tw": "Box-Behnken 設計（Box 與 Behnken 1960，3、4 或 5 個因子）-> ``design``。",
+   "ko": "Box-Behnken 설계(Box & Behnken 1960, 3·4·5 인자) -> ``design``.",
+   "de": "Box-Behnken-Versuchsplan (Box & Behnken 1960) für 3, 4 oder 5 Faktoren -> ``design``.",
+   "hi": "3, 4 या 5 factors के लिए Box-Behnken design (Box व Behnken 1960) -> ``design``।"
+  },
+  "multivar/doe_encode": {
+   "fp": "f72d062b4ac0",
+   "ja": "自然単位の設定値 (n, k) -> 符号化値(−1..+1 = lo..hi)つきの ``design``。",
+   "zh": "自然单位的设定值 (n, k) -> 带编码值（−1..+1 = lo..hi）的 ``design``。",
+   "tw": "自然單位的設定值 (n, k) -> 帶編碼值（−1..+1 = lo..hi）的 ``design``。",
+   "ko": "자연 단위 설정값 (n, k) -> 부호화 값(−1..+1 = lo..hi)을 가진 ``design``.",
+   "de": "Einstellungen in natürlichen Einheiten (n, k) -> ``design`` mit kodierten Werten (−1..+1 = lo..hi).",
+   "hi": "प्राकृतिक इकाइयों की settings (n, k) -> coded मानों (−1..+1 = lo..hi) वाला ``design``।"
+  },
+  "multivar/doe_decode": {
+   "fp": "1ac4d1a27ce1",
+   "ja": "``design`` -> 自然単位の行列 (n, k)。任意の符号化点をその範囲で戻すこともできる。",
+   "zh": "``design`` -> 自然单位矩阵 (n, k)；也可用其范围将任意编码点还原。",
+   "tw": "``design`` -> 自然單位矩陣 (n, k)；也可用其範圍將任意編碼點還原。",
+   "ko": "``design`` -> 자연 단위 행렬 (n, k). 임의의 부호화 점을 그 범위로 되돌릴 수도 있다.",
+   "de": "``design`` -> Matrix in natürlichen Einheiten (n, k); oder beliebige kodierte Punkte mit ihren Bereichen dekodieren.",
+   "hi": "``design`` -> प्राकृतिक इकाइयों का matrix (n, k); या किसी भी coded बिंदु को उसकी ranges से decode करें।"
+  },
   "acoustics/acoustic_material_table": {
    "fp": "43c867b32287",
    "ja": "組み込みの音響材料表: 密度・縦波音速・インピーダンス Z = ρc・減衰 α0·f^n と、値ごとの出典と確かめたかどうかの印(``table``)。",

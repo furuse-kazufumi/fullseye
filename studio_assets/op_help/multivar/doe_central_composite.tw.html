@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_central_composite — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">design</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import doe; doe.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmultivar.get(&quot;doe_central_composite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>中心複合設計（Box 與 Wilson 1951）-&gt; <code style="color:#22d3bf">design</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Three parts: the two-level factorial (full 2^k, or a fraction from <code style="color:#22d3bf">generators</code> as in <code style="color:#22d3bf">doe_fractional_factorial</code> — it must be resolution V or better so that every two-factor interaction of the quadratic model stays estimable), 2k axial points at ±alpha on each axis, and <code style="color:#22d3bf">center</code> centre points.</p>
+<p><code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">&quot;rotatable&quot;</code> — alpha = F^(1/4) with F the number of factorial points (the prediction variance then depends only on the distance from the centre; Box &amp; Hunter 1957), <code style="color:#22d3bf">&quot;face&quot;</code> — alpha = 1 (face-centred, three levels only), <code style="color:#22d3bf">&quot;spherical&quot;</code> — alpha = sqrt(k), or a number &gt; 0.</p>
+<p><code style="color:#22d3bf">inscribed=True</code> shrinks the whole design by 1/alpha so that the axial points sit at the ends of the range (lo/hi) and the factorial points inside it; otherwise the factorial points sit at lo/hi and the axial points go <b>outside</b> the range — <code style="color:#22d3bf">meta[&#x27;outside_range&#x27;]</code> then names the factors whose natural values leave lo..hi (check that the bench can be set there).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">design</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

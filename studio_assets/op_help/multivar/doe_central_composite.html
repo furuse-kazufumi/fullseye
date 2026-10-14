@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_central_composite — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">design</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import doe; doe.doe_central_composite(factors=3, alpha=&#x27;rotatable&#x27;, center=4, generators=None, inscribed=False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;doe_central_composite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Central composite design (Box &amp; Wilson 1951) -&gt; <code style="color:#22d3bf">design</code>.</p>
+<p>Three parts: the two-level factorial (full 2^k, or a fraction from <code style="color:#22d3bf">generators</code> as in <code style="color:#22d3bf">doe_fractional_factorial</code> — it must be resolution V or better so that every two-factor interaction of the quadratic model stays estimable), 2k axial points at ±alpha on each axis, and <code style="color:#22d3bf">center</code> centre points.</p>
+<p><code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">&quot;rotatable&quot;</code> — alpha = F^(1/4) with F the number of factorial points (the prediction variance then depends only on the distance from the centre; Box &amp; Hunter 1957), <code style="color:#22d3bf">&quot;face&quot;</code> — alpha = 1 (face-centred, three levels only), <code style="color:#22d3bf">&quot;spherical&quot;</code> — alpha = sqrt(k), or a number &gt; 0.</p>
+<p><code style="color:#22d3bf">inscribed=True</code> shrinks the whole design by 1/alpha so that the axial points sit at the ends of the range (lo/hi) and the factorial points inside it; otherwise the factorial points sit at lo/hi and the axial points go <b>outside</b> the range — <code style="color:#22d3bf">meta[&#x27;outside_range&#x27;]</code> then names the factors whose natural values leave lo..hi (check that the bench can be set there).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">design</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
