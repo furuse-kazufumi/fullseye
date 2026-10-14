@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_screen_pattern — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">images</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_screen_pattern(rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, max_side_px=1024)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_screen_pattern(rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, max_side_px=1024)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_screen_pattern&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>화면에 표시하는 패턴(화면 픽셀 격자). → 이미지 목록(각 (행, 열), 값 [0, 1]).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">kind=&quot;fringe&quot;</code>: 位相シフト縞 I_n = a + b cos(2π s / <code style="color:#22d3bf">period_mm</code> − 2πn/N)(a = 0.5、b = 0.45、s は <code style="color:#22d3bf">direction</code> が <code style="color:#22d3bf">&quot;x&quot;</code> なら画面の u、<code style="color:#22d3bf">&quot;y&quot;</code> なら v、中心が 0)を <code style="color:#22d3bf">n_steps</code> = N 枚。<code style="color:#22d3bf">fringe.wrapped_phase</code> で復号すると位相 2π s / 周期 がそのまま戻る(同じ符号規約)。<code style="color:#22d3bf">&quot;uniform&quot;</code>: 一様な白(0.8)1 枚。<code style="color:#22d3bf">&quot;softbox&quot;</code>: 片側から明るい大きな面光源 1 枚(0.75 + 0.2 u / 半幅)—— どちらも「縞を使わない普通の撮り方」の比較用。画面の画素数は <code style="color:#22d3bf">screen_size_mm / screen_pixel_mm</code>。図のために長辺を <code style="color:#22d3bf">max_side_px</code> 画素まで間引く(値は各画素の中心で評価するので間引いても縞の位相は正しい)。<code style="color:#22d3bf">deflectometry_render</code> は同じ輝度の式を連続の座標で評価する(画面の画素の格子は入れない)。</p>
+<p>Raises: <code style="color:#22d3bf">ValueError</code> —— 周期が正でない、N &lt; 3(縞のとき)、方向が x / y でない、kind が fringe / uniform / softbox でない、max_side_px &lt; 8、rig が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_phase_measuring_deflectometry">poc_phase_measuring_deflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_phase_measuring_deflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">images</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspecular:photometric_stereo_robust">photometric_stereo_robust</a> · <a style="color:#22d3bf" href="opspecular:photometric_residual">photometric_residual</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">deflectometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:deflectometry_rig">deflectometry_rig</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_render">deflectometry_render</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_phase_to_slope">deflectometry_phase_to_slope</a> · <a style="color:#22d3bf" href="opspecular:slope_to_curvature">slope_to_curvature</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_sensitivity">deflectometry_sensitivity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deflectometry.py — SPECULAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

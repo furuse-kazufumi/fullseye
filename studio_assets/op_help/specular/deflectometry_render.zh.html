@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_render — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus=&#x27;surface&#x27;, aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus=&#x27;surface&#x27;, aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>高度场 → 相机拍到的“屏幕的镜像”(正向仿真)。→ 图像列表(每张 (H, W),[0, 1])。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p><code style="color:#22d3bf">height</code> (H, W) [mm] は <code style="color:#22d3bf">rig</code> の視野(一辺 <code style="color:#22d3bf">field_mm</code>、格子間隔 field / (W − 1))に張った面の高さ。カメラの画像も (H, W) で、視野の四隅が収まる焦点距離を選ぶ(画素と面の格子は斜めから見るので 1 対 1 ではない —— <code style="color:#22d3bf">deflectometry_phase_to_slope</code> が投影して読み直す)。各画素の視線を面に当て(z = h の交点を反復で)、法線で鏡面反射して(<code style="color:#22d3bf">match3d.reflect</code>)画面に当て、画面の輝度(<code style="color:#22d3bf">deflectometry_screen_pattern</code> と同じ式)を読む。<code style="color:#22d3bf">kind=&quot;fringe&quot;</code> なら <code style="color:#22d3bf">n_steps</code> 枚、それ以外は 1 枚。</p>
+<p>傾きは <code style="color:#22d3bf">slope_x</code> = ∂h/∂x、<code style="color:#22d3bf">slope_y</code> = ∂h/∂y を渡せば解析値を使い(真値を厳密にするため)、省略すると <code style="color:#22d3bf">height</code> の中心差分。</p>
+<p>物理の効果(どれも既定は「理想の鏡」):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">diffuse_fraction</code> = k_d ∈ [0, 1): 面の拡散成分。I = (1 − k_d)·鏡面 + k_d·画面の平均輝度。縞の振幅が (1 − k_d) 倍に落ち、位相の雑音は 1 / (1 − k_d) 倍になる(ざらついた塗装)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scatter_rad</code>: 鏡面ローブの広がり(面の法線の標準偏差 [rad])。反射光は 2 倍広がり、画面上で σ = 2·scatter·(面から画面の距離)のガウスで縞がぼける → 振幅 exp(−2π²σ²/周期²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">back_thickness_mm</code> / <code style="color:#22d3bf">refractive_index</code>: 透明板(カバーガラス)の裏面反射。表で屈折(<code style="color:#22d3bf">glassmirror.refract_rays</code>)→ 平らな裏面で反射 → 表から出る光が、ずれた画面の点を映す。重みは Fresnel(<code style="color:#22d3bf">glassmirror.fresnel_dielectric</code>)。カメラの露出は表と裏の和で正規化する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">focus</code>: <code style="color:#22d3bf">&quot;surface&quot;</code>(面にピント)/ <code style="color:#22d3bf">&quot;screen&quot;</code>(画面の虚像 = 主光線に沿って L + d にピント)/ 0〜1 の数(その間の比 D_f = L + α d)。開口 <code style="color:#22d3bf">rig[&quot;aperture_mm&quot;]</code> = A の薄レンズで、距離 D の物体の錯乱円の直径は A·|D − D_f| / D_f。面にピント(α = 0)で開口積分を指定しないときは、面の 1 点から出た光が画面上で直径 A·d/L の円板に広がるだけなので、縞に一様円板の MTF 2 J1(πc/p) / (πc/p) を掛ける(閉形式、負なら位相が反転)。それ以外は<b>開口積分</b>: 開口上の <code style="color:#22d3bf">aperture_samples</code> 点(既定 16、Vogel の螺旋)から、主光線上のピントの点へ向かう光線を 1 本ずつ面に当てて反射させ、画面の輝度を平均する —— 画面側のぼけ(縞の振幅)と面側のぼけ(面の傾きの平均 = 凹みがぼける)が同時に出る。</p>
+<p>★2026-10-15: 初版は面側のぼけを「画像を円板で畳み込む」近似にしていて、画面にピントを合わせても</p>
+<p>縞の振幅が 0.59 倍に落ちた(縞そのものまでぼかしていた)。画面に合っていれば縞はくっきりで、ぼける</p>
+<p>のは縞を曲げる面の傾きのほう —— 開口積分に直した。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">noise_sigma</code>(画素の加法ガウス雑音、[0, 1] の単位)と <code style="color:#22d3bf">bits</code>(量子化、例 8)。<code style="color:#22d3bf">seed</code> で再現。</p>
+<p>画面の外に当たる画素は 0(黒)。<code style="color:#22d3bf">fringe.modulation</code> で低い変調の画素を除くこと。</p>
+<p>Raises: <code style="color:#22d3bf">ValueError</code> —— <code style="color:#22d3bf">height</code> が 2-D の有限な配列でない(2 × 2 未満も)、傾きの形が違う・有限でない、周期が正でない、N &lt; 3、方向・kind・focus が不正、k_d が [0, 1) の外、散乱が負、板厚が正でない、屈折率が 1 以下、雑音が負、bits が 1〜16 の整数でない、aperture_samples が 1〜256 の整数でも None でもない、rig が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_phase_measuring_deflectometry">poc_phase_measuring_deflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_phase_measuring_deflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">images</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspecular:photometric_stereo_robust">photometric_stereo_robust</a> · <a style="color:#22d3bf" href="opspecular:photometric_residual">photometric_residual</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">deflectometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:deflectometry_rig">deflectometry_rig</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_screen_pattern">deflectometry_screen_pattern</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_phase_to_slope">deflectometry_phase_to_slope</a> · <a style="color:#22d3bf" href="opspecular:slope_to_curvature">slope_to_curvature</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_sensitivity">deflectometry_sensitivity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deflectometry.py — SPECULAR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

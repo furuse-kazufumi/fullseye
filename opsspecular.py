@@ -5,7 +5,8 @@
 「Lambertian + 既知光源 + 影なし」の場合だけで、**影とスペキュラは線形性を破る**
 ので頑健版が別途要る、と。本族はその「別途」であり、加えて **形状復元にかける前に
 ハイライトを取り除く** 2 つの経路(色・偏光)を第一級の op にしたもの。
-13 op / 4 カテゴリ(numpy のみ、実体は `specularity.py`)。
+13 op / 4 カテゴリ(numpy のみ、実体は `specularity.py`)+ 2026-10-15 デフレクトメトリ 6 op
+(`deflectometry.py`、光沢面に映した縞の鏡像から傾きを測る)= 19 op / 5 カテゴリ。
 
 すべて閉形式なので、真値を持った合成データで機械精度まで検証できる — それが
 本 repo で op を足してよい条件そのもの。
@@ -33,9 +34,10 @@
     opsspecular.call("specular_diffuse_split", img)   # 宣言型(diffuse)だけ返る
     opsspecular.get("specular_diffuse_split")(img)    # 素の (diffuse, specular)
 """
+import deflectometry
 import specularity
 
-_MOD = {"specularity": specularity}
+_MOD = {"specularity": specularity, "deflectometry": deflectometry}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / images / normalmap / vector / labels / stokes
@@ -149,6 +151,18 @@ _CATALOG = {
         ("polarization_separate", "specularity", ["polsweep"], "image2d"),
         ("polarization_dolp_map", "specularity", ["polsweep"], "image2d"),
         ("polarization_stokes", "specularity", ["polsweep"], "stokes"),
+    ],
+    # 2026-10-15 位相計測デフレクトメトリ(PMD、deflectometry.py): 光沢面に映した画面の縞の鏡像 → 位相 → 法線 → 曲率。
+    # ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので
+    #   integrate_normals(高さ)・render_shaded へ無改造で流れる。装置の幾何は table(rig)で、他の op は
+    #   rig= で受ける(既定の装置なら省略可)。順方向は高さ場(image2d)→ 縞の鏡像(images)。
+    "deflectometry": [
+        ("deflectometry_rig", "deflectometry", [], "table"),
+        ("deflectometry_screen_pattern", "deflectometry", [], "images"),
+        ("deflectometry_render", "deflectometry", ["image2d"], "images"),
+        ("deflectometry_phase_to_slope", "deflectometry", ["image2d", "image2d"], "normalmap"),
+        ("slope_to_curvature", "deflectometry", ["normalmap"], "image2d"),
+        ("deflectometry_sensitivity", "deflectometry", [], "table"),
     ],
 }
 

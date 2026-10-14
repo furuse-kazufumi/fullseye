@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_sensitivity — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_sensitivity(rig=None, period_mm=10.0, n_steps=4, noise_sigma=0.004, fringe_amplitude=None, bits=8, diffuse_fraction=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_sensitivity(rig=None, period_mm=10.0, n_steps=4, noise_sigma=0.004, fringe_amplitude=None, bits=8, diffuse_fraction=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_sensitivity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>量測前以閉式給出最小可檢測斜率、高度與斜率不定性的係數以及對焦模糊。→ dict。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>返す鍵(角度は rad、長さは mm):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">slope_pixel_bound</code> —— 画面の画素ピッチ / (2d)。縞を使わず画面の画素を数えるときの傾きの刻み。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_noise_rad</code> —— N ステップの位相雑音 √(2/N)·σ / b。σ は画素の雑音(<code style="color:#22d3bf">bits</code> の量子化 1/(2^bits − 1)/√12 を 2 乗和で足す)、b は縞の振幅(既定 0.45·(1 − k_d)·|M|、M は面にピントのときの画面側の錯乱円 A·d/L の円板の MTF = <code style="color:#22d3bf">deflectometry_render</code> の既定と同じ条件。★初版は M を忘れていて、実測の位相雑音が閉形式の 1.12 倍に出た —— 内訳を追って直した)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fringe_amplitude</code> —— 上で使った b。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">screen_noise_mm</code> —— 画面の座標の雑音 周期·σ_φ / 2π。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">slope_noise_x</code> / <code style="color:#22d3bf">slope_noise_y</code> —— σ_u / (2d) と σ_u / (2 d cos θ)(入射面内と直交方向)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height_slope_coupling</code> —— 面が 1 mm ずれたときの見かけの傾き sin θ / d [rad/mm]。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">blur_screen_focus_surface_mm</code> / <code style="color:#22d3bf">blur_surface_focus_screen_mm</code> —— 面にピントを合わせたときの画面側の錯乱円 A·d / L と、画面にピントを合わせたときの面側の錯乱円 A·d / (L + d)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contrast_focus_surface</code> —— 面にピントのとき縞の振幅に掛かる円板の MTF。</p>
+<p>Raises: <code style="color:#22d3bf">ValueError</code> —— 周期・振幅が正でない、N &lt; 3、雑音が負、bits が 1〜16 の整数でも None でもない、k_d が [0, 1) の外、ぼけで縞が消える(MTF がちょうど 0)、rig が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_phase_measuring_deflectometry">poc_phase_measuring_deflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_phase_measuring_deflectometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">deflectometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:deflectometry_rig">deflectometry_rig</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_screen_pattern">deflectometry_screen_pattern</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_render">deflectometry_render</a> · <a style="color:#22d3bf" href="opspecular:deflectometry_phase_to_slope">deflectometry_phase_to_slope</a> · <a style="color:#22d3bf" href="opspecular:slope_to_curvature">slope_to_curvature</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deflectometry.py — SPECULAR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

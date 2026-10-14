@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 位相計測デフレクトメトリ(deflectometry 6 op + PoC)
+- `deflectometry`(`opsspecular` の新カテゴリ `deflectometry`、6 op): `deflectometry_rig`(装置の幾何の表。手で動かしたベクトルは拒否)/ `deflectometry_screen_pattern` / `deflectometry_render`(高さ場 → 縞の鏡像。拡散成分・鏡面ローブの散乱・カバーガラスの裏面反射・開口積分のピント・雑音と量子化)/ `deflectometry_phase_to_slope`(画面の絶対位相 2 枚 → 面の格子上の法線マップ、`match3d.normal_from_reflection`)/ `slope_to_curvature`(傾きを 1 回微分して平均・ガウス曲率、積分しない)/ `deflectometry_sensitivity`(撮る前の閉形式: σ_u/(2d)、sin θ / d、ピントのぼけ)。
+- PoC `poc_phase_measuring_deflectometry`(22 門、図 13 枚 + GIF): 塗装パネルの深さ 3 µm / 1 µm の凹みは写真の信号が 8 bit の 1 段の 0.17 倍なのに曲率マップで SNR 110 / 57、積分した深さは真値と 0.5 % 以内。位相雑音は閉形式と 1.00 倍、傾きの雑音は双線形の読み直しの 0.67 倍。壊れ方: 0.3 mm 浮かせると Δz sin θ / d の傾きと半径 388 m の椀(凹みは 0.7 %)、画面の距離 2 % の誤りで深さ −2.3 %、拡散 0.9 で次数が飛ぶ、カバーガラスの裏面は凹みのくさびで逆向きに曲がり傾きの感度が閉形式 0.246(凹みが 1/4 に見える)、画面にピントで凹みが 0.52 倍。
+- ★内訳を追って直したもの: 閉形式の位相雑音が実測の 1/1.12 だった → 面にピントの画面側のぼけ(円板の MTF 0.89)を振幅に入れ忘れていた。画面にピントでも縞が 0.59 倍に落ちた → 面側のぼけを画像の畳み込みで近似していたのをやめ、開口積分に。画面の距離の誤りで深さが 7.5 % 深く出た → 距離の誤りは面全体を半径 41 m の椀に見せるので、深さは局所の 2 次形状を外して測る。
+- 能力ノート `docs/capabilities/phase-measuring-deflectometry.md`、op 要約 6 言語、門 `tests/test_deflectometry.py`(30 件)。
 ### Added — テレセントリックレンズと寸法計測(telecentric 7 op + PoC)
 - `telecentric`(`opsoptics` の新カテゴリ `telecentric`、7 op): `telecentric_lens`(同じ単レンズの絞りの位置だけを変えた通常 / 物体側 / 両側テレセン、`stop_shift_mm` でテレセン度を崩す)、`chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙う —— 入射瞳が無限遠の物体側テレセンでは `raytrace.chief_ray` が止まっていた)、`magnification_vs_depth`、`telecentricity_error`、`defocus_spot_vs_depth`、`vignetting_vs_field`、`lens_equivalent_pinhole`(`render3d` のピンホールを入射瞳に)。
 - PoC `poc_telecentric_metrology`(24 門、図 6 枚 + GIF): 倍率の変化は閉形式 L/(L − Δz) と 7e-5、FA レンズ f = 25 mm は +5 mm で +6.9 %、テレセンは −0.013 %。描いた画像から測ったピン上面の径と穴の底の見える割合を閉形式と突き合わせる。★単レンズの瞳の球面収差でテレセン度 0.05° が残り、Newton の閉形式は視野の端で 11.8 % 外れ、視野の 50 % 点は近軸より 0.8 mm 手前。OSS の optiland と主光線の像の高さが 9e-8 mm(手元にあれば門、無ければ記録を印字)。

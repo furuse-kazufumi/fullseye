@@ -2970,6 +2970,22 @@
    }
   },
   {
+   "id": "poc_phase_measuring_deflectometry",
+   "group": "wing_metrology",
+   "media": "03_photo_vs_pmd.png",
+   "motion": false,
+   "thumb_src": "02_sample.png",
+   "label": {
+    "ja": "写真では見えない µm の凹みを縞の鏡像で(デフレクトメトリ)",
+    "en": "Micrometre dents a photo cannot show, in a fringe mirror image (deflectometry)",
+    "zh": "照片看不见的微米凹坑,用条纹的镜像找出(偏折术)",
+    "tw": "照片看不見的微米凹坑,用條紋的鏡像找出(偏折術)",
+    "ko": "사진에 보이지 않는 µm 오목을 줄무늬 거울상으로(디플렉토메트리)",
+    "de": "Mikrometer-Dellen, die kein Foto zeigt, im Spiegelbild eines Streifenmusters (Deflektometrie)",
+    "hi": "photo में न दिखने वाले µm गड्ढे, fringe के प्रतिबिंब में (deflectometry)"
+   }
+  },
+  {
    "id": "poc_interreflection_fringe_error",
    "group": "wing_metrology",
    "media": "02_direct_global.png",
@@ -5692,6 +5708,13 @@
     "ko": "텔레센트릭 렌즈와 치수 측정(주광선 기울기 → 높이에 따른 배율 → 비네팅과 흐림)",
     "de": "Telezentrische Objektive für die Maßprüfung (Hauptstrahlwinkel, Abbildungsmaßstab über der Höhe, Vignettierung und Unschärfe)",
     "hi": "dimensional metrology के लिए telecentric lens (chief ray angle → ऊँचाई के साथ magnification → vignetting और blur)"
+   },
+   "phase-measuring-deflectometry": {
+    "zh": "用条纹的镜像测量光泽面的微米凹坑(相位测量偏折术: 条纹 → 相位 → 斜率 → 曲率)",
+    "tw": "用條紋的鏡像量測光澤面的微米凹坑(相位量測偏折術: 條紋 → 相位 → 斜率 → 曲率)",
+    "ko": "줄무늬의 거울상으로 광택면의 µm 오목을 잰다(위상 측정 디플렉토메트리: 줄무늬 → 위상 → 기울기 → 곡률)",
+    "de": "Mikrometer-Dellen auf glänzenden Flächen im Spiegelbild eines Streifenbildschirms messen (phasenmessende Deflektometrie: Streifen, Phase, Neigung, Krümmung)",
+    "hi": "चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature)"
    },
    "spectral-radiometry-chain": {
     "zh": "光源 × 对象 × 传感器的光谱链(普朗克・CIE A・LED・滤光片・Si 的 QE)",

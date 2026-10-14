@@ -1,4 +1,4 @@
-# SPECULAR operator help — 13 ops in 4 categories
+# SPECULAR operator help — 19 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/specular/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 - [specular_photometric](guides/specular_photometric.md) — 鏡面反射の分離と頑健フォトメトリックステレオ — 使い方ガイド
 
 ## カテゴリ
+
+### deflectometry (6)
+
+[deflectometry_phase_to_slope](deflectometry/deflectometry_phase_to_slope.md) · [deflectometry_render](deflectometry/deflectometry_render.md) · [deflectometry_rig](deflectometry/deflectometry_rig.md) · [deflectometry_screen_pattern](deflectometry/deflectometry_screen_pattern.md) · [deflectometry_sensitivity](deflectometry/deflectometry_sensitivity.md) · [slope_to_curvature](deflectometry/slope_to_curvature.md)
 
 ### dichromatic (4)
 

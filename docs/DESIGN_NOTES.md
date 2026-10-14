@@ -1682,6 +1682,10 @@
 - **L100** — ★新しい型の語は作らない。曲線(大きさの格子・POD・下限)も表の列として返す。
 - **L101** — ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に 写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
 
+## `opsspecular.py`
+
+- **L156** — ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので integrate_normals(高さ)・render_shaded へ無改造で流れる。装置の幾何は table(rig)で、他の op は rig= で受ける(既定の装置なら省略可)。順方向は高さ場(image2d)→ 縞の鏡像(images)。
+
 ## `opsvolcolor.py`
 
 - **L63** — ★ ただし既存 `labels` 述語は ``ndim >= 1`` で **2-D のラベル画像と 3-D の ラベルボリュームが同居している**。本モジュールの 11 op は 2-D を渡されると 全部 ValueError になる(fail-closed)ので、**取り違えが黙って通ることは 無い**。危険なのは逆で、2-D の種しか無いプールでは 1 度も実行されないまま 「発見ゼロ」に見える —— opsphoton が counts で踏んだ罠と同じ形である。 配線側で 3-D ラベル種を必ず注ぐこと(下の「親が配線するとき」参照)。 * voxel — ``vol_label_overlay`` が重ねる元のグレーボリューム、および ``vol_label_color_flicker`` が受ける 2 値ボリューム。どちらも (D,H,W) の 既存 voxel 語彙そのもので、新語を作る理由が無い。 * rgbimage — 断面と投影の返り (H,W,3)。既存の rgbimage 消費 op(鏡面分離・ 色変換・保存)がそのまま意味を持って使える。**ここが rgbvolume 語彙の出口** なので、新語彙が袋小路にならない。 * matrix — ``vol_label_palette`` の返り (n+1, 3)。2-D の実行列そのもの。 * table — 形状統計 / 凡例 / ちらつき測定 / 色付きメッシュの集合。

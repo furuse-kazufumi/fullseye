@@ -17145,6 +17145,60 @@
    "de": "Zerlegt einen Polarisatordurchlauf in unpolarisierte und linear polarisierte Radianz. → (diffuse, specular), beide (H, W).",
    "hi": "polariser sweep को उसकी unpolarised और linearly polarised radiance में बाँटता है। → (diffuse, specular), दोनों (H, W)।"
   },
+  "specular/deflectometry_rig": {
+   "fp": "fdf7dce87f60",
+   "en": "Put the geometry of a deflectometry rig (camera, screen, field of view) into one table (dict).",
+   "zh": "把偏折术装置(相机、屏幕、视野)的几何关系整理成一张表(dict)。",
+   "tw": "把偏折術裝置(相機、螢幕、視野)的幾何關係整理成一張表(dict)。",
+   "ko": "디플렉토메트리 장치(카메라, 화면, 시야)의 기하를 하나의 표(dict)로 만든다.",
+   "de": "Die Geometrie eines Deflektometrie-Aufbaus (Kamera, Bildschirm, Messfeld) in einer Tabelle (dict) zusammenfassen.",
+   "hi": "deflectometry rig (camera, screen, field of view) की geometry को एक table (dict) में रखना।"
+  },
+  "specular/deflectometry_screen_pattern": {
+   "fp": "4f27fac479f7",
+   "en": "The pattern shown on the screen (on the screen's pixel grid). → list of images (each (rows, cols), values [0, 1]).",
+   "zh": "在屏幕上显示的图案(屏幕像素网格)。→ 图像列表(每张 (行, 列),值 [0, 1])。",
+   "tw": "在螢幕上顯示的圖案(螢幕像素網格)。→ 影像列表(每張 (列, 行),值 [0, 1])。",
+   "ko": "화면에 표시하는 패턴(화면 픽셀 격자). → 이미지 목록(각 (행, 열), 값 [0, 1]).",
+   "de": "Das auf dem Bildschirm gezeigte Muster (im Pixelraster des Bildschirms). → Liste von Bildern (je (Zeilen, Spalten), Werte [0, 1]).",
+   "hi": "screen पर दिखाया जाने वाला pattern (screen के pixel grid पर)। → images की list (हर एक (rows, cols), मान [0, 1])।"
+  },
+  "specular/deflectometry_render": {
+   "fp": "1cac429cfdb9",
+   "en": "Height field → the camera's image of the screen's mirror reflection (forward simulation). → list of images (each (H, W), [0, 1]).",
+   "zh": "高度场 → 相机拍到的“屏幕的镜像”(正向仿真)。→ 图像列表(每张 (H, W),[0, 1])。",
+   "tw": "高度場 → 相機拍到的「螢幕的鏡像」(正向模擬)。→ 影像列表(每張 (H, W),[0, 1])。",
+   "ko": "높이 장 → 카메라가 찍는 '화면의 거울상'(순방향 시뮬레이션). → 이미지 목록(각 (H, W), [0, 1]).",
+   "de": "Höhenfeld → das Kamerabild des gespiegelten Bildschirms (Vorwärtssimulation). → Liste von Bildern (je (H, W), [0, 1]).",
+   "hi": "height field → camera द्वारा लिया गया screen का दर्पण-प्रतिबिंब (forward simulation)। → images की list (हर एक (H, W), [0, 1])।"
+  },
+  "specular/deflectometry_phase_to_slope": {
+   "fp": "e32072c97643",
+   "en": "Two absolute screen phases (fringes along u and v) → a normal map (H, W, 3) on the surface grid.",
+   "zh": "两张屏幕绝对相位(u 方向与 v 方向的条纹)→ 被测面网格上的法线图 (H, W, 3)。",
+   "tw": "兩張螢幕絕對相位(u 方向與 v 方向的條紋)→ 被測面網格上的法線圖 (H, W, 3)。",
+   "ko": "화면의 절대 위상 2장(u 방향, v 방향 줄무늬) → 면 격자 위의 법선 맵 (H, W, 3).",
+   "de": "Zwei absolute Bildschirmphasen (Streifen entlang u und v) → eine Normalenkarte (H, W, 3) auf dem Flächenraster.",
+   "hi": "screen की दो absolute phases (u और v दिशा के fringes) → surface grid पर normal map (H, W, 3)।"
+  },
+  "specular/slope_to_curvature": {
+   "fp": "75cf783dab0d",
+   "en": "Normal map (H, W, 3) → a curvature map (H, W). One derivative of the slopes, no integration to height.",
+   "zh": "法线图 (H, W, 3) → 曲率图 (H, W)。只对斜率求一次导数,不积分成高度。",
+   "tw": "法線圖 (H, W, 3) → 曲率圖 (H, W)。只對斜率求一次導數,不積分成高度。",
+   "ko": "법선 맵 (H, W, 3) → 곡률 맵 (H, W). 기울기를 한 번 미분할 뿐 높이로 적분하지 않는다.",
+   "de": "Normalenkarte (H, W, 3) → Krümmungskarte (H, W). Eine Ableitung der Neigungen, keine Integration zur Höhe.",
+   "hi": "normal map (H, W, 3) → curvature map (H, W)। slopes का केवल एक derivative, height में integration नहीं।"
+  },
+  "specular/deflectometry_sensitivity": {
+   "fp": "08f4fbaecf25",
+   "en": "Before measuring, give the smallest detectable slope, the height-slope ambiguity coefficient and the focus blur in closed form. → dict.",
+   "zh": "测量前以闭式给出最小可检测斜率、高度与斜率不定性的系数以及对焦模糊。→ dict。",
+   "tw": "量測前以閉式給出最小可檢測斜率、高度與斜率不定性的係數以及對焦模糊。→ dict。",
+   "ko": "찍기 전에 최소 검출 기울기, 높이와 기울기 부정성의 계수, 초점 흐림을 닫힌 꼴로 낸다. → dict.",
+   "de": "Vor der Messung die kleinste nachweisbare Neigung, den Kopplungsfaktor der Höhen-Neigungs-Mehrdeutigkeit und die Fokusunschärfe in geschlossener Form angeben. → dict.",
+   "hi": "मापने से पहले, closed form में सबसे छोटा पहचानने योग्य slope, height-slope ambiguity का coefficient और focus blur देना। → dict।"
+  },
   "specular/polarization_stokes": {
    "fp": "7e3b25d89f3c",
    "ja": "偏光板回転から、シーン全体を積分した Stokes ベクトル。→ (4,)。:func:`optics.stokes_analyze` にそのまま渡せる。",
