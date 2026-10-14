@@ -6,6 +6,11 @@ category: 測る
 ops: [deflectometry_rig, deflectometry_screen_pattern, deflectometry_render, deflectometry_phase_to_slope, slope_to_curvature, deflectometry_sensitivity]
 examples: [poc_phase_measuring_deflectometry]
 version: 0.6.1
+inputs: [images]
+pipeline: [deflectometry_rig, deflectometry_sensitivity, wrapped_phase, absolute_phase, deflectometry_phase_to_slope, slope_to_curvature]
+alternatives: [deflectometry_render, deflectometry_screen_pattern, sfp_height, integrate_normals]
+limits: 1 台のカメラと 1 枚の画面では面の高さと傾きを分けられない(面が Δz ずれると傾きが Δz sin θ / d 狂う)。画面の画素の格子と液晶の階調の非線形は入っていない。無反射コートの無いカバーガラスでは凹みが 1/4 の深さにしか見えない(PoC の門)。
+calibration: 較正の op は無く、装置の幾何(入射角・カメラと画面までの距離 d・画面の画素ピッチ)は実測して `deflectometry_rig` に入れる。傾きは画面上のずれ / (2d) なので、d の誤りはそのまま傾きと曲率の比の誤りになる。
 ---
 
 # 光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)
@@ -29,6 +34,27 @@ Phase-measuring deflectometry for glossy surfaces: a rig table, the screen patte
 **向く**: 塗装・樹脂・ガラス・研磨金属の外観検査で、高さは µm でも傾きなら測れる欠陥(凹み、うねり、研磨ムラ、オレンジピール)の検出と、検査系の設計の見積り(画面の距離・縞の周期・開口・ピントの位置を変えたときの感度と壊れ方)。
 
 **向かない**: ★1 台のカメラと 1 枚の画面では、面の高さと傾きを分けられません(面が Δz ずれると傾きが Δz sin θ / d 狂う)。局所の凹みの形はほとんど影響を受けませんが、面全体の形を測るには高さの手がかり(2 台目のカメラ、画面を動かす、偏光)が要ります。カメラはピンホール + 薄レンズのぼけ、画面は平らで輝度は角度に依らず、画面の画素の格子と液晶の階調の非線形は入れていません(Wu ら 2015 が挙げる位相誤差の主因)。拡散成分は画面の平均輝度を一様に足す近似、ガラスの裏面は平らで表と平行です。無反射コートの無いカバーガラスでは、裏面の光が凹みの斜面(くさび)で逆向きに曲がり、凹みが 1/4 の深さにしか見えません(PoC の門で閉形式と照合)。装置の幾何は既知とし、較正の op はありません。
+
+## 推奨パイプライン
+
+`deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature`
+
+`deflectometry_rig` で装置の幾何を 1 つの表にし → `deflectometry_sensitivity` で撮る前に傾きの雑音 σ_u/(2d)・高さと傾きの不定性 sin θ / d・ピントのぼけを見積もる → 画面に位相シフト縞(細かい周期と粗い周期、x と y)を出して撮った画像の束を `wrapped_phase` → `absolute_phase` で画面の絶対位相にし → x・y の 2 枚を `deflectometry_phase_to_slope` で面の格子上の法線マップに → `slope_to_curvature` で平均曲率(積分しないので、面全体の傾きの誤差は消え、局所の凹みだけが立つ)。
+
+## 代替
+
+撮る前に検査系を試すなら `deflectometry_screen_pattern` と `deflectometry_render`(拡散・散乱・裏面反射・ピントを入れた順方向)。高さが要るなら法線マップを `sfp_height` か `integrate_normals` で積分する(ただし高さと傾きの不定性は残る)。
+
+## 限界
+
+- 高さと傾きの不定性: 面が Δz ずれると傾きが Δz sin θ / d 狂う。局所の凹みの形はほとんど影響を受けないが、面全体の形には 2 台目のカメラ・画面を動かす・偏光などの手がかりが要る。
+- 差分の曲率は格子 0.25 mm で真値より 5 % ほど低く出る(最初の 1 本の例)。
+- 無反射コートの無いカバーガラスでは裏面の光が凹みの斜面で逆向きに曲がり、凹みが 1/4 の深さにしか見えない(閉形式と PoC の門で照合)。
+- カメラはピンホール + 薄レンズのぼけ、画面は平らで輝度は角度に依らず、画面の画素の格子と液晶の階調の非線形(Wu ら 2015 の位相誤差の主因)は入っていない。
+
+## 実寸校正
+
+Fullseye に較正の op は無い。装置の幾何(入射角 θ、カメラと画面までの距離、視野、画面の大きさと画素ピッチ)は実測して `deflectometry_rig` に入れる —— 手で書き換えたベクトルはスカラーと食い違うとして拒否される。傾きは画面上のずれを 2d で割った量なので d の相対誤差がそのまま傾き・曲率の相対誤差になり、面の高さの誤差 Δz は傾きに Δz sin θ / d を足す(`deflectometry_sensitivity` が係数を返す)。
 
 ## 最初の 1 本
 

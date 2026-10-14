@@ -6,6 +6,11 @@ category: 光と色
 ops: [pixel_shift_pattern, pixel_shift_capture, pixel_shift_merge, pixel_shift_motion_mask, false_color_metric, pixel_shift_resolution_budget]
 examples: [poc_pixel_shift]
 version: 0.6.1
+inputs: [rgbimage]
+pipeline: [pixel_shift_resolution_budget, pixel_shift_pattern, pixel_shift_capture, pixel_shift_motion_mask, pixel_shift_merge, false_color_metric]
+alternatives: [drizzle_resample, align_frames, raw_demosaic_bilinear]
+limits: 合わせる側は公称のシフトが 1/scale 画素の格子に乗る場合専用。傾いたエッジの MTF50 は 1 枚でもシフトしても同じで(開口の sinc は動かない)、レンズが先に落ちていれば何も戻らない(PoC)。撮る側は理想の撮像素子で、雑音は呼び手が足す。
+calibration: 実寸は 1 枚撮りと同じ画素ピッチ ÷ 倍率。半画素シフトで合わせた 2 倍の格子では 1 画素がその半分になる。シフトそのものは公称で合わせるので、圧電の誤差は `pixel_shift_pattern(error_px=…)` で見積もる。
 ---
 
 # ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)
@@ -27,6 +32,26 @@ Six ops in `pixelshift` (category `pixelshift` of `opsoptics`): nominal shift se
 **向く**: 色の正しさが要る検査(基板・印刷・織物・塗装の色むら)でピクセルシフト機能を使うかの判断、レンズの F 値と画素の組み合わせでシフトに意味があるか(Q = λN/p)の見積り、シフト誤差の許容(圧電の精度)と搬送速度の上限の見積り、実機の連写を合わせるときの合成器。
 
 **向かない**: ★合わせる側は公称のシフトが 1/scale 画素の格子に乗る場合専用です(任意のずれは `astrostack.drizzle_resample`、手持ちの揺れのように位置合わせが要る場合は `astrostack.align_frames` が先)。drizzle の `shifts` は「フレームの中身のずれ」なのでセンサのシフトとは**符号が逆**です(PoC の門で確認)。撮る側は理想の撮像素子(箱の開口・画素間のクロストークなし・3 色が完全に分かれる色フィルタ)で、雑音は呼び手が足します。動き検出の差し戻し先は 1 枚の双線形デモザイクなので、ゆっくりした動き(PoC では 0.25 px/枚)では差し戻すほうが誤差が大きくなります。
+
+## 推奨パイプライン
+
+`pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric`
+
+`pixel_shift_resolution_budget` で画素ピッチと F 値から Q = λN/p とレンズ律速か画素律速かを見て(画素律速でなければシフトの意味は薄い)→ `pixel_shift_pattern` で公称のシフト列(1 画素 4 枚・半画素 4 枚・16 枚)→ 実機ではその連写、試すなら `pixel_shift_capture` で細かく描いたシーン(`rgbimage`)を撮る → `pixel_shift_motion_mask` で動いた所を見つけ → `pixel_shift_merge` で公称のシフトで格子へ振り分け → `false_color_metric` で偽色を測る。
+
+## 代替
+
+任意のずれ(格子に乗らない)は `drizzle_resample`、手持ちの揺れのように位置合わせが要る場合は `align_frames` が先(drizzle の `shifts` はフレームの中身のずれなので、センサのシフトとは符号が逆 —— PoC の門で確認)。動いた所の差し戻し先は 1 枚の `raw_demosaic_bilinear`。
+
+## 限界
+
+- MTF は上がらない: 傾いたエッジの MTF50 は 1 枚とシフトで同じ(開口の sinc は動かない)、レンズが先に落ちていれば何も戻らない(PoC の門)。
+- 撮る側は理想の撮像素子(箱の開口・画素間のクロストークなし・3 色が完全に分かれる色フィルタ)で、雑音は呼び手が足す。
+- 動き検出の差し戻し先は 1 枚の双線形デモザイクなので、ゆっくりした動き(PoC では 0.25 px/枚)では差し戻すほうが誤差が大きくなる。
+
+## 実寸校正
+
+ピクセルシフトは尺度を変えない —— 1 画素 4 枚の合成は 1 枚撮りと同じ格子(画素ピッチ ÷ 倍率)、半画素の合成は 2 倍の格子なので 1 画素がその半分の長さになる。合わせる側はシフトを公称の値で扱い、実測しない。圧電の誤差の影響は `pixel_shift_pattern` の `error_px` で見積もる(最初の 1 本の例は 0.1 px)。
 
 ## 最初の 1 本
 

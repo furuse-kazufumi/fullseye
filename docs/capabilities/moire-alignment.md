@@ -6,6 +6,11 @@ category: 測る
 ops: [moire_magnification, moire_talbot_gap, moire_overlay_image, moire_phase, moire_phase_to_shift, moire_differential_shift, moire_mark_read, moire_phase_crlb]
 examples: [poc_moire_alignment]
 version: 0.6.1
+inputs: [image2d]
+pipeline: [moire_magnification, moire_mark_read, moire_phase_crlb]
+alternatives: [moire_phase, moire_phase_to_shift, moire_differential_shift, moire_overlay_image, moire_talbot_gap, absolute_phase]
+limits: 0.1 nm 級の数字は白色雑音だけの床(`moire_phase_crlb`、PoC で Monte-Carlo と比 1.00)。実機の精度(公表値 10〜30 nm)を決めるマークの非対称・ギャップと傾き・レジスト膜はモデルに無い。読みは格子 1 ピッチ(差動は p_m p_w / (p_m + p_w))で折り返す。
+calibration: ずれの尺度は格子のピッチ(リソグラフィの寸法)で、カメラの倍率ではない —— 差動のマークならカメラの倍率 2 % の誤りは読みに入らない(PoC)。どちらの格子が動くかで拡大率が違う(ウェハ 50・マスク 51)ので取り違えると 2 % 狂う。
 ---
 
 # モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)
@@ -27,6 +32,27 @@ Eight ops in `moirealign` (category `moire_align` of `opsoptics`) for alignment 
 **向く**: 位置合わせのマークの設計(ピッチの差と拡大率・捕捉範囲・必要な画素数と雑音の見積り)、重ね合わせ(オーバーレイ)の読み取りの試作、差動の 2 対で何が消えて何が消えないかの確認、ギャップの Talbot 効果で縞が反転する距離の予測、カメラの分解能では見えない格子のずれを読む実験の下準備。
 
 **向かない**: ★ここで出る 0.1 nm 級の数字は**白色雑音だけ**の床です。実際の位置合わせの精度(公表値 10〜30 nm)はマークの非対称(エッチ・CMP)、ギャップとウェハの傾き、レジストの膜、照明の斜入射などの系統誤差が決め、このモデルには入っていません。ギャップの影響はマスクの像の回折だけ(戻りの光路の回折・多重反射は無し)で、0/1 の格子に限ります。読みはずれが動いた格子のピッチ 1 つ分(差動は p_m p_w / (p_m + p_w))で折り返すので、粗い位置決めを別に持つ必要があります。
+
+## 推奨パイプライン
+
+`moire_magnification` → `moire_mark_read` → `moire_phase_crlb`
+
+`moire_magnification` でピッチの差から縞の周期・拡大率・捕捉範囲を決め(どちらの格子が動くかを `moving=` で)→ 測定像と基準像(どちらも `image2d`、差動のマーク)を `moire_mark_read` に渡してずれ [nm] を読み → `moire_phase_crlb` でその条件(画素数・縞の振幅・雑音)の下限と比べる。単一の対の読みは `single_x_nm` にも出るが、マーク全体の流れ(PoC では 300 nm)を拡大率で割った分だけずれる。
+
+## 代替
+
+位相の地図そのものが要るなら `moire_phase`(ロックイン = 既知の周波数の最小二乗、または Takeda の FFT 法)→ `moire_phase_to_shift`(次数は粗い値と `absolute_phase` で決める)。2 対の位相を自分で持っているなら `moire_differential_shift`。撮る前の見積りとマークの合成は `moire_overlay_image`、近接ギャップで縞が反転する距離は `moire_talbot_gap`。
+
+## 限界
+
+- 白色雑音の床だけを扱う。1 nm の階段の誤差 RMS 0.08 nm(PoC)はこの床の数字で、実機の位置合わせの精度ではない。
+- ギャップの影響はマスクの像の回折だけ(戻りの光路の回折・多重反射は無し)、格子は 0/1 に限る。Talbot の反転では読みが半周期跳ぶ(PoC の門)。
+- 比べ手(相互相関 + 放物線補間)との差 91 倍の大半は放物線の偏りで、偶然の誤差だけなら 2.5 倍(PoC が内訳を門にしている)。
+- 読みは 1 ピッチで折り返すので、粗い位置決めを別に持つ。
+
+## 実寸校正
+
+ずれは格子のピッチ p_m・p_w から決まる量で、画素の大きさ(`pixel_um`)は縞の周波数を探す手がかりにしか使わない。差動のマークでは、カメラの倍率を 2 % 誤っても読みに入らないことを PoC が確かめている。拡大率はウェハが動くとき p_m/|Δp|、マスクが動くとき p_w/|Δp|(PoC で 50.000 / 51.000 を像から測り返す)なので、どちらを動かすかを取り違えないこと。
 
 ## 最初の 1 本
 

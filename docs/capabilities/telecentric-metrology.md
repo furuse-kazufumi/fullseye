@@ -6,6 +6,11 @@ category: 測る
 ops: [telecentric_lens, chief_ray_angle, magnification_vs_depth, telecentricity_error, defocus_spot_vs_depth, vignetting_vs_field, lens_equivalent_pinhole]
 examples: [poc_telecentric_metrology]
 version: 0.6.1
+inputs: []
+pipeline: [telecentric_lens, chief_ray_angle, telecentricity_error, magnification_vs_depth, defocus_spot_vs_depth, vignetting_vs_field]
+alternatives: [lens_system, paraxial_trace, lens_equivalent_pinhole, relative_illumination]
+limits: 処方は単レンズの組み合わせで、実機のテレセン(5〜10 枚)の瞳収差・歪曲の補正は無い(物体側テレセンの単レンズは物高 8 mm で歪曲 3 %、テレセン度 0.05° が残る)。回折は扱わず、ぼけは幾何光学の光線束。物体が無限遠の処方は拒否する。
+calibration: 画像の寸法を mm にする尺度は、両側テレセンなら高さに依らない(視野 4 mm・段差 5 mm で読みの差 −0.01 %)ので 1 枚の校正板でよい。通常のレンズでは同じ条件で 6.89 % 狂うので、測る面の高さで校正する。
 ---
 
 # テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)
@@ -27,6 +32,26 @@ Seven ops in `telecentric` (category `telecentric` of `opsoptics`) on top of the
 **向く**: 寸法検査のレンズ選び(段差の高さと視野の位置から、通常のレンズで何 % 狂うか)、テレセン度の仕様(0.1° なら段差 1 mm で 1.75 µm)の意味の確認、テレセンの視野と前玉径の見積り、被写界深度と NA の取引、検査の画像を正しい幾何で合成するためのカメラ。
 
 **向かない**: ★処方は単レンズの組み合わせで、実機のテレセン(5〜10 枚)の瞳収差と歪曲の補正は入っていません(物体側テレセンの単レンズは物高 8 mm で歪曲 3 %、テレセン度 0.05° が残ります)。カタログの処方があれば `lens_system` に面を並べて同じ op を使えます。物体が無限遠の処方は拒否します。`lens_equivalent_pinhole` は近軸の幾何の写しで、歪曲・瞳収差・ハイパーセントリック(入射瞳が物体の裏)は描画に入りません(後者は ValueError)。回折は扱わず、ぼけは幾何光学の光線束です。
+
+## 推奨パイプライン
+
+`telecentric_lens` → `chief_ray_angle` → `telecentricity_error` → `magnification_vs_depth` → `defocus_spot_vs_depth` → `vignetting_vs_field`
+
+`telecentric_lens` で同じ単レンズの絞りだけを動かした 3 種(通常 / 物体側 / 両側)の処方を作り(実機の処方があれば `lens_system` の table を代わりに)→ `chief_ray_angle` で主光線の物体側の傾き(テレセン度)→ `telecentricity_error` で段差の上下の寸法の読みの差 → `magnification_vs_depth` で物体を動かしたときの倍率 → `defocus_spot_vs_depth` でぼけの RMS → `vignetting_vs_field` で前玉が決める視野。どれも処方の table を受ける。
+
+## 代替
+
+近軸の量だけで足りるなら `paraxial_trace`。検査の画像を正しい幾何で合成したいなら `lens_equivalent_pinhole` で入射瞳の位置のピンホールにして `render3d` へ(近軸の写しで、歪曲・瞳収差は入らない)。無限遠の物体の照度は `relative_illumination`。
+
+## 限界
+
+- 単レンズの処方なので、物体側テレセンの単レンズは物高 8 mm で歪曲 3 %、テレセン度 0.05° が残る。実機の値はカタログの処方を `lens_system` に並べて同じ op に渡す。
+- 回折は扱わない。ぼけは瞳を総当たりで埋めた光線束の RMS(PoC で傾きが |m|·NA/√2 と一致)。
+- `lens_equivalent_pinhole` はハイパーセントリック(入射瞳が物体の裏)を拒否する。
+
+## 実寸校正
+
+寸法の尺度(mm/px)は既知寸法の校正板で取る。両側テレセンは倍率が高さに依らない(`telecentricity_error`: 視野 4 mm・段差 5 mm で −0.01 %)ので、校正板を置く高さを気にしなくてよい。通常のレンズ(f 25 mm、作動距離 75 mm)では同じ条件で 6.89 % 狂うので、測る面と同じ高さで校正し、段差の上下は別の尺度にする。テレセン度の仕様 0.1° は段差 1 mm あたり 1.75 µm の読みの差に当たる。
 
 ## 最初の 1 本
 

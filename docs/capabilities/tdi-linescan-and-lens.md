@@ -6,6 +6,11 @@ category: 光と色
 ops: [tdi_snr, tdi_sync_mtf, linescan_acquire, lens_field_profile, linescan_lens_columns, linescan_lens_example]
 examples: [poc_tdi_linescan]
 version: 0.6.1
+inputs: [image2d]
+pipeline: [tdi_snr, tdi_sync_mtf, linescan_lens_example, lens_field_profile, linescan_lens_columns, linescan_acquire]
+alternatives: [lens_system, emva_snr_curve, relative_illumination]
+limits: レンズの模型は実在の型番の処方ではない(数字を特定のレンズの性能として引用しない)。ぼけは列ごとのガウス近似、同期の模型は一定の ε とライン周期ごとの ε まで。C マウントの流用では像高 19.7 mm から光が届かず、フラットフィールド補正で照度は揃っても MTF と欠陥の CNR は戻らない(PoC)。
+calibration: 流れ方向の 1 画素は搬送速度 / ラインレートで決まるのでエンコーダ同期で取る(速度誤差 2 %・64 段で掃引 1.28 px、0.25 c/px の MTF 0.84)。幅方向は画素ピッチ / 倍率で、両方向とも既知長さの的で確かめる。
 ---
 
 # TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)
@@ -27,6 +32,27 @@ Six ops in `linescan`: the SNR of an N-stage TDI sensor from the EMVA 1288 linea
 **向く**: TDI の段数と照明の見積り(何段あれば欠陥の CNR が足りるか)、エンコーダ同期の要否と許せる速度誤差、ヨーと蛇行の許容値、ラインセンサに付けるレンズの像円と像高ごとの照度・MTF の確認、シェーディング補正で直るものと直らないものの切り分け。
 
 **向かない**: ★レンズの模型は実在の型番の処方ではありません(メーカーの処方は公開されていない)。数字を特定のレンズの性能として引用しないでください —— 処方があれば `raytrace.lens_system` で組んで `lens_field_profile` に渡します。ぼけは列ごとのガウス近似(MTF を 1 つの周波数で合わせる)で、コマのような非対称な PSF は対称になります。同期の模型は一定の ε とライン周期ごとの ε までで、電荷の送りの離散さ(全条件に共通の 1 画素の掃引)、CMOS TDI の画素内の時間ずれ、ベルトの滑りの統計は入れていません。無限遠の物体の照度は `optics.relative_illumination` / `lensimage` を使ってください(`lens_field_profile` は拒否します)。
+
+## 推奨パイプライン
+
+`tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire`
+
+`tdi_snr` で 1 段あたりの光子数と段数から SNR(電荷加算とデジタル加算を分けて)→ `tdi_sync_mtf` で同期ずれ ε とヨー θ が許せる範囲 → `linescan_lens_example`(または実機の処方を `lens_system` で組む)→ `lens_field_profile` で像高ごとの相対照度と MTF → `linescan_lens_columns` で画素列ごとの照度とぼけ → 反射率の地図(`image2d`)を `linescan_acquire` で搬送しながら撮って、欠陥の CNR を確かめる。
+
+## 代替
+
+1 段の EMVA 1288 の曲線だけなら `emva_snr_curve`。無限遠の物体の照度は `relative_illumination`(`lens_field_profile` は無限遠を拒否する)。
+
+## 限界
+
+- レンズの模型は同じ形の三枚玉を 57 mm の像円用(f 90)と 2/3 型用(f 35)に最適化したもので、実在の型番ではない。
+- ぼけは列ごとのガウス近似(MTF を 1 つの周波数で合わせる)で、コマのような非対称な PSF は対称になる。
+- 同期の模型は一定の ε とライン周期ごとの ε まで。電荷の送りの離散さ、CMOS TDI の画素内の時間ずれ、ベルトの滑りの統計は入っていない。
+- C マウントの流用では像高 19.7 mm から光が届かず、フラットフィールド補正で照度は揃っても MTF と欠陥の CNR は戻らない(PoC の門)。
+
+## 実寸校正
+
+流れ方向の画素の長さは搬送速度 ÷ ラインレートで決まる。速度誤差は尺度の誤りであると同時に N 段の間の掃引 N·|ε| 画素になる(`tdi_sync_mtf`: 2 %・64 段で 1.28 px、0.25 c/px の MTF 0.84)ので、エンコーダ同期でラインを打つ(PoC で速度のうねりが消える)。幅方向は画素ピッチ ÷ 倍率。両方向とも既知の長さの的を流して確かめる。
 
 ## 最初の 1 本
 
