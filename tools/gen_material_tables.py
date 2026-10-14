@@ -21,6 +21,12 @@
 Werner 2009 の REELS(電子エネルギー損失)逆算の表を選んでいて、可視の垂直反射率が
 Pt 0.93 / W 0.84(550 nm)と、別の測定(Pt 0.64〜0.73 / W 0.50)から大きく外れていた。
 いまは W = Weaver(測定)、Pt = Tselin 2024(分光エリプソメトリ、Phys. Rev. B 110, 195130)。
+
+**半導体も結晶の表から選ぶ**(2026-10-14): 初版の Ge は Amotchkina(e-beam 蒸着の膜に近い値、n(0.6 µm) = 3.07、
+n(10 µm) = 3.96)と Burnett(結晶)を継ぎ、SiC は 6H の Singh と Larruquert(スパッタ膜、n が 0.7 高い)を継いでいた
+—— 継ぎ目で n が 0.044 / 0.66 跳び、別の物質を 1 本につないでいた。いまは Ge = Nunley(結晶、0.19〜2.48 µm)+ Burnett
+(2〜14 µm)、SiC = Wang の 4H 常光線(0.40〜5 µm、ウェハの主流)。``tests/test_materials.py`` が継ぎ目の差(≤ 0.01)と
+独立の表(Ge: Li 293 K、SiC: Singh の 6H、Si: Li 293 K)との差を数える。
 ``tests/test_materials.py`` が 550 nm の反射率を別の測定の表の値と突き合わせる。
 """
 from __future__ import annotations
@@ -74,11 +80,11 @@ SELECTION += [
     # 半導体
     ("SI", "semiconductor", [("main/Si/nk/Green-2008.yml", "300 K, band-to-band k"),
                              ("main/Si/nk/Salzberg.yml", "IR Sellmeier, k not given (0)")], ["SILICON"]),
-    ("GE", "semiconductor", [("main/Ge/nk/Amotchkina.yml", ""), ("main/Ge/nk/Burnett.yml", "")], ["GERMANIUM"]),
+    ("GE", "semiconductor", [("main/Ge/nk/Nunley.yml", "300 K, bulk crystal"), ("main/Ge/nk/Burnett.yml", "")], ["GERMANIUM"]),
     ("GAAS", "semiconductor", [("main/GaAs/nk/Aspnes.yml", ""), ("main/GaAs/nk/Skauli.yml", "")], []),
     ("GAN", "semiconductor", [("main/GaN/nk/Barker-o.yml", "ordinary ray")], []),
     ("INP", "semiconductor", [("main/InP/nk/Aspnes.yml", "")], []),
-    ("SIC", "semiconductor", [("main/SiC/nk/Singh-o.yml", "6H, ordinary ray"), ("main/SiC/nk/Larruquert.yml", "")], []),
+    ("SIC", "semiconductor", [("main/SiC/nk/Wang-4H-o.yml", "4H, ordinary ray")], ["4H-SIC"]),
     # 膜
     ("SI3N4", "film", [("main/Si3N4/nk/Luke.yml", "")], ["SILICON_NITRIDE"]),
     ("TIO2", "film", [("main/TiO2/nk/Devore-o.yml", "rutile, ordinary ray")], []),

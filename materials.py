@@ -140,6 +140,39 @@ def _covers(ds, lam):
     return (lam >= lo - 1e-12) & (lam <= hi + 1e-12)
 
 
+#: 2 つの n の出典の継ぎ目で混ぜる幅(前の出典の終わりの波長に対する割合)。
+SEAM_BLEND_FRACTION = 0.03
+
+
+def _n_of(ds, lam):
+    if ds["type"] == "formula":
+        return _formula(ds["formula"], ds["coefficients"], lam)
+    tab = _rows(ds)
+    order = np.argsort(tab[:, 0])
+    return np.interp(lam, tab[order, 0], tab[order, 1])
+
+
+def _blend_seams(rec, lam, n):
+    """前の n の出典が終わる所で、次の出典が重なっていれば、終わりの手前 3 % を線形に混ぜる(in place)。
+
+    ★2026-10-14: 混ぜずに切り替えていたので、Si の n は 1450 nm で +0.0018 跳んでいた(Green 2008 の表 →
+    Salzberg の式、隣の 1 nm 刻みの 18 倍で向きも逆)。屈折率の微分(群屈折率・分散)を取る op がこの段差を拾う。
+    混ぜるのは前の出典の範囲の**最後の 3 %** だけ —— 重なりが長い記録(水: 可視の全域で 2 本が重なる)でも、
+    区間の内側は各一次文献の値のまま残る。
+    """
+    srcs = [d for d in rec["datasets"] if d["type"] in ("formula", "nk", "n")]
+    for a, b in zip(srcs, srcs[1:]):
+        end = a["range_um"][1]
+        if not (b["range_um"][0] < end <= b["range_um"][1]):
+            continue
+        start = max(end * (1.0 - SEAM_BLEND_FRACTION), b["range_um"][0], a["range_um"][0])
+        m = (lam >= start) & (lam <= end) & ~np.isnan(n)
+        if not np.any(m) or end <= start:
+            continue
+        t = (lam[m] - start) / (end - start)
+        n[m] = (1.0 - t) * _n_of(a, lam[m]) + t * _n_of(b, lam[m])
+
+
 def _nk(rec: dict, lam_um, op: str):
     """λ [µm](配列)の n, k と出典ラベルの列。区間外は ValueError(表の外挿はしない)。"""
     lam = np.atleast_1d(np.asarray(lam_um, dtype=np.float64))
@@ -176,6 +209,7 @@ def _nk(rec: dict, lam_um, op: str):
                 k_set |= need
                 for i in np.flatnonzero(need):
                     k_src[i] = ds.get("page") or ds.get("reference") or t
+    _blend_seams(rec, lam, n)
     if np.any(np.isnan(n)):
         lo = min(ds["range_um"][0] for ds in rec["datasets"] if ds["type"] in ("formula", "nk", "n"))
         hi = max(ds["range_um"][1] for ds in rec["datasets"] if ds["type"] in ("formula", "nk", "n"))

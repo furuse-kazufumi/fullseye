@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 材料表の見直し: Ge と SiC を結晶の表に、2 つの出典の継ぎ目を混ぜる
+- ★`materials_data.py`: Ge は Amotchkina(e-beam 蒸着の膜に近い値、n(0.6 µm) 3.07・n(10 µm) 3.96)を結晶の Burnett に継いでいた → Nunley(結晶、0.19〜2.48 µm)+ Burnett。SiC は 6H の Singh とスパッタ膜の Larruquert(n が 0.7 高い)を継いでいた → Wang の 4H 常光線(0.40〜5 µm)。どちらも継ぎ目で n が 0.044 / 0.66 跳び、別の物質を 1 本につないでいた。
+- `materials._nk`: 2 つの n の出典が重なる所で、前の出典の範囲の最後の 3 % を線形に混ぜる(Si の 1.45 µm で +0.0018 の段差 = 隣の 1 nm 刻みの 18 倍 → 混ぜた後は 2 倍)。区間の内側は各一次文献の値のまま。
+- 門 tests/test_materials.py: 独立の結晶の表(Ge: Li 293 K、SiC: Singh / Wang の 6H、Si: Li 293 K)と 0.005 以内、継ぎ目の生の差 < 0.01、混ぜた後の段差が隣の 3 倍以内。PoC の第二実装 optiland の Ge の点を Nunley で引き直し(4.250 / 0.0252、5e-10 で一致)。
+- 発見は非公開の Si 光弾性の PoC(Si の n の継ぎ目)と、その追跡で読んだ別の一次文献。
+
 ### Fixed — 薄膜の反射が金属の基板・膜の分散・偏光を受ける(焼き色・陽極酸化のプリセットが基板を誘電体扱いしていた)
 - `matappear.thin_film_reflectance`: n_film / n_sub が実数だけだった(複素数は TypeError)。複素数 n + ik(k ≥ 0)・材料名(共通の材料表、例 "TI" / "AL")・波長ごとの配列(膜の分散)を受け、`polarization="unpolarized" | "s" | "p"`。複素の Snell と Fresnel、位相は e^{2iβ} —— 実数の入力では旧式と 1e-15 で同じ。`thin_film_rgb` も材料名を通す。
 - ★`opassist` のプリセット「焼き色(チタン 90 nm)」は基板 n_sub = 2.6、「陽極酸化(150 nm)」は n_sub = 1.5 の**誘電体**で、反射率が 0.15〜0.19(Ti の n,k なら 0.35〜0.61)と黙って別の色になっていた → 基板を "TI" / "AL" に。

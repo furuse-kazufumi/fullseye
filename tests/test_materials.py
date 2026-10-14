@@ -342,3 +342,41 @@ def test_metal_reflectance_agrees_with_an_independent_dataset():
         c = M.material_optical_constants(name, 550.0)
         r = c["reflectance_normal"]
         assert lo - 0.03 <= r <= hi + 0.03, (name, r, lo, hi)
+
+
+#: 屈折率の、**材料表に選ばなかった**別の一次文献の値(refractiveindex.info database、2026-10-14 に読んだもの)。
+#: 初版の Ge(膜に近い Amotchkina)は 10 µm で 3.96、SiC(スパッタ膜の Larruquert を継いだ)は 1.55 µm で 3.18 —— この門で落ちる。
+INDEPENDENT_N = {
+    ("GE", 10.0): 4.0025,     # Li 293 K(Burnett 4.0040、Icenogle 4.0043)
+    ("GE", 1.0): 4.4259,      # Nunley(選んだ表そのもの —— 結晶の値が入っていること)
+    ("SIC", 0.633): 2.6342,   # Singh の 6H 常光線(4H と 6H の常光線は 0.002 以内)
+    ("SIC", 1.55): 2.5651,    # Wang の 6H 常光線
+    ("SI", 1.4): 3.4896,      # Li 293 K
+}
+
+
+def test_semiconductor_index_agrees_with_an_independent_bulk_dataset():
+    assert len(INDEPENDENT_N) == 5
+    for (name, lam_um), ref in INDEPENDENT_N.items():
+        n = M.material_optical_constants(name, lam_um * 1000.0)["n"]
+        assert abs(n - ref) < 0.005, (name, lam_um, n, ref)
+
+
+def test_two_index_sources_meet_without_a_step():
+    """2 つの n の出典の継ぎ目: 生の差は 0.01 以内(別の物質をつないでいない)、混ぜた後は 1 nm 刻みの段差が隣の 3 倍以内。"""
+    multi = []
+    for name in M.MATERIALS:
+        rec = M._record(name, "t")                           # 生のレコード(material_record は行数だけの要約)
+        srcs = [d for d in rec["datasets"] if d["type"] in ("formula", "nk", "n")]
+        for a, b in zip(srcs, srcs[1:]):
+            end = a["range_um"][1]
+            if b["range_um"][0] < end <= b["range_um"][1]:
+                multi.append((name, a, b, end))
+    assert len(multi) >= 3                                    # SI / GE / WATER(2026-10-14)
+    for name, a, b, end in multi:
+        raw = abs(float(M._n_of(a, np.array([end]))[0]) - float(M._n_of(b, np.array([end]))[0]))
+        assert raw < 0.01, (name, end, raw)
+        lam = np.linspace(end * 0.9, min(end * 1.05, b["range_um"][1]), 2001)
+        n = M._nk(M._record(name, "t"), lam, "t")[0]
+        d = np.abs(np.diff(n))
+        assert d.max() < 3.0 * np.median(d) + 1e-12, (name, d.max(), np.median(d))
