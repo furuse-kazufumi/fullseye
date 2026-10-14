@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: af7125e8f7ed -->
+<!-- i18n-source-sha: f31e8d62f1ed -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -82,7 +82,7 @@ op 筆記回答「這個 op 做什麼」，卻不回答「在這道工序、這�
 
 光學量測與外觀檢查的可靠性(POD、雷射散斑、偏振恢復形狀、全域光傳輸、驗收測試與不確定度、合成資料,共 6 個軸)是人工精選的層:論文由人挑選,每個軸的概述由人撰寫(清單 `docs/literature/curated/`)。
 
-**實際能檢索到的範圍**:該層只有在讀取儲存庫檔案時可用(Claude Code 技能 `fullseye-ops`,checkout 模式)。MCP 伺服器的搜尋(`fullseye_search_ops` / `fullseye_find_ops`)和 `fullseye-rag search` 不會傳回文獻層的叢集與論文。不過主題 → op 對照表中人工撰寫的脈絡(「主題: 為什麼用這個 op」,日文)已加入依語意搜尋的索引詞,因此用現場的說法(焊道高度、拋光去除量)也能找到 op,並顯示在結果的 `contexts` 欄位中。wheel(pip install)也不包含 `docs/literature`。
+**實際能檢索到的範圍**:該層只有在讀取儲存庫檔案時可用(Claude Code 技能 `fullseye-ops`,checkout 模式)。MCP 伺服器的搜尋(`fullseye_search_ops` / `fullseye_find_ops`)和 `fullseye-rag search` 不會傳回文獻層的叢集與論文。不過主題 → op 對照表中人工撰寫的脈絡(「主題: 為什麼用這個 op」,日文原文及英譯)已加入依語意搜尋的索引詞,因此用現場的說法(焊道高度、拋光去除量)也能找到 op,並顯示在結果的 `contexts` 欄位中。wheel(pip install)也不包含 `docs/literature`。
 
 ---
 

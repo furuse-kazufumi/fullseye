@@ -64,7 +64,7 @@ in the domain's words ("weld bead", "springback", "chatter", "reflow", "wafer CM
 2020+ ones per axis, an overview per axis, and what Fullseye does not cover). These
 files are reachable by reading the repository (this skill); the MCP server's search
 tools and `fullseye-rag search` do not return its clusters or papers, but the
-hand-written theme → op context ("theme: why this op", Japanese) is part of the
+hand-written theme → op context ("theme: why this op", Japanese plus an English translation) is part of the
 meaning-search index, so a shop-floor phrasing finds the op and the hit shows that
 context in `contexts`. The layer never picks
 ops by word overlap, and clusters with no matching ops say so. Next to it,

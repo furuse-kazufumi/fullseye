@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: af7125e8f7ed -->
+<!-- i18n-source-sha: f31e8d62f1ed -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -112,7 +112,7 @@ the repo, this layer alone is rebuilt with `tools/gen_literature_notes.py --rad-
 
 Optical metrology and inspection reliability (POD, laser speckle, shape from polarization, global light transport, acceptance testing and uncertainty, synthetic data: six axes) is a hand-curated layer: the papers were chosen by hand and each axis has an overview written by hand (manifest `docs/literature/curated/`).
 
-**What can actually reach it**: the layer is retrievable by reading the repository files (the Claude Code skill `fullseye-ops`, checkout mode). The MCP server's search (`fullseye_search_ops` / `fullseye_find_ops`) and `fullseye-rag search` do not return the layer's clusters or papers. The hand-written context of the theme → op table ("theme: why this op", in Japanese) is, however, part of the meaning search's index, so a shop-floor phrasing (weld bead height, polishing removal) can find the op, and the result shows it in its `contexts` field. The wheel (pip install) does not ship `docs/literature` either.
+**What can actually reach it**: the layer is retrievable by reading the repository files (the Claude Code skill `fullseye-ops`, checkout mode). The MCP server's search (`fullseye_search_ops` / `fullseye_find_ops`) and `fullseye-rag search` do not return the layer's clusters or papers. The hand-written context of the theme → op table ("theme: why this op", Japanese with an English translation) is, however, part of the meaning search's index, so a shop-floor phrasing (weld bead height, polishing removal) can find the op, and the result shows it in its `contexts` field. The wheel (pip install) does not ship `docs/literature` either.
 
 ---
 

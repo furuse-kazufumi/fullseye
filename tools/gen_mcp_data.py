@@ -17,7 +17,8 @@
   入出力の型・HALCON 名・ノートの相対パスと、要約の 6 言語(ja 原文 = ``tools/opdocs.py`` の要約、5 訳 =
   ``docs/i18n/op_summary.json`` のうち原文の指紋が今の要約と一致するもの)。古い訳は入れない(2026-10-07)。
   さらに op ごとの**文脈**(``t``): 文献層のテーマ → op の対応表(``tools/gen_literature_notes.py`` の ``THEME_TABLES``)と
-  厳選の層の軸(``docs/literature/curated/*.json``)で、人がその op に書いた「テーマ: なぜ使うか」(2026-10-15)。
+  厳選の層の軸(``docs/literature/curated/*.json``)で、人がその op に書いた「テーマ: なぜ使うか」(2026-10-15)と、
+  その英訳(``te``)。英訳は対訳表 ``docs/i18n/op_context.json``(原文の句 → en)から組み、欠けた句があれば止まる。
 
 なぜ複製か: ``docs/`` はパッケージの外にあり、flat layout の wheel には乗らない。
 0.1.11 の MCP は ``docs/OP_INDEX.json`` をリポジトリ相対で読んでいたので
@@ -73,6 +74,65 @@ def build_knobs() -> list:
     return rows
 
 
+#: 文脈の句(テーマ名・「なぜ使うか」)の対訳表。キーは原文(日本語)の句そのもの —— 原文を書き換えれば
+#: キーが外れて「訳なし」になり、:func:`op_contexts_en` が止まる(古い訳を黙って出さない)。
+CONTEXT_I18N = os.path.join(_ROOT, "docs", "i18n", "op_context.json")
+
+
+def _context_pairs() -> list:
+    """``[(op, テーマ, なぜ), …]`` —— 文献層のテーマ表と厳選の層の軸を、書かれた順に。"""
+    tools_dir = os.path.join(_ROOT, "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import gen_literature_notes as GL
+    out = []
+    for table in GL.THEME_TABLES.values():
+        for th in table:
+            for op, why in th["ops"]:
+                out.append((op, th["theme"], why))
+    for name, rel in sorted(GL.CURATED.items()):
+        with open(os.path.join(_ROOT, rel), encoding="utf-8") as f:
+            cur = json.load(f)
+        for ax in cur.get("axes") or ():
+            for op, why in ax.get("ops") or ():
+                out.append((op, ax["name"], why))
+    return out
+
+
+def context_phrases() -> list:
+    """訳が要る原文の句(テーマ名と「なぜ使うか」)の一覧(重複なし、出てきた順)。"""
+    seen = []
+    for _op, theme, why in _context_pairs():
+        for s in (theme, why):
+            if s not in seen:
+                seen.append(s)
+    return seen
+
+
+def load_context_i18n() -> dict:
+    """``{原文の句: {"en": 訳}}``。"""
+    with open(CONTEXT_I18N, encoding="utf-8") as f:
+        return json.load(f)["phrases"]
+
+
+def op_contexts_en() -> dict:
+    """:func:`op_contexts` の英語版(同じ op・同じ並び)。訳の無い句があれば止まる(fail-closed)。
+
+    ★2026-10-15: 文脈が日本語だけだったので、英語の問い合わせ(評価問題集の外れ 12 問のうち 8 問)は伸びなかった。
+    """
+    tr = load_context_i18n()
+    missing = [s for s in context_phrases() if not (tr.get(s) or {}).get("en")]
+    if missing:
+        raise SystemExit("文脈の句に英訳が無い(docs/i18n/op_context.json に足す): %d 句、例 %s" % (len(missing), missing[:3]))
+    ctx: dict = {}
+    for op, theme, why in _context_pairs():
+        line = "%s: %s" % (tr[theme]["en"], tr[why]["en"])
+        lst = ctx.setdefault(op, [])
+        if line not in lst:
+            lst.append(line)
+    return ctx
+
+
 def op_contexts() -> dict:
     """op 名 → 人が書いた文脈の行 ``["テーマ: なぜ使うか", …]``(文献層のテーマ表 + 厳選の層の軸)。
 
@@ -115,6 +175,7 @@ def build_search() -> dict:
         sys.path.insert(0, tools_dir)
     import opdocs as OD
     ctx = op_contexts()
+    ctx_en = op_contexts_en()
     from fullseye.opsearch import LANGS
     recs = OD._records()[0]
     si = OD.summary_i18n()
@@ -138,7 +199,8 @@ def build_search() -> dict:
                 path = fm["path"]
                 break
         row = {"n": r["name"], "d": r["dim"], "c": r.get("category"), "i": r.get("in"), "o": r.get("out"),
-               "h": r.get("halcon") or None, "p": path, "s": summ, "t": ctx.get(r["name"]) or None}
+               "h": r.get("halcon") or None, "p": path, "s": summ, "t": ctx.get(r["name"]) or None,
+               "te": ctx_en.get(r["name"]) or None}
         rows.append({k: v for k, v in row.items() if v not in (None, "", {})})
     if not rows:
         raise SystemExit("opdocs の記録が 0 件 —— 検索索引を書かない")

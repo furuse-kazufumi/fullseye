@@ -37,8 +37,15 @@ def unknown_ops(ev: dict) -> list:
     return sorted({o for q in ev["queries"] for o in q["ops"] if o not in names})
 
 
+def query_lang(q: str) -> str:
+    """問い合わせの言語(この問題集は ja と en だけ): かな・漢字を含めば ja。"""
+    import re
+    return "ja" if re.search(r"[぀-ヿ一-鿿]", q) else "en"
+
+
 def score(ev: dict, k: int | None = None, index_path: str | None = None) -> dict:
-    """集合ごと(と全体)の hit@k と MRR(上位 20 まで)。外した問い合わせは上位 k の名前つきで返す。"""
+    """集合ごと・言語ごと(``lang:ja`` / ``lang:en``)と全体の hit@k と MRR(上位 20 まで)。
+    外した問い合わせは上位 k の名前つきで返す。"""
     from fullseye.opsearch import search_ops
     k = k or int(ev.get("k", 5))
     per: dict = {}
@@ -48,7 +55,7 @@ def score(ev: dict, k: int | None = None, index_path: str | None = None) -> dict
         want = set(q["ops"])
         rank = next((i + 1 for i, n in enumerate(names) if n in want), None)
         hit = rank is not None and rank <= k
-        for key in (q.get("set", "all"), "all"):
+        for key in (q.get("set", "all"), "lang:" + query_lang(q["q"]), "all"):
             s = per.setdefault(key, {"n": 0, "hit": 0, "rr": 0.0})
             s["n"] += 1
             s["hit"] += int(hit)

@@ -43,8 +43,10 @@ FLOOR_FAMILIES = 48
 FLOOR_CATEGORIES = 455
 FLOOR_THEME_OPS = 344
 FLOOR_CONTEXT_OPS = 394
-#: 評価問題集(tests/data/rag_eval_queries.json)の hit@5 の床。整理前 0.52(26/50)→ 整理後 0.76(38/50)。
-FLOOR_HIT_AT_5 = {"all": 0.76, "classic": 0.90, "domain": 0.83, "new": 0.67}
+#: 評価問題集(tests/data/rag_eval_queries.json)の hit@5 の床。整理前 0.52(26/50)→ 日本語の文脈 0.76 →
+#: 英訳の文脈も足して 0.88(44/50)。言語別: en 0.64 → 0.72 → 0.96、ja 0.40 → 0.80 → 0.80。
+#: ★問題集は文脈の表と同じ書き手が同じ日に書いた —— 独立な評価ではないので、床は「後戻りしない」ことだけを言う。
+FLOOR_HIT_AT_5 = {"all": 0.88, "classic": 0.90, "domain": 0.91, "new": 0.85, "lang:en": 0.96, "lang:ja": 0.80}
 
 
 def _read(p):
@@ -207,6 +209,24 @@ def test_search_index_carries_the_hand_written_contexts(notes):
     missing = sorted(set(ctx) - have)
     assert not missing, "文脈が索引に入っていない(`py -3.11 tools/gen_mcp_data.py`): %s" % missing[:10]
     assert ix.get("ops_with_context") == len(have) >= FLOOR_CONTEXT_OPS
+    # 英語の文脈(te)は日本語の文脈(t)と同じ行数で、日本語が混ざらない(英語の問い合わせが伸びなかった件、2026-10-15)
+    jp = re.compile(r"[぀-ヿ一-鿿]")
+    bad = sorted(r["n"] for r in ix["ops"] if r.get("t") and (len(r.get("te") or ()) != len(r["t"])
+                                                              or any(jp.search(x) for x in r["te"])))
+    assert not bad, "英語の文脈が欠けた / 日本語が混ざった op: %s" % bad[:10]
+
+
+def test_context_translation_table_matches_the_phrases():
+    """対訳表 docs/i18n/op_context.json は、テーマ表と厳選の層の句をちょうど覆う(欠けも、使われない古い句も無い)。"""
+    import gen_mcp_data as GM
+    phrases = GM.context_phrases()
+    assert len(phrases) >= 500, len(phrases)
+    tr = GM.load_context_i18n()
+    missing = [p for p in phrases if not (tr.get(p) or {}).get("en")]
+    stale = sorted(set(tr) - set(phrases))
+    assert not missing, "英訳の無い句(docs/i18n/op_context.json に足す): %s" % missing[:5]
+    assert not stale, "どの表にももう無い句の訳(消す): %s" % stale[:5]
+    assert GM.op_contexts_en().keys() == GM.op_contexts().keys()
 
 
 def test_search_recall_on_the_evaluation_set_does_not_fall():

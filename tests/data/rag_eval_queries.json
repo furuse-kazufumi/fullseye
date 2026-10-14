@@ -1,5 +1,5 @@
 {
- "about": "意味で op を引く検索(fullseye.search_ops / MCP fullseye_find_ops / fullseye-rag search)の評価問題集。問い合わせは利用者の言い方で書き、期待する op は op ノートを読んで選んだ(どれか 1 つが上位 k に入れば当たり)。2026-10-15 作成。★正直な注記: 書いたのは文献層のテーマ表を書いたのと同じ作業者で、同じ日に書いた —— テーマ表の語を写さないようにしたが、独立な評価ではない。classic は昔からの画像処理、domain は製造・計測の現場の言い方、new は 2026-10 に足した op 系列。",
+ "about": "意味で op を引く検索(fullseye.search_ops / MCP fullseye_find_ops / fullseye-rag search)の評価問題集。問い合わせは利用者の言い方で書き、期待する op は op ノートを読んで選んだ(どれか 1 つが上位 k に入れば当たり)。2026-10-15 作成。★正直な注記: 書いたのは文献層のテーマ表を書いたのと同じ作業者で、同じ日に書いた —— テーマ表の語を写さないようにしたが、独立な評価ではない。集合は classic / domain / new と、言語(lang:ja / lang:en、採点器が問い合わせの文字種で分ける)。classic は昔からの画像処理、domain は製造・計測の現場の言い方、new は 2026-10 に足した op 系列。",
  "k": 5,
  "queries": [
   {"q": "エッジ検出", "set": "classic", "ops": ["sobel_amp", "sobel_mag", "canny3d", "prewitt_mag", "sk_canny", "edges_image", "roberts", "xkor_canny", "hx_detect_edge_segments", "roberts_mag", "xsp_gauss_grad_mag", "xpil_find_edges"]},

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: af7125e8f7ed -->
+<!-- i18n-source-sha: f31e8d62f1ed -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -83,7 +83,7 @@ op 노트(타입 계약·실행 가능한 예)→ 구현」. 초록은 옮기지
 
 광학 계측과 외관 검사의 신뢰성(POD, 레이저 스페클, 편광으로부터의 형상 복원, 전역 광 수송, 수입 시험과 불확도, 합성 데이터의 6개 축)은 사람이 엄선한 층입니다. 논문은 사람이 골랐고 축마다 개요를 사람이 썼습니다(목록 `docs/literature/curated/`).
 
-**실제로 검색되는 범위**: 이 층은 저장소 파일을 읽을 때(Claude Code 스킬 `fullseye-ops`, checkout 모드) 찾을 수 있습니다. MCP 서버의 검색(`fullseye_search_ops` / `fullseye_find_ops`)과 `fullseye-rag search`는 문헌 층의 클러스터나 논문을 반환하지 않습니다. 다만 테마 → op 표에 사람이 쓴 맥락("테마: 왜 이 op를 쓰는가", 일본어)은 의미 검색의 색인어에 들어 있어서, 현장의 표현(용접 비드 높이, 연마 제거량)으로도 op를 찾을 수 있고 결과의 `contexts` 필드에 표시됩니다. wheel(pip install)에도 `docs/literature`는 들어 있지 않습니다.
+**실제로 검색되는 범위**: 이 층은 저장소 파일을 읽을 때(Claude Code 스킬 `fullseye-ops`, checkout 모드) 찾을 수 있습니다. MCP 서버의 검색(`fullseye_search_ops` / `fullseye_find_ops`)과 `fullseye-rag search`는 문헌 층의 클러스터나 논문을 반환하지 않습니다. 다만 테마 → op 표에 사람이 쓴 맥락("테마: 왜 이 op를 쓰는가", 일본어 원문과 영어 번역)은 의미 검색의 색인어에 들어 있어서, 현장의 표현(용접 비드 높이, 연마 제거량)으로도 op를 찾을 수 있고 결과의 `contexts` 필드에 표시됩니다. wheel(pip install)에도 `docs/literature`는 들어 있지 않습니다.
 
 ---
 

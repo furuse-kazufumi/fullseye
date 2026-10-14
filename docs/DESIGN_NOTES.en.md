@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1398. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1399. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2306,6 +2306,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_pxrd.py`
 
 - **L246** _(ja)_ — ★a の門 5e-5 の余裕(組み込み時 2026-10-06 に雑音の種を 12 通りずつ振って実測): 誤差は雑音でなく較正の系統で決まり、 この像(傾き 5°・向き 30°)では −2.7〜−4.2e-5(種 6 は −3.2e-5)。種による散らばりは ±0.5e-5 程度で、24 通りの最大は |4.2e-5|。 種は固定なので結果は決定的。門を締めると系統の偏りに当たり、緩める理由も無いので 5e-5 のまま。
+
+## `tests/test_rag_by_ops.py`
+
+- **L48** _(ja)_ — ★問題集は文脈の表と同じ書き手が同じ日に書いた —— 独立な評価ではないので、床は「後戻りしない」ことだけを言う。
 
 ## `tests/test_raster.py`
 
