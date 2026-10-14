@@ -28736,6 +28736,60 @@
    "ko": "상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (``table``).",
    "de": "AMCW-Laufzeittiefe eines konkaven Lambert-Querschnitts (einer Raumecke), bei der jede Interreflexion um ihre Weglänge verzögert ist: komplexe Radiosität, Tiefenabweichung je Pixel (``table``).",
    "hi": "अवतल Lambertian अनुप्रस्थ-काट (कमरे का कोना) की AMCW time-of-flight गहराई, जहाँ हर interreflection अपनी पथ-लंबाई से विलंबित है: complex radiosity, हर pixel का गहराई bias (``table``)।"
+  },
+  "optics/pixel_shift_pattern": {
+   "fp": "e9ad0f409be5",
+   "en": "Nominal pixel-shift sequence ``(N, 2)`` (dr, dc) [sensor pixels] with the actuator error added.",
+   "zh": "像素位移的标称位移序列 ``(N, 2)``(dr, dc)[传感器像素],并加上执行器误差后返回。",
+   "tw": "像素位移的標稱位移序列 ``(N, 2)``(dr, dc)[感測器像素],並加上致動器誤差後回傳。",
+   "ko": "픽셀 시프트의 공칭 시프트 열 ``(N, 2)``(dr, dc)[센서 화소]에 액추에이터 오차를 더해 반환한다.",
+   "de": "Nominale Pixel-Shift-Folge ``(N, 2)`` (dr, dc) [Sensorpixel] mit addiertem Aktuatorfehler.",
+   "hi": "pixel-shift का nominal shift क्रम ``(N, 2)`` (dr, dc) [sensor pixel], actuator की त्रुटि जोड़कर लौटाता है।"
+  },
+  "optics/pixel_shift_capture": {
+   "fp": "b33f641a9a64",
+   "en": "Capture with a shifted sensor: integrate the scene **exactly** over the pixel aperture (a square box) and return Bayer or monochrome raw frames.",
+   "zh": "用位移后的传感器拍摄:在像素开口(正方形箱)上**精确**积分场景,返回 Bayer 或黑白的原始图像。",
+   "tw": "用位移後的感測器拍攝:在像素開口(正方形箱)上**精確**積分場景,回傳 Bayer 或黑白的原始影像。",
+   "ko": "시프트한 촬상 소자로 찍는다: 장면을 화소의 개구(정사각형 상자)로 **정확히** 적분하여 Bayer 또는 흑백 원시 영상을 반환한다.",
+   "de": "Aufnahme mit verschobenem Sensor: die Szene **exakt** über die Pixelapertur (ein quadratischer Kasten) integrieren und Bayer- oder Mono-Rohbilder liefern.",
+   "hi": "shift किए गए sensor से capture: scene को pixel aperture (वर्गाकार box) पर **ठीक-ठीक** integrate करके Bayer या monochrome raw frames लौटाता है।"
+  },
+  "optics/pixel_shift_merge": {
+   "fp": "bfd83e657ccd",
+   "en": "Merge pixel-shift frames by binning them onto the grid with the **nominal** shifts. No interpolation (only the mean of the samples at each grid point).",
+   "zh": "用**标称**位移把像素位移的各帧分配到网格上合成。不插值(只取同一网格点样本的平均)。",
+   "tw": "用**標稱**位移把像素位移的各幀分配到網格上合成。不內插(只取同一網格點樣本的平均)。",
+   "ko": "픽셀 시프트의 각 장을 **공칭** 시프트로 격자에 배분해 합성한다. 보간하지 않는다(같은 격자점 표본의 평균만).",
+   "de": "Pixel-Shift-Bilder mit den **nominalen** Verschiebungen auf das Raster einsortieren und zusammenführen. Keine Interpolation (nur der Mittelwert der Abtastwerte je Rasterpunkt).",
+   "hi": "pixel-shift frames को **nominal** shifts से grid पर बाँटकर जोड़ता है। interpolation नहीं (हर grid बिंदु के samples का केवल औसत)।"
+  },
+  "optics/pixel_shift_motion_mask": {
+   "fp": "4d097797603c",
+   "en": "Map of moved pixels ``(H·scale, W·scale)`` (1.0 = moved, 0.0 = static or undecidable).",
+   "zh": "运动像素图 ``(H·scale, W·scale)``(1.0 = 运动,0.0 = 静止或无法判定)。",
+   "tw": "移動像素圖 ``(H·scale, W·scale)``(1.0 = 移動,0.0 = 靜止或無法判定)。",
+   "ko": "움직인 화소의 지도 ``(H·scale, W·scale)``(1.0 = 움직임, 0.0 = 정지 / 판정 불가).",
+   "de": "Karte bewegter Pixel ``(H·scale, W·scale)`` (1.0 = bewegt, 0.0 = statisch oder nicht entscheidbar).",
+   "hi": "हिले हुए pixels का नक्शा ``(H·scale, W·scale)`` (1.0 = हिला, 0.0 = स्थिर / तय नहीं हो सकता)।"
+  },
+  "optics/false_color_metric": {
+   "fp": "173f5584dddc",
+   "en": "Amount of false colour: statistics of the colour-difference (BT.601 Cb, Cr) magnitude.",
+   "zh": "伪色的量:色差(BT.601 的 Cb、Cr)大小的统计。",
+   "tw": "偽色的量:色差(BT.601 的 Cb、Cr)大小的統計。",
+   "ko": "위색의 양: 색차(BT.601 의 Cb, Cr) 크기의 통계.",
+   "de": "Menge an Falschfarben: Statistik des Betrags der Farbdifferenz (BT.601 Cb, Cr).",
+   "hi": "false colour की मात्रा: colour-difference (BT.601 Cb, Cr) के परिमाण के आँकड़े।"
+  },
+  "optics/pixel_shift_resolution_budget": {
+   "fp": "370510e2dd62",
+   "en": "Closed-form budget of whether pixel shift raises resolution (lens-limited or pixel-limited).",
+   "zh": "像素位移能否提高分辨率的闭式预算(镜头受限还是像素受限)。",
+   "tw": "像素位移能否提高解析度的閉式預算(鏡頭受限還是像素受限)。",
+   "ko": "픽셀 시프트로 해상이 오르는지의 닫힌 형식 예산(렌즈 율속인가 화소 율속인가).",
+   "de": "Geschlossenes Budget, ob Pixel-Shift die Auflösung erhöht (objektiv- oder pixelbegrenzt).",
+   "hi": "pixel shift से resolution बढ़ता है या नहीं, इसका closed-form budget (lens-limited या pixel-limited)।"
   }
  }
 }

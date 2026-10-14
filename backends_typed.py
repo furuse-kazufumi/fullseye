@@ -197,6 +197,9 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-15 ピクセルシフト(pixelshift): 偽色の量は無彩色かどうかを測る表の op で、橋の汎用 rgbimage(0..1 の
+    # 任意の色)に掛けても「入力の色の量」を返すだけ —— 進化の語彙として意味のある手にならない。台帳から使う。
+    "false_color_metric",
     # 2026-10-14 ステップ型ファイバとライトガイド 7 本(fiberoptics、fiber): 引数だけで表か曲線を返す側で、画像を受けない。
     "material_group_index",
     "material_gvd",
