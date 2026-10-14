@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-硝材カタログ(Zemax .agf 形式)を読んで材料レコードの列(``table``)にする。
+硝材カタログ(光学設計ソフトの .agf 形式)を読んで材料レコードの列(``table``)にする。
 
 ``source`` は .agf ファイルのパス、.agf を並べたディレクトリ(全部読む)、または
 ``None``(同梱の雛形 :data:`AGF_EXAMPLE` を読む —— 自分のカタログを置く場所は

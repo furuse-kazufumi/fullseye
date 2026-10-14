@@ -604,7 +604,7 @@ _LENSES = {
 def linescan_lens_example(kind="linescan"):
     """ラインスキャンの撮像系の模型 2 つ(``raytrace.lens_system`` の ``table``)。
 
-    どちらも Cooke の三枚玉(N-SK16 / N-F2 / N-SK16、絞りは中玉の後ろ)を、57.344 mm(8192 × 7 µm)のセンサで
+    どちらも Cooke の三枚玉(SK16 相当のクラウン / F2 相当のフリント / SK16 相当、絞りは中玉の後ろ)を、57.344 mm(8192 × 7 µm)のセンサで
     幅 300 mm の web を見る倍率 −0.1911 に合わせて ``lensopt.optimize_lens`` で最適化した処方:
 
     * ``"linescan"``: f 90 mm、物体距離 519 mm、像高 28.7 mm(センサの端)まで最適化、大きい口径

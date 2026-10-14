@@ -7,7 +7,7 @@
 至る(MaleCNS v1.0 の superclass 別の体数、手元で数えた)。
 
 この PoC は「命令の次元がどこで落ちるか」を 1 つの数式 —— 状態の共分散の participation ratio
-``PR = (Σλ)² / Σλ``(Gao et al. 2017)—— で読み、**同じ数式を Physical AI(G1 ヒューマノイドの RL 方策が生む関節
+``PR = (Σλ)² / Σλ``(Gao et al. 2017)—— で読み、**同じ数式を Physical AI(人型ロボットの RL 方策が生む関節
 軌道、evis の筋活動)に当てる**。
 
 **主張(実データで確かめる)**:
@@ -18,7 +18,7 @@
    なく、首の圧縮は fan-in(収束)そのもので起きる。**正直な内訳**: 生の PR は「少数の刺激が MN を強く駆動する」
    裾の重さにも引かれる(実配線の MN の応答ノルムは中央値の 13 倍の刺激がある)ので、各刺激の状態を単位ノルムに
    揃えた**向きだけの次元**も測る —— それでも実配線は対照より 1.5 倍以上低い(kWTA)、線形では 3 倍以上低い。
-4. MN に出た命令の次元(生の PR ≈ 2〜4)は、G1 の RL 方策が生む歩行の関節軌道の次元(≈ 2〜4)と同じ桁。ダンス・
+4. MN に出た命令の次元(生の PR ≈ 2〜4)は、人型ロボットの RL 方策が生む歩行の関節軌道の次元(≈ 2〜4)と同じ桁。ダンス・
    格闘のような多様な動きでは 9〜12 に上がる。桁の比較であって同一性の主張ではない(刺激応答の集合と時系列は
    別の物)。
 
@@ -26,7 +26,7 @@
 1. ``funnel``: 層ごとの実効次元(実配線 kWTA / 対照 kWTA / 線形)。``funnel_direction``: 各刺激を単位ノルムに揃えた向きだけの次元。
 2. ``activity_flow``(GIF): 1 つの刺激が脳 → DN → 腹髄 → MN と soma の位置の上を流れる様子。
 3. ``command_space``: MN の状態の主成分平面(実配線 vs 対照)。
-4. ``physical_ai``: 同じ数式を当てた G1 の関節軌道と evis の筋活動の次元、MN の線と並べて。
+4. ``physical_ai``: 同じ数式を当てた人型ロボットの関節軌道と evis の筋活動の次元、MN の線と並べて。
 5. ``numbers``: 数字の表。
 
 データ: ``FULLSEYE_MALECNS_DIR``(feather 2 本)があれば MaleCNS v1.0(Janelia、CC BY 4.0、生データと部分グラフは
@@ -179,7 +179,7 @@ def stimuli(n0: int, N: int, frac: float = 0.05, seed: int = 0) -> np.ndarray:
 
 
 def physical_ai_series():
-    """(名前, 系列 (T, d)) の一覧。G1 の関節軌道と evis の筋活動があれば実データ、無ければ合成の歩容。"""
+    """(名前, 系列 (T, d)) の一覧。人型ロボットの関節軌道と evis の筋活動があれば実データ、無ければ合成の歩容。"""
     out = []
     d = os.environ.get("FULLSEYE_G1_QPOS_DIR")
     if d and not REDUCED:
@@ -187,7 +187,9 @@ def physical_ai_series():
             q = np.load(f).astype(np.float64)
             q = q[:, 7:] if q.shape[1] == 36 else q                     # 先頭 7 列 = 基底の位置と四元数
             if q.shape[0] >= 100:
-                out.append(("G1 " + os.path.basename(f).replace("_qpos.npy", ""), q))
+                # 系列名に機種名を出さない(ファイル名の先頭の機種名は落とす): humanoid <方策 / 動作>
+                stem = os.path.basename(f).replace("_qpos.npy", "").split("_", 1)[-1]
+                out.append(("humanoid " + stem, q))
     ev = os.environ.get("FULLSEYE_EVIS_CORPUS")
     if ev and not REDUCED and os.path.isfile(ev):
         z = np.load(ev, allow_pickle=True)
@@ -273,7 +275,7 @@ def main() -> int:
     walks = [pr for name, pr, _ in pr_ai if "walk" in name or "run" in name or "gait" in name]
     if walks:
         print("  locomotion PR median %.2f  vs  MN command PR %.1f" % (np.median(walks), prk[3]))
-        src_walk = "G1 walk / run" if any(nm.startswith("G1 ") for nm, _p, _s in pr_ai) else "synthetic gait"
+        src_walk = "humanoid walk / run" if any(nm.startswith("humanoid ") for nm, _p, _s in pr_ai) else "synthetic gait"
         rows.append(("locomotion (%s) PR median" % src_walk, "%.2f" % np.median(walks), "MN %.1f" % prk[3]))
     for name, pr, _ in pr_ai[:14]:                       # 図 physical_ai と同じ 14 本(図の横軸の番号 = この表の順)
         rows.append(("PR " + name, "%.2f" % pr, "-"))
@@ -323,17 +325,17 @@ def main() -> int:
                        caption="the %d stimuli projected on the first two principal components of the MN states: real wiring folds them onto a few directions, the shuffled control spreads them" % N)
         names = [nm for nm, _pr, _s in pr_ai][:14]
         vals = np.array([pr for _nm, pr, _s in pr_ai][:14])
-        # ★2026-10-06: G1 / evis のデータが無い環境(CI・初見の人)では系列が合成歩容 1 本だけになり、
-        #   折れ線は点 1 個で描けず図が消えて PoC 自身の assert で exit 1 だった(手元は G1 があって緑)。
+        # ★2026-10-06: 人型ロボット / evis のデータが無い環境(CI・初見の人)では系列が合成歩容 1 本だけになり、
+        #   折れ線は点 1 個で描けず図が消えて PoC 自身の assert で exit 1 だった(手元は人型ロボットのデータがあって緑)。
         #   系列が 2 本未満なら点で描き、図注は実際に使ったデータを言う。門 = tests/test_poc_connectome_motor_figures.py
         kind = "line" if len(vals) >= 2 else "scatter"
         srcs = []
-        if any(nm.startswith("G1 ") for nm in names):
-            srcs.append("joint-angle trajectories (G1 humanoid, RL policies and mocap retargets)")
+        if any(nm.startswith("humanoid ") for nm in names):
+            srcs.append("joint-angle trajectories (a humanoid robot, RL policies and mocap retargets)")
         if any(nm.startswith("evis ") for nm in names):
             srcs.append("muscle activations (evis)")
         if not srcs:
-            srcs.append("a synthetic gait (29 joints, 2 phases; no G1 / evis data on this machine)")
+            srcs.append("a synthetic gait (29 joints, 2 phases; no humanoid / evis data on this machine)")
         figs.save_plot("physical_ai", [("Physical AI sequences", np.arange(len(vals), dtype=float), vals),
                                        ("fly MN command PR", np.arange(len(vals), dtype=float), np.full(len(vals), prk[3]))],
                        xlabel="sequence index (names in the numbers table)", size=(720, 400),

@@ -424,7 +424,7 @@ def chapter_poincare_tube():
                                "広がったら積分器か断面の探し方が壊れている。")
         figs.save("tube",
                   raster_points(Vl[:, [0, 2]], shape=(420, 420)), gray=True,
-                  caption="ローレンツの軌道を管メッシュに(MATLAB の tubeplot 相当、"
+                  caption="ローレンツの軌道を管メッシュに(数値計算ソフトの tubeplot 相当、"
                           "%d 頂点 / %d 面)。★真値は「円を中心線にするとトーラスに"
                           "なり、体積 2π²Rr² = %.5f・表面積 4π²Rr = %.5f が解析解」"
                           "であること —— 既存 mesh_volume / mesh_area が測って比 "

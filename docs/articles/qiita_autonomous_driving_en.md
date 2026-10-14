@@ -335,7 +335,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 *↑ In-car camera, 0 → 10 s. While the oncoming car is in view its pixels carry the optical flow (arrows) and the true focus of expansion (cross), with the "true τ" and the "τ from flow" side by side at the top. After it passes, RSS flags the parked car in the ego lane as dangerous (t = 6.0 s), the ego brakes and stops 10.25 m short. **The numbers move** because the world holds the truth — τ and gap are not estimates, they are fixed at generation time.*
 
-Part 2 built the world, but nothing in it moved. This part sends a car the other way. Two questions: **how many seconds until we collide**, and **how many metres should we keep**. The first is Lee's (1976) τ theory — the time to collision with an approaching surface follows from how fast its image grows, with no distance and no speed; flies and humans brake on it. The second is Mobileye's RSS (Shalev-Shwartz et al. 2017) — from a response time and bounds on acceleration it gives, in closed form, the distance below which you are to blame. Both are **textbook formulas**, and in this world both can be checked against truth.
+Part 2 built the world, but nothing in it moved. This part sends a car the other way. Two questions: **how many seconds until we collide**, and **how many metres should we keep**. The first is Lee's (1976) τ theory — the time to collision with an approaching surface follows from how fast its image grows, with no distance and no speed; flies and humans brake on it. The second is RSS (Shalev-Shwartz et al. 2017) — from a response time and bounds on acceleration it gives, in closed form, the distance below which you are to blame. Both are **textbook formulas**, and in this world both can be checked against truth.
 
 ### Recipe
 
@@ -402,7 +402,7 @@ Since the square root of the area n scales as 1/Z, τ₀ = Δt / (1 − √(n₀
 
 #### 4. The lateral RSS formula differs in sign handling between the paper and the public implementation
 
-The paper's lemma is written for the case where both cars are still moving toward each other after ρ; outside that case (one is still moving away) the literal formula adds the receding car's stopping distance **in the approaching direction**. Intel's public ad-rss-lib adds the stopping distance only when the post-response velocity points at the other car, and treats μ differently (paper μ + [·]₊, library [· + μ]₊). The published test values are the library's, so this implementation follows the library and gates that it agrees with the paper inside the paper's assumption (over 100 of 300 random cases satisfy it; agreement to 1e-9). "The paper's formula verbatim" and "the same as the public implementation" are different claims.
+The paper's lemma is written for the case where both cars are still moving toward each other after ρ; outside that case (one is still moving away) the literal formula adds the receding car's stopping distance **in the approaching direction**. The public implementation ad-rss-lib adds the stopping distance only when the post-response velocity points at the other car, and treats μ differently (paper μ + [·]₊, library [· + μ]₊). The published test values are the library's, so this implementation follows the library and gates that it agrees with the paper inside the paper's assumption (over 100 of 300 random cases satisfy it; agreement to 1e-9). "The paper's formula verbatim" and "the same as the public implementation" are different claims.
 
 #### 5. The closing speed is v cos θ by the camera's pitch
 
@@ -1385,7 +1385,7 @@ The whole PoC: `py -3.11 examples/poc_driving_pass.py` (figures and videos when 
 
 ![Seven humanoid models crossing (pre-rendered impostors with masks)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif?v=2)
 
-*↑ Seven real robots from MuJoCo Menagerie (Unitree G1 and H1, Booster T1, Berkeley Humanoid, Fourier N1, PAL TALOS, Apptronik Apollo) crossing at a pedestrian crossing, seen from the car camera. Each body is drawn in advance from 16 directions × 12 gait phases; every frame scales that picture and pastes it, comparing depth with whatever stands in front. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
+*↑ Seven real humanoid robots from MuJoCo Menagerie crossing at a pedestrian crossing, seen from the car camera. Each body is drawn in advance from 16 directions × 12 gait phases; every frame scales that picture and pastes it, comparing depth with whatever stands in front. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
 
 Pedestrians in the earlier parts were procedural shapes: three boxes and a head. This part replaces them with real humanoids.
 
@@ -1401,21 +1401,21 @@ New module `drivehumanoid` (4 ledger ops plus `fs.humanoid_walk_clip`) and PoC �
 | Part | Where the truth comes from | Result |
 |---|---|---|
 | One gait cycle | every frame touches the ground, moves forward, and the stance foot does not slide | holds for all 7 models; one cycle advances 0.47–0.94 m |
-| Decimated mesh | merged points stay in their grid cell (shift ≤ √3 × cell) | G1: 393,270 → 1,497 triangles, cell 5.5 cm, largest shift 6.4 cm (bound 9.5 cm) |
+| Decimated mesh | merged points stay in their grid cell (shift ≤ √3 × cell) | Humanoid 1: 393,270 → 1,497 triangles, cell 5.5 cm, largest shift 6.4 cm (bound 9.5 cm) |
 | Pre-rendered impostors | the same pose drawn directly from the mesh | when direction and phase fall exactly on the steps, IoU 0.984, 0.991, 0.990, 1.000 at 6–12 m; a wall in front takes 612 pixels to 0 |
 | Cost per frame (640 × 400, 10 bodies) | time to draw the ground alone | impostors 1.02×, decimated mesh 1.23×, fine mesh (30,000 triangles each) 4.50× |
 
 ![The same pose drawn three ways](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png?v=2)
 
-*↑ G1 in one pose, drawn three ways: fine mesh (left), mesh decimated to 1,497 triangles (middle), impostor (right). In the middle the neck collapses into the grid and disappears, so the head floats (IoU 0.77). The impostor keeps the look even with direction and phase rounded to the steps (IoU 0.85).*
+*↑ Humanoid 1 in one pose, drawn three ways: fine mesh (left), mesh decimated to 1,497 triangles (middle), impostor (right). In the middle the neck collapses into the grid and disappears, so the head floats (IoU 0.77). The impostor keeps the look even with direction and phase rounded to the steps (IoU 0.85).*
 
 ![Decimation table for the seven models](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png?v=2)
 
-*↑ The visual meshes of the seven models decimated to a budget of 1,500 triangles each. Apollo starts at 1.55 million triangles, so its cell grows to 16.2 cm and its largest shift is 14.1 cm.*
+*↑ The visual meshes of the seven models decimated to a budget of 1,500 triangles each. Humanoid 7 starts at 1.55 million triangles, so its cell grows to 16.2 cm and its largest shift is 14.1 cm.*
 
 ### ★ Where implementations go wrong
 
-- **Looking joints up by name hits a different spelling for every model.** The hip pitch joint is `left_hip_pitch_joint` on G1, `LL_HFE` on Berkeley Humanoid and `leg_left_3_joint` on TALOS. Adding names per model breaks with every new robot. Here the chain is walked from each leaf body (a part with no children) to the root, and the joints whose axis points sideways are assigned hip, knee and ankle from the root outward. Left and right come from where the parts are.
+- **Looking joints up by name hits a different spelling for every model.** The hip pitch joint is `left_hip_pitch_joint` on one model, `LL_HFE` on another and `leg_left_3_joint` on a third. Adding names per model breaks with every new robot. Here the chain is walked from each leaf body (a part with no children) to the root, and the joints whose axis points sideways are assigned hip, knee and ankle from the root outward. Left and right come from where the parts are.
 - **The knee tells you which way the body faces.** A knee's range is wide on the side it bends to. Multiplying that side by the direction of the axis tells whether the body was built facing +x or −x. No per-model tuning is needed.
 - **Counting forward motion in two places makes the stance foot slide by a whole step.** Advance the walked distance either in the placement or in the shape, not both. Subtracting it in both moves the grounded foot backwards by one step every frame. The gate — vertices on the ground in two consecutive frames move by at most 15 % of the distance walked — rejects this.
 - **A too-small budget removes whole parts.** A part smaller than the grid cell collapses and leaves no triangles; the neck in the figure above is one. The number of parts lost is returned as `geoms_dropped`; check it when you choose a budget.
@@ -1425,7 +1425,7 @@ New module `drivehumanoid` (4 ledger ops plus `fs.humanoid_walk_clip`) and PoC �
 - The gait is a periodic formula; the centre of mass and balance are not solved. Slopes, steps, stopping and turning are not handled yet.
 - Impostors are pictures taken horizontally from far away and scaled down. A camera high up or close by sees a perspective difference; the IoU in the gates above is its size.
 - The impostor's shading is fixed to the light direction it was drawn with. Passing another light to `world_camera_impostors` does not redraw the pictures. They cast no shadows either.
-- OP3 (facing direction not detected correctly) and ToddlerBot (a box left at its feet) are left out of the seven.
+- Two more models are left out of the seven (facing direction not detected correctly; a box left at the feet).
 - Menagerie models are not put in the repository. Their location comes from the environment variable `FULLSEYE_MENAGERIE_DIR`; without it only the PoC's impostor gates (run on the box pedestrian) execute.
 
 ### Run it
@@ -1434,9 +1434,10 @@ New module `drivehumanoid` (4 ledger ops plus `fs.humanoid_walk_clip`) and PoC �
 import os
 import fullseye as fs
 
-# One gait cycle from Menagerie's G1 (joint roles come from the body's shape, not its names)
-g1 = os.path.join(os.environ["FULLSEYE_MENAGERIE_DIR"], "unitree_g1", "g1.xml")
-clip = fs.humanoid_walk_clip(g1)
+# One gait cycle from the first Menagerie humanoid in the list (joint roles come from the body's shape, not its names)
+import drivehumanoid
+d, f = drivehumanoid.MENAGERIE_HUMANOIDS[0]
+clip = fs.humanoid_walk_clip(os.path.join(os.environ["FULLSEYE_MENAGERIE_DIR"], d, f))
 print(clip["decimation"]["tris_before"], clip["decimation"]["tris_after"], round(clip["cycle_length"], 2))
 # 393270 1497 0.75   ← triangles before, after, metres per cycle
 
@@ -1492,7 +1493,7 @@ The whole PoC is `py -3.11 examples/poc_driving_humanoids.py` (figures and video
 - D. N. Lee, "A theory of visual control of braking based on information about time-to-collision", *Perception* 5, 1976.
 - H. C. Longuet-Higgins and K. Prazdny, "The interpretation of a moving retinal image", *Proc. R. Soc. Lond. B* 208, 1980 (focus of expansion).
 - S. Shalev-Shwartz, S. Shammah, A. Shashua, "On a Formal Model of Safe and Scalable Self-driving Cars", arXiv:1708.06374, 2017 (RSS; Lemma 2 and the opposite-direction and lateral closed forms).
-- Intel, *ad-rss-lib* (Apache-2.0): the parameter table in `doc/ad_rss/Appendix-ParameterDiscussion.md` and the expected values in `RssFormulaTests*.cpp`.
+- *ad-rss-lib* (Apache-2.0, https://github.com/intel/ad-rss-lib): the parameter table in `doc/ad_rss/Appendix-ParameterDiscussion.md` and the expected values in `RssFormulaTests*.cpp`.
 - K. Perlin, "Improving noise", *Proc. SIGGRAPH*, 2002 (gradient noise with quintic interpolation).
 - D. Saupe, "Algorithms for random fractals", in H.-O. Peitgen and D. Saupe (eds.), *The Science of Fractal Images*, Springer, 1988 (spectral synthesis of fBm; β = 2H + E).
 - A. Gaidon, Q. Wang, Y. Cabon, E. Vig, "Virtual worlds as proxy for multi-object tracking analysis", *CVPR*, 2016 (Virtual KITTI).

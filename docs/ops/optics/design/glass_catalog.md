@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_optimize_demo, poc_material_optical_library]
+examples: [lens_optimize_demo, poc_material_optical_library, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -19,11 +19,9 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 A catalogue glass by name (``table``), or the list of names when *name* is None.
 
-Names: Schott ``"N-BK7"``, ``"N-K5"``, ``"N-BAK4"``, ``"N-SK16"``, ``"N-SSK5"``,
-``"N-BAF10"``, ``"N-LAK22"``, ``"N-LAK9"``, ``"N-LASF9"``, ``"N-FK51A"``,
-``"N-F2"``, ``"N-SF2"``, ``"N-SF5"``, ``"N-SF10"``, ``"N-SF11"``, ``"N-SF6"``,
-``"N-SF57"`` and the crystals ``"SILICA"`` (fused), ``"CAF2"``, ``"SAPPHIRE"``
-(ordinary ray); case-insensitive, a few aliases (``"BK7"``, ``"SF11"``,
+Names: 17 glasses from a public glass catalogue (coefficients as published;
+``glass_catalog()`` lists their keys) and the crystals ``"SILICA"`` (fused),
+``"CAF2"``, ``"SAPPHIRE"`` (ordinary ray); case-insensitive, a few aliases (``"BK7"``, ``"SF11"``,
 ``"fused_silica"``, ``"fluorite"``). Any surface's ``n`` may simply be the
 name — ``lens_system`` resolves it. The returned dict is the
 :func:`sellmeier` form with the evaluated ``nd`` / ``vd``.
@@ -64,6 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
+- [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build a material record from Sellmeier coefficients (n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ), λ in µm, Cᵢ in µm²).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>既定値は N-BK7 の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に <code style="color:#22d3bf">material</code> としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。<code style="color:#22d3bf">reference</code> に出典を書いておくと <code style="color:#22d3bf">material_record</code> に残る。</p>
+<p>既定値は BK7 相当(別名 <code style="color:#22d3bf">&quot;BK7&quot;</code>)の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に <code style="color:#22d3bf">material</code> としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。<code style="color:#22d3bf">reference</code> に出典を書いておくと <code style="color:#22d3bf">material_record</code> に残る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -199,7 +199,7 @@ def scene_halftone(n_px):
 
 
 def scene_chart(n_px):
-    """解像チャート(ISO 12233 風、無彩色): Siemens スター・収束する線の楔・傾いたエッジ。"""
+    """解像チャート(ISO 12233 風、無彩色): 星形チャート・収束する線の楔・傾いたエッジ。"""
     y, x = _grid(n_px)
     g = np.full(y.shape, 0.85)
     cy, cx, R = n_px * 0.32, n_px * 0.32, n_px * 0.27
@@ -710,7 +710,7 @@ def make_figures(cf, four, half, sixteen, lens_rows, shift, motion, noise):
                    caption="基板の配線・織物・網点・解像チャート(上から)。左 = 3 色を各画素で取る理想センサ、中 = Bayer 1 枚 + "
                            "双線形デモザイク、右 = 1 画素シフト 4 枚。44 × 44 画素を最近傍で 5 倍。静止・誤差 0 では 4 枚の偽色は"
                            "定義上 0(4・5 章が壊れる条件)。")
-    # 1 枚の絵で見せる: Siemens スターの左半分 = 1 枚 + デモザイク、右半分 = 4 枚(ViEW2026 のサムネイルの元)
+    # 1 枚の絵で見せる: 星形チャートの左半分 = 1 枚 + デモザイク、右半分 = 4 枚(ViEW2026 のサムネイルの元)
     _n, _f1, _f4, _a, _b = rows[3]
     _sc, _tr, one_s, m4_s = panels[3]
     c0 = int(NS * 0.30)
@@ -720,7 +720,7 @@ def make_figures(cf, four, half, sixteen, lens_rows, shift, motion, noise):
     split = zoom(np.concatenate([left, right], axis=1), 6)
     split[:, 24 * 6 - 1:24 * 6 + 1] = 1.0
     figs.save("star_split", split,
-              caption="解像チャートの Siemens スター(48 × 48 画素を 6 倍)。左半分 = Bayer 1 枚 + 双線形デモザイク(色のモアレ)、"
+              caption="解像チャートの 星形チャート(48 × 48 画素を 6 倍)。左半分 = Bayer 1 枚 + 双線形デモザイク(色のモアレ)、"
                       "右半分 = 1 画素シフト 4 枚(偽色 0)。")
     figs.save_table("false_color_table", ["題材", "偽色 1 枚(平均)", "偽色 1 枚(99 %)", "偽色 4 枚", "PSNR 1 枚", "PSNR 4 枚"],
                     [[r[0], "%.4f" % r[1]["mean"], "%.4f" % r[1]["p99"], "%.1e" % r[2]["mean"], db(r[3]), db(r[4])] for r in rows],

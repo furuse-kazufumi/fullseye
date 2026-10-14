@@ -14266,13 +14266,13 @@
    "hi": "measured n(λ) (और k(λ)) की pairs (λ [nm], value) से material record बनाता है।"
   },
   "optics/read_glass_catalog_agf": {
-   "fp": "f2c625be3e5a",
-   "en": "Read a glass catalogue (Zemax .agf form) into a list of material records (table).",
-   "zh": "读取玻璃目录（Zemax .agf 格式）为材料记录的列表（table）。",
-   "tw": "讀取玻璃目錄（Zemax .agf 格式）為材料記錄的列表（table）。",
-   "ko": "유리 카탈로그(Zemax .agf 형식)를 읽어 재료 레코드의 목록(table)으로 만든다.",
-   "de": "Liest einen Glaskatalog (Zemax-.agf-Form) in eine Liste von Materialdatensätzen (table).",
-   "hi": "glass catalogue (Zemax .agf form) को पढ़कर material records की list (table) बनाता है।"
+   "fp": "5b728698ab5d",
+   "en": "Read a glass catalogue (the .agf form of optical design software) into a list of material records (table).",
+   "zh": "读取玻璃目录（光学设计软件的 .agf 格式）为材料记录的列表（table）。",
+   "tw": "讀取玻璃目錄（光學設計軟體的 .agf 格式）為材料記錄的列表（table）。",
+   "ko": "유리 카탈로그(광학 설계 소프트웨어의 .agf 형식)를 읽어 재료 레코드의 목록(table)으로 만든다.",
+   "de": "Liest einen Glaskatalog (.agf-Form von Optikdesign-Software) in eine Liste von Materialdatensätzen (table).",
+   "hi": "glass catalogue (optical design software का .agf form) को पढ़कर material records की list (table) बनाता है।"
   },
   "optics/blackbody_spectrum": {
    "fp": "3b41c0d1ecbf",

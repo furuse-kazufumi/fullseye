@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由测得的 n(λ)（以及 k(λ)）的 pairs（λ [nm]，值）建立材料记录。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は N-BK7 を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
+<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は BK7 相当を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

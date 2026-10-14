@@ -12,7 +12,7 @@ version: 0.2.1
 
 ## できること
 
-偏光カメラ(Sony IMX250MZR 系: FLIR BFS-U3-51S5P、LUCID TRI050S-P など)は 2×2 の画素ブロックに 0/45/90/135 度の偏光子を並べた**モザイク**を 1 枚で出します。`polarization_demosaic` がそれを 4 枚(0/45/90/135)に戻し(双線形。1 次の場は厳密に戻り、縁はモザイクを鏡映して位相を保つ)、そのまま `polarization_stokes` / `polarization_dolp_map` / `polarization_separate` に渡せます(角度の既定が一致しているので引数無しで繋がる)。センサの配列が違えば `layout=((a00, a01), (a10, a11))` で渡します。**カラー偏光センサ**(IMX250MYR、4×4 ブロック)は `polarization_demosaic_color` が (4, H, W, 3) に戻します —— 各偏光子位置の画素は半解像度の Bayer なので `raw_demosaic_bilinear` で展開し、戻してから各チャネルを偏光 demosaic する(2 つの厳密な段の合成)。
+偏光カメラ(画素の上に偏光子を載せた市販の偏光イメージセンサを使う機種)は 2×2 の画素ブロックに 0/45/90/135 度の偏光子を並べた**モザイク**を 1 枚で出します。`polarization_demosaic` がそれを 4 枚(0/45/90/135)に戻し(双線形。1 次の場は厳密に戻り、縁はモザイクを鏡映して位相を保つ)、そのまま `polarization_stokes` / `polarization_dolp_map` / `polarization_separate` に渡せます(角度の既定が一致しているので引数無しで繋がる)。センサの配列が違えば `layout=((a00, a01), (a10, a11))` で渡します。**カラー偏光センサ**(4×4 ブロック)は `polarization_demosaic_color` が (4, H, W, 3) に戻します —— 各偏光子位置の画素は半解像度の Bayer なので `raw_demosaic_bilinear` で展開し、戻してから各チャネルを偏光 demosaic する(2 つの厳密な段の合成)。
 
 試料の **Mueller 行列**は、既知の生成器(PSG)と検光子(PSA)の列で撮った強度から `mueller_from_intensities` が最小二乗で取り戻します。強度は 16 成分に線形なので観測行列 `outer(a_i, g_i)` を積んで解くだけです。★設計が S3 を見られないとき(偏光板だけ、階数 9)は**階数を言って断り**、擬似逆行列のもっともらしい答えを返しません。画像ごと(N, H, W)に渡せば画素ごとに解けます。
 
@@ -20,7 +20,7 @@ version: 0.2.1
 
 ## What it does
 
-Turn a polarisation camera's mosaic (a 2×2 block of 0/45/90/135° analysers, Sony IMX250MZR family) into four full-resolution images with `polarization_demosaic` (bilinear, exact on affine fields, phase-preserving mirrored border) that chain straight into `polarization_stokes` / `polarization_dolp_map`. Recover a sample's Mueller matrix from intensities measured through known generator/analyser states with `mueller_from_intensities` (linear least squares on `outer(a_i, g_i)`; refuses rank-deficient designs with the rank instead of returning a pseudo-inverse guess). Check any 4×4 matrix with `mueller_checks`: Cloude coherency eigenvalues (physical), purity, the Gil–Bernabeu depolarisation index and passivity.
+Turn a polarisation camera's mosaic (a 2×2 block of 0/45/90/135° analysers, as on commercial on-chip polarisation sensors) into four full-resolution images with `polarization_demosaic` (bilinear, exact on affine fields, phase-preserving mirrored border) that chain straight into `polarization_stokes` / `polarization_dolp_map`. Recover a sample's Mueller matrix from intensities measured through known generator/analyser states with `mueller_from_intensities` (linear least squares on `outer(a_i, g_i)`; refuses rank-deficient designs with the rank instead of returning a pseudo-inverse guess). Check any 4×4 matrix with `mueller_checks`: Cloude coherency eigenvalues (physical), purity, the Gil–Bernabeu depolarisation index and passivity.
 
 ## 向くところ / 向かないところ
 

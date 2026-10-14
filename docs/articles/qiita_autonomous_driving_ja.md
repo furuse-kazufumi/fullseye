@@ -334,7 +334,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 *↑ 車載カメラで 0 → 10 s。対向車が来る間はその画素の光学流(矢印)と真の拡大の中心(十字)を描き、上に「τ の真値」と「流れから出した τ」を並べる。通り過ぎたあと、自車線の停車車両に RSS が「危険」を出した瞬間(t = 6.0 s)に制動し、10.25 m 手前で止まる。**数字が動く**のは世界の側が真値を持っているから——τ も間隔も、推定でなく生成時に決まっている。*
 
-第 2 回で世界はできたが、動く物がいなかった。この回は対向車を走らせる。問いは 2 つ: **あと何秒でぶつかるか**、**何 m 空けるべきか**。前者は Lee(1976)の τ 理論——近づく面の像が広がる速さだけで衝突までの時間が決まり、距離も速度も要らない。ハエもヒトもこれで制動する。後者は Mobileye の RSS(Shalev-Shwartz ら 2017)——応答時間と加減速の上限から「これより近いと責任を問われる」距離を閉形式で与える。どちらも**教科書の式**で、この世界なら真値と突き合わせられる。
+第 2 回で世界はできたが、動く物がいなかった。この回は対向車を走らせる。問いは 2 つ: **あと何秒でぶつかるか**、**何 m 空けるべきか**。前者は Lee(1976)の τ 理論——近づく面の像が広がる速さだけで衝突までの時間が決まり、距離も速度も要らない。ハエもヒトもこれで制動する。後者は RSS(Shalev-Shwartz ら 2017)——応答時間と加減速の上限から「これより近いと責任を問われる」距離を閉形式で与える。どちらも**教科書の式**で、この世界なら真値と突き合わせられる。
 
 ### 手順
 
@@ -401,7 +401,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 #### 4. RSS の横方向は、論文の式と公開実装で符号の扱いが違う
 
-論文の Lemma は「ρ の後も互いに向かって動いている」前提で書かれていて、その前提の外(片方がまだ離れている)で式を字義どおり使うと、離れる車の停止距離を**近づく向きに足して**しまいます。Intel の公開実装 ad-rss-lib は「ρ 後の速度が相手へ向くときだけ停止距離を足す」と場合分けし、さらに μ の扱い(論文 μ + [·]₊、実装 [· + μ]₊)も違います。公表の試験値は実装のものなので、こちらは実装に合わせ、前提の内側では論文と一致することを門にしました(乱数 300 組から前提を満たす 100 組超で 1e-9)。「論文の式をそのまま」と「公開実装と同じ」は別の主張です。
+論文の Lemma は「ρ の後も互いに向かって動いている」前提で書かれていて、その前提の外(片方がまだ離れている)で式を字義どおり使うと、離れる車の停止距離を**近づく向きに足して**しまいます。公開実装 ad-rss-lib は「ρ 後の速度が相手へ向くときだけ停止距離を足す」と場合分けし、さらに μ の扱い(論文 μ + [·]₊、実装 [· + μ]₊)も違います。公表の試験値は実装のものなので、こちらは実装に合わせ、前提の内側では論文と一致することを門にしました(乱数 300 組から前提を満たす 100 組超で 1e-9)。「論文の式をそのまま」と「公開実装と同じ」は別の主張です。
 
 #### 5. カメラの俯角ぶん、閉じる速さは v cos θ
 
@@ -1385,7 +1385,7 @@ PoC 全体は `py -3.11 examples/poc_driving_pass.py`(図と動画は `FULLSEYE_
 
 ![横断歩道を渡る 7 機種のヒューマノイド(マスク付きの事前描画)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif?v=2)
 
-*↑ MuJoCo Menagerie の実在ロボット 7 機種(Unitree G1・H1、Booster T1、Berkeley Humanoid、Fourier N1、PAL TALOS、Apptronik Apollo)が横断歩道を渡る場面を、車載カメラの位置から撮った。1 体ずつ、向き 16 段 × 歩行の位相 12 段の絵を先に描いておき、毎コマはその絵を縮めて貼る。手前の物との前後は深度で比べる。[MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
+*↑ MuJoCo Menagerie の実在する人型ロボット 7 機種が横断歩道を渡る場面を、車載カメラの位置から撮った。1 体ずつ、向き 16 段 × 歩行の位相 12 段の絵を先に描いておき、毎コマはその絵を縮めて貼る。手前の物との前後は深度で比べる。[MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
 
 これまでの回の歩行者は、箱 3 つと頭 1 つの手続き的な形でした。今回は、その代わりに実在のヒューマノイドを歩かせます。
 
@@ -1401,21 +1401,21 @@ PoC 全体は `py -3.11 examples/poc_driving_pass.py`(図と動画は `FULLSEYE_
 | 部品 | 真値の出どころ | 成績 |
 |---|---|---|
 | 歩行 1 周期 | 毎コマ接地する・前へ進む・支持脚が地面で滑らない | 7 機種すべてで成立。1 周期で進む距離は 0.47〜0.94 m |
-| 間引いたメッシュ | 格子にまとめた点は同じ升の中にある(ずれ ≤ √3 × 格子幅) | G1 は 393,270 → 1,497 三角形、格子 5.5 cm、最大のずれ 6.4 cm(上限 9.5 cm) |
+| 間引いたメッシュ | 格子にまとめた点は同じ升の中にある(ずれ ≤ √3 × 格子幅) | 人型 1 は 393,270 → 1,497 三角形、格子 5.5 cm、最大のずれ 6.4 cm(上限 9.5 cm) |
 | マスク付きの事前描画 | 同じ姿勢を直接メッシュで描いた像 | 向きと位相が段にちょうど乗るとき、6〜12 m で一致度(IoU)0.984・0.991・0.990・1.000。手前に壁を置くと 612 画素 → 0 画素 |
 | 1 コマの費用(640 × 400、10 体) | 地面だけを描く時間 | 事前描画 1.02 倍、間引いたメッシュ 1.23 倍、精細なメッシュ(1 体 30,000 三角形)4.50 倍 |
 
 ![同じ姿勢を 3 通りで描く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png?v=2)
 
-*↑ G1 を同じ姿勢で 3 通りに描いた。左が精細なメッシュ、中が 1,497 三角形まで間引いたメッシュ、右が事前描画。中では首の部品が格子に潰れて消え、頭が浮いて見える(一致度 0.77)。右は、向きと位相を段に丸めたままでも見た目を保つ(一致度 0.85)。*
+*↑ 人型 1 を同じ姿勢で 3 通りに描いた。左が精細なメッシュ、中が 1,497 三角形まで間引いたメッシュ、右が事前描画。中では首の部品が格子に潰れて消え、頭が浮いて見える(一致度 0.77)。右は、向きと位相を段に丸めたままでも見た目を保つ(一致度 0.85)。*
 
 ![7 機種の間引きの表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png?v=2)
 
-*↑ 7 機種の見た目のメッシュを、1 体 1,500 三角形の予算で間引いた結果。元が 155 万三角形ある Apollo は格子が 16.2 cm まで粗くなり、最大のずれは 14.1 cm。*
+*↑ 7 機種の見た目のメッシュを、1 体 1,500 三角形の予算で間引いた結果。元が 155 万三角形ある人型 7 は格子が 16.2 cm まで粗くなり、最大のずれは 14.1 cm。*
 
 ### ★ 実装すると、ここで間違える
 
-- **関節を名前で探すと、機種ごとに別の綴りに当たる。** 股の縦の関節は、G1 では `left_hip_pitch_joint`、Berkeley Humanoid では `LL_HFE`、TALOS では `leg_left_3_joint` です。名前の一覧を機種ごとに足していく方法は、新しい機種が出るたびに破綻します。ここでは体の木の葉(子の無い部品)から根へたどり、回転軸が左右方向を向く関節を根の側から順に股・膝・足首と決めます。左右は部品の位置で決めます。
+- **関節を名前で探すと、機種ごとに別の綴りに当たる。** 股の縦の関節は、ある機種では `left_hip_pitch_joint`、別の機種では `LL_HFE`、さらに別の機種では `leg_left_3_joint` です。名前の一覧を機種ごとに足していく方法は、新しい機種が出るたびに破綻します。ここでは体の木の葉(子の無い部品)から根へたどり、回転軸が左右方向を向く関節を根の側から順に股・膝・足首と決めます。左右は部品の位置で決めます。
 - **膝の曲がる向きから体の前後を決める。** 膝の可動域は曲げる側に広く取ってあります。その向きと回転軸の向きを掛け合わせると、体が +x と −x のどちらを向いて作られたかが分かります。機種ごとの手直しは要りません。
 - **前進を 2 か所で数えると、支持脚が歩幅ぶん滑る。** 歩いた距離は、置く位置か形のどちらか一方だけで進めます。両方で引くと、地面に着いている足が 1 コマごとに歩幅だけ後ろへずれます。門は「2 コマ続けて地面にある頂点の世界の位置が、進んだ距離の 15 % 以下しか動かない」で、この誤りを落とします。
 - **間引きの予算を小さくしすぎると、部品が丸ごと消える。** 格子より小さい部品は、三角形が潰れて残りません。上の図の首がその例です。消えた部品の数は `geoms_dropped` で返すので、予算を決めるときに確かめてください。
@@ -1425,7 +1425,7 @@ PoC 全体は `py -3.11 examples/poc_driving_pass.py`(図と動画は `FULLSEYE_
 - 歩き方は周期の式で作っていて、重心やバランスは解いていません。坂、段差、立ち止まり、方向転換はまだ扱いません。
 - 事前描画は、遠くから水平に見た絵を縮めて貼ります。カメラが高い所や近い所にあると、透視の違いが出ます。上の門の一致度は、その違いの大きさです。
 - 事前描画の陰影は、絵を描いたときの光の向きのまま固まっています。`world_camera_impostors` に別の光の向きを渡しても、貼る絵は描き直されません。影も落としません。
-- OP3 は体の向きの判定が合わず、ToddlerBot は足元に箱が残ったので、今回の 7 機種から外しました。
+- ほかの 2 機種は、体の向きの判定が合わない・足元に箱が残るので、今回の 7 機種から外しました。
 - Menagerie のモデルは repo に入れません。場所は環境変数 `FULLSEYE_MENAGERIE_DIR` で渡します。無い環境では、PoC の事前描画の門(箱の歩行者で回す部分)だけが走ります。
 
 ### 動かす
@@ -1434,9 +1434,10 @@ PoC 全体は `py -3.11 examples/poc_driving_pass.py`(図と動画は `FULLSEYE_
 import os
 import fullseye as fs
 
-# Menagerie の G1 から歩行 1 周期を作る(関節の役割は名前でなく体の形から決める)
-g1 = os.path.join(os.environ["FULLSEYE_MENAGERIE_DIR"], "unitree_g1", "g1.xml")
-clip = fs.humanoid_walk_clip(g1)
+# Menagerie の人型(一覧の 1 機種目)から歩行 1 周期を作る(関節の役割は名前でなく体の形から決める)
+import drivehumanoid
+d, f = drivehumanoid.MENAGERIE_HUMANOIDS[0]
+clip = fs.humanoid_walk_clip(os.path.join(os.environ["FULLSEYE_MENAGERIE_DIR"], d, f))
 print(clip["decimation"]["tris_before"], clip["decimation"]["tris_after"], round(clip["cycle_length"], 2))
 # 393270 1497 0.75   ← 元の三角形、間引いた後、1 周期で進む距離 [m]
 
@@ -1492,7 +1493,7 @@ PoC 全体は `py -3.11 examples/poc_driving_humanoids.py`(図と動画は `FULL
 - D. N. Lee, "A theory of visual control of braking based on information about time-to-collision", *Perception* 5, 1976。
 - H. C. Longuet-Higgins and K. Prazdny, "The interpretation of a moving retinal image", *Proc. R. Soc. Lond. B* 208, 1980(拡大の中心)。
 - S. Shalev-Shwartz, S. Shammah, A. Shashua, "On a Formal Model of Safe and Scalable Self-driving Cars", arXiv:1708.06374, 2017(RSS。Lemma 2・対向・横方向の閉形式)。
-- Intel, *ad-rss-lib*(Apache-2.0)、`doc/ad_rss/Appendix-ParameterDiscussion.md` のパラメータ表と `RssFormulaTests*.cpp` の期待値。
+- *ad-rss-lib*(Apache-2.0、https://github.com/intel/ad-rss-lib)、`doc/ad_rss/Appendix-ParameterDiscussion.md` のパラメータ表と `RssFormulaTests*.cpp` の期待値。
 - K. Perlin, "Improving noise", *Proc. SIGGRAPH*, 2002(勾配雑音の quintic 補間)。
 - D. Saupe, "Algorithms for random fractals", in H.-O. Peitgen and D. Saupe (eds.), *The Science of Fractal Images*, Springer, 1988(fBm のスペクトル合成、β = 2H + E)。
 - A. Gaidon, Q. Wang, Y. Cabon, E. Vig, "Virtual worlds as proxy for multi-object tracking analysis", *CVPR*, 2016(Virtual KITTI)。

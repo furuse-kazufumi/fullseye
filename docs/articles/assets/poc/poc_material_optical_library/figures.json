@@ -12,10 +12,10 @@
  {
   "file": "02_glass_catalogue.png",
   "name": "glass_catalogue",
-  "caption": "4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。",
+  "caption": "4 つの公開カタログ(記号 A〜D)の Sellmeier 式とべき級数の分散式を同じレコード型で評価した。硝材コードは n_d − 1 の小数 3 桁と V_d × 10(係数の出どころは公開の硝材カタログ値)。",
   "shape": [
    1184,
-   528,
+   588,
    3
   ],
   "csv": "02_glass_catalogue.csv",
@@ -27,7 +27,7 @@
   "caption": "同じ一次文献を optiland(MIT)が別のコードで評価した値。式 1〜5 と数表の補間が同じ答えを返す。",
   "shape": [
    632,
-   553,
+   631,
    3
   ],
   "csv": "03_second_implementation.csv",
@@ -120,7 +120,7 @@
  {
   "file": "12_dispersion_glass_vs_plastic.png",
   "name": "dispersion_glass_vs_plastic",
-  "caption": "ポリカーボネートは N-BK7 の 2 倍以上の落ち(V_d ≈ 30)。CaF2 と石英はほぼ平ら。",
+  "caption": "ポリカーボネートは BK7 相当の 2 倍以上の落ち(V_d ≈ 30)。CaF2 と石英はほぼ平ら。",
   "shape": [
    360,
    716,
@@ -130,17 +130,17 @@
  {
   "file": "13_thermo_optic.png",
   "name": "thermo_optic",
-  "caption": "FD60 のような重フリントは低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。",
+  "caption": "重フリント(硝材 805255)は低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。",
   "shape": [
    360,
-   669,
+   755,
    3
   ]
  },
  {
   "file": "14_lens_axial_colour.png",
   "name": "lens_axial_colour",
-  "caption": "R = ±50 mm・厚さ 4 mm の両凸レンズ。硝材名を変えるだけで、他社の硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は N-BK7 の 1.2 倍、S-LAH58 は 1.6 倍、ポリカーボネートと H-ZF52A は 2.3〜2.7 倍。",
+  "caption": "R = ±50 mm・厚さ 4 mm の両凸レンズ。材料のキーを変えるだけで、別のカタログの硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は BK7 相当の 1.2 倍、高屈折率ランタン系(硝材 883408)は 1.6 倍、ポリカーボネートと重フリント(硝材 847238)は 2.3〜2.7 倍。",
   "shape": [
    360,
    560,

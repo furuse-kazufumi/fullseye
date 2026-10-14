@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build a material record from measured n(λ) (and k(λ)) given as pairs (λ [nm], value).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は N-BK7 を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
+<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は BK7 相当を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

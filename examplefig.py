@@ -182,7 +182,7 @@ def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
     見えてしまう(2026-09-13、焦点合成 PoC で踏んだ)。深度・位相・残差のような
     「場」は従来どおり疑似カラー/発散色のままにする。
 
-    ``vrange=(lo, hi)`` で**色の範囲を固定**する(MATLAB の ``clim``)。既定は 1 枚ごとに min..max へ
+    ``vrange=(lo, hi)`` で**色の範囲を固定**する(作図ソフトでいう ``clim``)。既定は 1 枚ごとに min..max へ
     伸ばすので、誤差 0.002 の差の図も真っ赤に見える(2026-10-03、逆 Abel の差の図で踏んだ)。
     並べて比べる図は同じ ``vrange`` を渡すこと。
     """
@@ -561,9 +561,9 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
     —— 実線どうしが重なると、データと参照の区別がつかない(2026-10-03、傾きの参照線で踏んだ)。
     ``colors`` は系列ごとの配色の役割名(``"reference"`` / ``"emphasis"`` / ``"right"`` / ``"wrong"`` / ``"neutral"``)の列
-    (MATLAB の 'Color')。同じ意味の線分を何本も描くときは同じ色にする。**ラベルが空の系列は凡例に載せない**
-    (MATLAB の 'HandleVisibility','off')—— 線分ごとに凡例が並ぶと読めない(2026-10-03、割当の図で踏んだ)。
-    ``aspect="equal"`` で x と y の 1 単位を同じ画素数にする(MATLAB の axis equal)。範囲は狭い側を中央から広げる
+    (作図ソフトでいう 'Color')。同じ意味の線分を何本も描くときは同じ色にする。**ラベルが空の系列は凡例に載せない**
+    (作図ソフトでいう 'HandleVisibility','off')—— 線分ごとに凡例が並ぶと読めない(2026-10-03、割当の図で踏んだ)。
+    ``aspect="equal"`` で x と y の 1 単位を同じ画素数にする(作図ソフトでいう axis equal)。範囲は狭い側を中央から広げる
     —— 縮尺が違うと円が楕円に見える(2026-10-03、Delaunay の外接円で踏んだ)。
 
     軸・目盛り・格子・凡例はすべて fullseye の annotate 族が引く。

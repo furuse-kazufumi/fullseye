@@ -6,7 +6,7 @@
 レンズは絞りを焦点に置いて主光線を光軸に平行にし、これを消す。本当にどれだけ消えるのか、消えないのは何かを、
 ``raytrace`` の逐次光線追跡で組んだレンズで閉形式と突き合わせる。新 op 7 本(``telecentric``)。6 章 + 付録:
 
-  1. **主光線の傾き(テレセン度)**: 同じ N-BK7 の等凸単レンズ f = 100 mm の絞りを、レンズの直後(通常)・後側焦点
+  1. **主光線の傾き(テレセン度)**: 同じ BK7 相当の等凸単レンズ f = 100 mm の絞りを、レンズの直後(通常)・後側焦点
      (物体側テレセン)に置き、後側焦点の後ろに 2 枚目(f = 50 mm)を足して両側テレセンを作る(倍率はどれも −0.5)。
      門: 実光線の主光線は絞りの中心を 1e-12 mm 以内で通る、通常のレンズの傾きは近軸の入射瞳 L から tanθ = h/L と一致、
      テレセン 2 種は物高 8 mm でも 0.052° / 0.048°(通常は −1.5°)。★0 にならないのは単レンズの瞳の球面収差で、
@@ -38,7 +38,7 @@
      実光線と 0.5 % 以内。許すぼけ 22 µm(物体側)を回折の円の直径 1.22λ/NA が超えない最小の NA は 0.033 で、
      そのとき被写界深度 c/NA は 0.68 mm が上限 —— NA 0.01 なら深さは 2.2 mm あるが回折の円が 72 µm で 22 µm を分解できない。
   付録. **第二の実装**: OSS の光線追跡 optiland(MIT)が手元にあれば同じ処方の主光線の像の高さを突き合わせる
-     (2026-10-15 に別の venv で 9e-8 mm。★内訳: 屈折率はどちらも Schott の同じ Sellmeier 係数なので、一致が見ているのは
+     (2026-10-15 に別の venv で 9e-8 mm。★内訳: 屈折率はどちらも公開の硝材カタログの同じ Sellmeier 係数なので、一致が見ているのは
      面との交点と主光線の狙いの実装だけ。optiland の狙いを近軸にすると物体側テレセンで 0.011 mm 違う)。
 
 【外部真値】閉形式(主光線の幾何、Newton の結像式、薄肉レンズ、円の重なりの面積、一様な円の RMS)と、OSS の
@@ -825,6 +825,7 @@ def chapter_second(L):
                   % (LABEL[k], y, TC.chief_ray_angle(L[k], 8.0)["image_y_mm"]))
         return None
     from optiland import optic
+    bk7 = RT.glass_catalog("BK7")["name"]
     out = {}
     for k in ("ento", "object"):
         s = L[k]
@@ -832,7 +833,7 @@ def chapter_second(L):
         o.add_surface(index=0, thickness=s["object_mm"])
         for i, sf in enumerate(s["surfaces"]):
             R = sf["R"] if math.isfinite(sf["R"]) else np.inf
-            mat = "N-BK7" if sf["n"] == "N-BK7" else "air"
+            mat = bk7 if sf["n"] == bk7 else "air"    # optiland へは同じ硝材のキーを渡す(名前は表から引く)
             kw = dict(index=i + 1, radius=R, thickness=sf["t"], material=mat, is_stop=(i == s["stop"]))
             o.add_surface(**kw)
         o.add_surface(index=len(s["surfaces"]) + 1)
@@ -852,7 +853,7 @@ def chapter_second(L):
         print("   %s: optiland %.6f mm / telecentric %.6f mm" % (LABEL[k], y, ours))
     worst = max(abs(a - b) for a, b in out.values())
     gate("optiland の主光線の像の高さ(物高 8 mm)と 1e-4 mm 以内", worst < 1e-4,
-         "最大 %.1e mm。★内訳: 屈折率はどちらも Schott の同じ Sellmeier 係数(1.5168001)なので、一致が見ているのは"
+         "最大 %.1e mm。★内訳: 屈折率はどちらも公開の硝材カタログの同じ Sellmeier 係数(1.5168001)なので、一致が見ているのは"
          "面との交点と主光線の狙いの実装だけ。optiland の狙いを近軸(paraxial)にすると物体側テレセンで 0.011 mm 違う"
          "(主光線が絞りを 0.083 mm 外す)" % worst)
     return out
@@ -916,7 +917,7 @@ def make_figures(L, chief, depth, rend, sweep, field, dof):
     panels = [_layout_plot(L[k], "%s:主光線は %s" % (LABEL[k], t)) for k, t in
               (("ento", "入射瞳(レンズ)へ集まる"), ("object", "物体側で光軸に平行"), ("bi", "物体側も像側も平行"))]
     figs.save("lens_layouts", np.concatenate(panels, 0),
-              "同じ N-BK7 の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、"
+              "同じ BK7 相当の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。物高 ±6 mm の主光線(実線)は、"
               "通常のレンズでは絞りへ向かって傾き、絞りを後側焦点に置くと物体側で光軸に平行になる。")
     # 2. 倍率と高さ
     curves, af = depth
