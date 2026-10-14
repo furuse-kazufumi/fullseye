@@ -4,7 +4,7 @@ dim: measure1d
 category: apply
 in: metrologymodel × image2d
 out: table
-examples: [poc_calipers_under_illusion, poc_dimensional_inspection]
+examples: [poc_calipers_under_illusion, poc_dimensional_inspection, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ row1,col1,row2,col2,angle_deg / 円は row,col,radius / 楕円は row,col,phi,ra
 
 - [poc_calipers_under_illusion](../../../../examples/poc_calipers_under_illusion.py) — `py -3.11 examples/poc_calipers_under_illusion.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
+- [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

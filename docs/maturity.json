@@ -948,6 +948,27 @@
    ]
   },
   {
+   "id": "telecentric-metrology",
+   "title": "テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)",
+   "title_en": "Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur)",
+   "category": "測る",
+   "note": "docs/capabilities/telecentric-metrology.md",
+   "status": "verified-synthetic",
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_telecentric_metrology",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "terrain-and-visibility",
    "title": "地形の傾き・水の流れ・見通しを測る",
    "title_en": "Slope, flow and line of sight on a terrain",

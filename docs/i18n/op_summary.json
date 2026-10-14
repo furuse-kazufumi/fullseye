@@ -28808,6 +28808,69 @@
    "ko": "상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (``table``).",
    "de": "AMCW-Laufzeittiefe eines konkaven Lambert-Querschnitts (einer Raumecke), bei der jede Interreflexion um ihre Weglänge verzögert ist: komplexe Radiosität, Tiefenabweichung je Pixel (``table``).",
    "hi": "अवतल Lambertian अनुप्रस्थ-काट (कमरे का कोना) की AMCW time-of-flight गहराई, जहाँ हर interreflection अपनी पथ-लंबाई से विलंबित है: complex radiosity, हर pixel का गहराई bias (``table``)।"
+  },
+  "optics/telecentric_lens": {
+   "fp": "0aa3577220b8",
+   "en": "Prescriptions of three imaging lenses made from the same singlet by moving only the stop (a `raytrace.lens_system` table).",
+   "zh": "用同一片单透镜、只改变光阑位置得到的三种成像镜头的处方(`raytrace.lens_system` 的 table)。",
+   "tw": "用同一片單透鏡、只改變光闌位置得到的三種成像鏡頭的處方(`raytrace.lens_system` 的 table)。",
+   "ko": "같은 단렌즈에서 조리개 위치만 바꾼 세 가지 결상 렌즈의 처방(`raytrace.lens_system`의 table).",
+   "de": "Vorschriften dreier abbildender Objektive aus derselben Einzellinse, bei denen nur die Blende verschoben ist (eine `raytrace.lens_system`-Tabelle).",
+   "hi": "एक ही singlet से केवल stop की स्थिति बदलकर बने तीन imaging lens के prescription (`raytrace.lens_system` table)।"
+  },
+  "optics/chief_ray_angle": {
+   "fp": "86ad6f39bf54",
+   "en": "The real chief ray from the object point at *field_mm* through the stop centre: its object-side angle (the telecentricity) and where it lands on the image.",
+   "zh": "从物高 *field_mm* 的点出发、穿过光阑中心的真实主光线:物方倾角(即远心度)与像的位置。",
+   "tw": "從物高 *field_mm* 的點出發、穿過光闌中心的真實主光線:物方傾角(即遠心度)與像的位置。",
+   "ko": "물체 높이 *field_mm*의 점에서 조리개 중심을 지나는 실제 주광선: 물체 측 기울기(= 텔레센트릭도)와 상의 위치.",
+   "de": "Der reale Hauptstrahl vom Objektpunkt in Höhe *field_mm* durch die Blendenmitte: sein objektseitiger Winkel (die Telezentrie) und sein Auftreffpunkt im Bild.",
+   "hi": "*field_mm* ऊँचाई के object point से stop के केंद्र से गुज़रने वाली वास्तविक chief ray: object side का झुकाव (telecentricity) और image पर उसकी स्थिति।"
+  },
+  "optics/magnification_vs_depth": {
+   "fp": "8837e64ee81d",
+   "en": "Magnification m(Δz) as the object moves along the axis (fixed image plane; real chief-ray image height over object height).",
+   "zh": "物体沿光轴移动时的放大率 m(Δz)(像面固定,真实主光线的像高 / 物高)。",
+   "tw": "物體沿光軸移動時的放大率 m(Δz)(像面固定,真實主光線的像高 / 物高)。",
+   "ko": "물체를 광축 방향으로 움직일 때의 배율 m(Δz)(상면 고정, 실제 주광선의 상 높이 / 물체 높이).",
+   "de": "Abbildungsmaßstab m(Δz), wenn sich das Objekt entlang der Achse bewegt (feste Bildebene; Bildhöhe des realen Hauptstrahls durch Objekthöhe).",
+   "hi": "object को axis के साथ हिलाने पर magnification m(Δz) (image plane स्थिर; वास्तविक chief ray की image ऊँचाई / object ऊँचाई)।"
+  },
+  "optics/telecentricity_error": {
+   "fp": "8d309e71cd13",
+   "en": "How differently the same dimension reads on the image when it sits on the upper and lower faces of a step of *step_height_mm*.",
+   "zh": "同一尺寸分别位于高度差为 *step_height_mm* 的台阶上下两面时,在像上看起来相差多少。",
+   "tw": "同一尺寸分別位於高度差為 *step_height_mm* 的台階上下兩面時,在像上看起來相差多少。",
+   "ko": "같은 치수가 높이 *step_height_mm*인 단차의 윗면과 아랫면에 있을 때 상에서 얼마나 다르게 보이는가.",
+   "de": "Wie unterschiedlich dasselbe Maß im Bild erscheint, wenn es auf der oberen und der unteren Fläche einer Stufe der Höhe *step_height_mm* liegt.",
+   "hi": "जब एक ही आयाम *step_height_mm* ऊँचे step की ऊपरी और निचली सतह पर हो, तो image पर वह कितना अलग दिखता है।"
+  },
+  "optics/defocus_spot_vs_depth": {
+   "fp": "d12e6cec6e06",
+   "en": "RMS blur radius on the fixed image plane as the object moves by ±Δz (µm; the ray bundle is traced exhaustively over a grid of slopes).",
+   "zh": "物体移动 ±Δz 时固定像面上的 RMS 模糊半径(µm,用斜率网格穷举追迹光线束)。",
+   "tw": "物體移動 ±Δz 時固定像面上的 RMS 模糊半徑(µm,用斜率網格窮舉追跡光線束)。",
+   "ko": "물체를 ±Δz 움직였을 때 고정된 상면에서의 RMS 흐림 반경(µm, 기울기 격자로 광선 다발을 전수 추적).",
+   "de": "RMS-Unschärferadius in der festen Bildebene, wenn sich das Objekt um ±Δz bewegt (µm; das Strahlenbündel wird über ein Neigungsraster vollständig verfolgt).",
+   "hi": "object के ±Δz हिलने पर स्थिर image plane पर RMS blur radius (µm; ray bundle को slopes के grid पर पूरी तरह trace किया जाता है)।"
+  },
+  "optics/vignetting_vs_field": {
+   "fp": "dc536b8c73e8",
+   "en": "For each object height, the solid angle (area in slope space) of the bundle that reaches the image, relative to on axis (vignetting).",
+   "zh": "各物高下到达像面的光线束立体角(斜率空间的面积)相对于轴上的比例(渐晕)。",
+   "tw": "各物高下到達像面的光線束立體角(斜率空間的面積)相對於軸上的比例(漸暈)。",
+   "ko": "물체 높이마다 상면까지 도달하는 광선 다발의 입체각(기울기 공간의 면적)을 축상 대비 비율로(비네팅).",
+   "de": "Für jede Objekthöhe der Raumwinkel (Fläche im Neigungsraum) des Bündels, das das Bild erreicht, relativ zur Achse (Vignettierung).",
+   "hi": "हर object ऊँचाई के लिए image तक पहुँचने वाले bundle का solid angle (slope space में क्षेत्रफल), axis के सापेक्ष (vignetting)।"
+  },
+  "optics/lens_equivalent_pinhole": {
+   "fp": "696c596a0828",
+   "en": "Map the chief-ray geometry onto a pinhole camera (pose, K) for `render3d.render_mesh`.",
+   "zh": "把主光线的几何映射为 `render3d.render_mesh` 用的针孔相机(pose, K)。",
+   "tw": "把主光線的幾何映射為 `render3d.render_mesh` 用的針孔相機(pose, K)。",
+   "ko": "주광선의 기하를 `render3d.render_mesh`용 핀홀 카메라(pose, K)로 옮긴다.",
+   "de": "Bildet die Hauptstrahlgeometrie auf eine Lochkamera (pose, K) für `render3d.render_mesh` ab.",
+   "hi": "chief ray की geometry को `render3d.render_mesh` के pinhole camera (pose, K) पर map करना।"
   }
  }
 }

@@ -132,6 +132,14 @@
 
 動く例: `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_calipers_under_illusion`
 
+### [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md)
+
+段差のある部品(ボンディングのダイ、コネクタのピン、穴)の寸法を 1 枚の画像で測るとき、通常のレンズは近い面ほど大きく写すので、高さの違う面で同じ寸法が違う長さに写ります。`telecentric` の 7 本は `raytrace` の処方(`lens_system` の table)を実光線で追い、この誤差がどれだけ出てどれだけ消えるかを数字で返します。
+
+使う op: `telecentric_lens`, `chief_ray_angle`, `magnification_vs_depth`, `telecentricity_error`, `defocus_spot_vs_depth`, `vignetting_vs_field`, `lens_equivalent_pinhole`
+
+動く例: `poc_telecentric_metrology`
+
 ### [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md)
 
 高さ格子(DEM)から、傾斜・斜面方位・可視領域・流向を出します。いずれも閉形式と突き合わせられる量なので、実装の誤りを数字で捕まえられます。

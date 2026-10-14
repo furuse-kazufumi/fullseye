@@ -28,10 +28,10 @@ _PAT = re.compile(r"(~?\d[\d,]*)\s+((?:typed |distinct |single-input |evolvable 
 #: 索引の外で決まる数(理由つき)。
 _OTHER = {
     2313: "HALCON の演算子の総数(halcon_names_data)",
-    455: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
+    462: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
           "shape_from_polarization 8 op で 372 → 380、light_transport 11 op で 380 → 391、"
           "acoustics の ultrasonic 7 op で 391 → 398、optics の EMVA 1288 12 op で 398 → 410、"
-          "2026-10-14 optics の cavity 5 op で 410 → 415、matprop 16 op で 415 → 431、spectral 9 op で 431 → 440、fiber 7 op で 440 → 447、2026-10-15 moire_align 8 op で 447 → 455)"),
+          "2026-10-14 optics の cavity 5 op で 410 → 415、matprop 16 op で 415 → 431、spectral 9 op で 431 → 440、fiber 7 op で 440 → 447、2026-10-15 moire_align 8 op で 447 → 455、telecentric 7 op で 455 → 462)"),
 }
 
 

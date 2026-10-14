@@ -133,6 +133,14 @@ Operators: `measure_pos`, `measure_pairs`, `blob_label`, `blob_select`
 
 Runnable: `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_calipers_under_illusion`
 
+### [Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur)](capabilities/telecentric-metrology.md)
+
+Seven ops in `telecentric` (category `telecentric` of `opsoptics`) on top of the `raytrace` prescriptions: a generator of the same singlet with the stop moved (entocentric, object-side telecentric, bi-telecentric, plus a stop shift that spoils telecentricity), the real chief ray found by aiming at the stop itself rather than at the entrance pupil (so it works with the pupil at infinity), the magnification versus object height on a fixed image plane, the dimensional error across a step, the RMS defocus blur from a brute-force pupil bundle, the vignetting set by the front lens, and a pinhole camera at the entrance pupil for `render3d`. The PoC gates the magnification against L/(L − Δz), the stop shift against Newton's equation, the blur slope against |m|·NA/√2, and measurements taken from rendered images against circle-overlap closed forms.
+
+Operators: `telecentric_lens`, `chief_ray_angle`, `magnification_vs_depth`, `telecentricity_error`, `defocus_spot_vs_depth`, `vignetting_vs_field`, `lens_equivalent_pinhole`
+
+Runnable: `poc_telecentric_metrology`
+
 ### [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md)
 
 From a height grid: slope, aspect, viewshed and flow direction. Each has a closed form to check against, so an implementation error shows up as a number.

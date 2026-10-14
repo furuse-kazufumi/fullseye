@@ -326,6 +326,12 @@ def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
 
+    def tele_first(**kw):
+        def b(pool, rng):
+            import telecentric
+            return [telecentric.telecentric_lens("object")], dict(kw)
+        return b
+
     def os_call(make):
         def b(pool, rng):
             OS, cam, scene, light = _optics_kit()
@@ -344,6 +350,12 @@ def _optics_builders():
         "tolerance_analysis": lens_first(trials=4, rings=3),
         "wavefront_from_opd": lens_first(size=16), "ray_fan": lens_first(n=9),
         "opd_map": lens_first(size=16), "chromatic_shift": lens_first(rings=3),
+        # telecentric(2026-10-15): 有限物体の処方が要る(example_system は無限遠の物体なので拒否される)
+        "chief_ray_angle": tele_first(), "telecentricity_error": tele_first(),
+        "magnification_vs_depth": tele_first(n_points=5),
+        "defocus_spot_vs_depth": tele_first(n_points=3, samples=21),
+        "vignetting_vs_field": tele_first(n_points=4, samples=21),
+        "lens_equivalent_pinhole": tele_first(width=32, height=32),
         "optimize_lens": lens_first(iterations=2, rings=2),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         "distortion_map": lens_first(image_size=(32, 32)),

@@ -4,7 +4,7 @@ dim: optics
 category: mirror
 in: 
 out: vector
-examples: [glass_and_mirror_optics, poc_material_optical_library]
+examples: [glass_and_mirror_optics, poc_material_optical_library, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [glass_and_mirror_optics](../../../../examples/glass_and_mirror_optics.py) — `py -3.11 examples/glass_and_mirror_optics.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
+- [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 
 ## 型が繋がる次の op(`vector` を入力に取れる)
 
