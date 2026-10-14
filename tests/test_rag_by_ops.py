@@ -41,8 +41,8 @@ DOCS_OPS = os.path.join(ROOT, "docs", "ops")
 FLOOR_NOTES = 3192
 FLOOR_FAMILIES = 48
 FLOOR_CATEGORIES = 455
-FLOOR_THEME_OPS = 332
-FLOOR_CONTEXT_OPS = 382
+FLOOR_THEME_OPS = 344
+FLOOR_CONTEXT_OPS = 394
 #: 評価問題集(tests/data/rag_eval_queries.json)の hit@5 の床。整理前 0.52(26/50)→ 整理後 0.76(38/50)。
 FLOOR_HIT_AT_5 = {"all": 0.76, "classic": 0.90, "domain": 0.83, "new": 0.67}
 
