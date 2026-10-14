@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-48 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+49 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -114,6 +114,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz): [Erklärung](../../capabilities/fiber-and-light-guide.md) _(ja)_ · Beispiele [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - Eine Tabelle optischer Materialkonstanten (83 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import): [Erklärung](../../capabilities/material-optical-property-library.md) _(ja)_ · Beispiele [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - Reflexion, Brechung und Interferenz berechnen: [Erklärung](../../capabilities/optics-and-materials.md) _(ja)_ · Beispiele [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht): [Erklärung](../../capabilities/pixel-shift-imaging.md) _(ja)_ · Beispiele [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - Rohbild einer Polarisationskamera in Stokes, DoLP und Mueller umrechnen: [Erklärung](../../capabilities/polarization-imaging.md) _(ja)_ · Beispiele [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Ein Bayer-Rohbild Schritt für Schritt nachvollziehbar in ein Anzeigebild umwandeln: [Erklärung](../../capabilities/raw-to-display-isp.md) _(ja)_ · Beispiele [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - Die spektrale Kette Lichtquelle × Objekt × Sensor (Planck, CIE A, LED, Filter, Si-QE): [Erklärung](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · Beispiele [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-231 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+232 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -310,7 +311,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (17)</summary>
+<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (18)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="Ein Fliegenauge nähert sich Streifen" width="200" height="200"><b>&#9654;</b><span>Ein Fliegenauge nähert sich Streifen</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Verwacklung entfernen" width="200" height="200"><b>&#9654;</b><span>Verwacklung entfernen</span></a>
@@ -329,6 +330,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_segmentation_gauntlet.jpg" alt="Segmentierungs-Parcours" width="200" height="200"><b>&#9654;</b><span>Segmentierungs-Parcours</span></a>
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="Aktive Konturen" width="200" height="200"><b>&#9654;</b><span>Aktive Konturen</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph-Segmentierung" width="200" height="200"><b>&#9654;</b><span>Graph-Segmentierung</span></a>
+<a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Pixel-Shift (Falschfarben, Aliasing)" width="200" height="200"><b>&#9654;</b><span>Pixel-Shift (Falschfarben, Aliasing)</span></a>
 </div>
 </details>
 

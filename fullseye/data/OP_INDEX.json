@@ -1,8 +1,8 @@
 {
- "n_ops": 3186,
+ "n_ops": 3192,
  "tiers": {
   "color": 12,
-  "ledger": 2233,
+  "ledger": 2239,
   "nary": 17,
   "registry": 924
  },
@@ -7880,6 +7880,19 @@
    "in_sorts": [
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "false_color_metric",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage"
    ]
   },
   {
@@ -18248,6 +18261,70 @@
    "in_sorts": [
     "flow2d"
    ]
+  },
+  {
+   "name": "pixel_shift_capture",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "video",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "matrix"
+   ]
+  },
+  {
+   "name": "pixel_shift_merge",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "rgbimage",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video",
+    "matrix"
+   ]
+  },
+  {
+   "name": "pixel_shift_motion_mask",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video",
+    "matrix"
+   ]
+  },
+  {
+   "name": "pixel_shift_pattern",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "pixel_shift_resolution_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pixelshift",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "pl_diffusion_psf",

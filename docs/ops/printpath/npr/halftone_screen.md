@@ -4,7 +4,7 @@ dim: printpath
 category: npr
 in: image2d
 out: image2d
-examples: [poc_beats_fringes_and_screens, poc_print_registration]
+examples: [poc_beats_fringes_and_screens, poc_pixel_shift, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ coverage and will read lighter than a real press.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_beats_fringes_and_screens](../../../../examples/poc_beats_fringes_and_screens.py) — `py -3.11 examples/poc_beats_fringes_and_screens.py`
+- [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
 - [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

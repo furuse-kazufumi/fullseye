@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — ピクセルシフト撮像(pixelshift 6 op + PoC)
+- `pixelshift`(`opsoptics` の新カテゴリ `pixelshift`、6 op): `pixel_shift_pattern`(公称のシフト列 + アクチュエータの誤差)、`pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒、枚ごとのシーンで動く被写体)、`pixel_shift_merge`(公称のシフトで格子へ、補間なし、埋められないシフト列は拒否、動き検出で 1 枚のデモザイクに差し戻し)、`pixel_shift_motion_mask`、`false_color_metric`、`pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。
+- PoC `poc_pixel_shift`(28 門、図 10 枚 + GIF): 1 画素 4 枚で偽色 0(定義上)、半画素で折り返しの山が f₀ に戻る、★MTF50 は 1 枚とシフトで同じ、レンズ律速(Q* = 1.47 で得が尽きる)、シフト誤差の閉形式、動く被写体の分かれ目(0.25 px/枚 は 4 枚が勝ち、0.5 px/枚 から逆転)、√N と動きの裏返し。★drizzle の `shifts` はセンサのシフトと符号が逆(門で固定)。
+- 能力ノート `docs/capabilities/pixel-shift-imaging.md`、op 要約 6 言語。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。

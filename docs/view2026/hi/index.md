@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-48 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+49 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -114,6 +114,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency): [explanation](../../capabilities/fiber-and-light-guide.md) _(ja)_ · examples [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - material optical constants की एक table (primary literature से 83 glasses, crystals, semiconductors, metals, liquids और plastics, glass-catalogue importer सहित): [explanation](../../capabilities/material-optical-property-library.md) _(ja)_ · examples [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - Reflection, refraction और interference की गणना: [explanation](../../capabilities/optics-and-materials.md) _(ja)_ · examples [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- pixel-shift imaging (1-pixel shift से पूरा रंग, half-pixel shift से aliasing खत्म, और कहाँ टूटता है): [explanation](../../capabilities/pixel-shift-imaging.md) _(ja)_ · examples [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - Polarisation camera के raw frame को Stokes, DoLP और Mueller में पढ़ना: [explanation](../../capabilities/polarization-imaging.md) _(ja)_ · examples [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - Bayer raw frame को हर stage समझाने लायक formula से display image में बदलना: [explanation](../../capabilities/raw-to-display-isp.md) _(ja)_ · examples [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
 - स्रोत × वस्तु × sensor की spectral श्रृंखला (Planck, CIE A, LED, filter, Si QE): [explanation](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · examples [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-231 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+232 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -310,7 +311,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality और restoration</b> (17)</summary>
+<details class="vall"><summary><b>Image quality और restoration</b> (18)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="धारियों की ओर बढ़ती मक्खी की आँख" width="200" height="200"><b>&#9654;</b><span>धारियों की ओर बढ़ती मक्खी की आँख</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -329,6 +330,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_segmentation_gauntlet.jpg" alt="Segmentation gauntlet" width="200" height="200"><b>&#9654;</b><span>Segmentation gauntlet</span></a>
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="Active contours" width="200" height="200"><b>&#9654;</b><span>Active contours</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph segmentation" width="200" height="200"><b>&#9654;</b><span>Graph segmentation</span></a>
+<a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="pixel shift (false colour, aliasing)" width="200" height="200"><b>&#9654;</b><span>pixel shift (false colour, aliasing)</span></a>
 </div>
 </details>
 

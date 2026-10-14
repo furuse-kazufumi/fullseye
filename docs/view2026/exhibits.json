@@ -3994,6 +3994,22 @@
    }
   },
   {
+   "id": "poc_pixel_shift",
+   "group": "wing_imaging",
+   "media": "12_four_shot_capture.gif",
+   "motion": true,
+   "thumb_src": "02_star_split.png",
+   "label": {
+    "ja": "ピクセルシフト(偽色と折り返し)",
+    "en": "Pixel shift (false colour, aliasing)",
+    "zh": "像素位移(伪色与混叠)",
+    "tw": "像素位移(偽色與混疊)",
+    "ko": "픽셀 시프트(위색과 에일리어싱)",
+    "de": "Pixel-Shift (Falschfarben, Aliasing)",
+    "hi": "pixel shift (false colour, aliasing)"
+   }
+  },
+  {
    "id": "poc_pigment_unmixing",
    "group": "wing_color",
    "media": "01_per_field_auc.png",
@@ -5975,6 +5991,13 @@
     "ko": "카메라 데이터시트의 수치를 EMVA 1288 절차로 다시 재고, 카메라 내부 전처리가 그 수치를 얼마나 움직이는지 본다(Linear와 General)",
     "de": "Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General)",
     "hi": "camera datasheet की संख्याएँ EMVA 1288 की विधि से फिर मापना, और देखना कि camera के भीतर का preprocessing उन्हें कितना बदलता है (Linear और General)"
+   },
+   "pixel-shift-imaging": {
+    "zh": "像素位移成像(1 像素位移得全色、半像素位移消除混叠,以及失效条件)",
+    "tw": "像素位移成像(1 像素位移得全色、半像素位移消除混疊,以及失效條件)",
+    "ko": "픽셀 시프트 촬상(1 화소 시프트로 전색, 반 화소 시프트로 에일리어싱 제거, 깨지는 조건까지)",
+    "de": "Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht)",
+    "hi": "pixel-shift imaging (1-pixel shift से पूरा रंग, half-pixel shift से aliasing खत्म, और कहाँ टूटता है)"
    }
   }
  }

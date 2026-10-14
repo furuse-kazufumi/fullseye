@@ -4038,7 +4038,7 @@ Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 19 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 20 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -4711,6 +4711,46 @@ Source: [examples/poc_zebra_stripes_fly_eye.py](https://github.com/furuse-kazufu
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye)
 
 Ops used (notes): [`coherence`](https://furuse.work/ops/acoustics/dual/coherence.html) · [`fly_emd_response`](https://furuse.work/ops/flyvision/motion/fly_emd_response.html) · [`fly_expansion_readout`](https://furuse.work/ops/flyvision/looming/fly_expansion_readout.html) · [`fly_flow_from_directions`](https://furuse.work/ops/flyvision/direction/fly_flow_from_directions.html) · [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) · [`fly_t4t5_field`](https://furuse.work/ops/flyvision/direction/fly_t4t5_field.html) · [`fly_tau_from_expansion`](https://furuse.work/ops/flyvision/looming/fly_tau_from_expansion.html) · [`fly_view_plane_texture`](https://furuse.work/ops/flyvision/stimulus/fly_view_plane_texture.html) · [`fly_vogel_lattice`](https://furuse.work/ops/flyvision/lattice/fly_vogel_lattice.html) · [`jitter`](https://furuse.work/ops/3d/augment/jitter.html) · [`lattice_moire_peak`](https://furuse.work/ops/flyvision/alias/lattice_moire_peak.html) · [`sampling_alias_distance`](https://furuse.work/ops/flyvision/alias/sampling_alias_distance.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`traj_tau_dot`](https://furuse.work/ops/flyvision/trajectory/traj_tau_dot.html)
+
+## No.2026.232 —— Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise
+
+[![Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/01_four_shot_false_color.png)
+
+*↑ **Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise** ―― What pixel shift (moving the sensor by one or half a pixel with a piezo actuator) adds to visual inspection and what it does not. Six new ops (`pixelshift`, category `pixelshift` of `opsoptics`): shift sequences with actuator error, an exact box-aperture capture through a shifted Bayer or monochrome sensor, a grid merge with the nominal shifts that refuses sequences that cannot fill the grid, a motion mask, a false-colour metric and the closed-form budget (sinc times diffraction MTF, Q = λN/p). Four 1-pixel shifts take false colour from 0.043-0.084 to zero on PCB traces, cloth, halftone print and a resolution chart (zero by construction when static and exact: R, G and B at every pixel see the same point through the same aperture). Half-pixel shifts move the FFT peak of 0.6-0.9 cyc/px gratings from the alias 1 − f₀ back to f₀, with heights matching 0.4·sinc(f₀) to 2e-14. The slanted-edge MTF50 is 0.478 single, 0.475 shifted and 0.467 cyc/px closed form: shifting removes aliasing, not MTF loss. Drizzle, an independent implementation, puts the peak at 0.700, and at 0.300 if handed the sensor shifts unchanged, because its sign convention is the opposite. With 3.45 µm pixels and f/1.4 to f/22 the 0.7 cyc/px modulation follows sinc times the diffraction MTF to 0.0008, vanishes beyond Q = 1.43, and the resolution gain ends at Q* = 1.47, before the aliasing boundary Q = 2. A 0.5 fill factor gives 3.2 times the modulation at 0.8 cyc/px. Failure modes: a single frame off by 0.05 px gives the colour error 2πf·a·sinc·δ/√2 to 1.2 %; random error of 0.1 px gives false colour 0.012 against 0.053 for a single demosaic. A moving part at 0.25 px per frame still beats a single demosaic (0.161 against 0.205), but from 0.5 px per frame the merge is worse; falling back to one frame where the greens disagree reaches the single-frame ceiling with no false detections on static areas. Noise falls as σ/√c for R and B and σ/√(2c) for G within 2.1 %, but on a moving grating more frames mean more error (0.081 to 0.273 from 4 to 16 frames). Nothing learned, nothing calibrated, 28 gates.*
+
+[![解像チャートの Siemens スター(48 × 48 画素を 6 倍)。左半分 = Bayer 1 枚 + 双線形デモザイク(色のモアレ)、右半分 = 1 画素シフト 4 枚(偽色 0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/02_star_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/02_star_split.png)
+
+*↑ The measurement ―― 解像チャートの Siemens スター(48 × 48 画素を 6 倍)。左半分 = Bayer 1 枚 + 双線形デモザイク(色のモアレ)、右半分 = 1 画素シフト 4 枚(偽色 0)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![偽色は 0〜1 の階調の色差(0.004 ≈ 8 bit の 1 階調)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/03_false_color_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/03_false_color_table.png)
+
+*↑ 偽色は 0〜1 の階調の色差(0.004 ≈ 8 bit の 1 階調)。*
+
+[![左は画素 1 つ = 8 × 8、右は出力画素 1 つ(= ½ センサ画素)= 4 × 4 で表示。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/05_grating_crops_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/05_grating_crops.png)
+
+*↑ 左は画素 1 つ = 8 × 8、右は出力画素 1 つ(= ½ センサ画素)= 4 × 4 で表示。*
+
+[![16 枚 = 半画素 4 位相 × 1 画素 4 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/07_sixteen_shot_wedge_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/07_sixteen_shot_wedge.png)
+
+*↑ 16 枚 = 半画素 4 位相 × 1 画素 4 枚。*
+
+[![基板の配線、乱数の誤差 8 通りの平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/09_shift_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/09_shift_error.png)
+
+*↑ 基板の配線、乱数の誤差 8 通りの平均。*
+
+[![左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif)
+
+*↑ The animation ―― 左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。*
+
+```
+py -3.11 examples/poc_pixel_shift.py
+```
+
+Source: [examples/poc_pixel_shift.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
+
+This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pixel_shift)
+
+Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_pattern.html) · [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`drizzle_resample`](https://furuse.work/ops/astrostack/stack/drizzle_resample.html) · [`edge_spread`](https://furuse.work/ops/optics/imaging/edge_spread.html) · [`false_color_metric`](https://furuse.work/ops/optics/pixelshift/false_color_metric.html) · [`halftone_screen`](https://furuse.work/ops/printpath/npr/halftone_screen.html) · [`mtf50`](https://furuse.work/ops/optics/imaging/mtf50.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_motion_mask`](https://furuse.work/ops/optics/pixelshift/pixel_shift_motion_mask.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`raw_demosaic_bilinear`](https://furuse.work/ops/gfx2d/isp/raw_demosaic_bilinear.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sfr_from_edge`](https://furuse.work/ops/optics/imaging/sfr_from_edge.html) · [`weave_normals`](https://furuse.work/ops/optics/surface/weave_normals.html)
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
