@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(366 例)
+### 2-D 画像/信号/幾何(368 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -49,6 +49,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する —— 俯瞰映像の追跡と PIV で衝突点と障害物の輪郭を読む** — 群れの個体を SPH の粒子として動かすと、障害物に当たった個体の減速が押し合いの圧力として上流へ伝わり、群れは円柱のまわりで近似的にポテンシャル流になる(導出)。上から撮った映像で個体の速度場を測り、自由流からの欠け方で衝突点(よどみ点)と障害物の中心・半径を読む。閉形式の場では 2 次元の当てはめが厳密、中心線の 1/√d の直線化は中心 0.30 % of R・半径 +0.09 %(U を閉形式で割り戻す反復をしないと半径 −16 %)。粒子の映像から PIV(pivops)で速度の rms 2.1 % of U・半径 −0.6 %、追跡(blob2d)で 3.3 %・+0.3 %。雑音だけ・渦・湧き出しの場では「説明できる割合」0.002〜0.080 で何も言わず、障害物ありは 0.761 以上。1692 個体の群れの模擬では、映像の速度が個体の本当の速度と rms 1.4 % で合い、**上流だけ(当たる前)**の当てはめで中心 4.5 % of R・半径 −10 %。正直に: 群れの流れは後ろに空洞が伸びる厳密でないポテンシャル流なので半径は 1 割小さく出る。障害物は円だけ、自由流は +x の前提。 `py -3.11 examples/poc_swarm_obstacle_from_flow.py`
 - **粉末 X 線回折の 2-D 検出器像から相を 1 つずつ剥がす —— 較正・方位積分・NNLS・残差の未知相。真値は NIST SRM 640g と COD** — 混合物の粉末に X 線を当てると、検出器には相ごとのデバイ環が重なって写る。標準 Si の環で検出器の中心・距離・傾きを較正し(中心 0.011 px、距離 0.0009 %、傾き 3.004°)、方位積分で 2θ のプロファイルに落とし、Scherrer で結晶子径(354 Å、真 350 Å)、CIF から作った参照の辞書で相を 1 つずつ剥がし(NNLS の前進選択、NaCl > CaF₂ > コランダム)、残差の 8 本を立方晶 F・a = 4.2170 Å と指数付けして候補 4 つから MgO を名指しする。4 相の分率の誤差 0.04 wt%。NIST SRM 640g の証明書の線 11 本を Bragg + 消滅則で 0.00044° 以内に再現。罠: 傾き 5° を無視すると山 10 本が 23 本に割れ、試料の格子が 0.4 % 大きいだけで分率が崩れる(格子の追い込みで戻る)。正直に: 合成と解析は同じ物理模型を共有するので 0.04 wt% は模型の量が戻る確認にとどまる —— 模型をわざと食い違わせると結晶子径 −29 % で 0.97 wt%。COD の CIF は repo の外(FULLSEYE_PXRD_DATA、無ければ立方晶の原型で全部の門が走る)。 `py -3.11 examples/poc_pxrd_phase_peel.py`
 - **円形部品の内径を mm まで(校正 1 個がサブピクセル精度の 500 倍効く)** — Ø10.000 mm の的(半径 100 px)と Ø6.130 mm の穴(61.3 px)を同じ画素ピッチ 0.050 mm/px で合成し、`otsu` → `area_center` の粗い中心 → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` で内径を mm に。★半径の偏り −0.011 px、内径 −0.4 µm。★公称倍率(作動距離 4 % ずれ)で換算すると −246 µm。★円周の 25 % が欠けても半径は返り(−5.0 px)、欠けは `rms`(0.067 → 1.90)と縁の点数(128 → 54)で見張る。 `py -3.11 examples/example_inner_diameter_mm.py`
+- **微細スクラッチの検出と幅計測(幅 1〜3 px は measure_pairs の危険域)** — 被覆率で描いた幅 1〜5 px の暗い傷(ぼけ σ=0.7)を真値に、`lines_gauss` の検出、`measure_pairs` の幅、輝度欠損の積分を並べる。★`lines_gauss` は暗線も明線も同じ輪郭にし(極性も幅も返さない)、`tophat` は暗線に 0 を返す(`bothat` が応答)。★`measure_pairs` は細いほど大きい側へ偏る —— 幅 1 px で +2.25 px(σ=1.0)/ +1.67 px(σ=0.5)、3 px で +0.78 / +0.35、5 px で +0.06 / +0.01 —— しかも失敗を返さない。積分法は全幅で 1e-4 px 以内。mm は基準帯(40 px = 2.000 mm)を同じ op で測った校正値を通すだけ。 `py -3.11 examples/example_scratch_width.py`
 - **部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)** — SDF から解析的に部品を作り、既知の PSF と画素積分で合成して真値を握る。ゼロ点(大津の整数幅)比 **41 倍**、スロット幅の偏り -0.5000 → -0.0113 px、合成不確かさ 0.0196 px = 0.245 um。★壊れるのは「ぼけ」ではなく**エッジ間距離 / PSF 幅**で、3.09 を切ると偏り 0.05 px 超 —— しかも 1.58 まで「対が見つかった」と答え続ける(失敗を返さない)。★**縁の定義を宣言しないと16 px = 200 um 動く**(サブピクセルの 3 桁上)。丸い縁は必ず小さく出る(直径誤差 ≈ -σ²/ρ を実測で確認)。真値をきりの良い整数に置くと副画素の周期誤差が消えることも示す。 `py -3.11 examples/poc_dimensional_inspection.py`
 - **星の位置を測る(理論下限を下回ったら、それは推定できていない印)** — 既知の天球座標に星を置き、既知の投影と PSF で合成するのでプレート定数まで真値が既知。**理論下限(Fisher)を下回った手法はゼロ**で、暗い端で下回って見えるゼロ点は真のずれへの感度 0.038 = 初期値を返しているだけ(散らばり0.2790 px は 1/√12 = 0.2887 と一致)。★予想が外れた 2 件: 既知 PSF の相関は標本化不足に**弱く**(FWHM 1.0 で 4 手法中最悪)、飽和画素を捨てる処置は**捨て方で符号が変わる**(重心なら 10 倍悪化、当てはめなら 121 倍改善)。偽解は 4000 回で 0 件でも「起きない」ではなく「測れていない」—— 総当たり通り数を掛けて初めて期待 5.77 件という使える数字になる。 `py -3.11 examples/poc_star_astrometry.py`
 - **表面粗さ(同じデータで Sa は合格・Sz は不合格になる標本間隔がある)** — PSD を指定して高さ場を合成するので Sq の真値が解析的に分かる。標本間隔 8 µm で**Sa は -3.5%(合格)なのに Sz は -19.8%(不合格)**。Sz は評価領域を広げると単調に増える = 「どれだけ長く見たか」を測っている。**最も頑健なのは Sa ではなくSq**(予想が外れた。折り返しは 2 次モーメントを保つ)。 `py -3.11 examples/poc_surface_roughness.py`
@@ -225,6 +226,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **separation**
 - **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
+- **偏光 4 方向の鏡面除去は金属では効かない(残る量を閉形式で当てる)** — 鏡面の偏光度 p を `fresnel_dielectric` / `fresnel_conductor` の s/p 反射率から出し、部分偏光の掃引を `polarization_render(D + (1-p)S, pS)` で描いて `polarization_separate` に戻す。★誘電体 n=1.5 の Brewster 角 56.3° では p=1、残り 0(3e-16)。30° では p=0.39 で鏡面の 61 % が「拡散」に残る。★アルミ相当(n=1.2, k=7.3)は p=0.05 で **94.8 % が残る** —— 道具は閉形式と 3e-16 で一致し、外れているのは『鏡面 = 完全偏光』の仮定。DoLP 地図も pS/(D+S) と一致。 `py -3.11 examples/example_polarization_metal.py`
 - **多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)** — 層構造を Kubelka–Munk で合成して真値を握り、下絵検出・顔料存在量・褪色前の色の復元を 9 手法で比べる。**可視だけ 16 バンドに割っても RGB と同じ**(再現率 0.118 対 0.119)。近赤外 1 枚は面ごとには完璧(AUC 1.000)なのに全体では 1 本も閾値が引けない —— 絵具ごとの近赤外反射率の差が下絵の信号より大きいため。近赤外の差分は逆に**剥落部で盲目**(0.013)になる。★MNF が PCA に負けた: 雑音共分散を横隣との差で作るので、下絵の上での横差分エネルギー(他所の 3.9 倍)を雑音として白色化していた。 `py -3.11 examples/poc_pigment_unmixing.py`
 - **海氷密接度(混合画素をどう数えるかで答えが変わる)** — ★ゼロ点(1 本のしきい値で 2 値化)は密接度 0.35・相関長 3 セルで **-4.2 ポイント**外し、線形混合分解は +0.02。対照群(標本化そのものの誤差 +0.01)が効いていて、**偏りは標本化ではなく数え方**だと分かる。★★同じしきい値・同じ真値でも塊の大きさで偏りが変わり(-4.2 → -0.2 ポイント)、**周長率で説明がつく**(偏り = -0.80 × 周長率 + 0.015、R² = 0.984)。第 3 成分(薄氷)は必ず配分され、同じ数字が真値の定義で -4.4 / +2.7 ポイントに化ける。 `py -3.11 examples/poc_sea_ice_concentration.py`
 - **蛍光の共局在と漏れ込み(Pearson と Manders は別の場所で壊れる)** — 2 色の小胞画像を真の共局在率 0〜100 % で合成し、漏れ込み [[1,α],[β,1]]・PSF・光子雑音を掛けて Pearson r と Otsu-Manders を測る。★無関係な 2 色が α=β=10 % で r=0.203 / M1=0.132、対称漏れ込みなら r=2α/(1+α²) で 0.5 を超える崖は α=0.282(予想 2−√3=0.268、片側なら 30 % でも 0.289)。★★単染色対照から分離すると r は戻る(0.007)が **Manders は戻らない** —— Otsu より下の裾が落ちて 100 % でも 0.699(閉形式の予想 0.750)。生の M1 が真値を横切る α=0.228 は裾落ちと漏れ込みの相殺。★★ぼけは Pearson を動かさず(0.011→0.089)Manders だけ 0.043→0.946 に押し、σ=2.5 px で Otsu の前景が小胞から細胞体へ飛び移る段差。★Costes のシャッフル検定は漏れ込みだけの r を p=0.000 で有意と言い、Costes 自動しきい値は漏れ込みで台まで落ちて M2=1.000 に崩壊する。 `py -3.11 examples/poc_colocalization_crosstalk.py`
@@ -822,7 +824,7 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` — XLD 輪郭（多角形の頂点列）を region（画素マスク）へ変換する。輪郭点を最近傍画素に打点したのち、``1+2a`` 回の二値膨張（dilation）で線を太らせて連結させる。b は未使用。 · 例: `gallery2d_contour_measure`
 - `lines_color` (halcon: `lines_color`) `color → contour` — カラー画像の線（リッジ）を検出する。HALCON の ``lines_color``（カラーの 線とその幅を検出する）に相当するとされるが、**線幅は推定しない**——輝度 画像上のガウシアン・ラプラシアン応答をしきい値二値化して連結成分を 輪郭として返すだけで、線幅（HALCON 側が返す値）に相当する出力は持たない。 · 例: `gallery2d_contour_measure`
 - `lines_facet` (halcon: `lines_facet`) `image → contour` — 線状構造（リッジ）を検出して輪郭（XLD contour）として返す。実装は Frangi フィルタ（``skimage.filters.frangi``、多スケール σ=1..3 のリッジ強調）で線らしさを求め、閾値 ``0.1+0.4a`` を超える連結成分の画素座標をそのまま輪郭点列として出力する。b は未使用。 · 例: `gallery2d_contour_measure`
-- `lines_gauss` (halcon: `lines_gauss`) `image → contour` — 線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調 フィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群 として返す。HALCON の ``lines_gauss``（Detect lines and their width.）が 本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に 単純化している(線幅の情報は返らない近似)。 · 例: `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
+- `lines_gauss` (halcon: `lines_gauss`) `image → contour` — 線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調 フィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群 として返す。HALCON の ``lines_gauss``（Detect lines and their width.）が 本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に 単純化している(線幅の情報は返らない近似)。 · 例: `example_scratch_width`, `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
 - `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` — 輪郭の各点を画像中心からの極座標(半径・角度)に変換し、疑似的な画素 座標(半径を ``H`` or ``W`` の大きい方でスケール、角度を [0,1] に写像)へ 詰め直す。HALCON の ``polar_trans_contour_xld``（Transform a contour in an annular arc to polar coordinates.）に相当する簡易な座標変換。 · 例: `gallery2d_contour_measure`
 - `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` — 輪郭の各点に、列位置に応じた疑似的な遠近収縮(``d = 1 + 0.3*a*(col - 中心)/幅``で各点の座標を割る)を適用する。真の 3x3 ホモグラフィ行列による 射影変換ではなく、片方向だけの簡易な縮尺変化で近似している点に注意。 HALCON の ``projective_trans_contour_xld``（Apply a projective transformation to an XLD contour.）の代役。 · 例: `gallery2d_contour_measure`
 - `select_contours` (halcon: `select_contours_xld`) `contour → contour` — 点数（長さ）でフィルタして XLD 輪郭を選別する。HALCON の ``select_contours_xld``（Select XLD contours according to several features.）に相当。 · 例: `gallery2d_contour_measure`, `quickstart`
@@ -1216,7 +1218,7 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
 
 #### 2d / morphology(36)
-- `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
+- `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`
 - `cv_blackhat` (halcon: `gray_bothat`) `image → image` — ブラックハット変換(black-hat、OpenCV 実装)。「閉処理結果 − 元画像」を計算し、暗い背景の上にある、構造要素より小さい暗い特徴だけを抽出する(cv_tophat の暗版)。 · 例: `gallery2d_morphology`, `poc_fresco_craquelure`
 - `cv_close` (halcon: `gray_closing`) `image → image` — グレー値モルフォロジー閉処理(closing、OpenCV 実装)。膨張してから収縮することで、構造要素より小さい暗い穴・隙間を埋める(cv_open の逆の効果)。 · 例: `gallery2d_morphology`
 - `cv_dilate` (halcon: `gray_dilation`) `image → image` — グレー値モルフォロジー膨張(dilation、OpenCV 実装)。近傍の最大値へ置き換える操作で、明るい領域を拡大・暗い領域を縮小する(cv_erode の逆)。 · 例: `gallery2d_morphology`
@@ -1247,7 +1249,7 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `persistence_map` `image → image` — **閾値を選ばずに**「山の目立ち具合」を測る(0 次元パーシステンス)。 · 例: `gallery2d_morphology`
 - `runlength_smear` `image → image` — **走査長平滑化(RLSA)**。行内の字の隙間を埋めて、字を「行」の塊にまとめる。 · 例: `gallery2d_morphology`
 - `sk_area_opening` `image → image` — 面積オープニング(area opening)。通常のモルフォロジー的開処理が構造要素の形で小さい明部を削るのに対し、こちらは面積(連結画素数)だけで判定し、指定面積未満の明るい連結成分を消す —— 形状に依らず「小さい」ものを落とせる。 · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
-- `tophat` (halcon: `gray_tophat`) `image → image` — ホワイトトップハット（原画像 − オープニング）。HALCON の ``gray_tophat``（Perform a gray value top hat transformation on an image.）に相当。 · 例: `degenerate_inputs`, `gallery2d_morphology`, `poc_search_sweep_width`
+- `tophat` (halcon: `gray_tophat`) `image → image` — ホワイトトップハット（原画像 − オープニング）。HALCON の ``gray_tophat``（Perform a gray value top hat transformation on an image.）に相当。 · 例: `degenerate_inputs`, `example_scratch_width`, `gallery2d_morphology`, `poc_search_sweep_width`
 - `xsk2_diameter_opening` `image → image` — 直径オープニング（面積オープニングの直径版、微小な明るい構造の除去）。``skimage.morphology.diameter_opening`` を呼ぶ。 · 例: `gallery2d_morphology`
 - `xsk2_reconstruction` `image → image` — モルフォロジー再構成（reconstruction by dilation）。 ``skimage.morphology.reconstruction`` を method="dilation" で呼ぶ。 · 例: `gallery2d_morphology`
 - `xsk3_area_closing` `image → image` — 面積クロージング(skimage ``morphology.area_closing``)。面積が閾値未満の暗い領域(窪み)だけを埋める、サイズベースのモルフォロジー演算 —— 通常のクロージングと違い構造要素の形状ではなく連結成分の面積で対象を選ぶ。 · 例: `gallery2d_morphology`
@@ -2519,10 +2521,10 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`
 
 #### optics / interface(4)
-- `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `glass_and_mirror_optics`
+- `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`
 - `critical_angle_deg` `入力なし → measurement` — 全反射の臨界角 [deg] = asin(n2/n1)。n1 > n2 でなければ ValueError(存在しない)。 · 例: `glass_and_mirror_optics`
-- `fresnel_conductor` `signal → signal` — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。 · 例: `glass_and_mirror_optics`, `poc_material_optical_library`
-- `fresnel_dielectric` `signal → signal` — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。 · 例: `glass_and_mirror_optics`, `poc_pv_thermal_survey`, `poc_shape_from_polarization`
+- `fresnel_conductor` `signal → signal` — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`, `poc_material_optical_library`
+- `fresnel_dielectric` `signal → signal` — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`, `poc_pv_thermal_survey`, `poc_shape_from_polarization`
 
 #### optics / light_transport(11)
 - `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`
@@ -2768,8 +2770,8 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
 
 #### specular / polarization(4)
-- `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
-- `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `poc_polarization_specular`, `specular_photometric`
+- `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `example_polarization_metal`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `poc_polarization_specular`, `specular_photometric`
 - `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 
@@ -4504,8 +4506,8 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 #### measure1d / caliper(6)
 - `fuzzy_measure_pairing` `image2d × measurehandle → table` — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 - `gen_measure_arc` `入力なし → measurehandle` — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
-- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
-- `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
+- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
 - `measure_pos` `image2d × measurehandle → table` — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
 - `translate_measure` `measurehandle → measurehandle` — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
 
@@ -4518,9 +4520,9 @@ _計 3195 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `create_metrology_model` `入力なし → metrologymodel` — 空の計測モデルを作る(create_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 
 #### measure1d / scale(3)
-- `mm_per_px_from_reference` `measurement → measurement` — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`
+- `mm_per_px_from_reference` `measurement → measurement` — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
 - `pixel_to_world` `measurement → measurement` — 画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。 · 例: `example_inner_diameter_mm`
-- `table_px_to_mm` `table → table` — 計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。 · 例: `example_inner_diameter_mm`
+- `table_px_to_mm` `table → table` — 計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
 
 ### roughness(6 ops / 3 categories)
 

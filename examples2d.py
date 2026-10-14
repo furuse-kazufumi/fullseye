@@ -621,6 +621,21 @@ EXAMPLES = [
                 "`mm_per_px_from_reference` → `pixel_to_world` で内径を mm に。★半径の偏り −0.011 px、内径 −0.4 µm。"
                 "★公称倍率(作動距離 4 % ずれ)で換算すると −246 µm。★円周の 25 % が欠けても半径は返り(−5.0 px)、"
                 "欠けは `rms`(0.067 → 1.90)と縁の点数(128 → 54)で見張る。"},
+    {"id": "example_scratch_width", "task": "metrology", "data": "synthetic",
+     "name": "微細スクラッチの検出と幅計測(幅 1〜3 px は measure_pairs の危険域)",
+     "summary": "被覆率で描いた幅 1〜5 px の暗い傷(ぼけ σ=0.7)を真値に、`lines_gauss` の検出、"
+                "`measure_pairs` の幅、輝度欠損の積分を並べる。★`lines_gauss` は暗線も明線も同じ輪郭にし"
+                "(極性も幅も返さない)、`tophat` は暗線に 0 を返す(`bothat` が応答)。"
+                "★`measure_pairs` は細いほど大きい側へ偏る —— 幅 1 px で +2.25 px(σ=1.0)/ +1.67 px(σ=0.5)、"
+                "3 px で +0.78 / +0.35、5 px で +0.06 / +0.01 —— しかも失敗を返さない。積分法は全幅で 1e-4 px 以内。"
+                "mm は基準帯(40 px = 2.000 mm)を同じ op で測った校正値を通すだけ。"},
+    {"id": "example_polarization_metal", "task": "separation", "data": "synthetic",
+     "name": "偏光 4 方向の鏡面除去は金属では効かない(残る量を閉形式で当てる)",
+     "summary": "鏡面の偏光度 p を `fresnel_dielectric` / `fresnel_conductor` の s/p 反射率から出し、部分偏光の掃引を "
+                "`polarization_render(D + (1-p)S, pS)` で描いて `polarization_separate` に戻す。"
+                "★誘電体 n=1.5 の Brewster 角 56.3° では p=1、残り 0(3e-16)。30° では p=0.39 で鏡面の 61 % が「拡散」に残る。"
+                "★アルミ相当(n=1.2, k=7.3)は p=0.05 で **94.8 % が残る** —— 道具は閉形式と 3e-16 で一致し、"
+                "外れているのは『鏡面 = 完全偏光』の仮定。DoLP 地図も pS/(D+S) と一致。"},
     # -- PoC 第 6 波 ------------------------------------------------------------- #
     {"id": "poc_dimensional_inspection", "task": "metrology", "data": "synthetic",
      "name": "部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)",
