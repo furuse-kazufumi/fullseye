@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3227,
+ "n_notes": 3233,
  "notes": {
   "vol_dilate": [
    {
@@ -27150,6 +27150,54 @@
     "category": "illumination",
     "out": "pairs",
     "path": "docs/ops/optics/illumination/lighting_sweep.md"
+   }
+  ],
+  "solid_angle_boundaries": [
+   {
+    "op": "solid_angle_boundaries",
+    "dim": "optics",
+    "category": "illumination",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/solid_angle_boundaries.md"
+   }
+  ],
+  "solid_angle_brightness": [
+   {
+    "op": "solid_angle_brightness",
+    "dim": "optics",
+    "category": "illumination",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/solid_angle_brightness.md"
+   }
+  ],
+  "solid_angle_light": [
+   {
+    "op": "solid_angle_light",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/solid_angle_light.md"
+   }
+  ],
+  "solid_angle_render": [
+   {
+    "op": "solid_angle_render",
+    "dim": "optics",
+    "category": "illumination",
+    "in": "normalmap × table",
+    "out": "image2d",
+    "path": "docs/ops/optics/illumination/solid_angle_render.md"
+   }
+  ],
+  "solid_angle_sweep": [
+   {
+    "op": "solid_angle_sweep",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "pairs",
+    "path": "docs/ops/optics/illumination/solid_angle_sweep.md"
    }
   ],
   "edge_spread": [

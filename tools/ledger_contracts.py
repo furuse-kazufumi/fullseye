@@ -292,6 +292,19 @@ def _optics_kit():
     return OS, cam, scene, light
 
 
+def _cone_light():
+    import illumdesign
+    return illumdesign.solid_angle_light(4.0, tilt_deg=1.0)
+
+
+def _tilted_normals(rng, size=16):
+    """A small normal map with random tilts of a few degrees (a probe for solid_angle_render)."""
+    import numpy as np
+    t = rng.normal(0.0, 0.05, (size, size, 2))
+    n = np.dstack([t, np.ones((size, size))])
+    return n / np.linalg.norm(n, axis=2, keepdims=True)
+
+
 def _lens(name="singlet"):
     import raytrace
     return raytrace.example_system(name)
@@ -370,6 +383,10 @@ def _optics_builders():
         # illumination designs
         "irradiance_map": lambda pool, rng: ([_optics_kit()[3]], {"shape": (16, 16)}),
         "defect_contrast": lambda pool, rng: ([_optics_kit()[3]], {"n_azimuth": 4}),
+        # cone lights (2026-10-15): the light must carry the 'solid_angle' record of solid_angle_light
+        "solid_angle_boundaries": lambda pool, rng: ([_cone_light()], {}),
+        "solid_angle_brightness": lambda pool, rng: ([_cone_light()], {"n_samples": 256}),
+        "solid_angle_render": lambda pool, rng: ([_tilted_normals(rng), _cone_light()], {"n_samples": 32}),
         # optical scenes
         "camera_rays": os_call(lambda OS, cam, sc, li, rng: ([cam], {})),
         "render_optscene": os_call(lambda OS, cam, sc, li, rng: ([sc, cam, [li]], {})),

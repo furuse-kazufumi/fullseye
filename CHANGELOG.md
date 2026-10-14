@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 照明の円錐と観察の NA(illumination に solid_angle 5 op + PoC)
+- `illumdesign` に 5 op(`opsoptics` の `illumination`): `solid_angle_light`(各点に同じ光の円錐が届く遠方場の照明。半角・傾き・方位・放射輝度、`irradiance_map` / `defect_contrast` にも渡せる)、`solid_angle_boundaries`(見えない傾き |α − β|/2・暗くなる傾き (α + β)/2・平らな地の明るさ・感度・regime の閉形式)、`solid_angle_brightness`(傾きごとの明るさ: 2 つの球冠の交わりの閉形式と、レンズの瞳を射影立体角で重みづけた数値積分。狭い側の円錐で標本を取るので台地が分解できる。微小面の粗さ σ は閉形式をガウスで平均した決定的な格子積分)、`solid_angle_sweep`(α に対するコントラスト)、`solid_angle_render`(法線マップをその照明とテレセンで撮る、粗さの地図つき)。
+- PoC `poc_illumination_cone_vs_na`(15 門、図 5 枚 + GIF): 閉形式と瞳の数値積分の差 0.002、打痕(最大傾き 0.25°)の画像のコントラストが閉形式と 1e-4、α = 0.5° と 7° で打痕が消える、ヘアラインの筋を消して傷を黒くする α の帯(3.5〜6.1°)、円錐を β 傾けて傾きの符号を読む、★うねり ±0.25° と粗さ σ で設計が効かなくなる。再利用できるライセンスの実画像(照明の立体角だけを変えた比較写真)は見つからず、実画像との突合は未了。
+- RAG: 文献層のテーマ表(光学・照明・撮像系、外観欠陥の検出)と英訳の文脈に 5 op、評価問題集に日英 1 問ずつ。
+
 ### Added — ピクセルシフト撮像(pixelshift 6 op + PoC)
 - `pixelshift`(`opsoptics` の新カテゴリ `pixelshift`、6 op): `pixel_shift_pattern`(公称のシフト列 + アクチュエータの誤差)、`pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒、枚ごとのシーンで動く被写体)、`pixel_shift_merge`(公称のシフトで格子へ、補間なし、埋められないシフト列は拒否、動き検出で 1 枚のデモザイクに差し戻し)、`pixel_shift_motion_mask`、`false_color_metric`、`pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。
 - PoC `poc_pixel_shift`(28 門、図 10 枚 + GIF): 1 画素 4 枚で偽色 0(定義上)、半画素で折り返しの山が f₀ に戻る、★MTF50 は 1 枚とシフトで同じ、レンズ律速(Q* = 1.47 で得が尽きる)、シフト誤差の閉形式、動く被写体の分かれ目(0.25 px/枚 は 4 枚が勝ち、0.5 px/枚 から逆転)、√N と動きの裏返し。★drizzle の `shifts` はセンサのシフトと符号が逆(門で固定)。

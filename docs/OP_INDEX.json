@@ -1,8 +1,8 @@
 {
- "n_ops": 3222,
+ "n_ops": 3227,
  "tiers": {
   "color": 12,
-  "ledger": 2269,
+  "ledger": 2274,
   "nary": 17,
   "registry": 924
  },
@@ -24380,6 +24380,68 @@
     "points",
     "points"
    ]
+  },
+  {
+   "name": "solid_angle_boundaries",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "solid_angle_brightness",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "solid_angle_light",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "solid_angle_render",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "image2d",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "normalmap",
+    "table"
+   ]
+  },
+  {
+   "name": "solid_angle_sweep",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "space_filling_curve",

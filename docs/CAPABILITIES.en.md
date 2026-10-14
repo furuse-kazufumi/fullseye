@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 61 capabilities**
+**Currently 62 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,6 +31,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -395,7 +396,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (10)
+## Light and colour (11)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -416,6 +417,18 @@ Seven ops in `fiberoptics` (category `fiber`): group index and material dispersi
 Operators: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
 
 Runnable: `poc_fiber_light_guide`
+
+### [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md)
+
+Five ops in `illumdesign` (category `illumination`) for lights defined by the cone of directions they deliver to every point (the far-field / Koehler limit), against a camera of object-side NA. On a specular facet the reflection moves the cone by 2θ without changing it, so the brightness is the intersection of two spherical caps, a closed form: slopes below |α − β|/2 do not show, slopes beyond (α + β)/2 go dark. The ops return the light, the closed-form slope thresholds, the brightness per slope (closed form and a projected-solid-angle pupil integral, with Gaussian micro-facet roughness), the contrast versus the cone half-angle, and an image of a normal map under the light. The PoC checks the closed form against the pupil integral (0.002) and against contrasts measured from rendered images (0.0004), chooses a cone that hides hairline marks while blackening a 4° scratch, reads the slope sign with a tilted cone, and shows waviness and roughness defeating the design.
+
+Operators: `solid_angle_light`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_sweep`, `solid_angle_render`
+
+Pipeline: [`solid_angle_light`](ops/optics/illumination/solid_angle_light.md) → [`solid_angle_boundaries`](ops/optics/illumination/solid_angle_boundaries.md) → [`solid_angle_sweep`](ops/optics/illumination/solid_angle_sweep.md) → [`solid_angle_brightness`](ops/optics/illumination/solid_angle_brightness.md) → [`solid_angle_render`](ops/optics/illumination/solid_angle_render.md)
+
+Alternatives: [`light_source`](ops/optics/illumination/light_source.md), [`defect_contrast`](ops/optics/illumination/defect_contrast.md), [`lighting_sweep`](ops/optics/illumination/lighting_sweep.md), [`illumination_design`](ops/optics/illumination/illumination_design.md), [`micro_normals`](ops/optics/finish/micro_normals.md), [`blast_normals`](ops/optics/finish/blast_normals.md)
+
+Runnable: `poc_illumination_cone_vs_na`
 
 ### [One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)](capabilities/material-optical-property-library.md)
 

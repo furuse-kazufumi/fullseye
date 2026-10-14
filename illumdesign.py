@@ -644,3 +644,457 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     return {"ranking": rows, "recommended": rows[0]["candidate"], "rule_of_thumb": rule,
             "agrees_with_rule": rows[0]["candidate"] == rule, "best_ring_elevation_deg": best_el,
             "surface": sp, "defect": defect, "slope_deg": float(slope_deg)}
+
+
+# --------------------------------------------------------------------------- #
+# illumination cone versus observation cone (2026-10-15)
+# --------------------------------------------------------------------------- #
+# A light whose *cone of directions* (half-angle and axis) is the same at every
+# point of the part — the far-field / Koehler limit an illuminator with a lens
+# in front of the emitter approximates — against a camera whose object-side
+# cone is set by its NA. This is the illumination-NA / imaging-NA relation of
+# microscopy and of schlieren optics, applied to a specular part. On a smooth
+# specular facet the reflection maps the illumination cone to another cone of
+# the same half-angle (a reflection is an isometry of the sphere of
+# directions), so the brightness the camera records is the share of its pupil
+# covered by the reflected cone: the intersection of two spherical caps, a
+# closed form. Tilting the facet by θ moves the reflected cone by 2θ (on axis).
+# With illumination half-angle α and observation half-angle β:
+#   |2θ| + β <= α  → the full pupil is lit: the facet is as bright as the flat
+#                    ground and the slope is invisible,
+#   |2θ| >= α + β  → the pupil is empty: dark,
+#   in between     → partial brightness that changes with θ: the slope shows.
+# (when α < β the source cone fits inside the pupil and |2θ| + α <= β is the
+# plateau instead). Matching α to β makes the smallest slopes visible; widening
+# α (or narrowing it far below β) hides the slopes below |α − β|/2; tilting the cone axis by ψ puts the flat ground on
+# the edge so that the *sign* of the slope reads as bright / dark (the
+# schlieren knife edge).
+
+MAX_SOLID_SAMPLES = 1 << 14
+MAX_RENDER_WORK = 1 << 26
+
+
+def _solid(light):
+    """The ``solid_angle`` record of a light from :func:`solid_angle_light`."""
+    if not isinstance(light, dict) or not isinstance(light.get("solid_angle"), dict):
+        raise ValueError("expected the dict returned by solid_angle_light() (it carries a 'solid_angle' record)")
+    sa = light["solid_angle"]
+    a = _finite(sa.get("half_angle_deg"), "solid_angle.half_angle_deg", positive=True)
+    t = _finite(sa.get("tilt_deg"), "solid_angle.tilt_deg", nonneg=True)
+    az = _finite(sa.get("azimuth_deg"), "solid_angle.azimuth_deg")
+    L = _finite(sa.get("radiance"), "solid_angle.radiance", nonneg=True)
+    if a >= 90.0 or a + t > 90.0:
+        raise ValueError("solid_angle: half_angle + tilt must stay within 90 deg")
+    return a, t, az, L
+
+
+def _cone_axis(tilt_deg, azimuth_deg):
+    t, p = math.radians(tilt_deg), math.radians(azimuth_deg)
+    return np.array([math.sin(t) * math.cos(p), math.sin(t) * math.sin(p), math.cos(t)])
+
+
+def _view_half_angle(view_na):
+    na = _finite(view_na, "view_na", positive=True)
+    if na >= 1.0:
+        raise ValueError("view_na must be < 1, got %r" % view_na)
+    return math.degrees(math.asin(na))
+
+
+def solid_angle_light(half_angle_deg=10.0, tilt_deg=0.0, azimuth_deg=0.0, radiance=1.0,
+                      distance_mm=100.0, n=64):
+    """A light defined by the cone of directions it delivers to every point (``table``).
+
+    Every point of the part receives light from the same cone: axis tilted
+    *tilt_deg* from the camera axis (+z) toward *azimuth_deg*, half-angle
+    *half_angle_deg* (the illumination NA is ``sin`` of it), uniform *radiance*
+    inside it. This is the far-field (Koehler) limit that an illuminator with
+    a lens in front of the emitter approximates; a coaxial light through a
+    half mirror is the case ``tilt_deg = 0``. The record ``solid_angle``
+    carries the cone for :func:`solid_angle_brightness`,
+    :func:`solid_angle_boundaries`, :func:`solid_angle_sweep` and
+    :func:`solid_angle_render`; the dict also holds *n* emitters on a disc at
+    *distance_mm* that subtends the same cone at the origin, so
+    :func:`irradiance_map` and :func:`defect_contrast` accept it as well (they
+    then see a near-field disc, not the far-field cone).
+
+    Returns the light dict (``kind = "solid_angle"``) with ``solid_angle`` =
+    ``{half_angle_deg, tilt_deg, azimuth_deg, radiance, axis, solid_angle_sr,
+    projected_solid_angle_sr}``; ``solid_angle_sr = 2π(1 − cos α)`` and the
+    projected solid angle ``π sin²α`` is the irradiance a surface facing the
+    cone receives per unit radiance. Fails closed (``ValueError``) when the
+    cone would reach below the part plane (``half_angle + tilt > 90``).
+    """
+    a = _finite(half_angle_deg, "half_angle_deg", positive=True)
+    t = _finite(tilt_deg, "tilt_deg", nonneg=True)
+    az = _finite(azimuth_deg, "azimuth_deg")
+    L = _finite(radiance, "radiance", nonneg=True)
+    dist = _finite(distance_mm, "distance_mm", positive=True)
+    nn = _count(n, "n", 1, MAX_EMITTERS)
+    if a >= 90.0 or a + t > 90.0:
+        raise ValueError("half_angle_deg + tilt_deg must be <= 90 (the cone must stay above the part), got %g + %g" % (a, t))
+    axis = _cone_axis(t, az)
+    # disc of emitters perpendicular to the axis at distance dist, radius dist*tan(a)
+    u = np.cross(axis, [0.0, 0.0, 1.0]) if t > 1e-9 else np.array([1.0, 0.0, 0.0])
+    u = u / np.linalg.norm(u)
+    w = np.cross(axis, u)
+    r = dist * math.tan(math.radians(a))
+    k = np.arange(nn)
+    rr = r * np.sqrt((k + 0.5) / nn)
+    ph = k * math.pi * (3.0 - math.sqrt(5.0))
+    E = dist * axis[None, :] + rr[:, None] * (np.cos(ph)[:, None] * u[None, :] + np.sin(ph)[:, None] * w[None, :])
+    D = -E / np.linalg.norm(E, axis=1, keepdims=True)
+    sa = math.radians(a)
+    rec = {"half_angle_deg": a, "tilt_deg": t, "azimuth_deg": az, "radiance": L,
+           "axis": [float(v) for v in axis], "solid_angle_sr": 2.0 * math.pi * (1.0 - math.cos(sa)),
+           "projected_solid_angle_sr": math.pi * math.sin(sa) ** 2}
+    # intensity per emitter so that the disc's radiance equals L: I = L * area / n
+    I0 = max(L, 1e-300) * math.pi * r * r / nn
+    return {"kind": "solid_angle", "intensity": I0, "cos_exponent": 1.0, "emitters": E, "directions": D,
+            "height_mm": float(E[:, 2].mean()), "radius_mm": r, "solid_angle": rec}
+
+
+def _cap_overlap(a, b, d):
+    """Area (sr) of the intersection of two spherical caps of angular radii a, b (rad), centres d apart."""
+    if d >= a + b:
+        return 0.0
+    if d <= abs(a - b):
+        m = min(a, b)
+        return 2.0 * math.pi * (1.0 - math.cos(m))
+    ca, cb, cd = math.cos(a), math.cos(b), math.cos(d)
+    sa, sb, sd = math.sin(a), math.sin(b), math.sin(d)
+
+    def ac(x):
+        return math.acos(max(-1.0, min(1.0, x)))
+    return (2.0 * math.pi - 2.0 * ac((cd - ca * cb) / (sa * sb))
+            - 2.0 * ca * ac((cb - cd * ca) / (sd * sa))
+            - 2.0 * cb * ac((ca - cd * cb) / (sd * sb)))
+
+
+def _cap_overlap_vec(a, b, d):
+    """:func:`_cap_overlap` over an array of centre distances *d* (rad)."""
+    d = np.asarray(d, dtype=np.float64)
+    out = np.zeros(d.shape)
+    full = d <= abs(a - b)
+    out[full] = 2.0 * math.pi * (1.0 - math.cos(min(a, b)))
+    part = (~full) & (d < a + b)
+    if np.any(part):
+        dd = d[part]
+        ca, cb, cd = math.cos(a), math.cos(b), np.cos(dd)
+        sa, sb, sd = math.sin(a), math.sin(b), np.sin(dd)
+        ac = lambda x: np.arccos(np.clip(x, -1.0, 1.0))  # noqa: E731
+        out[part] = (2.0 * math.pi - 2.0 * ac((cd - ca * cb) / (sa * sb))
+                     - 2.0 * ca * ac((cb - cd * ca) / (sd * sa))
+                     - 2.0 * cb * ac((ca - cd * cb) / (sd * sb)))
+    return out
+
+
+def _closed_brightness_rough(alpha, beta, axis, n0, sigma_deg, cells=81):
+    """The cap-intersection brightness averaged over Gaussian micro-facet tilts (σ per axis).
+
+    The micro-facet adds a tilt δ = (δx, δy) to the facet normal (``n0 + δ``,
+    renormalised). The integrand is the closed-form share — non-zero only on a
+    disc of δ of radius about (α + β)/2 around the tilt δ* that mirrors the cone
+    axis onto the camera axis — times the Gaussian density. A regular
+    *cells* × *cells* midpoint grid over the intersection of that disc's box and
+    the ±5σ box resolves both the narrow cone (σ ≫ α + β) and the narrow
+    Gaussian (σ ≪ α + β); Gauss–Hermite nodes would step over a cone narrower
+    than σ.
+    """
+    if sigma_deg <= 0.0:
+        return _closed_brightness(alpha, beta, axis, n0)[0]
+    sg = math.radians(sigma_deg)
+    h = axis + np.array([0.0, 0.0, 1.0])
+    h = h / np.linalg.norm(h)
+    lam = n0[2] / h[2]
+    dstar = lam * h[:2] - n0[:2]
+    rho = 1.3 * math.radians(alpha + beta) / 2.0 * lam
+    lo = np.maximum(dstar - rho, -5.0 * sg)
+    hi = np.minimum(dstar + rho, 5.0 * sg)
+    if np.any(hi <= lo):
+        return 0.0
+    k = int(cells)
+    gx = lo[0] + (np.arange(k) + 0.5) * (hi[0] - lo[0]) / k
+    gy = lo[1] + (np.arange(k) + 0.5) * (hi[1] - lo[1]) / k
+    DX, DY = np.meshgrid(gx, gy)
+    dA = (hi[0] - lo[0]) * (hi[1] - lo[1]) / (k * k)
+    W = np.exp(-(DX * DX + DY * DY) / (2.0 * sg * sg)) / (2.0 * math.pi * sg * sg) * dA
+    N = np.stack([n0[0] + DX, n0[1] + DY, np.full(DX.shape, n0[2])], -1)
+    N = N / np.linalg.norm(N, axis=-1, keepdims=True)
+    s2 = 2.0 * (N @ axis)[..., None] * N - axis
+    d = np.arccos(np.clip(s2[..., 2], -1.0, 1.0))
+    a, b = math.radians(alpha), math.radians(beta)
+    share = _cap_overlap_vec(a, b, d) / (2.0 * math.pi * (1.0 - math.cos(b)))
+    share = np.where(s2[..., 2] > 0.0, share, 0.0)
+    return float(np.sum(W * share))
+
+
+def _facet_normal(slope_deg, azimuth_deg):
+    s, p = math.radians(slope_deg), math.radians(azimuth_deg)
+    return np.array([math.sin(s) * math.cos(p), math.sin(s) * math.sin(p), math.cos(s)])
+
+
+def _closed_brightness(alpha, beta, axis, nrm):
+    """Share of the observation cap (half-angle beta about +z) covered by the mirrored illumination cap."""
+    s2 = 2.0 * float(np.dot(axis, nrm)) * nrm - axis          # the cone axis mirrored by the facet
+    d = math.acos(max(-1.0, min(1.0, float(s2[2]))))
+    if s2[2] <= 0.0:
+        return 0.0, math.degrees(d)
+    a, b = math.radians(alpha), math.radians(beta)
+    return _cap_overlap(a, b, d) / (2.0 * math.pi * (1.0 - math.cos(b))), math.degrees(d)
+
+
+def _pupil_samples(view_na, k):
+    """k points uniform over the pupil disc of radius NA in direction cosines (projected solid angle)."""
+    j = np.arange(k)
+    rr = view_na * np.sqrt((j + 0.5) / k)
+    ph = j * math.pi * (3.0 - math.sqrt(5.0))
+    px, py = rr * np.cos(ph), rr * np.sin(ph)
+    return np.stack([px, py, np.sqrt(1.0 - px * px - py * py)], 1)
+
+
+def _cap_samples(axis, alpha_deg, k):
+    """k directions uniform in solid angle over the cap of half-angle alpha about *axis*."""
+    j = np.arange(k)
+    ca = math.cos(math.radians(alpha_deg))
+    cz = 1.0 - (1.0 - ca) * (j + 0.5) / k
+    sz = np.sqrt(np.clip(1.0 - cz * cz, 0.0, None))
+    ph = j * math.pi * (3.0 - math.sqrt(5.0))
+    u = np.cross(axis, [0.0, 0.0, 1.0])
+    if np.linalg.norm(u) < 1e-12:
+        u = np.array([1.0, 0.0, 0.0])
+    u = u / np.linalg.norm(u)
+    w = np.cross(axis, u)
+    return (cz[:, None] * axis[None, :] + (sz * np.cos(ph))[:, None] * u[None, :]
+            + (sz * np.sin(ph))[:, None] * w[None, :])
+
+
+def _specular_share(N, alpha_deg, view_na, axis, k):
+    """Share of the pupil that sees the mirrored cone, for normals N (..., k, 3): one micro-facet per sample.
+
+    The quadrature runs over the *narrower* cone so that a plateau (one cone
+    wholly inside the other) is resolved: over the pupil (uniform in direction
+    cosines, i.e. projected solid angle) when α ≥ β — the share is the mean of
+    [mirrored ray inside the source cone]; over the source cap (uniform in solid
+    angle) when α < β — each source direction is mirrored into the view space
+    and counted with its cosine, ``share = Ω_α/(π NA²) · mean([inside pupil]·v_z)``.
+    """
+    beta = math.degrees(math.asin(view_na))
+    if alpha_deg >= beta:
+        V = _pupil_samples(view_na, k)
+        vn = np.sum(V * N, axis=-1)
+        R = 2.0 * vn[..., None] * N - V
+        inside = (np.sum(R * axis, axis=-1) >= math.cos(math.radians(alpha_deg))) & (vn > 0.0) & (R[..., 2] > 0.0)
+        return inside.mean(axis=-1)
+    S = _cap_samples(axis, alpha_deg, k)
+    sn = np.sum(S * N, axis=-1)
+    Vv = 2.0 * sn[..., None] * N - S
+    inside = ((Vv[..., 0] ** 2 + Vv[..., 1] ** 2) <= view_na * view_na) & (Vv[..., 2] > 0.0) & (sn > 0.0)
+    om = 2.0 * math.pi * (1.0 - math.cos(math.radians(alpha_deg)))
+    return om / (math.pi * view_na * view_na) * np.mean(inside * Vv[..., 2], axis=-1)
+
+
+def solid_angle_brightness(light, view_na=0.1, slopes_deg=(0.0, 1.0, 2.0, 5.0, 10.0), slope_azimuth_deg=0.0,
+                           roughness_deg=0.0, n_samples=4096, seed=0):
+    """Brightness of a smooth or rough specular facet versus its slope (``table``).
+
+    For each facet slope θ in *slopes_deg* (tilted toward *slope_azimuth_deg*;
+    a negative slope tilts the other way) the camera (object-side NA
+    *view_na*, half-angle β = asin NA, on the +z axis) records the share of its
+    pupil that sees the mirrored illumination cone of *light*
+    (:func:`solid_angle_light`, half-angle α, axis tilt ψ):
+
+    * ``closed_form`` — the intersection of two spherical caps (half-angles α
+      and β, centres ``d`` apart; ``d = 2θ`` for an on-axis cone) divided by
+      the cap of the pupil: exact for a mirror facet when the pupil is
+      weighted by solid angle. With *roughness_deg* σ > 0 the same closed
+      form averaged over the Gaussian micro-facet tilts on a fine midpoint
+      grid around the cone (deterministic: no sampling noise);
+    * ``numeric`` — *n_samples* rays over the narrower of the two cones (the
+      pupil disc, uniform in direction cosines = the projected-solid-angle
+      weighting of a lens, when α ≥ β; the source cap, each direction mirrored
+      into the view space and weighted by its cosine, when α < β), each
+      mirrored by the facet; with *roughness_deg* σ > 0 each ray meets a
+      micro-facet tilted by a Gaussian slope (σ per axis, seeded by *seed*):
+      the satin / blasted surface on which the boundary smears out.
+
+    Returns ``{"rows": [{slope_deg, closed_form, numeric,
+    centre_distance_deg}], ...}``. At σ = 0 the two columns differ only by the
+    pupil weighting (``O(β²)``) and the quadrature. Brightness is relative to
+    source radiance × Fresnel reflectance (1 = the whole pupil lit).
+    """
+    alpha, psi, az, _L = _solid(light)
+    beta = _view_half_angle(view_na)
+    na = float(view_na)
+    k = _count(n_samples, "n_samples", 16, MAX_SOLID_SAMPLES)
+    sig = _finite(roughness_deg, "roughness_deg", nonneg=True)
+    if sig > 30.0:
+        raise ValueError("roughness_deg must be <= 30 (small-slope micro-facet model)")
+    saz = _finite(slope_azimuth_deg, "slope_azimuth_deg")
+    seq = slopes_deg if isinstance(slopes_deg, (list, tuple, np.ndarray)) else [slopes_deg]
+    slopes = [_finite(s, "slope") for s in seq]
+    if not slopes or any(abs(s) >= 45.0 for s in slopes):
+        raise ValueError("slopes_deg must be a non-empty list of angles with |slope| < 45")
+    axis = _cone_axis(psi, az)
+    J = np.random.default_rng(int(seed)).standard_normal((k, 2)) * math.radians(sig)
+    rows = []
+    for s in slopes:
+        n0 = _facet_normal(s, saz)
+        cf, d = _closed_brightness(alpha, beta, axis, n0)
+        if sig > 0.0:
+            cf = _closed_brightness_rough(alpha, beta, axis, n0, sig)
+        N = n0[None, :] + np.stack([J[:, 0], J[:, 1], np.zeros(k)], 1)
+        N = N / np.linalg.norm(N, axis=1, keepdims=True)
+        num = float(_specular_share(N, alpha, na, axis, k))
+        rows.append({"slope_deg": float(s), "closed_form": float(cf), "numeric": num, "centre_distance_deg": d})
+    return {"rows": rows, "illum_half_angle_deg": alpha, "illum_tilt_deg": psi, "view_half_angle_deg": beta,
+            "view_na": na, "roughness_deg": sig, "n_samples": k}
+
+
+def solid_angle_boundaries(light, view_na=0.1):
+    """Closed-form slope thresholds of a smooth specular facet (``table``).
+
+    Illumination cone half-angle α, axis tilt ψ (from *light*); observation
+    half-angle β = asin *view_na*. A facet tilted by θ in the plane of the
+    cone tilt moves the mirrored cone axis to ``d = |2θ − ψ|`` from the camera
+    axis. Returned:
+
+    * ``flat_brightness`` — the flat surface (θ = 0), from the cap
+      intersection: 1 when ``ψ + β ≤ α``, ``Ω_α/Ω_β`` when the whole
+      (narrower) source cone sits inside the pupil, 0 when ``ψ ≥ α + β``;
+    * ``invisible_below_deg`` — ``max(|α − β| − ψ, 0)/2``: every |θ| below it
+      keeps one cap wholly inside the other, so the brightness does not change
+      and such slopes do not show at all. It is 0 only for matched cones
+      (α = β, or a tilt that puts the flat ground on the edge): there every
+      slope dims from the first fraction of a degree;
+    * ``dark_beyond_deg`` — ``(α + β + ψ)/2``, the slope (tilted toward the
+      cone) where the pupil empties; ``dark_beyond_other_side_deg`` —
+      ``(α + β − ψ)/2`` for the opposite tilt;
+    * ``sensitivity_per_deg`` — dB/dθ at θ = 0 from the closed form (0 in the
+      fully lit plateau, non-zero when the flat ground sits on the edge, which
+      is what makes the slope sign readable);
+    * ``regime`` — ``bright_field`` (the flat ground sees the whole of the
+      narrower cone: ``ψ ≤ |α − β|``), ``dark_field`` (flat dark:
+      ``ψ ≥ α + β``) or ``edge`` (in between: the flat ground sits on the
+      boundary).
+    """
+    alpha, psi, az, _L = _solid(light)
+    beta = _view_half_angle(view_na)
+    axis = _cone_axis(psi, az)
+
+    def b(th):
+        return _closed_brightness(alpha, beta, axis, _facet_normal(th, az))[0]
+    flat = b(0.0)
+    h = 1e-3
+    sens = (b(h) - b(-h)) / (2 * h)
+    if psi <= abs(alpha - beta) + 1e-12:
+        regime = "bright_field"
+    elif psi >= alpha + beta - 1e-12:
+        regime = "dark_field"
+    else:
+        regime = "edge"
+    return {"illum_half_angle_deg": alpha, "illum_tilt_deg": psi, "view_half_angle_deg": beta,
+            "flat_brightness": float(flat),
+            "invisible_below_deg": float(max(abs(alpha - beta) - psi, 0.0) / 2.0),
+            "dark_beyond_deg": float((alpha + beta + psi) / 2.0),
+            "dark_beyond_other_side_deg": float((alpha + beta - psi) / 2.0),
+            "sensitivity_per_deg": float(sens), "regime": regime}
+
+
+def solid_angle_sweep(slope_deg=2.0, view_na=0.1, half_angles_deg=None, tilt_deg=0.0, roughness_deg=0.0,
+                      n_samples=2048):
+    """Contrast of a facet against flat ground versus the illumination half-angle (``pairs``).
+
+    For each α in *half_angles_deg* (default 1°…30° in 1° steps) a cone light
+    of that half-angle and tilt *tilt_deg* is evaluated with
+    :func:`solid_angle_brightness` for the flat surface and a facet of
+    *slope_deg* (both with micro-facet roughness *roughness_deg*; the
+    numeric pupil integral when smooth, the grid average of the closed form
+    over the micro-facet tilts when rough). Returns
+    ``(n, 2)`` ``[α, |B_facet − B_flat| / (B_facet + B_flat)]`` (0 when both
+    are dark). On a smooth surface with an on-axis cone the contrast is 0
+    while ``2θ ≤ |α − β|`` (one cone stays inside the other: the slope hides,
+    both for a wide cone and for a pin-hole one) and 1 once ``α + β ≤ 2θ``
+    — the closed-form ends of the curve; it peaks near α = β.
+    """
+    if half_angles_deg is None:
+        half_angles_deg = [float(v) for v in range(1, 31)]
+    als = [_finite(a, "half_angle", positive=True) for a in half_angles_deg]
+    if not als:
+        raise ValueError("half_angles_deg must not be empty")
+    out = []
+    for a in als:
+        lt = solid_angle_light(a, tilt_deg=tilt_deg, n=1)
+        r = solid_angle_brightness(lt, view_na=view_na, slopes_deg=[0.0, slope_deg], roughness_deg=roughness_deg,
+                                   n_samples=n_samples)["rows"]
+        b0, b1 = r[0]["numeric"], r[1]["numeric"]
+        if roughness_deg and float(roughness_deg) > 0.0:
+            # the sampled micro-facets would add quadrature noise of the size of the effect; the
+            # grid average of the closed form is deterministic
+            b0, b1 = r[0]["closed_form"], r[1]["closed_form"]
+        out.append([a, abs(b1 - b0) / (b1 + b0) if (b1 + b0) > 0 else 0.0])
+    return np.array(out, dtype=np.float64)
+
+
+def solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0,
+                       n_samples=64, seed=0):
+    """Image of a normal map under a cone light through a lens of NA *view_na* (``image2d``).
+
+    *normals*: (H, W, 3) surface normals in camera coordinates (+z toward the
+    camera; zero-length = background, rendered 0) — e.g. from a height map's
+    gradient, ``metalfinish.micro_normals`` (hairline / turning marks) or
+    ``metalfinish.blast_normals`` (satin). *light*: :func:`solid_angle_light`.
+    Every pixel is viewed along +z with the same object-side cone (a
+    telecentric camera) and lit by the same cone (the far-field light), so the
+    image is a function of the local normal only:
+
+    ``B = F · share_of_pupil_lit + ρ · sin²α · cos γ``
+
+    The specular share uses *n_samples* rays over the narrower cone (the
+    pupil, uniform in direction cosines, or the source cap; the same
+    quadrature for every pixel, so there is no pixel noise),
+    each mirrored by the normal tilted by a micro-facet slope drawn once per
+    ray (*roughness_deg* σ, a scalar or an (H, W) map for satin patches);
+    ``F`` = *f0* (Fresnel at near-normal incidence, a constant over the small
+    angles involved); the diffuse body term with albedo *diffuse_albedo* uses
+    the closed form of the projected solid angle of a uniform cap
+    ``π sin²α cos γ`` (γ = angle between the normal and the cone axis; exact
+    while the cap stays above the facet's horizon) divided by π. Values are
+    relative to the source radiance (1 = mirror, full pupil, F = 1). With few
+    samples a partial overlap is quantised to 1/*n_samples*.
+    """
+    import matappear
+    N, mask = matappear._normal_map(normals, "solid_angle_render")
+    alpha, psi, az, L = _solid(light)
+    _view_half_angle(view_na)
+    k = _count(n_samples, "n_samples", 1, 4096)
+    F = _finite(f0, "f0", nonneg=True)
+    rho = _finite(diffuse_albedo, "diffuse_albedo", nonneg=True)
+    if F > 1.0 or rho > 1.0:
+        raise ValueError("f0 and diffuse_albedo must be <= 1")
+    H, W = N.shape[:2]
+    if H * W == 0:
+        raise ValueError("solid_angle_render: normals is empty")
+    if H * W * k > MAX_RENDER_WORK:
+        raise ValueError("H*W*n_samples = %d exceeds %d" % (H * W * k, MAX_RENDER_WORK))
+    rg = np.asarray(roughness_deg, dtype=np.float64)
+    if rg.ndim == 0:
+        rg = np.full((H, W), float(rg))
+    if rg.shape != (H, W) or not np.all(np.isfinite(rg)) or np.any(rg < 0) or np.any(rg > 30.0):
+        raise ValueError("roughness_deg must be a scalar or an (H, W) map of finite values in [0, 30]")
+    axis = _cone_axis(psi, az)
+    G = np.random.default_rng(int(seed)).standard_normal((k, 2))
+    flatN = N.reshape(-1, 3)
+    flatR = np.radians(rg.reshape(-1))
+    out = np.zeros(H * W)
+    step = max(1, (1 << 20) // k)
+    s2a = math.sin(math.radians(alpha)) ** 2
+    for a0 in range(0, len(flatN), step):
+        n0 = flatN[a0:a0 + step]
+        sg = flatR[a0:a0 + step]
+        Nn = n0[:, None, :] + np.concatenate([sg[:, None, None] * G[None, :, :], np.zeros((len(n0), k, 1))], 2)
+        Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=2, keepdims=True), 1e-12)
+        share = _specular_share(Nn, alpha, float(view_na), axis, k)
+        cg = np.clip(n0 @ axis, 0.0, None)
+        out[a0:a0 + step] = F * share + rho * s2a * cg
+    img = (out * L).reshape(H, W)
+    return img * mask

@@ -44,6 +44,7 @@
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
 | [干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE) | 波と信号 | `validated-public-real-data` | 12/12 | `poc_gw_detector_pseudo_simulation` real → tests/test_poc_scripts_run.py |
+| [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin) | 光と色 | `verified-synthetic` | 5/5 | `poc_illumination_cone_vs_na` synthetic → tests/test_poc_scripts_run.py |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | Inner diameter of a round part, all the way to millimetres | 測る | `validated-public-real-data` | 4/4 | `example_inner_diameter_mm` synthetic → tests/test_example_scripts_run.py<br>`poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
@@ -99,8 +100,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 373 |
-| `tests/test_poc_scripts_run.py` が走らせる | 236 |
+| 2-D 台帳の例 | 374 |
+| `tests/test_poc_scripts_run.py` が走らせる | 237 |
 | `tests/test_example_scripts_run.py` が走らせる | 137 |
 | **どの門も走らせていない** | **0** |
 

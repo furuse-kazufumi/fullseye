@@ -1052,6 +1052,7 @@ import illumdesign  # noqa: E402  (machine-vision illumination design)
 from illumdesign import (  # noqa: E402,F401
     light_source, irradiance_map, illumination_uniformity, defect_contrast,
     lighting_sweep, illumination_design,
+    solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
 )
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
@@ -1490,6 +1491,7 @@ __all__ = [
     "edgesfr", "edge_spread", "sfr_from_edge", "mtf50", "veiling_glare_index",
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
+    "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "ncc_map_3d", "gradient_normals", "subpixel_refine_edges", "min_max_gray_n",

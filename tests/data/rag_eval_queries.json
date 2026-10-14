@@ -51,6 +51,8 @@
   {"q": "X 線回折で相の割合を出す", "set": "new", "ops": ["phase_fractions", "diffraction_peaks", "azimuthal_integrate", "phase_peel", "phase_dictionary"]},
   {"q": "X-ray diffraction phase analysis", "set": "new", "ops": ["phase_fractions", "diffraction_peaks", "azimuthal_integrate", "phase_peel", "phase_dictionary"]},
   {"q": "画質を人の見え方で評価する", "set": "new", "ops": ["fsim", "gmsd", "vifp", "fsimc", "ssim", "ms_ssim", "tid2013_evaluate"]},
-  {"q": "perceptual image quality metric", "set": "new", "ops": ["fsim", "gmsd", "vifp", "fsimc", "ssim", "ms_ssim", "tid2013_evaluate"]}
+  {"q": "perceptual image quality metric", "set": "new", "ops": ["fsim", "gmsd", "vifp", "fsimc", "ssim", "ms_ssim", "tid2013_evaluate"]},
+  {"q": "V-ISA 照明を真似したい。照射立体角を絞って鏡面の浅い打痕を見たい", "set": "new", "ops": ["solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render"]},
+  {"q": "emulate V-ISA lighting: control the irradiation solid angle to reveal shallow dents on a mirror surface", "set": "new", "ops": ["solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render"]}
  ]
 }
