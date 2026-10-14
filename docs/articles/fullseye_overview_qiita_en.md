@@ -198,7 +198,7 @@ Just the four most frequent terms up front. **Every other term gets broken down 
 |---|---|
 | **Fullseye** | The star of this article. A self-built operator library for image processing and geometric vision. The name is **a pun on Bullseye — the dead center of a target in darts or archery** (details in "The Name," below). The development repo is called `imgevolve`. |
 | **Operator (op)** | "One image-processing function." Examples: Gaussian blur, Otsu thresholding, Sobel edges. Fullseye has roughly 1,000 of them. |
-| **HALCON** | The industrial machine-vision standard from Germany's MVTec. A giant with **2,313 operators**. Fullseye uses it as the **yardstick** for measuring "how much of this ground have I covered with my own implementations?" |
+| **HALCON** | The industrial machine-vision standard from Germany. A giant with **2,313 operators**. Fullseye uses it as the **yardstick** for measuring "how much of this ground have I covered with my own implementations?" |
 | **Studio (Fullseye Studio)** | The IDE (integrated development environment) for **looking at, trying out, and doing real work with** Fullseye. The equivalent of HDevelop in industrial vision. |
 
 ---

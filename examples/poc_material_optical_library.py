@@ -22,7 +22,7 @@
      にユーザーのカタログがあれば同名の硝材を照合(無ければ「未配置」と明示)。
   6. **同じ表を引く**(第 2 段、2026-10-14): レンズ(`raytrace`)・鏡(`glassmirror`)・観察対象
      (`optscene.scene_material`)が `materials` の同じレコードを引く。門: raytrace が手で写していた 20 種の
-     係数は materials と 1e-12 で同じ曲線、他社硝材・樹脂のレンズの F/d/C 線の焦点距離は厚肉レンズの
+     係数は materials と 1e-12 で同じ曲線、別のカタログの硝材・樹脂のレンズの F/d/C 線の焦点距離は厚肉レンズの
      閉形式と 1e-9、軸上色収差 Δf/f は 1/V_d と 4 % 以内(5 材料)、金属の実測経路は第二実装 optiland の
      n と 1e-6(k は写した有効数字まで)。**所見**: 初版の材料表は W と Pt に REELS 逆算の表を選んでいて、可視の反射率が
      0.84 / 0.93 と別の測定(W 0.50・Pt 0.64〜0.73)から外れていた —— 独立の表と突き合わせる門を足して差し替えた。
@@ -30,6 +30,8 @@
 【外部真値】refractiveindex.info database(CC0 1.0、Polyanskiy, Sci. Data 11, 94 (2024))の一次文献と
 カタログ公表値、Green, Sol. Energy Mater. Sol. Cells 92, 1305 (2008)、Johnson & Christy, Phys. Rev. B 6,
 4370 (1972)、Schroder, Thomas & Swartz, IEEE TED 25, 254 (1978)、optiland 0.6.3(OSS、第二実装)。
+硝材は銘柄名でなく、カタログ公表の n_d・ν_d から引き、6 桁の硝材コード(n_d の小数 3 桁 + ν_d × 10)で
+表示する(BK7・SF11 相当の 2 種は慣用の分類名で書く)。係数の出どころは公開の硝材カタログ値。
 【学習した数】0。【較正】0。
 """
 from __future__ import annotations
@@ -49,13 +51,68 @@ REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
 GLASS_DIR = os.environ.get("FULLSEYE_GLASS_DIR", "").strip()
 
+def _glass(nd: float, vd: float) -> str:
+    """カタログ公表の n_d・ν_d に一致する同梱の硝材を 1 つ引き、表のキーを返す。
+
+    公開側のソースに銘柄名(社名が分かる型番)を書かないための入口。一致が 1 つでなければ
+    ValueError(黙って別の硝材を選ばない)。
+    """
+    hit = [r["name"] for r in MT.material_table("glass")
+           if abs(r["nd"] - nd) < 5e-6 and abs(r["vd"] - vd) < 5e-4]
+    if len(hit) != 1:
+        raise ValueError("n_d %.6f / ν_d %.6f に一致する硝材が %d 件" % (nd, vd, len(hit)))
+    return hit[0]
+
+
+def _code(name: str) -> str:
+    """6 桁の硝材コード(n_d − 1 の小数 3 桁 + ν_d × 10)。"""
+    a = MT.abbe_number(name)
+    return "%03d%03d" % (round((a["nd_catalog"] - 1.0) * 1000.0), round(a["vd_catalog"] * 10.0))
+
+
+#: 慣用の分類名で書く硝材(材料表の別名)と、樹脂の一般名。
+BK7, SF11, COP = (MT.material_record(a)["name"] for a in ("BK7", "SF11", "COP"))
+G516641 = _glass(1.51633, 64.142022)        # BK7 と同じ帯のホウケイ酸クラウン(別カタログ)
+G517642B = _glass(1.5168, 64.198732)        # 同上(さらに別のカタログ)
+G517642C = _glass(1.5168, 64.2)             # 同上(.agf の雛形に入っている方)
+G805255 = _glass(1.80518, 25.46)            # 重フリント
+G847238 = _glass(1.84667, 23.791236)        # 重フリント(最も分散が大きい側)
+G883408 = _glass(1.882997, 40.765107)       # 高屈折率ランタン系
+
+
+def _catalogue_letter() -> dict:
+    """硝材ごとのカタログを A, B, … の記号にする(どの社かは書かない。出典は各レコードの一次文献)。"""
+    first = []
+    for r in MT.material_table("glass"):
+        key = str(r["reference"]).split()[0]
+        if key not in first:
+            first.append(key)
+    return {r["name"]: "ABCDEFGH"[first.index(str(r["reference"]).split()[0])] for r in MT.material_table("glass")}
+
+
+def _label(name: str) -> str:
+    """図・表・ログに出す材料名。硝材は分類名か 6 桁コード、樹脂は一般名。"""
+    rec = MT.material_record(name)
+    if rec["name"] == BK7:
+        return "BK7 相当"
+    if rec["name"] == SF11:
+        return "SF11 相当"
+    if rec["name"] == COP:
+        return "COP"
+    if rec["class"] == "glass":
+        code = _code(rec["name"])
+        dup = sum(_code(r["name"]) == code for r in MT.material_table("glass")) > 1
+        return "硝材 %s%s" % (code, "(カタログ %s)" % _catalogue_letter()[rec["name"]] if dup else "")
+    return rec["name"]
+
+
 #: 第二実装 optiland 0.6.3(同じ refractiveindex.info の一次文献を別のコードで評価、2026-10-14 実行)。
 #: (材料, λ nm) → (n, k)。Si は Green 2008 と Salzberg、水は Daimon(20 ℃)と Hale の区間。
 OPTILAND = {
-    ("N-BK7", 400): (1.530848538, 1.0227e-08), ("N-BK7", 1550): (1.500652043, 1.4361e-07),
-    ("N-SF11", 500): (1.802555175, 7.6618e-08), ("S-BSL7", 600): (1.515825156, 1.4345e-08),
-    ("H-K9L", 700): (1.513071801, 1.6736e-08), ("FD60", 900): (1.779252370, 1.4338e-08),
-    ("H-ZF52A", 800): (1.823406896, 1.2745e-08), ("SI", 1000): (3.572000000, 5.0930e-04),
+    (BK7, 400): (1.530848538, 1.0227e-08), (BK7, 1550): (1.500652043, 1.4361e-07),
+    (SF11, 500): (1.802555175, 7.6618e-08), (G516641, 600): (1.515825156, 1.4345e-08),
+    (G517642B, 700): (1.513071801, 1.6736e-08), (G805255, 900): (1.779252370, 1.4338e-08),
+    (G847238, 800): (1.823406896, 1.2745e-08), ("SI", 1000): (3.572000000, 5.0930e-04),
     ("SI", 3000): (3.432322072, 0.0), ("AG", 500): (0.050000000, 3.1309e+00),
     ("AU", 600): (0.248731988, 3.0740e+00), ("SILICA", 1064): (1.449630990, 0.0),
     ("CAF2", 1500): (1.426257966, 0.0), ("GE", 1550): (4.250000000, 2.5190e-02),
@@ -120,8 +177,8 @@ def chapter_glass():
          not any(g["class"] == "metal" for g in gm) and len(cls["glass"]) == 46)
     pm = {g["name"]: g for g in gm}
     gate("プラスチック 4 種はどれも V_d < 60(硝子なら同じ n_d のクラウンが 60 前後)",
-         all(pm[p]["vd"] < 60 for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", "ZEONEX_E48R")),
-         "PMMA %.1f / PC %.1f / PS %.1f / COP %.1f" % tuple(pm[p]["vd"] for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", "ZEONEX_E48R")))
+         all(pm[p]["vd"] < 60 for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", COP)),
+         "PMMA %.1f / PC %.1f / PS %.1f / COP %.1f" % tuple(pm[p]["vd"] for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", COP)))
     worst = 0.0
     for (name, wl), (n2, k2) in OPTILAND.items():
         a = MT.material_optical_constants(name, wl)
@@ -225,22 +282,22 @@ def chapter_mirror():
 # --------------------------------------------------------------------------- #
 def chapter_plastic():
     print("\n4. 硝子とプラスチックの分散と dn/dT")
-    names = ["N-BK7", "N-SF11", "SILICA", "CAF2", "PMMA", "POLYCARBONATE", "ZEONEX_E48R"]
+    names = [BK7, SF11, "SILICA", "CAF2", "PMMA", "POLYCARBONATE", COP]
     disp = {n: MT.material_dispersion(n, 440, 1000, 57) for n in names}
     def slope(n):
         d = disp[n]
         return (d[0, 1] - d[-1, 1]) / d[0, 1]
-    gate("ポリカーボネートの分散(440 → 1000 nm の n の落ち)は N-BK7 の 2 倍以上、CaF2 は N-BK7 より小さい",
-         slope("POLYCARBONATE") > 2 * slope("N-BK7") and slope("CAF2") < slope("N-BK7"),
-         "PC %.4f / N-BK7 %.4f / CaF2 %.4f" % (slope("POLYCARBONATE"), slope("N-BK7"), slope("CAF2")))
-    th_names = ["N-BK7", "N-SF11", "S-BSL7", "FD60", "H-ZF52A"]
+    gate("ポリカーボネートの分散(440 → 1000 nm の n の落ち)は BK7 相当の 2 倍以上、CaF2 は BK7 相当より小さい",
+         slope("POLYCARBONATE") > 2 * slope(BK7) and slope("CAF2") < slope(BK7),
+         "PC %.4f / BK7 相当 %.4f / CaF2 %.4f" % (slope("POLYCARBONATE"), slope(BK7), slope("CAF2")))
+    th_names = [BK7, SF11, G516641, G805255, G847238]
     temps = np.linspace(-20.0, 80.0, 41)
     th = {}
     worst = 0.0
     for n in th_names:
         tref = MT.thermo_optic_coefficient(n, 546.07, 20.0)["reference_temperature_c"]
         a = MT.thermo_optic_coefficient(n, 546.07, tref)
-        gate("%s: 基準温度 %.0f ℃ で Δn = 0" % (n, tref), abs(a["delta_n"]) < 1e-15)
+        gate("%s: 基準温度 %.0f ℃ で Δn = 0" % (_label(n), tref), abs(a["delta_n"]) < 1e-15)
         dn = np.array([MT.thermo_optic_coefficient(n, 546.07, t)["delta_n"] for t in temps])
         th[n] = dn
         # dn/dT = dΔn/dT を 40 ℃ の有限差分で確かめる(式 A の D₁・D₂・E₁ の項まで)
@@ -249,9 +306,9 @@ def chapter_plastic():
         an = MT.thermo_optic_coefficient(n, 546.07, 40.0)["dn_dt_per_k"]
         worst = max(worst, abs(fd / an - 1.0))
     gate("dn/dT は Δn の有限差分と 1e-3 以内(5 種、40 ℃)", worst < 1e-3, "最大 %.1e" % worst)
-    bk = MT.thermo_optic_coefficient("N-BK7", 546.07, 30.0)["dn_dt_per_k"]
+    bk = MT.thermo_optic_coefficient(BK7, 546.07, 30.0)["dn_dt_per_k"]
     NUMBERS["bk7_dndt"] = bk
-    gate("N-BK7 の dn/dT(e 線、20〜40 ℃)は 1.4〜1.8e-6 /K", 1.4e-6 < bk < 1.8e-6, "%.2e /K" % bk)
+    gate("BK7 相当の dn/dT(e 線、20〜40 ℃)は 1.4〜1.8e-6 /K", 1.4e-6 < bk < 1.8e-6, "%.2e /K" % bk)
     for n in ("PMMA", "WATER"):
         try:
             MT.thermo_optic_coefficient(n)
@@ -271,16 +328,16 @@ def chapter_import():
     for r in recs:
         for wl in (400.0, 587.56, 800.0, 1000.0):
             worst = max(worst, abs(MT.material_optical_constants(r, wl)["n"] - MT.material_optical_constants(r["name"], wl)["n"]))
-    gate("雛形 .agf の %s を読むと同梱レコードと 1e-12 以内(Sellmeier 1 と Schott 多項式の両方)" % " / ".join(r["name"] for r in recs),
-         worst < 1e-12 and [r["name"] for r in recs] == ["N-BK7", "BSC7"], "最大 %.1e" % worst)
+    gate("雛形 .agf の %s を読むと同梱レコードと 1e-12 以内(Sellmeier 1 とべき級数の分散式の両方)" % " / ".join(_label(r["name"]) for r in recs),
+         worst < 1e-12 and [r["name"] for r in recs] == [BK7, G517642C], "最大 %.1e" % worst)
     k = MT.material_optical_constants(recs[0], 400.0)["k"]
-    gate("IT 行(内部透過率)から k を復元する(N-BK7 の 400 nm で 1e-9〜1e-7)", 1e-9 < k < 1e-7, "%.2e" % k)
+    gate("IT 行(内部透過率)から k を復元する(BK7 相当の 400 nm で 1e-9〜1e-7)", 1e-9 < k < 1e-7, "%.2e" % k)
     custom = MT.material_from_sellmeier("my_glass", reference="worked example")
-    gate("自前の Sellmeier 係数(既定は N-BK7)からレコードを作り、他の op に渡せる",
+    gate("自前の Sellmeier 係数(既定は BK7 相当)からレコードを作り、他の op に渡せる",
          abs(MT.abbe_number(custom)["nd"] - 1.5168) < 1e-4)
-    cur = MT.material_from_curves(MT.material_dispersion("N-SF11", 400, 1000, 61), MT.material_extinction("N-SF11", 400, 1000, 61), "measured")
+    cur = MT.material_from_curves(MT.material_dispersion(SF11, 400, 1000, 61), MT.material_extinction(SF11, 400, 1000, 61), "measured")
     gate("測った曲線(pairs)から作ったレコードは節で元と一致し、区間外は外挿しない",
-         abs(MT.material_optical_constants(cur, 600.0)["n"] - MT.material_optical_constants("N-SF11", 600.0)["n"]) < 1e-12)
+         abs(MT.material_optical_constants(cur, 600.0)["n"] - MT.material_optical_constants(SF11, 600.0)["n"]) < 1e-12)
     try:
         MT.material_optical_constants(cur, 1200.0)
         gate("区間外は ValueError", False)
@@ -309,8 +366,8 @@ DATASET_R550 = {
     "PT": {"REELS": 0.934, "independent": {"Rakić 1998 LD": 0.641, "Werner 2009 DFT": 0.734}},
 }
 
-#: レンズの材料(4 社の硝材・樹脂)。焦点距離の色収差を閉形式と比べる。
-LENS_MEDIA = ["N-BK7", "S-LAH58", "H-ZF52A", "PMMA", "POLYCARBONATE"]
+#: レンズの材料(別々のカタログの硝材と樹脂)。焦点距離の色収差を閉形式と比べる。
+LENS_MEDIA = [BK7, G883408, G847238, "PMMA", "POLYCARBONATE"]
 
 
 def chapter_shared():
@@ -347,10 +404,10 @@ def chapter_shared():
         worst_v = max(worst_v, abs(ratio - 1.0))
         lens[g] = (vd, f, ratio)
     NUMBERS["lens_efl_worst"], NUMBERS["lens_colour_worst"] = worst_f, worst_v
-    gate("他社硝材・樹脂のレンズ(%d 種)の F/d/C 線の焦点距離 = 厚肉レンズの閉形式(その線の n)と 1e-9" % len(LENS_MEDIA),
+    gate("別のカタログの硝材・樹脂のレンズ(%d 種)の F/d/C 線の焦点距離 = 厚肉レンズの閉形式(その線の n)と 1e-9" % len(LENS_MEDIA),
          worst_f < 1e-9, "最大 %.1e mm" % worst_f)
     gate("軸上色収差 (f_C − f_F)/f_d は 1/V_d と 4 %% 以内(薄肉レンズの式、%d 種)" % len(LENS_MEDIA), worst_v < 0.04,
-         " / ".join("%s %.3f" % (g, v[2]) for g, v in lens.items()))
+         " / ".join("%s %.3f" % (_label(g), v[2]) for g, v in lens.items()))
     w = np.linspace(400.0, 800.0, 81)
     pinned = [("AG", 500), ("AU", 600)]
     worst_n, worst_k = 0.0, 0.0
@@ -385,10 +442,10 @@ def chapter_shared():
         ok &= lo <= r550[m] <= hi and not (lo <= d["REELS"] <= hi)
     gate("W と Pt の 550 nm 反射率は別の測定 2 本の幅に入り、初版の REELS 逆算(0.84 / 0.93)は入らない", ok,
          "W %.3f・Pt %.3f" % (r550["W"], r550["PT"]))
-    mat = OS.scene_material("dielectric", glass="S-LAH58")
-    nrgb = np.array([RT.refractive_index("S-LAH58", u) for u in OS._RGB_UM])
+    mat = OS.scene_material("dielectric", glass=G883408)
+    nrgb = np.array([RT.refractive_index(G883408, u) for u in OS._RGB_UM])
     met = OS.scene_material("conductor", metal="pt", metal_source="materials")
-    gate("観察対象の材質(optscene)も同じ表: 他社硝材の n_RGB は raytrace と一致、Pt の材質は実測の表で作れる",
+    gate("観察対象の材質(optscene)も同じ表: 別のカタログの硝材の n_RGB は raytrace と一致、Pt の材質は実測の表で作れる",
          np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials" and _refuses(
              lambda: OS.scene_material("conductor", metal="pt")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
     return lens, coarse, measured, w, rgb_t, rgb_m, r550
@@ -425,11 +482,13 @@ def make_figures(glass, si, mirror, plastic, agf, shared):
                          % (len(gm), NUMBERS["glass_worst_dn"], NUMBERS["glass_worst_dv"]),
                    kinds=kinds, colors=colors,
                    caption="分散式(refractiveindex.info の一次文献、CC0)から計算した n_d と V_d。プラスチックは同じ n_d の硝子より左(分散が大きい)、CaF2 と石英は右端。")
-    figs.save_table("glass_catalogue", ["硝材", "n_d 計算", "n_d 公表", "V_d 計算", "V_d 公表", "P_g,F", "密度 kg/m³"],
-                    [[r[0], "%.5f" % r[1], "%.5f" % r[2], "%.2f" % r[3], "%.2f" % r[4], "%.4f" % r[5], "%.0f" % r[6]] for r in rows[:46]],
-                    title="硝材 46 種: 分散式の n_d / V_d とカタログ公表値", caption="4 社のカタログの Sellmeier / Schott 多項式を同じレコード型で評価した。")
+    letter = _catalogue_letter()
+    figs.save_table("glass_catalogue", ["硝材コード", "カタログ", "n_d 計算", "n_d 公表", "V_d 計算", "V_d 公表", "P_g,F", "密度 kg/m³"],
+                    [[_code(r[0]), letter[r[0]], "%.5f" % r[1], "%.5f" % r[2], "%.2f" % r[3], "%.2f" % r[4], "%.4f" % r[5], "%.0f" % r[6]] for r in rows[:46]],
+                    title="硝材 46 種: 分散式の n_d / V_d とカタログ公表値", caption="4 つの公開カタログ(記号 A〜D)の Sellmeier 式とべき級数の分散式を同じレコード型で評価した。"
+                            "硝材コードは n_d − 1 の小数 3 桁と V_d × 10(係数の出どころは公開の硝材カタログ値)。")
     figs.save_table("second_implementation", ["材料", "λ nm", "n (optiland 0.6.3)", "n (fullseye)", "k (optiland)", "k (fullseye)"],
-                    [[nm, "%g" % wl, "%.9f" % n2, "%.9f" % MT.material_optical_constants(nm, wl)["n"], "%.4e" % k2,
+                    [[_label(nm), "%g" % wl, "%.9f" % n2, "%.9f" % MT.material_optical_constants(nm, wl)["n"], "%.4e" % k2,
                       "%.4e" % MT.material_optical_constants(nm, wl)["k"]] for (nm, wl), (n2, k2) in OPTILAND.items()],
                     title="第二実装との突き合わせ(最大差 %.1e)" % NUMBERS["optiland_worst"],
                     caption="同じ一次文献を optiland(MIT)が別のコードで評価した値。式 1〜5 と数表の補間が同じ答えを返す。")
@@ -487,12 +546,12 @@ def make_figures(glass, si, mirror, plastic, agf, shared):
         sw = np.asarray(fs.text_box(sw, m, (i * 100 + 50, 130), anchor="ct", font_size=12))
     figs.save("mirror_colours", sw, caption="n,k → 分光反射率 → CIE 等色関数 → sRGB。色は塗っていない: 金と銅が暖色で銀が中性なのは表の n,k から出る。")
     # 4. 分散と dn/dT
-    figs.save_plot("dispersion_glass_vs_plastic", [(n, disp[n][:, 0], disp[n][:, 1]) for n in disp], xlabel="波長 [nm]", ylabel="n",
+    figs.save_plot("dispersion_glass_vs_plastic", [(_label(n), disp[n][:, 0], disp[n][:, 1]) for n in disp], xlabel="波長 [nm]", ylabel="n",
                    title="硝子・結晶・プラスチックの分散(440〜1000 nm)",
-                   caption="ポリカーボネートは N-BK7 の 2 倍以上の落ち(V_d ≈ 30)。CaF2 と石英はほぼ平ら。")
-    figs.save_plot("thermo_optic", [(n, temps, th[n] * 1e6) for n in th], xlabel="温度 [℃]", ylabel="Δn × 1e6(e 線、真空中)",
+                   caption="ポリカーボネートは BK7 相当の 2 倍以上の落ち(V_d ≈ 30)。CaF2 と石英はほぼ平ら。")
+    figs.save_plot("thermo_optic", [(_label(n), temps, th[n] * 1e6) for n in th], xlabel="温度 [℃]", ylabel="Δn × 1e6(e 線、真空中)",
                    title="硝材の温度による屈折率変化(カタログの式 A)",
-                   caption="FD60 のような重フリントは低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。")
+                   caption="重フリント(硝材 805255)は低温側で負の dn/dT を持つ。基準温度(20 ℃ / 25 ℃)で 0 を通る。")
     # 6. 同じ表を引く
     lens, coarse, measured, w, rgb_t, rgb_m, r550 = shared
     import raytrace as RT
@@ -502,10 +561,10 @@ def make_figures(glass, si, mirror, plastic, agf, shared):
         sysd = RT.lens_system([{"R": 50.0, "t": 4.0, "n": g, "ap": 8}, {"R": -50.0, "t": None, "n": 1.0}])
         fd = lens[g][1][1]
         efl = [RT.paraxial_trace(RT.with_wavelength(sysd, float(x) / 1000.0))["efl"] / fd for x in lam]
-        curves.append(("%s(V_d %.1f)" % (g, lens[g][0]), lam, (np.array(efl) - 1.0) * 100.0))
+        curves.append(("%s(V_d %.1f)" % (_label(g), lens[g][0]), lam, (np.array(efl) - 1.0) * 100.0))
     figs.save_plot("lens_axial_colour", curves, xlabel="波長 [nm]", ylabel="焦点距離の変化 [%](d 線基準)",
                    title="同じ形のレンズを材料表の 5 材料で: 色収差は 1/V_d(閉形式と最大 %.1e mm)" % NUMBERS["lens_efl_worst"],
-                   caption="R = ±50 mm・厚さ 4 mm の両凸レンズ。硝材名を変えるだけで、他社の硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は N-BK7 の 1.2 倍、S-LAH58 は 1.6 倍、ポリカーボネートと H-ZF52A は 2.3〜2.7 倍。")
+                   caption="R = ±50 mm・厚さ 4 mm の両凸レンズ。材料のキーを変えるだけで、別のカタログの硝材も樹脂も同じ光線追跡に乗る。動きは 1/V_d に比例: PMMA は BK7 相当の 1.2 倍、高屈折率ランタン系(硝材 883408)は 1.6 倍、ポリカーボネートと重フリント(硝材 847238)は 2.3〜2.7 倍。")
     import glassmirror as GM
     series, styles, colors = [], [], []
     palette = {"ag": "neutral", "al": "reference", "au": "emphasis", "cr": "wrong", "cu": "right"}

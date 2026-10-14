@@ -19,7 +19,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。
 
-既定値は N-BK7 の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に
+既定値は BK7 相当(別名 ``"BK7"``)の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に
 ``material`` としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。
 ``reference`` に出典を書いておくと ``material_record`` に残る。
 

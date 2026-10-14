@@ -647,7 +647,7 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 [![tube](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube.png?v=3)
 
-*↑ ローレンツの軌道を管メッシュに(MATLAB の tubeplot 相当、12510 頂点 / 25000 面)。*
+*↑ ローレンツの軌道を管メッシュに(数値計算ソフトの tubeplot 相当、12510 頂点 / 25000 面)。*
 
 [![minimal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal.png?v=3)
 

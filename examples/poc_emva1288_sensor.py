@@ -185,15 +185,16 @@ def main() -> int:
     # ─────────────────────────────── 6. 公表値 ─────────────────────────────
     print("== 6. 公表値: メーカーが公表した EMVA 1288 データ(台帳 38 型番、整数に丸めた値)で式 (55)(28) を検算")
     import optscene
+    # 型番(社名が分かる)は図・ログに出さず、台帳の並び順の番号で書く(公開 PoC に社名を書かない規則)
     rows, bad_dr = [], []
-    for model, v in optscene._SENSOR_CATALOG.items():
+    for idx, (model, v) in enumerate(optscene._SENSOR_CATALOG.items()):
         qe_, sd_, sat, dr_db, snr_db = v[6] / 100.0, v[7], v[8] * 1e3, v[9], v[10]
         snr_calc = 20.0 * math.log10(math.sqrt(sat))
         t_ = SC.emva_sensitivity_threshold(qe_, sd_, 1.0, sigma_q2=0.0)
         dr_calc = SC.emva_dynamic_range(sat / qe_, t_["mu_p_min"])["dB"]
-        rows.append((model, snr_db, snr_calc, dr_db, dr_calc))
+        rows.append(("台帳の %d 番目" % (idx + 1), snr_db, snr_calc, dr_db, dr_calc, model))
         if abs(dr_calc - dr_db) > 3.0:
-            bad_dr.append(model)
+            bad_dr.append(rows[-1][0])
     d_snr = [abs(r[2] - r[1]) for r in rows]
     d_dr = [r[4] - r[3] for r in rows]
     print("  最大 SNR: 全 %d 型番で公表値との差 最大 %.2f dB(丸めの幅 0.5 dB 以内)" % (len(rows), max(d_snr)))
@@ -201,8 +202,10 @@ def main() -> int:
     for r in rows:
         if r[0] in bad_dr:
             print("    %s: 飽和 %.1f ke⁻・暗雑音 %d e⁻ からは DR %.1f dB、台帳は %d dB —— 暗雑音か DR の欄が別条件の値と見られる(未確認、台帳は直さない)" % (
-                r[0], optscene._SENSOR_CATALOG[r[0]][8], optscene._SENSOR_CATALOG[r[0]][7], r[4], r[3]))
-    gate("公表値: 最大 SNR は全型番 0.5 dB 以内、DR は 1 型番(IMX287)を除き 3 dB 以内", max(d_snr) <= 0.5 and bad_dr == ["IMX287"])
+                r[0], optscene._SENSOR_CATALOG[r[5]][8], optscene._SENSOR_CATALOG[r[5]][7], r[4], r[3]))
+    odd = [r[5] for r in rows if r[0] in bad_dr]
+    gate("公表値: 最大 SNR は全型番 0.5 dB 以内、DR は 1 型番(飽和 21.0 ke⁻・暗雑音 7 e⁻ の行)を除き 3 dB 以内",
+         max(d_snr) <= 0.5 and len(odd) == 1 and optscene._SENSOR_CATALOG[odd[0]][7:9] == (7, 21.0))
 
     # ─────────────────────────────── 7. 欠陥画素 ─────────────────────────────
     print("== 7. 欠陥画素(8.8 節): 熱画素を仕込み、平均画像の偏差のしきい値で数え直す")

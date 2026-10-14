@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_glass_catalog_agf(source=None) -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import materials; materials.read_glass_catalog_agf(source=None) -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;read_glass_catalog_agf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>读取玻璃目录（Zemax .agf 格式）为材料记录的列表（table）。</p>
+<p>读取玻璃目录（光学设计软件的 .agf 格式）为材料记录的列表（table）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">source</code> は .agf ファイルのパス、.agf を並べたディレクトリ(全部読む)、または <code style="color:#22d3bf">None</code>(同梱の雛形 <code style="color:#22d3bf">AGF_EXAMPLE</code> を読む —— 自分のカタログを置く場所は <code style="color:#22d3bf">os.environ[&quot;FULLSEYE_GLASS_DIR&quot;]</code> を渡す)。メーカーのカタログ本体は同梱しない。</p>
 <p>読むのは NM(名前・式番号・n_d・V_d)、CD(係数)、TD(dn/dT の式 A の係数と基準温度)、ED(熱膨張 ×1e-6 /K、密度 g/cm³、ΔP_g,F)、LD(波長範囲 µm)、IT(内部透過率 → k = −ln T · λ/(4π t))。知らない式番号・係数が足りない・範囲が無い硝材は ValueError (黙って別の式にしない)。返ったレコードは他の materials op に <code style="color:#22d3bf">material</code> として渡せる。</p>

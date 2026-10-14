@@ -24,6 +24,14 @@ import os
 
 import numpy as np
 
+#: MuJoCo Menagerie(https://github.com/google-deepmind/mujoco_menagerie、各モデルの LICENSE に従う)の
+#: 人型 7 機種の (ディレクトリ, MJCF) —— 外部データを読み込むための識別子で、PoC と展示では機種を
+#: 「人型 1〜7」とこの並び順の番号で書く(公開 PoC に社名・銘柄名を書かない規則、2026-10-15)。
+#: ほかの 2 機種は、向きの判定と足元の箱が合わず外した。
+MENAGERIE_HUMANOIDS = (("unitree_g1", "g1.xml"), ("unitree_h1", "h1.xml"), ("booster_t1", "t1.xml"),
+                       ("berkeley_humanoid", "berkeley_humanoid.xml"), ("fourier_n1", "n1.xml"),
+                       ("pal_talos", "talos.xml"), ("apptronik_apollo", "apptronik_apollo.xml"))
+
 __all__ = ["humanoid_walk_clip", "humanoid_clip_mesh", "world_pose_humanoid", "humanoid_impostors",
            "world_camera_impostors"]
 

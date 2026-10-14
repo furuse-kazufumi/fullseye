@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 Sellmeier 係數（n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)，λ 為 µm，Cᵢ 為 µm²）建立材料記錄。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>既定値は N-BK7 の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に <code style="color:#22d3bf">material</code> としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。<code style="color:#22d3bf">reference</code> に出典を書いておくと <code style="color:#22d3bf">material_record</code> に残る。</p>
+<p>既定値は BK7 相当(別名 <code style="color:#22d3bf">&quot;BK7&quot;</code>)の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に <code style="color:#22d3bf">material</code> としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。<code style="color:#22d3bf">reference</code> に出典を書いておくと <code style="color:#22d3bf">material_record</code> に残る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

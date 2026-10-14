@@ -320,7 +320,7 @@ def chapter_lens():
     ident = np.max(np.abs(ls["relative_illumination"][cov] - ls["cos4"][cov] * ls["pupil_factor"][cov] * ls["area_gain"][cov]))
     gate("照度 = cos⁴ × 瞳 × 歪曲 が厳密に成り立つ(最大差 %.1e)" % ident, ident < 1e-12)
     # cos⁴ の閉形式の検算: 絞りが第 1 面の薄い系(瞳収差なし)
-    pin = RT.lens_system([{"R": float("inf"), "t": 0.5, "n": 1.0, "ap": 1.0}, {"R": 51.68, "t": 5.0, "n": "N-BK7"},
+    pin = RT.lens_system([{"R": float("inf"), "t": 0.5, "n": 1.0, "ap": 1.0}, {"R": 51.68, "t": 5.0, "n": "BK7"},
                           {"R": float("inf"), "t": None, "n": 1.0}], stop=0, object_mm=300.0)
     pp = LS.lens_field_profile(pin, [0.0, 10.0, 20.0, 30.0])
     ri_c = optics.relative_illumination(half_angle_deg=float(np.degrees(np.arctan2(abs(pp["object_height_mm"][-1]),

@@ -586,7 +586,7 @@ def material_from_sellmeier(name: str = "custom", b=(1.03961212, 0.231792344, 1.
                             material_class: str = "glass", reference: str = "") -> dict:
     """Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。
 
-    既定値は N-BK7 の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に
+    既定値は BK7 相当(別名 ``"BK7"``)の公表係数(自分の硝材を足すときの雛形)。返り値は他の materials op に
     ``material`` としてそのまま渡せる。B と C の長さが違う・範囲が逆・係数が非有限なら ValueError。
     ``reference`` に出典を書いておくと ``material_record`` に残る。
     """
@@ -619,7 +619,7 @@ def material_from_curves(n_curve=N_CURVE_EXAMPLE, k_curve=None, name: str = "cus
                          material_class: str = "custom", reference: str = "") -> dict:
     """測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。
 
-    ``n_curve`` は (K, 2) で K ≥ 2、λ > 0、n > 0(既定は N-BK7 を 4 点で写した雛形
+    ``n_curve`` は (K, 2) で K ≥ 2、λ > 0、n > 0(既定は BK7 相当を 4 点で写した雛形
     :data:`N_CURVE_EXAMPLE`)。``k_curve`` は省略可(省略は k = 0)で
     k ≥ 0。空の入力(``n_curve`` が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。
     返り値は他の materials op に ``material`` として渡せる(区間は曲線の端まで、外挿しない)。
@@ -721,7 +721,7 @@ def _agf_text(source) -> str:
 
 
 def read_glass_catalog_agf(source=None) -> list:
-    """硝材カタログ(Zemax .agf 形式)を読んで材料レコードの列(``table``)にする。
+    """硝材カタログ(光学設計ソフトの .agf 形式)を読んで材料レコードの列(``table``)にする。
 
     ``source`` は .agf ファイルのパス、.agf を並べたディレクトリ(全部読む)、または
     ``None``(同梱の雛形 :data:`AGF_EXAMPLE` を読む —— 自分のカタログを置く場所は

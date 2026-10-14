@@ -6,7 +6,7 @@
 「車に対してはある程度正確な物理演算が要るけど、他のオブジェクトはそこまで正確さは要らない」。
 
 何をするか:
-  1. MuJoCo Menagerie の人型(G1・H1・T1・Berkeley Humanoid・Fourier N1・TALOS・Apollo)から、手続き的な歩行 1 周期を作る
+  1. MuJoCo Menagerie の人型 7 機種(人型 1〜7、並びは drivehumanoid.MENAGERIE_HUMANOIDS)から、手続き的な歩行 1 周期を作る
      (drivehumanoid.humanoid_walk_clip)。関節の役割は**名前でなく体の形**から決める(名前は機種ごとにばらばら)。
   2. 見た目の費用を 3 通りで測る: 見た目のメッシュそのまま / 格子で間引いたメッシュ / 向き × 位相のマスク付き事前描画。
   3. 横断歩道を渡る群れを車載カメラで撮る(事前描画)。当たり判定は外形の箱。
@@ -16,8 +16,8 @@ Menagerie がある時の門: 7 機種が歩く(接地・前進・支持脚が�
 地面だけの 1.5 倍以内。
 
 正直に: 歩き方は周期の式で、物理(重心・バランス)は解いていない —— 「擬似的に歩く」。事前描画は方位を 16 段・位相を 12 段に
-丸め、遠くから水平に見た像を縮めて貼るので、カメラが高い・近いと透視の違いが出る(門の IoU はその大きさ)。OP3 は向きの
-判定が合わず、ToddlerBot は足元に箱が残るので外した。
+丸め、遠くから水平に見た像を縮めて貼るので、カメラが高い・近いと透視の違いが出る(門の IoU はその大きさ)。ほかに 2 機種は
+向きの判定が合わない・足元に箱が残るので外した。
 
 Menagerie の場所は環境変数 FULLSEYE_MENAGERIE_DIR(git clone https://github.com/google-deepmind/mujoco_menagerie)。
 Run: py -3.11 examples/poc_driving_humanoids.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く)
@@ -38,9 +38,9 @@ import drivehumanoid as H  # noqa: E402
 import driveterrain as DT  # noqa: E402
 import driveworld as DW  # noqa: E402
 
-MODELS = [("unitree_g1", "g1.xml"), ("unitree_h1", "h1.xml"), ("booster_t1", "t1.xml"),
-          ("berkeley_humanoid", "berkeley_humanoid.xml"), ("fourier_n1", "n1.xml"), ("pal_talos", "talos.xml"),
-          ("apptronik_apollo", "apptronik_apollo.xml")]
+#: Menagerie の人型 7 機種(ディレクトリ名は読み込み用の識別子として drivehumanoid に置く)。表と図では「人型 k」。
+MODELS = list(H.MENAGERIE_HUMANOIDS)
+LABEL = {d: "人型 %d" % (k + 1) for k, (d, _f) in enumerate(MODELS)}
 W, Hh = 640, 400
 
 
@@ -102,7 +102,7 @@ def menagerie_part(root):
         assert np.allclose(c["V"][:, :, 2].min(axis=1), 0.0)
         assert c["cycle_length"] > 0.2, (d, c["cycle_length"])
         assert dec["max_vertex_shift"] <= math.sqrt(3) * dec["cell"] + 1e-12
-        rows.append((d, dec["tris_before"], dec["tris_after"], "%.1f" % (dec["cell"] * 100),
+        rows.append((LABEL[d], dec["tris_before"], dec["tris_after"], "%.1f" % (dec["cell"] * 100),
                      "%.1f" % (dec["max_vertex_shift"] * 100), "%.2f" % c["cycle_length"], "%.2f" % c["dims"][2]))
     assert len(lo) >= 3, "Menagerie の人型が 3 機種未満"
     print("%-18s %10s %8s %8s %10s %8s %6s" % ("機種", "元の三角形", "間引後", "格子 cm", "最大ずれ cm", "1 周期 m", "身長 m"))
@@ -141,7 +141,7 @@ def menagerie_part(root):
         print("  %-24s %.3f s(地面だけの %.2f 倍)" % (k, v, v / t_ground))
     assert results["マスク付きの事前描画"] <= 1.5 * t_ground + 0.01
     # 同じ姿勢を 3 通りで(何を失い、何を保つか): 精細なメッシュ / 間引いたメッシュ / 事前描画
-    d0 = "unitree_g1" if "unitree_g1" in names else names[0]
+    d0 = names[0]                                      # 人型 1(無ければ並びで最初に在る機種)
     Kc = DW.camera_intrinsics(40, 360, 400)
     pc = DW.camera_pose((-4.0, -1.5, 1.0), (0.0, 0.0, 0.7))
     s0, yaw0 = 0.3 * hi[d0]["cycle_length"], 0.4
@@ -155,7 +155,7 @@ def menagerie_part(root):
     ref = panels[0]["label"] == 7
     ious = [float((ref & (q["label"] == 7)).sum() / max((ref | (q["label"] == 7)).sum(), 1)) for q in panels[1:]]
     print("%s を 1 体、同じ姿勢で: 間引いたメッシュの一致度 %.3f、事前描画の一致度 %.3f(精細なメッシュに対して、"
-          "方位と位相は段に丸めたまま)" % (d0, ious[0], ious[1]))
+          "方位と位相は段に丸めたまま)" % (LABEL[d0], ious[0], ious[1]))
     figs.save_grid("humanoid_three_ways", [q["color"] for q in panels],
                    captions=["精細なメッシュ(%d 三角形)" % len(hi[d0]["F"]),
                              "間引いたメッシュ(%d 三角形、IoU %.2f)" % (len(lo[d0]["F"]), ious[0]),

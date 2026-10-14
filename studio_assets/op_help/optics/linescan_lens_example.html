@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linescan_lens_example(kind=&#x27;linescan&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.linescan_lens_example(kind=&#x27;linescan&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;linescan_lens_example&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ラインスキャンの撮像系の模型 2 つ(<code style="color:#22d3bf">raytrace.lens_system</code> の <code style="color:#22d3bf">table</code>)。</p>
-<p>どちらも Cooke の三枚玉(N-SK16 / N-F2 / N-SK16、絞りは中玉の後ろ)を、57.344 mm(8192 × 7 µm)のセンサで幅 300 mm の web を見る倍率 −0.1911 に合わせて <code style="color:#22d3bf">lensopt.optimize_lens</code> で最適化した処方:</p>
+<p>どちらも Cooke の三枚玉(SK16 相当のクラウン / F2 相当のフリント / SK16 相当、絞りは中玉の後ろ)を、57.344 mm(8192 × 7 µm)のセンサで幅 300 mm の web を見る倍率 −0.1911 に合わせて <code style="color:#22d3bf">lensopt.optimize_lens</code> で最適化した処方:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linescan&quot;</code>: f 90 mm、物体距離 519 mm、像高 28.7 mm(センサの端)まで最適化、大きい口径 —— <b>ラインスキャン用レンズ</b>の模型(像円がセンサを覆う)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;cmount&quot;</code>: f 35 mm、物体距離 201 mm、2/3 型の像高 5.5 mm までで最適化し、口径も 2/3 型用 —— <b>普通の C マウントレンズを長いセンサに流用</b>した模型。同じ形・同じ硝材で、違いは像円だけ。</p>
 <p>実在の型番の処方ではない(メーカーの処方は公開されていない)。像円の大きさと口径食の有無という <b>性質</b>を見るための模型。</p>

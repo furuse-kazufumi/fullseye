@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt einen Materialdatensatz aus gemessenen n(λ) (und k(λ)) als pairs (λ [nm], Wert).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は N-BK7 を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
+<p><code style="color:#22d3bf">n_curve</code> は (K, 2) で K ≥ 2、λ &gt; 0、n &gt; 0(既定は BK7 相当を 4 点で写した雛形 <code style="color:#22d3bf">N_CURVE_EXAMPLE</code>)。<code style="color:#22d3bf">k_curve</code> は省略可(省略は k = 0)で k ≥ 0。空の入力(<code style="color:#22d3bf">n_curve</code> が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。返り値は他の materials op に <code style="color:#22d3bf">material</code> として渡せる(区間は曲線の端まで、外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

@@ -19,7 +19,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。
 
-``n_curve`` は (K, 2) で K ≥ 2、λ > 0、n > 0(既定は N-BK7 を 4 点で写した雛形
+``n_curve`` は (K, 2) で K ≥ 2、λ > 0、n > 0(既定は BK7 相当を 4 点で写した雛形
 :data:`N_CURVE_EXAMPLE`)。``k_curve`` は省略可(省略は k = 0)で
 k ≥ 0。空の入力(``n_curve`` が 0 要素)は ValueError。同じ λ の重複や非有限も ValueError。
 返り値は他の materials op に ``material`` として渡せる(区間は曲線の端まで、外挿しない)。

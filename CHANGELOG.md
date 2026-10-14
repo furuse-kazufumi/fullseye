@@ -79,7 +79,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### Added — 材料の光学物性ライブラリ(materials 16 op + PoC)
 
-- **新 op 16 本** `materials.py`(`opsoptics` の新カテゴリ `matprop`)。**1 材料 = 1 レコード**で硝材 46 種(4 社のカタログ、Sellmeier 2 / Schott 多項式、n_d・V_d・密度・熱膨張・dn/dT の式 A)、結晶と IR 材 12、半導体 6(Si は Green 2008 の n,k と Salzberg の IR Sellmeier)、膜 4、金属 10(n,k の表)、水、プラスチック 4 の 83 種。数値は refractiveindex.info database(CC0 1.0)の一次文献だけで、`tools/gen_material_tables.py --rii <database dir>` が `materials_data.py` を生成する(`--check` で drift 検査。メーカーの .agf は同梱しない)。op は材料を名前(別名可)かレコードで受け、波長曲線はすべて `pairs`(λ [nm], 値)で返す: `material_table` / `material_record` / `material_optical_constants`(n・k・α・ε・垂直反射率と出典)/ `material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance`(平行平板、多重反射込み)/ `material_reflectance`(Fresnel、角度・偏光)/ `abbe_number` / `glass_map` / `thermo_optic_coefficient`(式 A の dn/dT と Δn、基準温度は 20 ℃ / 25 ℃)/ `plate_focus_shift`(t(1 − 1/n) と縦球面収差 ∝ NA²)/ `silicon_free_carrier_absorption`(Schroder 1978 の λ² 則)/ `material_from_sellmeier` / `material_from_curves` / `read_glass_catalog_agf`(Zemax の分散式 1〜13、IT 行から k)。区間外は外挿せず ValueError、k の表が無い区間は `k_source = None`。門は `tests/test_materials.py`(硝材 46 種の公表値 1e-4 / 0.3、Green 2008・Johnson & Christy・Malitson の点、9 本の分散式の恒等、閉形式、.agf の 13 式)。16 本とも `_OP_BRIDGE_SKIP`(引数だけで表と曲線を返す側)。
+- **新 op 16 本** `materials.py`(`opsoptics` の新カテゴリ `matprop`)。**1 材料 = 1 レコード**で硝材 46 種(4 つの公開カタログ、Sellmeier 2 / べき級数の分散式、n_d・V_d・密度・熱膨張・dn/dT の式 A)、結晶と IR 材 12、半導体 6(Si は Green 2008 の n,k と Salzberg の IR Sellmeier)、膜 4、金属 10(n,k の表)、水、プラスチック 4 の 83 種。数値は refractiveindex.info database(CC0 1.0)の一次文献だけで、`tools/gen_material_tables.py --rii <database dir>` が `materials_data.py` を生成する(`--check` で drift 検査。メーカーの .agf は同梱しない)。op は材料を名前(別名可)かレコードで受け、波長曲線はすべて `pairs`(λ [nm], 値)で返す: `material_table` / `material_record` / `material_optical_constants`(n・k・α・ε・垂直反射率と出典)/ `material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance`(平行平板、多重反射込み)/ `material_reflectance`(Fresnel、角度・偏光)/ `abbe_number` / `glass_map` / `thermo_optic_coefficient`(式 A の dn/dT と Δn、基準温度は 20 ℃ / 25 ℃)/ `plate_focus_shift`(t(1 − 1/n) と縦球面収差 ∝ NA²)/ `silicon_free_carrier_absorption`(Schroder 1978 の λ² 則)/ `material_from_sellmeier` / `material_from_curves` / `read_glass_catalog_agf`(.agf 形式の分散式 1〜13、IT 行から k)。区間外は外挿せず ValueError、k の表が無い区間は `k_source = None`。門は `tests/test_materials.py`(硝材 46 種の公表値 1e-4 / 0.3、Green 2008・Johnson & Christy・Malitson の点、9 本の分散式の恒等、閉形式、.agf の 13 式)。16 本とも `_OP_BRIDGE_SKIP`(引数だけで表と曲線を返す側)。
 - **PoC `poc_material_optical_library`**(収蔵は `tools/gen_exhibit_numbers.py` が発行): 5 章(Abbe 図 67 材料と第二実装 optiland 0.6.3 の 23 点 / Si の NIR 窓・透過率・自由キャリア・平板の焦点ずれ / 鏡の材料 10 種の反射率と色 / 硝子とプラスチックの分散と dn/dT / .agf の取り込み)。ユーザーの硝材カタログは `FULLSEYE_GLASS_DIR` に置けば同名硝材を照合。図 12 枚 + 表 2 + GIF 1 本。能力ノート `docs/capabilities/material-optical-property-library.md`。
 - **修正** `optscene.sensor_catalog`: 絞りの引数 `maker` をループの中で上書きしていたので、無引数でも最初の 1 社に絞られ 38 中 19 しか返らなかった(回帰 `tests/test_optscene.py`)。
 
@@ -847,14 +847,14 @@ minor —— 消した 3 つは op ではないが、呼んでいたコードは
 - ★**運転の世界を歩くヒューマノイド**(新モジュール `drivehumanoid`、台帳 `humanoid` 4 op + facade `humanoid_walk_clip`):
   著者の発案「人の代わりにヒューマノイドも何種類か擬似的に歩かせる」「計算コストを下げられるなら手段は問わない」「当たり判定は
   そこまで精密でなくていい」「物体ごとの描画をマスク付きで作っておく」「正確な物理が要るのは車、他はそこまで要らない」。
-  実測: Menagerie の G1 は見た目のメッシュ 39 万三角形で、3 体置くと 1 コマ 0.066 → 1.5 s。3DGS(物体ごとの上限 1,000〜30,000)は
+  実測: Menagerie の人型 1 は見た目のメッシュ 39 万三角形で、3 体置くと 1 コマ 0.066 → 1.5 s。3DGS(物体ごとの上限 1,000〜30,000)は
   0.74〜3.2 s でメッシュより遅かった(時間は「ガウシアン × 覆う画素」で決まる)。採った手: 関節の役割を**名前でなく体の形**から
-  決める手続き的な歩行 1 周期(G1・H1・T1・Berkeley・N1・TALOS・Apollo の 7 機種、名前は left_hip_pitch / LL_HFE / leg_left_3 とばらばら)、
+  決める手続き的な歩行 1 周期(人型 7 機種、名前は left_hip_pitch / LL_HFE / leg_left_3 とばらばら)、
   格子で間引いたメッシュ(LiDAR・深度用、ずれ ≤ √3·格子幅、消えた geom の数も返す)、向き 16 × 位相 12 のマスク付き事前描画
   (カメラ用)。10 体の 1 コマ: 事前描画 0.96〜1.10 倍・間引き 1.23〜1.44 倍・精細 4.5〜6.7 倍(地面だけ比)。当たり判定は外形の箱。
   - ★**門が 1 件捕まえた**: 最初の版は周期内の前進を形の側でも差し引き、置く側と 2 重に引いていた(支持脚の滑り = 歩幅そのもの)。
     直すと事前描画と直接の描画のマスクの一致度も 0.81 → 0.98〜1.00 に上がった(像がずれていた)。
-  - 正直に: 歩き方は周期の式で重心もバランスも解いていない(擬似)。OP3 は向きの判定が合わず、ToddlerBot は足元に箱が残るので外した。
+  - 正直に: 歩き方は周期の式で重心もバランスも解いていない(擬似)。ほかの 2 機種は向きの判定が合わない・足元に箱が残るので外した。
     Menagerie は repo に入れない(`FULLSEYE_MENAGERIE_DIR`、無ければ PoC のその部分は [skip]、事前描画の門は箱の歩行者で回る)。
   - 例 `examples/poc_driving_humanoids.py`、門 `tests/test_drivehumanoid.py` 10 本。
 - ★**Studio のヘルプに「開けるファイル」を機能として書いた**(ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」):
