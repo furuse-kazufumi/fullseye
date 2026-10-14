@@ -8,12 +8,13 @@
     1. AI 向けの使い方(用途→パイプライン提案の手順)。
     2. worked examples(用途→使う op)= 実際の組合せの手本。
     3. スタンドアロン幾何/数学モジュールの関数 API(署名+一行説明)。
-    4. 3D op 一覧(カテゴリ別、in→out と説明)。
-    5. 2D パイプライン op 一覧(カテゴリ別、HALCON別名 と in→out)。
-    6. 参照(アルゴリズムの一次情報・further reading の URL)。
+    4. 全 op を族(``docs/ops/<族>/``)→ カテゴリの順に(in→out・要約・HALCON 別名・例)。
+       母集団は op ノートと同じ ``tools/opdocs._records``(48 族)。
+    5. 参照(アルゴリズムの一次情報・further reading の URL)。
 
-設計: 内省は全て try/except で囲み、1 つの op/モジュールの失敗が台帳全体を壊さない
-(壊れた項目は "(introspection failed)" と明示し、握り潰さない)。
+設計: 補助の節(例・単体モジュール・参照)は try/except で囲み、1 つの失敗が台帳全体を
+壊さない(壊れた項目は "(introspection failed)" と明示し、握り潰さない)。**op の一覧の節だけは
+fail-closed** —— そこが空なら台帳の意味が無い。
 """
 from __future__ import annotations
 
@@ -148,163 +149,80 @@ def _modules_section() -> list[str]:
     return out
 
 
-def _ops3d_section() -> list[str]:
-    out = ["## 3-D operators(ops3d)by category", ""]
-    try:
-        import ops3d
-        cats = ops3d.categories()
-        catalog = getattr(ops3d, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (ops3d を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = ops3d.info(name)
-                io = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io}`) — {doc}{_ex_link(_ex_index()[0].get(name))}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
+#: 族の冒頭に置く手書きの一言(op の一覧そのものは生成)。無い族は一言なしで出す。
+_FAMILY_INTRO = {
+    "2d": ("1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る "
+           "n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。"),
+    "3d": "点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。",
+    "oned": ("プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・"
+             "音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。"),
+    "math": ("視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の"
+             "計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/"
+             "留数・等角写像・Cauchy-Riemann 残差)。FFT/複素画像は complexops・"
+             "volfreq、1-D 関数は funct1d を参照。"),
+    "optics": ("レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・"
+               "被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・"
+               "Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・"
+               "Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・"
+               "光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。"),
+    "drive": ("名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・"
+              "CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・"
+              "粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。"
+              "カテゴリ名で引くこと。"),
+}
+
+
+def _family_order(recs) -> list:
+    """族の並び = ``docs/ops/INDEX.md`` と同じ(2d, 3d, 台帳の登録順)。台帳に無い族は最後に名前順。"""
+    sys.path.insert(0, os.path.join(_REPO, "tools"))
+    import opdocs as OD
+    order = ["2d", "3d", *OD.LEDGER_DIMS]
+    present = {r["dim"] for r in recs}
+    return [d for d in order if d in present] + sorted(present - set(order))
+
+
+def _families_section() -> list[str]:
+    """全 op を**族(``docs/ops/<族>/``)→ カテゴリ**の順に並べる。
+
+    ★2026-10-15 まで、このカタログは ops / ops3d / ops1d / opsmath / opsoptics の **5 つのレジストリだけ**を
+    手で 1 節ずつ書いていて、残る 43 の台帳族(drive 694・segmentation 54・annotate 51 …)の **1,351 名が
+    1 度も出てこなかった**。pip だけで入れた利用者の RAG(``fullseye-rag``)はこのファイルしか持たないので、
+    その op は wheel の利用者からは探しようがなかった。op ノートと**同じ母集団**(``tools/opdocs._records``)
+    から書くことで、族を足しても節を書き足す必要がなくなる(門 = ``tests/test_rag_by_ops.py``)。
+    """
+    sys.path.insert(0, os.path.join(_REPO, "tools"))
+    import opdocs as OD
+    recs = OD._records()[0]
+    if not recs:
+        raise RuntimeError("opdocs._records() が 0 件 —— 空のカタログを書かない(fail-closed)")
+    by_dim: dict[str, dict[str, list]] = {}
+    for r in recs:
+        by_dim.setdefault(r["dim"], {}).setdefault(r["category"] or "(none)", []).append(r)
+    order = _family_order(recs)
+    out = ["## Operators by family(族 → カテゴリ、全 op)", "",
+           f"_計 {len(recs)} ops / {len(order)} families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ"
+           "(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_", ""]
+    out.append("族の一覧: " + " · ".join(
+        f"**{d}** {sum(len(v) for v in by_dim[d].values())}" for d in order))
+    out.append("")
+    for dim in order:
+        cats = by_dim[dim]
+        n = sum(len(v) for v in cats.values())
+        out.append(f"### {dim}({n} ops / {len(cats)} categories)")
         out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
-
-
-def _ops1d_section() -> list[str]:
-    out = ["## 1-D operators(ops1d)by category", "",
-           "プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・"
-           "音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。", ""]
-    try:
-        import ops1d
-        cats = ops1d.categories()
-        catalog = getattr(ops1d, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (ops1d を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = ops1d.info(name)
-                io = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io}`) — {doc}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
-
-
-def _opsmath_section() -> list[str]:
-    out = ["## Math operators(opsmath)by category", "",
-           "視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の"
-           "計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/"
-           "留数・等角写像・Cauchy-Riemann 残差)。北極星は"
-           "「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・"
-           "volfreq、1-D 関数は funct1d を参照。", ""]
-    try:
-        import opsmath
-        cats = opsmath.categories()
-        catalog = getattr(opsmath, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (opsmath を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = opsmath.info(name)
-                io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io_}`) — {doc}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
-
-
-def _opsoptics_section() -> list[str]:
-    out = ["## Optics operators(opsoptics)by category", "",
-           "レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・"
-           "被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・"
-           "Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・"
-           "Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用"
-           "(reflect / refract / fresnel_reflectance)と Zernike フィット"
-           "(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、"
-           "位相シフト干渉法は fringe が持ち場なので重複させていない。", ""]
-    try:
-        import opsoptics
-        cats = opsoptics.categories()
-        catalog = getattr(opsoptics, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (opsoptics を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = opsoptics.info(name)
-                io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io_}`) — {doc}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
-
-
-def _ops2d_section() -> list[str]:
-    out = ["## 2-D pipeline operators(ops registry)by category", "",
-           "1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` の"
-           "データ種で連鎖を組む。HALCON 別名は用途の手掛かり。", ""]
-    try:
-        import ops
-        reg = ops.REGISTRY
-    except Exception as e:
-        return out + [f"- (ops を読めませんでした: {e})", ""]
-    by_cat: dict[str, list] = {}
-    for o in reg:
-        try:
-            by_cat.setdefault(o.category, []).append(o)
-        except Exception:
-            continue
-    out.insert(1, f"_計 {len(reg)} ops / {len(by_cat)} categories。_\n")
-    for cat in sorted(by_cat):
-        ops_in = by_cat[cat]
-        out.append(f"### {cat}({len(ops_in)})")
-        for o in ops_in:
-            try:
-                hal = f" (halcon: `{o.halcon}`)" if getattr(o, "halcon", None) else ""
-                io = f"`{getattr(o, 'in_sort', '?')} → {getattr(o, 'out_sort', '?')}`"
-                out.append(f"- `{o.name}`{hal} {io}{_ex_link(_ex_index()[1].get(o.name))}")
-            except Exception as ex:
-                out.append(f"- `{getattr(o, 'name', '?')}` (introspection failed: {ex})")
-        out.append("")
+        if dim in _FAMILY_INTRO:
+            out += [_FAMILY_INTRO[dim], ""]
+        for cat in sorted(cats):
+            rows = sorted(cats[cat], key=lambda r: r["name"])
+            out.append(f"#### {dim} / {cat}({len(rows)})")
+            for r in rows:
+                summ = (OD.summary_and_rest(r.get("doc"))[0] or "").strip()
+                hal = f" (halcon: `{r['halcon']}`)" if r.get("halcon") else ""
+                io_ = f"`{r.get('in') or '入力なし'} → {r.get('out') or '?'}`"
+                ex = _ex_link(r.get("examples")) if dim in ("2d", "3d") else (
+                    _ex_link(r.get("examples")) if r.get("examples") else "")
+                out.append(f"- `{r['name']}`{hal} {io_}" + (f" — {summ}" if summ else "") + ex)
+            out.append("")
     return out
 
 
@@ -342,12 +260,15 @@ def _references_section() -> list[str]:
 def build_catalog() -> str:
     lines: list[str] = []
     for section in (_preamble, _examples_section, _modules_section,
-                    _ops3d_section, _ops2d_section, _ops1d_section, _opsmath_section,
-                    _opsoptics_section,
-                    _references_section):
+                    _families_section, _references_section):
+        if section is _families_section:
+            # ★fail-closed: op の一覧は台帳の本体。ここを「(section failed)」の 1 行で済ませると
+            #   カタログが黙って空になる(pip だけの利用者の RAG はこのファイルしか持たない)。
+            lines += section()
+            continue
         try:
             lines += section()
-        except Exception as e:                          # 1 セクションの失敗で全体を壊さない
+        except Exception as e:                          # 補助の節は 1 つ壊れても全体を出す
             lines += [f"## (section {section.__name__} failed: {e})", ""]
     return "\n".join(lines) + "\n"
 
