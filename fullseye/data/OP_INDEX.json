@@ -1,8 +1,8 @@
 {
- "n_ops": 3219,
+ "n_ops": 3222,
  "tiers": {
   "color": 12,
-  "ledger": 2266,
+  "ledger": 2269,
   "nary": 17,
   "registry": 924
  },
@@ -15511,6 +15511,19 @@
    ]
   },
   {
+   "name": "mm_per_px_from_reference",
+   "halcon": "",
+   "in_sort": "measurement",
+   "out_sort": "measurement",
+   "category": "scale",
+   "tier": "ledger",
+   "ledger": "opsmeasure1d",
+   "dim": "measure1d",
+   "in_sorts": [
+    "measurement"
+   ]
+  },
+  {
    "name": "moire_differential_shift",
    "halcon": "",
    "in_sort": null,
@@ -18580,6 +18593,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "pixel_to_world",
+   "halcon": "",
+   "in_sort": "measurement",
+   "out_sort": "measurement",
+   "category": "scale",
+   "tier": "ledger",
+   "ledger": "opsmeasure1d",
+   "dim": "measure1d",
+   "in_sorts": [
+    "measurement"
+   ]
   },
   {
    "name": "pl_diffusion_psf",
@@ -26155,6 +26181,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "table_px_to_mm",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "scale",
+   "tier": "ledger",
+   "ledger": "opsmeasure1d",
+   "dim": "measure1d",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "table_world",

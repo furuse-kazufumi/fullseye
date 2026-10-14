@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3219,
- "n_notes": 3225,
+ "n_ops": 3222,
+ "n_notes": 3228,
  "notes": {
   "vol_dilate": [
    {
@@ -26013,6 +26013,36 @@
     "category": "model",
     "out": "metrologymodel",
     "path": "docs/ops/measure1d/model/create_metrology_model.md"
+   }
+  ],
+  "mm_per_px_from_reference": [
+   {
+    "op": "mm_per_px_from_reference",
+    "dim": "measure1d",
+    "category": "scale",
+    "in": "measurement",
+    "out": "measurement",
+    "path": "docs/ops/measure1d/scale/mm_per_px_from_reference.md"
+   }
+  ],
+  "pixel_to_world": [
+   {
+    "op": "pixel_to_world",
+    "dim": "measure1d",
+    "category": "scale",
+    "in": "measurement",
+    "out": "measurement",
+    "path": "docs/ops/measure1d/scale/pixel_to_world.md"
+   }
+  ],
+  "table_px_to_mm": [
+   {
+    "op": "table_px_to_mm",
+    "dim": "measure1d",
+    "category": "scale",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/measure1d/scale/table_px_to_mm.md"
    }
   ],
   "complex_steerable_decompose": [

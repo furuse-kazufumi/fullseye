@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1407. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1414. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -124,6 +124,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1491** — verschlechtert sich umgekehrt (0.30 -> 0.56). ★Die Wurzel ist, dass das Verlängern des Abstands die Auflösung selbst zusammenfallen lässt, 0.0328 -> 0.0122.
 - **L1691** — ★2026-09-02: Diese beiden teilten sich `{"kind": "zoom"}` und waren daher eine **völlig identische Implementierung**, und keiner von beiden nutzte b (gemessen: max. Differenz 0.0 bei gleicher Eingabe, Differenz 0.0 zwischen b=0 und b=1). In HALCON nimmt die factor-Version zwei Skalierungsfaktoren und die size-Version eine Zielgröße, was **verschiedene Dinge** sind, deshalb haben wir das kind aufgeteilt, um die Realität an die Namen anzupassen.
 - **L1764** — ★2026-09-02: Die alte Spezifikation war out_sort=feature / metric="area", die Realität aber `np.mean(mask)` = das **im Bild eingenommene Flächenverhältnis**. Da HALCONs `area_center` ein op ist, der (Area, Row, Column) zurückgibt, gab es eine doppelte Diskrepanz: (1) er gibt das Zentrum nicht zurück, (2) die Fläche ist ein Verhältnis statt einer Pixelzahl (= auflösungsabhängig). Ein einzelner Skalar kann den Namen nicht erfüllen, daher machen wir ihn wie `ncc_locate` zum **1-D-Vektor des match sort** und geben (Flächenverhältnis, Zeile, Spalte) zurück. Sowohl match als auch feature sind terminale Sorts (Kandidaten sind nur identity), daher bewegt sich die Genom->op-Abbildung nicht.
+- **L1771** — ★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Die Beschreibung blieb drei Wochen lang „normiert“, und ein danach geschriebenes Beispiel ging kaputt, weil es die Koordinaten mit (H-1) multiplizierte (2026-10-15). tests/test_feature_units_doc_2026_10_15.py prueft, dass Beschreibung und Verhalten uebereinstimmen.
 
 ## `backends_bridge.py`
 
@@ -293,6 +294,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L46** — ★Ist das Repository-Wurzelverzeichnis nicht im Pfad, wird ``demops`` nicht gefunden (dieses Beispiel importiert `fullseye` nicht, daher greift der Pfad-Hook nicht).
 - **L59** — ★EXTEND: Zellgröße [m]. Bei echten Daten über dem_cell_size_webmercator(zoom, Breitengrad) ermitteln.
 - **L158** — ★Ehrliche Beobachtung: Liegt mitten an einem Hang eine Fehlstelle (no-data), so entwässert deren nördlicher Nachbar selbst als Outlet nicht in die Fehlstelle, sondern nach Südwesten (die Richtung mit endlichem Gefälle). Die Implementierung lautet "nur in die Fehlstelle, wenn es keinen anderen Abstieg gibt", enger als das "lässt Fluss zur Fehlstelle zu" des Docstrings. Hier wird nur ausgegeben, ohne assert.
+
+## `examples/example_inner_diameter_mm.py`
+
+- **L67** _(ja)_ — 穴(暗い側)を前景に。★面積の大小では決めない —— 穴と地の面積がほぼ同じだと 取り違える(R=100 px の的で地の側を「穴」と取った、2026-10-15)。輝度で決める。
+- **L71** _(ja)_ — area_center は (面積 [px²], 行 [px], 列 [px])。★2026-09-26 に正規化 [0,1] から HALCON と同じ画素値に変わった(ecdaf14637)。
 
 ## `examples/gallery2d_color_artistic.py`
 
@@ -1505,6 +1511,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L3460** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
 - **L3763** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
+## `measuring1d.py`
+
+- **L375** _(ja)_ — ★空の表は名指しで拒否する(2026-10-12 の空入力の方針 A)。空 list を空 list で返すと、 測定が 1 件も取れなかったことが mm 換算の後ろで見えなくなる。
+
 ## `medial.py`
 
 - **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
@@ -2480,8 +2490,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_capabilities_index.py`
 
-- **L34** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
-- **L40** — Englische Namen der Kategorien. ★Selbst in der englischen Version blieben nur die Ueberschriften auf Japanisch (gemessen 7 Zeilen) -- der Inhalt war mit `title_en` / `_summary_en` uebersetzt, aber die Ueberschriften wurden vergessen, ein Musterbeispiel fuer "umgeschaltet, aber Japanisch mischt sich ein". Hier nicht vorhandene Kategorien werden unveraendert ausgegeben (keine Uebersetzungen erfinden).
+- **L69** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
+- **L75** — Englische Namen der Kategorien. ★Selbst in der englischen Version blieben nur die Ueberschriften auf Japanisch (gemessen 7 Zeilen) -- der Inhalt war mit `title_en` / `_summary_en` uebersetzt, aber die Ueberschriften wurden vergessen, ein Musterbeispiel fuer "umgeschaltet, aber Japanisch mischt sich ein". Hier nicht vorhandene Kategorien werden unveraendert ausgegeben (keine Uebersetzungen erfinden).
+- **L91** _(ja)_ — ★レシピ欄がまだ無い能力(**理由つきで名指し**、免除は縮める側)。 レシピ欄は 2026-09-15 に当時の 16 件 + 新設 8 件 = 24 件へ付けた(ブランチ rag/recipes-and-help)。そのブランチが本線に入らないまま 1 か月が過ぎ、その間に 足された能力 32 件には欄が無い。2026-10-15 に移植したとき、その分の連鎖・限界・ 実寸校正を確かめずに書き足すことはしなかった(型の門は通っても、限界と校正の文が 実測でなくなる)。欄を埋めたらここから消す —— 消し忘れは :func:`load_all` が落とす。
 
 ## `tools/gen_design_notes.py`
 
@@ -2548,10 +2559,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L592** — ★2026-09-02: highpass / bandpass_image folgen nun der Konvention, "[0,1] mit 0 auf 0.5 abgebildet" zurueckzugeben. Zuvor gaben sie ein vorzeichenbehaftetes Array zurueck, das als image bezeichnet wurde, und beim Speichern / Zwischenstufen-clip wurde die negative Haelfte (etwa 50% der Pixel) stillschweigend auf 0 gedrueckt. Halte die Behebung **durch Messung statt Vermutung** fest: den Minimalwert und den Anteil negativer Pixel.
 - **L727** — ★2026-09-02: estimate_noise gibt jetzt in Einheiten von σ zurueck (zuvor blieb es bei σ>=0.08 bei 1.0 haengen und gab fuer σ, die sich um das 3-fache unterschieden, denselben Wert zurueck). Lege die Gerade y=x an, damit man visuell pruefen kann, "ob der Rueckgabewert σ selbst ist".
 - **L840** — ★Die Labels von _panel_grid brechen nicht um, und sobald sie die Breite ueberschreiten, stossen sie mit dem Nachbarn zusammen und werden unlesbar (bei tile 262px / font 19-17px sind pro Zeile ≈ 12 Vollbreiten-Zeichen das Maximum). Verlagere die Bedeutung des Skalierungsfaktors in Titel und Untertitel und platziere auf dem Panel nur einen kurzen Namen und Zahlen.
-- **L1184** — ★2026-09-02: `area_center` gibt nun, wie der Name sagt, die 3 Komponenten (Flaechenverhaeltnis, Zeile, Spalte) zurueck (bis dahin war es nur der einzelne Skalar Flaechenverhaeltnis und **gab das Zentrum nicht zurueck**). Alle 3 Komponenten sind [0,1]-normiert, um nicht von der Aufloesung abzuhaengen, also zum Zurueckrechnen in Pixel: Zeile ×(H-1) / Spalte ×(W-1). Hier zeichnen wir das zurueckgerechnete Zentrum in das Bild ein, sodass sichtbar wird, dass der Rueckgabewert wirklich das Zentrum ist.
-- **L1712** — ★Ruft man apply_cmap Punkt fuer Punkt auf, wird innerhalb dieses einen Punkts normiert, sodass alles dieselbe Farbe wird. Erstelle einmal eine LUT, die 0..1 aufspannt, und schlage darin nach.
-- **L1950** — ★2026-09-02: gabor verwendet nun eine feste Skala, die durch die L1-Norm des Kernels teilt, und gibt einen **ueber op hinweg vergleichbaren Absolutwert** zurueck. Zuvor teilte es durch "den maximalen Absolutwert in diesem Bild", also pro Orientierung durch einen anderen Divisor, was die Groesse der Antwort selbst = die Unterscheidungskraft ueber Orientierungen zunichtemachte. Im Gegenzug faellt der Rueckgabewert in ein schmales Band am unteren Ende von [0,1] (Mittel 0.007–0.030 bei diesen 3 Mustern), sodass **ein direktes Einfuegen alle 3 pechschwarz macht**. Zeige das Bild auf das 1–99%tile gestreckt und gib in den Label-Zahlen die vor der Streckung gemessenen Werte an (dieselbe Konvention wie das highpass-Panel von freq_sweep).
-- **L2065** — ★2026-09-02: die 3 op wurden zu getrennten Implementierungen. Zuvor ritten alle 3 auf geom "zoom" mit einer gegenseitigen maximalen Differenz von 0.0 / 4.9e-14 (= identisch), und zudem war b in allen 3 tot. Jetzt zoom_image_factor = 2 Skalierungsfaktoren (Hoehe/Breite) / zoom_image_size = Zielgroesse / rescale_img = isotroper Skalierungsfaktor + Interpolationsordnung. Die canvas shape bleibt bei allen wie die Eingabe.
+- **L1184** — ★2026-09-02: `area_center` gibt nun, wie der Name sagt, die 3 Komponenten (Flaechenverhaeltnis, Zeile, Spalte) zurueck (bis dahin war es nur der einzelne Skalar Flaechenverhaeltnis, und **das Zentrum wurde nicht zurueckgegeben**).
+- **L1186** — ★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Vorher waren sie auf [0,1] normiert, und hier wurde mit (H-1) / (W-1) multipliziert, um zu Pixeln zurueckzukehren (bis zur Korrektur am 2026-10-15 wurden die Pixelwerte erneut mit (H-1) multipliziert). Das zurueckgegebene Zentrum wird ins Bild gezeichnet, damit man sieht, dass es wirklich das Zentrum ist.
+- **L1713** — ★Ruft man apply_cmap Punkt fuer Punkt auf, wird innerhalb dieses einen Punkts normiert, sodass alles dieselbe Farbe wird. Erstelle einmal eine LUT, die 0..1 aufspannt, und schlage darin nach.
+- **L1951** — ★2026-09-02: gabor verwendet nun eine feste Skala, die durch die L1-Norm des Kernels teilt, und gibt einen **ueber op hinweg vergleichbaren Absolutwert** zurueck. Zuvor teilte es durch "den maximalen Absolutwert in diesem Bild", also pro Orientierung durch einen anderen Divisor, was die Groesse der Antwort selbst = die Unterscheidungskraft ueber Orientierungen zunichtemachte. Im Gegenzug faellt der Rueckgabewert in ein schmales Band am unteren Ende von [0,1] (Mittel 0.007–0.030 bei diesen 3 Mustern), sodass **ein direktes Einfuegen alle 3 pechschwarz macht**. Zeige das Bild auf das 1–99%tile gestreckt und gib in den Label-Zahlen die vor der Streckung gemessenen Werte an (dieselbe Konvention wie das highpass-Panel von freq_sweep).
+- **L2066** — ★2026-09-02: die 3 op wurden zu getrennten Implementierungen. Zuvor ritten alle 3 auf geom "zoom" mit einer gegenseitigen maximalen Differenz von 0.0 / 4.9e-14 (= identisch), und zudem war b in allen 3 tot. Jetzt zoom_image_factor = 2 Skalierungsfaktoren (Hoehe/Breite) / zoom_image_size = Zielgroesse / rescale_img = isotroper Skalierungsfaktor + Interpolationsordnung. Die canvas shape bleibt bei allen wie die Eingabe.
 
 ## `tools/gen_wing3d_gallery.py`
 
@@ -2628,10 +2640,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1279** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
 - **L1730** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
 - **L1770** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1784** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
-- **L1927** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2096** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2798** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L1781** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1790** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
+- **L1938** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2107** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2809** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -2673,10 +2686,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
 - **L232** _(ja)_ — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
 - **L303** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
-- **L357** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
-- **L530** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
-- **L547** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
-- **L619** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
+- **L362** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
+- **L535** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L552** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
+- **L624** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
 
 ## `unified.py`
 
