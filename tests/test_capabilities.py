@@ -228,3 +228,84 @@ def test_the_needs_user_input_list_has_no_dead_entries():
     ids = {cap["id"] for cap in CAP.load_all()}
     ghosts = sorted(set(NEEDS_USER_INPUT) - ids)
     assert not ghosts, "存在しない能力を免除している: %s" % ghosts
+
+
+# --------------------------------------------------------------------------- #
+# 用途 → op 連鎖のレシピ欄(2026-09-15、2026-10-15 に移植)
+# --------------------------------------------------------------------------- #
+def test_every_capability_has_a_type_checked_pipeline():
+    """★`pipeline` の op が全部索引に在り、**型が前段から後段へ繋がる**こと。
+
+    「ノート単体は正確だが用途から op へ辿る地図が無い」(Codex / Copilot が一致)
+    への答えがこの欄で、繋がらない連鎖を載せたら地図が嘘になる。同一視は
+    `gen_capabilities_index.SORT_ALIASES` の 4 組だけ(緩めるなら理由を書く)。
+    """
+    caps = CAP.load_all()
+    errs = CAP.all_pipeline_errors(caps)
+    assert not errs, "型が繋がらない / 索引に無い op を pipeline に書いている:\n  " + "\n  ".join(errs)
+    assert len(CAP.SORT_ALIASES) == 4, "同一視の組を増やすなら gen_capabilities_index の注記を更新すること"
+
+
+def test_every_capability_pipeline_and_alternatives_exist_in_all_four_tiers():
+    """pipeline / alternatives の op も、`ops` と同じ 4 層の実在検査を通ること。"""
+    bad = []
+    for cap in CAP.load_all():
+        for key in ("pipeline", "alternatives"):
+            for op in cap[key]:
+                if not _op_exists(op):
+                    bad.append((cap["id"], key, op))
+    assert not bad, "実在しない op: %s" % bad[:8]
+
+
+def test_every_capability_states_limits_and_calibration():
+    """limits / calibration は 1 行の欄と本文の節の**両方**に在ること(「動く」と
+    「その条件で測れる」は別。実寸校正が不要ならその理由を書く)。"""
+    bad = []
+    for cap in CAP.load_all():
+        if cap["id"] in CAP.NO_RECIPE_YET:
+            continue                     # 名指しの免除(下の門が縮むことを見る)
+        if len(cap["limits"]) < 20 or len(cap["calibration"]) < 12:
+            bad.append((cap["id"], "欄が短い"))
+        for sec in ("## 推奨パイプライン", "## 代替", "## 限界", "## 実寸校正"):
+            if sec not in cap["_body"]:
+                bad.append((cap["id"], sec))
+        chain = " → ".join("`%s`" % o for o in cap["pipeline"])
+        if chain not in cap["_body"]:
+            bad.append((cap["id"], "本文の推奨パイプラインが frontmatter の pipeline と一致しない"))
+    assert not bad, bad
+
+
+def test_the_capability_count_did_not_shrink():
+    """一致の門は空を通す —— 中身の量を別に数える(2026-09-15 実測 24 件、2026-10-15 は能力 56 件の
+    うちレシピ欄つき 24 件)。"""
+    caps = CAP.load_all()
+    assert len(caps) >= 56
+    with_recipe = [c for c in caps if c["pipeline"]]
+    assert len(with_recipe) >= 24, len(with_recipe)
+
+
+def test_the_no_recipe_yet_list_only_names_real_capabilities_without_a_recipe():
+    """★レシピ欄は 9/15 の 24 件に付けた。その後に足された能力 32 件は欄が無いまま移植した
+    (2026-10-15)。それを**理由つきで名指し**して、黙った穴にしない。免除は縮める側 ——
+    欄を埋めたら一覧から消す(消し忘れは load_all が落とす)、存在しない id を残さない。"""
+    ids = {c["id"] for c in CAP.load_all()}
+    ghosts = sorted(set(CAP.NO_RECIPE_YET) - ids)
+    assert not ghosts, "存在しない能力を免除している: %s" % ghosts
+    assert all(len(r) >= 10 for r in CAP.NO_RECIPE_YET.values()), "免除には理由を書く"
+
+
+def test_the_rag_guide_and_the_op_index_point_at_the_capabilities_first():
+    """★AI が「入口は 3 つ」と誤認した原因: `AI_RAG_GUIDE.md` にも `docs/ops/INDEX.md` にも
+    用途索引(CAPABILITIES)と op 探索 API への導線が無かった。7 言語すべてで、
+    先頭 60 行以内に CAPABILITIES が現れ、探索 API 5 本と CLI が本文に在ること。"""
+    langs = ["", "en", "zh", "tw", "ko", "de", "hi"]
+    for lang in langs:
+        name = "AI_RAG_GUIDE.md" if not lang else "AI_RAG_GUIDE.%s.md" % lang
+        text = io.open(os.path.join(ROOT, "docs", name), encoding="utf-8").read()
+        head = "\n".join(text.split("\n")[:60])
+        assert "CAPABILITIES" in head, "%s の先頭 60 行に CAPABILITIES への導線が無い" % name
+        for api in ("op_find", "op_assist", "op_path", "op_producers", "op_accepts", "fullseye has"):
+            assert api in text, "%s に %s への導線が無い" % (name, api)
+        idx = "INDEX.md" if not lang else "INDEX.%s.md" % lang
+        itext = io.open(os.path.join(ROOT, "docs", "ops", idx), encoding="utf-8").read()
+        assert "CAPABILITIES" in itext, "docs/ops/%s に CAPABILITIES への導線が無い" % idx

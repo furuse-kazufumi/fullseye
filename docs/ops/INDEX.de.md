@@ -105,9 +105,11 @@ Operatordokumentation für **fullseye 0.6.0**. Jeder Operator hat eine eigene Ma
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [Katalog der Beispieldaten (Download-URLs / Lizenzen)](./SAMPLES.md)
 - [Herkunft der Operatoren und Literatur](../REFERENCES.md)
+- [Nach Aufgabe suchen (empfohlene Pipeline / Alternativen / Grenzen / Kalibrierung auf reale Maße)](../CAPABILITIES.en.md)
 
 ## So wird das benutzt (für Assistenten)
 
+0. Steht die Aufgabe schon fest, zuerst in [CAPABILITIES.en.md](../CAPABILITIES.en.md) nachschlagen: Aufgabe → Op-Kette (Typverkettung wird per Gate geprüft).
 1. Wählen Sie zuerst eine **Familie** aus der Liste oben — nicht nur `2d`/`3d`: Optik, PIV, Tomographie und die übrigen Messfamilien haben jeweils eigene Operatoren.
 2. Lesen Sie die **Anleitungen** dieser Familie (`<family>/guides/`).
 4. Verketten Sie Operatoren so, dass die **Sorten `in → out`** jeder Notiz zusammenpassen.

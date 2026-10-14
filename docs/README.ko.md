@@ -53,13 +53,13 @@
 
 ### 검증 단계
 
-능력 48건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.6.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 56건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.6.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|
 | `research-prototype` | 구현은 있으나 테스트나 실행되는 예가 아직 갖춰지지 않음 | 0 |
-| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 41 |
-| `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 7 |
+| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 48 |
+| `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 8 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
 예 368건 중 게이트가 실제로 실행하는 것은 368건.
@@ -287,7 +287,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 243건
+## 문서 지도 — 전 251건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,195건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -429,7 +429,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(160)
+**Other**(168)
 
 | 문서 | 내용 |
 |---|---|
@@ -518,6 +518,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |
 | [`capabilities/golden-compare.md`](capabilities/golden-compare.md) | id: golden-compare |
 | [`capabilities/gw-interferometer-quantum-noise-and-matched-filter.md`](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | id: gw-interferometer-quantum-noise-and-matched-filter |
+| [`capabilities/inner-diameter-in-mm.md`](capabilities/inner-diameter-in-mm.md) | id: inner-diameter-in-mm |
 | [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | id: inspection-fixture |
 | [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | id: inspection-workflow |
 | [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | id: inverted-colour-overlays |
@@ -526,19 +527,26 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/light-transport.md`](capabilities/light-transport.md) | id: light-transport |
 | [`capabilities/material-optical-property-library.md`](capabilities/material-optical-property-library.md) | id: material-optical-property-library |
 | [`capabilities/measurement-system-and-uncertainty.md`](capabilities/measurement-system-and-uncertainty.md) | id: measurement-system-and-uncertainty |
+| [`capabilities/ocr-preprocessing.md`](capabilities/ocr-preprocessing.md) | id: ocr-preprocessing |
 | [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | id: one-stroke-drawing |
 | [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
+| [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
 | [`capabilities/pl-carrier-diffusion-visibility.md`](capabilities/pl-carrier-diffusion-visibility.md) | id: pl-carrier-diffusion-visibility |
+| [`capabilities/planarity-from-point-cloud.md`](capabilities/planarity-from-point-cloud.md) | id: planarity-from-point-cloud |
 | [`capabilities/point-target-detection.md`](capabilities/point-target-detection.md) | id: point-target-detection |
+| [`capabilities/polarisation-specular-removal.md`](capabilities/polarisation-specular-removal.md) | id: polarisation-specular-removal |
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
 | [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
 | [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
+| [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
+| [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |
+| [`capabilities/template-alignment.md`](capabilities/template-alignment.md) | id: template-alignment |
 | [`capabilities/terrain-and-visibility.md`](capabilities/terrain-and-visibility.md) | id: terrain-and-visibility |
 | [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | id: text-and-tables-on-images |
 | [`capabilities/theorems-as-pictures.md`](capabilities/theorems-as-pictures.md) | id: theorems-as-pictures |

@@ -105,9 +105,11 @@
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [샘플 데이터 카탈로그(다운로드 URL / 라이선스)](./SAMPLES.md)
 - [오퍼레이터의 출처와 참고문헌](../REFERENCES.md)
+- [용도로 찾기(권장 파이프라인 / 대안 / 한계 / 실측 보정)](../CAPABILITIES.md)
 
 ## 사용법(어시스턴트용)
 
+0. 용도가 정해져 있다면 먼저 [CAPABILITIES.md](../CAPABILITIES.md)에서 과제 → op 연쇄(타입 연결은 게이트로 검사됨)를 찾는다.
 1. 먼저 위 목록에서 **패밀리**를 고릅니다 — `2d`/`3d` 뿐 아니라 광학·PIV·토모그래피 등 계측 패밀리마다 고유한 오퍼레이터가 있습니다.
 2. 그 패밀리의 **사용 가이드**(`<family>/guides/`)를 읽습니다.
 3. 각 노트의 **데이터 종류 `in → out`** 이 이어지도록 연쇄를 구성합니다.

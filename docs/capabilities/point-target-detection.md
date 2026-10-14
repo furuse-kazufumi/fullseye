@@ -6,6 +6,11 @@ category: 見つける
 ops: [star_detect, peak_subbin, find_peaks, noise_sigma]
 examples: [poc_search_sweep_width, poc_astro_photometry]
 version: 0.1.11
+inputs: [image2d, signal]
+pipeline: [noise_sigma, star_detect, find_peaks, peak_subbin]
+alternatives: [xsk3_peak_local_max, blob_seeds, blob_label]
+limits: 目標が広がっていると不適(`blob_label` へ)。検出率だけでは誤検出が見えない —— 空撮の誤検出は直下に集中し、閾値で走査幅が 406 → 170 m 動く(`poc_search_sweep_width`)。
+calibration: 位置は px。実距離は `mm_per_px_from_reference`(空撮なら高度から GSD)で換算し、高度が変われば取り直す。
 ---
 
 # 小さな点状の目標を見つけて、副画素で位置を出す
@@ -35,6 +40,24 @@ img[40, 70] += 1.0                              # 点目標を 1 つ植える
 pts = fs.star_detect(img, threshold_sigma=5.0)
 print(pts)                                      # (row, col) の副画素座標
 ```
+
+## 推奨パイプライン
+
+`noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin`
+
+`noise_sigma` で頑健な雑音を測り → `star_detect` で `背景 + kσ` を超える局所最大を副画素重心で → 1-D なら `find_peaks` → `peak_subbin` で頂点を副ビンに。
+
+## 代替
+
+skimage の局所最大なら `xsk3_peak_local_max`。広がった目標は `blob_seeds` / `blob_label`。
+
+## 限界
+
+目標が広がっていると不適(`blob_label` へ)。検出率だけでは誤検出が見えない —— 空撮の誤検出は直下に集中し、閾値で走査幅が 406 → 170 m 動く(`poc_search_sweep_width`)。
+
+## 実寸校正
+
+位置は px。実距離は `mm_per_px_from_reference`(空撮なら高度から GSD)で換算し、高度が変われば取り直す。
 
 ## 裏づけ
 

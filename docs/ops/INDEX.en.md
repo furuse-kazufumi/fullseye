@@ -105,9 +105,11 @@ Operator documentation for **fullseye 0.6.0**. Every operator has its own Markdo
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [Sample-data catalog (download URLs / licences)](./SAMPLES.md)
 - [Operator provenance and references](../REFERENCES.md)
+- [Look up by task (recommended pipeline / alternatives / limits / real-world calibration)](../CAPABILITIES.en.md)
 
 ## How to use this (for an assistant)
 
+0. If the task is already known, start at [CAPABILITIES.en.md](../CAPABILITIES.en.md): task → op chain (type connections are gate-checked).
 1. Pick a **family** from the list above first — not just `2d`/`3d`: optics, PIV, tomography and the other measurement families each have operators of their own.
 2. Read that family's **how-to guides** (`<family>/guides/`).
 3. Chain operators so that the **sorts `in → out`** in each note connect.

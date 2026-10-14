@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4f91e0942e12 -->
+<!-- i18n-source-sha: 941aba11aaaa -->
 # Fullseye को AI assistant के RAG के रूप में इस्तेमाल करना (Claude Code के लिए)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · **हिन्दी**
@@ -17,6 +17,18 @@ repository के अंदर ही पूरे)।
 > pin करता है (अगर बाद में आपको हर op के पूरे notes चाहिए, तो बस repo clone करके फिर से चलाएँ)। Update करने के लिए
 > `py -3.11 tools/update_fullseye.py` चलाएँ (dirty tree को मना करता है, `--ff-only`, backup के ऊपर skill update करता है,
 > और Studio settings को नहीं छूता — इस तरह design किया गया है कि आपका environment न बिगड़े)।
+
+## अंदर जाने का रास्ता एक नहीं है (पहले यह पढ़ें)
+
+केवल documents मिलने पर Codex और Copilot दोनों **पहली बार में task से op तक का index नहीं ढूँढ पाए** (2026-09-15), क्योंकि यह guide उसकी ओर इशारा नहीं करती थी। अंदर जाने के पाँच रास्ते हैं:
+
+1. **task से** → [`docs/CAPABILITIES.en.md`](CAPABILITIES.en.md)। हर task की एक file (`docs/capabilities/`) में **recommended pipeline (क्रमबद्ध ops) / विकल्प / सीमाएँ / वास्तविक माप में calibration**; `tests/test_capabilities.py` जाँचता है कि हर op मौजूद है और **types (in → out) एक step से अगले step तक जुड़ते हैं**।
+2. **आप जो करना चाहते हैं, अपने शब्दों में** → `fullseye-rag search` / `fullseye.search_ops` (अगला section)।
+3. **op के नाम या concept से** → [`docs/ops/INDEX.md`](ops/INDEX.hi.md) → family index → op note।
+4. **program से** → `fs.op_find(query)` (free text, stems) / `fs.op_assist(op)` (spec, presets, आगे क्या जोड़ें) / `fs.op_path(from_sort, to_sort)` (type A से type B तक op chain) / `fs.op_producers(sort)` (वह type बनाने वाले ops) / `fs.op_accepts(op)` (मापे गए स्वीकार्य types); command line पर `fullseye has <op>` (HALCON नाम से भी)।
+5. **index files** → [`docs/OP_INDEX.json`](OP_INDEX.json) (हर op का type contract) और wheel के साथ आने वाली `OP_CATALOG.md`।
+
+**Windows shell में notes को स्पष्ट रूप से UTF-8 में पढ़ें** — वे बिना BOM के UTF-8 हैं; default code page से खोलने पर जापानी text बिगड़ जाता है और AI "पढ़ नहीं पाया" को "मौजूद नहीं" समझ लेता है (Codex में सच में हुआ)। PowerShell: `Get-Content -Encoding utf8`; Python: `PYTHONUTF8=1`।
 
 ---
 

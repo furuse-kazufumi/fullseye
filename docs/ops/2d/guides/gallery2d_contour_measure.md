@@ -133,6 +133,7 @@ flowchart LR
 `measure_pairs` はどの幅でも「対が見つかった」と答える(失敗を返さない —— 
 [`measure1d/guides/subpixel_measuring.md` §2](../../measure1d/guides/subpixel_measuring.md))。
 mm にするのは校正値(`mm_per_px_from_reference`)を `table_px_to_mm` に通すだけ。
+用途からの導線は [`docs/capabilities/scratch-detection-and-width.md`](../../../capabilities/scratch-detection-and-width.md)。
 
 ## 動く最小例(検証済み gallery2d_contour_measure から)
 

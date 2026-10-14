@@ -105,9 +105,11 @@
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [示例数据目录(下载 URL / 许可证)](./SAMPLES.md)
 - [算子的来源与参考文献](../REFERENCES.md)
+- [按用途查找(推荐流水线 / 替代 / 局限 / 实际尺寸标定)](../CAPABILITIES.md)
 
 ## 使用方法(面向 AI 助手)
 
+0. 如果用途已经明确,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 课题 → op 链(类型衔接已经过门检查)。
 1. 先从上面的列表选一个**族**——不只是 `2d`/`3d`:光学、PIV、断层成像等测量族各有专属算子。
 2. 阅读该族的**使用指南**(`<family>/guides/`)。
 3. 按每份说明中的**数据种类 `in → out`** 能接上的方式串联算子。

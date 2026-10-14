@@ -105,9 +105,11 @@
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [Sample data catalog (DL URL / license)](./SAMPLES.md)
 - [Operators का स्रोत और संदर्भ](../REFERENCES.md)
+- [उपयोग से खोजें (अनुशंसित pipeline / विकल्प / सीमाएँ / वास्तविक माप में calibration)](../CAPABILITIES.en.md)
 
 ## उपयोग का तरीका (assistant के लिए)
 
+0. अगर काम पहले से तय है, तो पहले [CAPABILITIES.en.md](../CAPABILITIES.en.md) में task → op chain देखें (type का जुड़ना gate से जाँचा गया है)।
 1. पहले ऊपर की सूची से **family** चुनें (केवल `2d`/`3d` नहीं — optics, PIV, tomography जैसी measurement families के अपने-अपने ops हैं)।
 2. उस family की **usage guide** (`<family>/guides/`) पढ़ें।
 3. हर op note के **data kinds `in → out`** जुड़ें, इस तरह chain बनाएँ।

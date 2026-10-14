@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4f91e0942e12 -->
+<!-- i18n-source-sha: 941aba11aaaa -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -8,6 +8,18 @@ Die empfohlene Nutzung von Fullseye besteht darin, es **als Wissensbasis (RAG) e
 Es werden drei Einführungsstufen bereitgestellt. **Tier 0/1 haben keinerlei externe Abhängigkeiten** (sie kommen allein mit dem Fullseye-Repository aus).
 
 > **Nutzung über PyPI**: In einer Umgebung, in der `pip install fullseye` ausgeführt wurde, steht das Konsolenskript **`fullseye-rag`** zur Verfügung. Bei einem Checkout (Clone / `pip install -e .`) wird der vollständige `docs/ops`-Korpus an das Skill gepinnt; bei einer reinen Wheel-Installation wird stattdessen die mitgelieferte `OP_CATALOG.md` (der vollständige Op-Katalog für die KI) gepinnt (wer später die vollständigen Pro-Op-Notizen möchte, klont einfach das Repository und führt es erneut aus). Aktualisiert wird mit `py -3.11 tools/update_fullseye.py` (verweigert einen dirty Tree, `--ff-only`, aktualisiert das Skill über ein Backup und rührt die Studio-Einstellungen nicht an — so konzipiert, dass es die Umgebung nicht zerstört).
+
+## Es gibt mehr als einen Einstieg (zuerst lesen)
+
+Nur mit den Dokumenten ausgestattet, fanden Codex und Copilot beide **beim ersten Versuch den Index „von der Aufgabe zum Op“ nicht** (2026-09-15), weil dieser Leitfaden nicht darauf verwies. Es gibt fünf Einstiege:
+
+1. **Nach Aufgabe** → [`docs/CAPABILITIES.en.md`](CAPABILITIES.en.md). Eine Datei pro Aufgabe (`docs/capabilities/`) mit **empfohlener Pipeline (geordnete Ops) / Alternativen / Grenzen / Kalibrierung auf reale Maße**; `tests/test_capabilities.py` prüft, dass jeder Op existiert und die **Typen (in → out) von Schritt zu Schritt verketten**.
+2. **Mit eigenen Worten, was man tun will** → `fullseye-rag search` / `fullseye.search_ops` (nächster Abschnitt).
+3. **Nach Op-Name oder Begriff** → [`docs/ops/INDEX.md`](ops/INDEX.de.md) → Familienindex → Op-Notiz.
+4. **Programmatisch** → `fs.op_find(query)` (Freitext, Wortstämme) / `fs.op_assist(op)` (Spezifikation, Presets, mögliche Folge-Ops) / `fs.op_path(from_sort, to_sort)` (Op-Kette von Typ A nach Typ B) / `fs.op_producers(sort)` (Ops, die einen Typ erzeugen) / `fs.op_accepts(op)` (gemessen akzeptierte Typen); auf der Kommandozeile `fullseye has <op>` (auch mit HALCON-Namen).
+5. **Indexdateien** → [`docs/OP_INDEX.json`](OP_INDEX.json) (Typverträge aller Ops) und das im Wheel mitgelieferte `OP_CATALOG.md`.
+
+**In Windows-Shells die Notizen ausdrücklich als UTF-8 lesen** — sie sind UTF-8 ohne BOM; mit der Standard-Codepage geöffnet wird der japanische Text zu Zeichensalat, und eine KI schließt „nicht vorhanden“, obwohl sie ihn nur nicht lesen konnte (bei Codex so passiert). PowerShell: `Get-Content -Encoding utf8`; Python: `PYTHONUTF8=1`.
 
 ---
 

@@ -25,6 +25,11 @@ version: 0.1.0
   4 層(`fs.` / `fs.ledger.` / `fs.op.` / `op_find`)のどこにも換算 op が無かったので足した。
   校正は「既知寸法の的を**同じ op で**測る」に固定する(公称倍率は使わない)。
 
+用途からの導線(推奨パイプライン / 代替 / 限界 / 実寸校正)は
+[`docs/capabilities/subpixel-2d-metrology.md`](../../../capabilities/subpixel-2d-metrology.md)、
+[`inner-diameter-in-mm.md`](../../../capabilities/inner-diameter-in-mm.md)、
+[`scratch-detection-and-width.md`](../../../capabilities/scratch-detection-and-width.md)。
+
 ## なぜ台帳に載せたか —— 見えていなかったから、ただし測ってから
 
 2026-09-06、この 2 モジュールが**公開経路のどこからも呼べない**ことが分かりました

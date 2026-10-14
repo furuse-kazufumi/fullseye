@@ -105,9 +105,11 @@
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [範例資料目錄(下載 URL / 授權)](./SAMPLES.md)
 - [運算子的來源與參考文獻](../REFERENCES.md)
+- [依用途查找(建議流程 / 替代 / 限制 / 實際尺寸校正)](../CAPABILITIES.md)
 
 ## 使用方法(給 AI 助手)
 
+0. 如果用途已經明確,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 課題 → op 鏈(型別銜接已通過門檢查)。
 1. 先從上面的清單選一個**族**——不只是 `2d`/`3d`:光學、PIV、斷層掃描等量測族各有專屬運算子。
 2. 閱讀該族的**使用指南**(`<family>/guides/`)。
 3. 依每份說明中的**資料種類 `in → out`** 能銜接的方式串接運算子。

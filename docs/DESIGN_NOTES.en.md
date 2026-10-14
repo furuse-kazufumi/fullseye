@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1402. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1404. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2475,8 +2475,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_capabilities_index.py`
 
-- **L34** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
-- **L40** — English names of the categories. ★Even in the English version only the headings stayed in Japanese (measured 7 lines) -- the body was translated with `title_en` / `_summary_en`, but the headings were forgotten, making it a textbook "switched but Japanese is mixed in" case. Categories not present here are emitted as-is (don't invent translations).
+- **L69** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
+- **L75** — English names of the categories. ★Even in the English version only the headings stayed in Japanese (measured 7 lines) -- the body was translated with `title_en` / `_summary_en`, but the headings were forgotten, making it a textbook "switched but Japanese is mixed in" case. Categories not present here are emitted as-is (don't invent translations).
+- **L91** _(ja)_ — ★レシピ欄がまだ無い能力(**理由つきで名指し**、免除は縮める側)。 レシピ欄は 2026-09-15 に当時の 16 件 + 新設 8 件 = 24 件へ付けた(ブランチ rag/recipes-and-help)。そのブランチが本線に入らないまま 1 か月が過ぎ、その間に 足された能力 32 件には欄が無い。2026-10-15 に移植したとき、その分の連鎖・限界・ 実寸校正を確かめずに書き足すことはしなかった(型の門は通っても、限界と校正の文が 実測でなくなる)。欄を埋めたらここから消す —— 消し忘れは :func:`load_all` が落とす。
 
 ## `tools/gen_design_notes.py`
 
@@ -2623,10 +2624,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1279** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
 - **L1730** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
 - **L1770** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1784** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
-- **L1927** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2096** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2798** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L1781** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1790** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L1938** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2107** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2809** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

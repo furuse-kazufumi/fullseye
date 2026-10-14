@@ -562,6 +562,22 @@
    "de": "4. Wenn das Verhalten unklar ist, führen Sie das **lauffähige Beispiel** der Notiz aus und prüfen Sie es gegen die Ground-Truth-Ausgabe.",
    "hi": "4. व्यवहार स्पष्ट न हो तो उस note का **चलाया जा सकने वाला उदाहरण** चलाएँ और ground truth (GT) output से जाँचें।"
   },
+  "- [用途から引く(推奨パイプライン / 代替 / 限界 / 実寸校正)](../CAPABILITIES.md)": {
+   "en": "- [Look up by task (recommended pipeline / alternatives / limits / real-world calibration)](../CAPABILITIES.en.md)",
+   "zh": "- [按用途查找(推荐流水线 / 替代 / 局限 / 实际尺寸标定)](../CAPABILITIES.md)",
+   "tw": "- [依用途查找(建議流程 / 替代 / 限制 / 實際尺寸校正)](../CAPABILITIES.md)",
+   "ko": "- [용도로 찾기(권장 파이프라인 / 대안 / 한계 / 실측 보정)](../CAPABILITIES.md)",
+   "de": "- [Nach Aufgabe suchen (empfohlene Pipeline / Alternativen / Grenzen / Kalibrierung auf reale Maße)](../CAPABILITIES.en.md)",
+   "hi": "- [उपयोग से खोजें (अनुशंसित pipeline / विकल्प / सीमाएँ / वास्तविक माप में calibration)](../CAPABILITIES.en.md)"
+  },
+  "0. 用途が決まっているなら、先に [CAPABILITIES.md](../CAPABILITIES.md) で課題 → op 連鎖(型が繋がることを検査済み)を引く。": {
+   "en": "0. If the task is already known, start at [CAPABILITIES.en.md](../CAPABILITIES.en.md): task → op chain (type connections are gate-checked).",
+   "zh": "0. 如果用途已经明确,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 课题 → op 链(类型衔接已经过门检查)。",
+   "tw": "0. 如果用途已經明確,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 課題 → op 鏈(型別銜接已通過門檢查)。",
+   "ko": "0. 용도가 정해져 있다면 먼저 [CAPABILITIES.md](../CAPABILITIES.md)에서 과제 → op 연쇄(타입 연결은 게이트로 검사됨)를 찾는다.",
+   "de": "0. Steht die Aufgabe schon fest, zuerst in [CAPABILITIES.en.md](../CAPABILITIES.en.md) nachschlagen: Aufgabe → Op-Kette (Typverkettung wird per Gate geprüft).",
+   "hi": "0. अगर काम पहले से तय है, तो पहले [CAPABILITIES.en.md](../CAPABILITIES.en.md) में task → op chain देखें (type का जुड़ना gate से जाँचा गया है)।"
+  },
   "**端の扱い**: {a0}(実測。`tools/impl2/border_probe.py`)。": {
    "en": "**Border handling**: {a0} (measured; `tools/impl2/border_probe.py`).",
    "zh": "**边界处理**：{a0}（实测。`tools/impl2/border_probe.py`）。",

@@ -6,6 +6,11 @@ category: 測る
 ops: [dem_geodetic_to_ecef, dem_ecef_to_geodetic, dem_geoid_height, dem_height_frame_convert, dem_height_frame_residual, dem_datum_shift_3param, dem_enu_from_geodetic, dem_geodetic_from_enu]
 examples: [poc_geodetic_height_frames, poc_geodetic_benchmarks_real, dem_geodesy_tour]
 version: 0.2.3
+inputs: []
+pipeline: [dem_geodetic_to_ecef, dem_ecef_to_geodetic]
+alternatives: [dem_geoid_height, dem_height_frame_convert, dem_height_frame_residual, dem_enu_from_geodetic, dem_geodetic_from_enu, dem_datum_shift_3param, dem_geodetic_slope]
+limits: epoch の移動(プレート運動)と 7 パラメータのヘルマート変換は**未実装**(`dem_datum_shift_3param` は平行移動 3 つだけ)。ジオイドモデルは計算せず公開格子を引くだけ。楕円体高と標高の取り違えは日本付近で 30〜40 m 静かにずれる(`poc_geodetic_height_frames`)。
+calibration: 画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`dem_height_frame_convert` で `H = h - N`(N は `dem_geoid_height` が公開格子から引く)。混ざった表は `dem_height_frame_residual` の残差で見張り、公開測量成果 523 点で答え合わせ(`poc_geodetic_benchmarks_real`)。
 ---
 
 # 地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)
@@ -48,6 +53,24 @@ print(fs.ledger.dem_height_frame_residual(h, H, N)['rms_m'])
 # 楕円体高をそのまま標高として使うと、残差が -N に張り付く(17 m の静かなずれ)
 print(fs.ledger.dem_height_frame_residual(h, h, N)['median_m'])
 ```
+
+## 推奨パイプライン
+
+`dem_geodetic_to_ecef` → `dem_ecef_to_geodetic`
+
+`dem_geodetic_to_ecef` で緯度・経度・楕円体高を ECEF [m] に → 計算 → `dem_ecef_to_geodetic` で戻す(往復の床 緯度 6.4e-12 度 / 高さ 8.5e-07 m)。
+
+## 代替
+
+高さの基準面をそろえるなら `dem_geoid_height` → `dem_height_frame_convert`(由来の悪い点は `dem_height_frame_residual`)。現場の局所座標は `dem_enu_from_geodetic` / `dem_geodetic_from_enu`、旧測地系からは `dem_datum_shift_3param`。地図上の傾斜を測地座標で出すなら `dem_geodetic_slope`。
+
+## 限界
+
+epoch の移動(プレート運動)と 7 パラメータのヘルマート変換は**未実装**(`dem_datum_shift_3param` は平行移動 3 つだけ)。ジオイドモデルは計算せず公開格子を引くだけ。楕円体高と標高の取り違えは日本付近で 30〜40 m 静かにずれる(`poc_geodetic_height_frames`)。
+
+## 実寸校正
+
+画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`dem_height_frame_convert` で `H = h - N`(N は `dem_geoid_height` が公開格子から引く)。混ざった表は `dem_height_frame_residual` の残差で見張り、公開測量成果 523 点で答え合わせ(`poc_geodetic_benchmarks_real`)。
 
 ## 裏づけ
 

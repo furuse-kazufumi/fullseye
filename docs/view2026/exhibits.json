@@ -5640,6 +5640,62 @@
    }
   ],
   "titles": {
+   "inner-diameter-in-mm": {
+    "zh": "测量圆形零件的内径,直到毫米",
+    "tw": "量測圓形零件的內徑,直到毫米",
+    "ko": "원형 부품의 내경을 mm 까지 재기",
+    "de": "Innendurchmesser eines runden Teils bis in Millimeter",
+    "hi": "गोल पुर्ज़े का भीतरी व्यास, mm तक"
+   },
+   "ocr-preprocessing": {
+    "zh": "OCR 预处理(倾斜校正、局部二值化、行切分)",
+    "tw": "OCR 前處理(傾斜校正、局部二值化、行切分)",
+    "ko": "OCR 전처리(기울기 보정, 국소 이진화, 행 잘라내기)",
+    "de": "OCR-Vorverarbeitung (Schräglagenkorrektur, lokale Binarisierung, Zeilenextraktion)",
+    "hi": "OCR pre-processing (deskew, local binarisation, line extraction)"
+   },
+   "periodic-defects-in-1d-signals": {
+    "zh": "在一维信号中找出周期性缺陷",
+    "tw": "在一維訊號中找出週期性缺陷",
+    "ko": "1차원 신호의 주기 결함 찾기",
+    "de": "Periodische Defekte in einem 1-D-Signal finden",
+    "hi": "1-D signal में periodic defects ढूँढना"
+   },
+   "planarity-from-point-cloud": {
+    "zh": "由三维点云求平面度",
+    "tw": "由三維點雲求平面度",
+    "ko": "3차원 점군에서 평면도 구하기",
+    "de": "Ebenheit einer Fläche aus einer 3-D-Punktwolke",
+    "hi": "3-D point cloud से सतह की समतलता (flatness)"
+   },
+   "polarisation-specular-removal": {
+    "zh": "用 4 个偏振方向去除镜面反射(区分电介质与金属)",
+    "tw": "用 4 個偏振方向去除鏡面反射(區分介電質與金屬)",
+    "ko": "편광 4 방향으로 정반사 제거(유전체와 금속을 구분)",
+    "de": "Spiegelreflexe mit vier Polarisatorwinkeln entfernen (Dielektrika vs. Metalle)",
+    "hi": "चार polariser कोणों से specular reflection हटाना (dielectric बनाम metal)"
+   },
+   "scratch-detection-and-width": {
+    "zh": "找出细微划痕并测量宽度",
+    "tw": "找出細微刮痕並量測寬度",
+    "ko": "미세한 스크래치를 찾아 폭 재기",
+    "de": "Feine Kratzer finden und ihre Breite messen",
+    "hi": "बारीक खरोंच ढूँढना और उनकी चौड़ाई मापना"
+   },
+   "surface-defects-with-lighting": {
+    "zh": "表面凹凸缺陷:从照明设计到检测",
+    "tw": "表面凹凸缺陷:從照明設計到檢測",
+    "ko": "표면 요철 결함: 조명 설계부터 검출까지",
+    "de": "Oberflächendefekte mit Relief: von der Beleuchtungsauslegung bis zur Detektion",
+    "hi": "सतह की ऊँच-नीच वाले defects: lighting design से detection तक"
+   },
+   "template-alignment": {
+    "zh": "定位(用模板匹配让测量线跟随)",
+    "tw": "定位(用樣板比對讓量測線跟隨)",
+    "ko": "위치 결정(템플릿 정합으로 측정선을 따라가게 하기)",
+    "de": "Teil per Template-Matching lokalisieren und das Messmodell mitführen",
+    "hi": "template matching से part ढूँढना और measurement model को साथ ले जाना"
+   },
    "compound-eye-aliasing-and-ttc": {
     "zh": "以闭式求周期图案在采样晶格上混叠的距离，以及条纹所扰乱的碰撞时间（复眼与检测相机）",
     "tw": "以閉式求週期圖案在取樣晶格上混疊的距離，以及條紋所擾亂的碰撞時間（複眼與檢測相機）",

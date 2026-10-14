@@ -34,6 +34,8 @@ Fullseye ships **3195 operator notes** in **48 families** — one generated Mark
 | Per-op note (contract, call form, HALCON alias, references, related ops) | `docs/ops/<family>/<category>/<op>.md` |
 | Table of contents, per family | `docs/ops/<family>/INDEX.md` |
 | Top-level table of contents (all families, with counts) | `docs/ops/INDEX.md` |
+| **Task → op chain** (recommended pipeline with type-checked chaining, alternatives, limits, real-world calibration) — start here when the task is known | `docs/CAPABILITIES.md`, one file per task under `docs/capabilities/` |
+| Op discovery API (search / chain / inputs): `fs.op_find`, `fs.op_assist`, `fs.op_path`, `fs.op_producers`, `fs.op_accepts`; CLI `fullseye has <op>` | `fullseye` facade |
 | Family how-to guides (math + mermaid + citations) | `docs/ops/<family>/guides/<name>.md` |
 | Sample-data catalog (real download URLs, licences) | `docs/ops/SAMPLES.md` |
 | Machine index of the registry | `docs/OP_INDEX.json` |

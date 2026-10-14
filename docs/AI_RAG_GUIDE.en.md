@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4f91e0942e12 -->
+<!-- i18n-source-sha: 941aba11aaaa -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -17,6 +17,18 @@ in the Fullseye repository).
 > AI) instead (if you later want the full per-op notes, just clone the repo and re-run). Update with
 > `py -3.11 tools/update_fullseye.py` (refuses a dirty tree, `--ff-only`, updates the skill over a
 > backup, and leaves Studio settings untouched — designed not to wreck your environment).
+
+## There is more than one way in (read this first)
+
+Given only the documents, Codex and Copilot both **failed to find the task-to-op index on the first try** (2026-09-15), because this guide did not point to it. There are five ways in:
+
+1. **By task** → [`docs/CAPABILITIES.en.md`](CAPABILITIES.en.md). One file per task (`docs/capabilities/`) with the **recommended pipeline (ordered ops) / alternatives / limits / real-world calibration**; `tests/test_capabilities.py` checks that every op exists and that the **types (in → out) connect from one step to the next**.
+2. **By what you want to do, in your own words** → `fullseye-rag search` / `fullseye.search_ops` (next section).
+3. **By op name or concept** → [`docs/ops/INDEX.md`](ops/INDEX.en.md) → family index → op note.
+4. **Programmatically** → `fs.op_find(query)` (free text, stems) / `fs.op_assist(op)` (spec, presets, what to chain next) / `fs.op_path(from_sort, to_sort)` (op chain from type A to type B) / `fs.op_producers(sort)` (ops that produce a type) / `fs.op_accepts(op)` (measured accepted types); on the command line `fullseye has <op>` (HALCON names work too).
+5. **Index files** → [`docs/OP_INDEX.json`](OP_INDEX.json) (type contracts of every op) and the `OP_CATALOG.md` shipped in the wheel.
+
+**On Windows shells, read the notes as UTF-8 explicitly** — they are UTF-8 without BOM; opened with the default code page the Japanese text turns to mojibake and an AI concludes "not there" when it simply could not read it (this happened with Codex). PowerShell: `Get-Content -Encoding utf8`; Python: `PYTHONUTF8=1`.
 
 ---
 

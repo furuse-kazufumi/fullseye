@@ -105,9 +105,11 @@
   - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [サンプルデータ カタログ(DL URL / ライセンス)](./SAMPLES.md)
 - [演算子の来歴・参考文献](../REFERENCES.md)
+- [用途から引く(推奨パイプライン / 代替 / 限界 / 実寸校正)](../CAPABILITIES.md)
 
 ## 使い方(assistant 向け)
 
+0. 用途が決まっているなら、先に [CAPABILITIES.md](../CAPABILITIES.md) で課題 → op 連鎖(型が繋がることを検査済み)を引く。
 1. まず上の一覧で**ファミリ**を選ぶ(`2d`/`3d` だけでなく、光学・PIV・トモグラフィ等の計測ファミリにそれぞれ固有の op がある)。
 2. そのファミリの**使い方ガイド**(`<family>/guides/`)を読む。
 3. 各 op ノートの**データ種 `in → out`** が繋がるように連鎖を組む。

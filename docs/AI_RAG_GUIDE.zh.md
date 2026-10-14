@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4f91e0942e12 -->
+<!-- i18n-source-sha: 941aba11aaaa -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -8,6 +8,18 @@ Fullseye 的推荐用法是"**作为 AI 编码助手的知识库（RAG）使用*
 我们提供三个阶段的引入方式。**Tier 0/1 没有任何外部依赖**（仅凭 Fullseye 仓库本身即可完成）。
 
 > **从 PyPI 使用**：在执行了 `pip install fullseye` 的环境中，可以使用控制台脚本 **`fullseye-rag`**。若是 checkout（clone / `pip install -e .`），会将 `docs/ops` 的完整语料库固定到技能中；若仅为 wheel 安装，则会将随附的 `OP_CATALOG.md`（面向 AI 的全 op 目录）固定为技能（之后如果需要完整的逐 op 笔记，只需 clone 仓库后重新执行即可）。更新方式为 `py -3.11 tools/update_fullseye.py`（拒绝在 dirty 树上执行 · `--ff-only` · 在备份基础上更新技能 · 不触碰 Studio 设置——设计上不会破坏你的环境）。
+
+## 入口不止一个(请先读)
+
+只拿到文档的 Codex / Copilot 第一次都**没能找到按用途查找的索引**(2026-09-15),原因是本指南没有指向它。入口共有 5 个:
+
+1. **按用途** → [`docs/CAPABILITIES.md`](CAPABILITIES.md)。每个课题一个文件(`docs/capabilities/`),给出**推荐流水线(有序 op)/ 替代 / 局限 / 实际尺寸标定**;`tests/test_capabilities.py` 检查 op 名确实存在,且**类型(in → out)从前一步衔接到后一步**。
+2. **用想做的事的说法** → `fullseye-rag search` / `fullseye.search_ops`(下一节)。
+3. **按 op 名或概念** → [`docs/ops/INDEX.md`](ops/INDEX.zh.md) → 族目录 → op 笔记。
+4. **用程序查** → `fs.op_find(query)`(自由词、词干)/ `fs.op_assist(op)`(规格、预设、下一步可接的 op)/ `fs.op_path(from_sort, to_sort)`(连接类型 A → 类型 B 的 op 序列)/ `fs.op_producers(sort)`(产生该类型的 op)/ `fs.op_accepts(op)`(实测可接受的类型);命令行为 `fullseye has <op>`(也可用 HALCON 名)。
+5. **索引文件** → [`docs/OP_INDEX.json`](OP_INDEX.json)(全部 op 的类型契约)、wheel 附带的 `OP_CATALOG.md`。
+
+**在 Windows 的 shell 中读取时请明确指定 UTF-8** —— 笔记是无 BOM 的 UTF-8,用默认代码页打开会乱码,AI 会在“读不懂”的情况下判断为“没有”(Codex 实际发生过)。PowerShell 用 `Get-Content -Encoding utf8`,Python 用 `PYTHONUTF8=1`。
 
 ---
 

@@ -6,6 +6,11 @@ category: 見つける
 ops: [blob_label, blob_select, blob_count, watersheds]
 examples: [poc_cell_counting, poc_particle_sizing, poc_real_coin_metrology]
 version: 0.1.11
+inputs: [image]
+pipeline: [auto_threshold, blob_label, blob_select, blob_features]
+alternatives: [watersheds, blob_seeds, blob_count, remove_small, select_shape, otsu]
+limits: 計数が合っていて分割が全部外れる点がある(`poc_cell_counting`)—— 数と形を別に数える。粒度分布で D50 が合う点は「正確」ではなく融合と縁切れの打ち消し(`poc_particle_sizing`)。
+calibration: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 ---
 
 # 領域を切り出して、選んで、数える
@@ -37,6 +42,24 @@ mask[40:46, 40:46] = True
 #   `fs.ledger.<name>` で見つからないときは `fs.op_find("<name>")` を引くと、どの層に居るかが返ります。
 print('個数 =', fs.op.blob_count(mask))          # 2.0
 ```
+
+## 推奨パイプライン
+
+`auto_threshold` → `blob_label` → `blob_select` → `blob_features`
+
+`auto_threshold` で前景の 2 値マスク → `blob_label` で連結成分にラベル → `blob_select` で面積・形・位置で絞り → `blob_features` で個々の面積・重心・主軸を表にする。
+
+## 代替
+
+接触した対象は `watersheds`(種は `blob_seeds`)。個数だけなら `blob_count`。2-D レジストリ側で済ませるなら `otsu` → `remove_small` → `select_shape`。
+
+## 限界
+
+計数が合っていて分割が全部外れる点がある(`poc_cell_counting`)—— 数と形を別に数える。粒度分布で D50 が合う点は「正確」ではなく融合と縁切れの打ち消し(`poc_particle_sizing`)。
+
+## 実寸校正
+
+面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
 ## 裏づけ
 
