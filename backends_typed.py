@@ -197,6 +197,14 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-15 TDI ラインスキャン 6 本(linescan、linescan): 表を返す側(撮像の linescan_acquire も dict を返す)で、
+    # 画像 → 画像の op ではない。台帳(`fullseye.ledger.tdi_snr` …)から使う。
+    "tdi_snr",
+    "tdi_sync_mtf",
+    "linescan_acquire",
+    "lens_field_profile",
+    "linescan_lens_columns",
+    "linescan_lens_example",
     # 2026-10-14 ステップ型ファイバとライトガイド 7 本(fiberoptics、fiber): 引数だけで表か曲線を返す側で、画像を受けない。
     "material_group_index",
     "material_gvd",

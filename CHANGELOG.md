@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — TDI ラインスキャンとラインスキャン用レンズ(linescan 6 op + PoC)
+- `linescan`(`opsoptics` の新カテゴリ `linescan`、6 op): `tdi_snr`(EMVA 1288 の式 21 を段数倍、電荷加算 / デジタル加算)、`tdi_sync_mtf`(同期ずれ N·ε とヨー N·sin θ の |sinc|)、`linescan_acquire`(反射率の地図を搬送して撮る: 速度誤差・ヨー・蛇行・エンコーダ同期・列ごとのレンズ・EMVA 1288 の雑音・画素の開口)、`lens_field_profile`(有限距離の処方を光線追跡し、像高ごとの照度を cos⁴ × 瞳 × 歪曲に厳密に分解、サジタル / タンジェンシャルの MTF)、`linescan_lens_columns`、`linescan_lens_example`(同じ三枚玉を 57 mm の像円用 f 90 と 2/3 型用 f 35 に最適化した模型)。
+- PoC `poc_tdi_linescan`(19 門、図 10 枚): SNR が式 21 と 1.2 % 以内(デジタル加算は ×8.09 = √64、電荷加算は ×26.9)、欠陥の検出 1 段 0/3 → 64 段 3/3、同期ずれの MTF が |sinc(f N ε)| と 45 条件で 0.0035、エンコーダ同期で速度のうねりが消えヨーは消えない、C マウントの流用は像高 19.7 mm から光が届かず、シェーディング補正で照度は揃うが MTF と CNR は戻らない。
+- 能力ノート `docs/capabilities/tdi-linescan-and-lens.md`、op 要約 6 言語、手書き件数 +6。
 ### Added — 位相計測デフレクトメトリ(deflectometry 6 op + PoC)
 - `deflectometry`(`opsspecular` の新カテゴリ `deflectometry`、6 op): `deflectometry_rig`(装置の幾何の表。手で動かしたベクトルは拒否)/ `deflectometry_screen_pattern` / `deflectometry_render`(高さ場 → 縞の鏡像。拡散成分・鏡面ローブの散乱・カバーガラスの裏面反射・開口積分のピント・雑音と量子化)/ `deflectometry_phase_to_slope`(画面の絶対位相 2 枚 → 面の格子上の法線マップ、`match3d.normal_from_reflection`)/ `slope_to_curvature`(傾きを 1 回微分して平均・ガウス曲率、積分しない)/ `deflectometry_sensitivity`(撮る前の閉形式: σ_u/(2d)、sin θ / d、ピントのぼけ)。
 - PoC `poc_phase_measuring_deflectometry`(22 門、図 13 枚 + GIF): 塗装パネルの深さ 3 µm / 1 µm の凹みは写真の信号が 8 bit の 1 段の 0.17 倍なのに曲率マップで SNR 110 / 57、積分した深さは真値と 0.5 % 以内。位相雑音は閉形式と 1.00 倍、傾きの雑音は双線形の読み直しの 0.67 倍。壊れ方: 0.3 mm 浮かせると Δz sin θ / d の傾きと半径 388 m の椀(凹みは 0.7 %)、画面の距離 2 % の誤りで深さ −2.3 %、拡散 0.9 で次数が飛ぶ、カバーガラスの裏面は凹みのくさびで逆向きに曲がり傾きの感度が閉形式 0.246(凹みが 1/4 に見える)、画面にピントで凹みが 0.52 倍。

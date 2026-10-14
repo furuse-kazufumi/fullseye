@@ -28925,6 +28925,60 @@
    "ko": "주광선의 기하를 `render3d.render_mesh`용 핀홀 카메라(pose, K)로 옮긴다.",
    "de": "Bildet die Hauptstrahlgeometrie auf eine Lochkamera (pose, K) für `render3d.render_mesh` ab.",
    "hi": "chief ray की geometry को `render3d.render_mesh` के pinhole camera (pose, K) पर map करना।"
+  },
+  "optics/tdi_snr": {
+   "fp": "0fd5d94f7531",
+   "en": "SNR of a TDI sensor for each stage count N (``table``) — the EMVA 1288 linear model scaled by the number of stages.",
+   "zh": "TDI 每个级数 N 的信噪比(``table``)—— 把 EMVA 1288 的线性模型按级数放大。",
+   "tw": "TDI 每個級數 N 的訊噪比(``table``)—— 把 EMVA 1288 的線性模型按級數放大。",
+   "ko": "TDI 단수 N마다의 SNR(``table``) —— EMVA 1288의 선형 모델을 단수배 해서.",
+   "de": "SNR eines TDI-Sensors für jede Stufenzahl N (``table``) — das lineare Modell von EMVA 1288, mit der Stufenzahl skaliert.",
+   "hi": "हर TDI stage संख्या N के लिए SNR (``table``) — EMVA 1288 के linear model को stages की संख्या से गुणा करके।"
+  },
+  "optics/tdi_sync_mtf": {
+   "fp": "6dbf8e79a5db",
+   "en": "MTF of the blur caused by a TDI synchronisation error and by yaw (a skewed web) (closed form, ``table``).",
+   "zh": "TDI 同步误差和偏航(斜行)造成的模糊的 MTF(闭式解,``table``)。",
+   "tw": "TDI 同步誤差和偏航(斜行)造成的模糊的 MTF(閉式解,``table``)。",
+   "ko": "TDI의 동기 오차와 요(사행)가 만드는 흐림의 MTF(닫힌 형식, ``table``).",
+   "de": "MTF der Unschärfe durch einen TDI-Synchronisationsfehler und durch Gieren (schräg laufende Bahn) (geschlossene Form, ``table``).",
+   "hi": "TDI synchronisation error और yaw (तिरछा चलता web) से बने blur का MTF (closed form, ``table``)।"
+  },
+  "optics/linescan_acquire": {
+   "fp": "57ddbc7942bb",
+   "en": "Image a reflectance map *web* with a TDI line-scan camera while it is transported past the sensor (``table``).",
+   "zh": "一边输送反射率图 *web*,一边用 TDI 线扫描相机拍摄(``table``)。",
+   "tw": "一邊輸送反射率圖 *web*,一邊用 TDI 線掃描相機拍攝(``table``)。",
+   "ko": "반사율 지도 *web*을 반송하면서 TDI 라인 스캔으로 촬영한다(``table``).",
+   "de": "Eine Reflexionskarte *web* mit einer TDI-Zeilenkamera aufnehmen, während sie am Sensor vorbeitransportiert wird (``table``).",
+   "hi": "reflectance map *web* को sensor के आगे से ले जाते हुए TDI line-scan camera से capture करना (``table``)।"
+  },
+  "optics/lens_field_profile": {
+   "fp": "2f69fa796c63",
+   "en": "**Relative illumination** and **MTF** for each image height, by ray tracing (``table``, object at a finite distance — the line-scan use).",
+   "zh": "用光线追迹求每个像高的**相对照度**和 **MTF**(``table``,物体在有限距离 —— 线扫描的用法)。",
+   "tw": "用光線追跡求每個像高的**相對照度**和 **MTF**(``table``,物體在有限距離 —— 線掃描的用法)。",
+   "ko": "광선 추적으로 상고마다의 **상대 조도**와 **MTF**(``table``, 유한 거리의 물체 = 라인 스캔의 사용법).",
+   "de": "**Relative Beleuchtungsstärke** und **MTF** für jede Bildhöhe per Raytracing (``table``, Objekt in endlicher Entfernung — der Zeilenkamera-Fall).",
+   "hi": "ray tracing से हर image height के लिए **relative illumination** और **MTF** (``table``, सीमित दूरी पर object — line-scan का उपयोग)।"
+  },
+  "optics/linescan_lens_columns": {
+   "fp": "e35a34208886",
+   "en": "Turn the image-height table of ``lens_field_profile`` into illumination and blur for **each pixel column** of a line sensor (``table``).",
+   "zh": "把 ``lens_field_profile`` 的像高表换成线传感器**每一列像素**的照度和模糊(``table``)。",
+   "tw": "把 ``lens_field_profile`` 的像高表換成線感測器**每一列像素**的照度和模糊(``table``)。",
+   "ko": "``lens_field_profile``의 상고 표를 라인 센서의 **화소 열마다**의 조도와 흐림으로 바꾼다(``table``).",
+   "de": "Die Bildhöhentabelle von ``lens_field_profile`` in Beleuchtung und Unschärfe für **jede Pixelspalte** eines Zeilensensors umrechnen (``table``).",
+   "hi": "``lens_field_profile`` की image-height table को line sensor के **हर pixel column** की illumination और blur में बदलना (``table``)।"
+  },
+  "optics/linescan_lens_example": {
+   "fp": "396ecf4e0c6b",
+   "en": "Two models of a line-scan imaging system (a ``table`` from ``raytrace.lens_system``).",
+   "zh": "线扫描成像系统的两个模型(``raytrace.lens_system`` 的 ``table``)。",
+   "tw": "線掃描成像系統的兩個模型(``raytrace.lens_system`` 的 ``table``)。",
+   "ko": "라인 스캔 촬상계의 모형 2개(``raytrace.lens_system``의 ``table``).",
+   "de": "Zwei Modelle eines Zeilenkamera-Abbildungssystems (eine ``table`` aus ``raytrace.lens_system``).",
+   "hi": "line-scan imaging system के दो model (``raytrace.lens_system`` की ``table``)।"
   }
  }
 }

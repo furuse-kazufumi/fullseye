@@ -4,7 +4,7 @@ dim: optics
 category: sensorchar
 in: image2d × image2d
 out: table
-examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
+examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor, poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [poc_emva1288_in_camera_processing](../../../../examples/poc_emva1288_in_camera_processing.py) — `py -3.11 examples/poc_emva1288_in_camera_processing.py`
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
+- [poc_tdi_linescan](../../../../examples/poc_tdi_linescan.py) — `py -3.11 examples/poc_tdi_linescan.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

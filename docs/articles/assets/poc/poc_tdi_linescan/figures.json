@@ -1,0 +1,102 @@
+[
+ {
+  "file": "01_tdi_stages_defects.png",
+  "name": "tdi_stages_defects",
+  "caption": "1 段 40 光子 × 反射率、読み出し 12 e⁻。左: 傷(幅 1.3 画素、深さ 12 %)、中: ピンホール 4 個(深さ 16 %)、右: 異物(深さ 8 %)。各パネルは自分の中央値 ± 3σ で伸ばし、2 倍に拡大(明るさの差ではなく SNR の差を見る図)。",
+  "shape": [
+   495,
+   1182,
+   3
+  ]
+ },
+ {
+  "file": "02_snr_vs_stages.png",
+  "name": "snr_vs_stages",
+  "caption": "EMVA 1288 の 2 枚撮り(時間雑音)で測った SNR と、式 21 を段数倍した閉形式。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sync_error_mtf.png",
+  "name": "sync_error_mtf",
+  "caption": "ε は搬送速度とラインレートの相対誤差。64 段の間に像が 64·ε 画素流れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sync_error_images.png",
+  "name": "sync_error_images",
+  "caption": "ピンホール(σ 1 画素)は ε = 6 % で 3.8 画素ぶん縦に伸びる(3 倍に拡大)。速度がうねってもエンコーダ同期なら崩れない。",
+  "shape": [
+   555,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "05_yaw_cross_mtf.png",
+  "name": "yaw_cross_mtf",
+  "caption": "web が走査軸から θ 傾くと、64 段の間に幅方向へ 64·sin θ 画素ずれる。速度を合わせても消えない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_weave.png",
+  "name": "weave",
+  "caption": "エンコーダ同期(速度の誤差なし)のまま。蛇行は幅方向の動きなので速度の同期では直らない。",
+  "shape": [
+   493,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "07_lens_relative_illumination.png",
+  "name": "lens_relative_illumination",
+  "caption": "光線追跡(射影立体角の一様格子)で数えた照度。ラインスキャン用は樽型歪曲で cos⁴ より明るい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_lens_mtf_field.png",
+  "name": "lens_mtf_field",
+  "caption": "タンジェンシャル = センサの並び(幅方向)、サジタル = 流れ方向。幾何 MTF × 回折 MTF。",
+  "shape": [
+   360,
+   802,
+   3
+  ]
+ },
+ {
+  "file": "09_full_width_shading.png",
+  "name": "full_width_shading",
+  "caption": "同じ明るさの尺度で表示。C マウントの両端は像円の外で光が届かない(補正は拒否される)。",
+  "shape": [
+   819,
+   1044,
+   3
+  ]
+ },
+ {
+  "file": "10_lens_defects_center_edge.png",
+  "name": "lens_defects_center_edge",
+  "caption": "補正で明るさは揃えてあるのに、C マウントの像高 14 mm では傷とピンホールがぼけて地合いに埋もれる。",
+  "shape": [
+   466,
+   430,
+   3
+  ]
+ }
+]

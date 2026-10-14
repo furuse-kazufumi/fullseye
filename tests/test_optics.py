@@ -890,12 +890,13 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-14: matprop(材料の物性ライブラリ、硝材・結晶・半導体・金属・液体・プラスチック 83 種)16 op を新しい族として追加(189 → 205)。
     # 2026-10-14: spectral(光源・フィルタ・センサの分光曲線、spectralrad)9 op を新しい族として追加(205 → 214)。
     # 2026-10-14: fiber(ステップ型ファイバとライトガイド、fiberoptics)7 op を新しい族として追加(214 → 221)。
-    # 2026-10-15: moire_align(モアレによる位置合わせ、moirealign)8 op を新しい族として追加(221 → 229)、telecentric(テレセントリックレンズと寸法計測)7 op(229 → 236)。
-    assert len(opsoptics.OPSOPTICS) == 236
+    # 2026-10-15: moire_align(モアレによる位置合わせ、moirealign)8 op を新しい族として追加(221 → 229)、telecentric(テレセントリックレンズと寸法計測)7 op(229 → 236)、linescan(TDI ラインスキャンとラインスキャン用レンズ)6 op(236 → 242)。
+    assert len(opsoptics.OPSOPTICS) == 242
     assert len(opsoptics.list_ops("moire_align")) == 8
     assert len(opsoptics.list_ops("telecentric")) == 7
     assert len(opsoptics.list_ops("fiber")) == 7
     assert len(opsoptics.list_ops("telecentric")) == 7
+    assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("matprop")) == 16
     assert len(opsoptics.list_ops("spectral")) == 9
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
@@ -907,7 +908,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "design", "fiber", "finish", "geometric", "glassbody", "illumination",
-        "imaging", "imaging_sim", "interface", "light_transport", "material", "matprop", "mirror", "moire_align", "optimization",
+        "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "optimization",
         "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
