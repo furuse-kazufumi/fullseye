@@ -857,6 +857,7 @@ def test_refract_points_at_the_per_ray_version_it_used_to_hide():
 
 def test_fit_zernike_is_area_weighted_so_a_truncated_fit_is_the_projection():
     """2026-10-14: 重みなしの極座標格子では Z80 + 0.3 Z20 を n_max=4 で読むと Z40 = 0.39 だった(真の射影は 0)。"""
+    pytest.importorskip("torch")                     # fit_zernike は grid_sample を使う(CI は py3.11 にしか torch を入れない)
     from math import factorial
     import match3d as M
 
