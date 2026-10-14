@@ -7,6 +7,21 @@
 増やし、何を増やさないか。いつ壊れるか。新 op 6 本(``pixelshift``)を、閉形式の真値と既存の op(``gfx2d`` の
 デモザイク、``edgesfr`` の傾いたエッジ、``optics`` の Airy と回折の MTF、``astrostack`` の drizzle)で採点する。
 
+  R. **実データ(主役)**: 35 mm フルサイズのミラーレス(センサシフト機)で撮ったピクセルシフト 4 枚の未加工 RAW(PixelShift200、Qian ほか ICCP 2022、
+     CC BY 4.0)で、ISO 12233 系の解像チャートの 256 × 1152 画素を測る。.ARW(TIFF)の CFA の IFD を読み、Range 要求で
+     **必要な行だけ**取る(1 枚 85 MB のうち 4.1 MB)。門: (1) 4 枚の巡り方は 96 通りの候補から「同じ点の 2 つの G の
+     食い違い」(``pixel_shift_motion_mask``)が最小のものを選ぶ —— 実機は (0,0)→(1,0)→(1,−1)→(0,−1) で「動いた」画素
+     0.09 %、★op の既定の並び (0,0)→(0,1)→(1,1)→(1,0) をそのまま渡すと 23.2 %(規約は機種ごとに違う)。(2) 合わせた像は
+     著者が同じ 4 枚から作った合成済み RGGB(.mat、列の帯だけ Range で取る)と相関 0.99999996・残差 0.3 DN(★同じ並べ替え
+     なので一致は当然 —— 見ているのは並び・黒・切り出し位置の取り違えが無いこと)。(3) 無彩色の帯の色は 1 枚 + 双線形
+     0.0540 → 4 枚 0.0251(紙 0.0099)、0.25 cyc/px より細かい縞の振幅は 4 枚が双線形の 1.67 倍。(4) ★正直に: rawpy の
+     AHD(rawpy があるとき)は 4 枚とほぼ同じ(振幅 1.01 倍、輝度の差 RMS 0.013)で、色は 0.0203 と 4 枚より**少ない** ——
+     4 枚に残る色は倍率色収差と R・G・B に別々に乗る雑音で、AHD はそれも滑らかに消す。チャートの縞は 0.31 cyc/px 止まり
+     でナイキストの手前なので、4 枚の本当の出番はこの切り出しに無い。★最初は AHD に白の釣り合いを掛けずに渡して、
+     振幅 1.22 倍・色 0.059 と出た —— AHD は色差の均一さで補間の向きを選ぶので、釣り合いはデモザイクの**前**に要る。
+     ネットの無い CI では記録値を印字して飛ばす(キャッシュ ``~/.cache/fullseye/poc_pixel_shift``、sha256 で確かめる)。
+     下の 0〜6 章は合成のシーンで、壊れる条件を掃引する補助。
+
   0. **閉形式を先に印字**: 画素の開口の MTF = |sinc(f)|(ナイキスト 0.5 cyc/px で 2/π = 0.637、MTF50 は
      0.603 cyc/px)、1 枚では f > 0.5 が |f − round f| に折り返る、半画素シフトでナイキストは 1.0、
      回折は Q = λN/p で決まり Q ≥ 2 ならレンズ律速、雑音は同じ点の標本数 n で σ/√n。
@@ -30,8 +45,15 @@
      増やすほど静止部の雑音は下がるが、動いた所の誤差は増える。
 
 【外部真値】閉形式(sinc の開口 MTF、回折の MTF、ナイキストと折り返し、√N)、合成シーンの既知の周波数と既知のシフト、
-既存 op(gfx2d のデモザイク、edgesfr の ISO 12233 の手順、optics の Airy・回折 MTF、astrostack の drizzle)。【学習】0。
-【較正】0。
+既存 op(gfx2d のデモザイク、edgesfr の ISO 12233 の手順、optics の Airy・回折 MTF、astrostack の drizzle)。実データの章は
+無彩色の解像チャート(色が 0 のはずの被写体)、著者の合成済み RGGB(第二の実装)、rawpy の AHD(第三者のデモザイク)。
+【学習】0。【較正】0(白の釣り合いはチャートの紙で取る)。
+
+【来歴(実データ)】G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, "Rethinking Learning-based
+Demosaicing, Denoising, and Super-Resolution Pipeline", ICCP 2022(arXiv:1905.02538)。データ PixelShift200
+(https://huggingface.co/datasets/guochengqian/PixelShift200)、CC BY 4.0(2026-10-15 にデータカードで確認)。使うのは場面
+pixelshift_5 の .ARW 4 枚の行 2096〜2352・列 3088〜4240 と、合成済み RGGB の列 3500〜3900。改変: 切り出し・白の釣り合い・
+ガンマ・拡大。repo にはデータを入れない(取得とキャッシュ、sha256 の確認だけ)。
 
 ★正直に書いておくこと:
   * 合成のシーンと理想の撮像素子(箱の開口、画素間のクロストークなし、マイクロレンズは開口率で代表)。実機の
@@ -852,9 +874,423 @@ def make_figures(cf, four, half, sixteen, lens_rows, shift, motion, noise):
                   caption="左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた"
                           "格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(%d × %d 画素を %d 倍)。" % (w, w, z))
 
+# --------------------------------------------------------------------------- #
+# R. 実データ: 35 mm フルサイズのミラーレス(センサシフト機)で撮ったピクセルシフト 4 枚の未加工 RAW(PixelShift200)
+# --------------------------------------------------------------------------- #
+#: 出典(図・figures.json・能力ノートにも同じ文言)。ライセンスは 2026-10-15 に Hugging Face のデータカード
+#: (license: cc-by-4.0)で確認。
+REAL_SOURCE = ("データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, "
+               "\"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, "
+               "arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。"
+               "場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。"
+               "改変: 切り出し・白の釣り合い・ガンマ・拡大。")
+REAL_SOURCE_SHORT = "データ: PixelShift200(Qian et al., ICCP 2022)、Hugging Face guochengqian/PixelShift200、CC BY 4.0(改変あり)"
+
+HF = "https://huggingface.co/datasets/guochengqian/PixelShift200/resolve/main/"
+REAL_SCENE = 5
+#: センサの行 2096〜2352、列 3088〜4240(偶数から始めて RGGB の位相を保つ)= チャート下段の周波数の帯と細い縞の列。
+REAL_ROWS = (2096, 2352)
+REAL_COLS = (3088, 4240)
+#: 著者の .mat から読む列の範囲(列優先の int16 なので、列の帯ごとに読む)。.mat は raw から行 6・列 2 ずれて切られている
+#: (場面 10 で確かめた。ここでも ±8 で探す)。
+MAT_COLS = (3500, 3900)
+#: 切り出しの中で、周波数が上がる縞(下段)が終わる列(その先は紙)。
+CHIRP_END = 1112
+#: 取得した部分の sha256(2026-10-15 の実物から)。合わなければ使わない。
+REAL_SHA = {
+    "frames": "b2de6960283986cf8bf46fa0aa4c675e64eff5fc9f7f5b9195abeb931b03d609",
+    "mat": "d5bd17e1f0ac83607db3a3edc8b1b9b8569e8974509840ec090d7a929b14885f",
+}
+#: 2026-10-15 の実測(ネットの無い CI では印字して章を飛ばす。門には使わない)。
+REAL_RECORDED = ("4 枚の並びは (0,0)→(1,0)→(1,−1)→(0,−1)(「動いた」画素 0.09 %、op の既定の並びでは 23.2 %)、"
+                 "著者の合成済み RGGB と相関 0.99999996・残差 0.3 DN、無彩色の帯の色 1 枚 + 双線形 0.0540 → 4 枚 0.0251"
+                 "(AHD 0.0203)、0.25 cyc/px より細かい縞の振幅 4 枚 / 双線形 = 1.67、AHD / 4 枚 = 1.01")
+
+
+def _real_cache_dir() -> str:
+    base = os.environ.get("FULLSEYE_DATA_DIR") or os.path.join(os.path.expanduser("~"), ".cache", "fullseye")
+    d = os.path.join(base, "poc_pixel_shift")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _http_range(url: str, start: int, n: int) -> bytes:
+    """``url`` の [start, start + n) を Range 要求で取る。206 で長さが合わなければ例外(全体を黙って落とさない)。"""
+    import urllib.request
+    req = urllib.request.Request(url, headers={"Range": "bytes=%d-%d" % (start, start + n - 1)})
+    with urllib.request.urlopen(req, timeout=120) as r:                   # noqa: S310 - 固定の https の URL
+        if r.status != 206:
+            raise IOError("Range が効かない(HTTP %d)" % r.status)
+        data = r.read()
+    if len(data) != n:
+        raise IOError("Range の長さが %d(期待 %d)" % (len(data), n))
+    return data
+
+
+def _arw_raw_ifd(head: bytes) -> dict:
+    """ARW(TIFF)の先頭から、CFA の生データの IFD(PhotometricInterpretation = 32803)を探す。
+
+    返り値: width / height / bits / offset(StripOffsets)/ count(StripByteCounts)/ compression / black(0x7310)/
+    cfa(0x828E の 4 バイト)。★非圧縮(compression = 1)・1 本のストリップ・16 bit の箱でなければ拒否する。
+    """
+    import struct
+    if head[:4] != b"II*\x00":
+        raise ValueError("ARW: little-endian TIFF ではない")
+    sizes = {1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 7: 1, 9: 4, 10: 8, 13: 4}
+
+    def read_ifd(off):
+        n = struct.unpack_from("<H", head, off)[0]
+        tags = {}
+        for i in range(n):
+            tag, typ, cnt, val = struct.unpack_from("<HHII", head, off + 2 + 12 * i)
+            nb = sizes.get(typ, 1) * cnt
+            raw = head[off + 2 + 12 * i + 8: off + 2 + 12 * i + 12] if nb <= 4 else head[val:val + nb]
+            if typ == 3:
+                v = struct.unpack("<%dH" % cnt, raw[:2 * cnt])
+            elif typ in (4, 13):
+                v = struct.unpack("<%dI" % cnt, raw[:4 * cnt])
+            else:
+                v = tuple(raw)
+            tags[tag] = v
+        nxt = struct.unpack_from("<I", head, off + 2 + 12 * n)[0]
+        return tags, nxt
+
+    todo, seen = [struct.unpack_from("<I", head, 4)[0]], set()
+    while todo:
+        off = todo.pop()
+        if not off or off in seen or off + 2 > len(head):
+            continue
+        seen.add(off)
+        tags, nxt = read_ifd(off)
+        todo.append(nxt)
+        todo.extend(tags.get(330, ()))                 # SubIFDs
+        if tags.get(262, (0,))[0] == 32803:
+            d = {"width": tags[256][0], "height": tags[257][0], "bits": tags[258][0], "compression": tags[259][0],
+                 "offset": tags[273][0], "count": tags[279][0], "strips": len(tags[273]),
+                 "black": tags.get(0x7310, (0,))[0], "cfa": tags.get(0x828E, ())}
+            if d["compression"] != 1 or d["strips"] != 1 or d["count"] != 2 * d["width"] * d["height"]:
+                raise ValueError("ARW: 非圧縮・1 ストリップ・16 bit の箱でない(%r)" % d)
+            return d
+    raise ValueError("ARW: CFA の IFD が見つからない")
+
+
+def _mat_rggb_header(url: str) -> dict:
+    """MATLAB v5 の .mat(非圧縮)の 2 つ目の要素(rggb、int16、(H, W, 4)、列優先)の位置。"""
+    import struct
+    off = 128
+    n0 = struct.unpack("<II", _http_range(url, off, 8))[1]
+    off = off + 8 + n0                                  # 1 つ目(metadata)を飛ばす
+    h = _http_range(url, off, 128)
+    typ, nbytes = struct.unpack_from("<II", h, 0)
+    if typ != 14:
+        raise ValueError(".mat: 圧縮(miCOMPRESSED)の要素は扱わない(type %d)" % typ)
+    p = 8 + 16
+    _dt, dn = struct.unpack_from("<II", h, p)
+    dims = struct.unpack_from("<%di" % (dn // 4), h, p + 8)
+    p += 8 + ((dn + 7) // 8) * 8
+    nt, nn = struct.unpack_from("<II", h, p)
+    if nt >> 16:
+        name = h[p + 4:p + 4 + (nt >> 16)]
+        p += 8
+    else:
+        name = h[p + 8:p + 8 + nn]
+        p += 8 + ((nn + 7) // 8) * 8
+    rt, _rn = struct.unpack_from("<II", h, p)
+    if name != b"rggb" or rt != 3 or len(dims) != 3 or dims[2] != 4:
+        raise ValueError(".mat: rggb (int16, H×W×4) でない(%r %r %r)" % (name, rt, dims))
+    return {"H": dims[0], "W": dims[1], "data": off + 8 + p + 8}
+
+
+def real_fetch():
+    """場面 5 の 4 枚の生データの切り出しと、著者の合成済み RGGB の列の帯を返す。``(dict, None)`` か ``(None, 理由)``。
+
+    ★取るのは**必要な行だけ**(1 枚 85 MB の .ARW から Range 要求で 4.1 MB × 4)と、.mat の 400 列(13 MB × 4)。
+    キャッシュは ``FULLSEYE_DATA_DIR``(既定 ``~/.cache/fullseye/poc_pixel_shift``)。CI と ``FULLSEYE_OFFLINE=1``
+    ではネットに出ない。中身の sha256 を確かめてから使う(合わなければ捨てて飛ばす)。repo には入れない。
+    """
+    import hashlib
+    p = os.path.join(_real_cache_dir(), "scene%d_r%d-%d_c%d-%d.npz" % (REAL_SCENE, *REAL_ROWS, *REAL_COLS))
+    offline = bool(os.environ.get("CI")) or os.environ.get("FULLSEYE_OFFLINE", "") == "1"
+    if not os.path.exists(p):
+        if offline:
+            return None, "ネットに出ない設定(CI / FULLSEYE_OFFLINE)で、キャッシュ %s が無い" % p
+        try:
+            frames, meta = [], None
+            r0, r1 = REAL_ROWS
+            for i in (1, 2, 3, 4):
+                url = HF + "PixelShift200_RawFiles/ARW/pixelshift_%d_%d.ARW" % (REAL_SCENE, i)
+                d = _arw_raw_ifd(_http_range(url, 0, 1 << 18))
+                blob = _http_range(url, d["offset"] + 2 * d["width"] * r0, 2 * d["width"] * (r1 - r0))
+                a = np.frombuffer(blob, "<u2").reshape(r1 - r0, d["width"])[:, REAL_COLS[0]:REAL_COLS[1]]
+                frames.append(a)
+                meta = meta or d
+            url = HF + "PixelShift200_RawFiles/raw_rggb/test_raw_rggb/pixelshift_%d_rggb.mat" % REAL_SCENE
+            mh = _mat_rggb_header(url)
+            c0, c1 = MAT_COLS
+            chans = []
+            for ch in range(4):
+                b = _http_range(url, mh["data"] + 2 * mh["H"] * (c0 + mh["W"] * ch), 2 * mh["H"] * (c1 - c0))
+                chans.append(np.frombuffer(b, "<i2").reshape(c1 - c0, mh["H"]).T)
+            mat = np.stack(chans, -1)[max(0, r0 - 16):r1 + 16]          # 行は切り出しの ±16 だけ残す
+            np.savez_compressed(p + ".part.npz", frames=np.stack(frames), mat=mat, mat_row0=max(0, r0 - 16),
+                                black=meta["black"], white=16383, cfa=np.array(meta["cfa"], np.uint8),
+                                width=meta["width"], height=meta["height"], bits=meta["bits"])
+            os.replace(p + ".part.npz", p)
+        except Exception as exc:                                           # noqa: BLE001 - 取れなければ飛ばす
+            return None, "取得できない(%s: %s)" % (type(exc).__name__, str(exc)[:100])
+    z = dict(np.load(p))
+    got = {"frames": hashlib.sha256(np.ascontiguousarray(z["frames"]).tobytes()).hexdigest(),
+           "mat": hashlib.sha256(np.ascontiguousarray(z["mat"]).tobytes()).hexdigest()}
+    for k, v in got.items():
+        if v != REAL_SHA[k]:
+            os.remove(p)
+            return None, "%s の sha256 が合わない(%s…)ので捨てた" % (k, v[:12])
+    z["sha"] = got
+    return z, None
+
+
+def real_ahd(z, gain):
+    """比較用の第三者のデモザイク: rawpy の AHD(rawpy があり、全体の .ARW 1 枚を落とせるときだけ。結果の切り出しを
+    キャッシュする)。raw の色空間・線形。★白の釣り合い *gain*(R, G, B)は**デモザイクの前に**掛けさせる —— AHD は
+    補間の向きを色差の均一さで選ぶので、釣り合っていない R・B のまま渡すと別物になる(2026-10-15 に踏んだ: 縞の振幅が
+    4 枚の 1.22 倍・色 0.059 と出た)。``(H, W, 3)`` か ``(None, 理由)``。"""
+    p = os.path.join(_real_cache_dir(), "scene%d_ahd_r%d-%d_c%d-%d_wb%.4f-%.4f.npy"
+                     % (REAL_SCENE, *REAL_ROWS, *REAL_COLS, gain[0], gain[2]))
+    if os.path.exists(p):
+        return np.load(p), None
+    offline = bool(os.environ.get("CI")) or os.environ.get("FULLSEYE_OFFLINE", "") == "1"
+    if offline:
+        return None, "ネットに出ない設定で、AHD のキャッシュが無い"
+    try:
+        import rawpy
+    except ImportError:
+        return None, "rawpy が無い(pip install rawpy で AHD との比較が加わる)"
+    try:
+        import tempfile
+        import urllib.request
+        url = HF + "PixelShift200_RawFiles/ARW/pixelshift_%d_1.ARW" % REAL_SCENE
+        with tempfile.TemporaryDirectory() as td:
+            f = os.path.join(td, "f1.ARW")
+            with urllib.request.urlopen(url, timeout=600) as r, open(f, "wb") as o:   # noqa: S310
+                o.write(r.read())
+            with rawpy.imread(f) as rp:
+                raw_v = rp.raw_image_visible[REAL_ROWS[0]:REAL_ROWS[1], REAL_COLS[0]:REAL_COLS[1]]
+                if not np.array_equal(raw_v, z["frames"][0]):
+                    return None, "rawpy の生データと Range で読んだ行が一致しない(読み方の規約を疑う)"
+                out = rp.postprocess(demosaic_algorithm=rawpy.DemosaicAlgorithm.AHD,
+                                     output_color=rawpy.ColorSpace.raw, gamma=(1, 1), no_auto_bright=True,
+                                     user_wb=[float(gain[0]), 1.0, float(gain[2]), 1.0], output_bps=16, user_flip=0,
+                                     user_black=int(z["black"]), user_sat=int(z["white"]))
+        a = out[REAL_ROWS[0]:REAL_ROWS[1], REAL_COLS[0]:REAL_COLS[1]].astype(np.float64) / 65535.0
+        np.save(p, a)
+        return a, None
+    except Exception as exc:                                               # noqa: BLE001
+        return None, "AHD を作れない(%s: %s)" % (type(exc).__name__, str(exc)[:100])
+
+
+def _real_region_metrics(img, ref, rows, cols):
+    """長方形の切り出しで、偽色(無彩色のチャートなので reference なし)と、4 枚との色の差(reference = 4 枚)。"""
+    a = img[rows, cols]
+    out = {"fc": PS.false_color_metric(a, border=0)["mean"]}
+    if ref is not None:
+        out["fc_vs4"] = PS.false_color_metric(a, reference=ref[rows, cols], border=0)["mean"]
+    return out
+
+
+def _chirp_modulation(Y, rows, win=48, step=40):
+    """周波数が左から右へ上がる縞の帯で、窓ごとの基本波の振幅(4 枚の像で決めた周波数のビンを、どの像でも読む)。"""
+    Y4 = Y["4shot"]
+    out = []
+    for c in range(8, min(Y4.shape[1] - 8, CHIRP_END) - win, step):      # 縞の右端より先(紙)は読まない
+        seg4 = Y4[rows, c:c + win].mean(0)
+        F = np.fft.rfft(seg4 - seg4.mean())
+        i = int(np.argmax(np.abs(F[1:]))) + 1
+        amp = {}
+        for k, y in Y.items():
+            seg = y[rows, c:c + win].mean(0)
+            amp[k] = 2.0 * abs(np.fft.rfft(seg - seg.mean())[i]) / win
+        out.append((i / win, amp))
+    return out
+
+
+def chapter_real():
+    print("\nR. 実データ —— 35 mm フルサイズのミラーレス(センサシフト機)で撮ったピクセルシフト 4 枚の未加工 RAW(%s)" % REAL_SOURCE_SHORT)
+    z, why = real_fetch()
+    if z is None:
+        print("   [skip] %s。2026-10-15 の実測: %s" % (why, REAL_RECORDED))
+        return None
+    import itertools
+    black, white = float(z["black"]), float(z["white"])
+    fr = (z["frames"].astype(np.float64) - black) / (white - black)
+    print("   生データ: %d × %d 画素の 14 bit(16 bit の箱)、黒 %d、CFA %s、切り出し 行 %d〜%d・列 %d〜%d(sha256 %s…)"
+          % (int(z["width"]), int(z["height"]), int(black), "".join("RGB"[int(v)] for v in z["cfa"]), *REAL_ROWS,
+             *REAL_COLS, z["sha"]["frames"][:12]))
+    gate("実データ: CFA は RGGB・黒 512・非圧縮(TIFF の CFA の IFD から読み、Range 要求で必要な行だけ取った)",
+         tuple(int(v) for v in z["cfa"]) == (0, 1, 1, 2) and int(black) == 512)
+    # (a) 4 枚の並び: 公称の 1 画素シフトの並べ方 24 通り × 向き 4 通りを、同じ点の 2 つの G の食い違いで選ぶ
+    base = np.array(PS.pixel_shift_pattern("4shot"))
+    cand = {}
+    for perm in itertools.permutations(range(4)):
+        for sr, sc in ((1, 1), (1, -1), (-1, 1), (-1, -1)):
+            sh = base[list(perm)] * np.array([sr, sc])
+            sh = sh - sh[0]
+            key = tuple(map(tuple, sh.tolist()))
+            if key not in cand:
+                cand[key] = float(PS.pixel_shift_motion_mask(fr, sh, "RGGB", threshold=4.0).mean())
+    order = sorted(cand.items(), key=lambda kv: kv[1])
+    found, f_best = order[0]
+    f_second = order[1][1]
+    f_default = cand[tuple(map(tuple, base.tolist()))]
+    SH = np.array(found)
+    NUMBERS.update({"real_motion_found": f_best, "real_motion_second": f_second, "real_motion_default": f_default})
+    print("   シフトの並び %d 通りを試した: 最良 %s で「動いた」画素 %.2f %%、次点 %.1f %%、op の既定の並び %s では %.1f %%"
+          % (len(cand), SH.astype(int).tolist(), 100 * f_best, 100 * f_second, base.astype(int).tolist(), 100 * f_default))
+    gate("★実データの 4 枚は (0,0)→(1,0)→(1,−1)→(0,−1)(下 → 左)の順: 止まった被写体で G の食い違いが閾値を超える画素 "
+         "%.2f %%(次点 %.1f %%)。op の既定 (0,0)→(0,1)→(1,1)→(1,0) をそのまま渡すと %.1f %% が「動いた」になる"
+         % (100 * f_best, 100 * f_second, 100 * f_default),
+         f_best < 0.01 and f_second > 5 * max(f_best, 1e-4) and f_default > 0.1
+         and SH.astype(int).tolist() == [[0, 0], [1, 0], [1, -1], [0, -1]],
+         "規約(機種ごとの巡り方)は実データから決める。公称の並びを鵜呑みにしない")
+    m4 = PS.pixel_shift_merge(fr, SH, "RGGB")
+    one = gfx2d.raw_demosaic_bilinear(np.clip(fr[0], 0, 1), "RGGB")
+    # (b) 著者の合成済み RGGB(.mat)と突き合わせる(第二の実装)
+    mat = z["mat"].astype(np.float64)
+    r0, c0 = REAL_ROWS[0], REAL_COLS[0]
+    best = None
+    hgt, wid = 200, 300
+    for dr in range(-8, 9):
+        for dc in range(-8, 9):
+            i0, j0 = 8, MAT_COLS[0] - c0 + 8 - dc
+            mi0 = r0 + i0 + dr - int(z["mat_row0"])
+            sub = mat[mi0:mi0 + hgt, 8:8 + wid]
+            ours = m4[i0:i0 + hgt, j0:j0 + wid]
+            if mi0 < 0 or sub.shape[:2] != (hgt, wid) or ours.shape[:2] != (hgt, wid):
+                continue
+            cr = float(np.corrcoef(sub[..., 0].ravel(), ours[..., 0].ravel())[0, 1])
+            if best is None or cr > best[0]:
+                best = (cr, dr, dc, sub, ours)
+    cr, dr, dc, sub, ours = best
+    fit = {}
+    for name, mi, oi in (("R", (0,), 0), ("B", (3,), 2), ("G", (1, 2), 1)):
+        mv = sub[..., list(mi)].mean(-1)
+        A = np.c_[ours[..., oi].ravel(), np.ones(mv.size)]
+        sol, *_ = np.linalg.lstsq(A, mv.ravel(), rcond=None)
+        fit[name] = (float(sol[0]), float(np.std(mv.ravel() - A @ sol)))
+    NUMBERS.update({"real_mat_corr": cr, "real_mat_rms_R": fit["R"][1], "real_mat_rms_B": fit["B"][1]})
+    print("   著者の .mat: raw から行 %+d・列 %+d の所で R の相関 %.9f。倍率 %.1f(R)、残差 R %.2f / G %.2f / B %.2f DN"
+          "(G は .mat の Gr・Gb の平均と比べた)" % (dr, dc, cr, fit["R"][0], fit["R"][1], fit["G"][1], fit["B"][1]))
+    gate("実データ: pixel_shift_merge の像は、著者が同じ 4 枚から作った合成済み RGGB と一致(R の相関 %.8f、R・G・B の残差 "
+         "%.2f / %.2f / %.2f DN = 丸め)" % (cr, fit["R"][1], fit["G"][1], fit["B"][1]),
+         cr > 0.99999 and max(v[1] for v in fit.values()) < 1.0,
+         "★一致が良すぎるのは同じ並べ替えだから —— 見ているのは 4 枚の並び・黒・切り出しの位置の取り違えが無いこと")
+    # (c) 白の釣り合い: 無彩色のチャートの紙(明るく平らな所)で 4 枚の像を灰色にする。どの像にも同じ倍率を掛ける
+    L601 = np.array([0.299, 0.587, 0.114])
+    Yr = m4 @ L601
+    ls = np.sqrt(np.maximum(ndi.uniform_filter(Yr ** 2, 15) - ndi.uniform_filter(Yr, 15) ** 2, 0))
+    paper = (ls < 0.01 * Yr.max()) & (Yr > 0.6 * Yr.max())
+    gain = np.array([np.median(m4[..., 1][paper]) / np.median(m4[..., 0][paper]), 1.0,
+                     np.median(m4[..., 1][paper]) / np.median(m4[..., 2][paper])])
+    imgs = {"one": one * gain, "4shot": m4 * gain}
+    ahd, why_ahd = real_ahd(z, gain)
+    if ahd is not None:
+        k = float((ahd[..., 1] * m4[..., 1]).sum() / (ahd[..., 1] ** 2).sum())
+        imgs["ahd"] = ahd * k
+        print("   rawpy の AHD(第三者のデモザイク)を 4 枚の像の目盛りへ合わせる倍率 %.4f" % k)
+    else:
+        print("   [skip] AHD との比較: %s" % why_ahd)
+    sc = float(np.percentile(imgs["4shot"][..., 1], 99.5))
+    imgs = {k: np.clip(v / sc, 0.0, 1.0) for k, v in imgs.items()}
+    print("   白の釣り合い(紙 %d 画素の中央値): R × %.3f、B × %.3f" % (int(paper.sum()), gain[0], gain[2]))
+    # (d) 偽色と細部: 周波数の帯(上段)・周波数が上がる縞(下段)・何も無い紙
+    regs = {"bursts": (slice(50, 125), slice(8, -8)), "chirp": (slice(140, 200), slice(8, -8)),
+            "paper": (slice(222, 250), slice(8, -8))}
+    met = {k: {rn: _real_region_metrics(v, imgs["4shot"], *rr) for rn, rr in regs.items()} for k, v in imgs.items()}
+    Y = {k: v @ L601 for k, v in imgs.items()}
+    yrms = {k: float(np.sqrt(np.mean((Y[k] - Y["4shot"])[50:200, 8:-8] ** 2))) for k in imgs if k != "4shot"}
+    mods = _chirp_modulation(Y, slice(140, 200))
+    hi = [m for m in mods if m[0] >= 0.25]
+    ratio_one = float(np.mean([m[1]["4shot"] / m[1]["one"] for m in hi]))
+    fmax = max(m[0] for m in mods)
+    for k in imgs:
+        print("   %-6s 色(無彩色の帯 / 縞 / 紙)%.4f / %.4f / %.4f%s" % (
+            k, met[k]["bursts"]["fc"], met[k]["chirp"]["fc"], met[k]["paper"]["fc"],
+            "" if k == "4shot" else "、4 枚との色の差 %.4f、輝度の差 RMS %.4f" % (met[k]["bursts"]["fc_vs4"], yrms[k])))
+    print("   縞の振幅(周波数 → 1 枚 + 双線形 / AHD / 4 枚): " + "、".join(
+        "%.2f → %.3f / %s / %.3f" % (f, a["one"], ("%.3f" % a["ahd"]) if "ahd" in a else "—", a["4shot"])
+        for f, a in mods[::3]))
+    NUMBERS.update({"real_fc_one": met["one"]["bursts"]["fc"], "real_fc_4": met["4shot"]["bursts"]["fc"],
+                    "real_fc_paper": met["4shot"]["paper"]["fc"], "real_mod_ratio": ratio_one, "real_fmax": fmax,
+                    "real_yrms_one": yrms["one"]})
+    gate("実データ: 無彩色のチャートの周波数の帯で、色が 1 枚 + 双線形デモザイク %.4f → 4 枚 %.4f(何も無い紙で %.4f)"
+         % (met["one"]["bursts"]["fc"], met["4shot"]["bursts"]["fc"], met["4shot"]["paper"]["fc"]),
+         met["one"]["bursts"]["fc"] > 1.3 * met["4shot"]["bursts"]["fc"])
+    gate("実データ: 0.25 cyc/px より細かい縞の振幅は 4 枚が 1 枚 + 双線形の %.2f 倍(チャートの最も細かい縞 %.2f cyc/px)"
+         % (ratio_one, fmax), ratio_one > 1.5)
+    if "ahd" in imgs:
+        ratio_ahd = float(np.mean([m[1]["ahd"] / m[1]["4shot"] for m in hi]))
+        NUMBERS.update({"real_fc_ahd": met["ahd"]["bursts"]["fc"], "real_ahd_ratio": ratio_ahd,
+                        "real_yrms_ahd": yrms["ahd"]})
+        gate("★正直に: よいデモザイク(rawpy の AHD)は、このチャートでは 4 枚とほとんど同じ —— 0.25 cyc/px より細かい縞の"
+             "振幅は 4 枚の %.2f 倍、輝度の差 RMS %.4f(双線形は %.4f)、色は %.4f で 4 枚の %.4f より少ない"
+             % (ratio_ahd, yrms["ahd"], yrms["one"], met["ahd"]["bursts"]["fc"], met["4shot"]["bursts"]["fc"]),
+             abs(ratio_ahd - 1) < 0.15 and yrms["ahd"] < 0.5 * yrms["one"]
+             and met["ahd"]["bursts"]["fc"] < met["4shot"]["bursts"]["fc"],
+             "4 枚に残る色はデモザイクの偽色ではなく、レンズの倍率色収差と R・G・B に別々に乗る雑音(AHD は色差を"
+             "滑らかにするので両方とも消す。何も無い紙でも AHD %.4f < 4 枚 %.4f)。チャートの縞は 0.31 cyc/px 止まりでナイキスト 0.5 の手前 —— 4 枚の本当の"
+             "出番(ナイキストに近い細かさ・色のある細部)はこの切り出しに無い"
+             % (met["ahd"]["paper"]["fc"], met["4shot"]["paper"]["fc"]))
+    return {"imgs": imgs, "mods": mods, "met": met, "SH": SH, "f_default": f_default}
+
+
+def make_real_figures(real):
+    """実データの図(既存の図の番号を動かさないよう、最後に足す)。"""
+    import fullseye as fs
+    imgs = real["imgs"]
+    gam = {k: np.clip(v, 0, 1) ** (1 / 2.2) for k, v in imgs.items()}
+    names = [("one", "1 枚 + 双線形デモザイク(gfx2d)"), ("ahd", "1 枚 + AHD(rawpy)"), ("4shot", "4 枚 pixel_shift_merge")]
+    tiles = []
+    for k, lab in names:
+        if k not in gam:
+            continue
+        t = np.asarray(fs.text_box(gam[k], lab, (8, 8), font_size=16))
+        tiles += [t, np.ones((6, t.shape[1], 3))]
+    figs.save("real_chart_strips", np.concatenate(tiles[:-1], 0),
+              "【実データ】35 mm フルサイズのミラーレス(センサシフト機)で撮った解像チャートの同じ場所(256 × 1152 画素、等倍)。上 = 1 枚目の RAW を双線形で"
+              "デモザイク、中 = 同じ 1 枚を rawpy の AHD で、下 = 4 枚を pixel_shift_merge で合わせたもの(どれも紙で白を"
+              "釣り合わせ、ガンマ 2.2)。双線形は細い縞に色のモアレと迷路の模様が出る。" + REAL_SOURCE, source=REAL_SOURCE)
+    rr, cc = slice(120, 230), slice(760, 1110)
+    zt = []
+    for k, lab in names:
+        if k not in gam:
+            continue
+        a = gam[k][rr, cc]
+        a = np.repeat(np.repeat(a, 3, 0), 3, 1)
+        a = np.asarray(fs.text_box(a, lab, (8, 8), font_size=18))
+        zt += [a, np.ones((8, a.shape[1], 3))]
+    figs.save("real_chart_zoom", np.concatenate(zt[:-1], 0),
+              "【実データ】周波数が右へ上がる縞の右端(約 0.2〜0.31 cyc/px)を最近傍で 3 倍。1 枚 + 双線形では縞に赤と青が"
+              "乗り、細い縞の振幅が半分に落ちる。AHD は振幅が 4 枚とほぼ同じで、縞に緑と赤紫がうっすら乗る。" + REAL_SOURCE_SHORT, source=REAL_SOURCE)
+    mods = sorted(real["mods"], key=lambda m: m[0])
+    fq = np.array([m[0] for m in mods])
+    ser, sty, col = [], [], []
+    for k, lab, c_ in (("one", "1 枚 + 双線形", "wrong"), ("ahd", "1 枚 + AHD", "emphasis"), ("4shot", "4 枚", "right")):
+        if k in imgs:
+            ser.append((lab, fq, np.array([m[1][k] for m in mods])))
+            sty.append(None)
+            col.append(c_)
+    figs.save_plot("real_chirp_modulation", ser, xlabel="縞の周波数 [cyc/px]", ylabel="縞の振幅(0〜1 の階調)",
+                   styles=sty, colors=col, kinds=["scatter"] * len(ser),
+                   title="実データ: 細い縞ほど双線形が落ちる(0.25 cyc/px 以上で 4 枚の 1/%.2f)" % NUMBERS["real_mod_ratio"],
+                   caption="【実データ】チャート下段の周波数が上がる縞を 48 画素の窓で切り、4 枚の像で決めた周波数のビンで 3 つの像の"
+                           "振幅を読んだ(周波数はビンの幅 1/48 で量子化)。チャートの縞は 0.31 cyc/px までしか無く、ナイキスト 0.5 の"
+                           "手前で終わる。"
+                           + REAL_SOURCE_SHORT, source=REAL_SOURCE)
+
+
 def main():
     t0 = time.time()
     print("PoC ピクセルシフト撮像(予算 %s、センサ %d × %d 画素、1 画素 = %d × %d 標本)" % ("reduced" if REDUCED else "full", NS, NS, F, F))
+    real = chapter_real()
     cf = chapter_closed_form()
     four = chapter_four_shot()
     half = chapter_half_pixel()
@@ -865,6 +1301,8 @@ def main():
     noise = chapter_noise()
     if not REDUCED and figs.target_dir() is not None:
         make_figures(cf, four, half, sixteen, lens_rows, shift, motion, noise)
+        if real is not None:
+            make_real_figures(real)
     print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))
