@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 48 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 49 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -100,6 +100,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 雷射光切法的誤差下限由散斑決定(同調成像、散斑統計與三角量測的不確定度): [說明](../../capabilities/laser-speckle-floor.md) _(ja)_ · 範例 [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - 在量測之前預測凹形部件的相互反射使條紋投影與 ToF 偏離多少(全域光傳輸、直接與全域分離、微相移): [說明](../../capabilities/light-transport.md) _(ja)_ · 範例 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - 這個數字有多少來自量測方式(量具 R&R 與量測不確定度): [說明](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 範例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
+- 用條紋的鏡像量測光澤面的微米凹坑(相位量測偏折術: 條紋 → 相位 → 斜率 → 曲率): [說明](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · 範例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - 多大的缺陷能被發現(檢出機率 POD 與 a90/95,MIL-HDBK-1823A): [說明](../../capabilities/probability-of-detection.md) _(ja)_ · 範例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - 量測 SEM 明亮邊緣把尺寸放大了多少（帶真值）: [說明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 範例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 - 用偏振量測黑色光澤件與玻璃的形狀(偏振形狀復原、模糊解集、折射率估計): [說明](../../capabilities/shape-from-polarization.md) _(ja)_ · 範例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
@@ -159,7 +160,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 231 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 232 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -218,7 +219,7 @@ PoC 231 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (41)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (42)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -256,6 +257,7 @@ PoC 231 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_pod_lighting/03_pod_curves.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pod_lighting.jpg" alt="各照明的檢出機率" width="200" height="200"><span>各照明的檢出機率</span></a>
 <a href="../../articles/assets/poc/poc_laser_line_speckle_floor/01_line.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_laser_line_speckle_floor.jpg" alt="光切法的散斑下限" width="200" height="200"><span>光切法的散斑下限</span></a>
 <a href="../../articles/assets/poc/poc_shape_from_polarization/05_normals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_shape_from_polarization.jpg" alt="用偏振量測黑色光澤件與玻璃" width="200" height="200"><span>用偏振量測黑色光澤件與玻璃</span></a>
+<a href="../../articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_phase_measuring_deflectometry.jpg" alt="照片看不見的微米凹坑,用條紋的鏡像找出(偏折術)" width="200" height="200"><span>照片看不見的微米凹坑,用條紋的鏡像找出(偏折術)</span></a>
 <a href="../../articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_interreflection_fringe_error.jpg" alt="白色溝槽的相互反射與條紋誤差" width="200" height="200"><span>白色溝槽的相互反射與條紋誤差</span></a>
 <a href="../../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zernike_aberrations.jpg" alt="澤尼克像差" width="200" height="200"><b>&#9654;</b><span>澤尼克像差</span></a>
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="注意力恆等式" width="200" height="200"><span>注意力恆等式</span></a>

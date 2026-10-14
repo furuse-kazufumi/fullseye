@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 位相計測デフレクトメトリ(deflectometry 6 op + PoC)
+- `deflectometry`(`opsspecular` の新カテゴリ `deflectometry`、6 op): `deflectometry_rig`(装置の幾何の表。手で動かしたベクトルは拒否)/ `deflectometry_screen_pattern` / `deflectometry_render`(高さ場 → 縞の鏡像。拡散成分・鏡面ローブの散乱・カバーガラスの裏面反射・開口積分のピント・雑音と量子化)/ `deflectometry_phase_to_slope`(画面の絶対位相 2 枚 → 面の格子上の法線マップ、`match3d.normal_from_reflection`)/ `slope_to_curvature`(傾きを 1 回微分して平均・ガウス曲率、積分しない)/ `deflectometry_sensitivity`(撮る前の閉形式: σ_u/(2d)、sin θ / d、ピントのぼけ)。
+- PoC `poc_phase_measuring_deflectometry`(22 門、図 13 枚 + GIF): 塗装パネルの深さ 3 µm / 1 µm の凹みは写真の信号が 8 bit の 1 段の 0.17 倍なのに曲率マップで SNR 110 / 57、積分した深さは真値と 0.5 % 以内。位相雑音は閉形式と 1.00 倍、傾きの雑音は双線形の読み直しの 0.67 倍。壊れ方: 0.3 mm 浮かせると Δz sin θ / d の傾きと半径 388 m の椀(凹みは 0.7 %)、画面の距離 2 % の誤りで深さ −2.3 %、拡散 0.9 で次数が飛ぶ、カバーガラスの裏面は凹みのくさびで逆向きに曲がり傾きの感度が閉形式 0.246(凹みが 1/4 に見える)、画面にピントで凹みが 0.52 倍。
+- ★内訳を追って直したもの: 閉形式の位相雑音が実測の 1/1.12 だった → 面にピントの画面側のぼけ(円板の MTF 0.89)を振幅に入れ忘れていた。画面にピントでも縞が 0.59 倍に落ちた → 面側のぼけを画像の畳み込みで近似していたのをやめ、開口積分に。画面の距離の誤りで深さが 7.5 % 深く出た → 距離の誤りは面全体を半径 41 m の椀に見せるので、深さは局所の 2 次形状を外して測る。
+- 能力ノート `docs/capabilities/phase-measuring-deflectometry.md`、op 要約 6 言語、門 `tests/test_deflectometry.py`(30 件)。
+
 ### Fixed — 有限物体の像面が無限遠の焦点に置かれていた + defocus_blur のぼけが 2 倍広かった
 - `raytrace.trace_rays`(と OPD・波面・スポット・色収差の全経路): 最後の面が t=None・image_mm 未指定のとき、像面を bfl(無限遠の物体の焦点)に置いていた → 近軸の像距離(paraxial_trace の image_mm、無限遠なら bfl と同じ)。N-BK7 の単レンズ・物体 700 mm で像は 51.39 mm なのに 47.71 mm に置かれ、W20 が −18 波の偽のぼけ(chromatic_shift の軸上色収差も 7.7 % ずれていた)。
 - `optscene.defocus_blur`: 錯乱円(直径 D の一様な円板)を σ = D/2 のガウスで近似していた → 各軸の標準偏差は D/4。

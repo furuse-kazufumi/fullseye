@@ -1,8 +1,8 @@
 {
- "n_ops": 3186,
+ "n_ops": 3192,
  "tiers": {
   "color": 12,
-  "ledger": 2233,
+  "ledger": 2239,
   "nary": 17,
   "registry": 924
  },
@@ -5543,6 +5543,66 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "deflectometry_phase_to_slope",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "normalmap",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "deflectometry_render",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "images",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "deflectometry_rig",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": []
+  },
+  {
+   "name": "deflectometry_screen_pattern",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "images",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": []
+  },
+  {
+   "name": "deflectometry_sensitivity",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
    "in_sorts": []
   },
   {
@@ -23861,6 +23921,19 @@
     "table",
     "any",
     "scalar"
+   ]
+  },
+  {
+   "name": "slope_to_curvature",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "image2d",
+   "category": "deflectometry",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": [
+    "normalmap"
    ]
   },
   {

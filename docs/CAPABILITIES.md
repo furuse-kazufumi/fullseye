@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 48 項目**
+**収録 49 項目**
 
-## 測る (16)
+## 測る (17)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -91,6 +91,14 @@
 使う op: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
 
 動く例: `poc_measurement_system_analysis`
+
+### [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md)
+
+塗装面・カバーガラス・鏡面研磨品の凹み、うねり、研磨ムラを、面の前に置いた画面の縞の**鏡像**から測ります。光沢面は鏡なので、照明を当てて撮った写真には照明しか写らず、深さ数 µm の凹みはまず見えません。画面に位相シフト縞を出して鏡像を撮ると、面が α 傾くだけで反射は 2α 曲がり、距離 d 先の画面では 2dα ずれます。傾きを、画面までの距離をてこにして測る方法です(Knauer ら 2004)。
+
+使う op: `deflectometry_rig`, `deflectometry_screen_pattern`, `deflectometry_render`, `deflectometry_phase_to_slope`, `slope_to_curvature`, `deflectometry_sensitivity`
+
+動く例: `poc_phase_measuring_deflectometry`
 
 ### [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

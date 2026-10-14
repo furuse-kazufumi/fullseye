@@ -75,7 +75,7 @@ rank-deficient (two angles equal modulo 180); more than
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[polarization_render](polarization_render.md)
+[polarization_render](polarization_render.md) · [deflectometry_render](../deflectometry/deflectometry_render.md) · [deflectometry_phase_to_slope](../deflectometry/deflectometry_phase_to_slope.md)
 
 ## 同カテゴリ(`polarization`)
 

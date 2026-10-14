@@ -188,7 +188,7 @@ repair).
 
 ## 型が繋がる次の op(`normalmap` を入力に取れる)
 
-[brdf_blinn_phong](../reflectance/brdf_blinn_phong.md) · [brdf_microfacet](../reflectance/brdf_microfacet.md) · [dichromatic_render](../reflectance/dichromatic_render.md)
+[brdf_blinn_phong](../reflectance/brdf_blinn_phong.md) · [brdf_microfacet](../reflectance/brdf_microfacet.md) · [dichromatic_render](../reflectance/dichromatic_render.md) · [slope_to_curvature](../deflectometry/slope_to_curvature.md)
 
 ## 同カテゴリ(`photometric`)
 

@@ -1128,6 +1128,13 @@ def _ledger_args():
         "polarization_separate": ((frames,), {}),
         "polarization_dolp_map": ((frames,), {}),
         "polarization_stokes": ((frames,), {}),
+        # デフレクトメトリ(2026-10-15): 既定の装置で、32 x 32 の小さな面
+        "deflectometry_rig": ((), {}),
+        "deflectometry_screen_pattern": ((), {"max_side_px": 64}),
+        "deflectometry_render": ((np.zeros((32, 32)),), {}),
+        "deflectometry_phase_to_slope": ((np.zeros((32, 32)), np.zeros((32, 32))), {}),
+        "slope_to_curvature": ((n,), {}),
+        "deflectometry_sensitivity": ((), {}),
     }
 
 
@@ -1151,10 +1158,12 @@ NEW_SORTS = {"rgbimage": RGBIMAGE_CHECK, "polsweep": POLSWEEP_CHECK}
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsspecular.missing() == []
-    assert len(opsspecular.OPSSPECULAR) == 13
-    assert sorted(opsspecular.categories()) == ["dichromatic", "photometric",
+    import deflectometry
+    # 13 + デフレクトメトリ 6(2026-10-15)
+    assert len(opsspecular.OPSSPECULAR) == 19
+    assert sorted(opsspecular.categories()) == ["deflectometry", "dichromatic", "photometric",
                                                 "polarization", "reflectance"]
-    assert set(opsspecular.OPSSPECULAR) == set(S.SPECULARITY)
+    assert set(opsspecular.OPSSPECULAR) == set(S.SPECULARITY) | set(deflectometry.DEFLECTOMETRY)
     assert set(S.SPECULARITY) <= set(S.__all__)
     for name, meta in opsspecular.OPSSPECULAR.items():
         assert meta["doc"], f"{name} has no docstring summary line"
