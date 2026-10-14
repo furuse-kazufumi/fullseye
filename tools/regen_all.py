@@ -30,6 +30,8 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
+import functools
 import os
 import re
 import subprocess
@@ -45,6 +47,14 @@ CHAIN = [
     #   2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
+    # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
+    # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
+    # ★2026-10-15: 16 番目から 2 番目へ上げた。入力は registry だけ(他の段の生成物を
+    #   読まない)なのに、gen_capabilities_index と gen_trust_block がこれを**先に**読んでいた ——
+    #   op を足すマージで索引に本線側を取ると、古い索引に新しい op が無くて止まる
+    #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
+    #   下の OUTPUTS / READS から `order_violations()` が検査する。
+    (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -57,18 +67,14 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
-    # ViEW2026 案内ページ(7 言語)。docmap がその題を読むので gen_docs_index_ops より先。
     (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
-    # ★gen_docs_index_ops より先: docmap が docs/OP_COUNT_HISTORY.md の題を読む。README*.md は
-    #   両者が書くが、マーカーが別なので互いの中身には触れない。gen_maturity の後(maturity.json を読む)。
+    # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
+    # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
+    # (ORDER_EXEMPT)。
     (["tools/gen_trust_block.py"],
      "README.md + docs/README*.md の trust ブロックと docs/OP_COUNT_HISTORY.md(測定データ docs/*.json から)"),
-    (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
     (["tools/gen_examples3d_doc.py"], "docs/EXAMPLES_3D.md(3-D 例の一覧)"),
     (["tools/gen_sensor_playbook.py"], "センサー playbook"),
-    # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
-    # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
-    (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
     # ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が
     #   885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と
     #   ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
@@ -81,11 +87,106 @@ CHAIN = [
     (["dispositions.py"], "docs/OP_DISPOSITION.json(HALCON 全 2,313 op の処遇。入力は同梱の fullseye/data/halcon_graph.json)"),
     (["references.py"], "docs/REFERENCES.md(op ごとの出典)"),
     (["samples.py"], "docs/EXAMPLES.md(ライブラリ横断のサンプルコード)"),
-    # 索引の後(複製するので)。ノートは opdocs の後なら何番目でもよい。
-    (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
-    (["tools/conversion_matrix.py"], "docs/CONVERSION_MATRIX.md(表現の変換表)"),
+    # ★2026-10-15: `--md` が無く、**何も書いていなかった**(要約を標準出力に出すだけ)。
+    #   docs/CONVERSION_MATRIX.md は 2026-09-02 の「型 59 / 変換ペア 164」のまま古び、
+    #   --check は「書かない段」を drift として見られないので 6 週間通っていた。
+    #   いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
+    (["tools/conversion_matrix.py", "--md", "docs/CONVERSION_MATRIX.md"],
+     "docs/CONVERSION_MATRIX.md(表現の変換表)"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
+    # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
+    #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
+    #   CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない ——
+    #   以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。
+    (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
+    # 索引と op ノートの後(複製するので)。
+    (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
 ]
+
+#: ---- 段の依存表(2026-10-15)------------------------------------------------------
+#:
+#: **順序の穴**: `gen_capabilities_index`(4 番目)が、16 番目でやっと作り直される
+#: `docs/OP_INDEX.json` を先に読んでいた。op を足すマージで索引に本線側を取ると止まる。
+#: 洗い出すと同じ型の逆順が他に 2 つ(`gen_trust_block` ← 索引、`gen_docs_index_ops` ←
+#: 後ろの 7 段)と、何も書かない段が 1 つ(`conversion_matrix`)あった。
+#: 「順序が意味を持つ」とコメントに書いてあっても、**何を読むかが表に無ければ順序は検査できない**。
+#:
+#: そこで各段の「書くもの」「読む(他の段の)生成物」を表にし、
+#:
+#:   * `order_violations()` —— 読む生成物を書く段が**後ろ**にあれば違反(静的。
+#:     tests/test_regen_all.py が毎回見る)
+#:   * `trace_problems()`   —— 鎖を回すたびに各段を audit hook の下で走らせ、実際に
+#:     open したパスと表を突き合わせる(表に無い読み書き / 読まなくなった宣言 /
+#:     宣言した出力に触れもしない段 を拒む)。CI の `regen_all --check` で効く。
+#:
+#: 表は手で書くが、**実コードとずれれば次の regen_all が赤になる**。
+#: パターンは fnmatch(`*` は `/` も跨ぐ)。repo 相対・`/` 区切り。
+OUTPUTS = {
+    "gen_auto_specs_data.py": ["auto_specs_data.py"],
+    "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
+                        "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
+    "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
+    "tools/gen_capabilities_index.py": ["docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md"],
+    "tools/gen_hardening_index.py": ["docs/HARDENING.md", "docs/HARDENING.*.md"],
+    "tools/gen_maturity.py": ["docs/MATURITY.md", "docs/maturity.json"],
+    "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
+                                     "docs/articles/fullseye_poc_museum_qiita_*.md",
+                                     "docs/articles/assets/poc/_hero_montage.jpg"],
+    "tools/gen_examples_readme.py": ["examples/README.md"],
+    "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
+    "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md"],
+    "tools/gen_trust_block.py": ["README.md", "docs/README.md", "docs/README.*.md",
+                                 "docs/OP_COUNT_HISTORY.md"],
+    "tools/gen_examples3d_doc.py": ["docs/EXAMPLES_3D.md"],
+    "tools/gen_sensor_playbook.py": ["docs/SENSOR_PLAYBOOK.md", "fullseye/SENSOR_PLAYBOOK.md"],
+    "catalog.py": ["docs/OPERATORS.md"],
+    "dispositions.py": ["docs/OP_DISPOSITION.json"],
+    "references.py": ["docs/REFERENCES.md"],
+    "samples.py": ["docs/EXAMPLES.md"],
+    "tools/conversion_matrix.py": ["docs/CONVERSION_MATRIX.md"],
+    "tools/gen_design_notes.py": ["docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md", "docs/design_notes.json"],
+    "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
+    "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
+                              "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
+}
+
+#: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
+#: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
+READS = {
+    "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
+    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
+                                 "docs/README.md", "docs/README.*.md"],
+    "tools/gen_design_notes.py": ["auto_specs_data.py"],
+    "tools/gen_docs_index_ops.py": [
+        "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
+        "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
+        "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md",
+        "docs/literature/OSS_LANDSCAPE.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
+        "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
+        "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
+        "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md"],
+    "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+}
+
+#: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
+_SHARED_README = ("README*.md は gen_trust_block(trust ブロック)と gen_docs_index_ops(ops / poc / "
+                  "docmap ブロック)が同じファイルの**別のマーカー区間**を読み替える。自分の区間しか"
+                  "書き換えないので、どちらが先でも 1 回で揃う。gen_docs_index_ops は "
+                  "OP_COUNT_HISTORY.md を読むので trust が先。")
+_SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の診断**(この環境と同梱索引の差)に"
+                 "だけ使い、docs/OP_INDEX.json の中身には入らない。複製を作る gen_mcp_data は"
+                 "索引を読むので後ろでなければならず、ここは構造的に循環する。")
+ORDER_EXEMPT = {
+    ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
+    ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
+    ("imgevolve.py", "fullseye/data/OP_INDEX.json"): _SHIPPED_DIAG,
+    ("imgevolve.py", "fullseye/data/op_knob.json"): _SHIPPED_DIAG,
+}
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
 #:
@@ -408,8 +509,214 @@ def unclassified() -> list[str]:
             and g not in NOT_A_GENERATOR]
 
 
-def _run(args: list[str]) -> int:
-    return subprocess.run([sys.executable] + args, cwd=_ROOT).returncode
+def _match(path: str, pat: str) -> bool:
+    return fnmatch.fnmatchcase(path, pat)
+
+
+@functools.lru_cache(maxsize=1)
+def _tracked_files() -> tuple:
+    """git の追跡ファイル(repo 相対・``/`` 区切り)。git が無ければ空(そのときは文字列比較だけ)。"""
+    try:
+        r = subprocess.run(["git", "ls-files", "-z"], cwd=_ROOT, capture_output=True, check=True)
+    except (OSError, subprocess.CalledProcessError):
+        return ()
+    return tuple(p for p in r.stdout.decode("utf-8", "replace").split("\0") if p)
+
+
+@functools.lru_cache(maxsize=None)
+def _expand(pat: str) -> frozenset:
+    rx = re.compile(fnmatch.translate(pat))
+    return frozenset(p for p in _tracked_files() if rx.match(p))
+
+
+def _overlap(a: str, b: str) -> bool:
+    """2 つのパターンが同じファイルを指しうるか(片方がもう片方に当たる / 追跡ファイルを共有する)。"""
+    return a == b or _match(a, b) or _match(b, a) or bool(_expand(a) & _expand(b))
+
+
+def _chain_scripts(chain=None) -> list:
+    return [args[0] for args, _ in (CHAIN if chain is None else chain)]
+
+
+def order_violations(order=None) -> list:
+    """読む生成物を、それを書く段が**後ろ**で作り直す組を全部返す。
+
+    ``order`` は段のスクリプト名の並び(既定は CHAIN)。戻り値は
+    ``(読む段, 読むパターン, 後ろで書く段, 書くパターン)`` のリスト。``ORDER_EXEMPT`` は除く。
+    """
+    order = _chain_scripts() if order is None else list(order)
+    bad = []
+    for i, reader in enumerate(order):
+        for rp in READS.get(reader, ()):
+            if (reader, rp) in ORDER_EXEMPT:
+                continue
+            for writer in order[i + 1:]:
+                for wp in OUTPUTS.get(writer, ()):
+                    if _overlap(rp, wp):
+                        bad.append((reader, rp, writer, wp))
+    return bad
+
+
+def table_problems() -> list:
+    """依存表そのものの健全性(静的)。空なら健全。"""
+    probs = []
+    scripts = _chain_scripts()
+    if set(OUTPUTS) != set(scripts):
+        probs.append("OUTPUTS のキーと CHAIN の段が食い違う: 表だけ %s / 鎖だけ %s"
+                     % (sorted(set(OUTPUTS) - set(scripts)), sorted(set(scripts) - set(OUTPUTS))))
+    for s in READS:
+        if s not in scripts:
+            probs.append("READS に鎖に無い段: %s" % s)
+    for s, pats in READS.items():
+        for rp in pats:
+            if not any(_overlap(rp, wp) for w, wps in OUTPUTS.items() if w != s for wp in wps):
+                probs.append("%s の READS %r は、どの(他の)段の出力でもない" % (s, rp))
+    for s, pats in OUTPUTS.items():
+        if not pats:
+            probs.append("%s の OUTPUTS が空" % s)
+        for wp in pats:
+            if _tracked_files() and not _expand(wp):
+                probs.append("%s の OUTPUTS %r に当たる追跡ファイルが 1 本も無い" % (s, wp))
+    for (s, rp), why in ORDER_EXEMPT.items():
+        if rp not in READS.get(s, ()):
+            probs.append("ORDER_EXEMPT の (%s, %r) が READS に無い(幽霊)" % (s, rp))
+        if len(why.strip()) < 15:
+            probs.append("ORDER_EXEMPT の (%s, %r) の理由が短すぎる" % (s, rp))
+    return probs
+
+
+def trace_problems(traces: dict) -> list:
+    """各段の**実測**の読み書き(``{段: {"r": [...], "w": [...]}}``)と表を突き合わせる。
+
+    * 宣言に無い書き込み(OUTPUTS に足す)
+    * 他の段の生成物を宣言なしに読んだ(READS に足す —— 足すと order_violations が順序を見る)
+    * 宣言した READS を 1 本も読んでいない(表が古い)
+    * 宣言した OUTPUTS のどれにも触れていない(**書いていない段** —— conversion_matrix が
+      `--md` 無しで 6 週間そうだった。書き換えずに読み比べるだけの段は読みで触れる)
+    """
+    probs = []
+    for s in _chain_scripts():
+        t = traces.get(s)
+        if t is None:
+            probs.append("%s: 実測が無い" % s)
+            continue
+        rd, wr = set(t.get("r", ())), set(t.get("w", ()))
+        own = OUTPUTS.get(s, [])
+        for p in sorted(wr):
+            if not any(_match(p, wp) for wp in own):
+                probs.append("%s: OUTPUTS に無いファイルを書いた: %s" % (s, p))
+        decl = READS.get(s, [])
+        for p in sorted(rd):
+            producers = [w for w, wps in OUTPUTS.items() if w != s and any(_match(p, wp) for wp in wps)]
+            if producers and not any(_match(p, rp) for rp in decl):
+                probs.append("%s: READS に無い生成物を読んだ: %s(書く段: %s)"
+                             % (s, p, ", ".join(producers)))
+        for rp in decl:
+            if not any(_match(p, rp) for p in rd):
+                probs.append("%s: READS の %r を 1 本も読んでいない(表が古い)" % (s, rp))
+        touched = rd | wr
+        for wp in own:
+            if not any(_match(p, wp) for p in touched):
+                probs.append("%s: OUTPUTS の %r に触れもしない(書いていない)" % (s, wp))
+    return probs
+
+
+def _rel_in_root(p) -> str | None:
+    """audit の open のパスを repo 相対(``/`` 区切り)に。repo の外は None。
+    ``__pycache__/X.cpython-*.pyc`` は ``X.py`` として数える(import は .pyc を開くので)。"""
+    if isinstance(p, int):
+        return None
+    try:
+        p = os.fspath(p)
+    except TypeError:
+        return None
+    if isinstance(p, bytes):
+        p = p.decode("utf-8", "replace")
+    ap = os.path.abspath(p)
+    root = os.path.abspath(_ROOT)
+    if os.path.normcase(ap) != os.path.normcase(root) and \
+            not os.path.normcase(ap).startswith(os.path.normcase(root) + os.sep):
+        return None
+    rel = os.path.relpath(ap, root).replace(os.sep, "/")
+    m = re.match(r"^(.*?)(?:^|/)__pycache__/([^/.]+)\.[^/]*\.pyc$", rel)
+    if m:
+        rel = (m.group(1) + "/" if m.group(1) else "") + m.group(2) + ".py"
+    return rel
+
+
+def _trace_one(argv) -> int:
+    """``regen_all.py --_trace OUT.json script [args...]``: 1 段を audit hook の下で走らせ、
+    repo 内で開いた/書いたパスを OUT.json に落とす。子プロセスは追わない(鎖の段は使わない)。"""
+    import json
+    import runpy
+    out, script, rest = argv[0], argv[1], argv[2:]
+    rd, wr = set(), set()
+    _W = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_APPEND | os.O_TRUNC
+
+    def hook(ev, args):
+        if ev == "open":
+            rel = _rel_in_root(args[0])
+            if rel is None:
+                return
+            mode, flags = args[1], args[2] if len(args) > 2 else 0
+            if mode is None:
+                writing = bool((flags or 0) & _W)
+            else:
+                writing = any(c in str(mode) for c in "wax+")
+            (wr if writing else rd).add(rel)
+        elif ev == "os.rename":
+            src, dst = _rel_in_root(args[0]), _rel_in_root(args[1])
+            wr.discard(src)
+            if dst is not None:
+                wr.add(dst)
+
+    def dump(rc):
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump({"script": script, "rc": rc, "r": sorted(rd), "w": sorted(wr)}, f,
+                      ensure_ascii=False)
+
+    real_exit = os._exit
+
+    def _exit(code=0):   # opdocs は flush 後に os._exit で確定させる —— その前に記録を落とす
+        dump(code)
+        sys.stdout.flush()
+        real_exit(code)
+
+    os._exit = _exit
+    path = os.path.join(_ROOT, script)
+    sys.argv = [path] + list(rest)
+    sys.path[0] = os.path.dirname(path)
+    sys.addaudithook(hook)
+    rc = 0
+    try:
+        runpy.run_path(path, run_name="__main__")
+    except SystemExit as e:
+        rc = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+    dump(rc)
+    return rc
+
+
+def _run(args: list[str], traces: dict | None = None) -> int:
+    if traces is None:
+        return subprocess.run([sys.executable] + args, cwd=_ROOT).returncode
+    import json
+    import tempfile
+    fd, tmp = tempfile.mkstemp(prefix="regen_trace_", suffix=".json")
+    os.close(fd)
+    try:
+        rc = subprocess.run([sys.executable, os.path.abspath(__file__), "--_trace", tmp] + args,
+                            cwd=_ROOT).returncode
+        try:
+            with open(tmp, encoding="utf-8") as f:
+                traces[args[0]] = json.load(f)
+        except (OSError, ValueError):
+            pass
+        return rc
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
 
 
 def _dirty() -> list[str]:
@@ -421,6 +728,9 @@ def _dirty() -> list[str]:
 
 
 def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["--_trace"]:
+        return _trace_one(argv[1:])
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true",
@@ -437,15 +747,37 @@ def main(argv=None) -> int:
         rest = unclassified()
         if rest:
             print("\n★どちらの表にも無い生成器(分類してください): %s" % ", ".join(rest))
+        bad = order_violations()
+        print("\n--- 順序の検査(READS / OUTPUTS から): %s ---"
+              % ("違反なし" if not bad else "★違反 %d 件" % len(bad)))
+        for r, rp, w, wp in bad:
+            print("  %s が %s を読むが、後ろの %s が書く(%s)" % (r, rp, w, wp))
         return 0
 
+    # 回す前に順序を見る —— 逆順のまま回すと、古い入力から作った生成物が書かれてしまう。
+    pre = ["%s が %s を読むが、後ろの %s が書く(%s)" % v for v in order_violations()] + table_problems()
+    if pre:
+        print("★鎖の順序 / 依存表が壊れている —— 回さずに止める:")
+        for ln in pre:
+            print("   " + ln)
+        return 1
+
     before = _dirty() if a.check else []
+    traces: dict = {}
     for args, what in CHAIN:
         print("\n=== %s  (%s)" % (" ".join(args), what))
-        rc = _run(args)
+        rc = _run(args, traces)
         if rc != 0:
             print("失敗: %s (exit %d) —— ここで止める" % (" ".join(args), rc))
             return rc
+
+    # 実測の読み書きと表を突き合わせる(表が実コードから遅れたら、ここで赤)。
+    tp = trace_problems(traces)
+    if tp:
+        print("\n★依存表(OUTPUTS / READS)が実測の読み書きと食い違う —— tools/regen_all.py の表を直すこと:")
+        for ln in tp:
+            print("   " + ln)
+        return 1
 
     if not a.check:
         print("\n生成物を作り直した。`git status` で差分を確認すること。")

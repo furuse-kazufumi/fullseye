@@ -206,7 +206,7 @@ def main(argv: list[str]) -> int:
         out.write_text(
             "# 型変換の行列 ―― 穴と不具合の点検\n\n"
             "`py -3.11 tools/conversion_matrix.py --md docs/CONVERSION_MATRIX.md` の生成物。\n"
-            "手で編集しない。\n\n```\n" + text + "\n```\n", encoding="utf-8")
+            "手で編集しない。\n\n```\n" + text + "\n```\n", encoding="utf-8", newline="\n")
         print(f"\nwrote {out}")
     return 0
 
