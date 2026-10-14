@@ -853,3 +853,21 @@ def test_refract_points_at_the_per_ray_version_it_used_to_hide():
     assert "refract" in (glassmirror.refract_rays.__doc__ or "")
     # 音響で使うときの読み替え(eta = 1/c)も、角度版の説明に在ること
     assert "1/c" in (X.snell_angle.__doc__ or "")
+
+
+def test_fit_zernike_is_area_weighted_so_a_truncated_fit_is_the_projection():
+    """2026-10-14: 重みなしの極座標格子では Z80 + 0.3 Z20 を n_max=4 で読むと Z40 = 0.39 だった(真の射影は 0)。"""
+    from math import factorial
+    import match3d as M
+
+    def R(n, m, r):
+        return sum((-1) ** k * factorial(n - k) / (factorial(k) * factorial((n + m) // 2 - k)
+                                                   * factorial((n - m) // 2 - k)) * r ** (n - 2 * k)
+                   for k in range((n - m) // 2 + 1))
+    size = 129
+    g = np.linspace(-1, 1, size)
+    X, Y = np.meshgrid(g, g)
+    r = np.hypot(X, Y)
+    c = M.fit_zernike(R(8, 0, r) + 0.3 * R(2, 0, r), n_max=4, radius=(size - 1) / 2)
+    assert len(c) == 15
+    assert abs(c[(2, 0)] - 0.3) < 0.01 and abs(c[(4, 0)]) < 0.01

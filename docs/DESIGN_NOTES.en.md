@@ -1179,13 +1179,13 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_zernike_aberrations.py`
 
 - **L85** _(ja)_ — n <= 6 の 28 モード。★(n+1)(n+2)/2 = 28 は閉形式で数えられる
-- **L399** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
-- **L584** _(ja)_ — ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。 `fit_zernike` は torch(`grid_sample`)で補間するので、CI の py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。 だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
-- **L703** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
-- **L834** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
-- **L861** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
-- **L1037** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
-- **L1294** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L402** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
+- **L588** _(ja)_ — ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。 `fit_zernike` は torch(`grid_sample`)で補間するので、CI の py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。 だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
+- **L707** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
+- **L838** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
+- **L865** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
+- **L1041** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
+- **L1298** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/polarization_camera_pipeline.py`
 
@@ -1456,8 +1456,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L3068** — ★2026-09-07: **fail-closed if the ring is outside the image**. ``r_in``/``r_out`` are in pixels, so passing them in mm reads outside the field of view and returns **all 0** with no exception (surfaced when `poc_pipe_wall_loss` produced one pitch-black figure). If not a single radius is inside the maximum distance from the centre to the image's four corners, the return can only be empty.
 - **L3079** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
 - **L3128** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
-- **L3199** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
-- **L3415** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
+- **L3259** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3473** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
 
 ## `mathestimation.py`
 

@@ -6,10 +6,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆盘图像 → Zernike 系数(光学/波前计量的<b>极坐标曲面拟合</b>)。返回 {(n,m): coef}。</p>
 <p>用正交多项式把圆盘上的曲面(波前像差、透镜形状)压缩为少数系数。tilt/defocus/astigmatism/ coma/spherical 等对应特定的 (n,m),旋转会使 m 混合(频带=旋转不变)。</p>
-<p>瞳(单位圆盘 ρ=1)默认放在图像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>,半径为 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 像素。若图像的瞳与此不同,请用 <code style="color:#22d3bf">center=(row, col)</code> 和 <code style="color:#22d3bf">radius</code>(像素)传入 —— 若不传入, 半径的偏差会直接成为向低阶模式的泄漏(在 129×129 上以默认值读取瞳半径 (H-1)/2 的纯 defocus, 得到 (2,0)=0.984 / (0,0)=−0.015,传入 <code style="color:#22d3bf">radius=(H-1)/2</code> 则为 0.999999)。瞳的圆超出图像的 <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> 会 ValueError。</p>
-<p>honest 披露(2026-10-07 订正): 以前这里写的是&quot;源于离散采样(nr=48, nt=72)的最大 ~10% 的串扰,提高 nr/nt 即可减少&quot;,但原因并不是分辨率。若瞳的半径、中心吻合且瞳外也有连续值的图像,以默认的 nr/nt 系数即可回到几乎为 1(129×129 上为 0.999999)。泄漏的实际原因是</p>
+<p>瞳(单位圆盘 ρ=1)默认放在图像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>,半径为 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 像素。若图像的瞳与此不同,请用 <code style="color:#22d3bf">center=(row, col)</code> 和 <code style="color:#22d3bf">radius</code>(像素)传入 —— 若不传入, 半径的偏差会直接成为向低阶模式的泄漏(在 129×129 上以默认值读取瞳半径 (H-1)/2 的纯 defocus, 得到 (2,0)=0.984 / (0,0)=−0.015,传入 <code style="color:#22d3bf">radius=(H-1)/2</code> 则为 0.999998)。瞳的圆超出图像的 <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> 会 ValueError。</p>
+<p>honest 披露(2026-10-07 订正): 以前这里写的是&quot;源于离散采样(nr=48, nt=72)的最大 ~10% 的串扰,提高 nr/nt 即可减少&quot;,但原因并不是分辨率。若瞳的半径、中心吻合且瞳外也有连续值的图像,以默认的 nr/nt 系数即可回到几乎为 1(129×129 上为 0.999998)。泄漏的实际原因是</p>
 <p style="margin:2px 0 2px 12px">(1) 上述瞳半径、中心的偏差(提高 nr/nt 也减少不了 1 个数量级),以及 (2) 在瞳外为 0 的图像中,</p>
 <p>最外侧的环(ρ=1)落在边缘上,双线性插值把外侧的 0 吸了进来(examples/poc_zernike_aberrations.py 的实测)。</p>
+<p>★2026-10-14 订正(面积权重):以前对极坐标网格(ρ 在 0..1 等间隔)做<b>不加权</b>的最小二乘。每个环的采样数相同,面积小的中心被过度计入,截断的高阶泄漏到低阶(用 n_max=4 读 Z80 + 0.3·Z20 得 Z40 = 0.39,真实投影为 0)。现在 ρ 取 <code style="color:#22d3bf">nr</code> 个 Gauss–Legendre 节点(不含 0 与 1), 按权重 w_i·ρ_i(面积元 ρ dρ dθ)求解 —— 带内多项式的投影是精确的。节点不落在 ρ = 1 上, 因此在瞳外为 0 的图像中吸入边缘 0 的量也减少(但不会消失:双线性插值的支撑仍跨过边缘)。</p>
 <p>Raises ValueError: 输入不是 2-D、小于 2x2、NaN/Inf/float32 溢出、瞳超出图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

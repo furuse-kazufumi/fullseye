@@ -1179,13 +1179,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_zernike_aberrations.py`
 
 - **L85** _(ja)_ — n <= 6 の 28 モード。★(n+1)(n+2)/2 = 28 は閉形式で数えられる
-- **L399** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
-- **L584** _(ja)_ — ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。 `fit_zernike` は torch(`grid_sample`)で補間するので、CI の py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。 だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
-- **L703** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
-- **L834** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
-- **L861** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
-- **L1037** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
-- **L1294** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L402** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
+- **L588** _(ja)_ — ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。 `fit_zernike` は torch(`grid_sample`)で補間するので、CI の py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。 だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
+- **L707** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
+- **L838** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
+- **L865** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
+- **L1041** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
+- **L1298** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/polarization_camera_pipeline.py`
 
@@ -1456,8 +1456,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L3068** — ★2026-09-07: **fail-closed, wenn der Ring ausserhalb des Bildes liegt**. ``r_in``/``r_out`` sind in Pixeln, also liest ein Uebergeben in mm ausserhalb des Sichtfelds und gibt ohne Ausnahme **komplett 0** zurueck (kam ans Licht, als `poc_pipe_wall_loss` eine pechschwarze Abbildung erzeugte). Liegt kein einziger Radius innerhalb der maximalen Distanz vom Zentrum zu den vier Bildecken, kann die Rueckgabe nur leer sein.
 - **L3079** — ★2026-09-07: grid_sample (bilinear, align_corners=True, zeros padding) durch scipys map_coordinates(order=1, mode="constant", cval=0) ersetzt -- dieselbe bilineare Interpolation, und es laeuft auch auf CI ohne torch (py3.10 / 3.12). Die gemessene Abweichung betraegt hoechstens 6.0e-06 (Zufallsbild im Bereich 0..1; die Rundungsdifferenz zwischen float32 und float64).
 - **L3128** — ★2026-09-07: Aus demselben Grund wie polar_unwrap durch map_coordinates ersetzt (bilinear, ausserhalb des Bereichs 0). Laeuft auch ohne torch. Die gemessene Abweichung betraegt hoechstens 7.6e-06.
-- **L3199** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
-- **L3415** — ★2026-09-07: affine_grid + grid_sample (align_corners=False, zeros padding) durch numpy-Koordinatenberechnung + scipys map_coordinates(order=1) ersetzt. torch wurde nur fuer das bilineare Resampling verwendet, und in einer Umgebung ohne torch (CI py3.10 / 3.12) wurde dieser op zu einem ImportError. Die Konvention wurde wortgetreu uebernommen: die normierte Koordinate eines Ausgabe-Voxels (d,h,w) ist ((i+0.5)/N)*2-1, und nach der Rotation wird sie per (g+1)/2*N-0.5 auf Eingabe-Pixelkoordinaten zurueckgefuehrt (die Definition von align_corners=False). Die letzte Achse von grid ist in der Reihenfolge (x, y, z) = (W, H, D). Die gemessene Abweichung von der torch-Version betraegt hoechstens 7.6e-06.
+- **L3259** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3473** — ★2026-09-07: affine_grid + grid_sample (align_corners=False, zeros padding) durch numpy-Koordinatenberechnung + scipys map_coordinates(order=1) ersetzt. torch wurde nur fuer das bilineare Resampling verwendet, und in einer Umgebung ohne torch (CI py3.10 / 3.12) wurde dieser op zu einem ImportError. Die Konvention wurde wortgetreu uebernommen: die normierte Koordinate eines Ausgabe-Voxels (d,h,w) ist ((i+0.5)/N)*2-1, und nach der Rotation wird sie per (g+1)/2*N-0.5 auf Eingabe-Pixelkoordinaten zurueckgefuehrt (die Definition von align_corners=False). Die letzte Achse von grid ist in der Reihenfolge (x, y, z) = (W, H, D). Die gemessene Abweichung von der torch-Version betraegt hoechstens 7.6e-06.
 
 ## `mathestimation.py`
 

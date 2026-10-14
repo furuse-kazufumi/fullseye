@@ -3163,6 +3163,51 @@ def _zernike_basis(nr, nt, n_max):
     return np.stack(rows, 0), idx, R.ravel()
 
 
+def _zernike_eval(rho, theta, n_max):
+    """任意の点 (ρ, θ) での Zernike 基底(``_zernike_basis`` と同じ規約・同じ並び)。返り (nz, N), 添字。"""
+    from math import factorial
+    R = np.asarray(rho, dtype=np.float64).ravel()
+    T = np.asarray(theta, dtype=np.float64).ravel()
+    rows, idx = [], []
+    for n in range(n_max + 1):
+        for m in range(-n, n + 1, 2):
+            am = abs(m)
+            Rnm = np.zeros_like(R)
+            for k in range((n - am) // 2 + 1):
+                c = ((-1) ** k * factorial(n - k)
+                     / (factorial(k) * factorial((n + am) // 2 - k)
+                        * factorial((n - am) // 2 - k)))
+                Rnm += c * R ** (n - 2 * k)
+            rows.append(Rnm * (np.cos(am * T) if m >= 0 else np.sin(am * T)))
+            idx.append((n, m))
+    return np.stack(rows, 0), idx
+
+
+def _fit_zernike_points(x, y, values, n_max, weights=None):
+    """単位円板上の点 (x, y) の値を Zernike で最小二乗(重みは面積要素。None なら等しい)。返り {(n,m): coef}。
+
+    ★画像を経由しない当てはめ。直交格子の瞳内の標本はどれも同じ面積を代表するので重みは要らない ——
+    ``raytrace.wavefront_from_opd`` が使う(2026-10-14、画像に焼くと瞳の半径と縁の 0 で係数が歪んだ)。
+    """
+    x = np.asarray(x, dtype=np.float64).ravel()
+    y = np.asarray(y, dtype=np.float64).ravel()
+    v = np.asarray(values, dtype=np.float64).ravel()
+    if not (x.size == y.size == v.size) or x.size == 0:
+        raise ValueError("_fit_zernike_points: x, y and values must be the same non-zero length")
+    rho = np.hypot(x, y)
+    if np.any(rho > 1.0 + 1e-9) or not np.all(np.isfinite(v)):
+        raise ValueError("_fit_zernike_points: points must lie in the unit disk and values must be finite")
+    B, idx = _zernike_eval(np.minimum(rho, 1.0), np.arctan2(y, x), n_max)
+    if x.size < len(idx):
+        raise ValueError("_fit_zernike_points: %d points cannot determine %d Zernike terms" % (x.size, len(idx)))
+    if weights is None:
+        coef, *_ = np.linalg.lstsq(B.T, v, rcond=None)
+    else:
+        sw = np.sqrt(np.asarray(weights, dtype=np.float64).ravel())
+        coef, *_ = np.linalg.lstsq(B.T * sw[:, None], v * sw, rcond=None)
+    return {idx[i]: float(coef[i]) for i in range(len(idx))}
+
+
 def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72, center=None, radius=None):
     """円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。
 
@@ -3172,15 +3217,21 @@ def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72, center=None, ra
     瞳(単位円板 ρ=1)は既定で画像中心 ``((H-1)/2, (W-1)/2)``、半径 ``min(H, W)/2 - 1`` 画素に
     置かれる。画像の瞳がこれと違うなら ``center=(row, col)`` と ``radius``(画素)で渡す —— 渡さないと
     半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を
-    既定で読むと (2,0)=0.984 / (0,0)=−0.015、``radius=(H-1)/2`` を渡せば 0.999999)。瞳の円が画像から
+    既定で読むと (2,0)=0.984 / (0,0)=−0.015、``radius=(H-1)/2`` を渡せば 0.999998)。瞳の円が画像から
     はみ出す ``center`` / ``radius`` は ValueError。
 
     honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% の
     クロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が
-    合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は
+    合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999998)に戻る。漏れの実際の原因は
     (1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で
     いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと
     (examples/poc_zernike_aberrations.py の実測)。
+
+    ★2026-10-14 訂正(面積の重み): 以前は ρ を 0..1 の等間隔に取った極座標の格子を**重みなし**で最小二乗していた。
+    各輪の標本数が同じなので、面積の小さい中心が過大に効き、打ち切った高次が低次へ漏れていた(Z80 + 0.3·Z20 を
+    n_max=4 で読むと Z40 = 0.39、真の射影は 0)。いまは ρ を Gauss–Legendre の ``nr`` 節(0 と 1 を含まない)に置き、
+    重み w_i·ρ_i(面積要素 ρ dρ dθ)で解く —— 帯域内の多項式なら射影が厳密に出る。節が ρ = 1 に乗らないので、
+    瞳の外が 0 の画像で縁の 0 を吸い込む量も減る(無くなりはしない: 双一次補間の足は縁を跨ぐ)。
 
     Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。
     """
@@ -3194,7 +3245,16 @@ def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72, center=None, ra
                          "got %dx%d (the polar grid divides by W-1/H-1)"
                          % (H, W))
     nr, nt = int(nr), int(nt)
-    B, idx, rho = _zernike_basis(nr, nt, n_max)
+    if nr < 2 or nt < 2 * n_max + 1:
+        raise ValueError("fit_zernike: need nr >= 2 and nt >= 2*n_max+1 (got nr=%d, nt=%d, n_max=%d)" % (nr, nt, n_max))
+    # 面積の重みつきの極座標の格子: ρ は Gauss–Legendre の節(0..1 へ写す)、θ は等間隔
+    gl_x, gl_w = np.polynomial.legendre.leggauss(nr)
+    rr = 0.5 * (gl_x + 1.0)
+    wr = 0.5 * gl_w * rr                                        # ∫ f ρ dρ の重み
+    th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
+    Rg, Tg = np.meshgrid(rr, th, indexing="ij")
+    B, idx = _zernike_eval(Rg, Tg, n_max)
+    wgt = np.repeat(wr, nt)
     cy, cx = (H - 1) / 2, (W - 1) / 2; rad = min(H, W) / 2 - 1
     # ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
     if center is not None:
@@ -3212,15 +3272,13 @@ def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72, center=None, ra
             or cx - rad < -_eps or cx + rad > W - 1 + _eps):
         raise ValueError("fit_zernike: the pupil circle (center=(%g, %g), radius=%g) leaves the "
                          "%dx%d image — samples outside would read as 0" % (cy, cx, rad, H, W))
-    rr = np.linspace(0, 1, nr); th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
-    Rg, Tg = np.meshgrid(rr, th, indexing="ij")
     ys = cy + Rg * rad * np.sin(Tg); xs = cx + Rg * rad * np.cos(Tg)
     grid = torch.stack([torch.as_tensor(xs / (W - 1) * 2 - 1, dtype=torch.float32),
                         torch.as_tensor(ys / (H - 1) * 2 - 1, dtype=torch.float32)], -1)[None]
     samp = F.grid_sample(torch.as_tensor(img, device=device)[None, None], grid.to(device),
                          align_corners=True)[0, 0].detach().cpu().numpy().ravel()
-    mask = rho <= 1.0
-    coef, *_ = np.linalg.lstsq(B[:, mask].T, samp[mask], rcond=None)
+    sw = np.sqrt(wgt)
+    coef, *_ = np.linalg.lstsq(B.T * sw[:, None], samp * sw, rcond=None)
     return {idx[i]: float(coef[i]) for i in range(len(idx))}
 
 

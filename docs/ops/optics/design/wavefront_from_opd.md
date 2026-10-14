@@ -19,10 +19,17 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``).
 
-Convenience chain: :func:`opd_map` → ``match3d.fit_zernike`` →
-``optics.wavefront_stats``. Returns the stats dict extended with
-``zernike`` (``{(n, m): coef}``), ``rms_opd_direct`` (RMS of the sampled OPD,
-independent of the fit) and ``pv_opd_direct``.
+Convenience chain: :func:`opd_samples` → a least-squares Zernike fit **on the
+pupil samples themselves** → ``optics.wavefront_stats``. Returns the stats dict
+extended with ``zernike`` (``{(n, m): coef}``), ``rms_opd_direct`` (RMS of the
+sampled OPD, independent of the fit) and ``pv_opd_direct``.
+
+Fixed 2026-10-14: the samples used to be burnt into an image and read back with
+``match3d.fit_zernike``, whose default pupil radius was half a pixel short and
+whose outer ring read the zeros outside the pupil — a synthetic Z20 + 0.5 Z40
+came back as 0.903 / 0.427 and a rotationally symmetric singlet showed a
+spurious Z(4,4). The square grid's in-pupil samples each stand for the same
+area, so a plain least-squares fit on them is the area-weighted projection.
 
 ## ファミリ共通の入力契約(fail-closed)
 

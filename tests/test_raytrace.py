@@ -365,3 +365,27 @@ def test_design_guide_snippets_run():
     assert len(runnable) >= 3, "the optics guide lost its design snippets"
     for src in runnable:
         exec(compile(src, guide, "exec"), {"__name__": "__guide__"})
+
+
+# --------------------------------------------------------------------------- #
+# 2026-10-14 wavefront_from_opd は瞳の標本の上で直接当てはめる(画像に焼かない)
+# --------------------------------------------------------------------------- #
+def test_zernike_fit_on_pupil_samples_recovers_an_in_band_wavefront_exactly():
+    import match3d
+    s = RT.example_system("singlet")
+    px, py, _, valid = RT.opd_samples(s)
+    q = px ** 2 + py ** 2
+    syn = (2 * q - 1) + 0.5 * (6 * q * q - 6 * q + 1) + 0.2 * (3 * q - 2) * px     # Z20 + 0.5 Z40 + 0.2 Z31
+    c = match3d._fit_zernike_points(px[valid], py[valid], syn[valid], 6)
+    assert len(c) == 28
+    assert abs(c[(2, 0)] - 1.0) < 1e-9 and abs(c[(4, 0)] - 0.5) < 1e-9 and abs(c[(3, 1)] - 0.2) < 1e-9
+    assert max(abs(v) for k, v in c.items() if k not in ((2, 0), (4, 0), (3, 1))) < 1e-9
+
+
+def test_rotationally_symmetric_singlet_has_no_non_rotational_terms():
+    """以前は画像に焼いて読み直していたので、回転対称な単レンズに Z(4,4) = −0.063 波が出ていた。"""
+    w = RT.wavefront_from_opd(RT.example_system("singlet"))
+    z = w["zernike"]
+    assert len(z) == 28
+    assert max(abs(v) for (n, m), v in z.items() if m != 0) < 1e-4
+    assert abs(w["rms_waves"] / w["rms_opd_direct"] - 1.0) < 0.03     # was −10 %

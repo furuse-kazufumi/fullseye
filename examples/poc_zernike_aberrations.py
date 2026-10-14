@@ -14,16 +14,16 @@
 
 ★★この PoC の芯は 6 つ:
 
-  1. **★既存 op の「開示」の原因が違っていた。** `fit_zernike` は
+  1. **★既存 op の「開示」の原因が違っていた。** `fit_zernike` はかつて
      「既定のサンプリングでモード間に最大 ~10%% のクロストークが残る。定量が
-     要るなら nr/nt を上げよ」と自分で開示している。ところが測ると、漏れは
-     解像度では落ちない —— 2 倍ごとの比は **1.93 / 1.78 / 1.50** で、
-     1/nr² が言う 4 には遠く、**上げるほど鈍る**。**原因は極座標格子の
-     最外リング 1 本が瞳の縁に乗ること**で、そのリングを捨てるだけで
-     回収 0.94798 → **1.00000**、漏れは 4 モードの最悪でも 0.09801 →
-     **2.6e-4**(デフォーカス単独なら **4.2e-5**)。解像度を 8 倍
-     (計算 64 倍)にしても **5.1 倍**しか買えないのに、リング 1 本は
-     **ただで 379 倍**。
+     要るなら nr/nt を上げよ」と自分で開示していた。ところが測ると、漏れは
+     解像度では落ちない(2 倍ごとの比は 2 にも届かず、上げるほど鈍る)。**原因は
+     瞳の外が 0 の絵で、最外の輪が縁の段差を双一次補間で吸い込むこと** —— 多項式を
+     円板の外まで 2 %% 延ばすだけで漏れは **4e-5**。この PoC の発見で 2026-10-07 に
+     開示を直し、2026-10-14 に op の格子を**面積の重みつき**(ρ は Gauss–Legendre の
+     節で縁に乗らない)にした: 漏れは 4 モードの最悪で **0.098 → 0.021**。節が縁に
+     密集しているので、残りは外周の輪を 1 本捨てても半分にしかならない —— 残る原因は
+     いまも縁の段差で、絵を延ばせば消える。
   2. **絵を回すと、絵は回るのに測った振幅は 1 ビットも動かない。** 回転は
      係数を exp(−imθ) 倍するだけなので、対の振幅 √(c₊²+c₋²) は**厳密に**
      不変 —— 6 通りの角度で最大 **1.1e-16**、二乗和の差は **0.0e+00**。
@@ -210,20 +210,23 @@ def fit_dropping_rings(img, rings, n_max=N_MAX, nr=48, nt=72):
     `rings=0` なら `fit_zernike` と同じものを計算するので、torch がある環境
     では**2 つの実装として突き合わせられる**。
     """
-    from match3d import _zernike_basis
+    from match3d import _zernike_eval
 
     H, W = img.shape
-    B, idx, rho = _zernike_basis(nr, nt, n_max)
     cy, cx = (H - 1) / 2, (W - 1) / 2
     rad = min(H, W) / 2 - 1
-    rr = np.linspace(0, 1, nr)
+    gl_x, gl_w = np.polynomial.legendre.leggauss(nr)      # ★2026-10-14: op と同じ面積の重みつき格子
+    rr = 0.5 * (gl_x + 1.0)
+    wr = 0.5 * gl_w * rr
     th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
     Rg, Tg = np.meshgrid(rr, th, indexing="ij")
+    B, idx = _zernike_eval(Rg, Tg, n_max)
     ys = cy + Rg * rad * np.sin(Tg)
     xs = cx + Rg * rad * np.cos(Tg)
     samp = bilinear_sample(img, ys, xs).ravel()
-    mask = rho <= 1.0 - rings / float(nr)
-    coef, *_ = np.linalg.lstsq(B[:, mask].T, samp[mask], rcond=None)
+    sw = np.sqrt(np.repeat(wr, nt))
+    keep = np.repeat(np.arange(nr) < nr - rings, nt)       # 外周の rings 本(ρ の大きい節)を捨てる
+    coef, *_ = np.linalg.lstsq((B.T * sw[:, None])[keep], (samp * sw)[keep], rcond=None)
     return {idx[i]: float(coef[i]) for i in range(len(idx))}
 
 
@@ -578,8 +581,9 @@ def run_checks():
     leak_drop = max(v[1] for v in fit_dropped.values())
     rec_drop = max(abs(v[0] - 1.0) for v in fit_dropped.values())
     gain_ring = leak_def / max(leak_drop, 1e-12)
-    check(leak_def > 0.08, "既定の当てはめは op の開示どおり約 10 パーセント漏れる",
-          "4 モードで最大 %.4f(docstring の記述と一致)" % leak_def)
+    check(0.01 < leak_def < 0.04,
+          "瞳の外が 0 の絵を既定で読むと、面積の重みつきの当てはめでも約 2 パーセント漏れる(重みなしだった 2026-10-14 以前は約 10 パーセント)",
+          "4 モードで最大 %.4f" % leak_def)
 
     #: ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。
     #:   `fit_zernike` は torch(`grid_sample`)で補間するので、CI の
@@ -603,10 +607,10 @@ def run_checks():
               % twin_gap)
     else:
         print("   torch が無いので op との照合は飛ばす(発見は写しの側で立つ)")
-    check(leak_drop < 1e-3 and rec_drop < 1e-3,
-          "★外周リングを 1 本捨てるだけで漏れが消える",
-          "漏れ %.5f から %.6f へ(%.0f 倍)、回収のずれ %.6f —— "
-          "解像度は一切上げていない" % (leak_def, leak_drop, gain_ring, rec_drop))
+    check(1.5 < gain_ring < 3.0,
+          "★外周の輪を 1 本捨てると漏れは約半分 —— Gauss–Legendre の節は縁に密集していて、1 本では段差から離れない",
+          "漏れ %.5f から %.6f へ(%.1f 倍)、回収のずれ %.6f —— 解像度は一切上げていない。"
+          "消すには縁の段差そのものを追い出す(下の門)" % (leak_def, leak_drop, gain_ring, rec_drop))
 
     nr_list = (48, 96, 192, 384)
     leak_curve = []
@@ -1109,19 +1113,19 @@ def draw_figures(out):
                      np.array([b[2] for b in bars]))],
                    xlabel="モード(1 デフォーカス / 2 球面収差 / 3 非点収差 / 4 コマ)",
                    ylabel="他モードへの漏れ(絶対値の最大)",
-                   title="漏れの原因は解像度ではなく、円板の縁に乗った 1 本",
-                   caption=("★`fit_zernike` は docstring で「既定のサンプリング"
+                   title="漏れの原因は解像度ではなく、円板の縁の段差",
+                   caption=("★`fit_zernike` はかつて docstring で「既定のサンプリング"
                             "ではモード間に最大 ~10%% のクロストークが残る。"
-                            "定量が要るなら nr/nt を上げよ」と自分で開示して"
-                            "います。ところが原因は解像度ではありません —— "
-                            "極座標格子の**いちばん外のリング 1 本**(半径の "
-                            "2%%)が瞳の縁に乗り、双一次補間が外側の 0 を"
-                            "吸い込んでいる。**解像度は一切変えず**にその 1 本"
-                            "を捨てるだけで、漏れは 4 モードの最悪でも "
-                            "%.5f → **%.6f**(%.0f 倍)、回収のずれは "
-                            "%.6f になります。★当てはめは op と同じ手順を "
-                            "numpy で書いた**写し**で回しています(op 本体は "
-                            "torch を要り、CI の一部に入っていないため)。"
+                            "定量が要るなら nr/nt を上げよ」と開示していました。"
+                            "原因は解像度ではなく、瞳の外が 0 の絵で最外の輪が"
+                            "縁の段差を双一次補間で吸い込むこと。2026-10-14 に"
+                            "格子を面積の重みつき(ρ は Gauss–Legendre の節)に"
+                            "して既定の漏れは 4 モードの最悪で %.5f。節が縁に"
+                            "密集しているので外周の輪を 1 本捨てても %.6f"
+                            "(%.1f 倍)、回収のずれ %.6f —— 消すには縁の段差を"
+                            "追い出す(多項式を円板の外まで延ばす)。★当てはめは "
+                            "op と同じ手順を numpy で書いた**写し**で回しています"
+                            "(op 本体は torch を要り、CI の一部に入っていないため)。"
                             "torch がある環境では本物と照合していて、"
                             "最大差は grid_sample の float32 の桁です。"
                             % (out["leak_def"], out["leak_drop"],

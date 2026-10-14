@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — Zernike の当てはめ(fit_zernike の面積の重み、wavefront_from_opd は瞳の標本で直接)
+- `raytrace.wavefront_from_opd`: 瞳の標本を画像に焼いて `fit_zernike` で読み直していたので、瞳の半径(32 を 31.5)と瞳の外の 0 で係数が歪んでいた(合成 Z20 1 + Z40 0.5 が 0.903 / 0.427、回転対称な単レンズに Z(4,4) = −0.063 波、RMS が直接の値より 10 % 低い)。標本の上で直接最小二乗する(`match3d._fit_zernike_points`)→ 1e-9 で戻り、Z(4,4) は −7e-6、RMS の比は +1.4 %。
+- `match3d.fit_zernike`: 極座標の格子を重みなしで解いていたので中心が過大に効き、打ち切った高次が低次へ漏れた(Z80 + 0.3 Z20 を n_max=4 で Z40 = 0.39)。ρ を Gauss–Legendre の節・重み ρ dρ にした → Z20 0.304、Z40 0.006。瞳の外が 0 の絵の既定の漏れも 0.098 → 0.021。
+- `examples/poc_zernike_aberrations.py` の第 3 章(op の手順の写し・門 2 本・説明)を新しい実測に書き直した。見つけたのは非公開の研磨の PoC(公開側へは修正と一般化した門だけを持ち込む)。
+
 ### Added — Si ウェハ越しの近赤外透過検査(spectralrad 9 op + PoC)
 - `spectralrad`(`opsoptics` の新カテゴリ `spectral`、9 op): 光源(`blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum`)、フィルタ(`bandpass_spectrum`)、センサ(`silicon_photodiode_qe`、材料表の Si の n,k から)、演算(`energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`)。曲線は材料と同じ pairs(λ nm, 値)、範囲の足りない曲線の積は ValueError。
 - PoC `poc_nir_silicon_transmission`(20 門、図 4 枚 + GIF): 最良の LED はウェハ厚で動く(50 µm → 935 nm、775 µm → 1065 nm)、定番 1050 nm は薄いダイで 1/3.4、1200 nm は Si センサで 1/28、集める深さ 3→50 µm で 16 倍、焦点は t(1 − 1/n) = 557 µm。
