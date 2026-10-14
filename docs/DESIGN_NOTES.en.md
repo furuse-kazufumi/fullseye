@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1394. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1398. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1341,13 +1341,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/mcp/server.py`
 
-- **L330** _(ja)_ — ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
-- **L388** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L699** _(ja)_ — ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと [identity, gaussian] が「any は image でない」で拒否されていた。
-- **L774** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L970** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L1034** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L1081** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L331** _(ja)_ — ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
+- **L389** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
+- **L700** _(ja)_ — ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと [identity, gaussian] が「any は image でない」で拒否されていた。
+- **L775** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L971** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L1035** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L1082** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
 ## `fullseye/xlsxio.py`
 
@@ -2501,13 +2501,19 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/gen_literature_notes.py`
 
 - **L78** _(ja)_ — ★2026-10-03: 運転の系列の集大成と「開かれた運転基盤」のために足した 2 分野。テーマ表は製造の表と分ける (共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に、製造の「reconstruction」が 3DGS に当たる)。
-- **L415** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
+- **L332** _(ja)_ — ★2026-10-15: 10 月に足した op の系列(研磨・粉体・粉末 X 線)は、既存のテーマの語に当たらず文献層から 1 本も 指されていなかった。語はクラスタ名に実際に出るものだけを置く(当たらない語は当てない)。
+- **L475** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
+- **L591** _(ja)_ — ★2026-10-15: ここはテーマごとに先頭 8 本で**黙って切っていた**。表の後ろに足した op(10 月の研磨・材料表・ ファイバ・触覚・peg-in-hole …)は対応表に在るのに文献層のどこにも出ず、表に書いたことが嘘になっていた (2026-10-15 時点の表 251 op のうち 21 本。うち 3 本は SPC のテーマの鍵がどのクラスタ名にも当たらなかった分)。 テーマは多くても 17 本なので全部出し、当たらないテーマは INDEX に名指しする(dead_themes)。
 
 ## `tools/gen_maturity.py`
 
 - **L105** _(ja)_ — 任意キー。**ここに無いキーは拒む**(fail-closed)。★所属・勤務先・製品名の欄は 意図して持たない —— 報告者に求めない情報は、台帳に置く場所も作らない。
 - **L313** — ★This is a **lower bound**. Since it only looks at whether the op name appears as a literal in ``tests/``, sweep-type tests that scan the ledger and run all op (``for name in ledger: ...``) aren't counted. Read it as "**no named test**", not "no test".
 - **L335** _(ja)_ — ★報告が付いた行にだけ鍵を足す(空の台帳で出力を動かさない)。 repo 内の判定は別の鍵に残す —— 1 つの段に畳まない。
+
+## `tools/gen_op_catalog.py`
+
+- **L265** _(ja)_ — ★fail-closed: op の一覧は台帳の本体。ここを「(section failed)」の 1 行で済ませると カタログが黙って空になる(pip だけの利用者の RAG はこのファイルしか持たない)。
 
 ## `tools/gen_op_figures.py`
 
@@ -2602,11 +2608,12 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1082** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
 - **L1260** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
 - **L1279** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
-- **L1728** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
-- **L1773** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
-- **L1916** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2085** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2787** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L1730** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L1770** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L1784** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L1927** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2096** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2798** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

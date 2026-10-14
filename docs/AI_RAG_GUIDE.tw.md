@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 680b80368512 -->
+<!-- i18n-source-sha: af7125e8f7ed -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -38,7 +38,7 @@ fullseye.search_ops("邊緣", k=5, lang="tw")    # Python；MCP 中為 fullseye_
 docs/ops/2d/<category>/<op>.md   # 呼叫形式·型別契約·HALCON 別名·參考文獻·相關 op
 docs/ops/3d/<category>/<op>.md
 docs/ops/INDEX.md                # 走訪資料夾階層自動產生的整體目錄
-docs/ops/2d/guides/<family>.md   # 13 個家族的使用指南(公式·圖示·經典文獻引用)
+docs/ops/<family>/guides/<name>.md   # 各家族的使用指南(公式·圖示·經典文獻引用)
 docs/OP_INDEX.json               # 登錄庫的機器可讀索引
 ```
 
@@ -82,7 +82,7 @@ op 筆記回答「這個 op 做什麼」，卻不回答「在這道工序、這�
 
 光學量測與外觀檢查的可靠性(POD、雷射散斑、偏振恢復形狀、全域光傳輸、驗收測試與不確定度、合成資料,共 6 個軸)是人工精選的層:論文由人挑選,每個軸的概述由人撰寫(清單 `docs/literature/curated/`)。
 
-**實際能檢索到的範圍**:該層只有在讀取儲存庫檔案時可用(Claude Code 技能 `fullseye-ops`,checkout 模式)。MCP 伺服器的搜尋(`fullseye_search_ops` / `fullseye_find_ops`)和 `fullseye-rag search` 只索引 op 筆記,不會傳回文獻層。wheel(pip install)也不包含 `docs/literature`。
+**實際能檢索到的範圍**:該層只有在讀取儲存庫檔案時可用(Claude Code 技能 `fullseye-ops`,checkout 模式)。MCP 伺服器的搜尋(`fullseye_search_ops` / `fullseye_find_ops`)和 `fullseye-rag search` 不會傳回文獻層的叢集與論文。不過主題 → op 對照表中人工撰寫的脈絡(「主題: 為什麼用這個 op」,日文)已加入依語意搜尋的索引詞,因此用現場的說法(焊道高度、拋光去除量)也能找到 op,並顯示在結果的 `contexts` 欄位中。wheel(pip install)也不包含 `docs/literature`。
 
 ---
 

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 680b80368512 -->
+<!-- i18n-source-sha: af7125e8f7ed -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -40,7 +40,7 @@ formulieren oder Englisch versuchen. Ausführbares Beispiel: `py -3.11 examples/
 docs/ops/2d/<category>/<op>.md   # Aufrufform, Typvertrag, HALCON-Alias, Literatur, verwandte Ops
 docs/ops/3d/<category>/<op>.md
 docs/ops/INDEX.md                # Gesamtinhaltsverzeichnis, automatisch durch Traversieren der Ordnerhierarchie erzeugt
-docs/ops/2d/guides/<family>.md   # Anleitungen für 13 Familien (Formeln, Diagramme, Zitate kanonischer Quellen)
+docs/ops/<family>/guides/<name>.md   # Anleitungen je Familie (Formeln, Diagramme, Zitate kanonischer Quellen)
 docs/OP_INDEX.json               # maschinenlesbarer Index der Registry
 ```
 
@@ -87,7 +87,7 @@ bei Allerweltswörtern und wurde verworfen). Da die Korpora außerhalb des Repos
 
 Optische Messtechnik und Zuverlässigkeit der Sichtprüfung (POD, Laser-Speckle, Form aus Polarisation, globaler Lichttransport, Abnahmeprüfung und Messunsicherheit, synthetische Daten: sechs Achsen) ist eine von Hand kuratierte Schicht: Die Arbeiten wurden von Hand ausgewählt, und jede Achse hat eine von Hand geschriebene Übersicht (Manifest `docs/literature/curated/`).
 
-**Was sie tatsächlich erreicht**: Die Schicht ist auffindbar, wenn man die Dateien des Repositorys liest (Claude-Code-Skill `fullseye-ops`, Checkout-Modus). Die Suche des MCP-Servers (`fullseye_search_ops` / `fullseye_find_ops`) und `fullseye-rag search` indizieren nur die Op-Notizen und liefern die Literaturschicht nicht. Auch das Wheel (pip install) enthält `docs/literature` nicht.
+**Was sie tatsächlich erreicht**: Die Schicht ist auffindbar, wenn man die Dateien des Repositorys liest (Claude-Code-Skill `fullseye-ops`, Checkout-Modus). Die Suche des MCP-Servers (`fullseye_search_ops` / `fullseye_find_ops`) und `fullseye-rag search` liefern die Cluster und Aufsätze der Literaturschicht nicht. Der von Hand geschriebene Kontext der Tabelle Thema → Op ("Thema: wozu dieser Op", auf Japanisch) gehört jedoch zum Index der Bedeutungssuche, sodass auch eine Formulierung aus der Werkstatt (Schweißnahthöhe, Polierabtrag) den Op findet; das Ergebnis zeigt ihn im Feld `contexts`. Auch das Wheel (pip install) enthält `docs/literature` nicht.
 
 ---
 

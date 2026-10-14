@@ -45,7 +45,7 @@ per-op ノートをそのまま検索・参照できます。コーパスはリ�
 docs/ops/2d/<category>/<op>.md   # 呼び出し形・型契約・HALCON 別名・文献・関連 op
 docs/ops/3d/<category>/<op>.md
 docs/ops/INDEX.md                # フォルダ階層 walk で自動生成の全体目次
-docs/ops/2d/guides/<family>.md   # 13 ファミリの使い方ガイド(数式・図・正典引用)
+docs/ops/<family>/guides/<name>.md   # 族ごとの使い方ガイド(数式・図・正典引用)
 docs/OP_INDEX.json               # レジストリの機械可読インデックス
 ```
 
@@ -103,7 +103,7 @@ op ノートは「この op が何をするか」を答えますが、「この�
 語の一致で op を引くことはしません(一般語で無関係の op が並ぶのを実測して捨てました)。コーパス本体は repo に無いので、
 この層だけは `tools/gen_literature_notes.py --rad-root <RAD>` で作り直し、`tests/test_literature_notes.py` が形を守ります。
 **引ける経路の正直な範囲**: この層はリポジトリのファイルとして読む(Claude Code のスキル `fullseye-ops`、checkout モード)ときに引けます。
-MCP サーバーの検索(`fullseye_search_ops` / `fullseye_find_ops`)と `fullseye-rag search` は op ノートだけを索引するので、文献層は返しません。
+MCP サーバーの検索(`fullseye_search_ops` / `fullseye_find_ops`)と `fullseye-rag search` は文献層のクラスタや論文を返しません。ただしテーマ → op の表で人が書いた文脈(「テーマ: なぜ使うか」、日本語)は意味で引く検索の索引語に入っていて、現場の言い方(「溶接ビードの高さ」「研磨の除去量」)で op を引け、結果の `contexts` 欄に出ます。
 wheel(pip install)にも `docs/literature` は入っていません。
 
 ---
