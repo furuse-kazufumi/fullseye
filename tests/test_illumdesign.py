@@ -214,7 +214,9 @@ def test_design_table_dark_field_for_scatter_matched_elevation_for_a_facet():
 # ledger                                                                       #
 # --------------------------------------------------------------------------- #
 ILLUM_OPS = ["light_source", "irradiance_map", "illumination_uniformity", "defect_contrast",
-             "lighting_sweep", "illumination_design"]
+             "lighting_sweep", "illumination_design",
+             "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep",
+             "solid_angle_render"]
 
 
 def test_illumination_category_is_registered_and_returns_declared_types():
@@ -226,7 +228,10 @@ def test_illumination_category_is_registered_and_returns_declared_types():
     args = {"light_source": (), "irradiance_map": (lt, (20, 20), (8, 8)),
             "illumination_uniformity": (ID.irradiance_map(lt, (20, 20), (8, 8)),),
             "defect_contrast": (lt,), "lighting_sweep": ("glossy", 10.0, [20.0, 50.0]),
-            "illumination_design": ()}
+            "illumination_design": (),
+            "solid_angle_light": (), "solid_angle_boundaries": (ID.solid_angle_light(),),
+            "solid_angle_brightness": (ID.solid_angle_light(),), "solid_angle_sweep": (2.0, 0.1, [3.0, 6.0]),
+            "solid_angle_render": (np.dstack([np.zeros((4, 4)), np.zeros((4, 4)), np.ones((4, 4))]), ID.solid_angle_light())}
     for name in ILLUM_OPS:
         meta = opsoptics.info(name)
         assert meta["module"] == "illumdesign" and meta["func"] is getattr(ID, name) and meta["doc"]
@@ -278,3 +283,136 @@ def test_facade_exports_every_illumination_op():
 def test_invalid_inputs_are_value_errors(bad):
     with pytest.raises(ValueError):
         bad()
+
+
+# --------------------------------------------------------------------------- #
+# illumination cone versus observation cone (solid_angle_*, 2026-10-15)
+# --------------------------------------------------------------------------- #
+def test_cap_overlap_matches_monte_carlo_on_the_sphere():
+    rng = np.random.default_rng(7)
+    v = rng.standard_normal((2_000_000, 3))
+    v /= np.linalg.norm(v, axis=1)[:, None]
+    for a, b, d in [(0.3, 0.2, 0.35), (0.25, 0.25, 0.2), (0.5, 0.2, 0.6)]:
+        c2 = np.array([math.sin(d), 0.0, math.cos(d)])
+        mc = ((v[:, 2] >= math.cos(a)) & (v @ c2 >= math.cos(b))).mean() * 4.0 * math.pi
+        cf = ID._cap_overlap(a, b, d)
+        assert cf == pytest.approx(mc, rel=0.03)
+    # the ends: contained cap / disjoint caps
+    assert ID._cap_overlap(0.3, 0.1, 0.1) == pytest.approx(2 * math.pi * (1 - math.cos(0.1)), rel=1e-12)
+    assert ID._cap_overlap(0.3, 0.1, 0.41) == 0.0
+
+
+def test_solid_angle_brightness_plateau_edge_and_dark_closed_form():
+    na = 0.1
+    beta = math.degrees(math.asin(na))
+    lt = ID.solid_angle_light(15.0)
+    bd = ID.solid_angle_boundaries(lt, view_na=na)
+    assert bd["regime"] == "bright_field" and bd["flat_brightness"] == 1.0
+    assert bd["invisible_below_deg"] == pytest.approx((15.0 - beta) / 2)
+    assert bd["dark_beyond_deg"] == pytest.approx((15.0 + beta) / 2)
+    inside = 0.98 * bd["invisible_below_deg"]
+    beyond = 1.02 * bd["dark_beyond_deg"]
+    mid = 0.5 * (bd["invisible_below_deg"] + bd["dark_beyond_deg"])
+    r = ID.solid_angle_brightness(lt, view_na=na, slopes_deg=[0.0, inside, -inside, mid, beyond], n_samples=8192)["rows"]
+    for row in r[:3]:
+        assert row["closed_form"] == 1.0 and row["numeric"] == 1.0      # the slope is invisible
+    assert 0.2 < r[3]["closed_form"] < 0.8
+    assert r[3]["numeric"] == pytest.approx(r[3]["closed_form"], abs=0.01)   # pupil weighting O(beta^2) + quadrature
+    assert r[4]["closed_form"] == 0.0 and r[4]["numeric"] == 0.0
+    # matched cones (alpha = beta): no plateau, every slope dims, monotonically
+    m = ID.solid_angle_brightness(ID.solid_angle_light(beta), view_na=na, slopes_deg=[0.0, 0.5, 1.0, 2.0, 4.0])["rows"]
+    cf = [x["closed_form"] for x in m]
+    assert cf[0] == pytest.approx(1.0) and all(a > b for a, b in zip(cf, cf[1:]))
+    assert ID.solid_angle_boundaries(ID.solid_angle_light(beta), view_na=na)["invisible_below_deg"] == 0.0
+    # a pin-hole cone (alpha << beta) has a plateau again: (beta - alpha)/2, at brightness Omega_a/Omega_b
+    ph = ID.solid_angle_boundaries(ID.solid_angle_light(1.0), view_na=na)
+    assert ph["invisible_below_deg"] == pytest.approx((beta - 1.0) / 2)
+    assert ph["regime"] == "bright_field"
+    assert ph["flat_brightness"] == pytest.approx((1 - math.cos(math.radians(1.0))) / (1 - math.cos(math.radians(beta))))
+
+
+def test_solid_angle_tilt_reads_the_sign_of_the_slope():
+    na = 0.1
+    lt = ID.solid_angle_light(6.0, tilt_deg=6.0)                  # flat ground on the edge (knife edge)
+    bd = ID.solid_angle_boundaries(lt, view_na=na)
+    assert bd["regime"] == "edge" and 0.0 < bd["flat_brightness"] < 1.0 and bd["sensitivity_per_deg"] > 0.05
+    r = ID.solid_angle_brightness(lt, view_na=na, slopes_deg=[-1.0, 0.0, 1.0], n_samples=8192)["rows"]
+    assert r[0]["closed_form"] < r[1]["closed_form"] < r[2]["closed_form"]
+    # dark field: the cone tilted past alpha + beta leaves the flat surface dark
+    dk = ID.solid_angle_boundaries(ID.solid_angle_light(4.0, tilt_deg=30.0), view_na=na)
+    assert dk["regime"] == "dark_field" and dk["flat_brightness"] == 0.0
+
+
+def test_solid_angle_sweep_ends_and_roughness_kills_the_contrast():
+    na, th = 0.1, 2.0
+    beta = math.degrees(math.asin(na))
+    sw = ID.solid_angle_sweep(slope_deg=th, view_na=na, half_angles_deg=[1.0, beta, beta + 2 * th + 0.5, 20.0])
+    assert sw.shape == (4, 2)
+    assert sw[0, 1] < 5e-3                           # pin-hole cone: 2 theta <= beta - alpha, inside the pupil
+    #                                                  (not 0: the lens weights the pupil by cos, O(theta*beta))
+    assert sw[1, 1] > 0.2                            # matched cones: the slope shows
+    assert sw[2, 1] == 0.0 and sw[3, 1] == 0.0       # wide cone: the slope hides inside it
+    big = ID.solid_angle_sweep(slope_deg=5.0, view_na=na, half_angles_deg=[1.0])[0, 1]
+    assert big == pytest.approx(1.0)                 # alpha + beta <= 2 theta: facet dark, ground lit
+    smooth = ID.solid_angle_sweep(slope_deg=th, view_na=na, half_angles_deg=[beta])[0, 1]
+    rough = ID.solid_angle_sweep(slope_deg=th, view_na=na, half_angles_deg=[beta], roughness_deg=8.0)[0, 1]
+    assert rough < 0.5 * smooth
+
+
+def test_solid_angle_render_matches_the_brightness_op_and_the_diffuse_closed_form():
+    lt = ID.solid_angle_light(8.0)
+    th = math.radians(5.0)
+    N = np.zeros((4, 5, 3))
+    N[..., 2] = 1.0
+    N[1, 1] = (math.sin(th), 0.0, math.cos(th))
+    N[3, 4] = 0.0                                       # background
+    img = ID.solid_angle_render(N, lt, view_na=0.1, f0=1.0, n_samples=1024)
+    ref = ID.solid_angle_brightness(lt, view_na=0.1, slopes_deg=[0.0, 5.0], n_samples=1024)["rows"]
+    assert img[0, 0] == pytest.approx(ref[0]["numeric"], abs=1e-12)
+    assert img[1, 1] == pytest.approx(ref[1]["numeric"], abs=1e-12)
+    assert img[3, 4] == 0.0
+    dif = ID.solid_angle_render(N, lt, view_na=0.1, f0=0.0, diffuse_albedo=1.0)
+    assert dif[0, 0] == pytest.approx(math.sin(math.radians(8.0)) ** 2, rel=1e-12)
+    assert dif[1, 1] == pytest.approx(math.sin(math.radians(8.0)) ** 2 * math.cos(th), rel=1e-12)
+    # a roughness map: the rough patch dims under a narrow cone
+    rg = np.zeros((4, 5))
+    rg[2, :] = 6.0
+    im2 = ID.solid_angle_render(N, ID.solid_angle_light(math.degrees(math.asin(0.1))), view_na=0.1, roughness_deg=rg, n_samples=512)
+    assert im2[2, 0] < 0.8 * im2[0, 0]
+
+
+def test_solid_angle_light_is_a_light_for_the_other_ops_and_rejects_bad_input():
+    lt = ID.solid_angle_light(10.0, tilt_deg=20.0, azimuth_deg=45.0, n=32)
+    ang = np.degrees(np.arccos(np.clip(-lt["directions"] @ np.array(lt["solid_angle"]["axis"]), -1, 1)))
+    assert ang.max() < 10.0 + 1e-9                      # the emitter disc subtends the cone at the origin
+    assert lt["solid_angle"]["projected_solid_angle_sr"] == pytest.approx(math.pi * math.sin(math.radians(10.0)) ** 2)
+    assert ID.irradiance_map(lt, size_mm=(10, 10), shape=(4, 4)).min() > 0
+    assert "per_slope" in ID.defect_contrast(lt, surface="glossy", slopes_deg=[2.0], n_azimuth=2)
+    for bad in [dict(half_angle_deg=0.0), dict(half_angle_deg=60.0, tilt_deg=40.0), dict(half_angle_deg=float("nan")),
+                dict(tilt_deg=-1.0), dict(n=0)]:
+        with pytest.raises(ValueError):
+            ID.solid_angle_light(**bad)
+    with pytest.raises(ValueError):
+        ID.solid_angle_brightness(ID.light_source("ring"), view_na=0.1)          # not a cone light
+    with pytest.raises(ValueError):
+        ID.solid_angle_brightness(lt, view_na=1.0)
+    with pytest.raises(ValueError):
+        ID.solid_angle_brightness(lt, view_na=0.1, slopes_deg=[50.0])
+    with pytest.raises(ValueError):
+        ID.solid_angle_render(np.full((2, 2, 3), np.nan), lt)
+    with pytest.raises(ValueError):
+        ID.solid_angle_render(np.ones((2, 2, 3)), lt, roughness_deg=np.ones((3, 3)))
+
+
+def test_solid_angle_rough_closed_form_agrees_with_the_sampled_micro_facets():
+    beta = math.degrees(math.asin(0.033))
+    for a in (0.5, beta, 4.0):
+        for sg in (0.25, 1.0, 4.0):
+            r = ID.solid_angle_brightness(ID.solid_angle_light(a), view_na=0.033, slopes_deg=[0.0, 0.25],
+                                          roughness_deg=sg, n_samples=16384)["rows"]
+            for row in r:
+                assert row["closed_form"] == pytest.approx(row["numeric"], abs=0.01), (a, sg, row)
+    # roughness spreads the flat brightness of a matched cone: monotone in sigma
+    fl = [ID.solid_angle_brightness(ID.solid_angle_light(beta), view_na=0.033, slopes_deg=[0.0],
+                                    roughness_deg=sg)["rows"][0]["closed_form"] for sg in (0.0, 0.1, 0.5, 2.0)]
+    assert all(x > y for x, y in zip(fl, fl[1:]))

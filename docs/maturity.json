@@ -465,6 +465,27 @@
    ]
   },
   {
+   "id": "illumination-cone-vs-na",
+   "title": "照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)",
+   "title_en": "Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)",
+   "category": "光と色",
+   "note": "docs/capabilities/illumination-cone-vs-na.md",
+   "status": "verified-synthetic",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_illumination_cone_vs_na",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "inner-diameter-in-mm",
    "title": "円形部品の内径を mm まで測る",
    "title_en": "Inner diameter of a round part, all the way to millimetres",
@@ -1652,8 +1673,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 376,
-  "run_by_the_poc_gate": 239,
+  "examples2d_total": 377,
+  "run_by_the_poc_gate": 240,
   "run_by_the_example_gate": 137,
   "not_run_by_any_gate": 0,
   "gates": [

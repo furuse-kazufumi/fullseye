@@ -894,7 +894,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: film(多層膜の分光反射率と膜厚、filmoptics)5 op を新しい族として追加(248 → 253)。
     # 2026-10-15: confocal(クロマティック共焦点、chromconf)6 op を新しい族として追加(253 → 259)。
     # 2026-10-15: 近赤外の分光撮像(食品の異物・樹脂の選別)で matprop に 3 op、spectral に 5 op(259 → 267)。
-    assert len(opsoptics.OPSOPTICS) == 267
+    # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
+    assert len(opsoptics.OPSOPTICS) == 272
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
     assert len(opsoptics.list_ops("moire_align")) == 8

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 64 項目**
+**収録 65 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -31,6 +31,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -465,7 +466,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (13)
+## 光と色 (14)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -506,6 +507,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
 
 動く例: `poc_fiber_light_guide`
+
+### [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md)
+
+鏡面に近い金属部品では、浅い打痕(傾き 0.1〜0.5°)やヘアラインの上の傷、梨地のムラが「同軸落射で見えたり見えなかったりする」。どう見えるかは、光源の種類より先に**各点に届く光の円錐の半角 α と向き ψ**、それとカメラが受け取る円錐(物体側 NA、半角 β = asin NA)の関係で決まります。顕微鏡のケーラー照明でいう照明の NA と対物の NA、シュリーレン法のナイフエッジと同じ幾何です。
+
+使う op: `solid_angle_light`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_sweep`, `solid_angle_render`
+
+推奨パイプライン: [`solid_angle_light`](ops/optics/illumination/solid_angle_light.md) → [`solid_angle_boundaries`](ops/optics/illumination/solid_angle_boundaries.md) → [`solid_angle_sweep`](ops/optics/illumination/solid_angle_sweep.md) → [`solid_angle_brightness`](ops/optics/illumination/solid_angle_brightness.md) → [`solid_angle_render`](ops/optics/illumination/solid_angle_render.md)
+
+代替: [`light_source`](ops/optics/illumination/light_source.md), [`defect_contrast`](ops/optics/illumination/defect_contrast.md), [`lighting_sweep`](ops/optics/illumination/lighting_sweep.md), [`illumination_design`](ops/optics/illumination/illumination_design.md), [`micro_normals`](ops/optics/finish/micro_normals.md), [`blast_normals`](ops/optics/finish/blast_normals.md)
+
+限界: 照明は各点に同じ円錐が届く遠方場の極限(ケーラー照明・光源を無限遠に置いた照明)、カメラはテレセン(どの画素も真上から同じ円錐)。Fresnel の反射率は小さな角では一定、回折・多重反射・円錐の中の放射輝度のむらは入れていない。粗さは微小面の傾きのガウス分布(σ 30° まで)。
+
+実寸校正: 円錐の半角 α は照明の開口(絞り)の半径と照明レンズの焦点距離から α = atan(r/f)、観察の半角 β は物体側 NA の asin。境界 |α − β|/2・(α + β)/2 は鏡面の傾きの角度なので尺度の校正は要らないが、α と β の実測(光源像の大きさ・レンズの NA)が要る。
+
+動く例: `poc_illumination_cone_vs_na`
 
 ### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 

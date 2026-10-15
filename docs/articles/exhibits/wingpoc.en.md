@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 36 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 37 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1095,6 +1095,42 @@ Source: [examples/poc_si_wafer_pl_defect_visibility.py](https://github.com/furus
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility)
 
 Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_diffusion_psf.html) · [`pl_groove_visibility`](https://furuse.work/ops/generative/pl/pl_groove_visibility.html) · [`pl_image_simulate`](https://furuse.work/ops/generative/pl/pl_image_simulate.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
+
+## No.2026.240 —— Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear
+
+[![Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png)
+
+*↑ **Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear** ―― For shallow dents, scratches on a hairline finish and satin unevenness on near-specular metal parts, what shows is set less by the type of light than by the half-angle α and axis of the cone of light reaching each point, relative to the cone the camera accepts (object-side NA, half-angle β): the illumination-NA / objective-NA relation of Koehler illumination and the knife edge of schlieren optics. Reflection is an isometry of the sphere of directions, so the brightness is the intersection of two spherical caps, a closed form: slopes below |α − β|/2 do not show, slopes beyond (α + β)/2 go dark. Five new ops in `illumdesign` (`solid_angle_light`, `solid_angle_boundaries`, `solid_angle_brightness`, `solid_angle_sweep`, `solid_angle_render`). The closed form agrees with the projected-solid-angle pupil integral to 0.002. Through a telecentric lens of NA 0.033 a 2 µm dent (steepest slope 0.25°) shows as a ring only with α = β (contrast −0.091 measured on the image, closed form to 1e-4) and vanishes at α = 0.5° and 7°, as the closed form predicts. The closed form picks α between 3.5° and 6.1° to hide hairline marks (99th-percentile slope 0.82°) while blackening a 4° scratch: at α = 4° the marks fluctuate 0.014 times as much as at α = β and the scratch contrast is −1.00. Tilting the cone by β puts the flat ground at 0.39 and splits the dent's flanks into 0.53 and 0.25 (closed form 0.54 / 0.25), so the slope sign reads as bright or dark. Satin patches (micro-facet spread 1.3° against 0.8°) give −0.20 at α = β and −0.02 at α = 7°. Where it breaks: ±0.25° waviness makes the background swing 1.6 times the dent's dip at α = β, so a threshold cannot pick the dent; a micro-facet spread of 0.25° already cuts the contrast to a third, and at 4° no cone gets above 0.001. No comparison photographs taken with only the illumination solid angle changed were found under a reusable licence, so the check against real images is still open. Nothing learned, nothing calibrated, 15 gates.*
+
+[![鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。α = 7° と 0.5° は傾き |α − β|/2 まで平らで、そこまでの傾きは見えない。α = β は 0 から下がり始めるので最も小さな傾きが見える。β だけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope.png)
+
+*↑ The measurement ―― 鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。α = 7° と 0.5° は傾き |α − β|/2 まで平らで、そこまでの傾きは見えない。α = β は 0 から下がり始めるので最も小さな傾きが見える。β だけ傾けた円錐は平らな地が半分の明るさで、傾きの向きで明るくも暗くもなる。 (figure labels are in Japanese; the numbers are the same)*
+
+[![傾き θ の面と平らな地のコントラストを α に対して(微小面の粗さ 0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/03_contrast_vs_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/03_contrast_vs_cone.png)
+
+*↑ 傾き θ の面と平らな地のコントラストを α に対して(微小面の粗さ 0)。*
+
+[![面のうねり(周期 1.5 mm、傾き ±0.25°)を足した鏡面の打痕。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/04_waviness_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/04_waviness_failure.png)
+
+*↑ 面のうねり(周期 1.5 mm、傾き ±0.25°)を足した鏡面の打痕。*
+
+[![α を 0.5〜3° から選んだ最大のコントラスト。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/05_roughness_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/05_roughness_failure.png)
+
+*↑ α を 0.5〜3° から選んだ最大のコントラスト。*
+
+[![ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。α ≈ β で筋が最も目立ち、α ≈ 4° で筋が消えて傷が黒く残り、広げすぎると傷も薄れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)
+
+*↑ The animation ―― ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。α ≈ β で筋が最も目立ち、α ≈ 4° で筋が消えて傷が黒く残り、広げすぎると傷も薄れる。*
+
+```
+py -3.11 examples/poc_illumination_cone_vs_na.py
+```
+
+Source: [examples/poc_illumination_cone_vs_na.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_illumination_cone_vs_na)
+
+Ops used (notes): [`blast_normals`](https://furuse.work/ops/optics/finish/blast_normals.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`metal_mirror_rgb`](https://furuse.work/ops/optics/mirror/metal_mirror_rgb.html) · [`micro_normals`](https://furuse.work/ops/optics/finish/micro_normals.html) · [`solid_angle_boundaries`](https://furuse.work/ops/optics/illumination/solid_angle_boundaries.html) · [`solid_angle_brightness`](https://furuse.work/ops/optics/illumination/solid_angle_brightness.html) · [`solid_angle_light`](https://furuse.work/ops/optics/illumination/solid_angle_light.html) · [`solid_angle_render`](https://furuse.work/ops/optics/illumination/solid_angle_render.html) · [`solid_angle_sweep`](https://furuse.work/ops/optics/illumination/solid_angle_sweep.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.235 —— TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
 

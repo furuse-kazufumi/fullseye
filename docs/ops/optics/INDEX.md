@@ -1,4 +1,4 @@
-# OPTICS operator help — 267 ops in 31 categories
+# OPTICS operator help — 272 ops in 31 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -58,9 +58,9 @@
 
 [beer_lambert_transmittance](glassbody/beer_lambert_transmittance.md) · [prism_min_deviation_deg](glassbody/prism_min_deviation_deg.md) · [refract_rays](glassbody/refract_rays.md) · [slab_transmittance](glassbody/slab_transmittance.md)
 
-### illumination (6)
+### illumination (11)
 
-[defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md)
+[defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
 
 ### imaging (7)
 

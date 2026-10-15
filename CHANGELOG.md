@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 照明の円錐と観察の NA(illumination に solid_angle 5 op + PoC)
+- `illumdesign` に 5 op(`opsoptics` の `illumination`): `solid_angle_light`(各点に同じ光の円錐が届く遠方場の照明。半角・傾き・方位・放射輝度、`irradiance_map` / `defect_contrast` にも渡せる)、`solid_angle_boundaries`(見えない傾き |α − β|/2・暗くなる傾き (α + β)/2・平らな地の明るさ・感度・regime の閉形式)、`solid_angle_brightness`(傾きごとの明るさ: 2 つの球冠の交わりの閉形式と、レンズの瞳を射影立体角で重みづけた数値積分。狭い側の円錐で標本を取るので台地が分解できる。微小面の粗さ σ は閉形式をガウスで平均した決定的な格子積分)、`solid_angle_sweep`(α に対するコントラスト)、`solid_angle_render`(法線マップをその照明とテレセンで撮る、粗さの地図つき)。
+- PoC `poc_illumination_cone_vs_na`(15 門、図 5 枚 + GIF): 閉形式と瞳の数値積分の差 0.002、打痕(最大傾き 0.25°)の画像のコントラストが閉形式と 1e-4、α = 0.5° と 7° で打痕が消える、ヘアラインの筋を消して傷を黒くする α の帯(3.5〜6.1°)、円錐を β 傾けて傾きの符号を読む、★うねり ±0.25° と粗さ σ で設計が効かなくなる。再利用できるライセンスの実画像(照明の立体角だけを変えた比較写真)は見つからず、実画像との突合は未了。
+- RAG: 文献層のテーマ表(光学・照明・撮像系、外観欠陥の検出)と英訳の文脈に 5 op、評価問題集に日英 1 問ずつ。
+
 ### Added — 近赤外のハイパースペクトルで見た目が同じ異物を選別する(8 op + 帯域選択)
 - `materials`: `material_nir_absorption`(樹脂・脂質・タンパク質・炭水化物・リグニンと、ナッツの仁・殻・木片の近赤外の吸収帯。中心は一次文献の実測、幅と強さは推定、水は表の n,k)/ `carbon_black_absorption`(Bond & Bergstrom 2006)/ `nir_model_info`。
 - `spectralrad`: `ingaas_photodiode_qe`(直接遷移の吸収端 + Urbach の裾、標準 1.7 µm と拡張品)/ `kubelka_munk_reflectance`(Kubelka 1948 の閉形式)/ `spectral_reflectance_from_material`(粒径の散乱 + Saunderson の界面)/ `hyperspectral_band_weights` / `hyperspectral_capture`(と画像の `hyperspectral_capture_cube`)。`specops.spec_band_selection_fisher`(Fisher 比 + 前向き選択)。

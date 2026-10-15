@@ -357,6 +357,13 @@ _CATALOG = {
         ("defect_contrast", "illumdesign", ["table"], "table"),
         ("lighting_sweep", "illumdesign", [], "pairs"),
         ("illumination_design", "illumdesign", [], "table"),
+        # 照明の立体角(開口の半角・向き)と観察の NA で、鏡面の傾きの明暗を設計する(2026-10-15)。
+        # 反射は方向の球の等長写像なので、明るさは 2 つの球冠の交わり = 閉形式。
+        ("solid_angle_light", "illumdesign", [], "table"),
+        ("solid_angle_boundaries", "illumdesign", ["table"], "table"),
+        ("solid_angle_brightness", "illumdesign", ["table"], "table"),
+        ("solid_angle_sweep", "illumdesign", [], "pairs"),
+        ("solid_angle_render", "illumdesign", ["normalmap", "table"], "image2d"),
     ],
     # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
     # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素

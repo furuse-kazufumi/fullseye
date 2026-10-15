@@ -15408,6 +15408,51 @@
    "de": "Defektkontrast über dem Elevationswinkel einer Ringleuchte (``pairs``).",
    "hi": "ring-light elevation angle के सापेक्ष defect contrast (``pairs``)।"
   },
+  "optics/solid_angle_light": {
+   "fp": "7edb8d7a49cb",
+   "ja": "各点に届く光の円錐(半角と向き)で決めた照明(``table``)。",
+   "zh": "由到达每一点的光锥(半角与方向)定义的照明(``table``)。",
+   "tw": "由到達每一點的光錐(半角與方向)定義的照明(``table``)。",
+   "ko": "각 점에 닿는 빛의 원뿔(반각과 방향)로 정한 조명 (``table``).",
+   "de": "Eine Beleuchtung, festgelegt durch den Richtungskegel (Halbwinkel und Achse), den sie jedem Punkt liefert (``table``).",
+   "hi": "हर बिंदु तक पहुँचने वाले प्रकाश-शंकु (अर्ध-कोण और दिशा) से परिभाषित light (``table``)।"
+  },
+  "optics/solid_angle_brightness": {
+   "fp": "3167e3ac73d9",
+   "ja": "滑らかな、または粗い鏡面の微小面の傾きに対する明るさ(``table``)。",
+   "zh": "光滑或粗糙镜面小面的亮度随其倾角的变化(``table``)。",
+   "tw": "光滑或粗糙鏡面小面的亮度隨其傾角的變化(``table``)。",
+   "ko": "매끄럽거나 거친 경면 미소면의 기울기에 따른 밝기 (``table``).",
+   "de": "Helligkeit einer glatten oder rauen spiegelnden Facette über ihrer Neigung (``table``).",
+   "hi": "चिकने या खुरदरे specular facet की चमक उसके ढलान के सापेक्ष (``table``)।"
+  },
+  "optics/solid_angle_boundaries": {
+   "fp": "e8d0c4cc3acd",
+   "ja": "滑らかな鏡面の微小面について、明暗が切り替わる傾きの閉形式の境界(``table``)。",
+   "zh": "光滑镜面小面明暗切换倾角的闭式边界(``table``)。",
+   "tw": "光滑鏡面小面明暗切換傾角的閉式邊界(``table``)。",
+   "ko": "매끄러운 경면 미소면에서 명암이 바뀌는 기울기의 닫힌 형식 경계 (``table``).",
+   "de": "Geschlossene Neigungsschwellen einer glatten spiegelnden Facette (``table``).",
+   "hi": "चिकने specular facet के लिए ढलान की closed-form सीमाएँ (``table``)।"
+  },
+  "optics/solid_angle_sweep": {
+   "fp": "3e9efba2fd4f",
+   "ja": "照明の円錐の半角に対する、微小面と平らな地のコントラスト(``pairs``)。",
+   "zh": "小面与平坦背景的对比度随照明光锥半角的变化(``pairs``)。",
+   "tw": "小面與平坦背景的對比度隨照明光錐半角的變化(``pairs``)。",
+   "ko": "조명 원뿔의 반각에 대한 미소면과 평평한 바탕의 대비 (``pairs``).",
+   "de": "Kontrast einer Facette gegen den ebenen Grund über dem Halbwinkel des Beleuchtungskegels (``pairs``).",
+   "hi": "illumination cone के अर्ध-कोण के सापेक्ष facet और समतल पृष्ठभूमि का contrast (``pairs``)।"
+  },
+  "optics/solid_angle_render": {
+   "fp": "b1dafeef7b85",
+   "ja": "円錐の照明の下で NA *view_na* のレンズを通して撮った法線マップの画像(``image2d``)。",
+   "zh": "在光锥照明下、经 NA 为 *view_na* 的镜头拍摄的法线图图像(``image2d``)。",
+   "tw": "在光錐照明下、經 NA 為 *view_na* 的鏡頭拍攝的法線圖影像(``image2d``)。",
+   "ko": "원뿔 조명 아래에서 NA *view_na* 렌즈로 찍은 법선 맵의 영상 (``image2d``).",
+   "de": "Bild einer Normalenkarte unter einer Kegelbeleuchtung durch ein Objektiv der NA *view_na* (``image2d``).",
+   "hi": "cone light के तहत NA *view_na* वाले lens से लिया गया normal map का image (``image2d``)।"
+  },
   "optics/linescan_capture": {
    "fp": "5db521e1f86e",
    "en": "Shoot with a **line-scan / TDI** camera (stacking one line at a time while the part moves).",

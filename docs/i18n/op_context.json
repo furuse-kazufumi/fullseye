@@ -1051,6 +1051,21 @@
   "直接光と大域光を分ける(高周波照明)": {
    "en": "Separate direct and global light (high-frequency illumination)"
   },
+  "照射立体角を制御する照明(V-ISA 型照明・照射立体角制御照明)を真似る光源: 照明の円錐の半角と向き": {
+   "en": "Light source that emulates irradiation-solid-angle-controlled illumination (V-ISA-style lighting): half-angle and tilt of the illumination cone"
+  },
+  "照射立体角と観察立体角(レンズの NA)から、明暗が切り替わる面の傾きの境界": {
+   "en": "Surface-slope thresholds where bright turns dark, from the irradiation solid angle and the observation solid angle (lens NA)"
+  },
+  "鏡面の傾きと明るさ(照射立体角と観察立体角の重なり、明視野と暗視野の境目)": {
+   "en": "Brightness of a specular slope (overlap of the irradiation and observation solid angles, the bright-field / dark-field border)"
+  },
+  "照射立体角を振って打痕・傷のコントラストの山を探す(V-ISA 型照明の立体角の設定)": {
+   "en": "Sweep the irradiation solid angle for the best dent / scratch contrast (choosing the solid angle of a V-ISA-style light)"
+  },
+  "照射立体角を絞る・広げる・ずらして、鏡面の打痕・ヘアラインの傷・梨地のムラを撮る": {
+   "en": "Image dents, scratches on hairline finish and satin unevenness on specular parts while narrowing, widening or tilting the irradiation solid angle"
+  },
   "稀な事象の加速評価(重要度サンプリング)": {
    "en": "Accelerated evaluation of rare events (importance sampling)"
   },
