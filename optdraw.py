@@ -259,15 +259,37 @@ class _Sheet:
         tu = np.array([math.cos(math.radians(ang)), math.sin(math.radians(ang))])
         tn = np.array([-tu[1], tu[0]])
         mid = 0.5 * (a2 + b2)
+        align = "center"
         if tw + 2.4 * al > L:                            # 数字が収まらなければ外へ出す
-            far = b2 if float(np.dot(b2 - a2, tu)) >= 0 else a2
-            pos = far + (2.2 * al + 0.5 * tw) * tu + self.p(1.0) * tn
+            if abs(u[1]) > abs(u[0]):
+                # 縦に近い寸法: 線の延長に長い文字を立てると寸法線から離れて浮くので、寸法線の真横に
+                # 水平に置く(外側 = 形体から遠い側)
+                ang = 0.0
+                side = 1.0 if n[0] >= 0 else -1.0
+                top = a2 if a2[1] >= b2[1] else b2          # 上の矢印の脇(下の端は作業面などと重なりやすい)
+                pos = top + side * self.p(1.5) * np.array([1.0, 0.0]) + np.array([0.0, self.p(1.0)])
+                align = "left" if side > 0 else "right"
+            else:
+                far = b2 if float(np.dot(b2 - a2, tu)) >= 0 else a2
+                pos = far + (2.2 * al + 0.5 * tw) * tu + self.p(1.0) * tn
         else:
             pos = mid + self.p(1.0) * tn
-        self.text(pos, text, layer=layer, align="center", angle=ang, tag="dim:" + name)
+        self.text(pos, text, layer=layer, align=align, angle=ang, tag="dim:" + name)
         self.dims.append({"name": name, "value": float(value), "text": text,
                           "p1": [float(a[0]), float(a[1])], "p2": [float(b[0]), float(b[1])],
                           "offset": float(offset)})
+
+    def axes(self, origin, labels, layer="THIN"):
+        """図の座標軸の向き(矢印 2 本と軸の名前): 横向きの矢印に labels[0]、上向きに labels[1]。"""
+        o = np.asarray(origin, float)
+        L = self.p(12.0)
+        for d, lab in ((np.array([1.0, 0.0]), labels[0]), (np.array([0.0, 1.0]), labels[1])):
+            tip = o + L * d
+            self.line(o, tip, layer, tag="axes")
+            self.arrow(tip, d, layer)
+            self.text(tip + self.p(2.0) * d - (np.array([0.0, 0.35]) * self.p(TEXT_SMALL) if d[0] else 0.0),
+                      lab, height=self.p(TEXT_SMALL), layer="TEXT", align="left" if d[0] else "center",
+                      tag="axes:" + lab)
 
     def angle_dim(self, c, r, a0, a1, text, name, value, layer="DIM"):
         """角度の寸法: 中心 *c*・半径 *r* の円弧(a0 → a1 度、反時計回り)と両端の矢印と数字。"""
@@ -845,6 +867,7 @@ def vision_setup_drawing(layout, view="both", barrel_diameter_mm=30.0, body_mm=4
         off = 0.5 * (corners[:, 1].max() - corners[:, 1].min()) + sh.p(8.0)
         sh.dim(p1, p2, -off, "DOF " + _fmt(dof, 3), "DOF", dof)
         sh.text((ymin_all, z_lo - sh.p(34.0)), "SIDE VIEW (Y-Z)", height=sh.p(TEXT_SMALL), tag="side:label")
+        sh.axes((ymin_all - sh.p(20.0), z_lo - sh.p(30.0)), ("+Y", "+Z"))
         bc = side(body_c)
         sh.text((bc[0] + 0.5 * body + sh.p(2.0), bc[1]), "CAMERA", height=sh.p(TEXT_SMALL), tag="side:label:camera")
         lc = side(eye - fwd * (0.5 * v_img))
@@ -865,6 +888,9 @@ def vision_setup_drawing(layout, view="both", barrel_diameter_mm=30.0, body_mm=4
                "FOV " + _fmt(fov_w), "FOV_top_x", fov_w)
         sh.text((ymin_all, extent[:, 0].min() + top_off - sh.p(24.0)), "TOP VIEW (Y-X)", height=sh.p(TEXT_SMALL),
                 tag="top:label")
+        # ★上面図は第三角法で側面図と横軸 y を共有するので、センサーの長辺(像の横 = 世界の x)は縦に描かれる。
+        #   向きを取り違えないよう、軸の矢印と名前を描く(+X が上)。
+        sh.axes((ymin_all - sh.p(20.0), extent[:, 0].min() + top_off - sh.p(20.0)), ("+Y", "+X"))
     # 諸元
     th = sh.p(TEXT_SMALL)
     yy = z_lo - sh.p(44.0)

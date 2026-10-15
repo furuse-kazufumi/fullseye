@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：612 / 1416 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：612 / 1417 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -1709,6 +1709,10 @@
 
 - **L63** — ★ 但既有的 `labels` 谓词为 ``ndim >= 1``，**2-D 的标签图像与 3-D 的标签体积同居**。本模块的 11 个 op 被传入 2-D 时全部抛 ValueError（fail-closed），故**弄错绝不会悄然通过**。危险在于相反面：在只有 2-D 种子的池中，会在一次也不执行的情况下看起来像“发现为零”—— 与 opsphoton 在 counts 上踩过的陷阱同形。配线侧务必注入 3-D 标签种子（参见下方“亲配线时”）。 * voxel —— ``vol_label_overlay`` 叠加的原灰度体积，以及 ``vol_label_color_flicker`` 接收的二值体积。二者都是 (D,H,W) 的既有 voxel 词汇本身，没有理由另造新词。 * rgbimage —— 断面与投影的返回 (H,W,3)。既有的 rgbimage 消费 op（镜面分离、色变换、保存）可保持语义地使用。**这里是 rgbvolume 词汇的出口**，故新词汇不成死胡同。 * matrix —— ``vol_label_palette`` 的返回 (n+1, 3)。就是 2-D 的实矩阵本身。 * table —— 形状统计 / 图例 / 闪烁测量 / 带色网格的集合。
 - **L77** — ★ 未为“带色网格的集合”另造新词，是**实测的结果**。最初打算加 `colormeshes`，但把既有的 table 消费 op 全部过一遍，将 ``vol_labels_to_meshes`` 的返回传入（2026-09-02 实测，横跨 ops3d / ops1d / opsmath / opsoptics / opslightfield / opsphoton / opsacoustics / opsinterferometry / opscadmap），能吃 table 的 op **只有 3 件（abcd_matrix / wavefront_stats / istft），且 3 件都以 ValueError fail-closed**。即不满足“混用会悄然出错”的条件。给不满足者添词，只会多出一个消费者为零的新词汇 = 多一个死胡同（``docs/OP_COMBINATION_MATRIX.md`` 的判断基准）。此外，若想把单个网格作为 ``mesh`` sort 流向下游，用 ``[(m["vertices"], m["faces"]) for m in result]`` 剥出 —— 因这是丢弃颜色的操作，故不在 adapter 中隐式进行。 -------------------------------------------------------------------------- 一个新词汇及其理由（基于实测） -------------------------------------------------------------------------- * rgbvolume —— **(D, H, W, 3) 的带色体积**。既有 `lightfield` 的谓词只是 ``ndim == 4``，故色体积**完全满足 lightfield**。实测（2026-09-02，将 ``(8, 16, 16, 3)`` 的色体积传给 lightfield 的 op）：- ``lf_refocus`` / ``lf_subaperture`` / ``lf_epi`` / ``lf_depth_from_focus`` 这 **4 个 op 既不出异常也不出 NaN**，返回有限的 (16, 3)（各自自称“重聚焦像”“部分开口像”“EPI”“深度”）。是把 z 轴读作角度轴 V、y 轴读作角度轴 U 而得的无意义有限值。- 只有 ``lf_all_in_focus`` 因参数不足给出 TypeError（不是类型问题）。反向（把光场传给 ``vol_label_slice_rgb``）会因 shape[3] != 3 而 fail-closed。**安全的只有一侧**，故不能依赖运行时检查。与将 zscan 从 video 分离同一判断。入口 = ``vol_colorize_labels`` (labels -> rgbvolume) 与 ``vol_label_overlay`` (voxel + labels -> rgbvolume)，出口 = ``vol_label_slice_rgb`` / ``vol_label_mpr_rgb`` (-> rgbimage)。产 2、吃 2，故不成死胡同。
+
+## `optdraw.py`
+
+- **L891** _(ja)_ — ★上面図は第三角法で側面図と横軸 y を共有するので、センサーの長辺(像の横 = 世界の x)は縦に描かれる。 向きを取り違えないよう、軸の矢印と名前を描く(+X が上)。
 
 ## `optics.py`
 

@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 612 / 1416 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 612 / 1417 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -1709,6 +1709,10 @@
 
 - **L63** — ★ 다만 기존 `labels` 술어는 ``ndim >= 1``이라 **2-D의 라벨 이미지와 3-D의 라벨 볼륨이 공존한다**. 본 모듈의 11 op는 2-D를 넘기면 전부 ValueError(fail-closed)가 되므로 **잘못 넣은 것이 조용히 통과하는 일은 없다**. 위험한 것은 반대로, 2-D 시드밖에 없는 풀에서는 한 번도 실행되지 않은 채 "발견 제로"처럼 보인다 —— opsphoton이 counts에서 밟은 함정과 같은 형태다. 배선 쪽에서 반드시 3-D 라벨 시드를 부을 것(아래 "부모가 배선할 때" 참조). * voxel — ``vol_label_overlay``가 겹치는 원래 그레이 볼륨, 그리고 ``vol_label_color_flicker``가 받는 이진 볼륨. 둘 다 (D,H,W)의 기존 voxel 어휘 그 자체라 새 용어를 만들 이유가 없다. * rgbimage — 단면과 투영의 반환 (H,W,3). 기존 rgbimage 소비 op(정반사 분리·색 변환·저장)가 의미를 유지한 채 쓸 수 있다. **여기가 rgbvolume 어휘의 출구**이므로 새 어휘가 막다른 길이 되지 않는다. * matrix — ``vol_label_palette``의 반환 (n+1, 3). 2-D 실행렬 그 자체. * table — 형상 통계 / 범례 / 깜빡임 측정 / 색이 입혀진 메시의 집합.
 - **L77** — ★ "색이 입혀진 메시의 집합"에 새 어휘를 만들지 않은 것은 **실측의 결과**다. 처음에는 `colormeshes`를 더하려 했으나, 기존 table 소비 op를 전부 훑어 ``vol_labels_to_meshes``의 반환을 넘겨 보니(2026-09-02 실측, ops3d / ops1d / opsmath / opsoptics / opslightfield / opsphoton / opsacoustics / opsinterferometry / opscadmap을 횡단), table을 먹는 op는 **3건(abcd_matrix / wavefront_stats / istft)뿐이고, 3건 모두 ValueError로 fail-closed**였다. 즉 "섞으면 조용히 틀린다"는 조건을 충족하지 않는다. 충족하지 않는 것에 어휘를 더하면 소비자 제로의 새 어휘 = 막다른 길이 하나 늘 뿐이다(``docs/OP_COMBINATION_MATRIX.md``의 판단 기준). 또한 개별 메시를 ``mesh`` sort로 하류로 흘리고 싶을 때는 ``[(m["vertices"], m["faces"]) for m in result]``로 벗긴다 —— 색을 버리는 조작이므로 adapter에서 암묵적으로 하지 않는다. -------------------------------------------------------------------------- 새 어휘 하나와 그 이유(실측 기반) -------------------------------------------------------------------------- * rgbvolume — **(D, H, W, 3)의 색이 입혀진 볼륨**. 기존 `lightfield`의 술어는 ``ndim == 4``뿐이므로 색 볼륨은 **lightfield를 완전히 만족한다**. 실측(2026-09-02, ``(8, 16, 16, 3)``의 색 볼륨을 lightfield의 op에): - ``lf_refocus`` / ``lf_subaperture`` / ``lf_epi`` / ``lf_depth_from_focus``의 **4 op가 예외도 NaN도 내지 않고** 유한한 (16, 3) 결과를 반환한다(각각 "재초점 상" "부분 개구 상" "EPI" "깊이"를 자칭). z 축을 각도 축 V, y 축을 각도 축 U로 읽은, 의미 없는 유한값이다. - ``lf_all_in_focus``만은 인자 부족으로 TypeError(타입 이야기가 아니다). 역방향(라이트필드를 ``vol_label_slice_rgb``에)은 shape[3] != 3으로 fail-closed한다. **안전한 것은 한쪽뿐**이므로 실행 시 체크에 기댈 수 없다. zscan을 video에서 분리한 것과 같은 판단. 입구 = ``vol_colorize_labels`` (labels -> rgbvolume)와 ``vol_label_overlay`` (voxel + labels -> rgbvolume), 출구 = ``vol_label_slice_rgb`` / ``vol_label_mpr_rgb`` (-> rgbimage). 낳는 것 2·먹는 것 2로 막다른 길이 되지 않는다.
+
+## `optdraw.py`
+
+- **L891** _(ja)_ — ★上面図は第三角法で側面図と横軸 y を共有するので、センサーの長辺(像の横 = 世界の x)は縦に描かれる。 向きを取り違えないよう、軸の矢印と名前を描く(+X が上)。
 
 ## `optics.py`
 
