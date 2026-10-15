@@ -381,6 +381,11 @@ def _rot(rng):
     return q * np.sign(np.linalg.det(q))
 
 
+def _drawing():
+    import optdraw
+    return optdraw.lens_section_drawing(_lens())
+
+
 def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
@@ -415,6 +420,15 @@ def _optics_builders():
         "defocus_spot_vs_depth": tele_first(n_points=3, samples=21),
         "vignetting_vs_field": tele_first(n_points=4, samples=21),
         "lens_equivalent_pinhole": tele_first(width=32, height=32),
+        # optdraw(2026-10-15): 図の dict(kind "optdraw")と、その SVG / DXF の文字列が要る(印の無い dict は拒否)
+        "lens_section_drawing": lens_first(),
+        "lens_element_drawing": lens_first(trials=4),
+        "vision_setup_drawing": os_call(lambda OS, cam, sc, li, rng: ([layout(OS, li)], {})),
+        "drawing_svg": lambda pool, rng: ([_drawing()], {}),
+        "drawing_dxf": lambda pool, rng: ([_drawing()], {}),
+        "drawing_raster": lambda pool, rng: ([_drawing()], {"dpi": 10.0}),
+        "svg_entities": lambda pool, rng: ([__import__("optdraw").drawing_svg(_drawing())], {}),
+        "dxf_entities": lambda pool, rng: ([__import__("optdraw").drawing_dxf(_drawing())], {}),
         "optimize_lens": lens_first(iterations=2, rings=2),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         "distortion_map": lens_first(image_size=(32, 32)),

@@ -5877,6 +5877,13 @@
     "de": "Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz)",
     "hi": "optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency)"
    },
+   "optics-drawings": {
+    "zh": "光学系统的图纸(以 SVG / DXF 输出透镜截面图、成像系统布置图和单透镜制造图)",
+    "tw": "光學系統的圖面(以 SVG / DXF 輸出透鏡截面圖、成像系統配置圖與單透鏡製造圖)",
+    "ko": "광학계 도면(렌즈 단면도·촬상계 설치도·단렌즈 제작도를 SVG / DXF로)",
+    "de": "Optische Zeichnungen (Linsenschnitte, Aufbauzeichnungen und Einzellinsen-Fertigungszeichnungen nach ISO 10110 als SVG / DXF)",
+    "hi": "optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में)"
+   },
    "illumination-cone-vs-na": {
     "zh": "用照明光锥与观察 NA 显现或隐藏镜面的微小倾斜(球冠的交集 → 倾斜的带 → 凹痕、划伤、喷砂面的不匀)",
     "tw": "用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻)",

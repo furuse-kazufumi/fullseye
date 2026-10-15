@@ -1,0 +1,74 @@
+---
+op: vision_setup_drawing
+dim: optics
+category: drawing
+in: table
+out: table
+examples: [poc_optics_drawings]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.6.0  # fullseye lib version this note was generated for
+---
+
+# vision_setup_drawing — OPTICS `drawing` op
+
+- **データ種**: `table` → `table`
+- **呼び出し**: `import fullseye as fs; fs.ledger.vision_setup_drawing(layout, view='both', barrel_diameter_mm=30.0, body_mm=40.0, scale=None, title=None)` (実装を直接呼ぶなら `import optdraw; optdraw.vision_setup_drawing(layout, view='both', barrel_diameter_mm=30.0, body_mm=40.0, scale=None, title=None)`、台帳から引くなら `opsoptics.get("vision_setup_drawing")`)
+
+## 使い方
+
+撮像系の設置図(``table``、図の dict)—— ``optscene.vision_layout`` から側面図と上面図を描く。
+
+描くもの: 作業面(z = 0)と部品(``scene`` があれば箱・円筒・球・板を投影、くり抜きは破線)、カメラ(鏡筒・
+本体・センサー面。鏡筒の先端 = 主点 = ``optscene`` のピンホール)、光軸(一点鎖線)、視野の錐(センサーの 4 隅の
+画素の縁から逆投影した 4 本の光線と、作業面の上の視野の四角)、被写界深度の帯(光軸に沿って ±DOF/2)、照明 5 種
+(ring = 円環と仰角、dome = 半球と天頂の穴、bar = 棒と仰角、coaxial = ハーフミラーと横の光源、backlight = 部品の
+下の面光源)と光の向きの矢印。寸法: 作動距離 WD・視野の幅(側面図は縦 = センサーの高さ方向、上面図は両方)・
+DOF・照明の高さと半径・仰角。諸元の表(倍率・作動 F 値・回折限界・物体側の画素・DOF・律速)を文字で書く。
+
+*view* は ``"side"`` / ``"top"`` / ``"both"``。側面図は (y, z)、上面図は (y, x) で、第三角法の並び(上面図を
+側面図の上に置き、横軸 y を共有する)。センサーの像の横(``camera`` の right)は世界の x、縦は y。
+★鏡筒の大きさ(*barrel_diameter_mm*)とカメラ本体(*body_mm*)は ``lens_spec`` に無いので図のための仮の寸法。
+作動距離は ``optscene`` の薄肉の模型どおり**物体から主点まで**(実機のカタログの WD は前玉の先端から)。
+
+返り値の ``values``: ``working_distance`` / ``fov_mm``(横, 縦)/ ``dof_mm`` / ``magnification`` /
+``fov_corners``(作業面の上の 4 隅、3-D)/ ``lights``(照明ごとの種類・高さ・半径・仰角)。
+
+## ファミリ共通の入力契約(fail-closed)
+
+optics の全 op は入力を検証してから計算する(黙って通さない):
+
+- **単位は引数名に埋め込む** — `_mm` / `_um` / `_deg` / `_mrad`。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。
+- **文字列は `ValueError`** — `float('50')` は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: `thin_lens('50', '200')` がもっともらしい 66.667 mm を返していた)。bool も `True == 1` の暗黙昇格として拒否。
+- **complex / masked array は `ValueError`**(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。
+- **0 除算とその親戚を名指しで拒否**: 焦点距離 0・曲率半径 0・屈折率 <= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 <= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。
+- **非有限を返すのは 2 op だけ、しかも契約として明記**: `depth_of_field` の過焦点距離以遠の `far_mm = inf`(それが過焦点距離の定義)と `gaussian_beam` のウエストでの `wavefront_radius_mm = inf`(平面波面の曲率半径)。どちらも有限の相棒(`far_is_infinite` / `curvature_per_mm`)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して `ValueError`** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。
+- **サイズ上限**: 生成格子は `optics.MAX_GRID`(4096)、供給された場/PSF/開口は `optics.MAX_FIELD_ELEMENTS`(2^24)、ABCD 素子列は `optics.MAX_SYSTEM_ELEMENTS`(1024)、Zernike は `MAX_ZERNIKE_TERMS`(512)/ `MAX_ZERNIKE_ORDER`(40)/ `MAX_ZERNIKE_BASIS`(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。
+- **物理的に不可能な状態も拒否**: 偏光度 > 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。
+
+## 詳しい使い方ガイド
+
+- [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
+
+## 型が繋がる次の op(`table` を入力に取れる)
+
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [sfr_from_edge](../imaging/sfr_from_edge.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md)
+
+## 同カテゴリ(`drawing`)
+
+[lens_section_drawing](lens_section_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+
+---
+*Provenance: optdraw.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

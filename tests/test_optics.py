@@ -896,7 +896,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: 近赤外の分光撮像(食品の異物・樹脂の選別)で matprop に 3 op、spectral に 5 op(259 → 267)。
     # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
-    assert len(opsoptics.OPSOPTICS) == 285
+    # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
+    assert len(opsoptics.OPSOPTICS) == 293
+    assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
     assert len(opsoptics.list_ops("oct")) == 13
@@ -916,7 +918,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "confocal", "design", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
         "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44

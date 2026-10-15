@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — optscene の撮像の倍率が光学バジェットと食い違っていた(vision_layout / observe_surface)
+- `optical_camera` に `image_distance_mm`(ピンホール → センサーの距離)を足し、`vision_layout` と `observe_surface` は薄肉レンズを作動距離に合焦させた像距離 v = f·WD/(WD − f) を渡す。以前は焦点距離 f を渡していて、描く画像の倍率は f/WD、`optical_budget` の倍率は f/(WD − f) と同じ構成で 2 つの模型が混ざっていた(f 25 mm・WD 200 mm で視野 28.26 mm → 正しくは 24.73 mm、14 %)。`optical_camera` を直接呼ぶ既定(無限遠合焦の近似)は変わらない。画素が面上で覆う幅(加工目の前置フィルタ)とラインスキャンの直交方向の画素も像距離で割る。
+- `examples/vision_layout_from_catalog.py` の視野の門は「画素数 × 画素 × WD / f」を両辺に入れていて素通ししていた。視野 8.2800 → 7.9488 mm(f 8 mm・WD 200 mm)、観察の照明比較は同軸 / ドームのコントラスト比 16 → 17 倍、リング 4.1722 → 4.9861。設置図(`optdraw`)の検分で見つけた。
+
+### Added — 光学系の図面(optdraw 8 op + PoC)
+- `optdraw`(`opsoptics` の新カテゴリ `drawing`、8 op): `lens_section_drawing`(処方 → 子午断面。円錐 + 非球面の sag、コバ・絞り・像面、絞りを狙った実光線、EFL / BFL / 全長 / 像高の寸法線、処方表)、`vision_setup_drawing`(`vision_layout` → 側面図と上面図、視野の錐・WD・DOF の帯・照明 5 種)、`lens_element_drawing`(ISO 10110 の 3 分割の表、公差は `tolerance_analysis` から)、`drawing_svg` / `drawing_dxf`(stdlib だけの SVG と DXF R12)、`drawing_raster`(matplotlib 任意)、`svg_entities` / `dxf_entities`(読み戻し)。
+- PoC `poc_optics_drawings`(49 門、仮番号): 図のファイルから読み戻して採点 —— Cooke triplet 2 本の EFL が公表値と 7e-6 / 2e-5、面の座標が球面の sag の閉形式と 6e-7 mm、光線の折れ点が面の上に 5e-7 mm、主光線が `raytrace.chief_ray` と 5e-7 mm、テレセンの主光線の傾きが `telecentric.chief_ray_angle` と 3e-7°、設置図の視野の錐・WD・DOF・仰角が閉形式どおり、製作図の n_d / ν_d が N-BK7 の公表値どおり。ezdxf 1.4.4(別の venv)が 11 枚を監査エラー 0 で読み、座標・文字が一致。壊した図(sag の符号・光線のずれ・数字の書き換え・VERTEX の欠け)で門が赤になる。
+- 能力ノート `docs/capabilities/optics-drawings.md`、op 要約 6 言語、`tests/test_optdraw.py`。
+
 ### Added — 工業用 OCT(octscan 13 op + PoC、実測は CC BY 4.0 の公開データ)
 - `octscan`(`opsoptics` の新カテゴリ `oct`、13 op): `oct_design`(軸分解能 (2 ln 2/π) λ0²/Δλ・深さ範囲 λ0²/(4δλ)・roll-off の |sinc|×ガウス・ショット雑音律の SNR・横分解能と焦点深度)、`oct_dispersion_broadening`(√(1+σ⁴φ₂²) と補償係数 a2・a3)、`oct_interferogram` / `oct_bscan_simulate`(層の並び → 干渉スペクトル。場の和の |E|² なので相互相関・自己相関・DC が入る。分光器(λ 等間隔 / k 等間隔)と波長掃引、屈折率と分散は `materials`、空洞・点散乱体・ビームの横の広がりと焦点・点照明とライン照明)、`oct_from_spectra`(生のスペクトルの入口)、`oct_k_linearize`、`oct_dispersion_estimate`(鏡の位相 / 鋭さ最大)、`oct_dispersion_compensate`、`oct_ascan`(窓・DC 除去・直交の組で鏡像を分ける)、`oct_bscan`、`oct_layer_thickness`(群屈折率で物理厚。点像の幅の 1.4 倍より狭い・雑音に沈む・谷から立たない界面は拒否)、`oct_bscan_boundaries`(動的計画法で界面を辿る、表面からの相対の探索)、`oct_bscan_flatten`。
 - PoC `poc_industrial_oct`(32 門、図 14 枚 + GIF): 公開の自動車塗装の生スペクトル(Liverpool Research Data Catalogue 126、CC BY 4.0、`data/oct_real/`)で透明層が論文の OCT と 1.5 µm・顕微鏡と 3.6 µm 以内、着色層は 4 枚中 3 枚が顕微鏡と 2.3 µm 以内(1 枚は 7.6 µm ずれて未解決)、白の見本の着色層の下は拒否、透明層の光学厚の深さに水平な自己相関の幽霊。★ファイルと論文の表の見本の対応は論文に無く、透明層の厚さで推定(色の名前が入れ替わって見える)。合成: 群屈折率で真値と 0.04 µm(位相屈折率なら 0.9〜1.9 % 厚い)、SNR が閉形式と 0.01 dB(λ 等間隔 + 3 次補間は補間で雑音が相関して +1 dB 甘く見える)、分散の広がりが閉形式と 0.5 % 以内で 3 通りの補償で戻る、鏡像の残りが tan(δ/2) と 0.1 dB、薄い層と散乱の限界、コートの厚さの地図と空洞・剥離。

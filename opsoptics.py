@@ -38,6 +38,12 @@ telecentric(telecentric.py、2026-10-15 追加)— **テレセントリックレ
 両側テレセン)の生成、主光線の傾き(テレセン度)、像面を固定して物体を動かしたときの倍率、段差の上下の
 寸法の誤差、ぼけの RMS、前玉で決まる視野(ケラレ)、``render3d`` へのピンホールの写しを返す。
 
+drawing(optdraw.py、2026-10-15 追加)— **光学系の図面**。``raytrace`` の処方も ``vision_layout`` も数と dict を
+返すだけで、図を 1 枚も出さなかった。optdraw はレンズの子午断面図(面の sag・コバ・絞り・像面・絞りを狙った
+実光線・EFL / BFL / 全長 / 像高の寸法線・処方表)、撮像系の設置図(側面図と上面図、視野の錐・WD・DOF の帯・照明 5 種)、
+単レンズの製作図(ISO 10110 の 3 分割の表、公差は ``tolerance_analysis`` から)を組み、stdlib だけの SVG と
+DXF R12 に書き出し、書いた図から座標と文字を読み戻す(門は読み戻しで採点する)。
+
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
 (曲率/間隔/円錐/非球面係数を変数に、多視野・多波長の横収差 + EFL 拘束)。
@@ -112,12 +118,14 @@ import fiberoptics
 import filmoptics
 import moirealign
 import telecentric
+import optdraw
 import linescan
 import pixelshift
 import octscan
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
+        "optdraw": optdraw,
         "linescan": linescan,
         "pixelshift": pixelshift,
         "octscan": octscan,
@@ -534,6 +542,18 @@ _CATALOG = {
         ("moire_differential_shift", "moirealign", [], "table"),
         ("moire_mark_read", "moirealign", ["image2d", "image2d"], "table"),
         ("moire_phase_crlb", "moirealign", [], "table"),
+    ],
+    "drawing": [  # 光学系の図面(optdraw、2026-10-15): 図の dict(kind "optdraw")を組み、SVG / DXF の文字列に書き、
+        # 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が
+        #   ValueError で拒む。SVG / DXF は既存の text(文字列)、画像は rgbimage。
+        ("lens_section_drawing", "optdraw", ["table"], "table"),
+        ("vision_setup_drawing", "optdraw", ["table"], "table"),
+        ("lens_element_drawing", "optdraw", ["table"], "table"),
+        ("drawing_svg", "optdraw", ["table"], "text"),
+        ("drawing_dxf", "optdraw", ["table"], "text"),
+        ("drawing_raster", "optdraw", ["table"], "rgbimage"),
+        ("svg_entities", "optdraw", ["text"], "table"),
+        ("dxf_entities", "optdraw", ["text"], "table"),
     ],
     "telecentric": [  # テレセントリックレンズと寸法計測(telecentric、2026-10-15): 絞りの位置で主光線の傾きを決め、
         # 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。

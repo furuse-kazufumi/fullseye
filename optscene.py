@@ -280,7 +280,7 @@ def scene_difference(solid: dict, cavity: dict) -> dict:
 def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
                    resolution=(256, 256), working_distance_mm: float = 200.0,
                    look_at_mm=(0.0, 0.0, 0.0), tilt_deg: float = 0.0,
-                   azimuth_deg: float = 0.0) -> dict:
+                   azimuth_deg: float = 0.0, image_distance_mm: float = None) -> dict:
     """実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。
 
     ``tilt_deg`` は真上(0°)からの傾き、``azimuth_deg`` はその方位。カメラは
@@ -288,8 +288,16 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     ―― ``calib`` / ``calibration3d`` 系の op と同じ規約なので、そのまま
     再投影や校正の検証に渡せる。
 
-    視野は tan 半角 = (画素数/2 · 画素ピッチ) / 焦点距離 で決まる。作動距離での
+    視野は tan 半角 = (画素数/2 · 画素ピッチ) / 像距離 で決まる。作動距離での
     視野幅 [mm] を ``fov_mm`` に入れてあるので、部品が収まるかを見てから撮れる。
+
+    ``image_distance_mm`` はピンホールからセンサーまでの距離(像距離 v)。省くと
+    ``focal_mm``(無限遠に合焦した近似)。★レンズを作動距離に合焦させた構成では
+    v = f·WD/(WD − f) で、倍率は v/WD = f/(WD − f)(``optical_budget`` と同じ薄肉の式)。
+    2026-10-15 まで ``vision_layout`` と ``observe_surface`` が v の代わりに f を渡していて、
+    描く画像の倍率は f/WD、バジェットの倍率は f/(WD − f) と同じ構成で 2 つのモデルが混ざって
+    いた(f 25 mm・WD 200 mm で視野が 14 % 広い)。``focal_mm`` はレンズの焦点距離のまま
+    残る(被写界深度のぼけ ``defocus_blur`` が使う)。
     """
     f = _pos(focal_mm, "focal_mm")
     px = _pos(pixel_um, "pixel_um") * 1e-3                      # µm → mm
@@ -298,6 +306,7 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     if res.shape != (2,) or res[0] < 2 or res[1] < 1:
         raise ValueError(f"resolution must be (width >= 2, height >= 1), got {resolution!r}")
     wd = _pos(working_distance_mm, "working_distance_mm")
+    v = f if image_distance_mm is None else _pos(image_distance_mm, "image_distance_mm")
     tgt = _arr(look_at_mm, "look_at_mm", 3)
     if not np.isfinite(float(azimuth_deg)):                     # NaN が R・t・eye を全部 NaN にしていた
         raise ValueError(f"azimuth_deg must be finite, got {azimuth_deg!r}")
@@ -313,13 +322,26 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     right = _unit(np.cross(fwd, ref)[None])[0]
     down = np.cross(fwd, right)                                 # 画像の +y は下向き(CV 規約)
     w, h = int(res[0]), int(res[1])
-    fpx = f / px
+    fpx = v / px
     K = np.array([[fpx, 0.0, (w - 1) / 2.0], [0.0, fpx, (h - 1) / 2.0], [0.0, 0.0, 1.0]])
     R = np.stack([right, down, fwd])                            # world → camera
     return {"K": K, "R": R, "t": -R @ eye, "eye": eye, "forward": fwd,
             "width": w, "height": h, "focal_mm": f, "pixel_mm": px,
-            "working_distance_mm": wd,
-            "fov_mm": (w * px * wd / f, h * px * wd / f)}
+            "image_distance_mm": v, "working_distance_mm": wd,
+            "fov_mm": (w * px * wd / v, h * px * wd / v)}
+
+
+def _image_distance(camera):
+    """ピンホールからセンサーまでの距離(古い dict には無いので焦点距離で代える)。"""
+    return float(camera.get("image_distance_mm", camera["focal_mm"]))
+
+
+def _thin_lens_image_distance(focal_mm, working_distance_mm):
+    """薄肉レンズを作動距離に合焦させたときの像距離 v = f·WD/(WD − f)(``optical_budget`` の倍率と同じ模型)。"""
+    f, wd = float(focal_mm), float(working_distance_mm)
+    if not wd > f:
+        raise ValueError(f"working_distance_mm {wd} must exceed focal_mm {f}")
+    return f * wd / (wd - f)
 
 
 def camera_rays(camera: dict) -> tuple:
@@ -1491,7 +1513,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
     o, d = camera_rays(camera)
     hit = trace_rays(scene, o, d)
     # 画素が面上で覆う幅 [mm]。加工目の前置フィルタ(解像できない目を平坦にする)に使う
-    fp = np.where(np.isfinite(hit["t"]), hit["t"], 0.0) * camera["pixel_mm"] / camera["focal_mm"]
+    fp = np.where(np.isfinite(hit["t"]), hit["t"], 0.0) * camera["pixel_mm"] / _image_distance(camera)
     col = _shade(scene, hit, d, lights, float(ambient), int(depth), bool(shadows), fp,
                  light_samples, float(wavelength_nm))
     if environment is not None and float(environment_gain) != 0.0:
@@ -1509,7 +1531,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
             ro, rd, nsub = _subpixel_rays(camera, rows.astype(float), cols.astype(float), ss)
             rhit = trace_rays(scene, ro, rd)
             rfp = (np.where(np.isfinite(rhit["t"]), rhit["t"], 0.0)
-                   * camera["pixel_mm"] / (camera["focal_mm"] * ss))
+                   * camera["pixel_mm"] / (_image_distance(camera) * ss))
             rc = _shade(scene, rhit, rd, lights, float(ambient), int(depth), bool(shadows),
                         rfp, light_samples, float(wavelength_nm))
             if environment is not None and float(environment_gain) != 0.0:
@@ -1669,6 +1691,7 @@ def inspection_dataset(scene, camera, lights, n: int = 8, seed: int = 0,
         if float(tilt_jitter_deg) > 0.0:
             cam = optical_camera(
                 focal_mm=camera["focal_mm"], pixel_um=camera["pixel_mm"] * 1e3,
+                image_distance_mm=_image_distance(camera),
                 resolution=(camera["width"], camera["height"]),
                 working_distance_mm=camera["working_distance_mm"],
                 tilt_deg=float(rng.uniform(0.0, float(tilt_jitter_deg))),
@@ -2783,6 +2806,8 @@ def vision_layout(sensor: dict, lens: dict, lights, scene=None,
         raise ValueError("lights must contain at least one light_spec() result")
     lam = float(np.mean([float(l.get("wavelength_nm", 550.0)) for l in lights]))
     cam = optical_camera(focal_mm=lens["focal_mm"], pixel_um=sensor["pixel_um"],
+                         image_distance_mm=_thin_lens_image_distance(lens["focal_mm"],
+                                                                     lens["working_distance_mm"]),
                          resolution=(sensor["width"], sensor["height"]),
                          working_distance_mm=lens["working_distance_mm"],
                          look_at_mm=look_at_mm, tilt_deg=tilt_deg, azimuth_deg=azimuth_deg)
@@ -2920,7 +2945,7 @@ def linescan_capture(scene, camera, lights, velocity_mm_s: float = 100.0,
         dirs = np.broadcast_to(d0[None, :, :], (n_lines, W, 3)).reshape(-1, 3)
         hit = trace_rays(scene, org, dirs)
         fp = (np.where(np.isfinite(hit["t"]), hit["t"], 0.0)
-              * camera["pixel_mm"] / camera["focal_mm"])
+              * camera["pixel_mm"] / _image_distance(camera))
         col = _shade(scene, hit, dirs, lights, float(ambient), int(depth), True, fp,
                      light_samples)
         bg = float(ambient) + _light_background(lights, org, dirs)
@@ -2945,7 +2970,7 @@ def linescan_capture(scene, camera, lights, velocity_mm_s: float = 100.0,
             _mod, _tilt, lab = _defect_sample(obj, hit["point"][sel])
             flat[np.nonzero(sel)[0]] = lab
             defect |= flat.reshape(n_lines, W)
-    cross = camera["pixel_mm"] * camera["working_distance_mm"] / camera["focal_mm"]
+    cross = camera["pixel_mm"] * camera["working_distance_mm"] / _image_distance(camera)
     return {"image": img, "depth_mm": np.where(idx >= 0, z, np.nan),
             "part_mask": idx == 0, "defect_mask": defect,
             "pixel_mm_scan": step, "pixel_mm_cross": cross,
@@ -3113,7 +3138,8 @@ def observe_surface(material: str = "al", finish: str = "hairline",
         extra = []
     scene = [plate] + extra
     cam = optical_camera(focal_mm=focal_mm, pixel_um=pixel_um, resolution=resolution,
-                         working_distance_mm=working_distance_mm, tilt_deg=tilt_deg)
+                         working_distance_mm=working_distance_mm, tilt_deg=tilt_deg,
+                         image_distance_mm=_thin_lens_image_distance(focal_mm, working_distance_mm))
     import illumdesign as _id
     light = _id.light_source(kind=illumination, radius_mm=source_size_mm,
                              height_mm=working_distance_mm * 0.55, n=196)
