@@ -39,7 +39,7 @@
 <p>|---|---|---|</p>
 <p>| どこまで決まるか | <code style="color:#22d3bf">simcal_identifiability</code> | Fisher 情報 J^T W J と Cramér-Rao 下界(<code style="color:#22d3bf">mathestimation.crlb_gaussian</code> と同じ定義、直線の模型で一致をテストが確かめる)、条件数(1e6 超で警告)、相関、共線性指数、<b>プロファイル尤度</b>(他のつまみを合わせ直しながら 1 つを動かし、χ² が χ²₁(95 %) = 3.84 上がる所)。片側しか閉じなければ「上限だけ」「下限だけ」として点推定を取り下げる。<code style="color:#22d3bf">at=</code> に真値を渡せば合成の研究で下界だけを計算できる |</p>
 <p>| どれだけ確かか | <code style="color:#22d3bf">simcal_uncertainty</code> | Laplace(Fisher 情報の逆、対数のつまみは非対称の区間)かパラメトリック・ブートストラップ。点推定の無い結果は拒否 |</p>
-<p>| 取り置いた画像で持つか | <code style="color:#22d3bf">simcal_validate</code> | 過適合の門 5 つ(初期値より良い / 保留 ÷ 学習 ≤ 1 + τ / 利得と黒レベルだけの模型より良い / 範囲・事前・端 / 自由なつまみ ≤ 画像が持つ方向の数)。どれか 1 つで拒否。LOCKED は 1 回だけ(2 回目は拒否) |</p>
+<p>| 取り置いた画像で持つか | <code style="color:#22d3bf">simcal_validate</code> | 門 6 つ(相対の 5 つ: 初期値より良い / 保留 ÷ 学習 ≤ 1 + τ / 利得と黒レベルだけの模型より良い / 範囲・事前・端 / 自由なつまみ ≤ 画像が持つ方向の数、と絶対の 1 つ: 学習と保留の χ² の上側確率 p ≥ alpha = 1e-3)。どれか 1 つで拒否。絶対の門は隣の干渉次数に落ちた当てはめ(χ²/ν 60、相対の門は全部通る)を拒否するが、雑音の過大評価は見つけない(4 倍で p = 1)。LOCKED は 1 回だけ(2 回目は拒否) |</p>
 <p>| 模型に何が足りないか | <code style="color:#22d3bf">simcal_discrepancy</code> | 雑音で割った残差の PCA(<code style="color:#22d3bf">mv_residual_pca</code>)を Tracy-Widom 99 % の端と比べる(素の Marchenko-Pastur の端は純雑音でも 10〜14 % 越える)。構造があれば、その形(地図)と「不確かさは楽観側」の注記 |</p>
 <p>| 表 1 枚 | <code style="color:#22d3bf">simcal_report</code> | つまみごとの値・単位・区間・分類と、走らせた門。走らせなかった門は not run |</p>
 <p>8 次の周辺減光の多項式は、画像の中では cos⁴ と同じくらいよく合います(保留の誤差も変わらない)。拒否するのは当てはめの交絡と、「自由なつまみ 10 &gt; 画像が持つ方向 6」の門です —— 画像の過適合は、保留の誤差より先に「決まらない」として現れます。</p>

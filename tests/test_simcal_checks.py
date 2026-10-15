@@ -275,22 +275,55 @@ def test_ledger_public_tier_fuzzer_and_summaries():
             assert e[lang].strip(), (name, lang)
 
 
-def test_wrong_fringe_order_is_not_rejected_by_the_validation_gates_only_warned():
-    """★穴の固定(2026-10-15): 隣の干渉次数に落ちた当てはめ(χ²/自由度 60)は、§6 の過適合の門 5 つを全部通る。
+def test_wrong_fringe_order_is_rejected_by_the_absolute_chi2_gate():
+    """隣の干渉次数に落ちた当てはめ(χ²/ν 60)は、相対の門 1〜5 を全部通るが、絶対の χ² の門(6 番目)が拒否する。
 
-    門はどれも相対比較(初期値より良い・保留 / 学習・利得と黒レベルだけの模型より良い・範囲・次元)で、
-    「雑音の何倍外れているか」の絶対の門が無いから。いまこの誤りを告げるのは fit.warnings(χ² が雑音の
-    +4 sd を超える)だけ —— 1 x 31 の画像は残差 PCA にも小さすぎる。絶対の χ² の門を足したらこの assert を反転する。
+    2026-10-15 まではこの穴をテストで固定していた(相対比較だけでは「雑音の何倍外れているか」を見ない)。
+    当てはめの段の警告(fit.warnings)はそのまま残す。
     """
     sys.path.insert(0, str(ROOT / "tests"))
     import test_simcal as T
     truth = {"n_film": 1.46, "d": 520.0}
     m = T.film_model(np.linspace(400.0, 700.0, 31))
     mo = sc.simcal_observe(m, T.capture(m, truth, 2))
+    ho = T.capture(m, truth, 10002)
     wrong = sc.simcal_fit(mo, n_starts=2, seed=0)
     assert wrong["fit"]["chi2_red"] > 10 and len(wrong["fit"]["warnings"]) >= 1
-    v = ck.simcal_validate(wrong, T.capture(m, truth, 10002))
-    assert v["status"] == "accepted" and v["validation"]["failed"] == []          # 門は通してしまう(穴)
-    assert v["errors"]["holdout"] > 10                                            # 数は残っている
+    v = ck.simcal_validate(wrong, ho)
+    assert v["status"] == "refused" and v["validation"]["failed"] == ["fit_consistent_with_noise"]
+    g = v["validation"]["gates"]["fit_consistent_with_noise"]
+    assert g["train"]["chi2_per_nu"] > 10 and g["train"]["p"] < 1e-3 and g["holdout"]["p"] < 1e-3
+    assert v["theta_hat"] == {} and "local minimum" in v["undetermined"]["d"]
+    right = ck.simcal_validate(sc.simcal_fit(mo, method="multistart", n_starts=16), ho)
+    assert right["status"] == "accepted" and right["validation"]["gates"]["fit_consistent_with_noise"]["passed"]
     with pytest.raises(MetricContractError, match="too small"):
         ck.simcal_discrepancy(wrong)
+
+
+def test_absolute_chi2_gate_false_rejections_on_g1_and_blind_to_overestimated_noise():
+    """G1 の 40 組(正しい模型・正しい雑音)で 6 番目の門の偽の拒否は alpha = 1e-3 の水準(期待 0.08 件 → 0 件)。
+    雑音の分散を 4 倍に見積もると p は 1 に張りつき、門は通る —— この門は雑音の過大評価を見つけない。"""
+    model = g1_model()
+    knobs = model["knobs"]
+    d = doe.doe_lhs(40, [(k["name"], 0.0, 1.0) for k in knobs], seed=7)
+    U = 0.05 + 0.9 * (d["coded"] + 1.0) / 2.0
+    rejected, ps = 0, []
+    for i, u in enumerate(U):
+        truth = {k["name"]: sc._from_u(float(u[j]), k) for j, k in enumerate(knobs)}
+        r = sc.simcal_fit(sc.simcal_observe(model, capture(model, truth, 1000 + i)), allow_undetermined=True)
+        if r["undetermined"]:
+            continue
+        g = ck.simcal_validate(r, capture(model, truth, 11000 + i), dims=10)["validation"]["gates"]
+        g6 = g["fit_consistent_with_noise"]
+        rejected += not g6["passed"]
+        ps += [g6["train"]["p"], g6["holdout"]["p"]]
+    assert len(ps) >= 76
+    assert rejected == 0, rejected
+    assert 0.2 < float(np.median(ps)) < 0.8                                      # p はおおよそ一様
+    # 雑音の分散を 4 倍: K を 4 倍・暗雑音(電子)を半分 -> K^2 sigma_d^2 も K mu も 4 倍
+    over = sc.simcal_model(chain=model["chain"], knobs=[dict(k) for k in knobs], scene=model["scene"],
+                           noise={"kind": "emva", "K": 4 * K, "sigma_d": SD / 2, "dark": "offset"})
+    truth = {"sigma": 1.2, "f": 60.0, "gain": 900.0, "offset": 80.0}
+    r = sc.simcal_fit(sc.simcal_observe(over, capture(over, truth, 5)))
+    g6 = ck.simcal_validate(r, capture(over, truth, 10005), dims=10)["validation"]["gates"]["fit_consistent_with_noise"]
+    assert g6["passed"] and g6["train"]["p"] > 0.999 and g6["train"]["chi2_per_nu"] < 0.35

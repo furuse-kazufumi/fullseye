@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # simcal_validate — SIMCAL `check` op
 
 - **データ種**: `calresult × simmodel` → `calresult`
-- **呼び出し**: `import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, seed=0) -> 'dict'` (実装を直接呼ぶなら `import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, seed=0) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_validate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -> 'dict'` (実装を直接呼ぶなら `import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_validate")`)
 
 ## 使い方
 
@@ -32,7 +32,17 @@ Errors are reduced chi^2 (1 = the residuals are exactly the noise). Gates, each 
 4. ``estimate_plausible`` — every estimate inside its range, not within 1 % of an end, and
    within 3 sd of its prior when one is given;
 5. ``knobs_within_dims`` — free knobs <= output directions above noise (``dims``, or computed
-   from a Latin hypercube over the knobs with ``sensitivity.mv_residual_pca``).
+   from a Latin hypercube over the knobs with ``sensitivity.mv_residual_pca``);
+6. ``fit_consistent_with_noise`` — the absolute gate: on the train images (nu = pixels − free
+   knobs) and on the holdout images (nu = pixels), chi^2 of the noise-normalised residuals has an
+   upper-tail probability P(chi^2_nu >= chi^2) of at least ``alpha`` (default 1e-3). Gates 1-5
+   are relative comparisons and pass a fit that is 60 times the noise everywhere (a thin film in
+   the wrong fringe order, measured); this one does not. Judged on p, not on chi^2/nu, because
+   chi^2/nu concentrates on 1 for large nu (both are returned). The variance is the noise model's
+   plus, for a stochastic model, its sample variance. A failure means: the fit is bad for this
+   noise model — a local minimum, a model discrepancy, or a noise estimate that is too small.
+   ★It does NOT detect a noise model that is too large: over-estimating the variance by 4x drives
+   p to 1 and the gate passes (measured) — that direction is visible only as chi^2/nu << 1.
 
 ``locked`` is scored **once** (``errors.locked``) and is not used by any gate; a result that
 already carries a LOCKED score is refused (the ``robust.py`` discipline: the untouched number

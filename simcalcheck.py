@@ -397,7 +397,8 @@ def _output_dims(model, P, seed):
     return int(sensitivity.mv_residual_pca(Yc, noise_sigma=1.0)["n_structural"])
 
 
-def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, seed=0) -> dict:
+def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=1e-3,
+                    seed=0) -> dict:
     """Over-fitting gates on held-out images; any one failing rejects the calibration (the estimates are withdrawn).
 
     ``holdout`` (and ``locked``): observed simmodels of the same knobs (``simcal_observe`` with
@@ -413,7 +414,17 @@ def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None,
     4. ``estimate_plausible`` — every estimate inside its range, not within 1 % of an end, and
        within 3 sd of its prior when one is given;
     5. ``knobs_within_dims`` — free knobs <= output directions above noise (``dims``, or computed
-       from a Latin hypercube over the knobs with ``sensitivity.mv_residual_pca``).
+       from a Latin hypercube over the knobs with ``sensitivity.mv_residual_pca``);
+    6. ``fit_consistent_with_noise`` — the absolute gate: on the train images (nu = pixels − free
+       knobs) and on the holdout images (nu = pixels), chi^2 of the noise-normalised residuals has an
+       upper-tail probability P(chi^2_nu >= chi^2) of at least ``alpha`` (default 1e-3). Gates 1-5
+       are relative comparisons and pass a fit that is 60 times the noise everywhere (a thin film in
+       the wrong fringe order, measured); this one does not. Judged on p, not on chi^2/nu, because
+       chi^2/nu concentrates on 1 for large nu (both are returned). The variance is the noise model's
+       plus, for a stochastic model, its sample variance. A failure means: the fit is bad for this
+       noise model — a local minimum, a model discrepancy, or a noise estimate that is too small.
+       ★It does NOT detect a noise model that is too large: over-estimating the variance by 4x drives
+       p to 1 and the gate passes (measured) — that direction is visible only as chi^2/nu << 1.
 
     ``locked`` is scored **once** (``errors.locked``) and is not used by any gate; a result that
     already carries a LOCKED score is refused (the ``robust.py`` discipline: the untouched number
@@ -439,7 +450,12 @@ def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None,
     P, u = _problem(res)
     Ph, _ = _problem(res, model=hm)
     train, rtr = _chi_red(P, u)
-    hold, _ = _chi_red(Ph, u)
+    hold, rho = _chi_red(Ph, u)
+    from scipy.stats import chi2 as _chi2
+    a_v = _sc._num(alpha, "alpha", op, 0.0, 0.5, lo_open=True)
+    chi_tr, nu_tr = float(rtr @ rtr), max(1, rtr.size - len(P.free))
+    chi_ho, nu_ho = float(rho @ rho), max(1, rho.size)
+    p_tr, p_ho = float(_chi2.sf(chi_tr, nu_tr)), float(_chi2.sf(chi_ho, nu_ho))
     u0 = np.array([_sc._to_u(k["init"], k) for k in P.free])
     hold0, _ = _chi_red(Ph, u0)
     # gain + offset baseline: weighted least squares of the train images on the initial simulation
@@ -490,6 +506,14 @@ def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None,
         "beats_gain_offset": {"passed": bool(hold < hold_go), "value": hold, "limit": hold_go},
         "estimate_plausible": {"passed": not implaus, "value": len(implaus), "limit": 0, "detail": implaus},
         "knobs_within_dims": {"passed": bool(len(P.free) <= dims_v), "value": len(P.free), "limit": dims_v},
+        "fit_consistent_with_noise": {
+            "passed": bool(p_tr >= a_v and p_ho >= a_v), "value": min(p_tr, p_ho), "limit": a_v,
+            "train": {"chi2": chi_tr, "nu": nu_tr, "chi2_per_nu": chi_tr / nu_tr, "p": p_tr},
+            "holdout": {"chi2": chi_ho, "nu": nu_ho, "chi2_per_nu": chi_ho / nu_ho, "p": p_ho},
+            "detail": "" if (p_tr >= a_v and p_ho >= a_v) else (
+                "the fit is poor for the noise model (chi^2/nu train %.3g, holdout %.3g; p %.3g, %.3g < alpha %g): a "
+                "local minimum, a model discrepancy, or a noise estimate that is too small"
+                % (chi_tr / nu_tr, chi_ho / nu_ho, p_tr, p_ho, a_v))},
     }
     failed = [g for g, v in gates.items() if not v["passed"]]
     res["errors"] = dict(res["errors"], train=train, holdout=hold, holdout_initial=hold0, holdout_gain_offset=hold_go)
@@ -497,9 +521,11 @@ def simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None,
         Pl, _ = _problem(res, model=lm)
         res["errors"]["locked"] = _chi_red(Pl, u)[0]
     if failed:
-        why = "; ".join("%s (%.4g vs %.4g)" % (g, gates[g]["value"], gates[g]["limit"]) for g in failed)
+        why = "; ".join("%s (%.4g vs %.4g)%s" % (g, gates[g]["value"], gates[g]["limit"],
+                                                 (" — " + gates[g]["detail"]) if gates[g].get("detail") else "")
+                        for g in failed)
         for n in list(res["theta_hat"]):
-            _withdraw(res, n, "over-fitting gate failed: %s" % why, "validate")
+            _withdraw(res, n, "validation gate failed: %s" % why, "validate")
         res["determined_combos"] = []
     res["validation"] = {"gates": gates, "failed": failed, "passed": not failed, "tau": tau_v,
                          "output_dims": dims_v, "n_free": len(P.free), "split_holdout": hm["observed"]["split"],
