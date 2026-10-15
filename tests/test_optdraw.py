@@ -150,7 +150,7 @@ def test_setup_drawing_fov_wd_dof_closed_forms(kind):
     lens = OS.lens_spec(focal_mm=25.0, f_number=4.0, working_distance_mm=200.0)
     lay = OS.vision_layout(sensor, lens, [OS.light_spec(kind, radius_mm=60.0, height_mm=40.0, n=12)])
     ents = OD.svg_entities(OD.drawing_svg(OD.vision_setup_drawing(lay)))["entities"]
-    fov_h = 768 * 3.45e-3 * 200.0 / 25.0
+    fov_h = 768 * 3.45e-3 / (25.0 / 175.0)            # 画素数 × 画素 / m、m = f/(WD − f)(薄肉レンズを WD に合焦)
     ends = []
     for e in ents:
         if e.get("tag") == "side:fov_ray":
@@ -277,3 +277,24 @@ def test_raster_has_the_paper_size():
     x0, y0, x1, y1 = d["frame"]
     assert img.ndim == 3 and img.shape[2] == 3
     assert abs(img.shape[1] - (x1 - x0) * d["scale"]) <= 1.5 and abs(img.shape[0] - (y1 - y0) * d["scale"]) <= 1.5
+
+
+def _imaged_width_px():
+    sensor = OS.sensor_spec(pixel_um=13.8, resolution=(256, 192))
+    lens = OS.lens_spec(focal_mm=25.0, f_number=4.0, working_distance_mm=200.0)
+    part = OS.scene_box((0.0, 0.0, 0.05), (6.0, 4.0, 0.05))
+    lay = OS.vision_layout(sensor, lens, [OS.light_spec("dome", radius_mm=80.0, height_mm=70.0, n=24)], scene=[part])
+    mask = np.asarray(OS.layout_capture(lay, supersample=1, apply_diffraction=False)["part_mask"], bool)
+    return int(mask[mask.shape[0] // 2].sum())
+
+
+def test_imaged_width_matches_thin_lens_magnification():
+    """図と独立の経路: 撮った画像の上で幅 12 mm の板が 12 × f/(WD − f) / 画素 の画素数に写る(2026-10-15 の混ざりの門)。"""
+    want = 12.0 * (25.0 / 175.0) / 13.8e-3
+    assert abs(_imaged_width_px() - want) <= 1.0
+
+
+def test_probe_pinhole_at_focal_length_turns_the_imaging_gate_red(monkeypatch):
+    monkeypatch.setattr(OS, "_thin_lens_image_distance", lambda f, wd: float(f))
+    want = 12.0 * (25.0 / 175.0) / 13.8e-3
+    assert abs(_imaged_width_px() - want) > 1.0

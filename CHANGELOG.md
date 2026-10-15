@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — optscene の撮像の倍率が光学バジェットと食い違っていた(vision_layout / observe_surface)
+- `optical_camera` に `image_distance_mm`(ピンホール → センサーの距離)を足し、`vision_layout` と `observe_surface` は薄肉レンズを作動距離に合焦させた像距離 v = f·WD/(WD − f) を渡す。以前は焦点距離 f を渡していて、描く画像の倍率は f/WD、`optical_budget` の倍率は f/(WD − f) と同じ構成で 2 つの模型が混ざっていた(f 25 mm・WD 200 mm で視野 28.26 mm → 正しくは 24.73 mm、14 %)。`optical_camera` を直接呼ぶ既定(無限遠合焦の近似)は変わらない。画素が面上で覆う幅(加工目の前置フィルタ)とラインスキャンの直交方向の画素も像距離で割る。
+- `examples/vision_layout_from_catalog.py` の視野の門は「画素数 × 画素 × WD / f」を両辺に入れていて素通ししていた。視野 8.2800 → 7.9488 mm(f 8 mm・WD 200 mm)、観察の照明比較は同軸 / ドームのコントラスト比 16 → 17 倍、リング 4.1722 → 4.9861。設置図(`optdraw`)の検分で見つけた。
+
 ### Added — 光学系の図面(optdraw 8 op + PoC)
 - `optdraw`(`opsoptics` の新カテゴリ `drawing`、8 op): `lens_section_drawing`(処方 → 子午断面。円錐 + 非球面の sag、コバ・絞り・像面、絞りを狙った実光線、EFL / BFL / 全長 / 像高の寸法線、処方表)、`vision_setup_drawing`(`vision_layout` → 側面図と上面図、視野の錐・WD・DOF の帯・照明 5 種)、`lens_element_drawing`(ISO 10110 の 3 分割の表、公差は `tolerance_analysis` から)、`drawing_svg` / `drawing_dxf`(stdlib だけの SVG と DXF R12)、`drawing_raster`(matplotlib 任意)、`svg_entities` / `dxf_entities`(読み戻し)。
 - PoC `poc_optics_drawings`(49 門、仮番号): 図のファイルから読み戻して採点 —— Cooke triplet 2 本の EFL が公表値と 7e-6 / 2e-5、面の座標が球面の sag の閉形式と 6e-7 mm、光線の折れ点が面の上に 5e-7 mm、主光線が `raytrace.chief_ray` と 5e-7 mm、テレセンの主光線の傾きが `telecentric.chief_ray_angle` と 3e-7°、設置図の視野の錐・WD・DOF・仰角が閉形式どおり、製作図の n_d / ν_d が N-BK7 の公表値どおり。ezdxf 1.4.4(別の venv)が 11 枚を監査エラー 0 で読み、座標・文字が一致。壊した図(sag の符号・光線のずれ・数字の書き換え・VERTEX の欠け)で門が赤になる。

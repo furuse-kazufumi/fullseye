@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # optical_camera — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
 
 ## 使い方
 
@@ -24,8 +24,16 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ―― ``calib`` / ``calibration3d`` 系の op と同じ規約なので、そのまま
 再投影や校正の検証に渡せる。
 
-視野は tan 半角 = (画素数/2 · 画素ピッチ) / 焦点距離 で決まる。作動距離での
+視野は tan 半角 = (画素数/2 · 画素ピッチ) / 像距離 で決まる。作動距離での
 視野幅 [mm] を ``fov_mm`` に入れてあるので、部品が収まるかを見てから撮れる。
+
+``image_distance_mm`` はピンホールからセンサーまでの距離(像距離 v)。省くと
+``focal_mm``(無限遠に合焦した近似)。★レンズを作動距離に合焦させた構成では
+v = f·WD/(WD − f) で、倍率は v/WD = f/(WD − f)(``optical_budget`` と同じ薄肉の式)。
+2026-10-15 まで ``vision_layout`` と ``observe_surface`` が v の代わりに f を渡していて、
+描く画像の倍率は f/WD、バジェットの倍率は f/(WD − f) と同じ構成で 2 つのモデルが混ざって
+いた(f 25 mm・WD 200 mm で視野が 14 % 広い)。``focal_mm`` はレンズの焦点距離のまま
+残る(被写界深度のぼけ ``defocus_blur`` が使う)。
 
 ## ファミリ共通の入力契約(fail-closed)
 

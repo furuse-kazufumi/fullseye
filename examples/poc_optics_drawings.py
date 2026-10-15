@@ -18,8 +18,13 @@
      割線法で探す(入射瞳を使わない)ので、入射瞳が無限遠でも描ける。門: 読み戻した主光線の物体側の傾きが
      ``telecentric.chief_ray_angle``(Newton 法、別の実装)と 1e-6° 以内、テレセン 2 種は 0.06° 未満、通常は 1° 超。
   3. **撮像系の設置図**: 照明 5 種(ring / dome / bar / coaxial / backlight)を描き分ける。門: 視野の錐の 4 本の線が
-     作業面で ±(画素数 × 画素 × WD / f)/2 に届く(閉形式、1e-6 mm)、WD・視野・DOF の数字が閉形式
-     (DOF = (2N_w·c + 2λN_w²)/m²)と表示の桁で一致、仰角の数字が atan(H/R) と一致、上面図の円環の半径が R。
+     作業面で ±(画素数 × 画素 / m)/2 に届く(m = f/(WD − f)、作動距離に合焦させた薄肉レンズ、1e-6 mm)、WD・視野・DOF の
+     数字が閉形式(DOF = (2N_w·c + 2λN_w²)/m²)と表示の桁で一致、仰角の数字が atan(H/R) と一致、上面図の円環の半径が R。
+     さらに図と独立の経路として、同じ構成を ``layout_capture`` で**撮った画像**の上で、幅の分かった部品が
+     幅 × m / 画素 の画素数に写ることを見る(1 画素以内)。★2026-10-15 の検分で、描いた視野(画素数 × 画素 × WD / f)と
+     バジェットの倍率 f/(WD − f) が同じ図の中で 14 % 食い違っているのが見つかった —— 当時のこの門は視野を同じ
+     WD / f の式で採点していた(両辺に同じ模型を入れた門)。原因は ``optscene.vision_layout`` がピンホールの距離に
+     焦点距離 f を渡していたことで、像距離 v = f·WD/(WD − f) に直した(``optscene`` の修正)。
   4. **単レンズの製作図(ISO 10110)**: N-BK7 の平凸 f = 100 mm と両凸。門: 読み戻した R・中心厚・外径の文字が
      処方どおり、n_d・ν_d がメーカーの公表値(N-BK7: 1.51680 / 64.17)と表示の桁で一致、注記の EFL が厚肉
      レンズの公式と一致、縞の本数が sag の差 / (λ/2) の閉形式と一致、Monte-Carlo の EFL の幅が
@@ -334,7 +339,8 @@ def chapter_setup():
         cam, lens = lay["camera"], lay["lens"]
         f, wd, N, px = lens["focal_mm"], lens["working_distance_mm"], lens["f_number"], lay["sensor"]["pixel_um"]
         w, h = lay["sensor"]["width"], lay["sensor"]["height"]
-        fov_w, fov_h = w * px * 1e-3 * wd / f, h * px * 1e-3 * wd / f
+        m_thin = f / (wd - f)                          # 薄肉レンズを WD に合焦(図にもカメラにも頼らない)
+        fov_w, fov_h = w * px * 1e-3 / m_thin, h * px * 1e-3 / m_thin
         # 視野の錐: 側面図の 4 本の線の作業面側の端
         ys = []
         for e in ents:
@@ -345,7 +351,7 @@ def chapter_setup():
         yy = np.array([y for y, _ in ys])
         zz = np.array([z for _, z in ys])
         err = max(abs(yy.max() - fov_h / 2), abs(yy.min() + fov_h / 2), float(np.abs(zz).max()))
-        gate("%s: 視野の錐が作業面で ±%.4f mm に届く(閉形式、< 1e-6 mm)" % (name, fov_h / 2),
+        gate("%s: 視野の錐が作業面で ±%.4f mm に届く(画素数 × 画素 / m、< 1e-6 mm)" % (name, fov_h / 2),
              len(ys) == 4 and err < 1e-6, "誤差 %.1e mm" % err)
         m = f / (wd - f)
         Nw = (1 + m) * N
@@ -452,6 +458,29 @@ def chapter_roundtrip():
 # --------------------------------------------------------------------------- #
 # 6. 壊して確かめる
 # --------------------------------------------------------------------------- #
+def imaged_width_px(OSm, f=25.0, wd=200.0, pixel_um=13.8, width_mm=12.0):
+    """撮った画像の上の部品の幅 [画素]: 薄い板(幅 *width_mm*)を ``layout_capture`` で撮り、中央の行の部品マスクを数える。"""
+    sensor = OSm.sensor_spec(pixel_um=pixel_um, resolution=(256, 192))
+    lens = OSm.lens_spec(focal_mm=f, f_number=4.0, working_distance_mm=wd)
+    part = OSm.scene_box((0.0, 0.0, 0.05), (0.5 * width_mm, 4.0, 0.05))
+    lay = OSm.vision_layout(sensor, lens, [OSm.light_spec("dome", radius_mm=80.0, height_mm=70.0, n=24)],
+                            scene=[part])
+    cap = OSm.layout_capture(lay, supersample=1, apply_diffraction=False)
+    mask = np.asarray(cap["part_mask"], bool)
+    return int(mask[mask.shape[0] // 2].sum()), width_mm * (f / (wd - f)) / (pixel_um * 1e-3), lay
+
+
+def chapter_imaging_scale():
+    print("\n3b. 撮った画像で倍率を測る —— 図にも計算にも頼らない経路")
+    got, want, lay = imaged_width_px(OS)
+    NUMBERS["imaged_px"] = got
+    gate("幅 12 mm の板が撮った画像で %d 画素 = 幅 × m / 画素 = %.1f 画素(1 画素以内)" % (got, want),
+         abs(got - want) <= 1.0, "m = f/(WD − f) = %.5f" % (25.0 / 175.0))
+    gate("描くカメラの倍率(像距離 / 作動距離)がバジェットの倍率と一致",
+         abs(lay["camera"]["image_distance_mm"] / lay["camera"]["working_distance_mm"]
+             - lay["budget"]["magnification"]) < 1e-12)
+
+
 def chapter_probes():
     print("\n6. 壊して確かめる —— 門が赤になるか")
     system = cooke_a()
@@ -492,6 +521,23 @@ def chapter_probes():
         gate("ENTITIES が閉じていない DXF は ValueError", False)
     except ValueError:
         gate("ENTITIES が閉じていない DXF は ValueError", True)
+    # 2026-10-15 に直した混ざり(ピンホールの距離に焦点距離)を戻すと、視野の門と撮像の門が両方赤になるか
+    orig_v = OS._thin_lens_image_distance
+    try:
+        OS._thin_lens_image_distance = lambda f, wd: float(f)
+        lay = setups()["dome"]
+        d = OD.vision_setup_drawing(lay)
+        ents = OD.svg_entities(OD.drawing_svg(d))["entities"]
+        f, wd = lay["lens"]["focal_mm"], lay["lens"]["working_distance_mm"]
+        fov_h = lay["sensor"]["height"] * lay["sensor"]["pixel_um"] * 1e-3 * (wd - f) / f
+        ys = [min(e["points"], key=lambda q: abs(q[1]))[0] for e in ents if e.get("tag") == "side:fov_ray"]
+        err = max(abs(max(ys) - fov_h / 2), abs(min(ys) + fov_h / 2))
+        gate("像距離を焦点距離に戻した設置図は、視野の門で赤(> 1e-3 mm)", err > 1e-3, "誤差 %.3f mm" % err)
+        got, want, _ = imaged_width_px(OS)
+        gate("同じく、撮った画像の板の幅が 1 画素を超えてずれる(撮像の門で赤)", abs(got - want) > 1.0,
+             "%d 画素 vs %.1f 画素" % (got, want))
+    finally:
+        OS._thin_lens_image_distance = orig_v
 
 
 def main():
@@ -503,6 +549,7 @@ def main():
     chapter_cooke()
     chapter_telecentric()
     chapter_setup()
+    chapter_imaging_scale()
     chapter_element()
     chapter_roundtrip()
     chapter_probes()

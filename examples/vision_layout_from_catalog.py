@@ -15,7 +15,10 @@ interface_budget / linescan_capture / observe_surface。
   * センサー対角 = 画素ピッチ × √(w² + h²)。IMX252 は 3.45 µm × 2560 = 8.832 mm(厳密)。
   * Airy 半径 = 1.22 · λ · N。F 値に**比例**する(F/2.8 は F/5.6 のちょうど半分)。
   * 実効 F 値 = N(1 + m)、物体側 Airy = Airy / m、物体側画素 = ピッチ / m(厳密)。
-  * 視野 = 画素数 × 画素ピッチ × WD / f(厳密)。
+  * 視野 = 画素数 × 画素ピッチ / m、m = f/(WD − f)(作動距離に合焦させた薄肉レンズ、厳密)。
+    ★2026-10-15 まで「画素数 × 画素ピッチ × WD / f」と書き、vision_layout も同じ式で描いていた —— 倍率の
+    バジェット(m = f/(WD − f))と描く画像(f/WD)の模型が食い違い、f 8 mm・WD 200 mm で視野が 4 % 広かった。
+    同じ式を両辺に入れた門だったので素通しした(設置図の検分で見つけた)。
   * 伝送帯域 = 規格帯域 × リンク数 × 効率、1 フレーム = w·h·(bit/8)、
     最大 fps = 帯域 / フレーム長(いずれも厳密)。
   * 回折ボケは**光を作りも消しもしない**(総和保存)。絞るとピークだけ落ちる。
@@ -143,10 +146,12 @@ def main() -> None:
                         OS.scene_material("lambert", albedo=0.7))
     layout = OS.vision_layout(small, wide, [dome], scene=[part])
 
-    fov_w = 96 * 3.45e-3 * 200.0 / 8.0
+    m = 8.0 / (200.0 - 8.0)                              # 薄肉レンズを WD に合焦(optical_budget と同じ)
+    fov_w = 96 * 3.45e-3 / m
     print(f"    視野 {layout['camera']['fov_mm'][0]:.4f} x "
-          f"{layout['camera']['fov_mm'][1]:.4f} mm  (N·p·WD/f = {fov_w:.4f})")
+          f"{layout['camera']['fov_mm'][1]:.4f} mm  (N·p/m = {fov_w:.4f}、m = f/(WD − f))")
     assert abs(layout["camera"]["fov_mm"][0] - fov_w) < 1e-12
+    assert abs(layout["budget"]["magnification"] - m) < 1e-15       # 描く倍率 = バジェットの倍率
 
     shots = {ms: OS.layout_capture(layout, exposure_ms=ms, supersample=1)
              for ms in (5.0, 10.0, 20.0)}
