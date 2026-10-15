@@ -293,3 +293,22 @@ def test_registry_and_adapter():
     b = O.oct_bscan_simulate(n_columns=8, n_pixels=256, width_um=100.0)
     img = opsoptics.call("oct_bscan", b)
     assert isinstance(img, np.ndarray) and img.ndim == 2 and np.all(np.isfinite(img))
+
+
+def test_threshold_knobs_change_the_verdict_on_a_boundary_ascan():
+    """拒否のしきい値 4 本は、境界の入力で 2 点振ると判定が変わる(探針 ledger_contracts._oct_edge_ascan と同じ入力)。"""
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import ledger_contracts as LC
+    a = LC._oct_edge_ascan()
+    base = O.oct_layer_thickness(a)
+    n0 = base["z_opt_um"].size
+
+    def n(**kw):
+        return O.oct_layer_thickness(a, **kw)["z_opt_um"].size
+    assert n(min_snr_db=6.0) > n0 > n(min_snr_db=24.0)                  # 雑音の床すれすれの界面
+    assert n(dynamic_range_db=40.0) < n0 == n(dynamic_range_db=160.0)    # 最も強い面から 40 dB 以上下の界面
+    assert n(min_prominence_db=0.5) == n0 > n(min_prominence_db=1.0)     # 谷から 0.8 dB の肩
+    lo = O.oct_layer_thickness(a, min_separation_fwhm=0.7)
+    assert lo["separation_limit_um"] == pytest.approx(0.5 * base["separation_limit_um"])
+    with pytest.raises(ValueError):                                       # 1.4 倍のすぐ上の肩が 2.8 倍では拒否
+        O.oct_layer_thickness(a, min_separation_fwhm=2.8)

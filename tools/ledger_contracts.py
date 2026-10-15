@@ -315,6 +315,24 @@ def _oct_bs():
     return octscan.oct_bscan_simulate(n_columns=12, n_pixels=256, width_um=200.0)
 
 
+def _oct_edge_ascan():
+    """しきい値が効く境界の A ライン(1 本に 3 つの構造を入れる):
+
+    * 界面 A と、その下 1.46 点像幅(1.4 倍のすぐ上)の弱い界面 B —— 谷から 0.8 dB しか立たない肩
+      (``min_prominence_db`` 0.5 / 1.0 で残る / 落ちる、``min_separation_fwhm`` 2.8 で拒否)
+    * 雑音の床から 16〜21 dB の界面 2 本 —— ``min_snr_db`` 24 で落ち、6 で雑音の山が 1 本増える
+    * 最も強い面から 40〜45 dB 下の界面 —— ``dynamic_range_db`` 40 で落ちる
+    """
+    import octscan
+    s = {"layers": [{"material": {"n": 1.50, "n_group": 1.52}, "thickness_um": 40.0},
+                    {"material": {"n": 1.56, "n_group": 1.58}, "thickness_um": 7.0},
+                    {"material": {"n": 1.567, "n_group": 1.587}, "thickness_um": 60.0}],
+         "substrate": {"n": 1.572, "n_group": 1.592}, "surface_um": 150.0}
+    it = octscan.oct_interferogram(s, n_pixels=512, grid="k", photons_ref_per_pixel=2e4, photons_mirror_per_pixel=1e7,
+                                   seed=11)
+    return octscan.oct_ascan(it, window="hann", zero_pad=4)
+
+
 def _oct_two_lines():
     """傾いた 2 本の界面(1.5 画素 / 列、間隔 6 画素)+ 粒状の雑音: 跳びの上限・間隔・跳びの罰が効く入力。"""
     rng = np.random.default_rng(7)
@@ -418,8 +436,9 @@ def _optics_builders():
         "oct_dispersion_compensate": lambda pool, rng: ([_oct_it(True)], {"a2": 20.0, "a3": 2.0}),
         "oct_ascan": lambda pool, rng: ([_oct_it(True)], {}),
         "oct_bscan": lambda pool, rng: ([_oct_bs()], {}),
-        "oct_layer_thickness": lambda pool, rng: (
-            [__import__("octscan").oct_ascan(_oct_it(True), zero_pad=4)], {"n_interfaces": 3}),
+        # 境界の入力(しきい値 4 本がそれぞれ判定を変える)。本数は指定しない —— 指定すると変種は拒否で終わり、
+        # ノブの効き目が測れない(拒否は探針では「呼べなかった」と数えられる)
+        "oct_layer_thickness": lambda pool, rng: ([_oct_edge_ascan()], {"n_group": 1.55}),
         "oct_bscan_boundaries": lambda pool, rng: ([_oct_two_lines()], {"n_boundaries": 2}),
         # 光子を渡すと SNR の欄が生きる(η・σ_d が効く)。分散の不一致は材料を渡したときだけ効く
         "oct_design": lambda pool, rng: ([], {"photons_mirror_per_pixel": 1e5, "reflectivity": 1e-3,

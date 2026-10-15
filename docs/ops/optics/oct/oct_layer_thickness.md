@@ -36,7 +36,8 @@ A スキャンの界面のピーク → **層の光学厚と物理厚**(``table`
 連続体で、その揺らぎの小さな極大を「下の面」と読まないため。
 メッセージに見えた本数と分解能を書く。
 返り値: dict(kind="oct_layers", z_opt_um(界面)、peak_db、optical_thickness_um、group_index、
-thickness_um、resolution_um、snr_db(界面ごと))。
+thickness_um、resolution_um、snr_db・prominence_db(界面ごと)、separation_limit_um(受け入れる最小の光学厚
+= min_separation_fwhm × 点像の幅)、min_thickness_um(それを層ごとの群屈折率で割った、測れる最も薄い物理厚))。
 
 ## ファミリ共通の入力契約(fail-closed)
 

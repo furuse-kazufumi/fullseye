@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 604
+  "dead_knob": 600
  },
  "debt": {
   "description": {},
@@ -609,11 +609,7 @@
    "write_wav.rate": "other",
    "yield_maneuver_check.left_tol": "tolerance_or_iterations",
    "yield_maneuver_check.stop_speed": "other",
-   "yield_maneuver_check.car_length": "size_or_count",
-   "oct_layer_thickness.min_snr_db": "size_or_count",
-   "oct_layer_thickness.min_separation_fwhm": "size_or_count",
-   "oct_layer_thickness.min_prominence_db": "size_or_count",
-   "oct_layer_thickness.dynamic_range_db": "other"
+   "yield_maneuver_check.car_length": "size_or_count"
   }
  }
 }

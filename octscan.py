@@ -1210,7 +1210,8 @@ def oct_layer_thickness(ascan, n_group=None, n_interfaces=None, min_snr_db=12.0,
     連続体で、その揺らぎの小さな極大を「下の面」と読まないため。
     メッセージに見えた本数と分解能を書く。
     返り値: dict(kind="oct_layers", z_opt_um(界面)、peak_db、optical_thickness_um、group_index、
-    thickness_um、resolution_um、snr_db(界面ごと))。
+    thickness_um、resolution_um、snr_db・prominence_db(界面ごと)、separation_limit_um(受け入れる最小の光学厚
+    = min_separation_fwhm × 点像の幅)、min_thickness_um(それを層ごとの群屈折率で割った、測れる最も薄い物理厚))。
     """
     op = "oct_layer_thickness"
     a = _table(ascan, "oct_ascan", op)
@@ -1273,8 +1274,10 @@ def oct_layer_thickness(ascan, n_group=None, n_interfaces=None, min_snr_db=12.0,
     zr = np.array(zr)
     opt = np.diff(zr)
     psf = a.get("psf_fwhm_um")
-    if psf and opt.size and min_separation_fwhm:
+    lim = None
+    if psf and min_separation_fwhm:
         lim = _nonneg(min_separation_fwhm, "min_separation_fwhm", op) * float(psf)
+    if lim is not None and opt.size:
         if np.min(opt) < lim:
             raise ValueError("%s: interfaces %.2f um apart (optical) are closer than %.2f x the point-spread width "
                              "(%.2f um) — the peaks overlap and bias each other; the layer is too thin to measure "
@@ -1282,7 +1285,8 @@ def oct_layer_thickness(ascan, n_group=None, n_interfaces=None, min_snr_db=12.0,
     out = {"kind": "oct_layers", "z_opt_um": zr, "peak_db": 20 * np.log10(amp[idx]),
            "snr_db": 20 * np.log10(amp[idx] / a["noise_sigma"]), "prominence_db": prominence,
            "optical_thickness_um": opt,
-           "resolution_um": res, "psf_fwhm_um": psf, "group_index": None, "thickness_um": None}
+           "resolution_um": res, "psf_fwhm_um": psf, "separation_limit_um": lim,
+           "min_thickness_um": None, "group_index": None, "thickness_um": None}
     if n_group is not None:
         ngs = list(n_group) if isinstance(n_group, (list, tuple)) else [n_group] * opt.size
         if len(ngs) != opt.size:
@@ -1293,6 +1297,8 @@ def oct_layer_thickness(ascan, n_group=None, n_interfaces=None, min_snr_db=12.0,
                                                                                        "n_group", op) for v in ngs])
         out["group_index"] = g
         out["thickness_um"] = opt / g
+        if lim is not None:
+            out["min_thickness_um"] = lim / g                    # この光源・窓で測れる最も薄い層(層ごと)
     return out
 
 
