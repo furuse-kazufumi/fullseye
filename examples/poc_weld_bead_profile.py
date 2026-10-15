@@ -697,7 +697,10 @@ def section9_tool_gaps() -> None:
     #   (`laser_line_coherent` / `speckle_field` / `triangulation_speckle_limit`)が引っかかる。
     #   だがあれは光条を**描く**側と、スペックルが決める誤差の**床**を返す閉形式で、
     #   画像から列ごとの中心を取る op ではない。穴は残っている(語でなく族で固定する)。
-    laser_hits = fs.op_find("laser")
+    # ★2026-10-15: op_find に docstring 全文の段(最低点 12)が加わり、引数の説明に "laser" と書いただけの
+    #   無関係な op も並ぶようになった。ここで固定したいのは「名前か 1 行目で laser を名乗る op」なので、その段は除く。
+    laser_hits = [r for r in fs.op_find("laser") if r["score"] > 12]
+    assert laser_hits, "op_find(\"laser\") が coherent 族すら返さない"
     assert all(r.get("module") == "coherent" for r in laser_hits), laser_hits
     # ★2026-09-23: `op_find("stripe")` は 0 件でなくなった —— wave 族の
     #   `wave_fringe_period`(「縞模様の画像から周期を測り返す」)が docstring で

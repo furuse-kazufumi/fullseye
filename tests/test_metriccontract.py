@@ -153,6 +153,37 @@ def test_every_scalar_metric_in_the_ledgers_declares_its_direction():
     assert not undeclared, f"向きが宣言されていない指標: {undeclared}"
 
 
+def _metrics_named_in_attempt_calls():
+    """出荷モジュールの ``attempt(..., metric="X")`` 呼び出しに実際に書かれた指標名(AST で数える)。
+
+    ★2026-10-15: simcal の当てはめは ``metric="simcal_chi2"`` で Attempt を作り、
+    ``value_or_worst`` に向きを引かせる。台帳の op でも ``compare_images`` の鍵でもないが、
+    宣言を消すと当てはめが ``no direction declared`` で止まる —— 死んだ宣言ではない。
+    名前を並べて免除せず、呼び出しの側から数える。
+    """
+    import ast
+    import glob
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    found = set()
+    for path in glob.glob(os.path.join(root, "*.py")):
+        with open(path, encoding="utf-8") as f:
+            try:
+                tree = ast.parse(f.read())
+            except SyntaxError:
+                continue
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Call):
+                fn = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
+                if fn.endswith("attempt"):
+                    for kw in n.keywords:
+                        if (kw.arg == "metric" and isinstance(kw.value, ast.Constant)
+                                and isinstance(kw.value.value, str)):
+                            found.add(kw.value.value)
+    assert found, "attempt(..., metric=...) の呼び出しが 1 つも見つからない —— 数え方が壊れている"
+    return found
+
+
 def test_no_direction_is_declared_for_something_that_does_not_exist():
     """逆向きの検査 —— **死んだ宣言**が溜まらないようにする。
 
@@ -169,7 +200,7 @@ def test_no_direction_is_declared_for_something_that_does_not_exist():
     rgb = rng.random((16, 16, 3))
     report_keys = set(M.compare_images(rgb, np.clip(rgb + 0.02, 0, 1), channel_axis=-1))
 
-    orphan = sorted(set(MC.DIRECTIONS) - ledger - report_keys)
+    orphan = sorted(set(MC.DIRECTIONS) - ledger - report_keys - _metrics_named_in_attempt_calls())
     assert not orphan, f"実在しない指標の向きが宣言されている: {orphan}"
 
     # 台帳外の宣言が「報告の鍵」であることを名指しで固定(偶然通らないように)

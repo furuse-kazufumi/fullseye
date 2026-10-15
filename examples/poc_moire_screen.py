@@ -648,7 +648,9 @@ def section8_tool_gaps():
     #   モアレ(格子×周期面)で、ディスプレイ・メッシュ・織物の検査カメラ側の語。
     # ★2026-10-15: 位置合わせのモアレ 8 op(moirealign、`moire_*`)が加わった —— ピッチの僅かに違う 2 枚の格子の
     #   縞の位相から nm のずれを読む側で、網点のうなり(画質の欠陥)とは逆に**モアレを測りに使う**語。
-    moire_hits = sorted(r["op"] for r in fs.op_find("moire"))
+    # ★2026-10-15: op_find に docstring 全文の段(最低点 12)が加わり、本文で「モアレ」に触れるだけの op
+    #   (fly_vogel_lattice・halftone_screen・sampling_alias_distance)も並ぶ。名乗る op だけを数える。
+    moire_hits = sorted(r["op"] for r in fs.op_find("moire") if r["score"] > 12)
     align = ["moire_differential_shift", "moire_magnification", "moire_mark_read", "moire_overlay_image",
              "moire_phase", "moire_phase_crlb", "moire_phase_to_shift", "moire_talbot_gap"]
     assert moire_hits == sorted(["halftone_moire_period", "lattice_moire_peak"] + align), moire_hits
