@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">sim-to-real 較正 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>実物の画像を与えたら、誤差をフィードバックして、計算に使う係数(周辺減光の強さ、ボケの幅、膜の厚さ、カメラの利得 …)を自動で合わせたい。ここで一番危ないのは、<b>画像が決めていない係数にもっともらしい数を出してしまう</b>ことです。</p>
+<p style="margin:2px 0 2px 12px">• 照明の強さとカメラの利得は、どちらも画像を同じように明るくします。画像から決まるのは積だけで、1 つずつの値は決まりません。</p>
+<p style="margin:2px 0 2px 12px">• 1 波長で一様な膜を撮ると、屈折率 n と膜厚 d は n x d(光路長)の形でしか効きません。</p>
+<p style="margin:2px 0 2px 12px">• 白い板を撮った画像では、ボケ(PSF の幅)は何も変えません。</p>
+<p>最適化はこういう場合も「収束」して数を返します。この族は、その数を<b>返さずに拒否</b>し、代わりに理由と、画像が決めている組み合わせ(照明 x 利得 = 899.4 のような)を返します。台帳は <code style="color:#22d3bf">opssimcal.py</code>、本体は <code style="color:#22d3bf">simcal.py</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  A[simcal_model&lt;br/&gt;連鎖・つまみ・雑音モデル] --&gt; B[simcal_observe&lt;br/&gt;位置合わせ・ROI・露出]
+  A --&gt; S[simcal_screen&lt;br/&gt;効くか・交絡か・出力の次元]
+  B --&gt; S
+  B --&gt; F[simcal_fit&lt;br/&gt;重みつき最小二乗]
+  F --&gt;|決まらない・端・雑音モデル無し| X[拒否: 理由と決まる組み合わせ]
+  F --&gt; R[calresult]
+  R --&gt; I[simcal_identifiability&lt;br/&gt;下界・プロファイル]
+  I --&gt; U[simcal_uncertainty&lt;br/&gt;Laplace / ブートストラップ]
+  I --&gt; V[simcal_validate&lt;br/&gt;過適合の門・LOCKED は 1 回]
+  V --&gt; D[simcal_discrepancy&lt;br/&gt;残差 PCA]
+  D --&gt; P[simcal_report]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">模型(model)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 順方向の模型を組む | <code style="color:#22d3bf">simcal_model</code> | 連鎖の各段は登録済みの op(例 <code style="color:#22d3bf">thin_film_reflectance</code>)か組み込みの段(<code style="color:#22d3bf">stage:gain_offset</code>・<code style="color:#22d3bf">stage:scale</code>・<code style="color:#22d3bf">stage:radial_cos4</code>・<code style="color:#22d3bf">stage:radial_poly</code>・<code style="color:#22d3bf">stage:gaussian_blur</code>・<code style="color:#22d3bf">stage:as_image</code>・<code style="color:#22d3bf">stage:mc_sample</code>)。つまみは 1 つの段の 1 つの引数に結びつき、単位・範囲・線形 / 対数・事前分布を持つ。組んだ時点で 1 回走らせ、走らない模型は拒否 |</p>
+<p>| 模型を走らせる | <code style="color:#22d3bf">simcal_simulate</code> | 条件(露光・波長 …)ごとに 2-D の画像 1 枚 |</p>
+<p>| 実画像を付ける | <code style="color:#22d3bf">simcal_observe</code> | 位相相関(<code style="color:#22d3bf">phase_correlation_fft</code>)で整数画素のずれを戻し、巻き込んだ縁は使わない。<b>露出の正規化と利得つまみの同時は拒否</b>(どちらも信号を倍にするので区別できず、正規化した雑音を 2 回数える) |</p>
+<p>雑音モデルは必須です。EMVA 1288 の線形カメラなら <code style="color:#22d3bf">{&quot;kind&quot;: &quot;emva&quot;, &quot;K&quot;: ..., &quot;sigma_d&quot;: ..., &quot;dark&quot;: ...}</code> (<code style="color:#22d3bf">sensorchar.emva_photon_transfer</code> の結果をそのまま渡せる。暗雑音が推定できなかった場合は上限を使う)、単純な場合は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;gaussian&quot;, &quot;sigma&quot;: ...}</code>。雑音の分散が無いと「決まる」の物差しが無いので、当てはめは拒否します。</p>
+<p>モンテカルロの描画器のような<b>確率的な模型</b>は <code style="color:#22d3bf">stochastic={&quot;seed&quot;: s, &quot;sample_var&quot;: &quot;estimate&quot;}</code> で受けます。種を固定する(共通乱数)と模型が決定的になり、ヤコビアンが壊れません。模型自身の標本の分散は雑音に足します —— 足さないと残差が雑音より大きく見え、後段の門が誤作動します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">合わせ(fit)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| どのつまみが効くか、交絡しているか | <code style="color:#22d3bf">simcal_screen</code> | 雑音で割った出力の主成分ごとに Morris / Sobol&#x27;(<code style="color:#22d3bf">sens_morris</code> / <code style="color:#22d3bf">sens_sobol</code> を再利用)。全範囲を動かしても雑音の 1.96 倍に届かないつまみは「効かない」。共線性指数(<code style="color:#22d3bf">mv_confounding</code>)で交絡の組、<code style="color:#22d3bf">mv_residual_pca</code> で雑音を越える出力の次元数 |</p>
+<p>| 係数を合わせる | <code style="color:#22d3bf">simcal_fit</code> | 雑音の分散で重みをつけた最小二乗(重みは予測で更新)。出発点は計画(ラテン超方格)の最良点。<code style="color:#22d3bf">lm</code>(範囲を出る一歩はそのまま取らない)・<code style="color:#22d3bf">nm</code>・<code style="color:#22d3bf">multistart</code>。<b>決まらない・効かない・範囲の端 1 % に張りつく</b>つまみがあれば拒否し、理由と決まる組み合わせを返す。<code style="color:#22d3bf">allow_undetermined=True</code> なら、それらのつまみには値を付けずに残りを返す |</p>
+<p>当てはめが違う谷(薄膜の隣の干渉次数など)に落ちたときは、値は返しますが <code style="color:#22d3bf">fit.warnings</code> に「χ²/自由度が雑音の何倍か、multistart を試せ」と書きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">検査(check / report)</h3>
+<p>どの検査も calresult を受けて calresult を返し、<b>支えられない点推定は理由をつけて取り下げます</b>(<code style="color:#22d3bf">undetermined</code> に移す)。</p>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| どこまで決まるか | <code style="color:#22d3bf">simcal_identifiability</code> | Fisher 情報 J^T W J と Cramér-Rao 下界(<code style="color:#22d3bf">mathestimation.crlb_gaussian</code> と同じ定義、直線の模型で一致をテストが確かめる)、条件数(1e6 超で警告)、相関、共線性指数、<b>プロファイル尤度</b>(他のつまみを合わせ直しながら 1 つを動かし、χ² が χ²₁(95 %) = 3.84 上がる所)。片側しか閉じなければ「上限だけ」「下限だけ」として点推定を取り下げる。<code style="color:#22d3bf">at=</code> に真値を渡せば合成の研究で下界だけを計算できる |</p>
+<p>| どれだけ確かか | <code style="color:#22d3bf">simcal_uncertainty</code> | Laplace(Fisher 情報の逆、対数のつまみは非対称の区間)かパラメトリック・ブートストラップ。点推定の無い結果は拒否 |</p>
+<p>| 取り置いた画像で持つか | <code style="color:#22d3bf">simcal_validate</code> | 門 6 つ(相対の 5 つ: 初期値より良い / 保留 ÷ 学習 ≤ 1 + τ / 利得と黒レベルだけの模型より良い / 範囲・事前・端 / 自由なつまみ ≤ 画像が持つ方向の数、と絶対の 1 つ: 学習と保留の χ² の上側確率 p ≥ alpha = 1e-3)。どれか 1 つで拒否。絶対の門は隣の干渉次数に落ちた当てはめ(χ²/ν 60、相対の門は全部通る)を拒否するが、雑音の過大評価は見つけない(4 倍で p = 1)。LOCKED は 1 回だけ(2 回目は拒否) |</p>
+<p>| 模型に何が足りないか | <code style="color:#22d3bf">simcal_discrepancy</code> | 雑音で割った残差の PCA(<code style="color:#22d3bf">mv_residual_pca</code>)を Tracy-Widom 99 % の端と比べる(素の Marchenko-Pastur の端は純雑音でも 10〜14 % 越える)。構造があれば、その形(地図)と「不確かさは楽観側」の注記 |</p>
+<p>| 表 1 枚 | <code style="color:#22d3bf">simcal_report</code> | つまみごとの値・単位・区間・分類と、走らせた門。走らせなかった門は not run |</p>
+<p>8 次の周辺減光の多項式は、画像の中では cos⁴ と同じくらいよく合います(保留の誤差も変わらない)。拒否するのは当てはめの交絡と、「自由なつまみ 10 &gt; 画像が持つ方向 6」の門です —— 画像の過適合は、保留の誤差より先に「決まらない」として現れます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+m = fs.ledger.simcal_model()                  # 例の模型: チャート -&gt; cos^4 の周辺減光 -&gt; 利得と黒レベル(合成の観測つき)
+print(fs.ledger.simcal_screen(m)[&quot;class&quot;])    # {&#x27;f&#x27;: &#x27;determined&#x27;, &#x27;gain&#x27;: &#x27;determined&#x27;, &#x27;offset&#x27;: &#x27;determined&#x27;}
+r = fs.ledger.simcal_fit(m)
+print(r[&quot;status&quot;], {k: round(v, 2) for k, v in r[&quot;theta_hat&quot;].items()})
+# accepted {&#x27;f&#x27;: 22.09, &#x27;gain&#x27;: 899.05, &#x27;offset&#x27;: 63.56}   (真値 22 / 900 / 64)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">例</h3>
+<p><code style="color:#22d3bf">examples/simcal_tour.py</code> —— 利得 x 照明の拒否と積、1 波長と 31 波長の膜、白い板とチャートのボケ、ずれた画像の位置合わせ。</p>
+<p><code style="color:#22d3bf">examples/simcal_checks_tour.py</code> —— 40 組の真値で回収を採点(39 組が 3 σ_CRLB 以内、雑音を見誤ると 29 組)、上限しか言えないボケ、8 次の多項式の拒否、光軸のずれたレンズの残差 PCA。</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_pls — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import multivar; multivar.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pls&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>Y를 X에 회귀하는 부분최소제곱(교차검증 Q^2, Q^2 성분 수 규칙, VIP 포함).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>PLS finds directions in X that both vary and predict Y — the tool for many correlated predictors and few runs (image features -&gt; process settings, or the reverse). <code style="color:#22d3bf">method=&quot;nipals&quot;</code> (default, Wold, Sjöström &amp; Eriksson 2001) or <code style="color:#22d3bf">&quot;simpls&quot;</code> (de Jong 1993; identical to NIPALS for a single response — a test pins it). X and Y are centred and, by default, scaled to unit variance.</p>
+<p>Q^2 is computed by <code style="color:#22d3bf">cv</code>-fold cross-validation with interleaved folds (run i in fold i mod cv, as in SIMCA&#x27;s default of 7 groups): <code style="color:#22d3bf">Q^2_a = 1 - PRESS_a / SS_{a-1}</code> per component (<code style="color:#22d3bf">SS_0</code> = total sum of squares of Y, <code style="color:#22d3bf">SS_{a-1}</code> the residual sum of squares with a-1 components), cumulative <code style="color:#22d3bf">Q^2 = 1 - PRESS_A / SS_0</code>. <code style="color:#22d3bf">n_components=None</code> keeps adding components while <code style="color:#22d3bf">Q^2_a &gt;= 0.0975</code> (= 1 - 0.95^2; Wold et al. 2001) up to <code style="color:#22d3bf">max_components</code>; if not even the first passes, one component is fitted and <code style="color:#22d3bf">significant</code> is False — the data then do not support a predictive model, and the coefficients should not be used.</p>
+<p>VIP (variable importance in projection) ranks X columns; the conventional threshold is VIP &gt; 1. <code style="color:#22d3bf">coef</code> / <code style="color:#22d3bf">intercept</code> predict Y in its original units from X in its original units.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pca">mv_pca</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

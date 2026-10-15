@@ -702,7 +702,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -882,6 +882,22 @@ def catalog():
     for n, m in opsdrive.OPSDRIVE.items():
         if m["func"] is not None:
             ops.append((n, "drive", list(m["in"]), m["out"], m["func"]))
+    # 実験計画・多変量解析・感度解析(opsmultivar 台帳、2026-10-15)。新語は 1 つ: ``design``
+    # (符号化 −1..1 と自然単位の行列・因子名・単位・範囲・尺度・交絡表を 1 つに持つ dict)。
+    # matrix と分けるのは、符号化と自然単位の行列は形も dtype も同じで、取り違えた二次の当てはめが
+    # 例外なしに別の中心の曲面を返すから(混ぜると黙って間違う → 型を分ける)。
+    import opsmultivar
+    for n, m in opsmultivar.OPSMULTIVAR.items():
+        if m["func"] is not None:
+            ops.append((n, "multivar", list(m["in"]), m["out"], m["func"]))
+    # sim-to-real 較正(opssimcal 台帳、2026-10-15)。新語は 2 つ: ``simmodel``(連鎖・つまみ・雑音モデル・
+    # 観測を持つ走らせられる模型)と ``calresult``(データが支える推定だけと、決まらないつまみの理由)。
+    # table と分けるのは、calresult は拒否したつまみの「最適化の終点」(推定ではない数)を持つので、
+    # table として読む op が黙ってその数を出してしまうから(混ぜると黙って間違う → 型を分ける)。
+    import opssimcal
+    for n, m in opssimcal.OPSSIMCAL.items():
+        if m["func"] is not None:
+            ops.append((n, "simcal", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

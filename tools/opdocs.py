@@ -113,6 +113,10 @@ LEDGER_DIMS = {
               "module": "gfx2d", "family": "game_graphics_2d"},
     # 2 モジュール台帳(illusion + perpetual)。ここの "module" は既定値で、
     # op ごとの module は台帳の info が持つ(ops1d が "dsp" を既定にするのと同じ)。
+    "multivar": {"registry": "opsmultivar", "table": "OPSMULTIVAR",
+                 "module": "doe", "family": "design_of_experiments"},
+    "simcal": {"registry": "opssimcal", "table": "OPSSIMCAL",
+               "module": "simcal", "family": "sim_to_real_calibration"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",

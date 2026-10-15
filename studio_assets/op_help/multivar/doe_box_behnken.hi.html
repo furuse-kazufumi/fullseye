@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_box_behnken — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">design</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_box_behnken(factors=3, center=3) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import doe; doe.doe_box_behnken(factors=3, center=3) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmultivar.get(&quot;doe_box_behnken&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3, 4 या 5 factors के लिए Box-Behnken design (Box व Behnken 1960) -&gt; <code style="color:#22d3bf">design</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Three levels per factor and no run at a corner of the cube: for every pair of factors, a 2^2 factorial (±1, ±1) with all other factors at 0, plus <code style="color:#22d3bf">center</code> centre runs — 12, 24 and 40 edge runs for k = 3, 4, 5 (the pair construction of Box &amp; Behnken&#x27;s table for these k). Useful when the extreme corners are unsafe or cannot be set. k = 4 is rotatable. Larger k use incomplete-block constructions that are not reproduced here and are refused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">design</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_orthogonal_array">doe_orthogonal_array</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -134,6 +134,8 @@ DIRECTIONS = {
     "sinkhorn_distance": "lower",
     "sinkhorn_divergence": "lower",
     "transport_cost": "lower",
+    # simcal —— 重みつき残差の二乗和(小さいほどよく合う)。多点出発の順位づけと Nelder-Mead の範囲外に使う
+    "simcal_chi2": "lower",
 }
 
 

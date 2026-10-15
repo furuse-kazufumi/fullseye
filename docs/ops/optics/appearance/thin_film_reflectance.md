@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: signal
-examples: [appearance_structural_colour, poc_thin_film_reflectometry]
+examples: [appearance_structural_colour, poc_thin_film_reflectometry, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -70,6 +70,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [appearance_structural_colour](../../../../examples/appearance_structural_colour.py) — `py -3.11 examples/appearance_structural_colour.py`
 - [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
+- [simcal_tour](../../../../examples/simcal_tour.py) — `py -3.11 examples/simcal_tour.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

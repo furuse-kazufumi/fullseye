@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_screen — SIMCAL <code style="color:#22d3bf">fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">simmodel</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_screen(model=None, method=&#x27;morris&#x27;, size=8, threshold=10.0, seed=0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import simcal; simcal.simcal_screen(model=None, method=&#x27;morris&#x27;, size=8, threshold=10.0, seed=0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssimcal.get(&quot;simcal_screen&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>哪些旋鈕能使影像變化超過相機雜訊、哪些相互混雜、輸出有多少個獨立方向。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Runs the model on a screening plan over the free knobs&#x27; ranges — Morris trajectories (<code style="color:#22d3bf">sensitivity.doe_morris</code>, <code style="color:#22d3bf">size</code> of them, (k+1) runs each) or a Saltelli plan (<code style="color:#22d3bf">sensitivity.doe_saltelli</code> with n = the power of two &gt;= 8 x <code style="color:#22d3bf">size</code> rows, (k+2) n runs) — and whitens every output by the noise standard deviation at the initial knobs. The whitened outputs are reduced to principal components and the indices are computed per component with <code style="color:#22d3bf">sensitivity.sens_morris</code> / <code style="color:#22d3bf">sens_sobol</code> (reused):</p>
+<p>Morris <code style="color:#22d3bf">mu_star_whitened</code> = sqrt(sum over components of mu*^2) — roughly how many noise standard deviations a full-range move of the knob shifts the images; Sobol&#x27; <code style="color:#22d3bf">gsi_st</code> = the variance-weighted total index over components (Lamboni et al. 2011). <code style="color:#22d3bf">output_dims</code> = number of principal directions of the centred whitened runs above the noise edge (<code style="color:#22d3bf">sensitivity.mv_residual_pca</code> with sigma = 1): more free knobs than output dims means the data cannot fix them all. Local confounding at the initial knobs:</p>
+<p><code style="color:#22d3bf">sensitivity.mv_confounding</code> on the whitened Jacobian (gamma_K &gt; <code style="color:#22d3bf">threshold</code>).</p>
+<p><code style="color:#22d3bf">class</code> per knob: <code style="color:#22d3bf">no_influence</code> (Morris: mu*_whitened &lt; 1.96, i.e. a full-range move is within noise; Sobol&#x27;: gsi_st &lt; 0.001), <code style="color:#22d3bf">combination</code> (in a confounded group: only a combination is determined), else <code style="color:#22d3bf">determined</code>. Needs a noise model (refused without).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">fit</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_fit">simcal_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcal.py — SIMCAL 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

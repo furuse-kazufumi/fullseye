@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 67 capabilities**
+**Currently 68 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -48,6 +48,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
@@ -63,7 +64,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (23)
+## Measure (24)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -236,6 +237,18 @@ Shape from polarisation for a 4-direction on-chip polariser sensor: the Fresnel 
 Operators: `sfp_dolp_model`, `dolp_to_zenith`, `aolp_to_azimuth`, `sfp_render`, `sfp_normals`, `sfp_disambiguate`, `sfp_estimate_index`, `sfp_height`
 
 Runnable: `poc_shape_from_polarization`
+
+### [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md)
+
+Ten ops (`simcal` / `simcalcheck`) fit the physical coefficients of a forward model built from fullseye ops (knobs with units, ranges and linear/log scales) to real images by noise-weighted least squares, and refuse to give a number for a coefficient the images do not determine: confounded knobs (illumination x gain, n x d at one wavelength) are reported as the determined combination, knobs without influence or pinned to a range end are refused, a profile likelihood that closes on one side only withdraws the estimate. Over-fitting gates on held-out images reject an 8th-order vignetting polynomial, and residual PCA against the Tracy-Widom edge of white noise detects a model discrepancy (a decentred lens).
+
+Operators: `simcal_model`, `simcal_simulate`, `simcal_observe`, `simcal_screen`, `simcal_fit`, `simcal_identifiability`, `simcal_uncertainty`, `simcal_validate`, `simcal_discrepancy`, `simcal_report`
+
+Pipeline: [`simcal_model`](ops/simcal/model/simcal_model.md) → [`simcal_observe`](ops/simcal/model/simcal_observe.md) → [`simcal_fit`](ops/simcal/fit/simcal_fit.md) → [`simcal_identifiability`](ops/simcal/check/simcal_identifiability.md) → [`simcal_report`](ops/simcal/report/simcal_report.md)
+
+Alternatives: [`simcal_screen`](ops/simcal/fit/simcal_screen.md), [`simcal_uncertainty`](ops/simcal/check/simcal_uncertainty.md), [`simcal_validate`](ops/simcal/check/simcal_validate.md), [`simcal_discrepancy`](ops/simcal/check/simcal_discrepancy.md), [`simcal_simulate`](ops/simcal/model/simcal_simulate.md), [`mv_confounding`](ops/multivar/identifiability/mv_confounding.md), [`mv_residual_pca`](ops/multivar/identifiability/mv_residual_pca.md), [`sens_morris`](ops/multivar/sensitivity/sens_morris.md)
+
+Runnable: `simcal_tour`, `simcal_checks_tour`
 
 ### [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md)
 

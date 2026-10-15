@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_observe — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">simmodel × images</code> → <code style="color:#22d3bf">simmodel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import simcal; simcal.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssimcal.get(&quot;simcal_observe&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>실측 영상을 simmodel에 붙인다: 정합·관심 영역·노출 정규화.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">images</code> — one 2-D array per condition (shape = what the model outputs). <code style="color:#22d3bf">align=True</code> registers each image to the simulation at the initial knobs by phase correlation (<code style="color:#22d3bf">filters_freq.phase_correlation_fft</code>, integer pixels), shifts it back and masks the wrapped border; a shift larger than <code style="color:#22d3bf">max_shift</code> is refused. <code style="color:#22d3bf">roi</code> = boolean mask or <code style="color:#22d3bf">(row0, row1, col0, col1)</code>. <code style="color:#22d3bf">exposure</code> = a factor per image to divide by (the noise variance is divided by its square) — <b>refused when the model has a free gain knob</b>: the two scale the same signal. <code style="color:#22d3bf">split</code> labels the data <code style="color:#22d3bf">train</code> / <code style="color:#22d3bf">holdout</code> / <code style="color:#22d3bf">locked</code> (the TRAIN / OBSERVED / LOCKED discipline of <code style="color:#22d3bf">robust.py</code>). Returns a new simmodel with <code style="color:#22d3bf">observed</code> filled (the input is not modified), including <code style="color:#22d3bf">data_range</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_checks_tour">simcal_checks_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_checks_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">simmodel</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_simulate">simcal_simulate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_screen">simcal_screen</a> · <a style="color:#22d3bf" href="opsimcal:simcal_fit">simcal_fit</a> · <a style="color:#22d3bf" href="opsimcal:simcal_validate">simcal_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_model">simcal_model</a> · <a style="color:#22d3bf" href="opsimcal:simcal_simulate">simcal_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcal.py — SIMCAL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

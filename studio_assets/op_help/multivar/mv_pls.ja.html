@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_pls — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import multivar; multivar.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pls&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Y を X に回帰する部分最小二乗(交差検証の Q^2、Q^2 による成分数の規則、VIP つき)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>PLS finds directions in X that both vary and predict Y — the tool for many correlated predictors and few runs (image features -&gt; process settings, or the reverse). <code style="color:#22d3bf">method=&quot;nipals&quot;</code> (default, Wold, Sjöström &amp; Eriksson 2001) or <code style="color:#22d3bf">&quot;simpls&quot;</code> (de Jong 1993; identical to NIPALS for a single response — a test pins it). X and Y are centred and, by default, scaled to unit variance.</p>
+<p>Q^2 is computed by <code style="color:#22d3bf">cv</code>-fold cross-validation with interleaved folds (run i in fold i mod cv, as in SIMCA&#x27;s default of 7 groups): <code style="color:#22d3bf">Q^2_a = 1 - PRESS_a / SS_{a-1}</code> per component (<code style="color:#22d3bf">SS_0</code> = total sum of squares of Y, <code style="color:#22d3bf">SS_{a-1}</code> the residual sum of squares with a-1 components), cumulative <code style="color:#22d3bf">Q^2 = 1 - PRESS_A / SS_0</code>. <code style="color:#22d3bf">n_components=None</code> keeps adding components while <code style="color:#22d3bf">Q^2_a &gt;= 0.0975</code> (= 1 - 0.95^2; Wold et al. 2001) up to <code style="color:#22d3bf">max_components</code>; if not even the first passes, one component is fitted and <code style="color:#22d3bf">significant</code> is False — the data then do not support a predictive model, and the coefficients should not be used.</p>
+<p>VIP (variable importance in projection) ranks X columns; the conventional threshold is VIP &gt; 1. <code style="color:#22d3bf">coef</code> / <code style="color:#22d3bf">intercept</code> predict Y in its original units from X in its original units.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pca">mv_pca</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

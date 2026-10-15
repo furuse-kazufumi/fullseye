@@ -1135,7 +1135,15 @@ def main():
     # ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、
     #   能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。
     #   件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
-    assert not [h for h in fs.op_find("ortho") if h.get("match") != "doc"]
+    #   ★2026-10-15: 語幹 "ortho" は名前で実験計画の直交表の op(orthogonal、別の語)に
+    #   当たるようになった。門が問うているのは「標高(orthometric)の op」なので、検索語を正確にする。
+    #   あわせて検索側の穴も塞いだ: 欧文のクエリは 1 行目の doc までしか見ておらず、"orthometric" は
+    #   dem_height_frame_convert の引数の説明にしか無いので 0 件だった(opassist.find に docstring 全文の段)。
+    assert not [h for h in fs.op_find("orthometric") if h.get("match") != "doc"]
+    _ortho_names = [h["op"] for h in fs.op_find("ortho") if h.get("match") != "doc"]
+    assert len(_ortho_names) >= 1 and all(o.startswith("doe_") for o in _ortho_names)   # 直交表(orthogonal)だけ
+    assert "dem_height_frame_convert" in [h["op"] for h in fs.op_find("orthometric")]
+    assert "dem_height_frame_convert" in [h["op"] for h in fs.op_find("ortho")]
     import demops as _D
     assert "orthometric" in _D.HEIGHT_FRAMES
     # ★``vertical`` は op_find が件数を返しても中身は 1 つも関係ない

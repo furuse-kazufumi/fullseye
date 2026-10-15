@@ -41,6 +41,10 @@ _LEDGERS = (
     ("opsacoustics", "OPSACOUSTICS"), ("opsinterferometry", "OPSINTERFEROMETRY"),
     ("opsflyvision", "OPSFLYVISION"), ("opsspc", "OPSSPC"), ("opsgraph", "OPSGRAPH"),
     ("opstext", "OPSTEXT"), ("opsresidue", "OPSRESIDUE"),
+    # 2026-10-15: 実験計画・多変量解析・感度解析。新語 design(符号化と自然単位を 1 つに持つ計画)。
+    ("opsmultivar", "OPSMULTIVAR"),
+    # 2026-10-15: sim-to-real 較正(実画像から物理モデルの係数を合わせ、決まらない係数は拒否)。新語 simmodel / calresult。
+    ("opssimcal", "OPSSIMCAL"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
@@ -754,6 +758,12 @@ def sample_input(op_name: str):
         # flow2d(2026-10-03): 種が無く、PIV 台帳の flow2d を取る op(矢印図・流線・渦度・Q 基準 …)が
         #   全部「押しても動かない」だった(Studio の台帳 op 実行窓で実測)。渦 + 一様な流れ。
         "flow2d": _sample_flow2d,
+        # design(2026-10-15): 3 因子の回転可能な中心複合計画(要因 8 + 軸 6 + 中心 4)。
+        "design": lambda: __import__("doe").doe_central_composite(3),
+        # simmodel / calresult(2026-10-15): 例の模型(チャート -> cos^4 の周辺減光 -> ゲイン/オフセット、合成の観測つき)と
+        #   その当てはめ。乱数は模型の内側の固定の種だけ(探針の共有乱数列は引かない)。
+        "simmodel": lambda: __import__("simcal").simcal_model(),
+        "calresult": lambda: __import__("simcal").simcal_fit(__import__("simcal").simcal_model()),
     }
     #: 単位に合う種(汎用の 0..1 では意味を持たない量がある)。
     #: ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと
@@ -1247,6 +1257,13 @@ def find(query: str, limit: int = 20) -> list[dict]:
                     if fr >= 0.5:
                         fs_ = _cjk_fraction(q, hay_name + " " + doc.lower())
                         score = int(round(16 * fr + 6 * fs_))
+                if not score and len(q) >= 4 and q_tokens and not _CJK_RE.search(q):
+                    # ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ
+                    #   出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか
+                    #   書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか
+                    #   返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+                    if q in _full_doc(mod_name, name, info):
+                        score = 12
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
                              "category": info.get("category"), "doc": doc,

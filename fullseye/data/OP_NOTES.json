@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3267,
- "n_notes": 3273,
+ "n_ops": 3295,
+ "n_notes": 3301,
  "notes": {
   "vol_dilate": [
    {
@@ -26134,6 +26134,179 @@
     "path": "docs/ops/motionmag/temporal/temporal_bandpass.md"
    }
   ],
+  "doe_main_effects": [
+   {
+    "op": "doe_main_effects",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/doe_main_effects.md"
+   }
+  ],
+  "mv_pca": [
+   {
+    "op": "mv_pca",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/mv_pca.md"
+   }
+  ],
+  "mv_pls": [
+   {
+    "op": "mv_pls",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/mv_pls.md"
+   }
+  ],
+  "rsm_fit": [
+   {
+    "op": "rsm_fit",
+    "dim": "multivar",
+    "category": "analysis",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/analysis/rsm_fit.md"
+   }
+  ],
+  "doe_decode": [
+   {
+    "op": "doe_decode",
+    "dim": "multivar",
+    "category": "coding",
+    "in": "design",
+    "out": "matrix",
+    "path": "docs/ops/multivar/coding/doe_decode.md"
+   }
+  ],
+  "doe_encode": [
+   {
+    "op": "doe_encode",
+    "dim": "multivar",
+    "category": "coding",
+    "in": "matrix",
+    "out": "design",
+    "path": "docs/ops/multivar/coding/doe_encode.md"
+   }
+  ],
+  "feat_image_vector": [
+   {
+    "op": "feat_image_vector",
+    "dim": "multivar",
+    "category": "features",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/multivar/features/feat_image_vector.md"
+   }
+  ],
+  "mv_confounding": [
+   {
+    "op": "mv_confounding",
+    "dim": "multivar",
+    "category": "identifiability",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/identifiability/mv_confounding.md"
+   }
+  ],
+  "mv_residual_pca": [
+   {
+    "op": "mv_residual_pca",
+    "dim": "multivar",
+    "category": "identifiability",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/identifiability/mv_residual_pca.md"
+   }
+  ],
+  "doe_box_behnken": [
+   {
+    "op": "doe_box_behnken",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_box_behnken.md"
+   }
+  ],
+  "doe_central_composite": [
+   {
+    "op": "doe_central_composite",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_central_composite.md"
+   }
+  ],
+  "doe_fractional_factorial": [
+   {
+    "op": "doe_fractional_factorial",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_fractional_factorial.md"
+   }
+  ],
+  "doe_lhs": [
+   {
+    "op": "doe_lhs",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_lhs.md"
+   }
+  ],
+  "doe_orthogonal_array": [
+   {
+    "op": "doe_orthogonal_array",
+    "dim": "multivar",
+    "category": "plan",
+    "out": "design",
+    "path": "docs/ops/multivar/plan/doe_orthogonal_array.md"
+   }
+  ],
+  "doe_morris": [
+   {
+    "op": "doe_morris",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "out": "design",
+    "path": "docs/ops/multivar/sensitivity/doe_morris.md"
+   }
+  ],
+  "doe_saltelli": [
+   {
+    "op": "doe_saltelli",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "out": "design",
+    "path": "docs/ops/multivar/sensitivity/doe_saltelli.md"
+   }
+  ],
+  "sens_morris": [
+   {
+    "op": "sens_morris",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/sensitivity/sens_morris.md"
+   }
+  ],
+  "sens_sobol": [
+   {
+    "op": "sens_sobol",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/sensitivity/sens_sobol.md"
+   }
+  ],
   "abs_funct_1d": [
    {
     "op": "abs_funct_1d",
@@ -31835,6 +32008,105 @@
     "category": "synth",
     "out": "shapeset",
     "path": "docs/ops/shapestat/synth/shape_synth_family.md"
+   }
+  ],
+  "simcal_discrepancy": [
+   {
+    "op": "simcal_discrepancy",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_discrepancy.md"
+   }
+  ],
+  "simcal_identifiability": [
+   {
+    "op": "simcal_identifiability",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_identifiability.md"
+   }
+  ],
+  "simcal_uncertainty": [
+   {
+    "op": "simcal_uncertainty",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_uncertainty.md"
+   }
+  ],
+  "simcal_validate": [
+   {
+    "op": "simcal_validate",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult × simmodel",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_validate.md"
+   }
+  ],
+  "simcal_fit": [
+   {
+    "op": "simcal_fit",
+    "dim": "simcal",
+    "category": "fit",
+    "in": "simmodel",
+    "out": "calresult",
+    "path": "docs/ops/simcal/fit/simcal_fit.md"
+   }
+  ],
+  "simcal_screen": [
+   {
+    "op": "simcal_screen",
+    "dim": "simcal",
+    "category": "fit",
+    "in": "simmodel",
+    "out": "table",
+    "path": "docs/ops/simcal/fit/simcal_screen.md"
+   }
+  ],
+  "simcal_model": [
+   {
+    "op": "simcal_model",
+    "dim": "simcal",
+    "category": "model",
+    "out": "simmodel",
+    "path": "docs/ops/simcal/model/simcal_model.md"
+   }
+  ],
+  "simcal_observe": [
+   {
+    "op": "simcal_observe",
+    "dim": "simcal",
+    "category": "model",
+    "in": "simmodel × images",
+    "out": "simmodel",
+    "path": "docs/ops/simcal/model/simcal_observe.md"
+   }
+  ],
+  "simcal_simulate": [
+   {
+    "op": "simcal_simulate",
+    "dim": "simcal",
+    "category": "model",
+    "in": "simmodel",
+    "out": "images",
+    "path": "docs/ops/simcal/model/simcal_simulate.md"
+   }
+  ],
+  "simcal_report": [
+   {
+    "op": "simcal_report",
+    "dim": "simcal",
+    "category": "report",
+    "in": "calresult",
+    "out": "table",
+    "path": "docs/ops/simcal/report/simcal_report.md"
    }
   ],
   "spc_capability": [

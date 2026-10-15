@@ -9,6 +9,258 @@
   "hi"
  ],
  "summaries": {
+  "simcal/simcal_identifiability": {
+   "fp": "a33c94d233ab",
+   "ja": "合わせた各つまみの Fisher 情報・Cramér-Rao 下界・相関・共線性・プロファイル尤度。",
+   "zh": "每个已拟合旋钮的 Fisher 信息、Cramér-Rao 下界、相关性、共线性与剖面似然。",
+   "tw": "每個已擬合旋鈕的 Fisher 資訊、Cramér-Rao 下界、相關性、共線性與剖面概似。",
+   "ko": "맞춘 각 노브의 Fisher 정보·Cramér-Rao 하한·상관·공선성·프로파일 우도.",
+   "de": "Fisher-Information, Cramér-Rao-Schranke, Korrelationen, Kollinearität und Profil-Likelihood jedes angepassten Reglers.",
+   "hi": "हर fit किए गए knob की Fisher information, Cramér-Rao bound, correlations, collinearity और profile likelihood।"
+  },
+  "simcal/simcal_uncertainty": {
+   "fp": "09e83dd4c9a7",
+   "ja": "決まったつまみの標準偏差と区間: Laplace(Fisher 情報の逆)かパラメトリック・ブートストラップ。",
+   "zh": "已确定旋钮的标准差与区间：Laplace（Fisher 信息之逆）或参数自助法。",
+   "tw": "已確定旋鈕的標準差與區間：Laplace（Fisher 資訊之逆）或參數自助法。",
+   "ko": "결정된 노브의 표준편차와 구간: Laplace(Fisher 정보의 역) 또는 모수적 부트스트랩.",
+   "de": "Standardabweichungen und Intervalle der bestimmten Regler: Laplace (inverse Fisher-Information) oder parametrischer Bootstrap.",
+   "hi": "निर्धारित knobs के standard deviation और intervals: Laplace (inverse Fisher) या parametric bootstrap।"
+  },
+  "simcal/simcal_validate": {
+   "fp": "3215c98854de",
+   "ja": "取り置いた画像での過適合の門。1 つでも落ちれば較正を拒否する(推定は取り下げる)。",
+   "zh": "在保留图像上的过拟合闸门；任一失败即拒绝该标定（撤回估计值）。",
+   "tw": "在保留影像上的過擬合閘門；任一失敗即拒絕該校正（撤回估計值）。",
+   "ko": "보류 영상에서의 과적합 관문. 하나라도 실패하면 보정을 거부한다(추정치는 철회).",
+   "de": "Überanpassungs-Prüfungen auf zurückgehaltenen Bildern; schlägt eine fehl, wird die Kalibrierung verworfen (Schätzwerte zurückgezogen).",
+   "hi": "held-out images पर over-fitting gates; किसी एक के भी विफल होने पर calibration अस्वीकृत (estimates वापस)।"
+  },
+  "simcal/simcal_discrepancy": {
+   "fp": "5eedf6e1bc79",
+   "ja": "雑音で正規化した残差に、模型が作れない構造(モデルの食い違い)があるか。",
+   "zh": "噪声归一化的残差中是否存在模型无法产生的结构（模型偏差）？",
+   "tw": "雜訊正規化的殘差中是否存在模型無法產生的結構（模型偏差）？",
+   "ko": "잡음으로 정규화한 잔차에 모형이 만들 수 없는 구조(모형 불일치)가 있는가.",
+   "de": "Enthalten die rauschnormierten Residuen Struktur, die das Modell nicht erzeugen kann (Modelldiskrepanz)?",
+   "hi": "क्या noise-normalised residuals में ऐसी संरचना है जो model नहीं बना सकता (model discrepancy)?"
+  },
+  "simcal/simcal_report": {
+   "fp": "73c97c00d812",
+   "ja": "較正の表 1 枚: 各つまみの値・単位・区間・分類、門、拒否の理由。",
+   "zh": "标定一览表：各旋钮的值、单位、区间与类别，各闸门，以及拒绝理由。",
+   "tw": "校正一覽表：各旋鈕的值、單位、區間與類別，各閘門，以及拒絕理由。",
+   "ko": "보정 표 한 장: 각 노브의 값·단위·구간·분류, 관문, 거부 사유.",
+   "de": "Eine Tabelle der Kalibrierung: Wert, Einheit, Intervall und Klasse jedes Reglers, die Prüfungen und die Ablehnungsgründe.",
+   "hi": "calibration की एक तालिका: हर knob का मान, इकाई, interval और वर्ग, gates, और अस्वीकृति के कारण।"
+  },
+  "simcal/simcal_model": {
+   "fp": "6044f31bbc6d",
+   "ja": "``simmodel`` を組む: 引数がつまみ(単位・範囲つき)になった op の順方向の連鎖と、雑音モデル。",
+   "zh": "构建 ``simmodel``：参数为旋钮（带单位与范围）的算子正向链，以及噪声模型。",
+   "tw": "建立 ``simmodel``：參數為旋鈕（帶單位與範圍）的運算子正向鏈，以及雜訊模型。",
+   "ko": "``simmodel``을 만든다: 인수가 단위·범위를 가진 노브인 op의 순방향 체인과 잡음 모델.",
+   "de": "Baut ein ``simmodel``: eine Vorwärtskette von Ops, deren Argumente Regler mit Einheiten und Bereichen sind, samt Rauschmodell.",
+   "hi": "``simmodel`` बनाता है: ops की forward chain जिसके arguments इकाई व सीमा वाले knobs हैं, साथ में noise model।"
+  },
+  "simcal/simcal_simulate": {
+   "fp": "a0499b5caa52",
+   "ja": "つまみの値で simmodel の連鎖を走らせる -> 条件ごとに 2-D 配列 1 枚(``images``)。",
+   "zh": "按给定旋钮值运行 simmodel 的链 -> 每个条件一个二维数组（``images``）。",
+   "tw": "以給定旋鈕值執行 simmodel 的鏈 -> 每個條件一個二維陣列（``images``）。",
+   "ko": "주어진 노브 값으로 simmodel 체인을 실행 -> 조건마다 2-D 배열 1장(``images``).",
+   "de": "Führt die Kette eines simmodel mit gegebenen Reglerwerten aus -> ein 2-D-Array pro Bedingung (``images``).",
+   "hi": "दिए गए knob मानों पर simmodel की chain चलाता है -> हर condition के लिए एक 2-D array (``images``)।"
+  },
+  "simcal/simcal_observe": {
+   "fp": "977b977fd39a",
+   "ja": "実測の画像を simmodel に付ける: 位置合わせ・関心領域・露出の正規化。",
+   "zh": "将实测图像附加到 simmodel：配准、感兴趣区域与曝光归一化。",
+   "tw": "將實測影像附加到 simmodel：對位、感興趣區域與曝光正規化。",
+   "ko": "실측 영상을 simmodel에 붙인다: 정합·관심 영역·노출 정규화.",
+   "de": "Hängt gemessene Bilder an ein simmodel an: Ausrichtung, Region of Interest und Belichtungsnormierung.",
+   "hi": "मापी गई images को simmodel से जोड़ता है: alignment, region of interest और exposure normalisation।"
+  },
+  "simcal/simcal_screen": {
+   "fp": "50a3999af61f",
+   "ja": "どのつまみがカメラの雑音を越えて画像を動かすか、どれが交絡しているか、出力の方向がいくつあるか。",
+   "zh": "哪些旋钮能使图像变化超过相机噪声、哪些相互混杂、输出有多少个独立方向。",
+   "tw": "哪些旋鈕能使影像變化超過相機雜訊、哪些相互混雜、輸出有多少個獨立方向。",
+   "ko": "어느 노브가 카메라 잡음을 넘어 영상을 움직이는지, 어느 것이 교락되어 있는지, 출력 방향이 몇 개인지.",
+   "de": "Welche Regler die Bilder über das Kamerarauschen hinaus bewegen, welche vermengt sind und wie viele Ausgaberichtungen es gibt.",
+   "hi": "कौन-से knobs images को camera noise से अधिक बदलते हैं, कौन-से confounded हैं, और output की कितनी दिशाएँ हैं।"
+  },
+  "simcal/simcal_fit": {
+   "fp": "7b4bd1169821",
+   "ja": "観測つき simmodel の自由なつまみを画像に合わせる(重みつき最小二乗)-> ``calresult``。",
+   "zh": "将带观测的 simmodel 的自由旋钮拟合到其图像（加权最小二乘）-> ``calresult``。",
+   "tw": "將帶觀測的 simmodel 的自由旋鈕擬合到其影像（加權最小平方）-> ``calresult``。",
+   "ko": "관측이 붙은 simmodel의 자유 노브를 영상에 맞춘다(가중 최소제곱) -> ``calresult``.",
+   "de": "Passt die freien Regler eines beobachteten simmodel an seine Bilder an (gewichtete kleinste Quadrate) -> ``calresult``.",
+   "hi": "observed simmodel के free knobs को उसकी images पर fit करता है (weighted least squares) -> ``calresult``।"
+  },
+  "multivar/doe_morris": {
+   "fp": "91535e011af3",
+   "ja": "Morris の一因子ずつのふるい計画: k+1 回の軌道を ``r`` 本 -> ``design``。",
+   "zh": "Morris 一次一因子筛选设计：``r`` 条各含 k+1 次运行的轨迹 -> ``design``。",
+   "tw": "Morris 一次一因子篩選設計：``r`` 條各含 k+1 次執行的軌跡 -> ``design``。",
+   "ko": "Morris 한 번에 한 인자 선별 설계: k+1회 궤적 ``r``개 -> ``design``.",
+   "de": "Morris-One-at-a-time-Screeningplan: ``r`` Trajektorien zu je k+1 Läufen -> ``design``.",
+   "hi": "Morris one-at-a-time screening plan: k+1 runs की ``r`` trajectories -> ``design``।"
+  },
+  "multivar/sens_morris": {
+   "fp": "2bcb9437dce4",
+   "ja": "Morris の要素効果 -> 因子ごとの mu, mu*, sigma(Morris 1991、mu* は Campolongo ら 2007)。",
+   "zh": "Morris 基本效应 -> 各因子的 mu、mu*、sigma（Morris 1991；mu* 见 Campolongo 等 2007）。",
+   "tw": "Morris 基本效應 -> 各因子的 mu、mu*、sigma（Morris 1991；mu* 見 Campolongo 等 2007）。",
+   "ko": "Morris 기본 효과 -> 인자별 mu, mu*, sigma(Morris 1991, mu*는 Campolongo 등 2007).",
+   "de": "Morris-Elementareffekte -> mu, mu*, sigma je Faktor (Morris 1991; mu* Campolongo et al. 2007).",
+   "hi": "Morris elementary effects -> हर factor के mu, mu*, sigma (Morris 1991; mu* Campolongo et al. 2007)।"
+  },
+  "multivar/doe_saltelli": {
+   "fp": "dab617a1b3d9",
+   "ja": "Sobol' 指数のための標本行列(Saltelli ら 2010)-> n (k + 2) 回の ``design``。",
+   "zh": "用于 Sobol' 指数的样本矩阵（Saltelli 等 2010）-> 共 n (k + 2) 次运行的 ``design``。",
+   "tw": "用於 Sobol' 指數的樣本矩陣（Saltelli 等 2010）-> 共 n (k + 2) 次執行的 ``design``。",
+   "ko": "Sobol' 지수를 위한 표본 행렬(Saltelli 등 2010) -> n (k + 2)회의 ``design``.",
+   "de": "Stichprobenmatrizen für Sobol'-Indizes (Saltelli et al. 2010) -> ``design`` mit n (k + 2) Läufen.",
+   "hi": "Sobol' indices के लिए sample matrices (Saltelli et al. 2010) -> n (k + 2) runs का ``design``।"
+  },
+  "multivar/sens_sobol": {
+   "fp": "4d10d61f5288",
+   "ja": "一次と全効果の Sobol' 指数(ブートストラップの信頼区間つき)。",
+   "zh": "一阶与总效应 Sobol' 指数，附自助法置信区间。",
+   "tw": "一階與總效應 Sobol' 指數，附自助法信賴區間。",
+   "ko": "1차 및 전체 Sobol' 지수(부트스트랩 신뢰구간 포함).",
+   "de": "Sobol'-Indizes erster Ordnung und Totaleffekt-Indizes mit Bootstrap-Konfidenzintervallen.",
+   "hi": "first-order और total Sobol' indices, bootstrap confidence intervals सहित।"
+  },
+  "multivar/mv_confounding": {
+   "fp": "dd1adff9ee25",
+   "ja": "共線性指数 gamma_K(Brun, Reichert & Künsch 2001): データが決められるパラメータはどれか。",
+   "zh": "共线性指数 gamma_K（Brun、Reichert 与 Künsch 2001）：数据能确定哪些参数。",
+   "tw": "共線性指數 gamma_K（Brun、Reichert 與 Künsch 2001）：資料能確定哪些參數。",
+   "ko": "공선성 지수 gamma_K(Brun, Reichert & Künsch 2001): 데이터가 정할 수 있는 파라미터는 무엇인가.",
+   "de": "Kollinearitätsindex gamma_K (Brun, Reichert & Künsch 2001): welche Parameter die Daten festlegen können.",
+   "hi": "collinearity index gamma_K (Brun, Reichert व Künsch 2001): data कौन-से parameters तय कर सकता है।"
+  },
+  "multivar/mv_residual_pca": {
+   "fp": "a7673b32fdda",
+   "ja": "当てはめたモデルの残差にまだ構造が残っているか: 残差行列の PCA と雑音の比較。",
+   "zh": "拟合模型的残差中是否仍有结构？残差矩阵的 PCA 与噪声比较。",
+   "tw": "擬合模型的殘差中是否仍有結構？殘差矩陣的 PCA 與雜訊比較。",
+   "ko": "적합한 모델의 잔차에 아직 구조가 남아 있는가: 잔차 행렬의 PCA와 잡음 비교.",
+   "de": "Tragen die Residuen eines angepassten Modells noch Struktur? PCA einer Residuenmatrix gegen Rauschen.",
+   "hi": "क्या fitted model के residuals में अब भी संरचना है? residual matrix का PCA बनाम noise।"
+  },
+  "multivar/feat_image_vector": {
+   "fp": "de94df9d3ba8",
+   "ja": "画像 -> 特徴量の表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``(画像 1 枚が 1 行)。",
+   "zh": "图像 -> 特征表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``，每幅图像一行。",
+   "tw": "影像 -> 特徵表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``，每張影像一列。",
+   "ko": "영상 -> 특징량 표 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, 영상 1장이 1행.",
+   "de": "Bilder -> Merkmalstabelle ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, eine Zeile pro Bild.",
+   "hi": "images -> feature table ``{\"matrix\" (N, F), \"names\", \"units\", ...}``, हर image की एक पंक्ति।"
+  },
+  "multivar/mv_pca": {
+   "fp": "101d75d76942",
+   "ja": "表(標本 x 変数)の主成分と、データが支える成分の数。",
+   "zh": "表（样本 x 变量）的主成分，以及数据所支持的成分个数。",
+   "tw": "表（樣本 x 變數）的主成分，以及資料所支持的成分個數。",
+   "ko": "표(표본 x 변수)의 주성분과, 데이터가 뒷받침하는 성분의 수.",
+   "de": "Hauptkomponenten einer Tabelle (Proben x Variablen) und wie viele davon die Daten stützen.",
+   "hi": "table (samples x variables) के principal components, और data कितने components का समर्थन करता है।"
+  },
+  "multivar/mv_pls": {
+   "fp": "b5185af84d4d",
+   "ja": "Y を X に回帰する部分最小二乗(交差検証の Q^2、Q^2 による成分数の規則、VIP つき)。",
+   "zh": "Y 对 X 的偏最小二乘回归，附交叉验证 Q^2、Q^2 成分数规则与 VIP。",
+   "tw": "Y 對 X 的偏最小平方迴歸，附交叉驗證 Q^2、Q^2 成分數規則與 VIP。",
+   "ko": "Y를 X에 회귀하는 부분최소제곱(교차검증 Q^2, Q^2 성분 수 규칙, VIP 포함).",
+   "de": "Partial-Least-Squares-Regression von Y auf X mit kreuzvalidiertem Q^2, der Q^2-Regel und VIP.",
+   "hi": "X पर Y का partial least squares regression, cross-validated Q^2, Q^2 नियम और VIP सहित।"
+  },
+  "multivar/rsm_fit": {
+   "fp": "8ccbf005c5cd",
+   "ja": "``design``(符号化単位)に応答曲面を当てる: 分散分析・当てはまりの悪さ・停留点。",
+   "zh": "在 ``design``（编码单位）上拟合响应曲面：方差分析、失拟检验、驻点。",
+   "tw": "在 ``design``（編碼單位）上擬合反應曲面：變異數分析、適合度不足檢定、駐點。",
+   "ko": "``design``(부호화 단위)에 반응표면을 적합: 분산분석, 적합결여, 정상점.",
+   "de": "Antwortfläche an ein ``design`` (kodierte Einheiten) anpassen: ANOVA, Lack-of-Fit, stationärer Punkt.",
+   "hi": "``design`` (coded units) पर response surface fit: ANOVA, lack of fit, stationary point।"
+  },
+  "multivar/doe_main_effects": {
+   "fp": "59757bec1374",
+   "ja": "因子ごとの水準平均(計画実験の応答表)と、散らばり・SN 比。",
+   "zh": "各因子的水平均值（设计实验的响应表），附离散度与 SN 比。",
+   "tw": "各因子的水準平均（設計實驗的反應表），附離散度與 SN 比。",
+   "ko": "인자별 수준 평균(계획 실험의 반응표)과 산포·SN 비.",
+   "de": "Stufenmittelwerte je Faktor — die Antworttabelle eines geplanten Versuchs — mit Streuung und SN-Verhältnis.",
+   "hi": "हर factor के level means — designed experiment की response table — dispersion और SN के साथ।"
+  },
+  "multivar/doe_lhs": {
+   "fp": "46807c805eb4",
+   "ja": "ラテン超方格計画(McKay, Beckman & Conover 1979)-> ``design``。",
+   "zh": "拉丁超立方设计（McKay、Beckman 与 Conover 1979）-> ``design``。",
+   "tw": "拉丁超立方設計（McKay、Beckman 與 Conover 1979）-> ``design``。",
+   "ko": "라틴 하이퍼큐브 설계(McKay, Beckman & Conover 1979) -> ``design``.",
+   "de": "Latin-Hypercube-Versuchsplan (McKay, Beckman & Conover 1979) -> ``design``.",
+   "hi": "Latin hypercube design (McKay, Beckman व Conover 1979) -> ``design``।"
+  },
+  "multivar/doe_orthogonal_array": {
+   "fp": "544f2053cc1e",
+   "ja": "直交表 L4 / L8 / L9 / L12 / L16 / L18 / L27(公表された表から写したもの)-> ``design``。",
+   "zh": "正交表 L4 / L8 / L9 / L12 / L16 / L18 / L27（照录自公开发表的表）-> ``design``。",
+   "tw": "直交表 L4 / L8 / L9 / L12 / L16 / L18 / L27（照錄自公開發表的表）-> ``design``。",
+   "ko": "직교표 L4 / L8 / L9 / L12 / L16 / L18 / L27(공표된 표에서 옮긴 것) -> ``design``.",
+   "de": "Orthogonales Feld L4 / L8 / L9 / L12 / L16 / L18 / L27 aus einer veröffentlichten Tabelle -> ``design``.",
+   "hi": "प्रकाशित तालिका से लिया गया orthogonal array L4 / L8 / L9 / L12 / L16 / L18 / L27 -> ``design``।"
+  },
+  "multivar/doe_fractional_factorial": {
+   "fp": "506a519039c5",
+   "ja": "生成子から作る 2 水準の正則な一部実施要因計画 2^(k-p)(Box & Hunter 1961)-> ``design``。",
+   "zh": "由生成元构造的二水平正则部分因子设计 2^(k-p)（Box 与 Hunter 1961）-> ``design``。",
+   "tw": "由生成元建構的二水準正則部分因子設計 2^(k-p)（Box 與 Hunter 1961）-> ``design``。",
+   "ko": "생성자로 만드는 2수준 정칙 일부실시 요인설계 2^(k-p)(Box & Hunter 1961) -> ``design``.",
+   "de": "Regulärer zweistufiger teilfaktorieller Versuchsplan 2^(k-p) aus Generatoren (Box & Hunter 1961) -> ``design``.",
+   "hi": "generators से बना regular दो-स्तरीय fractional factorial 2^(k-p) (Box व Hunter 1961) -> ``design``।"
+  },
+  "multivar/doe_central_composite": {
+   "fp": "09d3d359073b",
+   "ja": "中心複合計画(Box & Wilson 1951)-> ``design``。",
+   "zh": "中心复合设计（Box 与 Wilson 1951）-> ``design``。",
+   "tw": "中心複合設計（Box 與 Wilson 1951）-> ``design``。",
+   "ko": "중심 합성 설계(Box & Wilson 1951) -> ``design``.",
+   "de": "Zentral zusammengesetzter Versuchsplan (Box & Wilson 1951) -> ``design``.",
+   "hi": "Central composite design (Box व Wilson 1951) -> ``design``।"
+  },
+  "multivar/doe_box_behnken": {
+   "fp": "92c57a428ced",
+   "ja": "Box-Behnken 計画(Box & Behnken 1960、3・4・5 因子)-> ``design``。",
+   "zh": "Box-Behnken 设计（Box 与 Behnken 1960，3、4 或 5 个因子）-> ``design``。",
+   "tw": "Box-Behnken 設計（Box 與 Behnken 1960，3、4 或 5 個因子）-> ``design``。",
+   "ko": "Box-Behnken 설계(Box & Behnken 1960, 3·4·5 인자) -> ``design``.",
+   "de": "Box-Behnken-Versuchsplan (Box & Behnken 1960) für 3, 4 oder 5 Faktoren -> ``design``.",
+   "hi": "3, 4 या 5 factors के लिए Box-Behnken design (Box व Behnken 1960) -> ``design``।"
+  },
+  "multivar/doe_encode": {
+   "fp": "f72d062b4ac0",
+   "ja": "自然単位の設定値 (n, k) -> 符号化値(−1..+1 = lo..hi)つきの ``design``。",
+   "zh": "自然单位的设定值 (n, k) -> 带编码值（−1..+1 = lo..hi）的 ``design``。",
+   "tw": "自然單位的設定值 (n, k) -> 帶編碼值（−1..+1 = lo..hi）的 ``design``。",
+   "ko": "자연 단위 설정값 (n, k) -> 부호화 값(−1..+1 = lo..hi)을 가진 ``design``.",
+   "de": "Einstellungen in natürlichen Einheiten (n, k) -> ``design`` mit kodierten Werten (−1..+1 = lo..hi).",
+   "hi": "प्राकृतिक इकाइयों की settings (n, k) -> coded मानों (−1..+1 = lo..hi) वाला ``design``।"
+  },
+  "multivar/doe_decode": {
+   "fp": "1ac4d1a27ce1",
+   "ja": "``design`` -> 自然単位の行列 (n, k)。任意の符号化点をその範囲で戻すこともできる。",
+   "zh": "``design`` -> 自然单位矩阵 (n, k)；也可用其范围将任意编码点还原。",
+   "tw": "``design`` -> 自然單位矩陣 (n, k)；也可用其範圍將任意編碼點還原。",
+   "ko": "``design`` -> 자연 단위 행렬 (n, k). 임의의 부호화 점을 그 범위로 되돌릴 수도 있다.",
+   "de": "``design`` -> Matrix in natürlichen Einheiten (n, k); oder beliebige kodierte Punkte mit ihren Bereichen dekodieren.",
+   "hi": "``design`` -> प्राकृतिक इकाइयों का matrix (n, k); या किसी भी coded बिंदु को उसकी ranges से decode करें।"
+  },
   "acoustics/acoustic_material_table": {
    "fp": "43c867b32287",
    "ja": "組み込みの音響材料表: 密度・縦波音速・インピーダンス Z = ρc・減衰 α0·f^n と、値ごとの出典と確かめたかどうかの印(``table``)。",

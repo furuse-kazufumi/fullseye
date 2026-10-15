@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_main_effects — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">design × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_main_effects(design=None, y=None, goal=&#x27;larger&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import multivar; multivar.doe_main_effects(design=None, y=None, goal=&#x27;larger&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;doe_main_effects&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>인자별 수준 평균(계획 실험의 반응표)과 산포·SN 비.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">y</code> is (n,) or (n, r) with r repeated measurements (or noise-array conditions) per run. For each factor and level: the mean of y (location), the mean of log s over the runs at that level (dispersion, needs r &gt;= 2), the main-effect range (max - min of the level means) and its share of the total sum of squares.</p>
+<p>SN ratios are computed per run (Taguchi): larger-the-better <code style="color:#22d3bf">-10 log10(mean(1/y^2))</code> (the same formula as <code style="color:#22d3bf">spc.spc_mt_sn_ratio</code>, reused), smaller-the-better <code style="color:#22d3bf">-10 log10(mean(y^2))</code>, nominal-the-best <code style="color:#22d3bf">10 log10(ybar^2/s^2)</code>, and their level means are reported in <code style="color:#22d3bf">sn</code>. <b>They are not the basis of the recommended levels</b>: an SN ratio mixes location and dispersion in one number, and a level can raise it by lowering the mean (Box 1988; Nair 1992). <code style="color:#22d3bf">best_levels</code> chooses from the location table by <code style="color:#22d3bf">goal</code> (<code style="color:#22d3bf">&quot;larger&quot;</code>, <code style="color:#22d3bf">&quot;smaller&quot;</code>, or <code style="color:#22d3bf">&quot;nominal&quot;</code> — which picks the levels of smallest dispersion and leaves the mean to an adjustment factor), and <code style="color:#22d3bf">sn_agrees</code> says where the SN table would have chosen differently.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">analysis</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_pca">mv_pca</a> · <a style="color:#22d3bf" href="opmultivar:mv_pls">mv_pls</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

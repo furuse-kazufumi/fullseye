@@ -1,0 +1,91 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">実験計画・多変量解析・感度解析 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>実物の画像から物理モデルの係数を合わせたい(ユーザーの言葉では「誤差をフィードバックして係数を自動で調整したい」)。その前に答えておくべき問いが 3 つあります。</p>
+<p style="margin:2px 0 2px 12px">1. <b>どの条件で撮る(計算する)か。</b> 条件を 1 つずつ振ると、組み合わせの効果(照明を寝かせたら露光を減らす、のような)が見えません。4 条件 x 3 水準を全部撮ると 81 回。直交表 L9 なら 9 回で、どの 2 条件の組も均等に出ます。</p>
+<p style="margin:2px 0 2px 12px">2. <b>何が効いたか。</b> 効かないつまみは合わせても意味が無く、交互作用でしか効かないつまみは 1 つずつ見ても見落とします。</p>
+<p style="margin:2px 0 2px 12px">3. <b>データから決まるのはどれか。</b> 2 つのつまみが絵を同じように動かすなら、決まるのは片方ずつではなく組み合わせ(例: 屈折率 x 膜厚)だけです。</p>
+<p>この族はその道具箱です。台帳は <code style="color:#22d3bf">opsmultivar.py</code>、計画は <code style="color:#22d3bf">doe.py</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">計画(plan / coding)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 少ない回数で多くの条件を振る(田口の直交表) | <code style="color:#22d3bf">doe_orthogonal_array</code> | L4・L8・L9・L12・L16・L18・L27 を<b>公表された表から写した</b>(York 大学の公開表)。NIST Dataplot の L*.DAT と行まで一致することをテストが毎回確かめる |</p>
+<p>| 2 水準の一部実施(どれとどれが交絡するかつき) | <code style="color:#22d3bf">doe_fractional_factorial</code> | 生成子は NIST/SEMATECH e-Handbook Table 3.17。分解能と交絡表は生成子から計算し、表の分解能と一致 |</p>
+<p>| 二次の応答曲面を当てるための計画 | <code style="color:#22d3bf">doe_central_composite</code> / <code style="color:#22d3bf">doe_box_behnken</code> | 回転可能な α = F^{1/4}(NIST Table 3.23)、3 因子の点は NIST Table 3.24 と一致 |</p>
+<p>| シミュレーションの入力を偏りなく埋める | <code style="color:#22d3bf">doe_lhs</code> | 各条件の n 区間にちょうど 1 点(McKay ら 1979 の定義を返り値で検査) |</p>
+<p>| 記録した条件を計画と同じ座標へ / 計画を装置の設定値へ | <code style="color:#22d3bf">doe_encode</code> / <code style="color:#22d3bf">doe_decode</code> | 線形と対数(条件ごと) |</p>
+<p>返り値は新しい型 <code style="color:#22d3bf">design</code> です。<b>符号化(−1..+1)の行列と自然単位の行列を両方</b>、因子名・単位・範囲・尺度・交絡表と一緒に持ちます。<code style="color:#22d3bf">matrix</code> と分けた理由: 2 つの行列は形も dtype も同じで、取り違えた二次の当てはめは例外なしに別の中心の曲面を返すからです。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  F[&quot;条件と範囲&lt;br/&gt;(名前, lo, hi, 単位, 尺度)&quot;] --&gt; P[&quot;doe_orthogonal_array / doe_fractional_factorial&lt;br/&gt;doe_central_composite / doe_box_behnken / doe_lhs&quot;]
+  P --&gt; D[&quot;design&lt;br/&gt;coded + natural + alias&quot;]
+  D --&gt; N[&quot;doe_decode → 装置の設定値&quot;]
+  N --&gt; R[&quot;撮る / シミュレーションする&quot;]
+  R --&gt; Y[&quot;応答(画像の特徴量)&quot;]
+  D --&gt; A[&quot;解析(主効果・応答曲面・感度)&quot;]
+  Y --&gt; A</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+plan = fs.ledger.doe_orthogonal_array(&quot;L9&quot;, [(&quot;angle&quot;, 15, 75, &quot;deg&quot;), (&quot;power&quot;, 0.5, 1.5, &quot;a.u.&quot;),
+                                             (&quot;exposure&quot;, 2, 8, &quot;ms&quot;), (&quot;gain&quot;, 0, 12, &quot;dB&quot;)])
+settings = fs.ledger.doe_decode(plan)        # 9 x 4、自然単位
+print(plan[&quot;alias&quot;][:2])                     # どの交互作用がどの列に乗るか
+
+frac = fs.ledger.doe_fractional_factorial([&quot;gain&quot;, &quot;light&quot;, &quot;exp&quot;, &quot;angle&quot;, &quot;filter&quot;], 2)
+print(frac[&quot;meta&quot;][&quot;resolution_roman&quot;], frac[&quot;alias&quot;][0])   # III  gain = light*angle = exp*filter</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴(計画を選ぶ前に読む)</h3>
+<p style="margin:2px 0 2px 12px">• <b>分解能 III の一部実施では、主効果と 2 因子交互作用が同じ列になる。</b> <code style="color:#22d3bf">examples/doe_plan_tour.py</code> は、ゲインが何もしていないのに 2^(5-2) の 8 回が「ゲインの効果 6」と答える場面を再現します(全 32 回では 0)。<code style="color:#22d3bf">alias</code> に事前に書いてあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>L12・L18 は非正則</b>: 交互作用は 1 列に乗らず、他の列に薄く広がります(L12 は残り 9 列に 1/9 ずつ)。交互作用を見たいなら L8・L16・L27 のような正則な表で、<code style="color:#22d3bf">alias</code> が空になる列に割り付けます(L18 の 1 列目 x 2 列目だけは例外的に他の列に乗りません)。</p>
+<p style="margin:2px 0 2px 12px">• <b>回転可能な中心複合計画の軸の点は範囲の外に出ます。</b> <code style="color:#22d3bf">meta[&quot;outside_range&quot;]</code> が名指しします。装置がそこまで振れないなら <code style="color:#22d3bf">inscribed=True</code> で全体を縮めるか、<code style="color:#22d3bf">alpha=&quot;face&quot;</code>(3 水準)にします。</p>
+<p style="margin:2px 0 2px 12px">• <b>範囲は推測しません。</b> <code style="color:#22d3bf">doe_encode</code> は lo/hi を必ず受け取ります(データの最小・最大を範囲にすると、計画と記録で符号化がずれる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典(公開文献のみ)</h3>
+<p>McKay, Beckman &amp; Conover 1979, Technometrics 21(2):239 / Taguchi 1987(System of Experimental Design)、表は University of York &quot;Orthogonal Arrays (Taguchi Designs)&quot; と NIST Dataplot / Bose &amp; Bush 1952, Ann. Math. Stat. 23:508 / Box &amp; Hunter 1961, Technometrics 3(3):311 / Box &amp; Wilson 1951, JRSS B 13(1):1 / Box &amp; Behnken 1960, Technometrics 2(4):455 / NIST/SEMATECH e-Handbook of Statistical Methods 5.3.3.4.7, 5.3.3.6.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">解析(analysis / features)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 画像を名前と単位つきの特徴量の表に | <code style="color:#22d3bf">feat_image_vector</code> | 飽和・暗部・エントロピーは <code style="color:#22d3bf">data_range</code>(センサや形式の範囲)を<b>必ず受け取る</b>。データの最大値は白レベルではない |</p>
+<p>| 特徴量の独立な次元の数 | <code style="color:#22d3bf">mv_pca</code> | PCA = SVD(固有値が相関/共分散行列の固有値と一致)。次元数は累積寄与・平行分析(Horn 1965)・MDL(<code style="color:#22d3bf">mathspectral.n_sources_mdl</code> を再利用、標準化しないときだけ)の 3 通り |</p>
+<p>| 条件 ⇔ 画像の特徴量の回帰 | <code style="color:#22d3bf">mv_pls</code> | NIPALS(Wold ら 2001)と SIMPLS(de Jong 1993)の 2 実装が 1 変数 y で一致。交差検証の Q² と、Q²_a ≥ 0.0975 の成分数の規則、VIP |</p>
+<p>| 最良の条件と曲面の形 | <code style="color:#22d3bf">rsm_fit</code> | 二次式の停留点 = 解析解、正準解析(最大・最小・鞍点・尾根)、純誤差との当てはまりの悪さの F 検定。<b>計画が支えない次数は、交絡する項を名指しして拒否</b>(2 水準の計画に二次を当てると <code style="color:#22d3bf">x1^2 = 1</code>) |</p>
+<p>| 主効果の応答表 | <code style="color:#22d3bf">doe_main_effects</code> | 水準ごとの平均と log s。SN 比も出すが、推奨の水準は平均と散らばりを分けて読む(Box 1988。SN 比は 1 つの数に混ぜる) |</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+l9 = fs.ledger.doe_orthogonal_array(&quot;L9&quot;, [(&quot;angle&quot;, 15, 75, &quot;deg&quot;), (&quot;power&quot;, 0.5, 1.5, &quot;a.u.&quot;),
+                                           (&quot;exposure&quot;, 2, 8, &quot;ms&quot;), (&quot;gain&quot;, 0, 12, &quot;dB&quot;)])
+c = l9[&quot;coded&quot;]
+Y = np.stack([10 - 3 * c[:, 0] + 0.5 * c[:, 2] + 0.2 * s for s in (-1, 0, 1)], axis=1)   # 9 条件 x 3 回(装置の出力の代わり)
+me = fs.ledger.doe_main_effects(l9, Y, goal=&quot;larger&quot;)
+print(me[&quot;best_levels&quot;], me[&quot;sn_agrees&quot;])
+
+ccd = fs.ledger.doe_central_composite([(&quot;angle&quot;, 4, 20, &quot;deg&quot;), (&quot;exposure&quot;, 6, 30, &quot;ms&quot;)], center=5, inscribed=True)
+x = ccd[&quot;coded&quot;]
+y13 = 17 - (x[:, 0] - 0.2) ** 2 - 2 * (x[:, 1] + 0.1) ** 2 + 0.01 * np.cos(np.arange(len(x)))
+rs = fs.ledger.rsm_fit(ccd, y13)
+print(rs[&quot;canonical&quot;][&quot;kind&quot;], rs[&quot;stationary&quot;][&quot;natural&quot;], rs[&quot;lack_of_fit&quot;][&quot;testable&quot;])</pre>
+<p><code style="color:#22d3bf">examples/multivar_inspection_tour.py</code> は検査カメラの例で、主効果(角度が 8 割、強さ・露光・ゲインは同じ山形)、応答曲面(当てはまりの悪さが有意 = 二次では飽和の折れを表せない、という合図)、PCA(特徴量 9 本の独立な情報は 2 次元)、PLS(画像から照明の角度は読めるが、露光は読めない)を出します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">感度解析と同定性(sensitivity / identifiability)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 効くつまみを少ない回数でふるう | <code style="color:#22d3bf">doe_morris</code> → <code style="color:#22d3bf">sens_morris</code> | Morris 1991 の軌道(Δ = p/(2(p−1)))、μ* = 平均 \|EE\|(Campolongo ら 2007)、σ。線形のモデルでは EE = 係数(σ = 0) |</p>
+<p>| 分散のどれだけを各つまみが動かすか | <code style="color:#22d3bf">doe_saltelli</code> → <code style="color:#22d3bf">sens_sobol</code> | Saltelli ら 2010 の A・B・A_B 行列(Sobol&#x27; 列、n は 2 の冪でなければ拒否)、S1 は Saltelli 2010、ST は Jansen 1999 の推定量。Ishigami 関数(a = 7, b = 0.1)の解析値 S1 = 0.3139, 0.4424, 0 / ST = 0.5576, 0.4424, 0.2437 が 95 % 区間に入る |</p>
+<p>| データから決まるのはどのパラメータか | <code style="color:#22d3bf">mv_confounding</code> | Brun, Reichert &amp; Künsch 2001 の共線性指数 γ_K = 1/sqrt(min eig(S̃ᵀS̃))(列は単位長)。γ &gt; 10 で交絡、組ごとに決まる組み合わせ(例 <code style="color:#22d3bf">n^1 * d^1</code>)と決まらない組み合わせ |</p>
+<p>| モデルに何が足りないか | <code style="color:#22d3bf">mv_residual_pca</code> | 残差の PCA を雑音の床(既知の σ なら Marchenko-Pastur の端、無ければ置換の平行分析)と比べる |</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  M[&quot;doe_morris&lt;br/&gt;(r 軌道)&quot;] --&gt; SM[&quot;sens_morris&lt;br/&gt;μ*・σ&quot;]
+  SM --&gt;|残ったつまみ| S[&quot;doe_saltelli&lt;br/&gt;(n = 2^m)&quot;]
+  S --&gt; SS[&quot;sens_sobol&lt;br/&gt;S1・ST と CI&quot;]
+  J[&quot;感度行列&lt;br/&gt;(有限差分)&quot;] --&gt; C[&quot;mv_confounding&lt;br/&gt;γ・決まる組み合わせ&quot;]
+  R[&quot;残差(実物 − モデル)&lt;br/&gt;÷ 雑音の大きさ&quot;] --&gt; P[&quot;mv_residual_pca&lt;br/&gt;構造の成分数・形&quot;]</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import math
+import numpy as np
+import fullseye as fs
+
+d = fs.ledger.doe_saltelli(4096, [(&quot;x1&quot;, -math.pi, math.pi), (&quot;x2&quot;, -math.pi, math.pi), (&quot;x3&quot;, -math.pi, math.pi)])
+x = d[&quot;natural&quot;]
+y = np.sin(x[:, 0]) + 7 * np.sin(x[:, 1]) ** 2 + 0.1 * x[:, 2] ** 4 * np.sin(x[:, 0])   # Ishigami
+r = fs.ledger.sens_sobol(d, y)
+print(r[&quot;S1&quot;], r[&quot;ST&quot;], r[&quot;S1_ci&quot;])          # x3: S1 ≈ 0、ST ≈ 0.24(x1 との組でだけ効く)</pre>
+<p>落とし穴:</p>
+<p style="margin:2px 0 2px 12px">• <b>1 つずつ振ると、交互作用でしか効かないつまみを見落とします</b>(Ishigami の x3)。Morris の σ・Sobol&#x27; の ST − S1 が大きいつまみは組で見ます。</p>
+<p style="margin:2px 0 2px 12px">• <b>画像を同じように動かすつまみは、画像からは組み合わせしか決まりません。</b> 照明の強さ・露光・ゲインは雑音の無い画像を同じように明るくし、<code style="color:#22d3bf">mv_confounding</code> は γ = ∞ と「決まるのは 強さ x 露光 x ゲイン」を返します(<code style="color:#22d3bf">examples/sensitivity_tour.py</code>)。ゲインと光子数を分けるのは雑音の統計(光子伝達曲線、EMVA 1288)の側です。係数合わせの前にこれを確かめないと、合わせた値は意味の無い数になります。</p>
+<p style="margin:2px 0 2px 12px">• <b>残差は雑音の大きさで割ってから PCA に掛けます。</b> 光子雑音は明るい画素ほど大きく、割らないと「明るい回は残差も大きい」が構造に見えます。</p>

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_simulate — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">simmodel</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_simulate(model=None, theta=None, seed=None) -&gt; &#x27;list&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import simcal; simcal.simcal_simulate(model=None, theta=None, seed=None) -&gt; &#x27;list&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssimcal.get(&quot;simcal_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Führt die Kette eines simmodel mit gegebenen Reglerwerten aus -&gt; ein 2-D-Array pro Bedingung (<code style="color:#22d3bf">images</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">theta</code> is <code style="color:#22d3bf">{knob: value}</code> in natural units (missing knobs take their initial or fixed value; a <code style="color:#22d3bf">calresult</code> is accepted and its <code style="color:#22d3bf">theta_hat</code> used). Values outside a knob&#x27;s range are allowed here (a simulation is not a fit). <code style="color:#22d3bf">seed</code> overrides the common-random- number seed of a stochastic model (<code style="color:#22d3bf">None</code> = the model&#x27;s own). Refuses an unknown knob name or a non-finite output.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">Leitfaden zur Familie sim_to_real_calibration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_checks_tour">simcal_checks_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_checks_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">images</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_observe">simcal_observe</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_model">simcal_model</a> · <a style="color:#22d3bf" href="opsimcal:simcal_observe">simcal_observe</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcal.py — SIMCAL Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

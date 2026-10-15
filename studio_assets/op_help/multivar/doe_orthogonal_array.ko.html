@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_orthogonal_array — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">design</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_orthogonal_array(name=&#x27;L9&#x27;, factors=None, columns=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import doe; doe.doe_orthogonal_array(name=&#x27;L9&#x27;, factors=None, columns=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;doe_orthogonal_array&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>직교표 L4 / L8 / L9 / L12 / L16 / L18 / L27(공표된 표에서 옮긴 것) -&gt; <code style="color:#22d3bf">design</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>The arrays are <b>copied from published tables</b> (sources and the copy check in <code style="color:#22d3bf">OA_SOURCES</code>), not generated: Taguchi&#x27;s numbering of columns is what shop-floor literature and the linear graphs refer to, and a generated array with another column order would silently assign factors to interaction columns. Published level symbols 1, 2 (, 3) map to coded −1, +1 (, or −1, 0, +1).</p>
+<p><code style="color:#22d3bf">factors</code>: int / names / (name, lo, hi[, unit[, scale]]) (default: one factor per column). <code style="color:#22d3bf">columns</code>: 1-based column numbers to assign the factors to, in order (default: the first k columns; for L18 column 1 is the two-level one).</p>
+<p>The returned <code style="color:#22d3bf">alias</code> lists, for every pair of assigned factors, the columns their interaction falls on and the share (see <code style="color:#22d3bf">_oa_interaction_share</code>) — if such a column also carries an assigned factor, that main effect is confounded with the interaction. <code style="color:#22d3bf">meta[&#x27;strength2_ok&#x27;]</code> re-checks orthogonality on the table actually used, and <code style="color:#22d3bf">meta[&#x27;regular&#x27;]</code> says whether interactions land on whole columns.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:doe_plan_tour">doe_plan_tour</a> — <code style="color:#22d3bf">py -3.11 examples/doe_plan_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">design</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">plan</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_lhs">doe_lhs</a> · <a style="color:#22d3bf" href="opmultivar:doe_fractional_factorial">doe_fractional_factorial</a> · <a style="color:#22d3bf" href="opmultivar:doe_central_composite">doe_central_composite</a> · <a style="color:#22d3bf" href="opmultivar:doe_box_behnken">doe_box_behnken</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doe.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

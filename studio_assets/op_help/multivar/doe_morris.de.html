@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_morris — MULTIVAR <code style="color:#22d3bf">sensitivity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">design</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_morris(r=10, factors=4, levels=4, seed=0, n_candidates=0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensitivity; sensitivity.doe_morris(r=10, factors=4, levels=4, seed=0, n_candidates=0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmultivar.get(&quot;doe_morris&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Morris-One-at-a-time-Screeningplan: <code style="color:#22d3bf">r</code> Trajektorien zu je k+1 Läufen -&gt; <code style="color:#22d3bf">design</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Each trajectory starts at a random point of the <code style="color:#22d3bf">levels</code>-level grid on the unit cube and moves one factor at a time by delta = levels / (2 (levels - 1)) (Morris 1991; with an even <code style="color:#22d3bf">levels</code> every grid level is equally likely to be visited), so r (k+1) runs give r elementary effects per factor. <code style="color:#22d3bf">n_candidates &gt; r</code> draws that many trajectories and keeps r of them that are spread out: the trajectory distance of Campolongo et al. 2007 (sum over point pairs of their Euclidean distances), chosen greedily — a pair of the farthest trajectories first, then repeatedly the trajectory that adds the most distance (an approximation of their exhaustive search, stated in <code style="color:#22d3bf">meta[&#x27;selection&#x27;]</code>).</p>
+<p>The coded matrix is 2u - 1 of the unit-cube points; <code style="color:#22d3bf">meta</code> keeps the trajectory bookkeeping that <code style="color:#22d3bf">sens_morris</code> needs (<code style="color:#22d3bf">changed</code> factor and <code style="color:#22d3bf">sign</code> per step).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">Leitfaden zur Familie design_of_experiments</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">design</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">sensitivity</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:doe_saltelli">doe_saltelli</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

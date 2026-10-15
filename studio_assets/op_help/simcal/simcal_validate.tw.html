@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_validate — SIMCAL <code style="color:#22d3bf">check</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">calresult × simmodel</code> → <code style="color:#22d3bf">calresult</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssimcal.get(&quot;simcal_validate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在保留影像上的過擬合閘門；任一失敗即拒絕該校正（撤回估計值）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">holdout</code> (and <code style="color:#22d3bf">locked</code>): observed simmodels of the same knobs (<code style="color:#22d3bf">simcal_observe</code> with <code style="color:#22d3bf">split=&#x27;holdout&#x27;</code> / <code style="color:#22d3bf">&#x27;locked&#x27;</code>) or image lists for the fitted model&#x27;s conditions. Errors are reduced chi^2 (1 = the residuals are exactly the noise). Gates, each recorded in <code style="color:#22d3bf">validation.gates</code> with its value and limit:</p>
+<p style="margin:2px 0 2px 12px">1. <code style="color:#22d3bf">beats_initial</code> — holdout error at the estimate &lt; holdout error at the initial knobs;</p>
+<p style="margin:2px 0 2px 12px">2. <code style="color:#22d3bf">holdout_over_train</code> — holdout / train &lt;= 1 + tau, tau = the bootstrap 95 % relative spread of the train error over its pixels (<code style="color:#22d3bf">n_boot</code> resamples) unless given;</p>
+<p style="margin:2px 0 2px 12px">3. <code style="color:#22d3bf">beats_gain_offset</code> — better than the initial simulation re-scaled by a fitted gain and offset only (the cheapest model that could explain the images);</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">estimate_plausible</code> — every estimate inside its range, not within 1 % of an end, and within 3 sd of its prior when one is given;</p>
+<p style="margin:2px 0 2px 12px">5. <code style="color:#22d3bf">knobs_within_dims</code> — free knobs &lt;= output directions above noise (<code style="color:#22d3bf">dims</code>, or computed from a Latin hypercube over the knobs with <code style="color:#22d3bf">sensitivity.mv_residual_pca</code>);</p>
+<p style="margin:2px 0 2px 12px">6. <code style="color:#22d3bf">fit_consistent_with_noise</code> — the absolute gate: on the train images (nu = pixels − free knobs) and on the holdout images (nu = pixels), chi^2 of the noise-normalised residuals has an upper-tail probability P(chi^2_nu &gt;= chi^2) of at least <code style="color:#22d3bf">alpha</code> (default 1e-3). Gates 1-5 are relative comparisons and pass a fit that is 60 times the noise everywhere (a thin film in the wrong fringe order, measured); this one does not. Judged on p, not on chi^2/nu, because chi^2/nu concentrates on 1 for large nu (both are returned). The variance is the noise model&#x27;s plus, for a stochastic model, its sample variance. A failure means: the fit is bad for this noise model — a local minimum, a model discrepancy, or a noise estimate that is too small. ★It does NOT detect a noise model that is too large: over-estimating the variance by 4x drives p to 1 and the gate passes (measured) — that direction is visible only as chi^2/nu &lt;&lt; 1.</p>
+<p><code style="color:#22d3bf">locked</code> is scored <b>once</b> (<code style="color:#22d3bf">errors.locked</code>) and is not used by any gate; a result that already carries a LOCKED score is refused (the <code style="color:#22d3bf">robust.py</code> discipline: the untouched number is untouched only once).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_checks_tour">simcal_checks_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_checks_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">calresult</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a> · <a style="color:#22d3bf" href="opsimcal:simcal_report">simcal_report</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">check</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcalcheck.py — SIMCAL 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

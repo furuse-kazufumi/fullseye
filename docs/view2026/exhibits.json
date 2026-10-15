@@ -6234,6 +6234,13 @@
     "de": "Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General)",
     "hi": "camera datasheet की संख्याएँ EMVA 1288 की विधि से फिर मापना, और देखना कि camera के भीतर का preprocessing उन्हें कितना बदलता है (Linear और General)"
    },
+   "sim-to-real-calibration": {
+    "zh": "用实物图像拟合物理模型的系数(sim-to-real 标定)—— 图像无法确定的系数不给数值,而是返回能确定的组合与理由",
+    "tw": "用實物影像擬合物理模型的係數(sim-to-real 校正)—— 影像無法確定的係數不給數值,而是回傳能確定的組合與理由",
+    "ko": "실물 영상으로 물리 모형의 계수를 맞춘다(sim-to-real 보정) —— 영상이 정하지 못하는 계수에는 수를 내지 않고, 정해지는 조합과 이유를 돌려준다",
+    "de": "Die Koeffizienten eines physikalischen Modells an reale Bilder anpassen (Sim-to-Real-Kalibrierung) — keine Zahl für Koeffizienten, die die Bilder nicht bestimmen, stattdessen die bestimmte Kombination und der Grund",
+    "hi": "असली images से physical model के coefficients fit करना (sim-to-real calibration) — जिन coefficients को images तय नहीं करतीं उनके लिए कोई संख्या नहीं, बल्कि तय होने वाला संयोजन और कारण"
+   },
    "moire-alignment": {
     "zh": "莫尔对准(节距略异的两片光栅 → 条纹相位 → nm 位移,差动与 Talbot 间隙)",
     "tw": "疊紋對準(節距略異的兩片光柵 → 條紋相位 → nm 位移,差動與 Talbot 間隙)",

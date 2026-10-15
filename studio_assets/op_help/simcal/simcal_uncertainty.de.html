@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_uncertainty — SIMCAL <code style="color:#22d3bf">check</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">calresult</code> → <code style="color:#22d3bf">calresult</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_uncertainty(result=None, method=&#x27;laplace&#x27;, n_boot=40, level=0.95, seed=0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import simcalcheck; simcalcheck.simcal_uncertainty(result=None, method=&#x27;laplace&#x27;, n_boot=40, level=0.95, seed=0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssimcal.get(&quot;simcal_uncertainty&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Standardabweichungen und Intervalle der bestimmten Regler: Laplace (inverse Fisher-Information) oder parametrischer Bootstrap.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Only knobs that kept a point estimate are covered; knobs without one are held at the end point (the intervals are conditional on them — stated in <code style="color:#22d3bf">note</code>). <code style="color:#22d3bf">laplace</code>: covariance = inverse of J^T W J at the estimate on the unit-scaled knobs, intervals u ± z sd mapped back through each knob&#x27;s scale (a log knob gets an asymmetric interval), <code style="color:#22d3bf">std</code> by the delta method. <code style="color:#22d3bf">bootstrap</code>: <code style="color:#22d3bf">n_boot</code> refits to the fitted prediction plus Gaussian noise of the noise model&#x27;s variance (Efron 1979), percentile intervals at <code style="color:#22d3bf">level</code>. A result with no point estimate is refused. Under a model discrepancy both are optimistic (<code style="color:#22d3bf">simcal_discrepancy</code> says so).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">Leitfaden zur Familie sim_to_real_calibration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">calresult</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_validate">simcal_validate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a> · <a style="color:#22d3bf" href="opsimcal:simcal_report">simcal_report</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">check</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_validate">simcal_validate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcalcheck.py — SIMCAL Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

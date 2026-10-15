@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">feat_image_vector — MULTIVAR <code style="color:#22d3bf">features</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.feat_image_vector(images=None, features=(&#x27;mean&#x27;, &#x27;std&#x27;, &#x27;p01&#x27;, &#x27;p99&#x27;, &#x27;rms_contrast&#x27;, &#x27;michelson_contrast&#x27;, &#x27;grad_energy&#x27;, &#x27;laplacian_var&#x27;), data_range=None, unit=&#x27;DN&#x27;, roi=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import multivar; multivar.feat_image_vector(images=None, features=(&#x27;mean&#x27;, &#x27;std&#x27;, &#x27;p01&#x27;, &#x27;p99&#x27;, &#x27;rms_contrast&#x27;, &#x27;michelson_contrast&#x27;, &#x27;grad_energy&#x27;, &#x27;laplacian_var&#x27;), data_range=None, unit=&#x27;DN&#x27;, roi=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmultivar.get(&quot;feat_image_vector&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>图像 -&gt; 特征表 <code style="color:#22d3bf">{&quot;matrix&quot; (N, F), &quot;names&quot;, &quot;units&quot;, ...}</code>，每幅图像一行。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>The bridge from pictures to the multivariate ops: each image becomes a row of named numbers with units, ready for <code style="color:#22d3bf">mv_pca</code> / <code style="color:#22d3bf">mv_pls</code> / <code style="color:#22d3bf">rsm_fit</code>. Features (see <code style="color:#22d3bf">FEATURES</code>): <code style="color:#22d3bf">mean, std, p01, p50, p99, rms_contrast, michelson_contrast, grad_energy, laplacian_var</code> need no range; <code style="color:#22d3bf">saturated_fraction, dark_fraction, entropy_bits</code> need <code style="color:#22d3bf">data_range=(lo, hi)</code> — the range of the *sensor or format* (e.g. (0, 4095) for 12-bit), which the data cannot tell: the brightest pixel of a dim image is not the white level. It is therefore <b>required, never inferred</b>, and pixels outside it are refused (the range given is then wrong).</p>
+<p><code style="color:#22d3bf">unit</code> names the grey-level unit (<code style="color:#22d3bf">&quot;DN&quot;</code> by default) used in the unit strings. <code style="color:#22d3bf">roi=(r0, r1, c0, c1)</code> restricts every feature to that window (same for all images).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:multivar_inspection_tour">multivar_inspection_tour</a> — <code style="color:#22d3bf">py -3.11 examples/multivar_inspection_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">features</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: multivar.py — MULTIVAR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

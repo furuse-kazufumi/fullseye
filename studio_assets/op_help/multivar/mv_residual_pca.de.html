@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_residual_pca — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensitivity; sensitivity.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmultivar.get(&quot;mv_residual_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Tragen die Residuen eines angepassten Modells noch Struktur? PCA einer Residuenmatrix gegen Rauschen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">R</code> is (observations x variables) — e.g. one row per image, one column per pixel or feature, holding measured minus simulated. It is <b>not</b> centred: a bias common to every observation is itself a structure the model lacks.</p>
+<p>A component counts as structural when its singular value exceeds the noise edge:</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">noise_sigma</code> (e.g. the temporal noise from an EMVA 1288 characterisation): the largest singular value of an n x p matrix of i.i.d. noise is about sigma (sqrt(n) + sqrt(p)) (Marchenko-Pastur edge), used as the threshold;</p>
+<p style="margin:2px 0 2px 12px">• without it: permutation parallel analysis (Buja &amp; Eyuboglu 1992) — each column is shuffled independently <code style="color:#22d3bf">n_perm</code> times, which keeps every column&#x27;s distribution but destroys structure shared across columns, and component i must beat the 95th percentile of the shuffled i-th singular values. (It cannot see a structure that lives inside single columns, e.g. a constant bias column — use <code style="color:#22d3bf">noise_sigma</code> for that.)</p>
+<p>Returns the singular values, the threshold(s), <code style="color:#22d3bf">n_structural</code>, the share of the residual energy in the structural components, and their loadings (reshape a loading to the image shape to see *where* the model is wrong) and scores.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">Leitfaden zur Familie design_of_experiments</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">identifiability</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_confounding">mv_confounding</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

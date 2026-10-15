@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_residual_pca — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensitivity; sensitivity.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_residual_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>当てはめたモデルの残差にまだ構造が残っているか: 残差行列の PCA と雑音の比較。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p><code style="color:#22d3bf">R</code> is (observations x variables) — e.g. one row per image, one column per pixel or feature, holding measured minus simulated. It is <b>not</b> centred: a bias common to every observation is itself a structure the model lacks.</p>
+<p>A component counts as structural when its singular value exceeds the noise edge:</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">noise_sigma</code> (e.g. the temporal noise from an EMVA 1288 characterisation): the largest singular value of an n x p matrix of i.i.d. noise is about sigma (sqrt(n) + sqrt(p)) (Marchenko-Pastur edge), used as the threshold;</p>
+<p style="margin:2px 0 2px 12px">• without it: permutation parallel analysis (Buja &amp; Eyuboglu 1992) — each column is shuffled independently <code style="color:#22d3bf">n_perm</code> times, which keeps every column&#x27;s distribution but destroys structure shared across columns, and component i must beat the 95th percentile of the shuffled i-th singular values. (It cannot see a structure that lives inside single columns, e.g. a constant bias column — use <code style="color:#22d3bf">noise_sigma</code> for that.)</p>
+<p>Returns the singular values, the threshold(s), <code style="color:#22d3bf">n_structural</code>, the share of the residual energy in the structural components, and their loadings (reshape a loading to the image shape to see *where* the model is wrong) and scores.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">identifiability</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_confounding">mv_confounding</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

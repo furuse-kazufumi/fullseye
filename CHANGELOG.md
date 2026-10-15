@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
+- `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
+- `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。
+- 例(ツアー、収蔵番号なし): `doe_plan_tour` / `multivar_inspection_tour` / `sensitivity_tour` / `simcal_tour` / `simcal_checks_tour`。能力ノート `sim-to-real-calibration`。
+- `opassist.find`(op_find): docstring 全文との部分一致を最低点で拾う段を足した(欧文の ortho / orthometric が引けなかった)。`poc_geodetic_height_frames` の検索語を直した。
+
 ### Fixed — optscene の撮像の倍率が光学バジェットと食い違っていた(vision_layout / observe_surface)
 - `optical_camera` に `image_distance_mm`(ピンホール → センサーの距離)を足し、`vision_layout` と `observe_surface` は薄肉レンズを作動距離に合焦させた像距離 v = f·WD/(WD − f) を渡す。以前は焦点距離 f を渡していて、描く画像の倍率は f/WD、`optical_budget` の倍率は f/(WD − f) と同じ構成で 2 つの模型が混ざっていた(f 25 mm・WD 200 mm で視野 28.26 mm → 正しくは 24.73 mm、14 %)。`optical_camera` を直接呼ぶ既定(無限遠合焦の近似)は変わらない。画素が面上で覆う幅(加工目の前置フィルタ)とラインスキャンの直交方向の画素も像距離で割る。
 - `examples/vision_layout_from_catalog.py` の視野の門は「画素数 × 画素 × WD / f」を両辺に入れていて素通ししていた。視野 8.2800 → 7.9488 mm(f 8 mm・WD 200 mm)、観察の照明比較は同軸 / ドームのコントラスト比 16 → 17 倍、リング 4.1722 → 4.9861。設置図(`optdraw`)の検分で見つけた。

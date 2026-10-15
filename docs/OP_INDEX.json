@@ -1,8 +1,8 @@
 {
- "n_ops": 3267,
+ "n_ops": 3295,
  "tiers": {
   "color": 12,
-  "ledger": 2314,
+  "ledger": 2342,
   "nary": 17,
   "registry": 924
  },
@@ -14,6 +14,7 @@
   "beatcube",
   "bspline_curve",
   "bspline_surface",
+  "calresult",
   "cimage",
   "color",
   "conn_graph",
@@ -27,6 +28,7 @@
   "deformation",
   "depth",
   "descriptor",
+  "design",
   "efdmodel",
   "feature",
   "file",
@@ -89,6 +91,7 @@
   "shapeset",
   "shift",
   "signal",
+  "simmodel",
   "sinogram",
   "sinostack",
   "sprites",
@@ -6816,6 +6819,123 @@
    ]
   },
   {
+   "name": "doe_box_behnken",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_central_composite",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_decode",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "matrix",
+   "category": "coding",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design"
+   ]
+  },
+  {
+   "name": "doe_encode",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "design",
+   "category": "coding",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "doe_fractional_factorial",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_lhs",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_main_effects",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
+   ]
+  },
+  {
+   "name": "doe_morris",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "sensitivity",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_orthogonal_array",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "plan",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
+   "name": "doe_saltelli",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "design",
+   "category": "sensitivity",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": []
+  },
+  {
    "name": "dolp_to_zenith",
    "halcon": "",
    "in_sort": "image2d",
@@ -8184,6 +8304,19 @@
    "dim": "tomography",
    "in_sorts": [
     "sinostack"
+   ]
+  },
+  {
+   "name": "feat_image_vector",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "features",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -16428,6 +16561,59 @@
    ]
   },
   {
+   "name": "mv_confounding",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "identifiability",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mv_pca",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mv_pls",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "mv_residual_pca",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "identifiability",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "n_sources_mdl",
    "halcon": "",
    "in_sort": "matrix",
@@ -22715,6 +22901,20 @@
    ]
   },
   {
+   "name": "rsm_fit",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "analysis",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
+   ]
+  },
+  {
    "name": "rss_lateral",
    "halcon": "",
    "in_sort": "table",
@@ -23716,6 +23916,34 @@
    ]
   },
   {
+   "name": "sens_morris",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "sensitivity",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
+   ]
+  },
+  {
+   "name": "sens_sobol",
+   "halcon": "",
+   "in_sort": "design",
+   "out_sort": "table",
+   "category": "sensitivity",
+   "tier": "ledger",
+   "ledger": "opsmultivar",
+   "dim": "multivar",
+   "in_sorts": [
+    "design",
+    "signal"
+   ]
+  },
+  {
    "name": "sensor_capture",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -24315,6 +24543,136 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "simcal_discrepancy",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
+   "name": "simcal_fit",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "calresult",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_identifiability",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
+   "name": "simcal_model",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "simmodel",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": []
+  },
+  {
+   "name": "simcal_observe",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "simmodel",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel",
+    "images"
+   ]
+  },
+  {
+   "name": "simcal_report",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "table",
+   "category": "report",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
+   "name": "simcal_screen",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "table",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_simulate",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "images",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_uncertainty",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
+   "name": "simcal_validate",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult",
+    "simmodel"
+   ]
   },
   {
    "name": "sinkhorn",

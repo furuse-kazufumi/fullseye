@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_residual_pca — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensitivity; sensitivity.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;mv_residual_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>적합한 모델의 잔차에 아직 구조가 남아 있는가: 잔차 행렬의 PCA와 잡음 비교.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">R</code> is (observations x variables) — e.g. one row per image, one column per pixel or feature, holding measured minus simulated. It is <b>not</b> centred: a bias common to every observation is itself a structure the model lacks.</p>
+<p>A component counts as structural when its singular value exceeds the noise edge:</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">noise_sigma</code> (e.g. the temporal noise from an EMVA 1288 characterisation): the largest singular value of an n x p matrix of i.i.d. noise is about sigma (sqrt(n) + sqrt(p)) (Marchenko-Pastur edge), used as the threshold;</p>
+<p style="margin:2px 0 2px 12px">• without it: permutation parallel analysis (Buja &amp; Eyuboglu 1992) — each column is shuffled independently <code style="color:#22d3bf">n_perm</code> times, which keeps every column&#x27;s distribution but destroys structure shared across columns, and component i must beat the 95th percentile of the shuffled i-th singular values. (It cannot see a structure that lives inside single columns, e.g. a constant bias column — use <code style="color:#22d3bf">noise_sigma</code> for that.)</p>
+<p>Returns the singular values, the threshold(s), <code style="color:#22d3bf">n_structural</code>, the share of the residual energy in the structural components, and their loadings (reshape a loading to the image shape to see *where* the model is wrong) and scores.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">identifiability</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_confounding">mv_confounding</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
