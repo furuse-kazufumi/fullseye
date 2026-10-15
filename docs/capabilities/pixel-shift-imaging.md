@@ -23,9 +23,11 @@ calibration: 実寸は 1 枚撮りと同じ画素ピッチ ÷ 倍率。半画素
 
 PoC `poc_pixel_shift` は、基板の配線・織物・網点・解像チャートで偽色が消えること、半画素シフトで縞の山が折り返し 1 − f₀ から本当の f₀ へ戻ること、★傾いたエッジの MTF50 は 1 枚でもシフトしても同じ(開口の sinc は動かない)こと、レンズが先に落ちていれば何も戻らないこと、シフトの誤差・動く被写体・枚数を重ねたときの雑音と破綻を、閉形式と既存の op(drizzle・edgesfr・optics の Airy)で採点します。
 
+**実データで確かめたこと**(PoC の主役の章): 35 mm フルサイズのミラーレス(センサシフト機)で撮ったピクセルシフト 4 枚の未加工 RAW(PixelShift200、Qian ほか ICCP 2022、CC BY 4.0、https://huggingface.co/datasets/guochengqian/PixelShift200 、場面 pixelshift_5 の解像チャートの切り出し、改変あり)を、.ARW の必要な行だけ Range 要求で取って合わせました。★実機の 4 枚の巡り方は (0,0)→(1,0)→(1,−1)→(0,−1) で、`pixel_shift_pattern("4shot")` の既定の並びのまま渡すと止まった被写体の 23.2 % が「動いた」と出ます —— 並びは `pixel_shift_motion_mask` の割合が最小になるものを実データで選んでください(正しい並びで 0.09 %)。合わせた像は著者の合成済み RGGB と相関 0.99999996(同じ並べ替えなので当然の一致)。無彩色のチャートの色は 1 枚 + 双線形 0.0540 → 4 枚 0.0251、0.25 cyc/px より細かい縞の振幅は 4 枚が双線形の 1.67 倍。★rawpy の AHD(よいデモザイク)は振幅 1.01 倍・色 0.0203 で 4 枚とほぼ同じでした —— このチャートの縞は 0.31 cyc/px 止まりで、4 枚の得はナイキストに近い細かさ・色のある細部で出ます。
+
 ## What it does
 
-Six ops in `pixelshift` (category `pixelshift` of `opsoptics`): nominal shift sequences with actuator error, an exact box-aperture capture of a finely drawn scene through a shifted Bayer or monochrome sensor (optionally a different scene per frame for moving objects), a grid merge with the nominal shifts that refuses sequences that cannot fill the grid, a motion mask from disagreeing green samples with fallback to a single-frame demosaic, a false-colour metric, and the closed-form resolution budget (pixel-aperture sinc times diffraction MTF, Nyquist, Q = λN/p). The PoC shows false colour vanishing with 1-pixel shifts, aliasing vanishing with half-pixel shifts while the slanted-edge MTF50 stays put, the lens-limited regime where nothing is gained, and the failure modes: shift error, moving parts and stacking more frames.
+Six ops in `pixelshift` (category `pixelshift` of `opsoptics`): nominal shift sequences with actuator error, an exact box-aperture capture of a finely drawn scene through a shifted Bayer or monochrome sensor (optionally a different scene per frame for moving objects), a grid merge with the nominal shifts that refuses sequences that cannot fill the grid, a motion mask from disagreeing green samples with fallback to a single-frame demosaic, a false-colour metric, and the closed-form resolution budget (pixel-aperture sinc times diffraction MTF, Nyquist, Q = λN/p). The PoC shows false colour vanishing with 1-pixel shifts, aliasing vanishing with half-pixel shifts while the slanted-edge MTF50 stays put, the lens-limited regime where nothing is gained, and the failure modes: shift error, moving parts and stacking more frames. The lead chapter runs on real raw data (four pixel-shift frames from a 35 mm full-frame mirrorless camera with sensor shift, PixelShift200 by Qian et al., ICCP 2022, CC BY 4.0, a crop of a resolution chart): the camera cycles (0,0)→(1,0)→(1,−1)→(0,−1), and passing the op's default order instead flags 23.2 % of a static scene as moving (0.09 % with the right order); the merge matches the authors' own merged RGGB to a correlation of 0.99999996; false colour on the achromatic chart drops from 0.054 (single frame, bilinear) to 0.025; and a good demosaic (AHD in rawpy) comes within 1 % of the four-frame contrast on this chart, whose finest bars stop at 0.31 cyc/px.
 
 ## 向くところ / 向かないところ
 
@@ -48,6 +50,8 @@ Six ops in `pixelshift` (category `pixelshift` of `opsoptics`): nominal shift se
 - MTF は上がらない: 傾いたエッジの MTF50 は 1 枚とシフトで同じ(開口の sinc は動かない)、レンズが先に落ちていれば何も戻らない(PoC の門)。
 - 撮る側は理想の撮像素子(箱の開口・画素間のクロストークなし・3 色が完全に分かれる色フィルタ)で、雑音は呼び手が足す。
 - 動き検出の差し戻し先は 1 枚の双線形デモザイクなので、ゆっくりした動き(PoC では 0.25 px/枚)では差し戻すほうが誤差が大きくなる。
+- `pixel_shift_pattern` の 1 画素 4 枚の並びは公称の 1 通りで、機種ごとの巡り方は持たない。実データ(センサシフト機)は (0,0)→(1,0)→(1,−1)→(0,−1) で、既定のまま渡すと静止部の 23.2 % を「動いた」と誤る(PoC の実データの章)。
+- 実データで 4 枚に残る色(倍率色収差・R・G・B に別々に乗る雑音)は消えない。無彩色のチャートでは AHD のほうが色は少なかった(0.0203 対 0.0251)。
 
 ## 実寸校正
 

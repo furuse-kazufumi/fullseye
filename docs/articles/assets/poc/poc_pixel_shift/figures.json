@@ -124,5 +124,38 @@
   "frames": 12,
   "frames_written": 5,
   "fps": 1.5
+ },
+ {
+  "file": "13_real_chart_strips.png",
+  "name": "real_chart_strips",
+  "caption": "【実データ】35 mm フルサイズのミラーレス(センサシフト機)で撮った解像チャートの同じ場所(256 × 1152 画素、等倍)。上 = 1 枚目の RAW を双線形でデモザイク、中 = 同じ 1 枚を rawpy の AHD で、下 = 4 枚を pixel_shift_merge で合わせたもの(どれも紙で白を釣り合わせ、ガンマ 2.2)。双線形は細い縞に色のモアレと迷路の模様が出る。データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, \"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。",
+  "shape": [
+   780,
+   1152,
+   3
+  ],
+  "source": "データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, \"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。"
+ },
+ {
+  "file": "14_real_chart_zoom.png",
+  "name": "real_chart_zoom",
+  "caption": "【実データ】周波数が右へ上がる縞の右端(約 0.2〜0.31 cyc/px)を最近傍で 3 倍。1 枚 + 双線形では縞に赤と青が乗り、細い縞の振幅が半分に落ちる。AHD は振幅が 4 枚とほぼ同じで、縞に緑と赤紫がうっすら乗る。データ: PixelShift200(Qian et al., ICCP 2022)、Hugging Face guochengqian/PixelShift200、CC BY 4.0(改変あり)",
+  "shape": [
+   1006,
+   1050,
+   3
+  ],
+  "source": "データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, \"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。"
+ },
+ {
+  "file": "15_real_chirp_modulation.png",
+  "name": "real_chirp_modulation",
+  "caption": "【実データ】チャート下段の周波数が上がる縞を 48 画素の窓で切り、4 枚の像で決めた周波数のビンで 3 つの像の振幅を読んだ(周波数はビンの幅 1/48 で量子化)。チャートの縞は 0.31 cyc/px までしか無く、ナイキスト 0.5 の手前で終わる。データ: PixelShift200(Qian et al., ICCP 2022)、Hugging Face guochengqian/PixelShift200、CC BY 4.0(改変あり)",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "source": "データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, \"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。"
  }
 ]
