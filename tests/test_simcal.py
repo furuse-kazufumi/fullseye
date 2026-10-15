@@ -313,3 +313,19 @@ def test_ledger_public_tier_fuzzer_and_summaries():
         assert e["fp"] == opdocs.fingerprint(line), name
         for lang in ("ja", "zh", "tw", "ko", "de", "hi"):
             assert e[lang].strip(), (name, lang)
+
+
+def test_equal_magnitude_terms_keep_declaration_order_whatever_the_rounding_dust():
+    """利得 × 照明のように |e| が等しい組の文字列は、1e-16 の屑の向きで入れ替わらない。
+
+    2026-10-15、Windows では "illum^1 * gain^1"、CI の Linux では "gain^1 * illum^1" になり
+    G2 の門が CI だけで赤になった(固有ベクトルの成分が丸めの屑だけ違う)。両向きの屑で同じ文字列。
+    """
+    knobs = [{"name": "illum", "scale": "log"}, {"name": "gain", "scale": "log"}]
+    nrm = np.ones(2)
+    base = np.array([1.0, 1.0]) / np.sqrt(2.0)
+    texts = {sc._fmt_combo(base + np.array([d, -d]), nrm, knobs)[0] for d in (-1e-15, 0.0, 1e-15)}
+    texts |= {sc._fmt_combo(-(base + np.array([d, -d])), nrm, knobs)[0] for d in (-1e-15, 1e-15)}
+    assert texts == {"illum^1 * gain^1"}, texts
+    # 本当に大きさが違えば、大きい方が先に来る(丸めは 1e-6 の相対まで)
+    assert sc._fmt_combo(np.array([0.6, 0.8]), nrm, knobs)[0].startswith("gain^1")

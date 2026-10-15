@@ -416,8 +416,13 @@ def mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_sub
 
     def combo(v, cols):
         v = v / np.abs(v).max()
-        v = v * np.sign(v[np.argmax(np.abs(v))])
-        terms = [(names[cols[i]], float(v[i])) for i in np.argsort(-np.abs(v), kind="stable") if abs(v[i]) > 0.05]
+        # ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に
+        #   CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
+        mag = np.round(np.abs(v), 6)
+        lead = int(np.flatnonzero(mag == mag.max())[0])
+        v = v * np.sign(v[lead])
+        terms = [(names[cols[i]], float(v[i])) for i in sorted(range(len(v)), key=lambda i: (-mag[i], i))
+                 if abs(v[i]) > 0.05]
         if log_params:
             return " * ".join("%s^%.2g" % (nm, e) for nm, e in terms)
         return " + ".join("%.2g*%s" % (e, nm) for nm, e in terms)

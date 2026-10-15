@@ -924,10 +924,15 @@ def _fmt_combo(e, nrm, knobs):
     """
     e = np.asarray(e, dtype=np.float64)
     nrm = np.where(np.asarray(nrm, dtype=np.float64) > 0, nrm, 1.0)
-    lead = int(np.argmax(np.abs(e)))
+    # ★同じ大きさの項(利得 × 照明のように |e| が等しい組)の順と「主の項」は、丸めの屑で決めない。
+    #   argmax / argsort は 1e-16 の差で入れ替わり、Windows では "illum^1 * gain^1"、CI の Linux では
+    #   "gain^1 * illum^1" になった(2026-10-15)。大きさを 1e-6 の相対で丸めて比べ、同点は宣言順。
+    ae = np.abs(e)
+    mag = np.round(ae / ae.max(), 6) if ae.max() > 0 else ae
+    lead = int(np.flatnonzero(mag == mag.max())[0])
     w = e / nrm
     w = w / w[lead]
-    keep = [i for i in np.argsort(-np.abs(e), kind="stable") if abs(e[i]) > 0.05 * abs(e[lead])]
+    keep = [i for i in sorted(range(len(e)), key=lambda i: (-mag[i], i)) if mag[i] > 0.05]
     logs = [i for i in keep if knobs[i]["scale"] == "log"]
     lins = [i for i in keep if knobs[i]["scale"] != "log"]
     if logs and not lins:
