@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 61 capabilities**
+**Currently 62 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,6 +31,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -57,7 +58,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (22)
+## Measure (23)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -110,6 +111,18 @@ Pipeline: [`dem_geodetic_to_ecef`](ops/dem/geodesy/dem_geodetic_to_ecef.md) → 
 Alternatives: [`dem_geoid_height`](ops/dem/geodesy/dem_geoid_height.md), [`dem_height_frame_convert`](ops/dem/geodesy/dem_height_frame_convert.md), [`dem_height_frame_residual`](ops/dem/geodesy/dem_height_frame_residual.md), [`dem_enu_from_geodetic`](ops/dem/geodesy/dem_enu_from_geodetic.md), [`dem_geodetic_from_enu`](ops/dem/geodesy/dem_geodetic_from_enu.md), [`dem_datum_shift_3param`](ops/dem/geodesy/dem_datum_shift_3param.md), [`dem_geodetic_slope`](ops/dem/geodesy/dem_geodetic_slope.md)
 
 Runnable: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md)
+
+Thirteen ops in `octscan` for optical coherence tomography of coatings, conformal coats, adhesive layers and multilayer films: closed-form design numbers before measuring (axial resolution, depth range, sensitivity roll-off, shot-noise-limited SNR, lateral resolution and depth of focus), a simulator of spectral interferograms from a layer stack whose indices and dispersion come from the material table (field sum, so cross-correlation, autocorrelation and DC terms are all present; spectrometer or swept source), k-linearisation, numerical dispersion compensation with closed-form or estimated coefficients, A-scans with windowing, DC removal and full-range quadrature, B-scans, and measurement: interface peaks to optical and physical thickness through the group index (refusing layers that cannot be separated or seen), dynamic-programming boundary tracing on cross-section images, surface flattening, and an entry point for raw spectra from instruments and public data. The PoC processes public raw spectra of automotive paint panels (CC BY 4.0) and compares the layer thicknesses with the paper's ultrasonic and microscope values.
+
+Operators: `oct_design`, `oct_dispersion_broadening`, `oct_interferogram`, `oct_bscan_simulate`, `oct_from_spectra`, `oct_k_linearize`, `oct_dispersion_estimate`, `oct_dispersion_compensate`, `oct_ascan`, `oct_bscan`, `oct_layer_thickness`, `oct_bscan_boundaries`, `oct_bscan_flatten`
+
+Pipeline: [`oct_design`](ops/optics/oct/oct_design.md) → [`oct_from_spectra`](ops/optics/oct/oct_from_spectra.md) → [`oct_bscan`](ops/optics/oct/oct_bscan.md) → [`oct_bscan_boundaries`](ops/optics/oct/oct_bscan_boundaries.md) → [`oct_bscan_flatten`](ops/optics/oct/oct_bscan_flatten.md) → [`oct_layer_thickness`](ops/optics/oct/oct_layer_thickness.md)
+
+Alternatives: [`oct_interferogram`](ops/optics/oct/oct_interferogram.md), [`oct_bscan_simulate`](ops/optics/oct/oct_bscan_simulate.md), [`oct_ascan`](ops/optics/oct/oct_ascan.md), [`oct_dispersion_estimate`](ops/optics/oct/oct_dispersion_estimate.md), [`material_group_index`](ops/optics/fiber/material_group_index.md), [`csi_design`](ops/interferometry/design/csi_design.md)
+
+Runnable: `poc_industrial_oct`
 
 ### [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md)
 

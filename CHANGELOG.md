@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 工業用 OCT(octscan 13 op + PoC、実測は CC BY 4.0 の公開データ)
+- `octscan`(`opsoptics` の新カテゴリ `oct`、13 op): `oct_design`(軸分解能 (2 ln 2/π) λ0²/Δλ・深さ範囲 λ0²/(4δλ)・roll-off の |sinc|×ガウス・ショット雑音律の SNR・横分解能と焦点深度)、`oct_dispersion_broadening`(√(1+σ⁴φ₂²) と補償係数 a2・a3)、`oct_interferogram` / `oct_bscan_simulate`(層の並び → 干渉スペクトル。場の和の |E|² なので相互相関・自己相関・DC が入る。分光器(λ 等間隔 / k 等間隔)と波長掃引、屈折率と分散は `materials`、空洞・点散乱体・ビームの横の広がりと焦点・点照明とライン照明)、`oct_from_spectra`(生のスペクトルの入口)、`oct_k_linearize`、`oct_dispersion_estimate`(鏡の位相 / 鋭さ最大)、`oct_dispersion_compensate`、`oct_ascan`(窓・DC 除去・直交の組で鏡像を分ける)、`oct_bscan`、`oct_layer_thickness`(群屈折率で物理厚。点像の幅の 1.4 倍より狭い・雑音に沈む・谷から立たない界面は拒否)、`oct_bscan_boundaries`(動的計画法で界面を辿る、表面からの相対の探索)、`oct_bscan_flatten`。
+- PoC `poc_industrial_oct`(32 門、図 14 枚 + GIF): 公開の自動車塗装の生スペクトル(Liverpool Research Data Catalogue 126、CC BY 4.0、`data/oct_real/`)で透明層が論文の OCT と 1.5 µm・顕微鏡と 3.6 µm 以内、着色層は 4 枚中 3 枚が顕微鏡と 2.3 µm 以内(1 枚は 7.6 µm ずれて未解決)、白の見本の着色層の下は拒否、透明層の光学厚の深さに水平な自己相関の幽霊。★ファイルと論文の表の見本の対応は論文に無く、透明層の厚さで推定(色の名前が入れ替わって見える)。合成: 群屈折率で真値と 0.04 µm(位相屈折率なら 0.9〜1.9 % 厚い)、SNR が閉形式と 0.01 dB(λ 等間隔 + 3 次補間は補間で雑音が相関して +1 dB 甘く見える)、分散の広がりが閉形式と 0.5 % 以内で 3 通りの補償で戻る、鏡像の残りが tan(δ/2) と 0.1 dB、薄い層と散乱の限界、コートの厚さの地図と空洞・剥離。
+- 能力ノート `docs/capabilities/industrial-oct.md`、op 要約 6 言語、展示(産業検査ウィング)・ViEW2026 の一覧、手書き件数 +13、COLLECTION_SIZES。
+
 ### Added — ピクセルシフト撮像(pixelshift 6 op + PoC)
 - `pixelshift`(`opsoptics` の新カテゴリ `pixelshift`、6 op): `pixel_shift_pattern`(公称のシフト列 + アクチュエータの誤差)、`pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒、枚ごとのシーンで動く被写体)、`pixel_shift_merge`(公称のシフトで格子へ、補間なし、埋められないシフト列は拒否、動き検出で 1 枚のデモザイクに差し戻し)、`pixel_shift_motion_mask`、`false_color_metric`、`pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。
 - PoC `poc_pixel_shift`(28 門、図 10 枚 + GIF): 1 画素 4 枚で偽色 0(定義上)、半画素で折り返しの山が f₀ に戻る、★MTF50 は 1 枚とシフトで同じ、レンズ律速(Q* = 1.47 で得が尽きる)、シフト誤差の閉形式、動く被写体の分かれ目(0.25 px/枚 は 4 枚が勝ち、0.5 px/枚 から逆転)、√N と動きの裏返し。★drizzle の `shifts` はセンサのシフトと符号が逆(門で固定)。

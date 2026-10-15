@@ -112,11 +112,13 @@ import moirealign
 import telecentric
 import linescan
 import pixelshift
+import octscan
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "linescan": linescan,
         "pixelshift": pixelshift,
+        "octscan": octscan,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -521,6 +523,26 @@ _CATALOG = {
         ("false_color_metric", "pixelshift", ["rgbimage"], "table"),
         ("pixel_shift_resolution_budget", "pixelshift", [], "table"),
     ],
+    # oct(octscan、2026-10-15): 光干渉断層。層の並び → 干渉スペクトル → k 線形化 → 分散補償 → A スキャン → 層厚。
+    # ★新しい型の語は作らない。干渉スペクトル・A スキャン・B スキャンの束は kind の印つきの dict(table)で渡し、
+    #   印の違う table は消費する op がすべて ValueError で拒む(oct_interferogram / oct_bscan_spectra / oct_ascan /
+    #   oct_bscan の 4 種)—— 別の族の table を黙って読む経路が無い。B スキャンの画像だけは image2d(dB)で出し、
+    #   界面を辿る op は装置の出力の図(実画像)も同じ image2d で受ける。
+    "oct": [
+        ("oct_design", "octscan", [], "table"),
+        ("oct_dispersion_broadening", "octscan", [], "table"),
+        ("oct_interferogram", "octscan", [], "table"),
+        ("oct_bscan_simulate", "octscan", [], "table"),
+        ("oct_from_spectra", "octscan", ["matrix", "signal"], "table"),
+        ("oct_k_linearize", "octscan", ["table"], "table"),
+        ("oct_dispersion_estimate", "octscan", ["table"], "table"),
+        ("oct_dispersion_compensate", "octscan", ["table"], "table"),
+        ("oct_ascan", "octscan", ["table"], "table"),
+        ("oct_bscan", "octscan", ["table"], "image2d"),
+        ("oct_layer_thickness", "octscan", ["table"], "table"),
+        ("oct_bscan_boundaries", "octscan", ["image2d"], "table"),
+        ("oct_bscan_flatten", "octscan", ["table", "signal"], "table"),
+    ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),
         ("cavity_strain_transfer", "cavityoptics", [], "pairs"),
@@ -641,6 +663,8 @@ RESULT_ADAPTERS = {
     # (直進, 拡散) → (K, 2) の pairs。どちらも捨てない(合計が板の透過率になる)。
     "rough_transmission": lambda r: (np.stack(np.broadcast_arrays(*r), axis=-1).reshape(-1, 2)
                                      if isinstance(r, tuple) else r),
+    # B スキャンの表 → 断面像(dB)。深さ軸・横軸が要る呼び手は素の関数から表を取る。
+    "oct_bscan": lambda r: np.asarray(r["image_db"], float) if isinstance(r, dict) else r,
 }
 
 

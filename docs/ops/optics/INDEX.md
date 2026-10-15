@@ -1,4 +1,4 @@
-# OPTICS operator help — 248 ops in 29 categories
+# OPTICS operator help — 261 ops in 30 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -89,6 +89,10 @@
 ### moire_align (8)
 
 [moire_differential_shift](moire_align/moire_differential_shift.md) · [moire_magnification](moire_align/moire_magnification.md) · [moire_mark_read](moire_align/moire_mark_read.md) · [moire_overlay_image](moire_align/moire_overlay_image.md) · [moire_phase](moire_align/moire_phase.md) · [moire_phase_crlb](moire_align/moire_phase_crlb.md) · [moire_phase_to_shift](moire_align/moire_phase_to_shift.md) · [moire_talbot_gap](moire_align/moire_talbot_gap.md)
+
+### oct (13)
+
+[oct_ascan](oct/oct_ascan.md) · [oct_bscan](oct/oct_bscan.md) · [oct_bscan_boundaries](oct/oct_bscan_boundaries.md) · [oct_bscan_flatten](oct/oct_bscan_flatten.md) · [oct_bscan_simulate](oct/oct_bscan_simulate.md) · [oct_design](oct/oct_design.md) · [oct_dispersion_broadening](oct/oct_dispersion_broadening.md) · [oct_dispersion_compensate](oct/oct_dispersion_compensate.md) · [oct_dispersion_estimate](oct/oct_dispersion_estimate.md) · [oct_from_spectra](oct/oct_from_spectra.md) · [oct_interferogram](oct/oct_interferogram.md) · [oct_k_linearize](oct/oct_k_linearize.md) · [oct_layer_thickness](oct/oct_layer_thickness.md)
 
 ### optimization (3)
 

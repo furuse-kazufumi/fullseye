@@ -1,0 +1,158 @@
+[
+ {
+  "file": "01_real_paint_bscans.png",
+  "name": "real_paint_bscans",
+  "caption": "生の干渉スペクトル(CC BY 4.0、Liverpool Research Data Catalogue 126)を Fullseye の op だけで k 線形化・FFT し、界面を動的計画法で辿った。横 1 mm(100 本)、縦は表面の 40 µm 上から光路 260 µm。白の見本は着色層が強く散乱し、下の面が立たない。III-B の表面の下の水平な線は自己相関の幽霊。",
+  "shape": [
+   1462,
+   420,
+   3
+  ]
+ },
+ {
+  "file": "02_real_thickness_table.png",
+  "name": "real_thickness_table",
+  "caption": "屈折率は論文と同じ 1.56(透明層)・1.64(着色層)。表のどの行がどのファイルかは論文に無く、透明層の厚さで決めた(推定)。着色層はその対応と独立の突き合わせ。",
+  "shape": [
+   176,
+   732,
+   3
+  ],
+  "csv": "02_real_thickness_table.csv",
+  "tsv": "02_real_thickness_table.tsv"
+ },
+ {
+  "file": "03_real_flattened_profiles.png",
+  "name": "real_flattened_profiles",
+  "caption": "黒・濃色は透明層の下の面と着色層の下の面の 2 つの山。白は透明層の下の面のあと滑らかに減衰する(強い散乱)。この断面に oct_layer_thickness を掛けて層厚を出した。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_real_glass_axial_psf.png",
+  "name": "real_glass_axial_psf",
+  "caption": "公称 47 nm のガウスの閉形式 6.6 µm より細い —— 実測のスペクトルはガウスより広く裾が重い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_film_ascan.png",
+  "name": "film_ascan",
+  "caption": "破線は見つけた界面。光学厚を材料表の群屈折率で割ると真値と 0.05 µm 以内。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_rolloff.png",
+  "name": "rolloff",
+  "caption": "SD 840/50 nm 2048 画素(深さ範囲 2.26 mm)、SS 1310/100 nm・瞬時線幅 0.1 nm。点 = 鏡を深さごとに置いた合成。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_dispersion_broadening.png",
+  "name": "dispersion_broadening",
+  "caption": "840/50 nm。補償は exp(−i(a2Δk²+a3Δk³))、係数は A スキャンの鋭さが最大になるよう探した。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_quadrature_suppression.png",
+  "name": "quadrature_suppression",
+  "caption": "I₀ + i I_{π/2} の複素スペクトルで ±z を分ける(full range)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_autocorrelation_ghost.png",
+  "name": "autocorrelation_ghost",
+  "caption": "試料腕が参照光と同じ桁に強いと、層の上下の面どうしの干渉が 0 の近くに立つ。試料腕だけのスペクトルを引けば消える(実機では位相を π ずらした 2 枚の差)。",
+  "shape": [
+   360,
+   710,
+   3
+  ]
+ },
+ {
+  "file": "10_thin_layer_limit.png",
+  "name": "thin_layer_limit",
+  "caption": "下限: 窓なし 5.81 µm、hann 6.83 µm。点が無い厚さは op が拒否した(2 つの点像が重なり、頂点が引き寄せ合うので、見えても厚さが偏る)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_scattering_snr.png",
+  "name": "scattering_snr",
+  "caption": "1 回散乱(Beer–Lambert)の模型。実測の白の見本は µ_t ≈ 36 /mm と推定(着色層の中の減衰の傾き)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_coat_bscan.png",
+  "name": "coat_bscan",
+  "caption": "横 1.2 mm、縦は光路 25〜440 µm。左の剥離(3〜8 µm の空気の隙間)で板の面が明るくなり、右の空洞(半径 11 µm)は上下の面が点で見え、その上の点線は空洞と表面の自己相関。板(基板)は散乱の多い層。",
+  "shape": [
+   897,
+   500,
+   3
+  ]
+ },
+ {
+  "file": "13_coat_thickness_map.png",
+  "name": "coat_thickness_map",
+  "caption": "段差の上でコートが薄くなる(表面は段差の 45 % しか追わない)。剥離・空洞の列は外れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_lateral_vs_dof.png",
+  "name": "lateral_vs_dof",
+  "caption": "z_R = π w0² n/λ(w0 4 µm で 90 µm、6 µm で 202 µm、10 µm で 561 µm)。細く絞るほど深さの見える範囲が短い。ライン照明は片方向だけ共焦点なので信号の落ち方が緩い。",
+  "shape": [
+   360,
+   777,
+   3
+  ]
+ },
+ {
+  "file": "15_dispersion_compensation.gif",
+  "name": "dispersion_compensation",
+  "caption": "試料腕に溶融石英 12 mm の分散の不一致。補償の係数 a2 を 0 から 35.6 µm² まで動かすと、PMMA / PC / PS の 3 層の界面がにじみから線に締まる(横 0.6 mm、光路 130〜380 µm)。",
+  "shape": [
+   230,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 18,
+  "frames_written": 14,
+  "fps": 6.0
+ }
+]

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3235,
+ "n_notes": 3241,
  "notes": {
   "vol_dilate": [
    {
@@ -27765,6 +27765,132 @@
     "category": "moire_align",
     "out": "table",
     "path": "docs/ops/optics/moire_align/moire_talbot_gap.md"
+   }
+  ],
+  "oct_ascan": [
+   {
+    "op": "oct_ascan",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_ascan.md"
+   }
+  ],
+  "oct_bscan": [
+   {
+    "op": "oct_bscan",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/optics/oct/oct_bscan.md"
+   }
+  ],
+  "oct_bscan_boundaries": [
+   {
+    "op": "oct_bscan_boundaries",
+    "dim": "optics",
+    "category": "oct",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_bscan_boundaries.md"
+   }
+  ],
+  "oct_bscan_flatten": [
+   {
+    "op": "oct_bscan_flatten",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_bscan_flatten.md"
+   }
+  ],
+  "oct_bscan_simulate": [
+   {
+    "op": "oct_bscan_simulate",
+    "dim": "optics",
+    "category": "oct",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_bscan_simulate.md"
+   }
+  ],
+  "oct_design": [
+   {
+    "op": "oct_design",
+    "dim": "optics",
+    "category": "oct",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_design.md"
+   }
+  ],
+  "oct_dispersion_broadening": [
+   {
+    "op": "oct_dispersion_broadening",
+    "dim": "optics",
+    "category": "oct",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_dispersion_broadening.md"
+   }
+  ],
+  "oct_dispersion_compensate": [
+   {
+    "op": "oct_dispersion_compensate",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_dispersion_compensate.md"
+   }
+  ],
+  "oct_dispersion_estimate": [
+   {
+    "op": "oct_dispersion_estimate",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_dispersion_estimate.md"
+   }
+  ],
+  "oct_from_spectra": [
+   {
+    "op": "oct_from_spectra",
+    "dim": "optics",
+    "category": "oct",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_from_spectra.md"
+   }
+  ],
+  "oct_interferogram": [
+   {
+    "op": "oct_interferogram",
+    "dim": "optics",
+    "category": "oct",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_interferogram.md"
+   }
+  ],
+  "oct_k_linearize": [
+   {
+    "op": "oct_k_linearize",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_k_linearize.md"
+   }
+  ],
+  "oct_layer_thickness": [
+   {
+    "op": "oct_layer_thickness",
+    "dim": "optics",
+    "category": "oct",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/oct/oct_layer_thickness.md"
    }
   ],
   "bend_singlet": [

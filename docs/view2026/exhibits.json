@@ -5640,6 +5640,22 @@
     "de": "Messschieber-Illusion",
     "hi": "Calipers vs illusions"
    }
+  },
+  {
+   "id": "poc_industrial_oct",
+   "group": "wing_industrial",
+   "media": "01_real_paint_bscans.png",
+   "motion": false,
+   "thumb_src": "01_real_paint_bscans_720.jpg",
+   "label": {
+    "ja": "工業用 OCT(塗装の層厚と内部欠陥)",
+    "en": "Industrial OCT (paint layers and hidden defects)",
+    "zh": "工业 OCT(涂层厚度与内部缺陷)",
+    "tw": "工業 OCT(塗層厚度與內部缺陷)",
+    "ko": "공업용 OCT(도장 층 두께와 내부 결함)",
+    "de": "Industrielle OCT (Lackschichten und verborgene Fehler)",
+    "hi": "औद्योगिक OCT (paint layers और भीतरी defects)"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6146,6 +6162,13 @@
     "ko": "픽셀 시프트 촬상(1 화소 시프트로 전색, 반 화소 시프트로 에일리어싱 제거, 깨지는 조건까지)",
     "de": "Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht)",
     "hi": "pixel-shift imaging (1-pixel shift से पूरा रंग, half-pixel shift से aliasing खत्म, और कहाँ टूटता है)"
+   },
+   "industrial-oct": {
+    "zh": "工业 OCT(干涉光谱 → k 线性化 → 色散补偿 → A / B 扫描 → 用群折射率求层厚)",
+    "tw": "工業 OCT(干涉光譜 → k 線性化 → 色散補償 → A / B 掃描 → 用群折射率求層厚)",
+    "ko": "공업용 OCT(간섭 스펙트럼 → k 선형화 → 분산 보상 → A / B 스캔 → 군굴절률로 층 두께)",
+    "de": "Industrielle OCT (spektrales Interferogramm, k-Linearisierung, Dispersionskompensation, A/B-Scans, Schichtdicke über den Gruppenindex)",
+    "hi": "औद्योगिक OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, group index से layer की मोटाई)"
    }
   }
  }

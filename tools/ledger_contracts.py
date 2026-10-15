@@ -80,6 +80,8 @@ CATEGORIES = {
 #: ``render_beauty`` 512^2 with 2x supersampling (5.0 s per call).
 SIZE_OVERRIDES = {
     "video_cube_orbit": {"n_frames": 4, "size": 48},
+    # 光干渉断層の B スキャンの合成: 既定の 256 列 × 1024 画素は 1 回 6 s(列ごとに場を足す)。大きさだけを縮める。
+    "oct_bscan_simulate": {"n_columns": 12, "n_pixels": 256, "width_um": 200.0},
     "render_beauty": {"size": 96},
 }
 
@@ -302,6 +304,27 @@ def _ls():
     return linescan
 
 
+def _oct_it(k_linear=False):
+    """光干渉断層の干渉スペクトル(既定の層の並び、256 画素)。k 等間隔の分光器なら k 線形化の済んだ表。"""
+    import octscan
+    return octscan.oct_interferogram(n_pixels=256, oversample=4, grid="k" if k_linear else "lambda")
+
+
+def _oct_bs():
+    import octscan
+    return octscan.oct_bscan_simulate(n_columns=12, n_pixels=256, width_um=200.0)
+
+
+def _oct_two_lines():
+    """傾いた 2 本の界面(1.5 画素 / 列、間隔 6 画素)+ 粒状の雑音: 跳びの上限・間隔・跳びの罰が効く入力。"""
+    rng = np.random.default_rng(7)
+    H, W = 80, 24
+    yy = np.arange(H)[:, None]
+    top = 10 + 1.5 * np.arange(W)[None, :]
+    img = 4 * np.exp(-(yy - top) ** 2 / 2) + 2.5 * np.exp(-(yy - top - 6) ** 2 / 2)
+    return img + 0.8 * rng.random((H, W))
+
+
 def _labels3d():
     lab = np.zeros((12, 12, 12), np.int64)
     lab[1:5, 1:5, 1:5] = 1
@@ -387,6 +410,24 @@ def _optics_builders():
                                                  {"image_heights_mm": [0.0, 14.0, 28.0], "grid": 32}),
         "linescan_lens_columns": lambda pool, rng: (
             [_ls().lens_field_profile(None, [0.0, 10.0, 20.0, 28.672], grid=32)], {"width": 512, "pixel_um": 100.0}),
+        # 光干渉断層(octscan): 表は kind の印つきなので、それぞれ前段の op の本物の出力から作る
+        "oct_from_spectra": lambda pool, rng: (
+            [_oct_bs()["spectra"], _oct_bs()["wavelength_nm"]], {"center_nm": 840.0, "bandwidth_nm": 50.0}),
+        "oct_k_linearize": lambda pool, rng: ([_oct_it()], {}),
+        "oct_dispersion_estimate": lambda pool, rng: ([_oct_it(True)], {"n_grid": 11}),
+        "oct_dispersion_compensate": lambda pool, rng: ([_oct_it(True)], {"a2": 20.0, "a3": 2.0}),
+        "oct_ascan": lambda pool, rng: ([_oct_it(True)], {}),
+        "oct_bscan": lambda pool, rng: ([_oct_bs()], {}),
+        "oct_layer_thickness": lambda pool, rng: (
+            [__import__("octscan").oct_ascan(_oct_it(True), zero_pad=4)], {"n_interfaces": 3}),
+        "oct_bscan_boundaries": lambda pool, rng: ([_oct_two_lines()], {"n_boundaries": 2}),
+        # 光子を渡すと SNR の欄が生きる(η・σ_d が効く)。分散の不一致は材料を渡したときだけ効く
+        "oct_design": lambda pool, rng: ([], {"photons_mirror_per_pixel": 1e5, "reflectivity": 1e-3,
+                                              "beam_waist_um": 6.0}),
+        "oct_interferogram": lambda pool, rng: ([], {"n_pixels": 256, "oversample": 4, "mismatch_material": "SILICA",
+                                                     "mismatch_length_mm": 5.0}),
+        "oct_bscan_flatten": lambda pool, rng: (
+            [__import__("octscan").oct_bscan(_oct_bs()), np.full(12, 60.0)], {"above_um": 10.0, "below_um": 100.0}),
         "inspection_dataset": os_call(lambda OS, cam, sc, li, rng: ([sc, cam, [li]], {"n": 2})),
         "dataset_throughput": os_call(lambda OS, cam, sc, li, rng: (
             [OS.inspection_dataset(sc, cam, [li], n=2)], {})),
