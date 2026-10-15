@@ -1,8 +1,8 @@
 {
- "n_ops": 3222,
+ "n_ops": 3230,
  "tiers": {
   "color": 12,
-  "ledger": 2269,
+  "ledger": 2277,
   "nary": 17,
   "registry": 924
  },
@@ -12122,6 +12122,106 @@
    "tier": "ledger",
    "ledger": "opsacoustics",
    "dim": "acoustics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_capture",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "itof_flying_pixel_mask",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "image2d",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "itof_multipath_separate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_noise_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "itof_phase_amplitude",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_unwrap_error_rate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "itof_unwrap_multifreq",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_wiggling_correct",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "table"
    ]

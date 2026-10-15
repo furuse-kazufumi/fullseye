@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 61 capabilities**
+**Currently 62 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -33,6 +33,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
+| [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [Compute reflection, refraction and interference](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
@@ -57,7 +58,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (22)
+## Measure (23)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -122,6 +123,18 @@ Pipeline: [`gaussian`](ops/2d/smoothing/gaussian.md) → [`otsu`](ops/2d/segment
 Alternatives: [`gen_measure_arc`](ops/measure1d/caliper/gen_measure_arc.md), [`measure_pos`](ops/measure1d/caliper/measure_pos.md), [`hx_fit_circle_contour`](ops/2d/halcon_ext/hx_fit_circle_contour.md), [`cv_hough_circles`](ops/2d/features/cv_hough_circles.md), [`hough_circle_trans`](ops/2d/features/hough_circle_trans.md), [`table_px_to_mm`](ops/measure1d/scale/table_px_to_mm.md)
 
 Runnable: `example_inner_diameter_mm`, `poc_dimensional_inspection`, `poc_real_coin_metrology`
+
+### [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md)
+
+Eight ops in `itof` (category `itof` of `opsoptics`) take continuous-wave indirect time of flight from raw phase-step buckets to depth and into its failure modes: a capture model with shot and read noise, sine or square modulation, extra light paths and pixel-aperture mixing; K-step phase, amplitude and offset with a per-pixel noise estimate; the closed-form depth noise; multi-frequency unwrapping by exhaustive maximum-likelihood hypotheses, by `residue.residue_crt` or by the two-frequency beat, plus an upper bound on the wrong-order probability; two-path separation from equally spaced frequencies (matrix pencil); a flying-pixel mask; and correction of the square-wave cyclic error. The PoC scores noise, unwrapping, aliasing beyond the unambiguous range, a translucent film over a box, a room corner (matching `lighttransport`), flying pixels, the cyclic error and sunlight against closed forms and existing ops, compares the same scene with direct ToF from `photoncount`, and, when the public raw multi-frequency data (CC BY 4.0) is present, checks the unwrapping against its ground truth.
+
+Operators: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`
+
+Pipeline: [`itof_noise_budget`](ops/optics/itof/itof_noise_budget.md) → [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md)
+
+Alternatives: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md), [`tof_transport_depth`](ops/optics/light_transport/tof_transport_depth.md), [`residue_crt`](ops/residue/robust/residue_crt.md)
+
+Runnable: `poc_itof_multifreq`
 
 ### [Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty)](capabilities/laser-speckle-floor.md)
 

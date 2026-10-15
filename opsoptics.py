@@ -112,11 +112,13 @@ import moirealign
 import telecentric
 import linescan
 import pixelshift
+import itof
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "fiberoptics": fiberoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "linescan": linescan,
         "pixelshift": pixelshift,
+        "itof": itof,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -520,6 +522,17 @@ _CATALOG = {
         ("pixel_shift_motion_mask", "pixelshift", ["video", "matrix"], "image2d"),
         ("false_color_metric", "pixelshift", ["rgbimage"], "table"),
         ("pixel_shift_resolution_budget", "pixelshift", [], "table"),
+    ],
+    "itof": [  # 間接 ToF(連続波・位相方式、itof、2026-10-15): 4 段の生信号 → 位相 → 多周波アンラップ、壊れ方 4 つ
+        # ★距離は周期 c/(2f) の剰余。高い f ほど細かいが折り返す / 多重反射・縁の混合・高調波・背景光で壊れる。
+        ("itof_capture", "itof", ["depth"], "table"),               # 距離の図 → 生信号 (F, K, H, W) の表
+        ("itof_phase_amplitude", "itof", ["table"], "table"),
+        ("itof_noise_budget", "itof", [], "table"),
+        ("itof_unwrap_multifreq", "itof", ["table"], "table"),
+        ("itof_unwrap_error_rate", "itof", [], "table"),
+        ("itof_multipath_separate", "itof", ["table"], "table"),
+        ("itof_flying_pixel_mask", "itof", ["depth"], "image2d"),
+        ("itof_wiggling_correct", "itof", ["table"], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

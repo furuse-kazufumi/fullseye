@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3230,
+ "n_notes": 3236,
  "notes": {
   "vol_dilate": [
    {
@@ -27306,6 +27306,84 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/optics/interface/fresnel_dielectric.md"
+   }
+  ],
+  "itof_capture": [
+   {
+    "op": "itof_capture",
+    "dim": "optics",
+    "category": "itof",
+    "in": "depth",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_capture.md"
+   }
+  ],
+  "itof_flying_pixel_mask": [
+   {
+    "op": "itof_flying_pixel_mask",
+    "dim": "optics",
+    "category": "itof",
+    "in": "depth",
+    "out": "image2d",
+    "path": "docs/ops/optics/itof/itof_flying_pixel_mask.md"
+   }
+  ],
+  "itof_multipath_separate": [
+   {
+    "op": "itof_multipath_separate",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_multipath_separate.md"
+   }
+  ],
+  "itof_noise_budget": [
+   {
+    "op": "itof_noise_budget",
+    "dim": "optics",
+    "category": "itof",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_noise_budget.md"
+   }
+  ],
+  "itof_phase_amplitude": [
+   {
+    "op": "itof_phase_amplitude",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_phase_amplitude.md"
+   }
+  ],
+  "itof_unwrap_error_rate": [
+   {
+    "op": "itof_unwrap_error_rate",
+    "dim": "optics",
+    "category": "itof",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_unwrap_error_rate.md"
+   }
+  ],
+  "itof_unwrap_multifreq": [
+   {
+    "op": "itof_unwrap_multifreq",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_unwrap_multifreq.md"
+   }
+  ],
+  "itof_wiggling_correct": [
+   {
+    "op": "itof_wiggling_correct",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_wiggling_correct.md"
    }
   ],
   "form_factors_2d": [

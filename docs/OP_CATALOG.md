@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(373 例)
+### 2-D 画像/信号/幾何(374 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -427,6 +427,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/events_from_frames.py`
 - **TDI ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える** — フィルム・鋼板・ウェハのように流れてくるものはラインセンサで撮り、暗いラインでは TDI で N 段ぶん露光を積む。新 op 6 本(`linescan`、`opsoptics` の `linescan`): `tdi_snr`(EMVA 1288 の式 21 を段数倍、電荷加算 / デジタル加算)/ `tdi_sync_mtf`(同期ずれ・ヨーの閉形式)/ `linescan_acquire`(反射率の地図を搬送して撮る: 速度誤差・ヨー・蛇行・エンコーダ同期・レンズ・雑音)/ `lens_field_profile`(像高ごとの照度と MTF を光線追跡で)/ `linescan_lens_columns` / `linescan_lens_example`。★1 段 40 光子の暗い冷延鋼板で、2 枚撮りの時間雑音から測った SNR は式 21 と全段数で 1.2 % 以内。デジタル加算は 64 段で ×8.09(√64 = 8)、電荷加算は読み出し雑音を 1 回しか払わないので ×26.9。薄い傷・ピンホール・異物の検出は 1 段 0 / 3 → 64 段 3 / 3(誤検出 0)。★同期ずれ ε で像が N·ε 画素流れ、流れ方向の MTF は |sinc(f N ε)| —— 閉形式を先に印字し、正弦波の板で 45 条件の最大差 0.0035。速度のうねり ±3 % は自走で局所 MTF 0.64 まで落ち、エンコーダ同期で 1.000 に戻る。ヨーの幅方向のぼけ |sinc(f N sin θ)| はエンコーダでは直らない(9 条件で最大差 0.0017)。★同じ形の三枚玉を 57 mm の像円用(f 90)と 2/3 型用(f 35、C マウントの流用)に作って光線追跡: 照度は cos⁴ × 瞳 × 歪曲に厳密に分かれ(最大差 2e-16)、ラインスキャン用は端で 0.976(cos⁴ は 0.855、樽型歪曲 −2.9 % が ×1.111)、C マウントは像高 19.7 mm から光が届かない。フラットフィールド補正で照度の幅は 0.961 → 1.000 に揃うが、正弦波の変調は補正の前後で差 0.0006(MTF は直らない)、像高 14 mm の異物の CNR は C マウントで 1.52 → 1.54 のまま(ラインスキャン用 2.49)。学習 0、較正 0、門 19 件。 `py -3.11 examples/poc_tdi_linescan.py`
 - **ピクセルシフト撮像 ―― センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える。MTF は上がらない** — 撮像素子を圧電アクチュエータで 1 画素 / 半画素ずつ動かして撮る「ピクセルシフト」が、外観検査で何を増やし何を増やさないか。新 op 6 本(`pixelshift`、`opsoptics` の `pixelshift`): `pixel_shift_pattern` / `pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒)/ `pixel_shift_merge`(公称のシフトで格子へ、埋められないシフト列は拒否)/ `pixel_shift_motion_mask` / `false_color_metric` / `pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。1 画素シフト 4 枚は基板の配線・織物・網点・解像チャートで偽色を 0.043〜0.084 から 0 にする(静止・誤差 0 では定義上 0 —— 各画素の R・G・B が同じ開口で同じ点を見る)。半画素シフトでは 0.6〜0.9 cyc/px の縞の FFT の山が、1 枚の折り返し 1 − f₀ から本当の f₀ へ戻り、高さは 0.4·sinc(f₀) と 2e-14 で一致。★傾いたエッジの MTF50 は 1 枚 0.478・半画素 0.475・閉形式 0.467 cyc/px —— シフトで変わるのは折り返しで MTF ではない。drizzle(独立の実装)でも山は 0.700 に立ち、★センサのシフトをそのまま渡すと 0.300(符号の取り違えが折り返しに化ける)。画素 3.45 µm で F 1.4〜22 を振ると 0.7 cyc/px の変調は sinc·回折の閉形式と 0.0008 以内、Q > 1.43 で消え、解像の得は Q = 2 より手前の Q* = 1.47 で尽きる。開口率 0.5 なら 0.8 cyc/px の変調が 3.2 倍。壊れる条件: 1 枚だけ 0.05 px ずれた色の誤差は閉形式 2πf·a·sinc·δ/√2 と 1.2 %、乱数の誤差 σ = 0.1 px で偽色 0.012(1 枚のデモザイク 0.053)。搬送中の部品は 0.25 px/枚 までは 4 枚の破綻(0.161)が 1 枚のデモザイク(0.205)より小さく、0.5 px/枚 から逆転。動き検出で 1 枚に差し戻すと 1 枚の画質の天井に届き、静止部の誤検出 0 %。雑音は R・B が σ/√c、G が σ/√(2c) と 2.1 % 以内、動く縞では枚数を増やすほど誤差が増える(4 → 16 枚で 0.081 → 0.273)。学習 0、較正 0、門 28 件。 `py -3.11 examples/poc_pixel_shift.py`
+- **間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる** — 光を変調して戻り光との相関を 4 段の位相で測る間接 ToF(位相方式)を、生信号から距離まで通し、壊れる所まで測る。新 op 8 本(`itof`、`opsoptics` の `itof`): `itof_capture`(距離の図 → 周波数ごと 4 段のバケット、ショット雑音・背景光・余分な経路・画素の開口での混合)/ `itof_phase_amplitude` / `itof_noise_budget` / `itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号・`residue_crt`・2 周波のうなり)/ `itof_unwrap_error_rate` / `itof_multipath_separate`(等間隔の多周波の行列ペンシル)/ `itof_flying_pixel_mask` / `itof_wiggling_correct`。σ_d は SNR ≥ 3 の 11 条件で閉形式 c/(4πf)·√((B+σ_r²)/2)/A の 0.999〜1.029 倍、Lange の式とも一致。16/80/120 MHz の組は 18.7 m まで一意で、次数の誤りは σ_φ = 0.33 rad で 0.116(和集合の上界 0.132)。★同じ生信号で `residue_crt` は 0.556 —— 16 MHz を錨にするので、低い周波数の位相誤差が Wang–Xia の保証 0.105 rad を越えた所から崩れる。80/100/120 MHz の組では 7.5 m より奥の棚が何の警告も無く手前に折り返す。包装フィルムの奥の箱は 1 周波で手前に引かれ(`lighttransport.tof_multipath_phase` と一致)、20〜160 MHz の 8 周波の行列ペンシルは間隔 0.8 m で全画素を 2 cm 以内に戻すが 0.2 m 以下は分けられない。部屋の隅は全面で 8〜99 mm 奥へ伸び、輸送行列の 1 回反射と 1e-15 m で一致。箱の縁で宙に浮いた画素の 97 % に印をつけ、段差の無い画素を消すのは 0.03 %。矩形波の周期誤差 ±84.8 mm は閉形式 atan(u/(1−u)) と一致し、模型の逆引きで雑音の床(2.1 mm)まで下がる。太陽光が信号の 50 倍だと 12 m 以遠の次数の誤りが 12 % → 93 %。同じ卓上の場面を直接 ToF で撮ると縁は浮かず、フィルムの下もずれない。公開の実機の生データ(3 周波 × 3 段、Lawin・Forssén・Ovrén、ECCV 2016、Zenodo、CC BY 4.0)では、真値に対する 30 cm 以上の飛びが最尤 0.131・`residue_crt` 0.293(10 枚の平均)、margin で際どい画素を捨てると 68 % を残して 0.020。学習 0、較正は周期誤差の 16 点と実データの左半分だけ、門 29 件。 `py -3.11 examples/poc_itof_multifreq.py`
 - **光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで** — 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運ぶ。どちらもガラスの分散(材料表 `materials`)と導波の式で決まる。新 op 7 本(`fiberoptics`、`opsoptics` の `fiber`): `material_group_index` / `material_gvd` / `fiber_numerical_aperture` / `fiber_v_number` / `fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で)/ `fiber_mode_field_diameter` / `fiber_bundle_coupling`。溶融石英の群屈折率は 1.55 µm で 1.4626、材料分散の零点は 1272.8 nm、D(1.55 µm) は 21.9 ps/(nm·km) と公表値の幅に入る。遮断は Bessel の零点(LP11 = 2.4048)の 0.001 上下でモード数が 2 → 6 と切り替わり、V = 30 でモード数 456 は V²/2 = 450 と 1.3 %、LP01 の b(V) は Rudolph–Neumann の近似と 0.24 %。★LP02 は遮断の直上で束縛が指数関数的に弱く、浮動小数で解けるのは遮断の 0.05 上から(op の docstring に限界として明記)。モード径は Marcuse 1977 の近似式と 0.8 % 以内、2 次モーメントの定義に変えると V = 1.2 で 11 % 大きい —— 「MFD」は定義を書かないと比べられない。コア半径 4.1 µm・NA 0.12 の設計は遮断 1285 nm、1310 nm の MFD 9.06 µm で ITU-T G.652 の 8.6〜9.5 µm に入る。Lambert の LED を NA の違う束に入れる割合は (NA_束/NA_光源)² の閉形式どおりで、LED → ライトガイド 2 m → Si ウェハ 775 µm → Si センサの鎖は光子 1 個あたり 2.2e-4 電子。学習 0、較正 0、門 17 件。 `py -3.11 examples/poc_fiber_light_guide.py`
 - **Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ** — Si のダイやウェハの裏側は、Si が透ける近赤外の光で見る。ところが Si が透ける波長は Si のセンサが感じない波長でもあり、同じ材料の吸収端が観察対象では窓・センサでは壁になる。材料表(`materials`)の 1 つの Si のレコード(Green 2008)を、ウェハの透過率とフォトダイオードの QE の両方に使った。新 op 9 本(`spectralrad`、`opsoptics` の `spectral`): `blackbody_spectrum` / `cie_illuminant_a` / `led_spectrum` / `bandpass_spectrum` / `silicon_photodiode_qe` / `energy_to_photons` / `spectral_product` / `spectral_integral` / `spectral_stats`、どれも材料の曲線と同じ pairs(λ nm, 値)。光源は CIE A の表を定義式で 1.6e-6、黒体は Wien と Stefan–Boltzmann、QE は閉形式と 4e-19。最良の LED のピークはウェハが厚いほど長波長へ動く(50 µm → 935 nm、775 µm → 1065 nm)。定番の 1050 nm の LED は厚いウェハでは最良と 5 % 差だが、50 µm のダイでは最良の 1/3.4 しか電子が出ない。ウェハが最もよく透ける 1200 nm は、Si センサでは最良の 1/28。集める深さを 3 → 50 µm にすると電子は 16 倍だが、最良のピークは動かない(最適はウェハが決める)。775 µm 越しに CNR 20 を得るには開口 1 画素に 1.2e6 光子が要る。像から測った CNR は理論 e/√(e + 読出し²) と 10 % 以内。ウェハの厚さだけ機械的に焦点を下げると像は t(1 − 1/n) = 557 µm ずれ(W20 = 2.6 波長、回折の PSF)、縁の幅が 8 倍に崩れる。学習 0、較正 0、門 20 件。 `py -3.11 examples/poc_nir_silicon_transmission.py`
 - **材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、カタログ公表値と第二実装で採点** — 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まる。両方が**同じ材料表**を引けるように、硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つのレコード型に載せ、波長曲線をすべて同じ形(λ [nm], 値)で返す新 op 16 本(`opsoptics` の `matprop`、実装 `materials`)。数値は refractiveindex.info database(CC0)の一次文献の係数と数表だけ(`tools/gen_material_tables.py` が生成、出典を各区間に残す)。★硝材 46 種(4 社のカタログ、Sellmeier 2 と Schott 多項式): 分散式から計算した n_d / V_d が**カタログ公表値と最大 4e-6 / 0.005**(門は 1e-4 / 0.3)。Abbe 図に 67 材料(プラスチックは同じ n_d の硝子より左、CaF₂ と石英は右端)。**第二実装 optiland 0.6.3**(同じ一次文献を別のコードで評価)と 23 点で最大 5e-10。★Si の NIR 窓(Green 2008): 公表の表の点 n(1.0 µm) 3.572 / k 5.09e-4、k(1.2 µm) 2.1e-7 を再現、吸収係数は 1.0 → 1.2 µm で 64 → 0.022 /cm(3 桁)、775 µm のウェハの透過率は 1.0 µm で 0.3 %・1.2 µm で 52 %(閉形式 (1−R)²e^{−αt}/(1−R²e^{−2αt}) と 1e-9、R = 0.31 の多重反射込み)。自由キャリア吸収(Schroder 1978)は λ² 則と p/n = 2.7 を 1e-9 で、1e19 cm⁻³ の基板は 1.3 µm でそれだけで ×0.27 に暗くなる。平行平板の焦点ずれ t(1 − 1/n) = 556 µm、縦球面収差は NA 0.1 で 1.0 µm・NA の 2 乗。★鏡の材料 10 種(Johnson & Christy / Rakić / Weaver / Werner): 銀は 500 nm で 0.982、アルミの谷は 820 nm で 0.866、金は 500 nm 0.475 → 700 nm 0.971。色は CIE 等色関数から出し、金と銅は R > G > B・銀は 3 成分が 1 % 以内で中性(塗っていない)。斜入射 60° で s 0.953 > p 0.829。★硝子とプラスチック: ポリカーボネートの分散は N-BK7 の 2.3 倍、dn/dT はカタログの式 A で基準温度(20 ℃ / 25 ℃)で Δn = 0、有限差分と 4e-8、N-BK7 の e 線で 1.62e-6 /K。係数の無い材料(PMMA・水)は ValueError で黙って 0 にしない。★取り込み口: .agf(硝材カタログ、Zemax の分散式 1〜13 全部)の雛形を読むと同梱レコードと 0、内部透過率の行から k を復元、自前の Sellmeier 係数と測った曲線(pairs)からもレコードを作れ、区間外は外挿しない。ユーザーのカタログは `FULLSEYE_GLASS_DIR` に置けば同名硝材を照合(無ければ「未配置」と明示)。学習した数 0、較正 0、門 38 件、図なしで 1 秒未満。 `py -3.11 examples/poc_material_optical_library.py`
@@ -714,9 +715,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3236 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 256 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -1081,7 +1082,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `f2_bit_slice` (halcon: `bit_slice`) `image → image` — Extract one bit-plane of the image after 8-bit quantisation. ``a`` selects the plane (0 = LSB .. 7 = MSB); ``b`` is ignored. Returns a {0,1} image. · 例: `gallery2d_gray_arith`
 - `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` — Expand the domain of the image (the non-zero region) outward by a margin and set the new pixels to the nearest existing gray value. ``a`` sets the margin width (1..7 px); ``b`` is ignored. · 例: `gallery2d_gray_arith`
 - `f2_lut_trans` (halcon: `lut_trans`) `image → image` — Transform the image through a monotone (gamma-free) gray-value look-up table. The 256-entry table is a contrast sigmoid whose gain is set by ``a`` and pivot by ``b``, endpoint-normalised to span [0,1]; the image is then a genuine table lookup on its 8-bit-quantised value. · 例: `gallery2d_gray_arith`
-- `gamma` (halcon: `pow_image`) `image → image` — ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。 · 例: `gallery2d_gray_arith`
+- `gamma` (halcon: `pow_image`) `image → image` — ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。 · 例: `gallery2d_gray_arith`, `poc_itof_multifreq`
 - `gamma_image` (halcon: `gamma_image`) `image → image` — ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に 近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or decoding of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `illuminate` (halcon: `illuminate`) `image → image` — アンシャープマスク型の局所コントラスト強調。``sm`` = ガウシアンぼかし (半径 ``3+12*a``)を引いた差分 ``x - sm`` を元画像に足し戻すことで、 低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の ``illuminate``（Illuminate image.）の代役。 · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
 - `invert` (halcon: `invert_image`) `image → image` — 階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。 · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
@@ -1503,7 +1504,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` — Return one level of the image's Gauss pyramid, down-sampled by 2 ``level`` times (blur + decimate) and then up-sampled back to the original HxW so the result is a band-limited (low-pass) version at reduced resolution. ``a`` selects the level (1..4); ``b`` is ignored. · 例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` — ガウシアンぼかし(``scipy.ndimage.gaussian_filter``、シグマ ``0.3+2.7*a``) による平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核 の scipy 実装で、近似ではあるが結果は非常に近い。 · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` — 実装は ``gauss_filter`` と同一(同じ ``kind: "gauss"`` 分岐、シグマ ``0.3+2.7*a`` のガウシアンぼかし)。HALCON では ``gauss_filter``(離散近似) と ``gauss_image``(周波数領域/連続ガウス)は別演算子だが、この代役では 区別せず同じ関数を指す。HALCON の ``gauss_image``（Smooth an image using discrete Gaussian functions.）の代役。 · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` — 実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化) とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで 代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は 一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.） の代役。 · 例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `mean_box` (halcon: `mean_image`) `image → image` — 矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。 · 例: `gallery2d_smoothing_rank`
@@ -2379,7 +2380,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `chebyshev_eval_nd` `table × matrix → signal` — ``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。 · 例: `numerics_tour`
 - `chebyshev_nodes` `入力なし → signal` — 区間 [a, b] の Chebyshev 点 n 個(昇順)。 · 例: `numerics_tour`
 - `erf` `signal → signal` — 誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。 · 例: `numerics_tour`, `poc_battery_electrode_breathing`, `poc_change_detection_misreg`, `poc_crack_width_timeseries`, `poc_dic_strain`, `poc_die_tilt_tsv_overlay`, `poc_dimensional_inspection`, `poc_exoplanet_transit`, `poc_fresco_craquelure`, `poc_mri_bias_field`, `poc_search_sweep_width`, `poc_settlement_significance`, `poc_star_astrometry`, `representation_roundtrip`
-- `erfc` `signal → signal` — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。 · 例: `poc_dfm_thickness_overhang`
+- `erfc` `signal → signal` — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。 · 例: `poc_dfm_thickness_overhang`, `poc_itof_multifreq`
 - `gauss_cubature` `入力なし → table` — Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。 · 例: `gallery_math_numerics_filters`
 - `gauss_quadrature` `入力なし → table` — n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。 · 例: `numerics_tour`
 - `integrate_hamiltonian` `signal × signal → table` — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。 · 例: `numerics_tour`
@@ -2427,7 +2428,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(248 ops / 29 categories)
+### optics(256 ops / 30 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2531,18 +2532,28 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `fresnel_conductor` `signal → signal` — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`, `poc_material_optical_library`
 - `fresnel_dielectric` `signal → signal` — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`, `poc_phase_measuring_deflectometry`, `poc_pv_thermal_survey`, `poc_shape_from_polarization`
 
+#### optics / itof(8)
+- `itof_capture` `depth → table` — 距離の図 → 間接 ToF の生信号(周波数ごとに K 段のバケット、電子数)。``table``(``dict``)を返す。 · 例: `poc_itof_multifreq`
+- `itof_flying_pixel_mask` `depth → image2d` — 距離の図 → フライングピクセル(前景と背景の**間に浮いた**画素)の印 ``(H, W)``(1.0 = 浮いている)。 · 例: `poc_itof_multifreq`
+- `itof_multipath_separate` `table → table` — 等間隔の多周波で測ったフェーザ → 経路ごとの距離と強さ(行列ペンシル)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_noise_budget` `入力なし → table` — 間接 ToF の距離の雑音の閉形式(1 画素・1 周波数・等間隔 K 段)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_phase_amplitude` `table → table` — K 段の生信号 → 位相・振幅・オフセット・折り返した距離・画素ごとの距離の雑音の見積もり(``table``)。 · 例: `poc_itof_multifreq`
+- `itof_unwrap_error_rate` `入力なし → table` — 多周波アンラップ(最尤の復号)で次数(何周目か)を誤る確率の見積もり。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_unwrap_multifreq` `table → table` — 複数の周波数の位相 → 距離(多周波アンラップ)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_wiggling_correct` `table → table` — 高調波による周期誤差(wiggling)を補正した位相と距離。``table`` を返す。 · 例: `poc_itof_multifreq`
+
 #### optics / light_transport(11)
-- `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`
+- `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `fringe_multipath_phase_error` `入力なし → table` — Phase measured when a direct fringe phasor and a global phasor add: arg(a1 e^{iφ1} + a2 e^{iφ2}), its bias against φ1, and the worst case asin(a2/a1). · 例: `poc_interreflection_fringe_error`
-- `groove_profile` `入力なし → table` — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each. · 例: `poc_interreflection_fringe_error`
+- `groove_profile` `入力なし → table` — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `high_frequency_patterns` `入力なし → images` — Shifted high-frequency projector patterns: binary stripes with fill ratio α, a checkerboard, or phase-shifted sinusoids (one or several periods). · 例: `poc_interreflection_fringe_error`
 - `micro_phase_decode` `images → table` — Decode a narrow-band high-frequency fringe set (micro phase shifting, Gupta & Nayar 2012) into an absolute projector coordinate, ordering the fringes by the beat of the first two periods. · 例: `poc_interreflection_fringe_error`
 - `predict_fringe_phase_error` `table → table` — Predict, per camera pixel, the fringe-phase bias and height error that interreflection causes in phase-shifting profilometry, from the light-transport matrix. · 例: `poc_interreflection_fringe_error`
 - `render_transport` `table × images → images` — Render camera images of a concave Lambertian cross-section under projector patterns, through the light-transport matrix (direct + interreflection). · 例: `poc_interreflection_fringe_error`
 - `separate_direct_global` `images → table` — Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006). · 例: `poc_interreflection_fringe_error`
-- `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`
-- `tof_transport_depth` `table → table` — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias. · 例: `poc_interreflection_fringe_error`
-- `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`
+- `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
+- `tof_transport_depth` `table → table` — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
+- `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 
 #### optics / linescan(6)
 - `lens_field_profile` `table → table` — 像高ごとの**相対照度**と **MTF** を光線追跡で(``table``、有限距離の物体 = ラインスキャンの使い方)。 · 例: `poc_tdi_linescan`
@@ -2619,7 +2630,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / scene(44)
 - `airy_radius_um` `入力なし → measurement` — エアリーディスクの第 1 暗環までの半径 [µm] = 1.22 · λ · N(閉じた式)。 · 例: `vision_layout_from_catalog`
-- `camera_rays` `table → points` — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。 · 例: `studio_raytrace_scene`
+- `camera_rays` `table → points` — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。 · 例: `poc_itof_multifreq`, `studio_raytrace_scene`
 - `covers_sensor` `table × table → table` — レンズがそのセンサを覆えるか(イメージサークル 対 対角)。 · 例: `vision_layout_from_catalog`
 - `dataset_throughput` `table → table` — :func:`inspection_dataset` の結果 → 生成スループットの実測まとめ。 · 例: `virtual_machine_vision`
 - `defocus_blur` `rgbimage × image2d × table → rgbimage` — 深度の真値から**被写界深度のぼけ**を掛ける(理想ピンホール像 -> 実レンズの像)。 · 例: `poc_focus_stacking`, `virtual_machine_vision`
@@ -2774,8 +2785,8 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photon_uncertainty` `image2d → image2d` — Per-pixel Poisson error bar of a photon-count frame. · 例: `photon_timeresolved`, `poc_thermal_radiometry`
 
 #### photon / dtof(3)
-- `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`
-- `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`
+- `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`
+- `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`
 - `dtof_depth` `counts → measurement` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
 #### photon / lifetime(2)
@@ -3114,7 +3125,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `harmonic_rotation` `image2d × image2d → table` — Absolute in-plane rotation of ``image`` relative to ``reference`` over 360 degrees -> ``dict``. · 例: `poc_residue_crt`
 
 #### residue / robust(2)
-- `residue_crt` `matrix × signal → table` — Weighted robust CRT over real periods -> ``dict``. · 例: `poc_residue_crt`
+- `residue_crt` `matrix × signal → table` — Weighted robust CRT over real periods -> ``dict``. · 例: `poc_itof_multifreq`, `poc_residue_crt`
 - `residue_fault_locate` `matrix × signal → table` — Which band is corrupted? (redundant residue number system) -> ``dict``. · 例: `poc_residue_crt`
 
 #### residue / theorem(1)
@@ -4103,7 +4114,7 @@ _計 3228 ops / 48 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_colorbar` `image2d × image2d → image2d` — 画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。 · 例: `paper_figure`
 - `annotate_dimension` `image2d → image2d` — 画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。 · 例: `paper_figure`
 - `annotate_dimension_layout` `入力なし → table` — table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_figure_grid` `images → image2d` — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`, `poc_pixel_shift`
+- `annotate_figure_grid` `images → image2d` — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`, `poc_itof_multifreq`, `poc_pixel_shift`
 - `annotate_figure_grid_layout` `入力なし → table` — table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。 · 例: `paper_figure`
 - `annotate_inset` `image2d → image2d` — 画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。 · 例: `paper_figure`, `poc_real_defect_floor`
 - `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`

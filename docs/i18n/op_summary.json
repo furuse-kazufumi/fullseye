@@ -29060,6 +29060,78 @@
    "ko": "계측 결과 표(``measure_pairs`` / ``apply_metrology_model`` 의 반환값)에 mm 열을 더한다.",
    "de": "Fügt einer Messtabelle (Rückgabe von ``measure_pairs`` / ``apply_metrology_model``) mm-Spalten hinzu.",
    "hi": "measurement table (``measure_pairs`` / ``apply_metrology_model`` का return) में mm columns जोड़ता है।"
+  },
+  "optics/itof_capture": {
+   "fp": "e631a9fef968",
+   "en": "Depth map → raw indirect-ToF signal (K phase-step buckets per modulation frequency, in electrons). Returns a ``table`` (``dict``).",
+   "zh": "距离图 → 间接 ToF 的原始信号(每个调制频率 K 个相位步进的累积桶,单位为电子数)。返回 ``table``(``dict``)。",
+   "tw": "距離圖 → 間接 ToF 的原始訊號(每個調變頻率 K 個相位步進的累積桶,單位為電子數)。回傳 ``table``(``dict``)。",
+   "ko": "거리 맵 → 간접 ToF의 원시 신호(변조 주파수마다 K단 버킷, 전자 수). ``table``(``dict``)을 반환한다.",
+   "de": "Tiefenkarte → rohes indirektes ToF-Signal (K Phasenstufen-Buckets je Modulationsfrequenz, in Elektronen). Gibt eine ``table`` (``dict``) zurück.",
+   "hi": "depth map → indirect ToF का raw signal (हर modulation frequency पर K phase-step bucket, electrons में)। ``table`` (``dict``) लौटाता है।"
+  },
+  "optics/itof_phase_amplitude": {
+   "fp": "eeef517b8e78",
+   "en": "K-step raw signal → phase, amplitude, offset, wrapped depth and a per-pixel depth-noise estimate (``table``).",
+   "zh": "K 步原始信号 → 相位、振幅、偏移、折返距离以及逐像素的距离噪声估计(``table``)。",
+   "tw": "K 步原始訊號 → 相位、振幅、偏移、折返距離以及逐像素的距離雜訊估計(``table``)。",
+   "ko": "K단 원시 신호 → 위상·진폭·오프셋·접힌 거리·화소별 거리 잡음 추정(``table``).",
+   "de": "K-stufiges Rohsignal → Phase, Amplitude, Offset, gefaltete Tiefe und eine Schätzung des Tiefenrauschens je Pixel (``table``).",
+   "hi": "K-step raw signal → phase, amplitude, offset, wrapped depth और हर pixel के depth noise का अनुमान (``table``)।"
+  },
+  "optics/itof_noise_budget": {
+   "fp": "543c29a127cf",
+   "en": "Closed-form depth noise of indirect ToF (one pixel, one frequency, K equally spaced steps). Returns a ``table``.",
+   "zh": "间接 ToF 距离噪声的闭式解(单像素、单频率、等间隔 K 步)。返回 ``table``。",
+   "tw": "間接 ToF 距離雜訊的閉式解(單像素、單頻率、等間隔 K 步)。回傳 ``table``。",
+   "ko": "간접 ToF 거리 잡음의 닫힌 형태(1화소·1주파수·등간격 K단). ``table``을 반환한다.",
+   "de": "Geschlossene Form des Tiefenrauschens von indirektem ToF (ein Pixel, eine Frequenz, K äquidistante Stufen). Gibt eine ``table`` zurück.",
+   "hi": "indirect ToF के depth noise का closed form (एक pixel, एक frequency, समान अंतराल के K step)। ``table`` लौटाता है।"
+  },
+  "optics/itof_unwrap_multifreq": {
+   "fp": "ce3870cd42f0",
+   "en": "Phases at several frequencies → depth (multi-frequency unwrapping). Returns a ``table``.",
+   "zh": "多个频率的相位 → 距离(多频解包裹)。返回 ``table``。",
+   "tw": "多個頻率的相位 → 距離(多頻解包裹)。回傳 ``table``。",
+   "ko": "여러 주파수의 위상 → 거리(다주파 언랩). ``table``을 반환한다.",
+   "de": "Phasen bei mehreren Frequenzen → Tiefe (Mehrfrequenz-Phasenentfaltung). Gibt eine ``table`` zurück.",
+   "hi": "कई frequency की phase → depth (multi-frequency unwrapping)। ``table`` लौटाता है।"
+  },
+  "optics/itof_unwrap_error_rate": {
+   "fp": "94d3c2fd37c5",
+   "en": "Estimated probability that multi-frequency unwrapping (maximum-likelihood decoding) picks the wrong wrap order. Returns a ``table``.",
+   "zh": "多频解包裹(最大似然解码)判错周期序号(第几周)的概率估计。返回 ``table``。",
+   "tw": "多頻解包裹(最大概似解碼)判錯週期序號(第幾週)的機率估計。回傳 ``table``。",
+   "ko": "다주파 언랩(최우 복호)이 차수(몇 번째 주기인지)를 틀릴 확률의 추정. ``table``을 반환한다.",
+   "de": "Geschätzte Wahrscheinlichkeit, dass die Mehrfrequenz-Entfaltung (Maximum-Likelihood-Dekodierung) die falsche Periodenordnung wählt. Gibt eine ``table`` zurück.",
+   "hi": "multi-frequency unwrapping (maximum-likelihood decoding) के गलत wrap order चुनने की संभावना का अनुमान। ``table`` लौटाता है।"
+  },
+  "optics/itof_multipath_separate": {
+   "fp": "86eeaa8a6f04",
+   "en": "Phasors measured at equally spaced frequencies → depth and strength of each path (matrix pencil). Returns a ``table``.",
+   "zh": "在等间隔多频率下测得的相量 → 各路径的距离与强度(矩阵束法)。返回 ``table``。",
+   "tw": "在等間隔多頻率下測得的相量 → 各路徑的距離與強度(矩陣束法)。回傳 ``table``。",
+   "ko": "등간격 다주파로 잰 페이저 → 경로별 거리와 세기(행렬 펜슬). ``table``을 반환한다.",
+   "de": "Bei äquidistanten Frequenzen gemessene Zeiger → Tiefe und Stärke jedes Pfades (Matrix-Pencil). Gibt eine ``table`` zurück.",
+   "hi": "समान अंतराल की frequencies पर मापे phasor → हर path की depth और strength (matrix pencil)। ``table`` लौटाता है।"
+  },
+  "optics/itof_flying_pixel_mask": {
+   "fp": "381fcf4a7a67",
+   "en": "Depth map → mask of flying pixels (pixels **floating between** foreground and background), ``(H, W)`` (1.0 = floating).",
+   "zh": "距离图 → 飞点像素(**悬浮在**前景与背景**之间**的像素)的标记 ``(H, W)``(1.0 = 悬浮)。",
+   "tw": "距離圖 → 飛點像素(**懸浮在**前景與背景**之間**的像素)的標記 ``(H, W)``(1.0 = 懸浮)。",
+   "ko": "거리 맵 → 플라잉 픽셀(전경과 배경 **사이에 뜬** 화소)의 표시 ``(H, W)``(1.0 = 떠 있음).",
+   "de": "Tiefenkarte → Maske der fliegenden Pixel (Pixel, die **zwischen** Vorder- und Hintergrund schweben), ``(H, W)`` (1.0 = schwebend).",
+   "hi": "depth map → flying pixel (foreground और background के **बीच तैरते** pixel) का mask ``(H, W)`` (1.0 = तैरता हुआ)।"
+  },
+  "optics/itof_wiggling_correct": {
+   "fp": "f26ec8c13316",
+   "en": "Phase and depth with the harmonic cyclic error (wiggling) corrected. Returns a ``table``.",
+   "zh": "校正了谐波引起的周期误差(wiggling)后的相位与距离。返回 ``table``。",
+   "tw": "校正了諧波引起的週期誤差(wiggling)後的相位與距離。回傳 ``table``。",
+   "ko": "고조파에 의한 주기 오차(wiggling)를 보정한 위상과 거리. ``table``을 반환한다.",
+   "de": "Phase und Tiefe mit korrigiertem harmonischem Zyklusfehler (Wiggling). Gibt eine ``table`` zurück.",
+   "hi": "harmonics से आई cyclic error (wiggling) को ठीक करके phase और depth। ``table`` लौटाता है।"
   }
  }
 }

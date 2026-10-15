@@ -4,7 +4,7 @@ dim: photon
 category: dtof
 in: histcube
 out: depth
-examples: [photon_timeresolved, poc_dtof_ranging]
+examples: [photon_timeresolved, poc_dtof_ranging, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ Empty input (``cube`` with 0 elements) raises ``ValueError``.
 
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
+- [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 

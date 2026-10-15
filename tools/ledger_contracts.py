@@ -529,6 +529,54 @@ def _batch2_builders():
         raw = pixelshift.pixel_shift_capture(np.stack(scenes), 4, _ps_nom(), "RGGB", per_frame=True)
         return raw + 0.01 * rng.standard_normal(raw.shape)
 
+    def _itof_depth(rng):
+        # 段差のある距離の図(箱 0.8 m と床 1.2 m)。段差が無いと flying_pixel_mask の閾値が効く場面が無い。
+        d = 1.2 + 0.02 * rng.random((32, 32))
+        d[8:20, 10:24] = 0.8
+        return d
+
+    def _itof_raw(rng, freqs=(16e6, 80e6, 120e6), **kw):
+        import itof
+        return itof.itof_capture(_itof_depth(rng), frequencies_hz=freqs, seed=int(rng.integers(1 << 30)), **kw)
+
+    def _itof_phase(rng, freqs=(16e6, 80e6, 120e6), **kw):
+        import itof
+        return itof.itof_phase_amplitude(_itof_raw(rng, freqs, **kw))
+
+    def _itof_mp(rng):
+        # 等間隔 8 周波・2 経路(半透明の板 0.5 m と奥の面)。経路が 1 本だと分ける物が無い。
+        import itof
+        d = np.full((8, 8), 1.3)
+        raw = itof.itof_capture(d, frequencies_hz=tuple(20e6 * np.arange(1, 9)), signal_electrons=2e5,
+                                paths_depth=np.full((1, 8, 8), 0.5), paths_amplitude=np.full((1, 8, 8), 0.3),
+                                seed=int(rng.integers(1 << 30)))
+        return itof.itof_phase_amplitude(raw)
+
+    def _itof_fly(rng):
+        # 1 行ごとに段差の高さ(3〜33 cm)・台地の傾き・混ざる割合を変えた距離の図と、画素ごとの雑音 1.5 cm。
+        # 閾値(×0.5 / ×2)・n_sigma・台地の比・半径(2 画素に広がる混合)のどれを変えても印が動く場面を作る。
+        r = np.random.default_rng(7)
+        d = np.empty((40, 24))
+        for i in range(40):
+            jump, slope, frac = 0.03 + 0.3 * r.random(), 0.03 * r.random(), r.random()
+            row = 1.0 + slope * np.arange(24)
+            row[12:] += jump
+            row[12] = row[11] + slope + frac * jump
+            if i % 3 == 0:
+                row[13] = row[12] + (row[14] - row[12]) * r.random()
+            d[i] = row
+        return d, np.full((40, 24), 0.015)
+
+    def _itof_wig(rng):
+        # 矩形波の 4 段で撮った壁(0.1〜7.4 m)の位相と、レール上の 24 点の較正の組(n_harmonics と n_phases が効く)
+        import itof
+        pos = np.linspace(0.1, 7.4, 120)
+        raw = itof.itof_capture(pos[None, :], frequencies_hz=(20e6,), waveform="square", signal_electrons=1e6, seed=5)
+        ph = itof.itof_phase_amplitude(raw)["phase"]
+        true = np.mod(4 * np.pi * 20e6 * pos / itof.C_LIGHT, 2 * np.pi)
+        idx = np.linspace(0, 119, 24).astype(int)
+        return ph, (ph[0, 0, idx], true[idx])
+
     def ula(rng):
         import mathspectral
         return mathspectral.ula_snapshots((10.0, -20.0), n_elements=8, n_snapshots=64)
@@ -560,6 +608,15 @@ def _batch2_builders():
         "pixel_shift_merge": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {"motion_threshold": 4.0}),
         "pixel_shift_motion_mask": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {}),
         "pixel_shift_resolution_budget": lambda pool, rng: ([3.45, 2.8], {}),
+        # itof(2026-10-15): 段差のある距離の図、3 周波の生信号・位相の表、2 経路の 8 周波、矩形波の位相
+        "itof_capture": lambda pool, rng: ([_itof_depth(rng)], {"frequencies_hz": (16e6, 80e6, 120e6), "ambient_electrons": 500.0,
+                                                                 "read_noise_e": 5.0}),
+        "itof_phase_amplitude": lambda pool, rng: ([_itof_raw(rng, read_noise_e=5.0)], {}),
+        "itof_unwrap_multifreq": lambda pool, rng: ([_itof_phase(rng)], {}),
+        "itof_multipath_separate": lambda pool, rng: ([_itof_mp(rng)], {}),
+        "itof_flying_pixel_mask": lambda pool, rng: ([_itof_fly(rng)[0]], {"depth_sigma": _itof_fly(rng)[1]}),
+        "itof_wiggling_correct": lambda pool, rng: ([_itof_wig(rng)[0]], {"frequencies_hz": (20e6,),
+                                                                         "calibration": _itof_wig(rng)[1]}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 61 項目**
+**収録 62 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -32,6 +32,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
+| [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
@@ -56,7 +57,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (22)
+## 測る (23)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -129,6 +130,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 既知径の的(リングゲージ・基準穴)を**同じ円 op で**測り `mm_per_px_from_reference(2·radius_px, known_mm)` → `pixel_to_world(2·radius_px, mm_per_px)`。公称倍率は使わない。
 
 動く例: `example_inner_diameter_mm`, `poc_dimensional_inspection`, `poc_real_coin_metrology`
+
+### [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md)
+
+光を周波数 f で強度変調し、戻り光との相関を 4 段(K 段)の位相で測る間接 ToF を、生信号から距離まで通し、壊れるところまで再現します。`itof` の 8 本は `opsoptics` の族 `itof` です。
+
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`
+
+推奨パイプライン: [`itof_noise_budget`](ops/optics/itof/itof_noise_budget.md) → [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md)
+
+代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md), [`tof_transport_depth`](ops/optics/light_transport/tof_transport_depth.md), [`residue_crt`](ops/residue/robust/residue_crt.md)
+
+限界: 場面の強さは Lambert と逆二乗だけ(鏡面・迷光・画素間のクロストークなし)。行列ペンシルは等間隔の周波数専用で、帯域の分解能 c/(2FΔf) より近い 2 経路は雑音があると分けられない。雑音の閉形式は SNR ≥ 3 の近似(PoC)。
+
+実寸校正: 距離は周期 c/(2f) の剰余から出るので尺度は光速と周波数で決まる。実機では段の位相の符号と原点・系の遅延(距離のオフセット)・周波数の正確な値を較正する(オフセットは itof_wiggling_correct の較正の定数項)。
+
+動く例: `poc_itof_multifreq`
 
 ### [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md)
 
