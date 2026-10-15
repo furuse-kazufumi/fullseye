@@ -897,7 +897,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
-    assert len(opsoptics.OPSOPTICS) == 293
+    # 2026-10-15: itof(間接 ToF、itof)8 op を新しい族として追加(293 → 301)。
+    assert len(opsoptics.OPSOPTICS) == 301
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
@@ -908,6 +909,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("telecentric")) == 7
     assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("pixelshift")) == 6
+    assert len(opsoptics.list_ops("itof")) == 8
     assert len(opsoptics.list_ops("matprop")) == 19
     assert len(opsoptics.list_ops("spectral")) == 14
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
@@ -919,7 +921,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
-        "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
+        "imaging", "imaging_sim", "interface", "itof", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
         "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が

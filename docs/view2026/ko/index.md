@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-68개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+69개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -102,6 +102,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 지구 규모 좌표에 올리기(ECEF·높이 기준·국소 ENU): [설명](../../capabilities/geodetic-frames.md) _(ja)_ · 예제 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
 - 공업용 OCT(간섭 스펙트럼 → k 선형화 → 분산 보상 → A / B 스캔 → 군굴절률로 층 두께): [설명](../../capabilities/industrial-oct.md) _(ja)_ · 예제 [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - 원형 부품의 내경을 mm 까지 재기: [설명](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · 예제 [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 간접 ToF(위상 방식)의 다주파 언랩과 깨지는 방식(접힘, 다중 경로, 가장자리 혼합, 고조파, 배경광): [설명](../../capabilities/itof-multifreq.md) _(ja)_ · 예제 [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - 레이저 광절단의 오차 하한은 스페클이 정한다(결맞음 결상, 스페클 통계, 삼각측량의 불확도): [설명](../../capabilities/laser-speckle-floor.md) _(ja)_ · 예제 [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - 오목한 부품의 상호 반사가 줄무늬 투영과 ToF를 얼마나 어긋나게 하는지 측정 전에 예측한다(전역 광 수송, 직접·전역 분리, 마이크로 위상 이동): [설명](../../capabilities/light-transport.md) _(ja)_ · 예제 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - 그 숫자 중 얼마가 측정 방식 때문인가(게이지 R&R과 측정 불확도): [설명](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 예제 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 243개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -241,7 +242,7 @@ PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (46)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI·CT 대응" width="200" height="200"><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="준공 벽면 편차" width="200" height="200"><span>준공 벽면 편차</span></a>
@@ -288,6 +289,7 @@ PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="크로매틱 공초점 센서(색으로 높이 읽기)" width="200" height="200"><b>&#9654;</b><span>크로매틱 공초점 센서(색으로 높이 읽기)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="모아레 정렬(보이지 않는 격자 두 장으로 1 nm를 읽는다)" width="200" height="200"><b>&#9654;</b><span>모아레 정렬(보이지 않는 격자 두 장으로 1 nm를 읽는다)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="텔레센트릭 렌즈와 치수 측정" width="200" height="200"><b>&#9654;</b><span>텔레센트릭 렌즈와 치수 측정</span></a>
+<a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="간접 ToF(접힘과 다중 경로)" width="200" height="200"><b>&#9654;</b><span>간접 ToF(접힘과 다중 경로)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="광학계 도면(단면도·설치도·제작도)" width="200" height="200"><span>광학계 도면(단면도·설치도·제작도)</span></a>
 </div>
 </details>

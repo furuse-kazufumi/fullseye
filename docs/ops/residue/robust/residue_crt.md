@@ -4,7 +4,7 @@ dim: residue
 category: robust
 in: matrix × signal
 out: table
-examples: [poc_residue_crt]
+examples: [poc_itof_multifreq, poc_residue_crt]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ below ``Γ/4`` (Wang & Xia's bound); beyond it the margin collapses first.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 - [poc_residue_crt](../../../../examples/poc_residue_crt.py) — `py -3.11 examples/poc_residue_crt.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

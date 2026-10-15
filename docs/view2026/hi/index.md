@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-68 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+69 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -102,6 +102,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Measurements को पृथ्वी पर रखना (ECEF, height frames, local ENU): [explanation](../../capabilities/geodetic-frames.md) _(ja)_ · examples [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
 - औद्योगिक OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, group index से layer की मोटाई): [explanation](../../capabilities/industrial-oct.md) _(ja)_ · examples [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - गोल पुर्ज़े का भीतरी व्यास, mm तक: [explanation](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · examples [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- indirect ToF (phase-based) का multi-frequency unwrapping और वह कैसे टूटता है (wrapping, multipath, flying pixel, harmonics, ambient light): [explanation](../../capabilities/itof-multifreq.md) _(ja)_ · examples [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - laser sheet-of-light की त्रुटि की निचली सीमा speckle तय करता है (coherent imaging, speckle आँकड़े और triangulation अनिश्चितता): [explanation](../../capabilities/laser-speckle-floor.md) _(ja)_ · examples [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - मापने से पहले अनुमान लगाना कि अवतल हिस्सों का interreflection fringe projection और ToF को कितना भटकाता है (global light transport, direct/global पृथक्करण, micro phase shifting): [explanation](../../capabilities/light-transport.md) _(ja)_ · examples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - उस संख्या में कितना हिस्सा measurement का है, process का नहीं (gauge R&R और uncertainty): [explanation](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · examples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-242 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+243 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -241,7 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (46)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -288,6 +289,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="chromatic confocal sensor (रंग से ऊँचाई पढ़ना)" width="200" height="200"><b>&#9654;</b><span>chromatic confocal sensor (रंग से ऊँचाई पढ़ना)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="moiré alignment (दो अदृश्य gratings से 1 nm पढ़ना)" width="200" height="200"><b>&#9654;</b><span>moiré alignment (दो अदृश्य gratings से 1 nm पढ़ना)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telecentric lens और dimensional measurement" width="200" height="200"><b>&#9654;</b><span>Telecentric lens और dimensional measurement</span></a>
+<a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="indirect ToF (wrapping, multipath)" width="200" height="200"><b>&#9654;</b><span>indirect ToF (wrapping, multipath)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="calculation से optical drawings (section, setup, element)" width="200" height="200"><span>calculation से optical drawings (section, setup, element)</span></a>
 </div>
 </details>

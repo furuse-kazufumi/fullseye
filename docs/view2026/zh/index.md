@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 68 项,每项都有说明页(用法与限制)和可运行的示例。
+共 69 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -102,6 +102,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 放到地球尺度坐标上(ECEF、高程基准、局部 ENU): [说明](../../capabilities/geodetic-frames.md) _(ja)_ · 示例 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
 - 工业 OCT(干涉光谱 → k 线性化 → 色散补偿 → A / B 扫描 → 用群折射率求层厚): [说明](../../capabilities/industrial-oct.md) _(ja)_ · 示例 [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - 测量圆形零件的内径,直到毫米: [说明](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · 示例 [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 间接 ToF(相位法)的多频解包裹与失效方式(折返、多径、边缘混合、谐波、背景光): [说明](../../capabilities/itof-multifreq.md) _(ja)_ · 示例 [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - 激光光切法的误差下限由散斑决定(相干成像、散斑统计与三角测量的不确定度): [说明](../../capabilities/laser-speckle-floor.md) _(ja)_ · 示例 [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - 在测量之前预测凹形部件的相互反射使条纹投影与 ToF 偏离多少(全局光传输、直接与全局分离、微相移): [说明](../../capabilities/light-transport.md) _(ja)_ · 示例 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - 这个数字有多少来自测量方式(量具 R&R 与测量不确定度): [说明](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 示例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 243 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -241,7 +242,7 @@ PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (46)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -288,6 +289,7 @@ PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="彩色共焦传感器(由颜色读出高度)" width="200" height="200"><b>&#9654;</b><span>彩色共焦传感器(由颜色读出高度)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="莫尔对准(两片看不见的光栅读出 1 nm)" width="200" height="200"><b>&#9654;</b><span>莫尔对准(两片看不见的光栅读出 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="远心镜头与尺寸测量" width="200" height="200"><b>&#9654;</b><span>远心镜头与尺寸测量</span></a>
+<a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="间接 ToF(折返与多径)" width="200" height="200"><b>&#9654;</b><span>间接 ToF(折返与多径)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光学系统图纸(截面图、布置图、制造图)" width="200" height="200"><span>光学系统图纸(截面图、布置图、制造图)</span></a>
 </div>
 </details>

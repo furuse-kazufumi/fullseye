@@ -4138,6 +4138,22 @@
    }
   },
   {
+   "id": "poc_itof_multifreq",
+   "group": "wing_metrology",
+   "media": "14_flying_pixels_orbit.gif",
+   "motion": true,
+   "thumb_src": "01_warehouse_unwrap.png",
+   "label": {
+    "ja": "間接 ToF(折り返しと多重反射)",
+    "en": "Indirect ToF (wrapping, multipath)",
+    "zh": "间接 ToF(折返与多径)",
+    "tw": "間接 ToF(折返與多路徑)",
+    "ko": "간접 ToF(접힘과 다중 경로)",
+    "de": "Indirekte ToF (Faltung, Mehrwege)",
+    "hi": "indirect ToF (wrapping, multipath)"
+   }
+  },
+  {
    "id": "poc_pigment_unmixing",
    "group": "wing_color",
    "media": "01_per_field_auc.png",
@@ -6291,6 +6307,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "itof-multifreq": {
+    "zh": "间接 ToF(相位法)的多频解包裹与失效方式(折返、多径、边缘混合、谐波、背景光)",
+    "tw": "間接 ToF(相位法)的多頻解包裹與失效方式(折返、多路徑、邊緣混合、諧波、背景光)",
+    "ko": "간접 ToF(위상 방식)의 다주파 언랩과 깨지는 방식(접힘, 다중 경로, 가장자리 혼합, 고조파, 배경광)",
+    "de": "Indirekte Laufzeitmessung (phasenbasiert): Mehrfrequenz-Entfaltung und wie sie bricht (Faltung, Mehrwege, fliegende Pixel, Oberwellen, Fremdlicht)",
+    "hi": "indirect ToF (phase-based) का multi-frequency unwrapping और वह कैसे टूटता है (wrapping, multipath, flying pixel, harmonics, ambient light)"
    }
   }
  }

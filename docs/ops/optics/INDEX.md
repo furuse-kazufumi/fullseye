@@ -1,4 +1,4 @@
-# OPTICS operator help — 293 ops in 33 categories
+# OPTICS operator help — 301 ops in 34 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -77,6 +77,10 @@
 ### interface (4)
 
 [brewster_angle_deg](interface/brewster_angle_deg.md) · [critical_angle_deg](interface/critical_angle_deg.md) · [fresnel_conductor](interface/fresnel_conductor.md) · [fresnel_dielectric](interface/fresnel_dielectric.md)
+
+### itof (8)
+
+[itof_capture](itof/itof_capture.md) · [itof_flying_pixel_mask](itof/itof_flying_pixel_mask.md) · [itof_multipath_separate](itof/itof_multipath_separate.md) · [itof_noise_budget](itof/itof_noise_budget.md) · [itof_phase_amplitude](itof/itof_phase_amplitude.md) · [itof_unwrap_error_rate](itof/itof_unwrap_error_rate.md) · [itof_unwrap_multifreq](itof/itof_unwrap_multifreq.md) · [itof_wiggling_correct](itof/itof_wiggling_correct.md)
 
 ### light_transport (11)
 
