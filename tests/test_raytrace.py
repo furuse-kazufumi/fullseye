@@ -408,9 +408,40 @@ def test_finite_object_puts_the_image_at_the_paraxial_conjugate():
     s = RT.lens_system(surf, object_mm=700.0)
     p = RT.paraxial_trace(s)
     tr = RT.trace_rays(s, [[0.0, 0.0, 0.0]], [[0.0, 0.0, 1.0]])
-    assert abs(tr["image_z"] - p["image_mm"]) < 1e-12 and abs(p["image_mm"] - p["bfl"]) > 3.0
+    # 2026-10-15: 以前は trace_rays の像面を paraxial_trace の image_mm と比べていた(像面の置き場所は
+    # paraxial_trace から取っているので、両辺が同じ数)。真値は外から 2 本: 厚肉レンズの閉形式(主点からの
+    # Gauss の式)と、軸近くの実光線が光軸を横切る位置(Snell の法則だけで、近軸の行列を通らない)。
+    img_cf, img_ray = _thick_lens_image(surf, 700.0), _near_axis_crossing(s, 700.0)
+    assert abs(tr["image_z"] - img_cf) < 1e-9 and abs(img_ray - img_cf) < 1e-6
+    assert abs(img_cf - p["bfl"]) > 3.0
     inf = RT.lens_system(surf)
     z_fin = RT.wavefront_from_opd(s)["zernike"][(2, 0)]
     z_inf = RT.wavefront_from_opd(inf)["zernike"][(2, 0)]                # the spherical-aberration balance only
     assert abs(z_fin - z_inf) < 2.0, (z_fin, z_inf)                       # was −18.2 vs +3.4 waves
-    assert abs(RT.trace_rays(inf, [[0.0, 0.0, -1.0]], [[0.0, 0.0, 1.0]])["image_z"] - RT.paraxial_trace(inf)["bfl"]) < 1e-12
+    z_inf = RT.trace_rays(inf, [[0.0, 0.0, -1.0]], [[0.0, 0.0, 1.0]])["image_z"]
+    assert abs(z_inf - _thick_lens_image(surf, math.inf)) < 1e-9
+    assert abs(_near_axis_crossing(inf, math.inf) - _thick_lens_image(surf, math.inf)) < 1e-6
+
+
+def _thick_lens_image(surf, object_mm):
+    """厚肉の単レンズの像距離(後ろの頂点から)の閉形式: 屈折力 φ = (n−1)(1/R1 − 1/R2 + (n−1)t/(n R1 R2))、
+    前後の主点は頂点から −f(n−1)t/(n R2)・−f(n−1)t/(n R1)、主点から測って 1/s' = 1/f − 1/s。"""
+    n = RT.refractive_index(surf[0]["n"], RT.WL_D)
+    R1, R2, t = surf[0]["R"], surf[1]["R"], surf[0]["t"]
+    f = 1.0 / ((n - 1.0) * (1.0 / R1 - 1.0 / R2 + (n - 1.0) * t / (n * R1 * R2)))
+    h1, h2 = -f * (n - 1.0) * t / (n * R2), -f * (n - 1.0) * t / (n * R1)
+    if not math.isfinite(object_mm):
+        return f + h2
+    so = object_mm + h1
+    return f * so / (so - f) + h2
+
+
+def _near_axis_crossing(system, object_mm):
+    """軸のすぐ近く(高さ 1e-3 mm、傾き 1e-6)の実光線が最後の面の後で光軸を横切る位置(最後の頂点から)。"""
+    if math.isfinite(object_mm):
+        tr = RT.trace_rays(system, [[0.0, 0.0, -object_mm]], [[0.0, 1e-6, 1.0]], image_mm=1.0)
+    else:
+        tr = RT.trace_rays(system, [[0.0, 1e-3, -1.0]], [[0.0, 0.0, 1.0]], image_mm=1.0)
+    P, D = tr["points"][0, -2], tr["dirs"][0, -1]
+    z_last = sum(sf["t"] for sf in system["surfaces"][:-1])
+    return float(P[2] - P[1] * D[2] / D[1] - z_last)
