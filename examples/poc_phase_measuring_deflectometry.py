@@ -168,6 +168,7 @@ def peak_snr(k, XX, YY, dimple, noise_mask):
 
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     rig = fs.ledger.deflectometry_rig()          # θ 20°、カメラ 400 mm、画面 300 mm、視野 40 mm、開口 4 mm
     X = (np.arange(N) - (N - 1) / 2.0) * rig["field_mm"] / (N - 1)
     XX, YY = np.meshgrid(X, X)
@@ -473,7 +474,12 @@ def main():
           "%d / 5" % refused)
 
     elapsed = time.time() - t0
-    check(elapsed < 120.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に
+    #   なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」
+    #   なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
+    check(cpu < 120.0, "所要時間(この PoC 自身の CPU 時間。CI の上限に余裕を残す)",
+          "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     if figs.enabled():
         small = fs.ledger.deflectometry_screen_pattern(rig, PERIOD, 4, "x", max_side_px=480)
