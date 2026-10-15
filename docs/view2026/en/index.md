@@ -179,7 +179,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## See everything
 
-241 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+242 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -241,7 +241,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (45)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (46)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -288,6 +288,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="Chromatic confocal sensor (reading height from colour)" width="200" height="200"><b>&#9654;</b><span>Chromatic confocal sensor (reading height from colour)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="Moiré alignment (two invisible gratings read 1 nm)" width="200" height="200"><b>&#9654;</b><span>Moiré alignment (two invisible gratings read 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telecentric lens metrology" width="200" height="200"><b>&#9654;</b><span>Telecentric lens metrology</span></a>
+<a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="Optical drawings from the calculation" width="200" height="200"><span>Optical drawings from the calculation</span></a>
 </div>
 </details>
 

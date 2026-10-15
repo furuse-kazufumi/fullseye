@@ -19,7 +19,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### Added — 光学系の図面(optdraw 8 op + PoC)
 - `optdraw`(`opsoptics` の新カテゴリ `drawing`、8 op): `lens_section_drawing`(処方 → 子午断面。円錐 + 非球面の sag、コバ・絞り・像面、絞りを狙った実光線、EFL / BFL / 全長 / 像高の寸法線、処方表)、`vision_setup_drawing`(`vision_layout` → 側面図と上面図、視野の錐・WD・DOF の帯・照明 5 種)、`lens_element_drawing`(ISO 10110 の 3 分割の表、公差は `tolerance_analysis` から)、`drawing_svg` / `drawing_dxf`(stdlib だけの SVG と DXF R12)、`drawing_raster`(matplotlib 任意)、`svg_entities` / `dxf_entities`(読み戻し)。
-- PoC `poc_optics_drawings`(49 門、仮番号): 図のファイルから読み戻して採点 —— Cooke triplet 2 本の EFL が公表値と 7e-6 / 2e-5、面の座標が球面の sag の閉形式と 6e-7 mm、光線の折れ点が面の上に 5e-7 mm、主光線が `raytrace.chief_ray` と 5e-7 mm、テレセンの主光線の傾きが `telecentric.chief_ray_angle` と 3e-7°、設置図の視野の錐・WD・DOF・仰角が閉形式どおり、製作図の n_d / ν_d が BK7 相当の公開の硝材カタログ値どおり。ezdxf 1.4.4(別の venv)が 11 枚を監査エラー 0 で読み、座標・文字が一致。壊した図(sag の符号・光線のずれ・数字の書き換え・VERTEX の欠け)で門が赤になる。
+- PoC `poc_optics_drawings`(収蔵番号 2026.242、53 門): 図のファイルから読み戻して採点 —— Cooke triplet 2 本の EFL が公表値と 7e-6 / 2e-5、面の座標が球面の sag の閉形式と 6e-7 mm、光線の折れ点が面の上に 5e-7 mm、主光線が `raytrace.chief_ray` と 5e-7 mm、テレセンの主光線の傾きが `telecentric.chief_ray_angle` と 3e-7°、設置図の視野の錐・WD・DOF・仰角が閉形式どおり、製作図の n_d / ν_d が BK7 相当の公開の硝材カタログ値どおり。ezdxf 1.4.4(別の venv)が 11 枚を監査エラー 0 で読み、座標・文字が一致。壊した図(sag の符号・光線のずれ・数字の書き換え・VERTEX の欠け)で門が赤になる。
 - 能力ノート `docs/capabilities/optics-drawings.md`、op 要約 6 言語、`tests/test_optdraw.py`。
 
 ### Added — 工業用 OCT(octscan 13 op + PoC、実測は CC BY 4.0 の公開データ)

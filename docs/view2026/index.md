@@ -194,7 +194,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 241 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -256,7 +256,7 @@ PoC 241 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (45)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (46)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工した壁の歪み" width="200" height="200"><span>竣工した壁の歪み</span></a>
@@ -303,6 +303,7 @@ PoC 241 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_chromatic_confocal.jpg" alt="クロマティック共焦点(色で高さを読む)" width="200" height="200"><b>&#9654;</b><span>クロマティック共焦点(色で高さを読む)</span></a>
 <a href="../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_moire_alignment.jpg" alt="モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)" width="200" height="200"><b>&#9654;</b><span>モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)</span></a>
 <a href="../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_telecentric_metrology.jpg" alt="テレセントリックレンズと寸法計測" width="200" height="200"><b>&#9654;</b><span>テレセントリックレンズと寸法計測</span></a>
+<a href="../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_optics_drawings.jpg" alt="光学系の図面(断面図・設置図・製作図)" width="200" height="200"><span>光学系の図面(断面図・設置図・製作図)</span></a>
 </div>
 </details>
 

@@ -656,8 +656,10 @@ def lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_
     x_tab = z_first
     y_tab = ybase - 3 * step - sh.p(10.0)
     fu = "deg" if system["object_mm"] == RT.INF else "mm"
+    # ★入射瞳が無限遠(物体側テレセン)では近軸の F 値 = EFL / 入射瞳径 が 0 になる —— 意味の無い「F/0.00」を書かない
+    fno_s = _fmt(para["fno"]) if (math.isfinite(para["fno"]) and para["fno"] > 0.0) else "-"
     spec = [("AFOCAL   m %.4f   OAL %s" % (para["magnification"], _fmt(z_img))) if afocal else
-            "EFL %s   BFL %s   F/%s   OAL %s" % (_fmt(efl), _fmt(bfl), _fmt(para["fno"]), _fmt(z_img)),
+            "EFL %s   BFL %s   F/%s   OAL %s" % (_fmt(efl), _fmt(bfl), fno_s, _fmt(z_img)),
             "FIELD %s %s   WL %.1f nm   STOP S%d" % (" / ".join(_fmt(f, 1) for f in fields), fu,
                                                     1000.0 * system["wavelength_um"], st + 1)]
     for k, ln in enumerate(spec):

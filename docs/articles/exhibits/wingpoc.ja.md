@@ -1212,7 +1212,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 45 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 46 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2811,6 +2811,42 @@ py -3.11 examples/poc_chromatic_confocal.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_chromatic_confocal)
 
 使用 op(ノートへ): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_number.html) · [`chromatic_confocal_limits`](https://furuse.work/ops/optics/confocal/chromatic_confocal_limits.html) · [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/confocal/chromatic_confocal_peaks.html) · [`chromatic_confocal_probe`](https://furuse.work/ops/optics/confocal/chromatic_confocal_probe.html) · [`chromatic_confocal_readout`](https://furuse.work/ops/optics/confocal/chromatic_confocal_readout.html) · [`chromatic_confocal_spectrum`](https://furuse.work/ops/optics/confocal/chromatic_confocal_spectrum.html) · [`cie_xyz_from_wavelength`](https://furuse.work/ops/optics/appearance/cie_xyz_from_wavelength.html) · [`confocal_axial_response`](https://furuse.work/ops/optics/confocal/confocal_axial_response.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`material_reflectance`](https://furuse.work/ops/optics/matprop/material_reflectance.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plate_focus_shift`](https://furuse.work/ops/optics/matprop/plate_focus_shift.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
+
+## No.2026.242 —— 光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する
+
+[![光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png)
+
+*↑ **光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する** ―― 外観検査・計測の打ち合わせでは、レンズの断面図と装置の設置図(作動距離・視野・照明の角度)が共通言語で、レンズの製作を頼むには ISO 10110 の製作図が要る。Fullseye は処方を実光線で評価し、撮像系の光学バジェットも出すが、図を 1 枚も出さなかった。新 op 8 本(`optdraw`、`opsoptics` の `drawing`): `lens_section_drawing`(子午断面。面は処方の sag、コバと座・絞り・像面、絞りを狙って追跡した実光線を視野ごとに色分け、EFL・BFL・全長・像高の寸法線と処方表)/ `vision_setup_drawing`(側面図と上面図。視野の錐・作動距離・DOF の帯、照明 5 種と仰角)/ `lens_element_drawing`(ISO 10110 の 3 欄の表。公差は `tolerance_analysis` の辞書から写し、同じ公差の Monte-Carlo の EFL の幅を注記)/ `drawing_svg` / `drawing_dxf`(標準ライブラリだけ。SVG は 100 % で縮尺どおり、DXF は R12 で層と線種つき)/ `drawing_raster` / `svg_entities` / `dxf_entities`(読み戻し)。門は見た目でなく、書いたファイルから読み戻した線と文字で採点する: 教科書の Cooke triplet 2 本の EFL は公表値と 7e-6 / 2e-5、面の座標は球面の sag の閉形式と 6e-7 mm、光線の折れ点は面の上に 5e-7 mm、主光線は `raytrace.chief_ray` と 5e-7 mm、寸法と処方表の数字は表示の桁で一致。入射瞳が無限遠のテレセンも描け、主光線の傾きは `telecentric.chief_ray_angle`(別の実装)と 3e-7°。製作図の n_d・ν_d は公開の硝材カタログ値どおり、注記の EFL は厚肉レンズの公式どおり。SVG / DXF の往復は 11 枚で 1e-6 mm、OSS の DXF ライブラリ(MIT)も 11 枚を監査エラー 0 で読んだ。★等倍の検分で、設置図の視野 28.26 mm(センサー × WD / f)と倍率 0.1429(f/(WD − f))が同じ図の中で 14 % 食い違うのが見つかった。原因は `optscene.vision_layout` がピンホールの距離に焦点距離を渡していたことで、作動距離に合焦させた像距離 f·WD/(WD − f) に直した(視野は 24.73 mm)。当時の門は視野を同じ WD / f の式で採点していて素通しした(両辺に同じ模型)。いまは撮った画像の上で幅 12 mm の板が 124 画素(= 12 × m / 画素 = 124.2)に写ることも見る。★壊した図(sag の符号の反転・光線を 0.01 mm ずらす・EFL の数字の書き換え・DXF の頂点の欠け・像距離を焦点距離に戻す)で門が赤になることを確かめた。学習 0、較正 0、門 53 件。*
+
+[![教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。面は処方の sag、光線は絞りを狙って追跡した実光線で、視野 0 / 14 / 20° を青・緑・赤に分けた。寸法線の BFL 42.42・EFL](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/01_cooke_a.png)
+
+*↑ 測定の図 ―― 教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。面は処方の sag、光線は絞りを狙って追跡した実光線で、視野 0 / 14 / 20° を青・緑・赤に分けた。寸法線の BFL 42.42・EFL 50.00(H′ → F′)・全長 60.18・像高 18.14 は paraxial_trace の値で、SVG / DXF から読み戻した文字と表示の桁で一致する。縮尺 2:1。*
+
+[![もう 1 本の教科書の Cooke triplet(Geiser の例、f = 50 mm、F/4)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/02_cooke_b_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/02_cooke_b.png)
+
+*↑ もう 1 本の教科書の Cooke triplet(Geiser の例、f = 50 mm、F/4)。*
+
+[![絞りを後側焦点に置いた物体側テレセン。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/04_telecentric_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/04_telecentric_object.png)
+
+*↑ 絞りを後側焦点に置いた物体側テレセン。*
+
+[![同じカメラにドーム照明(半径 80 mm、天頂の穴は 20°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/07_setup_dome_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/07_setup_dome.png)
+
+*↑ 同じカメラにドーム照明(半径 80 mm、天頂の穴は 20°)。*
+
+[![バックライト(部品の下 30 mm、幅 80 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/09_setup_backlight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/09_setup_backlight.png)
+
+*↑ バックライト(部品の下 30 mm、幅 80 mm)。*
+
+```
+py -3.11 examples/poc_optics_drawings.py
+```
+
+ソース: [examples/poc_optics_drawings.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
+
+この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_optics_drawings)
+
+使用 op(ノートへ): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`drawing_dxf`](https://furuse.work/ops/optics/drawing/drawing_dxf.html) · [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`drawing_svg`](https://furuse.work/ops/optics/drawing/drawing_svg.html) · [`dxf_entities`](https://furuse.work/ops/optics/drawing/dxf_entities.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`lens_element_drawing`](https://furuse.work/ops/optics/drawing/lens_element_drawing.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`tolerance_analysis`](https://furuse.work/ops/optics/design/tolerance_analysis.html) · [`vision_layout`](https://furuse.work/ops/optics/scene/vision_layout.html) · [`vision_setup_drawing`](https://furuse.work/ops/optics/drawing/vision_setup_drawing.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

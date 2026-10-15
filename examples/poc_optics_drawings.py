@@ -5,7 +5,7 @@
 レンズの製作を頼むには ISO 10110 の製作図が要る。Fullseye は処方を実光線で評価し(``raytrace``)、撮像系の
 光学バジェットを出す(``optscene.vision_layout``)が、**図を 1 枚も出さなかった**。新 op 8 本(``optdraw``)で
 図を出し、**図に書いた線と文字を SVG / DXF から読み戻して**、計算と公表値に突き合わせる。見た目では採点しない。
-仮番号(収蔵番号は統合のときに振る)。6 章:
+収蔵番号 2026.242。6 章:
 
   1. **教科書の Cooke triplet 2 本**: 処方 A(f = 50 mm、F/5、半画角 20°、SK16 / F2 —— 光学設計ソフトの同梱
      サンプルと同じ数値が OSS の optiland のギャラリーに公表、EFL 49.9998 mm at 0.55 µm)と処方 B(Geiser の例、
@@ -243,11 +243,38 @@ def cooke_b():
 OUT = {}
 
 
+#: 図ごとの説明(展示と Studio の Figures に出る)。数字は図に書いた値そのもの(読み戻しの門で採点済み)。
+CAPTIONS = {
+    "cooke_a": "教科書の Cooke triplet(f = 50 mm、F/5、半画角 20°)の子午断面。面は処方の sag、光線は絞りを狙って追跡した実光線で、"
+               "視野 0 / 14 / 20° を青・緑・赤に分けた。寸法線の BFL 42.42・EFL 50.00(H′ → F′)・全長 60.18・像高 18.14 は "
+               "paraxial_trace の値で、SVG / DXF から読み戻した文字と表示の桁で一致する。縮尺 2:1。",
+    "cooke_b": "もう 1 本の教科書の Cooke triplet(Geiser の例、f = 50 mm、F/4)。絞りは第 3 面(凹レンズの前面)にある。"
+               "公表の f = 50 mm に対して EFL 50.00。",
+    "telecentric_entocentric": "同じ単レンズ(f = 100 mm)の絞りをレンズの直後に置いた通常のレンズ。物高 4 / 8 mm の光束は"
+                               "絞りへ向かって傾いて入る(主光線の傾き −1.5°)。",
+    "telecentric_object": "絞りを後側焦点に置いた物体側テレセン。入射瞳が無限遠にあっても、光線を絞りそのものへ狙うので描ける。"
+                          "主光線は物体側で光軸に平行(物高 8 mm で 0.052°、telecentric.chief_ray_angle と 3e-7° で一致)。"
+                          "最終面が後側焦点なので BFL は描かない(長さ 0)。",
+    "telecentric_bi": "後側焦点の後ろに 2 枚目を足した両側テレセン(倍率 −0.5)。無焦点なので F′・H′・EFL は描かず、"
+                      "諸元の行は AFOCAL と倍率を書く。",
+    "setup_ring_coaxial": "撮像系の設置図(側面図と、その上に第三角法で上面図)。f 25 mm・F/4・作動距離 200 mm・1024×768 画素・3.45 µm。"
+                          "視野 24.73 × 18.55 mm はセンサー ÷ 倍率 f/(WD − f)(作動距離に合焦させた薄肉レンズ)で、"
+                          "DOF 2.672 mm の帯は光軸に沿う。リング照明(仰角 40.6°、作業面から)と同軸落射(ハーフミラーと横の光源)。",
+    "setup_dome": "同じカメラにドーム照明(半径 80 mm、天頂の穴は 20°)。側面図は半球の断面と光の向き。",
+    "setup_bar_lowangle": "低角のバー照明(仰角 15.5°)。暗視野の配置で、光は作業面をかすめる。",
+    "setup_backlight": "バックライト(部品の下 30 mm、幅 80 mm)。上面図では部品の下に隠れるので破線。",
+    "element_planoconvex": "単レンズの製作図(ISO 10110 の表記)。左の面 / 材料 / 右の面の 3 欄に R(凸は CX)と公差、有効径、"
+                           "3/(面形状、546.07 nm の縞)・4/(面の傾き、分)・5/(きず)、n_d・ν_d と 0/ 1/ 2/。"
+                           "公差は tolerance_analysis の辞書から写し、注記に同じ公差の Monte-Carlo の EFL の幅を残す。",
+    "element_biconvex": "両凸レンズの製作図。R の公差 ±0.2 % は有効径の縁で sag の縞 8 本に当たる(注記 5)。",
+}
+
+
 def emit(name, drawing):
-    """--out があれば SVG / DXF / PNG を書く(等倍で見る用)。図は常に PoC の Figures にも出す。"""
+    """図を PoC の Figures に出す(紙の 150 dpi の等倍 PNG)。--out があれば SVG / DXF / PNG も書く(main)。"""
     OUT[name] = drawing
     if not REDUCED and figs.target_dir() is not None:
-        figs.save(name, OD.drawing_raster(drawing, dpi=120), drawing["values"].get("caption", name))
+        figs.save(name, OD.drawing_raster(drawing, dpi=150), CAPTIONS.get(name, name))
 
 
 # --------------------------------------------------------------------------- #

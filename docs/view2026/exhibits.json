@@ -5720,6 +5720,22 @@
     "de": "Industrielle OCT (Lackschichten und verborgene Fehler)",
     "hi": "औद्योगिक OCT (paint layers और भीतरी defects)"
    }
+  },
+  {
+   "id": "poc_optics_drawings",
+   "group": "wing_metrology",
+   "media": "06_setup_ring_coaxial.png",
+   "motion": false,
+   "thumb_src": "06_setup_ring_coaxial.png",
+   "label": {
+    "ja": "光学系の図面(断面図・設置図・製作図)",
+    "en": "Optical drawings from the calculation",
+    "zh": "光学系统图纸(截面图、布置图、制造图)",
+    "tw": "光學系統圖面(截面圖、配置圖、製造圖)",
+    "ko": "광학계 도면(단면도·설치도·제작도)",
+    "de": "Optische Zeichnungen aus der Rechnung",
+    "hi": "calculation से optical drawings (section, setup, element)"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
