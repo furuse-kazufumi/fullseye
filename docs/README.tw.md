@@ -53,16 +53,16 @@
 
 ### 驗證階段
 
-61 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.6.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+62 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.6.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
 | `research-prototype` | 已實作,但測試或可執行的範例尚未齊全 | 0 |
-| `verified-synthetic` | 已用合成真值自動驗證 | 53 |
+| `verified-synthetic` | 已用合成真值自動驗證 | 54 |
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 8 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-377 個範例中,檢查實際執行的有 377 個。
+378 個範例中,檢查實際執行的有 378 個。
 
 ### 各版本的運算子數
 
@@ -134,11 +134,11 @@
 
 ## 尋找運算子
 
-共有 **3,251 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **65 篇族群指南**。依維度的入口:
+共有 **3,256 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **65 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 936/936、型別台帳 2294/2306、單行門面 `fullseye.<名稱>` 683/1435 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 936/936、型別台帳 2299/2311、單行門面 `fullseye.<名稱>` 683/1436 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3251 篇中，附有可執行範例的 **3250** 篇(1 篇沒有)，用法說明 120 字以上的 **3087** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3251 篇全有。
+**內容實測**: 3256 篇中，附有可執行範例的 **3254** 篇(2 篇沒有)，用法說明 120 字以上的 **3092** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3256 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -181,6 +181,7 @@
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
 | `blob` | 10 | [INDEX](ops/blob/INDEX.md) · [guide](ops/blob/guides/blob_analysis.md) |
 | `llmcore` | 10 | [INDEX](ops/llmcore/INDEX.md) · [guide](ops/llmcore/guides/llmcore.md) |
+| `simcal` | 10 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `vx` | 10 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
@@ -189,7 +190,6 @@
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
-| `simcal` | 5 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -289,9 +289,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 256 篇
+## 文件地圖 — 共 257 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,251 篇運算子說明與 65 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,256 篇運算子說明與 65 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
@@ -431,7 +431,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(173)
+**Other**(174)
 
 | 文件 | 內容 |
 |---|---|
@@ -548,6 +548,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
+| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
 | [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |

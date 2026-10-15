@@ -1,8 +1,8 @@
 {
- "n_ops": 3245,
+ "n_ops": 3250,
  "tiers": {
   "color": 12,
-  "ledger": 2292,
+  "ledger": 2297,
   "nary": 17,
   "registry": 924
  },
@@ -24087,6 +24087,19 @@
    "in_sorts": []
   },
   {
+   "name": "simcal_discrepancy",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
    "name": "simcal_fit",
    "halcon": "",
    "in_sort": "simmodel",
@@ -24097,6 +24110,19 @@
    "dim": "simcal",
    "in_sorts": [
     "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_identifiability",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
    ]
   },
   {
@@ -24125,6 +24151,19 @@
    ]
   },
   {
+   "name": "simcal_report",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "table",
+   "category": "report",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
    "name": "simcal_screen",
    "halcon": "",
    "in_sort": "simmodel",
@@ -24147,6 +24186,33 @@
    "ledger": "opssimcal",
    "dim": "simcal",
    "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_uncertainty",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult"
+   ]
+  },
+  {
+   "name": "simcal_validate",
+   "halcon": "",
+   "in_sort": "calresult",
+   "out_sort": "calresult",
+   "category": "check",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "calresult",
     "simmodel"
    ]
   },

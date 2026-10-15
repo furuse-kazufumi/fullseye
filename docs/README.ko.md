@@ -53,16 +53,16 @@
 
 ### 검증 단계
 
-능력 61건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.6.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 62건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.6.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|
 | `research-prototype` | 구현은 있으나 테스트나 실행되는 예가 아직 갖춰지지 않음 | 0 |
-| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 53 |
+| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 54 |
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 8 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 377건 중 게이트가 실제로 실행하는 것은 377건.
+예 378건 중 게이트가 실제로 실행하는 것은 378건.
 
 ### 버전별 연산자 수
 
@@ -134,11 +134,11 @@
 
 ## 연산자 찾기
 
-**3,251개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **65개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,256개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **65개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2294/2306, 한 줄 파사드 `fullseye.<이름>` 683/1435 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 936/936, 타입 台帳 2299/2311, 한 줄 파사드 `fullseye.<이름>` 683/1436 — **파사드는 아직 절반**.
 
-**내용 실측**: 3251건 중 실행 가능한 예제가 붙은 것은 **3250**건(1건은 없음), 사용법이 120자 이상인 것은 **3087**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3251건 모두.
+**내용 실측**: 3256건 중 실행 가능한 예제가 붙은 것은 **3254**건(2건은 없음), 사용법이 120자 이상인 것은 **3092**건(164건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3256건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -181,6 +181,7 @@
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
 | `blob` | 10 | [INDEX](ops/blob/INDEX.md) · [guide](ops/blob/guides/blob_analysis.md) |
 | `llmcore` | 10 | [INDEX](ops/llmcore/INDEX.md) · [guide](ops/llmcore/guides/llmcore.md) |
+| `simcal` | 10 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `vx` | 10 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
@@ -189,7 +190,6 @@
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
-| `simcal` | 5 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -289,9 +289,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 256건
+## 문서 지도 — 전 257건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,251건과 패밀리 가이드 65건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,256건과 패밀리 가이드 65건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 
@@ -431,7 +431,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(173)
+**Other**(174)
 
 | 문서 | 내용 |
 |---|---|
@@ -548,6 +548,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
+| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
 | [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |

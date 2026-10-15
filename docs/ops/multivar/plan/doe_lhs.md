@@ -4,7 +4,7 @@ dim: multivar
 category: plan
 in: 
 out: design
-examples: [doe_plan_tour, multivar_inspection_tour, sensitivity_tour]
+examples: [doe_plan_tour, multivar_inspection_tour, sensitivity_tour, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ point per stratum — the defining property, checked on the returned matrix) and
 - [doe_plan_tour](../../../../examples/doe_plan_tour.py) — `py -3.11 examples/doe_plan_tour.py`
 - [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
 - [sensitivity_tour](../../../../examples/sensitivity_tour.py) — `py -3.11 examples/sensitivity_tour.py`
+- [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`
 
 ## 型が繋がる次の op(`design` を入力に取れる)
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3245,
- "n_notes": 3251,
+ "n_ops": 3250,
+ "n_notes": 3256,
  "notes": {
   "vol_dilate": [
    {
@@ -31576,6 +31576,46 @@
     "path": "docs/ops/shapestat/synth/shape_synth_family.md"
    }
   ],
+  "simcal_discrepancy": [
+   {
+    "op": "simcal_discrepancy",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_discrepancy.md"
+   }
+  ],
+  "simcal_identifiability": [
+   {
+    "op": "simcal_identifiability",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_identifiability.md"
+   }
+  ],
+  "simcal_uncertainty": [
+   {
+    "op": "simcal_uncertainty",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_uncertainty.md"
+   }
+  ],
+  "simcal_validate": [
+   {
+    "op": "simcal_validate",
+    "dim": "simcal",
+    "category": "check",
+    "in": "calresult × simmodel",
+    "out": "calresult",
+    "path": "docs/ops/simcal/check/simcal_validate.md"
+   }
+  ],
   "simcal_fit": [
    {
     "op": "simcal_fit",
@@ -31623,6 +31663,16 @@
     "in": "simmodel",
     "out": "images",
     "path": "docs/ops/simcal/model/simcal_simulate.md"
+   }
+  ],
+  "simcal_report": [
+   {
+    "op": "simcal_report",
+    "dim": "simcal",
+    "category": "report",
+    "in": "calresult",
+    "out": "table",
+    "path": "docs/ops/simcal/report/simcal_report.md"
    }
   ],
   "spc_capability": [

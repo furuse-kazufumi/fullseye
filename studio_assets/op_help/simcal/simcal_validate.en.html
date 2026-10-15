@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_validate — SIMCAL <code style="color:#22d3bf">check</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">calresult × simmodel</code> → <code style="color:#22d3bf">calresult</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, seed=0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, seed=0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opssimcal.get(&quot;simcal_validate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Over-fitting gates on held-out images; any one failing rejects the calibration (the estimates are withdrawn).</p>
+<p><code style="color:#22d3bf">holdout</code> (and <code style="color:#22d3bf">locked</code>): observed simmodels of the same knobs (<code style="color:#22d3bf">simcal_observe</code> with <code style="color:#22d3bf">split=&#x27;holdout&#x27;</code> / <code style="color:#22d3bf">&#x27;locked&#x27;</code>) or image lists for the fitted model&#x27;s conditions. Errors are reduced chi^2 (1 = the residuals are exactly the noise). Gates, each recorded in <code style="color:#22d3bf">validation.gates</code> with its value and limit:</p>
+<p style="margin:2px 0 2px 12px">1. <code style="color:#22d3bf">beats_initial</code> — holdout error at the estimate &lt; holdout error at the initial knobs;</p>
+<p style="margin:2px 0 2px 12px">2. <code style="color:#22d3bf">holdout_over_train</code> — holdout / train &lt;= 1 + tau, tau = the bootstrap 95 % relative spread of the train error over its pixels (<code style="color:#22d3bf">n_boot</code> resamples) unless given;</p>
+<p style="margin:2px 0 2px 12px">3. <code style="color:#22d3bf">beats_gain_offset</code> — better than the initial simulation re-scaled by a fitted gain and offset only (the cheapest model that could explain the images);</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">estimate_plausible</code> — every estimate inside its range, not within 1 % of an end, and within 3 sd of its prior when one is given;</p>
+<p style="margin:2px 0 2px 12px">5. <code style="color:#22d3bf">knobs_within_dims</code> — free knobs &lt;= output directions above noise (<code style="color:#22d3bf">dims</code>, or computed from a Latin hypercube over the knobs with <code style="color:#22d3bf">sensitivity.mv_residual_pca</code>).</p>
+<p><code style="color:#22d3bf">locked</code> is scored <b>once</b> (<code style="color:#22d3bf">errors.locked</code>) and is not used by any gate; a result that already carries a LOCKED score is refused (the <code style="color:#22d3bf">robust.py</code> discipline: the untouched number is untouched only once).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_checks_tour">simcal_checks_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_checks_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">calresult</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a> · <a style="color:#22d3bf" href="opsimcal:simcal_report">simcal_report</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">check</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_discrepancy">simcal_discrepancy</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcalcheck.py — SIMCAL operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

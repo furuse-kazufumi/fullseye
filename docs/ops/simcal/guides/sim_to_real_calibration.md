@@ -31,6 +31,11 @@ flowchart LR
   B --> F[simcal_fit<br/>重みつき最小二乗]
   F -->|決まらない・端・雑音モデル無し| X[拒否: 理由と決まる組み合わせ]
   F --> R[calresult]
+  R --> I[simcal_identifiability<br/>下界・プロファイル]
+  I --> U[simcal_uncertainty<br/>Laplace / ブートストラップ]
+  I --> V[simcal_validate<br/>過適合の門・LOCKED は 1 回]
+  V --> D[simcal_discrepancy<br/>残差 PCA]
+  D --> P[simcal_report]
 ```
 
 ## 模型(model)
@@ -59,6 +64,21 @@ flowchart LR
 当てはめが違う谷(薄膜の隣の干渉次数など)に落ちたときは、値は返しますが `fit.warnings` に
 「χ²/自由度が雑音の何倍か、multistart を試せ」と書きます。
 
+## 検査(check / report)
+
+どの検査も calresult を受けて calresult を返し、**支えられない点推定は理由をつけて取り下げます**(`undetermined` に移す)。
+
+| やりたいこと | op | 要点 |
+|---|---|---|
+| どこまで決まるか | `simcal_identifiability` | Fisher 情報 J^T W J と Cramér-Rao 下界(`mathestimation.crlb_gaussian` と同じ定義、直線の模型で一致をテストが確かめる)、条件数(1e6 超で警告)、相関、共線性指数、**プロファイル尤度**(他のつまみを合わせ直しながら 1 つを動かし、χ² が χ²₁(95 %) = 3.84 上がる所)。片側しか閉じなければ「上限だけ」「下限だけ」として点推定を取り下げる。`at=` に真値を渡せば合成の研究で下界だけを計算できる |
+| どれだけ確かか | `simcal_uncertainty` | Laplace(Fisher 情報の逆、対数のつまみは非対称の区間)かパラメトリック・ブートストラップ。点推定の無い結果は拒否 |
+| 取り置いた画像で持つか | `simcal_validate` | 過適合の門 5 つ(初期値より良い / 保留 ÷ 学習 ≤ 1 + τ / 利得と黒レベルだけの模型より良い / 範囲・事前・端 / 自由なつまみ ≤ 画像が持つ方向の数)。どれか 1 つで拒否。LOCKED は 1 回だけ(2 回目は拒否) |
+| 模型に何が足りないか | `simcal_discrepancy` | 雑音で割った残差の PCA(`mv_residual_pca`)を Tracy-Widom 99 % の端と比べる(素の Marchenko-Pastur の端は純雑音でも 10〜14 % 越える)。構造があれば、その形(地図)と「不確かさは楽観側」の注記 |
+| 表 1 枚 | `simcal_report` | つまみごとの値・単位・区間・分類と、走らせた門。走らせなかった門は not run |
+
+8 次の周辺減光の多項式は、画像の中では cos⁴ と同じくらいよく合います(保留の誤差も変わらない)。拒否するのは当てはめの交絡と、
+「自由なつまみ 10 > 画像が持つ方向 6」の門です —— 画像の過適合は、保留の誤差より先に「決まらない」として現れます。
+
 ## 最初の 1 本
 
 ```python
@@ -74,3 +94,5 @@ print(r["status"], {k: round(v, 2) for k, v in r["theta_hat"].items()})
 ## 例
 
 `examples/simcal_tour.py` —— 利得 x 照明の拒否と積、1 波長と 31 波長の膜、白い板とチャートのボケ、ずれた画像の位置合わせ。
+
+`examples/simcal_checks_tour.py` —— 40 組の真値で回収を採点(39 組が 3 σ_CRLB 以内、雑音を見誤ると 29 組)、上限しか言えないボケ、8 次の多項式の拒否、光軸のずれたレンズの残差 PCA。

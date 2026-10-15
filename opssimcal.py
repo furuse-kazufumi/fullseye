@@ -15,12 +15,18 @@ Categories:
   * ``fit``    — which knobs matter and their values (``simcal.py``): screening on the
     noise-whitened outputs (Morris / Sobol' / collinearity) and the weighted least-squares fit
     that refuses undetermined knobs.
+  * ``check``  — how far to trust the values (``simcalcheck.py``): Fisher information,
+    Cramér-Rao bound and profile likelihood; Laplace / bootstrap intervals; over-fitting gates on
+    held-out images (TRAIN / OBSERVED / LOCKED); residual PCA against the Tracy-Widom edge
+    (model discrepancy). Each withdraws the estimates it does not support.
+  * ``report`` — one table of the result (``simcalcheck.py``).
 
 Provenance is public literature only (docs/PROVENANCE.md naming rule): Levenberg 1944;
 Marquardt 1963; Nelder & Mead 1965; Kennedy & O'Hagan 2001; Brun, Reichert & Künsch 2001;
 Morris 1991; Saltelli et al. 2010; Lamboni, Monod & Makowski 2011 (variance-weighted indices over
 principal components); McCullagh & Nelder 1989 (iteratively re-weighted least squares); EMVA 1288
-Release 4.0 (camera noise model).
+Release 4.0 (camera noise model); Raue et al. 2009 (profile likelihood); Efron 1979 (bootstrap);
+Johnstone 2001 (Tracy-Widom edge); Brynjarsdóttir & O'Hagan 2014.
 
 Usage:
     import opssimcal
@@ -28,8 +34,9 @@ Usage:
     opssimcal.get("simcal_fit")(opssimcal.get("simcal_model")())
 """
 import simcal
+import simcalcheck
 
-_MOD = {"simcal": simcal}
+_MOD = {"simcal": simcal, "simcalcheck": simcalcheck}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: TWO new words, ``simmodel`` and ``calresult``.
@@ -57,6 +64,18 @@ _CATALOG = {
     "fit": [
         ("simcal_screen", "simcal", ["simmodel"], "table"),
         ("simcal_fit", "simcal", ["simmodel"], "calresult"),
+    ],
+    # 検査: 決まるか(下界・プロファイル)、どれだけ確かか、取り置いた画像で持つか、模型に何が足りないか。
+    #   どれも calresult を受けて calresult を返し、支えられない点推定は理由をつけて取り下げる。
+    "check": [
+        ("simcal_identifiability", "simcalcheck", ["calresult"], "calresult"),
+        ("simcal_uncertainty", "simcalcheck", ["calresult"], "calresult"),
+        ("simcal_validate", "simcalcheck", ["calresult", "simmodel"], "calresult"),
+        ("simcal_discrepancy", "simcalcheck", ["calresult"], "calresult"),
+    ],
+    # 報告: 表 1 枚(走らせなかった検査は「not run」と書く)。
+    "report": [
+        ("simcal_report", "simcalcheck", ["calresult"], "table"),
     ],
 }
 

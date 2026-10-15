@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 61 項目**
+**収録 62 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -42,6 +42,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
@@ -56,7 +57,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (22)
+## 測る (23)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -241,6 +242,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `sfp_dolp_model`, `dolp_to_zenith`, `aolp_to_azimuth`, `sfp_render`, `sfp_normals`, `sfp_disambiguate`, `sfp_estimate_index`, `sfp_height`
 
 動く例: `poc_shape_from_polarization`
+
+### [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md)
+
+周辺減光の強さ・ボケの幅・膜の厚さ・カメラの利得のような**物理の係数**を、実物の画像との差が雑音の大きさになるまで自動で 合わせます(`simcal`、10 op)。模型は fullseye の op の連鎖(例 `thin_film_reflectance` → 画像 → 利得と黒レベル)で、各段の 引数を単位・範囲・線形 / 対数つきの「つまみ」にします。当てはめは雑音の分散で重みをつけた最小二乗(重みは予測で更新)。
+
+使う op: `simcal_model`, `simcal_simulate`, `simcal_observe`, `simcal_screen`, `simcal_fit`, `simcal_identifiability`, `simcal_uncertainty`, `simcal_validate`, `simcal_discrepancy`, `simcal_report`
+
+推奨パイプライン: [`simcal_model`](ops/simcal/model/simcal_model.md) → [`simcal_observe`](ops/simcal/model/simcal_observe.md) → [`simcal_fit`](ops/simcal/fit/simcal_fit.md) → [`simcal_identifiability`](ops/simcal/check/simcal_identifiability.md) → [`simcal_report`](ops/simcal/report/simcal_report.md)
+
+代替: [`simcal_screen`](ops/simcal/fit/simcal_screen.md), [`simcal_uncertainty`](ops/simcal/check/simcal_uncertainty.md), [`simcal_validate`](ops/simcal/check/simcal_validate.md), [`simcal_discrepancy`](ops/simcal/check/simcal_discrepancy.md), [`simcal_simulate`](ops/simcal/model/simcal_simulate.md), [`mv_confounding`](ops/multivar/identifiability/mv_confounding.md), [`mv_residual_pca`](ops/multivar/identifiability/mv_residual_pca.md), [`sens_morris`](ops/multivar/sensitivity/sens_morris.md)
+
+限界: 推定の物差しはカメラの雑音モデル(EMVA 1288 の線形カメラかガウス)で、雑音モデルが無いと拒否する。雑音を 1/4 に見誤ると Cramér-Rao 下界も半分になり、40 組の採点は 39 組 → 29 組に落ちる(例で実測)。位置合わせは整数画素だけ。干渉縞のように谷がいくつもある問題では、小さな計画からの LM は隣の谷に落ちうる(値は返し、χ²/自由度を警告に出す)。モデルの食い違いがあると不確かさは楽観側になる(simcal_discrepancy が注記する)。
+
+実寸校正: 係数はつまみの単位(px・DN・nm …)で返る。画素から mm への換算は模型の外の話で、倍率や画素ピッチをつまみに入れるなら、それが画像から決まるかを simcal_screen で先に確かめる(倍率と画素ピッチは積でしか効かない)。
+
+動く例: `simcal_tour`, `simcal_checks_tour`
 
 ### [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md)
 

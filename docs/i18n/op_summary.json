@@ -9,6 +9,51 @@
   "hi"
  ],
  "summaries": {
+  "simcal/simcal_identifiability": {
+   "fp": "a33c94d233ab",
+   "ja": "合わせた各つまみの Fisher 情報・Cramér-Rao 下界・相関・共線性・プロファイル尤度。",
+   "zh": "每个已拟合旋钮的 Fisher 信息、Cramér-Rao 下界、相关性、共线性与剖面似然。",
+   "tw": "每個已擬合旋鈕的 Fisher 資訊、Cramér-Rao 下界、相關性、共線性與剖面概似。",
+   "ko": "맞춘 각 노브의 Fisher 정보·Cramér-Rao 하한·상관·공선성·프로파일 우도.",
+   "de": "Fisher-Information, Cramér-Rao-Schranke, Korrelationen, Kollinearität und Profil-Likelihood jedes angepassten Reglers.",
+   "hi": "हर fit किए गए knob की Fisher information, Cramér-Rao bound, correlations, collinearity और profile likelihood।"
+  },
+  "simcal/simcal_uncertainty": {
+   "fp": "09e83dd4c9a7",
+   "ja": "決まったつまみの標準偏差と区間: Laplace(Fisher 情報の逆)かパラメトリック・ブートストラップ。",
+   "zh": "已确定旋钮的标准差与区间：Laplace（Fisher 信息之逆）或参数自助法。",
+   "tw": "已確定旋鈕的標準差與區間：Laplace（Fisher 資訊之逆）或參數自助法。",
+   "ko": "결정된 노브의 표준편차와 구간: Laplace(Fisher 정보의 역) 또는 모수적 부트스트랩.",
+   "de": "Standardabweichungen und Intervalle der bestimmten Regler: Laplace (inverse Fisher-Information) oder parametrischer Bootstrap.",
+   "hi": "निर्धारित knobs के standard deviation और intervals: Laplace (inverse Fisher) या parametric bootstrap।"
+  },
+  "simcal/simcal_validate": {
+   "fp": "3215c98854de",
+   "ja": "取り置いた画像での過適合の門。1 つでも落ちれば較正を拒否する(推定は取り下げる)。",
+   "zh": "在保留图像上的过拟合闸门；任一失败即拒绝该标定（撤回估计值）。",
+   "tw": "在保留影像上的過擬合閘門；任一失敗即拒絕該校正（撤回估計值）。",
+   "ko": "보류 영상에서의 과적합 관문. 하나라도 실패하면 보정을 거부한다(추정치는 철회).",
+   "de": "Überanpassungs-Prüfungen auf zurückgehaltenen Bildern; schlägt eine fehl, wird die Kalibrierung verworfen (Schätzwerte zurückgezogen).",
+   "hi": "held-out images पर over-fitting gates; किसी एक के भी विफल होने पर calibration अस्वीकृत (estimates वापस)।"
+  },
+  "simcal/simcal_discrepancy": {
+   "fp": "5eedf6e1bc79",
+   "ja": "雑音で正規化した残差に、模型が作れない構造(モデルの食い違い)があるか。",
+   "zh": "噪声归一化的残差中是否存在模型无法产生的结构（模型偏差）？",
+   "tw": "雜訊正規化的殘差中是否存在模型無法產生的結構（模型偏差）？",
+   "ko": "잡음으로 정규화한 잔차에 모형이 만들 수 없는 구조(모형 불일치)가 있는가.",
+   "de": "Enthalten die rauschnormierten Residuen Struktur, die das Modell nicht erzeugen kann (Modelldiskrepanz)?",
+   "hi": "क्या noise-normalised residuals में ऐसी संरचना है जो model नहीं बना सकता (model discrepancy)?"
+  },
+  "simcal/simcal_report": {
+   "fp": "73c97c00d812",
+   "ja": "較正の表 1 枚: 各つまみの値・単位・区間・分類、門、拒否の理由。",
+   "zh": "标定一览表：各旋钮的值、单位、区间与类别，各闸门，以及拒绝理由。",
+   "tw": "校正一覽表：各旋鈕的值、單位、區間與類別，各閘門，以及拒絕理由。",
+   "ko": "보정 표 한 장: 각 노브의 값·단위·구간·분류, 관문, 거부 사유.",
+   "de": "Eine Tabelle der Kalibrierung: Wert, Einheit, Intervall und Klasse jedes Reglers, die Prüfungen und die Ablehnungsgründe.",
+   "hi": "calibration की एक तालिका: हर knob का मान, इकाई, interval और वर्ग, gates, और अस्वीकृति के कारण।"
+  },
   "simcal/simcal_model": {
    "fp": "6044f31bbc6d",
    "ja": "``simmodel`` を組む: 引数がつまみ(単位・範囲つき)になった op の順方向の連鎖と、雑音モデル。",

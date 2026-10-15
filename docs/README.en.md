@@ -53,16 +53,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 61 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.6.0); stage definitions in [MATURITY.md](MATURITY.md)).
+The 62 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.6.0); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 53 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 54 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 8 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 377 examples, 377 are actually run by a gate.
+Of 378 examples, 378 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -134,11 +134,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,251 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **65 family guides**. Entry points by dimension:
+**3,256 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **65 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 936/936, typed ledger 2294/2306, one-line facade `fullseye.<name>` 683/1435 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 936/936, typed ledger 2299/2311, one-line facade `fullseye.<name>` 683/1436 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3251 notes, **3250** link at least one runnable example (1 have none) and **3087** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3251.
+**Measured substance**: of 3256 notes, **3254** link at least one runnable example (2 have none) and **3092** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3256.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -181,6 +181,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
 | `blob` | 10 | [INDEX](ops/blob/INDEX.md) · [guide](ops/blob/guides/blob_analysis.md) |
 | `llmcore` | 10 | [INDEX](ops/llmcore/INDEX.md) · [guide](ops/llmcore/guides/llmcore.md) |
+| `simcal` | 10 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `vx` | 10 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
@@ -189,7 +190,6 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
-| `simcal` | 5 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -289,9 +289,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 256
+## Document map — all 257
 
-The complete map, so that **no document is unreachable from this index** (the 3,251 per-op notes and 65 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,256 per-op notes and 65 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -431,7 +431,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(173)
+**Other**(174)
 
 | document | what it covers |
 |---|---|
@@ -548,6 +548,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
+| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
 | [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |

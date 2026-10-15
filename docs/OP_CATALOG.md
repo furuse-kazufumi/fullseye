@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(377 例)
+### 2-D 画像/信号/幾何(378 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -228,6 +228,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **撮った画像から、何が効いたか・最良はどこか・画像から条件を読めるかを出す —— 主効果・応答曲面・PCA・PLS** — 検査カメラの 4 条件を L9 x 3 回で撮ると、傷の見えの 83 % は照明の角度で、強さ・露光・ゲインは同じ山形(どれも明るさ)。角度 x 露光を中心複合計画の 13 回で振ると、二次曲面の最良は 441 回の総当たりに対して損 2 % だが、当てはまりの悪さが有意 —— 飽和の折れを二次は表せない、という合図。特徴量 9 本の独立な情報は平行分析で 2 次元、PLS は画像から照明の角度を確かめ RMSE 2.6° で読むが、露光は読めない(Q² 0.38)。NIPALS と SIMPLS が一致。 `py -3.11 examples/multivar_inspection_tour.py`
 - **どのつまみが効くか・組でしか効かないか・データから決まるのはどれか・モデルに何が足りないか —— Sobol'・Morris・共線性指数・残差 PCA** — Ishigami 関数で x3 は単独では 0、x1 との組で全分散の 24 % を動かす(Sobol' の S1・ST が解析値を 95 % 区間に含む)。検査カメラの 6 条件を Morris の 49 回でふるうと、何もしない 2 条件と、光子を増やさないゲインが「効かない」に落ちる。雑音の無い画像では照明の強さ・露光・ゲインの感度の列が平行で γ = ∞、決まるのは 強さ x 露光 x ゲインの積だけ。周辺減光を知らないモデルの残差には雑音を越える構造(2 成分)が残り、第 1 成分の形は「減光 x 像」と相関 0.99、入れると 0 成分。 `py -3.11 examples/sensitivity_tour.py`
 - **実画像から物理モデルの係数を合わせる —— ただし画像が決めない係数には数を出さない(利得 x 照明・単波長の膜・効かないつまみ)** — 照明の強さとカメラの利得を同時に合わせようとすると simcal_fit は数を出さずに拒否し、決まる積(照明 x 利得 = 899.4、真値 900)だけを返す —— χ² の谷は点でなく 1 本の溝。550 nm 1 波長の膜は n^1 x d^0.94 しか決まらず、31 波長で n と d が別々に決まるが、小さな計画からの LM は隣の干渉次数(d = 357 nm、χ²/自由度 60)に落ちて警告し、multistart は 521 nm へ。白い板ではボケが画像を動かさない(μ* = 1e-13)ので拒否、チャートなら σ = 1.198 px(真値 1.2)。2 px・3 px ずれた画像は位相相関で戻し、巻き込んだ縁の 114 画素を外して合わせる。 `py -3.11 examples/simcal_tour.py`
+- **合わせた係数はどこまで信じてよいか —— 40 組の真値で回収を採点・上限しか言えないボケ・8 次の多項式の拒否・光軸のずれたレンズ** — ボケ・周辺減光・利得・黒レベルを 40 組の真値で撮って合わせると、39 組で 4 つとも Cramér-Rao 下界の 3 倍以内(z の標準偏差 1.05)。雑音を 1/4 に見誤った模型では 29 組に落ちる。σ = 0.12 px のボケは「σ < 0.29 px」としか言えない(プロファイル尤度が片側しか閉じない)。8 次の周辺減光の多項式は画像の中では cos⁴ と同じくらい合うが係数は±2 まで暴れ、当てはめが交絡で拒否、無理に通しても「自由なつまみ 10 > 画像の方向 6」で拒否 —— その門を外すと全部すり抜ける。光軸が 5 px ずれたレンズは数を返すが、残差 PCA の 1 成分が真のずれと相関 0.99。 `py -3.11 examples/simcal_checks_tour.py`
 - **MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか** — 同じニューロンの EM 配線と 2 光子応答を持つ MICrONS(Ding ら 2025)の公開表 12,894 体 × 120 コマと 1.69 M 対を、生データを commit せずに読む。実測応答を points_activity_video で 1 mm³ の波として回し、like-to-like を再現(結合 0.071 > 触れている 0.045 > 同領域 0.025、軸索ごとの置換帰無で 15 SD)、配線は近接以上を足す(相手平均との相関: 結合 0.24 > 触れている 0.18 > 同領域 0.12、対で 73 %)、conngraph の reservoir に実測を流した波は次数保存シャッフル 20 本の全部より高い(0.085 vs 0.048)が正直に薄い(標的 1 体に入力 1.8 本、広がりは対照と同じ)。reservoir は 1 段 1 ステップなので post は 1 コマずらして比べる。 `py -3.11 examples/poc_microns_brain_wave.py`
 - **動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)** — MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の実効次元(participation ratio)を読む: 282 > 61 > 8.7 > 2.4。層の大きさを揃えても脳は 249、送り手だけ混ぜた対照は MN 22 ——腹髄 → 筋の圧縮は配線の特異性、首は収束そのもの。向きだけの次元(単位ノルム)でも実配線 25 vs 対照 54。同じ数式で G1 のRL 歩行は 1.5〜4.1、ダンス 9、格闘 12、evis の筋活動 6〜10(桁の比較)。conngraph に 4 op を追加。 `py -3.11 examples/poc_connectome_motor_bottleneck.py`
 - **定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)** — 数学的に美しい図は、きれいなので**合っているかを誰も確かめない** —— 実装が少し間違っていても円は詰まるし螺旋は回る。そこで 6 つの図を描き、**絵とは独立の真値**だけで採点した。★デカルトの円定理: 生成は反射で行うので、**接触を距離から探し直して**定理に入れる(depth 4 の 164 円で、見つかった接触 4 円の組すべてが相対ずれ 1e-13 以下)。★整数充填: 種 (−1,2,2,3) の曲率はどこまで行っても整数のまま(Lagarias–Mallows–Wilks)—— 絵では絶対に見えない誤りを捕まえる。★フォード円が接するのは **|p·s − q·r| = 1** のときに限る: 分母 12 までの 47 円・1,081 組で不一致 0、個数もオイラーの関数の和と一致。★★測地ドームは**次数 5 の頂点がちょうど 12 個**(f = 1,2,3,4,6 すべて、V−E+F=2)—— 次数は**既存の別実装** graph_degree_table に数えさせた(自分で数え直して自分と一致しても確かめたことにならない)。★葉序は角度をどう選んでも螺旋に見えるので絵を見ずに近傍の**番号差**を数える: 黄金角では山の 7/7 がフィボナッチ、対照群 137.0° と 90° は 2/7。★モランの式は**描く前に**次元を解き(シェルピンスキー 1.5850 = log3/log2 と 9 桁一致)、描いた点は既存 fractal_dimension が 1.6164 —— 導出も入力も違うので一致は偶然では起きない。相似でないアフィン写像(シダ)は拒否する。★空間充填曲線は 4^n 点をちょうど 1 回ずつ通り隣は距離 1(row_major は行末で跳ぶ = 対照群、閉じているのは moore だけ)。局所性は主張でなく**表**: ヒルベルトは k=32 で 6.38 ≈ √32、走査線は 16.07。 `py -3.11 examples/poc_theorems_as_pictures.py`
@@ -718,9 +719,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3251 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3256 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 5 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -887,7 +888,7 @@ _計 3251 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `kirsch_dir` (halcon: `kirsch_dir`) `image → image` — Kirsch コンパスフィルタで最も強く応答した方向のインデックス(8 方向中の ``argmax``)を [0,1] に正規化して返す。``kirsch_amp`` と対になる方向成分。 HALCON の ``kirsch_dir``（Detect edges (amplitude and direction) using the Kirsch operator.）に相当。 · 例: `gallery2d_edges`
 - `laplace` (halcon: `laplace`) `image → image` — ラプラシアン(``ndimage.laplace``、有限差分による 2 階微分)の絶対値を 正規化したもの。方向性を持たない二階微分エッジ検出で、Sobel 系より高周波 ノイズに敏感。HALCON の ``laplace``（Calculate the Laplace operator by using finite differences.）に相当。 · 例: `gallery2d_edges`, `poc_focus_stacking`, `poc_search_sweep_width`, `poc_white_balance`
 - `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` — LoG(Laplacian of Gaussian、ガウス平滑化後にラプラシアンを掛けた 二階微分エッジ検出)。``signed01`` により符号つき応答を [0,1] へ写像し (0.5 がゼロ交差に相当)、ゼロ交差検出やブロブ検出の下地に使える。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`, `poc_real_defect_floor`
-- `log` (halcon: `laplace_of_gauss`) `image → image` — ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`, `gallery_spectrum_signal_bridge`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_emva1288_in_camera_processing`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`, `simcal_tour`
+- `log` (halcon: `laplace_of_gauss`) `image → image` — ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。 · 例: `gallery2d_edges`, `gallery_spectrum_signal_bridge`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_emva1288_in_camera_processing`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`, `simcal_checks_tour`, `simcal_tour`
 - `points_foerstner` (halcon: `points_foerstner`) `image → image` — Förstner 演算子によるコーナー強度マップ(``skimage.feature. corner_foerstner`` の重み ``w`` とロバスト形状指標 ``q`` の積、NaN は 0 に 置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。 HALCON の ``points_foerstner``（Detect points of interest using the Förstner operator.）に相当。 · 例: `gallery2d_edges`
 - `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` — 二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず ``b`` で 決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば ``corner_harris``、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON の ``points_harris_binomial``（Detect points of interest using the binomial approximation of the Harris operator.）に相当。 · 例: `gallery2d_edges`
 - `prewitt_amp` (halcon: `prewitt_amp`) `image → image` — Prewitt 勾配の振幅。Sobel と同じ 1 次微分だが重み付けが均一 (``[1,1,1]``)なカーネルを使う ―― Sobel よりノイズにやや弱いが計算は単純。 HALCON の ``prewitt_amp``（Detect edges (amplitude) using the Prewitt operator.）に相当。 · 例: `gallery2d_edges`, `poc_white_balance`
@@ -4238,7 +4239,7 @@ _計 3251 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `doe_box_behnken` `入力なし → design` — Box-Behnken design (Box & Behnken 1960) for 3, 4 or 5 factors -> ``design``. · 例: `doe_plan_tour`
 - `doe_central_composite` `入力なし → design` — Central composite design (Box & Wilson 1951) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`
 - `doe_fractional_factorial` `入力なし → design` — Regular two-level fractional factorial 2^(k-p) from generators (Box & Hunter 1961) -> ``design``. · 例: `doe_plan_tour`
-- `doe_lhs` `入力なし → design` — Latin hypercube design (McKay, Beckman & Conover 1979) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`, `sensitivity_tour`
+- `doe_lhs` `入力なし → design` — Latin hypercube design (McKay, Beckman & Conover 1979) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`, `sensitivity_tour`, `simcal_checks_tour`
 - `doe_orthogonal_array` `入力なし → design` — Orthogonal array L4 / L8 / L9 / L12 / L16 / L18 / L27 from a published table -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`
 
 #### multivar / sensitivity(4)
@@ -4247,16 +4248,25 @@ _計 3251 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sens_morris` `design × signal → table` — Morris elementary effects -> mu, mu*, sigma per factor (Morris 1991; mu* Campolongo et al. 2007). · 例: `sensitivity_tour`
 - `sens_sobol` `design × signal → table` — First-order and total Sobol' indices with bootstrap confidence intervals. · 例: `sensitivity_tour`
 
-### simcal(5 ops / 2 categories)
+### simcal(10 ops / 4 categories)
+
+#### simcal / check(4)
+- `simcal_discrepancy` `calresult → calresult` — Is there structure in the noise-normalised residuals that the model cannot produce (model discrepancy)? · 例: `simcal_checks_tour`
+- `simcal_identifiability` `calresult → calresult` — Fisher information, Cramér-Rao bound, correlations, collinearity and profile likelihood of every fitted knob. · 例: `simcal_checks_tour`
+- `simcal_uncertainty` `calresult → calresult` — Standard deviations and intervals of the determined knobs: Laplace (inverse Fisher) or parametric bootstrap.
+- `simcal_validate` `calresult × simmodel → calresult` — Over-fitting gates on held-out images; any one failing rejects the calibration (the estimates are withdrawn). · 例: `simcal_checks_tour`
 
 #### simcal / fit(2)
-- `simcal_fit` `simmodel → calresult` — Fit the free knobs of an observed simmodel to its images (weighted least squares) -> ``calresult``. · 例: `simcal_tour`
+- `simcal_fit` `simmodel → calresult` — Fit the free knobs of an observed simmodel to its images (weighted least squares) -> ``calresult``. · 例: `simcal_checks_tour`, `simcal_tour`
 - `simcal_screen` `simmodel → table` — Which knobs move the images above the camera noise, which are confounded, and how many output directions exist. · 例: `simcal_tour`
 
 #### simcal / model(3)
-- `simcal_model` `入力なし → simmodel` — Build a ``simmodel``: a forward chain of ops whose arguments are knobs with units, ranges and a noise model. · 例: `simcal_tour`
-- `simcal_observe` `simmodel × images → simmodel` — Attach measured images to a simmodel: alignment, region of interest and exposure normalisation. · 例: `simcal_tour`
-- `simcal_simulate` `simmodel → images` — Run a simmodel's chain at given knob values -> one 2-D array per condition (``images``). · 例: `simcal_tour`
+- `simcal_model` `入力なし → simmodel` — Build a ``simmodel``: a forward chain of ops whose arguments are knobs with units, ranges and a noise model. · 例: `simcal_checks_tour`, `simcal_tour`
+- `simcal_observe` `simmodel × images → simmodel` — Attach measured images to a simmodel: alignment, region of interest and exposure normalisation. · 例: `simcal_checks_tour`, `simcal_tour`
+- `simcal_simulate` `simmodel → images` — Run a simmodel's chain at given knob values -> one 2-D array per condition (``images``). · 例: `simcal_checks_tour`, `simcal_tour`
+
+#### simcal / report(1)
+- `simcal_report` `calresult → table` — One table of a calibration: each knob's value, unit, interval and class, the gates, and the reasons for refusals. · 例: `simcal_checks_tour`
 
 ### generative(34 ops / 6 categories)
 

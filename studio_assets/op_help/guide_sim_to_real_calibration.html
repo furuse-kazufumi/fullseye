@@ -13,7 +13,12 @@
   B --&gt; S
   B --&gt; F[simcal_fit&lt;br/&gt;重みつき最小二乗]
   F --&gt;|決まらない・端・雑音モデル無し| X[拒否: 理由と決まる組み合わせ]
-  F --&gt; R[calresult]</pre>
+  F --&gt; R[calresult]
+  R --&gt; I[simcal_identifiability&lt;br/&gt;下界・プロファイル]
+  I --&gt; U[simcal_uncertainty&lt;br/&gt;Laplace / ブートストラップ]
+  I --&gt; V[simcal_validate&lt;br/&gt;過適合の門・LOCKED は 1 回]
+  V --&gt; D[simcal_discrepancy&lt;br/&gt;残差 PCA]
+  D --&gt; P[simcal_report]</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">模型(model)</h3>
 <p>| やりたいこと | op | 要点 |</p>
 <p>|---|---|---|</p>
@@ -28,6 +33,16 @@
 <p>| どのつまみが効くか、交絡しているか | <code style="color:#22d3bf">simcal_screen</code> | 雑音で割った出力の主成分ごとに Morris / Sobol&#x27;(<code style="color:#22d3bf">sens_morris</code> / <code style="color:#22d3bf">sens_sobol</code> を再利用)。全範囲を動かしても雑音の 1.96 倍に届かないつまみは「効かない」。共線性指数(<code style="color:#22d3bf">mv_confounding</code>)で交絡の組、<code style="color:#22d3bf">mv_residual_pca</code> で雑音を越える出力の次元数 |</p>
 <p>| 係数を合わせる | <code style="color:#22d3bf">simcal_fit</code> | 雑音の分散で重みをつけた最小二乗(重みは予測で更新)。出発点は計画(ラテン超方格)の最良点。<code style="color:#22d3bf">lm</code>(範囲を出る一歩はそのまま取らない)・<code style="color:#22d3bf">nm</code>・<code style="color:#22d3bf">multistart</code>。<b>決まらない・効かない・範囲の端 1 % に張りつく</b>つまみがあれば拒否し、理由と決まる組み合わせを返す。<code style="color:#22d3bf">allow_undetermined=True</code> なら、それらのつまみには値を付けずに残りを返す |</p>
 <p>当てはめが違う谷(薄膜の隣の干渉次数など)に落ちたときは、値は返しますが <code style="color:#22d3bf">fit.warnings</code> に「χ²/自由度が雑音の何倍か、multistart を試せ」と書きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">検査(check / report)</h3>
+<p>どの検査も calresult を受けて calresult を返し、<b>支えられない点推定は理由をつけて取り下げます</b>(<code style="color:#22d3bf">undetermined</code> に移す)。</p>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| どこまで決まるか | <code style="color:#22d3bf">simcal_identifiability</code> | Fisher 情報 J^T W J と Cramér-Rao 下界(<code style="color:#22d3bf">mathestimation.crlb_gaussian</code> と同じ定義、直線の模型で一致をテストが確かめる)、条件数(1e6 超で警告)、相関、共線性指数、<b>プロファイル尤度</b>(他のつまみを合わせ直しながら 1 つを動かし、χ² が χ²₁(95 %) = 3.84 上がる所)。片側しか閉じなければ「上限だけ」「下限だけ」として点推定を取り下げる。<code style="color:#22d3bf">at=</code> に真値を渡せば合成の研究で下界だけを計算できる |</p>
+<p>| どれだけ確かか | <code style="color:#22d3bf">simcal_uncertainty</code> | Laplace(Fisher 情報の逆、対数のつまみは非対称の区間)かパラメトリック・ブートストラップ。点推定の無い結果は拒否 |</p>
+<p>| 取り置いた画像で持つか | <code style="color:#22d3bf">simcal_validate</code> | 過適合の門 5 つ(初期値より良い / 保留 ÷ 学習 ≤ 1 + τ / 利得と黒レベルだけの模型より良い / 範囲・事前・端 / 自由なつまみ ≤ 画像が持つ方向の数)。どれか 1 つで拒否。LOCKED は 1 回だけ(2 回目は拒否) |</p>
+<p>| 模型に何が足りないか | <code style="color:#22d3bf">simcal_discrepancy</code> | 雑音で割った残差の PCA(<code style="color:#22d3bf">mv_residual_pca</code>)を Tracy-Widom 99 % の端と比べる(素の Marchenko-Pastur の端は純雑音でも 10〜14 % 越える)。構造があれば、その形(地図)と「不確かさは楽観側」の注記 |</p>
+<p>| 表 1 枚 | <code style="color:#22d3bf">simcal_report</code> | つまみごとの値・単位・区間・分類と、走らせた門。走らせなかった門は not run |</p>
+<p>8 次の周辺減光の多項式は、画像の中では cos⁴ と同じくらいよく合います(保留の誤差も変わらない)。拒否するのは当てはめの交絡と、「自由なつまみ 10 &gt; 画像が持つ方向 6」の門です —— 画像の過適合は、保留の誤差より先に「決まらない」として現れます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
 
@@ -38,3 +53,4 @@ print(r[&quot;status&quot;], {k: round(v, 2) for k, v in r[&quot;theta_hat&quot;
 # accepted {&#x27;f&#x27;: 22.09, &#x27;gain&#x27;: 899.05, &#x27;offset&#x27;: 63.56}   (真値 22 / 900 / 64)</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">例</h3>
 <p><code style="color:#22d3bf">examples/simcal_tour.py</code> —— 利得 x 照明の拒否と積、1 波長と 31 波長の膜、白い板とチャートのボケ、ずれた画像の位置合わせ。</p>
+<p><code style="color:#22d3bf">examples/simcal_checks_tour.py</code> —— 40 組の真値で回収を採点(39 組が 3 σ_CRLB 以内、雑音を見誤ると 29 組)、上限しか言えないボケ、8 次の多項式の拒否、光軸のずれたレンズの残差 PCA。</p>

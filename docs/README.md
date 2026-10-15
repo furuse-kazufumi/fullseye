@@ -55,16 +55,16 @@
 
 ### 検証の段
 
-能力 61 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.6.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 62 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.6.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 53 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 54 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 8 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 377 本のうち、門が実際に走らせるもの 377 本。
+例 378 本のうち、門が実際に走らせるもの 378 本。
 
 ### 版ごとの op の数
 
@@ -136,11 +136,11 @@
 
 ## オペレータを探す
 
-**3,251 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **65 本の族ガイド**があります。次元ごとの入口:
+**3,256 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **65 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 936/936、型つき台帳 2294/2306、1 行ファサード `fullseye.<名前>` 683/1435。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 936/936、型つき台帳 2299/2311、1 行ファサード `fullseye.<名前>` 683/1436。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3251 本のうち、実行できる例が付いているのは **3250 本**(1 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3087 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3251 本すべてにある。
+**ノートの中身の実測**: 3256 本のうち、実行できる例が付いているのは **3254 本**(2 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3092 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3256 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -183,6 +183,7 @@
 | `volcolor` — 体積の色 | 11 | [INDEX](ops/volcolor/INDEX.md) |
 | `blob` — 2-D の連結成分解析 | 10 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
 | `llmcore` | 10 | [INDEX](ops/llmcore/INDEX.md) · [ガイド](ops/llmcore/guides/llmcore.md) |
+| `simcal` | 10 | [INDEX](ops/simcal/INDEX.md) · [ガイド](ops/simcal/guides/sim_to_real_calibration.md) |
 | `vx` | 10 | [INDEX](ops/vx/INDEX.md) · [ガイド](ops/vx/guides/openvx_ports.md) |
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [ガイド](ops/geocam/guides/geocam.md) |
 | `interferometry` — 干渉計 | 9 | [INDEX](ops/interferometry/INDEX.md) · [ガイド](ops/interferometry/guides/coherence_scanning.md) |
@@ -191,7 +192,6 @@
 | `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
-| `simcal` | 5 | [INDEX](ops/simcal/INDEX.md) · [ガイド](ops/simcal/guides/sim_to_real_calibration.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -291,9 +291,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 256 本
+## ドキュメント地図 — 全 257 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,251 本と族ガイド 65 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,256 本と族ガイド 65 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -433,7 +433,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(173)
+**そのほか**(174)
 
 | 文書 | 内容 |
 |---|---|
@@ -550,6 +550,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
+| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
 | [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |

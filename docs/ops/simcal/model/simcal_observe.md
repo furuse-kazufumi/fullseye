@@ -4,7 +4,7 @@ dim: simcal
 category: model
 in: simmodel × images
 out: simmodel
-examples: [simcal_tour]
+examples: [simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -41,11 +41,12 @@ two scale the same signal. ``split`` labels the data ``train`` / ``holdout`` / `
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`
 - [simcal_tour](../../../../examples/simcal_tour.py) — `py -3.11 examples/simcal_tour.py`
 
 ## 型が繋がる次の op(`simmodel` を入力に取れる)
 
-[simcal_simulate](simcal_simulate.md) · [simcal_screen](../fit/simcal_screen.md) · [simcal_fit](../fit/simcal_fit.md)
+[simcal_simulate](simcal_simulate.md) · [simcal_screen](../fit/simcal_screen.md) · [simcal_fit](../fit/simcal_fit.md) · [simcal_validate](../check/simcal_validate.md)
 
 ## 同カテゴリ(`model`)
 

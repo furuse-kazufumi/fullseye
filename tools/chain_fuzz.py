@@ -1478,6 +1478,12 @@ def _b_simcal_screen(pool, rng):
     return (_b_simcal_model(pool),), {"size": 4}
 
 
+def _b_simcal_uncertainty(pool, rng):
+    # ブートストラップの道を通す(既定の laplace では n_boot が効かない)。n_boot は小さく(探針は速さが要る)
+    res = (pool.get("calresult") or [None])[0] or __import__("simcal").simcal_fit(_b_simcal_model(pool))
+    return (res,), {"method": "bootstrap", "n_boot": 8}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -6955,6 +6961,7 @@ OP_ARG_BUILDERS = {
     "mv_residual_pca": _b_residual_pca,
     "simcal_observe": _b_simcal_observe,
     "simcal_screen": _b_simcal_screen,
+    "simcal_uncertainty": _b_simcal_uncertainty,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

@@ -4,6 +4,21 @@
   "en"
  ],
  "phrases": {
+  "Cramér-Rao 下界とプロファイル尤度で、決まるつまみか・上限しか言えないかを判定する": {
+   "en": "Decide with the Cramér-Rao bound and the profile likelihood whether a knob is determined or only bounded on one side"
+  },
+  "決まったつまみの区間(Laplace かブートストラップ)": {
+   "en": "Intervals of the determined knobs (Laplace or bootstrap)"
+  },
+  "取り置いた画像で過適合の門(LOCKED は 1 回だけ)": {
+   "en": "Over-fitting gates on held-out images (the LOCKED split is scored once)"
+  },
+  "残差 PCA でモデルの食い違いを見つけ、不確かさが楽観側だと注記する": {
+   "en": "Find a model discrepancy by residual PCA and note that the uncertainties are optimistic"
+  },
+  "較正の表 1 枚(走らせなかった検査は not run と書く)": {
+   "en": "One table of the calibration (checks that were not run are written as not run)"
+  },
   "sim-to-real 較正(実物の画像から物理モデルの係数を合わせ、決まらない係数には数を出さない)": {
    "en": "Sim-to-real calibration (fit a physical model's coefficients to real images; give no number for coefficients the images do not determine)"
   },

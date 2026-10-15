@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_discrepancy — SIMCAL <code style="color:#22d3bf">check</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">calresult</code> → <code style="color:#22d3bf">calresult</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_discrepancy(result=None, level=0.99) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import simcalcheck; simcalcheck.simcal_discrepancy(result=None, level=0.99) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssimcal.get(&quot;simcal_discrepancy&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>雑音で正規化した残差に、模型が作れない構造(モデルの食い違い)があるか。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The residual of every valid pixel is divided by the noise standard deviation (camera noise plus the model&#x27;s own sample variance), so white residuals have unit variance. With three or more conditions the matrix is conditions x pixels valid in all of them; with fewer it is the rows x columns of the (first) residual image (a smooth spatial pattern is low-rank there). <code style="color:#22d3bf">sensitivity.mv_residual_pca</code> counts the components whose singular value exceeds the Tracy-Widom <code style="color:#22d3bf">level</code> point of white noise of that shape (Johnstone 2001; <code style="color:#22d3bf">level</code> in 0.90 / 0.95 / 0.99 — the bare Marchenko-Pastur edge sqrt(n) + sqrt(p) is exceeded by pure noise 10-14 % of the time, measured). Structure found: <code style="color:#22d3bf">verdict = &quot;structure&quot;</code>, the loadings as maps (where the model is wrong), and a warning that every uncertainty of the result is optimistic — a calibrated knob may be absorbing the missing physics.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_checks_tour">simcal_checks_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_checks_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">calresult</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_validate">simcal_validate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_report">simcal_report</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">check</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_identifiability">simcal_identifiability</a> · <a style="color:#22d3bf" href="opsimcal:simcal_uncertainty">simcal_uncertainty</a> · <a style="color:#22d3bf" href="opsimcal:simcal_validate">simcal_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcalcheck.py — SIMCAL operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

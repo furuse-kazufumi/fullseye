@@ -745,6 +745,7 @@ import doe  # noqa: E402  (design of experiments: LHS, orthogonal arrays, fracti
 import multivar  # noqa: E402  (table PCA / PLS / response surfaces / main effects / image feature tables)
 import sensitivity  # noqa: E402  (Morris / Sobol sensitivity, collinearity index, residual PCA)
 import simcal  # noqa: E402  (sim-to-real calibration: forward model, observation, screening, refusing fit)
+import simcalcheck  # noqa: E402  (sim-to-real checks: profile likelihood, uncertainty, over-fitting gates, discrepancy)
 from residue import (  # noqa: E402,F401
     residue_integer_crt, residue_crt, residue_fault_locate, crt_displacement, harmonic_rotation,
 )
@@ -1335,7 +1336,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
