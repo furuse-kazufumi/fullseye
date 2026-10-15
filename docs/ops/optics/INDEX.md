@@ -1,4 +1,4 @@
-# OPTICS operator help — 248 ops in 29 categories
+# OPTICS operator help — 256 ops in 30 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -33,6 +33,10 @@
 ### design (15)
 
 [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md)
+
+### drawing (8)
+
+[drawing_dxf](drawing/drawing_dxf.md) · [drawing_raster](drawing/drawing_raster.md) · [drawing_svg](drawing/drawing_svg.md) · [dxf_entities](drawing/dxf_entities.md) · [lens_element_drawing](drawing/lens_element_drawing.md) · [lens_section_drawing](drawing/lens_section_drawing.md) · [svg_entities](drawing/svg_entities.md) · [vision_setup_drawing](drawing/vision_setup_drawing.md)
 
 ### fiber (7)
 

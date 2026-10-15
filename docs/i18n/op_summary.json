@@ -29060,6 +29060,78 @@
    "ko": "계측 결과 표(``measure_pairs`` / ``apply_metrology_model`` 의 반환값)에 mm 열을 더한다.",
    "de": "Fügt einer Messtabelle (Rückgabe von ``measure_pairs`` / ``apply_metrology_model``) mm-Spalten hinzu.",
    "hi": "measurement table (``measure_pairs`` / ``apply_metrology_model`` का return) में mm columns जोड़ता है।"
+  },
+  "optics/lens_section_drawing": {
+   "fp": "3f1fb2663ff6",
+   "en": "Meridional lens layout (``table``, a drawing dict) — the prescription's surfaces, edges, stop and image plane, real rays coloured by field, and dimensions.",
+   "zh": "透镜的子午截面图(``table``,图的 dict)—— 处方的各面、边缘、光阑、像面,按视场分色的实际光线和尺寸。",
+   "tw": "透鏡的子午截面圖(``table``,圖的 dict)—— 處方的各面、邊緣、光闌、像面,依視場分色的實際光線與尺寸。",
+   "ko": "렌즈의 자오 단면도(``table``, 도면 dict) — 처방의 면·가장자리·조리개·상면, 시야별로 색을 나눈 실제 광선과 치수.",
+   "de": "Meridionaler Linsenschnitt (``table``, ein Zeichnungs-dict) — Flächen, Ränder, Blende und Bildebene der Vorschrift, echte Strahlen nach Feld eingefärbt, mit Bemaßung.",
+   "hi": "लेंस का meridional अनुप्रस्थ-काट (``table``, drawing dict) — prescription की सतहें, किनारे, stop और image plane, field के अनुसार रंगी असली किरणें और आयाम।"
+  },
+  "optics/vision_setup_drawing": {
+   "fp": "6c337ccd47e9",
+   "en": "Machine-vision setup drawing (``table``, a drawing dict) — side and top views drawn from ``optscene.vision_layout``.",
+   "zh": "成像系统的布置图(``table``,图的 dict)—— 由 ``optscene.vision_layout`` 绘制侧视图和俯视图。",
+   "tw": "成像系統的配置圖(``table``,圖的 dict)—— 由 ``optscene.vision_layout`` 繪製側視圖與俯視圖。",
+   "ko": "촬상계 설치도(``table``, 도면 dict) — ``optscene.vision_layout``으로부터 측면도와 평면도를 그린다.",
+   "de": "Aufbauzeichnung eines Bildverarbeitungssystems (``table``, ein Zeichnungs-dict) — Seiten- und Draufsicht aus ``optscene.vision_layout``.",
+   "hi": "machine-vision setup का चित्र (``table``, drawing dict) — ``optscene.vision_layout`` से side view और top view।"
+  },
+  "optics/lens_element_drawing": {
+   "fp": "b708f6680b71",
+   "en": "Manufacturing drawing of a single lens (``table``, a drawing dict) — ISO 10110 notation with a section view, the three-field data table and a title block.",
+   "zh": "单透镜的制造图(``table``,图的 dict)—— 采用 ISO 10110 的标注,含截面图、三栏数据表和标题栏。",
+   "tw": "單透鏡的製造圖(``table``,圖的 dict)—— 採用 ISO 10110 的標註,含截面圖、三欄資料表與標題欄。",
+   "ko": "단렌즈 제작도(``table``, 도면 dict) — ISO 10110 표기로 단면도, 3분할 데이터 표, 표제란.",
+   "de": "Fertigungszeichnung einer Einzellinse (``table``, ein Zeichnungs-dict) — ISO-10110-Notation mit Schnittansicht, dreiteiliger Datentabelle und Schriftfeld.",
+   "hi": "एकल लेंस का निर्माण-चित्र (``table``, drawing dict) — ISO 10110 संकेतन में section view, तीन भागों की data table और title block।"
+  },
+  "optics/drawing_svg": {
+   "fp": "0ae16cd78ee8",
+   "en": "Writes a drawing as SVG text (``text``) — standard library only, coordinates in real millimetres, paper size = drawing × scale.",
+   "zh": "把图写成 SVG 字符串(``text``)—— 只用标准库,坐标为实物毫米,纸面大小 = 图 × 比例。",
+   "tw": "把圖寫成 SVG 字串(``text``)—— 只用標準函式庫,座標為實物毫米,紙面大小 = 圖 × 比例。",
+   "ko": "도면을 SVG 문자열로 쓴다(``text``) — 표준 라이브러리만 사용, 좌표는 실물 mm, 종이 크기 = 도면 × 축척.",
+   "de": "Schreibt eine Zeichnung als SVG-Text (``text``) — nur Standardbibliothek, Koordinaten in echten Millimetern, Papiergröße = Zeichnung × Maßstab.",
+   "hi": "drawing को SVG text (``text``) में लिखता है — केवल standard library, निर्देशांक वास्तविक mm में, काग़ज़ का आकार = चित्र × scale।"
+  },
+  "optics/drawing_dxf": {
+   "fp": "c47dea589a9a",
+   "en": "Writes a drawing as DXF R12 (AC1009) ASCII (``text``) — the smallest complete file a CAD program accepts, standard library only.",
+   "zh": "把图写成 DXF R12(AC1009)的 ASCII(``text``)—— 只用标准库写出 CAD 可读入的最小完整结构。",
+   "tw": "把圖寫成 DXF R12(AC1009)的 ASCII(``text``)—— 只用標準函式庫寫出 CAD 可讀入的最小完整結構。",
+   "ko": "도면을 DXF R12(AC1009) ASCII로 쓴다(``text``) — CAD에 가져갈 수 있는 최소한의 완전한 구성을 표준 라이브러리만으로 쓴다.",
+   "de": "Schreibt eine Zeichnung als DXF-R12-ASCII (AC1009, ``text``) — die kleinste vollständige Datei, die ein CAD-Programm annimmt, nur mit der Standardbibliothek.",
+   "hi": "drawing को DXF R12 (AC1009) ASCII (``text``) में लिखता है — CAD में ले जाने योग्य सबसे छोटी पूरी संरचना, केवल standard library से।"
+  },
+  "optics/drawing_raster": {
+   "fp": "4a4c89c9e6bf",
+   "en": "Renders a drawing to an RGB image (uint8, (H, W, 3)) (``rgbimage``) — with matplotlib (optional dependency), paper size × *dpi*.",
+   "zh": "把图渲染为 RGB 图像(uint8,(H, W, 3))(``rgbimage``)—— 使用 matplotlib(可选依赖),纸面大小 × *dpi*。",
+   "tw": "把圖渲染為 RGB 影像(uint8,(H, W, 3))(``rgbimage``)—— 使用 matplotlib(選用相依),紙面大小 × *dpi*。",
+   "ko": "도면을 RGB 이미지(uint8, (H, W, 3))로 만든다(``rgbimage``) — matplotlib(선택 의존성)로, 종이 크기 × *dpi*.",
+   "de": "Rastert eine Zeichnung zu einem RGB-Bild (uint8, (H, W, 3)) (``rgbimage``) — mit matplotlib (optionale Abhängigkeit), Papiergröße × *dpi*.",
+   "hi": "drawing को RGB image (uint8, (H, W, 3)) (``rgbimage``) में बदलता है — matplotlib (वैकल्पिक dependency) से, काग़ज़ का आकार × *dpi*।"
+  },
+  "optics/svg_entities": {
+   "fp": "1211cda4a8c1",
+   "en": "Reads an SVG (the shape ``drawing_svg`` writes: ``line`` / ``polyline`` / ``polygon`` / ``circle`` / ``path`` with M…A… and M…L… / ``text``) back into drawing entities (``table``), flipping y back to the drawing model's upward axis.",
+   "zh": "把 SVG(``drawing_svg`` 写出的形式:``line`` / ``polyline`` / ``polygon`` / ``circle`` / M…A… 与 M…L… 的 ``path`` / ``text``)读回为图的要素(``table``),并把 y 的符号恢复为图模型的朝向(y 向上)。",
+   "tw": "把 SVG(``drawing_svg`` 寫出的形式:``line`` / ``polyline`` / ``polygon`` / ``circle`` / M…A… 與 M…L… 的 ``path`` / ``text``)讀回為圖的要素(``table``),並把 y 的符號恢復為圖模型的方向(y 向上)。",
+   "ko": "SVG(``drawing_svg``가 쓰는 형식: ``line`` / ``polyline`` / ``polygon`` / ``circle`` / M…A…와 M…L…의 ``path`` / ``text``)를 도면 요소로 되읽는다(``table``). y 부호를 되돌려 도면 모델의 방향(y 위)으로 맞춘다.",
+   "de": "Liest ein SVG (die Form, die ``drawing_svg`` schreibt: ``line`` / ``polyline`` / ``polygon`` / ``circle`` / ``path`` mit M…A… und M…L… / ``text``) in Zeichnungselemente zurück (``table``) und dreht y wieder in die Aufwärtsrichtung des Zeichnungsmodells.",
+   "hi": "SVG (``drawing_svg`` जिस रूप में लिखता है: ``line`` / ``polyline`` / ``polygon`` / ``circle`` / M…A… और M…L… वाला ``path`` / ``text``) को drawing के तत्वों (``table``) में वापस पढ़ता है, y का चिह्न वापस मॉडल की दिशा (y ऊपर) में करता है।"
+  },
+  "optics/dxf_entities": {
+   "fp": "b161b0c0c4b5",
+   "en": "Reads the ENTITIES of a DXF (R12 ASCII; ``LWPOLYLINE`` from R2000 on is accepted too) back into drawing entities (``table``).",
+   "zh": "把 DXF(R12 的 ASCII,也接受 R2000 以后的 ``LWPOLYLINE``)的 ENTITIES 读回为图的要素(``table``)。",
+   "tw": "把 DXF(R12 的 ASCII,也接受 R2000 以後的 ``LWPOLYLINE``)的 ENTITIES 讀回為圖的要素(``table``)。",
+   "ko": "DXF(R12 ASCII, R2000 이후의 ``LWPOLYLINE``도 가능)의 ENTITIES를 도면 요소로 되읽는다(``table``).",
+   "de": "Liest die ENTITIES eines DXF (R12-ASCII; ``LWPOLYLINE`` ab R2000 wird ebenfalls angenommen) in Zeichnungselemente zurück (``table``).",
+   "hi": "DXF (R12 ASCII; R2000 के बाद का ``LWPOLYLINE`` भी स्वीकार्य) के ENTITIES को drawing के तत्वों (``table``) में वापस पढ़ता है।"
   }
  }
 }

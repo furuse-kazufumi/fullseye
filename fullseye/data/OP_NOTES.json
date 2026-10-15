@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3222,
- "n_notes": 3228,
+ "n_ops": 3230,
+ "n_notes": 3236,
  "notes": {
   "vol_dilate": [
    {
@@ -26895,6 +26895,86 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/wavefront_from_opd.md"
+   }
+  ],
+  "drawing_dxf": [
+   {
+    "op": "drawing_dxf",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/drawing/drawing_dxf.md"
+   }
+  ],
+  "drawing_raster": [
+   {
+    "op": "drawing_raster",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/drawing/drawing_raster.md"
+   }
+  ],
+  "drawing_svg": [
+   {
+    "op": "drawing_svg",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/drawing/drawing_svg.md"
+   }
+  ],
+  "dxf_entities": [
+   {
+    "op": "dxf_entities",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/dxf_entities.md"
+   }
+  ],
+  "lens_element_drawing": [
+   {
+    "op": "lens_element_drawing",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/lens_element_drawing.md"
+   }
+  ],
+  "lens_section_drawing": [
+   {
+    "op": "lens_section_drawing",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/lens_section_drawing.md"
+   }
+  ],
+  "svg_entities": [
+   {
+    "op": "svg_entities",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/svg_entities.md"
+   }
+  ],
+  "vision_setup_drawing": [
+   {
+    "op": "vision_setup_drawing",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/vision_setup_drawing.md"
    }
   ],
   "fiber_bundle_coupling": [

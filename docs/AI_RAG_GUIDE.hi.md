@@ -91,7 +91,7 @@ implement करें → bundled worked example से verify करें। 
 
 ## Tier 2 (optional): clustered corpus — external tools के साथ एक advanced रूप
 
-आप एक "navigable corpus" भी बना सकते हैं, जो **3,228 notes** को hierarchical तरीके से topic
+आप एक "navigable corpus" भी बना सकते हैं, जो **3,236 notes** को hierarchical तरीके से topic
 clusters में बाँटता है और हर cluster का LLM summary देता है। अंदर हम
 [RAPTOR](https://github.com/gadievron/raptor) fork का `corpus2skill` इस्तेमाल करते हैं (TF-IDF + k-means + LLM summary), लेकिन **यह
 एक optional optimization है, ज़रूरत नहीं**। एकमात्र ज़रूरत है "`docs/ops` को input के रूप में लेना और

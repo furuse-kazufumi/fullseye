@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 61 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 62 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -163,6 +163,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **繪製**
 
 - 把照片變成一條線(點描 → 巡迴路徑 → 旋轉的圓): [說明](../../capabilities/one-stroke-drawing.md) _(ja)_ · 範例 [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- 光學系統的圖面(以 SVG / DXF 輸出透鏡截面圖、成像系統配置圖與單透鏡製造圖): [說明](../../capabilities/optics-drawings.md) _(ja)_ · 範例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 製作會騙眼睛的圖來替量測方評分(錯覺、無限繪製、循環動畫): [說明](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 範例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
 - 定理即檢驗門的圖(阿波羅尼奧斯、福特圓、測地穹頂、葉序、IFS、空間填充曲線): [說明](../../capabilities/theorems-as-pictures.md) _(ja)_ · 範例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 

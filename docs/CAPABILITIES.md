@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 61 項目**
+**収録 62 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -35,6 +35,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
+| [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
@@ -766,7 +767,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `annotate_paper_tour`
 
-## 描く (3)
+## 描く (4)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -775,6 +776,22 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
 
 動く例: `poc_one_stroke_epicycles`
+
+### [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md)
+
+`raytrace` の処方(`lens_system` の table)と `optscene.vision_layout` の撮像系から、打ち合わせと製作に使う図を出します。`lens_section_drawing` はレンズの子午断面図で、面は処方の円錐 + 非球面の sag、コバと平らな座、絞り、像面、視野ごとに色を分けた実光線(絞りを狙って追跡するので、入射瞳が無限遠のテレセンでも描けます)、EFL・BFL・全長・像高の寸法線、処方表を描きます。`vision_setup_drawing` は側面図と上面図で、カメラ・視野の錐・作動距離・被写界深度の帯と、照明 5 種(リング・ドーム・バー・同軸・バックライト)の位置と仰角を寸法つきで描きます。`lens_element_drawing` は単レンズの製作図で、ISO 10110 の 3 分割の表(左の面・材料・右の面)に R・有効径・3/ 4/ 5/、n_d・ν_d と 0/ 1/ 2/ を書き、公差は `tolerance_analysis` の公差の辞書から写して EFL の Monte-Carlo の幅を注記に残します。
+
+使う op: `lens_section_drawing`, `vision_setup_drawing`, `lens_element_drawing`, `drawing_svg`, `drawing_dxf`, `drawing_raster`, `svg_entities`, `dxf_entities`
+
+推奨パイプライン: [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md) → [`drawing_svg`](ops/optics/drawing/drawing_svg.md) → [`drawing_dxf`](ops/optics/drawing/drawing_dxf.md) → [`svg_entities`](ops/optics/drawing/svg_entities.md) → [`dxf_entities`](ops/optics/drawing/dxf_entities.md)
+
+代替: [`vision_setup_drawing`](ops/optics/drawing/vision_setup_drawing.md), [`lens_element_drawing`](ops/optics/drawing/lens_element_drawing.md), [`drawing_raster`](ops/optics/drawing/drawing_raster.md), [`paraxial_trace`](ops/optics/design/paraxial_trace.md), [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md)
+
+限界: 鏡・傾き・偏心のある処方の断面図、接合レンズと非球面の製作図は描かない(ValueError)。製作図の ISO 10110 の表記は公開の解説で確かめた範囲。設置図の鏡筒とカメラ本体の大きさは仮の寸法で、作動距離は物体から主点まで(薄肉の模型)。
+
+実寸校正: 図は計算値そのものを実寸の mm で描くので、尺度の校正は要らない。SVG は紙の大きさ = 図 × 縮尺(100 % 表示・印刷で縮尺どおり)、DXF はモデル空間の 1 単位 = 1 mm。
+
+動く例: `poc_optics_drawings`
 
 ### [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md)
 

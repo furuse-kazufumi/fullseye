@@ -57,6 +57,7 @@
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | OCR pre-processing (deskew, local binarisation, line extraction) | 見つける | `verified-synthetic` | 2/4 | `gallery2d_segmentation` synthetic → tests/test_example_scripts_run.py<br>`poc_matrix_code_reading` synthetic → tests/test_poc_scripts_run.py<br>`gallery2d_region` synthetic → tests/test_example_scripts_run.py |
 | [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md) | Turn a photograph into a single line (stipple, tour, rotating circles) | 描く | `validated-public-real-data` | 9/9 | `poc_one_stroke_epicycles` real → tests/test_poc_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
+| [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md) | Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF) | 描く | `verified-synthetic` | 8/8 | `poc_optics_drawings` synthetic → tests/test_poc_scripts_run.py |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | Periodic defects in a 1-D signal | 波と信号 | `verified-synthetic` | 5/5 | `poc_web_roll_periodicity` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py<br>`poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry) | 測る | `verified-synthetic` | 6/6 | `poc_phase_measuring_deflectometry` synthetic → tests/test_poc_scripts_run.py |
 | [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md) | Pictures that carry their own ground truth (illusions, endless drawing, seamless loops) | 描く | `verified-synthetic` | 14/16 | `poc_illusions_and_perpetual_drawing` synthetic → tests/test_poc_scripts_run.py |
@@ -99,8 +100,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 373 |
-| `tests/test_poc_scripts_run.py` が走らせる | 236 |
+| 2-D 台帳の例 | 374 |
+| `tests/test_poc_scripts_run.py` が走らせる | 237 |
 | `tests/test_example_scripts_run.py` が走らせる | 137 |
 | **どの門も走らせていない** | **0** |
 

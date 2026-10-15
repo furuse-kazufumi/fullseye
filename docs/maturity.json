@@ -757,6 +757,27 @@
    ]
   },
   {
+   "id": "optics-drawings",
+   "title": "光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)",
+   "title_en": "Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF)",
+   "category": "描く",
+   "note": "docs/capabilities/optics-drawings.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_optics_drawings",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "periodic-defects-in-1d-signals",
    "title": "1-D 信号の周期欠陥を見つける",
    "title_en": "Periodic defects in a 1-D signal",
@@ -1586,8 +1607,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 373,
-  "run_by_the_poc_gate": 236,
+  "examples2d_total": 374,
+  "run_by_the_poc_gate": 237,
   "run_by_the_example_gate": 137,
   "not_run_by_any_gate": 0,
   "gates": [

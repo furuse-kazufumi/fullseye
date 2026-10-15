@@ -1,8 +1,8 @@
 {
- "n_ops": 3222,
+ "n_ops": 3230,
  "tiers": {
   "color": 12,
-  "ledger": 2269,
+  "ledger": 2277,
   "nary": 17,
   "registry": 924
  },
@@ -6827,6 +6827,45 @@
    ]
   },
   {
+   "name": "drawing_dxf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "drawing_raster",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "rgbimage",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "drawing_svg",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "driver_style",
    "halcon": "",
    "in_sort": null,
@@ -6927,6 +6966,19 @@
    "dim": "math",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "dxf_entities",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "text"
    ]
   },
   {
@@ -13179,6 +13231,19 @@
    "in_sorts": []
   },
   {
+   "name": "lens_element_drawing",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_equivalent_pinhole",
    "halcon": "",
    "in_sort": "table",
@@ -13197,6 +13262,19 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_section_drawing",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "drawing",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -25943,6 +26021,19 @@
    "in_sorts": []
   },
   {
+   "name": "svg_entities",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
    "name": "swarm_field_from_piv",
    "halcon": "",
    "in_sort": "any",
@@ -28186,6 +28277,19 @@
    "in_sorts": [
     "table",
     "table",
+    "table"
+   ]
+  },
+  {
+   "name": "vision_setup_drawing",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
     "table"
    ]
   },

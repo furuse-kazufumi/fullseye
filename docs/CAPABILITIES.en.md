@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 61 capabilities**
+**Currently 62 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -36,6 +36,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [Compute reflection, refraction and interference](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
+| [Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
@@ -651,7 +652,7 @@ Alternatives: [`text_box`](ops/annotate/text/text_box.md), [`annotate_panel_labe
 
 Runnable: `annotate_paper_tour`
 
-## Draw (3)
+## Draw (4)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -660,6 +661,18 @@ Turn the tone of a picture into a single closed line a pen could draw without li
 Operators: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
 
 Runnable: `poc_one_stroke_epicycles`
+
+### [Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF)](capabilities/optics-drawings.md)
+
+Eight ops in `optdraw` (category `drawing` of `opsoptics`) that draw what the optics ops compute: a meridional lens layout from a `raytrace` prescription (conic + aspheric sags, edges, stop, image plane, real rays aimed at the stop and coloured by field, EFL / BFL / track / image-height dimensions, a prescription table), a side + top view of a machine-vision setup from `vision_layout` (field-of-view cone, working distance, depth-of-field band, five light families with positions and elevation angles), and an ISO 10110-style element drawing whose tolerances come from the `tolerance_analysis` dictionary. Writers for SVG and DXF R12 use only the standard library; readers bring coordinates and text back so the gates score the written file, not the picture.
+
+Operators: `lens_section_drawing`, `vision_setup_drawing`, `lens_element_drawing`, `drawing_svg`, `drawing_dxf`, `drawing_raster`, `svg_entities`, `dxf_entities`
+
+Pipeline: [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md) → [`drawing_svg`](ops/optics/drawing/drawing_svg.md) → [`drawing_dxf`](ops/optics/drawing/drawing_dxf.md) → [`svg_entities`](ops/optics/drawing/svg_entities.md) → [`dxf_entities`](ops/optics/drawing/dxf_entities.md)
+
+Alternatives: [`vision_setup_drawing`](ops/optics/drawing/vision_setup_drawing.md), [`lens_element_drawing`](ops/optics/drawing/lens_element_drawing.md), [`drawing_raster`](ops/optics/drawing/drawing_raster.md), [`paraxial_trace`](ops/optics/design/paraxial_trace.md), [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md)
+
+Runnable: `poc_optics_drawings`
 
 ### [Pictures that carry their own ground truth (illusions, endless drawing, seamless loops)](capabilities/pictures-that-carry-their-own-truth.md)
 

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-61개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+62개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -163,6 +163,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **그리기**
 
 - 사진을 한 줄의 선으로(점묘 → 순회 경로 → 회전하는 원): [설명](../../capabilities/one-stroke-drawing.md) _(ja)_ · 예제 [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- 광학계 도면(렌즈 단면도·촬상계 설치도·단렌즈 제작도를 SVG / DXF로): [설명](../../capabilities/optics-drawings.md) _(ja)_ · 예제 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 눈을 속이는 그림을 만들어 측정 쪽을 채점(착시·무한 그리기·순환 동영상): [설명](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 예제 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
 - 정리가 검사 문이 되는 그림(아폴로니우스·포드·측지 돔·잎차례·IFS·공간 채움 곡선): [설명](../../capabilities/theorems-as-pictures.md) _(ja)_ · 예제 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 

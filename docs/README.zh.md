@@ -53,16 +53,16 @@
 
 ### 验证阶段
 
-61 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.6.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
+62 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.6.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
 
 | 阶段 | 含义 | 能力 |
 |---|---|---|
 | `research-prototype` | 已实现,但测试或可运行的示例尚不齐全 | 0 |
-| `verified-synthetic` | 已用合成真值自动验证 | 53 |
+| `verified-synthetic` | 已用合成真值自动验证 | 54 |
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 8 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-373 个示例中,检查实际运行的有 373 个。
+374 个示例中,检查实际运行的有 374 个。
 
 ### 各版本的算子数
 
@@ -87,7 +87,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 带真值求解的 236 个实际问题
+## PoC 系列 — 带真值求解的 237 个实际问题
 
 每一个都具有闭式或合成的真值，并必定附带零点(什么都不做)。失败模式分开计数，原因用对照组区分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -100,10 +100,10 @@
 | geometry (7) | [`poc_dfm_thickness_overhang`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dfm_thickness_overhang.py) Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them<br>[`poc_mesh_quality_repair`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mesh_quality_repair.py) Repair the mesh, then measure — the defect count clears, the quantity does not<br>[`poc_pallet_load_utilization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pallet_load_utilization.py) Pallet load utilization — one number gives voids and overhang the same value<br>[`poc_panorama_drift`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_panorama_drift.py) Chain the Neighbours Together and You Cannot Get Back Where You Started<br>[`poc_print_warpage_risk`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_warpage_risk.py) Warpage lives in the layer history — averaging the area throws the placement away<br>[`poc_symmetry_restoration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symmetry_restoration.py) Restoring what is missing by symmetry — the plane you assume is the lie you get<br>[`poc_xyt_event_surface`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_xyt_event_surface.py) The Arrival-Time Surface as an Isosurface in (x, y, t) |
 | segmentation (7) | [`poc_active_contours`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_active_contours.py) Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge<br>[`poc_cell_counting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers<br>[`poc_graph_hierarchy_segmentation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_graph_hierarchy_segmentation.py) Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine<br>[`poc_leaf_disease_area`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leaf_disease_area.py) Leaf disease severity — colour axes survive the lighting; the grade is decided by the leaf mask and the edge convention<br>[`poc_mri_bias_field`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mri_bias_field.py) MRI Bias Field and Tissue Area — Grey and White Matter Fail in Opposite Directions, and the Sum Hides It<br>[`poc_timelapse_growth`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_timelapse_growth.py) A Growth Time-Lapse as Space-Time Connected Components<br>[`poc_vegetation_cover`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vegetation_cover.py) Counting Crop Green — Ground Truth as Per-Pixel Leaf Area Fraction |
 | imaging quality (6) | [`poc_colormap_readability`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) Pseudo-colour changes what the reader decides — counting edges that are not there<br>[`poc_emva1288_in_camera_processing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py) In-Camera Processing Makes Datasheet Numbers Lie Plausibly - Denoising Adds 83 % to the Quantum Efficiency, the Standard's Check Misses It, Noise Correlation Catches It<br>[`poc_emva1288_sensor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure<br>[`poc_moire_screen`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_screen.py) Can Display-Inspection Moire Be Told From Real Non-Uniformity?<br>[`poc_veiling_glare`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_veiling_glare.py) Veiling Glare Breaks Contrast Measurement — MTF Passes While Black Level Fails<br>[`poc_zebra_stripes_fly_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zebra_stripes_fly_eye.py) A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better? |
+| optics_sensing (6) | [`poc_fiber_light_guide`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py) Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency<br>[`poc_material_optical_library`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py) A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation<br>[`poc_nir_silicon_transmission`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py) Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral<br>[`poc_optics_drawings`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py) 光学系の図面 ―― 計算した処方から、レンズ断面図・装置の設置図・単レンズの製作図を SVG / DXF で _(ja)_<br>[`poc_pixel_shift`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py) Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise<br>[`poc_tdi_linescan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py) TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor |
 | photometry (6) | [`poc_allsky_cloud_cover`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_allsky_cloud_cover.py) All-Sky Cloud Cover — Counting Pixels Is Biased by Position<br>[`poc_astro_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) How Many Frames for What Photometric Precision?<br>[`poc_exoplanet_transit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_exoplanet_transit.py) Exoplanet transit from aperture photometry — depth and duration fail separately<br>[`poc_nuclei_ploidy`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nuclei_ploidy.py) Ploidy From Integrated Nuclear Intensity — Area Cannot Separate It<br>[`poc_real_sky_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_sky_photometry.py) Planting Known Stars in a Real Deep Field — Contamination Lies About the Measurement and the Confidence in the Same Direction<br>[`poc_solar_limb_darkening`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_limb_darkening.py) Where Is the Edge of a Limb-Darkened Disc? The 50 % Rule Reads the Radius Small |
 | separation (6) | [`poc_colocalization_crosstalk`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colocalization_crosstalk.py) Colocalization lies under bleed-through — Pearson and Manders break in different places<br>[`poc_pigment_unmixing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py) Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand<br>[`poc_polarization_specular`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations<br>[`poc_real_stain_unmix`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stain_unmix.py) Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch<br>[`poc_recycling_sorting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_recycling_sorting.py) Sorting mixed waste by material — what a preprocessor can erase is decided by algebra<br>[`poc_sea_ice_concentration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sea_ice_concentration.py) Sea-Ice Concentration — The Answer Depends on How Mixed Pixels Are Counted |
 | calibration (5) | [`poc_camera_calibration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_calibration.py) A Reprojection Error of 0.05 px Guarantees Nothing<br>[`poc_fly_optomotor_steering`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_optomotor_steering.py) Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning<br>[`poc_public_camera_heading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading.py) Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself<br>[`poc_public_camera_heading_real`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading_real.py) Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road<br>[`poc_thermal_drift_metrology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermal_drift_metrology.py) How Much Camera Thermal Drift Costs a Dimensional Measurement |
-| optics_sensing (5) | [`poc_fiber_light_guide`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py) Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency<br>[`poc_material_optical_library`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py) A Material Optical-Property Library — 83 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation<br>[`poc_nir_silicon_transmission`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py) Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral<br>[`poc_pixel_shift`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py) Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise<br>[`poc_tdi_linescan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py) TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor |
 | registration (5) | [`poc_change_detection_misreg`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_change_detection_misreg.py) Change detection under misregistration — false positives are edge bands, with a cliff<br>[`poc_print_registration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_registration.py) Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique<br>[`poc_registration_basin`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?<br>[`poc_reproducible_icp`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_reproducible_icp.py) Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation<br>[`poc_template_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) Template Tracking Drifts Quietly Before It Ever Loses the Target |
 | motion (4) | [`poc_particle_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_tracking.py) Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions<br>[`poc_river_surface_velocity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_river_surface_velocity.py) River surface velocity from an oblique video (LSPIV) — velocity error and discharge error are different numbers<br>[`poc_traffic_counting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_traffic_counting.py) Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V<br>[`poc_warehouse_flow`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_warehouse_flow.py) Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion |
 | tomography_3d (4) | [`poc_battery_ct_degradation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py) Battery cell degradation by CT — the swelling shows outside, the cause stays inside<br>[`poc_battery_electrode_tortuosity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_electrode_tortuosity.py) Electrode tortuosity from CT — the rule of thumb only sees porosity<br>[`poc_ct_void_morphology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py) Collapsing joint voids into one number — what the number drops is the shape that matters<br>[`poc_die_tilt_tsv_overlay`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_die_tilt_tsv_overlay.py) Die tilt and TSV overlay from one CT — tilt fakes rotation too |
@@ -134,18 +134,18 @@
 
 ## 查找算子
 
-共有 **3,228 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **63 篇族指南**。按维度的入口:
+共有 **3,236 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **63 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 936/936、类型化台账 2271/2283、单行门面 `fullseye.<名称>` 683/1431 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 936/936、类型化台账 2279/2291、单行门面 `fullseye.<名称>` 683/1431 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3228 篇中，附有可运行示例的 **3227** 篇(1 篇没有)，用法说明 120 字以上的 **3064** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3228 篇全有。
+**内容实测**: 3236 篇中，附有可运行示例的 **3235** 篇(1 篇没有)，用法说明 120 字以上的 **3072** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3236 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 953 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
 | `3d` | 372 | [INDEX](ops/3d/INDEX.md) |
-| `optics` | 248 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 256 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 54 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -287,9 +287,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 256 篇
+## 文档地图 — 共 257 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,228 篇算子说明与 63 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,236 篇算子说明与 63 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -429,7 +429,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(173)
+**Other**(174)
 
 | 文档 | 内容 |
 |---|---|
@@ -531,6 +531,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/ocr-preprocessing.md`](capabilities/ocr-preprocessing.md) | id: ocr-preprocessing |
 | [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | id: one-stroke-drawing |
 | [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
+| [`capabilities/optics-drawings.md`](capabilities/optics-drawings.md) | id: optics-drawings |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |

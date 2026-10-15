@@ -4,7 +4,7 @@ dim: optics
 category: telecentric
 in: table
 out: table
-examples: [poc_telecentric_metrology]
+examples: [poc_optics_drawings, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

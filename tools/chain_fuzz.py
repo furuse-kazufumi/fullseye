@@ -7588,7 +7588,10 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       # ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
                                       "optimize_lens",
                                       # ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-                                      "telecentric_lens"}
+                                      "telecentric_lens",
+                                      # ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、
+                                      #   分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+                                      "lens_section_drawing", "lens_element_drawing"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

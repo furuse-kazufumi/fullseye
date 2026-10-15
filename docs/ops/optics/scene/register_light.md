@@ -72,7 +72,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`text` を入力に取れる)
 
-—
+[svg_entities](../drawing/svg_entities.md) · [dxf_entities](../drawing/dxf_entities.md)
 
 ## 同カテゴリ(`scene`)
 

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-61 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+62 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -163,6 +163,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **Zeichnen**
 
 - Ein Foto in eine einzige Linie verwandeln (Punkte → Tour → rotierende Kreise): [Erklärung](../../capabilities/one-stroke-drawing.md) _(ja)_ · Beispiele [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- Optische Zeichnungen (Linsenschnitte, Aufbauzeichnungen und Einzellinsen-Fertigungszeichnungen nach ISO 10110 als SVG / DXF): [Erklärung](../../capabilities/optics-drawings.md) _(ja)_ · Beispiele [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - Bilder, die das Auge täuschen, um das Messen zu benoten (Illusionen, endloses Zeichnen, Endlosschleifen): [Erklärung](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · Beispiele [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
 - Sätze als Bilder (Apollonisch, Ford, geodätische Kuppel, Phyllotaxis, IFS, raumfüllende Kurven): [Erklärung](../../capabilities/theorems-as-pictures.md) _(ja)_ · Beispiele [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 

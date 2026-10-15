@@ -5790,6 +5790,13 @@
     "de": "Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz)",
     "hi": "optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency)"
    },
+   "optics-drawings": {
+    "zh": "光学系统的图纸(以 SVG / DXF 输出透镜截面图、成像系统布置图和单透镜制造图)",
+    "tw": "光學系統的圖面(以 SVG / DXF 輸出透鏡截面圖、成像系統配置圖與單透鏡製造圖)",
+    "ko": "광학계 도면(렌즈 단면도·촬상계 설치도·단렌즈 제작도를 SVG / DXF로)",
+    "de": "Optische Zeichnungen (Linsenschnitte, Aufbauzeichnungen und Einzellinsen-Fertigungszeichnungen nach ISO 10110 als SVG / DXF)",
+    "hi": "optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में)"
+   },
    "telecentric-metrology": {
     "zh": "远心镜头与尺寸测量(主光线倾角 → 随高度变化的放大率 → 渐晕与模糊)",
     "tw": "遠心鏡頭與尺寸量測(主光線傾角 → 隨高度變化的放大率 → 漸暈與模糊)",
