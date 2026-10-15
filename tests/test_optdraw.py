@@ -158,14 +158,44 @@ def test_setup_drawing_fov_wd_dof_closed_forms(kind):
             ends.append(a if abs(a[1]) < abs(b[1]) else b)
     ys = np.array([p[0] for p in ends])
     assert len(ends) == 4 and abs(ys.max() - fov_h / 2) < 1e-6 and abs(ys.min() + fov_h / 2) < 1e-6
-    m = 25.0 / 175.0
-    nw = (1 + m) * 4.0
-    dof = (2 * nw * 3.45 + 2 * 0.55 * nw * nw) / (m * m) / 1000.0
+    # 2026-10-15: 以前は optscene.optical_budget の DOF の式 (2·N_w·c + 2·λ·N_w²)/m² を写して比べていた。
+    # 今は薄肉レンズの共役だけから数える: 幾何 = 像面のぼけ D·|v' − v|/v' が c(画素)になる近点と遠点の差、
+    # 波動 = 像面で ±λ·N_w²(デフォーカス波面 W20 = δz/(8 N_w²) が λ/8)を物体側の共役に戻した幅。
+    dof = _thin_lens_dof_mm(25.0, 4.0, 200.0, 3.45e-3, 0.55e-3)
     assert abs(_dim(ents, "WD") - 200.0) < 1e-9
-    assert abs(_dim(ents, "DOF") - dof) <= 0.0005 + 1e-9
+    assert abs(_dim(ents, "DOF") - dof) <= 0.0005 + 1e-4
     if kind in ("ring", "bar"):
         el = [float(e["text"][:-1]) for e in ents if e["type"] == "text" and re.fullmatch(r"\d+\.\d°", e["text"])]
         assert abs(el[0] - math.degrees(math.atan2(40.0, 60.0))) <= 0.05 + 1e-9
+
+
+def _thin_lens_dof_mm(f, N, s, c, lam):
+    """被写界深度 [mm] を薄肉レンズの共役(1/s + 1/v = 1/f)だけで数える(閉形式の近似式を使わない)。
+
+    幾何: 口径 D = f/N の像面のぼけ D·|v' − v|/v' = c となる物体距離を両側で二分法 → 遠点 − 近点。
+    波動: 像面で W20 = δz/(8 N_w²) が λ/8 になる ±δz = λ·N_w²(N_w = v/D)を、物体側の共役に戻した幅。
+    ★λ/8 は optscene の定義(波動の項 2·λ·N_w²)。Rayleigh の λ/4(Berek の λ/NA²)ならこの 2 倍。"""
+    v = f * s / (s - f)
+    D = f / N
+
+    def blur(sp):
+        vp = f * sp / (sp - f)
+        return D * abs(vp - v) / vp
+
+    def root(lo, hi):
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            if (blur(lo) - c) * (blur(mid) - c) <= 0:
+                hi = mid
+            else:
+                lo = mid
+        return 0.5 * (lo + hi)
+
+    geo = root(s, 2.0 * s) - root(1.01 * f, s)
+    nw = v / D
+    dz = lam * nw * nw
+    back = lambda vp: f * vp / (vp - f)
+    return geo + (back(v - dz) - back(v + dz))
 
 
 def test_element_drawing_iso10110_fields():
