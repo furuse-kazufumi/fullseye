@@ -62,7 +62,7 @@ The 61 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 8 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 375 examples, 375 are actually run by a gate.
+Of 376 examples, 376 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -134,11 +134,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,240 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **64 family guides**. Entry points by dimension:
+**3,246 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **64 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 936/936, typed ledger 2283/2295, one-line facade `fullseye.<name>` 683/1433 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 936/936, typed ledger 2289/2301, one-line facade `fullseye.<name>` 683/1434 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3240 notes, **3239** link at least one runnable example (1 have none) and **3076** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3240.
+**Measured substance**: of 3246 notes, **3245** link at least one runnable example (1 have none) and **3082** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3246.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -164,6 +164,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
+| `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
@@ -175,7 +176,6 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
-| `multivar` | 12 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 256
 
-The complete map, so that **no document is unreachable from this index** (the 3,240 per-op notes and 64 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,246 per-op notes and 64 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

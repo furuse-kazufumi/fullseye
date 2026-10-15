@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sens_morris — MULTIVAR <code style="color:#22d3bf">sensitivity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">design × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sens_morris(design=None, y=None, negligible=0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensitivity; sensitivity.sens_morris(design=None, y=None, negligible=0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmultivar.get(&quot;sens_morris&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Morris-Elementareffekte -&gt; mu, mu*, sigma je Faktor (Morris 1991; mu* Campolongo et al. 2007).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">design</code> must come from <code style="color:#22d3bf">doe_morris</code> (its trajectory bookkeeping is used) and <code style="color:#22d3bf">y</code> holds the model output for its rows in order. For trajectory t and step s that moves factor i by ±delta: <code style="color:#22d3bf">EE_i = (y_s - y_{s-1}) / (±delta)</code> in unit-cube units, and also per natural unit of the factor (<code style="color:#22d3bf">ee_natural</code>; on a log-scale factor the step is in log10 units).</p>
+<p><code style="color:#22d3bf">mu</code> (mean EE) can cancel when effects change sign; <code style="color:#22d3bf">mu_star</code> (mean |EE|) does not and is the ranking measure; <code style="color:#22d3bf">sigma</code> (standard deviation, ddof = 1) is large when the effect depends on where the other factors are (non-linear or interacting). <code style="color:#22d3bf">class</code> per factor: <code style="color:#22d3bf">negligible</code> (mu* below <code style="color:#22d3bf">negligible</code> x the largest mu*), <code style="color:#22d3bf">linear/additive</code> (sigma &lt; 0.1 mu*: the effect is the same everywhere — a convention of this op, stated), otherwise <code style="color:#22d3bf">non-linear or interacting</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">Leitfaden zur Familie design_of_experiments</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">sensitivity</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_morris">doe_morris</a> · <a style="color:#22d3bf" href="opmultivar:doe_saltelli">doe_saltelli</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

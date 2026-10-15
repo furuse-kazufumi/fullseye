@@ -1428,6 +1428,35 @@ def _b_feat_images(pool, rng):
     return ([np.outer(g, g) * s + 0.01 * rng.random((24, 24)) for s in (0.5, 1.0, 2.0)],), {}
 
 
+def _b_sens_morris(pool, rng):
+    S = __import__("sensitivity")
+    d = S.doe_morris(8, [("a", 0.0, 1.0), ("b", 0.0, 2.0), ("c", -1.0, 1.0)], seed=int(rng.integers(0, 100)))
+    x = d["natural"]
+    # c の効きを a の 6 % 前後に置く: negligible(既定 0.05)の上下で判定が変わる入力でないとノブが効かない
+    return (d, 2 * x[:, 0] + x[:, 1] ** 2 + 0.06 * x[:, 2]), {}
+
+
+def _b_sens_sobol(pool, rng):
+    S = __import__("sensitivity")
+    d = S.doe_saltelli(256, [("x1", -np.pi, np.pi), ("x2", -np.pi, np.pi), ("x3", -np.pi, np.pi)],
+                       seed=int(rng.integers(0, 100)))
+    x = d["natural"]
+    return (d, np.sin(x[:, 0]) + 7 * np.sin(x[:, 1]) ** 2 + 0.1 * x[:, 2] ** 4 * np.sin(x[:, 0])), {"n_boot": 50}
+
+
+def _b_confounding(pool, rng):
+    # n と d の列の角度を cos = 0.98(γ ≈ 7)に置く: threshold(既定 10)の上下で交絡の判定が変わる入力
+    q, _ = np.linalg.qr(rng.normal(size=(60, 4)))
+    d = 0.98 * q[:, 0] + np.sqrt(1 - 0.98 ** 2) * q[:, 1]
+    return (np.column_stack([q[:, 0], d, q[:, 2], q[:, 3] + 0.5 * q[:, 2]]),), \
+        {"names": ["n", "d", "gain", "offset"], "log_params": True}
+
+
+def _b_residual_pca(pool, rng):
+    R = 0.1 * rng.normal(size=(20, 48)) + np.outer(rng.normal(size=20), np.sin(np.linspace(0, 4, 48))) * 0.3
+    return (R,), {"n_perm": 20}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -6899,6 +6928,10 @@ OP_ARG_BUILDERS = {
     "rsm_fit": _b_rsm_fit,
     "doe_main_effects": _b_main_effects,
     "feat_image_vector": _b_feat_images,
+    "sens_morris": _b_sens_morris,
+    "sens_sobol": _b_sens_sobol,
+    "mv_confounding": _b_confounding,
+    "mv_residual_pca": _b_residual_pca,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

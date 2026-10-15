@@ -17,12 +17,18 @@ Categories:
     components judged three ways, PLS (NIPALS + SIMPLS), response surfaces with ANOVA /
     lack of fit / stationary point, main effects with dispersion and SN ratio.
   * ``features`` — images -> a named, unit-carrying feature table (``multivar.py``).
+  * ``sensitivity`` — which knobs matter (``sensitivity.py``): Morris trajectories and
+    elementary effects, Saltelli sample matrices and Sobol' S1 / ST with bootstrap CIs.
+  * ``identifiability`` — what the data can fix (``sensitivity.py``): Brun's collinearity
+    index with the determined combinations, and residual PCA against a noise floor.
 
 Provenance is public literature only (docs/PROVENANCE.md naming rule): McKay, Beckman &
 Conover 1979; Taguchi 1987 / Bose & Bush 1952 (tables via the University of York and NIST
 Dataplot); Box & Hunter 1961 (fractions, NIST/SEMATECH e-Handbook Table 3.17); Box & Wilson
 1951; Box & Behnken 1960; Hotelling 1933 / Horn 1965 (PCA, parallel analysis); Wold et al.
-1984 / 2001 and de Jong 1993 (PLS); Box & Draper 1987 (response surfaces); Box 1988 (SN ratios).
+1984 / 2001 and de Jong 1993 (PLS); Box & Draper 1987 (response surfaces); Box 1988 (SN ratios); Morris 1991 / Campolongo et al. 2007; Sobol' 1993 / Saltelli et
+al. 2010 / Jansen 1999; Brun, Reichert & Künsch 2001; Marchenko & Pastur 1967 / Buja &
+Eyuboglu 1992 (noise floor of the residual PCA).
 
 Usage:
     import opsmultivar
@@ -31,8 +37,9 @@ Usage:
 """
 import doe
 import multivar
+import sensitivity
 
-_MOD = {"doe": doe, "multivar": multivar}
+_MOD = {"doe": doe, "multivar": multivar, "sensitivity": sensitivity}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: ONE new word, ``design``.
@@ -70,6 +77,18 @@ _CATALOG = {
     # 特徴量: 画像 → 名前と単位つきの列(data_range は推測しない)。
     "features": [
         ("feat_image_vector", "multivar", ["images"], "table"),
+    ],
+    # 感度解析: どのつまみが効くか。計画(Morris の軌道 / Saltelli の A・B・A_B 行列)と、その出力からの指数。
+    "sensitivity": [
+        ("doe_morris", "sensitivity", [], "design"),
+        ("sens_morris", "sensitivity", ["design", "signal"], "table"),
+        ("doe_saltelli", "sensitivity", [], "design"),
+        ("sens_sobol", "sensitivity", ["design", "signal"], "table"),
+    ],
+    # 同定性: データから決まるのはどれか(感度行列の共線性)、モデルに何が足りないか(残差の構造)。
+    "identifiability": [
+        ("mv_confounding", "sensitivity", ["matrix"], "table"),
+        ("mv_residual_pca", "sensitivity", ["matrix"], "table"),
     ],
 }
 

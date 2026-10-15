@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(375 例)
+### 2-D 画像/信号/幾何(376 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -226,6 +226,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **analysis**
 - **検査カメラの条件出しを 1 つずつ振らずに計画する —— 直交表 L9・一部実施の交絡・ラテン超方格・中心複合計画** — 照明の角度・強さ・露光・ゲインの 4 条件 x 3 水準(全部なら 81 回)を、公表された直交表 L9 の 9 回で傷を撮る。5 条件を 2^(5-2) の 8 回で振ると、何もしていないゲインに角度 x 露光の交互作用 6 が乗り「ゲインが効く」と答える(全 32 回では 0、交絡表は事前に gain = angle*exposure と書く)。20 回を乱数で置くと 40 区間のうち 18 が空き、ラテン超方格は 0。回転可能な中心複合計画の軸の点は範囲の外(23.8〜66.2°)に出る。 `py -3.11 examples/doe_plan_tour.py`
 - **撮った画像から、何が効いたか・最良はどこか・画像から条件を読めるかを出す —— 主効果・応答曲面・PCA・PLS** — 検査カメラの 4 条件を L9 x 3 回で撮ると、傷の見えの 83 % は照明の角度で、強さ・露光・ゲインは同じ山形(どれも明るさ)。角度 x 露光を中心複合計画の 13 回で振ると、二次曲面の最良は 441 回の総当たりに対して損 2 % だが、当てはまりの悪さが有意 —— 飽和の折れを二次は表せない、という合図。特徴量 9 本の独立な情報は平行分析で 2 次元、PLS は画像から照明の角度を確かめ RMSE 2.6° で読むが、露光は読めない(Q² 0.38)。NIPALS と SIMPLS が一致。 `py -3.11 examples/multivar_inspection_tour.py`
+- **どのつまみが効くか・組でしか効かないか・データから決まるのはどれか・モデルに何が足りないか —— Sobol'・Morris・共線性指数・残差 PCA** — Ishigami 関数で x3 は単独では 0、x1 との組で全分散の 24 % を動かす(Sobol' の S1・ST が解析値を 95 % 区間に含む)。検査カメラの 6 条件を Morris の 49 回でふるうと、何もしない 2 条件と、光子を増やさないゲインが「効かない」に落ちる。雑音の無い画像では照明の強さ・露光・ゲインの感度の列が平行で γ = ∞、決まるのは 強さ x 露光 x ゲインの積だけ。周辺減光を知らないモデルの残差には雑音を越える構造(2 成分)が残り、第 1 成分の形は「減光 x 像」と相関 0.99、入れると 0 成分。 `py -3.11 examples/sensitivity_tour.py`
 - **MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか** — 同じニューロンの EM 配線と 2 光子応答を持つ MICrONS(Ding ら 2025)の公開表 12,894 体 × 120 コマと 1.69 M 対を、生データを commit せずに読む。実測応答を points_activity_video で 1 mm³ の波として回し、like-to-like を再現(結合 0.071 > 触れている 0.045 > 同領域 0.025、軸索ごとの置換帰無で 15 SD)、配線は近接以上を足す(相手平均との相関: 結合 0.24 > 触れている 0.18 > 同領域 0.12、対で 73 %)、conngraph の reservoir に実測を流した波は次数保存シャッフル 20 本の全部より高い(0.085 vs 0.048)が正直に薄い(標的 1 体に入力 1.8 本、広がりは対照と同じ)。reservoir は 1 段 1 ステップなので post は 1 コマずらして比べる。 `py -3.11 examples/poc_microns_brain_wave.py`
 - **動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)** — MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の実効次元(participation ratio)を読む: 282 > 61 > 8.7 > 2.4。層の大きさを揃えても脳は 249、送り手だけ混ぜた対照は MN 22 ——腹髄 → 筋の圧縮は配線の特異性、首は収束そのもの。向きだけの次元(単位ノルム)でも実配線 25 vs 対照 54。同じ数式で G1 のRL 歩行は 1.5〜4.1、ダンス 9、格闘 12、evis の筋活動 6〜10(桁の比較)。conngraph に 4 op を追加。 `py -3.11 examples/poc_connectome_motor_bottleneck.py`
 - **定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)** — 数学的に美しい図は、きれいなので**合っているかを誰も確かめない** —— 実装が少し間違っていても円は詰まるし螺旋は回る。そこで 6 つの図を描き、**絵とは独立の真値**だけで採点した。★デカルトの円定理: 生成は反射で行うので、**接触を距離から探し直して**定理に入れる(depth 4 の 164 円で、見つかった接触 4 円の組すべてが相対ずれ 1e-13 以下)。★整数充填: 種 (−1,2,2,3) の曲率はどこまで行っても整数のまま(Lagarias–Mallows–Wilks)—— 絵では絶対に見えない誤りを捕まえる。★フォード円が接するのは **|p·s − q·r| = 1** のときに限る: 分母 12 までの 47 円・1,081 組で不一致 0、個数もオイラーの関数の和と一致。★★測地ドームは**次数 5 の頂点がちょうど 12 個**(f = 1,2,3,4,6 すべて、V−E+F=2)—— 次数は**既存の別実装** graph_degree_table に数えさせた(自分で数え直して自分と一致しても確かめたことにならない)。★葉序は角度をどう選んでも螺旋に見えるので絵を見ずに近傍の**番号差**を数える: 黄金角では山の 7/7 がフィボナッチ、対照群 137.0° と 90° は 2/7。★モランの式は**描く前に**次元を解き(シェルピンスキー 1.5850 = log3/log2 と 9 桁一致)、描いた点は既存 fractal_dimension が 1.6164 —— 導出も入力も違うので一致は偶然では起きない。相似でないアフィン写像(シダ)は拒否する。★空間充填曲線は 4^n 点をちょうど 1 回ずつ通り隣は距離 1(row_major は行末で跳ぶ = 対照群、閉じているのは moore だけ)。局所性は主張でなく**表**: ヒルベルトは k=32 で 6.38 ≈ √32、走査線は 16.07。 `py -3.11 examples/poc_theorems_as_pictures.py`
@@ -716,9 +717,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3240 ops / 49 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3246 ops / 49 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 12 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 248 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -4213,7 +4214,7 @@ _計 3240 ops / 49 families。並びとノートの在り処は `docs/ops/INDEX.
 - `parallax_layers` `sprites → rgba` — Scroll a set of ``rgba`` layers at different rates and composite them. · 例: `gfx2d_scene`
 - `tilemap_render` `sprites → rgba` — Paint a grid of tile indices into one ``rgba`` image. · 例: `gfx2d_scene`
 
-### multivar(12 ops / 4 categories)
+### multivar(18 ops / 6 categories)
 
 #### multivar / analysis(4)
 - `doe_main_effects` `design × signal → table` — Level means per factor — the response table of a designed experiment — with dispersion and SN. · 例: `multivar_inspection_tour`
@@ -4222,18 +4223,28 @@ _計 3240 ops / 49 families。並びとノートの在り処は `docs/ops/INDEX.
 - `rsm_fit` `design × signal → table` — Fit a response surface on a ``design`` (coded units): ANOVA, lack of fit, stationary point. · 例: `multivar_inspection_tour`
 
 #### multivar / coding(2)
-- `doe_decode` `design → matrix` — ``design`` -> natural-unit matrix (n, k); or decode any coded point(s) with its ranges. · 例: `doe_plan_tour`, `multivar_inspection_tour`
+- `doe_decode` `design → matrix` — ``design`` -> natural-unit matrix (n, k); or decode any coded point(s) with its ranges. · 例: `doe_plan_tour`, `multivar_inspection_tour`, `sensitivity_tour`
 - `doe_encode` `matrix → design` — Natural-unit settings (n, k) -> ``design`` with coded values (−1..+1 = lo..hi). · 例: `multivar_inspection_tour`
 
 #### multivar / features(1)
 - `feat_image_vector` `images → table` — Images -> feature table ``{"matrix" (N, F), "names", "units", ...}``, one row per image. · 例: `multivar_inspection_tour`
 
+#### multivar / identifiability(2)
+- `mv_confounding` `matrix → table` — Collinearity index gamma_K (Brun, Reichert & Künsch 2001): which parameters the data can fix. · 例: `sensitivity_tour`
+- `mv_residual_pca` `matrix → table` — Do the residuals of a fitted model still carry structure? PCA of a residual matrix vs. noise. · 例: `sensitivity_tour`
+
 #### multivar / plan(5)
 - `doe_box_behnken` `入力なし → design` — Box-Behnken design (Box & Behnken 1960) for 3, 4 or 5 factors -> ``design``. · 例: `doe_plan_tour`
 - `doe_central_composite` `入力なし → design` — Central composite design (Box & Wilson 1951) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`
 - `doe_fractional_factorial` `入力なし → design` — Regular two-level fractional factorial 2^(k-p) from generators (Box & Hunter 1961) -> ``design``. · 例: `doe_plan_tour`
-- `doe_lhs` `入力なし → design` — Latin hypercube design (McKay, Beckman & Conover 1979) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`
+- `doe_lhs` `入力なし → design` — Latin hypercube design (McKay, Beckman & Conover 1979) -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`, `sensitivity_tour`
 - `doe_orthogonal_array` `入力なし → design` — Orthogonal array L4 / L8 / L9 / L12 / L16 / L18 / L27 from a published table -> ``design``. · 例: `doe_plan_tour`, `multivar_inspection_tour`
+
+#### multivar / sensitivity(4)
+- `doe_morris` `入力なし → design` — Morris one-at-a-time screening plan: ``r`` trajectories of k+1 runs -> ``design``. · 例: `sensitivity_tour`
+- `doe_saltelli` `入力なし → design` — Sample matrices for Sobol' indices (Saltelli et al. 2010) -> ``design`` of n (k + 2) runs. · 例: `sensitivity_tour`
+- `sens_morris` `design × signal → table` — Morris elementary effects -> mu, mu*, sigma per factor (Morris 1991; mu* Campolongo et al. 2007). · 例: `sensitivity_tour`
+- `sens_sobol` `design × signal → table` — First-order and total Sobol' indices with bootstrap confidence intervals. · 例: `sensitivity_tour`
 
 ### generative(34 ops / 6 categories)
 

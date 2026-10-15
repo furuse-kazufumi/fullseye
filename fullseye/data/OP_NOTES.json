@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3234,
- "n_notes": 3240,
+ "n_ops": 3240,
+ "n_notes": 3246,
  "notes": {
   "vol_dilate": [
    {
@@ -26204,6 +26204,26 @@
     "path": "docs/ops/multivar/features/feat_image_vector.md"
    }
   ],
+  "mv_confounding": [
+   {
+    "op": "mv_confounding",
+    "dim": "multivar",
+    "category": "identifiability",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/identifiability/mv_confounding.md"
+   }
+  ],
+  "mv_residual_pca": [
+   {
+    "op": "mv_residual_pca",
+    "dim": "multivar",
+    "category": "identifiability",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/multivar/identifiability/mv_residual_pca.md"
+   }
+  ],
   "doe_box_behnken": [
    {
     "op": "doe_box_behnken",
@@ -26247,6 +26267,44 @@
     "category": "plan",
     "out": "design",
     "path": "docs/ops/multivar/plan/doe_orthogonal_array.md"
+   }
+  ],
+  "doe_morris": [
+   {
+    "op": "doe_morris",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "out": "design",
+    "path": "docs/ops/multivar/sensitivity/doe_morris.md"
+   }
+  ],
+  "doe_saltelli": [
+   {
+    "op": "doe_saltelli",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "out": "design",
+    "path": "docs/ops/multivar/sensitivity/doe_saltelli.md"
+   }
+  ],
+  "sens_morris": [
+   {
+    "op": "sens_morris",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/sensitivity/sens_morris.md"
+   }
+  ],
+  "sens_sobol": [
+   {
+    "op": "sens_sobol",
+    "dim": "multivar",
+    "category": "sensitivity",
+    "in": "design × signal",
+    "out": "table",
+    "path": "docs/ops/multivar/sensitivity/sens_sobol.md"
    }
   ],
   "abs_funct_1d": [

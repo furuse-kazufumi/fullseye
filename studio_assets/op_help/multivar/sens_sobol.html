@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sens_sobol — MULTIVAR <code style="color:#22d3bf">sensitivity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">design × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sens_sobol(design=None, y=None, n_boot=500, level=0.95, seed=0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensitivity; sensitivity.sens_sobol(design=None, y=None, n_boot=500, level=0.95, seed=0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;sens_sobol&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>First-order and total Sobol&#x27; indices with bootstrap confidence intervals.</p>
+<p>From the outputs on a <code style="color:#22d3bf">doe_saltelli</code> design (blocks A, B, A_B^(i)):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">S1_i = (1/N) sum_j f(B)_j (f(A_B^(i))_j - f(A)_j) / V</code> (Saltelli et al. 2010, Table 2 (b));</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ST_i = (1/(2N)) sum_j (f(A)_j - f(A_B^(i))_j)^2 / V</code> (Jansen 1999; Saltelli et al. 2010, Table 2 (f));</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> = variance of the outputs at A and B together.</p>
+<p>S1 is the share of output variance a factor explains alone; ST adds every interaction it takes part in. ST ~ 0 means the factor can be fixed anywhere in its range; ST - S1 large means it acts through interactions. Confidence intervals come from <code style="color:#22d3bf">n_boot</code> bootstrap resamples of the N rows (the same row index across A, B and A_B^(i)) at <code style="color:#22d3bf">level</code>. The sum of S1 (<code style="color:#22d3bf">sum_s1</code>) is &lt;= 1 up to estimation error; a value far below 1 says interactions carry the rest.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sensitivity</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_morris">doe_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:doe_saltelli">doe_saltelli</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -62,7 +62,7 @@ Die 61 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 8 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 375 Beispielen werden 375 tatsächlich von einem Gate ausgeführt.
+Von 376 Beispielen werden 376 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -134,11 +134,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,240 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **64 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,246 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **64 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 936/936, typisiertes Ledger 2283/2295, Fassade `fullseye.<name>` 683/1433 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 936/936, typisiertes Ledger 2289/2301, Fassade `fullseye.<name>` 683/1434 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3240 Notizen verweisen **3239** auf mindestens ein lauffähiges Beispiel (1 ohne), **3076** haben einen Nutzungsabschnitt ab 120 Zeichen (164 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3240.
+**Gemessener Inhalt**: von 3246 Notizen verweisen **3245** auf mindestens ein lauffähiges Beispiel (1 ohne), **3082** haben einen Nutzungsabschnitt ab 120 Zeichen (164 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3246.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -164,6 +164,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
+| `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
@@ -175,7 +176,6 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
-| `multivar` | 12 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 256
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,240 Operator-Notizen und 64 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,246 Operator-Notizen und 64 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

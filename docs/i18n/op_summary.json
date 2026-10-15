@@ -9,6 +9,60 @@
   "hi"
  ],
  "summaries": {
+  "multivar/doe_morris": {
+   "fp": "91535e011af3",
+   "ja": "Morris の一因子ずつのふるい計画: k+1 回の軌道を ``r`` 本 -> ``design``。",
+   "zh": "Morris 一次一因子筛选设计：``r`` 条各含 k+1 次运行的轨迹 -> ``design``。",
+   "tw": "Morris 一次一因子篩選設計：``r`` 條各含 k+1 次執行的軌跡 -> ``design``。",
+   "ko": "Morris 한 번에 한 인자 선별 설계: k+1회 궤적 ``r``개 -> ``design``.",
+   "de": "Morris-One-at-a-time-Screeningplan: ``r`` Trajektorien zu je k+1 Läufen -> ``design``.",
+   "hi": "Morris one-at-a-time screening plan: k+1 runs की ``r`` trajectories -> ``design``।"
+  },
+  "multivar/sens_morris": {
+   "fp": "2bcb9437dce4",
+   "ja": "Morris の要素効果 -> 因子ごとの mu, mu*, sigma(Morris 1991、mu* は Campolongo ら 2007)。",
+   "zh": "Morris 基本效应 -> 各因子的 mu、mu*、sigma（Morris 1991；mu* 见 Campolongo 等 2007）。",
+   "tw": "Morris 基本效應 -> 各因子的 mu、mu*、sigma（Morris 1991；mu* 見 Campolongo 等 2007）。",
+   "ko": "Morris 기본 효과 -> 인자별 mu, mu*, sigma(Morris 1991, mu*는 Campolongo 등 2007).",
+   "de": "Morris-Elementareffekte -> mu, mu*, sigma je Faktor (Morris 1991; mu* Campolongo et al. 2007).",
+   "hi": "Morris elementary effects -> हर factor के mu, mu*, sigma (Morris 1991; mu* Campolongo et al. 2007)।"
+  },
+  "multivar/doe_saltelli": {
+   "fp": "dab617a1b3d9",
+   "ja": "Sobol' 指数のための標本行列(Saltelli ら 2010)-> n (k + 2) 回の ``design``。",
+   "zh": "用于 Sobol' 指数的样本矩阵（Saltelli 等 2010）-> 共 n (k + 2) 次运行的 ``design``。",
+   "tw": "用於 Sobol' 指數的樣本矩陣（Saltelli 等 2010）-> 共 n (k + 2) 次執行的 ``design``。",
+   "ko": "Sobol' 지수를 위한 표본 행렬(Saltelli 등 2010) -> n (k + 2)회의 ``design``.",
+   "de": "Stichprobenmatrizen für Sobol'-Indizes (Saltelli et al. 2010) -> ``design`` mit n (k + 2) Läufen.",
+   "hi": "Sobol' indices के लिए sample matrices (Saltelli et al. 2010) -> n (k + 2) runs का ``design``।"
+  },
+  "multivar/sens_sobol": {
+   "fp": "4d10d61f5288",
+   "ja": "一次と全効果の Sobol' 指数(ブートストラップの信頼区間つき)。",
+   "zh": "一阶与总效应 Sobol' 指数，附自助法置信区间。",
+   "tw": "一階與總效應 Sobol' 指數，附自助法信賴區間。",
+   "ko": "1차 및 전체 Sobol' 지수(부트스트랩 신뢰구간 포함).",
+   "de": "Sobol'-Indizes erster Ordnung und Totaleffekt-Indizes mit Bootstrap-Konfidenzintervallen.",
+   "hi": "first-order और total Sobol' indices, bootstrap confidence intervals सहित।"
+  },
+  "multivar/mv_confounding": {
+   "fp": "dd1adff9ee25",
+   "ja": "共線性指数 gamma_K(Brun, Reichert & Künsch 2001): データが決められるパラメータはどれか。",
+   "zh": "共线性指数 gamma_K（Brun、Reichert 与 Künsch 2001）：数据能确定哪些参数。",
+   "tw": "共線性指數 gamma_K（Brun、Reichert 與 Künsch 2001）：資料能確定哪些參數。",
+   "ko": "공선성 지수 gamma_K(Brun, Reichert & Künsch 2001): 데이터가 정할 수 있는 파라미터는 무엇인가.",
+   "de": "Kollinearitätsindex gamma_K (Brun, Reichert & Künsch 2001): welche Parameter die Daten festlegen können.",
+   "hi": "collinearity index gamma_K (Brun, Reichert व Künsch 2001): data कौन-से parameters तय कर सकता है।"
+  },
+  "multivar/mv_residual_pca": {
+   "fp": "a7673b32fdda",
+   "ja": "当てはめたモデルの残差にまだ構造が残っているか: 残差行列の PCA と雑音の比較。",
+   "zh": "拟合模型的残差中是否仍有结构？残差矩阵的 PCA 与噪声比较。",
+   "tw": "擬合模型的殘差中是否仍有結構？殘差矩陣的 PCA 與雜訊比較。",
+   "ko": "적합한 모델의 잔차에 아직 구조가 남아 있는가: 잔차 행렬의 PCA와 잡음 비교.",
+   "de": "Tragen die Residuen eines angepassten Modells noch Struktur? PCA einer Residuenmatrix gegen Rauschen.",
+   "hi": "क्या fitted model के residuals में अब भी संरचना है? residual matrix का PCA बनाम noise।"
+  },
   "multivar/feat_image_vector": {
    "fp": "de94df9d3ba8",
    "ja": "画像 -> 特徴量の表 ``{\"matrix\" (N, F), \"names\", \"units\", ...}``(画像 1 枚が 1 行)。",

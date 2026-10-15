@@ -64,3 +64,29 @@ y13 = 17 - (x[:, 0] - 0.2) ** 2 - 2 * (x[:, 1] + 0.1) ** 2 + 0.01 * np.cos(np.ar
 rs = fs.ledger.rsm_fit(ccd, y13)
 print(rs[&quot;canonical&quot;][&quot;kind&quot;], rs[&quot;stationary&quot;][&quot;natural&quot;], rs[&quot;lack_of_fit&quot;][&quot;testable&quot;])</pre>
 <p><code style="color:#22d3bf">examples/multivar_inspection_tour.py</code> は検査カメラの例で、主効果(角度が 8 割、強さ・露光・ゲインは同じ山形)、応答曲面(当てはまりの悪さが有意 = 二次では飽和の折れを表せない、という合図)、PCA(特徴量 9 本の独立な情報は 2 次元)、PLS(画像から照明の角度は読めるが、露光は読めない)を出します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">感度解析と同定性(sensitivity / identifiability)</h3>
+<p>| やりたいこと | op | 真値・出典 |</p>
+<p>|---|---|---|</p>
+<p>| 効くつまみを少ない回数でふるう | <code style="color:#22d3bf">doe_morris</code> → <code style="color:#22d3bf">sens_morris</code> | Morris 1991 の軌道(Δ = p/(2(p−1)))、μ* = 平均 \|EE\|(Campolongo ら 2007)、σ。線形のモデルでは EE = 係数(σ = 0) |</p>
+<p>| 分散のどれだけを各つまみが動かすか | <code style="color:#22d3bf">doe_saltelli</code> → <code style="color:#22d3bf">sens_sobol</code> | Saltelli ら 2010 の A・B・A_B 行列(Sobol&#x27; 列、n は 2 の冪でなければ拒否)、S1 は Saltelli 2010、ST は Jansen 1999 の推定量。Ishigami 関数(a = 7, b = 0.1)の解析値 S1 = 0.3139, 0.4424, 0 / ST = 0.5576, 0.4424, 0.2437 が 95 % 区間に入る |</p>
+<p>| データから決まるのはどのパラメータか | <code style="color:#22d3bf">mv_confounding</code> | Brun, Reichert &amp; Künsch 2001 の共線性指数 γ_K = 1/sqrt(min eig(S̃ᵀS̃))(列は単位長)。γ &gt; 10 で交絡、組ごとに決まる組み合わせ(例 <code style="color:#22d3bf">n^1 * d^1</code>)と決まらない組み合わせ |</p>
+<p>| モデルに何が足りないか | <code style="color:#22d3bf">mv_residual_pca</code> | 残差の PCA を雑音の床(既知の σ なら Marchenko-Pastur の端、無ければ置換の平行分析)と比べる |</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  M[&quot;doe_morris&lt;br/&gt;(r 軌道)&quot;] --&gt; SM[&quot;sens_morris&lt;br/&gt;μ*・σ&quot;]
+  SM --&gt;|残ったつまみ| S[&quot;doe_saltelli&lt;br/&gt;(n = 2^m)&quot;]
+  S --&gt; SS[&quot;sens_sobol&lt;br/&gt;S1・ST と CI&quot;]
+  J[&quot;感度行列&lt;br/&gt;(有限差分)&quot;] --&gt; C[&quot;mv_confounding&lt;br/&gt;γ・決まる組み合わせ&quot;]
+  R[&quot;残差(実物 − モデル)&lt;br/&gt;÷ 雑音の大きさ&quot;] --&gt; P[&quot;mv_residual_pca&lt;br/&gt;構造の成分数・形&quot;]</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import math
+import numpy as np
+import fullseye as fs
+
+d = fs.ledger.doe_saltelli(4096, [(&quot;x1&quot;, -math.pi, math.pi), (&quot;x2&quot;, -math.pi, math.pi), (&quot;x3&quot;, -math.pi, math.pi)])
+x = d[&quot;natural&quot;]
+y = np.sin(x[:, 0]) + 7 * np.sin(x[:, 1]) ** 2 + 0.1 * x[:, 2] ** 4 * np.sin(x[:, 0])   # Ishigami
+r = fs.ledger.sens_sobol(d, y)
+print(r[&quot;S1&quot;], r[&quot;ST&quot;], r[&quot;S1_ci&quot;])          # x3: S1 ≈ 0、ST ≈ 0.24(x1 との組でだけ効く)</pre>
+<p>落とし穴:</p>
+<p style="margin:2px 0 2px 12px">• <b>1 つずつ振ると、交互作用でしか効かないつまみを見落とします</b>(Ishigami の x3)。Morris の σ・Sobol&#x27; の ST − S1 が大きいつまみは組で見ます。</p>
+<p style="margin:2px 0 2px 12px">• <b>画像を同じように動かすつまみは、画像からは組み合わせしか決まりません。</b> 照明の強さ・露光・ゲインは雑音の無い画像を同じように明るくし、<code style="color:#22d3bf">mv_confounding</code> は γ = ∞ と「決まるのは 強さ x 露光 x ゲイン」を返します(<code style="color:#22d3bf">examples/sensitivity_tour.py</code>)。ゲインと光子数を分けるのは雑音の統計(光子伝達曲線、EMVA 1288)の側です。係数合わせの前にこれを確かめないと、合わせた値は意味の無い数になります。</p>
+<p style="margin:2px 0 2px 12px">• <b>残差は雑音の大きさで割ってから PCA に掛けます。</b> 光子雑音は明るい画素ほど大きく、割らないと「明るい回は残差も大きい」が構造に見えます。</p>

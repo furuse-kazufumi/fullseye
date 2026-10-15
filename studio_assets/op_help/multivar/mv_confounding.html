@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_confounding — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensitivity; sensitivity.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_confounding&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Collinearity index gamma_K (Brun, Reichert &amp; Künsch 2001): which parameters the data can fix.</p>
+<p><code style="color:#22d3bf">S</code> is the sensitivity matrix (observations x parameters): column j = the change of every output per change of parameter j (finite differences of a simulation, or a Jacobian), ideally already scaled to be dimensionless (Brun: s_ij = dtheta_j / sc_i * dy_i/dtheta_j). Each column is normalised to unit length, <code style="color:#22d3bf">s~_j = s_j / ||s_j||</code>, and for a parameter subset K</p>
+<p>gamma_K = 1 / sqrt( min eigenvalue of S~_K^T S~_K ).</p>
+<p>gamma_K = 1 for orthogonal columns; it grows when a change in one parameter can be compensated by the others (Brun et al. use 10-15 as the critical range; <code style="color:#22d3bf">threshold</code> defaults to 10). Returned: <code style="color:#22d3bf">delta_msqr</code> (importance, sqrt(mean s_ij^2) on the given scale), gamma of the full set and of every subset up to <code style="color:#22d3bf">max_subset</code> (all subsets for &lt;= 14 parameters), the <code style="color:#22d3bf">confounded_pairs</code> (gamma &gt; threshold), the largest identifiable subsets, the <code style="color:#22d3bf">undetermined_direction</code> of the full set (eigenvector of the smallest eigenvalue: moving the parameters along it barely changes the output), and per <code style="color:#22d3bf">confounded_groups</code> entry (the union of the minimal confounded subsets) the combinations the data <code style="color:#22d3bf">determined</code> (eigenvalue of the group&#x27;s S~^T S~ &gt;= 1/threshold^2) and those <code style="color:#22d3bf">undetermined</code>; parameters in no group are <code style="color:#22d3bf">determined_individually</code>. With <code style="color:#22d3bf">log_params=True</code> (columns are sensitivities to log parameters) the combinations are written as products of powers — e.g. <code style="color:#22d3bf">n^1 * d^1</code> when only the product of refractive index and thickness reaches the data. Columns that are all zero are reported as <code style="color:#22d3bf">no_influence</code> and left out of gamma.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">identifiability</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_residual_pca">mv_residual_pca</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

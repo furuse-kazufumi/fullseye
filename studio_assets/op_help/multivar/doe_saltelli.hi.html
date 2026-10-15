@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doe_saltelli — MULTIVAR <code style="color:#22d3bf">sensitivity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">design</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_saltelli(n=1024, factors=3, seed=0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensitivity; sensitivity.doe_saltelli(n=1024, factors=3, seed=0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmultivar.get(&quot;doe_saltelli&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Sobol&#x27; indices के लिए sample matrices (Saltelli et al. 2010) -&gt; n (k + 2) runs का <code style="color:#22d3bf">design</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>A Sobol&#x27; sequence of dimension 2k gives two independent n x k matrices A (first k columns) and B (last k). For each factor i, <code style="color:#22d3bf">A_B^(i)</code> is A with column i taken from B. Rows are stacked as <code style="color:#22d3bf">[A; B; A_B^(1); ...; A_B^(k)]</code> (<code style="color:#22d3bf">meta[&#x27;blocks&#x27;]</code>), which is the layout <code style="color:#22d3bf">sens_sobol</code> reads.</p>
+<p><code style="color:#22d3bf">n</code> must be a power of two: the balance properties of a Sobol&#x27; sequence hold for 2^m points, and the estimators&#x27; error behaves erratically otherwise — the op refuses rather than silently degrading. <code style="color:#22d3bf">seed</code> scrambles the sequence (Owen scrambling via scipy); <code style="color:#22d3bf">seed=None</code> uses the plain sequence.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">design</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_decode">doe_decode</a> · <a style="color:#22d3bf" href="opmultivar:rsm_fit">rsm_fit</a> · <a style="color:#22d3bf" href="opmultivar:doe_main_effects">doe_main_effects</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sensitivity</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:doe_morris">doe_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_morris">sens_morris</a> · <a style="color:#22d3bf" href="opmultivar:sens_sobol">sens_sobol</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

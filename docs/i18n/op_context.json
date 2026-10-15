@@ -4,6 +4,24 @@
   "en"
  ],
  "phrases": {
+  "効くつまみを少ない回数でふるう(Morris)": {
+   "en": "Screen the influential knobs in few runs (Morris)"
+  },
+  "要素効果の μ* と σ": {
+   "en": "Elementary effects: mu* and sigma"
+  },
+  "Sobol' 指数のための標本行列": {
+   "en": "Sample matrices for Sobol' indices"
+  },
+  "Sobol' の S1・ST(交互作用の分も)と信頼区間": {
+   "en": "Sobol' S1 and ST (including interactions) with confidence intervals"
+  },
+  "データから決まるパラメータの組(共線性指数)": {
+   "en": "Which parameter combinations the data determine (collinearity index)"
+  },
+  "残差に残った構造 = モデルに足りないもの": {
+   "en": "Structure left in the residuals = what the model is missing"
+  },
   "主効果の応答表(SN 比は参考、判断は平均と散らばり)": {
    "en": "Main-effects response table (SN ratio for reference; decide on mean and dispersion)"
   },

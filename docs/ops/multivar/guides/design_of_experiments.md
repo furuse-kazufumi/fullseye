@@ -105,3 +105,41 @@ print(rs["canonical"]["kind"], rs["stationary"]["natural"], rs["lack_of_fit"]["t
 `examples/multivar_inspection_tour.py` は検査カメラの例で、主効果(角度が 8 割、強さ・露光・ゲインは同じ山形)、
 応答曲面(当てはまりの悪さが有意 = 二次では飽和の折れを表せない、という合図)、PCA(特徴量 9 本の独立な情報は 2 次元)、
 PLS(画像から照明の角度は読めるが、露光は読めない)を出します。
+
+## 感度解析と同定性(sensitivity / identifiability)
+
+| やりたいこと | op | 真値・出典 |
+|---|---|---|
+| 効くつまみを少ない回数でふるう | `doe_morris` → `sens_morris` | Morris 1991 の軌道(Δ = p/(2(p−1)))、μ* = 平均 \|EE\|(Campolongo ら 2007)、σ。線形のモデルでは EE = 係数(σ = 0) |
+| 分散のどれだけを各つまみが動かすか | `doe_saltelli` → `sens_sobol` | Saltelli ら 2010 の A・B・A_B 行列(Sobol' 列、n は 2 の冪でなければ拒否)、S1 は Saltelli 2010、ST は Jansen 1999 の推定量。Ishigami 関数(a = 7, b = 0.1)の解析値 S1 = 0.3139, 0.4424, 0 / ST = 0.5576, 0.4424, 0.2437 が 95 % 区間に入る |
+| データから決まるのはどのパラメータか | `mv_confounding` | Brun, Reichert & Künsch 2001 の共線性指数 γ_K = 1/sqrt(min eig(S̃ᵀS̃))(列は単位長)。γ > 10 で交絡、組ごとに決まる組み合わせ(例 `n^1 * d^1`)と決まらない組み合わせ |
+| モデルに何が足りないか | `mv_residual_pca` | 残差の PCA を雑音の床(既知の σ なら Marchenko-Pastur の端、無ければ置換の平行分析)と比べる |
+
+```mermaid
+flowchart LR
+  M["doe_morris<br/>(r 軌道)"] --> SM["sens_morris<br/>μ*・σ"]
+  SM -->|残ったつまみ| S["doe_saltelli<br/>(n = 2^m)"]
+  S --> SS["sens_sobol<br/>S1・ST と CI"]
+  J["感度行列<br/>(有限差分)"] --> C["mv_confounding<br/>γ・決まる組み合わせ"]
+  R["残差(実物 − モデル)<br/>÷ 雑音の大きさ"] --> P["mv_residual_pca<br/>構造の成分数・形"]
+```
+
+```python
+import math
+import numpy as np
+import fullseye as fs
+
+d = fs.ledger.doe_saltelli(4096, [("x1", -math.pi, math.pi), ("x2", -math.pi, math.pi), ("x3", -math.pi, math.pi)])
+x = d["natural"]
+y = np.sin(x[:, 0]) + 7 * np.sin(x[:, 1]) ** 2 + 0.1 * x[:, 2] ** 4 * np.sin(x[:, 0])   # Ishigami
+r = fs.ledger.sens_sobol(d, y)
+print(r["S1"], r["ST"], r["S1_ci"])          # x3: S1 ≈ 0、ST ≈ 0.24(x1 との組でだけ効く)
+```
+
+落とし穴:
+
+- **1 つずつ振ると、交互作用でしか効かないつまみを見落とします**(Ishigami の x3)。Morris の σ・Sobol' の ST − S1 が大きいつまみは組で見ます。
+- **画像を同じように動かすつまみは、画像からは組み合わせしか決まりません。** 照明の強さ・露光・ゲインは雑音の無い画像を同じように明るくし、
+  `mv_confounding` は γ = ∞ と「決まるのは 強さ x 露光 x ゲイン」を返します(`examples/sensitivity_tour.py`)。ゲインと光子数を分けるのは
+  雑音の統計(光子伝達曲線、EMVA 1288)の側です。係数合わせの前にこれを確かめないと、合わせた値は意味の無い数になります。
+- **残差は雑音の大きさで割ってから PCA に掛けます。** 光子雑音は明るい画素ほど大きく、割らないと「明るい回は残差も大きい」が構造に見えます。

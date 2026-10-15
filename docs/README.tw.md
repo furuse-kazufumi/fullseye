@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 8 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-375 個範例中,檢查實際執行的有 375 個。
+376 個範例中,檢查實際執行的有 376 個。
 
 ### 各版本的運算子數
 
@@ -134,11 +134,11 @@
 
 ## 尋找運算子
 
-共有 **3,240 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **64 篇族群指南**。依維度的入口:
+共有 **3,246 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **64 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 936/936、型別台帳 2283/2295、單行門面 `fullseye.<名稱>` 683/1433 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 936/936、型別台帳 2289/2301、單行門面 `fullseye.<名稱>` 683/1434 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3240 篇中，附有可執行範例的 **3239** 篇(1 篇沒有)，用法說明 120 字以上的 **3076** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3240 篇全有。
+**內容實測**: 3246 篇中，附有可執行範例的 **3245** 篇(1 篇沒有)，用法說明 120 字以上的 **3082** 篇(164 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3246 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -164,6 +164,7 @@
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
+| `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
@@ -175,7 +176,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
-| `multivar` | 12 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 256 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,240 篇運算子說明與 64 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,246 篇運算子說明與 64 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

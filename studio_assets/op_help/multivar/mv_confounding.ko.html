@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mv_confounding — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensitivity; sensitivity.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmultivar.get(&quot;mv_confounding&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>공선성 지수 gamma_K(Brun, Reichert &amp; Künsch 2001): 데이터가 정할 수 있는 파라미터는 무엇인가.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">S</code> is the sensitivity matrix (observations x parameters): column j = the change of every output per change of parameter j (finite differences of a simulation, or a Jacobian), ideally already scaled to be dimensionless (Brun: s_ij = dtheta_j / sc_i * dy_i/dtheta_j). Each column is normalised to unit length, <code style="color:#22d3bf">s~_j = s_j / ||s_j||</code>, and for a parameter subset K</p>
+<p>gamma_K = 1 / sqrt( min eigenvalue of S~_K^T S~_K ).</p>
+<p>gamma_K = 1 for orthogonal columns; it grows when a change in one parameter can be compensated by the others (Brun et al. use 10-15 as the critical range; <code style="color:#22d3bf">threshold</code> defaults to 10). Returned: <code style="color:#22d3bf">delta_msqr</code> (importance, sqrt(mean s_ij^2) on the given scale), gamma of the full set and of every subset up to <code style="color:#22d3bf">max_subset</code> (all subsets for &lt;= 14 parameters), the <code style="color:#22d3bf">confounded_pairs</code> (gamma &gt; threshold), the largest identifiable subsets, the <code style="color:#22d3bf">undetermined_direction</code> of the full set (eigenvector of the smallest eigenvalue: moving the parameters along it barely changes the output), and per <code style="color:#22d3bf">confounded_groups</code> entry (the union of the minimal confounded subsets) the combinations the data <code style="color:#22d3bf">determined</code> (eigenvalue of the group&#x27;s S~^T S~ &gt;= 1/threshold^2) and those <code style="color:#22d3bf">undetermined</code>; parameters in no group are <code style="color:#22d3bf">determined_individually</code>. With <code style="color:#22d3bf">log_params=True</code> (columns are sensitivities to log parameters) the combinations are written as products of powers — e.g. <code style="color:#22d3bf">n^1 * d^1</code> when only the product of refractive index and thickness reaches the data. Columns that are all zero are reported as <code style="color:#22d3bf">no_influence</code> and left out of gamma.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemultivar:design_of_experiments">design_of_experiments 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sensitivity_tour">sensitivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/sensitivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">identifiability</code>)</h3>
+<p><a style="color:#22d3bf" href="opmultivar:mv_residual_pca">mv_residual_pca</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sensitivity.py — MULTIVAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

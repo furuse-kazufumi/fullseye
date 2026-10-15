@@ -52,7 +52,7 @@ factorial points sit at lo/hi and the axial points go **outside** the range —
 
 ## 型が繋がる次の op(`design` を入力に取れる)
 
-[doe_decode](../coding/doe_decode.md) · [rsm_fit](../analysis/rsm_fit.md) · [doe_main_effects](../analysis/doe_main_effects.md)
+[doe_decode](../coding/doe_decode.md) · [rsm_fit](../analysis/rsm_fit.md) · [doe_main_effects](../analysis/doe_main_effects.md) · [sens_morris](../sensitivity/sens_morris.md) · [sens_sobol](../sensitivity/sens_sobol.md)
 
 ## 同カテゴリ(`plan`)
 

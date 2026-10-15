@@ -1,4 +1,4 @@
-# MULTIVAR operator help — 12 ops in 4 categories
+# MULTIVAR operator help — 18 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/multivar/<category>/<op>.md` を走査。
 
@@ -20,9 +20,17 @@
 
 [feat_image_vector](features/feat_image_vector.md)
 
+### identifiability (2)
+
+[mv_confounding](identifiability/mv_confounding.md) · [mv_residual_pca](identifiability/mv_residual_pca.md)
+
 ### plan (5)
 
 [doe_box_behnken](plan/doe_box_behnken.md) · [doe_central_composite](plan/doe_central_composite.md) · [doe_fractional_factorial](plan/doe_fractional_factorial.md) · [doe_lhs](plan/doe_lhs.md) · [doe_orthogonal_array](plan/doe_orthogonal_array.md)
+
+### sensitivity (4)
+
+[doe_morris](sensitivity/doe_morris.md) · [doe_saltelli](sensitivity/doe_saltelli.md) · [sens_morris](sensitivity/sens_morris.md) · [sens_sobol](sensitivity/sens_sobol.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

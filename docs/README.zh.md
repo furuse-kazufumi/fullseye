@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 8 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-375 个示例中,检查实际运行的有 375 个。
+376 个示例中,检查实际运行的有 376 个。
 
 ### 各版本的算子数
 
@@ -134,11 +134,11 @@
 
 ## 查找算子
 
-共有 **3,240 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **64 篇族指南**。按维度的入口:
+共有 **3,246 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **64 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 936/936、类型化台账 2283/2295、单行门面 `fullseye.<名称>` 683/1433 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 936/936、类型化台账 2289/2301、单行门面 `fullseye.<名称>` 683/1434 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3240 篇中，附有可运行示例的 **3239** 篇(1 篇没有)，用法说明 120 字以上的 **3076** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3240 篇全有。
+**内容实测**: 3246 篇中，附有可运行示例的 **3245** 篇(1 篇没有)，用法说明 120 字以上的 **3082** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3246 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -164,6 +164,7 @@
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
+| `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
@@ -175,7 +176,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
-| `multivar` | 12 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 256 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,240 篇算子说明与 64 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,246 篇算子说明与 64 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
