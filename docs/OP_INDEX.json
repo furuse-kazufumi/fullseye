@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3301,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2348,
   "nary": 17,
   "registry": 924
  },
@@ -4145,6 +4145,28 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "conv_gci",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "verification",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "conv_observed_order",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "verification",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
   },
   {
    "name": "convex_hull",
@@ -12483,6 +12505,30 @@
    ]
   },
   {
+   "name": "iterate_fixed_point",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "iterate",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "iv_richardson_lucy_until",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stopping",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "jamming_diagram",
    "halcon": "",
    "in_sort": "table",
@@ -15011,6 +15057,28 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "mc_photon_slab",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "montecarlo",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "mc_sequential_mean",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "montecarlo",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
   },
   {
    "name": "mdr_spring_bed",

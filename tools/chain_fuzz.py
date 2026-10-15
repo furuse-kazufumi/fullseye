@@ -1484,6 +1484,18 @@ def _b_simcal_uncertainty(pool, rng):
     return (res,), {"method": "bootstrap", "n_boot": 8}
 
 
+# --- 収束型の演算(opsconverge)。乱数は引かない(op の内側の固定の種だけ)。 --- #
+def _b_rl_until(pool, rng):
+    # ポアソンの食い違い原理は光子数(非負の整数)を要る。汎用の 0..1 画像では「計数でない」と拒否するのが正しいので、
+    # 例の計数画像(棒と円をガウスでぼかしてポアソン雑音、固定の種)を渡す。
+    return (__import__("deconvstop")._example_counts(),), {}
+
+
+def _b_mc_photon_slab(pool, rng):
+    # 大きさだけを縮める(既定の 10 万光子は探針の 2 回呼びには重い)。
+    return (), {"n_photons": 4000, "batch": 2000}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -6962,6 +6974,8 @@ OP_ARG_BUILDERS = {
     "simcal_observe": _b_simcal_observe,
     "simcal_screen": _b_simcal_screen,
     "simcal_uncertainty": _b_simcal_uncertainty,
+    "iv_richardson_lucy_until": _b_rl_until,
+    "mc_photon_slab": _b_mc_photon_slab,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

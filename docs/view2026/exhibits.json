@@ -6291,6 +6291,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "convergent-forward-models": {
+    "zh": "把多重反射、多重散射和迭代算到收敛 —— 返回收敛的证据和剩余误差，不收敛就不给数值",
+    "tw": "把多重反射、多重散射和迭代算到收斂 —— 回傳收斂的證據和剩餘誤差，不收斂就不給數值",
+    "ko": "다중 반사, 다중 산란, 반복을 수렴할 때까지 돌린다 —— 수렴의 증거와 남은 오차를 돌려주고, 수렴하지 않으면 값을 내지 않는다",
+    "de": "Mehrfachreflexion, Mehrfachstreuung und Iterationen bis zur Konvergenz rechnen — mit Nachweis und Restfehler, und ohne Wert, wenn es nicht konvergiert",
+    "hi": "Inter-reflections, multiple scattering और iterations को convergence तक चलाना — convergence का प्रमाण और बचा हुआ error लौटाना, और converge न हो तो कोई मान नहीं"
    }
   }
  }

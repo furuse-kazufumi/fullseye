@@ -117,6 +117,8 @@ LEDGER_DIMS = {
                  "module": "doe", "family": "design_of_experiments"},
     "simcal": {"registry": "opssimcal", "table": "OPSSIMCAL",
                "module": "simcal", "family": "sim_to_real_calibration"},
+    "converge": {"registry": "opsconverge", "table": "OPSCONVERGE",
+                 "module": "converge", "family": "convergent_computation"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",

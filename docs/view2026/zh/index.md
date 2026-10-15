@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 68 项,每项都有说明页(用法与限制)和可运行的示例。
+共 69 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -123,6 +123,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 彩色共焦位移传感器(玻璃色散 → 标定表 → 返回光谱 → 高度与厚度): [说明](../../capabilities/chromatic-confocal-sensor.md) _(ja)_ · 示例 [poc_chromatic_confocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_chromatic_confocal.py)
 - 测量颜色(XYZ / Lab / 色差): [说明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 示例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- 把多重反射、多重散射和迭代算到收敛 —— 返回收敛的证据和剩余误差，不收敛就不给数值: [说明](../../capabilities/convergent-forward-models.md) _(ja)_ · 示例 [converge_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/converge_tour.py)
 - 光纤与光导(玻璃色散 → LP 模 → 模场直径 → 照明效率): [说明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 示例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用照明光锥与观察 NA 显现或隐藏镜面的微小倾斜(球冠的交集 → 倾斜的带 → 凹痕、划伤、喷砂面的不匀): [说明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 示例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - 用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）: [说明](../../capabilities/material-optical-property-library.md) _(ja)_ · 示例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
@@ -175,7 +176,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 145 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 146 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

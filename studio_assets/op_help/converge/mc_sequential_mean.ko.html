@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mc_sequential_mean — CONVERGE <code style="color:#22d3bf">montecarlo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mc_sequential_mean(sampler=&#x27;pi&#x27;, tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail=&#x27;raise&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import converge; converge.mc_sequential_mean(sampler=&#x27;pi&#x27;, tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail=&#x27;raise&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconverge.get(&quot;mc_sequential_mean&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>순차 몬테카를로 평균: 신뢰구간이 허용 폭보다 좁아질 때까지 표본을 더한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">sampler(rng, n)</code> returns n i.i.d. samples (a 1-D array) — or the built-in <code style="color:#22d3bf">&quot;pi&quot;</code> (4 * [u^2 + v^2 &lt;= 1], mean pi). Batch b is drawn from <code style="color:#22d3bf">default_rng((seed, b))</code>, so the result is reproducible and does not depend on how many batches came before.</p>
+<p>Stops at the first batch boundary, from the second batch on, where the half-width z * s / sqrt(n) &lt;= <code style="color:#22d3bf">tol</code> + <code style="color:#22d3bf">rel_tol</code> * |mean| (z from <code style="color:#22d3bf">confidence</code>; s the running sample standard deviation). This is the fixed-width sequential interval of Chow &amp; Robbins 1965; never stopping inside the first two batches guards against an early, accidentally small variance (raise <code style="color:#22d3bf">batch</code> to guard more) — the actual coverage is checked by the gates, not assumed.</p>
+<p>Returns <code style="color:#22d3bf">mean</code>, <code style="color:#22d3bf">se</code>, <code style="color:#22d3bf">ci</code> (lower, upper), <code style="color:#22d3bf">half_width</code>, <code style="color:#22d3bf">n_samples</code> (used), <code style="color:#22d3bf">converged</code> and <code style="color:#22d3bf">history</code> (n, mean, se per batch). <b>Refusal</b>: <code style="color:#22d3bf">max_samples</code> reached first raises <code style="color:#22d3bf">NotConvergedError</code> (<code style="color:#22d3bf">on_fail=&quot;record&quot;</code> returns the record with <code style="color:#22d3bf">mean = None</code> and the running values under <code style="color:#22d3bf">last_mean</code> / <code style="color:#22d3bf">last_se</code>).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">montecarlo</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:mc_photon_slab">mc_photon_slab</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

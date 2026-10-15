@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">収束型の演算 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>実物に近い順方向モデルは、閉じた式ではなく<b>繰り返しの極限</b>であることが多い。溝の壁から壁へ跳ね返り続ける光、濁った媒質の中で散乱を繰り返す光子、どこかで止めるべき逆畳み込み。回数を固定して打ち切ると、答えはもっともらしく見えたまま足りないことがあり、しかもその不足は数字の上に現れません。</p>
+<p style="margin:2px 0 2px 12px">• 直接光だけのモデルを凹んだ部品の実写に合わせると、相互反射の分を係数(アルベド・照明の強さ)が吸い込んで、残差は小さいのに係数が物理的にあり得ない値になる。</p>
+<p style="margin:2px 0 2px 12px">• モンテカルロは標本の数で精度が決まるのに、標本数を固定すると「どれだけ確かか」が分からない。</p>
+<p style="margin:2px 0 2px 12px">• Richardson-Lucy は回しすぎると雑音を増幅する(誤差はいったん下がってから上がる)。回数の固定値に根拠が無い。</p>
+<p>この族は、どの op も (1) 収束まで回し、(2) 収束した証拠(残差の履歴・信頼区間・観測収束次数)と残りの誤差を返し、</p>
+<p style="margin:2px 0 2px 12px">(3) 収束しなければ<b>値を返さない</b>(<code style="color:#22d3bf">NotConvergedError</code>、あるいは値の鍵を <code style="color:#22d3bf">None</code> にして最後の反復を <code style="color:#22d3bf">last_iterate</code> に置く)。</p>
+<p>台帳は <code style="color:#22d3bf">opsconverge.py</code>、本体は <code style="color:#22d3bf">converge.py</code>・<code style="color:#22d3bf">mcphoton.py</code>・<code style="color:#22d3bf">deconvstop.py</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  G[順方向モデル g] --&gt; I[iterate_fixed_point&lt;br/&gt;素の反復 / Aitken / Anderson]
+  I --&gt;|発散・振動・頭打ち| X[拒否: NotConvergedError]
+  I --&gt; R[値 + 残差の履歴 + 推定残り誤差]
+  R --&gt; O[conv_observed_order / conv_gci&lt;br/&gt;格子を 3 段振って検証]
+  M[確率的なモデル] --&gt; S[mc_sequential_mean&lt;br/&gt;区間が許容幅に入るまで]
+  P[濁った多層媒質] --&gt; T[mc_photon_slab&lt;br/&gt;MCML 型・区間つき]
+  Y[ぼけた計数画像] --&gt; D[iv_richardson_lucy_until&lt;br/&gt;食い違い原理で停止]
+  D --&gt;|頭打ち| Z[モデルの値域外: 像を返さない]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">反復(iterate)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| x = g(x) を解く | <code style="color:#22d3bf">iterate_fixed_point</code> | <code style="color:#22d3bf">plain</code>(線形なら反射を 1 回ずつ足す和そのもの)・<code style="color:#22d3bf">aitken</code>(Δ² の Steffensen 形)・<code style="color:#22d3bf">anderson</code>(Walker &amp; Ni 2011 の式 3.1 を QR で解き、条件数が 1e8 を超えたら古い列を捨てる)。残差の履歴、反復数、g を呼んだ回数、推定残り誤差 L/(1−L)·‖g(x)−x‖(L は g の割線の比の最大。L ≥ 1 なら出さない)。発散・周期 2 の振動・頭打ちは拒否 |</p>
+<p>線形の写像では、Anderson は GMRES と同じ反復を作ります(Walker &amp; Ni の定理 2.2)。テストは別に書いた GMRES と 1e-9 で照合します。振動する写像(ロジスティック写像 r = 3.2)でも x = g(x) の解は在り、Anderson はそれを残差で裏づけて返します(推定残り誤差は縮小写像でないので出しません)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">検証(verification)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 観測収束次数 | <code style="color:#22d3bf">conv_observed_order</code> | 細かい順に 3 つの解と、格子の大きさ h・比 r・セル数 N(と次元)のどれか 1 つ。Celik ら 2008 の式 3(格子比が一定でない項 q(p) を不動点反復で、振動収束は s = −1 として報告) |</p>
+<p>| 離散化誤差の見積もり | <code style="color:#22d3bf">conv_gci</code> | 外挿値(式 4)、近似相対誤差(式 5)、外挿相対誤差(式 6)、GCI(式 7、安全係数 1.25)。Celik の Table 1 の 3 列を再現(表に印字された丸めた比 1.333 ではなくセル数からの比で) |</p>
+<p>「何回反射を数えれば足りるか」「帯を何本に分ければ足りるか」「光子を何個飛ばせば足りるか」を、3 段振った解から数で言います。GCI はモデルの誤りは含みません(Celik: &quot;this does not account for modeling errors&quot;)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">モンテカルロ(montecarlo)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 区間が許容幅に入るまで標本を足す | <code style="color:#22d3bf">mc_sequential_mean</code> | <code style="color:#22d3bf">sampler(rng, n)</code>、バッチ b は <code style="color:#22d3bf">default_rng((seed, b))</code> で再現できる。2 バッチ目から、半幅 z·s/√n ≤ tol + rel_tol·|平均| で止める(Chow &amp; Robbins 1965)。予算 <code style="color:#22d3bf">max_samples</code> を使い切ったら拒否。実際の被覆率はテストが 400 回で両側に測る |</p>
+<p>| 濁った多層スラブの光子輸送 | <code style="color:#22d3bf">mc_photon_slab</code> | MCML マニュアルの規則(式 3.2a〜3.31: 鏡面反射・歩幅・吸収・Henyey-Greenstein・Fresnel の全反射か透過・層の境界での歩幅の持ち越し・ルーレット)を numpy で全光子一度に。光子 1 個ずつの寄与から標準誤差と区間。<code style="color:#22d3bf">tol</code> を渡すと逐次に |</p>
+<p>外部真値は MCML マニュアルの Table 6.1(van de Hulst: R_d 0.09739、T_t 0.66096)と Table 6.2(Giovanelli 0.2600)。区間が値を含むかを下端と上端の両側で判定します。Table 6.2 は鏡面 + 拡散(<code style="color:#22d3bf">R_total</code> = 0.04 + 0.219)で合い、拡散だけでは合いません。整合境界の半無限媒質は、Chandrasekhar の H 関数(<code style="color:#22d3bf">iterate_fixed_point</code> で解く)の 1 − H(1)√(1 − a) とも照合します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">止め方(stopping)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 逆畳み込みを止める所をデータに決めさせる | <code style="color:#22d3bf">iv_richardson_lucy_until</code> | ポアソンの食い違い (2/N)Σ[y ln(y/Hx) + Hx − y] ≤ τ(Bertero ら 2010、τ = 1、Benvenuto &amp; Piana 2012 の式 30)か、ガウスの Morozov ‖Hx − y‖² ≤ τNσ²(同 式 18)。各反復で Σ(Hx) = Σy(補題 3.2)を確かめる。食い違いが τ の上で頭打ちになったら「モデルの値域外」(PSF が広すぎる・背景が抜けている)として像を返さない |</p>
+<p>既存の <code style="color:#22d3bf">iv_richardson_lucy</code> は反復回数をノブで受けるだけで、止める根拠を持ちません。こちらは止めた反復の番号と食い違いの履歴を返します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+r = fs.ledger.iterate_fixed_point(&quot;cos&quot;, method=&quot;anderson&quot;)   # x = cos x
+print(round(r[&quot;x&quot;], 10), r[&quot;n_iter&quot;], r[&quot;n_evals&quot;])           # 0.7390851332 6 7
+g = fs.ledger.conv_gci()                                       # Celik ら 2008 Table 1 の第 1 列
+print(round(g[&quot;p&quot;], 2), round(g[&quot;gci_fine21_pct&quot;], 1))         # 1.53 2.2
+m = fs.ledger.mc_photon_slab(n_photons=100000)                 # MCML Table 6.1 のスラブ
+print(round(m[&quot;Rd&quot;], 4), [round(v, 4) for v in m[&quot;Rd_ci&quot;]])    # 0.0973 [0.0958, 0.0987] (van de Hulst 0.09739)
+d = fs.ledger.iv_richardson_lucy_until()                       # 例の光子計数画像
+print(d[&quot;status&quot;], d[&quot;k_stop&quot;])                                # stopped 12</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">例</h3>
+<p><code style="color:#22d3bf">examples/converge_tour.py</code> —— V 溝の相互反射(直接光だけなら奥は 1/10、素の反復 187 回対 Anderson 28 回、帯の数の GCI)、光子を足すと MCML の区間が van de Hulst の値に縮む様子、Richardson-Lucy の半収束と食い違い原理の停止、収束しない写像の拒否。</p>

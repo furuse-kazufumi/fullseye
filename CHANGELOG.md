@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 収束型の演算(converge 6 op): 収束まで回し、収束した証拠と残りの誤差を返し、収束しなければ値を出さない
+- `opsconverge`(新しい型なし): 反復 `iterate_fixed_point`(素の反復 / Aitken / Anderson —— Walker & Ni 2011 の式 3.1 を QR で、条件数で古い列を捨てる。発散・周期 2 の振動・頭打ちは `NotConvergedError`)、検証 `conv_observed_order` / `conv_gci`(Celik ら 2008 の式 1〜7、格子比が一定でない場合と振動収束)、モンテカルロ `mc_sequential_mean`(区間が許容幅に入るまで)/ `mc_photon_slab`(MCML の規則の多層スラブ、信頼区間つき)、止め方 `iv_richardson_lucy_until`(ポアソンの食い違い原理 τ = 1 / Morozov、止まらなければモデルの値域外)。
+- 外部真値の門: Celik の Table 1 の 3 列、MCML マニュアル Table 6.1 / 6.2(区間が値を両側で含む)、Anderson = GMRES(定理 2.2、別実装と照合)、H 関数の平面アルベド、Richardson-Lucy の総和の保存(補題 3.2)。
+- 例(ツアー、収蔵番号なし): `converge_tour`。能力ノート `convergent-forward-models`。`metriccontract.DIRECTIONS` に `fixed_point_residual`。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。

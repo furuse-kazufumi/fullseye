@@ -136,6 +136,8 @@ DIRECTIONS = {
     "transport_cost": "lower",
     # simcal —— 重みつき残差の二乗和(小さいほどよく合う)。多点出発の順位づけと Nelder-Mead の範囲外に使う
     "simcal_chi2": "lower",
+    # converge —— 不動点反復の最後の残差 ||g(x) - x||(小さいほど収束している)。converge.as_attempt が使う
+    "fixed_point_residual": "lower",
 }
 
 

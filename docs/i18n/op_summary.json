@@ -29717,6 +29717,60 @@
    "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
    "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
    "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
+  },
+  "converge/iterate_fixed_point": {
+   "fp": "9f3bd48e02d2",
+   "ja": "x = g(x) を不動点反復(素の反復 / Aitken / Anderson)で解き、収束しなければ値を返さずに拒否する。",
+   "zh": "用不动点迭代（普通迭代 / Aitken / Anderson）求解 x = g(x)，不收敛时拒绝而不返回值。",
+   "tw": "以不動點迭代（一般迭代 / Aitken / Anderson）求解 x = g(x)，不收斂時拒絕而不回傳值。",
+   "ko": "x = g(x)를 고정점 반복(일반 반복 / Aitken / Anderson)으로 풀고, 수렴하지 않으면 값을 내지 않고 거부한다.",
+   "de": "Löst x = g(x) durch Fixpunktiteration (einfach / Aitken / Anderson) und verweigert das Ergebnis, wenn sie nicht konvergiert.",
+   "hi": "x = g(x) को fixed-point iteration (plain / Aitken / Anderson) से हल करता है और converge न होने पर मान लौटाने से मना करता है।"
+  },
+  "converge/conv_observed_order": {
+   "fp": "2ff41506f3f3",
+   "ja": "系統的に細かくした 3 つの解から観測収束次数 p を求める(Celik ら 2008、式 3)。",
+   "zh": "由三个系统加密的解求表观收敛阶 p（Celik 等 2008，式 3）。",
+   "tw": "由三個系統加密的解求表觀收斂階 p（Celik 等 2008，式 3）。",
+   "ko": "체계적으로 세분한 세 해로부터 관측 수렴 차수 p를 구한다(Celik 외 2008, 식 3).",
+   "de": "Beobachtete Konvergenzordnung p aus drei systematisch verfeinerten Lösungen (Celik et al. 2008, Gl. 3).",
+   "hi": "तीन systematically refined solutions से observed order of convergence p निकालता है (Celik et al. 2008, eq. 3)।"
+  },
+  "converge/conv_gci": {
+   "fp": "36aefcea0507",
+   "ja": "最も細かい解の格子収束指標 GCI: Celik ら 2008 の手順(式 1〜7)。",
+   "zh": "最细解的网格收敛指数 GCI：Celik 等 2008 的步骤（式 1–7）。",
+   "tw": "最細解的網格收斂指標 GCI：Celik 等 2008 的程序（式 1–7）。",
+   "ko": "가장 세밀한 해의 격자 수렴 지수 GCI: Celik 외 2008의 절차(식 1~7).",
+   "de": "Gitterkonvergenzindex (GCI) der feinsten Lösung: Verfahren nach Celik et al. 2008, Gl. (1)-(7).",
+   "hi": "सबसे बारीक solution का grid convergence index (GCI): Celik et al. 2008 की प्रक्रिया, eqs. (1)-(7)।"
+  },
+  "converge/mc_sequential_mean": {
+   "fp": "8be59d7c4db7",
+   "ja": "逐次モンテカルロの平均: 信頼区間が許容幅より狭くなるまで標本を足す。",
+   "zh": "序贯蒙特卡罗均值：不断加样本，直到置信区间窄于容许值。",
+   "tw": "序貫蒙地卡羅平均：持續加樣本，直到信賴區間窄於容許值。",
+   "ko": "순차 몬테카를로 평균: 신뢰구간이 허용 폭보다 좁아질 때까지 표본을 더한다.",
+   "de": "Sequentieller Monte-Carlo-Mittelwert: Stichproben hinzufügen, bis das Konfidenzintervall schmaler als die Toleranz ist.",
+   "hi": "Sequential Monte Carlo mean: confidence interval tolerance से संकरा होने तक samples जोड़ता है।"
+  },
+  "converge/mc_photon_slab": {
+   "fp": "7ca5f6513d2f",
+   "ja": "多層の濁ったスラブの拡散反射・全透過・吸収を MCML 型のモンテカルロで、信頼区間つきで求める。",
+   "zh": "用 MCML 型蒙特卡罗计算多层浑浊平板的漫反射、总透射和吸收，并给出置信区间。",
+   "tw": "以 MCML 型蒙地卡羅計算多層混濁平板的漫反射、總穿透與吸收，並附信賴區間。",
+   "ko": "다층 혼탁 평판의 확산 반사·전투과·흡수를 MCML형 몬테카를로로 신뢰구간과 함께 구한다.",
+   "de": "Diffuse Reflexion, Gesamttransmission und Absorption einer geschichteten trüben Platte per Monte Carlo nach MCML, mit Konfidenzintervallen.",
+   "hi": "MCML-type Monte Carlo से layered turbid slab का diffuse reflectance, total transmittance और absorption, confidence intervals के साथ।"
+  },
+  "converge/iv_richardson_lucy_until": {
+   "fp": "4380a3309528",
+   "ja": "食い違い原理で止める Richardson-Lucy 逆畳み込み(ポアソン: Bertero 2010、τ = 1 / ガウス: Morozov)。モデルの値域外のデータは拒否する。",
+   "zh": "按偏差原理停止的 Richardson-Lucy 反卷积（泊松：Bertero 2010，τ = 1；高斯：Morozov）；拒绝模型值域之外的数据。",
+   "tw": "依偏差原理停止的 Richardson-Lucy 反卷積（卜瓦松：Bertero 2010，τ = 1；高斯：Morozov）；拒絕模型值域之外的資料。",
+   "ko": "불일치 원리로 멈추는 Richardson-Lucy 역합성곱(푸아송: Bertero 2010, τ = 1 / 가우스: Morozov). 모델 치역 밖의 데이터는 거부한다.",
+   "de": "Richardson-Lucy-Entfaltung mit Abbruch nach dem Diskrepanzprinzip (Poisson: Bertero 2010, τ = 1; Gauß: Morozov); verweigert Daten außerhalb des Modellbildbereichs.",
+   "hi": "Discrepancy principle से रुकने वाला Richardson-Lucy deconvolution (Poisson: Bertero 2010, τ = 1; Gaussian: Morozov); model की range से बाहर के data को मना करता है।"
   }
  }
 }

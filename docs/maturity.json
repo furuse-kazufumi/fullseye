@@ -251,6 +251,27 @@
    ]
   },
   {
+   "id": "convergent-forward-models",
+   "title": "多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない",
+   "title_en": "Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge",
+   "category": "光と色",
+   "note": "docs/capabilities/convergent-forward-models.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "converge_tour",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "emva1288-camera-datasheets",
    "title": "カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)",
    "title_en": "Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)",
@@ -1745,9 +1766,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 384,
+  "examples2d_total": 385,
   "run_by_the_poc_gate": 242,
-  "run_by_the_example_gate": 142,
+  "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

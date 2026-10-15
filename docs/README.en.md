@@ -53,16 +53,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 68 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.6.0); stage definitions in [MATURITY.md](MATURITY.md)).
+The 69 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.6.0); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 57 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 58 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 11 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 384 examples, 384 are actually run by a gate.
+Of 385 examples, 385 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -134,11 +134,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,301 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **65 family guides**. Entry points by dimension:
+**3,307 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **66 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 936/936, typed ledger 2344/2356, one-line facade `fullseye.<name>` 688/1441 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 936/936, typed ledger 2350/2362, one-line facade `fullseye.<name>` 688/1444 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3301 notes, **3299** link at least one runnable example (2 have none) and **3137** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3301.
+**Measured substance**: of 3307 notes, **3303** link at least one runnable example (4 have none) and **3143** have a usage section of 120+ characters (164 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3307.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -187,6 +187,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
+| `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [guide](ops/converge/guides/convergent_computation.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -289,9 +290,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 263
+## Document map — all 264
 
-The complete map, so that **no document is unreachable from this index** (the 3,301 per-op notes and 65 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,307 per-op notes and 66 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -431,7 +432,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(180)
+**Other**(181)
 
 | document | what it covers |
 |---|---|
@@ -513,6 +514,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/complex-plane-fields.md`](capabilities/complex-plane-fields.md) | id: complex-plane-fields |
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
+| [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
 | [`capabilities/fiber-and-light-guide.md`](capabilities/fiber-and-light-guide.md) | id: fiber-and-light-guide |

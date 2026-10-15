@@ -53,16 +53,16 @@
 
 ### 验证阶段
 
-68 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.6.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
+69 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.6.0)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
 
 | 阶段 | 含义 | 能力 |
 |---|---|---|
 | `research-prototype` | 已实现,但测试或可运行的示例尚不齐全 | 0 |
-| `verified-synthetic` | 已用合成真值自动验证 | 57 |
+| `verified-synthetic` | 已用合成真值自动验证 | 58 |
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 11 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-384 个示例中,检查实际运行的有 384 个。
+385 个示例中,检查实际运行的有 385 个。
 
 ### 各版本的算子数
 
@@ -134,11 +134,11 @@
 
 ## 查找算子
 
-共有 **3,301 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **65 篇族指南**。按维度的入口:
+共有 **3,307 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **66 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 936/936、类型化台账 2344/2356、单行门面 `fullseye.<名称>` 688/1441 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 936/936、类型化台账 2350/2362、单行门面 `fullseye.<名称>` 688/1444 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3301 篇中，附有可运行示例的 **3299** 篇(2 篇没有)，用法说明 120 字以上的 **3137** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3301 篇全有。
+**内容实测**: 3307 篇中，附有可运行示例的 **3303** 篇(4 篇没有)，用法说明 120 字以上的 **3143** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3307 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -187,6 +187,7 @@
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
+| `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [guide](ops/converge/guides/convergent_computation.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -289,9 +290,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 263 篇
+## 文档地图 — 共 264 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,301 篇算子说明与 65 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,307 篇算子说明与 66 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -431,7 +432,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(180)
+**Other**(181)
 
 | 文档 | 内容 |
 |---|---|
@@ -513,6 +514,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/complex-plane-fields.md`](capabilities/complex-plane-fields.md) | id: complex-plane-fields |
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
+| [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
 | [`capabilities/fiber-and-light-guide.md`](capabilities/fiber-and-light-guide.md) | id: fiber-and-light-guide |

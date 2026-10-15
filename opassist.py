@@ -45,6 +45,8 @@ _LEDGERS = (
     ("opsmultivar", "OPSMULTIVAR"),
     # 2026-10-15: sim-to-real 較正(実画像から物理モデルの係数を合わせ、決まらない係数は拒否)。新語 simmodel / calresult。
     ("opssimcal", "OPSSIMCAL"),
+    # 2026-10-15: 収束型の演算(不動点反復・観測収束次数と GCI・逐次モンテカルロ・光子輸送・食い違い原理で止める逆問題)。新語なし。
+    ("opsconverge", "OPSCONVERGE"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。

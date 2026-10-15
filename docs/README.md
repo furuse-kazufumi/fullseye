@@ -55,16 +55,16 @@
 
 ### 検証の段
 
-能力 68 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.6.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 69 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.6.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 57 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 58 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 11 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 384 本のうち、門が実際に走らせるもの 384 本。
+例 385 本のうち、門が実際に走らせるもの 385 本。
 
 ### 版ごとの op の数
 
@@ -136,11 +136,11 @@
 
 ## オペレータを探す
 
-**3,301 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **65 本の族ガイド**があります。次元ごとの入口:
+**3,307 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **66 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 936/936、型つき台帳 2344/2356、1 行ファサード `fullseye.<名前>` 688/1441。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 936/936、型つき台帳 2350/2362、1 行ファサード `fullseye.<名前>` 688/1444。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3301 本のうち、実行できる例が付いているのは **3299 本**(2 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3137 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3301 本すべてにある。
+**ノートの中身の実測**: 3307 本のうち、実行できる例が付いているのは **3303 本**(4 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3143 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3307 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -189,6 +189,7 @@
 | `interferometry` — 干渉計 | 9 | [INDEX](ops/interferometry/INDEX.md) · [ガイド](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` — モーション拡大 | 9 | [INDEX](ops/motionmag/INDEX.md) · [ガイド](ops/motionmag/guides/motion_magnification.md) |
 | `rangedoppler` — FMCW レンジドップラー | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [ガイド](ops/rangedoppler/guides/fmcw_range_doppler.md) |
+| `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [ガイド](ops/converge/guides/convergent_computation.md) |
 | `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
@@ -291,9 +292,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 263 本
+## ドキュメント地図 — 全 264 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,301 本と族ガイド 65 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,307 本と族ガイド 66 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -433,7 +434,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(180)
+**そのほか**(181)
 
 | 文書 | 内容 |
 |---|---|
@@ -515,6 +516,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/complex-plane-fields.md`](capabilities/complex-plane-fields.md) | id: complex-plane-fields |
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
+| [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
 | [`capabilities/fiber-and-light-guide.md`](capabilities/fiber-and-light-guide.md) | id: fiber-and-light-guide |
