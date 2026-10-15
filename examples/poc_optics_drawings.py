@@ -25,8 +25,8 @@
      バジェットの倍率 f/(WD − f) が同じ図の中で 14 % 食い違っているのが見つかった —— 当時のこの門は視野を同じ
      WD / f の式で採点していた(両辺に同じ模型を入れた門)。原因は ``optscene.vision_layout`` がピンホールの距離に
      焦点距離 f を渡していたことで、像距離 v = f·WD/(WD − f) に直した(``optscene`` の修正)。
-  4. **単レンズの製作図(ISO 10110)**: N-BK7 の平凸 f = 100 mm と両凸。門: 読み戻した R・中心厚・外径の文字が
-     処方どおり、n_d・ν_d がメーカーの公表値(N-BK7: 1.51680 / 64.17)と表示の桁で一致、注記の EFL が厚肉
+  4. **単レンズの製作図(ISO 10110)**: BK7 相当のホウケイ酸クラウン(n_d 1.517・ν_d 64.2)の平凸 f = 100 mm と両凸。門: 読み戻した R・中心厚・外径の文字が
+     処方どおり、n_d・ν_d が公開の硝材カタログ値(1.51680 / 64.17)と表示の桁で一致、注記の EFL が厚肉
      レンズの公式と一致、縞の本数が sag の差 / (λ/2) の閉形式と一致、Monte-Carlo の EFL の幅が
      ``tolerance_analysis`` と一致。
   5. **往復**: 図 → DXF → ``dxf_entities`` → 図、図 → SVG → ``svg_entities`` → 図 で座標が 1e-6 mm、文字が一致。
@@ -66,6 +66,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import examplefig as figs  # noqa: E402
+import materials as MT  # noqa: E402
 import optdraw as OD  # noqa: E402
 import optscene as OS  # noqa: E402
 import raytrace as RT  # noqa: E402
@@ -82,8 +83,26 @@ NUMBERS: dict[str, float] = {}
 #: EFL 49.9998 mm(基準波長 0.55 µm)。B: Sasian OPTI 517 L20 の Geiser の例、f = 50 mm。
 COOKE_A_EFL = 49.9998
 COOKE_B_EFL = 50.0
-#: N-BK7 のメーカー公表値(データシート)。
+#: BK7 相当のホウケイ酸クラウンの公開の硝材カタログ値(データシート)。
 NBK7_ND, NBK7_VD = 1.51680, 64.17
+
+
+def glass_near(nd, vd):
+    """材料表の硝子から n_d・ν_d が最も近いものの名前(公開側に硝材の銘柄名を書かないため、性質で指す)。
+    最も近い硝子が n_d で 0.002・ν_d で 0.5 より離れていれば止める(黙って別の硝子にしない)。"""
+    best = min(MT.glass_map("glass"), key=lambda r: abs(r["nd"] - nd) / 0.002 + abs(r["vd"] - vd) / 0.5)
+    if abs(best["nd"] - nd) > 0.002 or abs(best["vd"] - vd) > 0.5:
+        raise SystemExit("no glass near n_d %.4f / nu_d %.2f in the material table" % (nd, vd))
+    return best["name"]
+
+
+#: 硝材は n_d・ν_d の 6 桁コードで指す(BK7 相当のホウケイ酸クラウン、Cooke triplet の重クラウンとフリント、
+#: Geiser の例のランタンクラウンと重フリント)。
+GLASS_517642 = glass_near(1.5168, 64.17)
+GLASS_620603 = glass_near(1.6204, 60.32)
+GLASS_620364 = glass_near(1.6200, 36.43)
+GLASS_691547 = glass_near(1.6910, 54.71)
+GLASS_673323 = glass_near(1.6727, 32.25)
 #: 2026-10-15 に ezdxf 1.4(別の venv)で cooke_a.dxf を読ませた結果。手元に ezdxf が無いときに印字する(門には使わない)。
 EZDXF_RECORDED = ("ezdxf 1.4.4: 11 files read as AC1009, audit errors 0 / fixes 0, 1158 entities; layer, text and "
                   "coordinates identical to dxf_entities (max difference 0 mm)")
@@ -202,20 +221,20 @@ def roundtrip_residual(model, back, by_layer=False):
 # 処方
 # --------------------------------------------------------------------------- #
 def cooke_a():
-    """処方 A: f = 50、F/5、半画角 20°(SK16 / F2 → 現行の N-SK16 / N-F2)。絞りは第 4 面、入射瞳径 10 mm に合わせる。"""
-    c = [{"R": 22.01359, "t": 3.25896, "n": "N-SK16"}, {"R": -435.76044, "t": 6.00755, "n": 1.0},
-         {"R": -22.21328, "t": 0.99997, "n": "N-F2"}, {"R": 20.29192, "t": 4.75041, "n": 1.0, "ap": 4.6},
-         {"R": 79.68360, "t": 2.95208, "n": "N-SK16"}, {"R": -18.39533, "t": 42.20778, "n": 1.0}]
+    """処方 A: f = 50、F/5、半画角 20°(重クラウン n_d 1.620・ν_d 60.3 とフリント n_d 1.620・ν_d 36.4、どちらも現行の鉛フリー品)。絞りは第 4 面、入射瞳径 10 mm に合わせる。"""
+    c = [{"R": 22.01359, "t": 3.25896, "n": GLASS_620603}, {"R": -435.76044, "t": 6.00755, "n": 1.0},
+         {"R": -22.21328, "t": 0.99997, "n": GLASS_620364}, {"R": 20.29192, "t": 4.75041, "n": 1.0, "ap": 4.6},
+         {"R": 79.68360, "t": 2.95208, "n": GLASS_620603}, {"R": -18.39533, "t": 42.20778, "n": 1.0}]
     s = RT.lens_system(c, stop=3, wavelength_um=0.55, field=20.0)
     c[3]["ap"] = 4.6 * 5.0 / RT.paraxial_trace(s)["ep_radius"]
     return RT.lens_system(c, stop=3, wavelength_um=0.55, field=20.0)
 
 
 def cooke_b():
-    """処方 B: Geiser の例(f = 50、F/4、±20°、LAK9 / SF5 → N-LAK9 / N-SF5)。絞りは第 3 面、入射瞳径 12.5 mm。"""
-    c = [{"R": 23.713, "t": 4.831, "n": "N-LAK9"}, {"R": 7331.288, "t": 5.86, "n": 1.0},
-         {"R": -24.456, "t": 0.975, "n": "N-SF5", "ap": 5.0}, {"R": 21.896, "t": 4.822, "n": 1.0},
-         {"R": 86.759, "t": 3.127, "n": "N-LAK9"}, {"R": -20.4942, "t": 41.10346, "n": 1.0}]
+    """処方 B: Geiser の例(f = 50、F/4、±20°、ランタンクラウン n_d 1.691・ν_d 54.7 と重フリント n_d 1.673・ν_d 32.3 の現行の鉛フリー品)。絞りは第 3 面、入射瞳径 12.5 mm。"""
+    c = [{"R": 23.713, "t": 4.831, "n": GLASS_691547}, {"R": 7331.288, "t": 5.86, "n": 1.0},
+         {"R": -24.456, "t": 0.975, "n": GLASS_673323, "ap": 5.0}, {"R": 21.896, "t": 4.822, "n": 1.0},
+         {"R": 86.759, "t": 3.127, "n": GLASS_691547}, {"R": -20.4942, "t": 41.10346, "n": 1.0}]
     s = RT.lens_system(c, stop=2, field=20.0)
     c[2]["ap"] = 5.0 * 6.25 / RT.paraxial_trace(s)["ep_radius"]
     return RT.lens_system(c, stop=2, field=20.0)
@@ -382,8 +401,8 @@ def chapter_setup():
 def chapter_element():
     print("\n4. 単レンズの製作図(ISO 10110)—— 表の文字を処方と公表値と閉形式に突き合わせる")
     n = NBK7_ND
-    cases = {"planoconvex": [{"R": 51.68, "t": 5.0, "n": "N-BK7", "ap": 12.5}, {"R": math.inf, "t": None, "n": 1.0}],
-             "biconvex": [{"R": 102.0, "t": 6.0, "n": "N-BK7", "ap": 15.0}, {"R": -102.0, "t": None, "n": 1.0}]}
+    cases = {"planoconvex": [{"R": 51.68, "t": 5.0, "n": GLASS_517642, "ap": 12.5}, {"R": math.inf, "t": None, "n": 1.0}],
+             "biconvex": [{"R": 102.0, "t": 6.0, "n": GLASS_517642, "ap": 15.0}, {"R": -102.0, "t": None, "n": 1.0}]}
     for name, surf in cases.items():
         system = RT.lens_system(surf, stop=0)
         tol = {"radius_pct": 0.2, "thickness_mm": 0.05, "index": 0.0005, "tilt_deg": 0.05}
@@ -409,7 +428,7 @@ def chapter_element():
         note = [x for x in T if x.startswith("3. EFL ")][0]
         got = float(note.split()[2])
         gate("%s: 注記の EFL %.3f が厚肉レンズの公式 %.4f と表示の桁で一致" % (name, got, efl), abs(got - efl) <= 0.0005 + 2e-4)
-        mc = RT.tolerance_analysis(RT.lens_system([{"R": R1, "t": t, "n": "N-BK7", "ap": 0.5 * d["values"]["clear_aperture"]},
+        mc = RT.tolerance_analysis(RT.lens_system([{"R": R1, "t": t, "n": GLASS_517642, "ap": 0.5 * d["values"]["clear_aperture"]},
                                                   {"R": R2, "t": None, "n": 1.0}], stop=0),
                                    tolerances=dict(tol, decenter_mm=0.0), trials=100, seed=1)
         mm = re.search(r"p5 (\d+\.\d+) / p95 (\d+\.\d+)", note)

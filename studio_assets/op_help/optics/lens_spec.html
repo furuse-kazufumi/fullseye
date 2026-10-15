@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>レンズの諸元。NA と F 値は<b>どちらで与えてもよい</b>(N = 1/(2·NA))。</p>
 <p><code style="color:#22d3bf">coc_um</code> を省くと画素ピッチを許容錯乱円に使う(レイアウトが束ねるときに解決)。<code style="color:#22d3bf">telecentric=True</code> は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。</p>
-<p><code style="color:#22d3bf">model</code> に実在の型番を渡すと(<code style="color:#22d3bf">lens_catalog()</code> のキー &quot;Kowa LM6HC&quot; でも、型番だけ &quot;LM6HC&quot; + <code style="color:#22d3bf">maker=&quot;Kowa&quot;</code> でもよい。<b>レンズは型番がメーカー間で似通う</b>ので、曖昧なときは fail-closed で メーカー を要求する)、焦点距離・イメージサークルが公開値で埋まり、F 値を省いたときは開放値が入る。<b>カタログに載るのはそこまで</b>で、収差や MTF は入らない(機種ごとのグラフでしか出ないため)。</p>
+<p><code style="color:#22d3bf">model</code> に実在の型番を渡すと(<code style="color:#22d3bf">lens_catalog()</code> のキー「メーカー 型番」でも、型番だけ + <code style="color:#22d3bf">maker=</code> でもよい。<b>レンズは型番がメーカー間で似通う</b>ので、曖昧なときは fail-closed で メーカー を要求する)、焦点距離・イメージサークルが公開値で埋まり、F 値を省いたときは開放値が入る。<b>カタログに載るのはそこまで</b>で、収差や MTF は入らない(機種ごとのグラフでしか出ないため)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

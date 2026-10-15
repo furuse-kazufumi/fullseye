@@ -975,7 +975,7 @@ def _arw_raw_ifd(head: bytes) -> dict:
 
 
 def _mat_rggb_header(url: str) -> dict:
-    """MATLAB v5 の .mat(非圧縮)の 2 つ目の要素(rggb、int16、(H, W, 4)、列優先)の位置。"""
+    """MAT ファイル v5 の .mat(非圧縮)の 2 つ目の要素(rggb、int16、(H, W, 4)、列優先)の位置。"""
     import struct
     off = 128
     n0 = struct.unpack("<II", _http_range(url, off, 8))[1]

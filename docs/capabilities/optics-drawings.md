@@ -59,7 +59,7 @@ Eight ops in `optdraw` (category `drawing` of `opsoptics`) that draw what the op
 import optdraw as OD
 import raytrace as RT
 
-system = RT.lens_system([{"R": 51.68, "t": 5.0, "n": "N-BK7", "ap": 12.5},
+system = RT.lens_system([{"R": 51.68, "t": 5.0, "n": "BK7", "ap": 12.5},
                          {"R": float("inf"), "t": None, "n": 1.0}], stop=0, field=5.0)
 d = OD.lens_section_drawing(system)                  # 子午断面図(図の dict)
 open("singlet.svg", "w", encoding="utf-8").write(OD.drawing_svg(d))
