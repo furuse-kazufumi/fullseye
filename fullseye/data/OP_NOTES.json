@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3240,
- "n_notes": 3246,
+ "n_ops": 3245,
+ "n_notes": 3251,
  "notes": {
   "vol_dilate": [
    {
@@ -31574,6 +31574,55 @@
     "category": "synth",
     "out": "shapeset",
     "path": "docs/ops/shapestat/synth/shape_synth_family.md"
+   }
+  ],
+  "simcal_fit": [
+   {
+    "op": "simcal_fit",
+    "dim": "simcal",
+    "category": "fit",
+    "in": "simmodel",
+    "out": "calresult",
+    "path": "docs/ops/simcal/fit/simcal_fit.md"
+   }
+  ],
+  "simcal_screen": [
+   {
+    "op": "simcal_screen",
+    "dim": "simcal",
+    "category": "fit",
+    "in": "simmodel",
+    "out": "table",
+    "path": "docs/ops/simcal/fit/simcal_screen.md"
+   }
+  ],
+  "simcal_model": [
+   {
+    "op": "simcal_model",
+    "dim": "simcal",
+    "category": "model",
+    "out": "simmodel",
+    "path": "docs/ops/simcal/model/simcal_model.md"
+   }
+  ],
+  "simcal_observe": [
+   {
+    "op": "simcal_observe",
+    "dim": "simcal",
+    "category": "model",
+    "in": "simmodel × images",
+    "out": "simmodel",
+    "path": "docs/ops/simcal/model/simcal_observe.md"
+   }
+  ],
+  "simcal_simulate": [
+   {
+    "op": "simcal_simulate",
+    "dim": "simcal",
+    "category": "model",
+    "in": "simmodel",
+    "out": "images",
+    "path": "docs/ops/simcal/model/simcal_simulate.md"
    }
   ],
   "spc_capability": [

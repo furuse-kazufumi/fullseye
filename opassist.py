@@ -43,6 +43,8 @@ _LEDGERS = (
     ("opstext", "OPSTEXT"), ("opsresidue", "OPSRESIDUE"),
     # 2026-10-15: 実験計画・多変量解析・感度解析。新語 design(符号化と自然単位を 1 つに持つ計画)。
     ("opsmultivar", "OPSMULTIVAR"),
+    # 2026-10-15: sim-to-real 較正(実画像から物理モデルの係数を合わせ、決まらない係数は拒否)。新語 simmodel / calresult。
+    ("opssimcal", "OPSSIMCAL"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
@@ -758,6 +760,10 @@ def sample_input(op_name: str):
         "flow2d": _sample_flow2d,
         # design(2026-10-15): 3 因子の回転可能な中心複合計画(要因 8 + 軸 6 + 中心 4)。
         "design": lambda: __import__("doe").doe_central_composite(3),
+        # simmodel / calresult(2026-10-15): 例の模型(チャート -> cos^4 の周辺減光 -> ゲイン/オフセット、合成の観測つき)と
+        #   その当てはめ。乱数は模型の内側の固定の種だけ(探針の共有乱数列は引かない)。
+        "simmodel": lambda: __import__("simcal").simcal_model(),
+        "calresult": lambda: __import__("simcal").simcal_fit(__import__("simcal").simcal_model()),
     }
     #: 単位に合う種(汎用の 0..1 では意味を持たない量がある)。
     #: ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと

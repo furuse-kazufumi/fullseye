@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータ **2,240 本**(2012 年以降、`fetch_openalex_topical.py`)を TF-IDF + k-means で **64 クラスタ**に階層化し(raptor の `corpus2skill`、2026-09-21)、各クラスタの要約を LLM(claude-haiku-4-5)が書いた。ここに載せるのは**その要約と、代表論文の題名・著者・年・DOI だけ**(メタデータは CC0。抄録は出版社の権利なので写さない)。要約は生成時の英語のまま。**正直な限界**: 文献は原理・選定・校正の研究が中心で、型番やデータシートの数値(製品知識)は薄い。
 
-**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 3,240 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 3,245 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -156,6 +156,7 @@ This cluster covers parametric and generative design methodologies in CAD system
 **使う op**(テーマ → op の対応表から。ノートで型と例を確かめてから使う):
 
 - パラメトリック形状(SDF / CSG): [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)、[`sdf_intersect`](../ops/3d/sdf_csg/sdf_intersect.md)(積、sdf × sdf → sdf)、[`sdf_smooth_union`](../ops/3d/sdf_csg/sdf_smooth_union.md)(フィレットつきの和、sdf × sdf → sdf)、[`sdf_offset`](../ops/3d/sdf_csg/sdf_offset.md)(肉厚のオフセット、sdf → sdf)、[`sdf_to_occupancy`](../ops/3d/transform/sdf_to_occupancy.md)(SDF → 占有(スライスへ)、sdf → voxel)、[`grid_coords`](../ops/3d/sdf_csg/grid_coords.md)(評価格子、入力なし → coordgrid)、[`fit_superquadric`](../ops/3d/superquadric/fit_superquadric.md)(スーパー二次曲面の当てはめ(逆設計)、points → primitive)、[`fit_bspline_surface`](../ops/3d/freeform/fit_bspline_surface.md)(自由曲面の当てはめ、image2d × image2d × image2d → bspline_surface)
+- sim-to-real 較正(実物の画像から物理モデルの係数を合わせ、決まらない係数には数を出さない): [`simcal_model`](../ops/simcal/model/simcal_model.md)(順方向の物理モデルとつまみ(単位・範囲・カメラの雑音モデル)を組む、入力なし → simmodel)、[`simcal_simulate`](../ops/simcal/model/simcal_simulate.md)(つまみの値で模型を走らせて画像を作る、simmodel → images)、[`simcal_observe`](../ops/simcal/model/simcal_observe.md)(実物の画像を位置合わせ・関心領域・露出の正規化をして模型に付ける、simmodel × images → simmodel)、[`simcal_screen`](../ops/simcal/fit/simcal_screen.md)(どのつまみが雑音を越えて画像を動かすか・交絡しているか、simmodel → table)、[`simcal_fit`](../ops/simcal/fit/simcal_fit.md)(重みつき最小二乗で合わせ、決まらないつまみは数を出さずに拒否する、simmodel → calresult)
 - 波(レーダ・音・超音波): [`fmcw_range_profile`](../ops/rangedoppler/process/fmcw_range_profile.md)(FMCW の距離、beatcube → signal)、[`beamform_delay_sum`](../ops/rangedoppler/beamform/beamform_delay_sum.md)(ビームフォーミング、beatcube → signal)、[`range_doppler_map`](../ops/rangedoppler/process/range_doppler_map.md)(距離・速度、beatcube → image2d)、[`angular_spectrum_propagate`](../ops/optics/wave/angular_spectrum_propagate.md)(波の伝搬、cimage → cimage)、[`stft`](../ops/acoustics/transform/stft.md)(時間周波数、signal → table)、[`gcc_delay`](../ops/acoustics/dual/gcc_delay.md)(到達時間差、signal × signal → measurement)、[`pulse_echo_ascan`](../ops/acoustics/ultrasonic/pulse_echo_ascan.md)(超音波のパルスエコー(A スキャン)、table → table)、[`acoustic_layer_stack`](../ops/acoustics/ultrasonic/acoustic_layer_stack.md)(積層の反射と透過(音響インピーダンス)、入力なし → table)、[`echo_phase_polarity`](../ops/acoustics/ultrasonic/echo_phase_polarity.md)(エコーの位相の反転でボイドを見分ける、table → table)、[`matched_filter_snr`](../ops/oned/matched/matched_filter_snr.md)(既知の波形の整合フィルタ、signal × signal × pairs → signal)、[`music_doa`](../ops/math/spectral/music_doa.md)(アンテナ・マイク列での到来方向(MUSIC、ビーム幅より細かく)、matrix → table)
 - 文献のメタ議論(教育・レビュー) —— op なし(Fullseye の外)
 
@@ -188,7 +189,7 @@ This cluster covers the integration of programming paradigms with Computer-Aided
 
 This cluster covers parametric and feature-based CAD modeling methodologies, focusing on how complex engineering designs are created, modified, and reused through parametric systems.
 
-- 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)、ほか 7 個: `sdf_intersect`、`sdf_smooth_union`、`sdf_offset`、`sdf_to_occupancy`、`grid_coords`、`fit_superquadric`、`fit_bspline_surface`
+- 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)、ほか 12 個: `sdf_intersect`、`sdf_smooth_union`、`sdf_offset`、`sdf_to_occupancy`、`grid_coords`、`fit_superquadric`、`fit_bspline_surface`、`simcal_model`、`simcal_simulate`、`simcal_observe`、`simcal_screen`、`simcal_fit`
 - 代表論文(新しい順 + いちばん古い 1 本):
   - Seda Yilmaz et al. (2024). CAD and constructive solid geometry modeling of the Molten Salt Reactor Experiment with OpenMC. [10.3389/fnuen.2024.1385478](https://doi.org/10.3389/fnuen.2024.1385478)
   - Mutahar Safdar et al. (2020). Feature-based translation of CAD models with macro-parametric approach: issues of feature mapping, persistent naming, and constraint translation. [10.1093/jcde/qwaa043](https://doi.org/10.1093/jcde/qwaa043)
@@ -1150,6 +1151,11 @@ This cluster covers the intersection of digital transformation, automation, and 
 | [`sfp_normals`](../ops/optics/shape_from_polarization/sfp_normals.md) | injection / molding / fault |
 | [`shape_index`](../ops/3d/curvature/shape_index.md) | point / shape / cloud |
 | [`shape_pca`](../ops/shapestat/model/shape_pca.md) | point / shape / cloud |
+| [`simcal_fit`](../ops/simcal/fit/simcal_fit.md) | cad / parametric / design |
+| [`simcal_model`](../ops/simcal/model/simcal_model.md) | cad / parametric / design |
+| [`simcal_observe`](../ops/simcal/model/simcal_observe.md) | cad / parametric / design |
+| [`simcal_screen`](../ops/simcal/fit/simcal_screen.md) | cad / parametric / design |
+| [`simcal_simulate`](../ops/simcal/model/simcal_simulate.md) | cad / parametric / design |
 | [`slip_predict`](../ops/drive/roverslip/slip_predict.md) | robot / robotic / control |
 | [`spc_capability`](../ops/spc/capability/spc_capability.md) | injection / molding / fault; materials / review / design |
 | [`spc_cusum`](../ops/spc/change/spc_cusum.md) | injection / molding / fault; materials / review / design |

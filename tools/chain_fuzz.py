@@ -504,6 +504,11 @@ def make_generators():
         #   ここで乱数を引くと型名が後ろの種(image2d / matrix / signal …)が全部ずれ、他族の op の判定が
         #   動く(2026-10-15 に実測: 無関係な 6 op が「拒否」に、11 個のノブの判定が入れ替わった)。
         "design": lambda rng: __import__("doe").doe_central_composite(3),
+        # simmodel / calresult(2026-10-15、opssimcal): 例の模型(合成の観測つき)とその当てはめ。
+        #   ★design と同じく rng を 1 つも引かない(種は型名の順に同じ乱数列から作られる)。模型の観測は
+        #   simcal の内側の固定の種(20261015)で作るので決定的。
+        "simmodel": lambda rng: __import__("simcal").simcal_model(),
+        "calresult": lambda rng: __import__("simcal").simcal_fit(__import__("simcal").simcal_model()),
     }
 
 
@@ -1455,6 +1460,22 @@ def _b_confounding(pool, rng):
 def _b_residual_pca(pool, rng):
     R = 0.1 * rng.normal(size=(20, 48)) + np.outer(rng.normal(size=20), np.sin(np.linspace(0, 4, 48))) * 0.3
     return (R,), {"n_perm": 20}
+
+
+# --- sim-to-real 較正(opssimcal)。模型は種(観測つきの例)を使い、画像は模型が出す形で作る。 --- #
+def _b_simcal_model(pool):
+    return (pool.get("simmodel") or [None])[0] or __import__("simcal").simcal_model()
+
+
+def _b_simcal_observe(pool, rng):
+    sc = __import__("simcal")
+    m = _b_simcal_model(pool)
+    imgs = [y + rng.normal(0.0, 3.0, y.shape) for y in sc.simcal_simulate(m, {"f": 25.0, "gain": 800.0})]
+    return (m, imgs), {"align": True}
+
+
+def _b_simcal_screen(pool, rng):
+    return (_b_simcal_model(pool),), {"size": 4}
 
 
 def _b_graph_adj(pool, rng):
@@ -6932,6 +6953,8 @@ OP_ARG_BUILDERS = {
     "sens_sobol": _b_sens_sobol,
     "mv_confounding": _b_confounding,
     "mv_residual_pca": _b_residual_pca,
+    "simcal_observe": _b_simcal_observe,
+    "simcal_screen": _b_simcal_screen,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,
@@ -7390,6 +7413,15 @@ TYPE_CHECKS = {
     and v.shape[1] >= 2 and v.shape[2] >= 2,
     # sweep = 非負の 1-D 掃引(干渉信号 or 戻りスペクトル)
     # design(2026-10-15)= 符号化と自然単位の行列を両方持つ計画。両方が同じ形で、列数が因子の数。
+    # simmodel / calresult(2026-10-15)= 走らせられる模型 / データが支える推定だけを持つ較正結果。
+    "simmodel": lambda v: isinstance(v, dict) and v.get("sort") == "simmodel"
+    and isinstance(v.get("chain"), list) and len(v["chain"]) >= 1
+    and isinstance(v.get("knobs"), list) and len(v["knobs"]) >= 1
+    and isinstance(v.get("output_shapes"), list) and len(v["output_shapes"]) >= 1,
+    "calresult": lambda v: isinstance(v, dict) and v.get("sort") == "calresult"
+    and v.get("status") in ("accepted", "partial", "refused")
+    and isinstance(v.get("theta_hat"), dict) and isinstance(v.get("undetermined"), dict)
+    and isinstance(v.get("model"), dict) and v["model"].get("sort") == "simmodel",
     "design": lambda v: isinstance(v, dict) and v.get("sort") == "design"
     and isinstance(v.get("coded"), np.ndarray) and isinstance(v.get("natural"), np.ndarray)
     and v["coded"].ndim == 2 and v["coded"].shape == v["natural"].shape

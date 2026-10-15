@@ -1,8 +1,8 @@
 {
- "n_ops": 3240,
+ "n_ops": 3245,
  "tiers": {
   "color": 12,
-  "ledger": 2287,
+  "ledger": 2292,
   "nary": 17,
   "registry": 924
  },
@@ -14,6 +14,7 @@
   "beatcube",
   "bspline_curve",
   "bspline_surface",
+  "calresult",
   "cimage",
   "color",
   "conn_graph",
@@ -90,6 +91,7 @@
   "shapeset",
   "shift",
   "signal",
+  "simmodel",
   "sinogram",
   "sinostack",
   "sprites",
@@ -24083,6 +24085,70 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "simcal_fit",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "calresult",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_model",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "simmodel",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": []
+  },
+  {
+   "name": "simcal_observe",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "simmodel",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel",
+    "images"
+   ]
+  },
+  {
+   "name": "simcal_screen",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "table",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
+  },
+  {
+   "name": "simcal_simulate",
+   "halcon": "",
+   "in_sort": "simmodel",
+   "out_sort": "images",
+   "category": "model",
+   "tier": "ledger",
+   "ledger": "opssimcal",
+   "dim": "simcal",
+   "in_sorts": [
+    "simmodel"
+   ]
   },
   {
    "name": "sinkhorn",

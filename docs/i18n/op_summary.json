@@ -9,6 +9,51 @@
   "hi"
  ],
  "summaries": {
+  "simcal/simcal_model": {
+   "fp": "6044f31bbc6d",
+   "ja": "``simmodel`` を組む: 引数がつまみ(単位・範囲つき)になった op の順方向の連鎖と、雑音モデル。",
+   "zh": "构建 ``simmodel``：参数为旋钮（带单位与范围）的算子正向链，以及噪声模型。",
+   "tw": "建立 ``simmodel``：參數為旋鈕（帶單位與範圍）的運算子正向鏈，以及雜訊模型。",
+   "ko": "``simmodel``을 만든다: 인수가 단위·범위를 가진 노브인 op의 순방향 체인과 잡음 모델.",
+   "de": "Baut ein ``simmodel``: eine Vorwärtskette von Ops, deren Argumente Regler mit Einheiten und Bereichen sind, samt Rauschmodell.",
+   "hi": "``simmodel`` बनाता है: ops की forward chain जिसके arguments इकाई व सीमा वाले knobs हैं, साथ में noise model।"
+  },
+  "simcal/simcal_simulate": {
+   "fp": "a0499b5caa52",
+   "ja": "つまみの値で simmodel の連鎖を走らせる -> 条件ごとに 2-D 配列 1 枚(``images``)。",
+   "zh": "按给定旋钮值运行 simmodel 的链 -> 每个条件一个二维数组（``images``）。",
+   "tw": "以給定旋鈕值執行 simmodel 的鏈 -> 每個條件一個二維陣列（``images``）。",
+   "ko": "주어진 노브 값으로 simmodel 체인을 실행 -> 조건마다 2-D 배열 1장(``images``).",
+   "de": "Führt die Kette eines simmodel mit gegebenen Reglerwerten aus -> ein 2-D-Array pro Bedingung (``images``).",
+   "hi": "दिए गए knob मानों पर simmodel की chain चलाता है -> हर condition के लिए एक 2-D array (``images``)।"
+  },
+  "simcal/simcal_observe": {
+   "fp": "977b977fd39a",
+   "ja": "実測の画像を simmodel に付ける: 位置合わせ・関心領域・露出の正規化。",
+   "zh": "将实测图像附加到 simmodel：配准、感兴趣区域与曝光归一化。",
+   "tw": "將實測影像附加到 simmodel：對位、感興趣區域與曝光正規化。",
+   "ko": "실측 영상을 simmodel에 붙인다: 정합·관심 영역·노출 정규화.",
+   "de": "Hängt gemessene Bilder an ein simmodel an: Ausrichtung, Region of Interest und Belichtungsnormierung.",
+   "hi": "मापी गई images को simmodel से जोड़ता है: alignment, region of interest और exposure normalisation।"
+  },
+  "simcal/simcal_screen": {
+   "fp": "50a3999af61f",
+   "ja": "どのつまみがカメラの雑音を越えて画像を動かすか、どれが交絡しているか、出力の方向がいくつあるか。",
+   "zh": "哪些旋钮能使图像变化超过相机噪声、哪些相互混杂、输出有多少个独立方向。",
+   "tw": "哪些旋鈕能使影像變化超過相機雜訊、哪些相互混雜、輸出有多少個獨立方向。",
+   "ko": "어느 노브가 카메라 잡음을 넘어 영상을 움직이는지, 어느 것이 교락되어 있는지, 출력 방향이 몇 개인지.",
+   "de": "Welche Regler die Bilder über das Kamerarauschen hinaus bewegen, welche vermengt sind und wie viele Ausgaberichtungen es gibt.",
+   "hi": "कौन-से knobs images को camera noise से अधिक बदलते हैं, कौन-से confounded हैं, और output की कितनी दिशाएँ हैं।"
+  },
+  "simcal/simcal_fit": {
+   "fp": "7b4bd1169821",
+   "ja": "観測つき simmodel の自由なつまみを画像に合わせる(重みつき最小二乗)-> ``calresult``。",
+   "zh": "将带观测的 simmodel 的自由旋钮拟合到其图像（加权最小二乘）-> ``calresult``。",
+   "tw": "將帶觀測的 simmodel 的自由旋鈕擬合到其影像（加權最小平方）-> ``calresult``。",
+   "ko": "관측이 붙은 simmodel의 자유 노브를 영상에 맞춘다(가중 최소제곱) -> ``calresult``.",
+   "de": "Passt die freien Regler eines beobachteten simmodel an seine Bilder an (gewichtete kleinste Quadrate) -> ``calresult``.",
+   "hi": "observed simmodel के free knobs को उसकी images पर fit करता है (weighted least squares) -> ``calresult``।"
+  },
   "multivar/doe_morris": {
    "fp": "91535e011af3",
    "ja": "Morris の一因子ずつのふるい計画: k+1 回の軌道を ``r`` 本 -> ``design``。",

@@ -4,6 +4,24 @@
   "en"
  ],
  "phrases": {
+  "sim-to-real 較正(実物の画像から物理モデルの係数を合わせ、決まらない係数には数を出さない)": {
+   "en": "Sim-to-real calibration (fit a physical model's coefficients to real images; give no number for coefficients the images do not determine)"
+  },
+  "順方向の物理モデルとつまみ(単位・範囲・カメラの雑音モデル)を組む": {
+   "en": "Build the forward physical model and its knobs (units, ranges, camera noise model)"
+  },
+  "つまみの値で模型を走らせて画像を作る": {
+   "en": "Run the model at given knob values to make images"
+  },
+  "実物の画像を位置合わせ・関心領域・露出の正規化をして模型に付ける": {
+   "en": "Attach real images to the model with alignment, region of interest and exposure normalisation"
+  },
+  "どのつまみが雑音を越えて画像を動かすか・交絡しているか": {
+   "en": "Which knobs move the images beyond the noise, and which are confounded"
+  },
+  "重みつき最小二乗で合わせ、決まらないつまみは数を出さずに拒否する": {
+   "en": "Fit by weighted least squares and refuse, without a number, the knobs that are not determined"
+  },
   "効くつまみを少ない回数でふるう(Morris)": {
    "en": "Screen the influential knobs in few runs (Morris)"
   },

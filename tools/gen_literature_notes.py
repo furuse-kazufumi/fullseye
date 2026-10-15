@@ -288,6 +288,15 @@ THEME_OPS: list[dict] = [
              ("doe_saltelli", "Sobol' 指数のための標本行列"), ("sens_sobol", "Sobol' の S1・ST(交互作用の分も)と信頼区間"),
              ("mv_confounding", "データから決まるパラメータの組(共線性指数)"),
              ("mv_residual_pca", "残差に残った構造 = モデルに足りないもの")]},
+    # ★2026-10-15: sim-to-real 較正(opssimcal)。鍵はクラスタ名に実際に出る語(慣性センサ・力覚の「calibration」、
+    #   鍛造・交通・レーダの「simulation」「modeling」)—— シミュレーションを実物に合わせる・センサを較正する領域。
+    {"keys": ("calibration", "simulation", "simulations", "simulator", "modeling"),
+     "theme": "sim-to-real 較正(実物の画像から物理モデルの係数を合わせ、決まらない係数には数を出さない)",
+     "ops": [("simcal_model", "順方向の物理モデルとつまみ(単位・範囲・カメラの雑音モデル)を組む"),
+             ("simcal_simulate", "つまみの値で模型を走らせて画像を作る"),
+             ("simcal_observe", "実物の画像を位置合わせ・関心領域・露出の正規化をして模型に付ける"),
+             ("simcal_screen", "どのつまみが雑音を越えて画像を動かすか・交絡しているか"),
+             ("simcal_fit", "重みつき最小二乗で合わせ、決まらないつまみは数を出さずに拒否する")]},
     {"keys": ("twin", "predictive", "maintenance", "prognostic", "prognostics", "bearing", "bearings", "vibration", "vibrations", "condition", "health", "diagnosis", "fault diagnosis"),
      "theme": "予知保全(振動・軸受)",
      "ops": [("bearing_defect_frequencies", "軸受の欠陥周波数"), ("envelope_spectrum", "包絡スペクトル"), ("spectral_kurtosis", "衝撃の帯域"),

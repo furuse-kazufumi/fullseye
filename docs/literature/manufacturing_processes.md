@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータ **2,400 本**(2012 年以降、`fetch_openalex_topical.py`)を TF-IDF + k-means で **64 クラスタ**に階層化し(raptor の `corpus2skill`、2026-09-21)、各クラスタの要約を LLM(claude-haiku-4-5)が書いた。ここに載せるのは**その要約と、代表論文の題名・著者・年・DOI だけ**(メタデータは CC0。抄録は出版社の権利なので写さない)。要約は生成時の英語のまま。**正直な限界**: 文献は原理・選定・校正の研究が中心で、型番やデータシートの数値(製品知識)は薄い。
 
-**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 3,240 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 3,245 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -163,6 +163,7 @@ This cluster covers the scientific and engineering fundamentals of sheet metal f
 
 - 板金・成形(曲げ角・ひずみ): [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)、[`fit_spline_curve`](../ops/3d/curve/fit_spline_curve.md)(曲げ線の当てはめ、points → points)、[`curvature_torsion`](../ops/3d/curve/curvature_torsion.md)(曲線の曲率、points → pairs)
 - 鋳造・塑性加工・焼結(内部欠陥の CT): [`filtered_backprojection`](../ops/tomography/reconstruct/filtered_backprojection.md)(CT 再構成、sinogram → image2d)、[`sart_reconstruct`](../ops/tomography/reconstruct/sart_reconstruct.md)(少数投影の再構成、sinogram → image2d)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピングの補正、sinogram → sinogram)、[`ring_artifact_remove`](../ops/tomography/artifact/ring_artifact_remove.md)(リングアーチファクト、sinogram → sinogram)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(空隙のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(空隙の性質、labels → table)、[`filter_by_volume`](../ops/3d/regionprops/filter_by_volume.md)(大きさで選別、voxel → voxel)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)
+- sim-to-real 較正(実物の画像から物理モデルの係数を合わせ、決まらない係数には数を出さない): [`simcal_model`](../ops/simcal/model/simcal_model.md)(順方向の物理モデルとつまみ(単位・範囲・カメラの雑音モデル)を組む、入力なし → simmodel)、[`simcal_simulate`](../ops/simcal/model/simcal_simulate.md)(つまみの値で模型を走らせて画像を作る、simmodel → images)、[`simcal_observe`](../ops/simcal/model/simcal_observe.md)(実物の画像を位置合わせ・関心領域・露出の正規化をして模型に付ける、simmodel × images → simmodel)、[`simcal_screen`](../ops/simcal/fit/simcal_screen.md)(どのつまみが雑音を越えて画像を動かすか・交絡しているか、simmodel → table)、[`simcal_fit`](../ops/simcal/fit/simcal_fit.md)(重みつき最小二乗で合わせ、決まらないつまみは数を出さずに拒否する、simmodel → calresult)
 
 ### springback / bending / sheet
 
@@ -194,7 +195,7 @@ This cluster covers deep drawing and sheet metal forming processes, focusing on 
 
 This cluster covers computational and experimental techniques for simulating metal forging, forming, and deformation processes.
 
-- 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)、ほか 10 個: `fit_spline_curve`、`curvature_torsion`、`filtered_backprojection`、`sart_reconstruct`、`beam_hardening_correct`、`ring_artifact_remove`、`vol_label`、`vol_region_props`、`filter_by_volume`、`vol_granulometry`
+- 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)、ほか 15 個: `fit_spline_curve`、`curvature_torsion`、`filtered_backprojection`、`sart_reconstruct`、`beam_hardening_correct`、`ring_artifact_remove`、`vol_label`、`vol_region_props`、`filter_by_volume`、`vol_granulometry`、`simcal_model`、`simcal_simulate`、`simcal_observe`、`simcal_screen`、`simcal_fit`
 - 代表論文(新しい順 + いちばん古い 1 本):
   - Simin Dourandish et al. (2024). Numerical simulation and experimental validation of microstructure evolution during the upsetting process of a large size martensitic stainless steel forging. [10.1007/s12289-024-01840-0](https://doi.org/10.1007/s12289-024-01840-0)
   - Zhenhong Wang et al. (2024). Numerical Simulation and Process Parameter Optimization of Warm Forging Near-Net Forming for Spiral Bevel Gear. [10.3390/app14031147](https://doi.org/10.3390/app14031147)
@@ -1193,6 +1194,11 @@ This cluster encompasses the optimization and control of fused deposition modeli
 | [`shape_pca`](../ops/shapestat/model/shape_pca.md) | machining / optimization / surface |
 | [`silicon_free_carrier_absorption`](../ops/optics/matprop/silicon_free_carrier_absorption.md) | applications / materials / lithography; defect / detection / inspection |
 | [`silicon_photodiode_qe`](../ops/optics/spectral/silicon_photodiode_qe.md) | applications / materials / lithography |
+| [`simcal_fit`](../ops/simcal/fit/simcal_fit.md) | forming / sheet / metal |
+| [`simcal_model`](../ops/simcal/model/simcal_model.md) | forming / sheet / metal |
+| [`simcal_observe`](../ops/simcal/model/simcal_observe.md) | forming / sheet / metal |
+| [`simcal_screen`](../ops/simcal/fit/simcal_screen.md) | forming / sheet / metal |
+| [`simcal_simulate`](../ops/simcal/model/simcal_simulate.md) | forming / sheet / metal |
 | [`spad_deadtime_correct`](../ops/photon/spad/spad_deadtime_correct.md) | applications / materials / lithography |
 | [`spc_ewma`](../ops/spc/change/spc_ewma.md) | applications / materials / lithography |
 | [`speckle_quality`](../ops/piv/solid/speckle_quality.md) | forming / sheet / metal; welding / weld / arc |

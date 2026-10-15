@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">simcal_model — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">simmodel</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_model(chain=None, knobs=None, scene=None, nuisance=None, noise=None, conditions=None, stochastic=None, label=&#x27;model&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import simcal; simcal.simcal_model(chain=None, knobs=None, scene=None, nuisance=None, noise=None, conditions=None, stochastic=None, label=&#x27;model&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssimcal.get(&quot;simcal_model&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><code style="color:#22d3bf">simmodel</code> を組む: 引数がつまみ(単位・範囲つき)になった op の順方向の連鎖と、雑音モデル。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p><code style="color:#22d3bf">chain</code> — list of steps <code style="color:#22d3bf">{&quot;op&quot;: name, &quot;args&quot;: {...}}</code>; <code style="color:#22d3bf">op</code> is any registered fullseye op (e.g. <code style="color:#22d3bf">&quot;thin_film_reflectance&quot;</code>) or a built-in stage (<code style="color:#22d3bf">&quot;stage:gain_offset&quot;</code>, <code style="color:#22d3bf">&quot;stage:scale&quot;</code>, <code style="color:#22d3bf">&quot;stage:radial_cos4&quot;</code>, <code style="color:#22d3bf">&quot;stage:radial_poly&quot;</code>, <code style="color:#22d3bf">&quot;stage:gaussian_blur&quot;</code>, <code style="color:#22d3bf">&quot;stage:as_image&quot;</code>, <code style="color:#22d3bf">&quot;stage:mc_sample&quot;</code>). Step 0 receives <code style="color:#22d3bf">scene</code> as its first argument (or nothing when <code style="color:#22d3bf">scene</code> is <code style="color:#22d3bf">None</code>), each later step the previous output.</p>
+<p><code style="color:#22d3bf">knobs</code> — list of dicts <code style="color:#22d3bf">{&quot;name&quot;, &quot;step&quot; (index or op name), &quot;arg&quot;, &quot;lo&quot;, &quot;hi&quot;, &quot;unit&quot;, &quot;scale&quot; (&quot;linear&quot; | &quot;log&quot;), &quot;init&quot;, &quot;prior&quot; ((mean, sd) or None), &quot;role&quot; (&quot;gain&quot; | &quot;offset&quot; | None), &quot;fixed&quot; (value or None)}</code>. A knob is bound to one argument of one step; <code style="color:#22d3bf">init</code> defaults to the middle of the range (geometric middle on a log scale).</p>
+<p><code style="color:#22d3bf">conditions</code> — optional list of <code style="color:#22d3bf">{step: {arg: value}}</code> (one output image per</p>
+<p>condition: exposures, wavelengths, illumination angles). <code style="color:#22d3bf">nuisance</code> — names of knobs that are fitted but not of interest; <code style="color:#22d3bf">label</code> names the model in reports. <code style="color:#22d3bf">noise</code> / <code style="color:#22d3bf">stochastic</code> — see the module docstring.</p>
+<p>The model is run once at the initial knobs and refused (<code style="color:#22d3bf">ValueError</code>) when a step is unknown, a knob names an argument its op does not take, two knobs bind the same argument, a range is empty or a log range is not positive, or the output is not a finite 2-D array. With no arguments: a demo model (chart -&gt; cos^4 vignetting -&gt; gain/offset, EMVA noise) <b>with synthetic observations attached</b>, ready for <code style="color:#22d3bf">simcal_fit</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesimcal:sim_to_real_calibration">sim_to_real_calibration ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">simmodel</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_simulate">simcal_simulate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_observe">simcal_observe</a> · <a style="color:#22d3bf" href="opsimcal:simcal_screen">simcal_screen</a> · <a style="color:#22d3bf" href="opsimcal:simcal_fit">simcal_fit</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opsimcal:simcal_simulate">simcal_simulate</a> · <a style="color:#22d3bf" href="opsimcal:simcal_observe">simcal_observe</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: simcal.py — SIMCAL operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

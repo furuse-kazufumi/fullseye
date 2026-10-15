@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 8 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-376 个示例中,检查实际运行的有 376 个。
+377 个示例中,检查实际运行的有 377 个。
 
 ### 各版本的算子数
 
@@ -134,11 +134,11 @@
 
 ## 查找算子
 
-共有 **3,246 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **64 篇族指南**。按维度的入口:
+共有 **3,251 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **65 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 936/936、类型化台账 2289/2301、单行门面 `fullseye.<名称>` 683/1434 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 936/936、类型化台账 2294/2306、单行门面 `fullseye.<名称>` 683/1435 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3246 篇中，附有可运行示例的 **3245** 篇(1 篇没有)，用法说明 120 字以上的 **3082** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3246 篇全有。
+**内容实测**: 3251 篇中，附有可运行示例的 **3250** 篇(1 篇没有)，用法说明 120 字以上的 **3087** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3251 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -189,6 +189,7 @@
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
+| `simcal` | 5 | [INDEX](ops/simcal/INDEX.md) · [guide](ops/simcal/guides/sim_to_real_calibration.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -290,7 +291,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 256 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,246 篇算子说明与 64 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,251 篇算子说明与 65 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
