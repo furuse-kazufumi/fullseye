@@ -1,8 +1,8 @@
 {
- "n_ops": 3233,
+ "n_ops": 3241,
  "tiers": {
   "color": 12,
-  "ledger": 2280,
+  "ledger": 2288,
   "nary": 17,
   "registry": 924
  },
@@ -2811,6 +2811,17 @@
    "in_sorts": [
     "matrix"
    ]
+  },
+  {
+   "name": "carbon_black_absorption",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "carla_camera_pose",
@@ -11440,6 +11451,30 @@
    ]
   },
   {
+   "name": "hyperspectral_band_weights",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "hyperspectral_capture",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
    "name": "icosphere",
    "halcon": "",
    "in_sort": null,
@@ -11822,6 +11857,17 @@
    "in_sorts": [
     "voxel"
    ]
+  },
+  {
+   "name": "ingaas_photodiode_qe",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "inlier_ratio",
@@ -12827,6 +12873,19 @@
    "in_sorts": [
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "kubelka_munk_reflectance",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -14580,6 +14639,17 @@
    "in_sort": null,
    "out_sort": "pairs",
    "category": "fiber",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_nir_absorption",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "matprop",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -16395,6 +16465,17 @@
    "in_sorts": [
     "rgba"
    ]
+  },
+  {
+   "name": "nir_model_info",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "no_overtaking_zones",
@@ -24745,6 +24826,17 @@
     "pairs",
     "pairs"
    ]
+  },
+  {
+   "name": "spectral_reflectance_from_material",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "spectral_slope",

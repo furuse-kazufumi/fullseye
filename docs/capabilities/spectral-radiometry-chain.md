@@ -28,7 +28,7 @@ Nine ops in `spectralrad` complete the spectral chain image = source × optics/o
 
 **向く**: NIR / SWIR の照明波長の選定、フィルタとセンサの組合せの比較、ウェハ・窓越しの像の電子数と CNR の見積り、ハロゲンと LED の比較、光子数と露光時間の当たりをつけること。
 
-**向かない**: ★センサの QE は Si の吸収だけの模型で、画素の構造(マイクロレンズ・裏面照射の反射防止膜・深いトレンチ分離)は `collection_depth_um` と `front_reflectance` の 2 つにまとめています。メーカーの QE の曲線を使うなら、測った曲線を pairs で渡して `spectral_product` に掛けてください。InGaAs・Ge のセンサの QE はまだありません。Si の k の表(Green 2008)は 250〜1450 nm で、その外の QE は ValueError です。光源の配光と光学系の集光効率(何光子が画素に届くか)はこの層の外です(`illumdesign` / `optscene`)。
+**向かない**: ★センサの QE は Si の吸収だけの模型で、画素の構造(マイクロレンズ・裏面照射の反射防止膜・深いトレンチ分離)は `collection_depth_um` と `front_reflectance` の 2 つにまとめています。メーカーの QE の曲線を使うなら、測った曲線を pairs で渡して `spectral_product` に掛けてください。InGaAs の QE は `ingaas_photodiode_qe`(能力ノート nir-hyperspectral-sorting)、Ge のセンサの QE はまだありません。Si の k の表(Green 2008)は 250〜1450 nm で、その外の QE は ValueError です。光源の配光と光学系の集光効率(何光子が画素に届くか)はこの層の外です(`illumdesign` / `optscene`)。
 
 ## 最初の 1 本
 

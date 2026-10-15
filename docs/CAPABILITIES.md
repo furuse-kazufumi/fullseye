@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 63 項目**
+**収録 64 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -34,6 +34,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
+| [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
@@ -464,7 +465,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (12)
+## 光と色 (13)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -513,6 +514,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
 
 動く例: `poc_material_optical_library`
+
+### [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md)
+
+食品のライン(ナッツ・茶葉・米)に混じる殻・木片・樹脂片や、リサイクルの PET / PP / PE / PS は、色を合わせられると RGB のカメラでは分かりません。近赤外(0.9〜2.5 µm)では C-H の倍音・結合音と O-H の吸収帯が材料ごとに違うので、分光で分けられます。ここはその鎖を、観察対象と光学系が**同じ材料表**を引く形で組む 8 本です。
+
+使う op: `material_nir_absorption`, `carbon_black_absorption`, `nir_model_info`, `ingaas_photodiode_qe`, `kubelka_munk_reflectance`, `spectral_reflectance_from_material`, `hyperspectral_band_weights`, `hyperspectral_capture`
+
+推奨パイプライン: [`material_nir_absorption`](ops/optics/matprop/material_nir_absorption.md) → [`kubelka_munk_reflectance`](ops/optics/spectral/kubelka_munk_reflectance.md) → [`hyperspectral_capture`](ops/optics/spectral/hyperspectral_capture.md)
+
+代替: [`spectral_reflectance_from_material`](ops/optics/spectral/spectral_reflectance_from_material.md), [`hyperspectral_band_weights`](ops/optics/spectral/hyperspectral_band_weights.md), [`ingaas_photodiode_qe`](ops/optics/spectral/ingaas_photodiode_qe.md), [`carbon_black_absorption`](ops/optics/matprop/carbon_black_absorption.md)
+
+限界: 吸収帯の幅と強さは推定で実測のスペクトルに合わせていない。場面と分類器のライブラリを同じモデルから作ると逆犯罪になる。Kubelka–Munk は 2 流束の近似で、光沢・層の不均一・強い異方散乱は扱わない。InGaAs の QE は形のモデル。
+
+実寸校正: 反射率は白板の電子数で割る平場補正(white_electrons)で読む。帯の中心は一次文献の実測、幅と強さは実測の帯(bands=...)に差し替える。
+
+動く例: `poc_hyperspectral_foreign_matter`
 
 ### [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md)
 

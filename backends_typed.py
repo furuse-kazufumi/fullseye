@@ -252,6 +252,16 @@ _OP_BRIDGE_SKIP = {
     "spectral_product",
     "spectral_integral",
     "spectral_stats",
+    # 2026-10-15 近赤外の分光撮像 8 本(materials 3 + spectralrad 5): 材料名・曲線・帯域の引数だけで曲線か表を返し、
+    # 画像を受けない(キューブは spectralrad.hyperspectral_capture_cube)。
+    "material_nir_absorption",
+    "carbon_black_absorption",
+    "nir_model_info",
+    "ingaas_photodiode_qe",
+    "kubelka_munk_reflectance",
+    "spectral_reflectance_from_material",
+    "hyperspectral_band_weights",
+    "hyperspectral_capture",
     # 2026-10-14 材料の物性ライブラリ 16 本(materials、matprop): 全部が材料名と波長の引数だけで
     # 表か曲線(pairs)を返す側で、画像を受けない。台帳(`fullseye.ledger.material_transmittance` …)から使う。
     "material_table",

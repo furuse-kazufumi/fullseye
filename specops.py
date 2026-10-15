@@ -115,6 +115,7 @@ __all__ = [
     "stain_unmix", "stain_recompose", "stain_vectors_from_patches", "STAIN_VECTORS",
     "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
+    "spec_band_selection_fisher", "MAX_SELECT_PIXELS",
     "SPECTRALOPS",
     "PANSHARPEN_METHODS", "FUSE_METHODS",
     "MAX_VOXELS", "MAX_FILE_BYTES", "MAX_BANDS",
@@ -1372,6 +1373,106 @@ def spec_fuse(images, method: str = "pca", detail_size: int = 3) -> np.ndarray:
     return _finite_or_raise(np.ascontiguousarray(fused), "spec_fuse('max_abs_detail')")
 
 
+
+# --------------------------------------------------------------------------- #
+# Band selection (Fisher criterion)                                           #
+# --------------------------------------------------------------------------- #
+#: Cap on the labelled pixels used by :func:`spec_band_selection_fisher`.
+MAX_SELECT_PIXELS = 4_000_000
+
+
+def spec_band_selection_fisher(cube, labels, n_select: int = 4, ridge: float = 1e-9):
+    """Rank bands by the **Fisher criterion** and greedily pick a small separating subset.
+
+    Which few bands of a hyperspectral cube would a cheaper multispectral camera
+    (3–6 filters) need? Given a cube ``(H, W, B)`` and an integer ``labels`` map
+    ``(H, W)`` (``< 0`` = ignore), this returns
+
+    * ``fisher`` ``(B,)`` — the per-band multi-class Fisher ratio
+      ``Σ_k n_k (μ_kb − μ_b)² / Σ_k Σ_{i∈k} (x_ib − μ_kb)²`` (between-class over
+      within-class scatter, Fisher 1936); two classes reduce to
+      ``n₁n₂/(n₁+n₂) · (μ₁ − μ₂)² / (S₁ + S₂)`` with ``S`` the within-class sums;
+    * ``selected`` — *n_select* band indices chosen by **sequential forward
+      selection** on the multivariate criterion ``J(S) = trace(S_w⁻¹ S_b)`` over
+      the chosen bands (``S_w`` regularised by ``ridge · trace(S_w)/|S|``);
+    * ``criterion`` — ``J`` after each addition (non-decreasing);
+    * ``single_best`` — the best band alone (``argmax fisher``).
+
+    Greedy forward selection is **not** guaranteed optimal (Pudil et al. 1994);
+    it is the standard cheap answer and is what this returns — nothing more.
+    The criterion assumes roughly Gaussian classes with a shared covariance.
+    It is invariant to a per-band affine rescaling (gain/offset of a band), not
+    to a per-pixel brightness change — normalise first (e.g. divide by the
+    pixel's mean) if illumination varies.
+
+    References: R. A. Fisher, *Ann. Eugenics* 7, 179 (1936); P. Pudil, J. Novovičová,
+    J. Kittler, *Pattern Recognit. Lett.* 15, 1119 (1994) (floating search; plain
+    forward selection is its first stage).
+    """
+    c = _as_cube(cube)
+    H, W, B = c.shape
+    lab = np.asarray(labels)
+    if lab.shape != (H, W):
+        raise ValueError("spec_band_selection_fisher: labels must be (H, W) = (%d, %d), got %s" % (H, W, lab.shape))
+    if not np.issubdtype(lab.dtype, np.integer):
+        if not np.all(np.isfinite(lab)) or np.any(lab != np.round(lab)):
+            raise ValueError("spec_band_selection_fisher: labels must be integers")
+        lab = lab.astype(np.int64)
+    k = int(n_select)
+    if not (1 <= k <= B):
+        raise ValueError("spec_band_selection_fisher: n_select must lie in [1, %d], got %r" % (B, n_select))
+    rg = float(ridge)
+    if not (np.isfinite(rg) and rg >= 0.0):
+        raise ValueError("spec_band_selection_fisher: ridge must be finite and >= 0, got %r" % (ridge,))
+    m = lab >= 0
+    if int(m.sum()) > MAX_SELECT_PIXELS:
+        raise ValueError("spec_band_selection_fisher: %d labelled pixels exceed MAX_SELECT_PIXELS=%d"
+                         % (int(m.sum()), MAX_SELECT_PIXELS))
+    X = c[m]
+    y = lab[m]
+    classes, counts = np.unique(y, return_counts=True)
+    if classes.size < 2 or np.any(counts < 2):
+        raise ValueError("spec_band_selection_fisher: need >= 2 classes with >= 2 pixels each, got %s"
+                         % dict(zip(classes.tolist(), counts.tolist())))
+    mu = X.mean(axis=0)
+    Sb = np.zeros((B, B))
+    Sw = np.zeros((B, B))
+    for cl, n in zip(classes, counts):
+        Xc = X[y == cl]
+        mc = Xc.mean(axis=0)
+        d = (mc - mu)[:, None]
+        Sb += n * (d @ d.T)
+        D = Xc - mc
+        Sw += D.T @ D
+    within = np.diag(Sw).copy()
+    if np.any(within <= 0.0):
+        bad = int(np.flatnonzero(within <= 0.0)[0])
+        raise ValueError("spec_band_selection_fisher: band %d has zero within-class scatter (constant band); "
+                         "the Fisher ratio is undefined" % bad)
+    fisher = np.diag(Sb) / within
+
+    def crit(idx):
+        sw = Sw[np.ix_(idx, idx)]
+        sb = Sb[np.ix_(idx, idx)]
+        sw = sw + np.eye(len(idx)) * (rg * np.trace(sw) / len(idx))
+        return float(np.trace(np.linalg.solve(sw, sb)))
+
+    chosen, traj = [], []
+    for _ in range(k):
+        best, best_j = None, -np.inf
+        for b in range(B):
+            if b in chosen:
+                continue
+            j = crit(chosen + [b])
+            if best is None or j > best_j + 1e-12 * max(1.0, abs(best_j)):
+                best, best_j = b, j
+        chosen.append(int(best))
+        traj.append(best_j)
+    return {"fisher": _finite_or_raise(fisher, "spec_band_selection_fisher"), "selected": chosen,
+            "criterion": np.asarray(traj), "single_best": int(np.argmax(fisher)),
+            "classes": classes.tolist(), "counts": counts.tolist()}
+
+
 #: Introspectable list of the spectral operations this module exposes.
 SPECTRALOPS = (
     "read_envi", "write_envi",
@@ -1382,4 +1483,5 @@ SPECTRALOPS = (
     "spec_unmix", "spec_endmembers_ppi",
     "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
+    "spec_band_selection_fisher",
 )

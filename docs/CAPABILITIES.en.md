@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 63 capabilities**
+**Currently 64 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -35,6 +35,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
+| [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [Compute reflection, refraction and interference](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
@@ -397,7 +398,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (12)
+## Light and colour (13)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -438,6 +439,18 @@ Sixteen ops in the new `matprop` category of `opsoptics`, backed by one record p
 Operators: `material_table`, `material_record`, `material_optical_constants`, `material_dispersion`, `material_extinction`, `material_absorption`, `material_transmittance`, `material_reflectance`, `abbe_number`, `glass_map`, `thermo_optic_coefficient`, `plate_focus_shift`, `silicon_free_carrier_absorption`, `material_from_sellmeier`, `material_from_curves`, `read_glass_catalog_agf`
 
 Runnable: `poc_material_optical_library`
+
+### [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md)
+
+Eight ops build the NIR sorting chain with the object and the optics reading the same material table: absorption bands for polymers, lipids, proteins, carbohydrates and lignin (and nut kernels, shells and wood as mixtures; water from the table's n,k), carbon black, the Kubelka–Munk reflectance of a scattering layer, reflectance from a material name with grain-size scattering and the Saunderson surface correction, an InGaAs QE from the direct-gap absorption edges, and the linear map from reflectance to electrons per band through a halogen lamp, the lens glass, the band filters and the QE. Gates: the Kubelka–Munk limits and inverse, measured polymer trough positions within 5 nm, water absorption within 10 % of Kou 1993, linearity and the EMVA variance of the captured cube, and the Fisher ratio's two-class closed form.
+
+Operators: `material_nir_absorption`, `carbon_black_absorption`, `nir_model_info`, `ingaas_photodiode_qe`, `kubelka_munk_reflectance`, `spectral_reflectance_from_material`, `hyperspectral_band_weights`, `hyperspectral_capture`
+
+Pipeline: [`material_nir_absorption`](ops/optics/matprop/material_nir_absorption.md) → [`kubelka_munk_reflectance`](ops/optics/spectral/kubelka_munk_reflectance.md) → [`hyperspectral_capture`](ops/optics/spectral/hyperspectral_capture.md)
+
+Alternatives: [`spectral_reflectance_from_material`](ops/optics/spectral/spectral_reflectance_from_material.md), [`hyperspectral_band_weights`](ops/optics/spectral/hyperspectral_band_weights.md), [`ingaas_photodiode_qe`](ops/optics/spectral/ingaas_photodiode_qe.md), [`carbon_black_absorption`](ops/optics/matprop/carbon_black_absorption.md)
+
+Runnable: `poc_hyperspectral_foreign_matter`
 
 ### [Compute reflection, refraction and interference](capabilities/optics-and-materials.md)
 

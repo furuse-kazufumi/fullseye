@@ -893,7 +893,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: moire_align(モアレによる位置合わせ、moirealign)8 op を新しい族として追加(221 → 229)、telecentric(テレセントリックレンズと寸法計測)7 op(229 → 236)、linescan(TDI ラインスキャンとラインスキャン用レンズ)6 op(236 → 242)、pixelshift(ピクセルシフト撮像)6 op(242 → 248)。
     # 2026-10-15: film(多層膜の分光反射率と膜厚、filmoptics)5 op を新しい族として追加(248 → 253)。
     # 2026-10-15: confocal(クロマティック共焦点、chromconf)6 op を新しい族として追加(253 → 259)。
-    assert len(opsoptics.OPSOPTICS) == 259
+    # 2026-10-15: 近赤外の分光撮像(食品の異物・樹脂の選別)で matprop に 3 op、spectral に 5 op(259 → 267)。
+    assert len(opsoptics.OPSOPTICS) == 267
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
     assert len(opsoptics.list_ops("moire_align")) == 8
@@ -902,8 +903,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("telecentric")) == 7
     assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("pixelshift")) == 6
-    assert len(opsoptics.list_ops("matprop")) == 16
-    assert len(opsoptics.list_ops("spectral")) == 9
+    assert len(opsoptics.list_ops("matprop")) == 19
+    assert len(opsoptics.list_ops("spectral")) == 14
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。

@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 近赤外のハイパースペクトルで見た目が同じ異物を選別する(8 op + 帯域選択)
+- `materials`: `material_nir_absorption`(樹脂・脂質・タンパク質・炭水化物・リグニンと、ナッツの仁・殻・木片の近赤外の吸収帯。中心は一次文献の実測、幅と強さは推定、水は表の n,k)/ `carbon_black_absorption`(Bond & Bergstrom 2006)/ `nir_model_info`。
+- `spectralrad`: `ingaas_photodiode_qe`(直接遷移の吸収端 + Urbach の裾、標準 1.7 µm と拡張品)/ `kubelka_munk_reflectance`(Kubelka 1948 の閉形式)/ `spectral_reflectance_from_material`(粒径の散乱 + Saunderson の界面)/ `hyperspectral_band_weights` / `hyperspectral_capture`(と画像の `hyperspectral_capture_cube`)。`specops.spec_band_selection_fisher`(Fisher 比 + 前向き選択)。
+- PoC `poc_hyperspectral_foreign_matter`(25 門、図 12 枚 + GIF): RGB の AUC 0.48 / 標準 InGaAs 1.0000、Fisher の 3 帯域で全 71 帯と同じ、濡れ・ランプのずれ・光子・黒い樹脂(2 wt %)・逆犯罪(ライブラリが知らないゆがみ 6 % で誤排出 14 %)。
+
+### Fixed — 材料表の水の k
+- RII の Hale & Querry の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を 1/3 に潰していた。k だけ Segelstein 1981 に(Kou ら 1993 の実測と 10 % 以内)、n は Hale のまま。
+
 ### Added — クロマティック共焦点変位センサ(chromconf 6 op + PoC)
 - `chromconf`(`opsoptics` の新カテゴリ `confocal`、6 op): `chromatic_confocal_probe`(レンズの処方と材料表の硝材の分散、硝材は n_d・V_d で指す `GLASS_*` → 波長ごとの焦点位置・NA・縦球面収差と、鏡で較正したピーク位置)、`confocal_axial_response`(鏡面 sinc²(u/2)・点 sinc⁴(u/4)、縦球面収差は瞳の数値積分)、`chromatic_confocal_spectrum`(面と層構成 → 戻りスペクトル、Fresnel・往復の透過・傾き・粗さ・光源・分光器・雑音)、`chromatic_confocal_peaks`(4 推定法、白色参照で光源のむらを補正)、`chromatic_confocal_readout`(高さと透明板の厚さ、NA の補正)、`chromatic_confocal_limits`(範囲・分解能・傾き・Sparrow の最小膜厚)。全部 _OP_BRIDGE_SKIP、探針(ledger_contracts)には既定の較正表と透明板のスペクトルを種に。
 - PoC `poc_chromatic_confocal`: 高分散の重フリント(V_d 20.9)の非球面単レンズで 450〜700 nm の焦点が 1,191 µm。焦点は厚肉レンズの閉形式と 4e-12 µm、軸応答の幅は 0.443 λ/(1 − cos α)。★色球面収差(450 nm で −40 µm)が較正のピークを半分ずらす。★「鏡を動かす較正」はガウスの偏り(0.060 → 0.014 µm)を消すが放物線(ビンで振れる偏り)は消せない。★ホウケイ酸クラウン 500 µm の厚さは近軸の補正で −1.23 µm、NA の補正で −0.07 µm、n_d を使うと −2.18 µm。金は 509 nm 付近で 0.15 µm 遠く読める(反射率の傾き / 応答の曲率の閉形式が予言)。

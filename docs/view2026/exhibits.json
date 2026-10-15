@@ -3194,6 +3194,22 @@
    }
   },
   {
+   "id": "poc_hyperspectral_foreign_matter",
+   "group": "wing_color",
+   "media": "19_band_sweep.gif",
+   "motion": true,
+   "thumb_src": "04_real_pork_belly.png",
+   "label": {
+    "ja": "見た目が同じ異物をハイパースペクトルで選別",
+    "en": "Sorting look-alike foreign matter with hyperspectral NIR",
+    "zh": "用高光谱近红外分选外观相同的异物",
+    "tw": "用高光譜近紅外分選外觀相同的異物",
+    "ko": "겉보기가 같은 이물을 초분광 근적외로 선별",
+    "de": "Gleich aussehende Fremdkörper mit hyperspektralem NIR aussortieren",
+    "hi": "एक जैसे दिखने वाले बाहरी कणों को hyperspectral NIR से छाँटना"
+   }
+  },
+  {
    "id": "poc_nir_silicon_transmission",
    "group": "wing_color",
    "media": "05_best_led_sweep.gif",
@@ -5842,6 +5858,13 @@
     "ko": "줄무늬의 거울상으로 광택면의 µm 오목을 잰다(위상 측정 디플렉토메트리: 줄무늬 → 위상 → 기울기 → 곡률)",
     "de": "Mikrometer-Dellen auf glänzenden Flächen im Spiegelbild eines Streifenbildschirms messen (phasenmessende Deflektometrie: Streifen, Phase, Neigung, Krümmung)",
     "hi": "चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature)"
+   },
+   "nir-hyperspectral-sorting": {
+    "zh": "用近红外高光谱分选外观相同的异物(材料表的吸收带、散射层的反射、InGaAs 各波段的电子数)",
+    "tw": "用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數)",
+    "ko": "근적외 초분광으로 겉보기가 같은 이물을 선별(재료표의 흡수대, 산란층의 반사, InGaAs 대역별 전자 수)",
+    "de": "Gleich aussehende Fremdkörper mit NIR-Hyperspektral aussortieren (Absorptionsbanden der Materialtabelle, Reflexion streuender Schichten, InGaAs-Elektronen pro Band)",
+    "hi": "near-infrared hyperspectral से एक जैसे दिखने वाले बाहरी कण छाँटना (material table की absorption bands, scattering layer की reflectance, InGaAs के हर band के electrons)"
    },
    "spectral-radiometry-chain": {
     "zh": "光源 × 对象 × 传感器的光谱链(普朗克・CIE A・LED・滤光片・Si 的 QE)",

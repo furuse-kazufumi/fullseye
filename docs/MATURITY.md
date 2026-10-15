@@ -55,6 +55,7 @@
 | [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md) | One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer) | 光と色 | `validated-public-real-data` | 15/16 | `poc_material_optical_library` real → tests/test_poc_scripts_run.py |
 | [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md) | How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty) | 測る | `verified-synthetic` | 11/11 | `poc_measurement_system_analysis` synthetic → tests/test_poc_scripts_run.py |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap) | 測る | `verified-synthetic` | 8/8 | `poc_moire_alignment` synthetic → tests/test_poc_scripts_run.py |
+| [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons) | 光と色 | `validated-public-real-data` | 6/8 | `poc_hyperspectral_foreign_matter` real → tests/test_poc_scripts_run.py |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | OCR pre-processing (deskew, local binarisation, line extraction) | 見つける | `verified-synthetic` | 2/4 | `gallery2d_segmentation` synthetic → tests/test_example_scripts_run.py<br>`poc_matrix_code_reading` synthetic → tests/test_poc_scripts_run.py<br>`gallery2d_region` synthetic → tests/test_example_scripts_run.py |
 | [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md) | Turn a photograph into a single line (stipple, tour, rotating circles) | 描く | `validated-public-real-data` | 9/9 | `poc_one_stroke_epicycles` real → tests/test_poc_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
@@ -101,8 +102,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 375 |
-| `tests/test_poc_scripts_run.py` が走らせる | 238 |
+| 2-D 台帳の例 | 376 |
+| `tests/test_poc_scripts_run.py` が走らせる | 239 |
 | `tests/test_example_scripts_run.py` が走らせる | 137 |
 | **どの門も走らせていない** | **0** |
 
