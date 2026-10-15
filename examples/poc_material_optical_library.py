@@ -182,14 +182,22 @@ def chapter_glass():
     gate("プラスチック 4 種はどれも V_d < 60(硝子なら同じ n_d のクラウンが 60 前後)",
          all(pm[p]["vd"] < 60 for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", COP)),
          "PMMA %.1f / PC %.1f / PS %.1f / COP %.1f" % tuple(pm[p]["vd"] for p in ("PMMA", "POLYCARBONATE", "POLYSTYRENE", COP)))
-    worst = 0.0
+    worst, worst_k, zero_k = 0.0, 0.0, 0.0
     for (name, wl), (n2, k2) in OPTILAND.items():
         a = MT.material_optical_constants(name, wl)
         worst = max(worst, abs(a["n"] - n2))
         if k2 > 0:
-            worst = max(worst, abs(a["k"] / k2 - 1.0) * 1e-6)
+            worst_k = max(worst_k, abs(a["k"] / k2 - 1.0))
+        else:
+            zero_k = max(zero_k, abs(a["k"]))
     NUMBERS["optiland_worst"] = worst
-    gate("第二実装 optiland の n(λ) と %d 点で 1e-6 以内(k は相対 1)" % len(OPTILAND), worst <= 1e-6, "最大 %.1e" % worst)
+    NUMBERS["optiland_worst_k_rel"] = worst_k
+    # ★2026-10-15: 以前は k の相対差に 1e-6 を掛けて n の門に混ぜていたので、k が ±100 % ずれても通った。
+    #   写した k は有効数字 5 桁(1.4361e-07 など)なので、丸めの幅は相対 5e-5。optiland が k を持たない点(0)では
+    #   こちらも 1e-8 未満(水の 500 nm は Segelstein の 9e-10、吸収の無い区間)。
+    gate("第二実装 optiland の n(λ) と %d 点で 1e-6 以内、k は写した桁(相対 5e-5)、k を持たない点は 1e-8 未満" % len(OPTILAND),
+         worst <= 1e-6 and worst_k <= 5e-5 and zero_k < 1e-8,
+         "n 最大 %.1e・k 相対 %.1e・k の 0 点 %.1e" % (worst, worst_k, zero_k))
     return rows, gm
 
 
