@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 工業用 OCT(octscan 13 op + PoC、実測は CC BY 4.0 の公開データ)
+- `octscan`(`opsoptics` の新カテゴリ `oct`、13 op): `oct_design`(軸分解能 (2 ln 2/π) λ0²/Δλ・深さ範囲 λ0²/(4δλ)・roll-off の |sinc|×ガウス・ショット雑音律の SNR・横分解能と焦点深度)、`oct_dispersion_broadening`(√(1+σ⁴φ₂²) と補償係数 a2・a3)、`oct_interferogram` / `oct_bscan_simulate`(層の並び → 干渉スペクトル。場の和の |E|² なので相互相関・自己相関・DC が入る。分光器(λ 等間隔 / k 等間隔)と波長掃引、屈折率と分散は `materials`、空洞・点散乱体・ビームの横の広がりと焦点・点照明とライン照明)、`oct_from_spectra`(生のスペクトルの入口)、`oct_k_linearize`、`oct_dispersion_estimate`(鏡の位相 / 鋭さ最大)、`oct_dispersion_compensate`、`oct_ascan`(窓・DC 除去・直交の組で鏡像を分ける)、`oct_bscan`、`oct_layer_thickness`(群屈折率で物理厚。点像の幅の 1.4 倍より狭い・雑音に沈む・谷から立たない界面は拒否)、`oct_bscan_boundaries`(動的計画法で界面を辿る、表面からの相対の探索)、`oct_bscan_flatten`。
+- PoC `poc_industrial_oct`(32 門、図 14 枚 + GIF): 公開の自動車塗装の生スペクトル(Liverpool Research Data Catalogue 126、CC BY 4.0、`data/oct_real/`)で透明層が論文の OCT と 1.5 µm・顕微鏡と 3.6 µm 以内、着色層は 4 枚中 3 枚が顕微鏡と 2.3 µm 以内(1 枚は 7.6 µm ずれて未解決)、白の見本の着色層の下は拒否、透明層の光学厚の深さに水平な自己相関の幽霊。★ファイルと論文の表の見本の対応は論文に無く、透明層の厚さで推定(色の名前が入れ替わって見える)。合成: 群屈折率で真値と 0.04 µm(位相屈折率なら 0.9〜1.9 % 厚い)、SNR が閉形式と 0.01 dB(λ 等間隔 + 3 次補間は補間で雑音が相関して +1 dB 甘く見える)、分散の広がりが閉形式と 0.5 % 以内で 3 通りの補償で戻る、鏡像の残りが tan(δ/2) と 0.1 dB、薄い層と散乱の限界、コートの厚さの地図と空洞・剥離。
+- 能力ノート `docs/capabilities/industrial-oct.md`、op 要約 6 言語、展示(産業検査ウィング)・ViEW2026 の一覧、手書き件数 +13、COLLECTION_SIZES。
+
 ### Added — 照明の円錐と観察の NA(illumination に solid_angle 5 op + PoC)
 - `illumdesign` に 5 op(`opsoptics` の `illumination`): `solid_angle_light`(各点に同じ光の円錐が届く遠方場の照明。半角・傾き・方位・放射輝度、`irradiance_map` / `defect_contrast` にも渡せる)、`solid_angle_boundaries`(見えない傾き |α − β|/2・暗くなる傾き (α + β)/2・平らな地の明るさ・感度・regime の閉形式)、`solid_angle_brightness`(傾きごとの明るさ: 2 つの球冠の交わりの閉形式と、レンズの瞳を射影立体角で重みづけた数値積分。狭い側の円錐で標本を取るので台地が分解できる。微小面の粗さ σ は閉形式をガウスで平均した決定的な格子積分)、`solid_angle_sweep`(α に対するコントラスト)、`solid_angle_render`(法線マップをその照明とテレセンで撮る、粗さの地図つき)。
 - PoC `poc_illumination_cone_vs_na`(15 門、図 5 枚 + GIF): 閉形式と瞳の数値積分の差 0.002、打痕(最大傾き 0.25°)の画像のコントラストが閉形式と 1e-4、α = 0.5° と 7° で打痕が消える、ヘアラインの筋を消して傷を黒くする α の帯(3.5〜6.1°)、円錐を β 傾けて傾きの符号を読む、★うねり ±0.25° と粗さ σ で設計が効かなくなる。再利用できるライセンスの実画像(照明の立体角だけを変えた比較写真)は見つからず、実画像との突合は未了。

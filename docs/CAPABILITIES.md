@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 65 項目**
+**収録 66 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -32,6 +32,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
+| [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -60,7 +61,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (22)
+## 測る (23)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -117,6 +118,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`dem_height_frame_convert` で `H = h - N`(N は `dem_geoid_height` が公開格子から引く)。混ざった表は `dem_height_frame_residual` の残差で見張り、公開測量成果 523 点で答え合わせ(`poc_geodetic_benchmarks_real`)。
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md)
+
+塗装・コンフォーマルコート・接着層・多層フィルムの**層の並び**と、層の中の空洞・剥離を、壊さずに深さ方向で見ます。分光器型(SD-OCT)は 1 回の露光の干渉スペクトルを、波長掃引型(SS-OCT)は掃引の時間波形を、波数 k に等間隔に並べ直して FFT すると、深さごとの反射の振幅(A スキャン)になります。横に走査すると断面(B スキャン)です。
+
+使う op: `oct_design`, `oct_dispersion_broadening`, `oct_interferogram`, `oct_bscan_simulate`, `oct_from_spectra`, `oct_k_linearize`, `oct_dispersion_estimate`, `oct_dispersion_compensate`, `oct_ascan`, `oct_bscan`, `oct_layer_thickness`, `oct_bscan_boundaries`, `oct_bscan_flatten`
+
+推奨パイプライン: [`oct_design`](ops/optics/oct/oct_design.md) → [`oct_from_spectra`](ops/optics/oct/oct_from_spectra.md) → [`oct_bscan`](ops/optics/oct/oct_bscan.md) → [`oct_bscan_boundaries`](ops/optics/oct/oct_bscan_boundaries.md) → [`oct_bscan_flatten`](ops/optics/oct/oct_bscan_flatten.md) → [`oct_layer_thickness`](ops/optics/oct/oct_layer_thickness.md)
+
+代替: [`oct_interferogram`](ops/optics/oct/oct_interferogram.md), [`oct_bscan_simulate`](ops/optics/oct/oct_bscan_simulate.md), [`oct_ascan`](ops/optics/oct/oct_ascan.md), [`oct_dispersion_estimate`](ops/optics/oct/oct_dispersion_estimate.md), [`material_group_index`](ops/optics/fiber/material_group_index.md), [`csi_design`](ops/interferometry/design/csi_design.md)
+
+限界: 散乱は 1 回散乱(Beer–Lambert)の模型まで(多重散乱の背景は無い)。点像の幅の 1.4 倍(÷ n_g)より薄い層・雑音の 12 dB 上に立たない下の面・谷から 1 dB 立たない面は拒否。自己相関の幽霊は位相をずらした 2 枚か試料腕だけのスペクトルが無いと消えない。
+
+実寸校正: 深さの刻みは分光器の波長の較正(画素ごとの波長)で決まり、物理厚は光学厚 ÷ 群屈折率。群屈折率は材料表の名前か、厚さの既知の試料で校正した値を使う(位相屈折率で割ると 1〜2 % 厚く出る)。
+
+動く例: `poc_industrial_oct`
 
 ### [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md)
 

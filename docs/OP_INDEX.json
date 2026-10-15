@@ -1,8 +1,8 @@
 {
- "n_ops": 3246,
+ "n_ops": 3259,
  "tiers": {
   "color": 12,
-  "ledger": 2293,
+  "ledger": 2306,
   "nary": 17,
   "registry": 924
  },
@@ -16861,6 +16861,169 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "oct_ascan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "oct_bscan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "oct_bscan_boundaries",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "oct_bscan_flatten",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "oct_bscan_simulate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "oct_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "oct_dispersion_broadening",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "oct_dispersion_compensate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "oct_dispersion_estimate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "oct_from_spectra",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "oct_interferogram",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "oct_k_linearize",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "oct_layer_thickness",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "oct",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {

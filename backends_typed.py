@@ -197,6 +197,21 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-15 光干渉断層 13 本(octscan、oct): 表(干渉スペクトル・A スキャン)を受けて表を返す側で、画像 → 画像の
+    # op ではない。oct_bscan は表 → 断面像、oct_bscan_boundaries は断面像 → 表。台帳(`fullseye.ledger.oct_*`)から使う。
+    "oct_design",
+    "oct_dispersion_broadening",
+    "oct_interferogram",
+    "oct_bscan_simulate",
+    "oct_from_spectra",
+    "oct_k_linearize",
+    "oct_dispersion_estimate",
+    "oct_dispersion_compensate",
+    "oct_ascan",
+    "oct_bscan",
+    "oct_layer_thickness",
+    "oct_bscan_boundaries",
+    "oct_bscan_flatten",
     # 2026-10-15 TDI ラインスキャン 6 本(linescan、linescan): 表を返す側(撮像の linescan_acquire も dict を返す)で、
     # 画像 → 画像の op ではない。台帳(`fullseye.ledger.tdi_snr` …)から使う。
     "tdi_snr",

@@ -61,7 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[abcd_trace](../geometric/abcd_trace.md) · [emva_filter_distortion](../sensorchar/emva_filter_distortion.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md) · [pixel_shift_capture](pixel_shift_capture.md) · [pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md)
+[abcd_trace](../geometric/abcd_trace.md) · [emva_filter_distortion](../sensorchar/emva_filter_distortion.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md) · [pixel_shift_capture](pixel_shift_capture.md) · [pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md) · [oct_from_spectra](../oct/oct_from_spectra.md)
 
 ## 同カテゴリ(`pixelshift`)
 

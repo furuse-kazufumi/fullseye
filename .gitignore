@@ -16,6 +16,8 @@ data/*
 !data/macro_champions.json
 # Public measured data for the thin-film PoC (CC BY 4.0, small extracts; source and changes in its README.md).
 !data/thin_film_real/
+# Public measured OCT spectra for the industrial-OCT PoC (CC BY 4.0, a small extract; source and changes in its README.md).
+!data/oct_real/
 
 # packaging build artifacts
 *.egg-info/

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-65 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+66 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -100,6 +100,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Die Kennzahlen eines Kameradatenblatts mit dem Verfahren von EMVA 1288 nachmessen und sehen, wie stark kamerainterne Verarbeitung sie verschiebt (Linear und General): [Erklärung](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · Beispiele [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - Verzeichnungskoeffizienten aus geraden Linien schätzen (Plumb-Line, ohne Schachbrett): [Erklärung](../../capabilities/estimate-lens-distortion.md) _(ja)_ · Beispiele [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - Messungen auf die Erde bringen (ECEF, Höhenbezug, lokales ENU): [Erklärung](../../capabilities/geodetic-frames.md) _(ja)_ · Beispiele [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- Industrielle OCT (spektrales Interferogramm, k-Linearisierung, Dispersionskompensation, A/B-Scans, Schichtdicke über den Gruppenindex): [Erklärung](../../capabilities/industrial-oct.md) _(ja)_ · Beispiele [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - Innendurchmesser eines runden Teils bis in Millimeter: [Erklärung](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · Beispiele [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
 - Speckle setzt die Fehlergrenze des Laser-Lichtschnitts (kohärente Abbildung, Speckle-Statistik und Triangulationsunsicherheit): [Erklärung](../../capabilities/laser-speckle-floor.md) _(ja)_ · Beispiele [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - Vor dem Messen vorhersagen, wie weit Interreflexion in konkaven Teilen Streifenprojektion und ToF verfälscht (globaler Lichttransport, Trennung direkt/global, Micro Phase Shifting): [Erklärung](../../capabilities/light-transport.md) _(ja)_ · Beispiele [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
@@ -176,7 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-240 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+241 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -195,7 +196,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (37)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (38)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D-Barcode" width="200" height="200"><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Elektroden-Tortuosität" width="200" height="200"><span>Elektroden-Tortuosität</span></a>
@@ -234,6 +235,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_si_wafer_pl_defect_visibility.jpg" alt="PL-Rille gegen Diffusionslänge" width="200" height="200"><span>PL-Rille gegen Diffusionslänge</span></a>
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="Beleuchtungskegel und Abbildungs-NA" width="200" height="200"><b>&#9654;</b><span>Beleuchtungskegel und Abbildungs-NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI-Zeilenkamera und Zeilenobjektive" width="200" height="200"><span>TDI-Zeilenkamera und Zeilenobjektive</span></a>
+<a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="Industrielle OCT (Lackschichten und verborgene Fehler)" width="200" height="200"><span>Industrielle OCT (Lackschichten und verborgene Fehler)</span></a>
 </div>
 </details>
 

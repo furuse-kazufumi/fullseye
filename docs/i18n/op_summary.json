@@ -29160,6 +29160,123 @@
    "de": "Fügt einer Messtabelle (Rückgabe von ``measure_pairs`` / ``apply_metrology_model``) mm-Spalten hinzu.",
    "hi": "measurement table (``measure_pairs`` / ``apply_metrology_model`` का return) में mm columns जोड़ता है।"
   },
+  "optics/oct_design": {
+   "fp": "79b8cdc2daaa",
+   "en": "OCT performance in closed form **before measuring** (``table``): axial resolution, depth range, sensitivity roll-off, SNR, lateral resolution and depth of focus.",
+   "zh": "在**测量之前**用闭式求出 OCT 的性能(``table``):轴向分辨率、深度范围、灵敏度衰减(roll-off)、信噪比、横向分辨率与焦深。",
+   "tw": "在**量測之前**用閉式求出 OCT 的性能(``table``):軸向解析度、深度範圍、靈敏度衰減(roll-off)、訊噪比、橫向解析度與焦深。",
+   "ko": "**측정하기 전에** OCT의 성능을 닫힌 형식으로(``table``): 축 방향 분해능, 깊이 범위, 감도 roll-off, SNR, 횡 분해능과 초점 심도.",
+   "de": "OCT-Leistung in geschlossener Form **vor der Messung** (``table``): axiale Auflösung, Tiefenbereich, Empfindlichkeitsabfall (Roll-off), SNR, laterale Auflösung und Schärfentiefe.",
+   "hi": "**मापने से पहले** OCT का प्रदर्शन closed form में (``table``): axial resolution, depth range, sensitivity roll-off, SNR, lateral resolution और depth of focus।"
+  },
+  "optics/oct_dispersion_broadening": {
+   "fp": "6adf9cd5458a",
+   "en": "How much an A-scan peak broadens from a dispersion mismatch, a material (length L, round trip) present only in the sample arm (``table``, closed form).",
+   "zh": "只在样品臂中存在的材料(长度 L,往返)造成的色散失配使 A 扫描的峰展宽多少倍(``table``,闭式解)。",
+   "tw": "只在樣品臂中存在的材料(長度 L,往返)造成的色散失配使 A 掃描的峰展寬多少倍(``table``,閉式解)。",
+   "ko": "샘플 팔에만 있는 재료(길이 L, 왕복)의 분산 불일치로 A 스캔의 피크가 몇 배 넓어지는가(``table``, 닫힌 형식).",
+   "de": "Wie stark sich ein A-Scan-Peak durch eine Dispersionsfehlanpassung verbreitert, ein Material (Länge L, Hin- und Rückweg) nur im Probenarm (``table``, geschlossene Form).",
+   "hi": "केवल sample arm में मौजूद material (लंबाई L, आना-जाना) के dispersion mismatch से A-scan का peak कितने गुना चौड़ा होता है (``table``, closed form)।"
+  },
+  "optics/oct_interferogram": {
+   "fp": "7a7d2ac47b72",
+   "en": "The **spectral interferogram** of one OCT measurement of a layer stack (``sample``) (``table``).",
+   "zh": "用 OCT 对层结构(``sample``)测量一次得到的**干涉光谱**(``table``)。",
+   "tw": "用 OCT 對層結構(``sample``)量測一次得到的**干涉光譜**(``table``)。",
+   "ko": "층 구조(``sample``)를 OCT로 한 번 측정한 **간섭 스펙트럼**(``table``).",
+   "de": "Das **spektrale Interferogramm** einer OCT-Messung eines Schichtstapels (``sample``) (``table``).",
+   "hi": "एक layer stack (``sample``) के एक OCT measurement का **spectral interferogram** (``table``)।"
+  },
+  "optics/oct_bscan_simulate": {
+   "fp": "7b8cd074f4e3",
+   "en": "A **bundle of spectral interferograms forming a B-scan**, scanned laterally across a cross-section (``sample2d``) (``table``).",
+   "zh": "在横截面(``sample2d``)上横向扫描得到的 **B 扫描干涉光谱组**(``table``)。",
+   "tw": "在橫截面(``sample2d``)上橫向掃描得到的 **B 掃描干涉光譜組**(``table``)。",
+   "ko": "단면(``sample2d``)을 가로로 주사한 **B 스캔 간섭 스펙트럼 묶음**(``table``).",
+   "de": "Ein **Bündel spektraler Interferogramme eines B-Scans**, lateral über einen Querschnitt (``sample2d``) gescannt (``table``).",
+   "hi": "किसी cross-section (``sample2d``) पर पार्श्व scan से बना **B-scan के spectral interferograms का समूह** (``table``)।"
+  },
+  "optics/oct_k_linearize": {
+   "fp": "38dc0f67d477",
+   "en": "Resample a spectral interferogram onto a **uniform k grid** (``table`` → ``table``).",
+   "zh": "把干涉光谱重新排列到 **k 等间隔**(``table`` → ``table``)。",
+   "tw": "把干涉光譜重新排列到 **k 等間隔**(``table`` → ``table``)。",
+   "ko": "간섭 스펙트럼을 **k 등간격**으로 다시 표본화한다(``table`` → ``table``).",
+   "de": "Ein spektrales Interferogramm auf ein **gleichmäßiges k-Gitter** umtasten (``table`` → ``table``).",
+   "hi": "spectral interferogram को **समान अंतराल वाले k grid** पर दोबारा sample करना (``table`` → ``table``)।"
+  },
+  "optics/oct_dispersion_estimate": {
+   "fp": "ae1d7b2de744",
+   "en": "Estimate the dispersion-compensation coefficients a2 and a3 from a measured spectrum (``table`` → ``table``).",
+   "zh": "从测得的光谱估计色散补偿系数 a2、a3(``table`` → ``table``)。",
+   "tw": "從量得的光譜估計色散補償係數 a2、a3(``table`` → ``table``)。",
+   "ko": "측정한 스펙트럼에서 분산 보상 계수 a2·a3를 추정한다(``table`` → ``table``).",
+   "de": "Die Dispersionskompensations-Koeffizienten a2 und a3 aus einem gemessenen Spektrum schätzen (``table`` → ``table``).",
+   "hi": "मापे गए spectrum से dispersion compensation के गुणांक a2 और a3 का अनुमान (``table`` → ``table``)।"
+  },
+  "optics/oct_dispersion_compensate": {
+   "fp": "19d2285dd838",
+   "en": "Numerical dispersion compensation (``table`` → ``table``): turn the DC-removed, k-linear spectrum into an analytic signal and multiply by exp(−i(a2Δk² + a3Δk³)).",
+   "zh": "数值色散补偿(``table`` → ``table``):把去除直流的 k 等间隔光谱变成解析信号,乘以 exp(−i(a2Δk² + a3Δk³))。",
+   "tw": "數值色散補償(``table`` → ``table``):把去除直流的 k 等間隔光譜變成解析訊號,乘以 exp(−i(a2Δk² + a3Δk³))。",
+   "ko": "수치 분산 보상(``table`` → ``table``): DC를 제거한 k 등간격 스펙트럼을 해석 신호로 만들어 exp(−i(a2Δk² + a3Δk³))를 곱한다.",
+   "de": "Numerische Dispersionskompensation (``table`` → ``table``): das DC-bereinigte, k-lineare Spektrum in ein analytisches Signal wandeln und mit exp(−i(a2Δk² + a3Δk³)) multiplizieren.",
+   "hi": "numerical dispersion compensation (``table`` → ``table``): DC हटाए गए k-linear spectrum को analytic signal बनाकर exp(−i(a2Δk² + a3Δk³)) से गुणा करना।"
+  },
+  "optics/oct_ascan": {
+   "fp": "4eadbeb30100",
+   "en": "k-linear spectral interferogram → **A-scan** (reflection amplitude along depth, ``table``).",
+   "zh": "k 等间隔的干涉光谱 → **A 扫描**(沿深度方向的反射振幅,``table``)。",
+   "tw": "k 等間隔的干涉光譜 → **A 掃描**(沿深度方向的反射振幅,``table``)。",
+   "ko": "k 등간격의 간섭 스펙트럼 → **A 스캔**(깊이 방향 반사 진폭, ``table``).",
+   "de": "k-lineares spektrales Interferogramm → **A-Scan** (Reflexionsamplitude über der Tiefe, ``table``).",
+   "hi": "k-linear spectral interferogram → **A-scan** (गहराई के साथ परावर्तन का आयाम, ``table``)।"
+  },
+  "optics/oct_bscan": {
+   "fp": "9832bbf82adf",
+   "en": "Bundle of B-scan spectral interferograms → **cross-sectional image** (depth × lateral, ``table``; declared in the ledger as a 20 log10 image, image2d).",
+   "zh": "B 扫描的干涉光谱组 → **断面图像**(深度 × 横向,``table``;台账中声明为 20 log10 的图像 image2d)。",
+   "tw": "B 掃描的干涉光譜組 → **斷面影像**(深度 × 橫向,``table``;台帳中宣告為 20 log10 的影像 image2d)。",
+   "ko": "B 스캔 간섭 스펙트럼 묶음 → **단면 영상**(깊이 × 가로, ``table``; 대장에는 20 log10 영상 image2d로 선언).",
+   "de": "Bündel spektraler Interferogramme eines B-Scans → **Schnittbild** (Tiefe × lateral, ``table``; im Ledger als 20-log10-Bild image2d deklariert).",
+   "hi": "B-scan के spectral interferograms का समूह → **cross-sectional image** (गहराई × पार्श्व, ``table``; ledger में 20 log10 image, image2d के रूप में घोषित)।"
+  },
+  "optics/oct_layer_thickness": {
+   "fp": "bc9c1b4369c4",
+   "en": "Interface peaks of an A-scan → **optical and physical layer thicknesses** (``table``). Refuses when the interfaces cannot be separated or seen.",
+   "zh": "A 扫描中界面的峰 → **层的光学厚度与物理厚度**(``table``)。无法分离或看不到时拒绝。",
+   "tw": "A 掃描中界面的峰 → **層的光學厚度與物理厚度**(``table``)。無法分離或看不到時拒絕。",
+   "ko": "A 스캔의 계면 피크 → **층의 광학 두께와 물리 두께**(``table``). 분리할 수 없거나 보이지 않으면 거부한다.",
+   "de": "Grenzflächen-Peaks eines A-Scans → **optische und physikalische Schichtdicken** (``table``). Verweigert, wenn sich die Grenzflächen nicht trennen oder nicht sehen lassen.",
+   "hi": "A-scan के interface peaks → **layer की optical और physical मोटाई** (``table``)। interfaces अलग न हो सकें या दिखें नहीं तो इनकार करता है।"
+  },
+  "optics/oct_bscan_boundaries": {
+   "fp": "9551b7f4c434",
+   "en": "Trace interfaces laterally across a B-scan **image** (``image2d`` → ``table``). Also works on an instrument's output figure.",
+   "zh": "在 B 扫描**图像**上沿横向追踪界面(``image2d`` → ``table``)。也可用于仪器输出的图。",
+   "tw": "在 B 掃描**影像**上沿橫向追蹤界面(``image2d`` → ``table``)。也可用於儀器輸出的圖。",
+   "ko": "B 스캔 **영상**에서 계면을 가로로 따라간다(``image2d`` → ``table``). 장비가 출력한 그림에도 쓸 수 있다.",
+   "de": "Grenzflächen lateral über ein B-Scan-**Bild** verfolgen (``image2d`` → ``table``). Funktioniert auch mit einer Ausgabegrafik eines Geräts.",
+   "hi": "B-scan **image** पर interfaces को पार्श्व दिशा में trace करना (``image2d`` → ``table``)। instrument के output चित्र पर भी काम करता है।"
+  },
+  "optics/oct_bscan_flatten": {
+   "fp": "8bdf656edd54",
+   "en": "**Flatten** a B-scan along a surface and return the **laterally averaged depth profile** (``table`` → ``table``).",
+   "zh": "沿某个面(如表面)把 B 扫描**排平**,返回**横向平均的深度剖面**(``table`` → ``table``)。",
+   "tw": "沿某個面(如表面)把 B 掃描**排平**,傳回**橫向平均的深度剖面**(``table`` → ``table``)。",
+   "ko": "B 스캔을 면(표면 등)을 따라 **평평하게 다시 늘어놓고 가로로 평균한 깊이 단면**을 돌려준다(``table`` → ``table``).",
+   "de": "Einen B-Scan entlang einer Fläche (z. B. der Oberfläche) **ebnen** und das **lateral gemittelte Tiefenprofil** zurückgeben (``table`` → ``table``).",
+   "hi": "B-scan को किसी सतह के अनुसार **समतल करना** और **पार्श्व रूप से औसत किया गया depth profile** लौटाना (``table`` → ``table``)।"
+  },
+  "optics/oct_from_spectra": {
+   "fp": "59cff7015cee",
+   "en": "Turn raw spectra recorded by an instrument into the table this family's ops read (``matrix`` → ``table``), the entry point for real devices and public data.",
+   "zh": "把仪器记录的原始光谱转成本族 op 读取的表(``matrix`` → ``table``),是实机与公开数据的入口。",
+   "tw": "把儀器記錄的原始光譜轉成本族 op 讀取的表(``matrix`` → ``table``),是實機與公開資料的入口。",
+   "ko": "장비가 기록한 원시 스펙트럼을 이 계열 op가 읽는 표로 만든다(``matrix`` → ``table``). 실기·공개 데이터의 입구.",
+   "de": "Von einem Gerät aufgezeichnete Rohspektren in die Tabelle umwandeln, die die Ops dieser Familie lesen (``matrix`` → ``table``), der Einstieg für echte Geräte und öffentliche Daten.",
+   "hi": "instrument द्वारा रिकॉर्ड किए गए raw spectra को इस family के ops द्वारा पढ़ी जाने वाली table में बदलना (``matrix`` → ``table``), असली उपकरण और सार्वजनिक data का प्रवेश द्वार।"
+  },
   "optics/multilayer_reflectance": {
    "fp": "0e2baa03067f",
    "en": "Spectral reflectance (or transmittance / absorptance) of a multilayer film as pairs (λ nm, value): the exact characteristic-matrix (transfer-matrix) solution.",

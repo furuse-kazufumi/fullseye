@@ -46,6 +46,7 @@
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
 | [干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE) | 波と信号 | `validated-public-real-data` | 12/12 | `poc_gw_detector_pseudo_simulation` real → tests/test_poc_scripts_run.py |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin) | 光と色 | `verified-synthetic` | 5/5 | `poc_illumination_cone_vs_na` synthetic → tests/test_poc_scripts_run.py |
+| [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index) | 測る | `validated-public-real-data` | 12/13 | `poc_industrial_oct` real → tests/test_poc_scripts_run.py |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | Inner diameter of a round part, all the way to millimetres | 測る | `validated-public-real-data` | 4/4 | `example_inner_diameter_mm` synthetic → tests/test_example_scripts_run.py<br>`poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
@@ -103,8 +104,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 377 |
-| `tests/test_poc_scripts_run.py` が走らせる | 240 |
+| 2-D 台帳の例 | 378 |
+| `tests/test_poc_scripts_run.py` が走らせる | 241 |
 | `tests/test_example_scripts_run.py` が走らせる | 137 |
 | **どの門も走らせていない** | **0** |
 
