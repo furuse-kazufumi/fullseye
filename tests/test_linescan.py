@@ -2,7 +2,7 @@
 """linescan(TDI ラインスキャンとラインスキャン用レンズ、2026-10-15)の門。
 
 閉形式に対して: EMVA 1288 の式 21 を段数倍した SNR(デジタル加算は厳密に √N)、一様な掃引の |sinc| MTF、
-瞳収差の無い系の cos⁴ 則、照度の 3 因子分解(cos⁴ × 瞳 × 歪曲)が恒等式であること。
+瞳収差の無い系の cos⁴ 則、相対照度が像面から逆に引いた光線の射影立体角(輝度の保存)と一致すること。
 撮像に対して: 完全同期なら 1 標本で厳密、ε の掃引が閉形式に合う、エンコーダで速度誤差が消える、fail-closed。
 """
 from __future__ import annotations
@@ -155,12 +155,54 @@ def test_flux_follows_cos4_without_pupil_aberration():
     assert p["cos4"][-1] < 0.95                          # 探針が素通しでない(角が付いている)
 
 
-def test_illumination_factorisation_is_exact():
-    p = LS.lens_field_profile()
-    ok = p["covered"]
-    np.testing.assert_allclose(p["relative_illumination"][ok],
-                               (p["cos4"] * p["pupil_factor"] * p["area_gain"])[ok], rtol=1e-12)
-    assert p["relative_illumination"][-1] > 0.9
+def _reversed_system(s, image_mm):
+    """処方を裏返す(像面から物体へ): 面の順を逆に、曲率の符号を反転、各面の後ろの媒質 = 元の面の前の媒質。"""
+    surf = s["surfaces"]
+    n = len(surf)
+    out = []
+    for j in range(n):
+        i = n - 1 - j
+        out.append({"R": -surf[i]["R"], "t": surf[i - 1]["t"] if i > 0 else s["object_mm"],
+                    "n": s["index_object"] if i == 0 else surf[i - 1]["n"], "ap": surf[i]["ap"]})
+    return RT.lens_system(out, stop=n - 1 - s["stop"], object_mm=image_mm)
+
+
+def _reverse_irradiance(s, y_img, grid=512):
+    """像面の点 (0, y) の照度 ∝ そこから出してレンズを逆に抜けた光線の射影立体角(方向余弦の一様格子で数える)。
+
+    輝度は保存される(物体と像の媒質がどちらも空気)ので、一様な Lambert の物体なら像面の照度は
+    「レンズを抜けて物体に届く方向の射影立体角」そのもの。cos⁴・瞳・面積要素の分解をどれも通らない。"""
+    img = s["surfaces"][-1]["t"]
+    r = _reversed_system(s, img)
+    para = RT.paraxial_trace(r)
+    P0 = np.array([0.0, y_img, -img])
+    ang = np.linspace(0.0, 2.0 * math.pi, 64, endpoint=False)
+    rim = np.stack([para["ep_radius"] * np.cos(ang), para["ep_radius"] * np.sin(ang), np.full(64, para["ep_position"])], 1)
+    d = rim - P0
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    cL, cM = 0.5 * (d[:, 0].min() + d[:, 0].max()), 0.5 * (d[:, 1].min() + d[:, 1].max())
+    hw = 1.2 * max(np.ptp(d[:, 0]), np.ptp(d[:, 1]))
+    g = (np.arange(grid) + 0.5) / grid * 2.0 - 1.0
+    LL, MM = np.meshgrid(cL + hw * g, cM + hw * g)
+    LL, MM = LL.ravel(), MM.ravel()
+    D = np.stack([LL, MM, np.sqrt(1.0 - LL * LL - MM * MM)], 1)
+    v = RT.trace_rays(r, np.tile(P0, (len(D), 1)), D)["valid"]
+    edge = (np.abs(LL - cL) > hw * (1.0 - 1.5 / grid)) | (np.abs(MM - cM) > hw * (1.0 - 1.5 / grid))
+    assert v.sum() > 1000 and not (v & edge).any()          # 窓が瞳を囲んでいる
+    return float(v.sum()) * (2.0 * hw / grid) ** 2
+
+
+def test_relative_illumination_matches_the_reverse_traced_projected_solid_angle():
+    """2026-10-15: 以前の門は relative_illumination = cos4 × pupil_factor × area_gain を 1e-12 で確かめていたが、
+    pupil_factor は (光束の比)/cos4 と定義されているので、これは代数の恒等式(どんな値でも通る)。
+    今は独立の経路で: 像面の点から光線を逆に引き、レンズを抜けた方向の射影立体角を数える(輝度の保存)。
+    両方の求積の粗さ(格子の瞳の縁)で ±2.5e-3 揺れるので門は 5e-3。歪曲の面積要素は端で 11 % 効くので、
+    面積要素や cos⁴ を落とす誤りはこの門で赤になる。"""
+    s = LS.linescan_lens_example("linescan")
+    p = LS.lens_field_profile(s, [0.0, 10.0, 20.0, 28.672], grid=192)
+    E = np.array([_reverse_irradiance(s, y) for y in p["chief_image_mm"]])
+    np.testing.assert_allclose(p["relative_illumination"], E / E[0], atol=5e-3)
+    assert p["area_gain"][-1] > 1.05 and p["cos4"][-1] < 0.9         # 探針が素通しでない(両方の因子が効いている)
 
 
 def test_cmount_model_goes_dark_at_the_end_of_a_long_sensor():
