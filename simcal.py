@@ -980,8 +980,8 @@ def _diagnose(P, u, sw, threshold):
             reasons[k["name"]] = ("no_influence: moving %s alone to either end of its range raises chi^2 by at most "
                                   "%.3g (< %.2f) — the images do not see this knob" % (k["name"], rise, CHI2_1_95))
     conf = None
-    # columns with zero local sensitivity are left out (mv_confounding refuses a set with fewer than 2 live columns,
-    # and a knob at a stationary point of the model, e.g. sigma = 0 of a blur, has a zero derivative there)
+    # columns with zero local sensitivity are left out (mv_confounding reports them as no_influence; here the knob was
+    # already judged on its full-range chi^2 rise, and a stationary point such as sigma = 0 of a blur is not "no influence")
     live = [j for j in range(len(knobs)) if knobs[j]["name"] not in reasons and np.linalg.norm(J_phi[:, j]) > 0]
     if len(live) >= 2:
         conf = sensitivity.mv_confounding(J_phi[:, live], names=[names[j] for j in live], threshold=threshold,

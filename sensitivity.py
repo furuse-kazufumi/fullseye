@@ -394,9 +394,14 @@ def mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_sub
     dead = [names[j] for j in range(K) if j not in live]
     Sn = np.zeros_like(A)
     Sn[:, live] = A[:, live] / norms[live]
+    # ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない
+    #   (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
     if max_subset is None:
         max_subset = len(live) if len(live) <= MAX_SUBSET_FACTORS else 3
-    max_subset = _doe._int_arg(max_subset, "max_subset", op, 2, max(2, len(live)))
+    if len(live) >= 2:
+        max_subset = _doe._int_arg(max_subset, "max_subset", op, 2, len(live))
+    else:
+        max_subset = 0                                              # 部分集合なし(0 本・1 本)
     subsets = []
     for size in range(2, min(max_subset, len(live)) + 1):
         for comb in itertools.combinations(live, size):

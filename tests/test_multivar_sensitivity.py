@@ -156,6 +156,20 @@ def test_residual_pca_noise_floor_and_structure():
         se.mv_residual_pca(R, noise_sigma=-1)
 
 
+def test_confounding_with_zero_one_or_two_live_columns():
+    """生きた列が 0 本・1 本なら交絡は定義上ない(拒否せずに返す)。2 本なら普通に γ を出す。"""
+    rng = np.random.default_rng(0)
+    g = rng.normal(size=20)
+    zero = se.mv_confounding(np.zeros((20, 2)), ["a", "b"])
+    assert zero["no_influence"] == ["a", "b"] and zero["confounded_pairs"] == [] and zero["gamma_full"] == 1.0
+    assert zero["confounded_groups"] == [] and zero["undetermined_direction"] is None and not zero["identifiable"]
+    one = se.mv_confounding(np.column_stack([g, np.zeros(20)]), ["a", "b"])
+    assert one["no_influence"] == ["b"] and one["determined_individually"] == ["a"]
+    assert one["confounded_pairs"] == [] and one["gamma_full"] == 1.0 and one["largest_identifiable"] == [("a",)]
+    two = se.mv_confounding(np.column_stack([g, g + 1e-6 * rng.normal(size=20)]), ["a", "b"])
+    assert len(two["confounded_pairs"]) == 1 and two["gamma_full"] > 10 and not two["identifiable"]
+
+
 def test_ledger_public_tier_fuzzer_and_summaries():
     import fullseye as fs
     import opsmultivar as om

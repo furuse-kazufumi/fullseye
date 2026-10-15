@@ -1257,6 +1257,13 @@ def find(query: str, limit: int = 20) -> list[dict]:
                     if fr >= 0.5:
                         fs_ = _cjk_fraction(q, hay_name + " " + doc.lower())
                         score = int(round(16 * fr + 6 * fs_))
+                if not score and len(q) >= 4 and q_tokens and not _CJK_RE.search(q):
+                    # ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ
+                    #   出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか
+                    #   書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか
+                    #   返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+                    if q in _full_doc(mod_name, name, info):
+                        score = 12
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
                              "category": info.get("category"), "doc": doc,

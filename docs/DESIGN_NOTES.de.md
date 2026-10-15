@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 612 von 1419. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1422. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -654,7 +654,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1120** _(ja)_ — §10 穴。★2026-09-08 にこの節は「geoid / enu / datum は 0 件」を門にした。 2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている 語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
 - **L1125** _(ja)_ — ★2026-10-05: granular の datum_tilt_check(粉体の山の**基準面**の傾きの警報)が語幹 datum に当たる。 測地成果ではなく「高さ図の基準面」の意味 —— 同じ語の別の意味として名前で固定する。
 - **L1135** _(ja)_ — ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、 能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。 件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
-- **L1141** — ★Bei ``vertical`` liefert op_find durchaus Treffer, doch kein einziger ist relevant (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.
+- **L1138** _(ja)_ — ★2026-10-15: 語幹 "ortho" は名前で実験計画の直交表の op(orthogonal、別の語)に 当たるようになった。門が問うているのは「標高(orthometric)の op」なので、検索語を正確にする。 あわせて検索側の穴も塞いだ: 欧文のクエリは 1 行目の doc までしか見ておらず、"orthometric" は dem_height_frame_convert の引数の説明にしか無いので 0 件だった(opassist.find に docstring 全文の段)。
+- **L1149** — ★Bei ``vertical`` liefert op_find durchaus Treffer, doch kein einziger ist relevant (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.
 
 ## `examples/poc_glyph_typo_detection.py`
 
@@ -1559,13 +1560,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1015** — Die als Stamm-Uebereinstimmung geltende gemeinsame Praefixlaenge. ★Bei 4 werden "median"/"medial" und "contrast"/"contour" verknuepft; schneidet man bei 5, werden "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5) und "gaussian"/"gauss" (5) erfasst, die beiden obigen Paare hingegen nicht.
 - **L1025** — Die **nach dem gemeinsamen Praefix erlaubte Endung**. ★Entscheidet man allein nach der Praefixlaenge, werden "median"/"medial" verknuepft (sie teilen ein 5-Zeichen-"media"). Prueft man, ob die Endung nach einer Flexionsendung aussieht, kommt "correlation"/"correlate" (ion / e) durch, waehrend "median"/"medial" (n / l) und "corner"/"cornea" (r / a) herausfallen.
 - **L1121** — ★Untergrenze. Ohne sie gibt "zzz-nothing-matches" `histogram_match` zurueck (weil "matches" mit `match_*` stamm-uebereinstimmt). Liegt das Gewicht der getroffenen Woerter unter 15 % der gesamten Anfrage, gilt es als 'kein Treffer'. Gemessen: "digital image correlation" ist 0.19 (besteht), "zzz-nothing-matches" ist 0.10 (verworfen).
-- **L1295** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1323** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1375** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1395** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1408** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1418** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1436** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L1261** _(ja)_ — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+- **L1302** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1330** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1382** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1402** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1415** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1425** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1443** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1865,6 +1867,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `segcompare.py`
 
 - **L216** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+
+## `sensitivity.py`
+
+- **L397** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
 
 ## `shapestats.py`
 

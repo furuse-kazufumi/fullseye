@@ -652,7 +652,8 @@
 - **L1120** — §10 穴。★2026-09-08 にこの節は「geoid / enu / datum は 0 件」を門にした。 2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている 語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
 - **L1125** — ★2026-10-05: granular の datum_tilt_check(粉体の山の**基準面**の傾きの警報)が語幹 datum に当たる。 測地成果ではなく「高さ図の基準面」の意味 —— 同じ語の別の意味として名前で固定する。
 - **L1135** — ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、 能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。 件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
-- **L1141** — ★``vertical`` は op_find が件数を返しても中身は 1 つも関係ない (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
+- **L1138** — ★2026-10-15: 語幹 "ortho" は名前で実験計画の直交表の op(orthogonal、別の語)に 当たるようになった。門が問うているのは「標高(orthometric)の op」なので、検索語を正確にする。 あわせて検索側の穴も塞いだ: 欧文のクエリは 1 行目の doc までしか見ておらず、"orthometric" は dem_height_frame_convert の引数の説明にしか無いので 0 件だった(opassist.find に docstring 全文の段)。
+- **L1149** — ★``vertical`` は op_find が件数を返しても中身は 1 つも関係ない (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
 
 ## `examples/poc_glyph_typo_detection.py`
 
@@ -1557,13 +1558,14 @@
 - **L1015** — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
 - **L1025** — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
 - **L1121** — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
-- **L1295** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1323** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1375** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1395** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1408** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1418** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1436** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L1261** — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+- **L1302** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1330** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1382** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1402** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1415** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1425** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1443** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1863,6 +1865,10 @@
 ## `segcompare.py`
 
 - **L216** — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+
+## `sensitivity.py`
+
+- **L397** — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
 
 ## `shapestats.py`
 

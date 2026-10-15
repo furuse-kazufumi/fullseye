@@ -86,6 +86,7 @@ def test_interaction_columns_match_the_known_structure():
 
 def test_orthogonal_array_names_confounding_of_assigned_columns():
     d = doe.doe_orthogonal_array("L8", ["A", "B", "C"], columns=[1, 2, 3])
+    assert len(d["alias"]) >= 1
     assert any(line.startswith("A x B falls on column 3 (C") for line in d["alias"])
     d = doe.doe_orthogonal_array("L8", ["A", "B", "C"], columns=[1, 2, 4])
     assert d["alias"] == []                                   # 3 列目(A x B)を空けた割り付け

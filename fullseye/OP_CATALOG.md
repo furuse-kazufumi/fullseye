@@ -4745,7 +4745,7 @@ _計 3256 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dem_geodetic_slope` `depth → image2d` — **緯度経度の格子**(等角度間隔)の DEM の傾斜。セル寸法が緯度で変わる。 · 例: `dem_geodesy_tour`
 - `dem_geodetic_to_ecef` `入力なし → points` — 測地座標(緯度・経度・楕円体高)→ **地心直交座標 ECEF** [m]。 · 例: `dem_geodesy_tour`, `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
 - `dem_geoid_height` `depth → signal` — ジオイド高の格子を緯度・経度で**双一次補間**して ``N`` [m] を返す(``signal``)。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
-- `dem_height_frame_convert` `signal × signal → signal` — 高さの**基準**を移す: 楕円体高 ``h`` ↔ 標高 ``H``(``H = h - N``)。``signal``。 · 例: `poc_geodetic_benchmarks_real`
+- `dem_height_frame_convert` `signal × signal → signal` — 高さの**基準**を移す: 楕円体高 ``h`` ↔ 標高 ``H``(``H = h - N``)。``signal``。 · 例: `poc_geodetic_benchmarks_real`, `poc_geodetic_height_frames`
 - `dem_height_frame_residual` `signal × signal × signal → table` — ``h - H - N`` の残差 —— 高さの取り違えを**静かにさせない**検出器(``table``)。 · 例: `poc_geodetic_benchmarks_real`
 
 #### dem / hydrology(4)

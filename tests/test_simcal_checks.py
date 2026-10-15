@@ -273,3 +273,24 @@ def test_ledger_public_tier_fuzzer_and_summaries():
         assert e["fp"] == opdocs.fingerprint(line), name
         for lang in ("ja", "zh", "tw", "ko", "de", "hi"):
             assert e[lang].strip(), (name, lang)
+
+
+def test_wrong_fringe_order_is_not_rejected_by_the_validation_gates_only_warned():
+    """★穴の固定(2026-10-15): 隣の干渉次数に落ちた当てはめ(χ²/自由度 60)は、§6 の過適合の門 5 つを全部通る。
+
+    門はどれも相対比較(初期値より良い・保留 / 学習・利得と黒レベルだけの模型より良い・範囲・次元)で、
+    「雑音の何倍外れているか」の絶対の門が無いから。いまこの誤りを告げるのは fit.warnings(χ² が雑音の
+    +4 sd を超える)だけ —— 1 x 31 の画像は残差 PCA にも小さすぎる。絶対の χ² の門を足したらこの assert を反転する。
+    """
+    sys.path.insert(0, str(ROOT / "tests"))
+    import test_simcal as T
+    truth = {"n_film": 1.46, "d": 520.0}
+    m = T.film_model(np.linspace(400.0, 700.0, 31))
+    mo = sc.simcal_observe(m, T.capture(m, truth, 2))
+    wrong = sc.simcal_fit(mo, n_starts=2, seed=0)
+    assert wrong["fit"]["chi2_red"] > 10 and len(wrong["fit"]["warnings"]) >= 1
+    v = ck.simcal_validate(wrong, T.capture(m, truth, 10002))
+    assert v["status"] == "accepted" and v["validation"]["failed"] == []          # 門は通してしまう(穴)
+    assert v["errors"]["holdout"] > 10                                            # 数は残っている
+    with pytest.raises(MetricContractError, match="too small"):
+        ck.simcal_discrepancy(wrong)
