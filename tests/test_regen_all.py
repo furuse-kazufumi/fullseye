@@ -168,20 +168,28 @@ def test_trace_problems_rejects_drift_between_table_and_code():
 
     t = clean()
     t["tools/gen_capabilities_index.py"]["r"].append("docs/EXAMPLES.md")      # 宣言に無い読み
-    assert any("READS に無い生成物を読んだ: docs/EXAMPLES.md" in p for p in RA.trace_problems(t))
+    probs = RA.trace_problems(t)
+    assert probs, "宣言に無い読みを足したのに問題が 1 件も出ない"
+    assert any("READS に無い生成物を読んだ: docs/EXAMPLES.md" in p for p in probs), probs
 
     t = clean()
     t["catalog.py"]["w"].append("docs/STRAY.md")                                # 宣言に無い書き
-    assert any("OUTPUTS に無いファイルを書いた: docs/STRAY.md" in p for p in RA.trace_problems(t))
+    probs = RA.trace_problems(t)
+    assert probs, "宣言に無い書きを足したのに問題が 1 件も出ない"
+    assert any("OUTPUTS に無いファイルを書いた: docs/STRAY.md" in p for p in probs), probs
 
     t = clean()
     t["tools/gen_capabilities_index.py"]["r"] = []                              # 読まなくなった宣言
-    assert any("1 本も読んでいない" in p for p in RA.trace_problems(t))
+    probs = RA.trace_problems(t)
+    assert probs, "読みを消したのに問題が 1 件も出ない"
+    assert any("1 本も読んでいない" in p for p in probs), probs
 
     t = clean()
     t["tools/conversion_matrix.py"] = {"r": [], "w": []}                        # 何も書かない段
+    probs = RA.trace_problems(t)
+    assert probs, "何も書かない段なのに問題が 1 件も出ない"
     assert any("tools/conversion_matrix.py: OUTPUTS の 'docs/CONVERSION_MATRIX.md' に触れもしない" in p
-               for p in RA.trace_problems(t))
+               for p in probs), probs
 
 
 def test_trace_counts_cached_imports_as_the_module():
@@ -209,10 +217,13 @@ def test_every_chain_stage_is_traced_for_real(tmp_path):
     assert r.returncode == 0, r.stderr[-2000:]
     t = json.loads(out.read_text(encoding="utf-8"))
     assert t["w"] == [], "--md 無しの conversion_matrix は何も書かない(はず)"
-    assert any(p.endswith(".py") for p in t["r"]), "読みが 1 本も記録されていない —— hook が効いていない"
+    reads = t["r"]
+    assert reads, "読みが 1 本も記録されていない —— hook が効いていない"
+    assert any(p.endswith(".py") for p in reads), "読みに .py が無い —— import の記録が効いていない"
     # 表から見ると、これは「出力に触れもしない段」として拒まれる。
     probs = RA.trace_problems({**{s: {"r": [p.replace("*", "x") for p in RA.READS.get(s, [])],
                                       "w": [p.replace("*", "x") for p in RA.OUTPUTS[s]]}
                                   for s in _chain_order()},
                                "tools/conversion_matrix.py": t})
+    assert probs, "出力に触れない段なのに問題が 1 件も出ない"
     assert any("conversion_matrix.py: OUTPUTS" in p and "触れもしない" in p for p in probs), probs

@@ -1024,7 +1024,9 @@ def lda_fit(X, y, ridge=1e-6):
 def lda_predict(model, X):
     cls, mu, Si = model
     flat = X.reshape(-1, X.shape[-1])
-    d = np.stack([np.einsum("ij,jk,ik->i", flat - m, Si, flat - m) for m in mu], axis=1)
+    # Mahalanobis 距離の二乗。einsum("ij,jk,ik->i") は optimize 無しだと素朴な三重ループになり、実データの章で
+    # 282 秒かかっていた(2026-10-15 実測)。同じ式を行列積で計算する。
+    d = np.stack([np.sum(((flat - m) @ Si) * (flat - m), axis=1) for m in mu], axis=1)
     return cls[np.argmin(d, axis=1)].reshape(X.shape[:-1])
 
 

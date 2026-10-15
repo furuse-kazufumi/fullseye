@@ -435,6 +435,9 @@ with warnings.catch_warnings():
         lighting_sweep, illumination_design,
         solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
     )
+    # 2026-10-15 近赤外の分光撮像: 反射率のキューブ (H, W, L) を撮る。キューブ型が台帳に無いので facade から出す
+    #   (曲線・表を返す 5 本は opsoptics の spectral に載る)。
+    from spectralrad import hyperspectral_capture_cube  # noqa: E402,F401
     import lensimage  # noqa: E402,F401  (image formation through a designed lens)
     from lensimage import (  # noqa: E402,F401
         psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
