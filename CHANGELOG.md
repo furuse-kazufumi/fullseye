@@ -31,6 +31,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **設計どおり**: fixture / golden / jsonio / mdio / xlsxio がトップレベルに見える —— `fullseye` パッケージのサブモジュールで、`from fullseye.jsonio import …` で関数を出すと Python が属性として結ぶ。`__all__` には入れていない。
 - **真の空白**(別の作業に切り出す): kuwahara、XDoG。
 
+### Added — 3-D ラジオシティ(radiosity 7 op)と検査用の多重反射描画 + PoC「加工ポケットの相互反射を収束まで数える」
+- `radiosity3d`(`opsoptics` の新カテゴリ `radiosity`、7 op): `form_factor_parallel_rects` / `form_factor_perpendicular_rects`(Howell C-11 / C-14 の閉形式)、`form_factor_polygons`(凸多角形どうし、点 → 多角形は Lambert の輪郭和)、`radiosity_patches`、`form_factor_matrix`(遮蔽はシーンの光線、相反則を対称化)、`radiosity_progressive_3d`(Cohen ら 1988 の shooting、残エネルギーで止め、止まらなければ `converged=False`)、`render_optscene_gi`(直接光は `render_optscene` と同じ式、反射 n 回か収束まで、反射の回数の観測収束比と見積もり)。
+- 門 `tests/test_radiosity3d.py`(22 件): Howell の表を 6 桁、閉じた立方体の行和 = 1、漸進法 = `numpy.linalg.solve`(1e-11)、押し出した V 溝の断面が `lighttransport` の 2-D 厳密解へ、反射 0 回 = `render_optscene`(1e-12)。
+- PoC `poc_pocket_interreflection`(収蔵番号 2026.244): 反射率 0.7 のポケットの底の明るさの 48 % が相互反射。`simcal` で反射率を当てると、直接光だけのモデルは ρ 1.323(エネルギー保存に反する)で不合格、収束解は ρ 0.6996・照明 0.9999(真値 0.70 / 1.00)・χ²/ν 1.01 で合格。能力ノート `interreflection-to-convergence`。
+
 ### Added — 間接 ToF(位相方式)の多周波アンラップと壊れ方(itof 8 op + PoC)
 - `itof`(`opsoptics` の新カテゴリ `itof`、8 op): `itof_capture`(距離の図 → 周波数ごと K 段のバケット、ショット雑音・読み出し雑音・背景光、正弦か矩形の変調、余分な経路、画素の開口での混合)、`itof_phase_amplitude`(既知の任意の段の位相を最小二乗で、画素ごとの距離の雑音の見積もり)、`itof_noise_budget`(σ_d = c/(4πf)·√((B+σ_r²)/2)/A、Lange の式と一致)、`itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号 / `residue.residue_crt` / 2 周波のうなり)、`itof_unwrap_error_rate`(平行な直線の族の距離から和集合の上界、Wang–Xia の保証)、`itof_multipath_separate`(等間隔の多周波の行列ペンシル)、`itof_flying_pixel_mask`(両側が台地の段差の間に浮いた画素、雑音で閾値を上げる)、`itof_wiggling_correct`(矩形波の周期誤差を模型の逆引きか較正の調和で)。
 - PoC `poc_itof_multifreq`(収蔵番号 2026.243、30 門、図 13 枚 + GIF): 雑音の閉形式、倉庫の通路の 3 周波アンラップと遠くの次数の誤り(上界と照合)、80/100/120 MHz で 7.5 m より奥が折り返す、包装フィルムの 2 経路と分けられる間隔、部屋の隅の距離の伸び(`lighttransport` の輸送行列と 1e-15 m)、フライングピクセル、矩形波の周期誤差、太陽光、同じ場面の直接 ToF(`photoncount`)との比較、公開の実機の生データ(Zenodo 10.5281/zenodo.19608956、CC BY 4.0、手元にあるときだけ)。★統合時に `residue_crt` の錨を Wang–Xia どおりに直した(下の Fixed)ので、同じ生信号で最尤の復号と同等になった(合成 0.1161 対 0.1160、実データ 0.131 対 0.131。直す前は 0.556 / 0.293)。門は「同等」と「保証の外で ResidueBoundWarning」に書き直した。

@@ -162,6 +162,7 @@ def test_the_gate_sees_a_planted_gap(shipped):
     surfaces = _surfaces()
     population = set(shipped["registry"]) | {"__planted_op_not_on_any_surface__"}
     miss = _missing(population, surfaces)
+    assert len(miss) == len(surfaces) > 0
     assert set(miss) == set(surfaces)
     assert all(v == ["__planted_op_not_on_any_surface__"] for v in miss.values())
     # 台帳の表の判定も、形を壊すと外れる

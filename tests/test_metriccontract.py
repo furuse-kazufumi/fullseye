@@ -153,6 +153,25 @@ def test_every_scalar_metric_in_the_ledgers_declares_its_direction():
     assert not undeclared, f"向きが宣言されていない指標: {undeclared}"
 
 
+def _metric_defaults_passed_to_attempt(fn_node):
+    """関数の引数のうち、文字列の既定値を持ち、本体で ``Attempt(..., metric=<その引数>)`` に渡されるものの既定値。"""
+    import ast
+    a = fn_node.args
+    pos = a.posonlyargs + a.args
+    defaults = dict(zip([x.arg for x in pos[len(pos) - len(a.defaults):]], a.defaults))
+    defaults.update({x.arg: d for x, d in zip(a.kwonlyargs, a.kw_defaults) if d is not None})
+    named = {k: v.value for k, v in defaults.items() if isinstance(v, ast.Constant) and isinstance(v.value, str)}
+    out = set()
+    for n in ast.walk(fn_node):
+        if isinstance(n, ast.Call):
+            f = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
+            if f.lower().endswith("attempt"):
+                for kw in n.keywords:
+                    if kw.arg == "metric" and isinstance(kw.value, ast.Name) and kw.value.id in named:
+                        out.add(named[kw.value.id])
+    return out
+
+
 def _metrics_named_in_attempt_calls():
     """出荷モジュールの ``attempt(..., metric="X")`` 呼び出しに実際に書かれた指標名(AST で数える)。
 
@@ -160,6 +179,11 @@ def _metrics_named_in_attempt_calls():
     ``value_or_worst`` に向きを引かせる。台帳の op でも ``compare_images`` の鍵でもないが、
     宣言を消すと当てはめが ``no direction declared`` で止まる —— 死んだ宣言ではない。
     名前を並べて免除せず、呼び出しの側から数える。
+
+    ★2026-10-18(統合): converge.as_attempt は ``def as_attempt(record, metric="fixed_point_residual")``
+    の**既定値**で指標名を持ち、本体は ``Attempt(..., metric=metric)`` と変数で渡す。呼び出しの定数だけを
+    数えると、生きている宣言を「死んだ」と誤判定した。だから、本体で ``Attempt`` / ``attempt`` に
+    ``metric=<引数名>`` を渡す関数の、その引数の文字列の既定値も数える。
     """
     import ast
     import glob
@@ -173,6 +197,8 @@ def _metrics_named_in_attempt_calls():
             except SyntaxError:
                 continue
         for n in ast.walk(tree):
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                found |= _metric_defaults_passed_to_attempt(n)
             if isinstance(n, ast.Call):
                 fn = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
                 if fn.endswith("attempt"):
@@ -206,6 +232,18 @@ def test_no_direction_is_declared_for_something_that_does_not_exist():
     # 台帳外の宣言が「報告の鍵」であることを名指しで固定(偶然通らないように)
     assert "delta_e_2000_mean" in report_keys
     assert "delta_e_2000_mean" not in ledger
+
+
+def test_metric_named_by_a_default_argument_is_counted():
+    """探針: 既定値の経路(converge.as_attempt)を数えること、関係の無い既定値は数えないこと。"""
+    import ast
+    assert "fixed_point_residual" in _metrics_named_in_attempt_calls()
+    src = ("def f(r, metric='m_used'):" + chr(10) + "    return Attempt(ok=True, value=1.0, metric=metric)" + chr(10) +
+           "def g(r, metric='m_unused'):" + chr(10) + "    return metric" + chr(10))
+    fns = [n for n in ast.parse(src).body]
+    assert len(fns) == 2
+    assert _metric_defaults_passed_to_attempt(fns[0]) == {"m_used"}
+    assert _metric_defaults_passed_to_attempt(fns[1]) == set()
 
 
 def test_direction_refuses_to_guess():

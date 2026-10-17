@@ -256,6 +256,7 @@ def test_without_the_conditional_entry_the_first_run_is_rejected():
         first = _clean_traces()
         first[_GALLERY]["w"].append(_THUMB)
         probs = RA.trace_problems(first)
+        assert probs, "サムネを書いたのに問題が 1 件も出ない"
         assert any("OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in probs), probs
     finally:
         RA.MAY_OUTPUTS[_GALLERY] = saved
@@ -269,6 +270,7 @@ def test_putting_the_thumbnail_in_outputs_fails_the_second_run():
         second = _clean_traces()
         second[_GALLERY]["w"] = [w for w in second[_GALLERY]["w"] if not w.endswith("_720.jpg")]
         probs = RA.trace_problems(second)
+        assert probs, "書かない回なのに問題が 1 件も出ない"
         assert any("触れもしない" in p and "_720.jpg" in p for p in probs), probs
     finally:
         RA.OUTPUTS[_GALLERY].remove(pat)
@@ -279,10 +281,14 @@ def test_conditional_outputs_are_not_a_blanket():
     ファイルは拒む / 表の側も、理由の無い・鎖に無い段・ファイル名が * だけ・OUTPUTS と重なる宣言を拒む。"""
     t = _clean_traces()
     t["catalog.py"]["w"].append(_THUMB)
-    assert any("catalog.py: OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in RA.trace_problems(t))
+    probs = RA.trace_problems(t)
+    assert probs, "別の段がサムネを書いたのに問題が 1 件も出ない"
+    assert any("catalog.py: OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in probs), probs
     t = _clean_traces()
     t[_GALLERY]["w"].append("docs/articles/assets/poc/poc_new_exhibit/01_scene.png")
-    assert any("01_scene.png" in p for p in RA.trace_problems(t))
+    probs = RA.trace_problems(t)
+    assert probs, "宣言に無い PNG を書いたのに問題が 1 件も出ない"
+    assert any("01_scene.png" in p for p in probs), probs
     for bad, needle in (({"tools/no_such.py": {"docs/x_720.jpg": "理由は十分に長い説明の文です"}}, "鎖に無い段"),
                         ({_GALLERY: {"docs/x_720.jpg": "短い"}}, "理由が短すぎる"),
                         ({_GALLERY: {"docs/articles/*": "理由は十分に長い説明の文です"}}, "* だけ"),
@@ -293,6 +299,7 @@ def test_conditional_outputs_are_not_a_blanket():
         RA.MAY_OUTPUTS.update(bad)
         try:
             probs = RA.table_problems()
+            assert probs, needle
             assert any(needle in p for p in probs), (needle, probs)
         finally:
             RA.MAY_OUTPUTS.clear()
@@ -308,6 +315,7 @@ def test_conditional_outputs_take_part_in_the_order_check():
         order.remove(_GALLERY)
         order.append(_GALLERY)                      # サムネを書く段を読む段の後ろへ
         bad = RA.order_violations(order)
+        assert bad, "サムネを読む段の後ろで書いても逆順にならない"
         assert any(r == "tools/gen_examples_readme.py" and w == _GALLERY for r, _rp, w, _wp in bad), bad
     finally:
         RA.READS["tools/gen_examples_readme.py"].remove("docs/articles/assets/poc/*_720.jpg")
