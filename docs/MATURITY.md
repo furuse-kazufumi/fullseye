@@ -95,6 +95,7 @@
 | [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md) | Write typed op results as JSON and read them back bit-for-bit | 組み立てる | `verified-synthetic` | 11/11 | `typed_results_json` synthetic → tests/test_example_scripts_run.py |
 | [op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す](capabilities/typed-results-as-markdown.md) | Render typed op results as Markdown, with an exact JSON block to read back | 組み立てる | `verified-synthetic` | 4/4 | `typed_results_markdown` synthetic → tests/test_example_scripts_run.py |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | Diagnose faults from vibration and sound | 波と信号 | `verified-synthetic` | 5/5 | `poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py |
+| [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width | 測る | `verified-synthetic` | 9/9 | `poc_virtual_sem_kv_cd_bse` synthetic → tests/test_poc_scripts_run.py |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | Carve a solid out of silhouettes (visual hull) | 形にする | `verified-synthetic` | 4/4 | `space_carving` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_livestock_body_volume` synthetic → tests/test_poc_scripts_run.py |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | Turn a 3-D scan into a volume | 測る | `verified-synthetic` | 4/4 | `poc_stockpile_volume` synthetic → tests/test_poc_scripts_run.py<br>`poc_lidar_terrain_change` synthetic → tests/test_poc_scripts_run.py |
 | [絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)](capabilities/what-a-picture-cannot-check.md) | What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces) | 測る | `verified-synthetic` | 11/11 | `poc_what_a_picture_cannot_check` synthetic → tests/test_poc_scripts_run.py |
@@ -109,8 +110,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 387 |
-| `tests/test_poc_scripts_run.py` が走らせる | 244 |
+| 2-D 台帳の例 | 388 |
+| `tests/test_poc_scripts_run.py` が走らせる | 245 |
 | `tests/test_example_scripts_run.py` が走らせる | 143 |
 | **どの門も走らせていない** | **0** |
 

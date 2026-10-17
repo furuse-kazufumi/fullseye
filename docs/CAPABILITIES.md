@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -61,12 +61,13 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
+| [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (25)
+## 測る (26)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -347,6 +348,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: `cell_size` [m] を渡す —— 傾斜は高さと格子間隔の**比**なので、単位が揃っていないと角度が全部ずれる。
 
 動く例: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md)
+
+一次電子を固体の中で 1 個ずつ追うモンテカルロ(Joy の単散乱モデル。弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo 1989)で、反射電子係数 η・二次電子収率 δ・到達深さを `sem_electron_mc` が、δ(E) の形を `sem_yield_curve` が出します。材料の Z・A・密度・二次電子の定数は、光学と同じ材料表の `material_electron_properties` から引きます。CD-SEM の線プロファイルは `sem_line_profile`(台形の断面、埋もれた矩形も)で、線幅は `sem_cd_measure`(しきい値法・最大傾斜法)で測ります。高さ場と材料の地図からは `sem_image` が画素ごとに電子を撃って像を作り(レンズ内 SE / 側方 SE / 反射電子)、`sem_charging_series` が絶縁物の帯電をコマ送りにします。外部真値の門は 4 本: η(Z, E) が Joy のデータベースの実測の幅に入る / 傾けた試料の η(θ) が Arnal の式 / 到達深さが Kanaya-Okayama / δ の形と Emax が Lin & Joy 2005。
+
+使う op: `sem_electron_mc`, `sem_yield_curve`, `sem_se_universal_curve`, `sem_line_profile`, `sem_cd_measure`, `sem_image`, `sem_charging_series`, `sem_se_escape_fraction`, `material_electron_properties`
+
+推奨パイプライン: [`material_electron_properties`](ops/optics/matprop/material_electron_properties.md) → [`sem_electron_mc`](ops/generative/sem/sem_electron_mc.md) → [`sem_line_profile`](ops/generative/sem/sem_line_profile.md) → [`sem_cd_measure`](ops/generative/sem/sem_cd_measure.md) → [`sem_image`](ops/generative/sem/sem_image.md)
+
+代替: [`sem_render`](ops/generative/sem/sem_render.md), [`sem_yield_curve`](ops/generative/sem/sem_yield_curve.md), [`sem_charging_series`](ops/generative/sem/sem_charging_series.md)
+
+限界: 重元素(W・Au)の δ(E) の形は普遍曲線より裾が厚く合わない(SE2 が主、未解決)。δmax は Lin & Joy の表の約 0.8 倍。帯電の負の側は現象論。像は画素ごとの直接 MC なので高加速・大きな像は遅い。「低加速ほど側壁の上を測る」は側壁 88 度で成り立ち 80 度では逆(`poc_virtual_sem_kv_cd_bse`)。
+
+実寸校正: 高さ場・線幅・画素は nm のまま入れる。材料は `material_electron_properties` の名前で引き、表に無い材料の λ・ε は推定と明記される。実機と合わせるなら既知の材料(Si・Au)の η と δ を同じ加速電圧で測って比べる。
+
+動く例: `poc_virtual_sem_kv_cd_bse`
 
 ### [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md)
 

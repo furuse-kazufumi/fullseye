@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-71개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+72개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -117,6 +117,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 이미지에서 치수를 서브픽셀로 측정: [설명](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 예제 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - 텔레센트릭 렌즈와 치수 측정(주광선 기울기 → 높이에 따른 배율 → 비네팅과 흐림): [설명](../../capabilities/telecentric-metrology.md) _(ja)_ · 예제 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 지형의 경사·물 흐름·가시선 측정: [설명](../../capabilities/terrain-and-visibility.md) _(ja)_ · 예제 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 가상 SEM —— 전자와 고체의 상호작용을 몬테카를로로 풀고, 실측값으로 채점하면서 가속 전압·검출기·대전이 영상과 측정 선폭을 어떻게 바꾸는지 본다: [설명](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 예제 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 3-D 스캔에서 부피·토량 구하기: [설명](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 예제 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 그림으로는 확인할 수 없는 것(적분기 차수·리아푸노프 지수·분기·상관 차원·극소 곡면): [설명](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 예제 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
 
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 244개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 245개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -201,7 +202,7 @@ PoC 244개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>산업 검사</b> (38)</summary>
+<details class="vall"><summary><b>산업 검사</b> (39)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1차원 바코드" width="200" height="200"><span>1차원 바코드</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="전극 굴곡도" width="200" height="200"><span>전극 굴곡도</span></a>
@@ -241,6 +242,7 @@ PoC 244개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="조명 원뿔과 관찰 NA" width="200" height="200"><b>&#9654;</b><span>조명 원뿔과 관찰 NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 라인 스캔과 라인 스캔용 렌즈" width="200" height="200"><span>TDI 라인 스캔과 라인 스캔용 렌즈</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="공업용 OCT(도장 층 두께와 내부 결함)" width="200" height="200"><span>공업용 OCT(도장 층 두께와 내부 결함)</span></a>
+<a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="가상 SEM과 가속 전압" width="200" height="200"><span>가상 SEM과 가속 전압</span></a>
 </div>
 </details>
 

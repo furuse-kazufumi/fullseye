@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-71 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+72 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 画像から寸法をサブピクセルで測る: [説明](../capabilities/subpixel-2d-metrology.md) · 例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ): [説明](../capabilities/telecentric-metrology.md) · 例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 地形の傾き・水の流れ・見通しを測る: [説明](../capabilities/terrain-and-visibility.md) · 例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る: [説明](../capabilities/virtual-sem-monte-carlo.md) · 例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 3-D スキャンから体積・土量を出す: [説明](../capabilities/volume-from-3d-scan.md) · 例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面): [説明](../capabilities/what-a-picture-cannot-check.md) · 例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
 
@@ -197,7 +198,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 245 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -216,7 +217,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (38)</summary>
+<details class="vall"><summary><b>産業検査</b> (39)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -256,6 +257,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明の円錐と観察の NA" width="200" height="200"><b>&#9654;</b><span>照明の円錐と観察の NA</span></a>
 <a href="../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tdi_linescan.jpg" alt="TDI ラインスキャンとラインスキャン用レンズ" width="200" height="200"><span>TDI ラインスキャンとラインスキャン用レンズ</span></a>
 <a href="../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_industrial_oct.jpg" alt="工業用 OCT(塗装の層厚と内部欠陥)" width="200" height="200"><span>工業用 OCT(塗装の層厚と内部欠陥)</span></a>
+<a href="../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="仮想 SEM と加速電圧" width="200" height="200"><span>仮想 SEM と加速電圧</span></a>
 </div>
 </details>
 

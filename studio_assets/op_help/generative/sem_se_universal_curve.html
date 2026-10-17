@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_se_universal_curve — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">signal</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_se_universal_curve(e_over_emax=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sem; sem.sem_se_universal_curve(e_over_emax=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;sem_se_universal_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>二次電子収率の普遍曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。</p>
+<p>Lin &amp; Joy 2005(Surf. Interface Anal. 37:895)が 44 元素の実測をまとめた形。最大値は E/Emax ≈ 1 で約 1.0(式の定数のまま。正規化はしない)。<code style="color:#22d3bf">e_over_emax</code> を省くと 0.1〜30 の対数等間隔 64 点で返す(<code style="color:#22d3bf">signal</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; round(float(sem_se_universal_curve(1.0)), 3)</p>
+<p>1.025</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

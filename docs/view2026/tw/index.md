@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 71 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 72 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -117,6 +117,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 以次像素精度從影像量測尺寸: [說明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 範例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - 遠心鏡頭與尺寸量測(主光線傾角 → 隨高度變化的放大率 → 漸暈與模糊): [說明](../../capabilities/telecentric-metrology.md) _(ja)_ · 範例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 量測地形的坡度、水流與通視: [說明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 範例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 虛擬 SEM —— 用蒙地卡羅求解電子與固體的交互作用,對照實測值評分,觀察加速電壓、偵測器與帶電如何改變影像與量得的線寬: [說明](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 範例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 從 3-D 掃描求體積與土方量: [說明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 範例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 圖無法驗證的東西(積分器階數、李雅普諾夫指數、分岔、關聯維度、極小曲面): [說明](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 範例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
 
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 245 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -201,7 +202,7 @@ PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (38)</summary>
+<details class="vall"><summary><b>工業檢測</b> (39)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一維條碼" width="200" height="200"><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極曲折度" width="200" height="200"><span>電極曲折度</span></a>
@@ -241,6 +242,7 @@ PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明光錐與觀察 NA" width="200" height="200"><b>&#9654;</b><span>照明光錐與觀察 NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 線掃描相機與線掃描鏡頭" width="200" height="200"><span>TDI 線掃描相機與線掃描鏡頭</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="工業 OCT(塗層厚度與內部缺陷)" width="200" height="200"><span>工業 OCT(塗層厚度與內部缺陷)</span></a>
+<a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="虛擬 SEM 與加速電壓" width="200" height="200"><span>虛擬 SEM 與加速電壓</span></a>
 </div>
 </details>
 

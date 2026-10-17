@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(387 例)
+### 2-D 画像/信号/幾何(388 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -70,6 +70,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** — ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.13 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 24 件。 `py -3.11 examples/poc_telecentric_metrology.py`
 - **重力波望遠鏡の擬似シミュレーション —— 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点** — km 級の Michelson 干渉計が 1e-21 のひずみを読む仕組みを、どこまで**閉じた式**で再現できるか。検査装置の干渉計(エタロン・レーザー共振器・白色干渉・振動計)と同じ式なので、再現できた分だけ Fullseye の設計規則になる。新 op 12 本(`opsoptics` の `cavity` 5 本 + `ops1d` の `matched` 7 本)。★腕共振器: aLIGO の公表設計値(L 3994.5 m、T_ITM 1.4 %、T_ETM 5 ppm)で フィネス 445.5・極 42.1 Hz・循環光量 284 倍、伝達関数は極で 1/√2・FSR で零、Pound-Drever-Hall の傾きは Black 2001 の式 15 と 0.9999 倍。★量子雑音の予算(Kimble ら 2001): 散射 × 輻射圧 = SQL²/2 の恒等式が 1e-10、総和は K = 1 で SQL に触れ、**第二実装 gwinc 0.6.2**(信号再利用鏡を外した aLIGO)と 8 周波数で比 0.96〜1.12。公開設計曲線(LIGO-T1800044)との比は 20 Hz で 0.42・100 Hz で 1.99・1 kHz で 0.33 —— 信号再利用と熱雑音の分だけ形が違う(表で明示)。★★実データ(GWOSC の GW150914、CC BY 4.0、環境変数 FULLSEYE_GWOSC_DATA に置けば走り、無ければ「未配置」と明示): Welch の PSD → 白色化 → 35〜350 Hz で **PRL 116, 061102 図 1 の公表曲線と相関 0.959 / 0.935**(白色化なしなら 0.47 / 0.38)、数値相対論の波形の整合フィルタで **SNR H1 19.0 / L1 13.1(公表 ≈ 20 / 13)、ネットワーク 23.1(公表 24)、L1 が 7.1 ms 先(公表 6.9 +0.5/−0.4 ms)**。ニュートン近似のチャープは SNR 9.1 / 5.6(合体・リングダウンが無い分だけ損、それでも検出)。O1 の実測 ASD は設計曲線の 2〜7 倍(2015 年の装置は設計未達)。NR 波形の軌跡から式 1 でチャープ質量 38 M☉(公表 ≈ 31、1 周期に 7 % 上がる帯域では式 1 が高めに出る)、H1 の白色化データの尾根からは 42 M☉(NR 軌跡と 10 % 差)。★持ち帰り: 1/f² の色つき雑音に埋めた既知波形で、白色化した整合フィルタは埋めた高さどおり拾い、素の相互相関は狭帯域のトーンでは差が無く(0.98)、広帯域のチャープ 0.50・減衰振動 0.37 —— 白色化が効くのは波形が雑音の色を跨ぐとき。学習した数 0、較正 0、CI は合成と閉形式だけで図なし 4 秒。 `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
 - **SEM の明るい縁が寸法をどれだけ太らせるか(公開ウェハ欠陥データで採点)** — SEM 像では二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、その明るい縁ごとしきい値を超えて拾うと寸法・面積が系統的に太る。この太りを**真値つき**で切り分ける多段 PoC。新 op `sem_render`(二次電子の縁効果 sec θ + ビーム PSF + ポアソン雑音 + 帯電)は 3 本の閉形式の門をもつ: 平面で一様 / 斜面で平面比 = sec θ(誤差 0e+00)/ 段差の明るい縁の幅 = PSF 幅。★★合成(真値の面積が厳密)では **Dice は高い(中央 0.885 = 形はよく合う)のに面積は系統的に太り(比 1.09〜1.70)**、太りは閉形式 **ΔA ≈ 周囲長 × 有効縁幅**(有効縁幅/PSF の中央 1.01)でよく説明できる。★既知のビーム PSF 幅で面積を引くと偏りは 0.261 → 0.008 に消える(物理による補正)。埋め込み POD(`pod_hitmiss_fit`)で a90/95 が出る。★実データ(Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427)で採点すると: 段 0 のマスク規約検査で勾配の峰はマスク境界の cm = -1.3 px(**専門家マスクは明るい縁まで含む**)、クラス別 Dice 中央は 0.51 / 0.70 / 0.79(クラス 3/4/5、クラス 5 は全 4 枚)、面積比 1.70 / 1.22 / 1.42。★実データの欠陥は背景より 0.13 暗い穴で、合成の明るい塊と**極性が逆**であることも正直に印字する。実データ段は環境変数 FULLSEYE_CARINTHIA_DATA があるときだけ走り、無ければ合成のみ(CI は合成のみ、図なし既定で 60 秒未満)。 `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
+- **仮想 SEM: 加速電圧で像も測れる線幅も変わる(電子と固体のモンテカルロ、実測値で採点)** — SEM の像は表面の写真ではなく、固体の中で散乱する一次電子の相互作用の体積から何が出てきたかの集計。一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱 + Browning 1994 の Mott 近似 + Joy-Luo の阻止能)の新 op 8 本と材料表の `material_electron_properties` で、各段を外の実測値で採点する多段 PoC。★η(Z, E) は 7 元素 × 5〜30 keV が Joy のデータベースの実測の幅 ± 0.04 に入る(遮蔽ラザフォードは W・Au で外れる)。到達深さは Kanaya-Okayama の 0.83〜1.04 倍。SE の形は C〜Ag で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076(W・Au は裾が厚く未解決)。★★Si の上の W: 段差の無い W を 1 kV で見ると SE +5 % / 反射電子 +96 %(SE では消える)。5 kV では SE も +80 %(SE2 が Z を運ぶ)。深さ 150 nm の W は 20 kV でないと見えない。★CD-SEM: 側壁 88 度の線は 1 kV 39.1 nm / 20 kV 39.9 nm(低加速は側壁の上寄りを測る)。側壁 80 度では差が小さく向きも逆。★帯電: 0.5 kV は正に溜まって暗くなり η + δ·F(V*) = 1 の電位で止まる(二分法と 2e-15 V)、20 kV は負に溜まって明るくなる。途中で材料の境界を素通りする欠陥を見つけて直した(0.01 nm のキャップで η が 0.425 → 0.329 に跳んでいた)。実画像の章は未実施。CI は縮小(図なしで CPU 約 30 秒)。 `py -3.11 examples/poc_virtual_sem_kv_cd_bse.py`
 - **結晶粒度 G(面積法と切片法は別の崖で落ちる)** — Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。 `py -3.11 examples/poc_metal_grain_size.py`
 - **ねじのピッチ・フランク角・有効径(傾きは左右フランクに逆符号)** — ★列幅の FFT はピッチを**半分**と答える(単条ねじの上下輪郭は P/2 ずれる)。★★軸の傾き 3 度で左右フランク角は 33.18 / 26.74 度 ―― 半和が真のフランク角、半差が傾き。片側フランクのピッチは 1 次で ±3 % 狂い、頂点間隔は 2 次(-0.12 %)。★ぼけ σ=4 px で壊れるのは d2(-0.06 %)でなく α(-0.57 度)。★標本化の崖は α(8 px/山)→ d2(4 px/山)→ FFT の P(2 px/山 まで当たり、1.5 px/山 は 3.0 px に折り返す)の順。 `py -3.11 examples/poc_screw_thread_metrology.py`
 - **骨梁の厚さ Tb.Th・間隔 Tb.Sp・骨体積率(平板モデル vs 直接法)** — ★真値が複数ある: 幅の長さ加重平均 104.8 µm、面積加重 113.9、最大内接円の定義 121.6、平板モデル 118.4 µm ―― どれと比べるかで 9〜16 % 動く。★★解像度の崖は平均でなく分布に来る(60 µm 画素で重なり 0.83 → 0.09。平均は量子化 -29.5 % と大津の太り +26.6 % が打ち消す)。★★雑音は斑点(σ 0.10 から)と途切れ(σ 0.15 から)で Tb.Sp を逆向きに引き、opening r=1 は細い骨梁ごと切る(途切れ 5 → 16 本)が面積オープニングは斑点だけ消す。★カップ状バイアス β=0.6 は全体の BV/TV -0.9 % なのに中心/縁の Tb.Th が 83/112 µm ―― 場所で壊れる。log 域のまま大津を取ると +18.9 % 太る。 `py -3.11 examples/poc_bone_trabecular_thickness.py`
@@ -728,9 +729,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3331 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 309 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -1479,7 +1480,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -2441,7 +2442,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(308 ops / 35 categories)
+### optics(309 ops / 35 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2614,12 +2615,13 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `subsurface_approx` `normalmap → image2d` — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。 · 例: `machined_metal_and_materials`
 - `wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: `machined_metal_and_materials`
 
-#### optics / matprop(19)
+#### optics / matprop(20)
 - `abbe_number` `入力なし → table` — フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。 · 例: `poc_chromatic_confocal`, `poc_material_optical_library`
 - `carbon_black_absorption` `入力なし → pairs` — カーボンブラック(黒い樹脂の顔料)が足す吸収係数 α [1/mm]。 · 例: `poc_hyperspectral_foreign_matter`
 - `glass_map` `入力なし → table` — Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。 · 例: `poc_material_optical_library`, `poc_optics_drawings`
 - `material_absorption` `入力なし → pairs` — 吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を ``pairs``(λ [nm], α)で返す。 · 例: `poc_material_optical_library`
 - `material_dispersion` `入力なし → pairs` — 屈折率の分散曲線 n(λ) を ``pairs``(λ [nm], n)で返す(等間隔 ``n_points`` 点)。 · 例: `poc_fiber_light_guide`, `poc_material_optical_library`
+- `material_electron_properties` `入力なし → table` — 電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `material_extinction` `入力なし → pairs` — 消衰係数の曲線 k(λ) を ``pairs``(λ [nm], k)で返す。k の表が無い区間は 0。 · 例: `poc_material_optical_library`
 - `material_from_curves` `入力なし → table` — 測った n(λ)(と k(λ))の ``pairs``(λ [nm], 値)から材料レコードを作る。 · 例: `poc_material_optical_library`
 - `material_from_sellmeier` `入力なし → table` — Sellmeier 係数(n² − 1 = Σ Bᵢ λ²/(λ² − Cᵢ)、λ は µm、Cᵢ は µm²)から材料レコードを作る。 · 例: `poc_material_optical_library`
@@ -4365,7 +4367,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `conv_gci` `入力なし → table` — Grid convergence index of the finest solution: Celik et al. 2008 procedure, eqs. (1)-(7). · 例: `converge_tour`
 - `conv_observed_order` `入力なし → table` — Apparent order of convergence p from three systematically refined solutions (Celik et al. 2008, eq. 3).
 
-### generative(34 ops / 6 categories)
+### generative(42 ops / 6 categories)
 
 #### generative / illusion(13)
 - `illusion_cafe_wall` `入力なし → rgb` — カフェウォール錯視。**目地は厳密な水平線**なのに、傾いて見える。 · 例: `poc_calipers_under_illusion`
@@ -4405,8 +4407,16 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `pl_groove_visibility` `入力なし → table` — 溝の幅・拡散長・雑音から、影の溝と沈みの溝のコントラストと CNR を閉形式で返す(``table``)。 · 例: `poc_si_wafer_pl_defect_visibility`
 - `pl_image_simulate` `image2d → image2d` — 励起の場と再結合の場から PL 像を作る(定常拡散方程式の厳密解 + 光学 PSF + 雑音)。 · 例: `poc_si_wafer_pl_defect_visibility`
 
-#### generative / sem(1)
+#### generative / sem(9)
+- `sem_cd_measure` `pairs → table` — 線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_charging_series` `image2d → video` — 絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_electron_mc` `入力なし → table` — 平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_line_profile` `入力なし → table` — 1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_wafer_defect_edge_bias`
+- `sem_se_escape_fraction` `入力なし → signal` — 正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_se_universal_curve` `入力なし → signal` — 二次電子収率の普遍曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_yield_curve` `入力なし → table` — 加速電圧を振って η(E) と δ(E) を MC で出し、δ の形を普遍曲線と比べる。 · 例: `poc_virtual_sem_kv_cd_bse`
 
 #### generative / stream(3)
 - `perpetual_render` `table → rgb` — 状態を絵にする(``rgb``)。何歩目で描いてもよい。 · 例: `poc_illusions_and_perpetual_drawing`

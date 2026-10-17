@@ -1709,6 +1709,27 @@
    ]
   },
   {
+   "id": "virtual-sem-monte-carlo",
+   "title": "仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る",
+   "title_en": "A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width",
+   "category": "測る",
+   "note": "docs/capabilities/virtual-sem-monte-carlo.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_virtual_sem_kv_cd_bse",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "visual-hull-from-silhouettes",
    "title": "シルエットから立体を彫り出す(視体積交差)",
    "title_en": "Carve a solid out of silhouettes (visual hull)",
@@ -1808,8 +1829,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 387,
-  "run_by_the_poc_gate": 244,
+  "examples2d_total": 388,
+  "run_by_the_poc_gate": 245,
   "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [

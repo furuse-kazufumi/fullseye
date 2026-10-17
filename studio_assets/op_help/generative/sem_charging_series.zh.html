@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_charging_series — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_charging_series(height, material_map=None, *, materials=(&#x27;PMMA&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 1.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, frames: &#x27;int&#x27; = 12, layer_bottom_nm=0.0, volts_per_electron: &#x27;float&#x27; = 0.05, leak_frames: &#x27;float&#x27; = 0.0, spread_px: &#x27;float&#x27; = 1.0, phi_ev: &#x27;float&#x27; = 2.0, gain=None, seed: &#x27;int&#x27; = 0, return_potential: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import sem; sem.sem_charging_series(height, material_map=None, *, materials=(&#x27;PMMA&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 1.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, frames: &#x27;int&#x27; = 12, layer_bottom_nm=0.0, volts_per_electron: &#x27;float&#x27; = 0.05, leak_frames: &#x27;float&#x27; = 0.0, spread_px: &#x27;float&#x27; = 1.0, phi_ev: &#x27;float&#x27; = 2.0, gain=None, seed: &#x27;int&#x27; = 0, return_potential: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;sem_charging_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>按扫描帧推进绝缘体的带电,返回图像随时间的变化(<code style="color:#22d3bf">video</code>,(T, H, W))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>1 コマで画素あたり <code style="color:#22d3bf">electrons_per_pixel</code> 個の電子が入り、η + δ·F(V) 個が出ていく。差し引き 1 − η − δ·F(V) 個が絶縁物の面に溜まり、電位を <code style="color:#22d3bf">volts_per_electron</code> [V/個] ずつ動かす(負の電子が溜まれば V は下がる)。電位は <code style="color:#22d3bf">spread_px</code> で横に広がり、<code style="color:#22d3bf">leak_frames</code>(&gt; 0 なら)の時定数で抜ける。導体の面は接地(V = 0)。</p>
+<p style="margin:2px 0 2px 12px">• <b>正の帯電</b>(η + δ &gt; 1、低加速で多い): 二次電子が面に引き戻され(F(V)、<code style="color:#22d3bf">sem_se_escape_fraction</code>)、像は暗くなる。放出が減ると正味の流れも 0 に近づくので、電位は η + δ·F(V*) = 1 の V* で止まる(自己調整)。</p>
+<p style="margin:2px 0 2px 12px">• <b>負の帯電</b>(η + δ &lt; 1、高加速): 面の負の電位が二次電子を押し出し、像は <code style="color:#22d3bf">1 + |V| / (|V| + 20 V)</code> 倍に明るくなる(★現象論の式で、2 定数は固定 —— <code style="color:#22d3bf">_NEG_GAIN</code>・<code style="color:#22d3bf">_NEG_SCALE_V</code>。着地エネルギーの低下とビームの曲がりは入れない)。</p>
+<p>η と δ は <code style="color:#22d3bf">sem_image</code> のモンテカルロ(<code style="color:#22d3bf">return_signals</code>)で 1 回だけ求め、コマごとの雑音は検出された電子の数のポアソンで載せる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p>(frames, H, W) の float64、[0,1] (<code style="color:#22d3bf">sem_image</code> と同じ固定の倍率)。</p>
+<p><code style="color:#22d3bf">return_potential</code> なら dict(<code style="color:#22d3bf">video</code> と、コマごとの電位 <code style="color:#22d3bf">potential_v</code> (T, H, W)、</p>
+<p>絶縁物の面のマスク <code style="color:#22d3bf">insulator</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; v = sem_charging_series(np.zeros((4, 4)), materials=(&quot;PMMA&quot;,), substrate=&quot;PMMA&quot;,</p>
+<p>...                         electrons_per_pixel=5, frames=3)</p>
+<p>&gt;&gt;&gt; v.shape</p>
+<p>(3, 4, 4)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">video</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_universal_curve">sem_se_universal_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

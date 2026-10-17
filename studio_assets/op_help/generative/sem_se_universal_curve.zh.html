@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_se_universal_curve — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_se_universal_curve(e_over_emax=None)</code>(要直接调用实现,<code style="color:#22d3bf">import sem; sem.sem_se_universal_curve(e_over_emax=None)</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;sem_se_universal_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>二次电子产额的普适曲线 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Lin &amp; Joy 2005(Surf. Interface Anal. 37:895)が 44 元素の実測をまとめた形。最大値は E/Emax ≈ 1 で約 1.0(式の定数のまま。正規化はしない)。<code style="color:#22d3bf">e_over_emax</code> を省くと 0.1〜30 の対数等間隔 64 点で返す(<code style="color:#22d3bf">signal</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; round(float(sem_se_universal_curve(1.0)), 3)</p>
+<p>1.025</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

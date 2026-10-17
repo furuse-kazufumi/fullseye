@@ -899,7 +899,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
     # 2026-10-15: itof(間接 ToF、itof)8 op を新しい族として追加(293 → 301)。
     # 2026-10-15: radiosity(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画、radiosity3d)7 op を新しい族として追加(301 → 308)。
-    assert len(opsoptics.OPSOPTICS) == 308
+    # 2026-10-15: matprop に電子線の物性(material_electron_properties、仮想 SEM が引く)1 op(308 → 309)。
+    assert len(opsoptics.OPSOPTICS) == 309
     assert len(opsoptics.list_ops("radiosity")) == 7
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
@@ -912,7 +913,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("pixelshift")) == 6
     assert len(opsoptics.list_ops("itof")) == 8
-    assert len(opsoptics.list_ops("matprop")) == 19
+    assert len(opsoptics.list_ops("matprop")) == 20      # + 電子線の物性 1 op(2026-10-15)
     assert len(opsoptics.list_ops("spectral")) == 14
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /

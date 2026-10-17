@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-71 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+72 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -117,6 +117,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Maße aus dem Bild subpixelgenau messen: [Erklärung](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · Beispiele [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - Telezentrische Objektive für die Maßprüfung (Hauptstrahlwinkel, Abbildungsmaßstab über der Höhe, Vignettierung und Unschärfe): [Erklärung](../../capabilities/telecentric-metrology.md) _(ja)_ · Beispiele [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- Ein virtuelles REM — Elektron-Festkörper-Wechselwirkung per Monte Carlo lösen und, an Messdaten bewertet, sehen, wie Spannung, Detektor und Aufladung Bild und gemessene Linienbreite verändern: [Erklärung](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · Beispiele [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - Volumen und Erdmassen aus einem 3-D-Scan: [Erklärung](../../capabilities/volume-from-3d-scan.md) _(ja)_ · Beispiele [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - Was ein Bild nicht prüfen kann (Integratorordnung, Lyapunov-Spektrum, Bifurkationen, Korrelationsdimension, Minimalflächen): [Erklärung](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · Beispiele [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
 
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-244 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+245 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -201,7 +202,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (38)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (39)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D-Barcode" width="200" height="200"><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Elektroden-Tortuosität" width="200" height="200"><span>Elektroden-Tortuosität</span></a>
@@ -241,6 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="Beleuchtungskegel und Abbildungs-NA" width="200" height="200"><b>&#9654;</b><span>Beleuchtungskegel und Abbildungs-NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI-Zeilenkamera und Zeilenobjektive" width="200" height="200"><span>TDI-Zeilenkamera und Zeilenobjektive</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="Industrielle OCT (Lackschichten und verborgene Fehler)" width="200" height="200"><span>Industrielle OCT (Lackschichten und verborgene Fehler)</span></a>
+<a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="Virtuelles REM und Spannung" width="200" height="200"><span>Virtuelles REM und Spannung</span></a>
 </div>
 </details>
 

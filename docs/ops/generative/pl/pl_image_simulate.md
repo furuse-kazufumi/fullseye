@@ -74,7 +74,7 @@ True
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[sem_render](../sem/sem_render.md)
+[sem_render](../sem/sem_render.md) · [sem_image](../sem/sem_image.md) · [sem_charging_series](../sem/sem_charging_series.md)
 
 ## 同カテゴリ(`pl`)
 

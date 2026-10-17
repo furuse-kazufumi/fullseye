@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **135 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 38 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 39 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1215,6 +1215,46 @@ py -3.11 examples/poc_industrial_oct.py
 この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.245 —— 仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)
+
+[![仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
+
+*↑ **仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)** ―― 走査電子顕微鏡(SEM)の像は表面の写真ではなく、固体の中で散乱する一次電子の**相互作用の体積**から何が出てきたかの集計である。新 op 8 本(`sem_electron_mc` / `sem_yield_curve` / `sem_se_universal_curve` / `sem_line_profile` / `sem_cd_measure` / `sem_image` / `sem_charging_series` / `sem_se_escape_fraction`)と材料表の `material_electron_properties` で、一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱、弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo)を組み、各段を外の実測値で採点した。反射電子係数 η は 7 元素(C〜Au)× 5/10/20/30 keV の全部が Joy のデータベースの実測の幅 ± 0.04 に入り、遮蔽ラザフォードに戻すと W・Au で外れる。最大の到達深さは Kanaya-Okayama の 0.83〜1.04 倍、深さは E^1.75(Si)/ E^1.52(Au)で伸びる(KO は 1.67)。二次電子の収率の形は C〜Ag の 5 元素で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076、Emax は表の −4〜+7 %(合わせていない)。W・Au は裾が厚く合わない(SE2 が主、未解決)。★ユーザーの見立て「Si の上の W は SE では見えず、反射電子の Z コントラストで浮かぶ」は条件つきで当たった: 段差の無い W を 1 kV で見たときだけ(SE +5 %、反射電子 +96 %)。5 kV では SE も +80 % —— 反射電子が表面を抜けるときに作る SE2 が Z を運ぶ。深さ 150 nm に埋もれた W は 1 kV では反射電子でも +3 %、20 kV で +154 %(情報深さ)。CD-SEM では PMMA の線(底辺 40 nm)を側壁 88 度で測ると、しきい値法の線幅が 1 kV 39.1 nm / 20 kV 39.9 nm ―― 低加速は側壁の上寄り(0.33)、高加速は根元(0.03)を測る。ただし側壁 80 度では差が小さく向きも逆で、「低加速ほど上を測る」は一般則ではない。垂直の側壁はどの電圧でも太く測る(+0.3〜+1.0 nm)。帯電は、η + δ > 1 の 0.5 kV で正に溜まって暗くなり、η + δ·F(V*) = 1 を二分法で別に解いた電位に 2e-15 V で止まる。20 kV は負に溜まり続けて明るくなる(現象論)。途中で見つけた欠陥も残す: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていて、0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳んでいた(境界で歩を切って直し、回帰の門にした)。実画像の章は未実施(線幅の真値つきの CC BY の CD-SEM 像が見つからない)。*
+
+[![δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。破線は Lin & Joy 2005 の普遍曲線(式 12)。C〜Ag の 5 元素は重なる。W と Au(赤)は E > 3 Emax で裾が厚い —— 重](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/02_sem_se_universal_curve.png)
+
+*↑ 測定の図 ―― δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。破線は Lin & Joy 2005 の普遍曲線(式 12)。C〜Ag の 5 元素は重なる。W と Au(赤)は E > 3 Emax で裾が厚い —— 重元素は反射電子が多く、表面を抜けるときに作る SE2 が主になるので、SE1 だけを仮定した普遍曲線からずれる(未解決のまま数で固定)。*
+
+[![レンズ内の SE の線プロファイル(基板の水準で割った)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/03_sem_cd_profiles_by_kv_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/03_sem_cd_profiles_by_kv.png)
+
+*↑ レンズ内の SE の線プロファイル(基板の水準で割った)。*
+
+[![PMMA の線(高さ 40 nm)を Si の上で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/04_sem_cd_bias_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/04_sem_cd_bias_table.png)
+
+*↑ PMMA の線(高さ 40 nm)を Si の上で。*
+
+[![Si に埋もれた W(幅 100 nm、厚さ 60 nm)の、真上と 400 nm 離れた Si の平均との比 − 1(反射電子 / レンズ内 SE)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/06_sem_buried_w_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/06_sem_buried_w_contrast.png)
+
+*↑ Si に埋もれた W(幅 100 nm、厚さ 60 nm)の、真上と 400 nm 離れた Si の平均との比 − 1(反射電子 / レンズ内 SE)。*
+
+[![各パネルは Si の水準で割った信号(0〜3 で共通の濃淡)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/07_sem_tungsten_se_vs_bse_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/07_sem_tungsten_se_vs_bse.png)
+
+*↑ 各パネルは Si の水準で割った信号(0〜3 で共通の濃淡)。*
+
+[![Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。PMMA だけが負に帯電して明るくなり、接地した Si は変わらない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/09_sem_charging_pmma_line.gif)
+
+*↑ 動く図 ―― Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。PMMA だけが負に帯電して明るくなり、接地した Si は変わらない。*
+
+```
+py -3.11 examples/poc_virtual_sem_kv_cd_bse.py
+```
+
+ソース: [examples/poc_virtual_sem_kv_cd_bse.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse)
+
+使用 op(ノートへ): [`material_electron_properties`](https://furuse.work/ops/optics/matprop/material_electron_properties.html) · [`sem_cd_measure`](https://furuse.work/ops/generative/sem/sem_cd_measure.html) · [`sem_charging_series`](https://furuse.work/ops/generative/sem/sem_charging_series.html) · [`sem_electron_mc`](https://furuse.work/ops/generative/sem/sem_electron_mc.html) · [`sem_image`](https://furuse.work/ops/generative/sem/sem_image.html) · [`sem_line_profile`](https://furuse.work/ops/generative/sem/sem_line_profile.html) · [`sem_se_escape_fraction`](https://furuse.work/ops/generative/sem/sem_se_escape_fraction.html) · [`sem_se_universal_curve`](https://furuse.work/ops/generative/sem/sem_se_universal_curve.html) · [`sem_yield_curve`](https://furuse.work/ops/generative/sem/sem_yield_curve.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

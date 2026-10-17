@@ -328,8 +328,9 @@ def test_custom_records_round_trip_and_refuse_empty():
 def test_ledger_registration():
     import opsoptics
     names = [r[0] for r in opsoptics._CATALOG["matprop"]]
-    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS"))
-    assert len(names) == 19                                   # + 近赤外の吸収帯 3 op(2026-10-15)
+    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS",
+                                                                     "ELEMENTS", "ELECTRON_SOLID"))
+    assert len(names) == 20                                   # + 近赤外の吸収帯 3 op + 電子線の物性 1 op(2026-10-15)
     for n in names:
         assert opsoptics.get(n) is getattr(M, n)
     import fullseye as fs

@@ -5768,6 +5768,22 @@
     "de": "Interreflexion in der Tasche bis zur Konvergenz",
     "hi": "machined pocket का inter-reflection अभिसरण तक"
    }
+  },
+  {
+   "id": "poc_virtual_sem_kv_cd_bse",
+   "group": "wing_industrial",
+   "media": "05_sem_same_part_3kv_3detectors.png",
+   "motion": false,
+   "thumb_src": "05_sem_same_part_3kv_3detectors.png",
+   "label": {
+    "ja": "仮想 SEM と加速電圧",
+    "en": "Virtual SEM vs voltage",
+    "zh": "虚拟 SEM 与加速电压",
+    "tw": "虛擬 SEM 與加速電壓",
+    "ko": "가상 SEM과 가속 전압",
+    "de": "Virtuelles REM und Spannung",
+    "hi": "Virtual SEM बनाम accelerating voltage"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "virtual-sem-monte-carlo": {
+    "zh": "虚拟 SEM —— 用蒙特卡罗求解电子与固体的相互作用,对照实测值评分,观察加速电压、探测器和带电如何改变图像与测得的线宽",
+    "tw": "虛擬 SEM —— 用蒙地卡羅求解電子與固體的交互作用,對照實測值評分,觀察加速電壓、偵測器與帶電如何改變影像與量得的線寬",
+    "ko": "가상 SEM —— 전자와 고체의 상호작용을 몬테카를로로 풀고, 실측값으로 채점하면서 가속 전압·검출기·대전이 영상과 측정 선폭을 어떻게 바꾸는지 본다",
+    "de": "Ein virtuelles REM — Elektron-Festkörper-Wechselwirkung per Monte Carlo lösen und, an Messdaten bewertet, sehen, wie Spannung, Detektor und Aufladung Bild und gemessene Linienbreite verändern",
+    "hi": "Virtual SEM — electron-solid interaction को Monte Carlo से हल करना और मापे गए आँकड़ों से जाँचते हुए देखना कि voltage, detector और charging image और मापी गई line width को कैसे बदलते हैं"
    }
   }
  }
