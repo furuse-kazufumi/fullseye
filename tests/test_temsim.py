@@ -99,3 +99,24 @@ def test_ledger_registration():
     assert opsoptics.missing() == []
     import fullseye as fs
     assert callable(getattr(fs.ledger, "tem_ctf_estimate"))
+
+
+def test_refusal_thresholds_flip_the_verdict_at_the_boundary():
+    """判定のしきい値 2 つが、境界に置いた入力で 2 点とも効く(探針の種と同じ写真)。
+
+    Δf 6000 Å・帯域 k ≤ 0.2 Å⁻¹ で零点は 4 本、相関の山は 100 e/Å² で 11.8 MAD。線量 30 / 60 e/Å² の組は
+    山の z が既定の 8 のすぐ下と上に来る。返り値の ``n_rings`` と ``peak_z`` が「測れる限界」。
+    """
+    film = T.tem_amorphous_film(256, 1.0, 30.0, seed=2)
+    kw = dict(defocus_min_A=2000.0, k_max=0.2, on_fail="report")
+    I = T.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=100.0, seed=1)
+    base = T.tem_ctf_estimate(I, 1.0, **kw)
+    assert base["accepted"] and base["n_rings"] == 4 and 8.0 < base["peak_z"] < 16.0
+    assert T.tem_ctf_estimate(I, 1.0, min_rings=4, **kw)["accepted"]
+    assert not T.tem_ctf_estimate(I, 1.0, min_rings=5, **kw)["accepted"]
+    assert T.tem_ctf_estimate(I, 1.0, min_peak_z=4.0, **kw)["accepted"]
+    assert not T.tem_ctf_estimate(I, 1.0, min_peak_z=16.0, **kw)["accepted"]
+    lo = T.tem_ctf_estimate(T.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=30.0, seed=1), 1.0, **kw)
+    hi = T.tem_ctf_estimate(T.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=60.0, seed=1), 1.0, **kw)
+    assert 6.0 < lo["peak_z"] < 8.0 and not lo["accepted"]
+    assert 8.0 < hi["peak_z"] < 11.0 and hi["accepted"]
