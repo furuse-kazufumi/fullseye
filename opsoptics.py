@@ -117,13 +117,14 @@ import chromconf
 import fiberoptics
 import filmoptics
 import moirealign
+import gratinginterf
 import telecentric
 import optdraw
 import linescan
 import pixelshift
 import octscan
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign, "gratinginterf": gratinginterf,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "linescan": linescan,
@@ -543,6 +544,18 @@ _CATALOG = {
         ("moire_mark_read", "moirealign", ["image2d", "image2d"], "table"),
         ("moire_phase_crlb", "moirealign", [], "table"),
     ],
+    "grating_interf": [  # 格子干渉(gratinginterf、2026-10-15): 自己像の距離と周期 → 位相ステップの画像列 → 透過・微分位相・暗視野
+        # ★暗視野は縞の可視度の比(試料あり / なし)で、画素より小さい構造の小角散乱を測る。散乱角の広がりへは公表式で換算。
+        ("talbot_grating_design", "gratinginterf", [], "table"),
+        ("grating_stepping_simulate", "gratinginterf", ["image2d"], "images"),
+        ("grating_three_image_retrieve", "gratinginterf", ["images", "images"], "table"),
+        ("darkfield_scatter_relation", "gratinginterf", [], "table"),
+        # 2026-10-18 第 2 陣: 絨毯(I(x, z))・線源と Lau の条件・1 周期のステップ数の推定・微分位相の積分(折り返しは拒否)
+        ("talbot_carpet", "gratinginterf", [], "table"),
+        ("talbot_source_visibility", "gratinginterf", [], "table"),
+        ("grating_step_period_estimate", "gratinginterf", ["images"], "table"),
+        ("dpc_integrate", "gratinginterf", ["table"], "table"),     # 3 像の表(か 2-D の図)を受ける
+    ],
     "drawing": [  # 光学系の図面(optdraw、2026-10-15): 図の dict(kind "optdraw")を組み、SVG / DXF の文字列に書き、
         # 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が
         #   ValueError で拒む。SVG / DXF は既存の text(文字列)、画像は rgbimage。
@@ -725,6 +738,10 @@ RESULT_ADAPTERS = {
                                      if isinstance(r, tuple) else r),
     # B スキャンの表 → 断面像(dB)。深さ軸・横軸が要る呼び手は素の関数から表を取る。
     "oct_bscan": lambda r: np.asarray(r["image_db"], float) if isinstance(r, dict) else r,
+    # 位相ステップの画像列 (N, H, W) の ndarray → 2-D の画像 N 枚の列(宣言 images)。素の関数は ndarray のまま返す
+    # (向きの反転・露光の倍率など、配列の演算をそのまま使えるように)。消費側は列も (N, H, W) も受ける。
+    "grating_stepping_simulate": lambda r: ([np.asarray(x) for x in r]
+                                            if isinstance(r, np.ndarray) and r.ndim == 3 else r),
 }
 
 

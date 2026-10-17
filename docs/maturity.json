@@ -444,6 +444,27 @@
    ]
   },
   {
+   "id": "grating-interferometry",
+   "title": "格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける",
+   "title_en": "Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan",
+   "category": "測る",
+   "note": "docs/capabilities/grating-interferometry.md",
+   "status": "validated-public-real-data",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_grating_interferometry",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "gw-interferometer-quantum-noise-and-matched-filter",
    "title": "干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)",
    "title_en": "Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)",
@@ -1745,9 +1766,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 384,
-  "run_by_the_poc_gate": 242,
-  "run_by_the_example_gate": 142,
+  "examples2d_total": 386,
+  "run_by_the_poc_gate": 243,
+  "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

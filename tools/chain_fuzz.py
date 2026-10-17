@@ -4495,6 +4495,41 @@ def _b_moire_mark(pool, rng):
     return (img, ref), {"pixel_um": 2.0}
 
 
+def _b_grating_stacks(pool, rng):
+    """格子干渉の位相ステップ 2 組(試料あり 8 枚・基準 6 枚、16 x 20 画素、Poisson 雑音つき)。"""
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:16, :20]
+    t = np.exp(-0.03 * xx)
+    phi = float(rng.uniform(0.2, 1.0)) * np.sin(yy / 3.0)
+    dfm = 0.5 + 0.4 * np.cos(xx / 5.0) ** 2
+    s = _gi.grating_stepping_simulate(t, phi, dfm, n_steps=8, flux=2000.0, seed=3)
+    r = _gi.grating_stepping_simulate(None, n_steps=6, flux=2000.0, seed=4, shape=(16, 20))
+    return (s, r), {}
+
+
+def _b_grating_stack1(pool, rng):
+    """1 周期 10.6 段で 10 枚撮った基準の画像列(縞あり、雑音なし、12 x 14 画素)。"""
+    import gratinginterf as _gi
+    s = _gi.grating_stepping_simulate(None, n_steps=10, steps_per_period=10.6, shape=(12, 14),
+                                      ref_phase_rad=float(rng.uniform(-1.0, 1.0)))
+    return (s,), {}
+
+
+def _b_darkfield_rel(pool, rng):
+    """暗視野か散乱角の広がりの一方だけ(両方・どちらも無しは拒否する op)。"""
+    if rng.uniform() < 0.5:
+        return (), {"darkfield": float(rng.uniform(0.2, 0.95))}
+    return (), {"sigma_urad": float(rng.uniform(0.2, 5.0))}
+
+
+def _b_dpc_map(pool, rng):
+    """丸棒の微分位相(折り返しの無い 0.4 rad 程度、16 x 40 画素)を 3 像の表の形で、幾何と一緒に。"""
+    xb = np.arange(41, dtype=float) - 0.5
+    tb = 2.0 * np.sqrt(np.clip(12.0 ** 2 - (xb - 20.0) ** 2, 0.0, None))
+    phi = np.tile(float(rng.uniform(0.02, 0.06)) * np.diff(tb), (16, 1))
+    return ({"dpc_rad": phi},), {"pixel_um": 40.0, "distance_mm": 23.2, "analyzer_period_um": 2.0, "energy_kev": 14.4}
+
+
 def _b_gum_mc(pool, rng):
     """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
     n = 3
@@ -7074,6 +7109,12 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    # 格子干渉(2026-10-15): 3 像の分離は、縞の入った位相ステップの画像列 2 組が要る(汎用の画像の束には
+    # 1 周期の正弦が無く、基準の可視度が 0 で fail-closed で拒否される)。
+    "grating_three_image_retrieve": _b_grating_stacks,
+    "grating_step_period_estimate": _b_grating_stack1,
+    "dpc_integrate": _b_dpc_map,
+    "darkfield_scatter_relation": _b_darkfield_rel,
 }
 
 

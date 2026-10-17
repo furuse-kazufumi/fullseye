@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3303,
+ "n_notes": 3309,
  "notes": {
   "vol_dilate": [
    {
@@ -27452,6 +27452,82 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/optics/glassbody/slab_transmittance.md"
+   }
+  ],
+  "darkfield_scatter_relation": [
+   {
+    "op": "darkfield_scatter_relation",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/darkfield_scatter_relation.md"
+   }
+  ],
+  "dpc_integrate": [
+   {
+    "op": "dpc_integrate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/dpc_integrate.md"
+   }
+  ],
+  "grating_step_period_estimate": [
+   {
+    "op": "grating_step_period_estimate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/grating_step_period_estimate.md"
+   }
+  ],
+  "grating_stepping_simulate": [
+   {
+    "op": "grating_stepping_simulate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "image2d",
+    "out": "images",
+    "path": "docs/ops/optics/grating_interf/grating_stepping_simulate.md"
+   }
+  ],
+  "grating_three_image_retrieve": [
+   {
+    "op": "grating_three_image_retrieve",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "images × images",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/grating_three_image_retrieve.md"
+   }
+  ],
+  "talbot_carpet": [
+   {
+    "op": "talbot_carpet",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_carpet.md"
+   }
+  ],
+  "talbot_grating_design": [
+   {
+    "op": "talbot_grating_design",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_grating_design.md"
+   }
+  ],
+  "talbot_source_visibility": [
+   {
+    "op": "talbot_source_visibility",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_source_visibility.md"
    }
   ],
   "defect_contrast": [

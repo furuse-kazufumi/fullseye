@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **132 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **133 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 38 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 39 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1215,6 +1215,46 @@ py -3.11 examples/poc_industrial_oct.py
 この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.243 —— 格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る
+
+[![格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images.png)
+
+*↑ **格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る** ―― 吸収ではほとんど見えない繊維の向き・幅 2 µm の割れ・気孔の群を、X 線の格子干渉計の暗視野(縞の振幅の落ち方)で見る。新 op 8 本(`gratinginterf`、`opsoptics` の `grating_interf`): 設計の閉形式 `talbot_grating_design`(位相 π / π/2 / 吸収格子の分数タルボ距離、円錐ビームの d' = Ld/(L − d)、分析格子と Lau の線源格子の周期)、`talbot_carpet`(格子の後ろの強度 I(x, z) を回折次数の和で)、`talbot_source_visibility`(線源の幅・ガウスの焦点・線源格子で縞の可視度が何倍に落ちるか)、順モデル `grating_stepping_simulate`、`grating_step_period_estimate`(1 周期が何ステップかを残差の最小で)、`grating_three_image_retrieve`(試料と基準の 2 組 → 透過・微分位相・暗視野)、`darkfield_scatter_relation`(暗視野 → 散乱角の広がり)、`dpc_integrate`(微分位相 → 位相 → 厚さ、折り返しは拒否)。タルボ絨毯の縞の可視度の極大 4 本が分数タルボ距離 (m − 1/2)p²/(4λ) と格子 0.89 mm 以内、高さ 1.2733(方形波の基本波 4/π)、標本化した場の FFT 伝搬(第 2 実装)と 8e-4。焦点 2 mm では縞が ×0.001 に消え、Lau の条件の線源格子(41 本)で 2/π = 0.637 まで戻り、周期を 1/41 ずらすと再び消える(線源の点の和と 6e-5)。短繊維強化樹脂の板では、幅 2 µm の割れが暗視野で CNR 13.5(吸収 1.34)、4 方位の暗視野の cos 2ω から繊維の向きを中央値 2.7°・90 % 点 6.6° で戻し、穴の後ろの合流線の 90° を 89.8° と読む。★探針: 0/90° の 2 方位だけでは斜めの繊維の誤差が 30.3°。丸棒の厚さは微分位相の積分で 1.0 % 以内、感度を上げて本当の |φ| が π を超えると拒否する。★正直な限界: 鋭い縁の 1 画素だけが π を超える板は折り返しが見えず、中央の厚さを −857 µm(真値 2000)と黙って間違える。1 周期 20.85 段の走査を P = N と仮定すると微分位相の誤差 0.063 rad、推定した P で 0.022 rad。★残差をあてた平均で割ると最小が +0.03 段偏る(op は素の平均で割る)。**実データ**(CC BY 4.0、Zenodo 16944391): 基準 22 枚・試料 24 枚の 1 周期は 20.80・22.30 段(残差 0.0073 → 0.0044)、吸収の強い球は散乱が弱く(−ln D 0.17)繊維の束は散乱が強い(0.55)、球の左右の縁で微分位相の符号が逆。学習 0、較正 0、門 22 件。*
+
+[![位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet.png)
+
+*↑ 測定の図 ―― 位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1²/(4λ) = 54, 161, 268, 376 mm。z = 0 は純粋な位相格子なので強度は一様(縞が無い)。*
+
+[![点線 = 閉形式の距離。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/02_carpet_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/02_carpet_visibility.png)
+
+*↑ 点線 = 閉形式の距離。*
+
+[![開口 1/2 の線源格子。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/04_lau_condition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/04_lau_condition.png)
+
+*↑ 開口 1/2 の線源格子。*
+
+[![中央: 色相 = 向き、明るさ = 異方性の強さ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/06_fiber_orientation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/06_fiber_orientation.png)
+
+*↑ 中央: 色相 = 向き、明るさ = 異方性の強さ。*
+
+[![正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/09_wrap_refusal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/09_wrap_refusal.png)
+
+*↑ 正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。*
+
+[![格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)
+
+*↑ 動く図 ―― 格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。*
+
+```
+py -3.11 examples/poc_grating_interferometry.py
+```
+
+ソース: [examples/poc_grating_interferometry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_grating_interferometry.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_grating_interferometry)
+
+使用 op(ノートへ): [`angular_spectrum_propagate`](https://furuse.work/ops/optics/wave/angular_spectrum_propagate.html) · [`dpc_integrate`](https://furuse.work/ops/optics/grating_interf/dpc_integrate.html) · [`grating_step_period_estimate`](https://furuse.work/ops/optics/grating_interf/grating_step_period_estimate.html) · [`grating_stepping_simulate`](https://furuse.work/ops/optics/grating_interf/grating_stepping_simulate.html) · [`grating_three_image_retrieve`](https://furuse.work/ops/optics/grating_interf/grating_three_image_retrieve.html) · [`talbot_carpet`](https://furuse.work/ops/optics/grating_interf/talbot_carpet.html) · [`talbot_grating_design`](https://furuse.work/ops/optics/grating_interf/talbot_grating_design.html) · [`talbot_source_visibility`](https://furuse.work/ops/optics/grating_interf/talbot_source_visibility.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

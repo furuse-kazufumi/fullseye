@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 格子干渉による位相コントラストと暗視野(gratinginterf 8 op)と PoC poc_grating_interferometry
+- `opsoptics` の新カテゴリ `grating_interf`: `talbot_grating_design`(位相 π / π/2 / 吸収格子の分数タルボ距離、円錐ビームの距離と倍率、分析格子の周期、Lau の条件の線源格子の周期、角度感度・自己相関長・帯域)/ `grating_stepping_simulate`(透過・微分位相・暗視野 → 位相ステップの画像列、Poisson、1 周期のステップ数 P ≠ N)/ `grating_three_image_retrieve`(試料あり・なしの 2 組 → 3 像。P = N は `fringe.wrapped_phase` / `fringe.modulation`、P ≠ N は 3 項最小二乗、条件数 30 超・縞の無い基準は拒否)/ `darkfield_scatter_relation`(暗視野 D とガウス散乱の σ の換算、線拡散係数、自己相関長)。
+- 門 `tests/test_gratinginterf.py`: 公表の装置の距離 23.2 mm(Weitkamp ら 2005)、格子 1 周期の厳密な伝搬(`optics.angular_spectrum_propagate`)の極大と 7 通りの距離、円錐ビームを 1-D Fresnel で直接伝搬した縞の消える距離と周期、Poisson の位相雑音、ガウス散乱と一様散乱(Strobl の積分)、壊して確かめる探針(誤った距離の式・ステップの向き・試料と基準の取り違え)。式の変異 7 本をすべて殺すことを確かめた。
+- 例 `examples/grating_interferometry.py`(吸収ではほぼ見分けられない粉の区画が暗視野で 0.55 に落ちる、位相雑音は Poisson の式と比 0.99)。
+- 第 2 陣 4 op(2026-10-18): `talbot_carpet`(2 値の格子の後ろの強度 I(x, z) を回折次数の和で。厳密な角スペクトル / 近軸、近軸の位相誤差が 0.1 rad を超えると拒否)/ `talbot_source_visibility`(線源の幅・ガウスの焦点・線源格子の可視度の倍率。Lau の条件で 2/π)/ `grating_step_period_estimate`(1 周期のステップ数を残差の最小で。範囲の端・平らな曲線・縞なし・5 枚未満は拒否。★残差を P に依らない素の平均で割る —— あてた平均で割ると最小が雑音に比例して偏る)/ `dpc_integrate`(微分位相 → 位相 → 厚さ。隣との跳びが π を超える = 折り返しは拒否、NaN も拒否)。`grating_three_image_retrieve` に `reference_exposure`(基準と試料の露光の比。透過だけに効く)。
+- PoC `examples/poc_grating_interferometry.py`(門 22 件、図 11 枚 + GIF): タルボ絨毯と第 2 実装、Lau の条件と点の和、短繊維強化樹脂の板(割れの CNR 暗視野 13.5 / 吸収 1.34、繊維の向き 2.7°)、折り返しの拒否と見えない折り返し(正直な限界)、1 周期のステップ数の推定、公開の実データ(CC BY 4.0、Zenodo 16944391。データは同梱せず `FULLSEYE_TALBOT_DATA` があるときだけ走る)。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。

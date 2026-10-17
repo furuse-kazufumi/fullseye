@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 68 項目**
+**収録 69 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -31,6 +31,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
@@ -63,7 +64,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (24)
+## 測る (25)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -120,6 +121,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`dem_height_frame_convert` で `H = h - N`(N は `dem_geoid_height` が公開格子から引く)。混ざった表は `dem_height_frame_residual` の残差で見張り、公開測量成果 523 点で答え合わせ(`poc_geodetic_benchmarks_real`)。
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md)
+
+X 線(や可視光)の透過像は「どれだけ吸われたか」しか写しません。周期数 µm の格子を 2 枚(線源が大きいなら 3 枚)入れ、どちらかを 1 周期ずらしながら数枚撮ると、各画素で縞の正弦が取れます。その**平均**が透過(吸収)、**位相のずれ**が微分位相(屈折角)、**振幅の落ち方**が暗視野(画素より小さい構造からの小角散乱)です。吸収がまわりとほとんど同じ繊維・粉・微小な割れ・気孔の群が、暗視野でははっきり出ます。
+
+使う op: `talbot_grating_design`, `talbot_carpet`, `talbot_source_visibility`, `grating_stepping_simulate`, `grating_step_period_estimate`, `grating_three_image_retrieve`, `darkfield_scatter_relation`, `dpc_integrate`
+
+推奨パイプライン: [`talbot_grating_design`](ops/optics/grating_interf/talbot_grating_design.md) → [`talbot_source_visibility`](ops/optics/grating_interf/talbot_source_visibility.md) → [`grating_step_period_estimate`](ops/optics/grating_interf/grating_step_period_estimate.md) → [`grating_three_image_retrieve`](ops/optics/grating_interf/grating_three_image_retrieve.md) → [`darkfield_scatter_relation`](ops/optics/grating_interf/darkfield_scatter_relation.md) → [`dpc_integrate`](ops/optics/grating_interf/dpc_integrate.md)
+
+代替: [`talbot_carpet`](ops/optics/grating_interf/talbot_carpet.md), [`grating_stepping_simulate`](ops/optics/grating_interf/grating_stepping_simulate.md), [`wrapped_phase`](ops/3d/structured_light/wrapped_phase.md), [`moire_talbot_gap`](ops/optics/moire_align/moire_talbot_gap.md), [`angular_spectrum_propagate`](ops/optics/wave/angular_spectrum_propagate.md)
+
+限界: 位相ステップは 1 次の正弦だけを見る(格子の高次の調和・ステップの位置の揺れ・検出器の点広がりは模型に無い)。暗視野から散乱角へはガウス散乱の近似。単色の順モデルなので、多色の線源で吸収が平均のエネルギーを上げて可視度が落ちる効果は無い。折り返しは隣との跳びでしか見えない。
+
+実寸校正: 1 周期のステップ数 P は空気(基準)の区画で grating_step_period_estimate から決める。基準と試料の露光の比は reference_exposure に渡す。屈折角・位相への換算は分析格子の周期 p2 と距離 d、波長で決まる(talbot_grating_design の値か実測)。
+
+動く例: `poc_grating_interferometry`
 
 ### [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md)
 

@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 38 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 39 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1207,6 +1207,46 @@ Source: [examples/poc_industrial_oct.py](https://github.com/furuse-kazufumi/full
 This run produced **15 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.243 —— Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)
+
+[![Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images.png)
+
+*↑ **Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)** ―― A grating interferometer's dark field (the loss of fringe amplitude) shows what absorption hides: fibre orientation, a 2 µm crack and a cluster of pores. Eight new ops (`gratinginterf`, category `grating_interf` of `opsoptics`): closed-form design (fractional Talbot distances for π, π/2 and absorption gratings, the cone-beam distance d' = Ld/(L − d), analyser and Lau source-grating periods), the Talbot carpet I(x, z) as a sum over diffraction orders, the visibility loss from source size, Gaussian focal spots and source gratings, a phase-stepping forward model, estimation of the steps per period from the sine-fit residual, retrieval of transmission, differential phase and dark field from sample and reference stacks, dark field to scattering width, and integration of the differential phase into phase and thickness (refusing wrapped input). The four visibility maxima of the carpet sit on the fractional Talbot distances (m − 1/2)p²/(4λ) to within the 0.89 mm grid, at height 1.2733 (4/π for a square wave), and agree with an FFT propagation of the sampled field to 8e-4. A 2 mm focal spot washes the fringes out to x0.001; a source grating at the Lau period (41 slits) restores 2/π = 0.637, and detuning it by 1/41 kills them again (matching an incoherent point sum to 6e-5). In a short-fibre composite plate the 2 µm crack reaches CNR 13.5 in the dark field against 1.34 in absorption, the cos 2ω of four grating directions recovers fibre orientation to a median 2.7° (90th percentile 6.6°), and the weld line behind the hole reads 89.8° for 90°. Probe: with only 0° and 90° the diagonal fibres are off by 30.3°. Integrating the differential phase recovers a rod's thickness to 1.0 %, and the op refuses once the true |φ| exceeds π. Honest limit: a slab whose sharp edge pushes a single pixel past π wraps invisibly and the op silently returns -857 µm for 2000 µm. Assuming P = N for a scan of 20.85 steps per period leaves 0.063 rad of phase error, the estimated P 0.022 rad; dividing the residual by the fitted mean biases the minimum by +0.03 steps (the op divides by the raw mean). Real data (CC BY 4.0, Zenodo 16944391): 20.80 and 22.30 steps per period for the 22-frame reference and 24-frame object scans (residual 0.0073 to 0.0044); the strongly absorbing sphere scatters little (-ln D 0.17) while the fibre bundle scatters strongly (0.55), and the differential phase changes sign across the sphere. Nothing learned, nothing calibrated, 22 gates.*
+
+[![位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/01_talbot_carpet.png)
+
+*↑ The measurement ―― 位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1²/(4λ) = 54, 161, 268, 376 mm。z = 0 は純粋な位相格子なので強度は一様(縞が無い)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![点線 = 閉形式の距離。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/02_carpet_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/02_carpet_visibility.png)
+
+*↑ 点線 = 閉形式の距離。*
+
+[![開口 1/2 の線源格子。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/04_lau_condition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/04_lau_condition.png)
+
+*↑ 開口 1/2 の線源格子。*
+
+[![中央: 色相 = 向き、明るさ = 異方性の強さ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/06_fiber_orientation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/06_fiber_orientation.png)
+
+*↑ 中央: 色相 = 向き、明るさ = 異方性の強さ。*
+
+[![正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/09_wrap_refusal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/09_wrap_refusal.png)
+
+*↑ 正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。*
+
+[![格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)
+
+*↑ The animation ―― 格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。*
+
+```
+py -3.11 examples/poc_grating_interferometry.py
+```
+
+Source: [examples/poc_grating_interferometry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_grating_interferometry.py)
+
+This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_grating_interferometry)
+
+Ops used (notes): [`angular_spectrum_propagate`](https://furuse.work/ops/optics/wave/angular_spectrum_propagate.html) · [`dpc_integrate`](https://furuse.work/ops/optics/grating_interf/dpc_integrate.html) · [`grating_step_period_estimate`](https://furuse.work/ops/optics/grating_interf/grating_step_period_estimate.html) · [`grating_stepping_simulate`](https://furuse.work/ops/optics/grating_interf/grating_stepping_simulate.html) · [`grating_three_image_retrieve`](https://furuse.work/ops/optics/grating_interf/grating_three_image_retrieve.html) · [`talbot_carpet`](https://furuse.work/ops/optics/grating_interf/talbot_carpet.html) · [`talbot_grating_design`](https://furuse.work/ops/optics/grating_interf/talbot_grating_design.html) · [`talbot_source_visibility`](https://furuse.work/ops/optics/grating_interf/talbot_source_visibility.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

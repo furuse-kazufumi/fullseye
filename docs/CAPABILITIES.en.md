@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 68 capabilities**
+**Currently 69 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -32,6 +32,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
@@ -64,7 +65,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (24)
+## Measure (25)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -117,6 +118,18 @@ Pipeline: [`dem_geodetic_to_ecef`](ops/dem/geodesy/dem_geodetic_to_ecef.md) → 
 Alternatives: [`dem_geoid_height`](ops/dem/geodesy/dem_geoid_height.md), [`dem_height_frame_convert`](ops/dem/geodesy/dem_height_frame_convert.md), [`dem_height_frame_residual`](ops/dem/geodesy/dem_height_frame_residual.md), [`dem_enu_from_geodetic`](ops/dem/geodesy/dem_enu_from_geodetic.md), [`dem_geodetic_from_enu`](ops/dem/geodesy/dem_geodetic_from_enu.md), [`dem_datum_shift_3param`](ops/dem/geodesy/dem_datum_shift_3param.md), [`dem_geodetic_slope`](ops/dem/geodesy/dem_geodetic_slope.md)
 
 Runnable: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan](capabilities/grating-interferometry.md)
+
+Eight ops in `gratinginterf` for grating-based phase-contrast and dark-field imaging: closed-form geometry (fractional Talbot distances for π, π/2 and absorption gratings, cone-beam distance and analyser period, the Lau source-grating period), the Talbot carpet behind a binary grating as a sum over diffraction orders, the visibility loss from source size and source gratings, a forward model of phase-stepping stacks with Poisson noise, estimation of the number of steps per period from the sine-fit residual, retrieval of transmission, differential phase and dark field from sample and reference stacks, conversion of dark field to a Gaussian scattering width, and integration of the differential phase into the wavefront phase and projected thickness (refusing wrapped input). The PoC finds a 2 µm crack in a short-fibre composite plate in the dark field (CNR 13.5 against 1.34 in absorption), recovers fibre orientation from four grating directions, and separates the three images of a public CC BY 4.0 Talbot-Lau dataset.
+
+Operators: `talbot_grating_design`, `talbot_carpet`, `talbot_source_visibility`, `grating_stepping_simulate`, `grating_step_period_estimate`, `grating_three_image_retrieve`, `darkfield_scatter_relation`, `dpc_integrate`
+
+Pipeline: [`talbot_grating_design`](ops/optics/grating_interf/talbot_grating_design.md) → [`talbot_source_visibility`](ops/optics/grating_interf/talbot_source_visibility.md) → [`grating_step_period_estimate`](ops/optics/grating_interf/grating_step_period_estimate.md) → [`grating_three_image_retrieve`](ops/optics/grating_interf/grating_three_image_retrieve.md) → [`darkfield_scatter_relation`](ops/optics/grating_interf/darkfield_scatter_relation.md) → [`dpc_integrate`](ops/optics/grating_interf/dpc_integrate.md)
+
+Alternatives: [`talbot_carpet`](ops/optics/grating_interf/talbot_carpet.md), [`grating_stepping_simulate`](ops/optics/grating_interf/grating_stepping_simulate.md), [`wrapped_phase`](ops/3d/structured_light/wrapped_phase.md), [`moire_talbot_gap`](ops/optics/moire_align/moire_talbot_gap.md), [`angular_spectrum_propagate`](ops/optics/wave/angular_spectrum_propagate.md)
+
+Runnable: `poc_grating_interferometry`
 
 ### [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md)
 

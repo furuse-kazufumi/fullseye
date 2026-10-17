@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">talbot_source_visibility — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile=&#x27;uniform&#x27;, source_grating_period_um=None, duty=0.5, n_slits=None, wavelength_nm=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile=&#x27;uniform&#x27;, source_grating_period_um=None, duty=0.5, n_slits=None, wavelength_nm=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;talbot_source_visibility&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>光源尺寸與源光柵(Lau 條件)使條紋可見度降低為多少倍(閉式,非同調疊加)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>線源の 1 点が格子の線に直交する向きに s ずれると、分析格子の上の縞は s·d/L だけ逆向きにずれる(L = 線源から第 1 格子、d = 第 1 格子から分析格子)。互いに干渉しない点の縞を足すので、可視度の倍率は線源の分布のフーリエ変換を周波数 d/(L p2) で読んだ値になる(Pfeiffer ら 2006, Nature Physics 2, 258):</p>
+<p><code style="color:#22d3bf">&quot;uniform&quot;</code> 幅 w:          |sinc(π w d/(L p2))|(sinc x = sin x / x)</p>
+<p><code style="color:#22d3bf">&quot;gaussian&quot;</code> 半値全幅 w:   exp(−2π² σ² d²/(L² p2²))、σ = w/(2√(2 ln 2))</p>
+<p>線源格子(周期 p0、開口の割合 duty、開口 n_slits 本)を置くと、各開口は幅 duty·p0 の一様な線源、開口の並びは配列の因子 |sin(N β)/(N sin β)|、β = π p0 d/(L p2) を掛ける。β が π の整数倍(Lau の条件 p0 = p2·L/d)ですべての開口の縞が重なり、可視度は開口 1 本の |sinc(π duty)|(duty = 0.5 で 2/π)まで戻る。n_slits が None なら round(w/p0)(焦点 w に入る開口の数、1 以上)。線源格子はガウスの焦点とは組まない(拒否)。</p>
+<p>wavelength_nm を渡すと、第 1 格子での横のコヒーレンス長 l_c = λ L/w [µm] も返す。</p>
+<p>返り値 dict: <code style="color:#22d3bf">visibility_factor</code> / <code style="color:#22d3bf">slit_factor</code> / <code style="color:#22d3bf">array_factor</code>(線源格子なしは 1)/ <code style="color:#22d3bf">lau_period_um</code>(p2·L/d)/ <code style="color:#22d3bf">lau_ratio</code>(p0 / Lau の周期、線源格子なしは None)/ <code style="color:#22d3bf">n_slits</code> / <code style="color:#22d3bf">projected_blur_um</code>(w·d/L、分析格子の上での線源の影の幅)/ <code style="color:#22d3bf">coherence_length_um</code>(λ があるとき)。<b>Raises</b> ValueError: 正でない幅・距離・周期、未知の profile、ガウスと線源格子の組、duty が (0, 1] の外、n_slits が 1..100000 の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:grating_interferometry">grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/grating_interferometry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_grating_interferometry">poc_grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_grating_interferometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">grating_interf</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:talbot_grating_design">talbot_grating_design</a> · <a style="color:#22d3bf" href="opoptics:grating_stepping_simulate">grating_stepping_simulate</a> · <a style="color:#22d3bf" href="opoptics:grating_three_image_retrieve">grating_three_image_retrieve</a> · <a style="color:#22d3bf" href="opoptics:darkfield_scatter_relation">darkfield_scatter_relation</a> · <a style="color:#22d3bf" href="opoptics:talbot_carpet">talbot_carpet</a> · <a style="color:#22d3bf" href="opoptics:grating_step_period_estimate">grating_step_period_estimate</a> · <a style="color:#22d3bf" href="opoptics:dpc_integrate">dpc_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gratinginterf.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

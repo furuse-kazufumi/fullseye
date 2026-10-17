@@ -1,0 +1,126 @@
+[
+ {
+  "file": "01_talbot_carpet.png",
+  "name": "talbot_carpet",
+  "caption": "位相 π の格子(28 keV、p1 = 4.36 µm)の後ろの強度 I(x, z)。横 = 第 1 格子からの距離 0〜z_T/2(429 mm)、縦 = 2 周期。周期 p1/2 の縞が結ぶ距離が分数タルボ距離 (m − 1/2)p1²/(4λ) = 54, 161, 268, 376 mm。z = 0 は純粋な位相格子なので強度は一様(縞が無い)。",
+  "shape": [
+   512,
+   481
+  ]
+ },
+ {
+  "file": "02_carpet_visibility.png",
+  "name": "carpet_visibility",
+  "caption": "点線 = 閉形式の距離。極大の位置は第 2 実装(標本化した場の FFT 伝搬)とも 2e-3 で一致。",
+  "shape": [
+   360,
+   753,
+   3
+  ]
+ },
+ {
+  "file": "03_source_size.png",
+  "name": "source_size",
+  "caption": "L = 1200 mm、d = 56.2 mm、p2 = 2.282 µm。焦点 2 mm では ×0.001。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_lau_condition.png",
+  "name": "lau_condition",
+  "caption": "開口 1/2 の線源格子。開口 1 本の縞は |sinc(π/2)| = 2/π、開口の並びの因子 |sin Nβ/(N sin β)| は β = π(Lau の条件)で 1。",
+  "shape": [
+   360,
+   755,
+   3
+  ]
+ },
+ {
+  "file": "05_three_images.png",
+  "name": "three_images",
+  "caption": "同じ 8 段の位相ステップから 3 像。透過(板の値の範囲 0.814〜0.847 に伸ばして表示)では繊維の向き・幅 2 µm の割れ(右上の斜めの線)・気孔の群(右下)はほぼ見えない(割れの CNR 1.34)。暗視野では割れが CNR 13.5 で浮かび、格子を回すと繊維の向きに応じて明暗が入れ替わる。画素 40 µm、1 枚 6000 光子、V0 = 0.25。",
+  "shape": [
+   535,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "06_fiber_orientation.png",
+  "name": "fiber_orientation",
+  "caption": "中央: 色相 = 向き、明るさ = 異方性の強さ。穴の周りを回り込む流れと、穴の後ろの合流線(90°、水平な帯)で向きが変わる様子が戻る。右: 等方の気孔の群と割れは平均の散乱に出る。",
+  "shape": [
+   293,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "07_rotating_grating.gif",
+  "name": "rotating_grating",
+  "caption": "格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。",
+  "shape": [
+   400,
+   600,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0
+ },
+ {
+  "file": "08_dpc_integration.png",
+  "name": "dpc_integration",
+  "caption": "行の平均。縞の位相の最大 0.96 rad(π より十分小さい)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_wrap_refusal.png",
+  "name": "wrap_refusal",
+  "caption": "正直な限界: 鋭い縁の 1 画素だけが π を超える板は、折り返した値が背景と π 以内に収まるので見えずに通る(中央の厚さ -857 µm、真値 2000 µm)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_step_period.png",
+  "name": "step_period",
+  "caption": "真値は基準 20.85・試料 22.30。P = N と仮定すると微分位相に縞状の誤差が出る(次の図)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_step_period_dpc.png",
+  "name": "step_period_dpc",
+  "caption": "誤差 RMS 0.063 → 0.022 rad。P = N と仮定した誤差は位相の場そのものに沿って出る(縞の位相ごとにずれ方が違う)ので、平均を引いても消えない。推定した P では雑音だけが残る。",
+  "shape": [
+   221,
+   616,
+   3
+  ]
+ },
+ {
+  "file": "12_real_three_images.png",
+  "name": "real_three_images",
+  "caption": "球(吸収が強い)は透過で暗く暗視野ではほぼ消え、繊維の束の棒(吸収が弱い)は暗視野で暗い。微分位相の左右の色の違いは背景の位相の傾き(基準と試料の撮影の間の格子のずれか円錐の効果。dpc_integrate の baseline='both' で消す種類のずれ)。",
+  "shape": [
+   918,
+   1909,
+   3
+  ],
+  "source": "Sanchez-Lara, V. & Garcia-Pinto, D. (2025) Talbot Lau Phase Contrast Images. Zenodo. https://doi.org/10.5281/zenodo.16944391 (CC BY 4.0). 改変: 2×2 の画素を束ね、Fullseye の op で 3 像に分けた"
+ }
+]

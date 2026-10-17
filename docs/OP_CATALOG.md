@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(384 例)
+### 2-D 画像/信号/幾何(386 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -66,6 +66,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
 - **断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)** — 既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みになること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。 `py -3.11 examples/profile_frame_tour.py`
 - **工業用 OCT ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る** — 塗装・コンフォーマルコート・接着層・多層フィルムの層の並びと空洞・剥離を、光干渉断層(OCT)で壊さずに見る。新 op 13 本(`octscan`、`opsoptics` の `oct`): 撮る前の閉形式 `oct_design`(軸分解能・深さ範囲・roll-off・SNR・横分解能と焦点深度)、層の並びから干渉スペクトルを作る `oct_interferogram` / `oct_bscan_simulate`(屈折率と分散は材料表)、`oct_k_linearize` / `oct_dispersion_compensate` / `oct_dispersion_estimate` / `oct_ascan` / `oct_bscan`、群屈折率で厚さを出し分離できなければ拒否する `oct_layer_thickness`、界面を辿る `oct_bscan_boundaries`、`oct_bscan_flatten`、生のスペクトルの入口 `oct_from_spectra`。**実測**: 公開の自動車塗装の生スペクトル(CC BY 4.0)で透明層が論文の OCT と 2 µm 以内・顕微鏡と 4 µm 以内、着色層は 4 枚中 3 枚が顕微鏡と 2.5 µm 以内(1 枚は 7.6 µm ずれて未解決)、白の見本の着色層の下は拒否、透明層の光学厚の深さに水平に出る自己相関の幽霊。合成: 群屈折率で割った厚さが真値と 0.05 µm、軸分解能・SNR・roll-off・分散の広がり・鏡像の残り tan(δ/2)・横の点像が閉形式どおり。 `py -3.11 examples/poc_industrial_oct.py`
+- **格子干渉の 8 op を一巡 ―― 1 組の位相ステップから透過・微分位相・暗視野** — gratinginterf の 8 op の呼び出し例。公表の装置の距離 23.2 mm、粉の区画が暗視野で 0.55 に落ちる、位相雑音が Poisson の式と比 0.99、絨毯の極大 4/π と Lau の条件の 2/π、1 周期のステップ数の推定、微分位相の積分で丸棒の厚さ、折り返しの拒否。 `py -3.11 examples/grating_interferometry.py`
+- **格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る** — X 線の格子干渉計で、吸収ではほとんど見えない繊維の向き・幅 2 µm の割れ・気孔の群を暗視野(縞の振幅の落ち方)で見る。新 op 8 本(`gratinginterf`、`opsoptics` の `grating_interf`): 設計 `talbot_grating_design`・タルボ絨毯 `talbot_carpet`・線源と Lau の条件 `talbot_source_visibility`・順モデル `grating_stepping_simulate`・1 周期のステップ数の推定 `grating_step_period_estimate`・3 像の分離 `grating_three_image_retrieve`・暗視野 → 散乱角 `darkfield_scatter_relation`・微分位相の積分 `dpc_integrate`(折り返しは拒否)。絨毯の極大が分数タルボ距離と格子 0.89 mm 以内・高さ 4/π、焦点 2 mm で ×0.001 に消えた縞が Lau の条件の線源格子で 2/π に戻る。割れの CNR は暗視野 13.5 / 吸収 1.34、繊維の向きは 4 方位の暗視野から中央値 2.7°(2 方位だけでは 30.3°)。★鋭い縁の 1 画素だけが π を超える板は折り返しが見えずに通る(正直な限界)。**実データ**(CC BY 4.0、Zenodo 16944391)で 1 周期のステップ数を推定(基準 20.80・試料 22.30)してから 3 像に分ける。 `py -3.11 examples/poc_grating_interferometry.py`
 - **モアレで位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める** — リソグラフィやナノインプリントでマスクとウェハを nm で重ねる位置合わせ。ピッチの僅かに違う 2 枚の格子(マスク 2.00 µm、ウェハ 2.04 µm)はどちらもカメラのぼけで消えるが(直接の像の標準偏差 9e-6)、重ねると周期 102 µm の縞が現れ、ずれを 50 倍に拡大する。新 op 8 本(`moirealign`、`opsoptics` の `moire_align`): `moire_magnification` / `moire_talbot_gap` / `moire_overlay_image` / `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法)/ `moire_phase_to_shift` / `moire_differential_shift` / `moire_mark_read`(単一・差動・2 次元の 4 象限)/ `moire_phase_crlb`。★拡大率はどちらが動くかで違い、像から測ってウェハ 50.000・マスク 51.000(よく書かれる M = p_w/|Δp| はマスクが動く場合)。1 nm の階段 11 段をモアレは誤差 RMS 0.08 nm で読み、Monte-Carlo の標準偏差は位相の下限(Rife–Boorstyn × Hann の 1.5 × 基準像の 2 倍)と比 1.00。★比べ手(解像できる 20 µm の線の相互相関 + 放物線補間)との差は誤差 RMS で 91 倍だが、**その大半は放物線の偏り(ずれの 17 % 小さく読む)**で、偶然の誤差だけなら 0.077 対 0.19 nm の 2.5 倍しか違わない(内訳を分けて出す)。カメラを粗くすると(画素 0.5 → 2 µm)相互相関は 2.3 倍悪化しモアレは変わらない。逆向きのピッチ差の 2 対の差動は、マーク全体の流れ 300 nm(単一の対は 300/M = 6.2 nm 狂う)と照明の傾き 30 % を 0.03 nm 以内に消し、カメラの倍率を 2 % 間違えても +0.007 nm(換算はピッチだけで決まる。相互相関は 2 % そのまま狂う)。読みはピッチ 1 つ(差動は 1.01 µm)で折り返し、粗い相互相関で次数を決めると 0〜5 µm を 0.14 nm で読む。近接ギャップでは Talbot 長 2p²/λ = 14.5 µm で縞が戻り半分で符号が反転、反転を跨ぐと読みが半周期(1020 nm)跳ぶ。★正直な限界: 0.1 nm 級は白色雑音だけの床で、公表の位置合わせ精度 10〜30 nm はマークの非対称・ギャップ・傾きなどの系統誤差が決める。学習 0、較正 0、門 32 件。 `py -3.11 examples/poc_moire_alignment.py`
 - **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** — ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.13 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 24 件。 `py -3.11 examples/poc_telecentric_metrology.py`
 - **重力波望遠鏡の擬似シミュレーション —— 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点** — km 級の Michelson 干渉計が 1e-21 のひずみを読む仕組みを、どこまで**閉じた式**で再現できるか。検査装置の干渉計(エタロン・レーザー共振器・白色干渉・振動計)と同じ式なので、再現できた分だけ Fullseye の設計規則になる。新 op 12 本(`opsoptics` の `cavity` 5 本 + `ops1d` の `matched` 7 本)。★腕共振器: aLIGO の公表設計値(L 3994.5 m、T_ITM 1.4 %、T_ETM 5 ppm)で フィネス 445.5・極 42.1 Hz・循環光量 284 倍、伝達関数は極で 1/√2・FSR で零、Pound-Drever-Hall の傾きは Black 2001 の式 15 と 0.9999 倍。★量子雑音の予算(Kimble ら 2001): 散射 × 輻射圧 = SQL²/2 の恒等式が 1e-10、総和は K = 1 で SQL に触れ、**第二実装 gwinc 0.6.2**(信号再利用鏡を外した aLIGO)と 8 周波数で比 0.96〜1.12。公開設計曲線(LIGO-T1800044)との比は 20 Hz で 0.42・100 Hz で 1.99・1 kHz で 0.33 —— 信号再利用と熱雑音の分だけ形が違う(表で明示)。★★実データ(GWOSC の GW150914、CC BY 4.0、環境変数 FULLSEYE_GWOSC_DATA に置けば走り、無ければ「未配置」と明示): Welch の PSD → 白色化 → 35〜350 Hz で **PRL 116, 061102 図 1 の公表曲線と相関 0.959 / 0.935**(白色化なしなら 0.47 / 0.38)、数値相対論の波形の整合フィルタで **SNR H1 19.0 / L1 13.1(公表 ≈ 20 / 13)、ネットワーク 23.1(公表 24)、L1 が 7.1 ms 先(公表 6.9 +0.5/−0.4 ms)**。ニュートン近似のチャープは SNR 9.1 / 5.6(合体・リングダウンが無い分だけ損、それでも検出)。O1 の実測 ASD は設計曲線の 2〜7 倍(2015 年の装置は設計未達)。NR 波形の軌跡から式 1 でチャープ質量 38 M☉(公表 ≈ 31、1 周期に 7 % 上がる帯域では式 1 が高めに出る)、H1 の白色化データの尾根からは 42 M☉(NR 軌跡と 10 % 差)。★持ち帰り: 1/f² の色つき雑音に埋めた既知波形で、白色化した整合フィルタは埋めた高さどおり拾い、素の相互相関は狭帯域のトーンでは差が無く(0.98)、広帯域のチャープ 0.50・減衰振動 0.37 —— 白色化が効くのは波形が雑音の色を跨ぐとき。学習した数 0、較正 0、CI は合成と閉形式だけで図なし 4 秒。 `py -3.11 examples/poc_gw_detector_pseudo_simulation.py`
@@ -725,9 +727,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3301 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3309 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 293 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 301 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -2438,7 +2440,7 @@ _計 3301 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(293 ops / 33 categories)
+### optics(301 ops / 34 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2536,6 +2538,16 @@ _計 3301 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `prism_min_deviation_deg` `signal → signal` — プリズムの最小偏角 [deg]。**実硝材の分散**で波長ごとに変わる = 虹が出る理由。 · 例: `glass_and_mirror_optics`
 - `refract_rays` `points × points → points` — Snell 屈折のベクトル版。**光線ごとに全反射を判定**して (方向, TIR マスク) を返す。 · 例: `glass_and_mirror_optics`
 - `slab_transmittance` `signal → signal` — 平行平板(窓ガラス)の透過率。**両面での多重反射**と内部吸収を含む。 · 例: `glass_and_mirror_optics`, `machined_metal_and_materials`
+
+#### optics / grating_interf(8)
+- `darkfield_scatter_relation` `入力なし → table` — 暗視野 D(可視度の比)と、散乱角の分布の広がり σ の換算(ガウス散乱の公表式)。 · 例: `grating_interferometry`
+- `dpc_integrate` `table → table` — 微分位相(縞の位相のずれ φ)を格子の感度の向きに積分して、波面の位相 Φ [rad] に戻す。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `grating_step_period_estimate` `images → table` — 位相ステップの画像列から「1 周期が何ステップか」(P)を、正弦をあてた残差の最小で推定する。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `grating_stepping_simulate` `image2d → images` — 透過・微分位相・暗視野の 3 枚の図から、位相ステップの画像列 (N, H, W) を作る(順モデル)。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `grating_three_image_retrieve` `images × images → table` — 位相ステップの 2 組(試料あり・試料なし)から、透過・微分位相・暗視野の 3 枚を分ける。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `talbot_carpet` `入力なし → table` — タルボ絨毯: 2 値の格子(位相 π / 位相 π/2 / 吸収)の後ろの強度 I(x, z) を、回折次数の和で閉形式に出す。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `talbot_grating_design` `入力なし → table` — 格子干渉計の幾何: 第 1 格子の自己像の距離(分数タルボ距離)、縞と分析格子の周期、線源格子の周期(閉形式)。 · 例: `grating_interferometry`, `poc_grating_interferometry`
+- `talbot_source_visibility` `入力なし → table` — 線源の大きさと線源格子(Lau の条件)で、縞の可視度が何倍に落ちるか(閉形式、非干渉の和)。 · 例: `grating_interferometry`, `poc_grating_interferometry`
 
 #### optics / illumination(11)
 - `defect_contrast` `table → table` — Contrast of topographic and pigment defects under a light (``table``). · 例: `illumination_design_demo`
@@ -2792,7 +2804,7 @@ _計 3301 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / wave(9)
 - `airy_pattern` `入力なし → image2d` — The diffraction-limited PSF of a circular pupil (Airy pattern). · 例: `optics_imaging`, `poc_pixel_shift`, `poc_veiling_glare`
-- `angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: `optics_imaging`
+- `angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: `optics_imaging`, `poc_grating_interferometry`
 - `defocus_from_shift` `入力なし → measurement` — Defocus wavefront error (waves at the pupil edge) of an axial focus shift. · 例: `optics_imaging`, `poc_nir_silicon_transmission`
 - `four_f_filter` `cimage × cimage → cimage` — 4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。 · 例: `optics_four_f_processor`
 - `fourier_plane_filter` `入力なし → cimage` — 4f 系のフーリエ面に置く複素透過関数 ``H(fx, fy)``。 · 例: `optics_four_f_processor`

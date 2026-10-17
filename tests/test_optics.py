@@ -897,7 +897,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
-    assert len(opsoptics.OPSOPTICS) == 293
+    # 2026-10-15: grating_interf(格子干渉の位相・暗視野、gratinginterf)4 op を新しい族として追加(293 → 297)。
+    # 2026-10-18: grating_interf に絨毯・線源・ステップ数の推定・微分位相の積分の 4 op(297 → 301)。
+    assert len(opsoptics.OPSOPTICS) == 301
+    assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
@@ -918,7 +921,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
         "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44

@@ -1,4 +1,4 @@
-# OPTICS operator help — 293 ops in 33 categories
+# OPTICS operator help — 301 ops in 34 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -61,6 +61,10 @@
 ### glassbody (4)
 
 [beer_lambert_transmittance](glassbody/beer_lambert_transmittance.md) · [prism_min_deviation_deg](glassbody/prism_min_deviation_deg.md) · [refract_rays](glassbody/refract_rays.md) · [slab_transmittance](glassbody/slab_transmittance.md)
+
+### grating_interf (8)
+
+[darkfield_scatter_relation](grating_interf/darkfield_scatter_relation.md) · [dpc_integrate](grating_interf/dpc_integrate.md) · [grating_step_period_estimate](grating_interf/grating_step_period_estimate.md) · [grating_stepping_simulate](grating_interf/grating_stepping_simulate.md) · [grating_three_image_retrieve](grating_interf/grating_three_image_retrieve.md) · [talbot_carpet](grating_interf/talbot_carpet.md) · [talbot_grating_design](grating_interf/talbot_grating_design.md) · [talbot_source_visibility](grating_interf/talbot_source_visibility.md)
 
 ### illumination (11)
 

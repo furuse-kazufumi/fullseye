@@ -5736,6 +5736,22 @@
     "de": "Optische Zeichnungen aus der Rechnung",
     "hi": "calculation से optical drawings (section, setup, element)"
    }
+  },
+  {
+   "id": "poc_grating_interferometry",
+   "group": "wing_industrial",
+   "media": "12_real_three_images.png",
+   "motion": false,
+   "thumb_src": "12_real_three_images_720.jpg",
+   "label": {
+    "ja": "格子干渉計(暗視野で見える繊維・割れ・気孔)",
+    "en": "Grating interferometry (fibres, cracks and pores in the dark field)",
+    "zh": "光栅干涉仪(暗场中可见的纤维、裂纹与气孔)",
+    "tw": "光柵干涉儀(暗場中可見的纖維、裂紋與氣孔)",
+    "ko": "격자 간섭계(암시야로 보이는 섬유·균열·기공)",
+    "de": "Gitterinterferometrie (Fasern, Risse und Poren im Dunkelfeld)",
+    "hi": "grating interferometry (dark field में दिखते fibres, cracks और pores)"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6291,6 +6307,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "grating-interferometry": {
+    "zh": "光栅干涉仪(塔尔博特 / 塔尔博特-劳):由一次相位步进扫描分离透射、微分相位与暗场 3 幅像",
+    "tw": "光柵干涉儀(塔爾博特 / 塔爾博特-勞):由一次相位步進掃描分離穿透、微分相位與暗場 3 張像",
+    "ko": "격자 간섭계(탤벗 / 탤벗-라우): 한 번의 위상 스텝 스캔에서 투과·미분 위상·암시야 3장의 상을 분리",
+    "de": "Gitterinterferometrie (Talbot / Talbot-Lau): Transmission, differentielle Phase und Dunkelfeld aus einem Phase-Stepping-Scan",
+    "hi": "grating interferometry (Talbot / Talbot-Lau): एक phase-stepping scan से transmission, differential phase और dark field"
    }
   }
  }

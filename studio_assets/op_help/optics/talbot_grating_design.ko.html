@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">talbot_grating_design — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;talbot_grating_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>격자 간섭계의 기하: 제1 격자의 자기상 거리(분수 탤벗 거리), 줄무늬와 분석 격자의 주기, 선원 격자의 주기(닫힌 형식).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>第 1 格子(周期 period_um = p1)を通った波は、ある距離で格子の像(またはその周期の半分の像)を結ぶ。その距離に周期の合った吸収格子(分析格子)を置き、どちらかの格子を 1 周期ずらしながら撮ると、各画素で縞の正弦が取れる。この op はその距離と周期を返す。</p>
+<p>grating:</p>
+<p><code style="color:#22d3bf">&quot;pi&quot;</code>         位相 π の格子(線の幅が周期の半分)。縞の周期 p1/2、距離 d_m = (m − 1/2)·p1²/(4λ)</p>
+<p>(Weitkamp ら 2005, Opt. Express 13, 6296 の式 2)。</p>
+<p><code style="color:#22d3bf">&quot;pi_half&quot;</code>    位相 π/2 の格子。縞の周期 p1、d_m = (m − 1/2)·p1²/λ。</p>
+<p><code style="color:#22d3bf">&quot;absorption&quot;</code> 吸収格子。縞の周期 p1、d_m = m·p1²/λ(m = 2 がタルボ長 z_T = 2p1²/λ)。</p>
+<p>order: m(1 以上の整数)。source_distance_mm: 線源から第 1 格子までの距離 L。None は平面波(L = ∞)。有限なら距離は d&#x27; = L·d/(L − d) に伸び(同じ文献)、縞は M = (L + d&#x27;)/L 倍に拡大される。L ≤ d では自己像が結ばれない(分母が 0 以下)ので拒否する。</p>
+<p>返り値 dict:</p>
+<p><code style="color:#22d3bf">wavelength_nm</code> / <code style="color:#22d3bf">talbot_length_mm</code>(z_T = 2p1²/λ、平面波)/ <code style="color:#22d3bf">distance_plane_mm</code>(d_m)/</p>
+<p><code style="color:#22d3bf">distance_mm</code>(d&#x27;、円錐ビームで伸びた距離。平面波なら d_m と同じ)/ <code style="color:#22d3bf">magnification</code>(M)/</p>
+<p><code style="color:#22d3bf">fringe_period_um</code>(第 1 格子の直後での縞の周期)/ <code style="color:#22d3bf">analyzer_period_um</code>(p2 = M × 縞の周期)/</p>
+<p><code style="color:#22d3bf">source_grating_period_um</code>(Lau の条件 p0 = p2·L/d&#x27;、Pfeiffer ら 2006。平面波なら None)/</p>
+<p><code style="color:#22d3bf">angular_sensitivity</code>(縞の位相 / 屈折角 = 2π d&#x27;/p2 [rad/rad])/</p>
+<p><code style="color:#22d3bf">correlation_length_um</code>(暗視野の自己相関長 ξ = λ d&#x27;/p2)/</p>
+<p><code style="color:#22d3bf">relative_bandwidth</code>(縞の振幅が 0 になるまでの波長の幅 Δλ/λ = 1/(2m − 1)。位相 π の格子だけ。</p>
+<p>Weitkamp ら 2005 の式 3。他の格子は None)。</p>
+<p>例(公表値): 14.4 keV、p1 = 4 µm、位相 π、m = 1 → d = 23.2 mm、p2 = 2 µm(平面波。Weitkamp ら 2005 の図 4 の装置)。<b>Raises</b> ValueError: 正でない周期・波長、wavelength_nm と energy_kev の両方(どちらも無ければ 28 keV)、未知の grating、order が 1..1000 の外、L ≤ d。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>문자열은 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 는 <code style="color:#22d3bf">ValueError</code></b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).<b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>.</p>
+<p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. <b>그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code></b> —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:grating_interferometry">grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/grating_interferometry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_grating_interferometry">poc_grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_grating_interferometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">grating_interf</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:grating_stepping_simulate">grating_stepping_simulate</a> · <a style="color:#22d3bf" href="opoptics:grating_three_image_retrieve">grating_three_image_retrieve</a> · <a style="color:#22d3bf" href="opoptics:darkfield_scatter_relation">darkfield_scatter_relation</a> · <a style="color:#22d3bf" href="opoptics:talbot_carpet">talbot_carpet</a> · <a style="color:#22d3bf" href="opoptics:talbot_source_visibility">talbot_source_visibility</a> · <a style="color:#22d3bf" href="opoptics:grating_step_period_estimate">grating_step_period_estimate</a> · <a style="color:#22d3bf" href="opoptics:dpc_integrate">dpc_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gratinginterf.py — OPTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

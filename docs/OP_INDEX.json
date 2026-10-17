@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3303,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2350,
   "nary": 17,
   "registry": 924
  },
@@ -5516,6 +5516,17 @@
    ]
   },
   {
+   "name": "darkfield_scatter_relation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "data_range_of",
    "halcon": "",
    "in_sort": "image2d",
@@ -7017,6 +7028,19 @@
     "scalar",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "dpc_integrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -10764,6 +10788,46 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "grating_step_period_estimate",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "grating_stepping_simulate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "images",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "grating_three_image_retrieve",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images",
+    "images"
    ]
   },
   {
@@ -27123,6 +27187,39 @@
     "matrix",
     "matrix"
    ]
+  },
+  {
+   "name": "talbot_carpet",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_grating_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_source_visibility",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "tangent_field",

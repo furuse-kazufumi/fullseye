@@ -667,6 +667,11 @@ OP_PARAM_HINTS = {
     ("pc_lod_chain", "levels"): lambda rng: 2,
     # 測地距離の起点は頂点添字。種の最小メッシュでも 0 は必ず存在する
     ("geodesic_mesh", "source"): lambda rng: 0,
+    # 格子干渉の線源(2026-10-18): 焦点の幅・線源の距離・格子間の距離・分析格子の周期(実験室の X 線管の程度)
+    ("talbot_source_visibility", "source_width_um"): lambda rng: float(rng.uniform(20.0, 400.0)),
+    ("talbot_source_visibility", "source_distance_mm"): lambda rng: float(rng.uniform(800.0, 1600.0)),
+    ("talbot_source_visibility", "distance_mm"): lambda rng: float(rng.uniform(20.0, 60.0)),
+    ("talbot_source_visibility", "analyzer_period_um"): lambda rng: float(rng.uniform(1.5, 5.0)),
 }
 
 
