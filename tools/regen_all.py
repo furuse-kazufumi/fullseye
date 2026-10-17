@@ -154,6 +154,28 @@ OUTPUTS = {
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
 }
 
+#: ---- 書く**かもしれない**出力(2026-10-18)--------------------------------------------
+#:
+#: OUTPUTS は「この段が必ず触れる」宣言で、`trace_problems()` は触れもしない宣言を拒む。ところが
+#: **差分があるときだけ書く**出力がある —— `gen_wingpoc_gallery` は図の PNG より古いときだけ
+#: `<図>_720.jpg` のサムネを書き直す。統合で 2 回続けて同じ症状を踏んだ: 新しい PoC の図を初めて
+#: 載せる / 図を差し替えると「OUTPUTS に無いファイルを書いた」で止まり、OUTPUTS に足すと次の回は
+#: 「触れもしない」で止まる(2 回目の regen でやっと通る)。
+#:
+#: ここに挙げたパターンは**書いてもよいが、書かなくてもよい**(0 件を許す)。書き込みの許可と
+#: 順序の検査(`order_violations`)には効くが、「触れもしない」の検査と「追跡ファイルに当たる」の
+#: 検査には使わない。抜け道にしないよう、パターンごとに理由を書き(`table_problems` が短い理由・
+#: 鎖に無い段・ファイル名の部分が `*` だけのパターン・自分の OUTPUTS と重なるパターンを拒む)、
+#: tests/test_regen_all.py が「消すと 1 回目の regen が止まる」ことを探針で見る。
+MAY_OUTPUTS = {
+    "tools/gen_wingpoc_gallery.py": {
+        "docs/articles/assets/poc/*_720.jpg":
+            ("幅 720 px の JPEG サムネ。元の図(PNG)より古いか無いときだけ書く(_thumb)ので、"
+             "図を初めて載せた回・差し替えた回にしか書き込みが起きない。"),
+    },
+}
+
+
 #: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
@@ -542,6 +564,11 @@ def _overlap(a: str, b: str) -> bool:
     return a == b or _match(a, b) or _match(b, a) or bool(_expand(a) & _expand(b))
 
 
+def _all_outputs(stage: str) -> list:
+    """その段が書きうる全パターン(必ず書く OUTPUTS + 書くかもしれない MAY_OUTPUTS)。"""
+    return list(OUTPUTS.get(stage, ())) + list(MAY_OUTPUTS.get(stage, {}))
+
+
 def _chain_scripts(chain=None) -> list:
     return [args[0] for args, _ in (CHAIN if chain is None else chain)]
 
@@ -559,7 +586,7 @@ def order_violations(order=None) -> list:
             if (reader, rp) in ORDER_EXEMPT:
                 continue
             for writer in order[i + 1:]:
-                for wp in OUTPUTS.get(writer, ()):
+                for wp in _all_outputs(writer):
                     if _overlap(rp, wp):
                         bad.append((reader, rp, writer, wp))
     return bad
@@ -585,6 +612,18 @@ def table_problems() -> list:
         for wp in pats:
             if _tracked_files() and not _expand(wp):
                 probs.append("%s の OUTPUTS %r に当たる追跡ファイルが 1 本も無い" % (s, wp))
+    for s, pats in MAY_OUTPUTS.items():
+        if s not in scripts:
+            probs.append("MAY_OUTPUTS に鎖に無い段: %s" % s)
+        if not pats:
+            probs.append("%s の MAY_OUTPUTS が空" % s)
+        for wp, why in pats.items():
+            if len((why or "").strip()) < 15:
+                probs.append("%s の MAY_OUTPUTS %r の理由が短すぎる" % (s, wp))
+            if wp.rsplit("/", 1)[-1].strip("*") == "":
+                probs.append("%s の MAY_OUTPUTS %r はファイル名が * だけ(何でも書ける抜け道)" % (s, wp))
+            if any(_overlap(wp, op) for op in OUTPUTS.get(s, ())):
+                probs.append("%s の MAY_OUTPUTS %r が自分の OUTPUTS と重なる(どちらか一方に)" % (s, wp))
     for (s, rp), why in ORDER_EXEMPT.items():
         if rp not in READS.get(s, ()):
             probs.append("ORDER_EXEMPT の (%s, %r) が READS に無い(幽霊)" % (s, rp))
@@ -596,7 +635,7 @@ def table_problems() -> list:
 def trace_problems(traces: dict) -> list:
     """各段の**実測**の読み書き(``{段: {"r": [...], "w": [...]}}``)と表を突き合わせる。
 
-    * 宣言に無い書き込み(OUTPUTS に足す)
+    * 宣言に無い書き込み(OUTPUTS に足す。差分があるときだけ書くものは MAY_OUTPUTS に)
     * 他の段の生成物を宣言なしに読んだ(READS に足す —— 足すと order_violations が順序を見る)
     * 宣言した READS を 1 本も読んでいない(表が古い)
     * 宣言した OUTPUTS のどれにも触れていない(**書いていない段** —— conversion_matrix が
@@ -610,12 +649,13 @@ def trace_problems(traces: dict) -> list:
             continue
         rd, wr = set(t.get("r", ())), set(t.get("w", ()))
         own = OUTPUTS.get(s, [])
+        may = _all_outputs(s)      # 書いてよい = 必ず書く + 書くかもしれない
         for p in sorted(wr):
-            if not any(_match(p, wp) for wp in own):
+            if not any(_match(p, wp) for wp in may):
                 probs.append("%s: OUTPUTS に無いファイルを書いた: %s" % (s, p))
         decl = READS.get(s, [])
         for p in sorted(rd):
-            producers = [w for w, wps in OUTPUTS.items() if w != s and any(_match(p, wp) for wp in wps)]
+            producers = [w for w in _chain_scripts() if w != s and any(_match(p, wp) for wp in _all_outputs(w))]
             if producers and not any(_match(p, rp) for rp in decl):
                 probs.append("%s: READS に無い生成物を読んだ: %s(書く段: %s)"
                              % (s, p, ", ".join(producers)))

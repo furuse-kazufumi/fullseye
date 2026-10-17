@@ -227,3 +227,89 @@ def test_every_chain_stage_is_traced_for_real(tmp_path):
                                "tools/conversion_matrix.py": t})
     assert probs, "出力に触れない段なのに問題が 1 件も出ない"
     assert any("conversion_matrix.py: OUTPUTS" in p and "触れもしない" in p for p in probs), probs
+
+
+# ---- 書くかもしれない出力(2026-10-18)----------------------------------------------------
+_THUMB = "docs/articles/assets/poc/poc_new_exhibit/01_scene_720.jpg"
+_GALLERY = "tools/gen_wingpoc_gallery.py"
+
+
+def _clean_traces():
+    return {s: {"r": [p.replace("*", "x") for p in RA.READS.get(s, [])],
+                "w": [p.replace("*", "x") for p in RA.OUTPUTS[s]]} for s in _chain_order()}
+
+
+def test_conditional_thumbnail_passes_on_the_first_and_the_second_run():
+    """図を初めて載せた回(サムネを書く)も、次の回(書かない)も、表と食い違わない。
+    統合で 2 回踏んだ症状: 1 回目は「OUTPUTS に無いファイルを書いた」、OUTPUTS に足すと 2 回目に
+    「触れもしない」で止まった。"""
+    first = _clean_traces()
+    first[_GALLERY]["w"].append(_THUMB)
+    assert RA.trace_problems(first) == []
+    assert RA.trace_problems(_clean_traces()) == []          # 2 回目: 書かない
+
+
+def test_without_the_conditional_entry_the_first_run_is_rejected():
+    """探針: MAY_OUTPUTS を外すと、1 回目(サムネを書く回)が止まる —— 直す前の症状が戻る。"""
+    saved = RA.MAY_OUTPUTS.pop(_GALLERY)
+    try:
+        first = _clean_traces()
+        first[_GALLERY]["w"].append(_THUMB)
+        probs = RA.trace_problems(first)
+        assert any("OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in probs), probs
+    finally:
+        RA.MAY_OUTPUTS[_GALLERY] = saved
+
+
+def test_putting_the_thumbnail_in_outputs_fails_the_second_run():
+    """探針: 必ず書く OUTPUTS に入れると、書かない回が「触れもしない」で止まる(MAY_OUTPUTS が要る理由)。"""
+    pat = next(iter(RA.MAY_OUTPUTS[_GALLERY]))
+    RA.OUTPUTS[_GALLERY].append(pat)
+    try:
+        second = _clean_traces()
+        second[_GALLERY]["w"] = [w for w in second[_GALLERY]["w"] if not w.endswith("_720.jpg")]
+        probs = RA.trace_problems(second)
+        assert any("触れもしない" in p and "_720.jpg" in p for p in probs), probs
+    finally:
+        RA.OUTPUTS[_GALLERY].remove(pat)
+
+
+def test_conditional_outputs_are_not_a_blanket():
+    """書くかもしれない出力は、その段のそのパターンだけ。別の段が書けば拒む / 同じ段でも別の
+    ファイルは拒む / 表の側も、理由の無い・鎖に無い段・ファイル名が * だけ・OUTPUTS と重なる宣言を拒む。"""
+    t = _clean_traces()
+    t["catalog.py"]["w"].append(_THUMB)
+    assert any("catalog.py: OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in RA.trace_problems(t))
+    t = _clean_traces()
+    t[_GALLERY]["w"].append("docs/articles/assets/poc/poc_new_exhibit/01_scene.png")
+    assert any("01_scene.png" in p for p in RA.trace_problems(t))
+    for bad, needle in (({"tools/no_such.py": {"docs/x_720.jpg": "理由は十分に長い説明の文です"}}, "鎖に無い段"),
+                        ({_GALLERY: {"docs/x_720.jpg": "短い"}}, "理由が短すぎる"),
+                        ({_GALLERY: {"docs/articles/*": "理由は十分に長い説明の文です"}}, "* だけ"),
+                        ({_GALLERY: {"docs/articles/exhibits/wingpoc.ja.md": "理由は十分に長い説明の文です"}},
+                         "OUTPUTS と重なる")):
+        saved = dict(RA.MAY_OUTPUTS)
+        RA.MAY_OUTPUTS.clear()
+        RA.MAY_OUTPUTS.update(bad)
+        try:
+            probs = RA.table_problems()
+            assert any(needle in p for p in probs), (needle, probs)
+        finally:
+            RA.MAY_OUTPUTS.clear()
+            RA.MAY_OUTPUTS.update(saved)
+
+
+def test_conditional_outputs_take_part_in_the_order_check():
+    """書くかもしれない出力も、それを読む段より前で書かれなければならない(順序の門に入る)。"""
+    RA.READS.setdefault("tools/gen_examples_readme.py", [])
+    RA.READS["tools/gen_examples_readme.py"].append("docs/articles/assets/poc/*_720.jpg")
+    try:
+        order = _chain_order()
+        order.remove(_GALLERY)
+        order.append(_GALLERY)                      # サムネを書く段を読む段の後ろへ
+        bad = RA.order_violations(order)
+        assert any(r == "tools/gen_examples_readme.py" and w == _GALLERY for r, _rp, w, _wp in bad), bad
+    finally:
+        RA.READS["tools/gen_examples_readme.py"].remove("docs/articles/assets/poc/*_720.jpg")
+        if not RA.READS["tools/gen_examples_readme.py"]:
+            del RA.READS["tools/gen_examples_readme.py"]
