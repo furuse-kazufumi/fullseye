@@ -328,6 +328,10 @@ EXCLUDED = {
     "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★2026-10-07 まで"
                                                        "出力先が手元の絶対パスで、どの checkout から回しても"
                                                        "本線の図を書き換えていた(今は Path(__file__) から求める)。"),
+    "tools/gen_simcal_article_figs.py": _IMAGE_REASON + (" Qiita の sim-to-real 較正シリーズの図"
+                                                        "(docs/articles/assets/qiita_simcal_series/)。本文の数字は同じ場所の"
+                                                        "numbers.json と examples の simcal ツアー 2 本の印字に合わせ、ずれたら"
+                                                        "図を書かずに止まる(assert)。"),
     "tools/gen_evis_media.py": _IMAGE_REASON + " 入力は手元の evis 実験映像(EVIS_CHOPSTICK_DIR)。",
     "tools/gen_visionlab_video.py": _IMAGE_REASON + " 動画(GIF/MP4)。",
     "tools/gen_studio_screenshots.py": _IMAGE_REASON + " Studio(PySide6)を実際に起動して撮る。CI に画面は無い。",
