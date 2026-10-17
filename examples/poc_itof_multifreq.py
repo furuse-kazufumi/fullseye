@@ -14,7 +14,7 @@
   2. **多周波アンラップ**: 倉庫の通路(2.1〜18.3 m)を 3 周波で撮る。1 周波は 1.25 m ごとに折り返し、3 周波の剰余を
      次数の仮説を全部試す最尤の復号で組むと 18.7 m まで一意になる。遠いほど信号が弱く、**次数を丸ごと誤って距離が
      周期の単位で飛ぶ**画素が出る。誤り率の実測を和集合の上界と突き合わせ、2 周波のうなり(古典的な方法)・
-     ``residue.residue_crt``(最も長い周期を錨にする)と比べる。周波数の組を変えると非曖昧距離 7.5 m の外の棚が手前に
+     ``residue.residue_crt``(Wang–Xia の錨の選び方)と比べる。周波数の組を変えると非曖昧距離 7.5 m の外の棚が手前に
      **折り返して映る**。
   3. **マルチパス**: (a) 半透明の板(包装フィルム)の奥の箱 —— 経路が 2 本。1 周波の距離は 2 つの間のどこかに出る
      (``lighttransport.tof_multipath_phase`` と一致)。等間隔 8 周波の行列ペンシルで 2 本に分け、分けられる
@@ -34,8 +34,9 @@
 【実測(seed 固定。full 約 37 s、reduced 約 6 s)】
   * 雑音: SNR ≥ 3 の 11 条件で σ_d は閉形式の 0.999〜1.029 倍。SNR 2.3 では近似が外れ 8 % 大きい。背景光 4×S で 2.10〜2.21 倍。
   * 多周波(16/80/120 MHz): 次数の誤りは σ_φ = 0.33 rad で 0.116(上界 0.132)、0.24 rad で 0.021(上界 0.020)。
-    ★同じ生信号で ``residue_crt`` は 0.556 / 0.407 —— 16 MHz を錨にするので、低い周波数の位相誤差が Wang–Xia の保証
-    0.105 rad を越えた所から崩れる。通路では 4 m 以内の飛び 0.1 %、8〜12 m で 31 %(上界の平均 47 %)。
+    ★同じ生信号で ``residue_crt`` は 0.1161 / 0.0210 —— 最尤と同等。Wang–Xia の錨の選び方(雑音の分散が最小の帯、
+    同分散なら円上の最小二乗に最も近い剰余)が効く(最も長い周期 = 16 MHz を錨にしていた修正前は 0.556 / 0.407)。
+    保証 0.105 rad の外の標本には ResidueBoundWarning が出る。通路では 4 m 以内の飛び 0.1 %、8〜12 m で 31 %(上界の平均 47 %)。
   * マルチパス: フィルム(0.95 m)と箱(1.30 m)の 1 周波の距離は 1.2227 m(``tof_multipath_phase`` と一致)。8 周波の行列
     ペンシルは雑音なしで 1e-9 m まで戻し、雑音ありでは間隔 0.8 m で 100 %、0.5 m で 76 %、0.2 m 以下は 3 % 以下しか 2 cm
     に入らない。部屋の隅は全パッチで 8〜99 mm 奥へ伸び、輸送行列の 1 回反射と 1e-15 m で一致。
@@ -43,7 +44,8 @@
     直接 ToF は同じ場面で浮いた画素 0、フィルムの下の距離のずれも 0.1 mm(iToF は −70 mm)。
   * 周期誤差: 矩形波で ±84.8 mm(閉形式と 1.8e-15 rad)。模型の逆引きで 2.24 mm(雑音の床 2.14 mm)、16 点の較正で 5.20 mm。
   * 背景光: 信号の 50 倍で 4 m 以内の RMSE が 8.7 → 45.8 mm、12 m 以遠の次数の誤りが 12 % → 93 %。
-  * 実データ(右半分 97,943 画素、30 cm 以上の飛び): 最尤 1 枚 0.376 / 10 枚平均 0.131、``residue_crt`` 0.559 / 0.293。
+  * 実データ(右半分 97,943 画素、30 cm 以上の飛び): 最尤 1 枚 0.376 / 10 枚平均 0.131、``residue_crt`` も 0.376 / 0.131
+    (最尤と同等。錨を直す前は 0.559 / 0.293)。
     margin > 0.2 の画素だけ残すと 68 % が残り、飛びは 0.020。
 
 【外部真値】閉形式(位相と距離、Lange の雑音、三角波の相関、CRT の非曖昧距離、和集合の上界)、合成シーンの既知の距離、
@@ -75,6 +77,7 @@ import math
 import os
 import sys
 import time
+import warnings
 
 import numpy as np
 
@@ -309,10 +312,13 @@ def mc_error_rate(freqs, S, n, seed, method="ml"):
     raw = T.itof_capture(d, frequencies_hz=freqs, signal_electrons=S, demod_contrast=CD, read_noise_e=READ_E,
                          seed=seed + 1)
     pa = T.itof_phase_amplitude(raw)
-    un = T.itof_unwrap_multifreq(pa, method=method)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", residue.ResidueBoundWarning)
+        un = T.itof_unwrap_multifreq(pa, method=method)
+    n_warn = sum(1 for x in caught if issubclass(x.category, residue.ResidueBoundWarning))
     jump = np.abs(un["depth"] - d) > 0.25 * min(C / (2 * f) for f in freqs)
     sig = float(np.median(pa["phase_sigma"]))
-    return float(jump.mean()), sig
+    return float(jump.mean()), sig, n_warn
 
 
 def chapter_unwrap():
@@ -321,25 +327,33 @@ def chapter_unwrap():
     n = 140 if REDUCED else 260
     rows = []
     for S in (60.0, 130.0, 200.0, 300.0, 450.0):
-        rate, sig = mc_error_rate(F_SET, S, n, 100 + int(S))
-        rate_crt, _ = mc_error_rate(F_SET, S, n, 100 + int(S), "crt")
+        rate, sig, _ = mc_error_rate(F_SET, S, n, 100 + int(S))
+        rate_crt, _, warn_crt = mc_error_rate(F_SET, S, n, 100 + int(S), "crt")
         er = T.itof_unwrap_error_rate(F_SET, sig)
-        rows.append((S, sig, rate, er["nearest_term"], er["union_bound"], rate_crt))
+        rows.append((S, sig, rate, er["nearest_term"], er["union_bound"], rate_crt, warn_crt))
         print("   S = %4.0f e⁻: σ_φ = %.3f rad、次数の誤り 最尤 %.4f(和集合の上界 %.4f / 最近の 1 項 %.4f)、"
               "residue_crt %.4f" % (S, sig, rate, er["union_bound"], er["nearest_term"], rate_crt))
     ok = [r for r in rows if 3e-3 < r[2] < 0.3]
     gate("誤り率の実測が [最近の 1 項 × 0.5, 和集合の上界 × 1.3] に入る(誤り率 0.1〜30 % の条件)",
          len(ok) >= 2 and all(0.5 * r[3] <= r[2] <= 1.3 * r[4] for r in ok),
          "; ".join("%.4f ∈ [%.4f, %.4f]" % (r[2], 0.5 * r[3], 1.3 * r[4]) for r in ok))
-    gate("★residue_crt(最も長い周期 = 16 MHz を錨にする)は同じ生信号で最尤より誤る(低い周波数の位相誤差が"
-         " Wang–Xia の保証 %.3f rad を越える)" % T.itof_unwrap_error_rate(F_SET, 0.1)["guaranteed_phase_rad"][0],
-         all(r[5] > 2 * r[2] for r in rows if r[2] < 0.2), "; ".join("%.4f > %.4f" % (r[5], r[2]) for r in rows))
+    g_wx = T.itof_unwrap_error_rate(F_SET, 0.1)["guaranteed_phase_rad"][0]
+    # ★2026-10-18: residue_crt の錨を Wang–Xia 2010(IV-A 節)どおりに直した後は、最尤の復号と同等になる。
+    # 修正前(最も長い周期 = 16 MHz を常に錨にした)は 0.556 / 0.407 と大きく誤っていた。差の許容は
+    # 最尤の 10 % + 標本 5 個(誤りの少ない条件で数個の入れ替わりを許す)。
+    gate("residue_crt(Wang–Xia の錨の選び方: 雑音の分散が最小の帯、同分散なら円上の最小二乗に最も近い剰余)は"
+         "同じ生信号で最尤の復号と同等(差が最尤の 10 % + 標本 5 個以内)",
+         all(abs(r[5] - r[2]) <= 0.1 * r[2] + 5.0 / n ** 2 for r in rows),
+         "; ".join("%.4f ≈ %.4f" % (r[5], r[2]) for r in rows))
+    gate("residue_crt は Wang–Xia の保証(低い周波数で %.3f rad)の外の標本を黙って返さない(ResidueBoundWarning)" % g_wx,
+         all(r[6] > 0 for r in rows if r[1] > g_wx),
+         "; ".join("σ_φ %.3f rad: 警告 %d 回" % (r[1], r[6]) for r in rows))
     # 2b. うなり(2 周波)と CRT(最尤)
     two = (80e6, 100e6)
     cmp_rows = []
     for S in (150.0, 300.0):
-        rb, _ = mc_error_rate(two, S, n, 300 + int(S), "beat")
-        rc, sg = mc_error_rate(two, S, n, 300 + int(S), "ml")
+        rb, _, _ = mc_error_rate(two, S, n, 300 + int(S), "beat")
+        rc, sg, _ = mc_error_rate(two, S, n, 300 + int(S), "ml")
         cmp_rows.append((S, sg, rb, rc))
         print("   2 周波 80/100 MHz、S = %3.0f e⁻(σ_φ %.3f rad): うなり %.4f / 最尤 %.4f" % (S, sg, rb, rc))
     gate("同じ生信号で、最尤の復号はうなりより次数の誤りが少ない", all(r[3] < r[2] for r in cmp_rows),
@@ -747,7 +761,9 @@ def chapter_real_data():
     for name, ph, wgt in (("1 枚", ph1, A1 ** 2 / np.maximum(B1, 1.0)), ("%d 枚の平均" % smp.shape[0], phm, Am ** 2)):
         phc = np.stack([np.mod(ph[k] - 2 * np.pi * offs[k] / period[k], 2 * np.pi) for k in range(3)])
         for meth in ("ml", "crt"):
-            un = T.itof_unwrap_multifreq(phc, REAL_FREQS, weights=wgt, method=meth)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", residue.ResidueBoundWarning)   # 保証の外の画素は飛びとして数える
+                un = T.itof_unwrap_multifreq(phc, REAL_FREQS, weights=wgt, method=meth)
             e = un["depth"] - rgt
             jump = np.abs(e) > 0.3
             res[(name, meth)] = (float(jump[evalm].mean()), un, e)
@@ -760,10 +776,10 @@ def chapter_real_data():
             print("      %s %3.0f MHz 単独の折り返した距離の誤差(中央値)%.1f mm"
                   % (name, REAL_FREQS[k] / 1e6, 1e3 * np.median(np.abs(ew[evalm]))))
     avg = "%d 枚の平均" % smp.shape[0]
-    gate("実データ: 最尤の復号は residue_crt より飛びが少ない(1 枚でも平均でも)",
-         res[("1 枚", "ml")][0] < res[("1 枚", "crt")][0] and res[(avg, "ml")][0] < res[(avg, "crt")][0],
-         "1 枚 %.3f < %.3f、平均 %.3f < %.3f" % (res[("1 枚", "ml")][0], res[("1 枚", "crt")][0], res[(avg, "ml")][0],
-                                              res[(avg, "crt")][0]))
+    gate("実データ: residue_crt(Wang–Xia の錨)は最尤の復号と同等(1 枚でも平均でも、飛びの差が最尤の 10 % 以内)",
+         all(abs(res[(k, "crt")][0] - res[(k, "ml")][0]) <= 0.1 * res[(k, "ml")][0] for k in ("1 枚", avg)),
+         "1 枚 %.4f ≈ %.4f、平均 %.4f ≈ %.4f" % (res[("1 枚", "crt")][0], res[("1 枚", "ml")][0], res[(avg, "crt")][0],
+                                              res[(avg, "ml")][0]))
     gate("実データ: 枚数を平均すると飛びが減る(最尤)", res[(avg, "ml")][0] < res[("1 枚", "ml")][0],
          "%.3f → %.3f" % (res[("1 枚", "ml")][0], res[(avg, "ml")][0]))
     un, e = res[(avg, "ml")][1], res[(avg, "ml")][2]
@@ -945,8 +961,8 @@ def make_figures(cf, noise, uw, mp, fl, wg, amb, dt, real):
                                  "最尤の誤差 ±0.5 m", "residue_crt の誤差 ±0.5 m"],
                        signed=[False, False, True, True], ncols=2,
                        caption="実機の生データ(3 周波 × 3 段)を itof_phase_amplitude と itof_unwrap_multifreq に通し、真値と比べた。"
-                               "左半分で焦点距離・中心・周波数ごとのオフセットを較正し、右半分で採点した。最も低い周波数を錨にする"
-                               " residue_crt は飛びが多い。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。")
+                               "左半分で焦点距離・中心・周波数ごとのオフセットを較正し、右半分で採点した。錨を Wang–Xia の"
+                               "選び方にした residue_crt は最尤と同等。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。")
         mr = real["margin_rows"]
         figs.save_plot("public_raw_margin",
                        [("残る画素の割合", np.array([r[0] for r in mr]), np.array([r[1] for r in mr]) * 100),

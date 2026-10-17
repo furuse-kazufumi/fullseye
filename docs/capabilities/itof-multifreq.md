@@ -41,7 +41,7 @@ Eight ops in `itof` (category `itof` of `opsoptics`) take continuous-wave indire
 
 ## 代替
 
-直接 ToF(光子の到達時刻のヒストグラム)は `dtof_cube_simulate` → `dtof_cube_depth`(2 つの面の山を別々に見るので、縁が宙に浮かずフィルムの奥もずれない —— PoC で比較)。凹んだ形の相互反射による距離の偏りは `tof_transport_depth`。剰余の組み合わせそのものは `residue_crt`(★最も長い周期を錨にするので、位相雑音が帯ごとに同じ iToF では最尤の復号より誤る —— PoC と実データで確認)。
+直接 ToF(光子の到達時刻のヒストグラム)は `dtof_cube_simulate` → `dtof_cube_depth`(2 つの面の山を別々に見るので、縁が宙に浮かずフィルムの奥もずれない —— PoC で比較)。凹んだ形の相互反射による距離の偏りは `tof_transport_depth`。剰余の組み合わせそのものは `residue_crt`(★Wang–Xia の錨の選び方 —— 雑音の分散が最小の帯、同分散なら円上の最小二乗に最も近い剰余 —— で錨を選ぶので、位相雑音が帯ごとに同じ iToF でも最尤の復号と同等: 合成 0.1161 対 0.1160、実データ 0.131 対 0.131。以前の、常に最も長い周期を錨にする実装は 0.556 / 0.293 と大きく誤っていた。保証の外の画素では ResidueBoundWarning を出す)。
 
 ## 限界
 

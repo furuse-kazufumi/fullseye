@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
+- `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。
+- 数字(同じ生信号): iToF の合成 16/80/120 MHz で次数の誤り 0.5563 → 0.1161(最尤 0.1160)、実データ 10 枚平均 0.293 → 0.131(最尤 0.131)。`poc_residue_crt` の RRNS で犯人を当てた割合 88.5 → 88.9 %。門 `tests/test_residue_crt_reference_2026_10_15.py`(修正を戻すと 13 本とも赤)。
+- PoC の所要時間の門 15 本 17 門を、壁時計から `time.process_time` に替えた(壁時計は併記。CI の並列のシャードで壁時計 120.6 秒・手元 23 秒の赤が出た)。回帰の門 `tests/test_poc_time_gates_use_cpu_2026_10_15.py`(AST で壁時計の判定を拾う)。
+
 ### Fixed — 外部 AI のレビュー(PyPI 0.6.0 を導入して実測)の一次検証から
 0.6.0 の venv と master の両方で 1 件ずつ再現し、本物だけを直した(回帰テスト `tests/test_review_060_2026_10_18.py`)。
 - `fullseye index` が、OpenCV の無い素の `pip install fullseye` で `AssertionError`(color 層が空)で落ちていた。color 層は extra `opencv` が要るので、空を止めるのは OpenCV が在るときだけにした(レビューの N228 を再現する途中で見つけた)。
@@ -28,7 +33,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### Added — 間接 ToF(位相方式)の多周波アンラップと壊れ方(itof 8 op + PoC)
 - `itof`(`opsoptics` の新カテゴリ `itof`、8 op): `itof_capture`(距離の図 → 周波数ごと K 段のバケット、ショット雑音・読み出し雑音・背景光、正弦か矩形の変調、余分な経路、画素の開口での混合)、`itof_phase_amplitude`(既知の任意の段の位相を最小二乗で、画素ごとの距離の雑音の見積もり)、`itof_noise_budget`(σ_d = c/(4πf)·√((B+σ_r²)/2)/A、Lange の式と一致)、`itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号 / `residue.residue_crt` / 2 周波のうなり)、`itof_unwrap_error_rate`(平行な直線の族の距離から和集合の上界、Wang–Xia の保証)、`itof_multipath_separate`(等間隔の多周波の行列ペンシル)、`itof_flying_pixel_mask`(両側が台地の段差の間に浮いた画素、雑音で閾値を上げる)、`itof_wiggling_correct`(矩形波の周期誤差を模型の逆引きか較正の調和で)。
-- PoC `poc_itof_multifreq`(収蔵番号 2026.243、29 門、図 13 枚 + GIF): 雑音の閉形式、倉庫の通路の 3 周波アンラップと遠くの次数の誤り(上界と照合)、80/100/120 MHz で 7.5 m より奥が折り返す、包装フィルムの 2 経路と分けられる間隔、部屋の隅の距離の伸び(`lighttransport` の輸送行列と 1e-15 m)、フライングピクセル、矩形波の周期誤差、太陽光、同じ場面の直接 ToF(`photoncount`)との比較、公開の実機の生データ(Zenodo 10.5281/zenodo.19608956、CC BY 4.0、手元にあるときだけ)。★`residue_crt` は最も長い周期を錨にするので、位相雑音が帯ごとに同じ iToF では最尤の復号より誤る(合成 0.556 対 0.116、実データ 0.293 対 0.131)。`residue` 本体は変えていない。
+- PoC `poc_itof_multifreq`(収蔵番号 2026.243、30 門、図 13 枚 + GIF): 雑音の閉形式、倉庫の通路の 3 周波アンラップと遠くの次数の誤り(上界と照合)、80/100/120 MHz で 7.5 m より奥が折り返す、包装フィルムの 2 経路と分けられる間隔、部屋の隅の距離の伸び(`lighttransport` の輸送行列と 1e-15 m)、フライングピクセル、矩形波の周期誤差、太陽光、同じ場面の直接 ToF(`photoncount`)との比較、公開の実機の生データ(Zenodo 10.5281/zenodo.19608956、CC BY 4.0、手元にあるときだけ)。★統合時に `residue_crt` の錨を Wang–Xia どおりに直した(下の Fixed)ので、同じ生信号で最尤の復号と同等になった(合成 0.1161 対 0.1160、実データ 0.131 対 0.131。直す前は 0.556 / 0.293)。門は「同等」と「保証の外で ResidueBoundWarning」に書き直した。
 - 能力ノート `docs/capabilities/itof-multifreq.md`、op 要約 6 言語。
 ### Added — 収束型の演算(converge 6 op): 収束まで回し、収束した証拠と残りの誤差を返し、収束しなければ値を出さない
 - `opsconverge`(新しい型なし): 反復 `iterate_fixed_point`(素の反復 / Aitken / Anderson —— Walker & Ni 2011 の式 3.1 を QR で、条件数で古い列を捨てる。発散・周期 2 の振動・頭打ちは `NotConvergedError`)、検証 `conv_observed_order` / `conv_gci`(Celik ら 2008 の式 1〜7、格子比が一定でない場合と振動収束)、モンテカルロ `mc_sequential_mean`(区間が許容幅に入るまで)/ `mc_photon_slab`(MCML の規則の多層スラブ、信頼区間つき)、止め方 `iv_richardson_lucy_until`(ポアソンの食い違い原理 τ = 1 / Morozov、止まらなければモデルの値域外)。

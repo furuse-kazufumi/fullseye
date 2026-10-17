@@ -112,7 +112,7 @@
  {
   "file": "12_public_raw_unwrap.png",
   "name": "public_raw_unwrap",
-  "caption": "実機の生データ(3 周波 × 3 段)を itof_phase_amplitude と itof_unwrap_multifreq に通し、真値と比べた。左半分で焦点距離・中心・周波数ごとのオフセットを較正し、右半分で採点した。最も低い周波数を錨にする residue_crt は飛びが多い。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。",
+  "caption": "実機の生データ(3 周波 × 3 段)を itof_phase_amplitude と itof_unwrap_multifreq に通し、真値と比べた。左半分で焦点距離・中心・周波数ごとのオフセットを較正し、右半分で採点した。錨を Wang–Xia の選び方にした residue_crt は最尤と同等。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。",
   "shape": [
    942,
    1050,

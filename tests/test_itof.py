@@ -7,6 +7,7 @@ import math
 import numpy as np
 import pytest
 
+import residue  # noqa: E402
 import itof as T
 import lighttransport as LT
 import opsoptics
@@ -83,16 +84,20 @@ def test_beyond_unambiguous_range_folds():
     assert np.allclose(un["depth"], 9.0 - C / (2 * 20e6))
 
 
-def test_ml_beats_residue_crt_when_low_frequency_is_noisy():
+def test_residue_crt_matches_ml_with_the_wang_xia_anchor():
+    """2026-10-18 統合: residue_crt が錨を Wang–Xia(分散が最小の帯、同分散なら式 (58))で選ぶようになり、
+    位相雑音が帯ごとに同じ iToF でも最尤と同等になった(以前は最も長い周期を錨にして 2 倍以上誤った)。
+    保証の外の画素では黙らずに ResidueBoundWarning を出す。"""
     rng = np.random.default_rng(1)
     d = rng.uniform(0.3, 18.4, (150, 150))
     f = (16e6, 80e6, 120e6)
     pa = T.itof_phase_amplitude(T.itof_capture(d, frequencies_hz=f, signal_electrons=300.0, read_noise_e=10.0, seed=2))
     jml = np.mean(np.abs(T.itof_unwrap_multifreq(pa, method="ml")["depth"] - d) > 0.3)
-    jcrt = np.mean(np.abs(T.itof_unwrap_multifreq(pa, method="crt")["depth"] - d) > 0.3)
+    with pytest.warns(residue.ResidueBoundWarning):
+        jcrt = np.mean(np.abs(T.itof_unwrap_multifreq(pa, method="crt")["depth"] - d) > 0.3)
     sig = float(np.median(pa["phase_sigma"]))
     er = T.itof_unwrap_error_rate(f, sig)
-    assert jml < 0.5 * jcrt
+    assert abs(jcrt - jml) <= 0.1 * jml + 5.0 / d.size, (jcrt, jml)
     assert 0.5 * er["nearest_term"] <= jml <= 1.3 * er["union_bound"]
 
 

@@ -376,6 +376,7 @@ def _ten_units(out: dict) -> None:
 # ======================================================================================================================
 def main() -> int:
     t_all = time.time()
+    c_all = time.process_time()
     out = numpy_part()
     root, why = _data_dir()
     if root is not None:
@@ -383,8 +384,12 @@ def main() -> int:
     else:
         skip("門 10〜11(実データ)", why)
     el = time.time() - t_all
+    cpu = time.process_time() - c_all
     budget = 120.0 if FULL else 30.0
-    gate("門 13 所要 %.1f s ≤ %.0f s" % (el, budget), el <= budget)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 13 所要 %.1f s ≤ %.0f s" % (cpu, budget), cpu <= budget, "CPU %.1f s(壁時計 %.1f s)" % (cpu, el))
     if figs.enabled():
         figures(out)
     if figs.errors():
