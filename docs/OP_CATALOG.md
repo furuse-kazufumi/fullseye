@@ -2447,7 +2447,7 @@ _計 3301 ops / 50 families。並びとノートの在り処は `docs/ops/INDEX.
 - `grating_rgb` `normalmap → rgbimage` — 法線マップ + 光源 + 視線 → **回折による虹色** (H, W, 3) の線形 sRGB。 · 例: `appearance_structural_colour`
 - `grating_wavelengths` `入力なし → vector` — 回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。 · 例: `appearance_structural_colour`, `poc_beats_fringes_and_screens`
 - `spectrum_to_srgb` `signal → vector` — 分光反射率 → **線形 sRGB**(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。 · 例: `appearance_structural_colour`, `poc_material_optical_library`, `poc_pigment_unmixing`, `poc_white_balance`
-- `thin_film_reflectance` `signal → signal` — 薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。 · 例: `appearance_structural_colour`, `poc_thin_film_reflectometry`, `simcal_tour`
+- `thin_film_reflectance` `signal → signal` — 薄膜(厚さ d、屈折率 n_film)の分光反射率。特性行列法の厳密解(多重反射をすべて含む)。 · 例: `appearance_structural_colour`, `simcal_tour`
 - `thin_film_rgb` `normalmap → rgbimage` — 法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。 · 例: `appearance_structural_colour`
 - `ward_anisotropic` `normalmap → image2d` — Ward の異方性反射(楕円ガウス微小面)。ヘアライン仕上げの**伸びたハイライト**。 · 例: `appearance_structural_colour`
 

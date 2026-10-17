@@ -21,6 +21,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
 cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。
+n1 / n2: 入射側 / 板の屈折率。数か材料表の名前(例 "N-BK7"、名前なら d 線 587.56 nm の n)。
 
 返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する
 (エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この

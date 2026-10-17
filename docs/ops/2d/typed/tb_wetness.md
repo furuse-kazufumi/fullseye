@@ -40,7 +40,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
 
 base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。
-ior: 水膜の屈折率。
+ior: 水膜の屈折率。数か材料表の名前(例 "WATER"、名前なら d 線 587.56 nm の n)。
 
 返り値: 濡れた状態の拡散色(同形)。
 

@@ -104,8 +104,8 @@ _UNIT_BY_SUFFIX = (
 #: 値は (モジュール, 属性) で、実体は import 時ではなく参照時に解決する
 #: (循環 import を避け、任意依存が無い環境でも opassist 自体は読める)。
 _CHOICE_SOURCES = {
-    ("metal_optical_constants", "metal"): ("glassmirror", "METALS"),
-    ("metal_mirror_rgb", "metal"): ("glassmirror", "METALS"),
+    ("metal_optical_constants", "metal"): ("glassmirror", "MEASURED_METALS"),
+    ("metal_mirror_rgb", "metal"): ("glassmirror", "MEASURED_METALS"),
     ("finish_shade", "metal"): ("glassmirror", "METALS"),
     ("finish_shade", "kind"): ("metalfinish", "FINISHES"),
     ("tangent_field", "kind"): ("metalfinish", "FINISHES"),
@@ -123,6 +123,8 @@ _CHOICE_SOURCES = {
 _CHOICE_LITERAL = {
     ("fresnel_dielectric", "polarization"): ("unpolarized", "s", "p"),
     ("fresnel_conductor", "polarization"): ("unpolarized", "s", "p"),
+    ("thin_film_reflectance", "polarization"): ("unpolarized", "s", "p"),
+    ("thin_film_rgb", "polarization"): ("unpolarized", "s", "p"),
 }
 
 #: **プリセット** = 実在の設定に名前を付けたもの。数値を知らなくても試せるための導線。
@@ -143,11 +145,19 @@ PRESETS: dict[str, dict[str, dict[str, Any]]] = {
         "シャボン膜 (水 380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
         "陽極酸化被膜 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
         "反射防止 (λ/4 MgF2)": {"thickness_nm": 550.0 / (4 * 1.38), "n_film": 1.38, "n_sub": 1.52},
-        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": 2.4, "n_sub": "TI"},
+        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": "TIO2_AMORPHOUS", "n_sub": "TI"},
+        "Si の熱酸化膜 100 nm (60°・s 偏光)": {"thickness_nm": 100.0, "n_film": "SIO2", "n_sub": "SI",
+                                          "cos_theta": 0.5, "polarization": "s"},
+        "誘電体ミラー 550 nm (非晶質 TiO2 / SiO2 の 7 層、ガラスの上)": {
+            "thickness_nm": 58.6, "n_film": "TIO2_AMORPHOUS", "n_sub": "N-BK7",
+            "under_layers": [("SIO2", 94.2), ("TIO2_AMORPHOUS", 58.6)] * 3},
     },
     "thin_film_rgb": {
         "シャボン膜 (380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
         "陽極酸化 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
+        "焼き色 (チタン 90 nm、点光源)": {"thickness_nm": 90.0, "n_film": "TIO2_AMORPHOUS", "n_sub": "TI",
+                                       "light": (0.5, 0.0, 0.866)},
+        "Si の熱酸化膜 300 nm (ウェハの色)": {"thickness_nm": 300.0, "n_film": "SIO2", "n_sub": "SI"},
     },
     "fresnel_dielectric": {
         "空気 → 水": {"n1": 1.0, "n2": 1.333},
@@ -208,6 +218,15 @@ def _help_html_root(here):
     except Exception:
         return os.path.join(here, "studio_assets", "op_help")
 
+def _max_thickness(kw):
+    """膜厚の引数の最大値(スカラでも膜厚の場でも)。読めなければ 0(判定は op 本体の ValueError に任せる)。"""
+    try:
+        import numpy as _np
+        return float(_np.max(_np.asarray(kw.get("thickness_nm", 350.0), dtype=float)))
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _grating_light_across(kw):
     import numpy as np
     t = np.asarray(kw.get("tangent", (1.0, 0.0, 0.0)), float).ravel()[:3]
@@ -228,7 +247,7 @@ _PREFLIGHT = (
      "light をずらしてください)。"),
     ("critical_angle_deg", lambda kw: float(kw.get("n1", 1.5)) <= float(kw.get("n2", 1.0)),
      "全反射は密→疎(n1 > n2)でしか起きません。この組では臨界角が存在せず ValueError になります。"),
-    ("thin_film_reflectance", lambda kw: float(kw.get("thickness_nm", 350.0)) > 3000.0,
+    ("thin_film_reflectance", lambda kw: _max_thickness(kw) > 3000.0,
      "膜厚が可視光の波長より桁で大きいので、干渉の縞が積分の刻みより細かくなり、"
      "色ではなく平均値に潰れます(膜として意味を持つのは概ね 50–1000 nm)。"),
     ("slab_transmittance", lambda kw: float(kw.get("sigma_per_mm", 0.0)) * float(

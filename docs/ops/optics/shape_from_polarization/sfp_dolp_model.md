@@ -39,6 +39,11 @@ Returns a float64 array of the input's shape (a 0-d array for a scalar).
 **Raises** ``ValueError``: zenith outside ``[0, 90]`` or non-finite;
 *refractive_index* not a finite real ``> 1``; unknown *model*.
 
+*refractive_index* (here and in every op of this module) may also be a
+material name of the shared table ``materials`` (e.g. ``"N-BK7"``,
+``"PMMA"``, ``"WATER"``): its index at the d line (587.56 nm) is used.
+Metals and materials that absorb there are refused.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

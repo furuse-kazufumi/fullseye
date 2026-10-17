@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गीली surface का base रंग। <b>diffuse गहरा होता है</b> (और specular बढ़ता है)।</p>
 <p>base_rgb: सूखी अवस्था का रंग (H,W,3) या (3,)। wet: गीलापन (0–1)।</p>
-<p>ior: पानी की परत का refractive index।</p>
+<p>ior: पानी की परत का refractive index। संख्या या material table का नाम (जैसे &quot;WATER&quot;; नाम देने पर d line, 587.56 nm का n)।</p>
 <p>return value: गीली अवस्था का diffuse रंग (समान shape)।</p>
 <p>यह गहरा क्यों होता है: पानी की परत के अंदर total internal reflection होता है, और diffuse प्रकाश बार-बार surface की ओर लौटता है और हर बार absorb होता है। approximation के रूप में, सूखी reflectance ρ पर internal reflectance Ri = 1 − (1 − Ri0)/n² के बराबर re-absorption लगाया जाता है ―― गीली रेत के काली दिखने की यही घटना है (specular का बढ़ना <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> को ऊपर जोड़कर दर्शाया जाता है)।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">base_rgb</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

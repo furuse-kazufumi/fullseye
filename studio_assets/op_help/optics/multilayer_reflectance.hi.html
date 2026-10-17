@@ -18,7 +18,7 @@
 <p>quantity:     &quot;reflectance&quot; / &quot;transmittance&quot;(基板の中へ入る割合)/ &quot;absorptance&quot;(層での吸収 = 1 − R − T)。</p>
 <p>粗さ &gt; 0 では T と A を出さない(散乱光の行き先をこのモデルは持たない → ValueError)。</p>
 <p>返り値: (K, 2) の pairs。</p>
-<p>真値: 1 層なら <code style="color:#22d3bf">matappear.thin_film_reflectance</code>(Airy の式、別実装)と一致する。膜厚 0 は裸の基板の Fresnel、λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。吸収の無い積層では R + T = 1。</p>
+<p>真値: 1 層なら Airy の閉じた式(テストと PoC に独立に書いた式)と一致する。膜厚 0 は裸の基板の Fresnel、λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。吸収の無い積層では R + T = 1。</p>
 <p>&gt;&gt;&gt; p = multilayer_reflectance([(&quot;SIO2&quot;, 500.0)], &quot;SI&quot;, 400.0, 800.0, 5)</p>
 <p>&gt;&gt;&gt; p.shape</p>
 <p>(5, 2)</p>

@@ -1,20 +1,27 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_reflectance — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The spectral reflectance of a thin film (thickness d, index n_film). The closed Airy (multiple-reflection) form.</p>
+<p>The spectral reflectance of a thin film (thickness d, index n_film). The exact characteristic-matrix solution (all multiple reflections included).</p>
 <p>nm:           wavelength [nm] (array allowed).</p>
-<p>thickness_nm: film thickness [nm]. 200–800 for a soap bubble, 50–300 for an anodized coating.</p>
+<p>thickness_nm: film thickness [nm]. 200–800 for a soap bubble, 50–300 for an anodized coating. An <b>array</b> broadcastable with nm</p>
+<p>is allowed too (a thickness field; e.g. (H, W, 1) thicknesses and (K,) wavelengths → (H, W, K)).</p>
 <p>n_film/n_sub: refractive index of the film / substrate. Any of: a real number, a <b>complex n + ik</b> (k ≥ 0; metal substrates</p>
 <p>and absorbing films), a <b>material name</b> (the shared material table <code style="color:#22d3bf">materials</code>, e.g. &quot;TI&quot; / &quot;AL&quot; / &quot;SI&quot; —— its n,k</p>
-<p>at each wavelength), or a <b>per-wavelength array</b> broadcastable with nm (film dispersion).</p>
-<p>n_out:        refractive index of the incident side (a real number or a material name, no absorption).</p>
+<p>at each wavelength), a material record (dict), or a <b>per-wavelength array</b> broadcastable with nm (film dispersion).</p>
 <p>cos_theta:    cos of the angle of incidence on the incident side (array allowed, in a shape broadcastable with nm).</p>
+<p>n_out:        refractive index of the incident side (a real number or a material name, no absorption).</p>
 <p>polarization: &quot;unpolarized&quot; (default, mean of s and p) / &quot;s&quot; / &quot;p&quot;.</p>
-<p>Returns: reflectance R (0–1), in the broadcast shape of nm and cos_theta.</p>
-<p>Physics: the phase of propagation in the film β = 2π ñ_film d cosθ̃_film / λ (the complex Snell law gives cosθ̃ inside each layer). With the Fresnel coefficients of the interfaces as r1, r2, R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|². Reflection peaks at odd multiples of λ/4 (when n_film &gt; n_sub), and <b>the colour shifts as the thickness changes</b> —— that is the colour of a soap bubble. At film thickness 0, R matches the Fresnel reflection of the bare substrate (verified in tests).</p>
+<p>under_layers: layers between the film and the substrate (<code style="color:#22d3bf">[(index, thickness nm), ...]</code> from the incident side; the index is written</p>
+<p>like n_film). Empty (default) means a single film. For multilayer AR coatings, dielectric mirrors, a nitride under an oxide, etc.</p>
+<p>Returns: reflectance R (0–1), in the broadcast shape of nm, thickness_nm and cos_theta.</p>
+<p>★Sign convention: the complex index is N = n + ik with k ≥ 0. For a source that writes N = n − ik, pass the same k as a positive number (an input with a negative imaginary part raises ValueError —— the convention is not guessed).</p>
+<p>Physics: the characteristic matrix of each layer [[cos δ, −i sin δ / η], [−i η sin δ, cos δ]], δ = 2π N d cosθ̃ / λ (the complex Snell law gives cosθ̃ inside the layer, taking the decaying branch), with the tilted optical admittance η = N cosθ̃ (s) / N / cosθ̃ (p). For one layer this gives the same value as the Airy formula R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|² (compared in tests with a separately written formula). Reflection peaks at odd multiples of λ/4 (when n_film &gt; n_sub), and <b>the colour shifts as the thickness changes</b> —— that is the colour of a soap bubble. At film thickness 0, R matches the Fresnel reflection of the bare substrate. The calculation is done in one place, the characteristic matrix of <code style="color:#22d3bf">filmoptics</code> (the same function as <code style="color:#22d3bf">filmoptics.multilayer_reflectance</code>).</p>
 <p>★2026-10-14: the three indices used to be real only (a complex number raised TypeError). Approximating a metal substrate by a real index (heat-tinted titanium, 90 nm, with n_sub = 2.6) gave reflectances of 0.15–0.19, against 0.35–0.61 (380–780 nm) with the n,k of Ti —— a silent error that turns the colour into a different one. Now writing &quot;TI&quot; for the substrate brings in the n,k of the material table.</p>
+<p>&gt;&gt;&gt; r = thin_film_reflectance([450.0, 550.0, 650.0], 90.0, &quot;TIO2_AMORPHOUS&quot;, &quot;TI&quot;)</p>
+<p>&gt;&gt;&gt; bool(r.min() &gt; 0.3)</p>
+<p>True</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
@@ -35,7 +42,6 @@
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:appearance_structural_colour">appearance_structural_colour</a> — <code style="color:#22d3bf">py -3.11 examples/appearance_structural_colour.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
 <p><a style="color:#22d3bf" href="opoptics:emva_photon_transfer">emva_photon_transfer</a> · <a style="color:#22d3bf" href="opoptics:emva_quantum_efficiency">emva_quantum_efficiency</a> · <a style="color:#22d3bf" href="opoptics:emva_linearity_error">emva_linearity_error</a> · <a style="color:#22d3bf" href="opoptics:emva_snr_curve">emva_snr_curve</a> · <a style="color:#22d3bf" href="opoptics:emva_dark_current">emva_dark_current</a> · <a style="color:#22d3bf" href="opoptics:emva_total_snr">emva_total_snr</a> · <a style="color:#22d3bf" href="opoptics:emva_exposure_for_snr">emva_exposure_for_snr</a> · <a style="color:#22d3bf" href="opoptics:emva_photon_exposure">emva_photon_exposure</a></p>

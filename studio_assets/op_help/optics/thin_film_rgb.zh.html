@@ -1,14 +1,22 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法线图 + 视线 → <b>薄膜干涉的颜色</b> (H, W, 3) 线性 sRGB。</p>
-<p>面相对视线越倾斜，膜内光程越长，颜色向短波长侧移动 ―― 肥皂泡和烧过的钛的颜色在边缘处变化就是这个原因。角度依赖由 cosθ = |n·v| 求出。</p>
-<p>normals / view：(H,W,3) 法线贴图 / 从面到视点的方向。thickness_nm / n_film / n_sub：与 <code style="color:#22d3bf">thin_film_reflectance</code> 相同。</p>
-<p>(也可为复数、材料名。材料名限于覆盖 380–720 nm 的表 —— 例 基底 &quot;TI&quot; / &quot;AL&quot;)</p>
-<p>strength：整体强度。</p>
-<p>空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>面相对视线越倾斜,膜内光程越长,颜色向短波长侧移动 ―― 肥皂泡和烧过的钛的颜色在边缘处变化就是这个原因。</p>
+<p>normals / view:(H,W,3) 法线贴图 / 从面到视点的方向。</p>
+<p>thickness_nm: 膜厚 [nm]。标量或 <b>(H, W) 的膜厚场</b>(膜厚不均、楔形、涂布不均)。n_film / n_sub / n_out / polarization / under_layers: 与 <code style="color:#22d3bf">thin_film_reflectance</code> 相同(复数 n + ik、材料名、</p>
+<p>材料记录、逐波长数组。材料名限于覆盖 <code style="color:#22d3bf">nm</code> 网格的表 —— 例 基底 &quot;TI&quot; / &quot;AL&quot;)。</p>
+<p>strength:整体强度。</p>
+<p>light: 从面到光源的方向 (3,)。<b>None(默认)为均匀的天空照明</b>: 每个被分辨的面返回来自视线镜像方向的光,</p>
+<p>所以入射角为 cosθ = |n·v|(逐像素变化)。传入向量则得到<b>该光源镜面反射的颜色</b>: 把光送向视点的微面的法线</p>
+<p>是半向量 h = (l + v)/|l + v|,所以入射角为 cosθ = |h·l|(同轴照明 l = v 即垂直入射)。亮度(高光的形状)</p>
+<p>不包含在这里 —— 请乘以 <code style="color:#22d3bf">ward_anisotropic</code> 等。</p>
+<p>nm: 波长网格 [nm] (递增,2 点以上)。None 为 380–720 nm 的 69 点(<code style="color:#22d3bf">FILM_RGB_NM</code>)。材料表的范围与之</p>
+<p>不重叠的材料(例 金红石的 &quot;TIO2&quot; 从 430 nm 开始),请传入该范围内的网格。</p>
+<p>illuminant: 与 <code style="color:#22d3bf">nm</code> 等长的光源分光分布。None 为 D65(与 <code style="color:#22d3bf">spectrum_to_srgb</code> 相同)。</p>
+<p>空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。膜厚场的形状与法线贴图不符时也会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

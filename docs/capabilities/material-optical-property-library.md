@@ -1,14 +1,14 @@
 ---
 id: material-optical-property-library
-title: 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)
-title_en: One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)
+title: 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)
+title_en: One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)
 category: 光と色
 ops: [material_table, material_record, material_optical_constants, material_dispersion, material_extinction, material_absorption, material_transmittance, material_reflectance, abbe_number, glass_map, thermo_optic_coefficient, plate_focus_shift, silicon_free_carrier_absorption, material_from_sellmeier, material_from_curves, read_glass_catalog_agf]
 examples: [poc_material_optical_library]
 version: 0.6.1
 ---
 
-# 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)
+# 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)
 
 ## できること
 

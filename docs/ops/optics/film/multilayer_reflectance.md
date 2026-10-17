@@ -34,7 +34,7 @@ quantity:     "reflectance" / "transmittance"(基板の中へ入る割合)/ "abs
 
 返り値: (K, 2) の pairs。
 
-真値: 1 層なら ``matappear.thin_film_reflectance``(Airy の式、別実装)と一致する。膜厚 0 は裸の基板の Fresnel、
+真値: 1 層なら Airy の閉じた式(テストと PoC に独立に書いた式)と一致する。膜厚 0 は裸の基板の Fresnel、
 λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。
 吸収の無い積層では R + T = 1。
 

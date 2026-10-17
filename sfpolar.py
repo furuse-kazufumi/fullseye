@@ -123,8 +123,9 @@ def _num(v, name, op, lo=None, hi=None, lo_open=True, hi_open=False):
 
 
 def _index(n, op, name="refractive_index"):
-    """屈折率: 実数・有限・1 より大きい(n = 1 では界面が無く偏光も生じない)。"""
-    return _num(n, name, op, lo=1.0, hi=MAX_INDEX, lo_open=True)
+    """屈折率: 実数・有限・1 より大きい(n = 1 では界面が無く偏光も生じない)。材料名なら d 線の n(``materials._index_of``)。"""
+    import materials as _mat
+    return _num(_mat._index_of(n, op, name), name, op, lo=1.0, hi=MAX_INDEX, lo_open=True)
 
 
 def _model(model, op, allowed=_MODELS):
@@ -246,6 +247,11 @@ def sfp_dolp_model(zenith_deg, refractive_index=1.5, model="specular"):
 
     **Raises** ``ValueError``: zenith outside ``[0, 90]`` or non-finite;
     *refractive_index* not a finite real ``> 1``; unknown *model*.
+
+    *refractive_index* (here and in every op of this module) may also be a
+    material name of the shared table ``materials`` (e.g. ``"N-BK7"``,
+    ``"PMMA"``, ``"WATER"``): its index at the d line (587.56 nm) is used.
+    Metals and materials that absorb there are refused.
     """
     op = "sfp_dolp_model"
     n = _index(refractive_index, op)

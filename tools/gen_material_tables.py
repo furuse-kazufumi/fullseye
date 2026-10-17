@@ -87,7 +87,15 @@ SELECTION += [
     ("SIC", "semiconductor", [("main/SiC/nk/Wang-4H-o.yml", "4H, ordinary ray")], ["4H-SIC"]),
     # 膜
     ("SI3N4", "film", [("main/Si3N4/nk/Luke.yml", "")], ["SILICON_NITRIDE"]),
-    ("TIO2", "film", [("main/TiO2/nk/Devore-o.yml", "rutile, ordinary ray")], []),
+    ("TIO2", "film", [("main/TiO2/nk/Devore-o.yml", "rutile, ordinary ray")], ["TIO2_RUTILE_O"]),
+    # ★2026-10-15: 上の TIO2 はルチル単結晶の常光線だけ(430 nm から・k なし)。成膜した TiO2 は非晶質か
+    # アナターゼが多く n が低い —— 膜の計算はこちらを名指しする(非公開の膜の PoC で、ルチルの n で膜を
+    # 解くと傾いた面の膜厚の偏りが小さく出ることを確認)。
+    ("TIO2_RUTILE_E", "film", [("main/TiO2/nk/Devore-e.yml", "rutile, extraordinary ray")], []),
+    ("TIO2_AMORPHOUS", "film", [("main/TiO2/nk/Franta.yml",
+                                 "e-beam film 99.6 nm on c-Si, amorphous (very fine polycrystalline); "
+                                 "n and k from ellipsometry + spectrophotometry")], ["TIO2_FILM"]),
+    ("TIO2_ANATASE", "film", [("main/TiO2/nk/Jolivet-anatase.yml", "ALD film grown at 300 C, anatase")], []),
     ("TA2O5", "film", [("main/Ta2O5/nk/Gao.yml", "")], []),
     ("HFO2", "film", [("main/HfO2/nk/Al-Kuhaili.yml", "")], []),
     # 金属

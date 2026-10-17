@@ -559,7 +559,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_illumination_cone_vs_na`
 
-### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
+### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 
 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まります。これまで Fullseye は硝材 20 種の Sellmeier(`raytrace`)、金属 5 種の 5 点の n,k(`glassmirror`)、見た目のカタログ(`surfacelib` / `metalfinish`)が別々の名前空間にあり、同じ材料を光学系側と対象側で引く口がありませんでした。この回は**1 材料 = 1 レコード**の材料表を `materials` に作り、`opsoptics` の新カテゴリ `matprop` に 16 本を足しました。
 

@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>,或直接调用 <code style="color:#22d3bf">surfacelib.rough_transmission</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把毛玻璃的透射分成「直透分量」与「扩散分量」。</p>
-<p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。</p>
+<p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。n1 / n2: 入射侧 / 板的折射率。数值或材料表的名称(例 &quot;N-BK7&quot;,名称则取 d 线 587.56 nm 的 n)。</p>
 <p>返回值：(直进 T_spec, 漫射 T_diff) 2 个值。合计与透明板的透射率一致(不凭空产生能量 ―― 已由测试确认)。隔着磨砂玻璃的观感，只需用这个直进成分下降、漫射成分增加即可解释。</p>
 <p>空输入(<code style="color:#22d3bf">cos_i</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

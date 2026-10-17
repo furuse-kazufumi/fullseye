@@ -41,6 +41,9 @@ import matappear
 #: 金属の複素屈折率 n + ik(可視域の粗い表引き、線形補間して使う)。
 #: 出典: Au/Ag/Cu = Johnson & Christy 1972、Al = Rakić 1998、Cr = Johnson & Christy 1974。
 #: **粗い表**であることを隠さない: 5 点の線形補間なので、細い吸収構造は再現しない。
+#: ★2026-10-15 から既定ではない(``source="table"`` で選んだときだけ使う)。実測の表との色差は
+#: 法線入射で Cu ΔE*ab 8.3 / Au 6.6 / Ag 2.7 / Cr 0.6 / Al 0.2 —— 銀は青が 0.91 に落ちて黄ばんで
+#: いた(実測では 0.98 でほぼ中性)。以前の図を同じ値で再現したいときのために残す。
 #: それでも「銀はほぼ中性で最も明るい / 金と銅は 500 nm 付近で立ち上がる赤黄色 /
 #: アルミはやや暗いが平坦」という**色の順序**は正しく出る(テストで固定)。
 _METAL_NK = {
@@ -60,7 +63,7 @@ METALS = tuple(sorted(_METAL_NK))
 
 #: ``source="materials"`` で引ける金属(共通の材料表 ``materials`` の metal 部類、小文字)。
 #: こちらは一次文献の数表そのもの(Ag/Au/Cu/Cr/Ni/Ti = Johnson & Christy 1972/1974、
-#: Al = Rakić 1995、Rh = Weaver ほか、W/Pt = Werner ほか 2009)を線形補間する。
+#: Al = Rakić 1995、Rh / W = Weaver ほか、Pt = Tselin ほか 2024)を線形補間する。**既定はこちら**。
 #: 粗い表(``_METAL_NK``)と同じ名前の 5 種は、どちらの経路でも引ける —— 違いは
 #: PoC ``poc_material_optical_library`` の第 6 章が数える。
 MEASURED_METALS = ("ag", "al", "au", "cr", "cu", "ni", "pt", "rh", "ti", "w")
@@ -70,7 +73,10 @@ _SOURCES = ("table", "materials")
 def _measured_nk(metal, w_nm, op):
     """materials の実測表から (n, k)。表の範囲外は ValueError(外挿しない)。"""
     import materials as _mat
-    rec = _mat._record(str(metal), op)
+    try:
+        rec = _mat._record(str(metal), op)
+    except ValueError as exc:                     # 既定の経路になったので、名前の誤りは金属の一覧で答える
+        raise ValueError(f"{op}: unknown metal {metal!r}; measured metals: {MEASURED_METALS}") from exc
     if rec["class"] != "metal":
         raise ValueError(f"{op}: {metal!r} is a {rec['class']} in the material table, not a metal; "
                          f"metals: {MEASURED_METALS}")
@@ -213,16 +219,17 @@ def critical_angle_deg(n1=1.5, n2=1.0) -> float:
 # --------------------------------------------------------------------------- #
 # 2. 金属鏡の色                                                                 #
 # --------------------------------------------------------------------------- #
-def metal_optical_constants(metal="ag", wavelength_nm=550.0, source="table"):
+def metal_optical_constants(metal="ag", wavelength_nm=550.0, source="materials"):
     """金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。
 
-    metal: "ag" / "au" / "al" / "cu" / "cr"(`METALS`)。
-    wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。
-    source: "table"(既定、5 点の粗い表)/ "materials"(共通の材料表 ``materials`` の実測の数表。
-        金属は `MEASURED_METALS` の 10 種、表の範囲外は ValueError)。
+    metal: `MEASURED_METALS` の 10 種(source="table" なら "ag" / "au" / "al" / "cu" / "cr" = `METALS`)。
+    wavelength_nm: スカラまたは配列 [nm]。
+    source: "materials"(既定、共通の材料表 ``materials`` の実測の数表。表の範囲外は ValueError —— 外挿しない)/
+        "table"(5 点の粗い表、400〜800 nm。表の外は端の値で頭打ち)。
+        ★2026-10-15 に既定を粗い表から実測に替えた(粗い表では Cu の色が ΔE*ab 8.3、Au 6.6 ずれる)。
 
     返り値: (n, k) の 2 要素タプル(入力と同形の配列)。
-    出典は表の定義(`_METAL_NK`)を参照 — 5 点の粗い表であることを隠さない。
+    出典は `MEASURED_METALS` と `_METAL_NK` の定義を参照。
     """
     op = "metal_optical_constants"
     if source not in _SOURCES:
@@ -244,13 +251,13 @@ def metal_optical_constants(metal="ag", wavelength_nm=550.0, source="table"):
     return n, k
 
 
-def metal_mirror_rgb(metal="ag", cos_i=1.0, samples=61, source="table") -> np.ndarray:
+def metal_mirror_rgb(metal="ag", cos_i=1.0, samples=61, source="materials") -> np.ndarray:
     """金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
 
-    metal: `METALS` のいずれか(source="materials" なら `MEASURED_METALS`)。
+    metal: `MEASURED_METALS` のいずれか(source="table" なら `METALS`)。
     cos_i: 入射角の cos(スカラまたは配列)。
     samples: 380–780 nm を刻む点数。
-    source: n,k の出どころ(`metal_optical_constants` と同じ。既定は粗い表)。
+    source: n,k の出どころ(`metal_optical_constants` と同じ。既定は実測の表 "materials")。
 
     返り値: cos_i の形 + 末尾 3 の線形 sRGB。**色を塗っていない**ので、金が黄色いのも
     銀が中性なのも表の n,k から出る(テストで R>G>B の順序と銀の中性を固定)。

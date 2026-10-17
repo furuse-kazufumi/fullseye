@@ -5,7 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Put a transparent top coat over the surface (car paint, ceramic glaze, glossy plastic).</p>
 <p>base_rgb: base colour (H,W,3) or (3,). normals / light / view: same as above.</p>
-<p>ior: refractive index of the clear coat (clear lacquer ~1.5). coat: clear-coat strength (0–1).</p>
+<p>ior: refractive index of the clear coat (clear lacquer ~1.5). A number or a material-table name (e.g. &quot;PMMA&quot;; a name gives n at the d line, 587.56 nm).</p>
+<p>coat: clear-coat strength (0–1).</p>
 <p>coat_roughness: roughness of the clear coat (0 = perfect mirror, larger = blurrier).</p>
 <p>Returns: (H, W, 3) linear sRGB.</p>
 <p>★ The key is <b>subtracting energy</b>: the light reflected by the clear coat no longer reaches the base. The base is attenuated by (1 − F(incident)) × (1 − F(outgoing)) ―― without this factor, adding clear coat would make everything brighter (physically impossible).</p>

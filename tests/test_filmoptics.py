@@ -16,6 +16,32 @@ def _n(material, lam):
     return MT._nk(MT._record(material, "t"), np.asarray(lam, float) / 1000.0, "t")[0]
 
 
+def _airy(lam, d, n1, n2, cos0, pol):
+    """1 層の Airy の式(入射側は空気、N = n + ik)。matappear は 2026-10-15 から同じ特性行列を呼ぶので、式をここに持つ。"""
+    s0 = math.sqrt(1.0 - cos0 * cos0)
+
+    def cs(n):
+        c = np.sqrt(1.0 - (s0 / n) ** 2 + 0j)
+        return np.where((n * c).imag < 0, -c, c)
+
+    c1, c2 = cs(n1), cs(n2)
+    out = 0.0
+    pols = ("s", "p") if pol == "unpolarized" else (pol,)
+    for p in pols:
+        if p == "s":
+            r1, r2 = (cos0 - n1 * c1) / (cos0 + n1 * c1), (n1 * c1 - n2 * c2) / (n1 * c1 + n2 * c2)
+        else:
+            r1, r2 = (n1 * cos0 - c1) / (n1 * cos0 + c1), (n2 * c1 - n1 * c2) / (n2 * c1 + n1 * c2)
+        ph = np.exp(4j * np.pi * n1 * d * c1 / lam)
+        out = out + np.abs((r1 + r2 * ph) / (1 + r1 * r2 * ph)) ** 2
+    return out / len(pols)
+
+
+def _nk(material, lam):
+    n, k = MT._nk(MT._record(material, "t"), np.asarray(lam, float) / 1000.0, "t")[:2]
+    return n + 1j * k
+
+
 def test_single_layer_matches_airy_independent_implementation():
     lam = np.linspace(400.0, 800.0, 81)
     worst = 0.0
@@ -23,7 +49,7 @@ def test_single_layer_matches_airy_independent_implementation():
         for cos_t, pol in ((1.0, "unpolarized"), (0.6, "s"), (0.6, "p")):
             a = F.multilayer_reflectance([("SIO2", d)], "SI", wavelengths_nm=lam,
                                          angle_deg=math.degrees(math.acos(cos_t)), polarization=pol)[:, 1]
-            b = M.thin_film_reflectance(lam, d, "SIO2", "SI", cos_theta=cos_t, polarization=pol)
+            b = _airy(lam, d, _nk("SIO2", lam), _nk("SI", lam), cos_t, pol)
             worst = max(worst, float(np.max(np.abs(a - b))))
     assert worst < 1e-12
 

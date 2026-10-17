@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> or call <code style="color:#22d3bf">surfacelib.rough_transmission</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split the transmission of ground glass into a &quot;straight-through&quot; and a &quot;diffuse&quot; component.</p>
-<p>cos_i: cos of the angle of incidence. roughness: surface roughness (0 = clear, 1 = fully diffuse).</p>
+<p>cos_i: cos of the angle of incidence. roughness: surface roughness (0 = clear, 1 = fully diffuse). n1 / n2: refractive index of the incident side / the plate. A number or a material-table name (e.g. &quot;N-BK7&quot;; a name gives n at the d line, 587.56 nm).</p>
 <p>Returns: 2 values (direct T_spec, diffuse T_diff). Their sum matches the transmittance of a clear plate (no energy is created ―― verified in tests). How things look through frosted glass is explained simply by this direct component falling and the diffuse component rising.</p>
 <p>Empty input (<code style="color:#22d3bf">cos_i</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

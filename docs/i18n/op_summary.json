@@ -16282,13 +16282,13 @@
    "hi": "air में closed-form thick lens: EFL, back/front focal lengths, principal points।"
   },
   "optics/thin_film_reflectance": {
-   "fp": "aed080c05671",
-   "en": "The spectral reflectance of a thin film (thickness d, index n_film). The closed Airy (multiple-reflection) form.",
-   "zh": "薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的闭式。",
-   "tw": "薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的閉合式。",
-   "ko": "박막(두께 d, 굴절률 n_film)의 분광 반사율. Airy(다중 반사)의 닫힌 식.",
-   "de": "Der spektrale Reflexionsgrad eines dünnen Films (Dicke d, Index n_film). Die geschlossene Airy-(Mehrfachreflexions-)Form.",
-   "hi": "thin film (मोटाई d, refractive index n_film) की spectral reflectance। Airy (multiple reflection) का closed form।"
+   "fp": "df7f309817d2",
+   "en": "The spectral reflectance of a thin film (thickness d, index n_film). The exact characteristic-matrix solution (all multiple reflections included).",
+   "zh": "薄膜(厚度 d,折射率 n_film)的分光反射率。特性矩阵法的严格解(包含全部多次反射)。",
+   "tw": "薄膜(厚度 d,折射率 n_film)的分光反射率。特性矩陣法的嚴格解(包含全部多次反射)。",
+   "ko": "박막(두께 d, 굴절률 n_film)의 분광 반사율. 특성 행렬법의 엄밀해(다중 반사를 모두 포함).",
+   "de": "Der spektrale Reflexionsgrad eines dünnen Films (Dicke d, Index n_film). Die exakte Lösung mit der charakteristischen Matrix (alle Mehrfachreflexionen eingeschlossen).",
+   "hi": "thin film (मोटाई d, अपवर्तनांक n_film) की spectral reflectance। characteristic matrix विधि का सटीक हल (सभी multiple reflections शामिल)।"
   },
   "optics/thin_film_rgb": {
    "fp": "9ec751bd7d38",
