@@ -70,6 +70,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``local_std`` の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を
 確かめたいときの道具。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

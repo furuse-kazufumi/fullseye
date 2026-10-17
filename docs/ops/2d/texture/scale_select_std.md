@@ -56,6 +56,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 でない(空間相関のある)雑音では窓が伸びすぎる。(2) ``gamma`` が小さすぎると常に
 最小窓が選ばれ、``local_std`` の 3x3 と同じになる(効いていないときの見分け方)。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.41、0.59、0.75、0.91(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

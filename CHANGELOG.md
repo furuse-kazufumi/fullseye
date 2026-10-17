@@ -7,6 +7,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 外部 AI のレビュー(PyPI 0.6.0 を導入して実測)の一次検証から
+0.6.0 の venv と master の両方で 1 件ずつ再現し、本物だけを直した(回帰テスト `tests/test_review_060_2026_10_18.py`)。
+- `fullseye index` が、OpenCV の無い素の `pip install fullseye` で `AssertionError`(color 層が空)で落ちていた。color 層は extra `opencv` が要るので、空を止めるのは OpenCV が在るときだけにした(レビューの N228 を再現する途中で見つけた)。
+- `fullseye index` の既定の書き先: checkout の判定が「`docs/` が在るか」だけで、別のパッケージが `site-packages/docs/` を置いた環境ではそこへ書きに行った。`docs/OP_INDEX.json` と `tools/regen_all.py` の両方が在るときだけ checkout と見なし、それ以外はカレントディレクトリへ(N228)。
+- `fullseye ops list` が rc=2 だった。`fullseye algo list` と同じ形の `list` を受ける(既定の一覧と同じ出力、N217)。
+- `fullseye.apply("access_channel", img, 0)` の取り違えの文が受け取った image 側を言わなかった。受け取った 2 つと直した呼び方を言う(N224)。`fullseye.save(img, path)` も「逆順」と言う(N209。順は 0.2.1 から `save(path, arr, depth=None)` で、逆順は TypeError —— 0.2.1 の項に書いていなかった)。
+- `op_find` がファサード層(`fullseye.<名前>` にだけ在る公開関数)を見ていなかった。`op_find("sgm")` が 0 件で、レビューは「SGM と対応付けの計算が無い」と結論したが、`fullseye.disparity_sgm`(census の費用 + 経路集約)と `disparity_census` / `disparity_map` は 0.1 系から在る。ファサードの呼べる名前を、他の層より 1 点低く拾う(`"ledger": "facade"`、同名なら op 表の行が勝つ)。
+- `op_knob.json`(つまみ a・b の実測表)が 2026-09-16 のまま古かった: region → region の 87 op は一度も測っておらず、9-16 以降の image → image の 19 op も未計測(461 / 567)。9-17 に b を端の扱いに配線した 7 op(gaussian / mean_box / median / gopen / gclose / gdilate / gerode)は「b 未使用」のままで、`knob_summary` が実際と逆を言っていた。`tools/impl2/knob_probe.py` は二値の探針を op ごと(入力が region のときだけ)に使うよう直し、567 / 567 を測り直した。★op_knob の範囲は設計上「1 画像 + つまみ a・b」の 2-D op だけ —— レビューが挙げた msa_gauge_rr / gum_propagate / spc_cusum ほかの 7 本は台帳の op で、a・b のつまみを持たないので載らないのが正しい。
+- 門 `tests/test_op_surfaces_from_shipped_side.py`: wheel に入るモジュール(pyproject の py-modules)から台帳の形の表を全部探し、`opassist._LEDGERS` に無い表があれば赤。その全 op + 2-D レジストリ + n-ary が `list_ops(include_ledger=True)` / 同梱と docs の `OP_INDEX.json` / `OP_SEARCH.json` に載ること、op_knob が範囲の全部を持つことを数える(架空の op を足して 4 面すべてが「無い」と言う探針つき)。
+- 門 `tests/test_msa_gum_published_via_public_path.py`: 測定システム解析の参考マニュアル第 4 版のゲージ R&R の例題、JCGM 100 H.1 / H.2、JCGM 101 §9.2 / §9.4 を、公開の入口 `op_run` + 表の契約で再現(既存の `tests/test_msa.py` は `spc.*` を直接呼んでいた)。
+
+レビューの残りの判定(直していない理由):
+- **誤検出**: 「Engine / Graph / op_info がトップレベルから消えた」(N223)—— 0.1.6 〜 0.6.0 のどのタグにも `fullseye.Engine` / `fullseye.Graph` / `fullseye.op_info` は無い(git の全履歴で一度も定義されていない)。公開名は最初から `FullseyeEngine`(dict の段を受ける)と `FullseyeGraph`(`.add` を持つ)で、0.6.0 でも動く。op の情報は `op_assist` / `op_find` / `find_op`(CLI では `fullseye has <名前>`)。名前の変更は無いので移行表は無い。
+- **誤検出**: OP_SEARCH に simcal / optdraw / octscan が無い(N225)、族名の op_find が 0 件(N226)—— 3 族は 0.6.0 の公開の後に入った(この Unreleased)。master では OP_SEARCH にも op_find にも載る。
+- **誤検出**: MSA / GUM の公表値が未再測定 —— `tests/test_msa.py` が 2026-09-23 から表の契約で再現しており、0.6.0 の `op_run` でも同じ値が出る(上の門は公開の道を足しただけ)。
+- **設計どおり**: 引数なしの `op_run` が例外を出さない(N227)—— データを省くと `sample_input` の種で走る(`op_run` の docstring に明記)。種を作れない型だけ ValueError。
+- **設計どおり**: fixture / golden / jsonio / mdio / xlsxio がトップレベルに見える —— `fullseye` パッケージのサブモジュールで、`from fullseye.jsonio import …` で関数を出すと Python が属性として結ぶ。`__all__` には入れていない。
+- **真の空白**(別の作業に切り出す): kuwahara、XDoG。
+
 ### Added — 間接 ToF(位相方式)の多周波アンラップと壊れ方(itof 8 op + PoC)
 - `itof`(`opsoptics` の新カテゴリ `itof`、8 op): `itof_capture`(距離の図 → 周波数ごと K 段のバケット、ショット雑音・読み出し雑音・背景光、正弦か矩形の変調、余分な経路、画素の開口での混合)、`itof_phase_amplitude`(既知の任意の段の位相を最小二乗で、画素ごとの距離の雑音の見積もり)、`itof_noise_budget`(σ_d = c/(4πf)·√((B+σ_r²)/2)/A、Lange の式と一致)、`itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号 / `residue.residue_crt` / 2 周波のうなり)、`itof_unwrap_error_rate`(平行な直線の族の距離から和集合の上界、Wang–Xia の保証)、`itof_multipath_separate`(等間隔の多周波の行列ペンシル)、`itof_flying_pixel_mask`(両側が台地の段差の間に浮いた画素、雑音で閾値を上げる)、`itof_wiggling_correct`(矩形波の周期誤差を模型の逆引きか較正の調和で)。
 - PoC `poc_itof_multifreq`(収蔵番号 2026.243、29 門、図 13 枚 + GIF): 雑音の閉形式、倉庫の通路の 3 周波アンラップと遠くの次数の誤り(上界と照合)、80/100/120 MHz で 7.5 m より奥が折り返す、包装フィルムの 2 経路と分けられる間隔、部屋の隅の距離の伸び(`lighttransport` の輸送行列と 1e-15 m)、フライングピクセル、矩形波の周期誤差、太陽光、同じ場面の直接 ToF(`photoncount`)との比較、公開の実機の生データ(Zenodo 10.5281/zenodo.19608956、CC BY 4.0、手元にあるときだけ)。★`residue_crt` は最も長い周期を錨にするので、位相雑音が帯ごとに同じ iToF では最尤の復号より誤る(合成 0.556 対 0.116、実データ 0.293 対 0.131)。`residue` 本体は変えていない。

@@ -16,6 +16,7 @@
 <p>Binäre Erosion mit einem scheibenförmigen Strukturelement (<code style="color:#22d3bf">ndimage.binary_erosion</code>). Die grundlegendste binäre morphologische Operation, die den Vordergrundbereich von seiner äußeren Grenze her erodiert und schrumpfen lässt. Entspricht HALCONs <code style="color:#22d3bf">erosion_circle</code> (Erode a region with a circular structuring element.).</p>
 <p><code style="color:#22d3bf">a</code> variiert den Radius des Strukturelements im Bereich 1-4 (<code style="color:#22d3bf">_rad(a)</code>). <code style="color:#22d3bf">b</code> ist bei allen binären Morphologie-ops dieses Backends (erosion/dilation/opening/closing, sowohl kreisförmig als auch rechteckig) gleichermaßen <b>ungenutzt</b>.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.33、0.67、0.99 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

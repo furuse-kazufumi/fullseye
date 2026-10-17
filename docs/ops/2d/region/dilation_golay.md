@@ -41,6 +41,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 HALCON の ``dilation_golay``（Golay アルファベットから選んだ要素で膨張する演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

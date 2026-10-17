@@ -19,6 +19,7 @@
 <p style="margin:2px 0 2px 12px">(1) 间隙可以调到 <b>不是 3〜9 像素而是最多 65 像素</b>(在 <code style="color:#22d3bf">_k</code> 的上限下行连不起来。</p>
 <p>对 96 px 的字来说，字符间隔有 10〜30 像素)，(2) <b>2 个方向的 AND 合成</b> 无法用单个结构元素的闭运算写出。若只需一个方向，用 <code style="color:#22d3bf">gclose</code> 更快。</p>
 <p>直接作用于灰度图像(内部不做二值化)。由于是灰度闭运算，它朝 <b>填补暗间隙</b>的方向起作用 —— 请用于字亮、背景暗的图像。反之则先通过 <code style="color:#22d3bf">invert</code>。边界处理为 <code style="color:#22d3bf">scipy.ndimage</code> 默认的 <code style="color:#22d3bf">reflect</code>。空帧(常数图像)<b>原样返回</b>(没有需要填补的间隙)。值域保持输入不变，落在 [0,1] 内，不做逐图像的归一化(<b>值可以在图像之间比较</b>)。</p>
+<p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.15、0.29、0.43、0.57、0.71、0.85（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

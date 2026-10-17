@@ -2611,10 +2611,12 @@ def _check_call_args(image, name, a, b, policy):
     """``apply`` の引数を呼び出し規約に照らす。返り値は (a, b)(値域を切り詰めたもの)。"""
     if not isinstance(name, str):
         if isinstance(image, str) and (isinstance(name, np.ndarray) or name is None):
+            # ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側
+            #   (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
             raise TypeError(
-                "fullseye.apply(image, name, a, b): arguments look swapped -- "
-                "the first argument is the image, the second the op name (str); got name=%s"
-                % type(name).__name__)
+                "fullseye.apply(image, name, a, b): arguments look swapped -- got image=%r (str) and "
+                "name=%s; the image comes first and the op name second: fullseye.apply(<image>, %r, a, b)"
+                % (image, type(name).__name__, image))
         raise TypeError("fullseye.apply(image, name, a, b): name must be str, got %s"
                         % type(name).__name__)
     if image is None:

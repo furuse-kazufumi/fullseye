@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region के अंदर के छोटे छेद भरता है। केवल <code style="color:#22d3bf">area_threshold = 16+200a</code> pixels या उससे छोटे छेद भरता है (skimage का <code style="color:#22d3bf">remove_small_holes</code>)। b इस्तेमाल नहीं होता।</p>
 <p>HALCON के <code style="color:#22d3bf">fill_up_shape</code> (area, circularity जैसे shape features से चुने गए holes को ही भरने वाला operation) से अलग, यह implementation केवल area की ऊपरी सीमा से holes चुनने वाला सरलीकृत सन्निकटन है — circularity या convexity जैसे अन्य shape features से filtering नहीं की जा सकती।</p>
+<p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.29、0.65 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
