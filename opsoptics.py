@@ -764,6 +764,8 @@ RESULT_ADAPTERS = {
     "cie_xyz_from_wavelength": lambda r: np.atleast_2d(r),
     "metal_optical_constants": lambda r: (np.stack(r, axis=1)
                                           if isinstance(r, tuple) else r),
+    # (波長, 重み) の 2 本 → (k, 2) の pairs(台帳の宣言)。素の関数はタプルのまま(後方互換)。
+    "light_wavelengths": lambda r: (np.stack(r, axis=1) if isinstance(r, tuple) else r),
     # (方向, TIR マスク) → 方向。マスクが要る呼び手は素の関数を直接呼ぶ。
     "refract_rays": lambda r: r[0] if isinstance(r, tuple) else r,
     # (色の変調, 繊維方向) → 変調。接線は ward_anisotropic へ渡す用で素の関数から取る。

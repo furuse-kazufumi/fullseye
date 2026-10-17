@@ -6,6 +6,7 @@
 <p>把感測器・鏡頭・照明・場景綁成一體,並以<b>閉合式回傳導出量</b>。</p>
 <p>回傳值 dict：<code style="color:#22d3bf">camera</code>(與 <code style="color:#22d3bf">optical_camera</code> 相同的慣例)/ <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>)。</p>
 <p>拍攝前先看這裡，就能知道零件是否落在視野內、缺陷能否解析、景深是否足夠 ―― 不是「看不看得見」，而是「能否以所需的對比度成像」，先判斷這一點，正是擁有光學數位孿生的理由。</p>
+<p>若為 <code style="color:#22d3bf">lens_spec(telecentric=True)</code>，則相機為正射投影(<code style="color:#22d3bf">optical_camera(telecentric=True)</code>)，倍率不隨零件的高度變化。預算的代表波長是各光源能量重心的平均。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
@@ -28,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nir_silicon_transmission">poc_nir_silicon_transmission</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nir_silicon_transmission.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_optics_drawings">poc_optics_drawings</a> — <code style="color:#22d3bf">py -3.11 examples/poc_optics_drawings.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

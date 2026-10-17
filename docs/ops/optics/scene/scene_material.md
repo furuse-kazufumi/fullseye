@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [poc_material_optical_library, poc_pocket_interreflection, studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
+examples: [poc_material_optical_library, poc_nir_silicon_transmission, poc_pocket_interreflection, studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # scene_material — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'table') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'table') -> 'dict'`、台帳から引くなら `opsoptics.get("scene_material")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'materials', reflectance_curve=None, absorption_from_k: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05, metal_source: 'str' = 'materials', reflectance_curve=None, absorption_from_k: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("scene_material")`)
 
 ## 使い方
 
@@ -29,12 +29,20 @@ conductor: ``metal``(``glassmirror.METALS``)の複素屈折率で色が決まり
     exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、
     鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。
     **波長が式に入る**ので、同じ面でも光源の波長で見え方が変わる。
-    ``metal_source`` は n,k の出どころ: "table"(既定、5 点の粗い表)か "materials"
-    (共通の材料表の実測の数表。``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti /
-    W / Rh もここで選べる)。レンズの硝材と同じ表を観察対象も引く。
+    ``metal_source`` は n,k の出どころ: "materials"(既定、共通の材料表の実測の数表。
+    ``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti / W / Rh もここで選べる)か
+    "table"(5 点の粗い表)。レンズの硝材と同じ表を観察対象も引く。★2026-10-15 に
+    ``glassmirror`` の既定が実測の表になったのに合わせた(それまで既定は粗い表で、2 つの既定が食い違っていた)。
 dielectric: ``glass``(``raytrace.glass_catalog()``)の Sellmeier 分散で屈折し、
     ``sigma_per_mm`` の Beer–Lambert で吸収する。硝材名は共通の材料表の透過材
-    (他社の硝材・結晶・樹脂・水)まで引ける。
+    (他社の硝材・結晶・樹脂・水)まで引ける。レンズの媒質でない材料(Si・Ge などの半導体)も
+    ``materials`` の n で引ける。``absorption_from_k=True`` なら材料表の消衰係数 k から
+    α = 4πk/λ を波長ごとに足す(Si ウェハが 850 nm で不透明・1100 nm で透明になる理由)。
+
+分光の経路(``render_optscene(spectral=True)`` / ``layout_capture(mode="spectral")``)では、
+lambert は ``reflectance_curve``(pairs(λ [nm], R)、外挿しない)を引き、無ければ RGB の albedo の
+平均を**波長によらない**とみなす(仮定として結果に残る)。金属は材料表の n,k(Johnson & Christy ほか)
+から Fresnel で、誘電体は n(λ) で解く。RGB の経路(既定)は従来どおり。
 
 返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。
 
@@ -71,6 +79,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
 - [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
 - [virtual_machine_vision](../../../../examples/virtual_machine_vision.py) — `py -3.11 examples/virtual_machine_vision.py`

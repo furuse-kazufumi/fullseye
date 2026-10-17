@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: table × table × table
 out: rgbimage
-examples: [poc_pocket_interreflection, virtual_machine_vision]
+examples: [poc_nir_silicon_transmission, poc_pocket_interreflection, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # render_optscene — OPTICS `scene` op
 
 - **データ種**: `table × table × table` → `rgbimage`
-- **呼び出し**: `import fullseye as fs; fs.ledger.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("render_optscene")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12, spectral: 'bool' = False) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12, spectral: 'bool' = False) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("render_optscene")`)
 
 ## 使い方
 
@@ -46,6 +46,13 @@ exp(-(4πσcosθ/λ)²) に入るので、**同じ面でも波長で見え方が
 縞にしかならない(2026-09-05 のユーザー着眼)。既定は off ―― 測光の根拠が要る
 検査画像に、見た目のための項を黙って混ぜないため。``optscene.env_studio`` を
 渡すのが手軽で、自前の関数((...,3) 方向 -> (...,) 明るさ)でもよい。
+
+``spectral=True`` は**その 1 波長の単色**で撮る: 材質を ``wavelength_nm`` の値に落とす(金属は材料表の
+n,k の Fresnel、誘電体は n(λ)、lambert は ``reflectance_curve``)。3 チャネルは同じ値になる。
+光源のスペクトル・透過率・QE の積分は ``layout_capture(mode="spectral")`` が束ねる。
+
+同軸照明(``light_spec(kind="coaxial")``)があれば、像にハーフミラーの透過率を掛ける(カメラはそれ越しに
+見る)。部品に届く側の反射率は ``light_spec`` が強度に入れてある。
 
 表示用に丸めたい場合は自分で ``**(1/2.2)`` する。実レンズの歪曲・PSF・
 周辺光量・センサ雑音を足すには ``lensimage.render_through_lens`` を後段に、
@@ -83,6 +90,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
 - [virtual_machine_vision](../../../../examples/virtual_machine_vision.py) — `py -3.11 examples/virtual_machine_vision.py`
 

@@ -76,6 +76,11 @@ __all__ = [
 
 _UP = np.array([0.0, 0.0, 1.0])
 _RGB_UM = (0.610, 0.550, 0.465)          # R/G/B の代表波長 [µm](分散をこの 3 点で解く)
+#: 分光の経路で光子数に直すときの基準波長 [nm]。エネルギーの重み w に λ/λ_ref を掛ける(λ/hc の比)。
+#: 550 nm の単色・平らな QE・平らな透過率なら RGB の経路と同じ数になる(後方互換の門)。
+_PHOTON_REF_NM = 550.0
+#: ハロゲン(黒体)を切る既定の帯域 [nm]。Si が感じる範囲(Green 2008 の吸収端 ≈ 1.1 µm)。
+_HALOGEN_BAND_NM = (380.0, 1100.0)
 _MATERIALS = ("lambert", "conductor", "dielectric")
 
 
@@ -116,7 +121,8 @@ def _safe_unit(v):
 def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
                    finish: str = "random", glass: str = "N-BK7",
                    sigma_per_mm: float = 0.0, roughness_um: float = 0.05,
-                   metal_source: str = "table") -> dict:
+                   metal_source: str = "materials", reflectance_curve=None,
+                   absorption_from_k: bool = False) -> dict:
     """材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。
 
     3 種しか無いのは**混ぜると黙って間違う**からで、増やすなら型を分ける
@@ -129,12 +135,20 @@ def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
         exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、
         鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。
         **波長が式に入る**ので、同じ面でも光源の波長で見え方が変わる。
-        ``metal_source`` は n,k の出どころ: "table"(既定、5 点の粗い表)か "materials"
-        (共通の材料表の実測の数表。``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti /
-        W / Rh もここで選べる)。レンズの硝材と同じ表を観察対象も引く。
+        ``metal_source`` は n,k の出どころ: "materials"(既定、共通の材料表の実測の数表。
+        ``glassmirror.MEASURED_METALS`` の 10 種 —— Ni / Pt / Ti / W / Rh もここで選べる)か
+        "table"(5 点の粗い表)。レンズの硝材と同じ表を観察対象も引く。★2026-10-15 に
+        ``glassmirror`` の既定が実測の表になったのに合わせた(それまで既定は粗い表で、2 つの既定が食い違っていた)。
     dielectric: ``glass``(``raytrace.glass_catalog()``)の Sellmeier 分散で屈折し、
         ``sigma_per_mm`` の Beer–Lambert で吸収する。硝材名は共通の材料表の透過材
-        (他社の硝材・結晶・樹脂・水)まで引ける。
+        (他社の硝材・結晶・樹脂・水)まで引ける。レンズの媒質でない材料(Si・Ge などの半導体)も
+        ``materials`` の n で引ける。``absorption_from_k=True`` なら材料表の消衰係数 k から
+        α = 4πk/λ を波長ごとに足す(Si ウェハが 850 nm で不透明・1100 nm で透明になる理由)。
+
+    分光の経路(``render_optscene(spectral=True)`` / ``layout_capture(mode="spectral")``)では、
+    lambert は ``reflectance_curve``(pairs(λ [nm], R)、外挿しない)を引き、無ければ RGB の albedo の
+    平均を**波長によらない**とみなす(仮定として結果に残る)。金属は材料表の n,k(Johnson & Christy ほか)
+    から Fresnel で、誘電体は n(λ) で解く。RGB の経路(既定)は従来どおり。
 
     返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。
     """
@@ -150,6 +164,12 @@ def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
         if np.any(a < 0.0) or np.any(a > 1.0):
             raise ValueError("albedo must lie in [0, 1] (energy conservation)")
         m["albedo"] = a
+        if reflectance_curve is not None:
+            import spectralrad as _sr
+            rc = _sr._curve(reflectance_curve, "reflectance_curve", "scene_material")
+            if np.any(rc[:, 1] < 0.0) or np.any(rc[:, 1] > 1.0):
+                raise ValueError("reflectance_curve values must lie in [0, 1] (energy conservation)")
+            m["reflectance_curve"] = rc
     elif kind == "conductor":
         if metal_source not in ("table", "materials"):
             raise ValueError(f"metal_source must be 'table' or 'materials', got {metal_source!r}")
@@ -169,10 +189,80 @@ def scene_material(kind: str = "lambert", albedo=0.6, metal: str = "al",
         sig = float(sigma_per_mm)
         if not np.isfinite(sig) or sig < 0.0:
             raise ValueError(f"sigma_per_mm must be finite and >= 0, got {sigma_per_mm!r}")
-        # 硝材名は raytrace 側で検証させる(カタログの単一真実源はあちら)
-        m["n_rgb"] = np.array([float(_rt.refractive_index(glass, w)) for w in _RGB_UM])
-        m.update(glass=glass, sigma_per_mm=sig)
+        # 硝材名は raytrace 側で検証させる(カタログの単一真実源はあちら)。レンズの媒質でない
+        # 材料(半導体)は materials の n に落ちる(どちらにも無ければ ValueError)
+        m["n_rgb"] = np.array([_dielectric_n(glass, w * 1e3) for w in _RGB_UM])
+        if absorption_from_k:
+            _dielectric_alpha_per_mm(glass, 550.0)          # k の表が引けるかを入口で確かめる
+        m.update(glass=glass, sigma_per_mm=sig, absorption_from_k=bool(absorption_from_k))
     return m
+
+
+def _dielectric_n(name, lam_nm):
+    """透明材料の屈折率 n(λ)。レンズの媒質は raytrace(Sellmeier)、それ以外は materials の n。"""
+    try:
+        return float(_rt.refractive_index(name, float(lam_nm) * 1e-3))
+    except ValueError as exc:
+        import materials as _mat
+        try:
+            return float(_mat.material_optical_constants(name, float(lam_nm))["n"])
+        except ValueError:
+            raise exc from None
+
+
+def _dielectric_alpha_per_mm(name, lam_nm):
+    """材料表の消衰係数 k から吸収係数 α = 4πk/λ [1/mm]。表の外は ValueError(外挿しない)。"""
+    import materials as _mat
+    return float(_mat.material_optical_constants(name, float(lam_nm))["alpha_per_cm"]) * 0.1
+
+
+def _material_at(mat, lam_nm, notes):
+    """材質を 1 波長の単色に落とす(分光の経路)。3 チャネルは同じ値になる。"""
+    m = dict(mat)
+    lam = float(lam_nm)
+    m["spectral_nm"] = lam
+    if mat["kind"] == "lambert":
+        rc = mat.get("reflectance_curve")
+        if rc is not None:
+            if lam < rc[0, 0] - 1e-9 or lam > rc[-1, 0] + 1e-9:
+                raise ValueError(f"reflectance_curve covers {rc[0, 0]:g}-{rc[-1, 0]:g} nm but the light "
+                                 f"needs {lam:g} nm (not extrapolated)")
+            a = float(np.interp(lam, rc[:, 0], rc[:, 1]))
+        else:
+            a = float(np.mean(mat["albedo"]))
+            notes.add("lambert albedo without reflectance_curve taken as spectrally flat "
+                      "(mean of the RGB albedo)")
+        m["albedo"] = np.full(3, a)
+    elif mat["kind"] == "dielectric":
+        m["n_rgb"] = np.full(3, _dielectric_n(mat["glass"], lam))
+        if mat.get("absorption_from_k"):
+            m["sigma_per_mm"] = float(mat["sigma_per_mm"]) + _dielectric_alpha_per_mm(mat["glass"], lam)
+    return m
+
+
+def _scene_at_wavelength(scene, lam_nm, notes=None):
+    """シーンの材質をすべて 1 波長の単色に落としたコピー(形と欠陥はそのまま)。"""
+    notes = set() if notes is None else notes
+    return [dict(obj, material=_material_at(obj["material"], lam_nm, notes)) for obj in scene]
+
+
+def _metal_rgb(mat, cos_v):
+    """導体の鏡面反射率 (..., 3)。RGB の経路は CIE 色、分光の経路は 1 波長の Fresnel(3 チャネル同値)。"""
+    lam = mat.get("spectral_nm")
+    if lam is None:
+        return _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "materials"))
+    n, k = _gm.metal_optical_constants(mat["metal"], np.asarray([lam]), source="materials")
+    R = np.asarray(_gm.fresnel_conductor(np.asarray(cos_v, float), float(n[0]), float(k[0])), float)
+    return np.repeat(R[..., None], 3, axis=-1)
+
+
+def _splitter_transmittance(lights):
+    """同軸照明のハーフミラーの透過率の積(カメラはそれ越しに見る)。同軸が無ければ 1。"""
+    t = 1.0
+    for light in lights:
+        if isinstance(light, dict) and light.get("splitter_transmittance") is not None:
+            t *= float(light["splitter_transmittance"])
+    return t
 
 
 def scene_plane(z_mm: float = 0.0, material=None, half_size_mm=None) -> dict:
@@ -280,7 +370,8 @@ def scene_difference(solid: dict, cavity: dict) -> dict:
 def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
                    resolution=(256, 256), working_distance_mm: float = 200.0,
                    look_at_mm=(0.0, 0.0, 0.0), tilt_deg: float = 0.0,
-                   azimuth_deg: float = 0.0, image_distance_mm: float = None) -> dict:
+                   azimuth_deg: float = 0.0, image_distance_mm: float = None,
+                   telecentric: bool = False) -> dict:
     """実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。
 
     ``tilt_deg`` は真上(0°)からの傾き、``azimuth_deg`` はその方位。カメラは
@@ -298,6 +389,13 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     描く画像の倍率は f/WD、バジェットの倍率は f/(WD − f) と同じ構成で 2 つのモデルが混ざって
     いた(f 25 mm・WD 200 mm で視野が 14 % 広い)。``focal_mm`` はレンズの焦点距離のまま
     残る(被写界深度のぼけ ``defocus_blur`` が使う)。
+
+    ``telecentric=True`` は物体側テレセントリック: 主光線が光軸に平行なので、光線は 1 点(視点)から
+    放射状に出るのでなく、**光軸に平行に**出る(正射影)。画素の物体側の実寸は作動距離での値
+    ``pixel · WD / v`` に固定され、部品を持ち上げても像の大きさが変わらない(寸法測定でテレセンを
+    使う理由そのもの)。この場合 ``K`` は作動距離の面でだけ成り立つ名目の値で、``projection`` が
+    ``"orthographic"`` になる(透視の再投影には使えない)。2026-10-15 まで ``lens_spec(telecentric=True)``
+    を読むコードが無く、旗を立てても部品を 20 mm 持ち上げると像が 11 % 大きくなっていた。
     """
     f = _pos(focal_mm, "focal_mm")
     px = _pos(pixel_um, "pixel_um") * 1e-3                      # µm → mm
@@ -328,12 +426,51 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     return {"K": K, "R": R, "t": -R @ eye, "eye": eye, "forward": fwd,
             "width": w, "height": h, "focal_mm": f, "pixel_mm": px,
             "image_distance_mm": v, "working_distance_mm": wd,
-            "fov_mm": (w * px * wd / v, h * px * wd / v)}
+            "fov_mm": (w * px * wd / v, h * px * wd / v),
+            "telecentric": bool(telecentric),
+            "projection": "orthographic" if telecentric else "perspective",
+            "object_pixel_mm": px * wd / v}
 
 
 def _image_distance(camera):
     """ピンホールからセンサーまでの距離(古い dict には無いので焦点距離で代える)。"""
     return float(camera.get("image_distance_mm", camera["focal_mm"]))
+
+
+def _footprint(camera, t, factor=1):
+    """画素が面上で覆う幅 [mm](``t`` は光線の距離、当たらない光線は 0)。
+
+    透視なら ``t · pixel / v``、テレセン(正射影)なら距離によらず作動距離での値 ``pixel · WD / v``。
+    """
+    tt = np.where(np.isfinite(t), t, 0.0)
+    if camera.get("telecentric"):
+        opx = float(camera.get("object_pixel_mm",
+                               camera["pixel_mm"] * camera["working_distance_mm"] / _image_distance(camera)))
+        return np.where(np.isfinite(t), opx / float(factor), 0.0)
+    return tt * camera["pixel_mm"] / (_image_distance(camera) * float(factor))
+
+
+def _rays_at(camera, u, v):
+    """画素座標 (u, v)(任意の形、同じ形)→ 光線 (原点 (N, 3), 方向 (N, 3))。
+
+    透視は視点 1 点から K の逆写像の向きへ、テレセン(正射影)は視点を通り光軸に垂直な面の上の点から
+    光軸の向きへ出る。面の上の間隔は画素の物体側の実寸(``object_pixel_mm``)。
+    """
+    K, R = camera["K"], camera["R"]
+    uu = np.asarray(u, dtype=np.float64).reshape(-1)
+    vv = np.asarray(v, dtype=np.float64).reshape(-1)
+    if camera.get("telecentric"):
+        # 画素 1 つ = K[0,0] の何分の 1 かを物体側の実寸に直す(超標本化の K の拡大にも追随する)
+        scale = float(camera["working_distance_mm"]) / float(K[0, 0])
+        x = (uu - K[0, 2]) * scale
+        y = (vv - K[1, 2]) * scale
+        o = camera["eye"][None, :] + x[:, None] * R[0][None, :] + y[:, None] * R[1][None, :]
+        d = np.broadcast_to(camera["forward"], o.shape).copy()
+        return o, d
+    cam = np.stack([(uu - K[0, 2]) / K[0, 0], (vv - K[1, 2]) / K[1, 1], np.ones_like(uu)], -1)
+    d = _safe_unit(cam @ R)                                     # camera → world (R は直交)
+    o = np.broadcast_to(camera["eye"], d.shape).copy()
+    return o, d
 
 
 def _thin_lens_image_distance(focal_mm, working_distance_mm):
@@ -347,18 +484,15 @@ def _thin_lens_image_distance(focal_mm, working_distance_mm):
 def camera_rays(camera: dict) -> tuple:
     """カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。
 
-    方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので
+    方向は単位ベクトル、原点はすべて視点(テレセンのカメラでは光軸に垂直な面の上に並び、方向は
+    すべて光軸)。画素 (u, v) は行優先で並ぶので
     ``reshape(height, width, 3)`` で像に戻せる。K の逆写像で作っているため、
     交点を K で再投影すると元の画素に**厳密に**戻る(往復誤差 < 1e-9)。
     """
     _check_camera(camera, "camera_rays")
-    K, R = camera["K"], camera["R"]
     w, h = camera["width"], camera["height"]
     vv, uu = np.mgrid[0:h, 0:w].astype(np.float64)
-    cam = np.stack([(uu - K[0, 2]) / K[0, 0], (vv - K[1, 2]) / K[1, 1], np.ones_like(uu)], -1)
-    d = _safe_unit(cam.reshape(-1, 3) @ R)                      # camera → world (R は直交)
-    o = np.broadcast_to(camera["eye"], d.shape).copy()
-    return o, d
+    return _rays_at(camera, uu, vv)
 
 
 def reflect_rays(directions, normals):
@@ -1283,7 +1417,7 @@ def _specular_fixtures(scene, p, n, v, mat, lights, shadows, samples=24):
         acc += lit
     acc /= len(gx)
     cos_v = np.clip((n * v).sum(-1), 0.0, 1.0)
-    return acc[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
+    return acc[..., None] * _metal_rgb(mat, cos_v)
 
 
 def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
@@ -1333,7 +1467,7 @@ def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
                 lobe = _ward(nm, ldir, vm, t, b, ax, ay)
                 cos_v = np.clip((nm * vm).sum(-1), 0.0, 1.0)
                 diffuse = 1.0 - _specular_fraction(mat, cos_v, wavelength_nm, extra_rq)
-                col += (E * lobe * diffuse)[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
+                col += (E * lobe * diffuse)[..., None] * _metal_rgb(mat, cos_v)
             else:
                 cos_i = np.clip((nm * vm).sum(-1), 0.0, 1.0)
                 R = np.asarray(_gm.fresnel_dielectric(cos_i, 1.0, float(mat["n_rgb"][1])), float)
@@ -1368,8 +1502,15 @@ def _refract_through(scene, obj, p, n, d, lights, ambient, depth, shadows):
         dout = _safe_unit(np.where(tir2[..., None], reflect_rays(din, nq), dout))
         far = trace_rays(scene, q + 1e-4 * dout, dout)
         beyond = _shade(scene, far, dout, lights, ambient, depth - 1, shadows)
-        beyond = np.where((far["index"] < 0)[..., None], float(ambient), beyond)
-        res[:, ch] = (1.0 - R) * absorb * beyond[:, ch]
+        # 抜けた光線は光源そのものを見る(バックライトを透明体越しに撮る構成)。2026-10-15 まで
+        # 環境光だけにしていて、ガラス越しのバックライトが黒く写っていた
+        miss_bg = float(ambient) + _light_background(lights, q + 1e-4 * dout, dout)
+        beyond = np.where((far["index"] < 0)[..., None], miss_bg[..., None], beyond)
+        # 出口の界面の透過も数える(2026-10-15 まで入口の 1 − R だけで、平板の透過が (1 − R)² でなく
+        # 1 − R になっていた。N-BK7 で 4 %、Si で 31 % 明るすぎた)。全反射なら R = 1 で抜けない
+        cos_o = np.clip(-(din * nq).sum(-1), 0.0, 1.0)
+        R_out = np.asarray(_gm.fresnel_dielectric(cos_o, nk, 1.0), float)
+        res[:, ch] = (1.0 - R) * (1.0 - R_out) * absorb * beyond[:, ch]
     return res
 
 
@@ -1378,15 +1519,13 @@ def _refract_through(scene, obj, p, n, d, lights, ambient, depth, shadows):
 # --------------------------------------------------------------------------- #
 def _subpixel_rays(camera, rows, cols, factor):
     """指定画素を factor×factor に割った光線(原点, 方向)。適応的な精細化に使う。"""
-    K = camera["K"]
     f = int(factor)
     off = (np.arange(f) + 0.5) / f - 0.5
     du, dv = np.meshgrid(off, off, indexing="xy")
     u = cols[:, None] + du.ravel()[None, :]
     v = rows[:, None] + dv.ravel()[None, :]
-    cam = np.stack([(u - K[0, 2]) / K[0, 0], (v - K[1, 2]) / K[1, 1], np.ones_like(u)], -1)
-    d = _safe_unit(cam.reshape(-1, 3) @ camera["R"])
-    return np.broadcast_to(camera["eye"], d.shape).copy(), d, f * f
+    o, d = _rays_at(camera, u, v)
+    return o, d, f * f
 
 
 def _refine_mask(col, idx, threshold, saturate=None):
@@ -1418,6 +1557,8 @@ def _supersampled(camera, factor):
     out = dict(camera)
     out.update(K=K, width=camera["width"] * f, height=camera["height"] * f,
                pixel_mm=camera["pixel_mm"] / f)
+    if "object_pixel_mm" in camera:
+        out["object_pixel_mm"] = camera["object_pixel_mm"] / f
     return out
 
 
@@ -1457,7 +1598,8 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
                     saturate_at: float = None, wavelength_nm: float = 550.0,
                     environment=None,
                     environment_gain: float = 1.0,
-                    environment_samples: int = 12) -> np.ndarray:
+                    environment_samples: int = 12,
+                    spectral: bool = False) -> np.ndarray:
     """**検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。
 
     見た目を作るための多重反射・環境光は入れない。きれいな絵が要るなら
@@ -1488,6 +1630,13 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
     検査画像に、見た目のための項を黙って混ぜないため。``optscene.env_studio`` を
     渡すのが手軽で、自前の関数((...,3) 方向 -> (...,) 明るさ)でもよい。
 
+    ``spectral=True`` は**その 1 波長の単色**で撮る: 材質を ``wavelength_nm`` の値に落とす(金属は材料表の
+    n,k の Fresnel、誘電体は n(λ)、lambert は ``reflectance_curve``)。3 チャネルは同じ値になる。
+    光源のスペクトル・透過率・QE の積分は ``layout_capture(mode="spectral")`` が束ねる。
+
+    同軸照明(``light_spec(kind="coaxial")``)があれば、像にハーフミラーの透過率を掛ける(カメラはそれ越しに
+    見る)。部品に届く側の反射率は ``light_spec`` が強度に入れてある。
+
     表示用に丸めたい場合は自分で ``**(1/2.2)`` する。実レンズの歪曲・PSF・
     周辺光量・センサ雑音を足すには ``lensimage.render_through_lens`` を後段に、
     量子化と読み出し雑音だけなら ``sensor_capture`` を後段に掛ける。
@@ -1502,6 +1651,8 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
     ss = int(supersample)
     if ss < 1:
         raise ValueError(f"supersample must be >= 1, got {supersample!r}")
+    if spectral:
+        scene = _scene_at_wavelength(scene, float(wavelength_nm))
     if ss > 1 and not adaptive:
         fine = render_optscene(scene, _supersampled(camera, ss), lights, ambient=ambient,
                                depth=depth, shadows=shadows, supersample=1,
@@ -1513,7 +1664,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
     o, d = camera_rays(camera)
     hit = trace_rays(scene, o, d)
     # 画素が面上で覆う幅 [mm]。加工目の前置フィルタ(解像できない目を平坦にする)に使う
-    fp = np.where(np.isfinite(hit["t"]), hit["t"], 0.0) * camera["pixel_mm"] / _image_distance(camera)
+    fp = _footprint(camera, hit["t"])
     col = _shade(scene, hit, d, lights, float(ambient), int(depth), bool(shadows), fp,
                  light_samples, float(wavelength_nm))
     if environment is not None and float(environment_gain) != 0.0:
@@ -1530,8 +1681,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
         if len(rows):
             ro, rd, nsub = _subpixel_rays(camera, rows.astype(float), cols.astype(float), ss)
             rhit = trace_rays(scene, ro, rd)
-            rfp = (np.where(np.isfinite(rhit["t"]), rhit["t"], 0.0)
-                   * camera["pixel_mm"] / (_image_distance(camera) * ss))
+            rfp = _footprint(camera, rhit["t"], ss)
             rc = _shade(scene, rhit, rd, lights, float(ambient), int(depth), bool(shadows),
                         rfp, light_samples, float(wavelength_nm))
             if environment is not None and float(environment_gain) != 0.0:
@@ -1551,6 +1701,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
             "parts lying outside the camera field of view "
             f"({camera['fov_mm'][0]:.2f} x {camera['fov_mm'][1]:.2f} mm at the working "
             "distance). Pass ambient>0 if a dark frame is genuinely intended.")
+    col = col * _splitter_transmittance(lights)
     return col.reshape(camera["height"], camera["width"], 3)
 
 
@@ -1692,6 +1843,7 @@ def inspection_dataset(scene, camera, lights, n: int = 8, seed: int = 0,
             cam = optical_camera(
                 focal_mm=camera["focal_mm"], pixel_um=camera["pixel_mm"] * 1e3,
                 image_distance_mm=_image_distance(camera),
+                telecentric=bool(camera.get("telecentric", False)),
                 resolution=(camera["width"], camera["height"]),
                 working_distance_mm=camera["working_distance_mm"],
                 tilt_deg=float(rng.uniform(0.0, float(tilt_jitter_deg))),
@@ -2026,7 +2178,7 @@ def _studio_metal(scene, p, n, d, mat, depth, samples, env):
                 else _studio(scene, p + 1e-4 * n, rd, depth - 1, max(int(samples) // 4, 1), env))
     acc /= ns
     cos_v = np.clip(-(d * n).sum(-1), 0.0, 1.0)
-    return acc * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "table"))
+    return acc * _gm.metal_mirror_rgb(mat["metal"], cos_v, source=mat.get("metal_source", "materials"))
 
 
 def _studio_glass(scene, obj, p, n, d, mat, depth, samples, env):
@@ -2275,7 +2427,9 @@ def _components(mask, kind, source, min_area):
 #: 洗い出しの台帳は docs/ops/optics/guides/virtual_machine_vision.md。
 #: パラメータは「センサー・レンズ・光源・レイアウト」の 4 つに自然に分かれ、
 #: レイアウトが残り 3 つを束ねて**導出量を閉じた式で**返す。
-_SHUTTERS = ("global", "rolling")
+#: "switchable" は台帳の Teledyne e2v 2 型番(切替シャッタ)。2026-10-15 まで入っておらず、
+#: ``sensor_spec(model="EV76C570")`` が台帳に在る型番なのに ValueError で組めなかった。
+_SHUTTERS = ("global", "rolling", "switchable")
 _SOURCE_KINDS = ("led", "halogen", "laser")
 
 
@@ -2394,11 +2548,12 @@ def sensor_catalog(status: str = None, maker: str = None) -> dict:
     return out
 
 
-def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
-                quantum_efficiency: float = 0.6, full_well_e: float = 1.0e4,
-                read_noise_e: float = 2.5, dark_e_per_s: float = 5.0,
+def sensor_spec(pixel_um: float = None, resolution=None,
+                quantum_efficiency: float = None, full_well_e: float = None,
+                read_noise_e: float = None, dark_e_per_s: float = 5.0,
                 bit_depth: int = 8, gain_e_per_unit: float = 5.0e4,
-                shutter: str = "global", model: str = None) -> dict:
+                shutter: str = None, model: str = None, qe_curve=None,
+                qe_reference_nm: float = None, si_collection_um: float = 3.0) -> dict:
     """イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。
 
     ``quantum_efficiency`` は光子 -> 電子の変換効率、``dark_e_per_s`` は暗電流
@@ -2412,22 +2567,71 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
     ``model`` に実在の型番(``sensor_catalog()`` のキー)を渡すと、
     解像度・画素ピッチ・シャッタに加えて **QE・読み出し雑音・飽和容量も
     カメラメーカーが公表した EMVA1288 実測**で埋まる(引数で明示した値はそちらを優先)。
-    出所はカメラ実測なので、別のカメラなら少し変わる。
+    出所はカメラ実測なので、別のカメラなら少し変わる。台帳の QE は **545 nm** の値
+    (出典の表に「All measurements have been taken at 545 nm」とある)なので、``qe_reference_nm`` は 545 になる。
+
+    ★「明示した値」は**引数を渡したかどうか**で決める(既定は ``None``)。2026-10-15 まで既定値と
+    比べていたので、``read_noise_e=2.5`` や ``quantum_efficiency=0.6`` を明示すると既定値と同じだという
+    理由で黙って台帳の値(例: 14.0 e-)に置き換わっていた。明示した値は ``explicit_overrides`` に名前が残る。
+    型番と矛盾する ``pixel_um`` / ``shutter`` は ValueError(センサの物理は型番で決まる)。``resolution`` の
+    明示は ROI として尊重する(台帳の画素数を超えれば ValueError)。
+
+    分光(``layout_capture(mode="spectral")``)で使う量子効率の曲線 QE(λ):
+      * ``qe_curve`` に pairs(λ [nm], QE)を渡せばそれをそのまま使う(データシートの曲線。外挿しない)。
+      * 省くと Si フォトダイオードの模型 ``spectralrad.silicon_photodiode_qe``(Si の n,k は Green 2008)を、
+        集める深さ ``si_collection_um``(既定 3 µm)で作り、``qe_reference_nm`` で ``quantum_efficiency`` に
+        一致するよう倍率を合わせる。**形の模型であってデータシートの曲線ではない**。
     """
+    explicit = []
     if model is not None:
         cat = sensor_catalog()
         if model not in cat:
             raise ValueError(f"unknown sensor model {model!r}; "
                              f"choose from {sorted(cat)} or pass the numbers directly")
         c = cat[model]
-        pixel_um, resolution, shutter = c["pixel_um"], (c["width"], c["height"]), c["shutter"]
-        # EMVA1288 の実測があるものはそちらを既定にする(引数で明示指定されていれば尊重)
-        if quantum_efficiency == 0.6:
+        if pixel_um is not None and abs(float(pixel_um) - c["pixel_um"]) > 1e-9:
+            raise ValueError(f"pixel_um={pixel_um!r} contradicts model {model!r} "
+                             f"({c['pixel_um']} um); drop pixel_um or drop model")
+        if shutter is not None and shutter != c["shutter"]:
+            raise ValueError(f"shutter={shutter!r} contradicts model {model!r} ({c['shutter']!r})")
+        pixel_um, shutter = c["pixel_um"], c["shutter"]
+        if resolution is None:
+            resolution = (c["width"], c["height"])
+        else:
+            roi = np.asarray(resolution, dtype=int)
+            if roi.shape == (2,) and (roi[0] > c["width"] or roi[1] > c["height"]):
+                raise ValueError(f"resolution {tuple(roi)} exceeds model {model!r} "
+                                 f"({c['width']} x {c['height']}); a ROI must fit the sensor")
+            explicit.append("resolution")
+        # EMVA1288 の実測を既定にする。引数を**渡した**ものだけ尊重する(既定値との比較はしない)
+        if quantum_efficiency is None:
             quantum_efficiency = c["quantum_efficiency"]
-        if full_well_e == 1.0e4:
+        else:
+            explicit.append("quantum_efficiency")
+        if full_well_e is None:
             full_well_e = c["full_well_e"]
-        if read_noise_e == 2.5:
+        else:
+            explicit.append("full_well_e")
+        if read_noise_e is None:
             read_noise_e = c["read_noise_e"]
+        else:
+            explicit.append("read_noise_e")
+        if qe_reference_nm is None and "quantum_efficiency" not in explicit:
+            qe_reference_nm = 545.0                    # 台帳(Basler EMVA data overview)の測定波長
+    pixel_um = 3.45 if pixel_um is None else pixel_um
+    resolution = (1024, 1024) if resolution is None else resolution
+    quantum_efficiency = 0.6 if quantum_efficiency is None else quantum_efficiency
+    full_well_e = 1.0e4 if full_well_e is None else full_well_e
+    read_noise_e = 2.5 if read_noise_e is None else read_noise_e
+    shutter = "global" if shutter is None else shutter
+    qref = 550.0 if qe_reference_nm is None else _pos(qe_reference_nm, "qe_reference_nm")
+    curve = None
+    if qe_curve is not None:
+        import spectralrad as _sr
+        curve = _sr._curve(qe_curve, "qe_curve", "sensor_spec")
+        if np.any(curve[:, 1] < 0.0) or np.any(curve[:, 1] > 1.0):
+            raise ValueError("sensor_spec: qe_curve values must lie in [0, 1] (electrons per photon)")
+    w_si = _pos(si_collection_um, "si_collection_um")
     px = _pos(pixel_um, "pixel_um")
     res = np.asarray(resolution, dtype=int)
     # 高さ 1 = ラインセンサ(竹中 TL 系や Vieworks VT の TDI がこれ)。撮像側はまだ
@@ -2454,7 +2658,11 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
             "gain_e_per_unit": _pos(gain_e_per_unit, "gain_e_per_unit"), "shutter": shutter,
             "model": model,
             # 値の出所を残す(実測か典型値かを後から追跡できるように)
-            "noise_values_are": "EMVA1288 (Basler camera)" if model else "user-supplied"}
+            "noise_values_are": ("user-supplied" if not model
+                                 else "EMVA1288 (Basler camera)" if not explicit
+                                 else "EMVA1288 (Basler camera) with user overrides: " + ", ".join(explicit)),
+            "explicit_overrides": tuple(explicit),
+            "qe_curve": curve, "qe_reference_nm": qref, "si_collection_um": w_si}
 
 
 #: センサ形式 -> イメージサークル直径 [mm](規格値)。レンズが「その形式まで」と
@@ -2552,15 +2760,22 @@ def covers_sensor(lens: dict, sensor: dict) -> dict:
             "covers": bool(circle >= diag * 0.99), "margin_mm": circle - diag}
 
 
-def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
+def lens_spec(focal_mm: float = None, f_number: float = None, na: float = None,
               working_distance_mm: float = 200.0, coc_um: float = None,
               telecentric: bool = False, transmission: float = 0.9,
               model: str = None, maker: str = None,
-              image_circle_mm: float = None) -> dict:
+              image_circle_mm: float = None, transmission_curve=None) -> dict:
     """レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。
 
     ``coc_um`` を省くと画素ピッチを許容錯乱円に使う(レイアウトが束ねるときに解決)。
-    ``telecentric=True`` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。
+    ``telecentric=True`` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。``vision_layout`` が
+    これを ``optical_camera(telecentric=True)``(正射影)に渡すので、部品の高さが変わっても像の大きさは
+    変わらない(2026-10-15 まで旗を読むコードが無く、透視のまま撮っていた)。
+
+    ``transmission`` は可視の代表値(スカラ)。分光で撮る(``layout_capture(mode="spectral")``)ときに
+    波長で変わる透過率を入れたければ ``transmission_curve`` に pairs(λ [nm], T)を渡す(外挿しない)。
+    ``focal_mm`` の既定は 25 mm。``model`` と矛盾する ``focal_mm`` を明示すると ValueError(固定焦点の
+    焦点距離は型番で決まる。2026-10-15 まで既定値の 25 と区別できず、明示しても黙って型番の値になっていた)。
 
     ``model`` に実在の型番を渡すと(``lens_catalog()`` のキー「メーカー 型番」でも、
     型番だけ + ``maker=`` でもよい。**レンズは型番がメーカー間で
@@ -2585,11 +2800,14 @@ def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
             key = hits[0]
         c = cat[key]
         model = key
+        if focal_mm is not None and abs(float(focal_mm) - c["focal_mm"]) > 1e-9:
+            raise ValueError(f"focal_mm={focal_mm!r} contradicts lens model {key!r} "
+                             f"({c['focal_mm']} mm); drop focal_mm or drop model")
         focal_mm = c["focal_mm"]
         image_circle_mm = c["image_circle_mm"] if image_circle_mm is None else image_circle_mm
         if f_number is None and na is None:
             f_number = c["f_number_min"]              # 省略時は開放
-    f = _pos(focal_mm, "focal_mm")
+    f = _pos(25.0 if focal_mm is None else focal_mm, "focal_mm")
     wd = _pos(working_distance_mm, "working_distance_mm")
     if wd <= f:
         raise ValueError(f"working_distance_mm {wd} must exceed focal_mm {f}")
@@ -2599,10 +2817,17 @@ def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
     tr = float(transmission)
     if not (0.0 < tr <= 1.0):
         raise ValueError(f"transmission must lie in (0, 1], got {transmission!r}")
+    tcurve = None
+    if transmission_curve is not None:
+        import spectralrad as _sr
+        tcurve = _sr._curve(transmission_curve, "transmission_curve", "lens_spec")
+        if np.any(tcurve[:, 1] < 0.0) or np.any(tcurve[:, 1] > 1.0):
+            raise ValueError("lens_spec: transmission_curve values must lie in [0, 1]")
     return {"kind": "lens", "focal_mm": f, "f_number": N,
             "numerical_aperture": 1.0 / (2.0 * N), "working_distance_mm": wd,
             "coc_um": None if coc_um is None else _pos(coc_um, "coc_um"),
-            "telecentric": bool(telecentric), "transmission": tr, "model": model,
+            "telecentric": bool(telecentric), "transmission": tr, "transmission_curve": tcurve,
+            "model": model,
             "maker": maker if model is None else _LENS_CATALOG.get(model, (maker,))[0],
             "image_circle_mm": (None if image_circle_mm is None
                                 else _pos(image_circle_mm, "image_circle_mm"))}
@@ -2688,12 +2913,15 @@ def register_light(maker: str, model: str, kind: str = "ring", radius_mm: float 
     return key
 
 
-def light_spec(kind: str = "coaxial", source: str = "led",
-               wavelength_nm: float = 550.0, bandwidth_nm: float = 30.0,
-               radius_mm: float = 40.0, height_mm: float = 110.0,
+def light_spec(kind: str = None, source: str = None,
+               wavelength_nm: float = None, bandwidth_nm: float = None,
+               radius_mm: float = None, height_mm: float = None,
                size_mm: float = None, n: int = 196, intensity: float = 1.0,
                cos_exponent: float = 1.0, polarization: str = None,
-               model: str = None, maker: str = None) -> dict:
+               model: str = None, maker: str = None,
+               color_temperature_k: float = None, band_nm=None,
+               splitter_reflectance: float = 0.5,
+               splitter_transmittance: float = 0.5) -> dict:
     """照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。
 
     ``kind`` は coaxial / ring / dome / bar / backlight(器具の形)。
@@ -2705,6 +2933,22 @@ def light_spec(kind: str = "coaxial", source: str = "led",
     ``size_mm`` は器具の実体の差し渡し。鏡像として写るかどうか = 明視野/暗視野の
     本体なので、点近似のままだと暗視野が原理的に成立しない。省くと ``radius_mm``
     の半分を使う。
+
+    既定値(引数を省いたとき): kind coaxial / source led / 550 nm / 帯域 30 nm / 半径 40 mm /
+    高さ 110 mm。``model`` を渡すと台帳の値が既定になり、**明示した** wavelength_nm / bandwidth_nm /
+    radius_mm / height_mm / size_mm はそちらを優先する(同じ器具の波長違いを組める)。型番と矛盾する
+    kind / source は ValueError。
+
+    分光: LED は Ohno 2005 のスペクトル(``spectralrad.led_spectrum``、半値全幅 = ``bandwidth_nm``)、
+    ハロゲンは**黒体**(``spectralrad.blackbody_spectrum``、``color_temperature_k`` 既定 3000 K、峰は Wien の
+    変位則で約 966 nm)を ``band_nm``(ハロゲンの既定は Si が感じる 380〜1100 nm、LED は峰 ± 1.5 半値全幅)で
+    切ったもの、レーザーは 1 本の線。``light_wavelengths`` がこれを数本の波長と重みに落とす。
+
+    同軸照明(kind coaxial)はハーフミラーを通る: 光源の光は反射 ``splitter_reflectance`` 倍で部品に届き、
+    カメラはハーフミラー越しに見るので像は透過 ``splitter_transmittance`` 倍になる(往復で R·T、
+    50/50 なら 1/4)。返り値の ``intensity`` は部品に届く側(R 倍済み)、``emitted_intensity`` が光源の値。
+    T は ``render_optscene`` / ``layout_capture`` が像に掛ける。2026-10-15 まで往復の損失が無く、同軸だけが
+    リング照明に比べて約 4 倍明るく出ていた。R + T ≤ 1(エネルギー保存)でなければ ValueError。
     """
     if model is not None:
         cat = light_catalog()
@@ -2723,11 +2967,23 @@ def light_spec(kind: str = "coaxial", source: str = "led",
                                  "or register it with register_light()")
             key = hits[0]
         c = cat[key]
+        if kind is not None and kind != c["kind"]:
+            raise ValueError(f"kind={kind!r} contradicts light model {key!r} ({c['kind']!r})")
+        if source is not None and source != c["source"]:
+            raise ValueError(f"source={source!r} contradicts light model {key!r} ({c['source']!r})")
         kind, source = c["kind"], c["source"]
-        radius_mm, height_mm = c["radius_mm"], c["height_mm"]
-        wavelength_nm, bandwidth_nm = c["wavelength_nm"], c["bandwidth_nm"]
+        radius_mm = c["radius_mm"] if radius_mm is None else radius_mm
+        height_mm = c["height_mm"] if height_mm is None else height_mm
+        wavelength_nm = c["wavelength_nm"] if wavelength_nm is None else wavelength_nm
+        bandwidth_nm = c["bandwidth_nm"] if bandwidth_nm is None else bandwidth_nm
         size_mm = c["size_mm"] if size_mm is None else size_mm
         model, maker = key, c["maker"]
+    kind = "coaxial" if kind is None else kind
+    source = "led" if source is None else source
+    wavelength_nm = 550.0 if wavelength_nm is None else wavelength_nm
+    bandwidth_nm = 30.0 if bandwidth_nm is None else bandwidth_nm
+    radius_mm = 40.0 if radius_mm is None else radius_mm
+    height_mm = 110.0 if height_mm is None else height_mm
     if source not in _SOURCE_KINDS:
         raise ValueError(f"source must be one of {_SOURCE_KINDS}, got {source!r}")
     bw = float(bandwidth_nm)
@@ -2739,15 +2995,67 @@ def light_spec(kind: str = "coaxial", source: str = "led",
     wl = _pos(wavelength_nm, "wavelength_nm")
     if size_mm is not None:
         size_mm = _pos(size_mm, "size_mm")
+    tk = None
+    if source == "halogen":
+        tk = _pos(3000.0 if color_temperature_k is None else color_temperature_k, "color_temperature_k")
+    elif color_temperature_k is not None:
+        raise ValueError(f"color_temperature_k applies to source='halogen' only, got source={source!r}")
+    band = None
+    if band_nm is not None:
+        band = tuple(float(b) for b in _arr(band_nm, "band_nm", 2))
+        if not (0.0 < band[0] < band[1]):
+            raise ValueError(f"band_nm must be (lo, hi) with 0 < lo < hi, got {band_nm!r}")
+    emitted = float(intensity)
+    r_bs = t_bs = None
+    if kind == "coaxial":
+        r_bs, t_bs = float(splitter_reflectance), float(splitter_transmittance)
+        if not (0.0 < r_bs <= 1.0 and 0.0 < t_bs <= 1.0 and r_bs + t_bs <= 1.0 + 1e-12):
+            raise ValueError("splitter_reflectance and splitter_transmittance must lie in (0, 1] with "
+                             f"R + T <= 1 (energy conservation), got R={splitter_reflectance!r}, "
+                             f"T={splitter_transmittance!r}")
     import illumdesign as _id
     geo = _id.light_source(kind=kind, radius_mm=_pos(radius_mm, "radius_mm"),
                            height_mm=_pos(height_mm, "height_mm"), n=int(n),
-                           intensity=float(intensity), cos_exponent=float(cos_exponent))
+                           intensity=emitted * (r_bs if r_bs is not None else 1.0),
+                           cos_exponent=float(cos_exponent))
     geo["size_mm"] = float(size_mm) if size_mm is not None else float(radius_mm) * 0.5
     geo.update(source=source, wavelength_nm=wl, bandwidth_nm=bw,
                coherent=source == "laser", polarization=polarization,
-               model=model, maker=maker)
+               model=model, maker=maker, color_temperature_k=tk, band_nm=band,
+               emitted_intensity=emitted, splitter_reflectance=r_bs,
+               splitter_transmittance=t_bs)
     return geo
+
+
+def _light_spectrum(light, n_points=481):
+    """光源の相対分光分布(エネルギー、W/nm に比例)を pairs で。線スペクトル(レーザー・帯域 0)は None。
+
+    LED = Ohno 2005(``spectralrad.led_spectrum``、半値全幅 = ``bandwidth_nm``、既定の帯域は峰 ± 1.5 半値全幅)、
+    ハロゲン = Planck の黒体(``spectralrad.blackbody_spectrum``、``color_temperature_k`` 既定 3000 K)を
+    ``band_nm``(既定 380〜1100 nm)で切ったもの。
+    """
+    import spectralrad as _sr
+    src = light.get("source", "led")
+    lam = float(light.get("wavelength_nm", 550.0))
+    bw = float(light.get("bandwidth_nm", 0.0))
+    band = light.get("band_nm")
+    if src == "halogen":
+        tk = float(light.get("color_temperature_k") or 3000.0)
+        lo, hi = band if band is not None else _HALOGEN_BAND_NM
+        return _sr.blackbody_spectrum(tk, lo, hi, n_points)
+    if src == "laser" or bw <= 0.0:
+        return None
+    lo, hi = band if band is not None else (max(lam - 1.5 * bw, 1.0), lam + 1.5 * bw)
+    return _sr.led_spectrum(lam, bw, lo, hi, n_points)
+
+
+def _light_centroid_nm(light):
+    """光源のエネルギー重心の波長 [nm](線スペクトルならその波長)。"""
+    import spectralrad as _sr
+    curve = _light_spectrum(light)
+    if curve is None:
+        return float(light.get("wavelength_nm", 550.0))
+    return float(_sr.spectral_stats(curve)["centroid_nm"])
 
 
 def light_wavelengths(light: dict, samples: int = 5):
@@ -2756,17 +3064,23 @@ def light_wavelengths(light: dict, samples: int = 5):
     レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも
     波長で鏡面/散乱の配分が変わるので、広帯域は**重ね合わせて**撮るのが正しい。
 
-    手順: ``light["wavelength_nm"]``(無ければ 550)を中心 ``λ``、
-    ``light["bandwidth_nm"]``(無ければ 0)を全幅 ``bw`` とし、``k = max(samples, 1)``
-    本を ``λ ± bw/2`` に等間隔で置く。重みはガウス型 ``exp(-0.5 (2x)^2)``
-    (``x`` は ``[-1, 1]`` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。
-    ``bw <= 0``(レーザー)または ``k == 1`` なら ``λ`` 1 本・重み 1。
+    スペクトルの形(2026-10-15 から実形状): LED は Ohno 2005 のモデル(``spectralrad.led_spectrum``、
+    半値全幅 = ``bandwidth_nm``、峰 ± 1.5 半値全幅で切る)、ハロゲンは Planck の黒体
+    (``spectralrad.blackbody_spectrum``、``color_temperature_k`` 既定 3000 K、峰は Wien の変位則で約 966 nm)を
+    ``band_nm``(既定 380〜1100 nm、Si が感じる範囲)で切ったもの、レーザーは 1 本。``light_spec`` の
+    ``band_nm`` で帯域を変えられる。2026-10-15 まではハロゲンを 600 ± 150 nm のガウスで代用していた
+    (3000 K の黒体の峰は 966 nm なので、近赤外の光の大半を落としていた)。
+
+    手順: 帯域を ``k = max(samples, 1)`` 個の等幅の区間に分け、各区間の**エネルギー**
+    ∫ S(λ) dλ を重み、区間内のエネルギー重心を波長にする。重みは和が 1。``k == 1`` なら帯域全体の
+    重心 1 本(LED は峰、ハロゲンは重心)。レーザー・帯域 0 は ``λ`` 1 本・重み 1。
+    重みはエネルギーの割合で、光子数への換算(λ/hc)と QE は ``layout_capture(mode="spectral")`` が掛ける。
 
     - ``light``: ``light_spec`` の結果(dict)。キーが無ければ既定値で進む(dict でなければ
       ``ValueError``。sort ``table`` の行リストが流れ込むのを止める)。
-    - ``samples``: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。
-    - 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列。
-      スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。
+    - ``samples``: 本数。既定 5。1 未満は 1 に丸める。
+    - 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列(台帳の型 pairs へは
+      ``opsoptics.call`` の adapter が (k, 2) に揃える)。
 
     ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
     この重みで足し合わせる。
@@ -2776,14 +3090,72 @@ def light_wavelengths(light: dict, samples: int = 5):
     if isinstance(light, dict) and len(light) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("light_wavelengths: light is empty — pass a non-empty dict")
     _check_light_dict(light, "light_wavelengths")
+    import spectralrad as _sr
     lam = float(light.get("wavelength_nm", 550.0))
-    bw = float(light.get("bandwidth_nm", 0.0))
     k = max(int(samples), 1)
-    if bw <= 0.0 or k == 1:
+    curve = _light_spectrum(light)
+    if curve is None:
         return np.array([lam]), np.array([1.0])
-    xs = np.linspace(-1.0, 1.0, k)
-    w = np.exp(-0.5 * (xs * 2.0) ** 2)                 # ガウス型のスペクトル
-    return lam + 0.5 * bw * xs, w / w.sum()
+    x = curve[:, 0]
+    first = np.stack([x, x * curve[:, 1]], axis=1)
+    edges = np.linspace(x[0], x[-1], k + 1)
+    lams, ws = [], []
+    for a, b in zip(edges[:-1], edges[1:]):
+        e = _sr.spectral_integral(curve, a, b)
+        lams.append(_sr.spectral_integral(first, a, b) / e if e > 0.0 else 0.5 * (a + b))
+        ws.append(max(e, 0.0))
+    w = np.asarray(ws, dtype=np.float64)
+    if not w.sum() > 0.0:
+        raise ValueError("light_wavelengths: the light spectrum carries no energy in its band")
+    return np.asarray(lams, dtype=np.float64), w / w.sum()
+
+
+def _sensor_qe(sensor, lam_nm):
+    """センサの量子効率 QE(λ)(電子/光子)。``qe_curve`` があれば補間、無ければ Si の模型を基準波長で合わせる。"""
+    lam = float(lam_nm)
+    curve = sensor.get("qe_curve")
+    if curve is not None:
+        if lam < curve[0, 0] - 1e-9 or lam > curve[-1, 0] + 1e-9:
+            raise ValueError(f"the sensor qe_curve covers {curve[0, 0]:g}-{curve[-1, 0]:g} nm but the light "
+                             f"needs {lam:g} nm (not extrapolated)")
+        return float(np.interp(lam, curve[:, 0], curve[:, 1]))
+    shape = _si_qe_shape(float(sensor.get("si_collection_um", 3.0)))
+    ref = float(sensor.get("qe_reference_nm", 550.0))
+    for v in (lam, ref):
+        if v < shape[0, 0] - 1e-9 or v > shape[-1, 0] + 1e-9:
+            raise ValueError(f"the silicon QE model covers {shape[0, 0]:g}-{shape[-1, 0]:g} nm "
+                             f"(Green 2008), got {v:g} nm; pass sensor_spec(qe_curve=...) for other bands")
+    q = float(sensor["quantum_efficiency"]) * float(np.interp(lam, shape[:, 0], shape[:, 1])) \
+        / float(np.interp(ref, shape[:, 0], shape[:, 1]))
+    if q > 1.0 + 1e-9:
+        raise ValueError(f"the scaled silicon QE exceeds 1 at {lam:g} nm ({q:.3f}); the scalar "
+                         "quantum_efficiency does not fit the model at qe_reference_nm — pass qe_curve")
+    return q
+
+
+_SI_QE_CACHE = {}
+
+
+def _si_qe_shape(collection_um):
+    """Si フォトダイオードの QE の形(``spectralrad.silicon_photodiode_qe``、Green 2008 の範囲 250〜1450 nm)。"""
+    key = round(float(collection_um), 9)
+    if key not in _SI_QE_CACHE:
+        import spectralrad as _sr
+        _SI_QE_CACHE[key] = _sr.silicon_photodiode_qe(collection_depth_um=key, wl_min_nm=250.0,
+                                                      wl_max_nm=1450.0, n_points=1201)
+    return _SI_QE_CACHE[key]
+
+
+def _lens_transmission(lens, lam_nm):
+    """レンズの透過率 T(λ)。``transmission_curve`` があれば補間(外挿しない)、無ければスカラ。"""
+    curve = lens.get("transmission_curve")
+    if curve is None:
+        return float(lens["transmission"])
+    lam = float(lam_nm)
+    if lam < curve[0, 0] - 1e-9 or lam > curve[-1, 0] + 1e-9:
+        raise ValueError(f"the lens transmission_curve covers {curve[0, 0]:g}-{curve[-1, 0]:g} nm but the "
+                         f"light needs {lam:g} nm (not extrapolated)")
+    return float(np.interp(lam, curve[:, 0], curve[:, 1]))
 
 
 def vision_layout(sensor: dict, lens: dict, lights, scene=None,
@@ -2797,6 +3169,9 @@ def vision_layout(sensor: dict, lens: dict, lights, scene=None,
     撮る前にここを見れば、視野に部品が収まるか・欠陥が分解できるか・被写界深度が
     足りるかが分かる ―― 「見えるか」ではなく「必要なコントラストで写るか」を
     先に判断するのが、光学デジタルツインを持つ理由。
+
+    ``lens_spec(telecentric=True)`` ならカメラは正射影(``optical_camera(telecentric=True)``)になり、
+    部品の高さで倍率が変わらない。バジェットの代表波長は光源のエネルギー重心の平均。
     """
     for name, obj, want in (("sensor", sensor, "sensor"), ("lens", lens, "lens")):
         if not isinstance(obj, dict) or obj.get("kind") != want:
@@ -2804,8 +3179,10 @@ def vision_layout(sensor: dict, lens: dict, lights, scene=None,
     lights = [lights] if isinstance(lights, dict) else list(lights)
     if not lights:
         raise ValueError("lights must contain at least one light_spec() result")
-    lam = float(np.mean([float(l.get("wavelength_nm", 550.0)) for l in lights]))
+    # バジェットの代表波長 = 光源のエネルギー重心の平均(LED は峰、ハロゲンは黒体の帯域の重心)
+    lam = float(np.mean([_light_centroid_nm(_check_light_dict(l, "vision_layout")) for l in lights]))
     cam = optical_camera(focal_mm=lens["focal_mm"], pixel_um=sensor["pixel_um"],
+                         telecentric=bool(lens.get("telecentric", False)),
                          image_distance_mm=_thin_lens_image_distance(lens["focal_mm"],
                                                                      lens["working_distance_mm"]),
                          resolution=(sensor["width"], sensor["height"]),
@@ -2822,34 +3199,68 @@ def vision_layout(sensor: dict, lens: dict, lights, scene=None,
 
 def layout_capture(layout: dict, exposure_ms: float = 10.0, supersample: int = 2,
                    spectral_samples: int = 1, apply_diffraction: bool = True,
-                   apply_defocus: bool = False, raw: bool = False) -> dict:
+                   apply_defocus: bool = False, raw: bool = False,
+                   mode: str = "rgb") -> dict:
     """レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。
 
     ``spectral_samples`` > 1 で光源のスペクトルを重ね合わせる(ハロゲンのような
     広帯域はこれが要る。LED は 1-3 本、レーザーは 1 本で足りる)。
     ``raw=True`` なら量子化前の放射輝度も返す。
 
+    ``mode`` は 2 つ(既定は従来どおり "rgb"):
+      * ``"rgb"`` —— 材質は可視の RGB(金属の色・RGB の albedo)、透過率と QE は**波長によらない**スカラ。
+      * ``"spectral"`` —— 像 = Σ_λ w(λ) · 放射輝度(λ) · T_lens(λ) · QE(λ) · λ/550 nm。w は
+        ``light_wavelengths`` のエネルギーの重み、λ/550 nm はエネルギー → 光子数の比(λ/hc)、QE(λ) は
+        ``sensor_spec`` の ``qe_curve`` か Si の模型(Green 2008 の n,k、``qe_reference_nm`` で
+        ``quantum_efficiency`` に合わせる)、放射輝度(λ) は材質をその波長に落として撮る(金属は材料表の n,k、
+        誘電体は n(λ) と任意で k の吸収、lambert は ``reflectance_curve``)。3 チャネルは同じ値(単色センサ)。
+        550 nm の単色・平らな QE・平らな透過率・灰色の lambert なら "rgb" と同じ数になる。
+
+    回折ぼけは**波長ごと**に掛けてから足す(エアリー半径は λ に比例する)。2026-10-15 まではバジェットの
+    1 波長だけで掛けていた。同軸照明があれば、像にハーフミラーの透過率を掛ける。
+
     返り値 dict: ``image``(量子化済み)/ ``radiance``(raw のとき)/ ``depth_mm`` /
-    ``part_mask`` / ``defect_mask`` / ``budget``。
+    ``part_mask`` / ``defect_mask`` / ``budget`` / ``mode`` / ``spectral_terms``(波長・重み・
+    T·QE·光子比の一覧)/ ``assumptions``(分光の経路で置いた仮定)。
     """
     if not isinstance(layout, dict) or layout.get("kind") != "layout":
         raise ValueError("layout must be a vision_layout() result")
     if layout["scene"] is None:
         raise ValueError("layout has no scene; pass scene= to vision_layout()")
+    if mode not in ("rgb", "spectral"):
+        raise ValueError(f"mode must be 'rgb' or 'spectral', got {mode!r}")
     scene, cam, sensor, lens = (layout["scene"], layout["camera"],
                                 layout["sensor"], layout["lens"])
+    lights = layout["lights"]
+    t_all = _splitter_transmittance(lights)
     acc = None
-    for light in layout["lights"]:
+    notes = set()
+    terms = []
+    for light in lights:
         lams, ws = light_wavelengths(light, spectral_samples)
+        own = _splitter_transmittance([light])
         for lam, w in zip(lams, ws):
-            r = render_optscene(scene, cam, [light], depth=1, supersample=supersample,
-                                wavelength_nm=float(lam))
-            acc = w * r if acc is None else acc + w * r
-    acc = acc * lens["transmission"] * sensor["quantum_efficiency"]
+            lam = float(lam)
+            sc = scene if mode == "rgb" else _scene_at_wavelength(scene, lam, notes)
+            r = render_optscene(sc, cam, [light], depth=1, supersample=supersample,
+                                wavelength_nm=lam)
+            r = r * (t_all / own)                      # 他の同軸ユニットのハーフミラーも通って見る
+            if mode == "spectral":
+                tl, qe = _lens_transmission(lens, lam), _sensor_qe(sensor, lam)
+                gain = tl * qe * lam / _PHOTON_REF_NM
+            else:
+                tl, qe, gain = float(lens["transmission"]), float(sensor["quantum_efficiency"]), 1.0
+            if apply_diffraction:
+                r = diffraction_blur(r, cam, f_number=layout["budget"]["f_number_working"],
+                                     wavelength_nm=lam)
+            term = (float(w) * gain) * r
+            acc = term if acc is None else acc + term
+            terms.append({"wavelength_nm": lam, "weight": float(w), "lens_transmission": tl,
+                          "quantum_efficiency": qe, "photon_ratio": lam / _PHOTON_REF_NM
+                          if mode == "spectral" else 1.0})
+    if mode == "rgb":
+        acc = acc * lens["transmission"] * sensor["quantum_efficiency"]
     depth = optscene_depth(scene, cam)
-    if apply_diffraction:
-        acc = diffraction_blur(acc, cam, f_number=layout["budget"]["f_number_working"],
-                               wavelength_nm=layout["budget"]["wavelength_nm"])
     if apply_defocus:
         acc = defocus_blur(acc, depth, cam, f_number=lens["f_number"])
     img = sensor_capture(acc, exposure_ms=exposure_ms,
@@ -2860,7 +3271,8 @@ def layout_capture(layout: dict, exposure_ms: float = 10.0, supersample: int = 2
                          full_well_e=sensor["full_well_e"], bit_depth=sensor["bit_depth"])
     out = {"image": img, "depth_mm": depth, "budget": layout["budget"],
            "part_mask": optscene_mask(scene, cam, 0),
-           "defect_mask": optscene_defect_mask(scene, cam)}
+           "defect_mask": optscene_defect_mask(scene, cam),
+           "mode": mode, "spectral_terms": terms, "assumptions": sorted(notes)}
     if raw:
         out["radiance"] = acc
     return out
@@ -2944,8 +3356,7 @@ def linescan_capture(scene, camera, lights, velocity_mm_s: float = 100.0,
         org = (o0[None, :, :] + shift[..., None] * axis).reshape(-1, 3)
         dirs = np.broadcast_to(d0[None, :, :], (n_lines, W, 3)).reshape(-1, 3)
         hit = trace_rays(scene, org, dirs)
-        fp = (np.where(np.isfinite(hit["t"]), hit["t"], 0.0)
-              * camera["pixel_mm"] / _image_distance(camera))
+        fp = _footprint(camera, hit["t"])
         col = _shade(scene, hit, dirs, lights, float(ambient), int(depth), True, fp,
                      light_samples)
         bg = float(ambient) + _light_background(lights, org, dirs)
@@ -3029,11 +3440,18 @@ def optical_budget(focal_mm: float = 25.0, working_distance_mm: float = 200.0,
     m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:
 
       ``magnification`` 倍率 m / ``f_number_working`` N_w /
-      ``airy_um`` エアリー半径 1.22·λ·N_w(像面)/ ``airy_object_um`` それを物体側に換算 /
+      ``airy_um`` = ``airy_radius_um`` エアリー半径 1.22·λ·N_w(像面、Rayleigh の 2 点分離)/
+      ``airy_diameter_um`` エアリー径 2.44·λ·N_w / ``airy_object_um`` 半径を物体側に換算 /
       ``pixel_object_um`` 画素の物体側の実寸 / ``limit_um`` 実際の分解限界
-      (回折と標本化の**大きい方**)/ ``limited_by`` どちらが律速か /
-      ``dof_um`` 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/
-      ``coc_um`` 許容錯乱円(既定は画素ピッチ)。
+      (回折 = エアリー**径**の物体側と、標本化 = 2 画素の物体側の**大きい方**)/ ``limited_by`` どちらが律速か /
+      ``dof_um`` = ``dof_combined_um`` 被写界深度(物体側、幾何と回折の和)/ ``dof_geometric_um`` 錯乱円の幾何の深度
+      (薄肉レンズの近点・遠点)/ ``dof_diffraction_um`` Rayleigh の λ/4 の焦点深度 ±2·λ·N_w²(全幅 4·λ·N_w²)を m² で
+      物体側へ / ``coc_um`` 許容錯乱円(既定は画素ピッチ)。
+
+    式は ``visiondesign`` と **1 本**(``visiondesign._diffraction_limits`` / ``_depth_of_field``)で、同じ構成なら
+    ``visiondesign.system_feasibility`` の ``depth_of_field_geometric_mm`` / ``_diffraction_mm`` / ``_combined_mm``
+    と名前ごとに一致する。2026-10-15 までは 2 つの入口が別の式で、f 25・WD 200・F4・3.45 µm で被写界深度が
+    1.55 mm(幾何だけ)と 2.67 mm(幾何 + 回折の**半分**)、律速の判定がエアリー径と半径で 2 倍食い違っていた。
 
     「見えるか」ではなく「**必要なコントラストで写るか**」を決める前段の数字で、
     ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。
@@ -3049,19 +3467,25 @@ def optical_budget(focal_mm: float = 25.0, working_distance_mm: float = 200.0,
     lam = _pos(wavelength_nm, "wavelength_nm") * 1e-3            # nm -> µm
     c = px if coc_um is None else _pos(coc_um, "coc_um")
 
+    import visiondesign as _vd
     m = f / (wd - f)                                             # 薄肉近似の倍率
-    nw = (1.0 + abs(m)) * N                                      # 作動 F 値
-    airy = 1.22 * lam * nw                                       # 像面のエアリー半径
-    airy_obj = airy / abs(m)
-    px_obj = px / abs(m)
-    limit = max(airy_obj, 2.0 * px_obj)                          # 回折 と 標本化(2画素)
-    dof = (2.0 * nw * c + 2.0 * lam * nw * nw) / (m * m)         # 幾何 + 波動(物体側)
+    lim = _vd._diffraction_limits(px, N, m, lam)                 # visiondesign と同じ 1 本の式
+    nw = lim["working_f_number"]                                 # 作動 F 値
+    airy = lim["airy_radius_um"]                                 # 像面のエアリー半径
+    dofs = _vd._depth_of_field(f, wd, N, c, lam)
     return {"magnification": m, "f_number": N, "f_number_working": nw,
             "numerical_aperture": 1.0 / (2.0 * N), "airy_um": airy,
-            "airy_object_um": airy_obj, "pixel_object_um": px_obj,
-            "limit_um": limit,
-            "limited_by": "diffraction" if airy_obj >= 2.0 * px_obj else "sampling",
-            "dof_um": dof, "coc_um": c, "wavelength_nm": float(wavelength_nm)}
+            "airy_radius_um": airy, "airy_diameter_um": lim["airy_diameter_um"],
+            "airy_object_um": lim["rayleigh_object_um"],
+            "airy_diameter_object_um": lim["diffraction_object_um"],
+            "pixel_object_um": px / abs(m),
+            "limit_um": lim["resolution_object_um"],
+            "limited_by": lim["limited_by"],
+            "diffraction_criterion": lim["diffraction_criterion"],
+            "dof_um": dofs["combined_mm"] * 1e3, "dof_combined_um": dofs["combined_mm"] * 1e3,
+            "dof_geometric_um": dofs["geometric_mm"] * 1e3,
+            "dof_diffraction_um": dofs["diffraction_mm"] * 1e3,
+            "coc_um": c, "wavelength_nm": float(wavelength_nm)}
 
 
 def observe_surface(material: str = "al", finish: str = "hairline",
@@ -3115,8 +3539,8 @@ def observe_surface(material: str = "al", finish: str = "hairline",
     連鎖ファザーもこの理由で 32 x 32 / supersample 1 に固定してある
     (``typed_catalog.OP_PARAM_HINTS``)。
     """
-    if material not in _gm.METALS:
-        raise ValueError(f"material must be one of {tuple(_gm.METALS)}, got {material!r}")
+    if material not in _gm.MEASURED_METALS:                        # 実測の表(既定)の 10 種
+        raise ValueError(f"material must be one of {tuple(_gm.MEASURED_METALS)}, got {material!r}")
     if f_number is None and na is None:
         f_number = 5.6                                           # よくある既定
     budget = optical_budget(focal_mm=focal_mm, working_distance_mm=working_distance_mm,
@@ -3142,8 +3566,11 @@ def observe_surface(material: str = "al", finish: str = "hairline",
                          image_distance_mm=_thin_lens_image_distance(focal_mm, working_distance_mm))
     import illumdesign as _id
     light = _id.light_source(kind=illumination, radius_mm=source_size_mm,
-                             height_mm=working_distance_mm * 0.55, n=196)
+                             height_mm=working_distance_mm * 0.55, n=196,
+                             intensity=0.5 if illumination == "coaxial" else 1.0)
     light["size_mm"] = float(source_size_mm)                     # 器具の実体の大きさ
+    if illumination == "coaxial":                                # 50/50 のハーフミラーの往復(R·T = 1/4)
+        light.update(splitter_reflectance=0.5, splitter_transmittance=0.5, emitted_intensity=1.0)
     if defects:
         mask = optscene_defect_mask(scene, cam)
     img = render_optscene(scene, cam, [light], depth=1, supersample=int(supersample),

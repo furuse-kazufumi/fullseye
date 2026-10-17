@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # optical_camera — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None, telecentric: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None, telecentric: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
 
 ## 使い方
 
@@ -34,6 +34,13 @@ v = f·WD/(WD − f) で、倍率は v/WD = f/(WD − f)(``optical_budget`` と�
 描く画像の倍率は f/WD、バジェットの倍率は f/(WD − f) と同じ構成で 2 つのモデルが混ざって
 いた(f 25 mm・WD 200 mm で視野が 14 % 広い)。``focal_mm`` はレンズの焦点距離のまま
 残る(被写界深度のぼけ ``defocus_blur`` が使う)。
+
+``telecentric=True`` は物体側テレセントリック: 主光線が光軸に平行なので、光線は 1 点(視点)から
+放射状に出るのでなく、**光軸に平行に**出る(正射影)。画素の物体側の実寸は作動距離での値
+``pixel · WD / v`` に固定され、部品を持ち上げても像の大きさが変わらない(寸法測定でテレセンを
+使う理由そのもの)。この場合 ``K`` は作動距離の面でだけ成り立つ名目の値で、``projection`` が
+``"orthographic"`` になる(透視の再投影には使えない)。2026-10-15 まで ``lens_spec(telecentric=True)``
+を読むコードが無く、旗を立てても部品を 20 mm 持ち上げると像が 11 % 大きくなっていた。
 
 ## ファミリ共通の入力契約(fail-closed)
 

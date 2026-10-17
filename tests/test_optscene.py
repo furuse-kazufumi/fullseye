@@ -734,11 +734,13 @@ def test_scene_material_conductor_can_use_the_measured_metal_table():
     """2026-10-14: 観察対象の金属もレンズの硝材と同じ共通の材料表(materials)から引ける。"""
     m = OS.scene_material("conductor", metal="ni", metal_source="materials")
     assert m["metal"] == "ni" and m["metal_source"] == "materials"
-    assert OS.scene_material("conductor", metal="al")["metal_source"] == "table"   # default unchanged
+    # 2026-10-15: 既定は glassmirror と同じ実測の表(それまでは粗い表で、2 つの既定が食い違っていた)
+    assert OS.scene_material("conductor", metal="al")["metal_source"] == "materials"
+    assert OS.scene_material("conductor", metal="ni")["metal"] == "ni"             # 既定で実測の 10 種が引ける
     with pytest.raises(ValueError, match="metal_source"):
         OS.scene_material("conductor", metal="al", metal_source="palik")
     with pytest.raises(ValueError, match="metal must be one of"):
-        OS.scene_material("conductor", metal="ni")                                 # not in the coarse table
+        OS.scene_material("conductor", metal="ni", metal_source="table")           # not in the coarse table
     d = OS.scene_material("dielectric", glass="S-LAH58")                          # another maker's glass
     assert float(d["n_rgb"][2]) > float(d["n_rgb"][0]) > 1.85
 

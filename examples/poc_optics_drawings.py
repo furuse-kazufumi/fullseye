@@ -19,7 +19,7 @@
      ``telecentric.chief_ray_angle``(Newton 法、別の実装)と 1e-6° 以内、テレセン 2 種は 0.06° 未満、通常は 1° 超。
   3. **撮像系の設置図**: 照明 5 種(ring / dome / bar / coaxial / backlight)を描き分ける。門: 視野の錐の 4 本の線が
      作業面で ±(画素数 × 画素 / m)/2 に届く(m = f/(WD − f)、作動距離に合焦させた薄肉レンズ、1e-6 mm)、WD・視野・DOF の
-     数字が閉形式(DOF = (2N_w·c + 2λN_w²)/m²)と表示の桁で一致、仰角の数字が atan(H/R) と一致、上面図の円環の半径が R。
+     数字が閉形式(DOF = (2N_w·c + 4λN_w²)/m²、回折の項は Rayleigh の λ/4 の焦点深度 ±2λN_w²)と表示の桁で一致、仰角の数字が atan(H/R) と一致、上面図の円環の半径が R。
      さらに図と独立の経路として、同じ構成を ``layout_capture`` で**撮った画像**の上で、幅の分かった部品が
      幅 × m / 画素 の画素数に写ることを見る(1 画素以内)。★2026-10-15 の検分で、描いた視野(画素数 × 画素 × WD / f)と
      バジェットの倍率 f/(WD − f) が同じ図の中で 14 % 食い違っているのが見つかった —— 当時のこの門は視野を同じ
@@ -259,7 +259,7 @@ CAPTIONS = {
                       "諸元の行は AFOCAL と倍率を書く。",
     "setup_ring_coaxial": "撮像系の設置図(側面図と、その上に第三角法で上面図)。f 25 mm・F/4・作動距離 200 mm・1024×768 画素・3.45 µm。"
                           "視野 24.73 × 18.55 mm はセンサー ÷ 倍率 f/(WD − f)(作動距離に合焦させた薄肉レンズ)で、"
-                          "DOF 2.672 mm の帯は光軸に沿う。リング照明(仰角 40.6°、作業面から)と同軸落射(ハーフミラーと横の光源)。",
+                          "DOF 3.798 mm(幾何 1.546 + 回折 2.253)の帯は光軸に沿う。リング照明(仰角 40.6°、作業面から)と同軸落射(ハーフミラーと横の光源)。",
     "setup_dome": "同じカメラにドーム照明(半径 80 mm、天頂の穴は 20°)。側面図は半球の断面と光の向き。",
     "setup_bar_lowangle": "低角のバー照明(仰角 15.5°)。暗視野の配置で、光は作業面をかすめる。",
     "setup_backlight": "バックライト(部品の下 30 mm、幅 80 mm)。上面図では部品の下に隠れるので破線。",
@@ -402,7 +402,7 @@ def chapter_setup():
         m = f / (wd - f)
         Nw = (1 + m) * N
         lam = 0.55
-        dof = (2 * Nw * px + 2 * lam * Nw * Nw) / (m * m) / 1000.0
+        dof = (2 * Nw * px + 4 * lam * Nw * Nw) / (m * m) / 1000.0
         got = {k: dim_value(ents, k) for k in ("WD", "FOV", "DOF")}
         fov_vals = sorted(float(mm.group(1)) for t in texts(ents) for mm in [re.fullmatch(r"FOV (\d+\.\d+)", t)] if mm)
         ok = (got["WD"] is not None and abs(got["WD"] - wd) <= 0.005 and got["DOF"] is not None

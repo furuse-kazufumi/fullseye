@@ -74,6 +74,60 @@ def _pos(value, name):
     return v
 
 
+#: The diffraction limit that decides ``limited_by``: the **Airy disc diameter** 2.44·λ·N_w (the spot a point
+#: becomes, to the first dark ring; Greivenkamp, OPTI-201/202 notes, lecture 17 "Camera Systems") referred to the
+#: object, against two pixels referred to the object. The Rayleigh two-point separation (the Airy radius,
+#: 1.22·λ·N_w) is returned too, under its own name, because it is the other common reading of "resolution".
+DIFFRACTION_CRITERION = "airy_diameter"
+
+
+def _diffraction_limits(pitch_um, f_number, magnification, wavelength_um):
+    """The one formula for the diffraction / sampling limits (shared with ``optscene.optical_budget``).
+
+    Working f-number ``N_w = N (1 + |m|)``; Airy radius ``1.22 λ N_w`` (Rayleigh separation) and diameter
+    ``2.44 λ N_w``; sampling limit two pixels on the object. Returns plain floats (micrometres).
+    """
+    pitch, n, mag, lam = float(pitch_um), float(f_number), abs(float(magnification)), float(wavelength_um)
+    n_eff = n * (1.0 + mag)
+    airy_d = 2.44 * lam * n_eff
+    nyq = 2.0 * pitch / mag
+    diff = airy_d / mag
+    return {
+        "working_f_number": n_eff,
+        "airy_diameter_um": airy_d,
+        "airy_radius_um": 0.5 * airy_d,
+        "airy_over_pixel": airy_d / pitch,
+        "nyquist_object_um": nyq,
+        "diffraction_object_um": diff,
+        "rayleigh_object_um": 0.5 * airy_d / mag,
+        "resolution_object_um": max(nyq, diff),
+        "limited_by": "diffraction" if diff > nyq else "sampling",
+        "diffraction_criterion": DIFFRACTION_CRITERION,
+    }
+
+
+def _depth_of_field(focal_mm, working_distance_mm, f_number, coc_um, wavelength_um):
+    """The one formula for the depth of field (shared with ``optscene.optical_budget``), three named parts.
+
+    * ``geometric`` — the thin-lens blur-circle depth (``optics.depth_of_field``, the near/far limits of
+      Greivenkamp's lecture 17 with the stop at the lens), circle of confusion *coc_um* on the sensor.
+    * ``diffraction`` — the Rayleigh quarter-wave depth of focus ±2 λ N_w² on the image side (total 4 λ N_w²,
+      i.e. λ / NA'²), carried to the object by the longitudinal magnification m².
+    * ``combined`` — their sum, the form of the microscopy depth of field d = λ/NA² + e/(M·NA).
+
+    Lengths in millimetres; ``geometric`` and ``combined`` are ``inf`` at or beyond the hyperfocal distance.
+    """
+    f, s, n = float(focal_mm), float(working_distance_mm), float(f_number)
+    m = f / (s - f)
+    n_eff = n * (1.0 + m)
+    geo = optics.depth_of_field(focal_mm=f, f_number=n, subject_mm=s, coc_mm=float(coc_um) * 1e-3)
+    geo_mm = float(geo["depth_mm"])
+    diff_mm = 4.0 * float(wavelength_um) * n_eff * n_eff / (m * m) * 1e-3
+    return {"geometric_mm": geo_mm, "diffraction_mm": diff_mm, "combined_mm": geo_mm + diff_mm,
+            "far_is_infinite": bool(geo.get("far_is_infinite")), "near_mm": float(geo["near_mm"]),
+            "far_mm": float(geo["far_mm"])}
+
+
 def system_geometry(focal_mm=50.0, working_distance_mm=500.0,
                     pixel_pitch_um=3.45, width_px=2448, height_px=2048):
     """What the sensor covers on the part, from the lens and the standoff.
@@ -139,27 +193,19 @@ def resolving_power(pixel_pitch_um=3.45, f_number=8.0, magnification=0.1,
     throws away optical detail), above ~2 it is diffraction-limited (extra
     pixels buy nothing).
 
+    The same formula serves ``optscene.optical_budget`` (one implementation, ``_diffraction_limits``).
+    The Airy **radius** (the Rayleigh two-point separation, 1.22·λ·N_eff) is returned as well, under
+    ``airy_radius_um`` / ``rayleigh_object_um``; ``diffraction_criterion`` names which one decides
+    ``limited_by`` (the diameter). Until 2026-10-15 ``optscene`` decided it with the radius, so the two
+    entry points disagreed by a factor of two on the same lens.
+
     Raises ValueError: non-positive or non-finite inputs.
     """
     pitch = _pos(pixel_pitch_um, "pixel_pitch_um")
     n = _pos(f_number, "f_number")
     mag = _pos(magnification, "magnification")
     lam = _pos(wavelength_um, "wavelength_um")
-    n_eff = n * (1.0 + mag)
-    airy_um = 2.44 * lam * n_eff
-    nyquist_object_um = 2.0 * pitch / mag
-    diffraction_object_um = airy_um / mag
-    limited_by = ("diffraction" if diffraction_object_um > nyquist_object_um
-                  else "sampling")
-    return {
-        "working_f_number": n_eff,
-        "airy_diameter_um": airy_um,
-        "airy_over_pixel": airy_um / pitch,
-        "nyquist_object_um": nyquist_object_um,
-        "diffraction_object_um": diffraction_object_um,
-        "resolution_object_um": max(nyquist_object_um, diffraction_object_um),
-        "limited_by": limited_by,
-    }
+    return _diffraction_limits(pitch, n, mag, lam)
 
 
 def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
@@ -182,6 +228,14 @@ def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
     but the depth tolerance exceeds the depth of field), or ``"not_resolvable"``.
     ``pixels_across`` is the honest headline: how many pixels the defect covers.
 
+    The depth of field comes in three named parts (one formula, shared with
+    ``optscene.optical_budget``): ``depth_of_field_mm`` (= ``depth_of_field_geometric_mm``, the blur-circle
+    depth that decides ``depth_of_field_ok``), ``depth_of_field_diffraction_mm`` (the Rayleigh quarter-wave
+    depth 4·λ·N_eff² on the image side, over m²) and ``depth_of_field_combined_mm`` (their sum, the form of
+    the microscopy formula). Until 2026-10-15 this returned only the first while ``optscene`` returned a
+    sum with half the diffraction term, and the two entry points disagreed (1.55 vs 2.67 mm at f 25 mm,
+    WD 200 mm, F4, 3.45 um).
+
     Raises ValueError: any non-positive or non-finite input.
     """
     defect = _pos(defect_um, "defect_um")
@@ -192,13 +246,12 @@ def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
                           wavelength_um)
     pixels_across = defect / geo["um_per_pixel"]
     # 錯乱円は「object 側で 1 画素ぶん」に相当する image 側の大きさ = 画素ピッチ。
-    dof = optics.depth_of_field(focal_mm=geo["focal_mm"], f_number=float(f_number),
-                                subject_mm=geo["working_distance_mm"],
-                                coc_mm=_pos(pixel_pitch_um, "pixel_pitch_um") * 1e-3)
-    # ``optics.depth_of_field`` は近点/遠点/被写界深度/過焦点距離を返す。
+    # 式は optscene.optical_budget と 1 本(_depth_of_field)。幾何・回折・和を名前で分けて返す。
+    dofs = _depth_of_field(geo["focal_mm"], geo["working_distance_mm"], _pos(f_number, "f_number"),
+                           _pos(pixel_pitch_um, "pixel_pitch_um"), _pos(wavelength_um, "wavelength_um"))
     # 遠点が無限大なら深度も無限 — その場合はどんな公差も収まる。
-    dof_total = float(dof["depth_mm"])
-    dof_ok = bool(dof.get("far_is_infinite") or
+    dof_total = dofs["geometric_mm"]
+    dof_ok = bool(dofs["far_is_infinite"] or
                   (np.isfinite(dof_total) and dof_total >= tol))
     half_angle_deg = float(np.degrees(np.arctan2(
         geo["sensor_diagonal_mm"] / 2.0, geo["image_distance_mm"])))
@@ -219,6 +272,13 @@ def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
         "fov_w_mm": geo["fov_w_mm"],
         "fov_h_mm": geo["fov_h_mm"],
         "depth_of_field_mm": dof_total,
+        "depth_of_field_geometric_mm": dof_total,
+        "depth_of_field_diffraction_mm": dofs["diffraction_mm"],
+        "depth_of_field_combined_mm": dofs["combined_mm"],
+        "airy_diameter_um": res["airy_diameter_um"],
+        "airy_radius_um": res["airy_radius_um"],
+        "rayleigh_object_um": res["rayleigh_object_um"],
+        "diffraction_criterion": res["diffraction_criterion"],
         "depth_tolerance_mm": tol,
         "depth_of_field_ok": dof_ok,
         "corner_illumination": corner,

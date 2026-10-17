@@ -6,11 +6,14 @@
 <p>観察光学系の<b>分解能バジェット</b>を閉じた式で出す(撮る前に成立するかを見る)。</p>
 <p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
 <p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> エアリー半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> それを物体側に換算 /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> エアリー半径 1.22·λ·N_w(像面、Rayleigh の 2 点分離)/</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> エアリー径 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> 半径を物体側に換算 /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> 画素の物体側の実寸 / <code style="color:#22d3bf">limit_um</code> 実際の分解限界</p>
-<p>(回折と標本化の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
-<p><code style="color:#22d3bf">dof_um</code> 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
+<p>(回折 = エアリー<b>径</b>の物体側と、標本化 = 2 画素の物体側の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> 被写界深度(物体側、幾何と回折の和)/ <code style="color:#22d3bf">dof_geometric_um</code> 錯乱円の幾何の深度</p>
+<p>(薄肉レンズの近点・遠点)/ <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh の λ/4 の焦点深度 ±2·λ·N_w²(全幅 4·λ·N_w²)を m² で</p>
+<p>物体側へ / <code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
+<p>式は <code style="color:#22d3bf">visiondesign</code> と <b>1 本</b>(<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>)で、同じ構成なら <code style="color:#22d3bf">visiondesign.system_feasibility</code> の <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> と名前ごとに一致する。2026-10-15 までは 2 つの入口が別の式で、f 25・WD 200・F4・3.45 µm で被写界深度が 1.55 mm(幾何だけ)と 2.67 mm(幾何 + 回折の<b>半分</b>)、律速の判定がエアリー径と半径で 2 倍食い違っていた。</p>
 <p>「見えるか」ではなく「<b>必要なコントラストで写るか</b>」を決める前段の数字で、ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>

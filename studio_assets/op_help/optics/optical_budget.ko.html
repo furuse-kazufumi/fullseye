@@ -6,11 +6,14 @@
 <p>관찰 광학계의 <b>분해능 버짓</b>을 닫힌 식으로 냅니다(찍기 전에 성립하는지 봅니다).</p>
 <p>NA와 F값은 어느 쪽으로 주어도 된다(N = 1/(2·NA)). 배율은 얇은 렌즈 근사 m = f / (WD − f), 실효(작동) F값은 N_w = (1 + |m|)·N. 반환하는 양:</p>
 <p><code style="color:#22d3bf">magnification</code> 배율 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> 에어리 반경 1.22·λ·N_w(상면) / <code style="color:#22d3bf">airy_object_um</code> 그것을 물체 측으로 환산 /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> 에어리 반경 1.22·λ·N_w(상면, Rayleigh의 2점 분리) /</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> 에어리 직경 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> 반경을 물체 측으로 환산 /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> 화소의 물체 측 실제 치수 / <code style="color:#22d3bf">limit_um</code> 실제 분해 한계</p>
-<p>(회절과 표본화 중 <b>큰 쪽</b>) / <code style="color:#22d3bf">limited_by</code> 어느 쪽이 병목인지 /</p>
-<p><code style="color:#22d3bf">dof_um</code> 피사계 심도(물체 측, 기하 2·N_w·c/m²와 파동 2·λ·N_w²/m²의 합) /</p>
-<p><code style="color:#22d3bf">coc_um</code> 허용 착란원(기본값은 화소 피치).</p>
+<p>(회절 = 에어리 <b>직경</b>의 물체 측 값과, 표본화 = 2 화소의 물체 측 값 중 <b>큰 쪽</b>) / <code style="color:#22d3bf">limited_by</code> 어느 쪽이 병목인지 /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> 피사계 심도(물체 측, 기하와 회절의 합) / <code style="color:#22d3bf">dof_geometric_um</code> 착란원의 기하 심도</p>
+<p>(얇은 렌즈의 근점·원점) / <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh λ/4의 초점 심도 ±2·λ·N_w²(전폭 4·λ·N_w²)를 m²로</p>
+<p>물체 측으로 환산 / <code style="color:#22d3bf">coc_um</code> 허용 착란원(기본값은 화소 피치).</p>
+<p>식은 <code style="color:#22d3bf">visiondesign</code>과 <b>하나</b>(<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>)이며, 같은 구성이라면 <code style="color:#22d3bf">visiondesign.system_feasibility</code>의 <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> 와 이름별로 일치한다. 2026-10-15까지는 두 입구가 다른 식이어서, f 25·WD 200·F4·3.45 µm에서 피사계 심도가 1.55 mm(기하만)와 2.67 mm(기하 + 회절의 <b>절반</b>), 병목 판정이 에어리 직경과 반경으로 2배 어긋나 있었다.</p>
 <p>&quot;보이는가&quot;가 아니라 &quot;<b>필요한 콘트라스트로 찍히는가</b>&quot;를 정하는 전단의 숫자이며, 여기가 부족한 구성으로는 아무리 화상을 만들어도 실기에서 검사가 성립하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

@@ -2703,7 +2703,7 @@ _計 3342 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / scene(44)
 - `airy_radius_um` `入力なし → measurement` — エアリーディスクの第 1 暗環までの半径 [µm] = 1.22 · λ · N(閉じた式)。 · 例: `vision_layout_from_catalog`
-- `camera_rays` `table → points` — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。 · 例: `poc_itof_multifreq`, `poc_pocket_interreflection`, `studio_raytrace_scene`
+- `camera_rays` `table → points` — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。 · 例: `poc_itof_multifreq`, `poc_nir_silicon_transmission`, `poc_pocket_interreflection`, `studio_raytrace_scene`
 - `covers_sensor` `table × table → table` — レンズがそのセンサを覆えるか(イメージサークル 対 対角)。 · 例: `vision_layout_from_catalog`
 - `dataset_throughput` `table → table` — :func:`inspection_dataset` の結果 → 生成スループットの実測まとめ。 · 例: `virtual_machine_vision`
 - `defocus_blur` `rgbimage × image2d × table → rgbimage` — 深度の真値から**被写界深度のぼけ**を掛ける(理想ピンホール像 -> 実レンズの像)。 · 例: `poc_focus_stacking`, `virtual_machine_vision`
@@ -2713,11 +2713,11 @@ _計 3342 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `illumination_visibility` `table × points × table → signal` — 各点から見た**発光点の可視率** [0, 1] (= 落ち影)。 · 例: `studio_raytrace_scene`
 - `inspection_dataset` `table × table × table → table` — 外観検査 AI の**学習画像を n 枚**、画素完全なラベル付きで生成する(検査用)。 · 例: `virtual_machine_vision`
 - `interface_budget` `table → table` — 伝送帯域から**帯域律速の最大フレーム / ラインレート**を返す。 · 例: `vision_layout_from_catalog`
-- `layout_capture` `table → table` — レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
+- `layout_capture` `table → table` — レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 - `lens_catalog` `入力なし → table` — 産業用レンズの諸元表(型番で引ける)。``maker`` / ``mount`` で絞れる。 · 例: `vision_layout_from_catalog`
-- `lens_spec` `入力なし → table` — レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
+- `lens_spec` `入力なし → table` — レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 - `light_catalog` `入力なし → table` — 照明の諸元表(鍵は「メーカー 型番」)。``maker`` / ``kind`` で絞れる。 · 例: `vision_layout_from_catalog`
-- `light_spec` `入力なし → table` — 照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。 · 例: `poc_optics_drawings`, `studio_raytrace_scene`, `vision_layout_from_catalog`
+- `light_spec` `入力なし → table` — 照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `studio_raytrace_scene`, `vision_layout_from_catalog`
 - `light_wavelengths` `table → pairs` — 光源のスペクトルを、撮像に使う数本の波長と重みに落とす。 · 例: `vision_layout_from_catalog`
 - `linescan_capture` `table × table × table → table` — **ラインスキャン / TDI** で撮る(搬送しながら 1 ラインずつ積む)。 · 例: `vision_layout_from_catalog`
 - `observe_surface` `入力なし → table` — **観察光学系を組んで、指定した素材の仕上げ面を撮る**(一行で使える入口)。 · 例: `vision_layout_from_catalog`
@@ -2730,22 +2730,22 @@ _計 3342 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `random_defects` `table → table` — 部品に**ランダムな欠陥**を作る(傷・割れ・ピット・しみ・打痕・異物)。 · 例: `virtual_machine_vision`
 - `reflect_rays` `points × points → points` — 鏡面反射 d − 2(d·n)n。``glassmirror.refract_rays`` の相方(反射側が無かった)。 · 例: `studio_raytrace_scene`
 - `register_light` `入力なし → text` — 手元の照明をカタログに登録する(データシートの値をそのまま入れる)。 · 例: `vision_layout_from_catalog`
-- `render_optscene` `table × table × table → rgbimage` — **検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。 · 例: `poc_pocket_interreflection`, `virtual_machine_vision`
+- `render_optscene` `table × table × table → rgbimage` — **検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。 · 例: `poc_nir_silicon_transmission`, `poc_pocket_interreflection`, `virtual_machine_vision`
 - `render_studio` `table × table → rgbimage` — **見せる絵**を描く: 環境光・多重反射・屈折と分散つき(測光の真値は無い)。 · 例: `studio_raytrace_scene`
-- `scene_box` `入力なし → table` — 軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。 · 例: `poc_optics_drawings`, `poc_pocket_interreflection`, `studio_raytrace_scene`, `vision_layout_from_catalog`
+- `scene_box` `入力なし → table` — 軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `poc_pocket_interreflection`, `studio_raytrace_scene`, `vision_layout_from_catalog`
 - `scene_cylinder` `入力なし → table` — z 軸に平行な有限円筒(端面つき)。**加工仕上げが実際に載る形**。 · 例: `virtual_machine_vision`
 - `scene_difference` `table × table → table` — ``solid`` から ``cavity`` をくり抜く(CSG の差集合)。**中空の部品**を作る唯一の手段。 · 例: `poc_pocket_interreflection`, `studio_raytrace_scene`
-- `scene_material` `入力なし → table` — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。 · 例: `poc_material_optical_library`, `poc_pocket_interreflection`, `studio_raytrace_scene`, `virtual_machine_vision`, `vision_layout_from_catalog`
+- `scene_material` `入力なし → table` — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。 · 例: `poc_material_optical_library`, `poc_nir_silicon_transmission`, `poc_pocket_interreflection`, `studio_raytrace_scene`, `virtual_machine_vision`, `vision_layout_from_catalog`
 - `scene_plane` `入力なし → table` — z = ``z_mm`` の水平面(ステージ/コンベア)。``half_size_mm`` で有限の板にできる。 · 例: `poc_pocket_interreflection`, `virtual_machine_vision`
 - `scene_sphere` `入力なし → table` — 球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。 · 例: `virtual_machine_vision`
 - `sensor_capture` `rgbimage → rgbimage` — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。 · 例: `vision_layout_from_catalog`
 - `sensor_catalog` `入力なし → table` — 実在センサの諸元表(Basler の EMVA1288 実測つき)。 · 例: `vision_layout_from_catalog`
 - `sensor_diagonal_mm` `table → measurement` — センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。 · 例: `vision_layout_from_catalog`
-- `sensor_spec` `入力なし → table` — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
+- `sensor_spec` `入力なし → table` — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 - `surface_defect` `table × image2d → table` — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。 · 例: `studio_raytrace_scene`
 - `surface_finish` `table → table` — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。 · 例: `virtual_machine_vision`
 - `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `poc_chromatic_confocal`, `poc_pocket_interreflection`, `poc_telecentric_metrology`, `studio_raytrace_scene`
-- `vision_layout` `table × table × table → table` — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
+- `vision_layout` `table × table × table → table` — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `poc_nir_silicon_transmission`, `poc_optics_drawings`, `vision_layout_from_catalog`
 
 #### optics / sensorchar(19)
 - `emva_bspline_regression` `signal × signal → table` — 3 次 B-スプラインの最小二乗の当てはめと、その傾き(General 6.6 節、式 44〜49)。 · 例: `poc_emva1288_in_camera_processing`

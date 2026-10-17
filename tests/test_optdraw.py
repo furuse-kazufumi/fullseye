@@ -160,7 +160,8 @@ def test_setup_drawing_fov_wd_dof_closed_forms(kind):
     assert len(ends) == 4 and abs(ys.max() - fov_h / 2) < 1e-6 and abs(ys.min() + fov_h / 2) < 1e-6
     m = 25.0 / 175.0
     nw = (1 + m) * 4.0
-    dof = (2 * nw * 3.45 + 2 * 0.55 * nw * nw) / (m * m) / 1000.0
+    # 幾何 2·N_w·c/m² + 回折(Rayleigh の λ/4、像側 ±2·λ·N_w² = 全幅 4·λ·N_w²)/m²。2026-10-15 まで回折の項が半分だった
+    dof = (2 * nw * 3.45 + 4 * 0.55 * nw * nw) / (m * m) / 1000.0
     assert abs(_dim(ents, "WD") - 200.0) < 1e-9
     assert abs(_dim(ents, "DOF") - dof) <= 0.0005 + 1e-9
     if kind in ("ring", "bar"):

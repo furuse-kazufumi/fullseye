@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [poc_optics_drawings, poc_pocket_interreflection, studio_raytrace_scene, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, poc_pocket_interreflection, studio_raytrace_scene, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
 - [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
