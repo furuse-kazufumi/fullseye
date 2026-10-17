@@ -29843,6 +29843,69 @@
    "ko": "불일치 원리로 멈추는 Richardson-Lucy 역합성곱(푸아송: Bertero 2010, τ = 1 / 가우스: Morozov). 모델 치역 밖의 데이터는 거부한다.",
    "de": "Richardson-Lucy-Entfaltung mit Abbruch nach dem Diskrepanzprinzip (Poisson: Bertero 2010, τ = 1; Gauß: Morozov); verweigert Daten außerhalb des Modellbildbereichs.",
    "hi": "Discrepancy principle से रुकने वाला Richardson-Lucy deconvolution (Poisson: Bertero 2010, τ = 1; Gaussian: Morozov); model की range से बाहर के data को मना करता है।"
+  },
+  "optics/form_factor_parallel_rects": {
+   "fp": "bb1b0c8150e5",
+   "ja": "平行に正対する同じ長方形 a × b(間隔 c)の形態係数(Howell のカタログ C-11 の閉形式)。",
+   "zh": "两个相同、平行且正对的矩形 a × b(间距 c)之间的角系数(Howell 目录 C-11 的闭式解)。",
+   "tw": "兩個相同、平行且正對的矩形 a × b(間距 c)之間的形狀因子(Howell 目錄 C-11 的閉式解)。",
+   "ko": "간격 c로 평행하게 마주 보는 같은 직사각형 a × b 사이의 형태 계수 (Howell 카탈로그 C-11의 닫힌 형식).",
+   "de": "Sichtfaktor zwischen zwei gleichen, parallelen, direkt gegenüberliegenden Rechtecken a × b im Abstand c (Howells Katalog C-11, geschlossene Form).",
+   "hi": "दूरी c पर आमने-सामने समानांतर दो समान आयतों a × b के बीच view factor (Howell की सूची C-11 का बंद रूप)।"
+  },
+  "optics/form_factor_perpendicular_rects": {
+   "fp": "ad18997e52f9",
+   "ja": "長さ l の辺を共有して直角に交わる長方形 w × l から h × l への形態係数(Howell のカタログ C-14 の閉形式)。",
+   "zh": "共用长度为 l 的边、成 90° 相交的矩形 w × l 到 h × l 的角系数(Howell 目录 C-14 的闭式解)。",
+   "tw": "共用長度為 l 的邊、成 90° 相交的矩形 w × l 到 h × l 的形狀因子(Howell 目錄 C-14 的閉式解)。",
+   "ko": "길이 l의 변을 공유하며 직각으로 만나는 직사각형 w × l에서 h × l로의 형태 계수 (Howell 카탈로그 C-14의 닫힌 형식).",
+   "de": "Sichtfaktor von einem Rechteck w × l zu einem Rechteck h × l mit gemeinsamer Kante der Länge l unter 90° (Howells Katalog C-14, geschlossene Form).",
+   "hi": "लंबाई l का किनारा साझा करते हुए 90° पर मिलने वाले आयत w × l से h × l तक view factor (Howell की सूची C-14 का बंद रूप)।"
+  },
+  "optics/form_factor_polygons": {
+   "fp": "40e37d7649ca",
+   "ja": "3-D の平らな凸多角形(三角形・四角形)どうしの形態係数 F_ij を数値で求める。",
+   "zh": "以数值方法求三维中两个平面凸多边形(三角形或四边形)之间的角系数 F_ij。",
+   "tw": "以數值方法求三維中兩個平面凸多邊形(三角形或四邊形)之間的形狀因子 F_ij。",
+   "ko": "3-D의 평평한 볼록 다각형(삼각형·사각형) 사이의 형태 계수 F_ij를 수치로 구한다.",
+   "de": "Sichtfaktor F_ij zwischen zwei ebenen konvexen Polygonen (Dreiecke oder Vierecke) in 3-D, numerisch.",
+   "hi": "3-D में दो समतल उत्तल बहुभुजों (त्रिभुज या चतुर्भुज) के बीच view factor F_ij, संख्यात्मक रूप से।"
+  },
+  "optics/radiosity_patches": {
+   "fp": "08fb203b9345",
+   "ja": "多角形か optscene のシーンから、平らなラジオシティのパッチの組(``rad_patches`` の表)を作る。",
+   "zh": "由多边形或 optscene 场景构建一组平面辐射度面片(``rad_patches`` 表)。",
+   "tw": "由多邊形或 optscene 場景建立一組平面輻射度面片(``rad_patches`` 表)。",
+   "ko": "다각형 또는 optscene 장면으로부터 평평한 radiosity 패치 집합(``rad_patches`` 표)을 만든다.",
+   "de": "Baut einen Satz ebener Radiosity-Patches (Tabelle ``rad_patches``) aus Polygonen oder aus einer optscene-Szene.",
+   "hi": "बहुभुजों या optscene दृश्य से समतल radiosity patches का समूह (``rad_patches`` तालिका) बनाता है।"
+  },
+  "optics/form_factor_matrix": {
+   "fp": "71b2f88eed16",
+   "ja": "``radiosity_patches`` の組の全パッチ対の形態係数 F_ij(遮蔽はシーンの光線で判定)。",
+   "zh": "``radiosity_patches`` 面片组中所有面片对的角系数 F_ij(遮挡由场景光线判定)。",
+   "tw": "``radiosity_patches`` 面片組中所有面片對的形狀因子 F_ij(遮擋由場景光線判定)。",
+   "ko": "``radiosity_patches`` 집합의 모든 패치 쌍의 형태 계수 F_ij (가림은 장면의 광선으로 판정).",
+   "de": "Alle Patch-zu-Patch-Sichtfaktoren F_ij eines ``radiosity_patches``-Satzes (Verdeckung über Strahlen der Szene).",
+   "hi": "``radiosity_patches`` समूह के सभी patch-युग्मों के view factors F_ij (अवरोध दृश्य की किरणों से)।"
+  },
+  "optics/radiosity_progressive_3d": {
+   "fp": "5bbb86d13a0b",
+   "ja": "3-D のパッチの組の漸進ラジオシティ(Cohen ら 1988、shooting、式 7・8)と、収束した証拠。",
+   "zh": "三维面片组上的渐进细化辐射度(Cohen 等 1988,shooting,式 7–8)及其收敛的证据。",
+   "tw": "三維面片組上的漸進細化輻射度(Cohen 等 1988,shooting,式 7–8)及其收斂的證據。",
+   "ko": "3-D 패치 집합의 점진적 radiosity (Cohen 외 1988, shooting, 식 7–8)와 수렴했다는 증거.",
+   "de": "Progressive-Refinement-Radiosity (Cohen et al. 1988, Shooting, Gl. 7–8) auf einem 3-D-Patch-Satz, mit dem Nachweis der Konvergenz.",
+   "hi": "3-D patch समूह पर progressive-refinement radiosity (Cohen et al. 1988, shooting, समी. 7–8), अभिसरण के प्रमाण सहित।"
+  },
+  "optics/render_optscene_gi": {
+   "fp": "9c5ff9f2dbe4",
+   "ja": "相互反射つきの検査用の描画: ``render_optscene`` の測光に、Lambert のパッチ間の n 回反射(または収束解)を足す。",
+   "zh": "含相互反射的检测用渲染:在 ``render_optscene`` 的光度之上加上朗伯面片之间的 n 次反射(或收敛解)。",
+   "tw": "含相互反射的檢測用渲染:在 ``render_optscene`` 的光度之上加上朗伯面片之間的 n 次反射(或收斂解)。",
+   "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
+   "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
+   "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
   }
  }
 }

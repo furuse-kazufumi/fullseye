@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**133 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1220,7 +1220,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 47 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2895,6 +2895,42 @@ Source: [examples/poc_optics_drawings.py](https://github.com/furuse-kazufumi/ful
 This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_optics_drawings)
 
 Ops used (notes): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`drawing_dxf`](https://furuse.work/ops/optics/drawing/drawing_dxf.html) · [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`drawing_svg`](https://furuse.work/ops/optics/drawing/drawing_svg.html) · [`dxf_entities`](https://furuse.work/ops/optics/drawing/dxf_entities.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`lens_element_drawing`](https://furuse.work/ops/optics/drawing/lens_element_drawing.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`tolerance_analysis`](https://furuse.work/ops/optics/design/tolerance_analysis.html) · [`vision_layout`](https://furuse.work/ops/optics/scene/vision_layout.html) · [`vision_setup_drawing`](https://furuse.work/ops/optics/drawing/vision_setup_drawing.html)
+
+## No.2026.244 —— Counting Interreflection in a Machined Pocket to Convergence — The Direct-Light Model Fits with Albedo 1.32, the Converged Model Returns the Truth
+
+[![Counting Interreflection in a Machined Pocket to Convergence — The Direct-Light Model Fits with Albedo 1.32, the Converged Model Returns the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals.png)
+
+*↑ **Counting Interreflection in a Machined Pocket to Convergence — The Direct-Light Model Fits with Albedo 1.32, the Converged Model Returns the Truth** ―― In a concave part such as a machined pocket, light reflected by one wall lights the floor (interreflection). The inspection renderer render_optscene counts direct light only, and render_studio, which solves interreflection, has no meaningful absolute brightness. Seven new ops (radiosity3d, category radiosity of opsoptics) add render_optscene_gi: the same scene and lights, the direct photometry kept to 1e-16, plus n bounces or the converged sum (Cohen et al. 1988 progressive radiosity, stopped on the residual unshot energy, our choice since the paper gives no number). In a pocket of albedo 0.7, 48 % of the floor's brightness is interreflection. Calibrating albedo and light intensity with simcal: the direct-only model fits with albedo 1.32 (more light out than in), chi^2/nu 24 and four structured residual components, and is rejected; one bounce gives 0.87 and chi^2/nu 7.9; the converged model returns 0.6996 / 0.9999 (truth 0.70 / 1.00), chi^2/nu 1.01 and white residuals. Seven bounces bring the remainder under the 1.3 % noise (observed ratio 0.51, a GCI-style estimate trusted only in the asymptotic range). Howell's catalogue values 0.199825 / 0.200044 are reproduced in closed form and numerically, and Table 2 of Bulczak, Lambers and Kolb 2018 (Sensors, CC BY 4.0: one bounce cuts the measured error to 0.20-0.47 of direct-only) is set beside this PoC's 0.53.*
+
+[![同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_opt](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders.png)
+
+*↑ The measurement ―― 同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_optscene_gi は render_optscene と 1e-12 以内で一致する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![直接光だけのモデルの残差の主成分(simcal_discrepancy)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/03_discrepancy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/03_discrepancy.png)
+
+*↑ 直接光だけのモデルの残差の主成分(simcal_discrepancy)。*
+
+[![反射を k 回まで数えた像の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/04_bounces_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/04_bounces.png)
+
+*↑ 反射を k 回まで数えた像の誤差。*
+
+[![反射の回数だけでなく、パッチの細かさも収束させる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/05_mesh_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/05_mesh.png)
+
+*↑ 反射の回数だけでなく、パッチの細かさも収束させる。*
+
+[![3 つのモデルを同じ観測(ポケット + 反射率 0.5 の基準の板)に合わせた結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/06_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/06_calibration.png)
+
+*↑ 3 つのモデルを同じ観測(ポケット + 反射率 0.5 の基準の板)に合わせた結果。*
+
+```
+py -3.11 examples/poc_pocket_interreflection.py
+```
+
+Source: [examples/poc_pocket_interreflection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pocket_interreflection)
+
+Ops used (notes): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`form_factor_matrix`](https://furuse.work/ops/optics/radiosity/form_factor_matrix.html) · [`form_factor_parallel_rects`](https://furuse.work/ops/optics/radiosity/form_factor_parallel_rects.html) · [`form_factor_perpendicular_rects`](https://furuse.work/ops/optics/radiosity/form_factor_perpendicular_rects.html) · [`form_factor_polygons`](https://furuse.work/ops/optics/radiosity/form_factor_polygons.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`optical_camera`](https://furuse.work/ops/optics/scene/optical_camera.html) · [`radiosity_patches`](https://furuse.work/ops/optics/radiosity/radiosity_patches.html) · [`radiosity_progressive_3d`](https://furuse.work/ops/optics/radiosity/radiosity_progressive_3d.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`render_optscene_gi`](https://furuse.work/ops/optics/radiosity/render_optscene_gi.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_difference`](https://furuse.work/ops/optics/scene/scene_difference.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`scene_plane`](https://furuse.work/ops/optics/scene/scene_plane.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3309,
- "n_notes": 3315,
+ "n_ops": 3316,
+ "n_notes": 3322,
  "notes": {
   "vol_dilate": [
    {
@@ -28643,6 +28643,73 @@
     "in": "jones",
     "out": "stokes",
     "path": "docs/ops/optics/polarization/stokes_from_jones.md"
+   }
+  ],
+  "form_factor_matrix": [
+   {
+    "op": "form_factor_matrix",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table",
+    "out": "matrix",
+    "path": "docs/ops/optics/radiosity/form_factor_matrix.md"
+   }
+  ],
+  "form_factor_parallel_rects": [
+   {
+    "op": "form_factor_parallel_rects",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_parallel_rects.md"
+   }
+  ],
+  "form_factor_perpendicular_rects": [
+   {
+    "op": "form_factor_perpendicular_rects",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_perpendicular_rects.md"
+   }
+  ],
+  "form_factor_polygons": [
+   {
+    "op": "form_factor_polygons",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "points × points",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_polygons.md"
+   }
+  ],
+  "radiosity_patches": [
+   {
+    "op": "radiosity_patches",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/radiosity_patches.md"
+   }
+  ],
+  "radiosity_progressive_3d": [
+   {
+    "op": "radiosity_progressive_3d",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/radiosity_progressive_3d.md"
+   }
+  ],
+  "render_optscene_gi": [
+   {
+    "op": "render_optscene_gi",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/render_optscene_gi.md"
    }
   ],
   "airy_radius_um": [

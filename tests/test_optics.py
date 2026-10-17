@@ -898,7 +898,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
     # 2026-10-15: itof(間接 ToF、itof)8 op を新しい族として追加(293 → 301)。
-    assert len(opsoptics.OPSOPTICS) == 301
+    # 2026-10-15: radiosity(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画、radiosity3d)7 op を新しい族として追加(301 → 308)。
+    assert len(opsoptics.OPSOPTICS) == 308
+    assert len(opsoptics.list_ops("radiosity")) == 7
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
@@ -922,7 +924,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "itof", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
-        "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
+        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、
@@ -934,7 +936,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
                      ("mirror", "glassmirror"), ("glassbody", "glassmirror"),
                      ("finish", "metalfinish"), ("material", "surfacelib"),
                      ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent"),
-                     ("shape_from_polarization", "sfpolar"), ("light_transport", "lighttransport")):
+                     ("shape_from_polarization", "sfpolar"), ("light_transport", "lighttransport"),
+                     ("radiosity", "radiosity3d")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

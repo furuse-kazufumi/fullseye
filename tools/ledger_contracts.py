@@ -294,6 +294,29 @@ def _optics_kit():
     return OS, cam, scene, light
 
 
+def _gi_kit():
+    """A small Lambertian pocket (box minus box) on a black stage, a binned camera and a dome (radiosity3d)."""
+    import illumdesign
+    import optscene as OS
+    m = OS.scene_material("lambert", albedo=0.7)
+    scene = [OS.scene_difference(OS.scene_box((0.0, 0.0, 4.0), (8.0, 6.0, 4.0), m),
+                                 OS.scene_box((0.0, 0.0, 7.0), (5.0, 3.0, 4.0))),
+             OS.scene_plane(0.0, OS.scene_material("lambert", albedo=0.0))]
+    cam = OS.optical_camera(focal_mm=12.0, pixel_um=200.0, resolution=(24, 24), working_distance_mm=120.0)
+    light = illumdesign.light_source(kind="dome", radius_mm=50.0, n=8)
+    return scene, cam, light
+
+
+def _gi_patches(patch_mm=3.0):
+    import radiosity3d
+    return radiosity3d.radiosity_patches(scene=_gi_kit()[0], patch_mm=patch_mm, outer_mm=4.0)
+
+
+def _gi_emission(patches):
+    import numpy as np
+    return np.where(np.abs(patches["centers"][:, 2] - 3.0) < 1e-9, 1.0, 0.2)
+
+
 def _cone_light():
     import illumdesign
     return illumdesign.solid_angle_light(4.0, tilt_deg=1.0)
@@ -467,6 +490,19 @@ def _optics_builders():
         "oct_dispersion_compensate": lambda pool, rng: ([_oct_it(True)], {"a2": 20.0, "a3": 2.0}),
         "oct_ascan": lambda pool, rng: ([_oct_it(True)], {}),
         "oct_bscan": lambda pool, rng: ([_oct_bs()], {}),
+        # 3-D ラジオシティ(radiosity3d、2026-10-15): パッチの組は kind の印つきの表なので、箱のポケットから作る
+        "form_factor_parallel_rects": lambda pool, rng: ([], {"a": 2.0, "b": 1.5, "c": 1.0}),
+        "form_factor_perpendicular_rects": lambda pool, rng: ([], {"h": 1.5, "w": 0.8, "length": 1.2}),
+        "form_factor_polygons": lambda pool, rng: (
+            [[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]],
+             [[0.3, 0.2, 1.0], [1.3, 0.2, 1.0], [1.3, 1.2, 1.0], [0.3, 1.2, 1.0]]], {"n_quad": 4}),
+        "radiosity_patches": lambda pool, rng: ([], {"scene": _gi_kit()[0], "patch_mm": 3.0, "outer_mm": 4.0}),
+        # 細かいパッチ(1 mm)で遠い対を作る —— far_ratio が効く入力
+        "form_factor_matrix": lambda pool, rng: ([_gi_patches(1.0)], {"n_quad": 2}),
+        "radiosity_progressive_3d": lambda pool, rng: (
+            [_gi_patches(), _gi_emission(_gi_patches())], {"tol": 1e-6}),
+        "render_optscene_gi": lambda pool, rng: (
+            [_gi_kit()[0], _gi_kit()[1], [_gi_kit()[2]]], {"patch_mm": 3.0, "outer_mm": 4.0, "study_bounces": 3}),
         # 境界の入力(しきい値 4 本がそれぞれ判定を変える)。本数は指定しない —— 指定すると変種は拒否で終わり、
         # ノブの効き目が測れない(拒否は探針では「呼べなかった」と数えられる)
         "oct_layer_thickness": lambda pool, rng: ([_oct_edge_ascan()], {"n_group": 1.55}),

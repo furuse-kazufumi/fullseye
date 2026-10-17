@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 70 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 71 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -127,6 +127,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 把多重反射、多重散射和迭代算到收斂 —— 回傳收斂的證據和剩餘誤差，不收斂就不給數值: [說明](../../capabilities/convergent-forward-models.md) _(ja)_ · 範例 [converge_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/converge_tour.py)
 - 光纖與光導(玻璃色散 → LP 模 → 模場直徑 → 照明效率): [說明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 範例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻): [說明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 範例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+- 在保持光度真值的同時把凹形零件的相互反射計算到收斂(三維形狀因子、漸進輻射度、含多次反射的檢測用渲染): [說明](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 範例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - 用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 83 種，一次文獻的係數與數表，玻璃目錄匯入口）: [說明](../../capabilities/material-optical-property-library.md) _(ja)_ · 範例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數): [說明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 範例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 計算光的反射、折射與干涉: [說明](../../capabilities/optics-and-materials.md) _(ja)_ · 範例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -181,7 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 243 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -243,7 +244,7 @@ PoC 243 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (47)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (48)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -292,6 +293,7 @@ PoC 243 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="遠心鏡頭與尺寸量測" width="200" height="200"><b>&#9654;</b><span>遠心鏡頭與尺寸量測</span></a>
 <a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="間接 ToF(折返與多路徑)" width="200" height="200"><b>&#9654;</b><span>間接 ToF(折返與多路徑)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光學系統圖面(截面圖、配置圖、製造圖)" width="200" height="200"><span>光學系統圖面(截面圖、配置圖、製造圖)</span></a>
+<a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收斂" width="200" height="200"><span>加工凹槽的相互反射算到收斂</span></a>
 </div>
 </details>
 

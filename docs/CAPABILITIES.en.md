@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 70 capabilities**
+**Currently 71 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -36,6 +36,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
+| [Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -440,7 +441,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (15)
+## Light and colour (16)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -497,6 +498,18 @@ Pipeline: [`solid_angle_light`](ops/optics/illumination/solid_angle_light.md) �
 Alternatives: [`light_source`](ops/optics/illumination/light_source.md), [`defect_contrast`](ops/optics/illumination/defect_contrast.md), [`lighting_sweep`](ops/optics/illumination/lighting_sweep.md), [`illumination_design`](ops/optics/illumination/illumination_design.md), [`micro_normals`](ops/optics/finish/micro_normals.md), [`blast_normals`](ops/optics/finish/blast_normals.md)
 
 Runnable: `poc_illumination_cone_vs_na`
+
+### [Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)](capabilities/interreflection-to-convergence.md)
+
+Seven ops in `radiosity3d` (category `radiosity` of `opsoptics`). `render_optscene_gi` takes the scene, camera and lights of `render_optscene`, keeps its direct photometry exactly (zero bounces reproduce `render_optscene`), and adds Lambertian interreflection — `k` bounces as a Neumann partial sum or the converged sum by progressive radiosity (Cohen et al. 1988) — returning the image, the direct image, their difference (the interreflection map), the convergence evidence (residual unshot energy, shots, converged) and a bounce study (observed ratio of successive increments, a GCI-style estimate trusted in the asymptotic range, the bounce count that brings the remainder under a tolerance). The building blocks: Howell's closed forms C-11 and C-14, numerical view factors between flat convex polygons, patch sets from a scene or from polygons, the all-pairs view-factor matrix with occlusion, and the progressive solver whose stopping rule (residual energy below `tol` of the initial) is stated as our choice.
+
+Operators: `form_factor_parallel_rects`, `form_factor_perpendicular_rects`, `form_factor_polygons`, `radiosity_patches`, `form_factor_matrix`, `radiosity_progressive_3d`, `render_optscene_gi`
+
+Pipeline: [`radiosity_patches`](ops/optics/radiosity/radiosity_patches.md) → [`form_factor_matrix`](ops/optics/radiosity/form_factor_matrix.md)
+
+Alternatives: [`render_optscene_gi`](ops/optics/radiosity/render_optscene_gi.md), [`radiosity_progressive_3d`](ops/optics/radiosity/radiosity_progressive_3d.md), [`render_optscene`](ops/optics/scene/render_optscene.md), [`render_studio`](ops/optics/scene/render_studio.md), [`transport_matrix_radiosity`](ops/optics/light_transport/transport_matrix_radiosity.md), [`form_factors_2d`](ops/optics/light_transport/form_factors_2d.md)
+
+Runnable: `poc_pocket_interreflection`
 
 ### [One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)](capabilities/material-optical-property-library.md)
 

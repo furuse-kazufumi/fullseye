@@ -1,4 +1,4 @@
-# OPTICS operator help — 301 ops in 34 categories
+# OPTICS operator help — 308 ops in 35 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -121,6 +121,10 @@
 ### polarization (10)
 
 [jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_checks](polarization/mueller_checks.md) · [mueller_element](polarization/mueller_element.md) · [mueller_from_intensities](polarization/mueller_from_intensities.md) · [polarization_demosaic](polarization/polarization_demosaic.md) · [polarization_demosaic_color](polarization/polarization_demosaic_color.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
+
+### radiosity (7)
+
+[form_factor_matrix](radiosity/form_factor_matrix.md) · [form_factor_parallel_rects](radiosity/form_factor_parallel_rects.md) · [form_factor_perpendicular_rects](radiosity/form_factor_perpendicular_rects.md) · [form_factor_polygons](radiosity/form_factor_polygons.md) · [radiosity_patches](radiosity/radiosity_patches.md) · [radiosity_progressive_3d](radiosity/radiosity_progressive_3d.md) · [render_optscene_gi](radiosity/render_optscene_gi.md)
 
 ### scene (44)
 

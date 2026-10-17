@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_renders.png",
+  "name": "renders",
+  "caption": "同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_optscene_gi は render_optscene と 1e-12 以内で一致する。",
+  "shape": [
+   670,
+   606,
+   3
+  ]
+ },
+ {
+  "file": "02_residuals.png",
+  "name": "residuals",
+  "caption": "合わせた後の残差(雑音の σ で割った値、±8 σ で塗った)。直接光だけのモデルは反射率 1.32(1 を超える = 当てた光より多く返す面)で合い、中央は足りず壁際は出すぎる山形が残る。1 回反射は 0.87 で、山は低いがまだ残る。収束解は 0.700(真値 0.70)で、残差は雑音と区別できない。",
+  "shape": [
+   256,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "03_discrepancy.png",
+  "name": "discrepancy",
+  "caption": "直接光だけのモデルの残差の主成分(simcal_discrepancy)。雑音の Tracy-Widom 99 % の線を超える 成分が 4 本あり、第 1 成分は左右の壁と中央の差、第 2 成分は上下の壁と中央の差 —— 壁からの距離で変わる明るさ、つまりモデルに足りない相互反射の形を指す(画素は 6 倍に拡大)。",
+  "shape": [
+   256,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "04_bounces.png",
+  "name": "bounces",
+  "caption": "反射を k 回まで数えた像の誤差。等比級数なので直線に乗り、隣り合う増分の比(観測収束比)は 0.51。GCI 型の見積もり 1.25·Δg/(1 − g) は実際の差のすぐ上にあり、雑音の線(1.32 %)を下回るのは 7 回目から。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_mesh.png",
+  "name": "mesh",
+  "caption": "反射の回数だけでなく、パッチの細かさも収束させる。ポケットの内側のパッチを細かくすると、細かい真値(0.5 mm)との差が減る。較正には 1.0 mm を使った。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_calibration.png",
+  "name": "calibration",
+  "caption": "3 つのモデルを同じ観測(ポケット + 反射率 0.5 の基準の板)に合わせた結果。",
+  "shape": [
+   152,
+   563,
+   3
+  ],
+  "csv": "06_calibration.csv",
+  "tsv": "06_calibration.tsv"
+ },
+ {
+  "file": "07_bulczak.png",
+  "name": "bulczak",
+  "caption": "実測の凹形状 3 種 x 材料 2 種で、1 回反射を足すと距離の誤差が 0.20〜0.47 倍になる(論文の表 2、数値は改変なし)。本 PoC の強度画像では 0.53 倍。出典: D. Bulczak, M. Lambers, A. Kolb, Quantified, Interactive Simulation of AMCW ToF Camera Including Multipath Effects, Sensors 18(1):13 (2018), doi:10.3390/s18010013, (c) 2017 the authors, CC BY 4.0 (creativecommons.org/licenses/by/4.0) - Table 2 MAE values quoted unchanged; ratios computed here",
+  "shape": [
+   248,
+   500,
+   3
+  ],
+  "csv": "07_bulczak.csv",
+  "tsv": "07_bulczak.tsv"
+ }
+]

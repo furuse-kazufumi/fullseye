@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 70 項目**
+**収録 71 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -35,6 +35,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
+| [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
@@ -519,7 +520,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (15)
+## 光と色 (16)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -592,6 +593,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 円錐の半角 α は照明の開口(絞り)の半径と照明レンズの焦点距離から α = atan(r/f)、観察の半角 β は物体側 NA の asin。境界 |α − β|/2・(α + β)/2 は鏡面の傾きの角度なので尺度の校正は要らないが、α と β の実測(光源像の大きさ・レンズの NA)が要る。
 
 動く例: `poc_illumination_cone_vs_na`
+
+### [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md)
+
+`render_optscene` は検査用の描画で、実在の照明器具を物理単位で置いて**直接光だけ**を数えます(測光に根拠があり、真値と突き合わせられる)。`render_studio` は多重反射まで解きますが、明るさの絶対値に意味がありません。加工ポケット・内角・箱の隅のような凹んだ部品では、向かいの壁で反射した光が底を照らすので、直接光だけのモデルを実写に合わせると、その分が反射率や照明の強さに**吸収されて、もっともらしく合ってしまいます**。
+
+使う op: `form_factor_parallel_rects`, `form_factor_perpendicular_rects`, `form_factor_polygons`, `radiosity_patches`, `form_factor_matrix`, `radiosity_progressive_3d`, `render_optscene_gi`
+
+推奨パイプライン: [`radiosity_patches`](ops/optics/radiosity/radiosity_patches.md) → [`form_factor_matrix`](ops/optics/radiosity/form_factor_matrix.md)
+
+代替: [`render_optscene_gi`](ops/optics/radiosity/render_optscene_gi.md), [`radiosity_progressive_3d`](ops/optics/radiosity/radiosity_progressive_3d.md), [`render_optscene`](ops/optics/scene/render_optscene.md), [`render_studio`](ops/optics/scene/render_studio.md), [`transport_matrix_radiosity`](ops/optics/light_transport/transport_matrix_radiosity.md), [`form_factors_2d`](ops/optics/light_transport/form_factors_2d.md)
+
+限界: Lambert(完全拡散)だけ。シーンは箱・箱をくり抜いたポケット・有限の板(球・円筒・鏡面・加工目・欠陥は拒否)。パッチ内のラジオシティは一様で、画素の相互反射は点 → 多角形の閉形式で集め直す(遮蔽はパッチ中心への光線 1 本)。
+
+実寸校正: 照明の強さは線形に効き、幾何(形態係数・画素とパッチの対応)はシーンの形・カメラ・パッチの大きさの SHA-256 で使い回すので、反射率と照明の強さを動かす較正の繰り返しではラジオシティだけを解き直す。
+
+動く例: `poc_pocket_interreflection`
 
 ### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 

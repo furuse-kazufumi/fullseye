@@ -1,0 +1,8 @@
+形状	材料	直接光だけ MAE	1 回反射込み MAE	比
+Corner	#1	0.0885	0.0238	0.27
+Corner	#5	0.0884	0.0200	0.23
+CornerCube	#1	0.0728	0.0194	0.27
+CornerCube	#5	0.0688	0.0138	0.20
+CornerCubeShifted	#1	0.0846	0.0396	0.47
+CornerCubeShifted	#5	0.0777	0.0342	0.44
+本 PoC(強度)	反射率 0.7	706.4 DN	374.6 DN	0.53

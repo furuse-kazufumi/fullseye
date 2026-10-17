@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **133 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1220,7 +1220,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 47 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 48 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2895,6 +2895,42 @@ py -3.11 examples/poc_optics_drawings.py
 この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_optics_drawings)
 
 使用 op(ノートへ): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`drawing_dxf`](https://furuse.work/ops/optics/drawing/drawing_dxf.html) · [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`drawing_svg`](https://furuse.work/ops/optics/drawing/drawing_svg.html) · [`dxf_entities`](https://furuse.work/ops/optics/drawing/dxf_entities.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`lens_element_drawing`](https://furuse.work/ops/optics/drawing/lens_element_drawing.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`tolerance_analysis`](https://furuse.work/ops/optics/design/tolerance_analysis.html) · [`vision_layout`](https://furuse.work/ops/optics/scene/vision_layout.html) · [`vision_setup_drawing`](https://furuse.work/ops/optics/drawing/vision_setup_drawing.html)
+
+## No.2026.244 —— 加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る
+
+[![加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals.png)
+
+*↑ **加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る** ―― 加工ポケットのような凹んだ部品では、向かいの壁で反射した光が底を照らす(相互反射)。直接光だけの検査用描画 render_optscene はそれを数えず、多重反射を解く render_studio は明るさの絶対値に意味が無かった。新 op 7 本(radiosity3d)の render_optscene_gi は、同じシーン・同じ照明のまま直接光の測光を 1e-16 で保ち、反射を n 回か収束まで(Cohen ら 1988 の漸進 ラジオシティ)足す。反射率 0.7 のポケットでは底の明るさの 48 % が相互反射。simcal で反射率と照明の強さを合わせると、直接光だけの モデルは反射率 1.32(エネルギー保存に反する)で合い、χ²/ν 24・残差 PCA 4 成分で不合格、1 回反射は 0.87 で χ²/ν 7.9、収束解は 0.6996 / 0.9999(真値 0.70 / 1.00)で χ²/ν 1.01・残差は白色。反射は 7 回数えれば雑音(1.3 %)に埋もれる(観測収束比 0.51、GCI 型の見積もり)。Howell の表の形態係数 0.199825 / 0.200044 を閉形式と数値の両方で再現し、実測の論文(Bulczak ら 2018、CC BY 4.0)の表 2 —— 1 回反射を足すと誤差 0.20〜0.47 倍 —— と、本 PoC の 0.53 倍を並べた。*
+
+[![同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_opt](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/01_renders.png)
+
+*↑ 測定の図 ―― 同じシーン・同じドーム照明・同じカメラで、直接光だけの検査用描画(左上)と、反射を収束まで数えた描画(右上)。ポケットの底は相互反射で平均 48 % 明るく、角ほど強い(右下は像に占める相互反射の割合)。反射 0 回の render_optscene_gi は render_optscene と 1e-12 以内で一致する。*
+
+[![直接光だけのモデルの残差の主成分(simcal_discrepancy)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/03_discrepancy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/03_discrepancy.png)
+
+*↑ 直接光だけのモデルの残差の主成分(simcal_discrepancy)。*
+
+[![反射を k 回まで数えた像の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/04_bounces_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/04_bounces.png)
+
+*↑ 反射を k 回まで数えた像の誤差。*
+
+[![反射の回数だけでなく、パッチの細かさも収束させる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/05_mesh_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/05_mesh.png)
+
+*↑ 反射の回数だけでなく、パッチの細かさも収束させる。*
+
+[![3 つのモデルを同じ観測(ポケット + 反射率 0.5 の基準の板)に合わせた結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/06_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/06_calibration.png)
+
+*↑ 3 つのモデルを同じ観測(ポケット + 反射率 0.5 の基準の板)に合わせた結果。*
+
+```
+py -3.11 examples/poc_pocket_interreflection.py
+```
+
+ソース: [examples/poc_pocket_interreflection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pocket_interreflection)
+
+使用 op(ノートへ): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`form_factor_matrix`](https://furuse.work/ops/optics/radiosity/form_factor_matrix.html) · [`form_factor_parallel_rects`](https://furuse.work/ops/optics/radiosity/form_factor_parallel_rects.html) · [`form_factor_perpendicular_rects`](https://furuse.work/ops/optics/radiosity/form_factor_perpendicular_rects.html) · [`form_factor_polygons`](https://furuse.work/ops/optics/radiosity/form_factor_polygons.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`optical_camera`](https://furuse.work/ops/optics/scene/optical_camera.html) · [`radiosity_patches`](https://furuse.work/ops/optics/radiosity/radiosity_patches.html) · [`radiosity_progressive_3d`](https://furuse.work/ops/optics/radiosity/radiosity_progressive_3d.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`render_optscene_gi`](https://furuse.work/ops/optics/radiosity/render_optscene_gi.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_difference`](https://furuse.work/ops/optics/scene/scene_difference.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`scene_plane`](https://furuse.work/ops/optics/scene/scene_plane.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
