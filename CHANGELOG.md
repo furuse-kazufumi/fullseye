@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — PoC「実物の画像の誤差から薄膜の模型の係数を合わせる」(sim-to-real 較正の最初の実データ適用、収蔵番号 2026.243 は仮番)
+- `examples/poc_simcal_thin_film.py`(16 門、図 9 枚): 計画(L18・Morris・共線性指数)→ 決まるつまみだけ較正 → 同定性・過適合の門・残差 PCA。公開の実測(Schwarz ら 2024、CC BY 4.0、`data/thin_film_real/` を共用)で膜厚のプロファイル 95 % 区間 [94.6, 99.0] nm が基準 98.5 nm を含み、直入射・材料表の n の模型(区間 [93.02, 93.07] nm)は絶対の χ² の門で拒否。実物の顕微鏡写真では色温度と周辺減光だけが決まり、膜厚・屈折率・利得・ガンマは組み合わせ。n を固定したカメラ較正(−12 %)は絶対の χ² と残差 PCA が拒否。op 本体(simcal・multivar・filmoptics)は変えていない。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。

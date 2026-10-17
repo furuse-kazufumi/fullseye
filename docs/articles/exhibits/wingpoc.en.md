@@ -5830,7 +5830,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 18 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 19 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -6463,6 +6463,42 @@ Source: [examples/poc_public_camera_heading_real.py](https://github.com/furuse-k
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_public_camera_heading_real)
 
 Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`camera_orientation_from_sun_candidates`](https://furuse.work/ops/geocam/sun/camera_orientation_from_sun_candidates.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`sun_position`](https://furuse.work/ops/geocam/sun/sun_position.html)
+
+## No.2026.243 —— Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine
+
+[![Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png)
+
+*↑ **Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine** ―― Fit the coefficients of a thin-film forward model to real images, and give no number to a coefficient the data do not determine (sim-to-real calibration with the `simcal` ops, planned and screened with `multivar`). Model: transfer matrix (`filmoptics`) x black-body illuminant (`spectralrad`) x CIE 1931 to sRGB x gain, gamma and vignetting. Planning: seven knobs on an L18 array; Morris screening puts illumination x gain into one combination (sensitivity ratio 1.0000) and a 500 nm film seen at one wavelength fixes only A^1 d^0.93 (optical path n d); for the 98 nm film the interface reflectance dominates and the exponent departs from n d, stated. Core, public measured data (Schwarz et al. 2024, CC BY 4.0): fitting thickness, Cauchy A and B, NA and gain to the 100 % coverage microspectroscopy gives no point estimate (local collinearity gamma > 10) but a 95 % profile-likelihood interval of [94.6, 99.0] nm (width 4.4 nm) that contains the paper's 98.5 nm reference; the noise comes from a separate measurement (bare silicon) and all six over-fitting gates pass on held-out wavelengths. The normal-incidence model with the table index gives a narrow [93.02, 93.07] nm that misses the reference and is rejected by the absolute chi-square gate (chi2/nu 1.98). On the real micrograph only the colour temperature and the vignetting are determined; thickness, index, dispersion, gain and gamma are combinations - a point versus grooves in the chi-square landscape. Fixing the index gives d = 86.65 nm within 0.2 nm but 12 % low, and the absolute gate (chi2/nu 11.7) and the residual PCA (two components) reject it: the camera's spectral sensitivities are missing from the model. Synthetic: 40 of 40 seeds within 3 CRLB; the residual PCA finds a dispersion-free model at 500 nm and four angles. Honest limit: a constant index with free A is not rejectable on a 98 nm film (B has only an upper limit). Four probes flip the gates. Nothing learned, 16 gates.*
+
+[![Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits.png)
+
+*↑ The measurement ―― Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測定から)で割ると見える(次の図)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals.png)
+
+*↑ 豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。*
+
+[![膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness.png)
+
+*↑ 膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。*
+
+[![実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z.png)
+
+*↑ 実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。*
+
+[![材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration.png)
+
+*↑ 材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。*
+
+```
+py -3.11 examples/poc_simcal_thin_film.py
+```
+
+Source: [examples/poc_simcal_thin_film.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_simcal_thin_film.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_thin_film)
+
+Ops used (notes): [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`doe_decode`](https://furuse.work/ops/multivar/coding/doe_decode.html) · [`doe_orthogonal_array`](https://furuse.work/ops/multivar/plan/doe_orthogonal_array.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`mv_confounding`](https://furuse.work/ops/multivar/identifiability/mv_confounding.html) · [`mv_pca`](https://furuse.work/ops/multivar/analysis/mv_pca.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_report`](https://furuse.work/ops/simcal/report/simcal_report.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_uncertainty`](https://furuse.work/ops/simcal/check/simcal_uncertainty.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 

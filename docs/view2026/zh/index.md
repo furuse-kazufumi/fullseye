@@ -179,7 +179,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 243 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -315,8 +315,9 @@ PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>几何与标定</b> (18)</summary>
+<details class="vall"><summary><b>几何与标定</b> (19)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_thin_film.jpg" alt="用真实图像标定薄膜模型(可确定的系数与无法确定的组合)" width="200" height="200"><span>用真实图像标定薄膜模型(可确定的系数与无法确定的组合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="相机标定" width="200" height="200"><b>&#9654;</b><span>相机标定</span></a>
 <a href="../../articles/assets/poc/poc_panorama_drift/05_chain_drift_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_panorama_drift.jpg" alt="全景漂移" width="200" height="200"><b>&#9654;</b><span>全景漂移</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_depth/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stereo_depth.jpg" alt="实拍立体视觉" width="200" height="200"><span>实拍立体视觉</span></a>

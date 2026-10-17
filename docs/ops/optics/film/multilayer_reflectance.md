@@ -4,7 +4,7 @@ dim: optics
 category: film
 in: 
 out: pairs
-examples: [poc_thin_film_reflectometry]
+examples: [poc_simcal_thin_film, poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

@@ -179,7 +179,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 242 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 243 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -315,8 +315,9 @@ PoC 242 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何與校正</b> (18)</summary>
+<details class="vall"><summary><b>幾何與校正</b> (19)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_thin_film.jpg" alt="以真實影像校正薄膜模型(可確定的係數與無法確定的組合)" width="200" height="200"><span>以真實影像校正薄膜模型(可確定的係數與無法確定的組合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="相機校正" width="200" height="200"><b>&#9654;</b><span>相機校正</span></a>
 <a href="../../articles/assets/poc/poc_panorama_drift/05_chain_drift_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_panorama_drift.jpg" alt="全景漂移" width="200" height="200"><b>&#9654;</b><span>全景漂移</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_depth/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stereo_depth.jpg" alt="實拍立體視覺" width="200" height="200"><span>實拍立體視覺</span></a>
