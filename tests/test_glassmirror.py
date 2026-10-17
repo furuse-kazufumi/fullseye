@@ -180,10 +180,12 @@ def test_prism_rejects_bad_apex():
 # --------------------------------------------------------------------------- #
 # 2026-10-14 金属の n,k を共通の材料表(materials)の実測の数表からも引く
 # --------------------------------------------------------------------------- #
-def test_default_metal_source_is_still_the_coarse_table():
-    n, k = G.metal_optical_constants("ag", 500.0)
+def test_default_metal_source_is_the_measured_table_and_the_coarse_one_stays():
+    """2026-10-15 に既定を実測の表へ替えた(粗い表は Cu ΔE*ab 8.3 / Au 6.6)。粗い表は選べば同じ値で出る。"""
+    n, k = G.metal_optical_constants("ag", 500.0, source="table")
     assert float(n) == pytest.approx(0.130) and float(k) == pytest.approx(2.920)
-    assert np.array_equal(G.metal_mirror_rgb("au"), G.metal_mirror_rgb("au", source="table"))
+    assert np.array_equal(G.metal_mirror_rgb("au"), G.metal_mirror_rgb("au", source="materials"))
+    assert not np.array_equal(G.metal_mirror_rgb("au"), G.metal_mirror_rgb("au", source="table"))
 
 
 def test_measured_metals_come_from_the_material_table():

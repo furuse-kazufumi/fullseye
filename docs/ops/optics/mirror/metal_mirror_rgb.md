@@ -13,16 +13,16 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # metal_mirror_rgb — OPTICS `mirror` op
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='table') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='table') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='materials') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='materials') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
 
 ## 使い方
 
 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
 
-metal: `METALS` のいずれか(source="materials" なら `MEASURED_METALS`)。
+metal: `MEASURED_METALS` のいずれか(source="table" なら `METALS`)。
 cos_i: 入射角の cos(スカラまたは配列)。
 samples: 380–780 nm を刻む点数。
-source: n,k の出どころ(`metal_optical_constants` と同じ。既定は粗い表)。
+source: n,k の出どころ(`metal_optical_constants` と同じ。既定は実測の表 "materials")。
 
 返り値: cos_i の形 + 末尾 3 の線形 sRGB。**色を塗っていない**ので、金が黄色いのも
 銀が中性なのも表の n,k から出る(テストで R>G>B の順序と銀の中性を固定)。

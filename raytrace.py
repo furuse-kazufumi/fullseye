@@ -269,8 +269,18 @@ def refractive_index(medium, wavelength_um=WL_D):
     :func:`glass` or :func:`sellmeier`, or a catalogue name (:func:`glass_catalog`,
     which also reaches every transparent material of ``materials``).
     Air (1.0) and vacuum are returned unchanged.
+
+    A ``(nd, vd)`` pair (and a Cauchy dict ``{"A", "B"}`` from :func:`glass`) is
+    the two-term Cauchy curve n = A + B/λ² through the d line with the
+    F–C dispersion. It is only declared for **0.40–0.80 µm** and raises
+    ``ValueError`` outside: against the catalogue Sellmeier curves it is off by
+    +0.0057 for a borosilicate crown (n_d 1.5168, V_d 64.2) at 1.55 µm and −0.017 for
+    a dense flint (n_d 1.785, V_d 25.7) at 0.365 µm (inside the range: up to 4e-4 for
+    the crown and 7e-3 for the dense flint at 0.40 µm). Outside the visible, name the
+    glass in the catalogue or pass a Sellmeier / material dict instead.
     """
     wl = _finite(wavelength_um, "wavelength_um", positive=True)
+    cauchy_range_um = (0.40, 0.80)          # (nd, vd) / Cauchy: the visible band around F, d and C only
     if isinstance(medium, str):
         medium = glass_catalog(medium)
     if isinstance(medium, dict) and "material" in medium:
@@ -299,10 +309,12 @@ def refractive_index(medium, wavelength_um=WL_D):
         if not (math.isfinite(n) and n >= 1.0):
             raise ValueError("Sellmeier index %.4g at %.4g um is below 1 or non-finite" % (n, wl))
         return float(n)
-    if isinstance(medium, dict) and "A" in medium:
-        return float(medium["A"] + medium["B"] / wl ** 2)
-    if isinstance(medium, (tuple, list)) and len(medium) == 2:
-        g = glass(*medium)
+    if (isinstance(medium, dict) and "A" in medium) or (isinstance(medium, (tuple, list)) and len(medium) == 2):
+        if not (cauchy_range_um[0] <= wl <= cauchy_range_um[1]):
+            raise ValueError("wavelength %.4g um is outside the (nd, vd) / Cauchy range %s um; that two-term "
+                             "curve drifts from the real glass outside the visible (e.g. +0.0057 for a borosilicate "
+                             "crown at 1.55 um) -- name the glass or give a Sellmeier / material dict" % (wl, cauchy_range_um))
+        g = medium if isinstance(medium, dict) else glass(*medium)
         return float(g["A"] + g["B"] / wl ** 2)
     n = _finite(medium, "index", positive=True)
     if n < 1.0:

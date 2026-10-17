@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: signal
-examples: [appearance_structural_colour, poc_thin_film_reflectometry, simcal_tour]
+examples: [appearance_structural_colour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,31 +13,43 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # thin_film_reflectance — OPTICS `appearance` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized') -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_reflectance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized', under_layers=()) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized', under_layers=()) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_reflectance")`)
 
 ## 使い方
 
-薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。
+薄膜(厚さ d、屈折率 n_film)の分光反射率。特性行列法の厳密解(多重反射をすべて含む)。
 
 nm:           波長 [nm] (配列可)。
-thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。
+thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。nm とブロードキャストできる
+              **配列も可**(膜厚の場。例 (H, W, 1) の膜厚と (K,) の波長 → (H, W, K))。
 n_film/n_sub: 膜 / 基板の屈折率。実数・**複素数 n + ik**(k ≥ 0、金属の基板や吸収膜)・
               **材料名**(共通の材料表 ``materials``、例 "TI" / "AL" / "SI" —— その波長の n,k を引く)・
-              nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
-n_out:        入射側の屈折率(実数か材料名、吸収なし)。
+              材料レコード(dict)・nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
 cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。
+n_out:        入射側の屈折率(実数か材料名、吸収なし)。
 polarization: "unpolarized"(既定、s と p の平均)/ "s" / "p"。
+under_layers: 膜と基板の間の層(入射側から順の ``[(屈折率, 厚さ nm), ...]``、屈折率は n_film と同じ書き方)。
+              空(既定)なら 1 層の膜。多層の AR 膜・誘電体ミラー・酸化膜の下の窒化膜などに。
 
-返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。
+返り値: 反射率 R(0–1)。nm・thickness_nm・cos_theta のブロードキャスト形。
 
-物理: 膜内の伝搬による位相 β = 2π ñ_film d cosθ̃_film / λ(複素の Snell で層の中の cosθ̃ を出す)。
-境界のフレネル係数を r1, r2 として R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²。λ/4 の奇数倍で反射が
-極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。膜厚 0 では R が
-基板単体のフレネル反射に一致する(テストで確認)。
+★符号の約束: 複素屈折率は N = n + ik、k ≥ 0。N = n − ik と書く文献の値は同じ k を正のまま渡す
+(虚部が負の入力は ValueError —— どちらの約束かを推測しない)。
+
+物理: 層ごとの特性行列 [[cos δ, −i sin δ / η], [−i η sin δ, cos δ]]、δ = 2π N d cosθ̃ / λ(複素の Snell で
+層の中の cosθ̃ を出し、減衰する枝を取る)、傾いた光学アドミッタンス η = N cosθ̃(s)/ N / cosθ̃(p)。
+1 層なら Airy の式 R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|² と同じ値になる(テストで別に書いた式と比べる)。
+λ/4 の奇数倍で反射が極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。
+膜厚 0 では R が基板単体のフレネル反射に一致する。計算は ``filmoptics`` の特性行列 1 か所で行う
+(``filmoptics.multilayer_reflectance`` と同じ関数)。
 
 ★2026-10-14: 以前は 3 つの屈折率を実数に限っていた(複素数は TypeError)。金属の基板を実数で近似すると
 (焼けたチタン 90 nm を n_sub = 2.6 で)反射率が 0.15〜0.19 と出て、Ti の n,k なら 0.35〜0.61(380〜780 nm)
 —— 色が別物になる、黙った誤り。いまは基板に "TI" と書けば材料表の n,k が入る。
+
+>>> r = thin_film_reflectance([450.0, 550.0, 650.0], 90.0, "TIO2_AMORPHOUS", "TI")
+>>> bool(r.min() > 0.3)
+True
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -69,7 +81,6 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [appearance_structural_colour](../../../../examples/appearance_structural_colour.py) — `py -3.11 examples/appearance_structural_colour.py`
-- [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
 - [simcal_tour](../../../../examples/simcal_tour.py) — `py -3.11 examples/simcal_tour.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

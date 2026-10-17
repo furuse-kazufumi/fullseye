@@ -77,6 +77,30 @@ def _key(name: str) -> str:
     return "_".join(str(name).strip().upper().split())
 
 
+def _index_of(spec, op: str, name: str = "refractive_index", wavelength_nm: float = WL_D * 1000.0):
+    """透明な媒質の屈折率の指定を実数 n にする(屈折率を数で受けていた op が材料名も受けるための入口)。
+
+    spec が材料名(別名可)かレコード dict なら、その材料の ``wavelength_nm``(既定は d 線 587.56 nm)での n を返す。
+    それ以外(数)は**そのまま返す** —— 数の検査は呼び手の今までの検査に任せる(後方互換、値は 1 ビットも変わらない)。
+    金属(class "metal")は ValueError: 透明な媒質の屈折率を求める op に金属の名前を渡すのは取り違え。
+    k が n の 1e-3 を超える(その波長で不透明に近い)材料も ValueError。表の範囲外も ValueError(外挿しない)。
+    """
+    if not isinstance(spec, (str, dict)):
+        return spec
+    rec = _record(spec, op)
+    if rec["class"] == "metal":
+        raise ValueError("%s: %s is a metal in the material table; %s needs a transparent medium"
+                         % (op, rec["name"], name))
+    w = float(wavelength_nm)
+    if not (np.isfinite(w) and w > 0.0):
+        raise ValueError("%s: wavelength_nm must be finite and > 0, got %r" % (op, wavelength_nm))
+    n, k = _nk(rec, np.array([w / 1000.0]), op)[:2]
+    if float(k[0]) > 1e-3 * float(n[0]):
+        raise ValueError("%s: %s absorbs at %.1f nm (k = %.3g); %s needs a transparent medium"
+                         % (op, rec["name"], w, float(k[0]), name))
+    return float(n[0])
+
+
 def _record(material, op: str) -> dict:
     """名前(別名可)かレコード dict を 1 レコードに解決する。無ければ ValueError。"""
     if isinstance(material, dict):

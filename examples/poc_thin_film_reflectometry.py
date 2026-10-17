@@ -13,7 +13,7 @@
      * Sánchez-Arriaga ら, Sensors 23, 5326 (2023), doi:10.3390/s23115326、データ 10.15131/shef.data.23285603:
        市販の SiO₂/Si 膜厚標準(公称 476.3 nm・198.7 nm)を安価な分光器 2 種 × 光源 3 種で測った反射率。
      裸の Si の実測と材料表の Si、膜厚(顕微分光・標準試料)、被覆率の読み返し、実物の写真からの画素ごとの膜厚。
-  1. **転送行列の検算**: 1 層は Airy の式(``matappear.thin_film_reflectance``、別実装)と、(HL)^N の鏡・λ/4 の AR 膜・
+  1. **転送行列の検算**: 1 層は Airy の式(この PoC に独立に書いた閉じた式)と、(HL)^N の鏡・λ/4 の AR 膜・
      吸収の無い積層の R + T = 1 は閉形式と、膜厚 0 は裸の Si の Fresnel と一致する。fail-closed。
   2. **縞の本数**: 帯域 λ₁〜λ₂ の縞の本数は閉形式 N = d·Δx、x = 2 n(λ)/λ。
   3. **ウェハの色見本**: 計算した干渉色を、公表の SiO₂ on Si の色表(Pliskin & Conrad 1964 の表の写し、TU Delft
@@ -123,6 +123,32 @@ def n_of(material, lam):
     return MT._nk(MT._record(material, "poc"), np.asarray(lam, float) / 1000.0, "poc")[0]
 
 
+def airy(lam, d, n1, n2, cos0, pol):
+    """1 層の Airy の式(N = n + ik、位相 e^{2iβ}、減衰の枝 Im(N cosθ) ≥ 0)。filmoptics と別に書いた検算用。
+
+    以前は matappear.thin_film_reflectance を別実装として使っていたが、2026-10-15 に両 op の計算を filmoptics の
+    特性行列 1 か所に寄せたので、ここに式を持つ(同じコードを両辺に入れた門は何も確かめない)。
+    """
+    s0 = math.sqrt(1.0 - cos0 * cos0)
+
+    def cs(n):
+        c = np.sqrt(1.0 - (s0 / n) ** 2 + 0j)
+        return np.where((n * c).imag < 0, -c, c)
+
+    c1, c2 = cs(n1), cs(n2)
+    if pol == "s":
+        r1, r2 = (cos0 - n1 * c1) / (cos0 + n1 * c1), (n1 * c1 - n2 * c2) / (n1 * c1 + n2 * c2)
+    else:
+        r1, r2 = (n1 * cos0 - c1) / (n1 * cos0 + c1), (n2 * c1 - n1 * c2) / (n2 * c1 + n1 * c2)
+    ph = np.exp(4j * np.pi * n1 * d * c1 / lam)
+    return np.abs((r1 + r2 * ph) / (1 + r1 * r2 * ph)) ** 2
+
+
+def nk_of(material, lam):
+    n, k = MT._nk(MT._record(material, "poc"), np.asarray(lam, float) / 1000.0, "poc")[:2]
+    return n + 1j * k
+
+
 def spectrum(d, **kw):
     return FO.multilayer_reflectance([("SIO2", float(d))], "SI", LO, HI, K, **kw)
 
@@ -138,13 +164,17 @@ def chapter_truth():
         for cos_t, pol in ((1.0, "unpolarized"), (0.7, "s"), (0.5, "p")):
             a = FO.multilayer_reflectance([("SIO2", d)], "SI", wavelengths_nm=lam,
                                           angle_deg=math.degrees(math.acos(cos_t)), polarization=pol)[:, 1]
-            b = MA.thin_film_reflectance(lam, d, "SIO2", "SI", cos_theta=cos_t, polarization=pol)
+            pols = ("s", "p") if pol == "unpolarized" else (pol,)
+            b = sum(airy(lam, d, nk_of("SIO2", lam), nk_of("SI", lam), cos_t, p) for p in pols) / len(pols)
             worst = max(worst, float(np.max(np.abs(a - b))))
         a = FO.multilayer_reflectance([("SIO2", d)], "TI", wavelengths_nm=lam, angle_deg=40.0)[:, 1]
-        b = MA.thin_film_reflectance(lam, d, "SIO2", "TI", cos_theta=math.cos(math.radians(40.0)))
+        c40 = math.cos(math.radians(40.0))
+        b = 0.5 * (airy(lam, d, nk_of("SIO2", lam), nk_of("TI", lam), c40, "s")
+                   + airy(lam, d, nk_of("SIO2", lam), nk_of("TI", lam), c40, "p"))
         worst = max(worst, float(np.max(np.abs(a - b))))
     NUMBERS["airy_worst"] = worst
-    gate("1 層は Airy の式(matappear、別実装)と一致: Si・Ti の基板、s/p/無偏光、斜入射", worst < 1e-12, "最大差 %.1e" % worst)
+    gate("1 層は Airy の式(この PoC に独立に書いた式)と一致: Si・Ti の基板、s/p/無偏光、斜入射", worst < 1e-12,
+         "最大差 %.1e" % worst)
     nH, nL, ns, N, lam0 = 2.3, 1.38, 1.52, 5, 550.0
     stack = [(nH, lam0 / 4 / nH), (nL, lam0 / 4 / nL)] * N
     R = float(FO.multilayer_reflectance(stack, ns, wavelengths_nm=[lam0])[0, 1])

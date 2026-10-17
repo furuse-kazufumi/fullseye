@@ -1,14 +1,22 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>法線マップ + 視線 → <b>薄膜干渉の色</b> (H, W, 3) の線形 sRGB。</p>
-<p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
-<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ(複素数・材料名も可。材料名は</p>
-<p>380〜720 nm を覆う表に限る —— 例 基板 &quot;TI&quot; / &quot;AL&quot;)。</p>
+<p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。</p>
+<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。</p>
+<p>thickness_nm: 膜厚 [nm]。スカラか <b>(H, W) の膜厚の場</b>(膜厚むら・くさび・塗りむら)。n_film / n_sub / n_out / polarization / under_layers: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ(複素数 n + ik・</p>
+<p>材料名・材料レコード・波長ごとの配列。材料名は <code style="color:#22d3bf">nm</code> の格子を覆う表に限る —— 例 基板 &quot;TI&quot; / &quot;AL&quot;)。</p>
 <p>strength: 全体の強さ。</p>
-<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
+<p>light: 面から光源への方向 (3,)。<b>None(既定)は一様な天空照明</b>: 解像された各面は視線の鏡像方向から来る光を</p>
+<p>返すので、入射角は cosθ = |n·v|(画素ごとに変わる)。ベクトルを渡すと<b>その光源の鏡面反射の色</b>:</p>
+<p>視線へ光を返す微小面の法線はハーフベクトル h = (l + v)/|l + v| なので、入射角は cosθ = |h·l|</p>
+<p>(同軸照明 l = v なら垂直入射)。明るさ(ハイライトの形)はここに入れない —— <code style="color:#22d3bf">ward_anisotropic</code> などを掛ける。</p>
+<p>nm: 波長の格子 [nm] (昇順、2 点以上)。None は 380〜720 nm の 69 点(<code style="color:#22d3bf">FILM_RGB_NM</code>)。材料表の範囲が</p>
+<p>これと重ならない材料(例 ルチルの &quot;TIO2&quot; は 430 nm から)は、その範囲の格子を渡す。</p>
+<p>illuminant: <code style="color:#22d3bf">nm</code> と同じ長さの光源の分光分布。None は D65(<code style="color:#22d3bf">spectrum_to_srgb</code> と同じ)。</p>
+<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。膜厚の場の形が法線マップと合わないときも ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

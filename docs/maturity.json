@@ -734,8 +734,8 @@
   },
   {
    "id": "material-optical-property-library",
-   "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)",
-   "title_en": "One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
+   "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)",
+   "title_en": "One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
    "category": "光と色",
    "note": "docs/capabilities/material-optical-property-library.md",
    "status": "validated-public-real-data",

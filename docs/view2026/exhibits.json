@@ -3248,13 +3248,13 @@
    "motion": true,
    "thumb_src": "01_abbe_diagram.png",
    "label": {
-    "ja": "材料の光学物性ライブラリ(83 種が同じ表から)",
-    "en": "A material optical-property library (83 materials, one table)",
-    "zh": "材料光学物性库（83 种材料共用一张表）",
-    "tw": "材料光學物性庫（83 種材料共用一張表）",
-    "ko": "재료 광학 물성 라이브러리(83종이 같은 표에서)",
-    "de": "Eine Bibliothek optischer Materialeigenschaften (83 Materialien, eine Tabelle)",
-    "hi": "material optical-property library (83 materials, एक table)"
+    "ja": "材料の光学物性ライブラリ(86 種が同じ表から)",
+    "en": "A material optical-property library (86 materials, one table)",
+    "zh": "材料光学物性库（86 种材料共用一张表）",
+    "tw": "材料光學物性庫（86 種材料共用一張表）",
+    "ko": "재료 광학 물성 라이브러리(86종이 같은 표에서)",
+    "de": "Eine Bibliothek optischer Materialeigenschaften (86 Materialien, eine Tabelle)",
+    "hi": "material optical-property library (86 materials, एक table)"
    }
   },
   {
@@ -5968,11 +5968,11 @@
     "hi": "स्रोत × वस्तु × sensor की spectral श्रृंखला (Planck, CIE A, LED, filter, Si QE)"
    },
    "material-optical-property-library": {
-    "zh": "用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）",
-    "tw": "用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 83 種，一次文獻的係數與數表，玻璃目錄匯入口）",
-    "ko": "재료의 광학 물성을 하나의 표로 조회(유리·결정·반도체·금속·액체·플라스틱 83종, 1차 문헌의 계수와 수표, 유리 카탈로그 가져오기)",
-    "de": "Eine Tabelle optischer Materialkonstanten (83 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import)",
-    "hi": "material optical constants की एक table (primary literature से 83 glasses, crystals, semiconductors, metals, liquids और plastics, glass-catalogue importer सहित)"
+    "zh": "用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 86 种，一次文献的系数与数表，玻璃目录导入口）",
+    "tw": "用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 86 種，一次文獻的係數與數表，玻璃目錄匯入口）",
+    "ko": "재료의 광학 물성을 하나의 표로 조회(유리·결정·반도체·금속·액체·플라스틱 86종, 1차 문헌의 계수와 수표, 유리 카탈로그 가져오기)",
+    "de": "Eine Tabelle optischer Materialkonstanten (86 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import)",
+    "hi": "material optical constants की एक table (primary literature से 86 glasses, crystals, semiconductors, metals, liquids और plastics, glass-catalogue importer सहित)"
    },
    "gw-interferometer-quantum-noise-and-matched-filter": {
     "zh": "用闭式设计干涉仪的腔、量子噪声预算与有色噪声中的已知波形（把引力波探测器的公式用于检测干涉仪、振动计与声发射）",

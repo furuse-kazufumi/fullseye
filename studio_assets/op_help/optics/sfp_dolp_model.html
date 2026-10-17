@@ -9,6 +9,7 @@
 <p><code style="color:#22d3bf">model=&quot;diffuse&quot;</code>: <code style="color:#22d3bf">(T_p - T_s) / (T_p + T_s)</code> for light scattered inside the body and refracted out through the surface. It rises monotonically from 0 to <code style="color:#22d3bf">(n^2 - 1)/(n^2 + 1)</code> at 90 degrees (0.385 for n = 1.5) — weaker, but one value has one angle.</p>
 <p>Returns a float64 array of the input&#x27;s shape (a 0-d array for a scalar).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: zenith outside <code style="color:#22d3bf">[0, 90]</code> or non-finite; *refractive_index* not a finite real <code style="color:#22d3bf">&gt; 1</code>; unknown *model*.</p>
+<p>*refractive_index* (here and in every op of this module) may also be a material name of the shared table <code style="color:#22d3bf">materials</code> (e.g. <code style="color:#22d3bf">&quot;N-BK7&quot;</code>, <code style="color:#22d3bf">&quot;PMMA&quot;</code>, <code style="color:#22d3bf">&quot;WATER&quot;</code>): its index at the d line (587.56 nm) is used. Metals and materials that absorb there are refused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

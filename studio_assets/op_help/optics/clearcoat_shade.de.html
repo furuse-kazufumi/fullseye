@@ -5,7 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Legt einen transparenten Klarlack über die Oberfläche (Autolack, Keramikglasur, glänzender Kunststoff).</p>
 <p>base_rgb: Grundfarbe (H,W,3) oder (3,). normals / light / view: wie oben.</p>
-<p>ior: Brechungsindex des Klarlacks (Klarlack ~1.5). coat: Stärke des Klarlacks (0–1).</p>
+<p>ior: Brechungsindex des Klarlacks (Klarlack ~1.5). Eine Zahl oder ein Name der Materialtabelle (z. B. &quot;PMMA&quot;; ein Name liefert n an der d-Linie, 587.56 nm).</p>
+<p>coat: Stärke des Klarlacks (0–1).</p>
 <p>coat_roughness: Rauheit des Klarlacks (0 = perfekter Spiegel, größer = unschärfer).</p>
 <p>Rückgabewert: (H, W, 3) lineares sRGB.</p>
 <p>★ Entscheidend ist die <b>Subtraktion der Energie</b>: Was der Klarlack reflektiert, erreicht den Untergrund nicht mehr. Der Untergrund wird mit (1 − F(Einfall)) × (1 − F(Ausfall)) gedämpft ―― ohne diesen Faktor würde mehr Klarlack alles heller machen (physikalisch unmöglich).</p>

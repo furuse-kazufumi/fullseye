@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Grundfarbe einer nassen Oberfläche. <b>Das Diffuse wird dunkler</b> (und das Spekulare nimmt zu).</p>
 <p>base_rgb: Farbe im trockenen Zustand (H,W,3) oder (3,). wet: Nässegrad (0–1).</p>
-<p>ior: Brechungsindex des Wasserfilms.</p>
+<p>ior: Brechungsindex des Wasserfilms. Eine Zahl oder ein Name der Materialtabelle (z. B. &quot;WATER&quot;; ein Name liefert n an der d-Linie, 587.56 nm).</p>
 <p>Rückgabewert: diffuse Farbe im nassen Zustand (gleiche Form).</p>
 <p>Warum es dunkler wird: Im Wasserfilm tritt Totalreflexion auf, diffuses Licht wird immer wieder zur Oberfläche zurückgeworfen und dabei jedes Mal absorbiert. Näherungsweise wird auf den trockenen Reflexionsgrad ρ eine Reabsorption entsprechend dem inneren Reflexionsgrad Ri = 1 − (1 − Ri0)/n² angewandt ―― genau das Phänomen, dass nasser Sand dunkel aussieht (die Zunahme des Spiegelanteils wird durch Überlagern von <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> dargestellt).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">base_rgb</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

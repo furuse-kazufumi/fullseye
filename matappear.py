@@ -12,7 +12,7 @@ CIE の等色関数で RGB に落とす**。だから角度を変えれば色が
 内容(6 op):
   * ``cie_xyz_from_wavelength`` — CIE 1931 等色関数 x̄ȳz̄(多ローブ Gauss 近似)
   * ``spectrum_to_srgb``        — 分光反射率 × D65 → XYZ → 線形 sRGB
-  * ``thin_film_reflectance``   — 薄膜干渉の分光反射率(Airy、2 光束)
+  * ``thin_film_reflectance``   — 薄膜干渉の分光反射率(特性行列 = ``filmoptics`` と同じ計算、多層も)
   * ``grating_wavelengths``     — 回折格子の式 d(sinθ_out − sinθ_in) = mλ
   * ``grating_rgb``             — 法線・光源・視線 → CD 面の虹色 (H,W,3)
   * ``thin_film_rgb``           — 同・シャボン膜/陽極酸化被膜の干渉色 (H,W,3)
@@ -190,64 +190,84 @@ def spectrum_to_srgb(nm, reflectance, illuminant=None) -> np.ndarray:
 # 2. 薄膜干渉                                                                   #
 # --------------------------------------------------------------------------- #
 def _film_index(v, w, name, op):
-    """屈折率の指定(実数・複素数 n + ik・材料名・波長ごとの配列)を、波長 w [nm] での複素数の配列にする。"""
-    if isinstance(v, str):
-        import materials as _mat
-        rec = _mat._record(v, op)
-        flat = np.asarray(w, dtype=np.float64).ravel()
-        n, k = _mat._nk(rec, flat / 1000.0, op)[:2]
-        return (n + 1j * k).reshape(np.shape(w))
+    """屈折率の指定を波長 w [nm] での複素数 N = n + ik の配列にする(``filmoptics._index_spec`` に委ねる)。"""
+    import filmoptics as _fo
+    return _fo._index_spec(v, w, name, op)
+
+
+def _film_stack(n_film, thickness, under_layers, w, op):
+    """入射側から順の (屈折率の配列, 厚さ) の並び。最上層 = 膜、その下に under_layers。"""
+    layers = [(_film_index(n_film, w, "n_film", op), thickness)]
+    if under_layers is None:
+        return layers
+    if isinstance(under_layers, (str, bytes)) or not hasattr(under_layers, "__iter__"):
+        raise ValueError(f"{op}: under_layers must be a sequence of (index, thickness_nm) pairs, got {under_layers!r}")
+    for i, item in enumerate(under_layers):
+        try:
+            spec, d = item
+        except (TypeError, ValueError):
+            raise ValueError(f"{op}: under_layers[{i}] must be an (index, thickness_nm) pair, got {item!r}") from None
+        layers.append((_film_index(spec, w, f"under_layers[{i}]", op), _thickness(d, f"under_layers[{i}] thickness", op)))
+    return layers
+
+
+def _thickness(v, name, op):
+    """膜厚 [nm] (スカラか、波長とブロードキャストできる配列 = 膜厚の場)。有限で 0 以上。"""
     a = np.asarray(v)
-    if a.dtype.kind not in "biufc":
-        raise ValueError(f"{op}: {name} must be a number, a complex n + ik, a material name or an array: got {v!r}")
-    a = a.astype(np.complex128)
-    if not np.all(np.isfinite(a)) or np.any(a.real <= 0.0) or np.any(a.imag < 0.0):
-        raise ValueError(f"{op}: {name} must have a positive real part and k >= 0 (n + ik): got {v!r}")
+    if a.dtype.kind not in "biuf":
+        raise ValueError(f"{op}: {name} must be a real number or array [nm]: got {v!r}")
+    a = a.astype(np.float64)
+    if a.size == 0 or not np.all(np.isfinite(a)) or np.any(a < 0.0):
+        raise ValueError(f"{op}: {name} must be finite and >= 0 [nm]: got {v!r}")
     return a
 
 
-def _cos_in(n_layer, n0_sin0):
-    """層の中の複素の cosθ̃ = √(1 − (n₀ sinθ₀ / ñ)²)(減衰する枝 = Im(ñ cosθ̃) ≥ 0 を選ぶ)。"""
-    c = np.sqrt(1.0 - (n0_sin0 / n_layer) ** 2 + 0j)
-    flip = (n_layer * c).imag < 0.0
-    return np.where(flip, -c, c)
-
-
 def thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0,
-                          cos_theta=1.0, n_out=1.0, polarization="unpolarized") -> np.ndarray:
-    """薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。
+                          cos_theta=1.0, n_out=1.0, polarization="unpolarized", under_layers=()) -> np.ndarray:
+    """薄膜(厚さ d、屈折率 n_film)の分光反射率。特性行列法の厳密解(多重反射をすべて含む)。
 
     nm:           波長 [nm] (配列可)。
-    thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。
+    thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。nm とブロードキャストできる
+                  **配列も可**(膜厚の場。例 (H, W, 1) の膜厚と (K,) の波長 → (H, W, K))。
     n_film/n_sub: 膜 / 基板の屈折率。実数・**複素数 n + ik**(k ≥ 0、金属の基板や吸収膜)・
                   **材料名**(共通の材料表 ``materials``、例 "TI" / "AL" / "SI" —— その波長の n,k を引く)・
-                  nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
-    n_out:        入射側の屈折率(実数か材料名、吸収なし)。
+                  材料レコード(dict)・nm とブロードキャストできる**波長ごとの配列**(膜の分散)のどれでも。
     cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。
+    n_out:        入射側の屈折率(実数か材料名、吸収なし)。
     polarization: "unpolarized"(既定、s と p の平均)/ "s" / "p"。
+    under_layers: 膜と基板の間の層(入射側から順の ``[(屈折率, 厚さ nm), ...]``、屈折率は n_film と同じ書き方)。
+                  空(既定)なら 1 層の膜。多層の AR 膜・誘電体ミラー・酸化膜の下の窒化膜などに。
 
-    返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。
+    返り値: 反射率 R(0–1)。nm・thickness_nm・cos_theta のブロードキャスト形。
 
-    物理: 膜内の伝搬による位相 β = 2π ñ_film d cosθ̃_film / λ(複素の Snell で層の中の cosθ̃ を出す)。
-    境界のフレネル係数を r1, r2 として R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²。λ/4 の奇数倍で反射が
-    極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。膜厚 0 では R が
-    基板単体のフレネル反射に一致する(テストで確認)。
+    ★符号の約束: 複素屈折率は N = n + ik、k ≥ 0。N = n − ik と書く文献の値は同じ k を正のまま渡す
+    (虚部が負の入力は ValueError —— どちらの約束かを推測しない)。
+
+    物理: 層ごとの特性行列 [[cos δ, −i sin δ / η], [−i η sin δ, cos δ]]、δ = 2π N d cosθ̃ / λ(複素の Snell で
+    層の中の cosθ̃ を出し、減衰する枝を取る)、傾いた光学アドミッタンス η = N cosθ̃(s)/ N / cosθ̃(p)。
+    1 層なら Airy の式 R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|² と同じ値になる(テストで別に書いた式と比べる)。
+    λ/4 の奇数倍で反射が極大(n_film > n_sub のとき)になり、**厚みを変えると色が動く**のがシャボン玉の色。
+    膜厚 0 では R が基板単体のフレネル反射に一致する。計算は ``filmoptics`` の特性行列 1 か所で行う
+    (``filmoptics.multilayer_reflectance`` と同じ関数)。
 
     ★2026-10-14: 以前は 3 つの屈折率を実数に限っていた(複素数は TypeError)。金属の基板を実数で近似すると
     (焼けたチタン 90 nm を n_sub = 2.6 で)反射率が 0.15〜0.19 と出て、Ti の n,k なら 0.35〜0.61(380〜780 nm)
     —— 色が別物になる、黙った誤り。いまは基板に "TI" と書けば材料表の n,k が入る。
+
+    >>> r = thin_film_reflectance([450.0, 550.0, 650.0], 90.0, "TIO2_AMORPHOUS", "TI")
+    >>> bool(r.min() > 0.3)
+    True
     """
+    import filmoptics as _fo
     op = "thin_film_reflectance"
     w = _as_nm(nm, op)
-    d = float(thickness_nm)
-    if d < 0.0 or not np.isfinite(d):
-        raise ValueError(f"thin_film_reflectance: thickness_nm must be >= 0: got {thickness_nm}")
+    d = _thickness(thickness_nm, "thickness_nm", op)
     if polarization not in ("unpolarized", "s", "p"):
         raise ValueError(f"{op}: polarization must be 'unpolarized', 's' or 'p': got {polarization!r}")
     n0 = _film_index(n_out, w, "n_out", op)
     if np.any(np.abs(n0.imag) > 0.0):
         raise ValueError(f"{op}: n_out must be non-absorbing (the incident medium): got {n_out!r}")
-    n1 = _film_index(n_film, w, "n_film", op)
+    layers = _film_stack(n_film, d, under_layers, w, op)
     n2 = _film_index(n_sub, w, "n_sub", op)
     c0 = np.asarray(cos_theta, dtype=np.float64)
     # ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。
@@ -255,21 +275,15 @@ def thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0,
     if not np.all(np.isfinite(c0)) or np.any(c0 < -1e-9) or np.any(c0 > 1.0 + 1e-9):
         raise ValueError("thin_film_reflectance: cos_theta must be finite and lie in [0, 1]")
     c0 = np.clip(c0, 1e-9, 1.0)
-    n0_sin0 = n0 * np.sqrt(np.maximum(1.0 - c0 ** 2, 0.0))  # Snell の不変量(実数)
-    c1 = _cos_in(n1, n0_sin0)
-    c2 = _cos_in(n2, n0_sin0)
-
-    def fresnel(na, ca, nb, cb):
-        return (na * ca - nb * cb) / (na * ca + nb * cb), (nb * ca - na * cb) / (nb * ca + na * cb)
-
-    r1s, r1p = fresnel(n0, c0, n1, c1)
-    r2s, r2p = fresnel(n1, c1, n2, c2)
-    ph = np.exp(4j * np.pi * n1 * d * c1 / w)            # e^{2iβ}、Im ≥ 0 の枝で吸収膜は減衰する
-    pairs = {"s": ((r1s, r2s),), "p": ((r1p, r2p),), "unpolarized": ((r1s, r2s), (r1p, r2p))}[polarization]
+    sin0 = np.sqrt(np.maximum(1.0 - c0 ** 2, 0.0))
+    n0r = n0.real.astype(np.complex128)
+    pols = ("s", "p") if polarization == "unpolarized" else (polarization,)
     out = 0.0
-    for r1, r2 in pairs:
-        out = out + np.abs((r1 + r2 * ph) / (1.0 + r1 * r2 * ph)) ** 2
-    return np.real(out / len(pairs))                     # 無偏光 = s と p の平均
+    for p in pols:
+        R, _ = _fo._stack_rt(w, n0r, [n for n, _ in layers], [t for _, t in layers], n2, sin0, p, op, cos0=c0)
+        out = out + R
+    shape = np.broadcast_shapes(w.shape, d.shape, c0.shape)
+    return np.broadcast_to(np.real(out / len(pols)), shape).astype(np.float64)   # 無偏光 = s と p の平均
 
 
 # --------------------------------------------------------------------------- #
@@ -352,30 +366,63 @@ def grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1
     return rgb * mask[..., None]
 
 
+#: thin_film_rgb の既定の波長格子 [nm] (380〜720 nm を 5 nm 刻み、69 点)。
+FILM_RGB_NM = tuple(float(x) for x in np.linspace(380.0, 720.0, 69))
+
+
 def thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33,
-                  n_sub=1.0, strength=1.0) -> np.ndarray:
+                  n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None,
+                  polarization="unpolarized", n_out=1.0, under_layers=()) -> np.ndarray:
     """法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。
 
     面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や
-    焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。
+    焼けたチタンの色が縁で変わるのはこれ。
 
     normals / view: (H,W,3) 法線マップ / 面から視点への方向。
-    thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ(複素数・材料名も可。材料名は
-        380〜720 nm を覆う表に限る —— 例 基板 "TI" / "AL")。
+    thickness_nm: 膜厚 [nm]。スカラか **(H, W) の膜厚の場**(膜厚むら・くさび・塗りむら)。
+    n_film / n_sub / n_out / polarization / under_layers: :func:`thin_film_reflectance` と同じ(複素数 n + ik・
+        材料名・材料レコード・波長ごとの配列。材料名は ``nm`` の格子を覆う表に限る —— 例 基板 "TI" / "AL")。
     strength: 全体の強さ。
+    light: 面から光源への方向 (3,)。**None(既定)は一様な天空照明**: 解像された各面は視線の鏡像方向から来る光を
+        返すので、入射角は cosθ = |n·v|(画素ごとに変わる)。ベクトルを渡すと**その光源の鏡面反射の色**:
+        視線へ光を返す微小面の法線はハーフベクトル h = (l + v)/|l + v| なので、入射角は cosθ = |h·l|
+        (同軸照明 l = v なら垂直入射)。明るさ(ハイライトの形)はここに入れない —— ``ward_anisotropic`` などを掛ける。
+    nm: 波長の格子 [nm] (昇順、2 点以上)。None は 380〜720 nm の 69 点(``FILM_RGB_NM``)。材料表の範囲が
+        これと重ならない材料(例 ルチルの "TIO2" は 430 nm から)は、その範囲の格子を渡す。
+    illuminant: ``nm`` と同じ長さの光源の分光分布。None は D65(:func:`spectrum_to_srgb` と同じ)。
 
-    空の入力(``normals`` が 0 要素)は ValueError。
+    空の入力(``normals`` が 0 要素)は ValueError。膜厚の場の形が法線マップと合わないときも ValueError。
     """
     if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("thin_film_rgb: normals is empty — pass at least one element")
     op = "thin_film_rgb"
     N, mask = _normal_map(normals, op)
     V = _unit(view, "view", op)
-    cos_t = np.clip(np.abs(np.sum(N * V[None, None, :], axis=-1)), 0.0, 1.0)
-    grid = np.linspace(380.0, 720.0, 69)
-    R = thin_film_reflectance(grid[None, None, :], thickness_nm, n_film, n_sub,
-                              cos_theta=cos_t[..., None])
-    return spectrum_to_srgb(grid, R) * float(strength) * mask[..., None]
+    if light is None:
+        cos_t = np.clip(np.abs(np.sum(N * V[None, None, :], axis=-1)), 0.0, 1.0)
+    else:
+        L = _unit(light, "light", op)
+        h = L + V
+        hn = float(np.linalg.norm(h))
+        if hn < 1e-9:
+            raise ValueError(f"{op}: light and view point in opposite directions (no specular half vector)")
+        cos_t = np.full(N.shape[:2], min(abs(float(np.dot(h / hn, L))), 1.0))
+    grid = np.asarray(FILM_RGB_NM if nm is None else nm, dtype=np.float64)
+    if (grid.ndim != 1 or grid.size < 2 or not np.all(np.isfinite(grid)) or np.any(grid <= 0.0)
+            or np.any(np.diff(grid) <= 0.0)):
+        raise ValueError(f"{op}: nm must be a strictly increasing 1-D grid of >= 2 positive wavelengths [nm]")
+    d = np.asarray(thickness_nm, dtype=np.float64)
+    if d.ndim == 0:
+        d_field = d
+    elif d.shape == N.shape[:2]:
+        d_field = d[..., None]
+    else:
+        raise ValueError(f"{op}: thickness_nm must be a scalar or a field of shape {N.shape[:2]}, got {d.shape}")
+    R = thin_film_reflectance(grid[None, None, :], d_field, n_film, n_sub,
+                              cos_theta=cos_t[..., None], n_out=n_out, polarization=polarization,
+                              under_layers=under_layers)
+    R = np.broadcast_to(R, N.shape[:2] + grid.shape)
+    return spectrum_to_srgb(grid, R, illuminant) * float(strength) * mask[..., None]
 
 
 # --------------------------------------------------------------------------- #

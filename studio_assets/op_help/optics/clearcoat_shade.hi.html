@@ -5,7 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पारदर्शी ऊपरी परत चढ़ाता है (car paint, ceramic glaze, glossy plastic)।</p>
 <p>base_rgb: base रंग (H,W,3) या (3,)। normals / light / view: ऊपर के समान।</p>
-<p>ior: clear coat का refractive index (clear lacquer ~1.5)। coat: clear-coat की strength (0–1)।</p>
+<p>ior: clear coat का refractive index (clear lacquer ~1.5)। संख्या या material table का नाम (जैसे &quot;PMMA&quot;; नाम देने पर d line, 587.56 nm का n)।</p>
+<p>coat: clear-coat की strength (0–1)।</p>
 <p>coat_roughness: clear coat की roughness (0 = perfect mirror, बड़ा = अधिक धुंधला)।</p>
 <p>Returns: (H, W, 3) linear sRGB।</p>
 <p>★ मुख्य बात है <b>energy घटाना</b>: clear coat से परावर्तित प्रकाश अब base तक नहीं पहुँचता। base को (1 − F(incident)) × (1 − F(outgoing)) से attenuate किया जाता है ―― इस factor के बिना, clear coat जोड़ने से सब कुछ अधिक चमकीला हो जाता (भौतिक रूप से असंभव)।</p>

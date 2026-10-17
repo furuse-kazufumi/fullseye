@@ -94,6 +94,37 @@ def main() -> None:
     print(f"膜厚 250 → 520 nm の色差   : 平均 {float(np.abs(a[mask] - b[mask]).mean()):.4f}")
     assert float(np.abs(a[mask] - b[mask]).mean()) > 0.01
 
+    # --- 4b) 焼けたチタン: 材料名・膜厚の場・光源・偏光・多層 ------------------
+    #   基板は金属(材料表の "TI"、k > 0)、膜は成膜した非晶質の TiO2("TIO2_AMORPHOUS")。
+    #   膜厚は左 40 nm → 右 200 nm のくさび(膜厚の場)。
+    wedge = np.broadcast_to(np.linspace(40.0, 200.0, N.shape[1])[None, :], N.shape[:2])
+    ti = thin_film_rgb(N, thickness_nm=wedge, n_film="TIO2_AMORPHOUS", n_sub="TI")
+    as_glass = thin_film_rgb(N, thickness_nm=wedge, n_film=2.4, n_sub=2.6)    # 金属を誘電体で近似した誤り
+    lum_ti = float(ti[mask].mean())
+    lum_gl = float(as_glass[mask].mean())
+    print(f"くさび 40→200 nm の焼き色  : 平均の明るさ Ti の n,k {lum_ti:.3f} / 誘電体扱い {lum_gl:.3f}")
+    assert lum_ti > 1.8 * lum_gl                     # 金属の基板は反射が強い(誘電体扱いは暗く別の色)
+    cols = ti[N.shape[0] // 2, mask[N.shape[0] // 2]]
+    assert float(np.ptp(cols, axis=0).max()) > 0.2   # 膜厚の場で色が横に流れる
+    coax = thin_film_rgb(N, thickness_nm=90.0, n_film="TIO2_AMORPHOUS", n_sub="TI", light=(0, 0, 1))
+    flat0 = thin_film_rgb(np.dstack([np.zeros((1, 1)), np.zeros((1, 1)), np.ones((1, 1))]),
+                          thickness_nm=90.0, n_film="TIO2_AMORPHOUS", n_sub="TI")
+    assert np.allclose(coax[mask], flat0[0, 0], atol=1e-12)                   # 同軸照明 = 垂直入射の色
+    wl = np.linspace(400.0, 700.0, 61)
+    rs = thin_film_reflectance(wl, 90.0, "TIO2_AMORPHOUS", "TI", cos_theta=0.5, polarization="s")
+    rp = thin_film_reflectance(wl, 90.0, "TIO2_AMORPHOUS", "TI", cos_theta=0.5, polarization="p")
+    print(f"60° の s / p の反射率の差  : 最大 {float(np.max(np.abs(rs - rp))):.3f}(偏光カメラで膜を見るときに効く)")
+    assert float(np.max(np.abs(rs - rp))) > 0.05
+    import materials
+    nH, nL, ns = (materials._index_of(m, "example", wavelength_nm=550.0)          # 550 nm の材料表の n
+                  for m in ("TIO2_AMORPHOUS", "SIO2", "SILICA"))
+    mirror = float(thin_film_reflectance([550.0], 550.0 / 4 / nH, "TIO2_AMORPHOUS", "SILICA",
+                                         under_layers=[("SIO2", 550.0 / 4 / nL),
+                                                       ("TIO2_AMORPHOUS", 550.0 / 4 / nH)] * 3)[0])
+    Y = nH ** 8 / (nL ** 6 * ns)
+    print(f"7 層の誘電体ミラー(550 nm) : R = {mirror:.5f}(閉形式 {((1 - Y) / (1 + Y)) ** 2:.5f})")
+    assert abs(mirror - ((1 - Y) / (1 + Y)) ** 2) < 1e-4
+
     # --- 5) 異方性ハイライト ------------------------------------------------
     L = np.array([0.4, 0.5, 0.77]); L /= np.linalg.norm(L)
     wide = ward_anisotropic(N, light=L, view=(0, 0, 1), alpha_x=0.30, alpha_y=0.03)

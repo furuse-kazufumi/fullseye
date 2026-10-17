@@ -1,14 +1,16 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_optical_constants — OPTICS <code style="color:#22d3bf">mirror</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;table&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;materials&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import glassmirror; glassmirror.metal_optical_constants(metal=&#x27;ag&#x27;, wavelength_nm=550.0, source=&#x27;materials&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;metal_optical_constants&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code>,或直接调用 <code style="color:#22d3bf">glassmirror.metal_optical_constants</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按波长查金属的复折射率 (n, k)(可见光区,线性插值)。</p>
-<p>metal：&quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot;(<code style="color:#22d3bf">METALS</code>)。</p>
-<p>wavelength_nm：标量或数组 [nm]。表外取端点值封顶(不外推)。</p>
-<p>source:&quot;table&quot;(默认,5 点的粗糙表)/ &quot;materials&quot;(共用材料表 <code style="color:#22d3bf">materials</code> 的实测数表;金属为 <code style="color:#22d3bf">MEASURED_METALS</code> 的 10 种,超出表的范围则 ValueError)。</p>
-<p>返回值：(n, k) 的 2 元素元组(与输入同形的数组)。出处请参见表的定义(<code style="color:#22d3bf">_METAL_NK</code>) — 不隐瞒这是只有 5 点的粗糙表。</p>
+<p>metal: <code style="color:#22d3bf">MEASURED_METALS</code> 的 10 种(source=&quot;table&quot; 时为 &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; = <code style="color:#22d3bf">METALS</code>)。</p>
+<p>wavelength_nm: 标量或数组 [nm]。</p>
+<p>source: &quot;materials&quot;(默认,共用材料表 <code style="color:#22d3bf">materials</code> 的实测数表;超出表的范围则 ValueError —— 不外推)/</p>
+<p>&quot;table&quot;(5 点的粗糙表,400–800 nm;表外取端点值封顶)。</p>
+<p>★2026-10-15 把默认从粗糙表换成了实测表(用粗糙表时 Cu 的颜色偏 ΔE*ab 8.3,Au 偏 6.6)。</p>
+<p>返回值: (n, k) 的 2 元素元组(与输入同形的数组)。出处请参见 <code style="color:#22d3bf">MEASURED_METALS</code> 与 <code style="color:#22d3bf">_METAL_NK</code> 的定义。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

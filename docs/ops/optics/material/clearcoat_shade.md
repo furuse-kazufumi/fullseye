@@ -20,7 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。
 
 base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。
-ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。
+ior: 上塗りの屈折率(クリア塗料 ~1.5)。数か材料表の名前(例 "PMMA"、名前なら d 線 587.56 nm の n)。
+coat: 上塗りの強さ(0–1)。
 coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。
 
 返り値: (H, W, 3) 線形 sRGB。
