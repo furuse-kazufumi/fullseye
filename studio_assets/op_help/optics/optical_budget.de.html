@@ -6,11 +6,14 @@
 <p>Ermittelt das <b>Auflösungsbudget</b> einer Beobachtungsoptik in geschlossener Form (vor der Aufnahme prüfen, ob es trägt).</p>
 <p>NA und Blendenzahl können wahlweise angegeben werden (N = 1/(2·NA)). Die Vergrößerung ist die Dünnlinsennäherung m = f / (WD − f), die effektive (Arbeits-)Blendenzahl N_w = (1 + |m|)·N. Zurückgegebene Größen:</p>
 <p><code style="color:#22d3bf">magnification</code> Vergrößerung m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> Airy-Radius 1.22·λ·N_w (Bildebene) / <code style="color:#22d3bf">airy_object_um</code> dieser auf die Objektseite umgerechnet /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> Airy-Radius 1.22·λ·N_w (Bildebene, Rayleigh-Zweipunkttrennung) /</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> Airy-Durchmesser 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> der Radius auf die Objektseite umgerechnet /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> reale Pixelgröße auf der Objektseite / <code style="color:#22d3bf">limit_um</code> tatsächliche Auflösungsgrenze</p>
-<p>(der <b>größere Wert</b> von Beugung und Abtastung) / <code style="color:#22d3bf">limited_by</code> welcher der Engpass ist /</p>
-<p><code style="color:#22d3bf">dof_um</code> Schärfentiefe (Objektseite, Summe aus geometrisch 2·N_w·c/m² und wellenoptisch 2·λ·N_w²/m²) /</p>
-<p><code style="color:#22d3bf">coc_um</code> zulässiger Zerstreuungskreis (Default ist der Pixelabstand).</p>
+<p>(der <b>größere Wert</b> von Beugung = Airy-<b>Durchmesser</b> auf der Objektseite und Abtastung = 2 Pixel auf der Objektseite) / <code style="color:#22d3bf">limited_by</code> welcher der Engpass ist /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> Schärfentiefe (Objektseite, Summe aus geometrisch und Beugung) / <code style="color:#22d3bf">dof_geometric_um</code> geometrische Tiefe aus dem Zerstreuungskreis</p>
+<p>(Nah- und Fernpunkt der dünnen Linse) / <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh-λ/4-Fokustiefe ±2·λ·N_w² (volle Breite 4·λ·N_w²), mit m² auf die</p>
+<p>Objektseite übertragen / <code style="color:#22d3bf">coc_um</code> zulässiger Zerstreuungskreis (Default ist der Pixelabstand).</p>
+<p>Die Formeln sind mit <code style="color:#22d3bf">visiondesign</code> <b>eine einzige</b> (<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>); bei gleicher Konfiguration stimmen sie mit <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> von <code style="color:#22d3bf">visiondesign.system_feasibility</code> Name für Name überein. Bis 2026-10-15 nutzten die beiden Einstiegspunkte verschiedene Formeln: bei f 25, WD 200, F4, 3.45 µm betrug die Schärfentiefe 1.55 mm (nur geometrisch) bzw. 2.67 mm (geometrisch + <b>Hälfte</b> der Beugung), und die Engpass-Entscheidung wich zwischen Airy-Durchmesser und -Radius um den Faktor 2 ab.</p>
 <p>Das sind die vorgelagerten Zahlen, die nicht &quot;ist es sichtbar&quot;, sondern &quot;<b>wird es mit dem nötigen Kontrast abgebildet</b>&quot; entscheiden; mit einer Konfiguration, die hier nicht ausreicht, kommt die Prüfung an der realen Maschine nicht zustande, so viele Bilder man auch erzeugt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

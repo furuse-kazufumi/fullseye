@@ -6,11 +6,14 @@
 <p>以闭式给出观察光学系统的<b>分辨率预算</b>(拍之前先看能不能成立)。</p>
 <p>NA 和 F 值用哪一个给出都可以(N = 1/(2·NA))。倍率用薄透镜近似 m = f / (WD − f)，有效(工作)F 值为 N_w = (1 + |m|)·N。返回的量：</p>
 <p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> 艾里半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> 将其换算到物方 /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> 艾里半径 1.22·λ·N_w(像面，Rayleigh 两点分辨)/</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> 艾里直径 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> 将半径换算到物方 /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> 像素在物方的实际尺寸 / <code style="color:#22d3bf">limit_um</code> 实际的分辨极限</p>
-<p>(衍射与采样中<b>较大的一方</b>)/ <code style="color:#22d3bf">limited_by</code> 哪一方是瓶颈 /</p>
-<p><code style="color:#22d3bf">dof_um</code> 景深(物方，几何 2·N_w·c/m² 与波动 2·λ·N_w²/m² 之和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 容许弥散圆(默认为像素间距)。</p>
+<p>(衍射 = 艾里<b>直径</b>的物方值，与采样 = 2 个像素的物方值中<b>较大的一方</b>)/ <code style="color:#22d3bf">limited_by</code> 哪一方是瓶颈 /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> 景深(物方，几何与衍射之和)/ <code style="color:#22d3bf">dof_geometric_um</code> 弥散圆的几何景深</p>
+<p>(薄透镜的近点、远点)/ <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh λ/4 的焦深 ±2·λ·N_w²(全宽 4·λ·N_w²)以 m² 换算到</p>
+<p>物方 / <code style="color:#22d3bf">coc_um</code> 容许弥散圆(默认为像素间距)。</p>
+<p>公式与 <code style="color:#22d3bf">visiondesign</code> 共用<b>同一套</b>(<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>)，同一配置下与 <code style="color:#22d3bf">visiondesign.system_feasibility</code> 的 <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> 按名称一一一致。2026-10-15 之前两个入口使用不同公式，在 f 25、WD 200、F4、3.45 µm 下景深为 1.55 mm(仅几何)与 2.67 mm(几何 + 衍射的<b>一半</b>)，瓶颈判定也因艾里直径与半径而相差 2 倍。</p>
 <p>这是决定的不是“能否看见”而是“<b>能否以所需对比度成像</b>”的前段数字，在这里不足的配置下无论生成多少图像，在实机上检测都无法成立。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

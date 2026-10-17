@@ -448,9 +448,11 @@ def chapter_shared():
     mat = OS.scene_material("dielectric", glass=G883408)
     nrgb = np.array([RT.refractive_index(G883408, u) for u in OS._RGB_UM])
     met = OS.scene_material("conductor", metal="pt", metal_source="materials")
-    gate("観察対象の材質(optscene)も同じ表: 別のカタログの硝材の n_RGB は raytrace と一致、Pt の材質は実測の表で作れる",
-         np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials" and _refuses(
-             lambda: OS.scene_material("conductor", metal="pt")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
+    # 2026-10-15: scene_material の金属の既定は実測の表(glassmirror の既定と同じ)。粗い表を選んだときだけ Pt を拒む
+    gate("観察対象の材質(optscene)も同じ表: 別のカタログの硝材の n_RGB は raytrace と一致、Pt の材質は実測の表(既定)で作れ、粗い表では拒む",
+         np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials"
+         and OS.scene_material("conductor", metal="pt")["metal_source"] == "materials" and _refuses(
+             lambda: OS.scene_material("conductor", metal="pt", metal_source="table")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
     return lens, coarse, measured, w, rgb_t, rgb_m, r550
 
 

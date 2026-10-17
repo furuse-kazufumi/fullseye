@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: table × table × table
 out: table
-examples: [poc_optics_drawings, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -25,6 +25,9 @@ version: 0.6.0  # fullseye lib version this note was generated for
 撮る前にここを見れば、視野に部品が収まるか・欠陥が分解できるか・被写界深度が
 足りるかが分かる ―― 「見えるか」ではなく「必要なコントラストで写るか」を
 先に判断するのが、光学デジタルツインを持つ理由。
+
+``lens_spec(telecentric=True)`` ならカメラは正射影(``optical_camera(telecentric=True)``)になり、
+部品の高さで倍率が変わらない。バジェットの代表波長は光源のエネルギー重心の平均。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -58,6 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 

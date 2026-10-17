@@ -6,6 +6,7 @@
 <p>Bündelt Sensor, Objektiv, Beleuchtung und Szene und liefert die <b>abgeleiteten Größen in geschlossener Form</b>.</p>
 <p>Rückgabewert dict: <code style="color:#22d3bf">camera</code> (dieselbe Konvention wie <code style="color:#22d3bf">optical_camera</code>) / <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code> (<code style="color:#22d3bf">optical_budget</code>).</p>
 <p>Ein Blick hierauf vor der Aufnahme zeigt, ob das Teil ins Sichtfeld passt, ob der Defekt aufgelöst werden kann und ob die Schärfentiefe ausreicht ―― zuerst nicht &quot;ist es sichtbar&quot;, sondern &quot;wird es mit dem nötigen Kontrast abgebildet&quot; zu beurteilen, ist der Grund für einen optischen digitalen Zwilling.</p>
+<p>Mit <code style="color:#22d3bf">lens_spec(telecentric=True)</code> wird die Kamera zur Orthogonalprojektion (<code style="color:#22d3bf">optical_camera(telecentric=True)</code>), und die Vergrößerung ändert sich nicht mit der Höhe des Teils. Die repräsentative Wellenlänge des Budgets ist der Mittelwert der Energieschwerpunkte der Lichtquellen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
@@ -28,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nir_silicon_transmission">poc_nir_silicon_transmission</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nir_silicon_transmission.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_optics_drawings">poc_optics_drawings</a> — <code style="color:#22d3bf">py -3.11 examples/poc_optics_drawings.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>

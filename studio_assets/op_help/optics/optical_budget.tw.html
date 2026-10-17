@@ -6,11 +6,14 @@
 <p>以閉合式給出觀察光學系統的<b>解析度預算</b>(拍之前先看能不能成立)。</p>
 <p>NA 和 F 值用哪一個給定都可以(N = 1/(2·NA))。倍率用薄透鏡近似 m = f / (WD − f)，有效(工作)F 值為 N_w = (1 + |m|)·N。回傳的量：</p>
 <p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> 艾里半徑 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> 將其換算到物側 /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> 艾里半徑 1.22·λ·N_w(像面，Rayleigh 兩點分辨)/</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> 艾里直徑 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> 將半徑換算到物側 /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> 像素在物側的實際尺寸 / <code style="color:#22d3bf">limit_um</code> 實際的解析極限</p>
-<p>(繞射與取樣中<b>較大的一方</b>)/ <code style="color:#22d3bf">limited_by</code> 哪一方是瓶頸 /</p>
-<p><code style="color:#22d3bf">dof_um</code> 景深(物側，幾何 2·N_w·c/m² 與波動 2·λ·N_w²/m² 之和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 容許模糊圈(預設為像素間距)。</p>
+<p>(繞射 = 艾里<b>直徑</b>的物側值，與取樣 = 2 個像素的物側值中<b>較大的一方</b>)/ <code style="color:#22d3bf">limited_by</code> 哪一方是瓶頸 /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> 景深(物側，幾何與繞射之和)/ <code style="color:#22d3bf">dof_geometric_um</code> 模糊圈的幾何景深</p>
+<p>(薄透鏡的近點、遠點)/ <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh λ/4 的焦深 ±2·λ·N_w²(全寬 4·λ·N_w²)以 m² 換算到</p>
+<p>物側 / <code style="color:#22d3bf">coc_um</code> 容許模糊圈(預設為像素間距)。</p>
+<p>公式與 <code style="color:#22d3bf">visiondesign</code> 共用<b>同一套</b>(<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>)，同一配置下與 <code style="color:#22d3bf">visiondesign.system_feasibility</code> 的 <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> 依名稱逐一一致。2026-10-15 之前兩個入口使用不同公式，在 f 25、WD 200、F4、3.45 µm 下景深為 1.55 mm(僅幾何)與 2.67 mm(幾何 + 繞射的<b>一半</b>)，瓶頸判定也因艾里直徑與半徑而相差 2 倍。</p>
 <p>這是決定的不是「看不看得見」而是「<b>能否以所需對比度成像</b>」的前段數字，在這裡不足的配置下無論產生多少影像，在實機上檢測都無法成立。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

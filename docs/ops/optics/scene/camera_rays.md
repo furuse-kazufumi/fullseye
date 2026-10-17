@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: table
 out: points
-examples: [studio_raytrace_scene]
+examples: [poc_nir_silicon_transmission, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -20,7 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。
 
-方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので
+方向は単位ベクトル、原点はすべて視点(テレセンのカメラでは光軸に垂直な面の上に並び、方向は
+すべて光軸)。画素 (u, v) は行優先で並ぶので
 ``reshape(height, width, 3)`` で像に戻せる。K の逆写像で作っているため、
 交点を K で再投影すると元の画素に**厳密に**戻る(往復誤差 < 1e-9)。
 
@@ -56,6 +57,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)

@@ -6,11 +6,14 @@
 <p>Work out the <b>resolution budget</b> of an observation optic in closed form (see whether it holds up before you shoot).</p>
 <p>NA and F-number may be given either way (N = 1/(2·NA)). The magnification is the thin-lens approximation m = f / (WD − f), the effective (working) F-number is N_w = (1 + |m|)·N. Quantities returned:</p>
 <p><code style="color:#22d3bf">magnification</code> magnification m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> Airy radius 1.22·λ·N_w (image plane) / <code style="color:#22d3bf">airy_object_um</code> that converted to the object side /</p>
+<p><code style="color:#22d3bf">airy_um</code> = <code style="color:#22d3bf">airy_radius_um</code> Airy radius 1.22·λ·N_w (image plane, Rayleigh two-point separation) /</p>
+<p><code style="color:#22d3bf">airy_diameter_um</code> Airy diameter 2.44·λ·N_w / <code style="color:#22d3bf">airy_object_um</code> the radius converted to the object side /</p>
 <p><code style="color:#22d3bf">pixel_object_um</code> physical pixel size on the object side / <code style="color:#22d3bf">limit_um</code> actual resolution limit</p>
-<p>(the <b>larger</b> of diffraction and sampling) / <code style="color:#22d3bf">limited_by</code> which one is the bottleneck /</p>
-<p><code style="color:#22d3bf">dof_um</code> depth of field (object side, sum of geometric 2·N_w·c/m² and wave 2·λ·N_w²/m²) /</p>
-<p><code style="color:#22d3bf">coc_um</code> permissible circle of confusion (default is the pixel pitch).</p>
+<p>(the <b>larger</b> of diffraction = the Airy <b>diameter</b> on the object side and sampling = 2 pixels on the object side) / <code style="color:#22d3bf">limited_by</code> which one is the bottleneck /</p>
+<p><code style="color:#22d3bf">dof_um</code> = <code style="color:#22d3bf">dof_combined_um</code> depth of field (object side, sum of geometric and diffraction) / <code style="color:#22d3bf">dof_geometric_um</code> geometric depth from the circle of confusion</p>
+<p>(near and far points of a thin lens) / <code style="color:#22d3bf">dof_diffraction_um</code> Rayleigh λ/4 depth of focus ±2·λ·N_w² (full width 4·λ·N_w²) brought by m² to</p>
+<p>the object side / <code style="color:#22d3bf">coc_um</code> permissible circle of confusion (default is the pixel pitch).</p>
+<p>The formulas are <b>one</b> with <code style="color:#22d3bf">visiondesign</code> (<code style="color:#22d3bf">visiondesign._diffraction_limits</code> / <code style="color:#22d3bf">_depth_of_field</code>), so for the same configuration they match <code style="color:#22d3bf">depth_of_field_geometric_mm</code> / <code style="color:#22d3bf">_diffraction_mm</code> / <code style="color:#22d3bf">_combined_mm</code> of <code style="color:#22d3bf">visiondesign.system_feasibility</code> name by name. Until 2026-10-15 the two entry points used different formulas: at f 25, WD 200, F4, 3.45 µm the depth of field was 1.55 mm (geometric only) versus 2.67 mm (geometric + <b>half</b> of diffraction), and the bottleneck judgement disagreed by a factor of 2 between the Airy diameter and radius.</p>
 <p>These are the upstream numbers that decide not &quot;can it be seen&quot; but &quot;<b>is it imaged with the required contrast</b>&quot;; with a configuration that falls short here, however many images you make, the inspection will not work on the real machine.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>

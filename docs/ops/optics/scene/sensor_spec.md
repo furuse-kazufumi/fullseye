@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [poc_optics_drawings, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # sensor_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("sensor_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_spec(pixel_um: 'float' = None, resolution=None, quantum_efficiency: 'float' = None, full_well_e: 'float' = None, read_noise_e: 'float' = None, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = None, model: 'str' = None, qe_curve=None, qe_reference_nm: 'float' = None, si_collection_um: 'float' = 3.0) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.sensor_spec(pixel_um: 'float' = None, resolution=None, quantum_efficiency: 'float' = None, full_well_e: 'float' = None, read_noise_e: 'float' = None, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = None, model: 'str' = None, qe_curve=None, qe_reference_nm: 'float' = None, si_collection_um: 'float' = 3.0) -> 'dict'`、台帳から引くなら `opsoptics.get("sensor_spec")`)
 
 ## 使い方
 
@@ -30,7 +30,20 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``model`` に実在の型番(``sensor_catalog()`` のキー)を渡すと、
 解像度・画素ピッチ・シャッタに加えて **QE・読み出し雑音・飽和容量も
 カメラメーカーが公表した EMVA1288 実測**で埋まる(引数で明示した値はそちらを優先)。
-出所はカメラ実測なので、別のカメラなら少し変わる。
+出所はカメラ実測なので、別のカメラなら少し変わる。台帳の QE は **545 nm** の値
+(出典の表に「All measurements have been taken at 545 nm」とある)なので、``qe_reference_nm`` は 545 になる。
+
+★「明示した値」は**引数を渡したかどうか**で決める(既定は ``None``)。2026-10-15 まで既定値と
+比べていたので、``read_noise_e=2.5`` や ``quantum_efficiency=0.6`` を明示すると既定値と同じだという
+理由で黙って台帳の値(例: 14.0 e-)に置き換わっていた。明示した値は ``explicit_overrides`` に名前が残る。
+型番と矛盾する ``pixel_um`` / ``shutter`` は ValueError(センサの物理は型番で決まる)。``resolution`` の
+明示は ROI として尊重する(台帳の画素数を超えれば ValueError)。
+
+分光(``layout_capture(mode="spectral")``)で使う量子効率の曲線 QE(λ):
+  * ``qe_curve`` に pairs(λ [nm], QE)を渡せばそれをそのまま使う(データシートの曲線。外挿しない)。
+  * 省くと Si フォトダイオードの模型 ``spectralrad.silicon_photodiode_qe``(Si の n,k は Green 2008)を、
+    集める深さ ``si_collection_um``(既定 3 µm)で作り、``qe_reference_nm`` で ``quantum_efficiency`` に
+    一致するよう倍率を合わせる。**形の模型であってデータシートの曲線ではない**。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -64,6 +77,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 

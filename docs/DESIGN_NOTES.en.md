@@ -1765,8 +1765,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `optscene.py`
 
-- **L2197** _(ja)_ — σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
-- **L2541** _(ja)_ — ★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を **None** で持つ(鍵は在る) ので ``.get(.., 0.0)`` が None を返し、float(None) の生の TypeError が漏れていた —— 下の「image_circle_mm が無い」の ValueError に届いていなかった。
+- **L2349** _(ja)_ — σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
+- **L2749** _(ja)_ — ★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を **None** で持つ(鍵は在る) ので ``.get(.., 0.0)`` が None を返し、float(None) の生の TypeError が漏れていた —— 下の「image_circle_mm が無い」の ValueError に届いていなかった。
 
 ## `ozakimm.py`
 

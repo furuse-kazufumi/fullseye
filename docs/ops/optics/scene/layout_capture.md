@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: table
 out: table
-examples: [poc_optics_drawings, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # layout_capture — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("layout_capture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False, mode: 'str' = 'rgb') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False, mode: 'str' = 'rgb') -> 'dict'`、台帳から引くなら `opsoptics.get("layout_capture")`)
 
 ## 使い方
 
@@ -23,8 +23,21 @@ version: 0.6.0  # fullseye lib version this note was generated for
 広帯域はこれが要る。LED は 1-3 本、レーザーは 1 本で足りる)。
 ``raw=True`` なら量子化前の放射輝度も返す。
 
+``mode`` は 2 つ(既定は従来どおり "rgb"):
+  * ``"rgb"`` —— 材質は可視の RGB(金属の色・RGB の albedo)、透過率と QE は**波長によらない**スカラ。
+  * ``"spectral"`` —— 像 = Σ_λ w(λ) · 放射輝度(λ) · T_lens(λ) · QE(λ) · λ/550 nm。w は
+    ``light_wavelengths`` のエネルギーの重み、λ/550 nm はエネルギー → 光子数の比(λ/hc)、QE(λ) は
+    ``sensor_spec`` の ``qe_curve`` か Si の模型(Green 2008 の n,k、``qe_reference_nm`` で
+    ``quantum_efficiency`` に合わせる)、放射輝度(λ) は材質をその波長に落として撮る(金属は材料表の n,k、
+    誘電体は n(λ) と任意で k の吸収、lambert は ``reflectance_curve``)。3 チャネルは同じ値(単色センサ)。
+    550 nm の単色・平らな QE・平らな透過率・灰色の lambert なら "rgb" と同じ数になる。
+
+回折ぼけは**波長ごと**に掛けてから足す(エアリー半径は λ に比例する)。2026-10-15 まではバジェットの
+1 波長だけで掛けていた。同軸照明があれば、像にハーフミラーの透過率を掛ける。
+
 返り値 dict: ``image``(量子化済み)/ ``radiance``(raw のとき)/ ``depth_mm`` /
-``part_mask`` / ``defect_mask`` / ``budget``。
+``part_mask`` / ``defect_mask`` / ``budget`` / ``mode`` / ``spectral_terms``(波長・重み・
+T·QE·光子比の一覧)/ ``assumptions``(分光の経路で置いた仮定)。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -58,6 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 

@@ -4,7 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [poc_optics_drawings, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -13,14 +13,21 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # lens_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.lens_spec(focal_mm: 'float' = 25.0, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.lens_spec(focal_mm: 'float' = 25.0, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_spec(focal_mm: 'float' = None, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None, transmission_curve=None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.lens_spec(focal_mm: 'float' = None, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None, transmission_curve=None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_spec")`)
 
 ## 使い方
 
 レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。
 
 ``coc_um`` を省くと画素ピッチを許容錯乱円に使う(レイアウトが束ねるときに解決)。
-``telecentric=True`` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。
+``telecentric=True`` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。``vision_layout`` が
+これを ``optical_camera(telecentric=True)``(正射影)に渡すので、部品の高さが変わっても像の大きさは
+変わらない(2026-10-15 まで旗を読むコードが無く、透視のまま撮っていた)。
+
+``transmission`` は可視の代表値(スカラ)。分光で撮る(``layout_capture(mode="spectral")``)ときに
+波長で変わる透過率を入れたければ ``transmission_curve`` に pairs(λ [nm], T)を渡す(外挿しない)。
+``focal_mm`` の既定は 25 mm。``model`` と矛盾する ``focal_mm`` を明示すると ValueError(固定焦点の
+焦点距離は型番で決まる。2026-10-15 まで既定値の 25 と区別できず、明示しても黙って型番の値になっていた)。
 
 ``model`` に実在の型番を渡すと(``lens_catalog()`` のキー「メーカー 型番」でも、
 型番だけ + ``maker=`` でもよい。**レンズは型番がメーカー間で
@@ -60,6 +67,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 
