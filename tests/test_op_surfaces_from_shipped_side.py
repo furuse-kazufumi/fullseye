@@ -48,7 +48,9 @@ def _py_modules() -> list[str]:
             return list(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
     import re
     text = open(path, encoding="utf-8").read()
-    block = text.split("py-modules = [", 1)[1].split("]", 1)[0]
+    # 閉じ括弧は行頭の "]" だけ。コメント中の "[[...]]" で止まると py3.10 だけ表が 16 に縮んだ(CI 2026-10-18)
+    block = re.split(r"(?m)^\]", text.split("py-modules = [", 1)[1], maxsplit=1)[0]
+    block = "\n".join(line.split("#", 1)[0] for line in block.splitlines())
     return re.findall(r'"([A-Za-z0-9_]+)"', block)
 
 
@@ -112,7 +114,8 @@ def test_the_population_is_not_silently_small(shipped):
     """範囲を自分で読む門は黙って縮む —— 件数に床を置く(2026-10-18 の実測: 台帳 49 表 2,350 op)。"""
     assert len(shipped["tables"]) >= 49
     assert len(shipped["ledger"]) >= 2350
-    assert len(shipped["registry"]) >= 930
+    # 2-D レジストリは任意の依存で増減する(手元 930、CI の extras 構成で 910)。床は CI の実測より下に置く
+    assert len(shipped["registry"]) >= 900
     assert len(shipped["nary"]) >= 17
 
 
@@ -133,7 +136,7 @@ def test_every_shipped_op_is_on_all_four_surfaces(shipped):
 
 def test_op_knob_covers_its_declared_scope(shipped):
     scope = {n for n, pair in shipped["registry"].items() if pair in KNOB_SCOPE}
-    assert len(scope) >= 567
+    assert len(scope) >= 540          # 手元 567、CI 545(任意の依存の差)。縮みの検出が目的の床
     for rel in ("docs/op_knob.json", "fullseye/data/op_knob.json"):
         rows = {r["op"]: r for r in _load(rel)}
         lacking = sorted(scope - set(rows))
