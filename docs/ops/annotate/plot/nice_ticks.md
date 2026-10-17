@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: 
 out: signal
-examples: [annotate_gallery, poc_dehazing, poc_driving_decisions, poc_driving_traffic, poc_measurement_system_analysis, poc_moire_alignment, poc_pxrd_phase_peel]
+examples: [annotate_gallery, poc_dehazing, poc_driving_decisions, poc_driving_traffic, poc_measurement_system_analysis, poc_moire_alignment, poc_pxrd_phase_peel, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ ValueError
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
 - [poc_moire_alignment](../../../../examples/poc_moire_alignment.py) — `py -3.11 examples/poc_moire_alignment.py`
 - [poc_pxrd_phase_peel](../../../../examples/poc_pxrd_phase_peel.py) — `py -3.11 examples/poc_pxrd_phase_peel.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

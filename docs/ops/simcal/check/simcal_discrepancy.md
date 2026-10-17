@@ -4,7 +4,7 @@ dim: simcal
 category: check
 in: calresult
 out: calresult
-examples: [poc_pocket_interreflection, simcal_checks_tour]
+examples: [poc_pocket_interreflection, poc_simcal_thin_film, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ optimistic — a calibrated knob may be absorbing the missing physics.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`
 
 ## 型が繋がる次の op(`calresult` を入力に取れる)

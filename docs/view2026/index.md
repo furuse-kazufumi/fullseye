@@ -199,7 +199,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 246 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 247 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -339,8 +339,9 @@ PoC 246 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何・校正</b> (18)</summary>
+<details class="vall"><summary><b>幾何・校正</b> (19)</summary>
 <div class="vg vs">
+<a href="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_simcal_thin_film.jpg" alt="実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)" width="200" height="200"><span>実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)</span></a>
 <a href="../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_calibration.jpg" alt="カメラ校正" width="200" height="200"><b>&#9654;</b><span>カメラ校正</span></a>
 <a href="../articles/assets/poc/poc_panorama_drift/05_chain_drift_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_panorama_drift.jpg" alt="パノラマのずれ" width="200" height="200"><b>&#9654;</b><span>パノラマのずれ</span></a>
 <a href="../articles/assets/poc/poc_real_stereo_depth/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_real_stereo_depth.jpg" alt="実写のステレオ" width="200" height="200"><span>実写のステレオ</span></a>

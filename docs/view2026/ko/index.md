@@ -184,7 +184,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 246개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 247개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -324,8 +324,9 @@ PoC 246개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>기하·보정</b> (18)</summary>
+<details class="vall"><summary><b>기하·보정</b> (19)</summary>
 <div class="vg vs">
+<a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_thin_film.jpg" alt="실제 영상으로 박막 모델 보정(정해지는 계수와 정해지지 않는 조합)" width="200" height="200"><span>실제 영상으로 박막 모델 보정(정해지는 계수와 정해지지 않는 조합)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="카메라 보정" width="200" height="200"><b>&#9654;</b><span>카메라 보정</span></a>
 <a href="../../articles/assets/poc/poc_panorama_drift/05_chain_drift_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_panorama_drift.jpg" alt="파노라마 드리프트" width="200" height="200"><b>&#9654;</b><span>파노라마 드리프트</span></a>
 <a href="../../articles/assets/poc/poc_real_stereo_depth/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stereo_depth.jpg" alt="실사 스테레오" width="200" height="200"><span>실사 스테레오</span></a>

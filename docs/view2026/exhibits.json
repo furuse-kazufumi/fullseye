@@ -3146,6 +3146,22 @@
    }
   },
   {
+   "id": "poc_simcal_thin_film",
+   "group": "wing_geometry",
+   "media": "08_real_determined_vs_combinations.png",
+   "motion": false,
+   "thumb_src": "08_real_determined_vs_combinations_720.jpg",
+   "label": {
+    "ja": "実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)",
+    "en": "Calibrating a thin-film model to real images (determined coefficients vs combinations)",
+    "zh": "用真实图像标定薄膜模型(可确定的系数与无法确定的组合)",
+    "tw": "以真實影像校正薄膜模型(可確定的係數與無法確定的組合)",
+    "ko": "실제 영상으로 박막 모델 보정(정해지는 계수와 정해지지 않는 조합)",
+    "de": "Kalibrierung eines Dünnschichtmodells an echten Bildern (bestimmte Koeffizienten und Kombinationen)",
+    "hi": "असली images से thin film model का calibration (तय होने वाले coefficients और combinations)"
+   }
+  },
+  {
    "id": "poc_moire_alignment",
    "group": "wing_metrology",
    "media": "03_fringe_flow.gif",

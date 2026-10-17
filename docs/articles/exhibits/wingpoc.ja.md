@@ -5982,7 +5982,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 18 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 19 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -6615,6 +6615,42 @@ py -3.11 examples/poc_public_camera_heading_real.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_public_camera_heading_real)
 
 使用 op(ノートへ): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`camera_orientation_from_sun_candidates`](https://furuse.work/ops/geocam/sun/camera_orientation_from_sun_candidates.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`sun_position`](https://furuse.work/ops/geocam/sun/sun_position.html)
+
+## No.2026.247 —— 実物の画像の誤差から薄膜の模型の係数を合わせる ―― データが決めない係数には数を出さない(sim-to-real 較正)
+
+[![実物の画像の誤差から薄膜の模型の係数を合わせる ―― データが決めない係数には数を出さない(sim-to-real 較正)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png)
+
+*↑ **実物の画像の誤差から薄膜の模型の係数を合わせる ―― データが決めない係数には数を出さない(sim-to-real 較正)** ―― 実物の画像の誤差から薄膜の模型の係数を合わせ、データが決めない係数には数を出さない(sim-to-real 較正、`simcal` 10 op と `multivar` の計画・感度解析を再利用)。模型は転送行列(`filmoptics`)× 黒体の光源(`spectralrad`)× CIE 1931 → sRGB × 利得・ガンマ・周辺減光。★計画: つまみ 7 本を L18 で振り、Morris のふるいで照明 × 利得を「組み合わせ」に分け、共線性指数で照明と利得の感度の比 1.0000、1 波長の 500 nm の膜は A^1·d^0.93(光路長 n·d)と物理どおり(98 nm の膜では界面の反射が効いて n·d からずれる、と正直に)。★主役は公開の実測(Schwarz ら 2024、CC BY 4.0): 被覆率 100 % の顕微分光に膜厚・Cauchy の A と B・NA・利得の 5 本を合わせると、局所の共線性(γ > 10)で点推定は出さず、プロファイル尤度の 95 % 区間 [94.6, 99.0] nm(幅 4.4 nm)が論文の基準 98.5 nm を含む。雑音は別の測定(裸の Si)から取り、取り置いた波長で過適合の門 6 本を通る。直入射・材料表の n の貧しい模型は区間 [93.02, 93.07] nm と狭いのに基準を外し、絶対の χ² の門(χ²/ν 1.98)が拒否する。★実物の顕微鏡写真では色温度と周辺減光だけが決まり、膜厚・屈折率・分散・利得・ガンマは組み合わせ —— χ² の地形で点と溝に分かれる。材料表の n を固定すると d = 86.65 nm を ±0.2 nm で出すが基準から −12 %、絶対の χ²(χ²/ν 11.7)と残差 PCA(2 成分)がカメラの分光感度の欠けを見つけて拒否する。合成: 40 種中 40 種が 3σ_CRLB の内、500 nm・4 入射角で分散を無視した模型を残差 PCA が見つける。★正直な限界: A を自由にした一定の n は 98 nm の膜では拒否できない(分散 B は上限しか出ない)。探針 4 本(基準のずれ・白色だけの雑音・照明の固定・族の中の真値)で門が逆に鳴る。学習 0、門 16 件。*
+
+[![Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits.png)
+
+*↑ 測定の図 ―― Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測定から)で割ると見える(次の図)。*
+
+[![豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals.png)
+
+*↑ 豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。*
+
+[![膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness.png)
+
+*↑ 膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。*
+
+[![実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z.png)
+
+*↑ 実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。*
+
+[![材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration.png)
+
+*↑ 材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。*
+
+```
+py -3.11 examples/poc_simcal_thin_film.py
+```
+
+ソース: [examples/poc_simcal_thin_film.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_simcal_thin_film.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_thin_film)
+
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`doe_decode`](https://furuse.work/ops/multivar/coding/doe_decode.html) · [`doe_orthogonal_array`](https://furuse.work/ops/multivar/plan/doe_orthogonal_array.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`mv_confounding`](https://furuse.work/ops/multivar/identifiability/mv_confounding.html) · [`mv_pca`](https://furuse.work/ops/multivar/analysis/mv_pca.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_report`](https://furuse.work/ops/simcal/report/simcal_report.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_uncertainty`](https://furuse.work/ops/simcal/check/simcal_uncertainty.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) …(他 2)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 

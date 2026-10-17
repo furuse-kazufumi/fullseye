@@ -4,7 +4,7 @@ dim: multivar
 category: plan
 in: 
 out: design
-examples: [doe_plan_tour, multivar_inspection_tour]
+examples: [doe_plan_tour, multivar_inspection_tour, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ used, and ``meta['regular']`` says whether interactions land on whole columns.
 
 - [doe_plan_tour](../../../../examples/doe_plan_tour.py) — `py -3.11 examples/doe_plan_tour.py`
 - [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 
 ## 型が繋がる次の op(`design` を入力に取れる)
 

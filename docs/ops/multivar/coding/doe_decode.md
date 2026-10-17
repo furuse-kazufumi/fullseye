@@ -4,7 +4,7 @@ dim: multivar
 category: coding
 in: design
 out: matrix
-examples: [doe_plan_tour, multivar_inspection_tour, sensitivity_tour]
+examples: [doe_plan_tour, multivar_inspection_tour, poc_simcal_thin_film, sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -38,6 +38,7 @@ settings with the same ranges and scales.
 
 - [doe_plan_tour](../../../../examples/doe_plan_tour.py) — `py -3.11 examples/doe_plan_tour.py`
 - [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [sensitivity_tour](../../../../examples/sensitivity_tour.py) — `py -3.11 examples/sensitivity_tour.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)

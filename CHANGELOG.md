@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — PoC「実物の画像の誤差から薄膜の模型の係数を合わせる」(sim-to-real 較正の最初の実データ適用、収蔵番号 2026.243 は仮番)
+- `examples/poc_simcal_thin_film.py`(17 門、図 9 枚): 計画(L18・Morris・共線性指数)→ 決まるつまみだけ較正 → 同定性・過適合の門・残差 PCA。公開の実測(Schwarz ら 2024、CC BY 4.0、`data/thin_film_real/` を共用)で膜厚のプロファイル 95 % 区間 [94.6, 99.0] nm が基準 98.5 nm を含み、直入射・材料表の n の模型(区間 [93.02, 93.07] nm)は絶対の χ² の門で拒否。実物の顕微鏡写真では色温度と周辺減光だけが決まり、膜厚・屈折率・利得・ガンマは組み合わせ。n を固定したカメラ較正(−12 %)は絶対の χ² と残差 PCA が拒否。op 本体(simcal・multivar・filmoptics)は変えていない。
+- 統合時の修正: 取り置き / 学習 の比の門を、既定の bootstrap の限界(実測 1.21 に対し 1.25、数字をずらせば通る門)から F 分布の上側 α = 1e-3 の分位(F(328, 325) で 1.431、p = 0.056)に替えた。比は σ の定数倍の見誤りに依らない。門は解析の分位をモンテカルロ 20 万本(1.435)と照合し、取り置きの残差を 1.5 倍にすると p = 1.3e-18 で拒否する探針つき。主図(χ² の地形)に軸の目盛り・軸名・カラーバー・終点の印をつけた。
 ### Fixed — optscene を波長の積分に載せ替え、棚卸しの束 2 の「黙って間違う」7 件を直す(+ 金属の既定・透明体の出口の界面)
 - 波長の積分: `layout_capture(mode="spectral")` = Σ_λ w(λ)·放射輝度(λ)·T_lens(λ)·QE(λ)·λ/550 nm。光源は `spectralrad`(LED = Ohno 2005、ハロゲン = 黒体)、QE は `sensor_spec(qe_curve=...)` か Si の模型(Green 2008 の n,k、台帳の QE は 545 nm に合わせる)、材質は波長に落とす(金属 = 材料表の n,k の Fresnel、誘電体 = n(λ) と任意で k の吸収 `absorption_from_k`、lambert = `reflectance_curve`)。`render_optscene(spectral=True)` は 1 波長の単色。既定の `mode="rgb"` は従来どおり(550 nm・平らな QE・灰色の lambert で 2 つの経路は 1e-12 で一致)。新しい引数: `sensor_spec(qe_curve, qe_reference_nm, si_collection_um)`、`lens_spec(transmission_curve)`、`light_spec(color_temperature_k, band_nm, splitter_reflectance, splitter_transmittance)`、`scene_material(reflectance_curve, absorption_from_k)`、`optical_camera(telecentric)`。
 - 1 QE が波長によらなかった → 分光の経路で QE(λ)。dome・灰色の lambert で 550 / 940 / 1100 nm の像は 1 : 0.116 : 0.0029(QE 0.60 / 0.041 / 0.0008 × λ/550)。★1100 nm の Si の QE は「数 %」でなく 0.1 %(3 µm)〜0.4 %(10 µm)—— Green 2008 の α(1100 nm) = 3.5 /cm、吸収長 2.9 mm。
