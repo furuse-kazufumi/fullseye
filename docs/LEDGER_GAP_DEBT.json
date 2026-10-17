@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 607
+  "dead_knob": 600
  },
  "debt": {
   "description": {},
@@ -67,9 +67,6 @@
    "ball_detect.max_candidates": "size_or_count",
    "ball_track.max_jump": "size_or_count",
    "ball_track.min_score": "size_or_count",
-   "basis_material_decompose.max_iter": "tolerance_or_iterations",
-   "basis_material_decompose.max_thickness_cm": "size_or_count",
-   "basis_material_decompose.tol_cm": "tolerance_or_iterations",
    "beamform_delay_sum.wavelength_m": "other",
    "beamform_doa.wavelength_m": "other",
    "beamform_doa.n_targets": "size_or_count",
@@ -211,8 +208,6 @@
    "dtof_cube_depth.min_counts": "size_or_count",
    "dtof_cube_depth.empty_value": "other",
    "dynsys_correlation_dimension.max_points": "size_or_count",
-   "effective_z_map.high": "other",
-   "effective_z_map.low": "other",
    "env_params.lat": "other",
    "env_params.lon": "other",
    "env_studio.key": "other",
@@ -433,8 +428,6 @@
    "pure_pursuit_circle_offset.speed": "other",
    "pure_pursuit_curvature.window": "smoothing_or_threshold",
    "quasi_flat_zones.connectivity": "other",
-   "r_value_map.high": "other",
-   "r_value_map.min_log": "size_or_count",
    "range_doppler_peaks.min_fraction": "size_or_count",
    "refine_lm.iters": "tolerance_or_iterations",
    "refine_lm.tol": "tolerance_or_iterations",

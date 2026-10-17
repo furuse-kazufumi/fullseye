@@ -69,7 +69,7 @@ t = np.zeros((2, 32, 32))
 t[0] = 4.0                                                             # 赤身 4 cm
 t[1, 10:20, 10:20] = 0.2                                               # 皮質骨 2 mm
 sig = fs.ledger.xray_channel_projection(t, ["MUSCLE_ICRU44", "BONE_CORTICAL_ICRU44"], ch, 5e4, seed=1)
-b = fs.ledger.basis_material_decompose(sig, ch, ("MUSCLE_ICRU44", "AL"), 5e4)   # (2, 32, 32) [cm]
+b = np.asarray(fs.ledger.basis_material_decompose(sig, ch, ("MUSCLE_ICRU44", "AL"), 5e4))   # 基底ごとの厚み [cm] の並び → (2, 32, 32)
 print("骨の位置の Al 相当 %.3f cm、外 %.3f cm" % (b[1, 12:18, 12:18].mean(), b[1, 22:, 22:].mean()))
 print(fs.ledger.material_xray_constants("CU", 8.0)["mu_rho_cm2_g"])     # 52.55(NIST)
 ```

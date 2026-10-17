@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # basis_material_decompose — TOMOGRAPHY `spectral_xray` op
 
 - **データ種**: `images` → `images`
-- **呼び出し**: `import fullseye as fs; fs.ledger.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None, max_iter: 'int' = 60, tol_cm: 'float' = 1e-06, max_thickness_cm: 'float' = 100.0) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None, max_iter: 'int' = 60, tol_cm: 'float' = 1e-06, max_thickness_cm: 'float' = 100.0) -> 'dict'`、台帳から引くなら `opstomography.get("basis_material_decompose")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None) -> 'dict'`、台帳から引くなら `opstomography.get("basis_material_decompose")`)
 - **台帳経由の戻り値**: `fullseye.ledger.basis_material_decompose(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.basis_material_decompose.raw(...)`、または `dualxray.basis_material_decompose` を直接呼ぶ。
 
 ## 使い方
@@ -27,8 +27,10 @@ Gauss–Newton で解く(チャネル数 = 基底の数なら連立方程式の�
 基底の厚みは負になりうる(水と Al の基底でポリエチレンは Al が負)—— 物理の厚みではなく
 「同じ減衰を作る基底の組合せ」。
 
-**拒否(fail-closed)**: 信号が 0 以下・非有限の画素、``max_iter`` 回で ``tol_cm`` に収束しない画素、
-|b| > ``max_thickness_cm`` に飛ぶ画素は NaN にして ``rejected`` に数える(黙って値を返さない)。
+**拒否(fail-closed)**: 信号が 0 以下・非有限の画素、:data:`DECOMP_MAX_ITER` 回で :data:`DECOMP_TOL_CM` に
+収束しない画素、|b| > :data:`DECOMP_MAX_THICKNESS_CM` に飛ぶ画素は NaN にして ``rejected`` に数える
+(黙って値を返さない)。反復の上限・収束の幅・厚さの上限は引数にしない —— Gauss–Newton は 3〜6 回で
+1e-6 cm に収束し、どの値にしても解ける画素の答えは変わらない(効かないノブは置かない、2026-10-18)。
 チャネル数 < 基底の数は ValueError(解が決まらない)。
 
 返り値: dict(thickness (B, H, W) [cm], basis, rejected (H, W) bool, n_rejected, iterations,

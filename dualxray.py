@@ -64,6 +64,11 @@ K_SCALE = 0.035
 K_EXPONENT = 1.15
 
 MAX_PIXELS = 4_000_000
+#: 基底分解の内部定数(引数にしない)。反復の上限、収束とみなす更新幅 [cm]、それより厚い解は「飛んだ」として拒否する
+#: 厚さ [cm](100 cm の水は 80 kV で e^{-20} —— 計数が 0 になる厚さで、測った値ではありえない)。
+DECOMP_MAX_ITER = 60
+DECOMP_TOL_CM = 1e-6
+DECOMP_MAX_THICKNESS_CM = 100.0
 MAX_CHANNELS = 16
 MAX_BASIS = 3
 
@@ -396,7 +401,7 @@ def xray_channel_projection(thickness, materials_list=("MUSCLE_ICRU44",), channe
     """
     op = "xray_channel_projection"
     if channels is None:
-        channels = default_channels()
+        channels = _default_channels()
     E, W, g = _channels(channels, op)
     names = _names(materials_list)
     t = _stack(thickness, len(names), op)
@@ -418,14 +423,24 @@ def xray_channel_projection(thickness, materials_list=("MUSCLE_ICRU44",), channe
     return out
 
 
-def default_channels() -> dict:
+def _default_channels() -> dict:
     """既定のチャネル: 80 kV・Al 2.5 mm の W 管、CdTe 2 mm のフォトンカウンティング、窓 20 / 45 keV。"""
     return photon_counting_channels(xray_tube_spectrum(80.0), thresholds_kev=(20.0, 45.0))
 
 
+def _channel_index(v, name, n_channels, op):
+    """窓の番号(負は後ろから)。整数でない値(0.5 など)は黙って切り捨てずに拒否する。"""
+    if isinstance(v, bool) or not float(v).is_integer():
+        raise ValueError("%s: %s must be an integer channel index, got %r" % (op, name, v))
+    i = int(v)
+    if not -n_channels <= i < n_channels:
+        raise ValueError("%s: %s=%d is outside the %d channels" % (op, name, i, n_channels))
+    return i % n_channels
+
+
 def _log_signal(signal, channels, n0, flat, op):
     if channels is None:
-        channels = default_channels()
+        channels = _default_channels()
     s = np.asarray(signal, dtype=np.float64)
     E, W, g = _channels(channels, op)
     if s.ndim == 2:
@@ -451,8 +466,7 @@ def _log_signal(signal, channels, n0, flat, op):
 # 基底分解                                                                      #
 # --------------------------------------------------------------------------- #
 def basis_material_decompose(signal, channels=None, basis=("WATER", "AL"), photons_per_pixel: float = 1e5,
-                             flat=None, max_iter: int = 60, tol_cm: float = 1e-6,
-                             max_thickness_cm: float = 100.0) -> dict:
+                             flat=None) -> dict:
     """チャネルの信号 → 基底物質の厚み図(Alvarez–Macovski / Lehmann の基底分解)。
 
     各画素で、多色の順方向模型 L_c(b) = −ln(Σ_k W_ck g_k e^{−Σ_j μ_j(E_k) b_j} / Σ_k W_ck g_k)
@@ -462,8 +476,10 @@ def basis_material_decompose(signal, channels=None, basis=("WATER", "AL"), photo
     基底の厚みは負になりうる(水と Al の基底でポリエチレンは Al が負)—— 物理の厚みではなく
     「同じ減衰を作る基底の組合せ」。
 
-    **拒否(fail-closed)**: 信号が 0 以下・非有限の画素、``max_iter`` 回で ``tol_cm`` に収束しない画素、
-    |b| > ``max_thickness_cm`` に飛ぶ画素は NaN にして ``rejected`` に数える(黙って値を返さない)。
+    **拒否(fail-closed)**: 信号が 0 以下・非有限の画素、:data:`DECOMP_MAX_ITER` 回で :data:`DECOMP_TOL_CM` に
+    収束しない画素、|b| > :data:`DECOMP_MAX_THICKNESS_CM` に飛ぶ画素は NaN にして ``rejected`` に数える
+    (黙って値を返さない)。反復の上限・収束の幅・厚さの上限は引数にしない —— Gauss–Newton は 3〜6 回で
+    1e-6 cm に収束し、どの値にしても解ける画素の答えは変わらない(効かないノブは置かない、2026-10-18)。
     チャネル数 < 基底の数は ValueError(解が決まらない)。
 
     返り値: dict(thickness (B, H, W) [cm], basis, rejected (H, W) bool, n_rejected, iterations,
@@ -471,7 +487,7 @@ def basis_material_decompose(signal, channels=None, basis=("WATER", "AL"), photo
     """
     op = "basis_material_decompose"
     if channels is None:
-        channels = default_channels()
+        channels = _default_channels()
     E, W, g = _channels(channels, op)
     names = _names(basis)
     B, C = len(names), W.shape[0]
@@ -496,9 +512,7 @@ def basis_material_decompose(signal, channels=None, basis=("WATER", "AL"), photo
     conv = np.zeros(P, dtype=bool)
     it_used = np.zeros(P, dtype=np.int64)
     resid = np.full(P, np.nan)
-    mi = int(max_iter)
-    tol = _f(tol_cm, "tol_cm", op, 0.0, 1.0, lo_open=True)
-    bmax = _f(max_thickness_cm, "max_thickness_cm", op, 0.0, 1e4, lo_open=True)
+    mi, tol, bmax = DECOMP_MAX_ITER, DECOMP_TOL_CM, DECOMP_MAX_THICKNESS_CM
     active = good.copy()
     for it in range(1, mi + 1):
         idx = np.where(active)[0]
@@ -561,7 +575,7 @@ def basis_decomposition_crlb(thickness_cm=(5.0, 0.0), basis=("WATER", "AL"), cha
     """
     op = "basis_decomposition_crlb"
     if channels is None:
-        channels = default_channels()
+        channels = _default_channels()
     E, W, g = _channels(channels, op)
     names = _names(basis)
     mu = _mu_table(basis, E, op)
@@ -600,8 +614,8 @@ def r_value_map(signal, channels=None, photons_per_pixel: float = 1e5, low: int 
     n0 = _f(photons_per_pixel, "photons_per_pixel", op, 0.0, 1e12, lo_open=True)
     L, ok = _log_signal(signal, channels, n0, flat, op)
     C = L.shape[0]
-    lo_i, hi_i = int(low), int(high)
-    if not (-C <= lo_i < C and -C <= hi_i < C) or (lo_i % C) == (hi_i % C):
+    lo_i, hi_i = _channel_index(low, "low", C, op), _channel_index(high, "high", C, op)
+    if lo_i == hi_i:
         raise ValueError("%s: low/high must be two different channel indices (C=%d)" % (op, C))
     ml = _f(min_log, "min_log", op, 0.0, 10.0, lo_open=True)
     Ll, Lh = L[lo_i], L[hi_i]
@@ -652,11 +666,11 @@ def effective_z_map(signal, channels=None, photons_per_pixel: float = 1e5, low: 
     n0 = _f(photons_per_pixel, "photons_per_pixel", op, 0.0, 1e12, lo_open=True)
     L, ok = _log_signal(signal, channels, n0, flat, op)
     C = L.shape[0]
-    lo_i, hi_i = int(low) % C, int(high) % C
+    lo_i, hi_i = _channel_index(low, "low", C, op), _channel_index(high, "high", C, op)
     if lo_i == hi_i:
         raise ValueError("%s: low/high must be two different channels" % op)
     ml = _f(min_log, "min_log", op, 0.0, 10.0, lo_open=True)
-    curves = _r_curves(channels if channels is not None else default_channels(), lo_i, hi_i, op)
+    curves = _r_curves(channels if channels is not None else _default_channels(), lo_i, hi_i, op)
     Lh = L[hi_i]
     R = L[lo_i] / np.where(Lh > 0, Lh, np.nan)
     m = ok & np.isfinite(Lh) & (Lh >= ml) & np.isfinite(R)
@@ -705,7 +719,7 @@ def dual_energy_separability(material_a="POLYETHYLENE", thickness_a_cm: float = 
     """
     op = "dual_energy_separability"
     if channels is None:
-        channels = default_channels()
+        channels = _default_channels()
     E, W, g = _channels(channels, op)
     n0 = _f(photons_per_pixel, "photons_per_pixel", op, 0.0, 1e12, lo_open=True)
     ta = _f(thickness_a_cm, "thickness_a_cm", op, 0.0, 1000.0)

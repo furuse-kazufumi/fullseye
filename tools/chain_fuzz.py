@@ -6489,6 +6489,18 @@ def _b_dualxray(kind):
         t = rng.uniform(0.0, 0.5, size=(2, 16, 16)) * np.array([10.0, 0.3])[:, None, None]
         if kind == "thickness":
             return ([t], {"materials_list": ["WATER", "AL"]})
+        if kind == "signal3":
+            # ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと
+            #   どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が
+            #   無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。
+            #   窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、
+            #   effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+            ch3 = _dx.photon_counting_channels(_dx.xray_tube_spectrum(120.0), (20.0, 40.0, 60.0))
+            t3 = np.zeros((2, 16, 16))
+            t3[0] = np.linspace(0.0, 6.0, 16)[None, :] ** 2 / 6.0       # 水 0〜6 cm(先頭の列は L がほぼ 0)
+            t3[1] = np.linspace(0.0, 0.3, 16)[:, None]
+            sig3 = _dx.xray_channel_projection(t3, ["WATER", "AL"], ch3, 1e5, seed=int(rng.integers(0, 1000)))
+            return ([sig3], {"channels": ch3})
         sig = _dx.xray_channel_projection(t, ["WATER", "AL"], None, 1e5, seed=int(rng.integers(0, 1000)))
         return ([sig], {})
     return build
@@ -7103,8 +7115,8 @@ OP_ARG_BUILDERS = {
     "dual_kvp_channels": _b_dualxray("two_spectra"),
     "xray_channel_projection": _b_dualxray("thickness"),
     "basis_material_decompose": _b_dualxray("signal"),
-    "r_value_map": _b_dualxray("signal"),
-    "effective_z_map": _b_dualxray("signal"),
+    "r_value_map": _b_dualxray("signal3"),
+    "effective_z_map": _b_dualxray("signal3"),
 }
 
 

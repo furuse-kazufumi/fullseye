@@ -288,7 +288,7 @@ def test_zero_count_pixels_are_rejected_not_filled():
 def test_runaway_pixels_are_rejected():
     s = D.xray_channel_projection(np.full((2, 1, 1), 0.5), ["WATER", "AL"], CH, 1e4, noise=False)
     s[0] *= 1e-6                                                        # 低い窓だけ 1e-6 倍: 解が飛ぶ
-    r = D.basis_material_decompose(s, CH, ("WATER", "AL"), 1e4, max_thickness_cm=50.0)
+    r = D.basis_material_decompose(s, CH, ("WATER", "AL"), 1e4)
     assert r["n_rejected"] == 1
 
 
@@ -302,6 +302,8 @@ def test_runaway_pixels_are_rejected():
     lambda: D.xray_channel_projection(-np.ones((1, 2, 2)), ["WATER"], CH),                 # 負の厚さ
     lambda: D.xray_channel_projection(np.ones((2, 2, 2)), ["WATER"], CH),                  # 材料の数と合わない
     lambda: D.r_value_map(np.ones((2, 2, 2)), CH, low=1, high=1),                          # 同じ窓
+    lambda: D.r_value_map(np.ones((2, 2, 2)), CH, low=0.5),                                # 窓の番号が整数でない
+    lambda: D.effective_z_map(np.ones((2, 2, 2)), CH, high=5),                             # 窓の外
     lambda: D.xray_channel_projection(np.ones((1, 2, 2)), ["N-BK7"], CH),                  # 組成の無い硝材
 ])
 def test_refusals(call):
