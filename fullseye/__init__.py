@@ -434,6 +434,7 @@ with warnings.catch_warnings():
         light_source, irradiance_map, illumination_uniformity, defect_contrast,
         lighting_sweep, illumination_design,
         solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
+        illumination_train, illumination_field, coaxial_illumination,
     )
     # 2026-10-15 近赤外の分光撮像: 反射率のキューブ (H, W, L) を撮る。キューブ型が台帳に無いので facade から出す
     #   (曲線・表を返す 5 本は opsoptics の spectral に載る)。
@@ -1184,6 +1185,7 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
+    "illumination_train", "illumination_field", "coaxial_illumination",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",

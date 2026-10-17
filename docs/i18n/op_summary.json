@@ -29717,6 +29717,78 @@
    "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
    "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
    "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
+  },
+  "optics/grating_dispersion": {
+   "fp": "498fee38a239",
+   "en": "Solve the grating equation mλ = d(sin α + sin β) and tabulate angular and reciprocal linear dispersion, resolving power and the overlapping orders.",
+   "zh": "求解光栅方程 mλ = d(sin α + sin β),并列出角色散、倒线色散、分辨本领和重叠的衍射级。",
+   "tw": "求解光柵方程 mλ = d(sin α + sin β),並列出角色散、倒線色散、解析力與重疊的繞射級。",
+   "ko": "격자 방정식 mλ = d(sin α + sin β)를 풀어 각분산·역선분산·분해능·겹치는 차수를 표로 만든다.",
+   "de": "Löst die Gittergleichung mλ = d(sin α + sin β) und tabelliert Winkel- und reziproke Lineardispersion, Auflösungsvermögen und überlappende Ordnungen.",
+   "hi": "grating equation mλ = d(sin α + sin β) हल करके angular dispersion, reciprocal linear dispersion, resolving power और overlap करने वाले orders की table बनाता है।"
+  },
+  "optics/czerny_turner_design": {
+   "fp": "98c1bda4343d",
+   "en": "First-order design of a Czerny–Turner spectrometer (plane grating + two concave mirrors): camera focal length, coma-free mirror angle and the wavelength mapping.",
+   "zh": "Czerny–Turner 光谱仪(平面光栅 + 两块凹面镜)的一阶设计:相机焦距、消彗差的镜面角和波长映射。",
+   "tw": "Czerny–Turner 光譜儀(平面光柵 + 兩片凹面鏡)的一階設計:相機焦距、消彗差的鏡面角與波長映射。",
+   "ko": "Czerny–Turner 분광기(평면 격자 + 오목거울 2장)의 1차 설계: 카메라 초점거리·코마를 없애는 거울 각·파장 사상.",
+   "de": "Erstentwurf eines Czerny-Turner-Spektrometers (Plangitter + zwei Hohlspiegel): Kamerabrennweite, komafreier Spiegelwinkel und Wellenlängenabbildung.",
+   "hi": "Czerny–Turner spectrometer (plane grating + दो concave mirror) का first-order design: camera focal length, coma हटाने वाला mirror angle और wavelength mapping।"
+  },
+  "optics/spectrometer_bandpass": {
+   "fp": "71022453e05c",
+   "en": "Spectrometer bandpass (FWHM of the instrument line shape) per wavelength, from the slit, the pixels and diffraction.",
+   "zh": "按波长由狭缝、像素和衍射给出光谱仪的带宽(仪器线型的半高全宽)。",
+   "tw": "依波長由狹縫、像素與繞射給出光譜儀的頻寬(儀器線型的半高全寬)。",
+   "ko": "슬릿·화소·회절로부터 파장마다 분광기의 대역폭(장치 함수의 FWHM)을 구한다.",
+   "de": "Bandbreite des Spektrometers (FWHM der Instrumentenfunktion) je Wellenlänge aus Spalt, Pixeln und Beugung.",
+   "hi": "slit, pixel और diffraction से हर wavelength पर spectrometer की bandpass (instrument line shape का FWHM) देता है।"
+  },
+  "optics/spectrometer_slit_image": {
+   "fp": "3c362dc32a0e",
+   "en": "Trace the image of a long slit in 3-D and report smile (spectral-line curvature) and keystone (wavelength-dependent spatial magnification).",
+   "zh": "三维追迹长狭缝的像,给出 smile(谱线弯曲)和 keystone(空间放大率随波长的变化)。",
+   "tw": "三維追跡長狹縫的像,給出 smile(譜線彎曲)與 keystone(空間放大率隨波長的變化)。",
+   "ko": "긴 슬릿의 상을 3차원으로 추적해 smile(스펙트럼선의 휨)과 keystone(공간 배율의 파장 의존)을 구한다.",
+   "de": "Verfolgt das Bild eines langen Spalts in 3-D und liefert Smile (Krümmung der Spektrallinie) und Keystone (wellenlängenabhängige räumliche Vergrößerung).",
+   "hi": "लंबी slit की image को 3-D में trace करके smile (spectral line की वक्रता) और keystone (wavelength पर निर्भर spatial magnification) देता है।"
+  },
+  "optics/spectrometer_spectrum": {
+   "fp": "d833e2cee12e",
+   "en": "Input spectrum → detector pixel readings, with higher-order images overlapping the first order.",
+   "zh": "输入光谱 → 探测器像素的读数(高阶像与一阶像重叠)。",
+   "tw": "輸入光譜 → 偵測器像素的讀數(高階像與一階像重疊)。",
+   "ko": "입력 스펙트럼 → 검출기 화소의 읽기(1차 상에 고차 상이 겹침).",
+   "de": "Eingangsspektrum → Pixelwerte des Detektors, mit höheren Ordnungen, die sich der ersten überlagern.",
+   "hi": "input spectrum → detector pixels की readings (first order की image पर higher-order images का overlap)।"
+  },
+  "optics/illumination_train": {
+   "fp": "a9f71644afb4",
+   "ja": "顕微鏡の照明系(``kohler`` または ``critical``)を近軸で並べる(``table``)。",
+   "zh": "以近轴方式排布显微镜照明系统(``kohler`` 或 ``critical``)(``table``)。",
+   "tw": "以近軸方式排布顯微鏡照明系統(``kohler`` 或 ``critical``)(``table``)。",
+   "ko": "현미경 조명계(``kohler`` 또는 ``critical``)를 근축으로 배치한다 (``table``).",
+   "de": "Ein Mikroskop-Beleuchtungsstrahlengang (``kohler`` oder ``critical``), paraxial angeordnet (``table``).",
+   "hi": "microscope का illumination train (``kohler`` या ``critical``) paraxial रूप में रखता है (``table``)।"
+  },
+  "optics/illumination_field": {
+   "fp": "ea82a25e55fa",
+   "ja": "照明系が標本に作る放射照度(``image2d``)を、近軸で光源まで逆に追って求める。",
+   "zh": "通过近轴反向追迹到光源,求照明系统在标本上的辐照度(``image2d``)。",
+   "tw": "以近軸反向追跡到光源,求照明系統在標本上的輻照度(``image2d``)。",
+   "ko": "근축으로 광원까지 거꾸로 추적해 조명계가 표본에 만드는 방사조도(``image2d``)를 구한다.",
+   "de": "Bestrahlungsstärke eines Beleuchtungsstrahlengangs auf dem Präparat (``image2d``), durch paraxiale Rückverfolgung bis zur Quelle.",
+   "hi": "paraxial backward tracing से source तक जाकर illumination train द्वारा specimen पर irradiance (``image2d``) निकालता है।"
+  },
+  "optics/coaxial_illumination": {
+   "fp": "a3cc3fc72394",
+   "ja": "同軸落射(ハーフミラー): 往復の T*R の収支と、カメラが見る像(``table``)。",
+   "zh": "同轴落射照明(半透半反镜):往返 T*R 的收支与相机看到的像(``table``)。",
+   "tw": "同軸落射照明(半透半反鏡):往返 T*R 的收支與相機看到的像(``table``)。",
+   "ko": "동축 낙사 조명(하프 미러): 왕복 T*R 수지와 카메라가 보는 상 (``table``).",
+   "de": "Koaxiale Auflichtbeleuchtung (Halbspiegel): die Bilanz T*R für Hin- und Rückweg und das Bild, das die Kamera sieht (``table``).",
+   "hi": "coaxial (half-mirror) lighting: round-trip T*R का हिसाब और camera द्वारा देखी गई image (``table``)।"
   }
  }
 }

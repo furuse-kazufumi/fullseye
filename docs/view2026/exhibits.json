@@ -3114,6 +3114,22 @@
    }
   },
   {
+   "id": "poc_spectrometer_illumination",
+   "group": "wing_metrology",
+   "media": "03_slit_image_smile.png",
+   "motion": false,
+   "thumb_src": "08_kohler_vs_critical.png",
+   "label": {
+    "ja": "分光器と照明系(帯域の幅と光源の模様)",
+    "en": "Spectrometer and illumination (bandwidth and lamp structure)",
+    "zh": "光谱仪与照明系统(带宽与光源的纹样)",
+    "tw": "光譜儀與照明系統(頻寬與光源的紋樣)",
+    "ko": "분광기와 조명계(대역폭과 광원의 무늬)",
+    "de": "Spektrometer und Beleuchtung (Bandbreite und Lampenstruktur)",
+    "hi": "spectrometer और illumination (bandwidth और lamp की संरचना)"
+   }
+  },
+  {
    "id": "poc_fiber_light_guide",
    "group": "wing_color",
    "media": "03_lp_b_v_diagram.png",
@@ -6291,6 +6307,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "grating-spectrometer-and-illumination": {
+    "zh": "光栅光谱仪与显微镜照明(带宽、smile/keystone、柯勒/临界照明、同轴半反镜)",
+    "tw": "光柵光譜儀與顯微鏡照明(頻寬、smile/keystone、柯勒/臨界照明、同軸半反鏡)",
+    "ko": "회절격자 분광기와 현미경 조명(대역폭, smile/keystone, 쾰러/임계 조명, 동축 하프 미러)",
+    "de": "Gitterspektrometer und Mikroskopbeleuchtung (Bandbreite, Smile/Keystone, Köhler/kritisch, koaxialer Halbspiegel)",
+    "hi": "grating spectrometer और microscope illumination (bandwidth, smile/keystone, Köhler/critical, coaxial half mirror)"
    }
   }
  }

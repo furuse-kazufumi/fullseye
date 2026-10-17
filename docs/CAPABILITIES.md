@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 68 項目**
+**収録 69 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -31,6 +31,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
@@ -501,7 +502,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (14)
+## 光と色 (15)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -542,6 +543,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
 
 動く例: `poc_fiber_light_guide`
+
+### [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md)
+
+分光器の「帯域の幅」は、入口スリットの幅・格子の溝の密度と照らされた本数・鏡の焦点距離・検出器の画素から決まります。`gratingspec` の 5 本は、格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何からそれを組み立てます。`grating_dispersion` は角分散・逆線分散・分解能 mN・自由スペクトル範囲・同じ方向へ出る他の次数の波長を、`czerny_turner_design` は帯域と検出器の長さからカメラ鏡の焦点距離とコマを消す Shafer の角を、`spectrometer_bandpass` はスリットの像 ⊗ 画素 ⊗ 回折の装置関数の FWHM とエタンデュを、`spectrometer_slit_image` は溝に沿った方向余弦を保つ 3 次元の格子の式で長いスリットの像の smile と keystone を、`spectrometer_spectrum` は入力スペクトルから画素の読み(2 次・3 次の像の重なりとロングパスのフィルタつき)を出します。クロマティック共焦点の `spectrometer_fwhm_nm` とハイパースペクトルの `band_fwhm_nm` に渡す数字を、ここで作れます。
+
+使う op: `grating_dispersion`, `czerny_turner_design`, `spectrometer_bandpass`, `spectrometer_slit_image`, `spectrometer_spectrum`, `illumination_train`, `illumination_field`, `coaxial_illumination`
+
+推奨パイプライン: [`czerny_turner_design`](ops/optics/spectrometer/czerny_turner_design.md) → [`spectrometer_bandpass`](ops/optics/spectrometer/spectrometer_bandpass.md) → [`spectrometer_spectrum`](ops/optics/spectrometer/spectrometer_spectrum.md)
+
+代替: [`grating_dispersion`](ops/optics/spectrometer/grating_dispersion.md), [`spectrometer_slit_image`](ops/optics/spectrometer/spectrometer_slit_image.md), [`illumination_train`](ops/optics/illumination/illumination_train.md), [`illumination_field`](ops/optics/illumination/illumination_field.md), [`coaxial_illumination`](ops/optics/illumination/coaxial_illumination.md)
+
+限界: 鏡とレンズは無収差、カメラは歪曲の無い直線写像なので、帯域の幅は収差を入れない下限。高次の回折効率は 1 次との比の定数(模型)、偏光と blaze は入れない。照明は近軸で cos⁴ とレンズの収差を入れない。
+
+実寸校正: 較正は無い(設計値から閉形式と数値の畳み込みで出す)。実機の分光器は輝線ランプで波長を較正し、装置関数は単色の線で測って差し替える。
+
+動く例: `poc_spectrometer_illumination`
 
 ### [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md)
 

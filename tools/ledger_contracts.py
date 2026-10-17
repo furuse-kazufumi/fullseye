@@ -566,6 +566,36 @@ def _array_builders():
 _CCF_CACHE: dict = {}
 
 
+def _ct_design():
+    """既定の Czerny–Turner の設計表(gratingspec、1200 本/mm・500〜750 nm)。呼ぶたびに作る(軽い)。"""
+    import gratingspec
+    return gratingspec.czerny_turner_design()
+
+
+def _ct_spectrum(rng):
+    """250〜800 nm の連続光 + 輝線 3 本(0.04 nm 刻み)。2 次・3 次の像が帯域へ落ちる短波長を含む
+    (``max_order_multiple`` と ``higher_order_efficiency`` が効く入力)。"""
+    lam = np.arange(250.0, 800.0, 0.04)
+    s = 0.2 + 0.1 * rng.random()
+    y = np.full(lam.size, s)
+    for l0 in (312.6, 546.07, 576.96):
+        y = y + np.exp(-0.5 * ((lam - l0) / 0.03) ** 2)
+    return np.column_stack([lam, y])
+
+
+def _ill_train(kind="kohler"):
+    """既定の顕微鏡の照明系(illumdesign)。"""
+    import illumdesign
+    return illumdesign.illumination_train(kind)
+
+
+def _filament(rng):
+    """コイルの縞の入った光源の放射輝度の地図(ケーラーでは写らず、クリティカルでは写る)。"""
+    n = 32
+    xx = np.arange(n)[None, :] * np.ones((n, 1))
+    return 0.4 + 0.6 * (np.sin(xx / n * 2.0 * np.pi * (3.0 + rng.random())) > 0.0)
+
+
 def _ccf_probe():
     """既定の対物レンズの較正表(chromconf)。1 回だけ作り、呼ぶたびに深いコピーを渡す。"""
     if "probe" not in _CCF_CACHE:
@@ -702,6 +732,13 @@ def _batch2_builders():
         "chromatic_confocal_readout": lambda pool, rng: (
             [__import__("chromconf").chromatic_confocal_peaks(_ccf_plate_spectrum()), _ccf_probe()], {"layer_material": __import__("chromconf").GLASS_CROWN}),
         "chromatic_confocal_limits": lambda pool, rng: ([_ccf_probe()], {}),
+        # gratingspec(2026-10-15): 設計表(table)は汎用の table の種では作れないので、既定の Czerny–Turner を種に。
+        #   spectrum には 2 次・3 次の像が帯域へ落ちる短波長を含む細かいスペクトルを渡す。
+        "spectrometer_bandpass": lambda pool, rng: ([_ct_design()], {}),
+        "spectrometer_slit_image": lambda pool, rng: ([_ct_design()], {}),
+        "spectrometer_spectrum": lambda pool, rng: ([_ct_design(), _ct_spectrum(rng)], {}),
+        # illumdesign の照明系(2026-10-15): 照明系の表と、縞の入った光源(クリティカルなら写る)
+        "illumination_field": lambda pool, rng: ([_ill_train("critical")], {"source_radiance": _filament(rng)}),
         # 2026-10-15 近赤外の分光撮像: 吸収係数の曲線(材料表)と反射率の曲線(Kubelka–Munk)を種に
         "kubelka_munk_reflectance": lambda pool, rng: ([__import__("materials").material_nir_absorption(
             ("PE", "PP", "NUT_KERNEL")[int(rng.integers(3))], 900.0, 2500.0, 161)], {}),

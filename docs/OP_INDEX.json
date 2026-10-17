@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3303,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2350,
   "nary": 17,
   "registry": 924
  },
@@ -3663,6 +3663,17 @@
    ]
   },
   {
+   "name": "coaxial_illumination",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "coherence",
    "halcon": "",
    "in_sort": "signal",
@@ -5501,6 +5512,17 @@
    "in_sorts": [
     "voxel"
    ]
+  },
+  {
+   "name": "czerny_turner_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "d2_distribution",
@@ -10754,6 +10776,17 @@
    ]
   },
   {
+   "name": "grating_dispersion",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "grating_rgb",
    "halcon": "",
    "in_sort": "normalmap",
@@ -11776,6 +11809,30 @@
   },
   {
    "name": "illumination_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "illumination_field",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "illumination_train",
    "halcon": "",
    "in_sort": null,
    "out_sort": "table",
@@ -25536,6 +25593,46 @@
    "dim": "oned",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "spectrometer_bandpass",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_slit_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_spectrum",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "pairs",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "pairs"
    ]
   },
   {

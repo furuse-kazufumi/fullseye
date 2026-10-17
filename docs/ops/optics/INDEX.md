@@ -1,4 +1,4 @@
-# OPTICS operator help — 293 ops in 33 categories
+# OPTICS operator help — 301 ops in 34 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -62,9 +62,9 @@
 
 [beer_lambert_transmittance](glassbody/beer_lambert_transmittance.md) · [prism_min_deviation_deg](glassbody/prism_min_deviation_deg.md) · [refract_rays](glassbody/refract_rays.md) · [slab_transmittance](glassbody/slab_transmittance.md)
 
-### illumination (11)
+### illumination (14)
 
-[defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
+[coaxial_illumination](illumination/coaxial_illumination.md) · [defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_field](illumination/illumination_field.md) · [illumination_train](illumination/illumination_train.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
 
 ### imaging (7)
 
@@ -137,6 +137,10 @@
 ### spectral (14)
 
 [bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
+
+### spectrometer (5)
+
+[czerny_turner_design](spectrometer/czerny_turner_design.md) · [grating_dispersion](spectrometer/grating_dispersion.md) · [spectrometer_bandpass](spectrometer/spectrometer_bandpass.md) · [spectrometer_slit_image](spectrometer/spectrometer_slit_image.md) · [spectrometer_spectrum](spectrometer/spectrometer_spectrum.md)
 
 ### surface (5)
 

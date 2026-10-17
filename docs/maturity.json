@@ -444,6 +444,27 @@
    ]
   },
   {
+   "id": "grating-spectrometer-and-illumination",
+   "title": "回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)",
+   "title_en": "Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)",
+   "category": "光と色",
+   "note": "docs/capabilities/grating-spectrometer-and-illumination.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_spectrometer_illumination",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "gw-interferometer-quantum-noise-and-matched-filter",
    "title": "干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)",
    "title_en": "Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)",
@@ -1745,8 +1766,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 384,
-  "run_by_the_poc_gate": 242,
+  "examples2d_total": 385,
+  "run_by_the_poc_gate": 243,
   "run_by_the_example_gate": 142,
   "not_run_by_any_gate": 0,
   "gates": [

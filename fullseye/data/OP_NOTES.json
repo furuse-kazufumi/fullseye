@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3303,
+ "n_notes": 3309,
  "notes": {
   "vol_dilate": [
    {
@@ -27454,6 +27454,15 @@
     "path": "docs/ops/optics/glassbody/slab_transmittance.md"
    }
   ],
+  "coaxial_illumination": [
+   {
+    "op": "coaxial_illumination",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/coaxial_illumination.md"
+   }
+  ],
   "defect_contrast": [
    {
     "op": "defect_contrast",
@@ -27471,6 +27480,25 @@
     "category": "illumination",
     "out": "table",
     "path": "docs/ops/optics/illumination/illumination_design.md"
+   }
+  ],
+  "illumination_field": [
+   {
+    "op": "illumination_field",
+    "dim": "optics",
+    "category": "illumination",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/optics/illumination/illumination_field.md"
+   }
+  ],
+  "illumination_train": [
+   {
+    "op": "illumination_train",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/illumination_train.md"
    }
   ],
   "illumination_uniformity": [
@@ -29364,6 +29392,54 @@
     "in": "pairs",
     "out": "table",
     "path": "docs/ops/optics/spectral/spectral_stats.md"
+   }
+  ],
+  "czerny_turner_design": [
+   {
+    "op": "czerny_turner_design",
+    "dim": "optics",
+    "category": "spectrometer",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/czerny_turner_design.md"
+   }
+  ],
+  "grating_dispersion": [
+   {
+    "op": "grating_dispersion",
+    "dim": "optics",
+    "category": "spectrometer",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/grating_dispersion.md"
+   }
+  ],
+  "spectrometer_bandpass": [
+   {
+    "op": "spectrometer_bandpass",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/spectrometer_bandpass.md"
+   }
+  ],
+  "spectrometer_slit_image": [
+   {
+    "op": "spectrometer_slit_image",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/spectrometer_slit_image.md"
+   }
+  ],
+  "spectrometer_spectrum": [
+   {
+    "op": "spectrometer_spectrum",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table × pairs",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectrometer/spectrometer_spectrum.md"
    }
   ],
   "corrosion_mask": [

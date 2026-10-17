@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 68 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 69 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -124,6 +124,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 彩色共焦位移感測器(玻璃色散 → 校正表 → 返回光譜 → 高度與厚度): [說明](../../capabilities/chromatic-confocal-sensor.md) _(ja)_ · 範例 [poc_chromatic_confocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_chromatic_confocal.py)
 - 量測顏色(XYZ / Lab / 色差): [說明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 範例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 光纖與光導(玻璃色散 → LP 模 → 模場直徑 → 照明效率): [說明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 範例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
+- 光柵光譜儀與顯微鏡照明(頻寬、smile/keystone、柯勒/臨界照明、同軸半反鏡): [說明](../../capabilities/grating-spectrometer-and-illumination.md) _(ja)_ · 範例 [poc_spectrometer_illumination](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spectrometer_illumination.py)
 - 用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻): [說明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 範例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - 用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 83 種，一次文獻的係數與數表，玻璃目錄匯入口）: [說明](../../capabilities/material-optical-property-library.md) _(ja)_ · 範例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數): [說明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 範例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 242 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 243 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -241,7 +242,7 @@ PoC 242 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (46)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -286,6 +287,7 @@ PoC 242 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="中國剩餘定理相位" width="200" height="200"><b>&#9654;</b><span>中國剩餘定理相位</span></a>
 <a href="../../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM 邊緣變粗" width="200" height="200"><span>SEM 邊緣變粗</span></a>
 <a href="../../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_chromatic_confocal.jpg" alt="彩色共焦感測器(由顏色讀出高度)" width="200" height="200"><b>&#9654;</b><span>彩色共焦感測器(由顏色讀出高度)</span></a>
+<a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="光譜儀與照明系統(頻寬與光源的紋樣)" width="200" height="200"><span>光譜儀與照明系統(頻寬與光源的紋樣)</span></a>
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="疊紋對準(兩片看不見的光柵讀出 1 nm)" width="200" height="200"><b>&#9654;</b><span>疊紋對準(兩片看不見的光柵讀出 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="遠心鏡頭與尺寸量測" width="200" height="200"><b>&#9654;</b><span>遠心鏡頭與尺寸量測</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光學系統圖面(截面圖、配置圖、製造圖)" width="200" height="200"><span>光學系統圖面(截面圖、配置圖、製造圖)</span></a>

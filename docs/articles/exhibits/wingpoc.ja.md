@@ -1212,7 +1212,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 46 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 47 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2847,6 +2847,42 @@ py -3.11 examples/poc_optics_drawings.py
 この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_optics_drawings)
 
 使用 op(ノートへ): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`drawing_dxf`](https://furuse.work/ops/optics/drawing/drawing_dxf.html) · [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`drawing_svg`](https://furuse.work/ops/optics/drawing/drawing_svg.html) · [`dxf_entities`](https://furuse.work/ops/optics/drawing/dxf_entities.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`lens_element_drawing`](https://furuse.work/ops/optics/drawing/lens_element_drawing.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`tolerance_analysis`](https://furuse.work/ops/optics/design/tolerance_analysis.html) · [`vision_layout`](https://furuse.work/ops/optics/scene/vision_layout.html) · [`vision_setup_drawing`](https://furuse.work/ops/optics/drawing/vision_setup_drawing.html)
+
+## No.2026.243 —— 分光器と照明系 ―― 帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか
+
+[![分光器と照明系 ―― 帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png)
+
+*↑ **分光器と照明系 ―― 帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか** ―― ハイパースペクトルの PoC は「帯域の幅 10 nm」、クロマティック共焦点の PoC は「分光器の線幅」を与えられた数字として使っていた。その数字を、入口スリット・格子の溝・鏡の焦点距離・検出器の画素から格子の式で組み立てる。同じく顕微鏡と同軸落射の照明のむらを、光源のどの面がどこへ写るか(共役)から出す。新 op 8 本: `gratingspec`(`opsoptics` の新カテゴリ `spectrometer`)の `grating_dispersion`(格子の式・分散・分解能 mN・重なる次数)/ `czerny_turner_design`(帯域と検出器からカメラの焦点距離、Shafer のコマの条件)/ `spectrometer_bandpass`(スリットの像 ⊗ 画素 ⊗ 回折の装置関数の FWHM とエタンデュ)/ `spectrometer_slit_image`(溝に沿った方向余弦を保つ 3 次元の格子の式で smile と keystone)/ `spectrometer_spectrum`(入力スペクトル → 画素の読み、2 次・3 次の重なり)、`illumdesign` の `illumination_train`(ケーラー / クリティカルの共役)/ `illumination_field`(標本の点と方向から光源まで近軸で逆に追う放射照度)/ `coaxial_illumination`(ハーフミラーの往復 R·T と、鏡面・つや消しの部品の像)。★公表の分光器(CC BY 4.0 の論文 2 本): Shafer の条件でカメラ鏡の軸外し角 14.9679°(公表 14.968°)、式 (16) のカメラの焦点距離 68.88 mm(公表 r = 136 mm)、M 型の像の幅 39.2 / 43.7 / 52.6 µm(公表 40 / 43 / 50)と分解能 0.397 nm(公表 0.385〜0.391)。Feng 2021 の中心 0.4 nm だけは、本文の値からスリットの像だけで 0.49 nm になり合わない(差は残す)。★取引: 細いスリットは回折の床 0.886 λ/(mN) で止まり(矩形の瞳で 5e-4 以内)、広いスリットでは光の量 × 分解能 = 一定。Hg の 576.96 / 579.07 nm はスリット 50 µm(FWHM 0.79 nm)で分かれ、150 µm(2.37 nm)では山が 1 つに化ける。★smile: 長さ 4 mm のスリットの像は端で 41.9 µm(3 画素)長い波長の側へ曲がり、閉形式 y'²(sin α + sin β)/(2 f cos β) と 0.2 % 以内、Littrow の曲率半径 f/(2 tan β) と 1e-9。面内の式を流用した壊した模型は曲がりが 0 で門に落ちる。keystone は端の 750 nm で 60 µm。★迷光の次数: Hg ランプの 253.65 / 365.02 nm が 2 次で 507.30 / 730.04 nm の画素に偽の線を作り、ロングパス 400 nm で消える。★HSI(900〜1700 nm、150 本/mm、InGaAs 15 µm): HSI の PoC の「10 nm」はスリット 75 µm に当たる(全帯域で 10.01〜10.03 nm)、25 µm なら 3.4 nm、8 µm 以下で画素の 1.5 nm。装置関数は台形でガウスではない。★クロマティック共焦点: 可視の分光器のスリットを 25 → 400 µm に広げると、ホウケイ酸クラウンの 40 µm の板から順に表裏の 2 ピークが潰れ、400 µm では 100 µm の板まで readout が拒否する。★照明: コイルの縞の光源をクリティカル照明は視野に写し(CV 0.53)、ケーラー照明は消す(CV 2e-16)。視野の直径 = 視野絞り × |M|、E = L π NA² を 1 % で。開口絞りをコンデンサの焦点面から 4 mm 外す探針で縞が漏れる。同軸は往復 R·T = 1/4(optscene の同軸の光と同じ値)、吸収 6 % で最適 R = 0.47、鏡面の部品はパネルを 1 + h/H 倍に引き伸ばして写し(端のけられは閉形式どおり)、テレセントリックは 1 倍、つや消しは長方形の Lambert 面の閉形式と 0.2 % 以内。学習 0、較正 0、門 40 件。*
+
+[![スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。左: 細いスリットは回折の床 0.886 λ / (mN) で止まり、NA を上げて照らす溝を増やすと床が下がる。右: 広いスリッ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/01_resolution_vs_throughput.png)
+
+*↑ 測定の図 ―― スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。左: 細いスリットは回折の床 0.886 λ / (mN) で止まり、NA を上げて照らす溝を増やすと床が下がる。右: 広いスリットでは光の量と分解能の積が一定(傾き −1)、細くしていくと床に当たって光だけを失う。*
+
+[![Hg の黄色の 2 本を、スリットの幅を変えて読む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/02_mercury_yellow_doublet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/02_mercury_yellow_doublet.png)
+
+*↑ Hg の黄色の 2 本を、スリットの幅を変えて読む。*
+
+[![1 次の 500〜750 nm の検出器に、紫外の Hg 線の 2 次の像が偽の線として乗る(効率 0.3 の模型)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/05_second_order_ghosts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/05_second_order_ghosts.png)
+
+*↑ 1 次の 500〜750 nm の検出器に、紫外の Hg 線の 2 次の像が偽の線として乗る(効率 0.3 の模型)。*
+
+[![可視の分光器(600 本/mm)のスリットを広げると、薄い板の表裏の 2 ピークが 1 つに潰れ、readout は厚さを当て推量せず拒否する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/07_chromconf_plate_vs_slit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/07_chromconf_plate_vs_slit.png)
+
+*↑ 可視の分光器(600 本/mm)のスリットを広げると、薄い板の表裏の 2 ピークが 1 つに潰れ、readout は厚さを当て推量せず拒否する。*
+
+[![同軸落射(視野 44 mm 角): 鏡面の部品はパネルそのものを写す(R·T = 1/4)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/09_coaxial_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/09_coaxial_views.png)
+
+*↑ 同軸落射(視野 44 mm 角): 鏡面の部品はパネルそのものを写す(R·T = 1/4)。*
+
+```
+py -3.11 examples/poc_spectrometer_illumination.py
+```
+
+ソース: [examples/poc_spectrometer_illumination.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spectrometer_illumination.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_spectrometer_illumination)
+
+使用 op(ノートへ): [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/confocal/chromatic_confocal_peaks.html) · [`chromatic_confocal_probe`](https://furuse.work/ops/optics/confocal/chromatic_confocal_probe.html) · [`chromatic_confocal_readout`](https://furuse.work/ops/optics/confocal/chromatic_confocal_readout.html) · [`chromatic_confocal_spectrum`](https://furuse.work/ops/optics/confocal/chromatic_confocal_spectrum.html) · [`coaxial_illumination`](https://furuse.work/ops/optics/illumination/coaxial_illumination.html) · [`czerny_turner_design`](https://furuse.work/ops/optics/spectrometer/czerny_turner_design.html) · [`grating_dispersion`](https://furuse.work/ops/optics/spectrometer/grating_dispersion.html) · [`illumination_field`](https://furuse.work/ops/optics/illumination/illumination_field.html) · [`illumination_train`](https://furuse.work/ops/optics/illumination/illumination_train.html) · [`spectrometer_bandpass`](https://furuse.work/ops/optics/spectrometer/spectrometer_bandpass.html) · [`spectrometer_slit_image`](https://furuse.work/ops/optics/spectrometer/spectrometer_slit_image.html) · [`spectrometer_spectrum`](https://furuse.work/ops/optics/spectrometer/spectrometer_spectrum.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`wave_grating_orders`](https://furuse.work/ops/math/wave/wave_grating_orders.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
@@ -6806,7 +6842,7 @@ py -3.11 examples/poc_document_scan.py
 
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_document_scan)
 
-使用 op(ノートへ): [`corner_response`](https://furuse.work/ops/2d/edges/corner_response.html) · [`dc_homomorphic`](https://furuse.work/ops/2d/decomposition/dc_homomorphic.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`get_region_contour`](https://furuse.work/ops/2d/region/get_region_contour.html) · [`gray_tophat`](https://furuse.work/ops/2d/morphology/gray_tophat.html) · [`illuminate`](https://furuse.work/ops/2d/gray/illuminate.html) · [`mean_image`](https://furuse.work/ops/2d/smoothing/mean_image.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sobel_dir`](https://furuse.work/ops/2d/edges/sobel_dir.html) · [`var_threshold`](https://furuse.work/ops/2d/segmentation/var_threshold.html)
+使用 op(ノートへ): [`corner_response`](https://furuse.work/ops/2d/edges/corner_response.html) · [`dc_homomorphic`](https://furuse.work/ops/2d/decomposition/dc_homomorphic.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`get_region_contour`](https://furuse.work/ops/2d/region/get_region_contour.html) · [`gray_tophat`](https://furuse.work/ops/2d/morphology/gray_tophat.html) · [`illuminate`](https://furuse.work/ops/2d/gray/illuminate.html) · [`illumination_field`](https://furuse.work/ops/optics/illumination/illumination_field.html) · [`mean_image`](https://furuse.work/ops/2d/smoothing/mean_image.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sobel_dir`](https://furuse.work/ops/2d/edges/sobel_dir.html) · [`var_threshold`](https://furuse.work/ops/2d/segmentation/var_threshold.html)
 
 ## No.2026.020 —— 改竄検出を ROC で語る ―― 「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率
 

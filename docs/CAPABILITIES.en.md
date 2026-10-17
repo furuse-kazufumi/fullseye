@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 68 capabilities**
+**Currently 69 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -32,6 +32,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [Inner diameter of a round part, all the way to millimetres](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
@@ -426,7 +427,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (14)
+## Light and colour (15)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -459,6 +460,18 @@ Seven ops in `fiberoptics` (category `fiber`): group index and material dispersi
 Operators: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
 
 Runnable: `poc_fiber_light_guide`
+
+### [Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)](capabilities/grating-spectrometer-and-illumination.md)
+
+Five ops in `gratingspec` (category `spectrometer`): the grating equation with angular and reciprocal linear dispersion, resolving power mN, free spectral range and overlapping orders; a first-order Czerny-Turner design with Shafer's coma condition; the bandpass as the FWHM of the slit image, pixel and diffraction convolved, with the etendue; smile and keystone of a long slit from the 3-D grating equation; and the detector reading of an input spectrum including higher-order overlap and a long-pass filter. Three in `illumdesign`: Koehler and critical illumination trains with their conjugates, the specimen irradiance by paraxial backward tracing to a source radiance map, and the coaxial half mirror (round trip R·T, ghost, the image of a mirror-like or matte part).
+
+Operators: `grating_dispersion`, `czerny_turner_design`, `spectrometer_bandpass`, `spectrometer_slit_image`, `spectrometer_spectrum`, `illumination_train`, `illumination_field`, `coaxial_illumination`
+
+Pipeline: [`czerny_turner_design`](ops/optics/spectrometer/czerny_turner_design.md) → [`spectrometer_bandpass`](ops/optics/spectrometer/spectrometer_bandpass.md) → [`spectrometer_spectrum`](ops/optics/spectrometer/spectrometer_spectrum.md)
+
+Alternatives: [`grating_dispersion`](ops/optics/spectrometer/grating_dispersion.md), [`spectrometer_slit_image`](ops/optics/spectrometer/spectrometer_slit_image.md), [`illumination_train`](ops/optics/illumination/illumination_train.md), [`illumination_field`](ops/optics/illumination/illumination_field.md), [`coaxial_illumination`](ops/optics/illumination/coaxial_illumination.md)
+
+Runnable: `poc_spectrometer_illumination`
 
 ### [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md)
 
