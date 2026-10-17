@@ -178,6 +178,7 @@ def detect_stats(c, sites):
 
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     S = stacks()
     mats = fs.ledger.acoustic_material_table()["materials"]
     used = ("water", "silicon", "sio2", "copper", "air")
@@ -327,7 +328,11 @@ def main():
     check(not pods[F_POD[0]]["位相"][0]["a90_95_beyond_data"], "150 MHz の a90/95 は試した大きさの範囲の内側")
 
     elapsed = time.time() - t0
-    check(elapsed < 60.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    check(cpu < 60.0, "所要時間(CI の上限に余裕を残す)", "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     if figs.enabled():
         _figures(S, asc, pol, m_show, cs, show, trs, pods)

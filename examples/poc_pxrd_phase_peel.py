@@ -143,6 +143,7 @@ def composite(residual, models, vmax, gamma=0.45):
 # ----------------------------------------------------------------------------------------------
 def main() -> int:
     t_start = time.time()
+    c_start = time.process_time()
     data = _data_dir()
     P, source = load_phases(data)
     mix = ["NaCl", "Al2O3", "CaF2", "MgO"] if source == "COD" else ["NaCl", "Al", "CaF2", "MgO"]
@@ -255,9 +256,13 @@ def main() -> int:
     gate("outputs are finite and non-constant", all(np.all(np.isfinite(a)) and np.ptp(a) > 0 for a in
                                                   (std["image"], res["image"], res["y"], res["fit4"])), "")
     el = time.time() - t_start
+    cpu = time.process_time() - c_start
     # ★40 s は手元(19-22 s)の 2 倍で決めていたが、CI の py3.10 の走者で 41.6 s に
     #   なり落ちた(2026-10-11、ほかの 13 門は全部 ok)。走者は手元の約 2 倍遅いので 3 倍の 60 s に。
-    gate("run time", el < (120 if FULL else 60), "(%.1f s)" % el)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("run time", cpu < (120 if FULL else 60), "(CPU %.1f s, wall %.1f s)" % (cpu, el))
     n_ok = sum(ok for _, ok in _GATES)
     print("\n%d / %d gates passed" % (n_ok, len(_GATES)))
     # test_poc_scripts_run は stdout の「PASS」の行を合格の印として見る(exit 0 だけでは通さない)

@@ -132,6 +132,7 @@ def _wedge_synth(theta_deg, L_px, h0_px, phi_deg, lip_rc, shape, ss=4):
 def numpy_part() -> dict:
     print("== 1. numpy の門(閉形式・合成・体素・Boolean 模型)")
     t0 = time.perf_counter()
+    c0 = time.process_time()
     out = {}
     # 門 1 すり切りの閉形式 vs 体素
     a, h = 1.0, 0.4
@@ -308,10 +309,15 @@ def numpy_part() -> dict:
          all(callable(getattr(S, nm, None)) for nm in S.__all__) and docs_ok and "acos" not in src and not re.search(r"[A-Za-z]:[\\/](Users|dev)", src),
          "%d 本" % len(S.__all__))
     dt = time.perf_counter() - t0
+    cpu = time.process_time() - c0
     # ★2026-10-07: 共有ランナーでは同じ計算が手元の数倍かかる(poc_reproducible_icp で 6 s → 41〜57 s)。
     #   CI(py3.10)で 5.33 s になり落ちた。主張は手元の 5 s、CI は 8 倍の枠で「桁が変わっていない」だけを見る。
     budget = 40.0 if __import__("os").environ.get("GITHUB_ACTIONS") else 5.0
-    gate("門 15 既定の門の所要 ≤ %g s" % budget, dt <= budget, "%.2f s(手元の主張は ≤ 5 s)" % dt)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 15 既定の門の所要 ≤ %g s" % budget, cpu <= budget,
+         "CPU %.2f s(壁時計 %.2f s、手元の主張は ≤ 5 s)" % (cpu, dt))
     return out
 
 
@@ -327,6 +333,7 @@ def _render_fill(pos, r, a, zb, pitch, ext, z0, height):
 def full_part(out: dict) -> dict:
     print("== 2. MuJoCo の門(剛体球のすくいと注ぎ = 第 2 実装)")
     t0 = time.perf_counter()
+    c0 = time.process_time()
     a, h, zr = 0.03, 0.012, 0.10
     zb = zr - h
     fills = {}
@@ -492,7 +499,11 @@ def full_part(out: dict) -> dict:
          "出た割合の差 最大 %.3f(門 0.10、%d コマ; 殻を引かない断面積だと %.3f)—— 像は数より遅れる(輪郭は粒の外側の包絡、流れる表層は膨らむ)"
          % (float(np.max(np.abs(Fi - Ft))), len(Fi), float(np.max(np.abs(Fr - Ft)))))
     dt = time.perf_counter() - t0
-    gate("門 25 --full の所要 ≤ 240 s(機械の混み具合で倍まで揺れる)", dt <= 240.0, "%.1f s(すくい 12 本、注ぎ %.1f s・%d 球・%d 歩)" % (dt, pr["elapsed_s"], info["n"], info["steps"]))
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 25 --full の所要 ≤ 240 s(機械の混み具合で倍まで揺れる)", cpu <= 240.0, "CPU %.1f s(壁時計 %.1f s、すくい 12 本、注ぎ %.1f s・%d 球・%d 歩)" % (cpu, dt, pr["elapsed_s"], info["n"], info["steps"]))
     out.update(pour=pr, chunks=chunks, s_b=s_b, g_fit=g_fit, v0_fit=v0_fit, vres=100 * float(np.max(np.abs(vres))), best_o=best_o, best_s=best_s, Fm=Fm, tt=tt, Fi=Fi, Ft=Ft, Fi_theta=np.array(Fth),
                n_img=n_img, n_counted=n_counted, peak=peak, Wb=Wb, Dh=Dh, stream_geom=(pitch, ext, xc, height, s_top))
     return out

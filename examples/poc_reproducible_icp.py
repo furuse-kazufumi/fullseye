@@ -446,6 +446,7 @@ def figures(st: dict, od: dict, cpu: list, gpu_live: list, icp: dict) -> None:
 # ======================================================================================================================
 def main() -> int:
     t_all = time.time()
+    c_all = time.process_time()
     st = staircase()
     od = order_and_threads()
     scale_and_fail_closed()
@@ -459,8 +460,13 @@ def main() -> int:
         else:
             skip("GPU の測定", "cuBLAS 13 の FP64 エミュレーションが使えない(記録の表だけ描く)")
     dt = time.time() - t_all
+    cpu_s = time.process_time() - c_all          # ``cpu`` はこの関数で CPU の速度の表(cpu_speed())の名前
     budget = 120 if FULL else 30
-    gate("門 14 所要 ≤ %d s" % budget, dt <= budget, "%.1f s" % dt)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    #   ★GPU の測定(--full で GPU があるときだけ)の待ちは CPU 時間に入らない —— 門は CPU 側の計算量だけを見る。
+    gate("門 14 所要 ≤ %d s" % budget, cpu_s <= budget, "CPU %.1f s(壁時計 %.1f s)" % (cpu_s, dt))
     if figs.enabled():
         figures(st, od, cpu, gpu_live, icp)
     if figs.errors():

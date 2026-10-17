@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 615 von 1453. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 615 von 1472. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -343,6 +343,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L27** — ★Da ein Modul (pivops) im Repo-Wurzelverzeichnis importiert wird, das Repo-Wurzelverzeichnis nach vorne setzen, damit es direkt aus einem Checkout läuft. Gleiche Konvention wie die anderen Beispiele. Ohne dies scheitert `py -3.11 examples/<name>.py` mit ModuleNotFoundError (gemessen 2026-09-09: von den 83, für die es kein Ausführungstor gab, scheiterten nur diese 2 dieser Art).
 
+## `examples/poc_active_contours.py`
+
+- **L258** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
 ## `examples/poc_allsky_cloud_cover.py`
 
 - **L104** — ★Die letzten 3 sind **dünne Wolken** (unterschiedliche optische Dicke). Erhöht man die Schwelle, fallen sie von der dünnsten an weg — daher rührt die Treppe in Abschnitt 4.
@@ -564,6 +568,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L271** — ★Wendet man sobel_dir direkt auf eine binäre Maske an, wird die Gradientenrichtung auf 0/90 Grad quantisiert, und die richtungsbehaftete Hough mit einer Stimme pro Punkt kollabiert auf diese beiden Linien (gemessen: 2 der 4 Linien sind exakt 0.00 / 90.00 Grad). Erst weichzeichnen, dann die Richtung messen.
 
+## `examples/poc_dose_uniformity_from_grinding.py`
+
+- **L389** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
 ## `examples/poc_driving_decisions.py`
 
 - **L247** _(ja)_ — ★2026-10-03 まで縞が x に 10 m 長く y に並んでいた(90° 回っていた、ユーザー指摘)。下の門が向きを確かめる。
@@ -668,6 +676,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L375** _(ja)_ — ★これは note 080 で退けた「順位で判定する」とは別物 —— 判定は今も床で行い、 ここで固定するのは**分離しているという性質**だけ。
 - **L403** _(ja)_ — ★書体 1 本の環境では**主張を弱める**。妨害から作った床は書体の散らばりより 狭く(実測 0.0258 対 0.0581)、撮り方の違いだけで無事な字まで超えてしまう (実測 7 本中 5 本)。**この環境では言えないことを言わない**のが正しく、 閾値を緩めて通すのは測定を捨てるのと同じ。CI には CJK を 2 本入れてある。
 
+## `examples/poc_granular_heap_repose.py`
+
+- **L357** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L408** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
+## `examples/poc_graph_hierarchy_segmentation.py`
+
+- **L369** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
 ## `examples/poc_gravitational_lens_invariants.py`
 
 - **L77** _(ja)_ — 色。★赤と緑は対にしない
@@ -700,14 +717,27 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L393** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
 - **L433** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
 
+## `examples/poc_interreflection_fringe_error.py`
+
+- **L289** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L292** _(ja)_ — ★この PoC だけは CPU 時間が壁時計を大きく上回る(手元 24 スレッドで CPU 10〜13 秒・壁時計 0.6〜0.7 秒、 OMP/OPENBLAS/MKL_NUM_THREADS=1 では CPU・壁時計とも 0.1 秒未満)。計算そのものは小さく、差は BLAS の スレッドの空回り(待ちの spin)で、コア数に比例して増える。60 秒の上限は手元の 4.7 倍で、CI の走者(4 コア) では空回りがさらに小さいので据え置く。上限に近づいたら、計算が増えたのか空回りかをスレッド 1 で切り分ける。
+
 ## `examples/poc_kendama.py`
 
 - **L112** _(ja)_ — ★CI(2 コア、PoC を並列に走らせる)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-30、run 36657843727、 手元 160 s)。FULLSEYE_POC_BUDGET=reduced(CI では既定)で、大皿の 20 試行(予測誤差の曲線と主要な門)はそのままに、小皿・中皿・ 画素雑音・推奨品の試行を 10 に、画素雑音の段を 0 / 2 / 8 / 16 px に、3DGS の試行・コマ・間隔の段を減らす。門の閾値は変えない (測った段だけで判定)。展示の数字は full の実測で、reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+
+## `examples/poc_knife_tactile_toughness.py`
+
+- **L483** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_larval_connectome_reservoir.py`
 
 - **L43** _(ja)_ — ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。 FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、 reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
 - **L207** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+
+## `examples/poc_laser_line_speckle_floor.py`
+
+- **L332** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_leak_localization.py`
 
@@ -874,9 +904,19 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L418** _(ja)_ — drizzle(既存 op、面積保存の別実装)で独立に合わせる。★drizzle の shifts は「フレームの中身が基準からずれた向き」 なので、センサのシフト(画素 (r, c) がシーンの c + dc を見る = 中身は −dc ずれる)とは**符号が逆**。
 - **L508** _(ja)_ — ★Q = 2 は「折り返しが出るか」の境目。見える解像の得(系の MTF ≥ 0.1 の帯域)が尽きるのはもっと手前: sinc(0.5)·MTF(0.5Q) = 0.1 の Q*。F 11(Q = 1.75)は画素律速の判定でも得は 1.0 倍。
 
+## `examples/poc_pod_lighting.py`
+
+- **L406** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
+## `examples/poc_powder_grinding_ae.py`
+
+- **L269** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+
 ## `examples/poc_powder_scoop_pour.py`
 
-- **L311** _(ja)_ — ★2026-10-07: 共有ランナーでは同じ計算が手元の数倍かかる(poc_reproducible_icp で 6 s → 41〜57 s)。 CI(py3.10)で 5.33 s になり落ちた。主張は手元の 5 s、CI は 8 倍の枠で「桁が変わっていない」だけを見る。
+- **L313** _(ja)_ — ★2026-10-07: 共有ランナーでは同じ計算が手元の数倍かかる(poc_reproducible_icp で 6 s → 41〜57 s)。 CI(py3.10)で 5.33 s になり落ちた。主張は手元の 5 s、CI は 8 倍の枠で「桁が変わっていない」だけを見る。
+- **L316** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L503** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_print_registration.py`
 
@@ -904,8 +944,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_pxrd_phase_peel.py`
 
-- **L184** _(ja)_ — ★a の門 5e-5 の余裕(組み込み時 2026-10-06 に雑音の種を 12 通りずつ振って実測): 誤差は雑音でなく較正の系統で決まり、 この像(傾き 3°・向き −40°)では +3.0〜+4.1e-5(種 21 は +3.8e-5)。種による散らばりは ±0.5e-5 程度で、24 通りの最大は |4.2e-5|。 種は固定なので結果は決定的。門を締めると系統の偏りに当たり、緩める理由も無いので 5e-5 のまま。
-- **L258** _(ja)_ — ★40 s は手元(19-22 s)の 2 倍で決めていたが、CI の py3.10 の走者で 41.6 s に なり落ちた(2026-10-11、ほかの 13 門は全部 ok)。走者は手元の約 2 倍遅いので 3 倍の 60 s に。
+- **L185** _(ja)_ — ★a の門 5e-5 の余裕(組み込み時 2026-10-06 に雑音の種を 12 通りずつ振って実測): 誤差は雑音でなく較正の系統で決まり、 この像(傾き 3°・向き −40°)では +3.0〜+4.1e-5(種 21 は +3.8e-5)。種による散らばりは ±0.5e-5 程度で、24 通りの最大は |4.2e-5|。 種は固定なので結果は決定的。門を締めると系統の偏りに当たり、緩める理由も無いので 5e-5 のまま。
+- **L260** _(ja)_ — ★40 s は手元(19-22 s)の 2 倍で決めていたが、CI の py3.10 の走者で 41.6 s に なり落ちた(2026-10-11、ほかの 13 門は全部 ok)。走者は手元の約 2 倍遅いので 3 倍の 60 s に。
+- **L262** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_real_coin_metrology.py`
 
@@ -933,6 +974,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_reproducible_icp.py`
 
 - **L39** _(ja)_ — ★既定(図なし)の経路は CI の PoC の門そのもの。手元 6 s が CI で 41〜57 s(約 9 倍)になり「所要 ≤ 30 s」で落ちた (0.4.0、a9f7e765c)。既定は手元 2.5 s 以下に絞り、主張の重い版(20 万点 × 11 順、ICP の家族 5 本)は --full に移した。 記事・展示の数字は --full の実行から写している。
+- **L465** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L468** _(ja)_ — ★GPU の測定(--full で GPU があるときだけ)の待ちは CPU 時間に入らない —— 門は CPU 側の計算量だけを見る。
 
 ## `examples/poc_rotation_invariance_audit.py`
 
@@ -949,6 +992,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L683** — ★Bei einer einzigen Ziehung von Rauschen und Ausduennung schwankt die Fehlerrate um einige %. Dreimal laufen lassen und mitteln.
 - **L840** — ★Zeilenweise gebuendelt auswerten (eine Python-Schleife pro Zelle liefe 15000 Mal).
 - **L1079** — ★Volumen-Ops sind (depth,row,col). grid_coords ist (nx,ny,nz), also transponieren.
+
+## `examples/poc_sam_hybrid_bonding_voids.py`
+
+- **L332** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_scan_to_bim_asbuilt.py`
 
@@ -981,7 +1028,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_segmentation_gauntlet.py`
 
-- **L277** _(ja)_ — ★表は世界ごとに 1 枚。examplefig.save_table は 1 セルごとに text_box を全画像に掛けるので、65 行 × 16 列の 1 枚は 100 秒を超えた (実測 104 s)。11 行 × 11 列 × 6 枚なら数秒で、読む側も世界ごとに手法を比べられる。
+- **L237** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L282** _(ja)_ — ★表は世界ごとに 1 枚。examplefig.save_table は 1 セルごとに text_box を全画像に掛けるので、65 行 × 16 列の 1 枚は 100 秒を超えた (実測 104 s)。11 行 × 11 列 × 6 枚なら数秒で、読む側も世界ごとに手法を比べられる。
+
+## `examples/poc_shape_from_polarization.py`
+
+- **L296** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_solar_el_inspection.py`
 

@@ -114,6 +114,7 @@ def identifiability(t, x0, ratio, noise, seeds, rng_seed=0):
 def numpy_part() -> dict:
     print("== numpy だけの門(粉砕則・粒度分布・AE・画像の閉形式と往復)")
     t0 = time.time()
+    c0 = time.process_time()
     out: dict = {}
     # 門 1 粉砕則の閉形式
     x1, x2, C = 500.0, 50.0, 3.0
@@ -263,8 +264,13 @@ def numpy_part() -> dict:
     gate("門 11 入口: __all__ が実在し、docstring があり Markdown のリンク記法を含まない",
          not missing and not bad_doc and "](" not in (G.__doc__ or ""), "欠け %s、docstring %s" % (missing or "なし", bad_doc or "ok"))
     dt = time.time() - t0
+    cpu = time.process_time() - c0
     out["t_numpy"] = dt
-    gate("門 12 numpy の門の所要 ≤ %d s" % (60 if FULL else 8), dt <= (60 if FULL else 8), "%.2f s" % dt)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 12 numpy の門の所要 ≤ %d s" % (60 if FULL else 8), cpu <= (60 if FULL else 8),
+         "CPU %.2f s(壁時計 %.2f s)" % (cpu, dt))
     return out
 
 
