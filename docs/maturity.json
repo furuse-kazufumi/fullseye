@@ -1483,6 +1483,27 @@
    ]
   },
   {
+   "id": "tem-phase-contrast-and-ctf",
+   "title": "仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)",
+   "title_en": "A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction)",
+   "category": "測る",
+   "note": "docs/capabilities/tem-phase-contrast-and-ctf.md",
+   "status": "validated-public-real-data",
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tem_ctf_thon_rings",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "template-alignment",
    "title": "位置決め(テンプレート照合で測定線を追従させる)",
    "title_en": "Locate a part by template matching and move the measurement model with it",
@@ -1829,8 +1850,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 388,
-  "run_by_the_poc_gate": 245,
+  "examples2d_total": 389,
+  "run_by_the_poc_gate": 246,
   "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [

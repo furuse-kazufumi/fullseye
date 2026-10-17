@@ -1,8 +1,8 @@
 {
- "n_ops": 3325,
+ "n_ops": 3336,
  "tiers": {
   "color": 12,
-  "ledger": 2372,
+  "ledger": 2383,
   "nary": 17,
   "registry": 924
  },
@@ -27632,6 +27632,137 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "tem_amorphous_film",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_ctf",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_ctf_correct",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_ctf_estimate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_ctf_profile",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_image_weak_phase",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_multislice",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_power_spectrum",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_projected_potential",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_scherzer",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_wavelength",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "temporal_band_power",

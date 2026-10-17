@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-72 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+73 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -116,6 +116,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Die Koeffizienten eines physikalischen Modells an reale Bilder anpassen (Sim-to-Real-Kalibrierung) — keine Zahl für Koeffizienten, die die Bilder nicht bestimmen, stattdessen die bestimmte Kombination und der Grund: [Erklärung](../../capabilities/sim-to-real-calibration.md) _(ja)_ · Beispiele [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Maße aus dem Bild subpixelgenau messen: [Erklärung](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · Beispiele [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - Telezentrische Objektive für die Maßprüfung (Hauptstrahlwinkel, Abbildungsmaßstab über der Höhe, Vignettierung und Unschärfe): [Erklärung](../../capabilities/telecentric-metrology.md) _(ja)_ · Beispiele [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
+- Ein virtuelles Transmissionselektronenmikroskop (Elektronenwellenlänge, CTF, Phasenkontrastbilder, Defokus aus Thon-Ringen, Korrektur): [Erklärung](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · Beispiele [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
 - Ein virtuelles REM — Elektron-Festkörper-Wechselwirkung per Monte Carlo lösen und, an Messdaten bewertet, sehen, wie Spannung, Detektor und Aufladung Bild und gemessene Linienbreite verändern: [Erklärung](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · Beispiele [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - Volumen und Erdmassen aus einem 3-D-Scan: [Erklärung](../../capabilities/volume-from-3d-scan.md) _(ja)_ · Beispiele [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
@@ -183,7 +184,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-245 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+246 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -246,7 +247,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (48)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (49)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -296,6 +297,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="Indirekte ToF (Faltung, Mehrwege)" width="200" height="200"><b>&#9654;</b><span>Indirekte ToF (Faltung, Mehrwege)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="Optische Zeichnungen aus der Rechnung" width="200" height="200"><span>Optische Zeichnungen aus der Rechnung</span></a>
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="Interreflexion in der Tasche bis zur Konvergenz" width="200" height="200"><span>Interreflexion in der Tasche bis zur Konvergenz</span></a>
+<a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="Virtuelles TEM (Thon-Ringe und Defokus)" width="200" height="200"><b>&#9654;</b><span>Virtuelles TEM (Thon-Ringe und Defokus)</span></a>
 </div>
 </details>
 

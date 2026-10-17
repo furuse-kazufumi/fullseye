@@ -86,6 +86,7 @@
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height) | 光と色 | `verified-synthetic` | 6/6 | `poc_tdi_linescan` synthetic → tests/test_poc_scripts_run.py |
 | [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md) | Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur) | 測る | `verified-synthetic` | 7/7 | `poc_telecentric_metrology` synthetic → tests/test_poc_scripts_run.py |
+| [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md) | A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction) | 測る | `validated-public-real-data` | 11/11 | `poc_tem_ctf_thon_rings` real → tests/test_poc_scripts_run.py |
 | [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md) | Locate a part by template matching and move the measurement model with it | 見つける | `verified-synthetic` | 4/4 | `poc_template_tracking` synthetic → tests/test_poc_scripts_run.py<br>`gallery2d_contour_measure` synthetic → tests/test_example_scripts_run.py<br>`poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | Slope, flow and line of sight on a terrain | 測る | `verified-synthetic` | 4/4 | `poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py<br>`dem_terrain_analysis_tour` synthetic → tests/test_example_scripts_run.py |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | Put text and tables exactly where you want them on an image | 見せる | `verified-synthetic` | 6/6 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
@@ -110,8 +111,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 388 |
-| `tests/test_poc_scripts_run.py` が走らせる | 245 |
+| 2-D 台帳の例 | 389 |
+| `tests/test_poc_scripts_run.py` が走らせる | 246 |
 | `tests/test_example_scripts_run.py` が走らせる | 143 |
 | **どの門も走らせていない** | **0** |
 

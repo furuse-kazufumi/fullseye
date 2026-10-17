@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 72 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 73 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -116,6 +116,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 用實物影像擬合物理模型的係數(sim-to-real 校正)—— 影像無法確定的係數不給數值,而是回傳能確定的組合與理由: [說明](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 範例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - 以次像素精度從影像量測尺寸: [說明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 範例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
 - 遠心鏡頭與尺寸量測(主光線傾角 → 隨高度變化的放大率 → 漸暈與模糊): [說明](../../capabilities/telecentric-metrology.md) _(ja)_ · 範例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
+- 虛擬穿透式電子顯微鏡(電子波長 → CTF → 相位對比像 → 由 Thon 環估計欠焦 → 校正): [說明](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · 範例 [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - 量測地形的坡度、水流與通視: [說明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 範例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
 - 虛擬 SEM —— 用蒙地卡羅求解電子與固體的交互作用,對照實測值評分,觀察加速電壓、偵測器與帶電如何改變影像與量得的線寬: [說明](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 範例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 從 3-D 掃描求體積與土方量: [說明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 範例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
@@ -183,7 +184,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 245 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 246 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -246,7 +247,7 @@ PoC 245 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (48)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (49)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -296,6 +297,7 @@ PoC 245 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_itof_multifreq/14_flying_pixels_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_itof_multifreq.jpg" alt="間接 ToF(折返與多路徑)" width="200" height="200"><b>&#9654;</b><span>間接 ToF(折返與多路徑)</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光學系統圖面(截面圖、配置圖、製造圖)" width="200" height="200"><span>光學系統圖面(截面圖、配置圖、製造圖)</span></a>
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收斂" width="200" height="200"><span>加工凹槽的相互反射算到收斂</span></a>
+<a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="虛擬穿透式電子顯微鏡(Thon 環與欠焦)" width="200" height="200"><b>&#9654;</b><span>虛擬穿透式電子顯微鏡(Thon 環與欠焦)</span></a>
 </div>
 </details>
 

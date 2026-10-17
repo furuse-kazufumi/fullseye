@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 72 capabilities**
+**Currently 73 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -56,6 +56,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
 | [Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur)](capabilities/telecentric-metrology.md) | `telecentric_lens` → `chief_ray_angle` → `telecentricity_error` → `magnification_vs_depth` → `defocus_spot_vs_depth` → `vignetting_vs_field` | `poc_telecentric_metrology` |
+| [A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction)](capabilities/tem-phase-contrast-and-ctf.md) | `tem_power_spectrum` → `tem_ctf_estimate` → `tem_ctf_correct` | `poc_tem_ctf_thon_rings` |
 | [Locate a part by template matching and move the measurement model with it](capabilities/template-alignment.md) | `gaussian` → `ncc_locate` → `shape_locate` → `create_metrology_model` → `add_metrology_object_circle_measure` → `align_metrology_model` → `apply_metrology_model` | `poc_template_tracking` |
 | [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
@@ -68,7 +69,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (26)
+## Measure (27)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -289,6 +290,18 @@ Pipeline: [`telecentric_lens`](ops/optics/telecentric/telecentric_lens.md) → [
 Alternatives: [`lens_system`](ops/optics/design/lens_system.md), [`paraxial_trace`](ops/optics/design/paraxial_trace.md), [`lens_equivalent_pinhole`](ops/optics/telecentric/lens_equivalent_pinhole.md), [`relative_illumination`](ops/optics/geometric/relative_illumination.md)
 
 Runnable: `poc_telecentric_metrology`
+
+### [A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction)](capabilities/tem-phase-contrast-and-ctf.md)
+
+Eleven ops in `temsim` (category `tem` of `opsoptics`): relativistic electron wavelength and interaction constant, Scherzer defocus and point resolution, the 2-D CTF with astigmatism and spatial/temporal envelopes, the 1-D CTF with closed-form zeros, projected potentials from atom positions (electron scattering factors from the X-ray factors of `pxrd` via Mott–Bethe), an amorphous film, weak-phase or nonlinear (`coherent_image`) bright-field images with dose noise, a simple multislice, the tiled power spectrum, defocus and astigmatism estimation from Thon rings (with a jackknife uncertainty and an explicit refusal when the rings are not visible), and phase-flip or Wiener correction. Conventions follow CTFFIND4/RELION (Å, positive defocus = underfocus). The PoC grades against published wavelengths, closed-form CTF zeros, the Scherzer point resolution, Raman–Nath diffraction, synthetic ground truth, and three EMPIAR-10028 micrographs whose defocus it reproduces within 0.2 % of the authors' CTFFIND3 values.
+
+Operators: `tem_wavelength`, `tem_scherzer`, `tem_ctf`, `tem_ctf_profile`, `tem_projected_potential`, `tem_amorphous_film`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `tem_ctf_estimate`, `tem_ctf_correct`
+
+Pipeline: [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md) → [`tem_ctf_estimate`](ops/optics/tem/tem_ctf_estimate.md) → [`tem_ctf_correct`](ops/optics/tem/tem_ctf_correct.md)
+
+Alternatives: [`tem_ctf_profile`](ops/optics/tem/tem_ctf_profile.md), [`tem_scherzer`](ops/optics/tem/tem_scherzer.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`tem_amorphous_film`](ops/optics/tem/tem_amorphous_film.md), [`tem_multislice`](ops/optics/tem/tem_multislice.md)
+
+Runnable: `poc_tem_ctf_thon_rings`
 
 ### [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md)
 

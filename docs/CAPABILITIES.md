@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 72 項目**
+**収録 73 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -55,6 +55,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
 | [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md) | `telecentric_lens` → `chief_ray_angle` → `telecentricity_error` → `magnification_vs_depth` → `defocus_spot_vs_depth` → `vignetting_vs_field` | `poc_telecentric_metrology` |
+| [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md) | `tem_power_spectrum` → `tem_ctf_estimate` → `tem_ctf_correct` | `poc_tem_ctf_thon_rings` |
 | [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md) | `gaussian` → `ncc_locate` → `shape_locate` → `create_metrology_model` → `add_metrology_object_circle_measure` → `align_metrology_model` → `apply_metrology_model` | `poc_template_tracking` |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
@@ -67,7 +68,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (26)
+## 測る (27)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -332,6 +333,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 画像の寸法を mm にする尺度は、両側テレセンなら高さに依らない(視野 4 mm・段差 5 mm で読みの差 −0.01 %)ので 1 枚の校正板でよい。通常のレンズでは同じ条件で 6.89 % 狂うので、測る面の高さで校正する。
 
 動く例: `poc_telecentric_metrology`
+
+### [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md)
+
+透過電子顕微鏡(TEM)は薄い試料を透けた電子の位相を、対物レンズの球面収差 Cs と焦点外れ Δf で強度に変えて見ます。その変え方がコントラスト伝達関数 CTF = −sin(χ + arcsin w) で、周波数ごとに符号が入れ替わるので、写真の細部は焦点によって黒くも白くも写ります。パワースペクトルには CTF の零点が同心円(Thon リング)として出るので、逆にリングから焦点外れを読めます。`temsim`(`opsoptics` の `tem`、11 本)はこの流れを通します。
+
+使う op: `tem_wavelength`, `tem_scherzer`, `tem_ctf`, `tem_ctf_profile`, `tem_projected_potential`, `tem_amorphous_film`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `tem_ctf_estimate`, `tem_ctf_correct`
+
+推奨パイプライン: [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md) → [`tem_ctf_estimate`](ops/optics/tem/tem_ctf_estimate.md) → [`tem_ctf_correct`](ops/optics/tem/tem_ctf_correct.md)
+
+代替: [`tem_ctf_profile`](ops/optics/tem/tem_ctf_profile.md), [`tem_scherzer`](ops/optics/tem/tem_scherzer.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`tem_amorphous_film`](ops/optics/tem/tem_amorphous_film.md), [`tem_multislice`](ops/optics/tem/tem_multislice.md)
+
+限界: 弱位相近似の線形の像は位相の rms が 0.1 rad を超えると 10 % 以上ずれる(非線形は mode="coherent")。推定は CTF² の振動の当てはめで、リングが見えない・零点が 3 本無い・範囲の端・2-D の当てはめが別の谷に落ちた(z が低い)ときは拒否。Cu など重い元素の散乱因子は X 線の当てはめの限界で 10 % 小さい。
+
+実寸校正: 焦点外れの値は画素寸法の 2 乗と電子の波長に比例して決まる(画素寸法を 2 % 間違えると Δf は 4 % ずれる)。画素寸法は検出器の画素 ÷ 倍率か、格子間隔の既知の試料(金の格子・グラファイト)のリングで校正し、電圧と Cs は装置の値を使う。
+
+動く例: `poc_tem_ctf_thon_rings`
 
 ### [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md)
 

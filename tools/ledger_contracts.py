@@ -412,6 +412,19 @@ def _drawing():
     return optdraw.lens_section_drawing(_lens())
 
 
+def _tem_micrograph():
+    """しきい値の境界に置いた合成写真(非晶質炭素 30 Å、Δf 6000 Å、100 e/Å²、256²)。種は固定。
+
+    ★``tem_ctf_estimate`` の判定のしきい値 2 つが探針の 2 点(半分と倍)で効くように置いた(2026-10-18):
+    帯域 k ≤ 0.2 Å⁻¹ に零点が 4 本(``min_rings`` 3 → 1 は受理のまま、6 で拒否)、相関の山が 11.8 MAD
+    (``min_peak_z`` 8 → 4 は受理のまま、16 で拒否)。拒否は ``on_fail="report"`` で表に出す(例外だと探針が
+    その点を飛ばし、効き目が見えない)。
+    """
+    import temsim
+    film = temsim.tem_amorphous_film(256, 1.0, 30.0, seed=2)
+    return temsim.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=100.0, seed=1)
+
+
 def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
@@ -451,6 +464,10 @@ def _optics_builders():
         "lens_element_drawing": lens_first(trials=4),
         "vision_setup_drawing": os_call(lambda OS, cam, sc, li, rng: ([layout(OS, li)], {})),
         "drawing_svg": lambda pool, rng: ([_drawing()], {}),
+        # temsim(2026-10-15): 原子の座標(N, 2)と、Thon リングの見える小さな合成写真(32² の雑音では推定は拒否する)
+        "tem_projected_potential": lambda pool, rng: ([[[4.2, 5.1], [10.3, 7.7], [12.9, 3.3]]], {"shape": 32, "pixel_A": 0.5}),
+        "tem_ctf_estimate": lambda pool, rng: ([_tem_micrograph()], {"defocus_min_A": 2000.0, "k_max": 0.2,
+                                                                       "on_fail": "report"}),
         "drawing_dxf": lambda pool, rng: ([_drawing()], {}),
         "drawing_raster": lambda pool, rng: ([_drawing()], {"dpi": 10.0}),
         "svg_entities": lambda pool, rng: ([__import__("optdraw").drawing_svg(_drawing())], {}),

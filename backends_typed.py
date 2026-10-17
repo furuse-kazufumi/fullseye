@@ -231,6 +231,10 @@ _OP_BRIDGE_SKIP = {
     "fiber_lp_modes",
     "fiber_mode_field_diameter",
     "fiber_bundle_coupling",
+    # 2026-10-15 仮想の透過電子顕微鏡 11 本(temsim、tem): 引数だけで表・CTF・試料を作る側と、投影ポテンシャル / 顕微鏡写真
+    # (V Å / 電子の数)を受ける側。一般の画像を投影ポテンシャルと読ませても意味が無いので、台帳から使う。
+    "tem_wavelength", "tem_scherzer", "tem_ctf", "tem_ctf_profile", "tem_projected_potential", "tem_amorphous_film",
+    "tem_image_weak_phase", "tem_multislice", "tem_power_spectrum", "tem_ctf_estimate", "tem_ctf_correct",
     # 2026-10-15 薄膜の分光反射率と膜厚 5 本(filmoptics、film): 曲線(pairs)か表を返す側。map は帯域画像の列を受けるが
     # 返すのは表(膜厚・残差・候補の数の地図の dict)で、単一画像の op ではない。
     "multilayer_reflectance",

@@ -1,4 +1,4 @@
-# OPTICS operator help — 309 ops in 35 categories
+# OPTICS operator help — 320 ops in 36 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -153,6 +153,10 @@
 ### telecentric (7)
 
 [chief_ray_angle](telecentric/chief_ray_angle.md) · [defocus_spot_vs_depth](telecentric/defocus_spot_vs_depth.md) · [lens_equivalent_pinhole](telecentric/lens_equivalent_pinhole.md) · [magnification_vs_depth](telecentric/magnification_vs_depth.md) · [telecentric_lens](telecentric/telecentric_lens.md) · [telecentricity_error](telecentric/telecentricity_error.md) · [vignetting_vs_field](telecentric/vignetting_vs_field.md)
+
+### tem (11)
+
+[tem_amorphous_film](tem/tem_amorphous_film.md) · [tem_ctf](tem/tem_ctf.md) · [tem_ctf_correct](tem/tem_ctf_correct.md) · [tem_ctf_estimate](tem/tem_ctf_estimate.md) · [tem_ctf_profile](tem/tem_ctf_profile.md) · [tem_image_weak_phase](tem/tem_image_weak_phase.md) · [tem_multislice](tem/tem_multislice.md) · [tem_power_spectrum](tem/tem_power_spectrum.md) · [tem_projected_potential](tem/tem_projected_potential.md) · [tem_scherzer](tem/tem_scherzer.md) · [tem_wavelength](tem/tem_wavelength.md)
 
 ### wave (9)
 
