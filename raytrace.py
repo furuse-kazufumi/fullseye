@@ -31,6 +31,11 @@ Conventions (every function follows these; they are the textbook ones — Welfor
 * a mirror is a surface with ``mirror=True``: the ray is reflected and keeps
   travelling in its (now −z) direction; thicknesses after a mirror are still
   given as **positive physical distances** (the code handles the sign).
+  ``decenter`` / ``tilt`` perturb **that surface only** — the axis never folds
+  (a tilted mirror is a tolerance, not a fold: rays that end up running parallel
+  to the image plane are reported invalid). Fold mirrors, coordinate breaks,
+  beamsplitters and tilted plates live in ``raytrace3d``, whose traces of a
+  coaxial prescription equal this module's to 1e-12.
 * the aperture stop is one of the surfaces (``stop``); pupils are the paraxial
   images of it. Fields are given as angles in degrees for an object at infinity
   and as object heights in millimetres for a finite object distance.
@@ -61,6 +66,8 @@ import numpy as np
 # Fraunhofer lines (micrometres)
 WL_F, WL_D, WL_C = 0.48613, 0.58756, 0.65627
 INF = float("inf")
+#: 像面に届いたと見なす、光軸方向の方向余弦の下限(これ以下は像面とほぼ平行 = 89.94° 超)。raytrace3d と同じ値。
+_MIN_DZ = 1e-3
 
 
 # --------------------------------------------------------------------------- #
@@ -853,7 +860,11 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         tt = (z_img - P[:, 2]) / D[:, 2]
     Q = P + tt[:, None] * D
     opl += n_before * np.abs(tt)
-    valid &= np.isfinite(tt)
+    # ★2026-10-15: 像面とほぼ平行・逆向きに進む光線は像面に届かない —— 無効にする。以前は傾いた鏡(tilt 45°)の後で
+    #   D_z ≈ 1e-17 の光線が巨大な有限の点になり、spot_stats が rms 3.4e18 mm・n_vignetted 0 を返した
+    #   (傾きは「その面だけ」の摂動で、光軸は折れない。折り返しは raytrace3d の fold_mirror で組む)。
+    with np.errstate(invalid="ignore"):
+        valid &= np.isfinite(tt) & (dirn * D[:, 2] > _MIN_DZ)
     Q[~valid] = np.nan
     pts.append(Q)
     return {"points": np.stack(pts, 1), "dirs": np.stack(dirs, 1), "opl": opl,
@@ -878,6 +889,28 @@ def _pupil_grid(rings=6, kind="hexapolar"):
             pts.append((rad * math.cos(a), rad * math.sin(a)))
     a = np.array(pts)
     return a[:, 0], a[:, 1]
+
+
+def _pupil_at_infinity(para):
+    return not (math.isfinite(para["ep_radius"]) and math.isfinite(para["ep_position"]))
+
+
+def _launch_stop_aimed(system, px, py, field, pupil_fill=1.0, wavelength_um=None):
+    """光線を**絞りの点**へ狙って打ち出す(入射瞳が無限遠 = 物体側テレセンの系)。
+
+    ★2026-10-15: 以前は入射瞳を狙う ``_launch`` だけで、入射瞳が無限遠の系では ``chief_ray`` /
+    ``ray_bundle`` / ``spot_stats`` が ValueError で止まった(``telecentric`` は自前の狙いで回避していた)。
+    狙いは ``raytrace3d`` のベクトル化した Newton 法(絞りの局所座標の (px, py)·ap に当てる)。
+    狙えない光線(ケラレ・全反射)は NaN の方向で返し、追跡で無効になる。
+    """
+    import raytrace3d as _R3
+    sysw = system if wavelength_um is None or float(wavelength_um) == float(system["wavelength_um"]) \
+        else with_wavelength(system, wavelength_um)
+    s3 = _R3.noncoaxial_system(sysw)
+    ap = s3["records"][s3["stop"]]["ap"]
+    tg = np.stack([np.asarray(px, float), np.asarray(py, float)], 1) * ap * pupil_fill
+    P, D, opl0, ok = _R3._aim(s3, tg, (0.0, float(field)))
+    return P, D, opl0, ok
 
 
 def _launch(system, px, py, field, para, pupil_fill=1.0):
@@ -919,10 +952,14 @@ def chief_ray(system, field=None, wavelength_um=None, image_mm=None):
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
     para = _para_at(system, wavelength_um)
-    dpx, dpy = _chief_offset(system, field, para, wavelength_um)
-    P, D, opl0 = _launch(system, np.array([dpx]), np.array([dpy]), field, para)
+    if _pupil_at_infinity(para):                       # 物体側テレセン: 絞りの中心を狙う
+        P, D, opl0, aimed = _launch_stop_aimed(system, [0.0], [0.0], field, wavelength_um=wavelength_um)
+    else:
+        dpx, dpy = _chief_offset(system, field, para, wavelength_um)
+        P, D, opl0 = _launch(system, np.array([dpx]), np.array([dpy]), field, para)
+        aimed = np.ones(1, bool)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
-    ok = bool(tr["valid"][0])
+    ok = bool(tr["valid"][0]) and bool(aimed[0])
     return {"image_x": float(tr["points"][0, -1, 0]) if ok else float("nan"),
             "image_y": float(tr["points"][0, -1, 1]) if ok else float("nan"),
             "valid": ok, "points": tr["points"][0], "dirs": tr["dirs"][0],
@@ -1032,9 +1069,15 @@ def ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, k
     field = system["field"] if field is None else _finite(field, "field")
     para = _para_at(system, wavelength_um)
     px, py = _pupil_grid(rings, kind)
-    dpx, dpy = _chief_offset(system, field, para, wavelength_um)   # centre the bundle on the real chief ray
-    P, D, opl0 = _launch(system, px + dpx, py + dpy, field, para, pupil_fill)
+    if _pupil_at_infinity(para):                       # 物体側テレセン: 光線を 1 本ずつ絞りの点へ狙う
+        P, D, opl0, aimed = _launch_stop_aimed(system, px, py, field, pupil_fill, wavelength_um)
+    else:
+        dpx, dpy = _chief_offset(system, field, para, wavelength_um)   # centre the bundle on the real chief ray
+        P, D, opl0 = _launch(system, px + dpx, py + dpy, field, para, pupil_fill)
+        aimed = np.ones(len(px), bool)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
+    tr["valid"] &= aimed
+    tr["points"][~aimed] = np.nan
     img = tr["points"][:, -1, :2]
     # chief ray = pupil centre (index 0 of the hexapolar grid; for "grid" the nearest)
     ic = int(np.argmin(px * px + py * py))
@@ -1312,7 +1355,7 @@ def _perturbed(system, rng, tol):
                        image_mm=system["image_mm"], field=system["field"])
 
 
-def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6):
+def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator="auto"):
     """Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``).
 
     *tolerances*: ``{"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001,
@@ -1325,6 +1368,14 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
     the yield. Deterministic for a given *seed*. Spots are sampled to 99 % of the
     pupil radius so that edge vignetting by a tilt cannot masquerade as an
     improvement (``n_vignetted`` would otherwise jump on the nominal design).
+
+    *compensator* says whether each perturbed lens is **refocused**: ``"back_focus"`` moves the image
+    plane to the perturbed lens's paraxial image (an assembler adjusting the back focus), ``"none"``
+    keeps the nominal image plane, ``"auto"`` (default, the behaviour before 2026-10-15) refocuses
+    exactly when the last surface's ``t`` is None (the image then follows each perturbed lens) and keeps the
+    plane when ``t`` / ``image_mm`` is a number. ★The two answers differ by orders of magnitude (the
+    default singlet: the std of the RMS spot changes about 300×), so the result reports the compensator
+    actually used under ``compensator``.
     """
     _check_system(system)
     tol = {"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001, "decenter_mm": 0.02, "tilt_deg": 0.05}
@@ -1338,10 +1389,23 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
         raise ValueError("trials must be >= 1")
     rng = np.random.default_rng(int(seed))
     field = system["field"] if field is None else _finite(field, "field")
+    if compensator not in ("auto", "back_focus", "none"):
+        raise ValueError("compensator must be 'auto', 'back_focus' or 'none', got %r" % (compensator,))
+    if system["image_mm"] is not None:
+        img_nom = system["image_mm"]
+    elif system["surfaces"][-1]["t"] is not None:
+        img_nom = system["surfaces"][-1]["t"]
+    else:
+        img_nom = paraxial_trace(system)["image_mm"]
+    if compensator == "auto":
+        used = "back_focus" if (system["image_mm"] is None and system["surfaces"][-1]["t"] is None) else "none"
+    else:
+        used = compensator
 
     def metrics(sys_):
         p = paraxial_trace(sys_)
-        st = spot_stats(sys_, field=field, rings=rings, pupil_fill=0.99)   # see spot_stats: edge vignetting
+        img = p["image_mm"] if used == "back_focus" else img_nom
+        st = spot_stats(sys_, field=field, rings=rings, pupil_fill=0.99, image_mm=img)   # see spot_stats: edge vignetting
         return p["efl"], st["rms_radius"]
 
     efl0, rms0 = metrics(system)
@@ -1400,14 +1464,15 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
                          "d_efl": float(d_efl), "d_rms_spot": float(d_rms)})
     sens.sort(key=lambda r: -abs(r["d_rms_spot"]) if math.isfinite(r["d_rms_spot"]) else 0.0)
     return {"nominal": {"efl": efl0, "rms_spot": rms0}, "efl": dist(efls), "rms_spot": dist(rmss),
-            "trials": trials, "failed": n_fail, "tolerances": tol, "sensitivity": sens, "seed": int(seed)}
+            "trials": trials, "failed": n_fail, "tolerances": tol, "sensitivity": sens, "seed": int(seed),
+            "compensator": used}
 
 
 # --------------------------------------------------------------------------- #
 # chromatic behaviour
 # --------------------------------------------------------------------------- #
-def with_wavelength(system, wavelength_um):
-    """The same prescription evaluated at another wavelength (indices re-resolved)."""
+def with_wavelength(system, wavelength_um=WL_F):
+    """The same prescription evaluated at another wavelength (indices re-resolved; default the F line)."""
     _check_system(system)
     return lens_system([dict(s) for s in system["surfaces"]], stop=system["stop"],
                        object_mm=system["object_mm"], wavelength_um=wavelength_um,

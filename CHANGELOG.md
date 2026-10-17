@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数
+- `raytrace3d`(opsoptics の新カテゴリ `noncoaxial`): `noncoaxial_system`(面・座標の切り替え〔偏心 → x → y → z、`undo` で逆順〕・戻り・`fold_mirror`・傾いた平板 / 楔・平板の半透鏡〔透過 / 反射の枝〕。`raytrace.lens_system` の処方も受け、共軸なら `trace_rays` と 1e-12 で同じ)/ `noncoaxial_example` / `noncoaxial_layout` / `noncoaxial_trace` / `noncoaxial_spot` / `image_orientation`(反射の回数と裏返り)/ `beamsplitter_branches` / `tilted_plate_shift`(Smith の横ずれ、Coddington から導いた非点隔差)/ `scheimpflug_tilt`(tanθ' = m·tanθ、ヒンジ、実光線の確かめ)/ `surface_reflectance`(材料表 + `filmoptics` の膜、入射角つき)/ `ghost_analysis`(全ての 2 面の組の 2 回反射のゴースト: 焦点・像面上の大きさ・エネルギー比・照度比)/ `ghost_image` / `ghost_path`。
+- `optdraw.noncoaxial_drawing`(折り返した系の断面図・設置図、照明の枝を重ねる `overlays`、`rotate_deg`)。`lens_section_drawing` は鏡・傾き・偏心のある処方をここへ回す(以前は ValueError)。`lens_element_drawing` が接合レンズ群の組図と、非球面の ISO 10110-12 の sag の表を描く(以前は ValueError)。
+- `raytrace` の未登録だった公開関数を design に登録: `chief_ray` / `ray_bundle` / `opd_samples` / `with_wavelength`(既定の波長 F 線)。`trace_rays` は登録しない(台帳の名は `optscene` が持ち、正準名 `lens_trace_rays` は窓口の別名として予約済みで、台帳に置くと名前の衝突の門が赤)。`refractive_index` は別の作業が中を直しているので、この回は登録しない。
+- PoC `poc_noncoaxial_optics`(仮番 2026.243、門 19 件): 同軸落射の半透鏡の裏面のゴーストが鏡面の部品に偽の凹みを写し、入射角に合わせた 2 層の膜と 1° の楔で消える。折り返しで装置の高さ 393 → 249 mm。optiland(MIT)と 6 系の全ての面の交点が 1e-13 mm。
+
+### Fixed — raytrace の黙った誤答
+- 傾いた鏡(`tilt` は「その面だけ」の摂動)の後で像面とほぼ平行に進む光線を、巨大な有限の点として有効に数えていた(`spot_stats` が rms 3.4e18 mm・`n_vignetted` 0)。光軸方向の方向余弦が 1e-3 以下の光線は無効にする。
+- 入射瞳が無限遠(物体側テレセン)の処方で `chief_ray` / `ray_bundle` / `spot_stats` が ValueError で止まっていた。入射瞳が有限でなければ絞りの点を狙う(Newton 法)。テレセンの PoC は optiland の記録値を門に格上げ(`telecentric` と `raytrace.chief_ray` の両方が 5e-7 mm)。
+- `tolerance_analysis` の補償(像面を摂動した系の近軸の焦点に合わせ直すか)を `compensator`(`"auto"` / `"back_focus"` / `"none"`)で明示し、使った補償を結果の `compensator` に返す。既定 `"auto"` は従来どおり(最後の面の `t` が None なら合わせ直す)なので数字は動かない。補償の有無で RMS の標準偏差は 1〜2 桁違う。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。

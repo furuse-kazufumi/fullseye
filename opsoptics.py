@@ -44,6 +44,13 @@ drawing(optdraw.py、2026-10-15 追加)— **光学系の図面**。``raytrace``
 単レンズの製作図(ISO 10110 の 3 分割の表、公差は ``tolerance_analysis`` から)を組み、stdlib だけの SVG と
 DXF R12 に書き出し、書いた図から座標と文字を読み戻す(門は読み戻しで採点する)。
 
+noncoaxial(raytrace3d.py、2026-10-15 追加)— **非共軸の光学系**。``raytrace`` は光軸が 1 本の直線の
+共軸系だけを追い、折り返しミラー・同軸落射の半透鏡・傾いた平板・シャインプルーフ配置が組めず、半透鏡の裏面が
+作るゴーストも計算できなかった。raytrace3d は面ごとに 3-D の姿勢を持たせ(座標の切り替えは偏心 → x → y → z の
+順、戻しはその逆順)、``raytrace`` の面の式のまま追跡する(共軸の処方では ``trace_rays`` と 1e-12 で一致)。
+像の向き(反射の回数と裏返り)、半透鏡の 2 本の枝、傾いた平板の閉形式、シャインプルーフの像面の傾き、
+面の残留反射率(材料表 + 膜)、全ての 2 面の組のゴースト(焦点・像面上の大きさ・相対強度)を返す。
+
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
 (曲率/間隔/円錐/非球面係数を変数に、多視野・多波長の横収差 + EFL 拘束)。
@@ -119,6 +126,7 @@ import filmoptics
 import moirealign
 import telecentric
 import optdraw
+import raytrace3d
 import linescan
 import pixelshift
 import octscan
@@ -126,6 +134,7 @@ import octscan
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
+        "raytrace3d": raytrace3d,
         "linescan": linescan,
         "pixelshift": pixelshift,
         "octscan": octscan,
@@ -342,6 +351,15 @@ _CATALOG = {
         ("opd_map", "raytrace", ["table"], "image2d"),
         # 2026-09-03 追加: 波長ごとの焦点移動・倍率色収差・多色スポット
         ("chromatic_shift", "raytrace", ["table"], "table"),
+        # 2026-10-15 追加(台帳の漏れ): 公開していたのに未登録だった raytrace の関数。
+        #   ★trace_rays は登録しない: 台帳の trace_rays は optscene が持ち、正準名 lens_trace_rays は窓口(facade)の
+        #   別名として予約済み(opnames.FACADE_ALIASES)で、台帳に置くと test_op_names_phase1 の衝突の門が赤になる。
+        #   台帳からは ray_bundle / noncoaxial_trace で同じ追跡に届く。refractive_index は別の作業が中を直しているので
+        #   この回は登録しない(既定の媒質が要る)。
+        ("chief_ray", "raytrace", ["table"], "table"),
+        ("ray_bundle", "raytrace", ["table"], "table"),
+        ("opd_samples", "raytrace", ["table"], "table"),
+        ("with_wavelength", "raytrace", ["table"], "table"),
     ],
     # optimization(lensopt、2026-09-03 追加): 処方を**変える**側。減衰最小二乗
     # (Levenberg–Marquardt)で曲率/間隔/円錐/非球面係数を動かし、多視野・多波長の
@@ -554,6 +572,24 @@ _CATALOG = {
         ("drawing_raster", "optdraw", ["table"], "rgbimage"),
         ("svg_entities", "optdraw", ["text"], "table"),
         ("dxf_entities", "optdraw", ["text"], "table"),
+        # 2026-10-15: 折り返した系の断面図・設置図(raytrace3d の系の大域の配置を子午面に投影)
+        ("noncoaxial_drawing", "optdraw", ["table"], "table"),
+    ],
+    "noncoaxial": [  # 非共軸の光学系(raytrace3d、2026-10-15): 座標の切り替え・折り返しミラー・半透鏡・傾いた平板・
+        # シャインプルーフ・ゴースト。系は印つきの dict(kind "noncoaxial_system"、table)。raytrace.lens_system の処方も受ける。
+        ("noncoaxial_system", "raytrace3d", [], "table"),
+        ("noncoaxial_example", "raytrace3d", [], "table"),
+        ("noncoaxial_layout", "raytrace3d", ["table"], "table"),
+        ("noncoaxial_trace", "raytrace3d", ["table"], "table"),
+        ("noncoaxial_spot", "raytrace3d", ["table"], "table"),
+        ("image_orientation", "raytrace3d", ["table"], "table"),
+        ("beamsplitter_branches", "raytrace3d", [], "table"),
+        ("tilted_plate_shift", "raytrace3d", [], "table"),
+        ("scheimpflug_tilt", "raytrace3d", [], "table"),
+        ("surface_reflectance", "raytrace3d", [], "table"),
+        ("ghost_analysis", "raytrace3d", ["table"], "table"),
+        ("ghost_image", "raytrace3d", ["table"], "image2d"),
+        ("ghost_path", "raytrace3d", ["table"], "table"),
     ],
     "telecentric": [  # テレセントリックレンズと寸法計測(telecentric、2026-10-15): 絞りの位置で主光線の傾きを決め、
         # 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
@@ -704,6 +740,9 @@ def categories():
 #: タプル返しの op を将来足すならここに登録すること(空欄を埋めるために既存の
 #: 返り型をタプルへ変える、は本末転倒なのでしない)。
 RESULT_ADAPTERS = {
+    # (px, py, opd, valid) の 4 本 → table(どれも捨てない)
+    "opd_samples": lambda r: ({"px": r[0], "py": r[1], "opd": r[2], "valid": r[3]}
+                              if isinstance(r, tuple) else r),
     # (n, k) の 2 本 → (K, 2) の pairs。どちらも捨てない。
     # スカラ波長では (3,) が返る。宣言 points((N,3))へ揃える。
     "cie_xyz_from_wavelength": lambda r: np.atleast_2d(r),

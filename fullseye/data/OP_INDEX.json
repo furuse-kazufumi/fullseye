@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3313,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2360,
   "nary": 17,
   "registry": 924
  },
@@ -1935,6 +1935,17 @@
    ]
   },
   {
+   "name": "beamsplitter_branches",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "bearing_angle_image",
    "halcon": "",
    "in_sort": "depth",
@@ -3314,6 +3325,19 @@
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "chief_ray",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "table"
    ]
@@ -10180,6 +10204,45 @@
    ]
   },
   {
+   "name": "ghost_analysis",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ghost_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ghost_path",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "gicp",
    "halcon": "",
    "in_sort": "points",
@@ -11967,6 +12030,19 @@
    "dim": "imgmetrics",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "image_orientation",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -16805,6 +16881,80 @@
    "in_sorts": []
   },
   {
+   "name": "noncoaxial_drawing",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_example",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "noncoaxial_layout",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_spot",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_system",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "noncoaxial_trace",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "normal_consistency",
    "halcon": "",
    "in_sort": "points",
@@ -17367,6 +17517,19 @@
    "halcon": "",
    "in_sort": "table",
    "out_sort": "image2d",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "opd_samples",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
    "category": "design",
    "tier": "ledger",
    "ledger": "opsoptics",
@@ -21552,6 +21715,19 @@
    ]
   },
   {
+   "name": "ray_bundle",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ray_fan",
    "halcon": "",
    "in_sort": "table",
@@ -23313,6 +23489,17 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "scene",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "scheimpflug_tilt",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -26805,6 +26992,17 @@
    ]
   },
   {
+   "name": "surface_reflectance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "surface_residual",
    "halcon": "",
    "in_sort": "image2d",
@@ -27958,6 +28156,17 @@
     "scalar",
     "scalar"
    ]
+  },
+  {
+   "name": "tilted_plate_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "tilted_surface_read",
@@ -30702,6 +30911,19 @@
    "in_sorts": [
     "image2d",
     "scalar"
+   ]
+  },
+  {
+   "name": "with_wavelength",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {

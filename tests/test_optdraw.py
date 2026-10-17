@@ -252,12 +252,15 @@ def test_probe_broken_dxf_is_refused_or_differs(cooke_drawing):
 # 入口の拒否(fail-closed)
 # --------------------------------------------------------------------------- #
 def test_refuses_unsupported_inputs():
-    with pytest.raises(ValueError):
-        OD.lens_section_drawing(RT.example_system("paraboloid"))           # 鏡
+    # ★2026-10-15 から鏡は折り返した系の断面図(noncoaxial_drawing)に、接合レンズは組図になった(拒否しない)
+    assert OD.lens_section_drawing(RT.example_system("paraboloid"))["meta"]["source"] == "raytrace3d.noncoaxial_system"
+    assert OD.lens_element_drawing(RT.example_system("doublet"))["values"]["cemented"] is True
     with pytest.raises(ValueError):
         OD.lens_section_drawing({"surfaces": []})
     with pytest.raises(ValueError):
-        OD.lens_element_drawing(RT.example_system("doublet"))              # 接合
+        OD.noncoaxial_drawing(RT.example_system("singlet"), view="xy")
+    with pytest.raises(ValueError):
+        OD.noncoaxial_drawing(RT.example_system("singlet"), rotate_deg=45)
     with pytest.raises(ValueError):
         OD.drawing_svg({"kind": "other"})
     with pytest.raises(ValueError):
@@ -298,3 +301,104 @@ def test_probe_pinhole_at_focal_length_turns_the_imaging_gate_red(monkeypatch):
     monkeypatch.setattr(OS, "_thin_lens_image_distance", lambda f, wd: float(f))
     want = 12.0 * (25.0 / 175.0) / 13.8e-3
     assert abs(_imaged_width_px() - want) > 1.0
+
+
+# --------------------------------------------------------------------------- #
+# 2026-10-15: 折り返した系・接合レンズ・非球面の製作図(書いた SVG / DXF から読み戻して採点)
+# --------------------------------------------------------------------------- #
+def _texts(ents):
+    return [e["text"] for e in ents if e["type"] == "text"]
+
+
+@pytest.mark.parametrize("name", ["folded_singlet", "periscope", "epi_beamsplitter", "off_axis_parabola"])
+def test_folded_layout_surfaces_and_rays_read_back_onto_the_3d_layout(name):
+    import raytrace3d as R3
+    s3 = R3.noncoaxial_example(name)
+    d = OD.noncoaxial_drawing(s3)
+    lay = R3.noncoaxial_layout(s3)
+    for writer, reader in ((OD.drawing_svg, OD.svg_entities), (OD.drawing_dxf, OD.dxf_entities)):
+        ents = reader(writer(d))["entities"]
+        surfs = [e for e in ents if e["type"] == "polyline" and e.get("tag", "").startswith("surface:")] \
+            if writer is OD.drawing_svg else [e for e in ents if e["type"] == "polyline" and e["layer"] in ("OUTLINE",)]
+        # 面の曲線の中点 = 頂点(大域の z, y)に一致する面が、反射・屈折する面の数だけある
+        verts = [(v["vertex"][2], v["vertex"][1]) for v in lay["surfaces"]]
+        hit = 0
+        assert len(verts) >= 2
+        for (vz, vy) in verts:
+            if any(np.min(np.hypot(np.asarray(e["points"])[:, 0] - vz, np.asarray(e["points"])[:, 1] - vy)) < 1e-5
+                   for e in surfs):
+                hit += 1
+        assert hit >= len([v for v in lay["surfaces"] if v["reflect"] or v["beamsplitter"]])
+        # 光線の折れ点は面の上(各光線の 2 点目以降は 3-D の追跡点の投影)
+        rays = [np.asarray(e["points"]) for e in ents if e["type"] == "polyline" and e["layer"].startswith("RAY_F")]
+        assert len(rays) == len(d["values"]["rays"])
+        worst = max(float(np.max(np.abs(r[1:] - np.asarray(rr["points"])[:, [2, 1]])))
+                    for r, rr in zip(rays, d["values"]["rays"]))
+        assert worst < 2e-6
+    # 寸法 W / H の数字 = 外接矩形
+    ents = OD.svg_entities(OD.drawing_svg(d))["entities"]
+    W = _dim(ents, "W")
+    assert W is not None and abs(W - d["values"]["footprint"][0]) < 0.006
+
+
+def test_folded_layout_path_length_and_fold_angle_match_the_closed_form():
+    import raytrace3d as R3
+    d = OD.noncoaxial_drawing(R3.noncoaxial_example("folded_singlet"))
+    bfl = RT.paraxial_trace(RT.lens_system())["bfl"]
+    assert abs(d["values"]["path_length"] - (5.0 + bfl)) < 1e-9          # 展開した軸の長さ = 中心厚 + BFL
+    assert abs(d["values"]["fold_angles_deg"][0] - 90.0) < 1e-9          # 45° の鏡で 90°
+    p = R3.noncoaxial_example("periscope")
+    assert len(OD.noncoaxial_drawing(p)["values"]["fold_angles_deg"]) == 2
+
+
+def test_probe_a_shifted_mirror_vertex_breaks_the_readback():
+    import raytrace3d as R3
+    s3 = R3.noncoaxial_example("folded_singlet")
+    d = OD.noncoaxial_drawing(s3)
+    svg = OD.drawing_svg(d)
+    ents = OD.svg_entities(svg)["entities"]
+    m = [e for e in ents if e["type"] == "polyline" and e.get("tag") == "surface:3"][0]
+    v = R3.noncoaxial_layout(s3)["surfaces"][-1]["vertex"]
+    ok = np.min(np.hypot(np.asarray(m["points"])[:, 0] - v[2], np.asarray(m["points"])[:, 1] - v[1])) < 1e-5
+    assert ok
+    bad = [dict(e, points=[[x + 0.01, y] for x, y in e["points"]]) if e is m else e for e in ents]
+    mb = [e for e in bad if e["type"] == "polyline" and e.get("tag") == "surface:3"][0]
+    assert np.min(np.hypot(np.asarray(mb["points"])[:, 0] - v[2], np.asarray(mb["points"])[:, 1] - v[1])) > 1e-3
+
+
+def test_aspheric_element_drawing_writes_an_iso_10110_12_sag_table_that_reads_back():
+    s = RT.example_system("asphere")
+    d = OD.lens_element_drawing(s)
+    tab = d["values"]["sag_tables"][2]
+    surf = s["surfaces"][1]
+    assert len(tab) == OD.SAG_TABLE_ROWS
+    for h, z in tab:                                          # 表の数 = raytrace の sag の式(閉形式の円錐)
+        c = 1.0 / surf["R"]
+        want = c * h * h / (1.0 + math.sqrt(1.0 - (1.0 + surf["k"]) * c * c * h * h))
+        assert abs(z - want) < 1e-12
+    for writer, reader in ((OD.drawing_svg, OD.svg_entities), (OD.drawing_dxf, OD.dxf_entities)):
+        rows = []
+        for t in _texts(reader(writer(d))["entities"]):
+            m = re.fullmatch(r"\s*(-?\d+\.\d{4})\s+(-?\d+\.\d{6})", t)
+            if m:
+                rows.append((float(m.group(1)), float(m.group(2))))
+        assert len(rows) == OD.SAG_TABLE_ROWS
+        for (h, z), (h2, z2) in zip(rows, tab):
+            assert abs(h - h2) < 6e-5 and abs(z - z2) < 6e-7
+    # 壊した表(sag の符号を反転)は閉形式と合わない
+    assert max(abs(-z - z2) for (h, z), (h2, z2) in zip(tab, tab) if abs(z) > 1e-3) > 1e-3
+
+
+def test_cemented_group_drawing_reads_back_radii_glasses_and_thicknesses():
+    s = RT.example_system("doublet")
+    d = OD.lens_element_drawing(s)
+    v = d["values"]
+    assert v["R"] == [61.47, -44.64, -129.94] and v["center_thickness"] == [6.0, 2.5]
+    nd = [RT.refractive_index((1.5168, 64.17), RT.WL_D), RT.refractive_index((1.6477, 33.85), RT.WL_D)]
+    assert max(abs(a - b) for a, b in zip(v["nd"], nd)) < 1e-12
+    txt = _texts(OD.dxf_entities(OD.drawing_dxf(d))["entities"])
+    assert txt
+    assert any(re.fullmatch(r"2\s+-44\.6400\s+\S+", t) for t in txt)
+    assert any(re.fullmatch(r"2\s+1\.64770\s+33\.85\s+2\.50", t) for t in txt)
+    # 群の EFL(注記)= 処方の EFL
+    assert abs(v["efl"] - RT.paraxial_trace(s)["efl"]) < 1e-9

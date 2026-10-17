@@ -36,7 +36,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``vertex_z`` ``semi_diameter`` / 光線ごとの面上の交点 ``rays``)。``drawing_svg`` / ``drawing_dxf`` で書き出す。
 平面の ``R`` は ``lens_system`` の規約どおり ``inf``、無焦点の系(両側テレセン)の ``efl`` / ``bfl`` も ``inf``
 (非有限は契約。図には描かず、描かなかった寸法の名前を ``dimensions_skipped`` に残す)。
-★鏡・傾き・偏心のある処方、縁の厚さが負になる処方は ValueError。
+鏡・傾き・偏心のある処方(と ``raytrace3d.noncoaxial_system`` の系)は ``noncoaxial_drawing`` に回す(折り返した系の
+断面図)。★縁の厚さが負になる処方は ValueError。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -70,7 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`drawing`)
 
-[vision_setup_drawing](vision_setup_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+[vision_setup_drawing](vision_setup_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md) · [noncoaxial_drawing](noncoaxial_drawing.md)
 
 ---
 *Provenance: optdraw.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-68 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+69 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -127,6 +127,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Beleuchtungskegel und Abbildungs-NA auf spiegelnden Teilen (Schnitt zweier Kugelkappen, Neigungsbänder, Dellen, Kratzer und Satin): [Erklärung](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · Beispiele [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - Eine Tabelle optischer Materialkonstanten (83 Gläser, Kristalle, Halbleiter, Metalle, Flüssigkeiten und Kunststoffe aus der Primärliteratur, mit Glaskatalog-Import): [Erklärung](../../capabilities/material-optical-property-library.md) _(ja)_ · Beispiele [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - Gleich aussehende Fremdkörper mit NIR-Hyperspektral aussortieren (Absorptionsbanden der Materialtabelle, Reflexion streuender Schichten, InGaAs-Elektronen pro Band): [Erklärung](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · Beispiele [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
+- Nicht-koaxiale Optik (Faltspiegel, Strahlteiler, gekippte Platten, Scheimpflug und Geisterbilder): [Erklärung](../../capabilities/noncoaxial-optics.md) _(ja)_ · Beispiele [poc_noncoaxial_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_noncoaxial_optics.py)
 - Reflexion, Brechung und Interferenz berechnen: [Erklärung](../../capabilities/optics-and-materials.md) _(ja)_ · Beispiele [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - Pixel-Shift-Aufnahme (volle Farbe aus 1-Pixel-Verschiebungen, kein Aliasing aus Halbpixel-Verschiebungen, und wo es bricht): [Erklärung](../../capabilities/pixel-shift-imaging.md) _(ja)_ · Beispiele [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - Spiegelreflexe mit vier Polarisatorwinkeln entfernen (Dielektrika vs. Metalle): [Erklärung](../../capabilities/polarisation-specular-removal.md) _(ja)_ · Beispiele [example_polarization_metal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_polarization_metal.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) · [specular_photometric](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/specular_photometric.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-242 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+243 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -241,7 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Maß- und Formmessung</b> (46)</summary>
+<details class="vall"><summary><b>Maß- und Formmessung</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT-Zuordnung" width="200" height="200"><span>AOI-CT-Zuordnung</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Ist-Wände" width="200" height="200"><span>Ist-Wände</span></a>
@@ -289,6 +290,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)" width="200" height="200"><b>&#9654;</b><span>Moiré-Justierung (zwei unsichtbare Gitter lesen 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telezentrische Messobjektive" width="200" height="200"><b>&#9654;</b><span>Telezentrische Messobjektive</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="Optische Zeichnungen aus der Rechnung" width="200" height="200"><span>Optische Zeichnungen aus der Rechnung</span></a>
+<a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="Nicht-koaxiale Optik: Strahlteiler-Geister und Faltungen" width="200" height="200"><span>Nicht-koaxiale Optik: Strahlteiler-Geister und Faltungen</span></a>
 </div>
 </details>
 

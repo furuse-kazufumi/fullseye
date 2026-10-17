@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 68 項目**
+**収録 69 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -37,6 +37,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
+| [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
@@ -501,7 +502,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (14)
+## 光と色 (15)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -582,6 +583,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 反射率は白板の電子数で割る平場補正(white_electrons)で読む。帯の中心は一次文献の実測、幅と強さは実測の帯(bands=...)に差し替える。
 
 動く例: `poc_hyperspectral_foreign_matter`
+
+### [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md)
+
+`raytrace` の処方は光軸が 1 本の直線の共軸系でした。`raytrace3d` は面ごとに 3-D の姿勢(回転と原点)を持たせ、座標の切り替え(偏心してから x → y → z の順に回す。`undo` で逆順に戻す)、元の座標系への戻り、折り返しミラー(`fold_mirror`、45° で 90° 折れる)、傾いた平行平板や楔、平板の半透鏡(透過と反射の 2 本の枝)を組めます。面の式(円錐 + 偶数次の非球面)と屈折・反射の式は `raytrace` のままで、共軸の処方を変換した系は `raytrace.trace_rays` と 1e-12 で同じ交点・光路長になります。
+
+使う op: `noncoaxial_system`, `noncoaxial_example`, `noncoaxial_layout`, `noncoaxial_trace`, `noncoaxial_spot`, `image_orientation`, `beamsplitter_branches`, `tilted_plate_shift`, `scheimpflug_tilt`, `surface_reflectance`, `ghost_analysis`, `ghost_image`, `ghost_path`, `noncoaxial_drawing`
+
+推奨パイプライン: [`noncoaxial_system`](ops/optics/noncoaxial/noncoaxial_system.md) → [`noncoaxial_trace`](ops/optics/noncoaxial/noncoaxial_trace.md) → [`image_orientation`](ops/optics/noncoaxial/image_orientation.md) → [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md) → [`noncoaxial_drawing`](ops/optics/drawing/noncoaxial_drawing.md)
+
+代替: [`lens_system`](ops/optics/design/lens_system.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`tilted_plate_shift`](ops/optics/noncoaxial/tilted_plate_shift.md), [`scheimpflug_tilt`](ops/optics/noncoaxial/scheimpflug_tilt.md), [`surface_reflectance`](ops/optics/noncoaxial/surface_reflectance.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: ゴーストは 2 回反射まで(3 回以上・散乱・鏡筒の迷光は持たない)。各面の反射率は視野の主光線の入射角での無偏光の値で、半透鏡の膜は与えた R(角度・波長の依存なし)。光線の狙いは絞りの点への Newton 法(狙えない光線は無効として数える)。近軸量(EFL・瞳)は共軸の処方から変換した系だけで、ほかは実光線の近軸極限で焦点を求める。
+
+実寸校正: 長さは mm、角度は度。処方の数値がそのまま実寸で、校正は要らない。
+
+動く例: `poc_noncoaxial_optics`
 
 ### [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md)
 

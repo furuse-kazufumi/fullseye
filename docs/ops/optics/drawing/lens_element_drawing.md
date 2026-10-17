@@ -41,7 +41,10 @@ R の欄に ±ΔR を書いて ``3/-(B)`` とし、縞の換算は注記に残�
 返り値の ``values``: ``R1`` / ``R2`` / ``center_thickness`` / ``outer_diameter`` / ``clear_aperture`` /
 ``nd`` / ``vd`` / ``fringes_power`` / ``tilt_arcmin`` / ``efl`` / ``efl_p5`` / ``efl_p95``。平面の ``R`` と、分散の
 無い媒質の ``vd`` は ``inf``(非有限は契約、``lens_system`` の規約どおり)。
-★接合レンズ(面が 3 つ以上のガラスの連続)は 1 枚ずつ描けないので ValueError。
+接合レンズ群(面が 3 つ以上のガラスの連続)は 1 枚の組図にする: 断面に各レンズと接合面、データ欄は面ごとの R・
+有効径と、レンズごとの材料(n_d・ν_d)と中心厚(``values`` の ``R`` / ``center_thickness`` / ``nd`` / ``vd`` は
+列)。非球面・円錐面は ISO 10110-12 の sag の表(高さ h と sag z(h)、式と係数)を図に足し、``values`` の
+``sag_tables`` に同じ数を残す(門は図から読み戻して ``raytrace`` の sag の式と突き合わせる)。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -75,7 +78,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`drawing`)
 
-[lens_section_drawing](lens_section_drawing.md) · [vision_setup_drawing](vision_setup_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+[lens_section_drawing](lens_section_drawing.md) · [vision_setup_drawing](vision_setup_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md) · [noncoaxial_drawing](noncoaxial_drawing.md)
 
 ---
 *Provenance: optdraw.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

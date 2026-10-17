@@ -1,4 +1,4 @@
-# OPTICS operator help — 293 ops in 33 categories
+# OPTICS operator help — 311 ops in 34 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -34,13 +34,13 @@
 
 [chromatic_confocal_limits](confocal/chromatic_confocal_limits.md) · [chromatic_confocal_peaks](confocal/chromatic_confocal_peaks.md) · [chromatic_confocal_probe](confocal/chromatic_confocal_probe.md) · [chromatic_confocal_readout](confocal/chromatic_confocal_readout.md) · [chromatic_confocal_spectrum](confocal/chromatic_confocal_spectrum.md) · [confocal_axial_response](confocal/confocal_axial_response.md)
 
-### design (15)
+### design (19)
 
-[chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md)
+[chief_ray](design/chief_ray.md) · [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [opd_samples](design/opd_samples.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_bundle](design/ray_bundle.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md) · [with_wavelength](design/with_wavelength.md)
 
-### drawing (8)
+### drawing (9)
 
-[drawing_dxf](drawing/drawing_dxf.md) · [drawing_raster](drawing/drawing_raster.md) · [drawing_svg](drawing/drawing_svg.md) · [dxf_entities](drawing/dxf_entities.md) · [lens_element_drawing](drawing/lens_element_drawing.md) · [lens_section_drawing](drawing/lens_section_drawing.md) · [svg_entities](drawing/svg_entities.md) · [vision_setup_drawing](drawing/vision_setup_drawing.md)
+[drawing_dxf](drawing/drawing_dxf.md) · [drawing_raster](drawing/drawing_raster.md) · [drawing_svg](drawing/drawing_svg.md) · [dxf_entities](drawing/dxf_entities.md) · [lens_element_drawing](drawing/lens_element_drawing.md) · [lens_section_drawing](drawing/lens_section_drawing.md) · [noncoaxial_drawing](drawing/noncoaxial_drawing.md) · [svg_entities](drawing/svg_entities.md) · [vision_setup_drawing](drawing/vision_setup_drawing.md)
 
 ### fiber (7)
 
@@ -101,6 +101,10 @@
 ### moire_align (8)
 
 [moire_differential_shift](moire_align/moire_differential_shift.md) · [moire_magnification](moire_align/moire_magnification.md) · [moire_mark_read](moire_align/moire_mark_read.md) · [moire_overlay_image](moire_align/moire_overlay_image.md) · [moire_phase](moire_align/moire_phase.md) · [moire_phase_crlb](moire_align/moire_phase_crlb.md) · [moire_phase_to_shift](moire_align/moire_phase_to_shift.md) · [moire_talbot_gap](moire_align/moire_talbot_gap.md)
+
+### noncoaxial (13)
+
+[beamsplitter_branches](noncoaxial/beamsplitter_branches.md) · [ghost_analysis](noncoaxial/ghost_analysis.md) · [ghost_image](noncoaxial/ghost_image.md) · [ghost_path](noncoaxial/ghost_path.md) · [image_orientation](noncoaxial/image_orientation.md) · [noncoaxial_example](noncoaxial/noncoaxial_example.md) · [noncoaxial_layout](noncoaxial/noncoaxial_layout.md) · [noncoaxial_spot](noncoaxial/noncoaxial_spot.md) · [noncoaxial_system](noncoaxial/noncoaxial_system.md) · [noncoaxial_trace](noncoaxial/noncoaxial_trace.md) · [scheimpflug_tilt](noncoaxial/scheimpflug_tilt.md) · [surface_reflectance](noncoaxial/surface_reflectance.md) · [tilted_plate_shift](noncoaxial/tilted_plate_shift.md)
 
 ### oct (13)
 

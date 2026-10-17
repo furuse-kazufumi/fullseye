@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3313,
+ "n_notes": 3319,
  "notes": {
   "vol_dilate": [
    {
@@ -26984,6 +26984,16 @@
     "path": "docs/ops/optics/confocal/confocal_axial_response.md"
    }
   ],
+  "chief_ray": [
+   {
+    "op": "chief_ray",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/chief_ray.md"
+   }
+  ],
   "chromatic_shift": [
    {
     "op": "chromatic_shift",
@@ -27040,6 +27050,16 @@
     "path": "docs/ops/optics/design/opd_map.md"
    }
   ],
+  "opd_samples": [
+   {
+    "op": "opd_samples",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/opd_samples.md"
+   }
+  ],
   "paraxial_trace": [
    {
     "op": "paraxial_trace",
@@ -27048,6 +27068,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/paraxial_trace.md"
+   }
+  ],
+  "ray_bundle": [
+   {
+    "op": "ray_bundle",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/ray_bundle.md"
    }
   ],
   "ray_fan": [
@@ -27128,6 +27158,16 @@
     "path": "docs/ops/optics/design/wavefront_from_opd.md"
    }
   ],
+  "with_wavelength": [
+   {
+    "op": "with_wavelength",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/with_wavelength.md"
+   }
+  ],
   "drawing_dxf": [
    {
     "op": "drawing_dxf",
@@ -27186,6 +27226,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/drawing/lens_section_drawing.md"
+   }
+  ],
+  "noncoaxial_drawing": [
+   {
+    "op": "noncoaxial_drawing",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/noncoaxial_drawing.md"
    }
   ],
   "svg_entities": [
@@ -28199,6 +28249,130 @@
     "category": "moire_align",
     "out": "table",
     "path": "docs/ops/optics/moire_align/moire_talbot_gap.md"
+   }
+  ],
+  "beamsplitter_branches": [
+   {
+    "op": "beamsplitter_branches",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/beamsplitter_branches.md"
+   }
+  ],
+  "ghost_analysis": [
+   {
+    "op": "ghost_analysis",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/ghost_analysis.md"
+   }
+  ],
+  "ghost_image": [
+   {
+    "op": "ghost_image",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/optics/noncoaxial/ghost_image.md"
+   }
+  ],
+  "ghost_path": [
+   {
+    "op": "ghost_path",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/ghost_path.md"
+   }
+  ],
+  "image_orientation": [
+   {
+    "op": "image_orientation",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/image_orientation.md"
+   }
+  ],
+  "noncoaxial_example": [
+   {
+    "op": "noncoaxial_example",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_example.md"
+   }
+  ],
+  "noncoaxial_layout": [
+   {
+    "op": "noncoaxial_layout",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_layout.md"
+   }
+  ],
+  "noncoaxial_spot": [
+   {
+    "op": "noncoaxial_spot",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_spot.md"
+   }
+  ],
+  "noncoaxial_system": [
+   {
+    "op": "noncoaxial_system",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_system.md"
+   }
+  ],
+  "noncoaxial_trace": [
+   {
+    "op": "noncoaxial_trace",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_trace.md"
+   }
+  ],
+  "scheimpflug_tilt": [
+   {
+    "op": "scheimpflug_tilt",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/scheimpflug_tilt.md"
+   }
+  ],
+  "surface_reflectance": [
+   {
+    "op": "surface_reflectance",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/surface_reflectance.md"
+   }
+  ],
+  "tilted_plate_shift": [
+   {
+    "op": "tilted_plate_shift",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/tilted_plate_shift.md"
    }
   ],
   "oct_ascan": [

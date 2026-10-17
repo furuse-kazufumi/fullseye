@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-68 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+69 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -142,6 +142,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地): [説明](../capabilities/illumination-cone-vs-na.md) · 例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口): [説明](../capabilities/material-optical-property-library.md) · 例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数): [説明](../capabilities/nir-hyperspectral-sorting.md) · 例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
+- 非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト): [説明](../capabilities/noncoaxial-optics.md) · 例 [poc_noncoaxial_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_noncoaxial_optics.py)
 - 光の反射・屈折・干渉を計算する: [説明](../capabilities/optics-and-materials.md) · 例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで): [説明](../capabilities/pixel-shift-imaging.md) · 例 [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - 偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける): [説明](../capabilities/polarisation-specular-removal.md) · 例 [example_polarization_metal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_polarization_metal.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) · [specular_photometric](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/specular_photometric.py)
@@ -194,7 +195,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 243 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -256,7 +257,7 @@ PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (46)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (47)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工した壁の歪み" width="200" height="200"><span>竣工した壁の歪み</span></a>
@@ -304,6 +305,7 @@ PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_moire_alignment.jpg" alt="モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)" width="200" height="200"><b>&#9654;</b><span>モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)</span></a>
 <a href="../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_telecentric_metrology.jpg" alt="テレセントリックレンズと寸法計測" width="200" height="200"><b>&#9654;</b><span>テレセントリックレンズと寸法計測</span></a>
 <a href="../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_optics_drawings.jpg" alt="光学系の図面(断面図・設置図・製作図)" width="200" height="200"><span>光学系の図面(断面図・設置図・製作図)</span></a>
+<a href="../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_noncoaxial_optics.jpg" alt="非共軸の光学系(半透鏡のゴースト・折り返し)" width="200" height="200"><span>非共軸の光学系(半透鏡のゴースト・折り返し)</span></a>
 </div>
 </details>
 
