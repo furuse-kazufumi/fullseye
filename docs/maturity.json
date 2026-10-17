@@ -822,6 +822,27 @@
    ]
   },
   {
+   "id": "noncoaxial-optics",
+   "title": "非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)",
+   "title_en": "Non-coaxial optics (fold mirrors, beamsplitters, tilted plates, Scheimpflug and ghosts)",
+   "category": "光と色",
+   "note": "docs/capabilities/noncoaxial-optics.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_noncoaxial_optics",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "ocr-preprocessing",
    "title": "OCR の前処理(傾き補正・局所 2 値化・行の切り出し)",
    "title_en": "OCR pre-processing (deskew, local binarisation, line extraction)",
@@ -1850,8 +1871,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 390,
-  "run_by_the_poc_gate": 247,
+  "examples2d_total": 391,
+  "run_by_the_poc_gate": 248,
   "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [

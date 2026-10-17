@@ -30095,6 +30095,168 @@
    "ko": "CTF 보정(``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (위상 반전, 진폭은 그대로) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
    "de": "CTF-Korrektur (``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (Phasenumkehr, Amplituden unverändert) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
    "hi": "CTF सुधार (``image2d``)। ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (phase flipping, आयाम अपरिवर्तित) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]।"
+  },
+  "optics/noncoaxial_system": {
+   "fp": "591305072f62",
+   "ja": "検証済みの非共軸の逐次光学系を組む(``table``)—— 面・座標の切り替え・折り返し・平板。",
+   "zh": "构建经过校验的非共轴序列光学系统(``table``)——面、坐标断点、折转、平板。",
+   "tw": "建構經過驗證的非共軸序列光學系統(``table``)——面、座標斷點、折轉、平板。",
+   "ko": "검증된 비공축 순차 광학계를 구성한다(``table``) — 면·좌표 전환·접힘·평판.",
+   "de": "Baut ein geprüftes nicht-koaxiales sequenzielles System (``table``) — Flächen, Koordinatenbrüche, Faltungen, Platten.",
+   "hi": "सत्यापित non-coaxial sequential प्रणाली बनाता है (``table``) — सतहें, coordinate break, fold, plate।"
+  },
+  "optics/noncoaxial_example": {
+   "fp": "43a7bbbefc8f",
+   "ja": "名前つきの非共軸の例(``table``): 折り返し・潜望鏡・半透鏡・傾いた平板・シャインプルーフ。",
+   "zh": "命名的非共轴示例系统(``table``):折转、潜望镜、分束器、倾斜平板、沙伊姆弗勒。",
+   "tw": "具名的非共軸範例系統(``table``):折轉、潛望鏡、分光鏡、傾斜平板、沙伊姆弗勒。",
+   "ko": "이름 붙은 비공축 예제 계(``table``): 접힘·잠망경·빔스플리터·기울어진 평판·샤임플루크.",
+   "de": "Ein benanntes nicht-koaxiales Beispielsystem (``table``): Faltungen, Periskop, Strahlteiler, gekippte Platte, Scheimpflug.",
+   "hi": "नामित non-coaxial उदाहरण प्रणाली (``table``): fold, periscope, beamsplitter, झुकी plate, Scheimpflug।"
+  },
+  "optics/noncoaxial_layout": {
+   "fp": "506dc5be2dc0",
+   "ja": "全ての記録の大域の姿勢(``table``): 面の頂点・回転行列・軸の折れ線。",
+   "zh": "每条记录的全局位姿(``table``):面顶点、旋转矩阵、光轴折线。",
+   "tw": "每筆紀錄的全域位姿(``table``):面頂點、旋轉矩陣、光軸折線。",
+   "ko": "모든 기록의 전역 자세(``table``): 면 정점·회전 행렬·축 꺾은선.",
+   "de": "Globale Lage jedes Eintrags (``table``): Flächenscheitel, Rotationsmatrizen, Achsenpolygon.",
+   "hi": "हर record की global स्थिति (``table``): सतह के शीर्ष, rotation matrix, अक्ष की polyline।"
+  },
+  "optics/noncoaxial_trace": {
+   "fp": "5b3807093625",
+   "ja": "瞳を満たす実光線の束を 3-D の系に通す(``table``)。",
+   "zh": "让充满光瞳的实际光线束穿过三维系统(``table``)。",
+   "tw": "讓充滿光瞳的實際光線束穿過三維系統(``table``)。",
+   "ko": "동공을 채우는 실제 광선 다발을 3-D 계에 추적한다(``table``).",
+   "de": "Verfolgt pupillenfüllende reale Strahlenbündel durch das 3-D-System (``table``).",
+   "hi": "pupil भरने वाले वास्तविक किरण-समूह को 3-D प्रणाली से trace करता है (``table``)।"
+  },
+  "optics/noncoaxial_spot": {
+   "fp": "28a18c551fa9",
+   "ja": "(傾いていてもよい)像面上の RMS・幾何のスポット半径(mm)と重心(``table``)。",
+   "zh": "(可倾斜的)像面上的 RMS / 几何光斑半径(mm)与质心(``table``)。",
+   "tw": "(可傾斜的)像面上的 RMS / 幾何光斑半徑(mm)與質心(``table``)。",
+   "ko": "(기울어질 수 있는) 상면 위의 RMS·기하 스폿 반경(mm)과 중심(``table``).",
+   "de": "RMS- / geometrischer Spotradius (mm) und Schwerpunkt auf der (ggf. gekippten) Bildebene (``table``).",
+   "hi": "(संभवतः झुके) image plane पर RMS / geometric spot त्रिज्या (mm) और centroid (``table``)।"
+  },
+  "optics/image_orientation": {
+   "fp": "630dc87f55e5",
+   "ja": "折り返しを経た像の向き(``table``): 反射の回数・裏返り・回転。",
+   "zh": "经过折转后的像方向(``table``):反射次数、镜像翻转、旋转。",
+   "tw": "經過折轉後的像方向(``table``):反射次數、鏡像翻轉、旋轉。",
+   "ko": "접힘을 거친 상의 방향(``table``): 반사 횟수·뒤집힘·회전.",
+   "de": "Bildlage nach Faltungen (``table``): Reflexionen, Händigkeit, Drehung.",
+   "hi": "fold के बाद image का अभिविन्यास (``table``): परावर्तन, handedness, घुमाव।"
+  },
+  "optics/beamsplitter_branches": {
+   "fp": "28920584758d",
+   "ja": "集光する光束の中の平板の半透鏡の 2 本の枝(``table``)。",
+   "zh": "会聚光束中平板分束器的两条支路(``table``)。",
+   "tw": "會聚光束中平板分光鏡的兩條支路(``table``)。",
+   "ko": "수렴 광속 속 평판 빔스플리터의 두 가지(``table``).",
+   "de": "Die zwei Zweige eines Platten-Strahlteilers im konvergenten Bündel (``table``).",
+   "hi": "अभिसारी किरण-पुंज में plate beamsplitter की दो शाखाएँ (``table``)।"
+  },
+  "optics/tilted_plate_shift": {
+   "fp": "9871c56d43b1",
+   "ja": "θ だけ傾けた平行平板: 横ずれ・焦点ずれ・非点隔差(``table``、閉形式)。",
+   "zh": "倾斜 θ 的平行平板:横向偏移、焦点移动与像散(``table``,闭式)。",
+   "tw": "傾斜 θ 的平行平板:橫向偏移、焦點移動與像散(``table``,閉式)。",
+   "ko": "θ만큼 기울인 평행 평판: 횡 이동·초점 이동·비점수차(``table``, 닫힌 식).",
+   "de": "Um θ gekippte planparallele Platte: Querversatz, Fokusverschiebung und Astigmatismus (``table``, geschlossene Form).",
+   "hi": "θ से झुकी समानांतर plate: पार्श्व विस्थापन, focus विस्थापन और astigmatism (``table``, closed form)।"
+  },
+  "optics/scheimpflug_tilt": {
+   "fp": "3669afbe9780",
+   "ja": "傾いた物面に対するシャインプルーフの条件(``table``、閉形式と、任意で実光線)。",
+   "zh": "倾斜物面的沙伊姆弗勒条件(``table``;闭式,可选实际光线)。",
+   "tw": "傾斜物面的沙伊姆弗勒條件(``table``;閉式,可選實際光線)。",
+   "ko": "기울어진 물체면에 대한 샤임플루크 조건(``table``, 닫힌 식과 선택적으로 실제 광선).",
+   "de": "Scheimpflug-Bedingung für eine gekippte Objektebene (``table``; geschlossene Form, optional reale Strahlen).",
+   "hi": "झुके object plane के लिए Scheimpflug शर्त (``table``; closed form, वैकल्पिक रूप से वास्तविक किरणें)।"
+  },
+  "optics/surface_reflectance": {
+   "fp": "f95a7830622f",
+   "ja": "材料表と膜から求めた 1 面の残留反射率(``table``)。",
+   "zh": "由材料表与镀膜求得的单个面的残余反射率(``table``)。",
+   "tw": "由材料表與鍍膜求得的單一面的殘餘反射率(``table``)。",
+   "ko": "재료표와 막으로 구한 한 면의 잔류 반사율(``table``).",
+   "de": "Restreflexion einer Fläche aus der Materialtabelle und ihrer Beschichtung (``table``).",
+   "hi": "material table और coating से एक सतह की अवशिष्ट परावर्तकता (``table``)।"
+  },
+  "optics/ghost_analysis": {
+   "fp": "695ac7951e22",
+   "ja": "全ての 2 面の組の 2 回反射のゴースト(``table``): 焦点・像面上の大きさ・相対強度。",
+   "zh": "所有面对的两次反射鬼像(``table``):焦点、在传感器上的大小与相对强度。",
+   "tw": "所有面對的兩次反射鬼影(``table``):焦點、在感測器上的大小與相對強度。",
+   "ko": "모든 두 면 쌍의 2회 반사 고스트(``table``): 초점·센서 위 크기·상대 강도.",
+   "de": "Zweifach reflektierte Geisterbilder aller Flächenpaare (``table``): Fokus, Größe auf dem Sensor, relative Intensität.",
+   "hi": "हर सतह-जोड़ी के दो-परावर्तन ghost (``table``): focus, sensor पर आकार और सापेक्ष तीव्रता।"
+  },
+  "optics/ghost_image": {
+   "fp": "f37dab1d2f7f",
+   "ja": "点光源の像と全ての 2 回反射のゴーストの、像面の照度(``image2d``)。",
+   "zh": "点光源的像加上全部两次反射鬼像在像面上的照度(``image2d``)。",
+   "tw": "點光源的像加上全部兩次反射鬼影在像面上的照度(``image2d``)。",
+   "ko": "점광원의 상과 모든 2회 반사 고스트의 상면 조도(``image2d``).",
+   "de": "Bestrahlungsstärke in der Bildebene: Bild plus alle zweifach reflektierten Geister einer Punktquelle (``image2d``).",
+   "hi": "बिंदु स्रोत की image और सभी दो-परावर्तन ghost का image-plane विकिरण (``image2d``)।"
+  },
+  "optics/ghost_path": {
+   "fp": "df53582051e9",
+   "ja": "1 組の 2 回反射のゴーストの実光線の折れ線(``table``): 経路 i < j・光線・エネルギー。",
+   "zh": "单个两次反射鬼像的实际光线折线(``table``):路径 i < j、光线与能量。",
+   "tw": "單一兩次反射鬼影的實際光線折線(``table``):路徑 i < j、光線與能量。",
+   "ko": "한 쌍의 2회 반사 고스트의 실제 광선 꺾은선(``table``): 경로 i < j·광선·에너지.",
+   "de": "Reale Strahlpolygone eines zweifach reflektierten Geists (``table``): Pfad i < j, Strahlen, Energie.",
+   "hi": "एक दो-परावर्तन ghost की वास्तविक किरण polyline (``table``): पथ i < j, किरणें और ऊर्जा।"
+  },
+  "optics/noncoaxial_drawing": {
+   "fp": "aae45c6fb7a1",
+   "en": "Section / setup drawing of a folded system (``table``, a drawing dict) — the surfaces, mirrors, beamsplitters, image plane and rays of a ``raytrace3d`` system, projected onto the meridional plane in global coordinates.",
+   "zh": "折转系统的截面图/安装图(``table``,图的 dict)——把 ``raytrace3d`` 系统的面、反射镜、分束器、像面与光线以全局坐标投影到子午面绘制。",
+   "tw": "折轉系統的截面圖/安裝圖(``table``,圖的 dict)——把 ``raytrace3d`` 系統的面、反射鏡、分光鏡、像面與光線以全域座標投影到子午面繪製。",
+   "ko": "접힌 계의 단면도·설치도(``table``, 도면 dict) — ``raytrace3d`` 계의 면·거울·빔스플리터·상면·광선을 전역 좌표로 자오면에 투영해 그린다.",
+   "de": "Schnitt- / Aufstellungszeichnung eines gefalteten Systems (``table``, ein Zeichnungs-dict) — Flächen, Spiegel, Strahlteiler, Bildebene und Strahlen eines ``raytrace3d``-Systems, in globalen Koordinaten auf die Meridionalebene projiziert.",
+   "hi": "मुड़ी हुई प्रणाली का अनुप्रस्थ-काट / setup drawing (``table``, drawing dict) — ``raytrace3d`` प्रणाली की सतहें, दर्पण, beamsplitter, image plane और किरणें global निर्देशांकों में meridional तल पर प्रक्षेपित।"
+  },
+  "optics/chief_ray": {
+   "fp": "6b770f738f6a",
+   "ja": "1 つの視野の主光線(絞りの中心を通る)を追跡する(``table``)。",
+   "zh": "追迹某一视场的主光线(穿过光阑中心)(``table``)。",
+   "tw": "追跡某一視場的主光線(穿過光闌中心)(``table``)。",
+   "ko": "한 시야의 주광선(조리개 중심을 지나는)을 추적한다(``table``).",
+   "de": "Verfolgt den Hauptstrahl (durch die Blendenmitte) eines Feldes (``table``).",
+   "hi": "एक field की chief ray (stop के केंद्र से) trace करता है (``table``)।"
+  },
+  "optics/ray_bundle": {
+   "fp": "50df9b589a2d",
+   "ja": "1 つの視野の瞳を満たす束を追跡する。生の追跡結果に ``image_xy``(N,2)・``chief_xy``(2,)・``pupil``(N,2)の正規化座標・``opl0``(光線の始点の光路のずれ)を足して返す。",
+   "zh": "追迹某一视场充满光瞳的光束;返回原始追迹结果以及 ``image_xy`` (N,2)、``chief_xy`` (2,)、``pupil`` (N,2) 归一化坐标和 ``opl0``(光线起点的光程偏移)。",
+   "tw": "追跡某一視場充滿光瞳的光束;回傳原始追跡結果以及 ``image_xy`` (N,2)、``chief_xy`` (2,)、``pupil`` (N,2) 正規化座標和 ``opl0``(光線起點的光程偏移)。",
+   "ko": "한 시야의 동공을 채우는 다발을 추적한다. 원시 추적 결과와 ``image_xy`` (N,2)·``chief_xy`` (2,)·``pupil`` (N,2) 정규화 좌표·``opl0``(광선 시작점의 광로 오프셋)을 반환한다.",
+   "de": "Verfolgt ein pupillenfüllendes Bündel eines Feldes; liefert die Rohdaten plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normierte Koordinaten und ``opl0`` (Startwerte der optischen Weglänge).",
+   "hi": "एक field का pupil भरने वाला समूह trace करता है; कच्चा trace और ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised निर्देशांक तथा ``opl0`` (किरण के आरंभ का optical path offset) लौटाता है।"
+  },
+  "optics/opd_samples": {
+   "fp": "f056123fa419",
+   "ja": "瞳の格子点での OPD(波長単位): ``(px, py, opd, valid)`` を返す。",
+   "zh": "光瞳网格采样点上的 OPD(波长):返回 ``(px, py, opd, valid)``。",
+   "tw": "光瞳格點取樣上的 OPD(波長):回傳 ``(px, py, opd, valid)``。",
+   "ko": "동공 격자 표본의 OPD(파장 단위): ``(px, py, opd, valid)``를 반환한다.",
+   "de": "OPD (in Wellenlängen) an Pupillen-Gitterpunkten: liefert ``(px, py, opd, valid)``.",
+   "hi": "pupil grid नमूनों पर OPD (तरंगों में): ``(px, py, opd, valid)`` लौटाता है।"
+  },
+  "optics/with_wavelength": {
+   "fp": "a61df8c7cea1",
+   "ja": "同じ処方を別の波長で評価したもの(屈折率を引き直す。既定は F 線)。",
+   "zh": "在另一波长下评估的同一处方(重新解析折射率;默认 F 线)。",
+   "tw": "在另一波長下評估的同一處方(重新解析折射率;預設 F 線)。",
+   "ko": "같은 처방을 다른 파장에서 평가한 것(굴절률을 다시 구함, 기본은 F선).",
+   "de": "Dieselbe Vorschrift bei einer anderen Wellenlänge (Brechzahlen neu bestimmt; Standard die F-Linie).",
+   "hi": "वही prescription किसी अन्य तरंगदैर्घ्य पर (अपवर्तनांक दोबारा; डिफ़ॉल्ट F रेखा)।"
   }
  }
 }

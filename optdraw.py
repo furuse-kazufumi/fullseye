@@ -30,8 +30,11 @@ JIS Z 8114 の太い実線・細い実線・細い一点鎖線・細い破線)�
 書かない**(製図の慣行。mm)。文字は DXF R12 に載るよう ASCII と ⌀ ° ± だけを使い、DXF では ``%%c`` ``%%d``
 ``%%p`` に置き換える(それ以外の非 ASCII は fail-closed で拒否)。
 
-★描けないもの(fail-closed で ValueError): 鏡(``mirror``)・傾き・偏心を持つ処方(子午断面の 2-D 図に正しく
-載らない)、接合レンズの製作図(1 枚ずつの製作図にしか対応しない)、縁の厚さが負になる処方(作れない)。
+★2026-10-15 から描けるようになったもの: 鏡・傾き・偏心・座標の切り替え・折り返しミラー・半透鏡を持つ系は
+``noncoaxial_drawing``(``raytrace3d`` の系の大域の配置を子午面へ投影した断面図・設置図。``lens_section_drawing`` に
+鏡や傾きのある処方を渡すとここへ回す)、接合レンズ群の製作図(``lens_element_drawing`` が接合の群を 1 枚の組図に
+する)、非球面の製作図(ISO 10110-12 の sag の表)。描けないもの(fail-closed で ValueError): 縁の厚さが負になる
+処方(作れない)、投影面から大きく外れる配置(``view`` で面を選ぶ)。
 
 真値(外部): 球面の sag ``z = R − sign(R)·√(R² − y²)``、円錐の sag(``raytrace`` の docstring の式)、
 厚肉レンズの公式(lensmaker)、教科書の Cooke triplet の処方と公表 EFL、ISO 10110 の表記の公開解説、
@@ -53,7 +56,7 @@ import numpy as np
 import raytrace as RT
 
 __all__ = [
-    "lens_section_drawing", "vision_setup_drawing", "lens_element_drawing",
+    "lens_section_drawing", "vision_setup_drawing", "lens_element_drawing", "noncoaxial_drawing",
     "drawing_svg", "drawing_dxf", "drawing_raster", "svg_entities", "dxf_entities",
 ]
 
@@ -469,9 +472,17 @@ def lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_
     ``vertex_z`` ``semi_diameter`` / 光線ごとの面上の交点 ``rays``)。``drawing_svg`` / ``drawing_dxf`` で書き出す。
     平面の ``R`` は ``lens_system`` の規約どおり ``inf``、無焦点の系(両側テレセン)の ``efl`` / ``bfl`` も ``inf``
     (非有限は契約。図には描かず、描かなかった寸法の名前を ``dimensions_skipped`` に残す)。
-    ★鏡・傾き・偏心のある処方、縁の厚さが負になる処方は ValueError。
+    鏡・傾き・偏心のある処方(と ``raytrace3d.noncoaxial_system`` の系)は ``noncoaxial_drawing`` に回す(折り返した系の
+    断面図)。★縁の厚さが負になる処方は ValueError。
     """
     op = "lens_section_drawing"
+    if isinstance(system, dict) and system.get("kind") == "noncoaxial_system":
+        return noncoaxial_drawing(system, fields=fields, rays=rays, scale=scale, title=title)
+    if isinstance(system, dict) and "surfaces" in system and any(
+            s.get("mirror") or tuple(s.get("tilt", (0.0, 0.0))) != (0.0, 0.0)
+            or tuple(s.get("decenter", (0.0, 0.0))) != (0.0, 0.0) for s in system["surfaces"]):
+        import raytrace3d as R3
+        return noncoaxial_drawing(R3.noncoaxial_system(system), fields=fields, rays=rays, scale=scale, title=title)
     _system(system, op)
     nr = _int(rays, "rays", op, 1, _MAX_RAYS)
     npf = _int(profile_points, "profile_points", op, 11, _MAX_PROFILE)
@@ -1109,11 +1120,7 @@ def _element(system, element, op):
     if not groups:
         raise ValueError("%s: the prescription has no glass element" % op)
     e = _int(element, "element", op, 0, len(groups) - 1)
-    g = groups[e]
-    if len(g) != 2:
-        raise ValueError("%s: element %d is a cemented group of %d surfaces — draw each lens of the group "
-                         "separately (ISO 10110 has one drawing per element)" % (op, e, len(g)))
-    return g
+    return groups[e]
 
 
 def _sag_exact(R, y):
@@ -1149,11 +1156,18 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     返り値の ``values``: ``R1`` / ``R2`` / ``center_thickness`` / ``outer_diameter`` / ``clear_aperture`` /
     ``nd`` / ``vd`` / ``fringes_power`` / ``tilt_arcmin`` / ``efl`` / ``efl_p5`` / ``efl_p95``。平面の ``R`` と、分散の
     無い媒質の ``vd`` は ``inf``(非有限は契約、``lens_system`` の規約どおり)。
-    ★接合レンズ(面が 3 つ以上のガラスの連続)は 1 枚ずつ描けないので ValueError。
+    接合レンズ群(面が 3 つ以上のガラスの連続)は 1 枚の組図にする: 断面に各レンズと接合面、データ欄は面ごとの R・
+    有効径と、レンズごとの材料(n_d・ν_d)と中心厚(``values`` の ``R`` / ``center_thickness`` / ``nd`` / ``vd`` は
+    列)。非球面・円錐面は ISO 10110-12 の sag の表(高さ h と sag z(h)、式と係数)を図に足し、``values`` の
+    ``sag_tables`` に同じ数を残す(門は図から読み戻して ``raytrace`` の sag の式と突き合わせる)。
     """
     op = "lens_element_drawing"
     _system(system, op)
-    a, b = _element(system, element, op)
+    grp = _element(system, element, op)
+    if len(grp) > 2:
+        return _cemented_drawing(system, grp, element, tolerances, outer_diameter_mm, clear_aperture_mm,
+                                 chamfer_mm, scale, title, op)
+    a, b = grp
     surf = system["surfaces"]
     s1, s2 = surf[a], surf[b]
     tol = {"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001, "decenter_mm": 0.0, "tilt_deg": 0.05}
@@ -1181,12 +1195,9 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     if D < ce:
         raise ValueError("%s: outer diameter %.4g is smaller than the clear aperture %.4g" % (op, D, ce))
     for s in (s1, s2):
-        if s["R"] != RT.INF and abs(s["R"]) < 0.5 * D:
-            raise ValueError("%s: |R| = %.4g is smaller than the half diameter %.4g" % (op, abs(s["R"]), 0.5 * D))
-        if s["k"] != 0.0 or s["asph"]:
-            raise ValueError("%s: aspheric / conic surfaces need an ISO 10110-12 sag table — not drawn here" % op)
-    sag1 = _sag_exact(s1["R"], 0.5 * D)
-    sag2 = _sag_exact(s2["R"], 0.5 * D)
+        _check_extent(s, 0.5 * D, op)
+    sag1 = _zs(s1, 0.5 * D)
+    sag2 = _zs(s2, 0.5 * D)
     edge = ct + sag2 - sag1
     if edge <= 0.0:
         raise ValueError("%s: the edge thickness %.4g mm is not positive at the outer diameter %.4g" % (op, edge, D))
@@ -1230,14 +1241,14 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     s = _auto_scale(span, 110.0) if scale is None else _num(scale, "scale", op, positive=True)
     sh = _Sheet(s)
     y = np.linspace(-0.5 * D + ch, 0.5 * D - ch, 161)
-    z1 = np.array([_sag_exact(s1["R"], v) for v in y])
-    z2 = ct + np.array([_sag_exact(s2["R"], v) for v in y])
+    z1 = np.array([_zs(s1, v) for v in y])
+    z2 = ct + np.array([_zs(s2, v) for v in y])
     sh.poly(np.stack([z1, y], 1), "OUTLINE", tag="surface:1")
     sh.poly(np.stack([z2, y], 1), "OUTLINE", tag="surface:2")
     # 面取りと外周
     for sg in (1.0, -1.0):
-        e1 = (_sag_exact(s1["R"], 0.5 * D - ch), sg * (0.5 * D - ch))
-        e2 = (ct + _sag_exact(s2["R"], 0.5 * D - ch), sg * (0.5 * D - ch))
+        e1 = (_zs(s1, 0.5 * D - ch), sg * (0.5 * D - ch))
+        e2 = (ct + _zs(s2, 0.5 * D - ch), sg * (0.5 * D - ch))
         c1 = (sag1 + ch, sg * 0.5 * D)
         c2 = (ct + sag2 - ch, sg * 0.5 * D)
         sh.line(e1, c1, "OUTLINE", tag="chamfer")
@@ -1260,6 +1271,9 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     x0 = min(0.0, sag1) - sh.p(55.0)
 
     def rspec(R, side):
+        sf = s1 if side == 1 else s2
+        if _is_asph(sf):
+            return "R %.3f %s  ASPH (12/)" % (abs(R), "CX" if ((R > 0) if side == 1 else (R < 0)) else "CC")
         if R == RT.INF:
             return "R ∞"
         convex = (R > 0) if side == 1 else (R < 0)
@@ -1301,6 +1315,13 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     for k, txt in enumerate(notes):
         sh.text((x0, ny - hrow * k), txt, height=th, tag="note:%d" % k)
     tb = ny - hrow * (len(notes) + 1.0)
+    sag_tables = {}
+    for side, sf in ((1, s1), (2, s2)):
+        if not _is_asph(sf):
+            continue
+        tab = _sag_table(sf, 0.5 * ce)
+        sag_tables[side] = tab
+        tb = _draw_sag_table(sh, x0, tb, side, sf, tab, hrow, th)
     sh.poly([(x0, tb), (x0 + 3 * col, tb), (x0 + 3 * col, tb - 3.2 * hrow), (x0, tb - 3.2 * hrow)], "FRAME",
             closed=True, tag="titleblock")
     sh.text((x0 + sh.p(2.0), tb - hrow), title or "LENS ELEMENT %d" % (element + 1), height=sh.p(TEXT_H),
@@ -1310,10 +1331,471 @@ def lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=N
     values = {"R1": s1["R"], "R2": s2["R"], "center_thickness": ct, "outer_diameter": D, "clear_aperture": ce,
               "nd": nd, "vd": vd, "fringes_power": fr, "irregularity": irr, "tilt_arcmin": tilt_min,
               "edge_thickness": edge, "efl": efl, "efl_p5": mc["efl"]["p5"], "efl_p95": mc["efl"]["p95"],
-              "tolerances": tol, "chamfer": ch, "scale": s, "surfaces": [a, b], "radius_tolerance": radius_tolerance}
+              "tolerances": tol, "chamfer": ch, "scale": s, "surfaces": [a, b], "radius_tolerance": radius_tolerance,
+              "sag_tables": sag_tables}
     meta = {"standard": "ISO 10110 (notation from public explanations; the standard text is not reproduced)",
             "fringe_wavelength_um": FRINGE_WL_UM}
     return _finish(sh, title or "lens_element", values, meta, [])
+
+
+#: ISO 10110-12 の sag の表の行数(高さ 0 から有効半径まで等間隔、両端を含む)。
+SAG_TABLE_ROWS = 11
+
+
+def _is_asph(sf):
+    return sf["R"] != RT.INF and (sf["k"] != 0.0 or bool(sf["asph"])) or (sf["R"] == RT.INF and bool(sf["asph"]))
+
+
+def _zs(sf, y):
+    """面の sag(球面は閉形式 R − sign(R)√(R² − y²)、円錐・非球面は raytrace の式)。"""
+    if _is_asph(sf):
+        return float(_sag_profile(sf, [y])[0])
+    return _sag_exact(sf["R"], y)
+
+
+def _check_extent(sf, h, op):
+    if sf["R"] == RT.INF:
+        return
+    if not _is_asph(sf) and abs(sf["R"]) < h:
+        raise ValueError("%s: |R| = %.4g is smaller than the half diameter %.4g" % (op, abs(sf["R"]), h))
+    if _is_asph(sf) and sf["k"] > -1.0 and (1.0 + sf["k"]) * (h / sf["R"]) ** 2 >= 1.0:
+        raise ValueError("%s: the conic (R %.4g, k %.4g) does not reach the half diameter %.4g"
+                         % (op, sf["R"], sf["k"], h))
+
+
+def _sag_table(sf, h_max, rows=None):
+    """ISO 10110-12 の sag の表: 高さ h(0 → 有効半径、等間隔)と sag z(h) [mm]。"""
+    n = SAG_TABLE_ROWS if rows is None else rows
+    hs = np.linspace(0.0, h_max, n)
+    return [[float(h), float(_sag_profile(sf, [h])[0])] for h in hs]
+
+
+def _draw_sag_table(sh, x0, top, side, sf, tab, hrow, th):
+    """sag の表を図に書き、次の欄の上端を返す。式と係数(ASCII)を表の上に書く。"""
+    coef = "  ".join("A%d %.6e" % (4 + 2 * i, a) for i, a in enumerate(sf["asph"])) or "A4.. 0"
+    lines = ["12/ SURFACE %d ASPHERIC SAG TABLE (ISO 10110-12)" % side,
+             "z = c h^2/(1+SQRT(1-(1+k) c^2 h^2)) + A4 h^4 + A6 h^6 + ...",
+             "R %.6f  k %.6f  %s" % (sf["R"], sf["k"], coef),
+             "     h [mm]       z [mm]"]
+    y = top - hrow
+    for k, txt in enumerate(lines):
+        sh.text((x0, y - hrow * k), txt, height=th, tag="sagtab:%d:head:%d" % (side, k))
+    y -= hrow * len(lines)
+    for k, (h, z) in enumerate(tab):
+        sh.text((x0, y - hrow * k), "%11.4f %12.6f" % (h, z), height=th, tag="sagtab:%d:%d" % (side, k))
+    return y - hrow * (len(tab) + 1.0)
+
+
+def _cemented_drawing(system, grp, element, tolerances, outer_diameter_mm, clear_aperture_mm, chamfer_mm,
+                      scale, title, op):
+    """接合レンズ群の組図(断面・接合面・面ごとの R と有効径・レンズごとの材料と中心厚・sag の表)。"""
+    surf = system["surfaces"]
+    tol = {"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001, "decenter_mm": 0.0, "tilt_deg": 0.05}
+    if tolerances is not None:
+        if not isinstance(tolerances, dict):
+            raise ValueError("%s: tolerances must be a dict like tolerance_analysis takes" % op)
+        for k, v in tolerances.items():
+            if k not in tol:
+                raise ValueError("%s: unknown tolerance %r (choose from %s)" % (op, k, sorted(tol)))
+            tol[k] = _num(v, k, op, nonneg=True)
+    ch = _num(chamfer_mm, "chamfer_mm", op, nonneg=True)
+    if clear_aperture_mm is None:
+        aps = [surf[i]["ap"] for i in grp if surf[i]["ap"] is not None]
+        if aps:
+            ce = 2.0 * max(aps)
+        else:
+            sec = lens_section_drawing(system, rays=3)
+            ce = 2.0 * max(sec["values"]["surfaces"][i]["semi_diameter"] for i in grp)
+    else:
+        ce = _num(clear_aperture_mm, "clear_aperture_mm", op, positive=True)
+    D = 1.1 * ce if outer_diameter_mm is None else _num(outer_diameter_mm, "outer_diameter_mm", op, positive=True)
+    if D < ce:
+        raise ValueError("%s: outer diameter %.4g is smaller than the clear aperture %.4g" % (op, D, ce))
+    for i in grp:
+        _check_extent(surf[i], 0.5 * D, op)
+    zv = [0.0]
+    for i in grp[:-1]:
+        zv.append(zv[-1] + float(surf[i]["t"]))
+    cts = [float(surf[i]["t"]) for i in grp[:-1]]
+    edges = []
+    for k in range(len(grp) - 1):
+        e = (zv[k + 1] + _zs(surf[grp[k + 1]], 0.5 * D)) - (zv[k] + _zs(surf[grp[k]], 0.5 * D))
+        if e <= 0.0:
+            raise ValueError("%s: lens %d of the group has a non-positive edge thickness %.4g mm at the outer "
+                             "diameter %.4g" % (op, k + 1, e, D))
+        edges.append(e)
+    span = max(D, zv[-1] + abs(_zs(surf[grp[0]], 0.5 * D)) + abs(_zs(surf[grp[-1]], 0.5 * D)))
+    s = _auto_scale(span, 110.0) if scale is None else _num(scale, "scale", op, positive=True)
+    sh = _Sheet(s)
+    y = np.linspace(-0.5 * D + ch, 0.5 * D - ch, 161)
+    for k, i in enumerate(grp):
+        z = zv[k] + np.array([_zs(surf[i], v) for v in y])
+        sh.poly(np.stack([z, y], 1), "OUTLINE", tag="surface:%d" % (k + 1))
+        if 0 < k < len(grp) - 1:                       # 接合面は外径まで(面取りしない)
+            for sg in (1.0, -1.0):
+                sh.line((z[-1 if sg > 0 else 0], sg * (0.5 * D - ch)),
+                        (zv[k] + _zs(surf[i], 0.5 * D), sg * 0.5 * D), "OUTLINE", tag="cement")
+    for k in range(len(grp) - 1):
+        a, b = grp[k], grp[k + 1]
+        for sg in (1.0, -1.0):
+            za = zv[k] + _zs(surf[a], 0.5 * D - (ch if k == 0 else 0.0))
+            zb = zv[k + 1] + _zs(surf[b], 0.5 * D - (ch if k + 1 == len(grp) - 1 else 0.0))
+            ca = zv[k] + _zs(surf[a], 0.5 * D) + (ch if k == 0 else 0.0)
+            cb = zv[k + 1] + _zs(surf[b], 0.5 * D) - (ch if k + 1 == len(grp) - 1 else 0.0)
+            if k == 0:
+                sh.line((za, sg * (0.5 * D - ch)), (ca, sg * 0.5 * D), "OUTLINE", tag="chamfer")
+            if k + 1 == len(grp) - 1:
+                sh.line((zb, sg * (0.5 * D - ch)), (cb, sg * 0.5 * D), "OUTLINE", tag="chamfer")
+            sh.line((ca, sg * 0.5 * D), (cb, sg * 0.5 * D), "OUTLINE", tag="edge")
+    zmin = min(0.0, _zs(surf[grp[0]], 0.5 * D)) - sh.p(8.0)
+    zmax = max(zv[-1], zv[-1] + _zs(surf[grp[-1]], 0.5 * D)) + sh.p(8.0)
+    sh.line((zmin, 0.0), (zmax, 0.0), "AXIS", tag="axis")
+    for k, ct in enumerate(cts):
+        sh.dim((zv[k], 0.0), (zv[k + 1], 0.0), -(0.5 * D + sh.p(10.0 + 9.0 * (k % 2))),
+               "%s±%s" % (_fmt(ct), _fmt(tol["thickness_mm"])), "CT%d" % (k + 1), ct)
+    sh.dim((zmax + sh.p(4.0), -0.5 * D), (zmax + sh.p(4.0), 0.5 * D), -sh.p(4.0), "⌀%s" % _fmt(D), "D", D)
+    for k in range(len(grp)):
+        sh.text((zv[k], 0.5 * D + sh.p(4.0)), "%d" % (k + 1), height=sh.p(TEXT_H), align="center",
+                tag="label:surface")
+    th = sh.p(TEXT_SMALL)
+    hrow = 1.8 * th
+    x0 = zmin - sh.p(40.0)
+    y0 = -0.5 * D - sh.p(32.0)
+    rows = ["CEMENTED GROUP (ISO 10110 ASSEMBLY)", "SURF        R            ⌀e"]
+    Rs, nds, vds = [], [], []
+    for k, i in enumerate(grp):
+        R = surf[i]["R"]
+        Rs.append(R)
+        rows.append("%-4d %12s %10s%s" % (k + 1, "INF" if R == RT.INF else "%.4f" % R, _fmt(ce),
+                                          "  ASPH (12/)" if _is_asph(surf[i]) else ""))
+    rows.append("LENS     n_d        v_d       CT")
+    for k, i in enumerate(grp[:-1]):
+        nd, vd = _nd_vd(surf[i]["n"])
+        nds.append(nd)
+        vds.append(vd)
+        rows.append("%-4d %10.5f %9s %9s" % (k + 1, nd, ("%.2f" % vd) if math.isfinite(vd) else "-",
+                                             _fmt(cts[k])))
+    for k, txt in enumerate(rows):
+        sh.text((x0, y0 - hrow * k), txt, height=th, tag="cemented:%d" % k)
+    sub = RT.lens_system([{"R": surf[i]["R"], "t": surf[i]["t"], "n": surf[i]["n"], "k": surf[i]["k"],
+                           "asph": surf[i]["asph"], "ap": 0.5 * ce if k == 0 else None}
+                          for k, i in enumerate(grp[:-1])] +
+                         [{"R": surf[grp[-1]]["R"], "t": None, "n": 1.0, "k": surf[grp[-1]]["k"],
+                           "asph": surf[grp[-1]]["asph"]}], stop=0, wavelength_um=system["wavelength_um"])
+    efl = RT.paraxial_trace(sub)["efl"]
+    ny = y0 - hrow * (len(rows) + 1.0)
+    notes = ["NOTES", "1. CEMENT LAYER THICKNESS NEGLECTED (OPTICALLY THIN)",
+             "2. EDGE THICKNESS " + " / ".join(_fmt(e) for e in edges) + " (REFERENCE)",
+             "3. GROUP EFL %s (d-line, paraxial)" % _fmt(efl, 3),
+             "4. TOLERANCES: CT ±%g, n ±%g, R ±%g %%" % (tol["thickness_mm"], tol["index"], tol["radius_pct"])]
+    for k, txt in enumerate(notes):
+        sh.text((x0, ny - hrow * k), txt, height=th, tag="note:%d" % k)
+    tb = ny - hrow * (len(notes) + 1.0)
+    sag_tables = {}
+    for k, i in enumerate(grp):
+        if _is_asph(surf[i]):
+            tab = _sag_table(surf[i], 0.5 * ce)
+            sag_tables[k + 1] = tab
+            tb = _draw_sag_table(sh, x0, tb, k + 1, surf[i], tab, hrow, th)
+    sh.poly([(x0, tb), (x0 + sh.p(186.0), tb), (x0 + sh.p(186.0), tb - 3.2 * hrow), (x0, tb - 3.2 * hrow)],
+            "FRAME", closed=True, tag="titleblock")
+    sh.text((x0 + sh.p(2.0), tb - hrow), title or "CEMENTED GROUP %d" % (element + 1), height=sh.p(TEXT_H),
+            tag="titleblock:name")
+    sh.text((x0 + sh.p(2.0), tb - 2.4 * hrow), "ISO 10110   UNITS mm   SCALE %s   SHEET 1/1" % _scale_label(s),
+            height=th, tag="titleblock:info")
+    values = {"R": Rs, "center_thickness": cts, "nd": nds, "vd": vds, "outer_diameter": D, "clear_aperture": ce,
+              "edge_thickness": edges, "efl": efl, "surfaces": list(grp), "cemented": True, "scale": s,
+              "tolerances": tol, "sag_tables": sag_tables}
+    meta = {"standard": "ISO 10110 (assembly of a cemented group; notation from public explanations)"}
+    return _finish(sh, title or "cemented_group", values, meta, [])
+
+
+def _ascii_label(txt, fallback):
+    return txt if txt and all(32 <= ord(ch) < 127 for ch in txt) else fallback
+
+
+def noncoaxial_drawing(system, fields=None, rays=3, view="yz", scale=None, title=None, profile_points=61,
+                     rotate_deg=0, overlays=None):
+    """折り返した系の断面図・設置図(``table``、図の dict)—— ``raytrace3d`` の系の面・鏡・半透鏡・像面・光線を、
+    大域の座標で子午面に投影して描く。
+
+    *system* は ``raytrace3d.noncoaxial_system`` の系(``raytrace.lens_system`` の処方も受ける)。*view* は投影面:
+    ``"yz"``(横軸 = 大域の z、縦軸 = y。x 軸まわりの折り返しはこの面に載る)/ ``"zx"``(横軸 z、縦軸 x)。
+    面は局所の子午面の sag 曲線(``raytrace`` の円錐 + 非球面の式)を大域へ写して投影し、ガラスの群はコバの線で
+    閉じ、鏡は裏に斜線、半透鏡は ``BS`` の印。光軸は座標系の原点の折れ線(細い一点鎖線)、絞りは口径の外の刻み、
+    像面は像の座標系の線分(``image_tilt`` で傾く)、有限の物体は物面の線分(``object_tilt`` で傾く)。光線は視野
+    ごとに色を分け、絞りの上で等間隔に**絞りを狙った**実光線(``raytrace3d`` の Newton 法)。
+
+    *rotate_deg*(0 / 90 / 180 / 270)は紙の上で図を回す(同軸落射のように光が下から上へ進む装置を立てて描く)。
+    *overlays* は別の系(例: 照明の枝 = 半透鏡で反射する系)の列で、その光線を照明の光線の層に重ねて描く
+    (面は細線)。
+
+    寸法: 装置の占有の幅 ``W`` と高さ ``H``(面・像面・光線の外接矩形)。注記: 光路長(第 1 面 → 像面の軸の長さ)、
+    折り返しの角度。``values``: ``path_length`` / ``footprint`` / ``fold_angles_deg`` / 面ごとの大域の頂点
+    ``surfaces`` / 光線の大域の折れ線 ``rays`` / ``image_center``。
+    """
+    op = "noncoaxial_drawing"
+    import raytrace3d as R3
+    sysd = R3._check(system, op)
+    nr = _int(rays, "rays", op, 1, _MAX_RAYS)
+    npf = _int(profile_points, "profile_points", op, 11, _MAX_PROFILE)
+    if view not in ("yz", "zx"):
+        raise ValueError("%s: view must be 'yz' or 'zx', got %r" % (op, view))
+    if isinstance(rotate_deg, bool) or rotate_deg not in (0, 90, 180, 270):
+        raise ValueError("%s: rotate_deg must be 0, 90, 180 or 270, got %r" % (op, rotate_deg))
+    cr = {0: (1.0, 0.0), 90: (0.0, 1.0), 180: (-1.0, 0.0), 270: (0.0, -1.0)}[int(rotate_deg)]
+    ovs = [] if overlays is None else [R3._check(o_, op) for o_ in overlays]
+    if len(ovs) > 4:
+        raise ValueError("%s: at most 4 overlays" % op)
+    vi = 1 if view == "yz" else 0
+    recs = sysd["records"]
+    F0 = tuple(sysd["field"])
+    if fields is None:
+        fields = [(0.0, 0.0)] if F0 == (0.0, 0.0) else [(0.0, 0.0), (0.7 * F0[0], 0.7 * F0[1]), F0]
+    if isinstance(fields, (int, float, np.integer, np.floating)) and not isinstance(fields, bool):
+        fields = [fields]
+    flds = []
+    for i, f in enumerate(list(fields)):
+        if isinstance(f, (int, float, np.integer, np.floating)) and not isinstance(f, bool):
+            flds.append((0.0, _num(f, "fields[%d]" % i, op)))
+        else:
+            if not hasattr(f, "__len__") or len(f) != 2:
+                raise ValueError("%s: a field is a number (fy) or a pair (fx, fy), got %r" % (op, f))
+            flds.append((_num(f[0], "fields[%d][0]" % i, op), _num(f[1], "fields[%d][1]" % i, op)))
+    if not 1 <= len(flds) <= _MAX_FIELDS:
+        raise ValueError("%s: give 1..%d fields, got %d" % (op, _MAX_FIELDS, len(flds)))
+    lay = R3._layout(sysd)
+    path = R3._nominal_path(sysd)
+    pos = {k: j for j, (k, _, _) in enumerate(path)}
+    stop = sysd["stop"]
+    ap_stop = recs[stop]["ap"]
+    # --- 光線(描く束と、有効半径を決める密な束) ---
+    q_draw = np.array([0.0]) if nr == 1 else np.linspace(-1.0, 1.0, nr)
+    q_dense = np.linspace(-1.0, 1.0, 21)
+    sd_ray = {k: 0.0 for k in pos}
+    traced = []
+    for f in flds:
+        for qs, keep in ((q_dense, False), (q_draw, True)):
+            tg = np.zeros((len(qs), 2))
+            tg[:, 1 if view == "yz" else 0] = qs * ap_stop
+            P, D, _, ok = R3._aim(sysd, tg, f, layout=lay)
+            tr = R3._trace(sysd, P, D, layout=lay)
+            v = tr["valid"] & ok
+            if not keep:
+                if not np.any(v):
+                    raise ValueError("%s: no real ray of field %s reaches the image" % (op, f))
+                for k, j in pos.items():
+                    Rm, o = lay["poses"][k]
+                    loc = (tr["points"][v, j + 1, :] - o) @ Rm
+                    sd_ray[k] = max(sd_ray[k], float(np.max(np.hypot(loc[:, 0], loc[:, 1]))))
+            else:
+                traced.append((f, qs, tr, v))
+    sd = {k: (recs[k]["ap"] if recs[k]["ap"] is not None else max(sd_ray[k], 1e-3)) for k in pos}
+    before, after = R3._media(sysd)
+    glass = {k: (not recs[k]["reflect"]) and after[k] > 1.0 + 1e-9 for k in pos}
+    # 群(媒質がガラスの連続): 群の外径は最大の有効半径 × 1.05
+    groups, cur = [], []
+    for k, _, _ in path:
+        cur.append(k)
+        if not glass[k]:
+            if len(cur) >= 2:
+                groups.append(cur)
+            cur = []
+    r_out = dict(sd)
+    for g in groups:
+        R = 1.05 * max(sd[k] for k in g)
+        for k in g:
+            r_out[k] = R
+
+    def to2(P):
+        P = np.asarray(P, float)
+        h, v = P[..., 2], P[..., vi]
+        return np.stack([cr[0] * h - cr[1] * v, cr[1] * h + cr[0] * v], -1)
+
+    def prof(k, rmax):
+        r = recs[k]
+        yy = np.linspace(-rmax, rmax, npf)
+        c = 0.0 if r["R"] == RT.INF else 1.0 / r["R"]
+        zz = RT._sag(yy * yy, c, r["k"], r["asph"])
+        if not np.all(np.isfinite(zz)):
+            raise ValueError("%s: record %d sag is not finite inside its semi-diameter" % (op, k))
+        loc = np.zeros((npf, 3))
+        loc[:, 1 if view == "yz" else 0] = yy
+        loc[:, 2] = zz
+        Rm, o = lay["poses"][k]
+        return loc @ Rm.T + o
+
+    # --- 尺度は描く前に外接矩形から決める ---
+    pts_all = []
+    for k in pos:
+        pts_all.append(prof(k, r_out[k]))
+    for (_, _, tr, v) in traced:
+        if np.any(v):
+            pts_all.append(tr["points"][v, 1:, :].reshape(-1, 3))
+    Fi, oi = lay["image"]
+    pts_all.append(oi[None, :])
+    allp = to2(np.concatenate(pts_all, 0))
+    span = float(max(np.ptp(allp[:, 0]), np.ptp(allp[:, 1]), 1e-6))
+    s = _auto_scale(1.3 * span, 250.0) if scale is None else _num(scale, "scale", op, positive=True)
+    sh = _Sheet(s)
+    lead = 0.15 * span
+    # 光軸 = 視野 0 の主光線(絞りの中心を狙った実光線)の折れ線。座標系の原点の折れ線は平板の切り替えで
+    #   ジグザグになるので使わない。光路長はその第 1 面 → 像面の長さ、折り返しの角度は反射の前後の向きの角。
+    Pc, Dc, _, okc = R3._aim(sysd, np.zeros((1, 2)), (0.0, 0.0), layout=lay)
+    trc = R3._trace(sysd, Pc, Dc, layout=lay)
+    if not (okc[0] and trc["valid"][0]):
+        raise ValueError("%s: the axis ray (field 0, stop centre) does not reach the image" % op)
+    axis = [trc["points"][0, i] for i in range(1, trc["points"].shape[1])]
+    first = to2(axis[0])
+    d0 = to2(trc["dirs"][0, 0])
+    nd0 = float(np.hypot(*d0))
+    pre = first - lead * d0 / nd0 if nd0 > 1e-9 else first
+    sh.poly([pre] + [to2(p_) for p_ in axis], "AXIS", tag="axis")
+    path_len = float(sum(np.linalg.norm(axis[i + 1] - axis[i]) for i in range(len(axis) - 1)))
+    # 面
+    surf_rec = []
+    placed = []
+    ingroup = {k for g in groups for k in g}
+    for k, j in pos.items():
+        r = recs[k]
+        pp = to2(prof(k, r_out[k] if k in ingroup else sd[k]))
+        layer = "OUTLINE" if (k in ingroup or r["reflect"] or r["beamsplitter"]) else "THIN"
+        is_dummy = (not r["reflect"]) and r["beamsplitter"] is None and k not in ingroup and r["R"] == RT.INF
+        if not (is_dummy and k == stop):
+            sh.poly(pp, layer, tag="surface:%d" % k)
+        Rm, o = lay["poses"][k]
+        if r["mirror"]:                                  # 鏡の裏の斜線(光の来ない側 = 局所の +z)
+            back = to2(Rm[:, 2])
+            nb = float(np.hypot(*back))
+            if nb > 1e-6:
+                bdir = back / nb
+                tang = pp[-1] - pp[0]
+                tang = tang / max(float(np.hypot(*tang)), 1e-12)
+                L = sh.p(2.5)
+                for t in np.linspace(0.0, 1.0, 9):
+                    a = pp[0] + t * (pp[-1] - pp[0])
+                    sh.line(a, a + L * (0.7 * bdir + 0.7 * tang), "THIN", tag="mirror-back:%d" % k)
+        lab = _ascii_label(r["label"], "S%d" % (j + 1))
+        if r["beamsplitter"] is not None and "BS" not in lab:
+            lab += " BS"
+        top = pp[np.argmax(pp[:, 1])].copy()
+        top[1] += sh.p(3.0)
+        wlab = CHAR_W * sh.p(TEXT_SMALL) * len(lab)
+        for (lx, ly, lw) in placed:
+            if abs(top[0] - lx) < 0.5 * (wlab + lw) + sh.p(1.0) and abs(top[1] - ly) < sh.p(1.8 * TEXT_SMALL):
+                top[1] = ly + sh.p(1.8 * TEXT_SMALL)
+        placed.append((top[0], top[1], wlab))
+        surf_rec.append({"record": k, "label": lab, "vertex": o.tolist(), "semi_diameter": float(sd[k]),
+                         "outer_radius": float(r_out[k]), "R": r["R"], "k": r["k"], "mirror": r["mirror"],
+                         "beamsplitter": r["beamsplitter"], "normal": Rm[:, 2].tolist()})
+        sh.text((top[0], top[1]), lab, height=sh.p(TEXT_SMALL), align="center", tag="label:surface")
+    for g in groups:
+        for a, b in zip(g[:-1], g[1:]):
+            for sg in (1.0, -1.0):
+                pa = to2(prof(a, r_out[a])[0 if sg < 0 else -1])
+                pb = to2(prof(b, r_out[b])[0 if sg < 0 else -1])
+                sh.line(pa, pb, "OUTLINE", tag="edge")
+    # 絞り
+    Rm, o = lay["poses"][stop]
+    mark = max(sh.p(4.0), 0.12 * ap_stop)
+    for sg in (1.0, -1.0):
+        e = np.zeros(3)
+        e[1 if view == "yz" else 0] = sg
+        a = to2(o + Rm @ (e * ap_stop))
+        b = to2(o + Rm @ (e * (ap_stop + mark)))
+        sh.line(a, b, "STOP", tag="stop")
+    # 光線
+    rays_rec = []
+    n_vig = 0
+    for jf, (f, qs, tr, v) in enumerate(traced):
+        layer = "RAY_F%d" % (jf + 1)
+        for r_ in range(len(qs)):
+            if not v[r_]:
+                n_vig += 1
+                continue
+            pts = tr["points"][r_]
+            p0, dd = pts[0], tr["dirs"][r_, 0]
+            if sysd["object_mm"] == RT.INF or sysd["object_mm"] > 3.0 * span:
+                start = pts[1] - lead * dd
+            else:
+                start = p0
+            seq = [start] + [pts[i] for i in range(1, pts.shape[0])]
+            sh.poly(to2(np.array(seq)), layer, tag="ray:%d:%d" % (jf, r_))
+            rays_rec.append({"field_index": jf, "field": list(f), "pupil": float(qs[r_]),
+                             "points": [list(map(float, p)) for p in seq[1:]]})
+    # 重ねる系(照明の枝など): 面は細線、光線は照明の光線の層
+    ov_rec = []
+    for io, ov in enumerate(ovs):
+        lo = R3._layout(ov)
+        apo = ov["records"][ov["stop"]]["ap"]
+        tg = np.zeros((max(nr, 2), 2))
+        tg[:, 1 if view == "yz" else 0] = np.linspace(-1.0, 1.0, max(nr, 2)) * apo
+        Po, Do, _, oko = R3._aim(ov, tg, tuple(ov["field"]), layout=lo)
+        tro = R3._trace(ov, Po, Do, layout=lo)
+        for r_ in range(len(tg)):
+            if not (oko[r_] and tro["valid"][r_]):
+                continue
+            seq = [tro["points"][r_, i] for i in range(tro["points"].shape[1])]
+            sh.poly(to2(np.array(seq)), "LIGHTRAY", tag="overlay:%d:%d" % (io, r_))
+            ov_rec.append({"overlay": io, "points": [list(map(float, p_)) for p_ in seq]})
+        src = to2(tro["points"][0, 0]) if oko[0] else None
+        if src is not None:
+            sh.circle(src, sh.p(1.5), "LIGHT", tag="overlay-source:%d" % io)
+            sh.text((src[0], src[1] + sh.p(3.0)), "LIGHT", height=sh.p(TEXT_SMALL), align="center",
+                    tag="label:light")
+    # 像面
+    ih = max([abs(float(((np.array(rr["points"][-1]) - oi) @ Fi)[vi])) for rr in rays_rec] + [0.0])
+    hh = max(1.2 * ih, 0.25 * max(sd.values()))
+    tx, ty = sysd["image_tilt"]
+    slope = math.tan(math.radians(tx if view == "yz" else ty))
+    e = np.zeros(3)
+    e[vi] = 1.0
+    e[2] = slope
+    a, b = to2(oi - hh * (Fi @ e)), to2(oi + hh * (Fi @ e))
+    sh.line(a, b, "IMAGE", tag="image")
+    sh.text((b[0], b[1] + sh.p(3.0)), "IMA", height=sh.p(TEXT_SMALL), align="center", tag="label:image")
+    # 物面(有限で近ければ)
+    if sysd["object_mm"] != RT.INF and sysd["object_mm"] <= 3.0 * span:
+        hmax = max([abs(f[1 if view == "yz" else 0]) for f in flds] + [0.25 * max(sd.values())])
+        tx, ty = sysd["object_tilt"]
+        sl = math.tan(math.radians(tx if view == "yz" else ty))
+        e = np.zeros(3)
+        e[vi] = 1.0
+        e[2] = sl
+        po = np.array([0.0, 0.0, -sysd["object_mm"]])
+        a, b = to2(po - 1.2 * hmax * e), to2(po + 1.2 * hmax * e)
+        sh.line(a, b, "THIN", tag="object")
+        sh.text((b[0], b[1] + sh.p(3.0)), "OBJ", height=sh.p(TEXT_SMALL), align="center", tag="label:object")
+    # 折り返しの角度(反射の前後の主光線の向き)
+    folds = []
+    for j, (k, act, _) in enumerate(path):
+        if act == "reflect":
+            d1, d2 = trc["dirs"][0, j], trc["dirs"][0, j + 1]
+            folds.append(math.degrees(math.acos(max(-1.0, min(1.0, float(d1 @ d2))))))
+    # 寸法: 占有の幅と高さ
+    x0, y0, x1, y1 = _bbox([en for en in sh.ents if en["layer"] in ("OUTLINE", "THIN", "IMAGE", "STOP", "LIGHTRAY", "LIGHT")
+                            or en["layer"].startswith("RAY_F")])
+    W, H = x1 - x0, y1 - y0
+    step = sh.p(9.0)
+    sh.dim((x0, y0), (x1, y0), -step, "W " + _fmt(W), "W", W)
+    sh.dim((x1, y0), (x1, y1), -step, "H " + _fmt(H), "H", H)
+    th = sh.p(TEXT_SMALL)
+    ytab = y0 - 2.5 * step
+    notes = ["PATH %s   FOLDS %s   VIEW %s (horizontal z, vertical %s)"
+             % (_fmt(path_len), " / ".join(_fmt(a_, 1) for a_ in folds) or "-", view, "y" if vi == 1 else "x"),
+             "FIELD %s   WL %.1f nm   STOP %s" % (" / ".join("(%s,%s)" % (_fmt(f[0], 1), _fmt(f[1], 1)) for f in flds),
+                                                  1000.0 * sysd["wavelength_um"],
+                                                  _ascii_label(recs[stop]["label"], "S%d" % (pos[stop] + 1)))]
+    for k, ln in enumerate(notes):
+        sh.text((x0, ytab - 1.7 * th * k), ln, height=th, tag="spec:%d" % k)
+    values = {"path_length": path_len, "footprint": [W, H], "fold_angles_deg": folds, "surfaces": surf_rec,
+              "rays": rays_rec, "rays_vignetted": n_vig, "image_center": oi.tolist(), "fields": [list(f) for f in flds],
+              "view": view, "scale": s, "horizontal": "z", "rotate_deg": int(rotate_deg), "overlays": ov_rec}
+    meta = {"source": "raytrace3d.noncoaxial_system", "groups": groups, "stop": stop,
+            "conventions": "horizontal = global z, vertical = global %s; mm" % ("y" if vi == 1 else "x")}
+    title_lines = [title or "OPTICAL LAYOUT (FOLDED SYSTEM, VIEW %s)" % view.upper(),
+                   "UNITS mm   SCALE " + _scale_label(s)]
+    return _finish(sh, title or "noncoaxial_layout", values, meta, title_lines)
 
 
 def _fringe(v):

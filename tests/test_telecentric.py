@@ -35,9 +35,11 @@ def test_chief_ray_passes_the_stop_centre_even_with_the_pupil_at_infinity(lenses
         for h in (1.0, 4.0, 8.0):
             c = T.chief_ray_angle(s, h)
             assert c["stop_residual_mm"] < 1e-12 and c["valid"]
-    # raytrace.chief_ray は入射瞳を狙うので、物体側テレセンでは止まる(この層が要る理由)
-    with pytest.raises(ValueError):
-        RT.chief_ray(lenses["object"], 4.0)
+    # ★2026-10-15 まで raytrace.chief_ray は入射瞳を狙い、物体側テレセンでは ValueError で止まった。
+    #   いまは入射瞳が無限遠なら絞りを狙う —— この層の主光線と同じ像の高さになること。
+    for h in (1.0, 4.0, 8.0):
+        rc = RT.chief_ray(lenses["object"], h)
+        assert rc["valid"] and abs(rc["image_y"] - T.chief_ray_angle(lenses["object"], h)["image_y_mm"]) < 1e-9
     # 近軸の限界(小さい物高)では物体側テレセンの傾きは 0 に近い、通常のレンズは tanθ = h/L
     # (残りは単レンズの瞳の球面収差 ∝ h³: 8 mm で 0.05° → 0.5 mm で 1.3e-5°)
     assert abs(T.chief_ray_angle(lenses["object"], 0.5)["object_angle_deg"]) < 3e-5

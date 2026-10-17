@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 73 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 74 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 在保持光度真值的同時把凹形零件的相互反射計算到收斂(三維形狀因子、漸進輻射度、含多次反射的檢測用渲染): [說明](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 範例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - 用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 86 種，一次文獻的係數與數表，玻璃目錄匯入口）: [說明](../../capabilities/material-optical-property-library.md) _(ja)_ · 範例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數): [說明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 範例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
+- 非共軸光學系統(折轉反射鏡、分光鏡、傾斜平板、沙伊姆弗勒與鬼影): [說明](../../capabilities/noncoaxial-optics.md) _(ja)_ · 範例 [poc_noncoaxial_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_noncoaxial_optics.py)
 - 計算光的反射、折射與干涉: [說明](../../capabilities/optics-and-materials.md) _(ja)_ · 範例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
 - 像素位移成像(1 像素位移得全色、半像素位移消除混疊,以及失效條件): [說明](../../capabilities/pixel-shift-imaging.md) _(ja)_ · 範例 [poc_pixel_shift](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pixel_shift.py)
 - 用 4 個偏振方向去除鏡面反射(區分介電質與金屬): [說明](../../capabilities/polarisation-specular-removal.md) _(ja)_ · 範例 [example_polarization_metal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_polarization_metal.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) · [specular_photometric](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/specular_photometric.py)
@@ -184,7 +185,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 247 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -247,7 +248,7 @@ PoC 247 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (49)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (50)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -298,6 +299,7 @@ PoC 247 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光學系統圖面(截面圖、配置圖、製造圖)" width="200" height="200"><span>光學系統圖面(截面圖、配置圖、製造圖)</span></a>
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收斂" width="200" height="200"><span>加工凹槽的相互反射算到收斂</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="虛擬穿透式電子顯微鏡(Thon 環與欠焦)" width="200" height="200"><b>&#9654;</b><span>虛擬穿透式電子顯微鏡(Thon 環與欠焦)</span></a>
+<a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="非共軸光學系統(分光鏡鬼影與折轉)" width="200" height="200"><span>非共軸光學系統(分光鏡鬼影與折轉)</span></a>
 </div>
 </details>
 

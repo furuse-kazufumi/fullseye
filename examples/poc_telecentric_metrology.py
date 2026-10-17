@@ -51,7 +51,7 @@
   6. **被写界深度と NA の取引**: 門: ぼけの RMS の傾き |m|·NA/√2(一様な円の光束)を NA 0.005 / 0.01 / 0.02 で
      実光線と 0.5 % 以内。許すぼけ 22 µm(物体側)を回折の円の直径 1.22λ/NA が超えない最小の NA は 0.033 で、
      そのとき被写界深度 c/NA は 0.68 mm が上限 —— NA 0.01 なら深さは 2.2 mm あるが回折の円が 72 µm で 22 µm を分解できない。
-  付録. **第二の実装**: OSS の光線追跡 optiland(MIT)が手元にあれば同じ処方の主光線の像の高さを突き合わせる
+  付録. **第二の実装**: OSS の光線追跡 optiland(MIT)が手元にあれば同じ処方の主光線の像の高さを突き合わせ、無ければ記録値と照合する門
      (2026-10-15 に別の venv で 9e-8 mm。★内訳: 屈折率はどちらも公開の硝材カタログの同じ Sellmeier 係数なので、一致が見ているのは
      面との交点と主光線の狙いの実装だけ。optiland の狙いを近軸にすると物体側テレセンで 0.011 mm 違う)。
 
@@ -109,7 +109,9 @@ GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
 
 #: 2026-10-15 に optiland 0.6.3(別の venv)で同じ処方を組んで得た主光線の像の高さ [mm](物高 8 mm、
-#: 狙い = iterative)。手元に optiland が無いときに所見として印字する(門には使わない)。
+#: 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と
+#: telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する
+#: (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
 OPTILAND_RECORDED = {"ento": -4.000118, "object": -4.131367}
 
 
@@ -840,10 +842,16 @@ def chapter_second(L):
     try:
         import optiland  # noqa: F401
     except ImportError:
-        print("   [skip] optiland が入っていない(pip install optiland で同じ突き合わせが走る)")
+        print("   optiland が入っていない —— 記録値(2026-10-15、optiland 0.6.3)で照合する")
+        worst = 0.0
         for k, y in OPTILAND_RECORDED.items():
-            print("   記録(2026-10-15、optiland 0.6.3): %s %.6f mm / telecentric %.6f mm"
-                  % (LABEL[k], y, TC.chief_ray_angle(L[k], 8.0)["image_y_mm"]))
+            tc = TC.chief_ray_angle(L[k], 8.0)["image_y_mm"]
+            rt = RT.chief_ray(L[k], field=8.0)["image_y"]
+            worst = max(worst, abs(tc - y), abs(rt - y))
+            print("   記録 %s %.6f mm / telecentric %.7f mm / raytrace.chief_ray %.7f mm" % (LABEL[k], y, tc, rt))
+        gate("optiland の記録値(物高 8 mm の主光線の像の高さ)と telecentric・raytrace の両方が 2e-6 mm 以内", worst < 2e-6,
+             "最大 %.1e mm(記録は 6 桁の丸め)。raytrace.chief_ray は入射瞳が無限遠の物体側テレセンで以前は止まっていた"
+             "(2026-10-15 から絞りを狙う)" % worst)
         return None
     from optiland import optic
     bk7 = RT.glass_catalog("BK7")["name"]
@@ -870,7 +878,9 @@ def chapter_second(L):
         o.trace_generic(Hx=0.0, Hy=1.0, Px=0.0, Py=0.0, wavelength=0.58756)
         y = float(np.asarray(o.surface_group.y)[-1].ravel()[0])
         ours = TC.chief_ray_angle(s, 8.0)["image_y_mm"]
+        rt = RT.chief_ray(s, field=8.0)["image_y"]
         out[k] = (y, ours)
+        out[k + ":raytrace"] = (y, rt)
         print("   %s: optiland %.6f mm / telecentric %.6f mm" % (LABEL[k], y, ours))
     worst = max(abs(a - b) for a, b in out.values())
     gate("optiland の主光線の像の高さ(物高 8 mm)と 1e-4 mm 以内", worst < 1e-4,

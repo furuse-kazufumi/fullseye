@@ -429,6 +429,12 @@ def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
 
+    def s3_first(**kw):
+        def b(pool, rng):
+            import raytrace3d
+            return [raytrace3d.noncoaxial_example("epi_beamsplitter")], dict(kw)
+        return b
+
     def tele_first(**kw):
         def b(pool, rng):
             import telecentric
@@ -472,6 +478,12 @@ def _optics_builders():
         "drawing_raster": lambda pool, rng: ([_drawing()], {"dpi": 10.0}),
         "svg_entities": lambda pool, rng: ([__import__("optdraw").drawing_svg(_drawing())], {}),
         "dxf_entities": lambda pool, rng: ([__import__("optdraw").drawing_dxf(_drawing())], {}),
+        # raytrace の追加登録(2026-10-15)と raytrace3d(非共軸): 系は example の table
+        "chief_ray": lens_first(), "ray_bundle": lens_first(rings=2), "opd_samples": lens_first(size=8),
+        "with_wavelength": lens_first(),
+        "noncoaxial_layout": s3_first(), "noncoaxial_trace": s3_first(rings=2), "noncoaxial_spot": s3_first(rings=2),
+        "image_orientation": s3_first(), "ghost_analysis": s3_first(rings=2), "ghost_image": s3_first(size=16),
+        "ghost_path": s3_first(i=1, j=2, rings=1), "noncoaxial_drawing": s3_first(rays=1),
         "optimize_lens": lens_first(iterations=2, rings=2),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         "distortion_map": lens_first(image_size=(32, 32)),

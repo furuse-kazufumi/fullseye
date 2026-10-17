@@ -7732,7 +7732,14 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       "telecentric_lens",
                                       # ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、
                                       #   分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-                                      "lens_section_drawing", "lens_element_drawing"}
+                                      "lens_section_drawing", "lens_element_drawing",
+                                      # ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、
+                                      #   ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、
+                                      #   図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、
+                                      #   with_wavelength は処方(object_mm = inf)をそのまま返す。
+                                      "noncoaxial_system", "noncoaxial_example", "noncoaxial_layout",
+                                      "noncoaxial_drawing", "ghost_analysis", "ghost_path", "opd_samples",
+                                      "with_wavelength"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

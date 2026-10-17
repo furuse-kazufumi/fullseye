@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 73 capabilities**
+**Currently 74 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -41,6 +41,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
+| [Non-coaxial optics (fold mirrors, beamsplitters, tilted plates, Scheimpflug and ghosts)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [Compute reflection, refraction and interference](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
@@ -467,7 +468,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (16)
+## Light and colour (17)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -556,6 +557,18 @@ Pipeline: [`material_nir_absorption`](ops/optics/matprop/material_nir_absorption
 Alternatives: [`spectral_reflectance_from_material`](ops/optics/spectral/spectral_reflectance_from_material.md), [`hyperspectral_band_weights`](ops/optics/spectral/hyperspectral_band_weights.md), [`ingaas_photodiode_qe`](ops/optics/spectral/ingaas_photodiode_qe.md), [`carbon_black_absorption`](ops/optics/matprop/carbon_black_absorption.md)
 
 Runnable: `poc_hyperspectral_foreign_matter`
+
+### [Non-coaxial optics (fold mirrors, beamsplitters, tilted plates, Scheimpflug and ghosts)](capabilities/noncoaxial-optics.md)
+
+Thirteen ops in `raytrace3d` (category `noncoaxial` of `opsoptics`) give every surface of a sequential system a 3-D pose: coordinate breaks (decenter, then rotate about x, the new y, the new z; `undo` reverses one), returns to an earlier frame, fold mirrors, tilted or wedged plates and plate beamsplitters with a transmit and a reflect branch. Surfaces and the refraction / reflection law are `raytrace`'s own, so a coaxial prescription traces identically (1e-12). Ops report image orientation (reflections, handedness), both beamsplitter branches, closed-form tilted-plate shift and astigmatism, the Scheimpflug image tilt with a real-ray check, residual surface reflectance from the material table and thin-film stacks, and every two-reflection ghost (focus, size on the sensor, energy and irradiance ratios) as a table and an image. `optdraw.noncoaxial_drawing` draws folded systems to scale.
+
+Operators: `noncoaxial_system`, `noncoaxial_example`, `noncoaxial_layout`, `noncoaxial_trace`, `noncoaxial_spot`, `image_orientation`, `beamsplitter_branches`, `tilted_plate_shift`, `scheimpflug_tilt`, `surface_reflectance`, `ghost_analysis`, `ghost_image`, `ghost_path`, `noncoaxial_drawing`
+
+Pipeline: [`noncoaxial_system`](ops/optics/noncoaxial/noncoaxial_system.md) → [`noncoaxial_trace`](ops/optics/noncoaxial/noncoaxial_trace.md) → [`image_orientation`](ops/optics/noncoaxial/image_orientation.md) → [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md) → [`noncoaxial_drawing`](ops/optics/drawing/noncoaxial_drawing.md)
+
+Alternatives: [`lens_system`](ops/optics/design/lens_system.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`tilted_plate_shift`](ops/optics/noncoaxial/tilted_plate_shift.md), [`scheimpflug_tilt`](ops/optics/noncoaxial/scheimpflug_tilt.md), [`surface_reflectance`](ops/optics/noncoaxial/surface_reflectance.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+Runnable: `poc_noncoaxial_optics`
 
 ### [Compute reflection, refraction and interference](capabilities/optics-and-materials.md)
 

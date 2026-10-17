@@ -7,7 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-### Added — PoC「実物の画像の誤差から薄膜の模型の係数を合わせる」(sim-to-real 較正の最初の実データ適用、収蔵番号 2026.243 は仮番)
+### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数
+- `raytrace3d`(opsoptics の新カテゴリ `noncoaxial`): `noncoaxial_system`(面・座標の切り替え〔偏心 → x → y → z、`undo` で逆順〕・戻り・`fold_mirror`・傾いた平板 / 楔・平板の半透鏡〔透過 / 反射の枝〕。`raytrace.lens_system` の処方も受け、共軸なら `trace_rays` と 1e-12 で同じ)/ `noncoaxial_example` / `noncoaxial_layout` / `noncoaxial_trace` / `noncoaxial_spot` / `image_orientation`(反射の回数と裏返り)/ `beamsplitter_branches` / `tilted_plate_shift`(Smith の横ずれ、Coddington から導いた非点隔差)/ `scheimpflug_tilt`(tanθ' = m·tanθ、ヒンジ、実光線の確かめ)/ `surface_reflectance`(材料表 + `filmoptics` の膜、入射角つき)/ `ghost_analysis`(全ての 2 面の組の 2 回反射のゴースト: 焦点・像面上の大きさ・エネルギー比・照度比)/ `ghost_image` / `ghost_path`。
+- `optdraw.noncoaxial_drawing`(折り返した系の断面図・設置図、照明の枝を重ねる `overlays`、`rotate_deg`)。`lens_section_drawing` は鏡・傾き・偏心のある処方をここへ回す(以前は ValueError)。`lens_element_drawing` が接合レンズ群の組図と、非球面の ISO 10110-12 の sag の表を描く(以前は ValueError)。
+- `raytrace` の未登録だった公開関数を design に登録: `chief_ray` / `ray_bundle` / `opd_samples` / `with_wavelength`(既定の波長 F 線)。`trace_rays` は登録しない(台帳の名は `optscene` が持ち、正準名 `lens_trace_rays` は窓口の別名として予約済みで、台帳に置くと名前の衝突の門が赤)。`refractive_index` は別の作業が中を直しているので、この回は登録しない。
+- PoC `poc_noncoaxial_optics`(収蔵 2026.248、門 19 件): 同軸落射の半透鏡の裏面のゴーストが鏡面の部品に偽の凹みを写し、入射角に合わせた 2 層の膜と 1° の楔で消える。折り返しで装置の高さ 393 → 249 mm。optiland(MIT)と 6 系の全ての面の交点が 1e-13 mm。
+
+### Fixed — raytrace の黙った誤答
+- 傾いた鏡(`tilt` は「その面だけ」の摂動)の後で像面とほぼ平行に進む光線を、巨大な有限の点として有効に数えていた(`spot_stats` が rms 3.4e18 mm・`n_vignetted` 0)。光軸方向の方向余弦が 1e-3 以下の光線は無効にする。
+- 入射瞳が無限遠(物体側テレセン)の処方で `chief_ray` / `ray_bundle` / `spot_stats` が ValueError で止まっていた。入射瞳が有限でなければ絞りの点を狙う(Newton 法)。テレセンの PoC は optiland の記録値を門に格上げ(`telecentric` と `raytrace.chief_ray` の両方が 5e-7 mm)。
+- `tolerance_analysis` の補償(像面を摂動した系の近軸の焦点に合わせ直すか)を `compensator`(`"auto"` / `"back_focus"` / `"none"`)で明示し、使った補償を結果の `compensator` に返す。既定 `"auto"` は従来どおり(最後の面の `t` が None なら合わせ直す)なので数字は動かない。補償の有無で RMS の標準偏差は 1〜2 桁違う。
+### Added — PoC「実物の画像の誤差から薄膜の模型の係数を合わせる」(sim-to-real 較正の最初の実データ適用、収蔵 2026.247)
 - `examples/poc_simcal_thin_film.py`(17 門、図 9 枚): 計画(L18・Morris・共線性指数)→ 決まるつまみだけ較正 → 同定性・過適合の門・残差 PCA。公開の実測(Schwarz ら 2024、CC BY 4.0、`data/thin_film_real/` を共用)で膜厚のプロファイル 95 % 区間 [94.6, 99.0] nm が基準 98.5 nm を含み、直入射・材料表の n の模型(区間 [93.02, 93.07] nm)は絶対の χ² の門で拒否。実物の顕微鏡写真では色温度と周辺減光だけが決まり、膜厚・屈折率・利得・ガンマは組み合わせ。n を固定したカメラ較正(−12 %)は絶対の χ² と残差 PCA が拒否。op 本体(simcal・multivar・filmoptics)は変えていない。
 - 統合時の修正: 取り置き / 学習 の比の門を、既定の bootstrap の限界(実測 1.21 に対し 1.25、数字をずらせば通る門)から F 分布の上側 α = 1e-3 の分位(F(328, 325) で 1.431、p = 0.056)に替えた。比は σ の定数倍の見誤りに依らない。門は解析の分位をモンテカルロ 20 万本(1.435)と照合し、取り置きの残差を 1.5 倍にすると p = 1.3e-18 で拒否する探針つき。主図(χ² の地形)に軸の目盛り・軸名・カラーバー・終点の印をつけた。
 ### Fixed — optscene を波長の積分に載せ替え、棚卸しの束 2 の「黙って間違う」7 件を直す(+ 金属の既定・透明体の出口の界面)

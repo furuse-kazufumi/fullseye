@@ -5816,6 +5816,22 @@
     "de": "Virtuelles TEM (Thon-Ringe und Defokus)",
     "hi": "virtual TEM (Thon rings और defocus)"
    }
+  },
+  {
+   "id": "poc_noncoaxial_optics",
+   "group": "wing_metrology",
+   "media": "05_false_defect.png",
+   "motion": false,
+   "thumb_src": "05_false_defect.png",
+   "label": {
+    "ja": "非共軸の光学系(半透鏡のゴースト・折り返し)",
+    "en": "Non-coaxial optics: beamsplitter ghosts and folds",
+    "zh": "非共轴光学系统(分束器鬼像与折转)",
+    "tw": "非共軸光學系統(分光鏡鬼影與折轉)",
+    "ko": "비공축 광학계(빔스플리터 고스트·접힘)",
+    "de": "Nicht-koaxiale Optik: Strahlteiler-Geister und Faltungen",
+    "hi": "non-coaxial optics: beamsplitter ghost और fold"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6406,6 +6422,13 @@
     "ko": "가상 투과전자현미경(전자 파장 → CTF → 위상 콘트라스트 상 → Thon 링으로 디포커스 추정 → 보정)",
     "de": "Ein virtuelles Transmissionselektronenmikroskop (Elektronenwellenlänge, CTF, Phasenkontrastbilder, Defokus aus Thon-Ringen, Korrektur)",
     "hi": "virtual transmission electron microscope (electron wavelength → CTF → phase-contrast छवि → Thon rings से defocus → सुधार)"
+   },
+   "noncoaxial-optics": {
+    "zh": "非共轴光学系统(折转反射镜、分束器、倾斜平板、沙伊姆弗勒与鬼像)",
+    "tw": "非共軸光學系統(折轉反射鏡、分光鏡、傾斜平板、沙伊姆弗勒與鬼影)",
+    "ko": "비공축 광학계(접힘 거울·빔스플리터·기울어진 평판·샤임플루크·고스트)",
+    "de": "Nicht-koaxiale Optik (Faltspiegel, Strahlteiler, gekippte Platten, Scheimpflug und Geisterbilder)",
+    "hi": "non-coaxial optics (fold mirror, beamsplitter, झुकी plate, Scheimpflug और ghost)"
    }
   }
  }
