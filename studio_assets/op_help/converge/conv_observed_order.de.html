@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">conv_observed_order — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import converge; converge.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconverge.get(&quot;conv_observed_order&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Beobachtete Konvergenzordnung p aus drei systematisch verfeinerten Lösungen (Celik et al. 2008, Gl. 3).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">phi</code> = (phi1, phi2, phi3) on grids 1 (finest) .. 3 (coarsest). The refinement is given by exactly one of <code style="color:#22d3bf">h</code> = (h1, h2, h3) representative cell sizes, <code style="color:#22d3bf">r</code> = (r21, r32) with r21 = h2/h1 and r32 = h3/h2, or <code style="color:#22d3bf">n_cells</code> = (N1, N2, N3) with <code style="color:#22d3bf">dim</code> (h from Celik eqs. (1)-(2)). With eps32 = phi3 - phi2 and eps21 = phi2 - phi1 (Step 3):</p>
+<p>p = |ln|eps32/eps21| + q(p)| / ln(r21)                       (3a)</p>
+<p>q(p) = ln((r21^p - s) / (r32^p - s))                          (3b)</p>
+<p>s = sign(eps32 / eps21)                                       (3c)</p>
+<p>solved by fixed-point iteration from the first term (q = 0) with <code style="color:#22d3bf">iterate_fixed_point</code> (plain, as the paper prescribes; |p_k+1 - p_k| &lt;= 1e-13, at most 1000 steps). q = 0 when r is constant. s = -1 flags <b>oscillatory convergence</b> (reported, not refused — Celik keeps the absolute values so the extrapolation goes toward h = 0).</p>
+<p><b>Refusal</b>: eps21 or eps32 &quot;very close&quot; to zero (|eps| &lt;= 1e-12 * max|phi|) — Celik: the procedure does not work there (oscillation or an exact solution; refine further) — and a fixed-point iteration for p that does not converge.</p>
+<p>Defaults: the first column of Celik et al. 2008 Table 1 (p = 1.53).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">Leitfaden zur Familie convergent_computation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">verification</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:conv_gci">conv_gci</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

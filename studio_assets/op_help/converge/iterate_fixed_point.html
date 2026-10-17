@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">iterate_fixed_point — CONVERGE <code style="color:#22d3bf">iterate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import converge; converge.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconverge.get(&quot;iterate_fixed_point&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Solve x = g(x) by fixed-point iteration (plain / Aitken / Anderson) and refuse if it does not converge.</p>
+<p><code style="color:#22d3bf">g</code> is a callable mapping an iterate (scalar or array) to one of the same shape, or the name of a built-in example (<code style="color:#22d3bf">&quot;cos&quot;</code>: x = cos x, x0 = 1, fixed point 0.7390851332...). The residual is f_k = g(x_k) - x_k and the run has converged when <code style="color:#22d3bf">||f_k|| &lt;= tol + rtol * ||x_k||</code> (2-norm). The value returned is g(x_k).</p>
+<p><code style="color:#22d3bf">method</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;plain&quot;</code>    x_{k+1} = g(x_k) — the bounce-by-bounce Neumann sum for a linear map.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;aitken&quot;</code>   Aitken&#x27;s delta-squared on x, g(x), g(g(x)) per step (Steffensen form), component-wise; a component whose second difference vanishes takes g(g(x)).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;anderson&quot;</code> Anderson acceleration (Walker &amp; Ni 2011, Algorithm AA) with memory <code style="color:#22d3bf">m</code>, written as their eq. (3.1): gamma = argmin ||f_k - dF_k gamma||_2 with dF_k = (f_{k-m_k+1} - f_{k-m_k}, ..., f_k - f_{k-1}), then x_{k+1} = g(x_k) - dG_k gamma (dG holds the same differences of g). The least-squares problem is solved by a QR factorisation; while cond(R) &gt; <code style="color:#22d3bf">ANDERSON_COND_MAX</code> (1e8) the left-most (oldest) column is dropped (section 4 of Walker &amp; Ni, after Yang et al.). On a linear map with no columns dropped this reproduces GMRES (their Theorem 2.2): the gates check it.</p>
+<p>Returned (a table dict): <code style="color:#22d3bf">x</code> (g(x_k)), <code style="color:#22d3bf">converged</code>, <code style="color:#22d3bf">n_iter</code>, <code style="color:#22d3bf">n_evals</code> (calls of g), <code style="color:#22d3bf">residual_history</code> (||f_k|| per iterate), <code style="color:#22d3bf">lipschitz_estimate</code> (largest secant ratio of g over the stored iterates), <code style="color:#22d3bf">error_estimate</code> = L/(1-L) * ||f_k|| — the a-posteriori contraction bound on |g(x_k) - x*|, <code style="color:#22d3bf">None</code> when the estimated L is not below 1 — <code style="color:#22d3bf">columns_dropped</code> (Anderson conditioning) and <code style="color:#22d3bf">method</code>.</p>
+<p><b>Refusal</b>: divergence (non-finite residual or growth by <code style="color:#22d3bf">DIVERGENCE_FACTOR</code> = 1e8), a period-2 oscillation, stagnation or running out of <code style="color:#22d3bf">max_iter</code> raises <code style="color:#22d3bf">NotConvergedError</code> (a <code style="color:#22d3bf">MetricContractError</code>) with the record attached. With <code style="color:#22d3bf">on_fail=&quot;record&quot;</code> the record is returned instead, with <code style="color:#22d3bf">x = None</code> and the last iterate under <code style="color:#22d3bf">last_iterate</code> — never under <code style="color:#22d3bf">x</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:converge_tour">converge_tour</a> — <code style="color:#22d3bf">py -3.11 examples/converge_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">iterate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

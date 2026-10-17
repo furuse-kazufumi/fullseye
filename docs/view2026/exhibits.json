@@ -6314,6 +6314,13 @@
     "ko": "간접 ToF(위상 방식)의 다주파 언랩과 깨지는 방식(접힘, 다중 경로, 가장자리 혼합, 고조파, 배경광)",
     "de": "Indirekte Laufzeitmessung (phasenbasiert): Mehrfrequenz-Entfaltung und wie sie bricht (Faltung, Mehrwege, fliegende Pixel, Oberwellen, Fremdlicht)",
     "hi": "indirect ToF (phase-based) का multi-frequency unwrapping और वह कैसे टूटता है (wrapping, multipath, flying pixel, harmonics, ambient light)"
+   },
+   "convergent-forward-models": {
+    "zh": "把多重反射、多重散射和迭代算到收敛 —— 返回收敛的证据和剩余误差，不收敛就不给数值",
+    "tw": "把多重反射、多重散射和迭代算到收斂 —— 回傳收斂的證據和剩餘誤差，不收斂就不給數值",
+    "ko": "다중 반사, 다중 산란, 반복을 수렴할 때까지 돌린다 —— 수렴의 증거와 남은 오차를 돌려주고, 수렴하지 않으면 값을 내지 않는다",
+    "de": "Mehrfachreflexion, Mehrfachstreuung und Iterationen bis zur Konvergenz rechnen — mit Nachweis und Restfehler, und ohne Wert, wenn es nicht konvergiert",
+    "hi": "Inter-reflections, multiple scattering और iterations को convergence तक चलाना — convergence का प्रमाण और बचा हुआ error लौटाना, और converge न हो तो कोई मान नहीं"
    }
   }
  }

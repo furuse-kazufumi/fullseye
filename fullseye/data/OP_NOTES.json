@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3303,
- "n_notes": 3309,
+ "n_ops": 3309,
+ "n_notes": 3315,
  "notes": {
   "vol_dilate": [
    {
@@ -15236,6 +15236,61 @@
     "in": "conn_graph",
     "out": "points",
     "path": "docs/ops/conngraph/view/graph_layout_spectral.md"
+   }
+  ],
+  "iterate_fixed_point": [
+   {
+    "op": "iterate_fixed_point",
+    "dim": "converge",
+    "category": "iterate",
+    "out": "table",
+    "path": "docs/ops/converge/iterate/iterate_fixed_point.md"
+   }
+  ],
+  "mc_photon_slab": [
+   {
+    "op": "mc_photon_slab",
+    "dim": "converge",
+    "category": "montecarlo",
+    "out": "table",
+    "path": "docs/ops/converge/montecarlo/mc_photon_slab.md"
+   }
+  ],
+  "mc_sequential_mean": [
+   {
+    "op": "mc_sequential_mean",
+    "dim": "converge",
+    "category": "montecarlo",
+    "out": "table",
+    "path": "docs/ops/converge/montecarlo/mc_sequential_mean.md"
+   }
+  ],
+  "iv_richardson_lucy_until": [
+   {
+    "op": "iv_richardson_lucy_until",
+    "dim": "converge",
+    "category": "stopping",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/converge/stopping/iv_richardson_lucy_until.md"
+   }
+  ],
+  "conv_gci": [
+   {
+    "op": "conv_gci",
+    "dim": "converge",
+    "category": "verification",
+    "out": "table",
+    "path": "docs/ops/converge/verification/conv_gci.md"
+   }
+  ],
+  "conv_observed_order": [
+   {
+    "op": "conv_observed_order",
+    "dim": "converge",
+    "category": "verification",
+    "out": "table",
+    "path": "docs/ops/converge/verification/conv_observed_order.md"
    }
   ],
   "dem_cell_size_webmercator": [

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">conv_observed_order — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import converge; converge.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconverge.get(&quot;conv_observed_order&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由三個系統加密的解求表觀收斂階 p（Celik 等 2008，式 3）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">phi</code> = (phi1, phi2, phi3) on grids 1 (finest) .. 3 (coarsest). The refinement is given by exactly one of <code style="color:#22d3bf">h</code> = (h1, h2, h3) representative cell sizes, <code style="color:#22d3bf">r</code> = (r21, r32) with r21 = h2/h1 and r32 = h3/h2, or <code style="color:#22d3bf">n_cells</code> = (N1, N2, N3) with <code style="color:#22d3bf">dim</code> (h from Celik eqs. (1)-(2)). With eps32 = phi3 - phi2 and eps21 = phi2 - phi1 (Step 3):</p>
+<p>p = |ln|eps32/eps21| + q(p)| / ln(r21)                       (3a)</p>
+<p>q(p) = ln((r21^p - s) / (r32^p - s))                          (3b)</p>
+<p>s = sign(eps32 / eps21)                                       (3c)</p>
+<p>solved by fixed-point iteration from the first term (q = 0) with <code style="color:#22d3bf">iterate_fixed_point</code> (plain, as the paper prescribes; |p_k+1 - p_k| &lt;= 1e-13, at most 1000 steps). q = 0 when r is constant. s = -1 flags <b>oscillatory convergence</b> (reported, not refused — Celik keeps the absolute values so the extrapolation goes toward h = 0).</p>
+<p><b>Refusal</b>: eps21 or eps32 &quot;very close&quot; to zero (|eps| &lt;= 1e-12 * max|phi|) — Celik: the procedure does not work there (oscillation or an exact solution; refine further) — and a fixed-point iteration for p that does not converge.</p>
+<p>Defaults: the first column of Celik et al. 2008 Table 1 (p = 1.53).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">verification</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:conv_gci">conv_gci</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

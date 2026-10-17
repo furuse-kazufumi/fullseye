@@ -304,6 +304,16 @@ THEME_OPS: list[dict] = [
              ("simcal_validate", "取り置いた画像で過適合の門(LOCKED は 1 回だけ)"),
              ("simcal_discrepancy", "残差 PCA でモデルの食い違いを見つけ、不確かさが楽観側だと注記する"),
              ("simcal_report", "較正の表 1 枚(走らせなかった検査は not run と書く)")]},
+    # ★2026-10-15: 収束型の演算(opsconverge)。鍵はクラスタ名・葉の名前に実際に出る語(有限要素の「finite」= 格子の収束の検証、
+    #   霧・散乱・光線の輸送の「fog」「scattering」「transport」= 多重散乱のモンテカルロ、描画の「rendering」= 相互反射を収束まで)。
+    {"keys": ("finite", "fog", "scattering", "transport", "rendering"),
+     "theme": "収束型の演算(多重反射・多重散乱・反復を収束まで回し、収束した証拠と残りの誤差を返す。収束しなければ値を出さない)",
+     "ops": [("iterate_fixed_point", "相互反射や自己無撞着の式を不動点反復で解き(Anderson 加速)、収束しなければ拒否する"),
+             ("conv_observed_order", "格子・反射回数・標本数を 3 段振った解から観測収束次数を出す"),
+             ("conv_gci", "最も細かい解の離散化誤差を GCI で見積もる(シミュレーションの検証)"),
+             ("mc_sequential_mean", "信頼区間が許容幅に入るまで標本を足し、使った標本数を返す"),
+             ("mc_photon_slab", "濁った多層媒質の光子輸送(拡散反射・透過・吸収)を信頼区間つきで"),
+             ("iv_richardson_lucy_until", "逆畳み込みを食い違い原理で止め、雑音の増幅を防ぐ")]},
     {"keys": ("twin", "predictive", "maintenance", "prognostic", "prognostics", "bearing", "bearings", "vibration", "vibrations", "condition", "health", "diagnosis", "fault diagnosis"),
      "theme": "予知保全(振動・軸受)",
      "ops": [("bearing_defect_frequencies", "軸受の欠陥周波数"), ("envelope_spectrum", "包絡スペクトル"), ("spectral_kurtosis", "衝撃の帯域"),

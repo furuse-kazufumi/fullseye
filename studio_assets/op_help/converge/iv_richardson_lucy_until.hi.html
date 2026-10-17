@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">iv_richardson_lucy_until — CONVERGE <code style="color:#22d3bf">stopping</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise=&#x27;poisson&#x27;, sigma=None, gain=1.0, tau=1.0, max_iter=2000, plateau_window=25, plateau_rtol=0.0001, keep_history=True, callback=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deconvstop; deconvstop.iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise=&#x27;poisson&#x27;, sigma=None, gain=1.0, tau=1.0, max_iter=2000, plateau_window=25, plateau_rtol=0.0001, keep_history=True, callback=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconverge.get(&quot;iv_richardson_lucy_until&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Discrepancy principle से रुकने वाला Richardson-Lucy deconvolution (Poisson: Bertero 2010, τ = 1; Gaussian: Morozov); model की range से बाहर के data को मना करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">image</code>: the blurred, noisy 2-D image. <code style="color:#22d3bf">psf</code>: a 2-D PSF (normalised here), or a Gaussian of <code style="color:#22d3bf">psf_sigma</code> px. The blur is periodic (FFT), so the RL step x &lt;- x * H^T(y / H x) keeps sum(H x) = sum(y) exactly (Lemma 3.2 of Benvenuto &amp; Piana).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">noise=&quot;poisson&quot;</code>: <code style="color:#22d3bf">image * gain</code> must be photon counts (non-negative integers within 1e-6); stop at the first k with the Poisson discrepancy D_k &lt;= <code style="color:#22d3bf">tau</code> (Benvenuto &amp; Piana 2012 eq. (30); tau = 1 as proposed by Bertero et al. 2010).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">noise=&quot;gaussian&quot;</code>: <code style="color:#22d3bf">sigma</code> (the noise standard deviation, in image units) is required; stop at the first k with ||H x_k - y||^2 / (N sigma^2) &lt;= <code style="color:#22d3bf">tau</code> (Morozov, eq. (18)). The image must be non-negative (add the known offset first).</p>
+<p>The iteration starts from the flat image of the data&#x27;s mean (k = 0). Returns <code style="color:#22d3bf">image</code> (x_k in the input units), <code style="color:#22d3bf">stopped</code>, <code style="color:#22d3bf">status</code>, <code style="color:#22d3bf">k_stop</code>, <code style="color:#22d3bf">discrepancy_history</code> (D_0, D_1, ...), <code style="color:#22d3bf">mass_rel_error_max</code> (Lemma 3.2), <code style="color:#22d3bf">tau</code> and <code style="color:#22d3bf">noise</code>.</p>
+<p>Not stopped -&gt; <code style="color:#22d3bf">image = None</code> and <code style="color:#22d3bf">status</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;outside_model_range&quot;</code> — the discrepancy levelled off above tau (relative decrease below <code style="color:#22d3bf">plateau_rtol</code> per iteration over <code style="color:#22d3bf">plateau_window</code> iterations): y is not in the range of the model, so the criterion can never be met (Benvenuto &amp; Piana: the rule is a regularisation iff y is in H(C)). Typical causes: the assumed PSF is wider than the real blur, a background is missing, the noise level is wrong.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;max_iter&quot;</code> — still decreasing when <code style="color:#22d3bf">max_iter</code> ran out.</p>
+<p>The last iterate is under <code style="color:#22d3bf">last_iterate</code> (not an estimate). <code style="color:#22d3bf">callback(k, x_k, D_k)</code>, if given, is called after every iteration (x_k in the input units) — for plotting the run.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:converge_tour">converge_tour</a> — <code style="color:#22d3bf">py -3.11 examples/converge_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">stopping</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deconvstop.py — CONVERGE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 69 capabilities**
+**Currently 70 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -30,6 +30,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Segment regions, select them, and count](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
+| [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -439,7 +440,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (14)
+## Light and colour (15)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -464,6 +465,18 @@ Pipeline: [`rgb_to_lab`](ops/imgmetrics/colorspace/rgb_to_lab.md) → [`delta_e_
 Alternatives: [`rgb_to_xyz`](ops/imgmetrics/colorspace/rgb_to_xyz.md), [`xyz_to_lab`](ops/imgmetrics/colorspace/xyz_to_lab.md), [`delta_e_76`](ops/imgmetrics/colordiff/delta_e_76.md), [`delta_e_map`](ops/imgmetrics/colordiff/delta_e_map.md), [`cie_xyz_from_wavelength`](ops/optics/appearance/cie_xyz_from_wavelength.md), [`srgb_to_linear`](ops/gfx2d/colorspace/srgb_to_linear.md)
 
 Runnable: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md)
+
+Six ops (`converge`) run a forward model to convergence and return the evidence: a fixed-point driver with Aitken and Anderson acceleration (Walker & Ni 2011 eq. 3.1; it reproduces GMRES on linear maps, checked) that refuses divergent or oscillating runs; the observed order and grid convergence index of Celik et al. 2008 (Table 1 reproduced); sequential Monte Carlo to a tolerance; MCML-type photon transport in layered turbid slabs with confidence intervals that contain the MCML manual's Table 6.1 / 6.2 values; and Richardson-Lucy stopped by the Poisson discrepancy principle (tau = 1) or Morozov's, refusing data outside the model's range.
+
+Operators: `iterate_fixed_point`, `conv_observed_order`, `conv_gci`, `mc_sequential_mean`, `mc_photon_slab`, `iv_richardson_lucy_until`
+
+Pipeline: [`iterate_fixed_point`](ops/converge/iterate/iterate_fixed_point.md) → [`conv_gci`](ops/converge/verification/conv_gci.md)
+
+Alternatives: [`conv_observed_order`](ops/converge/verification/conv_observed_order.md), [`mc_sequential_mean`](ops/converge/montecarlo/mc_sequential_mean.md), [`mc_photon_slab`](ops/converge/montecarlo/mc_photon_slab.md), [`iv_richardson_lucy_until`](ops/converge/stopping/iv_richardson_lucy_until.md), [`iv_richardson_lucy`](ops/2d/restoration/iv_richardson_lucy.md)
+
+Runnable: `converge_tour`
 
 ### [Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency)](capabilities/fiber-and-light-guide.md)
 

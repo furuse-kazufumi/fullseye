@@ -1713,6 +1713,27 @@
   },
   "読み出し雑音を足す": {
    "en": "Add read noise"
+  },
+  "収束型の演算(多重反射・多重散乱・反復を収束まで回し、収束した証拠と残りの誤差を返す。収束しなければ値を出さない)": {
+   "en": "Convergent computation (run inter-reflections, multiple scattering and iterations to convergence, return the evidence and the remaining error, and no value when it does not converge)"
+  },
+  "相互反射や自己無撞着の式を不動点反復で解き(Anderson 加速)、収束しなければ拒否する": {
+   "en": "solve inter-reflection or self-consistent equations by fixed-point iteration (Anderson acceleration), refusing when it does not converge"
+  },
+  "格子・反射回数・標本数を 3 段振った解から観測収束次数を出す": {
+   "en": "observed order of convergence from solutions at three grid sizes, bounce counts or sample counts"
+  },
+  "最も細かい解の離散化誤差を GCI で見積もる(シミュレーションの検証)": {
+   "en": "estimate the discretisation error of the finest solution with the GCI (simulation verification)"
+  },
+  "信頼区間が許容幅に入るまで標本を足し、使った標本数を返す": {
+   "en": "add samples until the confidence interval is within the tolerance, and report how many were used"
+  },
+  "濁った多層媒質の光子輸送(拡散反射・透過・吸収)を信頼区間つきで": {
+   "en": "photon transport in layered turbid media (diffuse reflectance, transmittance, absorption) with confidence intervals"
+  },
+  "逆畳み込みを食い違い原理で止め、雑音の増幅を防ぐ": {
+   "en": "stop a deconvolution by the discrepancy principle so that it does not amplify the noise"
   }
  }
 }

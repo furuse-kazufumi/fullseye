@@ -846,6 +846,14 @@ def _knob_builders():
     * ``deflectometry_render`` (2026-10-15) -- ``refractive_index`` only acts on the back-surface
       reflection of a cover glass, which is off by default (``back_thickness_mm=None``, as
       documented). Here: a 1 mm plate over a shallow dimple.
+    * ``iterate_fixed_point`` / ``mc_sequential_mean`` / ``iv_richardson_lucy_until`` (2026-10-15,
+      opsconverge) -- a stopping rule's tolerance and budget only show when the run ends right at
+      them: on the default inputs the run converges long before ``max_iter`` and far below
+      ``tol``, so x0.5 / x2 change nothing. Here the run is first made once to read where it
+      stops, and the tolerance / budget are set so that it stops exactly there (Anderson on a
+      12-point H-equation; pi with tol 0.05 and a 6,000-sample budget; RL with a PSF too wide
+      for the data, which levels off outside the model's range, with max_iter = that iteration).
+      No random numbers are drawn here (only the ops' own fixed seeds).
     """
     def oblique(pool, rng):
         th = np.deg2rad(np.linspace(10.0, 60.0, 12))
@@ -890,9 +898,34 @@ def _knob_builders():
         h = -0.02 * np.exp(-(xx ** 2 + yy ** 2) / 0.1)
         return [h], {"back_thickness_mm": 1.0}
 
+    def h_equation_map():
+        n = 12
+        mu = (np.arange(n) + 0.5) / n
+        K = 0.45 * mu[:, None] / (mu[:, None] + mu[None, :]) / n
+        return (lambda H: 1.0 / (1.0 - K @ H)), np.ones(n)
+
+    def fixed_point(pool, rng):
+        cv = __import__("converge")
+        g, x0 = h_equation_map()
+        hist = cv.iterate_fixed_point(g, x0, method="anderson", tol=1e-15, max_iter=60,
+                                      on_fail="record")["residual_history"]
+        j = next(i for i, r in enumerate(hist) if r < 1e-6)
+        return [g, x0], {"method": "anderson", "tol": 1.5 * hist[j], "max_iter": j, "on_fail": "record"}
+
+    def seq_mean(pool, rng):
+        return [], {"sampler": "pi", "tol": 0.05, "batch": 512, "max_samples": 6000, "on_fail": "record"}
+
+    def rl_until(pool, rng):
+        ds = __import__("deconvstop")
+        y = ds._example_counts()
+        n_p = ds.iv_richardson_lucy_until(y, psf_sigma=2.5, keep_history=False)["n_iter"]
+        return [y], {"psf_sigma": 2.5, "max_iter": n_p}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
-            "slope_to_curvature": bowl_normals, "deflectometry_render": plate}
+            "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
+            "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
+            "iv_richardson_lucy_until": rl_until}
 
 
 def probe_builders():

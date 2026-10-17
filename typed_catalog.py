@@ -702,7 +702,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -898,6 +898,13 @@ def catalog():
     for n, m in opssimcal.OPSSIMCAL.items():
         if m["func"] is not None:
             ops.append((n, "simcal", list(m["in"]), m["out"], m["func"]))
+    # 収束型の演算(opsconverge 台帳、2026-10-15)。**新語なし**: 全 op が table を返し、収束しなかった
+    # 記録は値の鍵(x / mean / image)を None にして最後の反復を last_iterate に置く(既定は拒否)ので、
+    # table として素直に読んでも収束していない数を出せない —— 型を分ける理由(混ぜると黙って間違う)が無い。
+    import opsconverge
+    for n, m in opsconverge.OPSCONVERGE.items():
+        if m["func"] is not None:
+            ops.append((n, "converge", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

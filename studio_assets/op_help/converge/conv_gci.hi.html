@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">conv_gci — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_gci(phi=None, h=None, r=None, n_cells=None, dim=None, safety_factor=1.25) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import converge; converge.conv_gci(phi=None, h=None, r=None, n_cells=None, dim=None, safety_factor=1.25) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconverge.get(&quot;conv_gci&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>सबसे बारीक solution का grid convergence index (GCI): Celik et al. 2008 की प्रक्रिया, eqs. (1)-(7)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Takes the same inputs as <code style="color:#22d3bf">conv_observed_order</code> (three solutions, finest first, and the refinement) and returns, with p from eq. (3):</p>
+<p>phi_ext21 = (r21^p phi1 - phi2) / (r21^p - 1)                  (4)   (and phi_ext32)</p>
+<p>e_a21     = |(phi1 - phi2) / phi1|                            (5)</p>
+<p>e_ext21   = |(phi_ext12 - phi1) / phi_ext12|                   (6)</p>
+<p>GCI_fine21 = 1.25 e_a21 / (r21^p - 1)                         (7)</p>
+<p>(<code style="color:#22d3bf">safety_factor</code> = 1.25 as in eq. (7)). Fractions and percentages are both returned, and <code style="color:#22d3bf">report</code> reads &quot;phi1 +- GCI&quot;. Note what the GCI is not: it bounds the discretization error of the fine solution only — &quot;this does not account for modeling errors&quot; (Celik).</p>
+<p>Refusal as in <code style="color:#22d3bf">conv_observed_order</code>, plus phi1 = 0 or phi_ext = 0 (relative errors undefined). Defaults: Celik Table 1, first column (GCI 2.2 %).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:converge_tour">converge_tour</a> — <code style="color:#22d3bf">py -3.11 examples/converge_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">verification</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:conv_observed_order">conv_observed_order</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

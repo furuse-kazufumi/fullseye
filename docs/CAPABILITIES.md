@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 69 項目**
+**収録 70 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -29,6 +29,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
+| [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -518,7 +519,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (14)
+## 光と色 (15)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -551,6 +552,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 画素 → mm は関係しない。校正は**線形化**(`srgb_to_linear`)と**白色点**で、色差 ΔE は無次元。
 
 動く例: `poc_white_balance`, `poc_pigment_unmixing`
+
+### [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md)
+
+実物に近い順方向モデルは、閉じた式ではなく**繰り返しの極限**であることが多い —— 溝の壁から壁へ跳ね返り続ける光、濁った媒質の 中で散乱を繰り返す光子、どこかで止めるべき逆畳み込み。この族(`converge`、6 op)は、どれも収束まで回し、**収束した証拠**と **残りの誤差**を返し、収束しなければ値を返しません。
+
+使う op: `iterate_fixed_point`, `conv_observed_order`, `conv_gci`, `mc_sequential_mean`, `mc_photon_slab`, `iv_richardson_lucy_until`
+
+推奨パイプライン: [`iterate_fixed_point`](ops/converge/iterate/iterate_fixed_point.md) → [`conv_gci`](ops/converge/verification/conv_gci.md)
+
+代替: [`conv_observed_order`](ops/converge/verification/conv_observed_order.md), [`mc_sequential_mean`](ops/converge/montecarlo/mc_sequential_mean.md), [`mc_photon_slab`](ops/converge/montecarlo/mc_photon_slab.md), [`iv_richardson_lucy_until`](ops/converge/stopping/iv_richardson_lucy_until.md), [`iv_richardson_lucy`](ops/2d/restoration/iv_richardson_lucy.md)
+
+限界: 推定残り誤差は g が縮小写像である所でだけ意味を持つ(割線の比 L が 1 以上なら出さない)。GCI は離散化の誤差だけで、モデルの誤りは含まない。モンテカルロの区間は光子ごとの寄与の正規近似で、逐次に止めると被覆率は名目より少し下がりうる(0.95 に対し 400 回で実測、テストが両側で判定)。光子輸送は平行平板の層だけ(横方向の分布・ガラス層は無い)。Richardson-Lucy の止め方は雑音モデル(光子数か既知の σ)が正しいときだけ働く。
+
+実寸校正: 単位は入力のまま(光子輸送は係数の長さの単位と厚さの単位を揃える。反射率・透過率は無次元)。画素から mm への換算は無い。
+
+動く例: `converge_tour`
 
 ### [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md)
 
