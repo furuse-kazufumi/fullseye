@@ -897,7 +897,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
-    assert len(opsoptics.OPSOPTICS) == 293
+    # 2026-10-15: tem(仮想の透過電子顕微鏡、temsim)11 op を新しい族として追加(293 → 304)。
+    assert len(opsoptics.OPSOPTICS) == 304
+    assert len(opsoptics.list_ops("tem")) == 11
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
@@ -920,7 +922,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "oct", "optimization",
-        "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "wave"]
+        "pixelshift", "polarization", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "tem", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、

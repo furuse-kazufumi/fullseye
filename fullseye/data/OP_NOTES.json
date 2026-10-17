@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3306,
+ "n_notes": 3312,
  "notes": {
   "vol_dilate": [
    {
@@ -29479,6 +29479,110 @@
     "in": "table",
     "out": "pairs",
     "path": "docs/ops/optics/telecentric/vignetting_vs_field.md"
+   }
+  ],
+  "tem_amorphous_film": [
+   {
+    "op": "tem_amorphous_film",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_amorphous_film.md"
+   }
+  ],
+  "tem_ctf": [
+   {
+    "op": "tem_ctf",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_ctf.md"
+   }
+  ],
+  "tem_ctf_correct": [
+   {
+    "op": "tem_ctf_correct",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_ctf_correct.md"
+   }
+  ],
+  "tem_ctf_estimate": [
+   {
+    "op": "tem_ctf_estimate",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_ctf_estimate.md"
+   }
+  ],
+  "tem_ctf_profile": [
+   {
+    "op": "tem_ctf_profile",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_ctf_profile.md"
+   }
+  ],
+  "tem_image_weak_phase": [
+   {
+    "op": "tem_image_weak_phase",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_image_weak_phase.md"
+   }
+  ],
+  "tem_multislice": [
+   {
+    "op": "tem_multislice",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_multislice.md"
+   }
+  ],
+  "tem_power_spectrum": [
+   {
+    "op": "tem_power_spectrum",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_power_spectrum.md"
+   }
+  ],
+  "tem_projected_potential": [
+   {
+    "op": "tem_projected_potential",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_projected_potential.md"
+   }
+  ],
+  "tem_scherzer": [
+   {
+    "op": "tem_scherzer",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_scherzer.md"
+   }
+  ],
+  "tem_wavelength": [
+   {
+    "op": "tem_wavelength",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_wavelength.md"
    }
   ],
   "airy_pattern": [

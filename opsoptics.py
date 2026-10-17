@@ -115,6 +115,7 @@ import materials
 import spectralrad
 import chromconf
 import fiberoptics
+import temsim
 import filmoptics
 import moirealign
 import telecentric
@@ -123,7 +124,7 @@ import linescan
 import pixelshift
 import octscan
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "temsim": temsim, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "linescan": linescan,
@@ -521,6 +522,21 @@ _CATALOG = {
         ("chromatic_confocal_peaks", "chromconf", ["pairs"], "table"),
         ("chromatic_confocal_readout", "chromconf", ["table", "table"], "table"),
         ("chromatic_confocal_limits", "chromconf", ["table"], "table"),
+    ],
+    "tem": [  # 仮想の透過電子顕微鏡(temsim、2026-10-15): 電子の波長 → CTF(包絡つき)→ 投影ポテンシャル → 位相コントラストの像
+        # → Thon リングから焦点外れの推定(拒否つき)→ 補正。結像の本体は coherent_image、散乱因子は pxrd を Mott–Bethe で使う。
+        # ★画像を受ける op の in は image2d(橋の外)、引数だけの op は表 / 曲線を返す側なので 2-D の橋は架けない。
+        ("tem_wavelength", "temsim", [], "table"),
+        ("tem_scherzer", "temsim", [], "table"),
+        ("tem_ctf", "temsim", [], "image2d"),
+        ("tem_ctf_profile", "temsim", [], "table"),
+        ("tem_projected_potential", "temsim", [], "image2d"),
+        ("tem_amorphous_film", "temsim", [], "image2d"),
+        ("tem_image_weak_phase", "temsim", ["image2d"], "image2d"),
+        ("tem_multislice", "temsim", ["image2d"], "table"),
+        ("tem_power_spectrum", "temsim", ["image2d"], "image2d"),
+        ("tem_ctf_estimate", "temsim", ["image2d"], "table"),
+        ("tem_ctf_correct", "temsim", ["image2d"], "image2d"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。

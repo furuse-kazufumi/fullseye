@@ -386,6 +386,13 @@ def _drawing():
     return optdraw.lens_section_drawing(_lens())
 
 
+def _tem_micrograph():
+    """Thon リングの見える合成写真(非晶質炭素 30 Å、Δf 8000 Å、200 e/Å²、256²)。種は固定。"""
+    import temsim
+    film = temsim.tem_amorphous_film(256, 1.0, 30.0, seed=2)
+    return temsim.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 8000.0, dose_e_per_A2=200.0, seed=1)
+
+
 def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
@@ -425,6 +432,9 @@ def _optics_builders():
         "lens_element_drawing": lens_first(trials=4),
         "vision_setup_drawing": os_call(lambda OS, cam, sc, li, rng: ([layout(OS, li)], {})),
         "drawing_svg": lambda pool, rng: ([_drawing()], {}),
+        # temsim(2026-10-15): 原子の座標(N, 2)と、Thon リングの見える小さな合成写真(32² の雑音では推定は拒否する)
+        "tem_projected_potential": lambda pool, rng: ([[[4.2, 5.1], [10.3, 7.7], [12.9, 3.3]]], {"shape": 32, "pixel_A": 0.5}),
+        "tem_ctf_estimate": lambda pool, rng: ([_tem_micrograph()], {}),
         "drawing_dxf": lambda pool, rng: ([_drawing()], {}),
         "drawing_raster": lambda pool, rng: ([_drawing()], {"dpi": 10.0}),
         "svg_entities": lambda pool, rng: ([__import__("optdraw").drawing_svg(_drawing())], {}),

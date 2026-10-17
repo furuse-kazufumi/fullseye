@@ -29717,6 +29717,105 @@
    "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
    "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
    "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
+  },
+  "optics/tem_wavelength": {
+   "fp": "51e2ba93074d",
+   "en": "Electron wavelength (with the relativistic correction) and interaction constant for an accelerating voltage ``kv`` in kV, as a table.",
+   "zh": "返回加速电压 ``kv``(kV)下电子的波长(含相对论修正)和相互作用常数(表)。",
+   "tw": "回傳加速電壓 ``kv``(kV)下電子的波長(含相對論修正)與交互作用常數(表)。",
+   "ko": "가속 전압 ``kv``(kV)에서 전자의 파장(상대론 보정 포함)과 상호작용 상수를 표로 반환.",
+   "de": "Elektronenwellenlänge (mit relativistischer Korrektur) und Wechselwirkungskonstante für die Beschleunigungsspannung ``kv`` in kV, als Tabelle.",
+   "hi": "त्वरण वोल्टेज ``kv`` (kV) पर इलेक्ट्रॉन की तरंगदैर्घ्य (सापेक्षिक सुधार सहित) और interaction constant, table के रूप में।"
+  },
+  "optics/tem_scherzer": {
+   "fp": "ae7c48cf7ba8",
+   "en": "Scherzer defocus and point resolution (table).",
+   "zh": "Scherzer 欠焦与点分辨率(表)。",
+   "tw": "Scherzer 欠焦與點解析度(表)。",
+   "ko": "Scherzer 디포커스와 점 분해능(표).",
+   "de": "Scherzer-Defokus und Punktauflösung (Tabelle).",
+   "hi": "Scherzer defocus और point resolution (table)।"
+  },
+  "optics/tem_ctf": {
+   "fp": "2a651311b487",
+   "en": "2-D contrast transfer function (DC at the centre, ``fftshift`` order, shape ``shape``).",
+   "zh": "二维衬度传递函数(直流在中心,``fftshift`` 顺序,形状 ``shape``)。",
+   "tw": "二維對比轉移函數(直流在中心,``fftshift`` 順序,形狀 ``shape``)。",
+   "ko": "2차원 콘트라스트 전달 함수(DC가 중앙, ``fftshift`` 순서, 형태 ``shape``).",
+   "de": "2-D-Kontrastübertragungsfunktion (Gleichanteil in der Mitte, ``fftshift``-Reihenfolge, Form ``shape``).",
+   "hi": "2-D contrast transfer function (DC केंद्र में, ``fftshift`` क्रम, आकार ``shape``)।"
+  },
+  "optics/tem_ctf_profile": {
+   "fp": "26fcfd2e850d",
+   "en": "1-D radial CTF curve (with envelopes) and a table of its zeros.",
+   "zh": "一维径向 CTF 曲线(含包络)及其零点表。",
+   "tw": "一維徑向 CTF 曲線(含包絡)及其零點表。",
+   "ko": "1차원 동경 CTF 곡선(포락선 포함)과 영점 표.",
+   "de": "1-D-Radialkurve der CTF (mit Einhüllenden) und Tabelle ihrer Nullstellen.",
+   "hi": "1-D radial CTF वक्र (envelope सहित) और उसके शून्यों की table।"
+  },
+  "optics/tem_projected_potential": {
+   "fp": "21181278d044",
+   "en": "Atom positions to the potential projected along z, v_z(x, y) in V Å (periodic boundary, ``image2d``).",
+   "zh": "由原子坐标得到沿 z 方向投影的势 v_z(x, y),单位 V Å(周期边界,``image2d``)。",
+   "tw": "由原子座標得到沿 z 方向投影的位勢 v_z(x, y),單位 V Å(週期邊界,``image2d``)。",
+   "ko": "원자 좌표로부터 z 방향으로 투영한 퍼텐셜 v_z(x, y), 단위 V Å(주기 경계, ``image2d``).",
+   "de": "Atompositionen zum entlang z projizierten Potential v_z(x, y) in V Å (periodischer Rand, ``image2d``).",
+   "hi": "परमाणु स्थितियों से z दिशा में projected potential v_z(x, y), V Å में (periodic boundary, ``image2d``)।"
+  },
+  "optics/tem_amorphous_film": {
+   "fp": "f3a0cf002a79",
+   "en": "Projected potential of an amorphous film in V Å (the standard specimen for Thon rings, ``image2d``).",
+   "zh": "非晶膜的投影势,单位 V Å(Thon 环的标准试样,``image2d``)。",
+   "tw": "非晶膜的投影位勢,單位 V Å(Thon 環的標準試片,``image2d``)。",
+   "ko": "비정질 막의 투영 퍼텐셜, 단위 V Å(Thon 링의 표준 시료, ``image2d``).",
+   "de": "Projiziertes Potential eines amorphen Films in V Å (Standardprobe für Thon-Ringe, ``image2d``).",
+   "hi": "amorphous film का projected potential, V Å में (Thon rings का मानक नमूना, ``image2d``)।"
+  },
+  "optics/tem_image_weak_phase": {
+   "fp": "789b2041bac3",
+   "en": "TEM bright-field image (intensity with mean 1, ``image2d``) from a projected potential v_z in V Å.",
+   "zh": "由投影势 v_z(V Å)生成 TEM 明场像(平均为 1 的强度,``image2d``)。",
+   "tw": "由投影位勢 v_z(V Å)產生 TEM 明場像(平均為 1 的強度,``image2d``)。",
+   "ko": "투영 퍼텐셜 v_z(V Å)로부터 TEM 명시야상(평균 1인 강도, ``image2d``).",
+   "de": "TEM-Hellfeldbild (Intensität mit Mittelwert 1, ``image2d``) aus einem projizierten Potential v_z in V Å.",
+   "hi": "projected potential v_z (V Å) से TEM bright-field छवि (औसत 1 की तीव्रता, ``image2d``)।"
+  },
+  "optics/tem_multislice": {
+   "fp": "f5387fa05f48",
+   "en": "Simple multislice (Cowley–Moodie, in Kirkland's form): returns the exit wave (table).",
+   "zh": "简易多层法(Cowley–Moodie,Kirkland 的形式):返回出射波(表)。",
+   "tw": "簡易多層法(Cowley–Moodie,Kirkland 的形式):回傳出射波(表)。",
+   "ko": "간이 멀티슬라이스(Cowley–Moodie, Kirkland 형식): 출사파를 반환(표).",
+   "de": "Einfaches Multislice-Verfahren (Cowley–Moodie, in Kirklands Form): gibt die Austrittswelle zurück (Tabelle).",
+   "hi": "सरल multislice (Cowley–Moodie, Kirkland के रूप में): exit wave लौटाता है (table)।"
+  },
+  "optics/tem_power_spectrum": {
+   "fp": "e1938ffa8406",
+   "en": "Average of tiled periodograms (Welch, Hann window) as a 2-D array in ``fftshift`` order (``image2d``).",
+   "zh": "分块周期图的平均(Welch,Hann 窗),以 ``fftshift`` 顺序的二维数组返回(``image2d``)。",
+   "tw": "分塊週期圖的平均(Welch,Hann 窗),以 ``fftshift`` 順序的二維陣列回傳(``image2d``)。",
+   "ko": "타일로 나눈 periodogram의 평균(Welch, Hann 창)을 ``fftshift`` 순서의 2차원으로 반환(``image2d``).",
+   "de": "Mittel gekachelter Periodogramme (Welch, Hann-Fenster) als 2-D-Array in ``fftshift``-Reihenfolge (``image2d``).",
+   "hi": "tiles में बाँटे periodograms का औसत (Welch, Hann window), ``fftshift`` क्रम के 2-D array के रूप में (``image2d``)।"
+  },
+  "optics/tem_ctf_estimate": {
+   "fp": "e48a8c56bbed",
+   "en": "Estimate defocus (and astigmatism) from the Thon rings in the power spectrum of a micrograph (table).",
+   "zh": "由显微照片功率谱中的 Thon 环估计欠焦量(及像散)(表)。",
+   "tw": "由顯微照片功率譜中的 Thon 環估計欠焦量(及像散)(表)。",
+   "ko": "현미경 사진의 파워 스펙트럼에 나타난 Thon 링으로부터 디포커스(와 비점수차)를 추정(표).",
+   "de": "Defokus (und Astigmatismus) aus den Thon-Ringen im Leistungsspektrum einer Mikrographie schätzen (Tabelle).",
+   "hi": "micrograph के power spectrum के Thon rings से defocus (और astigmatism) का अनुमान (table)।"
+  },
+  "optics/tem_ctf_correct": {
+   "fp": "5287ce2805d6",
+   "en": "CTF correction (``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (phase flipping, amplitudes unchanged) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "zh": "CTF 校正(``image2d``)。``method=\"phase_flip\"``:F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (相位翻转,振幅不变)/ ``\"wiener\"``:F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]。",
+   "tw": "CTF 校正(``image2d``)。``method=\"phase_flip\"``:F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (相位翻轉,振幅不變)/ ``\"wiener\"``:F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]。",
+   "ko": "CTF 보정(``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (위상 반전, 진폭은 그대로) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "de": "CTF-Korrektur (``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (Phasenumkehr, Amplituden unverändert) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "hi": "CTF सुधार (``image2d``)। ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (phase flipping, आयाम अपरिवर्तित) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]।"
   }
  }
 }

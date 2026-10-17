@@ -3082,6 +3082,22 @@
    }
   },
   {
+   "id": "poc_tem_ctf_thon_rings",
+   "group": "wing_metrology",
+   "media": "01_thon_ring_sweep.gif",
+   "motion": true,
+   "thumb_src": "02_thon_rings_four_defoci.png",
+   "label": {
+    "ja": "仮想の透過電子顕微鏡(Thon リングと焦点外れ)",
+    "en": "Virtual TEM (Thon rings and defocus)",
+    "zh": "虚拟透射电子显微镜(Thon 环与欠焦)",
+    "tw": "虛擬穿透式電子顯微鏡(Thon 環與欠焦)",
+    "ko": "가상 투과전자현미경(Thon 링과 디포커스)",
+    "de": "Virtuelles TEM (Thon-Ringe und Defokus)",
+    "hi": "virtual TEM (Thon rings और defocus)"
+   }
+  },
+  {
    "id": "poc_si_wafer_pl_defect_visibility",
    "group": "wing_industrial",
    "media": "01_pl_groove_vs_diffusion_length.png",
@@ -6291,6 +6307,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "tem-phase-contrast-and-ctf": {
+    "zh": "虚拟透射电子显微镜(电子波长 → CTF → 相位衬度像 → 由 Thon 环估计欠焦 → 校正)",
+    "tw": "虛擬穿透式電子顯微鏡(電子波長 → CTF → 相位對比像 → 由 Thon 環估計欠焦 → 校正)",
+    "ko": "가상 투과전자현미경(전자 파장 → CTF → 위상 콘트라스트 상 → Thon 링으로 디포커스 추정 → 보정)",
+    "de": "Ein virtuelles Transmissionselektronenmikroskop (Elektronenwellenlänge, CTF, Phasenkontrastbilder, Defokus aus Thon-Ringen, Korrektur)",
+    "hi": "virtual transmission electron microscope (electron wavelength → CTF → phase-contrast छवि → Thon rings से defocus → सुधार)"
    }
   }
  }

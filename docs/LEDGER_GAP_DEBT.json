@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 600
+  "dead_knob": 602
  },
  "debt": {
   "description": {},
@@ -609,7 +609,9 @@
    "write_wav.rate": "other",
    "yield_maneuver_check.left_tol": "tolerance_or_iterations",
    "yield_maneuver_check.stop_speed": "other",
-   "yield_maneuver_check.car_length": "size_or_count"
+   "yield_maneuver_check.car_length": "size_or_count",
+   "tem_ctf_estimate.min_rings": "size_or_count",
+   "tem_ctf_estimate.min_peak_z": "size_or_count"
   }
  }
 }

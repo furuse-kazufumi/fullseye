@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 仮想の透過電子顕微鏡(temsim 11 op + PoC、実写は EMPIAR-10028・CC0)
+- `temsim`(`opsoptics` の新カテゴリ `tem`、11 op): `tem_wavelength`(相対論補正つきの波長と相互作用定数 σ)/ `tem_scherzer`(√(4/3 Cs λ) と 1.2 √(Cs λ) の 2 定義、点分解能は最初の零点の閉形式)/ `tem_ctf`(2-D、非点収差、Frank の空間・時間の包絡)/ `tem_ctf_profile`(1-D と零点の閉形式、情報限界)/ `tem_projected_potential`(原子の座標 → v_z、`pxrd.FORM_FACTORS` を Mott–Bethe で電子の散乱因子へ、双線形の置き方の sinc² を割り戻す)/ `tem_amorphous_film` / `tem_image_weak_phase`(弱位相近似の線形の像、または `coherent.coherent_image` に瞳 e^{iχ}、Poisson の線量)/ `tem_multislice`(Fresnel 伝播、帯域 2/3)/ `tem_power_spectrum` / `tem_ctf_estimate`(`mathspectral.lomb_scargle` で k² の周期の初期値 → u = k² の上の背景 → CTF² との正規化相互相関の格子 + 有界探索 → 非点収差の 2-D Nelder–Mead → タイル 8 組の jackknife。リングが見えない・零点が足りない・範囲の端は拒否、リングがタイルの刻みで均される周波数から上は自動で帯域を下げる)/ `tem_ctf_correct`(位相反転 / ウィーナー)。規約は CTFFIND4 / RELION(Å、正 = アンダーフォーカス)。
+- PoC `poc_tem_ctf_thon_rings`(36 門、図 15 枚 + GIF): 波長が公表値と 5 桁、零点が閉形式と 1.7e-12 Å⁻¹、Scherzer の最初の零点 0.6580 Cs^¼ λ^¾、Raman–Nath の J_n(φ₀)² と 1.6e-13、Si の平均内部ポテンシャル 13.83 V(中性原子 13.71 V)、像が最も似る焦点が Scherzer の 7 % 以内、合成 4 枚で Δf 13 Å 以内・非点 50 Å / 5.2° 以内、拒否 4 例、探針(画素寸法 +2 % → Δf × 1.039、電圧の取り違え → Cs 込みの最小 2 乗の予測と 0.3 %)、ドリフトと `phase_correlation_fft`、補正。実写 EMPIAR-10028 の 3 枚で著者の CTFFIND3 と −55 / +65 / −0.5 Å。★Cu の f_e(0) は DFT の表より 10.5 % 小さい(X 線の当てはめの限界、能力ノートに明記)。★非点収差の許容幅は初回の実行で外れて広げた(PoC に記録)。
+- 能力ノート `docs/capabilities/tem-phase-contrast-and-ctf.md`、op 要約 6 言語、`tests/test_temsim.py`、展示(計測ウィング)・ViEW2026 の一覧、COLLECTION_SIZES。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。
