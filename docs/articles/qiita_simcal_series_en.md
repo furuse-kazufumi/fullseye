@@ -7,9 +7,12 @@ tags:
   - DesignOfExperiments
   - Simulation
 public_private: false
+public_id: 9f52c52064d7dfa0cf5a
 ---
 
-# A Good Fit Is Not a Right Answer: Calibrating Physics-Model Coefficients to Real Images
+# A Good Fit Is Not a Right Answer: Calibrating Physics-Model Coefficients to Real Images, Starting from Multivariate Analysis
+
+> 日本語版: [実写に合わせて物理モデルの係数を決める](https://qiita.com/furuse-kazufumi/items/cf97ea24c7711e7a302d)
 
 <!--
   How to extend this series (do the same in the ja and en articles, in the same order):

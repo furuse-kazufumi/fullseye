@@ -7,9 +7,12 @@ tags:
   - 実験計画法
   - シミュレーション
 public_private: false
+public_id: cf97ea24c7711e7a302d
 ---
 
 # 実写に合わせて物理モデルの係数を決める ―― 多変量解析から入る sim-to-real 較正
+
+> English version: [A Good Fit Is Not a Right Answer](https://qiita.com/furuse-kazufumi/items/9f52c52064d7dfa0cf5a)
 
 <!--
   追記手順(ja / en の両方に同じ順で入れる。片方だけ足さない):
