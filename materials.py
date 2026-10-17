@@ -57,6 +57,7 @@ __all__ = [
     "thermo_optic_coefficient", "plate_focus_shift", "silicon_free_carrier_absorption",
     "material_from_sellmeier", "material_from_curves", "read_glass_catalog_agf",
     "NIR_BAND_MODELS", "material_nir_absorption", "carbon_black_absorption", "nir_model_info",
+    "ELEMENTS", "ELECTRON_SOLID", "material_electron_properties",
 ]
 
 #: フラウンホーファー線 [µm](硝材カタログの定義どおり)。
@@ -1031,3 +1032,114 @@ def nir_model_info(material="POLYETHYLENE") -> dict:
     return {"name": key, "class": m["class"], "bands": bands, "components": tuple(m.get("components", ())),
             "water": float(m.get("water", 0.0)), "scattering_per_mm": m.get("scattering_per_mm"),
             "reference_um": m.get("reference_um"), "n_nir": m["n_nir"], "note": m.get("note", "")}
+
+
+# --------------------------------------------------------------------------- #
+# 電子と固体の相互作用の物性(仮想 SEM のモンテカルロが引く)                    #
+# --------------------------------------------------------------------------- #
+#: 元素の Z と標準原子量 A [g/mol] (IUPAC 2021 の標準原子量の簡略値)。
+ELEMENTS = {
+    "H": (1, 1.008), "C": (6, 12.011), "N": (7, 14.007), "O": (8, 15.999),
+    "Al": (13, 26.982), "Si": (14, 28.085), "P": (15, 30.974), "Ti": (22, 47.867),
+    "Cr": (24, 51.996), "Ni": (28, 58.693), "Cu": (29, 63.546), "Ga": (31, 69.723),
+    "Ge": (32, 72.630), "As": (33, 74.922), "Rh": (45, 102.91), "Ag": (47, 107.87),
+    "In": (49, 114.82), "Hf": (72, 178.49), "Ta": (73, 180.95), "W": (74, 183.84),
+    "Pt": (78, 195.08), "Au": (79, 196.97),
+}
+
+#: 材料ごとの組成(原子数の比)・密度 [g/cm³]・絶縁体か・二次電子の 2 定数。
+#: 密度は室温のバルクの値(CRC Handbook of Chemistry and Physics の表の値。膜は成膜法で
+#: 数 % 動く)。二次電子の脱出深さ λ [nm] と、二次電子 1 個を作るエネルギー ε [eV] は、
+#: C / Al / Si / Cu / Ag / W / Au の 7 元素は Lin & Joy 2005(Surf. Interface Anal. 37:895)
+#: の Table 1 の値そのまま(``se_ref`` に同じ表の δmax と Emax [keV] を置く —— モンテカルロの
+#: δ の山はこれに**合わせていない**。比べる相手である)。表に無い材料の λ・ε は**推定**
+#: (半導体は Si と同じ λ = 2.7 nm・ε = 90 eV、金属は λ = 1 nm・ε = 35 eV、絶縁体は
+#: λ = 5 nm・ε = 50 eV)で、``se_ref`` は None。
+ELECTRON_SOLID = {
+    "SI": {"formula": {"Si": 1}, "density_g_cm3": 2.329, "insulator": False,
+           "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": (0.89, 0.45)},
+    "GE": {"formula": {"Ge": 1}, "density_g_cm3": 5.323, "insulator": False,
+           "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "GAAS": {"formula": {"Ga": 1, "As": 1}, "density_g_cm3": 5.317, "insulator": False,
+             "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "GAN": {"formula": {"Ga": 1, "N": 1}, "density_g_cm3": 6.15, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "INP": {"formula": {"In": 1, "P": 1}, "density_g_cm3": 4.81, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "SIC": {"formula": {"Si": 1, "C": 1}, "density_g_cm3": 3.21, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "SI3N4": {"formula": {"Si": 3, "N": 4}, "density_g_cm3": 3.17, "insulator": True,
+              "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "SILICA": {"formula": {"Si": 1, "O": 2}, "density_g_cm3": 2.20, "insulator": True,
+               "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "TIO2": {"formula": {"Ti": 1, "O": 2}, "density_g_cm3": 4.23, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "TA2O5": {"formula": {"Ta": 2, "O": 5}, "density_g_cm3": 8.2, "insulator": True,
+              "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "HFO2": {"formula": {"Hf": 1, "O": 2}, "density_g_cm3": 9.68, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "AL": {"formula": {"Al": 1}, "density_g_cm3": 2.70, "insulator": False,
+           "se_escape_nm": 1.7, "se_energy_ev": 32.0, "se_ref": (2.0, 0.4)},
+    "TI": {"formula": {"Ti": 1}, "density_g_cm3": 4.506, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "CR": {"formula": {"Cr": 1}, "density_g_cm3": 7.19, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "NI": {"formula": {"Ni": 1}, "density_g_cm3": 8.908, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "CU": {"formula": {"Cu": 1}, "density_g_cm3": 8.96, "insulator": False,
+           "se_escape_nm": 0.6, "se_energy_ev": 35.0, "se_ref": (1.53, 0.4)},
+    "RH": {"formula": {"Rh": 1}, "density_g_cm3": 12.41, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "AG": {"formula": {"Ag": 1}, "density_g_cm3": 10.49, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 50.0, "se_ref": (1.43, 0.6)},
+    "W": {"formula": {"W": 1}, "density_g_cm3": 19.25, "insulator": False,
+          "se_escape_nm": 0.2, "se_energy_ev": 20.0, "se_ref": (1.06, 0.25)},
+    "PT": {"formula": {"Pt": 1}, "density_g_cm3": 21.45, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "AU": {"formula": {"Au": 1}, "density_g_cm3": 19.30, "insulator": False,
+           "se_escape_nm": 0.5, "se_energy_ev": 35.0, "se_ref": (1.28, 0.5)},
+    "PMMA": {"formula": {"C": 5, "O": 2, "H": 8}, "density_g_cm3": 1.18, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    # 光学の表には無いが、反射電子係数の外部真値(Z = 6)に要るので電子の表にだけ置く。
+    "C": {"formula": {"C": 1}, "density_g_cm3": 2.26, "insulator": False,
+          "se_escape_nm": 2.5, "se_energy_ev": 80.0, "se_ref": (1.06, 0.4), "aliases": ("CARBON", "GRAPHITE")},
+}
+_ELECTRON_ALIASES = {a: k for k, v in ELECTRON_SOLID.items() for a in v.get("aliases", ())}
+
+
+def material_electron_properties(material="SI") -> dict:
+    """電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。
+
+    仮想 SEM のモンテカルロ(``semsim.sem_electron_mc`` ほか)が引く表で、光学の材料表と
+    同じ名前(別名可: SILICON / FUSED_SILICA …)で引ける。組成は原子数の比から質量分率に
+    直して返す(``composition`` = ((Z, A, 質量分率), ...))。``z_mean`` は質量分率で平均した Z。
+
+    Returns
+    -------
+    dict
+        ``name`` / ``composition`` / ``z_mean`` / ``a_mean`` / ``density_g_cm3`` /
+        ``insulator`` / ``se_escape_nm`` / ``se_energy_ev`` / ``se_ref`` / ``in_optical_table``。
+
+    Examples
+    --------
+    >>> r = material_electron_properties("SILICA")
+    >>> round(sum(c[2] for c in r["composition"]), 9), r["insulator"]
+    (1.0, True)
+    """
+    op = "material_electron_properties"
+    if not isinstance(material, str):
+        raise ValueError("%s: material must be a name, got %r" % (op, type(material).__name__))
+    key = _key(material)
+    key = _ELECTRON_ALIASES.get(key, _ALIASES.get(key, key))
+    if key not in ELECTRON_SOLID:
+        raise ValueError("%s: no electron-solid data for %r (have: %s)"
+                         % (op, material, ", ".join(sorted(ELECTRON_SOLID))))
+    rec = ELECTRON_SOLID[key]
+    parts = [(ELEMENTS[el][0], ELEMENTS[el][1], float(cnt)) for el, cnt in rec["formula"].items()]
+    mass = sum(a * c for _, a, c in parts)
+    comp = tuple((z, a, a * c / mass) for z, a, c in parts)
+    return {"name": key, "formula": dict(rec["formula"]), "composition": comp,
+            "z_mean": float(sum(z * w for z, _, w in comp)), "a_mean": float(sum(a * w for _, a, w in comp)),
+            "density_g_cm3": float(rec["density_g_cm3"]), "insulator": bool(rec["insulator"]),
+            "se_escape_nm": float(rec["se_escape_nm"]), "se_energy_ev": float(rec["se_energy_ev"]),
+            "se_ref": rec["se_ref"], "in_optical_table": key in _RECORDS}

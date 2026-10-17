@@ -83,6 +83,9 @@ SIZE_OVERRIDES = {
     # 光干渉断層の B スキャンの合成: 既定の 256 列 × 1024 画素は 1 回 6 s(列ごとに場を足す)。大きさだけを縮める。
     "oct_bscan_simulate": {"n_columns": 12, "n_pixels": 256, "width_um": 200.0},
     "render_beauty": {"size": 96},
+    # 仮想 SEM の平らな試料の MC: 既定は 95 % 区間が締まるまで最大 2 万電子。上限と刻みだけを縮める
+    # (上限で止まるので max_electrons が効く条件で探れる。意味のある量 tol・energy_kev は既定のまま)。
+    "sem_electron_mc": {"max_electrons": 2000, "batch": 500},
 }
 
 #: Ops whose ``None`` return is the documented contract, not a sort lie (the ``sort`` check

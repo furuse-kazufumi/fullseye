@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 仮想 SEM(電子と固体の相互作用のモンテカルロ、sem 8 op + 材料表 1 op + PoC)
+- `semsim`(generative 台帳の `sem` カテゴリ、`sem_render` の上位の選択肢): `sem_electron_mc`(平らな試料の η・δ・到達深さ・深さ分布、95 % 信頼区間で止める。試料の傾きつき)/ `sem_yield_curve` と `sem_se_universal_curve`(δ(E) と Lin & Joy 2005 の普遍曲線)/ `sem_line_profile`(台形の断面の線、埋もれた矩形、検出器 3 種)/ `sem_cd_measure`(しきい値法・最大傾斜法)/ `sem_image`(高さ場と材料の地図に画素ごとに電子を撃つ。雑音は撃った電子の数そのもの)/ `sem_charging_series` と `sem_se_escape_fraction`(絶縁物の帯電のコマ送り、Chung-Everhart の閉形式)。物理は Joy の単散乱 + Browning 1994 の Mott 近似 + Joy-Luo の阻止能(式だけを一次資料から。コードは写していない)。
+- `materials.material_electron_properties`(`opsoptics` の matprop): 元素の Z・A(IUPAC)、材料の組成・密度、二次電子の λ・ε(7 元素は Lin & Joy 2005 Table 1 のまま、他は推定と明記)。光学と同じ名前で引く。
+- 外部真値の門(`tests/test_semsim_mc.py`): η(Z, E) が Joy のデータベース(rev. 04-02)の実測の幅 ± 0.04 / η(θ) が Arnal の式 / 到達深さが Kanaya-Okayama(最大 0.75〜1.05 R_KO、指数 1.45〜1.85)/ δ の形と Emax が Lin & Joy 2005。壊して確かめる探針 3 本(遮蔽ラザフォード・阻止能半分・脱出深さ 10 倍)。
+- ★途中で見つけて直した欠陥: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていた(0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳ぶ)。境界で歩を切って新しい材料で引き直す(回帰の門つき)。
+- PoC `poc_virtual_sem_kv_cd_bse`(7 段、図 8 枚 + GIF): Si の上の W は段差が無く 1 kV のときだけ SE で消えて反射電子で浮く(SE +5 % / BSE +96 %)、CD-SEM の線幅は側壁 88 度で 1 kV 39.1 nm / 20 kV 39.9 nm(80 度では逆向き)、帯電は低加速で自己調整・高加速で溜まる。能力ノート `virtual-sem-monte-carlo`、op 要約 6 言語。
+
 ### Added — 実験計画・多変量解析・感度解析(multivar 18 op)と sim-to-real 較正(simcal 10 op)
 - `opsmultivar`(新しい型 `design`: 符号化と自然単位の行列・因子・範囲・交絡表を 1 つに持つ): 計画(doe)`doe_lhs` / `doe_orthogonal_array` / `doe_fractional_factorial` / `doe_central_composite` / `doe_box_behnken` / `doe_encode` / `doe_decode`、解析(multivar)`mv_pca` / `mv_pls` / `rsm_fit` / `doe_main_effects` / `feat_image_vector`、感度と同定性(sensitivity)`doe_morris` / `doe_saltelli` / `sens_morris` / `sens_sobol` / `mv_confounding`(共線性指数)/ `mv_residual_pca`。
 - `opssimcal`(新しい型 `simmodel` / `calresult`: 決まらないつまみには数を出さない): `simcal_model` / `simcal_simulate` / `simcal_observe` / `simcal_screen` / `simcal_fit`、検査 `simcal_identifiability` / `simcal_uncertainty` / `simcal_validate`(絶対の χ² の門を含む過適合の門)/ `simcal_discrepancy` / `simcal_report`。

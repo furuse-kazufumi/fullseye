@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_line_profile — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_line_profile(line_material=&#x27;PMMA&#x27;, substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 1.0, *, width_nm: &#x27;float&#x27; = 40.0, height_nm: &#x27;float&#x27; = 40.0, sidewall_deg: &#x27;float&#x27; = 88.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, x_half_range_nm=None, x_step_nm: &#x27;float&#x27; = 1.0, electrons_per_point: &#x27;int&#x27; = 200, buried=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import sem; sem.sem_line_profile(line_material=&#x27;PMMA&#x27;, substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 1.0, *, width_nm: &#x27;float&#x27; = 40.0, height_nm: &#x27;float&#x27; = 40.0, sidewall_deg: &#x27;float&#x27; = 88.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, x_half_range_nm=None, x_step_nm: &#x27;float&#x27; = 1.0, electrons_per_point: &#x27;int&#x27; = 200, buried=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;sem_line_profile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Monte Carlo line profile of a beam scanned across one line with a trapezoidal cross-section (CD-SEM).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>線は y に一様。底辺の幅 <code style="color:#22d3bf">width_nm</code>・高さ <code style="color:#22d3bf">height_nm</code>・側壁角 <code style="color:#22d3bf">sidewall_deg</code> (90 = 垂直)の台形で、材料 <code style="color:#22d3bf">line_material</code> が基板 <code style="color:#22d3bf">substrate</code> の上に乗る(<code style="color:#22d3bf">height_nm = 0</code> なら平らな基板)。ビームは幅 <code style="color:#22d3bf">beam_sigma_nm</code> のガウシアン、位置ごとに <code style="color:#22d3bf">electrons_per_point</code> 個を撃つ。<code style="color:#22d3bf">buried</code> は基板に埋もれた矩形の列 <code style="color:#22d3bf">[(材料名, x0, x1, 上端の深さ, 下端の深さ), ...]</code> [nm]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">x_nm</code> / 検出器ごとの信号 <code style="color:#22d3bf">se_total</code>・<code style="color:#22d3bf">inlens</code>・<code style="color:#22d3bf">everhart</code>・<code style="color:#22d3bf">bse</code></p>
+<p>(電子 1 個あたり)/ <code style="color:#22d3bf">eta</code> / <code style="color:#22d3bf">profile</code>(<code style="color:#22d3bf">pairs</code>: x と inlens)/</p>
+<p>真の寸法 <code style="color:#22d3bf">width_bottom_nm</code>・<code style="color:#22d3bf">width_top_nm</code>・<code style="color:#22d3bf">width_mid_nm</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; r = sem_line_profile(energy_kev=1.0, width_nm=30, height_nm=20, x_half_range_nm=30,</p>
+<p>...                      x_step_nm=10, electrons_per_point=40)</p>
+<p>&gt;&gt;&gt; r[&quot;profile&quot;].shape</p>
+<p>(7, 2)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_step">perpetual_step</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_render">perpetual_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_universal_curve">sem_se_universal_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

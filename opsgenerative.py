@@ -93,6 +93,18 @@ _CATALOG = {
     # 真値つき。作った像は真値つきの合成入力になり、既存の 2-D op がそのまま掛かる)。
     "sem": [
         ("sem_render", "sem", ["image2d"], "image2d"),
+        # 2026-10-15 仮想 SEM(電子と固体の相互作用のモンテカルロ、Joy の単散乱 + Browning の
+        #   Mott 近似 + Joy-Luo の阻止能)。sem_render の sec θ を「仮定」でなく軌跡の集計として
+        #   出す上位の選択肢。外部真値の門 = η(Z,E) の実測(Joy のデータベース)/ Arnal の η(θ)/
+        #   Kanaya-Okayama の到達深さ / Lin & Joy 2005 の δ の普遍曲線(tests/test_semsim_mc.py)。
+        ("sem_electron_mc", "sem", [], "table"),
+        ("sem_se_universal_curve", "sem", [], "signal"),
+        ("sem_yield_curve", "sem", [], "table"),
+        ("sem_line_profile", "sem", [], "table"),
+        ("sem_cd_measure", "sem", ["pairs"], "table"),
+        ("sem_image", "sem", ["image2d"], "image2d"),
+        ("sem_se_escape_fraction", "sem", [], "signal"),
+        ("sem_charging_series", "sem", ["image2d"], "video"),
     ],
     # 半導体 PL 像のキャリア拡散(pl: 励起と再結合の場から PL 像を定常拡散方程式の
     # 厳密解で作る。拡散 PSF = K₀(r/L)/2πL² で総和 1、一様で厳密に一様、影の溝は

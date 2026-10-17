@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 68 capabilities**
+**Currently 69 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -59,12 +59,13 @@ Every operator exists in the registry and the types connect from one step to the
 | [Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
 | [Reconstruct slices from projections (CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [Diagnose faults from vibration and sound](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
+| [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [Carve a solid out of silhouettes (visual hull)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [Turn a 3-D scan into a volume](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (24)
+## Measure (25)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -285,6 +286,18 @@ Pipeline: [`dem_fill_sinks`](ops/dem/hydrology/dem_fill_sinks.md) → [`dem_slop
 Alternatives: [`dem_hillshade`](ops/dem/shading/dem_hillshade.md), [`dem_flow_accumulation`](ops/dem/hydrology/dem_flow_accumulation.md), [`dem_geodetic_slope`](ops/dem/geodesy/dem_geodetic_slope.md)
 
 Runnable: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md)
+
+A Monte Carlo that tracks primary electrons one by one in the solid (Joy's single-scattering model with Browning's 1994 Mott-fit elastic cross-section and the Joy-Luo stopping power). `sem_electron_mc` returns the backscatter coefficient, the secondary-electron yield and the penetration depth; `sem_yield_curve` sweeps the voltage. Material Z, A, density and secondary-electron constants come from the same material table the optics use (`material_electron_properties`). `sem_line_profile` scans a line with a trapezoidal cross-section (buried rectangles allowed) and `sem_cd_measure` measures its width by threshold or maximum slope. `sem_image` fires electrons into every pixel of a height field with a material map (in-lens SE, side SE, backscatter detector) and `sem_charging_series` steps insulator charging frame by frame. Four external-truth gates: backscatter coefficients inside measured bands, Arnal's tilt law, the Kanaya-Okayama range, and the Lin & Joy 2005 universal yield curve and Emax.
+
+Operators: `sem_electron_mc`, `sem_yield_curve`, `sem_se_universal_curve`, `sem_line_profile`, `sem_cd_measure`, `sem_image`, `sem_charging_series`, `sem_se_escape_fraction`, `material_electron_properties`
+
+Pipeline: [`material_electron_properties`](ops/optics/matprop/material_electron_properties.md) → [`sem_electron_mc`](ops/generative/sem/sem_electron_mc.md) → [`sem_line_profile`](ops/generative/sem/sem_line_profile.md) → [`sem_cd_measure`](ops/generative/sem/sem_cd_measure.md) → [`sem_image`](ops/generative/sem/sem_image.md)
+
+Alternatives: [`sem_render`](ops/generative/sem/sem_render.md), [`sem_yield_curve`](ops/generative/sem/sem_yield_curve.md), [`sem_charging_series`](ops/generative/sem/sem_charging_series.md)
+
+Runnable: `poc_virtual_sem_kv_cd_bse`
 
 ### [Turn a 3-D scan into a volume](capabilities/volume-from-3d-scan.md)
 

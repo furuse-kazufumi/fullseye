@@ -481,6 +481,9 @@ _CATALOG = {
         ("material_nir_absorption", "materials", [], "pairs"),
         ("carbon_black_absorption", "materials", [], "pairs"),
         ("nir_model_info", "materials", [], "table"),
+        # 2026-10-15 電子線の物性(仮想 SEM のモンテカルロが引く): 組成の Z・A・質量分率、密度、
+        #   二次電子の λ・ε(7 元素は Lin & Joy 2005 Table 1、他は推定と明記)。光学の表と同じ名前で引く。
+        ("material_electron_properties", "materials", [], "table"),
     ],
     "spectral": [  # 光源・フィルタ・センサの分光曲線と、その積と積分(spectralrad、2026-10-14)
         # ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を

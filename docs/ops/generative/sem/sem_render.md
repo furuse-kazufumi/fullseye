@@ -81,11 +81,11 @@ True
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[pl_image_simulate](../pl/pl_image_simulate.md)
+[sem_image](sem_image.md) · [sem_charging_series](sem_charging_series.md) · [pl_image_simulate](../pl/pl_image_simulate.md)
 
 ## 同カテゴリ(`sem`)
 
-—
+[sem_electron_mc](sem_electron_mc.md) · [sem_se_universal_curve](sem_se_universal_curve.md) · [sem_yield_curve](sem_yield_curve.md) · [sem_line_profile](sem_line_profile.md) · [sem_cd_measure](sem_cd_measure.md) · [sem_image](sem_image.md) · [sem_se_escape_fraction](sem_se_escape_fraction.md) · [sem_charging_series](sem_charging_series.md)
 
 ---
 *Provenance: sem.py — GENERATIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

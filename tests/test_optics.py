@@ -897,7 +897,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: illumination に照明の円錐 5 op(solid_angle_*)を追加(267 → 272)。
     # 2026-10-15: oct(光干渉断層、octscan)13 op を新しい族として追加(272 → 285)。
     # 2026-10-15: drawing(光学系の図面、optdraw)8 op を新しい族として追加(285 → 293)。
-    assert len(opsoptics.OPSOPTICS) == 293
+    # 2026-10-15: matprop に電子線の物性(material_electron_properties、仮想 SEM が引く)1 op(293 → 294)。
+    assert len(opsoptics.OPSOPTICS) == 294
     assert len(opsoptics.list_ops("drawing")) == 8
     assert len(opsoptics.list_ops("confocal")) == 6
     assert len(opsoptics.list_ops("film")) == 5
@@ -908,7 +909,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("telecentric")) == 7
     assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("pixelshift")) == 6
-    assert len(opsoptics.list_ops("matprop")) == 19
+    assert len(opsoptics.list_ops("matprop")) == 20      # + 電子線の物性 1 op(2026-10-15)
     assert len(opsoptics.list_ops("spectral")) == 14
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /

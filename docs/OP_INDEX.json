@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3304,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2351,
   "nary": 17,
   "registry": 924
  },
@@ -14801,6 +14801,17 @@
    "in_sorts": []
   },
   {
+   "name": "material_electron_properties",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "material_extinction",
    "halcon": "",
    "in_sort": null,
@@ -23903,6 +23914,67 @@
    "in_sorts": []
   },
   {
+   "name": "sem_cd_measure",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "sem_charging_series",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sem_electron_mc",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sem_line_profile",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
    "name": "sem_render",
    "halcon": "",
    "in_sort": "image2d",
@@ -23914,6 +23986,39 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "sem_se_escape_fraction",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_se_universal_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_yield_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
   },
   {
    "name": "sens_morris",

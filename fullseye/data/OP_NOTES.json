@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3304,
+ "n_notes": 3310,
  "notes": {
   "vol_dilate": [
    {
@@ -22930,6 +22930,54 @@
     "path": "docs/ops/generative/pl/pl_image_simulate.md"
    }
   ],
+  "sem_cd_measure": [
+   {
+    "op": "sem_cd_measure",
+    "dim": "generative",
+    "category": "sem",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_cd_measure.md"
+   }
+  ],
+  "sem_charging_series": [
+   {
+    "op": "sem_charging_series",
+    "dim": "generative",
+    "category": "sem",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/generative/sem/sem_charging_series.md"
+   }
+  ],
+  "sem_electron_mc": [
+   {
+    "op": "sem_electron_mc",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_electron_mc.md"
+   }
+  ],
+  "sem_image": [
+   {
+    "op": "sem_image",
+    "dim": "generative",
+    "category": "sem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/generative/sem/sem_image.md"
+   }
+  ],
+  "sem_line_profile": [
+   {
+    "op": "sem_line_profile",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_line_profile.md"
+   }
+  ],
   "sem_render": [
    {
     "op": "sem_render",
@@ -22938,6 +22986,33 @@
     "in": "image2d",
     "out": "image2d",
     "path": "docs/ops/generative/sem/sem_render.md"
+   }
+  ],
+  "sem_se_escape_fraction": [
+   {
+    "op": "sem_se_escape_fraction",
+    "dim": "generative",
+    "category": "sem",
+    "out": "signal",
+    "path": "docs/ops/generative/sem/sem_se_escape_fraction.md"
+   }
+  ],
+  "sem_se_universal_curve": [
+   {
+    "op": "sem_se_universal_curve",
+    "dim": "generative",
+    "category": "sem",
+    "out": "signal",
+    "path": "docs/ops/generative/sem/sem_se_universal_curve.md"
+   }
+  ],
+  "sem_yield_curve": [
+   {
+    "op": "sem_yield_curve",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_yield_curve.md"
    }
   ],
   "perpetual_render": [
@@ -27980,6 +28055,15 @@
     "category": "matprop",
     "out": "pairs",
     "path": "docs/ops/optics/matprop/material_dispersion.md"
+   }
+  ],
+  "material_electron_properties": [
+   {
+    "op": "material_electron_properties",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_electron_properties.md"
    }
   ],
   "material_extinction": [

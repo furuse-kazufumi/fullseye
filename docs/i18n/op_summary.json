@@ -29717,6 +29717,96 @@
    "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
    "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
    "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
+  },
+  "generative/sem_electron_mc": {
+   "fp": "f34b620b55bd",
+   "ja": "平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。",
+   "en": "Monte Carlo of electrons fired into a flat specimen: backscatter coefficient η, secondary-electron yield δ and interaction volume.",
+   "zh": "向平整试样发射电子的蒙特卡罗:背散射系数 η、二次电子产额 δ 与相互作用体积。",
+   "tw": "向平整試樣發射電子的蒙地卡羅:背向散射係數 η、二次電子產額 δ 與交互作用體積。",
+   "ko": "평평한 시료에 전자를 쏘는 몬테카를로: 후방산란 계수 η, 2차 전자 수율 δ, 상호작용 부피.",
+   "de": "Monte-Carlo-Simulation von Elektronen in einer ebenen Probe: Rückstreukoeffizient η, Sekundärelektronenausbeute δ und Wechselwirkungsvolumen.",
+   "hi": "समतल नमूने में दागे गए electrons का Monte Carlo: backscatter गुणांक η, secondary-electron yield δ और interaction volume।"
+  },
+  "generative/sem_se_universal_curve": {
+   "fp": "a066b624b3e7",
+   "ja": "二次電子収率の普遍曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "en": "Universal secondary-electron yield curve δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "zh": "二次电子产额的普适曲线 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "tw": "二次電子產額的普適曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "ko": "2차 전자 수율의 보편 곡선 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "de": "Universelle Sekundärelektronen-Ausbeutekurve δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "hi": "secondary-electron yield का सार्वभौमिक वक्र δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]।"
+  },
+  "generative/sem_yield_curve": {
+   "fp": "d2cb1e270e21",
+   "ja": "加速電圧を振って η(E) と δ(E) を MC で出し、δ の形を普遍曲線と比べる。",
+   "en": "Sweep the accelerating voltage, compute η(E) and δ(E) by Monte Carlo, and compare the shape of δ with the universal curve.",
+   "zh": "扫描加速电压,用蒙特卡罗求 η(E) 与 δ(E),并把 δ 的形状与普适曲线比较。",
+   "tw": "掃描加速電壓,用蒙地卡羅求 η(E) 與 δ(E),並把 δ 的形狀與普適曲線比較。",
+   "ko": "가속 전압을 바꿔 가며 몬테카를로로 η(E)와 δ(E)를 구하고 δ의 모양을 보편 곡선과 비교한다.",
+   "de": "Beschleunigungsspannung durchfahren, η(E) und δ(E) per Monte Carlo berechnen und die Form von δ mit der universellen Kurve vergleichen.",
+   "hi": "accelerating voltage बदलते हुए Monte Carlo से η(E) और δ(E) निकालना, और δ के आकार की सार्वभौमिक वक्र से तुलना।"
+  },
+  "generative/sem_line_profile": {
+   "fp": "e400a1b44f2c",
+   "ja": "1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。",
+   "en": "Monte Carlo line profile of a beam scanned across one line with a trapezoidal cross-section (CD-SEM).",
+   "zh": "用蒙特卡罗求电子束横扫一条梯形截面线条的线轮廓(CD-SEM)。",
+   "tw": "用蒙地卡羅求電子束橫掃一條梯形截面線條的線輪廓(CD-SEM)。",
+   "ko": "사다리꼴 단면의 선 하나를 가로질러 전자빔을 주사한 라인 프로파일을 몬테카를로로 구한다(CD-SEM).",
+   "de": "Monte-Carlo-Linienprofil eines Strahls, der über eine Linie mit trapezförmigem Querschnitt gerastert wird (CD-SEM).",
+   "hi": "समलंब cross-section वाली एक line के आर-पार scan किए गए beam का Monte Carlo line profile (CD-SEM)।"
+  },
+  "generative/sem_cd_measure": {
+   "fp": "e17dedbe692d",
+   "ja": "線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。",
+   "en": "Measure a line width from a line profile (``pairs``: x and signal) with the two CD-SEM methods.",
+   "zh": "用 CD-SEM 的两种方法从线轮廓(``pairs``:x 与信号)求线宽。",
+   "tw": "用 CD-SEM 的兩種方法從線輪廓(``pairs``:x 與訊號)求線寬。",
+   "ko": "라인 프로파일(``pairs``: x와 신호)에서 CD-SEM의 두 방식으로 선폭을 구한다.",
+   "de": "Linienbreite aus einem Linienprofil (``pairs``: x und Signal) mit den zwei CD-SEM-Verfahren messen.",
+   "hi": "line profile (``pairs``: x और signal) से CD-SEM की दो विधियों से line width मापना।"
+  },
+  "generative/sem_image": {
+   "fp": "df9757edf327",
+   "ja": "高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。",
+   "en": "SEM image from a height field and a material map, firing electrons into every pixel (direct Monte Carlo).",
+   "zh": "由高度场与材料图生成 SEM 像:向每个像素发射电子(直接蒙特卡罗)。",
+   "tw": "由高度場與材料圖生成 SEM 像:向每個像素發射電子(直接蒙地卡羅)。",
+   "ko": "높이 장과 재료 지도로부터 화소마다 전자를 쏘아 SEM 영상을 만든다(직접 몬테카를로).",
+   "de": "SEM-Bild aus Höhenfeld und Materialkarte, indem in jedes Pixel Elektronen geschossen werden (direktes Monte Carlo).",
+   "hi": "height field और material map से हर pixel में electrons दागकर SEM image बनाना (direct Monte Carlo)।"
+  },
+  "generative/sem_se_escape_fraction": {
+   "fp": "c79948466eee",
+   "ja": "正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。",
+   "en": "Fraction F(V) of secondary electrons that can leave a positively charged surface (potential V > 0).",
+   "zh": "二次电子能离开正带电表面(电位 V > 0)的比例 F(V)。",
+   "tw": "二次電子能離開正帶電表面(電位 V > 0)的比例 F(V)。",
+   "ko": "양으로 대전된 면(전위 V > 0)에서 2차 전자가 빠져나갈 수 있는 비율 F(V).",
+   "de": "Anteil F(V) der Sekundärelektronen, die eine positiv geladene Oberfläche (Potential V > 0) verlassen können.",
+   "hi": "धनात्मक रूप से आवेशित सतह (potential V > 0) से बाहर निकल सकने वाले secondary electrons का अंश F(V)।"
+  },
+  "generative/sem_charging_series": {
+   "fp": "b8320621b12e",
+   "ja": "絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。",
+   "en": "Advance insulator charging frame by frame of the scan and return the image over time (``video``, (T, H, W)).",
+   "zh": "按扫描帧推进绝缘体的带电,返回图像随时间的变化(``video``,(T, H, W))。",
+   "tw": "按掃描幀推進絕緣體的帶電,回傳影像隨時間的變化(``video``,(T, H, W))。",
+   "ko": "절연체의 대전을 주사 프레임마다 진행시켜 영상의 시간 변화(``video``, (T, H, W))를 반환한다.",
+   "de": "Aufladung des Isolators Bild für Bild des Rasters fortschreiben und den zeitlichen Bildverlauf zurückgeben (``video``, (T, H, W)).",
+   "hi": "scan के हर frame के साथ insulator की charging आगे बढ़ाकर image का समय-परिवर्तन लौटाना (``video``, (T, H, W))।"
+  },
+  "optics/material_electron_properties": {
+   "fp": "12f114bef0e4",
+   "ja": "電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。",
+   "en": "Electron-beam properties (per-element Z, A and mass fraction, density, secondary-electron escape depth and generation energy).",
+   "zh": "电子束物性(各元素的 Z、A 与质量分数,密度,二次电子逃逸深度与生成能量)。",
+   "tw": "電子束物性(各元素的 Z、A 與質量分率,密度,二次電子逃逸深度與生成能量)。",
+   "ko": "전자빔 물성(원소별 Z·A·질량 분율, 밀도, 2차 전자의 탈출 깊이와 생성 에너지).",
+   "de": "Elektronenstrahl-Eigenschaften (je Element Z, A und Massenanteil, Dichte, Austrittstiefe und Erzeugungsenergie der Sekundärelektronen).",
+   "hi": "electron-beam गुण (हर तत्व का Z, A और mass fraction, घनत्व, secondary electrons की escape depth और generation energy)।"
   }
  }
 }
