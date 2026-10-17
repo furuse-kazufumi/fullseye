@@ -17739,6 +17739,132 @@
    "de": "Was eine Scangeometrie auflösen kann und was nicht — **bevor irgendetwas gebaut wird**.",
    "hi": "scan geometry क्या resolve कर सकती है और क्या नहीं — कुछ भी बनाने से **पहले**।"
   },
+  "tomography/material_xray_table": {
+   "fp": "0903efb5e092",
+   "en": "List the materials whose X-ray column (mass attenuation coefficient μ/ρ) can be looked up.",
+   "zh": "返回可以查询 X 射线列(质量衰减系数 μ/ρ)的材料一览。",
+   "tw": "傳回可以查詢 X 射線欄(質量衰減係數 μ/ρ)的材料一覽。",
+   "ko": "X선 열(질량 감쇠 계수 μ/ρ)을 조회할 수 있는 재료 목록을 반환한다.",
+   "de": "Listet die Materialien auf, deren Röntgenspalte (Massenschwächungskoeffizient μ/ρ) abgefragt werden kann.",
+   "hi": "उन materials की सूची देता है जिनका X-ray column (mass attenuation coefficient μ/ρ) देखा जा सकता है।"
+  },
+  "tomography/material_xray_attenuation": {
+   "fp": "f3fd6ec0b607",
+   "en": "Return a material's X-ray attenuation as ``pairs`` (E [keV], value); the mass attenuation coefficient μ/ρ [cm²/g] by default.",
+   "zh": "以 ``pairs``(E [keV], 值)返回材料的 X 射线衰减(默认为质量衰减系数 μ/ρ [cm²/g])。",
+   "tw": "以 ``pairs``(E [keV], 值)傳回材料的 X 射線衰減(預設為質量衰減係數 μ/ρ [cm²/g])。",
+   "ko": "재료의 X선 감쇠를 ``pairs``(E [keV], 값)로 반환한다(기본값은 질량 감쇠 계수 μ/ρ [cm²/g]).",
+   "de": "Gibt die Röntgenschwächung eines Materials als ``pairs`` (E [keV], Wert) zurück; standardmäßig den Massenschwächungskoeffizienten μ/ρ [cm²/g].",
+   "hi": "किसी material का X-ray attenuation ``pairs`` (E [keV], मान) के रूप में देता है; डिफ़ॉल्ट रूप से mass attenuation coefficient μ/ρ [cm²/g]।"
+  },
+  "tomography/material_xray_constants": {
+   "fp": "17a0c48f1dc1",
+   "en": "Return the X-ray constants at one energy (μ/ρ, μ_en/ρ, μ, half-value layer, mean free path) with their source.",
+   "zh": "返回单一能量下的 X 射线常数(μ/ρ、μ_en/ρ、μ、半值层、平均自由程)及其出处。",
+   "tw": "傳回單一能量下的 X 射線常數(μ/ρ、μ_en/ρ、μ、半值層、平均自由徑)及其出處。",
+   "ko": "한 에너지에서의 X선 상수(μ/ρ, μ_en/ρ, μ, 반가층, 평균 자유 행로)와 출처를 반환한다.",
+   "de": "Gibt die Röntgenkonstanten bei einer Energie (μ/ρ, μ_en/ρ, μ, Halbwertsschicht, mittlere freie Weglänge) mit Quelle zurück.",
+   "hi": "एक energy पर X-ray constants (μ/ρ, μ_en/ρ, μ, half-value layer, mean free path) और उनका स्रोत देता है।"
+  },
+  "tomography/material_effective_z": {
+   "fp": "da36208bc0d3",
+   "en": "Return the effective atomic number (Mayneord / Spiers power law) and the electron density from the composition.",
+   "zh": "由组成返回有效原子序数(Mayneord / Spiers 幂律式)和电子密度。",
+   "tw": "由組成傳回有效原子序(Mayneord / Spiers 冪律式)和電子密度。",
+   "ko": "조성으로부터 유효 원자 번호(Mayneord / Spiers 거듭제곱 식)와 전자 밀도를 반환한다.",
+   "de": "Gibt aus der Zusammensetzung die effektive Ordnungszahl (Potenzgesetz nach Mayneord / Spiers) und die Elektronendichte zurück.",
+   "hi": "composition से effective atomic number (Mayneord / Spiers power law) और electron density देता है।"
+  },
+  "tomography/xray_tube_spectrum": {
+   "fp": "95c7affebd24",
+   "en": "Return the photon spectrum of an X-ray tube as ``pairs`` (E [keV], photons / keV), normalised to Σ φ ΔE = 1.",
+   "zh": "以 ``pairs``(E [keV], 光子数 / keV)返回 X 射线管的光子能谱(归一化为 Σ φ ΔE = 1)。",
+   "tw": "以 ``pairs``(E [keV], 光子數 / keV)傳回 X 射線管的光子能譜(正規化為 Σ φ ΔE = 1)。",
+   "ko": "X선관의 광자 스펙트럼을 ``pairs``(E [keV], 광자 수 / keV)로 반환한다(Σ φ ΔE = 1로 정규화).",
+   "de": "Gibt das Photonenspektrum einer Röntgenröhre als ``pairs`` (E [keV], Photonen / keV) zurück, normiert auf Σ φ ΔE = 1.",
+   "hi": "X-ray tube का photon spectrum ``pairs`` (E [keV], photons / keV) के रूप में देता है, Σ φ ΔE = 1 पर normalised।"
+  },
+  "tomography/xray_beam_quality": {
+   "fp": "47bf4641f06d",
+   "en": "Beam quality of a spectrum: first and second half-value layers, homogeneity coefficient, mean energy and effective energy.",
+   "zh": "能谱的线质:第一、第二半值层、均匀系数、平均能量和有效能量。",
+   "tw": "能譜的線質:第一、第二半值層、均勻係數、平均能量和有效能量。",
+   "ko": "스펙트럼의 선질: 제1·제2 반가층, 균등도, 평균 에너지, 유효 에너지를 반환한다.",
+   "de": "Strahlqualität eines Spektrums: erste und zweite Halbwertsschicht, Homogenitätsgrad, mittlere und effektive Energie.",
+   "hi": "spectrum की beam quality: पहली और दूसरी half-value layer, homogeneity coefficient, mean energy और effective energy।"
+  },
+  "tomography/photon_counting_channels": {
+   "fp": "63673911bc2e",
+   "en": "Energy windows of a photon-counting detector → channels (one count per photon).",
+   "zh": "光子计数探测器的能量窗 → 通道(一个光子计一次)。",
+   "tw": "光子計數偵測器的能量窗 → 通道(一個光子計一次)。",
+   "ko": "광자 계수 검출기의 에너지 창 → 채널(광자 1개당 1카운트).",
+   "de": "Energiefenster eines photonenzählenden Detektors → Kanäle (ein Zählereignis pro Photon).",
+   "hi": "photon-counting detector की energy windows → channels (हर photon पर एक count)।"
+  },
+  "tomography/dual_kvp_channels": {
+   "fp": "d0542c835aa7",
+   "en": "The two channels of an energy-integrating (scintillator) detector imaged at two tube voltages.",
+   "zh": "以两种管电压拍摄的能量积分型(闪烁体)探测器的两个通道。",
+   "tw": "以兩種管電壓拍攝的能量積分型(閃爍體)偵測器的兩個通道。",
+   "ko": "두 관전압으로 찍는 에너지 적분형(신틸레이터) 검출기의 2채널.",
+   "de": "Die zwei Kanäle eines energieintegrierenden (Szintillator-)Detektors, aufgenommen mit zwei Röhrenspannungen.",
+   "hi": "दो tube voltages पर लिए गए energy-integrating (scintillator) detector के दो channels।"
+  },
+  "tomography/xray_channel_projection": {
+   "fp": "8b195f4e06b6",
+   "en": "Thickness map per material → an image of the signal in each channel (C, H, W).",
+   "zh": "每种材料的厚度图 → 每个通道的信号图像 (C, H, W)。",
+   "tw": "每種材料的厚度圖 → 每個通道的訊號影像 (C, H, W)。",
+   "ko": "재료별 두께 맵 → 채널별 신호 영상 (C, H, W).",
+   "de": "Dickenkarte je Material → ein Signalbild je Kanal (C, H, W).",
+   "hi": "हर material का thickness map → हर channel की signal image (C, H, W)।"
+  },
+  "tomography/basis_material_decompose": {
+   "fp": "f9a5f2ff9da9",
+   "en": "Channel signals → thickness maps of the basis materials (Alvarez–Macovski / Lehmann basis decomposition).",
+   "zh": "通道信号 → 基材料的厚度图(Alvarez–Macovski / Lehmann 基分解)。",
+   "tw": "通道訊號 → 基材料的厚度圖(Alvarez–Macovski / Lehmann 基分解)。",
+   "ko": "채널 신호 → 기저 물질의 두께 맵(Alvarez–Macovski / Lehmann 기저 분해).",
+   "de": "Kanalsignale → Dickenkarten der Basismaterialien (Basiszerlegung nach Alvarez–Macovski / Lehmann).",
+   "hi": "channel signals → basis materials के thickness maps (Alvarez–Macovski / Lehmann basis decomposition)।"
+  },
+  "tomography/basis_decomposition_crlb": {
+   "fp": "877c7940bfb1",
+   "en": "Return in closed form the lower bound (Cramér–Rao) on the variance of the decomposition at basis thicknesses b.",
+   "zh": "以闭式返回基厚度 b 处分解方差的下限(Cramér–Rao)。",
+   "tw": "以閉式傳回基厚度 b 處分解變異數的下限(Cramér–Rao)。",
+   "ko": "기저 두께 b에서 분해 분산의 하한(Cramér–Rao)을 닫힌 꼴로 반환한다.",
+   "de": "Gibt in geschlossener Form die untere Schranke (Cramér–Rao) der Varianz der Zerlegung bei den Basisdicken b zurück.",
+   "hi": "basis thicknesses b पर decomposition के variance की निचली सीमा (Cramér–Rao) closed form में देता है।"
+  },
+  "tomography/r_value_map": {
+   "fp": "647b1041f743",
+   "en": "Return the image of R = L_low / L_high (ratio of low- to high-energy log attenuation).",
+   "zh": "返回 R = L_low / L_high(低能与高能对数衰减之比)的图像。",
+   "tw": "傳回 R = L_low / L_high(低能與高能對數衰減之比)的影像。",
+   "ko": "R = L_low / L_high(저에너지와 고에너지 로그 감쇠의 비)의 영상을 반환한다.",
+   "de": "Gibt das Bild von R = L_low / L_high (Verhältnis der logarithmischen Schwächung bei niedriger und hoher Energie) zurück.",
+   "hi": "R = L_low / L_high (low और high energy के log attenuation का अनुपात) की image देता है।"
+  },
+  "tomography/effective_z_map": {
+   "fp": "207b94d76942",
+   "en": "Estimate an effective-atomic-number image from dual-energy images (R matched against the curves of the elements).",
+   "zh": "由双能图像估计有效原子序数图像(将 R 与元素的曲线对照)。",
+   "tw": "由雙能影像估計有效原子序影像(將 R 與元素的曲線對照)。",
+   "ko": "듀얼 에너지 영상에서 유효 원자 번호 영상을 추정한다(R을 원소의 곡선과 대조).",
+   "de": "Schätzt aus Dual-Energy-Bildern ein Bild der effektiven Ordnungszahl (R gegen die Kurven der Elemente abgeglichen).",
+   "hi": "dual-energy images से effective atomic number की image का अनुमान (R को elements के curves से मिलाकर)।"
+  },
+  "tomography/dual_energy_separability": {
+   "fp": "fc1456a5ca2b",
+   "en": "How well two materials (thicknesses) can be told apart by the channels' log attenuations (closed-form d′ and error rate).",
+   "zh": "两种材料(厚度)能被通道的对数衰减区分到什么程度(d′ 与错误率的闭式)。",
+   "tw": "兩種材料(厚度)能被通道的對數衰減區分到什麼程度(d′ 與錯誤率的閉式)。",
+   "ko": "두 재료(두께)를 채널의 로그 감쇠로 얼마나 구별할 수 있는가(d′와 오류율의 닫힌 꼴).",
+   "de": "Wie gut sich zwei Materialien (Dicken) anhand der logarithmischen Schwächung der Kanäle unterscheiden lassen (d′ und Fehlerrate in geschlossener Form).",
+   "hi": "channels के log attenuation से दो materials (thicknesses) को कितना अलग किया जा सकता है (d′ और error rate का closed form)।"
+  },
   "videostream/background_subtraction_window": {
    "fp": "1710bfc7dfac",
    "ja": "因果的な窓中央値の背景 → フレームごとの 0/1 前景マスク ``(T, H, W)``(``video``)。",

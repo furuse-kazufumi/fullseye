@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">effective_z_map — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.effective_z_map(signal, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, low: &#x27;int&#x27; = 0, high: &#x27;int&#x27; = -1, flat=None, min_log: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dualxray; dualxray.effective_z_map(signal, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, low: &#x27;int&#x27; = 0, high: &#x27;int&#x27; = -1, flat=None, min_log: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;effective_z_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Schätzt aus Dual-Energy-Bildern ein Bild der effektiven Ordnungszahl (R gegen die Kurven der Elemente abgeglichen).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各元素 Z(<code style="color:#22d3bf">EFFECTIVE_Z_REFERENCES</code>、H〜Fe)について、同じチャネルで質量厚さを振った(L_high, R) の曲線を作り、画素の L_high での R_Z を読む。画素の R を挟む 2 つの元素の間を Z について線形に補間した値が実効 Z。厚みの効果(ビーム硬化)は「同じ L_high で比べる」ことで打ち消す —— 厚い軽元素と薄い重元素が同じ L_high でも R で分かれる。</p>
+<p><b>拒否</b>: L_high &lt; <code style="color:#22d3bf">min_log</code>、R が H より小さいか Fe より大きい(範囲の外 —— Fe より重い元素は R がほとんど同じで Z を区別できず、さらに重い金属は K 端がスペクトルの中にあって R が単調でない)画素は NaN。照合の曲線が Z について単調でない(窓の選び方で K 端が入る)ときは ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

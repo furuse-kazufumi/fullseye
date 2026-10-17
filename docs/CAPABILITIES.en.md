@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 68 capabilities**
+**Currently 69 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -30,6 +30,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Segment regions, select them, and count](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
+| [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -306,7 +307,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (8)
+## Detect (9)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -319,6 +320,18 @@ Pipeline: [`auto_threshold`](ops/2d/segmentation/auto_threshold.md) → [`blob_l
 Alternatives: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
 
 Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md)
+
+Dual-energy and photon-counting X-ray material discrimination. The material table gains an X-ray column: mass attenuation coefficients from a bundled subset of NIST SRD 126 (Hubbell and Seltzer; 49 elements, 21 materials, 1 keV to 1 MeV) and the mixture rule for anything with a known composition, under the same names as the optical column. On top of it: a tungsten-anode tube spectrum and its half-value layer, photon-counting energy windows (absorption efficiency, energy resolution, charge-sharing tail) and dual-kVp channels, a noisy channel projection, a per-pixel polychromatic basis-material decomposition that rejects pixels it cannot solve, its Cramér-Rao bound, the R value, an effective-Z map and the closed-form separability of two materials. The PoC finds bone and glass fragments that a single X-ray image buries under the thickness variation of meat.
+
+Operators: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+
+Pipeline: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
+
+Alternatives: [`dual_kvp_channels`](ops/tomography/spectral_xray/dual_kvp_channels.md), [`r_value_map`](ops/tomography/spectral_xray/r_value_map.md), [`dual_energy_separability`](ops/tomography/spectral_xray/dual_energy_separability.md), [`xray_channel_projection`](ops/tomography/spectral_xray/xray_channel_projection.md), [`material_xray_attenuation`](ops/tomography/spectral_xray/material_xray_attenuation.md)
+
+Runnable: `poc_dual_energy_xray`
 
 ### [Fix the text inside an image against the string it should read](capabilities/fix-text-in-images.md)
 

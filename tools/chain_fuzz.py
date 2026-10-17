@@ -6471,6 +6471,29 @@ def _b_emva_general_relative_qe(pool, rng):
     return (mp, mu, 64.0, 64.0 + 0.1125 * mps * np.array([1.0, 0.7]), mps, 0), {}
 
 
+def _b_dualxray(kind):
+    """エネルギー弁別 X 線(dualxray、2026-10-15)の op に**本物の入力**を渡す。
+
+    ★宣言 in の ``pairs`` / ``images`` をプールから拾うと、乱数の pairs はエネルギーが単調増加でなく、
+    乱数の images はチャネルの数(2)と合わず、どちらも fail-closed で拒否される —— 走ったことには
+    なるが一度も計算しない。管のスペクトルと、既定のチャネルで撮った計数像を builder で作る。
+    """
+    def build(pool, rng):
+        import dualxray as _dx
+        kv = float(rng.integers(50, 121))
+        spec = _dx.xray_tube_spectrum(kv)
+        if kind == "spectrum":
+            return ([spec], {})
+        if kind == "two_spectra":
+            return ([_dx.xray_tube_spectrum(kv), _dx.xray_tube_spectrum(kv + 60.0)], {})
+        t = rng.uniform(0.0, 0.5, size=(2, 16, 16)) * np.array([10.0, 0.3])[:, None, None]
+        if kind == "thickness":
+            return ([t], {"materials_list": ["WATER", "AL"]})
+        sig = _dx.xray_channel_projection(t, ["WATER", "AL"], None, 1e5, seed=int(rng.integers(0, 1000)))
+        return ([sig], {})
+    return build
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -7074,6 +7097,14 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    # エネルギー弁別 X 線(2026-10-15): 単調なエネルギーのスペクトルと、2 チャネルの計数像が要る
+    "xray_beam_quality": _b_dualxray("spectrum"),
+    "photon_counting_channels": _b_dualxray("spectrum"),
+    "dual_kvp_channels": _b_dualxray("two_spectra"),
+    "xray_channel_projection": _b_dualxray("thickness"),
+    "basis_material_decompose": _b_dualxray("signal"),
+    "r_value_map": _b_dualxray("signal"),
+    "effective_z_map": _b_dualxray("signal"),
 }
 
 
@@ -7766,6 +7797,12 @@ NONFINITE_BY_CONTRACT_LEDGER_GATE = {
     "diabolo_spheroid",           # b_paper_literal: 「根の中が負になる(NaN)」
 }
 
+#: 文書化済みの非有限を返す op(エネルギー弁別 X 線、2026-10-15)。どれも「その画素では値を作らない」が契約:
+#:   * basis_material_decompose — 信号 0 以下・収束しない・飛ぶ画素は NaN で ``rejected`` に数える(docstring)。
+#:   * r_value_map — L_high < min_log(ほぼ素通しで比が雑音だけ)の画素は NaN(docstring)。
+#:   * effective_z_map — 照合の範囲の外(H より軽いか Fe より重い R、L_high が小さい)の画素は NaN(docstring)。
+NONFINITE_BY_CONTRACT_DUALXRAY = {"basis_material_decompose", "r_value_map", "effective_z_map"}
+
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
@@ -7788,7 +7825,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
     | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
-    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE
+    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE | NONFINITE_BY_CONTRACT_DUALXRAY
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

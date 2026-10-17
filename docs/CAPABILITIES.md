@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 68 項目**
+**収録 69 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -29,6 +29,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
+| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -353,7 +354,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (8)
+## 見つける (9)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -370,6 +371,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
 動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md)
+
+1 枚の X 線透過像は、各画素で L = −ln(I/I₀) = Σ μₘ tₘ という**1 つの数**しか測りません。厚い肉と薄い骨片・ガラスは同じ L を作れるので、厚みと材質は分けられません。光子のエネルギーを 2 つ以上の窓で数え分ける検出器(フォトンカウンティング)か、2 つの管電圧で撮ると、μ(E) の**形**が材質で違う(光電効果は ≈ Z³/E³、コンプトン散乱は電子密度だけ)ので、各画素で方程式が窓の数だけ立ち、2 つの基底物質の厚みに分けられます(Alvarez & Macovski 1976、Lehmann ら 1981)。
+
+使う op: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+
+推奨パイプライン: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
+
+代替: [`dual_kvp_channels`](ops/tomography/spectral_xray/dual_kvp_channels.md), [`r_value_map`](ops/tomography/spectral_xray/r_value_map.md), [`dual_energy_separability`](ops/tomography/spectral_xray/dual_energy_separability.md), [`xray_channel_projection`](ops/tomography/spectral_xray/xray_channel_projection.md), [`material_xray_attenuation`](ops/tomography/spectral_xray/material_xray_attenuation.md)
+
+限界: 散乱線・検出器の K 蛍光の逃げ・パイルアップ・画素間の電荷共有の二重計数は入っていない。X 線管のスペクトルは簡易模型(半価層は IEC の線質と 6 % 以内)。肉に埋まった異物の見かけの Z は組成だけでなく密度でも動き(PVC は 13.9 が 18.7 に見える)、無機物の向きは Al(13)から Cu(29)まで狭い角度に詰まるので、Z を 1 刻みでは読めない。
+
+実寸校正: 較正の op は無い。管電圧・ろ過・検出器の材料と厚さ・窓のしきい値・エネルギー分解能・電荷共有の割合を既知として `photon_counting_channels` に入れる —— 応答を知らずに分解すると肉が Al に化ける(PoC の門)。実機では厚さの分かった 2 材料の段の撮影でチャネルの応答を合わせる。
+
+動く例: `poc_dual_energy_xray`
 
 ### [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md)
 

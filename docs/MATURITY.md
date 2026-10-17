@@ -37,6 +37,7 @@
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
 | [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md) | Seeing the complex plane as an area (domain colouring, basins, escape time, flow) | 測る | `verified-synthetic` | 8/8 | `poc_complex_plane_fields` synthetic → tests/test_poc_scripts_run.py |
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
+| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z) | 見つける | `verified-synthetic` | 14/14 | `poc_dual_energy_xray` synthetic → tests/test_poc_scripts_run.py |
 | [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md) | Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General) | 測る | `verified-synthetic` | 13/13 | `poc_emva1288_sensor` synthetic → tests/test_poc_scripts_run.py<br>`poc_emva1288_in_camera_processing` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
 | [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md) | Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency) | 光と色 | `verified-synthetic` | 7/7 | `poc_fiber_light_guide` synthetic → tests/test_poc_scripts_run.py |
@@ -106,8 +107,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 384 |
-| `tests/test_poc_scripts_run.py` が走らせる | 242 |
+| 2-D 台帳の例 | 385 |
+| `tests/test_poc_scripts_run.py` が走らせる | 243 |
 | `tests/test_example_scripts_run.py` が走らせる | 142 |
 | **どの門も走らせていない** | **0** |
 

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">basis_material_decompose — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.basis_material_decompose(signal, channels=None, basis=(&#x27;WATER&#x27;, &#x27;AL&#x27;), photons_per_pixel: &#x27;float&#x27; = 100000.0, flat=None, max_iter: &#x27;int&#x27; = 60, tol_cm: &#x27;float&#x27; = 1e-06, max_thickness_cm: &#x27;float&#x27; = 100.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import dualxray; dualxray.basis_material_decompose(signal, channels=None, basis=(&#x27;WATER&#x27;, &#x27;AL&#x27;), photons_per_pixel: &#x27;float&#x27; = 100000.0, flat=None, max_iter: &#x27;int&#x27; = 60, tol_cm: &#x27;float&#x27; = 1e-06, max_thickness_cm: &#x27;float&#x27; = 100.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;basis_material_decompose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.basis_material_decompose(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">images</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.basis_material_decompose.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dualxray.basis_material_decompose</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>通道信号 → 基材料的厚度图(Alvarez–Macovski / Lehmann 基分解)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各画素で、多色の順方向模型 L_c(b) = −ln(Σ_k W_ck g_k e^{−Σ_j μ_j(E_k) b_j} / Σ_k W_ck g_k) を測った L_c に合わせる b(基底ごとの厚み [cm])を、分散 var(L_c) ≈ var_c/mean_c² で重みをつけた Gauss–Newton で解く(チャネル数 = 基底の数なら連立方程式の厳密解、多ければ重みつき最小二乗 = 高計数での最尤)。初期値は空きのスペクトルの実効 μ の線形解。基底の厚みは負になりうる(水と Al の基底でポリエチレンは Al が負)—— 物理の厚みではなく「同じ減衰を作る基底の組合せ」。</p>
+<p><b>拒否(fail-closed)</b>: 信号が 0 以下・非有限の画素、<code style="color:#22d3bf">max_iter</code> 回で <code style="color:#22d3bf">tol_cm</code> に収束しない画素、|b| &gt; <code style="color:#22d3bf">max_thickness_cm</code> に飛ぶ画素は NaN にして <code style="color:#22d3bf">rejected</code> に数える(黙って値を返さない)。チャネル数 &lt; 基底の数は ValueError(解が決まらない)。</p>
+<p>返り値: dict(thickness (B, H, W) [cm], basis, rejected (H, W) bool, n_rejected, iterations, residual (H, W) = 重みつき残差の二乗和)。<code style="color:#22d3bf">opstomography.call</code> は thickness だけを返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">images</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a> · <a style="color:#22d3bf" href="optomography:r_value_map">r_value_map</a> · <a style="color:#22d3bf" href="optomography:effective_z_map">effective_z_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

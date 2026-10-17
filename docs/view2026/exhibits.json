@@ -2986,6 +2986,22 @@
    }
   },
   {
+   "id": "poc_dual_energy_xray",
+   "group": "wing_industrial",
+   "media": "04_tray_single_vs_basis.png",
+   "motion": false,
+   "thumb_src": "05_material_colour.png",
+   "label": {
+    "ja": "肉の中の骨片とガラスを 2 つのエネルギーで分ける(デュアルエナジー X 線)",
+    "en": "Bone and glass in meat, separated with two X-ray energies (dual-energy X-ray)",
+    "zh": "用两种能量把肉中的骨片与玻璃分开(双能 X 射线)",
+    "tw": "用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)",
+    "ko": "고기 속 뼛조각과 유리를 두 에너지로 가른다(듀얼 에너지 X선)",
+    "de": "Knochen- und Glassplitter im Fleisch mit zwei Röntgenenergien trennen (Dual-Energy-Röntgen)",
+    "hi": "मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)"
+   }
+  },
+  {
    "id": "poc_interreflection_fringe_error",
    "group": "wing_metrology",
    "media": "02_direct_global.png",
@@ -5920,6 +5936,13 @@
     "ko": "줄무늬의 거울상으로 광택면의 µm 오목을 잰다(위상 측정 디플렉토메트리: 줄무늬 → 위상 → 기울기 → 곡률)",
     "de": "Mikrometer-Dellen auf glänzenden Flächen im Spiegelbild eines Streifenbildschirms messen (phasenmessende Deflektometrie: Streifen, Phase, Neigung, Krümmung)",
     "hi": "चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature)"
+   },
+   "dual-energy-xray-material-discrimination": {
+    "zh": "用两种 X 射线能量分离厚度与材质(双能 / 光子计数: 能谱 → 能量窗 → 基分解 → 有效原子序数)",
+    "tw": "用兩種 X 射線能量分離厚度與材質(雙能 / 光子計數: 能譜 → 能量窗 → 基分解 → 有效原子序)",
+    "ko": "두 X선 에너지로 두께와 재질을 가른다(듀얼 에너지 / 광자 계수: 스펙트럼 → 에너지 창 → 기저 분해 → 유효 Z)",
+    "de": "Dicke und Material mit zwei Röntgenenergien trennen (Dual-Energy und Photonenzählung: Spektrum, Energiefenster, Basiszerlegung, effektive Ordnungszahl)",
+    "hi": "दो X-ray energies से मोटाई और material अलग करना (dual-energy / photon counting: spectrum → energy windows → basis decomposition → effective Z)"
    },
    "nir-hyperspectral-sorting": {
     "zh": "用近红外高光谱分选外观相同的异物(材料表的吸收带、散射层的反射、InGaAs 各波段的电子数)",

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3309,
+ "n_notes": 3315,
  "notes": {
   "vol_dilate": [
    {
@@ -32690,6 +32690,139 @@
     "in": "sinogram",
     "out": "image2d",
     "path": "docs/ops/tomography/reconstruct/sart_reconstruct.md"
+   }
+  ],
+  "basis_decomposition_crlb": [
+   {
+    "op": "basis_decomposition_crlb",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/basis_decomposition_crlb.md"
+   }
+  ],
+  "basis_material_decompose": [
+   {
+    "op": "basis_material_decompose",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "images",
+    "path": "docs/ops/tomography/spectral_xray/basis_material_decompose.md"
+   }
+  ],
+  "dual_energy_separability": [
+   {
+    "op": "dual_energy_separability",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/dual_energy_separability.md"
+   }
+  ],
+  "dual_kvp_channels": [
+   {
+    "op": "dual_kvp_channels",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs × pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/dual_kvp_channels.md"
+   }
+  ],
+  "effective_z_map": [
+   {
+    "op": "effective_z_map",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/tomography/spectral_xray/effective_z_map.md"
+   }
+  ],
+  "material_effective_z": [
+   {
+    "op": "material_effective_z",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_effective_z.md"
+   }
+  ],
+  "material_xray_attenuation": [
+   {
+    "op": "material_xray_attenuation",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "pairs",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_attenuation.md"
+   }
+  ],
+  "material_xray_constants": [
+   {
+    "op": "material_xray_constants",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_constants.md"
+   }
+  ],
+  "material_xray_table": [
+   {
+    "op": "material_xray_table",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_table.md"
+   }
+  ],
+  "photon_counting_channels": [
+   {
+    "op": "photon_counting_channels",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/photon_counting_channels.md"
+   }
+  ],
+  "r_value_map": [
+   {
+    "op": "r_value_map",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/tomography/spectral_xray/r_value_map.md"
+   }
+  ],
+  "xray_beam_quality": [
+   {
+    "op": "xray_beam_quality",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/xray_beam_quality.md"
+   }
+  ],
+  "xray_channel_projection": [
+   {
+    "op": "xray_channel_projection",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "images",
+    "path": "docs/ops/tomography/spectral_xray/xray_channel_projection.md"
+   }
+  ],
+  "xray_tube_spectrum": [
+   {
+    "op": "xray_tube_spectrum",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "pairs",
+    "path": "docs/ops/tomography/spectral_xray/xray_tube_spectrum.md"
    }
   ],
   "fbp_volume": [
