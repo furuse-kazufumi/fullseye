@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 615 von 1454. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 615 von 1456. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1471,6 +1471,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `imgforensics.py`
 
 - **L192** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
+- **L706** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
 
 ## `imgio.py`
 
@@ -2235,6 +2236,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_honest_summary_arithmetic.py`
 
 - **L41** — Es auf "bei Fehlen mit Begründung skip" setzen —— ★das CI vom 2026-09-08 wurde hier rot: anzunehmen, was lokal vorhanden ist, sei auch im CI da, macht nur lokal grün (gleiches Muster wie `feedback_gate_computed_a_verdict_then_discarded_it`).
+
+## `tests/test_imgforensics.py`
+
+- **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
 
 ## `tests/test_kendama_combo.py`
 

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1454. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1456. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1471,6 +1471,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `imgforensics.py`
 
 - **L192** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
+- **L706** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
 
 ## `imgio.py`
 
@@ -2235,6 +2236,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_honest_summary_arithmetic.py`
 
 - **L41** — Make it "skip with a reason if absent" —— ★the 2026-09-08 CI went red here: assuming what you have locally is also present in CI makes only local green (same pattern as `feedback_gate_computed_a_verdict_then_discarded_it`).
+
+## `tests/test_imgforensics.py`
+
+- **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
 
 ## `tests/test_kendama_combo.py`
 
