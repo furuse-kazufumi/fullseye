@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-68개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+69개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -125,6 +125,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 색 측정(XYZ / Lab / 색차): [설명](../../capabilities/colour-and-delta-e.md) _(ja)_ · 예제 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 광파이버와 라이트 가이드(유리의 분산 → LP 모드 → 모드 필드 직경 → 조명 효율): [설명](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 예제 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 조명 원뿔과 관찰 NA로 경면의 작은 기울기를 드러내거나 감추기(구면 캡의 교집합 → 기울기 대역 → 찍힘·흠집·새틴 얼룩): [설명](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 예제 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+- 측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링): [설명](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 예제 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - 재료의 광학 물성을 하나의 표로 조회(유리·결정·반도체·금속·액체·플라스틱 83종, 1차 문헌의 계수와 수표, 유리 카탈로그 가져오기): [설명](../../capabilities/material-optical-property-library.md) _(ja)_ · 예제 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 근적외 초분광으로 겉보기가 같은 이물을 선별(재료표의 흡수대, 산란층의 반사, InGaAs 대역별 전자 수): [설명](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 예제 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 빛의 반사·굴절·간섭 계산: [설명](../../capabilities/optics-and-materials.md) _(ja)_ · 예제 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 243개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -241,7 +242,7 @@ PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (46)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI·CT 대응" width="200" height="200"><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="준공 벽면 편차" width="200" height="200"><span>준공 벽면 편차</span></a>
@@ -289,6 +290,7 @@ PoC 242개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="모아레 정렬(보이지 않는 격자 두 장으로 1 nm를 읽는다)" width="200" height="200"><b>&#9654;</b><span>모아레 정렬(보이지 않는 격자 두 장으로 1 nm를 읽는다)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="텔레센트릭 렌즈와 치수 측정" width="200" height="200"><b>&#9654;</b><span>텔레센트릭 렌즈와 치수 측정</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="광학계 도면(단면도·설치도·제작도)" width="200" height="200"><span>광학계 도면(단면도·설치도·제작도)</span></a>
+<a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="가공 포켓의 상호 반사를 수렴까지" width="200" height="200"><span>가공 포켓의 상호 반사를 수렴까지</span></a>
 </div>
 </details>
 

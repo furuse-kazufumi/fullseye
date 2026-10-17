@@ -5736,6 +5736,22 @@
     "de": "Optische Zeichnungen aus der Rechnung",
     "hi": "calculation से optical drawings (section, setup, element)"
    }
+  },
+  {
+   "id": "poc_pocket_interreflection",
+   "group": "wing_metrology",
+   "media": "02_residuals.png",
+   "motion": false,
+   "thumb_src": "02_residuals.png",
+   "label": {
+    "ja": "加工ポケットの相互反射を収束まで",
+    "en": "Pocket interreflection to convergence",
+    "zh": "加工凹槽的相互反射算到收敛",
+    "tw": "加工凹槽的相互反射算到收斂",
+    "ko": "가공 포켓의 상호 반사를 수렴까지",
+    "de": "Interreflexion in der Tasche bis zur Konvergenz",
+    "hi": "machined pocket का inter-reflection अभिसरण तक"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6291,6 +6307,13 @@
     "ko": "분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도)",
     "de": "Schichtdicke durch spektrale Reflektometrie (Transfermatrix, Interferenzfarbe, FFT und Modellanpassung, Dickenkarte)",
     "hi": "spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map)"
+   },
+   "interreflection-to-convergence": {
+    "zh": "在保持光度真值的同时把凹形零件的相互反射计算到收敛(三维角系数、渐进辐射度、含多次反射的检测用渲染)",
+    "tw": "在保持光度真值的同時把凹形零件的相互反射計算到收斂(三維形狀因子、漸進輻射度、含多次反射的檢測用渲染)",
+    "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
+    "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
+    "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
    }
   }
  }

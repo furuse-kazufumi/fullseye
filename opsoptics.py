@@ -24,6 +24,13 @@ light_transport(lighttransport.py、2026-10-13 追加)— **凹みの中の光**
 位相バイアスの予測(直接と大域のフェーザ和)、マイクロ位相シフトの復号、ToF の多経路
 (反射ごとの遅延を入れた複素ラジオシティ)。
 
+radiosity(radiosity3d.py、2026-10-15 追加)— **凹みの中の光を 3-D で、収束するまで**。``render_optscene`` は
+直接光だけ(測光に根拠あり)、``render_studio`` は多重反射を解くが明るさの絶対値に意味が無い、``light_transport`` は
+2-D だけ。radiosity3d は Howell の表(C-11 / C-14)の閉形式、平らな凸多角形どうしの数値の形態係数(点 → 多角形の
+輪郭和 + Gauss 求積)、optscene のシーン(箱・箱をくり抜いたポケット)のパッチ分割、Cohen ら(1988)の漸進
+ラジオシティ(残エネルギーの履歴・converged)、直接光の測光を変えずに反射を n 回または収束まで足す検査用の
+描画(``render_optscene_gi``、反射 0 回で ``render_optscene`` と一致、反射の回数の観測収束比と GCI 型の見積もり)。
+
 coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging_sim は強度の PSF を
 畳み込むインコヒーレント結像だけで、``optscene.light_spec`` がレーザーに付ける
 ``coherent=True`` の印を使う経路が無かった。coherent は粗面のランダム位相を瞳(コヒーレント
@@ -96,6 +103,7 @@ import coherent
 import edgesfr
 import sfpolar
 import lighttransport
+import radiosity3d
 import sensorchar
 import sensorgeneral
 import illumdesign
@@ -133,7 +141,7 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityo
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
         "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar,
-        "lighttransport": lighttransport}
+        "lighttransport": lighttransport, "radiosity3d": radiosity3d}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -662,6 +670,21 @@ _CATALOG = {
         ("micro_phase_decode", "lighttransport", ["images"], "table"),
         ("tof_multipath_phase", "lighttransport", [], "table"),
         ("tof_transport_depth", "lighttransport", ["table"], "table"),
+    ],
+    # radiosity(radiosity3d、2026-10-15 追加): 3-D の形態係数と漸進ラジオシティ(Cohen ら 1988)、検査用の
+    # 多重反射描画。light_transport は 2-D(押し出し形状)の輸送行列で、こちらは optscene のシーン(箱・ポケット)
+    # を 3-D のパッチに割る —— 族を分けたのは実装の module が別だから(台帳の検査は族ごとに 1 module)。
+    # ★新しい型の語は作らない。パッチの組・解・描画の結果は kind の印つきの dict(table)で、印の無い
+    #   table は消費する op が ValueError で拒む。多角形は points((V, 3))、放射は signal((N,))。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table(TYPE_TO_SORT に無い)。
+    "radiosity": [
+        ("form_factor_parallel_rects", "radiosity3d", [], "measurement"),
+        ("form_factor_perpendicular_rects", "radiosity3d", [], "measurement"),
+        ("form_factor_polygons", "radiosity3d", ["points", "points"], "measurement"),
+        ("radiosity_patches", "radiosity3d", [], "table"),
+        ("form_factor_matrix", "radiosity3d", ["table"], "matrix"),
+        ("radiosity_progressive_3d", "radiosity3d", ["table", "signal"], "table"),
+        ("render_optscene_gi", "radiosity3d", ["table", "table", "table"], "table"),
     ],
 }
 

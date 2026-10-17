@@ -1,8 +1,8 @@
 {
- "n_ops": 3295,
+ "n_ops": 3302,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2349,
   "nary": 17,
   "registry": 924
  },
@@ -9532,6 +9532,55 @@
    "ledger": "opsmath",
    "dim": "math",
    "in_sorts": []
+  },
+  {
+   "name": "form_factor_matrix",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "form_factor_parallel_rects",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "form_factor_perpendicular_rects",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "form_factor_polygons",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
   },
   {
    "name": "form_factors_2d",
@@ -21230,6 +21279,31 @@
    ]
   },
   {
+   "name": "radiosity_patches",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "radiosity_progressive_3d",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
    "name": "radius_outlier_removal",
    "halcon": "",
    "in_sort": "points",
@@ -22079,6 +22153,21 @@
    "in_sort": "table",
    "out_sort": "rgbimage",
    "category": "scene",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "render_optscene_gi",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "radiosity",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

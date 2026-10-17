@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 68 项,每项都有说明页(用法与限制)和可运行的示例。
+共 69 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -125,6 +125,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 测量颜色(XYZ / Lab / 色差): [说明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 示例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 光纤与光导(玻璃色散 → LP 模 → 模场直径 → 照明效率): [说明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 示例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用照明光锥与观察 NA 显现或隐藏镜面的微小倾斜(球冠的交集 → 倾斜的带 → 凹痕、划伤、喷砂面的不匀): [说明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 示例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+- 在保持光度真值的同时把凹形零件的相互反射计算到收敛(三维角系数、渐进辐射度、含多次反射的检测用渲染): [说明](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 示例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - 用一张表查材料的光学物性（玻璃、晶体、半导体、金属、液体、塑料 83 种，一次文献的系数与数表，玻璃目录导入口）: [说明](../../capabilities/material-optical-property-library.md) _(ja)_ · 示例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近红外高光谱分选外观相同的异物(材料表的吸收带、散射层的反射、InGaAs 各波段的电子数): [说明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 示例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 计算光的反射、折射与干涉: [说明](../../capabilities/optics-and-materials.md) _(ja)_ · 示例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 243 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -241,7 +242,7 @@ PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (46)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -289,6 +290,7 @@ PoC 242 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="莫尔对准(两片看不见的光栅读出 1 nm)" width="200" height="200"><b>&#9654;</b><span>莫尔对准(两片看不见的光栅读出 1 nm)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="远心镜头与尺寸测量" width="200" height="200"><b>&#9654;</b><span>远心镜头与尺寸测量</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="光学系统图纸(截面图、布置图、制造图)" width="200" height="200"><span>光学系统图纸(截面图、布置图、制造图)</span></a>
+<a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收敛" width="200" height="200"><span>加工凹槽的相互反射算到收敛</span></a>
 </div>
 </details>
 

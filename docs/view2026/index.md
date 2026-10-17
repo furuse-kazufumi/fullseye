@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-68 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+69 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -140,6 +140,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 色を測る(XYZ / Lab / 色差): [説明](../capabilities/colour-and-delta-e.md) · 例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率): [説明](../capabilities/fiber-and-light-guide.md) · 例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地): [説明](../capabilities/illumination-cone-vs-na.md) · 例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+- 凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画): [説明](../capabilities/interreflection-to-convergence.md) · 例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口): [説明](../capabilities/material-optical-property-library.md) · 例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数): [説明](../capabilities/nir-hyperspectral-sorting.md) · 例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 光の反射・屈折・干渉を計算する: [説明](../capabilities/optics-and-materials.md) · 例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -194,7 +195,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 243 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -256,7 +257,7 @@ PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (46)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (47)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工した壁の歪み" width="200" height="200"><span>竣工した壁の歪み</span></a>
@@ -304,6 +305,7 @@ PoC 242 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_moire_alignment.jpg" alt="モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)" width="200" height="200"><b>&#9654;</b><span>モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)</span></a>
 <a href="../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_telecentric_metrology.jpg" alt="テレセントリックレンズと寸法計測" width="200" height="200"><b>&#9654;</b><span>テレセントリックレンズと寸法計測</span></a>
 <a href="../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_optics_drawings.jpg" alt="光学系の図面(断面図・設置図・製作図)" width="200" height="200"><span>光学系の図面(断面図・設置図・製作図)</span></a>
+<a href="../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pocket_interreflection.jpg" alt="加工ポケットの相互反射を収束まで" width="200" height="200"><span>加工ポケットの相互反射を収束まで</span></a>
 </div>
 </details>
 

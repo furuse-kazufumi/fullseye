@@ -4,7 +4,7 @@ dim: simcal
 category: fit
 in: simmodel
 out: calresult
-examples: [simcal_checks_tour, simcal_tour]
+examples: [poc_pocket_interreflection, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ refused.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
 - [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`
 - [simcal_tour](../../../../examples/simcal_tour.py) — `py -3.11 examples/simcal_tour.py`
 

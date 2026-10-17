@@ -50,6 +50,7 @@
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | Inner diameter of a round part, all the way to millimetres | 測る | `validated-public-real-data` | 4/4 | `example_inner_diameter_mm` synthetic → tests/test_example_scripts_run.py<br>`poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
+| [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces) | 光と色 | `verified-synthetic` | 7/7 | `poc_pocket_interreflection` synthetic → tests/test_poc_scripts_run.py |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md) | Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty) | 測る | `verified-synthetic` | 6/6 | `poc_laser_line_speckle_floor` synthetic → tests/test_poc_scripts_run.py |
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
@@ -106,8 +107,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 384 |
-| `tests/test_poc_scripts_run.py` が走らせる | 242 |
+| 2-D 台帳の例 | 385 |
+| `tests/test_poc_scripts_run.py` が走らせる | 243 |
 | `tests/test_example_scripts_run.py` が走らせる | 142 |
 | **どの門も走らせていない** | **0** |
 

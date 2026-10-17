@@ -28,10 +28,10 @@ _PAT = re.compile(r"(~?\d[\d,]*)\s+((?:typed |distinct |single-input |evolvable 
 #: 索引の外で決まる数(理由つき)。
 _OTHER = {
     2313: "HALCON の演算子の総数(halcon_names_data)",
-    525: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
+    532: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
           "shape_from_polarization 8 op で 372 → 380、light_transport 11 op で 380 → 391、"
           "acoustics の ultrasonic 7 op で 391 → 398、optics の EMVA 1288 12 op で 398 → 410、"
-          "2026-10-14 optics の cavity 5 op で 410 → 415、matprop 16 op で 415 → 431、spectral 9 op で 431 → 440、fiber 7 op で 440 → 447、2026-10-15 moire_align 8 op で 447 → 455、telecentric 7 op で 455 → 462、specular の deflectometry 6 op で 462 → 468、optics の linescan 6 op で 468 → 474、optics の pixelshift 6 op で 474 → 480、optics の film 5 op で 480 → 485、optics の confocal 6 op で 485 → 491、matprop 3 + spectral 5 op(近赤外の分光撮像)で 491 → 499、illumination の solid_angle 5 op で 499 → 504、optics の oct 13 op で 504 → 517、optics の drawing 8 op で 517 → 525)"),
+          "2026-10-14 optics の cavity 5 op で 410 → 415、matprop 16 op で 415 → 431、spectral 9 op で 431 → 440、fiber 7 op で 440 → 447、2026-10-15 moire_align 8 op で 447 → 455、telecentric 7 op で 455 → 462、specular の deflectometry 6 op で 462 → 468、optics の linescan 6 op で 468 → 474、optics の pixelshift 6 op で 474 → 480、optics の film 5 op で 480 → 485、optics の confocal 6 op で 485 → 491、matprop 3 + spectral 5 op(近赤外の分光撮像)で 491 → 499、illumination の solid_angle 5 op で 499 → 504、optics の oct 13 op で 504 → 517、optics の drawing 8 op で 517 → 525、optics の radiosity 7 op で 525 → 532)"),
 }
 
 

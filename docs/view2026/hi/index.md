@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-68 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+69 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -125,6 +125,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - रंग मापना (XYZ / Lab / colour difference): [explanation](../../capabilities/colour-and-delta-e.md) _(ja)_ · examples [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency): [explanation](../../capabilities/fiber-and-light-guide.md) _(ja)_ · examples [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - specular parts पर illumination cone और imaging NA (दो spherical caps का intersection → slope bands → dent, scratch और satin): [explanation](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · examples [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
+- photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render): [explanation](../../capabilities/interreflection-to-convergence.md) _(ja)_ · examples [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
 - material optical constants की एक table (primary literature से 83 glasses, crystals, semiconductors, metals, liquids और plastics, glass-catalogue importer सहित): [explanation](../../capabilities/material-optical-property-library.md) _(ja)_ · examples [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - near-infrared hyperspectral से एक जैसे दिखने वाले बाहरी कण छाँटना (material table की absorption bands, scattering layer की reflectance, InGaAs के हर band के electrons): [explanation](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · examples [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - Reflection, refraction और interference की गणना: [explanation](../../capabilities/optics-and-materials.md) _(ja)_ · examples [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -179,7 +180,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-242 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+243 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -241,7 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (46)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -289,6 +290,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_moire_alignment.jpg" alt="moiré alignment (दो अदृश्य gratings से 1 nm पढ़ना)" width="200" height="200"><b>&#9654;</b><span>moiré alignment (दो अदृश्य gratings से 1 nm पढ़ना)</span></a>
 <a href="../../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_telecentric_metrology.jpg" alt="Telecentric lens और dimensional measurement" width="200" height="200"><b>&#9654;</b><span>Telecentric lens और dimensional measurement</span></a>
 <a href="../../articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_optics_drawings.jpg" alt="calculation से optical drawings (section, setup, element)" width="200" height="200"><span>calculation से optical drawings (section, setup, element)</span></a>
+<a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="machined pocket का inter-reflection अभिसरण तक" width="200" height="200"><span>machined pocket का inter-reflection अभिसरण तक</span></a>
 </div>
 </details>
 
