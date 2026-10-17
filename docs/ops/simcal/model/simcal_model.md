@@ -4,7 +4,7 @@ dim: simcal
 category: model
 in: 
 out: simmodel
-examples: [simcal_checks_tour, simcal_tour]
+examples: [poc_simcal_pixel_shift, poc_simcal_telecentric, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -54,6 +54,8 @@ noise) **with synthetic observations attached**, ready for :func:`simcal_fit`.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_simcal_pixel_shift](../../../../examples/poc_simcal_pixel_shift.py) — `py -3.11 examples/poc_simcal_pixel_shift.py`
+- [poc_simcal_telecentric](../../../../examples/poc_simcal_telecentric.py) — `py -3.11 examples/poc_simcal_telecentric.py`
 - [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`
 - [simcal_tour](../../../../examples/simcal_tour.py) — `py -3.11 examples/simcal_tour.py`
 

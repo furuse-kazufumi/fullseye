@@ -3194,6 +3194,22 @@
    }
   },
   {
+   "id": "poc_simcal_telecentric",
+   "group": "wing_metrology",
+   "media": "02_real_model_residuals.png",
+   "motion": false,
+   "thumb_src": "02_real_model_residuals.png",
+   "label": {
+    "ja": "テレセンの実画像で撮像模型を較正",
+    "en": "Calibrating an imaging model on a real telecentric image",
+    "zh": "用远心实拍图像校准成像模型",
+    "tw": "以遠心實拍影像校準成像模型",
+    "ko": "텔레센트릭 실사 이미지로 촬상 모델 보정",
+    "de": "Abbildungsmodell an einem echten telezentrischen Bild kalibrieren",
+    "hi": "real telecentric image पर imaging model का calibration"
+   }
+  },
+  {
    "id": "poc_tdi_linescan",
    "group": "wing_industrial",
    "media": "01_tdi_stages_defects.png",
@@ -4135,6 +4151,22 @@
     "ko": "픽셀 시프트(위색과 에일리어싱)",
     "de": "Pixel-Shift (Falschfarben, Aliasing)",
     "hi": "pixel shift (false colour, aliasing)"
+   }
+  },
+  {
+   "id": "poc_simcal_pixel_shift",
+   "group": "wing_imaging",
+   "media": "02_undetermined_map_star.png",
+   "motion": false,
+   "thumb_src": "02_undetermined_map_star.png",
+   "label": {
+    "ja": "ピクセルシフトのずれと開口の較正(決まらない地図)",
+    "en": "Calibrating pixel-shift offsets and aperture (undetermined map)",
+    "zh": "像素位移的偏移与开口校准(无法确定的地图)",
+    "tw": "像素位移的偏移與開口校準(無法確定的地圖)",
+    "ko": "픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)",
+    "de": "Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)",
+    "hi": "pixel shift के offset और aperture का calibration (undetermined map)"
    }
   },
   {

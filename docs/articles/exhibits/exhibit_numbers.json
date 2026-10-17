@@ -745,6 +745,14 @@
    "accessioned": "2026-10-13",
    "no": "2026.226"
   },
+  "poc_simcal_pixel_shift": {
+   "accessioned": "2026-10-18",
+   "no": "2026.243"
+  },
+  "poc_simcal_telecentric": {
+   "accessioned": "2026-10-18",
+   "no": "2026.244"
+  },
   "poc_skeleton_run_length_vs_voi": {
    "accessioned": "2026-09-28",
    "no": "2026.162"

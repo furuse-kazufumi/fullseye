@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1453. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1455. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1924,7 +1924,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `simcal.py`
 
-- **L927** _(ja)_ — ★同じ大きさの項(利得 × 照明のように |e| が等しい組)の順と「主の項」は、丸めの屑で決めない。 argmax / argsort は 1e-16 の差で入れ替わり、Windows では "illum^1 * gain^1"、CI の Linux では "gain^1 * illum^1" になった(2026-10-15)。大きさを 1e-6 の相対で丸めて比べ、同点は宣言順。
+- **L938** _(ja)_ — ★同じ大きさの項(利得 × 照明のように |e| が等しい組)の順と「主の項」は、丸めの屑で決めない。 argmax / argsort は 1e-16 の差で入れ替わり、Windows では "illum^1 * gain^1"、CI の Linux では "gain^1 * illum^1" になった(2026-10-15)。大きさを 1e-6 の相対で丸めて比べ、同点は宣言順。
+- **L967** _(ja)_ — ★重みは自然な座標(e·|列|)なので、単位の違う項が混ざると指数が大きくなりうる(8 次の多項式の係数と利得: 2026-10-18 に exp が溢れた)。対数のまま ln_product も返し、積は溢れたら inf / 0 にする(落とさない)。
 
 ## `spc.py`
 
@@ -2439,7 +2440,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_simcal.py`
 
-- **L301** _(ja)_ — ★種は乱数を引かない(探針の種は型名の順に同じ乱数列から作られる)
+- **L104** _(ja)_ — n^1 * d^~1(位相 4 pi n d / lambda)。★d の指数が 1 から外れるのは Fresnel の項(n だけに効く)の分。 2026-10-18 に決まる組の重みを e/|列| → e·|列| に直した(下の test_g2_determined_combination_weights_...)ので 0.94 → 1.07 に動いた。どちらも 1 の近くなので、この門は直す前も後も通る幅にしてある(向きの検査は下の門)。
+- **L339** _(ja)_ — ★種は乱数を引かない(探針の種は型名の順に同じ乱数列から作られる)
 
 ## `tests/test_spc.py`
 

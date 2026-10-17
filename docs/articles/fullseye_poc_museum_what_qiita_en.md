@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**132 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**133 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1220,7 +1220,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 46 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 47 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2855,6 +2855,30 @@ Source: [examples/poc_optics_drawings.py](https://github.com/furuse-kazufumi/ful
 This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_optics_drawings)
 
 Ops used (notes): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`drawing_dxf`](https://furuse.work/ops/optics/drawing/drawing_dxf.html) · [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`drawing_svg`](https://furuse.work/ops/optics/drawing/drawing_svg.html) · [`dxf_entities`](https://furuse.work/ops/optics/drawing/dxf_entities.html) · [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`layout_capture`](https://furuse.work/ops/optics/scene/layout_capture.html) · [`lens_element_drawing`](https://furuse.work/ops/optics/drawing/lens_element_drawing.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_spec`](https://furuse.work/ops/optics/scene/lens_spec.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`light_spec`](https://furuse.work/ops/optics/scene/light_spec.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`sensor_spec`](https://furuse.work/ops/optics/scene/sensor_spec.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`telecentric_lens`](https://furuse.work/ops/optics/telecentric/telecentric_lens.html) · [`tolerance_analysis`](https://furuse.work/ops/optics/design/tolerance_analysis.html) · [`vision_layout`](https://furuse.work/ops/optics/scene/vision_layout.html) · [`vision_setup_drawing`](https://furuse.work/ops/optics/drawing/vision_setup_drawing.html)
+
+## No.2026.244 —— Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'
+
+[![Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png)
+
+*↑ **Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'** ―― An imaging model with plate tilt, orientation, scale, radial distortion k1 and the inverse entrance-pupil distance 1/L (telecentricity) is calibrated with simcal on the ring centrelines of a real 29.5-degree tilted alignment plate (Stark et al., Sci. Rep. 2025, CC BY 4.0). With a noise level independent of the model (local-quadratic pure error, 1.12 px) the absolute chi-square gate fails (p = 7e-9) and the numbers are withdrawn: the 1.35 px residual carries smooth ring-by-ring discrepancy. Adding it as white variance passes all six gates, and only after checking that a ring jackknife agrees with the Laplace uncertainty are numbers reported: 252.14 ± 0.18 px/mm (paper K1 = 252.0) and 1/L = 0.50 ± 0.18 per metre, i.e. the entrance pupil is farther than 1.16 m (2 sigma), which rules out the ordinary f = 100 mm (302 mm) and f = 25 mm lenses. On synthetic data the eight coefficients are recovered at the bound, the ordinary lens's 1/L = 3.31 per metre within 0.1 sigma of the closed form, an untilted plate makes the orientation 'no influence', and a low-order discrepancy makes Laplace 2.4 times optimistic, which the jackknife catches. The 2.7-sigma offset of 1/L from zero is unresolved. No training.*
+
+[![【1〜3 章・実画像】入射瞳までの距離の逆数 1/L の標準誤差を 2 通りで出した。Laplace = 白い雑音を仮定したFisher 情報の逆、ジャックナイフ = リングを 1 本ずつ抜いて解き直した散らばり。食い違いの無い合成では2 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/01_laplace_vs_jackknife.png)
+
+*↑ The measurement ―― 【1〜3 章・実画像】入射瞳までの距離の逆数 1/L の標準誤差を 2 通りで出した。Laplace = 白い雑音を仮定したFisher 情報の逆、ジャックナイフ = リングを 1 本ずつ抜いて解き直した散らばり。食い違いの無い合成では2 つは同じ大きさ、リングごとに 0〜6 次の滑らかな食い違い(RMS 0.7 px、リングの半径と中心の癖を含む)を足すと Laplace が 2.4 倍小さく出る(楽観的)。実画像では食い違いを白い分散として足したあと、2 つは同じ大きさ(ジャックナイフ / Laplace = 0.8)—— この板の食い違いは係数の形を真似るほど低次ではない。 (figure labels are in Japanese; the numbers are the same)*
+
+[![【実画像】学習の測定線の残差を、リングごと・30° ごとに平均した(点の数は 4 以上)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/03_real_ring_discrepancy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/03_real_ring_discrepancy.png)
+
+*↑ 【実画像】学習の測定線の残差を、リングごと・30° ごとに平均した(点の数は 4 以上)。*
+
+```
+py -3.11 examples/poc_simcal_telecentric.py
+```
+
+Source: [examples/poc_simcal_telecentric.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_simcal_telecentric.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_telecentric)
+
+Ops used (notes): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
