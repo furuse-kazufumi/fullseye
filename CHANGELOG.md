@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 存在しない短い名前の当て推量に本名を案内する
+- `fullseye.Engine` / `Graph` / `op_info` などは(別名は足さず)AttributeError の文面で `FullseyeEngine` / `FullseyeGraph` / `op_assist`・`op_find`・`find_op` を案内する。`hasattr` は False のまま、表に無い名前は標準の AttributeError。
+
 ### Added — 間接 ToF(位相方式)の多周波アンラップと壊れ方(itof 8 op + PoC)
 - `itof`(`opsoptics` の新カテゴリ `itof`、8 op): `itof_capture`(距離の図 → 周波数ごと K 段のバケット、ショット雑音・読み出し雑音・背景光、正弦か矩形の変調、余分な経路、画素の開口での混合)、`itof_phase_amplitude`(既知の任意の段の位相を最小二乗で、画素ごとの距離の雑音の見積もり)、`itof_noise_budget`(σ_d = c/(4πf)·√((B+σ_r²)/2)/A、Lange の式と一致)、`itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号 / `residue.residue_crt` / 2 周波のうなり)、`itof_unwrap_error_rate`(平行な直線の族の距離から和集合の上界、Wang–Xia の保証)、`itof_multipath_separate`(等間隔の多周波の行列ペンシル)、`itof_flying_pixel_mask`(両側が台地の段差の間に浮いた画素、雑音で閾値を上げる)、`itof_wiggling_correct`(矩形波の周期誤差を模型の逆引きか較正の調和で)。
 - PoC `poc_itof_multifreq`(収蔵番号 2026.243、29 門、図 13 枚 + GIF): 雑音の閉形式、倉庫の通路の 3 周波アンラップと遠くの次数の誤り(上界と照合)、80/100/120 MHz で 7.5 m より奥が折り返す、包装フィルムの 2 経路と分けられる間隔、部屋の隅の距離の伸び(`lighttransport` の輸送行列と 1e-15 m)、フライングピクセル、矩形波の周期誤差、太陽光、同じ場面の直接 ToF(`photoncount`)との比較、公開の実機の生データ(Zenodo 10.5281/zenodo.19608956、CC BY 4.0、手元にあるときだけ)。★`residue_crt` は最も長い周期を錨にするので、位相雑音が帯ごとに同じ iToF では最尤の復号より誤る(合成 0.556 対 0.116、実データ 0.293 対 0.131)。`residue` 本体は変えていない。
