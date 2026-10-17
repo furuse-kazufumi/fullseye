@@ -131,7 +131,7 @@ def run() -> dict:
              wrong["fit"]["warnings"][0][:60] + "…"))
     print("   31 波長、multistart: n = %.4f、d = %.1f nm、χ²/自由度 = %.2f(真値 1.46 / 520)"
           % (right["theta_hat"]["n_film"], right["theta_hat"]["d"], right["fit"]["chi2_red"]))
-    assert r2a["theta_hat"] == {} and 0.9 < c2["weights"]["d"] < 1.05
+    assert r2a["theta_hat"] == {} and 0.9 < c2["weights"]["d"] < 1.1     # 1.07(Fresnel の項の分。2026-10-18 に重みを直して 0.94 から)
     assert abs(c2["value"]["product"] / nd_true - 1) < 0.01
     assert wrong["fit"]["chi2_red"] > 10 and wrong["fit"]["warnings"]
     assert abs(right["theta_hat"]["d"] - 520) < 8 and abs(right["theta_hat"]["n_film"] - 1.46) < 0.02
