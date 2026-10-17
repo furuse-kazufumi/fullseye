@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 605
+  "dead_knob": 600
  },
  "debt": {
   "description": {},
@@ -609,12 +609,7 @@
    "write_wav.rate": "other",
    "yield_maneuver_check.left_tol": "tolerance_or_iterations",
    "yield_maneuver_check.stop_speed": "other",
-   "yield_maneuver_check.car_length": "size_or_count",
-   "dpc_integrate.max_jump_rad": "size_or_count",
-   "grating_step_period_estimate.min_contrast": "size_or_count",
-   "grating_step_period_estimate.min_visibility": "size_or_count",
-   "grating_three_image_retrieve.min_visibility": "size_or_count",
-   "talbot_source_visibility.duty": "other"
+   "yield_maneuver_check.car_length": "size_or_count"
   }
  }
 }

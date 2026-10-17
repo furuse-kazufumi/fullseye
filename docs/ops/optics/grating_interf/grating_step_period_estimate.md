@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # grating_step_period_estimate — OPTICS `grating_interf` op
 
 - **データ種**: `images` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05, min_contrast=1.1)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05, min_contrast=1.1)`、台帳から引くなら `opsoptics.get("grating_step_period_estimate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)`、台帳から引くなら `opsoptics.get("grating_step_period_estimate")`)
 
 ## 使い方
 
@@ -26,16 +26,18 @@ region の画素で I_k = a + b cos(φ − 2πk/P) をあてた残差の RMS / �
 残差は 9 桁に丸めて比べ、同点は小さい P を取る(argmax の屑で OS ごとに答えが変わらないように)。
 
 region: (y0, y1, x0, x1) の画素の範囲(試料の無い空気・基準の画素を選ぶ)。None は全画素。
+min_visibility: 残差に数える画素の縞の可視度の下限(P = N で一度あてた振幅 / 平均)。格子の欠陥・影・試料の
+縁など、縞の弱い画素は正弦の残差が雑音だけになって P の判定を薄めるので、数に入れない。
 
 次のときは値を返さずに拒否する(fail-closed):
   * N < 5(未知数 3 + P に対して残差の自由度が足りない)
-  * region の可視度の中央値が min_visibility 未満(縞が無い)
+  * 可視度が min_visibility 以上の画素が 1 つも無い(縞が無い)
   * 最小が探索の範囲の端(本当の最小は外にあるかもしれない)
-  * 残差の最大 / 最小が min_contrast 未満(曲線が平らで P が決まらない)
+  * 残差の最大 / 最小が 1.1 未満(曲線が平らで P が決まらない。判定の定数で、つまみではない)
 
 返り値 dict: ``steps_per_period``(P)/ ``n_steps``(N)/ ``p_grid`` / ``residual``(各 P の残差)/
-``residual_min`` / ``residual_at_n``(P = N の残差。N が格子に無ければ None)/ ``visibility_median`` /
-``resolution``(= p_step)。
+``residual_min`` / ``residual_at_n``(P = N の残差。N が格子に無ければ None)/ ``visibility_median``
+(数に入れた画素の)/ ``n_pixels``(数に入れた画素の数)/ ``resolution``(= p_step)。
 **Raises** ValueError: 上の拒否、画像列が 3-D でない・NaN/Inf、region が画像の外、p_min ≥ p_max、
 p_step ≤ 0、格子が 2000 点を超える。
 

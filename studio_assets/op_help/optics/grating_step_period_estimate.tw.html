@@ -1,18 +1,19 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_step_period_estimate — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05, min_contrast=1.1)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gratinginterf; gratinginterf.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05, min_contrast=1.1)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;grating_step_period_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gratinginterf; gratinginterf.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;grating_step_period_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由相位步進影像序列估計「一個週期包含多少步」(P),取正弦擬合殘差的最小值。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>実際の装置では、格子を動かす量の較正のずれや「1 周期の両端を含む走査」で、1 周期のステップ数 P が撮った枚数 N と一致しない。P を間違えると縞の位相・振幅の読みが系統的に狂う(<code style="color:#22d3bf">grating_three_image_retrieve</code> の <code style="color:#22d3bf">fit_residual_*</code> が大きくなる)。この op は P を p_min..p_max(既定 N − 2 .. N + 2)で p_step 刻みに振り、region の画素で I_k = a + b cos(φ − 2πk/P) をあてた残差の RMS / 平均を、画素について二乗平均した値が最小の P を返す。残差は 9 桁に丸めて比べ、同点は小さい P を取る(argmax の屑で OS ごとに答えが変わらないように)。</p>
 <p>region: (y0, y1, x0, x1) の画素の範囲(試料の無い空気・基準の画素を選ぶ)。None は全画素。</p>
+<p>min_visibility: 残差に数える画素の縞の可視度の下限(P = N で一度あてた振幅 / 平均)。格子の欠陥・影・試料の縁など、縞の弱い画素は正弦の残差が雑音だけになって P の判定を薄めるので、数に入れない。</p>
 <p>次のときは値を返さずに拒否する(fail-closed):</p>
 <p style="margin:2px 0 2px 12px">• N &lt; 5(未知数 3 + P に対して残差の自由度が足りない)</p>
-<p style="margin:2px 0 2px 12px">• region の可視度の中央値が min_visibility 未満(縞が無い)</p>
+<p style="margin:2px 0 2px 12px">• 可視度が min_visibility 以上の画素が 1 つも無い(縞が無い)</p>
 <p style="margin:2px 0 2px 12px">• 最小が探索の範囲の端(本当の最小は外にあるかもしれない)</p>
-<p style="margin:2px 0 2px 12px">• 残差の最大 / 最小が min_contrast 未満(曲線が平らで P が決まらない)</p>
-<p>返り値 dict: <code style="color:#22d3bf">steps_per_period</code>(P)/ <code style="color:#22d3bf">n_steps</code>(N)/ <code style="color:#22d3bf">p_grid</code> / <code style="color:#22d3bf">residual</code>(各 P の残差)/ <code style="color:#22d3bf">residual_min</code> / <code style="color:#22d3bf">residual_at_n</code>(P = N の残差。N が格子に無ければ None)/ <code style="color:#22d3bf">visibility_median</code> / <code style="color:#22d3bf">resolution</code>(= p_step)。<b>Raises</b> ValueError: 上の拒否、画像列が 3-D でない・NaN/Inf、region が画像の外、p_min ≥ p_max、p_step ≤ 0、格子が 2000 点を超える。</p>
+<p style="margin:2px 0 2px 12px">• 残差の最大 / 最小が 1.1 未満(曲線が平らで P が決まらない。判定の定数で、つまみではない)</p>
+<p>返り値 dict: <code style="color:#22d3bf">steps_per_period</code>(P)/ <code style="color:#22d3bf">n_steps</code>(N)/ <code style="color:#22d3bf">p_grid</code> / <code style="color:#22d3bf">residual</code>(各 P の残差)/ <code style="color:#22d3bf">residual_min</code> / <code style="color:#22d3bf">residual_at_n</code>(P = N の残差。N が格子に無ければ None)/ <code style="color:#22d3bf">visibility_median</code> (数に入れた画素の)/ <code style="color:#22d3bf">n_pixels</code>(数に入れた画素の数)/ <code style="color:#22d3bf">resolution</code>(= p_step)。<b>Raises</b> ValueError: 上の拒否、画像列が 3-D でない・NaN/Inf、region が画像の外、p_min ≥ p_max、p_step ≤ 0、格子が 2000 点を超える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

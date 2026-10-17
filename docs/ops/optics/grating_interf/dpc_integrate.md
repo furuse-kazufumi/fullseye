@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # dpc_integrate — OPTICS `grating_interf` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None, max_jump_rad=3.141592653589793)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None, max_jump_rad=3.141592653589793)`、台帳から引くなら `opsoptics.get("dpc_integrate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None)`、台帳から引くなら `opsoptics.get("dpc_integrate")`)
 
 ## 使い方
 
@@ -31,7 +31,7 @@ delta(屈折率の 1 からのずれ δ)を渡すと、投影の厚さ t = −Φ
   ``"none"``  何も引かない(最初の境界で Φ = 0)
 
 ★折り返し(fail-closed): 微分位相は (−π, π] に折り返されている。本当の φ が π を超えた画素では
-隣と 2π 近く跳ぶ。積分の向きに隣り合う画素の差が max_jump_rad(既定 π、Itoh の条件)を超える画素が
+隣と 2π 近く跳ぶ。積分の向きに隣り合う画素の差が π(Itoh の条件。数学で決まる値なのでつまみにしない)を超える画素が
 1 つでもあれば、どれだけ足すべきか決まらないので値を返さずに拒否する(縞の位相を大きくしない ——
 距離 d を短くするか、細かい画素で撮る)。NaN(``grating_three_image_retrieve`` の無効画素)も拒否する。
 正直な限界: 折り返しは「隣との跳び」でしか見えない。平らな背景の隣にある 1 画素だけが π を超え、折り返した値が
@@ -41,7 +41,7 @@ delta(屈折率の 1 からのずれ δ)を渡すと、投影の厚さ t = −Φ
 返り値 dict: ``phase_rad``(H, W)/ ``thickness_um``(δ があるとき)/ ``refraction_urad`` /
 ``max_jump_rad``(実測の隣との差の最大)/ ``baseline``。
 **Raises** ValueError: 2-D でない・NaN/Inf、正でない画素・距離・周期・波長、wavelength_nm と energy_kev の両方 / どちらも無い、
-axis が 0/1 でない、未知の baseline、baseline_px が幅の半分を超える、δ ≤ 0、隣との差が max_jump_rad を超える。
+axis が 0/1 でない、未知の baseline、baseline_px が幅の半分を超える、δ ≤ 0、隣との差が π を超える。
 
 ## ファミリ共通の入力契約(fail-closed)
 

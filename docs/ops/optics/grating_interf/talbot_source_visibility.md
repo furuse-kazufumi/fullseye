@@ -13,7 +13,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 # talbot_source_visibility — OPTICS `grating_interf` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=0.5, n_slits=None, wavelength_nm=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=0.5, n_slits=None, wavelength_nm=None)`、台帳から引くなら `opsoptics.get("talbot_source_visibility")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)`、台帳から引くなら `opsoptics.get("talbot_source_visibility")`)
 
 ## 使い方
 
@@ -28,6 +28,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 配列の因子 |sin(N β)/(N sin β)|、β = π p0 d/(L p2) を掛ける。β が π の整数倍(Lau の条件 p0 = p2·L/d)で
 すべての開口の縞が重なり、可視度は開口 1 本の |sinc(π duty)|(duty = 0.5 で 2/π)まで戻る。
 n_slits が None なら round(w/p0)(焦点 w に入る開口の数、1 以上)。線源格子はガウスの焦点とは組まない(拒否)。
+duty(開口の割合)は線源格子があるときだけ意味を持つ(None は 0.5)。線源格子なしで duty か n_slits を渡すと、
+黙って無視せずに拒否する(線源格子の周期を渡し忘れた呼び出しを見逃さない)。
 
 wavelength_nm を渡すと、第 1 格子での横のコヒーレンス長 l_c = λ L/w [µm] も返す。
 
@@ -35,7 +37,7 @@ wavelength_nm を渡すと、第 1 格子での横のコヒーレンス長 l_c =
 ``lau_period_um``(p2·L/d)/ ``lau_ratio``(p0 / Lau の周期、線源格子なしは None)/ ``n_slits`` /
 ``projected_blur_um``(w·d/L、分析格子の上での線源の影の幅)/ ``coherence_length_um``(λ があるとき)。
 **Raises** ValueError: 正でない幅・距離・周期、未知の profile、ガウスと線源格子の組、duty が (0, 1] の外、
-n_slits が 1..100000 の外。
+n_slits が 1..100000 の外、線源格子なしでの duty・n_slits。
 
 ## ファミリ共通の入力契約(fail-closed)
 

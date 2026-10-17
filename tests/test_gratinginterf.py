@@ -541,3 +541,38 @@ def test_reference_exposure_ratio_fixes_transmission_only():
     assert np.max(np.abs(fixed["transmission"] - t)) < 1e-12
     assert np.max(np.abs(naive["darkfield"] - fixed["darkfield"])) < 1e-12
     assert np.max(np.abs(naive["dpc_rad"] - fixed["dpc_rad"])) < 1e-12
+
+
+def test_source_visibility_refuses_grating_parameters_without_a_grating():
+    # duty と n_slits は線源格子の量。周期を渡し忘れた呼び出しを黙って無視しない
+    with pytest.raises(ValueError, match="source_grating_period_um"):
+        GI.talbot_source_visibility(100.0, 1200.0, 45.0, 2.0, duty=0.3)
+    with pytest.raises(ValueError, match="source_grating_period_um"):
+        GI.talbot_source_visibility(100.0, 1200.0, 45.0, 2.0, n_slits=5)
+    p0 = 2.0 * 1200.0 / 45.0
+    a = GI.talbot_source_visibility(5 * p0, 1200.0, 45.0, 2.0, source_grating_period_um=p0, n_slits=5)
+    b = GI.talbot_source_visibility(5 * p0, 1200.0, 45.0, 2.0, source_grating_period_um=p0, n_slits=5, duty=0.25)
+    assert abs(a["visibility_factor"] - 2 / math.pi) < 1e-12                  # 既定 duty 0.5
+    assert abs(b["visibility_factor"] - math.sin(math.pi / 4) / (math.pi / 4)) < 1e-12
+
+
+def test_step_period_min_visibility_selects_pixels():
+    # 縞の弱い列(格子の影)を残差から外す。しきい値で数える画素が変わり、P は同じに戻る
+    yy, xx = np.mgrid[:12, :20]
+    dfm = np.clip(0.04 + 0.06 * xx, 0.0, 1.0)
+    s = GI.grating_stepping_simulate(None, None, dfm, n_steps=10, steps_per_period=10.6)
+    lo = GI.grating_step_period_estimate(s, min_visibility=0.02)
+    hi = GI.grating_step_period_estimate(s, min_visibility=0.1)
+    assert lo["n_pixels"] > hi["n_pixels"] > 0
+    assert lo["steps_per_period"] == hi["steps_per_period"] == 10.6
+    assert hi["visibility_median"] > lo["visibility_median"]
+    with pytest.raises(ValueError, match="no pixel"):
+        GI.grating_step_period_estimate(s, min_visibility=0.9)
+
+
+def test_judgement_constants_are_not_knobs():
+    # 平らさの判定と Itoh の条件は数学・判定の定数(つまみにしない)
+    import inspect
+    assert "min_contrast" not in inspect.signature(GI.grating_step_period_estimate).parameters
+    assert "max_jump_rad" not in inspect.signature(GI.dpc_integrate).parameters
+    assert GI._ITOH_LIMIT == math.pi and GI._MIN_RESIDUAL_CONTRAST == 1.1

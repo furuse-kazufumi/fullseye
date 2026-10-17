@@ -471,6 +471,14 @@ def darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2
 #: 格子 1 周期の透過の値(線の部分 t_a, 残り t_b)。線の幅の割合は duty。
 _GRATING_T = {"pi": (-1.0 + 0j, 1.0 + 0j), "pi_half": (1j, 1.0 + 0j), "absorption": (1.0 + 0j, 0.0 + 0j)}
 
+#: 残差の曲線が「平ら」とみなす最大 / 最小の比(`grating_step_period_estimate`)。P の推定が成り立つかの判定で、
+#: 調整するつまみではない(残差が 10 % も変わらない範囲では P は決まらない)。
+_MIN_RESIDUAL_CONTRAST = 1.1
+
+#: 折り返しの判定(`dpc_integrate`): 隣り合う画素の差の上限。Itoh の条件そのもの(π を超えた差は、折り返した値からは
+#: 2π を足すべきか決まらない)で、数学で決まる値なのでつまみにしない。
+_ITOH_LIMIT = math.pi
+
 #: 縞の可視度を出すときに足す回折次数(±N)。
 _VIS_HARMONICS = 32768
 
@@ -584,7 +592,7 @@ def talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating="p
 # 6. 線源の大きさ・線源格子と縞の可視度                                          #
 # --------------------------------------------------------------------------- #
 def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile="uniform",
-                             source_grating_period_um=None, duty=0.5, n_slits=None, wavelength_nm=None):
+                             source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None):
     """線源の大きさと線源格子(Lau の条件)で、縞の可視度が何倍に落ちるか(閉形式、非干渉の和)。
 
     線源の 1 点が格子の線に直交する向きに s ずれると、分析格子の上の縞は s·d/L だけ逆向きにずれる
@@ -596,6 +604,8 @@ def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, a
     配列の因子 |sin(N β)/(N sin β)|、β = π p0 d/(L p2) を掛ける。β が π の整数倍(Lau の条件 p0 = p2·L/d)で
     すべての開口の縞が重なり、可視度は開口 1 本の |sinc(π duty)|(duty = 0.5 で 2/π)まで戻る。
     n_slits が None なら round(w/p0)(焦点 w に入る開口の数、1 以上)。線源格子はガウスの焦点とは組まない(拒否)。
+    duty(開口の割合)は線源格子があるときだけ意味を持つ(None は 0.5)。線源格子なしで duty か n_slits を渡すと、
+    黙って無視せずに拒否する(線源格子の周期を渡し忘れた呼び出しを見逃さない)。
 
     wavelength_nm を渡すと、第 1 格子での横のコヒーレンス長 l_c = λ L/w [µm] も返す。
 
@@ -603,7 +613,7 @@ def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, a
     ``lau_period_um``(p2·L/d)/ ``lau_ratio``(p0 / Lau の周期、線源格子なしは None)/ ``n_slits`` /
     ``projected_blur_um``(w·d/L、分析格子の上での線源の影の幅)/ ``coherence_length_um``(λ があるとき)。
     **Raises** ValueError: 正でない幅・距離・周期、未知の profile、ガウスと線源格子の組、duty が (0, 1] の外、
-    n_slits が 1..100000 の外。
+    n_slits が 1..100000 の外、線源格子なしでの duty・n_slits。
     """
     op = "talbot_source_visibility"
     w = _pos(source_width_um, "source_width_um", op)
@@ -616,6 +626,9 @@ def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, a
     lau = p2 * big_l / d
     out = {"lau_period_um": lau, "projected_blur_um": w * d / big_l}
     if source_grating_period_um is None:
+        if duty is not None or n_slits is not None:
+            raise ValueError("%s: duty and n_slits describe a source grating — pass source_grating_period_um too "
+                             "(without a source grating they would be silently ignored)" % op)
         if profile == "uniform":
             x = math.pi * w * freq
             f = 1.0 if x == 0.0 else abs(math.sin(x) / x)
@@ -627,7 +640,7 @@ def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, a
         if profile != "uniform":
             raise ValueError("%s: a source grating is modelled with a uniformly lit spot only (profile='uniform')" % op)
         p0 = _pos(source_grating_period_um, "source_grating_period_um", op)
-        eta = _finite(duty, "duty", op)
+        eta = 0.5 if duty is None else _finite(duty, "duty", op)
         if not 0.0 < eta <= 1.0:
             raise ValueError("%s: duty must be in (0, 1], got %r" % (op, duty))
         if n_slits is None:
@@ -652,8 +665,7 @@ def talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, a
 # --------------------------------------------------------------------------- #
 # 7. 1 周期のステップ数の推定                                                    #
 # --------------------------------------------------------------------------- #
-def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05,
-                                 min_contrast=1.1):
+def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05):
     """位相ステップの画像列から「1 周期が何ステップか」(P)を、正弦をあてた残差の最小で推定する。
 
     実際の装置では、格子を動かす量の較正のずれや「1 周期の両端を含む走査」で、1 周期のステップ数 P が
@@ -663,16 +675,18 @@ def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, reg
     残差は 9 桁に丸めて比べ、同点は小さい P を取る(argmax の屑で OS ごとに答えが変わらないように)。
 
     region: (y0, y1, x0, x1) の画素の範囲(試料の無い空気・基準の画素を選ぶ)。None は全画素。
+    min_visibility: 残差に数える画素の縞の可視度の下限(P = N で一度あてた振幅 / 平均)。格子の欠陥・影・試料の
+    縁など、縞の弱い画素は正弦の残差が雑音だけになって P の判定を薄めるので、数に入れない。
 
     次のときは値を返さずに拒否する(fail-closed):
       * N < 5(未知数 3 + P に対して残差の自由度が足りない)
-      * region の可視度の中央値が min_visibility 未満(縞が無い)
+      * 可視度が min_visibility 以上の画素が 1 つも無い(縞が無い)
       * 最小が探索の範囲の端(本当の最小は外にあるかもしれない)
-      * 残差の最大 / 最小が min_contrast 未満(曲線が平らで P が決まらない)
+      * 残差の最大 / 最小が 1.1 未満(曲線が平らで P が決まらない。判定の定数で、つまみではない)
 
     返り値 dict: ``steps_per_period``(P)/ ``n_steps``(N)/ ``p_grid`` / ``residual``(各 P の残差)/
-    ``residual_min`` / ``residual_at_n``(P = N の残差。N が格子に無ければ None)/ ``visibility_median`` /
-    ``resolution``(= p_step)。
+    ``residual_min`` / ``residual_at_n``(P = N の残差。N が格子に無ければ None)/ ``visibility_median``
+    (数に入れた画素の)/ ``n_pixels``(数に入れた画素の数)/ ``resolution``(= p_step)。
     **Raises** ValueError: 上の拒否、画像列が 3-D でない・NaN/Inf、region が画像の外、p_min ≥ p_max、
     p_step ≤ 0、格子が 2000 点を超える。
     """
@@ -698,10 +712,20 @@ def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, reg
     if n_grid < 3 or n_grid > 2000:
         raise ValueError("%s: the search grid has %d points (needs 3..2000)" % (op, n_grid))
     vmin = _finite(min_visibility, "min_visibility", op)
-    cmin = _finite(min_contrast, "min_contrast", op)
+    if not 0.0 <= vmin < 1.0:
+        raise ValueError("%s: min_visibility must be in [0, 1), got %r" % (op, min_visibility))
     grid = np.round(lo + st * np.arange(n_grid), 9)
     res = np.full(n_grid, np.inf)
-    vis_med = None
+    # 数に入れる画素: P = N(1 周期を N 等分)で一度あてた可視度が vmin 以上。P の候補ごとに選び直さない
+    # (候補ごとに画素の組が変わると、残差の比較が別の集合どうしの比較になる)。
+    m0, a0, _p0, _r0 = _sine_fit(s, float(n), op, "stack")
+    with np.errstate(divide="ignore", invalid="ignore"):
+        vis0 = np.where(m0 > 0, a0 / m0, np.nan)
+    use = np.isfinite(vis0) & (vis0 >= vmin)
+    if not np.any(use):
+        raise ValueError("%s: no pixel has a fringe visibility >= %g (median %.3g) — no fringe to fit "
+                         "(choose an air/reference region)" % (op, vmin, float(np.nanmedian(vis0))))
+    vmed = float(np.median(vis0[use]))
     # 残差は P に依らない画素の素の平均で割る。あてた平均で割ると、P のずれが平均に漏れた分だけ雑音の項が
     # P の一次で傾き、最小が雑音の大きさに比例して偏る(1 枚 3000 光子・V 0.25・22 段で +0.06 段)。
     raw_mean = np.abs(s.mean(axis=0))
@@ -712,35 +736,30 @@ def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, reg
             continue                                                # 正弦が分けられない P は候補から外す
         with np.errstate(divide="ignore", invalid="ignore"):
             rel = np.where(raw_mean > 0, rel * np.abs(mean) / raw_mean, np.nan)
-        res[i] = round(float(np.sqrt(np.nanmean(rel * rel))), 9)       # 二乗平均(中央値より雑音に強い)
-        if vis_med is None or abs(pp - n) < abs(vis_med[0] - n):
-            with np.errstate(divide="ignore", invalid="ignore"):
-                vis_med = (pp, float(np.nanmedian(np.where(mean > 0, amp / mean, np.nan))))
+        sel = rel[use]
+        res[i] = round(float(np.sqrt(np.nanmean(sel * sel))), 9)       # 二乗平均(中央値より雑音に強い)
     if not np.any(np.isfinite(res)):
         raise ValueError("%s: no step period in [%g, %g] separates mean, cosine and sine" % (op, lo, hi))
-    vmed = vis_med[1]
-    if not (math.isfinite(vmed) and vmed >= vmin):
-        raise ValueError("%s: the median fringe visibility in the region is %.3g < %g — no fringe to fit "
-                         "(choose an air/reference region)" % (op, vmed, vmin))
     k = int(np.argmin(res))                                         # 同点は前(小さい P)
     if k == 0 or k == n_grid - 1:
         raise ValueError("%s: the residual minimum is at the edge of the search range (P = %g in [%g, %g]) — "
                          "the true step period may lie outside; widen p_min/p_max" % (op, grid[k], lo, hi))
     finite = res[np.isfinite(res)]
-    if not float(np.max(finite)) >= cmin * max(float(res[k]), 1e-300):
+    if not float(np.max(finite)) >= _MIN_RESIDUAL_CONTRAST * max(float(res[k]), 1e-300):
         raise ValueError("%s: the residual curve is flat (max/min = %.3g < %g) — the step period is not "
-                         "determined by these images" % (op, float(np.max(finite)) / max(float(res[k]), 1e-300), cmin))
+                         "determined by these images" % (op, float(np.max(finite)) / max(float(res[k]), 1e-300),
+                                                         _MIN_RESIDUAL_CONTRAST))
     at_n = np.nonzero(np.abs(grid - n) < 1e-9)[0]
     return {"steps_per_period": float(grid[k]), "n_steps": n, "p_grid": grid, "residual": res,
             "residual_min": float(res[k]), "residual_at_n": float(res[at_n[0]]) if at_n.size else None,
-            "visibility_median": vmed, "resolution": st}
+            "visibility_median": vmed, "n_pixels": int(np.sum(use)), "resolution": st}
 
 
 # --------------------------------------------------------------------------- #
 # 8. 微分位相の積分                                                             #
 # --------------------------------------------------------------------------- #
 def dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1,
-                  baseline="left", baseline_px=8, delta=None, max_jump_rad=math.pi):
+                  baseline="left", baseline_px=8, delta=None):
     """微分位相(縞の位相のずれ φ)を格子の感度の向きに積分して、波面の位相 Φ [rad] に戻す。
 
     屈折角 α = φ·p2/(2π d)(Weitkamp ら 2005 の式 1)、∂Φ/∂x = (2π/λ)·α。画素の中で平均した α を
@@ -755,7 +774,7 @@ def dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength
       ``"none"``  何も引かない(最初の境界で Φ = 0)
 
     ★折り返し(fail-closed): 微分位相は (−π, π] に折り返されている。本当の φ が π を超えた画素では
-    隣と 2π 近く跳ぶ。積分の向きに隣り合う画素の差が max_jump_rad(既定 π、Itoh の条件)を超える画素が
+    隣と 2π 近く跳ぶ。積分の向きに隣り合う画素の差が π(Itoh の条件。数学で決まる値なのでつまみにしない)を超える画素が
     1 つでもあれば、どれだけ足すべきか決まらないので値を返さずに拒否する(縞の位相を大きくしない ——
     距離 d を短くするか、細かい画素で撮る)。NaN(``grating_three_image_retrieve`` の無効画素)も拒否する。
     正直な限界: 折り返しは「隣との跳び」でしか見えない。平らな背景の隣にある 1 画素だけが π を超え、折り返した値が
@@ -765,7 +784,7 @@ def dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength
     返り値 dict: ``phase_rad``(H, W)/ ``thickness_um``(δ があるとき)/ ``refraction_urad`` /
     ``max_jump_rad``(実測の隣との差の最大)/ ``baseline``。
     **Raises** ValueError: 2-D でない・NaN/Inf、正でない画素・距離・周期・波長、wavelength_nm と energy_kev の両方 / どちらも無い、
-    axis が 0/1 でない、未知の baseline、baseline_px が幅の半分を超える、δ ≤ 0、隣との差が max_jump_rad を超える。
+    axis が 0/1 でない、未知の baseline、baseline_px が幅の半分を超える、δ ≤ 0、隣との差が π を超える。
     """
     op = "dpc_integrate"
     if wavelength_nm is None and energy_kev is None:
@@ -793,7 +812,7 @@ def dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength
     ax = _int_in(axis, "axis", op, 0, 1)
     if baseline not in ("left", "both", "none"):
         raise ValueError("%s: baseline must be 'left', 'both' or 'none', got %r" % (op, baseline))
-    jmax = _pos(max_jump_rad, "max_jump_rad", op)
+    jmax = _ITOH_LIMIT
     work = phi if ax == 1 else phi.T
     jumps = np.abs(np.diff(work, axis=1))
     worst = float(np.max(jumps))
