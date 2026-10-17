@@ -18,6 +18,7 @@
 <p style="margin:2px 0 2px 12px">(1) gap को <b>3–9 के बजाय 65 pixels तक</b> sweep किया जा सकता है (<code style="color:#22d3bf">_k</code> की ऊपरी सीमा पर lines नहीं जुड़तीं;</p>
 <p>96 px glyphs के लिए अक्षरों के बीच की दूरी 10–30 pixels होती है), (2) <b>2 दिशाओं का AND संयोजन</b> एक ही structuring element वाली closing से नहीं लिखा जा सकता। केवल एक दिशा के लिए <code style="color:#22d3bf">gclose</code> तेज़ है।</p>
 <p>यह greyscale images पर सीधे लागू होता है (अंदर कोई binarisation नहीं)। चूँकि यह grey-level closing है, यह <b>अंधेरे gaps भरने</b> की दिशा में काम करता है —— इसे अंधेरी पृष्ठभूमि पर चमकीले अक्षरों वाली images पर उपयोग करें। उल्टे मामले के लिए image को पहले <code style="color:#22d3bf">invert</code> से गुज़ारें। Border handling <code style="color:#22d3bf">scipy.ndimage</code> का default <code style="color:#22d3bf">reflect</code> है। खाली frame (constant image) <b>बिना बदले लौटाया जाता है</b> (भरने को कोई gap नहीं)। मान की सीमा इनपुट जैसी ही, [0,1] के भीतर रहती है, और प्रति-image normalisation नहीं है (<b>मान images के बीच तुलनीय हैं</b>)।</p>
+<p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.15、0.29、0.43、0.57、0.71、0.85 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

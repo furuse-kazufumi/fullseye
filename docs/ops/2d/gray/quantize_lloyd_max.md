@@ -51,6 +51,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 そのまま残る(代表値が動かない)。(3) 反復は局所解に落ちうるが、1-D では初期値を
 分位点に取れば実用上安定する。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.07、0.21、0.35、0.49、0.65(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

@@ -1329,6 +1329,35 @@ def find(query: str, limit: int = 20) -> list[dict]:
                      "category": "nary", "doc": doc,
                      "call": "apply([%s], name)" % ", ".join("x%d" % i for i in range(int(nop.arity))),
                      "score": score})
+    # ファサード層(``fullseye.<名前>``、op 表に載らない公開関数)。
+    # ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。
+    #   実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、
+    #   ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、
+    #   探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。
+    #   名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
+    taken = {h["op"] for h in hits}
+    for fname, fobj in _facade_callables():
+        if fname in taken:
+            continue
+        lines = (getattr(fobj, "__doc__", None) or "").strip().splitlines()
+        doc = lines[0].strip() if lines else ""
+        hay_name = fname.lower()
+        if hay_name == q:
+            score = 98
+        elif q in hay_name:
+            score = 58 + max(0, 20 - len(hay_name))
+        elif q in doc.lower():
+            score = 28
+        else:
+            fr = _stem_fraction(q_tokens, hay_name)
+            score = int(round(43 * fr)) if fr else 0
+            if not score:
+                fr = _stem_fraction(q_tokens, doc)
+                score = int(round(20 * fr)) if fr else 0
+            if not score:
+                continue
+        hits.append({"op": fname, "ledger": "facade", "module": getattr(fobj, "__module__", None),
+                     "category": "facade", "doc": doc, "call": "fullseye.%s(...)" % fname, "score": score})
     # ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
   #   doc = 説明・カテゴリの語)。doc をノートで埋めた(N119)途端、PoC の「op が無い」検査が説明文の語で当たって
   #   落ちた —— 件数で「在る」と言わず、name 以上の当たりだけを見るための鍵。GenSpark 第 33 報の exact もこれで読める。
@@ -1337,6 +1366,25 @@ def find(query: str, limit: int = 20) -> list[dict]:
         h["match"] = "exact" if sc >= 99 else "name" if sc >= 59 else "stem" if sc >= 40 else "doc"
     hits.sort(key=lambda h: (-h["score"], h["op"]))
     return hits[: max(int(limit), 1)]
+
+
+def _facade_callables():
+    """``fullseye.__all__`` のうち呼べるもの(モジュールを除く)を ``(名前, 物)`` で。読めなければ空。"""
+    import sys
+    import types
+    fs = sys.modules.get("fullseye")
+    if fs is None:
+        try:
+            fs = importlib.import_module("fullseye")
+        except Exception:                                # noqa: BLE001 - 検索だけ痩せる
+            return ()
+    out = []
+    for n in getattr(fs, "__all__", ()):
+        obj = getattr(fs, n, None)
+        if obj is None or isinstance(obj, types.ModuleType) or not callable(obj):
+            continue
+        out.append((n, obj))
+    return out
 
 
 def _nary_ops():

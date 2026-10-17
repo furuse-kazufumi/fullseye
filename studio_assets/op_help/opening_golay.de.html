@@ -16,6 +16,7 @@
 <p>Binäre Öffnung (opening) mit einem kreisförmigen Strukturelement (disk, Radius <code style="color:#22d3bf">_rad(a)</code>=1-4) -- Erosion gefolgt von Dilatation. Entfernt kleine Vorsprünge und isolierte Punkte. b wird nicht verwendet.</p>
 <p>Anders als HALCONs <code style="color:#22d3bf">opening_golay</code> (Operation, die mit einem Element aus dem Golay-Alphabet eine Öffnung (Opening) ausführt) approximiert diese Implementierung mit einem einfachen Kreisscheiben-Strukturelement statt mit einem bestimmten Element des Golay-Alphabets.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.33、0.67、0.99 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

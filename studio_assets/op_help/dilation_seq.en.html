@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sequential dilation using a fixed cross-shaped structuring element (4-connectivity), repeated 1-4 times depending on a. b is unused.</p>
 <p>Approximation corresponding to HALCON&#x27;s <code style="color:#22d3bf">dilation_seq</code> (an operation that sequentially dilates by repeatedly applying a structuring element). It is simplified in that it uses scipy&#x27;s default cross-shaped element instead of a circular or user-defined structuring element.</p>
+<p><b>Knobs (measured)</b>: <code style="color:#22d3bf">a</code> acts in <b>discrete steps</b>; it switches at a ≈ 0.33、0.67、0.99 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

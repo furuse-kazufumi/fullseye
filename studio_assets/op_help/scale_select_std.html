@@ -18,6 +18,7 @@
 <p><code style="color:#22d3bf">a</code> が試す窓の上限(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> のどこまでか)、<code style="color:#22d3bf">b</code> が信頼区間の倍率 <code style="color:#22d3bf">gamma</code>(1.0〜3.0)。<code style="color:#22d3bf">gamma</code> を大きくすると窓が伸びやすくなる(安定寄り)。</p>
 <p><b><code style="color:#22d3bf">local_std</code> との関係</b>: <code style="color:#22d3bf">local_std</code> は窓を固定する。平坦部の推定を締めたくて窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。<b>縁の鋭さを保ったまま平坦部の誤差だけ下げられる</b>のが取り柄で、代わりに計算量が窓の数だけ増える。</p>
 <p><b>適用条件</b>: (1) 「交わるか」の判定は誤差限界が正しいことに依存する —— 白色雑音でない(空間相関のある)雑音では窓が伸びすぎる。(2) <code style="color:#22d3bf">gamma</code> が小さすぎると常に最小窓が選ばれ、<code style="color:#22d3bf">local_std</code> の 3x3 と同じになる(効いていないときの見分け方)。</p>
+<p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.25、0.41、0.59、0.75、0.91(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

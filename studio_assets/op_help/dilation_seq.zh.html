@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用固定十字形结构元素（4 邻域），根据 a 重复 1〜4 次膨胀（dilation）的顺序膨胀。b 未使用。</p>
 <p>近似于 HALCON 的 <code style="color:#22d3bf">dilation_seq</code>（反复应用结构元素逐次膨胀的运算）。简化之处在于使用 scipy 默认的十字形元素，而不是圆形或用户自定义的结构元素。</p>
+<p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.33、0.67、0.99（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

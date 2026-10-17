@@ -215,8 +215,16 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o["tier"] in ("registry", "color")
                   and o["in_sort"] == "region" and o["out_sort"] == "region"]
-        globals()["_REGION_MODE"] = True
     names = list(dict.fromkeys(names))
+    # ★2026-10-18(外部レビュー 0.6.0 N220 の一次検証): 以前は ``--all-region`` が大域の ``_REGION_MODE`` を
+    #   立てるだけだったので、``--all-image --all-region`` を 1 回で回すと**画像の op まで二値の探針**で測り、
+    #   別々に回すと 2 回目の ``--json`` が 1 回目を上書きした。結果、op_knob.json は region -> region の
+    #   87 op を一度も載せておらず(461 / 567)、9-16 以降に足した image -> image の 19 op も未計測のまま
+    #   だった。二値の探針は **op ごと**に、入力の型(索引の in_sort)が region のときだけ使う。
+    region_in: set = set()
+    if names:
+        idx_all = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        region_in = {o["name"] for o in idx_all["ops"] if o.get("in_sort") == "region"}
     if a.limit:
         names = names[:a.limit]
     if not names:
@@ -224,6 +232,7 @@ def main() -> int:
 
     out, tally = [], {}
     for op in names:
+        globals()["_REGION_MODE"] = op in region_in
         try:
             r = measure(op)
         except Exception as e:                       # 測定器が落ちても全体は続ける

@@ -18,6 +18,7 @@
 <p><code style="color:#22d3bf">a</code> 是尝试的窗口上限（到 <code style="color:#22d3bf">3,5,7,9,11,13,15</code> 中的哪一个为止），<code style="color:#22d3bf">b</code> 是置信区间的倍率 <code style="color:#22d3bf">gamma</code>（1.0〜3.0）。<code style="color:#22d3bf">gamma</code> 越大窗口越容易扩展（偏向稳定）。</p>
 <p><b>与 <code style="color:#22d3bf">local_std</code> 的关系</b>：<code style="color:#22d3bf">local_std</code> 固定窗口。为了收紧平坦部的估计而扩大窗口会使边缘模糊，本 op 按位置解决这一取舍。<b>在保持边缘锐利的同时只降低平坦部的误差</b>是其优点，代价是计算量随窗口数增加。</p>
 <p><b>适用条件</b>：(1) “是否相交”的判定依赖于误差界正确 —— 对于非白噪声（有空间相关）的噪声，窗口会扩得过大。(2) <code style="color:#22d3bf">gamma</code> 太小时总是选中最小窗口，结果与 <code style="color:#22d3bf">local_std</code> 的 3x3 相同（这是判断其未起作用的方法）。</p>
+<p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.41、0.59、0.75、0.91（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
