@@ -7134,6 +7134,13 @@
     "ko": "포장의 RGB에서 색과 결로 작물과 잡초를 나누고, 잡초 피도를 미리 선언한 경계로 단계화(학습기 없음)",
     "de": "Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz)",
     "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)"
+   },
+   "good-sample-variation-model": {
+    "zh": "排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率)",
+    "tw": "排列良品來判斷「與平時不同」(良品統計變動模型,附宣告的誤檢率)",
+    "ko": "양품을 나란히 놓고 '평소와 다름'을 말한다 (양품 통계 변동 모델, 오검출률 선언)",
+    "de": "Abweichungen von ausgerichteten Gutteilen melden (pixelweises Variationsmodell mit erklärter Fehlalarmrate)",
+    "hi": "aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model)"
    }
   }
  },
