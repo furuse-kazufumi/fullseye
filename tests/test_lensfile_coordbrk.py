@@ -7,10 +7,15 @@
   テキストを読んだ系を、同じ光線で追い、全面の交点が 1e-12 mm で一致する(傾いた平板・二軸の折り返し)。
 * **Householder 鏡映** —— 45° などの折り返しの像 = 展開した系の像の鏡映(``p − 2((p − p0)·n)n``、鏡の法線 n は
   ``Rx(tilt)`` の z 列)。
+* **規約の一次資料** —— 傾きの合成順は形式の説明書(KA-01638)による: 順序 0 = 偏心のあと内因的な x-y-z
+  (``Rx·Ry·Rz``)、順序 1 = 内因的な z-y-x(``Rz·Ry·Rx``)のあと偏心。二軸の傾き (20°, 30°) で次の面の局所 z 軸が
+  どこへ向くかを閉形式で固定する門(optiland とは独立)。
 * **第 2 の実装(optiland、MIT)** —— ``coordbrk_recorded.json`` に、同じ .zmx を optiland が自分の読み手で読んで
   追った実光線の交点・方向余弦が記録してある(作り方は README)。CI には無いので記録値と照合し、手元に入って
-  いれば同じ数字をその場で計算し直す。optiland は**順序フラグ(PARM 6)を読まない**ので、順序 1 の戻りを含む
-  ``cb_tilted_plate`` の像面の位置だけは照合から外し、代わりに閉形式(戻りの後の座標系が元に戻る)で確かめる。
+  いれば同じ数字をその場で計算し直す。★optiland は多軸の傾きを ``Rz·Ry·Rx`` で合成し(説明書の順序 0 とは逆)、
+  **順序フラグ(PARM 6)も読まない**。そこで記録値との照合は optiland の合成順で組み直した写像で行い(単軸は
+  どちらでも同じ)、説明書の順序での値が optiland と食い違うことも門にする。順序 1 の戻りを含む ``cb_tilted_plate``
+  の像面の位置は照合から外し、閉形式(戻りの後の座標系が元に戻る)で確かめる。
 * **閉形式** —— 軸外し放物面は平行光を 1 点へ結ぶ(RMS が 0)、f = R/2。
 * **探針** —— オイラー角の順を入れ替える・傾きの符号を反転する・戻りを落とす、はどれも門を赤にする。
 """
@@ -51,8 +56,34 @@ def _model_to_constant(text, ns):
     return out
 
 
-def _vs_recorded(name, text=None):
-    """(最大の交点の差 [mm], 最大の方向余弦の差)—— 記録された光線を、記録された始点・方向のまま追って比べる。"""
+_DOC_BREAK_ELEMENTS = L._break_elements
+
+
+def _optiland_break_elements(parm, direction, t):
+    """optiland が読む COORDBRK の合成: 順序フラグを読まず、偏心のあと ``Rz·Ry·Rx``(説明書の順序 0 とは逆の合成)。"""
+    b, = _DOC_BREAK_ELEMENTS(parm, direction, t)
+    out = []
+    if b["decenter"] != (0.0, 0.0):
+        out.append({"type": "break", "decenter": b["decenter"], "tilt": (0.0, 0.0, 0.0), "order": "xyz", "t": 0.0})
+        out.append({"type": "break", "decenter": (0.0, 0.0), "tilt": b["tilt"], "order": "zyx", "t": t})
+    else:
+        out.append(dict(b, order="zyx"))
+    return out
+
+
+def _vs_recorded(name, text=None, override=None, documented=False):
+    """(最大の交点の差 [mm], 最大の方向余弦の差)—— 記録された光線を、記録された始点・方向のまま追って比べる。
+
+    既定は optiland の合成順(``_optiland_break_elements``)で読む。``documented=True`` なら説明書の順序で読む。"""
+    from unittest import mock
+    override = override or {}
+    base = _DOC_BREAK_ELEMENTS if documented else _optiland_break_elements
+    with mock.patch.object(L, "_break_elements", override.get("_break_elements", base)), \
+            mock.patch.object(L, "_mark_undos", override.get("_mark_undos", L._mark_undos)):
+        return _vs_recorded_inner(name, text)
+
+
+def _vs_recorded_inner(name, text=None):
     rec = REC[name]
     t = _model_to_constant(_text(name) if text is None else text, rec["n"])
     p = L.lens_file_read(t)
@@ -146,12 +177,52 @@ def _drop_undo(orig):
     ("tilt sign flipped", ("_break_elements", _flip_ax), "cb_plate_x_undo.zmx"),
     ("undo dropped", ("_mark_undos", _drop_undo), "cb_plate_x_undo.zmx"),
 ])
-def test_probe_wrong_conventions_turn_the_gate_red(monkeypatch, probe, patch, name):
+def test_probe_wrong_conventions_turn_the_gate_red(probe, patch, name):
     attr, make = patch
     assert _vs_recorded(name)[0] < 1e-9                                  # 本物は緑
-    monkeypatch.setattr(L, attr, make(getattr(L, attr)))
-    dp, dd = _vs_recorded(name)
+    base = _optiland_break_elements if attr == "_break_elements" else getattr(L, attr)
+    dp, dd = _vs_recorded(name, override={attr: make(base)})
     assert max(dp, dd) > 1e-6, (probe, name, dp, dd)
+
+
+@pytest.mark.parametrize("name", ["cb_fold_two_axis.zmx", "cb_three_mirrors.zmx"])
+def test_documented_multi_axis_order_differs_from_the_second_implementation(name):
+    # 説明書の順序(Rx·Ry·Rz)と optiland の合成(Rz·Ry·Rx)は、二軸以上の傾きで食い違う(単軸では一致)
+    dp, dd = _vs_recorded(name, documented=True)
+    assert max(dp, dd) > 1e-4
+    for single in ("cb_plate_x_undo.zmx", "cb_off_axis_parabola.zmx"):
+        a = _vs_recorded(single, documented=True)
+        b = _vs_recorded(single)
+        assert max(a) == pytest.approx(max(b), abs=1e-9) and a[0] < 1e-8
+
+
+# --------------------------------------------------------------------------- #
+# 1b. 一次資料(形式の説明書 KA-01638)の閉形式: 二軸の傾きで次の面の局所 z 軸
+# --------------------------------------------------------------------------- #
+def _two_axis_text(flag):
+    out = _text("cb_off_axis_parabola.zmx")
+    for k, v in ((2, 0.0), (3, 20.0), (4, 30.0), (6, flag)):
+        out, n = re.subn(r"  PARM %d \S+
+" % k, "  PARM %d %r
+" % (k, v), out, count=1)
+        assert n == 1
+    return out
+
+
+@pytest.mark.parametrize("flag,want", [
+    (0.0, (math.sin(math.radians(30)), -math.sin(math.radians(20)) * math.cos(math.radians(30)),
+           math.cos(math.radians(20)) * math.cos(math.radians(30)))),            # Rx(20)·Ry(30) の第 3 列
+    (1.0, (math.sin(math.radians(30)) * math.cos(math.radians(20)), -math.sin(math.radians(20)),
+           math.cos(math.radians(30)) * math.cos(math.radians(20)))),            # Rz·Ry(30)·Rx(20) の第 3 列
+])
+def test_two_axis_break_puts_the_next_local_z_where_the_documentation_says(flag, want):
+    text = _two_axis_text(flag)
+    assert "PARM 3 20.0" in text and "PARM 4 30.0" in text
+    p = L.lens_file_read(text)
+    lay = R3.noncoaxial_layout(p["system"])
+    mirror = [r for r in lay["surfaces"] if r["mirror"]][0]
+    assert np.abs(np.array(mirror["normal"]) - np.array(want)).max() < 1e-12
+    assert abs(want[0] - (0.5 if flag == 0.0 else 0.46985)) < 1e-5            # 説明書の数値(0.5, -0.2962, 0.8138) / (0.46985, -0.34202, 0.8138)
 
 
 # --------------------------------------------------------------------------- #
@@ -182,11 +253,9 @@ def _hand_tilted_plate():
     return R3.noncoaxial_system([
         {"R": 60.0, "t": 4.0, "n": BK, "ap": 4.0},
         {"R": 1.0 / -0.012, "t": 25.0, "n": 1.0},
-        {"type": "break", "decenter": (0.3, -0.2), "tilt": (0, 0, 0), "order": "xyz", "t": 0.0},     # 先に偏心
-        {"type": "break", "tilt": (22.0, -9.0, 4.0), "order": "zyx", "t": 0.0},                       # 次に Rz·Ry·Rx
+        {"type": "break", "decenter": (0.3, -0.2), "tilt": (22.0, -9.0, 4.0), "order": "xyz", "t": 0.0},  # 偏心 → Rx·Ry·Rz
         {"R": INF, "t": 4.0, "n": BK},
         {"R": INF, "t": 0.0, "n": 1.0},
-        {"type": "break", "undo": 3, "t": 0.0},
         {"type": "break", "undo": 2, "t": 30.0}], stop=0, wavelength_um=0.55)
 
 
@@ -201,17 +270,17 @@ def test_return_restores_the_frame_in_closed_form():
     lay = R3.noncoaxial_layout(p["system"])
     assert np.abs(np.array(lay["image"]["rotation"]) - np.eye(3)).max() < 1e-13
     # 原点 = (0, 0, 4 + 25 + 30) + R·(0, 0, 4):板の厚み 4 は傾いた軸に沿う(偏心は戻りで打ち消される)。
-    #   R = Rz(4°)·Ry(−9°)·Rx(22°) をここで独立に書く
+    #   R = Rx(22°)·Ry(−9°)·Rz(4°)(順序 0 = 内因的な x-y-z)をここで独立に書く
     def rot(ax, a):
         c, s_ = math.cos(math.radians(a)), math.sin(math.radians(a))
         return {"x": np.array([[1, 0, 0], [0, c, -s_], [0, s_, c]]), "y": np.array([[c, 0, s_], [0, 1, 0], [-s_, 0, c]]),
                 "z": np.array([[c, -s_, 0], [s_, c, 0], [0, 0, 1]])}[ax]
-    R = rot("z", 4.0) @ rot("y", -9.0) @ rot("x", 22.0)
+    R = rot("x", 22.0) @ rot("y", -9.0) @ rot("z", 4.0)
     want = np.array([0.0, 0.0, 59.0]) + R @ np.array([0.0, 0.0, 4.0])
     assert np.abs(np.array(lay["image"]["origin"]) - want).max() < 1e-12
-    # 戻りの 2 要素は tracer の undo 要素に写る
+    # 戻り(順序 1・全パラメータ反転)は tracer の undo 要素に写る
     els = p["system"]["elements"]
-    assert [e.get("undo") for e in els if "undo" in e] == [3, 2]
+    assert [e.get("undo") for e in els if "undo" in e] == [2]
     # 戻りを落とすと元に戻らない(探針)
     broken = [e for e in els if "undo" not in e]
     lay2 = R3.noncoaxial_layout(R3.noncoaxial_system(broken, stop=p["system"]["stop_arg"], wavelength_um=0.55))
@@ -236,11 +305,10 @@ def _hand_two_axis_fold():
     return R3.noncoaxial_system([
         {"R": 60.0, "t": 5.0, "n": BK, "ap": 4.0},
         {"R": INF, "t": 20.0, "n": 1.0},
-        {"type": "break", "decenter": (1.0, -0.5), "tilt": (0, 0, 0), "order": "xyz", "t": 0.0},
-        {"type": "break", "tilt": (30.0, 10.0, 5.0), "order": "zyx", "t": 0.0},
+        {"type": "break", "decenter": (1.0, -0.5), "tilt": (30.0, 10.0, 5.0), "order": "xyz", "t": 0.0},
         {"R": 250.0, "t": 35.0, "mirror": True},
-        {"type": "break", "decenter": (0.4, -0.3), "tilt": (0, 0, 0), "order": "xyz", "t": 0.0},
-        {"type": "break", "tilt": (-8.0, -12.0, -3.0), "order": "zyx", "t": 20.0}], stop=0, wavelength_um=0.55)
+        {"type": "break", "decenter": (0.4, -0.3), "tilt": (-8.0, -12.0, -3.0), "order": "xyz", "t": 20.0}],
+        stop=0, wavelength_um=0.55)
 
 
 def test_two_axis_fold_zmx_equals_the_hand_built_system():
@@ -258,10 +326,10 @@ def test_every_published_convention_is_visible_in_the_hand_built_gate():
         els = [dict(e) for e in ref]
         edit(els)
         return R3.noncoaxial_system(els, stop=p["system"]["stop_arg"], wavelength_um=0.55)
-    swap = variant(lambda e: [e[i].update(order="xyz") for i in range(len(e)) if e[i].get("order") == "zyx"])
+    swap = variant(lambda e: [e[i].update(order="zyx") for i in range(len(e)) if e[i].get("order") == "xyz"])
     unflip = variant(lambda e: [e[i].update(tilt=(e[i]["tilt"][0], -e[i]["tilt"][1], -e[i]["tilt"][2]))
-                                for i in range(len(e)) if e[i].get("type") == "break" and i > 4])
-    signed = variant(lambda e: e[3].update(tilt=(-30.0, 10.0, 5.0)))
+                                for i in range(len(e)) if e[i].get("type") == "break" and i > 3])
+    signed = variant(lambda e: e[2].update(tilt=(-30.0, 10.0, 5.0)))
     for bad in (swap, unflip, signed):
         assert _max_hit_difference(p["system"], bad) > 1e-4
 

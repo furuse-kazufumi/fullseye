@@ -63,18 +63,16 @@ A file with a coordinate break is read into ``raytrace3d.noncoaxial_system``
 instead of ``raytrace.lens_system``: ``lens_file_read()["system"]`` is then the
 non-coaxial table, ``["noncoaxial"]`` is True, ``lens_file_system`` returns a
 ``noncoaxial_system`` for the chosen field, and ``["surface_records"][j]`` lists
-the tracer records that surface ``j`` became. The convention (checked against a
-second implementation for order 0 and against a published design for the tilt
-sign; see ``tests/data/lensfile/README.md``):
+the tracer records that surface ``j`` became. The convention (from the format's
+documentation, KA-01638; the tilt sign also checked against a published design; see ``tests/data/lensfile/README.md``):
 
 * ``PARM 1, 2`` = decentre x, y; ``PARM 3, 4, 5`` = tilt about x, y, z in
   degrees (right-hand rule: a positive x tilt turns +z towards -y); ``PARM 6`` =
-  order. Order 0: decentre first, then tilt with ``Rz(az)·Ry(ay)·Rx(ax)`` (x
-  first, about fixed axes). Any other value: tilt first with ``Rx·Ry·Rz`` (z
-  first), then decentre along the tilted axes. ``DISZ`` is the thickness after
-  the break along the new z axis. The tracer's two break orders coincide with
-  the format's only for a single-axis tilt or no decentre; a decentred multi-axis
-  tilt is therefore written as two tracer breaks (decentre, tilt).
+  order. Order 0: decentre first, then intrinsic rotations x-y-z, matrix
+  ``Rx(ax)·Ry(ay)·Rz(az)`` (the format's documentation, KA-01638). Any other
+  value: intrinsic z-y-x, ``Rz·Ry·Rx``, then decentre along the tilted axes.
+  ``DISZ`` is the thickness after the break along the new z axis. These are
+  exactly the tracer's ``"xyz"`` and ``"zyx"`` breaks.
 * A file keeps one frame through a mirror and uses negative thicknesses after
   it; the tracer flips its frame at every reflection. The importer converts
   (``dy -> -dy``, ``ay -> -ay``, ``az -> -az`` after an odd number of mirrors,
@@ -910,41 +908,28 @@ def _z(v):
 
 
 def _break_elements(parm, direction, t):
-    """One COORDBRK surface (``PARM 1..6``) -> the ``raytrace3d`` break element(s), 1 or 2 dicts.
+    """One COORDBRK surface (``PARM 1..6``) -> one ``raytrace3d`` break element.
 
-    Format convention (checked against a second implementation for order 0 and against a published design
-    for the tilt sign): the break decentres by ``(PARM 1, PARM 2)`` and tilts by ``PARM 3, 4, 5`` degrees about
-    x, y, z with the right-hand rule. Order flag ``PARM 6 = 0``: decentre first, then tilt with the matrix
-    ``Rz(az)·Ry(ay)·Rx(ax)`` (x first, about fixed axes); a non-zero flag: tilt first with ``Rx·Ry·Rz`` (z first),
-    then decentre along the tilted axes. ``t`` is the thickness after the break along the new z.
+    Format convention (the format's documentation, KA-01638; the tilt sign also checked against a published
+    design): the break decentres by ``(PARM 1, PARM 2)`` and tilts by ``PARM 3, 4, 5`` degrees about x, y, z with
+    the right-hand rule. Order flag ``PARM 6 = 0``: decentre first, then intrinsic rotations x-y-z, i.e. the matrix
+    ``Rx(ax)·Ry(ay)·Rz(az)`` (the tracer's ``"xyz"`` break); a non-zero flag: intrinsic z-y-x, ``Rz·Ry·Rx``, then
+    decentre along the tilted axes (the tracer's ``"zyx"``). ``t`` is the thickness after the break along the
+    new z.
 
     ``raytrace3d`` flips its local frame at every reflection (a rotation of 180° about x), a file keeps its frame
     and uses negative thicknesses instead. With ``direction = -1`` (after an odd number of mirrors) the break is
     therefore conjugated by that flip: ``dy -> -dy``, ``ay -> -ay``, ``az -> -az`` (``dx`` and ``ax`` are
-    unchanged). The tracer's ``"xyz"`` break is *decentre, then Rx·Ry·Rz* and ``"zyx"`` is *Rz·Ry·Rx, then
-    decentre*; the two orders of the format coincide with them only for a single-axis tilt or no decentre, so a
-    decentred multi-axis tilt becomes two breaks (decentre, tilt).
+    unchanged).
     """
     def g(i):
         return float(parm.get(i, 0.0))
     d = (_z(g(1)), _z(direction * g(2)))
     a = (_z(g(3)), _z(direction * g(4)), _z(direction * g(5)))
     order1 = g(6) != 0.0
-    d_zero = d[0] == 0.0 and d[1] == 0.0
-    nz = sum(1 for v in a if v != 0.0)
-    zero3 = (0.0, 0.0, 0.0)
-
-    def brk(dd, aa, od, tt):
-        return {"type": "break", "decenter": dd, "tilt": aa, "order": od, "t": tt}
-    if d_zero:
-        return [brk(d, a, "xyz" if order1 else "zyx", t)]
-    if nz == 0:
-        return [brk(d, a, "xyz", t)]
-    if nz == 1:
-        return [brk(d, a, "zyx" if order1 else "xyz", t)]
-    if not order1:
-        return [brk(d, zero3, "xyz", 0.0), brk((0.0, 0.0), a, "zyx", t)]
-    return [brk((0.0, 0.0), a, "xyz", 0.0), brk(d, zero3, "xyz", t)]
+    # flag 0 = decentre, then intrinsic x-y-z (Rx·Ry·Rz) = the tracer's "xyz"; flag 1 = intrinsic z-y-x (Rz·Ry·Rx),
+    # then decentre along the tilted axes = the tracer's "zyx"
+    return [{"type": "break", "decenter": d, "tilt": a, "order": "zyx" if order1 else "xyz", "t": t}]
 
 
 def _is_undo_of(b, c, tol=1e-12):
@@ -1335,34 +1320,12 @@ def _glass_from_medium(med, op, where):
     raise ValueError("%s: %s: medium %r cannot be written as a GLAS record" % (op, where, med))
 
 
-def _euler_xyz(B):
-    """B = Rx(a)·Ry(b)·Rz(c) -> (a, b, c) in degrees (the tracer's ``"xyz"`` break matrix)."""
-    sb = max(-1.0, min(1.0, float(B[0, 2])))
-    a = math.atan2(-B[1, 2], B[2, 2])
-    b = math.asin(sb)
-    c = math.atan2(-B[0, 1], B[0, 0])
-    return (math.degrees(a), math.degrees(b), math.degrees(c))
-
-
 def _file_breaks(b, direction):
     """A tracer break -> a list of ``(decenter, tilt, order_flag)`` file coordinate breaks (the inverse of
     :func:`_break_elements`; *direction* is the file's side of the reflection flip)."""
     d = (_z(b["decenter"][0]), _z(direction * b["decenter"][1]))
     a = (_z(b["tilt"][0]), _z(direction * b["tilt"][1]), _z(direction * b["tilt"][2]))
-    d_zero = d[0] == 0.0 and d[1] == 0.0
-    nz = sum(1 for v in a if v != 0.0)
-    zero3 = (0.0, 0.0, 0.0)
-    if b["order"] == "xyz":                      # decentre, then Rx·Ry·Rz
-        if d_zero:
-            return [((0.0, 0.0), a, 0 if nz <= 1 else 1)]
-        if nz <= 1:
-            return [(d, a, 0)]
-        return [(d, zero3, 0), ((0.0, 0.0), a, 1)]
-    if d_zero:                                   # Rz·Ry·Rx, then decentre
-        return [((0.0, 0.0), a, 0)]
-    if nz <= 1:
-        return [(d, a, 1)]
-    return [((0.0, 0.0), a, 0), (d, zero3, 1)]
+    return [(d, a, 0 if b["order"] == "xyz" else 1)]
 
 
 def _surfaces_from_nc(system, template, op):
@@ -1433,7 +1396,7 @@ def _surfaces_from_nc(system, template, op):
                 if e[2] < -1e-9:
                     raise ValueError("%s: %s: the return would need a negative thickness (%.6g mm); lengthen the gap "
                                      "after it" % (op, where, e[2]))
-                a = _euler_xyz(Fc.T @ Ft)
+                a = R3._euler_zyx(Fc.T @ Ft)
                 sf = blank("COORDBRK")
                 sf["parm"] = {1: _z(e[0]), 2: _z(pre * e[1]), 3: _z(a[0]), 4: _z(pre * a[1]), 5: _z(pre * a[2]),
                               6: 1.0}
@@ -1586,8 +1549,8 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
     on the line; a custom Sellmeier medium without a catalogue name is refused
     (a reader could not resolve it). *system* may also be a
     ``raytrace3d.noncoaxial_system`` (the prescription is then optional): its break
-    and return elements become ``COORDBRK`` surfaces (a decentred multi-axis tilt
-    becomes two), an entrance-pupil diameter is recomputed from the stop radius.
+    and return elements become ``COORDBRK`` surfaces (order flag 0 / 1 for the
+    tracer's "xyz" / "zyx" breaks), an entrance-pupil diameter is recomputed from the stop radius.
     Refused: a beamsplitter surface, a per-surface decenter / tilt (put a break
     around it), a tilted image or object plane, a return across an odd number of
     reflections or one that would need a negative thickness. A coaxial
