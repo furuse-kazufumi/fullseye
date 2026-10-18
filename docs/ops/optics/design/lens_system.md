@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, poc_chromatic_confocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology]
+examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_chromatic_confocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -29,7 +29,20 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   ``k`` conic (default 0), ``ap`` semi-aperture in mm (default ``None`` =
   unlimited), ``mirror`` bool, ``decenter`` ``(dx, dy)`` mm, ``tilt``
   ``(ax, ay)`` degrees about x and y, ``asph`` even aspheric coefficients
-  ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic).
+  ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic), ``f`` the
+  focal length (mm, negative = diverging) of an **ideal paraxial lens**.
+* An ideal lens surface (``{"f": 50.0, "t": …}``) has zero thickness, no
+  shape and no glass (``R`` is flat and ``n`` is the medium it sits in; both
+  may be left out). It turns every ray by the thin-lens law exactly,
+  ``tan θ' = tan θ − h/f`` per transverse axis (h = the ray height), so a
+  collimated beam crosses the axis at ``f`` and a point object images at
+  the Gaussian conjugate with ``m = −s'/s``. Its optical path is the
+  stigmatic one (``f − √(h² + f²)`` for a collimated input, which is the
+  quadratic phase ``−h²/(2f)`` at small ``h``; a first surface with a finite
+  object uses that object and its Gaussian image instead), so spot, OPD and
+  PSF analyses of an aberration-free lens read zero aberration. It adds no
+  Seidel terms and no dispersion, takes no mirror / conic / asph, and the
+  non-coaxial ``raytrace3d`` does not read it.
 * *stop*: index of the aperture-stop surface (default: the first surface).
   The stop's ``ap`` is the stop radius (required unless every surface has
   one, in which case the smallest is used).
@@ -72,6 +85,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
+- [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
 - [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`

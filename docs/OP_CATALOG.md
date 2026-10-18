@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(391 例)
+### 2-D 画像/信号/幾何(392 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -424,6 +424,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
+- **理想レンズ面と、PSF から読む設計の指標(囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF)** — 理想レンズ(f)の焦点とガウスの結像公式、Airy の囲みエネルギー 83.8 %、円形瞳の MTF の閉形式との一致を確かめ、絞った単レンズの 8 度の視野で子午/球欠 MTF が割れることを見る。 `py -3.11 examples/optical_design_metrics.py`
 - **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
 - **実硝材で色収差を見て、減衰最小二乗でレンズを最適化する(lensopt)** — glass_catalog(Sellmeier)→ chromatic_shift で singlet/doublet の F-C 焦点移動、bend_singlet の Coddington 形状因子を optimize_lens が等凸から再発見、円錐 k=-n² と非球面 A4..A8 で無収差化、merit_function を 3 視野 × 3 波長で評価。 `py -3.11 examples/lens_optimize_demo.py`
 - **検査照明を設計する(illumdesign)— リング/ドーム/同軸/バックライトの照度と欠陥コントラスト** — light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。 `py -3.11 examples/illumination_design_demo.py`
@@ -732,9 +733,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3360 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3365 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 338 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 343 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -2445,7 +2446,7 @@ _計 3360 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(338 ops / 37 categories)
+### optics(343 ops / 37 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2487,16 +2488,16 @@ _計 3360 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
 - `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_material_optical_library`, `poc_optics_drawings`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
-- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
+- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
 - `opd_samples` `table → table` — OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``. · 例: `poc_noncoaxial_optics`
-- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
+- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
 - `ray_bundle` `table → table` — Trace a pupil-filling bundle at one field; returns the raw trace plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised coordinates and ``opl0`` (start-of-ray optical path offsets). · 例: `poc_noncoaxial_optics`
 - `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
 - `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`
 - `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
 - `spot_diagram` `table → pairs` — Transverse ray intersections on the image plane for one field point. · 例: `lens_design_demo`
-- `spot_stats` `table → table` — RMS / geometric spot radius (mm) and centroid for one field point (``table``). · 例: `lens_design_demo`, `lens_optimize_demo`
+- `spot_stats` `table → table` — RMS / geometric spot radius (mm) and centroid for one field point (``table``). · 例: `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`
 - `thick_lens` `入力なし → table` — Closed-form thick lens in air: EFL, back/front focal lengths, principal points. · 例: `lens_design_demo`, `poc_material_optical_library`
 - `tolerance_analysis` `table → table` — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``). · 例: `lens_design_demo`, `poc_optics_drawings`
 - `wavefront_from_opd` `table → table` — OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``). · 例: `lens_design_demo`
@@ -2562,21 +2563,26 @@ _計 3360 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `solid_angle_render` `normalmap × table → image2d` — Image of a normal map under a cone light through a lens of NA *view_na* (``image2d``). · 例: `poc_illumination_cone_vs_na`
 - `solid_angle_sweep` `入力なし → pairs` — Contrast of a facet against flat ground versus the illumination half-angle (``pairs``). · 例: `poc_illumination_cone_vs_na`
 
-#### optics / imaging(7)
+#### optics / imaging(11)
 - `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
+- `encircled_energy` `image2d → pairs` — Encircled energy of a point-spread function: the fraction of the energy inside a circle of radius r. · 例: `optical_design_metrics`
+- `energy_radii` `image2d → table` — The radius that holds a given fraction of a point-spread function's energy (``table``). · 例: `optical_design_metrics`
+- `ensquared_energy` `image2d → pairs` — Ensquared energy of a point-spread function: the fraction of the energy inside a square of half-width w. · 例: `optical_design_metrics`
 - `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
 - `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_pixel_shift`, `poc_veiling_glare`
+- `mtf_tangential_sagittal` `image2d → table` — Tangential and sagittal MTF from the 2-D transform of a point-spread function (``table``). · 例: `optical_design_metrics`
 - `psf_to_mtf` `image2d → pairs` — Radially-averaged MTF of a measured point-spread function. · 例: `optics_imaging`, `poc_veiling_glare`
 - `sfr_from_edge` `table → pairs` — ESF から SFR(エッジから測る MTF)を出す。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
 - `veiling_glare_index` `image2d × image2d × image2d → table` — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。 · 例: `poc_veiling_glare`
 - `wavefront_stats` `table → table` — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl. · 例: `optics_imaging`, `poc_zernike_aberrations`
 
-#### optics / imaging_sim(5)
+#### optics / imaging_sim(6)
 - `calibration_views` `table → table` — Synthetic camera-calibration views of a planar target through the designed lens (``table``). · 例: `lens_calibration_loop_demo`
 - `defect_dataset` `入力なし → table` — Synthetic defect images through a designed lens, with aligned masks (``table``). · 例: `lens_defect_dataset_demo`
 - `distortion_map` `table → table` — Real chief-ray height versus the paraxial one, and the remap grid (``table``). · 例: `lens_defect_dataset_demo`
-- `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`
+- `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`, `optical_design_metrics`
 - `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`
+- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `optical_design_metrics`
 
 #### optics / interface(4)
 - `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`

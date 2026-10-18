@@ -298,7 +298,7 @@ def _base_image_mm(system):
 
 
 def through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, wavelength_um=None,
-                      size=None, oversample=4, tangential_axis="y"):
+                      size=None, tangential_axis="y"):
     """Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``).
 
     For each image-plane shift in *defocus_mm* (mm, added to the system's image distance; positive moves
@@ -324,9 +324,13 @@ def through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, 
     zero crossing); a rotationally symmetric on-axis system gives identical tangential and sagittal
     curves, and an off-axis singlet separates them (astigmatism).
 
-    **Raises** ``ValueError``: a bad system, *field*, *wavelength_um*, *size* or *oversample* (see
-    :func:`psf_from_opd`); an empty or non-finite *frequency_cpmm* or *defocus_mm* (at most 64 each); a
-    frequency above the Nyquist limit of the PSF grid or negative; *tangential_axis* not ``'x'`` or ``'y'``.
+    The PSF grid is oversampled 2x, so its Nyquist limit equals the diffraction cutoff and the MTF at a
+    grid frequency does not depend on the oversampling (the transform of the periodic PSF is the pupil
+    autocorrelation).
+
+    **Raises** ``ValueError``: a bad system, *field*, *wavelength_um* or *size* (see :func:`psf_from_opd`);
+    an empty or non-finite *frequency_cpmm* or *defocus_mm* (at most 64 each); a negative frequency or one
+    above the diffraction cutoff of the PSF grid; *tangential_axis* not ``'x'`` or ``'y'``.
     """
     import optics
     op = "through_focus_mtf"
@@ -335,7 +339,7 @@ def through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, 
         raise ValueError("%s: tangential_axis must be 'x' or 'y', got %r" % (op, tangential_axis))
     field = system["field"] if field is None else _num(field, "field")
     wl = system["wavelength_um"] if wavelength_um is None else _num(wavelength_um, "wavelength_um", lo=1e-3)
-    oversample = _int(oversample, "oversample", 1, 64)
+    oversample = 2
     para = RT._para_at(system, wl)
     fno = _working_fno(para)
     cutoff = 1e3 / (wl * fno)
@@ -364,8 +368,8 @@ def through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, 
         fr, mr, fc, mc = optics._otf_slices(p, dx, op)
         nyq = 0.5e3 / dx
         if np.any(freqs > nyq * (1.0 + 1e-9)):
-            raise ValueError("%s: frequency %.6g cycles/mm is above the Nyquist limit %.6g of the PSF grid; "
-                             "raise oversample" % (op, float(freqs.max()), nyq))
+            raise ValueError("%s: frequency %.6g cycles/mm is above the Nyquist limit %.6g of the PSF grid (the "
+                             "diffraction cutoff is %.6g)" % (op, float(freqs.max()), nyq, cutoff))
         y, x = np.interp(freqs, fr, mr), np.interp(freqs, fc, mc)
         tan[i], sag[i] = (y, x) if tangential_axis == "y" else (x, y)
     score = 0.5 * (tan[:, 0] + sag[:, 0])

@@ -57,6 +57,12 @@ def main():
     print("第 1 暗環 r=%.3f um の囲みエネルギー %.2f %%(Airy 83.8 %%)  50/80/90 %% 半径 %s um"
           % (ring, 100 * e1, [round(v, 2) for v in rad["radius_um"]]))
     assert abs(e1 - 0.838) < 0.01
+    # 四角のエネルギー: 同じ半幅の円を含むので、いつも囲みエネルギー以上
+    sq = O.ensquared_energy(psf, pitch, samples=400, max_half_width_um=6 * lam * N)
+    w = 5.0
+    e_sq, e_ci = float(np.interp(w, sq[:, 0], sq[:, 1])), float(np.interp(w, ee[:, 0], ee[:, 1]))
+    print("半幅 %.1f um の四角に %.2f %% / 同じ半径の円に %.2f %%" % (w, 100 * e_sq, 100 * e_ci))
+    assert e_sq >= e_ci
 
     # (3) 子午/球欠 MTF: 回折限界の閉形式と、非点収差での分離
     fine = LI.psf_from_opd(lens, size=128, oversample=4)               # 点標本の細かい PSF(画素の開口を含めない)

@@ -30,7 +30,7 @@ import opsoptics  # noqa: E402
 import raytrace as RT  # noqa: E402
 
 INF = float("inf")
-SIM_OPS = ["psf_from_opd", "distortion_map", "render_through_lens", "defect_dataset", "calibration_views"]
+SIM_OPS = ["psf_from_opd", "through_focus_mtf", "distortion_map", "render_through_lens", "defect_dataset", "calibration_views"]
 
 
 def _small():
@@ -264,6 +264,7 @@ def test_imaging_sim_category_is_registered_with_the_declared_types():
         assert meta["doc"], name
     assert opsoptics.info("psf_from_opd")["in"] == ["table"] and opsoptics.info("psf_from_opd")["out"] == "image2d"
     assert opsoptics.info("distortion_map")["in"] == ["table"] and opsoptics.info("distortion_map")["out"] == "table"
+    assert opsoptics.info("through_focus_mtf")["in"] == ["table"] and opsoptics.info("through_focus_mtf")["out"] == "table"
     assert opsoptics.info("render_through_lens")["in"] == ["image2d", "table"]
     assert opsoptics.info("render_through_lens")["out"] == "image2d"
     assert opsoptics.info("defect_dataset")["in"] == [] and opsoptics.info("defect_dataset")["out"] == "table"
@@ -276,6 +277,7 @@ def test_imaging_sim_ops_return_their_declared_type_and_reach_the_fuzzer():
     pb = RT.example_system("paraboloid")
     img = np.random.default_rng(0).random((16, 16))
     args = {"psf_from_opd": (pb,), "distortion_map": (pb,), "render_through_lens": (img, pb),
+            "through_focus_mtf": (pb, [20.0], [0.0]),
             "calibration_views": (pb, (64, 64), 5.5, (4, 3, 5.0)),
             "defect_dataset": (1, pb, (32, 32))}
     for name in SIM_OPS:
@@ -297,7 +299,7 @@ def test_imaging_sim_ops_return_their_declared_type_and_reach_the_fuzzer():
     assert seen == {True, False}
 
 
-@pytest.mark.parametrize("name", SIM_OPS[:3])
+@pytest.mark.parametrize("name", ["psf_from_opd", "through_focus_mtf", "distortion_map", "render_through_lens"])
 def test_table_consuming_ops_refuse_a_random_table_with_value_error(name):
     rng = np.random.default_rng(7)
     fn = opsoptics.get(name)

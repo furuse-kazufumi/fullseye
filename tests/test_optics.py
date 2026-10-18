@@ -853,6 +853,8 @@ def _ledger_args():
         "four_f_filter": (field, O.fourier_plane_filter(16, "identity")),
         "defocus_from_shift": (), "pupil_psf": (ap,), "pupil_blur": (psf, ap),
         "psf_to_mtf": (psf,), "mtf_diffraction": (),
+        "encircled_energy": (psf,), "ensquared_energy": (psf,), "energy_radii": (psf,),
+        "mtf_tangential_sagittal": (psf,),
         "wavefront_stats": ({(2, 0): 0.05},),
         "jones_element": (), "jones_apply": (O.jones_element("polarizer", 30.0),
                                              np.array([1.0 + 0j, 0.0 + 0j])),
@@ -903,7 +905,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: tem(仮想の透過電子顕微鏡、temsim)11 op を新しい族として追加(309 → 320)。
     # 2026-10-15: noncoaxial(非共軸の光学系、raytrace3d)13 op を新しい族として追加、drawing に noncoaxial_drawing、
     #   design に未登録だった raytrace の 4 関数(chief_ray / ray_bundle / opd_samples / with_wavelength)(320 → 338)。
-    assert len(opsoptics.OPSOPTICS) == 338
+    # 2026-10-18: 逐次光学設計の指標 5 op(imaging に encircled_energy / ensquared_energy / energy_radii /
+    #   mtf_tangential_sagittal、imaging_sim に through_focus_mtf)(338 → 343)。
+    assert len(opsoptics.OPSOPTICS) == 343
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
     assert len(opsoptics.list_ops("tem")) == 11
@@ -950,7 +954,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 27                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
+    assert len(from_optics) == 31                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
     #                                                   + 2 四f 光学プロセッサ (2026-09-26)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")

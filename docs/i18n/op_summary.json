@@ -30257,6 +30257,51 @@
    "ko": "같은 처방을 다른 파장에서 평가한 것(굴절률을 다시 구함, 기본은 F선).",
    "de": "Dieselbe Vorschrift bei einer anderen Wellenlänge (Brechzahlen neu bestimmt; Standard die F-Linie).",
    "hi": "वही prescription किसी अन्य तरंगदैर्घ्य पर (अपवर्तनांक दोबारा; डिफ़ॉल्ट F रेखा)।"
+  },
+  "optics/encircled_energy": {
+   "fp": "39c2d8477342",
+   "ja": "点像分布関数(PSF)の囲みエネルギー: 半径 r の円の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的环围能量:半径为 r 的圆内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的環圍能量:半徑為 r 的圓內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 포위 에너지: 반지름 r인 원 안에 들어오는 에너지의 비율.",
+   "de": "Eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Kreises vom Radius r.",
+   "hi": "point-spread function (PSF) की encircled energy: त्रिज्या r के वृत्त के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/ensquared_energy": {
+   "fp": "11b3425a0c3f",
+   "ja": "点像分布関数(PSF)の四角エネルギー: 半幅 w の正方形の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的方形能量:半宽为 w 的正方形内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的方形能量:半寬為 w 的正方形內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 정사각형 에너지: 반폭 w인 정사각형 안에 들어오는 에너지의 비율.",
+   "de": "Quadratisch eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Quadrats der Halbbreite w.",
+   "hi": "point-spread function (PSF) की ensquared energy: अर्ध-चौड़ाई w के वर्ग के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/energy_radii": {
+   "fp": "7ef6db3122a4",
+   "ja": "点像分布関数(PSF)のエネルギーのうち、指定した割合を含む半径(``table``)。",
+   "zh": "包含点扩散函数(PSF)指定能量比例的半径(``table``)。",
+   "tw": "包含點擴散函數(PSF)指定能量比例的半徑(``table``)。",
+   "ko": "점확산함수(PSF) 에너지의 지정한 비율을 포함하는 반지름(``table``).",
+   "de": "Der Radius, der einen gegebenen Anteil der Energie einer Punktbildfunktion (PSF) enthält (``table``).",
+   "hi": "वह त्रिज्या जिसमें point-spread function (PSF) की ऊर्जा का दिया गया अनुपात आता है (``table``)।"
+  },
+  "optics/mtf_tangential_sagittal": {
+   "fp": "c909005b1168",
+   "ja": "点像分布関数(PSF)の 2 次元変換から、子午(タンジェンシャル)と球欠(サジタル)の MTF を別々に出す(``table``)。",
+   "zh": "由点扩散函数(PSF)的二维变换分别给出子午(切向)与弧矢 MTF(``table``)。",
+   "tw": "由點擴散函數(PSF)的二維變換分別給出子午(切向)與弧矢 MTF(``table``)。",
+   "ko": "점확산함수(PSF)의 2차원 변환에서 자오(접선)와 구결(시상) MTF를 따로 구한다(``table``).",
+   "de": "Tangentiale und sagittale MTF aus der 2-D-Transformierten einer Punktbildfunktion (PSF) (``table``).",
+   "hi": "point-spread function (PSF) के 2-D transform से tangential और sagittal MTF अलग-अलग (``table``)।"
+  },
+  "optics/through_focus_mtf": {
+   "fp": "57757121d3ad",
+   "ja": "像面の位置を動かしたときの、指定した空間周波数の子午・球欠 MTF(``table``)。",
+   "zh": "像面位置变化时,指定空间频率下的子午与弧矢 MTF(``table``)。",
+   "tw": "像面位置變化時,指定空間頻率下的子午與弧矢 MTF(``table``)。",
+   "ko": "상면 위치를 움직였을 때 지정한 공간 주파수의 자오·구결 MTF(``table``).",
+   "de": "Tangentiale und sagittale MTF bei gewählten Ortsfrequenzen über einen Bereich von Bildebenenlagen (``table``).",
+   "hi": "image plane की स्थिति बदलने पर चुनी गई spatial frequencies पर tangential और sagittal MTF (``table``)।"
   }
  }
 }

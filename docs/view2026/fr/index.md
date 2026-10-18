@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Ce qu'il permet de faire
 
-74 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+75 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -112,6 +112,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - À partir de quelle taille un défaut est-il détecté (probabilité de détection POD et a90/95, MIL-HDBK-1823A): [explication](../../capabilities/probability-of-detection.md) _(ja)_ · exemples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - Détecter les rayures fines et mesurer leur largeur: [explication](../../capabilities/scratch-detection-and-width.md) _(ja)_ · exemples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - Mesurer, avec vérité terrain, de combien le bord brillant d'un SEM grossit les dimensions: [explication](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · exemples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- Indicateurs de conception optique séquentielle (surface de lentille idéale, énergie encerclée, FTM tangentielle et sagittale, FTM à travers le foyer): [explication](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · exemples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
 - Mesurer la forme de pièces noires brillantes et de verre par polarisation (reconstruction de forme à partir de la polarisation, ensemble d'ambiguïtés, estimation de l'indice de réfraction): [explication](../../capabilities/shape-from-polarization.md) _(ja)_ · exemples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Ajuster les coefficients d'un modèle physique à des images réelles (calibrage sim-to-real) — aucune valeur pour un coefficient que les images ne déterminent pas ; on renvoie à la place la combinaison déterminée et la raison: [explication](../../capabilities/sim-to-real-calibration.md) _(ja)_ · exemples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Mesurer des dimensions sur une image au niveau sous-pixel: [explication](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · exemples [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -181,7 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[Liste des 146 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 147 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

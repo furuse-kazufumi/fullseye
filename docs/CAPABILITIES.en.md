@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 74 capabilities**
+**Currently 75 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -52,6 +52,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
@@ -70,7 +71,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (27)
+## Measure (28)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -247,6 +248,18 @@ Render a ground-truth SEM image from a height field with `sem_render` (secondary
 Operators: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 Runnable: `poc_sem_wafer_defect_edge_bias`
+
+### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
+
+An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics. The ideal lens turns rays by the thin-lens law exactly with a stigmatic optical path, so an aberration-free lens reads zero OPD and an Airy PSF. `encircled_energy` / `ensquared_energy` give the energy-versus-radius curves, `energy_radii` the radii at chosen fractions, `mtf_tangential_sagittal` the two meridional slices of the 2-D transform, and `through_focus_mtf` the MTF at chosen frequencies across image-plane shifts. Gates: focus at f to 1e-12 mm, Gaussian conjugate and magnification, 83.8 % at the first Airy dark ring, the closed-form circular-pupil MTF, and Hopkins' defocus integral.
+
+Operators: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`
+
+Pipeline: [`lens_system`](ops/optics/design/lens_system.md) → [`psf_from_opd`](ops/optics/imaging_sim/psf_from_opd.md) → [`encircled_energy`](ops/optics/imaging/encircled_energy.md) → [`energy_radii`](ops/optics/imaging/energy_radii.md) → [`mtf_tangential_sagittal`](ops/optics/imaging/mtf_tangential_sagittal.md) → [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md)
+
+Alternatives: [`psf_to_mtf`](ops/optics/imaging/psf_to_mtf.md), [`mtf_diffraction`](ops/optics/imaging/mtf_diffraction.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`opd_map`](ops/optics/design/opd_map.md), [`wavefront_from_opd`](ops/optics/design/wavefront_from_opd.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+Runnable: `optical_design_metrics`
 
 ### [Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)](capabilities/shape-from-polarization.md)
 

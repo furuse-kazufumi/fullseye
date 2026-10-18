@@ -6433,6 +6433,14 @@
     "hi": "optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में)",
     "fr": "Dessins de systèmes optiques (coupes de lentilles, schémas d'implantation de systèmes d'imagerie et dessins de fabrication de lentilles simples en SVG / DXF)"
    },
+   "sequential-lens-design-metrics": {
+    "zh": "顺序光学设计的指标(理想透镜面、环围能量、子午与弧矢 MTF、离焦 MTF)",
+    "tw": "循序光學設計的指標(理想透鏡面、環圍能量、子午與弧矢 MTF、離焦 MTF)",
+    "ko": "순차 광학 설계의 지표(이상 렌즈면, 포위 에너지, 자오와 구결 MTF, 스루포커스 MTF)",
+    "de": "Kennzahlen des sequenziellen Linsenentwurfs (ideale Linsenfläche, eingeschlossene Energie, tangentiale und sagittale MTF, Through-Focus-MTF)",
+    "hi": "sequential lens design के metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
+    "fr": "Indicateurs de conception optique séquentielle (surface de lentille idéale, énergie encerclée, FTM tangentielle et sagittale, FTM à travers le foyer)"
+   },
    "illumination-cone-vs-na": {
     "zh": "用照明光锥与观察 NA 显现或隐藏镜面的微小倾斜(球冠的交集 → 倾斜的带 → 凹痕、划伤、喷砂面的不匀)",
     "tw": "用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻)",

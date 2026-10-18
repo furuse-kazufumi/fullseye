@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 74 项,每项都有说明页(用法与限制)和可运行的示例。
+共 75 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -112,6 +112,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 哪种尺寸的缺陷能被发现(检出概率 POD 与 a90/95,MIL-HDBK-1823A): [说明](../../capabilities/probability-of-detection.md) _(ja)_ · 示例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - 找出细微划痕并测量宽度: [说明](../../capabilities/scratch-detection-and-width.md) _(ja)_ · 示例 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - 测量 SEM 明亮边缘把尺寸放大了多少（带真值）: [说明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 示例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- 顺序光学设计的指标(理想透镜面、环围能量、子午与弧矢 MTF、离焦 MTF): [说明](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 示例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
 - 用偏振测量黑色光泽件与玻璃的形状(偏振形状恢复、模糊解集、折射率估计): [说明](../../capabilities/shape-from-polarization.md) _(ja)_ · 示例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 用实物图像拟合物理模型的系数(sim-to-real 标定)—— 图像无法确定的系数不给数值,而是返回能确定的组合与理由: [说明](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 示例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - 以亚像素精度从图像测量尺寸: [说明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 示例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -181,7 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 146 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 147 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

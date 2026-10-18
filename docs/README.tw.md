@@ -53,16 +53,16 @@
 
 ### 驗證階段
 
-74 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+75 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
 | `research-prototype` | 已實作,但測試或可執行的範例尚未齊全 | 0 |
-| `verified-synthetic` | 已用合成真值自動驗證 | 62 |
+| `verified-synthetic` | 已用合成真值自動驗證 | 63 |
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 12 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-391 個範例中,檢查實際執行的有 391 個。
+392 個範例中,檢查實際執行的有 392 個。
 
 ### 各版本的運算子數
 
@@ -135,18 +135,18 @@
 
 ## 尋找運算子
 
-共有 **3,360 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **66 篇族群指南**。依維度的入口:
+共有 **3,365 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **66 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 936/936、型別台帳 2403/2415、單行門面 `fullseye.<名稱>` 692/1444 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 936/936、型別台帳 2408/2420、單行門面 `fullseye.<名稱>` 697/1449 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3360 篇中，附有可執行範例的 **3357** 篇(3 篇沒有)，用法說明 120 字以上的 **3195** 篇(165 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3360 篇全有。
+**內容實測**: 3365 篇中，附有可執行範例的 **3362** 篇(3 篇沒有)，用法說明 120 字以上的 **3200** 篇(165 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3365 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
 | `2d` | 953 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
 | `3d` | 372 | [INDEX](ops/3d/INDEX.md) |
-| `optics` | 338 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 343 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 54 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -291,9 +291,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 270 篇
+## 文件地圖 — 共 271 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,360 篇運算子說明與 66 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,365 篇運算子說明與 66 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
@@ -433,7 +433,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(187)
+**Other**(188)
 
 | 文件 | 內容 |
 |---|---|
@@ -558,6 +558,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
+| [`capabilities/sequential-lens-design-metrics.md`](capabilities/sequential-lens-design-metrics.md) | id: sequential-lens-design-metrics |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
 | [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |

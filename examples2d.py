@@ -1176,6 +1176,10 @@ EXAMPLES = [
      "name": "光学 op(optics)で検査機を 1 台、紙の上で設計する",
      "summary": "倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を"
                 "要求分解能に対して合否判定する。"},
+    {"id": "optical_design_metrics", "task": "optics_sensing", "data": "synthetic",
+     "name": "理想レンズ面と、PSF から読む設計の指標(囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF)",
+     "summary": "理想レンズ(f)の焦点とガウスの結像公式、Airy の囲みエネルギー 83.8 %、円形瞳の MTF の閉形式との"
+                "一致を確かめ、絞った単レンズの 8 度の視野で子午/球欠 MTF が割れることを見る。"},
     {"id": "lens_design_demo", "task": "optics_sensing", "data": "synthetic",
      "name": "実光線設計 op(raytrace)で singlet と doublet を比べる",
      "summary": "処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・"

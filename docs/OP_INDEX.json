@@ -1,8 +1,8 @@
 {
- "n_ops": 3354,
+ "n_ops": 3359,
  "tiers": {
   "color": 12,
-  "ledger": 2401,
+  "ledger": 2406,
   "nary": 17,
   "registry": 924
  },
@@ -7757,6 +7757,32 @@
    ]
   },
   {
+   "name": "encircled_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "energy_radii",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "energy_to_photons",
    "halcon": "",
    "in_sort": "pairs",
@@ -7778,6 +7804,19 @@
    "tier": "ledger",
    "ledger": "opsprintpath",
    "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ensquared_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "image2d"
    ]
@@ -16763,6 +16802,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "mtf_tangential_sagittal",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "mu_from_stop_distance",
@@ -28350,6 +28402,19 @@
    "dim": "segmentation",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "through_focus_mtf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "imaging_sim",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
