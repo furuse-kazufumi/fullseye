@@ -19,3 +19,30 @@ and `optiland.fileio.load_zemax_file`, then recording first-order data, the
 third-order (Seidel) sums of ray-optics and real-ray image coordinates of
 optiland. optiland cannot evaluate a model glass with V_d = 0, so its entries
 for the constant-index files are NaN and are not used.
+
+## Coordinate-break designs (`cb_*.zmx`, `coordbrk_recorded.json`)
+
+Hand-written `.zmx` texts (Fullseye test designs, no third-party content) that exercise `COORDBRK` surfaces:
+
+| file | what it contains |
+|---|---|
+| `cb_tilted_plate.zmx` | singlet, then a decentred three-axis tilted plate and its exact return (order flag 1, `PPAR` pickups of the negated values) |
+| `cb_plate_x_undo.zmx` | collimated beam through an x-tilted plate; the return is the same angle negated (maps to the tracer's undo element) |
+| `cb_fold_two_axis.zmx` | singlet, a decentred two-axis fold mirror, another decentred multi-axis break after the mirror (negative thicknesses) |
+| `cb_off_axis_parabola.zmx` | paraboloid used 36 mm off its axis through a decentre (closed form: perfect point focus, EFL = f(1 + (h/2f)^2)) |
+| `cb_three_mirrors.zmx` | three mirrors with dummy planes, tilt pickups and a decentre after two and after three reflections |
+
+`coordbrk_recorded.json` holds optiland 0.6.3's (MIT) real-ray result for the same files: global intersection points and
+direction cosines per surface row for 8-12 rays each (several fields with both x and y components, four pupil points),
+and the index of every glass row at 0.55 um. Produced on 2026-10-19 in the separate virtual environment with
+
+```
+for each file: op = optiland.fileio.load_zemax_file(path)
+               op.trace_generic(Hx, Hy, Px, Py, 0.55); read op.surface_group.x/y/z/L/M/N
+```
+
+(H = field / largest field radius, as optiland normalises it). optiland merges each coordinate break into the next
+surface, so its rows are the object, the non-break surfaces in file order and the image. Its reader **does not use the
+order flag (`PARM 6`)**: for `cb_tilted_plate.zmx` (order-1 return) the image-plane position is therefore not compared
+(the closed-form check "the return restores the frame" replaces it). Model glasses are replaced by optiland's own index
+at 0.55 um in the comparison (the two dispersion models differ in the fifth digit).

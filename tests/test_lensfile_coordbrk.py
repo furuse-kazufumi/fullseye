@@ -100,21 +100,21 @@ def test_recorded_gate_covers_what_it_claims():
     assert any(abs(f[0]) > 0 and abs(f[1]) > 0 for f in ({tuple(r["field"]) for r in REC["cb_tilted_plate.zmx"]["rays"]}))
 
 
-@pytest.mark.parametrize("name", [None] + FILES[:1])
+@pytest.mark.parametrize("name", FILES)
 def test_live_second_implementation_if_installed(name):
+    """optiland が入っていれば、記録と同じ数字をその場で計算し直して記録値と突き合わせる(CI には無いので skip)。"""
     pytest.importorskip("optiland")
     import warnings
     from optiland.fileio import load_zemax_file
     warnings.simplefilter("ignore")
-    fn = "cb_fold_two_axis.zmx"
-    op = load_zemax_file(os.path.join(DATA, fn))
-    ray = REC[fn]["rays"][5]
-    fx, fy = ray["field"]
-    rmax = max(math.hypot(*r["field"]) for r in REC[fn]["rays"])
-    op.trace_generic(fx / rmax, fy / rmax, ray["pupil"][0], ray["pupil"][1], 0.55)
-    sg = op.surface_group
-    assert np.abs(np.ravel(sg.x[:, 0]) - np.array(ray["x"])).max() < 1e-12
-    assert np.abs(np.ravel(sg.z[:, 0]) - np.array(ray["z"])).max() < 1e-12
+    op = load_zemax_file(os.path.join(DATA, name))
+    rmax = max(math.hypot(*r["field"]) for r in REC[name]["rays"])
+    for ray in REC[name]["rays"]:
+        fx, fy = ray["field"]
+        op.trace_generic(fx / rmax, fy / rmax, ray["pupil"][0], ray["pupil"][1], 0.55)
+        sg = op.surface_group
+        for k, a in (("x", sg.x), ("y", sg.y), ("z", sg.z), ("L", sg.L), ("M", sg.M), ("N", sg.N)):
+            assert np.abs(np.ravel(a[:, 0]) - np.array(ray[k])).max() < 1e-12
 
 
 def _swap_order(orig):
@@ -450,7 +450,7 @@ def test_report_and_refusals_for_coordinate_breaks():
     with pytest.raises(ValueError, match="field type"):
         L.lens_file_read(base.replace("FTYP 0 0", "FTYP 2 0"))
     with pytest.raises(ValueError, match="outside 1..6"):
-        L.lens_file_read(base.replace("  PARM 1 0\n", "  PARM 1 0\n  PARM 7 1\n", 1))
+        L.lens_file_read(base.replace("  PARM 1 0.0\n", "  PARM 1 0.0\n  PARM 7 1\n", 1))
     # SCBD tilts stay refused even in a file with coordinate breaks
     with pytest.raises(ValueError, match="SCBD"):
         L.lens_file_read(base.replace("SURF 3\n", "SURF 3\n  SCBD 1 0 0 0 0 90 0 0\n", 1))
