@@ -444,7 +444,7 @@ def test_report_and_refusals_for_coordinate_breaks():
     with pytest.raises(ValueError, match="no curvature"):
         L.lens_file_read(base.replace("  PARM 6 0.0\n", "  PARM 6 0.0\n  CURV 0.01 0 0 0 0 \"\"\n", 1))
     with pytest.raises(ValueError, match="runs against the light"):
-        L.lens_file_read(base.replace("DISZ 40\n", "DISZ -40\n", 1))
+        L.lens_file_read(base.replace("DISZ 40.0\n", "DISZ -40.0\n", 1))
     with pytest.raises(ValueError, match="object-space NA"):
         L.lens_file_read(base.replace("ENPD 12", "OBNA 0.1 0"))
     with pytest.raises(ValueError, match="field type"):
