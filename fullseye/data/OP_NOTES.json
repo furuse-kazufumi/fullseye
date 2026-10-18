@@ -14778,6 +14778,16 @@
     "path": "docs/ops/blob/select/blob_select_largest.md"
    }
   ],
+  "blob_count_interval": [
+   {
+    "op": "blob_count_interval",
+    "dim": "blob",
+    "category": "split",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/blob/split/blob_count_interval.md"
+   }
+  ],
   "blob_distance": [
    {
     "op": "blob_distance",

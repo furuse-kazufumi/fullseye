@@ -27918,6 +27918,15 @@
    "de": "Legt die Objekte farblich unterschieden über das Originalbild und gibt ein float-RGB der Form ``(H, W, 3)`` zurück.",
    "hi": "मूल image पर object को अलग-अलग रंगों में overlay करके ``(H, W, 3)`` का float RGB लौटाता है।"
   },
+  "blob/blob_count_interval": {
+   "fp": "9f97cd894c3e",
+   "en": "Counts overlapping objects. **When the count cannot be determined, returns an interval instead of a number** (fail-closed).",
+   "zh": "对重叠的物体计数。**无法确定时返回区间而不是个数**(fail-closed)。",
+   "tw": "對重疊的物體計數。**無法確定時回傳區間而不是個數**(fail-closed)。",
+   "ko": "겹친 물체를 센다. **정해지지 않을 때는 개수가 아니라 구간을 반환한다**(fail-closed).",
+   "de": "Zählt überlappende Objekte. **Ist die Anzahl nicht bestimmbar, wird statt einer Zahl ein Intervall zurückgegeben** (fail-closed).",
+   "hi": "overlap हुए objects गिनता है। **जब तय न हो सके, तो संख्या के बजाय interval लौटाता है** (fail-closed)।"
+  },
   "dem/dem_slope": {
    "fp": "70b34f800b85",
    "en": "Slope angle. ``units`` is ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",

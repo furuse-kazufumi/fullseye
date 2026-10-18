@@ -108,8 +108,8 @@
    "category": "見つける",
    "note": "docs/capabilities/blob-and-region.md",
    "status": "validated-public-real-data",
-   "ops_total": 4,
-   "ops_named_in_tests": 3,
+   "ops_total": 5,
+   "ops_named_in_tests": 4,
    "ops_not_named_in_tests": [
     "watersheds"
    ],
@@ -131,6 +131,13 @@
     },
     {
      "id": "poc_real_coin_metrology",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_dense_bubble_count",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,

@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>重なった物体を数える。<b>決まらないときは個数ではなく区間を返す</b>(fail-closed)。</p>
+<p>融合した塊の中の物体は、距離変換の山として現れる。2 つの円が重なるとくびれができ、くびれが浅くなるほど(山の<b>突出度</b>が小さいほど)「2 個か 1 個か」が決まらなくなる。<code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> は h を 1 つ選んで <b>必ず 1 つの個数を返す</b> —— 重なりが深くて決まらない所でも、もっともらしい数が出る。この op は山ごとに突出度を測り、閾値の帯に落ちた山を「あいまい」として個数を <code style="color:#22d3bf">lo</code> 〜 <code style="color:#22d3bf">hi</code> の区間で返す。区間の幅が 0 のときだけ <code style="color:#22d3bf">count</code> を返す。</p>
+<p>山の判定(突出度 p、高さ h、相対突出度 p/h。h は内接円の半径にあたる):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> かつ <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → 確かな山(数える)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> かつ <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → あいまい(lo には数えず hi には数える)</p>
+<p style="margin:2px 0 2px 12px">• それ以外 → 雑音(格子の量子化で出る山。楕円で実測 0.6 px 未満)</p>
+<p><b>相対突出度を使う理由</b>: 等しい半径 r の 2 円が重なり率 o(中心間 d = 2r(1 − o))で重なると、くびれの半幅は w = sqrt(r² − (d/2)²) で、p/h = 1 − sqrt(1 − (1 − o)²) —— <b>半径によらない</b>。絶対値の h を選ぶと、大きい泡と小さい泡が混ざった画像で片方にしか合わない(<code style="color:#22d3bf">poc_cell_counting</code> が記録した穴と同じ形)。既定の帯 0.05〜0.15 は重なり率 0.69〜0.47 に当たる。</p>
+<p><code style="color:#22d3bf">round_tol</code> を与えると、<b>山では説明できない面積</b>も拒否する。重なり率が 0.7 を超えると、くびれが格子の量子化に埋もれて山が 1 つしか残らない(2 個が 1 個に見える)。そこで成分の面積を、確かな山とあいまいな山の内接円の面積の和 Σπh² と比べ、面積 &gt; (1 + round_tol + 1/h_min) · Σπh² なら上限を開く(<code style="color:#22d3bf">hi = None</code>)。1/h_min は格子の量子化の分(半径 8 px 以上の円板で比 1.09 以下、2026-10-18 実測)。<code style="color:#22d3bf">round_tol</code> は<b>許す縦横比 − 1</b> にあたる(縦横比 a/b の楕円は面積比 a/b)。泡のように丸い物体なら 0.1、細胞のようにいびつなら 0.3 程度。<code style="color:#22d3bf">None</code> は形を仮定しない(深い重なりは見逃す)。</p>
+<p><b>区間の上限は保証ではない</b>: <code style="color:#22d3bf">hi</code> は山として見えた物体の数で、山を残さずに埋もれた物体(大きい泡に食い込んだ小さい泡など)は <code style="color:#22d3bf">hi</code> にも入らない。面積の検査がそれを拾えたときだけ上限を開く。<code style="color:#22d3bf">determined</code> が False のときは「数を言えない」ことだけが確かで、区間は目安(実際の泡の形の半合成で、決まらないと答えた塊の真値が <code style="color:#22d3bf">hi</code> を 1 個上回る例が出た。<code style="color:#22d3bf">poc_dense_bubble_count</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D の前景(<code style="color:#22d3bf">&gt; 0</code> が前景)。</p>
+<p>rel_lo, rel_hi : float</p>
+<p>相対突出度の帯。<code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>。</p>
+<p>min_prominence : float</p>
+<p>突出度の絶対の床 [px]。<code style="color:#22d3bf">&gt;= 0</code>。距離変換の量子化の山を落とす。</p>
+<p>round_tol : float or None</p>
+<p>面積の検査の許し(上を参照)。<code style="color:#22d3bf">None</code> で検査しない。</p>
+<p>connectivity : {4, 8}</p>
+<p>成分と水位の連結の取り方。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code>(区間の幅が 0 なら int、そうでなければ <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">lo</code>、</p>
+<p><code style="color:#22d3bf">hi</code>(上限が開いていれば <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">determined</code>、<code style="color:#22d3bf">reason</code>、</p>
+<p><code style="color:#22d3bf">labels</code>(確かな山だけを種にした分割、int32、内接円の冪図)、<code style="color:#22d3bf">labels_hi</code></p>
+<p>(あいまいな山も種にした分割)、<code style="color:#22d3bf">components</code>(成分ごとの <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code>(開いていれば -1)/ <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>)、</p>
+<p><code style="color:#22d3bf">peaks</code>(山ごとの <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code>(0 雑音・1 あいまい・2 確か))、</p>
+<p><code style="color:#22d3bf">params</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # 重なり率 0.1: 2 個に決まる</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # 重なり率 0.6: 決まらない</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>来歴(公開文献のみ): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— パーシステンス / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— 分水嶺 / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— 冪図(分割)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

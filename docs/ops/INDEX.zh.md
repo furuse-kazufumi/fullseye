@@ -91,8 +91,8 @@
   - [`descriptor`](./shape2d/INDEX.md#descriptor-10) 10 · [`morph`](./shape2d/INDEX.md#morph-6) 6
 - [PIV 算子](./piv/INDEX.md) —— 29 个算子 / 7 个类别
   - [`assess`](./piv/INDEX.md#assess-4) 4 · [`estimate`](./piv/INDEX.md#estimate-4) 4 · [`field`](./piv/INDEX.md#field-8) 8 · [`solid`](./piv/INDEX.md#solid-3) 3 · [`synth`](./piv/INDEX.md#synth-3) 3 · [`validate`](./piv/INDEX.md#validate-2) 2 · [`visualise`](./piv/INDEX.md#visualise-5) 5
-- [BLOB 算子](./blob/INDEX.md) —— 10 个算子 / 5 个类别
-  - [`connect`](./blob/INDEX.md#connect-1) 1 · [`extract`](./blob/INDEX.md#extract-3) 3 · [`measure`](./blob/INDEX.md#measure-1) 1 · [`select`](./blob/INDEX.md#select-2) 2 · [`split`](./blob/INDEX.md#split-3) 3
+- [BLOB 算子](./blob/INDEX.md) —— 11 个算子 / 5 个类别
+  - [`connect`](./blob/INDEX.md#connect-1) 1 · [`extract`](./blob/INDEX.md#extract-3) 3 · [`measure`](./blob/INDEX.md#measure-1) 1 · [`select`](./blob/INDEX.md#select-2) 2 · [`split`](./blob/INDEX.md#split-4) 4
 - [DEM 算子](./dem/INDEX.md) —— 25 个算子 / 5 个类别
   - [`geodesy`](./dem/INDEX.md#geodesy-12) 12 · [`hydrology`](./dem/INDEX.md#hydrology-4) 4 · [`shading`](./dem/INDEX.md#shading-1) 1 · [`surface`](./dem/INDEX.md#surface-5) 5 · [`visibility`](./dem/INDEX.md#visibility-3) 3
 - [CONNGRAPH 算子](./conngraph/INDEX.md) —— 28 个算子 / 7 个类别

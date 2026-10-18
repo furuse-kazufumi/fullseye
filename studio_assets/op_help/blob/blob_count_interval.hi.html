@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>overlap हुए objects गिनता है। <b>जब तय न हो सके, तो संख्या के बजाय interval लौटाता है</b> (fail-closed)।</p>
+<p>आपस में जुड़े गुच्छे के अंदर के objects, distance transform के peaks के रूप में दिखते हैं। जब दो circles overlap होते हैं तो एक neck बनती है, और neck जितनी उथली होती है (peak की <b>prominence</b> जितनी छोटी), उतना ही &quot;2 हैं या 1&quot; तय करना मुश्किल होता है। <code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> एक ही h चुनकर <b>हमेशा एक ही count लौटाते हैं</b> —— जहाँ overlap इतना गहरा है कि तय नहीं हो सकता, वहाँ भी एक विश्वसनीय-सी संख्या निकल आती है। यह op हर peak की prominence मापता है, threshold band में आने वाले peaks को &quot;ambiguous&quot; मानता है, और count को <code style="color:#22d3bf">lo</code> से <code style="color:#22d3bf">hi</code> तक के interval के रूप में लौटाता है। केवल जब interval की चौड़ाई 0 हो, तभी <code style="color:#22d3bf">count</code> लौटाता है।</p>
+<p>peak का वर्गीकरण (prominence p, height h, relative prominence p/h; h inscribed circle की radius के बराबर है):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> और <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → निश्चित peak (गिना जाता है)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> और <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → ambiguous (lo में नहीं गिना जाता, hi में गिना जाता है)</p>
+<p style="margin:2px 0 2px 12px">• बाकी → noise (grid quantisation से बने peaks; ellipses पर measurement में 0.6 px से कम)</p>
+<p><b>relative prominence क्यों</b>: जब समान radius r के दो circles overlap ratio o (centres की दूरी d = 2r(1 − o)) से overlap होते हैं, तो neck की आधी चौड़ाई w = sqrt(r² − (d/2)²) होती है, और p/h = 1 − sqrt(1 − (1 − o)²) —— <b>radius पर निर्भर नहीं</b>। absolute h चुनने पर, बड़े और छोटे bubbles वाली mixed image में वह सिर्फ़ एक तरफ़ ही ठीक बैठता है (<code style="color:#22d3bf">poc_cell_counting</code> ने जो कमी दर्ज की थी, उसी आकार की)। default band 0.05–0.15, overlap ratio 0.69–0.47 के बराबर है।</p>
+<p><code style="color:#22d3bf">round_tol</code> देने पर, <b>वह area जिसे peaks से समझाया नहीं जा सकता</b>, उसे भी reject किया जाता है। overlap ratio 0.7 से ऊपर जाने पर neck grid quantisation में दब जाती है और सिर्फ़ एक peak बचता है (2, 1 जैसे दिखते हैं)। इसलिए component के area की तुलना निश्चित और ambiguous peaks के inscribed circles के area के योग Σπh² से की जाती है, और अगर area &gt; (1 + round_tol + 1/h_min) · Σπh² हो, तो upper bound खोल दी जाती है (<code style="color:#22d3bf">hi = None</code>)। 1/h_min grid quantisation का हिस्सा है (8 px या उससे बड़ी radius के discs पर ratio 1.09 या कम, 2026-10-18 का measurement)। <code style="color:#22d3bf">round_tol</code> <b>अनुमत aspect ratio − 1</b> के बराबर है (aspect ratio a/b वाले ellipse का area ratio a/b होता है)। bubbles जैसे गोल objects के लिए 0.1, cells जैसे बेडौल objects के लिए लगभग 0.3। <code style="color:#22d3bf">None</code> कोई shape नहीं मानता (गहरे overlaps छूट जाते हैं)।</p>
+<p><b>interval की upper bound कोई guarantee नहीं है</b>: <code style="color:#22d3bf">hi</code> उन objects की संख्या है जो peaks के रूप में दिखे; जो objects कोई peak छोड़े बिना दब गए (जैसे किसी बड़े bubble में धँसा छोटा bubble), वे <code style="color:#22d3bf">hi</code> में भी नहीं आते। upper bound तभी खोली जाती है जब area check उन्हें पकड़ पाए। जब <code style="color:#22d3bf">determined</code> False हो, तो सिर्फ़ इतना निश्चित है कि &quot;संख्या बताई नहीं जा सकती&quot;, और interval केवल अनुमान है (असली bubble shapes वाले semi-synthetic test में, जिस गुच्छे को अनिर्धारित बताया गया उसका true count <code style="color:#22d3bf">hi</code> से 1 ज़्यादा निकला। <code style="color:#22d3bf">poc_dense_bubble_count</code>)।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D foreground (<code style="color:#22d3bf">&gt; 0</code> foreground है)।</p>
+<p>rel_lo, rel_hi : float</p>
+<p>relative prominence का band। <code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>।</p>
+<p>min_prominence : float</p>
+<p>prominence की absolute निचली सीमा [px]। <code style="color:#22d3bf">&gt;= 0</code>। distance transform के quantisation से बने peaks हटाता है।</p>
+<p>round_tol : float or None</p>
+<p>area check की छूट (ऊपर देखें)। <code style="color:#22d3bf">None</code> पर check नहीं होता।</p>
+<p>connectivity : {4, 8}</p>
+<p>components और water levels के लिए connectivity।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code> (interval की चौड़ाई 0 हो तो int, वरना <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">lo</code>,</p>
+<p><code style="color:#22d3bf">hi</code> (upper bound खुली हो तो <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">determined</code>, <code style="color:#22d3bf">reason</code>,</p>
+<p><code style="color:#22d3bf">labels</code> (सिर्फ़ निश्चित peaks को seed बनाकर partition, int32, inscribed circles का power diagram), <code style="color:#22d3bf">labels_hi</code></p>
+<p>(ambiguous peaks को भी seed बनाकर partition), <code style="color:#22d3bf">components</code> (हर component का <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code> (खुली हो तो -1) / <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>),</p>
+<p><code style="color:#22d3bf">peaks</code> (हर peak का <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code> (0 noise, 1 ambiguous, 2 निश्चित)),</p>
+<p><code style="color:#22d3bf">params</code>।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # overlap ratio 0.1: 2 तय होता है</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # overlap ratio 0.6: तय नहीं होता</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>स्रोत (केवल सार्वजनिक literature): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— persistence / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— watershed / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— power diagram (partition)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

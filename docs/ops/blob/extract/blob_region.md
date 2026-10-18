@@ -53,7 +53,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 
-[blob_label](../connect/blob_label.md) · [blob_distance](../split/blob_distance.md)
+[blob_label](../connect/blob_label.md) · [blob_distance](../split/blob_distance.md) · [blob_count_interval](../split/blob_count_interval.md)
 
 ## 同カテゴリ(`extract`)
 

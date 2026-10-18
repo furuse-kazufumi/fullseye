@@ -180,9 +180,9 @@
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [ガイド](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [ガイド](ops/live4d/guides/live4d.md) |
 | `profile` — 断面形状 | 12 | [INDEX](ops/profile/INDEX.md) · [ガイド](ops/profile/guides/profile_metrology.md) |
+| `blob` — 2-D の連結成分解析 | 11 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
 | `colortransport` — 色の輸送 | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` — 体積の色 | 11 | [INDEX](ops/volcolor/INDEX.md) |
-| `blob` — 2-D の連結成分解析 | 10 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
 | `llmcore` | 10 | [INDEX](ops/llmcore/INDEX.md) · [ガイド](ops/llmcore/guides/llmcore.md) |
 | `simcal` | 10 | [INDEX](ops/simcal/INDEX.md) · [ガイド](ops/simcal/guides/sim_to_real_calibration.md) |
 | `vx` | 10 | [INDEX](ops/vx/INDEX.md) · [ガイド](ops/vx/guides/openvx_ports.md) |

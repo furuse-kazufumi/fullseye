@@ -205,6 +205,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺** — segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。 `py -3.11 examples/halcon_segmentation_tour.py`
 - **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
 - **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
+- **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** — 距離変換の山の突出度(0 次元パーシステンス)で重なった泡を割り、決まらなければ区間で返す新 op `blob_count_interval`。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率は予言の幅に入り、自信をもった誤りは面積でも見えない重なり率 0.86〜0.90 から先だけ。BBBC005(CC0)の小さい物体で個数の相対誤差 0.34 %(連結成分 9.4 %)、大きい物体は 300 枚中 286 枚で数を返さず誤り 0。水電解の泡(PEMWE、CC BY 4.0)の形を並べた半合成で自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡の矩形に入るか)は決まった塊で 0.95。★形の許しを孤立した泡の 95 % に合わせると誤りが 3 % → 19 % に増える矛盾を掃引で示す。 `py -3.11 examples/poc_dense_bubble_count.py`
 - **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
 - **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
 - **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする(学習器なし、実データは雑草イネの UAV 画像)** — 新 op 5 本(`cropweed`、台帳 `opssegmentation` の `plant` / `classify`): `plant_color_index`(ExG・ExR・ExGR・CIVE・NGRDI・VEG、暗い画素は値を作らない)/ `superpixel_color_texture_features`(領域ごとの色と肌理の 10 特徴、向きの揃い)/ `fisher_lda_fit`・`fisher_lda_score`(2 クラスの Fisher 判別、閉形式)/ `cover_ratio_grade`(被度を評価前に宣言した境 5 / 25 / 50 % で 4 段階)。合成の水田(雑草の割合を分位点で厳密に置く)で κ 0.876、作物と雑草の色を入れ替えると被度の順位相関 −0.999(判定は色で決まる)。★実データ WeedyRice-RGBMS(UAV の RGB と雑草イネの注釈 734 組、CC BY 4.0、repo に入れない): val で格子を選び(SNIC 超画素より良い)、test 148 枚で段階の一致 0.574(多数派だけ 0.345)・κ 0.424 [0.313, 0.520]・並べ替え p 0.0005・被度の相関 0.826・IoU 0.397(ばらまき 0.189)。R と G を入れ替えると κ −0.023。撮影日を丸ごと外すと季節の違う 1 日は日の中の相関 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績。コンテストの画像は使っておらず、数字はコンテストの得点と比べられない。学習器 0、門 16 件(CI は合成の 10 件)。 `py -3.11 examples/poc_weed_rice_ratio.py`
@@ -4934,10 +4935,10 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `piv_streamline_image` `flow2d → rgb` — 流線図(MATLAB の ``streamslice``)。返りは ``(h*upsample, w*upsample, 3)``。 · 例: `piv_field_analysis_tour`
 - `piv_streamlines` `flow2d → table` — 流線を RK4 でたどる(MATLAB の ``stream2`` / ``streamslice`` に当たる)。 · 例: `piv_field_analysis_tour`
 
-### blob(10 ops / 5 categories)
+### blob(11 ops / 5 categories)
 
 #### blob / connect(1)
-- `blob_label` `mask → labels2d` — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。 · 例: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_label` `mask → labels2d` — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。 · 例: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / extract(3)
 - `blob_boundaries` `labels2d → mask` — 物体の輪郭(1 画素幅、bool)。**隣り合う物体の境目も残る**。 · 例: `poc_gear_tooth_metrology`
@@ -4945,16 +4946,17 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `blob_region` `labels2d → mask` — 物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。 · 例: `poc_gear_tooth_metrology`, `poc_particle_sizing`
 
 #### blob / measure(1)
-- `blob_features` `labels2d → table` — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。 · 例: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_features` `labels2d → table` — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。 · 例: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / select(2)
 - `blob_select` `labels2d → labels2d` — 特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。 · 例: `poc_particle_sizing`, `poc_pipe_wall_loss`, `poc_pv_thermal_survey`, `poc_solar_el_inspection`, `poc_weld_radiograph_porosity`
 - `blob_select_largest` `labels2d → labels2d` — 面積の大きい順に ``count`` 個だけ残す(**番号は面積の降順に振り直す**)。 · 例: `poc_am_thermal_to_ct`, `poc_gear_tooth_metrology`, `poc_solder_fillet_aoi`, `poc_wound_area_tracking`
 
-#### blob / split(3)
-- `blob_distance` `mask → image2d` — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。 · 例: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_segmentation_gauntlet`
-- `blob_seeds` `image2d → labels2d` — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。 · 例: `blob_split_tour`
-- `blob_split` `labels2d × labels2d × image2d → labels2d` — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。 · 例: `blob_split_tour`
+#### blob / split(4)
+- `blob_count_interval` `mask → table` — 重なった物体を数える。**決まらないときは個数ではなく区間を返す**(fail-closed)。 · 例: `poc_dense_bubble_count`
+- `blob_distance` `mask → image2d` — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。 · 例: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_dense_bubble_count`, `poc_segmentation_gauntlet`
+- `blob_seeds` `image2d → labels2d` — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。 · 例: `blob_split_tour`, `poc_dense_bubble_count`
+- `blob_split` `labels2d × labels2d × image2d → labels2d` — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。 · 例: `blob_split_tour`, `poc_dense_bubble_count`
 
 ### dem(25 ops / 5 categories)
 
@@ -5257,7 +5259,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### segmentation / world(8)
 - `lens_area` `入力なし → scalar` — 等しい半径 r の 2 円(中心間 d)の重なりの面積(閉形式)。d ≥ 2r なら 0。 · 例: `gallery_seg_measures`
 - `voronoi_cells` `points → table` — 矩形 [−0.5, W − 0.5] × [−0.5, H − 0.5] の中の種のボロノイ分割を多角形で返す(半平面の総当たり、O(n²))。 · 例: `gallery_seg_measures`
-- `world_blobs_touching` `入力なし → table` — 重なり合う円(細胞・粒)の世界: 鎖状に置いた等しい半径の円、各円は前の円とだけ中心間 2r(1 − overlap) で重なる。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
+- `world_blobs_touching` `入力なし → table` — 重なり合う円(細胞・粒)の世界: 鎖状に置いた等しい半径の円、各円は前の円とだけ中心間 2r(1 − overlap) で重なる。 · 例: `poc_active_contours`, `poc_dense_bubble_count`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 - `world_gradient_illumination` `入力なし → table` — 照明の勾配 + 雑音の上の暗い物体の世界(大域閾値が壊れ、局所閾値・フラットフィールドで切れる)。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 - `world_grains_voronoi` `入力なし → table` — ボロノイ結晶粒の世界: 格子の升から n 個を選んで ``jitter`` だけ揺らした種、ラベル = 最も近い種の番号(1..n)。 · 例: `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 - `world_parts_with_shadow` `入力なし → table` — 工業部品(回転した矩形 + 円の穴)と、斜めの照明による影・面の明暗・ハイライトの世界。真値 = 部品(穴は背景、影は背景)。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`

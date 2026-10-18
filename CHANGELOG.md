@@ -86,6 +86,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 例 `examples/poc_weed_rice_ratio.py`: 合成の水田(門 10、CI)と、実データ WeedyRice-RGBMS(Mendeley Data doi:10.17632/vt4s83pxx6.1、CC BY 4.0、`FULLSEYE_WEEDYRICE_DATA` があるときだけ。画像は repo に入れない)。test 148 枚で κ 0.424・被度の相関 0.826。撮影日を丸ごと外す検査で、季節の違う飛行への汎化が弱いこと(日の中の相関 0.14)も記録した。外観検査のアルゴリズムコンテストの 2026 年の課題と同じ型の問いだが、その画像は使っておらず、数字は得点と比べられない。
 - 門 `tests/test_cropweed.py`(閉形式・第 2 の計算・LDA の中点と符号反転とアフィン不変・R と G の入れ替えの探針・fail-closed)。
 - `examples/poc_leaf_disease_area.py` の「道具の穴 (a) 可視 3 バンドの植生指数が無い」を「埋まった」に直した。
+### Added — `blob_count_interval`(重なった物体の個数を、決まらなければ区間で返す)+ PoC「密集した泡を数える」(ALCON2009 型)
+- `blob2d.blob_count_interval`(台帳 `opsblob` の `split`): 距離変換の山ごとに突出度(0 次元パーシステンス)を測り、相対突出度 p/h が帯 [0.05, 0.15) に落ちた山を「あいまい」として個数を `lo`〜`hi` で返す。`round_tol` を与えると、山の内接円で説明できない面積の塊は上限を開く(`hi = None`)。分割は内接円の冪図(2 円なら根軸)。既存の `blob_split` は 520x696 で 1 枚 4 秒かかったので使わない。
+- 門: 等しい 2 円の相対突出度が閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率が予言の幅、自信をもった誤りは閉形式の「面積でも見えない」重なり率(0.86〜0.90)から先だけ、2 倍の拡大で不変、帯を潰す・面積の検査を外すと誤りが出る(壊す探針)、ALCON2009 型の採点の閉形式。
+- 実データ(repo に入れない。`FULLSEYE_BUBBLE_DOWNLOAD=1`): BBBC005 の真値マスク(CC0)で小さい物体の相対誤差 0.34 %(連結成分 9.4 %)・自信をもった誤り 11/600、大きい物体は 286/300 で数を返さず誤り 0。PEMWE の泡(Zenodo 10184579、CC BY 4.0)の形の半合成で誤り 2/65、ALCON 型 0.95。形の許しの矛盾(誤り 3 % → 19 %)を掃引で記録。いびつな泡の深い重なりで区間の上限が 1 個外れる限界は docstring に明記。
+- 図 11 枚 + GIF、展示(wing_industrial、収蔵番号は生成器の仮番)、examples2d、能力ノート `blob-and-region`、6 言語の要約と本文訳。
 
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。

@@ -91,8 +91,8 @@ Operatordokumentation für **fullseye 0.7.0**. Jeder Operator hat eine eigene Ma
   - [`descriptor`](./shape2d/INDEX.md#descriptor-10) 10 · [`morph`](./shape2d/INDEX.md#morph-6) 6
 - [PIV-Operatoren](./piv/INDEX.md) — 29 Operatoren / 7 Kategorien
   - [`assess`](./piv/INDEX.md#assess-4) 4 · [`estimate`](./piv/INDEX.md#estimate-4) 4 · [`field`](./piv/INDEX.md#field-8) 8 · [`solid`](./piv/INDEX.md#solid-3) 3 · [`synth`](./piv/INDEX.md#synth-3) 3 · [`validate`](./piv/INDEX.md#validate-2) 2 · [`visualise`](./piv/INDEX.md#visualise-5) 5
-- [BLOB-Operatoren](./blob/INDEX.md) — 10 Operatoren / 5 Kategorien
-  - [`connect`](./blob/INDEX.md#connect-1) 1 · [`extract`](./blob/INDEX.md#extract-3) 3 · [`measure`](./blob/INDEX.md#measure-1) 1 · [`select`](./blob/INDEX.md#select-2) 2 · [`split`](./blob/INDEX.md#split-3) 3
+- [BLOB-Operatoren](./blob/INDEX.md) — 11 Operatoren / 5 Kategorien
+  - [`connect`](./blob/INDEX.md#connect-1) 1 · [`extract`](./blob/INDEX.md#extract-3) 3 · [`measure`](./blob/INDEX.md#measure-1) 1 · [`select`](./blob/INDEX.md#select-2) 2 · [`split`](./blob/INDEX.md#split-4) 4
 - [DEM-Operatoren](./dem/INDEX.md) — 25 Operatoren / 5 Kategorien
   - [`geodesy`](./dem/INDEX.md#geodesy-12) 12 · [`hydrology`](./dem/INDEX.md#hydrology-4) 4 · [`shading`](./dem/INDEX.md#shading-1) 1 · [`surface`](./dem/INDEX.md#surface-5) 5 · [`visibility`](./dem/INDEX.md#visibility-3) 3
 - [CONNGRAPH-Operatoren](./conngraph/INDEX.md) — 28 Operatoren / 7 Kategorien
