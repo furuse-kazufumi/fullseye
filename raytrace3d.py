@@ -807,6 +807,31 @@ def _default_image(sysd):
     return float(((fp - o) @ F)[2])
 
 
+def _axis_jacobians(sysd, field=(0.0, 0.0), h=1e-4):
+    """無限遠の物体の軸上の平行束を、入口の面 z = 0 の上で (x, y) へ ±h だけずらして追い、
+    (J_stop, J_out) を返す。J_stop = 絞りの局所 (x, y) の変化 / 入口のずれ(2×2)、
+    J_out = 像側の方向の変化(軸光線に直交する 2 成分)/ 入口のずれ(2×2)。どちらも中心差分で、
+    ``lensfile`` が入射瞳の直径 ENPD や像側 F 値を絞りの半径へ換算するのに使う(近軸量の実光線版)。"""
+    lay = _layout(sysd)
+    X = np.array([h, -h, 0.0, 0.0, 0.0])
+    Y = np.array([0.0, 0.0, h, -h, 0.0])
+    P, D, _ = _launch_xy(sysd, X, Y, field, 0.0)
+    q = _stop_xy(sysd, P, D, lay)
+    tr = _trace(sysd, P, D, layout=lay, apertures=False)
+    Do = tr["dirs"][:, -1, :]
+    if not (np.all(np.isfinite(q)) and np.all(np.isfinite(Do))):
+        raise ValueError("the axial bundle does not reach the stop / image (give a stop that the axis ray passes)")
+    d0 = Do[4] / np.linalg.norm(Do[4])
+    a = np.array([1.0, 0.0, 0.0]) if abs(d0[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+    e1 = np.cross(d0, a)
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(d0, e1)
+    Js = np.array([[q[0, 0] - q[1, 0], q[2, 0] - q[3, 0]], [q[0, 1] - q[1, 1], q[2, 1] - q[3, 1]]]) / (2.0 * h)
+    dx, dy = (Do[0] - Do[1]) / (2.0 * h), (Do[2] - Do[3]) / (2.0 * h)
+    Jo = np.array([[e1 @ dx, e1 @ dy], [e2 @ dx, e2 @ dy]])
+    return Js, Jo
+
+
 # --------------------------------------------------------------------------- #
 # op: 例・配置
 # --------------------------------------------------------------------------- #

@@ -76,6 +76,7 @@ import os
 import numpy as np
 
 import raytrace as RT
+import raytrace3d as R3
 
 INF = float("inf")
 
@@ -92,7 +93,7 @@ _READ_TOP = frozenset(("VERS", "MODE", "NAME", "NOTE", "UNIT", "ENPD", "FNUM", "
                        "XFLN", "YFLN", "XFLD", "YFLD", "FWGN", "FWGT", "WAVM", "WAVL", "WWGT", "PWAV",
                        "GCAT", "RAIM", "VDXN", "VDYN", "VCXN", "VCYN", "VANN", "ENVD", "MNUM"))
 _READ_SURF = frozenset(("SURF", "TYPE", "CURV", "DISZ", "GLAS", "CONI", "PARM", "DIAM", "STOP", "COMM",
-                        "FLAP", "CLAP", "PZUP", "OBDC", "SQAP", "OBSC", "ELAP", "SCBD"))
+                        "FLAP", "CLAP", "PZUP", "PPAR", "OBDC", "SQAP", "OBSC", "ELAP", "SCBD"))
 
 #: Keywords that cannot change a sequential real-ray trace, with the reason (reported, not silently skipped).
 _IGNORED = {
@@ -106,7 +107,7 @@ _IGNORED = {
     "RCMF": "comment field", "AUTH": "author", "TOL": "tolerance data", "TOLE": "tolerance data",
     "MOFF": "multi-configuration operand", "COAT": "coating (transmission, not geometry)",
     "MIRR": "mirror-substrate drawing", "VDSZ": "vignetting display", "MAZH": "maximum zone height (display)",
-    "PPAR": "parameter pickup flag", "VPAR": "variable flag", "VCON": "variable flag", "DMFS": "default-merit settings",
+    "VPAR": "variable flag", "VCON": "variable flag", "DMFS": "default-merit settings",
     "TRAC": "ray-trace display setting", "TCED": "TCE data (thermal analysis)", "TCMM": "thermal data",
     "GLCB": "glass-catalogue settings", "ISNA": "ideal-surface settings",
 }
@@ -270,7 +271,7 @@ class _Report:
 def _new_surface(idx):
     return {"index": idx, "type": "STANDARD", "curv": 0.0, "disz": 0.0, "glass": None, "conic": 0.0,
             "parm": {}, "diam": 0.0, "diam_type": 0, "stop": False, "comment": "", "aperture": None,
-            "curv_solve": None, "pzup": None}
+            "curv_solve": None, "pzup": None, "ppar": []}
 
 
 def _parse(text, op):
@@ -336,6 +337,14 @@ def _parse(text, op):
                 cur["aperture"] = {"kind": kw, "r": r}
             elif kw == "PZUP":
                 cur["pzup"] = [a for a in args[:4]]
+            elif kw == "PPAR":
+                if len(args) < 4:
+                    raise ValueError("%s: %s: PPAR needs a parameter number, a source surface, a scale and an offset"
+                                     % (op, where))
+                cur["ppar"].append([int(_num(args[0], "%s PPAR parameter" % where, op)),
+                                    int(_num(args[1], "%s PPAR source" % where, op)),
+                                    _num(args[2], "%s PPAR scale" % where, op),
+                                    _num(args[3], "%s PPAR offset" % where, op)])
             elif kw == "OBDC":
                 if any(_num(a, "%s OBDC" % where, op) != 0.0 for a in args[:2]):
                     rep.u(where, kw, "decentred aperture is ignored (rays are clipped by a centred one)",
@@ -586,13 +595,30 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
     if top["telecentric"]:
         raise ValueError("%s: object-space telecentric systems (FTYP ... 1) are not supported by this importer" % op)
     user_cat, gdir = _user_catalogue(glass_dir, op)
+    # ---- parameter pickups (PPAR) are verified against their source, in file units ----
+    ppar_solves = []
+    for sf in surfs:
+        where = "surface %d" % sf["index"]
+        for (pn, src, scale, off) in sf["ppar"]:
+            if pn < 1:
+                rep.u(where, "PPAR", "pickup of parameter %d (not a PARM) is not supported" % pn)
+                continue
+            if not 0 <= src < len(surfs):
+                raise ValueError("%s: %s: parameter pickup from surface %d which does not exist" % (op, where, src))
+            want = scale * surfs[src]["parm"].get(pn, 0.0) + off
+            have = sf["parm"].get(pn, 0.0)
+            if abs(want - have) > 1e-9 * max(1.0, abs(have)):
+                raise ValueError("%s: %s: parameter pickup PARM %d from surface %d (scale %g, offset %g) gives %.10g but "
+                                 "the file stores %.10g — stale or corrupted file" % (op, where, pn, src, scale, off,
+                                                                                        want, have))
+            ppar_solves.append({"surface": sf["index"], "what": "PARM %d" % pn, "kind": "pickup", "source": src,
+                                "scale": scale, "status": "verified"})
     # ---- surface types and unit scaling -------------------------------------
     for sf in surfs:
         where = "surface %d" % sf["index"]
         t = sf["type"]
-        if t not in ("STANDARD", "EVENASPH"):
-            hint = {"COORDBRK": " (coordinate breaks: tilted / folded systems need the non-coaxial tracer)",
-                    "PARAXIAL": " (an ideal thin lens has no real-ray model here)"}.get(t, "")
+        if t not in ("STANDARD", "EVENASPH", "COORDBRK"):
+            hint = {"PARAXIAL": " (an ideal thin lens has no real-ray model here)"}.get(t, "")
             rep.u(where, "TYPE", "surface type %s is not supported%s" % (t, hint))
         sf["curv"] = sf["curv"] / s
         if math.isfinite(sf["disz"]):
@@ -600,7 +626,19 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         sf["diam"] *= s
         if sf["aperture"]:
             sf["aperture"]["r"] *= s
-        if t == "EVENASPH":
+        if t == "COORDBRK":
+            bad = sorted(k for k in sf["parm"] if k < 1 or k > 6)
+            if bad:
+                rep.u(where, "PARM", "coordinate-break parameter(s) %s outside 1..6" % bad)
+            if sf["glass"] is not None:
+                rep.u(where, "GLAS", "a coordinate break cannot carry a glass")
+            if sf["stop"]:
+                rep.u(where, "STOP", "the stop cannot be a coordinate break")
+            if sf["curv"] != 0.0:
+                rep.u(where, "CURV", "a coordinate break (COORDBRK) has no curvature (CURV %g)" % sf["curv"])
+            # PARM 1, 2 are decentres (lengths); 3-5 are tilts (degrees); 6 is the order flag
+            sf["parm"] = {k: (v * s if k in (1, 2) else v) for k, v in sf["parm"].items()}
+        elif t == "EVENASPH":
             p1 = sf["parm"].get(1, 0.0)
             if p1 != 0.0:
                 rep.u(where, "PARM", "even-asphere r^2 term (PARM 1 = %g) is not representable; refit it into "
@@ -645,7 +683,7 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         media.append(med)
         mirrors.append(mir)
     # ---- pickups ---------------------------------------------------------------
-    solves = []
+    solves = list(ppar_solves)
     for sf in surfs:
         where = "surface %d" % sf["index"]
         if sf["curv_solve"]:
@@ -688,6 +726,8 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         raise ValueError("%s: the import would be approximate — %s. Pass allow_partial=True to import anyway "
                          "(the result is then marked approximate)" % (
                              op, "; ".join("%s: %s" % (u["where"], u["message"]) for u in soft)))
+    if any(sf["type"] == "COORDBRK" for sf in surfs):
+        return _build_nc(top, surfs, rep, op, allow_partial, media, mirrors, s, solves, gdir)
     # ---- surfaces -> raytrace ---------------------------------------------------
     obj = surfs[0]
     if obj["disz"] == INF:
@@ -820,6 +860,279 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
             "solves": solves, "approximate": approx, "glass_dir": gdir}
 
 
+# --------------------------------------------------------------------------- #
+# coordinate breaks -> raytrace3d break elements
+# --------------------------------------------------------------------------- #
+def _z(v):
+    """Normalise -0.0 to 0.0 (a sign flip of zero must not leak into the model)."""
+    return float(v) + 0.0
+
+
+def _break_elements(parm, direction, t):
+    """One COORDBRK surface (``PARM 1..6``) -> the ``raytrace3d`` break element(s), 1 or 2 dicts.
+
+    Format convention (checked against a second implementation for order 0 and against a published design
+    for the tilt sign): the break decentres by ``(PARM 1, PARM 2)`` and tilts by ``PARM 3, 4, 5`` degrees about
+    x, y, z with the right-hand rule. Order flag ``PARM 6 = 0``: decentre first, then tilt with the matrix
+    ``Rz(az)·Ry(ay)·Rx(ax)`` (x first, about fixed axes); a non-zero flag: tilt first with ``Rx·Ry·Rz`` (z first),
+    then decentre along the tilted axes. ``t`` is the thickness after the break along the new z.
+
+    ``raytrace3d`` flips its local frame at every reflection (a rotation of 180° about x), a file keeps its frame
+    and uses negative thicknesses instead. With ``direction = -1`` (after an odd number of mirrors) the break is
+    therefore conjugated by that flip: ``dy -> -dy``, ``ay -> -ay``, ``az -> -az`` (``dx`` and ``ax`` are
+    unchanged). The tracer's ``"xyz"`` break is *decentre, then Rx·Ry·Rz* and ``"zyx"`` is *Rz·Ry·Rx, then
+    decentre*; the two orders of the format coincide with them only for a single-axis tilt or no decentre, so a
+    decentred multi-axis tilt becomes two breaks (decentre, tilt).
+    """
+    def g(i):
+        return float(parm.get(i, 0.0))
+    d = (_z(g(1)), _z(direction * g(2)))
+    a = (_z(g(3)), _z(direction * g(4)), _z(direction * g(5)))
+    order1 = g(6) != 0.0
+    d_zero = d[0] == 0.0 and d[1] == 0.0
+    nz = sum(1 for v in a if v != 0.0)
+    zero3 = (0.0, 0.0, 0.0)
+
+    def brk(dd, aa, od, tt):
+        return {"type": "break", "decenter": dd, "tilt": aa, "order": od, "t": tt}
+    if d_zero:
+        return [brk(d, a, "xyz" if order1 else "zyx", t)]
+    if nz == 0:
+        return [brk(d, a, "xyz", t)]
+    if nz == 1:
+        return [brk(d, a, "zyx" if order1 else "xyz", t)]
+    if not order1:
+        return [brk(d, zero3, "xyz", 0.0), brk((0.0, 0.0), a, "zyx", t)]
+    return [brk((0.0, 0.0), a, "xyz", 0.0), brk(d, zero3, "xyz", t)]
+
+
+def _is_undo_of(b, c, tol=1e-12):
+    """True when break *b* is, numerically, the exact inverse of break *c* (``raytrace3d``'s undo)."""
+    if b["type"] != "break" or c["type"] != "break" or "undo" in b or "undo" in c:
+        return False
+    if any(abs(x + y) > tol for x, y in zip(b["decenter"], c["decenter"])):
+        return False
+    if any(abs(x + y) > tol for x, y in zip(b["tilt"], c["tilt"])):
+        return False
+    d_zero = c["decenter"][0] == 0.0 and c["decenter"][1] == 0.0
+    nz = sum(1 for v in c["tilt"] if v != 0.0)
+    if d_zero and nz <= 1:                       # the two matrix orders coincide: either label is the inverse
+        return True
+    return b["order"] != c["order"]
+
+
+def _mark_undos(elements):
+    """Replace a break that exactly undoes an earlier one by ``{"type": "break", "undo": j}``.
+
+    Scans backwards for the nearest earlier break that is not yet undone, so ``CB(a) CB(b) CB(-b) CB(-a)``
+    pairs up like brackets. Returns the number of undo elements made."""
+    used = set()
+    n = 0
+    for i, e in enumerate(elements):
+        if e.get("type") != "break" or "undo" in e:
+            continue
+        for j in range(i - 1, -1, -1):
+            c = elements[j]
+            if c.get("type") == "break" and "undo" not in c and j not in used and _is_undo_of(e, c):
+                elements[i] = {"type": "break", "undo": j, "t": e["t"]}
+                used.add(j)
+                n += 1
+                break
+    return n
+
+
+def _nc_fields(top, s, object_mm, op, rep):
+    ftype, fields = _fields(top, op, rep)
+    if ftype not in ("angle", "object_height"):
+        raise ValueError("%s: field type %s is not supported with coordinate breaks (only angle and object height "
+                         "can be placed without the paraxial image-height conversion)" % (op, ftype))
+    if ftype == "object_height":
+        if object_mm == INF:
+            raise ValueError("%s: object-height fields need a finite object distance" % op)
+        for f in fields:
+            f["x"] *= s
+            f["y"] *= s
+    for f in fields:
+        # ray direction cosines ~ (tan fx, tan fy, 1): the sign is that of the file (positive = towards +x / +y)
+        f["field"] = (float(f["x"]), float(f["y"]))
+    return ftype, fields
+
+
+def _build_nc(top, surfs, rep, op, allow_partial, media, mirrors, s, solves, gdir):
+    """Surfaces with coordinate breaks -> a ``raytrace3d.noncoaxial_system`` (the file's frame is kept, thicknesses
+    after a mirror are the positive travel distances the tracer expects)."""
+    n = len(surfs)
+    if surfs[0]["type"] == "COORDBRK" or surfs[-1]["type"] == "COORDBRK":
+        raise ValueError("%s: the object and the image surface cannot be coordinate breaks" % op)
+    obj = surfs[0]
+    if obj["disz"] == INF:
+        object_mm = INF
+    else:
+        object_mm = obj["disz"]
+        if not object_mm > 0.0:
+            raise ValueError("%s: object distance %g mm must be > 0 (or INFINITY)" % (op, object_mm))
+    if mirrors[0]:
+        raise ValueError("%s: the object surface cannot be a mirror" % op)
+    index_object = media[0]
+    first_real = next((j for j in range(1, n - 1) if surfs[j]["type"] != "COORDBRK"), None)
+    if first_real is None:
+        raise ValueError("%s: no real surface between the object and the image" % op)
+    for j in range(1, first_real):
+        p = surfs[j]["parm"]
+        if any(p.get(k, 0.0) != 0.0 for k in (1, 2, 3, 4, 5)) or surfs[j]["disz"] != 0.0:
+            raise ValueError("%s: surface %d: a coordinate break in front of the first surface would move the object "
+                             "space; that convention is not verified here — put it behind the first surface" % (op, j))
+    elements, srec = [], [[] for _ in surfs]
+    direction = 1.0
+    stop, stop_j = None, None
+    cur_medium = index_object
+    n_merged = 0
+    for j in range(1, n - 1):
+        sf = surfs[j]
+        where = "surface %d" % sf["index"]
+        if not math.isfinite(sf["disz"]):
+            raise ValueError("%s: %s: infinite thickness is only allowed on the object surface" % (op, where))
+        if sf["type"] == "COORDBRK":
+            t = sf["disz"] * direction
+            if t < -1e-12:
+                raise ValueError("%s: %s: thickness %g mm runs against the light (a surface placed behind it) — not "
+                                 "supported" % (op, where, sf["disz"]))
+            for b in _break_elements(sf["parm"], direction, _z(max(0.0, t))):
+                srec[j].append(len(elements))
+                elements.append(b)
+            continue
+        pre = direction
+        if mirrors[j]:
+            direction = -direction
+        t = sf["disz"] * direction
+        if t < -1e-12:
+            raise ValueError("%s: %s: thickness %g mm runs against the light (a surface placed behind it) — not "
+                             "supported" % (op, where, sf["disz"]))
+        # A flat, bare air-to-air plane that is neither the stop nor an aperture does nothing to a ray; a sequential
+        # program still intersects it, even "behind" the previous surface, which the tracer rejects (a dummy plane
+        # at a mirror vertex catches rays off-vertex on the wrong side). Its thickness joins the previous element.
+        flat = sf["curv"] == 0.0 and (sf["type"] == "STANDARD" or not any(v != 0.0 for v in sf["parm"].values()))
+        if (elements and flat and not mirrors[j] and media[j] == cur_medium and sf["aperture"] is None
+                and not sf["stop"]):
+            elements[-1]["t"] = _z(elements[-1]["t"] + max(0.0, t))
+            n_merged += 1
+            continue
+        if not mirrors[j]:
+            cur_medium = media[j]
+        el = {"R": INF if sf["curv"] == 0.0 else pre / sf["curv"], "t": _z(max(0.0, t)), "k": sf["conic"]}
+        if sf["type"] == "EVENASPH":
+            asph = [sf["parm"].get(k, 0.0) for k in range(2, 10)]
+            while asph and asph[-1] == 0.0:
+                asph.pop()
+            if asph:
+                el["asph"] = tuple(_z(pre * a) for a in asph)
+        if mirrors[j]:
+            el["mirror"] = True
+        else:
+            el["n"] = media[j]
+        if sf["aperture"] is not None and sf["aperture"]["r"] > 0.0:
+            el["ap"] = sf["aperture"]["r"]
+        if sf["stop"]:
+            stop, stop_j = len(elements), j
+        srec[j].append(len(elements))
+        elements.append(el)
+    if stop is None:
+        if any(sf["stop"] for sf in (surfs[0], surfs[-1])):
+            raise ValueError("%s: the stop must be one of the lens surfaces, not the object or the image" % op)
+        stop, stop_j = srec[first_real][0], first_real
+        rep.notes.append("no STOP in the file: the first surface is taken as the stop")
+    if n_merged:
+        rep.notes.append("%d flat air-to-air plane(s) without aperture were merged into the preceding thickness (they "
+                         "do not change a ray; the tracer would reject rays that meet them 'behind' a vertex)"
+                         % n_merged)
+    n_undo = _mark_undos(elements)
+    if n_undo:
+        rep.notes.append("%d coordinate break(s) undo an earlier one exactly and are mapped to the tracer's undo "
+                         "element" % n_undo)
+    ftype, fields = _nc_fields(top, s, object_mm, op, rep)
+    wls, primary = _wavelengths(top, op)
+    wl0 = wls[primary]["um"]
+    ap = top["aperture"]
+    if ap is None:
+        raise ValueError("%s: the file has no system aperture (ENPD / FNUM / FLOA / OBNA)" % op)
+    kind, val, sub = ap
+    if kind == "OBNA":
+        raise ValueError("%s: object-space NA (OBNA) is not supported together with coordinate breaks" % op)
+    if kind in ("ENPD", "FNUM") and object_mm != INF:
+        raise ValueError("%s: %s with a finite object is not supported together with coordinate breaks (use FLOA "
+                         "or an object at infinity)" % (op, kind))
+    stop_given = elements[stop].get("ap")
+    trial = [dict(e) for e in elements]
+    trial[stop]["ap"] = 1.0
+    try:
+        sys1 = R3.noncoaxial_system(trial, stop=stop, object_mm=object_mm, wavelength_um=wl0,
+                                    index_object=index_object)
+        for w in wls:                                     # every declared wavelength must be evaluable
+            R3.noncoaxial_system(trial, stop=stop, object_mm=object_mm, wavelength_um=w["um"],
+                                 index_object=index_object)
+        Js = Jo = None
+        if object_mm == INF:
+            Js, Jo = R3._axis_jacobians(sys1)
+    except ValueError as e:
+        raise ValueError("%s: the prescription cannot be built: %s" % (op, e)) from None
+    pupil = {"entrance_radius_mm": None, "stop_radius_mm": None, "stop_per_entrance": None, "anisotropy": None,
+             "efl_mm": None}
+    scale = None
+    if Js is not None:
+        det = abs(float(np.linalg.det(Js)))
+        sv = np.linalg.svd(Js, compute_uv=False)
+        if not det > 1e-18:
+            raise ValueError("%s: the stop is not reached by an axial beam (degenerate pupil map)" % op)
+        scale = math.sqrt(det)
+        pupil["stop_per_entrance"] = scale
+        pupil["anisotropy"] = float(sv[0] / sv[1])
+        detj = abs(float(np.linalg.det(Jo)))
+        pupil["efl_mm"] = (1.0 / math.sqrt(detj)) if detj > 1e-18 else None
+    if kind == "ENPD":
+        if not val > 0.0:
+            raise ValueError("%s: ENPD must be > 0" % op)
+        pupil["entrance_radius_mm"] = val * s / 2.0
+        stop_r = pupil["entrance_radius_mm"] * scale
+    elif kind == "FNUM":
+        if sub != 0:
+            rep.u("system", "FNUM", "FNUM kind %d (paraxial working F/#) is converted as image-space F/#" % sub,
+                  approximable=True)
+            if not allow_partial:
+                raise ValueError("%s: FNUM kind %d (working F/#) is not supported; pass allow_partial=True to read it "
+                                 "as the image-space F/#" % (op, sub))
+        if not val > 0.0 or pupil["efl_mm"] is None:
+            raise ValueError("%s: FNUM needs a focusing system and F/# > 0" % op)
+        pupil["entrance_radius_mm"] = pupil["efl_mm"] / val / 2.0
+        stop_r = pupil["entrance_radius_mm"] * scale
+    else:                                                  # FLOA
+        d = surfs[stop_j]["diam"]
+        if not d > 0.0:
+            raise ValueError("%s: float-by-stop-size (FLOA) needs the stop's semi-diameter (DIAM > 0)" % op)
+        stop_r = d
+        if scale is not None:
+            pupil["entrance_radius_mm"] = stop_r / scale
+    pupil["stop_radius_mm"] = float(stop_r)
+    if pupil["anisotropy"] is not None and pupil["anisotropy"] > 1.0 + 1e-6:
+        rep.notes.append("the stop is tilted or anamorphic (entrance-to-stop scale differs by %.4g between its two "
+                         "directions): the stop radius preserves the area of the entrance pupil, and rays aimed at "
+                         "the stop fill a circle on the stop, not on the entrance pupil. Launch your own beam for an "
+                         "exact circular entrance pupil." % pupil["anisotropy"])
+    if stop_given is not None and abs(stop_given - stop_r) > 1e-9 * max(1.0, stop_r) and kind != "FLOA":
+        rep.notes.append("the stop's own aperture (%.6g mm) is replaced by the system aperture (%.6g mm)" %
+                         (stop_given, stop_r))
+    elements[stop]["ap"] = float(stop_r)
+    try:
+        system = R3.noncoaxial_system(elements, stop=stop, object_mm=object_mm, wavelength_um=wl0,
+                                      index_object=index_object, field=fields[0]["field"])
+    except ValueError as e:
+        raise ValueError("%s: the prescription cannot be built: %s" % (op, e)) from None
+    approx = bool(rep.unsupported)
+    return {"system": system, "fields": fields, "field_type": ftype, "wavelengths": wls, "primary": primary,
+            "solves": solves, "approximate": approx, "glass_dir": gdir, "noncoaxial": True, "pupil": pupil,
+            "surface_records": srec}
+
+
+
 def _surface_snapshot(sf):
     """The file-level surface as the writer needs it (mm, plain values)."""
     out = {k: sf[k] for k in ("index", "type", "curv", "disz", "conic", "diam", "diam_type", "stop", "comment")}
@@ -828,6 +1141,7 @@ def _surface_snapshot(sf):
     out["aperture"] = None if sf["aperture"] is None else dict(sf["aperture"])
     out["curv_solve"] = None if sf["curv_solve"] is None else list(sf["curv_solve"])
     out["pzup"] = None if sf["pzup"] is None else list(sf["pzup"])
+    out["ppar"] = [list(x) for x in sf["ppar"]]
     return out
 
 
@@ -881,7 +1195,8 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
             "wavelengths": built["wavelengths"], "primary": built["primary"],
             "system": built["system"], "surfaces": [_surface_snapshot(sf) for sf in surfs],
             "solves": built["solves"], "approximate": built["approximate"], "glass_dir": built["glass_dir"],
-            "report": rep.as_dict()}
+            "noncoaxial": bool(built.get("noncoaxial", False)), "pupil": built.get("pupil"),
+            "surface_records": built.get("surface_records"), "report": rep.as_dict()}
 
 
 def _check_prescription(p, op):
@@ -916,6 +1231,10 @@ def lens_file_system(prescription=None, field_index: int = 0, wavelength_index=N
     if isinstance(wi, (bool, np.bool_)) or not isinstance(wi, (int, np.integer)) or not 0 <= int(wi) < nw:
         raise ValueError("%s: wavelength_index must be 0..%d, got %r" % (op, nw - 1, wavelength_index))
     s = p["system"]
+    if p.get("noncoaxial"):
+        return R3.noncoaxial_system([dict(e) for e in s["elements"]], stop=s["stop_arg"], object_mm=s["object_mm"],
+                                    wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object_arg"],
+                                    field=p["fields"][int(field_index)]["field"])
     return RT.lens_system([dict(x) for x in s["surfaces"]], stop=s["stop"], object_mm=s["object_mm"],
                           wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object"],
                           image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"])
@@ -964,8 +1283,167 @@ def _glass_from_medium(med, op, where):
     raise ValueError("%s: %s: medium %r cannot be written as a GLAS record" % (op, where, med))
 
 
+def _euler_xyz(B):
+    """B = Rx(a)·Ry(b)·Rz(c) -> (a, b, c) in degrees (the tracer's ``"xyz"`` break matrix)."""
+    sb = max(-1.0, min(1.0, float(B[0, 2])))
+    a = math.atan2(-B[1, 2], B[2, 2])
+    b = math.asin(sb)
+    c = math.atan2(-B[0, 1], B[0, 0])
+    return (math.degrees(a), math.degrees(b), math.degrees(c))
+
+
+def _file_breaks(b, direction):
+    """A tracer break -> a list of ``(decenter, tilt, order_flag)`` file coordinate breaks (the inverse of
+    :func:`_break_elements`; *direction* is the file's side of the reflection flip)."""
+    d = (_z(b["decenter"][0]), _z(direction * b["decenter"][1]))
+    a = (_z(b["tilt"][0]), _z(direction * b["tilt"][1]), _z(direction * b["tilt"][2]))
+    d_zero = d[0] == 0.0 and d[1] == 0.0
+    nz = sum(1 for v in a if v != 0.0)
+    zero3 = (0.0, 0.0, 0.0)
+    if b["order"] == "xyz":                      # decentre, then Rx·Ry·Rz
+        if d_zero:
+            return [((0.0, 0.0), a, 0 if nz <= 1 else 1)]
+        if nz <= 1:
+            return [(d, a, 0)]
+        return [(d, zero3, 0), ((0.0, 0.0), a, 1)]
+    if d_zero:                                   # Rz·Ry·Rx, then decentre
+        return [((0.0, 0.0), a, 0)]
+    if nz <= 1:
+        return [(d, a, 1)]
+    return [((0.0, 0.0), a, 0), (d, zero3, 1)]
+
+
+def _surfaces_from_nc(system, template, op):
+    """Geometry of a ``raytrace3d.noncoaxial_system`` -> file-level surfaces (coordinate breaks included)."""
+    recs = system["records"]
+    if tuple(system["image_tilt"]) != (0.0, 0.0) or tuple(system["object_tilt"]) != (0.0, 0.0):
+        raise ValueError("%s: a tilted image or object plane cannot be written; add the tilt as a coordinate break"
+                         % op)
+    lay = R3._layout(system)
+    dirs, d = [], 1.0
+    for r in recs:
+        dirs.append(d)
+        if r["kind"] == "surface" and r["reflect"]:
+            d = -d
+    obj = {"index": 0, "type": "STANDARD", "curv": 0.0, "disz": system["object_mm"], "conic": 0.0, "diam": 0.0,
+           "diam_type": 0, "stop": False, "comment": "", "parm": {}, "aperture": None, "curv_solve": None,
+           "pzup": None, "ppar": [], "glass": _glass_from_medium(system["index_object_arg"], op, "object")}
+    out = [obj]
+
+    def blank(typ):
+        return {"index": 0, "type": typ, "curv": 0.0, "disz": 0.0, "conic": 0.0, "diam": 0.0, "diam_type": 0,
+                "stop": False, "comment": "", "parm": {}, "aperture": None, "curv_solve": None, "pzup": None,
+                "ppar": [], "glass": None}
+    for k, r in enumerate(recs):
+        where = "record %d" % k
+        pre = dirs[k]
+        t_trace = lay["image_mm"] if k == len(recs) - 1 else r["t"]
+        if r["kind"] == "surface":
+            if tuple(r["decenter"]) != (0.0, 0.0) or tuple(r["tilt"]) != (0.0, 0.0):
+                raise ValueError("%s: %s: a per-surface decenter / tilt cannot be written; use a coordinate break "
+                                 "before and after it" % (op, where))
+            if r["beamsplitter"] is not None:
+                raise ValueError("%s: %s: a beamsplitter surface cannot be written as a sequential .zmx surface"
+                                 % (op, where))
+            post = -pre if r["reflect"] else pre
+            sf = blank("STANDARD")
+            asph = list(r["asph"])
+            if asph:
+                sf["type"] = "EVENASPH"
+                sf["parm"] = {1: 0.0}
+                sf["parm"].update({i + 2: _z(pre * float(a)) for i, a in enumerate(asph)})
+            sf["curv"] = 0.0 if r["R"] == INF else _z(pre / r["R"])
+            sf["conic"] = float(r["k"])
+            sf["disz"] = _z(float(t_trace) * post)
+            sf["glass"] = ({"kind": "mirror", "name": "MIRROR"} if r["reflect"]
+                           else _glass_from_medium(r["n"], op, where))
+            if k == system["stop"]:
+                sf["stop"] = True
+            elif r["ap"] is not None:
+                sf["aperture"] = {"kind": "CLAP", "r": float(r["ap"])}
+            if r["label"]:
+                sf["comment"] = r["label"].replace("\n", " ")
+            out.append(sf)
+        else:
+            if r["kind"] == "break":
+                b = r
+            else:                                                     # return: the relative frame as one break
+                if dirs[k] != dirs[r["to"]]:
+                    raise ValueError("%s: %s: a return across an odd number of reflections cannot be written as a "
+                                     "coordinate break" % (op, where))
+                Fc, oc = lay["entry"][k]
+                Ft, ot = lay["entry"][r["to"]]
+                dd = Fc.T @ (ot - oc)
+                if abs(dd[2]) > 1e-9 * max(1.0, float(np.linalg.norm(dd))):
+                    raise ValueError("%s: %s: the return needs a decentre along z, which a coordinate break cannot "
+                                     "express" % (op, where))
+                b = {"decenter": (float(dd[0]), float(dd[1])), "tilt": _euler_xyz(Fc.T @ Ft), "order": "xyz"}
+            parts = _file_breaks(b, pre)
+            for i, (dc, tl, flag) in enumerate(parts):
+                sf = blank("COORDBRK")
+                sf["parm"] = {1: dc[0], 2: dc[1], 3: tl[0], 4: tl[1], 5: tl[2], 6: float(flag)}
+                sf["disz"] = _z(float(t_trace) * pre) if i == len(parts) - 1 else 0.0
+                if r["label"]:
+                    sf["comment"] = r["label"].replace("\n", " ")
+                out.append(sf)
+    out.append(blank("STANDARD"))
+    for i, sf in enumerate(out):
+        sf["index"] = i
+    if template is not None and len(template) == len(out) and \
+            [x["type"] == "COORDBRK" for x in template] == [x["type"] == "COORDBRK" for x in out]:
+        out = [_keep_extras(new, old) for new, old in zip(out, template)]
+    return out
+
+
+def _keep_extras(new, old):
+    """Carry the template's display data and still-valid solves over to a rebuilt surface."""
+    sf = dict(new)
+    for key in ("diam", "diam_type", "comment"):
+        if not new.get(key) and old.get(key):
+            sf[key] = old[key]
+    if old.get("aperture") and new.get("aperture"):
+        sf["aperture"] = dict(new["aperture"], kind=old["aperture"]["kind"])
+    og, ng = old.get("glass"), new.get("glass")
+    if og and ng and og.get("kind") in ("name", "model", "code") and ng["kind"] == og["kind"] \
+            and og.get("name") == ng["name"] and abs(og.get("nd", 0) - ng["nd"]) < 5e-4:
+        sf["glass"] = og
+    if old.get("curv_solve") is not None and new["curv"] == old.get("curv"):
+        sf["curv_solve"] = old["curv_solve"]
+    if old.get("pzup") is not None and new["disz"] == old.get("disz"):
+        sf["pzup"] = old["pzup"]
+    if old.get("ppar") and new["parm"] == old.get("parm"):
+        sf["ppar"] = [list(x) for x in old["ppar"]]
+    return sf
+
+
+def _nc_enpd(sysd):
+    """Entrance-pupil diameter (mm) of a non-coaxial system at an infinite object, from its stop radius."""
+    Js, _ = R3._axis_jacobians(sysd)
+    det = abs(float(np.linalg.det(Js)))
+    if not det > 1e-18:
+        raise ValueError("lens_file_write: the stop is not reached by an axial beam")
+    return 2.0 * sysd["records"][sysd["stop"]]["ap"] / math.sqrt(det)
+
+
+def _header_from_nc(system, op):
+    """A prescription header (aperture, field, wavelength) for a non-coaxial system written without a file."""
+    inf = system["object_mm"] == INF
+    fx, fy = system["field"]
+    ap = ({"type": "ENPD", "value": _nc_enpd(system), "kind": 0} if inf else {"type": "FLOA", "value": 0.0, "kind": 0})
+    return {"name": "", "notes": [], "aperture": ap, "field_type": "angle" if inf else "object_height",
+            "fields": [{"x": fx, "y": fy, "weight": 1.0}],
+            "wavelengths": [{"um": system["wavelength_um"], "weight": 1.0}], "primary": 0,
+            "surfaces": None, "system": system, "noncoaxial": True}
+
+
+def _is_nc(system):
+    return isinstance(system, dict) and system.get("kind") == "noncoaxial_system"
+
+
 def _surfaces_from_system(system, template, op):
     """Geometry of an (edited) lens_system -> file-level surfaces, keeping the template's extras."""
+    if _is_nc(system):
+        return _surfaces_from_nc(system, template, op)
     RT._check_system(system)
     lens = system["surfaces"]
     tpl = template if (template is not None and len(template) == len(lens) + 2) else None
@@ -1054,23 +1532,29 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
         lens_file_write(p, system=best, path="triplet_reoptimised.zmx")
     """
     op = "lens_file_write"
-    p = lens_file_read(None) if prescription is None else _check_prescription(prescription, op)
+    if prescription is None and system is not None and _is_nc(system):
+        p = _header_from_nc(system, op)
+    else:
+        p = lens_file_read(None) if prescription is None else _check_prescription(prescription, op)
     if encoding not in ("ascii", "utf-16"):
         raise ValueError("%s: encoding must be 'ascii' or 'utf-16', got %r" % (op, encoding))
     dropped = []
     if system is not None:
         surfs = _surfaces_from_system(system, p["surfaces"], op)
-        for a, b in zip(p["surfaces"], surfs):
+        for a, b in zip(p["surfaces"] or [], surfs):
             if a.get("curv_solve") and not b.get("curv_solve"):
                 dropped.append({"surface": a["index"], "what": "curvature solve"})
             if a.get("pzup") and not b.get("pzup"):
                 dropped.append({"surface": a["index"], "what": "thickness pickup"})
+            if a.get("ppar") and not b.get("ppar"):
+                dropped.append({"surface": a["index"], "what": "parameter pickup"})
         sysd = system
     else:
         surfs = p["surfaces"]
         sysd = p["system"]
     ap = p["aperture"]
-    para = RT.paraxial_trace(sysd)
+    nc = _is_nc(sysd)
+    para = None if nc else RT.paraxial_trace(sysd)
     lines = ["VERS 0", "MODE SEQ"]
     if p.get("name"):
         lines.append("NAME " + p["name"])
@@ -1083,6 +1567,8 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
         lines.append("FNUM %s %d" % (_g(ap["value"]), ap["kind"]))
     elif ap["type"] == "OBNA" and system is None:
         lines.append("OBNA %s %d" % (_g(ap["value"]), ap["kind"]))
+    elif nc:
+        lines.append("ENPD %s" % _g(ap["value"] if system is None and ap["type"] == "ENPD" else _nc_enpd(sysd)))
     else:
         lines.append("ENPD %s" % _g(2.0 * para["ep_radius"]))
     lines.append("ENVD 20 1 0")
@@ -1110,6 +1596,11 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
         if sf["type"] == "EVENASPH":
             for k in sorted(sf["parm"]):
                 lines.append("  PARM %d %s" % (k, _g(sf["parm"][k])))
+        elif sf["type"] == "COORDBRK":
+            for k in range(1, 7):
+                lines.append("  PARM %d %s" % (k, _g(sf["parm"].get(k, 0.0))))
+        for (pn, src, scale, off) in sf.get("ppar") or []:
+            lines.append("  PPAR %d %d %s %s 0" % (pn, src, _g(scale), _g(off)))
         lines.append("  DISZ %s" % _g(sf["disz"]))
         if sf.get("pzup"):
             lines.append("  PZUP " + " ".join(sf["pzup"]))
