@@ -98,7 +98,7 @@ def test_ledger_registration():
     assert set(opsoptics.list_ops("tem")) == set(T.__all__)
     assert opsoptics.missing() == []
     import fullseye as fs
-    assert callable(getattr(fs.ledger, "tem_ctf_estimate"))
+    assert callable(fs.ledger.tem_ctf_estimate)
 
 
 def test_refusal_thresholds_flip_the_verdict_at_the_boundary():
