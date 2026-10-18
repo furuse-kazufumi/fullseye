@@ -9,7 +9,7 @@
 数値と図の経路は全言語で共有し、文字列だけを訳す。出力:
 
 * ``docs/view2026/index.md``        → https://furuse.work/view2026/      (ja、QR の行き先)
-* ``docs/view2026/<lang>/index.md`` → https://furuse.work/view2026/<lang>/ (en zh tw ko de hi)
+* ``docs/view2026/<lang>/index.md`` → https://furuse.work/view2026/<lang>/ (exhibits.json の langs の ja 以外)
 
 ページの並び(スマートフォンで開かれる前提):
 
@@ -90,7 +90,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 });
 </script>"""
 
-#: ja の入口ページだけに置く。初回の訪問で、ブラウザの言語が ja 以外の 6 言語なら 1 度だけそのページへ送る。
+#: ja の入口ページだけに置く。初回の訪問で、ブラウザの言語が ja 以外の言語なら 1 度だけそのページへ送る。
 #: サイト内から来た(言語の切り替えを押した)ときと、2 回目以降は送らない。JS が無くても全部読める。
 REDIRECT = """<script>
 (function () {
@@ -101,7 +101,7 @@ REDIRECT = """<script>
     if (document.referrer && document.referrer.indexOf(location.host) >= 0) return;
     var n = (navigator.language || "").toLowerCase(), t = "";
     if (n.indexOf("zh") === 0) t = /tw|hk|mo|hant/.test(n) ? "tw" : "zh";
-    else if (/^(en|ko|de|hi)/.test(n)) t = n.slice(0, 2);
+    else if (/^(@LATIN@)/.test(n)) t = n.slice(0, 2);
     if (t) location.replace(t + "/");
   } catch (e) {}
 })();
@@ -298,7 +298,9 @@ def build(d: dict, lang: str) -> str:
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
            "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], "", STYLE, ""]
     if lang == "ja":
-        out += [REDIRECT, ""]
+        # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
+        out += [REDIRECT.replace("@LATIN@", "|".join(
+            l for l in d["langs"] if l not in ("ja", "zh", "tw"))), ""]
 
     # 1. 見どころ
     out += ["## " + ui["h_highlights"], "", '<div class="vg">']

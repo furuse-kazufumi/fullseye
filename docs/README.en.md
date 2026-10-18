@@ -290,7 +290,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 269
+## Document map — all 270
 
 The complete map, so that **no document is unreachable from this index** (the 3,360 per-op notes and 66 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -432,7 +432,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(186)
+**Other**(187)
 
 | document | what it covers |
 |---|---|
@@ -617,6 +617,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
+| [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
 | [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
 | [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
 | [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |

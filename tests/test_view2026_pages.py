@@ -28,7 +28,7 @@ def test_every_capability_doc_is_on_every_page():
     assert len(caps) >= 30, "docs/capabilities/ の件数が縮んでいる"
     d = G.load()
     langs = d["langs"]
-    assert len(langs) == 7
+    assert langs[0] == "ja" and len(langs) >= 7   # 言語を足しても通る(ja が先頭、既存の 7 言語は残る)
     for lang in langs:
         page = G.build(d, lang)
         missing = [c["id"] for c in caps if "capabilities/%s.md" % c["id"] not in page]

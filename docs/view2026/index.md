@@ -1,6 +1,6 @@
 <div class="vlang" markdown="1">
 
-**日本語** · [English](en/index.md) · [简体中文](zh/index.md) · [繁體中文](tw/index.md) · [한국어](ko/index.md) · [Deutsch](de/index.md) · [हिन्दी](hi/index.md)
+**日本語** · [English](en/index.md) · [简体中文](zh/index.md) · [繁體中文](tw/index.md) · [한국어](ko/index.md) · [Deutsch](de/index.md) · [हिन्दी](hi/index.md) · [Français](fr/index.md)
 
 </div>
 
@@ -40,7 +40,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
     if (document.referrer && document.referrer.indexOf(location.host) >= 0) return;
     var n = (navigator.language || "").toLowerCase(), t = "";
     if (n.indexOf("zh") === 0) t = /tw|hk|mo|hant/.test(n) ? "tw" : "zh";
-    else if (/^(en|ko|de|hi)/.test(n)) t = n.slice(0, 2);
+    else if (/^(en|ko|de|hi|fr)/.test(n)) t = n.slice(0, 2);
     if (t) location.replace(t + "/");
   } catch (e) {}
 })();
