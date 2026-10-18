@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 0.7.0 — 2026-10-18
+
 ### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数
 - `raytrace3d`(opsoptics の新カテゴリ `noncoaxial`): `noncoaxial_system`(面・座標の切り替え〔偏心 → x → y → z、`undo` で逆順〕・戻り・`fold_mirror`・傾いた平板 / 楔・平板の半透鏡〔透過 / 反射の枝〕。`raytrace.lens_system` の処方も受け、共軸なら `trace_rays` と 1e-12 で同じ)/ `noncoaxial_example` / `noncoaxial_layout` / `noncoaxial_trace` / `noncoaxial_spot` / `image_orientation`(反射の回数と裏返り)/ `beamsplitter_branches` / `tilted_plate_shift`(Smith の横ずれ、Coddington から導いた非点隔差)/ `scheimpflug_tilt`(tanθ' = m·tanθ、ヒンジ、実光線の確かめ)/ `surface_reflectance`(材料表 + `filmoptics` の膜、入射角つき)/ `ghost_analysis`(全ての 2 面の組の 2 回反射のゴースト: 焦点・像面上の大きさ・エネルギー比・照度比)/ `ghost_image` / `ghost_path`。
 - `optdraw.noncoaxial_drawing`(折り返した系の断面図・設置図、照明の枝を重ねる `overlays`、`rotate_deg`)。`lens_section_drawing` は鏡・傾き・偏心のある処方をここへ回す(以前は ValueError)。`lens_element_drawing` が接合レンズ群の組図と、非球面の ISO 10110-12 の sag の表を描く(以前は ValueError)。
