@@ -672,7 +672,7 @@ def grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, reg
     撮った枚数 N と一致しない。P を間違えると縞の位相・振幅の読みが系統的に狂う(``grating_three_image_retrieve`` の
     ``fit_residual_*`` が大きくなる)。この op は P を p_min..p_max(既定 N − 2 .. N + 2)で p_step 刻みに振り、
     region の画素で I_k = a + b cos(φ − 2πk/P) をあてた残差の RMS / 平均を、画素について二乗平均した値が最小の P を返す。
-    残差は 9 桁に丸めて比べ、同点は小さい P を取る(argmax の屑で OS ごとに答えが変わらないように)。
+    残差は 9 桁に丸めて比べ、同点は小さい P を取る(argmin が同点で返す位置が、丸めの屑で OS ごとに変わらないように)。
 
     region: (y0, y1, x0, x1) の画素の範囲(試料の無い空気・基準の画素を選ぶ)。None は全画素。
     min_visibility: 残差に数える画素の縞の可視度の下限(P = N で一度あてた振幅 / 平均)。格子の欠陥・影・試料の

@@ -168,13 +168,24 @@ def test_inclusive_endpoint_stepping_needs_the_true_step_period():
 
 def test_refraction_angle_from_geometry():
     g = GI.talbot_grating_design(4.0, energy_kev=14.4)
+    # 設計 op の出力と**独立**に、教科書の閉形式をここで書き下す(位相 π の格子、m = 1、平面波):
+    #   λ = hc / E(hc = 12.398419843 keV·Å)、d = (m − 1/2) p1² / (4λ)、p2 = p1 / 2(Weitkamp ら 2005 の式 2)
+    lam_um = 12.398419843 / 14.4 * 1e-4
+    d_ind_mm = 0.5 * 4.0 ** 2 / (4.0 * lam_um) * 1e-3
+    p2_ind_um = 4.0 / 2.0
+    assert g["distance_mm"] == pytest.approx(d_ind_mm, rel=1e-6)
+    assert g["analyzer_period_um"] == pytest.approx(p2_ind_um, rel=1e-12)
+    assert d_ind_mm == pytest.approx(23.2, abs=0.05)                                # 公表値(図 4 の装置): 23.2 mm、2 µm
     alpha_urad = 0.5
-    phi = 2 * math.pi * g["distance_mm"] * 1e3 * alpha_urad * 1e-6 / g["analyzer_period_um"]
+    # 順方向も逆変換も、設計 op ではなく独立に求めた d・p2 で行う(op の比が両辺で相殺して通ることを避ける)
+    phi = 2 * math.pi * d_ind_mm * 1e3 * alpha_urad * 1e-6 / p2_ind_um
     s = GI.grating_stepping_simulate(dpc_rad=np.full((4, 4), phi))
     r = GI.grating_stepping_simulate(shape=(4, 4))
-    o = GI.grating_three_image_retrieve(s, r, distance_mm=g["distance_mm"],
-                                        analyzer_period_um=g["analyzer_period_um"])
+    o = GI.grating_three_image_retrieve(s, r, distance_mm=d_ind_mm, analyzer_period_um=p2_ind_um)
     assert np.max(np.abs(o["refraction_urad"] - alpha_urad)) < 1e-12
+    # 設計 op の d・p2 で逆変換しても同じ角度になる(op の比が正しいことの確認)
+    o2 = GI.grating_three_image_retrieve(s, r, distance_mm=g["distance_mm"], analyzer_period_um=g["analyzer_period_um"])
+    assert np.max(np.abs(o2["refraction_urad"] - alpha_urad)) < 1e-5
 
 
 def test_phase_noise_matches_poisson_limit():
