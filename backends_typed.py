@@ -223,6 +223,12 @@ _OP_BRIDGE_SKIP = {
     # 2026-10-15 ピクセルシフト(pixelshift): 偽色の量は無彩色かどうかを測る表の op で、橋の汎用 rgbimage(0..1 の
     # 任意の色)に掛けても「入力の色の量」を返すだけ —— 進化の語彙として意味のある手にならない。台帳から使う。
     "false_color_metric",
+    # 2026-10-18 光学設計ファイル(.zmx)の読み書き 4 本(lensfile、lensfile): 処方(table)を読む・書く・分類する側で、
+    # 画像を受けない。
+    "lens_file_read",
+    "lens_file_system",
+    "lens_file_write",
+    "lens_file_report",
     # 2026-10-14 ステップ型ファイバとライトガイド 7 本(fiberoptics、fiber): 引数だけで表か曲線を返す側で、画像を受けない。
     "material_group_index",
     "material_gvd",
@@ -252,6 +258,17 @@ _OP_BRIDGE_SKIP = {
     "moire_differential_shift",
     "moire_mark_read",
     "moire_phase_crlb",
+    # 2026-10-15 格子干渉 4 本(gratinginterf、grating_interf): 設計の表・位相ステップの画像列 (N, H, W) を作る側と、
+    # 2 組の画像列から 3 像を分ける側。橋が渡す汎用の 1 枚の画像には位相ステップの縞が無い。
+    "talbot_grating_design",
+    "grating_stepping_simulate",
+    "grating_three_image_retrieve",
+    "darkfield_scatter_relation",
+    # 2026-10-18 第 2 陣: 絨毯と線源は引数だけ、ステップ数の推定は縞の入った画像列、積分は幾何(画素・距離・周期・波長)が要る。
+    "talbot_carpet",
+    "talbot_source_visibility",
+    "grating_step_period_estimate",
+    "dpc_integrate",
     # 2026-10-15 クロマティック共焦点 6 本(chromconf、confocal): レンズの処方・較正表・スペクトル(pairs)を受ける側で、
     # 画像を受けない。台帳(`fullseye.ledger.chromatic_confocal_probe` …)から使う。
     "chromatic_confocal_probe",

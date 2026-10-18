@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_screen_by_stripe_direction.png",
+  "name": "screen_by_stripe_direction",
+  "caption": "【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc の分類。縦縞では縞に沿った dr が画像を変えず「効かない」、斜めの縞では dr と dc が縞を横切る組(右上がりは dr + dc、右下がりは dr − dc)でしか決まらない —— 開口問題。",
+  "shape": [
+   518,
+   780,
+   3
+  ]
+ },
+ {
+  "file": "02_undetermined_map_star.png",
+  "name": "undetermined_map_star",
+  "caption": "【3 章・見せ場】シーメンススター(腕 32 本)を 8 画素の升に区切り、升ごとにフレームのずれ (dr, dc) を合わせた。升の色 = simcal_fit の分類(緑 = 両方決まる、橙 = 組でしか決まらない、灰 = 効かない)。赤い楕円 = Cramér-Rao の1σ(Fisher 行列の逆の dr・dc の部分)の形と向き(升ごとに長軸を升の幅の 0.84 に揃えた。大きさは升ごとに違う)。星の腕の上では縞が放射状の 1 方向なので、楕円は半径の向きに伸びる —— 縞に沿ったずれ(半径の向き)は画像を変えない。橙の升の「決まる組」は接線の向きと、升が見込む角度の半分以内で揃う(最大 2.5°)。星の外の板は何も決まらない。",
+  "shape": [
+   768,
+   768,
+   3
+  ]
+ },
+ {
+  "file": "03_recovery_vs_crlb.png",
+  "name": "recovery_vs_crlb",
+  "caption": "【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。軸は誤差を下界で割った値。全つまみの Fisher 距離の和は 56.1(χ²(60)、p = 0.62)。雑音を 1/4 に見誤ったモデルでは同じ門が p = 3e-21 で落ちる。",
+  "shape": [
+   360,
+   847,
+   3
+  ]
+ },
+ {
+  "file": "04_poor_model_residuals.png",
+  "name": "poor_model_residuals",
+  "caption": "【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。左 = 平行移動だけ(χ²/自由度 1.39、残差 PCA structure): 中心から離れるほど符号の揃った帯が残り(回転の分)、絶対の門(χ² の上側確率)と残差 PCA が拒否する。右 = 回転も(χ²/自由度 1.02、white): 残差は雑音だけ。",
+  "shape": [
+   384,
+   776
+  ]
+ },
+ {
+  "file": "05_resolution_budget.png",
+  "name": "resolution_budget",
+  "caption": "【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。使える帯域 = 折り返しを起こさず系の MTF が 0.1 以上の上限(1 枚はナイキスト 0.5 で頭打ち)。Q = 2.5 では 0.4 cyc/px でレンズが遮断し、シフトしても帯域は増えない(得 1)。行のアクチュエータが止まった 4 枚と、信号 60 DN の暗い 4 枚では得の数を返さない。",
+  "shape": [
+   360,
+   835,
+   3
+  ]
+ },
+ {
+  "file": "06_real_tiles.png",
+  "name": "real_tiles",
+  "caption": "【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。ひし形 = G の格子(45° 回した格子)の升 16 個。升ごとに 1 → 3 枚目のずれを G だけの simcal で合わせ、dr・dc とも決まった升は緑、片方が決まらない升は橙 / 灰。決まった升では位相相関(別の方法)と升ごとの差の平均が 0 と区別できない(t 検定の p = 0.22 / 0.30)。色をまたぐ組は χ²/自由度 31 で拒否。データ: PixelShift200(Qian et al., ICCP 2022)、Hugging Face guochengqian/PixelShift200、CC BY 4.0(改変あり)",
+  "shape": [
+   512,
+   2304,
+   3
+  ],
+  "source": "データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, \"Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline\", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。"
+ }
+]

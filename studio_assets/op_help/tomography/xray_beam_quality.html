@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">xray_beam_quality — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dualxray; dualxray.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;xray_beam_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>スペクトルの線質: 第 1・第 2 半価層、均等度、平均エネルギー、実効エネルギーを返す。</p>
+<p>半価層は<b>空気カーマ</b>が半分になる吸収体の厚さ(線量計で測る量の定義どおり):</p>
+<p>K(x) ∝ Σ φ(E) E (μ_en/ρ)_air(E) e^{−μ(E) x}。HVL₁ は K(x) = K(0)/2、HVL₂ は K(x) = K(0)/4 から HVL₁ を引いたもの、均等度 = HVL₁/HVL₂(単色なら 1)。実効エネルギーは単色で同じ HVL₁ を与えるエネルギー(μ(E_eff) = ln 2/HVL₁)。<code style="color:#22d3bf">material</code> は吸収体(既定 Al、Cu も使う)。</p>
+<p>返り値: dict(hvl1_mm, hvl2_mm, homogeneity, mean_energy_kev(光子数の平均), effective_energy_kev, material)。公表の線質(IEC 61267 の RQA 系列など)と比べる量。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

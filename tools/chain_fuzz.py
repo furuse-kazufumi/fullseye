@@ -1484,6 +1484,28 @@ def _b_simcal_uncertainty(pool, rng):
     return (res,), {"method": "bootstrap", "n_boot": 8}
 
 
+# --- 符号系の頑健照合(opscodematch)。乱数は共有の列を引かず、固定の種で 1 枚の場面を作る。 --- #
+def _codematch_scene():
+    from scipy import ndimage as _ndi
+    rr = np.random.default_rng(20261018)
+    a = _ndi.gaussian_filter(rr.random((64, 72)), 1.5)
+    return (a - a.min()) / (a.max() - a.min())
+
+
+def _b_codematch_pair(pool, rng):
+    # 場面とその一部(24 x 28、列数は偶数 = SCC の組が全列を覆う)。正解は左上 (20, 24)。
+    img = _codematch_scene()
+    return (img, img[20:44, 24:52].copy()), {}
+
+
+def _b_codematch_rrf(pool, rng):
+    # 背景と、明るさを単調に変えたうえで 16 x 16 の物を置いた現在の画像。
+    bg = _codematch_scene()
+    cur = bg ** 0.7
+    cur[24:40, 30:46] = 1.0 - bg[0:16, 0:16]
+    return (bg, cur), {}
+
+
 # --- 収束型の演算(opsconverge)。乱数は引かない(op の内側の固定の種だけ)。 --- #
 def _b_rl_until(pool, rng):
     # ポアソンの食い違い原理は光子数(非負の整数)を要る。汎用の 0..1 画像では「計数でない」と拒否するのが正しいので、
@@ -4507,6 +4529,60 @@ def _b_moire_mark(pool, rng):
     return (img, ref), {"pixel_um": 2.0}
 
 
+def _b_grating_stacks(pool, rng):
+    """格子干渉の位相ステップ 2 組(試料あり 8 枚・基準 6 枚、16 x 20 画素)。
+
+    基準の縞の可視度は列で 0.025〜0.25 に変わる(格子の端の影)。既定の ``min_visibility`` 0.02 では全画素が有効
+    (出力に NaN は無い)で、倍の 0.04 にすると端の列が無効画素(NaN)になる = しきい値が出力を変える。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:16, :20]
+    t = np.exp(-0.03 * xx)
+    phi = float(rng.uniform(0.2, 1.0)) * np.sin(yy / 3.0)
+    dfm = 0.5 + 0.4 * np.cos(xx / 5.0) ** 2
+    s = _gi.grating_stepping_simulate(t, phi, dfm, n_steps=8)
+    ref_d = np.clip(0.1 + 0.08 * xx, 0.0, 1.0) * np.ones((16, 20))           # V = 0.25 × (0.1 … 1)
+    r = _gi.grating_stepping_simulate(None, None, ref_d, n_steps=6)
+    return (s, r), {}
+
+
+def _b_grating_stack1(pool, rng):
+    """1 周期 10.6 段で 10 枚撮った基準の画像列(12 x 14 画素、弱い雑音つき)。
+
+    縞の可視度は列で 0.01〜0.25 に変わる。既定の ``min_visibility`` 0.05 の半分と倍(0.025・0.1)の間に入る列が
+    あるので、しきい値を動かすと残差に数える画素の組が変わり、残差の曲線が変わる。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:12, :14]
+    dfm = np.clip(0.04 + 0.075 * xx, 0.0, 1.0)
+    s = _gi.grating_stepping_simulate(None, None, dfm, n_steps=10, steps_per_period=10.6,
+                                      ref_phase_rad=float(rng.uniform(-1.0, 1.0)))
+    s = s + np.random.default_rng(7).normal(0.0, 0.003, s.shape)          # 共有の乱数列を引かない専用の種
+    return (s,), {}
+
+
+def _b_source_vis(pool, rng):
+    """線源格子つきの線源(Lau の条件の近く): duty と n_slits が効く場合を必ず含める。"""
+    big_l, d, p2 = float(rng.uniform(800.0, 1600.0)), float(rng.uniform(20.0, 60.0)), float(rng.uniform(1.5, 5.0))
+    p0 = p2 * big_l / d * float(rng.uniform(0.995, 1.005))
+    return (8.0 * p0, big_l, d, p2), {"source_grating_period_um": p0, "duty": 0.5, "n_slits": 8}
+
+
+def _b_darkfield_rel(pool, rng):
+    """暗視野か散乱角の広がりの一方だけ(両方・どちらも無しは拒否する op)。"""
+    if rng.uniform() < 0.5:
+        return (), {"darkfield": float(rng.uniform(0.2, 0.95))}
+    return (), {"sigma_urad": float(rng.uniform(0.2, 5.0))}
+
+
+def _b_dpc_map(pool, rng):
+    """丸棒の微分位相(折り返しの無い 0.4 rad 程度、16 x 40 画素)を 3 像の表の形で、幾何と一緒に。"""
+    xb = np.arange(41, dtype=float) - 0.5
+    tb = 2.0 * np.sqrt(np.clip(12.0 ** 2 - (xb - 20.0) ** 2, 0.0, None))
+    phi = np.tile(float(rng.uniform(0.02, 0.06)) * np.diff(tb), (16, 1))
+    return ({"dpc_rad": phi},), {"pixel_um": 40.0, "distance_mm": 23.2, "analyzer_period_um": 2.0, "energy_kev": 14.4}
+
+
 def _b_gum_mc(pool, rng):
     """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
     n = 3
@@ -6483,6 +6559,41 @@ def _b_emva_general_relative_qe(pool, rng):
     return (mp, mu, 64.0, 64.0 + 0.1125 * mps * np.array([1.0, 0.7]), mps, 0), {}
 
 
+def _b_dualxray(kind):
+    """エネルギー弁別 X 線(dualxray、2026-10-15)の op に**本物の入力**を渡す。
+
+    ★宣言 in の ``pairs`` / ``images`` をプールから拾うと、乱数の pairs はエネルギーが単調増加でなく、
+    乱数の images はチャネルの数(2)と合わず、どちらも fail-closed で拒否される —— 走ったことには
+    なるが一度も計算しない。管のスペクトルと、既定のチャネルで撮った計数像を builder で作る。
+    """
+    def build(pool, rng):
+        import dualxray as _dx
+        kv = float(rng.integers(50, 121))
+        spec = _dx.xray_tube_spectrum(kv)
+        if kind == "spectrum":
+            return ([spec], {})
+        if kind == "two_spectra":
+            return ([_dx.xray_tube_spectrum(kv), _dx.xray_tube_spectrum(kv + 60.0)], {})
+        t = rng.uniform(0.0, 0.5, size=(2, 16, 16)) * np.array([10.0, 0.3])[:, None, None]
+        if kind == "thickness":
+            return ([t], {"materials_list": ["WATER", "AL"]})
+        if kind == "signal3":
+            # ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと
+            #   どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が
+            #   無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。
+            #   窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、
+            #   effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+            ch3 = _dx.photon_counting_channels(_dx.xray_tube_spectrum(120.0), (20.0, 40.0, 60.0))
+            t3 = np.zeros((2, 16, 16))
+            t3[0] = np.linspace(0.0, 6.0, 16)[None, :] ** 2 / 6.0       # 水 0〜6 cm(先頭の列は L がほぼ 0)
+            t3[1] = np.linspace(0.0, 0.3, 16)[:, None]
+            sig3 = _dx.xray_channel_projection(t3, ["WATER", "AL"], ch3, 1e5, seed=int(rng.integers(0, 1000)))
+            return ([sig3], {"channels": ch3})
+        sig = _dx.xray_channel_projection(t, ["WATER", "AL"], None, 1e5, seed=int(rng.integers(0, 1000)))
+        return ([sig], {})
+    return build
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6976,6 +7087,10 @@ OP_ARG_BUILDERS = {
     "simcal_uncertainty": _b_simcal_uncertainty,
     "iv_richardson_lucy_until": _b_rl_until,
     "mc_photon_slab": _b_mc_photon_slab,
+    "ocm_match": _b_codematch_pair,
+    "isc_match": _b_codematch_pair,
+    "scc_match": _b_codematch_pair,
+    "radial_reach_filter": _b_codematch_rrf,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,
@@ -7088,6 +7203,21 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    # 格子干渉(2026-10-15): 3 像の分離は、縞の入った位相ステップの画像列 2 組が要る(汎用の画像の束には
+    # 1 周期の正弦が無く、基準の可視度が 0 で fail-closed で拒否される)。
+    "grating_three_image_retrieve": _b_grating_stacks,
+    "grating_step_period_estimate": _b_grating_stack1,
+    "dpc_integrate": _b_dpc_map,
+    "darkfield_scatter_relation": _b_darkfield_rel,
+    "talbot_source_visibility": _b_source_vis,
+    # エネルギー弁別 X 線(2026-10-15): 単調なエネルギーのスペクトルと、2 チャネルの計数像が要る
+    "xray_beam_quality": _b_dualxray("spectrum"),
+    "photon_counting_channels": _b_dualxray("spectrum"),
+    "dual_kvp_channels": _b_dualxray("two_spectra"),
+    "xray_channel_projection": _b_dualxray("thickness"),
+    "basis_material_decompose": _b_dualxray("signal"),
+    "r_value_map": _b_dualxray("signal3"),
+    "effective_z_map": _b_dualxray("signal3"),
 }
 
 
@@ -7739,7 +7869,10 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       #   with_wavelength は処方(object_mm = inf)をそのまま返す。
                                       "noncoaxial_system", "noncoaxial_example", "noncoaxial_layout",
                                       "noncoaxial_drawing", "ghost_analysis", "ghost_path", "opd_samples",
-                                      "with_wavelength"}
+                                      "with_wavelength",
+                                      # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
+                                      #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+                                      "lens_file_read", "lens_file_system"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
@@ -7787,6 +7920,12 @@ NONFINITE_BY_CONTRACT_LEDGER_GATE = {
     "diabolo_spheroid",           # b_paper_literal: 「根の中が負になる(NaN)」
 }
 
+#: 文書化済みの非有限を返す op(エネルギー弁別 X 線、2026-10-15)。どれも「その画素では値を作らない」が契約:
+#:   * basis_material_decompose — 信号 0 以下・収束しない・飛ぶ画素は NaN で ``rejected`` に数える(docstring)。
+#:   * r_value_map — L_high < min_log(ほぼ素通しで比が雑音だけ)の画素は NaN(docstring)。
+#:   * effective_z_map — 照合の範囲の外(H より軽いか Fe より重い R、L_high が小さい)の画素は NaN(docstring)。
+NONFINITE_BY_CONTRACT_DUALXRAY = {"basis_material_decompose", "r_value_map", "effective_z_map"}
+
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
@@ -7809,7 +7948,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
     | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
-    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE
+    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE | NONFINITE_BY_CONTRACT_DUALXRAY
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

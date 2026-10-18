@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## Essayez par vous-même
+
+Manipulez vous-même les figures de l'article, même sur téléphone. Changez de méthode avec les onglets et faites pivoter les vues 3-D en les faisant glisser.
+
+- **[CAO contre nuage de points scanné](../viewers/poc_cad_scan_deviation.html?lang=fr)**: Le recalage absorbe les défauts : une pièce de valeur vraie 1.2 µm montre un creux de 121 µm qui n'existe pas.
+- **[Changement de terrain par LiDAR](../viewers/poc_lidar_terrain_change.html?lang=fr)**: Une simple soustraction fait paraître tout le bloc inchangé 0.183 m plus bas. Une fois corrigé, seul le vrai changement reste.
+- **[Suivi par modèle](../viewers/poc_template_tracking.html?lang=fr)**: Même après avoir basculé sur un objet qui lui ressemble, le suivi continue de signaler « trouvé ».
+
 ## Points forts
 
 <div class="vg">
@@ -77,17 +85,19 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Ce qu'il permet de faire
 
-74 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+80 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
 **Trouver**
 
 - Découper des régions, les sélectionner et les compter: [explication](../../capabilities/blob-and-region.md) _(ja)_ · exemples [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- Séparer épaisseur et matériau avec deux énergies de rayons X (bi-énergie et comptage de photons : spectre, fenêtres d'énergie, décomposition en base, numéro atomique effectif): [explication](../../capabilities/dual-energy-xray-material-discrimination.md) _(ja)_ · exemples [poc_dual_energy_xray](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dual_energy_xray.py)
 - Corriger le texte contenu dans une image par rapport à la chaîne attendue: [explication](../../capabilities/fix-text-in-images.md) _(ja)_ · exemples [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - Prétraitement pour l'OCR (correction de l'inclinaison, binarisation locale, découpage des lignes): [explication](../../capabilities/ocr-preprocessing.md) _(ja)_ · exemples [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - Distinguer, par la PSF de diffusion des porteurs et le type de défaut, pourquoi une rainure fine n'est plus visible sur une image PL (inspection PL/EL des plaquettes de Si et des cellules solaires): [explication](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · exemples [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - Détecter de petites cibles ponctuelles et en déterminer la position au niveau sous-pixel: [explication](../../capabilities/point-target-detection.md) _(ja)_ · exemples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+- Appariement de gabarits robuste à l'éclairage inégal, aux reflets et aux occlusions (comparer le sens de la variation de luminosité comme un code, refuser les gabarits indéterminés): [explication](../../capabilities/robust-code-matching.md) _(ja)_ · exemples [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - Détecter les vides d'un collage hybride par la phase de l'écho ultrasonore et non par sa luminosité (C-scans au microscope acoustique à balayage, compromis sur la fréquence, POD): [explication](../../capabilities/sam-bond-voids.md) _(ja)_ · exemples [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - Défauts de relief de surface, de la conception de l'éclairage à la détection: [explication](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · exemples [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - Positionnement (suivi de la ligne de mesure par appariement de gabarit): [explication](../../capabilities/template-alignment.md) _(ja)_ · exemples [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
@@ -100,6 +110,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Remesurer les valeurs de la fiche technique d'une caméra selon la procédure EMVA 1288 et observer dans quelle mesure le prétraitement interne à la caméra les déplace (Linear et General): [explication](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · exemples [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - Estimer les coefficients de distorsion à partir de lignes censées être droites (plumb-line, sans damier): [explication](../../capabilities/estimate-lens-distortion.md) _(ja)_ · exemples [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - Placer les mesures sur le globe terrestre (ECEF, références de hauteur, ENU local): [explication](../../capabilities/geodetic-frames.md) _(ja)_ · exemples [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- Interférométrie à réseaux (Talbot / Talbot-Lau) : transmission, phase différentielle et champ sombre à partir d'un seul balayage par pas de phase: [explication](../../capabilities/grating-interferometry.md) _(ja)_ · exemples [poc_grating_interferometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_grating_interferometry.py)
 - OCT industrielle (spectre d'interférence → linéarisation en k → compensation de dispersion → A-scans / B-scans → épaisseur des couches par l'indice de groupe): [explication](../../capabilities/industrial-oct.md) _(ja)_ · exemples [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - Mesurer le diamètre intérieur d'une pièce circulaire jusqu'au mm: [explication](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · exemples [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
 - Temps de vol indirect (par phase) : déroulement multifréquence et modes de défaillance (repliement, trajets multiples, pixels de bord mélangés, harmoniques, lumière ambiante): [explication](../../capabilities/itof-multifreq.md) _(ja)_ · exemples [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
@@ -128,8 +139,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Mesurer la couleur (XYZ / Lab / écart de couleur): [explication](../../capabilities/colour-and-delta-e.md) _(ja)_ · exemples [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - Calculer réflexions multiples, diffusions multiples et itérations jusqu'à la convergence — en rendant la preuve de convergence et l'erreur résiduelle, et sans valeur si elle ne converge pas: [explication](../../capabilities/convergent-forward-models.md) _(ja)_ · exemples [converge_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/converge_tour.py)
 - Fibres optiques et guides de lumière (dispersion du verre → modes LP → diamètre de mode → efficacité de l'éclairage): [explication](../../capabilities/fiber-and-light-guide.md) _(ja)_ · exemples [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
+- Spectromètre à réseau et éclairage de microscope (largeur de bande, smile/keystone, Köhler/critique, demi-miroir coaxial): [explication](../../capabilities/grating-spectrometer-and-illumination.md) _(ja)_ · exemples [poc_spectrometer_illumination](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spectrometer_illumination.py)
 - Faire apparaître ou effacer les petites inclinaisons d'une surface spéculaire avec le cône d'éclairage et l'ON d'observation (intersection de calottes sphériques → bandes de pente → impacts, rayures, surface satinée): [explication](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · exemples [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - Compter l'interréflexion dans les pièces concaves jusqu'à la convergence sans perdre la vérité photométrique (facteurs de forme 3D, radiosité progressive, rendu d'inspection avec réflexions): [explication](../../capabilities/interreflection-to-convergence.md) _(ja)_ · exemples [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
+- Fichiers de conception optique (lecture et écriture de prescriptions séquentielles .zmx, inventaire des mots-clés, import fail-closed): [explication](../../capabilities/lens-prescription-files.md) _(ja)_ · exemples [poc_lens_file_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_file_roundtrip.py)
 - Consulter les propriétés optiques des matériaux dans une seule table (83 verres optiques, cristaux, semi-conducteurs, métaux, liquides et plastiques, avec coefficients et tables numériques issus de la littérature primaire, et point d'entrée pour importer un catalogue de verres): [explication](../../capabilities/material-optical-property-library.md) _(ja)_ · exemples [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - Trier par hyperspectral proche infrarouge des corps étrangers d'apparence identique (bandes d'absorption de la table des matériaux → réflectance de la couche diffusante → nombre d'électrons par bande de l'InGaAs): [explication](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · exemples [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - Optique non coaxiale (miroirs de repliement, lames semi-réfléchissantes, lames inclinées, Scheimpflug et images fantômes): [explication](../../capabilities/noncoaxial-optics.md) _(ja)_ · exemples [poc_noncoaxial_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_noncoaxial_optics.py)
@@ -169,6 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **Afficher**
 
 - Transformer les résultats en figures lisibles par l'humain: [explication](../../capabilities/figures-and-annotation.md) _(ja)_ · exemples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Tracer des lignes et des régions sans connaître la couleur du fond (couleur inversée): [explication](../../capabilities/inverted-colour-overlays.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Placer du texte et des tableaux à l'endroit souhaité sur une image: [explication](../../capabilities/text-and-tables-on-images.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,11 +195,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[Liste des 146 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 148 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 
-248 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+255 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -204,7 +218,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Inspection industrielle</b> (39)</summary>
+<details class="vall"><summary><b>Inspection industrielle</b> (42)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="Code-barres 1-D" width="200" height="200"><span>Code-barres 1-D</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Tortuosité des électrodes" width="200" height="200"><span>Tortuosité des électrodes</span></a>
@@ -245,10 +259,13 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="Caméra linéaire TDI et objectifs pour caméra linéaire" width="200" height="200"><span>Caméra linéaire TDI et objectifs pour caméra linéaire</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="OCT industrielle (épaisseur des couches de peinture et défauts internes)" width="200" height="200"><span>OCT industrielle (épaisseur des couches de peinture et défauts internes)</span></a>
 <a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="MEB virtuel et tension d'accélération" width="200" height="200"><span>MEB virtuel et tension d'accélération</span></a>
+<a href="../../articles/assets/poc/poc_grating_interferometry/12_real_three_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_grating_interferometry.jpg" alt="Interférométrie à réseaux (fibres, fissures et pores en champ sombre)" width="200" height="200"><span>Interférométrie à réseaux (fibres, fissures et pores en champ sombre)</span></a>
+<a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="Os et verre dans la viande, séparés par deux énergies de rayons X (rayons X bi-énergie)" width="200" height="200"><span>Os et verre dans la viande, séparés par deux énergies de rayons X (rayons X bi-énergie)</span></a>
+<a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Appariement de codes sous lumière variable et occlusion" width="200" height="200"><b>&#9654;</b><span>Appariement de codes sous lumière variable et occlusion</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (50)</summary>
+<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (52)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="Appariement AOI et CT" width="200" height="200"><span>Appariement AOI et CT</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Déformation des murs construits" width="200" height="200"><span>Déformation des murs construits</span></a>
@@ -300,6 +317,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="Interréflexion dans une poche usinée jusqu'à la convergence" width="200" height="200"><span>Interréflexion dans une poche usinée jusqu'à la convergence</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="MET virtuel (anneaux de Thon et défocalisation)" width="200" height="200"><b>&#9654;</b><span>MET virtuel (anneaux de Thon et défocalisation)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="Optique non coaxiale : images fantômes et repliements d'une lame semi-réfléchissante" width="200" height="200"><span>Optique non coaxiale : images fantômes et repliements d'une lame semi-réfléchissante</span></a>
+<a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="Spectromètre et éclairage (largeur de bande et structure de la lampe)" width="200" height="200"><span>Spectromètre et éclairage (largeur de bande et structure de la lampe)</span></a>
+<a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Étalonner un modèle d'imagerie sur une image télécentrique réelle" width="200" height="200"><span>Étalonner un modèle d'imagerie sur une image télécentrique réelle</span></a>
 </div>
 </details>
 
@@ -350,7 +369,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Qualité d'image et restauration</b> (18)</summary>
+<details class="vall"><summary><b>Qualité d'image et restauration</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="L'œil de la mouche face à des rayures" width="200" height="200"><b>&#9654;</b><span>L'œil de la mouche face à des rayures</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Correction du flou de bougé" width="200" height="200"><b>&#9654;</b><span>Correction du flou de bougé</span></a>
@@ -370,10 +389,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="Contours actifs" width="200" height="200"><b>&#9654;</b><span>Contours actifs</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Segmentation par graphe" width="200" height="200"><b>&#9654;</b><span>Segmentation par graphe</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Décalage de pixels (fausses couleurs et repliement)" width="200" height="200"><b>&#9654;</b><span>Décalage de pixels (fausses couleurs et repliement)</span></a>
+<a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)" width="200" height="200"><span>Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Couleur et séparation</b> (9)</summary>
+<details class="vall"><summary><b>Couleur et séparation</b> (10)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)" width="200" height="200"><span>Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)" width="200" height="200"><b>&#9654;</b><span>Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)</span></a>
@@ -384,6 +404,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_polarization_specular/01_fresnel.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_polarization_specular.jpg" alt="Suppression des reflets spéculaires par polarisation" width="200" height="200"><span>Suppression des reflets spéculaires par polarisation</span></a>
 <a href="../../articles/assets/poc/poc_real_stain_unmix/01_separation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stain_unmix.jpg" alt="Séparation des colorations sur prises réelles" width="200" height="200"><span>Séparation des colorations sur prises réelles</span></a>
 <a href="../../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_white_balance.jpg" alt="Balance des blancs" width="200" height="200"><span>Balance des blancs</span></a>
+<a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="Fichiers de conception optique (.zmx) : lire, analyser, corriger, réécrire" width="200" height="200"><span>Fichiers de conception optique (.zmx) : lire, analyser, corriger, réécrire</span></a>
 </div>
 </details>
 

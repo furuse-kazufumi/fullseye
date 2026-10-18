@@ -1,0 +1,67 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">符号系の頑健照合 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>テンプレート照合の定番の正規化相互相関(NCC、<code style="color:#22d3bf">ncc_locate</code> / <code style="color:#22d3bf">find_ncc_model</code>)は、明るさの<b>値</b>の相関を取ります。明るさ全体の倍率とオフセットには強いのですが、次の 3 つには弱い。</p>
+<p style="margin:2px 0 2px 12px">• テンプレートの一部だけを手前の物が隠す(遮蔽)。隠した物の明るさが違うと、相関は数割の遮蔽で別の場所に負ける。</p>
+<p style="margin:2px 0 2px 12px">• 光沢が飛んで一部が飽和する(局所のハイライト)。</p>
+<p style="margin:2px 0 2px 12px">• 照明がテンプレートの中でむらになる(片側だけ暗い、ガンマが違う)。</p>
+<p>この族は明るさの<b>変化の向き</b>を符号にして比べます。値が崩れても、向きは崩れにくい。そのかわり、平坦な所(向きが雑音で決まる所)は使えないので、<b>符号が位置を決めないテンプレートには値を返さずに拒否</b>します。台帳は <code style="color:#22d3bf">opscodematch.py</code>、本体は <code style="color:#22d3bf">codematch.py</code>。式は文献から再実装したもので、著者が承認したものではありません。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 圖(原始碼):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  I[画像] --&gt; OC[orientation_code&lt;br/&gt;勾配の向き N 段]
+  I --&gt; IS[increment_sign&lt;br/&gt;隣との増分の符号]
+  T[テンプレート] --&gt;|有効な符号が足りない| X[拒否: ValueError]
+  OC --&gt; OCM[ocm_match&lt;br/&gt;巡回差の平均]
+  IS --&gt; ISC[isc_match&lt;br/&gt;一致率]
+  IS --&gt; SCC[scc_match&lt;br/&gt;一致した組だけで相関]
+  OCM --&gt; R[row / col / score / margin]
+  ISC --&gt; R
+  SCC --&gt; R
+  B[背景] --&gt; RRF[radial_reach_filter&lt;br/&gt;8 方向の reach の符号]
+  C[現在の画像] --&gt; RRF
+  RRF --&gt; F[前景 / 判定しない画素]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">符号化(code)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 勾配の向きを符号に | <code style="color:#22d3bf">orientation_code</code> | Sobel の向き θ を N 段(既定 16 = 22.5°)に。<code style="color:#22d3bf">abs(∂x)+abs(∂y) &lt;= grad_thresh</code> は無効符号 N。オフセットで不変、rot90 で N/4 巡回 |</p>
+<p>| 隣との増分の符号 | <code style="color:#22d3bf">increment_sign</code> | <code style="color:#22d3bf">[I(次) &gt;= I(今)]</code>。狭義単調な明るさの変換で厳密に不変 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">照合(match)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 向きで探す | <code style="color:#22d3bf">ocm_match</code> | 巡回差 <code style="color:#22d3bf">min(abs(a-b), N-abs(a-b))</code> の平均(テンプレート側が無効なら 0、画像側だけ無効なら N/4)。Ullah・Kaneko・Igarashi 2001 |</p>
+<p>| 増分の符号で探す | <code style="color:#22d3bf">isc_match</code> | 一致率。単調な明るさ変換で点数地図が 1 ビットも変わらない。Kaneko・Murase・Igarashi 2002 |</p>
+<p>| 符号の合う画素だけで相関 | <code style="color:#22d3bf">scc_match</code> | 隣り合う 2 画素の組の符号が一致した画素だけで正規化相関。拡張マスク(2 × 2 組で 2 つ以上不一致なら外す)が既定。Kaneko・Satoh・Igarashi 2003 |</p>
+<p>座標は <code style="color:#22d3bf">find_ncc_model</code> と同じテンプレート中心。<code style="color:#22d3bf">margin</code> は最良位置から離れた次点との差で、似た物が 2 つある場面では小さくなります。</p>
+<p><b>SCC の選択の偏り</b>(PoC で実測): 「符号が合った画素だけ」を選ぶので、無関係な位置でも選んだ画素どうしの相関は高めに出ます。そのまま最大値を取ると、SCC は NCC より先に壊れました。既定では、無相関の位置で期待される使用率(基本マスク 1/2、拡張 5/16)に 4 標準偏差を足した値より使用率の低い位置を採点しません(<code style="color:#22d3bf">min_mask_fraction=None</code>)。これは論文の式には無く、論文の統計モデル(無相関で一致率 0.5)から足した拒否です。それでも SCC は OCM / ISC には届きません。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景との比較(change)</h3>
+<p>| やりたいこと | op | 要点 |</p>
+<p>|---|---|---|</p>
+<p>| 照明が変わっても物だけ拾う | <code style="color:#22d3bf">radial_reach_filter</code> | 背景の各画素から 8 方向へ、差が <code style="color:#22d3bf">t_p</code> 以上になる最初の画素(reach)を探し、その差の符号が現在の画像で保たれる方向を数える。保たれた割合が <code style="color:#22d3bf">agree_thresh</code> 未満なら前景。reach が <code style="color:#22d3bf">min_dirs</code> 方向に見つからない平坦な画素は判定しない。Satoh・Kaneko・Niwa・Yamamoto 2004 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+from scipy import ndimage
+import fullseye as fs
+
+rng = np.random.default_rng(0)
+scene = ndimage.gaussian_filter(rng.random((96, 96)), 1.5)
+scene = (scene - scene.min()) / (scene.max() - scene.min())
+tpl = scene[30:62, 40:72].copy()                     # 正解の中心は (46, 56)
+lit = scene ** 0.4                                   # 照明が変わった(ガンマ)
+lit[30:46, 40:56] = 1.0                              # テンプレートの 1/4 が飽和
+for name in (&quot;ocm_match&quot;, &quot;isc_match&quot;, &quot;scc_match&quot;):
+    r = getattr(fs.ledger, name)(lit, tpl)
+    print(name, r[&quot;row&quot;], r[&quot;col&quot;], round(r[&quot;score&quot;], 3))
+try:
+    fs.ledger.isc_match(lit, np.full((32, 32), 0.5))
+except ValueError as e:
+    print(&quot;refused:&quot;, str(e)[:40])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">どこで壊れるか</h3>
+<p><code style="color:#22d3bf">examples/poc_code_matching_breakdown.py</code> が、公開の実写 5 枚から切った 32 x 32 のテンプレートに遮蔽・ハイライト・照明のむら・回転を段階的に掛けて、1 px 以内で当たった割合を数えます。遮蔽とハイライトでは NCC が 1〜2 割で半分を割るのに対し、OCM と ISC は 4〜5 割でも半分以上残ります。回転には 4 種とも弱く、10° 前後で半分を割ります(回転を探す方向符号ヒストグラムの系統は別の課題)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献</h3>
+<p style="margin:2px 0 2px 12px">• F. Ullah, S. Kaneko, S. Igarashi, &quot;Orientation Code Matching for Robust Object Search&quot;, IEICE Trans. Inf. &amp; Syst. E84-D(8), 2001.</p>
+<p style="margin:2px 0 2px 12px">• S. Kaneko, I. Murase, S. Igarashi, &quot;Robust image registration by increment sign correlation&quot;, Pattern Recognition 35(10), 2002.</p>
+<p style="margin:2px 0 2px 12px">• S. Kaneko, Y. Satoh, S. Igarashi, &quot;Using selective correlation coefficient for robust image registration&quot;, Pattern Recognition 36(5), 2003.</p>
+<p style="margin:2px 0 2px 12px">• Y. Satoh, S. Kaneko, Y. Niwa, K. Yamamoto, &quot;Robust object detection using a Radial Reach Filter (RRF)&quot;, Systems and Computers in Japan 35(10), 2004.</p>
+<p style="margin:2px 0 2px 12px">• 符号化と相違度の表の確認に: 本田 匠・高氏 秀則・金子 俊一, 「照明スペクトル変動に対してロバストな重み付きカラー方向符号照合法」, 精密工学会誌 75(2), 2009。RRF の式の確認に: 和島 直哉・高橋 悟・伊藤 誠也・佐藤 雄隆・金子 俊一, 「Radial Reach Filter に基づく動画像処理を用いた移動体追跡法」, 電気学会論文誌 C 129(10), 2009。</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

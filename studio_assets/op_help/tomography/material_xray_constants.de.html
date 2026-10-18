@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">material_xray_constants — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_xray_constants(material=&#x27;CU&#x27;, energy_kev: &#x27;float&#x27; = 8.0, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import materials; materials.material_xray_constants(material=&#x27;CU&#x27;, energy_kev: &#x27;float&#x27; = 8.0, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;material_xray_constants&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Gibt die Röntgenkonstanten bei einer Energie (μ/ρ, μ_en/ρ, μ, Halbwertsschicht, mittlere freie Weglänge) mit Quelle zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>返り値: dict(name, energy_kev, mu_rho_cm2_g, mu_en_rho_cm2_g, density_g_cm3, mu_per_cm, hvl_mm = 10·ln 2/μ, mfp_mm = 10/μ, edges(±20 % の範囲にある吸収端の (元素, 端, keV)), kind, reference)。単色 X 線の半価層は ln 2/μ そのもの(多色の線質の半価層は <code style="color:#22d3bf">dualxray.xray_beam_quality</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: materials.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

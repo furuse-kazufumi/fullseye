@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">material_effective_z — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_effective_z(material=&#x27;WATER&#x27;, exponent: &#x27;float&#x27; = 2.94, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import materials; materials.material_effective_z(material=&#x27;WATER&#x27;, exponent: &#x27;float&#x27; = 2.94, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;material_effective_z&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Gibt aus der Zusammensetzung die effektive Ordnungszahl (Potenzgesetz nach Mayneord / Spiers) und die Elektronendichte zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Z_eff = (Σ aᵢ Zᵢ^p)^(1/p)、aᵢ = wᵢ (Z/A)ᵢ / Σ wⱼ (Z/A)ⱼ は<b>電子の割合</b>、p = 2.94 は光電効果の断面積の Z 依存(≈ Z^3.94/原子 → Z^2.94/電子)から来る慣用の指数。水は 7.42(公表値)。電子密度 ρₑ = ρ N_A Σ wᵢ Zᵢ/Aᵢ [電子/cm³] と、水に対する比も返す。デュアルエナジーの像から推定する実効 Z(<code style="color:#22d3bf">dualxray.effective_z_map</code>)は、この「組成の Z_eff」と同じものではない(光電効果の比で定義した Z は、スペクトルの位置で値が数 % 動く)—— その差を PoC で数える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: materials.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

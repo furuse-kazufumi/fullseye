@@ -58,6 +58,8 @@ with warnings.catch_warnings():
         plane_distance, height_above_plane, remove_ground,
         euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
         farthest_point_sampling, curvature, centroid, principal_axes,
+        pocviewer, write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab,
+        viewer_points_tab, viewer_frames_tab, viewer_split_tab,
         mesh, read_mesh, read_points, write_mesh, write_points, sample_surface,
         mesh_to_points, voxelize, bounds, recenter, normalize_scale,
         meshio_opt, read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -264,7 +266,7 @@ with warnings.catch_warnings():
         tcspc_stats, dtof_depth, dtof_cube_simulate, dtof_cube_depth,
         lifetime_fit, lifetime_phasor,
         specularity, motionmag, pose_quat, quatimage, rangedoppler,
-        acoustics, interferometry, flyvision, spc, graphinv, treemorph, segcompare, textregion, vxcore, residue, doe, multivar, sensitivity, simcal, simcalcheck, converge, mcphoton, deconvstop,
+        acoustics, interferometry, flyvision, spc, graphinv, treemorph, segcompare, textregion, vxcore, residue, doe, multivar, sensitivity, simcal, simcalcheck, converge, mcphoton, deconvstop, codematch,
         gfx2d, alpha_composite, alpha_composite_premul, blend_mode, bloom,
         chromatic_aberration, color_grade, color_lut, dither, film_grain,
         layer_stack, light_mask, linear_to_srgb, nine_slice, normal_map_decode,
@@ -434,6 +436,7 @@ with warnings.catch_warnings():
         light_source, irradiance_map, illumination_uniformity, defect_contrast,
         lighting_sweep, illumination_design,
         solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
+        illumination_train, illumination_field, coaxial_illumination,
     )
     # 2026-10-15 近赤外の分光撮像: 反射率のキューブ (H, W, L) を撮る。キューブ型が台帳に無いので facade から出す
     #   (曲線・表を返す 5 本は opsoptics の spectral に載る)。
@@ -867,6 +870,8 @@ __all__ = [
     "plane_distance", "height_above_plane", "remove_ground",
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
+    "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
@@ -1024,7 +1029,7 @@ __all__ = [
     # 漏れていた 2 つだけ(2026-09-01: 全部足して重複させた回帰)
     "dsp", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop", "codematch",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
@@ -1184,6 +1189,7 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
+    "illumination_train", "illumination_field", "coaxial_illumination",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
@@ -1246,6 +1252,33 @@ __all__ += [
     "vol_marker_watershed",
     "wet_surface_color",
 ]
+
+# 名前の当て推量への案内(外部 AI レビュー N223): `fullseye.Engine` / `fullseye.Graph` / `fullseye.op_info` は
+#   存在したことがない(公開名は FullseyeEngine / FullseyeGraph、op の情報は op_assist / op_find)。
+#   別名(alias)は足さない —— 同じものに名前が 2 つ出来るので。代わりに AttributeError の文面で本名を案内する。
+#   hasattr は False のまま、表に無い名前は標準の AttributeError。
+_NAME_HINTS = {
+    "Engine": ("FullseyeEngine", "dict-step engine: a list of (op, a, b) stages"),
+    "Graph": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "DAG": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "op_info": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "op_help": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "describe_op": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "get_op": ("find_op", "look an operator up by name; CLI: fullseye has <name>"),
+    "search_ops": ("op_find", "search operators by words"),
+    "list_operators": ("list_ops / op_names", "list operators"),
+}
+
+
+def __getattr__(name):
+    """Module-level hook: only reached when ``name`` is NOT a real attribute."""
+    hint = _NAME_HINTS.get(name)
+    if hint is not None:
+        real, what = hint
+        raise AttributeError(
+            "module 'fullseye' has no attribute '%s'; did you mean '%s'? (%s)" % (name, real, what))
+    raise AttributeError("module 'fullseye' has no attribute '%s'" % name)
+
 
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った
 #   道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。

@@ -9,6 +9,13 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 + lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
 optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
+spectrometer(gratingspec.py、2026-10-15 追加)— **回折格子と分光器**。クロマティック共焦点
+(``chromconf`` の ``spectrometer_fwhm_nm``)とハイパースペクトル(``spectralrad.hyperspectral_band_weights`` の
+``band_fwhm_nm``)は分光器の線幅を**与えられた数字**として受けていた。gratingspec は格子の式 mλ = d(sin α + sin β)
+と Czerny–Turner の幾何から、角分散・逆線分散・分解能 mN・帯域の幅(スリットの像 ⊗ 画素 ⊗ 回折)・コマを消す
+Shafer の角・smile と keystone(溝に沿った方向余弦を保つ 3 次元の格子の式)・高次の重なり(迷光の次数)を出す。
+同日、illumination に顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(往復の T·R)の 3 op。
+
 shape_from_polarization(sfpolar.py、2026-10-13 追加)— **偏光で形を測る**。偏光の分解
 (``polarization_demosaic`` → specularity の ``polarization_dolp_map`` / Stokes)はあったが、
 DoLP から天頂角、AoLP から方位角を逆算して法線にする経路が無かった(``polar_cam`` の
@@ -129,10 +136,13 @@ import cavityoptics
 import materials
 import spectralrad
 import chromconf
+import gratingspec
 import fiberoptics
 import temsim
+import lensfile
 import filmoptics
 import moirealign
+import gratinginterf
 import telecentric
 import optdraw
 import raytrace3d
@@ -141,7 +151,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "temsim": temsim, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -403,6 +413,13 @@ _CATALOG = {
         ("solid_angle_brightness", "illumdesign", ["table"], "table"),
         ("solid_angle_sweep", "illumdesign", [], "pairs"),
         ("solid_angle_render", "illumdesign", ["normalmap", "table"], "image2d"),
+        # 顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(2026-10-15)。照明系は共役面の鎖を
+        # 近軸で並べ、標本の点と方向から光源まで逆に追う(ケーラーは光源の模様が視野に写らない、クリティカルは
+        # 写る —— 閉形式の門)。同軸は往復の T·R(最大 0.25)と、鏡面の部品に写るパネルそのものの像。
+        # table を受ける側なので 2-D の橋は架からない(table は sort に写らない)。
+        ("illumination_train", "illumdesign", [], "table"),
+        ("illumination_field", "illumdesign", ["table"], "image2d"),
+        ("coaxial_illumination", "illumdesign", [], "table"),
     ],
     # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
     # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素
@@ -569,6 +586,26 @@ _CATALOG = {
         ("tem_ctf_estimate", "temsim", ["image2d"], "table"),
         ("tem_ctf_correct", "temsim", ["image2d"], "image2d"),
     ],
+    "lensfile": [  # 光学設計ファイル(.zmx の逐次処方)の読み書き(lensfile、2026-10-18)。読んだ処方は raytrace.lens_system
+        # そのもの(別の模型を作らない)なので、design / optimization / imaging_sim の op がそのまま使える。
+        # ★fail-closed: 扱えない面の種類・座標変換面・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial
+        #   で明示したときだけ(結果に approximate=True)。画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+        ("lens_file_read", "lensfile", [], "table"),
+        ("lens_file_system", "lensfile", ["table"], "table"),
+        ("lens_file_write", "lensfile", ["table"], "table"),
+        ("lens_file_report", "lensfile", [], "table"),
+    ],
+    "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
+        # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗
+        #   画素 ⊗ 回折)・smile / keystone(3 次元の格子の式)・高次の重なりまで。chromconf の spectrometer_fwhm_nm と
+        #   spectralrad の band_fwhm_nm を、スリット・格子・焦点距離・画素から実体化する。画像を受けないので 2-D の橋は
+        #   架からない(table は sort に写らず、spectrum は 2 入力)。
+        ("grating_dispersion", "gratingspec", [], "table"),
+        ("czerny_turner_design", "gratingspec", [], "table"),
+        ("spectrometer_bandpass", "gratingspec", ["table"], "table"),
+        ("spectrometer_slit_image", "gratingspec", ["table"], "table"),
+        ("spectrometer_spectrum", "gratingspec", ["table", "pairs"], "pairs"),
+    ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
         ("material_group_index", "fiberoptics", [], "pairs"),
@@ -589,6 +626,18 @@ _CATALOG = {
         ("moire_differential_shift", "moirealign", [], "table"),
         ("moire_mark_read", "moirealign", ["image2d", "image2d"], "table"),
         ("moire_phase_crlb", "moirealign", [], "table"),
+    ],
+    "grating_interf": [  # 格子干渉(gratinginterf、2026-10-15): 自己像の距離と周期 → 位相ステップの画像列 → 透過・微分位相・暗視野
+        # ★暗視野は縞の可視度の比(試料あり / なし)で、画素より小さい構造の小角散乱を測る。散乱角の広がりへは公表式で換算。
+        ("talbot_grating_design", "gratinginterf", [], "table"),
+        ("grating_stepping_simulate", "gratinginterf", ["image2d"], "images"),
+        ("grating_three_image_retrieve", "gratinginterf", ["images", "images"], "table"),
+        ("darkfield_scatter_relation", "gratinginterf", [], "table"),
+        # 2026-10-18 第 2 陣: 絨毯(I(x, z))・線源と Lau の条件・1 周期のステップ数の推定・微分位相の積分(折り返しは拒否)
+        ("talbot_carpet", "gratinginterf", [], "table"),
+        ("talbot_source_visibility", "gratinginterf", [], "table"),
+        ("grating_step_period_estimate", "gratinginterf", ["images"], "table"),
+        ("dpc_integrate", "gratinginterf", ["table"], "table"),     # 3 像の表(か 2-D の図)を受ける
     ],
     "drawing": [  # 光学系の図面(optdraw、2026-10-15): 図の dict(kind "optdraw")を組み、SVG / DXF の文字列に書き、
         # 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が
@@ -821,6 +870,10 @@ RESULT_ADAPTERS = {
                                      if isinstance(r, tuple) else r),
     # B スキャンの表 → 断面像(dB)。深さ軸・横軸が要る呼び手は素の関数から表を取る。
     "oct_bscan": lambda r: np.asarray(r["image_db"], float) if isinstance(r, dict) else r,
+    # 位相ステップの画像列 (N, H, W) の ndarray → 2-D の画像 N 枚の列(宣言 images)。素の関数は ndarray のまま返す
+    # (向きの反転・露光の倍率など、配列の演算をそのまま使えるように)。消費側は列も (N, H, W) も受ける。
+    "grating_stepping_simulate": lambda r: ([np.asarray(x) for x in r]
+                                            if isinstance(r, np.ndarray) and r.ndim == 3 else r),
 }
 
 

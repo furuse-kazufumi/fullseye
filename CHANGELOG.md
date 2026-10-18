@@ -7,6 +7,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — デフレクトメトリの PoC に実データの章(CC0、ハンマーの力の記録で採点)
+- `poc_phase_measuring_deflectometry` の 4 節: 鏡面の鋼板をハンマーで叩いて格子の鏡像を 75 kHz で撮った公開データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)から、格子の位相 → 時間方向につないだ傾き → 仮想場の方法で板の力を出し、ハンマーの先のロードセル(外部の真値)と比べる。峰 366.4 N 対 347.1 N(同じ σ で均したハンマー、+5.6 %、+27 µs)、相関 0.990、力積 −8.8 %。データの著者の公開コード recolo(第 2 の実装)の峰 363.6 N と +0.8 %。窓はハンマーを見ずに荷重の無い対照の窓 5 つの見かけの力(床 9.5 N)で選んだ。格子の位相は窓つき DFT と標本化モアレの 2 実装で、同じ分解能で RMS 0.0096 rad。変調度の低い窓・積分できない傾きの場(軸・符号の取り違え)・2π を取り違える間引きは拒否する。合否の幅は結果を見たあとで決めた(盲検でない)と PoC に明記。
+- `data/pmd_real/`(3 枚の切り出しと全解析の記録、README に出典と改変)と `tools/gen_pmd_real.py`。原本(110 MB)は repo の外で、`FULLSEYE_PMD_HAMMER_DATA` があるときだけ解析し直して記録との差を門で見る。
+
+### Fixed — 存在しない短い名前の当て推量に本名を案内する
+- `fullseye.Engine` / `Graph` / `op_info` などは(別名は足さず)AttributeError の文面で `FullseyeEngine` / `FullseyeGraph` / `op_assist`・`op_find`・`find_op` を案内する。`hasattr` は False のまま、表に無い名前は標準の AttributeError。
+
+### Added — エネルギー弁別 X 線による材質の判別(materials の X 線の列 + dualxray 10 op + PoC)
+- `materials` に **X 線の列**: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z`。質量減衰係数 μ/ρ(E) を光学の列と同じ名前で引く。数値は NIST SRD 126(Hubbell & Seltzer)の部分集合(元素 49 種・化合物 21 種・1 keV〜1 MeV、出典と著作権の表示つき、生成物 `materials_xray_data.py` = `tools/gen_xray_tables.py --nist <保存したページ>`)。組成の分かる材料と化学式は混合則(組成のレコードは仮想 SEM の `ELECTRON_SOLID` と同じ形 `{"formula": …, "density_g_cm3": …}` で、同じ名前があればそちらを使う)。組成の公表されていない硝材は拒否。
+- `dualxray`(`opstomography` の新カテゴリ `spectral_xray`、10 op): `xray_tube_spectrum`(Kramers の厚い陽極 + Kanaya–Okayama の深さ + 自己吸収 + W の K 線 + フィルタ)/ `xray_beam_quality`(空気カーマの半価層)/ `photon_counting_channels`(吸収効率・エネルギー分解能・電荷共有)/ `dual_kvp_channels` / `xray_channel_projection`(`photoncount.photon_sample` で Poisson)/ `basis_material_decompose`(多色の Gauss–Newton、解けない画素は NaN で数える)/ `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability`(d′ と Φ(−d′/2) の閉形式)。
+- 管の模型の 4 定数は公開のスペクトル計算(MIT)の形に合わせた(`tools/fit_xray_tube_constants.py`)。合わせに使っていない IEC 61267 の線質 8 つ(RQR / RQA)の半価層と 5.8 % 以内。
+- PoC `poc_dual_energy_xray`(21 門、図 12 枚): 肉のトレイ(25〜60 mm、赤身の折り返しと脂身の塊つき)の骨片・ガラスは 1 枚の像で段差が肉のむらの 0.9 倍、しきい値 1 本で肉の 86 % を誤検出、高域でも肉の重なりの縁が偽の塊 2 個 —— 赤身 + Al に分けた Al の像は偽の塊 0。交絡の組(厚い PE と薄い Al)は 1 つの窓で d′ = 0、誤り率の閉形式はモンテカルロと 0.004 以内、分けられなくなる Al の厚さは閉形式 0.125 mm・実測 0.126 mm(肉 40 mm の下で 0.364 mm)。分解の雑音は CRLB の 0.995 / 0.997 倍。壊れ方: 電荷共有 25 % を知らずに分解すると肉が Al に化ける(−3.2 mm)、単色の近似は肉 6 cm で −1.5 mm。埋まった異物の見かけの Z は密度でも動く(PVC 13.9 → 18.7)。
+- ★探針で見つけて直したもの: Pb 50 mm のろ過でも e^{−130} は 0 にならず、正規化して「ふつうのスペクトル」を返していた → 透過 1e-12 未満は拒否。
+- 能力ノート `docs/capabilities/dual-energy-xray-material-discrimination.md`、op 要約 6 言語、ViEW2026 案内、門 `tests/test_dualxray.py`(75 件、光子断面積とスペクトルの公開ライブラリがあれば第 2 実装と照合)。
+
+### Added — 格子干渉による位相コントラストと暗視野(gratinginterf 8 op)と PoC poc_grating_interferometry
+- `opsoptics` の新カテゴリ `grating_interf`: `talbot_grating_design`(位相 π / π/2 / 吸収格子の分数タルボ距離、円錐ビームの距離と倍率、分析格子の周期、Lau の条件の線源格子の周期、角度感度・自己相関長・帯域)/ `grating_stepping_simulate`(透過・微分位相・暗視野 → 位相ステップの画像列、Poisson、1 周期のステップ数 P ≠ N)/ `grating_three_image_retrieve`(試料あり・なしの 2 組 → 3 像。P = N は `fringe.wrapped_phase` / `fringe.modulation`、P ≠ N は 3 項最小二乗、条件数 30 超・縞の無い基準は拒否)/ `darkfield_scatter_relation`(暗視野 D とガウス散乱の σ の換算、線拡散係数、自己相関長)。
+- 門 `tests/test_gratinginterf.py`: 公表の装置の距離 23.2 mm(Weitkamp ら 2005)、格子 1 周期の厳密な伝搬(`optics.angular_spectrum_propagate`)の極大と 7 通りの距離、円錐ビームを 1-D Fresnel で直接伝搬した縞の消える距離と周期、Poisson の位相雑音、ガウス散乱と一様散乱(Strobl の積分)、壊して確かめる探針(誤った距離の式・ステップの向き・試料と基準の取り違え)。式の変異 7 本をすべて殺すことを確かめた。
+- 例 `examples/grating_interferometry.py`(吸収ではほぼ見分けられない粉の区画が暗視野で 0.55 に落ちる、位相雑音は Poisson の式と比 0.99)。
+- 第 2 陣 4 op(2026-10-18): `talbot_carpet`(2 値の格子の後ろの強度 I(x, z) を回折次数の和で。厳密な角スペクトル / 近軸、近軸の位相誤差が 0.1 rad を超えると拒否)/ `talbot_source_visibility`(線源の幅・ガウスの焦点・線源格子の可視度の倍率。Lau の条件で 2/π)/ `grating_step_period_estimate`(1 周期のステップ数を残差の最小で。範囲の端・平らな曲線・縞なし・5 枚未満は拒否。★残差を P に依らない素の平均で割る —— あてた平均で割ると最小が雑音に比例して偏る)/ `dpc_integrate`(微分位相 → 位相 → 厚さ。隣との跳びが π を超える = 折り返しは拒否、NaN も拒否)。`grating_three_image_retrieve` に `reference_exposure`(基準と試料の露光の比。透過だけに効く)。
+- PoC `examples/poc_grating_interferometry.py`(門 22 件、図 11 枚 + GIF): タルボ絨毯と第 2 実装、Lau の条件と点の和、短繊維強化樹脂の板(割れの CNR 暗視野 13.5 / 吸収 1.34、繊維の向き 2.7°)、折り返しの拒否と見えない折り返し(正直な限界)、1 周期のステップ数の推定、公開の実データ(CC BY 4.0、Zenodo 16944391。データは同梱せず `FULLSEYE_TALBOT_DATA` があるときだけ走る)。
+
+### Added — 光学設計ファイル(.zmx)の読み書き `lensfile`(4 op)+ PoC「読んで、解析して、直して、書き戻す」
+- `lensfile`(opsoptics の新カテゴリ `lensfile`): `lens_file_read`(.zmx の逐次処方 → `raytrace.lens_system` そのもの + 視野・波長・口径・ソルブ・キーワードの台帳)/ `lens_file_system`(視野・波長を選んだ処方)/ `lens_file_write`(.zmx に書く。`lensopt` で直した処方を、視野・波長・まだ有効なソルブを保って書き戻す)/ `lens_file_report`(読まずに分類)。面は STANDARD / EVENASPH・鏡・絞り、単位 MM/CM/IN/METER、口径 ENPD / FNUM / FLOA、視野は角度・物体高・近軸像高、UTF-16(BOM あり / なし)・UTF-8・Latin-1。★fail-closed: 座標変換面・理想レンズ・その他の面・r² の非球面項・逆向きの間隔・物体側テレセン・矛盾したピックアップは拒否、近似(カタログに無い硝材の n_d/ν_d 代用・ケラレ係数・曲がった像面・多構成・温度)は `allow_partial=True` のときだけ `approximate=True` の印つき。硝材は材料表か `.agf`(`glass_dir` / `FULLSEYE_GLASS_DIR`)を名前の完全一致で引き、別名は辿らない(古い鉛ガラスの名が無鉛の別硝材に化けるため)。
+- 門 `tests/test_lensfile.py`(81): ray-optics 0.9.8(BSD-3)と optiland 0.6.3(MIT)がそれぞれ自分の読み手で同じ .zmx を読んだ記録値と、近軸が 1e-12、Seidel 和が 1e-6、実光線 14 本が 1e-6 mm(実測 6e-16 / 6e-8 / 3e-8)、独立に書いた ABCD 行列、往復の恒等(ASCII と UTF-16)、.agf の分散式 13 本を式の定義と 1e-12、材料表 46 硝材の CC0 係数を .agf に書いて読み直して 1e-12・カタログ n_d と 1e-5、探針(曲率の符号の反転は第 2 実装との EFL の門が赤、単位・符号化・面の種類・硝材の別名・n_d の食い違い)。
+- Fixed: `raytrace._intersect_conic` は「|t| の小さい根」を選んでいて、光線が球の z 範囲の中から始まる配置(長い空気間隔の後の R < 0 の面、望遠型)で球の裏側を拾い、全光線が「けられ」になっていた。頂点を含む葉の根を選ぶ(門 `tests/test_raytrace_conic_branch_2026_10_18.py`、修正前は 7 件赤)。
+- PoC `examples/poc_lens_file_roundtrip.py`(門 21、図 6 枚): 三枚玉の中央の硝材を差し替えて崩れた処方(RMS 13.9 → 332 µm)を `lensopt` で 14.1 µm に戻して書き戻す。
+
+
 ## 0.7.0 — 2026-10-18
 
 ### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数

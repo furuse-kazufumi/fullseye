@@ -216,7 +216,7 @@ def test_design_table_dark_field_for_scatter_matched_elevation_for_a_facet():
 ILLUM_OPS = ["light_source", "irradiance_map", "illumination_uniformity", "defect_contrast",
              "lighting_sweep", "illumination_design",
              "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep",
-             "solid_angle_render"]
+             "solid_angle_render", "illumination_train", "illumination_field", "coaxial_illumination"]
 
 
 def test_illumination_category_is_registered_and_returns_declared_types():
@@ -231,7 +231,8 @@ def test_illumination_category_is_registered_and_returns_declared_types():
             "illumination_design": (),
             "solid_angle_light": (), "solid_angle_boundaries": (ID.solid_angle_light(),),
             "solid_angle_brightness": (ID.solid_angle_light(),), "solid_angle_sweep": (2.0, 0.1, [3.0, 6.0]),
-            "solid_angle_render": (np.dstack([np.zeros((4, 4)), np.zeros((4, 4)), np.ones((4, 4))]), ID.solid_angle_light())}
+            "solid_angle_render": (np.dstack([np.zeros((4, 4)), np.zeros((4, 4)), np.ones((4, 4))]), ID.solid_angle_light()),
+            "illumination_train": (), "illumination_field": (ID.illumination_train(),), "coaxial_illumination": ()}
     for name in ILLUM_OPS:
         meta = opsoptics.info(name)
         assert meta["module"] == "illumdesign" and meta["func"] is getattr(ID, name) and meta["doc"]

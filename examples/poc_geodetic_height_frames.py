@@ -1121,7 +1121,9 @@ def main():
     #   2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている
     #   語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
     closed = {"geoid": ["dem_geoid_height"],
-              "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu"],
+              # ★2026-10-15: material_xray_attenuation(X 線の減衰)の "att-enu-ation" が語幹 enu に当たる。
+              #   測地の ENU ではなく単語の一部 —— 同じ文字列の別の意味として名前で固定する。
+              "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu", "material_xray_attenuation"],
               # ★2026-10-05: granular の datum_tilt_check(粉体の山の**基準面**の傾きの警報)が語幹 datum に当たる。
               #   測地成果ではなく「高さ図の基準面」の意味 —— 同じ語の別の意味として名前で固定する。
               "datum": ["datum_tilt_check", "dem_datum_shift_3param"]}

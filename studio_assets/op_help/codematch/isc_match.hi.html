@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">isc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import codematch; codematch.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opscodematch.get(&quot;isc_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Increment sign correlation (ISC): वह स्थान लौटाता है जहाँ increment चिह्नों का सबसे बड़ा हिस्सा मेल खाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">r = (1/n) Σ [b_image == b_template]</code>(<code style="color:#22d3bf">n</code> は増分の数)。乱れた位置での期待値は 0.5、同じものなら 1 に近い。<code style="color:#22d3bf">direction=&quot;h&quot;</code> は論文どおり行に沿った増分、<code style="color:#22d3bf">&quot;hv&quot;</code> は縦の増分も足す 2 次元の拡張。</p>
+<p><b>狭義単調増加の明るさの変換(ガンマ・ゲイン・オフセット・任意の単調な表)で <code style="color:#22d3bf">score_map</code> は 1 ビットも変わらない。</b></p>
+<p>テンプレートの増分のうち <code style="color:#22d3bf">|Δ| &gt; flat_thresh</code> のものが <code style="color:#22d3bf">min_valid</code> に満たなければ ValueError(平坦なテンプレートは符号が雑音で決まり、位置を決めない)。既定の 0.01 は [0, 1] の明るさで 8 ビットの約 2.5 階調 —— これより小さい増分の符号は撮像の雑音と同じ桁で決まる。この判定はテンプレートだけを見るので、上の不変性を壊さない。拒否までの余裕は <code style="color:#22d3bf">refusal_margin</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

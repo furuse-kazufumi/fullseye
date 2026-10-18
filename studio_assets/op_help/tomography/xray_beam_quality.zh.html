@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">xray_beam_quality — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import dualxray; dualxray.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;xray_beam_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>能谱的线质:第一、第二半值层、均匀系数、平均能量和有效能量。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>半価層は<b>空気カーマ</b>が半分になる吸収体の厚さ(線量計で測る量の定義どおり):</p>
+<p>K(x) ∝ Σ φ(E) E (μ_en/ρ)_air(E) e^{−μ(E) x}。HVL₁ は K(x) = K(0)/2、HVL₂ は K(x) = K(0)/4 から HVL₁ を引いたもの、均等度 = HVL₁/HVL₂(単色なら 1)。実効エネルギーは単色で同じ HVL₁ を与えるエネルギー(μ(E_eff) = ln 2/HVL₁)。<code style="color:#22d3bf">material</code> は吸収体(既定 Al、Cu も使う)。</p>
+<p>返り値: dict(hvl1_mm, hvl2_mm, homogeneity, mean_energy_kev(光子数の平均), effective_energy_kev, material)。公表の線質(IEC 61267 の RQA 系列など)と比べる量。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -24,6 +24,10 @@
     py -3.11 tools/regen_all.py --check   # 作り直して、差分が出たら exit 1
     py -3.11 tools/regen_all.py --list    # 何をどの順で回すかだけ見る
 
+**この鎖に入れないもの**: ``tools/build_view2026_viewers.py``(ViEW2026 の「触って見る」3 本)。LiDAR の
+実データ(``FULLSEYE_DATA_DIR`` 配下、リポジトリに無い)が要るので、無い環境で ``--check`` が赤になる。
+出力(``docs/view2026/viewers/*.html``)を変える回は、手で回して commit する。
+
 ``--check`` は**強い不変条件**を見る: 全部作り直したあとの作業ツリーが
 きれいであること。個々の drift 検査の総和より広く、「回し忘れ」を 1 つ残らず拾う。
 """
@@ -249,6 +253,8 @@ _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は�
 EXCLUDED = {
     "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_oct_real.py": "工業用 OCT の PoC の実測データ(Liverpool Research Data Catalogue 126、CC BY 4.0)の抜き出し。入力の原本(.mat の zip、61 MB)は repo の外で手で取得するので CI では作れない —— A ラインを等間隔に 100 本ずつ抜いた小さな npz を data/oct_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
+    "tools/gen_xray_tables.py": "材料表の X 線の列(materials_xray_data.py)。入力は NIST SRD 126(Hubbell & Seltzer)の公開ページを手で保存したもの(repo の外、著作権の表示があるので部分集合だけを同梱)で CI では作れない —— 生成物を commit し、手元では `--nist <dir> --check` が drift を見る。tests/test_dualxray.py が NIST の公表値と化合物の表で中身を守る。",
+    "tools/gen_pmd_real.py": "デフレクトメトリの PoC の実データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)の抜き出しと全解析の記録。入力の原本(16 bit TIFF 280 枚、110 MB)は repo の外で手で取得するので CI では作れない —— 3 枚の切り出しと解析の記録の小さな npz を data/pmd_real/ に commit し、出典と改変は同じ場所の README.md に書く。PoC は FULLSEYE_PMD_HAMMER_DATA があるとき原本から解析し直して記録との差を門で見る。",
     "tools/gen_material_tables.py": "材料表(materials_data.py)。入力の refractiveindex.info database(CC0、71 MB)は repo の外にあるので CI では作れない —— 生成物を commit し、手元では `--rii <database dir> --check` が drift を見る。tests/test_materials.py がカタログ公表値(n_d / V_d)と一次文献の点で中身を守る。",
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
@@ -374,6 +380,7 @@ EXCLUDED = {
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。",
+    "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/bench_realtime.py": "ベンチ(実時間)。",
     "tools/bench_soak.py": "ベンチ(長時間)。",

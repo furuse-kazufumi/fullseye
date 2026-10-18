@@ -97,6 +97,7 @@ tb_angular_spectrum_propagate 0.50 0.50
 
 次の例は元の台帳 op `angular_spectrum_propagate` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_grating_interferometry](../../../../examples/poc_grating_interferometry.py) — `py -3.11 examples/poc_grating_interferometry.py`
 
 ## 型が繋がる次の op(`cimage` を入力に取れる)
 

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">isc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;isc_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>増分符号相関(ISC)。増分符号が一致する割合が最大の位置を返す。</p>
+<p><code style="color:#22d3bf">r = (1/n) Σ [b_image == b_template]</code>(<code style="color:#22d3bf">n</code> は増分の数)。乱れた位置での期待値は 0.5、同じものなら 1 に近い。<code style="color:#22d3bf">direction=&quot;h&quot;</code> は論文どおり行に沿った増分、<code style="color:#22d3bf">&quot;hv&quot;</code> は縦の増分も足す 2 次元の拡張。</p>
+<p><b>狭義単調増加の明るさの変換(ガンマ・ゲイン・オフセット・任意の単調な表)で <code style="color:#22d3bf">score_map</code> は 1 ビットも変わらない。</b></p>
+<p>テンプレートの増分のうち <code style="color:#22d3bf">|Δ| &gt; flat_thresh</code> のものが <code style="color:#22d3bf">min_valid</code> に満たなければ ValueError(平坦なテンプレートは符号が雑音で決まり、位置を決めない)。既定の 0.01 は [0, 1] の明るさで 8 ビットの約 2.5 階調 —— これより小さい増分の符号は撮像の雑音と同じ桁で決まる。この判定はテンプレートだけを見るので、上の不変性を壊さない。拒否までの余裕は <code style="color:#22d3bf">refusal_margin</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocm_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;ocm_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>方向符号照合(OCM)。符号の巡回差の平均が最小の位置を返す。</p>
+<p>相違度は画素ごとに <code style="color:#22d3bf">D(m, n)</code>(m = テンプレート側、n = 画像側の符号):</p>
+<p>両方有効なら巡回差 <code style="color:#22d3bf">min(|m-n|, N-|m-n|)</code>、テンプレート側が無効なら 0、画像側だけ無効なら <code style="color:#22d3bf">N/4</code>。全画素の平均を <code style="color:#22d3bf">N/2</code> で割った相違度 <code style="color:#22d3bf">h</code> を <code style="color:#22d3bf">dissimilarity_map</code> に、<code style="color:#22d3bf">score = 1 - h</code>(1 が完全一致)を <code style="color:#22d3bf">score_map</code> に返す。和は 4 倍して整数で数える(FFT の丸めを <code style="color:#22d3bf">rint</code> で消す)ので、同じ入力の答えは環境によらず同じ。</p>
+<p><b>テンプレートの有効な符号が</b> <code style="color:#22d3bf">max(min_valid, min_valid_fraction × 画素数)</code> <b>に満たなければ ValueError</b>(平坦なテンプレートは位置を決めない)。</p>
+<p>返り: <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code>(テンプレート中心)、<code style="color:#22d3bf">score</code>、<code style="color:#22d3bf">dissimilarity</code>、<code style="color:#22d3bf">second_score</code>・<code style="color:#22d3bf">margin</code>(最良から離れた次点との差)、<code style="color:#22d3bf">valid_fraction</code> (テンプレートの有効符号の割合)、<code style="color:#22d3bf">valid_required</code>・<code style="color:#22d3bf">refusal_margin</code>(拒否まであと何画素の余裕があるか)、<code style="color:#22d3bf">score_map</code>、<code style="color:#22d3bf">dissimilarity_map</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:isc_match">isc_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

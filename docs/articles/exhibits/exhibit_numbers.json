@@ -121,6 +121,10 @@
    "accessioned": "2026-10-15",
    "no": "2026.238"
   },
+  "poc_code_matching_breakdown": {
+   "accessioned": "2026-10-18",
+   "no": "2026.254"
+  },
   "poc_cold_chain_excursion": {
    "accessioned": "2026-09-07",
    "no": "2026.060"
@@ -273,6 +277,10 @@
    "accessioned": "2026-09-06",
    "no": "2026.016"
   },
+  "poc_dual_energy_xray": {
+   "accessioned": "2026-10-18",
+   "no": "2026.255"
+  },
   "poc_em_branch_territory": {
    "accessioned": "2026-09-21",
    "no": "2026.132"
@@ -373,6 +381,10 @@
    "accessioned": "2026-10-02",
    "no": "2026.187"
   },
+  "poc_grating_interferometry": {
+   "accessioned": "2026-10-18",
+   "no": "2026.251"
+  },
   "poc_gravitational_lens_invariants": {
    "accessioned": "2026-09-24",
    "no": "2026.147"
@@ -440,6 +452,10 @@
   "poc_leak_localization": {
    "accessioned": "2026-09-07",
    "no": "2026.069"
+  },
+  "poc_lens_file_roundtrip": {
+   "accessioned": "2026-10-18",
+   "no": "2026.249"
   },
   "poc_lidar_terrain_change": {
    "accessioned": "2026-09-07",
@@ -757,6 +773,14 @@
    "accessioned": "2026-10-13",
    "no": "2026.226"
   },
+  "poc_simcal_pixel_shift": {
+   "accessioned": "2026-10-18",
+   "no": "2026.252"
+  },
+  "poc_simcal_telecentric": {
+   "accessioned": "2026-10-18",
+   "no": "2026.253"
+  },
   "poc_simcal_thin_film": {
    "accessioned": "2026-10-18",
    "no": "2026.247"
@@ -780,6 +804,10 @@
   "poc_spc": {
    "accessioned": "2026-09-14",
    "no": "2026.121"
+  },
+  "poc_spectrometer_illumination": {
+   "accessioned": "2026-10-18",
+   "no": "2026.250"
   },
   "poc_star_astrometry": {
    "accessioned": "2026-09-06",

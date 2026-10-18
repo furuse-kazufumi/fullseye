@@ -192,6 +192,11 @@ from pcseg import (  # noqa: E402,F401
     euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
     farthest_point_sampling, curvature, centroid, principal_axes,
 )
+from pocviewer import (  # noqa: E402,F401
+    write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab, viewer_points_tab,
+    viewer_frames_tab, viewer_split_tab,
+)
+import pocviewer  # noqa: E402,F401
 from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
@@ -749,6 +754,7 @@ import simcalcheck  # noqa: E402  (sim-to-real checks: profile likelihood, uncer
 import converge  # noqa: E402  (convergent computation: fixed-point driver, observed order / GCI, sequential Monte Carlo)
 import mcphoton  # noqa: E402  (Monte Carlo photon transport in layered turbid slabs, MCML rules, with intervals)
 import deconvstop  # noqa: E402  (Richardson-Lucy stopped by the discrepancy principle)
+import codematch  # noqa: E402  (robust code matching: orientation code, increment sign, selective correlation, radial reach)
 from residue import (  # noqa: E402,F401
     residue_integer_crt, residue_crt, residue_fault_locate, crt_displacement, harmonic_rotation,
 )
@@ -1061,6 +1067,7 @@ from illumdesign import (  # noqa: E402,F401
     light_source, irradiance_map, illumination_uniformity, defect_contrast,
     lighting_sweep, illumination_design,
     solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
+    illumination_train, illumination_field, coaxial_illumination,
 )
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
@@ -1119,6 +1126,8 @@ __all__ = [
     "plane_distance", "height_above_plane", "remove_ground",
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
+    "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
@@ -1340,7 +1349,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop", "codematch",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
@@ -1500,6 +1509,7 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
+    "illumination_train", "illumination_field", "coaxial_illumination",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "ncc_map_3d", "gradient_normals", "subpixel_refine_edges", "min_max_gray_n",

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">orientation_code — CODEMATCH <code style="color:#22d3bf">code</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orientation_code(image, n_codes=16, grad_thresh=0.05)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.orientation_code(image, n_codes=16, grad_thresh=0.05)</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;orientation_code&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>勾配の向きを <code style="color:#22d3bf">n_codes</code> 段に量子化した方向符号の画像(OCM の符号化)。</p>
+<p><code style="color:#22d3bf">θ = atan2(∂I/∂行, ∂I/∂列)</code> を [0, 2π) に取り(Sobel、縁は最近傍で延長)、<code style="color:#22d3bf">floor(θ / (2π/N))</code> を符号 0..N-1 にする。<code style="color:#22d3bf">|∂I/∂列| + |∂I/∂行| &lt;= grad_thresh</code> の画素は無効符号 <code style="color:#22d3bf">N</code>(雑音しか無い所の向きは信用しない)。</p>
+<p><code style="color:#22d3bf">grad_thresh</code> は [0, 1] の明るさで測った Sobel の和の閾値。既定 0.05 は、8 ビットの量子化雑音(σ = 1/255)が作る和の平均(約 0.022)の 2 倍強。<code style="color:#22d3bf">n_codes</code> は 4 の倍数(既定 16 = 22.5° 刻み)。返りは int16 の 2 次元配列。</p>
+<p>明るさに定数を足しても符号は 1 つも変わらない。明るさを g 倍したときは <code style="color:#22d3bf">grad_thresh</code> も g 倍すれば同じ符号になる。画像を 90° 回すと、符号は <code style="color:#22d3bf">N/4</code> だけ巡回してずれる(<code style="color:#22d3bf">np.rot90</code> で反時計回りなら <code style="color:#22d3bf">-N/4</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:increment_sign">increment_sign</a> · <a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:isc_match">isc_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a> · <a style="color:#22d3bf" href="opcodematch:radial_reach_filter">radial_reach_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">code</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:increment_sign">increment_sign</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

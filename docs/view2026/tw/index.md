@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## 親手試試
+
+可以親手操作論文中的圖(手機上也能用)。用分頁切換方法,3-D 視圖可拖曳旋轉。
+
+- **[CAD 與實測點雲的偏差檢查](../viewers/poc_cad_scan_deviation.html?lang=tw)**: 對位會吸收缺陷:真值為 1.2 µm 的零件上出現了 121 µm 並不存在的凹坑。
+- **[LiDAR 地形變化](../viewers/poc_lidar_terrain_change.html?lang=tw)**: 樸素相減會讓沒有變化的整個區塊看起來下沉了 0.183 m。校正之後,只剩下真正的變化。
+- **[模板追蹤](../viewers/poc_template_tracking.html?lang=tw)**: 即使已經切換到相似的另一個物體,追蹤器仍然回報「找到了」。
+
 ## 精選
 
 <div class="vg">
@@ -77,17 +85,19 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 74 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 80 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
 **尋找**
 
 - 切出區域、篩選並計數: [說明](../../capabilities/blob-and-region.md) _(ja)_ · 範例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 用兩種 X 射線能量分離厚度與材質(雙能 / 光子計數: 能譜 → 能量窗 → 基分解 → 有效原子序): [說明](../../capabilities/dual-energy-xray-material-discrimination.md) _(ja)_ · 範例 [poc_dual_energy_xray](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dual_energy_xray.py)
 - 依應有的字串修正影像中的文字: [說明](../../capabilities/fix-text-in-images.md) _(ja)_ · 範例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - OCR 前處理(傾斜校正、局部二值化、行切分): [說明](../../capabilities/ocr-preprocessing.md) _(ja)_ · 範例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - 用載子擴散 PSF 與缺陷類型區分 PL 影像中細溝槽消失的原因（Si 晶圓·太陽能電池的 PL/EL 檢測）: [說明](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 範例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 找到小的點狀目標並以次像素定位: [說明](../../capabilities/point-target-detection.md) _(ja)_ · 範例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+- 耐光照不均、高光與遮擋的模板匹配(把亮度變化的方向作為符號比較,無法定位的模板則拒絕): [說明](../../capabilities/robust-code-matching.md) _(ja)_ · 範例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - 用超音波回波的相位而不是亮度找出混合鍵合中的空洞(掃描聲學顯微鏡的 C 掃描、頻率權衡、檢出機率): [說明](../../capabilities/sam-bond-voids.md) _(ja)_ · 範例 [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - 表面凹凸缺陷:從照明設計到檢測: [說明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 範例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - 定位(用樣板比對讓量測線跟隨): [說明](../../capabilities/template-alignment.md) _(ja)_ · 範例 [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
@@ -100,6 +110,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 用 EMVA 1288 的步驟重新量測相機規格書上的數值,並看相機內部的前處理會使這些數值偏移多少(Linear 與 General): [說明](../../capabilities/emva1288-camera-datasheets.md) _(ja)_ · 範例 [poc_emva1288_sensor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py) · [poc_emva1288_in_camera_processing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_in_camera_processing.py)
 - 從本應筆直的線估計畸變係數(鉛垂線法,不需棋盤格): [說明](../../capabilities/estimate-lens-distortion.md) _(ja)_ · 範例 [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - 放到地球尺度座標上(ECEF、高程基準、局部 ENU): [說明](../../capabilities/geodetic-frames.md) _(ja)_ · 範例 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- 光柵干涉儀(塔爾博特 / 塔爾博特-勞):由一次相位步進掃描分離穿透、微分相位與暗場 3 張像: [說明](../../capabilities/grating-interferometry.md) _(ja)_ · 範例 [poc_grating_interferometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_grating_interferometry.py)
 - 工業 OCT(干涉光譜 → k 線性化 → 色散補償 → A / B 掃描 → 用群折射率求層厚): [說明](../../capabilities/industrial-oct.md) _(ja)_ · 範例 [poc_industrial_oct](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_industrial_oct.py)
 - 量測圓形零件的內徑,直到毫米: [說明](../../capabilities/inner-diameter-in-mm.md) _(ja)_ · 範例 [example_inner_diameter_mm](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_inner_diameter_mm.py) · [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
 - 間接 ToF(相位法)的多頻解包裹與失效方式(折返、多路徑、邊緣混合、諧波、背景光): [說明](../../capabilities/itof-multifreq.md) _(ja)_ · 範例 [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
@@ -128,8 +139,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 量測顏色(XYZ / Lab / 色差): [說明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 範例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
 - 把多重反射、多重散射和迭代算到收斂 —— 回傳收斂的證據和剩餘誤差，不收斂就不給數值: [說明](../../capabilities/convergent-forward-models.md) _(ja)_ · 範例 [converge_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/converge_tour.py)
 - 光纖與光導(玻璃色散 → LP 模 → 模場直徑 → 照明效率): [說明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 範例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
+- 光柵光譜儀與顯微鏡照明(頻寬、smile/keystone、柯勒/臨界照明、同軸半反鏡): [說明](../../capabilities/grating-spectrometer-and-illumination.md) _(ja)_ · 範例 [poc_spectrometer_illumination](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spectrometer_illumination.py)
 - 用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻): [說明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 範例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - 在保持光度真值的同時把凹形零件的相互反射計算到收斂(三維形狀因子、漸進輻射度、含多次反射的檢測用渲染): [說明](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 範例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
+- 光學設計檔(.zmx 逐次處方的讀寫、關鍵字清單與 fail-closed 匯入): [說明](../../capabilities/lens-prescription-files.md) _(ja)_ · 範例 [poc_lens_file_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_file_roundtrip.py)
 - 用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 86 種，一次文獻的係數與數表，玻璃目錄匯入口）: [說明](../../capabilities/material-optical-property-library.md) _(ja)_ · 範例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數): [說明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 範例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 非共軸光學系統(折轉反射鏡、分光鏡、傾斜平板、沙伊姆弗勒與鬼影): [說明](../../capabilities/noncoaxial-optics.md) _(ja)_ · 範例 [poc_noncoaxial_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_noncoaxial_optics.py)
@@ -169,6 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **呈現**
 
 - 把結果做成人能讀懂的圖: [說明](../../capabilities/figures-and-annotation.md) _(ja)_ · 範例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- 把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言): [說明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 範例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - 不知道底色也能畫線與區域(反色): [說明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 把文字與表格放到影像上想要的位置: [說明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,11 +195,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 146 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 148 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 255 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -204,7 +218,7 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (39)</summary>
+<details class="vall"><summary><b>工業檢測</b> (42)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一維條碼" width="200" height="200"><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極曲折度" width="200" height="200"><span>電極曲折度</span></a>
@@ -245,10 +259,13 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 線掃描相機與線掃描鏡頭" width="200" height="200"><span>TDI 線掃描相機與線掃描鏡頭</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="工業 OCT(塗層厚度與內部缺陷)" width="200" height="200"><span>工業 OCT(塗層厚度與內部缺陷)</span></a>
 <a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="虛擬 SEM 與加速電壓" width="200" height="200"><span>虛擬 SEM 與加速電壓</span></a>
+<a href="../../articles/assets/poc/poc_grating_interferometry/12_real_three_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_grating_interferometry.jpg" alt="光柵干涉儀(暗場中可見的纖維、裂紋與氣孔)" width="200" height="200"><span>光柵干涉儀(暗場中可見的纖維、裂紋與氣孔)</span></a>
+<a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)" width="200" height="200"><span>用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)</span></a>
+<a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="耐光照與遮擋的符號匹配" width="200" height="200"><b>&#9654;</b><span>耐光照與遮擋的符號匹配</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (50)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (52)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 與 CT 對應" width="200" height="200"><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工牆面偏差" width="200" height="200"><span>竣工牆面偏差</span></a>
@@ -300,6 +317,8 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收斂" width="200" height="200"><span>加工凹槽的相互反射算到收斂</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="虛擬穿透式電子顯微鏡(Thon 環與欠焦)" width="200" height="200"><b>&#9654;</b><span>虛擬穿透式電子顯微鏡(Thon 環與欠焦)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="非共軸光學系統(分光鏡鬼影與折轉)" width="200" height="200"><span>非共軸光學系統(分光鏡鬼影與折轉)</span></a>
+<a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="光譜儀與照明系統(頻寬與光源的紋樣)" width="200" height="200"><span>光譜儀與照明系統(頻寬與光源的紋樣)</span></a>
+<a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="以遠心實拍影像校準成像模型" width="200" height="200"><span>以遠心實拍影像校準成像模型</span></a>
 </div>
 </details>
 
@@ -350,7 +369,7 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (18)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
@@ -370,10 +389,11 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="主動輪廓" width="200" height="200"><b>&#9654;</b><span>主動輪廓</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="圖分割" width="200" height="200"><b>&#9654;</b><span>圖分割</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="像素位移(偽色與混疊)" width="200" height="200"><b>&#9654;</b><span>像素位移(偽色與混疊)</span></a>
+<a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="像素位移的偏移與開口校準(無法確定的地圖)" width="200" height="200"><span>像素位移的偏移與開口校準(無法確定的地圖)</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>顏色與分離</b> (9)</summary>
+<details class="vall"><summary><b>顏色與分離</b> (10)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纖與光導(模態、色散、模場直徑)" width="200" height="200"><span>光纖與光導(模態、色散、模場直徑)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)" width="200" height="200"><b>&#9654;</b><span>以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)</span></a>
@@ -384,6 +404,7 @@ PoC 248 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_polarization_specular/01_fresnel.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_polarization_specular.jpg" alt="偏光去鏡面反射" width="200" height="200"><span>偏光去鏡面反射</span></a>
 <a href="../../articles/assets/poc/poc_real_stain_unmix/01_separation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stain_unmix.jpg" alt="實拍染色分離" width="200" height="200"><span>實拍染色分離</span></a>
 <a href="../../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_white_balance.jpg" alt="白平衡" width="200" height="200"><span>白平衡</span></a>
+<a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="光學設計檔(.zmx)的讀寫(與另外兩個實作對照)" width="200" height="200"><span>光學設計檔(.zmx)的讀寫(與另外兩個實作對照)</span></a>
 </div>
 </details>
 

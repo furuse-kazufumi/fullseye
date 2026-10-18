@@ -34,8 +34,8 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 137 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 91 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 142 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 93 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
 
@@ -60,14 +60,14 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-10-18 — No.2026.249 Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip
 - 2026-10-18 — No.2026.247 Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine
 - 2026-10-18 — No.2026.248 Non-Coaxial Optics — a Coaxial-Illumination Beamsplitter Paints a False Defect on a Mirror-Like Part, Removed by a Coating or a Wedge; Fold Mirrors Shrink the Machine
-- 2026-10-15 — No.2026.232 Moiré Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase
-- 2026-10-15 — No.2026.240 Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear
-- 2026-10-15 — No.2026.233 Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears
-- 2026-10-15 — No.2026.234 Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry
-- 2026-10-15 — No.2026.235 TDI Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
-- 2026-10-15 — No.2026.236 Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise
+- 2026-10-18 — No.2026.250 Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field
+- 2026-10-18 — No.2026.251 Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)
+- 2026-10-18 — No.2026.255 Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)
+- 2026-10-18 — No.2026.252 Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only
+- 2026-10-18 — No.2026.253 Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'
 
 ## Applying it to your own problem
 

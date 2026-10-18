@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">radial_reach_filter — CODEMATCH <code style="color:#22d3bf">change</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import codematch; codematch.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscodematch.get(&quot;radial_reach_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>Radial Reach Filter(RRF). 배경과 현재 영상을 8방향 reach의 부호로 비교한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>背景 <code style="color:#22d3bf">B</code> の画素 <code style="color:#22d3bf">p</code> から方向 <code style="color:#22d3bf">d_k</code> へ 1, 2, … と進み、<code style="color:#22d3bf">|B(p + r d_k) - B(p)| &gt;= t_p</code> になる最初の <code style="color:#22d3bf">r</code> を reach <code style="color:#22d3bf">r_k</code>(<code style="color:#22d3bf">max_reach</code> まで。画像の外に出たらその方向は無効)。符号 <code style="color:#22d3bf">b_k = [B(p + r_k d_k) &gt;= B(p)]</code>、現在の画像でも同じ位置の組で <code style="color:#22d3bf">b&#x27;_k = [I(p + r_k d_k) &gt;= I(p)]</code> を作り、一致した方向の数を RRC とする。有効な方向のうち一致した割合が <code style="color:#22d3bf">agree_thresh</code> 未満の画素を前景にする(8 方向が全部有効なら、既定 0.625 は「一致 5 未満」)。</p>
+<p>現在の画像に狭義単調増加の明るさの変換を掛けても、結果は 1 ビットも変わらない。影(局所の掛け算)の内側も同じ理由で前景にならない。</p>
+<p>fail-closed: 有効な方向が <code style="color:#22d3bf">min_dirs</code> 未満の画素は判定しない(<code style="color:#22d3bf">decided</code> が False、<code style="color:#22d3bf">rrc</code> が -1、前景にもしない)。判定できた画素が <code style="color:#22d3bf">min_decided_fraction</code> 未満なら ValueError(背景が平坦すぎて、変化を言えない)。</p>
+<p>返り: <code style="color:#22d3bf">foreground</code>(bool)、<code style="color:#22d3bf">decided</code>(bool)、<code style="color:#22d3bf">rrc</code>(一致した方向の数、判定しない画素は -1)、<code style="color:#22d3bf">valid_dirs</code>、<code style="color:#22d3bf">agree_fraction</code>(判定しない画素は 1.0)、<code style="color:#22d3bf">reach</code>((8, H, W)、無効は 0)、<code style="color:#22d3bf">decided_fraction</code>、<code style="color:#22d3bf">foreground_fraction</code>、<code style="color:#22d3bf">refusal_margin</code>(判定できた割合 − <code style="color:#22d3bf">min_decided_fraction</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">change</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

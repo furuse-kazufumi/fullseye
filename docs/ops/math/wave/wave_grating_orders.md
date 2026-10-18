@@ -4,7 +4,7 @@ dim: math
 category: wave
 in: 
 out: table
-examples: [poc_beats_fringes_and_screens]
+examples: [poc_beats_fringes_and_screens, poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_beats_fringes_and_screens](../../../../examples/poc_beats_fringes_and_screens.py) — `py -3.11 examples/poc_beats_fringes_and_screens.py`
+- [poc_spectrometer_illumination](../../../../examples/poc_spectrometer_illumination.py) — `py -3.11 examples/poc_spectrometer_illumination.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

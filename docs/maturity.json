@@ -272,6 +272,27 @@
    ]
   },
   {
+   "id": "dual-energy-xray-material-discrimination",
+   "title": "X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)",
+   "title_en": "Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)",
+   "category": "見つける",
+   "note": "docs/capabilities/dual-energy-xray-material-discrimination.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_dual_energy_xray",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "emva1288-camera-datasheets",
    "title": "カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)",
    "title_en": "Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)",
@@ -465,6 +486,48 @@
    ]
   },
   {
+   "id": "grating-interferometry",
+   "title": "格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける",
+   "title_en": "Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan",
+   "category": "測る",
+   "note": "docs/capabilities/grating-interferometry.md",
+   "status": "validated-public-real-data",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_grating_interferometry",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "grating-spectrometer-and-illumination",
+   "title": "回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)",
+   "title_en": "Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)",
+   "category": "光と色",
+   "note": "docs/capabilities/grating-spectrometer-and-illumination.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_spectrometer_illumination",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "gw-interferometer-quantum-noise-and-matched-filter",
    "title": "干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)",
    "title_en": "Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)",
@@ -607,6 +670,27 @@
    ]
   },
   {
+   "id": "interactive-poc-viewer",
+   "title": "結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)",
+   "title_en": "Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages)",
+   "category": "見せる",
+   "note": "docs/capabilities/interactive-poc-viewer.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "interactive_poc_viewer",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "interreflection-to-convergence",
    "title": "凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)",
    "title_en": "Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)",
@@ -706,6 +790,27 @@
      "id": "lens_undistort",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "lens-prescription-files",
+   "title": "光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)",
+   "title_en": "Lens design files (read, write and triage sequential .zmx prescriptions)",
+   "category": "光と色",
+   "note": "docs/capabilities/lens-prescription-files.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lens_file_roundtrip",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
     }
@@ -1237,6 +1342,29 @@
      "id": "raw_to_display_isp",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "robust-code-matching",
+   "title": "照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)",
+   "title_en": "Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)",
+   "category": "見つける",
+   "note": "docs/capabilities/robust-code-matching.md",
+   "status": "validated-public-real-data",
+   "ops_total": 6,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [
+    "increment_sign"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_code_matching_breakdown",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
     }
@@ -1871,9 +1999,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 391,
-  "run_by_the_poc_gate": 248,
-  "run_by_the_example_gate": 143,
+  "examples2d_total": 400,
+  "run_by_the_poc_gate": 255,
+  "run_by_the_example_gate": 145,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",
