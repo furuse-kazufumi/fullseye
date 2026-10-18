@@ -425,6 +425,13 @@ def _tem_micrograph():
     return temsim.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=100.0, seed=1)
 
 
+def _gauss_psf(size=65, sigma=3.0):
+    """円対称なガウスの点像(窓の外へ翼がはみ出さない)。"""
+    yy, xx = np.mgrid[0:size, 0:size] - size // 2
+    g = np.exp(-0.5 * (yy ** 2 + xx ** 2) / sigma ** 2)
+    return g / g.sum()
+
+
 def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
@@ -490,6 +497,10 @@ def _optics_builders():
         "lens_file_system": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"field_index": 1}),
         "lens_file_write": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"path": None}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
+        # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
+        #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)
+        "through_focus_mtf": lens_first(defocus_mm=[-0.1, 0.0, 0.1], frequency_cpmm=[20.0]),
+        "energy_radii": lambda pool, rng: ([_gauss_psf()], {"fractions": (0.5, 0.8)}),
         "distortion_map": lens_first(image_size=(32, 32)),
         "calibration_views": lens_first(image_size=(64, 64)),
         "render_through_lens": lambda pool, rng: (

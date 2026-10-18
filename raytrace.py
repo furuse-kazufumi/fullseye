@@ -363,7 +363,7 @@ def _index_offset(medium, delta):
 # --------------------------------------------------------------------------- #
 #: 面の dict が受ける鍵。後ろの 2 つ(n_value / dn)は lens_system 自身が書き足す値で、
 #: ``with_wavelength`` などが出力の面をそのまま入力に戻すので受ける(読み直して上書きする)。
-_SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn"))
+_SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn", "f"))
 
 
 def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
@@ -380,7 +380,20 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
       ``k`` conic (default 0), ``ap`` semi-aperture in mm (default ``None`` =
       unlimited), ``mirror`` bool, ``decenter`` ``(dx, dy)`` mm, ``tilt``
       ``(ax, ay)`` degrees about x and y, ``asph`` even aspheric coefficients
-      ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic).
+      ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic), ``f`` the
+      focal length (mm, negative = diverging) of an **ideal paraxial lens**.
+    * An ideal lens surface (``{"f": 50.0, "t": …}``) has zero thickness, no
+      shape and no glass (``R`` is flat and ``n`` is the medium it sits in; both
+      may be left out). It turns every ray by the thin-lens law exactly,
+      ``tan θ' = tan θ − h/f`` per transverse axis (h = the ray height), so a
+      collimated beam crosses the axis at ``f`` and a point object images at
+      the Gaussian conjugate with ``m = −s'/s``. Its optical path is the
+      stigmatic one (``f − √(h² + f²)`` for a collimated input, which is the
+      quadratic phase ``−h²/(2f)`` at small ``h``; a first surface with a finite
+      object uses that object and its Gaussian image instead), so spot, OPD and
+      PSF analyses of an aberration-free lens read zero aberration. It adds no
+      Seidel terms and no dispersion, takes no mirror / conic / asph, and the
+      non-coaxial ``raytrace3d`` does not read it.
     * *stop*: index of the aperture-stop surface (default: the first surface).
       The stop's ``ap`` is the stop radius (required unless every surface has
       one, in which case the smallest is used).
@@ -402,6 +415,7 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
     if not isinstance(surfaces, (list, tuple)) or len(surfaces) == 0:
         raise ValueError("surfaces must be a non-empty list of dicts or tuples")
     out = []
+    med_prev = index_object
     for i, s in enumerate(surfaces):
         if isinstance(s, (tuple, list)):
             keys = ("R", "t", "n", "k", "ap")
@@ -409,6 +423,18 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
                 raise ValueError("surface %d: a tuple surface is (R, t, n[, k[, ap]]) — got %d values; use a dict "
                                  "for mirror / decenter / tilt / asph" % (i, len(s)))
             s = {k: v for k, v in zip(keys, s)}
+        f_ideal = s.get("f", None) if isinstance(s, dict) else None
+        if f_ideal is not None:
+            f_ideal = _finite(f_ideal, "surface %d f" % i)
+            if f_ideal == 0.0:
+                raise ValueError("surface %d: an ideal lens needs f != 0 (use a very large f for no power)" % i)
+            if _radius(s.get("R", INF), "surface %d R" % i) != INF:
+                raise ValueError("surface %d: an ideal lens (f) has no radius — leave R flat" % i)
+            if s.get("mirror") or s.get("k", 0.0) not in (0, 0.0) or s.get("asph"):
+                raise ValueError("surface %d: an ideal lens (f) takes no mirror / conic / asph" % i)
+            s = dict(s)
+            s["R"] = INF
+            s.setdefault("n", med_prev)
         if not isinstance(s, dict) or "R" not in s or "n" not in s:
             raise ValueError("surface %d must have at least R, t and n (got %r)" % (i, s))
         unknown = sorted(set(s) - _SURFACE_KEYS)
@@ -422,6 +448,8 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
             raise ValueError("surface %d: only the last surface may omit t" % i)
         med = s["n"]
         n_now = refractive_index(med, wavelength_um)      # validates
+        if f_ideal is not None and abs(n_now - refractive_index(med_prev, wavelength_um)) > 1e-12:
+            raise ValueError("surface %d: an ideal lens sits in one medium — n after it must equal n before it" % i)
         k = _finite(s.get("k", 0.0), "surface %d k" % i)
         ap = s.get("ap", None)
         ap = None if ap is None else _finite(ap, "surface %d ap" % i, positive=True)
@@ -450,7 +478,8 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
             raise ValueError("surface %d: semi-aperture %.3g exceeds the conic's extent for R=%.3g" % (i, ap, R))
         out.append({"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
                     "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
-                    "dn": _dispersion(med)})
+                    "dn": _dispersion(med), "f": f_ideal})
+        med_prev = med
     if stop is None:
         stop = 0
     elif isinstance(stop, (bool, np.bool_)) or not isinstance(stop, (int, np.integer)):
@@ -502,14 +531,24 @@ def _paraxial_model(system, wavelength_um=None):
     return c, t_signed, n
 
 
-def _trace_paraxial(c, t, n, y0, u0, start=0):
-    """Trace one paraxial ray; returns arrays y (at each surface) and u' (after each)."""
+def _paraxial_power(system):
+    """Power 1/f of each ideal-lens surface (0 for the others) for :func:`_trace_paraxial`."""
+    return np.array([0.0 if s.get("f") is None else 1.0 / s["f"] for s in system["surfaces"]])
+
+
+def _trace_paraxial(c, t, n, y0, u0, start=0, pw=None):
+    """Trace one paraxial ray; returns arrays y (at each surface) and u' (after each).
+
+    *pw* is the per-surface power of ideal lenses (:func:`_paraxial_power`): the thin-lens
+    law ``u' = u − y/f`` in the travel direction, i.e. ``n'u' = nu − y c (n'−n) − y|n|/f``.
+    """
     ys, us = [], []
     y, u = y0, u0
     for i in range(start, len(c)):
         ys.append(y)
         # refraction: n' u' = n u - y c (n' - n)
-        u = (n[i] * u - y * c[i] * (n[i + 1] - n[i])) / n[i + 1]
+        p_i = 0.0 if pw is None else pw[i]
+        u = (n[i] * u - y * c[i] * (n[i + 1] - n[i]) - y * p_i * abs(n[i])) / n[i + 1]
         us.append(u)
         y = y + t[i] * u
     return np.array(ys), np.array(us)
@@ -536,9 +575,10 @@ def paraxial_trace(system):
     """
     _check_system(system)
     c, t, n = _paraxial_model(system)
+    pw = _paraxial_power(system)
     ns = len(c)
     # --- focal properties from a collimated axial ray (y=1, u=0) --- #
-    y, u = _trace_paraxial(c, t, n, 1.0, 0.0)
+    y, u = _trace_paraxial(c, t, n, 1.0, 0.0, pw=pw)
     if abs(u[-1]) < 1e-15:
         efl = INF
         bfl = INF
@@ -552,7 +592,7 @@ def paraxial_trace(system):
     c_r = -c[::-1]
     n_r = n[::-1]
     t_r = np.append(t[::-1][1:], 0.0)
-    y_r, u_r = _trace_paraxial(c_r, t_r, n_r, 1.0, 0.0)
+    y_r, u_r = _trace_paraxial(c_r, t_r, n_r, 1.0, 0.0, pw=pw[::-1])
     ffl = (y_r[-1] / u_r[-1]) if abs(u_r[-1]) > 1e-15 else -INF
     pp_rear = bfl - efl if math.isfinite(efl) else INF
     pp_front = ffl + efl if math.isfinite(efl) else -INF
@@ -562,7 +602,7 @@ def paraxial_trace(system):
     # ray from the stop centre backwards: trace forward a ray that has y=0 at the stop
     # with unit slope there, using the linearity of the paraxial trace.
     def y_at_stop(y0, u0):
-        yy, _ = _trace_paraxial(c, t, n, y0, u0)
+        yy, _ = _trace_paraxial(c, t, n, y0, u0, pw=pw)
         return yy[stop]
     obj = system["object_mm"]
     if obj == INF:
@@ -593,15 +633,15 @@ def paraxial_trace(system):
     # exit pupil: trace the (paraxial) chief ray forward and find where it crosses the axis
     if obj == INF:
         h = -b / a
-        yc, uc = _trace_paraxial(c, t, n, h, 1.0)
-        ym, um = _trace_paraxial(c, t, n, ep_radius, 0.0)
+        yc, uc = _trace_paraxial(c, t, n, h, 1.0, pw=pw)
+        ym, um = _trace_paraxial(c, t, n, ep_radius, 0.0, pw=pw)
         img = bfl
         lagrange = n[0] * (1.0 * ep_radius - 0.0 * h)      # n (ubar*y - u*ybar) at surface 0
     else:
         s0 = s_per_H                                      # chief slope per unit object height
-        yc, uc = _trace_paraxial(c, t, n, 1.0 + s0 * obj, s0)   # H = 1
+        yc, uc = _trace_paraxial(c, t, n, 1.0 + s0 * obj, s0, pw=pw)   # H = 1
         s_m = stop_r / abs(a)
-        ym, um = _trace_paraxial(c, t, n, s_m * obj, s_m)
+        ym, um = _trace_paraxial(c, t, n, s_m * obj, s_m, pw=pw)
         img = -ym[-1] / um[-1] if abs(um[-1]) > 1e-15 else INF
         mag = (yc[-1] + uc[-1] * img) / 1.0 if math.isfinite(img) else INF
         lagrange = n[0] * (s0 * (s_m * obj) - s_m * (1.0 + s0 * obj))
@@ -784,6 +824,48 @@ def _surface_normal(Q, c, k, asph=()):
     return g / np.linalg.norm(g, axis=1, keepdims=True)
 
 
+def _ideal_phase(P0, D0, Q, f, n, obj_z=None):
+    """Optical path (mm) an ideal lens adds at the hit point *Q* so that it is stigmatic (all local frame).
+
+    *P0*, *D0*: the ray before the lens. A ray that starts on the object plane (``obj_z`` = its z, a
+    finite object at the first surface) is a ray of a spherical wave from its own start point O, and
+    the lens images O at ``I = (m Ox, m Oy, s')`` (``s' = f s/(s-f)``, ``m = -s'/s``): equal path
+    ``|O−p| + φ + sgn(s')|I−p| = const``. Any other ray is a ray of a plane wave of its own direction,
+    focused at ``F = f (qx, qy, 1)``: ``d·p + φ + sgn(f)|F−p| = const``. Both are zero at the vertex
+    and ``−n h²/(2f)`` for small h (the quadratic phase).
+    """
+    sdir = np.where(D0[:, 2] >= 0.0, 1.0, -1.0)
+    q = D0[:, :2] / np.abs(D0[:, 2:3])
+    d = np.concatenate([q, sdir[:, None]], 1)
+    d = d / np.linalg.norm(d, axis=1, keepdims=True)
+    F = np.concatenate([q * f, (sdir * f)[:, None]], 1)
+    sg = 1.0 if f > 0 else -1.0
+    plane = n * (sg * np.linalg.norm(F, axis=1) - np.sum(d * Q, axis=1) - sg * np.linalg.norm(F - Q, axis=1))
+    if obj_z is None:
+        return plane
+    on_obj = np.abs(P0[:, 2] - obj_z) <= 1e-9 * max(1.0, abs(obj_z))
+    s_o = -obj_z
+    dd = s_o - f
+    if abs(dd) < 1e-12 * max(1.0, abs(f)):                # 像が無限遠: 出る波は平面波
+        qo = (P0[:, :2] / s_o) * -1.0                      # q' = -O/s
+        do = np.concatenate([qo, np.ones((len(P0), 1))], 1)
+        do = do / np.linalg.norm(do, axis=1, keepdims=True)
+        tail = np.sum(do * Q, axis=1)
+    else:
+        sp = f * s_o / dd
+        m = -sp / s_o
+        I = np.concatenate([P0[:, :2] * m, np.full((len(P0), 1), sp)], 1)
+        sps = 1.0 if sp > 0 else -1.0
+        tail = None
+    nO = np.linalg.norm(P0, axis=1)
+    sph = nO - np.linalg.norm(P0 - Q, axis=1)
+    if tail is not None:
+        sph = sph + tail
+    else:
+        sph = sph + sps * (np.linalg.norm(I, axis=1) - np.linalg.norm(I - Q, axis=1))
+    return n * np.where(on_obj, sph, plane / n)
+
+
 def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
     """Trace a bundle of real rays through the system to the image plane.
 
@@ -824,7 +906,12 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         off = np.array([s["decenter"][0], s["decenter"][1], z_vertex])
         Pl = (P - off) @ Rm                               # into the surface frame (R^T x)
         Dl = D @ Rm
-        t = _intersect_surface(Pl, Dl, c, k, s["asph"])
+        ideal = s.get("f") is not None
+        if ideal:                                         # 理想レンズ: 頂点面(z=0)と交わる
+            with np.errstate(divide="ignore", invalid="ignore"):
+                t = -Pl[:, 2] / Dl[:, 2]
+        else:
+            t = _intersect_surface(Pl, Dl, c, k, s["asph"])
         # a ray must move forward along its travel direction to reach the surface
         # (allow a tiny negative tolerance for rays already on the vertex plane)
         bad = ~np.isfinite(t) | (t < -1e-9)
@@ -842,6 +929,13 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
             Dn = Dl - 2.0 * np.sum(nrm * Dl, axis=1)[:, None] * nrm
             n_after = n_before
             dirn = -dirn
+        elif ideal:
+            # 薄肉レンズの法則: 進行方向の傾き q = (Dx, Dy)/|Dz| が q' = q - h/f になる(厳密)
+            n_after = n_before
+            sdir = np.where(Dl[:, 2] >= 0.0, 1.0, -1.0)
+            q = Dl[:, :2] / np.abs(Dl[:, 2:3])
+            q2 = q - Q[:, :2] / s["f"]
+            Dn = np.concatenate([q2, sdir[:, None]], 1)
         else:
             n_after = refractive_index(s["n"], wl)
             eta = n_before / n_after
@@ -852,6 +946,9 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
             Dn = eta * Dl + (eta * cos_i - cos_t)[:, None] * nrm
         Dn = Dn / np.linalg.norm(Dn, axis=1, keepdims=True)
         opl += n_before * np.abs(t)
+        if ideal:
+            opl += _ideal_phase(Pl, Dl, Q, s["f"], n_before,
+                                -system["object_mm"] if (i == 0 and system["object_mm"] != INF) else None)
         # back to the global frame
         Pg = Q @ Rm.T + off
         Dg = Dn @ Rm.T
@@ -924,6 +1021,8 @@ def _launch_stop_aimed(system, px, py, field, pupil_fill=1.0, wavelength_um=None
     狙えない光線(ケラレ・全反射)は NaN の方向で返し、追跡で無効になる。
     """
     import raytrace3d as _R3
+    if any(sf.get("f") is not None for sf in system["surfaces"]):
+        raise ValueError("a system with an ideal lens (f) and an object-side telecentric pupil cannot be aimed at the stop")
     sysw = system if wavelength_um is None or float(wavelength_um) == float(system["wavelength_um"]) \
         else with_wavelength(system, wavelength_um)
     s3 = _R3.noncoaxial_system(sysw)
@@ -1335,9 +1434,11 @@ def seidel_coefficients(system, field=None):
             ratio = yc[i] / ym[i]
             SI += dS; SII += dS * ratio; SIII += dS * ratio ** 2; SV += dS * ratio ** 3
         row = np.array([SI, SII, SIII, SIV, SV, CL, CT])
+        if surf[i].get("f") is not None:                 # 理想レンズは収差を足さない
+            row = np.zeros(7)
         tot += row
-        rows.append({"surface": i, "S_I": float(SI), "S_II": float(SII), "S_III": float(SIII),
-                     "S_IV": float(SIV), "S_V": float(SV), "C_L": float(CL), "C_T": float(CT)})
+        rows.append({"surface": i, "S_I": float(row[0]), "S_II": float(row[1]), "S_III": float(row[2]),
+                     "S_IV": float(row[3]), "S_V": float(row[4]), "C_L": float(row[5]), "C_T": float(row[6])})
     wl_mm = system["wavelength_um"] * 1e-3
     keys = ["S_I", "S_II", "S_III", "S_IV", "S_V", "C_L", "C_T"]
     total = {k: float(v) for k, v in zip(keys, tot)}
@@ -1361,7 +1462,7 @@ def _perturbed(system, rng, tol):
             q["R"] = s["R"] * (1.0 + rng.uniform(-1, 1) * tol["radius_pct"] / 100.0)
         if tol.get("thickness_mm", 0) and s["t"] is not None:
             q["t"] = max(0.0, s["t"] + rng.uniform(-1, 1) * tol["thickness_mm"])
-        if tol.get("index", 0) and not s["mirror"] and s["n_value"] > 1.0:   # glass only, never an air gap
+        if tol.get("index", 0) and not s["mirror"] and s["n_value"] > 1.0 and s.get("f") is None:   # glass only, never an air gap
             q["n"] = _index_offset(s["n"], rng.uniform(-1, 1) * tol["index"])
         if tol.get("decenter_mm", 0):
             q["decenter"] = (s["decenter"][0] + rng.uniform(-1, 1) * tol["decenter_mm"],

@@ -1485,6 +1485,27 @@
    ]
   },
   {
+   "id": "sequential-lens-design-metrics",
+   "title": "逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)",
+   "title_en": "Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
+   "category": "測る",
+   "note": "docs/capabilities/sequential-lens-design-metrics.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "optical_design_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "shape-from-polarization",
    "title": "黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)",
    "title_en": "Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)",

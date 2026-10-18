@@ -431,6 +431,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
+- **理想レンズ面と、PSF から読む設計の指標(囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF)** — 理想レンズ(f)の焦点とガウスの結像公式、Airy の囲みエネルギー 83.8 %、円形瞳の MTF の閉形式との一致を確かめ、絞った単レンズの 8 度の視野で子午/球欠 MTF が割れることを見る。 `py -3.11 examples/optical_design_metrics.py`
 - **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
 - **実硝材で色収差を見て、減衰最小二乗でレンズを最適化する(lensopt)** — glass_catalog(Sellmeier)→ chromatic_shift で singlet/doublet の F-C 焦点移動、bend_singlet の Coddington 形状因子を optimize_lens が等凸から再発見、円錐 k=-n² と非球面 A4..A8 で無収差化、merit_function を 3 視野 × 3 波長で評価。 `py -3.11 examples/lens_optimize_demo.py`
 - **検査照明を設計する(illumdesign)— リング/ドーム/同軸/バックライトの照度と欠陥コントラスト** — light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。 `py -3.11 examples/illumination_design_demo.py`
@@ -2593,7 +2594,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `solid_angle_render` `normalmap × table → image2d` — Image of a normal map under a cone light through a lens of NA *view_na* (``image2d``). · 例: `poc_illumination_cone_vs_na`
 - `solid_angle_sweep` `入力なし → pairs` — Contrast of a facet against flat ground versus the illumination half-angle (``pairs``). · 例: `poc_illumination_cone_vs_na`
 
-#### optics / imaging(7)
+#### optics / imaging(11)
 - `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
 - `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_lens_file_roundtrip`, `poc_pixel_shift`, `poc_veiling_glare`
 - `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_lens_file_roundtrip`, `poc_pixel_shift`, `poc_veiling_glare`
@@ -2602,12 +2603,13 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `veiling_glare_index` `image2d × image2d × image2d → table` — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。 · 例: `poc_veiling_glare`
 - `wavefront_stats` `table → table` — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl. · 例: `optics_imaging`, `poc_zernike_aberrations`
 
-#### optics / imaging_sim(5)
+#### optics / imaging_sim(6)
 - `calibration_views` `table → table` — Synthetic camera-calibration views of a planar target through the designed lens (``table``). · 例: `lens_calibration_loop_demo`
 - `defect_dataset` `入力なし → table` — Synthetic defect images through a designed lens, with aligned masks (``table``). · 例: `lens_defect_dataset_demo`
 - `distortion_map` `table → table` — Real chief-ray height versus the paraxial one, and the remap grid (``table``). · 例: `lens_defect_dataset_demo`
-- `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`
+- `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`, `optical_design_metrics`
 - `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`
+- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `optical_design_metrics`
 
 #### optics / interface(4)
 - `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`

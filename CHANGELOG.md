@@ -35,6 +35,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Fixed: `raytrace._intersect_conic` は「|t| の小さい根」を選んでいて、光線が球の z 範囲の中から始まる配置(長い空気間隔の後の R < 0 の面、望遠型)で球の裏側を拾い、全光線が「けられ」になっていた。頂点を含む葉の根を選ぶ(門 `tests/test_raytrace_conic_branch_2026_10_18.py`、修正前は 7 件赤)。
 - PoC `examples/poc_lens_file_roundtrip.py`(門 21、図 6 枚): 三枚玉の中央の硝材を差し替えて崩れた処方(RMS 13.9 → 332 µm)を `lensopt` で 14.1 µm に戻して書き戻す。
 
+### Added — 逐次光学設計の拡充 第 1 弾: 理想レンズ面・囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF(5 op)
+- `raytrace.lens_system` の面に `{"f": ...}`(理想レンズ / paraxial 面): 薄肉レンズの法則 `tan θ' = tan θ − h/f` を実光線に厳密に当てる(平行光の焦点誤差 0〜1e-12 mm、有限物体はガウスの結像公式と m = −s'/s)。光路は等光路(小さい高さで −h²/(2f))なので OPD / PSF / スポットが収差 0 を返す。`paraxial_trace` は冪を持ち(2 枚で f1 f2/(f1+f2−d))、Seidel は 0、`lens_section_drawing` は細線 + 矢じり。非共軸の `raytrace3d` では読まない。
+- `optics`: `encircled_energy` / `ensquared_energy`(PSF の囲み・四角エネルギーの曲線)、`energy_radii`(50 / 80 / 90 % の半径)、`mtf_tangential_sagittal`(2-D 変換の軸の断面)。`lensimage.through_focus_mtf`(像面を動かした PSF ごとの子午/球欠 MTF)。
+- 真値: Airy の囲みエネルギー(第 1 暗環で 83.78 %、Bessel の閉形式と 1e-4 以内)、四角瞳の Si 閉形式、ガウス PSF の閉形式、円形瞳の MTF の閉形式(1.7e-4)、Hopkins のデフォーカス積分(5e-3 以内)。能力ノート `sequential-lens-design-metrics`、呼び出し例 `examples/optical_design_metrics.py`。
 
 ## 0.7.0 — 2026-10-18
 

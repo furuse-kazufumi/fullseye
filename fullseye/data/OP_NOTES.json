@@ -27963,6 +27963,36 @@
     "path": "docs/ops/optics/imaging/edge_spread.md"
    }
   ],
+  "encircled_energy": [
+   {
+    "op": "encircled_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/encircled_energy.md"
+   }
+  ],
+  "energy_radii": [
+   {
+    "op": "energy_radii",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/energy_radii.md"
+   }
+  ],
+  "ensquared_energy": [
+   {
+    "op": "ensquared_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/ensquared_energy.md"
+   }
+  ],
   "mtf50": [
    {
     "op": "mtf50",
@@ -27980,6 +28010,16 @@
     "category": "imaging",
     "out": "pairs",
     "path": "docs/ops/optics/imaging/mtf_diffraction.md"
+   }
+  ],
+  "mtf_tangential_sagittal": [
+   {
+    "op": "mtf_tangential_sagittal",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/mtf_tangential_sagittal.md"
    }
   ],
   "psf_to_mtf": [
@@ -28069,6 +28109,16 @@
     "in": "image2d × table",
     "out": "image2d",
     "path": "docs/ops/optics/imaging_sim/render_through_lens.md"
+   }
+  ],
+  "through_focus_mtf": [
+   {
+    "op": "through_focus_mtf",
+    "dim": "optics",
+    "category": "imaging_sim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/imaging_sim/through_focus_mtf.md"
    }
   ],
   "brewster_angle_deg": [

@@ -136,6 +136,7 @@ __all__ = [
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "fourier_plane_filter", "four_f_filter",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
@@ -154,6 +155,7 @@ OPTICS = [
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "fourier_plane_filter", "four_f_filter",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
@@ -1492,6 +1494,346 @@ def mtf_diffraction(f_number=5.6, wavelength_um=0.55, samples=64):
     m = (2.0 / np.pi) * (np.arccos(x) - x * np.sqrt(np.clip(1.0 - x * x, 0.0, None)))
     out = np.column_stack([x * cutoff_per_um * 1e3, m])
     return np.ascontiguousarray(out, dtype=np.float64)
+
+
+# --------------------------------------------------------------------------- #
+# energy concentration and directional MTF of a point-spread function          #
+# --------------------------------------------------------------------------- #
+_MAX_SAMPLES = 4096
+
+
+def _psf_array(psf, op: str) -> np.ndarray:
+    """A validated, non-negative PSF with energy (float64, 2-D, at least 3x3)."""
+    p = _require_image(psf, "psf", op)
+    if p.ndim != 2 or min(p.shape) < 3:
+        raise ValueError("%s: psf must be a 2-D array of at least 3x3 samples, got shape %s" % (op, p.shape))
+    with np.errstate(over="ignore", invalid="ignore"):
+        total = float(p.sum())
+        pmax = float(p.max())
+    if float(p.min()) < -1e-9 * max(pmax, 0.0):
+        raise ValueError("%s: the PSF has negative samples (min %g) -- energy cannot be negative" % (op, float(p.min())))
+    if not (np.isfinite(total) and total > 0.0 and np.isfinite(pmax)):
+        raise ValueError("%s: the PSF has no finite positive energy (sum %g) -- an all-zero or overflowing "
+                         "array is not a point-spread function" % (op, total))
+    return np.clip(p, 0.0, None)
+
+
+def _psf_centre(p: np.ndarray, centre, op: str) -> tuple:
+    """Pixel coordinates ``(row, col)`` of the circle / square centre."""
+    h, w = p.shape
+    if isinstance(centre, str):
+        if centre == "centroid":
+            tot = float(p.sum())
+            return (float((p.sum(axis=1) * np.arange(h)).sum() / tot),
+                    float((p.sum(axis=0) * np.arange(w)).sum() / tot))
+        if centre == "peak":
+            i = int(np.argmax(np.round(p / p.max(), 12)))      # ties: the first, in raster order
+            return float(i // w), float(i % w)
+        if centre == "fft":
+            return float(h // 2), float(w // 2)                  # the fftshift origin psf_from_opd uses
+        raise ValueError("%s: centre must be 'centroid', 'peak', 'fft' or a (row, col) pair, got %r" % (op, centre))
+    try:
+        cy, cx = (_finite_scalar(v, "centre") for v in centre)
+    except (TypeError, ValueError):
+        raise ValueError("%s: centre must be 'centroid', 'peak', 'fft' or a (row, col) pair, got %r" % (op, centre)) from None
+    if not (-0.5 <= cy <= h - 0.5 and -0.5 <= cx <= w - 0.5):
+        raise ValueError("%s: centre (%g, %g) lies outside the %dx%d array" % (op, cy, cx, h, w))
+    return cy, cx
+
+
+def _fit_radius_px(p: np.ndarray, cy: float, cx: float) -> float:
+    """Largest radius (pixels) of a circle / half-width of a square that stays inside the array."""
+    h, w = p.shape
+    return float(min(cy + 0.5, cx + 0.5, h - 0.5 - cy, w - 0.5 - cx))
+
+
+def _half_plane_cover(u, a, b):
+    """Area of a unit pixel on the side ``n . x <= u`` of a straight cut with ``|n| = 1``.
+
+    *a* >= *b* >= 0 are the absolute components of the unit normal. The cut offset *u* is measured from
+    the pixel centre. Exact for a straight edge (the density of ``aX + bY`` for X, Y uniform on a unit
+    square is a trapezoid); a circle of radius many pixels is straight across one pixel.
+    """
+    a = np.asarray(a, float)
+    b = np.maximum(np.asarray(b, float), 1e-12)
+    u = np.asarray(u, float)
+    h = 0.5 * (a + b)
+    m = 0.5 * (a - b)
+    out = np.where(u <= -h, 0.0, 1.0)
+    inner = (u > -h) & (u < h)
+    lo = inner & (u < -m)
+    mid = inner & (np.abs(u) <= m)
+    hi = inner & (u > m)
+    out = np.where(lo, (u + h) ** 2 / (2.0 * a * b), out)
+    out = np.where(mid, 0.5 + u / a, out)
+    out = np.where(hi, 1.0 - (h - u) ** 2 / (2.0 * a * b), out)
+    return out
+
+
+class _CircleEnergy:
+    """Energy inside circles of any radius about one centre (pixel-exact edge pixels)."""
+
+    _REACH = 0.7072          # half the pixel diagonal
+
+    def __init__(self, p, cy, cx):
+        h, w = p.shape
+        yy, xx = np.mgrid[0:h, 0:w]
+        dy, dx = (yy - cy).ravel(), (xx - cx).ravel()
+        d = np.hypot(dy, dx)
+        order = np.argsort(d, kind="stable")
+        self.d = d[order]
+        self.I = p.ravel()[order]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ca = np.where(d[order] > 0, np.abs(dx[order]) / np.where(d[order] > 0, d[order], 1.0), 1.0)
+            sa = np.where(d[order] > 0, np.abs(dy[order]) / np.where(d[order] > 0, d[order], 1.0), 0.0)
+        self.a = np.maximum(ca, sa)
+        self.b = np.minimum(ca, sa)
+        self.ax = ca >= sa                                # True when |dx| is the larger component
+        self.sx = np.where(dx[order] < 0, -1.0, 1.0)
+        self.sy = np.where(dy[order] < 0, -1.0, 1.0)
+        self.prefix = np.concatenate([[0.0], np.cumsum(self.I)])
+        self.total = float(self.prefix[-1])
+
+    _NEAR = 2.5              # pixels this close to the centre are supersampled (a straight cut is wrong there)
+    _SUB = 16
+
+    def __call__(self, r):
+        lo = int(np.searchsorted(self.d, r - self._REACH, side="left"))
+        hi = int(np.searchsorted(self.d, r + self._REACH, side="right"))
+        e = self.prefix[lo]
+        if hi > lo:
+            d = self.d[lo:hi]
+            cov = _half_plane_cover(r - d, self.a[lo:hi], self.b[lo:hi])
+            near = d < self._NEAR
+            if np.any(near):
+                cov = np.where(near, self._supersampled(lo, hi, r), cov)
+            e += float(np.sum(self.I[lo:hi] * cov))
+        return e / self.total
+
+    def _supersampled(self, lo, hi, r):
+        """Fraction of each pixel inside the circle by a 16x16 sub-grid (only the near-centre pixels matter)."""
+        out = np.zeros(hi - lo)
+        sub = (np.arange(self._SUB) + 0.5) / self._SUB - 0.5
+        for k in np.nonzero(self.d[lo:hi] < self._NEAR)[0]:
+            i = lo + k
+            # the pixel's offset from the centre, rebuilt from its distance and direction cosines
+            dx = self.d[i] * (self.a[i] if self.ax[i] else self.b[i]) * self.sx[i]
+            dy = self.d[i] * (self.b[i] if self.ax[i] else self.a[i]) * self.sy[i]
+            gx = dx + sub[None, :]
+            gy = dy + sub[:, None]
+            out[k] = float(np.mean(gx * gx + gy * gy <= r * r))
+        return out
+
+
+class _SquareEnergy:
+    """Energy inside axis-aligned squares about one centre (separable, exact for pixels)."""
+
+    def __init__(self, p, cy, cx):
+        self.p = p / float(p.sum())
+        self.y = np.arange(p.shape[0]) - cy
+        self.x = np.arange(p.shape[1]) - cx
+
+    @staticmethod
+    def _cover(pos, w):
+        lo = np.maximum(pos[None, :] - 0.5, -w[:, None])
+        hi = np.minimum(pos[None, :] + 0.5, w[:, None])
+        return np.clip(hi - lo, 0.0, 1.0)
+
+    def __call__(self, w):
+        w = np.atleast_1d(np.asarray(w, float))
+        cy, cx = self._cover(self.y, w), self._cover(self.x, w)
+        return np.sum((cy @ self.p) * cx, axis=1)
+
+
+def _energy_curve(psf, pixel_pitch_um, samples, max_radius_um, centre, op, square):
+    p = _psf_array(psf, op)
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    n = _count(samples, "samples", 2, _MAX_SAMPLES)
+    cy, cx = _psf_centre(p, centre, op)
+    fit = _fit_radius_px(p, cy, cx)
+    if fit <= 0.5:
+        raise ValueError("%s: the centre (%.2f, %.2f) is on the array edge -- no circle fits" % (op, cy, cx))
+    if max_radius_um is None:
+        rmax = fit
+    else:
+        rmax = _positive(max_radius_um, "max_radius_um" if not square else "max_half_width_um") / pitch
+        if rmax > fit * (1.0 + 1e-12):
+            raise ValueError("%s: radius %.6g um leaves the array (the largest that fits about the centre is %.6g um) "
+                             "-- the energy outside the array is unknown" % (op, rmax * pitch, fit * pitch))
+    r = np.linspace(0.0, rmax, n)
+    if square:
+        e = _SquareEnergy(p, cy, cx)(r)
+    else:
+        ce = _CircleEnergy(p, cy, cx)
+        e = np.array([ce(float(v)) for v in r])
+    return np.ascontiguousarray(np.column_stack([r * pitch, np.clip(e, 0.0, 1.0)]), dtype=np.float64)
+
+
+def encircled_energy(psf, pixel_pitch_um=1.0, samples=64, max_radius_um=None, centre="centroid"):
+    """Encircled energy of a point-spread function: the fraction of the energy inside a circle of radius r.
+
+    The standard spot-quality curve of lens design (how much light lands inside a given pixel or fibre
+    core). *psf* is an ``image2d`` of non-negative samples on a grid of *pixel_pitch_um* (use the
+    ``pixel_pitch_um`` argument of ``lensimage.psf_from_opd``, or the fine-grid spacing of
+    ``pupil_psf``); the circle is centred on the energy centroid by default (*centre* = ``'centroid'``,
+    ``'peak'``, ``'fft'`` for the fftshift origin, or a ``(row, col)`` pair in pixels). Edge pixels are
+    weighted by the exact area inside the circle, so the curve is smooth in r; a radius under about two
+    pixels is resolved only coarsely.
+
+    Returns a ``(samples, 2)`` float64 ``pairs`` array: column 0 the radius in micrometres from 0 to
+    *max_radius_um* (default the largest circle that fits in the array about the centre), column 1 the
+    fraction of the **array's** energy inside, in [0, 1], non-decreasing. Energy outside the array is
+    not known, so a PSF window that cuts the wings off reads high; keep the window several times the
+    spot.
+
+    Ground truth it reproduces: an unaberrated circular pupil gives the Airy pattern, whose encircled
+    energy is ``1 - J0(v)^2 - J1(v)^2`` with ``v = 2 pi r / (lambda N)``: 83.8 % at the first dark ring
+    (``r = 1.2197 lambda N``, Born and Wolf), 91.0 % at the second, 93.8 % at the third (measured in
+    ``tests/test_optdesign_psf_metrics.py``).
+
+    **Raises** ``ValueError``: *psf* not 2-D / smaller than 3x3 / negative / zero energy / non-finite;
+    non-positive *pixel_pitch_um* or *max_radius_um*; *samples* outside ``[2, 4096]``; a radius that
+    leaves the array; a bad *centre*.
+    """
+    return _energy_curve(psf, pixel_pitch_um, samples, max_radius_um, centre, "encircled_energy", False)
+
+
+def ensquared_energy(psf, pixel_pitch_um=1.0, samples=64, max_half_width_um=None, centre="centroid"):
+    """Ensquared energy of a point-spread function: the fraction of the energy inside a square of half-width w.
+
+    The detector-pixel version of encircled energy: how much of the spot falls inside a square pixel
+    (side ``2 w``) centred on it. The square is axis-aligned with the array and centred like
+    :func:`encircled_energy` (same *centre* options). The edge pixels are weighted by the exact
+    overlap, so the curve is exact for a PSF that is constant across each pixel.
+
+    Returns a ``(samples, 2)`` float64 ``pairs`` array: column 0 the **half-width** in micrometres
+    (the pixel side is twice that), column 1 the fraction of the array's energy inside, non-decreasing
+    in [0, 1].
+
+    Ground truth it reproduces: a square pupil of side D has the separable PSF
+    ``sinc^2(D x / (lambda z)) sinc^2(D y / (lambda z))``, whose ensquared energy is
+    ``S(a)^2`` with ``S(a) = (2/pi) (Si(2 pi a) - sin^2(pi a) / (pi a))`` and ``a = w / (lambda N)``
+    (checked in ``tests/test_optdesign_psf_metrics.py``).
+
+    **Raises** ``ValueError``: as :func:`encircled_energy` (with *max_half_width_um*).
+    """
+    return _energy_curve(psf, pixel_pitch_um, samples, max_half_width_um, centre, "ensquared_energy", True)
+
+
+def energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind="circle", centre="centroid"):
+    """The radius that holds a given fraction of a point-spread function's energy (``table``).
+
+    Solves the encircled (``kind='circle'``) or ensquared (``kind='square'``) energy curve for each
+    fraction in *fractions* (strictly between 0 and 1, at most 16, ascending or not) by bisection on the
+    exact edge-weighted curve of :func:`encircled_energy` / :func:`ensquared_energy`: the usual "radius
+    at 50 / 80 / 90 %" figures of merit, in micrometres.
+
+    Returns ``{"kind", "fractions", "radius_um", "diameter_um", "centre_px"}``: for a circle the
+    radius, for a square the half-width (``diameter_um`` is twice that, the pixel side); ``centre_px``
+    is ``(row, col)``. A fraction that the array never reaches (the window cuts the wings off) raises
+    rather than returning the array edge.
+
+    Ground truth: the Airy pattern's radii at 50 / 80 / 90 % are the roots of
+    ``1 - J0(v)^2 - J1(v)^2 = fraction`` with ``v = 2 pi r / (lambda N)`` (tested against an independent root find).
+
+    **Raises** ``ValueError``: bad *psf* / *pixel_pitch_um* / *centre* (see :func:`encircled_energy`);
+    *kind* not ``'circle'`` or ``'square'``; a fraction outside (0, 1) or non-finite; a fraction the
+    array's energy does not reach inside the largest circle / square that fits.
+    """
+    op = "energy_radii"
+    if kind not in ("circle", "square"):
+        raise ValueError("%s: kind must be 'circle' or 'square', got %r" % (op, kind))
+    if isinstance(fractions, (str, bytes)) or not hasattr(fractions, "__len__"):
+        fractions = (fractions,)
+    fr = [_finite_scalar(f, "fractions[%d]" % i) for i, f in enumerate(fractions)]
+    if not 1 <= len(fr) <= 16 or any(not 0.0 < f < 1.0 for f in fr):
+        raise ValueError("%s: give 1..16 fractions strictly between 0 and 1, got %r" % (op, list(fractions)))
+    p = _psf_array(psf, op)
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    cy, cx = _psf_centre(p, centre, op)
+    fit = _fit_radius_px(p, cy, cx)
+    if fit <= 0.5:
+        raise ValueError("%s: the centre (%.2f, %.2f) is on the array edge -- no circle fits" % (op, cy, cx))
+    if kind == "square":
+        sq = _SquareEnergy(p, cy, cx)
+
+        def ee(r):
+            return float(sq(r)[0])
+    else:
+        ee = _CircleEnergy(p, cy, cx)
+    top = ee(fit)
+    out = []
+    for f in fr:
+        if top < f:
+            raise ValueError("%s: the array holds only %.4g of the energy inside the largest %s that fits "
+                             "(%.6g um) -- %.4g is not reached; use a larger PSF window"
+                             % (op, top, kind, fit * pitch, f))
+        lo, hi = 0.0, fit
+        for _ in range(60):
+            mid = 0.5 * (lo + hi)
+            if ee(mid) < f:
+                lo = mid
+            else:
+                hi = mid
+        out.append(0.5 * (lo + hi) * pitch)
+    return {"kind": kind, "fractions": [float(f) for f in fr], "radius_um": [float(v) for v in out],
+            "diameter_um": [float(2.0 * v) for v in out], "centre_px": (float(cy), float(cx))}
+
+
+def _otf_slices(p: np.ndarray, pitch_um: float, op: str):
+    """Axis slices of the modulus of the OTF of a PSF: ``(f_rows, mtf_rows, f_cols, mtf_cols)`` (cycles/mm).
+
+    ``f_rows`` / ``mtf_rows`` is the transfer along the row axis (the OTF at ``fx = 0``, the Fourier
+    transform of the line spread function collected across the columns); the columns likewise.
+    """
+    total = float(p.sum())
+    if not (total > 0.0):
+        raise ValueError("%s: the PSF sums to %g -- the DC normalisation would be 0/0" % (op, total))
+    with np.errstate(over="ignore", invalid="ignore"):
+        otf = np.fft.fft2(p)
+    dc = abs(complex(otf[0, 0]))
+    if not np.isfinite(dc) or dc == 0.0 or not np.isfinite(otf).all():
+        raise ValueError("%s: the transform overflowed float64 -- rescale the PSF (the MTF is scale-invariant)" % op)
+    h, w = p.shape
+    fr = np.arange(h // 2 + 1) / (h * pitch_um) * 1e3
+    fc = np.arange(w // 2 + 1) / (w * pitch_um) * 1e3
+    return fr, np.abs(otf[:h // 2 + 1, 0]) / dc, fc, np.abs(otf[0, :w // 2 + 1]) / dc
+
+
+def mtf_tangential_sagittal(psf, pixel_pitch_um=1.0, tangential_axis="y"):
+    """Tangential and sagittal MTF from the 2-D transform of a point-spread function (``table``).
+
+    The radial average of :func:`psf_to_mtf` hides astigmatism and coma; a lens designer reads the two
+    meridians separately. For a field point displaced along +y (the convention of ``raytrace``) the
+    **tangential** (meridional) MTF is the transform along y, the line through the OTF at ``fx = 0``, and
+    the **sagittal** MTF is the one along x. Each is a slice of ``|FFT2(PSF)| / |OTF(0)|`` at the exact
+    grid frequencies ``k / (n * pitch)`` up to the Nyquist limit, with no radial binning. (By the
+    projection-slice theorem the y slice is the transform of the line spread function that integrates the
+    PSF across x.) *tangential_axis* = ``'x'`` swaps the roles for a field along x.
+
+    Returns ``{"tangential": (n, 2) pairs, "sagittal": (m, 2) pairs, "nyquist_cpmm", "tangential_axis"}``
+    with frequencies in cycles per millimetre and the MTF in [0, 1]. A PSF binned onto detector pixels
+    (``psf_from_opd(pixel_pitch_um=...)``) carries the pixel aperture in its MTF; a fine-grid PSF does not.
+
+    Ground truth it reproduces: the diffraction-limited circular pupil
+    ``(2/pi)(arccos x - x sqrt(1 - x^2))`` on both curves (:func:`mtf_diffraction`); the two curves are
+    identical for a rotationally symmetric PSF on axis and separate for an astigmatic one (measured in
+    ``tests/test_optdesign_psf_metrics.py``).
+
+    **Raises** ``ValueError``: bad *psf* (see :func:`encircled_energy`) or *pixel_pitch_um*;
+    *tangential_axis* not ``'x'`` or ``'y'``.
+    """
+    op = "mtf_tangential_sagittal"
+    if tangential_axis not in ("x", "y"):
+        raise ValueError("%s: tangential_axis must be 'x' or 'y', got %r" % (op, tangential_axis))
+    p = _psf_array(psf, op)
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    fr, mr, fc, mc = _otf_slices(p, pitch, op)
+    y = np.ascontiguousarray(np.column_stack([fr, mr]), dtype=np.float64)
+    x = np.ascontiguousarray(np.column_stack([fc, mc]), dtype=np.float64)
+    tan, sag = (y, x) if tangential_axis == "y" else (x, y)
+    return {"tangential": tan, "sagittal": sag, "nyquist_cpmm": float(0.5 / pitch * 1e3),
+            "tangential_axis": tangential_axis}
 
 
 def _zernike_terms(coeffs, op: str):

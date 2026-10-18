@@ -565,6 +565,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
 | [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
 | [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
+| [`capabilities/sequential-lens-design-metrics.md`](capabilities/sequential-lens-design-metrics.md) | id: sequential-lens-design-metrics |
 | [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
 | [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
 | [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
