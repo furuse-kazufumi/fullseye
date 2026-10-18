@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_emva1288_in_camera_processing, poc_eye_to_brain, poc_pocket_interreflection, poc_powder_grinding_ae, poc_registration_basin, poc_simcal_thin_film, poc_wound_area_tracking, simcal_checks_tour, simcal_tour]
+examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_emva1288_in_camera_processing, poc_eye_to_brain, poc_pocket_interreflection, poc_powder_grinding_ae, poc_registration_basin, poc_simcal_pixel_shift, poc_simcal_thin_film, poc_wound_area_tracking, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -74,6 +74,7 @@ log 0.40 0.50
 - [poc_pocket_interreflection](../../../../examples/poc_pocket_interreflection.py) — `py -3.11 examples/poc_pocket_interreflection.py`
 - [poc_powder_grinding_ae](../../../../examples/poc_powder_grinding_ae.py) — `py -3.11 examples/poc_powder_grinding_ae.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`
+- [poc_simcal_pixel_shift](../../../../examples/poc_simcal_pixel_shift.py) — `py -3.11 examples/poc_simcal_pixel_shift.py`
 - [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 - [simcal_checks_tour](../../../../examples/simcal_checks_tour.py) — `py -3.11 examples/simcal_checks_tour.py`

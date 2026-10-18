@@ -1,8 +1,8 @@
 {
- "n_ops": 3354,
+ "n_ops": 3394,
  "tiers": {
   "color": 12,
-  "ledger": 2401,
+  "ledger": 2441,
   "nary": 17,
   "registry": 924
  },
@@ -1883,6 +1883,30 @@
    "in_sorts": []
   },
   {
+   "name": "basis_decomposition_crlb",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "basis_material_decompose",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "images",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "beam_hardening_apply",
    "halcon": "",
    "in_sort": "sinogram",
@@ -3685,6 +3709,17 @@
     "image2d",
     "scalar"
    ]
+  },
+  {
+   "name": "coaxial_illumination",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "coherence",
@@ -5549,6 +5584,17 @@
    ]
   },
   {
+   "name": "czerny_turner_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "d2_distribution",
    "halcon": "",
    "in_sort": "points",
@@ -5560,6 +5606,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "darkfield_scatter_relation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "data_range_of",
@@ -7066,6 +7123,19 @@
    ]
   },
   {
+   "name": "dpc_integrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "drag_coefficient_sphere",
    "halcon": "",
    "in_sort": "signal",
@@ -7192,6 +7262,31 @@
    "dim": "photon",
    "in_sorts": [
     "counts"
+   ]
+  },
+  {
+   "name": "dual_energy_separability",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "dual_kvp_channels",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs",
+    "pairs"
    ]
   },
   {
@@ -7370,6 +7465,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "effective_z_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -10888,6 +10996,17 @@
    ]
   },
   {
+   "name": "grating_dispersion",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "grating_rgb",
    "halcon": "",
    "in_sort": "normalmap",
@@ -10898,6 +11017,46 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "grating_step_period_estimate",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "grating_stepping_simulate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "images",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "grating_three_image_retrieve",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images",
+    "images"
    ]
   },
   {
@@ -11920,6 +12079,30 @@
    "in_sorts": []
   },
   {
+   "name": "illumination_field",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "illumination_train",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "illumination_uniformity",
    "halcon": "",
    "in_sort": "image2d",
@@ -12150,6 +12333,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "increment_sign",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "indices_to_labels",
@@ -12601,6 +12797,20 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "isc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -13858,6 +14068,54 @@
    ]
   },
   {
+   "name": "lens_file_read",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_report",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_file_write",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_section_drawing",
    "halcon": "",
    "in_sort": "table",
@@ -15072,6 +15330,17 @@
    "in_sorts": []
   },
   {
+   "name": "material_effective_z",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
    "name": "material_electron_properties",
    "halcon": "",
    "in_sort": null,
@@ -15212,6 +15481,39 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_xray_attenuation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "material_xray_constants",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "material_xray_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
    "in_sorts": []
   },
   {
@@ -17506,6 +17808,20 @@
    ]
   },
   {
+   "name": "ocm_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "oct_ascan",
    "halcon": "",
    "in_sort": "table",
@@ -17935,6 +18251,19 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "orientation_code",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -19148,6 +19477,19 @@
    "dim": "specular",
    "in_sorts": [
     "images"
+   ]
+  },
+  {
+   "name": "photon_counting_channels",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -21532,6 +21874,19 @@
    ]
   },
   {
+   "name": "r_value_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "racket_hit_check",
    "halcon": "",
    "in_sort": "table",
@@ -21617,6 +21972,20 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "radial_reach_filter",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "change",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
     "image2d"
    ]
   },
@@ -23651,6 +24020,20 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "scc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -26088,6 +26471,46 @@
    ]
   },
   {
+   "name": "spectrometer_bandpass",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_slit_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_spectrum",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "pairs",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "pairs"
+   ]
+  },
+  {
    "name": "spectrum",
    "halcon": "",
    "in_sort": "signal",
@@ -27683,6 +28106,39 @@
     "matrix",
     "matrix"
    ]
+  },
+  {
+   "name": "talbot_carpet",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_grating_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_source_visibility",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "tangent_field",
@@ -31712,6 +32168,43 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "xray_beam_quality",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "xray_channel_projection",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "images",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "xray_tube_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
   },
   {
    "name": "xyz_to_lab",
@@ -42488,499 +42981,6 @@
    "requires": [
     "cv2",
     "skimage"
-   ]
-  },
-  {
-   "name": "lens_file_read",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "lensfile",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "lens_file_report",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "lensfile",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "lens_file_system",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "lensfile",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "lens_file_write",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "lensfile",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "coaxial_illumination",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "illumination",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "czerny_turner_design",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectrometer",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "grating_dispersion",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectrometer",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "illumination_field",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "image2d",
-   "category": "illumination",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "illumination_train",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "illumination",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "spectrometer_bandpass",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "spectrometer",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "spectrometer_slit_image",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "spectrometer",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "spectrometer_spectrum",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "pairs",
-   "category": "spectrometer",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table",
-    "pairs"
-   ]
-  },
-  {
-   "name": "darkfield_scatter_relation",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "dpc_integrate",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "table"
-   ]
-  },
-  {
-   "name": "grating_step_period_estimate",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "images"
-   ]
-  },
-  {
-   "name": "grating_stepping_simulate",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "images",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "image2d"
-   ]
-  },
-  {
-   "name": "grating_three_image_retrieve",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "images",
-    "images"
-   ]
-  },
-  {
-   "name": "talbot_carpet",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "talbot_grating_design",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "talbot_source_visibility",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "grating_interf",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
-   "name": "basis_decomposition_crlb",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "basis_material_decompose",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "images",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "images"
-   ]
-  },
-  {
-   "name": "dual_energy_separability",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "dual_kvp_channels",
-   "halcon": "",
-   "in_sort": "pairs",
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "pairs",
-    "pairs"
-   ]
-  },
-  {
-   "name": "effective_z_map",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "image2d",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "images"
-   ]
-  },
-  {
-   "name": "material_effective_z",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "material_xray_attenuation",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "pairs",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "material_xray_constants",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "material_xray_table",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "photon_counting_channels",
-   "halcon": "",
-   "in_sort": "pairs",
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "pairs"
-   ]
-  },
-  {
-   "name": "r_value_map",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "image2d",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "images"
-   ]
-  },
-  {
-   "name": "xray_beam_quality",
-   "halcon": "",
-   "in_sort": "pairs",
-   "out_sort": "table",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "pairs"
-   ]
-  },
-  {
-   "name": "xray_channel_projection",
-   "halcon": "",
-   "in_sort": "images",
-   "out_sort": "images",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": [
-    "images"
-   ]
-  },
-  {
-   "name": "xray_tube_spectrum",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "pairs",
-   "category": "spectral_xray",
-   "tier": "ledger",
-   "ledger": "opstomography",
-   "dim": "tomography",
-   "in_sorts": []
-  },
-  {
-   "name": "increment_sign",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "image2d",
-   "category": "code",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d"
-   ]
-  },
-  {
-   "name": "isc_match",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "table",
-   "category": "match",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d",
-    "image2d"
-   ]
-  },
-  {
-   "name": "ocm_match",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "table",
-   "category": "match",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d",
-    "image2d"
-   ]
-  },
-  {
-   "name": "orientation_code",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "image2d",
-   "category": "code",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d"
-   ]
-  },
-  {
-   "name": "radial_reach_filter",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "table",
-   "category": "change",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d",
-    "image2d"
-   ]
-  },
-  {
-   "name": "scc_match",
-   "halcon": "",
-   "in_sort": "image2d",
-   "out_sort": "table",
-   "category": "match",
-   "tier": "ledger",
-   "ledger": "opscodematch",
-   "dim": "codematch",
-   "in_sorts": [
-    "image2d",
-    "image2d"
    ]
   }
  ]

@@ -1,4 +1,4 @@
-# OPTICS operator help — 338 ops in 37 categories
+# OPTICS operator help — 358 ops in 40 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -62,9 +62,13 @@
 
 [beer_lambert_transmittance](glassbody/beer_lambert_transmittance.md) · [prism_min_deviation_deg](glassbody/prism_min_deviation_deg.md) · [refract_rays](glassbody/refract_rays.md) · [slab_transmittance](glassbody/slab_transmittance.md)
 
-### illumination (11)
+### grating_interf (8)
 
-[defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
+[darkfield_scatter_relation](grating_interf/darkfield_scatter_relation.md) · [dpc_integrate](grating_interf/dpc_integrate.md) · [grating_step_period_estimate](grating_interf/grating_step_period_estimate.md) · [grating_stepping_simulate](grating_interf/grating_stepping_simulate.md) · [grating_three_image_retrieve](grating_interf/grating_three_image_retrieve.md) · [talbot_carpet](grating_interf/talbot_carpet.md) · [talbot_grating_design](grating_interf/talbot_grating_design.md) · [talbot_source_visibility](grating_interf/talbot_source_visibility.md)
+
+### illumination (14)
+
+[coaxial_illumination](illumination/coaxial_illumination.md) · [defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_field](illumination/illumination_field.md) · [illumination_train](illumination/illumination_train.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
 
 ### imaging (7)
 
@@ -81,6 +85,10 @@
 ### itof (8)
 
 [itof_capture](itof/itof_capture.md) · [itof_flying_pixel_mask](itof/itof_flying_pixel_mask.md) · [itof_multipath_separate](itof/itof_multipath_separate.md) · [itof_noise_budget](itof/itof_noise_budget.md) · [itof_phase_amplitude](itof/itof_phase_amplitude.md) · [itof_unwrap_error_rate](itof/itof_unwrap_error_rate.md) · [itof_unwrap_multifreq](itof/itof_unwrap_multifreq.md) · [itof_wiggling_correct](itof/itof_wiggling_correct.md)
+
+### lensfile (4)
+
+[lens_file_read](lensfile/lens_file_read.md) · [lens_file_report](lensfile/lens_file_report.md) · [lens_file_system](lensfile/lens_file_system.md) · [lens_file_write](lensfile/lens_file_write.md)
 
 ### light_transport (11)
 
@@ -149,6 +157,10 @@
 ### spectral (14)
 
 [bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
+
+### spectrometer (5)
+
+[czerny_turner_design](spectrometer/czerny_turner_design.md) · [grating_dispersion](spectrometer/grating_dispersion.md) · [spectrometer_bandpass](spectrometer/spectrometer_bandpass.md) · [spectrometer_slit_image](spectrometer/spectrometer_slit_image.md) · [spectrometer_spectrum](spectrometer/spectrometer_spectrum.md)
 
 ### surface (5)
 

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 75 項目**
+**収録 80 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -30,14 +30,18 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
+| [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
 | [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
+| [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
@@ -50,6 +54,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -69,7 +74,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (27)
+## 測る (28)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -126,6 +131,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`dem_height_frame_convert` で `H = h - N`(N は `dem_geoid_height` が公開格子から引く)。混ざった表は `dem_height_frame_residual` の残差で見張り、公開測量成果 523 点で答え合わせ(`poc_geodetic_benchmarks_real`)。
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md)
+
+X 線(や可視光)の透過像は「どれだけ吸われたか」しか写しません。周期数 µm の格子を 2 枚(線源が大きいなら 3 枚)入れ、どちらかを 1 周期ずらしながら数枚撮ると、各画素で縞の正弦が取れます。その**平均**が透過(吸収)、**位相のずれ**が微分位相(屈折角)、**振幅の落ち方**が暗視野(画素より小さい構造からの小角散乱)です。吸収がまわりとほとんど同じ繊維・粉・微小な割れ・気孔の群が、暗視野でははっきり出ます。
+
+使う op: `talbot_grating_design`, `talbot_carpet`, `talbot_source_visibility`, `grating_stepping_simulate`, `grating_step_period_estimate`, `grating_three_image_retrieve`, `darkfield_scatter_relation`, `dpc_integrate`
+
+推奨パイプライン: [`talbot_grating_design`](ops/optics/grating_interf/talbot_grating_design.md) → [`talbot_source_visibility`](ops/optics/grating_interf/talbot_source_visibility.md) → [`grating_step_period_estimate`](ops/optics/grating_interf/grating_step_period_estimate.md) → [`grating_three_image_retrieve`](ops/optics/grating_interf/grating_three_image_retrieve.md) → [`darkfield_scatter_relation`](ops/optics/grating_interf/darkfield_scatter_relation.md) → [`dpc_integrate`](ops/optics/grating_interf/dpc_integrate.md)
+
+代替: [`talbot_carpet`](ops/optics/grating_interf/talbot_carpet.md), [`grating_stepping_simulate`](ops/optics/grating_interf/grating_stepping_simulate.md), [`wrapped_phase`](ops/3d/structured_light/wrapped_phase.md), [`moire_talbot_gap`](ops/optics/moire_align/moire_talbot_gap.md), [`angular_spectrum_propagate`](ops/optics/wave/angular_spectrum_propagate.md)
+
+限界: 位相ステップは 1 次の正弦だけを見る(格子の高次の調和・ステップの位置の揺れ・検出器の点広がりは模型に無い)。暗視野から散乱角へはガウス散乱の近似。単色の順モデルなので、多色の線源で吸収が平均のエネルギーを上げて可視度が落ちる効果は無い。折り返しは隣との跳びでしか見えない。
+
+実寸校正: 1 周期のステップ数 P は空気(基準)の区画で grating_step_period_estimate から決める。基準と試料の露光の比は reference_exposure に渡す。屈折角・位相への換算は分析格子の周期 p2 と距離 d、波長で決まる(talbot_grating_design の値か実測)。
+
+動く例: `poc_grating_interferometry`
 
 ### [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md)
 
@@ -407,7 +428,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (8)
+## 見つける (10)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -424,6 +445,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
 動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md)
+
+1 枚の X 線透過像は、各画素で L = −ln(I/I₀) = Σ μₘ tₘ という**1 つの数**しか測りません。厚い肉と薄い骨片・ガラスは同じ L を作れるので、厚みと材質は分けられません。光子のエネルギーを 2 つ以上の窓で数え分ける検出器(フォトンカウンティング)か、2 つの管電圧で撮ると、μ(E) の**形**が材質で違う(光電効果は ≈ Z³/E³、コンプトン散乱は電子密度だけ)ので、各画素で方程式が窓の数だけ立ち、2 つの基底物質の厚みに分けられます(Alvarez & Macovski 1976、Lehmann ら 1981)。
+
+使う op: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+
+推奨パイプライン: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
+
+代替: [`dual_kvp_channels`](ops/tomography/spectral_xray/dual_kvp_channels.md), [`r_value_map`](ops/tomography/spectral_xray/r_value_map.md), [`dual_energy_separability`](ops/tomography/spectral_xray/dual_energy_separability.md), [`xray_channel_projection`](ops/tomography/spectral_xray/xray_channel_projection.md), [`material_xray_attenuation`](ops/tomography/spectral_xray/material_xray_attenuation.md)
+
+限界: 散乱線・検出器の K 蛍光の逃げ・パイルアップ・画素間の電荷共有の二重計数は入っていない。X 線管のスペクトルは簡易模型(半価層は IEC の線質と 6 % 以内)。肉に埋まった異物の見かけの Z は組成だけでなく密度でも動き(PVC は 13.9 が 18.7 に見える)、無機物の向きは Al(13)から Cu(29)まで狭い角度に詰まるので、Z を 1 刻みでは読めない。
+
+実寸校正: 較正の op は無い。管電圧・ろ過・検出器の材料と厚さ・窓のしきい値・エネルギー分解能・電荷共有の割合を既知として `photon_counting_channels` に入れる —— 応答を知らずに分解すると肉が Al に化ける(PoC の門)。実機では厚さの分かった 2 材料の段の撮影でチャネルの応答を合わせる。
+
+動く例: `poc_dual_energy_xray`
 
 ### [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md)
 
@@ -472,6 +509,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 位置は px。実距離は `mm_per_px_from_reference`(空撮なら高度から GSD)で換算し、高度が変われば取り直す。
 
 動く例: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md)
+
+明るさの**値**ではなく**変化の向き**を符号にして比べる照合の族(`codematch`、6 op)。学習した特徴を使わず、式と閾値だけで、 どこまで残りどこで壊れるかを自分で言えます。
+
+使う op: `ocm_match`, `isc_match`, `scc_match`, `orientation_code`, `increment_sign`, `radial_reach_filter`
+
+推奨パイプライン: [`isc_match`](ops/codematch/match/isc_match.md) → [`ocm_match`](ops/codematch/match/ocm_match.md)
+
+代替: [`scc_match`](ops/codematch/match/scc_match.md), [`ncc_locate`](ops/2d/matching/ncc_locate.md), [`radial_reach_filter`](ops/codematch/change/radial_reach_filter.md)
+
+限界: 回転には弱い(4 種とも 7〜9° で当たりが半分を割る。回転を探す方向符号ヒストグラムの系統は無い)。スケール変化も探さない。平坦な所の多いテンプレートは拒否されるか、SCC では採点できる位置が減る。SCC は「符号の合った画素だけを選ぶ」ので無関係な位置でも相関が高めに出る(選択の偏り)。既定の床でそれを抑えても OCM・ISC には届かない。RRF は背景が平坦な画素を判定しない(空・無地の壁)。
+
+実寸校正: 座標は画素(テンプレート中心、find_ncc_model と同じ規約)。閾値 grad_thresh・flat_thresh・t_p は [0, 1] の明るさで書く(8 ビットなら 255 で割る)。
+
+動く例: `poc_code_matching_breakdown`
 
 ### [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md)
 
@@ -555,7 +608,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (17)
+## 光と色 (19)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -613,6 +666,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_fiber_light_guide`
 
+### [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md)
+
+分光器の「帯域の幅」は、入口スリットの幅・格子の溝の密度と照らされた本数・鏡の焦点距離・検出器の画素から決まります。`gratingspec` の 5 本は、格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何からそれを組み立てます。`grating_dispersion` は角分散・逆線分散・分解能 mN・自由スペクトル範囲・同じ方向へ出る他の次数の波長を、`czerny_turner_design` は帯域と検出器の長さからカメラ鏡の焦点距離とコマを消す Shafer の角を、`spectrometer_bandpass` はスリットの像 ⊗ 画素 ⊗ 回折の装置関数の FWHM とエタンデュを、`spectrometer_slit_image` は溝に沿った方向余弦を保つ 3 次元の格子の式で長いスリットの像の smile と keystone を、`spectrometer_spectrum` は入力スペクトルから画素の読み(2 次・3 次の像の重なりとロングパスのフィルタつき)を出します。クロマティック共焦点の `spectrometer_fwhm_nm` とハイパースペクトルの `band_fwhm_nm` に渡す数字を、ここで作れます。
+
+使う op: `grating_dispersion`, `czerny_turner_design`, `spectrometer_bandpass`, `spectrometer_slit_image`, `spectrometer_spectrum`, `illumination_train`, `illumination_field`, `coaxial_illumination`
+
+推奨パイプライン: [`czerny_turner_design`](ops/optics/spectrometer/czerny_turner_design.md) → [`spectrometer_bandpass`](ops/optics/spectrometer/spectrometer_bandpass.md) → [`spectrometer_spectrum`](ops/optics/spectrometer/spectrometer_spectrum.md)
+
+代替: [`grating_dispersion`](ops/optics/spectrometer/grating_dispersion.md), [`spectrometer_slit_image`](ops/optics/spectrometer/spectrometer_slit_image.md), [`illumination_train`](ops/optics/illumination/illumination_train.md), [`illumination_field`](ops/optics/illumination/illumination_field.md), [`coaxial_illumination`](ops/optics/illumination/coaxial_illumination.md)
+
+限界: 鏡とレンズは無収差、カメラは歪曲の無い直線写像なので、帯域の幅は収差を入れない下限。高次の回折効率は 1 次との比の定数(模型)、偏光と blaze は入れない。照明は近軸で cos⁴ とレンズの収差を入れない。
+
+実寸校正: 較正は無い(設計値から閉形式と数値の畳み込みで出す)。実機の分光器は輝線ランプで波長を較正し、装置関数は単色の線で測って差し替える。
+
+動く例: `poc_spectrometer_illumination`
+
 ### [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md)
 
 鏡面に近い金属部品では、浅い打痕(傾き 0.1〜0.5°)やヘアラインの上の傷、梨地のムラが「同軸落射で見えたり見えなかったりする」。どう見えるかは、光源の種類より先に**各点に届く光の円錐の半角 α と向き ψ**、それとカメラが受け取る円錐(物体側 NA、半角 β = asin NA)の関係で決まります。顕微鏡のケーラー照明でいう照明の NA と対物の NA、シュリーレン法のナイフエッジと同じ幾何です。
@@ -644,6 +713,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 照明の強さは線形に効き、幾何(形態係数・画素とパッチの対応)はシーンの形・カメラ・パッチの大きさの SHA-256 で使い回すので、反射率と照明の強さを動かす較正の繰り返しではラジオシティだけを解き直す。
 
 動く例: `poc_pocket_interreflection`
+
+### [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md)
+
+市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(`.zmx`)を、`lens_file_read` がそのまま `raytrace.lens_system` の処方にします。別の模型を作らないので、実光線(`spot_stats` / `ray_fan`)・Seidel 和(`seidel_coefficients`)・波面と PSF(`opd_map` / `psf_from_opd`)・色収差(`chromatic_shift`)・公差(`tolerance_analysis`)・最適化(`optimize_lens`)・断面図(`lens_section_drawing`)がそのまま使えます。視野と波長はファイルの並びのまま持ち、`lens_file_system` で 1 つ選んだ処方にします。直した処方は `lens_file_write` が同じ形式で書き戻し(視野・波長・まだ有効なソルブを保つ)、`lens_file_report` は読まずに全キーワードを「読む / 無視(理由つき)/ 扱えない」に分けます。硝材は材料表か、手元の `.agf`(`glass_dir` か環境変数 `FULLSEYE_GLASS_DIR`、`read_glass_catalog_agf` が読む)を名前の完全一致で引きます。
+
+使う op: `lens_file_read`, `lens_file_system`, `lens_file_write`, `lens_file_report`
+
+推奨パイプライン: [`lens_file_read`](ops/optics/lensfile/lens_file_read.md) → [`lens_file_system`](ops/optics/lensfile/lens_file_system.md) → [`paraxial_trace`](ops/optics/design/paraxial_trace.md) → [`spot_stats`](ops/optics/design/spot_stats.md) → [`lens_file_write`](ops/optics/lensfile/lens_file_write.md)
+
+代替: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: 共軸の処方だけ(座標変換面・理想レンズ・トーリック・奇数次非球面は拒否)。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+
+実寸校正: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
+
+動く例: `poc_lens_file_roundtrip`
 
 ### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 
