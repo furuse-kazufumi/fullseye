@@ -289,6 +289,7 @@ def test_single_axis_return_is_the_trace_undo_element():
     p = L.lens_file_read(_text("cb_plate_x_undo.zmx"))
     undo = [e for e in p["system"]["elements"] if "undo" in e]
     assert len(undo) == 1 and undo[0]["t"] == 20.0
+    assert len(p["report"]["notes"]) > 0, "notes が空では注記の検査にならない"
     assert any("undo an earlier one exactly" in n for n in p["report"]["notes"])
     # 同じ系を undo ではなく明示の break(角を反転)で書いても同じ
     els = [dict(e) for e in p["system"]["elements"]]
@@ -532,6 +533,7 @@ def test_coaxial_files_are_unchanged():
 
 def test_flat_air_planes_are_merged_and_listed():
     p = L.lens_file_read(_text("cb_three_mirrors.zmx"))
+    assert len(p["report"]["notes"]) > 0, "notes が空では注記の検査にならない"
     assert any("flat air-to-air plane" in n for n in p["report"]["notes"])
     assert p["surface_records"][5] == [] and p["surface_records"][9] == []
     # 併合は光線を変えない: 無作用の平面を厚みに足した同じ系との差は 0
