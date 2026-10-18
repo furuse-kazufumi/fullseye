@@ -151,7 +151,8 @@ def test_tilted_plate_shift_and_astigmatism_equal_the_closed_forms(theta):
     cf = R3.tilted_plate_shift(5.0, "N-BK7", theta)
     assert abs(cf["lateral_shift_mm"] - lat) < 1e-14 and abs(cf["astigmatism_signed_mm"] - ast) < 1e-12
     assert abs(abs(R3._chief(sp, (0.0, 0.0))["points"][0, -1][1]) - lat) < 1e-12
-    assert abs((ft - fs) @ d - ast) < 1e-8
+    # 焦点はほぼ平行な 2 本の最接近点なので丸めの床が環境で 1e-9〜1e-7 mm と変わる(CI py3.10 で 1.0e-7)
+    assert abs((ft - fs) @ d - ast) < 1e-6
     assert abs((fs - f0s) @ d - cf["sagittal_shift_mm"]) < 1e-6
     assert abs((ft - f0t) @ d - cf["tangential_shift_mm"]) < 1e-6
 

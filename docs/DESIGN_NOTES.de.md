@@ -2487,7 +2487,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_raytrace3d.py`
 
-- **L275** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+- **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
 
 ## `tests/test_runner_scratch_families.py`
 

@@ -15,7 +15,7 @@
      同軸落射の検査レンズのカメラ側の 204 mm を 2 枚の鏡で折り返すと、装置の高さが 393 → 249 mm に縮み、像の RMS は
      1e-12 で変わらない。
   3. **傾いた平板と半透鏡の 2 本の枝**: 30° に傾けた 5 mm の平板の横ずれ t·sinθ(1 − cosθ/√(n² − sin²θ))(Smith)と
-     非点隔差(Coddington の式から導出、接線像が遠い)が、実光線と 1e-8 mm で一致(0〜60°)。45° の半透鏡の
+     非点隔差(Coddington の式から導出、接線像が遠い)が、実光線と 1e-6 mm で一致(0〜60°。焦点はほぼ平行な 2 本の交点なので丸めの床が環境により 1e-9〜1e-7 mm)。45° の半透鏡の
      反射の枝の像は展開した焦点の鏡映、透過の枝は閉形式の横ずれ。
   4. **シャインプルーフ**: 30° に傾いた物面を 2 枚玉で撮ると、撮像素子を tanθ' = m·tanθ だけ傾けたときに全面の
      ぼけが最小になる。実光線で求めた像面の傾きが閉形式と 1e-3° 以内、ヒンジ(物面と前側主面・像面と後側主面が
@@ -260,8 +260,8 @@ def chapter_plate():
     ws = max(abs(r["sag"] - r["sag_cf"]) for r in rows)
     NUMBERS.update({"plate_lat_err": wl, "plate_ast_err": wa})
     r30 = [r for r in rows if r["theta"] == 30.0][0]
-    gate("横ずれ t·sinθ(1 − cosθ/√(n² − sin²θ)) が実光線と 1e-12 mm、非点隔差が 1e-8 mm、球欠の焦点ずれが 1e-6 mm",
-         wl < 1e-12 and wa < 1e-8 and ws < 1e-6,
+    gate("横ずれ t·sinθ(1 − cosθ/√(n² − sin²θ)) が実光線と 1e-12 mm、非点隔差が 1e-6 mm、球欠の焦点ずれが 1e-6 mm",
+         wl < 1e-12 and wa < 1e-6 and ws < 1e-6,
          "30° で横ずれ %.4f mm・非点隔差 %.4f mm(接線像が遠い)。最大誤差 %.1e / %.1e / %.1e" % (r30["lat"], r30["ast"], wl, wa, ws))
     b = R3.beamsplitter_branches()
     cf = R3.tilted_plate_shift(3.0, "BK7", 45.0)
@@ -653,7 +653,7 @@ def make_figures(drawings, plate_rows, sch, ghost):
                    colors=["emphasis", "right", "reference", "reference"],
                    title="傾いた平板: 横ずれと非点隔差(点 = 実光線、破線 = Smith / Coddington の閉形式)",
                    caption="集光する光束(f/25)に 5 mm の平板を傾けて入れたときの、主光線の横ずれと、接線像と球欠像の"
-                           "距離(非点隔差)。実光線は閉形式と 1e-8 mm で重なる。")
+                           "距離(非点隔差)。実光線は閉形式と 1e-6 mm 以内で重なる。")
     heights, rf, rt, _ = sch
     figs.save_plot("scheimpflug_blur", [("撮像素子を傾けない", heights, [1000 * v for v in rf]),
                                         ("閉形式の角 %.2f° だけ傾ける" % NUMBERS["sch_tilt"], heights,
