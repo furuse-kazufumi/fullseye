@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 格子干渉による位相コントラストと暗視野(gratinginterf 8 op)と PoC poc_grating_interferometry
+- `opsoptics` の新カテゴリ `grating_interf`: `talbot_grating_design`(位相 π / π/2 / 吸収格子の分数タルボ距離、円錐ビームの距離と倍率、分析格子の周期、Lau の条件の線源格子の周期、角度感度・自己相関長・帯域)/ `grating_stepping_simulate`(透過・微分位相・暗視野 → 位相ステップの画像列、Poisson、1 周期のステップ数 P ≠ N)/ `grating_three_image_retrieve`(試料あり・なしの 2 組 → 3 像。P = N は `fringe.wrapped_phase` / `fringe.modulation`、P ≠ N は 3 項最小二乗、条件数 30 超・縞の無い基準は拒否)/ `darkfield_scatter_relation`(暗視野 D とガウス散乱の σ の換算、線拡散係数、自己相関長)。
+- 門 `tests/test_gratinginterf.py`: 公表の装置の距離 23.2 mm(Weitkamp ら 2005)、格子 1 周期の厳密な伝搬(`optics.angular_spectrum_propagate`)の極大と 7 通りの距離、円錐ビームを 1-D Fresnel で直接伝搬した縞の消える距離と周期、Poisson の位相雑音、ガウス散乱と一様散乱(Strobl の積分)、壊して確かめる探針(誤った距離の式・ステップの向き・試料と基準の取り違え)。式の変異 7 本をすべて殺すことを確かめた。
+- 例 `examples/grating_interferometry.py`(吸収ではほぼ見分けられない粉の区画が暗視野で 0.55 に落ちる、位相雑音は Poisson の式と比 0.99)。
+- 第 2 陣 4 op(2026-10-18): `talbot_carpet`(2 値の格子の後ろの強度 I(x, z) を回折次数の和で。厳密な角スペクトル / 近軸、近軸の位相誤差が 0.1 rad を超えると拒否)/ `talbot_source_visibility`(線源の幅・ガウスの焦点・線源格子の可視度の倍率。Lau の条件で 2/π)/ `grating_step_period_estimate`(1 周期のステップ数を残差の最小で。範囲の端・平らな曲線・縞なし・5 枚未満は拒否。★残差を P に依らない素の平均で割る —— あてた平均で割ると最小が雑音に比例して偏る)/ `dpc_integrate`(微分位相 → 位相 → 厚さ。隣との跳びが π を超える = 折り返しは拒否、NaN も拒否)。`grating_three_image_retrieve` に `reference_exposure`(基準と試料の露光の比。透過だけに効く)。
+- PoC `examples/poc_grating_interferometry.py`(門 22 件、図 11 枚 + GIF): タルボ絨毯と第 2 実装、Lau の条件と点の和、短繊維強化樹脂の板(割れの CNR 暗視野 13.5 / 吸収 1.34、繊維の向き 2.7°)、折り返しの拒否と見えない折り返し(正直な限界)、1 周期のステップ数の推定、公開の実データ(CC BY 4.0、Zenodo 16944391。データは同梱せず `FULLSEYE_TALBOT_DATA` があるときだけ走る)。
+
 ### Added — 光学設計ファイル(.zmx)の読み書き `lensfile`(4 op)+ PoC「読んで、解析して、直して、書き戻す」
 - `lensfile`(opsoptics の新カテゴリ `lensfile`): `lens_file_read`(.zmx の逐次処方 → `raytrace.lens_system` そのもの + 視野・波長・口径・ソルブ・キーワードの台帳)/ `lens_file_system`(視野・波長を選んだ処方)/ `lens_file_write`(.zmx に書く。`lensopt` で直した処方を、視野・波長・まだ有効なソルブを保って書き戻す)/ `lens_file_report`(読まずに分類)。面は STANDARD / EVENASPH・鏡・絞り、単位 MM/CM/IN/METER、口径 ENPD / FNUM / FLOA、視野は角度・物体高・近軸像高、UTF-16(BOM あり / なし)・UTF-8・Latin-1。★fail-closed: 座標変換面・理想レンズ・その他の面・r² の非球面項・逆向きの間隔・物体側テレセン・矛盾したピックアップは拒否、近似(カタログに無い硝材の n_d/ν_d 代用・ケラレ係数・曲がった像面・多構成・温度)は `allow_partial=True` のときだけ `approximate=True` の印つき。硝材は材料表か `.agf`(`glass_dir` / `FULLSEYE_GLASS_DIR`)を名前の完全一致で引き、別名は辿らない(古い鉛ガラスの名が無鉛の別硝材に化けるため)。
 - 門 `tests/test_lensfile.py`(81): ray-optics 0.9.8(BSD-3)と optiland 0.6.3(MIT)がそれぞれ自分の読み手で同じ .zmx を読んだ記録値と、近軸が 1e-12、Seidel 和が 1e-6、実光線 14 本が 1e-6 mm(実測 6e-16 / 6e-8 / 3e-8)、独立に書いた ABCD 行列、往復の恒等(ASCII と UTF-16)、.agf の分散式 13 本を式の定義と 1e-12、材料表 46 硝材の CC0 係数を .agf に書いて読み直して 1e-12・カタログ n_d と 1e-5、探針(曲率の符号の反転は第 2 実装との EFL の門が赤、単位・符号化・面の種類・硝材の別名・n_d の食い違い)。

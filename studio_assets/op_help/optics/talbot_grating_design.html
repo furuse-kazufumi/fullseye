@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">talbot_grating_design — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;talbot_grating_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>格子干渉計の幾何: 第 1 格子の自己像の距離(分数タルボ距離)、縞と分析格子の周期、線源格子の周期(閉形式)。</p>
+<p>第 1 格子(周期 period_um = p1)を通った波は、ある距離で格子の像(またはその周期の半分の像)を結ぶ。その距離に周期の合った吸収格子(分析格子)を置き、どちらかの格子を 1 周期ずらしながら撮ると、各画素で縞の正弦が取れる。この op はその距離と周期を返す。</p>
+<p>grating:</p>
+<p><code style="color:#22d3bf">&quot;pi&quot;</code>         位相 π の格子(線の幅が周期の半分)。縞の周期 p1/2、距離 d_m = (m − 1/2)·p1²/(4λ)</p>
+<p>(Weitkamp ら 2005, Opt. Express 13, 6296 の式 2)。</p>
+<p><code style="color:#22d3bf">&quot;pi_half&quot;</code>    位相 π/2 の格子。縞の周期 p1、d_m = (m − 1/2)·p1²/λ。</p>
+<p><code style="color:#22d3bf">&quot;absorption&quot;</code> 吸収格子。縞の周期 p1、d_m = m·p1²/λ(m = 2 がタルボ長 z_T = 2p1²/λ)。</p>
+<p>order: m(1 以上の整数)。source_distance_mm: 線源から第 1 格子までの距離 L。None は平面波(L = ∞)。有限なら距離は d&#x27; = L·d/(L − d) に伸び(同じ文献)、縞は M = (L + d&#x27;)/L 倍に拡大される。L ≤ d では自己像が結ばれない(分母が 0 以下)ので拒否する。</p>
+<p>返り値 dict:</p>
+<p><code style="color:#22d3bf">wavelength_nm</code> / <code style="color:#22d3bf">talbot_length_mm</code>(z_T = 2p1²/λ、平面波)/ <code style="color:#22d3bf">distance_plane_mm</code>(d_m)/</p>
+<p><code style="color:#22d3bf">distance_mm</code>(d&#x27;、円錐ビームで伸びた距離。平面波なら d_m と同じ)/ <code style="color:#22d3bf">magnification</code>(M)/</p>
+<p><code style="color:#22d3bf">fringe_period_um</code>(第 1 格子の直後での縞の周期)/ <code style="color:#22d3bf">analyzer_period_um</code>(p2 = M × 縞の周期)/</p>
+<p><code style="color:#22d3bf">source_grating_period_um</code>(Lau の条件 p0 = p2·L/d&#x27;、Pfeiffer ら 2006。平面波なら None)/</p>
+<p><code style="color:#22d3bf">angular_sensitivity</code>(縞の位相 / 屈折角 = 2π d&#x27;/p2 [rad/rad])/</p>
+<p><code style="color:#22d3bf">correlation_length_um</code>(暗視野の自己相関長 ξ = λ d&#x27;/p2)/</p>
+<p><code style="color:#22d3bf">relative_bandwidth</code>(縞の振幅が 0 になるまでの波長の幅 Δλ/λ = 1/(2m − 1)。位相 π の格子だけ。</p>
+<p>Weitkamp ら 2005 の式 3。他の格子は None)。</p>
+<p>例(公表値): 14.4 keV、p1 = 4 µm、位相 π、m = 1 → d = 23.2 mm、p2 = 2 µm(平面波。Weitkamp ら 2005 の図 4 の装置)。<b>Raises</b> ValueError: 正でない周期・波長、wavelength_nm と energy_kev の両方(どちらも無ければ 28 keV)、未知の grating、order が 1..1000 の外、L ≤ d。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>文字列は <code style="color:#22d3bf">ValueError</code></b> — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array は <code style="color:#22d3bf">ValueError</code></b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。<b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。<b>それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code></b> —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:grating_interferometry">grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/grating_interferometry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_grating_interferometry">poc_grating_interferometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_grating_interferometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">grating_interf</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:grating_stepping_simulate">grating_stepping_simulate</a> · <a style="color:#22d3bf" href="opoptics:grating_three_image_retrieve">grating_three_image_retrieve</a> · <a style="color:#22d3bf" href="opoptics:darkfield_scatter_relation">darkfield_scatter_relation</a> · <a style="color:#22d3bf" href="opoptics:talbot_carpet">talbot_carpet</a> · <a style="color:#22d3bf" href="opoptics:talbot_source_visibility">talbot_source_visibility</a> · <a style="color:#22d3bf" href="opoptics:grating_step_period_estimate">grating_step_period_estimate</a> · <a style="color:#22d3bf" href="opoptics:dpc_integrate">dpc_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gratinginterf.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4507,6 +4507,60 @@ def _b_moire_mark(pool, rng):
     return (img, ref), {"pixel_um": 2.0}
 
 
+def _b_grating_stacks(pool, rng):
+    """格子干渉の位相ステップ 2 組(試料あり 8 枚・基準 6 枚、16 x 20 画素)。
+
+    基準の縞の可視度は列で 0.025〜0.25 に変わる(格子の端の影)。既定の ``min_visibility`` 0.02 では全画素が有効
+    (出力に NaN は無い)で、倍の 0.04 にすると端の列が無効画素(NaN)になる = しきい値が出力を変える。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:16, :20]
+    t = np.exp(-0.03 * xx)
+    phi = float(rng.uniform(0.2, 1.0)) * np.sin(yy / 3.0)
+    dfm = 0.5 + 0.4 * np.cos(xx / 5.0) ** 2
+    s = _gi.grating_stepping_simulate(t, phi, dfm, n_steps=8)
+    ref_d = np.clip(0.1 + 0.08 * xx, 0.0, 1.0) * np.ones((16, 20))           # V = 0.25 × (0.1 … 1)
+    r = _gi.grating_stepping_simulate(None, None, ref_d, n_steps=6)
+    return (s, r), {}
+
+
+def _b_grating_stack1(pool, rng):
+    """1 周期 10.6 段で 10 枚撮った基準の画像列(12 x 14 画素、弱い雑音つき)。
+
+    縞の可視度は列で 0.01〜0.25 に変わる。既定の ``min_visibility`` 0.05 の半分と倍(0.025・0.1)の間に入る列が
+    あるので、しきい値を動かすと残差に数える画素の組が変わり、残差の曲線が変わる。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:12, :14]
+    dfm = np.clip(0.04 + 0.075 * xx, 0.0, 1.0)
+    s = _gi.grating_stepping_simulate(None, None, dfm, n_steps=10, steps_per_period=10.6,
+                                      ref_phase_rad=float(rng.uniform(-1.0, 1.0)))
+    s = s + np.random.default_rng(7).normal(0.0, 0.003, s.shape)          # 共有の乱数列を引かない専用の種
+    return (s,), {}
+
+
+def _b_source_vis(pool, rng):
+    """線源格子つきの線源(Lau の条件の近く): duty と n_slits が効く場合を必ず含める。"""
+    big_l, d, p2 = float(rng.uniform(800.0, 1600.0)), float(rng.uniform(20.0, 60.0)), float(rng.uniform(1.5, 5.0))
+    p0 = p2 * big_l / d * float(rng.uniform(0.995, 1.005))
+    return (8.0 * p0, big_l, d, p2), {"source_grating_period_um": p0, "duty": 0.5, "n_slits": 8}
+
+
+def _b_darkfield_rel(pool, rng):
+    """暗視野か散乱角の広がりの一方だけ(両方・どちらも無しは拒否する op)。"""
+    if rng.uniform() < 0.5:
+        return (), {"darkfield": float(rng.uniform(0.2, 0.95))}
+    return (), {"sigma_urad": float(rng.uniform(0.2, 5.0))}
+
+
+def _b_dpc_map(pool, rng):
+    """丸棒の微分位相(折り返しの無い 0.4 rad 程度、16 x 40 画素)を 3 像の表の形で、幾何と一緒に。"""
+    xb = np.arange(41, dtype=float) - 0.5
+    tb = 2.0 * np.sqrt(np.clip(12.0 ** 2 - (xb - 20.0) ** 2, 0.0, None))
+    phi = np.tile(float(rng.uniform(0.02, 0.06)) * np.diff(tb), (16, 1))
+    return ({"dpc_rad": phi},), {"pixel_um": 40.0, "distance_mm": 23.2, "analyzer_period_um": 2.0, "energy_kev": 14.4}
+
+
 def _b_gum_mc(pool, rng):
     """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
     n = 3
@@ -7088,6 +7142,13 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    # 格子干渉(2026-10-15): 3 像の分離は、縞の入った位相ステップの画像列 2 組が要る(汎用の画像の束には
+    # 1 周期の正弦が無く、基準の可視度が 0 で fail-closed で拒否される)。
+    "grating_three_image_retrieve": _b_grating_stacks,
+    "grating_step_period_estimate": _b_grating_stack1,
+    "dpc_integrate": _b_dpc_map,
+    "darkfield_scatter_relation": _b_darkfield_rel,
+    "talbot_source_visibility": _b_source_vis,
 }
 
 
@@ -7742,7 +7803,7 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       "with_wavelength",
                                       # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
                                       #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-                                      "lens_file_read", "lens_file_system"}
+                                      "lens_file_read", "lens_file_system"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
