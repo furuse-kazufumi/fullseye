@@ -52,20 +52,61 @@ a curved image surface (treated as flat), non-circular or decentred apertures
 (ignored), non-standard temperature / pressure (``ENVD``), multiple
 configurations (configuration 1 only), and unknown surface-level keywords.
 
-Refused always: coordinate breaks, ideal (paraxial) surfaces and every other
-surface type, an r² aspheric term, sequential-mode off (``MODE`` not ``SEQ``),
-a negative travel distance (a surface placed behind the light), telecentric
-object space, an inconsistent pickup, an infinite thickness after the object.
+Refused always: ideal (paraxial) surfaces and every other surface type, an r²
+aspheric term, sequential-mode off (``MODE`` not ``SEQ``), a negative travel
+distance (a surface placed behind the light), telecentric object space, an
+inconsistent pickup, an infinite thickness after the object, surface tilt /
+decentre data in ``SCBD`` (its layout is not documented in the sources checked).
+
+**Coordinate breaks** (``TYPE COORDBRK``, tilted / decentred / folded systems).
+A file with a coordinate break is read into ``raytrace3d.noncoaxial_system``
+instead of ``raytrace.lens_system``: ``lens_file_read()["system"]`` is then the
+non-coaxial table, ``["noncoaxial"]`` is True, ``lens_file_system`` returns a
+``noncoaxial_system`` for the chosen field, and ``["surface_records"][j]`` lists
+the tracer records that surface ``j`` became. The convention (checked against a
+second implementation for order 0 and against a published design for the tilt
+sign; see ``tests/data/lensfile/README.md``):
+
+* ``PARM 1, 2`` = decentre x, y; ``PARM 3, 4, 5`` = tilt about x, y, z in
+  degrees (right-hand rule: a positive x tilt turns +z towards -y); ``PARM 6`` =
+  order. Order 0: decentre first, then tilt with ``Rz(az)·Ry(ay)·Rx(ax)`` (x
+  first, about fixed axes). Any other value: tilt first with ``Rx·Ry·Rz`` (z
+  first), then decentre along the tilted axes. ``DISZ`` is the thickness after
+  the break along the new z axis. The tracer's two break orders coincide with
+  the format's only for a single-axis tilt or no decentre; a decentred multi-axis
+  tilt is therefore written as two tracer breaks (decentre, tilt).
+* A file keeps one frame through a mirror and uses negative thicknesses after
+  it; the tracer flips its frame at every reflection. The importer converts
+  (``dy -> -dy``, ``ay -> -ay``, ``az -> -az`` after an odd number of mirrors,
+  radii and aspheric terms flip sign, thicknesses become positive distances).
+* A later break that is exactly the inverse of an earlier one (order flipped,
+  every parameter negated, which is what a pickup with scale -1 stores) becomes
+  the tracer's ``undo`` element; ``PPAR`` pickups of ``PARM`` values are
+  verified against their source surface (a stale value is refused).
+* A flat, bare air-to-air plane without aperture (the usual dummy surface next
+  to a break or a mirror) is merged into the preceding thickness: it cannot
+  change a ray, and a sequential program lets rays meet it "behind" the previous
+  vertex, which the tracer rejects. It is listed in ``report["notes"]``.
+* Supported with breaks: aperture ``ENPD`` / ``FNUM`` (object at infinity;
+  converted to the stop radius through real axial rays, area-preserving when the
+  stop is tilted) and ``FLOA``; fields ``FTYP 0`` (angle) and ``1`` (object
+  height) kept as ``(x, y)`` with the sign of the file. Refused: ``OBNA``,
+  image-height fields, ``ENPD`` / ``FNUM`` with a finite object, a break in front
+  of the first surface (it would move the object space), a break that carries a
+  glass / curvature / the stop, a negative travel distance.
 
 Conventions: lengths in mm, wavelengths in µm (the file's own unit), field
-angles in degrees. Fields are folded to their radial magnitude
-(``hypot(x, y)`` for heights, the angle whose tangent is
-``hypot(tan θx, tan θy)`` for angles) — exact for the rotationally symmetric
-systems this module accepts (tilts and decentres are refused).
+angles in degrees. For coaxial files fields are folded to their radial
+magnitude (``hypot(x, y)`` for heights, the angle whose tangent is
+``hypot(tan θx, tan θy)`` for angles), which is exact for the rotationally
+symmetric systems of that path; with coordinate breaks fields stay ``(x, y)``
+(ray direction cosines ∝ ``(tan θx, tan θy, 1)``, positive = towards +x / +y).
 
 Round trip: ``lens_file_read(lens_file_write(p))`` reproduces the surfaces,
-glasses, apertures, fields and wavelengths of ``p`` exactly (tested). Keywords
-that were *ignored* are not written back.
+glasses, apertures, fields and wavelengths of ``p`` exactly (tested), coordinate
+breaks and their pickups included. ``lens_file_write(system=<noncoaxial_system>)``
+writes the break elements of a non-coaxial system back as ``COORDBRK`` surfaces.
+Keywords that were *ignored* are not written back.
 """
 from __future__ import annotations
 
@@ -1171,12 +1212,21 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
     :func:`lens_file_write` writes back, and ``report`` classifies every keyword
     as read / ignored / unsupported (see :func:`lens_file_report`).
 
+    A file with ``COORDBRK`` surfaces is read into a
+    ``raytrace3d.noncoaxial_system`` (``noncoaxial`` is True, ``system`` is that
+    table, each field's ``field`` is the pair ``(x, y)``, ``pupil`` holds the
+    entrance-pupil radius, stop radius and effective focal length found with real
+    axial rays, ``surface_records[j]`` the tracer records of file surface ``j``);
+    the conventions are in the module help.
+
     Example::
 
         p = lens_file_read("triplet.zmx")
         RT.paraxial_trace(p["system"])["efl"]
         sysf = lens_file_system(p, field_index=2)       # the 20-degree field
         RT.spot_stats(sysf)
+        q = lens_file_read("folded.zmx")                # tilts / decentres: a non-coaxial system
+        raytrace3d.noncoaxial_spot(lens_file_system(q, field_index=1))["rms_radius"]
     """
     op = "lens_file_read"
     if not isinstance(allow_partial, (bool, np.bool_)):
@@ -1212,7 +1262,9 @@ def lens_file_system(prescription=None, field_index: int = 0, wavelength_index=N
     value becomes the system's default field), *wavelength_index* one of
     ``prescription["wavelengths"]`` (default: the primary). Every raytrace /
     lensimage / lensopt op then works on the result. ``None`` reads the bundled
-    example first.
+    example first. For a file with coordinate breaks the result is a
+    ``raytrace3d.noncoaxial_system`` (use the ``raytrace3d`` ops on it) at the
+    field ``(x, y)`` of the file.
 
     Example::
 
@@ -1531,7 +1583,14 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
     design programs save). Media: an ``(n_d, V_d)`` pair or a plain index becomes
     a model glass, a catalogue name or ``.agf`` record its name with n_d / V_d
     on the line; a custom Sellmeier medium without a catalogue name is refused
-    (a reader could not resolve it). Tilted / decentred surfaces are refused.
+    (a reader could not resolve it). *system* may also be a
+    ``raytrace3d.noncoaxial_system`` (the prescription is then optional): its break
+    and return elements become ``COORDBRK`` surfaces (a decentred multi-axis tilt
+    becomes two), an entrance-pupil diameter is recomputed from the stop radius.
+    Refused: a beamsplitter surface, a per-surface decenter / tilt (put a break
+    around it), a tilted image or object plane, a return across an odd number of
+    reflections or one that would need a negative thickness. A coaxial
+    ``raytrace.lens_system`` with tilted / decentred surfaces is still refused.
 
     Returns ``{"text", "path", "n_surfaces", "encoding", "dropped_solves"}``.
 

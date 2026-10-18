@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — .zmx の座標変換面(COORDBRK: 傾き・偏心・折り返し)を非共軸の追跡器へ読む(lensfile 第 2 弾)
+- `lens_file_read` は `TYPE COORDBRK`(`PARM 1..6` = 偏心 x y / 傾き x y z / 順序、直後の `DISZ`)を含む処方を `raytrace3d.noncoaxial_system` の break 要素へ写す。`system` は非共軸の表、`noncoaxial` が True、視野は符号つきの `(x, y)` のまま、`lens_file_system` は視野ごとの `noncoaxial_system` を返す。規約: 右手系の傾き、順序 0 = 先に偏心して `Rz·Ry·Rx`(x が最初・固定軸まわり)、非 0 = 先に傾けて `Rx·Ry·Rz` のあと傾いた軸に沿って偏心。ファイルは鏡の後も座標系を返さず負の厚みを使い、追跡器は反射ごとに 180° 返すので、奇数回の鏡の後は dy・ay・az・R・非球面の符号を換算する。順序 0/1 の違いが効くのは多軸の傾き + 偏心のときだけで、そのときは追跡器の break 2 本に分ける。
+- 直前の break を完全に打ち消す break(順序を入れ替え全パラメータを反転 = ピックアップの scale −1 が保存する形)は追跡器の `undo` 要素に写る。`PPAR`(PARM のピックアップ)は元の面と照合し、食い違えば拒否。鏡や break の隣の「平らな空気間の無開口の面」(ダミー面)は光線を変えず、追跡器は頂点の「手前」で当たる光線を捨てるので、直前の厚みに併合して `notes` に残す。入射瞳 ENPD・像側 F/# は実光線の軸上束で絞りの半径へ換算(傾いた絞りでは面積を保つ)、`FLOA` はそのまま。
+- `lens_file_write` は `COORDBRK` 面を書き戻す(往復は恒等)。`system=` に `noncoaxial_system` を渡すと break / return 要素を `COORDBRK` に直して書く(多軸 + 偏心は 2 面、return は順序 1 の 1 面)。ビームスプリッタ面・面ごとの偏心 / 傾き・傾いた像面は拒否。
+- 拒否のまま(理由つき): `SCBD`(面の傾き・偏心、並びが公開資料に無い)、最初の面の前の break(物体空間を動かす規約を確かめていない)、`OBNA`、像高の視野、有限物体の ENPD / FNUM、`TOROIDAL`・`PARAXIAL` など別の面。
+- 公開の .zmx 15 本(ray-optics の試験データ): 座標変換面を含む 5 本のうち 3 本が読める(Ex66・Ex66NEW はそのまま、US08011793 は偏心した開口の無視つき `allow_partial`)。残る 2 本は `TOROIDAL`(Ex46)と `SCBD`(zmax_37992)。
+- 門 `tests/test_lensfile_coordbrk.py`(46 + 実装が入っていれば 5): optiland 0.6.3(MIT)の実光線を記録した 5 設計(傾いた平板・平板の戻り・二軸の折り返し・軸外し放物面・3 枚鏡)の交点が 1e-12 mm(放物面は optiland の反復の許容で 1e-9、実測 5e-11 / 6e-14 / 2e-13 / 3e-15)、手で組んだ `noncoaxial_system` と手書きの .zmx の交点が 1e-12、折り返しの像 = 展開した像の Householder 鏡映(4 通りの傾き)、軸外し放物面が点に結ぶ(RMS < 1e-9)・有効焦点距離 f(1 + (h/2f)²)、戻りの後の座標系が閉形式で元に戻る、書き戻しの恒等。探針: オイラー角の順の入れ替え・傾きの符号の反転・戻りの脱落はどれも赤。★optiland の読み手は順序フラグ(`PARM 6`)を読まないので、順序 1 の戻りを含む設計は像面の位置だけ照合から外した(閉形式で代替)。
+- PoC `poc_lens_file_roundtrip` に第 7 章(三枚玉 + 45° の折り返し、門 5 件追加)。`tests/data/lensfile/` に `cb_*.zmx` 5 本と `coordbrk_recorded.json`。
+
 ### Added — デフレクトメトリの PoC に実データの章(CC0、ハンマーの力の記録で採点)
 - `poc_phase_measuring_deflectometry` の 4 節: 鏡面の鋼板をハンマーで叩いて格子の鏡像を 75 kHz で撮った公開データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)から、格子の位相 → 時間方向につないだ傾き → 仮想場の方法で板の力を出し、ハンマーの先のロードセル(外部の真値)と比べる。峰 366.4 N 対 347.1 N(同じ σ で均したハンマー、+5.6 %、+27 µs)、相関 0.990、力積 −8.8 %。データの著者の公開コード recolo(第 2 の実装)の峰 363.6 N と +0.8 %。窓はハンマーを見ずに荷重の無い対照の窓 5 つの見かけの力(床 9.5 N)で選んだ。格子の位相は窓つき DFT と標本化モアレの 2 実装で、同じ分解能で RMS 0.0096 rad。変調度の低い窓・積分できない傾きの場(軸・符号の取り違え)・2π を取り違える間引きは拒否する。合否の幅は結果を見たあとで決めた(盲検でない)と PoC に明記。
 - `data/pmd_real/`(3 枚の切り出しと全解析の記録、README に出典と改変)と `tools/gen_pmd_real.py`。原本(110 MB)は repo の外で、`FULLSEYE_PMD_HAMMER_DATA` があるときだけ解析し直して記録との差を門で見る。

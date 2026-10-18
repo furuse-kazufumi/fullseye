@@ -3,7 +3,7 @@
 
 【問い】市販の逐次光線追跡の設計ソフトで作ったレンズを、そのまま Fullseye の解析(実光線・Seidel・PSF・MTF・
 最適化)に載せ、直した処方を同じ形式で返せるか。新 op 4 本(`lensfile`、`opsoptics` の `lensfile`):
-`lens_file_read` / `lens_file_system` / `lens_file_write` / `lens_file_report`。6 章:
+`lens_file_read` / `lens_file_system` / `lens_file_write` / `lens_file_report`。7 章:
 
   1. **読む**: 同梱の Cooke 三枚玉(f ≈ 50 mm、F/5、±20°、硝材は n_d・ν_d のモデル)を読み、全キーワードを
      「読んだ / 無視した(理由つき)/ 扱えない」に分ける。門: 扱えないが 0 件、近似の印が立たない。
@@ -16,8 +16,12 @@
   5. **直して書き戻す**: 中央の負レンズの硝材を別のフリント(648/338)に差し替えると処方が崩れる。`lensopt` で
      曲率 6 本を最適化(EFL を元の値に固定)→ `.zmx` に書く → 読み直す。門: 崩れた RMS が設計の 1.3 倍以内に戻る、
      読み直した処方が書いた処方と完全一致、視野・波長・口径が保たれる。
-  6. **壊して確かめる**: 座標変換面・未知の面・別名の硝材・曲率の符号の反転。門: 前の 3 つは拒否(理由つき、`lens_file_report` は例外でなく理由を返す)、
+  6. **壊して確かめる**: 曲率つきの座標変換面・未知の面・別名の硝材・曲率の符号の反転。門: 前の 3 つは拒否(理由つき、`lens_file_report` は例外でなく理由を返す)、
      符号の反転は読めてしまう(読み手には分からない)が、第 2 実装との EFL の門が赤になる。
+  7. **折り返し(座標変換面)**: 三枚玉の後ろに 45° の折り返し鏡を `COORDBRK` で足した .zmx を読む —— 傾き・偏心は
+     `raytrace3d.noncoaxial_system` の break 要素に写り(`lens_file_system` は視野 (x, y) のまま非共軸の系を返す)、
+     書き戻しても同じ。門: 折り返した像 = 展開した像の Householder 鏡映(1e-9 mm)、入射瞳の換算(ENPD → 絞りの半径・EFL)が
+     共軸の近軸量と 1e-6、書き戻して読み直すと面の表が完全一致、傾きの符号を反転すると鏡映の門が赤。
 
 【外部真値】ray-optics 0.9.8(BSD-3)・optiland 0.6.3(MIT)がそれぞれ読んだ値(記録値。手元に入っていれば
 tests/test_lensfile.py がその場で計算し直す)、回折限界の MTF の閉形式、近軸の f·tan θ。【学習】0。【較正】0。
@@ -27,8 +31,9 @@ tests/test_lensfile.py がその場で計算し直す)、回折限界の MTF の
 頂点を含む葉の根を選ぶように直した(tests/test_raytrace_conic_branch_2026_10_18.py)。
 ★所見 2: 硝材の名前の別名(古い鉛ガラスの名 → 無鉛の N- 硝材)を辿ると、別の硝材に黙って置き換わる。
 読み手は別名を辿らず、カタログ(`.agf`)に無ければ拒否する。
-★所見 3: 公開の .zmx 15 本を分類すると(手元の記録)、そのまま読めるのが 2、近似の印つきが 1、拒否が 12
-(座標変換面・傾き 6、物体側テレセン 1、カタログに無い硝材 5)—— 次の仕事の順番はこの内訳から決めた。
+★所見 3: 公開の .zmx 15 本を分類すると(最初の記録)、そのまま読めるのが 2、近似の印つきが 1、拒否が 12
+(座標変換面・傾き 6、物体側テレセン 1、カタログに無い硝材 5)—— 次の仕事の順番はこの内訳から決めた。座標変換面は
+その次の回で読めるようにした(7 章)。
 """
 from __future__ import annotations
 
@@ -234,7 +239,7 @@ def chapter_edit(p):
 def chapter_probes():
     print("\n6. 壊して確かめる")
     t = LF.ZMX_EXAMPLE
-    cases = [("座標変換面", t.replace("SURF 2\n  TYPE STANDARD", "SURF 2\n  TYPE COORDBRK"), "COORDBRK"),
+    cases = [("曲率つきの座標変換面", t.replace("SURF 2\n  TYPE STANDARD", "SURF 2\n  TYPE COORDBRK"), "COORDBRK"),
              ("未知の面のキーワード", t.replace("  DISZ 6.00755\n", "  DISZ 6.00755\n  ZZZZ 1 2 3\n"), "allow_partial"),
              ("別名でしか表に無い硝材", t.replace("___BLANK 1 0 1.62004 36.37", "F2 0 0 1.5 40"), "no catalogue")]
     for label, text, key in cases:
@@ -246,7 +251,7 @@ def chapter_probes():
     # lens_file_report: 読み込まずに分類する(古いファイルの束の仕分け)。例外を出さずに理由を返す。
     r = LF.lens_file_report(cases[0][1])
     vig = LF.lens_file_report(t.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n"))
-    print("   lens_file_report: 座標変換面 → 読める %s / 近似なら %s、面の種類 %s;ケラレ係数つき → 読める %s / 近似なら %s" % (
+    print("   lens_file_report: 曲率つきの座標変換面 → 読める %s / 近似なら %s、面の種類 %s;ケラレ係数つき → 読める %s / 近似なら %s" % (
         r["importable"], r["needs_allow_partial"], r["surface_types"], vig["importable"], vig["needs_allow_partial"]))
     gate("lens_file_report は拒否の理由を例外でなく返し、近似で読めるものを分ける",
          r["importable"] is False and r["needs_allow_partial"] is False and "COORDBRK" in (r["error"] or "")
@@ -256,6 +261,55 @@ def chapter_probes():
     bad = LF.lens_file_read(src.replace("CURV 0.045426484276303865", "CURV -0.045426484276303865"))
     d = abs(RT.paraxial_trace(bad["system"])["efl"] - rec["efl"])
     gate("第 1 面の曲率の符号を反転すると第 2 実装との EFL の門が赤(差 %.1f mm)" % d, d > 1.0)
+
+
+def chapter_coordbrk(p):
+    print("\n7. 折り返し(座標変換面 COORDBRK)")
+    import raytrace3d as R3
+    tail = '  DISZ 42.20778\n  DIAM 7.0 0 0 0 1 ""\nSURF 7\n  TYPE STANDARD\n  CURV 0 0 0 0 0 ""\n  DISZ 0\n'
+    assert LF.ZMX_EXAMPLE.count(tail) == 1
+    cb = ('SURF %d\n  TYPE COORDBRK\n  PARM 1 0\n  PARM 2 0\n  PARM 3 45\n  PARM 4 0\n  PARM 5 0\n  PARM 6 0\n  DISZ %s\n')
+    fold = ('  DISZ 20\n  DIAM 7.0 0 0 0 1 ""\n' + cb % (7, "0") +
+            'SURF 8\n  TYPE STANDARD\n  CURV 0 0 0 0 0 ""\n  DISZ 0\n  GLAS MIRROR 0 0 1.5 40 0 0 0 0 0 0\n' +
+            cb % (9, "-22.20778") + 'SURF 10\n  TYPE STANDARD\n  CURV 0 0 0 0 0 ""\n  DISZ 0\n')
+    text = LF.ZMX_EXAMPLE.replace(tail, fold)
+    q = LF.lens_file_read(text)
+    sysd = q["system"]
+    lay = R3.noncoaxial_layout(sysd)
+    print("   %d 面 → 記録 %d 本(break %d 本・鏡 %d 枚)、像面の法線 %s、x の視野は半径に畳まず (x, y) のまま %s" % (
+        len(q["surfaces"]), len(sysd["records"]), sum(1 for r in sysd["records"] if r["kind"] == "break"),
+        lay["n_reflections"], np.round(lay["image"]["normal"], 6).tolist(), [f["field"] for f in q["fields"]]))
+    # 入射瞳の換算: 共軸の近軸量と一致(ENPD → 絞りの半径、実光線の有効焦点距離)
+    para = RT.paraxial_trace(p["system"])
+    ap0 = p["system"]["surfaces"][p["system"]["stop"]]["ap"]
+    gate("入射瞳の換算: 絞りの半径 %.6f mm・EFL %.6f mm は共軸の近軸量と 1e-6" % (q["pupil"]["stop_radius_mm"], q["pupil"]["efl_mm"]),
+         abs(q["pupil"]["stop_radius_mm"] - ap0) < 1e-6 * ap0 and abs(q["pupil"]["efl_mm"] - abs(para["efl"])) < 1e-6 * abs(para["efl"]))
+    # 折り返した像 = 展開した像の Householder 鏡映(鏡の頂点 p0、法線 n)
+    unfolded = R3.noncoaxial_system(p["system"])
+    z_mirror = sum(s_["t"] for s_ in p["system"]["surfaces"][:-1]) + 20.0
+    n = RT._rot(45.0, 0.0)[:, 2]
+    p0 = np.array([0.0, 0.0, z_mirror])
+    worst = 0.0
+    for f in q["fields"]:
+        a = R3._chief(sysd, f["field"])["points"][0, -1]
+        b = R3._chief(unfolded, f["field"])["points"][0, -1]
+        worst = max(worst, float(np.abs(a - (b - 2.0 * ((b - p0) @ n) * n)).max()))
+    gate("折り返した像 = 展開した像の Householder 鏡映(3 視野の主光線、最大 %.1e mm)" % worst, worst < 1e-9)
+    # 書き戻し
+    w = LF.lens_file_write(q)
+    r = LF.lens_file_read(w["text"])
+    gate("書き戻して読み直すと面の表が完全一致(COORDBRK %d 面を含む)" % sum(1 for x in r["surfaces"] if x["type"] == "COORDBRK"),
+         r["surfaces"] == q["surfaces"] and "TYPE COORDBRK" in w["text"] and r["system"]["elements"] == sysd["elements"])
+    # 編集した非共軸の系 (system=) も COORDBRK で書ける
+    w2 = LF.lens_file_write(None, system=R3.noncoaxial_example("periscope"))
+    gate("noncoaxial_system の break から COORDBRK を書き、読み直した系が同じ光線を追う",
+         "TYPE COORDBRK" in w2["text"] and LF.lens_file_read(w2["text"])["noncoaxial"])
+    # 探針: 鏡の前の傾きの符号を反転すると、像は鏡映から外れる
+    bad = LF.lens_file_read(text.replace("PARM 3 45\n  PARM 4 0\n  PARM 5 0\n  PARM 6 0\n  DISZ 0\n", "PARM 3 -45\n  PARM 4 0\n  PARM 5 0\n  PARM 6 0\n  DISZ 0\n", 1))
+    bad_n = np.array(R3.noncoaxial_layout(bad["system"])["image"]["normal"])
+    gate("鏡の前の傾きの符号を反転すると像面の向きが変わり鏡映の門が赤(法線の差 %.2f)" % np.abs(bad_n - lay["image"]["normal"]).max(),
+         np.abs(bad_n - np.array(lay["image"]["normal"])).max() > 0.5)
+    return worst
 
 
 def make_figures(p, spots, se, mtfs, opt, rows):
@@ -324,6 +378,7 @@ def main():
     mtfs = chapter_mtf(p)
     opt = chapter_edit(p)
     chapter_probes()
+    NUMBERS["fold_worst_mm"] = chapter_coordbrk(p)
     if not REDUCED and figs.target_dir() is not None:
         make_figures(p, spots, se, mtfs, opt, rows)
     cpu = time.process_time() - c0

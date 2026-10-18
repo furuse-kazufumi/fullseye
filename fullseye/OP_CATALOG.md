@@ -2693,10 +2693,10 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ghost_image` `table → image2d` — Image-plane irradiance of the image plus all two-reflection ghosts of a point source (``image2d``). · 例: `poc_noncoaxial_optics`
 - `ghost_path` `table → table` — Real-ray polylines of one two-reflection ghost (``table``): the path i < j, its rays and energy. · 例: `poc_noncoaxial_optics`
 - `image_orientation` `table → table` — Image orientation through folds (``table``): reflections, handedness, rotation. · 例: `poc_noncoaxial_optics`
-- `noncoaxial_example` `入力なし → table` — A named non-coaxial example system (``table``): folds, a periscope, a beamsplitter, a tilted plate, Scheimpflug. · 例: `poc_noncoaxial_optics`
-- `noncoaxial_layout` `table → table` — Global pose of every record (``table``): surface vertices, rotation matrices, the axis polyline. · 例: `poc_noncoaxial_optics`
+- `noncoaxial_example` `入力なし → table` — A named non-coaxial example system (``table``): folds, a periscope, a beamsplitter, a tilted plate, Scheimpflug. · 例: `poc_lens_file_roundtrip`, `poc_noncoaxial_optics`
+- `noncoaxial_layout` `table → table` — Global pose of every record (``table``): surface vertices, rotation matrices, the axis polyline. · 例: `poc_lens_file_roundtrip`, `poc_noncoaxial_optics`
 - `noncoaxial_spot` `table → table` — RMS / geometric spot radius (mm) and centroid on the (possibly tilted) image plane (``table``). · 例: `poc_noncoaxial_optics`
-- `noncoaxial_system` `入力なし → table` — Build a validated non-coaxial sequential system (``table``) — surfaces, coordinate breaks, folds, plates. · 例: `poc_noncoaxial_optics`
+- `noncoaxial_system` `入力なし → table` — Build a validated non-coaxial sequential system (``table``) — surfaces, coordinate breaks, folds, plates. · 例: `poc_lens_file_roundtrip`, `poc_noncoaxial_optics`
 - `noncoaxial_trace` `table → table` — Trace pupil-filling real-ray bundles through the 3-D system (``table``). · 例: `poc_noncoaxial_optics`
 - `scheimpflug_tilt` `入力なし → table` — Scheimpflug condition for a tilted object plane (``table``; closed form, optionally real rays). · 例: `poc_noncoaxial_optics`
 - `surface_reflectance` `入力なし → table` — Residual reflectance of one surface from the material table and its coating (``table``). · 例: `poc_noncoaxial_optics`
