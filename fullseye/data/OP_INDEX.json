@@ -1,8 +1,8 @@
 {
- "n_ops": 3316,
+ "n_ops": 3322,
  "tiers": {
   "color": 12,
-  "ledger": 2363,
+  "ledger": 2369,
   "nary": 17,
   "registry": 924
  },
@@ -12076,6 +12076,19 @@
    "in_sorts": []
   },
   {
+   "name": "increment_sign",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "indices_to_labels",
    "halcon": "",
    "in_sort": "indices",
@@ -12525,6 +12538,20 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "isc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -17345,6 +17372,20 @@
    ]
   },
   {
+   "name": "ocm_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "oct_ascan",
    "halcon": "",
    "in_sort": "table",
@@ -17761,6 +17802,19 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "orientation_code",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -21447,6 +21501,20 @@
    ]
   },
   {
+   "name": "radial_reach_filter",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "change",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "radiosity_patches",
    "halcon": "",
    "in_sort": null,
@@ -23464,6 +23532,20 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "scc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {

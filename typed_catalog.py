@@ -702,7 +702,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -905,6 +905,14 @@ def catalog():
     for n, m in opsconverge.OPSCONVERGE.items():
         if m["func"] is not None:
             ops.append((n, "converge", list(m["in"]), m["out"], m["func"]))
+    # 符号系の頑健照合(opscodematch 台帳、2026-10-18)。**新語なし**: 符号の画像は image2d、照合と
+    # RRF は table(位置・点数・余裕・採点した位置のマスク)。平坦なテンプレート・平坦な背景は値を返さずに
+    # ValueError。真値は単調変換での不変性(定理)・rot90 の同変性・増分符号の確率モデルの閉形式・
+    # 総当たりの第 2 実装・既存の NCC(マスクが全部立つとき SCC = NCC)。
+    import opscodematch
+    for n, m in opscodematch.OPSCODEMATCH.items():
+        if m["func"] is not None:
+            ops.append((n, "codematch", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

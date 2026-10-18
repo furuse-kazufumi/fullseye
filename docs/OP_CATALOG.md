@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(387 例)
+### 2-D 画像/信号/幾何(388 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -472,6 +472,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **物体を取り込み→シム用に整える→把持位置→レンダリング** — OBJ/STL/PLY/OFF メッシュを水密化し正確な慣性テンソル(MuJoCo 用)、反対把持候補のランク付け、深度/シルエットのレンダまで numpy だけで通す。 `py -3.11 examples/import_and_grasp.py`
 - **3D Gaussian Splatting の出力(中心点群)を fullseye で処理する** — 3DGS を学習はしない(GPU レンダラが要る)。結果の点群を取り込みダウンサンプル・法線推定・2 回撮影の登録まで(テンプレート、--save で PLY)。 `py -3.11 examples/gaussian_splat_cloud.py`
 - **sim2real 劣化(aug_*)・人工生命・触覚 op 族の一巡** — 光子雑音/固定パターン/ローリングシャッター/JPEG/歪み等でクリーンな描画を実カメラ風に劣化させ、人工生命・触覚 op も含めて実行する(数値を印字)。 `py -3.11 examples/sim2real_and_alife.py`
+- **明るさの値ではなく「変化の向き」で探す —— 符号系の頑健照合 4 種と NCC の破綻点** — codematch 6 op(方向符号照合 OCM・増分符号相関 ISC・選択的相関係数 SCC・Radial Reach Filter)を、文献の式から再実装して採点する。公開の実写 5 枚(CC0)から切った 40 テンプレートに遮蔽・飽和ハイライト・片側の減光・回転を段階的に掛けると、当たりが半分を割る所は NCC が遮蔽 10 %・ハイライト 6 %、OCM が 67 %・44 %、ISC が 63 %・53 %、SCC が 36 %・10 %。回転には 4 種とも弱い(7〜9°)。門: 画素ごとの総当たりと OCM / ISC は整数で一致、マスクが全部立つとき SCC = 既存の NCC(差 7e-13)、単調な明るさの変換で ISC と RRF は 1 ビットも変わらない、OCM は rot90 と可換で巡回差を絶対差にした探針では 1,472 / 1,476 位置で崩れる、正解位置の ISC と SCC のマスク率は閉形式の期待値どおり(1,080 試行で |z| ≤ 3.6)。平坦なテンプレート 11 枚では符号系の誤答 0(拒否 10〜11 枚)、NCC は 10 枚で外す。RRF は全体のガンマ変化と影に対し差分の閾値に 24 組中 24 組で勝つ。 `py -3.11 examples/poc_code_matching_breakdown.py`
 - **鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる)** — ★★再投影 1 px = 1/f ラジアン = 距離 R で R/f メートル。f=265 px なら 22 m 先で 0.083 m/px で、yaw 0.20 度 = 0.98 px の「サブピクセル合格」でも BEV では既に 0.077 m ずれる。★★融合(IoU 0.7033)が単センサの最良 0.5417 を上回る分は**すべて視界**から来る —— 横に 1.8 m 離した 2 センサの影は 20 m 先で食い違い、左の遠方車は LiDAR が 24 セル / カメラが 0 セル、右は 0 / 52 セルと綺麗に入れ替わる。★予想が外れたのは崖の尺度で、点がセルを跨ぐ割合は幾何の予測と最大差 0.0553 で当たるのに、yaw 0.5 度で 68 % が跨いでも IoU は 5.8 % しか落ちない(効くのはセル 0.2 m でなく車幅 1.9 m)。★同じ yaw 1 度から最大値則は偽占有 96 セル、平均則は見逃し 85 セルを作るが IoU は 0.6583 と 0.6600 でほぼ同じ —— IoU 1 本では急停止と衝突を区別できない。★信頼度重み則は「なめらかに混ざる」はずが、雑音モデルが交差しないので評価セルの 80.4 % で LiDAR が勝ち、**実質「LiDAR 優先」の順位規則に退化**していた。 `py -3.11 examples/poc_bev_sensor_fusion.py`
 - **人と機械の安全距離(「近い」を測る点を置き換えると危険が消える)** — 多関節の人体(カプセル 10 本)と可動アームを合成し、真の最小分離距離を線分どうしの閉形式(総当たりと最大差 5.6e-05 m)と線分-直方体の凸 1 次元最小化で持ち、危険(真値 < 0.640 m)と停止判定(推定 < 0.690 m)を分けて数えた。★ゼロ点の重心 1 点は危険時に +0.166 m / 最大 +0.304 m 遠く言い(予想は腕の伸び - 被せた半径 = +0.232 m で桁も向きも当たり)、危険の 14.3 % を見落として誤検知は 0.8 % —— 足元 1 点はさらに 28.6 %。★★崖は 3 つあるが誤りの向きが違う: 理想でも誤検知は 3.4 % 出る(停止判定が物理の危険より 0.050 m 大きい設計余裕ぶん)のに対し、遮蔽を入れるとその誤検知が 0.0 % に減って代わりに見落としが 18.1 % 出る —— 見えない点は必ず『もっと遠い』としか言えないので、遮蔽は誤りを危険な側へ移すだけ。★遮蔽は点を増やしても消えない(1 台 800 点 18.1 % / 100 点 29.5 %、遮蔽なしの 100 点は 4.8 %)、効くのは 2 台目だけ(0.0 %)。★★Z_d を繰り返し性から見積もると 0.036 m(3σ)だが、同じ点群を測り直しても遮蔽の形は変わらないので原理的に写らず、遮蔽の偏りの 95 % 点 0.178 m の 5 分の 1 —— 見落としを 0 にする Z_d 0.150 m を入れると停止時間が 18.3 → 24.4 % に増える。★予想を外したのは点密度の式で、(s/2)²/(2r) は最疎で 0.107 m と踏んだが実測 +0.040 m(2.7 倍の過大)。★Chamfer 0.0388 m は隠れた手を薄めるが Hausdorff 0.2481 m(6.4 倍)は分離距離の過大評価と同じ桁に残る。★占有格子 + ESDF は距離を必ず遠く言い、40/20/10 mm で +0.0104 / +0.0056 / +0.0024 m —— 予想の半ボクセルではなく約 1/4 ボクセル(三線形補間が階段を均す)。 `py -3.11 examples/poc_safety_clearance.py`
 
@@ -728,9 +729,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3328 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -1223,7 +1224,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `macro_vol_denoise` `volume → volume` — 進化探索が発見した固定パイプライン（3-D ボリューム版）: ``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。 · 例: `gallery2d_physics_alife_3d`
 
 #### 2d / matching(2)
-- `ncc_locate` (halcon: `find_ncc_model`) `image → match` — 正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。 · 例: `gallery2d_contour_measure`, `poc_search_sweep_width`, `poc_template_tracking`
+- `ncc_locate` (halcon: `find_ncc_model`) `image → match` — 正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。 · 例: `gallery2d_contour_measure`, `poc_code_matching_breakdown`, `poc_search_sweep_width`, `poc_template_tracking`
 - `shape_locate` (halcon: `find_shape_model`) `image → match` — 回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の ``find_shape_model``（Find the best matches of a shape model in an image.）に相当。 · 例: `gallery2d_contour_measure`, `poc_template_tracking`
 
 #### 2d / measure1d(5)
@@ -4231,7 +4232,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / text(2)
 - `measure_text` `text → table` — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`
-- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
 
 ### gfx2d(44 ops / 9 categories)
 
@@ -4364,6 +4365,20 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 #### converge / verification(2)
 - `conv_gci` `入力なし → table` — Grid convergence index of the finest solution: Celik et al. 2008 procedure, eqs. (1)-(7). · 例: `converge_tour`
 - `conv_observed_order` `入力なし → table` — Apparent order of convergence p from three systematically refined solutions (Celik et al. 2008, eq. 3).
+
+### codematch(6 ops / 3 categories)
+
+#### codematch / change(1)
+- `radial_reach_filter` `image2d × image2d → table` — Radial Reach Filter(RRF)。背景と現在の画像を、8 方向の reach の符号で比べる。 · 例: `poc_code_matching_breakdown`
+
+#### codematch / code(2)
+- `increment_sign` `image2d → image2d` — 隣の画素との増分の符号 ``b = [I(次) >= I(今)]``(1 / 0 の uint8)。
+- `orientation_code` `image2d → image2d` — 勾配の向きを ``n_codes`` 段に量子化した方向符号の画像(OCM の符号化)。
+
+#### codematch / match(3)
+- `isc_match` `image2d × image2d → table` — 増分符号相関(ISC)。増分符号が一致する割合が最大の位置を返す。 · 例: `poc_code_matching_breakdown`
+- `ocm_match` `image2d × image2d → table` — 方向符号照合(OCM)。符号の巡回差の平均が最小の位置を返す。 · 例: `poc_code_matching_breakdown`
+- `scc_match` `image2d × image2d → table` — 選択的相関係数(SCC)。増分符号の一致する画素だけで正規化相関を取る。 · 例: `poc_code_matching_breakdown`
 
 ### generative(34 ops / 6 categories)
 

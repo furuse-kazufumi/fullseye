@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -49,6 +49,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -372,7 +373,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (8)
+## 見つける (9)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -437,6 +438,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 位置は px。実距離は `mm_per_px_from_reference`(空撮なら高度から GSD)で換算し、高度が変われば取り直す。
 
 動く例: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md)
+
+明るさの**値**ではなく**変化の向き**を符号にして比べる照合の族(`codematch`、6 op)。学習した特徴を使わず、式と閾値だけで、 どこまで残りどこで壊れるかを自分で言えます。
+
+使う op: `ocm_match`, `isc_match`, `scc_match`, `orientation_code`, `increment_sign`, `radial_reach_filter`
+
+推奨パイプライン: [`isc_match`](ops/codematch/match/isc_match.md) → [`ocm_match`](ops/codematch/match/ocm_match.md)
+
+代替: [`scc_match`](ops/codematch/match/scc_match.md), [`ncc_locate`](ops/2d/matching/ncc_locate.md), [`radial_reach_filter`](ops/codematch/change/radial_reach_filter.md)
+
+限界: 回転には弱い(4 種とも 7〜9° で当たりが半分を割る。回転を探す方向符号ヒストグラムの系統は無い)。スケール変化も探さない。平坦な所の多いテンプレートは拒否されるか、SCC では採点できる位置が減る。SCC は「符号の合った画素だけを選ぶ」ので無関係な位置でも相関が高めに出る(選択の偏り)。既定の床でそれを抑えても OCM・ISC には届かない。RRF は背景が平坦な画素を判定しない(空・無地の壁)。
+
+実寸校正: 座標は画素(テンプレート中心、find_ncc_model と同じ規約)。閾値 grad_thresh・flat_thresh・t_p は [0, 1] の明るさで書く(8 ビットなら 255 で割る)。
+
+動く例: `poc_code_matching_breakdown`
 
 ### [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md)
 

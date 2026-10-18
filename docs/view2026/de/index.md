@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-71 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+72 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -88,6 +88,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - OCR-Vorverarbeitung (Schräglagenkorrektur, lokale Binarisierung, Zeilenextraktion): [Erklärung](../../capabilities/ocr-preprocessing.md) _(ja)_ · Beispiele [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - Warum eine dünne Rille im PL-Bild verschwindet — Ladungsträger-Diffusions-PSF und Defektart trennen (PL/EL-Prüfung von Si-Wafern und Solarzellen): [Erklärung](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · Beispiele [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - Kleine punktförmige Ziele finden und subpixelgenau lokalisieren: [Erklärung](../../capabilities/point-target-detection.md) _(ja)_ · Beispiele [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+- Template-Matching, das ungleichmäßiges Licht, Glanzlichter und Verdeckung übersteht (Richtung der Helligkeitsänderung als Code vergleichen, unbestimmte Templates ablehnen): [Erklärung](../../capabilities/robust-code-matching.md) _(ja)_ · Beispiele [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - Hohlräume in Hybridbonds über die Phase statt die Helligkeit des Ultraschallechos finden (C-Bild des akustischen Rastermikroskops, Frequenzabwägung, Detektionswahrscheinlichkeit): [Erklärung](../../capabilities/sam-bond-voids.md) _(ja)_ · Beispiele [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - Oberflächendefekte mit Relief: von der Beleuchtungsauslegung bis zur Detektion: [Erklärung](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · Beispiele [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - Teil per Template-Matching lokalisieren und das Messmodell mitführen: [Erklärung](../../capabilities/template-alignment.md) _(ja)_ · Beispiele [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-244 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+245 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -201,7 +202,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (38)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (39)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D-Barcode" width="200" height="200"><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Elektroden-Tortuosität" width="200" height="200"><span>Elektroden-Tortuosität</span></a>
@@ -241,6 +242,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="Beleuchtungskegel und Abbildungs-NA" width="200" height="200"><b>&#9654;</b><span>Beleuchtungskegel und Abbildungs-NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI-Zeilenkamera und Zeilenobjektive" width="200" height="200"><span>TDI-Zeilenkamera und Zeilenobjektive</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="Industrielle OCT (Lackschichten und verborgene Fehler)" width="200" height="200"><span>Industrielle OCT (Lackschichten und verborgene Fehler)</span></a>
+<a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Code-Matching bei Licht und Verdeckung" width="200" height="200"><b>&#9654;</b><span>Code-Matching bei Licht und Verdeckung</span></a>
 </div>
 </details>
 

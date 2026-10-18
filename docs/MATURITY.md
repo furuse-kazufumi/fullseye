@@ -76,6 +76,7 @@
 | [偏光カメラの生フレームを Stokes・DoLP・Mueller に読む](capabilities/polarization-imaging.md) | Read a polarisation camera's raw frame into Stokes, DoLP and Mueller | 光と色 | `verified-synthetic` | 10/10 | `polarization_camera_pipeline` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py |
 | [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md) | Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A) | 測る | `verified-synthetic` | 7/7 | `poc_pod_lighting` synthetic → tests/test_poc_scripts_run.py |
 | [Bayer の生フレームを、段ごとに説明できる式で表示画像にする](capabilities/raw-to-display-isp.md) | Turn a Bayer raw frame into a display image, one explainable stage at a time | 光と色 | `verified-synthetic` | 13/14 | `raw_to_display_isp` synthetic → tests/test_example_scripts_run.py |
+| [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position) | 見つける | `validated-public-real-data` | 5/6 | `poc_code_matching_breakdown` real → tests/test_poc_scripts_run.py |
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
@@ -109,8 +110,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 387 |
-| `tests/test_poc_scripts_run.py` が走らせる | 244 |
+| 2-D 台帳の例 | 388 |
+| `tests/test_poc_scripts_run.py` が走らせる | 245 |
 | `tests/test_example_scripts_run.py` が走らせる | 143 |
 | **どの門も走らせていない** | **0** |
 

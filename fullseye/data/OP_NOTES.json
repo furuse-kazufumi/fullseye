@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3316,
- "n_notes": 3322,
+ "n_ops": 3322,
+ "n_notes": 3328,
  "notes": {
   "vol_dilate": [
    {
@@ -14846,6 +14846,66 @@
     "in": "mesh",
     "out": "indices",
     "path": "docs/ops/cadmap/visibility/cad_visible_faces.md"
+   }
+  ],
+  "radial_reach_filter": [
+   {
+    "op": "radial_reach_filter",
+    "dim": "codematch",
+    "category": "change",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/change/radial_reach_filter.md"
+   }
+  ],
+  "increment_sign": [
+   {
+    "op": "increment_sign",
+    "dim": "codematch",
+    "category": "code",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/codematch/code/increment_sign.md"
+   }
+  ],
+  "orientation_code": [
+   {
+    "op": "orientation_code",
+    "dim": "codematch",
+    "category": "code",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/codematch/code/orientation_code.md"
+   }
+  ],
+  "isc_match": [
+   {
+    "op": "isc_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/isc_match.md"
+   }
+  ],
+  "ocm_match": [
+   {
+    "op": "ocm_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/ocm_match.md"
+   }
+  ],
+  "scc_match": [
+   {
+    "op": "scc_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/scc_match.md"
    }
   ],
   "poisson_blend": [

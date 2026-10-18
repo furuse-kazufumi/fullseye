@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 38 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 39 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1207,6 +1207,46 @@ py -3.11 examples/poc_industrial_oct.py
 この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.245 —— 明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合
+
+[![明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion.png)
+
+*↑ **明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合** ―― テンプレート照合の正規化相互相関(NCC)は明るさの値を比べるので、テンプレートの一部が隠れる・光沢が飛ぶ・片側だけ暗いといった局所の崩れに弱い。明るさの変化の向きを符号にして比べる照合 4 種(方向符号照合 OCM、増分符号相関 ISC、選択的相関係数 SCC、背景比較の Radial Reach Filter。文献の式から再実装)を codematch 6 op として足し、公開の実写 5 枚(CC0)から切った 32 x 32 のテンプレート 40 枚に段階的な撹乱を掛けた。当たりが半分を割る所は、遮蔽で NCC 10 %・SCC 36 %・ISC 63 %・OCM 67 %、飽和ハイライトで NCC 6 %・SCC 10 %・OCM 44 %・ISC 53 %。回転には 4 種とも弱い(7〜9°)。SCC は符号の合った画素だけを選ぶので無関係な位置でも相関が上がり(選択の偏り)、文献の式のままでは NCC より先に壊れた。無相関の使用率の期待値 + 4σ を床にして直した。空を切った平坦なテンプレート 11 枚では、NCC は相関 0.82 前後で 10 枚を外し、符号系は拒否するか正解する(誤答 0)。門は総当たりの第 2 実装・既存の NCC・単調変換での不変性・rot90 の可換性(巡回差を絶対差にした探針で崩れる)・正解位置の値の閉形式(1,080 試行で |z| ≤ 3.6)。*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight.png)
+
+*↑ 測定の図 ―― 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/03_breakdown_shading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/03_breakdown_shading.png)
+
+*↑ 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/04_breakdown_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/04_breakdown_rotation.png)
+
+*↑ 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。*
+
+[![空の平坦な所(標準偏差 < 0.01)を切ったテンプレート。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/07_flat_template_refusal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/07_flat_template_refusal.png)
+
+*↑ 空の平坦な所(標準偏差 < 0.01)を切ったテンプレート。*
+
+[![雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/09_closed_form_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/09_closed_form_z.png)
+
+*↑ 雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。*
+
+[![飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)
+
+*↑ 動く図 ―― 飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。*
+
+```
+py -3.11 examples/poc_code_matching_breakdown.py
+```
+
+ソース: [examples/poc_code_matching_breakdown.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_code_matching_breakdown)
+
+使用 op(ノートへ): [`isc_match`](https://furuse.work/ops/codematch/match/isc_match.html) · [`ncc_locate`](https://furuse.work/ops/2d/matching/ncc_locate.html) · [`ocm_match`](https://furuse.work/ops/codematch/match/ocm_match.html) · [`radial_reach_filter`](https://furuse.work/ops/codematch/change/radial_reach_filter.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`scc_match`](https://furuse.work/ops/codematch/match/scc_match.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

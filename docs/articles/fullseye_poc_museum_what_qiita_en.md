@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**135 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 38 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 39 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1215,6 +1215,46 @@ Source: [examples/poc_industrial_oct.py](https://github.com/furuse-kazufumi/full
 This run produced **15 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.245 —— Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %
+
+[![Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion.png)
+
+*↑ **Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %** ―― Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/02_breakdown_highlight.png)
+
+*↑ The measurement ―― 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。 (figure labels are in Japanese; the numbers are the same)*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/03_breakdown_shading_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/03_breakdown_shading.png)
+
+*↑ 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。*
+
+[![公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/04_breakdown_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/04_breakdown_rotation.png)
+
+*↑ 公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。*
+
+[![空の平坦な所(標準偏差 < 0.01)を切ったテンプレート。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/07_flat_template_refusal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/07_flat_template_refusal.png)
+
+*↑ 空の平坦な所(標準偏差 < 0.01)を切ったテンプレート。*
+
+[![雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/09_closed_form_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/09_closed_form_z.png)
+
+*↑ 雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。*
+
+[![飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif)
+
+*↑ The animation ―― 飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。*
+
+```
+py -3.11 examples/poc_code_matching_breakdown.py
+```
+
+Source: [examples/poc_code_matching_breakdown.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_code_matching_breakdown)
+
+Ops used (notes): [`isc_match`](https://furuse.work/ops/codematch/match/isc_match.html) · [`ncc_locate`](https://furuse.work/ops/2d/matching/ncc_locate.html) · [`ocm_match`](https://furuse.work/ops/codematch/match/ocm_match.html) · [`radial_reach_filter`](https://furuse.work/ops/codematch/change/radial_reach_filter.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`scc_match`](https://furuse.work/ops/codematch/match/scc_match.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

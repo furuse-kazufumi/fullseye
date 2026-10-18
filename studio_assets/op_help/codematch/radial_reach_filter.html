@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">radial_reach_filter — CODEMATCH <code style="color:#22d3bf">change</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;radial_reach_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Radial Reach Filter(RRF)。背景と現在の画像を、8 方向の reach の符号で比べる。</p>
+<p>背景 <code style="color:#22d3bf">B</code> の画素 <code style="color:#22d3bf">p</code> から方向 <code style="color:#22d3bf">d_k</code> へ 1, 2, … と進み、<code style="color:#22d3bf">|B(p + r d_k) - B(p)| &gt;= t_p</code> になる最初の <code style="color:#22d3bf">r</code> を reach <code style="color:#22d3bf">r_k</code>(<code style="color:#22d3bf">max_reach</code> まで。画像の外に出たらその方向は無効)。符号 <code style="color:#22d3bf">b_k = [B(p + r_k d_k) &gt;= B(p)]</code>、現在の画像でも同じ位置の組で <code style="color:#22d3bf">b&#x27;_k = [I(p + r_k d_k) &gt;= I(p)]</code> を作り、一致した方向の数を RRC とする。有効な方向のうち一致した割合が <code style="color:#22d3bf">agree_thresh</code> 未満の画素を前景にする(8 方向が全部有効なら、既定 0.625 は「一致 5 未満」)。</p>
+<p>現在の画像に狭義単調増加の明るさの変換を掛けても、結果は 1 ビットも変わらない。影(局所の掛け算)の内側も同じ理由で前景にならない。</p>
+<p>fail-closed: 有効な方向が <code style="color:#22d3bf">min_dirs</code> 未満の画素は判定しない(<code style="color:#22d3bf">decided</code> が False、<code style="color:#22d3bf">rrc</code> が -1、前景にもしない)。判定できた画素が <code style="color:#22d3bf">min_decided_fraction</code> 未満なら ValueError(背景が平坦すぎて、変化を言えない)。</p>
+<p>返り: <code style="color:#22d3bf">foreground</code>(bool)、<code style="color:#22d3bf">decided</code>(bool)、<code style="color:#22d3bf">rrc</code>(一致した方向の数、判定しない画素は -1)、<code style="color:#22d3bf">valid_dirs</code>、<code style="color:#22d3bf">agree_fraction</code>(判定しない画素は 1.0)、<code style="color:#22d3bf">reach</code>((8, H, W)、無効は 0)、<code style="color:#22d3bf">decided_fraction</code>、<code style="color:#22d3bf">foreground_fraction</code>、<code style="color:#22d3bf">refusal_margin</code>(判定できた割合 − <code style="color:#22d3bf">min_decided_fraction</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">change</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

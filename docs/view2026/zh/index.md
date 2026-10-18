@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 71 项,每项都有说明页(用法与限制)和可运行的示例。
+共 72 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -88,6 +88,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - OCR 预处理(倾斜校正、局部二值化、行切分): [说明](../../capabilities/ocr-preprocessing.md) _(ja)_ · 示例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - 用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）: [说明](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 示例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 找到小的点状目标并以亚像素定位: [说明](../../capabilities/point-target-detection.md) _(ja)_ · 示例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+- 耐光照不均、高光与遮挡的模板匹配(把亮度变化的方向作为符号比较,无法定位的模板则拒绝): [说明](../../capabilities/robust-code-matching.md) _(ja)_ · 示例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - 用超声回波的相位而不是亮度找出混合键合中的空洞(扫描声学显微镜的 C 扫描、频率权衡、检出概率): [说明](../../capabilities/sam-bond-voids.md) _(ja)_ · 示例 [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
 - 表面凹凸缺陷:从照明设计到检测: [说明](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · 示例 [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - 定位(用模板匹配让测量线跟随): [说明](../../capabilities/template-alignment.md) _(ja)_ · 示例 [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 244 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 245 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -201,7 +202,7 @@ PoC 244 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>工业检测</b> (38)</summary>
+<details class="vall"><summary><b>工业检测</b> (39)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一维条码" width="200" height="200"><span>一维条码</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="电极曲折度" width="200" height="200"><span>电极曲折度</span></a>
@@ -241,6 +242,7 @@ PoC 244 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明光锥与观察 NA" width="200" height="200"><b>&#9654;</b><span>照明光锥与观察 NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 线扫描相机与线扫描镜头" width="200" height="200"><span>TDI 线扫描相机与线扫描镜头</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="工业 OCT(涂层厚度与内部缺陷)" width="200" height="200"><span>工业 OCT(涂层厚度与内部缺陷)</span></a>
+<a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="耐光照与遮挡的符号匹配" width="200" height="200"><b>&#9654;</b><span>耐光照与遮挡的符号匹配</span></a>
 </div>
 </details>
 

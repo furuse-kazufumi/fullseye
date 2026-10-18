@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 71 capabilities**
+**Currently 72 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -50,6 +50,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -321,7 +322,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (8)
+## Detect (9)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -374,6 +375,18 @@ Pipeline: [`noise_sigma`](ops/astrostack/quality/noise_sigma.md) → [`star_dete
 Alternatives: [`xsk3_peak_local_max`](ops/2d/segmentation/xsk3_peak_local_max.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_label`](ops/blob/connect/blob_label.md)
 
 Runnable: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md)
+
+Six ops (`codematch`) match on the direction of brightness change instead of its value: orientation code matching (OCM), increment sign correlation (ISC, exactly invariant to any strictly monotone brightness map), the selective correlation coefficient (SCC, with the extended mask) and the Radial Reach Filter for background comparison. Templates whose codes cannot fix a position are refused with ValueError, where NCC still returns a confident wrong answer. On real CC0 photographs with 40 templates per level, NCC drops below half its hits at 10 % occlusion and 6 % saturated highlight; OCM and ISC hold until 63-67 % occlusion and 44-53 % highlight. None of the four is rotation invariant (half the hits are lost at 7-9 degrees).
+
+Operators: `ocm_match`, `isc_match`, `scc_match`, `orientation_code`, `increment_sign`, `radial_reach_filter`
+
+Pipeline: [`isc_match`](ops/codematch/match/isc_match.md) → [`ocm_match`](ops/codematch/match/ocm_match.md)
+
+Alternatives: [`scc_match`](ops/codematch/match/scc_match.md), [`ncc_locate`](ops/2d/matching/ncc_locate.md), [`radial_reach_filter`](ops/codematch/change/radial_reach_filter.md)
+
+Runnable: `poc_code_matching_breakdown`
 
 ### [Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD)](capabilities/sam-bond-voids.md)
 

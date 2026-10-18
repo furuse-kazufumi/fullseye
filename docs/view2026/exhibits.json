@@ -5768,6 +5768,22 @@
     "de": "Interreflexion in der Tasche bis zur Konvergenz",
     "hi": "machined pocket का inter-reflection अभिसरण तक"
    }
+  },
+  {
+   "id": "poc_code_matching_breakdown",
+   "group": "wing_industrial",
+   "media": "05_highlight_sweep.gif",
+   "motion": true,
+   "thumb_src": "01_breakdown_occlusion.png",
+   "label": {
+    "ja": "照明と遮蔽に強い符号の照合",
+    "en": "Code matching under light and occlusion",
+    "zh": "耐光照与遮挡的符号匹配",
+    "tw": "耐光照與遮擋的符號匹配",
+    "ko": "조명과 가림에 강한 부호 정합",
+    "de": "Code-Matching bei Licht und Verdeckung",
+    "hi": "रोशनी और ओट में code matching"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "robust-code-matching": {
+    "zh": "耐光照不均、高光与遮挡的模板匹配(把亮度变化的方向作为符号比较,无法定位的模板则拒绝)",
+    "tw": "耐光照不均、高光與遮擋的模板匹配(把亮度變化的方向作為符號比較,無法定位的模板則拒絕)",
+    "ko": "조명 불균일·하이라이트·가림에 강한 템플릿 정합(밝기 변화의 방향을 부호로 비교하고, 위치를 정하지 못하는 템플릿은 거부)",
+    "de": "Template-Matching, das ungleichmäßiges Licht, Glanzlichter und Verdeckung übersteht (Richtung der Helligkeitsänderung als Code vergleichen, unbestimmte Templates ablehnen)",
+    "hi": "असमान रोशनी, highlight और ओट में टिकने वाला template matching (चमक बदलने की दिशा को code की तरह मिलाना, स्थान तय न कर पाने वाले template को मना करना)"
    }
   }
  }

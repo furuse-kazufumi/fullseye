@@ -1484,6 +1484,28 @@ def _b_simcal_uncertainty(pool, rng):
     return (res,), {"method": "bootstrap", "n_boot": 8}
 
 
+# --- 符号系の頑健照合(opscodematch)。乱数は共有の列を引かず、固定の種で 1 枚の場面を作る。 --- #
+def _codematch_scene():
+    from scipy import ndimage as _ndi
+    rr = np.random.default_rng(20261018)
+    a = _ndi.gaussian_filter(rr.random((64, 72)), 1.5)
+    return (a - a.min()) / (a.max() - a.min())
+
+
+def _b_codematch_pair(pool, rng):
+    # 場面とその一部(24 x 28、列数は偶数 = SCC の組が全列を覆う)。正解は左上 (20, 24)。
+    img = _codematch_scene()
+    return (img, img[20:44, 24:52].copy()), {}
+
+
+def _b_codematch_rrf(pool, rng):
+    # 背景と、明るさを単調に変えたうえで 16 x 16 の物を置いた現在の画像。
+    bg = _codematch_scene()
+    cur = bg ** 0.7
+    cur[24:40, 30:46] = 1.0 - bg[0:16, 0:16]
+    return (bg, cur), {}
+
+
 # --- 収束型の演算(opsconverge)。乱数は引かない(op の内側の固定の種だけ)。 --- #
 def _b_rl_until(pool, rng):
     # ポアソンの食い違い原理は光子数(非負の整数)を要る。汎用の 0..1 画像では「計数でない」と拒否するのが正しいので、
@@ -6976,6 +6998,10 @@ OP_ARG_BUILDERS = {
     "simcal_uncertainty": _b_simcal_uncertainty,
     "iv_richardson_lucy_until": _b_rl_until,
     "mc_photon_slab": _b_mc_photon_slab,
+    "ocm_match": _b_codematch_pair,
+    "isc_match": _b_codematch_pair,
+    "scc_match": _b_codematch_pair,
+    "radial_reach_filter": _b_codematch_rrf,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

@@ -29906,6 +29906,60 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "codematch/orientation_code": {
+   "fp": "72d086b77265",
+   "en": "Orientation-code image: gradient direction quantised into ``n_codes`` steps (the OCM coding).",
+   "zh": "将梯度方向量化为 ``n_codes`` 级的方向码图像（OCM 的编码）。",
+   "tw": "將梯度方向量化為 ``n_codes`` 級的方向碼影像（OCM 的編碼）。",
+   "ko": "기울기 방향을 ``n_codes`` 단계로 양자화한 방향 부호 영상(OCM의 부호화).",
+   "de": "Orientierungscode-Bild: Gradientenrichtung in ``n_codes`` Stufen quantisiert (die OCM-Kodierung).",
+   "hi": "gradient की दिशा को ``n_codes`` चरणों में quantise करने वाली orientation-code image (OCM की coding)।"
+  },
+  "codematch/increment_sign": {
+   "fp": "d9364373105d",
+   "en": "Sign of the increment to the neighbouring pixel, ``b = [I(next) >= I(this)]`` (uint8 1 / 0).",
+   "zh": "与相邻像素的增量符号 ``b = [I(下一个) >= I(当前)]``（1 / 0 的 uint8）。",
+   "tw": "與相鄰像素的增量符號 ``b = [I(下一個) >= I(目前)]``（1 / 0 的 uint8）。",
+   "ko": "이웃 화소와의 증분 부호 ``b = [I(다음) >= I(현재)]``(1 / 0의 uint8).",
+   "de": "Vorzeichen des Inkrements zum Nachbarpixel, ``b = [I(nächstes) >= I(aktuelles)]`` (uint8 1 / 0).",
+   "hi": "पड़ोसी pixel तक increment का चिह्न ``b = [I(अगला) >= I(वर्तमान)]`` (uint8 1 / 0)।"
+  },
+  "codematch/ocm_match": {
+   "fp": "0b99c1f3e5e5",
+   "en": "Orientation code matching (OCM): returns the position with the smallest mean cyclic code difference.",
+   "zh": "方向码匹配（OCM）：返回码的循环差平均值最小的位置。",
+   "tw": "方向碼匹配（OCM）：回傳碼的循環差平均值最小的位置。",
+   "ko": "방향 부호 정합(OCM). 부호의 순환 차 평균이 최소인 위치를 돌려준다.",
+   "de": "Orientierungscode-Matching (OCM): liefert die Position mit der kleinsten mittleren zyklischen Codedifferenz.",
+   "hi": "Orientation code matching (OCM): वह स्थान लौटाता है जहाँ codes के cyclic अंतर का औसत सबसे कम हो।"
+  },
+  "codematch/isc_match": {
+   "fp": "684f3af3afe7",
+   "en": "Increment sign correlation (ISC): returns the position where the largest fraction of increment signs agree.",
+   "zh": "增量符号相关（ISC）：返回增量符号一致比例最大的位置。",
+   "tw": "增量符號相關（ISC）：回傳增量符號一致比例最大的位置。",
+   "ko": "증분 부호 상관(ISC). 증분 부호가 일치하는 비율이 최대인 위치를 돌려준다.",
+   "de": "Inkrementvorzeichen-Korrelation (ISC): liefert die Position, an der der größte Anteil der Inkrementvorzeichen übereinstimmt.",
+   "hi": "Increment sign correlation (ISC): वह स्थान लौटाता है जहाँ increment चिह्नों का सबसे बड़ा हिस्सा मेल खाता है।"
+  },
+  "codematch/scc_match": {
+   "fp": "11b950520766",
+   "en": "Selective correlation coefficient (SCC): normalised correlation over only the pixels whose increment signs agree.",
+   "zh": "选择性相关系数（SCC）：只用增量符号一致的像素计算归一化相关。",
+   "tw": "選擇性相關係數（SCC）：只用增量符號一致的像素計算正規化相關。",
+   "ko": "선택적 상관 계수(SCC). 증분 부호가 일치하는 화소만으로 정규화 상관을 구한다.",
+   "de": "Selektiver Korrelationskoeffizient (SCC): normierte Korrelation nur über die Pixel, deren Inkrementvorzeichen übereinstimmen.",
+   "hi": "Selective correlation coefficient (SCC): केवल उन pixels पर normalised correlation जिनके increment चिह्न मेल खाते हैं।"
+  },
+  "codematch/radial_reach_filter": {
+   "fp": "583bca5a8792",
+   "en": "Radial Reach Filter (RRF): compares a background and the current image by the signs of the reaches in 8 directions.",
+   "zh": "Radial Reach Filter（RRF）：用 8 个方向的 reach 符号比较背景与当前图像。",
+   "tw": "Radial Reach Filter（RRF）：以 8 個方向的 reach 符號比較背景與目前影像。",
+   "ko": "Radial Reach Filter(RRF). 배경과 현재 영상을 8방향 reach의 부호로 비교한다.",
+   "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
+   "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
   }
  }
 }
