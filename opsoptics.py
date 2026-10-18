@@ -218,6 +218,13 @@ _CATALOG = {
     "imaging": [
         ("psf_to_mtf", "optics", ["image2d"], "pairs"),
         ("mtf_diffraction", "optics", [], "pairs"),
+        # 2026-10-18(逐次光学設計の拡充 第 1 弾): PSF から設計ソフトの定番の指標を出す。
+        # 囲み/四角エネルギーは PSF の窓の中の割合(エッジ画素は面積で重み)、子午/球欠 MTF は 2-D 変換の軸の断面
+        # (psf_to_mtf は半径平均だけだった)。真値 = Airy の 83.8 %、円形瞳の MTF の閉形式、ガウス PSF の閉形式。
+        ("encircled_energy", "optics", ["image2d"], "pairs"),
+        ("ensquared_energy", "optics", ["image2d"], "pairs"),
+        ("energy_radii", "optics", ["image2d"], "table"),
+        ("mtf_tangential_sagittal", "optics", ["image2d"], "table"),
         ("wavefront_stats", "optics", ["table"], "table"),
         # edgesfr(2026-10-01): 刃のエッジの写真から SFR/MTF、黒点の写真から迷光指数を**測る**側。
         # psf_to_mtf は PSF を持っている人向け、現場が持っているのはエッジと黒点の写真(poc_veiling_glare 8 節の穴)。
@@ -413,6 +420,8 @@ _CATALOG = {
     # 通す(ぼかさない)ので注釈が像とずれない。乱数 table は全 op が ValueError
     "imaging_sim": [
         ("psf_from_opd", "lensimage", ["table"], "image2d"),
+        # スルーフォーカス MTF: 像面を動かした PSF ごとの子午/球欠 MTF(Hopkins の閉形式と照合)。
+        ("through_focus_mtf", "lensimage", ["table"], "table"),
         ("distortion_map", "lensimage", ["table"], "table"),
         ("render_through_lens", "lensimage", ["image2d", "table"], "image2d"),
         ("defect_dataset", "lensimage", [], "table"),
