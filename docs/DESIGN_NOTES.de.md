@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 614 von 1525. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 614 von 1526. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2571,6 +2571,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_segmentation_halcon.py`
 
 - **L496** _(ja)_ — ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は 4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
+- **L499** _(ja)_ — ★2026-10-18(統合 8 第 2 波): 同じ「classify」カテゴリに cropweed の Fisher 判別 2 本が入った。HALCON 章の 9 本は 実体が segmentation.py の物なので、module で絞る(カテゴリ名だけで数えると汎用の判別が混ざる)。
 
 ## `tests/test_shapestats.py`
 

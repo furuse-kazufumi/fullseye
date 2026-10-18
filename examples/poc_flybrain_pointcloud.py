@@ -33,7 +33,7 @@ creativecommons.org/licenses/by/4.0). 座標は 8 nm のボクセル。図は so
 
 使い方:
     py -3.11 examples/poc_flybrain_pointcloud.py
-    FULLSEYE_MALECNS_DIR=C:/dev/data/malecns FULLSEYE_FIGURE_DIR=out/poc_flybrain_pointcloud py -3.11 examples/poc_flybrain_pointcloud.py
+    FULLSEYE_MALECNS_DIR=<male CNS の展開先> FULLSEYE_FIGURE_DIR=out/poc_flybrain_pointcloud py -3.11 examples/poc_flybrain_pointcloud.py
 """
 from __future__ import annotations
 

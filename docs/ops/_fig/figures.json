@@ -1,5 +1,5 @@
 {
- "generated_for": 937,
+ "generated_for": 939,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -8091,6 +8091,31 @@
    ],
    "out_kind": "ndarray",
    "program": "kirsch_dir 0.40 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "kuwahara": {
+   "color_ok": true,
+   "extra": {
+    "a": "kuwahara.a.jpg",
+    "inputs": "kuwahara.inputs.jpg"
+   },
+   "fig": "kuwahara.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "kuwahara 0.35 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -19074,6 +19099,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "xdog": {
+   "color_ok": true,
+   "extra": {
+    "a": "xdog.a.jpg",
+    "b": "xdog.b.jpg",
+    "inputs": "xdog.inputs.jpg"
+   },
+   "fig": "xdog.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "xdog 0.40 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "xg_area_center": {
    "extra": {
     "chain": "xg_area_center.chain.jpg"
@@ -21943,10 +21992,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 932,
+  "ok": 934,
   "unreachable": 0,
   "with_chain": 380,
   "with_gif": 40,
-  "with_sweep": 581
+  "with_sweep": 583
  }
 }

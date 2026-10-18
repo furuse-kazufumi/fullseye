@@ -347,7 +347,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) |
 | [`literature/optical_metrology.md`](literature/optical_metrology.md) | 文献層: 光学計測と外観検査の信頼性(厳選) |
 | [`literature/OSS_LANDSCAPE.md`](literature/OSS_LANDSCAPE.md) | 既存 OSS の地図 —— すでにある道具と、Fullseye との繋ぎ方 |
-| [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) |  |
+| [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
 
 **知覚・センサ**(7)
 

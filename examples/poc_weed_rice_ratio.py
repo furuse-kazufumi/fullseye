@@ -651,6 +651,7 @@ def main():
         raise SystemExit(1)
     if n_fail:
         raise SystemExit(1)
+    print("\nPASS: 門 %d 本すべて通った" % len(_GATES))     # tests/test_poc_scripts_run.py は行頭の PASS を探す
 
 
 if __name__ == "__main__":

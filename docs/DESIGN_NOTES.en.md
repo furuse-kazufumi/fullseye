@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1525. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1526. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2571,6 +2571,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_segmentation_halcon.py`
 
 - **L496** _(ja)_ — ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は 4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
+- **L499** _(ja)_ — ★2026-10-18(統合 8 第 2 波): 同じ「classify」カテゴリに cropweed の Fisher 判別 2 本が入った。HALCON 章の 9 本は 実体が segmentation.py の物なので、module で絞る(カテゴリ名だけで数えると汎用の判別が混ざる)。
 
 ## `tests/test_shapestats.py`
 
