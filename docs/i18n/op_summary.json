@@ -29942,6 +29942,51 @@
    "ko": "하나의 동작점에서 이진 결함 예측과 정답 영역별 중첩 (``table``).",
    "de": "Überlappung einer binären Defektvorhersage mit den Regionen der Grundwahrheit an einem Arbeitspunkt (``table``).",
    "hi": "एक operating point पर binary defect prediction का ground-truth regions से per-region overlap (``table``)।"
+  },
+  "spc/varmodel_alignment": {
+   "fp": "8fe168938342",
+   "ja": "良品それぞれの、群の典型の位置に対する並進のずれと、許容までの余裕(``table``)。",
+   "zh": "每个良品相对于该组典型位置的平移偏差,以及距容许值的余量(``table``)。",
+   "tw": "每個良品相對於該組典型位置的平移偏差,以及距容許值的餘量(``table``)。",
+   "ko": "각 양품이 그룹의 전형적 위치에 대해 갖는 평행이동 어긋남과 허용치까지의 여유 (``table``).",
+   "de": "Verschiebung jedes Gutteils gegenüber der typischen Lage des Stapels und der Abstand zur Toleranz (``table``).",
+   "hi": "हर अच्छे sample का stack की सामान्य स्थिति से translation offset, और tolerance तक का margin (``table``)।"
+  },
+  "spc/varmodel_band_k": {
+   "fp": "80bebd2af108",
+   "ja": "宣言した画素あたりの両側誤検出率に対する許容帯の半幅 ``k``(ばらつきの単位、``table``)。",
+   "zh": "对应所声明的每像素双侧误检率的容许带半宽 ``k``(以离散度为单位,``table``)。",
+   "tw": "對應所宣告的每像素雙側誤檢率的容許帶半寬 ``k``(以離散度為單位,``table``)。",
+   "ko": "선언한 픽셀당 양측 오검출률에 대한 허용 대역의 반폭 ``k`` (산포 단위, ``table``).",
+   "de": "Halbbreite ``k`` (in Streuungseinheiten) des Toleranzbands für eine erklärte zweiseitige Fehlalarmrate je Pixel (``table``).",
+   "hi": "घोषित दो-तरफ़ा per-pixel false-alarm दर के लिए tolerance band की आधी चौड़ाई ``k`` (spread की इकाई में, ``table``)।"
+  },
+  "spc/varmodel_fit": {
+   "fp": "6160807af29a",
+   "ja": "良品の積み重ねから画素ごとの変動モデル(中心・ばらつき・帯の半幅 k)を学ぶ(``table``)。",
+   "zh": "由良品图像堆叠学习逐像素的变动模型(中心、离散度、容许带半宽 k)(``table``)。",
+   "tw": "由良品影像堆疊學習逐像素的變動模型(中心、離散度、容許帶半寬 k)(``table``)。",
+   "ko": "양품 스택에서 픽셀별 변동 모델(중심·산포·대역 반폭 k)을 학습 (``table``).",
+   "de": "Ein pixelweises Variationsmodell (Zentrum, Streuung, Bandhalbbreite k) aus einem Stapel von Gutteilen lernen (``table``).",
+   "hi": "अच्छे samples के stack से per-pixel variation model (centre, spread, band की आधी चौड़ाई k) सीखना (``table``)।"
+  },
+  "spc/varmodel_calibrate": {
+   "fp": "decedb6abf8c",
+   "ja": "当てはめに使っていない良品から帯の半幅 ``k`` を測り直す(正規の仮定が外れる実画像用、``table``)。",
+   "zh": "用未参与拟合的良品重新求容许带半宽 ``k``(用于不满足正态假设的真实图像,``table``)。",
+   "tw": "用未參與擬合的良品重新求容許帶半寬 ``k``(用於不滿足常態假設的真實影像,``table``)。",
+   "ko": "적합에 쓰지 않은 양품으로 대역 반폭 ``k`` 를 다시 측정 (정규 가정이 깨지는 실영상용, ``table``).",
+   "de": "Die Bandhalbbreite ``k`` aus zurückgehaltenen Gutteilen neu bestimmen, für Daten, die die Normalannahme verletzen (``table``).",
+   "hi": "fit में न इस्तेमाल हुए अच्छे images से band की आधी चौड़ाई ``k`` फिर से निकालना, उन असली images के लिए जो normal मान्यता तोड़ते हैं (``table``)।"
+  },
+  "spc/varmodel_score": {
+   "fp": "ca4a693ee765",
+   "ja": "1 枚を ``varmodel_fit`` の模型に当てる: 何 σ 外れたかの z 図・帯の外の図・領域ごとの説明(``table``)。",
+   "zh": "将一张图像与 ``varmodel_fit`` 的模型比较:以 σ 计的 z 图、带外图与逐区域说明(``table``)。",
+   "tw": "將一張影像與 ``varmodel_fit`` 的模型比較:以 σ 計的 z 圖、帶外圖與逐區域說明(``table``)。",
+   "ko": "한 장을 ``varmodel_fit`` 모델에 대조: σ 단위 z 맵·대역 밖 맵·영역별 설명 (``table``).",
+   "de": "Ein Bild gegen ein ``varmodel_fit``-Modell bewerten: z-Karte in Sigma, Karte außerhalb des Bands und eine Erklärung je Region (``table``).",
+   "hi": "एक image को ``varmodel_fit`` model से मिलाना: sigma में z map, band से बाहर का map और हर region की व्याख्या (``table``)।"
   }
  }
 }

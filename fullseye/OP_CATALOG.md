@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(388 例)
+### 2-D 画像/信号/幾何(389 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -491,6 +491,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **融合した 2 円板を距離変換 → h-maxima の種 → 分水嶺で割る(閉形式で検算)** — blob_distance の中心値=半径、blob_seeds の種を h-maxima 閉形式と画素単位で照合、blob_split の 4 領域・前景保存を確かめる。h より低い塊にも種が立つ点と、割れ目が番号の大きい種の側へ食い込む偏りを隠さず印字する。 `py -3.11 examples/blob_split_tour.py`
 
 **detection**
+- **良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき、公開 VisA で採点)** — 位置をそろえた良品群から画素ごとの中心とばらつきを覚え、帯の外を欠陥とする古典の変動モデルを、帯の幅を**宣言した誤検出率から**決める新 op 5 本(varmodel_alignment / band_k / fit / calibrate / score)にした。★合成の良品では 4 種のばらつき(標準偏差・共通の分散・経験ベイズの縮小・中央値と MAD)とも、数えた誤検出率が宣言の二項 4σ の帯に入る。良品 5 枚で帯の幅は 9.4σ → 縮小で 5.0σ、5σ の傷の検出率 0.13 → 0.52。★★1〜2 px ずれた良品群は拒否、無理に通すと縁の帯が 22 倍に太り縁の傷を全部見逃す。Fourier シフトで合わせると 1.07 倍。汚れた良品群(3/20 枚に同じ傷)で std は見逃し、MAD は 0.98 で見つける。★公開実データ VisA pcb1(CC BY 4.0)で、合わせた帯は画素 AUROC 0.808・AUPRO 0.678、合わせない帯は 0.705・0.460、ゴールデン比較は 0.826・0.519(画素では上、欠陥を 1 つずつ数えると下)。宣言 1e-3 の誤検出率は実画像で 3.8 %、持ち出しの良品で較正しても 2.4 %(並進で取れない撮影の違い)。確率的なテクスチャ(DAGM 2007)は位置合わせが「測れない」と報告され、検出は偶然並み。実データ段は FULLSEYE_VISA_DATA / FULLSEYE_DAGM_DATA があるときだけ走り、CI は合成のみ(図なし数秒)。 `py -3.11 examples/poc_good_sample_variation_model.py`
 - **PL 像で細い溝はなぜ見えなくなるか(公開 Si ウェハ PL データで採点)** — フォトルミネッセンス(PL)像は、励起で作った過剰キャリアが**拡散してから**光る。だから像には光学の PSF のほかに、拡散長 L = √(Dτ) で決まる**もう 1 つの PSF**(2 次元のグリーン関数 K₀(r/L)/2πL²)が掛かる。新 op 3 本(`pl_diffusion_psf` は核を総和 1 で、`pl_image_simulate` は励起の場と再結合の場から定常拡散方程式を格子で厳密に解き、`pl_groove_visibility` は溝の幅・拡散長・雑音からコントラスト・CNR・見える境界 L* を閉形式で返す)。★着手前の予想「拡散長の長い良質なウェハほど同じ溝が見えなくなる」は**半分だけ当たった**: 影の溝(励起・発光の欠け、1 − e^{−w/2L})は L 20 → 160 µm で 11.8 → 1.6 % に消えるが、沈みの溝(再結合の線、Donolato 型 SL/(SL+2D))は 48.9 → 89.0 % に**深くなる**(格子の閉形式と 1e-10、連続形と 2.4 % 以内、Donolato 型と 1.7 % 以内)。★★公開実データ(Si ウェハのレーザー溝、HF 処理後 0 min / 55 min / 1 week、CC BY 4.0、DOI 10.5281/zenodo.19603335)を生画像から読み、論文図のヒストグラム(L1 0)と線走査(RMS ≤ 1.1 %)を再現したうえで数えると、HF 直後ほど溝は**深く(50 → 35 %)広い(半値幅 1.32 → 0.42 mm)**= 沈み型の向き。PL 水準は拡散長の代理にならない(55 min は水準が最低なのに深さ・幅は中間)。埋め込み POD(`pod_hitmiss_fit`)では、拡散長の長い 0 min 側で影型の a90 は 4.6 倍大きく(隠れる)、沈み型は 0.28 倍(目立つ)。実地の a90 は白色雑音の閉形式より 1 桁以上甘い —— 限界を決めるのは雑音でなく地の構造。実データ段は環境変数 FULLSEYE_SI_PL_DATA があるときだけ走り、無ければ合成のみで「実データ門は未実行」と明示(CI は合成のみ、図なしで 2 秒)。 `py -3.11 examples/poc_si_wafer_pl_defect_visibility.py`
 - **薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)** — 「どこまで薄い傷が見えるか」は普通、平らな地に白色雑音を載せた合成画像で見積もる。その見積もりがどれだけ甘いかを、CC0 実写テクスチャ(brick / grass / gravel)に**位置・大きさ・振幅が既知のガウシアン欠陥を仕込んで**測る。比較相手は**検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 雑音の量を同じにしてから構造の効果だけを取り出す。★★雑音を揃えても実写の限界は 2.03〜3.47 倍高い: **限界を決めているのは雑音ではなく地の構造**。★背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の 18 通り全部で 比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 検出器でも残る。★外した予測: 「欠陥が大きいほど差が開く」は**振幅の刻みが作った差**だった(34 段では σ=1.5 と σ=3.0 が別の格子点に丸まる。60 段にすると両方 3.30 倍で差が消える)。★★「実写だから場所で変わる」も誤り —— 場所による散らばりは brick 16.8 倍に対し grass 2.4 / gravel 3.3 で、**合成の 3.3 倍と区別がつかない**。散らばりを生むのは目地という**構造**であって「実写であること」ではない。★★ゼロ点(背景を引かず生の画素の最大点)は、**当てるだけなら整合フィルタより 0.65〜0.90 倍良い**(整合フィルタは地の構造も増幅するので損をする)。無欠陥面の空振りも brick では 0 対 0 の引き分け。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り整合フィルタは 0.0 回 —— 生の画素の閾値は明るさの絶対値だから。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。** `py -3.11 examples/poc_real_defect_floor.py`
 - **捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)** — 空撮画像から**横距離曲線**(機体直下からの横方向距離ごとの検出確率)を測り、その面積 W = ∫p dx を**走査幅**として捜索計画へ渡す。画像処理と意思決定を 1 本の数字でつなぐ展示。★走査幅の定義そのものを実証: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 256.2 m に揃えると、検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**形は消え、面積だけが残る**。★崖は C = W v t / A = 1。閉形式を先に印字して min(1,C) = 1.0000 / 1-exp(-C) = 0.6321、矩形の対照で実測 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 のためで、厳密 1-(1-W/Wd)^64 = 0.6350)。★★予測を外した 1: 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない。min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。★★予測を外した 2: 「平らな曲線のほうが矩形に近く平行捜索に強い」と予測したが**逆**(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。同条件でも**ランダム捜索では 2 本が一致する**(面積しか見ない)。★★予測を外した 3: 「端は解像度が落ちる」—— ナディア向き中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta なら 2.132 倍粗くなる。★★予測を外した 4: 「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換で順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★最適高度は内点(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と明記。掃引速度 W·v で見ると、v ∝ min(1,h/600) の機体では最適が 420 m へ動く。★見張り役: **誤検出は端ではなく直下に集中**(0-32 m 帯 113 件 / 最外帯 0 件)—— 目標も白波も同じ cos^4 で暗くなるので、いちばんよく見える所がいちばん吠える。閾値だけで W は 406 → 170 m 動くので、**『走査幅 400 m』は誤検出率と対でなければ何も言っていない**。★素材側の穴も 1 つ: 点源を画素中心 1 点標本で描くと総フラックス誤差 4.6e-07 なのに**ピークが σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、うち 1 つはその場で埋めた: op_find の語の切り出しが ASCII 限定で、**和文の複数語クエリは構造的に必ず 0 件**だった(採点する doc も docstring の 1 行目だけ)。CJK の段を足し、star_detect の docstring に分野中立の説明語を書いた。 `py -3.11 examples/poc_search_sweep_width.py`
@@ -729,9 +730,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3331 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 26 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 31 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -862,7 +863,7 @@ _計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dc_local_contrast_norm` `image → image` — Local contrast normalisation: (I - mean_w) / (std_w + eps), centred at 0.5. · 例: `gallery2d_texture_freq`
 - `dc_retinex` `image → image` — Single-scale retinex reflectance: log(I) - log(Gauss_sigma(I)) -> [0,1]. · 例: `gallery2d_texture_freq`, `poc_bone_trabecular_thickness`
 - `dc_rpca_lowrank` `image → image` — Robust-PCA low-rank (background) part. · 例: `blas_thread_budget`, `gallery2d_texture_freq`
-- `dc_rpca_sparse` `image → image` — Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5. · 例: `gallery2d_texture_freq`
+- `dc_rpca_sparse` `image → image` — Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5. · 例: `gallery2d_texture_freq`, `poc_good_sample_variation_model`
 - `dc_structure_texture` `image → image` — Structure / cartoon part of the image (TV-L2, Chambolle). · 例: `gallery2d_texture_freq`, `poc_fiber_orientation`
 - `dc_texture_residual` `image → image` — Texture / detail layer = input - structure, centred at 0.5. · 例: `gallery2d_texture_freq`
 
@@ -3103,13 +3104,13 @@ _計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 #### flyvision / tuning(1)
 - `fly_dsi` `signal → table` — Direction-selectivity index and preferred direction from tuning responses. · 例: `poc_fly_vision`
 
-### spc(26 ops / 9 categories)
+### spc(31 ops / 10 categories)
 
 #### spc / anomaly_eval(4)
-- `anomaly_image_auroc` `signal × signal → table` — Image-level AUROC from one anomaly score per image and a good/defective label per image (``table``). · 例: `anomaly_eval_metrics`
-- `anomaly_pixel_auroc` `video × video → table` — Pixel-level AUROC of anomaly score maps against ground-truth defect masks (``table``). · 例: `anomaly_eval_metrics`
-- `anomaly_pro` `video × video → table` — Per-region overlap (PRO) curve and its normalised area AUPRO up to ``fpr_max`` (``table``). · 例: `anomaly_eval_metrics`
-- `anomaly_region_overlap` `video × video → table` — Per-region overlap of a binary defect prediction with the ground-truth regions at one operating point (``table``). · 例: `anomaly_eval_metrics`
+- `anomaly_image_auroc` `signal × signal → table` — Image-level AUROC from one anomaly score per image and a good/defective label per image (``table``). · 例: `anomaly_eval_metrics`, `poc_good_sample_variation_model`
+- `anomaly_pixel_auroc` `video × video → table` — Pixel-level AUROC of anomaly score maps against ground-truth defect masks (``table``). · 例: `anomaly_eval_metrics`, `poc_good_sample_variation_model`
+- `anomaly_pro` `video × video → table` — Per-region overlap (PRO) curve and its normalised area AUPRO up to ``fpr_max`` (``table``). · 例: `anomaly_eval_metrics`, `poc_good_sample_variation_model`
+- `anomaly_region_overlap` `video × video → table` — Per-region overlap of a binary defect prediction with the ground-truth regions at one operating point (``table``). · 例: `anomaly_eval_metrics`, `poc_good_sample_variation_model`
 
 #### spc / capability(1)
 - `spc_capability` `signal → table` — Process capability indices Cp and Cpk from measurements and spec limits. · 例: `poc_spc`
@@ -3148,6 +3149,13 @@ _計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gum_propagate` `table → table` — 不確かさの伝播則(GUM 5.2、相関つき)(``table``)。 · 例: `poc_measurement_system_analysis`
 - `gum_standard_uncertainty` `table → table` — 不確かさの成分を**分布の形**から標準不確かさへ直す(``table``)。 · 例: `poc_measurement_system_analysis`
 - `gum_validate` `table × table → table` — モンテカルロの結果で伝播則の結果を**検証**する(``table``)。 · 例: `poc_measurement_system_analysis`
+
+#### spc / variation(5)
+- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_band_k` `入力なし → table` — Half-width ``k`` (in spread units) of the tolerance band for a declared two-sided per-pixel false-alarm rate (``table``).
+- `varmodel_calibrate` `table × video → table` — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `poc_good_sample_variation_model`
 
 ### graph(20 ops / 9 categories)
 

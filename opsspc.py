@@ -37,6 +37,15 @@ variation model, RPCA, golden comparison and later patch-feature methods share o
 Score / mask stacks are the existing ``video`` sort ((n, H, W)), per-image scores ``signal``;
 every op returns a table, so no 2-D bridge is built (TYPE_TO_SORT has no ``table``).
 
+Variation model (2026-10-18): the ``variation`` category (varmodel.py, 5 ops) is the classic
+"learn every pixel's usual value and spread from aligned good samples, flag what leaves the band"
+— with the band's half-width derived from a DECLARED per-pixel false-alarm rate (t prediction
+interval / empirical-Bayes moderated t / a Monte-Carlo pivot for median-MAD), an alignment check
+that refuses a misaligned stack (or registers it by a Fourier shift), shrinkage for few samples,
+a robust variant for contaminated good sets, held-out calibration for real images, and a
+per-region explanation in sigmas. Stacks are ``video``, one image ``image2d``, model and
+results ``table``; every op returns a table, so no 2-D bridge is built.
+
 Usage:
     import opsspc
     opsspc.list_ops("chart")
@@ -45,8 +54,9 @@ Usage:
 import anomeval
 import pod
 import spc
+import varmodel
 
-_MOD = {"spc": spc, "pod": pod, "anomeval": anomeval}
+_MOD = {"spc": spc, "pod": pod, "anomeval": anomeval, "varmodel": varmodel}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: no new word is coined (it all fits the existing pool).
@@ -124,6 +134,16 @@ _CATALOG = {
         ("anomaly_pixel_auroc", "anomeval", ["video", "video"], "table"),
         ("anomaly_pro", "anomeval", ["video", "video"], "table"),
         ("anomaly_region_overlap", "anomeval", ["video", "video"], "table"),
+    ],
+    # 良品統計の変動モデル(varmodel.py)。良品の積み重ねは video、試験の 1 枚は image2d、
+    # 模型と結果は表。k は宣言した誤検出率から決まる(欠陥で調整しない)。
+    # varmodel_band_k は入力の無い op(n と far だけから帯の幅)。
+    "variation": [
+        ("varmodel_alignment", "varmodel", ["video"], "table"),
+        ("varmodel_band_k", "varmodel", [], "table"),
+        ("varmodel_fit", "varmodel", ["video"], "table"),
+        ("varmodel_calibrate", "varmodel", ["table", "video"], "table"),
+        ("varmodel_score", "varmodel", ["image2d", "table"], "table"),
     ],
 }
 

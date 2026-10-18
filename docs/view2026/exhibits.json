@@ -5768,6 +5768,22 @@
     "de": "Interreflexion in der Tasche bis zur Konvergenz",
     "hi": "machined pocket का inter-reflection अभिसरण तक"
    }
+  },
+  {
+   "id": "poc_good_sample_variation_model",
+   "group": "wing_industrial",
+   "media": "01_band_width_alignment.png",
+   "motion": false,
+   "thumb_src": "01_band_width_alignment.png",
+   "label": {
+    "ja": "良品統計の変動モデル",
+    "en": "Good-sample variation model",
+    "zh": "良品统计变动模型",
+    "tw": "良品統計變動模型",
+    "ko": "양품 통계 변동 모델",
+    "de": "Variationsmodell aus Gutteilen",
+    "hi": "अच्छे samples का variation model"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "good-sample-variation-model": {
+    "zh": "排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率)",
+    "tw": "排列良品來判斷「與平時不同」(良品統計變動模型,附宣告的誤檢率)",
+    "ko": "양품을 나란히 놓고 '평소와 다름'을 말한다 (양품 통계 변동 모델, 오검출률 선언)",
+    "de": "Abweichungen von ausgerichteten Gutteilen melden (pixelweises Variationsmodell mit erklärter Fehlalarmrate)",
+    "hi": "aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model)"
    }
   }
  }

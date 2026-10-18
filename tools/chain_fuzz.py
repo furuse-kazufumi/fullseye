@@ -4606,6 +4606,50 @@ def _b_anomaly_region_overlap(pool, rng):
     return (pred, masks), {}
 
 
+def _vm_stack(rng, n=8, side=48):
+    """良品の積み重ね(varmodel の種): 縁のある模様 + 雑音、位置は揃っている。
+
+    ★プールの任意の video は動くクリップで、良品群として渡すと位置合わせの確認で拒否される
+    (探針が「拒否された」としか言えない)。揃った群を組んで当てはめを実際に走らせる。
+    """
+    yy, xx = np.mgrid[0:side, 0:side]
+    base = 0.5 + 0.3 * np.sin(xx / 3.0) * np.cos(yy / 4.0)
+    return base, base + 0.02 * rng.standard_normal((n, side, side))
+
+
+def _b_varmodel_alignment(pool, rng):
+    return (_vm_stack(rng)[1],), {}
+
+
+def _b_varmodel_band_k(pool, rng):
+    return (), {"n": 12, "far": 1e-2}
+
+
+def _b_varmodel_fit(pool, rng):
+    return (_vm_stack(rng)[1],), {"spread": "std", "far": 1e-2}
+
+
+def _b_varmodel_calibrate(pool, rng):
+    import varmodel as _vm
+    base, st = _vm_stack(rng, n=8)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    return (m, base + 0.02 * rng.standard_normal((12,) + base.shape)), {}
+
+
+def _b_varmodel_score(pool, rng):
+    """欠陥(+0.2 = 雑音の 10 倍、3×3)を 1 つ描いた試験の 1 枚。
+
+    ★16 px 四方・+0.3 の欠陥を 32 px の像に描くと、位相相関が欠陥に引かれて 0.85 px の「ずれ」になり、
+    ``align="check"`` が拒否した(実測 2026-10-18)。欠陥が像に対して大きすぎると位置合わせも汚れる。
+    """
+    import varmodel as _vm
+    base, st = _vm_stack(rng)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    img = base + 0.02 * rng.standard_normal(base.shape)
+    img[20:23, 24:27] += 0.2
+    return (img, m), {}
+
+
 def _b_coherent_image(pool, rng):
     """振幅(>= 0)と位相(rad)の 2 枚。プールの任意の 2 枚では振幅が負になりうる。"""
     return (rng.random((32, 32)), rng.uniform(0.0, 2.0 * np.pi, (32, 32))), {"cutoff": 0.2}
@@ -6592,6 +6636,11 @@ OP_ARG_BUILDERS = {
     "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
     "anomaly_pro": _b_anomaly_pro,
     "anomaly_region_overlap": _b_anomaly_region_overlap,
+    "varmodel_alignment": _b_varmodel_alignment,
+    "varmodel_band_k": _b_varmodel_band_k,
+    "varmodel_fit": _b_varmodel_fit,
+    "varmodel_calibrate": _b_varmodel_calibrate,
+    "varmodel_score": _b_varmodel_score,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,

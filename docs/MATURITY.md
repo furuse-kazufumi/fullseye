@@ -45,6 +45,7 @@
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
+| [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate) | 見つける | `validated-public-real-data` | 10/10 | `poc_good_sample_variation_model` real → tests/test_poc_scripts_run.py<br>`anomaly_eval_metrics` synthetic → tests/test_example_scripts_run.py |
 | [干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE) | 波と信号 | `validated-public-real-data` | 12/12 | `poc_gw_detector_pseudo_simulation` real → tests/test_poc_scripts_run.py |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin) | 光と色 | `verified-synthetic` | 5/5 | `poc_illumination_cone_vs_na` synthetic → tests/test_poc_scripts_run.py |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | Industrial OCT (spectral interferogram, k-linearisation, dispersion compensation, A/B-scans, layer thickness via the group index) | 測る | `validated-public-real-data` | 12/13 | `poc_industrial_oct` real → tests/test_poc_scripts_run.py |
@@ -109,8 +110,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 388 |
-| `tests/test_poc_scripts_run.py` が走らせる | 244 |
+| 2-D 台帳の例 | 389 |
+| `tests/test_poc_scripts_run.py` が走らせる | 245 |
 | `tests/test_example_scripts_run.py` が走らせる | 144 |
 | **どの門も走らせていない** | **0** |
 

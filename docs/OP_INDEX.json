@@ -1,8 +1,8 @@
 {
- "n_ops": 3320,
+ "n_ops": 3325,
  "tiers": {
   "color": 12,
-  "ledger": 2367,
+  "ledger": 2372,
   "nary": 17,
   "registry": 924
  },
@@ -29120,6 +29120,71 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "varmodel_alignment",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_band_k",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
+  },
+  {
+   "name": "varmodel_calibrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {
