@@ -1,4 +1,4 @@
-# TOMOGRAPHY operator help — 17 ops in 6 categories
+# TOMOGRAPHY operator help — 31 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/tomography/<category>/<op>.md` を走査。
 
@@ -23,6 +23,10 @@
 ### reconstruct (3)
 
 [backproject_sinogram](reconstruct/backproject_sinogram.md) · [filtered_backprojection](reconstruct/filtered_backprojection.md) · [sart_reconstruct](reconstruct/sart_reconstruct.md)
+
+### spectral_xray (14)
+
+[basis_decomposition_crlb](spectral_xray/basis_decomposition_crlb.md) · [basis_material_decompose](spectral_xray/basis_material_decompose.md) · [dual_energy_separability](spectral_xray/dual_energy_separability.md) · [dual_kvp_channels](spectral_xray/dual_kvp_channels.md) · [effective_z_map](spectral_xray/effective_z_map.md) · [material_effective_z](spectral_xray/material_effective_z.md) · [material_xray_attenuation](spectral_xray/material_xray_attenuation.md) · [material_xray_constants](spectral_xray/material_xray_constants.md) · [material_xray_table](spectral_xray/material_xray_table.md) · [photon_counting_channels](spectral_xray/photon_counting_channels.md) · [r_value_map](spectral_xray/r_value_map.md) · [xray_beam_quality](spectral_xray/xray_beam_quality.md) · [xray_channel_projection](spectral_xray/xray_channel_projection.md) · [xray_tube_spectrum](spectral_xray/xray_tube_spectrum.md)
 
 ### volume (2)
 

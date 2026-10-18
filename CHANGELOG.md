@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — エネルギー弁別 X 線による材質の判別(materials の X 線の列 + dualxray 10 op + PoC)
+- `materials` に **X 線の列**: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z`。質量減衰係数 μ/ρ(E) を光学の列と同じ名前で引く。数値は NIST SRD 126(Hubbell & Seltzer)の部分集合(元素 49 種・化合物 21 種・1 keV〜1 MeV、出典と著作権の表示つき、生成物 `materials_xray_data.py` = `tools/gen_xray_tables.py --nist <保存したページ>`)。組成の分かる材料と化学式は混合則(組成のレコードは仮想 SEM の `ELECTRON_SOLID` と同じ形 `{"formula": …, "density_g_cm3": …}` で、同じ名前があればそちらを使う)。組成の公表されていない硝材は拒否。
+- `dualxray`(`opstomography` の新カテゴリ `spectral_xray`、10 op): `xray_tube_spectrum`(Kramers の厚い陽極 + Kanaya–Okayama の深さ + 自己吸収 + W の K 線 + フィルタ)/ `xray_beam_quality`(空気カーマの半価層)/ `photon_counting_channels`(吸収効率・エネルギー分解能・電荷共有)/ `dual_kvp_channels` / `xray_channel_projection`(`photoncount.photon_sample` で Poisson)/ `basis_material_decompose`(多色の Gauss–Newton、解けない画素は NaN で数える)/ `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability`(d′ と Φ(−d′/2) の閉形式)。
+- 管の模型の 4 定数は公開のスペクトル計算(MIT)の形に合わせた(`tools/fit_xray_tube_constants.py`)。合わせに使っていない IEC 61267 の線質 8 つ(RQR / RQA)の半価層と 5.8 % 以内。
+- PoC `poc_dual_energy_xray`(21 門、図 12 枚): 肉のトレイ(25〜60 mm、赤身の折り返しと脂身の塊つき)の骨片・ガラスは 1 枚の像で段差が肉のむらの 0.9 倍、しきい値 1 本で肉の 86 % を誤検出、高域でも肉の重なりの縁が偽の塊 2 個 —— 赤身 + Al に分けた Al の像は偽の塊 0。交絡の組(厚い PE と薄い Al)は 1 つの窓で d′ = 0、誤り率の閉形式はモンテカルロと 0.004 以内、分けられなくなる Al の厚さは閉形式 0.125 mm・実測 0.126 mm(肉 40 mm の下で 0.364 mm)。分解の雑音は CRLB の 0.995 / 0.997 倍。壊れ方: 電荷共有 25 % を知らずに分解すると肉が Al に化ける(−3.2 mm)、単色の近似は肉 6 cm で −1.5 mm。埋まった異物の見かけの Z は密度でも動く(PVC 13.9 → 18.7)。
+- ★探針で見つけて直したもの: Pb 50 mm のろ過でも e^{−130} は 0 にならず、正規化して「ふつうのスペクトル」を返していた → 透過 1e-12 未満は拒否。
+- 能力ノート `docs/capabilities/dual-energy-xray-material-discrimination.md`、op 要約 6 言語、ViEW2026 案内、門 `tests/test_dualxray.py`(75 件、光子断面積とスペクトルの公開ライブラリがあれば第 2 実装と照合)。
+
 ### Added — 格子干渉による位相コントラストと暗視野(gratinginterf 8 op)と PoC poc_grating_interferometry
 - `opsoptics` の新カテゴリ `grating_interf`: `talbot_grating_design`(位相 π / π/2 / 吸収格子の分数タルボ距離、円錐ビームの距離と倍率、分析格子の周期、Lau の条件の線源格子の周期、角度感度・自己相関長・帯域)/ `grating_stepping_simulate`(透過・微分位相・暗視野 → 位相ステップの画像列、Poisson、1 周期のステップ数 P ≠ N)/ `grating_three_image_retrieve`(試料あり・なしの 2 組 → 3 像。P = N は `fringe.wrapped_phase` / `fringe.modulation`、P ≠ N は 3 項最小二乗、条件数 30 超・縞の無い基準は拒否)/ `darkfield_scatter_relation`(暗視野 D とガウス散乱の σ の換算、線拡散係数、自己相関長)。
 - 門 `tests/test_gratinginterf.py`: 公表の装置の距離 23.2 mm(Weitkamp ら 2005)、格子 1 周期の厳密な伝搬(`optics.angular_spectrum_propagate`)の極大と 7 通りの距離、円錐ビームを 1-D Fresnel で直接伝搬した縞の消える距離と周期、Poisson の位相雑音、ガウス散乱と一様散乱(Strobl の積分)、壊して確かめる探針(誤った距離の式・ステップの向き・試料と基準の取り違え)。式の変異 7 本をすべて殺すことを確かめた。

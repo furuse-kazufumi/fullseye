@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photon_counting_channels — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: &#x27;str&#x27; = &#x27;CDTE&#x27;, detector_mm: &#x27;float&#x27; = 2.0, energy_resolution_fwhm_kev: &#x27;float&#x27; = 0.0, charge_sharing: &#x27;float&#x27; = 0.0, upper_kev=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dualxray; dualxray.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: &#x27;str&#x27; = &#x27;CDTE&#x27;, detector_mm: &#x27;float&#x27; = 2.0, energy_resolution_fwhm_kev: &#x27;float&#x27; = 0.0, charge_sharing: &#x27;float&#x27; = 0.0, upper_kev=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;photon_counting_channels&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>光子計數偵測器的能量窗 → 通道(一個光子計一次)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">thresholds_kev</code> = (T₁, T₂, …): チャネル c は堆積エネルギーが [T_c, T_{c+1}) の光子を数える(最後の窓の上限は <code style="color:#22d3bf">upper_kev</code>、既定は無限大)。検出器の応答:</p>
+<p style="margin:2px 0 2px 12px">• 吸収効率 1 − e^{−μ d}(<code style="color:#22d3bf">detector</code> の X 線の列、既定 CdTe 2 mm)。</p>
+<p style="margin:2px 0 2px 12px">• エネルギー分解能: 堆積エネルギーに FWHM <code style="color:#22d3bf">energy_resolution_fwhm_kev</code> のガウスのぼけ。</p>
+<p style="margin:2px 0 2px 12px">• 電荷共有: 割合 <code style="color:#22d3bf">charge_sharing</code> の光子は電荷の一部しか集まらず、堆積エネルギーが [0, E] に一様に散らばる(低いエネルギーへの尾。1 画素の中の模型で、隣の画素への二重計数は入れない)。</p>
+<p>返り値: dict(energy_kev, weights (C, K) = 入射光子 1 個がチャネル c に数えられる確率 × スペクトルのビンの重み, gain = 1(計数), mode = &quot;counting&quot;, labels, thresholds_kev, response)。窓が 1 つも光子を拾わないときは ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

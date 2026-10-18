@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dual_energy_separability — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dual_energy_separability(material_a=&#x27;POLYETHYLENE&#x27;, thickness_a_cm: &#x27;float&#x27; = 1.0, material_b=&#x27;AL&#x27;, thickness_b_cm=None, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, background=None, n_pixels: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dualxray; dualxray.dual_energy_separability(material_a=&#x27;POLYETHYLENE&#x27;, thickness_a_cm: &#x27;float&#x27; = 1.0, material_b=&#x27;AL&#x27;, thickness_b_cm=None, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, background=None, n_pixels: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;dual_energy_separability&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 つの材料(厚み)が、チャネルの対数減衰でどれだけ分けられるか(d′ と誤り率の閉形式)。</p>
+<p><code style="color:#22d3bf">thickness_b_cm=None</code> は<b>交絡の組</b>: b の厚みを、最後(最も高いエネルギー)のチャネルで a と同じ L になるように決める(単一エネルギーの像では区別できない組)。<code style="color:#22d3bf">background</code> = (材料, 厚さ cm) は両方に重なる共通の母材(肉の中の異物)。<code style="color:#22d3bf">n_pixels</code> 個の画素を平均した領域で判定する(d′ は √n 倍)。</p>
+<p>各材料の L ベクトル(チャネルごと)は平均 μ_a, μ_b、共分散は Poisson の差分近似 Σ = diag(var_c/mean_c²)/n。判別は等事前確率の線形判別(LDA)で、d′² = Δᵀ Σ̄⁻¹ Δ、誤り率 = Φ(−d′/2)。比べのため、1 チャネルだけで判定したときの d′ も返す(交絡の組では最後のチャネルの d′ は 0)。</p>
+<p>返り値: dict(thickness_b_cm, L_a, L_b, R_a, R_b, d_prime, error_rate, d_prime_single (C,), error_rate_single (C,), sigma_L (C,), n_pixels)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

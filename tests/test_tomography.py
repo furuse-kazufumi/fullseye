@@ -734,8 +734,10 @@ class TestVolume:
 class TestLedger:
     def test_every_declared_op_exists(self):
         assert opstomography.missing() == []
-        assert len(opstomography.OPSTOMOGRAPHY) == len(tg.TOMOGRAPHY)
-        assert set(opstomography.OPSTOMOGRAPHY) == set(tg.TOMOGRAPHY)
+        # 2026-10-15: 同じ台帳に spectral_xray(dualxray + materials の X 線の列、tests/test_dualxray.py)が同居する
+        tomo = {n for n, m in opstomography.OPSTOMOGRAPHY.items() if m["module"] == "tomography"}
+        assert len(tomo) == len(tg.TOMOGRAPHY)
+        assert tomo == set(tg.TOMOGRAPHY)
 
     def test_every_op_is_exported(self):
         for name in tg.TOMOGRAPHY:
@@ -761,8 +763,9 @@ class TestLedger:
         assert opstomography.OPSTOMOGRAPHY["fbp_volume"]["out"] == "voxel"
 
     def test_result_adapters_are_unnecessary(self):
-        """Declared out-type == raw return type, for every op, checked."""
-        assert opstomography.RESULT_ADAPTERS == {}
+        """Declared out-type == raw return type for the 17 tomography ops (spectral_xray's 2 adapters are asserted below)."""
+        # spectral_xray の 2 op だけが (C|B, H, W) を images(並び)に写す adapter を持つ(理由は台帳の注記)
+        assert set(opstomography.RESULT_ADAPTERS) == {"xray_channel_projection", "basis_material_decompose"}
         sino = tg.ellipse_sinogram(64, DISC, np.linspace(0, 180, 45,
                                                          endpoint=False))
         assert isinstance(tg.sinogram_design(), dict)

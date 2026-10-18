@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">xray_tube_spectrum — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">pairs</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import dualxray; dualxray.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;xray_tube_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>以 <code style="color:#22d3bf">pairs</code>(E [keV], 光子数 / keV)返回 X 射线管的光子能谱(归一化为 Σ φ ΔE = 1)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>模型(厚い陽極):</p>
+<p style="margin:2px 0 2px 12px">• 制動放射は Kramers の薄い標的の断面積 ∝ 1/(T·E) を、電子が T = E₀ から E まで減速するあいだ積分する。減速は到達深さ x(T) = R(E₀) − R(T)(Kanaya–Okayama の R ∝ T^1.67)で表す。自己吸収が無ければ積分は Kramers の式 φ(E) ∝ (E₀ − E)/E そのものになる(門で確かめる)。</p>
+<p style="margin:2px 0 2px 12px">• 陽極の自己吸収: 深さ x で生まれた光子は取り出し角 θ の方向へ x/sin θ だけ陽極の中を通る(μ は materials の X 線の列から W を引く)。</p>
+<p style="margin:2px 0 2px 12px">• 特性線(管電圧が K 端より高いとき): Kα₂ / Kα₁ / Kβ₁ / Kβ₂(X-ray Data Booklet のエネルギーと相対強度)、総数は (U − 1)^K_EXPONENT(K_EXPONENT = 1.15、U = E₀/E_K)に比例。各線は 1 つのビンに入る。</p>
+<p style="margin:2px 0 2px 12px">• フィルタ: <code style="color:#22d3bf">filtration</code> = ((材料, 厚さ mm), …)。既定の Al 2.5 mm は管の固有ろ過の代表値。</p>
+<p><code style="color:#22d3bf">kvp</code> は 15〜300 kV、<code style="color:#22d3bf">de_kev</code> はビン幅(0.05〜5 keV)。返り値の E はビンの中心。特性線の強さは簡易模型(<code style="color:#22d3bf">K_SCALE</code>)で、実測のスペクトルとは数 % ずれる。線質の門は <code style="color:#22d3bf">xray_beam_quality</code> の半価層を公表の線質と比べる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pairs</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a> · <a style="color:#22d3bf" href="optomography:xray_channel_projection">xray_channel_projection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
