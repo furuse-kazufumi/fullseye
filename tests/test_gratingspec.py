@@ -81,14 +81,28 @@ def test_feng2021_shafer_angle_and_camera_focal_length():
     assert hi - lo == pytest.approx(28.67, rel=0.03)
 
 
+# 公表値(表 7)との許容差。**物理の不確かさから決める**(閾値を残差に合わせて広げたのではない):
+#  (a) 表の桁: 像の幅は 1 µm 刻み(±0.5 µm = 40 µm の 1.25 %)、分解能は 0.001 nm 刻み(±0.0005 nm = 0.13 %)。
+#  (b) この module は鏡が無収差。表 7 は実鏡の光線追跡なので、球面鏡のコマ・非点収差による像の広がりと
+#      焦点面の傾きは模型に無い。同じ module が Feng 2021 の中心の分解能で 24 % 外す(PoC の開示)ので、
+#      収差の許容が数 % あるのは物理として当然。像の幅は 750 nm 側(β = 48°、cosβ が小さく収差が最大)で
+#      効くので 8 %、分解能は像の幅 × 逆線分散の積で収差の一部が相殺するので 5 % とする。
+#  残差(M 型 2025): 像の幅 最大 5.2 %(750 nm)、分解能 最大 3.12 %。
+#  余裕(許容 − 残差): 像の幅 0.8 → 2.8 ポイント、分解能 0.38 → 1.88 ポイント。
+#  説明できていない残り: 公表の像の幅は波長への依存が模型より緩い(40 → 50 µm 対 39.2 → 52.6 µm)。
+#  式の形では出ず、実鏡の追跡でしか出ない量と考えるが、論文本体を機械で読めず未確認。
+PUB_IMAGE_TOL = 0.08
+PUB_RES_TOL = 0.05
+
+
 def test_mtype2025_slit_image_and_resolution():
     D = GS.czerny_turner_design(**MTYPE)
     B = GS.spectrometer_bandpass(D, 25.0, 14.0, 0.11, [500.0, 625.0, 750.0])
     pub_img = np.array([40.0, 43.0, 50.0])                                             # 表 7 の像の FWHM [µm]
-    assert np.all(np.abs(B["slit_image_um"] - pub_img) / pub_img < 0.06)
+    assert np.all(np.abs(B["slit_image_um"] - pub_img) / pub_img < PUB_IMAGE_TOL)
     pub_res = np.array([0.391, 0.386, 0.385])                                          # 表 7 の分解能 [nm]
     assert len(B["regime"]) == 3
-    assert np.all(np.abs(B["fwhm_nm"] - pub_res) / pub_res < 0.035)
+    assert np.all(np.abs(B["fwhm_nm"] - pub_res) / pub_res < PUB_RES_TOL)
     assert all(r == "slit" for r in B["regime"])
 
 

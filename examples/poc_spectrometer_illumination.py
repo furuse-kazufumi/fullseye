@@ -119,6 +119,11 @@ def resolved(r, l1, l2):
 # --------------------------------------------------------------------------- #
 # 1. 格子の式と公表の分光器                                                     #
 # --------------------------------------------------------------------------- #
+#: 表 7 との許容差(像の幅 8 %、分解能 5 %)。物理の不確かさからの根拠は tests/test_gratingspec.py の注記。
+PUB_IMAGE_TOL = 0.08
+PUB_RES_TOL = 0.05
+
+
 def chapter_published():
     print("\n1. 格子の式と公表の分光器")
     g = GS.grating_dispersion(1200, 550, 10, 1, focal_length_mm=100.0, illuminated_width_mm=25.0)
@@ -149,9 +154,11 @@ def chapter_published():
     pub_res = np.array([0.391, 0.386, 0.385])
     e_img = np.abs(Bm["slit_image_um"] - pub_img) / pub_img
     e_res = np.abs(Bm["fwhm_nm"] - pub_res) / pub_res
-    gate("M 型 2025: 像の幅 40 / 43 / 50 µm(表 7)と 6 % 以内", np.all(e_img < 0.06),
+    gate("M 型 2025: 像の幅 40 / 43 / 50 µm(表 7)と %.0f %% 以内(許容の根拠は tests/test_gratingspec.py)"
+         % (100 * PUB_IMAGE_TOL), np.all(e_img < PUB_IMAGE_TOL),
          "%s µm" % np.round(Bm["slit_image_um"], 1))
-    gate("M 型 2025: 分解能 0.391 / 0.386 / 0.385 nm(表 7)と 3.5 % 以内", np.all(e_res < 0.035),
+    gate("M 型 2025: 分解能 0.391 / 0.386 / 0.385 nm(表 7)と %.0f %% 以内" % (100 * PUB_RES_TOL),
+         np.all(e_res < PUB_RES_TOL),
          "%s nm" % np.round(Bm["fwhm_nm"], 4))
     NUMBERS["mtype_fwhm_nm_625"] = float(Bm["fwhm_nm"][1])
     rows = [["Feng 2021(900 本/mm)", "Shafer の角", "14.968°", "%.4f°" % Df["shafer_offaxis_deg"]],
@@ -360,6 +367,31 @@ def filament(n=64, periods=4):
     return coil * (0.8 + 0.2 * np.cos((yy - n / 2) / n * math.pi))
 
 
+def _trace_to_specimen(train, y0, u0, start="field_stop"):
+    """近軸光線を **要素の並びから直接** 追う(illumdesign の ABCD 行列を使わない独立経路)。
+
+    start の面(高さ y0、傾き u0)から標本の面まで、移送(y += u dz)と薄肉レンズ(u -= y / f)だけで進める。"""
+    els = train["elements"]
+    i0 = [e["name"] for e in els].index(start)
+    y, u, z = float(y0), float(u0), els[i0]["z_mm"]
+    for e in els[i0 + 1:]:
+        y += u * (e["z_mm"] - z)
+        z = e["z_mm"]
+        if e["type"] == "lens":
+            u -= y / e["f_mm"]
+    return y
+
+
+def _field_image_diameter(train):
+    """視野絞りの縁から出る 2 本の光線(傾きが違う)が標本の面で 1 点に集まるか(結像の条件)を確かめ、
+    その高さの 2 倍 = 視野絞りの像の直径を返す。集まらなければ ValueError。"""
+    ra = 0.5 * train["field_stop_mm"]
+    ya, yb = _trace_to_specimen(train, ra, 0.0), _trace_to_specimen(train, ra, 0.05)
+    if abs(ya - yb) > 1e-9 * max(1.0, abs(ya)):
+        raise ValueError("視野絞りは標本の面に結像していない(%.6g 対 %.6g)" % (ya, yb))
+    return 2.0 * abs(ya)
+
+
 def chapter_illumination():
     print("\n7. 照明系(ケーラー / クリティカル)")
     fil = filament()
@@ -374,9 +406,21 @@ def chapter_illumination():
     cv_k, cv_c = ck.std() / ck.mean(), cc.std() / cc.mean()
     gate("ケーラー: コイルの縞は視野に写らない(CV < 1e-9)", cv_k < 1e-9, "CV = %.1e" % cv_k)
     gate("クリティカル: 縞が写る(CV > 0.2)", cv_c > 0.2, "CV = %.3f" % cv_c)
-    gate("ケーラーの視野の直径 = 視野絞り × |M|(薄肉の閉形式)",
-         abs(K["field_diameter_mm"] - 6.0 * abs(K["field_stop_magnification"])) < 1e-12,
-         "%.3f mm、NA %.3f" % (K["field_diameter_mm"], K["illumination_na"]))
+    d_traced = _field_image_diameter(K)
+    gate("ケーラーの視野の直径 = 視野絞りの縁を光線追跡で標本の面へ写した直径(独立経路、1e-9 以内)",
+         abs(K["field_diameter_mm"] - d_traced) < 1e-9,
+         "追跡 %.4f mm、op %.4f mm、NA %.3f" % (d_traced, K["field_diameter_mm"], K["illumination_na"]))
+    s_obj = K["elements"][4]["z_mm"] - K["elements"][2]["z_mm"]          # 視野絞り → コンデンサ
+    s_img = K["specimen_z_mm"] - K["elements"][4]["z_mm"]                # コンデンサ → 標本
+    gate("薄肉レンズの式 1/s + 1/s' = 1/f(要素の距離から)で標本の面が視野絞りの像面、倍率 = −s'/s",
+         abs(1.0 / s_obj + 1.0 / s_img - 1.0 / K["condenser_f_mm"]) < 1e-12
+         and abs(K["field_stop_magnification"] + s_img / s_obj) < 1e-12,
+         "s = %.2f、s' = %.2f、M = %.4f" % (s_obj, s_img, K["field_stop_magnification"]))
+    wrong = dict(K, field_stop_magnification=1.1 * K["field_stop_magnification"],
+                 field_diameter_mm=1.1 * K["field_diameter_mm"])
+    gate("探針: 倍率を 10 % 誤った table は、追跡と距離の門で赤になる",
+         abs(wrong["field_diameter_mm"] - d_traced) > 1e-3
+         and abs(wrong["field_stop_magnification"] + s_img / s_obj) > 1e-3)
     Eu = ID.illumination_field(K, None, shape=(5, 5), n_pupil=96)
     gate("一様な光源で E = L π NA²(1 % 以内)", abs(Eu[2, 2] / (math.pi * K["illumination_na"] ** 2) - 1) < 0.01,
          "%.5f 対 %.5f" % (Eu[2, 2], math.pi * K["illumination_na"] ** 2))

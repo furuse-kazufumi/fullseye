@@ -48,7 +48,7 @@
     (2-19)〜(2-23)、(2-24)、(2-27)、(8-11a)、(8-12)、6.2.1 節の Czerny–Turner、7.2 節の line curvature)。
   * A. B. Shafer, L. R. Megill, L. Droppleman, "Optimization of the Czerny–Turner spectrometer",
     *J. Opt. Soc. Am.* 54(7):879-887, 1964 —— コマを消す条件(式の形は下の Feng ほか 2021 の式 (18) で確認)。
-  * M. C. Hutley, *Diffraction Gratings*, Academic Press, 1982 —— 円錐回折と line curvature。
+  * M. C. Hutley, *Diffraction Gratings*, 1982 —— 円錐回折と line curvature。
   * W. G. Fastie, "Image forming properties of the Ebert monochromator", *J. Opt. Soc. Am.* 42:647-651, 1952
     —— Littrow の線の曲率半径 f / (2 tan β)。
   * 公表の分光器の照合(CC BY 4.0、PoC の門):
