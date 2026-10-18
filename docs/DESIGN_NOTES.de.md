@@ -534,7 +534,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L748** _(ja)_ — ★最初は「相対 3 % 以内」と書いて、真値 30 個で 1 個ずれた 0.033 で落ちた —— 言いたかったのは 「誤っても 1 個ぶん」なので、個数の差で書き直した(2026-10-18)。真値は画面の外に出た細胞も 数えているので、1 個の差の一部は op でなく真値の規約の側にある(どれかは区別していない)。
 - **L751** _(ja)_ — ★2 回目: 1 個ぶんでも足りなかった(最大 2 個、600 枚の全数で)。ずれの大きさは印字に残し、 門は「自信をもった誤りの件数」だけにする —— 合わせ直すたびに門を緩めるのは門ではないので、 ここで止める。
-- **L844** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
+- **L846** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 
@@ -2121,7 +2121,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_blob2d.py`
 
-- **L442** — ★Alle drei Objekte müssen unterschiedliche Formen haben. Ein Seed mit gleichen, aufgereihten Formen lässt circularity und holes alle denselben Wert zurückgeben und verdeckt so einen "op, der bei jedem Regler dieselbe Zahl liefert".
+- **L443** — ★Alle drei Objekte müssen unterschiedliche Formen haben. Ein Seed mit gleichen, aufgereihten Formen lässt circularity und holes alle denselben Wert zurückgeben und verdeckt so einen "op, der bei jedem Regler dieselbe Zahl liefert".
 
 ## `tests/test_caltab.py`
 
