@@ -243,10 +243,27 @@ def _hero_montage(cap: dict) -> str:
     buf = io.BytesIO()
     sheet.save(buf, "JPEG", quality=JPEG_Q, optimize=True)
     data = buf.getvalue()
-    # 内容が同じなら書かない(mtime だけ動いて差分に見えるのを避ける)
-    if not (os.path.exists(dst) and io.open(dst, "rb").read() == data):
+    # 内容が同じなら書かない(mtime だけ動いて差分に見えるのを避ける)。バイトでなく画素で比べる:
+    # Pillow 12 と 13 では LANCZOS の丸めと JPEG のバイトが違い(平均 0.017 段・最大 17 段、2026-10-18 実測)、
+    # バイト比較だと手元(12)で作った看板が Linux の CI(13)の --check で毎回赤になる。
+    if not (os.path.exists(dst) and _same_picture(dst, data)):
         io.open(dst, "wb").write(data)
     return MONTAGE
+
+
+#: 看板を「同じ絵」とみなす画素差の上限(0〜255 の平均絶対差)。タイルが 1 枚変われば桁で超える
+MONTAGE_SAME_MEAN_ABS = 0.5
+
+
+def _same_picture(path: str, data: bytes) -> bool:
+    """既存の看板と新しい JPEG が同じ絵か(大きさが同じで、画素の平均絶対差が上限未満)。"""
+    import numpy as np
+    from PIL import Image
+    if io.open(path, "rb").read() == data:
+        return True
+    a = np.asarray(Image.open(path).convert("RGB"), dtype=np.int16)
+    b = np.asarray(Image.open(io.BytesIO(data)).convert("RGB"), dtype=np.int16)
+    return a.shape == b.shape and float(np.abs(a - b).mean()) < MONTAGE_SAME_MEAN_ABS
 
 
 _OP_URL = None
