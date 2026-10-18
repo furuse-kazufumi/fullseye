@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 80 項目**
+**収録 85 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -30,9 +30,11 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
 | [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
 | [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -52,10 +54,13 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
+| [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
@@ -74,7 +79,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (28)
+## 測る (30)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -276,6 +281,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_pod_lighting`
 
+### [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+粗さは断面(または面)から平均線(うねり)を引いて残りを測ります。普通のガウスフィルタは深い傷に引かれて平均線が傷の側へ凹み、**傷の両側の健全な面が山に見えます**(PoC の実測で、傷の脇の粗さが真値の 2.5 倍)。`roughness` 族の新しい 3 本は、Tukey の biweight で傷の重みを下げながら反復し、平均線を傷から守ります。
+
+使う op: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+推奨パイプライン: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+代替: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+限界: 傷の標本が 4 割を超えると平均線が傷側へ破綻する(合成断面の実測で 35 % までは雑音の床、40 % で 3.5 µm)。外れ値の無い断面でもロバスト版は線形と一致しない(biweight が雑音の裾を刈る)。傷が窓(既定 ±λc)より広いと外挿せず拒否する。収束しなければ値を返さない。次数 2 は出していない。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。
+
+実寸校正: 平均線の真値は測定器では得られない。標本間隔 dx(µm)とカットオフ λc(測定条件で決まる値)は呼び出し側が与え、単位を混ぜても検出できない。伝達関数は dx と λc だけで決まる閉形式なので、既知波長の正弦を通して λc で 0.5 になるかを現場の設定で確かめられる。
+
+動く例: `poc_robust_profile_filter`, `example_robust_profile_filter`
+
 ### [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md)
 
 線状の傷を**どこにあるか**(検出)と**どれだけ太いか**(幅)の 2 段で扱います。検出は Hessian リッジ応答(`lines_gauss`)か暗い細部だけを浮かせる形態学(`bothat`)、幅は検出した線に**直交する測定線**を張って `measure_pairs` で両側のエッジをサブピクセルで取り、`table_px_to_mm` で mm にします。
@@ -299,6 +320,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 使う op: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 動く例: `poc_sem_wafer_defect_edge_bias`
+
+### [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md)
+
+商用の逐次光学設計ソフトで毎日使う 4 つの道具を、Fullseye の op として足しました。
+
+使う op: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`
+
+推奨パイプライン: [`lens_system`](ops/optics/design/lens_system.md) → [`psf_from_opd`](ops/optics/imaging_sim/psf_from_opd.md) → [`encircled_energy`](ops/optics/imaging/encircled_energy.md) → [`energy_radii`](ops/optics/imaging/energy_radii.md) → [`mtf_tangential_sagittal`](ops/optics/imaging/mtf_tangential_sagittal.md) → [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md)
+
+代替: [`psf_to_mtf`](ops/optics/imaging/psf_to_mtf.md), [`mtf_diffraction`](ops/optics/imaging/mtf_diffraction.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`opd_map`](ops/optics/design/opd_map.md), [`wavefront_from_opd`](ops/optics/design/wavefront_from_opd.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: 理想レンズ面の光路は軸上の物点(第 1 面で有限物体なら光線ごとの物点)に対して等光路で、途中の理想レンズでは平行入射を仮定する(収束光の中の理想レンズの OPD は近似)。理想レンズは非共軸の raytrace3d では読まず、鏡・円錐・非球面・硝材を持たない。囲み/四角エネルギーは PSF の窓の中の割合で、窓が翼を切ると高めに出る(切れて届かない割合は ValueError)。半径が 2 画素前後より小さいと PSF の点標本を画素に均等に広げた近似が効く。スルーフォーカス MTF は 1 視野 1 波長ずつ(多色は波長ごとに呼ぶ)。
+
+実寸校正: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pitch_um、または細かい格子の間隔 λ·F#·(size−1)/M)で決まり、周波数は cycles/mm。ピッチを間違えると半径が比例して狂う(探針で確認)。
+
+動く例: `optical_design_metrics`
 
 ### [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md)
 
@@ -428,23 +465,39 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (10)
+## 見つける (12)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
 連結成分にラベルを付け、面積・形・位置で選び、数えます。接触している対象は分水嶺で分けられます。
 
-使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`
+使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`, `blob_count_interval`
 
 推奨パイプライン: [`auto_threshold`](ops/2d/segmentation/auto_threshold.md) → [`blob_label`](ops/blob/connect/blob_label.md) → [`blob_select`](ops/blob/select/blob_select.md) → [`blob_features`](ops/blob/measure/blob_features.md)
 
-代替: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
+代替: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`blob_count_interval`](ops/blob/split/blob_count_interval.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
 
 限界: 計数が合っていて分割が全部外れる点がある(`poc_cell_counting`)—— 数と形を別に数える。粒度分布で D50 が合う点は「正確」ではなく融合と縁切れの打ち消し(`poc_particle_sizing`)。
 
 実寸校正: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
-動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`, `poc_dense_bubble_count`
+
+### [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md)
+
+水田や畑の RGB 画像(UAV・定点カメラ)から、作物の画素と雑草の画素を分け、雑草の程度を段階(少ない / 中程度 / 多い / 甚大)で答えます。深層学習は使わず、色の指標と肌理の特徴を領域ごとに出し、2 クラスの Fisher 線形判別(閉形式)で分けます。
+
+使う op: `plant_color_index`, `superpixel_color_texture_features`, `fisher_lda_fit`, `fisher_lda_score`, `cover_ratio_grade`
+
+推奨パイプライン: [`superpixel_color_texture_features`](ops/segmentation/plant/superpixel_color_texture_features.md) → [`fisher_lda_fit`](ops/segmentation/classify/fisher_lda_fit.md) → [`fisher_lda_score`](ops/segmentation/classify/fisher_lda_score.md) → [`cover_ratio_grade`](ops/segmentation/plant/cover_ratio_grade.md)
+
+代替: [`plant_color_index`](ops/segmentation/plant/plant_color_index.md), [`snic_superpixels`](ops/segmentation/graph/snic_superpixels.md), [`class_ndim_norm`](ops/segmentation/classify/class_ndim_norm.md)
+
+限界: 判別は 10 特徴の 1 次式で、色と肌理が作物と雑草でほとんど同じ(雑草イネ)だと位置の精度は IoU 0.4 程度。季節の違う飛行への汎化は弱い(撮影日を丸ごと外すと日の中の相関 0.14 の日がある)。暗い画素は色度が決まらず値を作らない。
+
+実寸校正: 画像は uint8 か [0, 1] の float。照明の色が変わる圃場では、白板か灰色の板で白を合わせてから色指標を取る(色度座標の指標は一様な明るさの倍率には不変だが、色温度の変化には不変でない)。
+
+動く例: `poc_weed_rice_ratio`
 
 ### [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md)
 
@@ -469,6 +522,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 使う op: `glyph_correct_spec`, `glyph_make_spec`, `glyph_find_text_lines`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
 
 動く例: `fix_text_in_image`, `poc_glyph_typo_detection`
+
+### [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md)
+
+位置をそろえた良品の画像を何枚か渡すと、画素ごとの「いつもの値」(中心)と「いつものばらつき」を覚え、新しい 1 枚のどの画素が許容帯の外にあるか、何 σ 外れたかを領域ごとに説明します。外観検査の古典(良品統計・バリエーションモデル)ですが、帯の幅 k を手で決めずに、**1 画素あたりの誤検出率を宣言して**分布から決めます。
+
+使う op: `varmodel_alignment`, `varmodel_band_k`, `varmodel_fit`, `varmodel_calibrate`, `varmodel_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_region_overlap`, `compare_to_golden`
+
+推奨パイプライン: [`varmodel_alignment`](ops/spc/variation/varmodel_alignment.md) → [`varmodel_fit`](ops/spc/variation/varmodel_fit.md) → [`varmodel_calibrate`](ops/spc/variation/varmodel_calibrate.md) → [`varmodel_score`](ops/spc/variation/varmodel_score.md)
+
+代替: `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md), [`anomaly_pro`](ops/spc/anomaly_eval/anomaly_pro.md)
+
+限界: 並進だけを合わせる。回転・拡大・照明の違いが残る実画像では宣言の誤検出率は守られない(VisA pcb1 で宣言 1e-3 に対し 3.8 %、持ち出しの較正後も 2.4 %)。確率的なテクスチャには効かない(DAGM 2007 で偶然並み)。
+
+実寸校正: 帯は画素値の単位のまま。欠陥の大きさを実寸で言うなら、既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
+
+動く例: `poc_good_sample_variation_model`, `anomaly_eval_metrics`
 
 ### [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md)
 
@@ -1006,7 +1075,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `xlsx_report`
 
-## 見せる (4)
+## 見せる (5)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -1047,6 +1116,22 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 実寸校正: 描画のみ。実寸校正は不要。
 
 動く例: `annotate_paper_tour`
+
+### [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md)
+
+面を張れない点群 —— 細胞の位置、LiDAR、SfM の疎な点、粒子 —— を、点のまま RGB の絵にします。点は小数画素の位置に足跡(gaussian / disc / point)を落とし、**深さの順に**アルファ合成(over)するか、**光の総量を保って**足します(add、数の密度の地図になる)。カメラは `project_points` / `render_point_depth` と同じ OpenCV の規約(+Z が前)で、正射影は K を省くと点群を画像に収めます。
+
+使う op: `points_render`, `render_point_depth`, `project_points`
+
+推奨パイプライン: [`points_render`](ops/3d/render/points_render.md)
+
+代替: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
+
+限界: 正射影の自動の収め方は R, t を当てた後の XY の箱で決まる(透視は K が要る)。disc の足跡は画素に量子化されるので、像の重心は半径 1〜1.5 画素で最大 0.05 画素ずれる(小数画素の位置を見るなら gaussian、1e-3 画素以内)。over は点ごとの不透明度で重ねるので、奥の密度は手前に隠れる —— 数を見るなら add。点 × 足跡の組が 4,000 万を超える描画は拒否する。
+
+実寸校正: 画素校正は無い。縮尺が要るなら K の fx(画素 / 座標単位)から スケールバーを置く(annotate_scale_bar)。
+
+動く例: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
 

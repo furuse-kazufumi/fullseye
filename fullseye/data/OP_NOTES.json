@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3394,
- "n_notes": 3400,
+ "n_ops": 3421,
+ "n_notes": 3427,
  "notes": {
   "vol_dilate": [
    {
@@ -1631,6 +1631,16 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/edges/tf_steerable_filter.md"
+   }
+  ],
+  "xdog": [
+   {
+    "op": "xdog",
+    "dim": "2d",
+    "category": "edges",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/edges/xdog.md"
    }
   ],
   "xkor_dog": [
@@ -7571,6 +7581,16 @@
     "path": "docs/ops/2d/smoothing/isotropic_diffusion.md"
    }
   ],
+  "kuwahara": [
+   {
+    "op": "kuwahara",
+    "dim": "2d",
+    "category": "smoothing",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/smoothing/kuwahara.md"
+   }
+  ],
   "mean_box": [
    {
     "op": "mean_box",
@@ -9364,6 +9384,16 @@
     "in": "points",
     "out": "volume",
     "path": "docs/ops/2d/typed/tb_plane_segmentation.md"
+   }
+  ],
+  "tb_points_render": [
+   {
+    "op": "tb_points_render",
+    "dim": "2d",
+    "category": "typed",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/2d/typed/tb_points_render.md"
    }
   ],
   "tb_points_to_voxel": [
@@ -12572,6 +12602,16 @@
     "path": "docs/ops/3d/render/phong_shade.md"
    }
   ],
+  "points_render": [
+   {
+    "op": "points_render",
+    "dim": "3d",
+    "category": "render",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/3d/render/points_render.md"
+   }
+  ],
   "project_points": [
    {
     "op": "project_points",
@@ -14776,6 +14816,16 @@
     "in": "labels2d",
     "out": "labels2d",
     "path": "docs/ops/blob/select/blob_select_largest.md"
+   }
+  ],
+  "blob_count_interval": [
+   {
+    "op": "blob_count_interval",
+    "dim": "blob",
+    "category": "split",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/blob/split/blob_count_interval.md"
    }
   ],
   "blob_distance": [
@@ -27913,6 +27963,36 @@
     "path": "docs/ops/optics/imaging/edge_spread.md"
    }
   ],
+  "encircled_energy": [
+   {
+    "op": "encircled_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/encircled_energy.md"
+   }
+  ],
+  "energy_radii": [
+   {
+    "op": "energy_radii",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/energy_radii.md"
+   }
+  ],
+  "ensquared_energy": [
+   {
+    "op": "ensquared_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/ensquared_energy.md"
+   }
+  ],
   "mtf50": [
    {
     "op": "mtf50",
@@ -27930,6 +28010,16 @@
     "category": "imaging",
     "out": "pairs",
     "path": "docs/ops/optics/imaging/mtf_diffraction.md"
+   }
+  ],
+  "mtf_tangential_sagittal": [
+   {
+    "op": "mtf_tangential_sagittal",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/mtf_tangential_sagittal.md"
    }
   ],
   "psf_to_mtf": [
@@ -28019,6 +28109,16 @@
     "in": "image2d × table",
     "out": "image2d",
     "path": "docs/ops/optics/imaging_sim/render_through_lens.md"
+   }
+  ],
+  "through_focus_mtf": [
+   {
+    "op": "through_focus_mtf",
+    "dim": "optics",
+    "category": "imaging_sim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/imaging_sim/through_focus_mtf.md"
    }
   ],
   "brewster_angle_deg": [
@@ -31941,6 +32041,36 @@
     "path": "docs/ops/roughness/measure/surface_psd.md"
    }
   ],
+  "robust_gaussian_profile": [
+   {
+    "op": "robust_gaussian_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_profile.md"
+   }
+  ],
+  "robust_gaussian_surface": [
+   {
+    "op": "robust_gaussian_surface",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_surface.md"
+   }
+  ],
+  "robust_spline_profile": [
+   {
+    "op": "robust_spline_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_spline_profile.md"
+   }
+  ],
   "surface_filter": [
    {
     "op": "surface_filter",
@@ -32008,6 +32138,26 @@
     "in": "image2d × signal",
     "out": "labels2d",
     "path": "docs/ops/segmentation/classify/classify_image_class_lut.md"
+   }
+  ],
+  "fisher_lda_fit": [
+   {
+    "op": "fisher_lda_fit",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_fit.md"
+   }
+  ],
+  "fisher_lda_score": [
+   {
+    "op": "fisher_lda_score",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_score.md"
    }
   ],
   "learn_ndim_norm": [
@@ -32268,6 +32418,36 @@
     "in": "images",
     "out": "labels2d",
     "path": "docs/ops/segmentation/grow/regiongrowing_n.md"
+   }
+  ],
+  "cover_ratio_grade": [
+   {
+    "op": "cover_ratio_grade",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/cover_ratio_grade.md"
+   }
+  ],
+  "plant_color_index": [
+   {
+    "op": "plant_color_index",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/plant_color_index.md"
+   }
+  ],
+  "superpixel_color_texture_features": [
+   {
+    "op": "superpixel_color_texture_features",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/superpixel_color_texture_features.md"
    }
   ],
   "seg_boundary_f": [
@@ -32921,6 +33101,46 @@
     "path": "docs/ops/simcal/report/simcal_report.md"
    }
   ],
+  "anomaly_image_auroc": [
+   {
+    "op": "anomaly_image_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_image_auroc.md"
+   }
+  ],
+  "anomaly_pixel_auroc": [
+   {
+    "op": "anomaly_pixel_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_auroc.md"
+   }
+  ],
+  "anomaly_pro": [
+   {
+    "op": "anomaly_pro",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pro.md"
+   }
+  ],
+  "anomaly_region_overlap": [
+   {
+    "op": "anomaly_region_overlap",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_region_overlap.md"
+   }
+  ],
   "spc_capability": [
    {
     "op": "spc_capability",
@@ -33139,6 +33359,55 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/spc/uncertainty/gum_validate.md"
+   }
+  ],
+  "varmodel_alignment": [
+   {
+    "op": "varmodel_alignment",
+    "dim": "spc",
+    "category": "variation",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_alignment.md"
+   }
+  ],
+  "varmodel_band_k": [
+   {
+    "op": "varmodel_band_k",
+    "dim": "spc",
+    "category": "variation",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_band_k.md"
+   }
+  ],
+  "varmodel_calibrate": [
+   {
+    "op": "varmodel_calibrate",
+    "dim": "spc",
+    "category": "variation",
+    "in": "table × video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_calibrate.md"
+   }
+  ],
+  "varmodel_fit": [
+   {
+    "op": "varmodel_fit",
+    "dim": "spc",
+    "category": "variation",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_fit.md"
+   }
+  ],
+  "varmodel_score": [
+   {
+    "op": "varmodel_score",
+    "dim": "spc",
+    "category": "variation",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_score.md"
    }
   ],
   "deflectometry_phase_to_slope": [

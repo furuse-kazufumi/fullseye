@@ -316,7 +316,8 @@ def test_surface_params_fails_closed(kw, msg):
 def test_surface_filter_transmission_follows_iso(lam_f):
     """うねり側の振幅が ISO の透過率 exp(-π (α λc f)²) に載る。
 
-    打ち切り ``±λc/2`` のぶん最大 +0.0096 ずれる(実測、λ=λc で最大)。
+    打ち切り ``±0.75λc``(4σ)で最大 1e-4 未満(実測)。規格の文面の ``±λc/2`` だと
+    λ=λc で +0.0096 ずれていた(2026-10-18 に直した)。
     """
     lam_c, dx = 80.0, 1.0
     n = int(lam_f) * max(2, int(math.ceil(640.0 / lam_f)))
@@ -327,7 +328,7 @@ def test_surface_filter_transmission_follows_iso(lam_f):
     amp = math.hypot(2 * float(np.mean(row * np.cos(2 * np.pi * g / lam_f))),
                      2 * float(np.mean(row * np.sin(2 * np.pi * g / lam_f))))
     iso = math.exp(-math.pi * (R.GAUSS_ALPHA * lam_c / lam_f) ** 2)
-    assert abs(amp - iso) < 0.011
+    assert abs(amp - iso) < 1e-3
     assert np.allclose(rough + wavy, z, atol=1e-12)   # 分配は完全(消えも湧きもしない)
 
 
@@ -340,7 +341,34 @@ def test_surface_filter_halves_at_the_cutoff():
     row = wavy[n // 2]
     amp = math.hypot(2 * float(np.mean(row * np.cos(2 * np.pi * g / lam))),
                      2 * float(np.mean(row * np.sin(2 * np.pi * g / lam))))
-    assert amp == pytest.approx(0.5, abs=0.012)
+    assert amp == pytest.approx(0.5, abs=1e-3)
+
+
+def _wave_transmission(lam_c, lam_f, dx=1.0):
+    n = int(lam_f) * max(2, int(math.ceil(640.0 / lam_f)))
+    g = np.arange(n) * dx
+    _, wavy = R.surface_filter(_sine(n, dx, lam_f), dx, lambda_c=lam_c, end_effect="wrap")
+    row = wavy[n // 2]
+    return math.hypot(2 * float(np.mean(row * np.cos(2 * np.pi * g / lam_f))),
+                      2 * float(np.mean(row * np.sin(2 * np.pi * g / lam_f))))
+
+
+@pytest.mark.parametrize("lam_c", [32.0, 64.0, 80.0])
+def test_surface_filter_transmission_is_one_half_at_lambda_c_and_closed_form_around_it(lam_c):
+    """ISO 16610-21: T(λc) は**ちょうど** 0.5(|T-0.5|<1e-3)、λc/2 と 2λc でも閉形式
+    ``exp(-π (α λc / λ)²)`` に合う。直す前は λc で 0.5095 だった(打ち切り ±λc/2 の裾の欠け)。"""
+    assert abs(_wave_transmission(lam_c, lam_c) - 0.5) < 1e-3
+    for lam_f in (0.5 * lam_c, 2.0 * lam_c):
+        iso = math.exp(-math.pi * (R.GAUSS_ALPHA * lam_c / lam_f) ** 2)
+        assert abs(_wave_transmission(lam_c, lam_f) - iso) < 1e-3
+
+
+def test_surface_filter_truncation_is_four_sigma_and_kernel_is_normalised():
+    """打ち切りは ±GAUSS_TRUNCATE·λc = 4σ(規格の文面の ±λc/2 = 2.67σ ではない)で、核の総和は 1。"""
+    sigma = R.GAUSS_ALPHA * 80.0 / math.sqrt(2.0 * math.pi)
+    assert R.GAUSS_TRUNCATE * 80.0 / sigma == pytest.approx(4.0, abs=0.01)
+    w = R._gauss_weights(80.0, 1.0)
+    assert w.size == 2 * 60 + 1 and w.sum() == pytest.approx(1.0, abs=1e-15)
 
 
 def test_surface_filter_reject_is_exact_where_it_returns_values():
@@ -350,7 +378,7 @@ def test_surface_filter_reject_is_exact_where_it_returns_values():
     桁違いに壊れる。傾きを除けば wrap と mirror に差はほとんど無い。
     """
     nb, n, dx, lam_c = 352, 256, 1.0, 40.0
-    m = int(math.ceil(0.5 * lam_c / dx))
+    m = int(math.ceil(R.GAUSS_TRUNCATE * lam_c / dx))
     yy, xx = np.mgrid[0:nb, 0:nb].astype(np.float64) * dx
     big, _ = R.surface_synth_psd(nb, dx, 0.8, 2.0, 32.0, 0.08, 4242)
     big = big + 0.25 * np.cos(2 * np.pi * yy / 16.0) \

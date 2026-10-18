@@ -44,7 +44,7 @@ P(R, R') ⇔ |R̄ − R̄'| ≤ √(b²(R) + b²(R'))、b(R) = g √(ln(|R_|R||/
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`graph`)
 

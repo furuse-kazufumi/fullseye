@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">robust_gaussian_surface — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">depth</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">roughness.robust_gaussian_surface</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(roughness, mean_surface, info)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Robust Gaussian regression filter (surface): surface की waviness और roughness, जिसे scratches और spikes खींच नहीं पाते।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">robust_gaussian_profile</code> の 2 次元版(核は x・y に可分、局所面 <code style="color:#22d3bf">c + p u + q v</code> の回帰、biweight は面全体の残差の中央値で作る)。重みが非可分でも、必要なのは重み画像と <code style="color:#22d3bf">u^a v^b</code> を掛けた核との可分相関だけなので、 <code style="color:#22d3bf">O(N · 窓幅)</code> で済む。</p>
+<p>戻り値は <code style="color:#22d3bf">(roughness, mean_surface, info)</code>。端は削らず全面を返す。引数・fail-closed は断面版と同じ(<code style="color:#22d3bf">dy=None</code> は正方画素、<code style="color:#22d3bf">z</code> は 8x8 以上の 2 次元)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

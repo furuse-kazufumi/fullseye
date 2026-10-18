@@ -6166,6 +6166,23 @@
    }
   },
   {
+   "id": "poc_dense_bubble_count",
+   "group": "wing_industrial",
+   "media": "12_pair_merging.gif",
+   "motion": true,
+   "thumb_src": "01_real_bubbles_verdict.png",
+   "label": {
+    "ja": "密集した泡を数える(決まらなければ区間)",
+    "en": "Counting dense bubbles (an interval when undecidable)",
+    "zh": "密集气泡计数(无法确定时给出区间)",
+    "tw": "密集氣泡計數(無法確定時給出區間)",
+    "ko": "밀집한 기포 세기(결정할 수 없으면 구간)",
+    "de": "Dichte Blasen zählen (Intervall, wenn nicht entscheidbar)",
+    "hi": "घने bubbles गिनना (तय न हो तो interval)",
+    "fr": "Compter des bulles denses (un intervalle quand c'est indécidable)"
+   }
+  },
+  {
    "id": "poc_optics_drawings",
    "group": "wing_metrology",
    "media": "06_setup_ring_coaxial.png",
@@ -6368,6 +6385,74 @@
     "hi": "रोशनी और ओट में code matching",
     "fr": "Appariement de codes sous lumière variable et occlusion"
    }
+  },
+  {
+   "id": "poc_good_sample_variation_model",
+   "group": "wing_industrial",
+   "media": "01_band_width_alignment.png",
+   "motion": false,
+   "thumb_src": "01_band_width_alignment.png",
+   "label": {
+    "ja": "良品統計の変動モデル",
+    "en": "Good-sample variation model",
+    "zh": "良品统计变动模型",
+    "tw": "良品統計變動模型",
+    "ko": "양품 통계 변동 모델",
+    "de": "Variationsmodell aus Gutteilen",
+    "hi": "अच्छे samples का variation model",
+    "fr": "Modèle de variation des pièces bonnes"
+   }
+  },
+  {
+   "id": "poc_weed_rice_ratio",
+   "group": "wing_astroenv",
+   "media": "05_real_examples.png",
+   "motion": false,
+   "thumb_src": "05_real_examples.png",
+   "label": {
+    "ja": "水田の雑草の被度を 4 段階で",
+    "en": "Grading weed cover in rice paddies",
+    "zh": "把稻田杂草覆盖度分为 4 级",
+    "tw": "把稻田雜草覆蓋度分為 4 級",
+    "ko": "논의 잡초 피도를 4단계로",
+    "de": "Unkrautdeckung im Reisfeld in 4 Stufen",
+    "hi": "धान के खेत में खरपतवार cover के 4 grade",
+    "fr": "Classer en 4 niveaux le taux de couverture des adventices en rizière"
+   }
+  },
+  {
+   "id": "poc_robust_profile_filter",
+   "group": "wing_metrology",
+   "media": "04_scratched_surface.png",
+   "motion": false,
+   "thumb_src": "04_scratched_surface.png",
+   "label": {
+    "ja": "深い傷が平均線を凹ませる量と、ロバスト化の破綻点",
+    "en": "How far a scratch dents the mean line, and where robust filters break",
+    "zh": "划痕把平均线压凹多少,以及稳健滤波的失效点",
+    "tw": "刮痕把平均線壓凹多少,以及穩健濾波的失效點",
+    "ko": "흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점",
+    "de": "Wie weit ein Kratzer die Mittellinie eindellt und wo robuste Filter brechen",
+    "hi": "scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं",
+    "fr": "De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent"
+   }
+  },
+  {
+   "id": "poc_flybrain_pointcloud",
+   "group": "connectome",
+   "media": "03_rotation.gif",
+   "motion": true,
+   "thumb_src": "02_rotation_first_frame.png",
+   "label": {
+    "ja": "ハエの脳を細胞体の点で描く",
+    "en": "The fly brain as 126k cell bodies",
+    "zh": "用细胞体的点画出苍蝇的脑",
+    "tw": "用細胞體的點畫出蒼蠅的腦",
+    "ko": "세포체의 점으로 그린 파리의 뇌",
+    "de": "Das Fliegenhirn aus 126 000 Zellkörpern",
+    "hi": "126k cell bodies से fly brain",
+    "fr": "Le cerveau de la mouche en 126 000 corps cellulaires"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6551,6 +6636,14 @@
     "de": "Optische Zeichnungen (Linsenschnitte, Aufbauzeichnungen und Einzellinsen-Fertigungszeichnungen nach ISO 10110 als SVG / DXF)",
     "hi": "optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में)",
     "fr": "Dessins de systèmes optiques (coupes de lentilles, schémas d'implantation de systèmes d'imagerie et dessins de fabrication de lentilles simples en SVG / DXF)"
+   },
+   "sequential-lens-design-metrics": {
+    "zh": "顺序光学设计的指标(理想透镜面、环围能量、子午与弧矢 MTF、离焦 MTF)",
+    "tw": "循序光學設計的指標(理想透鏡面、環圍能量、子午與弧矢 MTF、離焦 MTF)",
+    "ko": "순차 광학 설계의 지표(이상 렌즈면, 포위 에너지, 자오와 구결 MTF, 스루포커스 MTF)",
+    "de": "Kennzahlen des sequenziellen Linsenentwurfs (ideale Linsenfläche, eingeschlossene Energie, tangentiale und sagittale MTF, Through-Focus-MTF)",
+    "hi": "sequential lens design के metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
+    "fr": "Indicateurs de conception optique séquentielle (surface de lentille idéale, énergie encerclée, FTM tangentielle et sagittale, FTM à travers le foyer)"
    },
    "illumination-cone-vs-na": {
     "zh": "用照明光锥与观察 NA 显现或隐藏镜面的微小倾斜(球冠的交集 → 倾斜的带 → 凹痕、划伤、喷砂面的不匀)",
@@ -7095,6 +7188,38 @@
     "de": "Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen)",
     "hi": "नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ)",
     "fr": "Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues)"
+   },
+   "crop-weed-cover-grade": {
+    "zh": "从田间 RGB 用颜色与纹理区分作物和杂草,并按事先声明的边界给杂草覆盖度分级(不用学习器)",
+    "tw": "從田間 RGB 以顏色與紋理區分作物和雜草,並依事先宣告的邊界為雜草覆蓋度分級(不用學習器)",
+    "ko": "포장의 RGB에서 색과 결로 작물과 잡초를 나누고, 잡초 피도를 미리 선언한 경계로 단계화(학습기 없음)",
+    "de": "Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz)",
+    "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)",
+    "fr": "Séparer culture et adventices dans une image RVB de champ par la couleur et la texture, puis classer le taux de couverture des adventices selon des seuils déclarés à l'avance (sans réseau appris)"
+   },
+   "good-sample-variation-model": {
+    "zh": "排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率)",
+    "tw": "排列良品來判斷「與平時不同」(良品統計變動模型,附宣告的誤檢率)",
+    "ko": "양품을 나란히 놓고 '평소와 다름'을 말한다 (양품 통계 변동 모델, 오검출률 선언)",
+    "de": "Abweichungen von ausgerichteten Gutteilen melden (pixelweises Variationsmodell mit erklärter Fehlalarmrate)",
+    "hi": "aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model)",
+    "fr": "Signaler ce qui diffère de pièces bonnes alignées (modèle de variation par pixel, taux de fausses alarmes déclaré)"
+   },
+   "robust-gaussian-spline-profile-filter": {
+    "zh": "不被划痕和突起拖动的平均线(稳健高斯回归与样条滤波,截面与曲面)",
+    "tw": "不被刮痕與突起拖動的平均線(穩健高斯迴歸與樣條濾波,截面與曲面)",
+    "ko": "흠집과 돌기에 끌려가지 않는 평균선(로버스트 가우스 회귀·스플라인 필터, 단면과 면)",
+    "de": "Eine Mittellinie, die sich von Kratzern und Spitzen nicht ziehen lässt (robuste Gauß-Regression und Spline, Profil und Fläche)",
+    "hi": "ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface)",
+    "fr": "Une ligne moyenne que ni les rayures ni les pics ne peuvent tirer (régression gaussienne robuste et filtre spline, profil et surface)"
+   },
+   "point-cloud-to-picture": {
+    "zh": "把点云原样画成彩色图像(亚像素足迹、按深度合成、保持光总量的叠加)",
+    "tw": "把點雲原樣畫成彩色影像(次像素足跡、依深度合成、保持光總量的疊加)",
+    "ko": "점군을 그대로 컬러 그림으로 그린다(서브픽셀 발자국, 깊이 순 합성, 빛의 총량을 보존하는 덧셈)",
+    "de": "Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition)",
+    "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)",
+    "fr": "Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière)"
    }
   }
  },

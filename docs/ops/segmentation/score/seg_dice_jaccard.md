@@ -48,7 +48,7 @@ Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無い�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`score`)
 

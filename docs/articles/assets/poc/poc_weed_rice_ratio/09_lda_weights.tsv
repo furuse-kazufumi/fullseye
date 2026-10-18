@@ -1,0 +1,9 @@
+特徴	重み(標準化後)
+gradient_mean	+3.638
+brightness_std	-1.041
+exg_std	-0.723
+brightness_mean	+0.662
+orientation_coherence	-0.612
+exgr_mean	+0.323
+cive_mean	-0.298
+chroma_g_mean	+0.293

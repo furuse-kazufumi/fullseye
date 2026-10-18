@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsblob —— 2-D の連結成分解析(blob analysis)op の統一レジストリ。
 
-実体は ``blob2d.py``(10 op / 5 カテゴリ)。台帳の役目は 3 つ:
+実体は ``blob2d.py``(11 op / 5 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -71,6 +71,9 @@ _CATALOG = {
         ("blob_distance", "blob2d", ["mask"], "image2d"),
         ("blob_seeds", "blob2d", ["image2d"], "labels2d"),
         ("blob_split", "blob2d", ["labels2d", "labels2d", "image2d"], "labels2d"),
+        # 2026-10-18 `poc_dense_bubble_count`: 割った結果の「個数」が決まるかを、山の突出度で
+        # 判定する。決まらなければ区間で返す(h を 1 つ選んで 1 つの数を返す上の 3 本の穴)。
+        ("blob_count_interval", "blob2d", ["mask"], "table"),
     ],
     # 取り出す/見る —— 1 個を領域として抜く、輪郭、重ね描き(出口)
     "extract": [

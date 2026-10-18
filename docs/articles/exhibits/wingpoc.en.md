@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 42 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 44 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1364,11 +1364,83 @@ This run produced **10 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`isc_match`](https://furuse.work/ops/codematch/match/isc_match.html) · [`ncc_locate`](https://furuse.work/ops/2d/matching/ncc_locate.html) · [`ocm_match`](https://furuse.work/ops/codematch/match/ocm_match.html) · [`radial_reach_filter`](https://furuse.work/ops/codematch/change/radial_reach_filter.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`scc_match`](https://furuse.work/ops/codematch/match/scc_match.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.256 —— Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It
+
+[![Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png)
+
+*↑ **Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It** ―― The inspection classic, learning every pixel's usual value and spread from many good samples and flagging what leaves the band, as an op family whose band width is derived from a declared per-pixel false-alarm rate instead of being set by hand (five new varmodel_* ops plus four method-independent anomeval metrics). For normal good samples a new pixel's deviation follows a t prediction interval, so the band width is closed-form. False-alarm rates counted on synthetic good samples fall inside the binomial 4-sigma band for per-pixel std, one pooled variance, empirical-Bayes shrinkage (Smyth 2004) and median/MAD, and the pooled variance fails when the noise differs per pixel. With five good samples the std band is 9.4 sigma wide (the t4 tail); shrinkage brings it to 5.0 and lifts the detection of 5-sigma flaws from 0.13 to 0.52. A good set shifted by 1-2 px is refused; forced through, the band on edges grows 22-fold and misses every edge flaw, and registering by a 1/20-px Fourier shift brings it back to 1.07. With three of twenty "good" samples carrying the same flaw, std misses the real flaw there (0.00) while median/MAD finds it (0.98). On the public VisA pcb1 data (CC BY 4.0, 200 test images) the registered band reaches pixel AUROC 0.808 and AUPRO 0.678 against 0.705 and 0.460 unregistered; golden comparison scores a higher pixel AUROC (0.826) but a lower AUPRO (0.519). The declared 1e-3 false-alarm rate is not kept on real images (3.8 %), and recalibrating on held-out good images only reaches 2.4 %: a difference between the training and test captures remains that a translation cannot remove. A stochastic texture (DAGM 2007, CC BY 4.0) has no structure in its mean image, its alignment is reported as unobservable and detection is at chance (pixel AUROC 0.465): where the method works and where it does not, both in numbers.*
+
+[![20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set.png)
+
+*↑ The measurement ―― 20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを無視する。左下の傷は汚れていない場所の対照。 (figure labels are in Japanese; the numbers are the same)*
+
+[![VisA pcb1 の試験 200 枚(CC BY 4.0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/03_visa_metrics_vs_n_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/03_visa_metrics_vs_n.png)
+
+*↑ VisA pcb1 の試験 200 枚(CC BY 4.0)。*
+
+[![VisA pcb1(CC BY 4.0、灰色・1/4 縮小、欠陥の周りを切り出し、基板の印字は入れない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/04_visa_explanation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/04_visa_explanation.png)
+
+*↑ VisA pcb1(CC BY 4.0、灰色・1/4 縮小、欠陥の周りを切り出し、基板の印字は入れない)。*
+
+[![画素ごとに独立な正規の良品(合成)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured.png)
+
+*↑ 画素ごとに独立な正規の良品(合成)。*
+
+```
+py -3.11 examples/poc_good_sample_variation_model.py
+```
+
+Source: [examples/poc_good_sample_variation_model.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_good_sample_variation_model)
+
+Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`dc_rpca_sparse`](https://furuse.work/ops/2d/decomposition/dc_rpca_sparse.html) · [`varmodel_alignment`](https://furuse.work/ops/spc/variation/varmodel_alignment.html) · [`varmodel_calibrate`](https://furuse.work/ops/spc/variation/varmodel_calibrate.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
+
+## No.2026.258 —— Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count
+
+[![Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
+
+*↑ **Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count** ―― Overlapping bubbles show up as peaks of the distance transform, and as the neck between them gets shallower the image stops deciding whether there are two bubbles or one. The existing chain (blob_distance, blob_seeds, blob_split) picks one h and always returns one number, so it calls two circles at overlap 0.8 a single bubble. The new op blob_count_interval measures each peak's prominence (0-dimensional persistence), returns an interval when the relative prominence falls inside a band, and opens the upper bound when the inscribed circles of the counted peaks cannot explain the area. The relative prominence of two equal circles follows the closed form 1 − sqrt(1 − (1 − o)²) to within 1.6 px, and upscaling by 2 leaves every answer unchanged. Confident errors appear only beyond the overlap where the union becomes indistinguishable from an ellipse of aspect 1.1 (0.86 to 0.90 by the closed form). On the BBBC005 ground-truth masks (CC0) the small objects are counted with a relative error of 0.34 % (connected components 9.4 %); for the deeply overlapping large objects the op declines to give a number on 286 of 300 images and makes no confident error. Semi-synthetic clusters built from real oxygen-bubble shapes of a water electrolyser (PEMWE, CC BY 4.0, hand-drawn masks) give 2 confident errors in 65 scenes and an ALCON2009-style score (centroid inside each bubble's box, implemented here) of 0.95 on the clusters it answers. Widening the shape tolerance until 95 % of isolated bubbles pass lets hidden bubbles through and raises the error rate from 3 % to 19 % — the sweep shows the trade-off between counting more and never being silently wrong. When irregular bubbles overlap deeply, even the upper bound of the declined interval can miss by one; the op documents this limit.*
+
+[![等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
+
+*↑ The measurement ―― 等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。 (figure labels are in Japanese; the numbers are the same)*
+
+[![重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts.png)
+
+*↑ 重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。*
+
+[![world_blobs_touching(12 円、半径 14 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error.png)
+
+*↑ world_blobs_touching(12 円、半径 14 px)。*
+
+[![BBBC005 の真値マスク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth.png)
+
+*↑ BBBC005 の真値マスク。*
+
+[![緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic.png)
+
+*↑ 緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。*
+
+[![2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
+
+*↑ The animation ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
+
+```
+py -3.11 examples/poc_dense_bubble_count.py
+```
+
+Source: [examples/poc_dense_bubble_count.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+
+This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dense_bubble_count)
+
+Ops used (notes): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
+
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 52 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 53 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3212,11 +3284,39 @@ This run produced **3 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.259 —— Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive
+
+[![Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
+
+*↑ **Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive** ―― Subtracting the waviness before measuring roughness lets a deep scratch pull a linear Gaussian mean line down, so the healthy surface beside it turns into false ridges (2.5 times the true roughness on a profile with 4.3 % scratch samples). The three new `roughness` ops down-weight the scratch with Tukey's biweight and iterate, and the mean line stays put (0.97 times). The transfer functions match their closed forms (0.5 at the cutoff; the existing `surface_filter` gave 0.5095 because of the standard's literal truncation and was fixed by widening it). The breakdown lies between 35 % and 40 % contamination: at 40 % the mean line is off by 3.5 µm and no better than the linear one. Fixing the weight function to 1 fails the gate, and a non-converging iteration is refused. The truth is closed forms plus a synthetic waviness; no real stylus profile has been checked yet.*
+
+[![λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
+
+*↑ The measurement ―― λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。 (figure labels are in Japanese; the numbers are the same)*
+
+[![細い線が傷つき断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile.png)
+
+*↑ 細い線が傷つき断面。*
+
+[![線形の引きずりは汚染に比例して増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve.png)
+
+*↑ 線形の引きずりは汚染に比例して増える。*
+
+```
+py -3.11 examples/poc_robust_profile_filter.py
+```
+
+Source: [examples/poc_robust_profile_filter.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
+
+Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
+
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 26 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 27 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -3960,9 +4060,37 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/population/graph_core_persistence.html) · [`graph_kcore`](https://furuse.work/ops/graph/core/graph_kcore.html) · [`graph_rich_club`](https://furuse.work/ops/conngraph/stats/graph_rich_club.html) · [`graph_rich_club_curve`](https://furuse.work/ops/graph/core/graph_rich_club_curve.html)
 
+## No.2026.260 —— Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture
+
+[![Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
+
+*↑ **Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture** ―― From the MaleCNS v1.0 annotations (Janelia FlyEM × Google Research, the whole male CNS, CC BY 4.0) the positions and superclasses of 126,104 brain cell bodies (VNC and ascending excluded) are drawn as a point cloud from the front, side and top and in rotation (optic-lobe intrinsic 81,055, central-brain intrinsic 31,997, visual projection 9,162, descending 1,308, ...). Fullseye had no op that turns a point cloud into a colour picture; the brain on the back of the ViEW 2026 business card was placed point by point in hand-written numpy. The new op `points_render` (ops3d / render) splats sub-pixel footprints (gaussian / disc / point) and either alpha-composites them in depth order or adds them conserving the total light. The gates use values the renderer never computes: 99.5 % of the cell bodies labelled L land in the right half of the front view (seen from the front the fly's left is on the right); 4,050 Kenyon cells picked by type name sit dorsal and posterior of 437 antennal-lobe neurons; the column sums of the front and top views (two different cameras) agree mirrored to 1.8e-15; the additive image sums to the point count within 1.2e-16; each class's image centroid lies on the closed-form projection within 1.4e-5 px. The op has 37 unit gates (its z-buffer matches render_point_depth on every pixel; a quarter turn about the axis equals numpy.rot90), and ten deliberate breakages (no depth sort, half-pixel shift, transposed rotation, transmittance off by one, ...) all turn them red. Cutting the Gaussian at 3 sigma moved centroids by 0.017 px and a circular cut made column sums depend on the row by 1e-5; the cut is now 4 sigma per axis. Raw data is never committed (cached from local feather files; without them a synthetic brain runs the same gates and the recorded values are printed).*
+
+[![回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame.png)
+
+*↑ The measurement ―― 回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0) (figure labels are in Japanese; the numbers are the same)*
+
+[![points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints.png)
+
+*↑ points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。*
+
+[![背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
+
+*↑ The animation ―― 背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)*
+
+```
+py -3.11 examples/poc_flybrain_pointcloud.py
+```
+
+Source: [examples/poc_flybrain_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_flybrain_pointcloud)
+
+Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`annotate_scale_bar`](https://furuse.work/ops/annotate/paper/annotate_scale_bar.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`points_render`](https://furuse.work/ops/3d/render/points_render.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 
-Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 22 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
+Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 23 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
 
 The shared finding is that the same object reads differently depending on where it is: the same cloud counts 1.45x more at the horizon than at the zenith; clouds of equal optical thickness are detected or not depending on their angular distance from the sun; the same reflection makes one detector read quietly low and another stop silently.
 
@@ -4234,7 +4362,7 @@ Source: [examples/poc_leaf_disease_area.py](https://github.com/furuse-kazufumi/f
 
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_leaf_disease_area)
 
-Ops used (notes): [`access_channel`](https://furuse.work/ops/2d/color/access_channel.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`reg_close`](https://furuse.work/ops/2d/region/reg_close.html) · [`reg_erode`](https://furuse.work/ops/2d/region/reg_erode.html) · [`rgb_to_lab`](https://furuse.work/ops/imgmetrics/colorspace/rgb_to_lab.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sk_otsu`](https://furuse.work/ops/2d/segmentation/sk_otsu.html) · [`specular_free_transform`](https://furuse.work/ops/specular/dichromatic/specular_free_transform.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`trans_from_rgb`](https://furuse.work/ops/2d/color/trans_from_rgb.html)
+Ops used (notes): [`access_channel`](https://furuse.work/ops/2d/color/access_channel.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`plant_color_index`](https://furuse.work/ops/segmentation/plant/plant_color_index.html) · [`reg_close`](https://furuse.work/ops/2d/region/reg_close.html) · [`reg_erode`](https://furuse.work/ops/2d/region/reg_erode.html) · [`rgb_to_lab`](https://furuse.work/ops/imgmetrics/colorspace/rgb_to_lab.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sk_otsu`](https://furuse.work/ops/2d/segmentation/sk_otsu.html) · [`specular_free_transform`](https://furuse.work/ops/specular/dichromatic/specular_free_transform.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`trans_from_rgb`](https://furuse.work/ops/2d/color/trans_from_rgb.html)
 
 ## No.2026.078 —— Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle
 
@@ -4707,6 +4835,42 @@ Source: [examples/poc_gw_detector_pseudo_simulation.py](https://github.com/furus
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation)
 
 Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html) · [`cavity_strain_transfer`](https://furuse.work/ops/optics/cavity/cavity_strain_transfer.html) · [`chirp_mass_from_track`](https://furuse.work/ops/oned/matched/chirp_mass_from_track.html) · [`chirp_newtonian`](https://furuse.work/ops/oned/matched/chirp_newtonian.html) · [`coincidence_delay`](https://furuse.work/ops/oned/matched/coincidence_delay.html) · [`fabry_perot_response`](https://furuse.work/ops/optics/cavity/fabry_perot_response.html) · [`matched_filter_snr`](https://furuse.work/ops/oned/matched/matched_filter_snr.html) · [`michelson_dc_readout`](https://furuse.work/ops/optics/cavity/michelson_dc_readout.html) · [`optimal_snr`](https://furuse.work/ops/oned/matched/optimal_snr.html) · [`pdh_error_signal`](https://furuse.work/ops/optics/cavity/pdh_error_signal.html) · [`psd_welch`](https://furuse.work/ops/oned/matched/psd_welch.html) · [`quantum_noise_budget`](https://furuse.work/ops/optics/cavity/quantum_noise_budget.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`whiten_by_psd`](https://furuse.work/ops/oned/matched/whiten_by_psd.html)
+
+## No.2026.257 —— How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges
+
+[![How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
+
+*↑ **How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges** ―― UAV RGB of rice paddies (WeedyRice-RGBMS, CC BY 4.0). Magenta is the annotated weedy rice, yellow the per-block Fisher discriminant (no learned network, a linear function of ten features). The grade edges, 5 / 25 / 50 %, were declared before evaluation. On 148 test images: grade agreement 0.574 (0.345 for always answering the majority grade), kappa 0.424, cover correlation 0.826, IoU 0.397 (0.189 for the same share scattered at random). Swapping R and G drops kappa to -0.023. Holding out whole flight dates, one late-season date falls to a within-date correlation of 0.14: the bundled split scores other frames of flights it has already seen.*
+
+[![作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy.png)
+
+*↑ The measurement ―― 作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。 (figure labels are in Japanese; the numbers are the same)*
+
+[![葉の形と配置は同じ乱数で同じ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/02_synthetic_color_swap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/02_synthetic_color_swap.png)
+
+*↑ 葉の形と配置は同じ乱数で同じ。*
+
+[![データ付属の分割は同じ飛行の隣り合うコマを train と test に分ける(コマは重なる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/04_leave_one_date_out_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/04_leave_one_date_out.png)
+
+*↑ データ付属の分割は同じ飛行の隣り合うコマを train と test に分ける(コマは重なる)。*
+
+[![対角が一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/07_grade_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/07_grade_confusion.png)
+
+*↑ 対角が一致。*
+
+[![正の重みは雑草イネの側。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights.png)
+
+*↑ 正の重みは雑草イネの側。*
+
+```
+py -3.11 examples/poc_weed_rice_ratio.py
+```
+
+Source: [examples/poc_weed_rice_ratio.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weed_rice_ratio)
+
+Ops used (notes): [`cover_ratio_grade`](https://furuse.work/ops/segmentation/plant/cover_ratio_grade.html) · [`fisher_lda_fit`](https://furuse.work/ops/segmentation/classify/fisher_lda_fit.html) · [`fisher_lda_score`](https://furuse.work/ops/segmentation/classify/fisher_lda_score.html) · [`msa_attribute_agreement`](https://furuse.work/ops/spc/msa/msa_attribute_agreement.html) · [`plant_color_index`](https://furuse.work/ops/segmentation/plant/plant_color_index.html) · [`snic_superpixels`](https://furuse.work/ops/segmentation/graph/snic_superpixels.html) · [`superpixel_color_texture_features`](https://furuse.work/ops/segmentation/plant/superpixel_color_texture_features.html)
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 

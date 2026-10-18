@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — `roughness.surface_filter` のカットオフでの透過率を 0.5095 から 0.5000 に
+- 原因は定数 α(`√(ln2/π)`)でも標本化後の正規化でもなく、ガウス核の打ち切り `±λc/2`(2.67σ)。裾の 0.8 % が落ち、残りを 1 に正規化し直すため T(λc) = 0.5095 になっていた。
+- 打ち切りを `±0.75λc`(4σ、定数 `GAUSS_TRUNCATE`)に広げ、T(λc) = 0.500012、λc/2 と 2λc も閉形式 `exp(-π(αλc/λ)²)` と 1e-4 未満で一致。`reject` が捨てる端の帯は 1.5 倍(512x512・λc=80 で捨てる割合 28.8 % → 41.4 %)。
+- テスト: `|T(λc) - 0.5| < 1e-3`、λc/2 と 2λc の閉形式、核の打ち切りが 4σ で総和 1。`robust_gaussian_profile(truncate=0.75)` が `surface_filter` と 1e-12 で一致。
+
 ### Added — デフレクトメトリの PoC に実データの章(CC0、ハンマーの力の記録で採点)
 - `poc_phase_measuring_deflectometry` の 4 節: 鏡面の鋼板をハンマーで叩いて格子の鏡像を 75 kHz で撮った公開データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)から、格子の位相 → 時間方向につないだ傾き → 仮想場の方法で板の力を出し、ハンマーの先のロードセル(外部の真値)と比べる。峰 366.4 N 対 347.1 N(同じ σ で均したハンマー、+5.6 %、+27 µs)、相関 0.990、力積 −8.8 %。データの著者の公開コード recolo(第 2 の実装)の峰 363.6 N と +0.8 %。窓はハンマーを見ずに荷重の無い対照の窓 5 つの見かけの力(床 9.5 N)で選んだ。格子の位相は窓つき DFT と標本化モアレの 2 実装で、同じ分解能で RMS 0.0096 rad。変調度の低い窓・積分できない傾きの場(軸・符号の取り違え)・2π を取り違える間引きは拒否する。合否の幅は結果を見たあとで決めた(盲検でない)と PoC に明記。
 - `data/pmd_real/`(3 枚の切り出しと全解析の記録、README に出典と改変)と `tools/gen_pmd_real.py`。原本(110 MB)は repo の外で、`FULLSEYE_PMD_HAMMER_DATA` があるときだけ解析し直して記録との差を門で見る。
@@ -35,6 +40,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Fixed: `raytrace._intersect_conic` は「|t| の小さい根」を選んでいて、光線が球の z 範囲の中から始まる配置(長い空気間隔の後の R < 0 の面、望遠型)で球の裏側を拾い、全光線が「けられ」になっていた。頂点を含む葉の根を選ぶ(門 `tests/test_raytrace_conic_branch_2026_10_18.py`、修正前は 7 件赤)。
 - PoC `examples/poc_lens_file_roundtrip.py`(門 21、図 6 枚): 三枚玉の中央の硝材を差し替えて崩れた処方(RMS 13.9 → 332 µm)を `lensopt` で 14.1 µm に戻して書き戻す。
 
+### Added — 逐次光学設計の拡充 第 1 弾: 理想レンズ面・囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF(5 op)
+- `raytrace.lens_system` の面に `{"f": ...}`(理想レンズ / paraxial 面): 薄肉レンズの法則 `tan θ' = tan θ − h/f` を実光線に厳密に当てる(平行光の焦点誤差 0〜1e-12 mm、有限物体はガウスの結像公式と m = −s'/s)。光路は等光路(小さい高さで −h²/(2f))なので OPD / PSF / スポットが収差 0 を返す。`paraxial_trace` は冪を持ち(2 枚で f1 f2/(f1+f2−d))、Seidel は 0、`lens_section_drawing` は細線 + 矢じり。非共軸の `raytrace3d` では読まない。
+- `optics`: `encircled_energy` / `ensquared_energy`(PSF の囲み・四角エネルギーの曲線)、`energy_radii`(50 / 80 / 90 % の半径)、`mtf_tangential_sagittal`(2-D 変換の軸の断面)。`lensimage.through_focus_mtf`(像面を動かした PSF ごとの子午/球欠 MTF)。
+- 真値: Airy の囲みエネルギー(第 1 暗環で 83.78 %、Bessel の閉形式と 1e-4 以内)、四角瞳の Si 閉形式、ガウス PSF の閉形式、円形瞳の MTF の閉形式(1.7e-4)、Hopkins のデフォーカス積分(5e-3 以内)。能力ノート `sequential-lens-design-metrics`、呼び出し例 `examples/optical_design_metrics.py`。
 
 ## 0.7.0 — 2026-10-18
 
@@ -74,6 +83,41 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 外部真値の門(`tests/test_semsim_mc.py`): η(Z, E) が Joy のデータベース(rev. 04-02)の実測の幅 ± 0.04 / η(θ) が Arnal の式 / 到達深さが Kanaya-Okayama(最大 0.75〜1.05 R_KO、指数 1.45〜1.85)/ δ の形と Emax が Lin & Joy 2005。壊して確かめる探針 3 本(遮蔽ラザフォード・阻止能半分・脱出深さ 10 倍)。
 - ★途中で見つけて直した欠陥: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていた(0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳ぶ)。境界で歩を切って新しい材料で引き直す(回帰の門つき)。
 - PoC `poc_virtual_sem_kv_cd_bse`(7 段、図 8 枚 + GIF): Si の上の W は段差が無く 1 kV のときだけ SE で消えて反射電子で浮く(SE +5 % / BSE +96 %)、CD-SEM の線幅は側壁 88 度で 1 kV 39.1 nm / 20 kV 39.9 nm(80 度では逆向き)、帯電は低加速で自己調整・高加速で溜まる。能力ノート `virtual-sem-monte-carlo`、op 要約 6 言語。
+### Added — 良品統計の変動モデル(誤検出率の宣言つき、5 op)と異常検知の評価指標(4 op)
+- `varmodel.py`(台帳 opsspc の新カテゴリ `variation`): `varmodel_alignment` / `varmodel_band_k` / `varmodel_fit` / `varmodel_calibrate` / `varmodel_score`。位置をそろえた良品群の画素ごとの中心とばらつきから許容帯を作り、帯の幅 k を**宣言した 1 画素あたりの誤検出率から**決める(std = t の予測区間、moderated = Smyth 2004 の経験ベイズ、mad = ピボットのモンテカルロ)。ずれた良品群は拒否(`align="check"`)、または Fourier シフトで合わせる(`align="translate"`)。構造の無い群は「測れない」と報告。帯の外は領域ごとに面積・符号・ピークの σ で説明する。
+- `anomeval.py`(新カテゴリ `anomaly_eval`): `anomaly_image_auroc` / `anomaly_pixel_auroc` / `anomaly_pro` / `anomaly_region_overlap`。方法に依存しない欠陥図の物差し(AUROC は Mann-Whitney の厳密値、PRO は全スコアで評価して FPR 0.3 まで積分)。
+- 門: 合成の良品で数えた誤検出率が宣言の二項 4σ の帯(4 種とも)、t の付表値、`phase_correlation_fft` との一致、Fourier シフトの真値と 0.03 px、ずれ・汚れ・裾の重い雑音の探針、AUROC の閉形式と sklearn、PRO の手計算と別経路。
+- PoC `poc_good_sample_variation_model`: 公開実データ VisA pcb1(CC BY 4.0)で、合わせた帯は画素 AUROC 0.808・AUPRO 0.678(合わせない帯 0.705・0.460、ゴールデン比較 0.826・0.519、RPCA 0.566・0.607)。宣言 1e-3 の誤検出率は実画像で 3.8 %、持ち出しの較正で 2.4 % —— 正直に印字。DAGM 2007(CC BY 4.0)の確率的なテクスチャは偶然並み(向かない題材として)。能力ノート `good-sample-variation-model`。
+### Added — 作物と雑草を色と肌理で分ける op 族 `cropweed`(5 op)+ PoC「水田の雑草はどれだけあるか」
+- 台帳 `opssegmentation` に新カテゴリ `plant`(`plant_color_index` / `superpixel_color_texture_features` / `cover_ratio_grade`)と、`classify` に `fisher_lda_fit` / `fisher_lda_score`。型の新語なし(rgbimage / labels2d / matrix / signal / table)。
+- `plant_color_index`: 可視 3 バンドの植物の色指標 ExG・ExR・ExGR・CIVE・NGRDI・VEG(式は Hamuda ら 2016 の総説の表と照合)。暗い画素は色度が決まらないので値を作らず NaN と `valid=False`(連鎖ファザーの非有限の契約に記載)。全画素が暗ければ拒否。
+- `cover_ratio_grade`: 被度を評価の前に宣言した境で段階にする(既定 5 / 25 / 50 %、植生調査の被度階級)。境からの距離 `margin` を返す。
+- 例 `examples/poc_weed_rice_ratio.py`: 合成の水田(門 10、CI)と、実データ WeedyRice-RGBMS(Mendeley Data doi:10.17632/vt4s83pxx6.1、CC BY 4.0、`FULLSEYE_WEEDYRICE_DATA` があるときだけ。画像は repo に入れない)。test 148 枚で κ 0.424・被度の相関 0.826。撮影日を丸ごと外す検査で、季節の違う飛行への汎化が弱いこと(日の中の相関 0.14)も記録した。外観検査のアルゴリズムコンテストの 2026 年の課題と同じ型の問いだが、その画像は使っておらず、数字は得点と比べられない。
+- 門 `tests/test_cropweed.py`(閉形式・第 2 の計算・LDA の中点と符号反転とアフィン不変・R と G の入れ替えの探針・fail-closed)。
+- `examples/poc_leaf_disease_area.py` の「道具の穴 (a) 可視 3 バンドの植生指数が無い」を「埋まった」に直した。
+### Added — `blob_count_interval`(重なった物体の個数を、決まらなければ区間で返す)+ PoC「密集した泡を数える」(ALCON2009 型)
+- `blob2d.blob_count_interval`(台帳 `opsblob` の `split`): 距離変換の山ごとに突出度(0 次元パーシステンス)を測り、相対突出度 p/h が帯 [0.05, 0.15) に落ちた山を「あいまい」として個数を `lo`〜`hi` で返す。`round_tol` を与えると、山の内接円で説明できない面積の塊は上限を開く(`hi = None`)。分割は内接円の冪図(2 円なら根軸)。既存の `blob_split` は 520x696 で 1 枚 4 秒かかったので使わない。
+- 門: 等しい 2 円の相対突出度が閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率が予言の幅、自信をもった誤りは閉形式の「面積でも見えない」重なり率(0.86〜0.90)から先だけ、2 倍の拡大で不変、帯を潰す・面積の検査を外すと誤りが出る(壊す探針)、ALCON2009 型の採点の閉形式。
+- 実データ(repo に入れない。`FULLSEYE_BUBBLE_DOWNLOAD=1`): BBBC005 の真値マスク(CC0)で小さい物体の相対誤差 0.34 %(連結成分 9.4 %)・自信をもった誤り 11/600、大きい物体は 286/300 で数を返さず誤り 0。PEMWE の泡(Zenodo 10184579、CC BY 4.0)の形の半合成で誤り 2/65、ALCON 型 0.95。形の許しの矛盾(誤り 3 % → 19 %)を掃引で記録。いびつな泡の深い重なりで区間の上限が 1 個外れる限界は docstring に明記。
+- 図 11 枚 + GIF、展示(wing_industrial、収蔵番号は生成器の仮番)、examples2d、能力ノート `blob-and-region`、6 言語の要約と本文訳。
+### Added — ロバストなガウス回帰・スプラインフィルタ(`roughness` 族 +3 op)と PoC
+- `robust_gaussian_profile` / `robust_spline_profile` / `robust_gaussian_surface`(`opsroughness` の `prepare`)。傷・突起に引きずられない平均線と粗さ。Tukey の biweight(しきい値 c·median|r|、既定 c=4.4)の反復、収束しなければ `ValueError`(fail-closed)。ガウスは局所回帰(次数 0/1、打ち切り ±λc で λc の透過率 0.5)、スプラインは 2 階差分の罰則つき最小二乗。
+- 門 `tests/test_roughness_robust.py`(33): ガウス `exp(-π(αλc/λ)²)`・離散スプライン `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` の閉形式、密行列・疎 LU・点ごとの lstsq の第 2 実装、既存 `surface_filter` との内部一致(重み 1・次数 0・打ち切り 0.5)、引きずり量と破綻点(40 %)、探針(重み 1 固定 / λc 10 % ずれ / α ずれ)。
+- PoC `examples/poc_robust_profile_filter.py` と呼び出し例 `examples/example_robust_profile_filter.py`、能力ノート `robust-gaussian-spline-profile-filter`。既存 `surface_filter` の λc での透過率 0.5095(規格の打ち切り ±λc/2)を新 op と並べて記録。
+### Fixed — `docs/literature/INDEX.md` の「op ノート N 本」が古いままだった(3,307 本 → 実ファイルは 3,322 本)
+- 文献層の本体は RAD コーパス(repo の外)から作るので `regen_all` の鎖に入らず、件数だけが取り残されて op を足すたびに古びていた(各層の「出荷ノート N 本」も同じ)。件数はコーパスが無くても `docs/ops` の実ファイル(先頭が `op:` の front matter のもの)を数えれば分かるので、`tools/gen_literature_notes.py --restate-counts`(`count_op_notes` / `restate_counts` / `stated_count_problems`)に切り出し、`tools/gen_literature_counts.py` を鎖の最後に足して毎回打ち直す。置換は 1 箇所ずつ数え、0 箇所・2 箇所なら止まる。
+- 門 `tests/test_literature_notes.py`: 書いてある件数 = 実ファイルの数(OP_NOTES.json の枚数とも一致)。壊して確かめる探針 4 本(1 枚足すだけで INDEX と各層の両方が赤 / 台帳でなくファイルを数える / 文が 0 箇所・2 箇所で止まる / 打ち直して緑に戻り 2 回目は何も書かない)。`tests/test_regen_all.py` に、この段が opdocs より前に来ると逆順として拒まれる探針を追加。
+
+### Added — kuwahara / xdog (gap confirmed in the 0.6.0 review)
+- `kuwahara`(smoothing、image → image): Kuwahara 1976。画素を角に含む `(r+1) x (r+1)` の窓 4 つ(中心の行と列を共有して重なる)のうち分散が最小の窓の平均を出す、縁を保つ平滑化。`a` が半径 1〜10、`b` は未使用。窓の和と二乗和を軸ごとの累積和で求めるので O(N)、半径に依存しない。同点は小数 10 桁に丸めた分散で比べ、宣言順(左上・右上・左下・右下)で決める。端は複製。
+- `xdog`(edges、image → image): Winnemöller・Kyprianidis・Olsen 2012 の XDoG。`D = G_σ − τ·G_kσ` をソフト閾値 `T(u) = 1 (u ≥ ε)、1 + tanh(φ(u − ε)) (u < ε)` に通す線画・墨絵調。`a` が σ(0.5〜3.0)、`b` が ε(0〜0.1)、残りは既定値 `k = 1.6`・`τ = 0.98`・`φ = 50`(docstring に明記)。端は複製。既存の `dog` / `diff_of_gauss` は絶対値を正規化した帯域通過で、閾値を通さない別の op。
+- 門 `tests/test_kuwahara_xdog.py`(17 件): kuwahara は総当たりの第 2 実装(窓ごとに `np.var` / `np.mean`)と 1e-12 で一致(ランダム 2 枚 + 段差・縞・市松・円・勾配、半径 1・2・3・5・8)、雑音なしの段差は閉形式でそっくり残り、雑音つきでは平坦部が 1/(r+1) 程度に落ちて段差は同程度に均す gaussian の 2 倍以上鋭い。xdog は独立な FFT のガウシアン(同じ打ち切りの核)による DoG と 1e-12、`τ = 1` かつ φ → ∞ で `D ≥ ε` の二値に一致(閉形式)、段差の暗い側にだけ線が出る。壊して確かめる探針: 象限の重なりを外した kuwahara、`k` を 1.5 にした xdog は参照と合わない。`op_knob.json` に 2 op を追加(567 → 569)。
+### Added — 点群をそのまま色の絵にする `points_render`(ops3d / render)+ PoC「ハエ(雄)の脳を細胞体 12 万 6 千個の点のまま描く」
+- `render3d.points_render(points, colors=None, size, K=None, R=None, t=None, projection, radius_px, footprint, composite, opacity, depth_cue, background, margin)`: (N, 3) → (H, W, 3)。小数画素の足跡(gaussian は 4σ を軸ごとに切る / disc / point)を深さの順にアルファ合成(over、入力の順に依らない)するか、光の総量を保って加算(add)。正射影は K を省くと収める。カメラは `project_points` / `render_point_depth` と同じ OpenCV の規約。fail-closed(空・非有限・値域外・透視で K 無し・組の数の上限)。2-D 橋 `tb_points_render`(knob の写しは `OP_KNOB_RANGE` で定義域の中に)。
+- 門 `tests/test_points_render.py`(37 件): 重心が閉じた式の射影と `match3d.project_points` に 1e-3 画素(gaussian)、`footprint="point"` の z-buffer が `render_point_depth` と全画素で一致、add の総和 = 点の色の総和、光軸まわり 90 度 = `numpy.rot90`。壊した 10 通り(深さの順を外す・半画素・R の転置・透過率を 1 つずらす・透視で割らない・後ろの点を残す・3σ / 円で切る ほか)はどれも赤。
+- PoC `examples/poc_flybrain_pointcloud.py`: MaleCNS v1.0(CC BY 4.0、生データは commit しない)の脳の細胞体 126,104 個を上位クラスで色分けし、正面・側面・背面と回転の GIF。門は注釈の左右ラベル(L の 99.5 % が正面図の右半分)、Kenyon 細胞と触角葉ニューロンの位置(背側・後ろ)、正面図と背面図の列の和の左右反転一致 1.8e-15。例 `examples_3d/points_render_basics.py`、能力ノート `point-cloud-to-picture`。
+- `tests/test_trust_block.py` の「厳密一致で 2 件落ちる」を、索引を版の行に揃えてから 1 本足す形に直した(ops3d の op は 2-D 橋も生むので registry も増え、件数が数え方の偶然で 3 になった)。
+
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。
 - 数字(同じ生信号): iToF の合成 16/80/120 MHz で次数の誤り 0.5563 → 0.1161(最尤 0.1160)、実データ 10 枚平均 0.293 → 0.131(最尤 0.131)。`poc_residue_crt` の RRNS で犯人を当てた割合 88.5 → 88.9 %。門 `tests/test_residue_crt_reference_2026_10_15.py`(修正を戻すと 13 本とも赤)。

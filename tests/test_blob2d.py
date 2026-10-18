@@ -408,7 +408,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import opsblob
 
     assert opsblob.missing() == []
-    assert set(opsblob.OPSBLOB) == set(B.__all__) - {"FEATURE_KEYS", "CONNECTIVITIES"}
+    assert set(opsblob.OPSBLOB) == set(B.__all__) - {"FEATURE_KEYS", "CONNECTIVITIES", "COUNT_STATUSES",
+                                                     "PEAK_NOISE", "PEAK_AMBIGUOUS", "PEAK_SURE"}
 
 
 def test_every_op_is_reachable_from_the_public_tier():
@@ -424,7 +425,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "blob"]
-    assert len(rows) == 10
+    assert len(rows) == 11          # 2026-10-18 blob_count_interval で 10 → 11
     assert {r[3] for r in rows} == {"labels2d", "table", "mask", "rgb", "image2d"}
 
 
@@ -585,3 +586,110 @@ def test_the_per_component_reconstruction_matches_the_global_one():
     mine = B.blob_seeds(d, 2.0) > 0
     naive = (d - B._reconstruct_by_dilation(d - 2.0, d)) > 0
     assert np.array_equal(mine, naive), int((mine != naive).sum())
+
+
+# --------------------------------------------------------------------------- #
+# blob_count_interval(2026-10-18、poc_dense_bubble_count)                      #
+# --------------------------------------------------------------------------- #
+def _pair(r, o, n=None, off=(0.21, 0.37)):
+    """等しい半径 r の 2 円、重なり率 o(中心間 2r(1 − o))、横並び。"""
+    n = n or int(4 * r + 20)
+    d = 2.0 * r * (1.0 - o)
+    yy, xx = np.mgrid[0:n, 0:n]
+    cy, cx = n / 2.0 + off[0], n / 2.0 + off[1]
+    a = (yy - cy) ** 2 + (xx - (cx - d / 2)) ** 2 < r * r
+    b = (yy - cy) ** 2 + (xx - (cx + d / 2)) ** 2 < r * r
+    return a | b, (cy, cx - d / 2), (cy, cx + d / 2)
+
+
+def test_count_interval_shallow_overlap_is_determined_and_split_on_the_chord():
+    m, c1, c2 = _pair(20, 0.1)
+    r = B.blob_count_interval(m)
+    assert r["determined"] and r["count"] == 2 and r["hi"] == 2
+    lab = r["labels"]
+    # 等しい円の冪図の境 = 根軸 = 2 つの中心の垂直二等分線
+    yy, xx = np.nonzero(m)
+    mid = (c1[1] + c2[1]) / 2.0
+    left = lab[yy, xx][xx < mid - 1.0]
+    right = lab[yy, xx][xx > mid + 1.0]
+    assert len(set(left.tolist())) == 1 and len(set(right.tolist())) == 1
+    assert left[0] != right[0]
+
+
+def test_count_interval_prominence_follows_the_closed_form():
+    for r0 in (20, 30):
+        for o in (0.2, 0.3, 0.4):
+            m, _, _ = _pair(r0, o)
+            pk = B.blob_count_interval(m)["peaks"]
+            p2 = float(np.sort(pk["prominence"])[::-1][1])
+            closed = r0 * (1.0 - math.sqrt(1.0 - (1.0 - o) ** 2))
+            assert abs(p2 - closed) <= 2.0, (r0, o, p2, closed)
+
+
+def test_count_interval_refuses_a_deep_overlap_instead_of_guessing():
+    m, _, _ = _pair(20, 0.8)
+    with_check = B.blob_count_interval(m, round_tol=0.1)
+    assert with_check["count"] is None and with_check["hi"] is None and with_check["lo"] == 1
+    assert with_check["components"]["status"] == ["unexplained"]
+    # 検査を外すと 1 個と言い切る(op の docstring の限界どおり)
+    assert B.blob_count_interval(m)["count"] == 1
+
+
+def test_count_interval_ambiguous_band_gives_a_finite_range():
+    m, _, _ = _pair(30, 0.55)
+    r = B.blob_count_interval(m, round_tol=0.1)
+    assert r["count"] is None and r["lo"] == 1 and r["hi"] == 2
+    assert r["components"]["status"] == ["ambiguous"]
+
+
+@pytest.mark.parametrize("radius", [6, 10, 20, 40])
+def test_count_interval_single_disc_is_one(radius):
+    n = 2 * radius + 12
+    yy, xx = np.mgrid[0:n, 0:n]
+    m = (yy - n / 2 - 0.3) ** 2 + (xx - n / 2 - 0.1) ** 2 < radius ** 2
+    r = B.blob_count_interval(m, round_tol=0.1)
+    assert r["determined"] and r["count"] == 1
+
+
+def test_count_interval_does_not_split_an_ellipse():
+    n = 90
+    yy, xx = np.mgrid[0:n, 0:n]
+    for th in np.linspace(0, math.pi / 2, 5):
+        u = (xx - 45.2) * math.cos(th) + (yy - 44.7) * math.sin(th)
+        v = -(xx - 45.2) * math.sin(th) + (yy - 44.7) * math.cos(th)
+        m = (u / 30.0) ** 2 + (v / 15.0) ** 2 < 1
+        r = B.blob_count_interval(m)
+        assert r["lo"] == 1, th
+        # 縦横比 2 の 1 個は、round_tol = 0.3 では上限を開く(細胞程度の許しを超える)
+        assert B.blob_count_interval(m, round_tol=0.3)["hi"] is None
+
+
+def test_count_interval_is_scale_free():
+    m, _, _ = _pair(14, 0.3)
+    big = np.kron(m, np.ones((2, 2), bool))
+    a, b = B.blob_count_interval(m), B.blob_count_interval(big)
+    assert (a["lo"], a["hi"]) == (b["lo"], b["hi"]) == (2, 2)
+
+
+def test_count_interval_empty_and_bad_input():
+    r = B.blob_count_interval(np.zeros((8, 8), bool))
+    assert r["count"] == 0 and r["determined"] and r["labels"].max() == 0
+    m, _, _ = _pair(10, 0.2)
+    for kw in ({"rel_lo": 0.2, "rel_hi": 0.1}, {"rel_lo": 0.0}, {"rel_hi": 1.0},
+               {"round_tol": float("nan")}, {"round_tol": -0.1},
+               {"min_prominence": -1.0}, {"connectivity": 6}):
+        with pytest.raises(ValueError):
+            B.blob_count_interval(m, **kw)
+    with pytest.raises(ValueError):
+        B.blob_count_interval(np.zeros((3, 3, 3), bool))
+
+
+def test_count_interval_peak_table_is_consistent():
+    m, _, _ = _pair(20, 0.3)
+    r = B.blob_count_interval(m)
+    pk = r["peaks"]
+    n = len(pk["height"])
+    assert all(len(v) == n for v in pk.values())
+    assert np.all(pk["prominence"] <= pk["height"] + 1e-9)
+    assert int(np.sum(pk["status"] == B.PEAK_SURE)) == r["lo"]
+    assert int(r["labels"].max()) == r["lo"]

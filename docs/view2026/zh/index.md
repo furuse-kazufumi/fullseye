@@ -85,15 +85,17 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 80 项,每项都有说明页(用法与限制)和可运行的示例。
+共 85 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
 **查找**
 
-- 切出区域、筛选并计数: [说明](../../capabilities/blob-and-region.md) _(ja)_ · 示例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 切出区域、筛选并计数: [说明](../../capabilities/blob-and-region.md) _(ja)_ · 示例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py) · [poc_dense_bubble_count](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+- 从田间 RGB 用颜色与纹理区分作物和杂草,并按事先声明的边界给杂草覆盖度分级(不用学习器): [说明](../../capabilities/crop-weed-cover-grade.md) _(ja)_ · 示例 [poc_weed_rice_ratio](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - 用两种 X 射线能量分离厚度与材质(双能 / 光子计数: 能谱 → 能量窗 → 基分解 → 有效原子序数): [说明](../../capabilities/dual-energy-xray-material-discrimination.md) _(ja)_ · 示例 [poc_dual_energy_xray](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dual_energy_xray.py)
 - 按应有的字符串修正图像中的文字: [说明](../../capabilities/fix-text-in-images.md) _(ja)_ · 示例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- 排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率): [说明](../../capabilities/good-sample-variation-model.md) _(ja)_ · 示例 [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR 预处理(倾斜校正、局部二值化、行切分): [说明](../../capabilities/ocr-preprocessing.md) _(ja)_ · 示例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - 用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）: [说明](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 示例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 找到小的点状目标并以亚像素定位: [说明](../../capabilities/point-target-detection.md) _(ja)_ · 示例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
@@ -121,8 +123,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 用条纹的镜像测量光泽面的微米凹坑(相位测量偏折术: 条纹 → 相位 → 斜率 → 曲率): [说明](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · 示例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - 由三维点云求平面度: [说明](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · 示例 [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - 哪种尺寸的缺陷能被发现(检出概率 POD 与 a90/95,MIL-HDBK-1823A): [说明](../../capabilities/probability-of-detection.md) _(ja)_ · 示例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+- 不被划痕和突起拖动的平均线(稳健高斯回归与样条滤波,截面与曲面): [说明](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · 示例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - 找出细微划痕并测量宽度: [说明](../../capabilities/scratch-detection-and-width.md) _(ja)_ · 示例 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - 测量 SEM 明亮边缘把尺寸放大了多少（带真值）: [说明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 示例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- 顺序光学设计的指标(理想透镜面、环围能量、子午与弧矢 MTF、离焦 MTF): [说明](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 示例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
 - 用偏振测量黑色光泽件与玻璃的形状(偏振形状恢复、模糊解集、折射率估计): [说明](../../capabilities/shape-from-polarization.md) _(ja)_ · 示例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 用实物图像拟合物理模型的系数(sim-to-real 标定)—— 图像无法确定的系数不给数值,而是返回能确定的组合与理由: [说明](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 示例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - 以亚像素精度从图像测量尺寸: [说明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 示例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -184,6 +188,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 把结果做成人能读懂的图: [说明](../../capabilities/figures-and-annotation.md) _(ja)_ · 示例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 - 把结果做成可以动手操作的单页 HTML(标签页、徽章、3-D、视频、多语言): [说明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 示例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - 不知道底色也能画线和区域(反色): [说明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 示例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- 把点云原样画成彩色图像(亚像素足迹、按深度合成、保持光总量的叠加): [说明](../../capabilities/point-cloud-to-picture.md) _(ja)_ · 示例 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 把文字和表格放到图像上想要的位置: [说明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 示例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
 **绘制**
@@ -195,11 +200,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 148 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 151 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 260 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -218,7 +223,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>工业检测</b> (42)</summary>
+<details class="vall"><summary><b>工业检测</b> (44)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一维条码" width="200" height="200"><span>一维条码</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="电极曲折度" width="200" height="200"><span>电极曲折度</span></a>
@@ -258,14 +263,16 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明光锥与观察 NA" width="200" height="200"><b>&#9654;</b><span>照明光锥与观察 NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI 线扫描相机与线扫描镜头" width="200" height="200"><span>TDI 线扫描相机与线扫描镜头</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="工业 OCT(涂层厚度与内部缺陷)" width="200" height="200"><span>工业 OCT(涂层厚度与内部缺陷)</span></a>
+<a href="../../articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dense_bubble_count.jpg" alt="密集气泡计数(无法确定时给出区间)" width="200" height="200"><b>&#9654;</b><span>密集气泡计数(无法确定时给出区间)</span></a>
 <a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="虚拟 SEM 与加速电压" width="200" height="200"><span>虚拟 SEM 与加速电压</span></a>
 <a href="../../articles/assets/poc/poc_grating_interferometry/12_real_three_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_grating_interferometry.jpg" alt="光栅干涉仪(暗场中可见的纤维、裂纹与气孔)" width="200" height="200"><span>光栅干涉仪(暗场中可见的纤维、裂纹与气孔)</span></a>
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="用两种能量把肉中的骨片与玻璃分开(双能 X 射线)" width="200" height="200"><span>用两种能量把肉中的骨片与玻璃分开(双能 X 射线)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="耐光照与遮挡的符号匹配" width="200" height="200"><b>&#9654;</b><span>耐光照与遮挡的符号匹配</span></a>
+<a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="良品统计变动模型" width="200" height="200"><span>良品统计变动模型</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (52)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (53)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -319,6 +326,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="非共轴光学系统(分束器鬼像与折转)" width="200" height="200"><span>非共轴光学系统(分束器鬼像与折转)</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="光谱仪与照明系统(带宽与光源的纹样)" width="200" height="200"><span>光谱仪与照明系统(带宽与光源的纹样)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="用远心实拍图像校准成像模型" width="200" height="200"><span>用远心实拍图像校准成像模型</span></a>
+<a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="划痕把平均线压凹多少,以及稳健滤波的失效点" width="200" height="200"><span>划痕把平均线压凹多少,以及稳健滤波的失效点</span></a>
 </div>
 </details>
 
@@ -434,7 +442,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>连接组与神经</b> (19)</summary>
+<details class="vall"><summary><b>连接组与神经</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_vision.jpg" alt="苍蝇视觉前端" width="200" height="200"><span>苍蝇视觉前端</span></a>
 <a href="../../articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_larval_connectome_reservoir.jpg" alt="幼虫连接组" width="200" height="200"><span>幼虫连接组</span></a>
@@ -455,6 +463,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_swc_tree_truth/01_swc_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_swc_tree_truth.jpg" alt="真实树骨架" width="200" height="200"><span>真实树骨架</span></a>
 <a href="../../articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_optomotor_steering.jpg" alt="苍蝇航向控制" width="200" height="200"><b>&#9654;</b><span>苍蝇航向控制</span></a>
 <a href="../../articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_worm_core_persists.jpg" alt="线虫脑核心" width="200" height="200"><b>&#9654;</b><span>线虫脑核心</span></a>
+<a href="../../articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_flybrain_pointcloud.jpg" alt="用细胞体的点画出苍蝇的脑" width="200" height="200"><b>&#9654;</b><span>用细胞体的点画出苍蝇的脑</span></a>
 </div>
 </details>
 
@@ -472,7 +481,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>天文与环境</b> (22)</summary>
+<details class="vall"><summary><b>天文与环境</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="引力波探测器的伪仿真" width="200" height="200"><b>&#9654;</b><span>引力波探测器的伪仿真</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天相机云量" width="200" height="200"><span>全天相机云量</span></a>
@@ -496,6 +505,7 @@ PoC 255 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="火星车轮打滑" width="200" height="200"><b>&#9654;</b><span>火星车轮打滑</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="两种高程(实测)" width="200" height="200"><span>两种高程(实测)</span></a>
 <a href="../../articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gravitational_lens_invariants.jpg" alt="引力透镜" width="200" height="200"><b>&#9654;</b><span>引力透镜</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="把稻田杂草覆盖度分为 4 级" width="200" height="200"><span>把稻田杂草覆盖度分为 4 级</span></a>
 </div>
 </details>
 

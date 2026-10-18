@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>겹친 물체를 센다. <b>정해지지 않을 때는 개수가 아니라 구간을 반환한다</b>(fail-closed).</p>
+<p>융합된 덩어리 안의 물체는 거리 변환의 봉우리로 나타난다. 두 원이 겹치면잘록한 목이 생기고, 목이 얕아질수록(봉우리의 <b>돌출도</b>가 작을수록) &quot;2 개인지 1 개인지&quot;가 정해지지 않게 된다. <code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> 는 h 를 하나 골라 <b>반드시 하나의 개수를 반환한다</b> —— 겹침이 깊어 정해지지 않는 곳에서도 그럴듯한수가 나온다. 이 op 는 봉우리마다 돌출도를 재고, 임계값 띠에 떨어진 봉우리를 &quot;모호&quot;로보아 개수를 <code style="color:#22d3bf">lo</code> 〜 <code style="color:#22d3bf">hi</code> 의 구간으로 반환한다. 구간의 폭이 0 일 때만 <code style="color:#22d3bf">count</code> 를 반환한다.</p>
+<p>봉우리 판정(돌출도 p, 높이 h, 상대 돌출도 p/h. h 는 내접원의 반지름에 해당):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> 이고 <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → 확실한 봉우리(센다)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> 이고 <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → 모호(lo 에는 세지 않고 hi 에는 센다)</p>
+<p style="margin:2px 0 2px 12px">• 그 밖 → 잡음(격자 양자화로 생기는 봉우리. 타원에서 실측 0.6 px 미만)</p>
+<p><b>상대 돌출도를 쓰는 이유</b>: 같은 반지름 r 의 두 원이 겹침률 o(중심 간 d = 2r(1 − o))로 겹치면, 목의 반폭은 w = sqrt(r² − (d/2)²) 이고 p/h = 1 − sqrt(1 − (1 − o)²) —— <b>반지름에 의존하지 않는다</b>. 절대값의 h 를 고르면큰 거품과 작은 거품이 섞인 영상에서 한쪽에만 맞는다(<code style="color:#22d3bf">poc_cell_counting</code> 이 기록한 구멍과 같은 형태). 기본 띠 0.05〜0.15 는 겹침률 0.69〜0.47 에 해당한다.</p>
+<p><code style="color:#22d3bf">round_tol</code> 을 주면 <b>봉우리로는 설명할 수 없는 면적</b>도 거부한다. 겹침률이 0.7 을 넘으면 목이 격자 양자화에 묻혀 봉우리가 하나만남는다(2 개가 1 개로 보인다). 그래서 성분의 면적을 확실한 봉우리와 모호한 봉우리의내접원 면적의 합 Σπh² 와 비교하여, 면적 &gt; (1 + round_tol + 1/h_min) · Σπh² 이면상한을 연다(<code style="color:#22d3bf">hi = None</code>). 1/h_min 은 격자 양자화의 몫(반지름 8 px 이상의 원판에서비 1.09 이하, 2026-10-18 실측). <code style="color:#22d3bf">round_tol</code> 은 <b>허용하는 종횡비 − 1</b> 에 해당한다(종횡비 a/b 의 타원은 면적비 a/b). 거품처럼 둥근 물체라면 0.1, 세포처럼일그러진 것이라면 0.3 정도. <code style="color:#22d3bf">None</code> 은 형태를 가정하지 않는다(깊은 겹침은 놓친다).</p>
+<p><b>구간의 상한은 보증이 아니다</b>: <code style="color:#22d3bf">hi</code> 는 봉우리로 보인 물체의 수이며, 봉우리를 남기지 않고묻힌 물체(큰 거품에 파고든 작은 거품 등)는 <code style="color:#22d3bf">hi</code> 에도 들어가지 않는다. 면적검사가 그것을 잡아냈을 때만 상한을 연다. <code style="color:#22d3bf">determined</code> 가 False 일 때는 &quot;수를말할 수 없다&quot;는 것만 확실하며, 구간은 기준일 뿐이다(실제 거품 형태의 반합성 실험에서, 정해지지 않는다고답한 덩어리의 참값이 <code style="color:#22d3bf">hi</code> 를 1 개 웃도는 예가 나왔다. <code style="color:#22d3bf">poc_dense_bubble_count</code>).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D 전경(<code style="color:#22d3bf">&gt; 0</code> 이 전경).</p>
+<p>rel_lo, rel_hi : float</p>
+<p>상대 돌출도의 띠. <code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>.</p>
+<p>min_prominence : float</p>
+<p>돌출도의 절대 하한 [px]. <code style="color:#22d3bf">&gt;= 0</code>. 거리 변환의 양자화로 생긴 봉우리를 버린다.</p>
+<p>round_tol : float or None</p>
+<p>면적 검사의 허용치(위 참조). <code style="color:#22d3bf">None</code> 이면 검사하지 않는다.</p>
+<p>connectivity : {4, 8}</p>
+<p>성분과 수위의 연결 방식.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code>(구간의 폭이 0 이면 int, 그렇지 않으면 <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">lo</code>,</p>
+<p><code style="color:#22d3bf">hi</code>(상한이 열려 있으면 <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">determined</code>, <code style="color:#22d3bf">reason</code>,</p>
+<p><code style="color:#22d3bf">labels</code>(확실한 봉우리만 씨앗으로 한 분할, int32, 내접원의 power diagram), <code style="color:#22d3bf">labels_hi</code></p>
+<p>(모호한 봉우리도 씨앗으로 한 분할), <code style="color:#22d3bf">components</code>(성분마다 <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code>(열려 있으면 -1) / <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>),</p>
+<p><code style="color:#22d3bf">peaks</code>(봉우리마다 <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code>(0 잡음 · 1 모호 · 2 확실)),</p>
+<p><code style="color:#22d3bf">params</code>.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # 겹침률 0.1: 2 개로 정해진다</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # 겹침률 0.6: 정해지지 않는다</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>내력(공개 문헌만): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— 지속성(persistence) / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— 분수령(watershed) / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— power diagram(분할).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

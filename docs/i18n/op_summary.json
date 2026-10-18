@@ -6201,6 +6201,15 @@
    "de": "Extrahiert iterativ mittels wiederholtem RANSAC bis zu `max_planes` Ebenen nacheinander (verbleibende Restpunkte sind -1).",
    "hi": "बार-बार RANSAC से अधिकतम max_planes planes को एक-एक करके निकालता है (residual points -1)।"
   },
+  "2d/tb_points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
+  },
   "2d/tb_points_to_voxel": {
    "fp": "21f55eef00b9",
    "en": "Point cloud (N,3) → density voxel (size³). Splatted via scatter_add, with optional Gaussian smoothing.",
@@ -10241,6 +10250,15 @@
    "ko": "이상치에 강건한 PnP(RANSAC + 최종 DLT 재적합). → (R, t, inlier_mask, info).",
    "de": "Ausreißerrobustes PnP (RANSAC plus abschließendes DLT-Refit). → (R, t, inlier_mask, info).",
    "hi": "outliers के प्रति robust PnP (RANSAC + अंतिम DLT refit)। → (R, t, inlier_mask, info)।"
+  },
+  "3d/points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
   },
   "3d/points_to_voxel": {
    "fp": "21f55eef00b9",
@@ -27918,6 +27936,15 @@
    "de": "Legt die Objekte farblich unterschieden über das Originalbild und gibt ein float-RGB der Form ``(H, W, 3)`` zurück.",
    "hi": "मूल image पर object को अलग-अलग रंगों में overlay करके ``(H, W, 3)`` का float RGB लौटाता है।"
   },
+  "blob/blob_count_interval": {
+   "fp": "9f97cd894c3e",
+   "en": "Counts overlapping objects. **When the count cannot be determined, returns an interval instead of a number** (fail-closed).",
+   "zh": "对重叠的物体计数。**无法确定时返回区间而不是个数**(fail-closed)。",
+   "tw": "對重疊的物體計數。**無法確定時回傳區間而不是個數**(fail-closed)。",
+   "ko": "겹친 물체를 센다. **정해지지 않을 때는 개수가 아니라 구간을 반환한다**(fail-closed).",
+   "de": "Zählt überlappende Objekte. **Ist die Anzahl nicht bestimmbar, wird statt einer Zahl ein Intervall zurückgegeben** (fail-closed).",
+   "hi": "overlap हुए objects गिनता है। **जब तय न हो सके, तो संख्या के बजाय interval लौटाता है** (fail-closed)।"
+  },
   "dem/dem_slope": {
    "fp": "70b34f800b85",
    "en": "Slope angle. ``units`` is ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",
@@ -30617,6 +30644,222 @@
    "ko": "Radial Reach Filter(RRF). 배경과 현재 영상을 8방향 reach의 부호로 비교한다.",
    "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
    "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
+  },
+  "spc/anomaly_image_auroc": {
+   "fp": "7145079fe2a4",
+   "ja": "画像ごとの異常スコアと良/不良のラベルから画像単位の AUROC(``table``)。",
+   "zh": "由每张图像的异常分数与良/不良标签计算图像级 AUROC(``table``)。",
+   "tw": "由每張影像的異常分數與良/不良標籤計算影像級 AUROC(``table``)。",
+   "ko": "이미지별 이상 점수와 양품/불량 라벨로 이미지 단위 AUROC (``table``).",
+   "de": "AUROC auf Bildebene aus einem Anomaliewert je Bild und einer Gut/Schlecht-Kennung je Bild (``table``).",
+   "hi": "हर image के एक anomaly score और अच्छा/दोषपूर्ण label से image-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pixel_auroc": {
+   "fp": "1dacad6a8246",
+   "ja": "異常スコアの図と欠陥マスクから画素単位の AUROC(``table``)。",
+   "zh": "由异常分数图与缺陷真值掩膜计算像素级 AUROC(``table``)。",
+   "tw": "由異常分數圖與缺陷真值遮罩計算像素級 AUROC(``table``)。",
+   "ko": "이상 점수 맵과 결함 정답 마스크로 픽셀 단위 AUROC (``table``).",
+   "de": "AUROC auf Pixelebene von Anomalie-Wertkarten gegen Defektmasken der Grundwahrheit (``table``).",
+   "hi": "anomaly score maps और ground-truth defect masks से pixel-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pro": {
+   "fp": "87069abda025",
+   "ja": "欠陥の連結領域ごとの重なり(PRO)の曲線と、``fpr_max`` までの正規化面積 AUPRO(``table``)。",
+   "zh": "按缺陷连通区域计算的重叠率(PRO)曲线,及积分到 ``fpr_max`` 的归一化面积 AUPRO(``table``)。",
+   "tw": "按缺陷連通區域計算的重疊率(PRO)曲線,及積分到 ``fpr_max`` 的正規化面積 AUPRO(``table``)。",
+   "ko": "결함 연결 영역별 중첩(PRO) 곡선과 ``fpr_max`` 까지의 정규화 면적 AUPRO (``table``).",
+   "de": "Kurve der Überlappung je Defektregion (PRO) und ihre normierte Fläche AUPRO bis ``fpr_max`` (``table``).",
+   "hi": "हर defect region के overlap (PRO) की curve और ``fpr_max`` तक उसका normalised area AUPRO (``table``)।"
+  },
+  "spc/anomaly_region_overlap": {
+   "fp": "840a230f98c4",
+   "ja": "1 つの動作点での 2 値の欠陥予測と真値の領域ごとの重なり(``table``)。",
+   "zh": "单一工作点下二值缺陷预测与真值各区域的重叠率(``table``)。",
+   "tw": "單一工作點下二值缺陷預測與真值各區域的重疊率(``table``)。",
+   "ko": "하나의 동작점에서 이진 결함 예측과 정답 영역별 중첩 (``table``).",
+   "de": "Überlappung einer binären Defektvorhersage mit den Regionen der Grundwahrheit an einem Arbeitspunkt (``table``).",
+   "hi": "एक operating point पर binary defect prediction का ground-truth regions से per-region overlap (``table``)।"
+  },
+  "spc/varmodel_alignment": {
+   "fp": "8fe168938342",
+   "ja": "良品それぞれの、群の典型の位置に対する並進のずれと、許容までの余裕(``table``)。",
+   "zh": "每个良品相对于该组典型位置的平移偏差,以及距容许值的余量(``table``)。",
+   "tw": "每個良品相對於該組典型位置的平移偏差,以及距容許值的餘量(``table``)。",
+   "ko": "각 양품이 그룹의 전형적 위치에 대해 갖는 평행이동 어긋남과 허용치까지의 여유 (``table``).",
+   "de": "Verschiebung jedes Gutteils gegenüber der typischen Lage des Stapels und der Abstand zur Toleranz (``table``).",
+   "hi": "हर अच्छे sample का stack की सामान्य स्थिति से translation offset, और tolerance तक का margin (``table``)।"
+  },
+  "spc/varmodel_band_k": {
+   "fp": "80bebd2af108",
+   "ja": "宣言した画素あたりの両側誤検出率に対する許容帯の半幅 ``k``(ばらつきの単位、``table``)。",
+   "zh": "对应所声明的每像素双侧误检率的容许带半宽 ``k``(以离散度为单位,``table``)。",
+   "tw": "對應所宣告的每像素雙側誤檢率的容許帶半寬 ``k``(以離散度為單位,``table``)。",
+   "ko": "선언한 픽셀당 양측 오검출률에 대한 허용 대역의 반폭 ``k`` (산포 단위, ``table``).",
+   "de": "Halbbreite ``k`` (in Streuungseinheiten) des Toleranzbands für eine erklärte zweiseitige Fehlalarmrate je Pixel (``table``).",
+   "hi": "घोषित दो-तरफ़ा per-pixel false-alarm दर के लिए tolerance band की आधी चौड़ाई ``k`` (spread की इकाई में, ``table``)।"
+  },
+  "spc/varmodel_fit": {
+   "fp": "6160807af29a",
+   "ja": "良品の積み重ねから画素ごとの変動モデル(中心・ばらつき・帯の半幅 k)を学ぶ(``table``)。",
+   "zh": "由良品图像堆叠学习逐像素的变动模型(中心、离散度、容许带半宽 k)(``table``)。",
+   "tw": "由良品影像堆疊學習逐像素的變動模型(中心、離散度、容許帶半寬 k)(``table``)。",
+   "ko": "양품 스택에서 픽셀별 변동 모델(중심·산포·대역 반폭 k)을 학습 (``table``).",
+   "de": "Ein pixelweises Variationsmodell (Zentrum, Streuung, Bandhalbbreite k) aus einem Stapel von Gutteilen lernen (``table``).",
+   "hi": "अच्छे samples के stack से per-pixel variation model (centre, spread, band की आधी चौड़ाई k) सीखना (``table``)।"
+  },
+  "spc/varmodel_calibrate": {
+   "fp": "decedb6abf8c",
+   "ja": "当てはめに使っていない良品から帯の半幅 ``k`` を測り直す(正規の仮定が外れる実画像用、``table``)。",
+   "zh": "用未参与拟合的良品重新求容许带半宽 ``k``(用于不满足正态假设的真实图像,``table``)。",
+   "tw": "用未參與擬合的良品重新求容許帶半寬 ``k``(用於不滿足常態假設的真實影像,``table``)。",
+   "ko": "적합에 쓰지 않은 양품으로 대역 반폭 ``k`` 를 다시 측정 (정규 가정이 깨지는 실영상용, ``table``).",
+   "de": "Die Bandhalbbreite ``k`` aus zurückgehaltenen Gutteilen neu bestimmen, für Daten, die die Normalannahme verletzen (``table``).",
+   "hi": "fit में न इस्तेमाल हुए अच्छे images से band की आधी चौड़ाई ``k`` फिर से निकालना, उन असली images के लिए जो normal मान्यता तोड़ते हैं (``table``)।"
+  },
+  "spc/varmodel_score": {
+   "fp": "ca4a693ee765",
+   "ja": "1 枚を ``varmodel_fit`` の模型に当てる: 何 σ 外れたかの z 図・帯の外の図・領域ごとの説明(``table``)。",
+   "zh": "将一张图像与 ``varmodel_fit`` 的模型比较:以 σ 计的 z 图、带外图与逐区域说明(``table``)。",
+   "tw": "將一張影像與 ``varmodel_fit`` 的模型比較:以 σ 計的 z 圖、帶外圖與逐區域說明(``table``)。",
+   "ko": "한 장을 ``varmodel_fit`` 모델에 대조: σ 단위 z 맵·대역 밖 맵·영역별 설명 (``table``).",
+   "de": "Ein Bild gegen ein ``varmodel_fit``-Modell bewerten: z-Karte in Sigma, Karte außerhalb des Bands und eine Erklärung je Region (``table``).",
+   "hi": "एक image को ``varmodel_fit`` model से मिलाना: sigma में z map, band से बाहर का map और हर region की व्याख्या (``table``)।"
+  },
+  "segmentation/plant_color_index": {
+   "fp": "74837abb9485",
+   "en": "Per-pixel plant colour indices from the three visible bands (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "zh": "逐像素计算可见光三波段的植物颜色指数（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "tw": "逐像素計算可見光三波段的植物顏色指數（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "ko": "가시광 3밴드의 식물 색 지수(ExG·ExR·ExGR·CIVE·NGRDI·VEG)를 화소마다 계산한다.",
+   "de": "Pflanzen-Farbindizes aus den drei sichtbaren Kanälen pro Pixel (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "hi": "तीन दृश्य band से हर pixel के plant colour index (ExG, ExR, ExGR, CIVE, NGRDI, VEG) निकालता है।"
+  },
+  "segmentation/superpixel_color_texture_features": {
+   "fp": "a866957294c1",
+   "en": "Ten colour (plant indices, chromaticity) and texture (gradient, orientation coherence) features for every region of a label image.",
+   "zh": "为标签图像的每个区域输出 10 个颜色（植物颜色指数、色度）与纹理（梯度、方向一致性）特征。",
+   "tw": "為標籤影像的每個區域輸出 10 個顏色（植物顏色指數、色度）與紋理（梯度、方向一致性）特徵。",
+   "ko": "라벨 영상의 영역마다 색(식물 색 지수·색도)과 결(기울기·방향 정렬도) 특징 10개를 낸다.",
+   "de": "Zehn Farb- (Pflanzenindizes, Chromatizität) und Texturmerkmale (Gradient, Orientierungskohärenz) für jede Region eines Labelbildes.",
+   "hi": "label image के हर region के लिए 10 colour (plant index, chromaticity) और texture (gradient, orientation coherence) feature देता है।"
+  },
+  "segmentation/fisher_lda_fit": {
+   "fp": "f986a704b2eb",
+   "en": "Fit a two-class Fisher linear discriminant (closed form, no iteration).",
+   "zh": "学习两类 Fisher 线性判别（闭式解，无迭代）。",
+   "tw": "學習兩類 Fisher 線性判別（閉式解，無迭代）。",
+   "ko": "2클래스 Fisher 선형 판별을 학습한다(닫힌 형태, 반복 없음).",
+   "de": "Zweiklassige lineare Fisher-Diskriminante anpassen (geschlossene Form, ohne Iteration).",
+   "hi": "दो class का Fisher linear discriminant सीखता है (closed form, कोई iteration नहीं)।"
+  },
+  "segmentation/fisher_lda_score": {
+   "fp": "7b2b0be5a7a9",
+   "en": "Score features with a discriminant fitted by ``fisher_lda_fit`` (score > 0 means class 1).",
+   "zh": "用 ``fisher_lda_fit`` 学到的判别对特征打分（score > 0 为类 1）。",
+   "tw": "以 ``fisher_lda_fit`` 學到的判別對特徵打分（score > 0 為類 1）。",
+   "ko": "``fisher_lda_fit``로 학습한 판별로 특징을 채점한다(score > 0이면 클래스 1).",
+   "de": "Merkmale mit einer durch ``fisher_lda_fit`` angepassten Diskriminante bewerten (score > 0 bedeutet Klasse 1).",
+   "hi": "``fisher_lda_fit`` से सीखे discriminant से feature को score देता है (score > 0 का अर्थ class 1)।"
+  },
+  "segmentation/cover_ratio_grade": {
+   "fp": "eb6c33721835",
+   "en": "Split a cover fraction (area share 0..1) into grades 0..len(edges) at **declared edges** ``edges``.",
+   "zh": "用**事先声明的边界** ``edges`` 把覆盖度（面积比例 0..1）分为 0..len(edges) 级。",
+   "tw": "以**事先宣告的邊界** ``edges`` 把覆蓋度（面積比例 0..1）分為 0..len(edges) 級。",
+   "ko": "피도(면적 비율 0..1)를 **미리 선언한 경계** ``edges``로 0..len(edges) 단계로 나눈다.",
+   "de": "Einen Deckungsgrad (Flächenanteil 0..1) an **vorab festgelegten Grenzen** ``edges`` in Stufen 0..len(edges) einteilen.",
+   "hi": "cover fraction (area का हिस्सा 0..1) को **पहले घोषित सीमाओं** ``edges`` पर 0..len(edges) grade में बाँटता है।"
+  },
+  "roughness/robust_gaussian_profile": {
+   "fp": "9fec53f12ae4",
+   "en": "Robust Gaussian regression filter (profile): a mean line and roughness that outliers and scratches cannot drag.",
+   "zh": "稳健高斯回归滤波器(截面):不被离群点和划痕拖动的平均线与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(截面):不被離群點與刮痕拖動的平均線與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(단면): 이상값과 흠집에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Profil): Mittellinie und Rauheit, die sich von Ausreißern und Kratzern nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (profile): ऐसी mean line और roughness जिसे outliers और scratches खींच नहीं पाते।"
+  },
+  "roughness/robust_spline_profile": {
+   "fp": "77dae02eccbb",
+   "en": "Robust spline filter (profile): a mean line and roughness that outliers cannot drag.",
+   "zh": "稳健样条滤波器(截面):不被离群点拖动的平均线与粗糙度。",
+   "tw": "穩健樣條濾波器(截面):不被離群點拖動的平均線與粗糙度。",
+   "ko": "로버스트 스플라인 필터(단면): 이상값에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Spline-Filter (Profil): Mittellinie und Rauheit, die sich von Ausreißern nicht ziehen lassen.",
+   "hi": "Robust spline filter (profile): ऐसी mean line और roughness जिसे outliers खींच नहीं पाते।"
+  },
+  "roughness/robust_gaussian_surface": {
+   "fp": "786df7c5ba92",
+   "en": "Robust Gaussian regression filter (surface): waviness and roughness of a surface that scratches and spikes cannot drag.",
+   "zh": "稳健高斯回归滤波器(曲面):不被划痕和突起拖动的曲面波纹度与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(曲面):不被刮痕與突起拖動的曲面波紋度與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(면): 흠집과 돌기에 끌려가지 않는 면의 파상도와 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Fläche): Welligkeit und Rauheit einer Fläche, die sich von Kratzern und Spitzen nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (surface): surface की waviness और roughness, जिसे scratches और spikes खींच नहीं पाते।"
+  },
+  "2d/kuwahara": {
+   "fp": "f83a1917f0bd",
+   "en": "Kuwahara filter (1976): edge-preserving smoothing that outputs the mean of whichever of four overlapping windows has the smallest variance.",
+   "zh": "Kuwahara 滤波（1976）。保边平滑：取四个相互重叠的窗口中方差最小者的均值作为输出。",
+   "tw": "Kuwahara 濾波（1976）。保邊平滑：取四個相互重疊的視窗中變異數最小者的平均值作為輸出。",
+   "ko": "Kuwahara 필터(1976). 서로 겹치는 네 개의 창 중 분산이 가장 작은 창의 평균을 출력하는 경계 보존 평활화.",
+   "de": "Kuwahara-Filter (1976): kantenerhaltende Glättung, die den Mittelwert desjenigen von vier überlappenden Fenstern mit der kleinsten Varianz ausgibt.",
+   "hi": "Kuwahara filter (1976)। चार overlapping windows में से जिसका variance सबसे कम हो उसका mean लौटाने वाला, किनारों को सुरक्षित रखने वाला smoothing।"
+  },
+  "2d/xdog": {
+   "fp": "1aca9168c860",
+   "en": "XDoG (extended difference of Gaussians; Winnemoller, Kyprianidis and Olsen 2012): line-art / ink-drawing stylisation.",
+   "zh": "XDoG（扩展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：线稿、水墨风格的风格化。",
+   "tw": "XDoG（擴展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：線稿、水墨風格的風格化。",
+   "ko": "XDoG(확장 가우시안 차분, Winnemoller·Kyprianidis·Olsen 2012)에 의한 선화·수묵풍 스타일라이즈.",
+   "de": "XDoG (erweiterte Gauß-Differenz, Winnemoller, Kyprianidis und Olsen 2012): Stilisierung zu Strichzeichnung bzw. Tuschezeichnung.",
+   "hi": "XDoG (extended difference of Gaussians, Winnemoller, Kyprianidis, Olsen 2012) से line-art / ink-drawing जैसी stylisation।"
+  },
+  "optics/encircled_energy": {
+   "fp": "39c2d8477342",
+   "ja": "点像分布関数(PSF)の囲みエネルギー: 半径 r の円の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的环围能量:半径为 r 的圆内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的環圍能量:半徑為 r 的圓內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 포위 에너지: 반지름 r인 원 안에 들어오는 에너지의 비율.",
+   "de": "Eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Kreises vom Radius r.",
+   "hi": "point-spread function (PSF) की encircled energy: त्रिज्या r के वृत्त के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/ensquared_energy": {
+   "fp": "11b3425a0c3f",
+   "ja": "点像分布関数(PSF)の四角エネルギー: 半幅 w の正方形の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的方形能量:半宽为 w 的正方形内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的方形能量:半寬為 w 的正方形內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 정사각형 에너지: 반폭 w인 정사각형 안에 들어오는 에너지의 비율.",
+   "de": "Quadratisch eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Quadrats der Halbbreite w.",
+   "hi": "point-spread function (PSF) की ensquared energy: अर्ध-चौड़ाई w के वर्ग के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/energy_radii": {
+   "fp": "7ef6db3122a4",
+   "ja": "点像分布関数(PSF)のエネルギーのうち、指定した割合を含む半径(``table``)。",
+   "zh": "包含点扩散函数(PSF)指定能量比例的半径(``table``)。",
+   "tw": "包含點擴散函數(PSF)指定能量比例的半徑(``table``)。",
+   "ko": "점확산함수(PSF) 에너지의 지정한 비율을 포함하는 반지름(``table``).",
+   "de": "Der Radius, der einen gegebenen Anteil der Energie einer Punktbildfunktion (PSF) enthält (``table``).",
+   "hi": "वह त्रिज्या जिसमें point-spread function (PSF) की ऊर्जा का दिया गया अनुपात आता है (``table``)।"
+  },
+  "optics/mtf_tangential_sagittal": {
+   "fp": "c909005b1168",
+   "ja": "点像分布関数(PSF)の 2 次元変換から、子午(タンジェンシャル)と球欠(サジタル)の MTF を別々に出す(``table``)。",
+   "zh": "由点扩散函数(PSF)的二维变换分别给出子午(切向)与弧矢 MTF(``table``)。",
+   "tw": "由點擴散函數(PSF)的二維變換分別給出子午(切向)與弧矢 MTF(``table``)。",
+   "ko": "점확산함수(PSF)의 2차원 변환에서 자오(접선)와 구결(시상) MTF를 따로 구한다(``table``).",
+   "de": "Tangentiale und sagittale MTF aus der 2-D-Transformierten einer Punktbildfunktion (PSF) (``table``).",
+   "hi": "point-spread function (PSF) के 2-D transform से tangential और sagittal MTF अलग-अलग (``table``)।"
+  },
+  "optics/through_focus_mtf": {
+   "fp": "57757121d3ad",
+   "ja": "像面の位置を動かしたときの、指定した空間周波数の子午・球欠 MTF(``table``)。",
+   "zh": "像面位置变化时,指定空间频率下的子午与弧矢 MTF(``table``)。",
+   "tw": "像面位置變化時,指定空間頻率下的子午與弧矢 MTF(``table``)。",
+   "ko": "상면 위치를 움직였을 때 지정한 공간 주파수의 자오·구결 MTF(``table``).",
+   "de": "Tangentiale und sagittale MTF bei gewählten Ortsfrequenzen über einen Bereich von Bildebenenlagen (``table``).",
+   "hi": "image plane की स्थिति बदलने पर चुनी गई spatial frequencies पर tangential और sagittal MTF (``table``)।"
   }
  }
 }

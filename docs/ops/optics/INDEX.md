@@ -1,4 +1,4 @@
-# OPTICS operator help — 358 ops in 40 categories
+# OPTICS operator help — 363 ops in 40 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -70,13 +70,13 @@
 
 [coaxial_illumination](illumination/coaxial_illumination.md) · [defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_field](illumination/illumination_field.md) · [illumination_train](illumination/illumination_train.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
 
-### imaging (7)
+### imaging (11)
 
-[edge_spread](imaging/edge_spread.md) · [mtf50](imaging/mtf50.md) · [mtf_diffraction](imaging/mtf_diffraction.md) · [psf_to_mtf](imaging/psf_to_mtf.md) · [sfr_from_edge](imaging/sfr_from_edge.md) · [veiling_glare_index](imaging/veiling_glare_index.md) · [wavefront_stats](imaging/wavefront_stats.md)
+[edge_spread](imaging/edge_spread.md) · [encircled_energy](imaging/encircled_energy.md) · [energy_radii](imaging/energy_radii.md) · [ensquared_energy](imaging/ensquared_energy.md) · [mtf50](imaging/mtf50.md) · [mtf_diffraction](imaging/mtf_diffraction.md) · [mtf_tangential_sagittal](imaging/mtf_tangential_sagittal.md) · [psf_to_mtf](imaging/psf_to_mtf.md) · [sfr_from_edge](imaging/sfr_from_edge.md) · [veiling_glare_index](imaging/veiling_glare_index.md) · [wavefront_stats](imaging/wavefront_stats.md)
 
-### imaging_sim (5)
+### imaging_sim (6)
 
-[calibration_views](imaging_sim/calibration_views.md) · [defect_dataset](imaging_sim/defect_dataset.md) · [distortion_map](imaging_sim/distortion_map.md) · [psf_from_opd](imaging_sim/psf_from_opd.md) · [render_through_lens](imaging_sim/render_through_lens.md)
+[calibration_views](imaging_sim/calibration_views.md) · [defect_dataset](imaging_sim/defect_dataset.md) · [distortion_map](imaging_sim/distortion_map.md) · [psf_from_opd](imaging_sim/psf_from_opd.md) · [render_through_lens](imaging_sim/render_through_lens.md) · [through_focus_mtf](imaging_sim/through_focus_mtf.md)
 
 ### interface (4)
 

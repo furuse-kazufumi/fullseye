@@ -91,7 +91,7 @@ fail-closed
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 
-[surface_form_remove](../prepare/surface_form_remove.md) · [surface_filter](../prepare/surface_filter.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
+[surface_form_remove](../prepare/surface_form_remove.md) · [surface_filter](../prepare/surface_filter.md) · [robust_gaussian_surface](../prepare/robust_gaussian_surface.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
 
 ## 同カテゴリ(`synth`)
 

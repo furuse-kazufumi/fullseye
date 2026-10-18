@@ -45,7 +45,7 @@ max_dist を増やした分割は入れ子になる(切る枝が減るだけ)。
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`graph`)
 

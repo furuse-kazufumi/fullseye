@@ -85,15 +85,17 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## What it can do
 
-80 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+85 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
 **Find**
 
-- Segment regions, select them, and count: [explanation](../../capabilities/blob-and-region.md) _(ja)_ · examples [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- Segment regions, select them, and count: [explanation](../../capabilities/blob-and-region.md) _(ja)_ · examples [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py) · [poc_dense_bubble_count](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+- Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network): [explanation](../../capabilities/crop-weed-cover-grade.md) _(ja)_ · examples [poc_weed_rice_ratio](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z): [explanation](../../capabilities/dual-energy-xray-material-discrimination.md) _(ja)_ · examples [poc_dual_energy_xray](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dual_energy_xray.py)
 - Fix the text inside an image against the string it should read: [explanation](../../capabilities/fix-text-in-images.md) _(ja)_ · examples [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate): [explanation](../../capabilities/good-sample-variation-model.md) _(ja)_ · examples [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR pre-processing (deskew, local binarisation, line extraction): [explanation](../../capabilities/ocr-preprocessing.md) _(ja)_ · examples [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells): [explanation](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · examples [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - Find small point-like targets and locate them below the pixel: [explanation](../../capabilities/point-target-detection.md) _(ja)_ · examples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
@@ -121,8 +123,10 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry): [explanation](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · examples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - Flatness of a surface from a 3-D point cloud: [explanation](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · examples [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A): [explanation](../../capabilities/probability-of-detection.md) _(ja)_ · examples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+- A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces): [explanation](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · examples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - Detect fine scratches and measure their width: [explanation](../../capabilities/scratch-detection-and-width.md) _(ja)_ · examples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - Measure how much the bright SEM edge inflates a dimension, with ground truth: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
 - Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead: [explanation](../../capabilities/sim-to-real-calibration.md) _(ja)_ · examples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Measure dimensions from an image, below the pixel: [explanation](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · examples [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -184,6 +188,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Turn results into figures people can read: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 - Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Draw lines and regions without knowing the background colour: [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- Draw a point cloud as a colour picture: [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Put text and tables exactly where you want them on an image: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
 **Draw**
@@ -195,11 +200,11 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 148 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 151 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
-255 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+260 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -218,7 +223,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (42)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (44)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D barcode" width="200" height="200"><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Electrode tortuosity" width="200" height="200"><span>Electrode tortuosity</span></a>
@@ -258,14 +263,16 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="Illumination cone versus imaging NA" width="200" height="200"><b>&#9654;</b><span>Illumination cone versus imaging NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI line scan and line-scan lenses" width="200" height="200"><span>TDI line scan and line-scan lenses</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="Industrial OCT (paint layers and hidden defects)" width="200" height="200"><span>Industrial OCT (paint layers and hidden defects)</span></a>
+<a href="../../articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dense_bubble_count.jpg" alt="Counting dense bubbles (an interval when undecidable)" width="200" height="200"><b>&#9654;</b><span>Counting dense bubbles (an interval when undecidable)</span></a>
 <a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="Virtual SEM vs voltage" width="200" height="200"><span>Virtual SEM vs voltage</span></a>
 <a href="../../articles/assets/poc/poc_grating_interferometry/12_real_three_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_grating_interferometry.jpg" alt="Grating interferometry (fibres, cracks and pores in the dark field)" width="200" height="200"><span>Grating interferometry (fibres, cracks and pores in the dark field)</span></a>
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="Bone and glass in meat, separated with two X-ray energies (dual-energy X-ray)" width="200" height="200"><span>Bone and glass in meat, separated with two X-ray energies (dual-energy X-ray)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Code matching under light and occlusion" width="200" height="200"><b>&#9654;</b><span>Code matching under light and occlusion</span></a>
+<a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="Good-sample variation model" width="200" height="200"><span>Good-sample variation model</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (52)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (53)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -319,6 +326,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="Non-coaxial optics: beamsplitter ghosts and folds" width="200" height="200"><span>Non-coaxial optics: beamsplitter ghosts and folds</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="Spectrometer and illumination (bandwidth and lamp structure)" width="200" height="200"><span>Spectrometer and illumination (bandwidth and lamp structure)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Calibrating an imaging model on a real telecentric image" width="200" height="200"><span>Calibrating an imaging model on a real telecentric image</span></a>
+<a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="How far a scratch dents the mean line, and where robust filters break" width="200" height="200"><span>How far a scratch dents the mean line, and where robust filters break</span></a>
 </div>
 </details>
 
@@ -434,7 +442,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Connectome and neurons</b> (19)</summary>
+<details class="vall"><summary><b>Connectome and neurons</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_vision.jpg" alt="Fly visual front end" width="200" height="200"><span>Fly visual front end</span></a>
 <a href="../../articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_larval_connectome_reservoir.jpg" alt="Larval connectome" width="200" height="200"><span>Larval connectome</span></a>
@@ -455,6 +463,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_swc_tree_truth/01_swc_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_swc_tree_truth.jpg" alt="SWC skeletons" width="200" height="200"><span>SWC skeletons</span></a>
 <a href="../../articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_optomotor_steering.jpg" alt="Fly steering" width="200" height="200"><b>&#9654;</b><span>Fly steering</span></a>
 <a href="../../articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_worm_core_persists.jpg" alt="Worm brain core" width="200" height="200"><b>&#9654;</b><span>Worm brain core</span></a>
+<a href="../../articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_flybrain_pointcloud.jpg" alt="The fly brain as 126k cell bodies" width="200" height="200"><b>&#9654;</b><span>The fly brain as 126k cell bodies</span></a>
 </div>
 </details>
 
@@ -472,7 +481,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomy and environment</b> (22)</summary>
+<details class="vall"><summary><b>Astronomy and environment</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="A gravitational-wave detector in closed form" width="200" height="200"><b>&#9654;</b><span>A gravitational-wave detector in closed form</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="All-sky cloud cover" width="200" height="200"><span>All-sky cloud cover</span></a>
@@ -496,6 +505,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="Mars rover slip" width="200" height="200"><b>&#9654;</b><span>Mars rover slip</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="Two heights (real)" width="200" height="200"><span>Two heights (real)</span></a>
 <a href="../../articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gravitational_lens_invariants.jpg" alt="Gravitational lens" width="200" height="200"><b>&#9654;</b><span>Gravitational lens</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="Grading weed cover in rice paddies" width="200" height="200"><span>Grading weed cover in rice paddies</span></a>
 </div>
 </details>
 

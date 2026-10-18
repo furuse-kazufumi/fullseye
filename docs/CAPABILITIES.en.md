@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 80 capabilities**
+**Currently 85 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,9 +31,11 @@ Every operator exists in the registry and the types connect from one step to the
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
 | [Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
 | [Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -53,10 +55,13 @@ Every operator exists in the registry and the types connect from one step to the
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
+| [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
@@ -75,7 +80,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (28)
+## Measure (30)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -245,6 +250,18 @@ Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`,
 
 Runnable: `poc_pod_lighting`
 
+### [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+Three ops in the `roughness` ledger (category `prepare`). `robust_gaussian_profile` is a Gaussian-weighted local regression (order 0 or 1) iterated with Tukey's biweight at `c · median|r|`; its transmission is exactly 50 % at λc (closed form `exp(-π(αλc/λ)²)`, α² = ln2/π), measured to 3e-8. `robust_spline_profile` solves a second-difference penalised least squares (a discrete cubic smoothing spline) with the same reweighting; its transfer function `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` is matched to 1e-11. `robust_gaussian_surface` is the areal version. On a synthetic profile with a known waviness, scratches covering up to 20 % of the samples drag the robust mean line 0.06 times as far as the linear one; at 40 % it breaks down, and a non-converging iteration is refused rather than returned.
+
+Operators: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+Pipeline: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+Alternatives: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+Runnable: `poc_robust_profile_filter`, `example_robust_profile_filter`
+
 ### [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md)
 
 Two stages: *where* (ridge response `lines_gauss`, or the black-top-hat `bothat` that lifts only dark fine detail) and *how wide* (a measurement line across the detected line, `measure_pairs` for the two sub-pixel edges, `table_px_to_mm` for millimetres).
@@ -264,6 +281,18 @@ Render a ground-truth SEM image from a height field with `sem_render` (secondary
 Operators: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 Runnable: `poc_sem_wafer_defect_edge_bias`
+
+### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
+
+An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics. The ideal lens turns rays by the thin-lens law exactly with a stigmatic optical path, so an aberration-free lens reads zero OPD and an Airy PSF. `encircled_energy` / `ensquared_energy` give the energy-versus-radius curves, `energy_radii` the radii at chosen fractions, `mtf_tangential_sagittal` the two meridional slices of the 2-D transform, and `through_focus_mtf` the MTF at chosen frequencies across image-plane shifts. Gates: focus at f to 1e-12 mm, Gaussian conjugate and magnification, 83.8 % at the first Airy dark ring, the closed-form circular-pupil MTF, and Hopkins' defocus integral.
+
+Operators: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`
+
+Pipeline: [`lens_system`](ops/optics/design/lens_system.md) → [`psf_from_opd`](ops/optics/imaging_sim/psf_from_opd.md) → [`encircled_energy`](ops/optics/imaging/encircled_energy.md) → [`energy_radii`](ops/optics/imaging/energy_radii.md) → [`mtf_tangential_sagittal`](ops/optics/imaging/mtf_tangential_sagittal.md) → [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md)
+
+Alternatives: [`psf_to_mtf`](ops/optics/imaging/psf_to_mtf.md), [`mtf_diffraction`](ops/optics/imaging/mtf_diffraction.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`opd_map`](ops/optics/design/opd_map.md), [`wavefront_from_opd`](ops/optics/design/wavefront_from_opd.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+Runnable: `optical_design_metrics`
 
 ### [Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)](capabilities/shape-from-polarization.md)
 
@@ -365,19 +394,31 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (10)
+## Detect (12)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
 Label connected components, select them by area, shape or position, and count them. Touching objects can be separated with a watershed.
 
-Operators: `blob_label`, `blob_select`, `blob_count`, `watersheds`
+Operators: `blob_label`, `blob_select`, `blob_count`, `watersheds`, `blob_count_interval`
 
 Pipeline: [`auto_threshold`](ops/2d/segmentation/auto_threshold.md) → [`blob_label`](ops/blob/connect/blob_label.md) → [`blob_select`](ops/blob/select/blob_select.md) → [`blob_features`](ops/blob/measure/blob_features.md)
 
-Alternatives: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
+Alternatives: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`blob_count_interval`](ops/blob/split/blob_count_interval.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
 
-Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`, `poc_dense_bubble_count`
+
+### [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md)
+
+Five ops for field RGB: six visible-band plant colour indices (ExG, ExR, ExGR, CIVE, NGRDI, VEG; dark pixels are left undefined rather than set to zero), ten colour and texture features per region of a label image (including structure-tensor orientation coherence, which separates aligned crop leaves from isotropic weed patches), a closed-form two-class Fisher discriminant (fit and score), and a grader that splits a cover fraction at edges declared before evaluation (default 5 / 25 / 50 %, the Braun-Blanquet cover classes). The PoC scores them on a public UAV dataset of weedy rice with pixel masks (CC BY 4.0): grade agreement kappa 0.424 on the held-out test split (permutation p = 0.0005), cover correlation 0.826, and an honest leave-one-date-out check where one late-season flight drops to r = 0.14.
+
+Operators: `plant_color_index`, `superpixel_color_texture_features`, `fisher_lda_fit`, `fisher_lda_score`, `cover_ratio_grade`
+
+Pipeline: [`superpixel_color_texture_features`](ops/segmentation/plant/superpixel_color_texture_features.md) → [`fisher_lda_fit`](ops/segmentation/classify/fisher_lda_fit.md) → [`fisher_lda_score`](ops/segmentation/classify/fisher_lda_score.md) → [`cover_ratio_grade`](ops/segmentation/plant/cover_ratio_grade.md)
+
+Alternatives: [`plant_color_index`](ops/segmentation/plant/plant_color_index.md), [`snic_superpixels`](ops/segmentation/graph/snic_superpixels.md), [`class_ndim_norm`](ops/segmentation/classify/class_ndim_norm.md)
+
+Runnable: `poc_weed_rice_ratio`
 
 ### [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md)
 
@@ -398,6 +439,18 @@ Fix the text inside an image against the string it should read, without regenera
 Operators: `glyph_correct_spec`, `glyph_make_spec`, `glyph_find_text_lines`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
 
 Runnable: `fix_text_in_image`, `poc_glyph_typo_detection`
+
+### [Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)](capabilities/good-sample-variation-model.md)
+
+A per-pixel variation model learned from aligned good samples, with the band half-width derived from a declared per-pixel false-alarm rate rather than tuned by hand: a t prediction interval for mean/std, an empirical-Bayes moderated t (Smyth 2004) for few samples, and a Monte-Carlo pivot for the robust median/MAD variant. Measured false-alarm rates on synthetic normal good samples fall inside the binomial 4-sigma band for all four estimators. The stack's alignment is measured to 1/20 px and a misaligned stack is refused (or registered by an all-pass Fourier shift); forcing a 1-2 px misaligned stack fattens the band on edges 22-fold and misses every edge defect. Held-out calibration re-derives k from good images when real data break the model, and every out-of-band region is explained by area, sign and peak sigma. Method-independent metrics (pixel AUROC, AUPRO to FPR 0.3, image AUROC, per-region overlap) compare it with RPCA and golden comparison.
+
+Operators: `varmodel_alignment`, `varmodel_band_k`, `varmodel_fit`, `varmodel_calibrate`, `varmodel_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_region_overlap`, `compare_to_golden`
+
+Pipeline: [`varmodel_alignment`](ops/spc/variation/varmodel_alignment.md) → [`varmodel_fit`](ops/spc/variation/varmodel_fit.md) → [`varmodel_calibrate`](ops/spc/variation/varmodel_calibrate.md) → [`varmodel_score`](ops/spc/variation/varmodel_score.md)
+
+Alternatives: `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md), [`anomaly_pro`](ops/spc/anomaly_eval/anomaly_pro.md)
+
+Runnable: `poc_good_sample_variation_model`, `anomaly_eval_metrics`
 
 ### [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md)
 
@@ -835,7 +888,7 @@ Operators: `save_xlsx_report`, `report`, `to_markdown`, `save_json`
 
 Runnable: `xlsx_report`
 
-## Show (4)
+## Show (5)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 
@@ -868,6 +921,18 @@ Pipeline: [`annotate_invert_visibility`](ops/annotate/overlay/annotate_invert_vi
 Alternatives: [`annotate_legend`](ops/annotate/paper/annotate_legend.md), [`text_box`](ops/annotate/text/text_box.md)
 
 Runnable: `annotate_paper_tour`
+
+### [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md)
+
+Draws a point cloud that has no surface — cell positions, LiDAR returns, sparse SfM points, particles — as an RGB image. Each point drops a sub-pixel footprint (gaussian / disc / point) that is alpha-composited in depth order (over) or added with the total light conserved (add, a density map). The camera follows the OpenCV convention of `project_points` / `render_point_depth`; an orthographic render fits the cloud to the image when K is omitted.
+
+Operators: `points_render`, `render_point_depth`, `project_points`
+
+Pipeline: [`points_render`](ops/3d/render/points_render.md)
+
+Alternatives: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
+
+Runnable: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md)
 

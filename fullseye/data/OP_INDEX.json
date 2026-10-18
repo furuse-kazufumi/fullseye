@@ -1,10 +1,10 @@
 {
- "n_ops": 3394,
+ "n_ops": 3421,
  "tiers": {
   "color": 12,
-  "ledger": 2441,
+  "ledger": 2465,
   "nary": 17,
-  "registry": 924
+  "registry": 927
  },
  "sorts": [
   "angle",
@@ -1380,6 +1380,62 @@
    ]
   },
   {
+   "name": "anomaly_image_auroc",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_pixel_auroc",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_pro",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_region_overlap",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
    "name": "anscombe_inverse",
    "halcon": "",
    "in_sort": "image2d",
@@ -2193,6 +2249,19 @@
    "dim": "blob",
    "in_sorts": [
     "labels2d"
+   ]
+  },
+  {
+   "name": "blob_count_interval",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "table",
+   "category": "split",
+   "tier": "ledger",
+   "ledger": "opsblob",
+   "dim": "blob",
+   "in_sorts": [
+    "mask"
    ]
   },
   {
@@ -4547,6 +4616,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "cover_ratio_grade",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "signal"
+   ]
   },
   {
    "name": "coverage_edge_points",
@@ -7865,6 +7947,32 @@
    ]
   },
   {
+   "name": "encircled_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "energy_radii",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "energy_to_photons",
    "halcon": "",
    "in_sort": "pairs",
@@ -7886,6 +7994,19 @@
    "tier": "ledger",
    "ledger": "opsprintpath",
    "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ensquared_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "image2d"
    ]
@@ -8736,6 +8857,34 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "fisher_lda_fit",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "fisher_lda_score",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "table",
+    "matrix"
    ]
   },
   {
@@ -17067,6 +17216,19 @@
    "in_sorts": []
   },
   {
+   "name": "mtf_tangential_sagittal",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "mu_from_stop_distance",
    "halcon": "",
    "in_sort": null,
@@ -20128,6 +20290,19 @@
    ]
   },
   {
+   "name": "plant_color_index",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage"
+   ]
+  },
+  {
    "name": "plate_focus_shift",
    "halcon": "",
    "in_sort": null,
@@ -20285,6 +20460,19 @@
    "in_sorts": [
     "points",
     "matrix"
+   ]
+  },
+  {
+   "name": "points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
    ]
   },
   {
@@ -23552,6 +23740,45 @@
     "scalar",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "robust_gaussian_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "robust_gaussian_surface",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "robust_spline_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -27617,6 +27844,20 @@
    ]
   },
   {
+   "name": "superpixel_color_texture_features",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage",
+    "labels2d"
+   ]
+  },
+  {
    "name": "superpixel_quality",
    "halcon": "",
    "in_sort": "labels2d",
@@ -28809,6 +29050,19 @@
    ]
   },
   {
+   "name": "through_focus_mtf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "imaging_sim",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ticks",
    "halcon": "",
    "in_sort": "image2d",
@@ -29965,6 +30219,71 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "varmodel_alignment",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_band_k",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
+  },
+  {
+   "name": "varmodel_calibrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {
@@ -36485,6 +36804,16 @@
    ]
   },
   {
+   "name": "kuwahara",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "laplace",
    "halcon": "laplace",
    "in_sort": "image",
@@ -40222,6 +40551,16 @@
    "requires": []
   },
   {
+   "name": "tb_points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
    "name": "tb_points_to_voxel",
    "halcon": "",
    "in_sort": "points",
@@ -41530,6 +41869,16 @@
     "cv2",
     "skimage"
    ]
+  },
+  {
+   "name": "xdog",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
   },
   {
    "name": "xg_area_center",

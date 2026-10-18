@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [lens_defect_dataset_demo, lens_design_demo, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology]
+examples: [lens_defect_dataset_demo, lens_design_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
 - [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`

@@ -1,0 +1,130 @@
+[
+ {
+  "file": "01_real_bubbles_verdict.png",
+  "name": "real_bubbles_verdict",
+  "caption": "水電解の酸素の泡(実画像、手作業マスク)に op の判定を重ねた。青 = 個数が決まった塊(黒線は割れ目)、橙 = くびれが帯の中で 1 個か 2 個か決まらない塊、紫 = 数えた山では面積を説明できない塊(上限を開く)。大きく融合したガスの帯は数を返さない。",
+  "shape": [
+   512,
+   1032,
+   3
+  ],
+  "source": "Colliard-Granero et al., PEMWE oxygen bubble optical video recording, Zenodo doi:10.5281/zenodo.10184579, CC BY 4.0. Masks thresholded at 127; bubble shapes re-placed (semi-synthetic)."
+ },
+ {
+  "file": "02_prominence_vs_overlap.png",
+  "name": "prominence_vs_overlap",
+  "caption": "等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_pair_verdicts.png",
+  "name": "pair_verdicts",
+  "caption": "重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。面積の検査が上限を開く(紫)。0.9 を超えると和集合は縦横比 1.1 の楕円と区別できない —— ここだけは op も 1 個と答える(閉形式が予言する見えない領域)。既存の連鎖(h = 1 px)は全部の重なり率で 1 つの数を返す。",
+  "shape": [
+   711,
+   1202,
+   3
+  ]
+ },
+ {
+  "file": "04_verdict_map.png",
+  "name": "verdict_map",
+  "caption": "判定の地図。行 = 半径(上から 12 px, 20 px, 30 px、最下段は 20 px と 12 px の組)、列 = 重なり率 0〜0.95(左から右)。青 = 2 個に決まる、橙 = 区間、紫 = 上限を開く、赤 = 自信をもった誤り(閉形式の見えない領域だけ)。",
+  "shape": [
+   212,
+   1094,
+   3
+  ]
+ },
+ {
+  "file": "05_world_count_error.png",
+  "name": "world_count_error",
+  "caption": "world_blobs_touching(12 円、半径 14 px)。連結成分は重なりの数だけ少なく、既存の連鎖は o ≥ 0.6 で自信をもって外れる。op は決まらない塊を区間で返し、1 つの数に決めた世界では真値と一致した。",
+  "shape": [
+   360,
+   765,
+   3
+  ]
+ },
+ {
+  "file": "06_world_scenes.png",
+  "name": "world_scenes",
+  "caption": "重なり率 0.2 / 0.5 / 0.7。決まった塊(青)の重心(赤の十字)は矩形に 1 つずつ入る。橙・紫の塊は棄権して点を出さない(区間だけを返す)。",
+  "shape": [
+   413,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "07_bbbc005_count_vs_truth.png",
+  "name": "bbbc005_count_vs_truth",
+  "caption": "BBBC005 の真値マスク。小さい物体は op の下限が真値の線に乗る(連結成分は密になるほど下)。大きい物体は重なりが深すぎて下限も大きく下回る —— op はその大半で上限を開き(数を返さず)、自信をもった誤りを出さない。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "source": "BBBC005v1 (Ljosa et al., Nature Methods 2012), https://bbbc.broadinstitute.org/BBBC005, CC0 1.0. Ground-truth masks read as is."
+ },
+ {
+  "file": "08_bbbc005_masks.png",
+  "name": "bbbc005_masks",
+  "caption": "同じ個数の場面の小さい物体(左)と大きい物体(右)。",
+  "shape": [
+   613,
+   1422,
+   3
+  ]
+ },
+ {
+  "file": "09_pemwe_semisynthetic.png",
+  "name": "pemwe_semisynthetic",
+  "caption": "緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。重なり率は小さいほうの泡の直径のうち相手に食い込んだ割合。o = 0.4 では塊は棄権し、区間だけを返す(真値を外すこともある)。",
+  "shape": [
+   1137,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "10_pemwe_alcon_vs_overlap.png",
+  "name": "pemwe_alcon_vs_overlap",
+  "caption": "得点 = (当たり − 誤検出 − 未検出)/ 真値の数。既存の連鎖は深い重なりで点を落とす。op は決まらない塊を棄権し、答えた分は満点に近い(棄権の割合は破線)。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "source": "Colliard-Granero et al., PEMWE oxygen bubble optical video recording, Zenodo doi:10.5281/zenodo.10184579, CC BY 4.0. Masks thresholded at 127; bubble shapes re-placed (semi-synthetic)."
+ },
+ {
+  "file": "11_pemwe_round_tol_tradeoff.png",
+  "name": "pemwe_round_tol_tradeoff",
+  "caption": "実際の泡の形の矛盾: 形の許しを広げると孤立した泡は 1 個と言い切れるが、隠れた泡も通して自信をもった誤りが出る。宣言値 0.3 で誤り 3.1 %、孤立した泡の 95 % を通す 0.65 では 18.5 %。",
+  "shape": [
+   360,
+   791,
+   3
+  ],
+  "source": "Colliard-Granero et al., PEMWE oxygen bubble optical video recording, Zenodo doi:10.5281/zenodo.10184579, CC BY 4.0. Masks thresholded at 127; bubble shapes re-placed (semi-synthetic)."
+ },
+ {
+  "file": "12_pair_merging.gif",
+  "name": "pair_merging",
+  "caption": "2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。",
+  "shape": [
+   288,
+   288,
+   3
+  ],
+  "animated": true,
+  "frames": 39,
+  "frames_written": 39,
+  "fps": 6.0
+ }
+]

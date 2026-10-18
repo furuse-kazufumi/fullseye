@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_transfer_functions.png",
+  "name": "transfer_functions",
+  "caption": "λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_scratched_profile.png",
+  "name": "scratched_profile",
+  "caption": "細い線が傷つき断面。線形ガウスの平均線(赤)だけが傷のたびに凹み、ロバスト2本は真のうねり(破線)に重なる。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "03_breakdown_curve.png",
+  "name": "breakdown_curve",
+  "caption": "線形の引きずりは汚染に比例して増える。ロバストは 30 % 付近まで雑音の床(0.1〜0.15 µm)に留まり、40 % を超えると破れる。破線 = 本当のうねりの振幅(これを超えると取り違え)。",
+  "shape": [
+   420,
+   680,
+   3
+  ]
+ },
+ {
+  "file": "04_scratched_surface.png",
+  "name": "scratched_surface",
+  "caption": "橙 = 負、青 = 正。(b) の線形の粗さは、傷(橙)の脇に青い帯が立つ。平均面が傷の側へ凹んだぶんの偽の山で、傷そのものより広い。(c) のロバストは傷だけが残る。(d) が凹みの形そのもの。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ }
+]

@@ -77,7 +77,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`imaging_sim`)
 
-[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [render_through_lens](render_through_lens.md) · [calibration_views](calibration_views.md)
+[psf_from_opd](psf_from_opd.md) · [through_focus_mtf](through_focus_mtf.md) · [distortion_map](distortion_map.md) · [render_through_lens](render_through_lens.md) · [calibration_views](calibration_views.md)
 
 ---
 *Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

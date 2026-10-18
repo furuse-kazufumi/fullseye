@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Counts overlapping objects. <b>When the count cannot be determined, returns an interval instead of a number</b> (fail-closed).</p>
+<p>Objects inside a merged clump appear as peaks of the distance transform. When two circles overlap, a neck forms, and the shallower the neck (the smaller the peak&#x27;s <b>prominence</b>), the less it can be decided whether it is &quot;2 or 1&quot;. <code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> pick a single h and <b>always return a single count</b> —— even where the overlap is too deep to decide, a plausible number comes out. This op measures the prominence of each peak, treats peaks falling in the threshold band as &quot;ambiguous&quot;, and returns the count as an interval from <code style="color:#22d3bf">lo</code> to <code style="color:#22d3bf">hi</code>. Only when the interval has width 0 does it return <code style="color:#22d3bf">count</code>.</p>
+<p>Peak classification (prominence p, height h, relative prominence p/h; h corresponds to the inscribed-circle radius):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> and <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → certain peak (counted)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> and <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → ambiguous (not counted in lo, counted in hi)</p>
+<p style="margin:2px 0 2px 12px">• otherwise → noise (peaks caused by grid quantisation; measured below 0.6 px on ellipses)</p>
+<p><b>Why relative prominence</b>: when two circles of equal radius r overlap with overlap ratio o (centre distance d = 2r(1 − o)), the half-width of the neck is w = sqrt(r² − (d/2)²), and p/h = 1 − sqrt(1 − (1 − o)²) —— <b>independent of the radius</b>. An absolute h fits only one side in an image mixing large and small bubbles (the same shape as the gap <code style="color:#22d3bf">poc_cell_counting</code> recorded). The default band 0.05–0.15 corresponds to overlap ratios 0.69–0.47.</p>
+<p>When <code style="color:#22d3bf">round_tol</code> is given, <b>area that the peaks cannot explain</b> is also rejected. Above an overlap ratio of 0.7 the neck is buried in grid quantisation and only one peak remains (2 objects look like 1). So the component area is compared with Σπh², the sum of the inscribed-circle areas of the certain and ambiguous peaks, and if area &gt; (1 + round_tol + 1/h_min) · Σπh², the upper bound is opened (<code style="color:#22d3bf">hi = None</code>). 1/h_min accounts for grid quantisation (for discs of radius 8 px or more the ratio is at most 1.09, measured 2026-10-18). <code style="color:#22d3bf">round_tol</code> corresponds to <b>the allowed aspect ratio − 1</b> (an ellipse with aspect ratio a/b has area ratio a/b). Use 0.1 for round objects such as bubbles, about 0.3 for irregular ones such as cells. <code style="color:#22d3bf">None</code> assumes no shape (deep overlaps are missed).</p>
+<p><b>The upper bound of the interval is not a guarantee</b>: <code style="color:#22d3bf">hi</code> is the number of objects that showed up as peaks; objects buried without leaving a peak (such as a small bubble eaten into a large one) are not included in <code style="color:#22d3bf">hi</code> either. The upper bound is opened only when the area check catches them. When <code style="color:#22d3bf">determined</code> is False, the only certain thing is that &quot;the count cannot be stated&quot;, and the interval is a rough guide (in a semi-synthetic test with real bubble shapes, a clump answered as undetermined had a true count exceeding <code style="color:#22d3bf">hi</code> by 1. <code style="color:#22d3bf">poc_dense_bubble_count</code>).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D foreground (<code style="color:#22d3bf">&gt; 0</code> is foreground).</p>
+<p>rel_lo, rel_hi : float</p>
+<p>Band of relative prominence. <code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>.</p>
+<p>min_prominence : float</p>
+<p>Absolute floor of prominence [px]. <code style="color:#22d3bf">&gt;= 0</code>. Drops peaks caused by distance-transform quantisation.</p>
+<p>round_tol : float or None</p>
+<p>Tolerance of the area check (see above). <code style="color:#22d3bf">None</code> skips the check.</p>
+<p>connectivity : {4, 8}</p>
+<p>Connectivity used for components and water levels.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code> (int if the interval has width 0, otherwise <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">lo</code>,</p>
+<p><code style="color:#22d3bf">hi</code> (<code style="color:#22d3bf">None</code> if the upper bound is open), <code style="color:#22d3bf">determined</code>, <code style="color:#22d3bf">reason</code>,</p>
+<p><code style="color:#22d3bf">labels</code> (partition seeded only by certain peaks, int32, power diagram of inscribed circles), <code style="color:#22d3bf">labels_hi</code></p>
+<p>(partition also seeded by ambiguous peaks), <code style="color:#22d3bf">components</code> (per component <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code> (-1 if open) / <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>),</p>
+<p><code style="color:#22d3bf">peaks</code> (per peak <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code> (0 noise, 1 ambiguous, 2 certain)),</p>
+<p><code style="color:#22d3bf">params</code>.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # overlap ratio 0.1: determined as 2</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # overlap ratio 0.6: undetermined</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>Provenance (public literature only): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— persistence / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— watershed / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— power diagram (partition).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

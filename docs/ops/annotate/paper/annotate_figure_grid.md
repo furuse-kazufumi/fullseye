@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: images
 out: image2d
-examples: [paper_figure, poc_itof_multifreq, poc_pixel_shift]
+examples: [paper_figure, poc_flybrain_pointcloud, poc_itof_multifreq, poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [paper_figure](../../../../examples/paper_figure.py) — `py -3.11 examples/paper_figure.py`
+- [poc_flybrain_pointcloud](../../../../examples/poc_flybrain_pointcloud.py) — `py -3.11 examples/poc_flybrain_pointcloud.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
 

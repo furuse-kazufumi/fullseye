@@ -80,7 +80,7 @@ class _P(HTMLParser):
 
 # --------------------------------------------------------------------------- #
 def test_every_payload_kind_builds_and_the_html_parses():
-    html = pv.build_html(_spec(), list(pv.LANGS))
+    html = pv._build_html(_spec(), list(pv.LANGS))
     p = _P()
     p.feed(html)
     assert {"canvas", "script", "style", "select"} <= set(p.tags)
@@ -89,7 +89,7 @@ def test_every_payload_kind_builds_and_the_html_parses():
 
 
 def test_every_tab_label_is_in_the_page_in_every_language():
-    d = _data(pv.build_html(_spec(), list(pv.LANGS)))
+    d = _data(pv._build_html(_spec(), list(pv.LANGS)))
     assert [t["id"] for t in d["tabs"]] == ["m", "p", "rgb", "f", "s"]
     for t, lab in zip(d["tabs"], ("mesh", "points", "rgbpts", "frames", "split")):
         for l in pv.LANGS:
@@ -98,21 +98,21 @@ def test_every_tab_label_is_in_the_page_in_every_language():
 
 def test_quantised_arrays_round_trip_within_half_a_step():
     tabs = _tiny_tabs()
-    d = _data(pv.build_html(_spec(tabs), ["ja"]))
+    d = _data(pv._build_html(_spec(tabs), ["ja"]))
     A = d["arrays"]
     by = {t["id"]: t for t in d["tabs"]}
     for src in (tabs[1], tabs[2]):                                   # points
         rec = A[by[src["id"]]["pos"]]
-        back = pv.decode_array(rec)
+        back = pv._decode_array(rec)
         assert back.shape == src["pos"].shape
         assert np.isfinite(back).all()
-        assert (np.abs(back - src["pos"]) <= pv.quant_step(rec) / 2 + 1e-9).all()
+        assert (np.abs(back - src["pos"]) <= pv._quant_step(rec) / 2 + 1e-9).all()
     rec = A[by["p"]["val"]]                                          # 値(カラーバー範囲でクリップ)
-    assert np.abs(pv.decode_array(rec) - np.clip(tabs[1]["val"], -1, 1)).max() <= pv.quant_step(rec)[0] / 2 + 1e-9
-    assert np.array_equal(pv.decode_array(A[by["rgb"]["rgb"]]), tabs[2]["rgb"])       # 無損失
-    assert np.array_equal(pv.decode_array(A[by["m"]["faces"]]), tabs[0]["faces"])
-    assert np.array_equal(pv.decode_array(A[by["f"]["frames"]]), tabs[3]["frames"])
-    assert np.array_equal(pv.decode_array(A[by["s"]["before"]]), tabs[4]["before"])
+    assert np.abs(pv._decode_array(rec) - np.clip(tabs[1]["val"], -1, 1)).max() <= pv._quant_step(rec)[0] / 2 + 1e-9
+    assert np.array_equal(pv._decode_array(A[by["rgb"]["rgb"]]), tabs[2]["rgb"])       # 無損失
+    assert np.array_equal(pv._decode_array(A[by["m"]["faces"]]), tabs[0]["faces"])
+    assert np.array_equal(pv._decode_array(A[by["f"]["frames"]]), tabs[3]["frames"])
+    assert np.array_equal(pv._decode_array(A[by["s"]["before"]]), tabs[4]["before"])
     ser = by["f"]["series"][0]["values"]
     assert ser[2] is None and ser[0] == 1.0                           # NaN は null
 
@@ -122,13 +122,13 @@ def test_identical_arrays_are_shared_between_tabs():
     cb = {"lo": 0, "hi": 1}
     tabs = [pv.viewer_points_tab("a", _tx("a"), "null", _tx("t"), pos, val=RNG.uniform(0, 1, 50), cbar=cb),
             pv.viewer_points_tab("b", _tx("b"), "passed", _tx("t"), pos, val=RNG.uniform(0, 1, 50), cbar=cb)]
-    d = _data(pv.build_html(_spec(tabs), ["ja"]))
+    d = _data(pv._build_html(_spec(tabs), ["ja"]))
     assert d["tabs"][0]["pos"] == d["tabs"][1]["pos"]                 # 位置は 1 本
     assert d["tabs"][0]["val"] != d["tabs"][1]["val"]
 
 
 def test_no_external_loads():
-    html = pv.build_html(_spec(), list(pv.LANGS))
+    html = pv._build_html(_spec(), list(pv.LANGS))
     assert "http://" not in html and "https://" not in html
     p = _P()
     p.feed(html)
@@ -140,7 +140,7 @@ def test_no_external_loads():
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node が無い")
 def test_the_page_script_is_valid_javascript(tmp_path):
-    html = pv.build_html(_spec(), list(pv.LANGS))
+    html = pv._build_html(_spec(), list(pv.LANGS))
     js = re.search(r"<script>(.*)</script>", html, re.S).group(1)
     f = tmp_path / "v.js"
     f.write_text(js, encoding="utf-8")
@@ -155,7 +155,7 @@ def test_the_page_script_is_valid_javascript(tmp_path):
 def test_single_language_build_has_no_other_language_chrome(lang):
     tabs = [pv.viewer_points_tab("p", _tx("t"), "limit", _tx("x"), RNG.uniform(0, 1, (20, 3)),
                                  val=RNG.uniform(0, 1, 20), cbar={"lo": 0, "hi": 1, "label": _tx("c")})]
-    html = pv.build_html(_spec(tabs), lang)
+    html = pv._build_html(_spec(tabs), lang)
     d = _data(html)
     assert d["langs"] == [lang] and list(d["langnames"]) == [lang]
     for table in (d["ui"], d["badges"]):
@@ -193,27 +193,27 @@ def test_a_missing_translation_raises_and_names_the_keys(tmp_path):
     del spec["tabs"][0]["text"]["zh"]
     spec["title"].pop("ko")
     with pytest.raises(ValueError) as ei:
-        pv.build_html(spec, ["ja", "zh", "ko"])
+        pv._build_html(spec, ["ja", "zh", "ko"])
     msg = str(ei.value)
     assert "tab m.text.zh" in msg and "title.ko" in msg
     out = tmp_path / "x.html"
     with pytest.raises(ValueError):
         pv.write_viewer(spec, out, ["ja", "zh"])
     assert not out.exists()                                           # 失敗したら何も書かない
-    pv.build_html(spec, ["ja", "en"])                                 # 要求していない言語の欠けは問わない
+    pv._build_html(spec, ["ja", "en"])                                 # 要求していない言語の欠けは問わない
 
 
 def test_a_plain_string_is_not_accepted_for_a_translated_field():
     spec = _spec()
     spec["subtitle"] = "日本語だけ"
     with pytest.raises(ValueError, match="subtitle"):
-        pv.build_html(spec, "ja")
+        pv._build_html(spec, "ja")
 
 
 @pytest.mark.parametrize("bad", [[], ["xx"], ["ja", "ja"], "english"])
 def test_bad_lang_argument_raises(bad):
     with pytest.raises(ValueError):
-        pv.build_html(_spec(), bad)
+        pv._build_html(_spec(), bad)
 
 
 # --------------------------------------------------------------------------- #
@@ -224,34 +224,34 @@ def test_invalid_specs_are_rejected_not_passed_through():
     with pytest.raises(ValueError, match="tabs"):
         pv.viewer_spec("x", _tx("a"), _tx("b"), _tx("c"), [])
     with pytest.raises(ValueError, match="tabs"):
-        pv.build_html({"title": _tx("a"), "subtitle": _tx("b"), "hint": _tx("c"), "tabs": []}, "ja")
+        pv._build_html({"title": _tx("a"), "subtitle": _tx("b"), "hint": _tx("c"), "tabs": []}, "ja")
     with pytest.raises(ValueError, match="badge"):
-        pv.build_html(_spec([dict(ok[1], badge="pass")]), "ja")                        # 旧名は通さない
+        pv._build_html(_spec([dict(ok[1], badge="pass")]), "ja")                        # 旧名は通さない
     with pytest.raises(ValueError, match="kind"):
-        pv.build_html(_spec([dict(ok[1], kind="volume")]), "ja")
+        pv._build_html(_spec([dict(ok[1], kind="volume")]), "ja")
     nan_pos = ok[1]["pos"].copy()
     nan_pos[3, 1] = np.nan
     with pytest.raises(ValueError, match="NaN"):
-        pv.build_html(_spec([dict(ok[1], pos=nan_pos)]), "ja")
+        pv._build_html(_spec([dict(ok[1], pos=nan_pos)]), "ja")
     with pytest.raises(ValueError, match="pos"):
-        pv.build_html(_spec([dict(ok[1], pos=ok[1]["pos"][:, :2])]), "ja")
+        pv._build_html(_spec([dict(ok[1], pos=ok[1]["pos"][:, :2])]), "ja")
     with pytest.raises(ValueError, match="faces"):
-        pv.build_html(_spec([dict(ok[0], faces=np.array([[0, 1, 99]]))]), "ja")
+        pv._build_html(_spec([dict(ok[0], faces=np.array([[0, 1, 99]]))]), "ja")
     with pytest.raises(ValueError, match="val"):
-        pv.build_html(_spec([dict(ok[1], val=ok[1]["val"][:-1])]), "ja")
+        pv._build_html(_spec([dict(ok[1], val=ok[1]["val"][:-1])]), "ja")
     with pytest.raises(ValueError, match="frames"):
-        pv.build_html(_spec([dict(ok[3], frames=np.zeros((4, 4), np.uint8))]), "ja")
+        pv._build_html(_spec([dict(ok[3], frames=np.zeros((4, 4), np.uint8))]), "ja")
     with pytest.raises(ValueError, match="xy"):
-        pv.build_html(_spec([dict(ok[3], boxes=[dict(ok[3]["boxes"][0], xy=np.zeros((5, 2)))])]), "ja")
+        pv._build_html(_spec([dict(ok[3], boxes=[dict(ok[3]["boxes"][0], xy=np.zeros((5, 2)))])]), "ja")
     with pytest.raises(ValueError, match="before"):
-        pv.build_html(_spec([dict(ok[4], after=ok[4]["after"][:, :, 0])]), "ja")
+        pv._build_html(_spec([dict(ok[4], after=ok[4]["after"][:, :, 0])]), "ja")
     with pytest.raises(ValueError, match="cbar"):
-        pv.build_html(_spec([dict(ok[1], cbar={"lo": 1, "hi": 1})]), "ja")
+        pv._build_html(_spec([dict(ok[1], cbar={"lo": 1, "hi": 1})]), "ja")
     dup = [dict(ok[1]), dict(ok[1])]
     with pytest.raises(ValueError, match="重複"):
-        pv.build_html(_spec(dup), "ja")
+        pv._build_html(_spec(dup), "ja")
     with pytest.raises(ValueError, match="id"):
-        pv.build_html(_spec([dict(ok[1], id="a b")]), "ja")
+        pv._build_html(_spec([dict(ok[1], id="a b")]), "ja")
 
 
 def test_write_viewer_returns_the_path_and_writes_one_file(tmp_path):
@@ -263,11 +263,11 @@ def test_write_viewer_returns_the_path_and_writes_one_file(tmp_path):
 
 def test_integer_json_images_are_taken_as_0_255():
     img = [[[0, 128, 255]] * 4] * 3                                    # JSON 経由の入れ子 list
-    d = _data(pv.build_html(_spec([pv.viewer_split_tab("s", _tx("a"), "null", _tx("b"), img, img,
+    d = _data(pv._build_html(_spec([pv.viewer_split_tab("s", _tx("a"), "null", _tx("b"), img, img,
                                                        _tx("c"), _tx("d"))]), "ja"))
-    assert pv.decode_array(d["arrays"][d["tabs"][0]["before"]]).max() == 255
+    assert pv._decode_array(d["arrays"][d["tabs"][0]["before"]]).max() == 255
     with pytest.raises(ValueError, match="0..255"):
-        pv.build_html(_spec([pv.viewer_split_tab("s", _tx("a"), "null", _tx("b"), [[300]], [[1]],
+        pv._build_html(_spec([pv.viewer_split_tab("s", _tx("a"), "null", _tx("b"), [[300]], [[1]],
                                                  _tx("c"), _tx("d"))]), "ja")
 
 

@@ -1,0 +1,53 @@
+[
+ {
+  "file": "01_band_width_alignment.png",
+  "name": "band_width_alignment",
+  "caption": "同じ模様の良品 20 枚。左: 揃った群の画素ごとの標準偏差 = 雑音 0.01 だけ。中: 1〜2 px ずれた群を許容を緩めて通すと、縁の上だけ帯が 22.2 倍に太る。右: 並進を測って Fourier シフトで合わせると 1.07 倍に戻る。太った帯の上では雑音の 8 倍の傷の検出率が 1.00 → 0.00 に落ちる。",
+  "shape": [
+   349,
+   1074,
+   3
+  ]
+ },
+ {
+  "file": "02_contaminated_good_set.png",
+  "name": "contaminated_good_set",
+  "caption": "20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを無視する。左下の傷は汚れていない場所の対照。",
+  "shape": [
+   381,
+   1202,
+   3
+  ]
+ },
+ {
+  "file": "03_visa_metrics_vs_n.png",
+  "name": "visa_metrics_vs_n",
+  "caption": "VisA pcb1 の試験 200 枚(CC BY 4.0)。良品 5 / 20 / 80 枚で学んだ変動モデルの AUPRO(実線)と、同じ物差しで測った比べる相手(破線: 位置合わせしない帯・ゴールデン比較・RPCA)。20 枚で頭打ちになり、位置合わせの有無の差(0.68 対 0.46)が枚数の差より大きい。",
+  "shape": [
+   360,
+   739,
+   3
+  ],
+  "source": "VisA (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling"
+ },
+ {
+  "file": "04_visa_explanation.png",
+  "name": "visa_explanation",
+  "caption": "VisA pcb1(CC BY 4.0、灰色・1/4 縮小、欠陥の周りを切り出し、基板の印字は入れない)。変動モデルは良品 20 枚(moderated)、z は画素ごとに良品のばらつきの何倍外れたか(青 = 良品より明るい、橙 = 暗い。黒 = 位置合わせで像の外にはみ出し、採点しない画素)。ゴールデン比較は同じ 20 枚の平均像との差、RPCA は 1 枚の低ランク分解の残差。並進で合わせても縁に残る z の縞は、学習用と試験用の撮影の違い(並進で取れない残り)。",
+  "shape": [
+   479,
+   676,
+   3
+  ]
+ },
+ {
+  "file": "05_far_declared_vs_measured.png",
+  "name": "far_declared_vs_measured",
+  "caption": "画素ごとに独立な正規の良品(合成)。当てはめに使わなかった良品で数えた誤検出率を宣言で割った値。1 = std n=5、2 = std n=20、3 = pooled n=5、4 = moderated n=5、5 = moderated n=20、6 = mad n=20、7 = pooled n=5(雑音が画素ごとに違う)。4 種のばらつきの推定(1〜6)は二項の 4σ の帯に入り、画素ごとに雑音が違うのに 1 つの分散を使った 7 だけが宣言の 2 倍に外れる。",
+  "shape": [
+   380,
+   760,
+   3
+  ]
+ }
+]

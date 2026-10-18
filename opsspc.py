@@ -29,15 +29,34 @@ hit/miss GLM, a90/95 by the delta method and by the likelihood ratio, false-call
 probability from unflawed sites, and the decision-threshold trade-off. Same table-in,
 table-out shape as msa / gum, so no new type word.
 
+Anomaly evaluation (2026-10-18): the ``anomaly_eval`` category (anomeval.py, 4 ops) is the
+yard-stick every defect-map method is compared with — image AUROC, pixel AUROC, PRO / AUPRO
+(per-region overlap integrated to FPR 0.3, Bergmann et al. 2020) and the per-region overlap at
+one operating point. It depends on no detection method, only on score maps and masks, so the
+variation model, RPCA, golden comparison and later patch-feature methods share one scorer.
+Score / mask stacks are the existing ``video`` sort ((n, H, W)), per-image scores ``signal``;
+every op returns a table, so no 2-D bridge is built (TYPE_TO_SORT has no ``table``).
+
+Variation model (2026-10-18): the ``variation`` category (varmodel.py, 5 ops) is the classic
+"learn every pixel's usual value and spread from aligned good samples, flag what leaves the band"
+— with the band's half-width derived from a DECLARED per-pixel false-alarm rate (t prediction
+interval / empirical-Bayes moderated t / a Monte-Carlo pivot for median-MAD), an alignment check
+that refuses a misaligned stack (or registers it by a Fourier shift), shrinkage for few samples,
+a robust variant for contaminated good sets, held-out calibration for real images, and a
+per-region explanation in sigmas. Stacks are ``video``, one image ``image2d``, model and
+results ``table``; every op returns a table, so no 2-D bridge is built.
+
 Usage:
     import opsspc
     opsspc.list_ops("chart")
     opsspc.get("spc_xbar_r")(subgroups)
 """
+import anomeval
 import pod
 import spc
+import varmodel
 
-_MOD = {"spc": spc, "pod": pod}
+_MOD = {"spc": spc, "pod": pod, "anomeval": anomeval, "varmodel": varmodel}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: no new word is coined (it all fits the existing pool).
@@ -106,6 +125,25 @@ _CATALOG = {
         ("pod_hitmiss_fit", "pod", ["table"], "table"),
         ("pod_false_call", "pod", ["signal"], "table"),
         ("pod_decision_tradeoff", "pod", ["table", "signal"], "table"),
+    ],
+    # 異常検知の評価指標(anomeval.py)。どの欠陥図の方法にも依存しない物差し。
+    # 入力: 画像ごとのスコアとラベルは 1-D(signal)、スコアの図とマスクの積み重ねは
+    # (n, H, W) の video(新しい型の語は作らない)。返りは表なので 2-D の橋は架からない。
+    "anomaly_eval": [
+        ("anomaly_image_auroc", "anomeval", ["signal", "signal"], "table"),
+        ("anomaly_pixel_auroc", "anomeval", ["video", "video"], "table"),
+        ("anomaly_pro", "anomeval", ["video", "video"], "table"),
+        ("anomaly_region_overlap", "anomeval", ["video", "video"], "table"),
+    ],
+    # 良品統計の変動モデル(varmodel.py)。良品の積み重ねは video、試験の 1 枚は image2d、
+    # 模型と結果は表。k は宣言した誤検出率から決まる(欠陥で調整しない)。
+    # varmodel_band_k は入力の無い op(n と far だけから帯の幅)。
+    "variation": [
+        ("varmodel_alignment", "varmodel", ["video"], "table"),
+        ("varmodel_band_k", "varmodel", [], "table"),
+        ("varmodel_fit", "varmodel", ["video"], "table"),
+        ("varmodel_calibrate", "varmodel", ["table", "video"], "table"),
+        ("varmodel_score", "varmodel", ["image2d", "table"], "table"),
     ],
 }
 

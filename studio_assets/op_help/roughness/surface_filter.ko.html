@@ -17,12 +17,14 @@
 <p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(기본값) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>. 아래 참조.</p>
 <p>dy         행 방향 샘플 간격(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>).</p>
 <p>★ 끝단 처리(<code style="color:#22d3bf">end_effect</code>) —— 이것이 이 op 를 쓴 이유</p>
-<p>합성곱은 커널 반경 <code style="color:#22d3bf">λc/2</code> 만큼, 끝단에서 &quot;없는 곳의 데이터&quot;를 필요로 한다.</p>
-<p>규격(ISO 16610-28)은 평가 영역을 양 끝에서 <code style="color:#22d3bf">λc/2</code> 씩 깎는 것을 전제로 한다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(기본값) —— 양 끝 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 샘플을 <b>버린다</b>. 출력은 입력보다 작은 배열이 된다. 버린 영역은 &quot;측정하지 않은&quot; 것이므로, 이것이 유일하게 거짓이 없는 선택지.</p>
+<p>합성곱은 커널 반경(<code style="color:#22d3bf">GAUSS_TRUNCATE·λc</code> = 0.75 λc, 4 σ) 만큼, 끝단에서 &quot;없는 곳의 데이터&quot;를 필요로 한다.</p>
+<p>규격(ISO 16610-28)은 평가 영역을 양 끝에서 깎는 것을 전제로 한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(기본값) —— 양 끝 <code style="color:#22d3bf">ceil(0.75 λc/pitch)</code> 샘플을 <b>버린다</b>. 출력은 입력보다 작은 배열이 된다. 버린 영역은 &quot;측정하지 않은&quot; 것이므로, 이것이 유일하게 거짓이 없는 선택지.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 거울상으로 연장해 같은 형태를 반환한다. 끝단에서 면이 우함수라고 가정한다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 순환 합성곱(FFT 와 동일). 왼쪽 끝의 다음이 오른쪽 끝이라고 가정한다.</p>
-<p><b>실측</b>. 참값은 704x704 면을 필터링한 뒤 중앙 512x512 를 잘라낸</p>
+<p><b>실측</b>(★아래 표는 절단이 <code style="color:#22d3bf">±λc/2</code> 였던 2026-10-18 이전의 측정. 커널을 <code style="color:#22d3bf">±0.75 λc</code> 로 넓힌 뒤에도</p>
+<p>1.~3. 의 경향은 같고, 끝단 띠가 40 → 60 샘플로 늘어날 뿐. 수치는 다시 재지 않았다).</p>
+<p>참값은 704x704 면을 필터링한 뒤 중앙 512x512 를 잘라낸</p>
 <p>것(끝단 바깥에 진짜 데이터가 있는 상태에서 계산한 답). dx=1, λc=80,</p>
 <p>끝단 띠 = 외곽 40 샘플, 거기서의 참값 rms 는 0.1932.</p>
 <p>면의 상태      end_effect   끝단 띠 rms 오차     중앙부 rms 오차</p>
@@ -35,22 +37,21 @@
 <p style="margin:2px 0 2px 12px">1. <b>끝단 처리는 끝단에서만 효과가 있다.</b> 중앙부는 어느 것이나 참값과 엄밀히 일치한다(커널이 끝단에 닿지 않으니 당연하지만, 확인했다).</p>
 <p style="margin:2px 0 2px 12px">2. <b>최악의 조합은 &quot;기울기를 남긴 채 wrap&quot;</b> —— 끝단 오차가참값 자체의 23 배. 왼쪽 끝의 다음이 오른쪽 끝이라고 가정하므로, 높이가 다른 2 변의 이음매에 단차가 생긴다.</p>
 <p style="margin:2px 0 2px 12px">3. <b>기울기만 제거하면 wrap 과 mirror 에 차이는 없다</b>(5.7 % 대 5.9 %, wrap 이 약간 낫다). &quot;순환 합성곱은 항상 나쁘다&quot;가 아니라 &quot;<b>기울기를 제거하지 않고 쓰는 것이 나쁘다</b>&quot;가 옳다.</p>
-<p style="margin:2px 0 2px 12px">4. reject 의 대가는 면적. 512x512·λc=80 에서 <b>28.8 % 를 버린다</b> (432x432 가 남는다). 버리는 비율은 <code style="color:#22d3bf">1 - (1 - λc/L)²</code> 로 늘어나므로, λc 가 평가 길이의 1/4 을 넘으면 절반 가까이를 잃는다.</p>
-<p>★ 투과율은 규격대로인가(실측, λc=80, dx=1, 정수 주기의 사인을 사영으로 측정)</p>
-<p>λ         파상도 쪽    ISO 규격값    차</p>
-<p>16      0.000806     0.000000    +8.1e-04</p>
-<p>32      0.017206     0.013139    +4.1e-03</p>
-<p>40      0.058676     0.062500    -3.8e-03</p>
-<p>64      0.342826     0.338564    +4.3e-03</p>
-<p>80      0.509549     0.500000    +9.6e-03   ← 최대</p>
-<p>128      0.772150     0.762799    +9.4e-03</p>
-<p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>컷오프 파장 그 자체에서 0.5000 이 아니라 0.5095</b>(상대 +1.9 %). 원인은</p>
-<p>규격이 지정하는 절단 <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)로, 꼬리의 0.8 % 가 떨어지기 때문.</p>
-<p>절단을 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)까지 넓히면 최대 오차는 9e-05 로 떨어지지만</p>
-<p>(실측), reject 로 버리는 띠가 1.5 배가 된다. <b>규격에 맞추는 쪽을 택하고, 어긋남을 적는</b> 쪽을 골랐다. 거칠기와 파상도의 합은 항상 입력과 엄밀히 일치하므로</p>
-<p>(위 표에서 <code style="color:#22d3bf">roughness + waviness = 1.000000</code>), 분배의 경계가</p>
-<p>1.9 % 어긋날 뿐, 에너지가 사라지거나 솟아나지는 않는다.</p>
+<p style="margin:2px 0 2px 12px">4. reject 의 대가는 면적. 512x512·λc=80 에서 <b>41.4 % 를 버린다</b> (392x392 가 남는다. 절단이 <code style="color:#22d3bf">±λc/2</code> 였을 때는 28.8 %). 버리는 비율은 <code style="color:#22d3bf">1 - (1 - 1.5 λc/L)²</code> 로 늘어나므로, λc 가 평가 길이의 1/6 을 넘으면 절반 가까이를 잃는다.</p>
+<p>★ 투과율은 규격대로인가(실측, λc=80, dx=1, 정수 주기의 사인을 사영으로 측정. 2026-10-18 에 고쳤다)</p>
+<p>λ         파상도 쪽    ISO 규격값    차      (고치기 전의 파상도 쪽 / 차)</p>
+<p>16     0.000030     0.000000    +3.0e-05    0.000806 / +8.1e-04</p>
+<p>32     0.013094     0.013139    -4.5e-05    0.017206 / +4.1e-03</p>
+<p>40     0.062544     0.062500    +4.4e-05    0.058676 / -3.8e-03</p>
+<p>64     0.338531     0.338564    -3.3e-05    0.342826 / +4.3e-03</p>
+<p>80     0.500012     0.500000    +1.2e-05    0.509549 / +9.6e-03   ← λc</p>
+<p>128     0.762894     0.762799    +9.5e-05    0.772150 / +9.4e-03</p>
+<p>256     0.934601     0.934550    +5.1e-05    0.937944 / +3.4e-03</p>
+<p><b>고치기 전에는 컷오프 파장 그 자체에서 0.5000 이 아니라 0.5095</b>(상대 +1.9 %)였다. 원인은 상수 α(<code style="color:#22d3bf">√(ln2/π)</code>)도</p>
+<p>표본화 뒤의 정규화도 아니고, <b>규격 문면의 절단 <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)</b> 였다: 꼬리의 0.8 % 가 떨어지고,</p>
+<p>나머지를 다시 1 로 정규화하므로 저역의 몫이 늘어난다.</p>
+<p>절단을 <code style="color:#22d3bf">±0.75 λc</code>(4 σ)로 넓히면 λc 에서 0.500012, 전 파장의 최대 오차는 9.5e-05 로 떨어진다(위 표).</p>
+<p>대가는 reject 가 버리는 끝단 띠가 1.5 배가 되는 것. 거칠기와 파상도의 합은 어느 쪽이든 입력과 정확히 일치한다.</p>
 <p>fail-closed(실패 시 거부)</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> 가 <code style="color:#22d3bf">&quot;gaussian&quot;</code> 이외 / <code style="color:#22d3bf">end_effect</code> 가 알려진 3 가지 이외.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> 와 <code style="color:#22d3bf">lambda_s</code> 가 둘 다 <code style="color:#22d3bf">None</code>(아무것도 하지 않는 호출).</p>
@@ -64,11 +65,12 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">depth</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">prepare</code>)</h3>
-<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a></p>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: roughness.py — ROUGHNESS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -74,7 +74,7 @@ def input_for(sort: str):
 # 全 op を明示的な文字列リテラルで列挙(op→example 逆引きインデックス用に、各 op 名  #
 # がソース中に literal で出現する必要がある)。ops レジストリから機械抽出したもの。   #
 # --------------------------------------------------------------------------- #
-OPS = ["gaussian", "mean_box", "bilateral", "unsharp", "median", "min_filter",
+OPS = ["gaussian", "mean_box", "bilateral", "kuwahara", "unsharp", "median", "min_filter",
        "max_filter", "percentile", "sk_tv", "sk_wavelet", "sk_median_disk",
        "sk_rolling_ball", "sk_nlm", "sk_tv_bregman", "cv_bilateral", "cv_median",
        "cv_box", "cv_gaussian", "cv_nlmeans", "cv_sharpen", "dl_aniso_diffusion",
@@ -221,6 +221,17 @@ def check_ground_truth() -> int:
     sharp = BY["unsharp"].fn(blur.copy(), 0.6, 0.5)
     assert grad_energy(sharp) > grad_energy(blur) + 1e-6, \
         f"GT unsharp: 先鋭化していない blur={grad_energy(blur):.4f} sharp={grad_energy(sharp):.4f}"
+    checks += 1
+
+    # GT7: kuwahara は縁を保つ平滑化 —— 雑音なしの段差はそっくり残り(自分の側の窓の分散が 0)、
+    # 雑音つきの平坦部の分散は下がり、段差は鈍らない。
+    for kr in (0.1, 0.5):
+        assert float(np.abs(BY["kuwahara"].fn(clean.copy(), kr, 0.0) - clean).max()) < 1e-12, \
+            "GT kuwahara: 雑音なしの段差が変わった"
+    cn = np.clip(clean + 0.03 * rng.standard_normal((n, n)), 0, 1)
+    ku = BY["kuwahara"].fn(cn.copy(), 0.3, 0.0)
+    assert float(np.var(ku[:, 4:24])) < 0.25 * float(np.var(cn[:, 4:24])), "GT kuwahara: 平坦部が均されていない"
+    assert ku[32, n // 2] - ku[32, n // 2 - 1] > 0.45, "GT kuwahara: 段差が鈍った"
     checks += 1
 
     return checks

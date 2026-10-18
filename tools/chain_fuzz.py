@@ -4645,6 +4645,87 @@ def _b_pod_decision_tradeoff(pool, rng):
     return (fit, rng.normal(-1.0, 0.5, 60)), {}
 
 
+def _anom_maps(rng, n=4, h=32, w=32):
+    """異常スコアの図と欠陥マスク(anomeval の種)。欠陥は 2 つの矩形、スコアは欠陥で高めの連続値。
+
+    ★プールの任意の video は 2 値でなく、マスクとして渡すと op が拒む。欠陥と良品の両方が
+    必ず在り(AUROC が定義される)、スコアが欠陥で部分的にしか高くない(PRO の曲線と
+    閾値つきの重なりが中間の値を取り、つまみの探針が効く)ように組む。
+    """
+    masks = np.zeros((n, h, w), dtype=bool)
+    masks[0, 4:10, 4:12] = True
+    masks[1, 20:24, 18:30] = True
+    scores = rng.random((n, h, w)) + 0.8 * masks * rng.random((n, h, w))
+    return scores, masks
+
+
+def _b_anomaly_image_auroc(pool, rng):
+    y = np.r_[np.zeros(12), np.ones(8)].astype(bool)
+    return (rng.random(20) + 0.5 * y, y), {}
+
+
+def _b_anomaly_pixel_auroc(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_pro(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_region_overlap(pool, rng):
+    """予測は欠陥の一部だけを覆う(重なり 0.3 と 0.8)— min_overlap を半分・倍にすると判定が動く。"""
+    scores, masks = _anom_maps(rng)
+    pred = np.zeros_like(masks)
+    pred[0, 4:10, 4:7] = True          # 1 つめの欠陥の 3/8 ≈ 0.375
+    pred[1, 20:24, 18:28] = True       # 2 つめの欠陥の 10/12 ≈ 0.83
+    pred[2, 0:3, 0:3] = True           # 誤検出
+    return (pred, masks), {}
+
+
+def _vm_stack(rng, n=8, side=48):
+    """良品の積み重ね(varmodel の種): 縁のある模様 + 雑音、位置は揃っている。
+
+    ★プールの任意の video は動くクリップで、良品群として渡すと位置合わせの確認で拒否される
+    (探針が「拒否された」としか言えない)。揃った群を組んで当てはめを実際に走らせる。
+    """
+    yy, xx = np.mgrid[0:side, 0:side]
+    base = 0.5 + 0.3 * np.sin(xx / 3.0) * np.cos(yy / 4.0)
+    return base, base + 0.02 * rng.standard_normal((n, side, side))
+
+
+def _b_varmodel_alignment(pool, rng):
+    return (_vm_stack(rng)[1],), {}
+
+
+def _b_varmodel_band_k(pool, rng):
+    return (), {"n": 12, "far": 1e-2}
+
+
+def _b_varmodel_fit(pool, rng):
+    return (_vm_stack(rng)[1],), {"spread": "std", "far": 1e-2}
+
+
+def _b_varmodel_calibrate(pool, rng):
+    import varmodel as _vm
+    base, st = _vm_stack(rng, n=8)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    return (m, base + 0.02 * rng.standard_normal((12,) + base.shape)), {}
+
+
+def _b_varmodel_score(pool, rng):
+    """欠陥(+0.2 = 雑音の 10 倍、3×3)を 1 つ描いた試験の 1 枚。
+
+    ★16 px 四方・+0.3 の欠陥を 32 px の像に描くと、位相相関が欠陥に引かれて 0.85 px の「ずれ」になり、
+    ``align="check"`` が拒否した(実測 2026-10-18)。欠陥が像に対して大きすぎると位置合わせも汚れる。
+    """
+    import varmodel as _vm
+    base, st = _vm_stack(rng)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    img = base + 0.02 * rng.standard_normal(base.shape)
+    img[20:23, 24:27] += 0.2
+    return (img, m), {}
+
+
 def _b_coherent_image(pool, rng):
     """振幅(>= 0)と位相(rad)の 2 枚。プールの任意の 2 枚では振幅が負になりうる。"""
     return (rng.random((32, 32)), rng.uniform(0.0, 2.0 * np.pi, (32, 32))), {"cutoff": 0.2}
@@ -6592,6 +6673,71 @@ def _b_dualxray(kind):
         sig = _dx.xray_channel_projection(t, ["WATER", "AL"], None, 1e5, seed=int(rng.integers(0, 1000)))
         return ([sig], {})
     return build
+# --- 作物と雑草(cropweed、2026-10-18): 植物の色指標・超画素の特徴・Fisher 判別・被度の段階 --------- #
+# 種は共有の乱数列を引かない(rng 引数は使わず、固定の種の生成器を各自で持つ)。汎用の (2, 2, 3) の
+# rgbimage は全画素が黒で、色度が 1 画素も決まらず fail-closed で拒否されるので、緑の葉・土・水と、
+# 明るさが dark_floor の半分と倍の間にある暗い画素を混ぜた小さな圃場を組む(ノブ dark_floor が効く)。
+def _cropweed_field(size=24):
+    g = np.random.default_rng(20261018)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    leaf = 0.5 + 0.5 * np.sin(0.9 * xx + 0.3 * yy)                  # 縞 = 葉の向き
+    rgb = np.empty((size, size, 3))
+    rgb[..., 0] = 0.20 + 0.10 * leaf
+    rgb[..., 1] = 0.35 + 0.30 * leaf
+    rgb[..., 2] = 0.15 + 0.05 * leaf
+    soil = (xx - size * 0.7) ** 2 + (yy - size * 0.3) ** 2 < (size * 0.18) ** 2
+    rgb[soil] = (0.45, 0.38, 0.30)
+    rgb += g.normal(0.0, 0.01, rgb.shape)
+    rgb[size - 3:, :4] = (0.012, 0.018, 0.012)                        # 明るさ 0.014 < 0.02
+    rgb[size - 3:, 4:8] = (0.025, 0.035, 0.024)                       # 明るさ 0.028: 0.02 と 0.04 の間
+    return np.clip(rgb, 0.0, 1.0)
+
+
+def _b_cropweed_plant_color_index(pool, rng):
+    return (_cropweed_field(),), {"index": "exg", "dark_floor": 0.02}
+
+
+def _b_cropweed_superpixel_features(pool, rng):
+    size = 24
+    rgb = _cropweed_field(size)
+    yy, xx = np.mgrid[0:size, 0:size]
+    lab = (yy // 6) * 4 + (xx // 6) + 1
+    lab[0, 0:5] = 17                                                  # 5 画素の小領域: min_size 4 は残し 8 は落とす
+    return (rgb, lab.astype(np.int64)), {"dark_floor": 0.02, "texture_sigma": 1.0, "min_size": 4}
+
+
+def _cropweed_two_class():
+    g = np.random.default_rng(20261019)
+    X0 = g.normal(0.0, 1.0, (20, 3))
+    X1 = g.normal(0.0, 1.0, (20, 3)) + np.array([1.5, -0.5, 0.8])
+    X = np.vstack([X0, X1])
+    y = np.r_[np.zeros(20), np.ones(20)]
+    return X, y
+
+
+def _b_cropweed_fisher_lda_fit(pool, rng):
+    X, y = _cropweed_two_class()
+    return (X, y), {"ridge": 1e-6}
+
+
+def _b_cropweed_fisher_lda_score(pool, rng):
+    import cropweed
+    X, y = _cropweed_two_class()
+    return (cropweed.fisher_lda_fit(X, y), X), {}
+
+
+def _b_cropweed_cover_ratio_grade(pool, rng):
+    return (np.linspace(0.0, 1.0, 21),), {}
+
+
+_CROPWEED_ENTRIES = {
+    "plant_color_index": _b_cropweed_plant_color_index,
+    "superpixel_color_texture_features": _b_cropweed_superpixel_features,
+    "fisher_lda_fit": _b_cropweed_fisher_lda_fit,
+    "fisher_lda_score": _b_cropweed_fisher_lda_score,
+    "cover_ratio_grade": _b_cropweed_cover_ratio_grade,
+}
+# --- /作物と雑草 ------------------------------------------------------------------------- #
 
 
 OP_ARG_BUILDERS = {
@@ -6662,6 +6808,15 @@ OP_ARG_BUILDERS = {
     "pod_hitmiss_fit": _b_pod_hitmiss_fit,
     "pod_false_call": _b_pod_false_call,
     "pod_decision_tradeoff": _b_pod_decision_tradeoff,
+    "anomaly_image_auroc": _b_anomaly_image_auroc,
+    "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
+    "anomaly_pro": _b_anomaly_pro,
+    "anomaly_region_overlap": _b_anomaly_region_overlap,
+    "varmodel_alignment": _b_varmodel_alignment,
+    "varmodel_band_k": _b_varmodel_band_k,
+    "varmodel_fit": _b_varmodel_fit,
+    "varmodel_calibrate": _b_varmodel_calibrate,
+    "varmodel_score": _b_varmodel_score,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,
@@ -7218,6 +7373,7 @@ OP_ARG_BUILDERS = {
     "basis_material_decompose": _b_dualxray("signal"),
     "r_value_map": _b_dualxray("signal3"),
     "effective_z_map": _b_dualxray("signal3"),
+    **_CROPWEED_ENTRIES,
 }
 
 
@@ -7943,6 +8099,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "slope_slip_curve",    # 登れない角は slip が NaN で feasible = False(docstring どおり、立ち往生)
                          "cvar_cost_map",       # 通れない辺(悲観的な滑り ≥ s_max・データの角の範囲の外・地図の外)は inf(docstring どおり)
                          "risk_aware_path",     # 届かなければ cost が inf(docstring どおり)
+                         "plant_color_index",   # 暗い画素(明るさ < dark_floor)は色度が決まらず index が NaN で valid = False(docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

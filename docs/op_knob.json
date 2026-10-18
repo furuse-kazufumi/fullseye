@@ -3565,6 +3565,24 @@
     "breakpoints": []
   },
   {
+    "op": "kuwahara",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.627813,
+      2.928224,
+      3.838781,
+      0.884654,
+      0.853213
+    ],
+    "a_effect": 4.627813394969951,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
     "op": "laplace",
     "steps": 51,
     "n_probe_images": 5,
@@ -6174,6 +6192,24 @@
       0.654902
     ],
     "a_effect": 1.0156862745098039,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xdog",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.986600878156547,
+    "b_used": true,
+    "a_effect_per_image": [
+      11.197941,
+      4.449741,
+      8.482201,
+      2.772877,
+      3.350973
+    ],
+    "a_effect": 11.197940729125852,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"

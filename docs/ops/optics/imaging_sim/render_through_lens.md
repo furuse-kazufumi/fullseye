@@ -83,11 +83,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [edge_spread](../imaging/edge_spread.md) · [veiling_glare_index](../imaging/veiling_glare_index.md) · [emva_pair_statistics](../sensorchar/emva_pair_statistics.md) · [emva_defect_pixels](../sensorchar/emva_defect_pixels.md)
+[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [encircled_energy](../imaging/encircled_energy.md) · [ensquared_energy](../imaging/ensquared_energy.md) · [energy_radii](../imaging/energy_radii.md) · [mtf_tangential_sagittal](../imaging/mtf_tangential_sagittal.md)
 
 ## 同カテゴリ(`imaging_sim`)
 
-[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [defect_dataset](defect_dataset.md) · [calibration_views](calibration_views.md)
+[psf_from_opd](psf_from_opd.md) · [through_focus_mtf](through_focus_mtf.md) · [distortion_map](distortion_map.md) · [defect_dataset](defect_dataset.md) · [calibration_views](calibration_views.md)
 
 ---
 *Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

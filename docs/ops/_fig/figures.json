@@ -1,5 +1,5 @@
 {
- "generated_for": 936,
+ "generated_for": 939,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -8094,6 +8094,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "kuwahara": {
+   "color_ok": true,
+   "extra": {
+    "a": "kuwahara.a.jpg",
+    "inputs": "kuwahara.inputs.jpg"
+   },
+   "fig": "kuwahara.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "kuwahara 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "laplace": {
    "color_ok": true,
    "extra": {
@@ -16066,6 +16091,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_points_render": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_points_render.a.jpg",
+    "b": "tb_points_render.b.jpg",
+    "chain": "tb_points_render.chain.jpg",
+    "inputs": "tb_points_render.inputs.jpg"
+   },
+   "fig": "tb_points_render.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_points_render 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_points_to_voxel": {
    "color_ok": false,
    "extra": {
@@ -19049,6 +19099,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "xdog": {
+   "color_ok": true,
+   "extra": {
+    "a": "xdog.a.jpg",
+    "b": "xdog.b.jpg",
+    "inputs": "xdog.inputs.jpg"
+   },
+   "fig": "xdog.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "xdog 0.40 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "xg_area_center": {
    "extra": {
     "chain": "xg_area_center.chain.jpg"
@@ -21918,10 +21992,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 931,
+  "ok": 934,
   "unreachable": 0,
-  "with_chain": 379,
+  "with_chain": 380,
   "with_gif": 40,
-  "with_sweep": 580
+  "with_sweep": 583
  }
 }

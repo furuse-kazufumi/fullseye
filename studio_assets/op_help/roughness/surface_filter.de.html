@@ -17,12 +17,14 @@
 <p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code> (Standard) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>. Siehe unten.</p>
 <p>dy         Abtastabstand in Zeilenrichtung (<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>).</p>
 <p>★ Randbehandlung (<code style="color:#22d3bf">end_effect</code>) — der Grund, warum dieser op geschrieben wurde</p>
-<p>Die Faltung braucht an den Rändern über den Kernradius <code style="color:#22d3bf">λc/2</code> hinweg &quot;Daten von dort, wo keine sind&quot;.</p>
-<p>Die Norm (ISO 16610-28) setzt voraus, dass der Auswertebereich an beiden Enden um je <code style="color:#22d3bf">λc/2</code> beschnitten wird.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> (Standard) — <b>verwirft</b> an beiden Enden <code style="color:#22d3bf">ceil(λc/2/pitch)</code> Abtastwerte. Die Ausgabe ist ein kleineres Array als die Eingabe. Der verworfene Bereich ist &quot;nicht gemessen&quot;, daher ist dies die einzige Option ohne Lüge.</p>
+<p>Die Faltung braucht an den Rändern über den Kernradius (<code style="color:#22d3bf">GAUSS_TRUNCATE·λc</code> = 0.75 λc, 4 σ) hinweg &quot;Daten von dort, wo keine sind&quot;.</p>
+<p>Die Norm (ISO 16610-28) setzt voraus, dass der Auswertebereich an beiden Enden beschnitten wird.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> (Standard) — <b>verwirft</b> an beiden Enden <code style="color:#22d3bf">ceil(0.75 λc/pitch)</code> Abtastwerte. Die Ausgabe ist ein kleineres Array als die Eingabe. Der verworfene Bereich ist &quot;nicht gemessen&quot;, daher ist dies die einzige Option ohne Lüge.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> — setzt spiegelbildlich fort und gibt dieselbe Form zurück. Nimmt an, dass die Fläche an den Rändern eine gerade Funktion ist.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> — zyklische Faltung (wie FFT). Nimmt an, dass auf das linke Ende das rechte Ende folgt.</p>
-<p><b>Gemessen</b>. Die Ground Truth ist eine 704x704-Fläche, zuerst gefiltert und dann auf die mittleren 512x512 zugeschnitten</p>
+<p><b>Gemessen</b> (★ die folgende Tabelle wurde mit der Kappung <code style="color:#22d3bf">±λc/2</code> gemessen, vor dem 2026-10-18. Nach der Erweiterung des Kerns auf <code style="color:#22d3bf">±0.75 λc</code></p>
+<p>gelten 1.–3. unverändert; nur der Randstreifen wächst von 40 auf 60 Abtastwerte. Die Zahlen wurden nicht neu gemessen).</p>
+<p>Die Ground Truth ist eine 704x704-Fläche, zuerst gefiltert und dann auf die mittleren 512x512 zugeschnitten</p>
 <p>(die Antwort, berechnet mit echten Daten außerhalb der Ränder). dx=1, λc=80,</p>
 <p>Randstreifen = äußere 40 Abtastwerte, dort beträgt der rms der Ground Truth 0.1932.</p>
 <p>Flächenzustand   end_effect   rms-Fehler Randstreifen   rms-Fehler Mitte</p>
@@ -35,22 +37,21 @@
 <p style="margin:2px 0 2px 12px">1. <b>Die Randbehandlung wirkt nur am Rand.</b> Die Mitte stimmt bei allen exakt mit der Ground Truth überein (selbstverständlich, da der Kern die Ränder nicht erreicht, aber geprüft).</p>
 <p style="margin:2px 0 2px 12px">2. <b>Die schlechteste Kombination ist &quot;wrap mit verbliebener Neigung&quot;</b> — der Randfehler beträgt das 23-fache der Ground Truth selbst. Da angenommen wird, dass auf das linke Ende das rechte folgt, entsteht an der Nahtstelle der 2 unterschiedlich hohen Kanten eine Stufe.</p>
 <p style="margin:2px 0 2px 12px">3. <b>Ist die Neigung entfernt, gibt es zwischen wrap und mirror keinen Unterschied</b> (5.7 % gegen 5.9 %, wrap etwas besser). Nicht &quot;zyklische Faltung ist immer schlecht&quot;, sondern &quot;<b>sie zu verwenden, ohne die Neigung zu entfernen, ist schlecht</b>&quot; ist richtig.</p>
-<p style="margin:2px 0 2px 12px">4. Der Preis von reject ist Fläche. Bei 512x512 und λc=80 werden <b>28.8 % verworfen</b> (432x432 bleiben). Der verworfene Anteil wächst mit <code style="color:#22d3bf">1 - (1 - λc/L)²</code>, daher geht fast die Hälfte verloren, sobald λc 1/4 der Messstrecke übersteigt.</p>
-<p>★ Entspricht die Übertragung der Norm? (gemessen, λc=80, dx=1, Sinus mit ganzzahliger Periode per Projektion gemessen)</p>
-<p>λ         Welligkeit   ISO-Normwert   Differenz</p>
-<p>16      0.000806     0.000000    +8.1e-04</p>
-<p>32      0.017206     0.013139    +4.1e-03</p>
-<p>40      0.058676     0.062500    -3.8e-03</p>
-<p>64      0.342826     0.338564    +4.3e-03</p>
-<p>80      0.509549     0.500000    +9.6e-03   ← Maximum</p>
-<p>128      0.772150     0.762799    +9.4e-03</p>
-<p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>Bei der Grenzwellenlänge selbst 0.5095 statt 0.5000</b> (relativ +1.9 %). Ursache ist</p>
-<p>die von der Norm vorgegebene Kappung <code style="color:#22d3bf">±λc/2</code> (= 2.67 σ), durch die 0.8 % der Ausläufer wegfallen.</p>
-<p>Erweitert man die Kappung auf 4 σ (<code style="color:#22d3bf">±0.75 λc</code>), fällt der maximale Fehler auf 9e-05</p>
-<p>(gemessen), aber der von reject verworfene Streifen wird 1.5-mal so breit. <b>Wir haben uns entschieden, der Norm zu folgen und die Abweichung zu dokumentieren.</b> Die Summe aus Rauheit und Welligkeit stimmt stets exakt mit der Eingabe überein</p>
-<p>(<code style="color:#22d3bf">roughness + waviness = 1.000000</code> in der Tabelle oben), daher verschiebt sich nur die Aufteilungsgrenze</p>
-<p>um 1.9 %; Energie verschwindet weder, noch entsteht sie.</p>
+<p style="margin:2px 0 2px 12px">4. Der Preis von reject ist Fläche. Bei 512x512 und λc=80 werden <b>41.4 % verworfen</b> (392x392 bleiben; bei der Kappung <code style="color:#22d3bf">±λc/2</code> waren es 28.8 %). Der verworfene Anteil wächst wie <code style="color:#22d3bf">1 - (1 - 1.5 λc/L)²</code>, sodass bei einem λc über 1/6 der Auswertelänge fast die Hälfte verloren geht.</p>
+<p>★ Entspricht die Übertragung der Norm? (gemessen, λc=80, dx=1, Sinus mit ganzzahliger Periode per Projektion gemessen. Am 2026-10-18 korrigiert)</p>
+<p>λ         Welligkeit   ISO-Normwert   Differenz   (Welligkeit / Differenz vor der Korrektur)</p>
+<p>16     0.000030     0.000000    +3.0e-05    0.000806 / +8.1e-04</p>
+<p>32     0.013094     0.013139    -4.5e-05    0.017206 / +4.1e-03</p>
+<p>40     0.062544     0.062500    +4.4e-05    0.058676 / -3.8e-03</p>
+<p>64     0.338531     0.338564    -3.3e-05    0.342826 / +4.3e-03</p>
+<p>80     0.500012     0.500000    +1.2e-05    0.509549 / +9.6e-03   ← λc</p>
+<p>128     0.762894     0.762799    +9.5e-05    0.772150 / +9.4e-03</p>
+<p>256     0.934601     0.934550    +5.1e-05    0.937944 / +3.4e-03</p>
+<p><b>Vor der Korrektur lag der Wert bei der Grenzwellenlänge selbst bei 0.5095 statt 0.5000</b> (relativ +1.9 %). Die Ursache war weder die Konstante α</p>
+<p>(<code style="color:#22d3bf">√(ln2/π)</code>) noch die Normierung nach der Abtastung, sondern <b>die Kappung <code style="color:#22d3bf">±λc/2</code> (= 2.67 σ) im Wortlaut der Norm</b>: Sie lässt</p>
+<p>0.8 % der Ausläufer wegfallen, und die Renormierung des Rests auf 1 vergrößert den Tiefpassanteil.</p>
+<p>Mit der Kappung <code style="color:#22d3bf">±0.75 λc</code> (4 σ) ergibt sich bei λc 0.500012, und der maximale Fehler über alle Wellenlängen fällt auf 9.5e-05 (Tabelle oben).</p>
+<p>Der Preis: Der von reject verworfene Randstreifen wird 1.5-mal so breit. Die Summe aus Rauheit und Welligkeit stimmt in beiden Fällen exakt mit der Eingabe überein.</p>
 <p>fail-closed</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> nicht <code style="color:#22d3bf">&quot;gaussian&quot;</code> / <code style="color:#22d3bf">end_effect</code> keiner der 3 bekannten Werte.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> und <code style="color:#22d3bf">lambda_s</code> beide <code style="color:#22d3bf">None</code> (ein Aufruf, der nichts tut).</p>
@@ -64,11 +65,12 @@
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">depth</code> als Eingabe)</h3>
-<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">prepare</code>)</h3>
-<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a></p>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: roughness.py — ROUGHNESS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1039,6 +1039,7 @@ from optics import (  # noqa: E402,F401
     fourier_plane_filter, four_f_filter,
     defocus_from_shift, pupil_psf, pupil_blur,
     psf_to_mtf, mtf_diffraction, wavefront_stats,
+    encircled_energy, ensquared_energy, energy_radii, mtf_tangential_sagittal,
     jones_element, jones_apply, stokes_from_jones,
     mueller_element, mueller_apply, stokes_analyze,
     polarization_demosaic, polarization_demosaic_color, mueller_from_intensities, mueller_checks,
@@ -1071,7 +1072,7 @@ from illumdesign import (  # noqa: E402,F401
 )
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
-    psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+    psf_from_opd, psf_field_grid, through_focus_mtf, distortion_map, render_through_lens, defect_dataset,
     calibration_views,
 )
 # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
@@ -1493,6 +1494,7 @@ __all__ = [
     "fourier_plane_filter", "four_f_filter",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
@@ -1510,7 +1512,7 @@ __all__ = [
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
     "illumination_train", "illumination_field", "coaxial_illumination",
-    "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
+    "lensimage", "psf_from_opd", "psf_field_grid", "through_focus_mtf", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "ncc_map_3d", "gradient_normals", "subpixel_refine_edges", "min_max_gray_n",
     "gen_gauss_bandpass", "apply_bandpass", "gaussians_to_mesh", "ensure_gray", "ensure_color",

@@ -309,7 +309,7 @@ def main(argv=None) -> int:
             continue
         spec = fn()
         if a.check:
-            n = len(pv.build_html(spec, ALL_LANGS).encode("utf-8"))
+            n = len(pv._build_html(spec, ALL_LANGS).encode("utf-8"))
             print("ok %s: %d tabs, %d bytes (not written)" % (pid, len(spec["tabs"]), n))
         else:
             path = pv.write_viewer(spec, OUT / (pid + ".html"), ALL_LANGS)

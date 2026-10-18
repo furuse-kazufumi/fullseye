@@ -108,8 +108,8 @@
    "category": "見つける",
    "note": "docs/capabilities/blob-and-region.md",
    "status": "validated-public-real-data",
-   "ops_total": 4,
-   "ops_named_in_tests": 3,
+   "ops_total": 5,
+   "ops_named_in_tests": 4,
    "ops_not_named_in_tests": [
     "watersheds"
    ],
@@ -131,6 +131,13 @@
     },
     {
      "id": "poc_real_coin_metrology",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_dense_bubble_count",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -266,6 +273,27 @@
      "id": "converge_tour",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "crop-weed-cover-grade",
+   "title": "圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)",
+   "title_en": "Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)",
+   "category": "見つける",
+   "note": "docs/capabilities/crop-weed-cover-grade.md",
+   "status": "validated-public-real-data",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_weed_rice_ratio",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
     }
@@ -478,6 +506,34 @@
    "examples": [
     {
      "id": "golden_compare",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "good-sample-variation-model",
+   "title": "良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)",
+   "title_en": "Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)",
+   "category": "見つける",
+   "note": "docs/capabilities/good-sample-variation-model.md",
+   "status": "validated-public-real-data",
+   "ops_total": 10,
+   "ops_named_in_tests": 10,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_good_sample_variation_model",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "anomaly_eval_metrics",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
      "executed": true,
@@ -1213,6 +1269,34 @@
    ]
   },
   {
+   "id": "point-cloud-to-picture",
+   "title": "点群をそのまま色の絵にする",
+   "title_en": "Draw a point cloud as a colour picture",
+   "category": "見せる",
+   "note": "docs/capabilities/point-cloud-to-picture.md",
+   "status": "validated-public-real-data",
+   "ops_total": 3,
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "points_render_basics",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_flybrain_pointcloud",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "point-target-detection",
    "title": "小さな点状の目標を見つけて、副画素で位置を出す",
    "title_en": "Find small point-like targets and locate them below the pixel",
@@ -1371,6 +1455,34 @@
    ]
   },
   {
+   "id": "robust-gaussian-spline-profile-filter",
+   "title": "傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)",
+   "title_en": "A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)",
+   "category": "測る",
+   "note": "docs/capabilities/robust-gaussian-spline-profile-filter.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_robust_profile_filter",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "example_robust_profile_filter",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "sam-bond-voids",
    "title": "ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)",
    "title_en": "Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD)",
@@ -1444,6 +1556,27 @@
      "id": "poc_sem_wafer_defect_edge_bias",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "sequential-lens-design-metrics",
+   "title": "逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)",
+   "title_en": "Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
+   "category": "測る",
+   "note": "docs/capabilities/sequential-lens-design-metrics.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "optical_design_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
     }
@@ -1999,9 +2132,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 400,
-  "run_by_the_poc_gate": 255,
-  "run_by_the_example_gate": 145,
+  "examples2d_total": 408,
+  "run_by_the_poc_gate": 260,
+  "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

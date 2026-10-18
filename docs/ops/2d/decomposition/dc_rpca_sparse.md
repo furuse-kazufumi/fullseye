@@ -4,7 +4,7 @@ dim: 2d
 category: decomposition
 in: image
 out: image
-examples: [gallery2d_texture_freq]
+examples: [gallery2d_texture_freq, poc_good_sample_variation_model]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -79,10 +79,11 @@ dc_rpca_sparse 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md) · [max_filter](../rank/max_filter.md)
+[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md)
 
 ## 同カテゴリ(`decomposition`)
 

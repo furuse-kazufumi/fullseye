@@ -85,15 +85,17 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-80 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+85 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
 **ढूँढना**
 
-- Regions को segment, select और count करना: [explanation](../../capabilities/blob-and-region.md) _(ja)_ · examples [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- Regions को segment, select और count करना: [explanation](../../capabilities/blob-and-region.md) _(ja)_ · examples [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py) · [poc_dense_bubble_count](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+- खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network): [explanation](../../capabilities/crop-weed-cover-grade.md) _(ja)_ · examples [poc_weed_rice_ratio](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - दो X-ray energies से मोटाई और material अलग करना (dual-energy / photon counting: spectrum → energy windows → basis decomposition → effective Z): [explanation](../../capabilities/dual-energy-xray-material-discrimination.md) _(ja)_ · examples [poc_dual_energy_xray](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dual_energy_xray.py)
 - Image के अंदर के text को सही string के अनुसार ठीक करना: [explanation](../../capabilities/fix-text-in-images.md) _(ja)_ · examples [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model): [explanation](../../capabilities/good-sample-variation-model.md) _(ja)_ · examples [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR pre-processing (deskew, local binarisation, line extraction): [explanation](../../capabilities/ocr-preprocessing.md) _(ja)_ · examples [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - PL image में पतली groove क्यों गायब होती है — carrier-diffusion PSF और defect के प्रकार से अलग करना (Si wafer और solar cell की PL/EL inspection): [explanation](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · examples [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - छोटे point-like targets ढूँढना और sub-pixel position निकालना: [explanation](../../capabilities/point-target-detection.md) _(ja)_ · examples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
@@ -121,8 +123,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature): [explanation](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · examples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 - 3-D point cloud से सतह की समतलता (flatness): [explanation](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · examples [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - किस आकार का दोष सच में मिलेगा (probability of detection और a90/95, MIL-HDBK-1823A): [explanation](../../capabilities/probability-of-detection.md) _(ja)_ · examples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+- ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface): [explanation](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · examples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - बारीक खरोंच ढूँढना और उनकी चौड़ाई मापना: [explanation](../../capabilities/scratch-detection-and-width.md) _(ja)_ · examples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - SEM की bright edge किसी dimension को कितना बढ़ाती है, ground truth के साथ मापना: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- sequential lens design के metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
 - polarisation से काले चमकदार और काँच के हिस्सों का आकार मापना (shape from polarisation, अस्पष्टता समुच्चय, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - असली images से physical model के coefficients fit करना (sim-to-real calibration) — जिन coefficients को images तय नहीं करतीं उनके लिए कोई संख्या नहीं, बल्कि तय होने वाला संयोजन और कारण: [explanation](../../capabilities/sim-to-real-calibration.md) _(ja)_ · examples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Image से dimensions को sub-pixel तक मापना: [explanation](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · examples [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -184,6 +188,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - नतीजों को पढ़ने लायक figures में बदलना: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 - नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Background का रंग जाने बिना lines और regions बनाना (inverted colour): [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़): [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Image पर text और tables ठीक मनचाही जगह रखना: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
 **चित्र बनाना**
@@ -195,11 +200,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 148 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 151 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
-255 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+260 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -218,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (42)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (44)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D barcode" width="200" height="200"><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Electrode tortuosity" width="200" height="200"><span>Electrode tortuosity</span></a>
@@ -258,14 +263,16 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="illumination cone और imaging NA" width="200" height="200"><b>&#9654;</b><span>illumination cone और imaging NA</span></a>
 <a href="../../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tdi_linescan.jpg" alt="TDI line scan और line-scan lens" width="200" height="200"><span>TDI line scan और line-scan lens</span></a>
 <a href="../../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_industrial_oct.jpg" alt="औद्योगिक OCT (paint layers और भीतरी defects)" width="200" height="200"><span>औद्योगिक OCT (paint layers और भीतरी defects)</span></a>
+<a href="../../articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dense_bubble_count.jpg" alt="घने bubbles गिनना (तय न हो तो interval)" width="200" height="200"><b>&#9654;</b><span>घने bubbles गिनना (तय न हो तो interval)</span></a>
 <a href="../../articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_virtual_sem_kv_cd_bse.jpg" alt="Virtual SEM बनाम accelerating voltage" width="200" height="200"><span>Virtual SEM बनाम accelerating voltage</span></a>
 <a href="../../articles/assets/poc/poc_grating_interferometry/12_real_three_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_grating_interferometry.jpg" alt="grating interferometry (dark field में दिखते fibres, cracks और pores)" width="200" height="200"><span>grating interferometry (dark field में दिखते fibres, cracks और pores)</span></a>
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)" width="200" height="200"><span>मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="रोशनी और ओट में code matching" width="200" height="200"><b>&#9654;</b><span>रोशनी और ओट में code matching</span></a>
+<a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="अच्छे samples का variation model" width="200" height="200"><span>अच्छे samples का variation model</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (52)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (53)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -319,6 +326,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="non-coaxial optics: beamsplitter ghost और fold" width="200" height="200"><span>non-coaxial optics: beamsplitter ghost और fold</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="spectrometer और illumination (bandwidth और lamp की संरचना)" width="200" height="200"><span>spectrometer और illumination (bandwidth और lamp की संरचना)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="real telecentric image पर imaging model का calibration" width="200" height="200"><span>real telecentric image पर imaging model का calibration</span></a>
+<a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं" width="200" height="200"><span>scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं</span></a>
 </div>
 </details>
 
@@ -434,7 +442,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Connectome और neurons</b> (19)</summary>
+<details class="vall"><summary><b>Connectome और neurons</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_vision.jpg" alt="Fly vision" width="200" height="200"><span>Fly vision</span></a>
 <a href="../../articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_larval_connectome_reservoir.jpg" alt="Larval connectome" width="200" height="200"><span>Larval connectome</span></a>
@@ -455,6 +463,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_swc_tree_truth/01_swc_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_swc_tree_truth.jpg" alt="SWC skeletons" width="200" height="200"><span>SWC skeletons</span></a>
 <a href="../../articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fly_optomotor_steering.jpg" alt="Fly steering" width="200" height="200"><b>&#9654;</b><span>Fly steering</span></a>
 <a href="../../articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_worm_core_persists.jpg" alt="Worm brain core" width="200" height="200"><b>&#9654;</b><span>Worm brain core</span></a>
+<a href="../../articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_flybrain_pointcloud.jpg" alt="126k cell bodies से fly brain" width="200" height="200"><b>&#9654;</b><span>126k cell bodies से fly brain</span></a>
 </div>
 </details>
 
@@ -472,7 +481,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomy और environment</b> (22)</summary>
+<details class="vall"><summary><b>Astronomy और environment</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="gravitational-wave detector का closed-form pseudo-simulation" width="200" height="200"><b>&#9654;</b><span>gravitational-wave detector का closed-form pseudo-simulation</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="All-sky cloud cover" width="200" height="200"><span>All-sky cloud cover</span></a>
@@ -496,6 +505,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="Mars rover slip" width="200" height="200"><b>&#9654;</b><span>Mars rover slip</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="Two heights (real)" width="200" height="200"><span>Two heights (real)</span></a>
 <a href="../../articles/assets/poc/poc_gravitational_lens_invariants/10_source_crossing.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gravitational_lens_invariants.jpg" alt="Gravitational lens" width="200" height="200"><b>&#9654;</b><span>Gravitational lens</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="धान के खेत में खरपतवार cover के 4 grade" width="200" height="200"><span>धान के खेत में खरपतवार cover के 4 grade</span></a>
 </div>
 </details>
 

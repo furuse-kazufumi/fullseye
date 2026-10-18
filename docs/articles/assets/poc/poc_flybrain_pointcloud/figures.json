@@ -1,0 +1,49 @@
+[
+ {
+  "file": "01_three_views.png",
+  "name": "three_views",
+  "caption": "正面・側面・背面。1 点 = 1 個の細胞体、色 = 上位クラス。gaussian の足跡(半径 1.6 画素)を不透明度 0.3 で深さの順に重ね、奥ほど暗く(depth_cue 0.5)。縮尺は 3 面で共通。MaleCNS v1.0(CC BY 4.0)",
+  "shape": [
+   613,
+   2140,
+   3
+  ],
+  "source": "Male CNS dataset v1.0 (minconf 0.5), Janelia FlyEM / Google Research, https://male-cns.janelia.org/, CC BY 4.0 (creativecommons.org/licenses/by/4.0) - soma positions and superclass labels; brain somata selected (VNC, ascending and z >= 60,000 excluded), otherwise unchanged"
+ },
+ {
+  "file": "02_rotation_first_frame.png",
+  "name": "rotation_first_frame",
+  "caption": "回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)",
+  "shape": [
+   380,
+   460,
+   3
+  ],
+  "source": "Male CNS dataset v1.0 (minconf 0.5), Janelia FlyEM / Google Research, https://male-cns.janelia.org/, CC BY 4.0 (creativecommons.org/licenses/by/4.0) - soma positions and superclass labels; brain somata selected (VNC, ascending and z >= 60,000 excluded), otherwise unchanged"
+ },
+ {
+  "file": "03_rotation.gif",
+  "name": "rotation",
+  "caption": "背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)",
+  "shape": [
+   380,
+   460,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 10.0
+ },
+ {
+  "file": "04_footprints.png",
+  "name": "footprints",
+  "caption": "points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。point は render_point_depth と同じ画素に落ち、隙間が残る。add は光の総量を保つので密度の地図になる。MaleCNS v1.0(CC BY 4.0)",
+  "shape": [
+   453,
+   1490,
+   3
+  ],
+  "source": "Male CNS dataset v1.0 (minconf 0.5), Janelia FlyEM / Google Research, https://male-cns.janelia.org/, CC BY 4.0 (creativecommons.org/licenses/by/4.0) - soma positions and superclass labels; brain somata selected (VNC, ascending and z >= 60,000 excluded), otherwise unchanged"
+ }
+]
