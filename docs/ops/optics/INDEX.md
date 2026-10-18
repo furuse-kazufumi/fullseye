@@ -1,4 +1,4 @@
-# OPTICS operator help — 363 ops in 40 categories
+# OPTICS operator help — 366 ops in 40 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -34,9 +34,9 @@
 
 [chromatic_confocal_limits](confocal/chromatic_confocal_limits.md) · [chromatic_confocal_peaks](confocal/chromatic_confocal_peaks.md) · [chromatic_confocal_probe](confocal/chromatic_confocal_probe.md) · [chromatic_confocal_readout](confocal/chromatic_confocal_readout.md) · [chromatic_confocal_spectrum](confocal/chromatic_confocal_spectrum.md) · [confocal_axial_response](confocal/confocal_axial_response.md)
 
-### design (19)
+### design (22)
 
-[chief_ray](design/chief_ray.md) · [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [opd_samples](design/opd_samples.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_bundle](design/ray_bundle.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md) · [with_wavelength](design/with_wavelength.md)
+[chief_ray](design/chief_ray.md) · [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [opd_samples](design/opd_samples.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_aiming](design/ray_aiming.md) · [ray_bundle](design/ray_bundle.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [set_vignetting](design/set_vignetting.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md) · [with_aiming](design/with_aiming.md) · [with_wavelength](design/with_wavelength.md)
 
 ### drawing (9)
 

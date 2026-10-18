@@ -54,6 +54,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `optics`: `encircled_energy` / `ensquared_energy`(PSF の囲み・四角エネルギーの曲線)、`energy_radii`(50 / 80 / 90 % の半径)、`mtf_tangential_sagittal`(2-D 変換の軸の断面)。`lensimage.through_focus_mtf`(像面を動かした PSF ごとの子午/球欠 MTF)。
 - 真値: Airy の囲みエネルギー(第 1 暗環で 83.78 %、Bessel の閉形式と 1e-4 以内)、四角瞳の Si 閉形式、ガウス PSF の閉形式、円形瞳の MTF の閉形式(1.7e-4)、Hopkins のデフォーカス積分(5e-3 以内)。能力ノート `sequential-lens-design-metrics`、呼び出し例 `examples/optical_design_metrics.py`。
 
+### Added — 逐次光学設計の拡充 第 3 弾: 実光線の照準とケラレ係数(3 op)
+- `raytrace.lens_system(..., aim="stop")` / `with_aiming`: 各瞳光線を絞りの指定の点へ Newton 法で通す(許容は絞り半径の 1e-11、収束しなければ ValueError)。同梱の三枚玉は軸上で 217 本中 48 本を失っていたのが 0 本になり、RMS スポットは軸上 5.07 → 4.69 µm / 14 度 16.6 → 17.4 µm / 20 度 11.9 → 15.6 µm。薄肉の理想レンズでは動かない(1e-12)。既存の数字を動かさないため既定は従来の `aim="paraxial"`。
+- ケラレ係数 VDX / VDY / VCX / VCY / VAN を視野ごとに(`lens_system(vignetting=[...])`、`ray_bundle` / `spot_stats` / `ray_fan` / `opd_samples` の `vignetting`)。`.zmx` の `VDXN…VANN` を読んで書き戻す(以前は `allow_partial` で無視)。`set_vignetting` は開口から係数を求め、`ray_aiming` は狙いの検査表を返す。 定義は書式の利用者ガイド(Vignetting Factors)と KA-01393 の `q = R(VAN)·((VDX, VDY) + diag(1−VCX, 1−VCY)·p)`。`set_vignetting` は既定が 4 本の周辺光線(`mode="four"`)、`mode="grid"` は格子で厳密に。
+- 真値: 光線が絞りに届く位置と狙いの差、VCY = 0.3 で絞り上の瞳の高さが 0.7 倍(1e-10)、理想レンズの子午 MTF が円形瞳の閉形式でカットオフ 0.7 倍・球欠は元のまま、設定後に切られる光線が 0 本、切られない系で係数が 0。門 `tests/test_optdesign_aiming.py`、呼び出し例 `examples/optical_design_metrics.py`(5)、能力ノート `sequential-lens-design-metrics`。
+
 ## 0.7.0 — 2026-10-18
 
 ### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数

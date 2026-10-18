@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3421,
- "n_notes": 3427,
+ "n_ops": 3424,
+ "n_notes": 3430,
  "notes": {
   "vol_dilate": [
    {
@@ -27310,6 +27310,16 @@
     "path": "docs/ops/optics/design/paraxial_trace.md"
    }
   ],
+  "ray_aiming": [
+   {
+    "op": "ray_aiming",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/ray_aiming.md"
+   }
+  ],
   "ray_bundle": [
    {
     "op": "ray_bundle",
@@ -27347,6 +27357,16 @@
     "category": "design",
     "out": "table",
     "path": "docs/ops/optics/design/sellmeier.md"
+   }
+  ],
+  "set_vignetting": [
+   {
+    "op": "set_vignetting",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/set_vignetting.md"
    }
   ],
   "spot_diagram": [
@@ -27396,6 +27416,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/wavefront_from_opd.md"
+   }
+  ],
+  "with_aiming": [
+   {
+    "op": "with_aiming",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/with_aiming.md"
    }
   ],
   "with_wavelength": [
