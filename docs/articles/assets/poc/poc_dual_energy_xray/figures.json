@@ -22,7 +22,7 @@
  {
   "file": "03_iec_beam_quality.png",
   "name": "iec_beam_quality",
-  "caption": "模型の 4 定数は SpekPy のスペクトルの形に合わせたもので、この表の値は合わせに使っていない。IEC の値は Tanguay & Persson(arXiv:2205.03362)表 I と Yoshizumi & Caldas の表から。",
+  "caption": "模型の 4 定数は公開のスペクトル計算(MIT)の形に合わせたもので、この表の値は合わせに使っていない。IEC の値は Tanguay & Persson(arXiv:2205.03362)表 I と Yoshizumi & Caldas の表から。",
   "shape": [
    272,
    492,

@@ -3,7 +3,7 @@
 
 外部真値: NIST SRD 126 の公表値(μ/ρ)、NIST の化合物の表(混合則の独立の経路)、IEC 61267 の線質の半価層
 (管の模型の合わせには使っていない)、Mayneord の水の Z_eff 7.42、閉形式(Kramers の式・CRLB・Φ(−d′/2))。
-第 2 実装: xraylib(BSD-3)と SpekPy(MIT)があれば照合する(無ければ飛ばす)。数字は 2026-10-15〜18 の実測。
+第 2 実装: 光子断面積とスペクトルの公開ライブラリ(BSD-3 / MIT)があれば照合する(無ければ飛ばす)。数字は 2026-10-15〜18 の実測。
 """
 from __future__ import annotations
 
@@ -142,7 +142,7 @@ def test_spectrum_is_normalised_and_has_tungsten_k_lines():
 
 
 #: IEC 61267:2005 の線質: (kV, 全ろ過 Al mm, 付加 Al mm, HVL mm Al)。Tanguay & Persson arXiv:2205.03362 表 I、
-#: Yoshizumi & Caldas(IPEN 2009)表 2。模型の 4 定数は SpekPy の形に合わせたもので、この値は合わせに使っていない。
+#: Yoshizumi & Caldas(IPEN 2009)表 2。模型の 4 定数は公開のスペクトル計算の形に合わせたもので、この値は合わせに使っていない。
 IEC = [(50, 2.4, 0.0, 1.78), (70, 2.8, 0.0, 2.58), (100, 3.2, 0.0, 3.97), (150, 4.2, 0.0, 6.57),
        (50, 2.4, 10.0, 3.8), (70, 2.8, 21.0, 6.8), (100, 3.2, 34.0, 10.1), (150, 4.2, 45.0, 13.3)]
 
@@ -271,8 +271,24 @@ def test_separability_closed_form_matches_monte_carlo():
 
 
 def test_matched_pair_has_equal_high_window_attenuation():
+    # 自己整合の確認のみ(実装は L_a[-1] を目標に b の厚みを二分探索するので、これだけでは表や窓の誤りを見逃す)
     r = D.dual_energy_separability("MUSCLE_ICRU44", 4.0, "BONE_CORTICAL_ICRU44", None, CH, 1e5)
     assert r["L_a"][-1] == pytest.approx(r["L_b"][-1], rel=1e-9)
+
+
+def test_matched_thickness_equals_hand_computed_beer_lambert():
+    """独立の門(単色の 2 チャネル): 窓がそれぞれ 1 本の単色線なら L_c = (μ/ρ)·ρ·t が厳密(Beer–Lambert)。
+
+    水 3 cm と同じ 100 keV の L になるアルミの厚み t_b = (μ/ρ)_水 ρ_水 t_a / ((μ/ρ)_Al ρ_Al) を、NIST SRD 126 の
+    公表値(PUBLISHED と同じ 0.1707 / 0.1704 cm²/g)と密度(水 1.000、Al 2.699 g/cm³)から手で計算して比べる。"""
+    mono = {"energy_kev": np.array([40.0, 100.0]), "weights": np.eye(2), "gain": np.ones(2), "mode": "photon_counting"}
+    r = D.dual_energy_separability("WATER", 3.0, "AL", None, mono, 1e5)
+    t_b = 0.1707 * 1.000 * 3.0 / (0.1704 * 2.699)                          # 1.1135 cm
+    assert r["thickness_b_cm"] == pytest.approx(t_b, rel=1e-3)             # 密度は 4 桁なので 1e-3
+    assert r["L_a"][1] == pytest.approx(0.1707 * 3.0, rel=1e-12)           # 水の 100 keV
+    assert r["L_a"][0] == pytest.approx(0.2683 * 3.0, rel=1e-12)           # 水の 40 keV
+    assert r["L_b"][1] == pytest.approx(r["L_a"][1], rel=1e-9)
+    assert r["L_b"][0] == pytest.approx(0.5685 * 2.699 * r["thickness_b_cm"], rel=1e-3)   # Al の 40 keV
 
 
 # --------------------------------------------------------------------------- #

@@ -51,8 +51,8 @@ ANODES = {
            ("Kb1", 67.2443, 22.0), ("Kb2", 69.067, 8.0))),
 }
 # 模型の 4 定数(2026-10-15、``tools/fit_xray_tube_constants.py``)。物理の形は Kramers + Kanaya–Okayama の深さ +
-# 自己吸収 + Green–Cosslett 型の特性線で、強さと深さの尺度だけを、別の物理模型 SpekPy v2.5.4(MIT、Poludniowski
-# ら、Med. Phys. 48, 3630 (2021))の W 陽極 12°・Al 2.5 mm のスペクトル(40〜150 kV)に合わせた:
+# 自己吸収 + Green–Cosslett 型の特性線で、強さと深さの尺度だけを、別の公開の物理模型(オープンソースの X 線管スペクトル計算、MIT、
+# Poludniowski ら、Med. Phys. 48, 3630 (2021))の W 陽極 12°・Al 2.5 mm のスペクトル(40〜150 kV)に合わせた:
 #   * 光子が生まれる深さ = DEPTH_FRACTION × (E₀/100 keV)^(−DEPTH_EXPONENT) × (R(E₀) − R(T))。電子は拡散と
 #     後方散乱で到達深さより浅いところで光子を出す(1 のままだと 150 kV の半価層が 33 % 硬い)。
 #   * K 線の総光子数 = K_SCALE × (U − 1)^K_EXPONENT × 自己吸収前の制動放射の総光子数(U = E₀/E_K)。
@@ -65,7 +65,7 @@ K_EXPONENT = 1.15
 
 MAX_PIXELS = 4_000_000
 #: 基底分解の内部定数(引数にしない)。反復の上限、収束とみなす更新幅 [cm]、それより厚い解は「飛んだ」として拒否する
-#: 厚さ [cm](100 cm の水は 80 kV で e^{-20} —— 計数が 0 になる厚さで、測った値ではありえない)。
+#: 厚さ(単位 cm。100 cm の水は 80 kV で e^{-20} —— 計数が 0 になる厚さで、測った値ではありえない)。
 DECOMP_MAX_ITER = 60
 DECOMP_TOL_CM = 1e-6
 DECOMP_MAX_THICKNESS_CM = 100.0
@@ -119,7 +119,7 @@ def _channels(ch, op):
 
 
 def _mu_table(materials_list, E, op):
-    """材料名の列 → (M, K) の線減衰係数 [1/cm](materials の X 線の列)。"""
+    """材料名の列 → (M, K) の線減衰係数(単位 1/cm。materials の X 線の列)。"""
     if isinstance(materials_list, (str, dict)):
         materials_list = [materials_list]
     rows = []
@@ -145,7 +145,7 @@ def _names(materials_list):
 # 線源                                                                          #
 # --------------------------------------------------------------------------- #
 def _ko_range_um(t_kev, z, a, rho):
-    """Kanaya–Okayama の電子の到達深さ [µm](J. Phys. D 5, 43, 1972)。"""
+    """Kanaya–Okayama の電子の到達深さ(単位 µm。J. Phys. D 5, 43, 1972)。"""
     return 0.0276 * a * np.power(t_kev, 1.67) / (z ** 0.889 * rho)
 
 
@@ -161,7 +161,7 @@ def xray_tube_spectrum(kvp: float = 80.0, anode: str = "W", takeoff_deg: float =
       * 陽極の自己吸収: 深さ x で生まれた光子は取り出し角 θ の方向へ x/sin θ だけ陽極の中を通る
         (μ は materials の X 線の列から W を引く)。
       * 特性線(管電圧が K 端より高いとき): Kα₂ / Kα₁ / Kβ₁ / Kβ₂(X-ray Data Booklet の
-        エネルギーと相対強度)、総数は (U − 1)^1.63(U = E₀/E_K)に比例。各線は 1 つのビンに入る。
+        エネルギーと相対強度)、総数は (U − 1)^K_EXPONENT(K_EXPONENT = 1.15、U = E₀/E_K)に比例。各線は 1 つのビンに入る。
       * フィルタ: ``filtration`` = ((材料, 厚さ mm), …)。既定の Al 2.5 mm は管の固有ろ過の代表値。
 
     ``kvp`` は 15〜300 kV、``de_kev`` はビン幅(0.05〜5 keV)。返り値の E はビンの中心。

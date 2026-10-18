@@ -763,7 +763,7 @@ class TestLedger:
         assert opstomography.OPSTOMOGRAPHY["fbp_volume"]["out"] == "voxel"
 
     def test_result_adapters_are_unnecessary(self):
-        """Declared out-type == raw return type, for every op, checked."""
+        """Declared out-type == raw return type for the 17 tomography ops (spectral_xray's 2 adapters are asserted below)."""
         # spectral_xray の 2 op だけが (C|B, H, W) を images(並び)に写す adapter を持つ(理由は台帳の注記)
         assert set(opstomography.RESULT_ADAPTERS) == {"xray_channel_projection", "basis_material_decompose"}
         sino = tg.ellipse_sinogram(64, DISC, np.linspace(0, 180, 45,

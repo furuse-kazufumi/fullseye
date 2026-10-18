@@ -48,7 +48,7 @@ Dual-energy and photon-counting X-ray material discrimination. The material tabl
 
 ## 限界
 
-- X 線管のスペクトルは簡易模型。強さと深さの尺度の 4 定数を SpekPy(MIT)のスペクトルの形に合わせてあり、合わせに使っていない IEC 61267 の線質 8 つ(RQR / RQA)の半価層と 5.8 % 以内(`tests/test_dualxray.py`)。
+- X 線管のスペクトルは簡易模型。強さと深さの尺度の 4 定数を公開のスペクトル計算(MIT)の形に合わせてあり、合わせに使っていない IEC 61267 の線質 8 つ(RQR / RQA)の半価層と 5.8 % 以内(`tests/test_dualxray.py`)。
 - μ/ρ の表は 1 keV〜1 MeV(外挿しない)。化合物の表に吸収端の点が無いので、端の ±15 % では混合則と表が数 % ずれる。
 - 散乱線、K 蛍光の逃げ、パイルアップ、画素間の電荷共有の二重計数、ヒール効果は入っていない。
 - 埋まった異物の見かけの Z は密度でも動く。無機物の Z の読みは粗い。
@@ -79,5 +79,5 @@ print(fs.ledger.material_xray_constants("CU", 8.0)["mu_rho_cm2_g"])     # 52.55(
 ## 裏づけ
 
 - op: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z` / `xray_tube_spectrum` / `xray_beam_quality` / `photon_counting_channels` / `dual_kvp_channels` / `xray_channel_projection` / `basis_material_decompose` / `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability`
-- 門: `tests/test_dualxray.py`(NIST の公表値 11 点と K 端、元素の表 × 組成の混合則と NIST の化合物の表、水の Z_eff 7.42、Kramers の閉形式、IEC 61267 の線質 8 つ、雑音なしの分解の回収 1e-14、CRLB と分解の雑音、誤り率の閉形式とモンテカルロ、fail-closed 10 本、xraylib と SpekPy があれば第 2 実装と照合)と PoC の 21 門。
-- 出典: Alvarez & Macovski, Phys. Med. Biol. 21, 733 (1976) / Lehmann ら, Med. Phys. 8, 659 (1981) / Roessl & Herrmann, Phys. Med. Biol. 54, 1307 (2009) / Hubbell & Seltzer, NIST SRD 126 (2004) / ICRU Report 44 (1989) / Kanaya & Okayama, J. Phys. D 5, 43 (1972) / X-ray Data Booklet (LBNL 2009) / Poludniowski ら(SpekPy), Med. Phys. 48, 3630 (2021) / IEC 61267:2005 の値は Tanguay & Persson, arXiv:2205.03362 表 I。
+- 門: `tests/test_dualxray.py`(NIST の公表値 11 点と K 端、元素の表 × 組成の混合則と NIST の化合物の表、水の Z_eff 7.42、Kramers の閉形式、IEC 61267 の線質 8 つ、雑音なしの分解の回収 1e-14、CRLB と分解の雑音、誤り率の閉形式とモンテカルロ、fail-closed 14 本(拒否の 12 通り + 0 計数・暴走の画素 2 本)、光子断面積とスペクトルの公開ライブラリがあれば第 2 実装と照合)と PoC の 21 門。
+- 出典: Alvarez & Macovski, Phys. Med. Biol. 21, 733 (1976) / Lehmann ら, Med. Phys. 8, 659 (1981) / Roessl & Herrmann, Phys. Med. Biol. 54, 1307 (2009) / Hubbell & Seltzer, NIST SRD 126 (2004) / ICRU Report 44 (1989) / Kanaya & Okayama, J. Phys. D 5, 43 (1972) / X-ray Data Booklet (LBNL 2009) / Poludniowski ら, Med. Phys. 48, 3630 (2021) / IEC 61267:2005 の値は Tanguay & Persson, arXiv:2205.03362 表 I。
