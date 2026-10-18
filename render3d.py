@@ -2261,3 +2261,258 @@ def curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False):
             faces.append((a, c, d))
             faces.append((a, d, b))
     return V, np.asarray(faces, dtype=np.int64)
+
+
+# ------------------------------------------------------------------------- #
+# 点群をそのまま描く(2026-10-18)—— 細胞体 12 万個の脳を、点のまま絵にする
+#
+# 既存の点の描画は 3 つあったが、どれも「点群を絵にする op」ではなかった:
+#   * ``render_point_depth``(match3d)は 1 点 = 1 画素の z-buffer で、色も足跡も無い深度画像
+#   * ``points_activity_video``(conngraph)は活動の動画の出口で、状態列 (T, n) が必須・正射影の四角
+#   * ``gs_render``(gsplatnp)は 3DGS の dict(共分散・法線・不透明度)を要し、Lambert で陰影をつける
+# 名刺の裏のハエの脳は、この穴を手書きの numpy で埋めていた。ここで汎用の op にする。
+# ------------------------------------------------------------------------- #
+
+#: 点 × 足跡の画素の組の上限(これを超える描画は黙って遅く走らせず拒否する)
+POINTS_RENDER_MAX_PAIRS = 40_000_000
+_POINTS_RENDER_FOOTPRINTS = ("gaussian", "disc", "point")
+_POINTS_RENDER_COMPOSITES = ("over", "add")
+_POINTS_RENDER_PROJECTIONS = ("orthographic", "perspective")
+
+
+def points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None,
+                  projection="orthographic", radius_px=1.5, footprint="gaussian",
+                  composite="over", opacity=1.0, depth_cue=0.0,
+                  background=(0.0, 0.0, 0.0), margin=0.05):
+    """Render an (N, 3) point cloud to an RGB image (H, W, 3): anti-aliased splats, depth-sorted, deterministic.
+
+    カメラは ``project_points`` / ``render_point_depth`` と同じ OpenCV の規約:
+    ``P_cam = R @ P + t``(+Z が前、u が右、v が下)。画素 ``(row=r, col=c)`` の中心が
+    連続座標 ``(u, v) = (c, r)``(このモジュール冒頭の画素中心の規約。0.5 を足さない)。
+
+    * ``projection="orthographic"``: ``u = fx·X + s·Y + cx``、``v = fy·Y + cy``(Z は順序だけに使う)。
+      ``K`` が None なら**自動で収める**: R, t を当てた後の XY の箱が、縁 ``margin``(画像の短辺に
+      対する割合)を残して画像に入る最大の等方倍率で、箱の中心を画像の中心 ``((W-1)/2, (H-1)/2)`` に置く。
+    * ``projection="perspective"``: ``u = fx·X/Z + s·Y/Z + cx``、``v = fy·Y/Z + cy``。Z ≤ 0 の点
+      (カメラの後ろ)は描かない。透視は距離が決まらないと収められないので ``K`` が要る(None は拒否)。
+
+    足跡(``footprint``、半径 ``radius_px`` 画素):
+
+    * ``"gaussian"``: 重み ``w = exp(-d²/(2σ²))``、σ = radius_px / 2(半径 = 2σ)。|Δu| か |Δv| が 4σ を
+      超える画素は 0(円でなく軸ごとに切るので足跡は x と y の積に分かれ、加算の像の列の和は点の行の
+      位置に依らない)。像の重心は射影位置に 1e-3 画素以内で乗る(3σ で切ると切り口の非対称で
+      0.017 画素ずれた。実測)。
+    * ``"disc"``: 半径 ``radius_px`` の円の画素被覆を 1 画素幅の線形ランプで近似
+      ``w = clip(radius_px + 0.5 - d, 0, 1)``(縁が階段にならない)。小さな円は画素に量子化されるので、
+      像の重心のずれは半径 1〜1.5 画素で最大 0.05 画素(小数画素の位置を測るなら gaussian)。
+    * ``"point"``: 最寄りの 1 画素だけ(``round``、``render_point_depth`` と同じ画素)。
+
+    d は点の射影位置(小数画素のまま)から画素中心までの距離 —— 点を画素に丸めてから
+    円を置くのではないので、0.3 画素ずれた点の像は 0.3 画素ずれる。
+
+    重ね方(``composite``):
+
+    * ``"over"``(既定): 画素ごとに**手前から**アルファ合成 ``C = Σ c_i α_i T_i``、
+      ``T_i = Π_{j が手前}(1 - α_j)``、``α_i = opacity · w_i``(足跡の重みは最大 1)、
+      最後に ``(1 - Σ α_i T_i) · background``。順序は**深さ Z**で決め、入力の並びには依らない
+      (Z が等しい点どうしだけ入力の番号順。丸めの屑で入れ替わらないよう Z の同点は番号で決める)。
+      opacity = 1 で足跡の中心(w = 1)に来た点は、その画素で後ろを完全に隠す(z-buffer と同じ勝ち方)。
+      積は log を取らずに層ごとに掛けるので、不透明な点の後ろの透過率は厳密に 0。
+    * ``"add"``: 足跡を**和が 1** に正規化して足す ``C = background + Σ opacity · c_i · ŵ_i``。
+      画像に収まった点については光の総量が厳密に保存される(``Σ (C - background) = Σ opacity · c_i``)。
+      密度の絵で、値は 1 を超えうる(切らない。トーンは呼び手が決める)。
+
+    ``colors``: None なら一様な明るい灰 (0.9, 0.9, 0.9)。(3,) なら全点に 1 色、(N, 3) なら点ごと。値は 0〜1。
+    ``depth_cue``(0〜1): 描かれる点の Z を手前 0・奥 1 に正規化した zn で、色に ``1 - depth_cue · zn``
+    を掛ける(奥ほど暗い。0 で無効)。``background``: 背景の RGB(0〜1)。``size``: ``(H, W)`` か整数(正方)。
+
+    返り値: float64 の (H, W, 3)。``"over"`` なら 0〜1 に収まる。
+
+    fail-closed(ValueError): 点が (N, 3) でない・有限でない、空の入力(``points`` が 0 要素)、
+    色の形か値域が違う、未知の projection / footprint / composite、radius_px ≤ 0、opacity が (0, 1] の外、
+    depth_cue が [0, 1] の外、margin が [0, 0.5) の外、画素数が ``MAX_PIXELS`` 超、透視で K が無い、
+    K が 3×3 でない・fx か fy が 0、点 × 足跡の組が ``POINTS_RENDER_MAX_PAIRS`` を超える。
+    画像に 1 点も入らないのは拒否しない(背景だけの画像が正しい答え)。
+
+    後段: ``tonemap_reinhard`` / ``antialias``、図は imgio で保存。深度だけなら ``render_point_depth``。
+    """
+    op = "points_render"
+    P = np.asarray(points, dtype=np.float64)
+    if P.size == 0:
+        raise ValueError(f"{op}: points is empty — pass at least one (x, y, z) point")
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError(f"{op}: points must be an (N, 3) array, got shape {P.shape}")
+    if not np.isfinite(P).all():
+        raise ValueError(f"{op}: points contain NaN or inf — drop them before rendering")
+    n = P.shape[0]
+    if isinstance(size, (int, np.integer)):
+        H = W = int(size)
+    else:
+        sz = tuple(int(s) for s in size)
+        if len(sz) != 2:
+            raise ValueError(f"{op}: size must be (H, W) or an int, got {size!r}")
+        H, W = sz
+    if H <= 0 or W <= 0:
+        raise ValueError(f"{op}: size must be positive, got {H}x{W}")
+    if H * W > MAX_PIXELS:
+        raise ValueError(f"{op}: {H}x{W} = {H * W} pixels exceeds MAX_PIXELS={MAX_PIXELS}")
+    if projection not in _POINTS_RENDER_PROJECTIONS:
+        raise ValueError(f"{op}: projection must be one of {_POINTS_RENDER_PROJECTIONS}, got {projection!r}")
+    if footprint not in _POINTS_RENDER_FOOTPRINTS:
+        raise ValueError(f"{op}: footprint must be one of {_POINTS_RENDER_FOOTPRINTS}, got {footprint!r}")
+    if composite not in _POINTS_RENDER_COMPOSITES:
+        raise ValueError(f"{op}: composite must be one of {_POINTS_RENDER_COMPOSITES}, got {composite!r}")
+    radius_px = float(radius_px)
+    opacity = float(opacity)
+    depth_cue = float(depth_cue)
+    margin = float(margin)
+    if not (np.isfinite(radius_px) and radius_px > 0.0):
+        raise ValueError(f"{op}: radius_px must be a positive number, got {radius_px}")
+    if not (np.isfinite(opacity) and 0.0 < opacity <= 1.0):
+        raise ValueError(f"{op}: opacity must lie in (0, 1], got {opacity}")
+    if not (np.isfinite(depth_cue) and 0.0 <= depth_cue <= 1.0):
+        raise ValueError(f"{op}: depth_cue must lie in [0, 1], got {depth_cue}")
+    if not (np.isfinite(margin) and 0.0 <= margin < 0.5):
+        raise ValueError(f"{op}: margin must lie in [0, 0.5), got {margin}")
+    bg = np.asarray(background, dtype=np.float64).reshape(-1)
+    if bg.shape != (3,) or not np.isfinite(bg).all() or bg.min() < 0.0 or bg.max() > 1.0:
+        raise ValueError(f"{op}: background must be 3 finite values in [0, 1], got {background!r}")
+    if colors is None:
+        C = np.full((n, 3), 0.9)
+    else:
+        C = np.asarray(colors, dtype=np.float64)
+        if C.shape == (3,):
+            C = np.broadcast_to(C, (n, 3))
+        if C.shape != (n, 3):
+            raise ValueError(f"{op}: colors must be (3,) or (N, 3) = ({n}, 3), got shape {C.shape}")
+        if not np.isfinite(C).all() or C.min() < 0.0 or C.max() > 1.0:
+            raise ValueError(f"{op}: colors must be finite and lie in [0, 1]")
+
+    # --- カメラ座標へ ---
+    Pc = P
+    if R is not None:
+        Rm = np.asarray(R, dtype=np.float64)
+        if Rm.shape != (3, 3) or not np.isfinite(Rm).all():
+            raise ValueError(f"{op}: R must be a finite 3x3 matrix, got shape {Rm.shape}")
+        Pc = Pc @ Rm.T
+    if t is not None:
+        tv = np.asarray(t, dtype=np.float64).reshape(-1)
+        if tv.shape != (3,) or not np.isfinite(tv).all():
+            raise ValueError(f"{op}: t must be 3 finite values, got {t!r}")
+        Pc = Pc + tv
+    X, Y, Z = Pc[:, 0], Pc[:, 1], Pc[:, 2]
+
+    if K is None:
+        if projection == "perspective":
+            raise ValueError(f"{op}: a perspective render needs K (the distance to the cloud fixes the scale)"
+                             " — pass K, or use projection='orthographic' to auto-fit")
+        x0, x1, y0, y1 = X.min(), X.max(), Y.min(), Y.max()
+        span = max(x1 - x0, y1 - y0)
+        avail = (min(H, W) - 1) * (1.0 - 2.0 * margin)
+        s = avail / span if span > 0.0 else 1.0
+        Km = np.array([[s, 0.0, (W - 1) / 2.0 - s * (x0 + x1) / 2.0],
+                       [0.0, s, (H - 1) / 2.0 - s * (y0 + y1) / 2.0],
+                       [0.0, 0.0, 1.0]])
+    else:
+        Km = np.asarray(K, dtype=np.float64)
+        if Km.shape != (3, 3) or not np.isfinite(Km).all() or Km[0, 0] == 0.0 or Km[1, 1] == 0.0:
+            raise ValueError(f"{op}: K must be a finite 3x3 intrinsic matrix with fx, fy != 0")
+    if projection == "perspective":
+        vis = Z > 0.0
+        Zs = np.where(vis, Z, 1.0)
+        u = Km[0, 0] * X / Zs + Km[0, 1] * Y / Zs + Km[0, 2]
+        v = Km[1, 1] * Y / Zs + Km[1, 2]
+    else:
+        vis = np.ones(n, dtype=bool)
+        u = Km[0, 0] * X + Km[0, 1] * Y + Km[0, 2]
+        v = Km[1, 1] * Y + Km[1, 2]
+
+    img = np.empty((H, W, 3), dtype=np.float64)
+    img[:] = bg
+    idx = np.flatnonzero(vis)
+    if idx.size == 0:
+        return img
+    u, v, Z, C = u[idx], v[idx], Z[idx], C[idx]
+    if depth_cue > 0.0:
+        zr = float(Z.max() - Z.min())
+        zn = (Z - Z.min()) / zr if zr > 0.0 else np.zeros_like(Z)
+        C = C * (1.0 - depth_cue * zn)[:, None]
+
+    # --- 足跡の窓(丸めた中心のまわりの整数オフセット) ---
+    if footprint == "gaussian":
+        sigma = radius_px / 2.0
+        reach = 4.0 * sigma
+    elif footprint == "disc":
+        sigma = 0.0
+        reach = radius_px + 0.5
+    else:
+        sigma = 0.0
+        reach = 0.0
+    half = int(np.ceil(reach + 0.5)) if footprint != "point" else 0
+    off = np.arange(-half, half + 1)
+    oy, ox = np.meshgrid(off, off, indexing="ij")
+    ox, oy = ox.reshape(-1), oy.reshape(-1)
+    m = idx.size
+    if m * ox.size > POINTS_RENDER_MAX_PAIRS:
+        raise ValueError(f"{op}: {m} points x {ox.size} footprint pixels = {m * ox.size} pairs exceeds "
+                         f"POINTS_RENDER_MAX_PAIRS={POINTS_RENDER_MAX_PAIRS} — fewer points or a smaller radius_px")
+    # 画像から遠く外れた点で int への変換が溢れないよう、窓の届かない点は先に落とす
+    near = (u > -half - 1.0) & (u < W + half) & (v > -half - 1.0) & (v < H + half)
+    sel = np.flatnonzero(near)
+    if sel.size == 0:
+        return img
+    u, v, Z, C = u[sel], v[sel], Z[sel], C[sel]
+    pid = np.arange(sel.size)
+    uc = np.rint(u).astype(np.int64)
+    vc = np.rint(v).astype(np.int64)
+    px = (uc[:, None] + ox[None, :]).reshape(-1)
+    py = (vc[:, None] + oy[None, :]).reshape(-1)
+    pp = np.repeat(pid, ox.size)
+    du = px - np.repeat(u, ox.size)
+    dv = py - np.repeat(v, ox.size)
+    d2 = du * du + dv * dv
+    if footprint == "gaussian":
+        w = np.exp(-d2 / (2.0 * sigma * sigma))
+        w[(np.abs(du) > reach) | (np.abs(dv) > reach)] = 0.0       # 軸ごとに切る = x と y に分かれる
+    elif footprint == "disc":
+        w = np.clip(radius_px + 0.5 - np.sqrt(d2), 0.0, 1.0)
+    else:
+        w = np.ones_like(d2)
+    if composite == "add":
+        tot = np.bincount(pp, weights=w, minlength=sel.size)   # 窓全体での和(画像の外も含む)
+        w = w / np.where(tot > 0.0, tot, 1.0)[pp]
+    inside = (w > 0.0) & (px >= 0) & (px < W) & (py >= 0) & (py < H)
+    px, py, pp, w = px[inside], py[inside], pp[inside], w[inside]
+    if pp.size == 0:
+        return img
+    pix = py * W + px
+    flat = img.reshape(-1, 3)
+    if composite == "add":
+        for k in range(3):
+            flat[:, k] += np.bincount(pix, weights=opacity * w * C[pp, k], minlength=H * W)
+        return img
+    # over: 画素 → 深さ → 番号 の順に並べ、画素ごとの手前からの透過率を累積で出す
+    order = np.lexsort((pp, Z[pp], pix))
+    pix, pp, w = pix[order], pp[order], w[order]
+    a = opacity * w
+    starts = np.r_[0, np.flatnonzero(np.diff(pix)) + 1]
+    counts = np.diff(np.r_[starts, pix.size])
+    # 透過率 T は画素ごとの積を「k 番目に手前の層」ごとにそのまま掛けていく(log を取らないので
+    # 丸めが積もらず、不透明 α = 1 の後ろは厳密に 0)。層 k を持つ画素は counts の降順で前詰めになる
+    gord = np.argsort(-counts, kind="stable")
+    cnt_sorted = counts[gord]
+    T = np.empty(pix.size)
+    T[starts] = 1.0
+    for k in range(1, int(counts.max())):
+        g = gord[:int(np.searchsorted(-cnt_sorted, -k, side="left"))]
+        prev = starts[g] + k - 1
+        T[prev + 1] = T[prev] * (1.0 - a[prev])
+    wt = a * T
+    A = np.bincount(pix, weights=wt, minlength=H * W)
+    for k in range(3):
+        flat[:, k] = np.bincount(pix, weights=wt * C[pp, k], minlength=H * W) + (1.0 - A) * bg[k]
+    np.clip(img, 0.0, 1.0, out=img)
+    return img
+
+
+__all__ += ["points_render", "POINTS_RENDER_MAX_PAIRS"]

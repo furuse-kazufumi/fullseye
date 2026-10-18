@@ -9386,6 +9386,16 @@
     "path": "docs/ops/2d/typed/tb_plane_segmentation.md"
    }
   ],
+  "tb_points_render": [
+   {
+    "op": "tb_points_render",
+    "dim": "2d",
+    "category": "typed",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/2d/typed/tb_points_render.md"
+   }
+  ],
   "tb_points_to_voxel": [
    {
     "op": "tb_points_to_voxel",
@@ -12590,6 +12600,16 @@
     "in": "normalmap",
     "out": "image2d",
     "path": "docs/ops/3d/render/phong_shade.md"
+   }
+  ],
+  "points_render": [
+   {
+    "op": "points_render",
+    "dim": "3d",
+    "category": "render",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/3d/render/points_render.md"
    }
   ],
   "project_points": [

@@ -6201,6 +6201,15 @@
    "de": "Extrahiert iterativ mittels wiederholtem RANSAC bis zu `max_planes` Ebenen nacheinander (verbleibende Restpunkte sind -1).",
    "hi": "बार-बार RANSAC से अधिकतम max_planes planes को एक-एक करके निकालता है (residual points -1)।"
   },
+  "2d/tb_points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
+  },
   "2d/tb_points_to_voxel": {
    "fp": "21f55eef00b9",
    "en": "Point cloud (N,3) → density voxel (size³). Splatted via scatter_add, with optional Gaussian smoothing.",
@@ -10241,6 +10250,15 @@
    "ko": "이상치에 강건한 PnP(RANSAC + 최종 DLT 재적합). → (R, t, inlier_mask, info).",
    "de": "Ausreißerrobustes PnP (RANSAC plus abschließendes DLT-Refit). → (R, t, inlier_mask, info).",
    "hi": "outliers के प्रति robust PnP (RANSAC + अंतिम DLT refit)। → (R, t, inlier_mask, info)।"
+  },
+  "3d/points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
   },
   "3d/points_to_voxel": {
    "fp": "21f55eef00b9",

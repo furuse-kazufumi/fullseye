@@ -20411,6 +20411,19 @@
    ]
   },
   {
+   "name": "points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "points_to_gaussians",
    "halcon": "",
    "in_sort": "points",
@@ -40467,6 +40480,16 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

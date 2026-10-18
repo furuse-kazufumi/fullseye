@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 372 の型付き op)を、**実問題を解く実行可能な事例**（全 121 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 373 の型付き op)を、**実問題を解く実行可能な事例**（全 122 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 93 事例
+- **合成データ(制御GT)** — 94 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
@@ -201,6 +201,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ### レンダリング品質
 
+- **点群をそのまま色の絵にする(足跡・深さの順・光の保存を閉じた式で)** (`points_render_basics`, synthetic) — points_render: 小数画素の点の像の重心が閉じた式の射影に 1e-3 画素以内、同じ画素の 2 点は入力の順に依らず手前が勝つ、add の像の総和 = 点の色の総和、光軸まわりの 90 度 = numpy.rot90。
 - **レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)** (`render_ao`, synthetic) — 物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。
 - **レンダリング品質: キャスト/ソフトシャドウ(接地影)** (`render_shadow`, synthetic) — shadow mappingで接地影。球を床に載せ解析GTだ円とIoU 0.978。影なし(従来陰影)はIoU 0.00(接地影を全く当てられない)を判別的に上回る。半影は光源角サイズで単調に拡大。
 - **レンダリング品質: matcap/Phong鏡面シェーディング** (`render_shade`, synthetic) — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。

@@ -581,6 +581,10 @@ OP_KNOB_RANGE = {
     #   ``_make_runner`` が整数に丸めて渡す。
     ("local_std", "window"): (3, 17),    # dsp.local_std は window >= 3(相対スケールだと a=0 で 2)
     ("fit_spline_curve", "k"): (1, 5),   # scipy splprep は 1 <= k <= 5(相対スケールだと a=1 で 6)
+    # ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。
+    #   足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
+    ("points_render", "radius_px"): (0.5, 4.0),
+    ("points_render", "opacity"): (0.1, 1.0),
 }
 
 

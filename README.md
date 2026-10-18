@@ -226,7 +226,7 @@ stacking) lets you develop and test perception pipelines without hardware:
 
 ![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
-The **3-D side is where Fullseye differentiates most**: 372 typed 3-D operators
+The **3-D side is where Fullseye differentiates most**: 373 typed 3-D operators
 spanning point clouds / meshes / volumes / SDF — 3-D feature descriptors
 (SHOT, FPFH, spin images), TSDF fusion, fringe projection, photometric stereo,
 superquadric fitting, medial axis, geodesic distance, visual hull, and

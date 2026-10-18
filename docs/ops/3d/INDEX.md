@@ -1,4 +1,4 @@
-# 3D operator help — 372 ops in 68 categories
+# 3D operator help — 373 ops in 68 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -205,9 +205,9 @@
 
 [inlier_ratio](registration_metrics/inlier_ratio.md) · [registration_recall](registration_metrics/registration_recall.md) · [rmse_inliers](registration_metrics/rmse_inliers.md) · [rotation_translation_error](registration_metrics/rotation_translation_error.md)
 
-### render (18)
+### render (19)
 
-[ambient_occlusion](render/ambient_occlusion.md) · [antialias](render/antialias.md) · [brdf_hapke](render/brdf_hapke.md) · [brdf_lommel_seeliger](render/brdf_lommel_seeliger.md) · [cast_shadow](render/cast_shadow.md) · [edge_alias_energy](render/edge_alias_energy.md) · [matcap_shade](render/matcap_shade.md) · [phong_shade](render/phong_shade.md) · [project_points](render/project_points.md) · [render_beauty](render/render_beauty.md) · [render_point_depth](render/render_point_depth.md) · [render_regolith](render/render_regolith.md) · [render_shaded](render/render_shaded.md) · [render_volume_projection](render/render_volume_projection.md) · [shadow_raycast](render/shadow_raycast.md) · [supersample_mesh](render/supersample_mesh.md) · [tonemap_aces](render/tonemap_aces.md) · [tonemap_reinhard](render/tonemap_reinhard.md)
+[ambient_occlusion](render/ambient_occlusion.md) · [antialias](render/antialias.md) · [brdf_hapke](render/brdf_hapke.md) · [brdf_lommel_seeliger](render/brdf_lommel_seeliger.md) · [cast_shadow](render/cast_shadow.md) · [edge_alias_energy](render/edge_alias_energy.md) · [matcap_shade](render/matcap_shade.md) · [phong_shade](render/phong_shade.md) · [points_render](render/points_render.md) · [project_points](render/project_points.md) · [render_beauty](render/render_beauty.md) · [render_point_depth](render/render_point_depth.md) · [render_regolith](render/render_regolith.md) · [render_shaded](render/render_shaded.md) · [render_volume_projection](render/render_volume_projection.md) · [shadow_raycast](render/shadow_raycast.md) · [supersample_mesh](render/supersample_mesh.md) · [tonemap_aces](render/tonemap_aces.md) · [tonemap_reinhard](render/tonemap_reinhard.md)
 
 ### resolution (15)
 

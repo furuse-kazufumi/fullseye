@@ -770,6 +770,7 @@ Seminal references for the 938 operators (families collapse many variants). The 
 | `tb_iss_keypoints` | typed | - |
 | `tb_project_points` | typed | - |
 | `tb_render_point_depth` | typed | - |
+| `tb_points_render` | typed | - |
 | `tb_statistical_outlier_removal` | typed | - |
 | `tb_radius_outlier_removal` | typed | - |
 | `tb_voxel_grid_downsample` | typed | - |

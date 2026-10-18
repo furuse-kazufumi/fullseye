@@ -770,6 +770,7 @@
 | `tb_iss_keypoints` | points->signal | typed |  | - | - | - |
 | `tb_project_points` | points->keypoints | typed |  | - | - | - |
 | `tb_render_point_depth` | points->image | typed |  | - | - | - |
+| `tb_points_render` | points->rgbimage | typed |  | - | - | - |
 | `tb_statistical_outlier_removal` | points | typed |  | - | - | - |
 | `tb_radius_outlier_removal` | points | typed |  | - | - | - |
 | `tb_voxel_grid_downsample` | points | typed |  | - | - | - |

@@ -1,5 +1,5 @@
 {
- "generated_for": 936,
+ "generated_for": 937,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -16066,6 +16066,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_points_render": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_points_render.a.jpg",
+    "b": "tb_points_render.b.jpg",
+    "chain": "tb_points_render.chain.jpg",
+    "inputs": "tb_points_render.inputs.jpg"
+   },
+   "fig": "tb_points_render.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_points_render 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_points_to_voxel": {
    "color_ok": false,
    "extra": {
@@ -21918,10 +21943,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 931,
+  "ok": 932,
   "unreachable": 0,
-  "with_chain": 379,
+  "with_chain": 380,
   "with_gif": 40,
-  "with_sweep": 580
+  "with_sweep": 581
  }
 }
