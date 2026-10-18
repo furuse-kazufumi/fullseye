@@ -37,7 +37,9 @@ An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics
 
 ## 推奨パイプライン
 
-`lens_system` → `psf_from_opd`(`pixel_pitch_um` つき)→ `encircled_energy` / `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf`
+`lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf`
+
+`psf_from_opd` には `pixel_pitch_um` を渡す。`encircled_energy` と `energy_radii` は同じ PSF から並べて使う(曲線と、指定した割合に達する半径)。
 
 `lens_system` に `{"f": 50.0, "t": None, "ap": 2.5}` の面を置いて収差ゼロの基準を作り(実際の系なら処方を並べる)→ `psf_from_opd` に `pixel_pitch_um` を渡して PSF を画素へ面積積分し → `encircled_energy` / `energy_radii` で「何 µm の円に 80 % 入るか」→ 細かい格子の PSF を `mtf_tangential_sagittal` に渡して子午/球欠の MTF → 像面のずれに対する余裕は `through_focus_mtf`(処方を直接受ける)。
 

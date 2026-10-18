@@ -91,6 +91,7 @@ def test_radii_at_50_80_90_percent_match_an_independent_root_find(airy):
     psf, dx = airy
     out = O.energy_radii(psf, dx, (0.5, 0.8, 0.9))
     ref = [brentq(lambda r, f=f: float(_airy_ee(r)) - f, 1e-3, 20 * LAM * N) for f in (0.5, 0.8, 0.9)]
+    assert len(out["radius_um"]) == len(ref) == 3             # the loop below must not run over nothing
     for got, want in zip(out["radius_um"], ref):
         assert abs(got - want) / want < 0.01, (got, want)
     assert out["diameter_um"] == pytest.approx([2 * v for v in out["radius_um"]])
@@ -110,6 +111,7 @@ def test_ensquared_energy_of_a_square_pupil_matches_the_sine_integral():
     errs = [abs(float(np.interp(a * LAM * N, es[:, 0], es[:, 1])) - float(closed(a))) for a in (0.5, 1.0, 2.0, 3.0)]
     assert max(errs) < 3e-3, errs           # the window wraps the sinc tails: array-normalised, so slightly high
     r = O.energy_radii(psf, dx, (0.5, 0.9), kind="square", centre="fft")
+    assert len(r["radius_um"]) == 2                           # the loop below must not run over nothing
     for got, f in zip(r["radius_um"], (0.5, 0.9)):
         want = brentq(lambda a, f=f: float(closed(a)) - f, 1e-3, 20) * LAM * N
         assert abs(got - want) / want < 0.01
