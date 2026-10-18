@@ -1411,6 +1411,7 @@ def _surfaces_from_nc(system, template, op):
                            else _glass_from_medium(r["n"], op, where))
             if k == system["stop"]:
                 sf["stop"] = True
+                sf["diam"] = float(r["ap"])             # the stop's semi-diameter (FLOA reads it back)
             elif r["ap"] is not None:
                 sf["aperture"] = {"kind": "CLAP", "r": float(r["ap"])}
             if r["label"]:

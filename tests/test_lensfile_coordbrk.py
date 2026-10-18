@@ -470,3 +470,17 @@ def test_flat_air_planes_are_merged_and_listed():
     assert p["surface_records"][5] == [] and p["surface_records"][9] == []
     # 併合は光線を変えない: 無作用の平面を厚みに足した同じ系との差は 0
     assert sum(1 for r in p["system"]["records"] if r["kind"] == "surface") == 4        # 平面 1 + 鏡 3
+
+
+def test_finite_object_system_is_written_with_a_floating_aperture_and_reads_back():
+    s = R3.noncoaxial_system([{"R": 51.68, "t": 5.0, "n": BK, "ap": 8.0},
+                              {"R": INF, "t": 30.0, "n": 1.0},
+                              {"type": "fold_mirror", "tilt": (30.0, 0.0), "ap": 30.0, "t": 60.0}],
+                             stop=0, object_mm=200.0, field=(1.0, 2.0))
+    w = L.lens_file_write(None, system=s)
+    assert "FLOA" in w["text"] and "FTYP 1 " in w["text"]
+    q = L.lens_file_read(w["text"])
+    assert q["field_type"] == "object_height" and q["fields"][0]["field"] == (1.0, 2.0)
+    assert q["system"]["object_mm"] == 200.0
+    assert abs(q["pupil"]["stop_radius_mm"] - 8.0) < 1e-12
+    assert _max_hit_difference(s, q["system"], fields=((1.0, 2.0),)) < 1e-9
