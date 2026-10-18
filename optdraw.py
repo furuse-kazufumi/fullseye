@@ -570,7 +570,8 @@ def lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_
         if not np.all(np.isfinite(z)):
             raise ValueError("%s: surface %d sag is not finite inside its semi-diameter" % (op, i))
         in_group = any(i in g for g in groups)
-        is_stop_only = (i == system["stop"]) and not in_group and srf["R"] == RT.INF
+        ideal = srf.get("f") is not None
+        is_stop_only = (i == system["stop"]) and not in_group and srf["R"] == RT.INF and not ideal
         if in_group:
             sh.poly(np.stack([z, y], 1), "OUTLINE", tag="surface:%d" % i)
             ze = zv[i] + float(_sag_profile(srf, [sd[i]])[0])
@@ -579,8 +580,14 @@ def lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_
                 sh.line((ze, -sd[i]), (ze, -r_out[i]), "OUTLINE", tag="flat:%d" % i)
         elif not is_stop_only:
             sh.poly(np.stack([z, y], 1), "THIN", tag="surface:%d" % i)       # 空気の中の面(ダミー面)
+        if ideal:                                  # 理想レンズ: 細い線 + 両端の矢じり(収束 = 外向き、発散 = 内向き)
+            outward = srf["f"] > 0.0
+            for sg in (1.0, -1.0):
+                yt = sd[i] if outward else sd[i] - sh.p(ARROW_L)
+                sh.arrow((zv[i], sg * yt), (0.0, sg if outward else -sg), layer="THIN")
         surf_rec.append({"index": i, "vertex_z": zv[i], "semi_diameter": float(sd[i]), "outer_radius": float(r_out[i]),
-                         "R": srf["R"], "k": srf["k"], "asph": list(srf["asph"])})
+                         "R": srf["R"], "k": srf["k"], "asph": list(srf["asph"]),
+                         "f": srf.get("f")})
         lab_y = r_out[i] + sh.p(3.0)
         if surf_rec[:-1] and abs(zv[i] - surf_rec[-2]["vertex_z"]) < sh.p(CHAR_W * TEXT_SMALL * 3.0):
             lab_y = max(lab_y, surf_rec[-2]["label_y"] + sh.p(1.8 * TEXT_SMALL))   # 近い面の番号は段をずらす
