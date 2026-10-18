@@ -900,16 +900,18 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: itof(間接 ToF、itof)8 op を新しい族として追加(293 → 301)。
     # 2026-10-15: radiosity(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画、radiosity3d)7 op を新しい族として追加(301 → 308)。
     # 2026-10-18: lensfile(.zmx の処方の読み書き)4 op(338 → 342)。
+    # 2026-10-18: spectrometer(回折格子と分光器、gratingspec)5 op + illumination の照明系 3 op(342 → 350)。
     # 2026-10-15: matprop に電子線の物性(material_electron_properties、仮想 SEM が引く)1 op(308 → 309)。
     # 2026-10-15: tem(仮想の透過電子顕微鏡、temsim)11 op を新しい族として追加(309 → 320)。
     # 2026-10-15: noncoaxial(非共軸の光学系、raytrace3d)13 op を新しい族として追加、drawing に noncoaxial_drawing、
     #   design に未登録だった raytrace の 4 関数(chief_ray / ray_bundle / opd_samples / with_wavelength)(320 → 338)。
-    assert len(opsoptics.OPSOPTICS) == 342
+    assert len(opsoptics.OPSOPTICS) == 350
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
     assert len(opsoptics.list_ops("tem")) == 11
     assert len(opsoptics.list_ops("drawing")) == 9
     assert len(opsoptics.list_ops("confocal")) == 6
+    assert len(opsoptics.list_ops("spectrometer")) == 5
     assert len(opsoptics.list_ops("film")) == 5
     assert len(opsoptics.list_ops("oct")) == 13
     assert len(opsoptics.list_ops("moire_align")) == 8
@@ -931,7 +933,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "itof", "lensfile", "light_transport", "linescan", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
-        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "surface", "telecentric", "tem", "wave"]
+        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、

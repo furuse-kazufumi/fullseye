@@ -9,6 +9,13 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 + lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
 optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
+spectrometer(gratingspec.py、2026-10-15 追加)— **回折格子と分光器**。クロマティック共焦点
+(``chromconf`` の ``spectrometer_fwhm_nm``)とハイパースペクトル(``spectralrad.hyperspectral_band_weights`` の
+``band_fwhm_nm``)は分光器の線幅を**与えられた数字**として受けていた。gratingspec は格子の式 mλ = d(sin α + sin β)
+と Czerny–Turner の幾何から、角分散・逆線分散・分解能 mN・帯域の幅(スリットの像 ⊗ 画素 ⊗ 回折)・コマを消す
+Shafer の角・smile と keystone(溝に沿った方向余弦を保つ 3 次元の格子の式)・高次の重なり(迷光の次数)を出す。
+同日、illumination に顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(往復の T·R)の 3 op。
+
 shape_from_polarization(sfpolar.py、2026-10-13 追加)— **偏光で形を測る**。偏光の分解
 (``polarization_demosaic`` → specularity の ``polarization_dolp_map`` / Stokes)はあったが、
 DoLP から天頂角、AoLP から方位角を逆算して法線にする経路が無かった(``polar_cam`` の
@@ -129,6 +136,7 @@ import cavityoptics
 import materials
 import spectralrad
 import chromconf
+import gratingspec
 import fiberoptics
 import temsim
 import lensfile
@@ -142,7 +150,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -404,6 +412,13 @@ _CATALOG = {
         ("solid_angle_brightness", "illumdesign", ["table"], "table"),
         ("solid_angle_sweep", "illumdesign", [], "pairs"),
         ("solid_angle_render", "illumdesign", ["normalmap", "table"], "image2d"),
+        # 顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(2026-10-15)。照明系は共役面の鎖を
+        # 近軸で並べ、標本の点と方向から光源まで逆に追う(ケーラーは光源の模様が視野に写らない、クリティカルは
+        # 写る —— 閉形式の門)。同軸は往復の T·R(最大 0.25)と、鏡面の部品に写るパネルそのものの像。
+        # table を受ける側なので 2-D の橋は架からない(table は sort に写らない)。
+        ("illumination_train", "illumdesign", [], "table"),
+        ("illumination_field", "illumdesign", ["table"], "image2d"),
+        ("coaxial_illumination", "illumdesign", [], "table"),
     ],
     # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
     # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素
@@ -578,6 +593,17 @@ _CATALOG = {
         ("lens_file_system", "lensfile", ["table"], "table"),
         ("lens_file_write", "lensfile", ["table"], "table"),
         ("lens_file_report", "lensfile", [], "table"),
+    ],
+    "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
+        # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗
+        #   画素 ⊗ 回折)・smile / keystone(3 次元の格子の式)・高次の重なりまで。chromconf の spectrometer_fwhm_nm と
+        #   spectralrad の band_fwhm_nm を、スリット・格子・焦点距離・画素から実体化する。画像を受けないので 2-D の橋は
+        #   架からない(table は sort に写らず、spectrum は 2 入力)。
+        ("grating_dispersion", "gratingspec", [], "table"),
+        ("czerny_turner_design", "gratingspec", [], "table"),
+        ("spectrometer_bandpass", "gratingspec", ["table"], "table"),
+        ("spectrometer_slit_image", "gratingspec", ["table"], "table"),
+        ("spectrometer_spectrum", "gratingspec", ["table", "pairs"], "pairs"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
