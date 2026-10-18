@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **135 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2936,7 +2936,7 @@ py -3.11 examples/poc_pocket_interreflection.py
 
 細胞を数える、核の DNA 量を読む、血管の分岐を測る、創傷の面積を追う。どれも「1 つの数字」で報告されがちで、しかもその数字が合ってしまう場面があります。過分割と過統合が釣り合って個数の偏りが +0.3 個になる細胞計数、背景を引き忘れても分類が生き残る倍数性、いちばん安定して、いちばん間違った治癒定数を返す較正。
 
-この部屋の 26 点は、真値に「どれとどれが重なっているか」「面積と DNA 量が別々にばらつく」「分岐則を厳密に満たす木」といった、ラベル画像だけでは残らない情報を持たせています。実データに差し替えるときも、ラベル画像だけを真値と呼ぶと主題そのものが消える、と各 docstring に書いてあります。
+この部屋の 27 点は、真値に「どれとどれが重なっているか」「面積と DNA 量が別々にばらつく」「分岐則を厳密に満たす木」といった、ラベル画像だけでは残らない情報を持たせています。実データに差し替えるときも、ラベル画像だけを真値と呼ぶと主題そのものが消える、と各 docstring に書いてあります。
 
 見どころは、性能が上がったように見えて測っている量が入れ替わっている場面です。ぼかすほど面積分類器が良くなるのは、面積という名前で DNA 量を漏らしているから。1 つの指標が良くなった理由を毎回追わないと、こういう嘘を成果として持ち帰ることになります。
 
@@ -3679,6 +3679,34 @@ py -3.11 examples/poc_worm_core_persists.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_core_persists)
 
 使用 op(ノートへ): [`graph_core_persistence`](https://furuse.work/ops/graph/population/graph_core_persistence.html) · [`graph_kcore`](https://furuse.work/ops/graph/core/graph_kcore.html) · [`graph_rich_club`](https://furuse.work/ops/conngraph/stats/graph_rich_club.html) · [`graph_rich_club_curve`](https://furuse.work/ops/graph/core/graph_rich_club_curve.html)
+
+## No.2026.245 —— ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する
+
+[![ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
+
+*↑ **ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する** ―― MaleCNS v1.0(Janelia FlyEM × Google Research、雄の全中枢神経系、CC BY 4.0)の注釈から、脳の細胞体 126,104 個(VNC・上行を除く)の位置と上位クラスを取り、点群のまま正面・側面・背面と回転で描いた(視葉の内在 81,055・中枢脳の内在 31,997・視覚の投射 9,162・下行 1,308 …)。Fullseye には点群を色の絵にする op が無く、ViEW 2026 の名刺の裏の脳は手書きの numpy で点を置いていた。新 op `points_render`(ops3d / render)は、小数画素の足跡(gaussian / disc / point)を深さの順にアルファ合成するか、光の総量を保って加算する。門は描画器が自分で計算していない値で採点する: 注釈の左右ラベルで L の細胞体の 99.5 % が正面図の右半分に(前から見るとハエの左は右)、細胞型の名前で引いた Kenyon 細胞 4,050 個が触角葉ニューロン 437 個より背側・後ろに、正面図と背面図(別のカメラ)の列の和が左右反転で 1.8e-15 まで一致、加算の像の総和が点の数と 1.2e-16 で一致、クラスごとの像の重心が閉じた式の射影と 1.4e-5 画素。op の単体の門は 37 件(z-buffer は render_point_depth と全画素で一致、光軸まわり 90 度 = numpy.rot90)、壊して確かめた 10 通り(深さの順を外す・半画素ずらす・回転を転置する・透過率を 1 つずらす など)はどれも赤。★3σ で足跡を切ると重心が 0.017 画素ずれ、円で切ると列の和が行の位置に 1e-5 依存した —— 4σ・軸ごとの切り口に直した。生データは repo に入れない(手元の feather からキャッシュ、無ければ合成の脳で同じ門を回し記録値を印字)。*
+
+[![回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame.png)
+
+*↑ 測定の図 ―― 回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)*
+
+[![points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints.png)
+
+*↑ points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。*
+
+[![背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
+
+*↑ 動く図 ―― 背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)*
+
+```
+py -3.11 examples/poc_flybrain_pointcloud.py
+```
+
+ソース: [examples/poc_flybrain_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_flybrain_pointcloud)
+
+使用 op(ノートへ): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`annotate_scale_bar`](https://furuse.work/ops/annotate/paper/annotate_scale_bar.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`points_render`](https://furuse.work/ops/3d/render/points_render.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 

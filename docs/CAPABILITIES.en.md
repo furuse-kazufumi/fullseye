@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 71 capabilities**
+**Currently 72 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -48,6 +48,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
@@ -731,7 +732,7 @@ Operators: `save_xlsx_report`, `report`, `to_markdown`, `save_json`
 
 Runnable: `xlsx_report`
 
-## Show (3)
+## Show (4)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 
@@ -756,6 +757,18 @@ Pipeline: [`annotate_invert_visibility`](ops/annotate/overlay/annotate_invert_vi
 Alternatives: [`annotate_legend`](ops/annotate/paper/annotate_legend.md), [`text_box`](ops/annotate/text/text_box.md)
 
 Runnable: `annotate_paper_tour`
+
+### [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md)
+
+Draws a point cloud that has no surface — cell positions, LiDAR returns, sparse SfM points, particles — as an RGB image. Each point drops a sub-pixel footprint (gaussian / disc / point) that is alpha-composited in depth order (over) or added with the total light conserved (add, a density map). The camera follows the OpenCV convention of `project_points` / `render_point_depth`; an orthographic render fits the cloud to the image when K is omitted.
+
+Operators: `points_render`, `render_point_depth`, `project_points`
+
+Pipeline: [`points_render`](ops/3d/render/points_render.md)
+
+Alternatives: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
+
+Runnable: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md)
 

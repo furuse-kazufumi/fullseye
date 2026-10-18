@@ -404,6 +404,9 @@ EXAMPLES = [
      "name": "ガウス曲率の符号で表面をドーム/鞍点に分類",
      "summary": "トーラス(R1.0/r0.35)密点群にgaussian_curvatureを当て、外周(楕円K>0)/内周(双曲K<0)を符号で分離精度1.000で分類(解析真値K=cos v/(r(R+r cos v))と一致)。このR,rは外周も内周もH>0なので平均曲率符号null=0.500(分離不能)を判別的に上回る。把持点選び/欠陥判定。"},
     # -- rendering quality(Wave B・映える静止3D)---------------------------------- #
+    {"id": "points_render_basics", "task": "rendering", "data": "synthetic",
+     "name": "点群をそのまま色の絵にする(足跡・深さの順・光の保存を閉じた式で)",
+     "summary": "points_render: 小数画素の点の像の重心が閉じた式の射影に 1e-3 画素以内、同じ画素の 2 点は入力の順に依らず手前が勝つ、add の像の総和 = 点の色の総和、光軸まわりの 90 度 = numpy.rot90。"},
     {"id": "render_ao", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)",
      "summary": "物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。"},

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 615 von 1488. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 615 von 1490. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -161,9 +161,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L458** _(ja)_ — ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で 残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
 - **L535** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
 - **L553** _(ja)_ — ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は ``_make_runner`` が整数に丸めて渡す。
-- **L568** _(ja)_ — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
-- **L762** _(ja)_ — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
-- **L845** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
+- **L559** _(ja)_ — ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。 足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
+- **L572** _(ja)_ — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
+- **L766** _(ja)_ — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
+- **L849** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
 
 ## `ballistics.py`
 
@@ -1695,16 +1696,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `ops3d.py`
 
-- **L384** — ★out ist nicht image2d, sondern **rgbimage** (gemessen 2026-09-02). Sowohl der docstring als auch die Implementierung sagen 'RGB (size, size, 3) float [0,1]', und nur diese Zeile gab sich als 2-D-Luminanzbild aus. Dieser op lief erst, nachdem ein mesh-Seed geliefert wurde, und das Typpraedikat deckte es mit einem TYPEMISS auf: "declared 'image2d' but returned ndarray(512,512,3)" (bis dahin war er wegen der Form, die (V,F) auf 2 Positionsargumente aufteilt, **nie ein einziges Mal gelaufen**). Die anderen 3 render_*-ops (ambient_occlusion / cast_shadow / supersample_mesh) sind wie gemessen 2-D, also bleibt image2d fuer sie in Ordnung -- die Luege war nur diese eine Zeile.
-- **L407** _(ja)_ — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
-- **L413** _(ja)_ — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
-- **L423** _(ja)_ — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
-- **L507** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L662** — ★Hinzugefuegt 2026-09-08. Bis dahin war der Pose-Helfer fuers Schnitzen (visualhull.look_at) aus keiner oeffentlichen Schicht erreichbar, und das Greifen des gleichnamigen render3d.look_at (gluLookAt, -Z nach vorn) ergab **ausnahmslos ein leeres hull** (poc_livestock_body_volume).
-- **L683** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L773** — ★Der Grund (a) fuer das Zurueckhalten -- 'die points-Kandidatenliste wird kuerzer und ueberschreibt stillschweigend den bestehenden champion' -- ist verschwunden, seit backends_typed.TYPE_TO_SORT coordgrid -> points faltet: Die 2-D-Bruecken tb_sphere_sdf / tb_box_sdf tragen INPUT_ADAPTERS._points_to_grid und **bauen tatsaechlich ein Koordinatenfeld aus der Punktwolke**, also ist deren "points"-Deklaration keine Luege (gemessen: das Uebergeben von (64,3) gibt (16,16,16) zurueck = lebendig). Die Luege war nur auf der 3-D-Verzeichnis-Seite.
-- **L934** — ★axis=1. Die kanonische Form von `pairs` ist **(N,2)** (gemessen: die 6 konsumierenden ops lehnen (2,N) ausdruecklich ab). Solange das Praedikat `lambda v: True` war, erzeugte dies (2,n) und gab als seinen Typ 'eine Form, die kein Konsument akzeptieren kann' aus
-- **L972** — ★Die kanonische Form von position ist **3 Komponenten [z, y, x]**. Nicht per Mehrheitsentscheid, sondern durch **Ausfuehren der Konsumenten** entschieden: refine_translation_lk / refine_lm sind fail-closed mit "init_pos must have exactly 3 components [z, y, x] (got 4)", wenn 4 Komponenten uebergeben werden (gemessen). Auch der Generator hat 3 Komponenten (8.0, 8.0, 8.0). Die match_*-Familie gibt jedoch gemaess docstring **4 Komponenten [score, d, h, w]** zurueck, sodass ein Durchleiten mit einem deklarierten out von "position" die nachgelagerten Verfeinerungs-ops ausloescht = eine Typ-Luege. Da score selbst eine ehrliche Information ist, **wird die Funktionsseite nicht beschnitten** (get() bleibt bei 4 Komponenten), und auf der call()-Seite, die den Typ des ledger ausgibt, werden nur die Koordinaten extrahiert (dieselbe Behandlung wie project_points).
+- **L388** — ★out ist nicht image2d, sondern **rgbimage** (gemessen 2026-09-02). Sowohl der docstring als auch die Implementierung sagen 'RGB (size, size, 3) float [0,1]', und nur diese Zeile gab sich als 2-D-Luminanzbild aus. Dieser op lief erst, nachdem ein mesh-Seed geliefert wurde, und das Typpraedikat deckte es mit einem TYPEMISS auf: "declared 'image2d' but returned ndarray(512,512,3)" (bis dahin war er wegen der Form, die (V,F) auf 2 Positionsargumente aufteilt, **nie ein einziges Mal gelaufen**). Die anderen 3 render_*-ops (ambient_occlusion / cast_shadow / supersample_mesh) sind wie gemessen 2-D, also bleibt image2d fuer sie in Ordnung -- die Luege war nur diese eine Zeile.
+- **L411** _(ja)_ — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
+- **L417** _(ja)_ — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
+- **L427** _(ja)_ — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
+- **L511** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L666** — ★Hinzugefuegt 2026-09-08. Bis dahin war der Pose-Helfer fuers Schnitzen (visualhull.look_at) aus keiner oeffentlichen Schicht erreichbar, und das Greifen des gleichnamigen render3d.look_at (gluLookAt, -Z nach vorn) ergab **ausnahmslos ein leeres hull** (poc_livestock_body_volume).
+- **L687** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L777** — ★Der Grund (a) fuer das Zurueckhalten -- 'die points-Kandidatenliste wird kuerzer und ueberschreibt stillschweigend den bestehenden champion' -- ist verschwunden, seit backends_typed.TYPE_TO_SORT coordgrid -> points faltet: Die 2-D-Bruecken tb_sphere_sdf / tb_box_sdf tragen INPUT_ADAPTERS._points_to_grid und **bauen tatsaechlich ein Koordinatenfeld aus der Punktwolke**, also ist deren "points"-Deklaration keine Luege (gemessen: das Uebergeben von (64,3) gibt (16,16,16) zurueck = lebendig). Die Luege war nur auf der 3-D-Verzeichnis-Seite.
+- **L938** — ★axis=1. Die kanonische Form von `pairs` ist **(N,2)** (gemessen: die 6 konsumierenden ops lehnen (2,N) ausdruecklich ab). Solange das Praedikat `lambda v: True` war, erzeugte dies (2,n) und gab als seinen Typ 'eine Form, die kein Konsument akzeptieren kann' aus
+- **L976** — ★Die kanonische Form von position ist **3 Komponenten [z, y, x]**. Nicht per Mehrheitsentscheid, sondern durch **Ausfuehren der Konsumenten** entschieden: refine_translation_lk / refine_lm sind fail-closed mit "init_pos must have exactly 3 components [z, y, x] (got 4)", wenn 4 Komponenten uebergeben werden (gemessen). Auch der Generator hat 3 Komponenten (8.0, 8.0, 8.0). Die match_*-Familie gibt jedoch gemaess docstring **4 Komponenten [score, d, h, w]** zurueck, sodass ein Durchleiten mit einem deklarierten out von "position" die nachgelagerten Verfeinerungs-ops ausloescht = eine Typ-Luege. Da score selbst eine ehrliche Information ist, **wird die Funktionsseite nicht beschnitten** (get() bleibt bei 4 Komponenten), und auf der call()-Seite, die den Typ des ledger ausgibt, werden nur die Koordinaten extrahiert (dieselbe Behandlung wie project_points).
 
 ## `opsacoustics.py`
 
@@ -2548,6 +2549,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_trust_block.py`
 
 - **L151** _(ja)_ — ★2026-10-12: ここは長らく ``release=True``(厳密一致)で呼んでいて、docstring の 「普段は 行 ≤ 索引」と食い違っていた。0.6.0 の後に op を 1 本でも足すと(pod 5 op) 凍結済みの 0.6.0 の行は直せないので、**どの commit でも必ず赤**になる門だった。 厳密一致はリリース直前に ``tools/gen_trust_block.py --release-check`` で見る (その意味は下の grown / shrunk の対で固定してある)。
+- **L159** _(ja)_ — ★2026-10-18: 先に索引を版の行とぴったり揃えてから 1 本足す。揃えずに足すと「厳密一致で 何件落ちるか」が、リリース後にどの層が増えたかで変わる(ops3d の op は 2-D 橋 tb_* も 生むので registry も 1 増え、2 件のはずが 3 件になった —— 門ではなく数え方の偶然)。
 
 ## `tests/test_vacuous_assertions.py`
 

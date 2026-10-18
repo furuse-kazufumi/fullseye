@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 点群をそのまま色の絵にする `points_render`(ops3d / render)+ PoC「ハエ(雄)の脳を細胞体 12 万 6 千個の点のまま描く」
+- `render3d.points_render(points, colors=None, size, K=None, R=None, t=None, projection, radius_px, footprint, composite, opacity, depth_cue, background, margin)`: (N, 3) → (H, W, 3)。小数画素の足跡(gaussian は 4σ を軸ごとに切る / disc / point)を深さの順にアルファ合成(over、入力の順に依らない)するか、光の総量を保って加算(add)。正射影は K を省くと収める。カメラは `project_points` / `render_point_depth` と同じ OpenCV の規約。fail-closed(空・非有限・値域外・透視で K 無し・組の数の上限)。2-D 橋 `tb_points_render`(knob の写しは `OP_KNOB_RANGE` で定義域の中に)。
+- 門 `tests/test_points_render.py`(37 件): 重心が閉じた式の射影と `match3d.project_points` に 1e-3 画素(gaussian)、`footprint="point"` の z-buffer が `render_point_depth` と全画素で一致、add の総和 = 点の色の総和、光軸まわり 90 度 = `numpy.rot90`。壊した 10 通り(深さの順を外す・半画素・R の転置・透過率を 1 つずらす・透視で割らない・後ろの点を残す・3σ / 円で切る ほか)はどれも赤。
+- PoC `examples/poc_flybrain_pointcloud.py`: MaleCNS v1.0(CC BY 4.0、生データは commit しない)の脳の細胞体 126,104 個を上位クラスで色分けし、正面・側面・背面と回転の GIF。門は注釈の左右ラベル(L の 99.5 % が正面図の右半分)、Kenyon 細胞と触角葉ニューロンの位置(背側・後ろ)、正面図と背面図の列の和の左右反転一致 1.8e-15。例 `examples_3d/points_render_basics.py`、能力ノート `point-cloud-to-picture`。
+- `tests/test_trust_block.py` の「厳密一致で 2 件落ちる」を、索引を版の行に揃えてから 1 本足す形に直した(ops3d の op は 2-D 橋も生むので registry も増え、件数が数え方の偶然で 3 になった)。
+
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。
 - 数字(同じ生信号): iToF の合成 16/80/120 MHz で次数の誤り 0.5563 → 0.1161(最尤 0.1160)、実データ 10 枚平均 0.293 → 0.131(最尤 0.131)。`poc_residue_crt` の RRNS で犯人を当てた割合 88.5 → 88.9 %。門 `tests/test_residue_crt_reference_2026_10_15.py`(修正を戻すと 13 本とも赤)。

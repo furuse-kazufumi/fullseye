@@ -5768,6 +5768,22 @@
     "de": "Interreflexion in der Tasche bis zur Konvergenz",
     "hi": "machined pocket का inter-reflection अभिसरण तक"
    }
+  },
+  {
+   "id": "poc_flybrain_pointcloud",
+   "group": "connectome",
+   "media": "03_rotation.gif",
+   "motion": true,
+   "thumb_src": "02_rotation_first_frame.png",
+   "label": {
+    "ja": "ハエの脳を細胞体の点で描く",
+    "en": "The fly brain as 126k cell bodies",
+    "zh": "用细胞体的点画出苍蝇的脑",
+    "tw": "用細胞體的點畫出蒼蠅的腦",
+    "ko": "세포체의 점으로 그린 파리의 뇌",
+    "de": "Das Fliegenhirn aus 126 000 Zellkörpern",
+    "hi": "126k cell bodies से fly brain"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "point-cloud-to-picture": {
+    "zh": "把点云原样画成彩色图像(亚像素足迹、按深度合成、保持光总量的叠加)",
+    "tw": "把點雲原樣畫成彩色影像(次像素足跡、依深度合成、保持光總量的疊加)",
+    "ko": "점군을 그대로 컬러 그림으로 그린다(서브픽셀 발자국, 깊이 순 합성, 빛의 총량을 보존하는 덧셈)",
+    "de": "Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition)",
+    "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)"
    }
   }
  }

@@ -1087,6 +1087,34 @@
    ]
   },
   {
+   "id": "point-cloud-to-picture",
+   "title": "点群をそのまま色の絵にする",
+   "title_en": "Draw a point cloud as a colour picture",
+   "category": "見せる",
+   "note": "docs/capabilities/point-cloud-to-picture.md",
+   "status": "validated-public-real-data",
+   "ops_total": 3,
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "points_render_basics",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_flybrain_pointcloud",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "point-target-detection",
    "title": "小さな点状の目標を見つけて、副画素で位置を出す",
    "title_en": "Find small point-like targets and locate them below the pixel",
@@ -1808,8 +1836,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 387,
-  "run_by_the_poc_gate": 244,
+  "examples2d_total": 388,
+  "run_by_the_poc_gate": 245,
   "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [

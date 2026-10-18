@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -47,6 +47,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
@@ -870,7 +871,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `xlsx_report`
 
-## 見せる (3)
+## 見せる (4)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -903,6 +904,22 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 実寸校正: 描画のみ。実寸校正は不要。
 
 動く例: `annotate_paper_tour`
+
+### [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md)
+
+面を張れない点群 —— 細胞の位置、LiDAR、SfM の疎な点、粒子 —— を、点のまま RGB の絵にします。点は小数画素の位置に足跡(gaussian / disc / point)を落とし、**深さの順に**アルファ合成(over)するか、**光の総量を保って**足します(add、数の密度の地図になる)。カメラは `project_points` / `render_point_depth` と同じ OpenCV の規約(+Z が前)で、正射影は K を省くと点群を画像に収めます。
+
+使う op: `points_render`, `render_point_depth`, `project_points`
+
+推奨パイプライン: [`points_render`](ops/3d/render/points_render.md)
+
+代替: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
+
+限界: 正射影の自動の収め方は R, t を当てた後の XY の箱で決まる(透視は K が要る)。disc の足跡は画素に量子化されるので、像の重心は半径 1〜1.5 画素で最大 0.05 画素ずれる(小数画素の位置を見るなら gaussian、1e-3 画素以内)。over は点ごとの不透明度で重ねるので、奥の密度は手前に隠れる —— 数を見るなら add。点 × 足跡の組が 4,000 万を超える描画は拒否する。
+
+実寸校正: 画素校正は無い。縮尺が要るなら K の fx(画素 / 座標単位)から スケールバーを置く(annotate_scale_bar)。
+
+動く例: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
 

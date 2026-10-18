@@ -1,10 +1,10 @@
 {
- "n_ops": 3316,
+ "n_ops": 3318,
  "tiers": {
   "color": 12,
-  "ledger": 2363,
+  "ledger": 2364,
   "nary": 17,
-  "registry": 924
+  "registry": 925
  },
  "sorts": [
   "angle",
@@ -19772,6 +19772,19 @@
    ]
   },
   {
+   "name": "points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "points_to_gaussians",
    "halcon": "",
    "in_sort": "points",
@@ -39265,6 +39278,16 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

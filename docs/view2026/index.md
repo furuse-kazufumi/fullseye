@@ -92,7 +92,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-71 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+72 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -182,6 +182,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 結果を人が読める図にする: [説明](../capabilities/figures-and-annotation.md) · 例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 - 地の色を知らずに線と領域を描く(反転色): [説明](../capabilities/inverted-colour-overlays.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- 点群をそのまま色の絵にする: [説明](../capabilities/point-cloud-to-picture.md) · 例 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 画像の上に、文字と表を置きたい場所へ置く: [説明](../capabilities/text-and-tables-on-images.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
 **描く**
@@ -197,7 +198,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 245 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -421,7 +422,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>コネクトーム・神経</b> (19)</summary>
+<details class="vall"><summary><b>コネクトーム・神経</b> (20)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fly_vision.jpg" alt="ハエの視覚前段" width="200" height="200"><span>ハエの視覚前段</span></a>
 <a href="../articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_larval_connectome_reservoir.jpg" alt="幼虫の配線で計算" width="200" height="200"><span>幼虫の配線で計算</span></a>
@@ -442,6 +443,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_swc_tree_truth/01_swc_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_swc_tree_truth.jpg" alt="本物の木で骨格" width="200" height="200"><span>本物の木で骨格</span></a>
 <a href="../articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fly_optomotor_steering.jpg" alt="ハエの進路制御" width="200" height="200"><b>&#9654;</b><span>ハエの進路制御</span></a>
 <a href="../articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_worm_core_persists.jpg" alt="線虫の脳の核" width="200" height="200"><b>&#9654;</b><span>線虫の脳の核</span></a>
+<a href="../articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_flybrain_pointcloud.jpg" alt="ハエの脳を細胞体の点で描く" width="200" height="200"><b>&#9654;</b><span>ハエの脳を細胞体の点で描く</span></a>
 </div>
 </details>
 

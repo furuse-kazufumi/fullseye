@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**135 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -2936,7 +2936,7 @@ Ops used (notes): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_ra
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 26 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 27 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -3679,6 +3679,34 @@ Source: [examples/poc_worm_core_persists.py](https://github.com/furuse-kazufumi/
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_core_persists)
 
 Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/population/graph_core_persistence.html) · [`graph_kcore`](https://furuse.work/ops/graph/core/graph_kcore.html) · [`graph_rich_club`](https://furuse.work/ops/conngraph/stats/graph_rich_club.html) · [`graph_rich_club_curve`](https://furuse.work/ops/graph/core/graph_rich_club_curve.html)
+
+## No.2026.245 —— Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture
+
+[![Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
+
+*↑ **Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture** ―― From the MaleCNS v1.0 annotations (Janelia FlyEM × Google Research, the whole male CNS, CC BY 4.0) the positions and superclasses of 126,104 brain cell bodies (VNC and ascending excluded) are drawn as a point cloud from the front, side and top and in rotation (optic-lobe intrinsic 81,055, central-brain intrinsic 31,997, visual projection 9,162, descending 1,308, ...). Fullseye had no op that turns a point cloud into a colour picture; the brain on the back of the ViEW 2026 business card was placed point by point in hand-written numpy. The new op `points_render` (ops3d / render) splats sub-pixel footprints (gaussian / disc / point) and either alpha-composites them in depth order or adds them conserving the total light. The gates use values the renderer never computes: 99.5 % of the cell bodies labelled L land in the right half of the front view (seen from the front the fly's left is on the right); 4,050 Kenyon cells picked by type name sit dorsal and posterior of 437 antennal-lobe neurons; the column sums of the front and top views (two different cameras) agree mirrored to 1.8e-15; the additive image sums to the point count within 1.2e-16; each class's image centroid lies on the closed-form projection within 1.4e-5 px. The op has 37 unit gates (its z-buffer matches render_point_depth on every pixel; a quarter turn about the axis equals numpy.rot90), and ten deliberate breakages (no depth sort, half-pixel shift, transposed rotation, transmittance off by one, ...) all turn them red. Cutting the Gaussian at 3 sigma moved centroids by 0.017 px and a circular cut made column sums depend on the row by 1e-5; the cut is now 4 sigma per axis. Raw data is never committed (cached from local feather files; without them a synthetic brain runs the same gates and the recorded values are printed).*
+
+[![回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/02_rotation_first_frame.png)
+
+*↑ The measurement ―― 回転の 1 コマ目(静止画の代わり)。正面から見たところ。MaleCNS v1.0(CC BY 4.0) (figure labels are in Japanese; the numbers are the same)*
+
+[![points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/04_footprints.png)
+
+*↑ points_render のノブ: footprint(point / disc / gaussian)と composite(over / add)。*
+
+[![背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
+
+*↑ The animation ―― 背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)*
+
+```
+py -3.11 examples/poc_flybrain_pointcloud.py
+```
+
+Source: [examples/poc_flybrain_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_flybrain_pointcloud)
+
+Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`annotate_scale_bar`](https://furuse.work/ops/annotate/paper/annotate_scale_bar.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`points_render`](https://furuse.work/ops/3d/render/points_render.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 

@@ -370,6 +370,10 @@ _CATALOG = {
         # 型の嘘で、pnp3d 側の "image2d" 宣言と噛み合って PnP を壊していた
         ("project_points", "match3d", ["points"], "keypoints", False),
         ("render_point_depth", "match3d", ["points"], "depth", False),
+        # 点群をそのまま色の絵に(2026-10-18、ハエの脳の細胞体 12 万個): 小数画素の足跡
+        # (gaussian / disc / point)を深さ順にアルファ合成(over)か光量保存で加算(add)。
+        # render_point_depth は 1 点 1 画素の深度だけで色も足跡も無い。
+        ("points_render", "render3d", ["points"], "rgbimage", False),
         ("render_volume_projection", "match3d", ["voxel"], "image2d", True),
         ("render_shaded", "match3d", ["normalmap"], "image2d", False),
         ("ambient_occlusion", "render_ao", ["mesh"], "image2d", False),
