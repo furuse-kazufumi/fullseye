@@ -66,7 +66,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them from measurement files in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), and `tests/test_trust_block.py` fails if this section drifts from them. Every number carries the version and date it was measured at.
 
-**18,174 regression tests** — the tree after 0.6.0 (includes unreleased changes), commit `482c913d26`, counted with `pytest --collect-only` on 2026-10-11 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
+**19,935 regression tests** — the tree after 0.7.0 (includes unreleased changes), commit `b9fa380b7a`, counted with `pytest --collect-only` on 2026-10-18 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
 
 ### If you add one operator, what checks it
 
@@ -114,6 +114,7 @@ Of 391 examples, 391 are actually run by a gate.
 | 0.4.0 | 2026-10-06 | 3,057 | 2,104 | 980 | 214 | 17,424 |
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
+| 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
 
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).
