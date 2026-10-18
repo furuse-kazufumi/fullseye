@@ -123,7 +123,8 @@ def _rebuild(system, values, variables, bounds):
             s["asph"] = tuple(a)
     return RT.lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                           wavelength_um=system["wavelength_um"], index_object=system["index_object"],
-                          image_mm=system["image_mm"], field=system["field"])
+                          image_mm=system["image_mm"], field=system["field"],
+                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"))
 
 
 def _default_variables(system):

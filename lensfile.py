@@ -36,7 +36,9 @@ and float-by-stop-size (``FLOA``), field types angle (``FTYP 0``), object height
 (``FTYP 1``) and paraxial image height (``FTYP 2``, converted through the
 paraxial chief ray), up to 12 fields with weights, wavelengths (``WAVM`` /
 ``WAVL``) with weights and the primary one (``PWAV``), surface apertures
-(``CLAP`` / ``FLAP`` → ``ap``), glasses by catalogue name (Fullseye's material
+(``CLAP`` / ``FLAP`` → ``ap``), the per-field vignetting factors
+(``VDXN`` / ``VDYN`` / ``VCXN`` / ``VCYN`` / ``VANN`` → ``system["vignetting"]``, applied by
+``raytrace`` as a pupil decentre / compression, and written back), glasses by catalogue name (Fullseye's material
 table or your ``.agf`` files — the file's own n_d is checked against the
 catalogue to 5e-4, so a same-named glass from another maker is refused), model
 glasses (``___BLANK``: n_d, V_d), six-digit glass codes and constant indices.
@@ -47,8 +49,7 @@ time) and listed in ``solves``.
 Approximations allowed only with ``allow_partial=True``: a glass name found in
 no catalogue (falls back to the file's n_d, V_d model), object-space NA
 (``OBNA``, converted paraxially), real-image-height fields (``FTYP 3``,
-converted paraxially), vignetting factors (ignored — rays are not compressed),
-a curved image surface (treated as flat), non-circular or decentred apertures
+converted paraxially), a curved image surface (treated as flat), non-circular or decentred apertures
 (ignored), non-standard temperature / pressure (``ENVD``), multiple
 configurations (configuration 1 only), and unknown surface-level keywords.
 
@@ -527,7 +528,14 @@ def _fields(top, op, rep):
     if n > len(ys) or n > len(xs):
         raise ValueError("%s: FTYP declares %d fields but only %d are given" % (op, n, min(len(ys), len(xs))))
     ws = (list(ws) + [1.0] * n)[:n]
-    fields = [{"x": xs[i], "y": ys[i], "weight": ws[i]} for i in range(n)]
+    vg = top["vign"]
+
+    def _v(kw, i):
+        vals = vg.get(kw)
+        return float(vals[i]) if vals and i < len(vals) else 0.0
+
+    fields = [{"x": xs[i], "y": ys[i], "weight": ws[i], "vdx": _v("VDXN", i), "vdy": _v("VDYN", i),
+               "vcx": _v("VCXN", i), "vcy": _v("VCYN", i), "van": _v("VANN", i)} for i in range(n)]
     return _FIELD_TYPES[ftype], fields
 
 
@@ -620,12 +628,15 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
     if top["mnum"] > 1:
         rep.u("system", "MNUM", "%d configurations — only configuration 1 (the stored prescription) is imported"
               % top["mnum"], approximable=True)
-    if any(any(v != 0.0 for v in vals) for vals in top["vign"].values()):
-        rep.u("system", "VDXN/VDYN/VCXN/VCYN", "vignetting factors are ignored (the pupil is not compressed; rays "
-              "that hit an aperture are clipped instead)", approximable=True)
     if top["raim"] and len(top["raim"]) > 1 and top["raim"][1] not in ("0",):
         rep.notes.append("ray aiming (RAIM) is on in the file; Fullseye aims the chief ray at the stop centre and "
                          "launches the other rays on the paraxial entrance pupil")
+    xs_ = top["x"] or []
+    for i, x in enumerate(xs_[:12]):                      # off-meridian field points are folded onto +y
+        if x != 0.0 and any(i < len(top["vign"].get(k, [])) and top["vign"][k][i] != 0.0 for k in top["vign"]):
+            rep.u("field %d" % (i + 1), "VDXN/VDYN/VCXN/VCYN",
+                  "vignetting factors of an off-meridian field point (x != 0) are applied without rotating the "
+                  "pupil to the field's azimuth (fields are folded onto +y)", approximable=True)
     img = surfs[-1]
     if img["curv"] != 0.0:
         rep.u("surface %d" % img["index"], "CURV", "curved image surface (R = %g mm) is treated as a plane" %
@@ -807,6 +818,7 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
     para = RT.paraxial_trace(system)
     for f in fields:
         f["field"] = _radial_field(fields_type, f, para["efl"], para["magnification"], object_mm == INF)
+    _attach_vignetting(system, fields, rep)
     if fields_type == "real_image_height":
         rep.u("system", "FTYP", "real-image-height fields converted through the paraxial chief ray", approximable=True)
         if not allow_partial:
@@ -818,6 +830,31 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
     approx = bool(rep.unsupported)
     return {"system": system, "fields": fields, "field_type": fields_type, "wavelengths": wls, "primary": primary,
             "solves": solves, "approximate": approx, "glass_dir": gdir}
+
+
+_VIG_FIELD_KEYS = ("vdx", "vdy", "vcx", "vcy", "van")
+
+
+def _attach_vignetting(system, fields, rep):
+    """Put the per-field vignetting factors on the system as ``system["vignetting"]`` (radial-field keyed)."""
+    recs = {}
+    for i, f in enumerate(fields):
+        vals = {k: f[k] for k in _VIG_FIELD_KEYS}
+        if not any(v != 0.0 for v in vals.values()):
+            continue
+        key = f["field"]
+        if key in recs and recs[key] != vals:
+            raise ValueError("lens_file_read: fields 1..%d include two with the same radial field %g but different "
+                             "vignetting factors (the importer folds fields onto +y, so they cannot both be kept)"
+                             % (len(fields), key))
+        recs[key] = vals
+    if not recs:
+        return
+    # fields without factors get explicit zero records, so that a field between two listed ones is
+    # interpolated toward zero rather than held at the nearest non-zero record
+    for f in fields:
+        recs.setdefault(f["field"], {k: 0.0 for k in _VIG_FIELD_KEYS})
+    system["vignetting"] = RT._vignetting_table([dict(v, field=k) for k, v in recs.items()])
 
 
 def _surface_snapshot(sf):
@@ -918,7 +955,8 @@ def lens_file_system(prescription=None, field_index: int = 0, wavelength_index=N
     s = p["system"]
     return RT.lens_system([dict(x) for x in s["surfaces"]], stop=s["stop"], object_mm=s["object_mm"],
                           wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object"],
-                          image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"])
+                          image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"],
+                          aim=s.get("aim", "paraxial"), vignetting=s.get("vignetting"))
 
 
 # --------------------------------------------------------------------------- #
@@ -1025,6 +1063,19 @@ def _surfaces_from_system(system, template, op):
     return out
 
 
+def _vignetting_for_write(fields, system):
+    """The factors to write for each field: the prescription's own, replaced by *system*'s record of the same field."""
+    out = []
+    recs = list((system or {}).get("vignetting") or ())
+    for f in fields:
+        v = {k: float(f.get(k, 0.0)) for k in _VIG_FIELD_KEYS}
+        for r in recs:
+            if abs(r["field"] - f["field"]) <= 1e-9 * max(1.0, abs(f["field"])):
+                v = {k: float(r[k]) for k in _VIG_FIELD_KEYS}
+        out.append(v)
+    return out
+
+
 def lens_file_write(prescription=None, system=None, path=None, encoding: str = "ascii") -> dict:
     """処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。
 
@@ -1095,6 +1146,10 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
     lines.append("XFLN " + " ".join([_g(f["x"]) for f in p["fields"]] + ["0"] * pad))
     lines.append("YFLN " + " ".join([_g(f["y"]) for f in p["fields"]] + ["0"] * pad))
     lines.append("FWGN " + " ".join([_g(f["weight"]) for f in p["fields"]] + ["1"] * pad))
+    vfields = _vignetting_for_write(p["fields"], system)
+    if any(v[k] != 0.0 for v in vfields for k in _VIG_FIELD_KEYS):
+        for kw, key in (("VDXN", "vdx"), ("VDYN", "vdy"), ("VCXN", "vcx"), ("VCYN", "vcy"), ("VANN", "van")):
+            lines.append(kw + " " + " ".join([_g(v[key]) for v in vfields] + ["0"] * pad))
     for k, w in enumerate(p["wavelengths"], 1):
         lines.append("WAVM %d %s %s" % (k, _g(w["um"]), _g(w["weight"])))
     lines.append("PWAV %d" % (p["primary"] + 1))
