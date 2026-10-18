@@ -153,7 +153,7 @@ def main() -> bool:
     err_g = max(abs(r[1] - r[2]) for r in rows)
     err_s = max(abs(r[3] - r[4]) for r in rows)
     # 既存の surface_filter(打ち切り ±0.75λc、2026-10-18 に ±λc/2 から広げた)がカットオフで何を返すか
-    h = 120
+    h = 160
     tile = np.tile(np.sin(2 * np.pi * X[:480] / LAMBDA_C), (h, 1))
     _, wav = R.surface_filter(tile, DX, lambda_c=LAMBDA_C, end_effect="reject")
     half_iso = float(np.abs(wav[wav.shape[0] // 2]).max())
