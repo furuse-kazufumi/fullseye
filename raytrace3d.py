@@ -22,7 +22,7 @@
   ゴースト  `ghost_analysis`(全ての 2 面の組のゴーストの焦点・像面上の大きさ・相対強度)/ `ghost_image`(像面の照度の図)/
             `ghost_path`(1 組のゴーストの光路を光線の折れ線で)
 
-座標の規約(Zemax 形式の座標の切り替えと同じ順序。ray-optics〔BSD-3〕の 'decenter' / 'reverse'、optiland〔MIT〕の
+座標の規約(光学設計ファイル(.zmx)の座標の切り替えと同じ順序。ray-optics〔BSD-3〕の 'decenter' / 'reverse'、optiland〔MIT〕の
 絶対座標と、式と規約だけを照合した。コードは写していない):
   * 大域の座標は第 1 面の頂点が原点、光は +z へ進む(``raytrace`` と同じ)。各面は**その時点の座標系**の中で
     ``raytrace`` の形のまま記述する(R は局所の +z 側に曲率中心があれば正)。

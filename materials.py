@@ -13,7 +13,7 @@ refractiveindex.info database(CC0 1.0、Polyanskiy, Sci. Data 11, 94 (2024))の�
 
     {"name": "N-BK7", "class": "glass", "aliases": ("BK7",),
      "datasets": [{"type": "formula", "formula": 2, "range_um": (0.3, 2.5), "coefficients": (...),
-                   "reference": "SCHOTT Zemax catalog 2017-01-20b ...", "page": "specs/schott/optical/N-BK7.yml"},
+                   "reference": "SCHOTT glass catalogue 2017-01-20b ...", "page": "specs/schott/optical/N-BK7.yml"},
                   {"type": "k", "range_um": (0.3, 2.5), "rows": 25, ...}],
      "properties": {"nd": 1.5168, "Vd": 64.17, "density_kg_m3": 2510.0,
                     "thermal_expansion_per_k": 7.1e-06, "dn_dt_formula_a": (D0, D1, D2, E0, E1, λ_tk)}}
@@ -685,7 +685,7 @@ def material_from_curves(n_curve=N_CURVE_EXAMPLE, k_curve=None, name: str = "cus
 # --------------------------------------------------------------------------- #
 #: .agf の雛形(2 種)。係数は refractiveindex.info(CC0)に載る公表値 —— N-BK7 は Sellmeier 1
 #: (式 2)、BSC7 は Schott 多項式(式 1)。テストは読んだ結果が同梱レコードと一致することを門にする。
-AGF_EXAMPLE = """CC Example glass catalogue in Zemax .agf form (coefficients from the refractiveindex.info database, CC0)
+AGF_EXAMPLE = """CC Example glass catalogue in the .agf catalogue-file form (coefficients from the refractiveindex.info database, CC0)
 NM N-BK7 2 517642 1.5168 64.17 0 1 0
 ED 7.1 8.3 2.51 -0.0009 0
 CD 1.03961212 0.00600069867 0.231792344 0.0200179144 1.01046945 103.560653 0 0 0 0
@@ -705,7 +705,7 @@ _AGF_POLY = {1: (2, -2, -4, -6, -8), 10: (2, -2, -4, -6, -8, -10, -12),
 
 
 def _agf_formula(code: int, cd, name: str):
-    """Zemax の分散式番号と CD 係数を refractiveindex.info の式に写す。"""
+    """.agf の分散式番号(1-13)と CD 係数を refractiveindex.info の式に写す。"""
     c = [float(v) for v in cd]
     if code in _AGF_POLY:
         exps = _AGF_POLY[code]
@@ -733,7 +733,7 @@ def _agf_formula(code: int, cd, name: str):
         a, b, cc, d, e = c[:5]
         return 4, (a, b, 2.0, cc, 1.0, d, 2.0, e, 1.0)
     raise ValueError("read_glass_catalog_agf: glass %s uses dispersion formula %d, which is not one of the "
-                     "Zemax formulas 1-13 this reader knows" % (name, code))
+                     ".agf dispersion formulas 1-13 this reader knows" % (name, code))
 
 
 def _agf_text(source) -> str:
