@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 11 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-387 个示例中,检查实际运行的有 387 个。
+388 个示例中,检查实际运行的有 388 个。
 
 ### 各版本的算子数
 
@@ -134,11 +134,11 @@
 
 ## 查找算子
 
-共有 **3,322 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **66 篇族指南**。按维度的入口:
+共有 **3,326 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **66 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 936/936、类型化台账 2365/2377、单行门面 `fullseye.<名称>` 688/1444 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 936/936、类型化台账 2369/2381、单行门面 `fullseye.<名称>` 688/1444 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3322 篇中，附有可运行示例的 **3318** 篇(4 篇没有)，用法说明 120 字以上的 **3158** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3322 篇全有。
+**内容实测**: 3326 篇中，附有可运行示例的 **3322** 篇(4 篇没有)，用法说明 120 字以上的 **3162** 篇(164 篇仅一行)。结构(调用形式、类型、可衔接算子)3326 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -157,10 +157,10 @@
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
+| `spc` | 26 | [INDEX](ops/spc/INDEX.md) |
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
-| `spc` | 22 | [INDEX](ops/spc/INDEX.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
@@ -292,7 +292,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 266 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,322 篇算子说明与 66 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,326 篇算子说明与 66 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

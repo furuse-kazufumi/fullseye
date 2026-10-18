@@ -408,6 +408,12 @@ EXAMPLES = [
      "summary": "compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。"
                 "同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。"
                 "golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。"},
+    {"id": "anomaly_eval_metrics", "task": "analysis", "data": "synthetic",
+     "name": "欠陥図の方法を比べる物差し —— 画素 AUROC は大きな傷 1 つで満点近くになり、小さな傷の見落としを PRO が出す",
+     "summary": "16 枚に大きな傷 1 つ(900 画素)と小さな傷 9 つ(4 画素ずつ)。大きな傷だけ当てる検出器は画素 AUROC 0.981 で勝つが、"
+                "傷を 1 つずつ数える AUPRO(FPR 0.3 まで)は 0.255。小さな傷を全部当てる検出器は画素 AUROC 0.747・AUPRO 0.957。"
+                "閾値 1 点の PRO は手計算の 0.1 と 0.95 に一致。anomaly_image_auroc / anomaly_pixel_auroc / anomaly_pro / "
+                "anomaly_region_overlap はどの方法(良品統計・RPCA・ゴールデン差分)にも同じ物差しとして使える。"},
     {"id": "inspection_workflow", "task": "workflow", "data": "synthetic",
      "name": "フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す",
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"

@@ -1,8 +1,12 @@
-# SPC operator help — 22 ops in 8 categories
+# SPC operator help — 26 ops in 9 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### anomaly_eval (4)
+
+[anomaly_image_auroc](anomaly_eval/anomaly_image_auroc.md) · [anomaly_pixel_auroc](anomaly_eval/anomaly_pixel_auroc.md) · [anomaly_pro](anomaly_eval/anomaly_pro.md) · [anomaly_region_overlap](anomaly_eval/anomaly_region_overlap.md)
 
 ### capability (1)
 

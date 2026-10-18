@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 11 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 387 本のうち、門が実際に走らせるもの 387 本。
+例 388 本のうち、門が実際に走らせるもの 388 本。
 
 ### 版ごとの op の数
 
@@ -136,11 +136,11 @@
 
 ## オペレータを探す
 
-**3,322 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **66 本の族ガイド**があります。次元ごとの入口:
+**3,326 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **66 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 936/936、型つき台帳 2365/2377、1 行ファサード `fullseye.<名前>` 688/1444。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 936/936、型つき台帳 2369/2381、1 行ファサード `fullseye.<名前>` 688/1444。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3322 本のうち、実行できる例が付いているのは **3318 本**(4 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3158 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3322 本すべてにある。
+**ノートの中身の実測**: 3326 本のうち、実行できる例が付いているのは **3322 本**(4 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3162 本**(164 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3326 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -159,10 +159,10 @@
 | `piv` — 粒子画像流速測定 + DIC | 29 | [INDEX](ops/piv/INDEX.md) · [ガイド](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [ガイド](ops/conngraph/guides/conngraph.md) |
 | `acoustics` — 音響 | 27 | [INDEX](ops/acoustics/INDEX.md) · [ガイド](ops/acoustics/guides/acoustic_condition_monitoring.md) |
+| `spc` | 26 | [INDEX](ops/spc/INDEX.md) |
 | `dem` — 地形 | 25 | [INDEX](ops/dem/INDEX.md) · [ガイド](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [ガイド](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [ガイド](ops/flyvision/guides/fly_vision.md) |
-| `spc` | 22 | [INDEX](ops/spc/INDEX.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` — 鏡面分離 | 19 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
@@ -294,7 +294,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 266 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,322 本と族ガイド 66 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,326 本と族ガイド 66 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

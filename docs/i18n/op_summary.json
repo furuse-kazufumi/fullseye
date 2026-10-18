@@ -29906,6 +29906,42 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "spc/anomaly_image_auroc": {
+   "fp": "7145079fe2a4",
+   "ja": "画像ごとの異常スコアと良/不良のラベルから画像単位の AUROC(``table``)。",
+   "zh": "由每张图像的异常分数与良/不良标签计算图像级 AUROC(``table``)。",
+   "tw": "由每張影像的異常分數與良/不良標籤計算影像級 AUROC(``table``)。",
+   "ko": "이미지별 이상 점수와 양품/불량 라벨로 이미지 단위 AUROC (``table``).",
+   "de": "AUROC auf Bildebene aus einem Anomaliewert je Bild und einer Gut/Schlecht-Kennung je Bild (``table``).",
+   "hi": "हर image के एक anomaly score और अच्छा/दोषपूर्ण label से image-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pixel_auroc": {
+   "fp": "1dacad6a8246",
+   "ja": "異常スコアの図と欠陥マスクから画素単位の AUROC(``table``)。",
+   "zh": "由异常分数图与缺陷真值掩膜计算像素级 AUROC(``table``)。",
+   "tw": "由異常分數圖與缺陷真值遮罩計算像素級 AUROC(``table``)。",
+   "ko": "이상 점수 맵과 결함 정답 마스크로 픽셀 단위 AUROC (``table``).",
+   "de": "AUROC auf Pixelebene von Anomalie-Wertkarten gegen Defektmasken der Grundwahrheit (``table``).",
+   "hi": "anomaly score maps और ground-truth defect masks से pixel-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pro": {
+   "fp": "87069abda025",
+   "ja": "欠陥の連結領域ごとの重なり(PRO)の曲線と、``fpr_max`` までの正規化面積 AUPRO(``table``)。",
+   "zh": "按缺陷连通区域计算的重叠率(PRO)曲线,及积分到 ``fpr_max`` 的归一化面积 AUPRO(``table``)。",
+   "tw": "按缺陷連通區域計算的重疊率(PRO)曲線,及積分到 ``fpr_max`` 的正規化面積 AUPRO(``table``)。",
+   "ko": "결함 연결 영역별 중첩(PRO) 곡선과 ``fpr_max`` 까지의 정규화 면적 AUPRO (``table``).",
+   "de": "Kurve der Überlappung je Defektregion (PRO) und ihre normierte Fläche AUPRO bis ``fpr_max`` (``table``).",
+   "hi": "हर defect region के overlap (PRO) की curve और ``fpr_max`` तक उसका normalised area AUPRO (``table``)।"
+  },
+  "spc/anomaly_region_overlap": {
+   "fp": "840a230f98c4",
+   "ja": "1 つの動作点での 2 値の欠陥予測と真値の領域ごとの重なり(``table``)。",
+   "zh": "单一工作点下二值缺陷预测与真值各区域的重叠率(``table``)。",
+   "tw": "單一工作點下二值缺陷預測與真值各區域的重疊率(``table``)。",
+   "ko": "하나의 동작점에서 이진 결함 예측과 정답 영역별 중첩 (``table``).",
+   "de": "Überlappung einer binären Defektvorhersage mit den Regionen der Grundwahrheit an einem Arbeitspunkt (``table``).",
+   "hi": "एक operating point पर binary defect prediction का ground-truth regions से per-region overlap (``table``)।"
   }
  }
 }

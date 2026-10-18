@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3316,
- "n_notes": 3322,
+ "n_ops": 3320,
+ "n_notes": 3326,
  "notes": {
   "vol_dilate": [
    {
@@ -32307,6 +32307,46 @@
     "in": "calresult",
     "out": "table",
     "path": "docs/ops/simcal/report/simcal_report.md"
+   }
+  ],
+  "anomaly_image_auroc": [
+   {
+    "op": "anomaly_image_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_image_auroc.md"
+   }
+  ],
+  "anomaly_pixel_auroc": [
+   {
+    "op": "anomaly_pixel_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_auroc.md"
+   }
+  ],
+  "anomaly_pro": [
+   {
+    "op": "anomaly_pro",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pro.md"
+   }
+  ],
+  "anomaly_region_overlap": [
+   {
+    "op": "anomaly_region_overlap",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_region_overlap.md"
    }
   ],
   "spc_capability": [

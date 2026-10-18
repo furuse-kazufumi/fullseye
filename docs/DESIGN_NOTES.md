@@ -1803,9 +1803,9 @@
 
 ## `opsspc.py`
 
-- **L71** — ★単位空間の MD² の平均は **ちょうど (n-1)/n**(導出、当てはめではない)。 教科書の「単位空間の距離は平均 1」を有限標本で正確に言い直したもので、 1.0 を固定する試験はどんな標本でも間違い、(n-1)/n は全部で正しい。
-- **L100** — ★新しい型の語は作らない。曲線(大きさの格子・POD・下限)も表の列として返す。
-- **L101** — ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に 写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
+- **L80** — ★単位空間の MD² の平均は **ちょうど (n-1)/n**(導出、当てはめではない)。 教科書の「単位空間の距離は平均 1」を有限標本で正確に言い直したもので、 1.0 を固定する試験はどんな標本でも間違い、(n-1)/n は全部で正しい。
+- **L109** — ★新しい型の語は作らない。曲線(大きさの格子・POD・下限)も表の列として返す。
+- **L110** — ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に 写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
 
 ## `opsspecular.py`
 
@@ -2584,14 +2584,14 @@
 - **L805** — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
 - **L938** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
 - **L1290** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L7266** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7388** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L7520** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
-- **L7729** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7731** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L7733** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L7755** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7863** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7307** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7429** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L7561** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L7770** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7772** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L7774** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L7796** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7904** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

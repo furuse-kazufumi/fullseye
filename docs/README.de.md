@@ -62,7 +62,7 @@ Die 71 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 11 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 387 Beispielen werden 387 tatsächlich von einem Gate ausgeführt.
+Von 388 Beispielen werden 388 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -134,11 +134,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,322 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **66 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,326 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **66 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 936/936, typisiertes Ledger 2365/2377, Fassade `fullseye.<name>` 688/1444 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 936/936, typisiertes Ledger 2369/2381, Fassade `fullseye.<name>` 688/1444 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3322 Notizen verweisen **3318** auf mindestens ein lauffähiges Beispiel (4 ohne), **3158** haben einen Nutzungsabschnitt ab 120 Zeichen (164 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3322.
+**Gemessener Inhalt**: von 3326 Notizen verweisen **3322** auf mindestens ein lauffähiges Beispiel (4 ohne), **3162** haben einen Nutzungsabschnitt ab 120 Zeichen (164 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3326.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -157,10 +157,10 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
+| `spc` | 26 | [INDEX](ops/spc/INDEX.md) |
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
-| `spc` | 22 | [INDEX](ops/spc/INDEX.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
@@ -292,7 +292,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 266
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,322 Operator-Notizen und 66 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,326 Operator-Notizen und 66 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

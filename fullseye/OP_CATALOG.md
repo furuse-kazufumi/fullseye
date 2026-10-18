@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(387 例)
+### 2-D 画像/信号/幾何(388 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -219,12 +219,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 - **やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)** — fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。 `py -3.11 examples/find_ops_by_meaning.py`
 
-**measurement**
-- **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
-- **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
-- **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
-
 **analysis**
+- **欠陥図の方法を比べる物差し —— 画素 AUROC は大きな傷 1 つで満点近くになり、小さな傷の見落としを PRO が出す** — 16 枚に大きな傷 1 つ(900 画素)と小さな傷 9 つ(4 画素ずつ)。大きな傷だけ当てる検出器は画素 AUROC 0.981 で勝つが、傷を 1 つずつ数える AUPRO(FPR 0.3 まで)は 0.255。小さな傷を全部当てる検出器は画素 AUROC 0.747・AUPRO 0.957。閾値 1 点の PRO は手計算の 0.1 と 0.95 に一致。anomaly_image_auroc / anomaly_pixel_auroc / anomaly_pro / anomaly_region_overlap はどの方法(良品統計・RPCA・ゴールデン差分)にも同じ物差しとして使える。 `py -3.11 examples/anomaly_eval_metrics.py`
 - **検査カメラの条件出しを 1 つずつ振らずに計画する —— 直交表 L9・一部実施の交絡・ラテン超方格・中心複合計画** — 照明の角度・強さ・露光・ゲインの 4 条件 x 3 水準(全部なら 81 回)を、公表された直交表 L9 の 9 回で傷を撮る。5 条件を 2^(5-2) の 8 回で振ると、何もしていないゲインに角度 x 露光の交互作用 6 が乗り「ゲインが効く」と答える(全 32 回では 0、交絡表は事前に gain = angle*exposure と書く)。20 回を乱数で置くと 40 区間のうち 18 が空き、ラテン超方格は 0。回転可能な中心複合計画の軸の点は範囲の外(23.8〜66.2°)に出る。 `py -3.11 examples/doe_plan_tour.py`
 - **撮った画像から、何が効いたか・最良はどこか・画像から条件を読めるかを出す —— 主効果・応答曲面・PCA・PLS** — 検査カメラの 4 条件を L9 x 3 回で撮ると、傷の見えの 83 % は照明の角度で、強さ・露光・ゲインは同じ山形(どれも明るさ)。角度 x 露光を中心複合計画の 13 回で振ると、二次曲面の最良は 441 回の総当たりに対して損 2 % だが、当てはまりの悪さが有意 —— 飽和の折れを二次は表せない、という合図。特徴量 9 本の独立な情報は平行分析で 2 次元、PLS は画像から照明の角度を確かめ RMSE 2.6° で読むが、露光は読めない(Q² 0.38)。NIPALS と SIMPLS が一致。 `py -3.11 examples/multivar_inspection_tour.py`
 - **どのつまみが効くか・組でしか効かないか・データから決まるのはどれか・モデルに何が足りないか —— Sobol'・Morris・共線性指数・残差 PCA** — Ishigami 関数で x3 は単独では 0、x1 との組で全分散の 24 % を動かす(Sobol' の S1・ST が解析値を 95 % 区間に含む)。検査カメラの 6 条件を Morris の 49 回でふるうと、何もしない 2 条件と、光子を増やさないゲインが「効かない」に落ちる。雑音の無い画像では照明の強さ・露光・ゲインの感度の列が平行で γ = ∞、決まるのは 強さ x 露光 x ゲインの積だけ。周辺減光を知らないモデルの残差には雑音を越える構造(2 成分)が残り、第 1 成分の形は「減光 x 像」と相関 0.99、入れると 0 成分。 `py -3.11 examples/sensitivity_tour.py`
@@ -251,6 +247,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **写真を 1 本の線にして、回る振り子に描かせる(濃淡 → 点描 → 巡回路 → フーリエ → G-code)** — 葛飾北斎「神奈川沖浪裏」(メトロポリタン美術館 CC0)の濃淡を 1 本の閉じた線にし、それを回る円の連鎖として描き直す。様式化は必ず「それらしい絵」が出るので、各段を数で門にした: 点描は濃淡を追うか(ランプで相関 0.9946、対照の一様画像では等間隔 cv 0.13)、★★**相関だけでは指数が見えない** —— 重心ボロノイの最適密度は √重み なので(Gersho)、実測の指数は 0.61 で暗さに比例していない(重みを二乗して 0.77)。巡回路は**最小全域木より短くなれない**ので比で言う(1.142、素朴な座標順は 41.3)、濃淡の再現は相関 0.983(同数のランダム線の対照群は +0.013)。★ペン幅は閉形式で解け、インク率は目標の 0.891 倍 —— 不足の 11 % が**線の重なりの量**。★★**ナイキストを先に確かめる**: 等弧長の打ち直しは間隔が線分より粗いと角を切って線が縮み、フーリエに載せる前に情報が落ちる(16,384 点で長さ保持 0.934 → 65,536 点で 0.984、誤差は 1/N)。★★円の本数はパーセバルで**描く前に**決まる(K=16 で 94.6 %、K=64 で 99.2 %)。GIF は**本物の回る腕**で、1 → 4 → 16 → 90 → 600 → 4000 本と増えるにつれ絵が正体を現す。出口は既存の G-code op で「1 本の線で紙の上 15.51 m、プロッタ最短 8.6 分」。--image で自分の写真でも走る。 `py -3.11 examples/poc_one_stroke_epicycles.py`
 - **高さは 2 つある・実データ編(公開された測量成果 523 点で、高さの取り違えを検出器にかける)** — NOAA/NGS の公開 datasheet は 1 点につき楕円体高 h(NAD 83)・正標高 H(NAVD 88)・ジオイド高 N(GEOID18)・地心直交座標を全部公開している —— コロラド州フロントレンジの 523 点で答え合わせ。既存 dem_geodetic_to_ecef は公開 (x,y,z) と rms 0.5 mm・最大 0.8 mm(これまで自分との往復しか測っていなかった)。0.25 度格子の双一次補間は公開 N と rms 11.1 cm で、GEOID18 と旧 GEOID12B のモデル差(平均 −1.0 cm)より大きい = 格子を細かくするほうが先に効く。格子外の 15 点は端で埋めず拒否。楕円体高を標高の列に入れると全点が直線 −N に乗って中央値 16.75 m 持ち上がる(外れ値に見えない)。★残差は由来を 1 文字も読まないのに、水準 1.6 cm < 網調整 1.9 cm < GPS 3.8 cm < VERTCON3 8.3 cm の順に並ぶ。生データは commit せず集計 56 KB だけ。 `py -3.11 examples/poc_geodetic_benchmarks_real.py`
 - **枝の縄張り(骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる)** — 3D 距離変換の「向き」op の使いどころ。真値の枝ラベルつき合成樹状突起(半径の違う 5 枝 + 分断片 + ごみ 6)を vol_rle_components(片ごとに持って体積で選ぶ)→ skeletonize_vol → skeleton_branches3d → vol_nearest_label(枝 id を空間の全 voxel へ配るボロノイ分割)で枝の縄張りにすると voxel 一致率 0.978・枝ごとの体積誤差 2.9 % 以内。半径は vol_nearest_seed_vector の変位長 + 0.5 で 0.24 voxel 以内(骨格上の距離変換の古典と同精度、こちらは表面の全 voxel に付く)。値だけの古典(接合点を球で削って連結成分)は球が小さいと分かれず大きいと体積を捨てる(0.78、22 % 未割当)。 `py -3.11 examples/poc_em_branch_territory.py`
+
+**measurement**
+- **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
+- **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
+- **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 
 **color**
 - **Bayer の生フレームを段ごとに説明できる式で表示画像にする(ISP 8 段)** — 黒レベル → 欠陥画素 → 周辺減光 → AWB(RAW 側)→ 双線形デモザイク → CCM → 色相彩度 → 明暗を全部閉じた式で。植えた台座・減光・かぶり・欠陥 12 画素を順に外し、デモザイク後の誤差は 95 % 点で 5e-4(最大は円の縁のジッパー 6e-2 を隠さず印字)。★gray-world は場面の平均が灰でないと真の照明の逆にならない —— 一致しない数字を並べて段の限界を見せる。 `py -3.11 examples/raw_to_display_isp.py`
@@ -728,9 +729,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 26 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -3102,7 +3103,13 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 #### flyvision / tuning(1)
 - `fly_dsi` `signal → table` — Direction-selectivity index and preferred direction from tuning responses. · 例: `poc_fly_vision`
 
-### spc(22 ops / 8 categories)
+### spc(26 ops / 9 categories)
+
+#### spc / anomaly_eval(4)
+- `anomaly_image_auroc` `signal × signal → table` — Image-level AUROC from one anomaly score per image and a good/defective label per image (``table``). · 例: `anomaly_eval_metrics`
+- `anomaly_pixel_auroc` `video × video → table` — Pixel-level AUROC of anomaly score maps against ground-truth defect masks (``table``). · 例: `anomaly_eval_metrics`
+- `anomaly_pro` `video × video → table` — Per-region overlap (PRO) curve and its normalised area AUPRO up to ``fpr_max`` (``table``). · 例: `anomaly_eval_metrics`
+- `anomaly_region_overlap` `video × video → table` — Per-region overlap of a binary defect prediction with the ground-truth regions at one operating point (``table``). · 例: `anomaly_eval_metrics`
 
 #### spc / capability(1)
 - `spc_capability` `signal → table` — Process capability indices Cp and Cpk from measurements and spec limits. · 例: `poc_spc`
