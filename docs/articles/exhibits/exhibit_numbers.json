@@ -195,7 +195,7 @@
   },
   "poc_dense_bubble_count": {
    "accessioned": "2026-10-18",
-   "no": "2026.245"
+   "no": "2026.258"
   },
   "poc_dfm_thickness_overhang": {
    "accessioned": "2026-09-07",
@@ -343,7 +343,7 @@
   },
   "poc_flybrain_pointcloud": {
    "accessioned": "2026-10-18",
-   "no": "2026.245"
+   "no": "2026.260"
   },
   "poc_focus_stacking": {
    "accessioned": "2026-09-06",
@@ -383,7 +383,7 @@
   },
   "poc_good_sample_variation_model": {
    "accessioned": "2026-10-18",
-   "no": "2026.245"
+   "no": "2026.256"
   },
   "poc_granular_heap_repose": {
    "accessioned": "2026-10-05",
@@ -735,7 +735,7 @@
   },
   "poc_robust_profile_filter": {
    "accessioned": "2026-10-18",
-   "no": "2026.245"
+   "no": "2026.259"
   },
   "poc_rotation_invariance_audit": {
    "accessioned": "2026-09-09",
@@ -987,7 +987,7 @@
   },
   "poc_weed_rice_ratio": {
    "accessioned": "2026-10-18",
-   "no": "2026.245"
+   "no": "2026.257"
   },
   "poc_weld_bead_profile": {
    "accessioned": "2026-09-06",
