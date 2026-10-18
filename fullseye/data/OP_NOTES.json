@@ -31951,6 +31951,36 @@
     "path": "docs/ops/roughness/measure/surface_psd.md"
    }
   ],
+  "robust_gaussian_profile": [
+   {
+    "op": "robust_gaussian_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_profile.md"
+   }
+  ],
+  "robust_gaussian_surface": [
+   {
+    "op": "robust_gaussian_surface",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_surface.md"
+   }
+  ],
+  "robust_spline_profile": [
+   {
+    "op": "robust_spline_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_spline_profile.md"
+   }
+  ],
   "surface_filter": [
    {
     "op": "surface_filter",

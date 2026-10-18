@@ -4,7 +4,7 @@ dim: roughness
 category: prepare
 in: depth
 out: depth
-examples: [poc_surface_roughness]
+examples: [poc_robust_profile_filter, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -107,15 +107,16 @@ fail-closed
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_robust_profile_filter](../../../../examples/poc_robust_profile_filter.py) — `py -3.11 examples/poc_robust_profile_filter.py`
 - [poc_surface_roughness](../../../../examples/poc_surface_roughness.py) — `py -3.11 examples/poc_surface_roughness.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 
-[surface_form_remove](surface_form_remove.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
+[surface_form_remove](surface_form_remove.md) · [robust_gaussian_surface](robust_gaussian_surface.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
 
 ## 同カテゴリ(`prepare`)
 
-[surface_form_remove](surface_form_remove.md)
+[surface_form_remove](surface_form_remove.md) · [robust_gaussian_profile](robust_gaussian_profile.md) · [robust_spline_profile](robust_spline_profile.md) · [robust_gaussian_surface](robust_gaussian_surface.md)
 
 ---
 *Provenance: roughness.py — ROUGHNESS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

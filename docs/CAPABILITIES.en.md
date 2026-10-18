@@ -245,6 +245,18 @@ Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`,
 
 Runnable: `poc_pod_lighting`
 
+### [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+Three ops in the `roughness` ledger (category `prepare`). `robust_gaussian_profile` is a Gaussian-weighted local regression (order 0 or 1) iterated with Tukey's biweight at `c · median|r|`; its transmission is exactly 50 % at λc (closed form `exp(-π(αλc/λ)²)`, α² = ln2/π), measured to 3e-8. `robust_spline_profile` solves a second-difference penalised least squares (a discrete cubic smoothing spline) with the same reweighting; its transfer function `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` is matched to 1e-11. `robust_gaussian_surface` is the areal version. On a synthetic profile with a known waviness, scratches covering up to 20 % of the samples drag the robust mean line 0.06 times as far as the linear one; at 40 % it breaks down, and a non-converging iteration is refused rather than returned.
+
+Operators: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+Pipeline: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+Alternatives: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+Runnable: `poc_robust_profile_filter`, `example_robust_profile_filter`
+
 ### [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md)
 
 Two stages: *where* (ridge response `lines_gauss`, or the black-top-hat `bothat` that lifts only dark fine detail) and *how wide* (a measurement line across the detected line, `measure_pairs` for the two sub-pixel edges, `table_px_to_mm` for millimetres).

@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">robust_gaussian_profile — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code> (die Implementierung direkt: <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code>; aus dem Register: <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">signal</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile.raw(...)</code> oder rufe <code style="color:#22d3bf">roughness.robust_gaussian_profile</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(roughness, mean_line, info)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Robuster Gauß-Regressionsfilter (Profil): Mittellinie und Rauheit, die sich von Ausreißern und Kratzern nicht ziehen lassen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>ガウス重みの局所回帰(次数 <code style="color:#22d3bf">order</code>)に Tukey の biweight を掛けて反復する。普通のガウスフィルタは深い溝や突起にそのまま引きずられ、平均線が傷の側へ凹む。この op は傷の部分の重みを下げる(<code style="color:#22d3bf">|r| ≥ c·median|r|</code> で 0)ので、平均線は傷を無視する。</p>
+<p>戻り値は <code style="color:#22d3bf">(roughness, mean_line, info)</code>。<code style="color:#22d3bf">roughness = z - mean_line</code>。端は <b>削らず</b> 全長を返す(窓に入るデータだけで回帰するので、ガウス平均と違って端でも偏らない。端の信頼度が気になるなら両端 <code style="color:#22d3bf">λc/2</code> を捨てる)。<code style="color:#22d3bf">info</code> は反復回数・収束・重みの要約。</p>
+<p>引数</p>
+<p>z          断面 <code style="color:#22d3bf">z[i]</code>(1 次元、有限値のみ)。</p>
+<p>dx         標本間隔。</p>
+<p>lambda_c   カットオフ波長(透過率 50 %)。<code style="color:#22d3bf">2*dx</code> 以上、評価長さ以下。</p>
+<p>c          biweight の定数(既定 4.4)。しきい値は <code style="color:#22d3bf">c × median|残差|</code>。</p>
+<p>order      0 = 重み付き平均、1 = 局所直線(既定)。内部の核はどちらも同じで、</p>
+<p>カットオフでの透過率は 0.5(閉形式 <code style="color:#22d3bf">exp(-π (α λc f)²)</code>、<code style="color:#22d3bf">f = 1/λc</code>)。</p>
+<p>robust     <code style="color:#22d3bf">False</code> なら重み 1 のまま(普通の線形ガウス回帰。比較・基準用)。</p>
+<p>truncate   窓の半径 <code style="color:#22d3bf">truncate·λc</code>(0.5 以上)。既定 1.0。0.5 にすると ISO の打ち切り</p>
+<p>になり、既存の <code style="color:#22d3bf">surface_filter</code> と内部で一致する。</p>
+<p>max_iter   反復の上限(<code style="color:#22d3bf">None</code> = 200)。収束しなければ <b>拒否する</b>。</p>
+<p>tol        収束判定: 平均線の変化の最大が <code style="color:#22d3bf">tol × median|残差|</code> 以下。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 配列が 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dx</code> / <code style="color:#22d3bf">lambda_c</code> / <code style="color:#22d3bf">c</code> / <code style="color:#22d3bf">tol</code> が有限の正でない、<code style="color:#22d3bf">lambda_c</code> が範囲外、<code style="color:#22d3bf">order</code> が 0/1 以外、<code style="color:#22d3bf">truncate</code> &lt; 0.5。</p>
+<p style="margin:2px 0 2px 12px">• 窓の中に重みを持つデータが無い(傷が窓より広い)/ 正規方程式が退化する。</p>
+<p style="margin:2px 0 2px 12px">• biweight の反復が <code style="color:#22d3bf">max_iter</code> 回で収束しない(外れ値が半数に近い等)。</p>
+<p>出典(式は論文のものを再実装。規格の本文は写していない): ISO 16610-21 / -31 のガウス回帰の考え方、Seewig, &quot;Gaussian Regression Filters&quot;(*Computational Surface and Roundness Metrology*, Springer 2009)、沼田・藤原・舟橋・輿水、精密工学会誌 76 (2010)(高速 M 推定)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_robust_profile_filter">example_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/example_robust_profile_filter.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a> · <a style="color:#22d3bf" href="oproughness:profile_params">profile_params</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

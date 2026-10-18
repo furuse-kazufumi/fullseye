@@ -729,6 +729,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.080"
   },
+  "poc_robust_profile_filter": {
+   "accessioned": "2026-10-18",
+   "no": "2026.245"
+  },
   "poc_rotation_invariance_audit": {
    "accessioned": "2026-09-09",
    "no": "2026.117"

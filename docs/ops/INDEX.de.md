@@ -85,8 +85,8 @@ Operatordokumentation für **fullseye 0.7.0**. Jeder Operator hat eine eigene Ma
   - [`deviation`](./shapestat/INDEX.md#deviation-1) 1 · [`model`](./shapestat/INDEX.md#model-6) 6 · [`procrustes`](./shapestat/INDEX.md#procrustes-5) 5 · [`symmetry`](./shapestat/INDEX.md#symmetry-2) 2 · [`synth`](./shapestat/INDEX.md#synth-2) 2
 - [MEASURE1D-Operatoren](./measure1d/INDEX.md) — 17 Operatoren / 4 Kategorien
   - [`apply`](./measure1d/INDEX.md#apply-2) 2 · [`caliper`](./measure1d/INDEX.md#caliper-6) 6 · [`model`](./measure1d/INDEX.md#model-6) 6 · [`scale`](./measure1d/INDEX.md#scale-3) 3
-- [ROUGHNESS-Operatoren](./roughness/INDEX.md) — 6 Operatoren / 3 Kategorien
-  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-2) 2 · [`synth`](./roughness/INDEX.md#synth-1) 1
+- [ROUGHNESS-Operatoren](./roughness/INDEX.md) — 9 Operatoren / 3 Kategorien
+  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-5) 5 · [`synth`](./roughness/INDEX.md#synth-1) 1
 - [SHAPE2D-Operatoren](./shape2d/INDEX.md) — 16 Operatoren / 2 Kategorien
   - [`descriptor`](./shape2d/INDEX.md#descriptor-10) 10 · [`morph`](./shape2d/INDEX.md#morph-6) 6
 - [PIV-Operatoren](./piv/INDEX.md) — 29 Operatoren / 7 Kategorien

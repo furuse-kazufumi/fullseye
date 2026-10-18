@@ -187,10 +187,10 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
+| `roughness` | 9 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `codematch` | 6 | [INDEX](ops/codematch/INDEX.md) · [guide](ops/codematch/guides/robust_code_matching.md) |
 | `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [guide](ops/converge/guides/convergent_computation.md) |
-| `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |

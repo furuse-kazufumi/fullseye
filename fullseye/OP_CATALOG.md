@@ -4854,15 +4854,18 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `pixel_to_world` `measurement → measurement` — 画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。 · 例: `example_inner_diameter_mm`
 - `table_px_to_mm` `table → table` — 計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
 
-### roughness(6 ops / 3 categories)
+### roughness(9 ops / 3 categories)
 
 #### roughness / measure(3)
 - `profile_params` `signal → table` — 断面の粗さパラメータ Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287)。 · 例: `poc_food_cutting_measure`, `poc_surface_roughness`
 - `surface_params` `depth → table` — 面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。 · 例: `poc_polish_wipe_measure`, `poc_surface_roughness`
 - `surface_psd` `depth → pairs` — 高さ場のパワースペクトル密度。``(q, C)`` を返す。**規約を引数で明示する。** · 例: `poc_surface_roughness`
 
-#### roughness / prepare(2)
-- `surface_filter` `depth → depth` — 高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。 · 例: `poc_surface_roughness`
+#### roughness / prepare(5)
+- `robust_gaussian_profile` `signal → signal` — ロバスト・ガウシアン回帰フィルタ(断面): 外れ値・傷に引きずられない平均線と粗さ。 · 例: `example_robust_profile_filter`, `poc_robust_profile_filter`
+- `robust_gaussian_surface` `depth → depth` — ロバスト・ガウシアン回帰フィルタ(面): 傷・突起に引きずられない面のうねりと粗さ。 · 例: `poc_robust_profile_filter`
+- `robust_spline_profile` `signal → signal` — ロバスト・スプラインフィルタ(断面): 外れ値に引きずられない平均線と粗さ。 · 例: `poc_robust_profile_filter`
+- `surface_filter` `depth → depth` — 高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。 · 例: `poc_robust_profile_filter`, `poc_surface_roughness`
 - `surface_form_remove` `depth → depth` — 格子のまま平面 / 二次曲面を除く。``(residual, coeffs)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`
 
 #### roughness / synth(1)

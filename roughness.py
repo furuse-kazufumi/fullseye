@@ -38,12 +38,13 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from scipy import ndimage
+from scipy import linalg, ndimage, sparse
 
 __all__ = [
     "surface_params", "profile_params", "surface_filter",
     "surface_form_remove", "surface_synth_psd", "surface_psd",
-    "GAUSS_ALPHA",
+    "robust_gaussian_profile", "robust_spline_profile", "robust_gaussian_surface",
+    "GAUSS_ALPHA", "ROBUST_C",
 ]
 
 #: ISO 16610-21 のガウスフィルタ定数。透過率 ``exp(-π (α λ f)²)`` が
@@ -915,3 +916,296 @@ def surface_psd(z, dx, kind="areal", dy=None):
     if kind == "radial":
         c = 2.0 * math.pi * q * c
     return q, c
+
+
+# --------------------------------------------------------------------------- #
+# ロバスト・ガウシアン回帰フィルタ / ロバスト・スプラインフィルタ(2026-10-18)  #
+# --------------------------------------------------------------------------- #
+#: Tukey の biweight に掛ける定数。しきい値は ``c * median(|r|)``(ISO 16610-31/-32 の流儀、
+#: 数式は Seewig 2009 / 沼田ら 2010 などの論文のもの。規格の文面は写していない)。
+ROBUST_C = 4.4
+
+#: biweight の反復の上限の既定(``max_iter=None``)。
+DEFAULT_MAX_ITER = 200
+
+#: 局所多項式の次数。0 = 重み付き平均(ISO 16610-21 と同じ核)、1 = 局所直線(端でも偏らない)。
+#: ★2 は入れない: 局所二次の中心値の等価核は ``G(u)(3/2 - u²/(2σ²))`` になり、透過率が
+#: ``(1+x)exp(-x)``, ``x = ln2 (λc f)²`` へ変わって λc で 85 % になる(= 規格のカットオフ定義と
+#: 食い違う)。次数 0/1 の内部は同じ核なので、カットオフの意味が保たれる。
+_REGRESSION_ORDERS = (0, 1)
+
+#: 行列式 / 対角積(局所回帰の正規方程式の条件)がこれ未満なら、値を返さず拒否する。
+_COND_MIN = 1e-9
+
+#: 窓の中の総重みが核の総和のこれ未満なら「データが無い」とみなして拒否する。
+_SUPPORT_MIN = 1e-9
+
+
+def _biweight(r: np.ndarray, cb: float) -> np.ndarray:
+    """Tukey の biweight ``δ = (1 - (r/cb)²)²``(``|r| < cb``)、それ以外は 0。
+
+    ★外れ値の門の探針はこの関数を ``np.ones_like`` に差し替えて「門が落ちる」ことを確かめる。
+    """
+    u = np.asarray(r, dtype=np.float64) / cb
+    inside = np.abs(u) < 1.0
+    return np.where(inside, (1.0 - u * u) ** 2, 0.0)
+
+
+def _check_robust_args(c, max_iter, tol, op: str) -> tuple[float, int, float]:
+    cc = float(c)
+    if not math.isfinite(cc) or cc <= 0.0:
+        raise ValueError(f"{op}: c must be a finite positive constant, got {c!r}")
+    if max_iter is None:
+        max_iter = DEFAULT_MAX_ITER
+    mi = int(max_iter)
+    if mi < 1 or mi != max_iter:
+        raise ValueError(f"{op}: max_iter must be a positive integer, got {max_iter!r}")
+    tt = float(tol)
+    if not math.isfinite(tt) or tt <= 0.0:
+        raise ValueError(f"{op}: tol must be a finite positive number, got {tol!r}")
+    return cc, mi, tt
+
+
+def _irls(z: np.ndarray, fit, c: float, max_iter: int, tol: float, robust: bool,
+          op: str) -> tuple[np.ndarray, dict]:
+    """biweight の反復再重み付け。``fit(w)`` は重み ``w`` での平均線(``z`` と同形)を返す。
+
+    線形(重み 1)の解から始め、残差の中央値 ``B`` で ``δ = biweight(r, c·B)`` を作り直して
+    当てはめ直す。平均線の変化量が ``tol * B`` 以下になったら収束。
+    ★``max_iter`` 回で収束しなければ **値を返さず拒否する**(fail-closed。途中の値は
+    「もっともらしいが収束していない」ので、黙って返すと外れ値の影響が残ったまま通る)。
+    """
+    m = fit(np.ones_like(z))
+    if not robust:
+        return m, {"iterations": 0, "converged": True, "robust": False,
+                   "n_zero_weight": 0, "min_weight": 1.0, "scale_B": float("nan")}
+    floor = 1e-12 * max(float(np.ptp(z)), 1e-300)
+    for it in range(1, max_iter + 1):
+        r = z - m
+        b = float(np.median(np.abs(r)))
+        cb = max(c * b, floor)
+        w = _biweight(r, cb)
+        m_new = fit(w)
+        step = float(np.max(np.abs(m_new - m)))
+        m = m_new
+        if step <= tol * max(b, floor):
+            return m, {"iterations": it, "converged": True, "robust": True,
+                       "n_zero_weight": int(np.count_nonzero(w == 0.0)),
+                       "min_weight": float(w.min()), "scale_B": b}
+    raise ValueError(
+        f"{op}: the biweight iteration did not converge in {max_iter} steps "
+        f"(last change {step:.3g} > tol*B = {tol * max(b, floor):.3g}); refusing to return "
+        "a mean line that may still be dragged by outliers. Raise max_iter, loosen tol, "
+        "or check whether outliers make up half of the profile or more (breakdown).")
+
+
+def _kernels(lam: float, pitch: float, truncate: float, order: int):
+    """ガウス核 ``G(u)·(u/σ)^a``(a = 0..2×order)の標本。``u`` は標本単位、σ も標本単位。
+
+    ガウスの幅は ISO 16610-21 の重み関数と同じ ``σ = α λ / √(2π)``(``α = √(ln2/π)``)。
+    ★打ち切りは ``±truncate·λc``(既定 1.0 = 5.3σ)。規格の ``±λc/2``(2.67σ)は裾を
+    0.8 % 落とし、カットオフでの透過率を 0.5095 にする(既存 ``surface_filter`` の実測)。
+    ここでは 5.3σ まで取るので、カットオフ波長で 0.5 に ``1e-6`` 台まで合う。
+    """
+    sigma = GAUSS_ALPHA * lam / (math.sqrt(2.0 * math.pi) * pitch)
+    radius = max(1, int(math.ceil(truncate * lam / pitch)))
+    u = np.arange(-radius, radius + 1, dtype=np.float64)
+    g = np.exp(-0.5 * (u / sigma) ** 2)
+    return [g * (u / sigma) ** a for a in range(0, 2 * order + 1)]
+
+
+def _check_truncate(truncate, op: str) -> float:
+    t = float(truncate)
+    if not math.isfinite(t) or t < 0.5:
+        raise ValueError(f"{op}: truncate must be >= 0.5 (in units of lambda_c), got {truncate!r}")
+    return t
+
+
+def _check_order(order, op: str) -> int:
+    if order not in _REGRESSION_ORDERS:
+        raise ValueError(
+            f"{op}: order must be one of {_REGRESSION_ORDERS}, got {order!r}. "
+            "Order 2 is not offered: its interior kernel is not the ISO 16610-21 Gaussian, "
+            "so the transmission at lambda_c would no longer be 50 %.")
+    return int(order)
+
+
+def robust_gaussian_profile(z, dx, lambda_c, c=ROBUST_C, order=1, robust=True,
+                            truncate=1.0, max_iter=None, tol=1e-6):
+    """ロバスト・ガウシアン回帰フィルタ(断面): 外れ値・傷に引きずられない平均線と粗さ。
+
+    ガウス重みの局所回帰(次数 ``order``)に Tukey の biweight を掛けて反復する。普通の
+    ガウスフィルタは深い溝や突起にそのまま引きずられ、平均線が傷の側へ凹む。この op は
+    傷の部分の重みを下げる(``|r| ≥ c·median|r|`` で 0)ので、平均線は傷を無視する。
+
+    戻り値は ``(roughness, mean_line, info)``。``roughness = z - mean_line``。端は **削らず**
+    全長を返す(窓に入るデータだけで回帰するので、ガウス平均と違って端でも偏らない。
+    端の信頼度が気になるなら両端 ``λc/2`` を捨てる)。``info`` は反復回数・収束・重みの要約。
+
+    引数
+      z          断面 ``z[i]``(1 次元、有限値のみ)。
+      dx         標本間隔。
+      lambda_c   カットオフ波長(透過率 50 %)。``2*dx`` 以上、評価長さ以下。
+      c          biweight の定数(既定 4.4)。しきい値は ``c × median|残差|``。
+      order      0 = 重み付き平均、1 = 局所直線(既定)。内部の核はどちらも同じで、
+                 カットオフでの透過率は 0.5(閉形式 ``exp(-π (α λc f)²)``、``f = 1/λc``)。
+      robust     ``False`` なら重み 1 のまま(普通の線形ガウス回帰。比較・基準用)。
+      truncate   窓の半径 ``truncate·λc``(0.5 以上)。既定 1.0。0.5 にすると ISO の打ち切り
+                 になり、既存の ``surface_filter`` と内部で一致する。
+      max_iter   反復の上限(``None`` = 200)。収束しなければ **拒否する**。
+      tol        収束判定: 平均線の変化の最大が ``tol × median|残差|`` 以下。
+
+    fail-closed
+      * 配列が 1 次元でない / 8 点未満 / NaN・Inf を含む。
+      * ``dx`` / ``lambda_c`` / ``c`` / ``tol`` が有限の正でない、``lambda_c`` が範囲外、
+        ``order`` が 0/1 以外、``truncate`` < 0.5。
+      * 窓の中に重みを持つデータが無い(傷が窓より広い)/ 正規方程式が退化する。
+      * biweight の反復が ``max_iter`` 回で収束しない(外れ値が半数に近い等)。
+
+    出典(式は論文のものを再実装。規格の本文は写していない): ISO 16610-21 / -31 の
+    ガウス回帰の考え方、Seewig, "Gaussian Regression Filters"(*Computational Surface and Roundness Metrology*, Springer 2009)、沼田・藤原・舟橋・輿水、
+    精密工学会誌 76 (2010)(高速 M 推定)。
+    """
+    op = "robust_gaussian_profile"
+    a = _as_profile(z, op, name="z")
+    pitch, _ = _pitch(dx, None, op)
+    lam = _check_cutoff(lambda_c, pitch, a.size * pitch, op, "lambda_c")
+    cc, mi, tt = _check_robust_args(c, max_iter, tol, op)
+    order = _check_order(order, op)
+    trunc = _check_truncate(truncate, op)
+    ks = _kernels(lam, pitch, trunc, order)
+    gsum = float(ks[0].sum())
+
+    def corr(arr, k):
+        return ndimage.correlate1d(arr, k, axis=0, mode="constant", cval=0.0)
+
+    def fit(w):
+        m0 = corr(w, ks[0])
+        if float(m0.min()) < _SUPPORT_MIN * gsum:
+            raise ValueError(
+                f"{op}: no weighted data inside the window at some sample (a scratch or gap "
+                f"wider than the window of +-{trunc:g}*lambda_c); refusing to extrapolate")
+        b0 = corr(w * a, ks[0])
+        if order == 0:
+            return b0 / m0
+        m1, m2 = corr(w, ks[1]), corr(w, ks[2])
+        b1 = corr(w * a, ks[1])
+        det = m0 * m2 - m1 * m1
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ok = bool(np.all(det / (m0 * m2) >= _COND_MIN))
+        if not ok:
+            raise ValueError(f"{op}: the local line fit is degenerate (weights concentrate on "
+                             "one sample); refusing to return a value")
+        return (b0 * m2 - m1 * b1) / det
+
+    m, info = _irls(a, fit, cc, mi, tt, bool(robust), op)
+    return a - m, m, info
+
+
+def robust_spline_profile(z, dx, lambda_c, c=ROBUST_C, robust=True, max_iter=None, tol=1e-6):
+    """ロバスト・スプラインフィルタ(断面): 外れ値に引きずられない平均線と粗さ。
+
+    平均線 ``w`` を ``Σ δ_i (z_i - w_i)² + β Σ (Δ² w)_i²`` の最小化で求める(2 階差分の罰則つき
+    最小二乗 = 離散の三次平滑化スプライン、Whittaker 1923 / Eilers 2003 / Krystek, Measurement 18 (1996) 9-15)。
+    重み ``δ`` は biweight で反復して更新する。ガウスと違って **端に自然境界条件が付く**
+    ので、端を削らなくても平均線が端で外へ振れにくい。
+
+    ``β = 1 / (16 sin⁴(π dx/λc))`` と置くと、線形(``robust=False``)の内部の伝達関数が
+    ``H(λ) = 1 / (1 + (sin(π dx/λ) / sin(π dx/λc))⁴)`` になり、``λ = λc`` でちょうど 50 %
+    (閉形式)。``dx/λ`` が小さい極限では ``1/(1+(λc/λ)⁴)``(張力 0 の三次スプラインフィルタの形)。
+
+    戻り値は ``(roughness, mean_line, info)``。引数と fail-closed は ``robust_gaussian_profile``
+    と同じ(``order`` / ``truncate`` は無い)。重みを持つデータが 2 点未満なら拒否する。
+    """
+    op = "robust_spline_profile"
+    a = _as_profile(z, op, name="z")
+    pitch, _ = _pitch(dx, None, op)
+    lam = _check_cutoff(lambda_c, pitch, a.size * pitch, op, "lambda_c")
+    cc, mi, tt = _check_robust_args(c, max_iter, tol, op)
+    n = a.size
+    s = math.sin(math.pi * pitch / lam)
+    beta = 1.0 / (16.0 * s ** 4)
+    d = sparse.diags([1.0, -2.0, 1.0], [0, 1, 2], shape=(n - 2, n))
+    pen = (d.T @ d).tocsr()
+    band = np.zeros((5, n))
+    for k in range(-2, 3):
+        dg = pen.diagonal(k)
+        if k >= 0:
+            band[2 - k, k:] = beta * dg
+        else:
+            band[2 - k, :n + k] = beta * dg
+
+    def fit(w):
+        if int(np.count_nonzero(w > 1e-12)) < 2:
+            raise ValueError(f"{op}: fewer than two samples carry weight; the spline is "
+                             "undetermined, refusing to return a value")
+        ab = band.copy()
+        ab[2] += w
+        out = linalg.solve_banded((2, 2), ab, w * a)
+        if not np.all(np.isfinite(out)):
+            raise ValueError(f"{op}: the banded solve returned a non-finite mean line")
+        return out
+
+    m, info = _irls(a, fit, cc, mi, tt, bool(robust), op)
+    return a - m, m, info
+
+
+def robust_gaussian_surface(z, dx, lambda_c, c=ROBUST_C, order=1, robust=True,
+                            truncate=1.0, dy=None, max_iter=None, tol=1e-6):
+    """ロバスト・ガウシアン回帰フィルタ(面): 傷・突起に引きずられない面のうねりと粗さ。
+
+    ``robust_gaussian_profile`` の 2 次元版(核は x・y に可分、局所面 ``c + p u + q v`` の
+    回帰、biweight は面全体の残差の中央値で作る)。重みが非可分でも、必要なのは重み画像と
+    ``u^a v^b`` を掛けた核との可分相関だけなので、 ``O(N · 窓幅)`` で済む。
+
+    戻り値は ``(roughness, mean_surface, info)``。端は削らず全面を返す。引数・fail-closed は
+    断面版と同じ(``dy=None`` は正方画素、``z`` は 8x8 以上の 2 次元)。
+    """
+    op = "robust_gaussian_surface"
+    a = _as_field(z, op, name="z")
+    fx, fy = _pitch(dx, dy, op)
+    lam = _check_cutoff(lambda_c, max(fx, fy), min(a.shape[1] * fx, a.shape[0] * fy),
+                        op, "lambda_c")
+    cc, mi, tt = _check_robust_args(c, max_iter, tol, op)
+    order = _check_order(order, op)
+    trunc = _check_truncate(truncate, op)
+    ky = _kernels(lam, fy, trunc, order)
+    kx = _kernels(lam, fx, trunc, order)
+    gsum = float(ky[0].sum() * kx[0].sum())
+
+    def c2(arr, ia, ib):
+        t = ndimage.correlate1d(arr, ky[ia], axis=0, mode="constant", cval=0.0)
+        return ndimage.correlate1d(t, kx[ib], axis=1, mode="constant", cval=0.0)
+
+    def fit(w):
+        m00 = c2(w, 0, 0)
+        if float(m00.min()) < _SUPPORT_MIN * gsum:
+            raise ValueError(
+                f"{op}: no weighted data inside the window at some pixel (a scratch or gap "
+                f"wider than the window of +-{trunc:g}*lambda_c); refusing to extrapolate")
+        wz = w * a
+        b00 = c2(wz, 0, 0)
+        if order == 0:
+            return b00 / m00
+        # 未知数 (c, p, q) = (切片, v 方向の傾き, u 方向の傾き)。添字は (y 側の次数, x 側の次数)。
+        m10, m01 = c2(w, 1, 0), c2(w, 0, 1)
+        m20, m11, m02 = c2(w, 2, 0), c2(w, 1, 1), c2(w, 0, 2)
+        mat = np.empty(a.shape + (3, 3))
+        mat[..., 0, 0] = m00
+        mat[..., 0, 1] = mat[..., 1, 0] = m10
+        mat[..., 0, 2] = mat[..., 2, 0] = m01
+        mat[..., 1, 1] = m20
+        mat[..., 1, 2] = mat[..., 2, 1] = m11
+        mat[..., 2, 2] = m02
+        rhs = np.stack([b00, c2(wz, 1, 0), c2(wz, 0, 1)], axis=-1)[..., None]
+        det = np.linalg.det(mat)
+        diag = m00 * m20 * m02
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ok = bool(np.all(det / diag >= _COND_MIN))
+        if not ok:
+            raise ValueError(f"{op}: the local plane fit is degenerate (weights concentrate "
+                             "on a line or a point); refusing to return a value")
+        return np.linalg.solve(mat, rhs)[..., 0, 0]
+
+    m, info = _irls(a, fit, cc, mi, tt, bool(robust), op)
+    return a - m, m, info

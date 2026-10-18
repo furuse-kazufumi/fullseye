@@ -276,6 +276,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_pod_lighting`
 
+### [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+粗さは断面(または面)から平均線(うねり)を引いて残りを測ります。普通のガウスフィルタは深い傷に引かれて平均線が傷の側へ凹み、**傷の両側の健全な面が山に見えます**(PoC の実測で、傷の脇の粗さが真値の 2.5 倍)。`roughness` 族の新しい 3 本は、Tukey の biweight で傷の重みを下げながら反復し、平均線を傷から守ります。
+
+使う op: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+推奨パイプライン: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+代替: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+限界: 傷の標本が 4 割を超えると平均線が傷側へ破綻する(合成断面の実測で 35 % までは雑音の床、40 % で 3.5 µm)。外れ値の無い断面でもロバスト版は線形と一致しない(biweight が雑音の裾を刈る)。傷が窓(既定 ±λc)より広いと外挿せず拒否する。収束しなければ値を返さない。次数 2 は出していない。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。
+
+実寸校正: 平均線の真値は測定器では得られない。標本間隔 dx(µm)とカットオフ λc(測定条件で決まる値)は呼び出し側が与え、単位を混ぜても検出できない。伝達関数は dx と λc だけで決まる閉形式なので、既知波長の正弦を通して λc で 0.5 になるかを現場の設定で確かめられる。
+
+動く例: `poc_robust_profile_filter`, `example_robust_profile_filter`
+
 ### [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md)
 
 線状の傷を**どこにあるか**(検出)と**どれだけ太いか**(幅)の 2 段で扱います。検出は Hessian リッジ応答(`lines_gauss`)か暗い細部だけを浮かせる形態学(`bothat`)、幅は検出した線に**直交する測定線**を張って `measure_pairs` で両側のエッジをサブピクセルで取り、`table_px_to_mm` で mm にします。

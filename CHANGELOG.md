@@ -91,6 +91,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 門: 等しい 2 円の相対突出度が閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率が予言の幅、自信をもった誤りは閉形式の「面積でも見えない」重なり率(0.86〜0.90)から先だけ、2 倍の拡大で不変、帯を潰す・面積の検査を外すと誤りが出る(壊す探針)、ALCON2009 型の採点の閉形式。
 - 実データ(repo に入れない。`FULLSEYE_BUBBLE_DOWNLOAD=1`): BBBC005 の真値マスク(CC0)で小さい物体の相対誤差 0.34 %(連結成分 9.4 %)・自信をもった誤り 11/600、大きい物体は 286/300 で数を返さず誤り 0。PEMWE の泡(Zenodo 10184579、CC BY 4.0)の形の半合成で誤り 2/65、ALCON 型 0.95。形の許しの矛盾(誤り 3 % → 19 %)を掃引で記録。いびつな泡の深い重なりで区間の上限が 1 個外れる限界は docstring に明記。
 - 図 11 枚 + GIF、展示(wing_industrial、収蔵番号は生成器の仮番)、examples2d、能力ノート `blob-and-region`、6 言語の要約と本文訳。
+### Added — ロバストなガウス回帰・スプラインフィルタ(`roughness` 族 +3 op)と PoC
+- `robust_gaussian_profile` / `robust_spline_profile` / `robust_gaussian_surface`(`opsroughness` の `prepare`)。傷・突起に引きずられない平均線と粗さ。Tukey の biweight(しきい値 c·median|r|、既定 c=4.4)の反復、収束しなければ `ValueError`(fail-closed)。ガウスは局所回帰(次数 0/1、打ち切り ±λc で λc の透過率 0.5)、スプラインは 2 階差分の罰則つき最小二乗。
+- 門 `tests/test_roughness_robust.py`(33): ガウス `exp(-π(αλc/λ)²)`・離散スプライン `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` の閉形式、密行列・疎 LU・点ごとの lstsq の第 2 実装、既存 `surface_filter` との内部一致(重み 1・次数 0・打ち切り 0.5)、引きずり量と破綻点(40 %)、探針(重み 1 固定 / λc 10 % ずれ / α ずれ)。
+- PoC `examples/poc_robust_profile_filter.py` と呼び出し例 `examples/example_robust_profile_filter.py`、能力ノート `robust-gaussian-spline-profile-filter`。既存 `surface_filter` の λc での透過率 0.5095(規格の打ち切り ±λc/2)を新 op と並べて記録。
 
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。

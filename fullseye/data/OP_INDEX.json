@@ -23678,6 +23678,45 @@
    ]
   },
   {
+   "name": "robust_gaussian_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "robust_gaussian_surface",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "robust_spline_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "roll_slide_state",
    "halcon": "",
    "in_sort": "table",

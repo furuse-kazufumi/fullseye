@@ -189,10 +189,10 @@
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [ガイド](ops/geocam/guides/geocam.md) |
 | `interferometry` — 干渉計 | 9 | [INDEX](ops/interferometry/INDEX.md) · [ガイド](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` — モーション拡大 | 9 | [INDEX](ops/motionmag/INDEX.md) · [ガイド](ops/motionmag/guides/motion_magnification.md) |
+| `roughness` — 表面粗さ | 9 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `rangedoppler` — FMCW レンジドップラー | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [ガイド](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `codematch` | 6 | [INDEX](ops/codematch/INDEX.md) · [ガイド](ops/codematch/guides/robust_code_matching.md) |
 | `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [ガイド](ops/converge/guides/convergent_computation.md) |
-| `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |

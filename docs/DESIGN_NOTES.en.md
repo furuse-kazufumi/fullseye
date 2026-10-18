@@ -1998,6 +1998,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L599** _(ja)_ — ★2026-10-07: 範囲内に候補が無い画素は margin 0(= valid にしない)。値は warp 用に有限のまま残す。
 - **L683** _(ja)_ — ★2026-10-07: refine 後に |d| が探索範囲 max_disp を越えた画素は黙って切らず valid=False にする。
 
+## `roughness.py`
+
+- **L932** _(ja)_ — ★2 は入れない: 局所二次の中心値の等価核は ``G(u)(3/2 - u²/(2σ²))`` になり、透過率が ``(1+x)exp(-x)``, ``x = ln2 (λc f)²`` へ変わって λc で 85 % になる(= 規格のカットオフ定義と 食い違う)。次数 0/1 の内部は同じ核なので、カットオフの意味が保たれる。
+
 ## `rust/fullseye_core/examples/python_ctypes.py`
 
 - **L42** _(ja)_ — ★第 5 引数 fs_dtype_t。2026-09-14 までヘッダにだけ在って実装と FFI 宣言に 無かった引数。ctypes は引数の数を検査しないので、抜けても黙って動く。
@@ -2906,10 +2910,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
 - **L232** _(ja)_ — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
 - **L303** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L362** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L535** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
-- **L552** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
-- **L624** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
+- **L368** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L541** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L558** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L630** _(ja)_ — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
 
 ## `unified.py`
 

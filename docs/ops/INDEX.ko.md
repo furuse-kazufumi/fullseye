@@ -85,8 +85,8 @@
   - [`deviation`](./shapestat/INDEX.md#deviation-1) 1 · [`model`](./shapestat/INDEX.md#model-6) 6 · [`procrustes`](./shapestat/INDEX.md#procrustes-5) 5 · [`symmetry`](./shapestat/INDEX.md#symmetry-2) 2 · [`synth`](./shapestat/INDEX.md#synth-2) 2
 - [MEASURE1D 오퍼레이터](./measure1d/INDEX.md) — 17 개 / 4 카테고리
   - [`apply`](./measure1d/INDEX.md#apply-2) 2 · [`caliper`](./measure1d/INDEX.md#caliper-6) 6 · [`model`](./measure1d/INDEX.md#model-6) 6 · [`scale`](./measure1d/INDEX.md#scale-3) 3
-- [ROUGHNESS 오퍼레이터](./roughness/INDEX.md) — 6 개 / 3 카테고리
-  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-2) 2 · [`synth`](./roughness/INDEX.md#synth-1) 1
+- [ROUGHNESS 오퍼레이터](./roughness/INDEX.md) — 9 개 / 3 카테고리
+  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-5) 5 · [`synth`](./roughness/INDEX.md#synth-1) 1
 - [SHAPE2D 오퍼레이터](./shape2d/INDEX.md) — 16 개 / 2 카테고리
   - [`descriptor`](./shape2d/INDEX.md#descriptor-10) 10 · [`morph`](./shape2d/INDEX.md#morph-6) 6
 - [PIV 오퍼레이터](./piv/INDEX.md) — 29 개 / 7 카테고리

@@ -85,8 +85,8 @@
   - [`deviation`](./shapestat/INDEX.md#deviation-1) 1 · [`model`](./shapestat/INDEX.md#model-6) 6 · [`procrustes`](./shapestat/INDEX.md#procrustes-5) 5 · [`symmetry`](./shapestat/INDEX.md#symmetry-2) 2 · [`synth`](./shapestat/INDEX.md#synth-2) 2
 - [MEASURE1D 算子](./measure1d/INDEX.md) —— 17 个算子 / 4 个类别
   - [`apply`](./measure1d/INDEX.md#apply-2) 2 · [`caliper`](./measure1d/INDEX.md#caliper-6) 6 · [`model`](./measure1d/INDEX.md#model-6) 6 · [`scale`](./measure1d/INDEX.md#scale-3) 3
-- [ROUGHNESS 算子](./roughness/INDEX.md) —— 6 个算子 / 3 个类别
-  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-2) 2 · [`synth`](./roughness/INDEX.md#synth-1) 1
+- [ROUGHNESS 算子](./roughness/INDEX.md) —— 9 个算子 / 3 个类别
+  - [`measure`](./roughness/INDEX.md#measure-3) 3 · [`prepare`](./roughness/INDEX.md#prepare-5) 5 · [`synth`](./roughness/INDEX.md#synth-1) 1
 - [SHAPE2D 算子](./shape2d/INDEX.md) —— 16 个算子 / 2 个类别
   - [`descriptor`](./shape2d/INDEX.md#descriptor-10) 10 · [`morph`](./shape2d/INDEX.md#morph-6) 6
 - [PIV 算子](./piv/INDEX.md) —— 29 个算子 / 7 个类别
