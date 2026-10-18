@@ -3018,6 +3018,18 @@
    "caption_ja": "加工ポケットのような凹んだ部品では、向かいの壁で反射した光が底を照らす(相互反射)。直接光だけの検査用描画 render_optscene はそれを数えず、多重反射を解く render_studio は明るさの絶対値に意味が無かった。新 op 7 本(radiosity3d)の render_optscene_gi は、同じシーン・同じ照明のまま直接光の測光を 1e-16 で保ち、反射を n 回か収束まで(Cohen ら 1988 の漸進 ラジオシティ)足す。反射率 0.7 のポケットでは底の明るさの 48 % が相互反射。simcal で反射率と照明の強さを合わせると、直接光だけの モデルは反射率 1.32(エネルギー保存に反する)で合い、χ²/ν 24・残差 PCA 4 成分で不合格、1 回反射は 0.87 で χ²/ν 7.9、収束解は 0.6996 / 0.9999(真値 0.70 / 1.00)で χ²/ν 1.01・残差は白色。反射は 7 回数えれば雑音(1.3 %)に埋もれる(観測収束比 0.51、GCI 型の見積もり)。Howell の表の形態係数 0.199825 / 0.200044 を閉形式と数値の両方で再現し、実測の論文(Bulczak ら 2018、CC BY 4.0)の表 2 —— 1 回反射を足すと誤差 0.20〜0.47 倍 —— と、本 PoC の 0.53 倍を並べた。",
    "caption_en": "In a concave part such as a machined pocket, light reflected by one wall lights the floor (interreflection). The inspection renderer render_optscene counts direct light only, and render_studio, which solves interreflection, has no meaningful absolute brightness. Seven new ops (radiosity3d, category radiosity of opsoptics) add render_optscene_gi: the same scene and lights, the direct photometry kept to 1e-16, plus n bounces or the converged sum (Cohen et al. 1988 progressive radiosity, stopped on the residual unshot energy, our choice since the paper gives no number). In a pocket of albedo 0.7, 48 % of the floor's brightness is interreflection. Calibrating albedo and light intensity with simcal: the direct-only model fits with albedo 1.32 (more light out than in), chi^2/nu 24 and four structured residual components, and is rejected; one bounce gives 0.87 and chi^2/nu 7.9; the converged model returns 0.6996 / 0.9999 (truth 0.70 / 1.00), chi^2/nu 1.01 and white residuals. Seven bounces bring the remainder under the 1.3 % noise (observed ratio 0.51, a GCI-style estimate trusted only in the asymptotic range). Howell's catalogue values 0.199825 / 0.200044 are reproduced in closed form and numerically, and Table 2 of Bulczak, Lambers and Kolb 2018 (Sensors, CC BY 4.0: one bounce cuts the measured error to 0.20-0.47 of direct-only) is set beside this PoC's 0.53.",
    "run": "py -3.11 examples/poc_pocket_interreflection.py"
+  },
+  {
+   "id": "poc_weed_rice_ratio",
+   "wing": "wing_astroenv",
+   "added": "2026-10-18",
+   "numbers_source": "log",
+   "figure": "real_examples",
+   "title_ja": "水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする",
+   "title_en": "How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges",
+   "caption_ja": "UAV の水田の RGB(WeedyRice-RGBMS、CC BY 4.0)。紫が注釈の雑草イネ、黄が 16 px 角の区画ごとの Fisher 判別(学習器なし、10 特徴の 1 次式)。段階の境は評価の前に 5 / 25 / 50 % と宣言した。test 148 枚で段階の一致 0.574(多数派だけ答えると 0.345)、κ 0.424、被度の相関 0.826、IoU 0.397(同じ割合でばらまくと 0.189)。R と G を入れ替えると κ は −0.023 に落ちる。撮影日を丸ごと外すと、季節の違う 1 日は日の中の相関が 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績だった。",
+   "caption_en": "UAV RGB of rice paddies (WeedyRice-RGBMS, CC BY 4.0). Magenta is the annotated weedy rice, yellow the per-block Fisher discriminant (no learned network, a linear function of ten features). The grade edges, 5 / 25 / 50 %, were declared before evaluation. On 148 test images: grade agreement 0.574 (0.345 for always answering the majority grade), kappa 0.424, cover correlation 0.826, IoU 0.397 (0.189 for the same share scattered at random). Swapping R and G drops kappa to -0.023. Holding out whole flight dates, one late-season date falls to a within-date correlation of 0.14: the bundled split scores other frames of flights it has already seen.",
+   "run": "py -3.11 examples/poc_weed_rice_ratio.py"
   }
  ]
 }

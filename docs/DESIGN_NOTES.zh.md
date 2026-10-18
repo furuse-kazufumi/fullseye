@@ -2586,14 +2586,14 @@
 - **L805** _(ja)_ — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
 - **L938** — ★混有非有限值的点云会**让 KD 树的构建本身以生的 ValueError 崩溃**（scipy："data must be finite"）。池的设计是记录 NONFINITE 后仍保留值，所以脏点云来到这里是预期之内 -- 由构建方防范。2026-09-06 实际踩到：新的族增加后连锁的走法变了，在 seed 3_000_0xx 命中这条路径，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。无法绑定的输入约定为跳过而非抛异常）。
 - **L1290** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L7266** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7388** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
-- **L7520** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
-- **L7729** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7731** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L7733** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L7755** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7863** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7334** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7456** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
+- **L7588** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
+- **L7797** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7799** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L7801** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L7823** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7932** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

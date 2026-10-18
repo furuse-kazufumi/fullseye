@@ -1,8 +1,8 @@
 {
- "n_ops": 3316,
+ "n_ops": 3321,
  "tiers": {
   "color": 12,
-  "ledger": 2363,
+  "ledger": 2368,
   "nary": 17,
   "registry": 924
  },
@@ -4490,6 +4490,19 @@
    "in_sorts": []
   },
   {
+   "name": "cover_ratio_grade",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "coverage_edge_points",
    "halcon": "",
    "in_sort": "image2d",
@@ -8604,6 +8617,34 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "fisher_lda_fit",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "fisher_lda_score",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "table",
+    "matrix"
    ]
   },
   {
@@ -19612,6 +19653,19 @@
    ]
   },
   {
+   "name": "plant_color_index",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage"
+   ]
+  },
+  {
    "name": "plate_focus_shift",
    "halcon": "",
    "in_sort": null,
@@ -26899,6 +26953,20 @@
    "in_sorts": [
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "superpixel_color_texture_features",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage",
+    "labels2d"
    ]
   },
   {

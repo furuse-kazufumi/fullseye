@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plant_color_index — SEGMENTATION <code style="color:#22d3bf">plant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plant_color_index(rgb, *, index: &#x27;str&#x27; = &#x27;exg&#x27;, dark_floor: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cropweed; cropweed.plant_color_index(rgb, *, index: &#x27;str&#x27; = &#x27;exg&#x27;, dark_floor: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;plant_color_index&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>逐像素计算可见光三波段的植物颜色指数（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。</p>
+<p><code style="color:#22d3bf">rgb</code> 为 (H, W, 3)。uint8 除以 255,float 不在 [0, 1] 内则拒绝。<code style="color:#22d3bf">index</code> 为 <code style="color:#22d3bf">exg</code> / <code style="color:#22d3bf">exr</code> / <code style="color:#22d3bf">exgr</code> / <code style="color:#22d3bf">cive</code> / <code style="color:#22d3bf">ngrdi</code> / <code style="color:#22d3bf">veg</code>。ExG、ExR、ExGR、CIVE、VEG 使用色度坐标 r = R/(R+G+B)、g、b,只有 NGRDI 使用原始的 (G − R)/(G + R)。亮度(RGB 的平均)低于 <code style="color:#22d3bf">dark_floor</code> 的像素,其色度由噪声决定,因此<b>不生成数值而设为 NaN</b>, 并令 <code style="color:#22d3bf">valid</code> 为 False(VEG 还排除 r 或 b 为 0 的像素,NGRDI 排除 G + R 为 0 的像素)。</p>
+<p>返回: <code style="color:#22d3bf">index</code>(H, W 的 float,NaN 表示未定义)、<code style="color:#22d3bf">valid</code>(bool)、<code style="color:#22d3bf">name</code>、<code style="color:#22d3bf">formula</code>、<code style="color:#22d3bf">vegetation_sign</code>(随植物增大的指数为 +1,CIVE 与 ExR 为 −1)、<code style="color:#22d3bf">citation</code>、<code style="color:#22d3bf">n_invalid</code>、<code style="color:#22d3bf">threshold_zero_is_boundary</code>(仅 ExGR 为 True: 0 是植物与背景的分界)。空输入、非有限值、超出范围、未知的指数名、全部像素未定义时以 <code style="color:#22d3bf">ValueError</code> 拒绝。</p>
+<p>调用示例: <code style="color:#22d3bf">fs.ledger.plant_color_index(img, index=&quot;exgr&quot;)[&quot;index&quot;] &gt; 0</code> 即植物像素。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_score">fisher_lda_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">plant</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:superpixel_color_texture_features">superpixel_color_texture_features</a> · <a style="color:#22d3bf" href="opsegmentation:cover_ratio_grade">cover_ratio_grade</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

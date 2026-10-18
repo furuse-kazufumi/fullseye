@@ -47,7 +47,7 @@ F = 2PR/(P+R)。境界は :func:`_boundary` の規約(ラベルの割れ目、1 
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`score`)
 

@@ -77,13 +77,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-71 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+72 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
 **Finden**
 
 - Regionen segmentieren, auswählen und zählen: [Erklärung](../../capabilities/blob-and-region.md) _(ja)_ · Beispiele [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz): [Erklärung](../../capabilities/crop-weed-cover-grade.md) _(ja)_ · Beispiele [poc_weed_rice_ratio](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - Text im Bild anhand des Soll-Strings korrigieren: [Erklärung](../../capabilities/fix-text-in-images.md) _(ja)_ · Beispiele [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - OCR-Vorverarbeitung (Schräglagenkorrektur, lokale Binarisierung, Zeilenextraktion): [Erklärung](../../capabilities/ocr-preprocessing.md) _(ja)_ · Beispiele [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - Warum eine dünne Rille im PL-Bild verschwindet — Ladungsträger-Diffusions-PSF und Defektart trennen (PL/EL-Prüfung von Si-Wafern und Solarzellen): [Erklärung](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · Beispiele [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-244 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+245 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -444,7 +445,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomie und Umwelt</b> (22)</summary>
+<details class="vall"><summary><b>Astronomie und Umwelt</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="Ein Gravitationswellendetektor in geschlossener Form" width="200" height="200"><b>&#9654;</b><span>Ein Gravitationswellendetektor in geschlossener Form</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="Bewölkung Allsky" width="200" height="200"><span>Bewölkung Allsky</span></a>
@@ -464,6 +465,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_astrometry.jpg" alt="Sternastrometrie" width="200" height="200"><span>Sternastrometrie</span></a>
 <a href="../../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tree_ring_dendro.jpg" alt="Jahresringe" width="200" height="200"><span>Jahresringe</span></a>
 <a href="../../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_vegetation_cover.jpg" alt="Vegetationsbedeckung" width="200" height="200"><span>Vegetationsbedeckung</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="Unkrautdeckung im Reisfeld in 4 Stufen" width="200" height="200"><span>Unkrautdeckung im Reisfeld in 4 Stufen</span></a>
 <a href="../../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_level.jpg" alt="Pegelstand" width="200" height="200"><span>Pegelstand</span></a>
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="Mars-Rover-Schlupf" width="200" height="200"><b>&#9654;</b><span>Mars-Rover-Schlupf</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="Zwei Höhen (echt)" width="200" height="200"><span>Zwei Höhen (echt)</span></a>

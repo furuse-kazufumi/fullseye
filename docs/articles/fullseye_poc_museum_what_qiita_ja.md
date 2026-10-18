@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **135 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -3682,7 +3682,7 @@ py -3.11 examples/poc_worm_core_persists.py
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 
-星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 22 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
+星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 23 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
 
 共通して出てきたのは「同じ物が、どこにあるかで違って読める」ことです。同じ雲が天頂と地平線で 1.45 倍、同じ厚さの雲が太陽からの角距離で検出されたりされなかったり、同じ反射が検出器によって「静かに低く読む」か「黙って止まる」か。
 
@@ -3954,7 +3954,7 @@ py -3.11 examples/poc_leaf_disease_area.py
 
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_leaf_disease_area)
 
-使用 op(ノートへ): [`access_channel`](https://furuse.work/ops/2d/color/access_channel.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`reg_close`](https://furuse.work/ops/2d/region/reg_close.html) · [`reg_erode`](https://furuse.work/ops/2d/region/reg_erode.html) · [`rgb_to_lab`](https://furuse.work/ops/imgmetrics/colorspace/rgb_to_lab.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sk_otsu`](https://furuse.work/ops/2d/segmentation/sk_otsu.html) · [`specular_free_transform`](https://furuse.work/ops/specular/dichromatic/specular_free_transform.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`trans_from_rgb`](https://furuse.work/ops/2d/color/trans_from_rgb.html)
+使用 op(ノートへ): [`access_channel`](https://furuse.work/ops/2d/color/access_channel.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`linear_to_srgb`](https://furuse.work/ops/gfx2d/colorspace/linear_to_srgb.html) · [`plant_color_index`](https://furuse.work/ops/segmentation/plant/plant_color_index.html) · [`reg_close`](https://furuse.work/ops/2d/region/reg_close.html) · [`reg_erode`](https://furuse.work/ops/2d/region/reg_erode.html) · [`rgb_to_lab`](https://furuse.work/ops/imgmetrics/colorspace/rgb_to_lab.html) · [`select_largest`](https://furuse.work/ops/2d/region/select_largest.html) · [`sk_otsu`](https://furuse.work/ops/2d/segmentation/sk_otsu.html) · [`specular_free_transform`](https://furuse.work/ops/specular/dichromatic/specular_free_transform.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`trans_from_rgb`](https://furuse.work/ops/2d/color/trans_from_rgb.html)
 
 ## No.2026.078 —— 太陽光発電所のドローン熱画像 —— 温度差を測っているつもりで、風と角度を測っている
 
@@ -4427,6 +4427,42 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation)
 
 使用 op(ノートへ): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html) · [`cavity_strain_transfer`](https://furuse.work/ops/optics/cavity/cavity_strain_transfer.html) · [`chirp_mass_from_track`](https://furuse.work/ops/oned/matched/chirp_mass_from_track.html) · [`chirp_newtonian`](https://furuse.work/ops/oned/matched/chirp_newtonian.html) · [`coincidence_delay`](https://furuse.work/ops/oned/matched/coincidence_delay.html) · [`fabry_perot_response`](https://furuse.work/ops/optics/cavity/fabry_perot_response.html) · [`matched_filter_snr`](https://furuse.work/ops/oned/matched/matched_filter_snr.html) · [`michelson_dc_readout`](https://furuse.work/ops/optics/cavity/michelson_dc_readout.html) · [`optimal_snr`](https://furuse.work/ops/oned/matched/optimal_snr.html) · [`pdh_error_signal`](https://furuse.work/ops/optics/cavity/pdh_error_signal.html) · [`psd_welch`](https://furuse.work/ops/oned/matched/psd_welch.html) · [`quantum_noise_budget`](https://furuse.work/ops/optics/cavity/quantum_noise_budget.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`whiten_by_psd`](https://furuse.work/ops/oned/matched/whiten_by_psd.html)
+
+## No.2026.245 —— 水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする
+
+[![水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
+
+*↑ **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする** ―― UAV の水田の RGB(WeedyRice-RGBMS、CC BY 4.0)。紫が注釈の雑草イネ、黄が 16 px 角の区画ごとの Fisher 判別(学習器なし、10 特徴の 1 次式)。段階の境は評価の前に 5 / 25 / 50 % と宣言した。test 148 枚で段階の一致 0.574(多数派だけ答えると 0.345)、κ 0.424、被度の相関 0.826、IoU 0.397(同じ割合でばらまくと 0.189)。R と G を入れ替えると κ は −0.023 に落ちる。撮影日を丸ごと外すと、季節の違う 1 日は日の中の相関が 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績だった。*
+
+[![作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy.png)
+
+*↑ 測定の図 ―― 作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。*
+
+[![葉の形と配置は同じ乱数で同じ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/02_synthetic_color_swap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/02_synthetic_color_swap.png)
+
+*↑ 葉の形と配置は同じ乱数で同じ。*
+
+[![データ付属の分割は同じ飛行の隣り合うコマを train と test に分ける(コマは重なる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/04_leave_one_date_out_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/04_leave_one_date_out.png)
+
+*↑ データ付属の分割は同じ飛行の隣り合うコマを train と test に分ける(コマは重なる)。*
+
+[![対角が一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/07_grade_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/07_grade_confusion.png)
+
+*↑ 対角が一致。*
+
+[![正の重みは雑草イネの側。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights.png)
+
+*↑ 正の重みは雑草イネの側。*
+
+```
+py -3.11 examples/poc_weed_rice_ratio.py
+```
+
+ソース: [examples/poc_weed_rice_ratio.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weed_rice_ratio)
+
+使用 op(ノートへ): [`cover_ratio_grade`](https://furuse.work/ops/segmentation/plant/cover_ratio_grade.html) · [`fisher_lda_fit`](https://furuse.work/ops/segmentation/classify/fisher_lda_fit.html) · [`fisher_lda_score`](https://furuse.work/ops/segmentation/classify/fisher_lda_score.html) · [`msa_attribute_agreement`](https://furuse.work/ops/spc/msa/msa_attribute_agreement.html) · [`plant_color_index`](https://furuse.work/ops/segmentation/plant/plant_color_index.html) · [`snic_superpixels`](https://furuse.work/ops/segmentation/graph/snic_superpixels.html) · [`superpixel_color_texture_features`](https://furuse.work/ops/segmentation/plant/superpixel_color_texture_features.html)
 
 
 

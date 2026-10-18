@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3316,
- "n_notes": 3322,
+ "n_ops": 3321,
+ "n_notes": 3327,
  "notes": {
   "vol_dilate": [
    {
@@ -31398,6 +31398,26 @@
     "path": "docs/ops/segmentation/classify/classify_image_class_lut.md"
    }
   ],
+  "fisher_lda_fit": [
+   {
+    "op": "fisher_lda_fit",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_fit.md"
+   }
+  ],
+  "fisher_lda_score": [
+   {
+    "op": "fisher_lda_score",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_score.md"
+   }
+  ],
   "learn_ndim_norm": [
    {
     "op": "learn_ndim_norm",
@@ -31656,6 +31676,36 @@
     "in": "images",
     "out": "labels2d",
     "path": "docs/ops/segmentation/grow/regiongrowing_n.md"
+   }
+  ],
+  "cover_ratio_grade": [
+   {
+    "op": "cover_ratio_grade",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/cover_ratio_grade.md"
+   }
+  ],
+  "plant_color_index": [
+   {
+    "op": "plant_color_index",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/plant_color_index.md"
+   }
+  ],
+  "superpixel_color_texture_features": [
+   {
+    "op": "superpixel_color_texture_features",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/superpixel_color_texture_features.md"
    }
   ],
   "seg_boundary_f": [

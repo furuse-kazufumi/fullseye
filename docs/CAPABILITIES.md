@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -30,6 +30,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -372,7 +373,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (8)
+## 見つける (9)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -389,6 +390,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
 動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md)
+
+水田や畑の RGB 画像(UAV・定点カメラ)から、作物の画素と雑草の画素を分け、雑草の程度を段階(少ない / 中程度 / 多い / 甚大)で答えます。深層学習は使わず、色の指標と肌理の特徴を領域ごとに出し、2 クラスの Fisher 線形判別(閉形式)で分けます。
+
+使う op: `plant_color_index`, `superpixel_color_texture_features`, `fisher_lda_fit`, `fisher_lda_score`, `cover_ratio_grade`
+
+推奨パイプライン: [`superpixel_color_texture_features`](ops/segmentation/plant/superpixel_color_texture_features.md) → [`fisher_lda_fit`](ops/segmentation/classify/fisher_lda_fit.md) → [`fisher_lda_score`](ops/segmentation/classify/fisher_lda_score.md) → [`cover_ratio_grade`](ops/segmentation/plant/cover_ratio_grade.md)
+
+代替: [`plant_color_index`](ops/segmentation/plant/plant_color_index.md), [`snic_superpixels`](ops/segmentation/graph/snic_superpixels.md), [`class_ndim_norm`](ops/segmentation/classify/class_ndim_norm.md)
+
+限界: 判別は 10 特徴の 1 次式で、色と肌理が作物と雑草でほとんど同じ(雑草イネ)だと位置の精度は IoU 0.4 程度。季節の違う飛行への汎化は弱い(撮影日を丸ごと外すと日の中の相関 0.14 の日がある)。暗い画素は色度が決まらず値を作らない。
+
+実寸校正: 画像は uint8 か [0, 1] の float。照明の色が変わる圃場では、白板か灰色の板で白を合わせてから色指標を取る(色度座標の指標は一様な明るさの倍率には不変だが、色温度の変化には不変でない)。
+
+動く例: `poc_weed_rice_ratio`
 
 ### [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md)
 

@@ -4,7 +4,7 @@ dim: segmentation
 category: graph
 in: image2d
 out: table
-examples: [poc_graph_hierarchy_segmentation]
+examples: [poc_graph_hierarchy_segmentation, poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -42,10 +42,11 @@ SNIC(Achanta–Süsstrunk 2017 の Algorithm 1): 格子の種から優先度つ�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_graph_hierarchy_segmentation](../../../../examples/poc_graph_hierarchy_segmentation.py) — `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
+- [poc_weed_rice_ratio](../../../../examples/poc_weed_rice_ratio.py) — `py -3.11 examples/poc_weed_rice_ratio.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`graph`)
 

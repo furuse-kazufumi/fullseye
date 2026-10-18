@@ -92,13 +92,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-71 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+72 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
 **見つける**
 
 - 領域を切り出して、選んで、数える: [説明](../capabilities/blob-and-region.md) · 例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし): [説明](../capabilities/crop-weed-cover-grade.md) · 例 [poc_weed_rice_ratio](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - 画像の中の文字を、正しい文字列に合わせて直す: [説明](../capabilities/fix-text-in-images.md) · 例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - OCR の前処理(傾き補正・局所 2 値化・行の切り出し): [説明](../capabilities/ocr-preprocessing.md) · 例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査): [説明](../capabilities/pl-carrier-diffusion-visibility.md) · 例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
@@ -197,7 +198,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 245 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -459,7 +460,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>天文・環境</b> (22)</summary>
+<details class="vall"><summary><b>天文・環境</b> (23)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="重力波望遠鏡の擬似シミュレーション" width="200" height="200"><b>&#9654;</b><span>重力波望遠鏡の擬似シミュレーション</span></a>
 <a href="../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天カメラの雲量" width="200" height="200"><span>全天カメラの雲量</span></a>
@@ -479,6 +480,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_star_astrometry.jpg" alt="星の位置精度" width="200" height="200"><span>星の位置精度</span></a>
 <a href="../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tree_ring_dendro.jpg" alt="年輪の幅" width="200" height="200"><span>年輪の幅</span></a>
 <a href="../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_vegetation_cover.jpg" alt="畑の緑の被覆率" width="200" height="200"><span>畑の緑の被覆率</span></a>
+<a href="../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_weed_rice_ratio.jpg" alt="水田の雑草の被度を 4 段階で" width="200" height="200"><span>水田の雑草の被度を 4 段階で</span></a>
 <a href="../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_water_level.jpg" alt="河川の水位" width="200" height="200"><span>河川の水位</span></a>
 <a href="../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_rover_slip_risk_path.jpg" alt="火星の車輪滑り" width="200" height="200"><b>&#9654;</b><span>火星の車輪滑り</span></a>
 <a href="../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="2 つの高さ(実データ)" width="200" height="200"><span>2 つの高さ(実データ)</span></a>

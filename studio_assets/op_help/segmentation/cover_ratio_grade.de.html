@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cover_ratio_grade — SEGMENTATION <code style="color:#22d3bf">plant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cropweed; cropweed.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;cover_ratio_grade&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Einen Deckungsgrad (Flächenanteil 0..1) an <b>vorab festgelegten Grenzen</b> <code style="color:#22d3bf">edges</code> in Stufen 0..len(edges) einteilen.</p>
+<p>Stufe k bedeutet edges[k−1] &lt;= f &lt; edges[k] (ein Wert genau auf einer Grenze kommt in die obere Stufe). Die Standardgrenzen (0.05, 0.25, 0.50) stammen aus den Deckungsklassen von Vegetationsaufnahmen (Braun-Blanquets 5 % / 25 % / 50 %) und ergeben 4 Stufen (0 gering / 1 mäßig / 2 hoch / 3 stark). Sie sind nicht an die Verteilung einer Annotation angepasst. <code style="color:#22d3bf">fraction</code> ist ein Skalar oder ein 1-D-Array. Rückgabe: <code style="color:#22d3bf">grade</code> (int-Array), <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">margin</code> (Abstand zur nächsten Grenze; kleiner = fragilere Einstufung), <code style="color:#22d3bf">n_grades</code>, <code style="color:#22d3bf">counts</code> (Anzahl je Stufe). Leere Eingabe, nicht endliche Werte, Werte außerhalb von [0, 1] und Grenzen, die in (0, 1) nicht streng steigen, werden mit <code style="color:#22d3bf">ValueError</code> abgelehnt.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_score">fisher_lda_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plant</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:plant_color_index">plant_color_index</a> · <a style="color:#22d3bf" href="opsegmentation:superpixel_color_texture_features">superpixel_color_texture_features</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

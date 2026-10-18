@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 71 capabilities**
+**Currently 72 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -31,6 +31,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
 | [Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Illumination cone versus imaging NA on specular parts (cap intersection, slope bands, dents, scratches and satin)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
@@ -321,7 +322,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (8)
+## Detect (9)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -334,6 +335,18 @@ Pipeline: [`auto_threshold`](ops/2d/segmentation/auto_threshold.md) → [`blob_l
 Alternatives: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
 
 Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md)
+
+Five ops for field RGB: six visible-band plant colour indices (ExG, ExR, ExGR, CIVE, NGRDI, VEG; dark pixels are left undefined rather than set to zero), ten colour and texture features per region of a label image (including structure-tensor orientation coherence, which separates aligned crop leaves from isotropic weed patches), a closed-form two-class Fisher discriminant (fit and score), and a grader that splits a cover fraction at edges declared before evaluation (default 5 / 25 / 50 %, the Braun-Blanquet cover classes). The PoC scores them on a public UAV dataset of weedy rice with pixel masks (CC BY 4.0): grade agreement kappa 0.424 on the held-out test split (permutation p = 0.0005), cover correlation 0.826, and an honest leave-one-date-out check where one late-season flight drops to r = 0.14.
+
+Operators: `plant_color_index`, `superpixel_color_texture_features`, `fisher_lda_fit`, `fisher_lda_score`, `cover_ratio_grade`
+
+Pipeline: [`superpixel_color_texture_features`](ops/segmentation/plant/superpixel_color_texture_features.md) → [`fisher_lda_fit`](ops/segmentation/classify/fisher_lda_fit.md) → [`fisher_lda_score`](ops/segmentation/classify/fisher_lda_score.md) → [`cover_ratio_grade`](ops/segmentation/plant/cover_ratio_grade.md)
+
+Alternatives: [`plant_color_index`](ops/segmentation/plant/plant_color_index.md), [`snic_superpixels`](ops/segmentation/graph/snic_superpixels.md), [`class_ndim_norm`](ops/segmentation/classify/class_ndim_norm.md)
+
+Runnable: `poc_weed_rice_ratio`
 
 ### [Fix the text inside an image against the string it should read](capabilities/fix-text-in-images.md)
 

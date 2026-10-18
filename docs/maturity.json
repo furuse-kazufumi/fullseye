@@ -272,6 +272,27 @@
    ]
   },
   {
+   "id": "crop-weed-cover-grade",
+   "title": "圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)",
+   "title_en": "Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)",
+   "category": "見つける",
+   "note": "docs/capabilities/crop-weed-cover-grade.md",
+   "status": "validated-public-real-data",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_weed_rice_ratio",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "emva1288-camera-datasheets",
    "title": "カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)",
    "title_en": "Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)",
@@ -1808,8 +1829,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 387,
-  "run_by_the_poc_gate": 244,
+  "examples2d_total": 388,
+  "run_by_the_poc_gate": 245,
   "run_by_the_example_gate": 143,
   "not_run_by_any_gate": 0,
   "gates": [

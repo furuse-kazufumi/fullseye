@@ -5274,6 +5274,22 @@
    }
   },
   {
+   "id": "poc_weed_rice_ratio",
+   "group": "wing_astroenv",
+   "media": "05_real_examples.png",
+   "motion": false,
+   "thumb_src": "05_real_examples.png",
+   "label": {
+    "ja": "水田の雑草の被度を 4 段階で",
+    "en": "Grading weed cover in rice paddies",
+    "zh": "把稻田杂草覆盖度分为 4 级",
+    "tw": "把稻田雜草覆蓋度分為 4 級",
+    "ko": "논의 잡초 피도를 4단계로",
+    "de": "Unkrautdeckung im Reisfeld in 4 Stufen",
+    "hi": "धान के खेत में खरपतवार cover के 4 grade"
+   }
+  },
+  {
    "id": "poc_water_level",
    "group": "wing_astroenv",
    "media": "01_scene.png",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "crop-weed-cover-grade": {
+    "zh": "从田间 RGB 用颜色与纹理区分作物和杂草,并按事先声明的边界给杂草覆盖度分级(不用学习器)",
+    "tw": "從田間 RGB 以顏色與紋理區分作物和雜草,並依事先宣告的邊界為雜草覆蓋度分級(不用學習器)",
+    "ko": "포장의 RGB에서 색과 결로 작물과 잡초를 나누고, 잡초 피도를 미리 선언한 경계로 단계화(학습기 없음)",
+    "de": "Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz)",
+    "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)"
    }
   }
  }

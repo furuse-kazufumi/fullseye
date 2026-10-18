@@ -46,7 +46,7 @@ Chan–Vese 2001 のエネルギー F = μ Length + ν Area(inside) + λ1 ∫_in
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`contour`)
 

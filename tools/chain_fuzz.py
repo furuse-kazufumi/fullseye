@@ -6483,6 +6483,73 @@ def _b_emva_general_relative_qe(pool, rng):
     return (mp, mu, 64.0, 64.0 + 0.1125 * mps * np.array([1.0, 0.7]), mps, 0), {}
 
 
+# --- 作物と雑草(cropweed、2026-10-18): 植物の色指標・超画素の特徴・Fisher 判別・被度の段階 --------- #
+# 種は共有の乱数列を引かない(rng 引数は使わず、固定の種の生成器を各自で持つ)。汎用の (2, 2, 3) の
+# rgbimage は全画素が黒で、色度が 1 画素も決まらず fail-closed で拒否されるので、緑の葉・土・水と、
+# 明るさが dark_floor の半分と倍の間にある暗い画素を混ぜた小さな圃場を組む(ノブ dark_floor が効く)。
+def _cropweed_field(size=24):
+    g = np.random.default_rng(20261018)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    leaf = 0.5 + 0.5 * np.sin(0.9 * xx + 0.3 * yy)                  # 縞 = 葉の向き
+    rgb = np.empty((size, size, 3))
+    rgb[..., 0] = 0.20 + 0.10 * leaf
+    rgb[..., 1] = 0.35 + 0.30 * leaf
+    rgb[..., 2] = 0.15 + 0.05 * leaf
+    soil = (xx - size * 0.7) ** 2 + (yy - size * 0.3) ** 2 < (size * 0.18) ** 2
+    rgb[soil] = (0.45, 0.38, 0.30)
+    rgb += g.normal(0.0, 0.01, rgb.shape)
+    rgb[size - 3:, :4] = (0.012, 0.018, 0.012)                        # 明るさ 0.014 < 0.02
+    rgb[size - 3:, 4:8] = (0.025, 0.035, 0.024)                       # 明るさ 0.028: 0.02 と 0.04 の間
+    return np.clip(rgb, 0.0, 1.0)
+
+
+def _b_cropweed_plant_color_index(pool, rng):
+    return (_cropweed_field(),), {"index": "exg", "dark_floor": 0.02}
+
+
+def _b_cropweed_superpixel_features(pool, rng):
+    size = 24
+    rgb = _cropweed_field(size)
+    yy, xx = np.mgrid[0:size, 0:size]
+    lab = (yy // 6) * 4 + (xx // 6) + 1
+    lab[0, 0:5] = 17                                                  # 5 画素の小領域: min_size 4 は残し 8 は落とす
+    return (rgb, lab.astype(np.int64)), {"dark_floor": 0.02, "texture_sigma": 1.0, "min_size": 4}
+
+
+def _cropweed_two_class():
+    g = np.random.default_rng(20261019)
+    X0 = g.normal(0.0, 1.0, (20, 3))
+    X1 = g.normal(0.0, 1.0, (20, 3)) + np.array([1.5, -0.5, 0.8])
+    X = np.vstack([X0, X1])
+    y = np.r_[np.zeros(20), np.ones(20)]
+    return X, y
+
+
+def _b_cropweed_fisher_lda_fit(pool, rng):
+    X, y = _cropweed_two_class()
+    return (X, y), {"ridge": 1e-6}
+
+
+def _b_cropweed_fisher_lda_score(pool, rng):
+    import cropweed
+    X, y = _cropweed_two_class()
+    return (cropweed.fisher_lda_fit(X, y), X), {}
+
+
+def _b_cropweed_cover_ratio_grade(pool, rng):
+    return (np.linspace(0.0, 1.0, 21),), {}
+
+
+_CROPWEED_ENTRIES = {
+    "plant_color_index": _b_cropweed_plant_color_index,
+    "superpixel_color_texture_features": _b_cropweed_superpixel_features,
+    "fisher_lda_fit": _b_cropweed_fisher_lda_fit,
+    "fisher_lda_score": _b_cropweed_fisher_lda_score,
+    "cover_ratio_grade": _b_cropweed_cover_ratio_grade,
+}
+# --- /作物と雑草 ------------------------------------------------------------------------- #
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -7088,6 +7155,7 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    **_CROPWEED_ENTRIES,
 }
 
 
@@ -7797,6 +7865,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "slope_slip_curve",    # 登れない角は slip が NaN で feasible = False(docstring どおり、立ち往生)
                          "cvar_cost_map",       # 通れない辺(悲観的な滑り ≥ s_max・データの角の範囲の外・地図の外)は inf(docstring どおり)
                          "risk_aware_path",     # 届かなければ cost が inf(docstring どおり)
+                         "plant_color_index",   # 暗い画素(明るさ < dark_floor)は色度が決まらず index が NaN で valid = False(docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

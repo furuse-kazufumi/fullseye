@@ -29906,6 +29906,51 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "segmentation/plant_color_index": {
+   "fp": "74837abb9485",
+   "en": "Per-pixel plant colour indices from the three visible bands (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "zh": "逐像素计算可见光三波段的植物颜色指数（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "tw": "逐像素計算可見光三波段的植物顏色指數（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "ko": "가시광 3밴드의 식물 색 지수(ExG·ExR·ExGR·CIVE·NGRDI·VEG)를 화소마다 계산한다.",
+   "de": "Pflanzen-Farbindizes aus den drei sichtbaren Kanälen pro Pixel (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "hi": "तीन दृश्य band से हर pixel के plant colour index (ExG, ExR, ExGR, CIVE, NGRDI, VEG) निकालता है।"
+  },
+  "segmentation/superpixel_color_texture_features": {
+   "fp": "a866957294c1",
+   "en": "Ten colour (plant indices, chromaticity) and texture (gradient, orientation coherence) features for every region of a label image.",
+   "zh": "为标签图像的每个区域输出 10 个颜色（植物颜色指数、色度）与纹理（梯度、方向一致性）特征。",
+   "tw": "為標籤影像的每個區域輸出 10 個顏色（植物顏色指數、色度）與紋理（梯度、方向一致性）特徵。",
+   "ko": "라벨 영상의 영역마다 색(식물 색 지수·색도)과 결(기울기·방향 정렬도) 특징 10개를 낸다.",
+   "de": "Zehn Farb- (Pflanzenindizes, Chromatizität) und Texturmerkmale (Gradient, Orientierungskohärenz) für jede Region eines Labelbildes.",
+   "hi": "label image के हर region के लिए 10 colour (plant index, chromaticity) और texture (gradient, orientation coherence) feature देता है।"
+  },
+  "segmentation/fisher_lda_fit": {
+   "fp": "f986a704b2eb",
+   "en": "Fit a two-class Fisher linear discriminant (closed form, no iteration).",
+   "zh": "学习两类 Fisher 线性判别（闭式解，无迭代）。",
+   "tw": "學習兩類 Fisher 線性判別（閉式解，無迭代）。",
+   "ko": "2클래스 Fisher 선형 판별을 학습한다(닫힌 형태, 반복 없음).",
+   "de": "Zweiklassige lineare Fisher-Diskriminante anpassen (geschlossene Form, ohne Iteration).",
+   "hi": "दो class का Fisher linear discriminant सीखता है (closed form, कोई iteration नहीं)।"
+  },
+  "segmentation/fisher_lda_score": {
+   "fp": "7b2b0be5a7a9",
+   "en": "Score features with a discriminant fitted by ``fisher_lda_fit`` (score > 0 means class 1).",
+   "zh": "用 ``fisher_lda_fit`` 学到的判别对特征打分（score > 0 为类 1）。",
+   "tw": "以 ``fisher_lda_fit`` 學到的判別對特徵打分（score > 0 為類 1）。",
+   "ko": "``fisher_lda_fit``로 학습한 판별로 특징을 채점한다(score > 0이면 클래스 1).",
+   "de": "Merkmale mit einer durch ``fisher_lda_fit`` angepassten Diskriminante bewerten (score > 0 bedeutet Klasse 1).",
+   "hi": "``fisher_lda_fit`` से सीखे discriminant से feature को score देता है (score > 0 का अर्थ class 1)।"
+  },
+  "segmentation/cover_ratio_grade": {
+   "fp": "eb6c33721835",
+   "en": "Split a cover fraction (area share 0..1) into grades 0..len(edges) at **declared edges** ``edges``.",
+   "zh": "用**事先声明的边界** ``edges`` 把覆盖度（面积比例 0..1）分为 0..len(edges) 级。",
+   "tw": "以**事先宣告的邊界** ``edges`` 把覆蓋度（面積比例 0..1）分為 0..len(edges) 級。",
+   "ko": "피도(면적 비율 0..1)를 **미리 선언한 경계** ``edges``로 0..len(edges) 단계로 나눈다.",
+   "de": "Einen Deckungsgrad (Flächenanteil 0..1) an **vorab festgelegten Grenzen** ``edges`` in Stufen 0..len(edges) einteilen.",
+   "hi": "cover fraction (area का हिस्सा 0..1) को **पहले घोषित सीमाओं** ``edges`` पर 0..len(edges) grade में बाँटता है।"
   }
  }
 }

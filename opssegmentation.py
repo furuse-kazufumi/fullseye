@@ -68,6 +68,11 @@ facade(統一 registry)は HALCON 名で引く層で、docs/ops のノート・�
   届かず台帳に無かった(公開経路の門で ``_INTERNAL`` に理由つきで置いていたもの)。入口は ``voxel``
   (D,H,W の 2 値体積)、出口は ``labels``(3-D の int ラベル、``ops3d`` の ``vol_watershed`` と同じ型)。
   HALCON の ``watershed`` 章とは別カテゴリ(``watersheds_marker`` は 2-D の HALCON 9 本の 1 本)。
+* ``plant`` と ``classify`` の 2 本(2026-10-18、``cropweed``): 圃場の RGB から作物と雑草を分ける汎用 op。
+  可視 3 バンドの植物の色指標 6 つ(``plant_color_index``)、ラベル画像の領域ごとの色と肌理の特徴
+  (``superpixel_color_texture_features``)、被度を宣言済みの境で段階に分ける ``cover_ratio_grade``、
+  2 クラスの Fisher 線形判別 ``fisher_lda_fit`` / ``fisher_lda_score``(``classify`` に置く。作物に限らない)。
+  新語なし(rgbimage / labels2d / matrix / signal / table)。例 ``examples/poc_weed_rice_ratio.py``。
 """
 import segmentation
 import segeval
@@ -75,9 +80,11 @@ import segworld
 import segcontour
 import seggraph
 import watershed3d
+import cropweed
 
 _MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
-        "segcontour": segcontour, "seggraph": seggraph, "watershed3d": watershed3d}
+        "segcontour": segcontour, "seggraph": seggraph, "watershed3d": watershed3d,
+        "cropweed": cropweed}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -92,6 +99,10 @@ _CATALOG = {
         ("learn_ndim_norm", "segmentation", ["matrix"], "table"),
         ("class_ndim_norm", "segmentation", ["images", "table"], "mask"),
         ("classify_image_class_lut", "segmentation", ["image2d", "signal"], "labels2d"),
+        # 2 クラスの Fisher 線形判別(cropweed、2026-10-18)。閉形式・学習と採点を分ける。
+        #   X は既存の matrix、y は 0/1 の 1-D = 既存の signal、学習済みの判別は dict → table。
+        ("fisher_lda_fit", "cropweed", ["matrix", "signal"], "table"),
+        ("fisher_lda_score", "cropweed", ["table", "matrix"], "table"),
     ],
     # 育てる —— 種から / 全画素から、グレー値の近さで領域を広げる
     "grow": [
@@ -166,6 +177,13 @@ _CATALOG = {
         ("threshold_isodata", "seggraph", ["image2d"], "table"),
         ("threshold_kittler", "seggraph", ["image2d"], "table"),
         ("threshold_kapur", "seggraph", ["image2d"], "table"),
+    ],
+    # 作物と雑草 —— 植物の色指標・超画素ごとの色と肌理・被度の段階(cropweed、2026-10-18)。
+    #   入口は既存の rgbimage(と labels2d)、被度は 1-D の signal。返りは全部 dict → table。
+    "plant": [
+        ("plant_color_index", "cropweed", ["rgbimage"], "table"),
+        ("superpixel_color_texture_features", "cropweed", ["rgbimage", "labels2d"], "table"),
+        ("cover_ratio_grade", "cropweed", ["signal"], "table"),
     ],
     # 3-D で割る —— 接触した物体を距離変換シードの分水嶺で分ける(watershed3d、2026-10-02)
     "watershed3d": [

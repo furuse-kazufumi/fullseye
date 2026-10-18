@@ -60,7 +60,7 @@ Dᵀ = その随伴。連続の極限で −δ_ε κ μ の項になり論文の
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`contour`)
 

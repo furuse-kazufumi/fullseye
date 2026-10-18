@@ -46,7 +46,7 @@ I(x, y) = i0 + g_x x/(W−1) + g_y y/(H−1)(i0 + g_x + g_y ≤ 1)、画像 = I 
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`world`)
 
