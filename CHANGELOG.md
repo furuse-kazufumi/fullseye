@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — デフレクトメトリの PoC に実データの章(CC0、ハンマーの力の記録で採点)
+- `poc_phase_measuring_deflectometry` の 4 節: 鏡面の鋼板をハンマーで叩いて格子の鏡像を 75 kHz で撮った公開データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)から、格子の位相 → 時間方向につないだ傾き → 仮想場の方法で板の力を出し、ハンマーの先のロードセル(外部の真値)と比べる。峰 366.4 N 対 347.1 N(同じ σ で均したハンマー、+5.6 %、+27 µs)、相関 0.990、力積 −8.8 %。データの著者の公開コード recolo(第 2 の実装)の峰 363.6 N と +0.8 %。窓はハンマーを見ずに荷重の無い対照の窓 5 つの見かけの力(床 9.5 N)で選んだ。格子の位相は窓つき DFT と標本化モアレの 2 実装で、同じ分解能で RMS 0.0096 rad。変調度の低い窓・積分できない傾きの場(軸・符号の取り違え)・2π を取り違える間引きは拒否する。合否の幅は結果を見たあとで決めた(盲検でない)と PoC に明記。
+- `data/pmd_real/`(3 枚の切り出しと全解析の記録、README に出典と改変)と `tools/gen_pmd_real.py`。原本(110 MB)は repo の外で、`FULLSEYE_PMD_HAMMER_DATA` があるときだけ解析し直して記録との差を門で見る。
+
 ### Fixed — 存在しない短い名前の当て推量に本名を案内する
 - `fullseye.Engine` / `Graph` / `op_info` などは(別名は足さず)AttributeError の文面で `FullseyeEngine` / `FullseyeGraph` / `op_assist`・`op_find`・`find_op` を案内する。`hasattr` は False のまま、表に無い名前は標準の AttributeError。
 
