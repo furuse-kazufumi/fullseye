@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 936 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 938 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -8,6 +8,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `gaussian` | smoothing | - |
 | `mean_box` | smoothing | - |
 | `bilateral` | smoothing | Tomasi & Manduchi (1998). Bilateral filtering for gray and color images. ICCV. |
+| `kuwahara` | smoothing | - |
 | `unsharp` | smoothing | - |
 | `median` | rank | Tukey, J. (1977). Exploratory Data Analysis (running median smoothing). |
 | `min_filter` | rank | - |
@@ -45,6 +46,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `local_bimodality` | texture | - |
 | `local_std` | texture | - |
 | `scale_select_std` | texture | - |
+| `xdog` | edges | Marr & Hildreth (1980). Theory of edge detection. Proc. R. Soc. Lond. B. |
 | `bootstrap_std_error` | texture | - |
 | `persistence_map` | morphology | - |
 | `structure_tensor_orientation` | texture | - |
@@ -941,7 +943,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 173/936 operators cite a seminal paper.**
+**Provenance coverage: 174/938 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

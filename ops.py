@@ -433,6 +433,121 @@ def _bilateral(v, a, b):
     return out / np.maximum(wsum, 1e-8)
 
 
+def _box_sums_valid(x, k):
+    """``k x k`` の窓の総和(窓が全部画像の中に入る位置だけ)。軸ごとの累積和なので O(N)。
+    2 次元の積分画像ではなく**軸ごと**に累積するのは、累積値が画素数ではなく行(列)の
+    長さまでしか大きくならず、桁落ちが 2 桁小さいため。"""
+    c = np.cumsum(x, axis=0)
+    c = np.concatenate([np.zeros((1, x.shape[1])), c], axis=0)
+    s = c[k:] - c[:-k]
+    c = np.cumsum(s, axis=1)
+    c = np.concatenate([np.zeros((s.shape[0], 1)), c], axis=1)
+    return c[:, k:] - c[:, :-k]
+
+
+#: Kuwahara の同点判定に使う分散の丸め桁。丸めた値で比べ、同点は宣言順(左上・右上・
+#: 左下・右下)で決める。丸めないと、足し算の順序の違いだけ(1e-17)で勝つ象限が
+#: 環境ごとに入れ替わる。
+_KUWAHARA_TIE_DIGITS = 10
+
+
+def _kuwahara_radius(a):
+    """``a`` を窓の半径 1..10 へ(線形、半分は切り上げ)。"""
+    return 1 + int(np.floor(float(np.clip(a, 0.0, 1.0)) * 9 + 0.5))
+
+
+def _kuwahara(v, a, b):
+    """Kuwahara フィルタ(1976)。4 つの重なる窓のうち分散が最小の窓の平均を出す、縁を保つ平滑化。
+
+油絵調の見た目にも使われる。
+
+各画素について、その画素を角に含む ``(r+1) x (r+1)`` の窓を 4 つ(左上・右上・左下・
+右下。隣り合う窓は中心の行と列を共有して重なる)とり、**分散がいちばん小さい窓の
+平均**を出力する。縁をまたぐ窓は分散が大きいので選ばれず、画素は縁の「自分と同じ側」
+の窓の平均になる。だから平坦部は均され、段差は鈍らない(``gaussian`` は段差をなだらかに
+してしまう)。
+
+``a`` が窓の半径 ``r = 1 + floor(9a + 0.5)``(``1〜10``、窓の一辺は ``r+1``)を振る。大きい
+ほど均す範囲が広がり、細い構造は消える。``b`` は未使用。
+
+計算量は **O(N)**: 窓の和と二乗和を軸ごとの累積和で求めるので、半径に依存しない
+(分散は ``E[x^2] - E[x]^2``、全体の平均を引いてから計算して桁落ちを抑える)。
+分散の同点は、小数 10 桁に丸めた値で比べ、宣言順(左上・右上・左下・右下)で決める。
+
+**端の扱い**: 端の画素を複製する(最近傍)。端の画素の窓は、画像の外を端の値で埋めて
+作る。
+
+**適用条件**: (1) 4 象限の方向は軸に揃っているので、斜めの縁では選ばれた窓が縁に
+沿わず、角の丸まりや「ブロック状」の模様が出る(一般化 Kuwahara はこれを直す)。
+(2) 半径が大きいと細い線は消える。(3) 出力は入力の局所平均だけから作るので、値域は
+入力の外に出ない。"""
+    x = np.asarray(v, np.float64)
+    r = _kuwahara_radius(a)
+    H, W = x.shape[0], x.shape[1]
+    mu = float(np.mean(x))
+    xp = np.pad(x - mu, r, mode="edge")
+    k = r + 1
+    n = float(k * k)
+    m = _box_sums_valid(xp, k) / n
+    q = _box_sums_valid(xp * xp, k) / n
+    var = np.maximum(q - m * m, 0.0)
+    # 窓の左上の位置(パディング後の座標): 画素 (y,x) は (y+r, x+r)
+    sl = ((slice(0, H), slice(0, W)), (slice(0, H), slice(r, r + W)),
+          (slice(r, r + H), slice(0, W)), (slice(r, r + H), slice(r, r + W)))
+    means = np.stack([m[s] for s in sl])
+    vars_ = np.round(np.stack([var[s] for s in sl]), _KUWAHARA_TIE_DIGITS)
+    pick = np.argmin(vars_, axis=0)
+    out = np.take_along_axis(means, pick[None], axis=0)[0] + mu
+    return np.clip(out, 0.0, 1.0)
+
+
+#: XDoG の既定値(Winnemoller・Kyprianidis・Olsen 2012 の記号)。``k`` は 2 つ目の
+#: ガウシアンの幅の比、``tau`` は引く量の重み、``phi`` は閾値の鋭さ。
+_XDOG_K, _XDOG_TAU, _XDOG_PHI = 1.6, 0.98, 50.0
+
+
+def _xdog_response(x, sigma, k, tau):
+    """``D = G_sigma * x - tau * G_(k sigma) * x``(端は複製)。"""
+    g1 = ndimage.gaussian_filter(x, sigma, mode="nearest")
+    g2 = ndimage.gaussian_filter(x, k * sigma, mode="nearest")
+    return g1 - tau * g2
+
+
+def _xdog_threshold(d, eps, phi):
+    """ソフト閾値 ``T(u) = 1 (u >= eps)、1 + tanh(phi (u - eps)) (u < eps)``。"""
+    t = np.ones_like(d)
+    low = d < eps
+    t[low] = 1.0 + np.tanh(phi * (d[low] - eps))
+    return t
+
+
+def _xdog(v, a, b):
+    """XDoG(拡張ガウス差分、Winnemoller・Kyprianidis・Olsen 2012)による線画・墨絵調のスタイライズ。
+
+``D = G_sigma - tau * G_(k sigma)`` を作り(``G`` はガウシアンのぼかし)、ソフト閾値
+``T(u) = 1 (u >= eps)、1 + tanh(phi (u - eps)) (u < eps)`` を通す。出力は ``0〜1`` で、
+紙の白(1)の上に、縁の暗い側だけが黒(0)に沈む。``tau = 1`` なら ``D`` は通常の DoG、
+``phi`` を無限大にすると閾値は ``D >= eps`` の二値(DoG の符号)になる。
+
+``a`` がぼかしの幅 ``sigma = 0.5 + 2.5a``(``0.5〜3.0``)を、``b`` が閾値の位置
+``eps = 0.1b``(``0〜0.1``)を振る。``sigma`` は線の太さと拾う縁の大きさ、``eps`` を
+上げると平坦部も黒く沈み(``tau < 1`` のとき明るい平坦部の ``D`` は ``(1 - tau) x 明るさ``
+で、最大 0.02)、墨を塗ったような絵になる。残りは固定: ``k = 1.6``、``tau = 0.98``、
+``phi = 50``(``D`` の振れは縁で ±0.1 前後なので、遷移幅は約 0.02)。
+
+**端の扱い**: 端の画素を複製する(最近傍)。
+
+**適用条件**: (1) 出力は入力の明るさの階調を捨てる(ほぼ二値)。計測には使わず見せ方
+のための op。(2) ``tau`` を 1 にしない既定では、真っ白な平坦部は ``D = 0.02`` で
+``eps`` を 0.02 超に上げると黒くなる。(3) 雑音の多い画像は ``sigma`` を上げないと
+雑音が線になる。"""
+    x = np.asarray(v, np.float64)
+    sigma = 0.5 + 2.5 * float(np.clip(a, 0.0, 1.0))
+    eps = 0.1 * float(np.clip(b, 0.0, 1.0))
+    d = _xdog_response(x, sigma, _XDOG_K, _XDOG_TAU)
+    return np.clip(_xdog_threshold(d, eps, _XDOG_PHI), 0.0, 1.0)
+
+
 def _local_bimodality(v, a, b):
     """**局所の二峰性**(bimodality coefficient)。閾値を 1 つも選ばずに「ここは 2 つの
 値に分かれているか」だけを 0〜1 の地図で返す。
@@ -2133,6 +2248,7 @@ _DEFS = [
     ("gaussian", "smoothing", "gauss_filter", IMAGE, IMAGE, _gaussian),
     ("mean_box", "smoothing", "mean_image", IMAGE, IMAGE, _mean_box),
     ("bilateral", "smoothing", "bilateral_filter", IMAGE, IMAGE, _bilateral),
+    ("kuwahara", "smoothing", None, IMAGE, IMAGE, _kuwahara),
     ("unsharp", "smoothing", "emphasize", IMAGE, IMAGE, _unsharp),
     ("median", "rank", "median_image", IMAGE, IMAGE, _median),
     ("min_filter", "rank", "gray_erosion_rect", IMAGE, IMAGE, _min_filter),
@@ -2171,6 +2287,7 @@ _DEFS = [
     ("local_bimodality", "texture", None, IMAGE, IMAGE, _local_bimodality),
     ("local_std", "texture", None, IMAGE, IMAGE, _local_std),
     ("scale_select_std", "texture", None, IMAGE, IMAGE, _scale_select_std),
+    ("xdog", "edges", None, IMAGE, IMAGE, _xdog),
     ("bootstrap_std_error", "texture", None, IMAGE, IMAGE, _bootstrap_std_error),
     ("persistence_map", "morphology", None, IMAGE, IMAGE, _persistence_map),
     ("structure_tensor_orientation", "texture", None, IMAGE, IMAGE, _st_orientation),

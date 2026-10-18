@@ -1,10 +1,10 @@
 {
- "n_ops": 3316,
+ "n_ops": 3318,
  "tiers": {
   "color": 12,
   "ledger": 2363,
   "nary": 17,
-  "registry": 924
+  "registry": 926
  },
  "sorts": [
   "angle",
@@ -35534,6 +35534,16 @@
    ]
   },
   {
+   "name": "kuwahara",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "laplace",
    "halcon": "laplace",
    "in_sort": "image",
@@ -40579,6 +40589,16 @@
     "cv2",
     "skimage"
    ]
+  },
+  {
+   "name": "xdog",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
   },
   {
    "name": "xg_area_center",

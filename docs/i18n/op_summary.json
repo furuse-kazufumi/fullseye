@@ -29906,6 +29906,24 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "2d/kuwahara": {
+   "fp": "f83a1917f0bd",
+   "en": "Kuwahara filter (1976): edge-preserving smoothing that outputs the mean of whichever of four overlapping windows has the smallest variance.",
+   "zh": "Kuwahara 滤波（1976）。保边平滑：取四个相互重叠的窗口中方差最小者的均值作为输出。",
+   "tw": "Kuwahara 濾波（1976）。保邊平滑：取四個相互重疊的視窗中變異數最小者的平均值作為輸出。",
+   "ko": "Kuwahara 필터(1976). 서로 겹치는 네 개의 창 중 분산이 가장 작은 창의 평균을 출력하는 경계 보존 평활화.",
+   "de": "Kuwahara-Filter (1976): kantenerhaltende Glättung, die den Mittelwert desjenigen von vier überlappenden Fenstern mit der kleinsten Varianz ausgibt.",
+   "hi": "Kuwahara filter (1976)। चार overlapping windows में से जिसका variance सबसे कम हो उसका mean लौटाने वाला, किनारों को सुरक्षित रखने वाला smoothing।"
+  },
+  "2d/xdog": {
+   "fp": "1aca9168c860",
+   "en": "XDoG (extended difference of Gaussians; Winnemoller, Kyprianidis and Olsen 2012): line-art / ink-drawing stylisation.",
+   "zh": "XDoG（扩展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：线稿、水墨风格的风格化。",
+   "tw": "XDoG（擴展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：線稿、水墨風格的風格化。",
+   "ko": "XDoG(확장 가우시안 차분, Winnemoller·Kyprianidis·Olsen 2012)에 의한 선화·수묵풍 스타일라이즈.",
+   "de": "XDoG (erweiterte Gauß-Differenz, Winnemoller, Kyprianidis und Olsen 2012): Stilisierung zu Strichzeichnung bzw. Tuschezeichnung.",
+   "hi": "XDoG (extended difference of Gaussians, Winnemoller, Kyprianidis, Olsen 2012) से line-art / ink-drawing जैसी stylisation।"
   }
  }
 }

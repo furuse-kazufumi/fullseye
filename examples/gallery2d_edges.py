@@ -101,7 +101,7 @@ OPS = [
     "xpil_find_edges", "xsp_morph_laplace", "xsp_gauss_grad_mag", "xsk2_corner_kr",
     "xsk2_inv_gauss_grad", "xwt_hf_reconstruct", "xwt_directional_detail",
     "xsk3_corner_moravec", "xsk3_corner_fast", "xkor_laplacian", "xkor_harris",
-    "xkor_gftt", "xkor_hessian", "xkor_dog", "f2_shock", "f2_shock_diffuse", "f2_topographic",
+    "xkor_gftt", "xkor_hessian", "xkor_dog", "f2_shock", "f2_shock_diffuse", "xdog", "f2_topographic",
     "tf_steerable_filter", "tf_phase_congruency",
 ]
 
@@ -253,6 +253,15 @@ def _ground_truth_checks(BY) -> int:
         "雑音 %.4f (入力 %.4f) / 段差 %.3f (入力 %.3f)" % (n10, in_noise, s10, in_step))
     # どの b でも真値を超えない(超えたら増幅している)
     assert max(steps) <= true_step + 1e-9,         "f2_shock_diffuse が真の段差を超えた(増幅している): %s" % [round(x, 3) for x in steps]
+    checks += 1
+
+    # XDoG(線画調): 段差の暗い側にだけ線が出て、遠い平坦部は紙の白(1.0)のまま。
+    # tau = 1 の DoG は縁の中心について奇関数なので、その符号が暗い側を決める(閉形式)。
+    xd = BY["xdog"].fn(step.copy(), 0.2, 0.0)[n // 2]
+    assert xd[:8].min() == 1.0 and xd[-8:].min() == 1.0, "GT xdog: 遠い平坦部が白でない"
+    assert xd.min() < 0.05 and int(np.argmin(xd)) < n // 2, "GT xdog: 線が暗い側に出ていない"
+    assert xd[n // 2:].min() > 0.99, "GT xdog: 明るい側に線が出た"
+    assert float(np.ptp(BY["xdog"].fn(const.copy(), 0.5, 0.5))) == 0.0, "GT xdog: 定数画像に線が出た"
     checks += 1
 
     return checks
