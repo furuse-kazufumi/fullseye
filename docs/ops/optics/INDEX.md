@@ -1,4 +1,4 @@
-# OPTICS operator help — 358 ops in 40 categories
+# OPTICS operator help — 363 ops in 40 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 

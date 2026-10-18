@@ -1,10 +1,10 @@
 {
- "n_ops": 3394,
+ "n_ops": 3421,
  "tiers": {
   "color": 12,
-  "ledger": 2441,
+  "ledger": 2465,
   "nary": 17,
-  "registry": 926
+  "registry": 927
  },
  "sorts": [
   "angle",

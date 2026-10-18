@@ -7,7 +7,7 @@ out: signal
 examples: [example_robust_profile_filter, poc_robust_profile_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # robust_gaussian_profile — ROUGHNESS `prepare` op
@@ -37,8 +37,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
   order      0 = 重み付き平均、1 = 局所直線(既定)。内部の核はどちらも同じで、
              カットオフでの透過率は 0.5(閉形式 ``exp(-π (α λc f)²)``、``f = 1/λc``)。
   robust     ``False`` なら重み 1 のまま(普通の線形ガウス回帰。比較・基準用)。
-  truncate   窓の半径 ``truncate·λc``(0.5 以上)。既定 1.0。0.5 にすると ISO の打ち切り
-             になり、既存の ``surface_filter`` と内部で一致する。
+  truncate   窓の半径 ``truncate·λc``(0.5 以上)。既定 1.0。0.75(``GAUSS_TRUNCATE``)に
+             すると、既存の ``surface_filter`` と内部で一致する(0.5 は規格の文面の打ち切り)。
   max_iter   反復の上限(``None`` = 200)。収束しなければ **拒否する**。
   tol        収束判定: 平均線の変化の最大が ``tol × median|残差|`` 以下。
 

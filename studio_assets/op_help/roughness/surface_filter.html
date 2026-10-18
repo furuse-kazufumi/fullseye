@@ -17,12 +17,14 @@
 <p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(既定) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>。下記。</p>
 <p>dy         行方向の標本間隔(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>)。</p>
 <p>★ 端の扱い(<code style="color:#22d3bf">end_effect</code>)—— ここがこの op を書いた理由</p>
-<p>畳み込みはカーネル半径 <code style="color:#22d3bf">λc/2</code> のぶん、端で「無い所のデータ」を要る。</p>
-<p>規格(ISO 16610-28)は評価領域を両端 <code style="color:#22d3bf">λc/2</code> ずつ削ることを前提にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(既定)—— 両端 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 標本を<b>捨てる</b>。出力は入力より小さい配列になる。捨てた領域は「測っていない」ので、これが唯一嘘のない選択肢。</p>
+<p>畳み込みはカーネル半径(<code style="color:#22d3bf">GAUSS_TRUNCATE·λc</code> = 0.75 λc、4 σ)のぶん、端で「無い所の</p>
+<p>データ」を要る。規格(ISO 16610-28)は評価領域を両端から削ることを前提にする。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(既定)—— 両端 <code style="color:#22d3bf">ceil(0.75 λc/pitch)</code> 標本を<b>捨てる</b>。出力は入力より小さい配列になる。捨てた領域は「測っていない」ので、これが唯一嘘のない選択肢。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 鏡像で延長して同じ形を返す。端では面が偶関数だと仮定する。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 循環畳み込み(FFT と同じ)。左端の続きが右端だと仮定する。</p>
-<p><b>実測</b>。真値は 704x704 の面をフィルタしてから中央 512x512 を切り出した</p>
+<p><b>実測</b>(★次の表は打ち切りが <code style="color:#22d3bf">±λc/2</code> だった 2026-10-18 以前の測定。核を <code style="color:#22d3bf">±0.75 λc</code> に</p>
+<p>広げたあとも 1.〜3. の傾向は同じで、端の帯が 40 → 60 標本に増えるだけ。数値は測り直していない)。</p>
+<p>真値は 704x704 の面をフィルタしてから中央 512x512 を切り出した</p>
 <p>もの(端の外側に本物のデータがある状態で計算した答え)。dx=1、λc=80、</p>
 <p>端の帯 = 外周 40 標本、そこでの真値の rms は 0.1932。</p>
 <p>面の状態     end_effect   端の帯の rms 誤差    中央部の rms 誤差</p>
@@ -35,22 +37,21 @@
 <p style="margin:2px 0 2px 12px">1. <b>端の扱いは端でしか効かない。</b> 中央部はどれも真値と厳密に一致する(カーネルが端に届かないので当然だが、確かめた)。</p>
 <p style="margin:2px 0 2px 12px">2. <b>最悪の組み合わせは「傾きを残したまま wrap」</b> —— 端の誤差が真値そのものの 23 倍。左端の続きが右端だと仮定するので、高さの違う 2 辺の継ぎ目に段差が立つ。</p>
 <p style="margin:2px 0 2px 12px">3. <b>傾きさえ除けば wrap と mirror に差は無い</b>(5.7 % 対 5.9 %、wrap がわずかに良い)。「循環畳み込みは常に悪い」ではなく「<b>傾きを除かずに使うのが悪い</b>」が正しい。</p>
-<p style="margin:2px 0 2px 12px">4. reject の代償は面積。512x512・λc=80 で <b>28.8 % を捨てる</b> (432x432 が残る)。捨てる割合は <code style="color:#22d3bf">1 - (1 - λc/L)²</code> で増えるので、λc が評価長さの 1/4 を超えると半分近くを失う。</p>
-<p>★ 透過率は規格どおりか(実測、λc=80、dx=1、整数周期の正弦を射影で測定)</p>
-<p>λ         うねり側    ISO 規格値    差</p>
-<p>16      0.000806     0.000000    +8.1e-04</p>
-<p>32      0.017206     0.013139    +4.1e-03</p>
-<p>40      0.058676     0.062500    -3.8e-03</p>
-<p>64      0.342826     0.338564    +4.3e-03</p>
-<p>80      0.509549     0.500000    +9.6e-03   ← 最大</p>
-<p>128      0.772150     0.762799    +9.4e-03</p>
-<p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>カットオフ波長そのもので 0.5000 でなく 0.5095</b>(相対 +1.9 %)。原因は</p>
-<p>規格が指定する打ち切り <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)で、裾の 0.8 % が落ちるため。</p>
-<p>打ち切りを 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)まで広げると最大誤差は 9e-05 に落ちる</p>
-<p>(実測)が、reject で捨てる帯が 1.5 倍になる。<b>規格に合わせる側を採り、ずれを書く</b>方を選んだ。粗さとうねりの和は常に入力に厳密一致する</p>
-<p>(上の表で <code style="color:#22d3bf">roughness + waviness = 1.000000</code>)ので、分配の境目が</p>
-<p>1.9 % ずれるだけで、エネルギーが消えたり湧いたりはしない。</p>
+<p style="margin:2px 0 2px 12px">4. reject の代償は面積。512x512・λc=80 で <b>41.4 % を捨てる</b> (392x392 が残る。打ち切りが <code style="color:#22d3bf">±λc/2</code> だった頃は 28.8 %)。捨てる割合は <code style="color:#22d3bf">1 - (1 - 1.5 λc/L)²</code> で増えるので、λc が評価長さの 1/6 を超えると半分近くを失う。</p>
+<p>★ 透過率は規格どおりか(実測、λc=80、dx=1、整数周期の正弦を射影で測定。2026-10-18 に直した)</p>
+<p>λ         うねり側    ISO 規格値    差      (直す前のうねり側 / 差)</p>
+<p>16      0.000030     0.000000    +3.0e-05    0.000806 / +8.1e-04</p>
+<p>32      0.013094     0.013139    -4.5e-05    0.017206 / +4.1e-03</p>
+<p>40      0.062544     0.062500    +4.4e-05    0.058676 / -3.8e-03</p>
+<p>64      0.338531     0.338564    -3.3e-05    0.342826 / +4.3e-03</p>
+<p>80      0.500012     0.500000    +1.2e-05    0.509549 / +9.6e-03   ← λc</p>
+<p>128      0.762894     0.762799    +9.5e-05    0.772150 / +9.4e-03</p>
+<p>256      0.934601     0.934550    +5.1e-05    0.937944 / +3.4e-03</p>
+<p><b>直す前はカットオフ波長そのもので 0.5000 でなく 0.5095</b>(相対 +1.9 %)だった。原因は</p>
+<p>定数 α(<code style="color:#22d3bf">√(ln2/π)</code>)でも標本化後の正規化でもなく、<b>規格の文面の打ち切り <code style="color:#22d3bf">±λc/2</code> (= 2.67 σ)</b>。裾の 0.8 % が落ち、残りを 1 に正規化し直すので、低域の取り分が増える。</p>
+<p>打ち切りを <code style="color:#22d3bf">±0.75 λc</code>(4 σ)にすると λc で 0.500012、全波長で最大誤差 9.5e-05 に落ちる</p>
+<p>(上の表)。代償は reject で捨てる端の帯が 1.5 倍になること。粗さとうねりの和は</p>
+<p>どちらでも入力に厳密一致する。</p>
 <p>fail-closed</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;gaussian&quot;</code> 以外 / <code style="color:#22d3bf">end_effect</code> が既知の 3 つ以外。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> と <code style="color:#22d3bf">lambda_s</code> の両方が <code style="color:#22d3bf">None</code>(何もしない呼び出し)。</p>

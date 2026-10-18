@@ -998,7 +998,7 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", name):
         raise ArgError("name は英数字と _ - だけ(64 文字まで): %r" % name)
     try:                                                   # 信頼境界: spec は untrusted、形違いは -32602
-        text = pocviewer.build_html(spec, langs)
+        text = pocviewer._build_html(spec, langs)
     except (ValueError, TypeError, KeyError, AttributeError) as exc:
         raise ArgError("spec が不正: %s" % exc) from None
     path = os.path.join(store.thumb_dir, name + ".html")

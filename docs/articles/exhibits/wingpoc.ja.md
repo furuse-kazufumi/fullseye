@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 42 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 44 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1364,11 +1364,83 @@ py -3.11 examples/poc_code_matching_breakdown.py
 
 使用 op(ノートへ): [`isc_match`](https://furuse.work/ops/codematch/match/isc_match.html) · [`ncc_locate`](https://furuse.work/ops/2d/matching/ncc_locate.html) · [`ocm_match`](https://furuse.work/ops/codematch/match/ocm_match.html) · [`radial_reach_filter`](https://furuse.work/ops/codematch/change/radial_reach_filter.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`scc_match`](https://furuse.work/ops/codematch/match/scc_match.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.256 —— 良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所
+
+[![良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png)
+
+*↑ **良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所** ―― 外観検査の古典「良品を何枚も撮り、画素ごとにいつもの値とばらつきを覚え、外れた画素を欠陥とする」を、帯の幅を手で決めず、1 画素あたりの誤検出率を宣言して決める op 族にした(新 op 5 本 varmodel_* と、方法に依存しない評価の物差し anomeval 4 本)。正規の良品なら新しい 1 枚の偏差は t 分布の予測区間に従うので、帯の幅は閉形式で出る。合成の良品で数えた誤検出率は、画素ごとの標準偏差・全画素で 1 つの分散・経験ベイズの縮小(Smyth 2004)・中央値と MAD の 4 種とも宣言の二項 4σ の帯に入り、画素ごとに雑音が違うのに 1 つの分散を使うと外れる。良品 5 枚では標準偏差の帯の幅は 9.4 倍(t₄ の裾)になり、縮小すると 5.0 倍、5σ の傷の検出率は 0.13 → 0.52。1〜2 px ずれた良品群は拒否され、無理に通すと縁の上の帯が 22 倍に太って縁の上の傷を 1 つも見つけない。並進を 1/20 px で測って Fourier シフトで合わせると 1.07 倍に戻る。3 枚に同じ傷のある「良品」群では標準偏差は傷を見逃し(0.00)、中央値と MAD は見つける(0.98)。公開実データ VisA pcb1(CC BY 4.0、試験 200 枚)では、合わせた帯の画素 AUROC 0.808・AUPRO 0.678 に対し、合わせない帯は 0.705・0.460。ゴールデン比較は画素 AUROC 0.826 と上回るが、欠陥を 1 つずつ数える AUPRO は 0.519 で下回る。宣言 1e-3 の誤検出率は実画像では 3.8 % で守られず、学習に使わなかった良品で帯を測り直しても 2.4 % —— 並進で取れない撮影の違いが残る。確率的なテクスチャ(DAGM 2007、CC BY 4.0)は平均像に構造が無く、位置合わせは「測れない」と報告され、検出は偶然並み(画素 AUROC 0.465)。この方法が効く所と効かない所の両方を数で示した。*
+
+[![20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/02_contaminated_good_set.png)
+
+*↑ 測定の図 ―― 20 枚の良品のうち 3 枚の同じ場所(右上の四角)に +0.3 の傷。std は傷を良品のばらつきとして覚え、帯が太る(左上)ので、同じ場所の本物の傷(+0.2 = 雑音の 10 倍)の z が小さい。中央値と MAD は 3 枚の外れを無視する。左下の傷は汚れていない場所の対照。*
+
+[![VisA pcb1 の試験 200 枚(CC BY 4.0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/03_visa_metrics_vs_n_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/03_visa_metrics_vs_n.png)
+
+*↑ VisA pcb1 の試験 200 枚(CC BY 4.0)。*
+
+[![VisA pcb1(CC BY 4.0、灰色・1/4 縮小、欠陥の周りを切り出し、基板の印字は入れない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/04_visa_explanation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/04_visa_explanation.png)
+
+*↑ VisA pcb1(CC BY 4.0、灰色・1/4 縮小、欠陥の周りを切り出し、基板の印字は入れない)。*
+
+[![画素ごとに独立な正規の良品(合成)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured.png)
+
+*↑ 画素ごとに独立な正規の良品(合成)。*
+
+```
+py -3.11 examples/poc_good_sample_variation_model.py
+```
+
+ソース: [examples/poc_good_sample_variation_model.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_good_sample_variation_model)
+
+使用 op(ノートへ): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`dc_rpca_sparse`](https://furuse.work/ops/2d/decomposition/dc_rpca_sparse.html) · [`varmodel_alignment`](https://furuse.work/ops/spc/variation/varmodel_alignment.html) · [`varmodel_calibrate`](https://furuse.work/ops/spc/variation/varmodel_calibrate.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
+
+## No.2026.258 —— 密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す
+
+[![密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
+
+*↑ **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** ―― 重なった泡は距離変換の山として現れ、くびれが浅くなるほど「2 個か 1 個か」が画像から決まらなくなる。既存の連鎖(`blob_distance` → `blob_seeds` → `blob_split`)は h を 1 つ選んで必ず 1 つの数を返すので、重なり率 0.8 の 2 円も1 個と言い切る。新 op `blob_count_interval` は山ごとに突出度(0 次元パーシステンス)を測り、相対突出度が帯の中なら区間、数えた山の内接円で面積を説明できなければ上限を開く。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と1.6 px 以内、2 倍に拡大しても答えは同じ。自信をもった誤りは、和集合が縦横比 1.1 の楕円と区別できなくなる重なり率(閉形式で 0.86〜0.90)から先だけ。BBBC005(CC0)の真値マスクでは小さい物体の個数の相対誤差 0.34 %(連結成分 9.4 %)、重なりの深い大きい物体は 300 枚中 286 枚で数を返さず、自信をもった誤りは 0。水電解の酸素の泡(PEMWE、CC BY 4.0、手作業マスク)の形を重なり率を振って並べた半合成で、自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡ごとの矩形に入るか、自前で実装)は答えた塊で 0.95。★形の許しを孤立した泡の 95 % を通す値まで広げると、隠れた泡も通して誤りが 3 % から 19 % に増える —— 数える力と黙って間違わないことの矛盾を掃引で示した。いびつな泡が深く食い込むと、決まらないと答えた区間の上限も 1 個外れる(op の限界として明記)。*
+
+[![等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
+
+*↑ 測定の図 ―― 等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。*
+
+[![重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts.png)
+
+*↑ 重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。*
+
+[![world_blobs_touching(12 円、半径 14 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error.png)
+
+*↑ world_blobs_touching(12 円、半径 14 px)。*
+
+[![BBBC005 の真値マスク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth.png)
+
+*↑ BBBC005 の真値マスク。*
+
+[![緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic.png)
+
+*↑ 緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。*
+
+[![2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
+
+*↑ 動く図 ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
+
+```
+py -3.11 examples/poc_dense_bubble_count.py
+```
+
+ソース: [examples/poc_dense_bubble_count.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dense_bubble_count)
+
+使用 op(ノートへ): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
+
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 52 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 53 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3212,6 +3284,34 @@ py -3.11 examples/poc_simcal_telecentric.py
 
 使用 op(ノートへ): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric/chief_ray_angle.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.259 —— 深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか
+
+[![深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
+
+*↑ **深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか** ―― 粗さ計測でうねりを引くと、深い傷に線形ガウスの平均線が引かれ、傷の脇の健全な面が山に化ける(傷の標本 4.3 % の断面で粗さが真値の 2.5 倍)。`roughness` 族の新 op 3 本は Tukey の biweight で傷の重みを下げて反復し、平均線を守る(ロバストは 0.97 倍)。伝達関数は閉形式に合う(λc で 0.5、既存 `surface_filter` は規格の打ち切りで 0.5095)。破綻点は汚染 35 % と 40 % のあいだで、40 % では 3.5 µm 外れて線形と並ぶ。重み関数を 1 にすると門が落ち、収束しなければ値を返さず拒否する。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。*
+
+[![λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
+
+*↑ 測定の図 ―― λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。*
+
+[![細い線が傷つき断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile.png)
+
+*↑ 細い線が傷つき断面。*
+
+[![線形の引きずりは汚染に比例して増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve.png)
+
+*↑ 線形の引きずりは汚染に比例して増える。*
+
+```
+py -3.11 examples/poc_robust_profile_filter.py
+```
+
+ソース: [examples/poc_robust_profile_filter.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
+
+使用 op(ノートへ): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
+
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
 細胞を数える、核の DNA 量を読む、血管の分岐を測る、創傷の面積を追う。どれも「1 つの数字」で報告されがちで、しかもその数字が合ってしまう場面があります。過分割と過統合が釣り合って個数の偏りが +0.3 個になる細胞計数、背景を引き忘れても分類が生き残る倍数性、いちばん安定して、いちばん間違った治癒定数を返す較正。
@@ -3960,7 +4060,7 @@ py -3.11 examples/poc_worm_core_persists.py
 
 使用 op(ノートへ): [`graph_core_persistence`](https://furuse.work/ops/graph/population/graph_core_persistence.html) · [`graph_kcore`](https://furuse.work/ops/graph/core/graph_kcore.html) · [`graph_rich_club`](https://furuse.work/ops/conngraph/stats/graph_rich_club.html) · [`graph_rich_club_curve`](https://furuse.work/ops/graph/core/graph_rich_club_curve.html)
 
-## No.2026.245 —— ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する
+## No.2026.260 —— ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する
 
 [![ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
 
@@ -4736,7 +4836,7 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 
 使用 op(ノートへ): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html) · [`cavity_strain_transfer`](https://furuse.work/ops/optics/cavity/cavity_strain_transfer.html) · [`chirp_mass_from_track`](https://furuse.work/ops/oned/matched/chirp_mass_from_track.html) · [`chirp_newtonian`](https://furuse.work/ops/oned/matched/chirp_newtonian.html) · [`coincidence_delay`](https://furuse.work/ops/oned/matched/coincidence_delay.html) · [`fabry_perot_response`](https://furuse.work/ops/optics/cavity/fabry_perot_response.html) · [`matched_filter_snr`](https://furuse.work/ops/oned/matched/matched_filter_snr.html) · [`michelson_dc_readout`](https://furuse.work/ops/optics/cavity/michelson_dc_readout.html) · [`optimal_snr`](https://furuse.work/ops/oned/matched/optimal_snr.html) · [`pdh_error_signal`](https://furuse.work/ops/optics/cavity/pdh_error_signal.html) · [`psd_welch`](https://furuse.work/ops/oned/matched/psd_welch.html) · [`quantum_noise_budget`](https://furuse.work/ops/optics/cavity/quantum_noise_budget.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`whiten_by_psd`](https://furuse.work/ops/oned/matched/whiten_by_psd.html)
 
-## No.2026.245 —— 水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする
+## No.2026.257 —— 水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする
 
 [![水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
 

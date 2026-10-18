@@ -17,8 +17,8 @@
 <p>order      0 = 重み付き平均、1 = 局所直線(既定)。内部の核はどちらも同じで、</p>
 <p>カットオフでの透過率は 0.5(閉形式 <code style="color:#22d3bf">exp(-π (α λc f)²)</code>、<code style="color:#22d3bf">f = 1/λc</code>)。</p>
 <p>robust     <code style="color:#22d3bf">False</code> なら重み 1 のまま(普通の線形ガウス回帰。比較・基準用)。</p>
-<p>truncate   窓の半径 <code style="color:#22d3bf">truncate·λc</code>(0.5 以上)。既定 1.0。0.5 にすると ISO の打ち切り</p>
-<p>になり、既存の <code style="color:#22d3bf">surface_filter</code> と内部で一致する。</p>
+<p>truncate   窓の半径 <code style="color:#22d3bf">truncate·λc</code>(0.5 以上)。既定 1.0。0.75(<code style="color:#22d3bf">GAUSS_TRUNCATE</code>)に</p>
+<p>すると、既存の <code style="color:#22d3bf">surface_filter</code> と内部で一致する(0.5 は規格の文面の打ち切り)。</p>
 <p>max_iter   反復の上限(<code style="color:#22d3bf">None</code> = 200)。収束しなければ <b>拒否する</b>。</p>
 <p>tol        収束判定: 平均線の変化の最大が <code style="color:#22d3bf">tol × median|残差|</code> 以下。</p>
 <p>fail-closed</p>

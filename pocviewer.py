@@ -60,7 +60,7 @@
 位置は軸ごとに uint16(最小値と範囲から等間隔。刻み = 範囲 / 65535)、値は uint16(カラーバーの
 範囲でクリップ。色が飽和するのと同じ範囲)、画像と索引は無損失の整数。点を減らすことはしない
 (見せたい欠陥を消さないため)。同じ配列は内容のハッシュで 1 本にまとめる(タブ間で位置を共有)。
-:func:`decode_array` が Python 側の逆変換で、テストは「戻した値が量子化の刻みの半分以内」を確かめる。
+:func:`_decode_array` が Python 側の逆変換で、テストは「戻した値が量子化の刻みの半分以内」を確かめる。
 
 ★fail-closed: NaN / inf、両言語がそろわない文字列、未知のバッジ・種類、範囲外の索引は、
 黙って通さず ``ValueError`` で止める。
@@ -148,7 +148,7 @@ def _finite(a: np.ndarray, what: str) -> np.ndarray:
     return a
 
 
-def encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -> dict:
+def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -> dict:
     """配列を ``{t, shape, lo, hi, b64}`` に詰める。
 
     ``t``:
@@ -199,8 +199,8 @@ def encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) ->
     return rec
 
 
-def decode_array(rec: dict) -> np.ndarray:
-    """:func:`encode_array` の逆。量子化した配列は float64 で返る(JS 側と同じ式)。"""
+def _decode_array(rec: dict) -> np.ndarray:
+    """:func:`_encode_array` の逆。量子化した配列は float64 で返る(JS 側と同じ式)。"""
     t = rec["t"]
     raw = base64.b64decode(rec["b64"])
     shape = tuple(rec["shape"])
@@ -216,7 +216,7 @@ def decode_array(rec: dict) -> np.ndarray:
     return np.frombuffer(raw, dtype=dt).reshape(shape).copy()
 
 
-def quant_step(rec: dict) -> np.ndarray:
+def _quant_step(rec: dict) -> np.ndarray:
     """量子化した配列の刻み(軸ごと)。復元誤差の上限は刻みの半分。"""
     maxv = _MAXV[rec["t"]]
     return (np.asarray(rec["hi"], float) - np.asarray(rec["lo"], float)) / maxv
@@ -229,7 +229,7 @@ class _Store:
         self.arrays: dict[str, dict] = {}
 
     def put(self, a, t: str = "q16", **kw) -> str:
-        rec = encode_array(a, t, **kw)
+        rec = _encode_array(a, t, **kw)
         h = hashlib.sha1(json.dumps({k: v for k, v in rec.items()}, sort_keys=True).encode()).hexdigest()[:12]
         self.arrays.setdefault(h, rec)
         return h
@@ -900,7 +900,7 @@ renderText(); select(cur); requestAnimationFrame(tick);
 """
 
 
-def build_html(spec: dict, lang="ja") -> str:
+def _build_html(spec: dict, lang="ja") -> str:
     """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。"""
     data = _pack_spec(spec, lang)
     blob = json.dumps(data, ensure_ascii=True, separators=(",", ":")).replace("</", "<\\/")
@@ -919,7 +919,7 @@ def write_viewer(spec: dict, path, lang="ja") -> str:
     ``lang="ja"`` は単言語のページ。``lang=["ja", "en", ...]`` は言語の切り替えつきで、先頭が既定。
     対応は ja / en / zh / tw / ko / de / hi / fr。URL の ``?lang=xx`` で開く言語を選べる。
     """
-    text = build_html(spec, lang)                      # 検査はここで終わる(書く前に落とす)
+    text = _build_html(spec, lang)                      # 検査はここで終わる(書く前に落とす)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(text.encode("utf-8"))
@@ -993,8 +993,7 @@ def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, c
 
 __all__ = [
     "BADGES", "UI", "LANGS", "LANG_NAMES", "KINDS", "viewer_text", "viewer_number", "viewer_spec", "viewer_mesh_tab",
-    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "write_viewer", "build_html",
-    "encode_array", "decode_array", "quant_step",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "write_viewer",
 ]
 
 

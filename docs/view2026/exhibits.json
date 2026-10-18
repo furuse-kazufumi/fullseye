@@ -6178,7 +6178,8 @@
     "tw": "密集氣泡計數(無法確定時給出區間)",
     "ko": "밀집한 기포 세기(결정할 수 없으면 구간)",
     "de": "Dichte Blasen zählen (Intervall, wenn nicht entscheidbar)",
-    "hi": "घने bubbles गिनना (तय न हो तो interval)"
+    "hi": "घने bubbles गिनना (तय न हो तो interval)",
+    "fr": "Compter des bulles denses (un intervalle quand c'est indécidable)"
    }
   },
   {
@@ -6398,7 +6399,8 @@
     "tw": "良品統計變動模型",
     "ko": "양품 통계 변동 모델",
     "de": "Variationsmodell aus Gutteilen",
-    "hi": "अच्छे samples का variation model"
+    "hi": "अच्छे samples का variation model",
+    "fr": "Modèle de variation des pièces bonnes"
    }
   },
   {
@@ -6414,7 +6416,8 @@
     "tw": "把稻田雜草覆蓋度分為 4 級",
     "ko": "논의 잡초 피도를 4단계로",
     "de": "Unkrautdeckung im Reisfeld in 4 Stufen",
-    "hi": "धान के खेत में खरपतवार cover के 4 grade"
+    "hi": "धान के खेत में खरपतवार cover के 4 grade",
+    "fr": "Classer en 4 niveaux le taux de couverture des adventices en rizière"
    }
   },
   {
@@ -6430,7 +6433,8 @@
     "tw": "刮痕把平均線壓凹多少,以及穩健濾波的失效點",
     "ko": "흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점",
     "de": "Wie weit ein Kratzer die Mittellinie eindellt und wo robuste Filter brechen",
-    "hi": "scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं"
+    "hi": "scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं",
+    "fr": "De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent"
    }
   },
   {
@@ -6446,7 +6450,8 @@
     "tw": "用細胞體的點畫出蒼蠅的腦",
     "ko": "세포체의 점으로 그린 파리의 뇌",
     "de": "Das Fliegenhirn aus 126 000 Zellkörpern",
-    "hi": "126k cell bodies से fly brain"
+    "hi": "126k cell bodies से fly brain",
+    "fr": "Le cerveau de la mouche en 126 000 corps cellulaires"
    }
   }
  ],
@@ -7189,28 +7194,32 @@
     "tw": "從田間 RGB 以顏色與紋理區分作物和雜草,並依事先宣告的邊界為雜草覆蓋度分級(不用學習器)",
     "ko": "포장의 RGB에서 색과 결로 작물과 잡초를 나누고, 잡초 피도를 미리 선언한 경계로 단계화(학습기 없음)",
     "de": "Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz)",
-    "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)"
+    "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)",
+    "fr": "Séparer culture et adventices dans une image RVB de champ par la couleur et la texture, puis classer le taux de couverture des adventices selon des seuils déclarés à l'avance (sans réseau appris)"
    },
    "good-sample-variation-model": {
     "zh": "排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率)",
     "tw": "排列良品來判斷「與平時不同」(良品統計變動模型,附宣告的誤檢率)",
     "ko": "양품을 나란히 놓고 '평소와 다름'을 말한다 (양품 통계 변동 모델, 오검출률 선언)",
     "de": "Abweichungen von ausgerichteten Gutteilen melden (pixelweises Variationsmodell mit erklärter Fehlalarmrate)",
-    "hi": "aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model)"
+    "hi": "aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model)",
+    "fr": "Signaler ce qui diffère de pièces bonnes alignées (modèle de variation par pixel, taux de fausses alarmes déclaré)"
    },
    "robust-gaussian-spline-profile-filter": {
     "zh": "不被划痕和突起拖动的平均线(稳健高斯回归与样条滤波,截面与曲面)",
     "tw": "不被刮痕與突起拖動的平均線(穩健高斯迴歸與樣條濾波,截面與曲面)",
     "ko": "흠집과 돌기에 끌려가지 않는 평균선(로버스트 가우스 회귀·스플라인 필터, 단면과 면)",
     "de": "Eine Mittellinie, die sich von Kratzern und Spitzen nicht ziehen lässt (robuste Gauß-Regression und Spline, Profil und Fläche)",
-    "hi": "ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface)"
+    "hi": "ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface)",
+    "fr": "Une ligne moyenne que ni les rayures ni les pics ne peuvent tirer (régression gaussienne robuste et filtre spline, profil et surface)"
    },
    "point-cloud-to-picture": {
     "zh": "把点云原样画成彩色图像(亚像素足迹、按深度合成、保持光总量的叠加)",
     "tw": "把點雲原樣畫成彩色影像(次像素足跡、依深度合成、保持光總量的疊加)",
     "ko": "점군을 그대로 컬러 그림으로 그린다(서브픽셀 발자국, 깊이 순 합성, 빛의 총량을 보존하는 덧셈)",
     "de": "Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition)",
-    "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)"
+    "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)",
+    "fr": "Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière)"
    }
   }
  },

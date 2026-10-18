@@ -95,8 +95,8 @@ def main() -> int:
               % (os.path.getsize(path) / 1e3, os.path.getsize(single) / 1e3, len(spec["tabs"])))
         data = json.loads(re.search(r"const D = (\{.*?\});\nconst \$ = ", html, re.S).group(1))
         rec = data["arrays"][next(t for t in data["tabs"] if t["id"] == "dent")["pos"]]
-        back = fs.pocviewer.decode_array(rec)
-        step = fs.pocviewer.quant_step(rec)
+        back = fs.pocviewer._decode_array(rec)
+        step = fs.pocviewer._quant_step(rec)
         worst = float(np.max(np.abs(back - pts) / (step / 2)))
         print("位置の復元: 最悪で刻みの半分の %.2f 倍(1 以下なら量子化の範囲内)" % worst)
         assert worst <= 1.0 + 1e-9, worst

@@ -1,4 +1,4 @@
-# 2D operator help — 955 ops in 49 categories
+# 2D operator help — 956 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
