@@ -3018,6 +3018,18 @@
    "caption_ja": "加工ポケットのような凹んだ部品では、向かいの壁で反射した光が底を照らす(相互反射)。直接光だけの検査用描画 render_optscene はそれを数えず、多重反射を解く render_studio は明るさの絶対値に意味が無かった。新 op 7 本(radiosity3d)の render_optscene_gi は、同じシーン・同じ照明のまま直接光の測光を 1e-16 で保ち、反射を n 回か収束まで(Cohen ら 1988 の漸進 ラジオシティ)足す。反射率 0.7 のポケットでは底の明るさの 48 % が相互反射。simcal で反射率と照明の強さを合わせると、直接光だけの モデルは反射率 1.32(エネルギー保存に反する)で合い、χ²/ν 24・残差 PCA 4 成分で不合格、1 回反射は 0.87 で χ²/ν 7.9、収束解は 0.6996 / 0.9999(真値 0.70 / 1.00)で χ²/ν 1.01・残差は白色。反射は 7 回数えれば雑音(1.3 %)に埋もれる(観測収束比 0.51、GCI 型の見積もり)。Howell の表の形態係数 0.199825 / 0.200044 を閉形式と数値の両方で再現し、実測の論文(Bulczak ら 2018、CC BY 4.0)の表 2 —— 1 回反射を足すと誤差 0.20〜0.47 倍 —— と、本 PoC の 0.53 倍を並べた。",
    "caption_en": "In a concave part such as a machined pocket, light reflected by one wall lights the floor (interreflection). The inspection renderer render_optscene counts direct light only, and render_studio, which solves interreflection, has no meaningful absolute brightness. Seven new ops (radiosity3d, category radiosity of opsoptics) add render_optscene_gi: the same scene and lights, the direct photometry kept to 1e-16, plus n bounces or the converged sum (Cohen et al. 1988 progressive radiosity, stopped on the residual unshot energy, our choice since the paper gives no number). In a pocket of albedo 0.7, 48 % of the floor's brightness is interreflection. Calibrating albedo and light intensity with simcal: the direct-only model fits with albedo 1.32 (more light out than in), chi^2/nu 24 and four structured residual components, and is rejected; one bounce gives 0.87 and chi^2/nu 7.9; the converged model returns 0.6996 / 0.9999 (truth 0.70 / 1.00), chi^2/nu 1.01 and white residuals. Seven bounces bring the remainder under the 1.3 % noise (observed ratio 0.51, a GCI-style estimate trusted only in the asymptotic range). Howell's catalogue values 0.199825 / 0.200044 are reproduced in closed form and numerically, and Table 2 of Bulczak, Lambers and Kolb 2018 (Sensors, CC BY 4.0: one bounce cuts the measured error to 0.20-0.47 of direct-only) is set beside this PoC's 0.53.",
    "run": "py -3.11 examples/poc_pocket_interreflection.py"
+  },
+  {
+   "id": "poc_robust_profile_filter",
+   "wing": "wing_metrology",
+   "added": "2026-10-18",
+   "numbers_source": "log",
+   "figure": "scratched_surface",
+   "title_ja": "深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか",
+   "title_en": "Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive",
+   "caption_ja": "粗さ計測でうねりを引くと、深い傷に線形ガウスの平均線が引かれ、傷の脇の健全な面が山に化ける(傷の標本 4.3 % の断面で粗さが真値の 2.5 倍)。`roughness` 族の新 op 3 本は Tukey の biweight で傷の重みを下げて反復し、平均線を守る(ロバストは 0.97 倍)。伝達関数は閉形式に合う(λc で 0.5、既存 `surface_filter` は規格の打ち切りで 0.5095)。破綻点は汚染 35 % と 40 % のあいだで、40 % では 3.5 µm 外れて線形と並ぶ。重み関数を 1 にすると門が落ち、収束しなければ値を返さず拒否する。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。",
+   "caption_en": "Subtracting the waviness before measuring roughness lets a deep scratch pull a linear Gaussian mean line down, so the healthy surface beside it turns into false ridges (2.5 times the true roughness on a profile with 4.3 % scratch samples). The three new `roughness` ops down-weight the scratch with Tukey's biweight and iterate, and the mean line stays put (0.97 times). The transfer functions match their closed forms (0.5 at the cutoff; the existing `surface_filter` gives 0.5095 because of the standard's truncation). The breakdown lies between 35 % and 40 % contamination: at 40 % the mean line is off by 3.5 µm and no better than the linear one. Fixing the weight function to 1 fails the gate, and a non-converging iteration is refused. The truth is closed forms plus a synthetic waviness; no real stylus profile has been checked yet.",
+   "run": "py -3.11 examples/poc_robust_profile_filter.py"
   }
  ]
 }

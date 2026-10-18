@@ -5768,6 +5768,22 @@
     "de": "Interreflexion in der Tasche bis zur Konvergenz",
     "hi": "machined pocket का inter-reflection अभिसरण तक"
    }
+  },
+  {
+   "id": "poc_robust_profile_filter",
+   "group": "wing_metrology",
+   "media": "04_scratched_surface.png",
+   "motion": false,
+   "thumb_src": "04_scratched_surface.png",
+   "label": {
+    "ja": "深い傷が平均線を凹ませる量と、ロバスト化の破綻点",
+    "en": "How far a scratch dents the mean line, and where robust filters break",
+    "zh": "划痕把平均线压凹多少,以及稳健滤波的失效点",
+    "tw": "刮痕把平均線壓凹多少,以及穩健濾波的失效點",
+    "ko": "흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점",
+    "de": "Wie weit ein Kratzer die Mittellinie eindellt und wo robuste Filter brechen",
+    "hi": "scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "robust-gaussian-spline-profile-filter": {
+    "zh": "不被划痕和突起拖动的平均线(稳健高斯回归与样条滤波,截面与曲面)",
+    "tw": "不被刮痕與突起拖動的平均線(穩健高斯迴歸與樣條濾波,截面與曲面)",
+    "ko": "흠집과 돌기에 끌려가지 않는 평균선(로버스트 가우스 회귀·스플라인 필터, 단면과 면)",
+    "de": "Eine Mittellinie, die sich von Kratzern und Spitzen nicht ziehen lässt (robuste Gauß-Regression und Spline, Profil und Fläche)",
+    "hi": "ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface)"
    }
   }
  }

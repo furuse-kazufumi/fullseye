@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 71 capabilities**
+**Currently 72 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -50,6 +50,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -67,7 +68,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (25)
+## Measure (26)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -224,6 +225,18 @@ Probability of detection per MIL-HDBK-1823A: â-vs-a regression with left and ri
 Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 Runnable: `poc_pod_lighting`
+
+### [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+Three ops in the `roughness` ledger (category `prepare`). `robust_gaussian_profile` is a Gaussian-weighted local regression (order 0 or 1) iterated with Tukey's biweight at `c · median|r|`; its transmission is exactly 50 % at λc (closed form `exp(-π(αλc/λ)²)`, α² = ln2/π), measured to 3e-8. `robust_spline_profile` solves a second-difference penalised least squares (a discrete cubic smoothing spline) with the same reweighting; its transfer function `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` is matched to 1e-11. `robust_gaussian_surface` is the areal version. On a synthetic profile with a known waviness, scratches covering up to 20 % of the samples drag the robust mean line 0.06 times as far as the linear one; at 40 % it breaks down, and a non-converging iteration is refused rather than returned.
+
+Operators: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+Pipeline: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+Alternatives: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+Runnable: `poc_robust_profile_filter`, `example_robust_profile_filter`
 
 ### [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md)
 

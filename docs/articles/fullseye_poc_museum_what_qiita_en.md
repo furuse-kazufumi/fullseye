@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**135 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1220,7 +1220,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 48 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2931,6 +2931,34 @@ Source: [examples/poc_pocket_interreflection.py](https://github.com/furuse-kazuf
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pocket_interreflection)
 
 Ops used (notes): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`form_factor_matrix`](https://furuse.work/ops/optics/radiosity/form_factor_matrix.html) · [`form_factor_parallel_rects`](https://furuse.work/ops/optics/radiosity/form_factor_parallel_rects.html) · [`form_factor_perpendicular_rects`](https://furuse.work/ops/optics/radiosity/form_factor_perpendicular_rects.html) · [`form_factor_polygons`](https://furuse.work/ops/optics/radiosity/form_factor_polygons.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`optical_camera`](https://furuse.work/ops/optics/scene/optical_camera.html) · [`radiosity_patches`](https://furuse.work/ops/optics/radiosity/radiosity_patches.html) · [`radiosity_progressive_3d`](https://furuse.work/ops/optics/radiosity/radiosity_progressive_3d.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`render_optscene_gi`](https://furuse.work/ops/optics/radiosity/render_optscene_gi.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_difference`](https://furuse.work/ops/optics/scene/scene_difference.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`scene_plane`](https://furuse.work/ops/optics/scene/scene_plane.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
+
+## No.2026.245 —— Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive
+
+[![Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
+
+*↑ **Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive** ―― Subtracting the waviness before measuring roughness lets a deep scratch pull a linear Gaussian mean line down, so the healthy surface beside it turns into false ridges (2.5 times the true roughness on a profile with 4.3 % scratch samples). The three new `roughness` ops down-weight the scratch with Tukey's biweight and iterate, and the mean line stays put (0.97 times). The transfer functions match their closed forms (0.5 at the cutoff; the existing `surface_filter` gives 0.5095 because of the standard's truncation). The breakdown lies between 35 % and 40 % contamination: at 40 % the mean line is off by 3.5 µm and no better than the linear one. Fixing the weight function to 1 fails the gate, and a non-converging iteration is refused. The truth is closed forms plus a synthetic waviness; no real stylus profile has been checked yet.*
+
+[![λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
+
+*↑ The measurement ―― λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。 (figure labels are in Japanese; the numbers are the same)*
+
+[![細い線が傷つき断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile.png)
+
+*↑ 細い線が傷つき断面。*
+
+[![線形の引きずりは汚染に比例して増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve.png)
+
+*↑ 線形の引きずりは汚染に比例して増える。*
+
+```
+py -3.11 examples/poc_robust_profile_filter.py
+```
+
+Source: [examples/poc_robust_profile_filter.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
+
+Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

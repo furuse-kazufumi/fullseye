@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -49,6 +49,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -66,7 +67,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (25)
+## 測る (26)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -251,6 +252,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 動く例: `poc_pod_lighting`
+
+### [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+粗さは断面(または面)から平均線(うねり)を引いて残りを測ります。普通のガウスフィルタは深い傷に引かれて平均線が傷の側へ凹み、**傷の両側の健全な面が山に見えます**(PoC の実測で、傷の脇の粗さが真値の 2.5 倍)。`roughness` 族の新しい 3 本は、Tukey の biweight で傷の重みを下げながら反復し、平均線を傷から守ります。
+
+使う op: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+推奨パイプライン: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+代替: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+限界: 傷の標本が 4 割を超えると平均線が傷側へ破綻する(合成断面の実測で 35 % までは雑音の床、40 % で 3.5 µm)。外れ値の無い断面でもロバスト版は線形と一致しない(biweight が雑音の裾を刈る)。傷が窓(既定 ±λc)より広いと外挿せず拒否する。収束しなければ値を返さない。次数 2 は出していない。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。
+
+実寸校正: 平均線の真値は測定器では得られない。標本間隔 dx(µm)とカットオフ λc(測定条件で決まる値)は呼び出し側が与え、単位を混ぜても検出できない。伝達関数は dx と λc だけで決まる閉形式なので、既知波長の正弦を通して λc で 0.5 になるかを現場の設定で確かめられる。
+
+動く例: `poc_robust_profile_filter`, `example_robust_profile_filter`
 
 ### [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md)
 

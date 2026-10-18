@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — ロバストなガウス回帰・スプラインフィルタ(`roughness` 族 +3 op)と PoC
+- `robust_gaussian_profile` / `robust_spline_profile` / `robust_gaussian_surface`(`opsroughness` の `prepare`)。傷・突起に引きずられない平均線と粗さ。Tukey の biweight(しきい値 c·median|r|、既定 c=4.4)の反復、収束しなければ `ValueError`(fail-closed)。ガウスは局所回帰(次数 0/1、打ち切り ±λc で λc の透過率 0.5)、スプラインは 2 階差分の罰則つき最小二乗。
+- 門 `tests/test_roughness_robust.py`(33): ガウス `exp(-π(αλc/λ)²)`・離散スプライン `1/(1+(sin(π dx/λ)/sin(π dx/λc))⁴)` の閉形式、密行列・疎 LU・点ごとの lstsq の第 2 実装、既存 `surface_filter` との内部一致(重み 1・次数 0・打ち切り 0.5)、引きずり量と破綻点(40 %)、探針(重み 1 固定 / λc 10 % ずれ / α ずれ)。
+- PoC `examples/poc_robust_profile_filter.py` と呼び出し例 `examples/example_robust_profile_filter.py`、能力ノート `robust-gaussian-spline-profile-filter`。既存 `surface_filter` の λc での透過率 0.5095(規格の打ち切り ±λc/2)を新 op と並べて記録。
+
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。
 - 数字(同じ生信号): iToF の合成 16/80/120 MHz で次数の誤り 0.5563 → 0.1161(最尤 0.1160)、実データ 10 枚平均 0.293 → 0.131(最尤 0.131)。`poc_residue_crt` の RRNS で犯人を当てた割合 88.5 → 88.9 %。門 `tests/test_residue_crt_reference_2026_10_15.py`(修正を戻すと 13 本とも赤)。

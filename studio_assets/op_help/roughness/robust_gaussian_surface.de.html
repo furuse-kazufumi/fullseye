@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">robust_gaussian_surface — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code> (die Implementierung direkt: <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code>; aus dem Register: <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">depth</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface.raw(...)</code> oder rufe <code style="color:#22d3bf">roughness.robust_gaussian_surface</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(roughness, mean_surface, info)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Robuster Gauß-Regressionsfilter (Fläche): Welligkeit und Rauheit einer Fläche, die sich von Kratzern und Spitzen nicht ziehen lassen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">robust_gaussian_profile</code> の 2 次元版(核は x・y に可分、局所面 <code style="color:#22d3bf">c + p u + q v</code> の回帰、biweight は面全体の残差の中央値で作る)。重みが非可分でも、必要なのは重み画像と <code style="color:#22d3bf">u^a v^b</code> を掛けた核との可分相関だけなので、 <code style="color:#22d3bf">O(N · 窓幅)</code> で済む。</p>
+<p>戻り値は <code style="color:#22d3bf">(roughness, mean_surface, info)</code>。端は削らず全面を返す。引数・fail-closed は断面版と同じ(<code style="color:#22d3bf">dy=None</code> は正方画素、<code style="color:#22d3bf">z</code> は 8x8 以上の 2 次元)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">depth</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_spline_profile">robust_spline_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

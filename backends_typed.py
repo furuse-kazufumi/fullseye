@@ -187,6 +187,10 @@ _OP_BRIDGE_SKIP = {
     #   太陽の円盤も空と地形の境界も無いので、どちらも ValueError か意味の無い線になる(「走った」≠「意味のある出力」)。
     #   台帳(`fullseye.ledger.sun_pixel_position` / `skyline_extract`)からは写真を渡して使う。
     "sun_pixel_position", "skyline_extract",
+    # 2026-10-18 ロバストな断面フィルタ 2 本: 橋が a,b を最初の数値引数(次数 order・定数 c)へ振ると
+    # order=2 などの範囲外になり、ガウスの次数は連続量でない(1 次元の断面を 2-D 画像の行から取る意味も無い)。
+    # 台帳(`fullseye.ledger.robust_gaussian_profile` …)からは本物の断面を渡して使える。
+    "robust_gaussian_profile", "robust_spline_profile",
     # 2026-09-21 実データ回の 2 本: 模様の探針には飽和塊も時刻つきの候補列も無い。
     "sun_bloom_fit", "camera_orientation_from_sun_candidates",
     # 2026-10-14 重力波の 12 本。cavityoptics の 5 本は引数だけで描く側(画像を受けない)。

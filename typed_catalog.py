@@ -359,6 +359,12 @@ OP_PARAM_HINTS = {
     ("surface_psd", "dx"): lambda rng: 1.0,
     ("surface_filter", "dx"): lambda rng: 1.0,
     ("surface_filter", "lambda_c"): lambda rng: 8.0,
+    ("robust_gaussian_profile", "dx"): lambda rng: 1.0,
+    ("robust_gaussian_profile", "lambda_c"): lambda rng: 8.0,
+    ("robust_spline_profile", "dx"): lambda rng: 1.0,
+    ("robust_spline_profile", "lambda_c"): lambda rng: 8.0,
+    ("robust_gaussian_surface", "dx"): lambda rng: 1.0,
+    ("robust_gaussian_surface", "lambda_c"): lambda rng: 8.0,
     # ★ここを入れないと surface_params は毎回 fail-closed で拒否され、
     #   カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
     ("surface_params", "assume_filtered"): lambda rng: True,

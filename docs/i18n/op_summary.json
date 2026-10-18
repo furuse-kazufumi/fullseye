@@ -29906,6 +29906,33 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "roughness/robust_gaussian_profile": {
+   "fp": "9fec53f12ae4",
+   "en": "Robust Gaussian regression filter (profile): a mean line and roughness that outliers and scratches cannot drag.",
+   "zh": "稳健高斯回归滤波器(截面):不被离群点和划痕拖动的平均线与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(截面):不被離群點與刮痕拖動的平均線與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(단면): 이상값과 흠집에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Profil): Mittellinie und Rauheit, die sich von Ausreißern und Kratzern nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (profile): ऐसी mean line और roughness जिसे outliers और scratches खींच नहीं पाते।"
+  },
+  "roughness/robust_spline_profile": {
+   "fp": "77dae02eccbb",
+   "en": "Robust spline filter (profile): a mean line and roughness that outliers cannot drag.",
+   "zh": "稳健样条滤波器(截面):不被离群点拖动的平均线与粗糙度。",
+   "tw": "穩健樣條濾波器(截面):不被離群點拖動的平均線與粗糙度。",
+   "ko": "로버스트 스플라인 필터(단면): 이상값에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Spline-Filter (Profil): Mittellinie und Rauheit, die sich von Ausreißern nicht ziehen lassen.",
+   "hi": "Robust spline filter (profile): ऐसी mean line और roughness जिसे outliers खींच नहीं पाते।"
+  },
+  "roughness/robust_gaussian_surface": {
+   "fp": "786df7c5ba92",
+   "en": "Robust Gaussian regression filter (surface): waviness and roughness of a surface that scratches and spikes cannot drag.",
+   "zh": "稳健高斯回归滤波器(曲面):不被划痕和突起拖动的曲面波纹度与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(曲面):不被刮痕與突起拖動的曲面波紋度與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(면): 흠집과 돌기에 끌려가지 않는 면의 파상도와 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Fläche): Welligkeit und Rauheit einer Fläche, die sich von Kratzern und Spitzen nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (surface): surface की waviness और roughness, जिसे scratches और spikes खींच नहीं पाते।"
   }
  }
 }

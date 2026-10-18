@@ -1212,7 +1212,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 48 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 49 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2923,6 +2923,34 @@ py -3.11 examples/poc_pocket_interreflection.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pocket_interreflection)
 
 使用 op(ノートへ): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_rays.html) · [`form_factor_matrix`](https://furuse.work/ops/optics/radiosity/form_factor_matrix.html) · [`form_factor_parallel_rects`](https://furuse.work/ops/optics/radiosity/form_factor_parallel_rects.html) · [`form_factor_perpendicular_rects`](https://furuse.work/ops/optics/radiosity/form_factor_perpendicular_rects.html) · [`form_factor_polygons`](https://furuse.work/ops/optics/radiosity/form_factor_polygons.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`optical_camera`](https://furuse.work/ops/optics/scene/optical_camera.html) · [`radiosity_patches`](https://furuse.work/ops/optics/radiosity/radiosity_patches.html) · [`radiosity_progressive_3d`](https://furuse.work/ops/optics/radiosity/radiosity_progressive_3d.html) · [`render_optscene`](https://furuse.work/ops/optics/scene/render_optscene.html) · [`render_optscene_gi`](https://furuse.work/ops/optics/radiosity/render_optscene_gi.html) · [`scene_box`](https://furuse.work/ops/optics/scene/scene_box.html) · [`scene_difference`](https://furuse.work/ops/optics/scene/scene_difference.html) · [`scene_material`](https://furuse.work/ops/optics/scene/scene_material.html) · [`scene_plane`](https://furuse.work/ops/optics/scene/scene_plane.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
+
+## No.2026.245 —— 深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか
+
+[![深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
+
+*↑ **深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか** ―― 粗さ計測でうねりを引くと、深い傷に線形ガウスの平均線が引かれ、傷の脇の健全な面が山に化ける(傷の標本 4.3 % の断面で粗さが真値の 2.5 倍)。`roughness` 族の新 op 3 本は Tukey の biweight で傷の重みを下げて反復し、平均線を守る(ロバストは 0.97 倍)。伝達関数は閉形式に合う(λc で 0.5、既存 `surface_filter` は規格の打ち切りで 0.5095)。破綻点は汚染 35 % と 40 % のあいだで、40 % では 3.5 µm 外れて線形と並ぶ。重み関数を 1 にすると門が落ち、収束しなければ値を返さず拒否する。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。*
+
+[![λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/01_transfer_functions.png)
+
+*↑ 測定の図 ―― λ = λc = 80 µm でガウス・スプラインとも 0.5。点は閉形式の線の上に乗る(ガウス 1e-7、スプライン 1e-12 の差)。スプラインは遮断が鋭い。*
+
+[![細い線が傷つき断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/02_scratched_profile.png)
+
+*↑ 細い線が傷つき断面。*
+
+[![線形の引きずりは汚染に比例して増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/03_breakdown_curve.png)
+
+*↑ 線形の引きずりは汚染に比例して増える。*
+
+```
+py -3.11 examples/poc_robust_profile_filter.py
+```
+
+ソース: [examples/poc_robust_profile_filter.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
+
+使用 op(ノートへ): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 
