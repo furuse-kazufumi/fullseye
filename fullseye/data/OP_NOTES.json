@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3316,
- "n_notes": 3322,
+ "n_ops": 3317,
+ "n_notes": 3323,
  "notes": {
   "vol_dilate": [
    {
@@ -14776,6 +14776,16 @@
     "in": "labels2d",
     "out": "labels2d",
     "path": "docs/ops/blob/select/blob_select_largest.md"
+   }
+  ],
+  "blob_count_interval": [
+   {
+    "op": "blob_count_interval",
+    "dim": "blob",
+    "category": "split",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/blob/split/blob_count_interval.md"
    }
   ],
   "blob_distance": [

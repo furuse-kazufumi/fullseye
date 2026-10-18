@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 615 von 1488. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 615 von 1491. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -171,8 +171,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `blob2d.py`
 
-- **L287** — ★Auf das Vorzeichen achten: Die Eckpunkte sind als (row, col) geordnet, daher ist die von ``_monotone_chain`` zurückgegebene Orientierung (row als x betrachtet) gegen den Uhrzeigersinn = auf dem Bildschirm im Uhrzeigersinn. Das Innere ist die Seite, auf der das Kreuzprodukt **nicht negativ** ist (mit ``<= 0`` geschrieben ergab sich für alle Objekte solidity 0).
-- **L587** — ★Erosion allein **liefert nur eine Seite**. Ein Objekt mit kleinerer Nummer bleibt, selbst wenn ein Objekt mit größerer Nummer benachbart ist, selbst das Minimum der Nachbarschaft und wird als "Inneres" beurteilt (2026-09-06 gemessen: in der Spalte, in der 1 und 2 sich berühren, verschwand die Kontur auf der Seite von 1). Betrachtet man Erosion und Dilatation zusammen, ergibt sich das symmetrische Urteil "in der Nachbarschaft gibt es eine andere Nummer als die eigene".
+- **L289** — ★Auf das Vorzeichen achten: Die Eckpunkte sind als (row, col) geordnet, daher ist die von ``_monotone_chain`` zurückgegebene Orientierung (row als x betrachtet) gegen den Uhrzeigersinn = auf dem Bildschirm im Uhrzeigersinn. Das Innere ist die Seite, auf der das Kreuzprodukt **nicht negativ** ist (mit ``<= 0`` geschrieben ergab sich für alle Objekte solidity 0).
+- **L589** — ★Erosion allein **liefert nur eine Seite**. Ein Objekt mit kleinerer Nummer bleibt, selbst wenn ein Objekt mit größerer Nummer benachbart ist, selbst das Minimum der Nachbarschaft und wird als "Inneres" beurteilt (2026-09-06 gemessen: in der Spalte, in der 1 und 2 sich berühren, verschwand die Kontur auf der Seite von 1). Betrachtet man Erosion und Dilatation zusammen, ergibt sich das symmetrische Urteil "in der Nachbarschaft gibt es eine andere Nummer als die eigene".
 
 ## `calib.py`
 
@@ -529,6 +529,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L42** — ★Ist das Repository-Wurzelverzeichnis nicht im Pfad, wird ``demops`` nicht gefunden (dieses Beispiel importiert `fullseye` nicht, daher greift der Pfad-Hook nicht).
 - **L76** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+
+## `examples/poc_dense_bubble_count.py`
+
+- **L748** _(ja)_ — ★最初は「相対 3 % 以内」と書いて、真値 30 個で 1 個ずれた 0.033 で落ちた —— 言いたかったのは 「誤っても 1 個ぶん」なので、個数の差で書き直した(2026-10-18)。真値は画面の外に出た細胞も 数えているので、1 個の差の一部は op でなく真値の規約の側にある(どれかは区別していない)。
+- **L751** _(ja)_ — ★2 回目: 1 個ぶんでも足りなかった(最大 2 個、600 枚の全数で)。ずれの大きさは印字に残し、 門は「自信をもった誤りの件数」だけにする —— 合わせ直すたびに門を緩めるのは門ではないので、 ここで止める。
+- **L844** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 

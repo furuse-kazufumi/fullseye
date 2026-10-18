@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1488. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1491. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -171,8 +171,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `blob2d.py`
 
-- **L287** — ★Mind the sign: vertices are ordered as (row, col), so the orientation returned by ``_monotone_chain`` is counter-clockwise (viewing row as x) = clockwise on screen. The inside is the side where the cross product is **non-negative** (writing ``<= 0`` produced solidity 0 for all objects).
-- **L587** — ★Erosion alone **produces only one side**. An object with a smaller label, even when a larger-labelled object is adjacent, keeps itself as the neighbourhood minimum and is judged "interior" (2026-09-06 measured: at the column where 1 and 2 touch, the contour on the 1 side disappeared). Looking at both erosion and dilation gives the symmetric judgment of "there is a different label in the neighbourhood".
+- **L289** — ★Mind the sign: vertices are ordered as (row, col), so the orientation returned by ``_monotone_chain`` is counter-clockwise (viewing row as x) = clockwise on screen. The inside is the side where the cross product is **non-negative** (writing ``<= 0`` produced solidity 0 for all objects).
+- **L589** — ★Erosion alone **produces only one side**. An object with a smaller label, even when a larger-labelled object is adjacent, keeps itself as the neighbourhood minimum and is judged "interior" (2026-09-06 measured: at the column where 1 and 2 touch, the contour on the 1 side disappeared). Looking at both erosion and dilation gives the symmetric judgment of "there is a different label in the neighbourhood".
 
 ## `calib.py`
 
@@ -529,6 +529,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L42** — ★Unless the repository root is on the path, ``demops`` is not found (this example does not import `fullseye`, so the path hook does not kick in).
 - **L76** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+
+## `examples/poc_dense_bubble_count.py`
+
+- **L748** _(ja)_ — ★最初は「相対 3 % 以内」と書いて、真値 30 個で 1 個ずれた 0.033 で落ちた —— 言いたかったのは 「誤っても 1 個ぶん」なので、個数の差で書き直した(2026-10-18)。真値は画面の外に出た細胞も 数えているので、1 個の差の一部は op でなく真値の規約の側にある(どれかは区別していない)。
+- **L751** _(ja)_ — ★2 回目: 1 個ぶんでも足りなかった(最大 2 個、600 枚の全数で)。ずれの大きさは印字に残し、 門は「自信をもった誤りの件数」だけにする —— 合わせ直すたびに門を緩めるのは門ではないので、 ここで止める。
+- **L844** _(ja)_ — ★記録(門ではない): o = 0.4 では「決まらない」と言った塊の区間が真値を外す。いびつな泡が 別の泡に食い込むと、くびれが山を残さず、上限 hi にも数えられない(op の docstring の限界)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 

@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 38 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 39 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1207,6 +1207,46 @@ Source: [examples/poc_industrial_oct.py](https://github.com/furuse-kazufumi/full
 This run produced **15 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.245 —— Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count
+
+[![Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
+
+*↑ **Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count** ―― Overlapping bubbles show up as peaks of the distance transform, and as the neck between them gets shallower the image stops deciding whether there are two bubbles or one. The existing chain (blob_distance, blob_seeds, blob_split) picks one h and always returns one number, so it calls two circles at overlap 0.8 a single bubble. The new op blob_count_interval measures each peak's prominence (0-dimensional persistence), returns an interval when the relative prominence falls inside a band, and opens the upper bound when the inscribed circles of the counted peaks cannot explain the area. The relative prominence of two equal circles follows the closed form 1 − sqrt(1 − (1 − o)²) to within 1.6 px, and upscaling by 2 leaves every answer unchanged. Confident errors appear only beyond the overlap where the union becomes indistinguishable from an ellipse of aspect 1.1 (0.86 to 0.90 by the closed form). On the BBBC005 ground-truth masks (CC0) the small objects are counted with a relative error of 0.34 % (connected components 9.4 %); for the deeply overlapping large objects the op declines to give a number on 286 of 300 images and makes no confident error. Semi-synthetic clusters built from real oxygen-bubble shapes of a water electrolyser (PEMWE, CC BY 4.0, hand-drawn masks) give 2 confident errors in 65 scenes and an ALCON2009-style score (centroid inside each bubble's box, implemented here) of 0.95 on the clusters it answers. Widening the shape tolerance until 95 % of isolated bubbles pass lets hidden bubbles through and raises the error rate from 3 % to 19 % — the sweep shows the trade-off between counting more and never being silently wrong. When irregular bubbles overlap deeply, even the upper bound of the declined interval can miss by one; the op documents this limit.*
+
+[![等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
+
+*↑ The measurement ―― 等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。 (figure labels are in Japanese; the numbers are the same)*
+
+[![重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts.png)
+
+*↑ 重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。*
+
+[![world_blobs_touching(12 円、半径 14 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error.png)
+
+*↑ world_blobs_touching(12 円、半径 14 px)。*
+
+[![BBBC005 の真値マスク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth.png)
+
+*↑ BBBC005 の真値マスク。*
+
+[![緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic.png)
+
+*↑ 緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。*
+
+[![2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
+
+*↑ The animation ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
+
+```
+py -3.11 examples/poc_dense_bubble_count.py
+```
+
+Source: [examples/poc_dense_bubble_count.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+
+This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dense_bubble_count)
+
+Ops used (notes): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

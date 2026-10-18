@@ -4,7 +4,7 @@ dim: blob
 category: split
 in: labels2d × labels2d × image2d
 out: labels2d
-examples: [blob_split_tour]
+examples: [blob_split_tour, poc_dense_bubble_count]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ numpy.ndarray
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
+- [poc_dense_bubble_count](../../../../examples/poc_dense_bubble_count.py) — `py -3.11 examples/poc_dense_bubble_count.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)
 
@@ -62,7 +63,7 @@ numpy.ndarray
 
 ## 同カテゴリ(`split`)
 
-[blob_distance](blob_distance.md) · [blob_seeds](blob_seeds.md)
+[blob_distance](blob_distance.md) · [blob_seeds](blob_seeds.md) · [blob_count_interval](blob_count_interval.md)
 
 ---
 *Provenance: blob2d.py — BLOB operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

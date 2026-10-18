@@ -5738,6 +5738,22 @@
    }
   },
   {
+   "id": "poc_dense_bubble_count",
+   "group": "wing_industrial",
+   "media": "12_pair_merging.gif",
+   "motion": true,
+   "thumb_src": "01_real_bubbles_verdict.png",
+   "label": {
+    "ja": "密集した泡を数える(決まらなければ区間)",
+    "en": "Counting dense bubbles (an interval when undecidable)",
+    "zh": "密集气泡计数(无法确定时给出区间)",
+    "tw": "密集氣泡計數(無法確定時給出區間)",
+    "ko": "밀집한 기포 세기(결정할 수 없으면 구간)",
+    "de": "Dichte Blasen zählen (Intervall, wenn nicht entscheidbar)",
+    "hi": "घने bubbles गिनना (तय न हो तो interval)"
+   }
+  },
+  {
    "id": "poc_optics_drawings",
    "group": "wing_metrology",
    "media": "06_setup_ring_coaxial.png",

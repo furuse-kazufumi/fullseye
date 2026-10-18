@@ -98,7 +98,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **見つける**
 
-- 領域を切り出して、選んで、数える: [説明](../capabilities/blob-and-region.md) · 例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 領域を切り出して、選んで、数える: [説明](../capabilities/blob-and-region.md) · 例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py) · [poc_dense_bubble_count](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
 - 画像の中の文字を、正しい文字列に合わせて直す: [説明](../capabilities/fix-text-in-images.md) · 例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - OCR の前処理(傾き補正・局所 2 値化・行の切り出し): [説明](../capabilities/ocr-preprocessing.md) · 例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
 - PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査): [説明](../capabilities/pl-carrier-diffusion-visibility.md) · 例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
@@ -197,7 +197,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 245 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -216,7 +216,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (38)</summary>
+<details class="vall"><summary><b>産業検査</b> (39)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -256,6 +256,7 @@ PoC 244 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明の円錐と観察の NA" width="200" height="200"><b>&#9654;</b><span>照明の円錐と観察の NA</span></a>
 <a href="../articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tdi_linescan.jpg" alt="TDI ラインスキャンとラインスキャン用レンズ" width="200" height="200"><span>TDI ラインスキャンとラインスキャン用レンズ</span></a>
 <a href="../articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_industrial_oct.jpg" alt="工業用 OCT(塗装の層厚と内部欠陥)" width="200" height="200"><span>工業用 OCT(塗装の層厚と内部欠陥)</span></a>
+<a href="../articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dense_bubble_count.jpg" alt="密集した泡を数える(決まらなければ区間)" width="200" height="200"><b>&#9654;</b><span>密集した泡を数える(決まらなければ区間)</span></a>
 </div>
 </details>
 

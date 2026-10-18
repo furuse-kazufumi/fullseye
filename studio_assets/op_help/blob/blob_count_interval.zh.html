@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>对重叠的物体计数。<b>无法确定时返回区间而不是个数</b>(fail-closed)。</p>
+<p>融合团块中的物体表现为距离变换的峰。两个圆重叠时会形成缩颈,缩颈越浅(峰的<b>突出度</b>越小),就越无法确定&quot;是 2 个还是 1 个&quot;。<code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> 只选一个 h, <b>总是返回一个确定的个数</b> —— 即使在重叠过深、无法确定的地方,也会给出一个看似合理的数。本 op 逐峰测量突出度,把落在阈值带内的峰视为&quot;模糊&quot;, 并以 <code style="color:#22d3bf">lo</code> 〜 <code style="color:#22d3bf">hi</code> 的区间返回个数。只有区间宽度为 0 时才返回 <code style="color:#22d3bf">count</code>。</p>
+<p>峰的判定(突出度 p、高度 h、相对突出度 p/h。h 相当于内切圆半径):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> 且 <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → 确定的峰(计数)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> 且 <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → 模糊(不计入 lo,计入 hi)</p>
+<p style="margin:2px 0 2px 12px">• 其他 → 噪声(网格量化产生的峰。椭圆上实测小于 0.6 px)</p>
+<p><b>使用相对突出度的理由</b>:半径同为 r 的 2 个圆以重叠率 o(中心距 d = 2r(1 − o))重叠时,缩颈的半宽为 w = sqrt(r² − (d/2)²), p/h = 1 − sqrt(1 − (1 − o)²) —— <b>与半径无关</b>。若选用绝对值的 h,在大泡与小泡混合的图像中只能适合其中一方(与 <code style="color:#22d3bf">poc_cell_counting</code> 记录下的漏洞同一形态)。默认带 0.05〜0.15 对应重叠率 0.69〜0.47。</p>
+<p>给出 <code style="color:#22d3bf">round_tol</code> 时,还会拒绝<b>无法用峰来解释的面积</b>。重叠率超过 0.7 时,缩颈被网格量化淹没,只剩下 1 个峰(2 个看起来像 1 个)。因此把分量的面积与确定峰和模糊峰的内切圆面积之和 Σπh² 比较,若面积 &gt; (1 + round_tol + 1/h_min) · Σπh²,则放开上限(<code style="color:#22d3bf">hi = None</code>)。1/h_min 是网格量化的部分(半径 8 px 以上的圆盘比值不超过 1.09,2026-10-18 实测)。<code style="color:#22d3bf">round_tol</code> 相当于<b>允许的长宽比 − 1</b> (长宽比 a/b 的椭圆面积比为 a/b)。像气泡那样圆的物体取 0.1,像细胞那样不规则的取 0.3 左右。<code style="color:#22d3bf">None</code> 不假定形状(会漏掉深度重叠)。</p>
+<p><b>区间的上限并非保证</b>: <code style="color:#22d3bf">hi</code> 是表现为峰的物体个数,没有留下峰而被埋没的物体(如嵌入大泡中的小泡)也不计入 <code style="color:#22d3bf">hi</code>。只有面积检查能捕捉到它时才放开上限。<code style="color:#22d3bf">determined</code> 为 False 时,唯一确定的是&quot;无法说出个数&quot;,区间只是参考(在使用真实气泡形状的半合成实验中,出现了回答为无法确定的团块其真值比 <code style="color:#22d3bf">hi</code> 多 1 个的例子。<code style="color:#22d3bf">poc_dense_bubble_count</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D 前景(<code style="color:#22d3bf">&gt; 0</code> 为前景)。</p>
+<p>rel_lo, rel_hi : float</p>
+<p>相对突出度的带。<code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>。</p>
+<p>min_prominence : float</p>
+<p>突出度的绝对下限 [px]。<code style="color:#22d3bf">&gt;= 0</code>。去除距离变换量化产生的峰。</p>
+<p>round_tol : float or None</p>
+<p>面积检查的容许量(见上文)。<code style="color:#22d3bf">None</code> 时不检查。</p>
+<p>connectivity : {4, 8}</p>
+<p>分量与水位的连通方式。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code>(区间宽度为 0 时为 int,否则为 <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">lo</code>、</p>
+<p><code style="color:#22d3bf">hi</code>(上限放开时为 <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">determined</code>、<code style="color:#22d3bf">reason</code>、</p>
+<p><code style="color:#22d3bf">labels</code>(只以确定峰为种子的分割,int32,内切圆的幂图)、<code style="color:#22d3bf">labels_hi</code></p>
+<p>(也以模糊峰为种子的分割)、<code style="color:#22d3bf">components</code>(各分量的 <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code>(放开时为 -1)/ <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>)、</p>
+<p><code style="color:#22d3bf">peaks</code>(各峰的 <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code>(0 噪声・1 模糊・2 确定))、</p>
+<p><code style="color:#22d3bf">params</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # 重叠率 0.1: 确定为 2 个</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # 重叠率 0.6: 无法确定</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>来历(仅限公开文献): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— 持续同调 / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— 分水岭 / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— 幂图(分割)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 38 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 39 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1207,6 +1207,46 @@ py -3.11 examples/poc_industrial_oct.py
 この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_industrial_oct)
 
 使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`material_optical_constants`](https://furuse.work/ops/optics/matprop/material_optical_constants.html) · [`oct_ascan`](https://furuse.work/ops/optics/oct/oct_ascan.html) · [`oct_bscan`](https://furuse.work/ops/optics/oct/oct_bscan.html) · [`oct_bscan_boundaries`](https://furuse.work/ops/optics/oct/oct_bscan_boundaries.html) · [`oct_bscan_flatten`](https://furuse.work/ops/optics/oct/oct_bscan_flatten.html) · [`oct_bscan_simulate`](https://furuse.work/ops/optics/oct/oct_bscan_simulate.html) · [`oct_design`](https://furuse.work/ops/optics/oct/oct_design.html) · [`oct_dispersion_broadening`](https://furuse.work/ops/optics/oct/oct_dispersion_broadening.html) · [`oct_dispersion_compensate`](https://furuse.work/ops/optics/oct/oct_dispersion_compensate.html) · [`oct_dispersion_estimate`](https://furuse.work/ops/optics/oct/oct_dispersion_estimate.html) · [`oct_from_spectra`](https://furuse.work/ops/optics/oct/oct_from_spectra.html) · [`oct_interferogram`](https://furuse.work/ops/optics/oct/oct_interferogram.html) · [`oct_k_linearize`](https://furuse.work/ops/optics/oct/oct_k_linearize.html) · [`oct_layer_thickness`](https://furuse.work/ops/optics/oct/oct_layer_thickness.html)
+
+## No.2026.245 —— 密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す
+
+[![密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
+
+*↑ **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** ―― 重なった泡は距離変換の山として現れ、くびれが浅くなるほど「2 個か 1 個か」が画像から決まらなくなる。既存の連鎖(`blob_distance` → `blob_seeds` → `blob_split`)は h を 1 つ選んで必ず 1 つの数を返すので、重なり率 0.8 の 2 円も1 個と言い切る。新 op `blob_count_interval` は山ごとに突出度(0 次元パーシステンス)を測り、相対突出度が帯の中なら区間、数えた山の内接円で面積を説明できなければ上限を開く。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と1.6 px 以内、2 倍に拡大しても答えは同じ。自信をもった誤りは、和集合が縦横比 1.1 の楕円と区別できなくなる重なり率(閉形式で 0.86〜0.90)から先だけ。BBBC005(CC0)の真値マスクでは小さい物体の個数の相対誤差 0.34 %(連結成分 9.4 %)、重なりの深い大きい物体は 300 枚中 286 枚で数を返さず、自信をもった誤りは 0。水電解の酸素の泡(PEMWE、CC BY 4.0、手作業マスク)の形を重なり率を振って並べた半合成で、自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡ごとの矩形に入るか、自前で実装)は答えた塊で 0.95。★形の許しを孤立した泡の 95 % を通す値まで広げると、隠れた泡も通して誤りが 3 % から 19 % に増える —— 数える力と黙って間違わないことの矛盾を掃引で示した。いびつな泡が深く食い込むと、決まらないと答えた区間の上限も 1 個外れる(op の限界として明記)。*
+
+[![等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/02_prominence_vs_overlap.png)
+
+*↑ 測定の図 ―― 等しい 2 円の 2 番目の山の相対突出度。閉形式(破線)は半径によらない。実測は格子の量子化で閉形式より最大 1.5 px 低い。点線の帯の中に落ちた山は『あいまい』。*
+
+[![重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/03_pair_verdicts.png)
+
+*↑ 重なり率を上げると、くびれが浅くなって 0.5 前後で『1 個か 2 個か』が決まらなくなり(橙)、0.7 を超えると山が 1 つになる。*
+
+[![world_blobs_touching(12 円、半径 14 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/05_world_count_error.png)
+
+*↑ world_blobs_touching(12 円、半径 14 px)。*
+
+[![BBBC005 の真値マスク。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/07_bbbc005_count_vs_truth.png)
+
+*↑ BBBC005 の真値マスク。*
+
+[![緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/09_pemwe_semisynthetic.png)
+
+*↑ 緑の矩形 = 置いた泡(真値)、赤の十字 = 決まった塊の重心。*
+
+[![2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
+
+*↑ 動く図 ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
+
+```
+py -3.11 examples/poc_dense_bubble_count.py
+```
+
+ソース: [examples/poc_dense_bubble_count.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dense_bubble_count.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dense_bubble_count)
+
+使用 op(ノートへ): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
