@@ -1,0 +1,44 @@
+VERS 0
+MODE SEQ
+NAME coordbrk off-axis parabola
+NOTE 0 Fullseye test design: paraboloid used 36 mm off its axis
+UNIT MM X W X CM MR CPMM
+ENPD 12
+ENVD 20 1 0
+FTYP 0 0 2 1 0 0 0
+XFLN 0.0 0.5 0 0 0 0 0 0 0 0 0 0
+YFLN 0.0 0.7 0 0 0 0 0 0 0 0 0 0
+FWGN 1 1 1 1 1 1 1 1 1 1 1 1
+WAVM 1 0.55 1
+PWAV 1
+SURF 0
+  TYPE STANDARD
+  CURV 0.0 0 0 0 0 ""
+  DISZ INFINITY
+SURF 1
+  STOP
+  TYPE STANDARD
+  CURV 0.0 0 0 0 0 ""
+  DISZ 10.0
+  DIAM 7.0 0 0 0 1 ""
+SURF 2
+  TYPE COORDBRK
+  CURV 0.0 0 0 0 0 ""
+  PARM 1 0.0
+  PARM 2 36.0
+  PARM 3 0.0
+  PARM 4 0.0
+  PARM 5 0.0
+  PARM 6 0.0
+  DISZ 40.0
+SURF 3
+  TYPE STANDARD
+  CURV -0.005 0 0 0 0 ""
+  DISZ -100.0
+  GLAS MIRROR 0 0 1.5 40 0 0 0 0 0 0
+  CONI -1.0
+  DIAM 30.0 0 0 0 1 ""
+SURF 4
+  TYPE STANDARD
+  CURV 0.0 0 0 0 0 ""
+  DISZ 0.0

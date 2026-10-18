@@ -916,7 +916,7 @@ def _is_undo_of(b, c, tol=1e-12):
         return False
     d_zero = c["decenter"][0] == 0.0 and c["decenter"][1] == 0.0
     nz = sum(1 for v in c["tilt"] if v != 0.0)
-    if d_zero and nz <= 1:                       # the two matrix orders coincide: either label is the inverse
+    if nz == 0 or (d_zero and nz <= 1):          # the two orders coincide: either label is the inverse
         return True
     return b["order"] != c["order"]
 
@@ -1366,19 +1366,29 @@ def _surfaces_from_nc(system, template, op):
             out.append(sf)
         else:
             if r["kind"] == "break":
-                b = r
-            else:                                                     # return: the relative frame as one break
+                parts = _file_breaks(r, pre)
+            else:
+                # A return goes back to the frame at the entry of record `to` and then runs t along its axis. As one
+                # break of order 1 (tilt, then decentre along the new axes, then the thickness): tilt = Ft relative
+                # to Fc, offset e = Ft^T (o_t - o_c) + (0, 0, t).
                 if dirs[k] != dirs[r["to"]]:
                     raise ValueError("%s: %s: a return across an odd number of reflections cannot be written as a "
                                      "coordinate break" % (op, where))
                 Fc, oc = lay["entry"][k]
                 Ft, ot = lay["entry"][r["to"]]
-                dd = Fc.T @ (ot - oc)
-                if abs(dd[2]) > 1e-9 * max(1.0, float(np.linalg.norm(dd))):
-                    raise ValueError("%s: %s: the return needs a decentre along z, which a coordinate break cannot "
-                                     "express" % (op, where))
-                b = {"decenter": (float(dd[0]), float(dd[1])), "tilt": _euler_xyz(Fc.T @ Ft), "order": "xyz"}
-            parts = _file_breaks(b, pre)
+                e = Ft.T @ (ot - oc) + np.array([0.0, 0.0, float(t_trace)])
+                if e[2] < -1e-9:
+                    raise ValueError("%s: %s: the return would need a negative thickness (%.6g mm); lengthen the gap "
+                                     "after it" % (op, where, e[2]))
+                a = _euler_xyz(Fc.T @ Ft)
+                sf = blank("COORDBRK")
+                sf["parm"] = {1: _z(e[0]), 2: _z(pre * e[1]), 3: _z(a[0]), 4: _z(pre * a[1]), 5: _z(pre * a[2]),
+                              6: 1.0}
+                sf["disz"] = _z(pre * max(0.0, float(e[2])))
+                if r["label"]:
+                    sf["comment"] = r["label"].replace("\n", " ")
+                out.append(sf)
+                continue
             for i, (dc, tl, flag) in enumerate(parts):
                 sf = blank("COORDBRK")
                 sf["parm"] = {1: dc[0], 2: dc[1], 3: tl[0], 4: tl[1], 5: tl[2], 6: float(flag)}
