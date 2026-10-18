@@ -908,7 +908,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-15: tem(仮想の透過電子顕微鏡、temsim)11 op を新しい族として追加(309 → 320)。
     # 2026-10-15: noncoaxial(非共軸の光学系、raytrace3d)13 op を新しい族として追加、drawing に noncoaxial_drawing、
     #   design に未登録だった raytrace の 4 関数(chief_ray / ray_bundle / opd_samples / with_wavelength)(320 → 338)。
-    assert len(opsoptics.OPSOPTICS) == 363
+    # 2026-10-19: 逐次光学設計の第 3 弾(絞り照準・ケラレ係数)3 op(363 → 366)。
+    assert len(opsoptics.OPSOPTICS) == 366
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
