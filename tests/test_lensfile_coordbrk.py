@@ -202,9 +202,7 @@ def test_documented_multi_axis_order_differs_from_the_second_implementation(name
 def _two_axis_text(flag):
     out = _text("cb_off_axis_parabola.zmx")
     for k, v in ((2, 0.0), (3, 20.0), (4, 30.0), (6, flag)):
-        out, n = re.subn(r"  PARM %d \S+
-" % k, "  PARM %d %r
-" % (k, v), out, count=1)
+        out, n = re.subn(r"  PARM %d \S+\n" % k, "  PARM %d %r\n" % (k, v), out, count=1)
         assert n == 1
     return out
 

@@ -36,8 +36,8 @@ a model glass, a catalogue name or ``.agf`` record its name with n_d / V_d
 on the line; a custom Sellmeier medium without a catalogue name is refused
 (a reader could not resolve it). *system* may also be a
 ``raytrace3d.noncoaxial_system`` (the prescription is then optional): its break
-and return elements become ``COORDBRK`` surfaces (a decentred multi-axis tilt
-becomes two), an entrance-pupil diameter is recomputed from the stop radius.
+and return elements become ``COORDBRK`` surfaces (order flag 0 / 1 for the
+tracer's "xyz" / "zyx" breaks), an entrance-pupil diameter is recomputed from the stop radius.
 Refused: a beamsplitter surface, a per-surface decenter / tilt (put a break
 around it), a tilted image or object plane, a return across an odd number of
 reflections or one that would need a negative thickness. A coaxial
