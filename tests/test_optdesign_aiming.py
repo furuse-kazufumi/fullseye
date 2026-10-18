@@ -250,6 +250,7 @@ def test_set_vignetting_leaves_no_clipped_ray(rings):
         assert a["n_lost"] == 0 and a["n_rays"] == 217
     # the factors are non-trivial exactly where rays were clipped
     rec = {r["field"]: r for r in out["vignetting"]}
+    assert len(rec[0.0]) > 1
     assert all(v == 0.0 for k, v in rec[0.0].items() if k != "field")
     assert rec[20.0]["vcy"] > 0.05 and rec[14.0]["vcy"] > 0.0
 
@@ -257,6 +258,7 @@ def test_set_vignetting_leaves_no_clipped_ray(rings):
 def test_set_vignetting_on_a_system_without_vignetting_is_zero_to_1e_9():
     for s in (_triplet(), RT.example_system("doublet")):
         out = RT.set_vignetting(s, fields=[0.0, 5.0])
+        assert len(out["vignetting"]) == 2
         for r in out["vignetting"]:
             assert all(abs(r[k]) < 1e-9 for k in ("vdx", "vdy", "vcx", "vcy", "van"))
 
@@ -409,8 +411,10 @@ def test_four_ray_and_grid_modes_agree_on_the_ellipse_edges_and_grid_is_stricter
     s = _clipped_triplet()
     four = RT.set_vignetting(s, fields=FIELDS, mode="four")
     grid = RT.set_vignetting(s, fields=FIELDS, mode="grid")
+    assert len(four["vignetting"]) == len(grid["vignetting"]) > 0
     for r4, rg in zip(four["vignetting"], grid["vignetting"]):
         assert rg["vcy"] >= r4["vcy"] - 1e-12 and rg["vcx"] >= r4["vcx"] - 1e-12
     # the four marginal rays pass in the four-ray result, whatever the grid does
+    assert four["vignetting"]
     for r in four["vignetting"]:
         assert bool(_marginal_valid(four, r["field"]).all())
