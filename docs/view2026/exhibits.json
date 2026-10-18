@@ -6285,6 +6285,23 @@
    }
   },
   {
+   "id": "poc_zoom_configurations",
+   "group": "wing_color",
+   "media": "01_zoom_configurations.png",
+   "motion": false,
+   "thumb_src": "01_zoom_configurations.png",
+   "label": {
+    "ja": "ズームレンズ(多構成)を 1 つの処方の差分で持つ",
+    "en": "Zoom lenses as differences of one prescription (multi-configuration)",
+    "zh": "以同一处方的差分持有变焦镜头(多构型)",
+    "tw": "以同一處方的差分持有變焦鏡頭(多構型)",
+    "ko": "줌 렌즈(다중 구성)를 하나의 처방의 차분으로 보관",
+    "de": "Zoomobjektive als Differenzen einer Vorschrift (Mehrkonfiguration)",
+    "hi": "zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना",
+    "fr": "Objectifs zoom comme différences d'une même prescription (multi-configuration)"
+   }
+  },
+  {
    "id": "poc_spectrometer_illumination",
    "group": "wing_metrology",
    "media": "03_slit_image_smile.png",

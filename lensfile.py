@@ -17,6 +17,8 @@ The ops::
     lens_file_write(prescription)   -> .zmx text (optionally the geometry of an edited system)
     lens_file_report(source)        -> keyword inventory: read / ignored / unsupported
 
+(``MNUM`` multi-configuration tables are read into ``system["configurations"]`` and written back from it.)
+
 **Fail-closed.** Every keyword in the file is classified as *read* (it changes
 the model), *ignored* (it cannot change a sequential real-ray trace: display
 settings, coatings, tolerance and merit-function rows, mechanical sizes) or
@@ -50,8 +52,9 @@ Approximations allowed only with ``allow_partial=True``: a glass name found in
 no catalogue (falls back to the file's n_d, V_d model), object-space NA
 (``OBNA``, converted paraxially), real-image-height fields (``FTYP 3``,
 converted paraxially), a curved image surface (treated as flat), non-circular or decentred apertures
-(ignored), non-standard temperature / pressure (``ENVD``), multiple
-configurations (configuration 1 only), and unknown surface-level keywords.
+(ignored), non-standard temperature / pressure (``ENVD``), a multi-configuration
+file with coordinate breaks (configuration 1 only), multi-configuration operands other than the ones
+listed below, and unknown surface-level keywords.
 
 Refused always: ideal (paraxial) surfaces and every other surface type, an r²
 aspheric term, sequential-mode off (``MODE`` not ``SEQ``), a negative travel
@@ -94,6 +97,26 @@ documentation, KA-01638; the tilt sign also checked against a published design; 
   of the first surface (it would move the object space), a break that carries a
   glass / curvature / the stop, a negative travel distance.
 
+**Multiple configurations** (zoom / switchable systems). ``MNUM n active`` declares *n* configurations and the
+table that follows holds one row per operand and configuration, ``OPERAND surface config value ...`` with
+the configuration 1-based: ``THIC`` thickness, ``CRVT`` curvature (1/length, like ``CURV``), ``GLSS`` glass
+name (``MIRROR``, or nothing for air), ``PRAM`` a surface parameter (its number is the second number after
+the value) and ``PAR1`` ... ``PAR9`` the same parameter in one word. ``lens_file_read`` builds every
+configuration (the surface blocks hold the active one), keeps the first as the system and stores the others
+as sparse overrides in ``system["configurations"]``; resolve them with ``lensconfig.lens_configurations``.
+``SDIA`` (semi-diameter, not read by this importer either), ``MOFF`` and ``MCOM`` are ignored and reported; any
+other operand is unsupported (``allow_partial=True`` drops it and marks the result approximate). A row must
+list every configuration (a partial row is refused). ``lens_file_write`` of a system that carries
+``configurations`` writes configuration 1 as the surface blocks, ``MNUM n 1`` and the rows of every operand
+that varies; it refuses (``ValueError``) what these lines cannot carry: a different aperture, field,
+wavelength, stop, conic constant, clear aperture or surface type in a later configuration, a model glass in a
+glass row, and (for a file with an F/# aperture) a stop aperture that does not follow the F/#. Curvature,
+thickness and parameter pickups are frozen at the written values (listed in ``dropped_solves``).
+Evidence for the line layout: public files (24 zoom lenses read in full, plus samples of every operand: rows, order, the active
+configuration) and the two public readers (which skip the table); see
+``docs/capabilities/sequential-lens-design-metrics.md``. The writer was checked by reading its output back
+and by reading real zoom files back after a write.
+
 Conventions: lengths in mm, wavelengths in µm (the file's own unit), field
 angles in degrees. For coaxial files fields are folded to their radial
 magnitude (``hypot(x, y)`` for heights, the angle whose tangent is
@@ -109,12 +132,15 @@ Keywords that were *ignored* are not written back.
 """
 from __future__ import annotations
 
+import copy
 import io
 import math
 import os
+import re
 
 import numpy as np
 
+import lensconfig as LC
 import raytrace as RT
 import raytrace3d as R3
 
@@ -145,7 +171,8 @@ _IGNORED = {
     "BLNK": "blank line marker", "FIMP": "import settings", "MEMA": "mechanical semi-aperture (drawing only)",
     "OMMA": "mechanical-aperture display", "OEMA": "mechanical-aperture display", "HYPR": "hyperhemisphere flag",
     "RCMF": "comment field", "AUTH": "author", "TOL": "tolerance data", "TOLE": "tolerance data",
-    "MOFF": "multi-configuration operand", "COAT": "coating (transmission, not geometry)",
+    "MOFF": "multi-configuration row (configuration settings; name strings, no geometry)",
+    "MCOM": "multi-configuration row comment", "COAT": "coating (transmission, not geometry)",
     "MIRR": "mirror-substrate drawing", "VDSZ": "vignetting display", "MAZH": "maximum zone height (display)",
     "VPAR": "variable flag", "VCON": "variable flag", "DMFS": "default-merit settings",
     "TRAC": "ray-trace display setting", "TCED": "TCE data (thermal analysis)", "TCMM": "thermal data",
@@ -318,9 +345,10 @@ def _parse(text, op):
     rep = _Report()
     top = {"name": "", "notes": [], "unit": "MM", "mode": "SEQ", "aperture": None, "ftyp": None,
            "x": None, "y": None, "w": None, "wavm": {}, "wavl": None, "wwgt": None, "pwav": None,
-           "vign": {}, "envd": None, "mnum": 1, "raim": None, "telecentric": False}
+           "vign": {}, "envd": None, "mnum": 1, "mcur": 1, "mce": [], "raim": None, "telecentric": False}
     surfs = []
     cur = None
+    mce_on = False                       # lines after MNUM are the multi-configuration table
     for lineno, line in enumerate(text.splitlines(), 1):
         toks = line.split()
         if not toks:
@@ -444,17 +472,107 @@ def _parse(text, op):
                 top["envd"] = [_num(a, "ENVD", op) for a in args[:3]]
             elif kw == "MNUM":
                 top["mnum"] = int(_num(args[0], "MNUM", op)) if args else 1
+                top["mcur"] = int(_num(args[1], "MNUM active configuration", op)) if len(args) > 1 else 1
+                if top["mnum"] < 1 or not 1 <= top["mcur"] <= top["mnum"]:
+                    raise ValueError("%s: line %d: MNUM %d %d — the active configuration must be 1..%d"
+                                     % (op, lineno, top["mnum"], top["mcur"], max(top["mnum"], 1)))
+                mce_on = True
             elif kw == "RAIM":
                 top["raim"] = args
             continue
         if kw in _IGNORED:
             rep.i(kw, _IGNORED[kw])
             continue
+        if mce_on and not indented:
+            _parse_mce_row(top, rep, toks, kw, lineno, op)
+            continue
         if cur is not None and indented:
             rep.u(where, kw, "unknown surface keyword %s — it may change the geometry" % kw, approximable=True)
             continue
         rep.i(kw, _MERIT_HINT if cur is not None else "unknown top-level setting (not geometry)")
+    top["mce_ok"] = top["mnum"] > 1 and not any(sf["type"] == "COORDBRK" for sf in surfs)
     return top, surfs, rep
+
+
+# Multi-configuration table (lines after ``MNUM n active``). Row layout, from public files
+# (see docs/capabilities/sequential-lens-design-metrics.md): ``OPERAND p1 config value ...`` with
+# p1 = surface, config 1-based, and for PRAM the parameter number as the 2nd token after the value.
+_MCE_READ = {"THIC": "thickness", "CRVT": "curvature", "GLSS": "glass", "PRAM": "surface parameter"}
+_MCE_PARN = re.compile(r"^PAR([1-9])$")
+_MCE_IGNORED = {"SDIA": "semi-diameter (display size; this importer does not read DIAM either, rays are clipped "
+                        "by CLAP / FLAP only)"}
+
+
+def _parse_mce_row(top, rep, toks, kw, lineno, op):
+    """One multi-configuration row -> ``top["mce"]`` (supported), ignored, or unsupported (never dropped silently)."""
+    where = "line %d" % lineno
+    if kw in _MCE_IGNORED:
+        rep.i(kw, _MCE_IGNORED[kw])
+        return
+    parn = _MCE_PARN.match(kw)
+    if kw not in _MCE_READ and not parn:
+        rep.u(where, kw, "multi-configuration operand %s is not supported (read: THIC CRVT GLSS PRAM PARn); "
+              "the configurations would differ from the file" % kw, approximable=True)
+        return
+    if len(toks) < 3:
+        raise ValueError("%s: %s: %s row needs a surface and a configuration number" % (op, where, kw))
+    surf = int(_num(toks[1], "%s %s surface" % (where, kw), op))
+    cfg = int(_num(toks[2], "%s %s configuration" % (where, kw), op))
+    value = toks[3] if len(toks) > 3 else ""
+    p2 = None
+    if kw == "PRAM":
+        if len(toks) < 6:
+            raise ValueError("%s: %s: PRAM row needs its parameter number (the 2nd number after the value)"
+                             % (op, where))
+        p2 = int(_num(toks[5], "%s PRAM parameter" % where, op))
+    elif parn:
+        p2 = int(parn.group(1))
+        kw = "PRAM"
+        rep.notes.append("%s: %s read as parameter %d (PARn: by analogy with the verified PAR3)" % (where, toks[0], p2))
+    if kw != "GLSS":
+        value = _num(value, "%s %s value" % (where, toks[0]), op)
+    rep.r(toks[0].upper())
+    top["mce"].append({"kw": kw, "surf": surf, "cfg": cfg, "value": value, "p2": p2, "where": where})
+
+
+def _mce_apply(surfs, rows, cfg, op):
+    """Apply configuration *cfg* (1-based) of the table to file-level surfaces (file units, before scaling)."""
+    for r in rows:
+        if r["cfg"] != cfg:
+            continue
+        sf = surfs[r["surf"]]
+        v = r["value"]
+        if r["kw"] == "THIC":
+            sf["disz"] = INF if (r["surf"] == 0 and v >= 1e10) else v
+            sf["pzup"] = None                       # a thickness pickup no longer holds once the value is set
+        elif r["kw"] == "CRVT":
+            sf["curv"] = v
+            sf["curv_solve"] = None
+        elif r["kw"] == "GLSS":
+            name = v.strip('"')
+            sf["glass"] = None if name == "" else {"name": name, "tokens": []}
+        else:
+            sf["parm"][r["p2"]] = v
+            sf["ppar"] = [x for x in sf["ppar"] if x[0] != r["p2"]]
+
+
+def _mce_check(top, nsurf, op):
+    """Every row group must give a value for every configuration (a partial row is ambiguous): fail-closed."""
+    n = top["mnum"]
+    groups = {}
+    for r in top["mce"]:
+        if not 1 <= r["cfg"] <= n:
+            raise ValueError("%s: %s: %s names configuration %d but MNUM declares %d" % (op, r["where"], r["kw"],
+                                                                                       r["cfg"], n))
+        if not 0 <= r["surf"] < nsurf:
+            raise ValueError("%s: %s: %s names surface %d which does not exist" % (op, r["where"], r["kw"], r["surf"]))
+        groups.setdefault((r["kw"], r["surf"], r["p2"]), []).append(r["cfg"])
+    for key, cfgs in sorted(groups.items(), key=lambda kv: (kv[0][0], kv[0][1], kv[0][2] or 0)):
+        if sorted(cfgs) != list(range(1, n + 1)):
+            raise ValueError("%s: multi-configuration row %s surface %d%s has configurations %s, expected 1..%d — "
+                             "a row must give every configuration" % (
+                                 op, key[0], key[1], "" if key[2] is None else " parameter %d" % key[2],
+                                 sorted(cfgs), n))
 
 
 # --------------------------------------------------------------------------- #
@@ -702,7 +820,7 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
                                                                abs(top["envd"][1] - 1.0) > 1e-9):
         rep.u("system", "ENVD", "temperature %g C / pressure %g atm differ from the catalogue reference (20 C, "
               "1 atm); indices are used at the reference" % (top["envd"][0], top["envd"][1]), approximable=True)
-    if top["mnum"] > 1:
+    if top["mnum"] > 1 and not top.get("mce_ok"):
         rep.u("system", "MNUM", "%d configurations — only configuration 1 (the stored prescription) is imported"
               % top["mnum"], approximable=True)
     if top["raim"] and len(top["raim"]) > 1 and top["raim"][1] not in ("0",):
@@ -1233,6 +1351,11 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
     :func:`lens_file_write` writes back, and ``report`` classifies every keyword
     as read / ignored / unsupported (see :func:`lens_file_report`).
 
+    A file with an ``MNUM`` table (more than one configuration) is read into the active
+    configuration plus ``system["configurations"]``, a list with one sparse override dict per
+    configuration (see ``lensconfig``); the result also carries ``n_configurations`` and
+    ``active_configuration`` (0-based).
+
     A file with ``COORDBRK`` surfaces is read into a
     ``raytrace3d.noncoaxial_system`` (``noncoaxial`` is True, ``system`` is that
     table, each field's ``field`` is the pair ``(x, y)``, ``pupil`` holds the
@@ -1256,7 +1379,23 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
     top, surfs, rep = _parse(text, op)
     if not surfs:
         raise ValueError("%s: no SURF record — not a sequential prescription" % op)
+    configs = None
+    if top["mce_ok"]:
+        _mce_check(top, len(surfs), op)
+        spare = [copy.deepcopy(surfs) for _ in range(top["mnum"])]          # _build scales the surfaces in place
+        for k in range(top["mnum"]):
+            _mce_apply(spare[k], top["mce"], k + 1, op)
+        surfs[:] = spare[top["mcur"] - 1]                                    # the stored prescription = active config
     built = _build(top, surfs, rep, op, bool(allow_partial), glass_dir)
+    if top["mce_ok"]:
+        configs = []
+        for k in range(top["mnum"]):
+            if k == top["mcur"] - 1:
+                other = built["system"]
+            else:
+                other = _build(top, spare[k], _Report(), op, bool(allow_partial), glass_dir)["system"]
+            configs.append(_config_diff(built["system"], other, "config %d" % (k + 1), k + 1, op))
+        built["system"]["configurations"] = configs
     ap = top["aperture"]
     return {"format": "zmx", "source": label, "encoding": enc, "name": top["name"], "notes": top["notes"],
             "unit": top["unit"],
@@ -1267,7 +1406,49 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
             "system": built["system"], "surfaces": [_surface_snapshot(sf) for sf in surfs],
             "solves": built["solves"], "approximate": built["approximate"], "glass_dir": built["glass_dir"],
             "noncoaxial": bool(built.get("noncoaxial", False)), "pupil": built.get("pupil"),
-            "surface_records": built.get("surface_records"), "report": rep.as_dict()}
+            "surface_records": built.get("surface_records"), "report": rep.as_dict(),
+            "n_configurations": top["mnum"] if configs is not None else 1,
+            "active_configuration": top["mcur"] - 1 if configs is not None else 0}
+
+
+def _same(a, b, tol=0.0):
+    """Value equality for override diffs: numbers within *tol* (relative), containers element-wise."""
+    if isinstance(a, dict) or isinstance(b, dict):
+        return isinstance(a, dict) and isinstance(b, dict) and a.keys() == b.keys() and \
+            all(_same(a[k], b[k], tol) for k in a)
+    if isinstance(a, (list, tuple)) or isinstance(b, (list, tuple)):
+        return isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == len(b) and \
+            all(_same(x, y, tol) for x, y in zip(a, b))
+    if isinstance(a, (int, float, np.floating, np.integer)) and isinstance(b, (int, float, np.floating, np.integer)) \
+            and not isinstance(a, bool) and not isinstance(b, bool):
+        if a == b:
+            return True
+        return math.isfinite(a) and math.isfinite(b) and abs(a - b) <= tol * max(abs(a), abs(b))
+    return a == b
+
+
+_DIFF_SURFACE = ("R", "t", "n", "k", "ap", "asph", "mirror", "f")
+_DIFF_SYSTEM = ("wavelength_um", "field", "stop", "object_mm", "image_mm", "aim")
+
+
+def _config_diff(base, other, name, number, op):
+    """Sparse override that turns the coaxial system *base* into *other* (same surface count required)."""
+    if len(base["surfaces"]) != len(other["surfaces"]):
+        raise ValueError("%s: configuration %d has %d lens surfaces, the active one %d — the configurations of a "
+                         "file must share one surface list" % (op, number, len(other["surfaces"]),
+                                                               len(base["surfaces"])))
+    surf = {}
+    for i, (a, b) in enumerate(zip(base["surfaces"], other["surfaces"])):
+        d = {k: copy.deepcopy(b[k]) for k in _DIFF_SURFACE if not _same(a.get(k), b.get(k))}
+        if d:
+            surf[i] = d
+    sysf = {k: copy.deepcopy(other[k]) for k in _DIFF_SYSTEM if not _same(base.get(k), other.get(k))}
+    out = {"name": name}
+    if surf:
+        out["surfaces"] = surf
+    if sysf:
+        out["system"] = sysf
+    return out
 
 
 def _check_prescription(p, op):
@@ -1308,10 +1489,13 @@ def lens_file_system(prescription=None, field_index: int = 0, wavelength_index=N
         return R3.noncoaxial_system([dict(e) for e in s["elements"]], stop=s["stop_arg"], object_mm=s["object_mm"],
                                     wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object_arg"],
                                     field=p["fields"][int(field_index)]["field"])
-    return RT.lens_system([dict(x) for x in s["surfaces"]], stop=s["stop"], object_mm=s["object_mm"],
-                          wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object"],
-                          image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"],
-                          aim=s.get("aim", "paraxial"), vignetting=s.get("vignetting"))
+    out = RT.lens_system([dict(x) for x in s["surfaces"]], stop=s["stop"], object_mm=s["object_mm"],
+                         wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object"],
+                         image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"],
+                         aim=s.get("aim", "paraxial"), vignetting=s.get("vignetting"))
+    if s.get("configurations"):
+        out["configurations"] = copy.deepcopy(s["configurations"])           # resolve with lensconfig
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -1579,6 +1763,128 @@ def _vignetting_for_write(fields, system):
     return out
 
 
+def _glass_row_value(g, where, number, op):
+    """The GLSS value of a file-level glass record (a name, MIRROR, or empty for air); anything else is refused."""
+    key = _glass_key(g)
+    if key is None:
+        return ""
+    if key[0] in ("mirror", "name"):
+        return key[1]
+    raise ValueError("%s: configuration %d changes the medium of %s to a %s glass (%s); the multi-configuration "
+                     "glass row carries a catalogue name, MIRROR or nothing, so a model / coded glass cannot be "
+                     "written" % (op, number, where, key[0], g["name"]))
+
+
+def _write_multi(p, sysd, path, encoding, op):
+    """Write a system that carries ``configurations``: configuration 1 as the surface blocks, the rest as table rows."""
+    resolved = LC.lens_configurations(sysd)
+    n = len(resolved)
+    frozen = [dict(sf, curv_solve=None, pzup=None, ppar=[]) for sf in (p["surfaces"] or [])]
+    dropped = [{"surface": a["index"], "what": w}
+               for a in (p["surfaces"] or []) for w, key in (("curvature solve", "curv_solve"),
+                                                            ("thickness pickup", "pzup"),
+                                                            ("parameter pickup", "ppar")) if a.get(key)]
+    p0 = dict(p, surfaces=frozen)
+    for k, r in enumerate(resolved[1:], 2):
+        for key in ("wavelength_um", "field", "aim", "vignetting"):
+            if not _same(resolved[0].get(key), r.get(key)):
+                raise ValueError("%s: configuration %d changes the system setting %s; the multi-configuration "
+                                 "lines verified for this format carry only thickness, curvature, glass and "
+                                 "surface parameters" % (op, k, key))
+    texts = [lens_file_write(p0, system=r, encoding="ascii")["text"] for r in resolved]
+    ap0 = p["aperture"]
+    if ap0["type"] == "FNUM" and ap0["kind"] == 0:
+        # an F/# file keeps the F/# fixed and lets the pupil follow the focal length: check that every
+        # configuration's pupil is the one that F/# implies, then write the F/# line instead of ENPD
+        for k, (t, r) in enumerate(zip(texts, resolved), 1):
+            enpd = float(next(ln for ln in t.splitlines() if ln.startswith("ENPD ")).split()[1])
+            want = abs(RT.paraxial_trace(r)["efl"]) / ap0["value"]
+            if abs(enpd - want) > 1e-6 * max(1.0, want):
+                raise ValueError("%s: configuration %d has an entrance pupil of %.6g mm but F/%g implies %.6g mm; "
+                                 "the file would carry one F/# for all configurations — set the stop aperture "
+                                 "to follow it" % (op, k, enpd, ap0["value"], want))
+        texts = [re.sub(r"(?m)^ENPD .*$", "FNUM %s 0" % _g(ap0["value"]), t, count=1) for t in texts]
+    parsed = [_parse(t, op) for t in texts]
+    head0 = texts[0].split("\nSURF 0")[0]
+    surfs0 = parsed[0][1]
+    rows = {"GLSS": [], "THIC": [], "CRVT": [], "PRAM": []}      # (surface, parameter) -> value per configuration
+    per = []                                                       # per configuration file-level surfaces
+    for k in range(1, n):
+        head = texts[k].split("\nSURF 0")[0]
+        if head != head0:
+            a, b = head0.splitlines(), head.splitlines()
+            bad = next((x for x in zip(a, b) if x[0] != x[1]), (None, None))
+            raise ValueError("%s: configuration %d differs from configuration 1 in a system setting (%r vs %r); "
+                             "the multi-configuration lines verified for this format carry only thickness, "
+                             "curvature, glass and surface parameters" % (op, k + 1, bad[0], bad[1]))
+        per.append(parsed[k][1])
+    allsurf = [surfs0] + per
+    for i, sf0 in enumerate(surfs0):
+        where = "surface %d" % i
+        for k, sk in enumerate(allsurf[1:], 2):
+            sf = sk[i] if i < len(sk) else None
+            if sf is None or len(sk) != len(surfs0):
+                raise ValueError("%s: configuration %d has a different number of surfaces" % (op, k))
+            for key in ("type", "conic", "stop", "diam", "diam_type", "aperture", "comment"):
+                if not _same(sf0[key], sf[key]):
+                    raise ValueError("%s: configuration %d changes %s of %s (%r -> %r); the multi-configuration "
+                                     "lines verified for this format cannot carry it" % (
+                                         op, k, {"aperture": "the clear aperture (CLAP / FLAP)", "conic": "the conic "
+                                                 "constant", "stop": "the stop", "diam": "the semi-diameter",
+                                                 "diam_type": "the semi-diameter", "type": "the surface type",
+                                                 "comment": "the comment"}[key], where, sf0[key], sf[key]))
+            if sf0["parm"].get(1, 0.0) != sf["parm"].get(1, 0.0):
+                raise ValueError("%s: configuration %d changes the r^2 term of %s" % (op, k, where))
+    for i, sf0 in enumerate(surfs0):
+        vals = [sk[i] for sk in allsurf]
+        if len({v["curv"] for v in vals}) > 1:
+            rows["CRVT"].append((i, None, [v["curv"] for v in vals]))
+        if len({v["disz"] for v in vals}) > 1:
+            rows["THIC"].append((i, None, [v["disz"] for v in vals]))
+        gs0 = _glass_key(sf0["glass"])
+        if any(_glass_key(sk[i]["glass"]) != gs0 for sk in per):
+            glass_vals = [_glass_row_value(sf0["glass"], "surface %d" % i, 1, op)] + [
+                _glass_row_value(sk[i]["glass"], "surface %d" % i, k, op) for k, sk in enumerate(per, 2)]
+            rows["GLSS"].append((i, None, glass_vals))
+        keys = sorted({q for v in vals for q in v["parm"] if q >= 2})
+        for q in keys:
+            pv = [v["parm"].get(q, 0.0) for v in vals]
+            if len(set(pv)) > 1:
+                rows["PRAM"].append((i, q, pv))
+    lines = [texts[0].rstrip("\n"), "MNUM %d 1" % n]
+    for kw in ("GLSS", "THIC", "CRVT", "PRAM"):
+        for (i, q, vs) in rows[kw]:
+            for k, v in enumerate(vs, 1):
+                if kw == "GLSS":
+                    lines.append(("GLSS %3d %3d %s 0 0" % (i, k, v)) if v else ("GLSS %3d %3d" % (i, k)))
+                    continue
+                if kw == "THIC" and v == INF:
+                    v = 1e10
+                tail = "0 %d 0 1 1 1.000000000000E+000 0.000000000000E+000 0" % (q if q is not None else 0)
+                lines.append("%s %3d %3d %s %s" % (kw, i, k, _g(v), tail))
+    text = "\n".join(lines) + "\n"
+    if path is not None:
+        data = text.encode("utf-16") if encoding == "utf-16" else text.encode("ascii", errors="strict")
+        with io.open(path, "wb") as fh:
+            fh.write(data)
+    return {"text": text, "path": path, "n_surfaces": len(surfs0), "encoding": encoding,
+            "dropped_solves": dropped, "n_configurations": n,
+            "rows": {kw: len(v) for kw, v in rows.items()}}
+
+
+def _glass_key(g):
+    """Identity of a parsed GLAS line for comparing configurations (name, MIRROR, or model / code values)."""
+    if g is None:
+        return None
+    up = g["name"].upper()
+    if up == "MIRROR":
+        return ("mirror", "MIRROR")
+    if up == "___BLANK" or (g["name"].isdigit() and len(g["name"]) == 6):
+        tk = g["tokens"]
+        return ("model", g["name"], tk[2] if len(tk) > 2 else None, tk[3] if len(tk) > 3 else None)
+    return ("name", g["name"])
+
+
 def lens_file_write(prescription=None, system=None, path=None, encoding: str = "ascii") -> dict:
     """処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。
 
@@ -1606,6 +1912,11 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
     reflections or one that would need a negative thickness. A coaxial
     ``raytrace.lens_system`` with tilted / decentred surfaces is still refused.
 
+    A *system* (or a prescription's system) that carries ``configurations`` is written as a multi-
+    configuration file: configuration 1 as the surface blocks, then ``MNUM`` and one row per varying
+    thickness / curvature / glass / aspheric parameter and configuration (see the module help for what is
+    refused); the result then also has ``n_configurations`` and ``rows`` (row counts per operand).
+
     Returns ``{"text", "path", "n_surfaces", "encoding", "dropped_solves"}``.
 
     Example::
@@ -1621,6 +1932,11 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
         p = lens_file_read(None) if prescription is None else _check_prescription(prescription, op)
     if encoding not in ("ascii", "utf-16"):
         raise ValueError("%s: encoding must be 'ascii' or 'utf-16', got %r" % (op, encoding))
+    sys_in = system if system is not None else p["system"]
+    if not _is_nc(sys_in) and sys_in.get("configurations") and len(sys_in["configurations"]) > 1:
+        return _write_multi(p, sys_in, path, encoding, op)
+    if not _is_nc(sys_in) and sys_in.get("configurations"):
+        system = LC.lens_with_configuration(sys_in, 0)            # one configuration: a plain single-config file
     dropped = []
     if system is not None:
         surfs = _surfaces_from_system(system, p["surfaces"], op)

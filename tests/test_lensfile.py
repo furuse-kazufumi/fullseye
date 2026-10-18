@@ -417,7 +417,8 @@ def test_approximations_need_allow_partial_and_are_marked():
     vign = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n").replace(
         "XFLN 0 0 0", "XFLN 0 5 0")
     curved = L.ZMX_EXAMPLE.replace("SURF 7\n  TYPE STANDARD\n  CURV 0 ", "SURF 7\n  TYPE STANDARD\n  CURV -0.01 ")
-    multi = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nMNUM 3 1\n")
+    # a multi-configuration table is read now; one with an operand the reader does not know is approximate
+    multi = L.ZMX_EXAMPLE + "MNUM 2 1\nAPER   0   1 5\nAPER   0   2 6\n"
     hot = L.ZMX_EXAMPLE.replace("ENVD 20 1 0", "ENVD 40 1 0")
     unknown = L.ZMX_EXAMPLE.replace("  DISZ 6.00755\n", "  DISZ 6.00755\n  ZZZZ 1 2 3\n")
     for t in (vign, curved, multi, hot, unknown):

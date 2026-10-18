@@ -497,6 +497,13 @@ def _optics_builders():
         #   lens_file_write は path=None で書かない(探針がファイルを作らない)。
         "lens_file_system": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"field_index": 1}),
         "lens_file_write": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"path": None}),
+        # lensconfig(2026-10-19): "configurations" を持つ処方(lensconfig の例)が要る(印の無い dict は拒否)
+        "lens_configurations": lambda pool, rng: ([__import__("lensconfig")._example_system()], {}),
+        "lens_with_configuration": lambda pool, rng: ([__import__("lensconfig")._example_system()], {"k": 1}),
+        "lens_configuration_table": lambda pool, rng: ([__import__("lensconfig")._example_system()], {}),
+        "lens_configuration_metrics": lambda pool, rng: ([__import__("lensconfig")._example_system()], {"metric": "efl"}),
+        "lens_add_configuration": lambda pool, rng: ([__import__("lensconfig")._example_system()],
+                                                     {"surfaces": {0: {"t": 15.0}}}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
         #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)

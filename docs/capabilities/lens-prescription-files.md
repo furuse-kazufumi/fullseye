@@ -9,7 +9,7 @@ version: 0.6.1
 inputs: [table]
 pipeline: [lens_file_read, lens_file_system, paraxial_trace, spot_stats, lens_file_write]
 alternatives: [lens_file_report, read_glass_catalog_agf, lens_system, optimize_lens, lens_section_drawing]
-limits: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+limits: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。曲がった像面・温度、座標変換面と多構成の併用は allow_partial のときだけ近似として読む(多構成の表 MNUM は読み書きできる)。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
 calibration: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
 ---
 
@@ -46,7 +46,8 @@ PoC `poc_lens_file_roundtrip` は、同じファイルを別の 2 実装(ray-opt
 ## 限界
 
 - 座標変換面は非共軸の追跡器へ読む(上記の拒否を除く)。理想レンズ(PARAXIAL)・トーリック・奇数次非球面・回折面・r² の非球面項は拒否する。傾いた絞りでは、絞りの縁の円と入射瞳の円が一致しない(`pupil["anisotropy"]`、絞りの半径は入射瞳の面積を保つ)。
-- ケラレ係数・曲がった像面・多構成・温度 / 気圧・未知の面のキーワードは `allow_partial=True` のときだけ近似として読み、`approximate=True` を立てる。
+- 曲がった像面・温度 / 気圧・未知の面のキーワード・座標変換面を含むファイルの多構成の表は `allow_partial=True` のときだけ近似として読み、`approximate=True` を立てる。
+- 多構成の表(`MNUM`、`THIC` / `CRVT` / `GLSS` / `PRAM` / `PARn` の行)は読み書きできる(構成は `system["configurations"]`、`lensconfig` の op で解決する)。`SDIA` / `MOFF` / `MCOM` は無視して報告、他の演算子は未対応(`allow_partial` で落として近似の印)。行の形の証人は `sequential-lens-design-metrics` の「多構成のファイルの行」。
 - ソルブは保存された値で読む(ピックアップだけは元の面と照合)。カタログに無い硝材と、材料表に別名でしか無い硝材は拒否する。
 - 設計ソフトそのものでの往復は試していない(第 2・第 3 の実装として ray-optics と optiland で照合した)。
 

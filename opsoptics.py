@@ -140,6 +140,7 @@ import gratingspec
 import fiberoptics
 import temsim
 import lensfile
+import lensconfig
 import filmoptics
 import moirealign
 import gratinginterf
@@ -151,7 +152,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -607,6 +608,15 @@ _CATALOG = {
         ("lens_file_system", "lensfile", ["table"], "table"),
         ("lens_file_write", "lensfile", ["table"], "table"),
         ("lens_file_report", "lensfile", [], "table"),
+    ],
+    "lensconfig": [  # 多構成(ズーム・切替)の逐次系(lensconfig、2026-10-19)。lens_system が "configurations"(構成ごとの疎な上書き)を
+        # 持つと、構成ごとに解決した lens_system を返す(別の模型を作らない)。.zmx の MNUM 表は lensfile が読み書きする。
+        # ★fail-closed: 無い面・未知の欄・lens_system が拒否する値は ValueError。基の系は書き換えない。
+        ("lens_configurations", "lensconfig", ["table"], "table"),
+        ("lens_with_configuration", "lensconfig", ["table"], "table"),
+        ("lens_configuration_table", "lensconfig", ["table"], "table"),
+        ("lens_configuration_metrics", "lensconfig", ["table"], "table"),
+        ("lens_add_configuration", "lensconfig", ["table"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗

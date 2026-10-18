@@ -8030,7 +8030,9 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       "with_aiming", "set_vignetting",
                                       # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
                                       #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-                                      "lens_file_read", "lens_file_system"}
+                                      "lens_file_read", "lens_file_system",
+                                      # ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+                                      "lens_configurations", "lens_with_configuration", "lens_add_configuration"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
