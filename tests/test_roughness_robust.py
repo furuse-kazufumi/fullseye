@@ -8,7 +8,7 @@
     周波数応答 ``4 sin²(π f dx)`` から導く)。
   * 第 2 実装: **密行列・点ごとの lstsq / 密な連立一次方程式**で書いた反復(op は可分相関・
     帯行列)。反復の不動点が一致することを見る。
-  * 既存の ``surface_filter``(ISO 16610-21 の別実装)— 重み 1・次数 0・打ち切り 0.5 で一致。
+  * 既存の ``surface_filter``(ISO 16610-21 の別実装)— 重み 1・次数 0・打ち切り 0.75(GAUSS_TRUNCATE)で一致。
   * 外れ値: 真の平均線が分かる合成(うねり + 雑音 + 片側に寄せた傷・突起)で、
     **引きずり量**(平均線の真値からの最大ずれ)を数え、線形ガウスとの比を門にする。
 
@@ -141,23 +141,24 @@ def test_transfer_gates_are_sharp_enough_to_catch_a_wrong_cutoff_or_alpha(monkey
 # --------------------------------------------------------------------------- #
 # 2. 既存の surface_filter(ISO 16610-21 の別実装)との一致                     #
 # --------------------------------------------------------------------------- #
-def test_unit_weight_order0_with_iso_truncation_equals_existing_surface_filter():
+def test_unit_weight_order0_with_same_truncation_equals_existing_surface_filter():
     lc, n, h = 40.0, 400, 120
     rng = np.random.default_rng(7)
     p = np.cumsum(rng.standard_normal(n)) * 0.1
     z2 = np.tile(p, (h, 1))                                  # 行が全部同じ面
     _, wav = R.surface_filter(z2, 1.0, lambda_c=lc, end_effect="reject")
-    rad = int(math.ceil(0.5 * lc))
-    mine = R.robust_gaussian_profile(p, 1.0, lc, order=0, robust=False, truncate=0.5)[1]
+    rad = int(math.ceil(R.GAUSS_TRUNCATE * lc))
+    mine = R.robust_gaussian_profile(p, 1.0, lc, order=0, robust=False, truncate=R.GAUSS_TRUNCATE)[1]
     ref = wav[wav.shape[0] // 2]                             # 行を 1 本取る(x の並び)
     assert ref.size == n - 2 * rad
     np.testing.assert_allclose(mine[rad:n - rad], ref, rtol=0, atol=1e-12)
 
 
-def test_existing_surface_filter_is_off_half_at_cutoff_but_robust_op_is_not():
-    """既存の透過率は打ち切り ±λc/2 のため λc で 0.5095(docs 既載)。新 op は 5.3σ まで取る。"""
+def test_literal_half_lambda_truncation_is_what_moves_the_cutoff_transmission_off_half():
+    """規格の文面の打ち切り ±λc/2 は λc の透過率を 0.5095 にずらす(2026-10-18 まで surface_filter がそうだった)。
+    surface_filter は ±0.75λc(4σ)に直し、新 op は 5.3σ まで取る。ずれの原因が打ち切りだと門にしておく。"""
     lin_iso = _gauss(np.sin(2 * np.pi * X / LC), order=0, robust=False, truncate=0.5)[1]
-    assert abs(_amp(lin_iso, LC) - 0.5) > 5e-3           # ISO 打ち切り = 既存と同じずれ
+    assert abs(_amp(lin_iso, LC) - 0.5) > 5e-3           # 文面どおりの打ち切り = 直す前の surface_filter のずれ
     lin_wide = _gauss(np.sin(2 * np.pi * X / LC), order=0, robust=False)[1]
     assert abs(_amp(lin_wide, LC) - 0.5) < 1e-5
 

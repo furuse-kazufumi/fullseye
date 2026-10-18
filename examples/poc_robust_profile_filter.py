@@ -22,7 +22,7 @@
 (``roughness`` 族、``prepare`` 区分)。式は論文のものを再実装した(文献は末尾)。
 
 【節立て】
- 1) 伝達関数 —— カットオフ波長で 0.5 か(既存の ``surface_filter`` は 0.5095)
+ 1) 伝達関数 —— カットオフ波長で 0.5 か(既存の ``surface_filter`` は直す前 0.5095、2026-10-18 以降は 0.5000)
  2) 傷つき断面 —— 線形ガウスの平均線は凹み、ロバストは真のうねりに留まる
  3) ★破綻点 —— 汚染率を 0〜60 % に振って、ロバストが勝てなくなる所を探す
  4) 面 —— 傷の周りの「偽の山」(halo)を数える
@@ -152,18 +152,19 @@ def main() -> bool:
         print("  %6.0f | %10.6f %10.6f | %14.9f %10.6f" % (lam, ag, cg, asp, cs))
     err_g = max(abs(r[1] - r[2]) for r in rows)
     err_s = max(abs(r[3] - r[4]) for r in rows)
-    # 既存の surface_filter(ISO の打ち切り ±λc/2)がカットオフで何を返すか
+    # 既存の surface_filter(打ち切り ±0.75λc、2026-10-18 に ±λc/2 から広げた)がカットオフで何を返すか
     h = 120
     tile = np.tile(np.sin(2 * np.pi * X[:480] / LAMBDA_C), (h, 1))
     _, wav = R.surface_filter(tile, DX, lambda_c=LAMBDA_C, end_effect="reject")
     half_iso = float(np.abs(wav[wav.shape[0] // 2]).max())
     print("  カットオフ波長 λ=λc での振幅: 閉形式 0.5 / 新 op(ガウス)%.6f / スプライン %.9f / "
           "既存 surface_filter %.4f" % (rows[3][1], rows[3][3], half_iso))
-    print("  → 既存の 0.5095 は規格の打ち切り ±λc/2(2.67σ)の裾 0.8%% の欠け。"
-          "新 op は ±λc(5.3σ)まで取るので 0.5 に %.1e で合う。" % abs(rows[3][1] - 0.5))
+    print("  → 既存の surface_filter も 4σ まで取るようになり 0.5 に %.1e で合う(直す前の 0.5095 は規格の文面の"
+          "打ち切り ±λc/2 = 2.67σ の裾 0.8%% の欠け)。新 op は ±λc(5.3σ)で 0.5 に %.1e。"
+          % (abs(half_iso - 0.5), abs(rows[3][1] - 0.5)))
     assert err_g < 1e-5, err_g
     assert err_s < 1e-9, err_s
-    assert abs(half_iso - 0.5) > 5e-3
+    assert abs(half_iso - 0.5) < 1e-3, half_iso
     fine = np.geomspace(24.0, 480.0, 60)
     gx = fine
     figs.save_plot(
