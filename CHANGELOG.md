@@ -79,6 +79,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `anomeval.py`(新カテゴリ `anomaly_eval`): `anomaly_image_auroc` / `anomaly_pixel_auroc` / `anomaly_pro` / `anomaly_region_overlap`。方法に依存しない欠陥図の物差し(AUROC は Mann-Whitney の厳密値、PRO は全スコアで評価して FPR 0.3 まで積分)。
 - 門: 合成の良品で数えた誤検出率が宣言の二項 4σ の帯(4 種とも)、t の付表値、`phase_correlation_fft` との一致、Fourier シフトの真値と 0.03 px、ずれ・汚れ・裾の重い雑音の探針、AUROC の閉形式と sklearn、PRO の手計算と別経路。
 - PoC `poc_good_sample_variation_model`: 公開実データ VisA pcb1(CC BY 4.0)で、合わせた帯は画素 AUROC 0.808・AUPRO 0.678(合わせない帯 0.705・0.460、ゴールデン比較 0.826・0.519、RPCA 0.566・0.607)。宣言 1e-3 の誤検出率は実画像で 3.8 %、持ち出しの較正で 2.4 % —— 正直に印字。DAGM 2007(CC BY 4.0)の確率的なテクスチャは偶然並み(向かない題材として)。能力ノート `good-sample-variation-model`。
+### Added — 作物と雑草を色と肌理で分ける op 族 `cropweed`(5 op)+ PoC「水田の雑草はどれだけあるか」
+- 台帳 `opssegmentation` に新カテゴリ `plant`(`plant_color_index` / `superpixel_color_texture_features` / `cover_ratio_grade`)と、`classify` に `fisher_lda_fit` / `fisher_lda_score`。型の新語なし(rgbimage / labels2d / matrix / signal / table)。
+- `plant_color_index`: 可視 3 バンドの植物の色指標 ExG・ExR・ExGR・CIVE・NGRDI・VEG(式は Hamuda ら 2016 の総説の表と照合)。暗い画素は色度が決まらないので値を作らず NaN と `valid=False`(連鎖ファザーの非有限の契約に記載)。全画素が暗ければ拒否。
+- `cover_ratio_grade`: 被度を評価の前に宣言した境で段階にする(既定 5 / 25 / 50 %、植生調査の被度階級)。境からの距離 `margin` を返す。
+- 例 `examples/poc_weed_rice_ratio.py`: 合成の水田(門 10、CI)と、実データ WeedyRice-RGBMS(Mendeley Data doi:10.17632/vt4s83pxx6.1、CC BY 4.0、`FULLSEYE_WEEDYRICE_DATA` があるときだけ。画像は repo に入れない)。test 148 枚で κ 0.424・被度の相関 0.826。撮影日を丸ごと外す検査で、季節の違う飛行への汎化が弱いこと(日の中の相関 0.14)も記録した。外観検査のアルゴリズムコンテストの 2026 年の課題と同じ型の問いだが、その画像は使っておらず、数字は得点と比べられない。
+- 門 `tests/test_cropweed.py`(閉形式・第 2 の計算・LDA の中点と符号反転とアフィン不変・R と G の入れ替えの探針・fail-closed)。
+- `examples/poc_leaf_disease_area.py` の「道具の穴 (a) 可視 3 バンドの植生指数が無い」を「埋まった」に直した。
 
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。

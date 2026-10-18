@@ -41,7 +41,7 @@ UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超画素の数。真
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`graph`)
 

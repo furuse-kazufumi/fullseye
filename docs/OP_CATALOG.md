@@ -207,6 +207,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
 - **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
 - **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
+- **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする(学習器なし、実データは雑草イネの UAV 画像)** — 新 op 5 本(`cropweed`、台帳 `opssegmentation` の `plant` / `classify`): `plant_color_index`(ExG・ExR・ExGR・CIVE・NGRDI・VEG、暗い画素は値を作らない)/ `superpixel_color_texture_features`(領域ごとの色と肌理の 10 特徴、向きの揃い)/ `fisher_lda_fit`・`fisher_lda_score`(2 クラスの Fisher 判別、閉形式)/ `cover_ratio_grade`(被度を評価前に宣言した境 5 / 25 / 50 % で 4 段階)。合成の水田(雑草の割合を分位点で厳密に置く)で κ 0.876、作物と雑草の色を入れ替えると被度の順位相関 −0.999(判定は色で決まる)。★実データ WeedyRice-RGBMS(UAV の RGB と雑草イネの注釈 734 組、CC BY 4.0、repo に入れない): val で格子を選び(SNIC 超画素より良い)、test 148 枚で段階の一致 0.574(多数派だけ 0.345)・κ 0.424 [0.313, 0.520]・並べ替え p 0.0005・被度の相関 0.826・IoU 0.397(ばらまき 0.189)。R と G を入れ替えると κ −0.023。撮影日を丸ごと外すと季節の違う 1 日は日の中の相関 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績。コンテストの画像は使っておらず、数字はコンテストの得点と比べられない。学習器 0、門 16 件(CI は合成の 10 件)。 `py -3.11 examples/poc_weed_rice_ratio.py`
 - **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
 - **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
 
@@ -3197,7 +3198,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### spc / msa(4)
 - `msa_anova_table` `table → table` — 交差 2 元配置(部品 x 測定者 x 繰り返し)の分散分析表(``table``)。 · 例: `poc_measurement_system_analysis`
-- `msa_attribute_agreement` `table → table` — 計数値(合否)検査の一致度(``table``)。 · 例: `poc_measurement_system_analysis`
+- `msa_attribute_agreement` `table → table` — 計数値(合否)検査の一致度(``table``)。 · 例: `poc_measurement_system_analysis`, `poc_weed_rice_ratio`
 - `msa_bias_linearity` `table → table` — 基準値に対する偏りと、その基準値依存(直線性)(``table``)。 · 例: `poc_measurement_system_analysis`
 - `msa_gauge_rr` `table → table` — 分散分析法によるゲージ R&R(``table``)。 · 例: `poc_measurement_system_analysis`
 
@@ -5180,13 +5181,15 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `attention_scores` `tokens × tokens → attnmap` — 生の注意スコア QKᵀ/√d → attnmap (T, S)。 · 例: `poc_attention_identities`
 - `attention_weights` `attnmap → attnmap` — 行ごとの softmax(マスクつき)→ attnmap。**行和は 1、mask 位置は厳密に 0**。 · 例: `poc_attention_identities`
 
-### segmentation(54 ops / 10 categories)
+### segmentation(59 ops / 11 categories)
 
-#### segmentation / classify(5)
+#### segmentation / classify(7)
 - `class_2dim_sup` `image2d × image2d × mask → mask` — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
 - `class_2dim_unsup` `image2d × image2d → labels2d` — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
 - `class_ndim_norm` `images × table → mask` — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`
 - `classify_image_class_lut` `image2d × signal → labels2d` — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`
+- `fisher_lda_fit` `matrix × signal → table` — 2 クラスの Fisher 線形判別を学習する(閉形式。反復なし)。 · 例: `poc_weed_rice_ratio`
+- `fisher_lda_score` `table × matrix → table` — ``fisher_lda_fit`` の学習済みの判別で特徴を採点する(score > 0 をクラス 1 とする)。 · 例: `poc_weed_rice_ratio`
 - `learn_ndim_norm` `matrix → table` — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`
 
 #### segmentation / compare(1)
@@ -5213,7 +5216,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `max_tree` `image2d → table` — 成分木(max-tree): 上位集合 {f ≥ h} の連結成分の木を Union-Find で作る(画素を値の降順に処理)。 · 例: `gallery_seg_measures`
 - `quasi_flat_zones` `image2d → table` — α-準平坦領域(Soille 2008): |f_p − f_q| ≤ α の隣接辺だけで結んだ連結成分。返す: ``labels``(1..k)、``n_zones``。 · 例: `poc_graph_hierarchy_segmentation`
 - `quickshift` `image2d → table` — quick shift(Vedaldi–Soatto 2008): 特徴 (y, x, ratio · I) で Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))(窓 3σ、σ = ``kernel_size``)を見積もり、各画素を「密度が上の点のうち最も近い点」(半径 ``search_radius`` の窓の中)に繋ぎ、 長さ > ``max_dist`` の枝を切った木の成分を領域にする。 · 例: `poc_graph_hierarchy_segmentation`
-- `snic_superpixels` `image2d → table` — SNIC(Achanta–Süsstrunk 2017 の Algorithm 1): 格子の種から優先度つき待ち行列で育てる非反復の超画素。 · 例: `poc_graph_hierarchy_segmentation`
+- `snic_superpixels` `image2d → table` — SNIC(Achanta–Süsstrunk 2017 の Algorithm 1): 格子の種から優先度つき待ち行列で育てる非反復の超画素。 · 例: `poc_graph_hierarchy_segmentation`, `poc_weed_rice_ratio`
 - `statistical_region_merging` `image2d → table` — 統計的領域併合 SRM(Nock–Nielsen 2004): 隣の画素の組を |I_p − I_q| の昇順に処理し、述語 P(R, R') が真なら併合。 · 例: `poc_graph_hierarchy_segmentation`
 - `superpixel_quality` `labels2d × labels2d → table` — 超画素の採点: 境界の再現率(``segeval.seg_boundary_f`` の recall、許容 τ)、補正つき未分割誤差 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|(Neubert–Protzel 2012、SNIC 論文の式 (2))、ASA = 1 − CUSE、Neubert–Protzel の未分割誤差 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超画素の数。真値の 0 も 1 つの領域として数える(背景も被覆の対象)。 · 例: `poc_graph_hierarchy_segmentation`
 - `ultrametric_contour_map` `image2d → table` — dynamics の階層の ultrametric contour map(UCM): 隣り合う画素 p, q の値 = 「p と q が同じ領域になる最小の閾値」。 · 例: `poc_graph_hierarchy_segmentation`
@@ -5221,6 +5224,11 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### segmentation / grow(2)
 - `expand_gray` `image2d × mask → mask` — seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。 · 例: `halcon_segmentation_tour`
 - `regiongrowing_n` `images → labels2d` — 多チャネル特徴の類似性で画像全体を領域分割(regiongrowing_n)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+
+#### segmentation / plant(3)
+- `cover_ratio_grade` `signal → table` — 被度(面積の割合 0..1)を、**宣言した境** ``edges`` で段階 0..len(edges) に分ける。 · 例: `poc_weed_rice_ratio`
+- `plant_color_index` `rgbimage → table` — 可視 3 バンドの植物の色指標(ExG・ExR・ExGR・CIVE・NGRDI・VEG)を画素ごとに計算する。 · 例: `poc_leaf_disease_area`, `poc_weed_rice_ratio`
+- `superpixel_color_texture_features` `rgbimage × labels2d → table` — ラベル画像の領域ごとに、色(植物の色指標・色度)と肌理(勾配・向きの揃い)の特徴 10 個を出す。 · 例: `poc_weed_rice_ratio`
 
 #### segmentation / score(8)
 - `seg_boundary_f` `labels2d × labels2d → table` — 境界 F 値(許容距離 τ): 予測の境界画素のうち真の境界から τ 以内にあるものの割合 = ``precision``、逆が ``recall``。 · 例: `poc_am_thermal_to_ct`, `poc_graph_hierarchy_segmentation`, `poc_sem_wafer_defect_edge_bias`

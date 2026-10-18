@@ -109,8 +109,8 @@
   - [`orientation`](./geocam/INDEX.md#orientation-1) 1 · [`skyline`](./geocam/INDEX.md#skyline-3) 3 · [`sun`](./geocam/INDEX.md#sun-5) 5
 - [LLMCORE 算子](./llmcore/INDEX.md) —— 10 个算子 / 4 个类别
   - [`attend`](./llmcore/INDEX.md#attend-4) 4 · [`decode`](./llmcore/INDEX.md#decode-1) 1 · [`prepare`](./llmcore/INDEX.md#prepare-2) 2 · [`score`](./llmcore/INDEX.md#score-3) 3
-- [SEGMENTATION 算子](./segmentation/INDEX.md) —— 54 个算子 / 10 个类别
-  - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
+- [SEGMENTATION 算子](./segmentation/INDEX.md) —— 59 个算子 / 11 个类别
+  - [`classify`](./segmentation/INDEX.md#classify-7) 7 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`plant`](./segmentation/INDEX.md#plant-3) 3 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [示例数据目录(下载 URL / 许可证)](./SAMPLES.md)
 - [算子的来源与参考文献](../REFERENCES.md)
 - [按用途查找(推荐流水线 / 替代 / 局限 / 实际尺寸标定)](../CAPABILITIES.md)

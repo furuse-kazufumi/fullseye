@@ -109,8 +109,8 @@ Operatordokumentation für **fullseye 0.7.0**. Jeder Operator hat eine eigene Ma
   - [`orientation`](./geocam/INDEX.md#orientation-1) 1 · [`skyline`](./geocam/INDEX.md#skyline-3) 3 · [`sun`](./geocam/INDEX.md#sun-5) 5
 - [LLMCORE-Operatoren](./llmcore/INDEX.md) — 10 Operatoren / 4 Kategorien
   - [`attend`](./llmcore/INDEX.md#attend-4) 4 · [`decode`](./llmcore/INDEX.md#decode-1) 1 · [`prepare`](./llmcore/INDEX.md#prepare-2) 2 · [`score`](./llmcore/INDEX.md#score-3) 3
-- [SEGMENTATION-Operatoren](./segmentation/INDEX.md) — 54 Operatoren / 10 Kategorien
-  - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
+- [SEGMENTATION-Operatoren](./segmentation/INDEX.md) — 59 Operatoren / 11 Kategorien
+  - [`classify`](./segmentation/INDEX.md#classify-7) 7 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`plant`](./segmentation/INDEX.md#plant-3) 3 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [Katalog der Beispieldaten (Download-URLs / Lizenzen)](./SAMPLES.md)
 - [Herkunft der Operatoren und Literatur](../REFERENCES.md)
 - [Nach Aufgabe suchen (empfohlene Pipeline / Alternativen / Grenzen / Kalibrierung auf reale Maße)](../CAPABILITIES.en.md)

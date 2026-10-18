@@ -473,7 +473,7 @@ PoC 255 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>天文與環境</b> (22)</summary>
+<details class="vall"><summary><b>天文與環境</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="重力波探測器的偽模擬" width="200" height="200"><b>&#9654;</b><span>重力波探測器的偽模擬</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天相機雲量" width="200" height="200"><span>全天相機雲量</span></a>
@@ -493,6 +493,7 @@ PoC 255 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_astrometry.jpg" alt="恆星位置精度" width="200" height="200"><span>恆星位置精度</span></a>
 <a href="../../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tree_ring_dendro.jpg" alt="年輪寬度" width="200" height="200"><span>年輪寬度</span></a>
 <a href="../../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_vegetation_cover.jpg" alt="植被覆蓋率" width="200" height="200"><span>植被覆蓋率</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="把稻田雜草覆蓋度分為 4 級" width="200" height="200"><span>把稻田雜草覆蓋度分為 4 級</span></a>
 <a href="../../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_level.jpg" alt="河川水位" width="200" height="200"><span>河川水位</span></a>
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="火星車輪打滑" width="200" height="200"><b>&#9654;</b><span>火星車輪打滑</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="兩種高程(實測)" width="200" height="200"><span>兩種高程(實測)</span></a>

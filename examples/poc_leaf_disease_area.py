@@ -331,7 +331,7 @@ def green(img):
 
 
 def exg(img):
-    """ExG = (2g - r - b) / (r + g + b)。**公開経路に無い**ので自前(vegetation_cover と同じ)。"""
+    """ExG = (2g - r - b) / (r + g + b)。書いた当時は公開経路に無かったので自前(今は台帳 op ``plant_color_index``)。"""
     s = img.sum(-1) + 1e-9
     return (2.0 * img[..., 1] - img[..., 0] - img[..., 2]) / s
 
@@ -895,9 +895,9 @@ def section_tool_gaps() -> None:
     print("8) 道具の穴(この PoC で fullseye を引いてみて)")
     print("=" * 78)
     names = set(fs.op_names()) | set(_L) | set(dir(fs))
-    assert not any(n in names for n in ("exg", "excess_green", "vegetation_index", "ngrdi"))
-    print("  (a) ExG(2g-r-b)や NGRDI など**可視 3 バンドの植生指数が無い**。"
-          "spec_index は 2 バンドの正規化差だけ。poc_vegetation_cover に続き 2 本目の自前実装。")
+    assert "plant_color_index" in names
+    print("  (a) 埋まった(2026-10-18): ExG(2g-r-b)・NGRDI ほか可視 3 バンドの植物の色指標は"
+          "台帳 op plant_color_index(cropweed)で引ける。この PoC の exg() は記録のために自前のまま残す。")
     assert "trans_from_rgb" in names
     print("  (b) trans_from_rgb は 8 bit 経由(OpenCV)。a*(8bit) と a*(float, rgb_to_lab)の差は"
           "上の表のとおり小さいが、Lab の a* が 1 刻みに丸まる。色相は 2° 刻み。")

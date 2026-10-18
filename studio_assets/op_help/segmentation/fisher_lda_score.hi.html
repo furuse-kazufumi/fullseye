@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_score — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">fisher_lda_fit</code> से सीखे discriminant से feature को score देता है (score &gt; 0 का अर्थ class 1)।</p>
+<p><code style="color:#22d3bf">model</code> <code style="color:#22d3bf">fisher_lda_fit</code> का परिणाम है; <code style="color:#22d3bf">X</code> (N, D) feature है (dict का <code style="color:#22d3bf">X</code> भी चलता है)। Standardisation training के औसत और scale से होता है। लौटाता है: <code style="color:#22d3bf">score</code> (N), <code style="color:#22d3bf">label</code> (0/1; <b>score ठीक 0 हो तो class 0</b>, घोषित नियम), <code style="color:#22d3bf">margin</code> (|score| / ‖w‖ = standardised space में सीमा तक दूरी), <code style="color:#22d3bf">n1</code> (class 1 माने गए की संख्या)। खाली input, column संख्या का मेल न होना, non-finite मान और ऐसा <code style="color:#22d3bf">model</code> जो सीखा हुआ discriminant नहीं है, <code style="color:#22d3bf">ValueError</code> से अस्वीकार।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">classify</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_2dim_sup">class_2dim_sup</a> · <a style="color:#22d3bf" href="opsegmentation:class_2dim_unsup">class_2dim_unsup</a> · <a style="color:#22d3bf" href="opsegmentation:learn_ndim_norm">learn_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:classify_image_class_lut">classify_image_class_lut</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_fit">fisher_lda_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

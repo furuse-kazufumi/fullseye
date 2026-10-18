@@ -473,7 +473,7 @@ PoC 255개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>천문·환경</b> (22)</summary>
+<details class="vall"><summary><b>천문·환경</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="중력파 망원경의 의사 시뮬레이션" width="200" height="200"><b>&#9654;</b><span>중력파 망원경의 의사 시뮬레이션</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="전천 카메라 운량" width="200" height="200"><span>전천 카메라 운량</span></a>
@@ -493,6 +493,7 @@ PoC 255개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_astrometry.jpg" alt="별 위치 정밀도" width="200" height="200"><span>별 위치 정밀도</span></a>
 <a href="../../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tree_ring_dendro.jpg" alt="나이테 폭" width="200" height="200"><span>나이테 폭</span></a>
 <a href="../../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_vegetation_cover.jpg" alt="식생 피복률" width="200" height="200"><span>식생 피복률</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="논의 잡초 피도를 4단계로" width="200" height="200"><span>논의 잡초 피도를 4단계로</span></a>
 <a href="../../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_level.jpg" alt="하천 수위" width="200" height="200"><span>하천 수위</span></a>
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="화성 바퀴 미끄럼" width="200" height="200"><b>&#9654;</b><span>화성 바퀴 미끄럼</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="두 높이(실데이터)" width="200" height="200"><span>두 높이(실데이터)</span></a>

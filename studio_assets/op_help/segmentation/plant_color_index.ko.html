@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plant_color_index — SEGMENTATION <code style="color:#22d3bf">plant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plant_color_index(rgb, *, index: &#x27;str&#x27; = &#x27;exg&#x27;, dark_floor: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cropweed; cropweed.plant_color_index(rgb, *, index: &#x27;str&#x27; = &#x27;exg&#x27;, dark_floor: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;plant_color_index&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>가시광 3밴드의 식물 색 지수(ExG·ExR·ExGR·CIVE·NGRDI·VEG)를 화소마다 계산한다.</p>
+<p><code style="color:#22d3bf">rgb</code>는 (H, W, 3). uint8은 255로 나누고, float이 [0, 1] 밖이면 거부한다. <code style="color:#22d3bf">index</code>는 <code style="color:#22d3bf">exg</code> / <code style="color:#22d3bf">exr</code> / <code style="color:#22d3bf">exgr</code> / <code style="color:#22d3bf">cive</code> / <code style="color:#22d3bf">ngrdi</code> / <code style="color:#22d3bf">veg</code>. ExG·ExR·ExGR·CIVE·VEG는 색도 좌표 r = R/(R+G+B)·g·b에 적용하고, NGRDI만 원래 값의 (G − R)/(G + R)을 쓴다. 밝기(RGB의 평균)가 <code style="color:#22d3bf">dark_floor</code> 미만인 화소는 색도가 잡음으로 정해지므로 <b>값을 만들지 않고 NaN</b>으로 두며 <code style="color:#22d3bf">valid</code>를 False로 한다(VEG는 r 또는 b가 0인 화소, NGRDI는 G + R이 0인 화소도 뺀다).</p>
+<p>반환: <code style="color:#22d3bf">index</code>(H, W의 float, NaN은 미정의)·<code style="color:#22d3bf">valid</code>(bool)·<code style="color:#22d3bf">name</code>·<code style="color:#22d3bf">formula</code>· <code style="color:#22d3bf">vegetation_sign</code>(식물에서 커지는 지수는 +1, CIVE와 ExR은 −1)·<code style="color:#22d3bf">citation</code>·<code style="color:#22d3bf">n_invalid</code>· <code style="color:#22d3bf">threshold_zero_is_boundary</code>(ExGR만 True: 0이 식물과 배경의 경계). 빈 입력·비유한 값·범위 밖·알 수 없는 지수 이름·모든 화소가 미정의일 때는 <code style="color:#22d3bf">ValueError</code>로 거부한다.</p>
+<p>호출 예: <code style="color:#22d3bf">fs.ledger.plant_color_index(img, index=&quot;exgr&quot;)[&quot;index&quot;] &gt; 0</code>이 식물 화소.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_score">fisher_lda_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">plant</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:superpixel_color_texture_features">superpixel_color_texture_features</a> · <a style="color:#22d3bf" href="opsegmentation:cover_ratio_grade">cover_ratio_grade</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

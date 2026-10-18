@@ -473,7 +473,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Astronomie und Umwelt</b> (22)</summary>
+<details class="vall"><summary><b>Astronomie und Umwelt</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="Ein Gravitationswellendetektor in geschlossener Form" width="200" height="200"><b>&#9654;</b><span>Ein Gravitationswellendetektor in geschlossener Form</span></a>
 <a href="../../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_allsky_cloud_cover.jpg" alt="Bewölkung Allsky" width="200" height="200"><span>Bewölkung Allsky</span></a>
@@ -493,6 +493,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_astrometry.jpg" alt="Sternastrometrie" width="200" height="200"><span>Sternastrometrie</span></a>
 <a href="../../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tree_ring_dendro.jpg" alt="Jahresringe" width="200" height="200"><span>Jahresringe</span></a>
 <a href="../../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_vegetation_cover.jpg" alt="Vegetationsbedeckung" width="200" height="200"><span>Vegetationsbedeckung</span></a>
+<a href="../../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_weed_rice_ratio.jpg" alt="Unkrautdeckung im Reisfeld in 4 Stufen" width="200" height="200"><span>Unkrautdeckung im Reisfeld in 4 Stufen</span></a>
 <a href="../../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_level.jpg" alt="Pegelstand" width="200" height="200"><span>Pegelstand</span></a>
 <a href="../../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_rover_slip_risk_path.jpg" alt="Mars-Rover-Schlupf" width="200" height="200"><b>&#9654;</b><span>Mars-Rover-Schlupf</span></a>
 <a href="../../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="Zwei Höhen (echt)" width="200" height="200"><span>Zwei Höhen (echt)</span></a>

@@ -488,7 +488,7 @@ PoC 255 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>天文・環境</b> (22)</summary>
+<details class="vall"><summary><b>天文・環境</b> (23)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_gw_detector_pseudo_simulation/04_power_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_gw_detector_pseudo_simulation.jpg" alt="重力波望遠鏡の擬似シミュレーション" width="200" height="200"><b>&#9654;</b><span>重力波望遠鏡の擬似シミュレーション</span></a>
 <a href="../articles/assets/poc/poc_allsky_cloud_cover/01_jacobian.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_allsky_cloud_cover.jpg" alt="全天カメラの雲量" width="200" height="200"><span>全天カメラの雲量</span></a>
@@ -508,6 +508,7 @@ PoC 255 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_star_astrometry/01_snr_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_star_astrometry.jpg" alt="星の位置精度" width="200" height="200"><span>星の位置精度</span></a>
 <a href="../articles/assets/poc/poc_tree_ring_dendro/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tree_ring_dendro.jpg" alt="年輪の幅" width="200" height="200"><span>年輪の幅</span></a>
 <a href="../articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_vegetation_cover.jpg" alt="畑の緑の被覆率" width="200" height="200"><span>畑の緑の被覆率</span></a>
+<a href="../articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_weed_rice_ratio.jpg" alt="水田の雑草の被度を 4 段階で" width="200" height="200"><span>水田の雑草の被度を 4 段階で</span></a>
 <a href="../articles/assets/poc/poc_water_level/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_water_level.jpg" alt="河川の水位" width="200" height="200"><span>河川の水位</span></a>
 <a href="../articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_rover_slip_risk_path.jpg" alt="火星の車輪滑り" width="200" height="200"><b>&#9654;</b><span>火星の車輪滑り</span></a>
 <a href="../articles/assets/poc/poc_geodetic_benchmarks_real/01_residual_sorted.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_geodetic_benchmarks_real.jpg" alt="2 つの高さ(実データ)" width="200" height="200"><span>2 つの高さ(実データ)</span></a>

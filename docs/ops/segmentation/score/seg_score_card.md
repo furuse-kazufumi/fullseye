@@ -45,7 +45,7 @@ Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`score`)
 

@@ -4,7 +4,7 @@ dim: spc
 category: msa
 in: table
 out: table
-examples: [poc_measurement_system_analysis]
+examples: [poc_measurement_system_analysis, poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ Cohen のカッパは ``2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))`` という閉形式と
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
+- [poc_weed_rice_ratio](../../../../examples/poc_weed_rice_ratio.py) — `py -3.11 examples/poc_weed_rice_ratio.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

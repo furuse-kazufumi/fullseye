@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cover_ratio_grade — SEGMENTATION <code style="color:#22d3bf">plant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cropweed; cropweed.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;cover_ratio_grade&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>被度(面積の割合 0..1)を、<b>宣言した境</b> <code style="color:#22d3bf">edges</code> で段階 0..len(edges) に分ける。</p>
+<p>段階 k は edges[k−1] &lt;= f &lt; edges[k] (境ちょうどは上の段階)。既定の境 (0.05, 0.25, 0.50) は植生調査の被度階級(Braun-Blanquet の 5 % / 25 % / 50 %)から借りたもので、4 段階(0 少ない / 1 中程度 / 2 多い / 3 甚大)になる。注釈の分布から決めたものではない。<code style="color:#22d3bf">fraction</code> はスカラーか 1-D の配列。返す: <code style="color:#22d3bf">grade</code>(int の配列)・<code style="color:#22d3bf">edges</code>・ <code style="color:#22d3bf">margin</code>(最も近い境までの距離。小さいほど判定が脆い)・<code style="color:#22d3bf">n_grades</code>・<code style="color:#22d3bf">counts</code>(段階ごとの数)。空の入力・非有限値・[0, 1] の外・境が (0, 1) の中で狭義単調増加でないときは <code style="color:#22d3bf">ValueError</code> で拒否する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_score">fisher_lda_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">plant</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:plant_color_index">plant_color_index</a> · <a style="color:#22d3bf" href="opsegmentation:superpixel_color_texture_features">superpixel_color_texture_features</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

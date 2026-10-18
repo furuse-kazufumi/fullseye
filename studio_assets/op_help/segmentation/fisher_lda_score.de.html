@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_score — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Merkmale mit einer durch <code style="color:#22d3bf">fisher_lda_fit</code> angepassten Diskriminante bewerten (score &gt; 0 bedeutet Klasse 1).</p>
+<p><code style="color:#22d3bf">model</code> ist das Ergebnis von <code style="color:#22d3bf">fisher_lda_fit</code>; <code style="color:#22d3bf">X</code> sind (N, D) Merkmale (auch das <code style="color:#22d3bf">X</code> eines dict). Die Standardisierung nutzt Mittel und Maßstab aus dem Training. Rückgabe: <code style="color:#22d3bf">score</code> (N), <code style="color:#22d3bf">label</code> (0/1; <b>ein Score von genau 0 ist Klasse 0</b>, eine festgelegte Regel), <code style="color:#22d3bf">margin</code> (|score| / ‖w‖ = Abstand zur Grenze im standardisierten Raum), <code style="color:#22d3bf">n1</code> (Anzahl als Klasse 1 beurteilt). Leere Eingabe, abweichende Spaltenzahl, nicht endliche Werte und ein <code style="color:#22d3bf">model</code>, das keine angepasste Diskriminante ist, werden mit <code style="color:#22d3bf">ValueError</code> abgelehnt.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weed_rice_ratio">poc_weed_rice_ratio</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weed_rice_ratio.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">classify</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_2dim_sup">class_2dim_sup</a> · <a style="color:#22d3bf" href="opsegmentation:class_2dim_unsup">class_2dim_unsup</a> · <a style="color:#22d3bf" href="opsegmentation:learn_ndim_norm">learn_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:classify_image_class_lut">classify_image_class_lut</a> · <a style="color:#22d3bf" href="opsegmentation:fisher_lda_fit">fisher_lda_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cropweed.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

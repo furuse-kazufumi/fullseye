@@ -49,7 +49,7 @@ Hungarian(総和最大の割当)でなく argmax なので、1 つの大きな�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`score`)
 

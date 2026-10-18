@@ -109,8 +109,8 @@
   - [`orientation`](./geocam/INDEX.md#orientation-1) 1 · [`skyline`](./geocam/INDEX.md#skyline-3) 3 · [`sun`](./geocam/INDEX.md#sun-5) 5
 - [LLMCORE 오퍼레이터](./llmcore/INDEX.md) — 10 개 / 4 카테고리
   - [`attend`](./llmcore/INDEX.md#attend-4) 4 · [`decode`](./llmcore/INDEX.md#decode-1) 1 · [`prepare`](./llmcore/INDEX.md#prepare-2) 2 · [`score`](./llmcore/INDEX.md#score-3) 3
-- [SEGMENTATION 오퍼레이터](./segmentation/INDEX.md) — 54 개 / 10 카테고리
-  - [`classify`](./segmentation/INDEX.md#classify-5) 5 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
+- [SEGMENTATION 오퍼레이터](./segmentation/INDEX.md) — 59 개 / 11 카테고리
+  - [`classify`](./segmentation/INDEX.md#classify-7) 7 · [`compare`](./segmentation/INDEX.md#compare-1) 1 · [`contour`](./segmentation/INDEX.md#contour-10) 10 · [`graph`](./segmentation/INDEX.md#graph-12) 12 · [`grow`](./segmentation/INDEX.md#grow-2) 2 · [`plant`](./segmentation/INDEX.md#plant-3) 3 · [`score`](./segmentation/INDEX.md#score-8) 8 · [`threshold`](./segmentation/INDEX.md#threshold-4) 4 · [`watershed`](./segmentation/INDEX.md#watershed-1) 1 · [`watershed3d`](./segmentation/INDEX.md#watershed3d-3) 3 · [`world`](./segmentation/INDEX.md#world-8) 8
 - [샘플 데이터 카탈로그(다운로드 URL / 라이선스)](./SAMPLES.md)
 - [오퍼레이터의 출처와 참고문헌](../REFERENCES.md)
 - [용도로 찾기(권장 파이프라인 / 대안 / 한계 / 실측 보정)](../CAPABILITIES.md)

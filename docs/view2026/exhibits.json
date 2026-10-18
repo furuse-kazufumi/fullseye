@@ -6384,6 +6384,22 @@
     "de": "Variationsmodell aus Gutteilen",
     "hi": "अच्छे samples का variation model"
    }
+  },
+  {
+   "id": "poc_weed_rice_ratio",
+   "group": "wing_astroenv",
+   "media": "05_real_examples.png",
+   "motion": false,
+   "thumb_src": "05_real_examples.png",
+   "label": {
+    "ja": "水田の雑草の被度を 4 段階で",
+    "en": "Grading weed cover in rice paddies",
+    "zh": "把稻田杂草覆盖度分为 4 级",
+    "tw": "把稻田雜草覆蓋度分為 4 級",
+    "ko": "논의 잡초 피도를 4단계로",
+    "de": "Unkrautdeckung im Reisfeld in 4 Stufen",
+    "hi": "धान के खेत में खरपतवार cover के 4 grade"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
@@ -7111,6 +7127,13 @@
     "de": "Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen)",
     "hi": "नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ)",
     "fr": "Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues)"
+   },
+   "crop-weed-cover-grade": {
+    "zh": "从田间 RGB 用颜色与纹理区分作物和杂草,并按事先声明的边界给杂草覆盖度分级(不用学习器)",
+    "tw": "從田間 RGB 以顏色與紋理區分作物和雜草,並依事先宣告的邊界為雜草覆蓋度分級(不用學習器)",
+    "ko": "포장의 RGB에서 색과 결로 작물과 잡초를 나누고, 잡초 피도를 미리 선언한 경계로 단계화(학습기 없음)",
+    "de": "Kultur und Unkraut in Feld-RGB nach Farbe und Textur trennen und den Unkrautdeckungsgrad an vorab festgelegten Grenzen einstufen (ohne gelerntes Netz)",
+    "hi": "खेत की RGB image में रंग और texture से फ़सल और खरपतवार अलग करना, और खरपतवार cover को पहले घोषित सीमाओं पर grade करना (बिना learned network)"
    }
   }
  },
