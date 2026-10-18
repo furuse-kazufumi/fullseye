@@ -35,6 +35,12 @@ repo に無い(数千本・外部)ので **CHAIN には入れない**(``regen_al
     py -3.11 tools/gen_literature_notes.py --rad-root C:/path/to/docs        # 既定 = 環境変数 FULLSEYE_RAD_DIR
     py -3.11 tools/gen_literature_notes.py --rad-root ... --corpus mech_design --max-papers 6
     py -3.11 tools/gen_literature_notes.py --rad-root ... --curated optical_metrology   # 厳選の層だけ
+    py -3.11 tools/gen_literature_notes.py --restate-counts                              # 件数だけ打ち直す(コーパス不要)
+
+**件数の古び(2026-10-18)**: INDEX の「op ノート N 本」は生成した日の数で、op を足すと古びる(3,307 のまま実際は 3,322 だった)。
+本体の再生成にはコーパスが要るが件数は要らないので、``--restate-counts`` が docs/ops の実ファイルを数えて件数だけ直し、
+``tools/gen_literature_counts.py`` が regen_all の鎖からそれを呼ぶ。``stated_count_problems()`` が実数との差を返し、
+``tests/test_literature_notes.py`` が門にする。
 
 fail-closed: rad-root が無い / コーパスが無い / クラスタが 1 つも読めない / op ノートが読めない / 対応表の op が実在しない
 ときは exit 1(空の文献層・嘘の op リンクを黙って出さない)。
@@ -911,6 +917,90 @@ def build_index(rows: dict[str, dict], n_notes: int, titles: dict[str, str] | No
     return "\n".join(out) + "\n"
 
 
+# --------------------------------------------------------------------------- #
+# 件数の打ち直し(コーパス不要)                                                      #
+# --------------------------------------------------------------------------- #
+#: INDEX.md の「`docs/ops` の op ノート N 本」(ノートの**枚数**)
+_INDEX_COUNT_RE = re.compile(r"(`docs/ops` の op ノート )([\d,]+)( 本)")
+#: 各文献層の「出荷ノート N 本」(ノートの**名前の数**。同じ名前が 2 つの族に在る op は 1 と数える)
+_LAYER_COUNT_RE = re.compile(r"(出荷ノート )([\d,]+)( 本)")
+_OP_NOTE_HEAD_RE = re.compile(r"\A---\r?\nop: *([^\r\n]+)")
+
+
+def count_op_notes(repo: str) -> tuple[int, int]:
+    """``docs/ops`` の実ファイルから ``(ノートの枚数, 名前の数)`` を数える(コーパスも OP_NOTES.json も要らない)。
+
+    op ノートは先頭が ``---`` / ``op: <名前>`` の front matter。索引(INDEX*.md)・SAMPLES・族の案内(guides)は
+    この形ではないので数えない。台帳(OP_NOTES.json)から数えると「台帳が古いのに数も古い」で気づけないので、
+    ファイルを開いて数える。
+    """
+    root = os.path.join(repo, "docs", "ops")
+    if not os.path.isdir(root):
+        raise SystemExit("docs/ops not found under %s (fail-closed)" % repo)
+    n_files, names = 0, set()
+    for dirpath, _dirs, files in os.walk(root):
+        for fn in files:
+            if not fn.endswith(".md"):
+                continue
+            with open(os.path.join(dirpath, fn), encoding="utf-8") as f:
+                m = _OP_NOTE_HEAD_RE.match(f.read(400))
+            if m:
+                n_files += 1
+                names.add(m.group(1).strip())
+    if not n_files:
+        raise SystemExit("no op notes found under docs/ops (fail-closed)")
+    return n_files, len(names)
+
+
+def _literature_files(lit_dir: str) -> tuple[str, list[str]]:
+    """``(INDEX.md のパス, 生成器が書いた文献層ファイルのパス)``。登録表(CORPORA / CURATED)の名前で引くので、
+    OSS の地図など別の生成器のファイルは読まない(regen_all の読み書きの宣言を増やさない)。"""
+    index = os.path.join(lit_dir, "INDEX.md")
+    layers = [p for p in (os.path.join(lit_dir, n + ".md") for n in sorted(set(CORPORA) | set(CURATED))) if os.path.isfile(p)]
+    return index, layers
+
+
+def stated_count_problems(repo: str = _ROOT) -> list[str]:
+    """文献層が書いている「op ノート N 本」が、``docs/ops`` の実ファイルの数と合っているか。ずれの一覧(空なら合っている)。"""
+    n_files, n_names = count_op_notes(repo)
+    index, layers = _literature_files(os.path.join(repo, "docs", "literature"))
+    probs = []
+    ms = _INDEX_COUNT_RE.findall(_read(index))
+    if len(ms) != 1:
+        probs.append("INDEX.md: 「op ノート N 本」が %d 箇所(1 箇所のはず)" % len(ms))
+    elif int(ms[0][1].replace(",", "")) != n_files:
+        probs.append("INDEX.md: op ノート %s 本と書いてあるが、docs/ops の実ファイルは %s 本" % (ms[0][1], f"{n_files:,}"))
+    for p in layers:
+        ms = _LAYER_COUNT_RE.findall(_read(p))
+        if len(ms) != 1:
+            probs.append("%s: 「出荷ノート N 本」が %d 箇所(1 箇所のはず)" % (os.path.basename(p), len(ms)))
+        elif int(ms[0][1].replace(",", "")) != n_names:
+            probs.append("%s: 出荷ノート %s 本と書いてあるが、実際の名前の数は %s" % (os.path.basename(p), ms[0][1], f"{n_names:,}"))
+    return probs
+
+
+def restate_counts(repo: str = _ROOT) -> list[str]:
+    """INDEX.md と各文献層の件数だけを、実ファイルの数に打ち直す。書き換えたファイルのパスを返す。
+
+    文献層の本体はコーパスから作るので ``--rad-root`` が要るが、**件数は docs/ops を数えれば分かる**。件数だけ古びて
+    (op を足すたびに 1 つずつ)他は変わらない、という古び方を、コーパス無しで直す。置換は 1 箇所ずつ数えて確かめる。
+    """
+    n_files, n_names = count_op_notes(repo)
+    index, layers = _literature_files(os.path.join(repo, "docs", "literature"))
+    changed = []
+    for path, rx, n in [(index, _INDEX_COUNT_RE, n_files)] + [(p, _LAYER_COUNT_RE, n_names) for p in layers]:
+        with open(path, encoding="utf-8", newline="") as f:
+            text = f.read()
+        new, k = rx.subn(lambda m: m.group(1) + f"{n:,}" + m.group(3), text)
+        if k != 1:
+            raise SystemExit("%s: expected exactly one count to restate, found %d (fail-closed)" % (path, k))
+        if new != text:
+            with open(path, "w", encoding="utf-8", newline="") as f:
+                f.write(new)
+            changed.append(path)
+    return changed
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--rad-root", default=os.environ.get("FULLSEYE_RAD_DIR", ""), help="RAD コーパスの親ディレクトリ(既定 = 環境変数 FULLSEYE_RAD_DIR)")
@@ -919,7 +1009,13 @@ def main(argv=None) -> int:
     ap.add_argument("--repo", default=_ROOT, help="Fullseye の checkout(op ノートの在処。既定 = この生成器の 2 つ上)")
     ap.add_argument("--out", default=None, help="出力先(既定 = <repo>/docs/literature)")
     ap.add_argument("--max-papers", type=int, default=6, help="葉クラスタごとに載せる代表論文の上限")
+    ap.add_argument("--restate-counts", action="store_true",
+                    help="件数(op ノートの枚数)だけを docs/ops の実ファイルから打ち直す。コーパス不要(regen_all の鎖から呼ばれる)")
     a = ap.parse_args(argv)
+    if a.restate_counts:
+        for p in restate_counts(a.repo):
+            print("literature count restated: %s" % os.path.relpath(p, a.repo))
+        return 0
     if not a.rad_root or not os.path.isdir(a.rad_root):
         raise SystemExit("--rad-root (or FULLSEYE_RAD_DIR) must point at the RAD corpus directory; got %r" % a.rad_root)
     out_dir = a.out or os.path.join(a.repo, "docs", "literature")

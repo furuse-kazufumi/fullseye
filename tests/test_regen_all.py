@@ -94,8 +94,8 @@ _OLD_ORDER = [
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
-    "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py",
-    "imgevolve.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
+    "tools/gen_sensor_playbook.py", "imgevolve.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
 ]
 
@@ -139,6 +139,18 @@ def test_the_order_gate_catches_a_single_swap():
     bad = RA.order_violations(order)
     assert ("tools/gen_capabilities_index.py", "docs/OP_INDEX.json", "imgevolve.py",
             "docs/OP_INDEX.json") in bad
+
+
+def test_the_literature_counts_stage_must_follow_the_notes_it_counts():
+    """件数の打ち直しは docs/ops を数えるので、op ノートを書く opdocs より後ろでなければならない(壊して確かめる)。"""
+    order = _chain_order()
+    assert "tools/gen_literature_counts.py" in order
+    assert not RA.order_violations(order)
+    order.remove("tools/gen_literature_counts.py")
+    order.insert(order.index("tools/opdocs.py"), "tools/gen_literature_counts.py")
+    bad = RA.order_violations(order)
+    assert bad
+    assert any(r == "tools/gen_literature_counts.py" and w == "tools/opdocs.py" for r, _rp, w, _wp in bad), bad
 
 
 def test_exemptions_are_not_a_blanket():
