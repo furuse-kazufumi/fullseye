@@ -157,7 +157,7 @@ def build_cad() -> dict:
 # 2. LiDAR の地形変化                                                            #
 # --------------------------------------------------------------------------- #
 def build_lidar() -> dict:
-    os.environ.setdefault(DATA_ENV, "C:/dev/data")
+    # 実データの置き場は環境変数 FULLSEYE_DATA_DIR で受ける(手元の絶対パスを既定にしない)。
     L = _load("poc_lidar_terrain_change")
     root, why = L.real_data_dir(L.USGS_SUBDIR)
     if root is None:

@@ -132,6 +132,7 @@ def test_no_external_loads():
     assert "http://" not in html and "https://" not in html
     p = _P()
     p.feed(html)
+    assert len(p.attrs) > 0                       # 属性を 1 つも読めていない(空)なら以下の検査は何も見ていない
     for tag, k, v in p.attrs:
         assert not (k in ("src", "href", "action") and v and re.match(r"(?i)(https?:)?//", v)), (tag, k, v)
     assert not re.search(r"@import|url\(|\bfetch\(|XMLHttpRequest|\bimport\(", html)

@@ -380,6 +380,7 @@ EXCLUDED = {
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。",
+    "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/bench_realtime.py": "ベンチ(実時間)。",
     "tools/bench_soak.py": "ベンチ(長時間)。",
