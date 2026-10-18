@@ -35,7 +35,7 @@ def test_mass_attenuation_matches_nist_published_values(mat, e, v):
 def test_copper_k_edge_jumps_from_38_to_278():
     below = M.material_xray_constants("CU", 8.97)["mu_rho_cm2_g"]
     at = M.material_xray_constants("CU", 8.9789)["mu_rho_cm2_g"]
-    assert 38.0 < below < 39.0 and at == pytest.approx(278.4)             # 38.39 → 278.4
+    assert 38.0 < below < 39.0 and at == pytest.approx(278.4)             # 38.29 → 278.4(cm²/g。keV ではない)
     assert ("Cu", "K", 8.9789) in M.material_xray_constants("CU", 9.0)["edges"]
 
 
