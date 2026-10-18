@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kuwahara — 2D <code style="color:#22d3bf">smoothing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;kuwahara&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Kuwahara-Filter (1976): kantenerhaltende Glättung, die den Mittelwert desjenigen von vier überlappenden Fenstern mit der kleinsten Varianz ausgibt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>油絵調の見た目にも使われる。</p>
+<p>各画素について、その画素を角に含む <code style="color:#22d3bf">(r+1) x (r+1)</code> の窓を 4 つ(左上・右上・左下・右下。隣り合う窓は中心の行と列を共有して重なる)とり、<b>分散がいちばん小さい窓の平均</b>を出力する。縁をまたぐ窓は分散が大きいので選ばれず、画素は縁の「自分と同じ側」の窓の平均になる。だから平坦部は均され、段差は鈍らない(<code style="color:#22d3bf">gaussian</code> は段差をなだらかにしてしまう)。</p>
+<p><code style="color:#22d3bf">a</code> が窓の半径 <code style="color:#22d3bf">r = 1 + floor(9a + 0.5)</code>(<code style="color:#22d3bf">1〜10</code>、窓の一辺は <code style="color:#22d3bf">r+1</code>)を振る。大きいほど均す範囲が広がり、細い構造は消える。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>計算量は <b>O(N)</b>: 窓の和と二乗和を軸ごとの累積和で求めるので、半径に依存しない(分散は <code style="color:#22d3bf">E[x^2] - E[x]^2</code>、全体の平均を引いてから計算して桁落ちを抑える)。分散の同点は、小数 10 桁に丸めた値で比べ、宣言順(左上・右上・左下・右下)で決める。</p>
+<p><b>端の扱い</b>: 端の画素を複製する(最近傍)。端の画素の窓は、画像の外を端の値で埋めて作る。</p>
+<p><b>適用条件</b>: (1) 4 象限の方向は軸に揃っているので、斜めの縁では選ばれた窓が縁に沿わず、角の丸まりや「ブロック状」の模様が出る(一般化 Kuwahara はこれを直す)。</p>
+<p style="margin:2px 0 2px 12px">(2) 半径が大きいと細い線は消える。(3) 出力は入力の局所平均だけから作るので、値域は</p>
+<p>入力の外に出ない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">smoothing</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:sk_tv">sk_tv</a> · <a style="color:#22d3bf" href="op:sk_wavelet">sk_wavelet</a> · <a style="color:#22d3bf" href="op:sk_rolling_ball">sk_rolling_ball</a> · <a style="color:#22d3bf" href="op:sk_nlm">sk_nlm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

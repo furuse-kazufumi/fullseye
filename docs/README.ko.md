@@ -144,7 +144,7 @@
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
-| `2d` | 953 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 955 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
 | `3d` | 372 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 358 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |

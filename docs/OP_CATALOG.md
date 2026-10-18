@@ -749,7 +749,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 358 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
-### 2d(953 ops / 49 categories)
+### 2d(955 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -891,7 +891,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` — crop_domain: restrict the image domain to the central ``a`` window, zeroing every pixel outside it (pixels outside the domain are undefined -> 0). ``a`` sets the kept window fraction; ``b`` is ignored. · 例: `gallery2d_gray_arith`
 - `it_full_domain` `image → image` — full_domain: expand the domain of the image to the full rectangle. A plain numpy array already carries a full domain, so this is the identity -- the genuine, correct behaviour of full_domain for such images. ``a``/``b`` ignored. · 例: `gallery2d_gray_arith`
 
-#### 2d / edges(58)
+#### 2d / edges(59)
 - `corner_response` (halcon: `points_harris`) `image → image` — Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。 · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `cv_corner_harris` (halcon: `points_harris`) `image → image` — Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。 · 例: `gallery2d_edges`
 - `cv_laplacian` (halcon: `laplace`) `image → image` — ラプラシアンフィルタ(OpenCV 実装)。2 階微分による等方的なエッジ/ブロブ検出で、輪郭のみならず孤立点にも強く反応する(ノイズにも敏感)。 · 例: `gallery2d_edges`
@@ -934,6 +934,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sobel_mag` (halcon: `sobel_amp`) `image → image` — Sobel フィルタによる勾配強度（エッジ検出）。HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。 · 例: `find_ops_by_meaning`, `gallery2d_edges`
 - `tf_phase_congruency` `image → image` — phase_congruency: a simplified monogenic phase-congruency feature map. · 例: `gallery2d_edges`, `poc_iqa_fsim_gmsd_vif`
 - `tf_steerable_filter` `image → image` — steerable_filter: oriented first-derivative-of-Gaussian response. · 例: `gallery2d_edges`
+- `xdog` `image → image` — XDoG(拡張ガウス差分、Winnemoller・Kyprianidis・Olsen 2012)による線画・墨絵調のスタイライズ。 · 例: `gallery2d_edges`
 - `xkor_dog` `image → image` — DoG（Difference of Gaussians）ブロブ応答。``kornia.feature.dog_response_single``（無ければ ``dog_response`` にフォールバック）を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
 - `xkor_gftt` `image → image` — GFTT（Good Features To Track、Shi-Tomasi）コーナー応答。``kornia.feature.gftt_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
 - `xkor_harris` `image → image` — Harris コーナー応答。``kornia.feature.harris_response`` を呼び、符号付き応答を ``signed01`` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。 · 例: `gallery2d_edges`
@@ -1518,7 +1519,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### 2d / self-similarity(1)
 - `xmh_selfmatch` `image → image` — 自己相似マップ(``mahotas.template_match`` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。 · 例: `gallery2d_features`
 
-#### 2d / smoothing(48)
+#### 2d / smoothing(49)
 - `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` — Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の 伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より 大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an anisotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` — エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `bilateral_filter` (halcon: `bilateral_filter`) `image → image` — OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を 空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する 定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
@@ -1537,6 +1538,7 @@ _計 3400 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` — 実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化) とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで 代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は 一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.） の代役。 · 例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `kuwahara` `image → image` — Kuwahara フィルタ(1976)。4 つの重なる窓のうち分散が最小の窓の平均を出す、縁を保つ平滑化。 · 例: `gallery2d_smoothing_rank`
 - `mean_box` (halcon: `mean_image`) `image → image` — 矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` — 小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を **近似**したスムージング。真の平均曲率 PDE(``ops`` 側の別実装が本来やる 拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が このバックエンド固有の近似の限界。HALCON の ``mean_curvature_flow`` （Apply the mean curvature flow to an image.）の代役。 · 例: `gallery2d_smoothing_rank`
 - `mean_image` (halcon: `mean_image`) `image → image` — 矩形平均フィルタ(box filter)。HALCON の ``mean_image``（Smooth by averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。 · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`

@@ -146,7 +146,7 @@
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
-| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 953 | [INDEX](ops/2d/INDEX.md) |
+| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 955 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 372 | [INDEX](ops/3d/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 358 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |

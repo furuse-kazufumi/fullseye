@@ -102,6 +102,9 @@ CHAIN = [
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
     #   CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない ——
     #   以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。
+    # 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。
+    # docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+    (["tools/gen_literature_counts.py"], "docs/literature の件数(op ノートの枚数)を実ファイルから打ち直す"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
@@ -156,6 +159,10 @@ OUTPUTS = {
     "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
+    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
+                                       "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
+                                       "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+                                       "docs/literature/sensor_simulation.md"],
 }
 
 #: ---- 書く**かもしれない**出力(2026-10-18)--------------------------------------------
@@ -193,12 +200,16 @@ READS = {
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
-        "docs/literature/OSS_LANDSCAPE.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/literature/OSS_LANDSCAPE.md", "docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
+        "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
+        "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+        "docs/literature/sensor_simulation.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+    "tools/gen_literature_counts.py": ["docs/ops/*"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。

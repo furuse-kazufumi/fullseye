@@ -71,11 +71,11 @@ roberts 0.40 0.50
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md) · [max_filter](../rank/max_filter.md)
+[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md)
 
 ## 同カテゴリ(`edges`)
 
-[sobel_mag](sobel_mag.md) · [prewitt_mag](prewitt_mag.md) · [roberts_mag](roberts_mag.md) · [dog](dog.md) · [edge_transition_width](edge_transition_width.md) · [grad_dir](grad_dir.md) · [log](log.md) · [corner_response](corner_response.md)
+[sobel_mag](sobel_mag.md) · [prewitt_mag](prewitt_mag.md) · [roberts_mag](roberts_mag.md) · [dog](dog.md) · [edge_transition_width](edge_transition_width.md) · [xdog](xdog.md) · [grad_dir](grad_dir.md) · [log](log.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

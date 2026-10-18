@@ -1633,6 +1633,16 @@
     "path": "docs/ops/2d/edges/tf_steerable_filter.md"
    }
   ],
+  "xdog": [
+   {
+    "op": "xdog",
+    "dim": "2d",
+    "category": "edges",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/edges/xdog.md"
+   }
+  ],
   "xkor_dog": [
    {
     "op": "xkor_dog",
@@ -7569,6 +7579,16 @@
     "out": "image",
     "halcon": "isotropic_diffusion",
     "path": "docs/ops/2d/smoothing/isotropic_diffusion.md"
+   }
+  ],
+  "kuwahara": [
+   {
+    "op": "kuwahara",
+    "dim": "2d",
+    "category": "smoothing",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/smoothing/kuwahara.md"
    }
   ],
   "mean_box": [
