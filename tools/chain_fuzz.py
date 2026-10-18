@@ -7739,7 +7739,10 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       #   with_wavelength は処方(object_mm = inf)をそのまま返す。
                                       "noncoaxial_system", "noncoaxial_example", "noncoaxial_layout",
                                       "noncoaxial_drawing", "ghost_analysis", "ghost_path", "opd_samples",
-                                      "with_wavelength"}
+                                      "with_wavelength",
+                                      # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
+                                      #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+                                      "lens_file_read", "lens_file_system"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

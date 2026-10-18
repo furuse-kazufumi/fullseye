@@ -2166,7 +2166,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 9 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 10 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -2395,6 +2395,42 @@ py -3.11 examples/poc_fiber_light_guide.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fiber_light_guide)
 
 使用 op(ノートへ): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/energy_to_photons.html) · [`fiber_bundle_coupling`](https://furuse.work/ops/optics/fiber/fiber_bundle_coupling.html) · [`fiber_lp_modes`](https://furuse.work/ops/optics/fiber/fiber_lp_modes.html) · [`fiber_mode_field_diameter`](https://furuse.work/ops/optics/fiber/fiber_mode_field_diameter.html) · [`fiber_numerical_aperture`](https://furuse.work/ops/optics/fiber/fiber_numerical_aperture.html) · [`fiber_v_number`](https://furuse.work/ops/optics/fiber/fiber_v_number.html) · [`led_spectrum`](https://furuse.work/ops/optics/spectral/led_spectrum.html) · [`material_dispersion`](https://furuse.work/ops/optics/matprop/material_dispersion.html) · [`material_group_index`](https://furuse.work/ops/optics/fiber/material_group_index.html) · [`material_gvd`](https://furuse.work/ops/optics/fiber/material_gvd.html) · [`material_transmittance`](https://furuse.work/ops/optics/matprop/material_transmittance.html) · [`silicon_photodiode_qe`](https://furuse.work/ops/optics/spectral/silicon_photodiode_qe.html) · [`spectral_integral`](https://furuse.work/ops/optics/spectral/spectral_integral.html) · [`spectral_product`](https://furuse.work/ops/optics/spectral/spectral_product.html)
+
+## No.2026.245 —— 光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点
+
+[![光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png)
+
+*↑ **光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点** ―― 市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(.zmx)を、そのまま `raytrace` の処方にして実光線・Seidel・PSF・MTF・最適化に載せ、直した処方を同じ形式で返す。新 op 4 本(`lensfile`、`opsoptics` の `lensfile`): `lens_file_read` / `lens_file_system` / `lens_file_write` / `lens_file_report`。全キーワードを「読んだ / 無視(理由つき)/ 扱えない」に分け、扱えない面(座標変換面・理想レンズ・トーリック …)・r² の非球面項・別名でしか表に無い硝材は拒否し、近似は allow_partial のときだけ印つきで読む。同じファイルを ray-optics(BSD-3)と optiland(MIT)がそれぞれ自分の読み手で読んだ値と、近軸(EFL・BFL・入射瞳)が 4 設計で 6e-16、Seidel 和が 6e-8、実光線 14 本の像面座標が 3e-8 mm で一致した。三枚玉の中央の硝材を 648/338 に差し替えると RMS スポットは 13.9 → 332 µm に崩れ、`lensopt` で曲率 6 本を直すと 14.1 µm(EFL は元の 50.02 mm)に戻り、書き戻した .zmx を読み直すと処方が完全一致する。★作る途中で `raytrace` の円錐面の交点の選び方の欠陥(長い空気間隔の後の R < 0 の面で、全光線が「けられ」に化ける)を見つけて直した。学習 0、較正 0、門 21 件。*
+
+[![読み込んだ処方の子午断面図(optdraw)。視野 0・14・20° の実光線 5 本ずつ、寸法は EFL・BFL・全長・像高。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout.png)
+
+*↑ 測定の図 ―― 読み込んだ処方の子午断面図(optdraw)。視野 0・14・20° の実光線 5 本ずつ、寸法は EFL・BFL・全長・像高。*
+
+[![S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars.png)
+
+*↑ S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。*
+
+[![実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf.png)
+
+*↑ 実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。*
+
+[![中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation.png)
+
+*↑ 中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。*
+
+[![記録値(tests/data/lensfile/second_recorded.json)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations.png)
+
+*↑ 記録値(tests/data/lensfile/second_recorded.json)。*
+
+```
+py -3.11 examples/poc_lens_file_roundtrip.py
+```
+
+ソース: [examples/poc_lens_file_roundtrip.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_file_roundtrip.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_file_roundtrip)
+
+使用 op(ノートへ): [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_report`](https://furuse.work/ops/optics/lensfile/lens_file_report.html) · [`lens_file_system`](https://furuse.work/ops/optics/lensfile/lens_file_system.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`merit_function`](https://furuse.work/ops/optics/optimization/merit_function.html) · [`mtf50`](https://furuse.work/ops/optics/imaging/mtf50.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`optimize_lens`](https://furuse.work/ops/optics/optimization/optimize_lens.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`seidel_coefficients`](https://furuse.work/ops/optics/design/seidel_coefficients.html) · [`spot_diagram`](https://furuse.work/ops/optics/design/spot_diagram.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 

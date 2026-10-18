@@ -2864,6 +2864,18 @@
    "run": "py -3.11 examples/poc_fiber_light_guide.py"
   },
   {
+   "id": "poc_lens_file_roundtrip",
+   "wing": "wing_color",
+   "added": "2026-10-18",
+   "numbers_source": "log",
+   "figure": "spot_diagram",
+   "title_ja": "光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点",
+   "title_en": "Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip",
+   "caption_ja": "市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(.zmx)を、そのまま `raytrace` の処方にして実光線・Seidel・PSF・MTF・最適化に載せ、直した処方を同じ形式で返す。新 op 4 本(`lensfile`、`opsoptics` の `lensfile`): `lens_file_read` / `lens_file_system` / `lens_file_write` / `lens_file_report`。全キーワードを「読んだ / 無視(理由つき)/ 扱えない」に分け、扱えない面(座標変換面・理想レンズ・トーリック …)・r² の非球面項・別名でしか表に無い硝材は拒否し、近似は allow_partial のときだけ印つきで読む。同じファイルを ray-optics(BSD-3)と optiland(MIT)がそれぞれ自分の読み手で読んだ値と、近軸(EFL・BFL・入射瞳)が 4 設計で 6e-16、Seidel 和が 6e-8、実光線 14 本の像面座標が 3e-8 mm で一致した。三枚玉の中央の硝材を 648/338 に差し替えると RMS スポットは 13.9 → 332 µm に崩れ、`lensopt` で曲率 6 本を直すと 14.1 µm(EFL は元の 50.02 mm)に戻り、書き戻した .zmx を読み直すと処方が完全一致する。★作る途中で `raytrace` の円錐面の交点の選び方の欠陥(長い空気間隔の後の R < 0 の面で、全光線が「けられ」に化ける)を見つけて直した。学習 0、較正 0、門 21 件。",
+   "caption_en": "The plain-text prescription (.zmx) that commercial sequential ray-tracing programs save becomes a `raytrace` prescription, goes through real rays, Seidel sums, PSF, MTF and optimisation, and is written back in the same format. Four new ops (`lensfile`, category `lensfile` of `opsoptics`): read, pick a field / wavelength, write, and a keyword inventory. Every keyword is classified as read, ignored (with a reason) or unsupported; unsupported surfaces (coordinate breaks, ideal lenses, toroids ...), an r² aspheric term and glass names that exist in the material table only as an alias are refused, and approximations are imported only with allow_partial and are marked. Against what ray-optics (BSD-3) and optiland (MIT) computed from the very same files with their own readers, first-order data agree to 6e-16 on four designs, the Seidel sums to 6e-8 and 14 real rays to 3e-8 mm on the image. Swapping the middle element of the triplet to a 648/338 flint blows the RMS spot from 13.9 to 332 µm; `lensopt` on the six curvatures brings it back to 14.1 µm at the original 50.02 mm focal length, and the written .zmx reads back identically. Building this exposed and fixed a defect in `raytrace`: the conic intersection took the root with the smallest |t|, so a concave surface after a long air gap turned every ray into a 'vignetted' one. No learning, no calibration, 21 gates.",
+   "run": "py -3.11 examples/poc_lens_file_roundtrip.py"
+  },
+  {
    "id": "poc_moire_alignment",
    "wing": "wing_metrology",
    "added": "2026-10-15",

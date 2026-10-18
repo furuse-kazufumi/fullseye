@@ -485,6 +485,10 @@ def _optics_builders():
         "image_orientation": s3_first(), "ghost_analysis": s3_first(rings=2), "ghost_image": s3_first(size=16),
         "ghost_path": s3_first(i=1, j=2, rings=1), "noncoaxial_drawing": s3_first(rays=1),
         "optimize_lens": lens_first(iterations=2, rings=2),
+        # lensfile(2026-10-18): lens_file_read の返す処方(視野・波長・面の表つき)が要る(印の無い dict は拒否)。
+        #   lens_file_write は path=None で書かない(探針がファイルを作らない)。
+        "lens_file_system": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"field_index": 1}),
+        "lens_file_write": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"path": None}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         "distortion_map": lens_first(image_size=(32, 32)),
         "calibration_views": lens_first(image_size=(64, 64)),

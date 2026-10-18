@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 光学設計ファイル(.zmx)の読み書き `lensfile`(4 op)+ PoC「読んで、解析して、直して、書き戻す」
+- `lensfile`(opsoptics の新カテゴリ `lensfile`): `lens_file_read`(.zmx の逐次処方 → `raytrace.lens_system` そのもの + 視野・波長・口径・ソルブ・キーワードの台帳)/ `lens_file_system`(視野・波長を選んだ処方)/ `lens_file_write`(.zmx に書く。`lensopt` で直した処方を、視野・波長・まだ有効なソルブを保って書き戻す)/ `lens_file_report`(読まずに分類)。面は STANDARD / EVENASPH・鏡・絞り、単位 MM/CM/IN/METER、口径 ENPD / FNUM / FLOA、視野は角度・物体高・近軸像高、UTF-16(BOM あり / なし)・UTF-8・Latin-1。★fail-closed: 座標変換面・理想レンズ・その他の面・r² の非球面項・逆向きの間隔・物体側テレセン・矛盾したピックアップは拒否、近似(カタログに無い硝材の n_d/ν_d 代用・ケラレ係数・曲がった像面・多構成・温度)は `allow_partial=True` のときだけ `approximate=True` の印つき。硝材は材料表か `.agf`(`glass_dir` / `FULLSEYE_GLASS_DIR`)を名前の完全一致で引き、別名は辿らない(古い鉛ガラスの名が無鉛の別硝材に化けるため)。
+- 門 `tests/test_lensfile.py`(81): ray-optics 0.9.8(BSD-3)と optiland 0.6.3(MIT)がそれぞれ自分の読み手で同じ .zmx を読んだ記録値と、近軸が 1e-12、Seidel 和が 1e-6、実光線 14 本が 1e-6 mm(実測 6e-16 / 6e-8 / 3e-8)、独立に書いた ABCD 行列、往復の恒等(ASCII と UTF-16)、.agf の分散式 13 本を式の定義と 1e-12、材料表 46 硝材の CC0 係数を .agf に書いて読み直して 1e-12・カタログ n_d と 1e-5、探針(曲率の符号の反転は第 2 実装との EFL の門が赤、単位・符号化・面の種類・硝材の別名・n_d の食い違い)。
+- Fixed: `raytrace._intersect_conic` は「|t| の小さい根」を選んでいて、光線が球の z 範囲の中から始まる配置(長い空気間隔の後の R < 0 の面、望遠型)で球の裏側を拾い、全光線が「けられ」になっていた。頂点を含む葉の根を選ぶ(門 `tests/test_raytrace_conic_branch_2026_10_18.py`、修正前は 7 件赤)。
+- PoC `examples/poc_lens_file_roundtrip.py`(門 21、図 6 枚): 三枚玉の中央の硝材を差し替えて崩れた処方(RMS 13.9 → 332 µm)を `lensopt` で 14.1 µm に戻して書き戻す。
+
+
 ## 0.7.0 — 2026-10-18
 
 ### Added — 非共軸の光学系(raytrace3d 13 op)・折り返した系の図面・raytrace の未登録 5 関数
