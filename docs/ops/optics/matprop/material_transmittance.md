@@ -7,7 +7,7 @@ out: pairs
 examples: [poc_fiber_light_guide, poc_material_optical_library, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # material_transmittance — OPTICS `matprop` op

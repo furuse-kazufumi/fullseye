@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1498. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1500. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -83,7 +83,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L159** _(ja)_ — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
 - **L435** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L523** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L454** _(ja)_ — ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、 その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
+- **L525** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
 
 ## `backends.py`
 
@@ -2824,8 +2825,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/preflight.py`
 
 - **L121** — ★ If a previous staging copy remains in `build/lib`, setuptools **packs it into the wheel as-is** (measured 2026-09-05: a module removed from py-modules stayed in the wheel, and the gate's mutation test passed). Same reason release.yml builds from a clean checkout. Here too, always discard it before building.
-- **L310** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
-- **L353** — ★ Calling `--only suite` without `--full` yields 0 items, and it used to say "all PASS" and return with rc=0 (measured in the 2026-09-05 review). **A gate that passes while checking nothing** is worse than no gate.
+- **L233** _(ja)_ — ★2026-10-18: スクリプトは一時 dir に置くので、`import fullseye` は editable install(本線の 作業ツリー)を読んでいた —— worktree で出すリリースを検査したつもりで、別の版を見ていた。 PYTHONPATH でこの ROOT を先頭に置き、点検する対象 = 出すツリーにする。
+- **L319** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L362** — ★ Calling `--only suite` without `--full` yields 0 items, and it used to say "all PASS" and return with rc=0 (measured in the 2026-09-05 review). **A gate that passes while checking nothing** is worse than no gate.
 
 ## `tools/preflight_op_add.py`
 

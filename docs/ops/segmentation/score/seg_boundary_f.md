@@ -7,7 +7,7 @@ out: table
 examples: [poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation, poc_sem_wafer_defect_edge_bias]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # seg_boundary_f — SEGMENTATION `score` op

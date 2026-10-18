@@ -7,7 +7,7 @@ out: image2d
 examples: [gallery_drive_city_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # grid_distances — DRIVE `agv` op

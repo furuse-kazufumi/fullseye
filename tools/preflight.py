@@ -230,11 +230,20 @@ def _degenerate(label, runner, workdir) -> Result:
 def check_degenerate_local() -> Result:
     tmp = tempfile.mkdtemp(prefix="fs_deg_")
     try:
+        # ★2026-10-18: スクリプトは一時 dir に置くので、`import fullseye` は editable install(本線の
+        #   作業ツリー)を読んでいた —— worktree で出すリリースを検査したつもりで、別の版を見ていた。
+        #   PYTHONPATH でこの ROOT を先頭に置き、点検する対象 = 出すツリーにする。
         def run(script, log):
-            _run([PY, script, log], timeout=1800)
+            _run([PY, script, log], timeout=1800, env={"PYTHONPATH": ROOT})
         return _degenerate("local", run, tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _wsl_path(p: str) -> str:
+    """Windows のパス(C: のドライブ文字つき)を WSL のパス(/mnt/c/...)に。"""
+    p = os.path.abspath(p)
+    return "/mnt/" + p[0].lower() + p[2:].replace("\\", "/")
 
 
 def check_degenerate_linux() -> Result:
@@ -256,8 +265,8 @@ def check_degenerate_linux() -> Result:
 
     def run(script, log):
         _run(["wsl", "-e", "bash", "-lc",
-              "PYTHONPATH=/mnt/c/dev/projects/imgevolve /tmp/fs018/bin/python %s/%s %s/%s"
-              % (wsl_share, os.path.basename(script), wsl_share, os.path.basename(log))],
+              "PYTHONPATH=%s /tmp/fs018/bin/python %s/%s %s/%s"
+              % (_wsl_path(ROOT), wsl_share, os.path.basename(script), wsl_share, os.path.basename(log))],
              timeout=1800)
     return _degenerate("linux", run, share)
 

@@ -7,7 +7,7 @@ out: video
 examples: [gallery_live4d_volseq_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # volseq_cut_video — LIVE4D `series` op

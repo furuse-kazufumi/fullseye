@@ -7,7 +7,7 @@ out: table
 examples: [poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # dxf_entities — OPTICS `drawing` op

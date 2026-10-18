@@ -7,7 +7,7 @@ out: rgbimage
 examples: [poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # pixel_shift_merge — OPTICS `pixelshift` op

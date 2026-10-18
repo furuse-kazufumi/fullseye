@@ -7,7 +7,7 @@ out: table
 examples: [poc_moire_alignment, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # moire_differential_shift — OPTICS `moire_align` op

@@ -7,7 +7,7 @@ out: measurement
 examples: [gallery_oned_audio_funct, gallery_spectrum_signal_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # zero_crossing_rate — ONED `signal` op

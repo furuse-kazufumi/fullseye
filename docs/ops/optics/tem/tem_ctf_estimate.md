@@ -7,7 +7,7 @@ out: table
 examples: [poc_tem_ctf_thon_rings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # tem_ctf_estimate — OPTICS `tem` op

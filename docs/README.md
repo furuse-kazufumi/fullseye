@@ -55,7 +55,7 @@
 
 ### 検証の段
 
-能力 74 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.6.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 74 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|

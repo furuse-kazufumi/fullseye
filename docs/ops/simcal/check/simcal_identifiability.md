@@ -7,7 +7,7 @@ out: calresult
 examples: [poc_simcal_thin_film, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.7.0  # fullseye lib version this note was generated for
 ---
 
 # simcal_identifiability — SIMCAL `check` op
