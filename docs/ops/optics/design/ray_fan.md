@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # ray_fan — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ Returns ``(n,2)``: column 0 the normalised pupil coordinate (−1…1) along
 *axis* (``"y"`` tangential, ``"x"`` sagittal), column 1 the image-plane
 displacement (mm) of that ray from the chief ray along the same axis.
 The classic "ray fan plot"; NaN where a ray is vignetted.
+*aim* / *vignetting* as in :func:`ray_bundle`: the fan runs over the vignetted pupil, the chief ray
+it is measured from is the unvignetted one.
 
 ## ファミリ共通の入力契約(fail-closed)
 

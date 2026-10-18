@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # lens_system — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)`、台帳から引くなら `opsoptics.get("lens_system")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None)`、台帳から引くなら `opsoptics.get("lens_system")`)
 
 ## 使い方
 
@@ -50,6 +50,20 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   collimated object); *index_object*: index of object space.
 * *field*: default field for the analysis ops — degrees (infinite object)
   or object height in mm (finite object). Default 0 (on axis).
+* *aim*: how the pupil rays are launched. ``"paraxial"`` (the default, and what every
+  earlier version did) aims them at the paraxial entrance pupil, with only the chief ray
+  moved onto the stop centre; in a system with pupil aberration the marginal rays then land
+  outside the stop and are clipped (the stock Cooke triplet loses 48 of 217 rays on axis).
+  ``"stop"`` is **real-ray aiming**: every pupil ray is iterated (Newton, tolerance 1e-11 of the
+  stop radius, ``ValueError`` if it does not converge) so that it crosses the stop surface at the
+  requested point, which is what lens-design software reports. See :func:`with_aiming`.
+* *vignetting*: per-field pupil vignetting factors as design software stores them, a list of
+  ``{"field", "vdx", "vdy", "vcx", "vcy", "van"}`` (``field`` in the same unit as *field*;
+  missing keys are 0). The normalised pupil is compressed by ``(1 - VCX, 1 - VCY)`` (along
+  axes rotated by ``van`` degrees) and decentred by ``(VDX, VDY)`` before the rays are aimed:
+  ``q = (VDX, VDY) + R(van) diag(1 - VCX, 1 - VCY) R(-van) p``. A field between two records is
+  interpolated linearly, one outside the listed range takes the nearest record.
+  :func:`set_vignetting` computes them from the apertures.
 
 Default (no *surfaces*): a plano-convex BK7 singlet, ``f ≈ 100 mm``,
 ``f/4``, stop at the first surface — a sensible starting point for the

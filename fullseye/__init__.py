@@ -420,6 +420,7 @@ with warnings.catch_warnings():
         spot_diagram, spot_stats, ray_fan, opd_map, opd_samples,
         wavefront_from_opd, seidel_coefficients, tolerance_analysis,
         glass_catalog, sellmeier, chromatic_shift, chief_ray, with_wavelength,
+        with_aiming, ray_aiming, set_vignetting,
     )
     import lensopt  # noqa: E402,F401  (damped-least-squares lens optimisation)
     from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
@@ -1184,6 +1185,7 @@ __all__ = [
     "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
     "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
+    "with_aiming", "ray_aiming", "set_vignetting",
     "lensopt", "optimize_lens", "merit_function", "bend_singlet",
     "sensorchar", "emva_pair_statistics", "emva_photon_transfer", "emva_quantum_efficiency", "emva_linearity_error", "emva_snr_curve", "emva_sensitivity_threshold", "emva_dynamic_range", "emva_dark_current", "emva_spatial_nonuniformity", "emva_defect_pixels", "emva_highpass", "emva_spectrogram", "emva_total_snr", "emva_exposure_for_snr", "emva_photon_exposure", "emva_bspline_regression", "emva_ptc_linearity_check", "emva_noise_whiteness", "emva_filter_distortion",
     "sensorgeneral", "emva_general_sensitivity", "emva_general_nonuniformity", "emva_general_relative_qe",

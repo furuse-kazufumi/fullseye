@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # opd_samples — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("opd_samples")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("opd_samples")`)
 - **台帳経由の戻り値**: `fullseye.ledger.opd_samples(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.opd_samples.raw(...)`、または `raytrace.opd_samples` を直接呼ぶ。
 
 ## 使い方
@@ -26,6 +26,11 @@ diameter spans ``size − 1`` sample spacings. ``optics.pupil_psf`` counts
 the other way (its grid's full width of ``size`` cells is the diameter), so
 feeding it this map needs ``f_number = N·(size−1)/size`` for the same PSF
 scale (``lensimage.psf_from_opd`` does the bookkeeping for you).
+
+*aim* (``"paraxial"`` / ``"stop"``, default the system's) is the ray aiming of :func:`ray_bundle`.
+Vignetting (*vignetting*, default the system's per-field factors) is a **mask** here: the grid stays the
+physical pupil (so ``lensimage`` keeps its PSF scale) and only the samples inside the vignetted ellipse
+are valid — the same pupil region the spot diagram fills. The reference is the unvignetted chief ray.
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -488,6 +488,7 @@ def _optics_builders():
         # raytrace の追加登録(2026-10-15)と raytrace3d(非共軸): 系は example の table
         "chief_ray": lens_first(), "ray_bundle": lens_first(rings=2), "opd_samples": lens_first(size=8),
         "with_wavelength": lens_first(),
+        "with_aiming": lens_first(), "ray_aiming": lens_first(rings=2), "set_vignetting": lens_first(),
         "noncoaxial_layout": s3_first(), "noncoaxial_trace": s3_first(rings=2), "noncoaxial_spot": s3_first(rings=2),
         "image_orientation": s3_first(), "ghost_analysis": s3_first(rings=2), "ghost_image": s3_first(size=16),
         "ghost_path": s3_first(i=1, j=2, rings=1), "noncoaxial_drawing": s3_first(rays=1),

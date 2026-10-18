@@ -13,13 +13,27 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # ray_bundle — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0)`、台帳から引くなら `opsoptics.get("ray_bundle")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("ray_bundle")`)
 
 ## 使い方
 
 Trace a pupil-filling bundle at one field; returns the raw trace plus
 ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised coordinates
 and ``opl0`` (start-of-ray optical path offsets).
+
+*aim*: ``"paraxial"`` launches the rays at the paraxial entrance pupil (only the chief ray is moved
+onto the stop centre — the behaviour of every earlier version and the default of a system built
+without ``aim``), ``"stop"`` is real-ray aiming (each ray is iterated until it crosses the stop at
+its own point, residual below 1e-11 of the stop radius, ``ValueError`` otherwise); ``None`` takes
+the system's ``aim``. *vignetting*: ``None`` takes the system's per-field factors
+(:func:`lens_system`), a dict ``{"vdx", "vdy", "vcx", "vcy", "van"}`` overrides them for this call
+(``{}`` = none). The grid ``pupil`` is compressed / decentred by them before aiming, so the bundle
+fills the vignetted pupil; ``chief_xy`` stays the unvignetted chief ray.
+
+Extra keys: ``pupil_vignetted`` (N,2) the stop-plane pupil coordinates actually aimed at,
+``stop_xy`` (N,2) where each ray crossed the stop (stop frame, mm; NaN if it was lost before it),
+``aim``, ``vignetting`` (the factors used, or ``None``) and ``aim_residual`` (largest aiming error in
+stop radii; ``None`` for paraxial aiming).
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -413,7 +413,9 @@ def test_probe_glass_names_are_never_silently_substituted():
 
 
 def test_approximations_need_allow_partial_and_are_marked():
-    vign = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n")
+    # vignetting factors are read now (raytrace applies them); only a field off the y axis is approximate
+    vign = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n").replace(
+        "XFLN 0 0 0", "XFLN 0 5 0")
     curved = L.ZMX_EXAMPLE.replace("SURF 7\n  TYPE STANDARD\n  CURV 0 ", "SURF 7\n  TYPE STANDARD\n  CURV -0.01 ")
     multi = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nMNUM 3 1\n")
     hot = L.ZMX_EXAMPLE.replace("ENVD 20 1 0", "ENVD 40 1 0")
@@ -424,6 +426,8 @@ def test_approximations_need_allow_partial_and_are_marked():
         p = L.lens_file_read(t, allow_partial=True)
         assert p["approximate"] is True and p["report"]["n_unsupported"] >= 1
     assert L.lens_file_read(None)["approximate"] is False
+    exact = L.lens_file_read(L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n"))
+    assert exact["approximate"] is False and exact["system"]["vignetting"][1]["vdy"] == 0.1
 
 
 def test_aperture_and_field_types():
@@ -454,7 +458,8 @@ def test_report_triages_without_raising():
     assert r["surface_types"] == {"STANDARD": 7, "COORDBRK": 1}
     ok = L.lens_file_report(None)
     assert ok["importable"] and ok["error"] is None and ok["read"]["SURF"] == 8
-    v = L.lens_file_report(L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\nPOLS 1 0 1\n"))
+    v = L.lens_file_report(L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\nPOLS 1 0 1\n").replace(
+        "XFLN 0 0 0", "XFLN 0 5 0"))
     assert v["needs_allow_partial"] and v["ignored"]["POLS"]["count"] == 1
 
 

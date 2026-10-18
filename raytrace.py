@@ -1613,7 +1613,8 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
     ellipse is shrunk about its centre until none is. A field with nothing clipped gets all-zero factors
     (to 1e-9 and in practice exactly). A field whose chief ray is itself clipped raises ``ValueError``.
     Returns a copy of *system* with ``aim="stop"`` (the factors are fractions of the stop pupil, so they
-    belong to real-ray aiming) and the records for those fields replaced.
+    belong to real-ray aiming) and the records for those fields replaced; ``vignetting_set`` records the
+    fields, grid (``rings``, ``n_checked`` rays per field), and wavelength the factors were verified on.
     """
     _check_system(system)
     if fields is None:
@@ -1679,6 +1680,8 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
     out = dict(system)
     out["aim"] = "stop"
     out["vignetting"] = _vignetting_table(keep + list(recs.values()))
+    out["vignetting_set"] = {"fields": [float(f) for f in fl], "rings": rings, "wavelength_um": float(wl),
+                             "n_checked": int(len(gx) + len(ang))}
     return out
 
 

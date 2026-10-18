@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # spot_diagram — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ Returns ``(N,2)`` ``(x, y)`` positions in mm relative to the **chief ray**
 (so the pattern is centred; use ``ray_bundle`` for absolute positions), and
 stores the statistics on the array as attributes via :func:`spot_stats`.
 Rays that miss / vignette are dropped. Pupil: hexapolar, ``rings`` rings.
+*aim* (``"paraxial"`` / ``"stop"``, default the system's own) and *vignetting* are those of
+:func:`ray_bundle`.
 
 ## ファミリ共通の入力契約(fail-closed)
 
