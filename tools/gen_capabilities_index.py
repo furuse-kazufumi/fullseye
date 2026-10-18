@@ -129,6 +129,11 @@ NO_RECIPE_YET = {cid: _LATER for cid in (
     "what-a-picture-cannot-check",
     "xlsx-report",
 )}
+#: ★型付きの連鎖で書けない能力(ファサードの API で、(画像, a, b) の op ではない)。上の「後で書く」
+#: とは理由が違う: 推奨パイプラインの各段は OP_INDEX の in/out の sort で型検査されるが、ここは
+#: 仕様(辞書)を書き出す関数で、画像の連鎖の途中に置けない。限界は本文の「向かない」に書いた。
+NO_RECIPE_YET["interactive-poc-viewer"] = (
+    "ファサードの API(spec 辞書 -> HTML)で型付き op の連鎖に載らない。限界は本文の「向かない」に書いた")
 #: 空でよい欄(``inputs`` は生成 op から始まる連鎖なら空、``alternatives`` は無くてもよい)。
 MAY_BE_EMPTY = ("inputs", "alternatives")
 

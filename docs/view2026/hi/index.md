@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## खुद आज़माएँ
+
+शोध-पत्र के चित्रों को खुद चलाकर देखें (फ़ोन पर भी चलता है)। tab से विधि बदलें और 3-D दृश्य को drag करके घुमाएँ।
+
+- **[CAD बनाम स्कैन पॉइंट क्लाउड](../viewers/poc_cad_scan_deviation.html?lang=hi)**: संरेखण दोष को सोख लेता है: जिस पुर्ज़े का सही मान 1.2 µm है, उसमें 121 µm का ऐसा गड्ढा दिखता है जो है ही नहीं।
+- **[LiDAR भू-भाग परिवर्तन](../viewers/poc_lidar_terrain_change.html?lang=hi)**: सीधा घटाने पर बिना बदला पूरा खंड 0.183 m धँसा हुआ दिखता है। सुधार के बाद केवल असली बदलाव बचता है।
+- **[टेम्पलेट ट्रैकिंग](../viewers/poc_template_tracking.html?lang=hi)**: किसी हमशक्ल वस्तु पर चले जाने के बाद भी ट्रैकर “मिल गया” बताता रहता है।
+
 ## मुख्य झलकियाँ
 
 <div class="vg">
@@ -77,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-74 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+75 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -169,6 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **दिखाना**
 
 - नतीजों को पढ़ने लायक figures में बदलना: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Background का रंग जाने बिना lines और regions बनाना (inverted colour): [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Image पर text और tables ठीक मनचाही जगह रखना: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,7 +190,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 146 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 147 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 

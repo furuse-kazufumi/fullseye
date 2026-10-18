@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## Try it yourself
+
+Run the paper's figures yourself, on a phone too. Switch methods with the tabs and drag the 3-D views to rotate them.
+
+- **[CAD versus a scanned point cloud](../viewers/poc_cad_scan_deviation.html?lang=en)**: Alignment absorbs defects: a part whose true value is 1.2 µm shows a 121 µm dent that does not exist.
+- **[LiDAR terrain change](../viewers/poc_lidar_terrain_change.html?lang=en)**: Plain differencing makes the whole unchanged block look 0.183 m lower. Correct it and only the real change is left.
+- **[Template tracking](../viewers/poc_template_tracking.html?lang=en)**: Even after it switches to a look-alike object, the tracker keeps reporting 'found'.
+
 ## Highlights
 
 <div class="vg">
@@ -77,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## What it can do
 
-74 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+75 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -169,6 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **Show**
 
 - Turn results into figures people can read: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Draw lines and regions without knowing the background colour: [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Put text and tables exactly where you want them on an image: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,7 +190,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[All 146 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 147 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 

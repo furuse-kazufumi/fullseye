@@ -6928,7 +6928,109 @@
     "de": "Nicht-koaxiale Optik (Faltspiegel, Strahlteiler, gekippte Platten, Scheimpflug und Geisterbilder)",
     "hi": "non-coaxial optics (fold mirror, beamsplitter, झुकी plate, Scheimpflug और ghost)",
     "fr": "Optique non coaxiale (miroirs de repliement, lames semi-réfléchissantes, lames inclinées, Scheimpflug et images fantômes)"
+   },
+   "interactive-poc-viewer": {
+    "zh": "把结果做成可以动手操作的单页 HTML(标签页、徽章、3-D、视频、多语言)",
+    "tw": "把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言)",
+    "ko": "결과를 직접 만져 볼 수 있는 한 장짜리 HTML로 만들기(탭·배지·3-D·동영상·다국어)",
+    "de": "Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen)",
+    "hi": "नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ)",
+    "fr": "Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues)"
    }
   }
+ },
+ "viewers": {
+  "_": "「触って見る」(docs/view2026/viewers/*.html、tools/build_view2026_viewers.py が各 PoC を走らせて作る)への入口。各言語のページは ?lang=<その言語> 付きで開く。行の数は全言語で ja と同じ並びにする(生成器が検査)。",
+  "h": {
+   "ja": "触って見る",
+   "en": "Try it yourself",
+   "zh": "亲手试试",
+   "tw": "親手試試",
+   "ko": "직접 만져 보기",
+   "de": "Selbst ausprobieren",
+   "hi": "खुद आज़माएँ",
+   "fr": "Essayez par vous-même"
+  },
+  "intro": {
+   "ja": "論文の図を、手元で動かして確かめられます(スマートフォンでも動きます)。タブで方法を切り替え、3-D はドラッグで回せます。",
+   "en": "Run the paper's figures yourself, on a phone too. Switch methods with the tabs and drag the 3-D views to rotate them.",
+   "zh": "可以亲手操作论文中的图(手机上也能用)。用标签页切换方法,3-D 视图可拖动旋转。",
+   "tw": "可以親手操作論文中的圖(手機上也能用)。用分頁切換方法,3-D 視圖可拖曳旋轉。",
+   "ko": "논문의 그림을 직접 움직여 확인할 수 있습니다(스마트폰에서도 동작합니다). 탭으로 방법을 바꾸고, 3-D는 드래그로 돌려 볼 수 있습니다.",
+   "de": "Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone. Methoden wechseln Sie über die Tabs, 3-D-Ansichten drehen Sie per Ziehen.",
+   "hi": "शोध-पत्र के चित्रों को खुद चलाकर देखें (फ़ोन पर भी चलता है)। tab से विधि बदलें और 3-D दृश्य को drag करके घुमाएँ।",
+   "fr": "Manipulez vous-même les figures de l'article, même sur téléphone. Changez de méthode avec les onglets et faites pivoter les vues 3-D en les faisant glisser."
+  },
+  "items": [
+   {
+    "id": "poc_cad_scan_deviation",
+    "title": {
+     "ja": "CAD と実測点群の差分検査",
+     "en": "CAD versus a scanned point cloud",
+     "zh": "CAD 与实测点云的偏差检查",
+     "tw": "CAD 與實測點雲的偏差檢查",
+     "ko": "CAD와 실측 점군의 편차 검사",
+     "de": "CAD gegen Scan-Punktwolke",
+     "hi": "CAD बनाम स्कैन पॉइंट क्लाउड",
+     "fr": "CAO contre nuage de points scanné"
+    },
+    "line": {
+     "ja": "位置合わせが欠陥を吸い、真値 1.2 µm の部品に 121 µm の存在しないへこみが出る。",
+     "en": "Alignment absorbs defects: a part whose true value is 1.2 µm shows a 121 µm dent that does not exist.",
+     "zh": "配准会吸收缺陷:真值为 1.2 µm 的零件上出现了 121 µm 并不存在的凹坑。",
+     "tw": "對位會吸收缺陷:真值為 1.2 µm 的零件上出現了 121 µm 並不存在的凹坑。",
+     "ko": "정합이 결함을 흡수해, 참값이 1.2 µm인 부품에 존재하지 않는 121 µm의 오목이 나타납니다.",
+     "de": "Die Ausrichtung schluckt Defekte: Ein Bauteil mit dem Sollwert 1.2 µm zeigt eine nicht vorhandene Delle von 121 µm.",
+     "hi": "संरेखण दोष को सोख लेता है: जिस पुर्ज़े का सही मान 1.2 µm है, उसमें 121 µm का ऐसा गड्ढा दिखता है जो है ही नहीं।",
+     "fr": "Le recalage absorbe les défauts : une pièce de valeur vraie 1.2 µm montre un creux de 121 µm qui n'existe pas."
+    }
+   },
+   {
+    "id": "poc_lidar_terrain_change",
+    "title": {
+     "ja": "LiDAR の地形変化",
+     "en": "LiDAR terrain change",
+     "zh": "LiDAR 地形变化",
+     "tw": "LiDAR 地形變化",
+     "ko": "LiDAR 지형 변화",
+     "de": "LiDAR-Geländeänderung",
+     "hi": "LiDAR भू-भाग परिवर्तन",
+     "fr": "Changement de terrain par LiDAR"
+    },
+    "line": {
+     "ja": "素朴に引くと、変化の無い区画全体が 0.183 m 沈んで見える。補正すると、本当の変化だけが残る。",
+     "en": "Plain differencing makes the whole unchanged block look 0.183 m lower. Correct it and only the real change is left.",
+     "zh": "朴素相减会让没有变化的整个地块看起来下沉了 0.183 m。校正之后,只剩下真正的变化。",
+     "tw": "樸素相減會讓沒有變化的整個區塊看起來下沉了 0.183 m。校正之後,只剩下真正的變化。",
+     "ko": "단순히 빼면 변하지 않은 구획 전체가 0.183 m 가라앉은 것처럼 보입니다. 보정하면 실제 변화만 남습니다.",
+     "de": "Einfaches Abziehen lässt den ganzen unveränderten Block um 0.183 m abgesunken wirken. Nach der Korrektur bleibt nur die echte Änderung.",
+     "hi": "सीधा घटाने पर बिना बदला पूरा खंड 0.183 m धँसा हुआ दिखता है। सुधार के बाद केवल असली बदलाव बचता है।",
+     "fr": "Une simple soustraction fait paraître tout le bloc inchangé 0.183 m plus bas. Une fois corrigé, seul le vrai changement reste."
+    }
+   },
+   {
+    "id": "poc_template_tracking",
+    "title": {
+     "ja": "テンプレート追跡",
+     "en": "Template tracking",
+     "zh": "模板跟踪",
+     "tw": "模板追蹤",
+     "ko": "템플릿 추적",
+     "de": "Template-Tracking",
+     "hi": "टेम्पलेट ट्रैकिंग",
+     "fr": "Suivi par modèle"
+    },
+    "line": {
+     "ja": "そっくりな別物体に乗り換えても、追跡は「見つけた」と報告し続ける。",
+     "en": "Even after it switches to a look-alike object, the tracker keeps reporting 'found'.",
+     "zh": "即使已经切换到相似的另一个物体,跟踪器仍然报告“找到了”。",
+     "tw": "即使已經切換到相似的另一個物體,追蹤器仍然回報「找到了」。",
+     "ko": "비슷한 다른 물체로 갈아탄 뒤에도 추적기는 계속 '찾았다'고 보고합니다.",
+     "de": "Auch nachdem er auf ein ähnliches anderes Objekt gesprungen ist, meldet der Tracker weiter „gefunden“.",
+     "hi": "किसी हमशक्ल वस्तु पर चले जाने के बाद भी ट्रैकर “मिल गया” बताता रहता है।",
+     "fr": "Même après avoir basculé sur un objet qui lui ressemble, le suivi continue de signaler « trouvé »."
+    }
+   }
+  ]
  }
 }

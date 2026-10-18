@@ -130,6 +130,9 @@ py-modules = [
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
   # imgevolve / the fullseye facade import it, so it must ship.
   "opnames",
+  # pocviewer: PoC の結果を 1 枚の HTML ビューアにする公開 API(fullseye.write_viewer、MCP tool も呼ぶ)。
+  # root モジュールが py-modules から落ちると wheel から黙って消える(2026-09-05 / 09-14 の事故と同じ族)。
+  "pocviewer",
   # realdata: 実写サンプルの取り口(2026-09-08 追加)。examples/poc_real_*.py が
   # import する。ライブラリ本体は使わないが、**wheel から落ちると PoC が
   # 動かない** —— core CI の packaging 門が実際に捕まえた。

@@ -192,7 +192,8 @@ def test_every_declared_tool_has_a_body(cat):
     order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
-             "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion"]
+             "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
+             "fullseye_write_viewer"]
     assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
     ctx: dict = {}
     for n in order:
@@ -239,6 +240,12 @@ def test_every_declared_tool_has_a_body(cat):
                                               K, [-0.24, 0.06, 0.0, 0.0, 0.0]).tolist()
                       for x in (40, 100, 160)]
             a = {"lines": lines, "K": K.tolist(), "radial": 2, "tangential": False}
+        elif n == "fullseye_write_viewer":
+            t = {"ja": "表題", "en": "Title"}
+            a = {"spec": {"id": "mcp_body", "title": t, "subtitle": t, "hint": t, "tabs": [
+                {"id": "a", "label": t, "badge": "null", "text": t, "kind": "points",
+                 "pos": [[0, 0, 0], [1, 0, 0], [0, 1, 1]], "val": [0.0, 0.5, 1.0],
+                 "cbar": {"lo": 0, "hi": 1}}]}, "lang": ["ja", "en"]}
         else:
             a = {}
         res = call_tool(n, a, cat, store)

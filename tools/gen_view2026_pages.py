@@ -13,6 +13,8 @@
 
 ページの並び(スマートフォンで開かれる前提):
 
+0. 触って見る —— ``viewers``(``docs/view2026/viewers/*.html``、``tools/build_view2026_viewers.py`` が各 PoC を
+   走らせて作る自己完結の HTML)への 3 本。リンクは ``?lang=<そのページの言語>`` 付きで、ビューアが同じ言語で開く。
 1. 見どころ —— 手で選んだ展示のサムネイルの格子(``exhibits``)。押すと動画・GIF・原寸の図。
 2. シリーズ記事 —— 大きいタイル(``series``)。各シリーズの Qiita 記事(公開のもの)へ。
 3. できること —— ``docs/capabilities/*.md`` の全件を分類ごとに。各行から説明のページと走る例へ。
@@ -150,6 +152,21 @@ def validate(d: dict) -> list[str]:
             full("ui." + k, {l: v for l, v in tr.items() if l != "ja"} | {"ja": "-"})
         else:
             full("ui." + k, tr)
+    vw = d["viewers"]
+    full("viewers.h", vw["h"])
+    full("viewers.intro", vw["intro"])
+    for it in vw["items"]:
+        full("viewers.%s.title" % it["id"], it["title"])
+        full("viewers.%s.line" % it["id"], it["line"])
+        if not (BASE / "viewers" / (it["id"] + ".html")).is_file():
+            bad.append("viewers.%s: ビューアが無い (docs/view2026/viewers/%s.html) —— "
+                       "py -3.11 tools/build_view2026_viewers.py" % (it["id"], it["id"]))
+        ref = Counter(_NUM.findall(vw["intro"]["ja"] + " " + it["line"]["ja"]))
+        for l in langs[1:]:
+            got = Counter(_NUM.findall(vw["intro"][l] + " " + it["line"][l]))
+            if got != ref:
+                bad.append("viewers.%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
+                    it["id"], l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
     cats = {c["id"] for c in d["categories"]}
     for c in d["categories"]:
         full("categories." + c["id"], c)
@@ -301,6 +318,13 @@ def build(d: dict, lang: str) -> str:
         # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
         out += [REDIRECT.replace("@LATIN@", "|".join(
             l for l in d["langs"] if l not in ("ja", "zh", "tw"))), ""]
+
+    # 0. 触って見る(docs/view2026/viewers/*.html。各ページは自分の言語で開く)
+    vw = d["viewers"]
+    out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
+    for it in vw["items"]:
+        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (it["title"][lang], up, it["id"], lang, it["line"][lang]))
+    out.append("")
 
     # 1. 見どころ
     out += ["## " + ui["h_highlights"], "", '<div class="vg">']

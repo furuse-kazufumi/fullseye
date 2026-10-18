@@ -607,6 +607,27 @@
    ]
   },
   {
+   "id": "interactive-poc-viewer",
+   "title": "結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)",
+   "title_en": "Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages)",
+   "category": "見せる",
+   "note": "docs/capabilities/interactive-poc-viewer.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "interactive_poc_viewer",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "interreflection-to-convergence",
    "title": "凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)",
    "title_en": "Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)",
@@ -1871,9 +1892,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 391,
+  "examples2d_total": 392,
   "run_by_the_poc_gate": 248,
-  "run_by_the_example_gate": 143,
+  "run_by_the_example_gate": 144,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

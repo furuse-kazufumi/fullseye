@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 74 項目**
+**収録 75 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -67,7 +67,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
 
-レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
+レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
 ## 測る (27)
 
@@ -921,7 +921,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `xlsx_report`
 
-## 見せる (3)
+## 見せる (4)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -938,6 +938,14 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 実寸校正: `annotate_scale_bar` の `units_per_pixel` は `mm_per_px_from_reference` で**実測**した mm/px を渡す(公称倍率で描いたスケールバーは嘘の長さになる)。
 
 動く例: `poc_colormap_readability`, `poc_dem_terrain`
+
+### [結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)](capabilities/interactive-poc-viewer.md)
+
+PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**にします。暗色で、素の WebGL と 2-D canvas だけ、外部ライブラリも外部 URL の読み込みも無く、`file://` でも iPhone の Safari でも動きます。同じ課題を違う方法で試した記録を**タブ**に並べ、各タブに正直な**バッジ**(門を通った / 限界を見せる / 何もしない場合)・短い説明・実測の数字を付けます。
+
+使う op: `write_viewer`, `viewer_spec`, `viewer_points_tab`, `viewer_mesh_tab`, `viewer_frames_tab`, `viewer_split_tab`
+
+動く例: `interactive_poc_viewer`
 
 ### [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md)
 

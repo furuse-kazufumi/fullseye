@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 74 capabilities**
+**Currently 75 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -68,7 +68,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Carve a solid out of silhouettes (visual hull)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [Turn a 3-D scan into a volume](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
 
-32 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
+33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
 ## Measure (27)
 
@@ -770,7 +770,7 @@ Operators: `save_xlsx_report`, `report`, `to_markdown`, `save_json`
 
 Runnable: `xlsx_report`
 
-## Show (3)
+## Show (4)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 
@@ -783,6 +783,14 @@ Pipeline: [`annotate_figure_grid`](ops/annotate/paper/annotate_figure_grid.md) �
 Alternatives: `colorize_height`, [`render_beauty`](ops/3d/render/render_beauty.md), [`annotate_legend`](ops/annotate/paper/annotate_legend.md), [`annotate_inset`](ops/annotate/paper/annotate_inset.md)
 
 Runnable: `poc_colormap_readability`, `poc_dem_terrain`
+
+### [Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages)](capabilities/interactive-poc-viewer.md)
+
+`write_viewer(spec, path, lang=...)` writes one self-contained HTML page (dark theme, plain WebGL and 2-D canvas, no libraries, no external loads; works from `file://` and on iPhone Safari). Tabs hold the same task attempted by different methods; each carries an honest badge (`passed` / `limit` / `null`), a short text and measured numbers. Payloads: a triangle mesh with per-vertex scalar colour and a colour bar; a point cloud (scalar or RGB colour, optional grey ghost cloud); a 2-D frame sequence with overlaid boxes and a thresholded time-series plot; a before/after pair with a draggable split. `lang` is a code or a list (first is the default) from ja, en, zh, tw, ko, de, hi, fr; every requested language must be present for every string or `ValueError` names the missing keys (no silent fallback). Data is quantised, never decimated: positions as per-axis uint16, values as uint16 over the colour-bar range, images and indices lossless. Standard library and NumPy only. The same call is available as the MCP tool `fullseye_write_viewer`.
+
+Operators: `write_viewer`, `viewer_spec`, `viewer_points_tab`, `viewer_mesh_tab`, `viewer_frames_tab`, `viewer_split_tab`
+
+Runnable: `interactive_poc_viewer`
 
 ### [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md)
 
