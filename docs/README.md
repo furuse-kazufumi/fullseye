@@ -55,16 +55,16 @@
 
 ### 検証の段
 
-能力 74 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 75 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 62 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 63 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 12 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 391 本のうち、門が実際に走らせるもの 391 本。
+例 392 本のうち、門が実際に走らせるもの 392 本。
 
 ### 版ごとの op の数
 
@@ -139,7 +139,7 @@
 
 **3,360 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **66 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 936/936、型つき台帳 2403/2415、1 行ファサード `fullseye.<名前>` 692/1444。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 936/936、型つき台帳 2403/2415、1 行ファサード `fullseye.<名前>` 692/1453。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 3360 本のうち、実行できる例が付いているのは **3357 本**(3 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3195 本**(165 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3360 本すべてにある。
 
@@ -293,7 +293,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 270 本
+## ドキュメント地図 — 全 271 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,360 本と族ガイド 66 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -435,7 +435,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(187)
+**そのほか**(188)
 
 | 文書 | 内容 |
 |---|---|
@@ -531,6 +531,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/inner-diameter-in-mm.md`](capabilities/inner-diameter-in-mm.md) | id: inner-diameter-in-mm |
 | [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | id: inspection-fixture |
 | [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | id: inspection-workflow |
+| [`capabilities/interactive-poc-viewer.md`](capabilities/interactive-poc-viewer.md) | id: interactive-poc-viewer |
 | [`capabilities/interreflection-to-convergence.md`](capabilities/interreflection-to-convergence.md) | id: interreflection-to-convergence |
 | [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | id: inverted-colour-overlays |
 | [`capabilities/itof-multifreq.md`](capabilities/itof-multifreq.md) | id: itof-multifreq |

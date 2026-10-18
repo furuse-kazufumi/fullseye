@@ -53,16 +53,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 74 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.0); stage definitions in [MATURITY.md](MATURITY.md)).
+The 75 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.0); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 62 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 63 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 12 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 391 examples, 391 are actually run by a gate.
+Of 392 examples, 392 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -137,7 +137,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **3,360 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **66 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 936/936, typed ledger 2403/2415, one-line facade `fullseye.<name>` 692/1444 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 936/936, typed ledger 2403/2415, one-line facade `fullseye.<name>` 692/1453 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 3360 notes, **3357** link at least one runnable example (3 have none) and **3195** have a usage section of 120+ characters (165 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3360.
 
@@ -291,7 +291,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 270
+## Document map — all 271
 
 The complete map, so that **no document is unreachable from this index** (the 3,360 per-op notes and 66 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -433,7 +433,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(187)
+**Other**(188)
 
 | document | what it covers |
 |---|---|
@@ -529,6 +529,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/inner-diameter-in-mm.md`](capabilities/inner-diameter-in-mm.md) | id: inner-diameter-in-mm |
 | [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | id: inspection-fixture |
 | [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | id: inspection-workflow |
+| [`capabilities/interactive-poc-viewer.md`](capabilities/interactive-poc-viewer.md) | id: interactive-poc-viewer |
 | [`capabilities/interreflection-to-convergence.md`](capabilities/interreflection-to-convergence.md) | id: interreflection-to-convergence |
 | [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | id: inverted-colour-overlays |
 | [`capabilities/itof-multifreq.md`](capabilities/itof-multifreq.md) | id: itof-multifreq |

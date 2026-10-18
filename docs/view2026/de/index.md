@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## Selbst ausprobieren
+
+Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone. Methoden wechseln Sie über die Tabs, 3-D-Ansichten drehen Sie per Ziehen.
+
+- **[CAD gegen Scan-Punktwolke](../viewers/poc_cad_scan_deviation.html?lang=de)**: Die Ausrichtung schluckt Defekte: Ein Bauteil mit dem Sollwert 1.2 µm zeigt eine nicht vorhandene Delle von 121 µm.
+- **[LiDAR-Geländeänderung](../viewers/poc_lidar_terrain_change.html?lang=de)**: Einfaches Abziehen lässt den ganzen unveränderten Block um 0.183 m abgesunken wirken. Nach der Korrektur bleibt nur die echte Änderung.
+- **[Template-Tracking](../viewers/poc_template_tracking.html?lang=de)**: Auch nachdem er auf ein ähnliches anderes Objekt gesprungen ist, meldet der Tracker weiter „gefunden“.
+
 ## Highlights
 
 <div class="vg">
@@ -77,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Was es kann
 
-74 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+75 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -169,6 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **Darstellen**
 
 - Ergebnisse in lesbare Abbildungen verwandeln: [Erklärung](../../capabilities/figures-and-annotation.md) _(ja)_ · Beispiele [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen): [Erklärung](../../capabilities/interactive-poc-viewer.md) _(ja)_ · Beispiele [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - Linien und Flächen ohne Kenntnis der Hintergrundfarbe zeichnen (invertierte Farbe): [Erklärung](../../capabilities/inverted-colour-overlays.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Text und Tabellen genau an die gewünschte Stelle im Bild setzen: [Erklärung](../../capabilities/text-and-tables-on-images.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,7 +190,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[Alle 146 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 147 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 

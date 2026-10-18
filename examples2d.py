@@ -590,6 +590,13 @@ EXAMPLES = [
                 "**再投影 RMS は比 1.00 倍のまま fx の誤差が 281 倍**(0.026 % 対 7.33 %)。"
                 "区別できるのは sigma_fx(129 倍)。傾き 0 度の退化配置は閉形式が拒否するが"
                 "非線形最適化は正常な再投影誤差とともに 25 % 外れた答えを返す。"},
+    {"id": "interactive_poc_viewer", "task": "visualization", "data": "synthetic",
+     "name": "結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)",
+     "summary": "fs.write_viewer の最小例。点群・メッシュ・動画(真値と推定の枠 + しきい値つきの時系列)・"
+                "前後の分割の 4 種を、正直なバッジ(門を通った / 限界を見せる / 何もしない場合)つきの"
+                "タブで 1 本の自己完結 HTML にする。言語は lang で選ぶ(ja / en / zh / tw / ko / de / hi / fr、"
+                "先頭が既定)。位置は間引かず量子化(戻りが刻みの半分以内)、外部 URL 無し、"
+                "欠けた訳は黙って補わず ValueError。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"

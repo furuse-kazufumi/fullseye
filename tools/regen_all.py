@@ -24,6 +24,10 @@
     py -3.11 tools/regen_all.py --check   # 作り直して、差分が出たら exit 1
     py -3.11 tools/regen_all.py --list    # 何をどの順で回すかだけ見る
 
+**この鎖に入れないもの**: ``tools/build_view2026_viewers.py``(ViEW2026 の「触って見る」3 本)。LiDAR の
+実データ(``FULLSEYE_DATA_DIR`` 配下、リポジトリに無い)が要るので、無い環境で ``--check`` が赤になる。
+出力(``docs/view2026/viewers/*.html``)を変える回は、手で回して commit する。
+
 ``--check`` は**強い不変条件**を見る: 全部作り直したあとの作業ツリーが
 きれいであること。個々の drift 検査の総和より広く、「回し忘れ」を 1 つ残らず拾う。
 """

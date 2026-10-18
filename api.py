@@ -192,6 +192,11 @@ from pcseg import (  # noqa: E402,F401
     euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
     farthest_point_sampling, curvature, centroid, principal_axes,
 )
+from pocviewer import (  # noqa: E402,F401
+    write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab, viewer_points_tab,
+    viewer_frames_tab, viewer_split_tab,
+)
+import pocviewer  # noqa: E402,F401
 from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
@@ -1121,6 +1126,8 @@ __all__ = [
     "plane_distance", "height_above_plane", "remove_ground",
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
+    "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",

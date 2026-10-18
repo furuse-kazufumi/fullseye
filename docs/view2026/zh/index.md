@@ -31,6 +31,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
 </style>
 
+## 亲手试试
+
+可以亲手操作论文中的图(手机上也能用)。用标签页切换方法,3-D 视图可拖动旋转。
+
+- **[CAD 与实测点云的偏差检查](../viewers/poc_cad_scan_deviation.html?lang=zh)**: 配准会吸收缺陷:真值为 1.2 µm 的零件上出现了 121 µm 并不存在的凹坑。
+- **[LiDAR 地形变化](../viewers/poc_lidar_terrain_change.html?lang=zh)**: 朴素相减会让没有变化的整个地块看起来下沉了 0.183 m。校正之后,只剩下真正的变化。
+- **[模板跟踪](../viewers/poc_template_tracking.html?lang=zh)**: 即使已经切换到相似的另一个物体,跟踪器仍然报告“找到了”。
+
 ## 精选
 
 <div class="vg">
@@ -77,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 74 项,每项都有说明页(用法与限制)和可运行的示例。
+共 75 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -169,6 +177,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **呈现**
 
 - 把结果做成人能读懂的图: [说明](../../capabilities/figures-and-annotation.md) _(ja)_ · 示例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- 把结果做成可以动手操作的单页 HTML(标签页、徽章、3-D、视频、多语言): [说明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 示例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
 - 不知道底色也能画线和区域(反色): [说明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 示例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 把文字和表格放到图像上想要的位置: [说明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 示例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
@@ -181,7 +190,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 146 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 147 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
