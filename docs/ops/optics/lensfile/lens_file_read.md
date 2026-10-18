@@ -39,12 +39,21 @@ as the file stores them, glasses, apertures, solves) that
 :func:`lens_file_write` writes back, and ``report`` classifies every keyword
 as read / ignored / unsupported (see :func:`lens_file_report`).
 
+A file with ``COORDBRK`` surfaces is read into a
+``raytrace3d.noncoaxial_system`` (``noncoaxial`` is True, ``system`` is that
+table, each field's ``field`` is the pair ``(x, y)``, ``pupil`` holds the
+entrance-pupil radius, stop radius and effective focal length found with real
+axial rays, ``surface_records[j]`` the tracer records of file surface ``j``);
+the conventions are in the module help.
+
 Example::
 
     p = lens_file_read("triplet.zmx")
     RT.paraxial_trace(p["system"])["efl"]
     sysf = lens_file_system(p, field_index=2)       # the 20-degree field
     RT.spot_stats(sysf)
+    q = lens_file_read("folded.zmx")                # tilts / decentres: a non-coaxial system
+    raytrace3d.noncoaxial_spot(lens_file_system(q, field_index=1))["rms_radius"]
 
 ## ファミリ共通の入力契約(fail-closed)
 
