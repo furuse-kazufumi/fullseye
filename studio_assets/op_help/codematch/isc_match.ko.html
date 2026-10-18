@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">isc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import codematch; codematch.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscodematch.get(&quot;isc_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>증분 부호 상관(ISC). 증분 부호가 일치하는 비율이 최대인 위치를 돌려준다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">r = (1/n) Σ [b_image == b_template]</code>(<code style="color:#22d3bf">n</code> は増分の数)。乱れた位置での期待値は 0.5、同じものなら 1 に近い。<code style="color:#22d3bf">direction=&quot;h&quot;</code> は論文どおり行に沿った増分、<code style="color:#22d3bf">&quot;hv&quot;</code> は縦の増分も足す 2 次元の拡張。</p>
+<p><b>狭義単調増加の明るさの変換(ガンマ・ゲイン・オフセット・任意の単調な表)で <code style="color:#22d3bf">score_map</code> は 1 ビットも変わらない。</b></p>
+<p>テンプレートの増分のうち <code style="color:#22d3bf">|Δ| &gt; flat_thresh</code> のものが <code style="color:#22d3bf">min_valid</code> に満たなければ ValueError(平坦なテンプレートは符号が雑音で決まり、位置を決めない)。既定の 0.01 は [0, 1] の明るさで 8 ビットの約 2.5 階調 —— これより小さい増分の符号は撮像の雑音と同じ桁で決まる。この判定はテンプレートだけを見るので、上の不変性を壊さない。拒否までの余裕は <code style="color:#22d3bf">refusal_margin</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

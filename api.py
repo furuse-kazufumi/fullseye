@@ -749,6 +749,7 @@ import simcalcheck  # noqa: E402  (sim-to-real checks: profile likelihood, uncer
 import converge  # noqa: E402  (convergent computation: fixed-point driver, observed order / GCI, sequential Monte Carlo)
 import mcphoton  # noqa: E402  (Monte Carlo photon transport in layered turbid slabs, MCML rules, with intervals)
 import deconvstop  # noqa: E402  (Richardson-Lucy stopped by the discrepancy principle)
+import codematch  # noqa: E402  (robust code matching: orientation code, increment sign, selective correlation, radial reach)
 from residue import (  # noqa: E402,F401
     residue_integer_crt, residue_crt, residue_fault_locate, crt_displacement, harmonic_rotation,
 )
@@ -1341,7 +1342,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop", "codematch",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",

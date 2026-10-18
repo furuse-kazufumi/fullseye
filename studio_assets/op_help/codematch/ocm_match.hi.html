@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocm_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import codematch; codematch.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opscodematch.get(&quot;ocm_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Orientation code matching (OCM): वह स्थान लौटाता है जहाँ codes के cyclic अंतर का औसत सबसे कम हो।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>相違度は画素ごとに <code style="color:#22d3bf">D(m, n)</code>(m = テンプレート側、n = 画像側の符号):</p>
+<p>両方有効なら巡回差 <code style="color:#22d3bf">min(|m-n|, N-|m-n|)</code>、テンプレート側が無効なら 0、画像側だけ無効なら <code style="color:#22d3bf">N/4</code>。全画素の平均を <code style="color:#22d3bf">N/2</code> で割った相違度 <code style="color:#22d3bf">h</code> を <code style="color:#22d3bf">dissimilarity_map</code> に、<code style="color:#22d3bf">score = 1 - h</code>(1 が完全一致)を <code style="color:#22d3bf">score_map</code> に返す。和は 4 倍して整数で数える(FFT の丸めを <code style="color:#22d3bf">rint</code> で消す)ので、同じ入力の答えは環境によらず同じ。</p>
+<p><b>テンプレートの有効な符号が</b> <code style="color:#22d3bf">max(min_valid, min_valid_fraction × 画素数)</code> <b>に満たなければ ValueError</b>(平坦なテンプレートは位置を決めない)。</p>
+<p>返り: <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code>(テンプレート中心)、<code style="color:#22d3bf">score</code>、<code style="color:#22d3bf">dissimilarity</code>、<code style="color:#22d3bf">second_score</code>・<code style="color:#22d3bf">margin</code>(最良から離れた次点との差)、<code style="color:#22d3bf">valid_fraction</code> (テンプレートの有効符号の割合)、<code style="color:#22d3bf">valid_required</code>・<code style="color:#22d3bf">refusal_margin</code>(拒否まであと何画素の余裕があるか)、<code style="color:#22d3bf">score_map</code>、<code style="color:#22d3bf">dissimilarity_map</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:isc_match">isc_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

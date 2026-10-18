@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">increment_sign — CODEMATCH <code style="color:#22d3bf">code</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.increment_sign(image, axis=&#x27;h&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.increment_sign(image, axis=&#x27;h&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;increment_sign&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>隣の画素との増分の符号 <code style="color:#22d3bf">b = [I(次) &gt;= I(今)]</code>(1 / 0 の uint8)。</p>
+<p><code style="color:#22d3bf">axis=&quot;h&quot;</code>(既定)は行に沿って右隣と比べ、形は <code style="color:#22d3bf">(H, W-1)</code>。<code style="color:#22d3bf">axis=&quot;v&quot;</code> は下隣と比べ、形は <code style="color:#22d3bf">(H-1, W)</code>。等しい画素の組は 1(論文の <code style="color:#22d3bf">&gt;=</code> の規約)。狭義単調増加の明るさの変換 <code style="color:#22d3bf">g</code> では <code style="color:#22d3bf">increment_sign(g(I)) == increment_sign(I)</code> が厳密に成り立つ(ISC の不変性の芯)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:orientation_code">orientation_code</a> · <a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:isc_match">isc_match</a> · <a style="color:#22d3bf" href="opcodematch:scc_match">scc_match</a> · <a style="color:#22d3bf" href="opcodematch:radial_reach_filter">radial_reach_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">code</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:orientation_code">orientation_code</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
