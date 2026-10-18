@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3316,
- "n_notes": 3322,
+ "n_ops": 3320,
+ "n_notes": 3326,
  "notes": {
   "vol_dilate": [
    {
@@ -27846,6 +27846,44 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/itof/itof_wiggling_correct.md"
+   }
+  ],
+  "lens_file_read": [
+   {
+    "op": "lens_file_read",
+    "dim": "optics",
+    "category": "lensfile",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_read.md"
+   }
+  ],
+  "lens_file_report": [
+   {
+    "op": "lens_file_report",
+    "dim": "optics",
+    "category": "lensfile",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_report.md"
+   }
+  ],
+  "lens_file_system": [
+   {
+    "op": "lens_file_system",
+    "dim": "optics",
+    "category": "lensfile",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_system.md"
+   }
+  ],
+  "lens_file_write": [
+   {
+    "op": "lens_file_write",
+    "dim": "optics",
+    "category": "lensfile",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_write.md"
    }
   ],
   "form_factors_2d": [

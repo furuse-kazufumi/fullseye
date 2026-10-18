@@ -3130,6 +3130,22 @@
    }
   },
   {
+   "id": "poc_lens_file_roundtrip",
+   "group": "wing_color",
+   "media": "02_spot_diagram.png",
+   "motion": false,
+   "thumb_src": "01_layout.png",
+   "label": {
+    "ja": "光学設計ファイル(.zmx)の読み書き(別の 2 実装と照合)",
+    "en": "Lens design files (.zmx): read, analyse, fix, write back",
+    "zh": "光学设计文件(.zmx)的读写(与另外两个实现对照)",
+    "tw": "光學設計檔(.zmx)的讀寫(與另外兩個實作對照)",
+    "ko": "광학 설계 파일(.zmx)의 읽기와 쓰기(다른 두 구현과 대조)",
+    "de": "Optikdesign-Dateien (.zmx): lesen, analysieren, korrigieren, zurückschreiben",
+    "hi": "lens design file (.zmx): पढ़ना, analysis, सुधार और वापस लिखना"
+   }
+  },
+  {
    "id": "poc_thin_film_reflectometry",
    "group": "wing_color",
    "media": "12_thickness_sweep.gif",
@@ -6344,6 +6360,13 @@
     "ko": "측광 참값을 지킨 채 오목한 부품의 상호 반사를 수렴까지 센다(3-D 형태 계수·점진적 radiosity·다중 반사 검사용 렌더링)",
     "de": "Interreflexion in konkaven Teilen bis zur Konvergenz zählen, ohne die photometrische Wahrheit zu verlieren (3-D-Sichtfaktoren, progressive Radiosity, Inspektions-Rendering mit Reflexionen)",
     "hi": "photometric सत्य बनाए रखते हुए अवतल parts के inter-reflection को अभिसरण तक गिनना (3-D view factors, progressive radiosity, bounces सहित inspection render)"
+   },
+   "lens-prescription-files": {
+    "zh": "光学设计文件(.zmx 逐次处方的读写、关键字清单与 fail-closed 导入)",
+    "tw": "光學設計檔(.zmx 逐次處方的讀寫、關鍵字清單與 fail-closed 匯入)",
+    "ko": "광학 설계 파일(.zmx 순차 처방의 읽기·쓰기, 키워드 목록, fail-closed 가져오기)",
+    "de": "Optikdesign-Dateien (sequenzielle .zmx-Vorschriften lesen und schreiben, Schlüsselwort-Inventar, fail-closed Import)",
+    "hi": "lens design file (.zmx sequential prescription पढ़ना-लिखना, keyword सूची और fail-closed import)"
    }
   }
  }

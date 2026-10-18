@@ -1,4 +1,4 @@
-# OPTICS operator help — 308 ops in 35 categories
+# OPTICS operator help — 312 ops in 36 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -81,6 +81,10 @@
 ### itof (8)
 
 [itof_capture](itof/itof_capture.md) · [itof_flying_pixel_mask](itof/itof_flying_pixel_mask.md) · [itof_multipath_separate](itof/itof_multipath_separate.md) · [itof_noise_budget](itof/itof_noise_budget.md) · [itof_phase_amplitude](itof/itof_phase_amplitude.md) · [itof_unwrap_error_rate](itof/itof_unwrap_error_rate.md) · [itof_unwrap_multifreq](itof/itof_unwrap_multifreq.md) · [itof_wiggling_correct](itof/itof_wiggling_correct.md)
+
+### lensfile (4)
+
+[lens_file_read](lensfile/lens_file_read.md) · [lens_file_report](lensfile/lens_file_report.md) · [lens_file_system](lensfile/lens_file_system.md) · [lens_file_write](lensfile/lens_file_write.md)
 
 ### light_transport (11)
 

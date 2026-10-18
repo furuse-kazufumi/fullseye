@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(387 例)
+### 2-D 画像/信号/幾何(388 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -437,6 +437,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **ピクセルシフト撮像 ―― センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える。MTF は上がらない** — 撮像素子を圧電アクチュエータで 1 画素 / 半画素ずつ動かして撮る「ピクセルシフト」が、外観検査で何を増やし何を増やさないか。新 op 6 本(`pixelshift`、`opsoptics` の `pixelshift`): `pixel_shift_pattern` / `pixel_shift_capture`(画素の開口の箱で厳密に積分、Bayer か白黒)/ `pixel_shift_merge`(公称のシフトで格子へ、埋められないシフト列は拒否)/ `pixel_shift_motion_mask` / `false_color_metric` / `pixel_shift_resolution_budget`(sinc × 回折 MTF、Q = λN/p)。1 画素シフト 4 枚は基板の配線・織物・網点・解像チャートで偽色を 0.043〜0.084 から 0 にする(静止・誤差 0 では定義上 0 —— 各画素の R・G・B が同じ開口で同じ点を見る)。半画素シフトでは 0.6〜0.9 cyc/px の縞の FFT の山が、1 枚の折り返し 1 − f₀ から本当の f₀ へ戻り、高さは 0.4·sinc(f₀) と 2e-14 で一致。★傾いたエッジの MTF50 は 1 枚 0.478・半画素 0.475・閉形式 0.467 cyc/px —— シフトで変わるのは折り返しで MTF ではない。drizzle(独立の実装)でも山は 0.700 に立ち、★センサのシフトをそのまま渡すと 0.300(符号の取り違えが折り返しに化ける)。画素 3.45 µm で F 1.4〜22 を振ると 0.7 cyc/px の変調は sinc·回折の閉形式と 0.0008 以内、Q > 1.43 で消え、解像の得は Q = 2 より手前の Q* = 1.47 で尽きる。開口率 0.5 なら 0.8 cyc/px の変調が 3.2 倍。壊れる条件: 1 枚だけ 0.05 px ずれた色の誤差は閉形式 2πf·a·sinc·δ/√2 と 1.2 %、乱数の誤差 σ = 0.1 px で偽色 0.012(1 枚のデモザイク 0.053)。搬送中の部品は 0.25 px/枚 までは 4 枚の破綻(0.161)が 1 枚のデモザイク(0.205)より小さく、0.5 px/枚 から逆転。動き検出で 1 枚に差し戻すと 1 枚の画質の天井に届き、静止部の誤検出 0 %。雑音は R・B が σ/√c、G が σ/√(2c) と 2.1 % 以内、動く縞では枚数を増やすほど誤差が増える(4 → 16 枚で 0.081 → 0.273)。学習 0、較正 0、門 28 件。 `py -3.11 examples/poc_pixel_shift.py`
 - **間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる** — 光を変調して戻り光との相関を 4 段の位相で測る間接 ToF(位相方式)を、生信号から距離まで通し、壊れる所まで測る。新 op 8 本(`itof`、`opsoptics` の `itof`): `itof_capture`(距離の図 → 周波数ごと 4 段のバケット、ショット雑音・背景光・余分な経路・画素の開口での混合)/ `itof_phase_amplitude` / `itof_noise_budget` / `itof_unwrap_multifreq`(次数の仮説を全部試す最尤の復号・`residue_crt`・2 周波のうなり)/ `itof_unwrap_error_rate` / `itof_multipath_separate`(等間隔の多周波の行列ペンシル)/ `itof_flying_pixel_mask` / `itof_wiggling_correct`。σ_d は SNR ≥ 3 の 11 条件で閉形式 c/(4πf)·√((B+σ_r²)/2)/A の 0.999〜1.029 倍、Lange の式とも一致。16/80/120 MHz の組は 18.7 m まで一意で、次数の誤りは σ_φ = 0.33 rad で 0.116(和集合の上界 0.132)。★同じ生信号で `residue_crt` は 0.556 —— 16 MHz を錨にするので、低い周波数の位相誤差が Wang–Xia の保証 0.105 rad を越えた所から崩れる。80/100/120 MHz の組では 7.5 m より奥の棚が何の警告も無く手前に折り返す。包装フィルムの奥の箱は 1 周波で手前に引かれ(`lighttransport.tof_multipath_phase` と一致)、20〜160 MHz の 8 周波の行列ペンシルは間隔 0.8 m で全画素を 2 cm 以内に戻すが 0.2 m 以下は分けられない。部屋の隅は全面で 8〜99 mm 奥へ伸び、輸送行列の 1 回反射と 1e-15 m で一致。箱の縁で宙に浮いた画素の 97 % に印をつけ、段差の無い画素を消すのは 0.03 %。矩形波の周期誤差 ±84.8 mm は閉形式 atan(u/(1−u)) と一致し、模型の逆引きで雑音の床(2.1 mm)まで下がる。太陽光が信号の 50 倍だと 12 m 以遠の次数の誤りが 12 % → 93 %。同じ卓上の場面を直接 ToF で撮ると縁は浮かず、フィルムの下もずれない。公開の実機の生データ(3 周波 × 3 段、Lawin・Forssén・Ovrén、ECCV 2016、Zenodo、CC BY 4.0)では、真値に対する 30 cm 以上の飛びが最尤 0.131・`residue_crt` 0.293(10 枚の平均)、margin で際どい画素を捨てると 68 % を残して 0.020。学習 0、較正は周期誤差の 16 点と実データの左半分だけ、門 29 件。 `py -3.11 examples/poc_itof_multifreq.py`
 - **光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで** — 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運ぶ。どちらもガラスの分散(材料表 `materials`)と導波の式で決まる。新 op 7 本(`fiberoptics`、`opsoptics` の `fiber`): `material_group_index` / `material_gvd` / `fiber_numerical_aperture` / `fiber_v_number` / `fiber_lp_modes`(弱導波の LP_lm の特性方程式を区間ごとに二分法で)/ `fiber_mode_field_diameter` / `fiber_bundle_coupling`。溶融石英の群屈折率は 1.55 µm で 1.4626、材料分散の零点は 1272.8 nm、D(1.55 µm) は 21.9 ps/(nm·km) と公表値の幅に入る。遮断は Bessel の零点(LP11 = 2.4048)の 0.001 上下でモード数が 2 → 6 と切り替わり、V = 30 でモード数 456 は V²/2 = 450 と 1.3 %、LP01 の b(V) は Rudolph–Neumann の近似と 0.24 %。★LP02 は遮断の直上で束縛が指数関数的に弱く、浮動小数で解けるのは遮断の 0.05 上から(op の docstring に限界として明記)。モード径は Marcuse 1977 の近似式と 0.8 % 以内、2 次モーメントの定義に変えると V = 1.2 で 11 % 大きい —— 「MFD」は定義を書かないと比べられない。コア半径 4.1 µm・NA 0.12 の設計は遮断 1285 nm、1310 nm の MFD 9.06 µm で ITU-T G.652 の 8.6〜9.5 µm に入る。Lambert の LED を NA の違う束に入れる割合は (NA_束/NA_光源)² の閉形式どおりで、LED → ライトガイド 2 m → Si ウェハ 775 µm → Si センサの鎖は光子 1 個あたり 2.2e-4 電子。学習 0、較正 0、門 17 件。 `py -3.11 examples/poc_fiber_light_guide.py`
+- **光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点** — 市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(.zmx)を、そのまま raytrace の処方にして実光線・Seidel・PSF・MTF・最適化に載せ、直した処方を同じ形式で返す。新 op 4 本(`lensfile`、`opsoptics` の `lensfile`): `lens_file_read` / `lens_file_system` / `lens_file_write` / `lens_file_report`。全キーワードを「読んだ / 無視(理由つき)/ 扱えない」に分け、扱えない面(座標変換面・理想レンズ・トーリック …)・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial のときだけ印つきで読む。同じファイルを ray-optics(BSD-3)と optiland(MIT)がそれぞれ自分の読み手で読んだ値と、近軸(EFL・BFL・入射瞳)が 4 設計で 6e-16、Seidel 和が 6e-8、実光線 14 本の像面座標が 3e-8 mm で一致。三枚玉の中央の硝材を 648/338 に差し替えると RMS は 13.9 → 332 µm に崩れ、lensopt で曲率 6 本を直すと 14.1 µm(EFL は元の 50.02 mm)に戻り、書き戻した .zmx を読み直すと処方が完全一致。★作る途中で raytrace の円錐面の交点の選び方の欠陥(長い空気間隔の後の R < 0 の面で全光線が「けられ」に化ける)を見つけて直した。学習 0、較正 0、門 21 件。 `py -3.11 examples/poc_lens_file_roundtrip.py`
 - **加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る** — 加工ポケットのような凹んだ部品では、向かいの壁で反射した光が底を照らす(相互反射)。直接光だけの検査用描画 render_optscene はそれを数えず、多重反射を解く render_studio は明るさの絶対値に意味が無かった。新 op 7 本(radiosity3d)の render_optscene_gi は、同じシーン・同じ照明のまま直接光の測光を 1e-16 で保ち、反射を n 回か収束まで(Cohen ら 1988 の漸進 ラジオシティ)足す。反射率 0.7 のポケットでは底の明るさの 48 % が相互反射。simcal で反射率と照明の強さを合わせると、直接光だけの モデルは反射率 1.32(エネルギー保存に反する)で合い、χ²/ν 24・残差 PCA 4 成分で不合格、1 回反射は 0.87 で χ²/ν 7.9、収束解は 0.6996 / 0.9999(真値 0.70 / 1.00)で χ²/ν 1.01・残差は白色。反射は 7 回数えれば雑音(1.3 %)に埋もれる(観測収束比 0.51、GCI 型の見積もり)。Howell の表の形態係数 0.199825 / 0.200044 を閉形式と数値の両方で再現し、実測の論文(Bulczak ら 2018、CC BY 4.0)の表 2 —— 1 回反射を足すと誤差 0.20〜0.47 倍 —— と、本 PoC の 0.53 倍を並べた。 `py -3.11 examples/poc_pocket_interreflection.py`
 - **光学系の図面 ―― 計算した処方から、レンズ断面図・装置の設置図・単レンズの製作図を SVG / DXF で** — 外観検査・計測の打ち合わせでは、レンズの断面図と装置の設置図(作動距離・視野・照明の角度)が共通言語で、レンズを作ってもらうには ISO 10110 の製作図が要る。`raytrace` も `optscene.vision_layout` も数しか返さなかったので、新 op 8 本(`optdraw`、`opsoptics` の `drawing`)で図を出す: `lens_section_drawing`(子午断面。面は円錐 + 非球面の sag、コバ・絞り・像面、視野ごとに色を分けた実光線、EFL・BFL・全長・像高の寸法線と処方表)/ `vision_setup_drawing`(側面図と上面図。視野の錐・WD・DOF の帯、照明 5 種 ring / dome / bar / coaxial / backlight の位置と仰角)/ `lens_element_drawing`(ISO 10110 の 3 分割の表。公差は `tolerance_analysis` の公差から写し、EFL の Monte-Carlo の幅を注記)/ `drawing_svg` / `drawing_dxf`(stdlib だけの SVG と DXF R12)/ `drawing_raster` / `svg_entities` / `dxf_entities`(読み戻し)。門は図を書いたファイルから読み戻して採点する: 教科書の Cooke triplet 2 本の EFL が公表値と 7e-6 / 2e-5、面の座標が球面の sag の閉形式と 6e-7 mm、光線の折れ点が面の上に 5e-7 mm、主光線が `raytrace.chief_ray` と 5e-7 mm、寸法と処方表の数字が表示の桁で一致。光線は絞りを狙って割線法で探すので入射瞳が無限遠のテレセンでも描け、主光線の傾きは `telecentric.chief_ray_angle`(Newton 法)と 3e-7°。設置図の視野の錐は閉形式と 2e-15 mm、WD・視野・DOF・仰角の数字も閉形式どおり。製作図の n_d・ν_d は BK7 相当の公開の硝材カタログ値 1.51680 / 64.17、注記の EFL は厚肉レンズの公式どおり。SVG / DXF の往復は 11 枚で座標 1e-6 mm、OSS の ezdxf(MIT)も 11 枚を監査エラー 0 で読んだ。★sag の符号を反転した図・光線を 0.01 mm ずらした SVG・EFL を書き換えた SVG・VERTEX を抜いた DXF で、門がすべて赤になることも確かめた。★検分で、設置図の視野(画素数 × 画素 × WD / f)とバジェットの倍率 f/(WD − f) が同じ図の中で 14 % 食い違うのが見つかり、`optscene.vision_layout` / `observe_surface` がピンホールの距離に焦点距離を渡していたのを像距離 f·WD/(WD − f) に直した。門は撮った画像の上の既知の幅の板の画素数(124 画素 = 12 mm × m / 画素)で、図と独立に倍率を見る。学習 0、較正 0、門 53 件。 `py -3.11 examples/poc_optics_drawings.py`
 - **分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ** — Si 上の SiO₂ の膜厚を反射スペクトルの干渉縞から測る op 5 本(`filmoptics`、`opsoptics` の `film`): `multilayer_reflectance`(転送行列)/ `film_color` / `film_thickness_fft` / `film_thickness_fit` / `film_thickness_map`。膜も基板も材料表(`materials`)の鍵で引く。★主役は他人が測った実物のデータ(どちらも CC BY 4.0): Schwarz ら 2024 の顕微分光では、裸の Si の実測反射率が材料表の Si と中央値 0.4 % 差、SiO₂ の膜厚は直入射のモデルで 92.9 nm(基準 98.5 nm と −5.7 %)、残差が最小の NA 0.5 を入れると 95.8 nm(−2.7 %)。測定点の被覆率は 11 点を平均 0.6 点の誤差で読み返す。同じ試料の実物のカラー顕微鏡写真からは、裸の Si で白を合わせるだけで画素ごとの膜厚が出て中央値 87.4 nm(−11 %、カメラの分光感度は不明)。Sánchez-Arriaga ら 2023 の安価な分光器では、標準 476.3 nm が 5 本すべて 2 % 以内、198.7 nm は中央値 +6.6 % で、1 本は最良の候補が 51 nm に外れて正しい値は 2 番目の候補に残る。FFT 法は 98 nm の膜を自分で「信頼できない」と言う(下限の閉形式 554 nm)。合成の章: 1 層は Airy の式(別実装)と 3e-15、縞の本数は d·Δx と ±1、FFT の下限の閉形式 538 nm と実測 525 nm、材料の取り違え・入射角・NA の偏りは閉形式どおり。公表の色表との色相の一致は 1〜3 次で 59 %(弱い門)。模型のウェハ(彗星は縁まで半径方向、縁の盛り上がり、芯ずれの輪 —— 量は文献表に結びつけ、無いものは模型と明記)では分光 31 帯域の膜厚マップが RMS 0.17 nm、RGB は候補が複数の画素が 14 %。学習 0、門 37 件。 `py -3.11 examples/poc_thin_film_reflectometry.py`
@@ -728,9 +729,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3326 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 308 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
+族の一覧: **2d** 953 · **3d** 372 · **math** 114 · **optics** 312 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 22 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 17 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **generative** 34 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 6 · **shape2d** 16 · **piv** 29 · **blob** 10 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 54
 
 ### 2d(953 ops / 49 categories)
 
@@ -2441,7 +2442,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(308 ops / 35 categories)
+### optics(312 ops / 36 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2482,13 +2483,13 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
 - `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_material_optical_library`, `poc_optics_drawings`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
-- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
+- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_material_optical_library`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
-- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_chromatic_confocal`, `poc_material_optical_library`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
+- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_material_optical_library`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
 - `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
-- `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`
+- `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`, `poc_lens_file_roundtrip`
 - `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
-- `spot_diagram` `table → pairs` — Transverse ray intersections on the image plane for one field point. · 例: `lens_design_demo`
+- `spot_diagram` `table → pairs` — Transverse ray intersections on the image plane for one field point. · 例: `lens_design_demo`, `poc_lens_file_roundtrip`
 - `spot_stats` `table → table` — RMS / geometric spot radius (mm) and centroid for one field point (``table``). · 例: `lens_design_demo`, `lens_optimize_demo`
 - `thick_lens` `入力なし → table` — Closed-form thick lens in air: EFL, back/front focal lengths, principal points. · 例: `lens_design_demo`, `poc_material_optical_library`
 - `tolerance_analysis` `table → table` — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``). · 例: `lens_design_demo`, `poc_optics_drawings`
@@ -2496,11 +2497,11 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / drawing(8)
 - `drawing_dxf` `table → text` — 図を DXF R12(AC1009)の ASCII にする(``text``)—— CAD に持ち込める最小の完全な構成を stdlib だけで書く。 · 例: `poc_optics_drawings`
-- `drawing_raster` `table → rgbimage` — 図を RGB の画像(uint8、(H, W, 3))にする(``rgbimage``)—— matplotlib(任意依存)で、紙の大きさ × *dpi*。 · 例: `poc_optics_drawings`
+- `drawing_raster` `table → rgbimage` — 図を RGB の画像(uint8、(H, W, 3))にする(``rgbimage``)—— matplotlib(任意依存)で、紙の大きさ × *dpi*。 · 例: `poc_lens_file_roundtrip`, `poc_optics_drawings`
 - `drawing_svg` `table → text` — 図を SVG の文字列にする(``text``)—— stdlib だけ、座標は実物の mm、紙の大きさ = 図 × 縮尺。 · 例: `poc_optics_drawings`
 - `dxf_entities` `text → table` — DXF(R12 の ASCII、R2000 以降の ``LWPOLYLINE`` も可)の ENTITIES を図の要素に読み戻す(``table``)。 · 例: `poc_optics_drawings`
 - `lens_element_drawing` `table → table` — 単レンズの製作図(``table``、図の dict)—— ISO 10110 の表記で、断面図と 3 分割のデータ欄と表題欄。 · 例: `poc_optics_drawings`
-- `lens_section_drawing` `table → table` — レンズの子午断面図(``table``、図の dict)—— 処方の面・コバ・絞り・像面と、視野ごとに色を分けた実光線と寸法。 · 例: `poc_optics_drawings`
+- `lens_section_drawing` `table → table` — レンズの子午断面図(``table``、図の dict)—— 処方の面・コバ・絞り・像面と、視野ごとに色を分けた実光線と寸法。 · 例: `poc_lens_file_roundtrip`, `poc_optics_drawings`
 - `svg_entities` `text → table` — SVG(``drawing_svg`` が書く形: ``line`` / ``polyline`` / ``polygon`` / ``circle`` / ``path`` の M…A… と M…L… / ``text``)を図の要素に読み戻す(``table``)。y の符号を戻して図のモデルの向き(y 上)にする。 · 例: `poc_optics_drawings`
 - `vision_setup_drawing` `table → table` — 撮像系の設置図(``table``、図の dict)—— ``optscene.vision_layout`` から側面図と上面図を描く。 · 例: `poc_optics_drawings`
 
@@ -2555,9 +2556,9 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / imaging(7)
 - `edge_spread` `image2d → table` — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
-- `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
-- `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_pixel_shift`, `poc_veiling_glare`
-- `psf_to_mtf` `image2d → pairs` — Radially-averaged MTF of a measured point-spread function. · 例: `optics_imaging`, `poc_veiling_glare`
+- `mtf50` `pairs → measurement` — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError`` (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。 · 例: `poc_lens_file_roundtrip`, `poc_pixel_shift`, `poc_veiling_glare`
+- `mtf_diffraction` `入力なし → pairs` — The diffraction-limited MTF of a circular pupil (closed form). · 例: `optics_imaging`, `poc_lens_file_roundtrip`, `poc_pixel_shift`, `poc_veiling_glare`
+- `psf_to_mtf` `image2d → pairs` — Radially-averaged MTF of a measured point-spread function. · 例: `optics_imaging`, `poc_lens_file_roundtrip`, `poc_veiling_glare`
 - `sfr_from_edge` `table → pairs` — ESF から SFR(エッジから測る MTF)を出す。 · 例: `poc_pixel_shift`, `poc_veiling_glare`
 - `veiling_glare_index` `image2d × image2d × image2d → table` — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。 · 例: `poc_veiling_glare`
 - `wavefront_stats` `table → table` — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl. · 例: `optics_imaging`, `poc_zernike_aberrations`
@@ -2584,6 +2585,12 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `itof_unwrap_error_rate` `入力なし → table` — 多周波アンラップ(最尤の復号)で次数(何周目か)を誤る確率の見積もり。``table`` を返す。 · 例: `poc_itof_multifreq`
 - `itof_unwrap_multifreq` `table → table` — 複数の周波数の位相 → 距離(多周波アンラップ)。``table`` を返す。 · 例: `poc_itof_multifreq`
 - `itof_wiggling_correct` `table → table` — 高調波による周期誤差(wiggling)を補正した位相と距離。``table`` を返す。 · 例: `poc_itof_multifreq`
+
+#### optics / lensfile(4)
+- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `poc_lens_file_roundtrip`
+- `lens_file_report` `入力なし → table` — ``.zmx`` を読み込まずに分類する —— 何を読み / 無視し / 拒否するか(``table``)。 · 例: `poc_lens_file_roundtrip`
+- `lens_file_system` `table → table` — 読み込んだ処方を、視野 1 つ・波長 1 つの ``raytrace.lens_system`` にする(``table``)。 · 例: `poc_lens_file_roundtrip`
+- `lens_file_write` `table → table` — 処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。 · 例: `poc_lens_file_roundtrip`
 
 #### optics / light_transport(11)
 - `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
@@ -2666,8 +2673,8 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / optimization(3)
 - `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
-- `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`
-- `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`
+- `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
+- `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
 
 #### optics / pixelshift(6)
 - `false_color_metric` `rgbimage → table` — 偽色の量: 色差(BT.601 の Cb, Cr)の大きさの統計。 · 例: `poc_pixel_shift`
@@ -2741,7 +2748,7 @@ _計 3322 ops / 51 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sensor_spec` `入力なし → table` — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
 - `surface_defect` `table × image2d → table` — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。 · 例: `studio_raytrace_scene`
 - `surface_finish` `table → table` — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。 · 例: `virtual_machine_vision`
-- `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `poc_chromatic_confocal`, `poc_pocket_interreflection`, `poc_telecentric_metrology`, `studio_raytrace_scene`
+- `trace_rays` `table × points × points → table` — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。 · 例: `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_pocket_interreflection`, `poc_telecentric_metrology`, `studio_raytrace_scene`
 - `vision_layout` `table × table × table → table` — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。 · 例: `poc_optics_drawings`, `vision_layout_from_catalog`
 
 #### optics / sensorchar(19)

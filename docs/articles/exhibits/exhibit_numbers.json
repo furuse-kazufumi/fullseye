@@ -441,6 +441,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.069"
   },
+  "poc_lens_file_roundtrip": {
+   "accessioned": "2026-10-18",
+   "no": "2026.245"
+  },
   "poc_lidar_terrain_change": {
    "accessioned": "2026-09-07",
    "no": "2026.070"

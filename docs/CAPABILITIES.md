@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 71 項目**
+**収録 72 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -38,6 +38,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
+| [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
@@ -520,7 +521,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (16)
+## 光と色 (17)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -609,6 +610,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 照明の強さは線形に効き、幾何(形態係数・画素とパッチの対応)はシーンの形・カメラ・パッチの大きさの SHA-256 で使い回すので、反射率と照明の強さを動かす較正の繰り返しではラジオシティだけを解き直す。
 
 動く例: `poc_pocket_interreflection`
+
+### [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md)
+
+市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(`.zmx`)を、`lens_file_read` がそのまま `raytrace.lens_system` の処方にします。別の模型を作らないので、実光線(`spot_stats` / `ray_fan`)・Seidel 和(`seidel_coefficients`)・波面と PSF(`opd_map` / `psf_from_opd`)・色収差(`chromatic_shift`)・公差(`tolerance_analysis`)・最適化(`optimize_lens`)・断面図(`lens_section_drawing`)がそのまま使えます。視野と波長はファイルの並びのまま持ち、`lens_file_system` で 1 つ選んだ処方にします。直した処方は `lens_file_write` が同じ形式で書き戻し(視野・波長・まだ有効なソルブを保つ)、`lens_file_report` は読まずに全キーワードを「読む / 無視(理由つき)/ 扱えない」に分けます。硝材は材料表か、手元の `.agf`(`glass_dir` か環境変数 `FULLSEYE_GLASS_DIR`、`read_glass_catalog_agf` が読む)を名前の完全一致で引きます。
+
+使う op: `lens_file_read`, `lens_file_system`, `lens_file_write`, `lens_file_report`
+
+推奨パイプライン: [`lens_file_read`](ops/optics/lensfile/lens_file_read.md) → [`lens_file_system`](ops/optics/lensfile/lens_file_system.md) → [`paraxial_trace`](ops/optics/design/paraxial_trace.md) → [`spot_stats`](ops/optics/design/spot_stats.md) → [`lens_file_write`](ops/optics/lensfile/lens_file_write.md)
+
+代替: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: 共軸の処方だけ(座標変換面・理想レンズ・トーリック・奇数次非球面は拒否)。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+
+実寸校正: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
+
+動く例: `poc_lens_file_roundtrip`
 
 ### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 

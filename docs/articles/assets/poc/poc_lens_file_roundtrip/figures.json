@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_layout.png",
+  "name": "layout",
+  "caption": "読み込んだ処方の子午断面図(optdraw)。視野 0・14・20° の実光線 5 本ずつ、寸法は EFL・BFL・全長・像高。",
+  "shape": [
+   831,
+   792,
+   3
+  ]
+ },
+ {
+  "file": "02_spot_diagram.png",
+  "name": "spot_diagram",
+  "caption": "3 視野 × 3 波長(瞳の 98 % を 8 輪)。各スポットは d 線の重心を基準に置いたので、F / C の行の上下のずれが倍率の色収差、広がりが球面収差・コマ・非点。",
+  "shape": [
+   560,
+   676,
+   3
+  ]
+ },
+ {
+  "file": "03_seidel_bars.png",
+  "name": "seidel_bars",
+  "caption": "S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。和は ray-optics の 3 次収差と 1e-6 で一致。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_mtf.png",
+  "name": "mtf",
+  "caption": "実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。破線は無収差の円形瞳の閉形式(上限)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_optimisation.png",
+  "name": "optimisation",
+  "caption": "中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。結果を .zmx に書き戻す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_second_implementations.png",
+  "name": "second_implementations",
+  "caption": "記録値(tests/data/lensfile/second_recorded.json)。optiland は n_d だけの硝材(ν_d = 0)を評価できないので —。",
+  "shape": [
+   176,
+   526,
+   3
+  ],
+  "csv": "06_second_implementations.csv",
+  "tsv": "06_second_implementations.tsv"
+ }
+]

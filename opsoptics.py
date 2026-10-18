@@ -123,6 +123,7 @@ import materials
 import spectralrad
 import chromconf
 import fiberoptics
+import lensfile
 import filmoptics
 import moirealign
 import telecentric
@@ -132,7 +133,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "lensfile": lensfile, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "linescan": linescan,
@@ -531,6 +532,15 @@ _CATALOG = {
         ("chromatic_confocal_peaks", "chromconf", ["pairs"], "table"),
         ("chromatic_confocal_readout", "chromconf", ["table", "table"], "table"),
         ("chromatic_confocal_limits", "chromconf", ["table"], "table"),
+    ],
+    "lensfile": [  # 光学設計ファイル(.zmx の逐次処方)の読み書き(lensfile、2026-10-18)。読んだ処方は raytrace.lens_system
+        # そのもの(別の模型を作らない)なので、design / optimization / imaging_sim の op がそのまま使える。
+        # ★fail-closed: 扱えない面の種類・座標変換面・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial
+        #   で明示したときだけ(結果に approximate=True)。画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+        ("lens_file_read", "lensfile", [], "table"),
+        ("lens_file_system", "lensfile", ["table"], "table"),
+        ("lens_file_write", "lensfile", ["table"], "table"),
+        ("lens_file_report", "lensfile", [], "table"),
     ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。

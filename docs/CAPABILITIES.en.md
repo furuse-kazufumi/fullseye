@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 71 capabilities**
+**Currently 72 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -39,6 +39,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
+| [Lens design files (read, write and triage sequential .zmx prescriptions)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
@@ -441,7 +442,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (16)
+## Light and colour (17)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -510,6 +511,18 @@ Pipeline: [`radiosity_patches`](ops/optics/radiosity/radiosity_patches.md) → [
 Alternatives: [`render_optscene_gi`](ops/optics/radiosity/render_optscene_gi.md), [`radiosity_progressive_3d`](ops/optics/radiosity/radiosity_progressive_3d.md), [`render_optscene`](ops/optics/scene/render_optscene.md), [`render_studio`](ops/optics/scene/render_studio.md), [`transport_matrix_radiosity`](ops/optics/light_transport/transport_matrix_radiosity.md), [`form_factors_2d`](ops/optics/light_transport/form_factors_2d.md)
 
 Runnable: `poc_pocket_interreflection`
+
+### [Lens design files (read, write and triage sequential .zmx prescriptions)](capabilities/lens-prescription-files.md)
+
+`lens_file_read` turns the plain-text sequential prescription that commercial lens-design programs save (`.zmx`) into a `raytrace.lens_system`, so every Fullseye optics op (real rays, Seidel sums, OPD / PSF / MTF, colour, tolerances, DLS optimisation, section drawings) runs on it unchanged. Fields and wavelengths are kept as listed in the file; `lens_file_system` picks one. `lens_file_write` writes a prescription (optionally the geometry of an edited system) back, and `lens_file_report` classifies every keyword as read, ignored (with a reason) or unsupported without importing. Glasses come from the material table or your own `.agf` catalogues, matched by exact name. The PoC checks first-order data, Seidel sums and real rays against what two independent readers (ray-optics, optiland) computed from the same files.
+
+Operators: `lens_file_read`, `lens_file_system`, `lens_file_write`, `lens_file_report`
+
+Pipeline: [`lens_file_read`](ops/optics/lensfile/lens_file_read.md) → [`lens_file_system`](ops/optics/lensfile/lens_file_system.md) → [`paraxial_trace`](ops/optics/design/paraxial_trace.md) → [`spot_stats`](ops/optics/design/spot_stats.md) → [`lens_file_write`](ops/optics/lensfile/lens_file_write.md)
+
+Alternatives: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+Runnable: `poc_lens_file_roundtrip`
 
 ### [One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)](capabilities/material-optical-property-library.md)
 

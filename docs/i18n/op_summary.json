@@ -29906,6 +29906,42 @@
    "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
    "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
    "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "optics/lens_file_read": {
+   "fp": "7903a456f64e",
+   "en": "Read a ``.zmx`` sequential lens prescription into a Fullseye prescription (``table``).",
+   "zh": "将 ``.zmx`` 逐次透镜处方读入 Fullseye 的处方(``table``)。",
+   "tw": "將 ``.zmx`` 逐次透鏡處方讀入 Fullseye 的處方(``table``)。",
+   "ko": "``.zmx`` 순차 렌즈 처방을 Fullseye의 처방(``table``)으로 읽는다.",
+   "de": "Liest eine sequenzielle ``.zmx``-Linsenvorschrift in eine Fullseye-Vorschrift ein (``table``).",
+   "hi": "``.zmx`` sequential lens prescription को Fullseye prescription (``table``) में पढ़ता है।"
+  },
+  "optics/lens_file_system": {
+   "fp": "1f702354a74f",
+   "en": "The imported prescription as a ``raytrace.lens_system`` at one field and wavelength (``table``).",
+   "zh": "把导入的处方变成某一视场、某一波长下的 ``raytrace.lens_system``(``table``)。",
+   "tw": "把匯入的處方變成某一視場、某一波長下的 ``raytrace.lens_system``(``table``)。",
+   "ko": "가져온 처방을 하나의 시야·파장에서의 ``raytrace.lens_system``(``table``)으로 만든다.",
+   "de": "Die importierte Vorschrift als ``raytrace.lens_system`` bei einem Feld und einer Wellenlänge (``table``).",
+   "hi": "import की गई prescription को एक field और wavelength पर ``raytrace.lens_system`` (``table``) बनाता है।"
+  },
+  "optics/lens_file_write": {
+   "fp": "38f1c13a11f0",
+   "en": "Write a prescription as ``.zmx`` text that :func:`lens_file_read` and design programs read (``table``).",
+   "zh": "把处方写成 :func:`lens_file_read` 和设计软件都能读的 ``.zmx`` 文本(``table``)。",
+   "tw": "把處方寫成 :func:`lens_file_read` 和設計軟體都能讀的 ``.zmx`` 文字(``table``)。",
+   "ko": "처방을 :func:`lens_file_read`와 설계 프로그램이 읽을 수 있는 ``.zmx`` 텍스트로 쓴다(``table``).",
+   "de": "Schreibt eine Vorschrift als ``.zmx``-Text, den :func:`lens_file_read` und Designprogramme lesen (``table``).",
+   "hi": "prescription को ``.zmx`` text के रूप में लिखता है जिसे :func:`lens_file_read` और design programs पढ़ते हैं (``table``)।"
+  },
+  "optics/lens_file_report": {
+   "fp": "19e894a64e02",
+   "en": "Inventory of a ``.zmx`` file without importing it: what would be read / ignored / refused (``table``).",
+   "zh": "不导入就清点 ``.zmx`` 文件:哪些会被读取 / 忽略 / 拒绝(``table``)。",
+   "tw": "不匯入就清點 ``.zmx`` 檔:哪些會被讀取 / 忽略 / 拒絕(``table``)。",
+   "ko": "가져오지 않고 ``.zmx`` 파일을 조사한다: 무엇이 읽히고 / 무시되고 / 거부되는지(``table``).",
+   "de": "Inventar einer ``.zmx``-Datei ohne Import: was gelesen / ignoriert / abgelehnt würde (``table``).",
+   "hi": "``.zmx`` file को import किए बिना जाँचता है: क्या पढ़ा / अनदेखा / अस्वीकार होगा (``table``)।"
   }
  }
 }

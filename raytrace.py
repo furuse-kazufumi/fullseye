@@ -681,8 +681,16 @@ def _intersect_conic(P, D, c, k):
         t_lin = -C / B
         t1 = (-B - sq) / (2.0 * A)
         t2 = (-B + sq) / (2.0 * A)
-    # the intersection nearest the vertex plane (smallest |t|) is the physical one
-    pick = np.where(np.abs(t1) <= np.abs(t2), t1, t2)
+    # ★2026-10-18(lensfile の第 2 実装との照合で発覚): 以前は「|t| の小さい方」を選んでいた。光線が前の面から
+    #   出て、球の z 範囲の中から始まる(R < 0 の面が長い空気間隔の後にある望遠型など)と、後ろ側の球面
+    #   (t < 0)を拾い、全光線が「けられ」に化けていた(R = −14.5 の面の 26 mm 手前から y = 3 の光線が NaN)。
+    #   物理的な交点は頂点を含む葉 —— sag の式の枝で (1+k)·c·z = 1 − √(1 − (1+k)c²r²) ≤ 1 —— の上にある。
+    #   その葉の上の根だけを候補にし、両方が乗るとき(双曲面など)に |t| の小さい方を取る。
+    with np.errstate(invalid="ignore"):
+        on1 = kk * c * (z + t1 * N) <= 1.0 + 1e-9
+        on2 = kk * c * (z + t2 * N) <= 1.0 + 1e-9
+    pick = np.where(on1 & on2, np.where(np.abs(t1) <= np.abs(t2), t1, t2),
+                    np.where(on1, t1, np.where(on2, t2, np.nan)))
     t = np.where(lin, t_lin, pick)
     t = np.where(ok, t, np.nan)
     return t

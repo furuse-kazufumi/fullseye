@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 71 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 72 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -128,6 +128,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光纖與光導(玻璃色散 → LP 模 → 模場直徑 → 照明效率): [說明](../../capabilities/fiber-and-light-guide.md) _(ja)_ · 範例 [poc_fiber_light_guide](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fiber_light_guide.py)
 - 用照明光錐與觀察 NA 顯現或隱藏鏡面的微小傾斜(球冠的交集 → 傾斜的帶 → 凹痕、刮傷、噴砂面的不勻): [說明](../../capabilities/illumination-cone-vs-na.md) _(ja)_ · 範例 [poc_illumination_cone_vs_na](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 - 在保持光度真值的同時把凹形零件的相互反射計算到收斂(三維形狀因子、漸進輻射度、含多次反射的檢測用渲染): [說明](../../capabilities/interreflection-to-convergence.md) _(ja)_ · 範例 [poc_pocket_interreflection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pocket_interreflection.py)
+- 光學設計檔(.zmx 逐次處方的讀寫、關鍵字清單與 fail-closed 匯入): [說明](../../capabilities/lens-prescription-files.md) _(ja)_ · 範例 [poc_lens_file_roundtrip](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_file_roundtrip.py)
 - 用一張表查材料的光學物性（玻璃、晶體、半導體、金屬、液體、塑膠 86 種，一次文獻的係數與數表，玻璃目錄匯入口）: [說明](../../capabilities/material-optical-property-library.md) _(ja)_ · 範例 [poc_material_optical_library](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_material_optical_library.py)
 - 用近紅外高光譜分選外觀相同的異物(材料表的吸收帶、散射層的反射、InGaAs 各波段的電子數): [說明](../../capabilities/nir-hyperspectral-sorting.md) _(ja)_ · 範例 [poc_hyperspectral_foreign_matter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hyperspectral_foreign_matter.py)
 - 計算光的反射、折射與干涉: [說明](../../capabilities/optics-and-materials.md) _(ja)_ · 範例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
@@ -182,7 +183,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 245 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -366,9 +367,10 @@ PoC 244 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>顏色與分離</b> (9)</summary>
+<details class="vall"><summary><b>顏色與分離</b> (10)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纖與光導(模態、色散、模場直徑)" width="200" height="200"><span>光纖與光導(模態、色散、模場直徑)</span></a>
+<a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="光學設計檔(.zmx)的讀寫(與另外兩個實作對照)" width="200" height="200"><span>光學設計檔(.zmx)的讀寫(與另外兩個實作對照)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)" width="200" height="200"><b>&#9654;</b><span>以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)</span></a>
 <a href="../../articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_hyperspectral_foreign_matter.jpg" alt="用高光譜近紅外分選外觀相同的異物" width="200" height="200"><b>&#9654;</b><span>用高光譜近紅外分選外觀相同的異物</span></a>
 <a href="../../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_nir_silicon_transmission.jpg" alt="透過矽晶圓的近紅外檢測(選擇 LED 波長)" width="200" height="200"><b>&#9654;</b><span>透過矽晶圓的近紅外檢測(選擇 LED 波長)</span></a>

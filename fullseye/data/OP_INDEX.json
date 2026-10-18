@@ -1,8 +1,8 @@
 {
- "n_ops": 3316,
+ "n_ops": 3320,
  "tiers": {
   "color": 12,
-  "ledger": 2363,
+  "ledger": 2367,
   "nary": 17,
   "registry": 924
  },
@@ -13774,6 +13774,54 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "linescan",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_file_read",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_report",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_file_write",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
