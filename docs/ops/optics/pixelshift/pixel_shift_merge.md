@@ -4,7 +4,7 @@ dim: optics
 category: pixelshift
 in: video × matrix
 out: rgbimage
-examples: [poc_pixel_shift]
+examples: [poc_pixel_shift, poc_simcal_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
+- [poc_simcal_pixel_shift](../../../../examples/poc_simcal_pixel_shift.py) — `py -3.11 examples/poc_simcal_pixel_shift.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 

@@ -10,7 +10,7 @@
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 20 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 21 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -723,6 +723,42 @@ Source: [examples/poc_pixel_shift.py](https://github.com/furuse-kazufumi/fullsey
 This run produced **15 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pixel_shift)
 
 Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_pattern.html) · [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`drizzle_resample`](https://furuse.work/ops/astrostack/stack/drizzle_resample.html) · [`edge_spread`](https://furuse.work/ops/optics/imaging/edge_spread.html) · [`false_color_metric`](https://furuse.work/ops/optics/pixelshift/false_color_metric.html) · [`halftone_screen`](https://furuse.work/ops/printpath/npr/halftone_screen.html) · [`mtf50`](https://furuse.work/ops/optics/imaging/mtf50.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_motion_mask`](https://furuse.work/ops/optics/pixelshift/pixel_shift_motion_mask.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`raw_demosaic_bilinear`](https://furuse.work/ops/gfx2d/isp/raw_demosaic_bilinear.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sfr_from_edge`](https://furuse.work/ops/optics/imaging/sfr_from_edge.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`weave_normals`](https://furuse.work/ops/optics/surface/weave_normals.html)
+
+## No.2026.243 —— Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only
+
+[![Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png)
+
+*↑ **Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only** ―― Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the lens Q = λN/p from the captured frames, refusing numbers that the data cannot fix. The centrepiece is an 'undetermined map' of a Siemens star cut into 8-pixel tiles: on the spokes the shift is fixed only along the tangent, the Cramér-Rao ellipses stretch radially, and the 'determined combination' simcal returns lies within 2.5 degrees of the closed-form tangent. This chapter found a bug in simcal (the determined combination was divided by the sensitivity column norms instead of multiplied), now fixed with a regression test. Injected ±0.1 px shifts are recovered at the Cramér-Rao bound (Fisher-distance chi-square p = 0.62); a noise model off by 4x fails the same gate (p = 3e-21). A rotated frame fitted by translation only is rejected by the residual PCA and the absolute chi-square gate. With half-pixel shifts the fitted aperture and Q give a resolution gain of 1.420 ± 0.005 (closed form 1.414), and Q = 2.5 is lens-limited with gain 1; a stuck row actuator and a 60 DN dim capture both make it refuse the gain. On real raw frames (PixelShift200, Qian et al., ICCP 2022, CC BY 4.0) the G-to-G diagonal pairs agree tile by tile with phase correlation (paired t-test p = 0.22 / 0.30) and the cross-colour pair is refused (chi-square per dof 31). No training.*
+
+[![【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction.png)
+
+*↑ The measurement ―― 【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc の分類。縦縞では縞に沿った dr が画像を変えず「効かない」、斜めの縞では dr と dc が縞を横切る組(右上がりは dr + dc、右下がりは dr − dc)でしか決まらない —— 開口問題。 (figure labels are in Japanese; the numbers are the same)*
+
+[![【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb.png)
+
+*↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
+
+[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+
+*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。*
+
+[![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| ×](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
+
+*↑ 【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。*
+
+[![【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles.png)
+
+*↑ 【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。*
+
+```
+py -3.11 examples/poc_simcal_pixel_shift.py
+```
+
+Source: [examples/poc_simcal_pixel_shift.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_simcal_pixel_shift.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_pixel_shift)
+
+Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 

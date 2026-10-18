@@ -1180,22 +1180,23 @@ def _perspective_beta(rk_mm, tilt, L_mm, px_per_mm):
     return float(np.linalg.lstsq(A, np.array(cen), rcond=None)[0][0])
 
 
-def chapter_real(L):
-    """実画像の章: 論文の生画像(アライメント板・樹脂の球)を Fullseye の計測 op で測り、論文の値と突き合わせる。"""
-    print("\n0. 実画像 —— Stark ほか(Sci. Rep. 2025)のテレセン生画像を測る(%s)" % REAL_SOURCE_SHORT)
-    paths, why = real_fetch()
-    if paths is None:
-        r = REAL_RECORDED
-        print("   [skip] %s。2026-10-15 の実測: 円の間隔 %.2f px/mm(論文の K1 252.0 と %+.2f %%)、リング %d 本、"
-              "板の傾き %.1f°、楕円の中心のずれ β = %.3f ± %.3f px/mm²(入射瞳は %.0f mm より遠い)、"
-              "樹脂の球の輪郭の半径 %.3f / %.3f mm(公称 2.5 mm)" % (why, r["px_per_mm"], r["vs_K1_pct"], r["rings"],
-                                                         r["tilt_deg"], r["beta_px_per_mm2"], r["beta_se"],
-                                                         r["pupil_min_mm"], *r["sphere_r_mm"]))
-        return None
-    import measure as ME
+def _rho_of(P_, c_, phi_, q_):
+    """楕円の族の「半径」: 中心 c_ から見た点を向き phi_ の軸へ回し、短軸を縦横比 q_ で割って伸ばした距離。"""
+    dy, dx = P_[:, 0] - c_[0], P_[:, 1] - c_[1]
+    u = dx * np.cos(phi_) + dy * np.sin(phi_)
+    v = -dx * np.sin(phi_) + dy * np.cos(phi_)
+    return np.sqrt(u * u + (v / q_) ** 2)
+
+
+def plate_ring_points(g):
+    """アライメント板の画像 *g*(0〜1)から、中央の穴の中心と、リングの中心線の点・リングの番号を取る。
+
+    ``chapter_real`` と ``poc_simcal_telecentric`` が同じ読み方を使う(2026-10-15 に ``chapter_real`` から切り出した。
+    中身は切り出す前と同じ)。返り値: ``cy, cx, hole``(穴の中心と metrology の円)・``pts``(全点)・``phi, q, s, ph``
+    (族の向き・縦横比・間隔・位相の当たり)・``P``(使う点 (行, 列))・``idx``(``ks`` の中の位置)・``ks``(リングの番号)。
+    """
     from scipy import ndimage
-    g = np.asarray(fs_read(paths["plate"]), float)
-    g = g / g.max()
+    rho_of = _rho_of
     # (a) 中心: 中央の穴(暗い円板)を距離変換で当たりを付け、metrology の円 → 楕円で縁に当て直す
     dark = ndimage.gaussian_filter(g, 3) < 0.03
     dt = ndimage.distance_transform_edt(dark)
@@ -1225,7 +1226,6 @@ def chapter_real(L):
     metrology.add_metrology_object_circle_measure(mod, float(hy), float(hx), float(dtw.max()), n=90)
     hole = metrology.apply_metrology_model(mod, g, measure_length=15, sigma=2, threshold=0.1)[0]["params"]
     cy, cx = hole["row"], hole["col"]
-    print("   中央の穴: 中心 (%.1f, %.1f) px、半径 %.1f px(metrology の円)" % (cy, cx, hole["radius"]))
     # (b) リングの中心線の点 → 同心の相似な楕円の族(共通の中心・向き・縦横比 + リングごとの長半径)を当てる
     #   ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で
     #   膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と
@@ -1235,11 +1235,6 @@ def chapter_real(L):
     pts = _ring_points(g, cy, cx)
     pts = pts[(pts[:, 2] > 15) & (pts[:, 2] < 80) & (np.hypot(pts[:, 0] - cy, pts[:, 1] - cx) > 200)]
 
-    def rho_of(P_, c_, phi_, q_):
-        dy, dx = P_[:, 0] - c_[0], P_[:, 1] - c_[1]
-        u = dx * np.cos(phi_) + dy * np.sin(phi_)
-        v = -dx * np.sin(phi_) + dy * np.cos(phi_)
-        return np.sqrt(u * u + (v / q_) ** 2)
 
     best = None
     for phi in np.deg2rad(np.arange(-90.0, 90.0, 2.0)):
@@ -1259,6 +1254,32 @@ def chapter_real(L):
     ks = np.array([kk for kk in sorted(cnt) if cnt[kk] >= 30])
     sel = np.isin(K, ks)
     P, idx = P[sel], np.searchsorted(ks, K[sel])
+    return {"cy": cy, "cx": cx, "hole": hole, "pts": pts, "phi": phi, "q": q, "s": s, "ph": ph,
+            "P": P, "idx": idx, "ks": ks}
+
+
+def chapter_real(L):
+    """実画像の章: 論文の生画像(アライメント板・樹脂の球)を Fullseye の計測 op で測り、論文の値と突き合わせる。"""
+    print("\n0. 実画像 —— Stark ほか(Sci. Rep. 2025)のテレセン生画像を測る(%s)" % REAL_SOURCE_SHORT)
+    paths, why = real_fetch()
+    if paths is None:
+        r = REAL_RECORDED
+        print("   [skip] %s。2026-10-15 の実測: 円の間隔 %.2f px/mm(論文の K1 252.0 と %+.2f %%)、リング %d 本、"
+              "板の傾き %.1f°、楕円の中心のずれ β = %.3f ± %.3f px/mm²(入射瞳は %.0f mm より遠い)、"
+              "樹脂の球の輪郭の半径 %.3f / %.3f mm(公称 2.5 mm)" % (why, r["px_per_mm"], r["vs_K1_pct"], r["rings"],
+                                                         r["tilt_deg"], r["beta_px_per_mm2"], r["beta_se"],
+                                                         r["pupil_min_mm"], *r["sphere_r_mm"]))
+        return None
+    import measure as ME
+    from scipy import ndimage
+    g = np.asarray(fs_read(paths["plate"]), float)
+    g = g / g.max()
+    rp = plate_ring_points(g)
+    cy, cx, hole = rp["cy"], rp["cx"], rp["hole"]
+    print("   中央の穴: 中心 (%.1f, %.1f) px、半径 %.1f px(metrology の円)" % (cy, cx, hole["radius"]))
+    from scipy.optimize import least_squares
+    rho_of = _rho_of
+    phi, q, s, ph, P, idx, ks = (rp[k] for k in ("phi", "q", "s", "ph", "P", "idx", "ks"))
 
     def fam_resid(x_, P_, i_):
         return rho_of(P_, x_[:2], x_[2], x_[3]) - x_[4:][i_]

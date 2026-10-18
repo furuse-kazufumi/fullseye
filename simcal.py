@@ -912,12 +912,23 @@ def _nelder_mead(P, u0, max_iter=400):
 # --------------------------------------------------------------------------- #
 # diagnostics at an end point                                                 #
 # --------------------------------------------------------------------------- #
-def _fmt_combo(e, nrm, knobs):
-    """A combination direction -> (text, natural weights).
+def _fmt_combo(e, nrm, knobs, determined=True):
+    """A combination -> (text, natural weights).
 
     ``e`` is an eigenvector for unit-normalised sensitivity columns (dimensionless, so its entries
-    say which knobs take part); the natural weight of knob j is ``e_j / nrm_j`` per ln(theta) for a
-    log knob and per theta for a linear one. Terms with |e_j| < 5 % of the largest are dropped.
+    say which knobs take part). The normalised coordinates are phi_j * nrm_j (phi = ln(theta) for a
+    log knob, theta for a linear one), so the two kinds of vector map back differently:
+
+    * ``determined=True`` — a **combination the data fix** is the linear functional e . (D phi)
+      = (D e) . phi, so the natural weight of knob j is ``e_j * nrm_j``;
+    * ``determined=False`` — an **undetermined direction** (a move of the knobs that leaves the
+      images unchanged) is the vector D^-1 e, so the weight is ``e_j / nrm_j``.
+
+    ★Until 2026-10-18 both used ``e_j / nrm_j``. With equal column norms (gain x illumination,
+    n x d of a thin film) the two agree, which is why the tests did not see it; with unequal norms
+    the determined combination came out rotated (the Siemens-star tiles of
+    ``examples/poc_simcal_pixel_shift.py``: 20-40 degrees off the tangent the closed form gives).
+    Terms with |e_j| < 5 % of the largest are dropped.
     All-log groups print as a product of powers (``n^1 * d^0.72``: the exponents are comparable),
     all-linear groups as a weighted sum, mixed groups as ``w*ln(name) + w*name``; weights are scaled
     so the term with the largest |e_j| has weight 1.
@@ -930,7 +941,7 @@ def _fmt_combo(e, nrm, knobs):
     ae = np.abs(e)
     mag = np.round(ae / ae.max(), 6) if ae.max() > 0 else ae
     lead = int(np.flatnonzero(mag == mag.max())[0])
-    w = e / nrm
+    w = e * nrm if determined else e / nrm
     w = w / w[lead]
     keep = [i for i in sorted(range(len(e)), key=lambda i: (-mag[i], i)) if mag[i] > 0.05]
     logs = [i for i in keep if knobs[i]["scale"] == "log"]
@@ -953,7 +964,11 @@ def _combo_value(v, knobs, theta):
     lg = [i for i, k in enumerate(knobs) if k["scale"] == "log" and v[i] != 0]
     ln = [i for i, k in enumerate(knobs) if k["scale"] != "log" and v[i] != 0]
     if lg:
-        out["product"] = float(math.exp(sum(v[i] * math.log(theta[knobs[i]["name"]]) for i in lg)))
+        # ★重みは自然な座標(e·|列|)なので、単位の違う項が混ざると指数が大きくなりうる(8 次の多項式の係数と利得:
+        #   2026-10-18 に exp が溢れた)。対数のまま ln_product も返し、積は溢れたら inf / 0 にする(落とさない)。
+        lp = float(sum(v[i] * math.log(theta[knobs[i]["name"]]) for i in lg))
+        out["ln_product"] = lp
+        out["product"] = math.exp(lp) if lp < 709.0 else math.inf
     if ln:
         out["sum"] = float(sum(v[i] * theta[knobs[i]["name"]] for i in ln))
     return out
@@ -998,7 +1013,8 @@ def _diagnose(P, u, sw, threshold):
             Sn = sub / np.where(nrm > 0, nrm, 1.0)
             lam, vec = np.linalg.eigh(Sn.T @ Sn)
             gk = [knobs[i] for i in idx]
-            # natural-coordinate weights: the eigenvector is for normalised columns -> divide by the column norm
+            # natural-coordinate weights: the eigenvector is for normalised columns -> a determined combination is
+            # (D e) . phi (multiply by the column norm; _fmt_combo)
             Fphi = sub.T @ sub
             for e in range(lam.size - 1, -1, -1):
                 if lam[e] >= 1.0 / threshold ** 2:
@@ -1008,7 +1024,8 @@ def _diagnose(P, u, sw, threshold):
                                    "weights": dict(zip([k["name"] for k in gk], wn.tolist())),
                                    "value": _combo_value(wn, gk, th), "std_linearised": math.sqrt(max(var, 0.0)),
                                    "gamma": float(grp["gamma"]) if math.isfinite(grp["gamma"]) else None})
-            und = [_fmt_combo(vec[:, e], nrm, gk)[0] for e in range(lam.size) if lam[e] < 1.0 / threshold ** 2]
+            und = [_fmt_combo(vec[:, e], nrm, gk, determined=False)[0] for e in range(lam.size)
+                   if lam[e] < 1.0 / threshold ** 2]
             for k in gk:
                 reasons.setdefault(k["name"], "confounded: %s cannot be told apart from %s (gamma = %s > %g); the data fix "
                                    "only %s; not determined: %s"

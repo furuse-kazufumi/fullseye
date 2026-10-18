@@ -10,7 +10,7 @@
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 20 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 21 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -723,6 +723,42 @@ py -3.11 examples/poc_pixel_shift.py
 この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pixel_shift)
 
 使用 op(ノートへ): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_pattern.html) · [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`drizzle_resample`](https://furuse.work/ops/astrostack/stack/drizzle_resample.html) · [`edge_spread`](https://furuse.work/ops/optics/imaging/edge_spread.html) · [`false_color_metric`](https://furuse.work/ops/optics/pixelshift/false_color_metric.html) · [`halftone_screen`](https://furuse.work/ops/printpath/npr/halftone_screen.html) · [`mtf50`](https://furuse.work/ops/optics/imaging/mtf50.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_motion_mask`](https://furuse.work/ops/optics/pixelshift/pixel_shift_motion_mask.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`raw_demosaic_bilinear`](https://furuse.work/ops/gfx2d/isp/raw_demosaic_bilinear.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sfr_from_edge`](https://furuse.work/ops/optics/imaging/sfr_from_edge.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`weave_normals`](https://furuse.work/ops/optics/surface/weave_normals.html)
+
+## No.2026.243 —— ピクセルシフトのずれと開口を実画像から合わせる ―― 縞しか写っていない所では、ずれは 1 方向にしか決まらない
+
+[![ピクセルシフトのずれと開口を実画像から合わせる ―― 縞しか写っていない所では、ずれは 1 方向にしか決まらない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png)
+
+*↑ **ピクセルシフトのずれと開口を実画像から合わせる ―― 縞しか写っていない所では、ずれは 1 方向にしか決まらない** ―― ピクセルシフト(撮像素子を 1 画素 / 半画素ずつ動かして撮る)の公称のずれ・開口率・レンズの Q を、撮れた画像から sim-to-real 較正(simcal)で合わせ、決まらない所では数を返さない。見せ場はシーメンススターを 8 画素の升に区切った「決まらない地図」: 星の腕の上の升ではずれは接線の向きにしか決まらず、Cramér-Rao の楕円は半径の向きに伸び、simcal の返す「決まる組」の向きは閉形式の接線と最大 2.5°。★この章が simcal の誤り(決まる組の重みを感度の列の大きさで割っていた。正しくは掛ける)を見つけ、直した(回帰の試験つき)。注入した ±0.1 px のずれは下界どおりに散って戻り(Fisher 距離の χ² の p = 0.62)、雑音を 1/4 に見誤ると同じ門が p = 3e-21 で落ちる。回ったフレームを平行移動だけで合わせると残差 PCA と絶対の門(χ² の上側確率)が拒否する。半画素シフトでは開口率と Q を合わせて解像の得 1.420 ± 0.005(閉形式 1.414)、Q = 2.5 はレンズ律速で得 1。行のアクチュエータが止まった 4 枚と、信号 60 DN の暗い 4 枚では得を返さない。実データ(PixelShift200、Qian ほか ICCP 2022、CC BY 4.0)では G どうしの斜めの組のずれを G の格子の升 16 個で合わせ、位相相関と升ごとに一致(t 検定 p = 0.22 / 0.30)、色をまたぐ組は χ²/自由度 31 で拒否。学習 0。*
+
+[![【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction.png)
+
+*↑ 測定の図 ―― 【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc の分類。縦縞では縞に沿った dr が画像を変えず「効かない」、斜めの縞では dr と dc が縞を横切る組(右上がりは dr + dc、右下がりは dr − dc)でしか決まらない —— 開口問題。*
+
+[![【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb.png)
+
+*↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
+
+[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+
+*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。*
+
+[![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| ×](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
+
+*↑ 【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。*
+
+[![【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles.png)
+
+*↑ 【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。*
+
+```
+py -3.11 examples/poc_simcal_pixel_shift.py
+```
+
+ソース: [examples/poc_simcal_pixel_shift.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_simcal_pixel_shift.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_pixel_shift)
+
+使用 op(ノートへ): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
