@@ -442,7 +442,7 @@ def test_report_and_refusals_for_coordinate_breaks():
     with pytest.raises(ValueError, match="cannot carry a glass"):
         L.lens_file_read(base.replace(cb, cb + "  GLAS ___BLANK 1 0 1.5 60 0 0 0 0 0 0\n"))
     with pytest.raises(ValueError, match="no curvature"):
-        L.lens_file_read(base.replace(cb, cb + "  CURV 0.01 0 0 0 0 \"\"\n"))
+        L.lens_file_read(base.replace("  PARM 6 0.0\n", "  PARM 6 0.0\n  CURV 0.01 0 0 0 0 \"\"\n", 1))
     with pytest.raises(ValueError, match="runs against the light"):
         L.lens_file_read(base.replace("DISZ 40\n", "DISZ -40\n", 1))
     with pytest.raises(ValueError, match="object-space NA"):
