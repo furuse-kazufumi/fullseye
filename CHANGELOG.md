@@ -74,6 +74,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 外部真値の門(`tests/test_semsim_mc.py`): η(Z, E) が Joy のデータベース(rev. 04-02)の実測の幅 ± 0.04 / η(θ) が Arnal の式 / 到達深さが Kanaya-Okayama(最大 0.75〜1.05 R_KO、指数 1.45〜1.85)/ δ の形と Emax が Lin & Joy 2005。壊して確かめる探針 3 本(遮蔽ラザフォード・阻止能半分・脱出深さ 10 倍)。
 - ★途中で見つけて直した欠陥: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていた(0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳ぶ)。境界で歩を切って新しい材料で引き直す(回帰の門つき)。
 - PoC `poc_virtual_sem_kv_cd_bse`(7 段、図 8 枚 + GIF): Si の上の W は段差が無く 1 kV のときだけ SE で消えて反射電子で浮く(SE +5 % / BSE +96 %)、CD-SEM の線幅は側壁 88 度で 1 kV 39.1 nm / 20 kV 39.9 nm(80 度では逆向き)、帯電は低加速で自己調整・高加速で溜まる。能力ノート `virtual-sem-monte-carlo`、op 要約 6 言語。
+### Added — 良品統計の変動モデル(誤検出率の宣言つき、5 op)と異常検知の評価指標(4 op)
+- `varmodel.py`(台帳 opsspc の新カテゴリ `variation`): `varmodel_alignment` / `varmodel_band_k` / `varmodel_fit` / `varmodel_calibrate` / `varmodel_score`。位置をそろえた良品群の画素ごとの中心とばらつきから許容帯を作り、帯の幅 k を**宣言した 1 画素あたりの誤検出率から**決める(std = t の予測区間、moderated = Smyth 2004 の経験ベイズ、mad = ピボットのモンテカルロ)。ずれた良品群は拒否(`align="check"`)、または Fourier シフトで合わせる(`align="translate"`)。構造の無い群は「測れない」と報告。帯の外は領域ごとに面積・符号・ピークの σ で説明する。
+- `anomeval.py`(新カテゴリ `anomaly_eval`): `anomaly_image_auroc` / `anomaly_pixel_auroc` / `anomaly_pro` / `anomaly_region_overlap`。方法に依存しない欠陥図の物差し(AUROC は Mann-Whitney の厳密値、PRO は全スコアで評価して FPR 0.3 まで積分)。
+- 門: 合成の良品で数えた誤検出率が宣言の二項 4σ の帯(4 種とも)、t の付表値、`phase_correlation_fft` との一致、Fourier シフトの真値と 0.03 px、ずれ・汚れ・裾の重い雑音の探針、AUROC の閉形式と sklearn、PRO の手計算と別経路。
+- PoC `poc_good_sample_variation_model`: 公開実データ VisA pcb1(CC BY 4.0)で、合わせた帯は画素 AUROC 0.808・AUPRO 0.678(合わせない帯 0.705・0.460、ゴールデン比較 0.826・0.519、RPCA 0.566・0.607)。宣言 1e-3 の誤検出率は実画像で 3.8 %、持ち出しの較正で 2.4 % —— 正直に印字。DAGM 2007(CC BY 4.0)の確率的なテクスチャは偶然並み(向かない題材として)。能力ノート `good-sample-variation-model`。
+
 ### Fixed — `residue_crt` の錨を Wang–Xia 2010 どおりに選び、保証の外では黙らない + PoC の所要時間の門を CPU 時間に
 - `residue.residue_crt`: 錨は常に最も長い周期の剰余だった(位相雑音が帯ごとに同じだと、距離の単位で最も雑音の大きい剰余)。Wang & Xia(IEEE TSP 58(11), 2010)の IV-A 節どおり、分散 p²/w が最小の帯、同分散なら剰余 mod Γ が円上の最小二乗の共通剰余(式 (55))に最も近い帯(式 (58))を錨にする。重み 0 の帯は錨にしない。剰余 mod Γ が Γ/2 より短い弧に収まらない標本は保証の外として `on_outside`(`"warn"` 既定 = `ResidueBoundWarning` / `"raise"` / `"nan"` / `"flag"`)で扱い、返り値に `gamma` / `error_bound` / `phase_bound_rad` / `reference` / `within_bound` を足した。
 - 数字(同じ生信号): iToF の合成 16/80/120 MHz で次数の誤り 0.5563 → 0.1161(最尤 0.1160)、実データ 10 枚平均 0.293 → 0.131(最尤 0.131)。`poc_residue_crt` の RRNS で犯人を当てた割合 88.5 → 88.9 %。門 `tests/test_residue_crt_reference_2026_10_15.py`(修正を戻すと 13 本とも赤)。

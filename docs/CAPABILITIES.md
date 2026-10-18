@@ -470,6 +470,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `fix_text_in_image`, `poc_glyph_typo_detection`
 
+### [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md)
+
+位置をそろえた良品の画像を何枚か渡すと、画素ごとの「いつもの値」(中心)と「いつものばらつき」を覚え、新しい 1 枚のどの画素が許容帯の外にあるか、何 σ 外れたかを領域ごとに説明します。外観検査の古典(良品統計・バリエーションモデル)ですが、帯の幅 k を手で決めずに、**1 画素あたりの誤検出率を宣言して**分布から決めます。
+
+使う op: `varmodel_alignment`, `varmodel_band_k`, `varmodel_fit`, `varmodel_calibrate`, `varmodel_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_region_overlap`, `compare_to_golden`
+
+推奨パイプライン: [`varmodel_alignment`](ops/spc/variation/varmodel_alignment.md) → [`varmodel_fit`](ops/spc/variation/varmodel_fit.md) → [`varmodel_calibrate`](ops/spc/variation/varmodel_calibrate.md) → [`varmodel_score`](ops/spc/variation/varmodel_score.md)
+
+代替: `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md), [`anomaly_pro`](ops/spc/anomaly_eval/anomaly_pro.md)
+
+限界: 並進だけを合わせる。回転・拡大・照明の違いが残る実画像では宣言の誤検出率は守られない(VisA pcb1 で宣言 1e-3 に対し 3.8 %、持ち出しの較正後も 2.4 %)。確率的なテクスチャには効かない(DAGM 2007 で偶然並み)。
+
+実寸校正: 帯は画素値の単位のまま。欠陥の大きさを実寸で言うなら、既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
+
+動く例: `poc_good_sample_variation_model`, `anomaly_eval_metrics`
+
 ### [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md)
 
 認識器(外部の OCR / 1-D・2-D コードのデコーダ)に渡す前の、**傾き補正 → 局所 2 値化 → ゴミ取り → 行のまとめ**を 2-D レジストリ op だけで組みます。認識そのものはこのライブラリの持ち場ではありません。

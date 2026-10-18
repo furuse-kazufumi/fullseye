@@ -4645,6 +4645,87 @@ def _b_pod_decision_tradeoff(pool, rng):
     return (fit, rng.normal(-1.0, 0.5, 60)), {}
 
 
+def _anom_maps(rng, n=4, h=32, w=32):
+    """異常スコアの図と欠陥マスク(anomeval の種)。欠陥は 2 つの矩形、スコアは欠陥で高めの連続値。
+
+    ★プールの任意の video は 2 値でなく、マスクとして渡すと op が拒む。欠陥と良品の両方が
+    必ず在り(AUROC が定義される)、スコアが欠陥で部分的にしか高くない(PRO の曲線と
+    閾値つきの重なりが中間の値を取り、つまみの探針が効く)ように組む。
+    """
+    masks = np.zeros((n, h, w), dtype=bool)
+    masks[0, 4:10, 4:12] = True
+    masks[1, 20:24, 18:30] = True
+    scores = rng.random((n, h, w)) + 0.8 * masks * rng.random((n, h, w))
+    return scores, masks
+
+
+def _b_anomaly_image_auroc(pool, rng):
+    y = np.r_[np.zeros(12), np.ones(8)].astype(bool)
+    return (rng.random(20) + 0.5 * y, y), {}
+
+
+def _b_anomaly_pixel_auroc(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_pro(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_region_overlap(pool, rng):
+    """予測は欠陥の一部だけを覆う(重なり 0.3 と 0.8)— min_overlap を半分・倍にすると判定が動く。"""
+    scores, masks = _anom_maps(rng)
+    pred = np.zeros_like(masks)
+    pred[0, 4:10, 4:7] = True          # 1 つめの欠陥の 3/8 ≈ 0.375
+    pred[1, 20:24, 18:28] = True       # 2 つめの欠陥の 10/12 ≈ 0.83
+    pred[2, 0:3, 0:3] = True           # 誤検出
+    return (pred, masks), {}
+
+
+def _vm_stack(rng, n=8, side=48):
+    """良品の積み重ね(varmodel の種): 縁のある模様 + 雑音、位置は揃っている。
+
+    ★プールの任意の video は動くクリップで、良品群として渡すと位置合わせの確認で拒否される
+    (探針が「拒否された」としか言えない)。揃った群を組んで当てはめを実際に走らせる。
+    """
+    yy, xx = np.mgrid[0:side, 0:side]
+    base = 0.5 + 0.3 * np.sin(xx / 3.0) * np.cos(yy / 4.0)
+    return base, base + 0.02 * rng.standard_normal((n, side, side))
+
+
+def _b_varmodel_alignment(pool, rng):
+    return (_vm_stack(rng)[1],), {}
+
+
+def _b_varmodel_band_k(pool, rng):
+    return (), {"n": 12, "far": 1e-2}
+
+
+def _b_varmodel_fit(pool, rng):
+    return (_vm_stack(rng)[1],), {"spread": "std", "far": 1e-2}
+
+
+def _b_varmodel_calibrate(pool, rng):
+    import varmodel as _vm
+    base, st = _vm_stack(rng, n=8)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    return (m, base + 0.02 * rng.standard_normal((12,) + base.shape)), {}
+
+
+def _b_varmodel_score(pool, rng):
+    """欠陥(+0.2 = 雑音の 10 倍、3×3)を 1 つ描いた試験の 1 枚。
+
+    ★16 px 四方・+0.3 の欠陥を 32 px の像に描くと、位相相関が欠陥に引かれて 0.85 px の「ずれ」になり、
+    ``align="check"`` が拒否した(実測 2026-10-18)。欠陥が像に対して大きすぎると位置合わせも汚れる。
+    """
+    import varmodel as _vm
+    base, st = _vm_stack(rng)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    img = base + 0.02 * rng.standard_normal(base.shape)
+    img[20:23, 24:27] += 0.2
+    return (img, m), {}
+
+
 def _b_coherent_image(pool, rng):
     """振幅(>= 0)と位相(rad)の 2 枚。プールの任意の 2 枚では振幅が負になりうる。"""
     return (rng.random((32, 32)), rng.uniform(0.0, 2.0 * np.pi, (32, 32))), {"cutoff": 0.2}
@@ -6662,6 +6743,15 @@ OP_ARG_BUILDERS = {
     "pod_hitmiss_fit": _b_pod_hitmiss_fit,
     "pod_false_call": _b_pod_false_call,
     "pod_decision_tradeoff": _b_pod_decision_tradeoff,
+    "anomaly_image_auroc": _b_anomaly_image_auroc,
+    "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
+    "anomaly_pro": _b_anomaly_pro,
+    "anomaly_region_overlap": _b_anomaly_region_overlap,
+    "varmodel_alignment": _b_varmodel_alignment,
+    "varmodel_band_k": _b_varmodel_band_k,
+    "varmodel_fit": _b_varmodel_fit,
+    "varmodel_calibrate": _b_varmodel_calibrate,
+    "varmodel_score": _b_varmodel_score,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,

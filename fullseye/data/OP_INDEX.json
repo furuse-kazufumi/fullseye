@@ -1380,6 +1380,62 @@
    ]
   },
   {
+   "name": "anomaly_image_auroc",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_pixel_auroc",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_pro",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_region_overlap",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
    "name": "anscombe_inverse",
    "halcon": "",
    "in_sort": "image2d",
@@ -29965,6 +30021,71 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "varmodel_alignment",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_band_k",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
+  },
+  {
+   "name": "varmodel_calibrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {

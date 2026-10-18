@@ -6368,6 +6368,22 @@
     "hi": "रोशनी और ओट में code matching",
     "fr": "Appariement de codes sous lumière variable et occlusion"
    }
+  },
+  {
+   "id": "poc_good_sample_variation_model",
+   "group": "wing_industrial",
+   "media": "01_band_width_alignment.png",
+   "motion": false,
+   "thumb_src": "01_band_width_alignment.png",
+   "label": {
+    "ja": "良品統計の変動モデル",
+    "en": "Good-sample variation model",
+    "zh": "良品统计变动模型",
+    "tw": "良品統計變動模型",
+    "ko": "양품 통계 변동 모델",
+    "de": "Variationsmodell aus Gutteilen",
+    "hi": "अच्छे samples का variation model"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

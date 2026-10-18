@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">varmodel_band_k — SPC <code style="color:#22d3bf">variation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.varmodel_band_k(n=20, far=0.001, spread=&#x27;std&#x27;, df_prior=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import varmodel; varmodel.varmodel_band_k(n=20, far=0.001, spread=&#x27;std&#x27;, df_prior=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;varmodel_band_k&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>선언한 픽셀당 양측 오검출률에 대한 허용 대역의 반폭 <code style="color:#22d3bf">k</code> (산포 단위, <code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>A new good pixel <code style="color:#22d3bf">x</code> is flagged when <code style="color:#22d3bf">|x - center| &gt; k * spread</code>. Under per-pixel independent normal good samples:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">std</code>: <code style="color:#22d3bf">(x - mean)/(s * sqrt(1+1/n)) ~ t_{n-1}</code> so <code style="color:#22d3bf">k = t_{n-1}^-1(1 - far/2) * sqrt(1+1/n)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pooled</code>: one variance pooled over many pixels (degrees of freedom <code style="color:#22d3bf">df_prior</code>; <code style="color:#22d3bf">None</code> = infinite) → normal quantile.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moderated</code>: empirical-Bayes shrunk variance with <code style="color:#22d3bf">df_prior</code> = d0 prior degrees of freedom (Smyth 2004) → <code style="color:#22d3bf">t_{n-1+d0}</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mad</code>: median / MAD centre and spread → no closed form, but the ratio is a pivot, so k is a Monte-Carlo quantile that depends on (n, far) only (fixed seed; <code style="color:#22d3bf">mc_far_rel_se</code> is the relative standard error of the achieved rate). Needs <code style="color:#22d3bf">n &gt;= 5</code> and <code style="color:#22d3bf">far &gt;= 1e-3</code>.</p>
+<p>The threshold comes from the distribution, never from test defects. Returns <code style="color:#22d3bf">k</code>, <code style="color:#22d3bf">df</code> (0 for <code style="color:#22d3bf">mad</code>: no t quantile is involved), <code style="color:#22d3bf">far</code>, <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">spread</code>, <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">mc_far_rel_se</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for <code style="color:#22d3bf">n &lt; 2</code> (<code style="color:#22d3bf">mad</code>: <code style="color:#22d3bf">n &lt; 5</code>), <code style="color:#22d3bf">far</code> outside [1e-9, 0.5), an unknown <code style="color:#22d3bf">spread</code> or a non-positive <code style="color:#22d3bf">df_prior</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">variation</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:varmodel_alignment">varmodel_alignment</a> · <a style="color:#22d3bf" href="opspc:varmodel_fit">varmodel_fit</a> · <a style="color:#22d3bf" href="opspc:varmodel_calibrate">varmodel_calibrate</a> · <a style="color:#22d3bf" href="opspc:varmodel_score">varmodel_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: varmodel.py — SPC 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
