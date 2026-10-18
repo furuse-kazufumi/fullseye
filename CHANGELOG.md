@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — 存在しない短い名前の当て推量に本名を案内する
+- `fullseye.Engine` / `Graph` / `op_info` などは(別名は足さず)AttributeError の文面で `FullseyeEngine` / `FullseyeGraph` / `op_assist`・`op_find`・`find_op` を案内する。`hasattr` は False のまま、表に無い名前は標準の AttributeError。
+
 ### Added — エネルギー弁別 X 線による材質の判別(materials の X 線の列 + dualxray 10 op + PoC)
 - `materials` に **X 線の列**: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z`。質量減衰係数 μ/ρ(E) を光学の列と同じ名前で引く。数値は NIST SRD 126(Hubbell & Seltzer)の部分集合(元素 49 種・化合物 21 種・1 keV〜1 MeV、出典と著作権の表示つき、生成物 `materials_xray_data.py` = `tools/gen_xray_tables.py --nist <保存したページ>`)。組成の分かる材料と化学式は混合則(組成のレコードは仮想 SEM の `ELECTRON_SOLID` と同じ形 `{"formula": …, "density_g_cm3": …}` で、同じ名前があればそちらを使う)。組成の公表されていない硝材は拒否。
 - `dualxray`(`opstomography` の新カテゴリ `spectral_xray`、10 op): `xray_tube_spectrum`(Kramers の厚い陽極 + Kanaya–Okayama の深さ + 自己吸収 + W の K 線 + フィルタ)/ `xray_beam_quality`(空気カーマの半価層)/ `photon_counting_channels`(吸収効率・エネルギー分解能・電荷共有)/ `dual_kvp_channels` / `xray_channel_projection`(`photoncount.photon_sample` で Poisson)/ `basis_material_decompose`(多色の Gauss–Newton、解けない画素は NaN で数える)/ `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability`(d′ と Φ(−d′/2) の閉形式)。

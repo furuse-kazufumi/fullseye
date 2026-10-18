@@ -1249,6 +1249,33 @@ __all__ += [
     "wet_surface_color",
 ]
 
+# 名前の当て推量への案内(外部 AI レビュー N223): `fullseye.Engine` / `fullseye.Graph` / `fullseye.op_info` は
+#   存在したことがない(公開名は FullseyeEngine / FullseyeGraph、op の情報は op_assist / op_find)。
+#   別名(alias)は足さない —— 同じものに名前が 2 つ出来るので。代わりに AttributeError の文面で本名を案内する。
+#   hasattr は False のまま、表に無い名前は標準の AttributeError。
+_NAME_HINTS = {
+    "Engine": ("FullseyeEngine", "dict-step engine: a list of (op, a, b) stages"),
+    "Graph": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "DAG": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "op_info": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "op_help": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "describe_op": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "get_op": ("find_op", "look an operator up by name; CLI: fullseye has <name>"),
+    "search_ops": ("op_find", "search operators by words"),
+    "list_operators": ("list_ops / op_names", "list operators"),
+}
+
+
+def __getattr__(name):
+    """Module-level hook: only reached when ``name`` is NOT a real attribute."""
+    hint = _NAME_HINTS.get(name)
+    if hint is not None:
+        real, what = hint
+        raise AttributeError(
+            "module 'fullseye' has no attribute '%s'; did you mean '%s'? (%s)" % (name, real, what))
+    raise AttributeError("module 'fullseye' has no attribute '%s'" % name)
+
+
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った
 #   道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 del os, sys, warnings, annotations
