@@ -1,0 +1,12 @@
+[
+ {
+  "file": "01_zoom_configurations.png",
+  "name": "zoom_configurations",
+  "caption": "間隔の差分だけを構成に持ち、後端は構成ごとに合わせ直す。スポットは構成ごとの 10° 視野で広がる。",
+  "shape": [
+   360,
+   752,
+   3
+  ]
+ }
+]

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3424,
- "n_notes": 3430,
+ "n_ops": 3429,
+ "n_notes": 3435,
  "notes": {
   "vol_dilate": [
    {
@@ -28265,6 +28265,56 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/itof/itof_wiggling_correct.md"
+   }
+  ],
+  "lens_add_configuration": [
+   {
+    "op": "lens_add_configuration",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_add_configuration.md"
+   }
+  ],
+  "lens_configuration_metrics": [
+   {
+    "op": "lens_configuration_metrics",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configuration_metrics.md"
+   }
+  ],
+  "lens_configuration_table": [
+   {
+    "op": "lens_configuration_table",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configuration_table.md"
+   }
+  ],
+  "lens_configurations": [
+   {
+    "op": "lens_configurations",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configurations.md"
+   }
+  ],
+  "lens_with_configuration": [
+   {
+    "op": "lens_with_configuration",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_with_configuration.md"
    }
   ],
   "lens_file_read": [
