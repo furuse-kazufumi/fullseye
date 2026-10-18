@@ -388,6 +388,10 @@ _CATALOG = {
         ("ray_bundle", "raytrace", ["table"], "table"),
         ("opd_samples", "raytrace", ["table"], "table"),
         ("with_wavelength", "raytrace", ["table"], "table"),
+        # 2026-10-19 追加(光線の照準とケラレ係数): 実光線で絞りの点へ狙う / 狙いの検査表 / 開口から係数を求める
+        ("with_aiming", "raytrace", ["table"], "table"),
+        ("ray_aiming", "raytrace", ["table"], "table"),
+        ("set_vignetting", "raytrace", ["table"], "table"),
     ],
     # optimization(lensopt、2026-09-03 追加): 処方を**変える**側。減衰最小二乗
     # (Levenberg–Marquardt)で曲率/間隔/円錐/非球面係数を動かし、多視野・多波長の

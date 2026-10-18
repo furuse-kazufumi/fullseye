@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # spot_stats — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)`、台帳から引くなら `opsoptics.get("spot_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_stats")`)
 
 ## 使い方
 
@@ -24,6 +24,8 @@ with the stop on a surface, the outermost rays sit exactly on the aperture
 edge and any perturbation (tilt, decenter) vignettes half of them, which
 makes the RMS *drop* — :func:`tolerance_analysis` uses 0.99 for that reason.
 ``n_vignetted`` reports how many rays were lost either way.
+*aim* / *vignetting*: see :func:`ray_bundle` — with ``aim="stop"`` and the field's vignetting
+factors this is the spot a lens-design program reports (no marginal rays lost to pupil aberration).
 
 ## ファミリ共通の入力契約(fail-closed)
 

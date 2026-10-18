@@ -30860,6 +30860,33 @@
    "ko": "상면 위치를 움직였을 때 지정한 공간 주파수의 자오·구결 MTF(``table``).",
    "de": "Tangentiale und sagittale MTF bei gewählten Ortsfrequenzen über einen Bereich von Bildebenenlagen (``table``).",
    "hi": "image plane की स्थिति बदलने पर चुनी गई spatial frequencies पर tangential और sagittal MTF (``table``)।"
+  },
+  "optics/with_aiming": {
+   "fp": "d8e9f4842c09",
+   "ja": "光線の照準モードやケラレ係数を設定した *system* の複製(``table``)。",
+   "zh": "返回设置了光线瞄准模式和/或渐晕系数的 *system* 副本(``table``)。",
+   "tw": "回傳設定了光線瞄準模式和/或漸暈係數的 *system* 副本(``table``)。",
+   "ko": "광선 조준 모드나 비네팅 계수를 설정한 *system*의 복사본(``table``).",
+   "de": "Kopie von *system* mit gesetztem Strahlzielmodus und/oder Vignettierungsfaktoren (``table``).",
+   "hi": "ray-aiming mode और/या vignetting factors सेट किए हुए *system* की प्रति (``table``)।"
+  },
+  "optics/ray_aiming": {
+   "fp": "84db7dc34bc0",
+   "ja": "1 つの視野で瞳の光線がどれだけ絞りに届くか: 本数・残差・瞳の広がり(``table``)。",
+   "zh": "单个视场下瞳面光线到达光阑的情况:光线数、残差与光瞳范围(``table``)。",
+   "tw": "單一視場下瞳面光線到達光闌的情況:光線數、殘差與光瞳範圍(``table``)。",
+   "ko": "한 시야에서 동공 광선이 조리개에 얼마나 도달하는가: 광선 수, 잔차, 동공 범위(``table``).",
+   "de": "Wie gut die Pupillenstrahlen bei einem Feldpunkt die Blende erreichen: Anzahl, Restfehler und Pupillenausdehnung (``table``).",
+   "hi": "एक field पर pupil rays stop तक कितनी अच्छी तरह पहुँचती हैं: गिनती, residual और pupil का विस्तार (``table``)।"
+  },
+  "optics/set_vignetting": {
+   "fp": "1e0cf34a5809",
+   "ja": "「set vignetting」と同じく、開口に切られる光線をなくすケラレ係数を求める(``table``)。",
+   "zh": "与“set vignetting”相同,求出消除所有被口径截断光线的渐晕系数(``table``)。",
+   "tw": "與「set vignetting」相同,求出消除所有被口徑截斷光線的漸暈係數(``table``)。",
+   "ko": "\"set vignetting\"처럼 개구에 잘리는 광선을 없애는 비네팅 계수를 계산한다(``table``).",
+   "de": "Berechnet wie „Set Vignetting“ die Vignettierungsfaktoren, die jeden von einer Apertur beschnittenen Strahl beseitigen (``table``).",
+   "hi": "\"set vignetting\" की तरह, aperture से कटने वाली हर ray को हटाने वाले vignetting factors निकालता है (``table``)।"
   }
  }
 }

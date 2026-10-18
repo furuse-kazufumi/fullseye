@@ -23,6 +23,8 @@ Returns ``{"image_x", "image_y"}`` (mm on the image plane), ``"valid"``,
 the full ``points`` (n_surf+2, 3) / ``dirs`` polylines and ``"opl"``.
 Fields are along +y (degrees for a distant object, mm otherwise), as
 everywhere in this module; ``lensimage.distortion_map`` uses this.
+The chief ray is always the **unvignetted** one (pupil centre) and goes through the stop centre
+whatever the system's ``aim`` is.
 
 ## ファミリ共通の入力契約(fail-closed)
 

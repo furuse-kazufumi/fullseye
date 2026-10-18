@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>追跡某一視場的主光線(穿過光闌中心)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Returns <code style="color:#22d3bf">{&quot;image_x&quot;, &quot;image_y&quot;}</code> (mm on the image plane), <code style="color:#22d3bf">&quot;valid&quot;</code>, the full <code style="color:#22d3bf">points</code> (n_surf+2, 3) / <code style="color:#22d3bf">dirs</code> polylines and <code style="color:#22d3bf">&quot;opl&quot;</code>. Fields are along +y (degrees for a distant object, mm otherwise), as everywhere in this module; <code style="color:#22d3bf">lensimage.distortion_map</code> uses this.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;image_x&quot;, &quot;image_y&quot;}</code> (mm on the image plane), <code style="color:#22d3bf">&quot;valid&quot;</code>, the full <code style="color:#22d3bf">points</code> (n_surf+2, 3) / <code style="color:#22d3bf">dirs</code> polylines and <code style="color:#22d3bf">&quot;opl&quot;</code>. Fields are along +y (degrees for a distant object, mm otherwise), as everywhere in this module; <code style="color:#22d3bf">lensimage.distortion_map</code> uses this. The chief ray is always the <b>unvignetted</b> one (pupil centre) and goes through the stop centre whatever the system&#x27;s <code style="color:#22d3bf">aim</code> is.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

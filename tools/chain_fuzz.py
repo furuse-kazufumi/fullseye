@@ -8026,6 +8026,8 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       "noncoaxial_system", "noncoaxial_example", "noncoaxial_layout",
                                       "noncoaxial_drawing", "ghost_analysis", "ghost_path", "opd_samples",
                                       "with_wavelength",
+                                      # ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+                                      "with_aiming", "set_vignetting",
                                       # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
                                       #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
                                       "lens_file_read", "lens_file_system"}

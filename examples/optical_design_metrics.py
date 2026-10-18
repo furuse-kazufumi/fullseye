@@ -11,10 +11,14 @@
 (3) ``mtf_tangential_sagittal``: 同じ PSF の子午/球欠 MTF は回折限界の閉形式と一致し、軸上では 2 本が重なる。
     絞った単レンズを 8 度の視野で見ると非点収差で 2 本が割れる。
 (4) ``through_focus_mtf``: 像面を動かしたときの MTF(Hopkins の閉形式と照合)。
+(5) ``with_aiming`` / ``ray_aiming`` / ``set_vignetting``: 実光線の照準とケラレ係数。三枚玉の軸上では近軸の入射瞳へ打つと瞳の縁
+    217 本中 48 本が絞りで失われるが、絞りの点へ狙えば 0 本になる。ケラレ係数 VCY=0.3 は瞳の高さを 0.7 倍にし、
+    ``set_vignetting`` は開口から係数を求める。
 
 【真値】
 理想レンズの焦点誤差(1e-12 mm 級)、結像公式 s' = f s/(s-f) と m = -s'/s、Airy の囲みエネルギー 83.8 %、
-円形瞳の MTF の閉形式 (2/π)(arccos x − x √(1−x²))。
+円形瞳の MTF の閉形式 (2/π)(arccos x − x √(1−x²))、絞り上の光線の位置(狙った点との差 1e-11 以内)、
+ケラレ係数 1−VCY の瞳の高さ(0.7)。
 """
 from __future__ import annotations
 
@@ -25,6 +29,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import lensfile as LF  # noqa: E402
 import lensimage as LI  # noqa: E402
 import optics as O  # noqa: E402
 import raytrace as RT  # noqa: E402
@@ -87,6 +92,35 @@ def main():
             assert np.max(np.abs(r["tangential"] - r["sagittal"])) < 1e-6        # 回転対称: 2 本が重なる
         else:
             assert np.max(np.abs(r["tangential"] - r["sagittal"])) > 0.05        # 非点収差で割れる
+
+    # (5) 実光線の照準とケラレ係数(同梱の三枚玉。f ≈ 50 mm、f/5、視野 0 / 14 / 20 度)
+    triplet = LF.lens_file_read(None)["system"]
+    aimed = RT.with_aiming(triplet, "stop")                              # 以後の解析は光線を絞りの点へ狙う
+    for fld in (0.0, 14.0, 20.0):
+        old = RT.ray_aiming(triplet, field=fld, aim="paraxial")
+        new = RT.ray_aiming(aimed, field=fld)
+        so, sn = RT.spot_stats(triplet, field=fld), RT.spot_stats(aimed, field=fld)
+        print("三枚玉 視野 %4.1f 度: 近軸の照準 %d/%d 本を絞りで失い RMS %.2f um → 実光線の照準 %d 本失い RMS %.2f um(狙いの残差 %.1e)"
+              % (fld, old["n_lost"], old["n_rays"], 1e3 * so["rms_radius"], new["n_lost"], 1e3 * sn["rms_radius"],
+                 new["max_residual"]))
+        assert new["n_lost"] == 0 and new["max_residual"] < 1e-11
+    assert RT.ray_aiming(triplet, field=0.0, aim="paraxial")["n_lost"] == 48
+    cut = RT.ray_aiming(aimed, field=14.0, vignetting={"vcy": 0.3})
+    ext = cut["stop_y"][1] - cut["stop_y"][0]
+    print("ケラレ係数 VCY=0.3: 絞り上の瞳の高さは %.6f 倍(1 − VCY = 0.7)" % (ext / 2.0))
+    assert abs(ext / 2.0 - 0.7) < 1e-9
+    surf = [dict(s) for s in triplet["surfaces"]]
+    for i, a in {0: 8.5, 1: 8.0, 2: 4.0, 4: 6.4, 5: 6.8}.items():       # 周辺の視野で光線を切るレンズ口径
+        surf[i]["ap"] = a
+    clipped = RT.lens_system(surf, stop=triplet["stop"], object_mm=triplet["object_mm"],
+                             wavelength_um=triplet["wavelength_um"], image_mm=triplet["image_mm"])
+    vig = RT.set_vignetting(clipped, fields=[0.0, 14.0, 20.0], mode="grid")
+    four = RT.set_vignetting(clipped, fields=[0.0, 14.0, 20.0], mode="four")
+    for r4, r in zip(four["vignetting"], vig["vignetting"]):
+        print("  視野 %4.1f 度: 4 本の周辺光線 VDY=%+.4f VCX=%.4f VCY=%.4f / 格子 VDY=%+.4f VCX=%.4f VCY=%.4f"
+              % (r["field"], r4["vdy"], r4["vcx"], r4["vcy"], r["vdy"], r["vcx"], r["vcy"]))
+        assert RT.ray_aiming(vig, field=r["field"])["n_lost"] == 0
+        assert r["vcy"] >= r4["vcy"] - 1e-12            # 格子の方が厳しい
     print("PASS")
 
 

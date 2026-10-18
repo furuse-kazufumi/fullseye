@@ -250,8 +250,8 @@ def chapter_probes():
             gate("%s は拒否される" % label, key in str(e), str(e)[:110] + "…")
     # lens_file_report: 読み込まずに分類する(古いファイルの束の仕分け)。例外を出さずに理由を返す。
     r = LF.lens_file_report(cases[0][1])
-    vig = LF.lens_file_report(t.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n"))
-    print("   lens_file_report: 曲率つきの座標変換面 → 読める %s / 近似なら %s、面の種類 %s;ケラレ係数つき → 読める %s / 近似なら %s" % (
+    vig = LF.lens_file_report(t.replace("ENVD 20 1 0", "ENVD 40 1 0"))
+    print("   lens_file_report: 曲率つきの座標変換面 → 読める %s / 近似なら %s、面の種類 %s;温度 40 度(ENVD)つき → 読める %s / 近似なら %s" % (
         r["importable"], r["needs_allow_partial"], r["surface_types"], vig["importable"], vig["needs_allow_partial"]))
     gate("lens_file_report は拒否の理由を例外でなく返し、近似で読めるものを分ける",
          r["importable"] is False and r["needs_allow_partial"] is False and "COORDBRK" in (r["error"] or "")

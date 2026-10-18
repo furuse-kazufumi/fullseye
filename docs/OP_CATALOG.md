@@ -750,9 +750,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3427 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3430 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 363 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 31 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 366 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 31 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(956 ops / 49 categories)
 
@@ -2467,7 +2467,7 @@ _計 3427 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(363 ops / 40 categories)
+### optics(366 ops / 40 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2503,7 +2503,7 @@ _計 3427 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `chromatic_confocal_spectrum` `table → pairs` — 面の位置と層構成から、クロマティック共焦点の戻りスペクトルを合成する(順モデル)。 · 例: `poc_chromatic_confocal`, `poc_spectrometer_illumination`
 - `confocal_axial_response` `入力なし → pairs` — 共焦点顕微鏡の軸方向の応答 I(z)(焦点からのずれ z [µm] に対する検出強度)を pairs で返す。 · 例: `poc_chromatic_confocal`
 
-#### optics / design(19)
+#### optics / design(22)
 - `chief_ray` `table → table` — Trace the chief ray (through the stop centre) at one field (``table``). · 例: `lens_optimize_demo`, `poc_optics_drawings`, `poc_telecentric_metrology`
 - `chromatic_shift` `table → table` — Focal shift, image-height shift and spot size versus wavelength (``table``). · 例: `lens_optimize_demo`, `poc_material_optical_library`
 - `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
@@ -2513,15 +2513,18 @@ _計 3427 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
 - `opd_samples` `table → table` — OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``. · 例: `poc_noncoaxial_optics`
 - `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_tdi_linescan`, `poc_telecentric_metrology`
+- `ray_aiming` `table → table` — How well the pupil rays reach the stop at one field: counts, residual and pupil extent (``table``). · 例: `optical_design_metrics`
 - `ray_bundle` `table → table` — Trace a pupil-filling bundle at one field; returns the raw trace plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised coordinates and ``opl0`` (start-of-ray optical path offsets). · 例: `poc_lens_file_roundtrip`, `poc_noncoaxial_optics`
 - `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
 - `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`, `poc_lens_file_roundtrip`
 - `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
+- `set_vignetting` `table → table` — Compute the vignetting factors that remove every aperture-clipped ray, as "set vignetting" does (``table``). · 例: `optical_design_metrics`
 - `spot_diagram` `table → pairs` — Transverse ray intersections on the image plane for one field point. · 例: `lens_design_demo`, `poc_lens_file_roundtrip`
 - `spot_stats` `table → table` — RMS / geometric spot radius (mm) and centroid for one field point (``table``). · 例: `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`
 - `thick_lens` `入力なし → table` — Closed-form thick lens in air: EFL, back/front focal lengths, principal points. · 例: `lens_design_demo`, `poc_material_optical_library`
 - `tolerance_analysis` `table → table` — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``). · 例: `lens_design_demo`, `poc_optics_drawings`
 - `wavefront_from_opd` `table → table` — OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``). · 例: `lens_design_demo`
+- `with_aiming` `table → table` — Copy of *system* with a ray-aiming mode and/or vignetting factors set (``table``). · 例: `optical_design_metrics`
 - `with_wavelength` `table → table` — The same prescription evaluated at another wavelength (indices re-resolved; default the F line). · 例: `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_material_optical_library`
 
 #### optics / drawing(9)
@@ -2635,7 +2638,7 @@ _計 3427 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `itof_wiggling_correct` `table → table` — 高調波による周期誤差(wiggling)を補正した位相と距離。``table`` を返す。 · 例: `poc_itof_multifreq`
 
 #### optics / lensfile(4)
-- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `poc_lens_file_roundtrip`
+- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `optical_design_metrics`, `poc_lens_file_roundtrip`
 - `lens_file_report` `入力なし → table` — ``.zmx`` を読み込まずに分類する —— 何を読み / 無視し / 拒否するか(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_system` `table → table` — 読み込んだ処方を、視野 1 つ・波長 1 つの ``raytrace.lens_system`` にする(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_write` `table → table` — 処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。 · 例: `poc_lens_file_roundtrip`

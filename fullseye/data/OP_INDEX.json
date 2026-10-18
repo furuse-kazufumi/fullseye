@@ -1,8 +1,8 @@
 {
- "n_ops": 3421,
+ "n_ops": 3424,
  "tiers": {
   "color": 12,
-  "ledger": 2465,
+  "ledger": 2468,
   "nary": 17,
   "registry": 927
  },
@@ -22511,6 +22511,19 @@
    ]
   },
   {
+   "name": "ray_aiming",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ray_box_ranges",
    "halcon": "",
    "in_sort": "points",
@@ -25187,6 +25200,19 @@
    "dim": "segmentation",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "set_vignetting",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -32179,6 +32205,19 @@
    "in_sorts": [
     "image2d",
     "scalar"
+   ]
+  },
+  {
+   "name": "with_aiming",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {

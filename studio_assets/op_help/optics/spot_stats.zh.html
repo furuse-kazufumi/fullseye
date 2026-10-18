@@ -1,12 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spot_stats — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)</code>(要直接调用实现,<code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>某个视场点的 RMS / 几何光斑半径(mm)与重心(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*pupil_fill* &lt; 1 samples the pupil only up to that fraction of its radius:</p>
-<p>with the stop on a surface, the outermost rays sit exactly on the aperture edge and any perturbation (tilt, decenter) vignettes half of them, which makes the RMS *drop* — <code style="color:#22d3bf">tolerance_analysis</code> uses 0.99 for that reason. <code style="color:#22d3bf">n_vignetted</code> reports how many rays were lost either way.</p>
+<p>with the stop on a surface, the outermost rays sit exactly on the aperture edge and any perturbation (tilt, decenter) vignettes half of them, which makes the RMS *drop* — <code style="color:#22d3bf">tolerance_analysis</code> uses 0.99 for that reason. <code style="color:#22d3bf">n_vignetted</code> reports how many rays were lost either way. *aim* / *vignetting*: see <code style="color:#22d3bf">ray_bundle</code> — with <code style="color:#22d3bf">aim=&quot;stop&quot;</code> and the field&#x27;s vignetting factors this is the spot a lens-design program reports (no marginal rays lost to pupil aberration).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
