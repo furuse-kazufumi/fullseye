@@ -793,7 +793,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 代替: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
 
-限界: 共軸の処方だけ(座標変換面・理想レンズ・トーリック・奇数次非球面は拒否)。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+限界: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
 
 実寸校正: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
 

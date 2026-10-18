@@ -23,7 +23,9 @@ version: 0.7.0  # fullseye lib version this note was generated for
 value becomes the system's default field), *wavelength_index* one of
 ``prescription["wavelengths"]`` (default: the primary). Every raytrace /
 lensimage / lensopt op then works on the result. ``None`` reads the bundled
-example first.
+example first. For a file with coordinate breaks the result is a
+``raytrace3d.noncoaxial_system`` (use the ``raytrace3d`` ops on it) at the
+field ``(x, y)`` of the file.
 
 Example::
 
