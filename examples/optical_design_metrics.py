@@ -114,10 +114,13 @@ def main():
         surf[i]["ap"] = a
     clipped = RT.lens_system(surf, stop=triplet["stop"], object_mm=triplet["object_mm"],
                              wavelength_um=triplet["wavelength_um"], image_mm=triplet["image_mm"])
-    vig = RT.set_vignetting(clipped, fields=[0.0, 14.0, 20.0])
-    for r in vig["vignetting"]:
-        print("  視野 %4.1f 度: VDY=%+.4f VCX=%.4f VCY=%.4f" % (r["field"], r["vdy"], r["vcx"], r["vcy"]))
+    vig = RT.set_vignetting(clipped, fields=[0.0, 14.0, 20.0], mode="grid")
+    four = RT.set_vignetting(clipped, fields=[0.0, 14.0, 20.0], mode="four")
+    for r4, r in zip(four["vignetting"], vig["vignetting"]):
+        print("  視野 %4.1f 度: 4 本の周辺光線 VDY=%+.4f VCX=%.4f VCY=%.4f / 格子 VDY=%+.4f VCX=%.4f VCY=%.4f"
+              % (r["field"], r4["vdy"], r4["vcx"], r4["vcy"], r["vdy"], r["vcx"], r["vcy"]))
         assert RT.ray_aiming(vig, field=r["field"])["n_lost"] == 0
+        assert r["vcy"] >= r4["vcy"] - 1e-12            # 格子の方が厳しい
     print("PASS")
 
 

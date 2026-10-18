@@ -13,7 +13,7 @@ version: 0.7.0  # fullseye lib version this note was generated for
 # set_vignetting — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.set_vignetting(system, fields=None, rings=8, wavelength_um=None)` (実装を直接呼ぶなら `import raytrace; raytrace.set_vignetting(system, fields=None, rings=8, wavelength_um=None)`、台帳から引くなら `opsoptics.get("set_vignetting")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.set_vignetting(system, fields=None, rings=8, wavelength_um=None, mode='four')` (実装を直接呼ぶなら `import raytrace; raytrace.set_vignetting(system, fields=None, rings=8, wavelength_um=None, mode='four')`、台帳から引くなら `opsoptics.get("set_vignetting")`)
 
 ## 使い方
 
@@ -22,9 +22,16 @@ Compute the vignetting factors that remove every aperture-clipped ray, as "set v
 For each field (a list of radial field values; default the existing records' fields, else the
 system's own ``field``) the real-ray-aimed pupil is searched along ±x and ±y for the edge of the
 clear region (bisection to 1e-13): ``VDX, VDY`` are the centres and ``VCX, VCY`` one minus the
-half-widths, ``VAN`` is 0. If a ``rings``-ring hexapolar grid plus a 72-point rim of the resulting
-ellipse still has clipped rays (the clear region is not an ellipse, e.g. two offset circles) the
-ellipse is shrunk about its centre until none is. A field with nothing clipped gets all-zero factors
+half-widths, ``VAN`` is 0.
+
+*mode* ``"four"`` (the default) is the definition of the format's user guide (knowledge-base article
+KA-01393): the factors are chosen so that exactly the four marginal rays — top ``(0, 1)``, bottom
+``(0, -1)``, left ``(-1, 0)`` and right ``(1, 0)`` of the vignetted pupil — pass every aperture. It is
+what reproduces the factors recorded in a file, but when the clear region is not an ellipse (e.g. two
+offset circles) rays between the four can still be clipped. ``"grid"`` is the stricter option: if a
+``rings``-ring hexapolar grid plus a 72-point rim of the resulting ellipse still has clipped rays the
+ellipse is shrunk about its centre until none is, so afterwards no ray of the grid is clipped.
+A field with nothing clipped gets all-zero factors
 (to 1e-9 and in practice exactly). A field whose chief ray is itself clipped raises ``ValueError``.
 Returns a copy of *system* with ``aim="stop"`` (the factors are fractions of the stop pupil, so they
 belong to real-ray aiming) and the records for those fields replaced; ``vignetting_set`` records the

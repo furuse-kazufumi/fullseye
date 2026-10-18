@@ -59,10 +59,13 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   requested point, which is what lens-design software reports. See :func:`with_aiming`.
 * *vignetting*: per-field pupil vignetting factors as design software stores them, a list of
   ``{"field", "vdx", "vdy", "vcx", "vcy", "van"}`` (``field`` in the same unit as *field*;
-  missing keys are 0). The normalised pupil is compressed by ``(1 - VCX, 1 - VCY)`` (along
-  axes rotated by ``van`` degrees) and decentred by ``(VDX, VDY)`` before the rays are aimed:
-  ``q = (VDX, VDY) + R(van) diag(1 - VCX, 1 - VCY) R(-van) p``. A field between two records is
-  interpolated linearly, one outside the listed range takes the nearest record.
+  missing keys are 0). Definition: the format's user guide (topic "Vignetting Factors") and
+  knowledge-base article KA-01393. The normalised pupil ``p`` is first scaled and shifted,
+  ``p' = (VDX, VDY) + diag(1 - VCX, 1 - VCY) p``, and the result is then rotated by ``van`` degrees
+  (counter-clockwise, ``x' = x cos - y sin``): ``q = R(van) p'`` — the decentre rotates too. It is
+  applied before the rays are aimed (at the stop with ``aim="stop"``, at the paraxial entrance pupil
+  otherwise). A field between two records is interpolated linearly, one outside the listed range takes
+  the nearest record.
   :func:`set_vignetting` computes them from the apertures.
 
 Default (no *surfaces*): a plano-convex BK7 singlet, ``f ≈ 100 mm``,

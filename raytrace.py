@@ -410,10 +410,13 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
       requested point, which is what lens-design software reports. See :func:`with_aiming`.
     * *vignetting*: per-field pupil vignetting factors as design software stores them, a list of
       ``{"field", "vdx", "vdy", "vcx", "vcy", "van"}`` (``field`` in the same unit as *field*;
-      missing keys are 0). The normalised pupil is compressed by ``(1 - VCX, 1 - VCY)`` (along
-      axes rotated by ``van`` degrees) and decentred by ``(VDX, VDY)`` before the rays are aimed:
-      ``q = (VDX, VDY) + R(van) diag(1 - VCX, 1 - VCY) R(-van) p``. A field between two records is
-      interpolated linearly, one outside the listed range takes the nearest record.
+      missing keys are 0). Definition: the format's user guide (topic "Vignetting Factors") and
+      knowledge-base article KA-01393. The normalised pupil ``p`` is first scaled and shifted,
+      ``p' = (VDX, VDY) + diag(1 - VCX, 1 - VCY) p``, and the result is then rotated by ``van`` degrees
+      (counter-clockwise, ``x' = x cos - y sin``): ``q = R(van) p'`` — the decentre rotates too. It is
+      applied before the rays are aimed (at the stop with ``aim="stop"``, at the paraxial entrance pupil
+      otherwise). A field between two records is interpolated linearly, one outside the listed range takes
+      the nearest record.
       :func:`set_vignetting` computes them from the apertures.
 
     Default (no *surfaces*): a plano-convex BK7 singlet, ``f ≈ 100 mm``,
@@ -1167,26 +1170,22 @@ def _vig_rot(van):
 def _vig_forward(px, py, v):
     """Normalised pupil grid point -> point of the vignetted pupil (stop-plane units).
 
-    The compression ``(1 - VCX, 1 - VCY)`` acts along axes rotated by ``VAN`` (degrees, counter-clockwise);
-    the decentre ``(VDX, VDY)`` is added afterwards in the unrotated pupil frame:
-    ``q = (VDX, VDY) + R(VAN) diag(1 - VCX, 1 - VCY) R(-VAN) p``.
+    Scale and shift first, then rotate the whole result by ``VAN`` (degrees, counter-clockwise):
+    ``p' = (VDX, VDY) + diag(1 - VCX, 1 - VCY) p``, ``q = R(VAN) p'`` (the user guide, topic
+    "Vignetting Factors"). For ``VAN = 0`` this is just the scale and shift.
     """
     c, s = _vig_rot(v["van"])
-    u = c * px + s * py
-    w = -s * px + c * py
-    u = u * (1.0 - v["vcx"])
-    w = w * (1.0 - v["vcy"])
-    return v["vdx"] + c * u - s * w, v["vdy"] + s * u + c * w
+    x = v["vdx"] + (1.0 - v["vcx"]) * px
+    y = v["vdy"] + (1.0 - v["vcy"]) * py
+    return c * x - s * y, s * x + c * y
 
 
 def _vig_inverse(qx, qy, v):
     """Inverse of :func:`_vig_forward` (grid point whose vignetted image is q)."""
     c, s = _vig_rot(v["van"])
-    x = qx - v["vdx"]
-    y = qy - v["vdy"]
-    u = (c * x + s * y) / (1.0 - v["vcx"])
-    w = (-s * x + c * y) / (1.0 - v["vcy"])
-    return c * u - s * w, s * u + c * w
+    x = c * qx + s * qy - v["vdx"]
+    y = -s * qx + c * qy - v["vdy"]
+    return x / (1.0 - v["vcx"]), y / (1.0 - v["vcy"])
 
 
 def _vertex_z(system, index):
@@ -1602,15 +1601,22 @@ def ray_aiming(system, field=None, rings=8, wavelength_um=None, aim="stop", vign
     return out
 
 
-def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
+def set_vignetting(system, fields=None, rings=8, wavelength_um=None, mode="four"):
     """Compute the vignetting factors that remove every aperture-clipped ray, as "set vignetting" does (``table``).
 
     For each field (a list of radial field values; default the existing records' fields, else the
     system's own ``field``) the real-ray-aimed pupil is searched along ±x and ±y for the edge of the
     clear region (bisection to 1e-13): ``VDX, VDY`` are the centres and ``VCX, VCY`` one minus the
-    half-widths, ``VAN`` is 0. If a ``rings``-ring hexapolar grid plus a 72-point rim of the resulting
-    ellipse still has clipped rays (the clear region is not an ellipse, e.g. two offset circles) the
-    ellipse is shrunk about its centre until none is. A field with nothing clipped gets all-zero factors
+    half-widths, ``VAN`` is 0.
+
+    *mode* ``"four"`` (the default) is the definition of the format's user guide (knowledge-base article
+    KA-01393): the factors are chosen so that exactly the four marginal rays — top ``(0, 1)``, bottom
+    ``(0, -1)``, left ``(-1, 0)`` and right ``(1, 0)`` of the vignetted pupil — pass every aperture. It is
+    what reproduces the factors recorded in a file, but when the clear region is not an ellipse (e.g. two
+    offset circles) rays between the four can still be clipped. ``"grid"`` is the stricter option: if a
+    ``rings``-ring hexapolar grid plus a 72-point rim of the resulting ellipse still has clipped rays the
+    ellipse is shrunk about its centre until none is, so afterwards no ray of the grid is clipped.
+    A field with nothing clipped gets all-zero factors
     (to 1e-9 and in practice exactly). A field whose chief ray is itself clipped raises ``ValueError``.
     Returns a copy of *system* with ``aim="stop"`` (the factors are fractions of the stop pupil, so they
     belong to real-ray aiming) and the records for those fields replaced; ``vignetting_set`` records the
@@ -1627,6 +1633,8 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
     rings = int(rings)
     if rings < 1:
         raise ValueError("rings must be >= 1")
+    if mode not in ("four", "grid"):
+        raise ValueError("mode must be 'four' (the four marginal rays) or 'grid' (every ray of the grid), got %r" % (mode,))
     wl = system["wavelength_um"] if wavelength_um is None else _finite(wavelength_um, "wavelength_um", positive=True)
     base = dict(system, aim="stop", vignetting=())
     gx, gy = _pupil_grid(rings)
@@ -1641,20 +1649,33 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
 
         if not clear([0.0], [0.0])[0]:
             raise ValueError("set_vignetting: the chief ray is clipped at field %r — no pupil is left" % f)
-        # edge of the clear region along +x, -x, +y, -y (bisection on the distance from the chief ray)
+        # The four marginal rays of the vignetted pupil sit at c + (+-ax, 0) and c + (0, +-ay), c = (VDX, VDY): so
+        # the clear edge is searched along the two lines through the *current* centre, and the centre and the
+        # half-widths are updated until they stop moving (a fixed point; one pass when nothing is clipped).
         dirs = np.array([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]])
-        lo = np.zeros(4)
-        hi = np.ones(4)
-        full = clear(dirs[:, 0], dirs[:, 1])
-        for _ in range(60):
-            mid = 0.5 * (lo + hi)
-            ok = clear(mid * dirs[:, 0], mid * dirs[:, 1])
-            lo = np.where(ok, mid, lo)
-            hi = np.where(ok, hi, mid)
-        t = np.where(full, 1.0, lo)
-        t_xp, t_xm, t_yp, t_ym = [float(v) for v in t]
-        cx, cy = 0.5 * (t_xp - t_xm), 0.5 * (t_yp - t_ym)
-        ax, ay = 0.5 * (t_xp + t_xm), 0.5 * (t_yp + t_ym)
+        cx = cy = 0.0
+        full = np.ones(4, bool)
+        for _it in range(40):
+            ox, oy = np.full(4, cx), np.full(4, cy)
+            full = clear(ox + dirs[:, 0], oy + dirs[:, 1])
+            lo = np.zeros(4)
+            hi = np.ones(4)
+            for _ in range(46):
+                mid = 0.5 * (lo + hi)
+                ok = clear(ox + mid * dirs[:, 0], oy + mid * dirs[:, 1])
+                lo = np.where(ok, mid, lo)
+                hi = np.where(ok, hi, mid)
+            t_xp, t_xm, t_yp, t_ym = [float(v) for v in np.where(full, 1.0, lo)]
+            ncx, ncy = cx + 0.5 * (t_xp - t_xm), cy + 0.5 * (t_yp - t_ym)
+            ax, ay = 0.5 * (t_xp + t_xm), 0.5 * (t_yp + t_ym)
+            moved = max(abs(ncx - cx), abs(ncy - cy))
+            if moved < 1e-13 or not clear([ncx], [ncy])[0]:
+                if moved >= 1e-13:                          # the new centre is itself clipped: keep the last good one
+                    ax, ay = 0.5 * (t_xp + t_xm), 0.5 * (t_yp + t_ym)
+                    ncx, ncy = cx, cy
+                cx, cy = ncx, ncy
+                break
+            cx, cy = ncx, ncy
 
         def ellipse_clear(sc):
             ex = np.concatenate([gx * ax * sc + cx, ax * sc * np.cos(ang) + cx])
@@ -1662,7 +1683,7 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
             return bool(clear(ex, ey).all())
 
         sc = 1.0
-        if not ellipse_clear(1.0):
+        if mode == "grid" and not ellipse_clear(1.0):
             a, b = 0.0, 1.0
             for _ in range(60):
                 m = 0.5 * (a + b)
@@ -1681,7 +1702,7 @@ def set_vignetting(system, fields=None, rings=8, wavelength_um=None):
     out["aim"] = "stop"
     out["vignetting"] = _vignetting_table(keep + list(recs.values()))
     out["vignetting_set"] = {"fields": [float(f) for f in fl], "rings": rings, "wavelength_um": float(wl),
-                             "n_checked": int(len(gx) + len(ang))}
+                             "mode": mode, "n_checked": 4 if mode == "four" else int(len(gx) + len(ang))}
     return out
 
 

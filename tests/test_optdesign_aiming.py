@@ -243,7 +243,7 @@ def test_set_vignetting_leaves_no_clipped_ray(rings):
     s = _clipped_triplet()
     before = {f: RT.ray_aiming(s, field=f, rings=rings, aim="stop", vignetting={})["n_lost"] for f in FIELDS}
     assert before[14.0] > 0 and before[20.0] > 0                      # the apertures do clip
-    out = RT.set_vignetting(s, fields=FIELDS, rings=8)
+    out = RT.set_vignetting(s, fields=FIELDS, rings=8, mode="grid")
     assert out["aim"] == "stop"
     for f in FIELDS:
         a = RT.ray_aiming(out, field=f, rings=8)
@@ -322,3 +322,95 @@ def test_registered_ops_exist_and_have_help():
     for name in ("with_aiming", "set_vignetting", "ray_aiming"):
         fn = getattr(RT, name)
         assert fn.__doc__ and len(fn.__doc__) > 100
+
+
+# --------------------------------------------------------------------------- user-guide definition (scale/shift, then rotate)
+def _passing_stop_points(s, **vig):
+    b = RT.ray_bundle(s, field=0.0, rings=8, kind="grid", aim="stop", vignetting=vig)
+    xy = b["stop_xy"][np.isfinite(b["stop_xy"]).all(1)]
+    return xy[np.lexsort((xy[:, 1].round(9), xy[:, 0].round(9)))]
+
+
+def test_van_90_is_the_x_y_swap_of_van_0_with_the_decentre_rotating_too():
+    s = _triplet()
+    a = _passing_stop_points(s, vdx=0.2, vcy=0.3, van=0.0)
+    b = _passing_stop_points(s, vdx=0.2, vcy=0.3, van=90.0)
+    assert len(a) == len(b) > 100
+    rot = np.stack([-a[:, 1], a[:, 0]], 1)                     # R(90): (x, y) -> (-y, x)
+    rot = rot[np.lexsort((rot[:, 1].round(9), rot[:, 0].round(9)))]
+    assert float(np.max(np.abs(rot - b))) < 1e-10
+    ap = s["surfaces"][s["stop"]]["ap"]
+    # the offset moved from +x (VAN=0) to +y (VAN=90): the decentre is rotated with the compression
+    assert a[:, 0].mean() > 0.01 * ap and abs(a[:, 1].mean()) < 1e-9 * ap
+    assert b[:, 1].mean() > 0.01 * ap and abs(b[:, 0].mean()) < 1e-9 * ap
+    # probe: the old order (rotate the compression only) would leave the decentre on +x
+    assert abs(b[:, 0].mean()) < 1e-9 * ap
+
+
+def test_forward_inverse_are_inverse_with_rotation_and_the_manual_formula():
+    v = {"vdx": 0.2, "vdy": -0.1, "vcx": 0.1, "vcy": 0.3, "van": 40.0}
+    px, py = np.array([0.3, -0.8, 0.0]), np.array([0.5, 0.2, 0.0])
+    qx, qy = RT._vig_forward(px, py, v)
+    th = math.radians(40.0)
+    xs, ys = 0.2 + 0.9 * px, -0.1 + 0.7 * py
+    assert np.allclose(qx, xs * math.cos(th) - ys * math.sin(th), atol=1e-15)
+    assert np.allclose(qy, xs * math.sin(th) + ys * math.cos(th), atol=1e-15)
+    x2, y2 = RT._vig_inverse(qx, qy, v)
+    assert np.allclose(x2, px, atol=1e-14) and np.allclose(y2, py, atol=1e-14)
+
+
+def _y_aperture_system():
+    """Ideal lens f=50 (the stop, radius 5) and a flat 20 mm behind it with a 6 mm semi-aperture, field tan = 0.2.
+
+    A ray at pupil height (hx, hy) reaches the flat at (0.6 hx, 0.6 hy + 4): the x marginal rays (r^2 = 9 + 16 = 25)
+    pass the 6 mm aperture, the top ray (y = 7) is clipped. Only the top is cut: the top limit is (6 - 4)/3 = 2/3
+    and the bottom reaches the stop edge (-1), so VDY = (2/3 - 1)/2 = -1/6 and VCY = 1 - 5/6 = 1/6. The pupil is
+    centred 1/6 below the stop centre, so its right / left marginal rays at (+-ax, -1/6) are cut by the *stop* disk
+    at x = +-sqrt(1 - 1/36): VCX = 1 - sqrt(35)/6 (0.014), VDX = 0 -- the same coupling any design program has.
+    """
+    return RT.lens_system([{"f": 50.0, "t": 20.0, "ap": 5.0}, {"R": RT.INF, "t": None, "n": 1.0, "ap": 6.0}], stop=0)
+
+
+def _marginal_valid(system, field):
+    """valid flags of the pupil centre and the four marginal rays (top, bottom, left, right) of the vignetted pupil."""
+    b = RT.ray_bundle(system, field=field, kind="grid", rings=1)
+    pu = b["pupil"]
+    order = [int(np.argmin(np.hypot(pu[:, 0] - x, pu[:, 1] - y))) for x, y in ((0, 1), (0, -1), (-1, 0), (1, 0))]
+    return b["valid"][order]
+
+
+def test_four_ray_set_vignetting_matches_the_closed_form_on_a_y_aperture():
+    s = _y_aperture_system()
+    fld = math.degrees(math.atan(0.2))
+    out = RT.set_vignetting(s, fields=[fld], mode="four")
+    r = out["vignetting"][0]
+    assert r["vcy"] == pytest.approx(1.0 / 6.0, abs=1e-9) and r["vdy"] == pytest.approx(-1.0 / 6.0, abs=1e-9)
+    assert r["vcx"] == pytest.approx(1.0 - math.sqrt(35.0) / 6.0, abs=1e-9) and abs(r["vdx"]) < 1e-9
+    assert r["van"] == 0.0
+    assert out["vignetting_set"]["mode"] == "four" and out["vignetting_set"]["n_checked"] == 4
+    assert bool(_marginal_valid(out, fld).all())
+    # probe: pull the top edge 1e-6 further out and the top marginal ray is clipped
+    over = RT.with_aiming(s, "stop", vignetting=[{"field": fld, "vdy": r["vdy"], "vcy": r["vcy"] - 1e-6,
+                                                   "vcx": r["vcx"]}])
+    assert not bool(_marginal_valid(over, fld)[0])
+    with pytest.raises(ValueError):
+        RT.set_vignetting(s, fields=[fld], mode="nope")
+
+
+def test_four_ray_set_vignetting_on_a_round_aperture_gives_equal_vcx_vcy_and_no_decentre():
+    # on axis the flat's 2.4 mm aperture clips at |p| = 2.4 / (0.6 * 5) = 0.8 in every direction
+    s = RT.lens_system([{"f": 50.0, "t": 20.0, "ap": 5.0}, {"R": RT.INF, "t": None, "n": 1.0, "ap": 2.4}], stop=0)
+    r = RT.set_vignetting(s, fields=[0.0])["vignetting"][0]
+    assert r["vcx"] == pytest.approx(0.2, abs=1e-9) and r["vcy"] == pytest.approx(0.2, abs=1e-9)
+    assert abs(r["vdx"]) < 1e-9 and abs(r["vdy"]) < 1e-9
+
+
+def test_four_ray_and_grid_modes_agree_on_the_ellipse_edges_and_grid_is_stricter():
+    s = _clipped_triplet()
+    four = RT.set_vignetting(s, fields=FIELDS, mode="four")
+    grid = RT.set_vignetting(s, fields=FIELDS, mode="grid")
+    for r4, rg in zip(four["vignetting"], grid["vignetting"]):
+        assert rg["vcy"] >= r4["vcy"] - 1e-12 and rg["vcx"] >= r4["vcx"] - 1e-12
+    # the four marginal rays pass in the four-ray result, whatever the grid does
+    for r in four["vignetting"]:
+        assert bool(_marginal_valid(four, r["field"]).all())
