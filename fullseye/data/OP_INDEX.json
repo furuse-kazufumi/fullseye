@@ -1,8 +1,8 @@
 {
- "n_ops": 3455,
+ "n_ops": 3465,
  "tiers": {
   "color": 12,
-  "ledger": 2499,
+  "ledger": 2509,
   "nary": 17,
   "registry": 927
  },
@@ -5682,6 +5682,17 @@
    ]
   },
   {
+   "name": "cylinder_lens_caustic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "cylinder_sdf",
    "halcon": "",
    "in_sort": "coordgrid",
@@ -10106,6 +10117,17 @@
    "in_sorts": [
     "measurement"
    ]
+  },
+  {
+   "name": "fresnel_water_air",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "friction_circle_usage",
@@ -18290,6 +18312,28 @@
    ]
   },
   {
+   "name": "ocean_height_field",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "ocean_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "ocm_match",
    "halcon": "",
    "in_sort": "image2d",
@@ -19973,6 +20017,17 @@
     "signal",
     "table"
    ]
+  },
+  {
+   "name": "phase_function_hg",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "phase_peel",
@@ -23231,6 +23286,17 @@
    ]
   },
   {
+   "name": "refracted_view",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "region_growing",
    "halcon": "",
    "in_sort": "points",
@@ -24661,6 +24727,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "scattering_phase_petzold",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "scc_match",
@@ -26740,6 +26817,17 @@
    "in_sorts": [
     "measurement"
    ]
+  },
+  {
+   "name": "snell_window",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "snic_superpixels",
@@ -30596,6 +30684,21 @@
    "in_sorts": []
   },
   {
+   "name": "underwater_image",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "unexplained_peaks",
    "halcon": "",
    "in_sort": "table",
@@ -32228,6 +32331,17 @@
     "signal",
     "signal"
    ]
+  },
+  {
+   "name": "water_attenuation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "watermark_capacity",

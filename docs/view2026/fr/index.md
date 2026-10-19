@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-87 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+88 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -164,6 +164,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - La chaîne spectrale source lumineuse × objet × capteur (Planck, CIE A, LED, filtres, QE du Si, produits et intégrales de courbes): [explication](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · exemples [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - Caméras linéaires TDI et objectifs pour caméra linéaire (nombre d'étages et SNR, FTM du défaut de synchronisation, éclairement et FTM selon la hauteur d'image): [explication](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · exemples [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - Mesure de l'épaisseur d'une couche mince par réflectométrie spectrale (matrice de transfert → couleur d'interférence → FFT, ajustement de modèle, cartes d'épaisseur): [explication](../../capabilities/thin-film-reflectometry.md) _(ja)_ · exemples [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
+- L'eau et les milieux transparents (vagues, Fresnel et réfraction à la surface, couleur et diffusion sous l'eau, une bouteille comme lentille): [explication](../../capabilities/water-transparent-media.md) _(ja)_ · exemples [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **Ondes et signaux**
 
@@ -210,7 +211,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-265 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+266 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -385,7 +386,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Qualité d'image et restauration</b> (19)</summary>
+<details class="vall"><summary><b>Qualité d'image et restauration</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="L'œil de la mouche face à des rayures" width="200" height="200"><b>&#9654;</b><span>L'œil de la mouche face à des rayures</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Correction du flou de bougé" width="200" height="200"><b>&#9654;</b><span>Correction du flou de bougé</span></a>
@@ -405,6 +406,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_active_contours/06_u_shape_snakes.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_active_contours.jpg" alt="Contours actifs" width="200" height="200"><b>&#9654;</b><span>Contours actifs</span></a>
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Segmentation par graphe" width="200" height="200"><b>&#9654;</b><span>Segmentation par graphe</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Décalage de pixels (fausses couleurs et repliement)" width="200" height="200"><b>&#9654;</b><span>Décalage de pixels (fausses couleurs et repliement)</span></a>
+<a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille" width="200" height="200"><span>L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)" width="200" height="200"><span>Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)</span></a>
 </div>
 </details>

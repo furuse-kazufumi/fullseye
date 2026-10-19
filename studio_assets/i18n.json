@@ -297,6 +297,14 @@
    "ko": "선택한 연산자의 HTML 도움말 표시(영상 처리 상세)",
    "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)",
    "hi": "चुने गए operator की HTML help दिखाएँ (image-processing का विवरण)"
+  },
+  "Freeze the current pipeline and its result as A, then compare it with what you change next (Window > Panels > A / B)": {
+   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(Window > Panels > A / B)",
+   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(Window > Panels > A / B)",
+   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(Window > Panels > A / B)",
+   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(Window > Panels > A / B)",
+   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (Window > Panels > A / B)",
+   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (Window > Panels > A / B)"
   }
  },
  "guide": {
@@ -1300,6 +1308,486 @@
    "ko": "출력: 단계 %d (%s)",
    "de": "Aus: Stufe %d (%s)",
    "hi": "आउटपुट: चरण %d (%s)"
+  },
+  "(unnamed image)": {
+   "ja": "(無名の画像)",
+   "zh": "(未命名图像)",
+   "tw": "(未命名影像)",
+   "ko": "(이름 없는 이미지)",
+   "de": "(unbenanntes Bild)",
+   "hi": "(बिना नाम की छवि)"
+  },
+  "input changed: %s → %s": {
+   "ja": "入力が変わりました: %s → %s",
+   "zh": "输入已更改: %s → %s",
+   "tw": "輸入已變更: %s → %s",
+   "ko": "입력이 바뀌었습니다: %s → %s",
+   "de": "Eingabe geändert: %s → %s",
+   "hi": "इनपुट बदला: %s → %s"
+  },
+  "stage %d (%s) %s: %s → %s": {
+   "ja": "段 %d (%s) の %s: %s → %s",
+   "zh": "阶段 %d (%s) 的 %s: %s → %s",
+   "tw": "階段 %d (%s) 的 %s: %s → %s",
+   "ko": "단계 %d (%s)의 %s: %s → %s",
+   "de": "Stufe %d (%s), %s: %s → %s",
+   "hi": "चरण %d (%s), %s: %s → %s"
+  },
+  "stage %d (%s): bypassed": {
+   "ja": "段 %d (%s): バイパスにした",
+   "zh": "阶段 %d (%s): 已旁路",
+   "tw": "階段 %d (%s): 已旁路",
+   "ko": "단계 %d (%s): 우회함",
+   "de": "Stufe %d (%s): überbrückt",
+   "hi": "चरण %d (%s): बायपास किया"
+  },
+  "stage %d (%s): switched on again": {
+   "ja": "段 %d (%s): バイパスを解除した",
+   "zh": "阶段 %d (%s): 已重新启用",
+   "tw": "階段 %d (%s): 已重新啟用",
+   "ko": "단계 %d (%s): 다시 켬",
+   "de": "Stufe %d (%s): wieder eingeschaltet",
+   "hi": "चरण %d (%s): फिर से चालू किया"
+  },
+  "removed: stage %d %s (%s)": {
+   "ja": "削除: 段 %d %s (%s)",
+   "zh": "已删除: 阶段 %d %s (%s)",
+   "tw": "已刪除: 階段 %d %s (%s)",
+   "ko": "삭제: 단계 %d %s (%s)",
+   "de": "Entfernt: Stufe %d %s (%s)",
+   "hi": "हटाया: चरण %d %s (%s)"
+  },
+  "added: stage %d %s (%s)": {
+   "ja": "追加: 段 %d %s (%s)",
+   "zh": "已添加: 阶段 %d %s (%s)",
+   "tw": "已新增: 階段 %d %s (%s)",
+   "ko": "추가: 단계 %d %s (%s)",
+   "de": "Hinzugefügt: Stufe %d %s (%s)",
+   "hi": "जोड़ा: चरण %d %s (%s)"
+  },
+  "which pinned snapshot to compare with the live result": {
+   "ja": "いまの結果と比べる、固定した記録",
+   "zh": "与当前结果比较的已固定快照",
+   "tw": "與目前結果比較的已固定快照",
+   "ko": "현재 결과와 비교할 고정된 스냅샷",
+   "de": "Welcher angeheftete Stand mit dem aktuellen Ergebnis verglichen wird",
+   "hi": "वर्तमान परिणाम से तुलना के लिए पिन किया गया स्नैपशॉट"
+  },
+  "side by side": {
+   "ja": "並べる",
+   "zh": "并排",
+   "tw": "並排",
+   "ko": "나란히",
+   "de": "nebeneinander",
+   "hi": "साथ-साथ"
+  },
+  "swipe": {
+   "ja": "スワイプ",
+   "zh": "滑动对比",
+   "tw": "滑動對比",
+   "ko": "스와이프",
+   "de": "Wischen",
+   "hi": "स्वाइप"
+  },
+  "blink": {
+   "ja": "点滅",
+   "zh": "闪烁切换",
+   "tw": "閃爍切換",
+   "ko": "깜빡임",
+   "de": "Blinken",
+   "hi": "ब्लिंक"
+  },
+  "difference": {
+   "ja": "差",
+   "zh": "差异",
+   "tw": "差異",
+   "ko": "차이",
+   "de": "Differenz",
+   "hi": "अंतर"
+  },
+  "absolute": {
+   "ja": "絶対値",
+   "zh": "绝对值",
+   "tw": "絕對值",
+   "ko": "절댓값",
+   "de": "Betrag",
+   "hi": "निरपेक्ष"
+  },
+  "signed": {
+   "ja": "符号つき",
+   "zh": "带符号",
+   "tw": "帶符號",
+   "ko": "부호 있음",
+   "de": "mit Vorzeichen",
+   "hi": "चिह्न सहित"
+  },
+  "ratio": {
+   "ja": "比",
+   "zh": "比值",
+   "tw": "比值",
+   "ko": "비율",
+   "de": "Verhältnis",
+   "hi": "अनुपात"
+  },
+  "drag: A on the left of the line, B on the right": {
+   "ja": "ドラッグ: 線の左が A、右が B",
+   "zh": "拖动: 线左侧为 A,右侧为 B",
+   "tw": "拖曳: 線左側為 A,右側為 B",
+   "ko": "드래그: 선 왼쪽은 A, 오른쪽은 B",
+   "de": "Ziehen: links der Linie A, rechts B",
+   "hi": "खींचें: रेखा के बाईं ओर A, दाईं ओर B"
+  },
+  "what changed since A": {
+   "ja": "A からの変更点",
+   "zh": "相对 A 的更改",
+   "tw": "相對 A 的變更",
+   "ko": "A 이후 바뀐 점",
+   "de": "Änderungen seit A",
+   "hi": "A के बाद क्या बदला"
+  },
+  "put A's pipeline back (one undo step)": {
+   "ja": "A の処理列に戻す(Undo は 1 回分)",
+   "zh": "恢复 A 的流水线(撤销算 1 步)",
+   "tw": "還原 A 的流程(復原算 1 步)",
+   "ko": "A의 파이프라인으로 되돌립니다(실행 취소 1단계)",
+   "de": "Pipeline von A wiederherstellen (ein Undo-Schritt)",
+   "hi": "A की पाइपलाइन वापस लाएँ (एक undo चरण)"
+  },
+  "keep the current pipeline and drop A": {
+   "ja": "いまの処理列を残し、A を捨てる",
+   "zh": "保留当前流水线并丢弃 A",
+   "tw": "保留目前流程並捨棄 A",
+   "ko": "현재 파이프라인을 유지하고 A를 버립니다",
+   "de": "Aktuelle Pipeline behalten und A verwerfen",
+   "hi": "वर्तमान पाइपलाइन रखें और A हटाएँ"
+  },
+  "keep A and pin the current result as a second snapshot (the oldest goes past two)": {
+   "ja": "A を残し、いまの結果を 2 つ目として固定する(3 つ目からは古い方を捨てる)",
+   "zh": "保留 A,并把当前结果固定为第二个快照(超过两个时丢弃最旧的)",
+   "tw": "保留 A,並把目前結果固定為第二個快照(超過兩個時捨棄最舊的)",
+   "ko": "A를 유지하고 현재 결과를 두 번째 스냅샷으로 고정합니다(세 번째부터는 가장 오래된 것을 버립니다)",
+   "de": "A behalten und das aktuelle Ergebnis als zweiten Stand anheften (ab dem dritten fällt der älteste weg)",
+   "hi": "A रखें और वर्तमान परिणाम को दूसरे स्नैपशॉट के रूप में पिन करें (दो से अधिक होने पर सबसे पुराना हटता है)"
+  },
+  "show the selected stage's result at the values just below and above the current knob; nothing is computed while this is closed": {
+   "ja": "選んだ段の結果を、いまのノブの少し下と少し上の値で並べて見ます。閉じている間は何も計算しません",
+   "zh": "并排显示所选阶段在当前旋钮值上下相邻取值时的结果;关闭时不做任何计算",
+   "tw": "並排顯示所選階段在目前旋鈕值上下相鄰取值時的結果;關閉時不做任何計算",
+   "ko": "선택한 단계의 결과를 현재 노브보다 조금 작은 값과 조금 큰 값으로 나란히 보여 줍니다. 닫혀 있는 동안에는 아무것도 계산하지 않습니다",
+   "de": "Zeigt das Ergebnis der gewählten Stufe bei Werten knapp unter und über dem aktuellen Regler; solange das geschlossen ist, wird nichts berechnet",
+   "hi": "चुने हुए चरण का परिणाम वर्तमान नॉब से थोड़े कम और थोड़े अधिक मानों पर दिखाता है; बंद रहने तक कुछ भी गणना नहीं होती"
+  },
+  "select a stage to try its values": {
+   "ja": "段を選ぶと、その値を試せます",
+   "zh": "选择一个阶段即可试其取值",
+   "tw": "選取一個階段即可試其取值",
+   "ko": "단계를 선택하면 그 값을 시험해 볼 수 있습니다",
+   "de": "Stufe wählen, um ihre Werte auszuprobieren",
+   "hi": "मान आज़माने के लिए चरण चुनें"
+  },
+  "this stage is bypassed: switch it on to try its values": {
+   "ja": "この段はバイパス中です。値を試すには戻してください",
+   "zh": "此阶段已旁路:启用后才能试其取值",
+   "tw": "此階段已旁路:啟用後才能試其取值",
+   "ko": "이 단계는 우회 중입니다. 값을 시험하려면 다시 켜세요",
+   "de": "Diese Stufe ist überbrückt: zum Ausprobieren wieder einschalten",
+   "hi": "यह चरण बायपास है: मान आज़माने के लिए इसे चालू करें"
+  },
+  "this operator does not use knob %s": {
+   "ja": "この op はノブ %s を使いません",
+   "zh": "此算子不使用旋钮 %s",
+   "tw": "此運算子不使用旋鈕 %s",
+   "ko": "이 연산자는 노브 %s를 쓰지 않습니다",
+   "de": "Dieser Operator verwendet Regler %s nicht",
+   "hi": "यह ऑपरेटर नॉब %s का उपयोग नहीं करता"
+  },
+  "no picture": {
+   "ja": "絵なし",
+   "zh": "无图像",
+   "tw": "無影像",
+   "ko": "그림 없음",
+   "de": "kein Bild",
+   "hi": "कोई चित्र नहीं"
+  },
+  "the current value": {
+   "ja": "いまの値",
+   "zh": "当前值",
+   "tw": "目前值",
+   "ko": "현재 값",
+   "de": "aktueller Wert",
+   "hi": "वर्तमान मान"
+  },
+  "click to choose, then adopt": {
+   "ja": "クリックで選び、そのあと採用します",
+   "zh": "点击选择,然后采用",
+   "tw": "點擊選擇,然後採用",
+   "ko": "클릭해서 고른 뒤 채택합니다",
+   "de": "Anklicken zum Auswählen, dann übernehmen",
+   "hi": "चुनने के लिए क्लिक करें, फिर अपनाएँ"
+  },
+  "some values gave no picture": {
+   "ja": "絵にならない値があります",
+   "zh": "有些取值没有图像",
+   "tw": "有些取值沒有影像",
+   "ko": "그림이 되지 않는 값이 있습니다",
+   "de": "Manche Werte ergaben kein Bild",
+   "hi": "कुछ मानों से चित्र नहीं बना"
+  },
+  "showing only the region %s": {
+   "ja": "範囲 %s だけを表示しています",
+   "zh": "仅显示区域 %s",
+   "tw": "僅顯示區域 %s",
+   "ko": "영역 %s만 표시 중",
+   "de": "Nur der Bereich %s wird gezeigt",
+   "hi": "केवल क्षेत्र %s दिखाया जा रहा है"
+  },
+  "change %s": {
+   "ja": "%s を変更",
+   "zh": "更改 %s",
+   "tw": "變更 %s",
+   "ko": "%s 변경",
+   "de": "%s ändern",
+   "hi": "%s बदलें"
+  },
+  "pin the current result as A (toolbar, Ctrl+Shift+A), then change something": {
+   "ja": "いまの結果を A として固定し(ツールバー / Ctrl+Shift+A)、そのあと何か変えてください",
+   "zh": "先把当前结果固定为 A(工具栏 / Ctrl+Shift+A),再改动点什么",
+   "tw": "先把目前結果固定為 A(工具列 / Ctrl+Shift+A),再改動點什麼",
+   "ko": "현재 결과를 A로 고정한(도구 모음 / Ctrl+Shift+A) 뒤 무엇이든 바꿔 보세요",
+   "de": "Aktuelles Ergebnis als A anheften (Werkzeugleiste / Strg+Umschalt+A), dann etwas ändern",
+   "hi": "वर्तमान परिणाम को A के रूप में पिन करें (टूलबार / Ctrl+Shift+A), फिर कुछ बदलें"
+  },
+  "no changes since %s": {
+   "ja": "%s から変更なし",
+   "zh": "自 %s 以来无更改",
+   "tw": "自 %s 以來無變更",
+   "ko": "%s 이후 변경 없음",
+   "de": "Keine Änderungen seit %s",
+   "hi": "%s के बाद कोई बदलाव नहीं"
+  },
+  "B: now": {
+   "ja": "B: いま",
+   "zh": "B: 当前",
+   "tw": "B: 目前",
+   "ko": "B: 현재",
+   "de": "B: jetzt",
+   "hi": "B: अभी"
+  },
+  "cannot recompute %s": {
+   "ja": "%s を再計算できません",
+   "zh": "无法重新计算 %s",
+   "tw": "無法重新計算 %s",
+   "ko": "%s를 다시 계산할 수 없습니다",
+   "de": "%s lässt sich nicht neu berechnen",
+   "hi": "%s की पुनर्गणना नहीं हो सकती"
+  },
+  "%s has no picture to show": {
+   "ja": "%s には見せる絵がありません",
+   "zh": "%s 没有可显示的图像",
+   "tw": "%s 沒有可顯示的影像",
+   "ko": "%s에는 보여 줄 그림이 없습니다",
+   "de": "%s hat kein Bild zum Anzeigen",
+   "hi": "%s के पास दिखाने के लिए चित्र नहीं है"
+  },
+  "%s: result needs review": {
+   "ja": "%s: 結果に要確認の点があります",
+   "zh": "%s: 结果需要复查",
+   "tw": "%s: 結果需要複查",
+   "ko": "%s: 결과 확인이 필요합니다",
+   "de": "%s: Ergebnis prüfen",
+   "hi": "%s: परिणाम की समीक्षा चाहिए"
+  },
+  "A and B differ in size or are not pictures: use side by side": {
+   "ja": "A と B の大きさが違うか、絵ではありません。並べる表示にしてください",
+   "zh": "A 与 B 尺寸不同或不是图像:请使用并排模式",
+   "tw": "A 與 B 尺寸不同或不是影像:請使用並排模式",
+   "ko": "A와 B의 크기가 다르거나 그림이 아닙니다. 나란히 보기를 쓰세요",
+   "de": "A und B unterscheiden sich in der Größe oder sind keine Bilder: Nebeneinander verwenden",
+   "hi": "A और B का आकार अलग है या वे चित्र नहीं हैं: साथ-साथ दृश्य उपयोग करें"
+  },
+  "this mode needs two pictures of the same size": {
+   "ja": "このモードには同じ大きさの絵が 2 枚必要です",
+   "zh": "此模式需要两幅尺寸相同的图像",
+   "tw": "此模式需要兩幅尺寸相同的影像",
+   "ko": "이 모드에는 같은 크기의 그림 두 장이 필요합니다",
+   "de": "Dieser Modus braucht zwei gleich große Bilder",
+   "hi": "इस मोड के लिए समान आकार के दो चित्र चाहिए"
+  },
+  "difference (%s)": {
+   "ja": "差 (%s)",
+   "zh": "差异 (%s)",
+   "tw": "差異 (%s)",
+   "ko": "차이 (%s)",
+   "de": "Differenz (%s)",
+   "hi": "अंतर (%s)"
+  },
+  "|B - A|: black = 0, bright = %.4g": {
+   "ja": "|B - A|: 黒 = 0、明るいほど差が大きい(最大 %.4g)",
+   "zh": "|B - A|: 黑色 = 0,越亮差异越大(最大 %.4g)",
+   "tw": "|B - A|: 黑色 = 0,越亮差異越大(最大 %.4g)",
+   "ko": "|B - A|: 검정 = 0, 밝을수록 차이가 큼(최대 %.4g)",
+   "de": "|B - A|: schwarz = 0, heller = größerer Unterschied (max. %.4g)",
+   "hi": "|B - A|: काला = 0, जितना चमकीला उतना अधिक अंतर (अधिकतम %.4g)"
+  },
+  "B - A: white = 0, red = more in B, blue = less (±%.4g)": {
+   "ja": "B - A: 白 = 0、赤 = B の方が大きい、青 = 小さい(±%.4g)",
+   "zh": "B - A: 白色 = 0,红色 = B 更大,蓝色 = 更小(±%.4g)",
+   "tw": "B - A: 白色 = 0,紅色 = B 較大,藍色 = 較小(±%.4g)",
+   "ko": "B - A: 흰색 = 0, 빨강 = B가 큼, 파랑 = 작음(±%.4g)",
+   "de": "B - A: weiß = 0, rot = in B größer, blau = kleiner (±%.4g)",
+   "hi": "B - A: सफ़ेद = 0, लाल = B में अधिक, नीला = कम (±%.4g)"
+  },
+  "log2(B / A): white = same, red = B larger, blue = smaller (±%.3g)": {
+   "ja": "log2(B / A): 白 = 同じ、赤 = B が大きい、青 = 小さい(±%.3g)",
+   "zh": "log2(B / A): 白色 = 相同,红色 = B 更大,蓝色 = 更小(±%.3g)",
+   "tw": "log2(B / A): 白色 = 相同,紅色 = B 較大,藍色 = 較小(±%.3g)",
+   "ko": "log2(B / A): 흰색 = 같음, 빨강 = B가 큼, 파랑 = 작음(±%.3g)",
+   "de": "log2(B / A): weiß = gleich, rot = B größer, blau = kleiner (±%.3g)",
+   "hi": "log2(B / A): सफ़ेद = समान, लाल = B बड़ा, नीला = छोटा (±%.3g)"
+  },
+  "there is no image to pin": {
+   "ja": "固定する画像がありません",
+   "zh": "没有可固定的图像",
+   "tw": "沒有可固定的影像",
+   "ko": "고정할 이미지가 없습니다",
+   "de": "Es gibt kein Bild zum Anheften",
+   "hi": "पिन करने के लिए कोई छवि नहीं है"
+  },
+  "pinned as %s": {
+   "ja": "%s として固定しました",
+   "zh": "已固定为 %s",
+   "tw": "已固定為 %s",
+   "ko": "%s로 고정했습니다",
+   "de": "Als %s angeheftet",
+   "hi": "%s के रूप में पिन किया"
+  },
+  "(the oldest pinned snapshot was dropped)": {
+   "ja": "(いちばん古い固定を破棄しました)",
+   "zh": "(最旧的固定快照已丢弃)",
+   "tw": "(最舊的固定快照已捨棄)",
+   "ko": "(가장 오래된 고정 스냅샷을 버렸습니다)",
+   "de": "(der älteste angeheftete Stand wurde verworfen)",
+   "hi": "(सबसे पुराना पिन किया स्नैपशॉट हटा दिया गया)"
+  },
+  "restore %s": {
+   "ja": "%s に戻す",
+   "zh": "恢复 %s",
+   "tw": "還原 %s",
+   "ko": "%s로 되돌리기",
+   "de": "%s wiederherstellen",
+   "hi": "%s पर लौटें"
+  },
+  "%s restored": {
+   "ja": "%s に戻しました",
+   "zh": "已恢复 %s",
+   "tw": "已還原 %s",
+   "ko": "%s로 되돌렸습니다",
+   "de": "%s wiederhergestellt",
+   "hi": "%s पर लौट आए"
+  },
+  "kept the current result; %s dropped": {
+   "ja": "いまの結果を採用し、%s を破棄しました",
+   "zh": "已采用当前结果,%s 已丢弃",
+   "tw": "已採用目前結果,%s 已捨棄",
+   "ko": "현재 결과를 채택하고 %s를 버렸습니다",
+   "de": "Aktuelles Ergebnis übernommen; %s verworfen",
+   "hi": "वर्तमान परिणाम अपनाया; %s हटाया"
+  },
+  "Pin as A": {
+   "ja": "A として固定",
+   "zh": "固定为 A",
+   "tw": "固定為 A",
+   "ko": "A로 고정",
+   "de": "Als A anheften",
+   "hi": "A के रूप में पिन करें"
+  },
+  "Try nearby values": {
+   "ja": "前後の値を比較",
+   "zh": "比较相邻取值",
+   "tw": "比較相鄰取值",
+   "ko": "앞뒤 값 비교",
+   "de": "Nachbarwerte ausprobieren",
+   "hi": "आसपास के मान आज़माएँ"
+  },
+  "Restore A": {
+   "ja": "A に戻す",
+   "zh": "恢复 A",
+   "tw": "還原 A",
+   "ko": "A로 되돌리기",
+   "de": "A wiederherstellen",
+   "hi": "A पर लौटें"
+  },
+  "Adopt B": {
+   "ja": "B を採用",
+   "zh": "采用 B",
+   "tw": "採用 B",
+   "ko": "B 채택",
+   "de": "B übernehmen",
+   "hi": "B अपनाएँ"
+  },
+  "Keep both": {
+   "ja": "両方残す",
+   "zh": "两者都保留",
+   "tw": "兩者都保留",
+   "ko": "둘 다 유지",
+   "de": "Beide behalten",
+   "hi": "दोनों रखें"
+  },
+  "Adopt this value": {
+   "ja": "この値を採用",
+   "zh": "采用此值",
+   "tw": "採用此值",
+   "ko": "이 값을 채택",
+   "de": "Diesen Wert übernehmen",
+   "hi": "यह मान अपनाएँ"
+  },
+  "What changed": {
+   "ja": "変更点",
+   "zh": "更改内容",
+   "tw": "變更內容",
+   "ko": "바뀐 점",
+   "de": "Änderungen",
+   "hi": "क्या बदला"
+  },
+  "sync the main view too": {
+   "ja": "メインビューも同期",
+   "zh": "同时同步主视图",
+   "tw": "同時同步主視圖",
+   "ko": "메인 뷰도 동기화",
+   "de": "Hauptansicht mitsynchronisieren",
+   "hi": "मुख्य दृश्य भी सिंक करें"
+  },
+  "knob a": {
+   "ja": "ノブ a",
+   "zh": "旋钮 a",
+   "tw": "旋鈕 a",
+   "ko": "노브 a",
+   "de": "Regler a",
+   "hi": "नॉब a"
+  },
+  "knob b": {
+   "ja": "ノブ b",
+   "zh": "旋钮 b",
+   "tw": "旋鈕 b",
+   "ko": "노브 b",
+   "de": "Regler b",
+   "hi": "नॉब b"
+  },
+  "3 values": {
+   "ja": "3 通り",
+   "zh": "3 个值",
+   "tw": "3 個值",
+   "ko": "값 3개",
+   "de": "3 Werte",
+   "hi": "3 मान"
+  },
+  "5 values": {
+   "ja": "5 通り",
+   "zh": "5 个值",
+   "tw": "5 個值",
+   "ko": "값 5개",
+   "de": "5 Werte",
+   "hi": "5 मान"
   }
  }
 }

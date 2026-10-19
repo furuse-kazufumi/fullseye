@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 87 項目**
+**収録 88 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -78,6 +78,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
+| [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md) | `ocean_height_field` → `refracted_view` → `water_attenuation` → `underwater_image` | `poc_water_transparent_media` |
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
@@ -711,7 +712,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (19)
+## 光と色 (20)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -976,6 +977,22 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 実寸校正: 反射率の絶対値は裸の Si(材料表の Si の Fresnel)を基準にする(実測と中央値 0.4 % 差)。任意単位の分光器は fit_scale=True、カメラは裸の Si の領域で白を合わせる。
 
 動く例: `poc_thin_film_reflectometry`
+
+### [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md)
+
+水は、上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタです。`watermedia` の 10 本は、その両方を閉形式と公表値の表に載せ、数値解は別の経路で確かめられるようにしたものです。`ocean_spectrum` は風速から Pierson–Moskowitz(1964)と JONSWAP(1973)の波のスペクトル、有義波高、周期を返し、`ocean_height_field` はそれを Tessendorf(2001)の FFT で 2 次元の海にして(高さ・傾き・法線・荒れによる水平変位、水深の分散関係)返します。
+
+使う op: `ocean_spectrum`, `ocean_height_field`, `fresnel_water_air`, `snell_window`, `refracted_view`, `water_attenuation`, `underwater_image`, `phase_function_hg`, `scattering_phase_petzold`, `cylinder_lens_caustic`
+
+推奨パイプライン: [`ocean_height_field`](ops/optics/watermedia/ocean_height_field.md) → [`refracted_view`](ops/optics/watermedia/refracted_view.md) → [`water_attenuation`](ops/optics/watermedia/water_attenuation.md) → [`underwater_image`](ops/optics/watermedia/underwater_image.md)
+
+代替: [`ocean_spectrum`](ops/optics/watermedia/ocean_spectrum.md), [`fresnel_water_air`](ops/optics/watermedia/fresnel_water_air.md), [`snell_window`](ops/optics/watermedia/snell_window.md), [`phase_function_hg`](ops/optics/watermedia/phase_function_hg.md), [`scattering_phase_petzold`](ops/optics/watermedia/scattering_phase_petzold.md), [`cylinder_lens_caustic`](ops/optics/watermedia/cylinder_lens_caustic.md)
+
+限界: 平らな水の見かけの深さ d/n は真上の近傍だけ(30° で 7 %、60° で 52 % の過大評価)。PM / JONSWAP の海は毛管波を持たず、格子で解ける波の傾きは Cox & Munk の 1〜2 割(飽和域を毛管波数まで延ばすと 5 m/s では合うが 10 m/s は 4 割届かない)。水の吸収は 380〜727.5 nm、ジャーロフの表は 400〜700 nm(3C は 650 nm、5C は 575 nm まで)で、外は拒否する。Kd を視線に沿った減衰として使うのは近似で、実際は距離と深さで変わる。波面の屈折は焦線の近くで経路が複数あり、見つけた 1 本だけを返す(式を満たさなければ NaN)。
+
+実寸校正: 水の種類は実測の Kd(またはディスク透視度)から最も近いジャーロフ型を選ぶ。屈折率は波長ごとの材料表なので、塩分・温度の違いは n_water で与える。カメラ画像の色は、センサの分光感度と露出で変わるので、RGB は 3 つの代表波長の近似(分光画像なら波長を渡す)。瓶の焦線は光軸に直交する断面の 2 次元の光線追跡で、円柱の長さ方向の曲がりは無い。
+
+動く例: `poc_water_transparent_media`
 
 ## 波と信号 (5)
 
