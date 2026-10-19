@@ -71,6 +71,7 @@ def test_the_catalogue_lists_every_required_operand_with_meaning_unit_and_argume
     names = [o["name"] for o in cat["operands"]]
     assert cat["n_operands"] == len(names) == len(set(names)) and cat["names"] == names
     assert set(REQUIRED) <= set(names) and {"TRAN", "OPDW"} <= set(names)
+    assert len(cat["operands"]) == 30
     for o in cat["operands"]:
         assert o["description"].strip() and isinstance(o["unit"], str) and isinstance(o["required"], list)
         assert o["kind"] in ("scalar", "group") and o["sense"] in ("eq", "ge", "le")
@@ -271,7 +272,9 @@ def test_centroid_reference_never_exceeds_the_chief_reference_and_efl_hold_is_sh
     assert b["merit"] <= a["merit"] and b["merit"] < 0.99 * a["merit"]
     efl = [r for r in a["table"] if r["op"] == "EFFL"][0]
     assert efl["contribution"] == [r for r in b["table"] if r["op"] == "EFFL"][0]["contribution"]
-    assert all(r["rays_lost"] == 0 for r in a["table"] if r["op"] == "TRAN")
+    tran = [r for r in a["table"] if r["op"] == "TRAN"]
+    assert len(tran) == 3
+    assert all(r["rays_lost"] == 0 for r in tran)
 
 
 @pytest.mark.parametrize("aim", ["paraxial", "stop"])

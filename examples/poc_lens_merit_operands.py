@@ -137,6 +137,15 @@ def chapter_closed_forms():
     err = abs(one(ideal, {"op": "WFNO"}) / (f / (2 * h)) - 1.0)
     gate("理想レンズの作動 F ナンバー WFNO は f/2h と相対 1e-6 以内", err < 1e-6, "%.1e" % err)
 
+    cat = LM.merit_operands_list()
+    one_sided = [o["name"] for o in cat["operands"] if o["sense"] != "eq"]
+    print("   オペランド %d 個(スカラー %d、群 %d)、片側の既定: %s" % (
+        cat["n_operands"], sum(o["kind"] == "scalar" for o in cat["operands"]), sum(o["kind"] == "group" for o in cat["operands"]),
+        " ".join(one_sided)))
+    gate("オペランドの一覧は 30 個(スカラー 28 + 群 2)で、全部に意味・単位・引数があり、片側は CTGT/CTLT/ETGT/ETLT/MNCG/MXCG/MNCA/MXCA の 8 個",
+         cat["n_operands"] == 30 and all(o["description"] and isinstance(o["unit"], str) for o in cat["operands"])
+         and sorted(one_sided) == sorted(["CTGT", "CTLT", "ETGT", "ETLT", "MNCG", "MXCG", "MNCA", "MXCA"]))
+
 
 def chapter_consistency():
     print("\n2. 突き合わせ")
@@ -233,6 +242,11 @@ def chapter_triplet():
     print("   支配する行: %s(%.1f %%) → %s" % (dom0, max(x["percent"] for x in tb), dom1))
     gate("開始は EFL の保持が最大の行(50 % 以上)で、最適化後は 1 % 未満になって波面の行へ移る",
          pe0 > 50.0 and pe0 == max(x["percent"] for x in tb) and pe1 < 1.0 and dom1.startswith("OPDW"), "EFL %.1f %% → %.2f %%" % (pe0, pe1))
+    cc = LM.merit_contributions(cs, ops, top=3, **kw)
+    print("   最適化後の上位 3 行: " + "、".join("%s %.1f %%" % (x["label"], x["percent"]) for x in cc["contributions"]))
+    gate("merit_contributions の先頭は最適化後の表の支配する行で、割合は大きい順",
+         cc["dominant"]["label"] == dom1 and [x["percent"] for x in cc["contributions"]] == sorted(
+             (x["percent"] for x in cc["contributions"]), reverse=True))
     again = LM.optimize_lens_operands(s0, ops, VARS, iterations=40, max_thickness=9.0, **kw)
     gate("同じ入力は同じ結果(履歴・半径・厚みが一致)", again["history"] == r["history"] and
          [x["R"] for x in again["system"]["surfaces"]] == [x["R"] for x in cs["surfaces"]])
