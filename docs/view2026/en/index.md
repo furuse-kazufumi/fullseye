@@ -126,7 +126,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces): [explanation](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · examples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - Detect fine scratches and measure their width: [explanation](../../capabilities/scratch-detection-and-width.md) _(ja)_ · examples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - Measure how much the bright SEM edge inflates a dimension, with ground truth: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
-- Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py)
+- Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py)
 - Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead: [explanation](../../capabilities/sim-to-real-calibration.md) _(ja)_ · examples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Measure dimensions from an image, below the pixel: [explanation](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · examples [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -204,7 +204,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## See everything
 
-261 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+262 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -401,7 +401,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour and separation</b> (11)</summary>
+<details class="vall"><summary><b>Colour and separation</b> (12)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Optical fibres and light guides (modes, dispersion, mode field)" width="200" height="200"><span>Optical fibres and light guides (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)" width="200" height="200"><b>&#9654;</b><span>Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)</span></a>
@@ -414,6 +414,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_white_balance.jpg" alt="White balance" width="200" height="200"><span>White balance</span></a>
 <a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="Lens design files (.zmx): read, analyse, fix, write back" width="200" height="200"><span>Lens design files (.zmx): read, analyse, fix, write back</span></a>
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Zoom lenses as differences of one prescription (multi-configuration)" width="200" height="200"><span>Zoom lenses as differences of one prescription (multi-configuration)</span></a>
+<a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glass substitution and multi-start global search" width="200" height="200"><span>Glass substitution and multi-start global search</span></a>
 </div>
 </details>
 
