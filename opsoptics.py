@@ -143,6 +143,7 @@ import lensfile
 import lensconfig
 import lockin
 import lensglobal
+import lensmerit
 import filmoptics
 import moirealign
 import gratinginterf
@@ -154,7 +155,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "lensglobal": lensglobal, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "lensglobal": lensglobal, "lensmerit": lensmerit, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -638,6 +639,16 @@ _CATALOG = {
         ("glass_nearest", "lensglobal", [], "table"),
         ("lens_substitute_glasses", "lensglobal", ["table"], "table"),
         ("lens_global_search", "lensglobal", ["table"], "table"),
+    ],
+    "lensmerit": [  # オペランド表のマージン関数と、それを最小化する最適化(lensmerit、2026-10-19)。行 = 目標・重み・片側の境界。
+        # lensopt の変数・LM をそのまま使い、硝材を変数にできる(離散の外側ループ)。★fail-closed: 未知のオペランド・足りない/余計な引数・
+        # 範囲外の添字・有限でない値・重みが全部 0 の表は ValueError。
+        ("merit_operands_list", "lensmerit", [], "table"),
+        ("merit_evaluate", "lensmerit", ["table"], "table"),
+        ("merit_default", "lensmerit", ["table"], "table"),
+        ("merit_boundary_operands", "lensmerit", ["table"], "table"),
+        ("optimize_lens_operands", "lensmerit", ["table"], "table"),
+        ("merit_contributions", "lensmerit", ["table"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗

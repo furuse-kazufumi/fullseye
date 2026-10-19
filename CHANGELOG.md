@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — オペランド表のメリット関数と、硝材を変数にできる最適化: `lensmerit` 6 op(逐次光学設計の第 6 弾)
+- `merit_operands_list()`: 30 個のオペランド(名前・意味・単位・必須の引数・既定の引数・片側の向き)。`EFFL` `TOTR` `TTHI` `CTGT`/`CTLT`(中心厚)`ETGT`/`ETLT`(縁厚)`MNCG`/`MXCG`/`MNCA`/`MXCA`(ガラス・空気の厚みの最小・最大)`REAY`/`REAX`(実光線の高さ)`RAID`(入射角)`OPDX`(1 点の OPD)`SPHA` `COMA` `ASTI` `FCUR` `DIST`(Seidel 和を波長で割った波長数)`AXCL`/`LACL`(軸上・倍率色)`RSCE`/`RSCH`(重心・主光線まわりの RMS スポット)`WFNO` `PMAG` `DIMX` `WFRMS`、と瞳全体を 1 行にまとめる群の行 `TRAN`(横収差)`OPDW`(OPD)。
+- `merit_evaluate(system, operands, fields, wavelengths, field_weights, wavelength_weights)`: 行ごとに値・目標・重み・寄与 (w(値−目標))²・全体に対する割合を返す。片側の行(`ETGT` など、または任意の行に `sense="ge"/"le"`)は境界が守られている間は寄与 0。`field` / `wavelength` は呼び出しの `fields` / `wavelengths` の添字か `"all"`(行が展開され、重みに √視野重み・√波長重みが掛かる)。縁厚は両面のクリア半径(面の `ap`、無ければ近軸の周辺光線 + 主光線の高さ)でのサグから `t − sag_i(h_i) + sag_{i+1}(h_{i+1})`(円錐・偶数次非球面を含む)。
+- `merit_default(system, kind, fields, wavelengths, rings, reference, ...)`: 瞳全体の光線行(`kind="spot"` は `TRAN`、`"wavefront"` は `OPDW`)+ EFL の保持の表。基準は主光線か重心(波面では平均の除去)。`kind="spot"`・`reference="chief"` の合計は `lensopt.merit_function` と一致(実測で相対 0.0)。
+- `merit_boundary_operands(system, min_edge, min_centre, max_centre, min_air, max_air, weight)`: 各ガラスの縁厚、ガラスの中心厚と空気間隔の範囲を、片側の行にする。
+- `optimize_lens_operands(system, operands, variables, iterations, ..., glass_candidates, glass_iterations, outer_iterations)`: 行を積んだ残差ベクトルに対する Levenberg–Marquardt。変数・前進差分のヤコビアン・刻み・受け入れの規則は `lensopt` のまま。変数 `"g<i>"` は面 i の硝材を候補(カタログ名・(n_d, V_d)・`raytrace.glass` の辞書)から選ぶ離散の外側ループで、連続変数が収束したあと候補を 1 つずつ(入れ替えて連続変数を `glass_iterations` 反復だけ再最適化)試し、最良を残す。現在の硝材と同じ候補は飛ばすので、候補が現在の硝材だけなら連続変数だけの結果と完全に一致する。返り値は最終の系、最適化前後の表、履歴、`rejected_steps`、硝材ごとの候補と merit。
+- `merit_contributions(system, operands, ..., top)`: 寄与の大きい順の割合の表と、境界の破れている行。
+- 門 `tests/test_lensmerit.py`(45 件。うち独立実装を live で回す 1 件は、そのライブラリが無ければ理由つきで skip): 薄肉色消しの屈折力配分(EFFL + AXCL = 0 の最適化、閉形式に 1e-4 以内、実測 1e-14)、平凸の縁厚と円錐・非球面を含む縁厚の手書きの式(1e-12)、全長(1e-12)、屈折球面の実光線の高さ・入射角(Snell、1e-12)と 1 面の 3 次球面収差(Welford の閉形式、相対 1e-9)、理想レンズの作動 F ナンバー(1e-6)・倍率・歪曲 0、薄肉レンズの軸上色(2 つの焦点距離の差、1e-10)、`merit_default` が `lensopt.merit_function` と一致(1e-9、4 通りの視野・波長・重み)、RSCH ≥ RSCE で理想レンズの焦点ずれでは等しい、`_opd_points` が `raytrace.opd_samples` と(1e-9、近軸・絞り照準・3 視野)、`WFRMS` が `opd_map` の標準偏差と一致。第 2 実装(MIT ライセンスの公開ライブラリ)が出した EFL・像面の実光線(3 瞳点 × 2 視野)・重心まわりの RMS スポット・OPD の記録値(`tests/data/lensmerit_optiland_ref.json`)と 1e-6 mm 以内(実測 2e-14)、軸上の OPD は 1e-9 波長(実測 8.5e-11)。インストールされていれば同じ数を live でも計算して比べる。壊して確かめる: 境界が届かない縁厚は支配する行として報告され最後の表に破れが残る、未知のオペランド・足りない引数・余計な引数・範囲外の視野・波長・面の添字・重み全部 0・有限でない値・失われた光線は ValueError、硝材が 1 候補(現在の硝材)なら連続変数だけと同じ、2 回の実行は同一。
+- PoC `poc_lens_merit_operands`(収蔵番号 2026.265): 縁の薄い三枚玉を、波面 + EFL の保持 + 境界の表で最適化して寄与の割合が EFL の保持から波面へ移るのを示し、負レンズの硝材を間違えた出発点で `g2` を 6 種のモデル硝材から選ばせると軸上色が 1/17、倍率色が 1/154 に落ちる。手書きの件数を打ち直す: 光学の op 389(+6)、索引 3,455 / 台帳 2,499。
+- ★既知の限界: 軸外の OPD は独立実装と最大値の 0.03 %(14°)〜0.25 %(20°)ずれる。基準球の半径を、独立実装は像点から射出瞳中心までの距離、`raytrace.opd_samples`(`_opd_points` も同じ)は光軸方向の距離だけにしている規約の違い。1 本の光線のオペランド(`REAY` など)はケラレ係数を使わず、光線が失われたら ValueError。境界が効いた点では減衰最小二乗が `stalled` や反復の上限で止まることがあり、境界の重みが小さいと(10)破れが残る(0.06 mm)ので、PoC は 100 にしている。硝材の候補を入れ替えた処方が口径で主光線を失うと、その候補は `tried` にエラーつきで記録され、飛ばされる。
+
 ## 0.7.1 — 2026-10-19
 
 ### Added — パッチ特徴の異常検知(`anomaly_patch` 5 op)と評価の追加 3 op(F1 最大・再現率を保証する運用点)
