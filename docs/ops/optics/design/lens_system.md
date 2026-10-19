@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
+examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # lens_system — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None)`、台帳から引くなら `opsoptics.get("lens_system")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None, image_R=inf, image_k=0.0, afocal=False)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None, image_R=inf, image_k=0.0, afocal=False)`、台帳から引くなら `opsoptics.get("lens_system")`)
 
 ## 使い方
 
@@ -68,6 +68,23 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   the nearest record.
   :func:`set_vignetting` computes them from the apertures.
 
+* ``a2`` the r^2 term of the sag (mm^-1; the even asphere's ``PARM 1``) and ``odd`` the general power
+  series ``(B1, B2, ..., B8)`` added to the sag, ``z += B1 r + B2 r^2 + ...`` (an *odd asphere*; the
+  coefficient of ``r^i`` is in mm^(1-i)). Both are left out of the surface dict when zero, so a
+  prescription without them is bit-identical to before.
+* ``solve`` a declarative rule that sets this surface's curvature or the thickness after it from the rest of
+  the prescription (marginal / chief ray height or angle, paraxial image, F/#, concentric, aplanatic, pickup);
+  ``lenssolve.lens_solve_set`` builds one, ``lenssolve.lens_apply_solves`` resolves them (``lens_system``
+  resolves them once at construction, so the ``R`` / ``t`` it returns already hold the solved values).
+  A surface with a thickness solve may leave ``t`` out.
+* *image_R*, *image_k*: radius (mm, ``inf`` flat) and conic constant of the **image surface**; rays are intersected
+  with it and spot / OPD are measured on it (the paraxial image is unchanged). Positive R: centre to the right.
+* *afocal*: the image space is collimated (an afocal system: telescope, beam expander). It needs an object at
+  infinity; ``paraxial_trace`` then reports ``angular_magnification`` and the exit pupil instead of a focal length
+  (``efl`` = ``bfl`` = inf), ``ray_bundle`` / ``spot_stats`` / ``ray_fan`` report the **exit angle in arcminutes**
+  (relative to the chief ray) in place of the image-plane position, and ``opd_samples`` references a plane wave.
+  A system flagged afocal whose collimated beam does not leave collimated is refused (``ValueError``).
+
 Default (no *surfaces*): a plano-convex BK7 singlet, ``f ≈ 100 mm``,
 ``f/4``, stop at the first surface — a sensible starting point for the
 examples and for the no-argument registry call.
@@ -107,6 +124,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_lens_global_search](../../../../examples/poc_lens_global_search.py) — `py -3.11 examples/poc_lens_global_search.py`
 - [poc_lens_merit_operands](../../../../examples/poc_lens_merit_operands.py) — `py -3.11 examples/poc_lens_merit_operands.py`
+- [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`

@@ -102,6 +102,10 @@ def _rebuild(system, values, variables, bounds):
     for v, var in zip(values, variables):
         kind, i, j = var
         s = surf[i]
+        rule = s.get("solve")
+        if rule is not None and rule["target"] == kind and kind in ("c", "t"):
+            raise ValueError("variable %s%d is set by a %r solve on that surface; clear the solve "
+                             "(lenssolve.lens_solve_clear) before making it a variable" % (kind, i, rule["kind"]))
         if kind == "c":
             c = float(v)
             cmax = 1.0 / bounds["min_radius"]
@@ -124,7 +128,8 @@ def _rebuild(system, values, variables, bounds):
     return RT.lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                           wavelength_um=system["wavelength_um"], index_object=system["index_object"],
                           image_mm=system["image_mm"], field=system["field"],
-                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"))
+                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"),
+                          **RT._system_extras(system))
 
 
 def _default_variables(system):
