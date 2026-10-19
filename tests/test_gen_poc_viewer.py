@@ -315,3 +315,64 @@ def test_mcp_tool_writes_into_the_sandbox_and_rejects_bad_input():
     del s2["title"]["fr"]
     with pytest.raises(ArgError, match="title.fr"):                  # 欠けた訳は -32602(補わない)
         call_tool("fullseye_write_viewer", {"spec": s2, "lang": ["ja", "fr"]}, cat, store)
+
+
+# --------------------------------------------------------------------------- #
+# ViEW2026 の「触って見る」第 2 弾(tools/build_view2026_viewers.py の 4 本)。          #
+# 各 PoC の関数を呼び直して作る(手で写した数字は 1 つも無い)ので、ここで 1 本ずつ実際に組んで固める。  #
+# --------------------------------------------------------------------------- #
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SECOND_BATCH = {
+    "poc_thermography_ndt": ["frames", "split", "split", "split"],
+    "poc_grating_interferometry": ["frames", "split", "frames", "split", "split"],
+    "poc_phase_measuring_deflectometry": ["split", "frames", "split", "split", "split", "split"],
+    "poc_asteroid_curvature": ["points", "points", "points", "points"],
+}
+
+
+def _builders():
+    for p in (os.path.join(_ROOT, "tools"), _ROOT):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import build_view2026_viewers as B
+    return B
+
+
+def test_the_viewer_registry_counts_are_fixed():
+    B = _builders()
+    assert len(B.BUILDERS) == 7                                      # 第 1 弾 3 + 第 2 弾 4
+    assert set(SECOND_BATCH) <= set(B.BUILDERS)
+    d = json.load(open(os.path.join(_ROOT, "docs", "view2026", "exhibits.json"), encoding="utf-8"))
+    assert [i["id"] for i in d["viewers"]["items"]] == list(B.BUILDERS)   # 案内ページの並び = 登録の並び
+    for pid in B.BUILDERS:
+        assert os.path.isfile(os.path.join(_ROOT, "docs", "view2026", "viewers", pid + ".html")), pid
+
+
+@pytest.mark.parametrize("pid", sorted(SECOND_BATCH))
+def test_second_batch_viewer_builds_with_all_languages_and_fails_closed(pid, tmp_path):
+    B = _builders()
+    spec = B.BUILDERS[pid]()
+    kinds = SECOND_BATCH[pid]
+    assert [t["kind"] for t in spec["tabs"]] == kinds
+    assert {t["badge"] for t in spec["tabs"]} - {"passed"}           # 成功だけを並べない(限界か零点が最低 1 つ)
+    out = pv.write_viewer(spec, tmp_path / (pid + ".html"), B.ALL_LANGS)
+    html = open(out, encoding="utf-8").read()
+    d = _data(html)
+    assert d["langs"] == list(pv.LANGS) and len(d["tabs"]) == len(kinds)
+    assert len(html.encode("utf-8")) < 8_000_000                      # 第 2 弾は軽く(各 8 MB 未満)
+    assert not re.search(r"(?<![0-9A-Za-z])[A-Za-z]:[\\/]", html), "ドライブ文字つきのパスが入っている"   # 手元のパスを入れない
+    assert "/users/" not in html.lower() and "/home/" not in html.lower()
+    for lang in pv.LANGS:                                             # 全タブの題が全言語にある(空の訳を通さない)
+        for t in spec["tabs"]:
+            assert t["label"][lang].strip() and t["text"][lang].strip(), (pid, t["id"], lang)
+    spec["tabs"][0]["text"].pop("hi")                                 # 1 言語だけ欠ければ止まる(補わない)
+    with pytest.raises(ValueError, match="hi"):
+        pv._build_html(spec, B.ALL_LANGS)
+
+
+def test_a_shipped_second_batch_file_is_the_current_builder_output_in_shape():
+    """docs/view2026/viewers/ の実物が、いまの仕様と同じタブ構成・言語であること(古い生成物を残さない)。"""
+    for pid, kinds in SECOND_BATCH.items():
+        d = _data(open(os.path.join(_ROOT, "docs", "view2026", "viewers", pid + ".html"), encoding="utf-8").read())
+        assert d["langs"] == list(pv.LANGS) and len(d["tabs"]) == len(kinds), pid

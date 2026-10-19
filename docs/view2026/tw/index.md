@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD 與實測點雲的偏差檢查](../viewers/poc_cad_scan_deviation.html?lang=tw)**: 對位會吸收缺陷:真值為 1.2 µm 的零件上出現了 121 µm 並不存在的凹坑。
 - **[LiDAR 地形變化](../viewers/poc_lidar_terrain_change.html?lang=tw)**: 樸素相減會讓沒有變化的整個區塊看起來下沉了 0.183 m。校正之後,只剩下真正的變化。
 - **[模板追蹤](../viewers/poc_template_tracking.html?lang=tw)**: 即使已經切換到相似的另一個物體,追蹤器仍然回報「找到了」。
+- **[脈衝熱成像的深度估計](../viewers/poc_thermography_ndt.html?lang=tw)**: 只把擬合的時間窗從 25 秒縮到 4 秒,小缺陷深度的最大誤差就從 +627% 縮小到 ±14%。問題出在窗口的選擇,而不是物理。
+- **[塔爾博特地毯與光柵 X 光像](../viewers/poc_grating_interferometry.html?lang=tw)**: 在吸收像中裂紋的對比雜訊比只有 1.34,在暗場像中升到 13.5,轉動光柵還能讀出纖維的方向。
+- **[用條紋鏡像看微米級凹坑](../viewers/poc_phase_measuring_deflectometry.html?lang=tw)**: 照片中的訊號只有雜訊的 0.17 倍,什麼也看不見;而由條紋鏡像做出的曲率圖中,深 1 µm 的凹坑高出雜訊 57 倍。
+- **[小行星表面的彎曲程度](../viewers/poc_asteroid_curvature.html?lang=tw)**: 由真實小行星的點雲算出曲率,用顏色看山脊和巨石邊緣。先在答案已知的球面上驗證了方法。
 
 ## 精選
 

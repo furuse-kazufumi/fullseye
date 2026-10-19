@@ -38,6 +38,10 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - **[CAD gegen Scan-Punktwolke](../viewers/poc_cad_scan_deviation.html?lang=de)**: Die Ausrichtung schluckt Defekte: Ein Bauteil mit dem Sollwert 1.2 µm zeigt eine nicht vorhandene Delle von 121 µm.
 - **[LiDAR-Geländeänderung](../viewers/poc_lidar_terrain_change.html?lang=de)**: Einfaches Abziehen lässt den ganzen unveränderten Block um 0.183 m abgesunken wirken. Nach der Korrektur bleibt nur die echte Änderung.
 - **[Template-Tracking](../viewers/poc_template_tracking.html?lang=de)**: Auch nachdem er auf ein ähnliches anderes Objekt gesprungen ist, meldet der Tracker weiter „gefunden“.
+- **[Tiefenschätzung mit Impuls-Thermografie](../viewers/poc_thermography_ndt.html?lang=de)**: Allein das Kürzen des Anpassungsfensters von 25 s auf 4 s verkleinert den größten Tiefenfehler kleiner Defekte von +627% auf ±14%. Die Ursache war die Wahl des Fensters, nicht die Physik.
+- **[Talbot-Teppich und Gitter-Röntgenbilder](../viewers/poc_grating_interferometry.html?lang=de)**: In der Absorption beträgt das Kontrast-Rausch-Verhältnis des Risses nur 1.34, im Dunkelfeld steigt es auf 13.5, und beim Drehen des Gitters lässt sich sogar die Faserrichtung ablesen.
+- **[Mikrometerdellen im Spiegelbild von Streifen](../viewers/poc_phase_measuring_deflectometry.html?lang=de)**: Im Foto ist das Signal nur das 0.17-Fache des Rauschens und nichts zu sehen; in der aus dem Spiegelbild der Streifen erzeugten Krümmungskarte ragt eine 1 µm tiefe Delle 57-mal über das Rauschen.
+- **[Wie stark sich die Oberfläche eines Asteroiden krümmt](../viewers/poc_asteroid_curvature.html?lang=de)**: Die Krümmung wird aus den Punkten eines echten Asteroiden berechnet; Grate und Felsblockkanten erscheinen in Farbe. Der Maßstab wurde zuerst an einer Kugel mit bekannter Antwort geprüft.
 
 ## Highlights
 

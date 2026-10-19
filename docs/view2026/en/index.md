@@ -38,6 +38,10 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - **[CAD versus a scanned point cloud](../viewers/poc_cad_scan_deviation.html?lang=en)**: Alignment absorbs defects: a part whose true value is 1.2 µm shows a 121 µm dent that does not exist.
 - **[LiDAR terrain change](../viewers/poc_lidar_terrain_change.html?lang=en)**: Plain differencing makes the whole unchanged block look 0.183 m lower. Correct it and only the real change is left.
 - **[Template tracking](../viewers/poc_template_tracking.html?lang=en)**: Even after it switches to a look-alike object, the tracker keeps reporting 'found'.
+- **[Pulse thermography depth](../viewers/poc_thermography_ndt.html?lang=en)**: Cutting the fit window from 25 s to 4 s shrinks the worst depth error of small flaws from +627% to ±14%. The cause was the choice of window, not the physics.
+- **[Talbot carpet and grating X-ray images](../viewers/poc_grating_interferometry.html?lang=en)**: In absorption the crack's contrast-to-noise ratio is only 1.34; in dark field it rises to 13.5, and turning the grating even reveals the fibre direction.
+- **[Micron dents in a mirror image of stripes](../viewers/poc_phase_measuring_deflectometry.html?lang=en)**: In a photograph the signal is 0.17 times the noise and nothing shows; in the curvature map built from the mirror image of stripes, a dent 1 µm deep stands 57 times above the noise.
+- **[How sharply an asteroid's surface bends](../viewers/poc_asteroid_curvature.html?lang=en)**: Curvature computed from the points of a real asteroid, with ridges and boulder edges shown in colour. The ruler is checked first on a sphere whose answer is known.
 
 ## Highlights
 

@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD와 실측 점군의 편차 검사](../viewers/poc_cad_scan_deviation.html?lang=ko)**: 정합이 결함을 흡수해, 참값이 1.2 µm인 부품에 존재하지 않는 121 µm의 오목이 나타납니다.
 - **[LiDAR 지형 변화](../viewers/poc_lidar_terrain_change.html?lang=ko)**: 단순히 빼면 변하지 않은 구획 전체가 0.183 m 가라앉은 것처럼 보입니다. 보정하면 실제 변화만 남습니다.
 - **[템플릿 추적](../viewers/poc_template_tracking.html?lang=ko)**: 비슷한 다른 물체로 갈아탄 뒤에도 추적기는 계속 '찾았다'고 보고합니다.
+- **[펄스 서모그래피의 깊이 추정](../viewers/poc_thermography_ndt.html?lang=ko)**: 맞추는 시간 창을 25초에서 4초로 줄이기만 해도 작은 결함의 깊이 오차가 최대 +627%에서 ±14%로 줄어듭니다. 원인은 물리가 아니라 창의 선택이었습니다.
+- **[탈보 카펫과 격자 X선 영상](../viewers/poc_grating_interferometry.html?lang=ko)**: 흡수 영상에서는 균열의 대비 잡음비가 1.34에 불과하지만 암시야에서는 13.5로 올라가고, 격자를 돌리면 섬유의 방향까지 읽을 수 있습니다.
+- **[줄무늬 거울상으로 보는 µm 오목](../viewers/poc_phase_measuring_deflectometry.html?lang=ko)**: 사진의 신호는 잡음의 0.17배라 아무것도 보이지 않지만, 줄무늬 거울상으로 만든 곡률 지도에서는 깊이 1 µm의 오목이 잡음의 57배로 솟아 보입니다.
+- **[소행성 표면은 얼마나 휘어 있는가](../viewers/poc_asteroid_curvature.html?lang=ko)**: 실제 소행성의 점군에서 곡률을 구해 능선과 큰 바위의 가장자리를 색으로 봅니다. 답을 아는 구에서 먼저 잣대를 확인했습니다.
 
 ## 하이라이트
 
