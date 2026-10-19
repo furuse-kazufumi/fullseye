@@ -141,6 +141,7 @@ import fiberoptics
 import temsim
 import lensfile
 import lensconfig
+import lockin
 import lensglobal
 import filmoptics
 import moirealign
@@ -153,7 +154,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lensglobal": lensglobal, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "lensglobal": lensglobal, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -618,6 +619,19 @@ _CATALOG = {
         ("lens_configuration_table", "lensconfig", ["table"], "table"),
         ("lens_configuration_metrics", "lensconfig", ["table"], "table"),
         ("lens_add_configuration", "lensconfig", ["table"], "table"),
+    ],
+    "lockin": [  # 画素ごとの直交復調(ロックイン / 時間相関イメージセンサ、lockin、2026-10-19): 画像列 → 振幅・位相・直流
+        # ★fail-closed: 矩形窓は参照の周期が整数のときだけ(そうでなければ拒否し、窓の宣言 hann を促す)、ナイキスト以上・1 周期未満は拒否。
+        #   法線の復元は影の無い画素だけ有効(他は NaN と valid = False)。雑音の模擬は種を明示。
+        ("lockin_demodulate", "lockin", ["video"], "table"),
+        ("lockin_amplitude", "lockin", ["video"], "image2d"),
+        ("lockin_phase", "lockin", ["video"], "image2d"),
+        ("lockin_noise_floor", "lockin", [], "table"),
+        ("lockin_walsh_codes", "lockin", [], "matrix"),
+        ("lockin_separate", "lockin", ["video"], "table"),
+        ("lockin_ring_synthesize", "lockin", ["image2d"], "video"),
+        ("lockin_ring_normals", "lockin", ["table"], "table"),
+        ("lockin_thermal_wave", "lockin", ["image2d"], "video"),
     ],
     "lensglobal": [  # 硝材の置き換えと多始点の大域探索(lensglobal、2026-10-19)。局所最適化は lensopt.optimize_lens をそのまま使い、
         # merit を再実装しない。★fail-closed: カタログに許容距離内の近傍が無いモデル硝材・無効な始点・未知の merit 欄は ValueError。

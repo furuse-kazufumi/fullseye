@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3432,
- "n_notes": 3438,
+ "n_ops": 3441,
+ "n_notes": 3447,
  "notes": {
   "vol_dilate": [
    {
@@ -28545,6 +28545,94 @@
     "category": "linescan",
     "out": "table",
     "path": "docs/ops/optics/linescan/tdi_sync_mtf.md"
+   }
+  ],
+  "lockin_amplitude": [
+   {
+    "op": "lockin_amplitude",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "image2d",
+    "path": "docs/ops/optics/lockin/lockin_amplitude.md"
+   }
+  ],
+  "lockin_demodulate": [
+   {
+    "op": "lockin_demodulate",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_demodulate.md"
+   }
+  ],
+  "lockin_noise_floor": [
+   {
+    "op": "lockin_noise_floor",
+    "dim": "optics",
+    "category": "lockin",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_noise_floor.md"
+   }
+  ],
+  "lockin_phase": [
+   {
+    "op": "lockin_phase",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "image2d",
+    "path": "docs/ops/optics/lockin/lockin_phase.md"
+   }
+  ],
+  "lockin_ring_normals": [
+   {
+    "op": "lockin_ring_normals",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_ring_normals.md"
+   }
+  ],
+  "lockin_ring_synthesize": [
+   {
+    "op": "lockin_ring_synthesize",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/optics/lockin/lockin_ring_synthesize.md"
+   }
+  ],
+  "lockin_separate": [
+   {
+    "op": "lockin_separate",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_separate.md"
+   }
+  ],
+  "lockin_thermal_wave": [
+   {
+    "op": "lockin_thermal_wave",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/optics/lockin/lockin_thermal_wave.md"
+   }
+  ],
+  "lockin_walsh_codes": [
+   {
+    "op": "lockin_walsh_codes",
+    "dim": "optics",
+    "category": "lockin",
+    "out": "matrix",
+    "path": "docs/ops/optics/lockin/lockin_walsh_codes.md"
    }
   ],
   "clearcoat_shade": [

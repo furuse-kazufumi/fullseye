@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 85 capabilities**
+**Currently 86 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -45,6 +45,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Lens design files (read, write and triage sequential .zmx prescriptions)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [Non-coaxial optics (fold mirrors, beamsplitters, tilted plates, Scheimpflug and ghosts)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
@@ -80,7 +81,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (30)
+## Measure (31)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -197,6 +198,18 @@ Global light transport for concave Lambertian parts and its effect on active 3-D
 Operators: `groove_profile`, `form_factors_2d`, `transport_matrix_radiosity`, `high_frequency_patterns`, `render_transport`, `separate_direct_global`, `fringe_multipath_phase_error`, `predict_fringe_phase_error`, `micro_phase_decode`, `tof_multipath_phase`, `tof_transport_depth`
 
 Runnable: `poc_interreflection_fringe_error`
+
+### [Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)](capabilities/lockin-demodulation.md)
+
+Nine ops in `lockin` (category `lockin` of `opsoptics`): per-pixel quadrature demodulation of an image sequence against a sinusoidal reference, returning amplitude, phase, DC, in-phase, quadrature and the window leakage; the window is declared (rectangular only for a whole number of periods, otherwise refused; hann reports its leakage). Closed-form amplitude and phase noise from the SNR (Rice phase distribution), a multipole-modulated ring of sources on a Lambertian relief and the normals recovered from its first-harmonic response with the albedo cancelled, Walsh codes and a least-squares separation of coded lights from daylight, and the exact surface temperature of a periodically heated plate for lock-in thermography.
+
+Operators: `lockin_demodulate`, `lockin_amplitude`, `lockin_phase`, `lockin_noise_floor`, `lockin_walsh_codes`, `lockin_separate`, `lockin_ring_synthesize`, `lockin_ring_normals`, `lockin_thermal_wave`
+
+Pipeline: [`lockin_ring_synthesize`](ops/optics/lockin/lockin_ring_synthesize.md) → [`lockin_demodulate`](ops/optics/lockin/lockin_demodulate.md) → [`lockin_ring_normals`](ops/optics/lockin/lockin_ring_normals.md)
+
+Alternatives: [`lockin_amplitude`](ops/optics/lockin/lockin_amplitude.md), [`lockin_phase`](ops/optics/lockin/lockin_phase.md), [`lockin_separate`](ops/optics/lockin/lockin_separate.md), [`lockin_walsh_codes`](ops/optics/lockin/lockin_walsh_codes.md), [`lockin_noise_floor`](ops/optics/lockin/lockin_noise_floor.md), [`lockin_thermal_wave`](ops/optics/lockin/lockin_thermal_wave.md)
+
+Runnable: `poc_lockin_imaging`
 
 ### [How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty)](capabilities/measurement-system-and-uncertainty.md)
 

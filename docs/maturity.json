@@ -894,6 +894,27 @@
    ]
   },
   {
+   "id": "lockin-demodulation",
+   "title": "画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)",
+   "title_en": "Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)",
+   "category": "測る",
+   "note": "docs/capabilities/lockin-demodulation.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lockin_imaging",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "material-optical-property-library",
    "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)",
    "title_en": "One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
@@ -2146,8 +2167,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 410,
-  "run_by_the_poc_gate": 262,
+  "examples2d_total": 411,
+  "run_by_the_poc_gate": 263,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [
