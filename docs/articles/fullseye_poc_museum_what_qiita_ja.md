@@ -1404,7 +1404,7 @@ py -3.11 examples/poc_good_sample_variation_model.py
 
 使用 op(ノートへ): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`dc_rpca_sparse`](https://furuse.work/ops/2d/decomposition/dc_rpca_sparse.html) · [`varmodel_alignment`](https://furuse.work/ops/spc/variation/varmodel_alignment.html) · [`varmodel_calibrate`](https://furuse.work/ops/spc/variation/varmodel_calibrate.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
 
-## No.2026.262 —— 良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで
+## No.2026.263 —— 良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで
 
 [![良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png)
 

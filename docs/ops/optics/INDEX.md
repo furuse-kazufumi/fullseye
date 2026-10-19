@@ -1,4 +1,4 @@
-# OPTICS operator help — 371 ops in 41 categories
+# OPTICS operator help — 374 ops in 42 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -93,6 +93,10 @@
 ### lensfile (4)
 
 [lens_file_read](lensfile/lens_file_read.md) · [lens_file_report](lensfile/lens_file_report.md) · [lens_file_system](lensfile/lens_file_system.md) · [lens_file_write](lensfile/lens_file_write.md)
+
+### lensglobal (3)
+
+[glass_nearest](lensglobal/glass_nearest.md) · [lens_global_search](lensglobal/lens_global_search.md) · [lens_substitute_glasses](lensglobal/lens_substitute_glasses.md)
 
 ### light_transport (11)
 

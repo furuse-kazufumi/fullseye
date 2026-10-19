@@ -30933,6 +30933,33 @@
    "de": "Gibt eine Kopie von *system* mit einer zusätzlichen Konfiguration zurück (``table``).",
    "hi": "*system* की एक प्रति लौटाता है जिसमें एक और विन्यास जुड़ा हो (``table``)।"
   },
+  "optics/glass_nearest": {
+   "fp": "007e202a6b69",
+   "en": "Return the k catalogue glasses nearest to (n_d, V_d), with their distances (``table``).",
+   "zh": "返回与 (n_d, V_d) 最接近的 k 种目录玻璃及其距离(``table``)。",
+   "tw": "回傳與 (n_d, V_d) 最接近的 k 種目錄玻璃及其距離(``table``)。",
+   "ko": "(n_d, V_d)에 가장 가까운 카탈로그 유리 k개를 거리와 함께 돌려준다(``table``).",
+   "de": "Gibt die k Katalogläser zurück, die (n_d, V_d) am nächsten liegen, mit ihren Abständen (``table``).",
+   "hi": "(n_d, V_d) के सबसे निकट के k catalogue glasses को उनकी दूरी के साथ लौटाता है (``table``)।"
+  },
+  "optics/lens_substitute_glasses": {
+   "fp": "bd0407b0876f",
+   "en": "Replace the model glasses (n_d, V_d) of a system by the k-th nearest catalogue glass (``table``).",
+   "zh": "将系统中的模型玻璃 (n_d, V_d) 替换为第 k 近的目录玻璃(``table``)。",
+   "tw": "將系統中的模型玻璃 (n_d, V_d) 替換為第 k 近的目錄玻璃(``table``)。",
+   "ko": "계의 모델 유리 (n_d, V_d)를 k번째로 가까운 카탈로그 유리로 바꾼다(``table``).",
+   "de": "Ersetzt die Modellgläser (n_d, V_d) eines Systems durch das k-nächste Katalogglas (``table``).",
+   "hi": "system के model glasses (n_d, V_d) को k-वें निकटतम catalogue glass से बदलता है (``table``)।"
+  },
+  "optics/lens_global_search": {
+   "fp": "c5cbe00461dc",
+   "en": "Collect local optima with multi-start local optimisation (lensopt.optimize_lens) and return them in merit order (``table``).",
+   "zh": "用多起点局部优化(lensopt.optimize_lens)收集局部最优解,按 merit 顺序返回(``table``)。",
+   "tw": "用多起點局部最佳化(lensopt.optimize_lens)收集局部最佳解,按 merit 順序回傳(``table``)。",
+   "ko": "다중 시작 국소 최적화(lensopt.optimize_lens)로 국소해를 모아 merit 순으로 돌려준다(``table``).",
+   "de": "Sammelt lokale Optima per Mehrstart-Optimierung (lensopt.optimize_lens) und gibt sie nach Merit sortiert zurück (``table``).",
+   "hi": "multi-start local optimisation (lensopt.optimize_lens) से local optima इकट्ठा करके merit क्रम में लौटाता है (``table``)।"
+  },
   "spc/patch_features": {
    "fp": "7e775b15a9e9",
    "ja": "格子上の古典的なパッチ特徴: パッチごとに D 次元のベクトル(勾配・Gabor・LBP・周波数帯・色)(``table``)。",
