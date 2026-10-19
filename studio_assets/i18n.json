@@ -1172,6 +1172,30 @@
    "ko": "이 결과를 대장 op로…",
    "de": "Dieses Ergebnis an eine Ledger-Op…",
    "hi": "यह परिणाम किसी ledger op को भेजें…"
+  },
+  "Run: done / Result: needs review (%s)": {
+   "ja": "実行: 完了 / 結果: 要確認 (%s)",
+   "zh": "运行:完成 / 结果:需确认 (%s)",
+   "tw": "執行:完成 / 結果:需確認 (%s)",
+   "ko": "실행: 완료 / 결과: 확인 필요 (%s)",
+   "de": "Lauf: fertig / Ergebnis: prüfen (%s)",
+   "hi": "चलाना: पूर्ण / परिणाम: जाँच आवश्यक (%s)"
+  },
+  "Run: done / Result: validity not judged": {
+   "ja": "実行: 完了 / 結果: 妥当性未判定",
+   "zh": "运行:完成 / 结果:未判定有效性",
+   "tw": "執行:完成 / 結果:未判定有效性",
+   "ko": "실행: 완료 / 결과: 타당성 미판정",
+   "de": "Lauf: fertig / Ergebnis: Gültigkeit nicht beurteilt",
+   "hi": "चलाना: पूर्ण / परिणाम: वैधता का आकलन नहीं"
+  },
+  "Run: done / Result: valid (as reported by the op)": {
+   "ja": "実行: 完了 / 結果: 妥当 (op の申告)",
+   "zh": "运行:完成 / 结果:有效(按 op 自报)",
+   "tw": "執行:完成 / 結果:有效(依 op 自報)",
+   "ko": "실행: 완료 / 결과: 유효 (op 보고 기준)",
+   "de": "Lauf: fertig / Ergebnis: gültig (laut Op)",
+   "hi": "चलाना: पूर्ण / परिणाम: वैध (op के अनुसार)"
   }
  }
 }
