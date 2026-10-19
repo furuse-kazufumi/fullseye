@@ -1,4 +1,4 @@
-# OPTICS operator help — 393 ops in 44 categories
+# OPTICS operator help — 399 ops in 45 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -97,6 +97,10 @@
 ### lensglobal (3)
 
 [glass_nearest](lensglobal/glass_nearest.md) · [lens_global_search](lensglobal/lens_global_search.md) · [lens_substitute_glasses](lensglobal/lens_substitute_glasses.md)
+
+### lensmerit (6)
+
+[merit_boundary_operands](lensmerit/merit_boundary_operands.md) · [merit_contributions](lensmerit/merit_contributions.md) · [merit_default](lensmerit/merit_default.md) · [merit_evaluate](lensmerit/merit_evaluate.md) · [merit_operands_list](lensmerit/merit_operands_list.md) · [optimize_lens_operands](lensmerit/optimize_lens_operands.md)
 
 ### light_transport (11)
 

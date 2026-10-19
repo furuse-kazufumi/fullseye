@@ -6353,6 +6353,23 @@
    }
   },
   {
+   "id": "poc_lens_merit_operands",
+   "group": "wing_color",
+   "media": "01_lens_merit_operands.png",
+   "motion": false,
+   "thumb_src": "01_lens_merit_operands.png",
+   "label": {
+    "ja": "要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)",
+    "en": "Designing a triplet from a table of requirements (edge bounds and glass as a variable)",
+    "zh": "用要求表设计三片式镜头(边缘厚度边界与玻璃作为变量)",
+    "tw": "用要求表設計三片式鏡頭(邊緣厚度邊界與玻璃作為變數)",
+    "ko": "요구 사항 표로 트리플렛 설계(가장자리 두께 경계와 변수로서의 유리)",
+    "de": "Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)",
+    "hi": "आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)",
+    "fr": "Concevoir un triplet à partir d'un tableau d'exigences (bornes d'épaisseur de bord, verre comme variable)"
+   }
+  },
+  {
    "id": "poc_spectrometer_illumination",
    "group": "wing_metrology",
    "media": "03_slit_image_smile.png",

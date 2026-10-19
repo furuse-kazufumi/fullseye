@@ -1,8 +1,8 @@
 {
- "n_ops": 3459,
+ "n_ops": 3465,
  "tiers": {
   "color": 12,
-  "ledger": 2503,
+  "ledger": 2509,
   "nary": 17,
   "registry": 927
  },
@@ -16331,6 +16331,58 @@
    ]
   },
   {
+   "name": "merit_boundary_operands",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_contributions",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_default",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_evaluate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "merit_function",
    "halcon": "",
    "in_sort": "table",
@@ -16342,6 +16394,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "merit_operands_list",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "mesh_area",
@@ -18600,6 +18663,19 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "optimization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "optimize_lens_operands",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

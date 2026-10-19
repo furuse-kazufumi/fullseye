@@ -31113,6 +31113,60 @@
    "de": "Die höchste Schwelle wählen, deren Defekt-Recall mit Sicherheit ``confidence`` mindestens ``recall`` beträgt (``table``).",
    "hi": "वह सबसे ऊँचा threshold चुनना जिसकी defect recall ``confidence`` स्तर पर कम से कम ``recall`` होने की गारंटी हो (``table``)।"
   },
+  "optics/merit_operands_list": {
+   "fp": "8224730149f4",
+   "en": "List the operands of the merit function: name, meaning, unit and arguments (``table``).",
+   "zh": "列出评价函数的操作数(operand):名称、含义、单位和参数(``table``)。",
+   "tw": "列出評價函數的運算元(operand):名稱、意義、單位與參數(``table``)。",
+   "ko": "메리트 함수의 오퍼랜드 목록: 이름, 의미, 단위, 인수(``table``).",
+   "de": "Listet die Operanden der Gütefunktion auf: Name, Bedeutung, Einheit und Argumente (``table``).",
+   "hi": "merit function के operands की सूची: नाम, अर्थ, इकाई और arguments (``table``)।"
+  },
+  "optics/merit_evaluate": {
+   "fp": "33da3e0b5609",
+   "en": "Apply an operand table to a prescription and return each row's value, target, weight, contribution and share (``table``).",
+   "zh": "把操作数表应用到处方上,返回每一行的值、目标、权重、贡献及其占比(``table``)。",
+   "tw": "把運算元表套用到處方上,回傳每一列的值、目標、權重、貢獻及其占比(``table``)。",
+   "ko": "오퍼랜드 표를 처방에 적용해 각 행의 값, 목표, 가중치, 기여와 그 비율을 돌려준다(``table``).",
+   "de": "Wendet eine Operandentabelle auf eine Konstruktion an und gibt Wert, Ziel, Gewicht, Beitrag und Anteil jeder Zeile zurück (``table``).",
+   "hi": "operand table को prescription पर लागू करके हर पंक्ति का मान, लक्ष्य, भार, योगदान और उसका हिस्सा लौटाता है (``table``)।"
+  },
+  "optics/merit_default": {
+   "fp": "86f5603d1159",
+   "en": "Build the default merit function as an operand table: whole-pupil ray rows plus the EFL hold (``table``).",
+   "zh": "把默认评价函数组成操作数表:整个光瞳的光线行加上 EFL 的保持(``table``)。",
+   "tw": "把預設評價函數組成運算元表:整個光瞳的光線列加上 EFL 的保持(``table``)。",
+   "ko": "기본 메리트 함수를 오퍼랜드 표로 구성한다: 동공 전체의 광선 행과 EFL 유지(``table``).",
+   "de": "Baut die Standard-Gütefunktion als Operandentabelle: Strahlzeilen über die ganze Pupille plus die EFL-Vorgabe (``table``).",
+   "hi": "default merit function को operand table के रूप में बनाता है: पूरे pupil की ray पंक्तियाँ और EFL hold (``table``)।"
+  },
+  "optics/merit_boundary_operands": {
+   "fp": "01f14ceb0401",
+   "en": "Turn manufacturing bounds into table rows: edge thickness of every glass, centre-thickness and air-gap ranges (``table``).",
+   "zh": "把制造上的边界变成表中的行:每块玻璃的边缘厚度、中心厚度和空气间隔的范围(``table``)。",
+   "tw": "把製造上的邊界變成表中的列:每片玻璃的邊緣厚度、中心厚度與空氣間隔的範圍(``table``)。",
+   "ko": "제조상의 경계를 표의 행으로 만든다: 각 유리의 가장자리 두께, 중심 두께와 공기 간격의 범위(``table``).",
+   "de": "Macht Fertigungsgrenzen zu Tabellenzeilen: Randdicke jedes Glases, Bereiche für Mittendicke und Luftabstand (``table``).",
+   "hi": "निर्माण संबंधी सीमाओं को table की पंक्तियों में बदलता है: हर glass की edge thickness, centre thickness और air gap की सीमाएँ (``table``)।"
+  },
+  "optics/optimize_lens_operands": {
+   "fp": "04cbdf254732",
+   "en": "Minimise the operand-table merit function by Levenberg-Marquardt; glass can be a variable too (``table``).",
+   "zh": "用 LM 法最小化操作数表的评价函数,玻璃也可以作为变量(``table``)。",
+   "tw": "用 LM 法最小化運算元表的評價函數,玻璃也可以作為變數(``table``)。",
+   "ko": "오퍼랜드 표의 메리트 함수를 LM으로 최소화한다. 유리도 변수로 삼을 수 있다(``table``).",
+   "de": "Minimiert die Gütefunktion der Operandentabelle mit Levenberg-Marquardt; auch das Glas kann Variable sein (``table``).",
+   "hi": "operand table के merit function को LM से न्यूनतम करता है; glass भी variable हो सकता है (``table``)।"
+  },
+  "optics/merit_contributions": {
+   "fp": "047bc063381e",
+   "en": "Show which rows dominate the merit function: a table of percentages, largest first (``table``).",
+   "zh": "显示哪些行主导评价函数:按贡献从大到小的百分比表(``table``)。",
+   "tw": "顯示哪些列主導評價函數:依貢獻由大到小的百分比表(``table``)。",
+   "ko": "어느 행이 메리트 함수를 지배하는지 보인다: 기여가 큰 순서의 백분율 표(``table``).",
+   "de": "Zeigt, welche Zeilen die Gütefunktion dominieren: eine Prozenttabelle, größte zuerst (``table``).",
+   "hi": "बताता है कि कौन सी पंक्तियाँ merit function पर हावी हैं: योगदान के क्रम में प्रतिशत की table (``table``)।"
+  },
   "optics/ocean_spectrum": {
    "fp": "ae5f8d9b6132",
    "ja": "風の海の 1 次元の波のスペクトル S(ω)と、有義波高・ピーク周期 -> dict。",

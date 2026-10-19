@@ -508,6 +508,25 @@ def _optics_builders():
         "lens_substitute_glasses": lambda pool, rng: ([__import__("lensglobal")._example_doublet()], {}),
         "lens_global_search": lambda pool, rng: ([__import__("lensglobal")._example_doublet()],
                                                  {"variables": ["c0", "c1"], "n_starts": 3, "iterations": 3, "spread": 0.001}),
+        # lensmerit(2026-10-19): オペランド表は処方 + 行のリスト。行の添字が処方の面数を超えない最小の表で探る
+        "merit_evaluate": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        "merit_default": lens_first(rings=2),
+        "merit_boundary_operands": lens_first(),
+        "merit_contributions": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        # 効かないノブの門: 止める条件(iterations / tolerance)、連続変数の下限(min_thickness / min_radius)、硝材の外側ループ
+        # (glass_iterations / outer_iterations)は、それぞれが出力を変える入力でないと「効かない」と判定される。
+        # 開始の厚み 0.3 は min_thickness 0.5 に当たり、R = 1.5 は min_radius 2 に当たる。互いに引き合う行(TOTR / ETGT / CTLT)で
+        # 収束が tolerance で止まり、iterations はそのすぐ上
+        "optimize_lens_operands": lambda pool, rng: ([__import__("raytrace").lens_system(
+            [{"R": 1.5, "t": 0.3, "n": (1.6, 50.0), "ap": 0.9}, {"R": -3.0, "t": None, "n": 1.0}], stop=0)],
+            {"operands": [{"op": "EFFL", "target": 1.5, "weight": 1.0},
+                          {"op": "RSCH", "target": 0.0, "weight": 5.0, "rings": 2, "pupil_fill": 0.9},
+                          {"op": "ETGT", "surf": 0, "target": 0.4, "weight": 5.0},
+                          {"op": "TOTR", "target": 4.0, "weight": 1.0},
+                          {"op": "CTLT", "surf": 0, "target": 0.45, "weight": 8.0}],
+             "variables": ["c0", "c1", "t0", "g0"], "iterations": 8, "tolerance": 1e-2,
+             "glass_candidates": [(1.5, 60.0), (1.8, 30.0), (1.7, 45.0)], "glass_iterations": 4,
+             "outer_iterations": 3, "min_thickness": 0.5}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
         #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)

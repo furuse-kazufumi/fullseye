@@ -144,6 +144,7 @@ import lensconfig
 import lockin
 import watermedia
 import lensglobal
+import lensmerit
 import filmoptics
 import moirealign
 import gratinginterf
@@ -155,7 +156,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "lensmerit": lensmerit, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -639,6 +640,16 @@ _CATALOG = {
         ("glass_nearest", "lensglobal", [], "table"),
         ("lens_substitute_glasses", "lensglobal", ["table"], "table"),
         ("lens_global_search", "lensglobal", ["table"], "table"),
+    ],
+    "lensmerit": [  # オペランド表のマージン関数と、それを最小化する最適化(lensmerit、2026-10-19)。行 = 目標・重み・片側の境界。
+        # lensopt の変数・LM をそのまま使い、硝材を変数にできる(離散の外側ループ)。★fail-closed: 未知のオペランド・足りない/余計な引数・
+        # 範囲外の添字・有限でない値・重みが全部 0 の表は ValueError。
+        ("merit_operands_list", "lensmerit", [], "table"),
+        ("merit_evaluate", "lensmerit", ["table"], "table"),
+        ("merit_default", "lensmerit", ["table"], "table"),
+        ("merit_boundary_operands", "lensmerit", ["table"], "table"),
+        ("optimize_lens_operands", "lensmerit", ["table"], "table"),
+        ("merit_contributions", "lensmerit", ["table"], "table"),
     ],
     "watermedia": [  # 水と透明媒質(watermedia、2026-10-19): 海の波・屈折・減衰・散乱・瓶のレンズ作用
         # ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。

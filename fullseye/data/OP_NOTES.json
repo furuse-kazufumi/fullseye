@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3459,
- "n_notes": 3465,
+ "n_ops": 3465,
+ "n_notes": 3471,
  "notes": {
   "vol_dilate": [
    {
@@ -28382,6 +28382,65 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lensglobal/lens_substitute_glasses.md"
+   }
+  ],
+  "merit_boundary_operands": [
+   {
+    "op": "merit_boundary_operands",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_boundary_operands.md"
+   }
+  ],
+  "merit_contributions": [
+   {
+    "op": "merit_contributions",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_contributions.md"
+   }
+  ],
+  "merit_default": [
+   {
+    "op": "merit_default",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_default.md"
+   }
+  ],
+  "merit_evaluate": [
+   {
+    "op": "merit_evaluate",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_evaluate.md"
+   }
+  ],
+  "merit_operands_list": [
+   {
+    "op": "merit_operands_list",
+    "dim": "optics",
+    "category": "lensmerit",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_operands_list.md"
+   }
+  ],
+  "optimize_lens_operands": [
+   {
+    "op": "optimize_lens_operands",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/optimize_lens_operands.md"
    }
   ],
   "form_factors_2d": [
