@@ -1196,6 +1196,110 @@
    "ko": "실행: 완료 / 결과: 유효 (op 보고 기준)",
    "de": "Lauf: fertig / Ergebnis: gültig (laut Op)",
    "hi": "चलाना: पूर्ण / परिणाम: वैध (op के अनुसार)"
+  },
+  "regions %s → %s": {
+   "ja": "領域数 %s → %s",
+   "zh": "区域数 %s → %s",
+   "tw": "區域數 %s → %s",
+   "ko": "영역 수 %s → %s",
+   "de": "Regionen %s → %s",
+   "hi": "क्षेत्र %s → %s"
+  },
+  "contours %s → %s": {
+   "ja": "輪郭数 %s → %s",
+   "zh": "轮廓数 %s → %s",
+   "tw": "輪廓數 %s → %s",
+   "ko": "윤곽 수 %s → %s",
+   "de": "Konturen %s → %s",
+   "hi": "आकृति रेखाएँ %s → %s"
+  },
+  "table: %d rows × %d cols": {
+   "ja": "表 %d 行 × %d 列",
+   "zh": "表 %d 行 × %d 列",
+   "tw": "表 %d 列 × %d 欄",
+   "ko": "표 %d행 × %d열",
+   "de": "Tabelle: %d Zeilen × %d Spalten",
+   "hi": "तालिका: %d पंक्तियाँ × %d स्तंभ"
+  },
+  "value %s → %s": {
+   "ja": "値 %s → %s",
+   "zh": "值 %s → %s",
+   "tw": "值 %s → %s",
+   "ko": "값 %s → %s",
+   "de": "Wert %s → %s",
+   "hi": "मान %s → %s"
+  },
+  "bypassed: this stage passes its input through unchanged (Ctrl+B switches it on again)": {
+   "ja": "バイパス中: この段は入力をそのまま通します(Ctrl+B で戻す)",
+   "zh": "已旁路:此阶段原样传递输入(Ctrl+B 恢复)",
+   "tw": "已旁路:此階段原樣傳遞輸入(Ctrl+B 恢復)",
+   "ko": "우회 중: 이 단계는 입력을 그대로 통과시킵니다(Ctrl+B로 복원)",
+   "de": "Überbrückt: Diese Stufe reicht ihre Eingabe unverändert durch (Strg+B schaltet sie wieder ein)",
+   "hi": "बायपास: यह चरण इनपुट को ज्यों का त्यों आगे देता है (Ctrl+B से वापस चालू)"
+  },
+  "Bypass stage (on/off)": {
+   "ja": "段をバイパス(入/切)",
+   "zh": "旁路阶段(开/关)",
+   "tw": "旁路階段(開/關)",
+   "ko": "단계 우회(켜기/끄기)",
+   "de": "Stufe überbrücken (an/aus)",
+   "hi": "चरण बायपास (चालू/बंद)"
+  },
+  "Stage in → out": {
+   "ja": "段の前後",
+   "zh": "阶段输入 → 输出",
+   "tw": "階段輸入 → 輸出",
+   "ko": "단계 입력 → 출력",
+   "de": "Stufe: Ein → Aus",
+   "hi": "चरण: इनपुट → आउटपुट"
+  },
+  "select a stage to compare its input and output": {
+   "ja": "段を選ぶと入力と出力を並べて見られます",
+   "zh": "选择一个阶段以并排查看其输入和输出",
+   "tw": "選擇一個階段以並排檢視其輸入和輸出",
+   "ko": "단계를 선택하면 입력과 출력을 나란히 볼 수 있습니다",
+   "de": "Stufe wählen, um Ein- und Ausgabe nebeneinander zu sehen",
+   "hi": "इनपुट और आउटपुट साथ-साथ देखने के लिए चरण चुनें"
+  },
+  "pipeline error (see the Problems list)": {
+   "ja": "パイプラインのエラー(Problems を参照)",
+   "zh": "流水线错误(见 Problems 列表)",
+   "tw": "流水線錯誤(見 Problems 清單)",
+   "ko": "파이프라인 오류(Problems 목록 참조)",
+   "de": "Pipeline-Fehler (siehe Problems-Liste)",
+   "hi": "पाइपलाइन त्रुटि (Problems सूची देखें)"
+  },
+  "no picture for this result": {
+   "ja": "この結果は絵になりません",
+   "zh": "此结果没有图像",
+   "tw": "此結果沒有圖像",
+   "ko": "이 결과는 그림이 없습니다",
+   "de": "Für dieses Ergebnis gibt es kein Bild",
+   "hi": "इस परिणाम का कोई चित्र नहीं है"
+  },
+  "in: input image": {
+   "ja": "入力: 元画像",
+   "zh": "输入:原图像",
+   "tw": "輸入:原圖像",
+   "ko": "입력: 원본 이미지",
+   "de": "Ein: Eingabebild",
+   "hi": "इनपुट: मूल छवि"
+  },
+  "in: stage %d output": {
+   "ja": "入力: 段 %d の出力",
+   "zh": "输入:阶段 %d 的输出",
+   "tw": "輸入:階段 %d 的輸出",
+   "ko": "입력: 단계 %d의 출력",
+   "de": "Ein: Ausgabe von Stufe %d",
+   "hi": "इनपुट: चरण %d का आउटपुट"
+  },
+  "out: stage %d (%s)": {
+   "ja": "出力: 段 %d (%s)",
+   "zh": "输出:阶段 %d (%s)",
+   "tw": "輸出:階段 %d (%s)",
+   "ko": "출력: 단계 %d (%s)",
+   "de": "Aus: Stufe %d (%s)",
+   "hi": "आउटपुट: चरण %d (%s)"
   }
  }
 }

@@ -493,6 +493,7 @@ def test_variables_window_lists_and_displays_stage_outputs():
     for op, a, b in (("gaussian", 0.4, 0.5), ("sobel_mag", 0.5, 0.5), ("otsu", 0.5, 0.5)):
         model.add_stage(op, a, b)
     v = win._variables
+    model.step_states()                              # run first: the list/variables rebuild never computes (slice 2)
     v["refresh"]()
     # input + one row per stage, each labelled with the output sort (otsu -> region)
     labels = [v["list"].item(i).text() for i in range(v["list"].count())]
@@ -796,6 +797,8 @@ def test_failing_stage_tooltip_is_truncated():
     m = studio.PipelineModel(studio.demo_image(32))
     m.stages = [["gaussian", .5, .5], ["nope_" + "x" * 400, .5, .5]]
     win, _ = studio.build_window(m)
+    m.step_states()                                  # run first: the list rebuild itself never computes (slice 2)
+    win._refresh_stage_list()
     assert len(win._stage_list.item(1).toolTip()) < 200
     assert all(len(win._problems_list.item(i).text()) < 220
                for i in range(win._problems_list.count()))
@@ -1845,6 +1848,7 @@ def test_variable_window_thumbnails_and_iconic_control():
     for op in ("gaussian", "otsu"):
         model.add_stage(op)
     v = win._variables
+    model.step_states()                              # run first: the variables rebuild never computes (slice 2)
     v["refresh"]()
     lst = v["list"]
     n_icon = sum(1 for i in range(lst.count()) if not lst.item(i).icon().isNull())
@@ -2212,6 +2216,7 @@ def test_per_stage_timing_is_accurate_and_shown(tmp_path):
     io.open(pj, "w", encoding="utf-8").write(
         json.dumps({"stages": [[picked[0], 0.5, 0.5], [picked[1], 0.5, 0.5]]}))
     win.drop_handler([pj])
+    win._do_run_all()                                # run first: the list rebuild itself never computes (slice 2)
     rows = [win._stage_list.item(i).text() for i in range(win._stage_list.count())]
     assert rows and all("ms" in r for r in rows)
 
@@ -2424,6 +2429,7 @@ def test_variable_watch_expressions_evaluate_live():
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     model.add_stage("gaussian")
+    model.step_states()                                      # run first: the variables rebuild never computes (slice 2)
     win._variables["refresh"]()
     lst = win._variables["list"]
     lst.setCurrentRow(0)                                     # the input frame
