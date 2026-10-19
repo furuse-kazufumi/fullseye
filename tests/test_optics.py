@@ -910,8 +910,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     #   design に未登録だった raytrace の 4 関数(chief_ray / ray_bundle / opd_samples / with_wavelength)(320 → 338)。
     # 2026-10-19: 逐次光学設計の第 3 弾(絞り照準・ケラレ係数)3 op(363 → 366)。
     # 2026-10-19: 逐次光学設計の第 4 弾(多構成: lensconfig)5 op(366 → 371)。
-    # 2026-10-19: 画素ごとの直交復調(lockin)9 op(371 → 380)。
-    assert len(opsoptics.OPSOPTICS) == 380
+    # 2026-10-19: 逐次光学設計の第 5 弾(硝材の置き換えと大域探索: lensglobal)3 op(371 → 374)。
+    # 2026-10-19: 画素ごとの直交復調(lockin)9 op(374 → 383)。
+    assert len(opsoptics.OPSOPTICS) == 383
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
@@ -939,7 +940,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
-        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
+        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
         "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
@@ -953,7 +954,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
                      ("finish", "metalfinish"), ("material", "surfacelib"),
                      ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent"),
                      ("shape_from_polarization", "sfpolar"), ("light_transport", "lighttransport"),
-                     ("radiosity", "radiosity3d"), ("lensfile", "lensfile"), ("lensconfig", "lensconfig"), ("lockin", "lockin")):
+                     ("radiosity", "radiosity3d"), ("lensfile", "lensfile"), ("lensconfig", "lensconfig"), ("lensglobal", "lensglobal"), ("lockin", "lockin")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

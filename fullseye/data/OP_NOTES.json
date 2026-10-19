@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3438,
- "n_notes": 3444,
+ "n_ops": 3441,
+ "n_notes": 3447,
  "notes": {
   "vol_dilate": [
    {
@@ -28353,6 +28353,35 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lensfile/lens_file_write.md"
+   }
+  ],
+  "glass_nearest": [
+   {
+    "op": "glass_nearest",
+    "dim": "optics",
+    "category": "lensglobal",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/glass_nearest.md"
+   }
+  ],
+  "lens_global_search": [
+   {
+    "op": "lens_global_search",
+    "dim": "optics",
+    "category": "lensglobal",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/lens_global_search.md"
+   }
+  ],
+  "lens_substitute_glasses": [
+   {
+    "op": "lens_substitute_glasses",
+    "dim": "optics",
+    "category": "lensglobal",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/lens_substitute_glasses.md"
    }
   ],
   "form_factors_2d": [

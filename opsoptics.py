@@ -142,6 +142,7 @@ import temsim
 import lensfile
 import lensconfig
 import lockin
+import lensglobal
 import filmoptics
 import moirealign
 import gratinginterf
@@ -153,7 +154,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "lensglobal": lensglobal, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -631,6 +632,12 @@ _CATALOG = {
         ("lockin_ring_synthesize", "lockin", ["image2d"], "video"),
         ("lockin_ring_normals", "lockin", ["table"], "table"),
         ("lockin_thermal_wave", "lockin", ["image2d"], "video"),
+    ],
+    "lensglobal": [  # 硝材の置き換えと多始点の大域探索(lensglobal、2026-10-19)。局所最適化は lensopt.optimize_lens をそのまま使い、
+        # merit を再実装しない。★fail-closed: カタログに許容距離内の近傍が無いモデル硝材・無効な始点・未知の merit 欄は ValueError。
+        ("glass_nearest", "lensglobal", [], "table"),
+        ("lens_substitute_glasses", "lensglobal", ["table"], "table"),
+        ("lens_global_search", "lensglobal", ["table"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗

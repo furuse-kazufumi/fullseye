@@ -1,0 +1,12 @@
+[
+ {
+  "file": "01_lens_global_search.png",
+  "name": "lens_global_search",
+  "caption": "左: 始点ごとの局所解の merit(基が違う 2 つの解)。右: 硝材図の上で、モデル硝材(クラウン・フリント)から最近傍のカタログ硝材への置き換え。",
+  "shape": [
+   360,
+   1120,
+   3
+  ]
+ }
+]

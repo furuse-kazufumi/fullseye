@@ -3320,7 +3320,7 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
 
-## No.2026.262 —— Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution
+## No.2026.263 —— Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution
 
 [![Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
 

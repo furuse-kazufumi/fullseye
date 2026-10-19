@@ -3320,7 +3320,7 @@ py -3.11 examples/poc_robust_profile_filter.py
 
 使用 op(ノートへ): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
 
-## No.2026.262 —— 画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点
+## No.2026.263 —— 画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点
 
 [![画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
 

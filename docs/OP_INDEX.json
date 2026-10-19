@@ -1,8 +1,8 @@
 {
- "n_ops": 3438,
+ "n_ops": 3441,
  "tiers": {
   "color": 12,
-  "ledger": 2482,
+  "ledger": 2485,
   "nary": 17,
   "registry": 927
  },
@@ -10618,6 +10618,17 @@
    "in_sorts": []
   },
   {
+   "name": "glass_nearest",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensglobal",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "global_to_tile",
    "halcon": "",
    "in_sort": null,
@@ -14317,6 +14328,19 @@
    ]
   },
   {
+   "name": "lens_global_search",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensglobal",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_section_drawing",
    "halcon": "",
    "in_sort": "table",
@@ -14366,6 +14390,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_substitute_glasses",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensglobal",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "lens_system",
