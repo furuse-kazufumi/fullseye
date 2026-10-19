@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 88 項目**
+**収録 89 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -78,6 +78,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
+| [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md) | `caustic_irradiance` → `caustic_floor_segmentation` | `poc_water_inspection_images` |
 | [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md) | `ocean_height_field` → `refracted_view` → `water_attenuation` → `underwater_image` | `poc_water_transparent_media` |
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
@@ -712,7 +713,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (20)
+## 光と色 (21)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -977,6 +978,22 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 実寸校正: 反射率の絶対値は裸の Si(材料表の Si の Fresnel)を基準にする(実測と中央値 0.4 % 差)。任意単位の分光器は fit_scale=True、カメラは裸の Si の領域で白を合わせる。
 
 動く例: `poc_thin_film_reflectometry`
+
+### [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md)
+
+`watermedia` の物理を、検査カメラが記録する絵にする 7 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
+
+使う op: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
+
+推奨パイプライン: [`caustic_irradiance`](ops/optics/watervision/caustic_irradiance.md) → [`caustic_floor_segmentation`](ops/optics/watervision/caustic_floor_segmentation.md)
+
+代替: [`bottle_image`](ops/optics/watervision/bottle_image.md), [`fill_level_from_image`](ops/optics/watervision/fill_level_from_image.md), [`wet_surface_appearance`](ops/optics/watervision/wet_surface_appearance.md), [`wet_dry_inspection_pair`](ops/optics/watervision/wet_dry_inspection_pair.md), [`underwater_inspection_image`](ops/optics/watervision/underwater_inspection_image.md)
+
+限界: 瓶は水平の断面ごとに追跡するので、カメラから縦に離れた行の光線の傾きを無視する(垂直な円柱なら実効屈折率 sqrt(n² − sin²α) で厳密に扱えるが、肩の曲面では使えない。傾き 40 度で明るい帯の半幅が約 29 % 動く)。壁の内部反射は追わない(全反射は追う)。濡れた面の膜は波長より十分厚いとして干渉を無視し、被覆率の法則(膜厚 2 µm で 63 %)は仮定。コースティクスの光子法は折り目で有限の大きな値を数え、波面法は inf と旗を返す。海の傾きの絶対値は毛管波を持たないスペクトルでは決まらないので手で合わせる。ランプのベールは 1 回散乱でビームの形は仮定。
+
+実寸校正: 瓶はカメラ距離・画素の大きさ(物体面)・壁厚・屈折率を実物に合わせる。背面板の放射の角度範囲(既定 ±8 度)は板の仕様に合わせる。濡れた面は膜厚と粗さを実測の光沢度から選ぶ。水中画像は水の種類(ジャーロフ型)を実測の Kd から選び、ランプの出力とカメラとの距離で SNR が決まる。
+
+動く例: `poc_water_inspection_images`
 
 ### [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md)
 

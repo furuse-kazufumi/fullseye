@@ -914,7 +914,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-19: 画素ごとの直交復調(lockin)9 op(374 → 383)。
     # 2026-10-19: 逐次光学設計の第 6 弾(オペランド表のマージン関数: lensmerit)6 op(383 → 389)。
     # 2026-10-19: 水と透明媒質(watermedia)10 op(389 → 399)。
-    assert len(opsoptics.OPSOPTICS) == 399
+    # 2026-10-20: 水の検査画像(watervision)7 op(399 → 406)。
+    assert len(opsoptics.OPSOPTICS) == 406
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
@@ -943,7 +944,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
         "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
-        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "watermedia", "wave"]
+        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "watermedia", "watervision", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、
@@ -956,7 +957,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
                      ("finish", "metalfinish"), ("material", "surfacelib"),
                      ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent"),
                      ("shape_from_polarization", "sfpolar"), ("light_transport", "lighttransport"),
-                     ("radiosity", "radiosity3d"), ("lensfile", "lensfile"), ("lensconfig", "lensconfig"), ("lensglobal", "lensglobal"), ("lensmerit", "lensmerit"), ("lockin", "lockin"), ("watermedia", "watermedia")):
+                     ("radiosity", "radiosity3d"), ("lensfile", "lensfile"), ("lensconfig", "lensconfig"), ("lensglobal", "lensglobal"), ("lensmerit", "lensmerit"), ("lockin", "lockin"), ("watermedia", "watermedia"), ("watervision", "watervision")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

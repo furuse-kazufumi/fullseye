@@ -920,6 +920,14 @@ def _batch2_builders():
         "phase_function_hg": lambda pool, rng: ([2.0 * rng.random(7) - 1.0, 1.8 * rng.random() - 0.9], {}),
         "scattering_phase_petzold": lambda pool, rng: ([0.1 + 179.0 * rng.random(5)], {}),
         "cylinder_lens_caustic": lambda pool, rng: ([10.0 + 20.0 * rng.random(), 1.4 + 0.2 * rng.random(), 1.333, 1.0], {}),
+        # watervision(2026-10-20): 波は小さく(波頭より底が深い)、瓶は粗い画素で、濡れ面の角度は [0, 90)、欠陥マスクは両クラスを含める
+        "caustic_irradiance": lambda pool, rng: ([0.01 * rng.standard_normal((16, 16)), 2.0 + 2.0 * rng.random(), 1.0 + rng.random(), [60.0 * rng.random(), 360.0 * rng.random()]], {"ray_density": 1}),
+        "bottle_image": lambda pool, rng: ([20.0 + 20.0 * rng.random(), 2.0, 80.0, rng.random(), 1.45 + 0.15 * rng.random(), 1.333], {"pixel_pitch_um": 1000.0}),
+        "fill_level_from_image": lambda pool, rng: ([np.where(np.arange(40)[:, None] < 10 + int(rng.integers(0, 20)), 0.9, 0.5) + 0.01 * rng.random((40, 12)), 100.0], {}),
+        "wet_surface_appearance": lambda pool, rng: ([0.05 + 0.9 * rng.random(), rng.random(), 30.0 * rng.random(), 80.0 * rng.random(), 80.0 * rng.random()], {}),
+        "wet_dry_inspection_pair": lambda pool, rng: ([0.2 + 0.7 * rng.random((16, 16)), np.arange(16)[:, None] < 4 + np.zeros((1, 16), dtype=bool), 0.2, 10.0 * rng.random(), 60.0 * rng.random(), 60.0 * rng.random()], {}),
+        "underwater_inspection_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 1.0 + 5.0 * rng.random((6, 6)), "jerlov_II"], {"light": "both"}),
+        "caustic_floor_segmentation": lambda pool, rng: ([1.0 + 0.3 * rng.random((16, 16))], {}),
         # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
         #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
         #   max_peaks のノブが効かない入力になる)。
