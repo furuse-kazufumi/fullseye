@@ -447,6 +447,7 @@ def test_beer_lambert_consistency_and_a_photon_count():
     for wt in ("pure", "jerlov_I", "jerlov_III", "jerlov_1C"):
         r = W.water_attenuation(wl, wt, depth_m=z)
         assert r["transmittance"].shape == (3, 3)
+        assert len(z) == 3
         for i, zi in enumerate(z):
             ref = glassmirror.beer_lambert_transmittance(zi * 1000.0, r["kd"] / 1000.0)      # path in mm, sigma per mm
             assert np.abs(r["transmittance"][i] - ref).max() < 1e-12

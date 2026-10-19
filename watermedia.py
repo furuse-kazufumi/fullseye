@@ -174,7 +174,7 @@ def ocean_spectrum(wind_speed_mps, fetch_m=None, kind="pierson_moskowitz", omega
     ``pierson_moskowitz`` (Pierson & Moskowitz 1964, a fully developed sea): ``S = alpha g^2 omega^-5
     exp(-1.25 (omega_p / omega)^4)`` with ``alpha = 0.0081`` and ``omega_p = (4 beta / 5)^(1/4) g / U = 0.877 g / U`` (``U`` is
     the wind speed at 10 m). Its zeroth moment is ``m0 = alpha U^4 / (4 beta g^2)`` so ``Hs = 4 sqrt(m0) = 0.2092 U^2 / g``
-    (the rule of thumb is 0.21 U^2 / g); ``hs_closed_form_m`` is that value and ``hs_m`` the numerical integral of the
+    (the rule of thumb is 0.21 U^2 / g); ``hs_closed_form_m`` is that value (None where there is no closed form) and ``hs_m`` the numerical integral of the
     returned spectrum. ``jonswap`` (Hasselmann et al. 1973) multiplies the same shape by the peak enhancement
     ``gamma ** exp(-(omega - omega_p)^2 / (2 sigma^2 omega_p^2))`` (``gamma = 3.3``, ``sigma = 0.07`` below the peak and
     ``0.09`` above). With ``fetch_m`` the fetch-limited ``alpha = 0.076 (U^2 / (F g))^0.22`` and ``omega_p = 22 (g^2 / (U F))^(1/3)``
@@ -215,7 +215,7 @@ def ocean_spectrum(wind_speed_mps, fetch_m=None, kind="pierson_moskowitz", omega
            "omega_peak_numeric": w_peak, "m0": m0, "kind": kind, "alpha": alpha, "gamma": gm if kind == "jonswap" else 1.0,
            "fully_developed": fetch is None, "hs_rule_of_thumb_m": 0.21 * U * U / G}
     out["hs_closed_form_m"] = (4.0 * math.sqrt(PM_ALPHA / (4.0 * PM_BETA)) * U * U / G
-                               if (kind == "pierson_moskowitz" or (fetch is None and gm == 1.0)) else float("nan"))
+                               if (kind == "pierson_moskowitz" or (fetch is None and gm == 1.0)) else None)
     return out
 
 
@@ -536,7 +536,7 @@ def refracted_view(points_xyz, eye_xyz, surface="flat", n_water=None, wavelength
     verified at the result and a point that fails it (or does not converge) is returned as NaN with ``converged`` False.
     The table has ``apparent`` (M, 3), ``refraction_point`` (M, 3), ``converged``, ``in_air``, ``snell_residual``
     (flat: ``|n sin(theta_w) - sin(theta_a)|``, wavy: the norm of the vector residual), ``apparent_depth_m`` and ``n_water``.
-    A caustic can make several paths possible; the one found is the stationary point nearest the flat solution."""
+    A caustic can make several paths possible; the one found is the stationary point nearest the flat solution, or (when the Newton iteration fails on steep ripples) the shortest optical path on a local grid."""
     op = "refracted_view"
     P = _array(points_xyz, "points_xyz", op)
     if P.ndim == 1:
@@ -596,6 +596,17 @@ def refracted_view(points_xyz, eye_xyz, surface="flat", n_water=None, wavelength
             sg = s[0] if s[0] > 1e-12 else 1.0
             x0, y0 = p[0] + x[0] * vx[0] / sg, p[1] + x[0] * vy[0] / sg
             R, rr, ok = _wavy_refraction(p, E, wavy, n, x0, y0)
+            if not ok:
+                # steep ripples can lose the Newton iteration: restart from the shortest optical path found on a local grid
+                for frac in (0.2, 0.5, 1.0):
+                    w = frac * max(-p[2], 0.1)
+                    gx_, gy_ = np.meshgrid(np.linspace(x0 - w, x0 + w, 31), np.linspace(y0 - w, y0 + w, 31))
+                    zz = wavy.h(gx_, gy_)
+                    ln = n * np.sqrt((gx_ - p[0]) ** 2 + (gy_ - p[1]) ** 2 + (zz - p[2]) ** 2)                         + np.sqrt((gx_ - E[0]) ** 2 + (gy_ - E[1]) ** 2 + (zz - E[2]) ** 2)
+                    j = np.unravel_index(int(np.argmin(ln)), ln.shape)
+                    R, rr, ok = _wavy_refraction(p, E, wavy, n, float(gx_[j]), float(gy_[j]))
+                    if ok:
+                        break
             res[i] = rr
             if not ok:
                 conv[i] = False
