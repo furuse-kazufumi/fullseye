@@ -126,7 +126,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 不被刮痕與突起拖動的平均線(穩健高斯迴歸與樣條濾波,截面與曲面): [說明](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · 範例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - 找出細微刮痕並量測寬度: [說明](../../capabilities/scratch-detection-and-width.md) _(ja)_ · 範例 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - 量測 SEM 明亮邊緣把尺寸放大了多少（帶真值）: [說明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 範例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
-- 循序光學設計的指標(理想透鏡面、環圍能量、子午與弧矢 MTF、離焦 MTF): [說明](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 範例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py)
+- 循序光學設計的指標(理想透鏡面、環圍能量、子午與弧矢 MTF、離焦 MTF): [說明](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 範例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py)
 - 用偏振量測黑色光澤件與玻璃的形狀(偏振形狀復原、模糊解集、折射率估計): [說明](../../capabilities/shape-from-polarization.md) _(ja)_ · 範例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 用實物影像擬合物理模型的係數(sim-to-real 校正)—— 影像無法確定的係數不給數值,而是回傳能確定的組合與理由: [說明](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 範例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - 以次像素精度從影像量測尺寸: [說明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 範例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -204,7 +204,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 261 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 262 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -401,7 +401,7 @@ PoC 261 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>顏色與分離</b> (11)</summary>
+<details class="vall"><summary><b>顏色與分離</b> (12)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纖與光導(模態、色散、模場直徑)" width="200" height="200"><span>光纖與光導(模態、色散、模場直徑)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)" width="200" height="200"><b>&#9654;</b><span>以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)</span></a>
@@ -414,6 +414,7 @@ PoC 261 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_white_balance.jpg" alt="白平衡" width="200" height="200"><span>白平衡</span></a>
 <a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="光學設計檔(.zmx)的讀寫(與另外兩個實作對照)" width="200" height="200"><span>光學設計檔(.zmx)的讀寫(與另外兩個實作對照)</span></a>
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="以同一處方的差分持有變焦鏡頭(多構型)" width="200" height="200"><span>以同一處方的差分持有變焦鏡頭(多構型)</span></a>
+<a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="玻璃替換與多起點全域搜尋" width="200" height="200"><span>玻璃替換與多起點全域搜尋</span></a>
 </div>
 </details>
 

@@ -90,7 +90,7 @@
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
-| [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF) | 測る | `verified-synthetic` | 14/14 | `optical_design_metrics` synthetic → tests/test_example_scripts_run.py<br>`poc_zoom_configurations` synthetic → tests/test_poc_scripts_run.py |
+| [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF) | 測る | `verified-synthetic` | 17/17 | `optical_design_metrics` synthetic → tests/test_example_scripts_run.py<br>`poc_zoom_configurations` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_global_search` synthetic → tests/test_poc_scripts_run.py |
 | [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md) | Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index) | 測る | `verified-synthetic` | 8/8 | `poc_shape_from_polarization` synthetic → tests/test_poc_scripts_run.py |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead | 測る | `verified-synthetic` | 10/10 | `simcal_tour` synthetic → tests/test_example_scripts_run.py<br>`simcal_checks_tour` synthetic → tests/test_example_scripts_run.py |
 | [光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分)](capabilities/spectral-radiometry-chain.md) | The spectral chain source × object × sensor (Planck, CIE A, LEDs, filters, Si QE, curve products and integrals) | 光と色 | `verified-synthetic` | 9/9 | `poc_nir_silicon_transmission` synthetic → tests/test_poc_scripts_run.py |
@@ -123,8 +123,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 409 |
-| `tests/test_poc_scripts_run.py` が走らせる | 261 |
+| 2-D 台帳の例 | 410 |
+| `tests/test_poc_scripts_run.py` が走らせる | 262 |
 | `tests/test_example_scripts_run.py` が走らせる | 148 |
 | **どの門も走らせていない** | **0** |
 

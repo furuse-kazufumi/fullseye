@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 硝材の置き換えと多始点の大域探索: `lensglobal` 3 op(逐次光学設計の第 5 弾)
+- `glass_nearest(n_d, v_d, catalog, k, metric, p_gf)`: カタログ(既定は `materials.glass_map` の光学ガラス 46 種、または `{"name", "nd", "vd", "PgF"}` の列)を Abbe 面の距離で並べ、近い順に k 個を距離つきで返す。距離は `nd_vd`(`√(Δn_d² + (ΔV_d/100)²)`)と `partial_dispersion`(P_g,F の項 `(ΔP_gF/0.1)²` を足す。`p_gf` が要る)。
+- `lens_substitute_glasses(system, catalog, k, metric, tolerance)`: 系のモデル硝材((n_d, V_d) の組・`raytrace.glass` の辞書)を k 番目に近いカタログ硝材に置き換え、面ごとの表を返す。許容距離の外・k がカタログより大きい・ビルドできない系は ValueError で、一部だけ置き換えない。基の系は書き換えない。
+- `lens_global_search(system, variables, merit, n_starts, seed, spread, iterations, duplicate_tolerance)`: 多始点の局所最適化。局所最適化は `lensopt.optimize_lens` をそのまま使い(merit は再実装せず、`merit` はその引数の辞書)、全始点で同じ EFL の目標。全局所解を merit 順に返し、同じ解は重複の印(`duplicate_of`)、`basins` に別々の解と届いた始点の数。同じ seed は同じ結果。
+- 門 `tests/test_optdesign_globalglass.py`(30 件): 薄肉色消しの閉形式 φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2) と、置き換え後の F−C の屈折力差 φ1'/V1' + φ2'/V2'(光線追跡と手計算が相対 1e-6 以内、実測 4e-11、k = 1, 2, 3)、カタログ硝材 8 種が自分自身の最近傍で距離 0、単レンズの曲げが 3 次の最適 q* = 2(n²−1)/(n+2) = 0.7397 に開口を小さくすると近づく(開口 5 / 3 mm で 0.7374 / 0.7383、ap² で外挿して 0.7388)、色消し 2 枚の屈折力を 8 始点すべてが相対 1e-6 以内(実測 9.8e-9)で見つけて 1 つの解にまとまる、3 曲率の色消しの 2 つの解(merit 1.18e-5 と 5.04e-6)を 20 始点で両方訪れ、1 始点は浅い解に留まる。PoC `poc_lens_global_search`(収蔵番号 2026.262)。手書きの件数を打ち直す: 光学の op 374(+3)、索引 3,432 / 台帳 2,476。
+- ★既知の限界: `optimize_lens` の既定の EFL の重みは開口の小さい系で硬すぎ、merit 5e-10 で収束が止まる(`efl_weight` を 1 にすると 1e-22 まで下がる)。この系の門は `efl_weight=1.0` で回している。
+
 ### Added — 多構成(ズーム・切替)の逐次系: `lensconfig` 5 op と .zmx の `MNUM` 表の読み書き(逐次光学設計の第 4 弾)
 - `raytrace.lens_system` の辞書に `"configurations"`(構成ごとの疎な上書き: 面の `R t n k ap f asph mirror decenter tilt`、系の `wavelength_um field stop object_mm image_mm aim`)を持たせられる。`lens_configurations` / `lens_with_configuration`(k は 0 始まり)が構成ごとに解決した `lens_system` を返し、他の op はそのまま使える。無い面・未知の欄・`lens_system` が拒否する値は構成の番号つきの ValueError、基の系は書き換えない。
 - `lens_configuration_table`(行 = 変わる量、列 = 構成)、`lens_configuration_metrics`(EFL・BFL・RMS スポット・MTF・囲みエネルギーを構成ごとに。既存の op を呼ぶだけ)、`lens_add_configuration`。
