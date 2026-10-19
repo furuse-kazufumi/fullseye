@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">patchbank_score — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchbank_score(image, model, k=1, smooth=4.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchbank_score(image, model, k=1, smooth=4.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;patchbank_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>將一張影像與記憶庫比較:由各圖塊到最近 k 個良品圖塊的距離產生異常圖(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">model</code> comes from <code style="color:#22d3bf">patchbank_fit</code>; <code style="color:#22d3bf">image</code> must have the training images&#x27; shape. The distance (Euclidean, in standardised feature space; the mean over the k nearest) is computed exactly by brute force, interpolated to the image size and smoothed by a Gaussian of <code style="color:#22d3bf">smooth</code> px. Returns <code style="color:#22d3bf">map</code> (H, W), <code style="color:#22d3bf">grid</code> (raw distances), <code style="color:#22d3bf">image_score</code> (maximum of the smoothed map), <code style="color:#22d3bf">k</code> and <code style="color:#22d3bf">smooth</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for a model that is not a <code style="color:#22d3bf">patchbank_fit</code> result, a different image shape, <code style="color:#22d3bf">k</code> larger than the bank, or a negative / non-finite <code style="color:#22d3bf">smooth</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_patch_anomaly">poc_patch_anomaly</a> — <code style="color:#22d3bf">py -3.11 examples/poc_patch_anomaly.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">anomaly_patch</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:patch_features">patch_features</a> · <a style="color:#22d3bf" href="opspc:patchdist_fit">patchdist_fit</a> · <a style="color:#22d3bf" href="opspc:patchdist_score">patchdist_score</a> · <a style="color:#22d3bf" href="opspc:patchbank_fit">patchbank_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomaly_patch.py — SPC 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

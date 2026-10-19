@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 85 capabilities**
+**Currently 86 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -51,6 +51,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [OCR pre-processing (deskew, local binarisation, line extraction)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [Compute reflection, refraction and interference](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
+| [Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
@@ -394,7 +395,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (12)
+## Detect (13)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -463,6 +464,18 @@ Pipeline: [`median`](ops/2d/rank/median.md) → [`rotate_image`](ops/2d/geometry
 Alternatives: [`sk_niblack`](ops/2d/segmentation/sk_niblack.md), [`adaptive_gauss_thresh`](ops/2d/segmentation/adaptive_gauss_thresh.md), [`otsu`](ops/2d/segmentation/otsu.md), [`gray_bothat`](ops/2d/morphology/gray_bothat.md), [`unsharp`](ops/2d/smoothing/unsharp.md), [`zoom_image_factor`](ops/2d/geometry/zoom_image_factor.md), [`affine_trans_image`](ops/2d/geometry/affine_trans_image.md)
 
 Runnable: `gallery2d_segmentation`, `poc_matrix_code_reading`, `gallery2d_region`
+
+### [Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)](capabilities/patch-feature-anomaly-detection.md)
+
+Anomaly detection from good samples only, with classical, deterministic patch features instead of a pretrained network. `patchdist_*` fits a multivariate normal per grid position and scores by Mahalanobis distance; since n good images give a singular covariance when n <= D, the shrinkage is declared (Ledoit–Wolf analytic intensity, or a number) and `shrinkage="none"` is refused for a singular covariance. `pool="global"` fits one distribution to all patches for stationary textures. `patchbank_*` keeps a memory bank thinned by greedy k-centre covering, reports the covering radius, and optionally appends the grid position to find a correct pattern in the wrong place. Evaluation uses the method-independent `anomeval` family (pixel / image AUROC, AUPRO, F1 max) and `anomaly_operating_point`, which picks the highest threshold whose defect recall is guaranteed at a stated confidence with an exact Clopper–Pearson limit and refuses when there are too few defective images. On a stochastic texture the per-position normal distribution loses to the pooled distribution and the memory bank at 5, 20 and 80 good images; a memory bank at 10 % keeps its accuracy at about a tenth of the scoring time; the guaranteed operating point keeps its declared confidence in 95.7 % of 300 repetitions against 50.3 % for the unguaranteed quantile.
+
+Operators: `patch_features`, `patchdist_fit`, `patchdist_score`, `patchbank_fit`, `patchbank_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_pixel_f1_max`, `anomaly_image_f1_max`, `anomaly_operating_point`, `anomaly_region_overlap`
+
+Pipeline: [`patchbank_fit`](ops/spc/anomaly_patch/patchbank_fit.md) → [`patchbank_score`](ops/spc/anomaly_patch/patchbank_score.md)
+
+Alternatives: [`varmodel_fit`](ops/spc/variation/varmodel_fit.md), `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md)
+
+Runnable: `poc_patch_anomaly`, `anomaly_eval_metrics`
 
 ### [Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells)](capabilities/pl-carrier-diffusion-visibility.md)
 

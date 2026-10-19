@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">patchbank_score — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchbank_score(image, model, k=1, smooth=4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchbank_score(image, model, k=1, smooth=4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;patchbank_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>한 장을 메모리 뱅크에 대조: 패치마다 가장 가까운 양품 k개까지의 거리로 이상 맵을 만든다 (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">model</code> comes from <code style="color:#22d3bf">patchbank_fit</code>; <code style="color:#22d3bf">image</code> must have the training images&#x27; shape. The distance (Euclidean, in standardised feature space; the mean over the k nearest) is computed exactly by brute force, interpolated to the image size and smoothed by a Gaussian of <code style="color:#22d3bf">smooth</code> px. Returns <code style="color:#22d3bf">map</code> (H, W), <code style="color:#22d3bf">grid</code> (raw distances), <code style="color:#22d3bf">image_score</code> (maximum of the smoothed map), <code style="color:#22d3bf">k</code> and <code style="color:#22d3bf">smooth</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for a model that is not a <code style="color:#22d3bf">patchbank_fit</code> result, a different image shape, <code style="color:#22d3bf">k</code> larger than the bank, or a negative / non-finite <code style="color:#22d3bf">smooth</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_patch_anomaly">poc_patch_anomaly</a> — <code style="color:#22d3bf">py -3.11 examples/poc_patch_anomaly.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">anomaly_patch</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:patch_features">patch_features</a> · <a style="color:#22d3bf" href="opspc:patchdist_fit">patchdist_fit</a> · <a style="color:#22d3bf" href="opspc:patchdist_score">patchdist_score</a> · <a style="color:#22d3bf" href="opspc:patchbank_fit">patchbank_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomaly_patch.py — SPC 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

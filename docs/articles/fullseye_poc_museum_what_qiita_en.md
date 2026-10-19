@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**147 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**148 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 44 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 45 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1403,6 +1403,42 @@ Source: [examples/poc_good_sample_variation_model.py](https://github.com/furuse-
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_good_sample_variation_model)
 
 Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`dc_rpca_sparse`](https://furuse.work/ops/2d/decomposition/dc_rpca_sparse.html) · [`varmodel_alignment`](https://furuse.work/ops/spc/variation/varmodel_alignment.html) · [`varmodel_calibrate`](https://furuse.work/ops/spc/variation/varmodel_calibrate.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
+
+## No.2026.262 —— Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold
+
+[![Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png)
+
+*↑ **Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold** ―― The most common family in inspection research, learning the features of good samples and flagging patches that leave them, built with classical features (multi-resolution gradients, Gabor, rotation-invariant LBP, spectral bands, colour) instead of a deep network, with the variants compared on one yard-stick (pixel AUROC, AUPRO, image AUROC, F1 max). Eight new ops: patch_features, patchdist_fit / patchdist_score, patchbank_fit / patchbank_score, and the evaluation additions anomaly_pixel_f1_max, anomaly_image_f1_max and anomaly_operating_point. On a synthetic stochastic texture (smooth random fields with planted spots and thin scratches) the per-position normal distribution scores an AUPRO of 0.375 with 20 good images and loses to the pooled distribution (0.559) and a 10 % memory bank (0.603), in the same order at 5, 20 and 80 good images: it estimates 51 dimensions from few samples per position. Where n <= D makes the covariance singular the shrinkage is declared (intensity 0.374 at 5 good images, 0.067 at 80) and an undeclared one is refused. The existing variation model scores a pixel AUROC of 0.785 on the texture (the memory bank 0.881) and is refused on a weave whose phase differs every time. A logical anomaly, a vertical bar moved by 24 px, is missed by a memory that ignores position (anomaly score 0.9 times that of good images) and found when a position weight is added (3.9 times). Thinning the memory to 10 % keeps AUPRO at 0.638 against 0.684 and cuts the scoring CPU time from 12.55 s to 0.84 s. The operating point that guarantees recall 0.8 at confidence 0.9 keeps its promise in 0.957 of 300 repetitions of the calibrate-on-30-defects procedure, against 0.503 for simply taking the 80 % point of the calibration defects, at the price of more false alarms (0.369 against 0.211). On the public DAGM 2007 Class1 data (a stochastic texture, CC BY 4.0) the variation model scores a pixel AUROC of 0.436, below chance; a gradient-only memory bank reaches 0.768 (AUPRO 0.474) but its per-image AUROC is 0.53, and growing the feature to 51 dimensions drops it to 0.623. On VisA pcb1 (CC BY 4.0, 20 good images) the 10 % memory bank reaches pixel AUROC 0.990, AUPRO 0.875 and image AUROC 0.935 (the variation model: 0.808 and 0.678), and adding the position weight lowers it to 0.969 and 0.790; candle scores 0.895 and 0.734.*
+
+[![確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves.png)
+
+*↑ The measurement ―― 確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。 (figure labels are in Japanese; the numbers are the same)*
+
+[![確率場の試験画像での AUPRO。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve.png)
+
+*↑ 確率場の試験画像での AUPRO。*
+
+[![良品では縦の棒は左(x = 20)にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly.png)
+
+*↑ 良品では縦の棒は左(x = 20)にある。*
+
+[![欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee.png)
+
+*↑ 欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。*
+
+[![DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps.png)
+
+*↑ DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。*
+
+```
+py -3.11 examples/poc_patch_anomaly.py
+```
+
+Source: [examples/poc_patch_anomaly.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_patch_anomaly)
+
+Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_operating_point`](https://furuse.work/ops/spc/anomaly_eval/anomaly_operating_point.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pixel_f1_max`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_f1_max.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`gabor`](https://furuse.work/ops/2d/texture/gabor.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`patch_features`](https://furuse.work/ops/spc/anomaly_patch/patch_features.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`patchdist_fit`](https://furuse.work/ops/spc/anomaly_patch/patchdist_fit.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
 
 ## No.2026.258 —— Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count
 

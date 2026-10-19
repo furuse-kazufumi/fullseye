@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3429,
- "n_notes": 3435,
+ "n_ops": 3437,
+ "n_notes": 3443,
  "notes": {
   "vol_dilate": [
    {
@@ -33191,6 +33191,26 @@
     "path": "docs/ops/spc/anomaly_eval/anomaly_image_auroc.md"
    }
   ],
+  "anomaly_image_f1_max": [
+   {
+    "op": "anomaly_image_f1_max",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_image_f1_max.md"
+   }
+  ],
+  "anomaly_operating_point": [
+   {
+    "op": "anomaly_operating_point",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_operating_point.md"
+   }
+  ],
   "anomaly_pixel_auroc": [
    {
     "op": "anomaly_pixel_auroc",
@@ -33199,6 +33219,16 @@
     "in": "video × video",
     "out": "table",
     "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_auroc.md"
+   }
+  ],
+  "anomaly_pixel_f1_max": [
+   {
+    "op": "anomaly_pixel_f1_max",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_f1_max.md"
    }
   ],
   "anomaly_pro": [
@@ -33219,6 +33249,56 @@
     "in": "video × video",
     "out": "table",
     "path": "docs/ops/spc/anomaly_eval/anomaly_region_overlap.md"
+   }
+  ],
+  "patch_features": [
+   {
+    "op": "patch_features",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patch_features.md"
+   }
+  ],
+  "patchbank_fit": [
+   {
+    "op": "patchbank_fit",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchbank_fit.md"
+   }
+  ],
+  "patchbank_score": [
+   {
+    "op": "patchbank_score",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchbank_score.md"
+   }
+  ],
+  "patchdist_fit": [
+   {
+    "op": "patchdist_fit",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchdist_fit.md"
+   }
+  ],
+  "patchdist_score": [
+   {
+    "op": "patchdist_score",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchdist_score.md"
    }
   ],
   "spc_capability": [

@@ -1,12 +1,16 @@
-# SPC operator help — 31 ops in 10 categories
+# SPC operator help — 39 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
 ## カテゴリ
 
-### anomaly_eval (4)
+### anomaly_eval (7)
 
-[anomaly_image_auroc](anomaly_eval/anomaly_image_auroc.md) · [anomaly_pixel_auroc](anomaly_eval/anomaly_pixel_auroc.md) · [anomaly_pro](anomaly_eval/anomaly_pro.md) · [anomaly_region_overlap](anomaly_eval/anomaly_region_overlap.md)
+[anomaly_image_auroc](anomaly_eval/anomaly_image_auroc.md) · [anomaly_image_f1_max](anomaly_eval/anomaly_image_f1_max.md) · [anomaly_operating_point](anomaly_eval/anomaly_operating_point.md) · [anomaly_pixel_auroc](anomaly_eval/anomaly_pixel_auroc.md) · [anomaly_pixel_f1_max](anomaly_eval/anomaly_pixel_f1_max.md) · [anomaly_pro](anomaly_eval/anomaly_pro.md) · [anomaly_region_overlap](anomaly_eval/anomaly_region_overlap.md)
+
+### anomaly_patch (5)
+
+[patch_features](anomaly_patch/patch_features.md) · [patchbank_fit](anomaly_patch/patchbank_fit.md) · [patchbank_score](anomaly_patch/patchbank_score.md) · [patchdist_fit](anomaly_patch/patchdist_fit.md) · [patchdist_score](anomaly_patch/patchdist_score.md)
 
 ### capability (1)
 

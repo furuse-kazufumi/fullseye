@@ -1,8 +1,8 @@
 {
- "n_ops": 3429,
+ "n_ops": 3437,
  "tiers": {
   "color": 12,
-  "ledger": 2473,
+  "ledger": 2481,
   "nary": 17,
   "registry": 927
  },
@@ -1394,7 +1394,49 @@
    ]
   },
   {
+   "name": "anomaly_image_f1_max",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_operating_point",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "anomaly_pixel_auroc",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_pixel_f1_max",
    "halcon": "",
    "in_sort": "video",
    "out_sort": "table",
@@ -19038,6 +19080,73 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "patch_features",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "patchbank_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "patchbank_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "patchdist_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "patchdist_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
   },
   {
    "name": "path_slip_risk",

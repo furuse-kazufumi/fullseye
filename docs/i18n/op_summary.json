@@ -30932,6 +30932,78 @@
    "ko": "구성을 하나 더 붙인 *system*의 복사본을 돌려준다(``table``).",
    "de": "Gibt eine Kopie von *system* mit einer zusätzlichen Konfiguration zurück (``table``).",
    "hi": "*system* की एक प्रति लौटाता है जिसमें एक और विन्यास जुड़ा हो (``table``)।"
+  },
+  "spc/patch_features": {
+   "fp": "7e775b15a9e9",
+   "ja": "格子上の古典的なパッチ特徴: パッチごとに D 次元のベクトル(勾配・Gabor・LBP・周波数帯・色)(``table``)。",
+   "zh": "网格上的经典图块特征:每个图块一个 D 维向量(梯度、Gabor、LBP、频带、颜色)(``table``)。",
+   "tw": "網格上的經典圖塊特徵:每個圖塊一個 D 維向量(梯度、Gabor、LBP、頻帶、顏色)(``table``)。",
+   "ko": "격자 위의 고전적 패치 특징: 패치마다 D차원 벡터(기울기·Gabor·LBP·주파수 대역·색) (``table``).",
+   "de": "Klassische Patch-Merkmale auf einem Gitter: ein D-dimensionaler Vektor je Patch (Gradient, Gabor, LBP, Frequenzbänder, Farbe) (``table``).",
+   "hi": "grid पर classical patch features: हर patch का D-आयामी vector (gradient, Gabor, LBP, frequency bands, colour) (``table``)।"
+  },
+  "spc/patchdist_fit": {
+   "fp": "612fc01f8542",
+   "ja": "良品の画像から、格子の位置ごとにパッチ特徴の正規分布を学ぶ(縮小推定を宣言、特異なら拒否)(``table``)。",
+   "zh": "从良品图像学习每个网格位置上图块特征的正态分布(声明收缩估计,协方差奇异则拒绝)(``table``)。",
+   "tw": "從良品影像學習每個網格位置上圖塊特徵的常態分佈(宣告收縮估計,共變異數奇異則拒絕)(``table``)。",
+   "ko": "양품 이미지에서 격자 위치마다 패치 특징의 정규분포를 학습 (수축 추정을 선언하고, 특이하면 거부) (``table``).",
+   "de": "Aus Gutbildern je Gitterposition eine Normalverteilung des Patch-Merkmals lernen (Schrumpfung wird deklariert, singuläre Kovarianz abgelehnt) (``table``).",
+   "hi": "अच्छे images से हर grid position पर patch feature का normal distribution सीखना (shrinkage घोषित, singular covariance अस्वीकृत) (``table``)।"
+  },
+  "spc/patchdist_score": {
+   "fp": "2cca83e21e54",
+   "ja": "1 枚を位置ごとの正規分布に当てる: パッチごとのマハラノビス距離から異常地図を作る(``table``)。",
+   "zh": "将一张图像与逐位置的正态分布比较:由各图块的马氏距离生成异常图(``table``)。",
+   "tw": "將一張影像與逐位置的常態分佈比較:由各圖塊的馬氏距離產生異常圖(``table``)。",
+   "ko": "한 장을 위치별 정규분포에 대조: 패치별 마할라노비스 거리로 이상 맵을 만든다 (``table``).",
+   "de": "Ein Bild gegen die Normalverteilung je Position bewerten: Anomaliekarte aus der Mahalanobis-Distanz je Patch (``table``).",
+   "hi": "एक image को हर position के normal distribution से मिलाना: हर patch की Mahalanobis दूरी से anomaly map बनाना (``table``)।"
+  },
+  "spc/patchbank_fit": {
+   "fp": "cea39158076a",
+   "ja": "良品のパッチ特徴の記憶バンクを作る。記憶は座標の貪欲被覆(k 中心)で間引く(``table``)。",
+   "zh": "建立良品图块特征的记忆库,并用贪心 k 中心覆盖进行稀疏化(``table``)。",
+   "tw": "建立良品圖塊特徵的記憶庫,並用貪婪 k 中心覆蓋進行稀疏化(``table``)。",
+   "ko": "양품 패치 특징의 메모리 뱅크를 만들고 탐욕적 k-중심 커버링으로 솎아낸다 (``table``).",
+   "de": "Eine Speicherbank guter Patch-Merkmale aufbauen, ausgedünnt durch gierige k-Zentren-Überdeckung (``table``).",
+   "hi": "अच्छे patch features का memory bank बनाना, greedy k-centre covering से छाँटा हुआ (``table``)।"
+  },
+  "spc/patchbank_score": {
+   "fp": "29dc6d181e70",
+   "ja": "1 枚を記憶バンクに当てる: パッチごとに近い良品 k 個までの距離から異常地図を作る(``table``)。",
+   "zh": "将一张图像与记忆库比较:由各图块到最近 k 个良品图块的距离生成异常图(``table``)。",
+   "tw": "將一張影像與記憶庫比較:由各圖塊到最近 k 個良品圖塊的距離產生異常圖(``table``)。",
+   "ko": "한 장을 메모리 뱅크에 대조: 패치마다 가장 가까운 양품 k개까지의 거리로 이상 맵을 만든다 (``table``).",
+   "de": "Ein Bild gegen die Speicherbank bewerten: Anomaliekarte aus dem Abstand jedes Patches zu seinen k nächsten guten Patches (``table``).",
+   "hi": "एक image को memory bank से मिलाना: हर patch की सबसे निकट k अच्छे patches तक की दूरी से anomaly map बनाना (``table``)।"
+  },
+  "spc/anomaly_pixel_f1_max": {
+   "fp": "264e0799f720",
+   "ja": "異常スコアの図と欠陥マスクから、全閾値にわたる画素単位の F1 の最大値(``table``)。",
+   "zh": "由异常得分图与缺陷掩膜,求遍历所有阈值的像素级 F1 最大值(``table``)。",
+   "tw": "由異常得分圖與缺陷遮罩,求遍歷所有閾值的像素級 F1 最大值(``table``)。",
+   "ko": "이상 점수 맵과 결함 마스크로부터 모든 임계값에 걸친 화소 단위 F1의 최댓값 (``table``).",
+   "de": "Bester Pixel-F1 über alle Schwellen aus Anomalie-Scorekarten und Defektmasken (``table``).",
+   "hi": "anomaly score maps और defect masks से सभी thresholds पर pixel-स्तर का सर्वोत्तम F1 (``table``)।"
+  },
+  "spc/anomaly_image_f1_max": {
+   "fp": "82f7ab1cdf62",
+   "ja": "画像ごとの異常スコアと良/不良ラベルから、全閾値にわたる画像単位の F1 の最大値(``table``)。",
+   "zh": "由每张图像的异常得分与良/不良标签,求遍历所有阈值的图像级 F1 最大值(``table``)。",
+   "tw": "由每張影像的異常得分與良/不良標籤,求遍歷所有閾值的影像級 F1 最大值(``table``)。",
+   "ko": "이미지별 이상 점수와 양/불량 라벨로부터 모든 임계값에 걸친 이미지 단위 F1의 최댓값 (``table``).",
+   "de": "Bester Bild-F1 über alle Schwellen aus einem Anomalie-Score je Bild und einem Gut/Defekt-Label (``table``).",
+   "hi": "हर image के anomaly score और अच्छा/दोषपूर्ण label से सभी thresholds पर image-स्तर का सर्वोत्तम F1 (``table``)।"
+  },
+  "spc/anomaly_operating_point": {
+   "fp": "f0fb23b84091",
+   "ja": "欠陥の再現率が ``confidence`` の水準で ``recall`` 以上と保証できる、最も高い閾値を選ぶ(``table``)。",
+   "zh": "选出能以 ``confidence`` 的置信水平保证缺陷召回率不低于 ``recall`` 的最高阈值(``table``)。",
+   "tw": "選出能以 ``confidence`` 的信賴水準保證缺陷召回率不低於 ``recall`` 的最高閾值(``table``)。",
+   "ko": "결함 재현율이 ``confidence`` 수준에서 ``recall`` 이상임을 보장할 수 있는 가장 높은 임계값을 고른다 (``table``).",
+   "de": "Die höchste Schwelle wählen, deren Defekt-Recall mit Sicherheit ``confidence`` mindestens ``recall`` beträgt (``table``).",
+   "hi": "वह सबसे ऊँचा threshold चुनना जिसकी defect recall ``confidence`` स्तर पर कम से कम ``recall`` होने की गारंटी हो (``table``)।"
   }
  }
 }

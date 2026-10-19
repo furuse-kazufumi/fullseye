@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">patchdist_score — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchdist_score(image, model, smooth=4.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchdist_score(image, model, smooth=4.0)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;patchdist_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Ein Bild gegen die Normalverteilung je Position bewerten: Anomaliekarte aus der Mahalanobis-Distanz je Patch (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">model</code> comes from <code style="color:#22d3bf">patchdist_fit</code>; <code style="color:#22d3bf">image</code> must have the training images&#x27; shape. The grid of distances <code style="color:#22d3bf">sqrt((x - mu)&#x27; P (x - mu))</code> is interpolated (bilinear, between patch centres) to the image size and smoothed by a Gaussian of <code style="color:#22d3bf">smooth</code> px (0 = no smoothing). Returns <code style="color:#22d3bf">map</code> (H, W; higher = more anomalous), <code style="color:#22d3bf">grid</code> (the raw distances), <code style="color:#22d3bf">image_score</code> (the maximum of the smoothed map) and <code style="color:#22d3bf">smooth</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for a model that is not a <code style="color:#22d3bf">patchdist_fit</code> result, a different image shape, or a negative / non-finite <code style="color:#22d3bf">smooth</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">anomaly_patch</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:patch_features">patch_features</a> · <a style="color:#22d3bf" href="opspc:patchdist_fit">patchdist_fit</a> · <a style="color:#22d3bf" href="opspc:patchbank_fit">patchbank_fit</a> · <a style="color:#22d3bf" href="opspc:patchbank_score">patchbank_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomaly_patch.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

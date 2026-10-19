@@ -4726,6 +4726,64 @@ def _b_varmodel_score(pool, rng):
     return (img, m), {}
 
 
+def _b_anomaly_pixel_f1_max(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_image_f1_max(pool, rng):
+    y = np.r_[np.zeros(12), np.ones(8)].astype(bool)
+    return (rng.random(20) + 0.5 * y, y), {}
+
+
+def _b_anomaly_operating_point(pool, rng):
+    """保証に足りる数の欠陥(20 枚)と良品 30 枚。recall 0.8・信頼 0.9 なら n_required = 11 で、つまみが効く。"""
+    y = np.r_[np.zeros(30), np.ones(20)].astype(bool)
+    return (rng.random(50) + 0.6 * y, y), {"recall": 0.8, "confidence": 0.9}
+
+
+def _patch_tex(rng, n=40):
+    """パッチ特徴の種: 滑らかなランダム模様(確率的なテクスチャ)。"""
+    from scipy import ndimage as _ndi
+    return _ndi.gaussian_filter(rng.standard_normal((n, n)), 1.5) * 3.0
+
+
+def _patch_stack(rng, n=8):
+    return np.stack([_patch_tex(rng) for _ in range(n)])
+
+
+_PATCH_KW = {"patch": 8, "stride": 4, "scales": (1.0, 2.0), "groups": ("gradient", "gabor", "lbp")}
+
+
+def _patch_test_image(rng):
+    img = _patch_tex(rng)
+    img[14:22, 18:28] += 1.5
+    return img
+
+
+def _b_patch_features(pool, rng):
+    return (_patch_test_image(rng),), dict(_PATCH_KW)
+
+
+def _b_patchdist_fit(pool, rng):
+    return (_patch_stack(rng),), dict(_PATCH_KW)
+
+
+def _b_patchdist_score(pool, rng):
+    import anomaly_patch as _ap
+    m = _ap.patchdist_fit(_patch_stack(rng), **_PATCH_KW)
+    return (_patch_test_image(rng), m), {}
+
+
+def _b_patchbank_fit(pool, rng):
+    return (_patch_stack(rng),), dict(_PATCH_KW, coreset=0.3)
+
+
+def _b_patchbank_score(pool, rng):
+    import anomaly_patch as _ap
+    m = _ap.patchbank_fit(_patch_stack(rng), **dict(_PATCH_KW, coreset=0.3))
+    return (_patch_test_image(rng), m), {"k": 2}
+
+
 def _b_coherent_image(pool, rng):
     """振幅(>= 0)と位相(rad)の 2 枚。プールの任意の 2 枚では振幅が負になりうる。"""
     return (rng.random((32, 32)), rng.uniform(0.0, 2.0 * np.pi, (32, 32))), {"cutoff": 0.2}
@@ -6812,6 +6870,14 @@ OP_ARG_BUILDERS = {
     "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
     "anomaly_pro": _b_anomaly_pro,
     "anomaly_region_overlap": _b_anomaly_region_overlap,
+    "anomaly_pixel_f1_max": _b_anomaly_pixel_f1_max,
+    "anomaly_image_f1_max": _b_anomaly_image_f1_max,
+    "anomaly_operating_point": _b_anomaly_operating_point,
+    "patch_features": _b_patch_features,
+    "patchdist_fit": _b_patchdist_fit,
+    "patchdist_score": _b_patchdist_score,
+    "patchbank_fit": _b_patchbank_fit,
+    "patchbank_score": _b_patchbank_score,
     "varmodel_alignment": _b_varmodel_alignment,
     "varmodel_band_k": _b_varmodel_band_k,
     "varmodel_fit": _b_varmodel_fit,

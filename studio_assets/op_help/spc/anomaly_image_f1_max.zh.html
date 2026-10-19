@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_image_f1_max — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_image_f1_max(scores, labels)</code>(要直接调用实现,<code style="color:#22d3bf">import anomeval; anomeval.anomaly_image_f1_max(scores, labels)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;anomaly_image_f1_max&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由每张图像的异常得分与良/不良标签,求遍历所有阈值的图像级 F1 最大值(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p><code style="color:#22d3bf">scores</code> is a 1-D array (higher = more anomalous), <code style="color:#22d3bf">labels</code> the same length with 1 / True = defective; an image is predicted defective when its score is &gt;= the threshold. Exact at every distinct score; the highest threshold wins a tie. Returns <code style="color:#22d3bf">f1</code>, <code style="color:#22d3bf">threshold</code>, <code style="color:#22d3bf">precision</code>, <code style="color:#22d3bf">recall</code>, <code style="color:#22d3bf">n_pos</code> and <code style="color:#22d3bf">n_neg</code> (images).</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> on empty / mismatched / non-finite input, non-binary labels, or when all images carry the same label.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">anomaly_eval</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:anomaly_image_auroc">anomaly_image_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pixel_auroc">anomaly_pixel_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pro">anomaly_pro</a> · <a style="color:#22d3bf" href="opspc:anomaly_region_overlap">anomaly_region_overlap</a> · <a style="color:#22d3bf" href="opspc:anomaly_pixel_f1_max">anomaly_pixel_f1_max</a> · <a style="color:#22d3bf" href="opspc:anomaly_operating_point">anomaly_operating_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomeval.py — SPC 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_pixel_f1_max — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video × video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_pixel_f1_max(scores, masks)</code>(要直接呼叫實作,<code style="color:#22d3bf">import anomeval; anomeval.anomaly_pixel_f1_max(scores, masks)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;anomaly_pixel_f1_max&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由異常得分圖與缺陷遮罩,求遍歷所有閾值的像素級 F1 最大值(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">scores</code> and <code style="color:#22d3bf">masks</code> are (n, H, W) (or lists / single 2-D maps); a pixel is predicted defective when its score is &gt;= the threshold. The F1 = 2TP / (2TP + FP + FN) is evaluated exactly at every distinct score (sorted cumulative sums, no threshold grid); the highest threshold wins a tie. Returns <code style="color:#22d3bf">f1</code>, <code style="color:#22d3bf">threshold</code>, <code style="color:#22d3bf">precision</code> and <code style="color:#22d3bf">recall</code> at the maximum, <code style="color:#22d3bf">n_pos</code> and <code style="color:#22d3bf">n_neg</code> (pixels). It counts pixels, like the pixel AUROC, not regions (see <code style="color:#22d3bf">anomaly_pro</code>): a small defect weighs little however well it is found.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> on empty / mismatched / non-finite input, non-binary masks, or when the masks contain no defect pixel or no good pixel.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_patch_anomaly">poc_patch_anomaly</a> — <code style="color:#22d3bf">py -3.11 examples/poc_patch_anomaly.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">anomaly_eval</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:anomaly_image_auroc">anomaly_image_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pixel_auroc">anomaly_pixel_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pro">anomaly_pro</a> · <a style="color:#22d3bf" href="opspc:anomaly_region_overlap">anomaly_region_overlap</a> · <a style="color:#22d3bf" href="opspc:anomaly_image_f1_max">anomaly_image_f1_max</a> · <a style="color:#22d3bf" href="opspc:anomaly_operating_point">anomaly_operating_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomeval.py — SPC 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

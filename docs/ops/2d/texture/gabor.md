@@ -5,7 +5,7 @@ category: texture
 in: image
 out: image
 halcon: gen_gabor
-examples: [gallery2d_texture_freq]
+examples: [gallery2d_texture_freq, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -80,6 +80,7 @@ gabor 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
