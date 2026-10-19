@@ -378,7 +378,7 @@ def _curv(s):
 
 def _sag_profile(s, y):
     """面 *s* の sag(``raytrace`` の円錐 + 偶数次の非球面の式)。図の面の形はここだけで決まる。"""
-    return RT._sag(np.asarray(y, float) ** 2, _curv(s), s["k"], s["asph"])
+    return RT._sag(np.asarray(y, float) ** 2, _curv(s), s["k"], s["asph"], RT._xtra(s))
 
 
 def _is_glass(s):

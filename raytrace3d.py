@@ -345,6 +345,10 @@ def _from_lens_system(system, op):
     """``raytrace.lens_system`` の処方 → 素の記録。鏡の後は座標系が反転するので R・非球面・偏心 y・傾き y の符号を返す。"""
     recs = []
     sign = 1.0
+    system = RT._solved(system)
+    if system.get("image_R", INF) != INF or system.get("afocal") or             any(s.get("a2") or s.get("odd") for s in system["surfaces"]):
+        raise ValueError("%s: the non-coaxial tracer does not read a curved image surface, an afocal flag or the "
+                         "a2 / odd (odd-asphere) sag terms of raytrace.lens_system" % op)
     for i, s in enumerate(system["surfaces"]):
         R = s["R"] if s["R"] == INF else sign * s["R"]
         asph = tuple(sign * a for a in s["asph"]) if sign < 0 else tuple(s["asph"])
