@@ -4,9 +4,9 @@
   "en": "Measured regression-test count. Collection depends on the environment (which optional backends are installed) and takes about 40 s, so regen_all --check does not run it; it is measured per version and recorded here. tests/test_trust_block.py checks version against pyproject, so a version bump fails the gate until this is re-measured."
  },
  "version": "0.7.1",
- "count": 20750,
+ "count": 20795,
  "date": "2026-10-19",
- "commit": "32754a697c",
+ "commit": "fbe838d6f4",
  "relation": "in_release",
  "command": "PYTHONPATH=. py -3.11 -m pytest --collect-only -q -p no:cacheprovider tests",
  "environment": {
