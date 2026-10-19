@@ -85,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 86 项,每项都有说明页(用法与限制)和可运行的示例。
+共 87 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 间接 ToF(相位法)的多频解包裹与失效方式(折返、多径、边缘混合、谐波、背景光): [说明](../../capabilities/itof-multifreq.md) _(ja)_ · 示例 [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - 激光光切法的误差下限由散斑决定(相干成像、散斑统计与三角测量的不确定度): [说明](../../capabilities/laser-speckle-floor.md) _(ja)_ · 示例 [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - 在测量之前预测凹形部件的相互反射使条纹投影与 ToF 偏离多少(全局光传输、直接与全局分离、微相移): [说明](../../capabilities/light-transport.md) _(ja)_ · 示例 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+- 逐像素锁相解调(时间相关成像:幅值、相位与直流;光环法线、编码光分离、热波): [说明](../../capabilities/lockin-demodulation.md) _(ja)_ · 示例 [poc_lockin_imaging](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 - 这个数字有多少来自测量方式(量具 R&R 与测量不确定度): [说明](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 示例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - 莫尔对准(节距略异的两片光栅 → 条纹相位 → nm 位移,差动与 Talbot 间隙): [说明](../../capabilities/moire-alignment.md) _(ja)_ · 示例 [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - 用条纹的镜像测量光泽面的微米凹坑(相位测量偏折术: 条纹 → 相位 → 斜率 → 曲率): [说明](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · 示例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
@@ -205,7 +206,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 264 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -274,7 +275,7 @@ PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (53)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -326,6 +327,7 @@ PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="加工凹槽的相互反射算到收敛" width="200" height="200"><span>加工凹槽的相互反射算到收敛</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="虚拟透射电子显微镜(Thon 环与欠焦)" width="200" height="200"><b>&#9654;</b><span>虚拟透射电子显微镜(Thon 环与欠焦)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="非共轴光学系统(分束器鬼像与折转)" width="200" height="200"><span>非共轴光学系统(分束器鬼像与折转)</span></a>
+<a href="../../articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lockin_imaging.jpg" alt="逐像素锁相解调:光环法线、日间化、热波" width="200" height="200"><span>逐像素锁相解调:光环法线、日间化、热波</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="光谱仪与照明系统(带宽与光源的纹样)" width="200" height="200"><span>光谱仪与照明系统(带宽与光源的纹样)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="用远心实拍图像校准成像模型" width="200" height="200"><span>用远心实拍图像校准成像模型</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="划痕把平均线压凹多少,以及稳健滤波的失效点" width="200" height="200"><span>划痕把平均线压凹多少,以及稳健滤波的失效点</span></a>

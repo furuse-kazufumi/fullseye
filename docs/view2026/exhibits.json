@@ -6302,6 +6302,23 @@
    }
   },
   {
+   "id": "poc_lockin_imaging",
+   "group": "wing_metrology",
+   "media": "01_ring_amp_phase.png",
+   "motion": false,
+   "thumb_src": "01_ring_amp_phase.png",
+   "label": {
+    "ja": "画素ごとの直交復調(ロックイン)で法線・昼間化・熱波を読む",
+    "en": "Per-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves",
+    "zh": "逐像素锁相解调:光环法线、日间化、热波",
+    "tw": "逐像素鎖相解調:光環法線、日間化、熱波",
+    "ko": "화소별 록인 복조: 링 조명 법선, 주간화, 열파",
+    "de": "Pixelweise Lock-in-Demodulation: Ring-Normalen, Tageslicht-Trennung, Wärmewellen",
+    "hi": "प्रति-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves",
+    "fr": "Démodulation lock-in par pixel : normales d'éclairage annulaire, séparation de la lumière du jour, ondes thermiques"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",
@@ -7103,6 +7120,14 @@
     "de": "Die Koeffizienten eines physikalischen Modells an reale Bilder anpassen (Sim-to-Real-Kalibrierung) — keine Zahl für Koeffizienten, die die Bilder nicht bestimmen, stattdessen die bestimmte Kombination und der Grund",
     "hi": "असली images से physical model के coefficients fit करना (sim-to-real calibration) — जिन coefficients को images तय नहीं करतीं उनके लिए कोई संख्या नहीं, बल्कि तय होने वाला संयोजन और कारण",
     "fr": "Ajuster les coefficients d'un modèle physique à des images réelles (calibrage sim-to-real) — aucune valeur pour un coefficient que les images ne déterminent pas ; on renvoie à la place la combinaison déterminée et la raison"
+   },
+   "lockin-demodulation": {
+    "zh": "逐像素锁相解调(时间相关成像:幅值、相位与直流;光环法线、编码光分离、热波)",
+    "tw": "逐像素鎖相解調(時間相關成像:振幅、相位與直流;光環法線、編碼光分離、熱波)",
+    "ko": "화소별 록인 복조(시간 상관 이미징: 진폭·위상·직류, 링 조명 법선, 부호화 조명 분리, 열파)",
+    "de": "Pixelweise Lock-in-Demodulation (Zeitkorrelations-Bildgebung: Amplitude, Phase und Gleichanteil; Ring-Normalen, Trennung codierten Lichts, Wärmewellen)",
+    "hi": "प्रति-pixel lock-in demodulation (time-correlation imaging: amplitude, phase और DC; ring-light normals, coded-light separation, thermal waves)",
+    "fr": "Démodulation lock-in par pixel (imagerie à corrélation temporelle : amplitude, phase et continu ; normales d'éclairage annulaire, séparation de lumière codée, ondes thermiques)"
    },
    "moire-alignment": {
     "zh": "莫尔对准(节距略异的两片光栅 → 条纹相位 → nm 位移,差动与 Talbot 间隙)",

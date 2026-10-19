@@ -626,6 +626,12 @@ def stage8_real():
 
 # --------------------------------------------------------------------------- #
 def main():
+    if REDUCED:                        # CI では他の PoC と並走するので、BLAS のスレッドを絞って全体を遅くしない
+        try:
+            from threadpoolctl import threadpool_limits          # noqa: PLC0415
+            threadpool_limits(limits=2)
+        except ImportError:
+            pass
     t0 = time.perf_counter()
     c0 = time.process_time()
     print("良品だけから学ぶパッチ特徴の異常検知: 古典特徴で『分布』と『記憶』を比べる")

@@ -85,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-86 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+87 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - indirect ToF (phase-based) का multi-frequency unwrapping और वह कैसे टूटता है (wrapping, multipath, flying pixel, harmonics, ambient light): [explanation](../../capabilities/itof-multifreq.md) _(ja)_ · examples [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - laser sheet-of-light की त्रुटि की निचली सीमा speckle तय करता है (coherent imaging, speckle आँकड़े और triangulation अनिश्चितता): [explanation](../../capabilities/laser-speckle-floor.md) _(ja)_ · examples [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - मापने से पहले अनुमान लगाना कि अवतल हिस्सों का interreflection fringe projection और ToF को कितना भटकाता है (global light transport, direct/global पृथक्करण, micro phase shifting): [explanation](../../capabilities/light-transport.md) _(ja)_ · examples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+- प्रति-pixel lock-in demodulation (time-correlation imaging: amplitude, phase और DC; ring-light normals, coded-light separation, thermal waves): [explanation](../../capabilities/lockin-demodulation.md) _(ja)_ · examples [poc_lockin_imaging](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 - उस संख्या में कितना हिस्सा measurement का है, process का नहीं (gauge R&R और uncertainty): [explanation](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · examples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - moiré alignment (थोड़े अलग pitch के दो gratings → fringe phase → nm विस्थापन, differential और Talbot gap): [explanation](../../capabilities/moire-alignment.md) _(ja)_ · examples [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - चमकदार सतह के µm गड्ढों को fringe screen के प्रतिबिंब से मापना (phase-measuring deflectometry: fringe → phase → slope → curvature): [explanation](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · examples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
@@ -205,7 +206,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-263 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+264 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -274,7 +275,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (53)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -326,6 +327,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="machined pocket का inter-reflection अभिसरण तक" width="200" height="200"><span>machined pocket का inter-reflection अभिसरण तक</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="virtual TEM (Thon rings और defocus)" width="200" height="200"><b>&#9654;</b><span>virtual TEM (Thon rings और defocus)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="non-coaxial optics: beamsplitter ghost और fold" width="200" height="200"><span>non-coaxial optics: beamsplitter ghost और fold</span></a>
+<a href="../../articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lockin_imaging.jpg" alt="प्रति-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves" width="200" height="200"><span>प्रति-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="spectrometer और illumination (bandwidth और lamp की संरचना)" width="200" height="200"><span>spectrometer और illumination (bandwidth और lamp की संरचना)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="real telecentric image पर imaging model का calibration" width="200" height="200"><span>real telecentric image पर imaging model का calibration</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं" width="200" height="200"><span>scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं</span></a>

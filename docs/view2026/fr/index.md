@@ -85,7 +85,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-86 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+87 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -119,6 +119,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Temps de vol indirect (par phase) : déroulement multifréquence et modes de défaillance (repliement, trajets multiples, pixels de bord mélangés, harmoniques, lumière ambiante): [explication](../../capabilities/itof-multifreq.md) _(ja)_ · exemples [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - Le plancher d'erreur de la coupe lumineuse laser est fixé par le speckle (imagerie cohérente, statistiques du speckle, incertitude de triangulation): [explication](../../capabilities/laser-speckle-floor.md) _(ja)_ · exemples [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - Prédire avant la prise de vue de combien les interréflexions dans les creux faussent la projection de franges et le ToF (transport global de la lumière, séparation direct/global, décalage de phase micro): [explication](../../capabilities/light-transport.md) _(ja)_ · exemples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+- Démodulation lock-in par pixel (imagerie à corrélation temporelle : amplitude, phase et continu ; normales d'éclairage annulaire, séparation de lumière codée, ondes thermiques): [explication](../../capabilities/lockin-demodulation.md) _(ja)_ · exemples [poc_lockin_imaging](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 - Quelle part de ce chiffre revient à la méthode de mesure (R&R du système de mesure et incertitude de mesure): [explication](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · exemples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Alignement par moiré (deux réseaux de pas légèrement différents, phase des franges, décalage en nm, paires différentielles et distance de Talbot): [explication](../../capabilities/moire-alignment.md) _(ja)_ · exemples [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - Mesurer des creux de l'ordre du µm sur une surface brillante grâce à l'image miroir de franges (déflectométrie à mesure de phase : franges → phase → pente → courbure): [explication](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · exemples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
@@ -205,7 +206,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-263 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+264 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -274,7 +275,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (53)</summary>
+<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="Appariement AOI et CT" width="200" height="200"><span>Appariement AOI et CT</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Déformation des murs construits" width="200" height="200"><span>Déformation des murs construits</span></a>
@@ -326,6 +327,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="Interréflexion dans une poche usinée jusqu'à la convergence" width="200" height="200"><span>Interréflexion dans une poche usinée jusqu'à la convergence</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="MET virtuel (anneaux de Thon et défocalisation)" width="200" height="200"><b>&#9654;</b><span>MET virtuel (anneaux de Thon et défocalisation)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="Optique non coaxiale : images fantômes et repliements d'une lame semi-réfléchissante" width="200" height="200"><span>Optique non coaxiale : images fantômes et repliements d'une lame semi-réfléchissante</span></a>
+<a href="../../articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lockin_imaging.jpg" alt="Démodulation lock-in par pixel : normales d'éclairage annulaire, séparation de la lumière du jour, ondes thermiques" width="200" height="200"><span>Démodulation lock-in par pixel : normales d'éclairage annulaire, séparation de la lumière du jour, ondes thermiques</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="Spectromètre et éclairage (largeur de bande et structure de la lampe)" width="200" height="200"><span>Spectromètre et éclairage (largeur de bande et structure de la lampe)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Étalonner un modèle d'imagerie sur une image télécentrique réelle" width="200" height="200"><span>Étalonner un modèle d'imagerie sur une image télécentrique réelle</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent" width="200" height="200"><span>De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent</span></a>

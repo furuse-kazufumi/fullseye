@@ -542,7 +542,9 @@ def section8_tool_gaps():
     # (a) 熱モデルが無い。2026-10-14 に materials.thermo_optic_coefficient(硝材の dn/dT、カタログの式 A)が
     #     入ったので 'thermo' は 1 件になった —— それは**硝子の屈折率の温度係数**であって、カメラの K が時間と
     #     ともに動く熱モデルではない。穴の半分(硝材側)が塞がった所見として名指しで除き、残りは 0 件のまま固定する。
-    known = {"thermo_optic_coefficient"}
+    #     2026-10-19 に lockin_thermal_wave(周期加熱した板の表面温度 = ロックイン・サーモグラフィの熱波)が入った。
+    #     これも語が当たるだけで、カメラの K の熱モデルではない(この門で 5 度目の偽陽性なので名指しで除く)。
+    known = {"thermo_optic_coefficient", "lockin_thermal_wave"}
     for kw in ("thermal", "temperature", "thermo", "drift"):
         hit = [n for n in allnames if kw in n.lower() and n not in known]
         assert not hit, (kw, hit)

@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_ring_amp_phase.png",
+  "name": "ring_amp_phase",
+  "caption": "8 灯の輪の光の位相を方位角と一緒に 1 周させ(双極子)、画素ごとに復調する。",
+  "shape": [
+   550,
+   616,
+   3
+  ]
+ },
+ {
+  "file": "02_daylighting.png",
+  "name": "daylighting",
+  "caption": "Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。",
+  "shape": [
+   550,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "03_thermography.png",
+  "name": "thermography",
+  "caption": "CFRP 板 3 mm、加熱 0.2 Hz(μ = 0.81 mm)。",
+  "shape": [
+   550,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "04_thermal_phase_vs_depth.png",
+  "name": "thermal_phase_vs_depth",
+  "caption": "周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

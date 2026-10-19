@@ -489,6 +489,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.099"
   },
+  "poc_lockin_imaging": {
+   "accessioned": "2026-10-19",
+   "no": "2026.263"
+  },
   "poc_machine_condition_fusion": {
    "accessioned": "2026-09-07",
    "no": "2026.071"
@@ -583,7 +587,7 @@
   },
   "poc_patch_anomaly": {
    "accessioned": "2026-10-19",
-   "no": "2026.263"
+   "no": "2026.264"
   },
   "poc_peg_failure_recovery": {
    "accessioned": "2026-10-04",

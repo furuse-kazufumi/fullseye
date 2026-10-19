@@ -64,6 +64,7 @@
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
 | [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | Lens design files (read, write and triage sequential .zmx prescriptions) | 光と色 | `verified-synthetic` | 4/4 | `poc_lens_file_roundtrip` synthetic → tests/test_poc_scripts_run.py |
 | [凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)](capabilities/light-transport.md) | Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting) | 測る | `verified-synthetic` | 11/11 | `poc_interreflection_fringe_error` synthetic → tests/test_poc_scripts_run.py |
+| [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves) | 測る | `verified-synthetic` | 9/9 | `poc_lockin_imaging` synthetic → tests/test_poc_scripts_run.py |
 | [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md) | One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer) | 光と色 | `validated-public-real-data` | 15/16 | `poc_material_optical_library` real → tests/test_poc_scripts_run.py |
 | [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md) | How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty) | 測る | `verified-synthetic` | 11/11 | `poc_measurement_system_analysis` synthetic → tests/test_poc_scripts_run.py |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap) | 測る | `verified-synthetic` | 8/8 | `poc_moire_alignment` synthetic → tests/test_poc_scripts_run.py |
@@ -124,8 +125,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 411 |
-| `tests/test_poc_scripts_run.py` が走らせる | 263 |
+| 2-D 台帳の例 | 412 |
+| `tests/test_poc_scripts_run.py` が走らせる | 264 |
 | `tests/test_example_scripts_run.py` が走らせる | 148 |
 | **どの門も走らせていない** | **0** |
 
