@@ -8100,7 +8100,9 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       # ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
                                       "lens_configurations", "lens_with_configuration", "lens_add_configuration",
                                       # ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-                                      "lens_substitute_glasses", "lens_global_search"}
+                                      "lens_substitute_glasses", "lens_global_search",
+                                      # ★2026-10-19: 最適化後の処方(R = inf)を返す
+                                      "optimize_lens_operands"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

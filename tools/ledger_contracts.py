@@ -508,6 +508,12 @@ def _optics_builders():
         "lens_substitute_glasses": lambda pool, rng: ([__import__("lensglobal")._example_doublet()], {}),
         "lens_global_search": lambda pool, rng: ([__import__("lensglobal")._example_doublet()],
                                                  {"variables": ["c0", "c1"], "n_starts": 3, "iterations": 3, "spread": 0.001}),
+        # lensmerit(2026-10-19): オペランド表は処方 + 行のリスト。行の添字が処方の面数を超えない最小の表で探る
+        "merit_evaluate": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        "merit_default": lens_first(rings=2),
+        "merit_boundary_operands": lens_first(),
+        "merit_contributions": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        "optimize_lens_operands": lens_first(variables=["c0"], iterations=3),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
         #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)
