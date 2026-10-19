@@ -39,7 +39,7 @@ GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
 FCD = [RT.WL_F, RT.WL_D, RT.WL_C]
 N1, V1, N2, V2 = 1.5168, 64.17, 1.6200, 36.37
-NAMED = ["N-BK7", "N-SF11", "N-FK51A", "N-F2", "N-SK16", "N-SF6", "N-LAK9", "N-BAK4"]
+CAT_PICK = tuple(range(0, 46, 6))                # 8 catalogue glasses spread over the Abbe plane (no brand names in public text)
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -53,17 +53,23 @@ def _row(name):
     return next(r for r in MAT.glass_map("glass") if r["name"] == name)
 
 
+def _picked():
+    rows = MAT.glass_map("glass")
+    return [rows[i] for i in CAT_PICK]
+
+
 def chapter_glass():
     print("\n1. 硝材の置き換え")
     worst, back = 0.0, 0
-    for nm in NAMED:
-        r = _row(nm)
+    picked = _picked()
+    for r in picked:
+        nm = r["name"]
         nb = LG.glass_nearest(r["nd"], r["vd"])["neighbours"][0]
         worst = max(worst, nb["distance"])
         s = RT.lens_system([{"R": 60.0, "t": 4.0, "n": (r["nd"], r["vd"]), "ap": 8.0}, {"R": -60.0, "t": None, "n": 1.0}], stop=0)
         back += LG.lens_substitute_glasses(s)["table"][0]["glass"] == nm == nb["name"]
     gate("カタログ硝材 8 種は自分自身が最近傍で距離 0、モデル硝材にしてから置き換えても元の名前に戻る",
-         worst == 0.0 and back == len(NAMED), "最大距離 %.1e、戻った %d/%d" % (worst, back, len(NAMED)))
+         worst == 0.0 and back == len(picked) == 8, "最大距離 %.1e、戻った %d/%d" % (worst, back, len(picked)))
     q = (1.62, 36.4)
     a = LG.glass_nearest(*q)["neighbours"][0]
     b = LG.glass_nearest(*q, metric="partial_dispersion", p_gf=0.535)["neighbours"][0]
