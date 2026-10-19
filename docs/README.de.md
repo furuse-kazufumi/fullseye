@@ -53,7 +53,7 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 86 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 86 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|

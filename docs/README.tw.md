@@ -53,7 +53,7 @@
 
 ### 驗證階段
 
-86 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+86 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.1)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|

@@ -53,7 +53,7 @@
 
 ### 검증 단계
 
-능력 86건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.7.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 86건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.7.1)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|

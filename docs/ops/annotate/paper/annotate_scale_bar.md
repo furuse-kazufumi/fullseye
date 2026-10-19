@@ -7,7 +7,7 @@ out: image2d
 examples: [paper_figure, poc_flybrain_pointcloud, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # annotate_scale_bar — ANNOTATE `paper` op

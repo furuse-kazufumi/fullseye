@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 0.7.1 — 2026-10-19
+
 ### Fixed — `gum_propagate` / `gum_monte_carlo` の相関行列の検査、矩形入力の周辺分布、`disparity_sgm` の非有限入力
 - R01 `gum_propagate`: 相関行列そのものを検査する(有限・対称・対角 1・半正定値)。射影した分散が正でも非半正定値の行列は ValueError。
 - R02 `gum_monte_carlo`: 同じ検査を共有(非対称・対角 ≠ 1・NaN は ValueError)。

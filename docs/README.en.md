@@ -53,7 +53,7 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 86 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.0); stage definitions in [MATURITY.md](MATURITY.md)).
+The 86 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.1); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|

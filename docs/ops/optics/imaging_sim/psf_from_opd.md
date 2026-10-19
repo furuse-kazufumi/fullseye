@@ -7,7 +7,7 @@ out: image2d
 examples: [lens_defect_dataset_demo, optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # psf_from_opd — OPTICS `imaging_sim` op

@@ -7,7 +7,7 @@ out: table
 examples: [poc_pod_lighting, poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # pod_ahat_fit — SPC `pod` op

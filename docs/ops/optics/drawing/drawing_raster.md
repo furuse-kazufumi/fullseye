@@ -7,7 +7,7 @@ out: rgbimage
 examples: [poc_lens_file_roundtrip, poc_noncoaxial_optics, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # drawing_raster — OPTICS `drawing` op

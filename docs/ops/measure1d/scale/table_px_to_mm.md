@@ -7,7 +7,7 @@ out: table
 examples: [example_inner_diameter_mm, example_scratch_width]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # table_px_to_mm — MEASURE1D `scale` op
