@@ -130,8 +130,13 @@ Ranked by usability payoff; each is a self-contained, testable increment:
 2. **Per-op knob semantics.** The two knobs mean different things per op; surface
    the actual meaning (min/max radius, threshold, sigma) by adding an optional
    `knob_doc` to the `Op` dataclass and showing it under the sliders.
-3. **Live thumbnails** of each stage's result in the pipeline rows (`QListWidget`
-   item icons) — turns the list into a visual filmstrip.
+3. ~~**Live thumbnails** of each stage's result in the pipeline rows~~ **(done, Studio
+   slice 2, 2026-10-20)** — `PipelineModel.stage_preview(i)` hands the list a small
+   (48×36) uint8 picture made from the stage cache, never from a recompute; a stage
+   never computed shows "未計算 / not computed", one computed with older knobs / another
+   image / another bypass shows "再計算が必要 / recompute needed" (no stale picture).
+   Region, contour, table, scalar and series results get a picture or a kind symbol; only
+   the small arrays are kept (well under 1 MB for a 2048×2048, 5-stage pipeline).
 4. **Recent files / recent pipelines** menu (`QSettings`), and remember window
    geometry + splitter sizes between sessions.
 5. **Non-blocking apply** for slow ops (`QThreadPool`) with a busy indicator, so
@@ -166,6 +171,20 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     dtype); opening reloads a matching file silently, warns on a changed file, reports
     a missing one in Problems and tries the same file name next to the `.json`. Still
     open: embedding small inputs in the project, and a multi-image project.
+
+12. ~~**Stage in → out panel**~~ **(done, Studio slice 2)** — a dock that shows the selected
+    stage's input and output side by side through the same display mapping, with a
+    one-line, kind-dependent summary (`_stage_delta_summary`: regions n → m, image
+    mean / σ / min / max, table rows × cols, contour count). Still open: **A/B compare**
+    of two arbitrary stages (or two knob settings of one stage), and **synchronised zoom
+    and pan** between the two panes (today each pane is fitted to its size).
+13. ~~**Temporary bypass of a stage**~~ **(done, Studio slice 2)** — `PipelineModel.set_bypass`
+    / `toggle_bypass`, Ctrl+B and the stage context menu. A bypassed stage passes its input
+    through, is greyed and struck through, is part of the cache key, is saved as a 4th
+    stage element `true` only when on (older files are byte-identical), appears as
+    `# bypassed: op` in the export and the Program text, and its undo entry is labelled
+    "bypass". Still open: the Program text is not parsed back into bypass marks (Apply
+    drops them), and bypass has no per-run / per-image scope.
 
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a
