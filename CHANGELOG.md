@@ -7,12 +7,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 0.7.1 — 2026-10-19
+
 ### Added — パッチ特徴の異常検知(`anomaly_patch` 5 op)と評価の追加 3 op(F1 最大・再現率を保証する運用点)
 - 良品だけから学ぶ異常検知を、深層特徴なしの古典特徴(多重解像度の勾配・Gabor・回転不変の一様 LBP・パッチの周波数帯・色)で組んだ。`patch_features`(特徴)、`patchdist_fit` / `patchdist_score`(格子の位置ごとの正規分布とマハラノビス距離。共分散が特異になる n ≦ D では**縮小推定を宣言**: `shrinkage="auto"`(Ledoit–Wolf の解析的な強さ)か数、宣言なしで特異なら `ValueError`。`pool="global"` は全位置まとめた 1 つの分布)、`patchbank_fit` / `patchbank_score`(記憶バンクと k 近傍。記憶は貪欲な k 中心の被覆で間引き、被覆半径を返す。`position_weight` で格子の位置を特徴に足す)。台帳は `opsspc` の新カテゴリ `anomaly_patch`。
 - 評価 `anomeval` に 3 op: `anomaly_pixel_f1_max` / `anomaly_image_f1_max`(全閾値の F1 の最大、厳密)、`anomaly_operating_point`(持ち出した欠陥のうち何枚を拾うかを Clopper–Pearson の下限で決め、再現率 ≧ r を信頼水準 c で保証する最も高い閾値。保証に要る欠陥の数 ceil(ln(1−c)/ln r) に足りなければ閾値を返さず `ValueError`)。画素 AUROC・PRO・画像 AUROC は既存の `anomeval` をそのまま使う。
 - 門 `tests/test_anomaly_patch.py`(37 件): 特徴の閉形式(斜面の勾配 a・倍角成分・波長に合った正弦波の Gabor 応答・LBP の符号)、第 2 実装(縮小の強さと共分散は `sklearn` の `LedoitWolf`、F1 最大は `precision_recall_curve`、最近傍は `cdist`、運用点の下限は `scipy.stats.binomtest` の正確な区間、Mahalanobis は `np.cov` + `np.linalg.solve`)、白色雑音の距離の超過率が F 分布の分位点と二項 4σ 以内、貪欲被覆の半径が最適な k 中心の 2 倍以下(総当たり)、良品だけで学んだ検出器が無作為より桁で良い、良品 5・20・80 枚で順位が変わらない、探針(欠陥マスクを 1 画素ずらすと PRO が下がる・正常画像を欠陥扱いにすると AUROC が割り算の計算どおりに下がる・特異な共分散は宣言か拒否・位置を見ない記憶は動いた棒を見逃す)。
 - PoC `poc_patch_anomaly`(収蔵番号 2026.264): 合成の 3 つの世界(確率場・向きの揃わない織り・位置の決まった部品)で 8 変種 + 変動モデル + 無作為を同じ採点台で比べ、確率場では位置ごとの正規分布(AUPRO 0.375)が全位置まとめた分布(0.559)と記憶バンク(0.603)に負け、良品 5・20・80 枚でも順位は変わらない。論理的な異常(縦の棒が動く)は位置を見ない記憶が見逃し(異常度は良品の 0.9 倍)、位置の重みを足すと指す(3.9 倍)。記憶 10 % は AUPRO 0.638 対 0.684 で採点の CPU 時間は 0.84 秒対 12.55 秒。運用点の保証は 300 回の繰り返しで真の再現率 0.8 以上になった割合 0.957(宣言 0.9)、較正の 80 % 点を取るだけの方法は 0.503。公開実データ(リポジトリに同梱しない): DAGM 2007 Class1(確率的なテクスチャ、CC BY 4.0)の変動モデルは画素 AUROC 0.436 で偶然以下、勾配だけの記憶バンクは 0.768(AUPRO 0.474)だが画像ごとの AUROC は 0.53 で、特徴を 51 次元に増やすと 0.623 に落ちる。VisA pcb1(CC BY 4.0、良品 20 枚)は記憶バンク 10 % で画素 AUROC 0.990・AUPRO 0.875・画像 AUROC 0.935(変動モデルは 0.808・0.678)、位置の重みを足すと 0.969・0.790 に下がる。candle は 0.895・0.734。
 - 手書きの件数を打ち直す: 索引 3,441 → 3,449 op、型付き台帳 2,485 → 2,493、ノート 3,447 → 3,455(AI_RAG_GUIDE 7 言語は `i18n_docs --stamp`)。
+
+### Fixed — `gum_propagate` / `gum_monte_carlo` の相関行列の検査、矩形入力の周辺分布、`disparity_sgm` の非有限入力
+- R01 `gum_propagate`: 相関行列そのものを検査する(有限・対称・対角 1・半正定値)。射影した分散が正でも非半正定値の行列は ValueError。
+- R02 `gum_monte_carlo`: 同じ検査を共有(非対称・対角 ≠ 1・NaN は ValueError)。
+- R03 `gum_monte_carlo`: 相関つきの矩形・三角・U 字入力をガウス copula で作り、指定した周辺分布を保つ(95 % 半幅 1.8875 → 1.6446、閉形式 1.6454)。
+- R04 `gum_propagate`: 相関による厳密な打ち消し(X1 = X2, Y = X1 − X2)は `guf_valid=True`・u = 0・`note=["exact_cancellation"]`。感度がすべて 0 の本物の停留点は従来どおり `stationary_point`。
+- R05 `disparity_sgm`: 全画素が NaN/inf の画像は ValueError。一部が非有限なら、その画素の視差は NaN(0 を返さない)。
+- L01 `gum_monte_carlo`: 特異な半正定値(完全な ± 相関)を固有分解で扱い(退化した正規分布)、「同時分布が存在しない」という誤ったメッセージをやめた。
 
 ### Added — 画素ごとの直交復調(ロックイン / 時間相関イメージセンサ): `lockin` 9 op
 - `lockin_demodulate`(画像列 (T, H, W) を正弦の参照に対して画素ごとに直交復調: 振幅・位相・直流・同相・直交と窓の漏れ)と、2 次元の画像だけを返す `lockin_amplitude` / `lockin_phase`。窓は宣言する: 矩形窓は参照の周期が整数のときだけ厳密で、そうでない長さは拒否(最寄りの枚数を示す)、`hann` は漏れ(`leak_image` / `leak_dc`)を表で返す。ナイキスト以上・1 周期未満・非有限は拒否。

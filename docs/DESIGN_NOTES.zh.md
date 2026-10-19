@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：614 / 1532 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：614 / 1533 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -2052,15 +2052,16 @@
 
 - **L426** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
 - **L732** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
-- **L1018** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
-- **L1027** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
-- **L1042** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
-- **L1072** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
-- **L1089** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
-- **L1119** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1399** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1431** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1539** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1039** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
+- **L1048** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
+- **L1059** _(ja)_ — ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。 感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し** (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
+- **L1070** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
+- **L1101** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+- **L1118** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1148** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+- **L1473** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1505** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1613** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 

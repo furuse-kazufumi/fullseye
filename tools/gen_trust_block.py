@@ -373,12 +373,14 @@ def _note(t: dict, history: dict, ch: dict) -> str:
 
 
 def summary_versions(history: dict) -> list:
-    """トップに出す版: 各 x.y.0 と、定義の変わり目の前後(注記が指す版)。"""
+    """トップに出す版: 各 x.y.0 と、定義の変わり目の前後(注記が指す版)と、現行の版。"""
     named = set()
     for ch in history["definition_changes"]:
         named.update((ch["version"], ch["compare_with"]))
-    return [r["version"] for r in history["rows"]
-            if r["version"].endswith(".0") or r["version"] in named]
+    rows = history["rows"]
+    last = rows[-1]["version"] if rows else None     # 現行の版(パッチ版でも必ず出す)
+    return [r["version"] for r in rows
+            if r["version"].endswith(".0") or r["version"] in named or r["version"] == last]
 
 
 def build_block(lang: str, data: dict, link_prefix: str = "") -> str:
