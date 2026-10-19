@@ -370,7 +370,9 @@ EXCLUDED = {
     "tools/gen_simcal_article_figs.py": _IMAGE_REASON + (" Qiita の sim-to-real 較正シリーズの図"
                                                         "(docs/articles/assets/qiita_simcal_series/)。本文の数字は同じ場所の"
                                                         "numbers.json と examples の simcal ツアー 2 本の印字に合わせ、ずれたら"
-                                                        "図を書かずに止まる(assert)。"),
+                                                        "図を書かずに止まる(assert)。第 2 回の図は実写の PoC 4 本"
+                                                        "(薄膜・テレセン・ピクセルシフト・相互反射)の章を呼ぶので、"
+                                                        "公開画像の取得(ネット)と 10 分前後の CPU が要る。"),
     "tools/gen_evis_media.py": _IMAGE_REASON + " 入力は手元の evis 実験映像(EVIS_CHOPSTICK_DIR)。",
     "tools/gen_visionlab_video.py": _IMAGE_REASON + " 動画(GIF/MP4)。",
     "tools/gen_studio_screenshots.py": _IMAGE_REASON + " Studio(PySide6)を実際に起動して撮る。CI に画面は無い。",
