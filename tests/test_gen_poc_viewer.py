@@ -345,6 +345,7 @@ def test_the_viewer_registry_counts_are_fixed():
     assert set(SECOND_BATCH) <= set(B.BUILDERS)
     d = json.load(open(os.path.join(_ROOT, "docs", "view2026", "exhibits.json"), encoding="utf-8"))
     assert [i["id"] for i in d["viewers"]["items"]] == list(B.BUILDERS)   # 案内ページの並び = 登録の並び
+    assert len(B.BUILDERS) == 7                                      # 空の対象を周って「通った」ことにしない
     for pid in B.BUILDERS:
         assert os.path.isfile(os.path.join(_ROOT, "docs", "view2026", "viewers", pid + ".html")), pid
 
@@ -363,8 +364,10 @@ def test_second_batch_viewer_builds_with_all_languages_and_fails_closed(pid, tmp
     assert len(html.encode("utf-8")) < 8_000_000                      # 第 2 弾は軽く(各 8 MB 未満)
     assert not re.search(r"(?<![0-9A-Za-z])[A-Za-z]:[\\/]", html), "ドライブ文字つきのパスが入っている"   # 手元のパスを入れない
     assert "/users/" not in html.lower() and "/home/" not in html.lower()
+    tabs = spec["tabs"]
+    assert tabs and len(pv.LANGS) == 8
     for lang in pv.LANGS:                                             # 全タブの題が全言語にある(空の訳を通さない)
-        for t in spec["tabs"]:
+        for t in tabs:
             assert t["label"][lang].strip() and t["text"][lang].strip(), (pid, t["id"], lang)
     spec["tabs"][0]["text"].pop("hi")                                 # 1 言語だけ欠ければ止まる(補わない)
     with pytest.raises(ValueError, match="hi"):
@@ -373,6 +376,7 @@ def test_second_batch_viewer_builds_with_all_languages_and_fails_closed(pid, tmp
 
 def test_a_shipped_second_batch_file_is_the_current_builder_output_in_shape():
     """docs/view2026/viewers/ の実物が、いまの仕様と同じタブ構成・言語であること(古い生成物を残さない)。"""
+    assert len(SECOND_BATCH) == 4
     for pid, kinds in SECOND_BATCH.items():
         d = _data(open(os.path.join(_ROOT, "docs", "view2026", "viewers", pid + ".html"), encoding="utf-8").read())
         assert d["langs"] == list(pv.LANGS) and len(d["tabs"]) == len(kinds), pid
