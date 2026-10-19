@@ -963,6 +963,33 @@ def _uncertainty_terms(table, op, u, sensitivity):
     return uu, cc
 
 
+def _validate_correlation(correlation, n, op):
+    """相関行列そのものを検査して (n, n) の float 配列で返す(fail-closed)。
+
+    有限・正方・対称(1e-12)・対角 1・``|r| <= 1``・**半正定値**(最小固有値
+    ``>= -1e-12``)。★射影した分散 ``w' R w`` が負でないことは半正定値の証拠に
+    ならない(``w`` によっては非半正定値の行列でも正になる)ので、行列自体を見る。
+    """
+    R = np.asarray(correlation, dtype=np.float64)
+    if R.shape != (n, n):
+        raise ValueError("%s: correlation must be (%d, %d), got %s" % (op, n, n, R.shape))
+    if not np.isfinite(R).all():
+        raise ValueError("%s: correlation matrix contains NaN or inf" % op)
+    if not np.allclose(R, R.T, rtol=0.0, atol=1e-12):
+        raise ValueError("%s: correlation matrix is not symmetric" % op)
+    if not np.allclose(np.diag(R), 1.0, rtol=0.0, atol=1e-12):
+        raise ValueError("%s: correlation matrix must have 1 on the diagonal" % op)
+    if (np.abs(R) > 1.0 + 1e-12).any():
+        raise ValueError("%s: correlation coefficients must lie in [-1, 1]" % op)
+    lam_min = float(np.linalg.eigvalsh(0.5 * (R + R.T)).min()) if n else 0.0
+    if lam_min < -1e-12:
+        raise ValueError(
+            "%s: the correlation matrix is not positive semi-definite (smallest "
+            "eigenvalue %.3e) — it is not a possible set of correlations, so no "
+            "combined uncertainty follows from it." % (op, lam_min))
+    return R
+
+
 def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
     """不確かさの伝播則(GUM 5.2、相関つき)(``table``)。
 
@@ -995,25 +1022,19 @@ def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
     contrib = (cc * uu) ** 2
     cov_total = 0.0
     if correlation is not None:
-        R = np.asarray(correlation, dtype=np.float64)
-        if R.shape != (n, n):
-            raise ValueError("%s: correlation must be (%d, %d), got %s"
-                             % (op, n, n, R.shape))
-        if not np.allclose(R, R.T, atol=1e-12):
-            raise ValueError("%s: correlation matrix is not symmetric" % op)
-        if not np.allclose(np.diag(R), 1.0, atol=1e-12):
-            raise ValueError("%s: correlation matrix must have 1 on the diagonal" % op)
-        if (np.abs(R) > 1.0 + 1e-12).any():
-            raise ValueError("%s: correlation coefficients must lie in [-1, 1]" % op)
+        R = _validate_correlation(correlation, n, op)
         w = cc * uu
         cov_total = float(w @ R @ w - (w ** 2).sum())
     uc2 = float(contrib.sum() + cov_total)
-    if uc2 < 0.0:
-        # 相関行列が半正定値でないと負になりうる。黙って 0 に丸めない。
-        raise ValueError(
-            "%s: the propagated variance came out negative (%.3e). That means the "
-            "correlation matrix is not positive semi-definite — it is not a possible "
-            "set of correlations, so no combined uncertainty follows from it." % (op, uc2))
+    # 行列は上で半正定値と確認済みなので、ここで負になるのは丸めだけ。項の大きさに
+    # 対する相対許容で 0 に倒し、それを超えて負なら(あり得ないが)拒否する。
+    scale = float(contrib.sum() + abs(cov_total))
+    tol0 = 1e-12 * scale
+    if uc2 < -tol0:
+        raise ValueError("%s: the propagated variance came out negative (%.3e) from a "
+                         "positive semi-definite matrix — numerical breakdown" % (op, uc2))
+    if abs(uc2) <= tol0:
+        uc2 = 0.0
     uc = float(np.sqrt(uc2))
     # ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に
     #   不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例
@@ -1033,8 +1054,15 @@ def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
     #   ここで実装したのは、その条件が破れたときに**観測される形**のほうである
     #   —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
     reasons = []
+    notes = []
     if uc2 == 0.0 and (uu > 0).any():
-        reasons.append("stationary_point")
+        # ★停留点 = 不確かさのある入力の 1 次感度が**すべて**0(高次項が支配する)。
+        #   感度が非 0 なのに分散が 0 なのは、相関による**厳密な打ち消し**
+        #   (X1 = X2 で Y = X1 - X2)で、u = 0 が正しい答え —— 妥当として note を付ける。
+        if np.all(cc[uu > 0] == 0.0):
+            reasons.append("stationary_point")
+        else:
+            notes.append("exact_cancellation")
     return {
         "u": uu,
         "sensitivity": cc,
@@ -1042,6 +1070,7 @@ def gum_propagate(table, u="u", sensitivity="sensitivity", correlation=None):
         # ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
         "guf_valid": np.array([not reasons]),
         "invalid_reasons": np.array(reasons, dtype=object),
+        "note": np.array(notes, dtype=object),
         "pct_contribution": 100.0 * contrib / uc2 if uc2 > 0 else np.full(n, float("nan")),
         "covariance_term": np.array([cov_total]),
         "u_combined": np.array([uc]),
@@ -1130,6 +1159,74 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
     return out
 
 
+def _std_inverse_cdf(kind, p):
+    """平均 0・標準偏差 1 に標準化した分布の逆累積分布関数(``p`` は (0, 1))。"""
+    if kind in ("rectangular", "uniform"):
+        return (2.0 * p - 1.0) * np.sqrt(3.0)
+    if kind == "triangular":
+        x = np.where(p < 0.5, -1.0 + np.sqrt(2.0 * p), 1.0 - np.sqrt(2.0 * (1.0 - p)))
+        return x * np.sqrt(6.0)
+    if kind in ("u_shaped", "arcsine"):
+        return np.cos(np.pi * (1.0 - p)) * np.sqrt(2.0)
+    raise ValueError("unknown distribution %r" % kind)          # pragma: no cover
+
+
+def _legacy_draw(rng, kind, n):
+    """相関なしの従来の引き方(乱数列を変えないために残す)。"""
+    if kind in ("rectangular", "uniform"):
+        return rng.uniform(-1.0, 1.0, n) * np.sqrt(3.0)
+    if kind == "triangular":
+        return rng.triangular(-1.0, 0.0, 1.0, n) * np.sqrt(6.0)
+    if kind in ("u_shaped", "arcsine"):
+        return np.cos(rng.uniform(0.0, np.pi, n)) * np.sqrt(2.0)
+    raise ValueError("unknown distribution %r" % kind)          # pragma: no cover
+
+
+def _mixing_matrix(R):
+    """``A A' = R`` となる A。正定値は Cholesky、特異な半正定値は固有分解(負の丸めは落とす)。"""
+    try:
+        return np.linalg.cholesky(R)
+    except np.linalg.LinAlgError:
+        lam, V = np.linalg.eigh(0.5 * (R + R.T))
+        return V * np.sqrt(np.clip(lam, 0.0, None))
+
+
+def _mc_standardised(kinds, correlation, n, seed, op):
+    """標準化(平均 0・標準偏差 1)した入力標本 (n, m) を作る。
+
+    相関なし: 従来どおり成分ごとに独立に引く。相関あり: 正規成分だけなら多変量正規。
+    正規でない成分を含むなら **ガウス copula** —— 相関行列で多変量正規 ``g`` を作り、
+    ``u = Phi(g)`` で一様にしてから各成分の逆累積分布関数に通す。線形に混ぜると
+    矩形が台形になって指定した周辺分布が壊れる(95 % 半幅 1.645 が 1.885)が、
+    copula なら周辺分布は厳密に保たれる。ただし指定した相関係数は**正規スコアの
+    相関**で、出力の Pearson 相関とは(非正規成分では)わずかに違う。
+    特異(完全相関)な半正定値行列は固有分解で扱う(退化した正規分布は存在する)。
+    """
+    m = len(kinds)
+    rng = np.random.default_rng(int(seed))
+    R = None if correlation is None else _validate_correlation(correlation, m, op)
+    z = np.empty((n, m), dtype=np.float64)
+    is_normal = [k == "normal" or k.startswith("normal_") for k in kinds]
+    if R is None or all(is_normal):
+        for i, kind in enumerate(kinds):
+            z[:, i] = rng.standard_normal(n) if is_normal[i] else _legacy_draw(rng, kind, n)
+        if R is not None:
+            z = z @ _mixing_matrix(R).T
+        return z
+    from scipy.special import ndtr
+    g = rng.standard_normal((n, m)) @ _mixing_matrix(R).T
+    p = np.clip(ndtr(g), 1e-16, 1.0 - 1e-16)
+    for i, kind in enumerate(kinds):
+        z[:, i] = g[:, i] if is_normal[i] else _std_inverse_cdf(kind, p[:, i])
+    return z
+
+
+def _mc_samples(table, correlation, n, seed, distribution="dist"):
+    """入力標本そのもの(標準化、(n, m))—— 周辺分布と相関の検査用。"""
+    kinds = [str(k).lower() for k in table[distribution]]
+    return _mc_standardised(kinds, correlation, int(n), seed, "gum_monte_carlo")
+
+
 def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
                     level=0.95, correlation=None, distribution=None,
                     value=None, power=None):
@@ -1152,7 +1249,10 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
     ★これは ``gum_propagate`` の**独立な検算**である。伝播則は偏微分と分散の代数、
     こちらは乱数の標本 —— 導出も実装も別なので、線形モデルでは
     ``u_mc -> u_c``(1/sqrt(n) の速さ)に近づくはずで、近づかなければどちらかが
-    壊れている。相関は Cholesky 分解で入れるので、伝播則の相関項とは別の経路を通る。
+    壊れている。相関は Cholesky(特異な半正定値は固有分解)で入れるので、伝播則の相関項とは別の経路を通る。
+    ★正規でない入力に相関を与えるときは**ガウス copula**(``_mc_standardised``)で
+    入れるので、各入力の周辺分布は指定した形のまま(矩形は矩形)で、*correlation* は
+    正規スコアの相関として働く。完全相関(特異)の行列も退化した正規分布として扱う。
 
     ★★**非線形では両者が食い違うのが正しい**。規格の例(比較損失
     ``dY = X1^2 + X2^2``、各 ``u = 0.005``)を ``x1 = x2 = 0`` で回すと:
@@ -1190,33 +1290,7 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
         if bad:
             raise ValueError("%s: unknown distribution(s) %s" % (op, bad))
 
-    rng = np.random.default_rng(int(seed))
-    # 標準化した標本を作る(平均 0、標準偏差 1)。分布の形だけがここで効く。
-    z = np.empty((n, m), dtype=np.float64)
-    for i, kind in enumerate(kinds):
-        if kind == "normal" or kind.startswith("normal_"):
-            z[:, i] = rng.standard_normal(n)
-        elif kind in ("rectangular", "uniform"):
-            z[:, i] = rng.uniform(-1.0, 1.0, n) * np.sqrt(3.0)
-        elif kind == "triangular":
-            z[:, i] = rng.triangular(-1.0, 0.0, 1.0, n) * np.sqrt(6.0)
-        elif kind in ("u_shaped", "arcsine"):
-            z[:, i] = np.cos(rng.uniform(0.0, np.pi, n)) * np.sqrt(2.0)
-        else:                                    # pragma: no cover
-            raise ValueError("%s: unknown distribution %r" % (op, kind))
-    if correlation is not None:
-        R = np.asarray(correlation, dtype=np.float64)
-        if R.shape != (m, m):
-            raise ValueError("%s: correlation must be (%d, %d), got %s"
-                             % (op, m, m, R.shape))
-        try:
-            L = np.linalg.cholesky(R)
-        except np.linalg.LinAlgError as exc:
-            raise ValueError(
-                "%s: the correlation matrix is not positive definite, so there is no "
-                "joint distribution with those correlations to sample from (%s)"
-                % (op, exc)) from exc
-        z = z @ L.T
+    z = _mc_standardised(kinds, correlation, n, seed, op)
 
     xs = np.zeros(m, dtype=np.float64)
     if value is not None:

@@ -7,7 +7,7 @@ out: images
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # basis_material_decompose — TOMOGRAPHY `spectral_xray` op

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 11529e905883 -->
+<!-- i18n-source-sha: 8291b38d20e8 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -337,6 +337,12 @@ des Beispiels an die Op übereinstimmen.
 | Tabelle (dict) | gleich lange numerische Spalten als Linien; x-Achse ist eine Spalte `t` / `x` / `freq` …, falls vorhanden |
 | `(h, w, 4)` / `(h, w, 1)` / komplex | RGB über Weiß / Graustufen / Betrag \|z\| |
 | leere Arrays, 4-D und mehr | Form und Wertebereich als Text (der erste Wert wird nicht als „Skalar“ gezeigt) |
+
+## Ergebnis-Cache, Prüfmarken und Eingabebild-Referenz (2026-10-19)
+
+- **Ergebnis-Cache je Stufe**: Wenn Sie einen Regler bewegen, werden nur diese Stufe und die folgenden neu berechnet; frühere Ergebnisse werden wiederverwendet. Am rechten Ende jeder Stufenzeile steht `⟳ calc` für eine diesmal berechnete und `↺ cache` für eine aus dem Cache gelieferte Stufe. Ein Bildwechsel, Umsortieren oder Löschen verwirft alles ab der betroffenen Stufe. Der Cache hält je Stufe nur das neueste Ergebnis und wächst daher beim wiederholten Ziehen nicht.
+- **Prüfmarke (⚠)**: „Lief es" (`ran`) und „ist das Ergebnis tragfähig" (`valid`) werden getrennt geführt. Enthält ein Ergebnis NaN / Inf, ist es leer oder haben alle Pixel denselben Wert, erhält die Stufenzeile ein `⚠`; der Grund steht im Tooltip und in Problems (eine andere Zeile als die `✕`-Fehler). Ist das Ergebnis eine Tabelle mit Feldern wie `converged` / `valid` / `ok`, übernimmt Studio diese Angabe. Ein Ergebnis ohne Gültigkeitsangabe heißt „Gültigkeit nicht beurteilt“, nie OK. Nach Run all zeigt die Statuszeile „Lauf: fertig / Ergebnis: prüfen (Grund)“ oder „Lauf: fertig / Ergebnis: Gültigkeit nicht beurteilt“. Studio **meldet nur**; es behebt das numerische Problem der Operation nicht und ändert keinen Wert.
+- **Eingabebild-Referenz**: Save pipeline legt im JSON unter `input` eine Referenz auf die geladene Bilddatei ab (Pfad wie angegeben, sha256 der Datei, shape, dtype). Beim Öffnen wird eine vorhandene Datei mit passendem sha256 stillschweigend neu geladen. Eine vorhandene, aber geänderte Datei wird geladen, und Problems zeigt „input file changed since save“. Fehlt sie, bleibt das aktuelle Bild, und Problems zeigt „input not found: Pfad“ (eine gleichnamige Datei neben der `.json` wird als Kandidat zum Neu-Verknüpfen versucht). Ältere JSON-Dateien ohne `input` werden wie bisher geladen.
 
 ## Zusammenhang zwischen Export und Save/Open
 

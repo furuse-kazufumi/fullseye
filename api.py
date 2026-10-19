@@ -2879,7 +2879,7 @@ def _prepare_pipeline(image, stages, a, b, policy):
     return image, checked, ops_
 
 
-def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast):
+def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
     """CPU の段実行の唯一の本体: 各段の後の値を順に yield する。
 
     ``run_pipeline`` は最後の値を、``FullseyeEngine.run_stepwise`` は全部を取る ——
@@ -2887,7 +2887,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast):
     dtype 契約と guard を飛ばし、uint8 で別の答えを返していた)。
     """
     v = image
-    first = True
+    first = bool(entry)       # entry=False: *image* is already a mid-chain value (Studio's stage cache resumes here)
     for (name, sa, sb), op in zip(norm, ops_):
         if isinstance(v, PrecisionUnion):
             # lazy stages keep the union (see _apply_impl); the first non-lazy stage

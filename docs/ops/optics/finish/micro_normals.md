@@ -7,7 +7,7 @@ out: normalmap
 examples: [machined_metal_and_materials, poc_illumination_cone_vs_na, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # micro_normals — OPTICS `finish` op
