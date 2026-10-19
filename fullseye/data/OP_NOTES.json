@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3465,
- "n_notes": 3471,
+ "n_ops": 3474,
+ "n_notes": 3480,
  "notes": {
   "vol_dilate": [
    {
@@ -28441,6 +28441,96 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lensmerit/optimize_lens_operands.md"
+   }
+  ],
+  "afocal_system": [
+   {
+    "op": "afocal_system",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/afocal_system.md"
+   }
+  ],
+  "lens_afocal_report": [
+   {
+    "op": "lens_afocal_report",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_afocal_report.md"
+   }
+  ],
+  "lens_apply_solves": [
+   {
+    "op": "lens_apply_solves",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_apply_solves.md"
+   }
+  ],
+  "lens_image_surface": [
+   {
+    "op": "lens_image_surface",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_image_surface.md"
+   }
+  ],
+  "lens_petzval_radius": [
+   {
+    "op": "lens_petzval_radius",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_petzval_radius.md"
+   }
+  ],
+  "lens_solve_clear": [
+   {
+    "op": "lens_solve_clear",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solve_clear.md"
+   }
+  ],
+  "lens_solve_set": [
+   {
+    "op": "lens_solve_set",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solve_set.md"
+   }
+  ],
+  "lens_solves_list": [
+   {
+    "op": "lens_solves_list",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solves_list.md"
+   }
+  ],
+  "lens_zmx_solves_roundtrip": [
+   {
+    "op": "lens_zmx_solves_roundtrip",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_zmx_solves_roundtrip.md"
    }
   ],
   "form_factors_2d": [

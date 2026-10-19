@@ -363,11 +363,13 @@ def _index_offset(medium, delta):
 # --------------------------------------------------------------------------- #
 #: 面の dict が受ける鍵。後ろの 2 つ(n_value / dn)は lens_system 自身が書き足す値で、
 #: ``with_wavelength`` などが出力の面をそのまま入力に戻すので受ける(読み直して上書きする)。
-_SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn", "f"))
+_SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn", "f",
+                           "a2", "odd", "solve"))
 
 
 def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
-                index_object=1.0, image_mm=None, field=None, aim="paraxial", vignetting=None):
+                index_object=1.0, image_mm=None, field=None, aim="paraxial", vignetting=None,
+                image_R=INF, image_k=0.0, afocal=False):
     """Build a validated sequential prescription (the ``table`` every other op consumes).
 
     *surfaces* is a list; each entry is a dict ``{"R", "t", "n", "k", "ap",
@@ -419,6 +421,23 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
       the nearest record.
       :func:`set_vignetting` computes them from the apertures.
 
+    * ``a2`` the r^2 term of the sag (mm^-1; the even asphere's ``PARM 1``) and ``odd`` the general power
+      series ``(B1, B2, ..., B8)`` added to the sag, ``z += B1 r + B2 r^2 + ...`` (an *odd asphere*; the
+      coefficient of ``r^i`` is in mm^(1-i)). Both are left out of the surface dict when zero, so a
+      prescription without them is bit-identical to before.
+    * ``solve`` a declarative rule that sets this surface's curvature or the thickness after it from the rest of
+      the prescription (marginal / chief ray height or angle, paraxial image, F/#, concentric, aplanatic, pickup);
+      ``lenssolve.lens_solve_set`` builds one, ``lenssolve.lens_apply_solves`` resolves them (``lens_system``
+      resolves them once at construction, so the ``R`` / ``t`` it returns already hold the solved values).
+      A surface with a thickness solve may leave ``t`` out.
+    * *image_R*, *image_k*: radius (mm, ``inf`` flat) and conic constant of the **image surface**; rays are intersected
+      with it and spot / OPD are measured on it (the paraxial image is unchanged). Positive R: centre to the right.
+    * *afocal*: the image space is collimated (an afocal system: telescope, beam expander). It needs an object at
+      infinity; ``paraxial_trace`` then reports ``angular_magnification`` and the exit pupil instead of a focal length
+      (``efl`` = ``bfl`` = inf), ``ray_bundle`` / ``spot_stats`` / ``ray_fan`` report the **exit angle in arcminutes**
+      (relative to the chief ray) in place of the image-plane position, and ``opd_samples`` references a plane wave.
+      A system flagged afocal whose collimated beam does not leave collimated is refused (``ValueError``).
+
     Default (no *surfaces*): a plano-convex BK7 singlet, ``f ≈ 100 mm``,
     ``f/4``, stop at the first surface — a sensible starting point for the
     examples and for the no-argument registry call.
@@ -461,7 +480,11 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
         R = _radius(s.get("R"), "surface %d R" % i)
         t = s.get("t", None)
         t = None if t is None else _finite(t, "surface %d t" % i, nonneg=True)
-        if t is None and i != len(surfaces) - 1:
+        rule = s.get("solve", None)
+        if rule is not None:
+            import lenssolve as _LS
+            rule = _LS._check_rule(rule, i, len(surfaces), "surface %d" % i)
+        if t is None and i != len(surfaces) - 1 and not (rule is not None and rule["target"] == "t"):
             raise ValueError("surface %d: only the last surface may omit t" % i)
         med = s["n"]
         n_now = refractive_index(med, wavelength_um)      # validates
@@ -491,11 +514,33 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
                 asph = asph[:-1]
         if asph and R == INF and k != 0.0:
             raise ValueError("surface %d: a flat base with a conic constant is meaningless" % i)
-        if math.isfinite(R) and k > -1.0 and ap is not None and (1.0 + k) * (ap / R) ** 2 > 1.0:
+        if math.isfinite(R) and k > -1.0 and ap is not None and (1.0 + k) * (ap / R) ** 2 > 1.0 \
+                and not (rule is not None and rule["target"] == "c"):
             raise ValueError("surface %d: semi-aperture %.3g exceeds the conic's extent for R=%.3g" % (i, ap, R))
-        out.append({"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
-                    "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
-                    "dn": _dispersion(med), "f": f_ideal})
+        a2 = _finite(s.get("a2", 0.0), "surface %d a2" % i)
+        odd = s.get("odd", None)
+        if odd is None:
+            odd = ()
+        elif isinstance(odd, (int, float, bool, str)):
+            raise ValueError("surface %d: odd must be a sequence (B1, B2, ...) of coefficients" % i)
+        else:
+            odd = tuple(_finite(b, "surface %d odd[%d]" % (i, j)) for j, b in enumerate(odd))
+            if len(odd) > 8:
+                raise ValueError("surface %d: at most 8 odd-asphere coefficients (B1..B8)" % i)
+            while odd and odd[-1] == 0.0:
+                odd = odd[:-1]
+        if (a2 != 0.0 or odd) and f_ideal is not None:
+            raise ValueError("surface %d: an ideal lens (f) takes no a2 / odd terms" % i)
+        rec = {"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
+               "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
+               "dn": _dispersion(med), "f": f_ideal}
+        if a2 != 0.0:
+            rec["a2"] = a2
+        if odd:
+            rec["odd"] = odd
+        if rule is not None:
+            rec["solve"] = rule
+        out.append(rec)
         med_prev = med
     if stop is None:
         stop = 0
@@ -518,7 +563,90 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
             "image_mm": None if image_mm is None else _finite(image_mm, "image_mm"),
             "field": 0.0 if field is None else _finite(field, "field"),
             "aim": _check_aim(aim), "vignetting": _vignetting_table(vignetting)}
+    image_R = _radius(image_R, "image_R")
+    image_k = _finite(image_k, "image_k")
+    if image_R != INF:
+        sysd["image_R"] = image_R
+        if image_k != 0.0:
+            sysd["image_k"] = image_k
+    elif image_k != 0.0:
+        raise ValueError("a flat image surface with a conic constant is meaningless (image_R is inf)")
+    if not isinstance(afocal, (bool, np.bool_)):
+        raise ValueError("afocal must be True or False, got %r" % (afocal,))
+    if afocal:
+        if obj != INF:
+            raise ValueError("an afocal system needs an object at infinity (object_mm=inf), got %r" % obj)
+        sysd["afocal"] = True
+    if any("solve" in s for s in out):
+        import lenssolve as _LS
+        sysd = _LS.lens_apply_solves(sysd)
     return sysd
+
+
+def _system_extras(system):
+    """The system-level keys ``lens_system`` takes beyond the usual ones (image surface, afocal), for a rebuild."""
+    ex = {}
+    if system.get("image_R", INF) != INF:
+        ex["image_R"] = system["image_R"]
+        if system.get("image_k", 0.0) != 0.0:
+            ex["image_k"] = system["image_k"]
+    if system.get("afocal"):
+        ex["afocal"] = True
+    return ex
+
+
+def _c_extra(s):
+    """The paraxial curvature the r^2 terms add: ``2 (a2 + B2)`` (the r^1 term is a cone; it has no paraxial power)."""
+    odd = s.get("odd", ())
+    return 2.0 * (s.get("a2", 0.0) + (odd[1] if len(odd) > 1 else 0.0))
+
+
+def _c_par(s):
+    """Paraxial (vertex) curvature of a surface dict: ``1/R`` plus the r^2 terms of the sag."""
+    c = 0.0 if s["R"] == INF else 1.0 / s["R"]
+    if "a2" in s or "odd" in s:
+        c = c + _c_extra(s)
+    return c
+
+
+def _xtra(s):
+    """The (a2, odd) sag extras of a surface dict, or None when it has none (keeps the old paths bit-identical)."""
+    a2 = s.get("a2", 0.0)
+    odd = s.get("odd", ())
+    if a2 == 0.0 and not odd:
+        return None
+    return (a2, odd)
+
+
+def _freeze_solves(system):
+    """The solved prescription as plain numbers (a manufactured lens does not re-solve itself): for tolerancing.
+
+    A ``paraxial_image`` solve on the last surface stays a free back focus (``t=None``), which is what an assembler
+    adjusts and what ``tolerance_analysis`` has always treated a missing last thickness as.
+    """
+    res = _solved(system)
+    if res is system and not any("solve" in s for s in system["surfaces"]):
+        return system
+    surfs = []
+    last = len(res["surfaces"]) - 1
+    for i, s in enumerate(res["surfaces"]):
+        d = {k: v for k, v in s.items() if k != "solve"}
+        rule = s.get("solve")
+        if i == last and rule is not None and rule["kind"] == "paraxial_image":
+            d["t"] = None
+        surfs.append(d)
+    return lens_system(surfs, stop=res["stop"], object_mm=res["object_mm"], wavelength_um=res["wavelength_um"],
+                       index_object=res["index_object"], image_mm=res["image_mm"], field=res["field"],
+                       aim=res.get("aim", "paraxial"), vignetting=res.get("vignetting"), **_system_extras(res))
+
+
+def _solved(system):
+    """*system* with its solve rules resolved (the same object when it has none)."""
+    for s in system["surfaces"]:
+        if "solve" in s:
+            import lenssolve as _LS
+            return _LS.lens_apply_solves(system)
+    return system
 
 
 def _check_system(system):
@@ -534,7 +662,7 @@ def _paraxial_model(system, wavelength_um=None):
     """Curvatures, signed thicknesses and signed indices for the (y, u) trace."""
     surf = system["surfaces"]
     wl = system["wavelength_um"] if wavelength_um is None else wavelength_um
-    c = np.array([0.0 if s["R"] == INF else 1.0 / s["R"] for s in surf])
+    c = np.array([_c_par(s) for s in surf])
     n = [system["index_object"]]
     sign = 1.0
     for s in surf:
@@ -592,12 +720,22 @@ def paraxial_trace(system):
     thin-lens limit, and a mirror ``f = −R/2`` (see ``tests/test_raytrace.py``).
     """
     _check_system(system)
+    system = _solved(system)
     c, t, n = _paraxial_model(system)
     pw = _paraxial_power(system)
     ns = len(c)
+    afocal = bool(system.get("afocal"))
     # --- focal properties from a collimated axial ray (y=1, u=0) --- #
     y, u = _trace_paraxial(c, t, n, 1.0, 0.0, pw=pw)
-    if abs(u[-1]) < 1e-15:
+    if afocal:
+        if system["object_mm"] != INF:
+            raise ValueError("an afocal system needs an object at infinity")
+        scale = float(np.max(np.abs(u))) if len(u) else 0.0
+        if abs(u[-1]) > 1e-9 * max(scale, 1e-300):
+            raise ValueError("the system is flagged afocal but a collimated beam leaves it with slope %.3g "
+                             "(largest internal slope %.3g): it focuses; fix the spacing or drop afocal=True"
+                             % (abs(u[-1]), scale))
+    if afocal or abs(u[-1]) < 1e-15:
         efl = INF
         bfl = INF
     else:
@@ -611,7 +749,7 @@ def paraxial_trace(system):
     n_r = n[::-1]
     t_r = np.append(t[::-1][1:], 0.0)
     y_r, u_r = _trace_paraxial(c_r, t_r, n_r, 1.0, 0.0, pw=pw[::-1])
-    ffl = (y_r[-1] / u_r[-1]) if abs(u_r[-1]) > 1e-15 else -INF
+    ffl = (y_r[-1] / u_r[-1]) if (abs(u_r[-1]) > 1e-15 and not afocal) else -INF
     pp_rear = bfl - efl if math.isfinite(efl) else INF
     pp_front = ffl + efl if math.isfinite(efl) else -INF
     # --- pupils: the stop imaged into object / image space --- #
@@ -673,7 +811,11 @@ def paraxial_trace(system):
     pp_rear = bfl - efl if math.isfinite(efl) else INF
     fno = INF if ep_radius == 0 or not math.isfinite(efl) else abs(efl) / (2.0 * ep_radius)
     na_img = abs(n[-1]) * abs(um[-1]) if obj != INF else abs(n[-1]) * abs(um[-1])
-    return {"efl": float(efl), "bfl": float(bfl), "ffl": float(ffl),
+    extra = {}
+    if afocal:
+        # angular magnification: image-space over object-space slope of the chief ray (travel direction)
+        extra = {"afocal": True, "angular_magnification": float(uc[-1] * sgn)}
+    out = {"efl": float(efl), "bfl": float(bfl), "ffl": float(ffl),
             "pp_front": float(pp_front), "pp_rear": float(pp_rear),
             "image_mm": float(img), "magnification": float(mag) if mag is not None else 0.0,
             "ep_position": float(ep_pos), "ep_radius": float(ep_radius),
@@ -682,6 +824,8 @@ def paraxial_trace(system):
             "marginal": {"y": ym.tolist(), "u": um.tolist()},
             "chief": {"y": yc.tolist(), "u": uc.tolist()},
             "n_surfaces": ns}
+    out.update(extra)
+    return out
 
 
 def thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168):
@@ -761,7 +905,39 @@ def _intersect_conic(P, D, c, k):
     return t
 
 
-def _sag(r2, c, k, asph=()):
+def _extra_sag(r2, extra):
+    """The r^2 term and the power series B_i r^i of ``extra = (a2, odd)``."""
+    a2, odd = extra
+    z = a2 * r2
+    if odd:
+        r = np.sqrt(r2)
+        p = r
+        for b in odd:
+            z = z + b * p
+            p = p * r
+    return z
+
+
+def _extra_dsag(r2, extra):
+    """d/d(r²) of :func:`_extra_sag` (the B1 r term has the slope B1 / (2 r), taken as 0 at the vertex)."""
+    a2, odd = extra
+    s = np.full_like(r2, a2)
+    if odd:
+        r = np.sqrt(r2)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            for i, b in enumerate(odd, 1):
+                if b == 0.0:
+                    continue
+                if i == 1:
+                    s = s + np.where(r > 0.0, b / (2.0 * r), 0.0)
+                elif i == 2:
+                    s = s + b
+                else:
+                    s = s + 0.5 * i * b * r ** (i - 2)
+    return s
+
+
+def _sag(r2, c, k, asph=(), extra=None):
     """Surface sag z(r²) of the conic plus the even aspheric polynomial (NaN outside the conic)."""
     r2 = np.asarray(r2, dtype=np.float64)
     if c == 0.0:
@@ -775,10 +951,12 @@ def _sag(r2, c, k, asph=()):
         for a in asph:
             z = z + a * p
             p = p * r2
+    if extra is not None:
+        z = z + _extra_sag(r2, extra)
     return z
 
 
-def _dsag_dr2(r2, c, k, asph=()):
+def _dsag_dr2(r2, c, k, asph=(), extra=None):
     """d z / d(r²) — the sag slope expressed per unit r² (so the normal is (−2x·s, −2y·s, 1))."""
     r2 = np.asarray(r2, dtype=np.float64)
     if c == 0.0:
@@ -794,10 +972,12 @@ def _dsag_dr2(r2, c, k, asph=()):
             s = s + a * m * p
             p = p * r2
             m += 1.0
+    if extra is not None:
+        s = s + _extra_dsag(r2, extra)
     return s
 
 
-def _intersect_asphere(P, D, c, k, asph, t0):
+def _intersect_asphere(P, D, c, k, asph, t0, extra=None):
     """Newton refinement of the conic intersection *t0* onto the aspheric surface."""
     x, y, z = P[:, 0], P[:, 1], P[:, 2]
     L, M, N = D[:, 0], D[:, 1], D[:, 2]
@@ -806,8 +986,8 @@ def _intersect_asphere(P, D, c, k, asph, t0):
     for _ in range(40):
         xx, yy, zz = x + t * L, y + t * M, z + t * N
         r2 = xx * xx + yy * yy
-        F = zz - _sag(r2, c, k, asph)
-        s = _dsag_dr2(r2, c, k, asph)
+        F = zz - _sag(r2, c, k, asph, extra)
+        s = _dsag_dr2(r2, c, k, asph, extra)
         dF = N - 2.0 * s * (xx * L + yy * M)
         with np.errstate(invalid="ignore", divide="ignore"):
             step = F / dF
@@ -817,22 +997,22 @@ def _intersect_asphere(P, D, c, k, asph, t0):
             break
     xx, yy, zz = x + t * L, y + t * M, z + t * N
     r2 = xx * xx + yy * yy
-    F = zz - _sag(r2, c, k, asph)
+    F = zz - _sag(r2, c, k, asph, extra)
     ok &= np.isfinite(t) & np.isfinite(F) & (np.abs(F) < 1e-8)
     return np.where(ok, t, np.nan)
 
 
-def _intersect_surface(P, D, c, k, asph=()):
+def _intersect_surface(P, D, c, k, asph=(), extra=None):
     t = _intersect_conic(P, D, c, k)
-    if asph:
-        t = _intersect_asphere(P, D, c, k, asph, t)
+    if asph or extra is not None:
+        t = _intersect_asphere(P, D, c, k, asph, t, extra)
     return t
 
 
-def _surface_normal(Q, c, k, asph=()):
-    if asph:
+def _surface_normal(Q, c, k, asph=(), extra=None):
+    if asph or extra is not None:
         r2 = Q[:, 0] ** 2 + Q[:, 1] ** 2
-        s = _dsag_dr2(r2, c, k, asph)
+        s = _dsag_dr2(r2, c, k, asph, extra)
         g = np.stack([-2.0 * s * Q[:, 0], -2.0 * s * Q[:, 1], np.ones(len(Q))], 1)
         return g / np.linalg.norm(g, axis=1, keepdims=True)
     if c == 0.0:
@@ -897,6 +1077,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
     the last vertex).
     """
     _check_system(system)
+    system = _solved(system)
     wl = system["wavelength_um"] if wavelength_um is None else _finite(wavelength_um, "wavelength_um", positive=True)
     P = np.array(origins, dtype=np.float64)
     D = np.array(directions, dtype=np.float64)
@@ -929,7 +1110,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
             with np.errstate(divide="ignore", invalid="ignore"):
                 t = -Pl[:, 2] / Dl[:, 2]
         else:
-            t = _intersect_surface(Pl, Dl, c, k, s["asph"])
+            t = _intersect_surface(Pl, Dl, c, k, s["asph"], _xtra(s))
         # a ray must move forward along its travel direction to reach the surface
         # (allow a tiny negative tolerance for rays already on the vertex plane)
         bad = ~np.isfinite(t) | (t < -1e-9)
@@ -938,7 +1119,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         if s["ap"] is not None:
             r = np.hypot(Q[:, 0], Q[:, 1])
             bad |= r > s["ap"] * (1.0 + 1e-12)
-        nrm = _surface_normal(Q, c, k, s["asph"])
+        nrm = _surface_normal(Q, c, k, s["asph"], _xtra(s))
         # orient the normal against the incoming ray
         flip = np.sum(nrm * Dl, axis=1) > 0
         nrm[flip] *= -1.0
@@ -986,13 +1167,21 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
     if image_mm is None:
         if surf[-1]["t"] is not None:
             image_mm = surf[-1]["t"]
+        elif system.get("afocal"):
+            image_mm = 0.0                    # collimated exit beam: any plane will do, the angles are what is read
         else:
             # ★2026-10-14: 以前は bfl(無限遠の物体の焦点)を使い、有限物体でも像面を無限遠の焦点に置いていた
             #   (700 mm の物体で像は 51.39 mm なのに 47.71 mm、W20 −18 波の偽のぼけ)。近軸の像距離は無限遠なら bfl と同じ。
             image_mm = paraxial_trace(system)["image_mm"]
     z_img = z_last + dirn * image_mm
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tt = (z_img - P[:, 2]) / D[:, 2]
+    c_im = 0.0 if system.get("image_R", INF) == INF else 1.0 / system["image_R"]
+    if c_im == 0.0:
+        with np.errstate(divide="ignore", invalid="ignore"):
+            tt = (z_img - P[:, 2]) / D[:, 2]
+    else:                                                  # a curved image surface: intersect it in its own frame
+        Pi = np.stack([P[:, 0], P[:, 1], dirn * (P[:, 2] - z_img)], 1)
+        Di = np.stack([D[:, 0], D[:, 1], dirn * D[:, 2]], 1)
+        tt = _intersect_conic(Pi, Di, c_im, system.get("image_k", 0.0))
     Q = P + tt[:, None] * D
     opl += n_before * np.abs(tt)
     # ★2026-10-15: 像面とほぼ平行・逆向きに進む光線は像面に届かない —— 無効にする。以前は傾いた鏡(tilt 45°)の後で
@@ -1005,6 +1194,34 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
     return {"points": np.stack(pts, 1), "dirs": np.stack(dirs, 1), "opl": opl,
             "valid": valid, "image_z": float(image_mm), "z_image_global": float(z_img),
             "n_image": float(n_before)}
+
+
+def _plane_wave_opd(tr, opl0, wl):
+    """OPD (waves, Welford sign) of every ray against the plane wave through the chief ray's last point (afocal systems).
+
+    The last ray of the trace is the chief ray. Returns ``(w, valid)``.
+    """
+    pts, dirs = tr["points"], tr["dirs"]
+    n_img = tr["n_image"]
+    Pl = pts[:, -2, :]
+    Dl = dirs[:, -1, :]
+    last_leg = np.linalg.norm(pts[:, -1, :] - Pl, axis=1) * n_img
+    opl_last = tr["opl"] - last_leg + opl0
+    Dc = Dl[-1]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        s = np.sum((Pl[-1] - Pl) * Dc, axis=1) / np.sum(Dl * Dc, axis=1)
+    opl_ref = opl_last + n_img * s
+    valid = tr["valid"] & np.isfinite(opl_ref)
+    return np.where(valid, (opl_ref[-1] - opl_ref) / (wl * 1e-3), np.nan), valid
+
+
+def _exit_angles_arcmin(tr):
+    """Exit direction of every ray of a trace as (angle in x, angle in y) in arcminutes (NaN where the ray is lost)."""
+    d = tr["dirs"][:, -1, :]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ax = np.degrees(np.arctan2(d[:, 0], np.abs(d[:, 2]))) * 60.0
+        ay = np.degrees(np.arctan2(d[:, 1], np.abs(d[:, 2]))) * 60.0
+    return np.stack([ax, ay], 1)
 
 
 def _pupil_grid(rings=6, kind="hexapolar"):
@@ -1504,7 +1721,7 @@ def ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, k
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
     tr["valid"] &= aimed
     tr["points"][~aimed] = np.nan
-    img = tr["points"][:, -1, :2]
+    img = _exit_angles_arcmin(tr) if system.get("afocal") else tr["points"][:, -1, :2]
     ic = int(np.argmin(px * px + py * py))
     if v is None:
         chief_xy = img[ic].copy()
@@ -1550,7 +1767,7 @@ def ray_fan(system, field=None, n=21, axis="y", wavelength_um=None, image_mm=Non
     qx = np.append(qx, 0.0); qy = np.append(qy, 0.0)    # chief ray last
     P, D, _o, _a, _r = _launch_pupil(system, qx, qy, field, para, 1.0, wavelength_um, aim)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
-    img = tr["points"][:, -1, :2]
+    img = _exit_angles_arcmin(tr) if system.get("afocal") else tr["points"][:, -1, :2]
     chief = img[-1]
     comp = 1 if axis == "y" else 0
     return np.stack([q, img[:-1, comp] - chief[comp]], 1)
@@ -1776,6 +1993,9 @@ def opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, 
     tr = trace_rays(system, P, D, wavelength_um=wl, image_mm=image_mm)
     pts, dirs = tr["points"], tr["dirs"]
     n_img = tr["n_image"]
+    if system.get("afocal"):                                   # collimated exit beam: the reference is a plane wave
+        w, valid = _plane_wave_opd(tr, opl0, wl)
+        return px, py, w[:-1], (valid[:-1] & inside)
     # reference sphere: centre = chief ray image point, through the exit pupil (on axis)
     chief_img = pts[-1, -1]
     surf = system["surfaces"]
@@ -1872,6 +2092,10 @@ def seidel_coefficients(system, field=None):
     at small aperture (``tests/test_raytrace.py``).
     """
     _check_system(system)
+    system = _solved(system)
+    if any("a2" in s or "odd" in s for s in system["surfaces"]):
+        raise ValueError("seidel_coefficients: the third-order sums are those of a sphere + conic + A4..: a surface with an "
+                         "r^2 (a2) or odd (odd) sag term has none; fold the r^2 term into the curvature or trace real rays")
     field = system["field"] if field is None else _finite(field, "field")
     para = paraxial_trace(system)
     c, t, n = _paraxial_model(system)
@@ -1986,6 +2210,7 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
     actually used under ``compensator``.
     """
     _check_system(system)
+    system = _freeze_solves(system)                # solved numbers become the nominal design (see _freeze_solves)
     tol = {"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001, "decenter_mm": 0.02, "tilt_deg": 0.05}
     if tolerances:
         for k, v in tolerances.items():
@@ -2082,11 +2307,12 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
 def with_wavelength(system, wavelength_um=WL_F):
     """The same prescription evaluated at another wavelength (indices re-resolved; default the F line)."""
     _check_system(system)
-    return lens_system([dict(s) for s in system["surfaces"]], stop=system["stop"],
+    system = _solved(system)                                  # the geometry is the one solved at the design wavelength
+    return lens_system([{k: v for k, v in s.items() if k != "solve"} for s in system["surfaces"]], stop=system["stop"],
                        object_mm=system["object_mm"], wavelength_um=wavelength_um,
                        index_object=system["index_object"], image_mm=system["image_mm"],
                        field=system["field"], aim=system.get("aim", "paraxial"),
-                       vignetting=system.get("vignetting"))
+                       vignetting=system.get("vignetting"), **_system_extras(system))
 
 
 def chromatic_shift(system, wavelengths=(WL_F, WL_D, WL_C), field=None, rings=6):

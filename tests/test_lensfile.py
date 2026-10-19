@@ -81,10 +81,21 @@ def test_pickups_are_verified_kept_and_dropped_when_edited():
     assert kinds == {(5, "curvature"): "verified", (5, "thickness"): "verified"}
     assert "CURV 0.045426484276303865 4 1 1 0" in L.lens_file_write(p)["text"]
     s = p["system"]
+    # 2026-10-20: the pickups are followed (solve rules), not frozen: an edit of the picked-up surface is overruled by the
+    # rule, an edit of the source moves it, and the write puts the same lines back (nothing dropped)
+    assert s["surfaces"][4]["solve"] == {"kind": "pickup", "target": "c", "source": 0, "quantity": "c", "scale": 1.0,
+                                         "offset": 0.0}
+    assert s["surfaces"][4]["R"] == pytest.approx(s["surfaces"][0]["R"], rel=1e-12)
+    assert s["surfaces"][4]["t"] == s["surfaces"][0]["t"]
     surf = [dict(x) for x in s["surfaces"]]
     surf[4]["R"] = 30.0
     w = L.lens_file_write(p, system=RT.lens_system(surf, stop=s["stop"]))
-    assert {"surface": 5, "what": "curvature solve"} in w["dropped_solves"]
+    assert w["dropped_solves"] == []
+    surf[0]["R"] = 31.0
+    moved = RT.lens_system(surf, stop=s["stop"])
+    assert moved["surfaces"][4]["R"] == pytest.approx(31.0, rel=1e-12)
+    wtext = L.lens_file_write(p, system=moved)["text"]
+    assert "CURV %s 4 1 1 0" % repr(1.0 / moved["surfaces"][4]["R"]) in wtext
     bad = t.replace("CURV 0.045426484276303865 4 1 1 0", "CURV 0.046 4 1 1 0")
     with pytest.raises(ValueError, match="pickup"):
         L.lens_file_read(bad)
@@ -365,7 +376,7 @@ def test_probe_encodings():
 
 
 @pytest.mark.parametrize("typ,msg", [("COORDBRK", "COORDBRK"), ("PARAXIAL", "PARAXIAL"), ("TOROIDAL", "TOROIDAL"),
-                                     ("ODDASPH", "ODDASPH"), ("BICONICX", "BICONICX")])
+                                     ("EXTENDEDPOLY", "EXTENDEDPOLY"), ("BICONICX", "BICONICX")])
 def test_probe_unsupported_surface_types_are_refused_even_with_allow_partial(typ, msg):
     t = L.ZMX_EXAMPLE.replace("SURF 2\n  TYPE STANDARD", "SURF 2\n  TYPE %s" % typ)
     for partial in (False, True):
@@ -377,8 +388,13 @@ def test_probe_geometry_refusals():
     base = _read("asphere_singlet.zmx")
     text = open(os.path.join(DATA, "asphere_singlet.zmx"), encoding="ascii").read()
     assert base["system"]["surfaces"][1]["asph"][0] == 2e-5
-    with pytest.raises(ValueError, match="r\\^2"):
-        L.lens_file_read(text.replace("PARM 1 0", "PARM 1 0.001"), allow_partial=True)
+    # 2026-10-20: the r^2 term is read (surface key a2); a file with coordinate breaks still refuses an odd asphere
+    with_r2 = L.lens_file_read(text.replace("PARM 1 0", "PARM 1 0.001"))
+    assert with_r2["system"]["surfaces"][1]["a2"] == 0.001 and with_r2["system"]["surfaces"][1]["asph"][0] == 2e-5
+    assert "a2" not in base["system"]["surfaces"][1]
+    cb_text = open(os.path.join(DATA, "cb_tilted_plate.zmx"), encoding="ascii").read()
+    with pytest.raises(ValueError, match="coordinate"):
+        L.lens_file_read(cb_text.replace("TYPE STANDARD", "TYPE ODDASPH", 1), allow_partial=True)
     with pytest.raises(ValueError, match="against the light"):
         L.lens_file_read(L.ZMX_EXAMPLE.replace("DISZ 6.00755", "DISZ -6.00755"))
     with pytest.raises(ValueError, match="MODE"):
@@ -417,11 +433,14 @@ def test_approximations_need_allow_partial_and_are_marked():
     vign = L.ZMX_EXAMPLE.replace("PWAV 2\n", "PWAV 2\nVDYN 0 0.1 0.2 0 0 0 0 0 0 0 0 0\n").replace(
         "XFLN 0 0 0", "XFLN 0 5 0")
     curved = L.ZMX_EXAMPLE.replace("SURF 7\n  TYPE STANDARD\n  CURV 0 ", "SURF 7\n  TYPE STANDARD\n  CURV -0.01 ")
+    # 2026-10-20: a curved image surface is read (image_R) instead of being flattened
+    cp = L.lens_file_read(curved)
+    assert cp["approximate"] is False and cp["system"]["image_R"] == pytest.approx(-100.0, rel=1e-12)
     # a multi-configuration table is read now; one with an operand the reader does not know is approximate
     multi = L.ZMX_EXAMPLE + "MNUM 2 1\nAPER   0   1 5\nAPER   0   2 6\n"
     hot = L.ZMX_EXAMPLE.replace("ENVD 20 1 0", "ENVD 40 1 0")
     unknown = L.ZMX_EXAMPLE.replace("  DISZ 6.00755\n", "  DISZ 6.00755\n  ZZZZ 1 2 3\n")
-    for t in (vign, curved, multi, hot, unknown):
+    for t in (vign, multi, hot, unknown):
         with pytest.raises(ValueError, match="allow_partial"):
             L.lens_file_read(t)
         p = L.lens_file_read(t, allow_partial=True)

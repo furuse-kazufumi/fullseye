@@ -42,7 +42,7 @@ import raytrace as RT
 __all__ = ["lens_configurations", "lens_with_configuration", "lens_configuration_table",
            "lens_configuration_metrics", "lens_add_configuration"]
 
-SURFACE_FIELDS = ("R", "t", "n", "k", "ap", "f", "asph", "mirror", "decenter", "tilt")
+SURFACE_FIELDS = ("R", "t", "n", "k", "ap", "f", "asph", "a2", "odd", "mirror", "decenter", "tilt")
 SYSTEM_FIELDS = ("wavelength_um", "field", "stop", "object_mm", "image_mm", "aim")
 _CONFIG_KEYS = frozenset(("name", "surfaces", "system"))
 METRICS = ("efl", "bfl", "rms_spot", "geo_spot", "mtf", "encircled_energy")
@@ -131,6 +131,7 @@ def _resolve(system, k, op):
           "image_mm": sysf.get("image_mm", system["image_mm"]),
           "field": sysf.get("field", system["field"]),
           "aim": sysf.get("aim", system.get("aim", "paraxial"))}
+    kw.update(RT._system_extras(system))
     if "stop" in sysf and 0 <= int(stop) < len(lens) and lens[int(stop)].get("ap") is None:
         aps = [s["ap"] for s in lens if s.get("ap") is not None]
         if aps:

@@ -31256,6 +31256,87 @@
    "ko": "평행광 속의 원기둥(막대나 병)의 근축 초점과 실제 광선의 초점선 -> dict.",
    "de": "Paraxialer Fokus und Realstrahl-Kaustik eines Zylinders (Stab oder Flasche) im parallelen Strahl -> dict.",
    "hi": "समानांतर किरण-पुंज में बेलन (छड़ या बोतल) का पैराएक्सियल फोकस और वास्तविक किरणों की caustic -> dict।"
+  },
+  "optics/lens_apply_solves": {
+   "fp": "ec89668e4391",
+   "en": "Return a copy of the prescription with every solve resolved: the rules stay, R / t become the solved values (``table``).",
+   "zh": "返回已解出所有解(solve)的处方副本:规则保留,R / t 变为解出的值(``table``)。",
+   "tw": "回傳已解出所有解(solve)的處方副本:規則保留,R / t 變為解出的值(``table``)。",
+   "ko": "모든 솔브(solve)를 푼 처방의 복사본을 돌려준다: 규칙은 남고 R / t는 푼 값이 된다(``table``).",
+   "de": "Gibt eine Kopie der Konstruktion mit allen aufgelösten Solves zurück: die Regeln bleiben, R / t werden zu den gelösten Werten (``table``).",
+   "hi": "सभी solve हल की हुई prescription की प्रति लौटाता है: नियम बने रहते हैं, R / t हल किए गए मान बन जाते हैं (``table``)।"
+  },
+  "optics/lens_solve_set": {
+   "fp": "a3508ff382a1",
+   "en": "Attach a solve rule to a surface and return the solved prescription (``table``).",
+   "zh": "给某个面加上解(solve)的规则,并返回解出后的处方(``table``)。",
+   "tw": "為某個面加上解(solve)的規則,並回傳解出後的處方(``table``)。",
+   "ko": "면에 솔브(solve) 규칙을 붙이고 푼 처방을 돌려준다(``table``).",
+   "de": "Hängt einer Fläche eine Solve-Regel an und gibt die gelöste Konstruktion zurück (``table``).",
+   "hi": "किसी surface पर solve का नियम जोड़कर हल की हुई prescription लौटाता है (``table``)।"
+  },
+  "optics/lens_solve_clear": {
+   "fp": "825d29fd5aa4",
+   "en": "Remove the solve rule of a surface: the solved values stay as plain numbers (``table``).",
+   "zh": "去掉某个面的解(solve)规则:解出的值作为普通数值保留(``table``)。",
+   "tw": "去掉某個面的解(solve)規則:解出的值作為普通數值保留(``table``)。",
+   "ko": "면의 솔브(solve) 규칙을 제거한다: 푼 값은 일반 숫자로 남는다(``table``).",
+   "de": "Entfernt die Solve-Regel einer Fläche: die gelösten Werte bleiben als gewöhnliche Zahlen (``table``).",
+   "hi": "किसी surface का solve नियम हटाता है: हल किए गए मान सामान्य संख्याओं के रूप में रहते हैं (``table``)।"
+  },
+  "optics/lens_solves_list": {
+   "fp": "e77f5675d473",
+   "en": "List the solves in place: rule, solved value, achieved quantity and error (``table``).",
+   "zh": "列出现有的解(solve):规则、解出的值、达到的量及误差(``table``)。",
+   "tw": "列出現有的解(solve):規則、解出的值、達到的量及誤差(``table``)。",
+   "ko": "붙어 있는 솔브(solve)의 목록: 규칙, 푼 값, 달성한 양과 오차(``table``).",
+   "de": "Listet die vorhandenen Solves auf: Regel, gelöster Wert, erreichte Größe und Fehler (``table``).",
+   "hi": "लगे हुए solve की सूची: नियम, हल किया गया मान, प्राप्त राशि और त्रुटि (``table``)।"
+  },
+  "optics/afocal_system": {
+   "fp": "313bbfe7fcee",
+   "en": "Build an afocal system (telescope, beam expander): flag a given system as afocal, or make an ideal two-lens telescope (``table``).",
+   "zh": "构造像空间为平行光的系统(望远镜、扩束器):给已有系统加上 afocal 标记,或生成由两片理想透镜构成的望远镜(``table``)。",
+   "tw": "建構像空間為平行光的系統(望遠鏡、擴束器):為既有系統加上 afocal 標記,或生成由兩片理想透鏡構成的望遠鏡(``table``)。",
+   "ko": "상 공간이 평행광인 계(망원경, 빔 확대기)를 만든다: 주어진 계에 afocal 표시를 붙이거나 이상 렌즈 2장의 망원경을 만든다(``table``).",
+   "de": "Baut ein afokales System (Fernrohr, Strahlaufweiter): markiert ein gegebenes System als afokal oder erzeugt ein ideales Zwei-Linsen-Fernrohr (``table``).",
+   "hi": "ऐसा तंत्र बनाता है जिसका image space समानांतर प्रकाश का हो (दूरबीन, beam expander): दिए गए तंत्र पर afocal चिह्न लगाता है या दो आदर्श lens की दूरबीन बनाता है (``table``)।"
+  },
+  "optics/lens_afocal_report": {
+   "fp": "fcfc0b7ebd70",
+   "en": "Angular magnification, exit pupil and angular aberrations per field (in arcminutes) of an afocal system (``table``).",
+   "zh": "afocal 系统的角放大率、出瞳和各视场的角度像差(角分)(``table``)。",
+   "tw": "afocal 系統的角放大率、出瞳和各視場的角度像差(角分)(``table``)。",
+   "ko": "afocal 계의 각배율, 사출동 및 시야별 각도 수차(각분)(``table``).",
+   "de": "Winkelvergrößerung, Austrittspupille und Winkelaberrationen je Feld (in Bogenminuten) eines afokalen Systems (``table``).",
+   "hi": "afocal तंत्र का कोणीय आवर्धन, exit pupil और हर field की कोणीय aberration (आर्कमिनट में) (``table``)।"
+  },
+  "optics/lens_image_surface": {
+   "fp": "6213b9eb7f66",
+   "en": "Return a prescription with a curved image surface: rays meet this surface, and spot, OPD and MTF are measured on it (``table``).",
+   "zh": "返回像面为曲面的处方:光线与该面相交,光斑、OPD 和 MTF 都在该面上测量(``table``)。",
+   "tw": "回傳像面為曲面的處方:光線與該面相交,光斑、OPD 和 MTF 都在該面上量測(``table``)。",
+   "ko": "상면을 곡면으로 만든 처방을 돌려준다: 광선은 이 면과 만나고 스폿, OPD, MTF는 이 면에서 측정한다(``table``).",
+   "de": "Gibt eine Konstruktion mit gekrümmter Bildfläche zurück: Strahlen schneiden diese Fläche, Spot, OPD und MTF werden auf ihr gemessen (``table``).",
+   "hi": "curved image surface वाली prescription लौटाता है: किरणें इसी सतह से मिलती हैं, और spot, OPD तथा MTF इसी पर मापे जाते हैं (``table``)।"
+  },
+  "optics/lens_petzval_radius": {
+   "fp": "3ece3cd3bd68",
+   "en": "Petzval radius in image space: the radius of the image surface that removes the third-order field curvature (``table``).",
+   "zh": "像空间的佩茨瓦尔半径:消除三阶场曲的像面曲率半径(``table``)。",
+   "tw": "像空間的佩茨瓦爾半徑:消除三階場曲的像面曲率半徑(``table``)。",
+   "ko": "상 공간의 페츠발 반지름: 3차 상면 만곡을 없애는 상면의 곡률 반지름(``table``).",
+   "de": "Petzval-Radius im Bildraum: der Krümmungsradius der Bildfläche, die die Bildfeldwölbung dritter Ordnung aufhebt (``table``).",
+   "hi": "image space की Petzval त्रिज्या: वह image surface की वक्रता त्रिज्या जो तीसरे क्रम की field curvature मिटा देती है (``table``)।"
+  },
+  "optics/lens_zmx_solves_roundtrip": {
+   "fp": "78ee0d1b14a5",
+   "en": "Write the solves to a ``.zmx``, read it back and write again: check that this is a fixed point (``table``).",
+   "zh": "把解(solve)写入 ``.zmx``,读回后再写一次:检查是否为不动点(``table``)。",
+   "tw": "把解(solve)寫入 ``.zmx``,讀回後再寫一次:檢查是否為不動點(``table``)。",
+   "ko": "솔브(solve)를 ``.zmx``에 쓰고 다시 읽어 한 번 더 쓴다: 고정점이 되는지 확인한다(``table``).",
+   "de": "Schreibt die Solves in eine ``.zmx``, liest sie zurück und schreibt erneut: prüft, ob das ein Fixpunkt ist (``table``).",
+   "hi": "solve को ``.zmx`` में लिखता है, वापस पढ़ता है और फिर लिखता है: जाँचता है कि यह fixed point है या नहीं (``table``)।"
   }
  }
 }
