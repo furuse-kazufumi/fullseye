@@ -374,4 +374,5 @@ def test_op_missing_in_this_environment_is_marked_unavailable_not_dropped(monkey
     assert row["tier"] == "unavailable" and row["fit"] == "declared"
     assert api._shipped_index().get("remove_small") is not None
     others = [e for e in res["applicable"] if e["name"] != "remove_small"]
-    assert len(others) >= 3 and all(e["tier"] != "unavailable" for e in others)
+    assert len(others) >= 3                      # 他の行は落ちていない(CI の殻では他にも unavailable が混ざりうる)
+    assert all(e["fit"] in ("declared", "measured") for e in others)
