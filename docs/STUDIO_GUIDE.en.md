@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 11529e905883 -->
+<!-- i18n-source-sha: 8291b38d20e8 -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -342,6 +342,12 @@ Results that are not pixels are drawn according to their shape (the right panel 
 | table (dict) | its numeric columns of equal length as lines; the x axis is a `t` / `x` / `freq` … column if there is one |
 | `(h, w, 4)` / `(h, w, 1)` / complex | RGB over white / grey / magnitude \|z\| |
 | empty arrays, 4-D and more | shape and range as text (the first value is not shown as a "scalar") |
+
+## Result cache, review marks and the input reference (2026-10-19)
+
+- **Per-stage result cache**: when you move a knob, only that stage and the ones after it are recomputed; earlier results are reused. At the right end of each stage row, `⟳ calc` marks a stage computed this time and `↺ cache` one served from the cache. Changing the image, reordering or deleting stages drops everything from the affected stage onward. The cache keeps one latest result per stage, so dragging a knob repeatedly does not grow it.
+- **Review mark (⚠)**: "did it run" (`ran`) and "is the result sound" (`valid`) are kept apart. When a result contains NaN / Inf, is empty, or has every pixel equal, the stage row gets a `⚠`, with the reason in its tooltip and in Problems (a separate row from the `✕` errors). If the result is a table with fields such as `converged` / `valid` / `ok`, Studio mirrors that declaration. A result that carries no validity information is shown as "validity not judged", never as OK. After Run all the status bar reads "Run: done / Result: needs review (reason)" or "Run: done / Result: validity not judged". Studio only **reports**; it does not repair the operator's numerical problem or change any value.
+- **Input reference**: Save pipeline stores a reference to the loaded image file in the JSON under `input` (the path as given, the file's sha256, shape and dtype). On open, a file that exists with a matching sha256 is reloaded silently. A file that exists but differs is loaded and Problems shows "input file changed since save". If it is missing, the current image is kept and Problems shows "input not found: path" (a file with the same name next to the `.json` is tried as a relink candidate). Older JSON files without `input` load exactly as before.
 
 ## The relationship between Export and Save/Open
 
