@@ -1,8 +1,8 @@
 {
- "n_ops": 3429,
+ "n_ops": 3438,
  "tiers": {
   "color": 12,
-  "ledger": 2473,
+  "ledger": 2482,
   "nary": 17,
   "registry": 927
  },
@@ -14872,6 +14872,119 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "lockin_amplitude",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_demodulate",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_noise_floor",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lockin_phase",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_ring_normals",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lockin_ring_synthesize",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "lockin_separate",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_thermal_wave",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "lockin_walsh_codes",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "log_zero_crossings",

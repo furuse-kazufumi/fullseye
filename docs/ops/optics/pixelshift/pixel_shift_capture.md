@@ -73,7 +73,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md)
+[lockin_demodulate](../lockin/lockin_demodulate.md) · [lockin_amplitude](../lockin/lockin_amplitude.md) · [lockin_phase](../lockin/lockin_phase.md) · [lockin_separate](../lockin/lockin_separate.md) · [pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md)
 
 ## 同カテゴリ(`pixelshift`)
 

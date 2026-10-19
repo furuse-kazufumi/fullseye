@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**147 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**148 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1448,7 +1448,7 @@ Ops used (notes): [`blob_count_interval`](https://furuse.work/ops/blob/split/blo
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 53 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 54 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3319,6 +3319,34 @@ Source: [examples/poc_robust_profile_filter.py](https://github.com/furuse-kazufu
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
 
 Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
+
+## No.2026.262 —— Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution
+
+[![Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
+
+*↑ **Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution** ―― Per-pixel quadrature demodulation (lock-in) is made a general op on an image sequence, and the three uses of a time-correlation image sensor are shown as variants of one function. Nine new ops (`lockin`, category `lockin` of `opsoptics`): `lockin_demodulate` (amplitude, phase, DC, in-phase, quadrature and the window leakage), `lockin_amplitude`, `lockin_phase`, `lockin_noise_floor` (closed-form amplitude and phase noise from the SNR), `lockin_walsh_codes`, `lockin_separate` (coded lights by least squares), `lockin_ring_synthesize`, `lockin_ring_normals` (normals from the first-harmonic response of a multipole-modulated ring) and `lockin_thermal_wave` (exact surface temperature of a periodically heated plate). A sinusoid of amplitude 2.5, phase 0.7 rad and DC 1.5 is returned to 6.6e-15, and detuning the reference rolls the amplitude off as a sinc (0.4977 at delta-f times T = 0.6033, 0 at 1.0). A length that is not a whole number of periods is refused for the rectangular window; declaring hann returns the leakage in the table (amplitude error 0.0156 at 3.75 periods against a declared bound of 0.0157). With white noise the phase standard deviation at component SNR 45, 11 and 1.7 is 0.0220, 0.0888 and 0.7244 rad measured against 0.0221, 0.0887 and 0.7306 from the closed form of the Rice phase distribution, within 0.9 % (the small-noise approximation is 19 % off at SNR 1.7). (a) Running the phase of an 8-source ring once around the azimuth makes the albedo drop out of the first-harmonic response and leaves the normals: on a surface with an albedo stripe pattern (tilt up to 28.8 degrees) the angle error is 1.0e-13 degrees, and the correlation with the true tilt is -0.035 for the mean image against 1.000000 for the ring normals. The quadrupole reads 0 on a Lambertian surface (3.5e-16). With noise sigma 0.004 the gradient error is 0.0069 measured against 0.0069 predicted (normal-angle RMS 0.56 degrees). A slope beyond the shadow limit is marked invalid instead of given a normal. (b) Three lights switched by Walsh codes are separated to 1.9e-15 even with daylight 2.6 to 4.2 times the lamp, while the best two-frame difference has an error of 0.94 (as large as the lamp image). Under flicker and slow drift the error of lamp 1 is 0.053, 0.031 after a drift column is added, and the flicker shows in the residual image. (c) A 3 mm CFRP plate heated at 0.2 Hz (thermal diffusion length 0.818 mm) has a phase that equals the exact -45 degrees + arg coth((1+j)L/mu) to 1.0e-15, and uneven heating changes the amplitude but not the phase (difference 5.6e-16). The phase standard deviation of the sound area under noise is 0.0213 rad measured against 0.0214 predicted. Voids at 0.3 / 0.6 / 1.0 / 1.5 mm are read from the phase as 0.30 / 0.60 / 1.00 / 1.54 mm (the phase peaks at L/mu = 1.963; deeper voids cannot be read uniquely). Detuning the reference by 10 %, a wrong zenith angle, an undeclared window and dependent codes each turn a gate red or are refused. No learning, no calibration, 25 gates.*
+
+[![Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting.png)
+
+*↑ The measurement ―― Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![CFRP 板 3 mm、加熱 0.2 Hz(μ = 0.81 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/03_thermography_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/03_thermography.png)
+
+*↑ CFRP 板 3 mm、加熱 0.2 Hz(μ = 0.81 mm)。*
+
+[![周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/04_thermal_phase_vs_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/04_thermal_phase_vs_depth.png)
+
+*↑ 周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。*
+
+```
+py -3.11 examples/poc_lockin_imaging.py
+```
+
+Source: [examples/poc_lockin_imaging.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
+
+Ops used (notes): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

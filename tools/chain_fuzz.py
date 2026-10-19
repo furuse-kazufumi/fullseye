@@ -8103,6 +8103,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "slope_slip_curve",    # 登れない角は slip が NaN で feasible = False(docstring どおり、立ち往生)
                          "cvar_cost_map",       # 通れない辺(悲観的な滑り ≥ s_max・データの角の範囲の外・地図の外)は inf(docstring どおり)
                          "risk_aware_path",     # 届かなければ cost が inf(docstring どおり)
+                         "lockin_ring_normals",  # 影が出る画素(A/DC >= 1/2)と DC <= 0 の画素は全マップが NaN で valid = False(docstring どおり、モデルの外)
                          "plant_color_index",   # 暗い画素(明るさ < dark_floor)は色度が決まらず index が NaN で valid = False(docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \

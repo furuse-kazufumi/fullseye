@@ -85,7 +85,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-85개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+86개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -118,6 +118,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 간접 ToF(위상 방식)의 다주파 언랩과 깨지는 방식(접힘, 다중 경로, 가장자리 혼합, 고조파, 배경광): [설명](../../capabilities/itof-multifreq.md) _(ja)_ · 예제 [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - 레이저 광절단의 오차 하한은 스페클이 정한다(결맞음 결상, 스페클 통계, 삼각측량의 불확도): [설명](../../capabilities/laser-speckle-floor.md) _(ja)_ · 예제 [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - 오목한 부품의 상호 반사가 줄무늬 투영과 ToF를 얼마나 어긋나게 하는지 측정 전에 예측한다(전역 광 수송, 직접·전역 분리, 마이크로 위상 이동): [설명](../../capabilities/light-transport.md) _(ja)_ · 예제 [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+- 화소별 록인 복조(시간 상관 이미징: 진폭·위상·직류, 링 조명 법선, 부호화 조명 분리, 열파): [설명](../../capabilities/lockin-demodulation.md) _(ja)_ · 예제 [poc_lockin_imaging](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 - 그 숫자 중 얼마가 측정 방식 때문인가(게이지 R&R과 측정 불확도): [설명](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 예제 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - 모아레 정렬(피치가 조금 다른 격자 두 장 → 줄무늬 위상 → nm 변위, 차동과 Talbot 갭): [설명](../../capabilities/moire-alignment.md) _(ja)_ · 예제 [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - 줄무늬의 거울상으로 광택면의 µm 오목을 잰다(위상 측정 디플렉토메트리: 줄무늬 → 위상 → 기울기 → 곡률): [설명](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · 예제 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
@@ -204,7 +205,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 261개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 262개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -272,7 +273,7 @@ PoC 261개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (53)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI·CT 대응" width="200" height="200"><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="준공 벽면 편차" width="200" height="200"><span>준공 벽면 편차</span></a>
@@ -324,6 +325,7 @@ PoC 261개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="가공 포켓의 상호 반사를 수렴까지" width="200" height="200"><span>가공 포켓의 상호 반사를 수렴까지</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="가상 투과전자현미경(Thon 링과 디포커스)" width="200" height="200"><b>&#9654;</b><span>가상 투과전자현미경(Thon 링과 디포커스)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="비공축 광학계(빔스플리터 고스트·접힘)" width="200" height="200"><span>비공축 광학계(빔스플리터 고스트·접힘)</span></a>
+<a href="../../articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lockin_imaging.jpg" alt="화소별 록인 복조: 링 조명 법선, 주간화, 열파" width="200" height="200"><span>화소별 록인 복조: 링 조명 법선, 주간화, 열파</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="분광기와 조명계(대역폭과 광원의 무늬)" width="200" height="200"><span>분광기와 조명계(대역폭과 광원의 무늬)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="텔레센트릭 실사 이미지로 촬상 모델 보정" width="200" height="200"><span>텔레센트릭 실사 이미지로 촬상 모델 보정</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점" width="200" height="200"><span>흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점</span></a>

@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **147 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **148 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1448,7 +1448,7 @@ py -3.11 examples/poc_dense_bubble_count.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 53 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 54 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3319,6 +3319,34 @@ py -3.11 examples/poc_robust_profile_filter.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_robust_profile_filter)
 
 使用 op(ノートへ): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/prepare/robust_gaussian_profile.html) · [`robust_gaussian_surface`](https://furuse.work/ops/roughness/prepare/robust_gaussian_surface.html) · [`robust_spline_profile`](https://furuse.work/ops/roughness/prepare/robust_spline_profile.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html)
+
+## No.2026.262 —— 画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点
+
+[![画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
+
+*↑ **画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点** ―― 画素ごとの直交復調(ロックイン)を画像列に対する汎用の op にして、時間相関イメージセンサの 3 つの使い方を同じ関数の変種で示す。新 op 9 本(`lockin`、`opsoptics` の `lockin`): `lockin_demodulate`(振幅・位相・直流・同相・直交と窓の漏れの表)/ `lockin_amplitude` / `lockin_phase` / `lockin_noise_floor`(SN 比から振幅・位相の雑音を閉形式で)/ `lockin_walsh_codes` / `lockin_separate`(符号化した灯を最小二乗で分離)/ `lockin_ring_synthesize` / `lockin_ring_normals`(多重極変調リングの基本波応答から法線)/ `lockin_thermal_wave`(周期加熱した板の表面温度の厳密解)。振幅 2.5・位相 0.7 rad・直流 1.5 の正弦は 6.6e-15 以内で返り、参照の周波数をずらすと振幅は sinc で落ちる(Δf·T = 0.6033 で 0.4977、1.0 で 0)。周期が整数でない長さは矩形窓では拒否し、hann を宣言すると漏れ(3.75 周期で振幅誤差 0.0156、宣言した上限 0.0157)を表で返す。白色雑音の下の位相の標準偏差は、成分の SN 比 45・11・1.7 で実測 0.0220・0.0888・0.7244 rad、Rice の位相分布の閉形式 0.0221・0.0887・0.7306 と 0.9 % 以内(小雑音近似は SN 比 1.7 で 19 % 外れる)。(a) 8 灯の輪の光の位相を方位角と一緒に 1 周させると、基本波の応答から反射率が消えて法線が出る: 反射率の縞のある面(傾き最大 28.8°)で角度誤差 1.0e-13°、真の傾きとの相関は平均の像 −0.035 に対してリングの法線 1.000000。四重極は朗伯面で 0(3.5e-16)。雑音 σ = 0.004 の勾配の誤差は予測 0.0069 と実測 0.0069(法線の角度 RMS 0.56°)。影の限界を超える斜面は法線を作らず無効にする。(b) Walsh 符号で断続する 3 灯は、昼間の光が灯の 2.6〜4.2 倍あっても 1.9e-15 で分離でき、最良の 2 コマの差は誤差 0.94(灯の像の最大と同じ)。ちらつきとゆっくりした増加の下では灯 1 の誤差 0.053 → 増加の列を足して 0.031、ちらつきは残差の画像に出る。(c) CFRP 板 3 mm を 0.2 Hz で加熱すると(熱拡散長 0.818 mm)、位相は厳密解 −45° + arg coth((1+j)L/μ) と 1.0e-15 で一致し、加熱ムラは振幅を変えるが位相には入らない(差 5.6e-16)。雑音下の健全部の位相の標準偏差は実測 0.0213 rad、予測 0.0214 rad。深さ 0.3 / 0.6 / 1.0 / 1.5 mm の欠陥を位相から 0.30 / 0.60 / 1.00 / 1.54 mm と読む(位相の最大は L/μ = 1.963 で、それより深いと位相から一意に読めない)。参照を 10 % ずらす・天頂角を間違える・窓を宣言しない・符号が従属、は門が赤になるか拒否される。学習 0、較正 0、門 25 件。*
+
+[![Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/02_daylighting.png)
+
+*↑ 測定の図 ―― Walsh 符号 3 本で断続する 3 灯。分離した灯 1 は真値と 1e-12 で一致する。*
+
+[![CFRP 板 3 mm、加熱 0.2 Hz(μ = 0.81 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/03_thermography_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/03_thermography.png)
+
+*↑ CFRP 板 3 mm、加熱 0.2 Hz(μ = 0.81 mm)。*
+
+[![周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/04_thermal_phase_vs_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/04_thermal_phase_vs_depth.png)
+
+*↑ 周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。*
+
+```
+py -3.11 examples/poc_lockin_imaging.py
+```
+
+ソース: [examples/poc_lockin_imaging.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
+
+使用 op(ノートへ): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

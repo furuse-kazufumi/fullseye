@@ -766,6 +766,20 @@ def _batch2_builders():
         raw = pixelshift.pixel_shift_capture(np.stack(scenes), 4, _ps_nom(), "RGGB", per_frame=True)
         return raw + 0.01 * rng.standard_normal(raw.shape)
 
+    def _lk_clip(rng):
+        # lockin(2026-10-19): 周期が整数(32 枚 / 16 fps / 2 Hz = 4 周期)の画像列 = 振幅・位相・直流が画素ごとに違う正弦
+        k = np.arange(32)[:, None, None]
+        amp, ph, dc = 0.2 + rng.random((8, 8)), 6.0 * rng.random((8, 8)) - 3.0, 1.0 + rng.random((8, 8))
+        return dc + amp * np.cos(2.0 * np.pi * 2.0 * k / 16.0 + ph)
+
+    def _lk_height(rng):
+        yy, xx = np.mgrid[0:16, 0:16]
+        return 3.0 * np.exp(-((yy - 8.0) ** 2 + (xx - 8.0) ** 2) / 20.0) + 0.1 * rng.random((16, 16))
+
+    def _lk_demod(rng):
+        import lockin
+        return lockin.lockin_demodulate(lockin.lockin_ring_synthesize(_lk_height(rng), 20.0, 8, 1, 16, 2), 1.0, 16.0)
+
     def _film_spec(rng):
         import filmoptics
         return filmoptics.multilayer_reflectance([("SIO2", 300.0 + 900.0 * rng.random())], "SI", 400.0, 800.0, 81)
@@ -862,6 +876,16 @@ def _batch2_builders():
         "pixel_shift_merge": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {"motion_threshold": 4.0}),
         "pixel_shift_motion_mask": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {}),
         "pixel_shift_resolution_budget": lambda pool, rng: ([3.45, 2.8], {}),
+        # lockin(2026-10-19): 画像列は周期が整数の正弦、符号は Walsh 行、法線の復元はリングの像を復調した表を種にする
+        "lockin_demodulate": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_amplitude": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_phase": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_noise_floor": lambda pool, rng: ([64, 0.1 + rng.random(), 1.0], {}),
+        "lockin_walsh_codes": lambda pool, rng: ([16, 3], {}),
+        "lockin_separate": lambda pool, rng: ([_lk_clip(rng), __import__("lockin").lockin_walsh_codes(32, 3)], {}),
+        "lockin_ring_synthesize": lambda pool, rng: ([_lk_height(rng), 20.0, 8, 1, 16, 2], {}),
+        "lockin_ring_normals": lambda pool, rng: ([_lk_demod(rng), 20.0], {}),
+        "lockin_thermal_wave": lambda pool, rng: ([1e-3 * (1.0 + 2.0 * rng.random((8, 8))), 4.2e-7, 0.1, 16, 2], {}),
         # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
         #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
         #   max_peaks のノブが効かない入力になる)。

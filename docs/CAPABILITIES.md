@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 85 項目**
+**収録 86 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -44,6 +44,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
 | [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
@@ -79,7 +80,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (30)
+## 測る (31)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -216,6 +217,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 使う op: `groove_profile`, `form_factors_2d`, `transport_matrix_radiosity`, `high_frequency_patterns`, `render_transport`, `separate_direct_global`, `fringe_multipath_phase_error`, `predict_fringe_phase_error`, `micro_phase_decode`, `tof_multipath_phase`, `tof_transport_depth`
 
 動く例: `poc_interreflection_fringe_error`
+
+### [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md)
+
+変調した光や熱で場面を照らし、画素ごとに参照信号と相関を取ると、画像でなく「参照に追従する成分の振幅と位相」と直流が出ます。`lockin` の 9 本は、画像列 (T, H, W) に対するその直交復調と 3 つの使い方です。`lockin_demodulate` は振幅・位相・直流・同相・直交と窓の漏れを返し(`lockin_amplitude` / `lockin_phase` は 2 次元の画像だけ)、窓は宣言します: 矩形窓は参照の周期が整数のときだけ厳密で、そうでなければ拒否し、hann なら漏れの大きさを表で返します。`lockin_noise_floor` は白色雑音の下の振幅・位相の雑音を SN 比から閉形式(位相は Rice の分布)で与えます。
+
+使う op: `lockin_demodulate`, `lockin_amplitude`, `lockin_phase`, `lockin_noise_floor`, `lockin_walsh_codes`, `lockin_separate`, `lockin_ring_synthesize`, `lockin_ring_normals`, `lockin_thermal_wave`
+
+推奨パイプライン: [`lockin_ring_synthesize`](ops/optics/lockin/lockin_ring_synthesize.md) → [`lockin_demodulate`](ops/optics/lockin/lockin_demodulate.md) → [`lockin_ring_normals`](ops/optics/lockin/lockin_ring_normals.md)
+
+代替: [`lockin_amplitude`](ops/optics/lockin/lockin_amplitude.md), [`lockin_phase`](ops/optics/lockin/lockin_phase.md), [`lockin_separate`](ops/optics/lockin/lockin_separate.md), [`lockin_walsh_codes`](ops/optics/lockin/lockin_walsh_codes.md), [`lockin_noise_floor`](ops/optics/lockin/lockin_noise_floor.md), [`lockin_thermal_wave`](ops/optics/lockin/lockin_thermal_wave.md)
+
+限界: 法線の復元は朗伯面で、輪の光源のどれも影にならない画素(傾き < 90° − 天頂角)だけ有効(他は NaN と valid = False)。光沢・相互反射では式が崩れる。熱波は定常状態の 1 次元モデル(横拡散と立ち上がりの過渡は無し)で、位相は L/μ = 1.963 で最大になるのでそれより深い欠陥は位相から一意に読めない。矩形窓は周期が整数のときだけ(そうでなければ拒否)。
+
+実寸校正: 位相は参照の周波数と標本化の時刻(fps)だけで決まり、画素の大きさや照度の絶対値は要らない。振幅は照明・反射率・放射率の掛け算を含むので、反射率を消したいときは A / 直流(法線)か位相(熱波)を使う。参照の周波数が 10 % ずれると振幅が落ちる(sinc)ので、参照は実測の周波数に合わせる。
+
+動く例: `poc_lockin_imaging`
 
 ### [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md)
 

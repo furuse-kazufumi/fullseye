@@ -85,7 +85,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## What it can do
 
-85 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+86 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -118,6 +118,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light): [explanation](../../capabilities/itof-multifreq.md) _(ja)_ · examples [poc_itof_multifreq](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_itof_multifreq.py)
 - Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty): [explanation](../../capabilities/laser-speckle-floor.md) _(ja)_ · examples [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
 - Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting): [explanation](../../capabilities/light-transport.md) _(ja)_ · examples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+- Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves): [explanation](../../capabilities/lockin-demodulation.md) _(ja)_ · examples [poc_lockin_imaging](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 - How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty): [explanation](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · examples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap): [explanation](../../capabilities/moire-alignment.md) _(ja)_ · examples [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry): [explanation](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · examples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
@@ -204,7 +205,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## See everything
 
-261 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+262 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -272,7 +273,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (53)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -324,6 +325,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_pocket_interreflection/02_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pocket_interreflection.jpg" alt="Pocket interreflection to convergence" width="200" height="200"><span>Pocket interreflection to convergence</span></a>
 <a href="../../articles/assets/poc/poc_tem_ctf_thon_rings/01_thon_ring_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tem_ctf_thon_rings.jpg" alt="Virtual TEM (Thon rings and defocus)" width="200" height="200"><b>&#9654;</b><span>Virtual TEM (Thon rings and defocus)</span></a>
 <a href="../../articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_noncoaxial_optics.jpg" alt="Non-coaxial optics: beamsplitter ghosts and folds" width="200" height="200"><span>Non-coaxial optics: beamsplitter ghosts and folds</span></a>
+<a href="../../articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lockin_imaging.jpg" alt="Per-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves" width="200" height="200"><span>Per-pixel lock-in demodulation: ring-light normals, daylighting, thermal waves</span></a>
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="Spectrometer and illumination (bandwidth and lamp structure)" width="200" height="200"><span>Spectrometer and illumination (bandwidth and lamp structure)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Calibrating an imaging model on a real telecentric image" width="200" height="200"><span>Calibrating an imaging model on a real telecentric image</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="How far a scratch dents the mean line, and where robust filters break" width="200" height="200"><span>How far a scratch dents the mean line, and where robust filters break</span></a>
