@@ -7130,7 +7130,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 12 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 13 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -7427,6 +7427,22 @@ py -3.11 examples/poc_lens_global_search.py
 この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_global_search)
 
 使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`glass_nearest`](https://furuse.work/ops/optics/lensglobal/glass_nearest.html) · [`lens_global_search`](https://furuse.work/ops/optics/lensglobal/lens_global_search.html) · [`lens_substitute_glasses`](https://furuse.work/ops/optics/lensglobal/lens_substitute_glasses.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
+
+## No.2026.265 —— 要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点
+
+[![要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png)
+
+*↑ **要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点** ―― 設計者のメリット関数は「ここの縁厚は 1 mm 以上、EFL は 50 mm、波面は小さく」という要求の表。その表を、行ごとに目標・重み・片側の境界として持ち、最適化が何に引っ張られているかを行ごとの割合で言う。新 op 6 本(`lensmerit`、`opsoptics` の `lensmerit`): `merit_operands_list`(30 個のオペランドの名前・意味・単位・引数)/ `merit_evaluate`(行ごとの値・目標・重み・寄与 (w(値−目標))²・割合。境界の行は満たしている間は寄与 0)/ `merit_default`(瞳全体の光線行 + EFL の保持。スポットか波面、主光線か重心の基準)/ `merit_boundary_operands`(各ガラスの縁厚・中心厚・空気間隔の境界)/ `optimize_lens_operands`(`lensopt` の変数・減衰最小二乗・刻みをそのまま使い、`g<i>` で硝材を候補から選ぶ離散の外側ループを足す)/ `merit_contributions`(どの行が支配しているかの割合の表)。縁厚は両面のクリア半径でのサグ(円錐・偶数次非球面を含む)から t − sag_i(h_i) + sag_(i+1)(h_(i+1))。閉形式で採点: 薄肉色消しの屈折力配分 φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2)(EFFL と AXCL = 0 の最適化が相対 1.7e-14 で着く)、平凸の縁厚 1.8e-15、屈折球面の実光線の高さと入射角が Snell の式と 1.1e-13、理想レンズの作動 F ナンバーが f/2h と 1.2e-7。既定の表(スポット・主光線基準)は `lensopt.merit_function` と相対 0.0(門は 1e-9)。独立実装(MIT ライセンスの公開ライブラリ)の記録値と、EFL 1.4e-14、像面の実光線 1.8e-14 mm、軸上の OPD 8.5e-11 波長で合う。軸外の OPD は 14° で最大値の 0.03 %、20° で 0.25 % ずれる(基準球の半径の取り方の規約の違い: 独立実装は像点から射出瞳中心までの距離、`raytrace.opd_samples` は光軸方向の距離だけ)。三枚玉(古典的な 40° の半径を 7〜10 % ずらし、縁を薄くし、EFL を 58 mm にした出発点)を、波面(3 視野 × F・d・C)+ EFL 50 mm の保持 + 境界(縁厚 ≥ 1 mm、中心厚 2〜8 mm、空気間隔 ≥ 0.5 mm)の表で最適化: merit 1.03e5 → 33.9(1/3041)、EFL 57.98 → 50.0015 mm、縁厚 1.83 / 2.38 / 0.10 → 3.37 / 3.78 / 1.00 mm、RMS スポット(軸上・8.4°・12°)25 / 13 / 22 → 5.8 / 8.4 / 12 µm。支配する行は EFL の保持(82 %)から 12° の波面の行(71 %)へ移る。負レンズの硝材を間違えた(クラウン)出発点を、軸上色・倍率色の行を足した表で最適化すると、連続変数だけでは軸上色が −1.02 mm のまま(硝材は連続変数では直せない)。`g2` を 6 種のモデル硝材から選ばせると高分散のフリントが選ばれ、AXCL は −1.02 → −0.059 mm(1/17)、12° の LACL は −0.051 → −3.3e-4 mm(1/154)、merit は 1.26e4 → 47(1/265)。正直な注意: 境界の重みを 10 にすると中心厚が 0.06 mm 破れたまま止まったので 100 にした。最適化は境界が効いた点(縁厚 1.001 mm)で 40 反復を使い切る。CI の縮小予算(外側ループ 1 回)では硝材の最適化後の merit は 45.6、AXCL は 1/18、LACL は 1/167 になる。学習 0、較正 0、25 門。*
+
+```
+py -3.11 examples/poc_lens_merit_operands.py
+```
+
+ソース: [examples/poc_lens_merit_operands.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_merit_operands)
+
+使用 op(ノートへ): [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`merit_boundary_operands`](https://furuse.work/ops/optics/lensmerit/merit_boundary_operands.html) · [`merit_contributions`](https://furuse.work/ops/optics/lensmerit/merit_contributions.html) · [`merit_default`](https://furuse.work/ops/optics/lensmerit/merit_default.html) · [`merit_evaluate`](https://furuse.work/ops/optics/lensmerit/merit_evaluate.html) · [`merit_function`](https://furuse.work/ops/optics/optimization/merit_function.html) · [`merit_operands_list`](https://furuse.work/ops/optics/lensmerit/merit_operands_list.html) · [`optimize_lens_operands`](https://furuse.work/ops/optics/lensmerit/optimize_lens_operands.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
