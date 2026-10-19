@@ -333,3 +333,35 @@ def test_conditional_outputs_take_part_in_the_order_check():
         RA.READS["tools/gen_examples_readme.py"].remove("docs/articles/assets/poc/*_720.jpg")
         if not RA.READS["tools/gen_examples_readme.py"]:
             del RA.READS["tools/gen_examples_readme.py"]
+
+
+def test_dirty_ignores_touched_but_identical_files(tmp_path, monkeypatch):
+    """改行コードだけ・mtime だけの「変更」は食い違いに数えず、本当の変更は数える。"""
+    import subprocess
+
+    def git(*a):
+        return subprocess.run(["git", *a], cwd=tmp_path, capture_output=True,
+                              text=True, check=True)
+
+    git("init", "-q")
+    git("config", "user.email", "t@example.invalid")
+    git("config", "user.name", "t")
+    git("config", "core.autocrlf", "false")
+    same = tmp_path / "same.txt"
+    real = tmp_path / "real.txt"
+    same.write_bytes(b"a\nb\n")
+    real.write_bytes(b"x\n")
+    git("add", ".")
+    git("commit", "-q", "-m", "init")
+    # 中身は同じまま書き直し(mtime が変わり、stat キャッシュは古くなる)。
+    st = same.stat()
+    same.write_bytes(b"a\nb\n")
+    os.utime(same, (st.st_atime + 5, st.st_mtime + 5))
+    real.write_bytes(b"y\n")
+    (tmp_path / "new.txt").write_bytes(b"n\n")
+    monkeypatch.setattr(RA, "_ROOT", str(tmp_path))
+    lines = RA._dirty()
+    assert len([ln for ln in lines if ln.endswith("same.txt")]) == 0, lines
+    assert len([ln for ln in lines if ln.endswith("real.txt")]) == 1, lines
+    assert len([ln for ln in lines if ln.startswith("??") and ln.endswith("new.txt")]) == 1, lines
+    assert len(lines) == 2, lines

@@ -791,12 +791,34 @@ def _run(args: list[str], traces: dict | None = None) -> int:
             pass
 
 
+def _content_changed(path: str) -> bool:
+    """追跡済みファイルの中身が本当に変わっているか(`git diff --quiet` の exit code)。"""
+    r = subprocess.run(["git", "diff", "--quiet", "--", path], cwd=_ROOT,
+                       capture_output=True)
+    return r.returncode != 0
+
+
 def _dirty() -> list[str]:
+    # Windows では改行コードだけが違う(中身は同じ)再生成物が `git status` に
+    # 「変更」として出て、--check が偽の食い違いを報告した(2026-10-19 に 28 本、
+    # `git diff` は空)。stat キャッシュを更新してから読み、さらに追跡済みで
+    # `git diff --quiet` が 0 のもの(=中身が同じ)は落とす。未追跡 `??` と
+    # 本当の内容変更は残す。
+    subprocess.run(["git", "update-index", "-q", "--refresh"], cwd=_ROOT,
+                   capture_output=True)
     r = subprocess.run(["git", "status", "--porcelain"], cwd=_ROOT,
                        capture_output=True, text=True, errors="replace")
-    return [ln for ln in r.stdout.splitlines() if ln.strip()
-            # 毎ターン自動で書き換わるので、回し忘れの証拠にはならない。
-            and not ln.endswith("docs/SESSION_SUMMARY.md")]
+    out = []
+    for ln in r.stdout.splitlines():
+        if not ln.strip():
+            continue
+        # 毎ターン自動で書き換わるので、回し忘れの証拠にはならない。
+        if ln.endswith("docs/SESSION_SUMMARY.md"):
+            continue
+        if not ln.startswith("??") and ln[:2].strip() in ("M", "MM", "AM", "TM")                 and " -> " not in ln and not _content_changed(ln[3:].strip().strip('"')):
+            continue
+        out.append(ln)
+    return out
 
 
 def main(argv=None) -> int:
