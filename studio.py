@@ -758,6 +758,7 @@ class PipelineModel:
         self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
         self._fresh: set = set()              # stage indices computed since acknowledge() (UI marker)
         self._last = (0, -1)                  # (stages served from cache, last index reached) of the last call
+        self._fail = None                     # (stage index, stage key, image version, exception) of the last failed run
         self._thumbs: dict = {}               # stage index -> (image version, stage key, small uint8 thumb or None, kind)
         self._image = None if image is None else np.asarray(image, np.float64)
         self._stages: list[list] = []         # [ [name, a, b], ... ]
@@ -862,8 +863,12 @@ class PipelineModel:
         active = [k for k in range(n) if not _is_bypassed(stages[k])]
         norm = ops_ = ()
         if active:
-            base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(stages[k][:3]) for k in active],
-                                                     0.5, 0.5, policy)
+            try:
+                base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(stages[k][:3]) for k in active],
+                                                         0.5, 0.5, policy)
+            except Exception as e:
+                self._note_failure(self._first_bad_prefix(active, policy, v), e)
+                raise
         else:
             base = self._image
         pos = {k: j for j, k in enumerate(active)}
@@ -881,10 +886,77 @@ class PipelineModel:
                 val = next(steps)
             except StopIteration:
                 break
+            except Exception as e:
+                self._note_failure(k, e)
+                raise
             ms = round((time.perf_counter() - t0) * 1000.0, 1)
             self._cache.append((_stage_key(stages[k]), val, ms))
             self._fresh.add(k)
             prev = val
+
+    def _first_bad_prefix(self, active, policy, v):
+        """Index of the first stage whose prefix the pre-run checks refuse (error path only; runs nothing)."""
+        for j in range(len(active)):
+            try:
+                api._prepare_pipeline(self._image, [tuple(self._stages[k][:3]) for k in active[:j + 1]],
+                                      0.5, 0.5, policy)
+            except Exception:
+                return active[j]
+        return active[-1]
+
+    def _note_failure(self, k, exc):
+        self._fail = (k, tuple(_stage_key(x) for x in self._stages[:k + 1]), self._img_ver, exc)
+
+    def _live_failure(self):
+        """``(stage index, exception)`` of the last failed run if it still describes the current stages, else None."""
+        f = self._fail
+        if f is None:
+            return None
+        k, keys, ver, exc = f
+        st = self._stages
+        if ver != self._img_ver or k >= len(st) or tuple(_stage_key(x) for x in st[:k + 1]) != keys:
+            return None
+        return k, exc
+
+    def _is_fresh(self, i):
+        """True if stage *i* has a cached result that is valid for the current stages (reads only)."""
+        stages = self._stages
+        return (0 <= i < len(stages) and self._ctx == self._context() and i < len(self._cache)
+                and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
+
+    def cached_result(self, i):
+        """The cached value after stage *i* (``-1`` = the base image), or None when it is not cached
+        (never computed, or computed with other knobs). Reads only: nothing is run."""
+        if i < 0:
+            return self._image
+        return self._cache[i][1] if self._is_fresh(i) else None
+
+    def cached_times(self):
+        """Per stage ms of the cached run, None where nothing valid is cached. Runs nothing."""
+        return [self._cache[i][2] if self._is_fresh(i) else None for i in range(len(self._stages))]
+
+    def cached_step_states(self):
+        """Like :meth:`step_states` but **from the cache only**: a stage with a valid cached result gets the
+        same inspection / ``ran`` / ``valid`` / ``reasons``; a stage that failed on the last run (and every
+        stage after it) an ``error`` state; every other stage ``state=None`` with ``status`` ``"stale"``
+        (computed earlier with other knobs) or ``"uncomputed"``. Runs nothing."""
+        out = []
+        live = self._live_failure()
+        for i, st in enumerate(self._stages):
+            op, a, b = st
+            pv = self.stage_preview(i)
+            state = None
+            if live is not None and i >= live[0]:
+                state = {"kind": "error", "message": str(live[1]), "ran": False, "valid": None, "reasons": []}
+            elif pv["status"] == "ready":
+                val = self._cache[i][1]
+                state = inspect_result(val)
+                valid, reasons = assess_validity(val)
+                state.update(ran=True, valid=valid, reasons=reasons)
+            out.append({"index": i, "op": op, "a": a, "b": b, "state": state,
+                        "status": "error" if (state and state.get("kind") == "error") else pv["status"],
+                        "bypass": _is_bypassed(st)})
+        return out
 
     def add_stage(self, name, a=0.5, b=0.5):
         op = api.find_op(name)
@@ -1008,9 +1080,7 @@ class PipelineModel:
             del self._thumbs[k]
         key = _stage_key(stages[i])
         byp = _is_bypassed(stages[i])
-        fresh = (self._ctx == self._context() and i < len(self._cache)
-                 and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
-        if fresh:
+        if self._is_fresh(i):
             rec = self._thumbs.get(i)
             if rec is None or rec[0] != self._img_ver or rec[1] != key:
                 th, kind = _result_thumbnail(self._cache[i][1])
@@ -2916,8 +2986,14 @@ def parse_hdev_program_lines(text, names):
     names = set(names)
     errs = []
     toks = []
+    byp_lines = set()
     for n, raw in enumerate(text.splitlines(), 1):
-        line = _hdev_strip_comment(raw)
+        mb = re.match(r"\s*#\s*bypassed:\s*(\S.*)$", raw)
+        if mb and mb.group(1).split()[0].split("(")[0].lower() in names:
+            line = _hdev_strip_comment(mb.group(1)).strip()      # "# bypassed: op (a, b)" = a switched-off stage
+            byp_lines.add(n)
+        else:
+            line = _hdev_strip_comment(raw)
         if not line:
             continue
         head = line.split()[0].lower()
@@ -2973,6 +3049,9 @@ def parse_hdev_program_lines(text, names):
                     continue                       # applied via extract_dev_directives
                 st = _hdev_parse_op(line, n, errs, names)
                 if st:
+                    if n in byp_lines:
+                        st = _normalise_stage(st)
+                        st.bypass = True
                     out.append((st, n))            # (stage, source line)
         return out
 
@@ -6394,7 +6473,7 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
 
-    def refresh_stage_list(select=None):
+    def refresh_stage_list(select=None, sync_code=True):
         """Rebuild the stage rows (and the Problems panel).
 
         Never renders the image: the row is selected with the list's signals still
@@ -6404,28 +6483,32 @@ def build_window(model=None):
         state["reordering"] = True                    # suppress the drag-reorder handler
         stage_list.blockSignals(True)
         stage_list.clear()
+        # CACHE ONLY (Studio slice 2): rebuilding the list never runs a stage. Computation
+        # happens from run / step / the settled knob drag / the main view, as before; a row
+        # whose stage has no valid cached result says so ("not computed" / "recompute needed").
         try:
-            states = model.step_states()
+            states = model.cached_step_states()
         except Exception as e:                        # summaries lost -> say so, don't blank
             states = []
             state["errors"].append(("step summaries unavailable", str(e)))
             flash("step summaries unavailable: %s" % truncate(e, 100))
-        try:
-            times = model.step_times()
-        except Exception as e:
-            times = []
-            state["errors"].append(("stage timings unavailable", str(e)))
-            flash("stage timings unavailable: %s" % truncate(e, 100))
+        times = model.cached_times()
         marks = model.stage_marks()                   # which stages were recomputed since the last refresh
         model.acknowledge()
         validity_rows = []
         for i, (name, a, b) in enumerate(model.stages):
             byp = _is_bypassed(model.stages[i])
-            st = states[i]["state"] if i < len(states) else {}
-            summ = step_summary(st) if st else ""
-            ms = times[i] if i < len(times) else None
+            st = (states[i]["state"] if i < len(states) else None) or {}
+            pstatus = states[i]["status"] if i < len(states) else "uncomputed"
+            if st:
+                summ = step_summary(st)
+            elif pstatus == "stale":
+                summ = "再計算が必要 / recompute needed"
+            else:
+                summ = "未計算 / not computed"
+            ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
-            mk = marks[i] if i < len(marks) else "pending"
+            mk = marks[i] if (i < len(marks) and st) else "pending"
             cstr = {"computed": "  ·  ⟳ calc", "cached": "  ·  ↺ cache"}.get(mk, "")
             warn = st.get("valid") is False
             wstr = "  ·  ⚠" if warn else ""
@@ -6466,7 +6549,8 @@ def build_window(model=None):
         state["reordering"] = False
         refresh_problems(states)
         sync_stage_ui()
-        getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
+        if sync_code:                                 # (a run keeps the editor's cursor / timings: sync_code=False)
+            getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
 
     def refresh_problems(states=None):
         """Populate the Problems list: static validation (unknown op / sort mismatch,
@@ -6481,7 +6565,7 @@ def build_window(model=None):
                      for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
             for s in states:                                    # runtime errors
-                if s.get("state", {}).get("kind") == "error":
+                if (s.get("state") or {}).get("kind") == "error":
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
         if states is not None:
@@ -6799,6 +6883,10 @@ def build_window(model=None):
     def on_knob_settled():
         """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
         i = selected_index()
+        try:
+            model.step_states()                           # the settled drag runs the pipeline once (O(n))
+        except Exception:
+            pass                                          # a failing stage is recorded and shown in the rows
         refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
         base = getattr(win, "_knob_drag_base", None)
         win._knob_drag_base = None
@@ -7041,6 +7129,11 @@ def build_window(model=None):
         if stage_list.count() != len(model.stages):          # self-heal a desynced UI list
             refresh_stage_list(select=i)
         stage_list.setCurrentRow(i)                          # triggers show_result for that step
+        try:
+            model.result_upto(i)                             # a step/run computes up to here (a no-op if the view just did)
+        except Exception:
+            pass                                             # the failing stage is recorded and shown in the rows
+        refresh_stage_list(select=i, sync_code=False)         # the step has run: rows now read its cache
         _select_var_row(i + 1)                               # sync: highlight this step's output var
         flash("step %d/%d — %s (showing this stage's result)"
               % (i + 1, len(model.stages), model.stages[i][0]))
@@ -8958,8 +9051,9 @@ def build_window(model=None):
         if state["dev_update"]["pc"]:
             code_edit.set_exec_line(ln)
         stage_list.setCurrentRow(i)
+        refresh_stage_list(select=i, sync_code=False)
         try:
-            refresh_problems(model.step_states())
+            refresh_problems(model.cached_step_states())
         except Exception as e:
             state["errors"].append(("problems refresh failed", str(e)))
         flash(msg)
@@ -9074,6 +9168,7 @@ def build_window(model=None):
             code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)   # dev_update_pc
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)     # show the result up to the reached line
+            refresh_stage_list(select=last, sync_code=False)
         tmo = state["system"]["operator_timeout_ms"]
         slow = [ln for ln, ms in timings.items() if tmo and ms > tmo]   # soft set_operator_timeout
         code_status.setText("ran %d line(s) in %.1f ms%s%s"
@@ -9107,6 +9202,7 @@ def build_window(model=None):
         if state["dev_update"]["pc"]:
             code_edit.set_exec_line(ln)        # dev_update_pc
         stage_list.setCurrentRow(nxt - 1)
+        refresh_stage_list(select=nxt - 1, sync_code=False)
         code_status.setText("stepped to line %d (stage %d)" % (ln, nxt))
 
     def continue_program():
@@ -9143,6 +9239,7 @@ def build_window(model=None):
             code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)
+            refresh_stage_list(select=last, sync_code=False)
         code_status.setText("continued line %d → %d%s"
                             % (_stage_line(start) if start < len(model.stages) else exec_line + 1,
                                _stage_line(last) if last >= 0 else exec_line,
@@ -9173,11 +9270,11 @@ def build_window(model=None):
     def _var_entries():
         ents = [("input", -1, "image")]
         try:
-            states = model.step_states()
+            states = model.cached_step_states()       # cache only: listing variables never runs a stage
         except Exception:
             states = []
         for i, (name, a, b) in enumerate(model.stages):
-            kind = states[i]["state"].get("kind", "?") if i < len(states) else "?"
+            kind = ((states[i]["state"] or {}).get("kind", "?") if i < len(states) else "?")
             ents.append(("%d: %s" % (i + 1, name), i, kind))
         return ents
 
@@ -9186,8 +9283,11 @@ def build_window(model=None):
         if it is None:
             var_inspect.setPlainText(""); refresh_watches(); return
         try:
-            val = model.result_upto(it.data(QtCore.Qt.UserRole))
-            var_inspect.setPlainText(format_inspection(inspect_result(val)))
+            val = model.cached_result(it.data(QtCore.Qt.UserRole))
+            if val is None:
+                var_inspect.setPlainText("未計算 / not computed (run or step to this stage)")
+            else:
+                var_inspect.setPlainText(format_inspection(inspect_result(val)))
         except Exception as e:
             var_inspect.setPlainText("inspect error: %s" % e)
         refresh_watches()
@@ -9207,7 +9307,7 @@ def build_window(model=None):
         val = None
         if it is not None:
             try:
-                val = model.result_upto(it.data(QtCore.Qt.UserRole))
+                val = model.cached_result(it.data(QtCore.Qt.UserRole))
             except Exception:
                 val = None
         env = {"v": val, "np": np, "img": model.image}
@@ -9308,7 +9408,7 @@ def build_window(model=None):
         var_list.setIconSize(QtCore.QSize(_VAR_THUMB, _VAR_THUMB))
         for label, idx, kind in _var_entries():
             try:
-                val = model.result_upto(idx)
+                val = model.cached_result(idx)
             except Exception:
                 val = None
             ic = _var_icon(val)                      # iconic vars get a shape thumbnail

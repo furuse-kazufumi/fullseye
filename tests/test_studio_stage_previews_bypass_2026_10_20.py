@@ -170,6 +170,7 @@ def test_a5_stage_list_rows_have_icons_and_placeholders_offscreen(monkeypatch):
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     for n in _OPS4:
         model.add_stage(n, 0.4, 0.5)
+    model.step_states()                                   # run first: the list rebuild itself computes nothing
     win._refresh_stage_list(select=3)
     sl = win._stage_list
     assert sl.count() == 4
@@ -453,4 +454,85 @@ def test_d1_slice1_state_and_cache_marks_still_there_offscreen():
     assert [s["bypass"] for s in st] == [False] * 4
     assert model.cache_status() == ["cached"] * 4
     assert win._problems_list.item(0).text() == "no problems"
+    win.close()
+
+
+# ------------------------------ E: the list rebuild never computes -------------- #
+def test_e1_refresh_stage_list_runs_no_op_and_says_what_is_missing(monkeypatch):
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    counts = _counting(monkeypatch, _OPS4)
+    for n in _OPS4[:3]:
+        model.add_stage(n, 0.4, 0.5)
+    win._refresh_stage_list(select=2)
+    assert counts == {n: 0 for n in _OPS4}                     # nothing has run: the rebuild ran nothing
+    rows = [win._stage_list.item(i).text() for i in range(3)]
+    assert len(rows) == 3
+    assert all("未計算 / not computed" in r and " ms" not in r for r in rows)
+    win._do_run_all()                                          # the user runs
+    ran = dict(counts)
+    assert all(ran[n] == 1 for n in _OPS4[:3])
+    rows = [win._stage_list.item(i).text() for i in range(3)]
+    assert all(" ms" in r for r in rows)
+    model.set_knobs(1, a=0.8)                                  # a knob change on stage 2
+    win._refresh_stage_list(select=2)
+    assert counts == ran                                       # still nothing computed by the rebuild
+    rows = [win._stage_list.item(i).text() for i in range(3)]
+    assert "recompute needed" not in rows[0] and " ms" in rows[0]
+    assert "再計算が必要 / recompute needed" in rows[1] and " ms" not in rows[1]
+    assert "再計算が必要 / recompute needed" in rows[2]
+    win._variables["refresh"]()                                # the variables panel is cache-only too
+    win._update_stage_icons()
+    assert counts == ran
+    win._do_run_all()                                          # running computes stages 2 and 3 only
+    assert counts["gaussian"] == ran["gaussian"]
+    assert counts["sobel_amp"] == ran["sobel_amp"] + 1 and counts["invert"] == ran["invert"] + 1
+    assert all(" ms" in win._stage_list.item(i).text() for i in range(3))
+    win.close()
+
+
+def test_e2_a_failed_run_stays_visible_in_the_rows_and_problems(monkeypatch):
+    _app()
+    monkeypatch.setenv("FULLSEYE_ON_ERROR", "raise")
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    for n in _OPS4[:3]:
+        model.add_stage(n, 0.4, 0.5)
+
+    def boom(v, a, b):
+        raise RuntimeError("boom in sobel")
+    monkeypatch.setitem(api._ops.RT, "sobel_amp", boom)
+    model.step_states()                                        # the run (records where it failed)
+    win._refresh_stage_list(select=0)                          # the rebuild only reads that record
+    probs = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
+    assert any(t.startswith("✕") and "boom in sobel" in t for t in probs)
+    assert "ERROR" in win._stage_list.item(1).text()
+    assert "ERROR" not in win._stage_list.item(0).text()
+    model.set_knobs(1, a=0.9)                                  # the record no longer describes these stages
+    win._refresh_stage_list(select=0)
+    assert "ERROR" not in win._stage_list.item(1).text()
+    win.close()
+
+
+# ------------------------------ F: Program text round-trips a bypassed stage ---- #
+def test_f1_program_text_roundtrips_bypass_through_apply():
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    for n in _OPS4[:3]:
+        model.add_stage(n, 0.4, 0.5)
+    model.set_bypass(1, True)
+    before = json.loads(json.dumps(model.to_dict()))
+    assert before["stages"][1][3] is True
+    win._code_sync()
+    text = win._program["edit"].toPlainText()
+    assert "# bypassed: sobel_amp (0.4, 0.5)" in text
+    win._program["apply"]()                                    # program_text_from_model -> apply_program
+    after = json.loads(json.dumps(model.to_dict()))
+    assert after == before
+    assert [model.is_bypassed(i) for i in range(3)] == [False, True, False]
+    stages, errs, lines = studio.parse_hdev_program_lines(
+        "gaussian (0.4, 0.5)\n# bypassed: invert 0.2 0.3\n# bypassed: not_an_op\n# plain comment\notsu (0.5, 0.5)\n",
+        api.list_ops() and [o["name"] for o in api.list_ops()])
+    assert not errs and lines == [1, 2, 5]
+    assert [studio._is_bypassed(st) for st in stages] == [False, True, False]
+    assert [tuple(st) for st in stages][1] == ("invert", 0.2, 0.3)
     win.close()

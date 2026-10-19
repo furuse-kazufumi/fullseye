@@ -183,8 +183,8 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     through, is greyed and struck through, is part of the cache key, is saved as a 4th
     stage element `true` only when on (older files are byte-identical), appears as
     `# bypassed: op` in the export and the Program text, and its undo entry is labelled
-    "bypass". Still open: the Program text is not parsed back into bypass marks (Apply
-    drops them), and bypass has no per-run / per-image scope.
+    "bypass". The Program text writes `# bypassed: op (a, b)` and the parser reads it back
+    (Apply round-trips). Still open: bypass has no per-run / per-image scope.
 
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a
