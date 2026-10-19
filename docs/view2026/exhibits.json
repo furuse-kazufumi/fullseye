@@ -6370,6 +6370,23 @@
    }
   },
   {
+   "id": "poc_zmx_public_verify",
+   "group": "wing_color",
+   "media": "01_independent_verification.png",
+   "motion": false,
+   "thumb_src": "02_spot_diagrams.png",
+   "label": {
+    "ja": "公開 .zmx 処方の独立照合と検査レンズ採点",
+    "en": "Independent verification and inspection scoring of public .zmx prescriptions",
+    "zh": "公开 .zmx 处方的独立验证与检测评分",
+    "tw": "公開 .zmx 處方的獨立驗證與檢測評分",
+    "ko": "공개 .zmx 처방의 독립 검증과 검사 평가",
+    "de": "Unabhängige Prüfung öffentlicher .zmx-Rezepte",
+    "hi": "सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन",
+    "fr": "Vérification indépendante de prescriptions .zmx publiques"
+   }
+  },
+  {
    "id": "poc_spectrometer_illumination",
    "group": "wing_metrology",
    "media": "03_slit_image_smile.png",

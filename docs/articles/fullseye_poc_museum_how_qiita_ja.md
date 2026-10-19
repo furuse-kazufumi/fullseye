@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **97 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **98 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2238,7 +2238,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 13 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 14 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -2631,6 +2631,38 @@ py -3.11 examples/poc_hyperspectral_foreign_matter.py
 この回が作った図は全部で **19 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter)
 
 使用 op(ノートへ): [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`hyperspectral_capture`](https://furuse.work/ops/optics/spectral/hyperspectral_capture.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`kubelka_munk_reflectance`](https://furuse.work/ops/optics/spectral/kubelka_munk_reflectance.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`spectral_reflectance_from_material`](https://furuse.work/ops/optics/spectral/spectral_reflectance_from_material.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.270 —— 公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する
+
+[![公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png)
+
+*↑ **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** ―― 4 本の処方を別の読取器と光線追跡器で計算し、EFL、BFL、実光線、RMS スポットを照合する。無限遠、入口瞳径 1 mm、256×256 画素、5.5 µm の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の参照球と瞳写像の規約差は図に残す。学習 0、較正 0、門 2 件。*
+
+[![2 処方、3 視野。各パネルの RMS は同じ実光線から計算。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams.png)
+
+*↑ 測定の図 ―― 2 処方、3 視野。各パネルの RMS は同じ実光線から計算。*
+
+[![合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores.png)
+
+*↑ 合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。*
+
+[![出力から測った傷 contrast は -0.424〜-0.397。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility.png)
+
+*↑ 出力から測った傷 contrast は -0.424〜-0.397。*
+
+[![光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit.png)
+
+*↑ 光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。*
+
+```
+py -3.11 examples/poc_zmx_public_verify.py
+```
+
+ソース: [examples/poc_zmx_public_verify.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zmx_public_verify.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zmx_public_verify)
+
+使用 op(ノートへ): [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_from_opd`](https://furuse.work/ops/optics/imaging_sim/psf_from_opd.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`render_through_lens`](https://furuse.work/ops/optics/imaging_sim/render_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html)
 
 ### 法科学・文書ウィング ―― 1 枚の成功例は証拠にならない
 

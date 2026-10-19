@@ -211,7 +211,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-266 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+267 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -411,7 +411,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour और separation</b> (13)</summary>
+<details class="vall"><summary><b>Colour और separation</b> (14)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="optical fibre और light guide (modes, dispersion, mode field)" width="200" height="200"><span>optical fibre और light guide (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)" width="200" height="200"><b>&#9654;</b><span>spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)</span></a>
@@ -426,6 +426,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना" width="200" height="200"><span>zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="glass substitution और multi-start global search" width="200" height="200"><span>glass substitution और multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)" width="200" height="200"><span>आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)</span></a>
+<a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन" width="200" height="200"><span>सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन</span></a>
 </div>
 </details>
 

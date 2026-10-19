@@ -211,7 +211,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 266개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 267개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -411,7 +411,7 @@ PoC 266개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>색·분리</b> (13)</summary>
+<details class="vall"><summary><b>색·분리</b> (14)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="광파이버와 라이트 가이드(모드, 분산, 모드 필드)" width="200" height="200"><span>광파이버와 라이트 가이드(모드, 분산, 모드 필드)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)" width="200" height="200"><b>&#9654;</b><span>분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)</span></a>
@@ -426,6 +426,7 @@ PoC 266개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="줌 렌즈(다중 구성)를 하나의 처방의 차분으로 보관" width="200" height="200"><span>줌 렌즈(다중 구성)를 하나의 처방의 차분으로 보관</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="유리 대체와 다중 시작 전역 탐색" width="200" height="200"><span>유리 대체와 다중 시작 전역 탐색</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="요구 사항 표로 트리플렛 설계(가장자리 두께 경계와 변수로서의 유리)" width="200" height="200"><span>요구 사항 표로 트리플렛 설계(가장자리 두께 경계와 변수로서의 유리)</span></a>
+<a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="공개 .zmx 처방의 독립 검증과 검사 평가" width="200" height="200"><span>공개 .zmx 처방의 독립 검증과 검사 평가</span></a>
 </div>
 </details>
 

@@ -1061,10 +1061,27 @@
    "accessioned": "2026-09-24",
    "no": "2026.150"
   },
+  "poc_zmx_public_verify": {
+   "accessioned": "2026-10-20",
+   "no": "2026.270"
+  },
   "poc_zoom_configurations": {
    "accessioned": "2026-10-19",
    "no": "2026.261"
   }
  },
- "retired": {}
+ "retired": {
+  "parallel_slice_267": {
+   "no": "2026.267",
+   "reason": "別の並行作業に予約済み"
+  },
+  "parallel_slice_268": {
+   "no": "2026.268",
+   "reason": "別の並行作業に予約済み"
+  },
+  "parallel_slice_269": {
+   "no": "2026.269",
+   "reason": "別の並行作業に予約済み"
+  }
+ }
 }

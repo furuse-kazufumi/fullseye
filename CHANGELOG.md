@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 門 `tests/test_zmx_public_verify.py`: 公開処方を含む `.zmx` 4 本を別の読取器・追跡器で計算し、EFL/BFL(相対 1e-9)、実光線(3 瞳点×2 視野、1e-6 mm)、重心まわり RMS スポット(3 視野、1e-6 mm)を記録値に照合する。外部実装が無い CI でも記録値を必ず検査し、入っていれば同じ呼出しで再生成する。軸外 OPD は参照球と内部絞りの瞳写像の規約差を隠さず、ピーク比 50 % の診断門と図に残す。
+- PoC `poc_zmx_public_verify`(収蔵番号 2026.270、CI 約 9 s): 無限遠、入口瞳径 1 mm、256×256 画素、5.5 µm の条件で 4 処方を検査レンズとして採点する。相対照明、歪曲、RMS/画素、倍率色、ナイキスト周波数の 1/4 の MTF、角の 3 画素傷を実像で示し、傷が消える処方もそのまま記録する。新しい op は追加しない。
+
 ### Added — 水と透明媒質(海の波・水面の屈折・水中の色と散乱・瓶のレンズ作用): `watermedia` 10 op
 - `ocean_spectrum`(Pierson–Moskowitz 1964 と JONSWAP 1973 の S(ω)、有義波高・周期。PM の有義波高は閉形式 0.21 U²/g に 0.4 %、JONSWAP は γ = 1 で PM に 1e-9)と `ocean_height_field`(Tessendorf 2001 の FFT の海: エルミート対称で実数、方向分布 cos² / cos2s、水深の分散関係、荒れによる水平変位、単一モード。空間の分散はスペクトルの積分に 0.02 %、傾きの分散は Cox & Munk と比べて格子で解ける波は 1〜2 割 ―― PM は毛管波を持たない。飽和域を毛管波数まで延ばすと 5 m/s で 98 %、10 m/s で 61 %)。
 - `fresnel_water_air`(水の屈折率は材料表の実部で分散込み。Brewster 角 53.12°・臨界角 48.6°・R(0)・R + T = 1 を閉形式と glassmirror に照合、全反射の旗)/ `snell_window`(窓の半径・見かけの深さ。d/n は 60° で 52 % 外れる)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で: 平面は二分法で 4 次方程式と光路長の直接最小化に一致、波面は双 3 次の高さのニュートン法でベクトルのスネルの式を検算し、外れた点は NaN と `converged = False`)。

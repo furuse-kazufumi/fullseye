@@ -226,7 +226,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 266 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 267 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -426,7 +426,7 @@ PoC 266 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>色・分離</b> (13)</summary>
+<details class="vall"><summary><b>色・分離</b> (14)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_light_guide.jpg" alt="光ファイバとライトガイド(モード・分散・モード径)" width="200" height="200"><span>光ファイバとライトガイド(モード・分散・モード径)</span></a>
 <a href="../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_thin_film_reflectometry.jpg" alt="分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)" width="200" height="200"><b>&#9654;</b><span>分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)</span></a>
@@ -441,6 +441,7 @@ PoC 266 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zoom_configurations.jpg" alt="ズームレンズ(多構成)を 1 つの処方の差分で持つ" width="200" height="200"><span>ズームレンズ(多構成)を 1 つの処方の差分で持つ</span></a>
 <a href="../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_global_search.jpg" alt="硝材の置き換えと大域探索(多始点の局所最適化)" width="200" height="200"><span>硝材の置き換えと大域探索(多始点の局所最適化)</span></a>
 <a href="../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_merit_operands.jpg" alt="要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)" width="200" height="200"><span>要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)</span></a>
+<a href="../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zmx_public_verify.jpg" alt="公開 .zmx 処方の独立照合と検査レンズ採点" width="200" height="200"><span>公開 .zmx 処方の独立照合と検査レンズ採点</span></a>
 </div>
 </details>
 

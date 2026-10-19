@@ -7166,7 +7166,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 13 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 14 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -7559,6 +7559,38 @@ Source: [examples/poc_hyperspectral_foreign_matter.py](https://github.com/furuse
 This run produced **19 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter)
 
 Ops used (notes): [`carbon_black_absorption`](https://furuse.work/ops/optics/matprop/carbon_black_absorption.html) · [`hyperspectral_band_weights`](https://furuse.work/ops/optics/spectral/hyperspectral_band_weights.html) · [`hyperspectral_capture`](https://furuse.work/ops/optics/spectral/hyperspectral_capture.html) · [`ingaas_photodiode_qe`](https://furuse.work/ops/optics/spectral/ingaas_photodiode_qe.html) · [`kubelka_munk_reflectance`](https://furuse.work/ops/optics/spectral/kubelka_munk_reflectance.html) · [`material_nir_absorption`](https://furuse.work/ops/optics/matprop/material_nir_absorption.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`nir_model_info`](https://furuse.work/ops/optics/matprop/nir_model_info.html) · [`spectral_reflectance_from_material`](https://furuse.work/ops/optics/spectral/spectral_reflectance_from_material.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.270 —— Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
+
+[![Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png)
+
+*↑ **Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses** ―― Four prescriptions are calculated with a separate reader and ray tracer, comparing EFL, BFL, real rays and RMS spots. At infinity focus with a 1 mm entrance pupil and a 256 by 256 sensor of 5.5 um pixels, illumination, distortion, colour shift, MTF and visibility of a three-pixel scratch are scored. The OPD reference-sphere and pupil-mapping convention difference is retained as a figure. No learning, no calibration, two gates.*
+
+[![2 処方、3 視野。各パネルの RMS は同じ実光線から計算。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams.png)
+
+*↑ The measurement ―― 2 処方、3 視野。各パネルの RMS は同じ実光線から計算。 (figure labels are in Japanese; the numbers are the same)*
+
+[![合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores.png)
+
+*↑ 合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。*
+
+[![出力から測った傷 contrast は -0.424〜-0.397。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility.png)
+
+*↑ 出力から測った傷 contrast は -0.424〜-0.397。*
+
+[![光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit.png)
+
+*↑ 光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。*
+
+```
+py -3.11 examples/poc_zmx_public_verify.py
+```
+
+Source: [examples/poc_zmx_public_verify.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zmx_public_verify.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zmx_public_verify)
+
+Ops used (notes): [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_from_opd`](https://furuse.work/ops/optics/imaging_sim/psf_from_opd.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`render_through_lens`](https://furuse.work/ops/optics/imaging_sim/render_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 

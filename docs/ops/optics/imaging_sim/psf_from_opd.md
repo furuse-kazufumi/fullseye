@@ -4,7 +4,7 @@ dim: optics
 category: imaging_sim
 in: table
 out: image2d
-examples: [lens_defect_dataset_demo, optical_design_metrics]
+examples: [lens_defect_dataset_demo, optical_design_metrics, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -74,6 +74,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
 - [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
+- [poc_zmx_public_verify](../../../../examples/poc_zmx_public_verify.py) — `py -3.11 examples/poc_zmx_public_verify.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
