@@ -6455,6 +6455,23 @@
    }
   },
   {
+   "id": "poc_patch_anomaly",
+   "group": "wing_industrial",
+   "media": "01_anomaly_maps.png",
+   "motion": false,
+   "thumb_src": "01_anomaly_maps.png",
+   "label": {
+    "ja": "良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)",
+    "en": "Anomaly detection from good samples only (classical patch features: distribution versus memory)",
+    "zh": "仅从良品学习的图块特征异常检测(经典特征的分布与记忆)",
+    "tw": "僅從良品學習的圖塊特徵異常檢測(經典特徵的分布與記憶)",
+    "ko": "양품만으로 학습하는 패치 특징 이상 탐지(고전 특징의 분포와 메모리)",
+    "de": "Anomalieerkennung nur aus Gutteilen (klassische Patch-Merkmale: Verteilung gegen Speicher)",
+    "hi": "केवल अच्छे नमूनों से patch-feature anomaly detection (classical features का distribution बनाम memory)",
+    "fr": "Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)"
+   }
+  },
+  {
    "id": "poc_weed_rice_ratio",
    "group": "wing_astroenv",
    "media": "05_real_examples.png",
@@ -7279,6 +7296,14 @@
     "de": "Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition)",
     "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)",
     "fr": "Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière)"
+   },
+   "patch-feature-anomaly-detection": {
+    "zh": "仅从良品学习并指出偏离的图块(经典特征的逐位置正态分布与记忆库,保证召回率的工作点)",
+    "tw": "僅從良品學習並指出偏離的圖塊(經典特徵的逐位置常態分佈與記憶庫,保證召回率的工作點)",
+    "ko": "양품만으로 학습해 벗어난 패치를 가리킨다 (고전 특징의 위치별 정규분포와 메모리 뱅크, 재현율을 보장하는 운용점)",
+    "de": "Aus Gutteilen lernen und abweichende Patches zeigen (klassische Merkmale: Normalverteilung je Position oder Speicherbank, Arbeitspunkt mit garantiertem Recall)",
+    "hi": "केवल अच्छे samples से सीखकर भटके हुए patches बताना (classical features का per-position normal distribution या memory bank, recall की गारंटी वाला operating point)",
+    "fr": "Apprendre des seules bonnes pièces et désigner les patchs qui s'en écartent (caractéristiques classiques : loi normale par position ou banque mémoire, point de fonctionnement à rappel garanti)"
    }
   }
  },
@@ -7372,6 +7397,98 @@
      "de": "Auch nachdem er auf ein ähnliches anderes Objekt gesprungen ist, meldet der Tracker weiter „gefunden“.",
      "hi": "किसी हमशक्ल वस्तु पर चले जाने के बाद भी ट्रैकर “मिल गया” बताता रहता है।",
      "fr": "Même après avoir basculé sur un objet qui lui ressemble, le suivi continue de signaler « trouvé »."
+    }
+   },
+   {
+    "id": "poc_thermography_ndt",
+    "title": {
+     "ja": "パルスサーモグラフィの深さ推定",
+     "en": "Pulse thermography depth",
+     "zh": "脉冲热成像的深度估计",
+     "tw": "脈衝熱成像的深度估計",
+     "ko": "펄스 서모그래피의 깊이 추정",
+     "de": "Tiefenschätzung mit Impuls-Thermografie",
+     "hi": "पल्स थर्मोग्राफी से गहराई का अनुमान",
+     "fr": "Profondeur par thermographie pulsée"
+    },
+    "line": {
+     "ja": "当てはめる時間窓を 25 秒から 4 秒に切るだけで、小さい欠陥の深さの誤差が最大 +627% から ±14% に縮む。外れた原因は物理でなく窓の選び方だった。",
+     "en": "Cutting the fit window from 25 s to 4 s shrinks the worst depth error of small flaws from +627% to ±14%. The cause was the choice of window, not the physics.",
+     "zh": "只把拟合的时间窗从 25 秒缩到 4 秒,小缺陷深度的最大误差就从 +627% 缩小到 ±14%。问题出在窗口的选择,而不是物理。",
+     "tw": "只把擬合的時間窗從 25 秒縮到 4 秒,小缺陷深度的最大誤差就從 +627% 縮小到 ±14%。問題出在窗口的選擇,而不是物理。",
+     "ko": "맞추는 시간 창을 25초에서 4초로 줄이기만 해도 작은 결함의 깊이 오차가 최대 +627%에서 ±14%로 줄어듭니다. 원인은 물리가 아니라 창의 선택이었습니다.",
+     "de": "Allein das Kürzen des Anpassungsfensters von 25 s auf 4 s verkleinert den größten Tiefenfehler kleiner Defekte von +627% auf ±14%. Die Ursache war die Wahl des Fensters, nicht die Physik.",
+     "hi": "फ़िट की समय-विंडो को 25 s से 4 s करने भर से छोटे दोषों की गहराई की सबसे बड़ी त्रुटि +627% से घटकर ±14% रह जाती है। कारण भौतिकी नहीं, विंडो का चुनाव था।",
+     "fr": "Raccourcir la fenêtre d'ajustement de 25 s à 4 s ramène la pire erreur de profondeur des petits défauts de +627% à ±14%. La cause était le choix de la fenêtre, pas la physique."
+    }
+   },
+   {
+    "id": "poc_grating_interferometry",
+    "title": {
+     "ja": "タルボ絨毯と格子の X 線像",
+     "en": "Talbot carpet and grating X-ray images",
+     "zh": "塔尔博特地毯与光栅 X 射线像",
+     "tw": "塔爾博特地毯與光柵 X 光像",
+     "ko": "탈보 카펫과 격자 X선 영상",
+     "de": "Talbot-Teppich und Gitter-Röntgenbilder",
+     "hi": "टैल्बट कालीन और ग्रेटिंग एक्स-रे चित्र",
+     "fr": "Tapis de Talbot et images X par réseaux"
+    },
+    "line": {
+     "ja": "吸収では割れのコントラスト雑音比が 1.34 しかないが、暗視野では 13.5 に上がり、格子を回すと繊維の向きまで読める。",
+     "en": "In absorption the crack's contrast-to-noise ratio is only 1.34; in dark field it rises to 13.5, and turning the grating even reveals the fibre direction.",
+     "zh": "在吸收像中裂纹的对比噪声比只有 1.34,在暗场像中升到 13.5,转动光栅还能读出纤维的方向。",
+     "tw": "在吸收像中裂紋的對比雜訊比只有 1.34,在暗場像中升到 13.5,轉動光柵還能讀出纖維的方向。",
+     "ko": "흡수 영상에서는 균열의 대비 잡음비가 1.34에 불과하지만 암시야에서는 13.5로 올라가고, 격자를 돌리면 섬유의 방향까지 읽을 수 있습니다.",
+     "de": "In der Absorption beträgt das Kontrast-Rausch-Verhältnis des Risses nur 1.34, im Dunkelfeld steigt es auf 13.5, und beim Drehen des Gitters lässt sich sogar die Faserrichtung ablesen.",
+     "hi": "अवशोषण में दरार का कंट्रास्ट-शोर अनुपात केवल 1.34 है; डार्क फ़ील्ड में वह 13.5 हो जाता है, और ग्रेटिंग घुमाने से रेशे की दिशा तक पढ़ी जा सकती है।",
+     "fr": "En absorption, le rapport contraste/bruit de la fissure n'est que de 1.34 ; en champ sombre il monte à 13.5, et en tournant le réseau on lit même la direction des fibres."
+    }
+   },
+   {
+    "id": "poc_phase_measuring_deflectometry",
+    "title": {
+     "ja": "縞の鏡像で見る µm の凹み",
+     "en": "Micron dents in a mirror image of stripes",
+     "zh": "用条纹镜像看微米级凹坑",
+     "tw": "用條紋鏡像看微米級凹坑",
+     "ko": "줄무늬 거울상으로 보는 µm 오목",
+     "de": "Mikrometerdellen im Spiegelbild von Streifen",
+     "hi": "धारियों के प्रतिबिंब में µm गड्ढे",
+     "fr": "Creux de quelques µm dans l'image-miroir de franges"
+    },
+    "line": {
+     "ja": "写真の信号は雑音の 0.17 倍で何も見えないが、縞の鏡像から作る曲率の地図では、深さ 1 µm の凹みが雑音の 57 倍に立つ。",
+     "en": "In a photograph the signal is 0.17 times the noise and nothing shows; in the curvature map built from the mirror image of stripes, a dent 1 µm deep stands 57 times above the noise.",
+     "zh": "照片中的信号只有噪声的 0.17 倍,什么也看不见;而由条纹镜像做出的曲率图中,深 1 µm 的凹坑高出噪声 57 倍。",
+     "tw": "照片中的訊號只有雜訊的 0.17 倍,什麼也看不見;而由條紋鏡像做出的曲率圖中,深 1 µm 的凹坑高出雜訊 57 倍。",
+     "ko": "사진의 신호는 잡음의 0.17배라 아무것도 보이지 않지만, 줄무늬 거울상으로 만든 곡률 지도에서는 깊이 1 µm의 오목이 잡음의 57배로 솟아 보입니다.",
+     "de": "Im Foto ist das Signal nur das 0.17-Fache des Rauschens und nichts zu sehen; in der aus dem Spiegelbild der Streifen erzeugten Krümmungskarte ragt eine 1 µm tiefe Delle 57-mal über das Rauschen.",
+     "hi": "फ़ोटो में संकेत शोर का केवल 0.17 गुना है और कुछ नहीं दिखता; धारियों के प्रतिबिंब से बने वक्रता के नक्शे में 1 µm गहरा गड्ढा शोर से 57 गुना ऊँचा खड़ा दिखता है।",
+     "fr": "Dans une photo, le signal vaut 0.17 fois le bruit et rien n'apparaît ; dans la carte de courbure issue de l'image-miroir de franges, un creux de 1 µm dépasse le bruit de 57 fois."
+    }
+   },
+   {
+    "id": "poc_asteroid_curvature",
+    "title": {
+     "ja": "小惑星の表面の曲がり具合",
+     "en": "How sharply an asteroid's surface bends",
+     "zh": "小行星表面的弯曲程度",
+     "tw": "小行星表面的彎曲程度",
+     "ko": "소행성 표면은 얼마나 휘어 있는가",
+     "de": "Wie stark sich die Oberfläche eines Asteroiden krümmt",
+     "hi": "क्षुद्रग्रह की सतह कितनी मुड़ी है",
+     "fr": "À quel point la surface d'un astéroïde se courbe"
+    },
+    "line": {
+     "ja": "実在の小惑星の点群から曲率を出し、尾根や巨礫の縁を色で見る。答えの分かる球で、先に物差しを確かめてある。",
+     "en": "Curvature computed from the points of a real asteroid, with ridges and boulder edges shown in colour. The ruler is checked first on a sphere whose answer is known.",
+     "zh": "由真实小行星的点云算出曲率,用颜色看山脊和巨石边缘。先在答案已知的球面上验证了方法。",
+     "tw": "由真實小行星的點雲算出曲率,用顏色看山脊和巨石邊緣。先在答案已知的球面上驗證了方法。",
+     "ko": "실제 소행성의 점군에서 곡률을 구해 능선과 큰 바위의 가장자리를 색으로 봅니다. 답을 아는 구에서 먼저 잣대를 확인했습니다.",
+     "de": "Die Krümmung wird aus den Punkten eines echten Asteroiden berechnet; Grate und Felsblockkanten erscheinen in Farbe. Der Maßstab wurde zuerst an einer Kugel mit bekannter Antwort geprüft.",
+     "hi": "वास्तविक क्षुद्रग्रह के बिंदुओं से वक्रता निकाली गई है, कटक और चट्टानों के किनारे रंग में दिखते हैं। पैमाने को पहले ऐसे गोले पर जाँचा गया जिसका उत्तर ज्ञात है।",
+     "fr": "La courbure est calculée à partir des points d'un astéroïde réel ; crêtes et bords de blocs apparaissent en couleur. La règle a d'abord été vérifiée sur une sphère dont la réponse est connue."
     }
    }
   ]

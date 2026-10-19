@@ -10,19 +10,25 @@
   * :func:`anomaly_pro` — PRO 曲線(欠陥の連結領域ごとの重なりの平均)と、FPR 0.3 までの
     正規化面積 AUPRO(Bergmann ら CVPR 2020 の定義と、その後の慣習の積分上限)。
   * :func:`anomaly_region_overlap` — 1 つの閾値での領域ごとの重なりと、検出した領域の割合。
+  * :func:`anomaly_pixel_f1_max` / :func:`anomaly_image_f1_max` — 閾値を動かしたときの F1 の最大値(画素 / 画像)。
+  * :func:`anomaly_operating_point` — 欠陥の再現率を信頼水準つきで保証する運用点(閾値)の選択。
 
 約束: AUROC は**厳密**(同点は 1/2、順位の中央値で数える)、PRO の曲線は閾値の格子を使わず
 **すべての異なるスコアで**評価する(並べ替えた累積和)。定義できないとき(欠陥も良品も無い等)は
 値を返さず ``ValueError``。
 
 出典(公開文献のみ): J. A. Hanley & B. J. McNeil, *Radiology* 143:29, 1982(AUROC = Mann–Whitney)/
-P. Bergmann, M. Fauser, D. Sattlegger, C. Steger, *CVPR* 2020(PRO、FPR 0.3 までの積分)。
+P. Bergmann, M. Fauser, D. Sattlegger, C. Steger, *CVPR* 2020(PRO、FPR 0.3 までの積分)/
+C. J. Clopper & E. S. Pearson, *Biometrika* 26:404, 1934(二項の正確な信頼限界、運用点の保証)。
 """
 from __future__ import annotations
 
+import math
+
 import numpy as np
 
-__all__ = ["anomaly_image_auroc", "anomaly_pixel_auroc", "anomaly_pro", "anomaly_region_overlap"]
+__all__ = ["anomaly_image_auroc", "anomaly_pixel_auroc", "anomaly_pro", "anomaly_region_overlap",
+           "anomaly_pixel_f1_max", "anomaly_image_f1_max", "anomaly_operating_point"]
 
 _MAX_VALUES = 1 << 27                     # 1 回で受け付ける値の数の上限(メモリの防壁)
 
@@ -223,3 +229,130 @@ def anomaly_region_overlap(predicted, masks, min_overlap=0.5):
             "hit_any": float((hit > 0).mean()),
             "fpr": float((pr & ~mk).sum() / nneg) if nneg else 0.0,
             "n_regions": int(nreg), "min_overlap": mo}
+
+
+def _f1_max(s, y, op):
+    """Best F1 over every distinct threshold (predict defective when score >= t). Exact, sorted cumulative sums."""
+    pos = int(y.sum())
+    neg = int(y.size - pos)
+    if pos == 0 or neg == 0:
+        raise ValueError("%s: need both positives and negatives (got %d / %d)" % (op, pos, neg))
+    order = np.argsort(-s, kind="mergesort")
+    sv = s[order]
+    tp = np.cumsum(y[order].astype(np.float64))
+    fp = np.cumsum((~y[order]).astype(np.float64))
+    last = np.r_[np.nonzero(np.diff(sv) != 0)[0], sv.size - 1]       # the end of every group of equal scores
+    tp, fp, thr = tp[last], fp[last], sv[last]
+    f1 = 2.0 * tp / (2.0 * tp + fp + (pos - tp))
+    i = int(np.argmax(f1))                                           # the first (highest) threshold wins a tie
+    return {"f1": float(f1[i]), "threshold": float(thr[i]), "precision": float(tp[i] / (tp[i] + fp[i])),
+            "recall": float(tp[i] / pos), "n_pos": pos, "n_neg": neg}
+
+
+def anomaly_pixel_f1_max(scores, masks):
+    """Best pixel-level F1 over all thresholds of anomaly score maps against defect masks (``table``).
+
+    ``scores`` and ``masks`` are (n, H, W) (or lists / single 2-D maps); a pixel is predicted
+    defective when its score is >= the threshold. The F1 = 2TP / (2TP + FP + FN) is evaluated
+    exactly at every distinct score (sorted cumulative sums, no threshold grid); the highest
+    threshold wins a tie. Returns ``f1``, ``threshold``, ``precision`` and ``recall`` at the
+    maximum, ``n_pos`` and ``n_neg`` (pixels). It counts pixels, like the pixel AUROC, not
+    regions (see ``anomaly_pro``): a small defect weighs little however well it is found.
+
+    Raises ``ValueError`` on empty / mismatched / non-finite input, non-binary masks, or when
+    the masks contain no defect pixel or no good pixel.
+    """
+    op = "anomaly_pixel_f1_max"
+    s = _scores(scores, "scores", op)
+    mk = _binary(masks, s.shape, "masks", op)
+    return _f1_max(s.ravel(), mk.ravel(), op)
+
+
+def anomaly_image_f1_max(scores, labels):
+    """Best image-level F1 over all thresholds from one anomaly score per image and a good/defective label (``table``).
+
+    ``scores`` is a 1-D array (higher = more anomalous), ``labels`` the same length with 1 /
+    True = defective; an image is predicted defective when its score is >= the threshold.
+    Exact at every distinct score; the highest threshold wins a tie. Returns ``f1``,
+    ``threshold``, ``precision``, ``recall``, ``n_pos`` and ``n_neg`` (images).
+
+    Raises ``ValueError`` on empty / mismatched / non-finite input, non-binary labels, or when
+    all images carry the same label.
+    """
+    op = "anomaly_image_f1_max"
+    s = np.asarray(scores, dtype=np.float64).ravel()
+    if s.size == 0:
+        raise ValueError("%s: scores is empty" % op)
+    if not np.isfinite(s).all():
+        raise ValueError("%s: scores contains non-finite values" % op)
+    if np.asarray(labels).ndim != 1:
+        raise ValueError("%s: labels must be 1-D with one label per score" % op)
+    return _f1_max(s, _binary(labels, s.shape, "labels", op), op)
+
+
+def _cp_lower(k, n, alpha):
+    """One-sided Clopper-Pearson lower confidence limit of a binomial proportion (k of n, level 1 - alpha)."""
+    if k <= 0:
+        return 0.0
+    from scipy.stats import beta               # noqa: PLC0415
+    return float(beta.ppf(alpha, k, n - k + 1))
+
+
+def _cp_upper(k, n, alpha):
+    if k >= n:
+        return 1.0
+    from scipy.stats import beta               # noqa: PLC0415
+    return float(beta.ppf(1.0 - alpha, k + 1, n - k))
+
+
+def anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95):
+    """Pick the highest threshold whose defect recall is guaranteed to be at least ``recall`` at ``confidence`` (``table``).
+
+    ``scores`` (1-D, higher = more anomalous) and ``labels`` (1 / True = defective) are image
+    scores of a held-out set that was NOT used to fit the detector. Detecting k of the n
+    defective images, the exact one-sided Clopper–Pearson lower limit of the recall at level
+    ``confidence`` is computed; the smallest k whose limit reaches ``recall`` fixes the threshold
+    at the k-th highest defect score (>= rule: the highest threshold that still carries the
+    guarantee, so the fewest false alarms). The guarantee holds for defects drawn like the
+    held-out ones; it is a statement about a sample, not about every future defect. Returns
+    ``threshold``, ``recall_observed``, ``recall_lower`` (the limit), ``detected``, ``n_pos``,
+    ``n_neg``, ``fpr`` (fraction of good images at or above the threshold), ``fpr_upper`` (its
+    one-sided Clopper–Pearson upper limit at the same level) and ``n_required`` (the smallest
+    number of defective images for which the guarantee is attainable at all:
+    ceil(ln(1 - confidence) / ln(recall))).
+
+    Raises ``ValueError`` when the guarantee is unattainable with so few defective images
+    (``n_pos < n_required``): it never returns a threshold it cannot back. Also on empty /
+    mismatched / non-finite input, non-binary labels, no good or no defective image, or
+    ``recall`` / ``confidence`` outside (0, 1).
+    """
+    op = "anomaly_operating_point"
+    s = np.asarray(scores, dtype=np.float64).ravel()
+    if s.size == 0:
+        raise ValueError("%s: scores is empty" % op)
+    if not np.isfinite(s).all():
+        raise ValueError("%s: scores contains non-finite values" % op)
+    if np.asarray(labels).ndim != 1:
+        raise ValueError("%s: labels must be 1-D with one label per score" % op)
+    y = _binary(labels, s.shape, "labels", op)
+    for nm, v in (("recall", recall), ("confidence", confidence)):
+        if isinstance(v, bool) or not (0.0 < float(v) < 1.0):
+            raise ValueError("%s: %s must be in (0, 1), got %r" % (op, nm, v))
+    rec, conf = float(recall), float(confidence)
+    alpha = 1.0 - conf
+    pos = int(y.sum())
+    neg = int(y.size - pos)
+    if pos == 0 or neg == 0:
+        raise ValueError("%s: need both defective and good images (got %d / %d)" % (op, pos, neg))
+    n_req = int(math.ceil(math.log(alpha) / math.log(rec) - 1e-12))
+    if pos < n_req:
+        raise ValueError("%s: recall >= %g at confidence %g cannot be guaranteed with %d defective images "
+                         "(at least %d are needed, even if all are detected)" % (op, rec, conf, pos, n_req))
+    ds = np.sort(s[y])[::-1]                                         # defect scores, highest first
+    k = next(kk for kk in range(1, pos + 1) if _cp_lower(kk, pos, alpha) >= rec)
+    thr = float(ds[k - 1])
+    detected = int((ds >= thr).sum())
+    fa = int((s[~y] >= thr).sum())
+    return {"threshold": thr, "recall_observed": detected / pos, "recall_lower": _cp_lower(detected, pos, alpha),
+            "detected": detected, "n_pos": pos, "n_neg": neg, "fpr": fa / neg,
+            "fpr_upper": _cp_upper(fa, neg, alpha), "n_required": n_req, "recall": rec, "confidence": conf}

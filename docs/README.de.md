@@ -29,7 +29,7 @@
 
 Keine dieser Zahlen ist von Hand geschrieben: `tools/gen_trust_block.py` erzeugt diesen Abschnitt aus Messdateien in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), und `tests/test_trust_block.py` schlägt fehl, wenn er davon abweicht. Jede Zahl trägt Version und Datum ihrer Messung.
 
-**20,750 Regressionstests** — in 0.7.1 enthalten, Commit `32754a697c`, am 2026-10-19 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
+**19,935 Regressionstests** — Stand nach 0.7.0 (mit unveröffentlichten Änderungen), Commit `b9fa380b7a`, am 2026-10-18 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
 
 ### Was einen neu hinzugefügten Operator prüft
 
@@ -53,16 +53,16 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 86 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 87 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
 | `research-prototype` | implementiert; Tests oder ein laufendes Beispiel fehlen noch | 0 |
 | `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 69 |
-| `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 17 |
+| `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 411 Beispielen werden 411 tatsächlich von einem Gate ausgeführt.
+Von 412 Beispielen werden 412 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -78,7 +78,6 @@ Von 411 Beispielen werden 411 tatsächlich von einem Gate ausgeführt.
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
-| 0.7.1 | 2026-10-19 | 3,441 | 2,485 | 982 | 263 | 20,750 |
 
 - Der HALCON-Wert 323 für 0.1.0–0.1.8 ist der damals festgehaltene Wert; ab 0.1.9 beträgt er nach geänderter Zählung 979 (keine 656 neuen Implementierungen).
 - 0.2.0 ist die erste Version, deren Index das typisierte Register enthält: 918 → 1,942 ist eine Änderung der Zählweise, keine neue Implementierung (das Register gab es ab 0.1.6, aber außerhalb des Index).
@@ -89,7 +88,7 @@ Von 411 Beispielen werden 411 tatsächlich von einem Gate ausgeführt.
 
 <!-- poc-index:start -->
 
-## PoC-Serie — 263 reale Aufgaben mit Grundwahrheit
+## PoC-Serie — 264 reale Aufgaben mit Grundwahrheit
 
 Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. Fehlerarten werden getrennt gezählt. Vollständige Liste: [examples/README.md](../examples/README.md).
 
@@ -106,9 +105,9 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | photometry (6) | [`poc_allsky_cloud_cover`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_allsky_cloud_cover.py) All-Sky Cloud Cover — Counting Pixels Is Biased by Position<br>[`poc_astro_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) How Many Frames for What Photometric Precision?<br>[`poc_exoplanet_transit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_exoplanet_transit.py) Exoplanet transit from aperture photometry — depth and duration fail separately<br>[`poc_nuclei_ploidy`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nuclei_ploidy.py) Ploidy From Integrated Nuclear Intensity — Area Cannot Separate It<br>[`poc_real_sky_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_sky_photometry.py) Planting Known Stars in a Real Deep Field — Contamination Lies About the Measurement and the Confidence in the Same Direction<br>[`poc_solar_limb_darkening`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_limb_darkening.py) Where Is the Edge of a Limb-Darkened Disc? The 50 % Rule Reads the Radius Small |
 | separation (6) | [`poc_colocalization_crosstalk`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colocalization_crosstalk.py) Colocalization lies under bleed-through — Pearson and Manders break in different places<br>[`poc_pigment_unmixing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py) Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand<br>[`poc_polarization_specular`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations<br>[`poc_real_stain_unmix`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stain_unmix.py) Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch<br>[`poc_recycling_sorting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_recycling_sorting.py) Sorting mixed waste by material — what a preprocessor can erase is decided by algebra<br>[`poc_sea_ice_concentration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sea_ice_concentration.py) Sea-Ice Concentration — The Answer Depends on How Mixed Pixels Are Counted |
 | calibration (5) | [`poc_camera_calibration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_calibration.py) A Reprojection Error of 0.05 px Guarantees Nothing<br>[`poc_fly_optomotor_steering`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_optomotor_steering.py) Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning<br>[`poc_public_camera_heading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading.py) Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself<br>[`poc_public_camera_heading_real`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading_real.py) Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road<br>[`poc_thermal_drift_metrology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermal_drift_metrology.py) How Much Camera Thermal Drift Costs a Dimensional Measurement |
+| detection (5) | [`poc_good_sample_variation_model`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It<br>[`poc_patch_anomaly`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold<br>[`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works<br>[`poc_si_wafer_pl_defect_visibility`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py) Why a Thin Groove Vanishes in a PL Image — a Longer Diffusion Length Hides Only Shadow Grooves, and Makes Sink Grooves Stand Out |
 | registration (5) | [`poc_change_detection_misreg`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_change_detection_misreg.py) Change detection under misregistration — false positives are edge bands, with a cliff<br>[`poc_print_registration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_registration.py) Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique<br>[`poc_registration_basin`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?<br>[`poc_reproducible_icp`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_reproducible_icp.py) Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation<br>[`poc_template_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) Template Tracking Drifts Quietly Before It Ever Loses the Target |
 | visualization (5) | [`poc_eye_to_brain`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_eye_to_brain.py) What the Compound Eye Sees, and Where the Brain Answers — Trace an Ommatidium and the Response Travels the Wiring<br>[`poc_flybrain_pointcloud`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py) Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture<br>[`poc_live4d`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_live4d.py) Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth<br>[`poc_malecns_activity_wave`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_malecns_activity_wave.py) Watching a Pulse Travel the Wiring on the 3-D Fly Brain — Connectome vs Degree-Preserving Shuffle<br>[`poc_video_cube`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_video_cube.py) A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid |
-| detection (4) | [`poc_good_sample_variation_model`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It<br>[`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works<br>[`poc_si_wafer_pl_defect_visibility`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py) Why a Thin Groove Vanishes in a PL Image — a Longer Diffusion Length Hides Only Shadow Grooves, and Makes Sink Grooves Stand Out |
 | motion (4) | [`poc_particle_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_tracking.py) Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions<br>[`poc_river_surface_velocity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_river_surface_velocity.py) River surface velocity from an oblique video (LSPIV) — velocity error and discharge error are different numbers<br>[`poc_traffic_counting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_traffic_counting.py) Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V<br>[`poc_warehouse_flow`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_warehouse_flow.py) Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion |
 | inspection (4) | [`poc_em_second_opinion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_second_opinion.py) A Second Opinion for EM Connectome Proofreading — Membranes Belong Only on Label Boundaries<br>[`poc_illumination_cone_vs_na`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py) Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear<br>[`poc_print_layer_inspection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_layer_inspection.py) Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by the Numbers<br>[`poc_sam_hybrid_bonding_voids`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py) Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image |
 | tomography_3d (4) | [`poc_battery_ct_degradation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py) Battery cell degradation by CT — the swelling shows outside, the cause stays inside<br>[`poc_battery_electrode_tortuosity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_electrode_tortuosity.py) Electrode tortuosity from CT — the rule of thumb only sees porosity<br>[`poc_ct_void_morphology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py) Collapsing joint voids into one number — what the number drops is the shape that matters<br>[`poc_die_tilt_tsv_overlay`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_die_tilt_tsv_overlay.py) Die tilt and TSV overlay from one CT — tilt fakes rotation too |
@@ -136,11 +135,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,447 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **67 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,455 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **67 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 939/939, typisiertes Ledger 2487/2499, Fassade `fullseye.<name>` 703/1465 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 939/939, typisiertes Ledger 2495/2507, Fassade `fullseye.<name>` 703/1465 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3447 Notizen verweisen **3438** auf mindestens ein lauffähiges Beispiel (9 ohne), **3282** haben einen Nutzungsabschnitt ab 120 Zeichen (165 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3447.
+**Gemessener Inhalt**: von 3455 Notizen verweisen **3444** auf mindestens ein lauffähiges Beispiel (11 ohne), **3290** haben einen Nutzungsabschnitt ab 120 Zeichen (165 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3455.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -156,7 +155,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
-| `spc` | 31 | [INDEX](ops/spc/INDEX.md) |
+| `spc` | 39 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 31 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
@@ -293,9 +292,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 282
+## Dokumentkarte — alle 283
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,447 Operator-Notizen und 67 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,455 Operator-Notizen und 67 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -435,7 +434,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(199)
+**Other**(200)
 
 | Dokument | Inhalt |
 |---|---|
@@ -554,6 +553,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | id: one-stroke-drawing |
 | [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
 | [`capabilities/optics-drawings.md`](capabilities/optics-drawings.md) | id: optics-drawings |
+| [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |

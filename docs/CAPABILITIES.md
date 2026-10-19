@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 86 項目**
+**収録 87 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -51,6 +51,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
+| [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
@@ -482,7 +483,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (12)
+## 見つける (13)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -571,6 +572,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 実寸校正: 文字は px で扱い、実寸校正は不要。読み取り解像度の目安は x 高さ 20 px 以上(足りなければ `zoom_image_factor`)。
 
 動く例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `gallery2d_region`
+
+### [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md)
+
+良品の画像だけを何枚か渡すと、パッチ(格子の小窓)ごとの古典特徴を覚え、新しい 1 枚のどのパッチが良品から外れているかを異常地図で返します。覚え方は 2 つあります。
+
+使う op: `patch_features`, `patchdist_fit`, `patchdist_score`, `patchbank_fit`, `patchbank_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_pixel_f1_max`, `anomaly_image_f1_max`, `anomaly_operating_point`, `anomaly_region_overlap`
+
+推奨パイプライン: [`patchbank_fit`](ops/spc/anomaly_patch/patchbank_fit.md) → [`patchbank_score`](ops/spc/anomaly_patch/patchbank_score.md)
+
+代替: [`varmodel_fit`](ops/spc/variation/varmodel_fit.md), `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md)
+
+限界: 特徴は古典の手作り(勾配・Gabor・LBP・周波数帯・色)で、深層特徴ではない。細かい欠陥や意味の絡む欠陥(論理的な異常)は、位置の重みを足した記憶でも位置の違いまでしか言えない。良品群に欠陥が混ざると分布も記憶も鈍る。実データ(テクスチャ)では画像ごとの AUROC は 0.5〜0.6 止まりで、深層特徴の方法の数字の代わりにはならない。
+
+実寸校正: 異常地図は特徴空間の距離(位置ごとの分布はマハラノビス距離)で、画素値の単位ではない。大きさを実寸で言うなら、既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`(格子の刻み stride px が地図の分解能)。
+
+動く例: `poc_patch_anomaly`, `anomaly_eval_metrics`
 
 ### [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md)
 

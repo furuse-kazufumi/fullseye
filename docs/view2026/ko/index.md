@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD와 실측 점군의 편차 검사](../viewers/poc_cad_scan_deviation.html?lang=ko)**: 정합이 결함을 흡수해, 참값이 1.2 µm인 부품에 존재하지 않는 121 µm의 오목이 나타납니다.
 - **[LiDAR 지형 변화](../viewers/poc_lidar_terrain_change.html?lang=ko)**: 단순히 빼면 변하지 않은 구획 전체가 0.183 m 가라앉은 것처럼 보입니다. 보정하면 실제 변화만 남습니다.
 - **[템플릿 추적](../viewers/poc_template_tracking.html?lang=ko)**: 비슷한 다른 물체로 갈아탄 뒤에도 추적기는 계속 '찾았다'고 보고합니다.
+- **[펄스 서모그래피의 깊이 추정](../viewers/poc_thermography_ndt.html?lang=ko)**: 맞추는 시간 창을 25초에서 4초로 줄이기만 해도 작은 결함의 깊이 오차가 최대 +627%에서 ±14%로 줄어듭니다. 원인은 물리가 아니라 창의 선택이었습니다.
+- **[탈보 카펫과 격자 X선 영상](../viewers/poc_grating_interferometry.html?lang=ko)**: 흡수 영상에서는 균열의 대비 잡음비가 1.34에 불과하지만 암시야에서는 13.5로 올라가고, 격자를 돌리면 섬유의 방향까지 읽을 수 있습니다.
+- **[줄무늬 거울상으로 보는 µm 오목](../viewers/poc_phase_measuring_deflectometry.html?lang=ko)**: 사진의 신호는 잡음의 0.17배라 아무것도 보이지 않지만, 줄무늬 거울상으로 만든 곡률 지도에서는 깊이 1 µm의 오목이 잡음의 57배로 솟아 보입니다.
+- **[소행성 표면은 얼마나 휘어 있는가](../viewers/poc_asteroid_curvature.html?lang=ko)**: 실제 소행성의 점군에서 곡률을 구해 능선과 큰 바위의 가장자리를 색으로 봅니다. 답을 아는 구에서 먼저 잣대를 확인했습니다.
 
 ## 하이라이트
 
@@ -85,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-86개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+87개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -97,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 이미지 속 글자를 올바른 문자열에 맞춰 고치기: [설명](../../capabilities/fix-text-in-images.md) _(ja)_ · 예제 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - 양품을 나란히 놓고 '평소와 다름'을 말한다 (양품 통계 변동 모델, 오검출률 선언): [설명](../../capabilities/good-sample-variation-model.md) _(ja)_ · 예제 [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR 전처리(기울기 보정, 국소 이진화, 행 잘라내기): [설명](../../capabilities/ocr-preprocessing.md) _(ja)_ · 예제 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- 양품만으로 학습해 벗어난 패치를 가리킨다 (고전 특징의 위치별 정규분포와 메모리 뱅크, 재현율을 보장하는 운용점): [설명](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · 예제 [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - PL 영상에서 가는 홈이 사라지는 이유를 캐리어 확산 PSF와 결함의 종류로 구분(Si 웨이퍼·태양전지의 PL/EL 검사): [설명](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 예제 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 작은 점 모양 목표를 찾아 서브픽셀로 위치 구하기: [설명](../../capabilities/point-target-detection.md) _(ja)_ · 예제 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - 조명 불균일·하이라이트·가림에 강한 템플릿 정합(밝기 변화의 방향을 부호로 비교하고, 위치를 정하지 못하는 템플릿은 거부): [설명](../../capabilities/robust-code-matching.md) _(ja)_ · 예제 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 263개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 264개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -224,7 +229,7 @@ PoC 263개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>산업 검사</b> (44)</summary>
+<details class="vall"><summary><b>산업 검사</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1차원 바코드" width="200" height="200"><span>1차원 바코드</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="전극 굴곡도" width="200" height="200"><span>전극 굴곡도</span></a>
@@ -270,6 +275,7 @@ PoC 263개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="고기 속 뼛조각과 유리를 두 에너지로 가른다(듀얼 에너지 X선)" width="200" height="200"><span>고기 속 뼛조각과 유리를 두 에너지로 가른다(듀얼 에너지 X선)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="조명과 가림에 강한 부호 정합" width="200" height="200"><b>&#9654;</b><span>조명과 가림에 강한 부호 정합</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="양품 통계 변동 모델" width="200" height="200"><span>양품 통계 변동 모델</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="양품만으로 학습하는 패치 특징 이상 탐지(고전 특징의 분포와 메모리)" width="200" height="200"><span>양품만으로 학습하는 패치 특징 이상 탐지(고전 특징의 분포와 메모리)</span></a>
 </div>
 </details>
 

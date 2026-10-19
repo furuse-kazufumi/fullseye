@@ -53,6 +53,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD と実測点群の差分検査](viewers/poc_cad_scan_deviation.html?lang=ja)**: 位置合わせが欠陥を吸い、真値 1.2 µm の部品に 121 µm の存在しないへこみが出る。
 - **[LiDAR の地形変化](viewers/poc_lidar_terrain_change.html?lang=ja)**: 素朴に引くと、変化の無い区画全体が 0.183 m 沈んで見える。補正すると、本当の変化だけが残る。
 - **[テンプレート追跡](viewers/poc_template_tracking.html?lang=ja)**: そっくりな別物体に乗り換えても、追跡は「見つけた」と報告し続ける。
+- **[パルスサーモグラフィの深さ推定](viewers/poc_thermography_ndt.html?lang=ja)**: 当てはめる時間窓を 25 秒から 4 秒に切るだけで、小さい欠陥の深さの誤差が最大 +627% から ±14% に縮む。外れた原因は物理でなく窓の選び方だった。
+- **[タルボ絨毯と格子の X 線像](viewers/poc_grating_interferometry.html?lang=ja)**: 吸収では割れのコントラスト雑音比が 1.34 しかないが、暗視野では 13.5 に上がり、格子を回すと繊維の向きまで読める。
+- **[縞の鏡像で見る µm の凹み](viewers/poc_phase_measuring_deflectometry.html?lang=ja)**: 写真の信号は雑音の 0.17 倍で何も見えないが、縞の鏡像から作る曲率の地図では、深さ 1 µm の凹みが雑音の 57 倍に立つ。
+- **[小惑星の表面の曲がり具合](viewers/poc_asteroid_curvature.html?lang=ja)**: 実在の小惑星の点群から曲率を出し、尾根や巨礫の縁を色で見る。答えの分かる球で、先に物差しを確かめてある。
 
 ## 見どころ
 
@@ -100,7 +104,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-86 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+87 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -112,6 +116,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 画像の中の文字を、正しい文字列に合わせて直す: [説明](../capabilities/fix-text-in-images.md) · 例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - 良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき): [説明](../capabilities/good-sample-variation-model.md) · 例 [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR の前処理(傾き補正・局所 2 値化・行の切り出し): [説明](../capabilities/ocr-preprocessing.md) · 例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- 良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点): [説明](../capabilities/patch-feature-anomaly-detection.md) · 例 [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査): [説明](../capabilities/pl-carrier-diffusion-visibility.md) · 例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 小さな点状の目標を見つけて、副画素で位置を出す: [説明](../capabilities/point-target-detection.md) · 例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - 照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する): [説明](../capabilities/robust-code-matching.md) · 例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -220,7 +225,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 263 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 264 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -239,7 +244,7 @@ PoC 263 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (44)</summary>
+<details class="vall"><summary><b>産業検査</b> (45)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -285,6 +290,7 @@ PoC 263 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dual_energy_xray.jpg" alt="肉の中の骨片とガラスを 2 つのエネルギーで分ける(デュアルエナジー X 線)" width="200" height="200"><span>肉の中の骨片とガラスを 2 つのエネルギーで分ける(デュアルエナジー X 線)</span></a>
 <a href="../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_code_matching_breakdown.jpg" alt="照明と遮蔽に強い符号の照合" width="200" height="200"><b>&#9654;</b><span>照明と遮蔽に強い符号の照合</span></a>
 <a href="../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_good_sample_variation_model.jpg" alt="良品統計の変動モデル" width="200" height="200"><span>良品統計の変動モデル</span></a>
+<a href="../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_patch_anomaly.jpg" alt="良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)" width="200" height="200"><span>良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)</span></a>
 </div>
 </details>
 

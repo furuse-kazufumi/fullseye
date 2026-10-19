@@ -4,7 +4,7 @@ dim: spc
 category: variation
 in: image2d × table
 out: table
-examples: [poc_good_sample_variation_model]
+examples: [poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ image (``translate``).
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
+- [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

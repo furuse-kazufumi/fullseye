@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD बनाम स्कैन पॉइंट क्लाउड](../viewers/poc_cad_scan_deviation.html?lang=hi)**: संरेखण दोष को सोख लेता है: जिस पुर्ज़े का सही मान 1.2 µm है, उसमें 121 µm का ऐसा गड्ढा दिखता है जो है ही नहीं।
 - **[LiDAR भू-भाग परिवर्तन](../viewers/poc_lidar_terrain_change.html?lang=hi)**: सीधा घटाने पर बिना बदला पूरा खंड 0.183 m धँसा हुआ दिखता है। सुधार के बाद केवल असली बदलाव बचता है।
 - **[टेम्पलेट ट्रैकिंग](../viewers/poc_template_tracking.html?lang=hi)**: किसी हमशक्ल वस्तु पर चले जाने के बाद भी ट्रैकर “मिल गया” बताता रहता है।
+- **[पल्स थर्मोग्राफी से गहराई का अनुमान](../viewers/poc_thermography_ndt.html?lang=hi)**: फ़िट की समय-विंडो को 25 s से 4 s करने भर से छोटे दोषों की गहराई की सबसे बड़ी त्रुटि +627% से घटकर ±14% रह जाती है। कारण भौतिकी नहीं, विंडो का चुनाव था।
+- **[टैल्बट कालीन और ग्रेटिंग एक्स-रे चित्र](../viewers/poc_grating_interferometry.html?lang=hi)**: अवशोषण में दरार का कंट्रास्ट-शोर अनुपात केवल 1.34 है; डार्क फ़ील्ड में वह 13.5 हो जाता है, और ग्रेटिंग घुमाने से रेशे की दिशा तक पढ़ी जा सकती है।
+- **[धारियों के प्रतिबिंब में µm गड्ढे](../viewers/poc_phase_measuring_deflectometry.html?lang=hi)**: फ़ोटो में संकेत शोर का केवल 0.17 गुना है और कुछ नहीं दिखता; धारियों के प्रतिबिंब से बने वक्रता के नक्शे में 1 µm गहरा गड्ढा शोर से 57 गुना ऊँचा खड़ा दिखता है।
+- **[क्षुद्रग्रह की सतह कितनी मुड़ी है](../viewers/poc_asteroid_curvature.html?lang=hi)**: वास्तविक क्षुद्रग्रह के बिंदुओं से वक्रता निकाली गई है, कटक और चट्टानों के किनारे रंग में दिखते हैं। पैमाने को पहले ऐसे गोले पर जाँचा गया जिसका उत्तर ज्ञात है।
 
 ## मुख्य झलकियाँ
 
@@ -85,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-86 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+87 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -97,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Image के अंदर के text को सही string के अनुसार ठीक करना: [explanation](../../capabilities/fix-text-in-images.md) _(ja)_ · examples [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - aligned अच्छे samples से जो अलग है उसे बताना (घोषित false-alarm दर वाला per-pixel variation model): [explanation](../../capabilities/good-sample-variation-model.md) _(ja)_ · examples [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR pre-processing (deskew, local binarisation, line extraction): [explanation](../../capabilities/ocr-preprocessing.md) _(ja)_ · examples [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- केवल अच्छे samples से सीखकर भटके हुए patches बताना (classical features का per-position normal distribution या memory bank, recall की गारंटी वाला operating point): [explanation](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · examples [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - PL image में पतली groove क्यों गायब होती है — carrier-diffusion PSF और defect के प्रकार से अलग करना (Si wafer और solar cell की PL/EL inspection): [explanation](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · examples [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - छोटे point-like targets ढूँढना और sub-pixel position निकालना: [explanation](../../capabilities/point-target-detection.md) _(ja)_ · examples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - असमान रोशनी, highlight और ओट में टिकने वाला template matching (चमक बदलने की दिशा को code की तरह मिलाना, स्थान तय न कर पाने वाले template को मना करना): [explanation](../../capabilities/robust-code-matching.md) _(ja)_ · examples [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-263 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+264 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -224,7 +229,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (44)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D barcode" width="200" height="200"><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Electrode tortuosity" width="200" height="200"><span>Electrode tortuosity</span></a>
@@ -270,6 +275,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)" width="200" height="200"><span>मांस में हड्डी और काँच के टुकड़े, दो X-ray energies से अलग (dual-energy X-ray)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="रोशनी और ओट में code matching" width="200" height="200"><b>&#9654;</b><span>रोशनी और ओट में code matching</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="अच्छे samples का variation model" width="200" height="200"><span>अच्छे samples का variation model</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="केवल अच्छे नमूनों से patch-feature anomaly detection (classical features का distribution बनाम memory)" width="200" height="200"><span>केवल अच्छे नमूनों से patch-feature anomaly detection (classical features का distribution बनाम memory)</span></a>
 </div>
 </details>
 

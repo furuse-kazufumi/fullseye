@@ -31,7 +31,7 @@
 
 ここの数字は手で書いていません。`docs/` の測定データ(`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`)から `tools/gen_trust_block.py` が描き、食い違えば `tests/test_trust_block.py` が落ちます。どの数にも、測った版と日付を添えています。
 
-**回帰テスト 20,750 件** — 0.7.1 に含まれる、commit `32754a697c`、2026-10-19 に `pytest --collect-only` で数えた値(optional backend をすべて入れた環境。入れていない環境では、その backend を使う試験が収集されず件数は減ります)。
+**回帰テスト 19,935 件** — 0.7.0 の後のツリー(未リリース分を含む)、commit `b9fa380b7a`、2026-10-18 に `pytest --collect-only` で数えた値(optional backend をすべて入れた環境。入れていない環境では、その backend を使う試験が収集されず件数は減ります)。
 
 ### op を 1 本足すと、どんな門が確かめるか
 
@@ -55,16 +55,16 @@
 
 ### 検証の段
 
-能力 86 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.1)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 87 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.0)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
 | `verified-synthetic` | 真値を持つ合成データで自動検証 | 69 |
-| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 17 |
+| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 411 本のうち、門が実際に走らせるもの 411 本。
+例 412 本のうち、門が実際に走らせるもの 412 本。
 
 ### 版ごとの op の数
 
@@ -80,7 +80,6 @@
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
-| 0.7.1 | 2026-10-19 | 3,441 | 2,485 | 982 | 263 | 20,750 |
 
 - 0.1.0〜0.1.8 の HALCON 対応 323 は当時の記録値。0.1.9 からは数え方を改めた 979(実装が 656 本増えたのではない)。
 - 0.2.0 で型付き台帳を初めて索引に含めた。918 → 1,942 は数え方の変更で、新しい実装ではない(台帳は 0.1.6 から在ったが索引の外だった)。
@@ -91,7 +90,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 263 本
+## PoC シリーズ — 真値つきで実問題を解いた 264 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -108,9 +107,9 @@
 | 測光 (6) | [`poc_allsky_cloud_cover`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_allsky_cloud_cover.py) 全天カメラの雲量(画素を数えると雲の位置で 1.45 倍動く)<br>[`poc_astro_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) 天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)<br>[`poc_exoplanet_transit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_exoplanet_transit.py) 系外惑星トランジットの相対測光(深さと継続時間は別々に壊れる)<br>[`poc_nuclei_ploidy`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nuclei_ploidy.py) 蛍光核の積分輝度から倍数性を出す(面積では分かれない)<br>[`poc_real_sky_photometry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_sky_photometry.py) 実写の深宇宙に既知の星を仕込んで測る(汚染は S/N も同じ向きに膨らませる)<br>[`poc_solar_limb_darkening`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_limb_darkening.py) 縁が暗い天体の輪郭はどこか(周辺減光と「50 % 法」) |
 | 分離 (6) | [`poc_colocalization_crosstalk`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colocalization_crosstalk.py) 蛍光の共局在と漏れ込み(Pearson と Manders は別の場所で壊れる)<br>[`poc_pigment_unmixing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py) 多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)<br>[`poc_polarization_specular`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) 偏光による鏡面分離(分けた「拡散」は本当に拡散か)<br>[`poc_real_stain_unmix`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stain_unmix.py) 実写の免疫染色を色で分ける(残差は平面内の誤りに構造的に盲目)<br>[`poc_recycling_sorting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_recycling_sorting.py) 混合廃棄物の材質選別(消せる汚れと消せない汚れは代数で決まる)<br>[`poc_sea_ice_concentration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sea_ice_concentration.py) 海氷密接度(混合画素をどう数えるかで答えが変わる) |
 | 校正 (5) | [`poc_camera_calibration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_calibration.py) カメラ校正の再投影誤差は何を保証しないか<br>[`poc_fly_optomotor_steering`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_optomotor_steering.py) ハエの視葉だけで進路を立て直す(ラミナから操舵まで、学習なしで)<br>[`poc_public_camera_heading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading.py) 公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)<br>[`poc_public_camera_heading_real`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_public_camera_heading_real.py) 公共カメラはどこを向いているか・実写編(807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する)<br>[`poc_thermal_drift_metrology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermal_drift_metrology.py) カメラの熱ドリフトが寸法計測に効く量(分離できるのは歪みがあるから) |
+| detection (5) | [`poc_good_sample_variation_model`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) 良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき、公開 VisA で採点)<br>[`poc_patch_anomaly`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) 良品だけから学ぶパッチ特徴の異常検知(古典特徴の位置ごとの分布と記憶バンク、再現率を保証する閾値、公開データで採点)<br>[`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) 薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) 捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)<br>[`poc_si_wafer_pl_defect_visibility`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py) PL 像で細い溝はなぜ見えなくなるか(公開 Si ウェハ PL データで採点) |
 | 位置合わせ (5) | [`poc_change_detection_misreg`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_change_detection_misreg.py) 変化検出と位置合わせ誤差(偽陽性はエッジの帯、しかも崖つき)<br>[`poc_print_registration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_registration.py) 印刷の版ずれを刷り上がりから測る(網点は格子なので答えが 1 つに決まらない)<br>[`poc_registration_basin`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) 点群位置合わせの収束域(どれだけずれていたら失敗するか)<br>[`poc_reproducible_icp`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_reproducible_icp.py) 点の順を入れ替えても 1 ビットも動かない位置合わせ —— Ozaki スキームの FP64 の縮約、誤差は段で落ち上界で保証<br>[`poc_template_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) テンプレート追跡(見失うより先に、静かにずれる) |
 | visualization (5) | [`poc_eye_to_brain`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_eye_to_brain.py) 複眼が見る像と、脳のどこが反応するかを並べる(個眼をなぞると応答が配線を伝わる)<br>[`poc_flybrain_pointcloud`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py) ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く(点群を描く op points_render)<br>[`poc_live4d`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_live4d.py) 生きている組織の 3D+t を古典手法だけで短い 3D 動画像に(増幅・流れ・補間・高さ場、全部に真値)<br>[`poc_malecns_activity_wave`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_malecns_activity_wave.py) ハエの脳の立体の上で刺激の波が配線を伝わるのを見る(コネクトーム vs 次数保存 shuffle)<br>[`poc_video_cube`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_video_cube.py) 動画を空間 × 時間の立方体として見る(Video Summagator の再実装、ハエの脳の断面も同じ op で) |
-| detection (4) | [`poc_good_sample_variation_model`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) 良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき、公開 VisA で採点)<br>[`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) 薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) 捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)<br>[`poc_si_wafer_pl_defect_visibility`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py) PL 像で細い溝はなぜ見えなくなるか(公開 Si ウェハ PL データで採点) |
 | 動き (4) | [`poc_particle_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_tracking.py) 粒子追跡を (行, 列, 時刻) の体積として測る(誤リンクの向きは 1 種類ではない)<br>[`poc_river_surface_velocity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_river_surface_velocity.py) 河川表面流速を斜め動画から測る(速度の誤差と流量の誤差は別物)<br>[`poc_traffic_counting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_traffic_counting.py) (x, y, t) で数える(通過台数とオクルージョン、そして L/V という 1 つの定数)<br>[`poc_warehouse_flow`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_warehouse_flow.py) 庫内の滞留を種類別に読む(1 つの「滞留時間」に畳むと全部が混雑になる) |
 | inspection (4) | [`poc_em_second_opinion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_second_opinion.py) EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)<br>[`poc_illumination_cone_vs_na`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py) 照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする<br>[`poc_print_layer_inspection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_layer_inspection.py) 3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)<br>[`poc_sam_hybrid_bonding_voids`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py) ハイブリッド接合のボイドは超音波の明るさでなく位相で見つける(SAM の C スキャン、周波数の取引、POD) |
 | tomography_3d (4) | [`poc_battery_ct_degradation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py) 電池セルの内部劣化を CT で測る(膨れの何割が外から見えるか)<br>[`poc_battery_electrode_tortuosity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_electrode_tortuosity.py) 電極の屈曲度を CT から測る(Bruggeman は向きに盲目)<br>[`poc_ct_void_morphology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py) X 線 CT のボイド形態(合否 1 個の数字は、寿命に効く形に盲目)<br>[`poc_die_tilt_tsv_overlay`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_die_tilt_tsv_overlay.py) ダイの傾きと TSV の位置ずれ(同じ 1 つの CT から。傾きは回転まで偽装する) |
@@ -138,11 +137,11 @@
 
 ## オペレータを探す
 
-**3,447 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **67 本の族ガイド**があります。次元ごとの入口:
+**3,455 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **67 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 939/939、型つき台帳 2487/2499、1 行ファサード `fullseye.<名前>` 703/1465。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 939/939、型つき台帳 2495/2507、1 行ファサード `fullseye.<名前>` 703/1465。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3447 本のうち、実行できる例が付いているのは **3438 本**(9 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3282 本**(165 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3447 本すべてにある。
+**ノートの中身の実測**: 3455 本のうち、実行できる例が付いているのは **3444 本**(11 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3290 本**(165 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3455 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -158,7 +157,7 @@
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [ガイド](ops/generative/guides/generative_art.md) |
 | `imgmetrics` — 画質の指標 | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` — 表現の橋渡し(型と型のあいだ) | 42 | [INDEX](ops/reprconv/INDEX.md) |
-| `spc` | 31 | [INDEX](ops/spc/INDEX.md) |
+| `spc` | 39 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` — 断層 | 31 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` — 粒子画像流速測定 + DIC | 29 | [INDEX](ops/piv/INDEX.md) · [ガイド](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [ガイド](ops/conngraph/guides/conngraph.md) |
@@ -295,9 +294,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 282 本
+## ドキュメント地図 — 全 283 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,447 本と族ガイド 67 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,455 本と族ガイド 67 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -437,7 +436,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(199)
+**そのほか**(200)
 
 | 文書 | 内容 |
 |---|---|
@@ -556,6 +555,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | id: one-stroke-drawing |
 | [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
 | [`capabilities/optics-drawings.md`](capabilities/optics-drawings.md) | id: optics-drawings |
+| [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |

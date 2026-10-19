@@ -1133,6 +1133,34 @@
    ]
   },
   {
+   "id": "patch-feature-anomaly-detection",
+   "title": "良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)",
+   "title_en": "Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)",
+   "category": "見つける",
+   "note": "docs/capabilities/patch-feature-anomaly-detection.md",
+   "status": "validated-public-real-data",
+   "ops_total": 12,
+   "ops_named_in_tests": 12,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_patch_anomaly",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "anomaly_eval_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "periodic-defects-in-1d-signals",
    "title": "1-D 信号の周期欠陥を見つける",
    "title_en": "Periodic defects in a 1-D signal",
@@ -2167,8 +2195,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 411,
-  "run_by_the_poc_gate": 263,
+  "examples2d_total": 412,
+  "run_by_the_poc_gate": 264,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [

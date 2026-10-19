@@ -38,6 +38,10 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - **[CAD gegen Scan-Punktwolke](../viewers/poc_cad_scan_deviation.html?lang=de)**: Die Ausrichtung schluckt Defekte: Ein Bauteil mit dem Sollwert 1.2 µm zeigt eine nicht vorhandene Delle von 121 µm.
 - **[LiDAR-Geländeänderung](../viewers/poc_lidar_terrain_change.html?lang=de)**: Einfaches Abziehen lässt den ganzen unveränderten Block um 0.183 m abgesunken wirken. Nach der Korrektur bleibt nur die echte Änderung.
 - **[Template-Tracking](../viewers/poc_template_tracking.html?lang=de)**: Auch nachdem er auf ein ähnliches anderes Objekt gesprungen ist, meldet der Tracker weiter „gefunden“.
+- **[Tiefenschätzung mit Impuls-Thermografie](../viewers/poc_thermography_ndt.html?lang=de)**: Allein das Kürzen des Anpassungsfensters von 25 s auf 4 s verkleinert den größten Tiefenfehler kleiner Defekte von +627% auf ±14%. Die Ursache war die Wahl des Fensters, nicht die Physik.
+- **[Talbot-Teppich und Gitter-Röntgenbilder](../viewers/poc_grating_interferometry.html?lang=de)**: In der Absorption beträgt das Kontrast-Rausch-Verhältnis des Risses nur 1.34, im Dunkelfeld steigt es auf 13.5, und beim Drehen des Gitters lässt sich sogar die Faserrichtung ablesen.
+- **[Mikrometerdellen im Spiegelbild von Streifen](../viewers/poc_phase_measuring_deflectometry.html?lang=de)**: Im Foto ist das Signal nur das 0.17-Fache des Rauschens und nichts zu sehen; in der aus dem Spiegelbild der Streifen erzeugten Krümmungskarte ragt eine 1 µm tiefe Delle 57-mal über das Rauschen.
+- **[Wie stark sich die Oberfläche eines Asteroiden krümmt](../viewers/poc_asteroid_curvature.html?lang=de)**: Die Krümmung wird aus den Punkten eines echten Asteroiden berechnet; Grate und Felsblockkanten erscheinen in Farbe. Der Maßstab wurde zuerst an einer Kugel mit bekannter Antwort geprüft.
 
 ## Highlights
 
@@ -85,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-86 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+87 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -97,6 +101,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Text im Bild anhand des Soll-Strings korrigieren: [Erklärung](../../capabilities/fix-text-in-images.md) _(ja)_ · Beispiele [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - Abweichungen von ausgerichteten Gutteilen melden (pixelweises Variationsmodell mit erklärter Fehlalarmrate): [Erklärung](../../capabilities/good-sample-variation-model.md) _(ja)_ · Beispiele [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR-Vorverarbeitung (Schräglagenkorrektur, lokale Binarisierung, Zeilenextraktion): [Erklärung](../../capabilities/ocr-preprocessing.md) _(ja)_ · Beispiele [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- Aus Gutteilen lernen und abweichende Patches zeigen (klassische Merkmale: Normalverteilung je Position oder Speicherbank, Arbeitspunkt mit garantiertem Recall): [Erklärung](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · Beispiele [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - Warum eine dünne Rille im PL-Bild verschwindet — Ladungsträger-Diffusions-PSF und Defektart trennen (PL/EL-Prüfung von Si-Wafern und Solarzellen): [Erklärung](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · Beispiele [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - Kleine punktförmige Ziele finden und subpixelgenau lokalisieren: [Erklärung](../../capabilities/point-target-detection.md) _(ja)_ · Beispiele [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - Template-Matching, das ungleichmäßiges Licht, Glanzlichter und Verdeckung übersteht (Richtung der Helligkeitsänderung als Code vergleichen, unbestimmte Templates ablehnen): [Erklärung](../../capabilities/robust-code-matching.md) _(ja)_ · Beispiele [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +210,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-263 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+264 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -224,7 +229,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (44)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D-Barcode" width="200" height="200"><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Elektroden-Tortuosität" width="200" height="200"><span>Elektroden-Tortuosität</span></a>
@@ -270,6 +275,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="Knochen- und Glassplitter im Fleisch mit zwei Röntgenenergien trennen (Dual-Energy-Röntgen)" width="200" height="200"><span>Knochen- und Glassplitter im Fleisch mit zwei Röntgenenergien trennen (Dual-Energy-Röntgen)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Code-Matching bei Licht und Verdeckung" width="200" height="200"><b>&#9654;</b><span>Code-Matching bei Licht und Verdeckung</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="Variationsmodell aus Gutteilen" width="200" height="200"><span>Variationsmodell aus Gutteilen</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="Anomalieerkennung nur aus Gutteilen (klassische Patch-Merkmale: Verteilung gegen Speicher)" width="200" height="200"><span>Anomalieerkennung nur aus Gutteilen (klassische Patch-Merkmale: Verteilung gegen Speicher)</span></a>
 </div>
 </details>
 

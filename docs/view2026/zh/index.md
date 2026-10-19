@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD 与实测点云的偏差检查](../viewers/poc_cad_scan_deviation.html?lang=zh)**: 配准会吸收缺陷:真值为 1.2 µm 的零件上出现了 121 µm 并不存在的凹坑。
 - **[LiDAR 地形变化](../viewers/poc_lidar_terrain_change.html?lang=zh)**: 朴素相减会让没有变化的整个地块看起来下沉了 0.183 m。校正之后,只剩下真正的变化。
 - **[模板跟踪](../viewers/poc_template_tracking.html?lang=zh)**: 即使已经切换到相似的另一个物体,跟踪器仍然报告“找到了”。
+- **[脉冲热成像的深度估计](../viewers/poc_thermography_ndt.html?lang=zh)**: 只把拟合的时间窗从 25 秒缩到 4 秒,小缺陷深度的最大误差就从 +627% 缩小到 ±14%。问题出在窗口的选择,而不是物理。
+- **[塔尔博特地毯与光栅 X 射线像](../viewers/poc_grating_interferometry.html?lang=zh)**: 在吸收像中裂纹的对比噪声比只有 1.34,在暗场像中升到 13.5,转动光栅还能读出纤维的方向。
+- **[用条纹镜像看微米级凹坑](../viewers/poc_phase_measuring_deflectometry.html?lang=zh)**: 照片中的信号只有噪声的 0.17 倍,什么也看不见;而由条纹镜像做出的曲率图中,深 1 µm 的凹坑高出噪声 57 倍。
+- **[小行星表面的弯曲程度](../viewers/poc_asteroid_curvature.html?lang=zh)**: 由真实小行星的点云算出曲率,用颜色看山脊和巨石边缘。先在答案已知的球面上验证了方法。
 
 ## 精选
 
@@ -85,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 86 项,每项都有说明页(用法与限制)和可运行的示例。
+共 87 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -97,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 按应有的字符串修正图像中的文字: [说明](../../capabilities/fix-text-in-images.md) _(ja)_ · 示例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - 排列良品来判断“与平时不同”(良品统计变动模型,附声明的误检率): [说明](../../capabilities/good-sample-variation-model.md) _(ja)_ · 示例 [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR 预处理(倾斜校正、局部二值化、行切分): [说明](../../capabilities/ocr-preprocessing.md) _(ja)_ · 示例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- 仅从良品学习并指出偏离的图块(经典特征的逐位置正态分布与记忆库,保证召回率的工作点): [说明](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · 示例 [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - 用载流子扩散 PSF 和缺陷类型区分 PL 像中细沟槽消失的原因（Si 晶圆·太阳能电池的 PL/EL 检测）: [说明](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 示例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 找到小的点状目标并以亚像素定位: [说明](../../capabilities/point-target-detection.md) _(ja)_ · 示例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - 耐光照不均、高光与遮挡的模板匹配(把亮度变化的方向作为符号比较,无法定位的模板则拒绝): [说明](../../capabilities/robust-code-matching.md) _(ja)_ · 示例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 264 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -224,7 +229,7 @@ PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>工业检测</b> (44)</summary>
+<details class="vall"><summary><b>工业检测</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一维条码" width="200" height="200"><span>一维条码</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="电极曲折度" width="200" height="200"><span>电极曲折度</span></a>
@@ -270,6 +275,7 @@ PoC 263 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="用两种能量把肉中的骨片与玻璃分开(双能 X 射线)" width="200" height="200"><span>用两种能量把肉中的骨片与玻璃分开(双能 X 射线)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="耐光照与遮挡的符号匹配" width="200" height="200"><b>&#9654;</b><span>耐光照与遮挡的符号匹配</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="良品统计变动模型" width="200" height="200"><span>良品统计变动模型</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="仅从良品学习的图块特征异常检测(经典特征的分布与记忆)" width="200" height="200"><span>仅从良品学习的图块特征异常检测(经典特征的分布与记忆)</span></a>
 </div>
 </details>
 

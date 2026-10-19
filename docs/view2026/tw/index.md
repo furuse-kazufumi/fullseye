@@ -38,6 +38,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[CAD 與實測點雲的偏差檢查](../viewers/poc_cad_scan_deviation.html?lang=tw)**: 對位會吸收缺陷:真值為 1.2 µm 的零件上出現了 121 µm 並不存在的凹坑。
 - **[LiDAR 地形變化](../viewers/poc_lidar_terrain_change.html?lang=tw)**: 樸素相減會讓沒有變化的整個區塊看起來下沉了 0.183 m。校正之後,只剩下真正的變化。
 - **[模板追蹤](../viewers/poc_template_tracking.html?lang=tw)**: 即使已經切換到相似的另一個物體,追蹤器仍然回報「找到了」。
+- **[脈衝熱成像的深度估計](../viewers/poc_thermography_ndt.html?lang=tw)**: 只把擬合的時間窗從 25 秒縮到 4 秒,小缺陷深度的最大誤差就從 +627% 縮小到 ±14%。問題出在窗口的選擇,而不是物理。
+- **[塔爾博特地毯與光柵 X 光像](../viewers/poc_grating_interferometry.html?lang=tw)**: 在吸收像中裂紋的對比雜訊比只有 1.34,在暗場像中升到 13.5,轉動光柵還能讀出纖維的方向。
+- **[用條紋鏡像看微米級凹坑](../viewers/poc_phase_measuring_deflectometry.html?lang=tw)**: 照片中的訊號只有雜訊的 0.17 倍,什麼也看不見;而由條紋鏡像做出的曲率圖中,深 1 µm 的凹坑高出雜訊 57 倍。
+- **[小行星表面的彎曲程度](../viewers/poc_asteroid_curvature.html?lang=tw)**: 由真實小行星的點雲算出曲率,用顏色看山脊和巨石邊緣。先在答案已知的球面上驗證了方法。
 
 ## 精選
 
@@ -85,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 86 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 87 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -97,6 +101,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 依應有的字串修正影像中的文字: [說明](../../capabilities/fix-text-in-images.md) _(ja)_ · 範例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - 排列良品來判斷「與平時不同」(良品統計變動模型,附宣告的誤檢率): [說明](../../capabilities/good-sample-variation-model.md) _(ja)_ · 範例 [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - OCR 前處理(傾斜校正、局部二值化、行切分): [說明](../../capabilities/ocr-preprocessing.md) _(ja)_ · 範例 [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- 僅從良品學習並指出偏離的圖塊(經典特徵的逐位置常態分佈與記憶庫,保證召回率的工作點): [說明](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · 範例 [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - 用載子擴散 PSF 與缺陷類型區分 PL 影像中細溝槽消失的原因（Si 晶圓·太陽能電池的 PL/EL 檢測）: [說明](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · 範例 [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - 找到小的點狀目標並以次像素定位: [說明](../../capabilities/point-target-detection.md) _(ja)_ · 範例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - 耐光照不均、高光與遮擋的模板匹配(把亮度變化的方向作為符號比較,無法定位的模板則拒絕): [說明](../../capabilities/robust-code-matching.md) _(ja)_ · 範例 [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 263 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 264 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -224,7 +229,7 @@ PoC 263 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (44)</summary>
+<details class="vall"><summary><b>工業檢測</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="一維條碼" width="200" height="200"><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極曲折度" width="200" height="200"><span>電極曲折度</span></a>
@@ -270,6 +275,7 @@ PoC 263 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)" width="200" height="200"><span>用兩種能量把肉中的骨片與玻璃分開(雙能 X 射線)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="耐光照與遮擋的符號匹配" width="200" height="200"><b>&#9654;</b><span>耐光照與遮擋的符號匹配</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="良品統計變動模型" width="200" height="200"><span>良品統計變動模型</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="僅從良品學習的圖塊特徵異常檢測(經典特徵的分布與記憶)" width="200" height="200"><span>僅從良品學習的圖塊特徵異常檢測(經典特徵的分布與記憶)</span></a>
 </div>
 </details>
 
