@@ -3,7 +3,7 @@
   "ja": "op を 1 本足したとき、どの種類の門がそれを確かめるかの実測(mutation probe)。数字は手で書かず、この表から tools/gen_trust_block.py が描く。",
   "en": "Measured answer to: if one op is added to a tier, which kinds of gates check it (mutation probe). Rendered by tools/gen_trust_block.py; never hand-written."
  },
- "valid_for_version": "0.7.0",
+ "valid_for_version": "0.7.1",
  "method": {
   "ja": "層ごと・壊し方ごとに、わざと壊した op を 1 本だけ注入して全テストを走らせ、落ちた試験を数えた。壊し方: (a) 正しく書いた op、(b) 例外を投げる、(c) NaN を返す、(d) 型の違う値を返す、(e) 呼ぶたびに出力が変わる、(f) 引数を無視する、(g) 説明が無い、(g2) 説明が英語だけ、(h) 拒否すべき空入力を受け付ける。手続きの門 = (a) で落ちた試験(正しい op でも、ノート・索引などを作り直すまで落ちる)。振る舞いの門 = (b)〜(h) で落ちた試験のうち (a) で落ちなかったものの種類数。✓ = その壊し方で手続き以外の試験が 1 本以上落ちた。汚染された実行は捨てて測り直した。探針のスクリプトは repo に入れていない。",
   "en": "Per tier and per kind of breakage, exactly one deliberately broken op was injected and the whole suite was run; failing tests were counted. Breakages: (a) a well-formed op, (b) raises, (c) returns NaN, (d) returns the wrong type, (e) output changes between calls, (f) ignores its parameters, (g) no description, (g2) English-only description, (h) accepts empty input that should be refused. Bookkeeping gates = tests failing for (a) (they fire for any new op until its note, index etc. are regenerated). Behavioural gates = distinct tests failing for (b)–(h) beyond those failing for (a). ✓ = at least one non-bookkeeping test failed for that breakage. Contaminated runs were discarded and re-measured. The probe scripts are not part of the repository."
