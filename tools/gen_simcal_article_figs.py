@@ -1,5 +1,6 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""Qiita の sim-to-real 較正シリーズ(第 1 回)の図を、examples の simcal ツアーと同じ組み立てで作る。
+"""Qiita の sim-to-real 較正シリーズ(第 1・2 回)の図を作る。第 1 回は examples の simcal ツアーと同じ組み立て、第 2 回は
+実写の PoC 4 本(薄膜・テレセン・ピクセルシフト・相互反射)の章の関数をそのまま呼ぶ。
 
     py -3.11 tools/gen_simcal_article_figs.py
 
@@ -7,7 +8,9 @@
 図はすべて Fullseye 自身の描画(examplefig = annotate 族)で引く。真値・門の値は破線で描く。
 
 数字の照合: 本文に書いた数字は numbers.json と、examples/simcal_tour.py・simcal_checks_tour.py の
-実行ログの両方に一致させる(同じ模型・同じ乱数の種)。干渉次数の門の表だけは、ツアーが保留画像を
+実行ログの両方に一致させる(同じ模型・同じ乱数の種)。第 2 回の数字は numbers.json の "part2" と、各 PoC の印字
+(examples/poc_simcal_thin_film.py ・ poc_simcal_telecentric.py ・ poc_simcal_pixel_shift.py ・ poc_pocket_interreflection.py)
+の両方に合わせる。第 2 回は実データ(各 PoC が取得してキャッシュする公開画像)が要る。干渉次数の門の表だけは、ツアーが保留画像を
 撮らないので、ここで種 10002 の保留画像を撮って simcal_validate を回す(tests/test_simcal_checks.py の
 test_wrong_fringe_order_is_rejected_by_the_absolute_chi2_gate と同じ手順)。
 """
@@ -258,6 +261,318 @@ def draw(d: dict, lang: str, tmp: Path) -> list[Path]:
     return written
 
 
+# ====================================================================================== #
+# 第 2 回: 実写の較正と、収束させて解く順方向模型                                            #
+# ====================================================================================== #
+TXT2 = {
+    "ja": {
+        "fp_title": "実測の膜厚: 区間 [%.1f, %.1f] nm に基準 %.1f nm が入る(貧しい模型は狭いのに外す)",
+        "fp_rich": "豊かな模型(他のつまみは合わせ直す)",
+        "fp_poor": "直入射・材料表の n(拒否)",
+        "fp_95": "χ²₁(95 %) = 3.84",
+        "fp_ref": "基準 %.1f nm",
+        "fp_x": "膜厚 d [nm]",
+        "fp_y": "Δχ²",
+        "fr_title": "残差を雑音の床で割る: 貧しい模型は全帯域でうねる",
+        "fr_rich": "豊かな模型",
+        "fr_poor": "直入射・材料表の n",
+        "fr_band": "±1 σ",
+        "fr_x": "波長 [nm]",
+        "fr_y": "(実測 − 模型) / σ",
+        "tb_title": "リング x 30° の残差の平均 / 純粋誤差(破線 = ±2): 雑音では説明できない形が残る",
+        "tb_series": "残差の平均 / 純粋誤差の標準誤差",
+        "tb_x": "リング(1〜8)の順に並べた区間の番号",
+        "tb_y": "z",
+        "tp_title": "入射瞳までの距離の逆数 1/L [/m]: 当てはめ(線 = ±2σ)と通常のレンズ",
+        "tp_fit": "当てはめ(実画像)",
+        "tp_f100": "通常のレンズ f = 100 mm",
+        "tp_f25": "通常のレンズ f = 25 mm",
+        "tp_x": "",
+        "tp_y": "log10 (1/L [/m])",
+        "ps_title": "升ごとの差(simcal − 位相相関)[画素]: 0 の周りに散る",
+        "ps_13": "組 1→3",
+        "ps_24": "組 2→4",
+        "ps_zero": "差 0",
+        "ps_x": "升の番号(dr は 0〜15、dc は 16〜31)",
+        "ps_y": "差 [画素]",
+        "pb_title": "反射の回数と、収束解との差(破線 = 雑音 %.2f %%)",
+        "pb_actual": "収束解との実際の差",
+        "pb_gci": "見積もり(GCI 型)",
+        "pb_noise": "雑音の大きさ",
+        "pb_x": "反射の回数 k",
+        "pb_y": "log10 (像の最大値に対する差)",
+        "pt_title": "反射の数え方が 3 通りの模型に、同じ観測を合わせる(真値 反射率 0.70・照明 1.00)",
+        "pt_header": ["模型", "反射率", "照明", "χ²/ν(学習)", "残差 PCA", "判定"],
+        "pt_names": {"direct": "直接光だけ", "one": "1 回反射", "converged": "収束解"},
+        "pt_pca": "%d 成分(構造)", "pt_white": "0 成分(白色)",
+        "pt_refused": "不合格", "pt_accepted": "合格",
+    },
+    "en": {
+        "fp_title": "Measured thickness: [%.1f, %.1f] nm contains the reference %.1f nm (the poor model is narrow and misses)",
+        "fp_rich": "rich model (other knobs refitted)",
+        "fp_poor": "normal incidence, table index (rejected)",
+        "fp_95": "chi^2_1 (95 %) = 3.84",
+        "fp_ref": "reference %.1f nm",
+        "fp_x": "thickness d [nm]",
+        "fp_y": "delta chi^2",
+        "fr_title": "Residual over the noise floor: the poor model undulates across the whole band",
+        "fr_rich": "rich model",
+        "fr_poor": "normal incidence, table index",
+        "fr_band": "+-1 sigma",
+        "fr_x": "wavelength [nm]",
+        "fr_y": "(measured - model) / sigma",
+        "tb_title": "Mean residual per ring x 30 deg over pure error (dashed = +-2): a shape noise cannot explain",
+        "tb_series": "mean residual / standard error from pure error",
+        "tb_x": "bin index, ordered by ring (1 to 8)",
+        "tb_y": "z",
+        "tp_title": "Inverse entrance-pupil distance 1/L [/m]: fit (line = +-2 sigma) and ordinary lenses",
+        "tp_fit": "fit (real image)",
+        "tp_f100": "ordinary lens f = 100 mm",
+        "tp_f25": "ordinary lens f = 25 mm",
+        "tp_x": "",
+        "tp_y": "log10 (1/L [/m])",
+        "ps_title": "Per-tile difference (simcal - phase correlation) [pixel]: scatter around zero",
+        "ps_13": "pair 1->3",
+        "ps_24": "pair 2->4",
+        "ps_zero": "difference 0",
+        "ps_x": "tile index (dr is 0-15, dc is 16-31)",
+        "ps_y": "difference [pixel]",
+        "pb_title": "Bounce count vs the gap to the converged image (dashed = noise %.2f %%)",
+        "pb_actual": "actual gap to the converged image",
+        "pb_gci": "estimate (GCI style)",
+        "pb_noise": "noise level",
+        "pb_x": "bounces k",
+        "pb_y": "log10 (gap / image maximum)",
+        "pt_title": "One observation fitted by three ways of counting reflections (truth albedo 0.70, light 1.00)",
+        "pt_header": ["model", "albedo", "light", "chi^2/nu (train)", "residual PCA", "verdict"],
+        "pt_names": {"direct": "direct light only", "one": "one bounce", "converged": "converged"},
+        "pt_pca": "%d components (structure)", "pt_white": "0 components (white)",
+        "pt_refused": "rejected", "pt_accepted": "accepted",
+    },
+}
+
+
+def compute_part2() -> dict:
+    """第 2 回の数字と図の元データ。各 PoC の章の関数をそのまま呼ぶ(PoC の印字とここの数字は同じ計算)。"""
+    sys.path.insert(0, str(ROOT / "examples"))
+    import poc_pocket_interreflection as P4         # noqa: E402
+    import poc_simcal_pixel_shift as P3             # noqa: E402
+    import poc_simcal_telecentric as P2             # noqa: E402
+    import poc_simcal_thin_film as P1               # noqa: E402
+    from scipy.stats import chi2 as _chi2           # noqa: E402
+    q: dict = {}
+
+    # ---- 薄膜: 実測の顕微分光(同梱データ)と実物の顕微鏡写真 ---------------------- #
+    lam, Y, _cov = P1.load_spectra()
+    sigma, _g, white = P1.noise_floor(lam, Y)
+    A0, B0, _dn = P1.cauchy_of_table(lam)
+    real = P1.chapter_real_spectrum(lam, Y, sigma, (A0, B0))
+    poor = P1.chapter_poor(lam, Y, sigma, (A0, B0), white)
+    cam = P1.chapter_micrograph(P1.load_blocks(), (A0, B0))
+    N1 = P1.NUMBERS
+    gates = real["val"]["validation"]["gates"]
+    y = Y[:, 0]
+    fit_rich = P1.spectrum_line(lam=lam, **real["end"])[0]
+    pn = poor["normal"]["fit"]["diagnostics"]["endpoint_not_an_estimate"]
+    fit_poor = P1.spectrum_line(lam=lam, A=A0, B=B0, **pn)[0]
+    tr_rich = np.array(real["ident"]["identifiability"]["profile"]["d"]["trace"])
+    tr_poor = np.array(poor["normal"]["d"]["trace"])
+    pf = poor["freeA"]["d"]
+    pnd = poor["nodisp"]["d"]
+    q["film"] = {
+        "ref_nm": float(P1.REF_NM), "sigma": float(sigma), "white_sigma": float(white),
+        "d_lo": float(N1["real_d_lo"]), "d_hi": float(N1["real_d_hi"]), "d_width": float(N1["real_d_width"]),
+        "rich_chi2_train": float(gates["fit_consistent_with_noise"]["train"]["chi2_per_nu"]),
+        "rich_chi2_holdout": float(gates["fit_consistent_with_noise"]["holdout"]["chi2_per_nu"]),
+        "rich_status": real["val"]["status"], "rich_failed": list(real["val"]["validation"]["failed"]),
+        "n_holdout": int(len(real["ho"])),
+        "profile_class": {k: v[0] for k, v in N1["real_prof"].items()},
+        "B_upper": float(N1["real_prof"]["B"][2]),
+        "poor_normal_chi2": float(N1["poor_normal_chi2"]), "poor_normal_d": [float(v) for v in N1["poor_normal_d"]],
+        "poor_normal_status": poor["normal"]["val"]["status"],
+        "poor_normal_failed": list(poor["normal"]["val"]["validation"]["failed"]),
+        "poor_nodisp_chi2": float(N1["poor_nodisp_chi2"]),
+        "poor_nodisp_d": [float(pnd["lower"]), float(pnd["upper"])],
+        "poor_freeA_chi2": float(N1["poor_freeA_chi2"]),
+        "poor_freeA_d": [float(pf["lower"]), float(pf["upper"])],
+        "poor_freeA_status": poor["freeA"]["val"]["status"],
+        "cam_d": float(cam["fit"]["theta_hat"]["d"]), "cam_d_lo": float(N1["cam_d_lo"]), "cam_d_hi": float(N1["cam_d_hi"]),
+        "cam_chi2": float(N1["cam_chi2"]), "cam_struct": int(N1["cam_struct"]),
+        "cam_T": float(cam["fit"]["theta_hat"]["T"]), "cam_gamma": float(cam["fit"]["theta_hat"]["gamma"]),
+        "cam_determined": sorted(cam["fit"]["theta_hat"].keys()),
+    }
+    q["_film"] = {"lam": lam, "rr": (y - fit_rich) / sigma, "rp": (y - fit_poor) / sigma, "tr_rich": tr_rich,
+                  "tr_poor": tr_poor}
+
+    # ---- テレセンの実画像 ----------------------------------------------------------- #
+    tm = P2._load_sibling("poc_telecentric_metrology")
+    syn = P2.chapter_synthetic(tm.lenses())
+    rt = P2.chapter_real(tm, syn)
+    if rt is None:
+        raise RuntimeError("telecentric real image is not available (needs the cached public image)")
+    N2 = P2.NUMBERS
+    bins = rt["bins"]
+    bz = np.array([bm / (rt["s_pe"] / np.sqrt(n)) for _k, _b, bm, n in bins])
+    g6 = rt["vA"]["validation"]["gates"]["fit_consistent_with_noise"]
+    rms = float(np.sqrt(np.mean(rt["Rt"][rt["Mt"]] ** 2)))
+    inv_ento, inv_fa = 1000.0 / syn["L_ento"], 1000.0 / syn["L_fa25"]
+    q["tele"] = {
+        "px_per_mm": float(N2["real_px_per_mm"]), "px_se": float(N2["real_px_se"]),
+        "paper_K1": float(tm.PAPER["K1_px_per_mm"]), "paper_K2": [float(v) for v in tm.PAPER["K2_px_per_mm"]],
+        "inv_L": float(N2["real_inv_L"]), "inv_L_se": float(N2["real_inv_L_se"]),
+        "pupil_min_m": float(N2["real_pupil_min_m"]), "inv_L_sigma": float(abs(N2["real_inv_L"]) / N2["real_inv_L_se"]),
+        "inv_L_ento": float(inv_ento), "inv_L_f25": float(inv_fa),
+        "sigma_pure_error": float(rt["s_pe"]), "sigma_total": float(rt["s_tot"]), "resid_rms": rms,
+        "pure_chi2_train": float(g6["train"]["chi2_per_nu"]), "pure_p_train": float(g6["train"]["p"]),
+        "pure_chi2_holdout": float(g6["holdout"]["chi2_per_nu"]),
+        "pure_status": rt["vA"]["status"], "pure_failed": list(rt["vA"]["validation"]["failed"]),
+        "pca_verdict": rt["vA"]["discrepancy"]["verdict"],
+        "n_bins": int(len(bz)), "bins_chi2": float((bz ** 2).sum()), "bins_p": float(_chi2.sf((bz ** 2).sum(), len(bz))),
+        "total_passed": bool(rt["vB"]["validation"]["passed"]),
+        "jack_over_laplace_invL": float(rt["jk"]["inv_L"] / rt["lap"]["inv_L"]),
+        "n_points": int(rt["Mt"].sum()),
+        "synthetic_jack_over_laplace_discrepant": float(N2["syn_disc_ratio"]),
+        "synthetic_jack_over_laplace_clean": float(N2["syn_clean_ratio"]),
+    }
+    q["_tele"] = {"bz": bz}
+
+    # ---- ピクセルシフトの実データ ---------------------------------------------------- #
+    rp = P3.chapter_real()
+    if rp is None:
+        raise RuntimeError("pixel-shift real frames are not available (needs the cached public frames)")
+    N3 = P3.NUMBERS
+    pairs = rp["pairs"]
+    keys = (((0, 2), "13"), ((1, 3), "24"))
+    diffs = {n: pairs[k]["diff"] for k, n in keys}
+    q["pshift"] = {
+        "K": float(N3["real_K"]), "p_13": float(N3["real_p_02"]), "p_24": float(N3["real_p_13"]),
+        "n_tiles": {n: int(len(pairs[k]["rows"])) for k, n in keys},
+        "n_determined": {n: int(len(pairs[k]["both"])) for k, n in keys},
+        "chi2_median": {n: float(np.median([w["chi2"] for w in pairs[k]["rows"]])) for k, n in keys},
+        "mean_diff_px": {n: [float(v) for v in diffs[n].mean(0)] for n in diffs},
+        "max_abs_diff_px": float(max(np.abs(d_).max() for d_ in diffs.values())),
+        "mean_shift_px": {n: [float(v) for v in pairs[k]["est"].mean(0)] for k, n in keys},
+        "chi2_diag_mosaic": float(N3["real_chi2_diag_mosaic"]), "chi2_cross": float(N3["real_chi2_cross"]),
+        "cross_status": rp["cross"]["status"],
+    }
+    q["_pshift"] = diffs
+
+    # ---- 相互反射(PoC の main と同じ順) ----------------------------------------------- #
+    roi, crop = P4.roi_crop()
+    r0_, r1_, c0, c1 = crop
+    P4.ROI_C = roi[r0_:r1_, c0:c1]
+    truth, tt, kappa, mesh = P4.chapter_render(crop)
+    rows, need, noise_rel = P4.chapter_bounces(kappa)
+    mus = [P4.DARK + kappa * truth["image"][r0_:r1_, c0:c1, 1], P4.DARK + kappa * tt["image"][r0_:r1_, c0:c1, 1]]
+    train, hold = P4.capture(mus, P4.SEED), P4.capture(mus, P4.SEED + 10000)
+    forward = P4.make_forward(kappa, crop)
+    res = P4.chapter_calibrate(forward, train, hold)
+    ratios, mae = P4.chapter_bulczak(forward, train)
+    share = truth["indirect_share"][r0_:r1_, c0:c1][P4.ROI_C]
+    q["pocket"] = {
+        "rho_true": P4.RHO_TRUE, "I_true": P4.I_TRUE, "noise_rel": float(noise_rel), "need": int(need),
+        "need_actual_gap": float(rows[need]["error_vs_converged"]),
+        "share_mean": float(share.mean()), "share_max": float(share.max()),
+        "rows": [{"k": int(x["bounces"]), "increment": x["increment"], "ratio": x["observed_ratio"],
+                  "asymptotic": bool(x["asymptotic"]), "gci": x["gci"], "actual": float(x["error_vs_converged"])}
+                 for x in rows],
+        "models": {n: {"rho": float(r["rho"]), "intensity": float(r["intensity"]),
+                       "chi2_train": float(r["chi2_train"]), "chi2_hold": float(r["chi2_hold"]),
+                       "n_struct": int(r["n_struct"]), "verdict": r["verdict"], "failed": list(r["failed"]),
+                       "rel_rms": float(r["rel_rms"])} for n, r in res.items()},
+        "mae_dn": {k: float(v) for k, v in mae.items()},
+        "mae_noise_only_dn": float(np.sqrt(2 / np.pi) * np.sqrt(P4.emva_var(train[0][P4.ROI_C])).mean()),
+        "mae_ratio_one_over_direct": float(mae["one"] / mae["direct"]),
+        "cited_ratio_range": [float(min(ratios)), float(max(ratios))],
+        "mesh": [[float(a), float(b), float(c_)] for a, b, c_ in mesh],
+    }
+    return q
+
+
+def draw_part2(d: dict, lang: str, tmp: Path) -> list[Path]:
+    """第 2 回の図を 1 言語ぶん tmp に書き、書いたファイルを返す。"""
+    os.environ["FULLSEYE_FIGURE_DIR"] = str(tmp)
+    import examplefig as figs                  # noqa: E402
+    figs.reset()
+    t = TXT2[lang]
+    f, fm = d["film"], d["_film"]
+    lam = fm["lam"]
+    tr, tp = fm["tr_rich"], fm["tr_poor"]
+    tr = tr[tr[:, 1] <= 12.0]
+    tp = tp[tp[:, 1] <= 12.0]
+    figs.save_plot(
+        "film_real_profile",
+        [(t["fp_rich"], tr[:, 0], tr[:, 1]), (t["fp_poor"], tp[:, 0], tp[:, 1]),
+         (t["fp_95"], [88, 104], [3.84, 3.84]), (t["fp_ref"] % f["ref_nm"], [f["ref_nm"], f["ref_nm"]], [0, 12])],
+        kinds=["line"] * 4, styles=[None, None, "dashed", "dotted"],
+        colors=["right", "wrong", "reference", "emphasis"], xlim=(88, 104), ylim=(0, 12),
+        xlabel=t["fp_x"], ylabel=t["fp_y"], title=t["fp_title"] % (f["d_lo"], f["d_hi"], f["ref_nm"]), size=(840, 420))
+    lim = float(np.ceil(1.1 * max(np.abs(fm["rr"]).max(), np.abs(fm["rp"]).max())))
+    figs.save_plot(
+        "film_real_residuals",
+        [(t["fr_rich"], lam, fm["rr"]), (t["fr_poor"], lam, fm["rp"]),
+         (t["fr_band"], [lam[0], lam[-1]], [1, 1]), ("", [lam[0], lam[-1]], [-1, -1])],
+        kinds=["line"] * 4, styles=[None, None, "dashed", "dashed"],
+        colors=["right", "wrong", "reference", "reference"], ylim=(-lim, lim),
+        xlabel=t["fr_x"], ylabel=t["fr_y"], title=t["fr_title"], size=(840, 420))
+    bz = d["_tele"]["bz"]
+    xs = np.arange(1, len(bz) + 1)
+    figs.save_plot(
+        "tele_ring_bins",
+        [(t["tb_series"], xs, bz), ("±2", [0.5, len(bz) + 0.5], [2, 2]), ("", [0.5, len(bz) + 0.5], [-2, -2])],
+        kinds=["scatter", "line", "line"], styles=[None, "dashed", "dashed"],
+        colors=["emphasis", "reference", "reference"], xlim=(0.5, len(bz) + 0.5),
+        xlabel=t["tb_x"], ylabel=t["tb_y"], title=t["tb_title"], size=(840, 420))
+    te = d["tele"]
+    lo, hi = te["inv_L"] - 2 * te["inv_L_se"], te["inv_L"] + 2 * te["inv_L_se"]
+    figs.save_plot(
+        "tele_pupil",
+        [(t["tp_fit"], [3.0], [np.log10(te["inv_L"])]), ("", [3.0, 3.0], [np.log10(lo), np.log10(hi)]),
+         (t["tp_f100"], [4.0], [np.log10(te["inv_L_ento"])]), (t["tp_f25"], [5.0], [np.log10(te["inv_L_f25"])])],
+        kinds=["scatter", "line", "scatter", "scatter"], styles=[None, None, None, None],
+        colors=["right", "right", "wrong", "wrong"], xlim=(0.4, 5.6),
+        xlabel=t["tp_x"], ylabel=t["tp_y"], title=t["tp_title"], size=(720, 420))
+    ps = d["_pshift"]
+    n13, n24 = len(ps["13"]), len(ps["24"])
+    figs.save_plot(
+        "pshift_tile_diff",
+        [(t["ps_13"], np.r_[np.arange(n13), 16 + np.arange(n13)], np.r_[ps["13"][:, 0], ps["13"][:, 1]]),
+         (t["ps_24"], np.r_[np.arange(n24), 16 + np.arange(n24)] + 0.3, np.r_[ps["24"][:, 0], ps["24"][:, 1]]),
+         (t["ps_zero"], [-0.5, 32], [0, 0])],
+        kinds=["scatter", "scatter", "line"], styles=[None, None, "dashed"],
+        colors=["emphasis", "right", "reference"], xlim=(-0.5, 32),
+        xlabel=t["ps_x"], ylabel=t["ps_y"], title=t["ps_title"], size=(840, 420))
+    pk = d["pocket"]
+    ks = [r["k"] for r in pk["rows"]]
+    act = [np.log10(r["actual"]) for r in pk["rows"]]
+    gk = [r["k"] for r in pk["rows"] if r["gci"] is not None]
+    gv = [np.log10(r["gci"]) for r in pk["rows"] if r["gci"] is not None]
+    figs.save_plot(
+        "pocket_bounces",
+        [(t["pb_actual"], ks, act), (t["pb_gci"], gk, gv),
+         (t["pb_noise"], [ks[0], ks[-1]], [np.log10(pk["noise_rel"])] * 2)],
+        kinds=["scatter", "scatter", "line"], styles=[None, None, "dashed"],
+        colors=["emphasis", "right", "reference"], xlabel=t["pb_x"], ylabel=t["pb_y"],
+        title=t["pb_title"] % (100 * pk["noise_rel"]), size=(720, 420))
+    rows = []
+    for k in ("direct", "one", "converged"):
+        m = pk["models"][k]
+        rows.append([t["pt_names"][k], "%.3f" % m["rho"], "%.3f" % m["intensity"], "%.2f" % m["chi2_train"],
+                     (t["pt_pca"] % m["n_struct"]) if m["n_struct"] else t["pt_white"],
+                     t["pt_refused"] if m["failed"] else t["pt_accepted"]])
+    figs.save_table("pocket_models", t["pt_header"], rows, title=t["pt_title"],
+                    col_w=125)
+    errs = figs.errors()
+    if errs:
+        raise RuntimeError("figure errors: %s" % errs)
+    written = []
+    for e in figs.manifest():
+        dst = OUT / (e["name"] + "_" + lang + ".png")
+        shutil.copyfile(tmp / e["file"], dst)
+        written.append(dst)
+    return written
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     d = compute()
@@ -274,7 +589,14 @@ def main() -> int:
     for lang in ("ja", "en"):
         with tempfile.TemporaryDirectory() as td:
             written += draw(d, lang, Path(td))
+    # ---- 第 2 回 ------------------------------------------------------------------- #
+    os.environ.setdefault("FULLSEYE_POC_BUDGET", "full")
+    q = compute_part2()
+    for lang in ("ja", "en"):
+        with tempfile.TemporaryDirectory() as td:
+            written += draw_part2(q, lang, Path(td))
     nums = {k: v for k, v in d.items() if not k.startswith("_")}
+    nums["part2"] = {k: v for k, v in q.items() if not k.startswith("_")}
     for k in ("nm", "observed", "spec_wrong", "spec_right"):
         nums["film"].pop(k)
     (OUT / "numbers.json").write_text(json.dumps(nums, ensure_ascii=False, indent=1) + chr(10), encoding="utf-8")
