@@ -62,8 +62,11 @@ def validate_pipeline_dict(d):
         raise ValueError("'stages' must be a list, got %s" % type(raw).__name__)
     out = []
     for i, s in enumerate(raw):
-        if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+        if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
             raise ValueError("stage %d must be [op, a, b], got %r" % (i + 1, truncate(s, 60)))
+        if len(s) == 4 and not isinstance(s[3], bool):
+            raise ValueError("stage %d: the bypass flag must be true or false, got %r"
+                             % (i + 1, truncate(s[3], 40)))
         name = s[0]
         if not isinstance(name, str):
             raise ValueError("stage %d: operator name must be text, got %r"
@@ -88,7 +91,7 @@ def validate_pipeline_dict(d):
                                  % (i + 1, name, label, v))
         # store the CANONICAL op name: a HALCON alias is accepted on input, but the
         # program text / runners resolve canonical names (F5 review finding)
-        out.append([op.name, a, b])
+        out.append([op.name, a, b] + ([True] if len(s) == 4 and s[3] else []))   # bypass: written only when on
     return out
 
 
@@ -124,14 +127,40 @@ def validate_directives(d):
     return out
 
 
+class _Stage(list):
+    """One pipeline stage: still the 3-element ``[name, a, b]`` list every unpacking site expects,
+    plus a ``bypass`` flag (Studio slice 2). A bypassed stage passes its input through unchanged;
+    the flag is an attribute, not a 4th element, so ``name, a, b = stage`` keeps working."""
+    bypass = False
+
+
+def _is_bypassed(s):
+    """True if the stage (a :class:`_Stage` or a plain list) is switched off for now."""
+    return bool(getattr(s, "bypass", False))
+
+
 def _normalise_stage(s):
     """One pipeline stage as the mutable ``[name, a, b]`` list the model edits in place.
 
     Every loader (parser tuples, JSON, recipes, undo snapshots) passes through here,
-    so ``set_knobs`` can never meet a tuple again (F1 review finding)."""
-    if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+    so ``set_knobs`` can never meet a tuple again (F1 review finding). The result is a
+    :class:`_Stage`; the ``bypass`` flag of a stage given in is kept (a saved file may carry it
+    as a 4th boolean element), so a copy made through here does not drop it."""
+    if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
         raise ValueError("stage must be [op, a, b], got %r" % (truncate(s, 60),))
-    return [str(s[0]), float(s[1]), float(s[2])]
+    byp = _is_bypassed(s)
+    if len(s) == 4:
+        if not isinstance(s[3], (bool, np.bool_)):
+            raise ValueError("stage bypass flag must be true or false, got %r" % (truncate(s[3], 40),))
+        byp = byp or bool(s[3])
+    out = _Stage([str(s[0]), float(s[1]), float(s[2])])
+    out.bypass = byp
+    return out
+
+
+def _copy_stage(s):
+    """A copy of one stage that keeps the bypass flag (``list(s)`` would drop it)."""
+    return _normalise_stage(s)
 
 
 def _log_soft_failure(context, exc):
@@ -379,8 +408,10 @@ def _settings():
 
 
 def _stage_key(s):
-    """The cache key of one stage: (op, a, b) as plain values."""
-    return (str(s[0]), float(s[1]), float(s[2]))
+    """The cache key of one stage: (op, a, b) as plain values; a bypassed stage adds a 4th part,
+    so toggling bypass changes the key and drops the cache from that stage on."""
+    k = (str(s[0]), float(s[1]), float(s[2]))
+    return k + ("bypass",) if _is_bypassed(s) else k
 
 
 # --------------------------------------------------------------------------- #
@@ -533,6 +564,187 @@ def resolve_input_ref(ref, base_dir):
     return {"status": "missing", "path": None, "message": "input not found: %s" % given}
 
 
+#: stage-list thumbnail size (width, height) in pixels
+_STAGE_THUMB = (48, 36)
+
+
+def _cheap_is_binary(a):
+    """``_is_binary`` without sorting every pixel: look at a strided sample first, and confirm in one pass."""
+    if a.dtype == bool:
+        return True
+    step = max(1, int(max(a.shape[:2]) // 128))
+    sample = a[::step, ::step]
+    fin = sample[np.isfinite(sample)] if sample.dtype.kind == "f" else sample
+    if fin.size == 0 or np.unique(fin).size > 2:
+        return False
+    return bool(np.all((a == 0) | (a == 1)))
+
+
+def _shrink_u8(u8, size):
+    """Area-average a uint8 ``(h, w)`` / ``(h, w, 3)`` image down so it fits *size* ``(w, h)``
+    (never up). Pure numpy: one pass per axis, so a 2048 x 2048 stage costs milliseconds."""
+    h, w = u8.shape[:2]
+    tw, th = size
+    sc = min(tw / float(w), th / float(h), 1.0)
+    nw, nh = max(1, int(round(w * sc))), max(1, int(round(h * sc)))
+    ye = np.linspace(0, h, nh + 1).astype(np.int64)
+    xe = np.linspace(0, w, nw + 1).astype(np.int64)
+    acc = np.add.reduceat(u8, ye[:-1], axis=0, dtype=np.float32)
+    acc = np.add.reduceat(acc, xe[:-1], axis=1)
+    cnt = np.outer(np.diff(ye), np.diff(xe)).astype(np.float32)
+    if acc.ndim == 3:
+        cnt = cnt[..., None]
+    return np.clip(np.rint(acc / cnt), 0, 255).astype(np.uint8)
+
+
+def _contour_thumb(xld, size):
+    """Rasterise an XLD contour set ``{"shape": (H, W), "cs": [Nx2 (row, col)]}`` into a small RGB array."""
+    tw, th = size
+    img = np.empty((th, tw, 3), np.uint8)
+    img[:] = (27, 30, 40)
+    shp = xld.get("shape") or (1, 1)
+    H, W = max(int(shp[0]), 1), max(int(shp[1]), 1)
+    sc = (min(tw, th) - 2) / float(max(H, W))
+    oy, ox = (th - sc * H) / 2.0, (tw - sc * W) / 2.0
+    for c in list(xld.get("cs") or [])[:200]:
+        try:
+            pts = np.asarray(c, np.float64)
+        except Exception:
+            continue
+        if pts.ndim != 2 or pts.shape[0] < 2 or pts.shape[1] < 2 or not np.isfinite(pts[:, :2]).all():
+            continue
+        y = pts[:, 0] * sc + oy
+        x = pts[:, 1] * sc + ox
+        seg = np.hypot(np.diff(x), np.diff(y))
+        t = np.concatenate([[0.0], np.cumsum(seg)])
+        if t[-1] <= 0:
+            continue
+        tt = np.linspace(0.0, t[-1], int(t[-1] * 2) + 2)
+        xi = np.rint(np.interp(tt, t, x)).astype(int)
+        yi = np.rint(np.interp(tt, t, y)).astype(int)
+        ok = (xi >= 0) & (xi < tw) & (yi >= 0) & (yi < th)
+        img[yi[ok], xi[ok]] = (23, 184, 166)
+    return img
+
+
+def _result_thumbnail(val, size=_STAGE_THUMB):
+    """``(thumb, kind)`` for a stage result: *thumb* is a small uint8 RGB array (or None when the
+    result has no picture: a table, a scalar, a series, a 4-D array), *kind* a short word
+    (``image`` / ``color`` / ``region`` / ``flow2d`` / ``contour`` / ``table`` / ``feature`` /
+    ``series`` / ``array`` / ``other``). Reads the value only; nothing is computed."""
+    try:
+        if isinstance(val, dict):
+            if "cs" in val:
+                return _contour_thumb(val, size), "contour"
+            return None, "table"
+        if isinstance(val, np.ndarray):
+            if val.size == 0:
+                return None, "other"
+            if _is_flow2d(val) or val.dtype.kind == "c" or (val.ndim == 3 and val.shape[2] in (1, 4)):
+                prev = result_preview(val, max_px=96)
+                if prev is not None and prev.get("image") is not None:
+                    img = np.clip(np.nan_to_num(np.asarray(prev["image"], np.float64)), 0, 1)
+                    u8 = np.rint(img * 255.0).astype(np.uint8)
+                    u8 = _shrink_u8(u8, size)
+                    return (np.repeat(u8[..., None], 3, 2) if u8.ndim == 2 else u8), (
+                        "flow2d" if _is_flow2d(val) else "image")
+                return None, "other"
+            if val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3):
+                kind = "color" if val.ndim == 3 else ("region" if _cheap_is_binary(val) else "image")
+                a = np.nan_to_num(np.asarray(val, np.float64), nan=0.0, posinf=1.0, neginf=0.0)
+                u8 = np.rint(np.clip(a, 0.0, 1.0) * 255.0).astype(np.uint8)
+                u8 = _shrink_u8(u8, size)
+                return (np.repeat(u8[..., None], 3, 2) if u8.ndim == 2 else u8), kind
+            if val.ndim == 1 and val.size > 1:
+                return None, "series"
+            if val.ndim >= 3:
+                return None, "array"
+            return None, "feature"
+        if isinstance(val, (int, float, np.integer, np.floating)):
+            return None, "feature"
+    except Exception:                      # a thumbnail is a convenience: never break the list
+        return None, "other"
+    return None, "other"
+
+
+def _label_count(val):
+    """Number of regions of a binary result (8-connected) or of labels of an integer label image;
+    None for anything else (a grey image, a table, ...)."""
+    if not isinstance(val, np.ndarray) or val.ndim != 2 or val.size == 0 or val.dtype.kind == "c":
+        return None
+    if _cheap_is_binary(val):
+        from scipy import ndimage
+        return int(ndimage.label(val > 0.5, structure=np.ones((3, 3), int))[1])
+    fin = val[np.isfinite(val)]
+    if fin.size and fin.min() >= 0 and fin.max() > 1 and np.all(fin == np.rint(fin)):
+        return int(np.unique(fin[fin > 0]).size)
+    return None
+
+
+def _image_stats(val):
+    """``(mean, sigma, min, max)`` over the finite values of a real array, or None."""
+    if not isinstance(val, np.ndarray) or val.size == 0 or val.dtype.kind not in "biuf":
+        return None
+    a = np.asarray(val, np.float64)
+    a = a[np.isfinite(a)]
+    if a.size == 0:
+        return None
+    return float(a.mean()), float(a.std()), float(a.min()), float(a.max())
+
+
+def _table_shape(val):
+    """``(rows, cols)`` of a result table (dict): cols = fields, rows = the longest array field."""
+    rows = 1
+    for v in val.values():
+        try:
+            arr = np.asarray(v)
+            if arr.ndim >= 1:
+                rows = max(rows, int(arr.shape[0]))
+        except Exception:
+            continue
+    return rows, len(val)
+
+
+def _stage_delta_summary(before, after):
+    """One line saying what a stage did, by the kind of its result: region / label results give
+    the object count before -> after, images ``mean / sigma / min / max`` before -> after, a table
+    its rows and columns, a contour set its contour count. Reads values only. Headless."""
+    na = _label_count(after)
+    if na is not None:
+        nb = _label_count(before)
+        return tr("regions %s → %s") % ("–" if nb is None else nb, na)
+    if isinstance(after, dict):
+        if "cs" in after:
+            nb = len(before.get("cs", [])) if isinstance(before, dict) and "cs" in before else None
+            return tr("contours %s → %s") % ("–" if nb is None else nb, len(after.get("cs", [])))
+        rows, cols = _table_shape(after)
+        return tr("table: %d rows × %d cols") % (rows, cols)
+    sa = _image_stats(after)
+    if sa is not None and isinstance(after, np.ndarray) and after.ndim in (2, 3):
+        sb = _image_stats(before)
+        if sb is None:
+            return "mean %s  σ %s  min %s  max %s" % tuple(fmt_num(x, 4) for x in sa)
+        return " · ".join("%s %s → %s" % (lab, fmt_num(x, 4), fmt_num(y, 4))
+                               for lab, x, y in zip(("mean", "σ", "min", "max"), sb, sa))
+    if after is None:
+        return ""
+    try:
+        va = float(np.asarray(after).reshape(-1)[0])
+        vb = None
+        try:
+            vb = float(np.asarray(before).reshape(-1)[0]) if before is not None and np.size(before) == 1 else None
+        except (TypeError, ValueError):
+            vb = None
+        return tr("value %s → %s") % ("–" if vb is None else fmt_num(vb, 4), fmt_num(va, 4))
+    except (TypeError, ValueError, IndexError):
+        return type(after).__name__
+
+
+class _Snap(list):
+    """An undo snapshot (a list of stages) that remembers what the edit was (``label``)."""
+    label = None
+
+
 class PipelineModel:
     """An ordered list of (op, a, b) stages applied to a base image.
 
@@ -546,6 +758,7 @@ class PipelineModel:
         self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
         self._fresh: set = set()              # stage indices computed since acknowledge() (UI marker)
         self._last = (0, -1)                  # (stages served from cache, last index reached) of the last call
+        self._thumbs: dict = {}               # stage index -> (image version, stage key, small uint8 thumb or None, kind)
         self._image = None if image is None else np.asarray(image, np.float64)
         self._stages: list[list] = []         # [ [name, a, b], ... ]
         #: display / config directive lines (dev_* / set_system / disp_*) that belong
@@ -576,6 +789,7 @@ class PipelineModel:
         # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
         # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
         self._stages = [_normalise_stage(s) for s in (value or [])]
+        self._thumbs.clear()                  # a new pipeline: nothing was computed for these stages before
         self._invalidate(0)
 
     def set_image(self, arr):
@@ -643,12 +857,25 @@ class PipelineModel:
         if v >= n:
             return
         policy = ctx[1]
-        base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(s) for s in stages[:n]], 0.5, 0.5, policy)
+        fast = api._fast_on(None)
+        # a bypassed stage is not prepared or run: it hands its input on unchanged
+        active = [k for k in range(n) if not _is_bypassed(stages[k])]
+        norm = ops_ = ()
+        if active:
+            base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(stages[k][:3]) for k in active],
+                                                     0.5, 0.5, policy)
+        else:
+            base = self._image
+        pos = {k: j for j, k in enumerate(active)}
         prev = base if v == 0 else self._cache[v - 1][1]
-        steps = api._pipeline_steps(prev, norm[v:], ops_[v:], True, policy, api._fast_on(None), entry=(v == 0))
         import time
-        k = v
-        while True:
+        for k in range(v, n):
+            if k not in pos:                                   # bypassed: same object, no copy, no time
+                self._cache.append((_stage_key(stages[k]), prev, 0.0))
+                self._fresh.add(k)
+                continue
+            j = pos[k]
+            steps = api._pipeline_steps(prev, [norm[j]], [ops_[j]], True, policy, fast, entry=(j == 0))
             t0 = time.perf_counter()
             try:
                 val = next(steps)
@@ -657,13 +884,13 @@ class PipelineModel:
             ms = round((time.perf_counter() - t0) * 1000.0, 1)
             self._cache.append((_stage_key(stages[k]), val, ms))
             self._fresh.add(k)
-            k += 1
+            prev = val
 
     def add_stage(self, name, a=0.5, b=0.5):
         op = api.find_op(name)
         if op is None:
             raise KeyError(name)
-        self.stages.append([op.name, float(a), float(b)])     # canonical name (alias ok)
+        self.stages.append(_normalise_stage([op.name, float(a), float(b)]))     # canonical name (alias ok)
         return len(self.stages) - 1
 
     def remove_stage(self, i):
@@ -676,9 +903,28 @@ class PipelineModel:
 
     def duplicate_stage(self, i):
         """Insert a copy of stage i right after it; return the new stage's index."""
-        self.stages.insert(i + 1, list(self.stages[i]))
+        self.stages.insert(i + 1, _copy_stage(self.stages[i]))
         self._invalidate(i + 1)
         return i + 1
+
+    def set_bypass(self, i, flag=True):
+        """Switch stage *i* off (``True``: it passes its input through unchanged) or on again.
+
+        Not a removal: the stage keeps its place and knobs. The flag is part of the cache key, so
+        the stage and everything after it is recomputed. Returns the new flag."""
+        st = self.stages[i]
+        if not isinstance(st, _Stage):
+            st = self.stages[i] = _normalise_stage(st)
+        st.bypass = bool(flag)
+        self._invalidate(i)
+        return st.bypass
+
+    def toggle_bypass(self, i):
+        """Flip the bypass flag of stage *i*; returns the new flag."""
+        return self.set_bypass(i, not _is_bypassed(self.stages[i]))
+
+    def is_bypassed(self, i):
+        return _is_bypassed(self.stages[i])
 
     def set_knobs(self, i, a=None, b=None):
         st = self.stages[i]
@@ -743,8 +989,45 @@ class PipelineModel:
             except Exception as e:                       # this op failed on its input
                 err = e if err is None else err
                 state = {"kind": "error", "message": str(e), "ran": False, "valid": None, "reasons": []}
-            out.append({"index": i, "op": op, "a": a, "b": b, "state": state})
+            out.append({"index": i, "op": op, "a": a, "b": b, "state": state,
+                        "bypass": _is_bypassed(self.stages[i])})
         return out
+
+    def stage_preview(self, i):
+        """What the stage list may show for stage *i*, **without computing anything**.
+
+        ``{"status", "thumb", "kind", "bypass"}``. ``status`` is ``"ready"`` (a valid cached result
+        exists: *thumb* is its small uint8 RGB picture, or None for a table / scalar; *kind* says
+        what it is), ``"stale"`` (it was computed before, but with other knobs / another image /
+        another bypass: no picture is given, so an old one is never shown as if it were current) or
+        ``"uncomputed"`` (never computed). Only the small thumbnail is kept, never a copy of the array."""
+        stages = self._stages
+        if not 0 <= i < len(stages):
+            raise IndexError(i)
+        for k in [k for k in self._thumbs if k >= len(stages)]:
+            del self._thumbs[k]
+        key = _stage_key(stages[i])
+        byp = _is_bypassed(stages[i])
+        fresh = (self._ctx == self._context() and i < len(self._cache)
+                 and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
+        if fresh:
+            rec = self._thumbs.get(i)
+            if rec is None or rec[0] != self._img_ver or rec[1] != key:
+                th, kind = _result_thumbnail(self._cache[i][1])
+                rec = self._thumbs[i] = (self._img_ver, key, th, kind)
+            return {"status": "ready", "thumb": rec[2], "kind": rec[3], "bypass": byp}
+        rec = self._thumbs.get(i)
+        if rec is not None and rec[1][0] == key[0]:
+            return {"status": "stale", "thumb": None, "kind": rec[3], "bypass": byp}
+        return {"status": "uncomputed", "thumb": None, "kind": None, "bypass": byp}
+
+    def stage_previews(self):
+        """:meth:`stage_preview` for every stage (still computes nothing)."""
+        return [self.stage_preview(i) for i in range(len(self._stages))]
+
+    def thumb_bytes(self):
+        """Bytes held by the thumbnail store (the small arrays only)."""
+        return int(sum(r[2].nbytes for r in self._thumbs.values() if r[2] is not None))
 
     def step_times(self):
         """Per-stage wall-clock in ms, aligned with self.stages: the cost of that stage's own
@@ -764,7 +1047,11 @@ class PipelineModel:
     def export_python(self):
         lines = ["import fullseye, numpy as np", "", "def pipeline(frame):",
                  "    return fullseye.run_pipeline(frame, ["]
-        for name, a, b in self.stages:
+        for st in self.stages:
+            name, a, b = st
+            if _is_bypassed(st):                   # switched off: the script must equal the model output
+                lines.append(f"        # bypassed: {name}")
+                continue
             # full precision (repr), not %.3f: the exported script must run the SAME
             # pipeline as the editor (a 0.12345 knob used to become 0.123 silently)
             lines.append(f"        ({name!r}, {a!r}, {b!r}),")
@@ -772,7 +1059,10 @@ class PipelineModel:
         return "\n".join(lines) + "\n"
 
     def to_dict(self):
-        d = {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
+        # a stage is [op, a, b]; a bypassed one adds a 4th element true (key written only when on,
+        # so a file without bypass is byte-identical to what older versions wrote)
+        d = {"fullseye_pipeline": 1,
+             "stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages]}
         if self.directives:                          # key only when used: old files stay byte-identical
             d["directives"] = list(self.directives)
         if self.input_path:                          # the input reference (path as given + sha256 of the file)
@@ -2918,7 +3208,7 @@ def run_holdout(stages, image_paths, gt_paths=None):
         try:
             img = api.read_image(p)
             t0 = time.perf_counter()
-            out = api.run_pipeline(img, list(stages))
+            out = api.run_pipeline(img, [st for st in stages if not _is_bypassed(st)])
             rec["ms"] = (time.perf_counter() - t0) * 1000.0
             rec["ok"] = True
             rec["out_shape"] = tuple(np.shape(out))
@@ -5175,6 +5465,9 @@ def build_window(model=None):
     act_down = _act("Move stage down", "Ctrl+Down", "Move the selected stage later")
     act_clear = _act("Clear pipeline", "Ctrl+Shift+Backspace", "Remove all stages")
     act_dup = _act("Duplicate stage", "Ctrl+D", "Insert a copy of the selected stage after it")
+    act_bypass = _act("Bypass stage (on/off)", "Ctrl+B",
+                      "Switch the selected stage off for now: it passes its input through unchanged "
+                      "(not a removal; press again to switch it on)")
     act_top = _act("Move stage to top", "Ctrl+Shift+Up", "Move the selected stage to the front")
     act_bottom = _act("Move stage to bottom", "Ctrl+Shift+Down", "Move the selected stage to the end")
     act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
@@ -5265,7 +5558,7 @@ def build_window(model=None):
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
     m.addSeparator()
-    m.addAction(act_remove); m.addAction(act_dup)
+    m.addAction(act_remove); m.addAction(act_dup); m.addAction(act_bypass)
     m.addAction(act_up); m.addAction(act_down)
     m.addAction(act_top); m.addAction(act_bottom)
     m.addSeparator(); m.addAction(act_clear)
@@ -5711,6 +6004,49 @@ def build_window(model=None):
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+
+    class _PixPane(QtWidgets.QWidget):
+        """A pane that keeps the pixmap it was given (``pixmap()``) and paints it scaled to fit."""
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self._pm = None
+            self._msg = ""
+            self.setMinimumSize(120, 90)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+        def set_source(self, pm, msg=""):
+            self._pm, self._msg = pm, msg
+            self.update()
+
+        def pixmap(self):
+            return self._pm
+
+        def paintEvent(self, ev):
+            pt = QtGui.QPainter(self)
+            pt.fillRect(self.rect(), QtGui.QColor(NAVY_1))
+            if self._pm is not None and not self._pm.isNull():
+                sc = self._pm.scaled(self.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                pt.drawPixmap((self.width() - sc.width()) // 2, (self.height() - sc.height()) // 2, sc)
+            elif self._msg:
+                pt.setPen(QtGui.QColor(MUTED))
+                pt.drawText(self.rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
+            pt.end()
+
+    cmp_w = QtWidgets.QWidget()
+    _cl = QtWidgets.QVBoxLayout(cmp_w); _cl.setContentsMargins(6, 6, 6, 6)
+    cmp_left, cmp_right = _PixPane(), _PixPane()
+    cmp_ltitle, cmp_rtitle = QtWidgets.QLabel(""), QtWidgets.QLabel("")
+    for _t in (cmp_ltitle, cmp_rtitle):
+        _t.setProperty("muted", True)
+    _crow = QtWidgets.QHBoxLayout()
+    for _t, _pane in ((cmp_ltitle, cmp_left), (cmp_rtitle, cmp_right)):
+        _col = QtWidgets.QVBoxLayout(); _col.addWidget(_t); _col.addWidget(_pane, 1)
+        _crow.addLayout(_col, 1)
+    cmp_summary = QtWidgets.QLabel("")
+    cmp_summary.setWordWrap(True)
+    cmp_summary.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+    _cl.addLayout(_crow, 1); _cl.addWidget(cmp_summary)
+    dock_cmp = _mk_dock(tr("Stage in \u2192 out"), cmp_w, "dock_compare")
     # Default layout (user-directed 2026-08-15): the IMAGE (central MDI) is the largest
     # surface, the Program (script code) is the second, and op selection + Variables /
     # Objects are compact panels ("small size", mostly floated / shown on demand).
@@ -5731,17 +6067,19 @@ def build_window(model=None):
     win.tabifyDockWidget(dock_ops, dock_pipe)                       # Pipeline·Params tabbed in
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
     win.tabifyDockWidget(dock_ops, dock_disp)                       # Display·Analysis tabbed in
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_cmp)
+    win.tabifyDockWidget(dock_ops, dock_cmp)                        # Stage in -> out tabbed in
     dock_ops.raise_()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
     # each back. Operators stays (compact) since it is the primary build tool.
-    for _d in (dock_vars, dock_pipe, dock_disp):
+    for _d in (dock_vars, dock_pipe, dock_disp, dock_cmp):
         _d.hide()
     win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp}
     # On-demand panels + less-common actions live behind ONE small popup menu button
     # (per user direction: prefer popup menus, keep buttons small) instead of a row of
     # wide toggles. Each panel toggle's text is the panel name; checking it shows it.
@@ -5749,7 +6087,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ops, dock_code):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -5995,6 +6333,67 @@ def build_window(model=None):
         return bool(CONFIRM_HOOK(
             win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
 
+    _icon_cache = {}
+    _KIND_GLYPH = {"table": "\u25a6", "feature": "#", "series": "~", "array": "\u25a3", "contour": "\u2307",
+                   "other": "\u00b7"}
+
+    def _glyph_icon(glyph, tone):
+        """A neutral placeholder / kind icon of the thumbnail size (cached by glyph and colour)."""
+        key = (glyph, tone)
+        ic = _icon_cache.get(key)
+        if ic is None:
+            tw, th = _STAGE_THUMB
+            pm = QtGui.QPixmap(tw, th)
+            pm.fill(QtGui.QColor(NAVY_1))
+            pt = QtGui.QPainter(pm)
+            pt.setPen(QtGui.QColor(tone))
+            f = pt.font(); f.setPointSize(13); pt.setFont(f)
+            pt.drawText(pm.rect(), QtCore.Qt.AlignCenter, glyph)
+            pt.end()
+            ic = _icon_cache[key] = QtGui.QIcon(pm)
+        return ic
+
+    def _thumb_icon(arr):
+        """A QIcon from the model's small uint8 RGB thumbnail, centred on a fixed-size canvas so the rows align."""
+        a = np.ascontiguousarray(arr)
+        h, w = a.shape[:2]
+        qi = QtGui.QImage(a.data, w, h, 3 * w, QtGui.QImage.Format_RGB888).copy()
+        tw, th = _STAGE_THUMB
+        pm = QtGui.QPixmap(tw, th)
+        pm.fill(QtGui.QColor(NAVY_1))
+        pt = QtGui.QPainter(pm)
+        pt.drawImage((tw - w) // 2, (th - h) // 2, qi)
+        pt.end()
+        return QtGui.QIcon(pm)
+
+    def update_stage_icons():
+        """Put each stage row's thumbnail / placeholder from the model's stage cache.
+
+        Reads only what is cached (``model.stage_preview``): it never computes a stage. A stage with
+        a valid result shows its small picture; one never computed shows the neutral 'not computed'
+        icon; one computed earlier with other knobs shows 'recompute needed' instead of an old picture."""
+        stage_list.setIconSize(QtCore.QSize(*_STAGE_THUMB))
+        for i in range(min(stage_list.count(), len(model.stages))):
+            it = stage_list.item(i)
+            try:
+                pv = model.stage_preview(i)
+            except Exception:
+                continue
+            base = it.data(QtCore.Qt.UserRole + 1) or ""
+            if pv["status"] == "ready":
+                th = pv["thumb"]
+                it.setIcon(_thumb_icon(th) if th is not None
+                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), TEAL))
+                it.setToolTip(base)
+            elif pv["status"] == "stale":
+                it.setIcon(_glyph_icon("\u21bb", AMBER))
+                it.setToolTip("\u518d\u8a08\u7b97\u304c\u5fc5\u8981 / recompute needed\n\n" + base)
+            else:
+                it.setIcon(_glyph_icon("\u2026", MUTED))
+                it.setToolTip("\u672a\u8a08\u7b97 / not computed\n\n" + base)
+            it.setData(QtCore.Qt.UserRole + 2, pv["status"])
+    win._update_stage_icons = update_stage_icons
+
     def refresh_stage_list(select=None):
         """Rebuild the stage rows (and the Problems panel).
 
@@ -6021,6 +6420,7 @@ def build_window(model=None):
         model.acknowledge()
         validity_rows = []
         for i, (name, a, b) in enumerate(model.stages):
+            byp = _is_bypassed(model.stages[i])
             st = states[i]["state"] if i < len(states) else {}
             summ = step_summary(st) if st else ""
             ms = times[i] if i < len(times) else None
@@ -6030,7 +6430,8 @@ def build_window(model=None):
             warn = st.get("valid") is False
             wstr = "  ·  ⚠" if warn else ""
             it = QtWidgets.QListWidgetItem(
-                f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}{cstr}{wstr}")
+                f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}{cstr}{wstr}"
+                + ("  \u00b7  \u2937 bypass" if byp else ""))
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
             row = _op_row(name)
             it.setToolTip(op_tooltip(row) if row else name)
@@ -6044,8 +6445,15 @@ def build_window(model=None):
             if st.get("kind") == "error":             # mark a stage that raised at runtime
                 it.setForeground(QtGui.QColor(AMBER))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
+            if byp:                                   # switched off: greyed + struck through, still in its place
+                _f = it.font(); _f.setStrikeOut(True); it.setFont(_f)
+                it.setForeground(QtGui.QColor(MUTED))
+                it.setToolTip(tr("bypassed: this stage passes its input through unchanged (Ctrl+B switches it on again)")
+                              + "\n\n" + it.toolTip())
+            it.setData(QtCore.Qt.UserRole + 1, it.toolTip())    # the row's own tooltip; icons add a status line
             stage_list.addItem(it)
         state["validity_rows"] = validity_rows
+        update_stage_icons()
         if stage_list.count() == 0:                     # onboarding: guide the empty state
             hint = QtWidgets.QListWidgetItem(
                 "— empty — double-click an operator, or drop an image/.json here, to start —")
@@ -6065,7 +6473,12 @@ def build_window(model=None):
         via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
         perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
-        probs = list(engine.diagnose_stages(model.stages))     # static checks
+        _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
+        if len(_act_idx) == len(model.stages):
+            probs = list(engine.diagnose_stages(model.stages))     # static checks
+        else:                                                      # a bypassed stage is not part of the chain
+            probs = [dict(p, index=_act_idx[p["index"]]) if 0 <= p.get("index", -1) < len(_act_idx) else p
+                     for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
             for s in states:                                    # runtime errors
                 if s.get("state", {}).get("kind") == "error":
@@ -6206,6 +6619,51 @@ def build_window(model=None):
                 view.set_message("Nothing to display")
             hist_view.clear(); state["result"] = None; state["raw"] = None
 
+    def _val_pixmap(val):
+        """The pixmap the main view would show for *val* (same display mode and mapping as ``_render``), or None."""
+        drawable = (isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
+                    and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3)))
+        img = None
+        if drawable:
+            img = apply_display(val, display.currentText(), base=model.image, draw=state["draw"])
+        else:
+            prev = result_preview(val)
+            if prev is not None:
+                img = prev.get("image")
+        qi = _to_qimage(img, QtGui) if img is not None else None
+        return QtGui.QPixmap.fromImage(qi) if qi is not None else None
+
+    def update_stage_compare():
+        """Fill the 'Stage in -> out' panel for the selected stage: its input and output side by
+        side through the same display mapping, and a one-line before -> after summary. Only runs
+        while the panel is open; the values come from the stage cache (the stage is run once, as
+        the main view needs it anyway)."""
+        if dock_cmp.isHidden():
+            return
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            for _p in (cmp_left, cmp_right):
+                _p.set_source(None, tr("select a stage to compare its input and output"))
+            cmp_ltitle.setText(""); cmp_rtitle.setText(""); cmp_summary.setText("")
+            return
+        try:
+            before, after = model.result_upto(i - 1), model.result_upto(i)
+        except Exception as e:
+            for _p in (cmp_left, cmp_right):
+                _p.set_source(None, tr("pipeline error (see the Problems list)"))
+            cmp_summary.setText(truncate(e, 160))
+            return
+        none_msg = tr("no picture for this result")
+        cmp_left.set_source(_val_pixmap(before), none_msg)
+        cmp_right.set_source(_val_pixmap(after), none_msg)
+        cmp_ltitle.setText(tr("in: input image") if i == 0 else tr("in: stage %d output") % i)
+        cmp_rtitle.setText(tr("out: stage %d (%s)") % (i + 1, model.stages[i][0]))
+        cmp_summary.setText(_stage_delta_summary(before, after))
+    win._update_stage_compare = update_stage_compare
+    win._compare = {"dock": dock_cmp, "left": cmp_left, "right": cmp_right, "summary": cmp_summary,
+                    "left_title": cmp_ltitle, "right_title": cmp_rtitle}
+    dock_cmp.visibilityChanged.connect(lambda vis: update_stage_compare() if vis else None)
+
     def show_result():
         """Render the current result. The whole body is guarded, not just the
         pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
@@ -6217,6 +6675,7 @@ def build_window(model=None):
         state["renders"] += 1
         try:
             _render()
+            update_stage_compare()
         except Exception as e:
             view.set_message("Display error\n\n%s\n\n(see the Problems list)" % truncate(e, 200))
             inspector.setPlainText("display error: %s" % e)
@@ -6246,7 +6705,7 @@ def build_window(model=None):
         n = len(model.stages)
         has_sel = 0 <= i < n
         has_res = isinstance(state.get("result"), np.ndarray)
-        _enable(has_sel, act_remove, b_rm)
+        _enable(has_sel, act_remove, b_rm, act_bypass)
         _enable(has_sel and i > 0, act_up, b_up)
         _enable(has_sel and i < n - 1, act_down, b_dn)
         _enable(has_res, act_save_res, b_save, act_3d, b_3d)
@@ -6306,7 +6765,7 @@ def build_window(model=None):
         if getattr(win, "_knob_drag_base", None) is None:
             # first tick of a drag: capture the PRE-drag pipeline once; the settled
             # handler turns it into a single undo entry (drags coalesce)
-            win._knob_drag_base = [list(st) for st in model.stages]
+            win._knob_drag_base = [_copy_stage(st) for st in model.stages]
         v = float(value)
         # The KnobRow already mirrored the value into the sibling widgets (signals
         # blocked) and refreshed the label in display units; only the model, the
@@ -6343,7 +6802,7 @@ def build_window(model=None):
         refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
         base = getattr(win, "_knob_drag_base", None)
         win._knob_drag_base = None
-        if base is not None and base != [list(st) for st in model.stages]:
+        if base is not None and base != [_copy_stage(st) for st in model.stages]:
             win._undo_stack.append(base)
             if len(win._undo_stack) > _UNDO_CAP:
                 del win._undo_stack[0]
@@ -6369,14 +6828,17 @@ def build_window(model=None):
         act_undo.setEnabled(bool(win._undo_stack))
         act_redo.setEnabled(bool(win._redo_stack))
 
-    def _snapshot():
+    def _snapshot(label=None):
         # DEEP copy: each stage is a mutable [op, a, b] list that set_knobs edits in
         # place — a shallow list(model.stages) shared the inner lists, so dragging a
         # knob silently rewrote every snapshot already in the undo/redo stacks.
-        return [list(st) for st in model.stages]
+        # _copy_stage keeps the bypass flag; the label says what the edit was (undo/redo message).
+        snap = _Snap(_copy_stage(st) for st in model.stages)
+        snap.label = label
+        return snap
 
-    def push_undo():
-        win._undo_stack.append(_snapshot())
+    def push_undo(label=None):
+        win._undo_stack.append(_snapshot(label))
         if len(win._undo_stack) > _UNDO_CAP:
             del win._undo_stack[0]
         win._redo_stack.clear()
@@ -6388,7 +6850,7 @@ def build_window(model=None):
         # corrupting history (F8 review finding) — cancel it and forget its base
         knob_timer.stop()
         win._knob_drag_base = None
-        model.stages = [list(st) for st in stages]
+        model.stages = [_copy_stage(st) for st in stages]
         mark_dirty()
         refresh_stage_list(select=(len(model.stages) - 1) if model.stages else None)
         show_result()
@@ -6397,16 +6859,20 @@ def build_window(model=None):
     def undo():
         if not win._undo_stack:
             return
-        win._redo_stack.append(_snapshot())
-        _restore_stages(win._undo_stack.pop())
-        flash("undo (%d more)" % len(win._undo_stack))
+        snap = win._undo_stack.pop()
+        lab = getattr(snap, "label", None)
+        win._redo_stack.append(_snapshot(lab))
+        _restore_stages(snap)
+        flash("undo %s(%d more)" % ((lab + " ") if lab else "", len(win._undo_stack)))
 
     def redo():
         if not win._redo_stack:
             return
-        win._undo_stack.append(_snapshot())
-        _restore_stages(win._redo_stack.pop())
-        flash("redo (%d more)" % len(win._redo_stack))
+        snap = win._redo_stack.pop()
+        lab = getattr(snap, "label", None)
+        win._undo_stack.append(_snapshot(lab))
+        _restore_stages(snap)
+        flash("redo %s(%d more)" % ((lab + " ") if lab else "", len(win._redo_stack)))
     win._undo = undo
     win._redo = redo
     win._push_undo = push_undo
@@ -6595,7 +7061,7 @@ def build_window(model=None):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
             return
         try:
-            snap = [list(st) for st in model.stages]
+            snap = [_copy_stage(st) for st in model.stages]
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
             report_error("Sample pipeline", e); return
@@ -6615,7 +7081,7 @@ def build_window(model=None):
     def remove():
         i = selected_index()
         if 0 <= i < len(model.stages):
-            push_undo()
+            push_undo("remove")
             model.remove_stage(i)
             mark_dirty()
             n = len(model.stages)
@@ -6631,6 +7097,18 @@ def build_window(model=None):
             push_undo()
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
+
+    def toggle_bypass_ui():
+        """Switch the selected stage off / on (it keeps its place and knobs). One undo entry, labelled 'bypass'."""
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            return
+        push_undo("bypass")
+        on = model.toggle_bypass(i)
+        mark_dirty()
+        refresh_stage_list(select=i); show_result()
+        flash("stage %d (%s) %s" % (i + 1, model.stages[i][0], "bypassed" if on else "switched on again"))
+    win._toggle_bypass = toggle_bypass_ui
 
     def duplicate_stage_ui():
         i = selected_index()
@@ -8405,6 +8883,7 @@ def build_window(model=None):
     act_up.triggered.connect(lambda: move(-1)); act_down.triggered.connect(lambda: move(1))
     act_clear.triggered.connect(clear_pipe)
     act_dup.triggered.connect(duplicate_stage_ui)
+    act_bypass.triggered.connect(toggle_bypass_ui)
     act_top.triggered.connect(lambda: move_to_end(True))
     act_bottom.triggered.connect(lambda: move_to_end(False))
     act_focus_search.triggered.connect(lambda: (search.setFocus(), search.selectAll()))
@@ -8444,7 +8923,8 @@ def build_window(model=None):
                     "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif")
         # repr = full precision: the program must run the SAME pipeline as the model
         # (a 0.12345 knob used to come back as 0.123 after Sync/Apply)
-        return "\n".join("%s (%r, %r)" % (n, a, b) for (n, a, b) in model.stages)
+        return "\n".join(("# bypassed: %s (%r, %r)" if _is_bypassed(st) else "%s (%r, %r)") % tuple(st[:3])
+                         for st in model.stages)
 
     # ---- stage <-> editor line map (F2 review finding) ------------------------- #
     # Directive lines (dev_* / set_system / disp_*) and comments emit no stage, and an
@@ -8488,6 +8968,8 @@ def build_window(model=None):
         """The same computation api.run_pipeline performs for stage *i* on value *v*
         (entry coercion on the first stage, canonical-name resolution, feature ->
         float), so the timed run IS the displayed pipeline. KeyError for an unknown op."""
+        if 0 <= i < len(model.stages) and _is_bypassed(model.stages[i]):
+            return v                                  # switched off: the value passes through
         return api.run_pipeline(v, [(name, a, b)], coerce=(i == 0))
 
     def sync_program():
@@ -9132,6 +9614,7 @@ def build_window(model=None):
                 ("Run from here", lambda: win._program["run_from"](i + 1)),
                 ("Continue (to breakpoint / end)", lambda: win._program["continue"]()),
                 ("---", None),
+                (tr("Bypass stage (on/off)"), toggle_bypass_ui),
                 ("Remove stage", remove),
                 ("Move up", lambda: move(-1)),
                 ("Move down", lambda: move(1))]
@@ -10744,7 +11227,7 @@ def build_window(model=None):
         try:
             with open(path, encoding="utf-8") as fh:          # missing / permission
                 data = json.loads(fh.read())                  # malformed JSON
-            snap = [list(st) for st in model.stages]
+            snap = [_copy_stage(st) for st in model.stages]
             model.load_dict(data)                             # schema + op-name validation
             win._undo_stack.append(snap)                      # fork history only on success
             if len(win._undo_stack) > _UNDO_CAP:
@@ -10924,7 +11407,7 @@ def build_window(model=None):
     # the operator list. Binding them to the pipeline list with
     # WidgetWithChildrenShortcut keeps the *menu items*, the toolbar and the
     # buttons working exactly as before — only the bare key press is now scoped.
-    for _a in (act_remove, act_dup, act_up, act_down, act_top, act_bottom, act_step, act_reset):
+    for _a in (act_remove, act_dup, act_bypass, act_up, act_down, act_top, act_bottom, act_step, act_reset):
         _a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)
         stage_list.addAction(_a)
 
@@ -10977,7 +11460,7 @@ def build_window(model=None):
         "feature_inspection": act_featins, "viewer_3d": act_viewer3d,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
-        "duplicate_stage": act_dup, "move_top": act_top, "move_bottom": act_bottom,
+        "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
         "focus_search": act_focus_search,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
