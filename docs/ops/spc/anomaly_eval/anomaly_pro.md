@@ -4,7 +4,7 @@ dim: spc
 category: anomaly_eval
 in: video × video
 out: table
-examples: [anomaly_eval_metrics, poc_good_sample_variation_model]
+examples: [anomaly_eval_metrics, poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ region, no good pixel, or ``fpr_max`` outside (0, 1].
 
 - [anomaly_eval_metrics](../../../../examples/anomaly_eval_metrics.py) — `py -3.11 examples/anomaly_eval_metrics.py`
 - [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
+- [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -48,7 +49,7 @@ region, no good pixel, or ``fpr_max`` outside (0, 1].
 
 ## 同カテゴリ(`anomaly_eval`)
 
-[anomaly_image_auroc](anomaly_image_auroc.md) · [anomaly_pixel_auroc](anomaly_pixel_auroc.md) · [anomaly_region_overlap](anomaly_region_overlap.md)
+[anomaly_image_auroc](anomaly_image_auroc.md) · [anomaly_pixel_auroc](anomaly_pixel_auroc.md) · [anomaly_region_overlap](anomaly_region_overlap.md) · [anomaly_pixel_f1_max](anomaly_pixel_f1_max.md) · [anomaly_image_f1_max](anomaly_image_f1_max.md) · [anomaly_operating_point](anomaly_operating_point.md)
 
 ---
 *Provenance: anomeval.py — SPC operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

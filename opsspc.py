@@ -51,12 +51,13 @@ Usage:
     opsspc.list_ops("chart")
     opsspc.get("spc_xbar_r")(subgroups)
 """
+import anomaly_patch
 import anomeval
 import pod
 import spc
 import varmodel
 
-_MOD = {"spc": spc, "pod": pod, "anomeval": anomeval, "varmodel": varmodel}
+_MOD = {"spc": spc, "pod": pod, "anomeval": anomeval, "varmodel": varmodel, "anomaly_patch": anomaly_patch}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: no new word is coined (it all fits the existing pool).
@@ -134,6 +135,18 @@ _CATALOG = {
         ("anomaly_pixel_auroc", "anomeval", ["video", "video"], "table"),
         ("anomaly_pro", "anomeval", ["video", "video"], "table"),
         ("anomaly_region_overlap", "anomeval", ["video", "video"], "table"),
+        ("anomaly_pixel_f1_max", "anomeval", ["video", "video"], "table"),
+        ("anomaly_image_f1_max", "anomeval", ["signal", "signal"], "table"),
+        ("anomaly_operating_point", "anomeval", ["signal", "signal"], "table"),
+    ],
+    # パッチ特徴の異常検知(anomaly_patch.py)。古典特徴(勾配・Gabor・LBP・周波数帯・色)で良品から学ぶ。
+    # 画像は image2d、良品の積み重ねは (n, H, W) の video、模型と結果は表。評価は anomaly_eval を使う。
+    "anomaly_patch": [
+        ("patch_features", "anomaly_patch", ["image2d"], "table"),
+        ("patchdist_fit", "anomaly_patch", ["video"], "table"),
+        ("patchdist_score", "anomaly_patch", ["image2d", "table"], "table"),
+        ("patchbank_fit", "anomaly_patch", ["video"], "table"),
+        ("patchbank_score", "anomaly_patch", ["image2d", "table"], "table"),
     ],
     # 良品統計の変動モデル(varmodel.py)。良品の積み重ねは video、試験の 1 枚は image2d、
     # 模型と結果は表。k は宣言した誤検出率から決まる(欠陥で調整しない)。

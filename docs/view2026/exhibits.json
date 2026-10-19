@@ -6455,6 +6455,23 @@
    }
   },
   {
+   "id": "poc_patch_anomaly",
+   "group": "wing_industrial",
+   "media": "01_anomaly_maps.png",
+   "motion": false,
+   "thumb_src": "01_anomaly_maps.png",
+   "label": {
+    "ja": "良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)",
+    "en": "Anomaly detection from good samples only (classical patch features: distribution versus memory)",
+    "zh": "仅从良品学习的图块特征异常检测(经典特征的分布与记忆)",
+    "tw": "僅從良品學習的圖塊特徵異常檢測(經典特徵的分布與記憶)",
+    "ko": "양품만으로 학습하는 패치 특징 이상 탐지(고전 특징의 분포와 메모리)",
+    "de": "Anomalieerkennung nur aus Gutteilen (klassische Patch-Merkmale: Verteilung gegen Speicher)",
+    "hi": "केवल अच्छे नमूनों से patch-feature anomaly detection (classical features का distribution बनाम memory)",
+    "fr": "Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)"
+   }
+  },
+  {
    "id": "poc_weed_rice_ratio",
    "group": "wing_astroenv",
    "media": "05_real_examples.png",
@@ -7279,6 +7296,14 @@
     "de": "Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition)",
     "hi": "point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़)",
     "fr": "Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière)"
+   },
+   "patch-feature-anomaly-detection": {
+    "zh": "仅从良品学习并指出偏离的图块(经典特征的逐位置正态分布与记忆库,保证召回率的工作点)",
+    "tw": "僅從良品學習並指出偏離的圖塊(經典特徵的逐位置常態分佈與記憶庫,保證召回率的工作點)",
+    "ko": "양품만으로 학습해 벗어난 패치를 가리킨다 (고전 특징의 위치별 정규분포와 메모리 뱅크, 재현율을 보장하는 운용점)",
+    "de": "Aus Gutteilen lernen und abweichende Patches zeigen (klassische Merkmale: Normalverteilung je Position oder Speicherbank, Arbeitspunkt mit garantiertem Recall)",
+    "hi": "केवल अच्छे samples से सीखकर भटके हुए patches बताना (classical features का per-position normal distribution या memory bank, recall की गारंटी वाला operating point)",
+    "fr": "Apprendre des seules bonnes pièces et désigner les patchs qui s'en écartent (caractéristiques classiques : loi normale par position ou banque mémoire, point de fonctionnement à rappel garanti)"
    }
   }
  },

@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">patchdist_score — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchdist_score(image, model, smooth=4.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchdist_score(image, model, smooth=4.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;patchdist_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>1 枚を位置ごとの正規分布に当てる: パッチごとのマハラノビス距離から異常地図を作る(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p><code style="color:#22d3bf">model</code> comes from <code style="color:#22d3bf">patchdist_fit</code>; <code style="color:#22d3bf">image</code> must have the training images&#x27; shape. The grid of distances <code style="color:#22d3bf">sqrt((x - mu)&#x27; P (x - mu))</code> is interpolated (bilinear, between patch centres) to the image size and smoothed by a Gaussian of <code style="color:#22d3bf">smooth</code> px (0 = no smoothing). Returns <code style="color:#22d3bf">map</code> (H, W; higher = more anomalous), <code style="color:#22d3bf">grid</code> (the raw distances), <code style="color:#22d3bf">image_score</code> (the maximum of the smoothed map) and <code style="color:#22d3bf">smooth</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for a model that is not a <code style="color:#22d3bf">patchdist_fit</code> result, a different image shape, or a negative / non-finite <code style="color:#22d3bf">smooth</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">anomaly_patch</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:patch_features">patch_features</a> · <a style="color:#22d3bf" href="opspc:patchdist_fit">patchdist_fit</a> · <a style="color:#22d3bf" href="opspc:patchbank_fit">patchbank_fit</a> · <a style="color:#22d3bf" href="opspc:patchbank_score">patchbank_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomaly_patch.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

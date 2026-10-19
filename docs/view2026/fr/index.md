@@ -85,7 +85,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-86 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+87 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -97,6 +97,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Corriger le texte contenu dans une image par rapport à la chaîne attendue: [explication](../../capabilities/fix-text-in-images.md) _(ja)_ · exemples [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
 - Signaler ce qui diffère de pièces bonnes alignées (modèle de variation par pixel, taux de fausses alarmes déclaré): [explication](../../capabilities/good-sample-variation-model.md) _(ja)_ · exemples [poc_good_sample_variation_model](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_good_sample_variation_model.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - Prétraitement pour l'OCR (correction de l'inclinaison, binarisation locale, découpage des lignes): [explication](../../capabilities/ocr-preprocessing.md) _(ja)_ · exemples [gallery2d_segmentation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_segmentation.py) · [poc_matrix_code_reading](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) · [gallery2d_region](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_region.py)
+- Apprendre des seules bonnes pièces et désigner les patchs qui s'en écartent (caractéristiques classiques : loi normale par position ou banque mémoire, point de fonctionnement à rappel garanti): [explication](../../capabilities/patch-feature-anomaly-detection.md) _(ja)_ · exemples [poc_patch_anomaly](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py) · [anomaly_eval_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/anomaly_eval_metrics.py)
 - Distinguer, par la PSF de diffusion des porteurs et le type de défaut, pourquoi une rainure fine n'est plus visible sur une image PL (inspection PL/EL des plaquettes de Si et des cellules solaires): [explication](../../capabilities/pl-carrier-diffusion-visibility.md) _(ja)_ · exemples [poc_si_wafer_pl_defect_visibility](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_si_wafer_pl_defect_visibility.py)
 - Détecter de petites cibles ponctuelles et en déterminer la position au niveau sous-pixel: [explication](../../capabilities/point-target-detection.md) _(ja)_ · exemples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - Appariement de gabarits robuste à l'éclairage inégal, aux reflets et aux occlusions (comparer le sens de la variation de luminosité comme un code, refuser les gabarits indéterminés): [explication](../../capabilities/robust-code-matching.md) _(ja)_ · exemples [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
@@ -205,7 +206,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-263 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+264 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -224,7 +225,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Inspection industrielle</b> (44)</summary>
+<details class="vall"><summary><b>Inspection industrielle</b> (45)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="Code-barres 1-D" width="200" height="200"><span>Code-barres 1-D</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Tortuosité des électrodes" width="200" height="200"><span>Tortuosité des électrodes</span></a>
@@ -270,6 +271,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_dual_energy_xray.jpg" alt="Os et verre dans la viande, séparés par deux énergies de rayons X (rayons X bi-énergie)" width="200" height="200"><span>Os et verre dans la viande, séparés par deux énergies de rayons X (rayons X bi-énergie)</span></a>
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Appariement de codes sous lumière variable et occlusion" width="200" height="200"><b>&#9654;</b><span>Appariement de codes sous lumière variable et occlusion</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="Modèle de variation des pièces bonnes" width="200" height="200"><span>Modèle de variation des pièces bonnes</span></a>
+<a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)" width="200" height="200"><span>Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)</span></a>
 </div>
 </details>
 
