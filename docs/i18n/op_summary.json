@@ -30887,6 +30887,51 @@
    "ko": "\"set vignetting\"처럼 개구에 잘리는 광선을 없애는 비네팅 계수를 계산한다(``table``).",
    "de": "Berechnet wie „Set Vignetting“ die Vignettierungsfaktoren, die jeden von einer Apertur beschnittenen Strahl beseitigen (``table``).",
    "hi": "\"set vignetting\" की तरह, aperture से कटने वाली हर ray को हटाने वाले vignetting factors निकालता है (``table``)।"
+  },
+  "optics/lens_configurations": {
+   "fp": "3bc881d21b96",
+   "en": "Resolve a multi-configuration prescription into one ``lens_system`` per configuration (``table``).",
+   "zh": "将多构型处方解析为每个构型一个 ``lens_system`` 的列表(``table``)。",
+   "tw": "將多構型處方解析為每個構型一個 ``lens_system`` 的列表(``table``)。",
+   "ko": "다중 구성 처방을 구성마다 하나의 ``lens_system``으로 풀어 목록으로 돌려준다(``table``).",
+   "de": "Löst eine Mehrkonfigurations-Vorschrift in je ein ``lens_system`` pro Konfiguration auf (``table``).",
+   "hi": "बहु-विन्यास prescription को प्रत्येक विन्यास के लिए एक ``lens_system`` की सूची में हल करता है (``table``)।"
+  },
+  "optics/lens_with_configuration": {
+   "fp": "74ea7ac3dd11",
+   "en": "Return configuration k (0-based) of a multi-configuration prescription as a resolved ``lens_system`` (``table``).",
+   "zh": "返回多构型处方的第 k 个构型(从 0 起)解析后的 ``lens_system``(``table``)。",
+   "tw": "回傳多構型處方的第 k 個構型(從 0 起)解析後的 ``lens_system``(``table``)。",
+   "ko": "다중 구성 처방의 k번째(0부터) 구성을 풀어 ``lens_system``으로 돌려준다(``table``).",
+   "de": "Gibt die k-te Konfiguration (0-basiert) einer Mehrkonfigurations-Vorschrift als aufgelöstes ``lens_system`` zurück (``table``).",
+   "hi": "बहु-विन्यास prescription का k-वाँ (0 से शुरू) विन्यास हल किए गए ``lens_system`` के रूप में लौटाता है (``table``)।"
+  },
+  "optics/lens_configuration_table": {
+   "fp": "403f15eb4fa9",
+   "en": "Return the multi-configuration table (rows = what changes between configurations, columns = configurations) (``table``).",
+   "zh": "返回多构型表(行 = 随构型变化的量,列 = 构型)(``table``)。",
+   "tw": "回傳多構型表(列 = 隨構型變化的量,欄 = 構型)(``table``)。",
+   "ko": "다중 구성 표(행 = 구성마다 달라지는 양, 열 = 구성)를 돌려준다(``table``).",
+   "de": "Gibt die Mehrkonfigurations-Tabelle zurück (Zeilen = was sich je Konfiguration ändert, Spalten = Konfigurationen) (``table``).",
+   "hi": "बहु-विन्यास तालिका लौटाता है (पंक्तियाँ = विन्यास के साथ बदलने वाली राशियाँ, स्तंभ = विन्यास) (``table``)।"
+  },
+  "optics/lens_configuration_metrics": {
+   "fp": "e85c0451f630",
+   "en": "List one metric (EFL, back focal length, RMS spot, MTF, encircled energy) per configuration (``table``).",
+   "zh": "按构型逐个列出一项指标(EFL、后焦距、RMS 光斑、MTF、环围能量)(``table``)。",
+   "tw": "依構型逐個列出一項指標(EFL、後焦距、RMS 光斑、MTF、圍繞能量)(``table``)。",
+   "ko": "구성마다 지표 하나(EFL, 후초점거리, RMS 스폿, MTF, 포함 에너지)를 나열한다(``table``).",
+   "de": "Listet je Konfiguration eine Kennzahl (EFL, Schnittweite, RMS-Spot, MTF, eingeschlossene Energie) auf (``table``).",
+   "hi": "प्रत्येक विन्यास के लिए एक मापदंड (EFL, पश्च फोकस दूरी, RMS स्पॉट, MTF, घिरी ऊर्जा) सूचीबद्ध करता है (``table``)।"
+  },
+  "optics/lens_add_configuration": {
+   "fp": "42dcc0ecda3d",
+   "ja": "*system* に構成を 1 つ足した複製を返す(``table``)。",
+   "zh": "返回追加了一个构型的 *system* 副本(``table``)。",
+   "tw": "回傳追加了一個構型的 *system* 副本(``table``)。",
+   "ko": "구성을 하나 더 붙인 *system*의 복사본을 돌려준다(``table``).",
+   "de": "Gibt eine Kopie von *system* mit einer zusätzlichen Konfiguration zurück (``table``).",
+   "hi": "*system* की एक प्रति लौटाता है जिसमें एक और विन्यास जुड़ा हो (``table``)।"
   }
  }
 }

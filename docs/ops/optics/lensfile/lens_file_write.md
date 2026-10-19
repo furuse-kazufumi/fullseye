@@ -4,7 +4,7 @@ dim: optics
 category: lensfile
 in: table
 out: table
-examples: [poc_lens_file_roundtrip]
+examples: [poc_lens_file_roundtrip, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -43,6 +43,11 @@ around it), a tilted image or object plane, a return across an odd number of
 reflections or one that would need a negative thickness. A coaxial
 ``raytrace.lens_system`` with tilted / decentred surfaces is still refused.
 
+A *system* (or a prescription's system) that carries ``configurations`` is written as a multi-
+configuration file: configuration 1 as the surface blocks, then ``MNUM`` and one row per varying
+thickness / curvature / glass / aspheric parameter and configuration (see the module help for what is
+refused); the result then also has ``n_configurations`` and ``rows`` (row counts per operand).
+
 Returns ``{"text", "path", "n_surfaces", "encoding", "dropped_solves"}``.
 
 Example::
@@ -76,6 +81,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
+- [poc_zoom_configurations](../../../../examples/poc_zoom_configurations.py) — `py -3.11 examples/poc_zoom_configurations.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

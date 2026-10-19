@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 多構成(ズーム・切替)の逐次系: `lensconfig` 5 op と .zmx の `MNUM` 表の読み書き(逐次光学設計の第 4 弾)
+- `raytrace.lens_system` の辞書に `"configurations"`(構成ごとの疎な上書き: 面の `R t n k ap f asph mirror decenter tilt`、系の `wavelength_um field stop object_mm image_mm aim`)を持たせられる。`lens_configurations` / `lens_with_configuration`(k は 0 始まり)が構成ごとに解決した `lens_system` を返し、他の op はそのまま使える。無い面・未知の欄・`lens_system` が拒否する値は構成の番号つきの ValueError、基の系は書き換えない。
+- `lens_configuration_table`(行 = 変わる量、列 = 構成)、`lens_configuration_metrics`(EFL・BFL・RMS スポット・MTF・囲みエネルギーを構成ごとに。既存の op を呼ぶだけ)、`lens_add_configuration`。
+- `lens_file_read` は `MNUM n 有効な構成` の表(`THIC` / `CRVT` / `GLSS` / `PRAM` / `PARn` の行)を構成ごとに組み立て、有効な構成を系に、全構成を `system["configurations"]` に入れる(`n_configurations` / `active_configuration`)。`SDIA` / `MOFF` / `MCOM` は無視して報告、他の演算子は未対応(`allow_partial` で落として近似の印)。行が全構成を揃えていない・範囲外の面や構成は拒否。`lens_file_write` は `configurations` を持つ系を構成 1 の面のブロック + `MNUM` + 変わる量の行で書き、行で運べない差(口径・視野・波長・円錐定数・面の型・モデル硝材、F/# から外れた瞳)は ValueError。
+- 行の形は公開のズームレンズ .zmx 24 本(`MNUM 2〜11`)と他の公開試料で確かめた(証人ごとの内訳は `docs/capabilities/sequential-lens-design-metrics.md`)。24 本のうち 23 本が読め、構成ごとの EFL は題名の焦点距離の範囲と一致、8 本を書いて読み戻すと EFL が一致。実ファイルは権利が明確でないので同梱しない。
+- 門 `tests/test_optdesign_multiconfig.py`(薄肉 2 枚の閉形式 EFL / BFL 1e-9、単一の理想レンズの f を変えた囲みエネルギーの Airy 83.8 %、往復で全上書き値と EFL が 1e-12、基の系を書き換えない、行の形、拒否の理由)。PoC `poc_zoom_configurations`(収蔵番号 2026.261)。
+
 ### Fixed — `roughness.surface_filter` のカットオフでの透過率を 0.5095 から 0.5000 に
 - 原因は定数 α(`√(ln2/π)`)でも標本化後の正規化でもなく、ガウス核の打ち切り `±λc/2`(2.67σ)。裾の 0.8 % が落ち、残りを 1 に正規化し直すため T(λc) = 0.5095 になっていた。
 - 打ち切りを `±0.75λc`(4σ、定数 `GAUSS_TRUNCATE`)に広げ、T(λc) = 0.500012、λc/2 と 2λc も閉形式 `exp(-π(αλc/λ)²)` と 1e-4 未満で一致。`reject` が捨てる端の帯は 1.5 倍(512x512・λc=80 で捨てる割合 28.8 % → 41.4 %)。

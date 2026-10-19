@@ -325,7 +325,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 商用の逐次光学設計ソフトで毎日使う 4 つの道具を、Fullseye の op として足しました。
 
-使う op: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`, `with_aiming`, `ray_aiming`, `set_vignetting`
+使う op: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`, `with_aiming`, `ray_aiming`, `set_vignetting`, `lens_configurations`, `lens_with_configuration`, `lens_configuration_table`, `lens_configuration_metrics`, `lens_add_configuration`
 
 推奨パイプライン: [`lens_system`](ops/optics/design/lens_system.md) → [`psf_from_opd`](ops/optics/imaging_sim/psf_from_opd.md) → [`encircled_energy`](ops/optics/imaging/encircled_energy.md) → [`energy_radii`](ops/optics/imaging/energy_radii.md) → [`mtf_tangential_sagittal`](ops/optics/imaging/mtf_tangential_sagittal.md) → [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md)
 
@@ -335,7 +335,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 実寸校正: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pitch_um、または細かい格子の間隔 λ·F#·(size−1)/M)で決まり、周波数は cycles/mm。ピッチを間違えると半径が比例して狂う(探針で確認)。
 
-動く例: `optical_design_metrics`
+動く例: `optical_design_metrics`, `poc_zoom_configurations`
 
 ### [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md)
 
@@ -793,7 +793,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 代替: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
 
-限界: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。ケラレ係数・曲がった像面・多構成・温度は allow_partial のときだけ近似として読む。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+限界: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。曲がった像面・温度、座標変換面と多構成の併用は allow_partial のときだけ近似として読む(多構成の表 MNUM は読み書きできる)。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
 
 実寸校正: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
 

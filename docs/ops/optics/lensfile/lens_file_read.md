@@ -4,7 +4,7 @@ dim: optics
 category: lensfile
 in: 
 out: table
-examples: [optical_design_metrics, poc_lens_file_roundtrip]
+examples: [optical_design_metrics, poc_lens_file_roundtrip, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.0  # fullseye lib version this note was generated for
@@ -38,6 +38,11 @@ with :func:`lens_file_system`), ``fields`` are ``{"x", "y", "weight",
 as the file stores them, glasses, apertures, solves) that
 :func:`lens_file_write` writes back, and ``report`` classifies every keyword
 as read / ignored / unsupported (see :func:`lens_file_report`).
+
+A file with an ``MNUM`` table (more than one configuration) is read into the active
+configuration plus ``system["configurations"]``, a list with one sparse override dict per
+configuration (see ``lensconfig``); the result also carries ``n_configurations`` and
+``active_configuration`` (0-based).
 
 A file with ``COORDBRK`` surfaces is read into a
 ``raytrace3d.noncoaxial_system`` (``noncoaxial`` is True, ``system`` is that
@@ -81,6 +86,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
+- [poc_zoom_configurations](../../../../examples/poc_zoom_configurations.py) — `py -3.11 examples/poc_zoom_configurations.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

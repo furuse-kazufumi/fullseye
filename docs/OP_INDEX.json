@@ -1,8 +1,8 @@
 {
- "n_ops": 3424,
+ "n_ops": 3429,
  "tiers": {
   "color": 12,
-  "ledger": 2468,
+  "ledger": 2473,
   "nary": 17,
   "registry": 927
  },
@@ -14156,6 +14156,19 @@
    ]
   },
   {
+   "name": "lens_add_configuration",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_area",
    "halcon": "",
    "in_sort": null,
@@ -14176,6 +14189,45 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_configuration_metrics",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_configuration_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_configurations",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "lens_element_drawing",
@@ -14325,6 +14377,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_with_configuration",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "level_set_reinit",

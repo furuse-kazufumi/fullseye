@@ -126,7 +126,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Une ligne moyenne que ni les rayures ni les pics ne peuvent tirer (régression gaussienne robuste et filtre spline, profil et surface): [explication](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · exemples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - Détecter les rayures fines et mesurer leur largeur: [explication](../../capabilities/scratch-detection-and-width.md) _(ja)_ · exemples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - Mesurer, avec vérité terrain, de combien le bord brillant d'un SEM grossit les dimensions: [explication](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · exemples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
-- Indicateurs de conception optique séquentielle (surface de lentille idéale, énergie encerclée, FTM tangentielle et sagittale, FTM à travers le foyer): [explication](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · exemples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py)
+- Indicateurs de conception optique séquentielle (surface de lentille idéale, énergie encerclée, FTM tangentielle et sagittale, FTM à travers le foyer): [explication](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · exemples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py)
 - Mesurer la forme de pièces noires brillantes et de verre par polarisation (reconstruction de forme à partir de la polarisation, ensemble d'ambiguïtés, estimation de l'indice de réfraction): [explication](../../capabilities/shape-from-polarization.md) _(ja)_ · exemples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Ajuster les coefficients d'un modèle physique à des images réelles (calibrage sim-to-real) — aucune valeur pour un coefficient que les images ne déterminent pas ; on renvoie à la place la combinaison déterminée et la raison: [explication](../../capabilities/sim-to-real-calibration.md) _(ja)_ · exemples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
 - Mesurer des dimensions sur une image au niveau sous-pixel: [explication](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · exemples [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
@@ -204,7 +204,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-260 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+261 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -401,7 +401,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Couleur et séparation</b> (10)</summary>
+<details class="vall"><summary><b>Couleur et séparation</b> (11)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)" width="200" height="200"><span>Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)" width="200" height="200"><b>&#9654;</b><span>Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)</span></a>
@@ -413,6 +413,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_real_stain_unmix/01_separation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_stain_unmix.jpg" alt="Séparation des colorations sur prises réelles" width="200" height="200"><span>Séparation des colorations sur prises réelles</span></a>
 <a href="../../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_white_balance.jpg" alt="Balance des blancs" width="200" height="200"><span>Balance des blancs</span></a>
 <a href="../../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_file_roundtrip.jpg" alt="Fichiers de conception optique (.zmx) : lire, analyser, corriger, réécrire" width="200" height="200"><span>Fichiers de conception optique (.zmx) : lire, analyser, corriger, réécrire</span></a>
+<a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Objectifs zoom comme différences d'une même prescription (multi-configuration)" width="200" height="200"><span>Objectifs zoom comme différences d'une même prescription (multi-configuration)</span></a>
 </div>
 </details>
 

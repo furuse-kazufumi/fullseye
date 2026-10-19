@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **93 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **94 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2202,7 +2202,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 10 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 11 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -2467,6 +2467,22 @@ py -3.11 examples/poc_lens_file_roundtrip.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_file_roundtrip)
 
 使用 op(ノートへ): [`drawing_raster`](https://furuse.work/ops/optics/drawing/drawing_raster.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_report`](https://furuse.work/ops/optics/lensfile/lens_file_report.html) · [`lens_file_system`](https://furuse.work/ops/optics/lensfile/lens_file_system.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_section_drawing`](https://furuse.work/ops/optics/drawing/lens_section_drawing.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`merit_function`](https://furuse.work/ops/optics/optimization/merit_function.html) · [`mtf50`](https://furuse.work/ops/optics/imaging/mtf50.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`noncoaxial_example`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_example.html) · [`noncoaxial_layout`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_layout.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`optimize_lens`](https://furuse.work/ops/optics/optimization/optimize_lens.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`seidel_coefficients`](https://furuse.work/ops/optics/design/seidel_coefficients.html) · [`spot_diagram`](https://furuse.work/ops/optics/design/spot_diagram.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
+
+## No.2026.261 —— ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点
+
+[![ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png)
+
+*↑ **ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点** ―― 広角・標準・望遠のように間隔や曲率だけが違う複数の構成を、処方を複製せず構成ごとの差分で持つ。新 op 5 本(`lensconfig`、`opsoptics` の `lensconfig`): `lens_configurations` / `lens_with_configuration` / `lens_configuration_table`(行 = 変わる量、列 = 構成)/ `lens_configuration_metrics`(EFL・後端焦点距離・RMS スポット・MTF・囲みエネルギーを構成ごとに)/ `lens_add_configuration`。`lens_file_read` / `lens_file_write` は設計ファイル(.zmx)の `MNUM` の表(`THIC` / `CRVT` / `GLSS` / `PRAM` の行)を読み書きする。行の形は公開のズームレンズ .zmx 24 本で確かめた。薄肉 2 枚(f1 = 100、f2 = 60 mm)の間隔 10 / 20 / 30 mm で EFL・後端焦点距離が閉形式 f1·f2/(f1+f2−d) と 1e-9 以内、単一の理想レンズの f を構成ごとに変えると囲みエネルギーは Airy の 83.8 %(最大の差 1e-4)。Cooke 三枚玉の前玉と中玉の間隔を変えた 3 構成(後端は構成ごとに合わせ直す)で EFL 50.26 / 50.02 / 49.79 mm、軸上 RMS スポット 3.6 / 12.0 / 26.2 µm。3 構成を MNUM 表つきの .zmx に書いて読み戻すと、構成ごとの全上書き値と EFL が 1e-12 以内で一致し、書き→読み→書きで同じ表になる。★構成ごとに口径・視野・波長が違う系は、検証できた行では運べないので .zmx への書き出しを拒否する(黙って落とさない)。学習 0、較正 0、門 14 件。*
+
+```
+py -3.11 examples/poc_zoom_configurations.py
+```
+
+ソース: [examples/poc_zoom_configurations.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zoom_configurations)
+
+使用 op(ノートへ): [`encircled_energy`](https://furuse.work/ops/optics/imaging/encircled_energy.html) · [`lens_add_configuration`](https://furuse.work/ops/optics/lensconfig/lens_add_configuration.html) · [`lens_configuration_metrics`](https://furuse.work/ops/optics/lensconfig/lens_configuration_metrics.html) · [`lens_configuration_table`](https://furuse.work/ops/optics/lensconfig/lens_configuration_table.html) · [`lens_configurations`](https://furuse.work/ops/optics/lensconfig/lens_configurations.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lens_with_configuration`](https://furuse.work/ops/optics/lensconfig/lens_with_configuration.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html)
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 

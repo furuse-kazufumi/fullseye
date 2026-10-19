@@ -2876,6 +2876,18 @@
    "run": "py -3.11 examples/poc_lens_file_roundtrip.py"
   },
   {
+   "id": "poc_zoom_configurations",
+   "wing": "wing_color",
+   "added": "2026-10-19",
+   "numbers_source": "log",
+   "figure": "zoom_configurations",
+   "title_ja": "ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点",
+   "title_en": "A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table",
+   "caption_ja": "広角・標準・望遠のように間隔や曲率だけが違う複数の構成を、処方を複製せず構成ごとの差分で持つ。新 op 5 本(`lensconfig`、`opsoptics` の `lensconfig`): `lens_configurations` / `lens_with_configuration` / `lens_configuration_table`(行 = 変わる量、列 = 構成)/ `lens_configuration_metrics`(EFL・後端焦点距離・RMS スポット・MTF・囲みエネルギーを構成ごとに)/ `lens_add_configuration`。`lens_file_read` / `lens_file_write` は設計ファイル(.zmx)の `MNUM` の表(`THIC` / `CRVT` / `GLSS` / `PRAM` の行)を読み書きする。行の形は公開のズームレンズ .zmx 24 本で確かめた。薄肉 2 枚(f1 = 100、f2 = 60 mm)の間隔 10 / 20 / 30 mm で EFL・後端焦点距離が閉形式 f1·f2/(f1+f2−d) と 1e-9 以内、単一の理想レンズの f を構成ごとに変えると囲みエネルギーは Airy の 83.8 %(最大の差 1e-4)。Cooke 三枚玉の前玉と中玉の間隔を変えた 3 構成(後端は構成ごとに合わせ直す)で EFL 50.26 / 50.02 / 49.79 mm、軸上 RMS スポット 3.6 / 12.0 / 26.2 µm。3 構成を MNUM 表つきの .zmx に書いて読み戻すと、構成ごとの全上書き値と EFL が 1e-12 以内で一致し、書き→読み→書きで同じ表になる。★構成ごとに口径・視野・波長が違う系は、検証できた行では運べないので .zmx への書き出しを拒否する(黙って落とさない)。学習 0、較正 0、門 14 件。",
+   "caption_en": "Several configurations that differ only in a spacing or a curvature, such as wide, standard and tele, are held as differences of one prescription instead of copies. Five new ops (`lensconfig`, category `lensconfig` of `opsoptics`): resolve all configurations, resolve one, the operand-by-configuration table, one metric (EFL, back focal length, RMS spot, MTF, encircled energy) per configuration, and append a configuration. `lens_file_read` / `lens_file_write` read and write the `MNUM` table of the design file (.zmx) with its `THIC` / `CRVT` / `GLSS` / `PRAM` rows; the row layout was checked on 24 public zoom-lens files. For two thin lenses (f1 = 100, f2 = 60 mm) at separations 10 / 20 / 30 mm the EFL and back focal length match the closed form f1 f2 / (f1 + f2 - d) to 1e-9, and for one ideal lens whose f changes per configuration the encircled energy is the Airy 83.8 % (worst difference 1e-4). A Cooke triplet with the gap between the first two lenses changed (the image distance refocused per configuration) has EFL 50.26 / 50.02 / 49.79 mm and on-axis RMS spot 3.6 / 12.0 / 26.2 um. Written to a .zmx with an MNUM table and read back, every overridden value and the EFL agree to 1e-12 per configuration and write-read-write gives the same table. A system whose aperture, field or wavelength differs between configurations cannot be carried by the verified rows, so the writer refuses it instead of dropping the difference. Learning 0, calibration 0, 14 gates.",
+   "run": "py -3.11 examples/poc_zoom_configurations.py"
+  },
+  {
    "id": "poc_moire_alignment",
    "wing": "wing_metrology",
    "added": "2026-10-15",
