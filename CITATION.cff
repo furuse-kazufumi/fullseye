@@ -17,6 +17,9 @@ identifiers:
     value: 10.5281/zenodo.22761195
     description: "Concept DOI (resolves to the newest archived version; each GitHub Release mints a version DOI)"
   - type: doi
+    value: 10.5281/zenodo.23484987
+    description: "Version DOI for 0.7.1 (minted by Zenodo from the GitHub Release on 2026-10-20)"
+  - type: doi
     value: 10.5281/zenodo.23448784
     description: "Version DOI for 0.7.0 (minted by Zenodo from the GitHub Release on 2026-10-18)"
   - type: doi
@@ -42,7 +45,7 @@ identifiers:
     description: "Version DOI for 0.2.0"
 abstract: >-
   Fullseye is a numpy-native library of typed classical image-processing and
-  geometric-vision operators (2-D and 3-D; 3,472 operators in the machine-readable index:
+  geometric-vision operators (2-D and 3-D; 3,481 operators in the machine-readable index:
   939 single-input 2-D operators, 17 n-ary and 2,465 in the typed ledgers), with an evolutionary pipeline-design mode
   evaluated under honest held-out gates, a Physical-AI perception stack
   (stereo -> depth -> point cloud -> 6-DoF pose), and an HDevelop-style IDE

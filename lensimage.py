@@ -72,6 +72,9 @@ def _system(system):
         raise ValueError("expected the dict returned by raytrace.lens_system(), got %r"
                          % type(system).__name__)
     RT.paraxial_trace(system)                       # validates the prescription too
+    if system.get("afocal"):
+        raise ValueError("an afocal system has no image plane and no F-number: the PSF / MTF / image-formation ops need a "
+                         "focusing system (use lenssolve.lens_afocal_report for the angular spot and the wavefront)")
     return system
 
 

@@ -1,0 +1,840 @@
+{
+ "ZMX_EXAMPLE": {
+  "rows": [
+   {
+    "R": 22.01359,
+    "ap": null,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 3.25896
+   },
+   {
+    "R": -435.76044,
+    "ap": null,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 6.00755
+   },
+   {
+    "R": -22.21328,
+    "ap": null,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 0.99997
+   },
+   {
+    "R": 20.29192,
+    "ap": 3.804552993374212,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 4.75041
+   },
+   {
+    "R": 79.6836,
+    "ap": null,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 2.95208
+   },
+   {
+    "R": -18.39533,
+    "ap": null,
+    "asph": [],
+    "k": 0.0,
+    "mirror": false,
+    "t": 42.20778
+   }
+  ]
+ },
+ "asphere_singlet.zmx": {
+  "fields": [
+   0.0,
+   5.0
+  ],
+  "n_solves": 0,
+  "noncoaxial": false,
+  "object_mm": "inf",
+  "rows": [
+   {
+    "R": 25.0,
+    "ap": 10.0,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.5168001097398938,
+    "t": 6.0,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -150.0,
+    "ap": null,
+    "asph": [
+     2e-05,
+     -3e-08,
+     1e-11
+    ],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": -3.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 35.0,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "stop": 0,
+  "wavelength_um": 0.58756
+ },
+ "cb_fold_two_axis.zmx": {
+  "elements": [
+   {
+    "R": 60.0,
+    "ap": 4.0,
+    "k": 0.0,
+    "n": [
+     1.5168,
+     64.17
+    ],
+    "t": 5.0
+   },
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 20.0
+   },
+   {
+    "decenter": [
+     1.0,
+     -0.5
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     30.0,
+     10.0,
+     5.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": 250.0,
+    "k": 0.0,
+    "mirror": true,
+    "t": 35.0
+   },
+   {
+    "decenter": [
+     0.4,
+     -0.3
+    ],
+    "order": "xyz",
+    "t": 20.0,
+    "tilt": [
+     -8.0,
+     -12.0,
+     -3.0
+    ],
+    "type": "break"
+   }
+  ],
+  "noncoaxial": true
+ },
+ "cb_off_axis_parabola.zmx": {
+  "elements": [
+   {
+    "R": Infinity,
+    "ap": 6.0,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 10.0
+   },
+   {
+    "decenter": [
+     0.0,
+     36.0
+    ],
+    "order": "xyz",
+    "t": 40.0,
+    "tilt": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": -200.0,
+    "k": -1.0,
+    "mirror": true,
+    "t": 100.0
+   }
+  ],
+  "noncoaxial": true
+ },
+ "cb_plate_x_undo.zmx": {
+  "elements": [
+   {
+    "R": Infinity,
+    "ap": 3.0,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 10.0
+   },
+   {
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     25.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": [
+     1.5168,
+     64.17
+    ],
+    "t": 5.0
+   },
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 0.0
+   },
+   {
+    "t": 20.0,
+    "type": "break",
+    "undo": 1
+   }
+  ],
+  "noncoaxial": true
+ },
+ "cb_three_mirrors.zmx": {
+  "elements": [
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 60.0
+   },
+   {
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     12.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": 166.66666666666666,
+    "k": 0.0,
+    "mirror": true,
+    "t": 0.0
+   },
+   {
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "order": "xyz",
+    "t": 50.0,
+    "tilt": [
+     12.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     -9.0,
+     -4.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": 250.0,
+    "ap": 11.28398522835117,
+    "k": 0.0,
+    "mirror": true,
+    "t": 0.0
+   },
+   {
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "order": "xyz",
+    "t": 70.0,
+    "tilt": [
+     -9.0,
+     4.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "decenter": [
+     0.0,
+     5.0
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     7.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": 500.0,
+    "k": 0.0,
+    "mirror": true,
+    "t": 60.0
+   },
+   {
+    "decenter": [
+     0.0,
+     2.0
+    ],
+    "order": "xyz",
+    "t": 10.0,
+    "tilt": [
+     7.0,
+     0.0,
+     0.0
+    ],
+    "type": "break"
+   }
+  ],
+  "noncoaxial": true
+ },
+ "cb_tilted_plate.zmx": {
+  "elements": [
+   {
+    "R": 60.0,
+    "ap": 4.0,
+    "k": 0.0,
+    "n": [
+     1.5168,
+     64.17
+    ],
+    "t": 4.0
+   },
+   {
+    "R": -83.33333333333333,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 25.0
+   },
+   {
+    "decenter": [
+     0.3,
+     -0.2
+    ],
+    "order": "xyz",
+    "t": 0.0,
+    "tilt": [
+     22.0,
+     -9.0,
+     4.0
+    ],
+    "type": "break"
+   },
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": [
+     1.5168,
+     64.17
+    ],
+    "t": 4.0
+   },
+   {
+    "R": Infinity,
+    "k": 0.0,
+    "n": 1.0,
+    "t": 0.0
+   },
+   {
+    "t": 30.0,
+    "type": "break",
+    "undo": 2
+   }
+  ],
+  "noncoaxial": true
+ },
+ "double_gauss_const.zmx": {
+  "fields": [
+   0.0,
+   10.0,
+   14.0
+  ],
+  "n_solves": 0,
+  "noncoaxial": false,
+  "object_mm": "inf",
+  "rows": [
+   {
+    "R": 56.20238,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62229,
+    "t": 8.75,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 152.2858,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 0.5,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 37.68262,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.60738,
+    "t": 12.5,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": Infinity,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.60342,
+    "t": 3.8,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 24.2313,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 16.369445,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": Infinity,
+    "ap": 6.341270471610401,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 13.747957,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -28.377310000000005,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.60342,
+    "t": 3.8,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": Infinity,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62041,
+    "t": 11.0,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -37.92546,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 0.5,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 177.41176,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62041,
+    "t": 7.0,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -79.41143,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 61.487536,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "stop": 5,
+  "wavelength_um": 0.58756
+ },
+ "triplet_catalog.zmx": {
+  "fields": [
+   0.0,
+   14.0,
+   20.0
+  ],
+  "n_solves": 0,
+  "noncoaxial": false,
+  "object_mm": "inf",
+  "rows": [
+   {
+    "R": 22.01359,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.6204100608393475,
+    "t": 3.25896,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -435.76044,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 6.00755,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -22.21328,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.6200532924653839,
+    "t": 0.99997,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 20.29192,
+    "ap": 3.804554499511585,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 4.75041,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 79.6836,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.6204100608393475,
+    "t": 2.95208,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -18.39533,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 42.20778,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "stop": 3,
+  "wavelength_um": 0.58756
+ },
+ "triplet_const.zmx": {
+  "fields": [
+   0.0,
+   14.0,
+   20.0
+  ],
+  "n_solves": 0,
+  "noncoaxial": false,
+  "object_mm": "inf",
+  "rows": [
+   {
+    "R": 22.01359,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62041,
+    "t": 3.25896,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -435.76044,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 6.00755,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -22.21328,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62004,
+    "t": 0.99997,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 20.29192,
+    "ap": 3.804552993374212,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 4.75041,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": 79.6836,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.62041,
+    "t": 2.95208,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "R": -18.39533,
+    "ap": null,
+    "asph": [],
+    "decenter": [
+     0.0,
+     0.0
+    ],
+    "k": 0.0,
+    "mirror": false,
+    "n_value": 1.0,
+    "t": 42.20778,
+    "tilt": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "stop": 3,
+  "wavelength_um": 0.58756
+ }
+}

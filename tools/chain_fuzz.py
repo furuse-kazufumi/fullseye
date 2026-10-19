@@ -8102,7 +8102,11 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       # ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
                                       "lens_substitute_glasses", "lens_global_search",
                                       # ★2026-10-19: 最適化後の処方(R = inf)を返す
-                                      "optimize_lens_operands"}
+                                      "optimize_lens_operands",
+                                      # ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、
+                                      #   その解の一覧(R = inf の行)を返す
+                                      "lens_apply_solves", "lens_solve_set", "lens_solve_clear", "afocal_system",
+                                      "lens_image_surface", "lens_solves_list"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が

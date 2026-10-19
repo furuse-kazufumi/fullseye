@@ -146,6 +146,7 @@ import watermedia
 import watervision
 import lensglobal
 import lensmerit
+import lenssolve
 import filmoptics
 import moirealign
 import gratinginterf
@@ -157,7 +158,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -651,6 +652,19 @@ _CATALOG = {
         ("merit_boundary_operands", "lensmerit", ["table"], "table"),
         ("optimize_lens_operands", "lensmerit", ["table"], "table"),
         ("merit_contributions", "lensmerit", ["table"], "table"),
+    ],
+    "lenssolve": [  # 解(solve)・ピックアップ・afocal・曲面の像面(lenssolve、2026-10-20)。解は面に付く宣言的な規則で、
+        # 追跡の前に毎回解き直される(傍らの数値は解いた値)。★fail-closed: 未知の種類・循環したピックアップ・絞りを動かす厚みの解・
+        # 軸上の主光線の解・根の無い F/# の解・collimate しない afocal は ValueError。
+        ("lens_apply_solves", "lenssolve", ["table"], "table"),
+        ("lens_solve_set", "lenssolve", ["table"], "table"),
+        ("lens_solve_clear", "lenssolve", ["table"], "table"),
+        ("lens_solves_list", "lenssolve", ["table"], "table"),
+        ("afocal_system", "lenssolve", ["table"], "table"),
+        ("lens_afocal_report", "lenssolve", ["table"], "table"),
+        ("lens_image_surface", "lenssolve", ["table"], "table"),
+        ("lens_petzval_radius", "lenssolve", ["table"], "table"),
+        ("lens_zmx_solves_roundtrip", "lenssolve", ["table"], "table"),
     ],
     "watermedia": [  # 水と透明媒質(watermedia、2026-10-19): 海の波・屈折・減衰・散乱・瓶のレンズ作用
         # ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。
