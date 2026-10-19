@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 水と透明媒質(海の波・水面の屈折・水中の色と散乱・瓶のレンズ作用): `watermedia` 10 op
+- `ocean_spectrum`(Pierson–Moskowitz 1964 と JONSWAP 1973 の S(ω)、有義波高・周期。PM の有義波高は閉形式 0.21 U²/g に 0.4 %、JONSWAP は γ = 1 で PM に 1e-9)と `ocean_height_field`(Tessendorf 2001 の FFT の海: エルミート対称で実数、方向分布 cos² / cos2s、水深の分散関係、荒れによる水平変位、単一モード。空間の分散はスペクトルの積分に 0.02 %、傾きの分散は Cox & Munk と比べて格子で解ける波は 1〜2 割 ―― PM は毛管波を持たない。飽和域を毛管波数まで延ばすと 5 m/s で 98 %、10 m/s で 61 %)。
+- `fresnel_water_air`(水の屈折率は材料表の実部で分散込み。Brewster 角 53.12°・臨界角 48.6°・R(0)・R + T = 1 を閉形式と glassmirror に照合、全反射の旗)/ `snell_window`(窓の半径・見かけの深さ。d/n は 60° で 52 % 外れる)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で: 平面は二分法で 4 次方程式と光路長の直接最小化に一致、波面は双 3 次の高さのニュートン法でベクトルのスネルの式を検算し、外れた点は NaN と `converged = False`)。
+- `water_attenuation`(Pope & Fry 1997 の純水の吸収の表: 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m。Smith & Baker 1981 の散乱、Solonenko & Mobley 2015 のジャーロフ型 I〜9C の a・b・Kd と深さごとの透過率。表の外・未知の型は拒否)/ `underwater_image`(Akkaynak & Treibitz 2018 の画像形成: 直接光の減衰 + 後方散乱のベール、距離 0 で入力に戻る、後方散乱を切ると Beer–Lambert)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold 1972 の体積散乱関数 3 局)/ `cylinder_lens_caustic`(円柱の近軸焦点は n R / (2 (n − 1))、実光線の焦線と球面収差、水入りの瓶と空の瓶の屈折力の比 13.6)。
+- 手書きの件数を打ち直す: 光学の op 399(+10)、索引 3,455 → 3,465、型付き台帳 2,499 → 2,509、ノート 3,461 → 3,471(AI_RAG_GUIDE 7 言語は `i18n_docs --stamp`)。能力ノート `docs/capabilities/water-transparent-media.md`、op 要約 6 言語、展示(撮像ウィング)・ViEW2026 の一覧。
+- 門 `tests/test_watermedia.py`(閉形式・第 2 実装・公表値で採点し、拒否と壊して確かめる探針を置く)。PoC `poc_water_transparent_media`(収蔵番号 2026.266、門 43 件、CPU 12 s で図つき、CI では 1 s 前後): 海・プールの底の市松模様とスネルの窓・水を入れた瓶の焦線と液面検査・潜水夫の見る色票・d/n の限界。
+
 ### Added — オペランド表のメリット関数と、硝材を変数にできる最適化: `lensmerit` 6 op(逐次光学設計の第 6 弾)
 - `merit_operands_list()`: 30 個のオペランド(名前・意味・単位・必須の引数・既定の引数・片側の向き)。`EFFL` `TOTR` `TTHI` `CTGT`/`CTLT`(中心厚)`ETGT`/`ETLT`(縁厚)`MNCG`/`MXCG`/`MNCA`/`MXCA`(ガラス・空気の厚みの最小・最大)`REAY`/`REAX`(実光線の高さ)`RAID`(入射角)`OPDX`(1 点の OPD)`SPHA` `COMA` `ASTI` `FCUR` `DIST`(Seidel 和を波長で割った波長数)`AXCL`/`LACL`(軸上・倍率色)`RSCE`/`RSCH`(重心・主光線まわりの RMS スポット)`WFNO` `PMAG` `DIMX` `WFRMS`、と瞳全体を 1 行にまとめる群の行 `TRAN`(横収差)`OPDW`(OPD)。
 - `merit_evaluate(system, operands, fields, wavelengths, field_weights, wavelength_weights)`: 行ごとに値・目標・重み・寄与 (w(値−目標))²・全体に対する割合を返す。片側の行(`ETGT` など、または任意の行に `sense="ge"/"le"`)は境界が守られている間は寄与 0。`field` / `wavelength` は呼び出しの `fields` / `wavelengths` の添字か `"all"`(行が展開され、重みに √視野重み・√波長重みが掛かる)。縁厚は両面のクリア半径(面の `ap`、無ければ近軸の周辺光線 + 主光線の高さ)でのサグから `t − sag_i(h_i) + sag_{i+1}(h_{i+1})`(円錐・偶数次非球面を含む)。

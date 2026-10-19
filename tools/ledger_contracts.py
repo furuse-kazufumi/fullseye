@@ -909,6 +909,17 @@ def _batch2_builders():
         "lockin_ring_synthesize": lambda pool, rng: ([_lk_height(rng), 20.0, 8, 1, 16, 2], {}),
         "lockin_ring_normals": lambda pool, rng: ([_lk_demod(rng), 20.0], {}),
         "lockin_thermal_wave": lambda pool, rng: ([1e-3 * (1.0 + 2.0 * rng.random((8, 8))), 4.2e-7, 0.1, 16, 2], {}),
+        # watermedia(2026-10-19): 風速・角度・屈折率は物理の範囲、点は水中(z < 0)、目は水面の上、画像は 3 バンドの非負
+        "ocean_spectrum": lambda pool, rng: ([4.0 + 10.0 * rng.random()], {"kind": "jonswap"}),
+        "ocean_height_field": lambda pool, rng: ([16, 60.0, 4.0 + 8.0 * rng.random(), 360.0 * rng.random()], {"seed": int(rng.integers(0, 1000)), "directional": "cos2s"}),
+        "fresnel_water_air": lambda pool, rng: ([90.0 * rng.random()], {}),
+        "snell_window": lambda pool, rng: ([0.5 + 5.0 * rng.random()], {}),
+        "refracted_view": lambda pool, rng: ([np.array([[0.0, 0.0, -1.0 - rng.random()], [0.5, 0.3, -2.0]]), np.array([2.0 * rng.random(), 1.0, 3.0])], {}),
+        "water_attenuation": lambda pool, rng: ([0.42 + 0.25 * rng.random(), "jerlov_II"], {"depth_m": 3.0 * rng.random()}),
+        "underwater_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 2.0 * rng.random((6, 6)), 6.0 * rng.random((6, 6))], {}),
+        "phase_function_hg": lambda pool, rng: ([2.0 * rng.random(7) - 1.0, 1.8 * rng.random() - 0.9], {}),
+        "scattering_phase_petzold": lambda pool, rng: ([0.1 + 179.0 * rng.random(5)], {}),
+        "cylinder_lens_caustic": lambda pool, rng: ([10.0 + 20.0 * rng.random(), 1.4 + 0.2 * rng.random(), 1.333, 1.0], {}),
         # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
         #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
         #   max_peaks のノブが効かない入力になる)。

@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 87 capabilities**
+**Currently 88 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -79,6 +79,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [Carve a solid out of silhouettes (visual hull)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [Turn a 3-D scan into a volume](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
+| [Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)](capabilities/water-transparent-media.md) | `ocean_height_field` → `refracted_view` → `water_attenuation` → `underwater_image` | `poc_water_transparent_media` |
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
@@ -588,7 +589,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (19)
+## Light and colour (20)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -797,6 +798,18 @@ Pipeline: [`multilayer_reflectance`](ops/optics/film/multilayer_reflectance.md) 
 Alternatives: [`thin_film_reflectance`](ops/optics/appearance/thin_film_reflectance.md), [`film_color`](ops/optics/film/film_color.md)
 
 Runnable: `poc_thin_film_reflectometry`
+
+### [Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)](capabilities/water-transparent-media.md)
+
+Ten ops in `watermedia` (category `watermedia` of `opsoptics`): the wave spectrum of a wind sea (Pierson-Moskowitz, JONSWAP) and a Tessendorf FFT sea with slopes, normals, choppiness and finite depth; Fresnel reflectance and transmittance of the air-water interface with the dispersive index of the material table; Snell's window and the apparent depth; the apparent position of an underwater point as a stationary point of the optical path (bisection on a flat surface, Newton iteration with the vector Snell law verified on a wavy one); pure-water absorption (Pope & Fry 1997), scattering (Smith & Baker 1981) and the diffuse attenuation of the Jerlov water types (Solonenko & Mobley 2015); underwater image formation (Akkaynak & Treibitz 2018); the Henyey-Greenstein and Petzold phase functions; and the paraxial focus and real-ray caustic of a cylinder. Inputs outside a table, unknown water types, |g| >= 1 and n <= 1 are refused; a path that does not satisfy Snell's law is returned as NaN.
+
+Operators: `ocean_spectrum`, `ocean_height_field`, `fresnel_water_air`, `snell_window`, `refracted_view`, `water_attenuation`, `underwater_image`, `phase_function_hg`, `scattering_phase_petzold`, `cylinder_lens_caustic`
+
+Pipeline: [`ocean_height_field`](ops/optics/watermedia/ocean_height_field.md) → [`refracted_view`](ops/optics/watermedia/refracted_view.md) → [`water_attenuation`](ops/optics/watermedia/water_attenuation.md) → [`underwater_image`](ops/optics/watermedia/underwater_image.md)
+
+Alternatives: [`ocean_spectrum`](ops/optics/watermedia/ocean_spectrum.md), [`fresnel_water_air`](ops/optics/watermedia/fresnel_water_air.md), [`snell_window`](ops/optics/watermedia/snell_window.md), [`phase_function_hg`](ops/optics/watermedia/phase_function_hg.md), [`scattering_phase_petzold`](ops/optics/watermedia/scattering_phase_petzold.md), [`cylinder_lens_caustic`](ops/optics/watermedia/cylinder_lens_caustic.md)
+
+Runnable: `poc_water_transparent_media`
 
 ## Waves and signals (5)
 

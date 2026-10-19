@@ -66,7 +66,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](defocus_blur.md) · [diffraction_blur](diffraction_blur.md) · [sensor_capture](sensor_capture.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [false_color_metric](../pixelshift/false_color_metric.md)
+[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](defocus_blur.md) · [diffraction_blur](diffraction_blur.md) · [sensor_capture](sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [false_color_metric](../pixelshift/false_color_metric.md)
 
 ## 同カテゴリ(`scene`)
 
