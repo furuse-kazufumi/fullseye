@@ -142,6 +142,7 @@ import temsim
 import lensfile
 import lensconfig
 import lockin
+import watermedia
 import lensglobal
 import lensmerit
 import lenssolve
@@ -156,7 +157,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "lensglobal": lensglobal, "lensmerit": lensmerit, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "lensmerit": lensmerit, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -663,6 +664,20 @@ _CATALOG = {
         ("lens_image_surface", "lenssolve", ["table"], "table"),
         ("lens_petzval_radius", "lenssolve", ["table"], "table"),
         ("lens_zmx_solves_roundtrip", "lenssolve", ["table"], "table"),
+    ],
+    "watermedia": [  # 水と透明媒質(watermedia、2026-10-19): 海の波・屈折・減衰・散乱・瓶のレンズ作用
+        # ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。
+        #   波のスペクトルは Pierson-Moskowitz(1964)/ JONSWAP(1973)、水の吸収は Pope & Fry(1997)、散乱の位相関数は Petzold(1972)。
+        ("ocean_spectrum", "watermedia", [], "table"),
+        ("ocean_height_field", "watermedia", [], "table"),
+        ("fresnel_water_air", "watermedia", [], "table"),
+        ("snell_window", "watermedia", [], "table"),
+        ("refracted_view", "watermedia", [], "table"),
+        ("water_attenuation", "watermedia", [], "table"),
+        ("underwater_image", "watermedia", ["rgbimage", "image2d", "image2d"], "table"),
+        ("phase_function_hg", "watermedia", [], "table"),
+        ("scattering_phase_petzold", "watermedia", [], "table"),
+        ("cylinder_lens_caustic", "watermedia", [], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3464,
- "n_notes": 3470,
+ "n_ops": 3474,
+ "n_notes": 3480,
  "notes": {
   "vol_dilate": [
    {
@@ -30737,6 +30737,97 @@
     "category": "tem",
     "out": "table",
     "path": "docs/ops/optics/tem/tem_wavelength.md"
+   }
+  ],
+  "cylinder_lens_caustic": [
+   {
+    "op": "cylinder_lens_caustic",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/cylinder_lens_caustic.md"
+   }
+  ],
+  "fresnel_water_air": [
+   {
+    "op": "fresnel_water_air",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/fresnel_water_air.md"
+   }
+  ],
+  "ocean_height_field": [
+   {
+    "op": "ocean_height_field",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/ocean_height_field.md"
+   }
+  ],
+  "ocean_spectrum": [
+   {
+    "op": "ocean_spectrum",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/ocean_spectrum.md"
+   }
+  ],
+  "phase_function_hg": [
+   {
+    "op": "phase_function_hg",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/phase_function_hg.md"
+   }
+  ],
+  "refracted_view": [
+   {
+    "op": "refracted_view",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/refracted_view.md"
+   }
+  ],
+  "scattering_phase_petzold": [
+   {
+    "op": "scattering_phase_petzold",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/scattering_phase_petzold.md"
+   }
+  ],
+  "snell_window": [
+   {
+    "op": "snell_window",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/snell_window.md"
+   }
+  ],
+  "underwater_image": [
+   {
+    "op": "underwater_image",
+    "dim": "optics",
+    "category": "watermedia",
+    "in": "rgbimage × image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/underwater_image.md"
+   }
+  ],
+  "water_attenuation": [
+   {
+    "op": "water_attenuation",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/water_attenuation.md"
    }
   ],
   "airy_pattern": [

@@ -2166,6 +2166,27 @@
    ]
   },
   {
+   "id": "water-transparent-media",
+   "title": "水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)",
+   "title_en": "Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)",
+   "category": "光と色",
+   "note": "docs/capabilities/water-transparent-media.md",
+   "status": "verified-synthetic",
+   "ops_total": 10,
+   "ops_named_in_tests": 10,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_water_transparent_media",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "what-a-picture-cannot-check",
    "title": "絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)",
    "title_en": "What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces)",
@@ -2209,8 +2230,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 414,
-  "run_by_the_poc_gate": 266,
+  "examples2d_total": 415,
+  "run_by_the_poc_gate": 267,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [

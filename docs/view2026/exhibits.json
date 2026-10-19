@@ -6319,6 +6319,23 @@
    }
   },
   {
+   "id": "poc_water_transparent_media",
+   "group": "wing_imaging",
+   "media": "04_pool_views.png",
+   "motion": false,
+   "thumb_src": "04_pool_views.png",
+   "label": {
+    "ja": "水と透明媒質: 海の波・プールの屈折・水中の色・瓶の焦線",
+    "en": "Water and transparent media: ocean waves, pool refraction, colour under water, a bottle's caustic",
+    "zh": "水与透明介质:海浪、泳池折射、水下颜色、瓶子的焦散线",
+    "tw": "水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線",
+    "ko": "물과 투명 매질: 바다 파도, 수영장 굴절, 수중의 색, 병의 초점선",
+    "de": "Wasser und transparente Medien: Meereswellen, Brechung im Becken, Farbe unter Wasser, Brennlinie einer Flasche",
+    "hi": "पानी और पारदर्शी माध्यम: ocean waves, pool में refraction, पानी के भीतर का रंग, बोतल की caustic",
+    "fr": "L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",
@@ -7338,6 +7355,14 @@
     "de": "Aus Gutteilen lernen und abweichende Patches zeigen (klassische Merkmale: Normalverteilung je Position oder Speicherbank, Arbeitspunkt mit garantiertem Recall)",
     "hi": "केवल अच्छे samples से सीखकर भटके हुए patches बताना (classical features का per-position normal distribution या memory bank, recall की गारंटी वाला operating point)",
     "fr": "Apprendre des seules bonnes pièces et désigner les patchs qui s'en écartent (caractéristiques classiques : loi normale par position ou banque mémoire, point de fonctionnement à rappel garanti)"
+   },
+   "water-transparent-media": {
+    "zh": "水与透明介质(海浪、水面的菲涅耳与折射、水下的颜色与散射、瓶子的透镜作用)",
+    "tw": "水與透明介質(海浪、水面的菲涅耳與折射、水下的顏色與散射、瓶子的透鏡作用)",
+    "ko": "물과 투명 매질(바다 파도, 수면의 프레넬과 굴절, 수중의 색과 산란, 병의 렌즈 작용)",
+    "de": "Wasser und transparente Medien (Meereswellen, Fresnel und Brechung an der Oberfläche, Farbe und Streuung unter Wasser, eine Flasche als Linse)",
+    "hi": "पानी और पारदर्शी माध्यम (ocean waves, सतह पर Fresnel और refraction, पानी के भीतर रंग और scattering, लेंस के रूप में बोतल)",
+    "fr": "L'eau et les milieux transparents (vagues, Fresnel et réfraction à la surface, couleur et diffusion sous l'eau, une bouteille comme lentille)"
    }
   }
  },

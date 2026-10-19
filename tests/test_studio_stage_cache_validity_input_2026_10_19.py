@@ -277,6 +277,7 @@ def test_b5_problems_and_status_offscreen(monkeypatch):
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     for n in _OPS4:
         model.add_stage(n, 0.4, 0.5)
+    model.step_states()                               # run first: the list rebuild never computes (slice 2)
     win._refresh_stage_list()
     probs = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
     warn = [t for t in probs if t.startswith("⚠")]

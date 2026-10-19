@@ -1,4 +1,4 @@
-# OPTICS operator help — 398 ops in 45 categories
+# OPTICS operator help — 408 ops in 46 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -193,6 +193,10 @@
 ### tem (11)
 
 [tem_amorphous_film](tem/tem_amorphous_film.md) · [tem_ctf](tem/tem_ctf.md) · [tem_ctf_correct](tem/tem_ctf_correct.md) · [tem_ctf_estimate](tem/tem_ctf_estimate.md) · [tem_ctf_profile](tem/tem_ctf_profile.md) · [tem_image_weak_phase](tem/tem_image_weak_phase.md) · [tem_multislice](tem/tem_multislice.md) · [tem_power_spectrum](tem/tem_power_spectrum.md) · [tem_projected_potential](tem/tem_projected_potential.md) · [tem_scherzer](tem/tem_scherzer.md) · [tem_wavelength](tem/tem_wavelength.md)
+
+### watermedia (10)
+
+[cylinder_lens_caustic](watermedia/cylinder_lens_caustic.md) · [fresnel_water_air](watermedia/fresnel_water_air.md) · [ocean_height_field](watermedia/ocean_height_field.md) · [ocean_spectrum](watermedia/ocean_spectrum.md) · [phase_function_hg](watermedia/phase_function_hg.md) · [refracted_view](watermedia/refracted_view.md) · [scattering_phase_petzold](watermedia/scattering_phase_petzold.md) · [snell_window](watermedia/snell_window.md) · [underwater_image](watermedia/underwater_image.md) · [water_attenuation](watermedia/water_attenuation.md)
 
 ### wave (9)
 

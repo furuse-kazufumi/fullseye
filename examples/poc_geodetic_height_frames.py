@@ -1123,7 +1123,8 @@ def main():
     closed = {"geoid": ["dem_geoid_height"],
               # ★2026-10-15: material_xray_attenuation(X 線の減衰)の "att-enu-ation" が語幹 enu に当たる。
               #   測地の ENU ではなく単語の一部 —— 同じ文字列の別の意味として名前で固定する。
-              "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu", "material_xray_attenuation"],
+              # ★2026-10-19: water_attenuation(水の減衰)も同じ。
+              "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu", "material_xray_attenuation", "water_attenuation"],
               # ★2026-10-05: granular の datum_tilt_check(粉体の山の**基準面**の傾きの警報)が語幹 datum に当たる。
               #   測地成果ではなく「高さ図の基準面」の意味 —— 同じ語の別の意味として名前で固定する。
               "datum": ["datum_tilt_check", "dem_datum_shift_3param"]}
