@@ -197,7 +197,8 @@ def _is_registry(name: str) -> bool:
 
 def _tier(name: str) -> str:
     """どの層の op か: ``registry``(単入力の 2-D レジストリ)/ ``ledger``(型付き台帳)/ ``nary``(複数入力の 2-D)/
-    ``z_algo``(汎用アルゴリズム)/ ``other``。索引の op は全部どれかに入る(``api.list_ops`` が正本)。"""
+    ``z_algo``(汎用アルゴリズム)/ ``unavailable``。索引に在るのにこの環境では登録されていない op
+    (任意の依存が無い CI の一部の殻など)は ``unavailable`` —— 検索には出すが、UI は走らせられない印にする。"""
     if _is_registry(name):
         return "registry"
     if name in _ledger_names():
@@ -205,7 +206,7 @@ def _tier(name: str) -> str:
     if "tiers" not in _NAME_CACHE:
         import api
         _NAME_CACHE["tiers"] = {d["name"]: d["tier"] for d in api.list_ops(include_ledger=True, include_algo=True)}
-    return _NAME_CACHE["tiers"].get(name, "other")
+    return _NAME_CACHE["tiers"].get(name, "unavailable")
 
 
 def _edges() -> dict:
@@ -264,8 +265,9 @@ def _required_knobs(name: str) -> int:
 
 
 def _bridge_rank(name: str) -> tuple:
-    """橋渡し op の選び方: 既定のまま走る(必須のつまみが少ない)→ レジストリの基本 op → 名前の短い順 → 辞書順(決定的)。"""
-    return (_required_knobs(name), 0 if _is_registry(name) else 1, len(name), name)
+    """橋渡し op の選び方: この環境で動く → 既定のまま走る(必須のつまみが少ない)→ レジストリの基本 op → 名前の短い順 → 辞書順(決定的)。"""
+    return (1 if _tier(name) == "unavailable" else 0, _required_knobs(name), 0 if _is_registry(name) else 1,
+            len(name), name)
 
 
 def _bridge(cur: Optional[str], target: Optional[str], exclude: str = "") -> list:

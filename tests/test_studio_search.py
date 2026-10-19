@@ -349,8 +349,29 @@ def test_every_row_name_resolves():
                     # 単入力の 2-D op は find_op、台帳 op は known_ops、複数入力の op(symm_difference 等)は
                     # find_op に無く list_ops の nary 層で引く —— どれにも無い名前は 1 行も出さない
                     ok = api.find_op(e["name"]) is not None or e["name"] in ledger
+                    if e["tier"] == "unavailable":
+                        # 索引には在るが、この環境では登録されていない(任意の依存が無い殻)。出荷の索引が名前を持つ
+                        assert e["name"] not in listed and not ok, e["name"]
+                        assert api._shipped_index().get(e["name"]) is not None, e["name"]
+                        continue
                     assert (ok or listed.get(e["name"], {}).get("tier") in ("nary", "z_algo")), e["name"]
                     assert e["name"] in listed, e["name"]
                     assert e["tier"] == listed[e["name"]]["tier"], e["name"]
                     n += 1
     assert n >= 100
+
+
+def test_op_missing_in_this_environment_is_marked_unavailable_not_dropped(monkeypatch):
+    """任意の依存が無い環境では、索引に在る op が登録されない(CI の殻で xmh_bwperim が実際にそうだった)。
+    その行は落とさず ``tier="unavailable"`` で返し、型の判定は変えない。環境を差し替えて種を与える。"""
+    real_find, real_list = api.find_op, api.list_ops
+    gone = {"remove_small"}
+    monkeypatch.setattr(api, "find_op", lambda n: None if n in gone else real_find(n))
+    monkeypatch.setattr(api, "list_ops", lambda *a, **k: [d for d in real_list(*a, **k) if d["name"] not in gone])
+    ss.clear_caches()
+    res = ss.search_grouped("remove small regions", _region())
+    row = {e["name"]: e for e in res["applicable"]}["remove_small"]
+    assert row["tier"] == "unavailable" and row["fit"] == "declared"
+    assert api._shipped_index().get("remove_small") is not None
+    others = [e for e in res["applicable"] if e["name"] != "remove_small"]
+    assert len(others) >= 3 and all(e["tier"] != "unavailable" for e in others)
