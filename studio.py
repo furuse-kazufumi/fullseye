@@ -378,15 +378,193 @@ def _settings():
     return QtCore.QSettings("Fullseye", "Studio")
 
 
+def _stage_key(s):
+    """The cache key of one stage: (op, a, b) as plain values."""
+    return (str(s[0]), float(s[1]), float(s[2]))
+
+
+# --------------------------------------------------------------------------- #
+# 結果の妥当性(ran / valid / reasons を分けて持つ)と、入力画像の参照(project 保存)。
+# どちらも Qt を使わない。Studio は**報告するだけ**で、op の数値の問題を直したり隠したりしない。
+# --------------------------------------------------------------------------- #
+#: 結果の dict が持つ「妥当/非妥当」の明示欄(opsmultivar / lensopt / spc / drive* などの実在の名前)。
+_VALIDITY_KEYS = ("converged", "valid", "guf_valid", "ok", "success")
+#: ``status`` 欄の文字列のうち、失敗を意味するもの / 成功を意味するもの(出典タグの "primary" などは判定しない)。
+_STATUS_BAD = frozenset({"failed", "failure", "error", "diverged", "not_converged", "nonconverged",
+                         "max_iter", "maxiter", "max_iterations", "singular", "invalid", "degenerate"})
+_STATUS_GOOD = frozenset({"converged", "ok", "success", "succeeded"})
+
+
+def _bool_verdict(x):
+    """明示欄 1 つの判定: True / False / None(読めない)。大きい bool 配列は「有効が 1 つも無い」時だけ False。"""
+    if isinstance(x, (bool, np.bool_)):
+        return bool(x)
+    if isinstance(x, np.ndarray) and x.dtype == bool and x.size:
+        if x.size == 1:
+            return bool(x.reshape(-1)[0])
+        return None if x.any() else False
+    return None
+
+
+def assess_validity(val):
+    """結果の妥当性を ``(valid, reasons)`` で返す。valid は True / False / None(未判定)。
+
+    * 結果が dict で明示欄(``converged`` / ``valid`` / ``guf_valid`` / ``ok`` / ``success`` /
+      ``status`` / ``n_iter`` と ``max_iter``)を持てば、それを写す。どれかが偽なら False。
+    * 配列は、非有限値・空・(実数画像で)一定値のときだけ False。それ以外は**判定しない(None)**
+      —— 妥当性の情報が無い結果に「OK」を出さない。
+    報告するだけで、値は一切変えない。"""
+    why = []
+    if isinstance(val, dict):
+        good = False
+        for k in _VALIDITY_KEYS:
+            if k not in val:
+                continue
+            r = _bool_verdict(val[k])
+            if r is False:
+                big = isinstance(val[k], np.ndarray) and val[k].size > 1
+                why.append("%s is False%s" % (k, " (no valid entries)" if big else ""))
+            elif r is True:
+                good = True
+        st = val.get("status")
+        if isinstance(st, str):
+            sl = st.strip().lower()
+            if sl in _STATUS_BAD:
+                why.append("status=%s" % st)
+            elif sl in _STATUS_GOOD:
+                good = True
+        for ik in ("n_iter", "iterations"):
+            mi = val.get("max_iter", val.get("max_iterations"))
+            n = val.get(ik)
+            if (isinstance(n, (int, np.integer)) and isinstance(mi, (int, np.integer))
+                    and not isinstance(n, bool) and mi > 0 and n >= mi):
+                why.append("reached max_iter (%d)" % int(mi))
+                break
+        if why:
+            ir = val.get("invalid_reasons")
+            if isinstance(ir, (list, tuple)):
+                why.extend(str(x) for x in ir[:8])
+            return False, why
+        return (True, []) if good else (None, [])
+    if isinstance(val, (float, complex, np.floating, np.complexfloating)):
+        val = np.asarray(val)
+    if not isinstance(val, np.ndarray):
+        return None, []
+    if val.size == 0:
+        return False, ["empty result"]
+    if val.dtype.kind in "fc":
+        fin = np.isfinite(val)
+        k = int(val.size - np.count_nonzero(fin))
+        if k:
+            why.append("%d non-finite values" % k)
+        if val.ndim in (2, 3) and fin.any():
+            num = np.abs(val[fin]) if val.dtype.kind == "c" else val[fin]
+            if float(np.ptp(num)) == 0.0 and not _is_binary(val):
+                why.append("constant image (all pixels equal)")
+    return (False, why) if why else (None, [])
+
+
+def file_sha256(path):
+    """ファイルのバイト列の sha256(16 進)。読めなければ OSError。"""
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def input_reference(path, image=None):
+    """project 保存に入れる入力画像の参照: path(与えられたまま)・sha256・shape・dtype。"""
+    ref = {"path": str(path), "sha256": file_sha256(path)}
+    if image is not None:
+        arr = np.asarray(image)
+        ref["shape"] = [int(v) for v in arr.shape]
+        ref["dtype"] = str(arr.dtype)
+    return ref
+
+
+def _valid_input_ref(d):
+    """保存ファイルの ``input`` 欄を読む。壊れていたら None(古い形と同じ扱い。読み込みは落とさない)。"""
+    if not isinstance(d, dict) or not isinstance(d.get("path"), str) or not d["path"]:
+        return None
+    if not isinstance(d.get("sha256"), str):
+        return None
+    ref = {"path": d["path"], "sha256": d["sha256"]}
+    if isinstance(d.get("shape"), list) and all(isinstance(v, int) and not isinstance(v, bool) for v in d["shape"]):
+        ref["shape"] = list(d["shape"])
+    if isinstance(d.get("dtype"), str):
+        ref["dtype"] = d["dtype"]
+    return ref
+
+
+def resolve_input_ref(ref, base_dir):
+    """保存された入力参照を今の環境へ当てる。``{"status", "path", "message"}`` を返す。
+
+    status: ``ok``(ある・sha256 一致 = 黙って読む)/ ``changed``(ある・不一致 = 読むが警告)/
+    ``relinked``(元の場所に無く、.json の隣の同じ名前で見つかった・一致)/ ``missing``(見つからない =
+    今の画像を保つ)。相対 path は .json のあるフォルダ基準。"""
+    given = str(ref["path"])
+    cand = given if os.path.isabs(given) else os.path.join(base_dir, given)
+    name = re.split(r"[\\/]", given)[-1]
+
+    def _same(p):
+        try:
+            return file_sha256(p) == ref.get("sha256")
+        except OSError:
+            return None
+
+    if os.path.isfile(cand):
+        same = _same(cand)
+        if same:
+            return {"status": "ok", "path": cand, "message": ""}
+        if same is not None:
+            return {"status": "changed", "path": cand,
+                    "message": "input file changed since save: %s" % given}
+    alt = os.path.join(base_dir, name) if name else ""
+    if alt and os.path.isfile(alt) and os.path.abspath(alt) != os.path.abspath(cand):
+        same = _same(alt)
+        if same:
+            return {"status": "relinked", "path": alt,
+                    "message": "input relinked by file name: %s -> %s" % (given, alt)}
+        if same is not None:
+            return {"status": "changed", "path": alt,
+                    "message": "input file changed since save: %s (found next to the project file)" % given}
+    return {"status": "missing", "path": None, "message": "input not found: %s" % given}
+
+
 class PipelineModel:
-    """An ordered list of (op, a, b) stages applied to a base image."""
+    """An ordered list of (op, a, b) stages applied to a base image.
+
+    Each stage's result is cached, keyed by the stage prefix (op, a, b of every stage up to
+    and including it) and the base-image version; a knob drag on stage *i* recomputes only
+    stages *i..* (see :meth:`result_upto`)."""
 
     def __init__(self, image=None):
-        self.image = None if image is None else np.asarray(image, np.float64)
+        self._img_ver = 0
+        self._cache: list = []                # [(stage_key, value, ms), ...] one entry per stage, prefix-valid
+        self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
+        self._fresh: set = set()              # stage indices computed since acknowledge() (UI marker)
+        self._last = (0, -1)                  # (stages served from cache, last index reached) of the last call
+        self._image = None if image is None else np.asarray(image, np.float64)
         self._stages: list[list] = []         # [ [name, a, b], ... ]
         #: display / config directive lines (dev_* / set_system / disp_*) that belong
         #: to the program but are not stages; persisted in to_dict() when non-empty
         self.directives: list[str] = []
+        #: path of the input file the window loaded (set by the window; saved as "input" in to_dict)
+        self.input_path = None
+        #: the "input" reference read by the last load_dict (None for files without one)
+        self.input_ref = None
+
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, value):
+        self._image = None if value is None else np.asarray(value, np.float64)
+        self._img_ver += 1                    # any new base image drops every cached stage
+        self._cache.clear(); self._fresh.clear()
 
     @property
     def stages(self):
@@ -398,9 +576,88 @@ class PipelineModel:
         # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
         # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
         self._stages = [_normalise_stage(s) for s in (value or [])]
+        self._invalidate(0)
 
     def set_image(self, arr):
-        self.image = np.asarray(arr, np.float64)
+        self.image = arr
+
+    # -- stage cache ------------------------------------------------------- #
+    def _invalidate(self, i):
+        """Drop the cached results of stage *i* and everything after it (earlier ones stay)."""
+        i = max(0, int(i))
+        del self._cache[i:]
+        self._fresh = {k for k in self._fresh if k < i}
+
+    def cache_len(self):
+        """How many stage results are cached (never more than the number of stages)."""
+        return len(self._cache)
+
+    def acknowledge(self):
+        """The UI has shown which stages were recomputed: forget that marker."""
+        self._fresh = set()
+
+    def cache_status(self):
+        """Per stage, for the LAST :meth:`result_upto` call: ``"cached"`` (served from the cache),
+        ``"computed"`` (run in that call) or ``"pending"`` (beyond what that call needed and not cached)."""
+        hit, last = self._last
+        out = []
+        for i in range(len(self._stages)):
+            if i <= last:
+                out.append("cached" if i < hit else "computed")
+            else:
+                out.append("cached" if i < len(self._cache) else "pending")
+        return out
+
+    @property
+    def last_cache_hits(self):
+        """``(True, True, False, ...)``: per stage the last call reached, whether the cache served it."""
+        hit, last = self._last
+        return tuple(i < hit for i in range(last + 1))
+
+    def stage_marks(self):
+        """Per stage for the stage list: ``"computed"`` if it was recomputed since :meth:`acknowledge`,
+        ``"cached"`` if a valid cached result exists, else ``"pending"``."""
+        return ["computed" if i in self._fresh else ("cached" if i < len(self._cache) else "pending")
+                for i in range(len(self._stages))]
+
+    def _context(self):
+        return (self._img_ver, api._policy(None), api._fast_on(None))
+
+    def _ensure(self, idx):
+        """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve."""
+        stages = self._stages
+        idx = min(idx, len(stages) - 1)
+        n = idx + 1
+        ctx = self._context()
+        if ctx != self._ctx:
+            self._cache.clear(); self._fresh.clear(); self._ctx = ctx
+        # the longest cached prefix whose keys still equal the current stages (also catches
+        # edits that bypassed set_knobs, e.g. ``model.stages[i][1] = x``)
+        v = 0
+        lim = min(len(self._cache), len(stages))
+        while v < lim and self._cache[v][0] == _stage_key(stages[v]):
+            v += 1
+        self._invalidate(v)
+        hit = min(v, n)
+        self._last = (hit, idx)
+        if v >= n:
+            return
+        policy = ctx[1]
+        base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(s) for s in stages[:n]], 0.5, 0.5, policy)
+        prev = base if v == 0 else self._cache[v - 1][1]
+        steps = api._pipeline_steps(prev, norm[v:], ops_[v:], True, policy, api._fast_on(None), entry=(v == 0))
+        import time
+        k = v
+        while True:
+            t0 = time.perf_counter()
+            try:
+                val = next(steps)
+            except StopIteration:
+                break
+            ms = round((time.perf_counter() - t0) * 1000.0, 1)
+            self._cache.append((_stage_key(stages[k]), val, ms))
+            self._fresh.add(k)
+            k += 1
 
     def add_stage(self, name, a=0.5, b=0.5):
         op = api.find_op(name)
@@ -411,13 +668,16 @@ class PipelineModel:
 
     def remove_stage(self, i):
         del self.stages[i]
+        self._invalidate(i)
 
     def move_stage(self, i, j):
         self.stages.insert(j, self.stages.pop(i))
+        self._invalidate(min(i, j))
 
     def duplicate_stage(self, i):
         """Insert a copy of stage i right after it; return the new stage's index."""
         self.stages.insert(i + 1, list(self.stages[i]))
+        self._invalidate(i + 1)
         return i + 1
 
     def set_knobs(self, i, a=None, b=None):
@@ -428,6 +688,7 @@ class PipelineModel:
             st[1] = float(a)
         if b is not None:
             st[2] = float(b)
+        self._invalidate(i)                          # stage i and later; earlier results stay
 
     def load_recipe(self, name):
         """Replace the pipeline with a named sample recipe (see `recipes`)."""
@@ -437,13 +698,16 @@ class PipelineModel:
         self.stages = [[op, float(a), float(b)] for (op, a, b) in st]
 
     def result_upto(self, idx):
-        """The value after applying stages[0 .. idx] (idx = -1 -> the raw image)."""
+        """The value after applying stages[0 .. idx] (idx = -1 -> the raw image).
+
+        Reuses the longest cached prefix and computes only the remaining stages. A stage that
+        raises leaves the earlier stages cached and re-raises the same error on the next call."""
         if self.image is None:
             return None
         if idx < 0 or not self.stages:
             return self.image
-        prefix = [tuple(s) for s in self.stages[: idx + 1]]
-        return api.run_pipeline(self.image, prefix)
+        self._ensure(idx)
+        return self._cache[min(idx, len(self._stages) - 1)][1]
 
     def output(self):
         return self.result_upto(len(self.stages) - 1)
@@ -453,41 +717,46 @@ class PipelineModel:
         an inspection of the intermediate result after that stage. This is what a
         step-through debugger shows — the object/variable state at every step.
 
+        Each state also carries ``ran`` (no exception), ``valid`` (True / False / None =
+        not judged, see :func:`assess_validity`) and ``reasons``; a result with non-finite
+        values is ``ran=True, valid=False`` — a warning, not an error.
+
         A stage that raises records an ``{"kind": "error"}`` state instead of
-        aborting the whole list, so one bad stage does not blank the rest."""
+        aborting the whole list, so one bad stage does not blank the rest. The stages are
+        walked forward once (each runs at most once; cached ones not at all)."""
         out = []
+        err = None
+        if self.image is not None and self.stages:
+            try:
+                self._ensure(len(self.stages) - 1)
+            except Exception:                            # per-stage below says where it broke
+                pass
         for i in range(len(self.stages)):
             op, a, b = self.stages[i]
             try:
-                state = inspect_result(self.result_upto(i))
+                if err is not None:
+                    raise err
+                val = self.result_upto(i)
+                state = inspect_result(val)
+                valid, reasons = assess_validity(val)
+                state.update(ran=True, valid=valid, reasons=reasons)
             except Exception as e:                       # this op failed on its input
-                state = {"kind": "error", "message": str(e)}
+                err = e if err is None else err
+                state = {"kind": "error", "message": str(e), "ran": False, "valid": None, "reasons": []}
             out.append({"index": i, "op": op, "a": a, "b": b, "state": state})
         return out
 
     def step_times(self):
-        """Accurate per-stage wall-clock in ms, aligned with self.stages.
-
-        Applies each stage once to the previous stage's result (O(n)), so each number
-        is that stage's own cost — a bottleneck read-out for the pipeline list. Kept
-        separate from step_states (which owns the inspection states) so the correctness
-        path is untouched; a stage that raises records None and stops the timing.
-        """
-        import time
+        """Per-stage wall-clock in ms, aligned with self.stages: the cost of that stage's own
+        (last) computation, kept with its cached result — O(n), no stage is run twice. A stage
+        that raised (and the ones after it) records None."""
         if self.image is None or not self.stages:
             return []
-        out = []
-        img = self.image
-        for st in self.stages:
-            if img is None:
-                out.append(None); continue
-            t0 = time.perf_counter()
-            try:
-                img = api.run_pipeline(img, [tuple(st)])
-                out.append(round((time.perf_counter() - t0) * 1000.0, 1))
-            except Exception:
-                out.append(None); img = None
-        return out
+        try:
+            self._ensure(len(self.stages) - 1)
+        except Exception:
+            pass
+        return [self._cache[i][2] if i < len(self._cache) else None for i in range(len(self.stages))]
 
     def ops_string(self):
         return ",".join(s[0] for s in self.stages)
@@ -506,6 +775,11 @@ class PipelineModel:
         d = {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
         if self.directives:                          # key only when used: old files stay byte-identical
             d["directives"] = list(self.directives)
+        if self.input_path:                          # the input reference (path as given + sha256 of the file)
+            try:
+                d["input"] = input_reference(self.input_path, self.image)
+            except OSError:
+                pass                                 # unreadable input: save the pipeline without a reference
         return d
 
     def load_dict(self, d):
@@ -518,6 +792,7 @@ class PipelineModel:
         directives = validate_directives(d)
         self.stages = stages
         self.directives = directives
+        self.input_ref = _valid_input_ref(d.get("input"))    # a malformed "input" is ignored, never fatal
 
 
 class PerceptionModel:
@@ -974,7 +1249,9 @@ def _describe_value(v) -> str:
         if v.dtype.kind in "biuf":
             fin = np.isfinite(v)
             rng = "[%s, %s]" % (fmt_num(np.min(v[fin])), fmt_num(np.max(v[fin]))) if fin.any() else "[non-finite]"
-            return "array %s %s %s" % (fmt_shape(v.shape), v.dtype, rng)
+            nf = int(v.size - np.count_nonzero(fin))
+            return "array %s %s %s%s" % (fmt_shape(v.shape), v.dtype, rng,
+                                         " (%d non-finite)" % nf if nf else "")   # NaN / Inf are never hidden
         if v.dtype.kind == "c":
             return "array %s complex |max| %s" % (fmt_shape(v.shape), fmt_num(np.abs(v).max()))
         return "array %s %s" % (fmt_shape(v.shape), v.dtype)
@@ -5740,19 +6017,35 @@ def build_window(model=None):
             times = []
             state["errors"].append(("stage timings unavailable", str(e)))
             flash("stage timings unavailable: %s" % truncate(e, 100))
+        marks = model.stage_marks()                   # which stages were recomputed since the last refresh
+        model.acknowledge()
+        validity_rows = []
         for i, (name, a, b) in enumerate(model.stages):
             st = states[i]["state"] if i < len(states) else {}
             summ = step_summary(st) if st else ""
             ms = times[i] if i < len(times) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
-            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}")
+            mk = marks[i] if i < len(marks) else "pending"
+            cstr = {"computed": "  ·  ⟳ calc", "cached": "  ·  ↺ cache"}.get(mk, "")
+            warn = st.get("valid") is False
+            wstr = "  ·  ⚠" if warn else ""
+            it = QtWidgets.QListWidgetItem(
+                f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}{cstr}{wstr}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
             row = _op_row(name)
             it.setToolTip(op_tooltip(row) if row else name)
+            if warn:                                  # ran, but the result needs a look (a warning, not an error)
+                why = "; ".join(st.get("reasons", []))
+                it.setForeground(QtGui.QColor("#c9a227"))
+                it.setToolTip("⚠ result needs review: %s\n(Studio only reports this; the result is shown as computed.)\n\n%s"
+                              % (why, it.toolTip()))
+                validity_rows.append({"index": i, "op": name, "severity": "warning", "glyph": "⚠",
+                                      "message": why})
             if st.get("kind") == "error":             # mark a stage that raised at runtime
                 it.setForeground(QtGui.QColor(AMBER))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
             stage_list.addItem(it)
+        state["validity_rows"] = validity_rows
         if stage_list.count() == 0:                     # onboarding: guide the empty state
             hint = QtWidgets.QListWidgetItem(
                 "— empty — double-click an operator, or drop an image/.json here, to start —")
@@ -5778,9 +6071,11 @@ def build_window(model=None):
                 if s.get("state", {}).get("kind") == "error":
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
+        if states is not None:
+            probs.extend(state.get("validity_rows", []))        # ran-but-needs-review: ⚠, distinct from ✕
         probs.sort(key=lambda p: (p["index"], 0 if p["severity"] == "error" else 1))
         for p in probs:
-            mark = "✕" if p["severity"] == "error" else "!"
+            mark = p.get("glyph") or ("✕" if p["severity"] == "error" else "!")
             it = QtWidgets.QListWidgetItem("%s stage %d (%s): %s"
                                            % (mark, p["index"] + 1,
                                               truncate(p.get("op", "?"), 40),
@@ -5801,7 +6096,13 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, rerr[0])
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
-        if not probs and not perr and not rerr:
+        notes = state.get("input_notes") or []
+        for msg in notes:                                       # saved-input reference could not be matched cleanly
+            it = QtWidgets.QListWidgetItem("⚠ input: %s" % truncate(msg, 160))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor("#c9a227"))
+            problems_list.addItem(it)
+        if not probs and not perr and not rerr and not notes:
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
@@ -5856,6 +6157,9 @@ def build_window(model=None):
             prev = result_preview(val)
             if prev is not None:
                 insp += "\n\nPreview: %s" % prev["note"]
+        _v, _why = assess_validity(val)
+        if _v is False:
+            insp += "\n\n⚠ result needs review: %s" % "; ".join(_why)
         inspector.setPlainText(insp)
         if prev is not None and prev.get("image") is not None:
             qi = _to_qimage(prev["image"], QtGui)
@@ -6352,6 +6656,7 @@ def build_window(model=None):
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
+        state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
@@ -6365,7 +6670,9 @@ def build_window(model=None):
             _load_image_path(path)
 
     def use_demo():
-        model.set_image(demo_image()); state["fit_next"] = True; show_result()
+        model.set_image(demo_image()); state["fit_next"] = True
+        state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
+        show_result()
 
     def load_sample_image(name):
         """Load one of the collected, license-clean sample images (sample_images.py)."""
@@ -6374,6 +6681,7 @@ def build_window(model=None):
             model.set_image(sample_images.load(name))
         except Exception as e:
             report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
+        state["image_path"] = None; state["input_notes"] = []
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
     win._load_sample_image = load_sample_image
@@ -8059,6 +8367,23 @@ def build_window(model=None):
             if state.get("code_dirty"):
                 return
         step_to(len(model.stages) - 1)
+        _flash_run_validity()
+
+    def _flash_run_validity():
+        """Status bar after a run: 'ran' and 'valid' are two facts. Reports only; never fixes."""
+        if not model.stages or model.image is None:
+            return
+        try:
+            val = model.output()
+        except Exception:
+            return                                    # a stage raised: the Problems list says which
+        v, why = assess_validity(val)
+        if v is False:
+            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why))
+        elif v is None:
+            flash(tr("Run: done / Result: validity not judged"))
+        else:
+            flash(tr("Run: done / Result: valid (as reported by the op)"))
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
@@ -10403,6 +10728,7 @@ def build_window(model=None):
         if not path:
             return
         try:
+            model.input_path = state.get("image_path")          # saved as "input" (path as given + sha256)
             _atomic_write_text(path, json.dumps(model.to_dict(), indent=2))   # never a half file
         except Exception as e:                                # permission / bad path / full disk
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
@@ -10435,6 +10761,19 @@ def build_window(model=None):
         state["dev_lines"] = list(model.directives)
         state["code_dirty"] = False
         code_edit.breakpoints.clear()
+        state["input_notes"] = []
+        if model.input_ref:                               # the input the project was saved with
+            res = resolve_input_ref(model.input_ref, os.path.dirname(os.path.abspath(path)))
+            if res["path"]:
+                if _load_image_path(res["path"]):         # ok / relinked: silent; changed: loaded + warned
+                    if res["status"] == "changed":
+                        state["input_notes"] = [res["message"]]
+                    elif res["status"] == "relinked":
+                        flash(res["message"])
+                else:
+                    state["input_notes"] = ["input could not be read: %s" % res["path"]]
+            else:
+                state["input_notes"] = [res["message"]]   # missing: keep the current image
         refresh_stage_list(select=len(model.stages) - 1)
         if model.directives:
             apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
@@ -10444,6 +10783,7 @@ def build_window(model=None):
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
     win._open_pipe_path = _open_pipe_path
+    win._refresh_stage_list = refresh_stage_list
 
     def open_pipe():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
