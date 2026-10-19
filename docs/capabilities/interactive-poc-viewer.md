@@ -28,7 +28,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 **向く**: 論文の QR コードの行き先に置く「触れる展示」、PoC の結果を同僚に配る、成功だけでなく失敗の形(限界・零点)を並べて見せる、数字をカードと HUD に出して「何を見ているか」を 1 行で添える。
 
-**向かない**: ★**解析の道具ではありません**(色と数字を見せるだけで、計算はしない)。★**volume(ボクセル)や大きな動画**は想定外(2-D のコマは 8 bit、メッシュの頂点が 65,535 を超えるには `OES_element_index_uint` が要る)。★**数字は手で写さない** —— 実行から取ること(`tools/build_view2026_viewers.py` が 3 本の手本)。★数万〜数十万点までは軽いが、数百万点は端末による。
+**向かない**: ★**解析の道具ではありません**(色と数字を見せるだけで、計算はしない)。★**volume(ボクセル)や大きな動画**は想定外(2-D のコマは 8 bit、メッシュの頂点が 65,535 を超えるには `OES_element_index_uint` が要る)。★**数字は手で写さない** —— 実行から取ること(`tools/build_view2026_viewers.py` が 7 本の手本)。★数万〜数十万点までは軽いが、数百万点は端末による。
 
 ## 最初の 1 本
 
@@ -51,6 +51,6 @@ fs.write_viewer(spec, "out/my_viewer.html", lang=["ja", "en", "fr"])   # 先頭�
 ## 裏づけ
 
 - 実装: `pocviewer.py`(`write_viewer` / `viewer_spec` / `viewer_*_tab`。標準ライブラリ + numpy だけ)
-- 例: [`interactive_poc_viewer`](../../examples/interactive_poc_viewer.py)(4 種のペイロード、位置の復元が量子化の刻みの半分以内、外部 URL 無し、欠けた訳の拒否)。実物は `tools/build_view2026_viewers.py`(CAD の偏差 / LiDAR の地形変化 / テンプレート追跡の 3 本、8 言語)
+- 例: [`interactive_poc_viewer`](../../examples/interactive_poc_viewer.py)(4 種のペイロード、位置の復元が量子化の刻みの半分以内、外部 URL 無し、欠けた訳の拒否)。実物は `tools/build_view2026_viewers.py`(CAD の偏差 / LiDAR の地形変化 / テンプレート追跡 / パルスサーモグラフィ / 格子干渉計 / デフレクトメトリ / 小惑星の曲率の 7 本、8 言語)
 - 試験: `tests/test_gen_poc_viewer.py`(4 種のペイロード / 題が全言語で入る / 復元誤差 / 外部 URL 無し / 言語ごとに他言語の字が混ざらない / 欠けた訳を名指しで拒否 / 壊れた仕様の拒否 / MCP tool)
 - MCP: `fullseye_write_viewer`(`docs/MCP.md`)

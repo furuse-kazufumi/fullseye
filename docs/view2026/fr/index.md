@@ -38,6 +38,10 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - **[CAO contre nuage de points scanné](../viewers/poc_cad_scan_deviation.html?lang=fr)**: Le recalage absorbe les défauts : une pièce de valeur vraie 1.2 µm montre un creux de 121 µm qui n'existe pas.
 - **[Changement de terrain par LiDAR](../viewers/poc_lidar_terrain_change.html?lang=fr)**: Une simple soustraction fait paraître tout le bloc inchangé 0.183 m plus bas. Une fois corrigé, seul le vrai changement reste.
 - **[Suivi par modèle](../viewers/poc_template_tracking.html?lang=fr)**: Même après avoir basculé sur un objet qui lui ressemble, le suivi continue de signaler « trouvé ».
+- **[Profondeur par thermographie pulsée](../viewers/poc_thermography_ndt.html?lang=fr)**: Raccourcir la fenêtre d'ajustement de 25 s à 4 s ramène la pire erreur de profondeur des petits défauts de +627% à ±14%. La cause était le choix de la fenêtre, pas la physique.
+- **[Tapis de Talbot et images X par réseaux](../viewers/poc_grating_interferometry.html?lang=fr)**: En absorption, le rapport contraste/bruit de la fissure n'est que de 1.34 ; en champ sombre il monte à 13.5, et en tournant le réseau on lit même la direction des fibres.
+- **[Creux de quelques µm dans l'image-miroir de franges](../viewers/poc_phase_measuring_deflectometry.html?lang=fr)**: Dans une photo, le signal vaut 0.17 fois le bruit et rien n'apparaît ; dans la carte de courbure issue de l'image-miroir de franges, un creux de 1 µm dépasse le bruit de 57 fois.
+- **[À quel point la surface d'un astéroïde se courbe](../viewers/poc_asteroid_curvature.html?lang=fr)**: La courbure est calculée à partir des points d'un astéroïde réel ; crêtes et bords de blocs apparaissent en couleur. La règle a d'abord été vérifiée sur une sphère dont la réponse est connue.
 
 ## Points forts
 
