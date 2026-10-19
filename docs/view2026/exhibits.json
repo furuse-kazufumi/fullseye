@@ -6302,6 +6302,23 @@
    }
   },
   {
+   "id": "poc_lens_global_search",
+   "group": "wing_color",
+   "media": "01_lens_global_search.png",
+   "motion": false,
+   "thumb_src": "01_lens_global_search.png",
+   "label": {
+    "ja": "硝材の置き換えと大域探索(多始点の局所最適化)",
+    "en": "Glass substitution and multi-start global search",
+    "zh": "玻璃替换与多起点全局搜索",
+    "tw": "玻璃替換與多起點全域搜尋",
+    "ko": "유리 대체와 다중 시작 전역 탐색",
+    "de": "Glasersatz und Mehrstart-Globalsuche",
+    "hi": "glass substitution और multi-start global search",
+    "fr": "Substitution de verre et recherche globale multi-départ"
+   }
+  },
+  {
    "id": "poc_spectrometer_illumination",
    "group": "wing_metrology",
    "media": "03_slit_image_smile.png",

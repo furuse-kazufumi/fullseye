@@ -7066,7 +7066,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 11 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 12 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -7347,6 +7347,22 @@ Source: [examples/poc_zoom_configurations.py](https://github.com/furuse-kazufumi
 This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zoom_configurations)
 
 Ops used (notes): [`encircled_energy`](https://furuse.work/ops/optics/imaging/encircled_energy.html) · [`lens_add_configuration`](https://furuse.work/ops/optics/lensconfig/lens_add_configuration.html) · [`lens_configuration_metrics`](https://furuse.work/ops/optics/lensconfig/lens_configuration_metrics.html) · [`lens_configuration_table`](https://furuse.work/ops/optics/lensconfig/lens_configuration_table.html) · [`lens_configurations`](https://furuse.work/ops/optics/lensconfig/lens_configurations.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lens_with_configuration`](https://furuse.work/ops/optics/lensconfig/lens_with_configuration.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html)
+
+## No.2026.262 —— Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending
+
+[![Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search.png)
+
+*↑ **Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending** ―― A model glass (n_d, V_d) is swapped for a catalogue glass, and the local optimiser is run from many starting points to collect the local optima. Three new ops (`lensglobal`, category `lensglobal` of `opsoptics`): `glass_nearest` (the k nearest catalogue glasses in the Abbe plane, distance nd_vd or partial_dispersion with a P_g,F term), `lens_substitute_glasses` (replace the model glasses of a system by the k-th nearest catalogue glass; beyond the tolerance it is a ValueError and nothing is swapped partially) and `lens_global_search` (multi-start; the local optimiser is `lensopt.optimize_lens` itself, the merit is not re-implemented; every local optimum is returned in merit order, coinciding ones are flagged as duplicates, the same seed gives the same result). Each of 8 catalogue glasses is its own nearest neighbour at distance 0, and a model glass made from it is swapped back to its name. The powers of a thin achromat (crown 1.5168 / 64.17, flint 1.6200 / 36.37) from the closed form phi1 = phi V1/(V1 - V2), phi2 = -phi V2/(V1 - V2) are achromatic to 1e-12, and after the swap the F-C power difference becomes phi1'/V1' + phi2'/V2' (+5.9e-5 of the power for N-BK7 + N-F2, -4.5e-3 for k = 2); the traced value agrees with the hand computation to 4e-11 relative. Three external truths for the search. (a) Bending a singlet: the best shape factor at apertures 5 / 3 mm, 0.7374 / 0.7383, extrapolated in ap^2 gives 0.7388, within 1e-3 of the third-order q* = 2(n^2 - 1)/(n + 2) = 0.7397. (b) A thin achromat: all 8 starts reach the closed-form powers to 9.8e-9 relative and collapse into one optimum. (c) A three-curvature achromat: 19 of 20 starts fall into the shallow optimum (merit 1.18e-5) and one reaches the deep one (5.04e-6); a single start stays in the shallow one. Honest note: the local optimiser's default EFL weight is too stiff for a small-aperture system and stalls at merit 5e-10, so (b) was run with efl_weight = 1. Learning 0, calibration 0, 10 gates.*
+
+```
+py -3.11 examples/poc_lens_global_search.py
+```
+
+Source: [examples/poc_lens_global_search.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_global_search)
+
+Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`glass_nearest`](https://furuse.work/ops/optics/lensglobal/glass_nearest.html) · [`lens_global_search`](https://furuse.work/ops/optics/lensglobal/lens_global_search.html) · [`lens_substitute_glasses`](https://furuse.work/ops/optics/lensglobal/lens_substitute_glasses.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
 ## No.2026.237 —— Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps
 

@@ -504,6 +504,10 @@ def _optics_builders():
         "lens_configuration_metrics": lambda pool, rng: ([__import__("lensconfig")._example_system()], {"metric": "efl"}),
         "lens_add_configuration": lambda pool, rng: ([__import__("lensconfig")._example_system()],
                                                      {"surfaces": {0: {"t": 15.0}}}),
+        # lensglobal(2026-10-19): モデル硝材 (n_d, V_d) を持つ処方が要る(カタログ名だけの処方は置き換える物が無い)
+        "lens_substitute_glasses": lambda pool, rng: ([__import__("lensglobal")._example_doublet()], {}),
+        "lens_global_search": lambda pool, rng: ([__import__("lensglobal")._example_doublet()],
+                                                 {"variables": ["c0", "c1"], "n_starts": 3, "iterations": 3, "spread": 0.001}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
         # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
         #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)

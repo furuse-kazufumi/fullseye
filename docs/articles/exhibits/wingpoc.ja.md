@@ -7066,7 +7066,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
-光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 11 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
+光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 12 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。
 
 結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。
 
@@ -7347,6 +7347,22 @@ py -3.11 examples/poc_zoom_configurations.py
 この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zoom_configurations)
 
 使用 op(ノートへ): [`encircled_energy`](https://furuse.work/ops/optics/imaging/encircled_energy.html) · [`lens_add_configuration`](https://furuse.work/ops/optics/lensconfig/lens_add_configuration.html) · [`lens_configuration_metrics`](https://furuse.work/ops/optics/lensconfig/lens_configuration_metrics.html) · [`lens_configuration_table`](https://furuse.work/ops/optics/lensconfig/lens_configuration_table.html) · [`lens_configurations`](https://furuse.work/ops/optics/lensconfig/lens_configurations.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lens_with_configuration`](https://furuse.work/ops/optics/lensconfig/lens_with_configuration.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html)
+
+## No.2026.262 —— 硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点
+
+[![硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search.png)
+
+*↑ **硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点** ―― モデル硝材 (n_d, V_d) をカタログ硝材に置き換え、局所最適化を違う始点から何度も回して局所解を集める。新 op 3 本(`lensglobal`、`opsoptics` の `lensglobal`): `glass_nearest`(Abbe 面の距離で最近傍のカタログ硝材 k 個。距離は nd_vd か、P_g,F の項を足した partial_dispersion)/ `lens_substitute_glasses`(系のモデル硝材を k 番目に近いカタログ硝材へ。許容距離の外は ValueError で、部分的には置き換えない)/ `lens_global_search`(多始点。局所最適化は `lensopt.optimize_lens` をそのまま使い、merit を再実装しない。merit 順に全局所解を返し、同じ解は重複の印、同じ seed は同じ結果)。カタログ硝材 8 種は自分自身が最近傍で距離 0、モデル硝材にしてから置き換えると元の名前に戻る。薄肉色消し 2 枚(クラウン 1.5168 / 64.17、フリント 1.6200 / 36.37)の屈折力は閉形式 φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2) で色消しが 1e-12 以内になり、硝材を置き換えると F−C の屈折力差は φ1'/V1' + φ2'/V2' に変わる(N-BK7 + N-F2 で Φ に対し +5.9e-5、k = 2 で −4.5e-3)。光線追跡の値と手計算が相対 4e-11 以内。大域探索の真値は 3 つ。(a) 単レンズの曲げ: 開口 5 / 3 mm の最良の形状係数 0.7374 / 0.7383 を ap² で外挿すると 0.7388 で、3 次の解 q* = 2(n²−1)/(n+2) = 0.7397 と 1e-3 以内。(b) 色消し 2 枚: 8 始点すべてが閉形式の屈折力に相対 9.8e-9 で着き、1 つの解にまとまる。(c) 3 曲率の色消し 2 枚: 浅い解(merit 1.18e-5)に 20 始点中 19 本がはまり、深い解(5.04e-6)には 1 本だけ届く。1 始点では浅い解のまま。★局所最適化の既定の EFL の重みは開口の小さい系で硬すぎて収束が進まない(merit 5e-10 で止まる)ので、(b) は efl_weight = 1 で回した。学習 0、較正 0、門 10 件。*
+
+```
+py -3.11 examples/poc_lens_global_search.py
+```
+
+ソース: [examples/poc_lens_global_search.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_global_search)
+
+使用 op(ノートへ): [`glass`](https://furuse.work/ops/optics/design/glass.html) · [`glass_map`](https://furuse.work/ops/optics/matprop/glass_map.html) · [`glass_nearest`](https://furuse.work/ops/optics/lensglobal/glass_nearest.html) · [`lens_global_search`](https://furuse.work/ops/optics/lensglobal/lens_global_search.html) · [`lens_substitute_glasses`](https://furuse.work/ops/optics/lensglobal/lens_substitute_glasses.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
