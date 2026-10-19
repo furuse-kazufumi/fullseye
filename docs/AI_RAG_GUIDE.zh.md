@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: ab31adb3914e -->
+<!-- i18n-source-sha: a4d6407fa5fb -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
