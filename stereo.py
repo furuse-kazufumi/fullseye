@@ -314,13 +314,26 @@ def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
     result has far fewer isolated mismatches than the raw winner-take-all
     :func:`disparity_census` / :func:`disparity_map` — the standard high-quality
     passive-stereo method. ``paths`` is 2 (horizontal only) or 4 (cardinal, the
-    default 4-path variant). Returns per-pixel disparity (float), left-referenced."""
+    default 4-path variant). Returns per-pixel disparity (float), left-referenced.
+
+    Non-finite input: an image with **no** finite pixel raises ``ValueError``; for a
+    partly non-finite pair the pixels that are NaN/inf in either image come back as
+    ``NaN`` (invalid), never as a disparity of 0."""
     L = np.asarray(left, np.float64)
     R = np.asarray(right, np.float64)
     if L.shape != R.shape or L.ndim != 2:
         raise ValueError("left/right must be equal-shape 2-D arrays")
     if paths not in (2, 4):
         raise ValueError("paths must be 2 or 4")
+    bad = ~(np.isfinite(L) & np.isfinite(R))
+    if not np.isfinite(L).any() or not np.isfinite(R).any():
+        raise ValueError("disparity_sgm: an image has no finite pixel (all NaN/inf) — "
+                         "there is nothing to match, refusing to return a disparity of 0")
+    if bad.any():
+        # 非有限画素は比較が全部 False になり偽の一致を作る。有限値の平均で埋めて
+        # から計算し、そこの視差は NaN で返す(無効の印)。
+        L = np.where(np.isfinite(L), L, L[np.isfinite(L)].mean())
+        R = np.where(np.isfinite(R), R, R[np.isfinite(R)].mean())
     D = int(max_disp)
     vol = _census_cost_volume(census_transform(L, window),
                               census_transform(R, window), D)
@@ -329,7 +342,9 @@ def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
     S = np.zeros_like(C)
     for sy, sx in dirs:
         S += _aggregate_dir(C, sy, sx, float(P1), float(P2))
-    return S.argmin(-1).astype(np.float64)
+    out = S.argmin(-1).astype(np.float64)
+    out[bad] = np.nan                  # 入力が非有限だった画素は無効(NaN)
+    return out
 
 
 # --- disparity post-processing ---------------------------------------------- #

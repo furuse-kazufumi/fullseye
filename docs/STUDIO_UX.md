@@ -145,6 +145,28 @@ Ranked by usability payoff; each is a self-contained, testable increment:
 8. **Onboarding**: a first-run overlay pointing at the operator browser →
    pipeline → knobs → result loop.
 
+9. ~~**Stage result cache**~~ **(done, Studio slice 1, 2026-10-19)** — `PipelineModel`
+   keeps one cached result per stage, keyed by the stage prefix (op, a, b of every stage
+   up to it) and the base-image version, so a knob drag recomputes only that stage and
+   the ones after it; `step_states` / `step_times` walk the stages once (O(n), not
+   O(n²)). The stage list shows `⟳ calc` / `↺ cache` per row (`cache_status()`,
+   `stage_marks()`). Still open: a non-blocking apply for slow ops (item 5), and a
+   cache that spans several base images.
+10. ~~**Validity flag**~~ **(done, Studio slice 1)** — a state now carries `ran` (no
+    exception), `valid` (True / False / None = not judged) and `reasons`, kept apart.
+    A plain array is judged only when clearly bad (non-finite values, empty, or all
+    pixels equal); a result table maps its explicit fields (`converged`, `valid`,
+    `guf_valid`, `ok`, `success`, `status`, `n_iter` against `max_iter`). Rows show
+    `⚠` (distinct from `✕` errors); the status bar says "Run: done / Result: needs
+    review (reason)" or "validity not judged". Studio reports; it does not repair the
+    operator's numerics. Still open: a per-op `validity` declaration in the registry
+    so ops that return plain arrays can say what "sound" means for them.
+11. ~~**Project keeps its input reference**~~ **(done, first part, Studio slice 1)** —
+    the saved JSON gains an optional `input` (path as given, sha256 of the file, shape,
+    dtype); opening reloads a matching file silently, warns on a changed file, reports
+    a missing one in Problems and tries the same file name next to the `.json`. Still
+    open: embedding small inputs in the project, and a multi-image project.
+
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a
 thin wiring layer — the pattern that makes this file testable head­lessly.

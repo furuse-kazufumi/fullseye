@@ -7,7 +7,7 @@ out: depth
 examples: [poc_robust_profile_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.0  # fullseye lib version this note was generated for
+version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
 # robust_gaussian_surface — ROUGHNESS `prepare` op

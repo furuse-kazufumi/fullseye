@@ -8,7 +8,7 @@
 <p>*value* 와 *power* 에 열 이름을 넘기면 <b>거듭제곱 모델</b>을 돌린다:</p>
 <p>y = sum_i c_i (x_i + e_i)^{p_i}</p>
 <p>(<code style="color:#22d3bf">e_i</code> 는 분포에서 뽑은 흔들림. 기본값은 <code style="color:#22d3bf">x_i = 0</code> / <code style="color:#22d3bf">p_i = 1</code> = 선형.) 거듭제곱까지로 좁힌 것은 대장에 실리는 op 는 <b>선언적</b>이어야 하며 임의의 함수를받을 수 없기 때문 —— 그래도 규격의 비선형 예(제곱의 합)는 이것으로 표현할 수 있고, 전파 법칙이 무너지는 장면을 재현할 수 있다.</p>
-<p>★이것은 <code style="color:#22d3bf">gum_propagate</code> 의 <b>독립적인 검산</b>이다. 전파 법칙은 편미분과 분산의 대수, 이쪽은 난수 표본 —— 유도도 구현도 별개이므로, 선형 모델에서는 <code style="color:#22d3bf">u_mc -&gt; u_c</code>(1/sqrt(n) 의 속도)로 다가가야 하며, 다가가지 않으면 어느 한쪽이깨져 있다. 상관은 Cholesky 분해로 넣으므로 전파 법칙의 상관 항과는 다른 경로를 지난다.</p>
+<p>★이것은 <code style="color:#22d3bf">gum_propagate</code> 의 <b>독립적인 검산</b>이다. 전파 법칙은 편미분과 분산의 대수, 이쪽은 난수 표본 —— 유도도 구현도 별개이므로, 선형 모델에서는 <code style="color:#22d3bf">u_mc -&gt; u_c</code>(1/sqrt(n) 의 속도)로 다가가야 하며, 다가가지 않으면 어느 한쪽이깨져 있다. 상관은 Cholesky 분해(특이한 반양정치 행렬은 고유분해)로 넣으므로 전파 법칙의 상관 항과는 다른 경로를 지난다. ★정규가 아닌 입력에는 상관을 <b>가우스 copula</b>(<code style="color:#22d3bf">_mc_standardised</code>)로 넣으므로 각 입력의 주변분포는 지정한 형태 그대로(직사각형은 직사각형)이며, *correlation* 은 정규 점수의 상관으로 작용한다. 완전 상관(특이) 행렬도 퇴화한 정규분포로 다룬다.</p>
 <p>★★<b>비선형에서는 둘이 어긋나는 것이 옳다</b>. 규격의 예(비교 손실 <code style="color:#22d3bf">dY = X1^2 + X2^2</code>, 각 <code style="color:#22d3bf">u = 0.005</code>)를 <code style="color:#22d3bf">x1 = x2 = 0</code> 에서 돌리면:</p>
 <p>전파 법칙   감도 <code style="color:#22d3bf">c_i = 2 x_i</code> 가 <b>둘 다 0</b> 이 되므로 <code style="color:#22d3bf">u_c = 0</code>, 구간 [0, 0]</p>
 <p>몬테카를로  <code style="color:#22d3bf">dy = 50e-6</code>, <code style="color:#22d3bf">u = 50e-6</code>, 구간 <code style="color:#22d3bf">[0, 150e-6]</code></p>

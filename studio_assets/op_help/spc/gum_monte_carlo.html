@@ -8,7 +8,7 @@
 <p>*value* と *power* に列名を渡すと <b>冪モデル</b> を回す:</p>
 <p>y = sum_i c_i (x_i + e_i)^{p_i}</p>
 <p>(<code style="color:#22d3bf">e_i</code> が分布から引いた揺らぎ。既定は <code style="color:#22d3bf">x_i = 0</code> / <code style="color:#22d3bf">p_i = 1</code> = 線形。) 冪までに絞ったのは、台帳に載る op は<b>宣言的</b>でなければならず、任意の関数を受け取れないため —— それでも規格の非線形の例(二乗の和)はこれで表現でき、伝播則が破綻する場面を再現できる。</p>
-<p>★これは <code style="color:#22d3bf">gum_propagate</code> の<b>独立な検算</b>である。伝播則は偏微分と分散の代数、こちらは乱数の標本 —— 導出も実装も別なので、線形モデルでは <code style="color:#22d3bf">u_mc -&gt; u_c</code>(1/sqrt(n) の速さ)に近づくはずで、近づかなければどちらかが壊れている。相関は Cholesky 分解で入れるので、伝播則の相関項とは別の経路を通る。</p>
+<p>★これは <code style="color:#22d3bf">gum_propagate</code> の<b>独立な検算</b>である。伝播則は偏微分と分散の代数、こちらは乱数の標本 —— 導出も実装も別なので、線形モデルでは <code style="color:#22d3bf">u_mc -&gt; u_c</code>(1/sqrt(n) の速さ)に近づくはずで、近づかなければどちらかが壊れている。相関は Cholesky(特異な半正定値は固有分解)で入れるので、伝播則の相関項とは別の経路を通る。★正規でない入力に相関を与えるときは<b>ガウス copula</b>(<code style="color:#22d3bf">_mc_standardised</code>)で入れるので、各入力の周辺分布は指定した形のまま(矩形は矩形)で、*correlation* は正規スコアの相関として働く。完全相関(特異)の行列も退化した正規分布として扱う。</p>
 <p>★★<b>非線形では両者が食い違うのが正しい</b>。規格の例(比較損失 <code style="color:#22d3bf">dY = X1^2 + X2^2</code>、各 <code style="color:#22d3bf">u = 0.005</code>)を <code style="color:#22d3bf">x1 = x2 = 0</code> で回すと:</p>
 <p>伝播則   感度 <code style="color:#22d3bf">c_i = 2 x_i</code> が<b>両方 0</b> になるので <code style="color:#22d3bf">u_c = 0</code>、区間 [0, 0]</p>
 <p>モンテカルロ  <code style="color:#22d3bf">dy = 50e-6</code>、<code style="color:#22d3bf">u = 50e-6</code>、区間 <code style="color:#22d3bf">[0, 150e-6]</code></p>
