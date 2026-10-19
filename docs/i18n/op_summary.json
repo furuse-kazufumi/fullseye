@@ -31112,6 +31112,96 @@
    "ko": "결함 재현율이 ``confidence`` 수준에서 ``recall`` 이상임을 보장할 수 있는 가장 높은 임계값을 고른다 (``table``).",
    "de": "Die höchste Schwelle wählen, deren Defekt-Recall mit Sicherheit ``confidence`` mindestens ``recall`` beträgt (``table``).",
    "hi": "वह सबसे ऊँचा threshold चुनना जिसकी defect recall ``confidence`` स्तर पर कम से कम ``recall`` होने की गारंटी हो (``table``)।"
+  },
+  "optics/ocean_spectrum": {
+   "fp": "ae5f8d9b6132",
+   "ja": "風の海の 1 次元の波のスペクトル S(ω)と、有義波高・ピーク周期 -> dict。",
+   "zh": "风浪的一维波谱 S(ω),及有效波高与峰值周期 -> 字典。",
+   "tw": "風浪的一維波譜 S(ω),及有效波高與峰值週期 -> 字典。",
+   "ko": "풍성파의 1차원 파랑 스펙트럼 S(ω)와 유의파고·피크 주기 -> dict.",
+   "de": "Eindimensionales Wellenspektrum S(ω) einer Windsee mit signifikanter Wellenhöhe und Spitzenperiode -> dict.",
+   "hi": "पवन-जनित समुद्र का एक-आयामी तरंग स्पेक्ट्रम S(ω), उसकी significant ऊँचाई और peak period के साथ -> dict।"
+  },
+  "optics/ocean_height_field": {
+   "fp": "680587986f50",
+   "ja": "時刻 t の Tessendorf(2001)の FFT の海面 -> dict(高さ・傾き・法線マップ・変位)。",
+   "zh": "时刻 t 的 Tessendorf(2001)FFT 海面 -> 字典(高度、斜率、法线图、位移)。",
+   "tw": "時刻 t 的 Tessendorf(2001)FFT 海面 -> 字典(高度、斜率、法線圖、位移)。",
+   "ko": "시각 t의 Tessendorf(2001) FFT 해수면 -> dict(높이, 기울기, 법선 맵, 변위).",
+   "de": "FFT-Meeresoberfläche nach Tessendorf (2001) zum Zeitpunkt t -> dict (Höhe, Neigungen, Normalenkarte, Verschiebung).",
+   "hi": "समय t पर Tessendorf (2001) FFT समुद्र-सतह -> dict (ऊँचाई, ढलान, normal map, विस्थापन)।"
+  },
+  "optics/fresnel_water_air": {
+   "fp": "bb07353be4b7",
+   "ja": "空気と水の界面のフレネル反射率と透過率 -> dict。",
+   "zh": "空气-水界面的菲涅耳反射率与透射率 -> 字典。",
+   "tw": "空氣-水界面的菲涅耳反射率與穿透率 -> 字典。",
+   "ko": "공기-물 경계면의 프레넬 반사율과 투과율 -> dict.",
+   "de": "Fresnel-Reflexions- und Transmissionsgrad der Grenzfläche Luft-Wasser -> dict.",
+   "hi": "वायु-जल अंतरापृष्ठ की Fresnel परावर्तन और संचरण दक्षता -> dict।"
+  },
+  "optics/snell_window": {
+   "fp": "5dea6e667b03",
+   "ja": "水面下の点から見たスネルの窓と、平らな界面の見かけの深さ -> dict。",
+   "zh": "从水面下一点看到的斯涅尔窗,以及平坦界面的视深度 -> 字典。",
+   "tw": "從水面下一點看到的斯涅爾窗,以及平坦界面的視深度 -> 字典。",
+   "ko": "수면 아래의 한 점에서 본 스넬의 창과 평평한 경계면의 겉보기 깊이 -> dict.",
+   "de": "Snelliussches Fenster von einem Punkt unter der Oberfläche aus und scheinbare Tiefe an einer ebenen Grenzfläche -> dict.",
+   "hi": "सतह के नीचे के एक बिंदु से दिखने वाली Snell की खिड़की और समतल अंतरापृष्ठ की आभासी गहराई -> dict।"
+  },
+  "optics/refracted_view": {
+   "fp": "3c7ae1d2918b",
+   "ja": "水中の点が、平らな(または波のある)水面の上のカメラにどこに見えるか(フェルマーの原理)-> dict。",
+   "zh": "水下的点在平坦或有波的水面上方的相机中出现在哪里(费马原理)-> 字典。",
+   "tw": "水下的點在平坦或有波的水面上方的相機中出現在哪裡(費馬原理)-> 字典。",
+   "ko": "평평하거나 물결이 있는 수면 위의 카메라에 수중의 점이 어디에 보이는가(페르마의 원리) -> dict.",
+   "de": "Wo ein Unterwasserpunkt für eine Kamera über einer ebenen oder welligen Oberfläche erscheint (Fermatsches Prinzip) -> dict.",
+   "hi": "समतल या लहरदार सतह के ऊपर रखे camera को जल के भीतर का बिंदु कहाँ दिखता है (Fermat का सिद्धांत) -> dict।"
+  },
+  "optics/water_attenuation": {
+   "fp": "e52cf6680cef",
+   "ja": "水の吸収・散乱・拡散減衰と、深さごとの透過率 -> dict。",
+   "zh": "水的吸收、散射与漫衰减系数,以及随深度的透过率 -> 字典。",
+   "tw": "水的吸收、散射與漫衰減係數,以及隨深度的穿透率 -> 字典。",
+   "ko": "물의 흡수·산란·확산 감쇠와 깊이에 따른 투과율 -> dict.",
+   "de": "Absorption, Streuung und diffuse Abschwächung von Wasser sowie die Transmission über die Tiefe -> dict.",
+   "hi": "जल का अवशोषण, प्रकीर्णन और विसरित क्षीणन तथा गहराई के साथ संचरण -> dict।"
+  },
+  "optics/underwater_image": {
+   "fp": "596175e42886",
+   "ja": "水を通して記録された場面の画像(改訂版 Jaffe–McGlamery モデル)-> dict。",
+   "zh": "透过水记录的场景图像(修订版 Jaffe–McGlamery 模型)-> 字典。",
+   "tw": "透過水記錄的場景影像(修訂版 Jaffe–McGlamery 模型)-> 字典。",
+   "ko": "물을 통해 기록된 장면의 영상(개정판 Jaffe–McGlamery 모델) -> dict.",
+   "de": "Das durch Wasser aufgenommene Bild einer Szene (überarbeitetes Jaffe-McGlamery-Modell) -> dict.",
+   "hi": "पानी के माध्यम से रिकॉर्ड किए गए दृश्य की छवि (संशोधित Jaffe–McGlamery मॉडल) -> dict।"
+  },
+  "optics/phase_function_hg": {
+   "fp": "540ed4a5f5bb",
+   "ja": "球面で規格化した Henyey–Greenstein 位相関数 -> dict。",
+   "zh": "在球面上归一化的 Henyey–Greenstein 相函数 -> 字典。",
+   "tw": "在球面上歸一化的 Henyey–Greenstein 相函數 -> 字典。",
+   "ko": "구면에서 정규화한 Henyey–Greenstein 위상 함수 -> dict.",
+   "de": "Die über die Kugel normierte Henyey-Greenstein-Phasenfunktion -> dict.",
+   "hi": "गोले पर सामान्यीकृत Henyey–Greenstein phase function -> dict।"
+  },
+  "optics/scattering_phase_petzold": {
+   "fp": "285fe14e3db4",
+   "ja": "自然の水で実測された体積散乱関数(Petzold 1972)を位相関数として -> dict。",
+   "zh": "天然水体实测的体散射函数(Petzold 1972),以相函数形式给出 -> 字典。",
+   "tw": "天然水體實測的體散射函數(Petzold 1972),以相函數形式給出 -> 字典。",
+   "ko": "자연 수역에서 실측한 체적 산란 함수(Petzold 1972)를 위상 함수로 -> dict.",
+   "de": "Die gemessene Volumenstreufunktion natürlicher Gewässer (Petzold 1972) als Phasenfunktion -> dict.",
+   "hi": "प्राकृतिक जल का मापा गया volume scattering function (Petzold 1972), phase function के रूप में -> dict।"
+  },
+  "optics/cylinder_lens_caustic": {
+   "fp": "2a4592a3ffb3",
+   "ja": "平行光の中の円柱(棒や瓶)の近軸焦点と実光線の焦線 -> dict。",
+   "zh": "平行光束中圆柱(棒或瓶)的近轴焦点与实际光线的焦散线 -> 字典。",
+   "tw": "平行光束中圓柱(棒或瓶)的近軸焦點與實際光線的焦散線 -> 字典。",
+   "ko": "평행광 속의 원기둥(막대나 병)의 근축 초점과 실제 광선의 초점선 -> dict.",
+   "de": "Paraxialer Fokus und Realstrahl-Kaustik eines Zylinders (Stab oder Flasche) im parallelen Strahl -> dict.",
+   "hi": "समानांतर किरण-पुंज में बेलन (छड़ या बोतल) का पैराएक्सियल फोकस और वास्तविक किरणों की caustic -> dict।"
   }
  }
 }

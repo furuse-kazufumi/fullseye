@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 水と透明媒質(海の波・水面の屈折・水中の色と散乱・瓶のレンズ作用): `watermedia` 10 op
+- `ocean_spectrum`(Pierson–Moskowitz 1964 と JONSWAP 1973 の S(ω)、有義波高・周期。PM の有義波高は閉形式 0.21 U²/g に 0.4 %、JONSWAP は γ = 1 で PM に 1e-9)と `ocean_height_field`(Tessendorf 2001 の FFT の海: エルミート対称で実数、方向分布 cos² / cos2s、水深の分散関係、荒れによる水平変位、単一モード。空間の分散はスペクトルの積分に 0.02 %、傾きの分散は Cox & Munk と比べて格子で解ける波は 1〜2 割 ―― PM は毛管波を持たない。飽和域を毛管波数まで延ばすと 5 m/s で 98 %、10 m/s で 61 %)。
+- `fresnel_water_air`(水の屈折率は材料表の実部で分散込み。Brewster 角 53.12°・臨界角 48.6°・R(0)・R + T = 1 を閉形式と glassmirror に照合、全反射の旗)/ `snell_window`(窓の半径・見かけの深さ。d/n は 60° で 52 % 外れる)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で: 平面は二分法で 4 次方程式と光路長の直接最小化に一致、波面は双 3 次の高さのニュートン法でベクトルのスネルの式を検算し、外れた点は NaN と `converged = False`)。
+- `water_attenuation`(Pope & Fry 1997 の純水の吸収の表: 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m。Smith & Baker 1981 の散乱、Solonenko & Mobley 2015 のジャーロフ型 I〜9C の a・b・Kd と深さごとの透過率。表の外・未知の型は拒否)/ `underwater_image`(Akkaynak & Treibitz 2018 の画像形成: 直接光の減衰 + 後方散乱のベール、距離 0 で入力に戻る、後方散乱を切ると Beer–Lambert)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold 1972 の体積散乱関数 3 局)/ `cylinder_lens_caustic`(円柱の近軸焦点は n R / (2 (n − 1))、実光線の焦線と球面収差、水入りの瓶と空の瓶の屈折力の比 13.6)。
+- 手書きの件数を打ち直す: 光学の op 393(+10)、索引 3,449 → 3,459、型付き台帳 2,493 → 2,503、ノート 3,455 → 3,465(AI_RAG_GUIDE 7 言語は `i18n_docs --stamp`)。能力ノート `docs/capabilities/water-transparent-media.md`、op 要約 6 言語、展示(撮像ウィング)・ViEW2026 の一覧。
+- 門 `tests/test_watermedia.py`(閉形式・第 2 実装・公表値で採点し、拒否と壊して確かめる探針を置く)。PoC `poc_water_transparent_media`(収蔵番号 2026.266、門 43 件、CPU 12 s で図つき、CI では 1 s 前後): 海・プールの底の市松模様とスネルの窓・水を入れた瓶の焦線と液面検査・潜水夫の見る色票・d/n の限界。
+
 ### Added — パッチ特徴の異常検知(`anomaly_patch` 5 op)と評価の追加 3 op(F1 最大・再現率を保証する運用点)
 - 良品だけから学ぶ異常検知を、深層特徴なしの古典特徴(多重解像度の勾配・Gabor・回転不変の一様 LBP・パッチの周波数帯・色)で組んだ。`patch_features`(特徴)、`patchdist_fit` / `patchdist_score`(格子の位置ごとの正規分布とマハラノビス距離。共分散が特異になる n ≦ D では**縮小推定を宣言**: `shrinkage="auto"`(Ledoit–Wolf の解析的な強さ)か数、宣言なしで特異なら `ValueError`。`pool="global"` は全位置まとめた 1 つの分布)、`patchbank_fit` / `patchbank_score`(記憶バンクと k 近傍。記憶は貪欲な k 中心の被覆で間引き、被覆半径を返す。`position_weight` で格子の位置を特徴に足す)。台帳は `opsspc` の新カテゴリ `anomaly_patch`。
 - 評価 `anomeval` に 3 op: `anomaly_pixel_f1_max` / `anomaly_image_f1_max`(全閾値の F1 の最大、厳密)、`anomaly_operating_point`(持ち出した欠陥のうち何枚を拾うかを Clopper–Pearson の下限で決め、再現率 ≧ r を信頼水準 c で保証する最も高い閾値。保証に要る欠陥の数 ceil(ln(1−c)/ln r) に足りなければ閾値を返さず `ValueError`)。画素 AUROC・PRO・画像 AUROC は既存の `anomeval` をそのまま使う。
