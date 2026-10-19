@@ -2687,7 +2687,7 @@ _計 3447 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lockin_ring_normals` `table → table` — Surface normals from the first-harmonic response of a dipole-modulated ring -> dict of maps. · 例: `poc_lockin_imaging`
 - `lockin_ring_synthesize` `image2d → video` — A Lambertian relief lit by a ring of modulated sources -> image sequence (T, H, W). · 例: `poc_lockin_imaging`
 - `lockin_separate` `video → table` — Separate coded lights and the uncoded rest by least squares against zero-mean codes -> dict of maps. · 例: `poc_lockin_imaging`
-- `lockin_thermal_wave` `image2d → video` — Steady-state surface temperature of a plate heated by a sinusoidal flux, per pixel -> image sequence (T, H, W). · 例: `poc_lockin_imaging`
+- `lockin_thermal_wave` `image2d → video` — Steady-state surface temperature of a plate heated by a sinusoidal flux, per pixel -> image sequence (T, H, W). · 例: `poc_lockin_imaging`, `poc_thermal_drift_metrology`
 - `lockin_walsh_codes` `入力なし → matrix` — Orthogonal zero-mean on/off codes for coded intermittent lighting -> (n_codes, n_frames) matrix of +-1. · 例: `poc_lockin_imaging`
 
 #### optics / material(6)

@@ -1154,7 +1154,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_thermal_drift_metrology.py`
 
-- **L558** _(ja)_ — ★語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に鳴る。`gauge` は 測定システム解析(`msa_gauge_rr` = ゲージ R&R)が入った時点で当たるように なった —— この repo で 4 度目の偽陽性なので、意味の合う語だけに絞る。
+- **L560** _(ja)_ — ★語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に鳴る。`gauge` は 測定システム解析(`msa_gauge_rr` = ゲージ R&R)が入った時点で当たるように なった —— この repo で 4 度目の偽陽性なので、意味の合う語だけに絞る。
 
 ## `examples/poc_thermal_radiometry.py`
 
