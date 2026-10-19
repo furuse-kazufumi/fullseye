@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — Studio の論理層 `studio_search`(目的検索を適用できる/前処理が必要/その他に分ける)と `studio_errors`(原因・場所・次の行動)
+- `studio_search`: `search_grouped` は `search_ops` の順位を保ったまま、今の入力の型で結果を 3 群に分け(宣言または `accepted_sorts` の実測で適用可 / 2 手以内の橋で届く / その他)、各行に正式名・表示名・型・点数・当たった欄を付ける。実測は上位 k 件にだけ・op ごとに覚える。`current_sort_of` は値から型を推す(`studio.inspect_result` と矛盾しないことを門で照合)。`search_zero_results_help` は 0 件のときの近い語・op 名・カテゴリ・型。
+- `studio_errors`: `explain_failure` は例外を 原因 / 場所 / 入力の事実 / 次の行動 に分ける(大きさの不一致・型の取り違え・非有限・空・つまみの範囲外・次元違い・依存の欠落・未知の op・汎用)。行動は提案 5 種類だけで、自動の修復は種類として存在しない。`format_failure` が Problems 欄の文面(ja / en)にする。
+- Qt 非依存・標準ライブラリ + numpy のみ。`studio.py` への配線は次の片(`docs/STUDIO_UX.md`)。門 `tests/test_studio_search.py`(27 件)・`tests/test_studio_errors.py`(16 件)。
+
+
 ## 0.7.1 — 2026-10-19
 
 ### Added — パッチ特徴の異常検知(`anomaly_patch` 5 op)と評価の追加 3 op(F1 最大・再現率を保証する運用点)

@@ -167,6 +167,29 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     a missing one in Problems and tries the same file name next to the `.json`. Still
     open: embedding small inputs in the project, and a multi-image project.
 
+## ロジック層: studio_search / studio_errors、UI への配線は次の片
+
+Studio の UX 案のうち ①(目的検索)と ⑦(直せるエラー)の**論理だけ**を、Qt を使わない 2 つの
+モジュールに先に置いた。`studio.py` はまだ触っていない(配線は次の片で、数行で済む形にしてある)。
+
+- `studio_search.search_grouped(query, current_value, current_sort, k, lang)` — `fullseye.opsearch.search_ops`
+  の順位のまま、結果を `applicable`(今の入力の型で適用できる: 宣言どおり、または `opassist.accepted_sorts`
+  の実測が通す)/ `needs_preprocessing`(2 手以内の前処理 `bridge` で届く)/ `other` に分ける。
+  各行は正式名・表示名(要約の 1 行目)・入力→出力の型・点数・当たった欄(`why`)を持つ。今の型が分からなければ
+  全部 `other` で、並びは `search_ops` と 1 対 1。実測は上位 k 件だけ・op ごとに覚える。
+  `current_sort_of(value)` は値から台帳の型名を推し、`studio.inspect_result` の kind と矛盾しないことを門で照合している。
+  0 件のときは `search_zero_results_help` が近い語・近い op 名・カテゴリ・型を返し、空の一覧で終わらない。
+- `studio_errors.explain_failure(exc, op_name=, stage_index=, inputs=)` — 失敗を 原因 / 場所 / 入力の事実 / 次の行動 に
+  分ける。認識する種類は 大きさの不一致・型の取り違え・非有限・空・つまみの範囲外・次元違い・依存の欠落・未知の op・
+  汎用(これも場所と生の文面は埋める)。行動の種類は `reselect_input` / `show_inputs_side_by_side` / `open_log` /
+  `edit_knob` / `insert_stage` の 5 つだけで、**自動の修復(大きさを合わせて再実行など)は種類として存在しない**。
+  `format_failure(info, lang)` が Problems 欄の複数行(原因 / 場所 / 次にできること + 入力の表)にする。
+
+*配線の見取り図(次の片):* 検索欄の Enter で `search_grouped(text, current_value=model の現在の結果)` を呼んで 3 群を
+一覧にし、`report_error` / `_fail_stage` の `except` で `explain_failure(exc, op_name=, stage_index=, inputs=)` →
+`format_failure` を Problems に出す。行動の実行(選び直し・並べて表示・ログ・つまみへの移動・段の挿入)は UI 側の仕事で、
+論理層は提案を返すだけ。
+
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a
 thin wiring layer — the pattern that makes this file testable head­lessly.
