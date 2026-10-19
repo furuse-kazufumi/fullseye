@@ -95,6 +95,43 @@ def validate_pipeline_dict(d):
     return out
 
 
+def validate_pinned(d):
+    """Validate the optional ``pinned`` key of a pipeline payload -> a list of
+    ``{"stages", "input", "display", "note"}`` dicts (at most :data:`MAX_PINS`).
+
+    Absent -> ``[]`` (files written before the key existed load as before). Present but malformed
+    -> :class:`ValueError`, so a bad file leaves the current project untouched. The stages go
+    through :func:`validate_pipeline_dict` (known ops, knobs in [0, 1], bypass flags)."""
+    if not isinstance(d, dict):
+        raise ValueError("not a pipeline file (expected a JSON object)")
+    raw = d.get("pinned")
+    if raw is None:
+        return []
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError("'pinned' must be a list, got %s" % type(raw).__name__)
+    if len(raw) > MAX_PINS:
+        raise ValueError("'pinned' holds %d snapshots, at most %d are kept" % (len(raw), MAX_PINS))
+    out = []
+    for i, p in enumerate(raw):
+        if not isinstance(p, dict):
+            raise ValueError("pinned snapshot %d must be an object, got %s" % (i + 1, type(p).__name__))
+        try:
+            stages = validate_pipeline_dict({"stages": p.get("stages")})
+        except ValueError as e:
+            raise ValueError("pinned snapshot %d: %s" % (i + 1, e)) from None
+        disp = p.get("display")
+        if disp is not None and not isinstance(disp, dict):
+            raise ValueError("pinned snapshot %d: 'display' must be an object" % (i + 1))
+        note = p.get("note", "")
+        if not isinstance(note, str):
+            raise ValueError("pinned snapshot %d: 'note' must be text" % (i + 1))
+        out.append({"stages": stages, "input": _valid_input_ref(p.get("input")),
+                    "display": {k: v for k, v in (disp or {}).items() if isinstance(k, str)
+                                and isinstance(v, (str, int, float, bool))},
+                    "note": note})
+    return out
+
+
 #: Program lines that are display / config DIRECTIVES (not pipeline stages) and are
 #: therefore persisted next to the stages in a pipeline file (key ``directives``).
 _DIRECTIVE_PREFIXES = ("dev_", "set_system", "disp_")
@@ -745,6 +782,52 @@ class _Snap(list):
     label = None
 
 
+#: how many pinned snapshots a project keeps (the oldest is dropped past this)
+MAX_PINS = 2
+
+
+class PinnedSnapshot:
+    """A frozen "this is how it looked" record (Studio slice 3): the stage list (bypass flags included),
+    the input reference, the display settings and the final output.
+
+    The output is ONE private copy made at pin time and marked read-only
+    (``array.flags.writeable is False``), so no later run, cache reuse or in-place op can change it.
+    ``stages`` is a tuple of private stage copies; :meth:`stage_copies` hands out fresh ones.
+    The arrays are never saved: :meth:`to_dict` writes the stages, input, display and note, and the
+    array is recomputed on load (see :meth:`PipelineModel.recompute_pins`)."""
+
+    def __init__(self, stages, input_ref=None, display=None, note="", img_ver=0):
+        self.stages = tuple(_copy_stage(s) for s in stages)
+        self.input = dict(input_ref) if input_ref else None
+        self.display = dict(display or {})
+        self.note = str(note or "")
+        self.img_ver = img_ver              # the in-session image version it was made under (see diff_pin)
+        self.array = None                   # read-only ndarray of the final output, or None
+        self.valid = None                   # assess_validity of that output
+        self.reasons = []
+        self.error = None                   # why the array could not be (re)computed, else None
+        self.kind = None                    # "image" / "other" (a result that is not a picture)
+
+    def stage_copies(self):
+        return [_copy_stage(s) for s in self.stages]
+
+    def freeze(self, value):
+        """Take one private read-only copy of *value* as the pinned output."""
+        self.valid, self.reasons = assess_validity(value)
+        if isinstance(value, np.ndarray):
+            a = np.array(value, copy=True)
+            a.flags.writeable = False
+            self.array, self.kind = a, "image"
+        else:
+            self.array, self.kind = None, "other"
+        self.error = None
+
+    def to_dict(self):
+        return {"stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages],
+                "input": dict(self.input) if self.input else None,
+                "display": dict(self.display), "note": self.note}
+
+
 class PipelineModel:
     """An ordered list of (op, a, b) stages applied to a base image.
 
@@ -769,6 +852,11 @@ class PipelineModel:
         self.input_path = None
         #: the "input" reference read by the last load_dict (None for files without one)
         self.input_ref = None
+        #: pinned snapshots (Studio slice 3), oldest first, at most MAX_PINS; saved under "pinned"
+        self.pins: list = []
+        #: the snapshot the last :meth:`pin` call pushed out (None if none was dropped)
+        self.last_dropped_pin = None
+        self._in_ref_cache = None             # (input path, image version, reference) of the current input
 
     @property
     def image(self):
@@ -1099,6 +1187,107 @@ class PipelineModel:
         """Bytes held by the thumbnail store (the small arrays only)."""
         return int(sum(r[2].nbytes for r in self._thumbs.values() if r[2] is not None))
 
+    def run_variants(self, i, which, knobs):
+        """Run stage *i* ALONE with each knob value in *knobs* (knob ``which`` = ``"a"`` | ``"b"``),
+        starting from the cached output of stage *i-1*; the other knob keeps its current value.
+
+        Returns ``[(value, None) | (None, exception), ...]``, one per knob value. Exactly one call of
+        stage *i*'s op per value and none of any other stage (the prefix comes from the cache and is
+        only computed if it is missing). The stage list and the cache are not touched, so the user's
+        pipeline is exactly as it was. A bypassed stage cannot be varied (it runs nothing)."""
+        stages = self._stages
+        if self._image is None or not 0 <= i < len(stages):
+            raise IndexError(i)
+        if which not in ("a", "b"):
+            raise ValueError("which must be 'a' or 'b', got %r" % (which,))
+        if _is_bypassed(stages[i]):
+            raise ValueError("stage %d is bypassed: switch it on to try its values" % (i + 1))
+        active_before = any(not _is_bypassed(stages[k]) for k in range(i))
+        prefix = self.result_upto(i - 1) if active_before else None
+        policy, fast = api._policy(None), api._fast_on(None)
+        out = []
+        for kn in knobs:
+            a, b = float(stages[i][1]), float(stages[i][2])
+            if which == "a":
+                a = float(kn)
+            else:
+                b = float(kn)
+            try:
+                base, norm, ops_ = api._prepare_pipeline(self._image, [(stages[i][0], a, b)], 0.5, 0.5, policy)
+                start = prefix if active_before else base
+                steps = api._pipeline_steps(start, norm, ops_, True, policy, fast, entry=not active_before)
+                out.append((next(steps), None))
+            except Exception as e:                       # one bad candidate does not blank the others
+                out.append((None, e))
+        return out
+
+    # -- pinned snapshots (Studio slice 3) ----------------------------------- #
+    def _current_input_ref(self):
+        """The reference (path + sha256) of the current input file, or None when the input is not a file.
+        Cached per (path, image version): the file is hashed once, not on every refresh."""
+        if not self.input_path:
+            return None
+        c = self._in_ref_cache
+        if c is not None and c[0] == self.input_path and c[1] == self._img_ver:
+            return c[2]
+        try:
+            ref = input_reference(self.input_path, self._image)
+        except OSError:
+            ref = None
+        self._in_ref_cache = (self.input_path, self._img_ver, ref)
+        return ref
+
+    def pin(self, note="", display=None):
+        """Freeze the current pipeline and its final output as a :class:`PinnedSnapshot` (appended;
+        past :data:`MAX_PINS` the oldest is dropped and kept in :attr:`last_dropped_pin`)."""
+        if self._image is None:
+            raise ValueError("there is no image to pin")
+        out = self.output()                              # may raise: a pipeline that fails cannot be pinned
+        p = PinnedSnapshot(self._stages, self._current_input_ref(), display, note, self._img_ver)
+        p.freeze(out)
+        self.last_dropped_pin = None
+        self.pins.append(p)
+        while len(self.pins) > MAX_PINS:
+            self.last_dropped_pin = self.pins.pop(0)
+        return p
+
+    def drop_pin(self, k):
+        """Remove and return the pinned snapshot at position *k*."""
+        return self.pins.pop(k)
+
+    def diff_pin(self, pin):
+        """What changed between *pin* (A) and the current pipeline (B): see :func:`diff_pipelines`."""
+        cur = self._current_input_ref()
+        if pin.input and cur:
+            changed = pin.input.get("sha256") != cur.get("sha256")
+        else:
+            changed = pin.img_ver != self._img_ver       # no file to compare: a new image object counts
+        return diff_pipelines(pin.stages, self._stages, pin.input, cur, input_changed=changed)
+
+    def recompute_pins(self):
+        """Recompute every pinned output from its stages and the CURRENT image (arrays are not saved).
+
+        Fail-closed: if the snapshot knows the input file it was made from and the current input file
+        is a different one, nothing is computed (``pin.error`` says why); a pipeline that fails sets
+        ``pin.error`` too. The pin is kept either way, so the Problems list can say "cannot recompute"."""
+        cur = self._current_input_ref()
+        for p in self.pins:
+            p.error = None
+            if p.input and cur and p.input.get("sha256") != cur.get("sha256"):
+                p.array, p.error = None, "the input image is not the one this snapshot was made from"
+                continue
+            try:
+                if self._image is None:
+                    raise ValueError("there is no input image")
+                m = PipelineModel(self._image)
+                m.stages = p.stage_copies()
+                out = m.output()
+            except Exception as e:
+                p.array, p.error = None, truncate(e, 160)
+                continue
+            p.freeze(out)
+            p.img_ver = self._img_ver
+
     def step_times(self):
         """Per-stage wall-clock in ms, aligned with self.stages: the cost of that stage's own
         (last) computation, kept with its cached result — O(n), no stage is run twice. A stage
@@ -1140,19 +1329,29 @@ class PipelineModel:
                 d["input"] = input_reference(self.input_path, self.image)
             except OSError:
                 pass                                 # unreadable input: save the pipeline without a reference
+        if self.pins:                                # key only when used: old files stay byte-identical
+            d["pinned"] = [p.to_dict() for p in self.pins]
         return d
 
-    def load_dict(self, d):
+    def load_dict(self, d, recompute_pins=True):
         """Replace the pipeline from a saved dict.
 
         The payload is validated into a temporary list first (see
-        :func:`validate_pipeline_dict` / :func:`validate_directives`), so a malformed
-        file raises :class:`ValueError` and leaves the current pipeline untouched."""
+        :func:`validate_pipeline_dict` / :func:`validate_directives` / :func:`validate_pinned`), so a
+        malformed file raises :class:`ValueError` and leaves the current pipeline untouched.
+        Pinned snapshots are restored without their arrays and recomputed from the current image
+        (``recompute_pins=False``: the caller does it once the right image is loaded)."""
         stages = validate_pipeline_dict(d)
         directives = validate_directives(d)
+        pinned = validate_pinned(d)
         self.stages = stages
         self.directives = directives
         self.input_ref = _valid_input_ref(d.get("input"))    # a malformed "input" is ignored, never fatal
+        self.pins = [PinnedSnapshot(p["stages"], p["input"], p["display"], p["note"], self._img_ver)
+                     for p in pinned]
+        self.last_dropped_pin = None
+        if recompute_pins and self.pins:
+            self.recompute_pins()
 
 
 class PerceptionModel:
@@ -2002,14 +2201,30 @@ def stage_knob_text(name, a, b):
     return ", ".join(parts)
 
 
-def apply_display(val, mode, base=None, draw=None):
+def _stretch(val, vmin, vmax):
+    """Linear map of *val* so that ``vmin`` -> 0 and ``vmax`` -> 1 (float64; non-finite -> 0 / 1 / 0)."""
+    a = np.asarray(val, np.float64)
+    span = float(vmax) - float(vmin)
+    if not (math.isfinite(span) and span > 0):
+        span = 1.0
+    return np.nan_to_num((a - float(vmin)) / span, nan=0.0, posinf=1.0, neginf=0.0)
+
+
+def apply_display(val, mode, base=None, draw=None, vmin=None, vmax=None):
     """Map a 2-D result to an RGB image for the chosen display mode: 'gray', any
     false-colour palette name, 'shaded relief', 'height (color)', or 'region overlay'
     (blend a binary region onto *base* — HDevelop dev_display of a region on the
     current image). *draw* (optional) is the HDevelop dev_set_draw/dev_set_color/
     dev_set_line_width style {mode:'fill'|'margin', color, line_width, alpha} for the
     region overlay; None = the default amber fill. Non-2-D or already-color results
-    are returned unchanged. (Headless, testable.)"""
+    are returned unchanged. *vmin* / *vmax* (both given) fix the display range: the value
+    is stretched so ``vmin`` -> black and ``vmax`` -> white BEFORE the mode is applied, which is
+    how several pictures (the knob strip, the A / B panes) are shown on one common scale; a
+    binary region in 'region overlay' mode is left alone. (Headless, testable.)"""
+    if (vmin is not None and vmax is not None and isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
+            and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3))
+            and not (mode == "region overlay" and val.ndim == 2 and _is_binary(val))):
+        val = _stretch(val, vmin, vmax)
     if not isinstance(val, np.ndarray) or val.ndim != 2:
         return val
     if mode == "region overlay":
@@ -2028,6 +2243,251 @@ def apply_display(val, mode, base=None, draw=None):
     if mode in imgio.COLORMAPS:
         return imgio.apply_cmap(val, name=mode)
     return val
+
+
+# --------------------------------------------------------------------------- #
+# Studio slice 3 (Qt-free helpers): candidate knob values for the strip, one shared display range,
+# the A / B difference image, the "what changed" list, and the view-sync group.
+# --------------------------------------------------------------------------- #
+def shared_display_range(*arrays):
+    """``(lo, hi)``: the finite min / max over every ndarray given (non-arrays are skipped), so several
+    pictures can be shown on ONE scale. ``None`` when there is nothing to measure; a flat input gives
+    ``(lo, lo + 1)``."""
+    lo, hi = math.inf, -math.inf
+    for a in arrays:
+        if not isinstance(a, np.ndarray) or a.dtype.kind not in "biuf" or a.size == 0:
+            continue
+        f = a[np.isfinite(a)] if a.dtype.kind == "f" else a
+        if f.size:
+            lo, hi = min(lo, float(f.min())), max(hi, float(f.max()))
+    if not math.isfinite(lo):
+        return None
+    return (lo, hi) if hi > lo else (lo, lo + 1.0)
+
+
+def _window_values(cur, delta, half, lo, hi):
+    """``2 * half + 1`` values ``cur + o * delta`` around *cur* (``o`` = -half .. half), the whole row
+    slid by whole steps (so *cur* itself stays in it) when one end would leave ``[lo, hi]``, and any
+    value that still sticks out dropped: a knob at its end still gets a full strip where the range allows."""
+    eps = 1e-9 * max(1.0, abs(delta))
+    offs = list(range(-half, half + 1))
+    while cur + offs[0] * delta < lo - eps and cur + (offs[-1] + 1) * delta <= hi + eps:
+        offs = [o + 1 for o in offs]
+    while cur + offs[-1] * delta > hi + eps and cur + (offs[0] - 1) * delta >= lo - eps:
+        offs = [o - 1 for o in offs]
+    return [cur + o * delta for o in offs if lo - eps <= cur + o * delta <= hi + eps]
+
+
+def knob_candidates(spec, knob, n=3):
+    """Knob values to try around *knob* (0..1) for a knob with param spec *spec*: the list the knob strip shows.
+
+    ``n`` is 3 or 5 (anything else is 3). Returns ``[{"knob", "text", "current"}, ...]`` in ascending
+    order, ``text`` being the value in the knob's own unit. Continuous knob: steps of the spec's
+    ``step`` or 1/10 of its range, whichever is larger (geometric steps when the spec maps on a
+    log scale); int: whole steps; choice: the neighbouring choices; bool: both. Never outside the
+    allowed range (the window slides back in); an unused knob has no candidates. The entry marked
+    ``current`` carries the knob exactly as it is."""
+    PS = param_specs
+    spec = spec or PS.GENERIC_FLOAT
+    kind = spec.get("kind", "float")
+    n = 5 if int(n) >= 5 else 3
+    half = n // 2
+    try:
+        k0 = float(knob)
+    except (TypeError, ValueError):
+        k0 = 0.0
+    k0 = min(1.0, max(0.0, k0)) if math.isfinite(k0) else 0.0
+    if kind == "unused":
+        return []
+    if kind == "bool":
+        cur = bool(PS.knob_to_display(spec, k0))
+        ks = [0.0, 1.0]
+        return [{"knob": (k0 if bool(PS.knob_to_display(spec, k)) == cur else k),
+                 "text": PS.format_display(spec, k), "current": bool(PS.knob_to_display(spec, k)) == cur}
+                for k in ks]
+    if kind in ("choice", "int"):
+        lo, hi = int(spec.get("min", 0)), int(spec.get("max", 0))
+        d = int(PS.knob_to_display(spec, k0))
+        step = 1 if kind == "choice" else max(1, int(round((hi - lo) / 10.0)))
+        vals = sorted({int(round(v)) for v in _window_values(d, step, half, lo, hi)})
+        items = [(v, k0 if v == d else PS.display_to_knob(spec, v)) for v in vals]
+    else:
+        lo, hi = float(spec.get("min", 0.0)), float(spec.get("max", 1.0))
+        d = float(PS.knob_to_display(spec, k0))
+        if spec.get("map") == "log" and lo > 0 and hi > 0:
+            u0, ulo, uhi = math.log(d), math.log(lo), math.log(hi)
+            delta = (uhi - ulo) / 10.0
+            vals = [math.exp(u) for u in _window_values(u0, delta, half, ulo, uhi)]
+        else:
+            delta = max(float(spec.get("step") or 0.001), abs(hi - lo) / 10.0)
+            vals = _window_values(d, delta, half, min(lo, hi), max(lo, hi))
+        items = [(v, k0 if abs(v - d) <= 1e-12 * max(1.0, abs(d)) else PS.display_to_knob(spec, v))
+                 for v in vals]
+    out, seen = [], set()
+    for _v, kn in items:
+        key = round(kn, 9)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"knob": kn, "text": PS.format_display(spec, kn), "current": abs(kn - k0) <= 1e-12})
+    return out
+
+
+def _gray2d(a):
+    """A float64 ``(h, w)`` view of an image for differencing (a 3-channel image -> luminance)."""
+    a = np.asarray(a, np.float64)
+    return a if a.ndim == 2 else imgio.ensure_gray(a)
+
+
+def difference_image(a, b, kind="absolute"):
+    """The picture of how *b* differs from *a*, as an RGB float image in [0, 1] plus its scale.
+
+    ``kind``: ``"absolute"`` |b - a| on a sequential map; ``"signed"`` b - a on a symmetric diverging
+    map (zero is the neutral middle, + and - are mirror images); ``"ratio"`` log2(b / a) on the same
+    diverging map (doubling and halving are mirror images; pixels where a is 0 or a value is not finite
+    are left black). Returns ``{"image", "scale", "kind"}`` where ``scale`` is the value at the end of
+    the colour bar. Raises :class:`ValueError` when the two are not same-size pictures (fail-closed)."""
+    if not (isinstance(a, np.ndarray) and isinstance(b, np.ndarray) and a.dtype.kind in "biuf"
+            and b.dtype.kind in "biuf"):
+        raise ValueError("no picture to compare")
+    if a.shape != b.shape:
+        raise ValueError("A %s and B %s differ in size" % (fmt_shape(a.shape), fmt_shape(b.shape)))
+    ga, gb = _gray2d(a), _gray2d(b)
+    if kind == "absolute":
+        d = np.abs(gb - ga)
+        m = float(np.max(d[np.isfinite(d)])) if np.isfinite(d).any() else 0.0
+        t = d / m if m > 0 else np.zeros_like(d)
+        return {"image": imgio.apply_cmap(np.clip(t, 0, 1), name="inferno", vmin=0.0, vmax=1.0),
+                "scale": m, "kind": kind}
+    if kind == "signed":
+        d = gb - ga
+    elif kind == "ratio":
+        with np.errstate(divide="ignore", invalid="ignore"):
+            d = np.log2(gb / ga)
+        d[~np.isfinite(d)] = np.nan
+    else:
+        raise ValueError("unknown difference kind %r" % (kind,))
+    fin = np.isfinite(d)
+    m = float(np.max(np.abs(d[fin]))) if fin.any() else 0.0
+    t = d / m if m > 0 else np.zeros_like(d)
+    img = imgio.apply_cmap(np.clip(t, -1, 1), name="coolwarm", vmin=-1.0, vmax=1.0, invalid=(0, 0, 0))
+    return {"image": img, "scale": m, "kind": kind}
+
+
+def _knob_text_for(spec, knob):
+    """A knob value in its own unit ('1.38 px'); a plain number for a knob without a spec."""
+    return param_specs.format_display(spec, float(knob))
+
+
+def diff_pipelines(old, new, old_input=None, new_input=None, input_changed=None):
+    """What changed from the stage list *old* (A) to *new* (B), as an ordered list of entries.
+
+    The two lists are aligned by operator name (``difflib``), so an inserted or removed stage does not
+    make every later stage look edited. Entries, in order of position: ``input`` (first), then per
+    position ``knob`` (old -> new in the knob's unit; an unused knob is skipped, it changes nothing),
+    ``bypass`` (switched off / on again), ``removed`` and ``added``. Each entry is
+    ``{"kind", "index", "op", "knob", "old", "new", "text"}``; ``index`` is 1-based (a removed stage
+    counts in A, the others in B). *input_changed* None = compare the two input references by sha256."""
+    import difflib
+    out = []
+    if input_changed is None:
+        input_changed = bool(old_input and new_input and old_input.get("sha256") != new_input.get("sha256"))
+    if input_changed:
+        def _name(r):
+            return re.split(r"[\\/]", str(r["path"]))[-1] if r else tr("(unnamed image)")
+        o, n = _name(old_input), _name(new_input)
+        out.append({"kind": "input", "index": 0, "op": None, "knob": None, "old": o, "new": n,
+                    "text": tr("input changed: %s \u2192 %s") % (o, n)})
+    ops_o = [str(s[0]) for s in old]
+    ops_n = [str(s[0]) for s in new]
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, ops_o, ops_n, autojunk=False).get_opcodes():
+        if tag == "equal":
+            for k in range(i2 - i1):
+                so, sn, j = old[i1 + k], new[j1 + k], j1 + k
+                op = str(sn[0])
+                specs = param_specs.spec_for(op)
+                for letter, ix in (("a", 1), ("b", 2)):
+                    sp = specs[letter]
+                    if sp.get("kind") == "unused" or abs(float(so[ix]) - float(sn[ix])) <= 1e-12:
+                        continue
+                    ot, nt = _knob_text_for(sp, so[ix]), _knob_text_for(sp, sn[ix])
+                    out.append({"kind": "knob", "index": j + 1, "op": op, "knob": letter, "old": ot, "new": nt,
+                                "text": tr("stage %d (%s) %s: %s \u2192 %s")
+                                % (j + 1, op, sp.get("label") or letter, ot, nt)})
+                if _is_bypassed(so) != _is_bypassed(sn):
+                    on = _is_bypassed(sn)
+                    out.append({"kind": "bypass", "index": j + 1, "op": op, "knob": None,
+                                "old": not on, "new": on,
+                                "text": tr("stage %d (%s): bypassed") % (j + 1, op) if on
+                                else tr("stage %d (%s): switched on again") % (j + 1, op)})
+        else:
+            for i in range(i1, i2):
+                op = ops_o[i]
+                out.append({"kind": "removed", "index": i + 1, "op": op, "knob": None, "old": None, "new": None,
+                            "text": tr("removed: stage %d %s (%s)")
+                            % (i + 1, op, stage_knob_text(op, old[i][1], old[i][2]))})
+            for j in range(j1, j2):
+                op = ops_n[j]
+                out.append({"kind": "added", "index": j + 1, "op": op, "knob": None, "old": None, "new": None,
+                            "text": tr("added: stage %d %s (%s)")
+                            % (j + 1, op, stage_knob_text(op, new[j][1], new[j][2]))})
+    return out
+
+
+class ViewSyncGroup:
+    """Several image views that move together: a zoom, a pan or a fit in any member is replayed
+    in all the others (same scale and scroll offsets), and a hover in one puts a crosshair at the same
+    IMAGE coordinate in the others. Qt-free: the members are duck-typed (``sync_state()``,
+    ``sync_apply(state, full)``, ``sync_cursor(pos)``), and a guard flag keeps a replay from echoing back,
+    so one wheel event is exactly one ``setTransform`` on each other member."""
+
+    def __init__(self):
+        self._members = []
+        self._busy = False
+
+    @property
+    def members(self):
+        return list(self._members)
+
+    def add(self, view):
+        if view not in self._members:
+            self._members.append(view)
+        view._sync_group = self
+        return view
+
+    def remove(self, view):
+        if view in self._members:
+            self._members.remove(view)
+        if getattr(view, "_sync_group", None) is self:
+            view._sync_group = None
+        for m in self._members:                      # the departed member's crosshair must not stay behind
+            m.sync_cursor(None)
+        view.sync_cursor(None)
+
+    def notify_view(self, src, full=True):
+        """*src* moved: replay its state in the others (``full`` False: scroll offsets only)."""
+        if self._busy or src not in self._members:
+            return
+        self._busy = True
+        try:
+            st = src.sync_state()
+            for m in list(self._members):
+                if m is not src:
+                    m.sync_apply(st, full)
+        finally:
+            self._busy = False
+
+    def notify_cursor(self, src, pos):
+        """The cursor is over image coordinate *pos* ``(x, y)`` in *src* (None: it left)."""
+        if self._busy or src not in self._members:
+            return
+        self._busy = True
+        try:
+            for m in list(self._members):
+                if m is not src:
+                    m.sync_cursor(pos)
+        finally:
+            self._busy = False
 
 
 def _downsample_grid(hm, max_side=140):
@@ -3637,9 +4097,206 @@ def _knob_row_class(QtWidgets, QtCore):
     return KnobRow
 
 
+class ViewSyncMixin:
+    """The "moves together" half of an image view (mixed in before ``QGraphicsView``): the three methods a
+    :class:`ViewSyncGroup` calls (``sync_state`` / ``sync_apply`` / ``sync_cursor``) and the hooks the view
+    calls back (``_sync_zoomed`` after a zoom or fit, ``_sync_scrolled`` on a pan, ``_sync_hover`` on a mouse move).
+
+    A replay is applied under ``_sync_applying`` so it never echoes back; the view that was driven by
+    the user is the only one that notifies the group."""
+
+    def _sync_init(self):
+        self._sync_group = None
+        self._sync_applying = False
+        self._sync_zooming = False
+        self._fitted = False
+        self._cross = None
+        self._cross_pos = None
+        self.horizontalScrollBar().valueChanged.connect(self._sync_scrolled)
+        self.verticalScrollBar().valueChanged.connect(self._sync_scrolled)
+
+    def sync_state(self):
+        from PySide6 import QtGui
+        vp = self.viewport()
+        return {"transform": QtGui.QTransform(self.transform()),
+                "h": self.horizontalScrollBar().value(), "v": self.verticalScrollBar().value(),
+                "size": (vp.width(), vp.height()), "center": self.mapToScene(vp.rect().center()),
+                "fitted": bool(self._fitted)}
+
+    def sync_apply(self, st, full=True):
+        """Replay another member's view: its scale (``full``) and its scroll offsets. Panes of the same
+        size take the offsets as they are (same offsets = same picture part); panes of another size
+        centre on the same image point instead, since the same offsets would show another part."""
+        self._sync_applying = True
+        try:
+            if full:
+                self.setTransform(st["transform"])
+                self._fitted = bool(st.get("fitted"))
+            vp = self.viewport()
+            if (vp.width(), vp.height()) == tuple(st["size"]):
+                self.horizontalScrollBar().setValue(st["h"])
+                self.verticalScrollBar().setValue(st["v"])
+            else:
+                self.centerOn(st["center"])
+        finally:
+            self._sync_applying = False
+
+    def _sync_scrolled(self, _v=0):
+        if self._sync_applying or self._sync_zooming or self._sync_group is None:
+            return
+        self._fitted = False
+        self._sync_group.notify_view(self, False)
+
+    def _sync_zoomed(self):
+        """The user (or a Fit / 1:1 button) changed this view's scale: replay it in the group, once."""
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            g.notify_view(self, True)
+
+    def _sync_hover(self, e):
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            self.sync_cursor(None)                       # the pane the mouse is in shows the real cursor, not a crosshair
+            p = self.mapToScene(e.position().toPoint())
+            g.notify_cursor(self, (p.x(), p.y()))
+
+    def sync_cursor(self, pos):
+        """Show the crosshair at image coordinate *pos* ``(x, y)`` (None: hide it)."""
+        from PySide6 import QtGui, QtWidgets
+        if pos is None:
+            self._cross_pos = None
+            if self._cross is not None:
+                self._cross.setVisible(False)
+            return
+        sc = self.scene()
+        if sc is None:
+            return
+        if self._cross is None:
+            self._cross = QtWidgets.QGraphicsPathItem()
+            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen.setCosmetic(True)
+            pen.setWidth(1)
+            self._cross.setPen(pen)
+            self._cross.setZValue(100)
+            sc.addItem(self._cross)
+        x, y = float(pos[0]), float(pos[1])
+        r = sc.sceneRect()
+        path = QtGui.QPainterPath()
+        path.moveTo(r.left(), y); path.lineTo(r.right(), y)
+        path.moveTo(x, r.top()); path.lineTo(x, r.bottom())
+        self._cross.setPath(path)
+        self._cross.setVisible(True)
+        self._cross_pos = (x, y)
+
+    def crosshair_pos(self):
+        """Where this view's synchronised crosshair is, in image coordinates, or None."""
+        return self._cross_pos
+
+    def leaveEvent(self, e):
+        super().leaveEvent(e)
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            g.notify_cursor(self, None)
+
+
+def _sync_view_class(QtWidgets, QtGui, QtCore):
+    """A zoom / pan picture pane that can join a :class:`ViewSyncGroup` (the Stage in -> out panes and the
+    A / B panes). Wheel = zoom at the cursor, drag = pan; it keeps the pixmap it was given (``pixmap()``),
+    fits a new picture to the pane (and refits on resize until the user zooms), and writes a message
+    instead of a picture when there is none."""
+
+    class SyncView(ViewSyncMixin, QtWidgets.QGraphicsView):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.setScene(QtWidgets.QGraphicsScene(self))
+            self._item = QtWidgets.QGraphicsPixmapItem()
+            self._item.setTransformationMode(QtCore.Qt.FastTransformation)   # zoomed pixels stay visible
+            self.scene().addItem(self._item)
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+            self.setMouseTracking(True)
+            self.setBackgroundBrush(QtGui.QColor(NAVY_1))
+            self.setMinimumSize(120, 90)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            self._pm = None
+            self._msg = ""
+            self._sync_init()
+            self._fitted = True
+
+        def set_source(self, pm, msg=""):
+            """Show *pm* (a QPixmap) or, when it is None / null, the message *msg*."""
+            self._msg = msg or ""
+            if pm is None or pm.isNull():
+                self._pm = None
+                self._item.setPixmap(QtGui.QPixmap())
+                self.viewport().update()
+                return
+            same = self._pm is not None and self._pm.size() == pm.size()
+            self._pm = pm
+            self._item.setPixmap(pm)
+            self.scene().setSceneRect(QtCore.QRectF(pm.rect()))
+            if not same:
+                self.fit()                               # a picture of another size starts fitted
+
+        def pixmap(self):
+            return self._pm
+
+        def fit(self):
+            if self._pm is None:
+                return
+            self._sync_zooming = True
+            try:
+                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+            finally:
+                self._sync_zooming = False
+            self._fitted = True
+            self._sync_zoomed()
+
+        def resizeEvent(self, e):
+            was = self._fitted
+            self._sync_zooming = True                    # the scroll bars re-ranging on a resize are not a user pan
+            try:
+                super().resizeEvent(e)
+            finally:
+                self._sync_zooming = False
+            self._fitted = was
+            if was and self._pm is not None:
+                self.fit()
+
+        def wheelEvent(self, e):
+            f = 1.25 if e.angleDelta().y() > 0 else 0.8
+            if not 0.02 <= self.transform().m11() * f <= 64.0:
+                return
+            self._fitted = False
+            self._sync_zooming = True
+            try:
+                self.scale(f, f)
+            finally:
+                self._sync_zooming = False
+            self._sync_zoomed()
+
+        def mousePressEvent(self, e):
+            self._fitted = False
+            super().mousePressEvent(e)
+
+        def mouseMoveEvent(self, e):
+            super().mouseMoveEvent(e)
+            self._sync_hover(e)
+
+        def drawForeground(self, painter, rect):
+            if self._pm is None and self._msg:
+                painter.save()
+                painter.resetTransform()
+                painter.setPen(QtGui.QColor(MUTED))
+                painter.drawText(self.viewport().rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
+                painter.restore()
+
+    return SyncView
+
+
 def _image_view_class(QtWidgets, QtGui, QtCore):
     """A zoom/pan image viewer (wheel = zoom at cursor, drag = pan)."""
-    class ImageView(QtWidgets.QGraphicsView):
+    class ImageView(ViewSyncMixin, QtWidgets.QGraphicsView):
         #: tests set this False so contextMenuEvent builds the menu without the
         #: blocking ``QMenu.exec`` (the built menu is kept in ``_last_context_menu``)
         CONTEXT_MENU_EXEC = True
@@ -3664,6 +4321,11 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.save_cb = None                      # optional (view) -> None for Save image…
             self.actions = {}                        # own QActions (secondary windows)
             self._tools = None                       # overlay icon strip (secondary windows)
+            self.roi_cb = None                       # optional callback(rect | None), rect = (x0, y0, x1, y1) in pixels
+            self._band = None                        # Shift+drag rubber band (a region of interest)
+            self._band_origin = None
+            self._roi_item = None
+            self._sync_init()
             if tools:
                 self._build_own_actions()
                 self._build_tools_strip()
@@ -3804,8 +4466,40 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
         def set_data(self, arr):
             self._data = np.asarray(arr) if arr is not None else None
 
+        # ---- region of interest: Shift + drag a rectangle, Shift + click clears it ---------- #
+        def set_roi_rect(self, rect):
+            """Draw (or, with None, remove) the dashed region-of-interest rectangle (pixels ``x0, y0, x1, y1``)."""
+            if self._roi_item is not None:
+                try:
+                    self._scene.removeItem(self._roi_item)
+                except Exception:
+                    pass
+                self._roi_item = None
+            if rect is None:
+                return
+            x0, y0, x1, y1 = rect
+            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen.setCosmetic(True); pen.setStyle(QtCore.Qt.DashLine)
+            self._roi_item = self._scene.addRect(QtCore.QRectF(x0, y0, x1 - x0, y1 - y0), pen)
+            self._roi_item.setZValue(50)
+
+        def _band_to_rect(self, pos):
+            """The rubber band (origin .. *pos*) as an image rectangle clipped to the picture, or None if it is a click."""
+            r = QtCore.QRect(self._band_origin, pos).normalized()
+            pm = self._item.pixmap()
+            if pm.isNull() or r.width() < 3 or r.height() < 3:
+                return None
+            sr = self.mapToScene(r).boundingRect()
+            x0, y0 = max(0, int(math.floor(sr.left()))), max(0, int(math.floor(sr.top())))
+            x1, y1 = min(pm.width(), int(math.ceil(sr.right()))), min(pm.height(), int(math.ceil(sr.bottom())))
+            return (x0, y0, x1, y1) if (x1 - x0 >= 2 and y1 - y0 >= 2) else None
+
         def mouseMoveEvent(self, e):
+            if self._band_origin is not None:
+                self._band.setGeometry(QtCore.QRect(self._band_origin, e.position().toPoint()).normalized())
+                return
             super().mouseMoveEvent(e)
+            self._sync_hover(e)
             if self._data is not None and self.hover_cb is not None:
                 p = self.mapToScene(e.position().toPoint())
                 x, y = int(p.x()), int(p.y())
@@ -3815,6 +4509,13 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
 
         def mousePressEvent(self, e):
             self._press_pos = e.position().toPoint()
+            if e.button() == QtCore.Qt.LeftButton and (e.modifiers() & QtCore.Qt.ShiftModifier):
+                self._band_origin = self._press_pos                 # Shift + drag: a rubber band, not a pan
+                if self._band is None:
+                    self._band = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.viewport())
+                self._band.setGeometry(QtCore.QRect(self._band_origin, QtCore.QSize()))
+                self._band.show()
+                return
             super().mousePressEvent(e)
 
         def mouseReleaseEvent(self, e):
@@ -3822,6 +4523,14 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             # fires click_cb — the Feature-inspection dialog uses it for
             # "click a region -> select its table row". A drag (ScrollHandDrag pan)
             # moves further than the 4-px slop and is NOT a click.
+            if self._band_origin is not None:
+                rect = self._band_to_rect(e.position().toPoint())
+                self._band.hide()
+                self._band_origin = None
+                self._press_pos = None
+                if self.roi_cb is not None:
+                    self.roi_cb(rect)                              # None (a Shift+click) clears the region
+                return
             super().mouseReleaseEvent(e)
             pos = e.position().toPoint()
             if (self.click_cb is not None and self._data is not None
@@ -3854,19 +4563,33 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._data = None
             self.reset_zoom()
 
+        def _scaled(self, f):
+            """Scale by *f* and tell the sync group once (the scroll bars moving meanwhile are not a pan)."""
+            self._sync_zooming = True
+            try:
+                self.scale(f, f)
+            finally:
+                self._sync_zooming = False
+            self._sync_zoomed()
+
         def wheelEvent(self, e):
-            f = 1.25 if e.angleDelta().y() > 0 else 0.8
-            self.scale(f, f)
+            self._scaled(1.25 if e.angleDelta().y() > 0 else 0.8)
 
         def zoom(self, f):
-            self.scale(f, f)
+            self._scaled(f)
 
         def reset_zoom(self):
             self.resetTransform()
+            self._sync_zoomed()
 
         def fit(self):
             if not self._item.pixmap().isNull():
-                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+                self._sync_zooming = True
+                try:
+                    self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+                finally:
+                    self._sync_zooming = False
+                self._sync_zoomed()
 
         def set_pixmap_keep_view(self, pm):
             """Swap the pixmap but KEEP the current zoom/pan when the image geometry is
@@ -3877,13 +4600,16 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             t = self.transform()
             hs = self.horizontalScrollBar().value()
             vs = self.verticalScrollBar().value()
-            self.set_pixmap(pm)
-            if same:
-                self.setTransform(t)
-                self.horizontalScrollBar().setValue(hs)
-                self.verticalScrollBar().setValue(vs)
-                return True
-            return False
+            self._sync_applying = True                   # a re-render restoring the same view is not a user pan
+            try:
+                self.set_pixmap(pm)
+                if same:
+                    self.setTransform(t)
+                    self.horizontalScrollBar().setValue(hs)
+                    self.verticalScrollBar().setValue(vs)
+            finally:
+                self._sync_applying = False
+            return bool(same)
 
         def set_part(self, r1, c1, r2, c2):
             """dev_set_part: show the image part with corners (Row1,Col1)-(Row2,Col2)
