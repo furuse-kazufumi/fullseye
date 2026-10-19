@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**95 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**96 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 21 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 22 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -759,6 +759,42 @@ Source: [examples/poc_simcal_pixel_shift.py](https://github.com/furuse-kazufumi/
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_pixel_shift)
 
 Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelshift/pixel_shift_capture.html) · [`pixel_shift_merge`](https://furuse.work/ops/optics/pixelshift/pixel_shift_merge.html) · [`pixel_shift_pattern`](https://furuse.work/ops/optics/pixelshift/pixel_shift_pattern.html) · [`pixel_shift_resolution_budget`](https://furuse.work/ops/optics/pixelshift/pixel_shift_resolution_budget.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.266 —— Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations
+
+[![Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/04_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/04_pool_views.png)
+
+*↑ **Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations** ―― Water is a moving lens seen from above and a colour filter that thickens with distance seen from below. Ten new ops (`watermedia`, category `watermedia` of `opsoptics`): `ocean_spectrum` (S(omega) of Pierson-Moskowitz and JONSWAP, significant height and period), `ocean_height_field` (a Tessendorf FFT sea: height, slopes, normals, choppiness, depth), `fresnel_water_air` (the index of water is the real part of the material table with dispersion; flags total internal reflection), `snell_window` (window radius and apparent depth), `refracted_view` (where an underwater point appears, as a stationary point of the optical path: bisection on a flat surface, Newton iteration on a wavy one with the vector Snell law verified and failures returned as NaN), `water_attenuation` (Pope & Fry pure-water absorption, Smith & Baker scattering, Solonenko & Mobley a, b and Kd of the Jerlov types), `underwater_image` (Akkaynak & Treibitz image formation: direct signal plus backscatter), `phase_function_hg` / `scattering_phase_petzold` (the Petzold volume scattering function) and `cylinder_lens_caustic` (paraxial focus and real-ray caustic of a cylinder). (1) A Pierson-Moskowitz sea at 8 m/s: significant height 1.3656 m (0.21 U^2/g = 1.3705 m, 0.36 %), peak 1.0753 rad/s (0.877 g/U = 1.0751, 2e-4), JONSWAP with gamma = 1 equals PM to 1e-9, the height is real (imaginary part 3.5e-16), the spatial variance is within 0.02 % of the integral of the spectrum (8 seeds) and a single mode has the period 2 pi / omega to 2.8e-16. Against Cox & Munk (0.003 + 0.00512 U) the slope variance of the resolved waves alone is 11 % at 5 m/s and 16 % at 10 m/s (PM has no capillary waves); carrying the saturation range to the capillary wave number 370 /m gives 98 % (-2.5 %) at 5 m/s but 61 % (-38.7 %) at 10 m/s, kept in the gates as the limit that the constant alpha of PM does not grow with the wind. (2) A checkerboard on the bottom of a 2 m pool: the apparent depth straight above is d / n to 0, the found path satisfies Snell's law to 7.8e-16, the flat refraction point agrees with the quartic to 1e-15 and with a direct minimisation of the optical path to 2.8e-8, and on a wavy surface the backward ray trace that builds the image returns to the same bottom point within 9.6e-9 m. In a fisheye looking up from under water the total internal reflection starts within one pixel (1.5 degrees) after the critical angle 48.59 degrees. (3) A water-filled bottle (R = 30 mm, n = 1.52, wall 1.5 mm, water 1.333): paraxial focus 61.24 mm, marginal ray 40.01 mm (spherical aberration 21.23 mm); the paraxial focus of a rod matches n R / (2 (n - 1)) and the real-ray focus matches the trigonometric chord to 3.6e-14. The power is 0.01633 /mm filled and -0.00120 /mm empty (ratio 13.6); on a screen 50 mm behind, the centre is 4.88 times the incident light where there is water (peak 13.97) and 0.94 times where the bottle is empty. (4) A colour chart at 1, 5 and 15 m: the Pope & Fry absorption has its minimum 0.00442 /m at 417.5 nm and 0.624 /m at 700 nm (table values), Beer-Lambert agrees with glassmirror to 1.1e-16, a count of 200,000 photons follows the exponential law to 0.2 sigma, Kd at 500 nm is 0.029 < 0.064 < 0.109 < 0.120 (I < II < III < 1C), red decays 12.2 times faster than blue in Jerlov I (transmission over 10 m: red 0.074, green 0.557, blue 0.807) and the R of the red patch at 15 m is 0.010. (5) Limits: the flat-surface apparent depth d / n is wrong the more obliquely one looks (7 % too deep at 30 degrees, 52 % at 60). The probes that break the answer on purpose (an index of 1.4, alpha changed by 10 %, Snell's law reversed) turn a gate red. No learning, no calibration, 43 gates.*
+
+[![Tessendorf の FFT。有義波高 1.37 m、周期 5.8 s。波は +x(右)へ進む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field.png)
+
+*↑ The measurement ―― Tessendorf の FFT。有義波高 1.37 m、周期 5.8 s。波は +x(右)へ進む。 (figure labels are in Japanese; the numbers are the same)*
+
+[![JONSWAP はピークを γ 倍に尖らせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_spectrum.png)
+
+*↑ JONSWAP はピークを γ 倍に尖らせる。*
+
+[![空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_bottle_caustic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_bottle_caustic.png)
+
+*↑ 空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。*
+
+[![上: 外洋(ジャーロフ I)、下: 沿岸(3C)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/07_diver_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/07_diver_chart.png)
+
+*↑ 上: 外洋(ジャーロフ I)、下: 沿岸(3C)。*
+
+[![純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/09_water_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/09_water_spectra.png)
+
+*↑ 純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。*
+
+```
+py -3.11 examples/poc_water_transparent_media.py
+```
+
+Source: [examples/poc_water_transparent_media.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_transparent_media)
+
+Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/glassbody/beer_lambert_transmittance.html) · [`cylinder_lens_caustic`](https://furuse.work/ops/optics/watermedia/cylinder_lens_caustic.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`ocean_spectrum`](https://furuse.work/ops/optics/watermedia/ocean_spectrum.html) · [`phase_function_hg`](https://furuse.work/ops/optics/watermedia/phase_function_hg.html) · [`refract_rays`](https://furuse.work/ops/optics/glassbody/refract_rays.html) · [`refracted_view`](https://furuse.work/ops/optics/watermedia/refracted_view.html) · [`scattering_phase_petzold`](https://furuse.work/ops/optics/watermedia/scattering_phase_petzold.html) · [`snell_window`](https://furuse.work/ops/optics/watermedia/snell_window.html) · [`underwater_image`](https://furuse.work/ops/optics/watermedia/underwater_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html)
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
