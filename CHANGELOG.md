@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Fixed — `gum_propagate` / `gum_monte_carlo` の相関行列の検査、矩形入力の周辺分布、`disparity_sgm` の非有限入力
+- R01 `gum_propagate`: 相関行列そのものを検査する(有限・対称・対角 1・半正定値)。射影した分散が正でも非半正定値の行列は ValueError。
+- R02 `gum_monte_carlo`: 同じ検査を共有(非対称・対角 ≠ 1・NaN は ValueError)。
+- R03 `gum_monte_carlo`: 相関つきの矩形・三角・U 字入力をガウス copula で作り、指定した周辺分布を保つ(95 % 半幅 1.8875 → 1.6446、閉形式 1.6454)。
+- R04 `gum_propagate`: 相関による厳密な打ち消し(X1 = X2, Y = X1 − X2)は `guf_valid=True`・u = 0・`note=["exact_cancellation"]`。感度がすべて 0 の本物の停留点は従来どおり `stationary_point`。
+- R05 `disparity_sgm`: 全画素が NaN/inf の画像は ValueError。一部が非有限なら、その画素の視差は NaN(0 を返さない)。
+- L01 `gum_monte_carlo`: 特異な半正定値(完全な ± 相関)を固有分解で扱い(退化した正規分布)、「同時分布が存在しない」という誤ったメッセージをやめた。
+
 ### Added — 硝材の置き換えと多始点の大域探索: `lensglobal` 3 op(逐次光学設計の第 5 弾)
 - `glass_nearest(n_d, v_d, catalog, k, metric, p_gf)`: カタログ(既定は `materials.glass_map` の光学ガラス 46 種、または `{"name", "nd", "vd", "PgF"}` の列)を Abbe 面の距離で並べ、近い順に k 個を距離つきで返す。距離は `nd_vd`(`√(Δn_d² + (ΔV_d/100)²)`)と `partial_dispersion`(P_g,F の項 `(ΔP_gF/0.1)²` を足す。`p_gf` が要る)。
 - `lens_substitute_glasses(system, catalog, k, metric, tolerance)`: 系のモデル硝材((n_d, V_d) の組・`raytrace.glass` の辞書)を k 番目に近いカタログ硝材に置き換え、面ごとの表を返す。許容距離の外・k がカタログより大きい・ビルドできない系は ValueError で、一部だけ置き換えない。基の系は書き換えない。
