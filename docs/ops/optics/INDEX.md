@@ -1,4 +1,4 @@
-# OPTICS operator help — 389 ops in 44 categories
+# OPTICS operator help — 398 ops in 45 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -101,6 +101,10 @@
 ### lensmerit (6)
 
 [merit_boundary_operands](lensmerit/merit_boundary_operands.md) · [merit_contributions](lensmerit/merit_contributions.md) · [merit_default](lensmerit/merit_default.md) · [merit_evaluate](lensmerit/merit_evaluate.md) · [merit_operands_list](lensmerit/merit_operands_list.md) · [optimize_lens_operands](lensmerit/optimize_lens_operands.md)
+
+### lenssolve (9)
+
+[afocal_system](lenssolve/afocal_system.md) · [lens_afocal_report](lenssolve/lens_afocal_report.md) · [lens_apply_solves](lenssolve/lens_apply_solves.md) · [lens_image_surface](lenssolve/lens_image_surface.md) · [lens_petzval_radius](lenssolve/lens_petzval_radius.md) · [lens_solve_clear](lenssolve/lens_solve_clear.md) · [lens_solve_set](lenssolve/lens_solve_set.md) · [lens_solves_list](lenssolve/lens_solves_list.md) · [lens_zmx_solves_roundtrip](lenssolve/lens_zmx_solves_roundtrip.md)
 
 ### light_transport (11)
 

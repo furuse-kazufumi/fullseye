@@ -4,7 +4,7 @@ dim: optics
 category: lensfile
 in: table
 out: table
-examples: [poc_lens_file_roundtrip, poc_zoom_configurations]
+examples: [poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -81,6 +81,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
+- [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
 - [poc_zoom_configurations](../../../../examples/poc_zoom_configurations.py) — `py -3.11 examples/poc_zoom_configurations.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

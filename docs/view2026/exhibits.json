@@ -6353,6 +6353,23 @@
    }
   },
   {
+   "id": "poc_lens_solves_afocal",
+   "group": "wing_color",
+   "media": "01_lens_solves_afocal.png",
+   "motion": false,
+   "thumb_src": "01_lens_solves_afocal.png",
+   "label": {
+    "ja": "設計の関係を「解」で持つ(絞りに追従する F/#、afocal、曲面の像面、奇数次非球面)",
+    "en": "Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)",
+    "zh": "用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)",
+    "tw": "用「解(solve)」保持設計關係(隨光闌變化的 F 數、afocal、曲面像面、奇次非球面)",
+    "ko": "설계의 관계를 솔브로 유지하기(조리개를 따라가는 F/#, afocal, 곡면 상면, 홀수차 비구면)",
+    "de": "Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)",
+    "hi": "design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)",
+    "fr": "Garder les relations d'une conception sous forme de solves (F/# qui suit le diaphragme, afocal, image courbe, asphères impaires)"
+   }
+  },
+  {
    "id": "poc_spectrometer_illumination",
    "group": "wing_metrology",
    "media": "03_slit_image_smile.png",
