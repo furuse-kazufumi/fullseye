@@ -30933,6 +30933,87 @@
    "de": "Gibt eine Kopie von *system* mit einer zusätzlichen Konfiguration zurück (``table``).",
    "hi": "*system* की एक प्रति लौटाता है जिसमें एक और विन्यास जुड़ा हो (``table``)।"
   },
+  "optics/lockin_demodulate": {
+   "fp": "c34822fe3acd",
+   "ja": "画像列を正弦の参照に対して画素ごとに直交復調する -> マップの dict。",
+   "zh": "将图像序列对正弦参考逐像素进行正交解调 -> 映射字典。",
+   "tw": "將影像序列對正弦參考逐像素進行正交解調 -> 映射字典。",
+   "ko": "영상 시퀀스를 정현파 기준 신호에 대해 화소별로 직교 복조한다 -> 맵의 dict.",
+   "de": "Quadratur-Demodulation einer Bildfolge gegen eine sinusförmige Referenz, pixelweise -> dict von Karten.",
+   "hi": "छवि अनुक्रम का sinusoidal संदर्भ के विरुद्ध प्रति-pixel quadrature demodulation -> मानचित्रों का dict।"
+  },
+  "optics/lockin_amplitude": {
+   "fp": "7393f205ce5f",
+   "ja": "各画素のうち参照に追従する成分の振幅マップ A -> (H, W) の画像。",
+   "zh": "每个像素中跟随参考信号的成分的幅值图 A -> (H, W) 图像。",
+   "tw": "每個像素中跟隨參考訊號的成分的振幅圖 A -> (H, W) 影像。",
+   "ko": "각 화소에서 기준 신호를 따르는 성분의 진폭 맵 A -> (H, W) 영상.",
+   "de": "Amplitudenkarte A des Anteils jedes Pixels, der der Referenz folgt -> (H, W)-Bild.",
+   "hi": "प्रत्येक pixel के उस भाग का amplitude मानचित्र A जो संदर्भ का अनुसरण करता है -> (H, W) छवि।"
+  },
+  "optics/lockin_phase": {
+   "fp": "0a9756cf7519",
+   "ja": "各画素のうち参照に追従する成分の位相マップ phi(ラジアン、(-pi, pi])-> (H, W) の画像。",
+   "zh": "每个像素中跟随参考信号的成分的相位图 phi(弧度,(-pi, pi])-> (H, W) 图像。",
+   "tw": "每個像素中跟隨參考訊號的成分的相位圖 phi(弧度,(-pi, pi])-> (H, W) 影像。",
+   "ko": "각 화소에서 기준 신호를 따르는 성분의 위상 맵 phi(라디안, (-pi, pi]) -> (H, W) 영상.",
+   "de": "Phasenkarte phi (Radiant, (-pi, pi]) des Anteils jedes Pixels, der der Referenz folgt -> (H, W)-Bild.",
+   "hi": "प्रत्येक pixel के उस भाग का phase मानचित्र phi (radian, (-pi, pi]) जो संदर्भ का अनुसरण करता है -> (H, W) छवि।"
+  },
+  "optics/lockin_noise_floor": {
+   "fp": "58c66e60fffd",
+   "ja": "白色雑音に対するロックインの振幅と位相の雑音を閉形式で与える -> dict。",
+   "zh": "给出白噪声下锁相幅值与相位噪声的闭式解 -> 字典。",
+   "tw": "給出白雜訊下鎖相振幅與相位雜訊的閉式解 -> 字典。",
+   "ko": "백색 잡음에 대한 록인 진폭과 위상 잡음의 닫힌 형식 -> dict.",
+   "de": "Geschlossene Form des Rauschens von Lock-in-Amplitude und -Phase bei weißem Rauschen -> dict.",
+   "hi": "श्वेत शोर के लिए lock-in amplitude और phase के शोर का closed-form -> dict।"
+  },
+  "optics/lockin_walsh_codes": {
+   "fp": "147c022cbdf0",
+   "ja": "符号化間歇照明のための直交・零平均のオン/オフ符号 -> +-1 の (n_codes, n_frames) 行列。",
+   "zh": "用于编码间歇照明的正交零均值开/关码 -> +-1 的 (n_codes, n_frames) 矩阵。",
+   "tw": "用於編碼間歇照明的正交零平均開/關碼 -> +-1 的 (n_codes, n_frames) 矩陣。",
+   "ko": "부호화 간헐 조명을 위한 직교·영평균 온/오프 부호 -> +-1의 (n_codes, n_frames) 행렬.",
+   "de": "Orthogonale mittelwertfreie Ein/Aus-Codes für codierte intermittierende Beleuchtung -> (n_codes, n_frames)-Matrix aus +-1.",
+   "hi": "कोडित आंतरायिक प्रकाश के लिए orthogonal, शून्य-माध्य on/off कोड -> +-1 का (n_codes, n_frames) आव्यूह।"
+  },
+  "optics/lockin_separate": {
+   "fp": "ffbc5ab4f75e",
+   "ja": "零平均の符号に対する最小二乗で、符号化された照明と符号化されていない残りを分離する -> マップの dict。",
+   "zh": "通过对零均值码的最小二乘,分离编码光源与未编码的其余部分 -> 映射字典。",
+   "tw": "透過對零平均碼的最小平方法,分離編碼光源與未編碼的其餘部分 -> 映射字典。",
+   "ko": "영평균 부호에 대한 최소제곱으로 부호화된 조명과 부호화되지 않은 나머지를 분리한다 -> 맵의 dict.",
+   "de": "Trennt codierte Lichtquellen vom uncodierten Rest per Kleinste-Quadrate gegen mittelwertfreie Codes -> dict von Karten.",
+   "hi": "शून्य-माध्य कोड के विरुद्ध least squares से कोडित प्रकाश और बिना कोड वाले शेष को अलग करता है -> मानचित्रों का dict।"
+  },
+  "optics/lockin_ring_synthesize": {
+   "fp": "7da303033175",
+   "ja": "変調した光源の輪で照らしたランバート面の凹凸 -> 画像列 (T, H, W)。",
+   "zh": "由一圈调制光源照明的朗伯起伏表面 -> 图像序列 (T, H, W)。",
+   "tw": "由一圈調變光源照明的朗伯起伏表面 -> 影像序列 (T, H, W)。",
+   "ko": "변조된 광원의 고리로 비춘 램버트 요철 표면 -> 영상 시퀀스 (T, H, W).",
+   "de": "Ein von einem Ring modulierter Quellen beleuchtetes Lambert-Relief -> Bildfolge (T, H, W).",
+   "hi": "मॉड्युलेटेड स्रोतों की एक वलय से प्रकाशित Lambertian उभार-सतह -> छवि अनुक्रम (T, H, W)।"
+  },
+  "optics/lockin_ring_normals": {
+   "fp": "dec1c774bb98",
+   "ja": "双極子変調したリングの基本波応答から面の法線を求める -> マップの dict。",
+   "zh": "由偶极调制光环的基波响应求表面法线 -> 映射字典。",
+   "tw": "由偶極調變光環的基波響應求表面法線 -> 映射字典。",
+   "ko": "쌍극자 변조 고리의 기본파 응답에서 표면 법선을 구한다 -> 맵의 dict.",
+   "de": "Oberflächennormalen aus der Grundwellenantwort eines dipolmodulierten Rings -> dict von Karten.",
+   "hi": "द्विध्रुव-मॉड्युलेटेड वलय की मूल-तरंग प्रतिक्रिया से सतह के अभिलंब -> मानचित्रों का dict।"
+  },
+  "optics/lockin_thermal_wave": {
+   "fp": "be32c6cbb661",
+   "ja": "正弦波の熱流束で加熱した板の定常状態の表面温度を画素ごとに -> 画像列 (T, H, W)。",
+   "zh": "逐像素给出受正弦热流加热的平板的稳态表面温度 -> 图像序列 (T, H, W)。",
+   "tw": "逐像素給出受正弦熱流加熱的平板的穩態表面溫度 -> 影像序列 (T, H, W)。",
+   "ko": "정현파 열유속으로 가열한 판의 정상 상태 표면 온도를 화소별로 -> 영상 시퀀스 (T, H, W).",
+   "de": "Stationäre Oberflächentemperatur einer von einem sinusförmigen Wärmestrom geheizten Platte, pro Pixel -> Bildfolge (T, H, W).",
+   "hi": "sinusoidal ऊष्मा-अभिवाह से गर्म की गई प्लेट का steady-state सतह तापमान, प्रति pixel -> छवि अनुक्रम (T, H, W)।"
+  },
   "optics/glass_nearest": {
    "fp": "007e202a6b69",
    "en": "Return the k catalogue glasses nearest to (n_d, V_d), with their distances (``table``).",

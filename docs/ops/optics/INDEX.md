@@ -1,4 +1,4 @@
-# OPTICS operator help — 374 ops in 42 categories
+# OPTICS operator help — 383 ops in 43 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -105,6 +105,10 @@
 ### linescan (6)
 
 [lens_field_profile](linescan/lens_field_profile.md) · [linescan_acquire](linescan/linescan_acquire.md) · [linescan_lens_columns](linescan/linescan_lens_columns.md) · [linescan_lens_example](linescan/linescan_lens_example.md) · [tdi_snr](linescan/tdi_snr.md) · [tdi_sync_mtf](linescan/tdi_sync_mtf.md)
+
+### lockin (9)
+
+[lockin_amplitude](lockin/lockin_amplitude.md) · [lockin_demodulate](lockin/lockin_demodulate.md) · [lockin_noise_floor](lockin/lockin_noise_floor.md) · [lockin_phase](lockin/lockin_phase.md) · [lockin_ring_normals](lockin/lockin_ring_normals.md) · [lockin_ring_synthesize](lockin/lockin_ring_synthesize.md) · [lockin_separate](lockin/lockin_separate.md) · [lockin_thermal_wave](lockin/lockin_thermal_wave.md) · [lockin_walsh_codes](lockin/lockin_walsh_codes.md)
 
 ### material (6)
 

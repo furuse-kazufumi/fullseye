@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 画素ごとの直交復調(ロックイン / 時間相関イメージセンサ): `lockin` 9 op
+- `lockin_demodulate`(画像列 (T, H, W) を正弦の参照に対して画素ごとに直交復調: 振幅・位相・直流・同相・直交と窓の漏れ)と、2 次元の画像だけを返す `lockin_amplitude` / `lockin_phase`。窓は宣言する: 矩形窓は参照の周期が整数のときだけ厳密で、そうでない長さは拒否(最寄りの枚数を示す)、`hann` は漏れ(`leak_image` / `leak_dc`)を表で返す。ナイキスト以上・1 周期未満・非有限は拒否。
+- `lockin_noise_floor`: 白色雑音の下の振幅・位相の雑音を SN 比から閉形式で(位相は Rice の分布の数値積分、小雑音近似も併記)。`lockin_walsh_codes` / `lockin_separate`: 直交な零平均の符号で断続する灯を、昼間の光と最小二乗で分離(残差と条件数を返し、従属・定数の符号は拒否)。
+- `lockin_ring_synthesize` / `lockin_ring_normals`: 輪の光源の位相を方位角と一緒に 1 周(多重極)させたランバート面の像列と、基本波の応答 (n_x − j n_y) と直流から反射率を消して法線・勾配を返す復元。影になる画素(A / 直流 ≥ 1/2)は NaN と `valid = False`(法線を作らない)。`lockin_thermal_wave`: 周期加熱した板の表面温度の厳密解 coth(σL)(ロックイン・サーモグラフィ)。
+- 門 `tests/test_lockin.py`(正弦の閉形式 1e-12、Dirichlet 核の手書きの閉形式で参照のずれ 1e-12、sinc の落ち方、位相の標準偏差が Rice の閉形式と 3 % 以内、2 次曲面の解析的な法線に対する角度誤差 1e-9°、輪の光の別実装(光源の総和)1e-14、熱波の閉形式を陽的な有限体積と照合、拒否の理由)。PoC `poc_lockin_imaging`(収蔵番号 2026.263)。
 ### Added — 硝材の置き換えと多始点の大域探索: `lensglobal` 3 op(逐次光学設計の第 5 弾)
 - `glass_nearest(n_d, v_d, catalog, k, metric, p_gf)`: カタログ(既定は `materials.glass_map` の光学ガラス 46 種、または `{"name", "nd", "vd", "PgF"}` の列)を Abbe 面の距離で並べ、近い順に k 個を距離つきで返す。距離は `nd_vd`(`√(Δn_d² + (ΔV_d/100)²)`)と `partial_dispersion`(P_g,F の項 `(ΔP_gF/0.1)²` を足す。`p_gf` が要る)。
 - `lens_substitute_glasses(system, catalog, k, metric, tolerance)`: 系のモデル硝材((n_d, V_d) の組・`raytrace.glass` の辞書)を k 番目に近いカタログ硝材に置き換え、面ごとの表を返す。許容距離の外・k がカタログより大きい・ビルドできない系は ValueError で、一部だけ置き換えない。基の系は書き換えない。
