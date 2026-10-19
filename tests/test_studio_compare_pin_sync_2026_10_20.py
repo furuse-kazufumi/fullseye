@@ -217,7 +217,7 @@ def test_a5_roi_renders_only_that_rectangle(monkeypatch):
 def test_a5b_shift_drag_on_the_main_view_sets_the_roi():
     from PySide6 import QtCore, QtGui
     win, model = _window3()
-    view = win._view
+    view = win._main_view
     view.resize(400, 300)
     view.fit()
     P = QtCore.QPointF
@@ -469,8 +469,10 @@ def test_b7_pin_action_exists_and_the_dock_starts_hidden_and_empty():
     win._ab["refresh"]()
     assert win._ab["a"].pixmap() is None and not win._ab["restore"].isEnabled()
     assert win._ab["changes"].count() == 0
-    win._actions["pin_a"].trigger()                                   # nothing to pin yet is a message, not a crash
+    model.image = None
+    win._actions["pin_a"].trigger()                                   # nothing to pin is a message, not a crash
     assert model.pins == []
+    assert "no image" in win.statusBar().currentMessage()
 
 
 def test_b8_panes_share_one_display_range_from_a_and_b(monkeypatch):
@@ -709,15 +711,15 @@ def test_c5_the_window_syncs_stage_in_out_the_ab_panes_and_optionally_the_main_v
     members = g.members
     for v in (cmp_["left"], cmp_["right"], win._ab["a"], win._ab["b"]):
         assert v in members
-    assert win._view not in members
+    assert win._main_view not in members
     win._ab["sync_main"].setChecked(True)
-    assert win._view in g.members
+    assert win._main_view in g.members
     win._ab["sync_main"].setChecked(False)
-    assert win._view not in g.members
+    assert win._main_view not in g.members
     cmp_["left"].resize(300, 220)
     cmp_["right"].resize(300, 220)
     win._docks["compare"].show()
-    win._stage_list.setCurrentRow(1)
+    win._stage_list.setCurrentRow(2)
     assert cmp_["left"].pixmap() is not None and cmp_["right"].pixmap() is not None
     _wheel(cmp_["left"], 120, 100, 80)
     assert cmp_["right"].transform().m11() == cmp_["left"].transform().m11()

@@ -172,12 +172,12 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     a missing one in Problems and tries the same file name next to the `.json`. Still
     open: embedding small inputs in the project, and a multi-image project.
 
-12. ~~**Stage in → out panel**~~ **(done, Studio slice 2)** — a dock that shows the selected
+12. ~~**Stage in → out panel**~~ **(done, Studio slice 2; A/B compare and synchronised zoom, its two
+    open parts, done in slice 3 = item 14)** — a dock that shows the selected
     stage's input and output side by side through the same display mapping, with a
     one-line, kind-dependent summary (`_stage_delta_summary`: regions n → m, image
-    mean / σ / min / max, table rows × cols, contour count). Still open: **A/B compare**
-    of two arbitrary stages (or two knob settings of one stage), and **synchronised zoom
-    and pan** between the two panes (today each pane is fitted to its size).
+    mean / σ / min / max, table rows × cols, contour count). The two things this item
+    left open are done in Studio slice 3 (item 14): A/B compare and synchronised zoom.
 13. ~~**Temporary bypass of a stage**~~ **(done, Studio slice 2)** — `PipelineModel.set_bypass`
     / `toggle_bypass`, Ctrl+B and the stage context menu. A bypassed stage passes its input
     through, is greyed and struck through, is part of the cache key, is saved as a 4th
@@ -185,6 +185,35 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     `# bypassed: op` in the export and the Program text, and its undo entry is labelled
     "bypass". The Program text writes `# bypassed: op (a, b)` and the parser reads it back
     (Apply round-trips). Still open: bypass has no per-run / per-image scope.
+
+14. ~~**Try values side by side, pin A and compare B, synchronised zoom**~~ **(done, Studio
+    slice 3; the old item 12 "still open" and ideas 047 / 057 / 058 / 062 / 065)** — three
+    parts. **A knob strip** (`knob_candidates`, `PipelineModel.run_variants`): under the
+    knob rows, "Try nearby values" shows the selected stage's result at 3 or 5 values around
+    the current one (spec step or 1/10 of the range, geometric for a log spec, neighbouring
+    choices for an int / choice knob, never outside the range). Only that stage runs, once per
+    candidate, from the cached output of the stage before; only small pixmaps are kept; one
+    display range for all (`apply_display(..., vmin, vmax)`, `shared_display_range`); an
+    optional Shift+drag region of interest of the main view limits what is drawn; choosing a
+    picture changes nothing and "Adopt this value" goes through the normal knob path (one
+    undo entry). **Pin A / compare B** (`PinnedSnapshot`, `PipelineModel.pin`, the A / B
+    dock): a frozen copy of the stage list, input reference, final output (read-only array)
+    and display settings; side by side / swipe / blink / difference (absolute, signed,
+    ratio); a "what changed" list (`diff_pipelines`); restore A (one undo entry) / adopt B /
+    keep both; at most two pins; saved under `pinned` WITHOUT arrays and recomputed on load
+    (a pin that cannot be rebuilt is kept and reported in Problems). **Synchronised views**
+    (`ViewSyncGroup`): the Stage in → out panes and the A / B panes (optionally the main
+    view) zoom, pan and show a crosshair together. Still open: the strip shows one knob at
+    a time (a two-knob grid is not built); a pin keeps the stages and the picture but not
+    the input image itself; A / B always compares the FINAL output (no "A at stage 3 versus B
+    at stage 5"); the swipe boundary is vertical only.
+15. **Work modes** (idea ⑭, still open) — "build the pipeline / compare results / inspect
+    numbers / write code" as presets of which panels are big and which are folded, without
+    losing the input or the results; a temporary "image only, large" view.
+16. **Column wizard for typed ops** (idea ②, still open) — open a CSV, map the file's real
+    columns to the op's inputs (part id / operator / measured value), show the checked shape
+    of the data (parts, operators, missing, repeats), remember the mapping, and stop before
+    running on an unsupported shape.
 
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a

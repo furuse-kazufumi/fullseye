@@ -2265,6 +2265,20 @@ def shared_display_range(*arrays):
     return (lo, hi) if hi > lo else (lo, lo + 1.0)
 
 
+def crop_roi(val, roi):
+    """The part of *val* (a 2-D / 3-channel picture) inside the region of interest ``(x0, y0, x1, y1)``
+    (pixel columns / rows, clipped to the picture); *val* itself when there is no region, no picture or the
+    region misses it."""
+    if roi is None or not isinstance(val, np.ndarray) or val.ndim not in (2, 3):
+        return val
+    x0, y0, x1, y1 = roi
+    h, w = val.shape[:2]
+    x0, y0, x1, y1 = max(0, int(x0)), max(0, int(y0)), min(w, int(x1)), min(h, int(y1))
+    if x1 - x0 < 1 or y1 - y0 < 1:
+        return val
+    return val[y0:y1, x0:x1]
+
+
 def _window_values(cur, delta, half, lo, hi):
     """``2 * half + 1`` values ``cur + o * delta`` around *cur* (``o`` = -half .. half), the whole row
     slid by whole steps (so *cur* itself stays in it) when one end would leave ``[lo, hi]``, and any
@@ -4097,7 +4111,7 @@ def _knob_row_class(QtWidgets, QtCore):
     return KnobRow
 
 
-class ViewSyncMixin:
+class _ViewSyncMixin:
     """The "moves together" half of an image view (mixed in before ``QGraphicsView``): the three methods a
     :class:`ViewSyncGroup` calls (``sync_state`` / ``sync_apply`` / ``sync_cursor``) and the hooks the view
     calls back (``_sync_zoomed`` after a zoom or fit, ``_sync_scrolled`` on a pan, ``_sync_hover`` on a mouse move).
@@ -4205,7 +4219,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
     fits a new picture to the pane (and refits on resize until the user zooms), and writes a message
     instead of a picture when there is none."""
 
-    class SyncView(ViewSyncMixin, QtWidgets.QGraphicsView):
+    class SyncView(_ViewSyncMixin, QtWidgets.QGraphicsView):
         def __init__(self, parent=None):
             super().__init__(parent)
             self.setScene(QtWidgets.QGraphicsScene(self))
@@ -4296,7 +4310,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
 
 def _image_view_class(QtWidgets, QtGui, QtCore):
     """A zoom/pan image viewer (wheel = zoom at cursor, drag = pan)."""
-    class ImageView(ViewSyncMixin, QtWidgets.QGraphicsView):
+    class ImageView(_ViewSyncMixin, QtWidgets.QGraphicsView):
         #: tests set this False so contextMenuEvent builds the menu without the
         #: blocking ``QMenu.exec`` (the built menu is kept in ``_last_context_menu``)
         CONTEXT_MENU_EXEC = True
@@ -6279,6 +6293,9 @@ def build_window(model=None):
     act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
     act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
     act_undo.setEnabled(False); act_redo.setEnabled(False)
+    act_pin = _act("Pin as A", "Ctrl+Shift+A",
+                   "Freeze the current pipeline and its result as A, then compare it with what you change next "
+                   "(Window > Panels > A / B)")
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
@@ -6362,6 +6379,8 @@ def build_window(model=None):
     m.addSeparator(); m.addAction(act_quit)
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
+    m.addSeparator()
+    m.addAction(act_pin)
     m.addSeparator()
     m.addAction(act_remove); m.addAction(act_dup); m.addAction(act_bypass)
     m.addAction(act_up); m.addAction(act_down)
@@ -6451,7 +6470,7 @@ def build_window(model=None):
     # Primary actions get a themed icon so the icon-only toolbar reads at a glance;
     # tooltips (already set on each action) name them.
     for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
-                    (act_export, "export")):
+                    (act_export, "export"), (act_pin, "eye")):
         _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
         tb.addAction(_a)
 
@@ -6645,6 +6664,42 @@ def build_window(model=None):
     klay = QtWidgets.QVBoxLayout()
     klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
     klay.addWidget(lb); klay.addLayout(_rb)
+    # ---- Studio slice 3 A: "try nearby values" strip (collapsed by default; computes only when open) ---- #
+    strip_toggle = QtWidgets.QToolButton()
+    strip_toggle.setCheckable(True)
+    strip_toggle.setArrowType(QtCore.Qt.RightArrow)
+    strip_toggle.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+    strip_toggle.setText("Try nearby values")
+    strip_toggle.setToolTip(tr("show the selected stage's result at the values just below and above the current knob; "
+                               "nothing is computed while this is closed"))
+    strip_body = QtWidgets.QWidget()
+    strip_body.setVisible(False)
+    _sbl = QtWidgets.QVBoxLayout(strip_body); _sbl.setContentsMargins(0, 2, 0, 2)
+    strip_which = QtWidgets.QComboBox()
+    strip_which.addItem(tr("knob a"), "a"); strip_which.addItem(tr("knob b"), "b")
+    strip_count = QtWidgets.QComboBox()
+    strip_count.addItem(tr("3 values"), 3); strip_count.addItem(tr("5 values"), 5)
+    _ctl = QtWidgets.QHBoxLayout(); _ctl.addWidget(strip_which); _ctl.addWidget(strip_count); _ctl.addStretch(1)
+    _sbl.addLayout(_ctl)
+    strip_cells_row = QtWidgets.QHBoxLayout()
+    strip_slots = []                                   # five fixed slots; only as many as there are candidates are shown
+    for _k in range(5):
+        _slot = QtWidgets.QWidget()
+        _sv = QtWidgets.QVBoxLayout(_slot); _sv.setContentsMargins(0, 0, 0, 0); _sv.setSpacing(2)
+        _cell = QtWidgets.QToolButton()
+        _cell.setCheckable(True)
+        _cell.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        _adopt = QtWidgets.QPushButton("Adopt this value")
+        _adopt.setEnabled(False)
+        _sv.addWidget(_cell); _sv.addWidget(_adopt)
+        _slot.setVisible(False)
+        strip_cells_row.addWidget(_slot)
+        strip_slots.append((_slot, _cell, _adopt))
+    _sbl.addLayout(strip_cells_row)
+    strip_msg = QtWidgets.QLabel("")
+    strip_msg.setWordWrap(True); strip_msg.setProperty("hint", True)
+    _sbl.addWidget(strip_msg)
+    klay.addWidget(strip_toggle); klay.addWidget(strip_body)
     mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
     win._knob_rows = (krow_a, krow_b)
     win._op_knob_rows = (op_row_a, op_row_b)
@@ -6810,36 +6865,14 @@ def build_window(model=None):
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
 
-    class _PixPane(QtWidgets.QWidget):
-        """A pane that keeps the pixmap it was given (``pixmap()``) and paints it scaled to fit."""
-        def __init__(self, parent=None):
-            super().__init__(parent)
-            self._pm = None
-            self._msg = ""
-            self.setMinimumSize(120, 90)
-            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-
-        def set_source(self, pm, msg=""):
-            self._pm, self._msg = pm, msg
-            self.update()
-
-        def pixmap(self):
-            return self._pm
-
-        def paintEvent(self, ev):
-            pt = QtGui.QPainter(self)
-            pt.fillRect(self.rect(), QtGui.QColor(NAVY_1))
-            if self._pm is not None and not self._pm.isNull():
-                sc = self._pm.scaled(self.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-                pt.drawPixmap((self.width() - sc.width()) // 2, (self.height() - sc.height()) // 2, sc)
-            elif self._msg:
-                pt.setPen(QtGui.QColor(MUTED))
-                pt.drawText(self.rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
-            pt.end()
+    SyncView = _sync_view_class(QtWidgets, QtGui, QtCore)
+    sync_group = ViewSyncGroup()                          # Stage in -> out panes + A / B panes (+ the main view, optionally)
+    win._sync_group = sync_group
 
     cmp_w = QtWidgets.QWidget()
     _cl = QtWidgets.QVBoxLayout(cmp_w); _cl.setContentsMargins(6, 6, 6, 6)
-    cmp_left, cmp_right = _PixPane(), _PixPane()
+    cmp_left, cmp_right = SyncView(), SyncView()
+    sync_group.add(cmp_left); sync_group.add(cmp_right)
     cmp_ltitle, cmp_rtitle = QtWidgets.QLabel(""), QtWidgets.QLabel("")
     for _t in (cmp_ltitle, cmp_rtitle):
         _t.setProperty("muted", True)
@@ -6852,6 +6885,60 @@ def build_window(model=None):
     cmp_summary.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
     _cl.addLayout(_crow, 1); _cl.addWidget(cmp_summary)
     dock_cmp = _mk_dock(tr("Stage in \u2192 out"), cmp_w, "dock_compare")
+
+    # ---- Studio slice 3 B: the A / B dock (hidden by default) ---------------------------------- #
+    ab_w = QtWidgets.QWidget()
+    _abl = QtWidgets.QVBoxLayout(ab_w); _abl.setContentsMargins(6, 6, 6, 6)
+    ab_ref = QtWidgets.QComboBox()                       # which pinned snapshot is "A"
+    ab_ref.setToolTip(tr("which pinned snapshot to compare with the live result"))
+    ab_mode = QtWidgets.QComboBox()
+    for _key, _lbl in (("side", "side by side"), ("swipe", "swipe"), ("blink", "blink"), ("diff", "difference")):
+        ab_mode.addItem(tr(_lbl), _key)
+    ab_diff = QtWidgets.QComboBox()
+    for _key, _lbl in (("absolute", "absolute"), ("signed", "signed"), ("ratio", "ratio")):
+        ab_diff.addItem(tr(_lbl), _key)
+    ab_swipe = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+    ab_swipe.setRange(0, 100); ab_swipe.setValue(50)
+    ab_swipe.setToolTip(tr("drag: A on the left of the line, B on the right"))
+    ab_blink = QtWidgets.QSpinBox()
+    ab_blink.setRange(100, 5000); ab_blink.setSingleStep(50); ab_blink.setValue(500); ab_blink.setSuffix(" ms")
+    ab_sync_main = QtWidgets.QCheckBox(tr("sync the main view too"))
+    _abrow = QtWidgets.QHBoxLayout()
+    for _w in (ab_ref, ab_mode, ab_diff, ab_swipe, ab_blink):
+        _abrow.addWidget(_w)
+    _abrow.addStretch(1); _abrow.addWidget(ab_sync_main)
+    ab_a, ab_b = SyncView(), SyncView()
+    sync_group.add(ab_a); sync_group.add(ab_b)
+    ab_atitle, ab_btitle = QtWidgets.QLabel(""), QtWidgets.QLabel("")
+    for _t in (ab_atitle, ab_btitle):
+        _t.setProperty("muted", True)
+    _abpanes = QtWidgets.QHBoxLayout()
+    ab_cols = []                                         # one container per pane, so a hidden pane gives its room back
+    for _t, _pane in ((ab_atitle, ab_a), (ab_btitle, ab_b)):
+        _cw = QtWidgets.QWidget()
+        _col = QtWidgets.QVBoxLayout(_cw); _col.setContentsMargins(0, 0, 0, 0)
+        _col.addWidget(_t); _col.addWidget(_pane, 1)
+        _abpanes.addWidget(_cw, 1)
+        ab_cols.append(_cw)
+    ab_info = QtWidgets.QLabel("")
+    ab_info.setWordWrap(True); ab_info.setProperty("hint", True)
+    ab_changes = QtWidgets.QListWidget()
+    ab_changes.setMaximumHeight(110)
+    ab_changes.setToolTip(tr("what changed since A"))
+    ab_restore = QtWidgets.QPushButton("Restore A")
+    ab_adopt = QtWidgets.QPushButton("Adopt B")
+    ab_keep = QtWidgets.QPushButton("Keep both")
+    ab_restore.setToolTip(tr("put A's pipeline back (one undo step)"))
+    ab_adopt.setToolTip(tr("keep the current pipeline and drop A"))
+    ab_keep.setToolTip(tr("keep A and pin the current result as a second snapshot (the oldest goes past two)"))
+    _abbtn = QtWidgets.QHBoxLayout()
+    for _w in (ab_restore, ab_adopt, ab_keep):
+        _abbtn.addWidget(_w)
+    _abbtn.addStretch(1)
+    _chl = QtWidgets.QLabel(tr("What changed")); _chl.setProperty("muted", True)
+    _abl.addLayout(_abrow); _abl.addLayout(_abpanes, 1); _abl.addWidget(ab_info)
+    _abl.addWidget(_chl); _abl.addWidget(ab_changes); _abl.addLayout(_abbtn)
+    dock_ab = _mk_dock(tr("A / B"), ab_w, "dock_ab")
     # Default layout (user-directed 2026-08-15): the IMAGE (central MDI) is the largest
     # surface, the Program (script code) is the second, and op selection + Variables /
     # Objects are compact panels ("small size", mostly floated / shown on demand).
@@ -6874,17 +6961,19 @@ def build_window(model=None):
     win.tabifyDockWidget(dock_ops, dock_disp)                       # Display·Analysis tabbed in
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_cmp)
     win.tabifyDockWidget(dock_ops, dock_cmp)                        # Stage in -> out tabbed in
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ab)
+    win.tabifyDockWidget(dock_ops, dock_ab)                         # A / B tabbed in
     dock_ops.raise_()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
     # each back. Operators stays (compact) since it is the primary build tool.
-    for _d in (dock_vars, dock_pipe, dock_disp, dock_cmp):
+    for _d in (dock_vars, dock_pipe, dock_disp, dock_cmp, dock_ab):
         _d.hide()
     win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
     # On-demand panels + less-common actions live behind ONE small popup menu button
     # (per user direction: prefer popup menus, keep buttons small) instead of a row of
     # wide toggles. Each panel toggle's text is the panel name; checking it shows it.
@@ -6892,7 +6981,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -7059,6 +7148,7 @@ def build_window(model=None):
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
              "program_error": None, "stage_lines": None,
              "renders": 0, "image_path": None, "pipe_path": None,
+             "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
              # editing/execution. Turn off to make many edits (or a heavy run) without the
@@ -7325,7 +7415,15 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, -1)
             it.setForeground(QtGui.QColor("#c9a227"))
             problems_list.addItem(it)
-        if not probs and not perr and not rerr and not notes:
+        pin_bad = [(k, p) for k, p in enumerate(model.pins) if p.error]
+        for k, p in pin_bad:                                    # a pinned snapshot whose picture could not be rebuilt
+            lab = "AB"[k] if k < 2 else str(k + 1)
+            it = QtWidgets.QListWidgetItem("⚠ %s を再計算できません / cannot recompute %s: %s"
+                                           % (lab, lab, truncate(p.error, 120)))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor("#c9a227"))
+            problems_list.addItem(it)
+        if not probs and not perr and not rerr and not notes and not pin_bad:
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
@@ -7429,13 +7527,16 @@ def build_window(model=None):
                 view.set_message("Nothing to display")
             hist_view.clear(); state["result"] = None; state["raw"] = None
 
-    def _val_pixmap(val):
-        """The pixmap the main view would show for *val* (same display mode and mapping as ``_render``), or None."""
+    def _val_pixmap(val, rng=None, base=None):
+        """The pixmap the main view would show for *val* (same display mode and mapping as ``_render``), or None.
+        *rng* ``(lo, hi)`` shows it on a common scale (see :func:`shared_display_range`); *base* is the picture a
+        region is drawn on (default: the input image)."""
         drawable = (isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
                     and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3)))
         img = None
         if drawable:
-            img = apply_display(val, display.currentText(), base=model.image, draw=state["draw"])
+            img = apply_display(val, display.currentText(), base=(model.image if base is None else base),
+                                draw=state["draw"], vmin=(rng[0] if rng else None), vmax=(rng[1] if rng else None))
         else:
             prev = result_preview(val)
             if prev is not None:
@@ -7474,6 +7575,396 @@ def build_window(model=None):
                     "left_title": cmp_ltitle, "right_title": cmp_rtitle}
     dock_cmp.visibilityChanged.connect(lambda vis: update_stage_compare() if vis else None)
 
+    # ---- Studio slice 3 A: the knob strip ------------------------------------------------------ #
+    _STRIP_THUMB = (120, 90)
+    strip = {"toggle": strip_toggle, "body": strip_body, "which": strip_which, "count": strip_count,
+             "message": strip_msg, "cells": [], "adopt": [], "thumbs": [], "values": [], "chosen": None,
+             "knob": "a", "op": None}
+    win._strip = strip
+    strip_timer = QtCore.QTimer(win)
+    strip_timer.setSingleShot(True)
+
+    def _strip_clear(msg):
+        for _slot, _c, _a in strip_slots:
+            _slot.setVisible(False)
+        strip.update(cells=[], adopt=[], thumbs=[], values=[], chosen=None)
+        strip_msg.setText(msg)
+        strip_msg.setVisible(bool(msg))
+
+    def update_knob_strip():
+        """Fill the strip for the selected stage and knob. Runs only while the strip is open; the stage runs
+        once per candidate on the CACHED output of the stage before it (see PipelineModel.run_variants), and only
+        small pixmaps are kept - never the arrays."""
+        if not strip_toggle.isChecked():
+            return
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            return _strip_clear(tr("select a stage to try its values"))
+        name, a, b = model.stages[i]
+        specs = param_specs.spec_for(name)
+        if strip["op"] != name:                         # another op: start on its first knob that does something
+            strip["op"] = name
+            first = "a" if specs["a"].get("kind") != "unused" else "b"
+            strip_which.blockSignals(True)
+            strip_which.setCurrentIndex(strip_which.findData(first))
+            strip_which.blockSignals(False)
+        which = strip_which.currentData() or "a"
+        n = int(strip_count.currentData() or 3)
+        if model.is_bypassed(i):
+            return _strip_clear(tr("this stage is bypassed: switch it on to try its values"))
+        spec = specs[which]
+        cands = knob_candidates(spec, a if which == "a" else b, n)
+        if not cands:
+            return _strip_clear(tr("this operator does not use knob %s") % which)
+        try:
+            results = model.run_variants(i, which, [c["knob"] for c in cands])
+            cur = model.result_upto(i)
+        except Exception as e:
+            return _strip_clear(truncate(e, 160))
+        roi = state.get("roi")
+        crops = [crop_roi(v, roi) for v, _e in results]
+        rng = shared_display_range(crop_roi(cur, roi), *crops)        # ONE display range for the whole strip
+        base = crop_roi(model.image, roi)
+        pix, vals = [], []
+        for (v, err), c, cand in zip(results, crops, cands):
+            pm = None
+            if err is None and v is not None:
+                try:
+                    pm = _val_pixmap(c, rng=rng, base=base)
+                except Exception:
+                    pm = None
+            if pm is not None:
+                pm = pm.scaled(*_STRIP_THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            pix.append(pm)
+            vals.append(dict(cand))
+        del results, crops, cur
+        strip["knob"] = which
+        strip.update(thumbs=pix, values=vals, chosen=None,
+                     cells=[strip_slots[k][1] for k in range(len(vals))],
+                     adopt=[strip_slots[k][2] for k in range(len(vals))])
+        for k, (_slot, cell, adopt) in enumerate(strip_slots):
+            _slot.setVisible(k < len(vals))
+            if k >= len(vals):
+                continue
+            pm = pix[k]
+            cell.blockSignals(True); cell.setChecked(False); cell.blockSignals(False)
+            cell.setIcon(QtGui.QIcon(pm) if pm is not None else QtGui.QIcon())
+            cell.setIconSize(pm.size() if pm is not None else QtCore.QSize(*_STRIP_THUMB))
+            cell.setText(vals[k]["text"] + (" \u25cf" if vals[k]["current"] else "")
+                         + ("" if pm is not None else "\n" + tr("no picture")))
+            cell.setToolTip(tr("the current value") if vals[k]["current"] else tr("click to choose, then adopt"))
+            adopt.setEnabled(False)
+        msg = ""
+        if any(p is None for p in pix):
+            msg = tr("some values gave no picture")
+        if roi is not None:
+            msg = (msg + "  " if msg else "") + tr("showing only the region %s") % (roi,)
+        strip_msg.setText(msg)
+        strip_msg.setVisible(bool(msg))
+
+    def _strip_choose(k):
+        """Choosing a candidate only marks it and enables ITS adopt button; the knob does not move."""
+        strip["chosen"] = k
+        for j, (_slot, cell, adopt) in enumerate(strip_slots):
+            cell.blockSignals(True); cell.setChecked(j == k); cell.blockSignals(False)
+            adopt.setEnabled(j == k and j < len(strip["values"]))
+
+    def _strip_adopt(k):
+        """Apply candidate *k* through the normal knob path: one undo entry (named after the knob), the same
+        debounce-tail handler a slider drag ends in."""
+        vals = strip["values"]
+        i = selected_index()
+        if not (0 <= k < len(vals) and 0 <= i < len(model.stages)):
+            return
+        which = strip["knob"]
+        kn = float(vals[k]["knob"])
+        spec = param_specs.spec_for(model.stages[i][0])[which]
+        row = krow_a if which == "a" else krow_b
+        row.set_knob(kn)                                # mirror into the widgets, no emit
+        _knob_changed(which, kn, from_spin=True)
+        knob_timer.stop()
+        if getattr(win, "_knob_drag_base", None) is not None:
+            win._knob_drag_base.label = tr("change %s") % (spec.get("label") or which)
+        on_knob_settled()
+        strip["chosen"] = None
+        update_knob_strip()
+
+    def _on_strip_toggle(on):
+        strip_toggle.setArrowType(QtCore.Qt.DownArrow if on else QtCore.Qt.RightArrow)
+        strip_body.setVisible(bool(on))
+        if on:
+            update_knob_strip()
+
+    strip_toggle.toggled.connect(_on_strip_toggle)
+    strip_which.currentIndexChanged.connect(lambda _=None: update_knob_strip())
+    strip_count.currentIndexChanged.connect(lambda _=None: update_knob_strip())
+    for _k, (_slot, _cell, _adopt) in enumerate(strip_slots):
+        _cell.clicked.connect(lambda _=False, k=_k: _strip_choose(k))
+        _adopt.clicked.connect(lambda _=False, k=_k: _strip_adopt(k))
+    strip_timer.timeout.connect(update_knob_strip)
+    strip["refresh"] = update_knob_strip
+
+    def _strip_schedule():
+        """A render happened: refresh the open strip once the knob has been quiet for a moment (a drag is one refresh)."""
+        if strip_toggle.isChecked():
+            strip_timer.start(KNOB_DEBOUNCE_MS * 2)
+
+    # ---- region of interest of the main view (Shift + drag; Shift + click clears) ------------- #
+    def set_roi(rect):
+        r = None
+        if rect is not None:
+            x0, y0, x1, y1 = [int(v) for v in rect]
+            if x0 >= 0 and y0 >= 0 and x1 - x0 >= 2 and y1 - y0 >= 2:
+                r = (x0, y0, x1, y1)
+        state["roi"] = r
+        view.set_roi_rect(r)
+        _strip_schedule()
+    win._set_roi = set_roi
+    view.roi_cb = set_roi
+
+    # ---- Studio slice 3 B: pin A, compare with the live result B ------------------------------ #
+    ab_state = {"mode": "side", "phase": 0, "range": None, "pm_a": None, "pm_b": None}
+    ab = {"dock": dock_ab, "a": ab_a, "b": ab_b, "mode": ab_mode, "diff_kind": ab_diff, "ref": ab_ref,
+          "swipe": ab_swipe, "blink_ms": ab_blink, "info": ab_info, "changes": ab_changes,
+          "restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep, "sync_main": ab_sync_main,
+          "title_a": ab_atitle, "title_b": ab_btitle}
+    win._ab = ab
+    ab_timer = QtCore.QTimer(win)
+    ab["timer"] = ab_timer
+
+    def _pin_label(k):
+        return "AB"[k] if 0 <= k < 2 else str(k + 1)
+
+    def _ref_pin():
+        k = ab_ref.currentIndex()
+        return model.pins[k] if 0 <= k < len(model.pins) else None
+
+    def _fill_ab_ref():
+        keep = ab_ref.currentIndex()
+        ab_ref.blockSignals(True)
+        ab_ref.clear()
+        for k, p in enumerate(model.pins):
+            ab_ref.addItem(_pin_label(k) + (": " + p.note if p.note else ""))
+        ab_ref.setCurrentIndex(min(max(keep, 0), len(model.pins) - 1) if model.pins else -1)
+        ab_ref.blockSignals(False)
+
+    def _ab_timer_sync():
+        """The blink timer runs only while the dock is shown, a snapshot exists and the mode is 'blink'."""
+        want = (not dock_ab.isHidden()) and ab_state["mode"] == "blink" and bool(model.pins)
+        if want:
+            ab_timer.setInterval(ab_blink.value())
+            if not ab_timer.isActive():
+                ab_timer.start()
+        elif ab_timer.isActive():
+            ab_timer.stop()
+
+    def _swipe_pixmap(pa, pb, frac):
+        out = QtGui.QPixmap(pb)
+        cut = int(round(pa.width() * frac))
+        pt = QtGui.QPainter(out)
+        if cut > 0:
+            pt.drawPixmap(0, 0, pa, 0, 0, cut, pa.height())
+        if 0 < cut < pa.width():
+            pt.setPen(QtGui.QPen(QtGui.QColor(AMBER), 1))
+            pt.drawLine(cut, 0, cut, pa.height())
+        pt.end()
+        return out
+
+    def _ab_show_composite():
+        """Swipe / blink from the two pixmaps already made (moving the slider or a blink tick recomputes nothing)."""
+        pa, pb = ab_state["pm_a"], ab_state["pm_b"]
+        if pa is None or pb is None:
+            return
+        if ab_state["mode"] == "swipe":
+            ab_a.set_source(_swipe_pixmap(pa, pb, ab_swipe.value() / 100.0))
+            ab_atitle.setText(tr("A | B"))
+        elif ab_state["mode"] == "blink":
+            ab_a.set_source(pb if ab_state["phase"] else pa)
+            ab_atitle.setText("B" if ab_state["phase"] else "A")
+
+    def update_ab():
+        """Redraw the A / B dock. Costs nothing while the dock is hidden."""
+        _ab_timer_sync()
+        if dock_ab.isHidden():
+            return
+        _fill_ab_ref()
+        pin = _ref_pin()
+        ab_changes.clear()
+        for _b in (ab_restore, ab_adopt):
+            _b.setEnabled(pin is not None)
+        ab_keep.setEnabled(bool(model.pins) and model.image is not None)
+        mode = ab_state["mode"]
+        ab_diff.setVisible(mode == "diff"); ab_swipe.setVisible(mode == "swipe"); ab_blink.setVisible(mode == "blink")
+        ab_b.setVisible(mode == "side"); ab_btitle.setVisible(mode == "side"); ab_cols[1].setVisible(mode == "side")
+        ab_state.update(pm_a=None, pm_b=None, range=None)
+        if pin is None:
+            for _p in (ab_a, ab_b):
+                _p.set_source(None, tr("pin the current result as A (toolbar, Ctrl+Shift+A), then change something"))
+            ab_atitle.setText(""); ab_btitle.setText(""); ab_info.setText("")
+            return
+        lab = _pin_label(model.pins.index(pin))
+        for e in model.diff_pin(pin):
+            ab_changes.addItem(e["text"])
+        if ab_changes.count() == 0:
+            _h = QtWidgets.QListWidgetItem(tr("no changes since %s") % lab)
+            _h.setForeground(QtGui.QColor(MUTED))
+            ab_changes.addItem(_h)
+        ab_atitle.setText(lab + (": " + pin.note if pin.note else ""))
+        ab_btitle.setText(tr("B: now"))
+        A = pin.array
+        if A is None:
+            ab_a.set_source(None, (tr("cannot recompute %s") % lab) + (": " + pin.error if pin.error else ""))
+            ab_info.setText(tr("%s has no picture to show") % lab)
+            return
+        try:
+            B = model.output()
+        except Exception as e:
+            ab_a.set_source(None, tr("pipeline error (see the Problems list)"))
+            ab_info.setText(truncate(e, 160))
+            return
+        rng = shared_display_range(A, B)                      # ONE display range chosen from A and B together
+        ab_state["range"] = rng
+        none_msg = tr("no picture for this result")
+        info = []
+        if pin.valid is False:
+            info.append(tr("%s: result needs review") % lab + " (" + "; ".join(pin.reasons) + ")")
+        if mode == "side":
+            ab_a.set_source(_val_pixmap(A, rng=rng), none_msg)
+            ab_b.set_source(_val_pixmap(B, rng=rng), none_msg)
+        else:
+            pa, pb = _val_pixmap(A, rng=rng), _val_pixmap(B, rng=rng)
+            same = (isinstance(A, np.ndarray) and isinstance(B, np.ndarray) and A.shape == B.shape
+                    and pa is not None and pb is not None)
+            if not same:
+                ab_a.set_source(None, tr("A and B differ in size or are not pictures: use side by side"))
+                info.append(tr("this mode needs two pictures of the same size"))
+            elif mode == "diff":
+                kind = ab_diff.currentData() or "absolute"
+                try:
+                    d = difference_image(A, B, kind)
+                    qi = _to_qimage(d["image"], QtGui)
+                    ab_a.set_source(QtGui.QPixmap.fromImage(qi), none_msg)
+                    ab_atitle.setText(tr("difference (%s)") % tr(kind))
+                    info.append({"absolute": tr("|B - A|: black = 0, bright = %.4g"),
+                                 "signed": tr("B - A: white = 0, red = more in B, blue = less (\u00b1%.4g)"),
+                                 "ratio": tr("log2(B / A): white = same, red = B larger, blue = smaller (\u00b1%.3g)")}[kind]
+                                % d["scale"])
+                except ValueError as e:
+                    ab_a.set_source(None, truncate(e, 120))
+            else:
+                ab_state.update(pm_a=pa, pm_b=pb)
+                _ab_show_composite()
+        ab_info.setText("   ".join(info))
+
+    def _ab_set_mode(key):
+        i = ab_mode.findData(key)
+        if i >= 0:
+            ab_mode.setCurrentIndex(i)
+
+    def _on_ab_mode(_=None):
+        ab_state["mode"] = ab_mode.currentData() or "side"
+        ab_state["phase"] = 0
+        update_ab()
+
+    def ab_tick():
+        ab_state["phase"] = 1 - ab_state["phase"]
+        _ab_show_composite()
+
+    ab_mode.currentIndexChanged.connect(_on_ab_mode)
+    ab_diff.currentIndexChanged.connect(lambda _=None: update_ab())
+    ab_ref.currentIndexChanged.connect(lambda _=None: update_ab())
+    ab_swipe.valueChanged.connect(lambda _=None: _ab_show_composite() if ab_state["mode"] == "swipe" else None)
+    ab_blink.valueChanged.connect(lambda v: ab_timer.setInterval(int(v)))
+    ab_timer.timeout.connect(ab_tick)
+    ab["refresh"] = update_ab
+    ab["set_mode"] = _ab_set_mode
+    ab["tick"] = ab_tick
+
+    class _DockVisibility(QtCore.QObject):
+        """Show / hide of the A / B dock (also when its window is not on screen yet): redraw it, run or stop the blink timer."""
+        def eventFilter(self, obj, ev):
+            if ev.type() in (QtCore.QEvent.Show, QtCore.QEvent.Hide, QtCore.QEvent.ShowToParent,
+                             QtCore.QEvent.HideToParent):
+                try:
+                    update_ab()
+                except RuntimeError:                      # a widget already torn down while the window closes
+                    pass
+            return False
+    _ab_filter = _DockVisibility(win)
+    dock_ab.installEventFilter(_ab_filter)
+    win._ab_filter = _ab_filter
+
+    def _toggle_sync_main(on):
+        if on:
+            sync_group.add(view)
+        else:
+            sync_group.remove(view)
+    ab_sync_main.toggled.connect(_toggle_sync_main)
+
+    def _ab_schedule():
+        if not dock_ab.isHidden():
+            ab_refresh_timer.start(KNOB_DEBOUNCE_MS)
+    ab_refresh_timer = QtCore.QTimer(win)
+    ab_refresh_timer.setSingleShot(True)
+    ab_refresh_timer.timeout.connect(update_ab)
+
+    def _refresh_problems_only():
+        """Redraw the Problems list from the cache (a pin that could not be rebuilt is listed there)."""
+        try:
+            refresh_problems(model.cached_step_states())
+        except Exception:
+            refresh_problems(None)
+
+    def pin_as_a():
+        """Toolbar / Ctrl+Shift+A: freeze the pipeline and its result. The oldest of the (at most two) snapshots goes."""
+        if model.image is None:
+            flash(tr("there is no image to pin"))
+            return
+        model.input_path = state.get("image_path")
+        try:
+            model.pin(display={"mode": display.currentText()})
+        except Exception as e:
+            report_error("Could not pin", e)
+            return
+        lab = _pin_label(len(model.pins) - 1)
+        msg = tr("pinned as %s") % lab
+        if model.last_dropped_pin is not None:
+            msg += "  " + tr("(the oldest pinned snapshot was dropped)")
+        flash(msg)
+        mark_dirty()
+        _refresh_problems_only()
+        update_ab()
+    act_pin.triggered.connect(lambda _=False: pin_as_a())
+    win._pin_a = pin_as_a
+
+    def restore_a():
+        pin = _ref_pin()
+        if pin is None:
+            return
+        lab = _pin_label(model.pins.index(pin))
+        push_undo(tr("restore %s") % lab)                 # ONE undo entry
+        _restore_stages(pin.stage_copies())
+        m_ = pin.display.get("mode")
+        if isinstance(m_, str) and display.findText(m_) >= 0 and display.currentText() != m_:
+            display.setCurrentText(m_)
+        flash(tr("%s restored") % lab)
+
+    def adopt_b():
+        pin = _ref_pin()
+        if pin is None:
+            return
+        lab = _pin_label(model.pins.index(pin))
+        model.drop_pin(model.pins.index(pin))
+        mark_dirty()
+        flash(tr("kept the current result; %s dropped") % lab)
+        _refresh_problems_only()
+        update_ab()
+
+    def keep_both():
+        pin_as_a()
+
+    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
+
     def show_result():
         """Render the current result. The whole body is guarded, not just the
         pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
@@ -7486,6 +7977,8 @@ def build_window(model=None):
         try:
             _render()
             update_stage_compare()
+            _strip_schedule()
+            _ab_schedule()
         except Exception as e:
             view.set_message("Display error\n\n%s\n\n(see the Problems list)" % truncate(e, 200))
             inspector.setPlainText("display error: %s" % e)
@@ -7575,7 +8068,7 @@ def build_window(model=None):
         if getattr(win, "_knob_drag_base", None) is None:
             # first tick of a drag: capture the PRE-drag pipeline once; the settled
             # handler turns it into a single undo entry (drags coalesce)
-            win._knob_drag_base = [_copy_stage(st) for st in model.stages]
+            win._knob_drag_base = _Snap(_copy_stage(st) for st in model.stages)
         v = float(value)
         # The KnobRow already mirrored the value into the sibling widgets (signals
         # blocked) and refreshed the label in display units; only the model, the
@@ -7953,6 +8446,7 @@ def build_window(model=None):
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
+        model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
         state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
@@ -7969,6 +8463,7 @@ def build_window(model=None):
     def use_demo():
         model.set_image(demo_image()); state["fit_next"] = True
         state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
+        model.input_path = None
         show_result()
 
     def load_sample_image(name):
@@ -7979,6 +8474,7 @@ def build_window(model=None):
         except Exception as e:
             report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
         state["image_path"] = None; state["input_notes"] = []
+        model.input_path = None
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
     win._load_sample_image = load_sample_image
@@ -12054,7 +12550,7 @@ def build_window(model=None):
             with open(path, encoding="utf-8") as fh:          # missing / permission
                 data = json.loads(fh.read())                  # malformed JSON
             snap = [_copy_stage(st) for st in model.stages]
-            model.load_dict(data)                             # schema + op-name validation
+            model.load_dict(data, recompute_pins=False)       # schema + op-name validation; pins after the image
             win._undo_stack.append(snap)                      # fork history only on success
             if len(win._undo_stack) > _UNDO_CAP:
                 del win._undo_stack[0]
@@ -12083,7 +12579,9 @@ def build_window(model=None):
                     state["input_notes"] = ["input could not be read: %s" % res["path"]]
             else:
                 state["input_notes"] = [res["message"]]   # missing: keep the current image
+        model.recompute_pins()                            # snapshots are saved without their pictures: rebuild them now
         refresh_stage_list(select=len(model.stages) - 1)
+        update_ab()
         if model.directives:
             apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
         show_result()
@@ -12287,7 +12785,7 @@ def build_window(model=None):
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
-        "focus_search": act_focus_search,
+        "focus_search": act_focus_search, "pin_a": act_pin,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
