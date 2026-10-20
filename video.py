@@ -72,7 +72,7 @@ def _to01(a: np.ndarray) -> np.ndarray:
     return np.clip(a.astype(np.float64), 0.0, 1.0)
 
 
-_GRAY_BACKENDS = ("auto", "cv2", "numpy")
+_GRAY_BACKENDS = ("auto", "cv2", "numpy", "integer")
 
 
 def _gray_u8(a: np.ndarray, backend: str) -> np.ndarray:
@@ -134,6 +134,9 @@ def _coerce(frame, gray: bool, dtype: str = "float64", gray_backend: str = "auto
         if a.ndim == 3 and a.shape[2] == 3:
             return a
         raise ValueError("unexpected frame shape %r" % (a.shape,))
+    if (gray and gray_backend == "integer" and a.ndim == 3 and a.shape[2] == 3
+            and np.issubdtype(a.dtype, np.integer)):
+        return _to01(_gray_u8(a, "numpy"))
     a = _to01(a)
     if gray:
         if a.ndim == 2:
@@ -153,13 +156,15 @@ def _coerce(frame, gray: bool, dtype: str = "float64", gray_backend: str = "auto
     raise ValueError("unexpected frame shape %r" % (a.shape,))
 
 
-def _iter_cv2(path):
+def _iter_cv2(path, start=0):
     """Fallback frame iterator via OpenCV (BGR uint8 → RGB). Callers check the
     file exists first, so an open failure here means undecodable, not missing."""
     cv2 = _cv2()
     cap = cv2.VideoCapture(path)
     if not cap.isOpened():
         raise RuntimeError("could not decode %s (corrupt or unsupported format)" % path)
+    if start:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(start))
     try:
         while True:
             ok, bgr = cap.read()
@@ -249,8 +254,8 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
     if _cv2() is not None:
         kept = 0
-        for i, fr in enumerate(_iter_cv2(path)):
-            if i < start or (i - start) % step:
+        for i, fr in enumerate(_iter_cv2(path, start)):
+            if i % step:
                 continue
             yield _coerce(fr, gray, dtype, gray_backend)
             kept += 1
@@ -426,25 +431,28 @@ def write_video(path: str, frames, fps: float = 30.0, verify: bool = True) -> No
     imageio = _imageio()
     if imageio is None:
         raise RuntimeError("write_video needs imageio (with imageio-ffmpeg for mp4)")
-    seq = [_to_uint8_frame(f) for f in frames]
-    if not seq:
-        raise ValueError("no frames to write")
-    n_written = len(seq)
     if path.lower().endswith(_VIDEO_EXTS):
-        padded = []
-        for a in seq:
-            ph = a.shape[0] % 2
-            pw = a.shape[1] % 2
-            if ph or pw:
-                pad = [(0, ph), (0, pw)] + ([(0, 0)] if a.ndim == 3 else [])
-                a = np.pad(a, pad, mode="edge")
-            padded.append(a)
-        seq = padded
-        # macro_block_size=1 stops imageio-ffmpeg from silently resizing the frame
-        # up to a multiple of 16 (which would change the array's width/height); the
-        # even-padding above already satisfies libx264's yuv420p ÷2 requirement.
-        imageio.mimsave(path, seq, fps=float(fps), macro_block_size=1)
+        writer = imageio.get_writer(path, fps=float(fps), macro_block_size=1)
+        n_written = 0
+        try:
+            for frame in frames:
+                a = _to_uint8_frame(frame)
+                ph = a.shape[0] % 2
+                pw = a.shape[1] % 2
+                if ph or pw:
+                    pad = [(0, ph), (0, pw)] + ([(0, 0)] if a.ndim == 3 else [])
+                    a = np.pad(a, pad, mode="edge")
+                writer.append_data(a)
+                n_written += 1
+        finally:
+            writer.close()
+        if not n_written:
+            raise ValueError("no frames to write")
     else:
+        seq = [_to_uint8_frame(f) for f in frames]
+        if not seq:
+            raise ValueError("no frames to write")
+        n_written = len(seq)
         # GIF: the per-frame delay is `duration` in MILLISECONDS. Passing
         # duration=1/fps (seconds) truncates to a 0 ms delay (fps inert); `fps=`
         # works but is deprecated in imageio 2.28+. Convert explicitly. Pillow is
