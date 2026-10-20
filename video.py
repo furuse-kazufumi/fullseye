@@ -156,15 +156,13 @@ def _coerce(frame, gray: bool, dtype: str = "float64", gray_backend: str = "auto
     raise ValueError("unexpected frame shape %r" % (a.shape,))
 
 
-def _iter_cv2(path, start=0):
+def _iter_cv2(path):
     """Fallback frame iterator via OpenCV (BGR uint8 → RGB). Callers check the
     file exists first, so an open failure here means undecodable, not missing."""
     cv2 = _cv2()
     cap = cv2.VideoCapture(path)
     if not cap.isOpened():
         raise RuntimeError("could not decode %s (corrupt or unsupported format)" % path)
-    if start:
-        cap.set(cv2.CAP_PROP_POS_FRAMES, int(start))
     try:
         while True:
             ok, bgr = cap.read()
@@ -254,8 +252,8 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
     if _cv2() is not None:
         kept = 0
-        for i, fr in enumerate(_iter_cv2(path, start)):
-            if i % step:
+        for i, fr in enumerate(_iter_cv2(path)):
+            if i < start or (i - start) % step:
                 continue
             yield _coerce(fr, gray, dtype, gray_backend)
             kept += 1
