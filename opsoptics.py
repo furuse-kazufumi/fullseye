@@ -145,6 +145,7 @@ import lockin
 import watermedia
 import lensglobal
 import lensmerit
+import lensrender
 import filmoptics
 import moirealign
 import gratinginterf
@@ -156,7 +157,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "lensmerit": lensmerit, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -664,6 +665,18 @@ _CATALOG = {
         ("phase_function_hg", "watermedia", [], "table"),
         ("scattering_phase_petzold", "watermedia", [], "table"),
         ("cylinder_lens_caustic", "watermedia", [], "table"),
+    ],
+    "lensrender": [  # 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender、2026-10-20): 像面側から射出瞳を標本化して物体空間へ逆向きに追跡する
+        # Kolb, Mitchell & Hanrahan (1995)。幾何光学のみ(回折なし)。★fail-closed: 射出瞳が無限遠の系・非有限の入力・範囲外の波長/照明の表・
+        # 軸対称でない系への点光源(前方追跡で回す)は ValueError。ケラレ/全反射の光線は NaN と vignetted = True で返す。
+        ("lens_scene", "lensrender", [], "table"),
+        ("exit_pupil_samples", "lensrender", ["table"], "table"),
+        ("trace_sensor_rays", "lensrender", ["table"], "table"),
+        ("scene_radiance", "lensrender", [], "table"),
+        ("render_scene_through_lens", "lensrender", ["table"], "table"),
+        ("bokeh_shape", "lensrender", ["table"], "table"),
+        ("render_ghost_overlay", "lensrender", ["table"], "table"),
+        ("render_compare_prescriptions", "lensrender", [], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗
