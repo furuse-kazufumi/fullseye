@@ -293,11 +293,9 @@ def largedef_radius_ratio(d, p: float, method: str = "quadrature"):
             root = np.sqrt(1.0 - d1)
             val[~small] = (0.5 * root + np.arctan2(np.sqrt(d1), root) / (2.0 * np.sqrt(d1))) / root
             return _out(val, scalar)
+        # 一般 p の行列化はこの規模では速くなく、作業領域も増えたため採らない。
         up = _U ** p
-        val = np.empty_like(arr)
-        for start in range(0, arr.size, 4096):
-            ds = arr[start:start + 4096]
-            val[start:start + 4096] = np.sqrt(1.0 - ds[:, None] * up) @ _WU
+        val = np.array([float(np.sum(_WU * np.sqrt(1.0 - di * up))) for di in arr])
         val /= np.sqrt(1.0 - arr)
         return _out(val, scalar)
     out = np.empty_like(arr)
