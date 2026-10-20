@@ -14,6 +14,7 @@ import lighttransport
 import multivar
 import render_ssaa
 import textregion
+import geompred
 
 
 def test_289_290_bilateral_shared_guide_and_bool_mask_match_joint_path():
@@ -243,3 +244,21 @@ def test_306_307_component_prefixes_match_independent_refits():
         for a in range(1, 6):
             one = fit(X, Y, a)
             np.testing.assert_allclose(full["W"][:, :a], one["W"], rtol=0, atol=1e-12)
+
+
+def test_317_near_cocircular_probe_keeps_exact_incircle_decision():
+    eps = np.nextafter(1.0, 2.0) - 1.0
+    points = np.array([[1., 0.], [0., 1.], [-1., 0.],
+                       [0., -1.], [0., -(1. - eps)], [0., -(1. + 2 * eps)]])
+    got = geompred.is_delaunay_2d(points, [[0, 1, 2]])
+    assert got == (False, [(0, 4)])
+
+
+def test_318_sorted_edge_variant_preserves_degenerate_nonmanifold_order():
+    cases = [
+        np.array([[8, 8, 2], [2, 8, 3], [8, 2, 4]]),
+        np.array([[5, 1, 9], [1, 5, 8], [5, 1, 7], [20, 21, 22]]),
+        np.array([[10, 2, 4], [4, 2, 8], [9, 10, 4]]),
+    ]
+    for faces in cases:
+        assert geompred.mesh_orientation_consistent(faces, method="fast") == geompred.mesh_orientation_consistent(faces)
