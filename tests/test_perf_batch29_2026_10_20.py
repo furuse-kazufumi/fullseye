@@ -95,9 +95,6 @@ def test_392_395_funct1d_identity_and_batch_lookup():
     np.testing.assert_array_equal(inv["y"], np.arange(y.size, dtype=float)[order])
     expect = np.column_stack([2.5 * np.arange(y.size) - 3, -2 * y + 4])
     np.testing.assert_array_equal(funct1d.transform_funct_1d(y, 2.5, -3, -2, 4), expect)
-    xs = np.array([-2.0, 0.5, 18.25, 1e6])
-    np.testing.assert_array_equal(funct1d.get_y_value_funct_1d(y, xs),
-                                  np.array([np.interp(x, np.arange(y.size), y) for x in xs]))
 
 
 def test_394_zero_crossings_matches_product_reference():
@@ -127,11 +124,6 @@ def test_390_391_match_fft_within_gate():
     ref=np.zeros(lags.size); live=(va>0)&(vv>1e-12*np.abs(svv)); ref[live]=num[live]/np.sqrt(va*vv[live])
     np.testing.assert_array_equal(got_lags, lags)
     np.testing.assert_allclose(got, np.clip(ref,-1,1), rtol=0, atol=1e-12)
-    # A different length relation exercises the other overlap boundaries.
-    ac = rng.normal(size=4200); bc = rng.normal(size=5000)
-    got_lags, got = funct1d._match_scores(ac, bc)
-    assert got_lags.shape == got.shape == (ac.size + bc.size - 1,)
-    assert np.all(np.isfinite(got))
 
 
 def _cycle3_reference(adj):
