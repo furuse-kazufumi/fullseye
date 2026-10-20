@@ -265,13 +265,38 @@ def largedef_radius_ratio(d, p: float, method: str = "quadrature"):
     **Raises** ``ValueError``: d が [0, 1) の外、p が範囲外、method の綴り違い。"""
     arr, scalar = _as_d(d)
     p = _check_p(p)
-    if method not in ("quadrature", "beta"):
-        raise ValueError("largedef_radius_ratio: method must be 'quadrature' or 'beta', got %r" % method)
+    if method not in ("quadrature", "beta", "fast"):
+        raise ValueError("largedef_radius_ratio: method must be 'quadrature', 'beta' or 'fast', got %r" % method)
     if math.isinf(p):
         return _out(1.0 / np.sqrt(1.0 - arr), scalar)
     if method == "quadrature":
         up = _U ** p
         val = np.array([float(np.sum(_WU * np.sqrt(1.0 - di * up))) for di in arr]) / np.sqrt(1.0 - arr)
+        return _out(val, scalar)
+    if method == "fast":
+        # 結果の丸めが異なり得るため明示選択。p=1,2 は閉形式、それ以外は
+        # d×求積点を小ブロックにして Python ループを減らす。
+        if p == 1.0:
+            val = np.empty_like(arr)
+            small = arr < 1e-6
+            d0 = arr[small]
+            val[small] = 1.0 + d0 / 4.0 + 7.0 * d0 * d0 / 32.0
+            d1 = arr[~small]
+            val[~small] = (2.0 / (3.0 * d1)) * (-np.expm1(1.5 * np.log1p(-d1))) / np.sqrt(1.0 - d1)
+            return _out(val, scalar)
+        if p == 2.0:
+            val = np.empty_like(arr)
+            small = arr < 1e-6
+            d0 = arr[small]
+            val[small] = 1.0 + d0 / 3.0 + 4.0 * d0 * d0 / 15.0
+            d1 = arr[~small]
+            root = np.sqrt(1.0 - d1)
+            val[~small] = (0.5 * root + np.arctan2(np.sqrt(d1), root) / (2.0 * np.sqrt(d1))) / root
+            return _out(val, scalar)
+        # 一般 p の行列化はこの規模では速くなく、作業領域も増えたため採らない。
+        up = _U ** p
+        val = np.array([float(np.sum(_WU * np.sqrt(1.0 - di * up))) for di in arr])
+        val /= np.sqrt(1.0 - arr)
         return _out(val, scalar)
     out = np.empty_like(arr)
     for i, di in enumerate(arr):
@@ -356,8 +381,11 @@ def large_deformation_inverse(a: float, L: float, lin: dict, reading: str = "der
             raise ValueError("large_deformation_inverse: punch contact radius must exceed a0=%.4g (got %.4g)" % (a0, a))
         d = 1.0 - (a0 / a) ** 2
     else:
+        up = _U ** p
+
         def a_of(dd):
-            return float(largedef_radius_ratio(dd, p)) * lin["D"] * (dd * L) ** (1.0 / p)
+            ratio = float(np.sum(_WU * np.sqrt(1.0 - dd * up))) / math.sqrt(1.0 - dd)
+            return ratio * lin["D"] * (dd * L) ** (1.0 / p)
         lo, hi = 0.0, 1.0 - 1e-9
         if a_of(hi) < a:
             raise ValueError("large_deformation_inverse: a=%.4g is beyond d → 1 (max %.4g)" % (a, a_of(hi)))
@@ -504,7 +532,7 @@ def contact_patch_radius(img, pitch: float, ring_px: float = 4.0) -> dict:
         raise ValueError("contact_patch_radius: img must be a 2-D image of at least 16×16")
     if not np.all(np.isfinite(im)):
         raise ValueError("contact_patch_radius: img has non-finite pixels")
-    lo, hi = np.percentile(im, 1.0), np.percentile(im, 99.9)
+    lo, hi = np.percentile(im, (1.0, 99.9))
     if not (hi > lo):
         raise ValueError("contact_patch_radius: no contrast (flat image)")
     t = 0.5 * (lo + hi)
@@ -521,16 +549,21 @@ def contact_patch_radius(img, pitch: float, ring_px: float = 4.0) -> dict:
     rp = float(ring_px)
     if cy - r_t - 2 * rp < 0 or cx - r_t - 2 * rp < 0 or cy + r_t + 2 * rp > H - 1 or cx + r_t + 2 * rp > W - 1:
         raise ValueError("contact_patch_radius: contact patch touches the window border")
-    Y, X = np.mgrid[0:H, 0:W]
+    # 半径判定に必要なのは接触周辺だけ。窓全体の Y/X/R を保持しない。
+    reach = r_t + 2 * rp
+    y0, y1 = max(0, int(math.floor(cy - reach))), min(H, int(math.ceil(cy + reach)) + 1)
+    x0, x1 = max(0, int(math.floor(cx - reach))), min(W, int(math.ceil(cx + reach)) + 1)
+    Y, X = np.mgrid[y0:y1, x0:x1]
+    local = im[y0:y1, x0:x1]
     R = np.hypot(Y - cy, X - cx)
     inner = R < max(r_t - rp, 1.5)
     ring = (R > r_t + rp) & (R < r_t + 2 * rp)
     assert int(inner.sum()) >= 1 and int(ring.sum()) >= 8
-    fg, bg = float(np.median(im[inner])), float(np.median(im[ring]))
+    fg, bg = float(np.median(local[inner])), float(np.median(local[ring]))
     if not (fg > bg):
         raise ValueError("contact_patch_radius: patch is not brighter than its surroundings")
     sel = R < r_t + rp
-    cov = (im[sel] - bg) / (fg - bg)
+    cov = (local[sel] - bg) / (fg - bg)
     s = float(cov.sum())
     if not (s > 0):
         raise ValueError("contact_patch_radius: non-positive covered area")

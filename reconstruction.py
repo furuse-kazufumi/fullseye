@@ -132,27 +132,46 @@ def reconstruct_height_field_from_gradient(grad_row, grad_col):
     return z - z.min()
 
 
-def photometric_stereo(images, light_dirs):
+def photometric_stereo(images, light_dirs, chunk=None):
     """複数照明画像(Lambertian)から法線と反射率を復元(photometric_stereo)。
     images: (K,H,W)、light_dirs: (K,3) 正規化光源方向。"""
     I = np.stack([np.asarray(im, float) for im in images], axis=0)  # (K,H,W)
     L = np.asarray(light_dirs, float)                               # (K,3)
     K, H, W = I.shape
     Ivec = I.reshape(K, -1)                                         # (K, HW)
-    G = np.linalg.lstsq(L, Ivec, rcond=None)[0]                     # (3, HW) = albedo*normal
+    if chunk is None:
+        G = np.linalg.lstsq(L, Ivec, rcond=None)[0]                 # (3, HW) = albedo*normal
+    else:
+        chunk = int(chunk)
+        if chunk < 1:
+            raise ValueError("photometric_stereo: chunk must be >= 1")
+        # 分解は一度だけ、右辺は画素ブロックごとに解いてピークメモリを抑える。
+        Q, R = np.linalg.qr(L, mode="reduced")
+        G = np.empty((3, H * W), dtype=np.float64)
+        for start in range(0, H * W, chunk):
+            stop = min(start + chunk, H * W)
+            G[:, start:stop] = np.linalg.solve(R, Q.T @ Ivec[:, start:stop])
     albedo = np.linalg.norm(G, axis=0)
     normals = G / (albedo + 1e-12)
     return {"normals": normals.T.reshape(H, W, 3),
             "albedo": albedo.reshape(H, W)}
 
 
-def uncalibrated_photometric_stereo(images):
+def uncalibrated_photometric_stereo(images, method="exact"):
     """光源方向未知の photometric stereo(SVD で 3 階数近似、uncalibrated_photometric_stereo)。
     Bas-relief 曖昧性を残したまま法線場を復元。"""
     I = np.stack([np.asarray(im, float) for im in images], axis=0)
     K, H, W = I.shape
     M = I.reshape(K, -1)
-    U, S, Vt = np.linalg.svd(M, full_matrices=False)
+    if method == "exact":
+        U, S, Vt = np.linalg.svd(M, full_matrices=False)
+    elif method == "fast":
+        from scipy.sparse.linalg import svds
+        U, S, Vt = svds(M, k=3, which="LM")
+        order = np.argsort(S)[::-1]
+        U, S, Vt = U[:, order], S[order], Vt[order]
+    else:
+        raise ValueError("uncalibrated_photometric_stereo: method must be 'exact' or 'fast'")
     B = (np.diag(S[:3]) @ Vt[:3])                                   # (3, HW) surface
     albedo = np.linalg.norm(B, axis=0)
     normals = (B / (albedo + 1e-12)).T.reshape(H, W, 3)
@@ -191,14 +210,20 @@ def depth_from_focus(images, focus_positions=None):
     from scipy.ndimage import laplace, uniform_filter
     stack = np.stack([np.asarray(im, float) for im in images], axis=0)
     K = stack.shape[0]
-    sml = np.stack([uniform_filter(np.abs(laplace(stack[k])), 5) for k in range(K)], axis=0)
-    best = np.argmax(sml, axis=0)
+    sharpness = uniform_filter(np.abs(laplace(stack[0])), 5)
+    best = np.zeros(sharpness.shape, dtype=np.intp)
+    for k in range(1, K):
+        candidate = uniform_filter(np.abs(laplace(stack[k])), 5)
+        # np.argmax は最初の NaN を選び、同値なら最初の番号を保つ。
+        update = ~np.isnan(sharpness) & (np.isnan(candidate) | (candidate > sharpness))
+        sharpness[update] = candidate[update]
+        best[update] = k
     if focus_positions is not None:
         fp = np.asarray(focus_positions, float)
         depth = fp[best]
     else:
         depth = best.astype(float)
-    return {"depth": depth, "index": best, "sharpness": sml.max(axis=0)}
+    return {"depth": depth, "index": best, "sharpness": sharpness}
 
 
 # ── 相対姿勢 / 三角測量 ──────────────────────────────────────────────────────── #
@@ -221,13 +246,15 @@ def triangulate_points(P1, P2, pts1, pts2):
         raise ValueError("triangulate_points: pts1 and pts2 must contain the same number of points")
     if len(pts1) == 0:
         return np.empty((0, 3), dtype=float)
-    out = []
-    for (x1, y1), (x2, y2) in zip(pts1, pts2):
-        A = np.vstack([x1 * P1[2] - P1[0], y1 * P1[2] - P1[1],
-                       x2 * P2[2] - P2[0], y2 * P2[2] - P2[1]])
-        _, _, Vt = np.linalg.svd(A)
-        X = Vt[-1]; out.append(X[:3] / X[3])
-    return np.asarray(out)
+    # 点ごとの 4x4 設計行列を一度に組み、SVD も一括で(点ごとの SVD と同じ LAPACK 呼び出し)
+    A = np.empty((len(pts1), 4, 4), dtype=np.float64)
+    A[:, 0] = pts1[:, 0, None] * P1[2] - P1[0]
+    A[:, 1] = pts1[:, 1, None] * P1[2] - P1[1]
+    A[:, 2] = pts2[:, 0, None] * P2[2] - P2[0]
+    A[:, 3] = pts2[:, 1, None] * P2[2] - P2[1]
+    _u, _s, Vh = np.linalg.svd(A)
+    X = Vh[:, -1]
+    return X[:, :3] / X[:, 3, None]
 
 
 def reconstruct_points_stereo(pts_left, pts_right, focal=500.0, baseline=0.1, cx=0.0, cy=0.0):
@@ -345,7 +372,10 @@ def gen_binocular_proj_rectification(F, shape):
 def select_grayvalues_from_channels(image_stack, index_image):
     """index 画像に従い多チャネルスタックから画素ごとにグレー値を選ぶ
     (select_grayvalues_from_channels)。焦点スタックからの合成に。"""
-    stack = np.stack([np.asarray(im, float) for im in image_stack], axis=0)
+    if isinstance(image_stack, np.ndarray):
+        stack = np.asarray(image_stack, dtype=float)
+    else:
+        stack = np.stack([np.asarray(im, float) for im in image_stack], axis=0)
     idx = np.clip(np.asarray(index_image, int), 0, stack.shape[0] - 1)
     H, W = idx.shape
     rr, cc = np.mgrid[0:H, 0:W]
