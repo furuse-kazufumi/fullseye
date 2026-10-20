@@ -144,11 +144,13 @@ def _sample(image, uv, wrap_x=False):
 
 
 def cubemap_from_equirect(equi, face_size):
+    """Resample an equirectangular image into six cubemap faces."""
     yy,xx=np.mgrid[0:face_size,0:face_size]; uv=np.stack((xx+.5,yy+.5),axis=-1)
     return np.stack([_sample(equi,dir_to_equirect(cubemap_to_dir(np.full((face_size,face_size),f),uv,face_size),*equi.shape[:2]),True) for f in range(6)])
 
 
 def equirect_from_cubemap(cube, out_shape):
+    """Resample six cubemap faces into an equirectangular image."""
     cube=np.asarray(cube,float); h,w=out_shape; d=equirect_to_dir(h,w); face,uv=dir_to_cubemap(d,cube.shape[1]); out=np.empty((h,w)+cube.shape[3:],float)
     for f in range(6):
         m=face==f; out[m]=_sample(cube[f],uv)[m]
@@ -213,6 +215,7 @@ def equirect_defect_unwrap_pipe(equi, axis="horizontal", radius_m=None, length_m
 
 
 def viewport_from_equirect(equi,yaw=0,pitch=0,roll=0,fov_deg=90,size=(256,256)):
+    """Extract a rectilinear viewer viewport from an equirectangular image."""
     h,w=(size,size) if np.isscalar(size) else size; yy,xx=np.mgrid[0:h,0:w]
     d=perspective_unproject(np.stack((xx+.5,yy+.5),axis=-1),fov_deg,(h,w)); R=_ypr(yaw,pitch,roll)
     return _sample(equi,dir_to_equirect(d@R.T,*equi.shape[:2]),True)
@@ -224,6 +227,7 @@ def _ypr(yaw,pitch,roll):
 
 
 def equirect_rotate(equi,R):
+    """Apply a proper three-dimensional rotation to a panorama."""
     R=np.asarray(R,float)
     if R.shape!=(3,3) or not np.allclose(R.T@R,np.eye(3),atol=1e-9) or np.linalg.det(R)<0: raise ValueError("R must be a proper rotation")
     h,w=equi.shape[:2]; d=equirect_to_dir(h,w)@R
@@ -231,12 +235,14 @@ def equirect_rotate(equi,R):
 
 
 def equirect_weight_map(h,w,solid_angle=False):
+    """Return cosine-latitude weights, optionally normalised to four pi."""
     lat=np.pi/2-(np.arange(h)+.5)*np.pi/h; q=np.cos(lat)[:,None]*np.ones((1,w))
     if solid_angle: q*=4*np.pi/q.sum()
     return q
 
 
 def ws_psnr(a,b,data_range=1.0):
+    """Compute cosine-latitude weighted spherical PSNR."""
     a=np.asarray(a,float); b=np.asarray(b,float); w=equirect_weight_map(a.shape[0],a.shape[1]);
     if a.ndim==3: w=w[...,None]
     mse=np.sum(w*(a-b)**2)/(np.sum(w)*(a.shape[2] if a.ndim==3 else 1))
@@ -244,6 +250,7 @@ def ws_psnr(a,b,data_range=1.0):
 
 
 def s_psnr(a,b,n=10000,data_range=1.0):
+    """Compute PSNR at deterministic near-uniform sphere samples."""
     i=np.arange(n); y=1-2*(i+.5)/n; lon=(np.pi*(3-np.sqrt(5))*i+np.pi)%(2*np.pi)-np.pi
     d=np.stack((np.sqrt(1-y*y)*np.sin(lon),y,np.sqrt(1-y*y)*np.cos(lon)),axis=-1)
     aa=_sample(a,dir_to_equirect(d,*a.shape[:2]),True); bb=_sample(b,dir_to_equirect(d,*b.shape[:2]),True); mse=np.mean((aa-bb)**2)
@@ -251,6 +258,7 @@ def s_psnr(a,b,n=10000,data_range=1.0):
 
 
 def equirect_filter_gaussian(image,sigma_deg):
+    """Gaussian-filter a panorama with longitude scale adapted to latitude."""
     im=np.asarray(image,float); h,w=im.shape[:2]; sy=sigma_deg*h/180; out=np.empty_like(im)
     for y in range(h):
         lat=np.pi/2-(y+.5)*np.pi/h; sx=min(sigma_deg*w/(360*max(np.cos(lat),1e-3)),w/4)
@@ -260,19 +268,27 @@ def equirect_filter_gaussian(image,sigma_deg):
 
 
 def ods_depth_to_disparity(depth_m,ipd_m,w):
+    """Convert radial depth to ODS horizontal pixel disparity."""
     d=np.asarray(depth_m,float)
     if np.any(d<ipd_m/2): raise ValueError("depth is inside the eye circle")
     return 2*np.arcsin(ipd_m/(2*d))*w/(2*np.pi)
 
 
 def ods_disparity_to_depth(disp_px,ipd_m,w):
+    """Convert ODS horizontal pixel disparity to radial depth."""
     a=np.asarray(disp_px,float)*2*np.pi/w
     if np.any(a<=0) or np.any(a>=np.pi): raise ValueError("disparity must subtend an angle in (0,pi)")
     return ipd_m/(2*np.sin(a/2))
 
 
-def stereo360_sbs(left,right): return stereo_pack(left,right,"sbs")
-def stereo360_top_bottom(left,right): return stereo_pack(left,right,"tb")
+def stereo360_sbs(left,right):
+    """Pack a panorama pair side by side."""
+    return stereo_pack(left,right,"sbs")
+
+
+def stereo360_top_bottom(left,right):
+    """Pack a panorama pair top and bottom."""
+    return stereo_pack(left,right,"tb")
 
 
 _DUBOIS_L=np.array([[.456100,-.040082,-.015216],[.500484,-.037824,-.020597],[.176381,-.015759,-.005469]])
@@ -309,12 +325,14 @@ def anaglyph_preview(left,right,**kwargs):
 
 
 def stereo_parallax_budget(disparity_px,width_px,viewing_distance_m,screen_width_m,ipd_m):
+    """Report physical parallax and the common one- and three-percent limits."""
     mm=abs(float(disparity_px))/width_px*screen_width_m*1000; frac=mm/(screen_width_m*1000)
     return {"parallax_mm":mm,"screen_fraction":frac,"comfort_1pct":frac<=.01,"comfort_3pct":frac<=.03,
             "vergence_distance_m":float(ipd_m/(ipd_m/viewing_distance_m + np.sign(disparity_px)*mm/1000/max(viewing_distance_m,1e-12)))}
 
 
 def stereo_pack(left,right,layout="sbs"):
+    """Pack two eye images in a named display layout."""
     a=np.asarray(left); b=np.asarray(right)
     if a.shape!=b.shape: raise ValueError("eye images must have equal shape")
     if layout=="sbs": return np.concatenate((a,b),axis=1)
@@ -334,16 +352,19 @@ def stereo_unpack(packed,layout="sbs"):
 
 
 def anaglyph_from_ods(left,right,yaw=0,pitch=0,fov=90,size=(256,256),method="dubois"):
+    """Extract an ODS viewport pair and compose a colour-filter view."""
     return anaglyph(viewport_from_equirect(left,yaw,pitch,0,fov,size),viewport_from_equirect(right,yaw,pitch,0,fov,size),method)
 
 
 def video360_viewport_track(frames,yaw,pitch,fov=90,size=(256,256)):
+    """Extract a moving viewport from an equirectangular frame sequence."""
     n=len(frames); ys=np.asarray(yaw(n) if callable(yaw) else yaw,float); ps=np.asarray(pitch(n) if callable(pitch) else pitch,float)
     if ys.size!=n or ps.size!=n: raise ValueError("view path length must equal frame count")
     return np.stack([viewport_from_equirect(frames[i],ys[i],ps[i],0,fov,size) for i in range(n)])
 
 
 def video360_tile_coverage(view_path,tiles=(8,4),fov_deg=90):
+    """Report which longitude-latitude streaming tiles a view path touches."""
     path=np.asarray(view_path,float); nx,ny=tiles; seen=np.zeros((ny,nx),bool)
     hy=fov_deg/2
     for yaw,pitch in path:
