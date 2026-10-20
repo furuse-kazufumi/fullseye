@@ -157,7 +157,7 @@ py-modules = [
   "blob2d", "opsblob",
   "conngraph", "opsconngraph", "eyebrain", "emproof", "opsemproof", "videocube", "opsvideocube", "live4d", "opslive4d", "printpath", "opsprintpath", "geocam", "opsgeocam","geocam", "opsgeocam",
   # 2026-09-24: LLM に至る系譜の芯(注意・RoPE・RMSNorm)。numpy だけで動く。
-  "llmcore", "opsllmcore",
+  "lenstol", "llmcore", "opsllmcore",
   # 2026-10-02: HALCON Segmentation 章の 9 op の台帳。実体 segmentation は下の facade 群に既載。
   "opssegmentation",
   # 2026-10-02: セグメンテーション第 1 陣。採点の物差し(segeval)と真値つき合成世界(segworld)の実体。
