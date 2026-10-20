@@ -137,9 +137,13 @@ def antialias(hi_res_image, ss, filter: str = "box") -> np.ndarray:
 
     if a.ndim == 2:
         blk = a.reshape(h, s, w, s)
+        if filter == "box":
+            return blk.mean(axis=(1, 3))
         return np.einsum("i,j,aibj->ab", wy, wx, blk, optimize=True)
     c = a.shape[2]
     blk = a.reshape(h, s, w, s, c)
+    if filter == "box":
+        return blk.mean(axis=(1, 3))
     return np.einsum("i,j,aibjk->abk", wy, wx, blk, optimize=True)
 
 
