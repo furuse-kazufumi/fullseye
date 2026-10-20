@@ -3283,6 +3283,18 @@
    "run": "py -3.11 examples/poc_lockin_imaging.py"
   },
   {
+   "id": "poc_zmx_public_verify",
+   "wing": "wing_color",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "independent_verification",
+   "title_ja": "公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する",
+   "title_en": "Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses",
+   "caption_ja": "4 本の処方を別の読取器と光線追跡器で計算し、EFL、BFL、実光線、RMS スポットを照合する。無限遠、入口瞳径 1 mm、256×256 画素、5.5 µm の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の参照球と瞳写像の規約差は図に残す。学習 0、較正 0、門 2 件。",
+   "caption_en": "Four prescriptions are calculated with a separate reader and ray tracer, comparing EFL, BFL, real rays and RMS spots. At infinity focus with a 1 mm entrance pupil and a 256 by 256 sensor of 5.5 um pixels, illumination, distortion, colour shift, MTF and visibility of a three-pixel scratch are scored. The OPD reference-sphere and pupil-mapping convention difference is retained as a figure. No learning, no calibration, two gates.",
+   "run": "py -3.11 examples/poc_zmx_public_verify.py"
+  },
+  {
    "id": "poc_water_transparent_media",
    "wing": "wing_imaging",
    "added": "2026-10-19",

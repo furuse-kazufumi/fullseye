@@ -301,7 +301,7 @@ Runnable: `poc_sem_wafer_defect_edge_bias`
 
 ### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
 
-An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics. The ideal lens turns rays by the thin-lens law exactly with a stigmatic optical path, so an aberration-free lens reads zero OPD and an Airy PSF. `encircled_energy` / `ensquared_energy` give the energy-versus-radius curves, `energy_radii` the radii at chosen fractions, `mtf_tangential_sagittal` the two meridional slices of the 2-D transform, and `through_focus_mtf` the MTF at chosen frequencies across image-plane shifts. Gates: focus at f to 1e-12 mm, Gaussian conjugate and magnification, 83.8 % at the first Airy dark ring, the closed-form circular-pupil MTF, and Hopkins' defocus integral.
+### Independent verification of public `.zmx` prescriptions (2026-10-20)
 
 Operators: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`, `with_aiming`, `ray_aiming`, `set_vignetting`, `lens_configurations`, `lens_with_configuration`, `lens_configuration_table`, `lens_configuration_metrics`, `lens_add_configuration`, `glass_nearest`, `lens_substitute_glasses`, `lens_global_search`, `merit_operands_list`, `merit_evaluate`, `merit_default`, `merit_boundary_operands`, `optimize_lens_operands`, `merit_contributions`, `lens_apply_solves`, `lens_solve_set`, `lens_solve_clear`, `lens_solves_list`, `afocal_system`, `lens_afocal_report`, `lens_image_surface`, `lens_petzval_radius`, `lens_zmx_solves_roundtrip`
 

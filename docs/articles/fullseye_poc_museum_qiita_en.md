@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 149 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 100 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 101 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
 
@@ -61,13 +61,13 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 ## Recently added (newest first)
 
 - 2026-10-20 — No.2026.267 Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres
+- 2026-10-20 — No.2026.270 Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
 - 2026-10-20 — No.2026.268 How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
 - 2026-10-20 — No.2026.269 Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
 - 2026-10-19 — No.2026.261 A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table
 - 2026-10-19 — No.2026.262 Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending
 - 2026-10-19 — No.2026.265 Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation
 - 2026-10-19 — No.2026.264 Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold
-- 2026-10-19 — No.2026.263 Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution
 
 ## Applying it to your own problem
 

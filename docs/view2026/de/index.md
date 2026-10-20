@@ -213,7 +213,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-269 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+270 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -415,7 +415,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Farbe und Trennung</b> (14)</summary>
+<details class="vall"><summary><b>Farbe und Trennung</b> (15)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)" width="200" height="200"><span>Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)" width="200" height="200"><b>&#9654;</b><span>Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)</span></a>
@@ -431,6 +431,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glasersatz und Mehrstart-Globalsuche" width="200" height="200"><span>Glasersatz und Mehrstart-Globalsuche</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)" width="200" height="200"><span>Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)" width="200" height="200"><span>Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)</span></a>
+<a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Unabhängige Prüfung öffentlicher .zmx-Rezepte" width="200" height="200"><span>Unabhängige Prüfung öffentlicher .zmx-Rezepte</span></a>
 </div>
 </details>
 

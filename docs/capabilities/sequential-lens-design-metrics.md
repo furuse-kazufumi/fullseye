@@ -67,6 +67,12 @@ calibration: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pi
 
 ## What it does
 
+### Independent verification of public `.zmx` prescriptions (2026-10-20)
+
+`tests/data/lensfile/` の同軸処方 4 本を、それぞれ別の `.zmx` 読取器と光線追跡器で再計算した。`asphere_singlet.zmx`、`double_gauss_const.zmx`、`triplet_catalog.zmx`、`triplet_const.zmx` について、EFL/BFL の最大相対差は 3.5e-16、同じ入射光線を再生した像面座標と重心まわり RMS スポットの差は 1e-6 mm 未満だった。記録値は `tests/data/zmx_public_ref.json` に置き、任意の外部実装が無い CI でも毎回照合する。
+
+PoC `poc_zmx_public_verify`(収蔵番号 2026.270)は、作動距離を無限遠、入口瞳径を 1 mm、センサーを 256×256 画素・5.5 µm と明記して、相対照明、歪曲、RMS スポット/画素、倍率色、ナイキスト周波数の 1/4 の MTF、角の 3 画素傷のコントラストを採点する。OPD は参照球だけでなく内部絞りの瞳写像も実装ごとに異なるため、精密一致の門には使わず規約差の図として残す。
+
 An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics. The ideal lens turns rays by the thin-lens law exactly with a stigmatic optical path, so an aberration-free lens reads zero OPD and an Airy PSF. `encircled_energy` / `ensquared_energy` give the energy-versus-radius curves, `energy_radii` the radii at chosen fractions, `mtf_tangential_sagittal` the two meridional slices of the 2-D transform, and `through_focus_mtf` the MTF at chosen frequencies across image-plane shifts. Gates: focus at f to 1e-12 mm, Gaussian conjugate and magnification, 83.8 % at the first Airy dark ring, the closed-form circular-pupil MTF, and Hopkins' defocus integral.
 
 Real-ray aiming and vignetting factors (2026-10-19): `with_aiming(system, "stop")` (or `lens_system(..., aim="stop")`) iterates every pupil ray onto its own point of the stop surface (tolerance 1e-11 of the stop radius, `ValueError` if it does not converge), so the stock triplet loses 0 of 217 rays on axis instead of 48; the default stays the paraxial launch so existing numbers do not move. `lens_system(..., vignetting=[...])` carries per-field VDX / VDY / VCX / VCY / VAN (read from and written to `.zmx`), `set_vignetting` computes them from the apertures, `ray_aiming` reports the counts, residual and pupil extent. Spot, OPD, PSF and MTF ops use the aimed, vignetted pupil.

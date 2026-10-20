@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [lens_defect_dataset_demo, lens_design_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
+examples: [lens_defect_dataset_demo, lens_design_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_tdi_linescan, poc_telecentric_metrology, poc_zmx_public_verify, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -73,6 +73,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [poc_photograph_through_prescription](../../../../examples/poc_photograph_through_prescription.py) — `py -3.11 examples/poc_photograph_through_prescription.py`
 - [poc_tdi_linescan](../../../../examples/poc_tdi_linescan.py) — `py -3.11 examples/poc_tdi_linescan.py`
 - [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
+- [poc_zmx_public_verify](../../../../examples/poc_zmx_public_verify.py) — `py -3.11 examples/poc_zmx_public_verify.py`
 - [poc_zoom_configurations](../../../../examples/poc_zoom_configurations.py) — `py -3.11 examples/poc_zoom_configurations.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

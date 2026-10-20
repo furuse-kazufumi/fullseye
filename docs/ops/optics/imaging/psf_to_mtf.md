@@ -4,7 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: pairs
-examples: [optics_imaging, poc_lens_file_roundtrip, poc_veiling_glare]
+examples: [optics_imaging, poc_lens_file_roundtrip, poc_veiling_glare, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -82,6 +82,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_veiling_glare](../../../../examples/poc_veiling_glare.py) — `py -3.11 examples/poc_veiling_glare.py`
+- [poc_zmx_public_verify](../../../../examples/poc_zmx_public_verify.py) — `py -3.11 examples/poc_zmx_public_verify.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
