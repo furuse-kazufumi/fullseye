@@ -445,7 +445,9 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
             a short buffer is a dropped packet, never a reason to return a
             half-filled image.
     """
-    b = np.unpackbits(np.asarray(buf, dtype=np.uint8).ravel(), bitorder="little")
+    raw = (np.frombuffer(buf, dtype=np.uint8) if isinstance(buf, (bytes, bytearray, memoryview))
+           else np.asarray(buf, dtype=np.uint8).ravel())
+    b = np.unpackbits(raw, bitorder="little")
     need = int(bits) * int(count)
     if b.size < need:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
@@ -474,7 +476,8 @@ def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
         raise ValueError("unpack_grouped: %d-bit grouped layout is not defined here"
                          % bits)
     low = bits - 8
-    a = np.asarray(buf, dtype=np.uint8).ravel()
+    a = (np.frombuffer(buf, dtype=np.uint8) if isinstance(buf, (bytes, bytearray, memoryview))
+         else np.asarray(buf, dtype=np.uint8).ravel())
     pairs = (int(count) + 1) // 2
     if a.size < pairs * 3:
         raise ValueError("unpack_grouped: %d pixels need %d bytes, buffer has %d"
