@@ -171,6 +171,36 @@ def test_400_swap_symmetry_shared_and_union_match_reference():
         assert (got["shared"], got["union"]) == (shared, union)
 
 
+def _rich_club_reference(b, deg, ks):
+    phi=np.zeros(len(ks)); cnt=np.zeros(len(ks), dtype=np.int64)
+    order=np.argsort(-deg); ds=deg[order]
+    for i,k in enumerate(ks):
+        r=int((ds>k).sum()); cnt[i]=r
+        if r >= 2:
+            idx=order[:r]; phi[i]=float(b[np.ix_(idx,idx)].sum())/(r*(r-1))
+    return phi,cnt
+
+
+def test_397_sparse_cycle_and_399_rich_club_match_original():
+    rng=np.random.default_rng(399)
+    a=(rng.random((300,300)) < .01).astype(np.int64); np.fill_diagonal(a,0)
+    assert graphinv.graph_cycle3(a)["cycles3"] == _cycle3_reference(a)
+    deg=a.sum(0)+a.sum(1); ks=np.arange(int(deg.max()))
+    got=graphinv._rich_club_phi(a,deg,ks)
+    ref=_rich_club_reference(a,deg,ks)
+    np.testing.assert_array_equal(got[0],ref[0]); np.testing.assert_array_equal(got[1],ref[1])
+
+
+def test_403_404_consensus_aggregation_identity():
+    rng=np.random.default_rng(403)
+    mats=[rng.integers(0,4,(40,40)) for _ in range(5)]
+    for m in mats: np.fill_diagonal(m,0)
+    got=graphinv.graph_edge_consensus(mats)
+    p=np.stack([m>0 for m in mats]); occ=p.sum(0); s=np.stack(mats).sum(0)
+    ref=[float(s[occ==c].sum()/s.sum()) if c else 0.0 for c in range(6)]
+    np.testing.assert_allclose(got["synapse_share"], ref, rtol=0, atol=1e-15)
+
+
 def test_408_min_dist_matches_reference_including_duplicates():
     rng = np.random.default_rng(408)
     for shape in ((2, 1), (20, 7), (101, 3)):

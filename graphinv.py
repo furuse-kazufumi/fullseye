@@ -152,7 +152,12 @@ def graph_cycle3(adj):
     M = B.astype(np.int64)
     # trace((M @ M) @ M) == sum((M @ M) * M.T).  Keeping int64 preserves
     # the old overflow boundary while avoiding the second dense matrix product.
-    c3 = int(np.sum((M @ M) * M.T, dtype=np.int64)) // 3
+    if np.count_nonzero(B) < B.size // 20 and B.shape[0] >= 128:
+        from scipy.sparse import csr_matrix
+        S = csr_matrix(M)
+        c3 = int(S.T.multiply(S @ S).sum()) // 3
+    else:
+        c3 = int(np.sum((M @ M) * M.T, dtype=np.int64)) // 3
     return {"cycles3": c3, "n": int(B.shape[0])}
 
 
@@ -398,9 +403,12 @@ def graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0
         for j in range(K):
             u = E[i] + E[j] - inter[i, j]
             J[i, j] = inter[i, j] / u if u else 1.0
-    S = np.stack(W).sum(axis=0)                                    # synapses summed over individuals
+    S = np.zeros_like(W[0])
+    for w in W:
+        S += w                                                     # synapses summed over individuals
     tot = float(S.sum())
-    share = [float(S[occ == c].sum() / tot) if c > 0 else 0.0 for c in range(K + 1)]
+    sums = np.bincount(occ.ravel(), weights=S.ravel(), minlength=K + 1)
+    share = [float(sums[c] / tot) if c > 0 else 0.0 for c in range(K + 1)]
     out = {
         "k": K, "n": int(n), "names": names,
         "edges_per_individual": [int(e) for e in E], "union": union,
@@ -646,13 +654,16 @@ def _rich_club_phi(B: np.ndarray, deg: np.ndarray, ks: np.ndarray) -> tuple:
     cnt = np.zeros(len(ks), dtype=np.int64)
     order = np.argsort(-deg)
     dsorted = deg[order]
+    prefix_edges = np.zeros(len(order) + 1, dtype=np.int64)
+    for r, v in enumerate(order, 1):
+        prior = order[:r - 1]
+        prefix_edges[r] = prefix_edges[r - 1] + B[v, prior].sum() + B[prior, v].sum()
     for i, k in enumerate(ks):
-        r = int((dsorted > k).sum())
+        r = int(np.searchsorted(-dsorted, -k, side="left"))
         cnt[i] = r
         if r < 2:
             continue
-        idx = order[:r]
-        phi[i] = float(B[np.ix_(idx, idx)].sum()) / float(r * (r - 1))
+        phi[i] = float(prefix_edges[r]) / float(r * (r - 1))
     return phi, cnt
 
 
@@ -769,7 +780,8 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
         raise ValueError("%s: need at least 2 individuals, got %d" % (op, K))
     if mode not in _CORE_MODES:
         raise ValueError("%s: mode must be one of %s, got %r" % (op, "/".join(_CORE_MODES), mode))
-    cores = []
+    inners = []
+    kmaxes = []
     n = None
     for i, m in enumerate(mats):
         r = graph_kcore(m, mode=mode, weighted=weighted)
@@ -778,10 +790,11 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
         elif r["n"] != n:
             raise ValueError("%s: adjs[%s] has %d nodes but adjs[%s] has %d — put every "
                              "individual on one node order first" % (op, names[i], r["n"], names[0], n))
-        cores.append(r)
+        inners.append(r["inner"] & (r["kmax"] > 0))
+        kmaxes.append(r["kmax"])
     # ★2026-10-07: kmax = 0 の個体(辺 0 本など)は「0-core = 全員」を最内殻にして全ノードを数えていた
     #   (三角形 2 個体 + 空 1 個体で appearances [3,3,3,1,1])。殻が無い個体は誰も含まない。
-    membership = np.stack([r["inner"] & (r["kmax"] > 0) for r in cores])
+    membership = np.stack(inners)
     app = membership.sum(axis=0).astype(np.int64)
     persistent = app == K
     transient = app == 1
@@ -792,6 +805,6 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
         "persistent": persistent, "recurrent": recurrent, "transient": transient, "never": never,
         "n_persistent": int(persistent.sum()), "n_recurrent": int(recurrent.sum()),
         "n_transient": int(transient.sum()), "n_never": int(never.sum()),
-        "kmax": np.array([r["kmax"] for r in cores]), "n_inner": membership.sum(axis=1).astype(np.int64),
+        "kmax": np.array(kmaxes), "n_inner": membership.sum(axis=1).astype(np.int64),
         "mode": mode, "weighted": bool(weighted),
     }
