@@ -105,12 +105,21 @@ def _images(x, name, op, min_n=1):
     if isinstance(x, (list, tuple)):
         if len(x) == 0:
             raise ValueError("%s: %s is empty (0 images)" % (op, name))
-        arrs = [np.asarray(a, dtype=np.float64) for a in x]
+        raw = [np.asarray(item) for item in x]
+        total = sum(item.size for item in raw)
+        if total > _MAX_VALUES:
+            raise ValueError("%s: %s has %d values (> %d); downsample first" %
+                             (op, name, total, _MAX_VALUES))
+        arrs = [np.asarray(item, dtype=np.float64) for item in raw]
         if len({a.shape for a in arrs}) != 1:
             raise ValueError("%s: images in %s differ in shape: %s" % (op, name, sorted({a.shape for a in arrs})))
         a = np.stack(arrs, axis=0)
     else:
-        a = np.asarray(x, dtype=np.float64)
+        raw = np.asarray(x)
+        if raw.size > _MAX_VALUES:
+            raise ValueError("%s: %s has %d values (> %d); downsample first" %
+                             (op, name, raw.size, _MAX_VALUES))
+        a = np.asarray(raw, dtype=np.float64)
     if a.size == 0:
         raise ValueError("%s: %s is empty" % (op, name))
     if a.ndim == 2:
