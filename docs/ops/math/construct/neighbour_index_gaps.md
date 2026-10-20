@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # neighbour_index_gaps — MATH `construct` op
 
 - **データ種**: `pairs` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6)` (実装を直接呼ぶなら `import mathops; mathops.neighbour_index_gaps(points, k=6)`、台帳から引くなら `opsmath.get("neighbour_index_gaps")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6, chunk=65536)` (実装を直接呼ぶなら `import mathops; mathops.neighbour_index_gaps(points, k=6, chunk=65536)`、台帳から引くなら `opsmath.get("neighbour_index_gaps")`)
 
 ## 使い方
 
@@ -50,6 +50,9 @@ neighbour).
 Limits: the first points of a spiral sit near the centre where the packing
 is degenerate, so the histogram has a low-index tail that carries no
 parastichy information. Compare *peaks*, not the raw tail.
+
+Equal-distance neighbours retain the spatial tree query's native index order;
+chunking does not sort or otherwise change that tie rule.
 
 HALCON: no operator.
 

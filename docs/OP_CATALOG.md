@@ -760,9 +760,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 423 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 956 · **3d** 374 · **math** 114 · **optics** 423 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(956 ops / 49 categories)
 
@@ -1744,7 +1744,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tb_pc_density_equalize` `points → points` — Fill the sparse regions, then thin the dense ones: uniform spacing (``points``). · 例: なし
 - `tb_pc_fill_sparse` `points → points` — Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``). · 例: なし
 - `tb_pc_poisson_disk` `points → points` — Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``). · 例: なし
-- `tb_plane_sdf` `points → volume` — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_plane_sdf` `points → volume` — 半空間の厳密な符号付き距離場。``fast`` は1e6で相対差1.5e-10の選択式経路、既定は ``exact``。 · 例: なし
 - `tb_plane_segmentation` `points → volume` — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: なし
 - `tb_points_render` `points → rgbimage` — Render an (N, 3) point cloud to an RGB image (H, W, 3): anti-aliased splats, depth-sorted, deterministic. · 例: なし
 - `tb_points_to_voxel` `points → volume` — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: なし
@@ -1822,7 +1822,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(373 ops / 68 categories)
+### 3d(374 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -2232,12 +2232,13 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `rigid_flow` `points × points → pose` — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
 - `smooth_flow` `points × points → flow_scattered` — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
-#### 3d / sdf_csg(12)
+#### 3d / sdf_csg(13)
 - `box_sdf` `coordgrid → sdf` — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `capsule_sdf` `coordgrid → sdf` — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: `procedural_hand`, `sdf_csg`
 - `cylinder_sdf` `coordgrid → sdf` — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `grid_axes` `入力なし → coordgrid` — Return three 1-D voxel-centre axes for memory-efficient primitive evaluation. · 例: なし
 - `grid_coords` `入力なし → coordgrid` — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
-- `plane_sdf` `coordgrid → sdf` — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `plane_sdf` `coordgrid → sdf` — 半空間の厳密な符号付き距離場。``fast`` は1e6で相対差1.5e-10の選択式経路、既定は ``exact``。 · 例: `sdf_csg`
 - `sdf_intersect` `sdf × sdf → sdf` — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `sdf_offset` `sdf → sdf` — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`
 - `sdf_smooth_union` `sdf × sdf → sdf` — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
@@ -2459,7 +2460,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dct_transform` `image2d → table` — 正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。 · 例: `transforms_tour`
 - `dwt_inverse` `table → image2d` — ``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。 · 例: `transforms_tour`
 - `dwt_transform` `image2d → table` — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。 · 例: `transforms_tour`
-- `hankel_image` `image2d → table` — 軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。 · 例: `transforms_tour`
+- `hankel_image` `image2d → table` — 軸対称な画像の2次元フーリエ変換を動径のHankel変換で求める。``memory_budget`` は実測差1e-10以下の省メモリ経路。 · 例: `transforms_tour`
 - `hankel_transform` `signal × signal → table` — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。 · 例: `transforms_tour`
 - `laplace_inverse_talbot` `signal × signal × signal → signal` — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。 · 例: `transforms_tour`
 - `tf_bilinear` `signal × signal → table` — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。 · 例: `gallery_math_numerics_filters`

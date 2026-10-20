@@ -1626,18 +1626,18 @@ This repository records *why* things are the way they are in **comments in the s
 - **L2173** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
 - **L2286** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
 - **L2399** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
-- **L2731** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
-- **L2740** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
-- **L2808** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
-- **L2914** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
-- **L3004** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
-- **L3012** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
-- **L3017** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
-- **L3086** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
-- **L3285** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
-- **L3289** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3460** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3763** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L2740** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
+- **L2749** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
+- **L2817** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2923** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L3013** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
+- **L3021** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
+- **L3026** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
+- **L3095** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
+- **L3294** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3298** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3469** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3793** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `measuring1d.py`
 
@@ -1735,8 +1735,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L666** — ★Added 2026-09-08. Until then the pose helper for carving (visualhull.look_at) could not be reached from any public layer, and grabbing the same-named render3d.look_at (gluLookAt, -Z forward) resulted in **an empty hull without exception** (poc_livestock_body_volume).
 - **L687** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
 - **L777** — ★The reason (a) for holding it back -- 'the points candidate list gets shorter and silently overwrites the existing champion' -- is gone now that backends_typed.TYPE_TO_SORT folds coordgrid -> points: the 2-D bridges tb_sphere_sdf / tb_box_sdf carry INPUT_ADAPTERS._points_to_grid and **actually build a coordinate field from the point cloud**, so their "points" declaration is not a lie (measured: passing (64,3) returns (16,16,16) = alive). The lie was only on the 3-D ledger side.
-- **L938** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
-- **L976** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
+- **L939** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
+- **L977** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
 
 ## `opsacoustics.py`
 
@@ -2034,7 +2034,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `sdf_ops.py`
 
-- **L308** — ★ Reason for adding it, based on measurement: `poc_dfm_thickness_overhang` and `poc_cad_scan_deviation` reported that # "a machine part is made of cylindrical holes, chamfers, and fillets, but since the primitives are only sphere and # box, it cannot be assembled with CSG", and both wrote per-face analytic formulas themselves. The 4 here are **all closed-form and exact** (outside is the # Euclidean distance to the nearest surface, inside is the negative to the nearest face), so a synthetic part with # ground truth can now be assembled with CSG alone. # --------------------------------------------------------------------------- #
+- **L342** — ★ Reason for adding it, based on measurement: `poc_dfm_thickness_overhang` and `poc_cad_scan_deviation` reported that # "a machine part is made of cylindrical holes, chamfers, and fillets, but since the primitives are only sphere and # box, it cannot be assembled with CSG", and both wrote per-face analytic formulas themselves. The 4 here are **all closed-form and exact** (outside is the # Euclidean distance to the nearest surface, inside is the negative to the nearest face), so a synthetic part with # ground truth can now be assembled with CSG alone. # --------------------------------------------------------------------------- #
 
 ## `segcompare.py`
 

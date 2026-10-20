@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # hankel_transform — MATH `transform` op
 
 - **データ種**: `signal × signal` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256, plan: 'HankelPlan | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256, plan: 'HankelPlan | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_transform")`)
 
 ## 使い方
 
