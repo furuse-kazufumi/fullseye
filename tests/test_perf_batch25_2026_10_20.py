@@ -167,6 +167,7 @@ def test_281_chebyshev_decay_matches_original_reductions():
     expected = [np.abs(np.moveaxis(coeffs, axis, 0))
                 .reshape(coeffs.shape[axis], -1).max(axis=1)
                 for axis in range(coeffs.ndim)]
+    assert expected
     for actual, reference in zip(got["decay"], expected):
         assert np.array_equal(actual, reference)
 
