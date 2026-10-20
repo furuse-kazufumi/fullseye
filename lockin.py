@@ -169,9 +169,10 @@ def lockin_demodulate(video, f_ref, fps, window="rect") -> dict:
     flat = vid.reshape(n, -1)
     sw = float(w.sum())
     shape = vid.shape[1:]
-    in_phase = ((2.0 / sw) * ((w * np.cos(ph)) @ flat)).reshape(shape)          # A cos(phi)
-    quad = (-(2.0 / sw) * ((w * np.sin(ph)) @ flat)).reshape(shape)             # A sin(phi)
-    dc = ((w @ flat) / sw).reshape(shape)
+    weights = np.stack(((2.0 / sw) * w * np.cos(ph),
+                        -(2.0 / sw) * w * np.sin(ph), w / sw))
+    products = weights @ flat
+    in_phase, quad, dc = (products[i].reshape(shape) for i in range(3))
     leak_image, leak_dc = _leak(w, f, fs)
     return {"amplitude": np.hypot(in_phase, quad), "phase": np.arctan2(quad, in_phase), "dc": dc,
             "in_phase": in_phase, "quadrature": quad, "periods": float(periods), "window": window,
