@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, poc_driving_decisions, poc_measurement_system_analysis, poc_moire_alignment, poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # legend_box — ANNOTATE `furniture` op

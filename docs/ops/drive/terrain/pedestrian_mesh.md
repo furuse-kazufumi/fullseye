@@ -7,7 +7,7 @@ out: table
 examples: [gallery_drive_world_objects, poc_driving_crossing, poc_driving_humanoids, poc_driving_traffic, poc_driving_weather, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # pedestrian_mesh — DRIVE `terrain` op

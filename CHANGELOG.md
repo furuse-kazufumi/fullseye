@@ -60,6 +60,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `studio_errors`: `explain_failure` は例外を 原因 / 場所 / 入力の事実 / 次の行動 に分ける(大きさの不一致・型の取り違え・非有限・空・つまみの範囲外・次元違い・依存の欠落・未知の op・汎用)。行動は提案 5 種類だけで、自動の修復は種類として存在しない。`format_failure` が Problems 欄の文面(ja / en)にする。
 - Qt 非依存・標準ライブラリ + numpy のみ。`studio.py` への配線は次の片(`docs/STUDIO_UX.md`)。門 `tests/test_studio_search.py`(27 件)・`tests/test_studio_errors.py`(16 件)。
 
+## 0.7.2 — 2026-10-20
+
+### Fixed — 不要な大配列を作らない性能改善
+- Census視差はコスト体積を保持せず、同点時は従来どおり小さい視差を選ぶ逐次最小値に変更した。
+- パッチ特徴の集計、縮小係数、最近傍距離をブロック処理とバッファ再利用に変更し、入力上限を特徴生成前に検査するようにした。
+- 独立な線形モンテカルロ計算に、既定のseed再現性を変えない任意の`stream=True`経路を追加した。相関入力は従来経路を使う。
+- SGM集計、最近傍seed変位、ロックイン復調、二値画像判定の一時配列と全走査を削減した。
+
 ## 0.7.1 — 2026-10-19
 
 ### Added — パッチ特徴の異常検知(`anomaly_patch` 5 op)と評価の追加 3 op(F1 最大・再現率を保証する運用点)

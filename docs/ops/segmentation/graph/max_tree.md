@@ -7,7 +7,7 @@ out: table
 examples: [gallery_seg_measures]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # max_tree — SEGMENTATION `graph` op

@@ -2065,9 +2065,9 @@
 - **L1101** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
 - **L1118** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
 - **L1148** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1473** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1505** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1613** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1480** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1512** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1620** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 
@@ -2083,22 +2083,22 @@
 - **L343** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
 - **L352** — ★ 直接右鍵點擊圖本身（使用者 2026-09-06：「若能右鍵把作為圖顯示的東西複製到剪貼簿就好了」）。這是本 repo 的 Studio UI 規約——**顯示系也須能從右鍵完成一整套**。可與下方按鈕列做同樣的事（不要二者取其一）。
 - **L1437** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
-- **L1451** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1461** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1484** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1495** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2027** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6682** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L8452** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L9302** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L9458** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L10330** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L11217** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L11290** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L11293** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L12782** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L12801** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L13717** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L1456** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1466** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1489** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1500** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2032** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6687** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L8457** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L9307** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L9463** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L10335** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L11222** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L11295** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L11298** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L12787** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L12806** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L13722** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `superquadric.py`
 
@@ -2956,10 +2956,10 @@
 
 ## `volops.py`
 
-- **L1180** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1193** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1292** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1312** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1184** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1197** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1296** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1316** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 
