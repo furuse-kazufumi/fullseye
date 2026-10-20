@@ -390,11 +390,11 @@ def contact_radius_ring(h, pitch: float, n_az: int = 72, step_px: float = 0.25, 
         raise ValueError("contact_radius_ring: search radius %.3g px < 2 (indentation too close to the window edge)" % rmax)
     rs = np.arange(1.0, rmax, float(step_px))
     phis = np.linspace(0.0, 2.0 * math.pi, int(n_az), endpoint=False)
-    sy, sx = np.sin(phis)[:, None], np.cos(phis)[:, None]
-    profs = (_bilinear(h, cy + (rs[None, :] + 0.5) * sy, cx + (rs[None, :] + 0.5) * sx)
-             - _bilinear(h, cy + (rs[None, :] - 0.5) * sy, cx + (rs[None, :] - 0.5) * sx))
     radii, pts = [], []
-    for ph, prof in zip(phis, profs):
+    for ph in phis:
+        sy, sx = math.sin(ph), math.cos(ph)
+        prof = (_bilinear(h, cy + (rs + 0.5) * sy, cx + (rs + 0.5) * sx)
+                - _bilinear(h, cy + (rs - 0.5) * sy, cx + (rs - 0.5) * sx))
         k = int(np.argmax(prof))
         rk = rs[k]
         if 0 < k < len(rs) - 1:
