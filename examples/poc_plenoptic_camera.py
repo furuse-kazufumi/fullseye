@@ -302,6 +302,8 @@ def main():
     if not cfg["ci"]:
         assert max(abs(peaks-truth_slopes)) <= (slopes[1]-slopes[0])/2 + 1e-12
     assert np.isfinite(depth_est).all() and np.isfinite(sharp).all()
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("PASS: figure and reduced scales share one light-field run")
 
 
