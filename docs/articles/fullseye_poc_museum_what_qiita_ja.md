@@ -1410,25 +1410,25 @@ py -3.11 examples/poc_good_sample_variation_model.py
 
 *↑ **良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで** ―― 外観検査の研究で最も厚い「良品の特徴を覚え、外れたパッチを欠陥とする」型の異常検知を、深層特徴を使わず古典特徴(多重解像度の勾配・Gabor・回転不変の LBP・周波数帯・色)で組み、変種を 1 つの採点台(画素 AUROC・AUPRO・画像 AUROC・F1 最大)で比べた(新 op 8 本: patch_features / patchdist_fit・patchdist_score / patchbank_fit・patchbank_score と、評価の anomaly_pixel_f1_max / anomaly_image_f1_max / anomaly_operating_point)。確率場(1 枚ごとに模様が違う滑らかなテクスチャ)に点と細い傷を植えた合成では、位置ごとの正規分布は良品 20 枚で AUPRO 0.375 と、全位置まとめた分布(0.559)・記憶バンク 10 %(0.603)に負け、良品 5・20・80 枚のどれでも順位は同じ。位置ごとの標本が少ないのに 51 次元を推定するためで、共分散が特異な n ≦ D では縮小推定を宣言し(良品 5 枚で縮小の強さ 0.374、80 枚で 0.067)、宣言なしは拒否される。既存の変動モデルは確率場で画素 AUROC 0.785(記憶バンクは 0.881)、位相が毎回違う織りでは位置合わせが成り立たず拒否される。縦の棒が 24 px 動いた論理的な異常は、位置を見ない記憶では異常度が良品の 0.9 倍で見逃され、位置の重みを足すと 3.9 倍で指す。記憶を 10 % に間引いても AUPRO は 0.638 対 0.684 で、採点の CPU 時間は 0.84 秒対 12.55 秒。再現率 0.8 を信頼水準 0.9 で保証する運用点は、較正の欠陥 30 枚で閾値を決める手順を 300 回繰り返すと真の再現率が 0.8 以上になった割合が 0.957(較正の欠陥の 80 % 点を取るだけの方法は 0.503)、代償は誤検出(平均 0.369 対 0.211)。DAGM 2007 Class1(確率的なテクスチャ、CC BY 4.0)の変動モデルは画素 AUROC 0.436 で偶然以下、勾配だけの記憶バンクは 0.768(AUPRO 0.474)だが画像ごとの AUROC は 0.53 で、特徴を 51 次元に増やすと 0.623 に落ちる。VisA pcb1(CC BY 4.0、良品 20 枚)は記憶バンク 10 % で画素 AUROC 0.990・AUPRO 0.875・画像 AUROC 0.935(変動モデルは 0.808・0.678)、位置の重みを足すと 0.969・0.790 に下がる。candle は 0.895・0.734。*
 
-[![確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves.png)
+[![記憶バンクの異常度閾値を下げると欠陥領域が現れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_anomaly_threshold_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_anomaly_threshold_sweep.gif)
 
-*↑ 測定の図 ―― 確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。*
+*↑ 測定の図 ―― 記憶バンクの異常度閾値を下げると欠陥領域が現れる。*
 
-[![確率場の試験画像での AUPRO。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve.png)
+[![確率場・良品 20 枚の PRO 曲線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_pro_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_pro_curves.png)
+
+*↑ 確率場・良品 20 枚の PRO 曲線。*
+
+[![確率場の試験画像での AUPRO。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_sample_count_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_sample_count_curve.png)
 
 *↑ 確率場の試験画像での AUPRO。*
 
-[![良品では縦の棒は左(x = 20)にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly.png)
+[![良品では縦の棒は左(x = 20)にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_logical_anomaly_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_logical_anomaly.png)
 
 *↑ 良品では縦の棒は左(x = 20)にある。*
 
-[![欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee.png)
+[![欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_recall_guarantee_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_recall_guarantee.png)
 
 *↑ 欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。*
-
-[![DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps.png)
-
-*↑ DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。*
 
 ```
 py -3.11 examples/poc_patch_anomaly.py
@@ -1436,7 +1436,7 @@ py -3.11 examples/poc_patch_anomaly.py
 
 ソース: [examples/poc_patch_anomaly.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py)
 
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_patch_anomaly)
+この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_patch_anomaly)
 
 使用 op(ノートへ): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_operating_point`](https://furuse.work/ops/spc/anomaly_eval/anomaly_operating_point.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pixel_f1_max`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_f1_max.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`gabor`](https://furuse.work/ops/2d/texture/gabor.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`patch_features`](https://furuse.work/ops/spc/anomaly_patch/patch_features.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`patchdist_fit`](https://furuse.work/ops/spc/anomaly_patch/patchdist_fit.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
 
@@ -3374,13 +3374,17 @@ py -3.11 examples/poc_robust_profile_filter.py
 
 *↑ 周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。*
 
+[![周期加熱のコマを順に加えると、深さごとの位相像が収束する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/05_thermal_phase_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/05_thermal_phase_convergence.gif)
+
+*↑ 動く図 ―― 周期加熱のコマを順に加えると、深さごとの位相像が収束する。*
+
 ```
 py -3.11 examples/poc_lockin_imaging.py
 ```
 
 ソース: [examples/poc_lockin_imaging.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 
-この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
 
 使用 op(ノートへ): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
 
