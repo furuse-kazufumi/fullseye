@@ -251,12 +251,31 @@ def generalized_procrustes(shapes, max_iter: int = 100, tol: float = 1e-10,
     """
     x = _as_family(shapes)
     k = x.shape[0]
+    centroids = x.mean(axis=1)
+    centered = x - centroids[:, None, :]
+    norms2 = np.einsum("knc,knc->k", centered, centered)
+
+    def align_all(target):
+        target_center = target.mean(0)
+        target0 = target - target_center
+        cross = np.einsum("kni,nj->kij", centered, target0)
+        u, singular, vt = np.linalg.svd(cross, full_matrices=False)
+        sign = np.ones((k, 3))
+        if not reflection:
+            sign[:, 2] = np.where(np.linalg.det(u @ vt) < 0.0, -1.0, 1.0)
+        rot = np.swapaxes((u * sign[:, None, :]) @ vt, 1, 2)
+        scale = np.ones(k)
+        if scaling:
+            np.divide(np.sum(singular * sign, axis=1), norms2,
+                      out=scale, where=norms2 > 0.0)
+        return (np.einsum("knj,kij->kni", centered, rot) *
+                scale[:, None, None] + target_center)
+
     ref = x[0]
     cur = x.copy()
     prev_mean = None
     for _ in range(max(1, int(max_iter))):
-        for i in range(k):
-            cur[i] = procrustes_align(x[i], ref, scaling=scaling, reflection=reflection)
+        cur = align_all(ref)
         mean = cur.mean(0)
         # 平均を最初の個体に合わせ直す(枠が漂わないように)
         mean = procrustes_align(mean, x[0], scaling=scaling, reflection=reflection)
@@ -267,9 +286,7 @@ def generalized_procrustes(shapes, max_iter: int = 100, tol: float = 1e-10,
                 break
         prev_mean = mean
         ref = mean
-    for i in range(k):
-        cur[i] = procrustes_align(x[i], ref, scaling=scaling, reflection=reflection)
-    return cur
+    return align_all(ref)
 
 
 def shape_mean(shapes, max_iter: int = 100, tol: float = 1e-10,
