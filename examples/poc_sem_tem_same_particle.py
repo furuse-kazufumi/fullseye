@@ -38,6 +38,10 @@ PX_NM = 1.0
 N = 256
 SEED = 273
 MFP_NM = 72.0
+MICRO_N = 1024
+MICRO_PX_NM = N * PX_NM / MICRO_N
+SEM_DWELL_US = 10.0
+TEM_DOSE_E_PER_PX = 36.0
 
 
 def gate(name, ok, detail):
@@ -174,6 +178,98 @@ def tem_particle(d_nm, defocus_nm, n=129, pixel_nm=PX_NM):
     return mass, thick, fringe
 
 
+def _continuous_field(a, n=MICRO_N):
+    """Sample a continuous specimen field on the detector grid (not a display upscale)."""
+    return ndi.zoom(np.asarray(a, float), n / a.shape[0], order=3, mode="reflect")
+
+
+def _gray_rgb(a, lo=None, hi=None):
+    a = np.asarray(a, float)
+    lo = float(np.percentile(a, 0.2) if lo is None else lo)
+    hi = float(np.percentile(a, 99.8) if hi is None else hi)
+    g = np.clip((a - lo) / max(hi - lo, 1e-12), 0, 1)
+    return np.repeat(g[..., None], 3, axis=2)
+
+
+def _data_bar(image, text, scale_nm=50.0):
+    """Append a generic microscope data bar using repository annotation operations."""
+    rgb = np.asarray(image, float)
+    h, w = rgb.shape[:2]
+    band = np.full((76, w, 3), 0.025, float)
+    band = np.asarray(fs.text_box(band, text, (18, 16), anchor="lt", font_size=18,
+                                  box_alpha=0.0, text_color=(.92, .92, .92)))
+    band = np.asarray(fs.scale_bar(band, scale_nm, MICRO_PX_NM, unit="nm", xy=(w-22, 54),
+                                   anchor="rb", color="neutral", thickness=5,
+                                   font_size=17, text_color=(1, 1, 1)))
+    return np.concatenate([rgb, band], axis=0)
+
+
+def sem_micrograph(s, dwell_us=SEM_DWELL_US, seed=SEED):
+    """Secondary-electron frame with topography and raster-detector signatures."""
+    rng = np.random.default_rng(seed)
+    h = np.maximum(_continuous_field(s["height"]), 0.0)
+    gy, gx = np.gradient(h, MICRO_PX_NM)
+    slope = np.hypot(gx, gy)
+    detector_facing = np.clip(-gx / np.sqrt(1 + gx*gx + gy*gy), -.75, .75)
+    edge = slope / (1.0 + slope)
+    # Edge escape, left-side detector shadow and broad topographic response.
+    signal = .19 + .34 * (h / max(float(h.max()), 1e-12))**.42
+    signal += .30 * edge + .17 * detector_facing
+    signal *= .96 + .04 * ndi.gaussian_filter(rng.normal(size=h.shape), 8.0)
+    # Charging drift/streak from one insulating particle, displaced along fast scan.
+    x0, y0 = s["xy"][0] * (MICRO_N / N)
+    yy, xx = np.mgrid[:MICRO_N, :MICRO_N]
+    charge = np.exp(-.5*((yy-y0)/18)**2) * np.exp(-np.maximum(xx-x0, 0)/170) * (xx > x0)
+    signal += .11 * charge * (1 + .22*np.sin(2*np.pi*xx/71))
+    # Poisson statistics scale with dwell; line offsets are the raster signature.
+    counts_per_unit = 22.0 * dwell_us
+    shot = rng.poisson(np.clip(signal, 0.01, 1.2) * counts_per_unit) / counts_per_unit
+    rows = ndi.gaussian_filter1d(rng.normal(0, .012, MICRO_N), 1.2)[:, None]
+    periodic = .006 * np.sin(2*np.pi*np.arange(MICRO_N)[:, None]/19 + .4)
+    raw = np.clip(shot + rows + periodic, 0, 1)
+    return {"raw": raw, "ideal": np.clip(signal, 0, 1), "charge": charge,
+            "dwell_us": float(dwell_us)}
+
+
+def _powerlaw_texture(n, slope=-2.2, seed=1):
+    rng = np.random.default_rng(seed)
+    fy = np.fft.fftfreq(n)[:, None]
+    fx = np.fft.rfftfreq(n)[None, :]
+    f = np.hypot(fx, fy)
+    amp = np.zeros_like(f)
+    amp[f > 0] = f[f > 0] ** (slope / 2.0)
+    z = rng.normal(size=amp.shape) + 1j*rng.normal(size=amp.shape)
+    a = np.fft.irfft2(z * amp, s=(n, n))
+    return (a-a.mean()) / max(a.std(), 1e-12)
+
+
+def tem_micrograph(s, defocus_nm, dose=TEM_DOSE_E_PER_PX, seed=SEED+1):
+    """Bright-field frame on amorphous support with dose and readout noise."""
+    rng = np.random.default_rng(seed + int(abs(defocus_nm)))
+    thick = np.maximum(_continuous_field(s["height"]), 0.0)
+    support = _powerlaw_texture(MICRO_N, -2.2, seed+7)
+    ideal = .78 + .027 * support
+    ideal -= .48 * (1.0 - np.exp(-thick/MFP_NM))
+    if defocus_nm:
+        lam_nm = TEM.tem_wavelength(300.0)["wavelength_A"] * .1
+        fringe_nm = math.sqrt(lam_nm * abs(defocus_nm))
+        outside = ndi.distance_transform_edt(thick <= .03, sampling=MICRO_PX_NM)
+        rim = np.exp(-.5*((outside-fringe_nm)/.72)**2) * (thick <= .03)
+        ideal -= .105 * rim
+    electrons = rng.poisson(np.clip(ideal, .03, .98) * dose)
+    raw = electrons / dose + rng.normal(0, .010, ideal.shape)
+    return {"raw": np.clip(raw, 0, 1), "ideal": np.clip(ideal, 0, 1),
+            "defocus_nm": float(defocus_nm), "dose": float(dose)}
+
+
+def instrument_frame(kind, image, *, defocus_nm=0.0):
+    if kind == "SEM":
+        text = "5.0 kV    HFW 256 nm    WD 8.0 mm    SE    dwell %.1f us" % SEM_DWELL_US
+    else:
+        text = "300 kV    defocus %+.0f nm    dose %.0f e-/px" % (defocus_nm, TEM_DOSE_E_PER_PX)
+    return _data_bar(_gray_rgb(image, 0, 1), text)
+
+
 def chapter3(s):
     print("\n3) TEM mass-thickness and Fresnel edge")
     truth = 52.0
@@ -307,12 +403,61 @@ def text_frame(img, text):
                                   text_color=(1, 1, 1), box_color=(0, 0, 0)))
 
 
+def _measurement_overlay(raw, s, dilation_px, kind, defocus_nm=0.0):
+    labels, _ = watershed_measure(s, dilation_px)
+    lab = ndi.zoom(labels, MICRO_N / N, order=0)
+    boundary = lab != ndi.grey_erosion(lab, size=(5, 5))
+    rgb = _gray_rgb(raw, 0, 1)
+    rgb[boundary] = 1.0
+    # Maximum-slope edge is shown as a second, darker broken trace.
+    inner = ndi.binary_erosion(lab > 0, iterations=6)
+    inner_edge = inner != ndi.binary_erosion(inner, iterations=2)
+    dash = (np.indices(inner.shape).sum(axis=0) // 9) % 2 == 0
+    rgb[inner_edge & dash] = .18
+    return instrument_frame(kind, rgb[..., 0], defocus_nm=defocus_nm)
+
+
+def _error_panel(raw, ideal, kind, defocus_nm=0.0):
+    err = raw-ideal
+    # Absolute residual is a confidence/error image, intentionally grayscale.
+    e = np.clip(np.abs(err) / max(float(np.percentile(np.abs(err), 99.5)), 1e-12), 0, 1)
+    panel = instrument_frame(kind, e, defocus_nm=defocus_nm)
+    return np.asarray(fs.text_box(panel, "absolute residual    RMS %.3f" % np.sqrt(np.mean(err*err)),
+                                  (16, 16), anchor="lt", font_size=18,
+                                  text_color=(1, 1, 1), box_color=(0, 0, 0)))
+
+
+def _truth_panel(height):
+    h = _continuous_field(height)
+    lut = np.asarray(fs.colorize_depth(np.linspace(0, 1, 256)[None, :]))[0]
+    idx = np.clip(h / max(float(h.max()), 1e-12) * 255, 0, 255).astype(int)
+    rgb = np.asarray(lut[idx, :3], float)
+    canvas = np.full((MICRO_N, MICRO_N+190, 3), .06, float)
+    canvas[:, :MICRO_N] = rgb
+    return np.asarray(fs.color_bar(canvas, lut, (MICRO_N+25, 100, 32, 800),
+                                   vmin=0, vmax=float(h.max()), unit="nm",
+                                   orientation="vertical", font_size=15))
+
+
 def make_figures(s, sem, tem, seg, tomo, limits):
     if not figs.enabled():
         return 0
-    figs.save_grid("same_specimen_sem_tem", [s["height"], sem["image"], tem["focus"], tem["under"]],
-                   ["truth height", "SEM SE", "TEM focus", "TEM underfocus"],
-                   title="One particle ledger, two microscopes")
+    sem_raw = sem_micrograph(s)
+    tem_focus = tem_micrograph(s, 0.0)
+    tem_under = tem_micrograph(s, 12000.0)
+    figs.save("truth_height", _truth_panel(s["height"]),
+              "Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin.")
+    sem_panels = [instrument_frame("SEM", sem_raw["raw"]),
+                  _measurement_overlay(sem_raw["raw"], s, 2, "SEM"),
+                  _error_panel(sem_raw["raw"], sem_raw["ideal"], "SEM")]
+    figs.save("sem_raw_overlay_error", np.concatenate(sem_panels, axis=1),
+              "Secondary-electron output | threshold and maximum-slope diameters | absolute residual.")
+    tem_panels = [instrument_frame("TEM", tem_focus["raw"], defocus_nm=0),
+                  instrument_frame("TEM", tem_under["raw"], defocus_nm=12000),
+                  _measurement_overlay(tem_under["raw"], s, 1, "TEM", defocus_nm=12000),
+                  _error_panel(tem_under["raw"], tem_under["ideal"], "TEM", defocus_nm=12000)]
+    figs.save("tem_raw_overlay_error", np.concatenate(tem_panels, axis=1),
+              "Bright-field in-focus and under-focus output | derived diameters | absolute residual.")
     figs.save_plot("diameter_bias", [("SEM threshold", [1.2,1.8,2.4,3.0],
                                               sem["fit"]*np.array([1.2,1.8,2.4,3.0])),
                                       ("Gaussian rim closed form", [1.2,1.8,2.4,3.0],
@@ -325,12 +470,12 @@ def make_figures(s, sem, tem, seg, tomo, limits):
     figs.save_table("limits", ["view", "question", "answer", "number"], limits,
                     title="What each microscope cannot tell")
     frames = []
-    for df in np.linspace(80, 1000, 24):
-        im, _, fr = tem_particle(52.0, float(df))
-        frames.append(text_frame(im, "df %4.0f nm   D %5.1f nm" % (df, 52+2*fr)))
+    for k, df in enumerate(np.linspace(80, 12000, 24)):
+        frame = tem_micrograph(s, float(df), seed=SEED+100+k)
+        frames.append(instrument_frame("TEM", frame["raw"], defocus_nm=float(df)))
     figs.save_video("tem_focus_sweep", frames, fps=8.0, gif_every=1, gif_width=480,
-                    caption="24 defocus frames; the first frame is already away from focus")
-    return 6
+                    caption="24 greyscale bright-field frames with data bar; first and last defocus differ")
+    return 8
 
 
 def main():
@@ -345,7 +490,7 @@ def main():
     nfig = make_figures(s, sem, tem, seg, tomo, limits)
     if figs.errors():
         raise RuntimeError("figure errors: " + "; ".join(figs.errors()))
-    gate("figure contract", nfig == (6 if figs.enabled() else 0), "%d figures" % nfig)
+    gate("figure contract", nfig == (8 if figs.enabled() else 0), "%d figures" % nfig)
     cpu, wall = time.process_time()-cpu0, time.perf_counter()-wall0
     gate("CI process-time budget", not os.environ.get("CI") or cpu < 20.0,
          "CPU %.2f s; wall %.2f s" % (cpu, wall))
