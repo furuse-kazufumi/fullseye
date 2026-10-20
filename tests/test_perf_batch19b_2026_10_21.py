@@ -6,6 +6,7 @@ import regionprops3d
 import backends_measure1d
 import backends_color
 import pcl_filter
+import fringe
 from scipy.ndimage import map_coordinates
 
 
@@ -103,3 +104,20 @@ def test_98_colour_pca_reference_and_offset_elision_probe():
         direct = ((direct - direct.min(0)) /
                   (np.ptp(direct, axis=0) + 1e-8)).reshape(shape)
         np.testing.assert_allclose(direct, expected, rtol=0, atol=4e-16)
+
+
+def test_102_cropped_phase_unwrap_matches_full_canvas_and_island_offsets():
+    yy, xx = np.mgrid[:90, :130]
+    wrapped = np.angle(np.exp(1j * (.31 * xx + .17 * yy)))
+    masks = []
+    mask = np.zeros_like(wrapped, dtype=bool)
+    mask[20:70, 30:100] = True
+    masks.append(mask)
+    islands = np.zeros_like(mask)
+    islands[10:30, 10:35] = True
+    islands[55:80, 85:120] = True
+    masks.append(islands)
+    for valid in masks:
+        expected = fringe.unwrap_phase_2d(wrapped, mask=valid)
+        got = fringe.unwrap_phase_2d(wrapped, mask=valid, crop_valid=True)
+        assert np.array_equal(got, expected, equal_nan=True)
