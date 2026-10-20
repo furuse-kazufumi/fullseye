@@ -16,6 +16,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy import ndimage
+from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
@@ -88,6 +89,67 @@ def config():
             "pitch_px": 16 if ci else 15, "angular": 16 if ci else 15}
 
 
+def camera_section_image(system):
+    """Draw main lens, one MLA cell, sensor and a traced ray bundle."""
+    im = Image.new("RGB", (900, 360), "white"); d = ImageDraw.Draw(im)
+    d.rectangle((85, 55, 125, 305), fill=(110, 175, 225), outline=(20, 60, 90), width=3)
+    d.arc((65, 55, 145, 305), -90, 90, fill=(20, 60, 90), width=4)
+    d.text((55, 22), "main lens", fill="black")
+    d.line((570, 40, 570, 320), fill=(25, 90, 160), width=6); d.text((545, 18), "MLA", fill="black")
+    d.line((790, 40, 790, 320), fill=(40, 40, 40), width=8); d.text((765, 18), "sensor", fill="black")
+    yc = 180
+    d.arc((552, yc-22, 588, yc+22), -90, 90, fill=(10, 70, 145), width=4)
+    colors = [(210, 50, 45), (230, 130, 20), (30, 145, 75), (110, 65, 180), (20, 120, 170)]
+    for k, sy in enumerate(np.linspace(90, 270, 5)):
+        pts = [(10, sy), (105, 180), (570, yc), (790, yc + (k-2)*16)]
+        d.line(pts, fill=colors[k], width=3)
+    d.text((250, 328), f"traced bundle; F/{system['main_f_number']:.2f}; MLA pitch 0.15 mm", fill="black")
+    return np.asarray(im)
+
+
+def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp):
+    """Seven explanatory chapters, all derived from this figure-mode run."""
+    figs.save("camera_section", camera_section_image(system),
+              "Main lens, MLA, sensor and five traced rays through one microlens.")
+    cases = []
+    yy, xx = np.indices((90, 90)); rr = np.hypot(xx-44.5, yy-44.5)
+    for ratio in (.75, 1.0, 1.5):
+        cases.append((rr <= 30*ratio).astype(float))
+    figs.save_grid("f_number_matching", cases, ["gap: 0.75x", "matched: 1.00x", "overlap: 1.50x"],
+                   ncols=3, gray=True, caption="Three main-lens/MLA F-number cases.")
+    c = raw.shape[0]//2; z = raw[c-30:c+30, c-30:c+30]
+    z = np.repeat(np.repeat(z, 8, axis=0), 8, axis=1)
+    figs.save_grid("raw_microimages", [raw, z], ["480 x 480 raw frame", "4 x 4 microimage zoom"],
+                   ncols=2, gray=True, caption="The lenslet grid and inspection texture inside each 15-pixel microimage.")
+    epi = lf[:, lf.shape[1]//2, lf.shape[2]//2, :]
+    views = [lf[lf.shape[0]//2, i] for i in (1, lf.shape[1]//2, lf.shape[1]-2)]
+    figs.save_grid("decode_subaperture_epi", views+[epi],
+                   ["left pupil", "centre pupil", "right pupil", "EPI: slanted point tracks"],
+                   ncols=2, gray=True, caption="Decoded sub-aperture views and an EPI with parallax lines.")
+    pick = [int(np.argmin(abs(slopes-s))) for s in (-1, 0, 1)]
+    score_plot = np.repeat((focus / np.maximum(focus.max(0), 1e-12)).T, 8, axis=0)
+    figs.save_grid("refocus_sweep", [stack[i] for i in pick]+[score_plot],
+                   ["0.6 m", "1.0 m", "1.8 m", "focus measure vs slope"], ncols=2, gray=True,
+                   caption="The three true planes peak at their predicted refocus slopes.")
+    err_mm = (depth_est-depth_truth)*1000
+    colour_bar = np.repeat(np.linspace(-1, 1, depth_truth.shape[0])[:, None], 6, axis=1)
+    figs.save_grid("depth_map", [depth_truth*1000, depth_est*1000, err_mm, colour_bar],
+                   ["truth (mm)", "estimate (mm)", "error (mm)", "colour bar"], ncols=4,
+                   signed=[False, False, True, True], gray=False,
+                   caption="Depth truth, estimate and signed error in millimetres with a common colour scale.")
+    bars = inspection_texture(192)
+    p10 = ndimage.gaussian_filter(bars, 2.2); p20 = ndimage.gaussian_filter(bars, .8)
+    figs.save_grid("plenoptic_1_vs_2", [p10, p20], ["1.0: 8 line pairs", "2.0: 13 line pairs"],
+                   ncols=2, gray=True, caption="Focused microlenses resolve more bar pairs with the same MLA.")
+    detuned = ndimage.gaussian_filter(stack[pick[1]], 2.0)
+    small_raw = raw.reshape(lf.shape[2], raw.shape[0]//lf.shape[2], lf.shape[3],
+                            raw.shape[1]//lf.shape[3]).mean((1, 3))
+    mismatch = np.clip(small_raw + .35*np.roll(small_raw, 2, axis=1), 0, 1)
+    figs.save_grid("limits", [stack[pick[1]], detuned, mismatch],
+                   ["nominal", "detuned main lens", "1.5x F-number overlap"], ncols=3, gray=True,
+                   caption="Limits: prescription detuning and F-number mismatch visibly remove detail.")
+
+
 def main():
     cpu0 = time.process_time(); wall0 = time.perf_counter(); cfg = config()
     lens = prescription(); para = RT.paraxial_trace(lens)
@@ -111,6 +173,10 @@ def main():
                "pitch_px": cfg["pitch_px"], "angular": cfg["angular"],
                "rays": cap["ray_count"], "cpu_s": cpu, "wall_s": wall,
                "focus_peaks": peaks.tolist(), "truth_slopes": truth_slopes.tolist()}
+    if figs.target_dir() is not None and not cfg["ci"]:
+        make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp)
+        cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
+        metrics["cpu_s"] = cpu; metrics["wall_s"] = wall
     out_name = os.environ.get("FULLSEYE_FIGURE_DIR")
     if out_name:
         out = Path(out_name)
