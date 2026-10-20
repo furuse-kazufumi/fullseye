@@ -157,9 +157,18 @@ def time_surface(frames, tau=2.0, thr=0.1, eps=_EPS):
         raise ValueError("time_surface needs a (T,H,W) stack with T>=2")
     T, H, W = f.shape
     last = np.full((H, W), -np.inf, np.float64)   # last event time per pixel
-    for t in range(1, T):
-        fired = simulate_events(f[t - 1], f[t], thr, eps) != 0.0
+    unresolved = np.ones((H, W), dtype=bool)
+    threshold = _thr(thr)
+    next_log = _log(_img(f[-1]), eps)
+    for t in range(T - 1, 0, -1):
+        prev_log = _log(_img(f[t - 1]), eps)
+        delta = next_log - prev_log
+        fired = unresolved & ((delta >= threshold) | (delta <= -threshold))
         last[fired] = float(t)
+        unresolved[fired] = False
+        if not unresolved.any():
+            break
+        next_log = prev_log
     age = float(T - 1) - last                       # frames since last event
     sae = np.where(np.isfinite(last), np.exp(-age / max(tau, 1e-6)), 0.0)
     return np.clip(sae, 0.0, 1.0)

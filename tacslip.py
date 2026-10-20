@@ -528,6 +528,24 @@ def _scalar_lstsq(f, obs):
     return float((np.dot(fs, obs) / np.dot(fs, fs)) / scale)
 
 
+def _rigid_scalar_lstsq(fx, fy, ux, uy):
+    """一変数の場から二方向の平均移動を除いて最小二乗する。"""
+    fmx, fmy = float(fx.mean()), float(fy.mean())
+    umx, umy = float(ux.mean()), float(uy.mean())
+    fc = np.concatenate((fx - fmx, fy - fmy))
+    uc = np.concatenate((ux - umx, uy - umy))
+    scale = float(np.max(np.abs(fc)))
+    if scale <= np.finfo(np.float64).eps * max(float(np.max(np.abs(np.concatenate((fx, fy))))), 1.0) * len(fc):
+        n = len(fx)
+        f = np.concatenate((fx, fy))
+        obs = np.concatenate((ux, uy))
+        ones_x = np.concatenate((np.ones(n), np.zeros(n)))
+        ones_y = np.concatenate((np.zeros(n), np.ones(n)))
+        return np.linalg.lstsq(np.column_stack((f, ones_x, ones_y)), obs, rcond=None)[0]
+    coef = _scalar_lstsq(fc, uc)
+    return np.array((coef, umx - coef * fmx, umy - coef * fmy))
+
+
 def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41, rigid: bool = False) -> dict:
     """マーカー位置 pts_px (M, 2) [px] と変位 u_m (M, 2) [m] に (c/a, μP) を当てる: c/a を粗く走査 → 最良の周りを細かく、μP は各 c で
     線形最小二乗。返り ``c_over_a``・``q_ratio`` = 1 − (c/a)³・``muP``・``Q``・``mu``(= μP/P)・``rms_m``・``shift_m``。
@@ -544,15 +562,15 @@ def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41,
         raise ValueError("mindlin_fit: pts_px and u_m must be (M, 2) with M >= 3")
     n = len(pts_px)
     obs = np.concatenate([u_m[:, 0], u_m[:, 1]])
-    ones_x = np.concatenate([np.ones(n), np.zeros(n)]); ones_y = np.concatenate([np.zeros(n), np.ones(n)])
 
     def cost(ca):
         fx, fy = _model_unit_field(model, pts_px, ca)
         f = np.concatenate([fx, fy])
         if rigid:
-            A = np.column_stack([f, ones_x, ones_y])
-            sol, *_ = np.linalg.lstsq(A, obs, rcond=None)
-            residual = obs - A @ sol
+            sol = _rigid_scalar_lstsq(fx, fy, u_m[:, 0], u_m[:, 1])
+            residual = obs - f * sol[0]
+            residual[:n] -= sol[1]
+            residual[n:] -= sol[2]
         else:
             sol = np.array([_scalar_lstsq(f, obs)])
             residual = obs - f * sol[0]
