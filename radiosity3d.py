@@ -645,22 +645,31 @@ def _ff_matrix(polys, normals, areas, centers, n_quad, occluders, chunk=60000, f
     P = polys.shape[0]
     scale = max(1.0, float(np.abs(polys).max()))
     eps = 1e-12 * scale
-    I, J = np.nonzero(_candidates(polys, normals, eps))
     F = np.zeros((P, P))
     xq, wq = _quad_points(polys, n_quad)
     # 遠い対(中心間の距離 > far_ratio x 大きい方のパッチの差し渡し)は受け側を重心 1 点で代表する。
     # 点 → 多角形は閉形式のままなので、落ちるのは受け側の面の上での変化だけ(距離の 2 乗で小さくなる)。
     diam = np.sqrt(2.0 * areas)
-    far = np.zeros(len(I), bool)
-    if far_ratio is not None:
-        dist = np.linalg.norm(centers[I] - centers[J], axis=-1)
-        far = dist > far_ratio * np.maximum(diam[I], diam[J])
-    for sel, xs, ws in ((~far, xq, wq), (far, centers[:, None, :], areas[:, None])):
-        Is, Js = I[sel], J[sel]
-        for s in range(0, len(Is), chunk):
-            ii, jj = Is[s:s + chunk], Js[s:s + chunk]
-            F[ii, jj] = _ff_pairs(xs[ii], normals[ii], ws[ii], areas[ii], polys[jj], centers[jj], normals[jj],
-                                  occluders, eps)
+    plane = (normals * polys[:, 0]).sum(-1)
+    for first in range(0, P, 256):
+        stop = min(first + 256, P)
+        pb, nb = polys[first:stop], normals[first:stop]
+        front_j = (np.einsum("jkc,ic->ijk", polys, nb) - plane[first:stop, None, None] > eps * 10).any(-1)
+        front_i = (np.einsum("ikc,jc->ijk", pb, normals) - plane[None, :, None] > eps * 10).any(-1)
+        cand = front_j & front_i
+        cand[np.arange(stop - first), np.arange(first, stop)] = False
+        ib, J = np.nonzero(cand)
+        I = ib + first
+        far = np.zeros(len(I), bool)
+        if far_ratio is not None:
+            dist = np.linalg.norm(centers[I] - centers[J], axis=-1)
+            far = dist > far_ratio * np.maximum(diam[I], diam[J])
+        for sel, xs, ws in ((~far, xq, wq), (far, centers[:, None, :], areas[:, None])):
+            Is, Js = I[sel], J[sel]
+            for s in range(0, len(Is), chunk):
+                ii, jj = Is[s:s + chunk], Js[s:s + chunk]
+                F[ii, jj] = _ff_pairs(xs[ii], normals[ii], ws[ii], areas[ii], polys[jj], centers[jj], normals[jj],
+                                      occluders, eps)
     return F
 
 
