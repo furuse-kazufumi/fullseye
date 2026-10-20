@@ -221,6 +221,19 @@ def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
+def video_frame(v, label: str, size=(720, 720), signed: bool = False,
+                gray: bool = False, vrange=None):
+    """動画用の単一画像を全面に拡大し、上端へ1行だけ注記する。"""
+    from PIL import Image
+    import fullseye as fs
+
+    rgb = _to_rgb8(v, signed=signed, gray=gray, vrange=vrange)
+    w, h = (int(size[0]), int(size[1]))
+    rgb = np.asarray(Image.fromarray(rgb).resize((w, h), Image.Resampling.BILINEAR))
+    return np.asarray(fs.text_box(rgb, label, (w // 2, 18), anchor="ct", font_size=24,
+                                  text_color=(1.0, 1.0, 1.0), box_color=(0.0, 0.0, 0.0)))
+
+
 def save(name: str, image, caption: str = "", signed: bool = False,
          gray: bool = False, source: str = "") -> Path | None:
     """図を 1 枚書く。``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。

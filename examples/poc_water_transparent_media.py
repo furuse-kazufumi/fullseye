@@ -534,6 +534,16 @@ def make_figures(ocean, pool, bottle, diver, limits):
     figs.save_grid("ocean_field", [hh, shade], captions=["高さ [m]", "同じ海を斜めの光で陰影づけ(法線 · 光の向き)"], ncols=2, signed=[True, False],
                    gray=[False, True], title="風速 8 m/s の海(Pierson–Moskowitz + cos² の方向分布、300 m 四方)",
                    caption="Tessendorf の FFT。有義波高 %.2f m、周期 %.1f s。波は +x(右)へ進む。" % (sp8["hs_m"], sp8["tp_s"]))
+    frames = []
+    seq = fields + fields[::-1]
+    for i in range(32):
+        f = seq[i % len(seq)]
+        frames.append(figs.video_frame(f["height"], "時刻 %.1f s" % (i * 0.1), signed=True,
+                                      vrange=(-float(abs(hh).max()), float(abs(hh).max()))))
+    assert len(frames) >= 24
+    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs.save_video("ocean_surface_motion", frames, caption="同じFFT海面の時刻を進めると波面が風下へ動く。",
+                    fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
     jn8 = WM.ocean_spectrum(8.0, kind="jonswap")
     wm_ = sp8["omega"]
     sel = (wm_ >= 0.4) & (wm_ <= 4.0)

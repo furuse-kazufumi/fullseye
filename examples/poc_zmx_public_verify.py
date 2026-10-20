@@ -15,6 +15,7 @@ import json
 import math
 import os
 import sys
+import time
 
 import numpy as np
 
@@ -91,6 +92,21 @@ def spot_figure(items):
             panels.append(canvas); caps.append("%s, %.1f°, RMS %.1f µm" % (name[:-4], field["y"], rms * 1e3))
     figs.save_grid("spot_diagrams", panels, caps, title="3 視野のスポット (各列の尺度は個別)", ncols=3,
                    caption="2 処方、3 視野。各パネルの RMS は同じ実光線から計算。")
+    p = items["triplet_catalog.zmx"]
+    max_field = max(f["y"] for f in p["fields"])
+    frames = []
+    for field in np.linspace(0.0, max_field, 32):
+        b = RT.ray_bundle(p["system"], field=float(field), rings=6, pupil_fill=0.8)
+        xy = b["image_xy"][b["valid"]]
+        xy -= xy.mean(0)
+        canvas = np.zeros((240, 240))
+        q = np.clip(((xy / 0.04 + 0.5) * 239).astype(int), 0, 239)
+        canvas[q[:, 1], q[:, 0]] = 1.0
+        frames.append(figs.video_frame(canvas, "視野角 %.1f°" % field, gray=True))
+    assert len(frames) >= 24
+    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs.save_video("spot_field_sweep", frames, caption="同じ処方のスポットを軸上から最大視野まで掃引する。",
+                    fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
 
 
 def inspection(items):
@@ -150,6 +166,7 @@ def opd_limit(items):
 
 
 def main():
+    c0 = time.process_time()
     print("公開 .zmx 処方の照合と検査レンズ採点 (収蔵番号 2026.270)")
     print("作動距離=∞、入口瞳径=1 mm、センサー=256×256、画素ピッチ=5.5 µm")
     items = systems()
@@ -157,8 +174,8 @@ def main():
     print("\n門")
     figures_enabled = figs.enabled()
     figure_count = len(figs.manifest())
-    gate("4 処方を読み、図を 5 枚作る",
-         len(items) == 4 and (not figures_enabled or figure_count == 5),
+    gate("4 処方を読み、図を 6 枚作る",
+         len(items) == 4 and (not figures_enabled or figure_count == 6),
          "図 %s" % (figure_count if figures_enabled else "出力なし"))
     print("\n%d/%d PASS" % (sum(GATES), len(GATES)))
     figure_errors = figs.errors()
@@ -166,6 +183,7 @@ def main():
         print("図の書き出しで失敗:", "; ".join(figure_errors))
     if not all(GATES) or figure_errors:
         raise SystemExit(1)
+    print("所要 CPU %.1f s" % (time.process_time() - c0))
     print("PASS")
 
 
