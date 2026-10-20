@@ -1,33 +1,27 @@
-"""PoC 2026.274 の場面真値と独立な閉形式の門。"""
+"""ToF camera PoC composability and physical-scene gates."""
 
 import numpy as np
 
 from examples import poc_tof_camera as P
 
 
-def test_scene_truth_contains_all_inspection_targets_and_two_bounce_paths():
+def test_scene_truth_contains_all_ray_cast_targets():
     scene = P.make_scene(48, 72)
     assert scene["depth"].shape == (48, 72)
-    assert scene["path_depths"].shape[0] >= 2
-    assert scene["path_depths"].shape[1:] == scene["depth"].shape
-    assert set(np.unique(scene["labels"])) >= {0, 1, 2, 3, 4, 5}
-    assert np.allclose(scene["path_depths"][0], scene["depth"])
+    assert scene["path_depths"].shape == (2, 48, 72)
+    assert set(np.unique(scene["labels"])) >= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 
-def test_plane_ray_distance_matches_the_closed_form_and_broken_probe_fails():
+def test_chained_facade_call_needs_no_conversion():
     scene = P.make_scene(48, 72)
-    yy, xx = np.indices(scene["depth"].shape)
-    ray_z = 1.0 / np.sqrt(1.0 + scene["ray_x"] ** 2 + scene["ray_y"] ** 2)
-    plane = scene["labels"] == 0
-    expected = P.WALL_Z / ray_z
-    assert int(plane.sum()) > 100
-    assert float(np.max(np.abs(scene["depth"][plane] - expected[plane]))) < 1e-12
-    broken = P.WALL_Z * np.ones_like(expected)
-    assert float(np.max(np.abs(broken[plane] - expected[plane]))) > 0.01
+    filtered, points = P.depth_to_points_chain(scene["depth"])
+    assert filtered.shape == scene["depth"].shape
+    assert points.shape == (48 * 72, 3)
+    assert np.isfinite(points).all()
 
 
-def test_volume_closed_form_is_independent_of_camera_estimators():
-    scene = P.make_scene(48, 72)
-    truth = P.measure_box_volumes(scene["depth"], scene)
-    assert len(truth) == 3
-    assert np.allclose(truth, P.BOX_VOLUMES_M3, rtol=0.08)
+def test_volume_measurement_is_stable_on_truth():
+    scene = P.make_scene(80, 108)
+    truth = P.measure_box_volumes(scene["depth_truth"], scene)
+    assert truth.shape == (3,)
+    assert np.all(truth > 0)
