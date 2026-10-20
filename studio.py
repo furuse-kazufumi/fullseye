@@ -422,6 +422,84 @@ ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
+RUN_WORKER_I18N_KEYS = (
+    "Run in progress %d/%d stages: %s", "Request stop", "Stop requested",
+    "Stop requested (the current stage cannot be interrupted)", "Stopped (%d/%d stages completed)",
+    "Current settings: unchanged / displayed result: generation %d",
+    "Current settings: changed / displayed result: generation %d",
+    "The completed result used settings from before the change",
+    "Show that result", "Run with current settings", "Generation %d",
+)
+
+
+class _RunControllerState:
+    """GUI-owned bookkeeping for independent worker threads."""
+
+    def __init__(self):
+        self.generation = 0
+        self.latest_generation = 0
+        self.threads = {}
+        self.retired_threads = []
+        self.history = []
+        self.status_history = []
+        self.request_stop = lambda: None
+
+    @property
+    def running(self):
+        return bool(self.threads)
+
+
+def _run_snapshot(model, generation):
+    """Freeze one run's input and stage settings without retaining GUI objects."""
+    image = None if model.image is None else np.array(model.image, copy=True)
+    if image is not None:
+        image.flags.writeable = False
+    stages = tuple((str(s[0]), float(s[1]), float(s[2]), bool(_is_bypassed(s)))
+                   for s in model.stages)
+    return {"generation": int(generation), "image": image, "stages": stages,
+            "image_version": model._img_ver, "input_ref": dict(model.input_ref or {}),
+            "token": (model._img_ver, tuple(_stage_key(s) for s in model.stages))}
+
+
+def _run_worker_class(QtCore):
+    class RunWorker(QtCore.QObject):
+        started = QtCore.Signal(int, int, int, str)
+        finished = QtCore.Signal(int, int, object, object, float)
+        run_done = QtCore.Signal(int, bool)
+
+        def __init__(self, snapshot, stop_event):
+            super().__init__()
+            self.snapshot = snapshot
+            self.stop_event = stop_event
+
+        @QtCore.Slot()
+        def run(self):
+            import time
+            snap = self.snapshot
+            gen, stages = snap["generation"], snap["stages"]
+            value = snap["image"]
+            stopped = False
+            for i, (name, a, b, bypass) in enumerate(stages):
+                if self.stop_event.is_set():
+                    stopped = True
+                    break
+                self.started.emit(gen, i, len(stages), name)
+                t0 = time.perf_counter()
+                try:
+                    result = value if bypass else api.run_pipeline(
+                        value, [(name, a, b)], coerce=(i == 0))
+                except Exception as exc:  # transported to the GUI thread as data
+                    self.finished.emit(gen, i, None, exc, (time.perf_counter() - t0) * 1000.0)
+                    self.run_done.emit(gen, False)
+                    return
+                value = result
+                self.finished.emit(gen, i, result, None, (time.perf_counter() - t0) * 1000.0)
+            if self.stop_event.is_set():
+                stopped = True
+            self.run_done.emit(gen, stopped)
+
+    return RunWorker
+
 
 
 # --------------------------------------------------------------------------- #
@@ -839,6 +917,7 @@ class PipelineModel:
     stages *i..* (see :meth:`result_upto`)."""
 
     def __init__(self, image=None):
+        self._change_callback = None
         self._img_ver = 0
         self._cache: list = []                # [(stage_key, value, ms), ...] one entry per stage, prefix-valid
         self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
@@ -860,6 +939,29 @@ class PipelineModel:
         #: the snapshot the last :meth:`pin` call pushed out (None if none was dropped)
         self.last_dropped_pin = None
         self._in_ref_cache = None             # (input path, image version, reference) of the current input
+        self.displayed_generation = 0
+        self.displayed_result = None
+        self.applied_run_results = 0
+        self._displayed_stage_results = {}
+
+    def _apply_worker_result(self, snapshot, stage_index, value, ms):
+        """Accept a worker value on the GUI thread; callers already checked its generation."""
+        gen = snapshot["generation"]
+        self.displayed_generation = gen
+        self.displayed_result = value
+        self._displayed_stage_results[stage_index] = (gen, value)
+        self.applied_run_results += 1
+        current = (self._img_ver, tuple(_stage_key(s) for s in self.stages))
+        if snapshot["token"] != current:
+            return False
+        if stage_index == 0:
+            self._cache.clear()
+        if stage_index == len(self._cache):
+            key = _stage_key(self.stages[stage_index])
+            self._cache.append((key, value, round(float(ms), 1)))
+            self._fresh.add(stage_index)
+            self._ctx = self._context()
+        return True
 
     @property
     def image(self):
@@ -870,6 +972,7 @@ class PipelineModel:
         self._image = None if value is None else np.asarray(value, np.float64)
         self._img_ver += 1                    # any new base image drops every cached stage
         self._cache.clear(); self._fresh.clear()
+        self._notify_changed()
 
     @property
     def stages(self):
@@ -883,6 +986,12 @@ class PipelineModel:
         self._stages = [_normalise_stage(s) for s in (value or [])]
         self._thumbs.clear()                  # a new pipeline: nothing was computed for these stages before
         self._invalidate(0)
+        self._notify_changed()
+
+    def _notify_changed(self):
+        callback = getattr(self, "_change_callback", None)
+        if callback is not None:
+            callback()
 
     def set_image(self, arr):
         self.image = arr
@@ -1054,20 +1163,24 @@ class PipelineModel:
         if op is None:
             raise KeyError(name)
         self.stages.append(_normalise_stage([op.name, float(a), float(b)]))     # canonical name (alias ok)
+        self._notify_changed()
         return len(self.stages) - 1
 
     def remove_stage(self, i):
         del self.stages[i]
         self._invalidate(i)
+        self._notify_changed()
 
     def move_stage(self, i, j):
         self.stages.insert(j, self.stages.pop(i))
         self._invalidate(min(i, j))
+        self._notify_changed()
 
     def duplicate_stage(self, i):
         """Insert a copy of stage i right after it; return the new stage's index."""
         self.stages.insert(i + 1, _copy_stage(self.stages[i]))
         self._invalidate(i + 1)
+        self._notify_changed()
         return i + 1
 
     def set_bypass(self, i, flag=True):
@@ -1080,6 +1193,7 @@ class PipelineModel:
             st = self.stages[i] = _normalise_stage(st)
         st.bypass = bool(flag)
         self._invalidate(i)
+        self._notify_changed()
         return st.bypass
 
     def toggle_bypass(self, i):
@@ -1098,6 +1212,7 @@ class PipelineModel:
         if b is not None:
             st[2] = float(b)
         self._invalidate(i)                          # stage i and later; earlier results stay
+        self._notify_changed()
 
     def load_recipe(self, name):
         """Replace the pipeline with a named sample recipe (see `recipes`)."""
@@ -5404,8 +5519,11 @@ def _load_i18n():
     langs = dict(data.get("languages") or {})
     if "en" not in langs:                      # English is always available as the base
         langs = {"en": "English", **langs}
-    return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""},
-            data.get("strings", {}) or {})
+    strings = dict(data.get("strings", {}) or {})
+    for key in RUN_WORKER_I18N_KEYS:
+        if key in data:                         # slice-5 rows live beside the older top-level rows
+            strings[key] = data[key]
+    return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""}, strings)
 
 
 LANGUAGES, TOOLTIPS_I18N, HELP_I18N, STRINGS_I18N = _load_i18n()
@@ -6510,6 +6628,23 @@ def build_window(model=None):
     win._img_info.setToolTip("current result: shape · dtype · value range")
     status.addPermanentWidget(win._img_info)
 
+    run_box = QtWidgets.QWidget()
+    run_lay = QtWidgets.QHBoxLayout(run_box); run_lay.setContentsMargins(6, 0, 0, 0)
+    run_attr = QtWidgets.QLabel("")
+    run_status = QtWidgets.QLabel("")
+    run_progress = QtWidgets.QProgressBar(); run_progress.setTextVisible(False); run_progress.setFixedWidth(90)
+    run_stop = QtWidgets.QPushButton(tr("Request stop"))
+    run_banner = QtWidgets.QLabel("")
+    run_show = QtWidgets.QPushButton(tr("Show that result"))
+    run_current = QtWidgets.QPushButton(tr("Run with current settings"))
+    for widget in (run_attr, run_status, run_progress, run_stop, run_banner, run_show, run_current):
+        run_lay.addWidget(widget)
+    run_progress.hide(); run_stop.hide(); run_banner.hide(); run_show.hide(); run_current.hide()
+    status.addPermanentWidget(run_box, 1)
+    win._run_ui = {"box": run_box, "attribution": run_attr, "status": run_status,
+                   "progress": run_progress, "stop": run_stop, "banner": run_banner,
+                   "show_result": run_show, "run_current": run_current}
+
     def flash(msg):
         status.showMessage(msg, 6000)
 
@@ -7584,6 +7719,159 @@ def build_window(model=None):
         return box.findChildren(QtWidgets.QPushButton) if box is not None else []
     win._problem_buttons = _problem_buttons
 
+    run_ctl = _RunControllerState()
+    run_snapshots = {}
+    run_completed = {}
+    run_stop_events = {}
+    RunWorker = _run_worker_class(QtCore)
+
+    def _current_run_token():
+        return (model._img_ver, tuple(_stage_key(s) for s in model.stages))
+
+    def _update_attribution():
+        gen = model.displayed_generation or run_ctl.latest_generation
+        if not gen:
+            run_attr.setText("")
+            return
+        snap = run_snapshots.get(gen)
+        changed = snap is not None and snap["token"] != _current_run_token()
+        key = ("Current settings: changed / displayed result: generation %d" if changed else
+               "Current settings: unchanged / displayed result: generation %d")
+        run_attr.setText(tr(key) % gen)
+
+    def settings_changed():
+        _update_attribution()
+        gen = model.displayed_generation
+        snap = run_snapshots.get(gen)
+        if snap is not None and snap["token"] != _current_run_token() and gen in run_completed:
+            run_banner.setText(tr("The completed result used settings from before the change"))
+            for widget in (run_banner, run_show, run_current):
+                widget.show()
+    win._settings_changed = settings_changed
+    model._change_callback = settings_changed
+
+    def _worker_started(gen, i, n, name):
+        if gen != run_ctl.latest_generation:
+            return
+        run_progress.setRange(0, n); run_progress.setValue(i)
+        text = tr("Run in progress %d/%d stages: %s") % (i + 1, n, name)
+        run_status.setText(text); run_ctl.status_history.append(text)
+
+    def _worker_finished(gen, i, value, exc, ms):
+        snap = run_snapshots.get(gen)
+        if gen != run_ctl.latest_generation:
+            run_ctl.history.append((gen, "dropped", i))
+            return
+        if exc is not None:
+            name = snap["stages"][i][0] if snap and i < len(snap["stages"]) else None
+            report_error("Run", exc, op_name=name, stage_index=i,
+                         inputs=[snap["image"]] if snap else None)
+            return
+        model._apply_worker_result(snap, i, value, ms)
+        run_completed[gen] = i + 1
+        run_progress.setValue(i + 1)
+
+    def _thread_finished(gen):
+        pair = run_ctl.threads.pop(gen, None)
+        if pair is not None:
+            run_ctl.retired_threads.append(pair[0])
+        run_stop_events.pop(gen, None)
+
+    def _worker_done(gen, stopped):
+        thread_worker = run_ctl.threads.get(gen)
+        if thread_worker is not None:
+            thread_worker[0].quit()
+        if gen != run_ctl.latest_generation:
+            run_ctl.history.append((gen, "stopped" if stopped else "finished", run_completed.get(gen, 0)))
+            return
+        n = len(run_snapshots[gen]["stages"])
+        done = run_completed.get(gen, 0)
+        run_stop.setEnabled(False); run_progress.hide(); run_stop.hide()
+        if stopped:
+            text = tr("Stopped (%d/%d stages completed)") % (done, n)
+            run_status.setText(text); run_ctl.status_history.append(text)
+        else:
+            run_status.setText("")
+        snap = run_snapshots[gen]
+        if not stopped and done == n:
+            state["worker_result"] = model.displayed_result
+            show_result()
+            refresh_stage_list(select=len(model.stages) - 1 if model.stages else None)
+            if snap["token"] != _current_run_token():
+                run_banner.setText(tr("The completed result used settings from before the change"))
+                for widget in (run_banner, run_show, run_current):
+                    widget.show()
+            else:
+                for widget in (run_banner, run_show, run_current):
+                    widget.hide()
+        _update_attribution()
+
+    class _RunBridge(QtCore.QObject):
+        @QtCore.Slot(int, int, int, str)
+        def started(self, gen, i, n, name):
+            _worker_started(gen, i, n, name)
+
+        @QtCore.Slot(int, int, object, object, float)
+        def finished(self, gen, i, value, exc, ms):
+            _worker_finished(gen, i, value, exc, ms)
+
+        @QtCore.Slot(int, bool)
+        def done(self, gen, stopped):
+            _worker_done(gen, stopped)
+
+    run_bridge = _RunBridge(win)
+
+    def start_run_async():
+        import threading
+        run_ctl.generation += 1
+        gen = run_ctl.generation
+        run_ctl.latest_generation = gen
+        snap = _run_snapshot(model, gen)
+        run_snapshots[gen] = snap
+        run_completed[gen] = 0
+        stop_event = threading.Event(); run_stop_events[gen] = stop_event
+        thread = QtCore.QThread(win)
+        worker = RunWorker(snap, stop_event); worker.moveToThread(thread)
+        worker.started.connect(run_bridge.started, QtCore.Qt.QueuedConnection)
+        worker.finished.connect(run_bridge.finished, QtCore.Qt.QueuedConnection)
+        worker.run_done.connect(run_bridge.done, QtCore.Qt.QueuedConnection)
+        worker.run_done.connect(worker.deleteLater)
+        thread.started.connect(worker.run)
+        thread.finished.connect(lambda g=gen: _thread_finished(g))
+        run_ctl.threads[gen] = (thread, worker)
+        text = tr("Run in progress %d/%d stages: %s") % (
+            1, max(len(snap["stages"]), 1), snap["stages"][0][0] if snap["stages"] else "")
+        run_status.setText(text); run_ctl.status_history.append(text)
+        run_progress.setRange(0, len(snap["stages"])); run_progress.setValue(0); run_progress.show()
+        run_stop.setText(tr("Request stop")); run_stop.setEnabled(True); run_stop.show()
+        for widget in (run_banner, run_show, run_current):
+            widget.hide()
+        thread.start()
+        return gen
+
+    def request_stop():
+        gen = run_ctl.latest_generation
+        event = run_stop_events.get(gen)
+        if event is None or event.is_set():
+            return
+        event.set()
+        run_stop.setEnabled(False)
+        text = tr("Stop requested (the current stage cannot be interrupted)")
+        run_status.setText(text); run_ctl.status_history.append(text)
+
+    def show_completed_result():
+        gen = run_ctl.latest_generation
+        if gen in run_completed and model.displayed_generation == gen:
+            state["worker_result"] = model.displayed_result
+            show_result()
+
+    run_ctl.request_stop = request_stop
+    run_stop.clicked.connect(request_stop)
+    run_show.clicked.connect(show_completed_result)
+    run_current.clicked.connect(start_run_async)
+    win._run_controller = run_ctl
+    win._start_run_async = start_run_async
+
     def on_rows_moved(*_):
         """A drag-reorder inside the stage list -> permute model.stages to match."""
         if state.get("reordering"):
@@ -7593,13 +7881,19 @@ def build_window(model=None):
             push_undo()
             model.stages = [model.stages[i] for i in order]
             mark_dirty()
+            settings_changed()
             refresh_stage_list(select=stage_list.currentRow())
             show_result()
 
     def _render():
         idx = selected_index()
         try:
-            if idx < 0 and state.get("view_raw"):
+            worker_value = state.pop("worker_result", None)
+            if worker_value is not None:
+                val = worker_value
+            elif run_ctl.running and model.displayed_generation:
+                val = model.displayed_result
+            elif idx < 0 and state.get("view_raw"):
                 val = model.result_upto(-1)           # Reset -> the pre-pipeline raw image
             else:
                 val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
@@ -7723,7 +8017,9 @@ def build_window(model=None):
         cmp_left.set_source(_val_pixmap(before), none_msg)
         cmp_right.set_source(_val_pixmap(after), none_msg)
         cmp_ltitle.setText(tr("in: input image") if i == 0 else tr("in: stage %d output") % i)
-        cmp_rtitle.setText(tr("out: stage %d (%s)") % (i + 1, model.stages[i][0]))
+        stage_gen = model._displayed_stage_results.get(i, (0, None))[0]
+        suffix = " · " + tr("Generation %d") % stage_gen if stage_gen else ""
+        cmp_rtitle.setText(tr("out: stage %d (%s)") % (i + 1, model.stages[i][0]) + suffix)
         cmp_summary.setText(_stage_delta_summary(before, after))
     win._update_stage_compare = update_stage_compare
     win._compare = {"dock": dock_cmp, "left": cmp_left, "right": cmp_right, "summary": cmp_summary,
@@ -7965,7 +8261,8 @@ def build_window(model=None):
             _h.setForeground(QtGui.QColor(MUTED))
             ab_changes.addItem(_h)
         ab_atitle.setText(lab + (": " + pin.note if pin.note else ""))
-        ab_btitle.setText(tr("B: now"))
+        ab_btitle.setText(tr("B: now") + ((" · " + tr("Generation %d") % model.displayed_generation)
+                                          if model.displayed_generation else ""))
         A = pin.array
         if A is None:
             ab_a.set_source(None, (tr("cannot recompute %s") % lab) + (": " + pin.error if pin.error else ""))
@@ -8233,6 +8530,7 @@ def build_window(model=None):
         else:
             model.set_knobs(i, b=v)
         mark_dirty()
+        settings_changed()
         show_result()
         knob_timer.start(KNOB_DEBOUNCE_MS)
 
@@ -8258,7 +8556,8 @@ def build_window(model=None):
         """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
         i = selected_index()
         try:
-            model.step_states()                           # the settled drag runs the pipeline once (O(n))
+            if not run_ctl.running:
+                model.step_states()                       # the settled drag runs the pipeline once (O(n))
         except Exception:
             pass                                          # a failing stage is recorded and shown in the rows
         refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
@@ -10344,6 +10643,16 @@ def build_window(model=None):
         step_to(len(model.stages) - 1)
         _flash_run_validity()
 
+    def _do_run_all_async():
+        prog = getattr(win, "_program", None)
+        if state.get("code_dirty") and prog:
+            prog["apply"]()
+            if state.get("code_dirty"):
+                return
+        if model.stages:
+            stage_list.setCurrentRow(len(model.stages) - 1)
+        start_run_async()
+
     def _flash_run_validity():
         """Status bar after a run: 'ran' and 'valid' are two facts. Reports only; never fixes."""
         if not model.stages or model.image is None:
@@ -10362,7 +10671,7 @@ def build_window(model=None):
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
-    b_runall.clicked.connect(_do_run_all)
+    b_runall.clicked.connect(_do_run_all_async)
     stage_list.model().rowsMoved.connect(on_rows_moved)     # drag-reorder -> permute model
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
@@ -10389,7 +10698,7 @@ def build_window(model=None):
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(_do_step)
-    act_runall.triggered.connect(_do_run_all)
+    act_runall.triggered.connect(_do_run_all_async)
 
     # Debugger-style function keys that fire ANYWHERE in the window. The Ctrl+Arrow
     # step/run keys above are deliberately scoped to the pipeline list so they do
