@@ -257,7 +257,9 @@ def _census_cost_volume(Lc: np.ndarray, Rc: np.ndarray, D: int) -> np.ndarray:
     vol = np.empty((D + 1, H, W), np.float64)
     for d in range(D + 1):
         Rd = _shift_right_cols(Rc, d)
-        vol[d] = _popcount64(Lc ^ Rd).astype(np.float64)
+        xor = Lc ^ Rd
+        count = np.bitwise_count(xor) if hasattr(np, "bitwise_count") else _popcount64(xor)
+        vol[d] = count.astype(np.float64)
     return vol
 
 
@@ -274,7 +276,16 @@ def disparity_census(left, right, max_disp: int = 16, window: int = 5) -> np.nda
         raise ValueError("left/right must be equal-shape 2-D arrays")
     Lc = census_transform(L, window)
     Rc = census_transform(R, window)
-    return _census_cost_volume(Lc, Rc, int(max_disp)).argmin(0).astype(np.float64)
+    D = int(max_disp)
+    best_cost = np.full(Lc.shape, np.inf)
+    best_disp = np.zeros(Lc.shape, np.float64)
+    for d in range(D + 1):
+        xor = Lc ^ _shift_right_cols(Rc, d)
+        cost = np.bitwise_count(xor) if hasattr(np, "bitwise_count") else _popcount64(xor)
+        better = cost < best_cost
+        best_cost[better] = cost[better]
+        best_disp[better] = d
+    return best_disp
 
 
 def _sgm_penalty(prev: np.ndarray, P1: float, P2: float) -> np.ndarray:
