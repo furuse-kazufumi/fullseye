@@ -1,6 +1,10 @@
 """Performance slice 13: exactness gates against the pre-change algorithms."""
 from __future__ import annotations
 
+import statistics
+import time
+import tracemalloc
+
 import numpy as np
 import pytest
 
@@ -81,9 +85,10 @@ def _old_euclidean_clusters(points, tol=.05, min_size=10, max_size=None):
 
 def _assert_same_clusters(points, **kwargs):
     expected = _old_euclidean_clusters(points, **kwargs)
-    got = pcseg.euclidean_clusters(points, **kwargs)
-    assert len(got) == len(expected)
-    assert all(np.array_equal(a, b) for a, b in zip(got, expected))
+    for method in ("exact", "low_memory"):
+        got = pcseg.euclidean_clusters(points, method=method, **kwargs)
+        assert len(got) == len(expected)
+        assert all(np.array_equal(a, b) for a, b in zip(got, expected))
 
 
 def test_euclidean_clusters_matches_old_order_boundary_and_filters():
@@ -100,6 +105,58 @@ def test_euclidean_clusters_matches_old_with_many_tiny_noise_components():
     noise = np.column_stack([np.arange(400) * 3. + 100., np.zeros(400), np.zeros(400)])
     points = np.vstack([*blobs, noise])
     _assert_same_clusters(points, tol=.1, min_size=20)
+
+
+@pytest.fixture(scope="module")
+def random_cloud_50k():
+    return np.random.default_rng(1303).random((50_000, 3))
+
+
+def test_euclidean_clusters_both_methods_match_old_on_50k_random_cloud(random_cloud_50k):
+    _assert_same_clusters(random_cloud_50k, tol=.025, min_size=2)
+
+
+def test_euclidean_clusters_default_speed_matches_original(random_cloud_50k):
+    kwargs = {"tol": .025, "min_size": 2}
+    # Warm imports, SciPy dispatch, and the allocator before comparing CPU time.
+    _old_euclidean_clusters(random_cloud_50k, **kwargs)
+    pcseg.euclidean_clusters(random_cloud_50k, **kwargs)
+
+    def median_cpu(fn):
+        runs = []
+        for _ in range(5):
+            start = time.process_time()
+            # Windows process_time advances in coarse ticks; batch calls so the
+            # 15% comparison is not decided by one scheduler tick.
+            for _ in range(4):
+                fn(random_cloud_50k, **kwargs)
+            runs.append(time.process_time() - start)
+        return statistics.median(runs)
+
+    original = median_cpu(_old_euclidean_clusters)
+    restored = median_cpu(pcseg.euclidean_clusters)
+    assert restored <= original * 1.15, (original, restored)
+
+
+def test_euclidean_clusters_low_memory_peak_below_30_percent(random_cloud_50k):
+    kwargs = {"tol": .025, "min_size": 2}
+
+    def peak(method):
+        tracemalloc.start()
+        try:
+            pcseg.euclidean_clusters(random_cloud_50k, method=method, **kwargs)
+            return tracemalloc.get_traced_memory()[1]
+        finally:
+            tracemalloc.stop()
+
+    default_peak = peak("exact")
+    low_memory_peak = peak("low_memory")
+    assert low_memory_peak <= default_peak * .3, (default_peak, low_memory_peak)
+
+
+def test_euclidean_clusters_rejects_unknown_method():
+    with pytest.raises(ValueError, match="method"):
+        pcseg.euclidean_clusters(np.zeros((1, 3)), method="approximate")
 
 
 def _old_farthest_point_sampling(points, k, seed=0):
