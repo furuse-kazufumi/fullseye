@@ -609,7 +609,9 @@ def _fit_form(a: np.ndarray, fx: float, fy: float, order: int):
     cv = float(np.sum(a * v[:, None]) / (nx * np.dot(v, v)))
     if order == 1:
         c = np.array([c0, cu, cv])
-        fitted = c0 + cu * u[None, :] + cv * v[:, None]
+        fitted = np.empty_like(a, dtype=np.float64)
+        fitted[:] = c0 + cu * u
+        fitted += cv * v[:, None]
         scale = np.array([1.0, 1.0 / hx, 1.0 / hy])
     else:
         qu = u * u - np.mean(u * u)
@@ -620,9 +622,11 @@ def _fit_form(a: np.ndarray, fx: float, fy: float, order: int):
                     (np.dot(u, u) * np.dot(v, v)))
         c = np.array([c0 - cuu * np.mean(u * u) - cvv * np.mean(v * v),
                       cu, cv, cuu, cuv, cvv])
-        fitted = (c[0] + cu * u[None, :] + cv * v[:, None] +
-                  cuu * u[None, :] ** 2 + cuv * v[:, None] * u[None, :] +
-                  cvv * v[:, None] ** 2)
+        fitted = np.empty_like(a, dtype=np.float64)
+        fitted[:] = c[0] + cu * u + cuu * u ** 2
+        fitted += (cv * v + cvv * v ** 2)[:, None]
+        for row, vv in zip(fitted, v):
+            row += (cuv * vv) * u
         scale = np.array([1.0, 1.0 / hx, 1.0 / hy, 1.0 / hx ** 2,
                           1.0 / (hx * hy), 1.0 / hy ** 2])
     resid = a - fitted
