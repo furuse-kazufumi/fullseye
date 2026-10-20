@@ -450,7 +450,7 @@ def _error_panel(raw, ideal, kind, defocus_nm=0.0):
     e = np.clip(np.abs(err) / max(float(np.percentile(np.abs(err), 99.5)), 1e-12), 0, 1)
     panel = instrument_frame(kind, e, defocus_nm=defocus_nm)
     return np.asarray(fs.text_box(panel, "absolute residual    RMS %.3f" % np.sqrt(np.mean(err*err)),
-                                  (16, 16), anchor="lt", font_size=18,
+                                  (16, 54), anchor="lt", font_size=18,
                                   text_color=(1, 1, 1), box_color=(0, 0, 0)))
 
 
@@ -484,7 +484,7 @@ def make_figures(s, sem, tem, seg, tomo, limits):
                                "derived overlay: white threshold / dark dashed max slope"),
                   _panel_title(_error_panel(sem_raw["raw"], sem_raw["ideal"], "SEM"),
                                "error / confidence")]
-    figs.save("sem_raw_overlay_error", np.concatenate(sem_panels, axis=1),
+    figs.save("same_specimen_sem_tem", np.concatenate(sem_panels, axis=1),
               "Secondary-electron output | threshold and maximum-slope diameters | absolute residual.")
     tem_panels = [_panel_title(instrument_frame("TEM", tem_focus["raw"], defocus_nm=0),
                                "raw output: in focus"),

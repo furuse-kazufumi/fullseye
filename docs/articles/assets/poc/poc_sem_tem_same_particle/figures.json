@@ -1,16 +1,36 @@
 [
  {
-  "file": "01_same_specimen_sem_tem.png",
-  "name": "same_specimen_sem_tem",
-  "caption": "",
+  "file": "01_truth_height.png",
+  "name": "truth_height",
+  "caption": "Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin.",
   "shape": [
-   647,
-   542,
+   1024,
+   1214,
    3
   ]
  },
  {
-  "file": "02_diameter_bias.png",
+  "file": "02_same_specimen_sem_tem.png",
+  "name": "same_specimen_sem_tem",
+  "caption": "Secondary-electron output | threshold and maximum-slope diameters | absolute residual.",
+  "shape": [
+   1100,
+   3072,
+   3
+  ]
+ },
+ {
+  "file": "03_tem_raw_overlay_error.png",
+  "name": "tem_raw_overlay_error",
+  "caption": "Bright-field in-focus and under-focus output | derived diameters | absolute residual.",
+  "shape": [
+   1100,
+   4096,
+   3
+  ]
+ },
+ {
+  "file": "04_diameter_bias.png",
   "name": "diameter_bias",
   "caption": "",
   "shape": [
@@ -20,7 +40,7 @@
   ]
  },
  {
-  "file": "03_touching_watershed.png",
+  "file": "05_touching_watershed.png",
   "name": "touching_watershed",
   "caption": "",
   "shape": [
@@ -30,7 +50,7 @@
   ]
  },
  {
-  "file": "04_missing_wedge.png",
+  "file": "06_missing_wedge.png",
   "name": "missing_wedge",
   "caption": "",
   "shape": [
@@ -40,7 +60,7 @@
   ]
  },
  {
-  "file": "05_limits.png",
+  "file": "07_limits.png",
   "name": "limits",
   "caption": "",
   "shape": [
@@ -48,28 +68,28 @@
    498,
    3
   ],
-  "csv": "05_limits.csv",
-  "tsv": "05_limits.tsv"
+  "csv": "07_limits.csv",
+  "tsv": "07_limits.tsv"
  },
  {
-  "file": "06_tem_focus_sweep.gif",
+  "file": "08_tem_focus_sweep.gif",
   "name": "tem_focus_sweep",
-  "caption": "24 defocus frames; the first frame is already away from focus",
+  "caption": "24 greyscale bright-field frames with data bar; first and last defocus differ",
   "shape": [
-   258,
-   258,
+   516,
+   480,
    3
   ],
   "animated": true,
   "frames": 24,
   "frames_written": 24,
   "fps": 8.0,
-  "video": "06_tem_focus_sweep.mp4",
+  "video": "08_tem_focus_sweep.mp4",
   "video_frames": 24,
   "video_fps": 8.0,
   "video_shape": [
-   258,
-   258,
+   1100,
+   1024,
    3
   ]
  }

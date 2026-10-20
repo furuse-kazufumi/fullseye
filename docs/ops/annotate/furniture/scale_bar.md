@@ -4,7 +4,7 @@ dim: annotate
 category: furniture
 in: image2d
 out: image2d
-examples: [annotate_gallery]
+examples: [annotate_gallery, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_sem_tem_same_particle](../../../../examples/poc_sem_tem_same_particle.py) — `py -3.11 examples/poc_sem_tem_same_particle.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

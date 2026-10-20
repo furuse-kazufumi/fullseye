@@ -6610,9 +6610,9 @@
   {
    "id": "poc_sem_tem_same_particle",
    "group": "wing_metrology",
-   "media": "06_tem_focus_sweep.gif",
+   "media": "08_tem_focus_sweep.gif",
    "motion": true,
-   "thumb_src": "01_same_specimen_sem_tem.png",
+   "thumb_src": "02_same_specimen_sem_tem.png",
    "label": {
     "ja": "同じ粒子を走査像と透過像で測る",
     "en": "The same particles in scanning and transmission images",
