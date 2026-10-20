@@ -197,6 +197,67 @@ def equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feathe
     return {"image":out,"blind_mask":den==0,"weight":den}
 
 
+def panorama_scene(h=256, w=512, seed=275, n_frames=30, fisheye_size=320):
+    """Build a deterministic synthetic tunnel-and-bay inspection scene.
+
+    The return value contains the equirectangular radiance and radial depth,
+    truth masks for a crack and marked parts, six cubemap faces, a calibrated
+    back-to-back 190-degree fisheye capture, and a moving panorama sequence.
+    All dimensions are configurable and ``seed`` controls surface variation.
+    """
+    if min(h, w, fisheye_size) < 16 or n_frames < 1:
+        raise ValueError("scene dimensions and frame count must be positive")
+    rng = np.random.default_rng(seed)
+    d = equirect_to_dir(h, w)
+    lon = np.arctan2(d[..., 0], d[..., 2])
+    lat = np.arcsin(np.clip(d[..., 1], -1, 1))
+    # Corrugated cylindrical tunnel with a brighter service bay straight ahead.
+    depth = 3.0 / np.maximum(np.sqrt(d[..., 0]**2 + d[..., 1]**2), .16)
+    depth *= 1 + .035*np.sin(12*lon) + .02*np.cos(9*lat)
+    mortar = .08*np.cos(24*lon) + .045*np.cos(18*lat)
+    noise = rng.normal(0, .018, (h, w))
+    base = .34 + mortar + noise
+    bay = (np.abs(lon) < .42) & (np.abs(lat) < .31)
+    base[bay] = .55 + .08*np.cos(7*lon[bay])*np.cos(8*lat[bay])
+    crack_curve = -.36 + .11*np.sin(14*(lat + .08))
+    crack = (np.abs(lon-crack_curve) < np.deg2rad(1.5)) & (lat > -.38) & (lat < .34)
+    part_a = (np.abs(lon-.15) < .10) & (np.abs(lat-.05) < .075)
+    part_b = (np.abs(lon+.18) < .075) & (np.abs(lat+.12) < .09)
+    rgb = np.stack((base*.92, base, base*1.04), axis=-1)
+    rgb[crack] = (.07, .025, .02)
+    rgb[part_a] = (.92, .43, .08)
+    rgb[part_b] = (.14, .72, .82)
+    # Distance rings and a metric reference stripe make the inspection scale visible.
+    rings = (np.cos(32*lat) > .975) & ~bay
+    rgb[rings] = np.maximum(rgb[rings], (.62, .64, .58))
+    rgb = np.clip(rgb, 0, 1)
+    face_size = max(16, min(h//2, w//4))
+    cube = cubemap_from_equirect(rgb, face_size)
+    fs = int(fisheye_size); yy, xx = np.mgrid[0:fs, 0:fs]
+    centre = (fs/2, fs/2); fpx = fs*.30
+    pixels = np.stack((xx+.5, yy+.5), axis=-1)
+    radius = np.hypot(xx+.5-centre[0], yy+.5-centre[1])
+    valid = radius <= _radius(np.deg2rad(95), "equidistant", fpx, (1,))
+    pixels = np.where(valid[..., None], pixels, np.asarray(centre))
+    local = fisheye_unproject(pixels, f_px=fpx,
+                              centre=centre, fov_deg=190)
+    front_r = np.eye(3); back_r = _ypr(180, 0, 0)
+    fisheyes = np.stack([_sample(rgb, dir_to_equirect(local @ r.T, h, w), True)
+                         for r in (front_r, back_r)])
+    fisheyes[:, ~valid] = 0
+    t = np.linspace(0, 1, n_frames, endpoint=False)
+    path = np.column_stack((-65 + 150*t, 7*np.sin(2*np.pi*t)))
+    frames = np.stack([equirect_rotate(rgb, _ypr(-yaw, -pitch, 0))
+                       for yaw, pitch in path])
+    return {"equirect": rgb, "depth_m": depth, "cubemap": cube,
+            "fisheyes": fisheyes, "fisheye_rotations": np.stack((front_r, back_r)),
+            "fisheye_f_px": fpx, "fisheye_centres": (centre, centre),
+            "crack_mask": crack, "part_masks": np.stack((part_a, part_b)),
+            "frames": frames, "view_path_deg": path,
+            "truth": {"tunnel_radius_m": 3.0, "crack_angular_width_deg": 3.0,
+                      "crack_axial_extent_m": 2.16}}
+
+
 def ods_render(scene_fn, ipd_m, h, w):
     """Render ODS rays using ``scene_fn(origins, directions)``."""
     d=equirect_to_dir(h,w); lon=np.arctan2(d[...,0],d[...,2]); tangent=np.stack((np.cos(lon),np.zeros_like(lon),-np.sin(lon)),axis=-1)

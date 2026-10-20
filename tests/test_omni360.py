@@ -128,3 +128,16 @@ def test_stabilisation_reports_non_rotational_motion():
     result = O.equirect_stabilise([reference, translated], residual_limit=.025)
     assert result["residual"].shape == (2,)
     assert not result["removable"][1]
+
+
+def test_synthetic_inspection_scene_is_seeded_and_reusable():
+    a = O.panorama_scene(64, 128, seed=8, n_frames=5, fisheye_size=48)
+    b = O.panorama_scene(64, 128, seed=8, n_frames=5, fisheye_size=48)
+    assert len(a) >= 12
+    assert a["equirect"].shape == (64, 128, 3)
+    assert a["cubemap"].shape == (6, 32, 32, 3)
+    assert a["fisheyes"].shape == (2, 48, 48, 3)
+    assert a["frames"].shape == (5, 64, 128, 3)
+    assert np.array_equal(a["equirect"], b["equirect"])
+    assert np.count_nonzero(a["crack_mask"]) > 10
+    assert np.max(np.abs(a["frames"][0] - a["frames"][-1])) > .1
