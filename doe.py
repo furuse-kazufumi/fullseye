@@ -218,11 +218,9 @@ def _int_arg(v, name: str, op: str, lo: int, hi: int) -> int:
 # Latin hypercube                                                             #
 # --------------------------------------------------------------------------- #
 def _min_dist(u: np.ndarray) -> float:
-    if u.shape[0] >= 512:
-        from scipy.spatial import cKDTree
-        return float(cKDTree(u).query(u, k=2)[0][:, 1].min())
-    from scipy.spatial.distance import pdist
-    return float(pdist(u).min())
+    d = np.sqrt(((u[:, None, :] - u[None, :, :]) ** 2).sum(-1))
+    d[np.diag_indices_from(d)] = np.inf
+    return float(d.min())
 
 
 def _min_dist_bounded(u: np.ndarray, upper: float, return_pairs: bool = False):
@@ -530,14 +528,14 @@ def _oa_strength2_ok(table: np.ndarray) -> bool:
     """True if every pair of columns shows every level pair equally often (strength-2 orthogonality)."""
     n = table.shape[0]
     for a, b in itertools.combinations(range(table.shape[1]), 2):
-        sa, ia = np.unique(table[:, a], return_inverse=True)
-        sb, ib = np.unique(table[:, b], return_inverse=True)
+        sa, sb = np.unique(table[:, a]), np.unique(table[:, b])
         if n % (sa.size * sb.size):
             return False
         want = n // (sa.size * sb.size)
-        counts = np.bincount(ia * sb.size + ib, minlength=sa.size * sb.size)
-        if not np.all(counts == want):
-            return False
+        for x in sa:
+            for y in sb:
+                if int(np.sum((table[:, a] == x) & (table[:, b] == y))) != want:
+                    return False
     return True
 
 
