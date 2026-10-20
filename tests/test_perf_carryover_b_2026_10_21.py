@@ -11,6 +11,8 @@ import profileops
 import tsdf_fusion
 import flow
 from scipy import ndimage
+from scipy.optimize import least_squares
+import fit_primitives_ext
 
 
 def _original_sart(sinogram, angles_deg, *, size, n_iter=1, relaxation=0.15):
@@ -194,3 +196,41 @@ def test_sparse_point_tracker_is_gated_against_dense_reference():
         assert np.array_equal(dense_ok, expected_ok)
         assert dense_ok.all() and sparse_ok.all()
         assert np.max(np.abs(sparse - dense)) <= 1.0
+
+
+def _original_fit_torus(points):
+    p = np.asarray(points, np.float64)
+    c0 = p.mean(0)
+    n0 = fit_primitives_ext._symmetry_axis(p - c0)
+    a, rho = fit_primitives_ext._axial_radial(p, c0, n0)
+    major = float(rho.mean())
+    minor = float(np.mean(np.sqrt((rho - major) ** 2 + a ** 2)))
+    def residual(x):
+        aa, rr = fit_primitives_ext._axial_radial(
+            p, x[:3], fit_primitives_ext._unit(x[3:6]))
+        return np.sqrt((rr - x[6]) ** 2 + aa ** 2) - x[7]
+    sol = least_squares(residual, np.r_[c0, n0, major, minor],
+                        bounds=(np.r_[[-np.inf] * 6, 1e-9, 1e-9], np.repeat(np.inf, 8)),
+                        method="trf", xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    return sol
+
+
+def test_torus_tangent_axis_mode_keeps_default_and_converges_within_contract():
+    rng = np.random.default_rng(95)
+    for n, major, minor, noise in ((300, 2., .5, 0.), (600, 3., .3, .001),
+                                    (900, 1.5, .7, .003)):
+        u = rng.uniform(0, 2 * np.pi, n)
+        w = rng.uniform(0, 2 * np.pi, n)
+        points = np.c_[(major + minor * np.cos(w)) * np.cos(u),
+                       (major + minor * np.cos(w)) * np.sin(u), minor * np.sin(w)]
+        points += rng.normal(0, noise, points.shape)
+        ref = _original_fit_torus(points)
+        default = fit_primitives_ext.fit_torus(points)
+        assert np.array_equal(default["center"], ref.x[:3])
+        assert np.array_equal(default["axis"], fit_primitives_ext._unit(ref.x[3:6]))
+        fast = fit_primitives_ext.fit_torus(points, axis_parameterization="tangent")
+        assert np.max(np.abs(fast["center"] - default["center"])) < 1e-9
+        axis_delta = min(np.max(np.abs(fast["axis"] - default["axis"])),
+                         np.max(np.abs(fast["axis"] + default["axis"])))
+        assert axis_delta < 1e-9
+        assert max(abs(fast["R"] - default["R"]), abs(fast["r"] - default["r"])) < 1e-9

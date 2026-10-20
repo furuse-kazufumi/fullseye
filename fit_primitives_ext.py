@@ -192,12 +192,17 @@ def fit_cone(points) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_torus(points) -> dict:
+def fit_torus(points, axis_parameterization="cartesian") -> dict:
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
     ``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
     初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
+
+    ``axis_parameterization="tangent"`` uses two local axis coordinates.  It
+    can change convergence; measured centre/radii and sign-invariant axis
+    differences on full noisy tori are below 1e-9.  The default
+    ``"cartesian"`` path is unchanged.
 
     Args:
         points: (N,3) 点群(最低 7 点)。
@@ -210,6 +215,8 @@ def fit_torus(points) -> dict:
         ValueError: 形状不正/点数不足 fail-closed。
     """
     P = _as_points(points, 7, "fit_torus")
+    if axis_parameterization not in ("cartesian", "tangent"):
+        raise ValueError("fit_torus: axis_parameterization must be 'cartesian' or 'tangent'")
     center0 = P.mean(0)
     Q = P - center0
     diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
@@ -229,6 +236,28 @@ def fit_torus(points) -> dict:
         r = p[7]
         aa, rr = _axial_radial(P, c, n)
         return np.sqrt((rr - R) ** 2 + aa ** 2) - r
+
+    if axis_parameterization == "tangent":
+        seed = np.array([1.0, 0.0, 0.0]) if abs(n0[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+        e1 = _unit(np.cross(n0, seed))
+        e2 = np.cross(n0, e1)
+
+        def tangent_resid(p):
+            n = _unit(n0 + p[3] * e1 + p[4] * e2)
+            aa, rr = _axial_radial(P, p[0:3], n)
+            return np.sqrt((rr - p[5]) ** 2 + aa ** 2) - p[6]
+
+        p0 = np.concatenate([center0, [0.0, 0.0, R0, r0]])
+        lb = np.array([-np.inf] * 5 + [1e-9, 1e-9])
+        ub = np.array([np.inf] * 7)
+        sol = least_squares(tangent_resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
+        center = np.asarray(sol.x[0:3], dtype=np.float64)
+        axis = _unit(n0 + sol.x[3] * e1 + sol.x[4] * e2)
+        R, r = float(sol.x[5]), float(sol.x[6])
+        residual = float(np.sqrt(np.mean(sol.fun ** 2)))
+        return {"center": center, "axis": axis, "R": R, "r": r,
+                "residual": residual}
 
     p0 = np.concatenate([center0, n0, [R0, r0]])
     lb = np.array([-np.inf] * 6 + [1e-9, 1e-9])
