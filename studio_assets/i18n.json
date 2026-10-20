@@ -1,4 +1,34 @@
 {
+  "Applicable to the current input": {
+    "ja": "現在の入力に適用できる", "zh": "适用于当前输入", "tw": "適用於目前輸入",
+    "ko": "현재 입력에 적용 가능", "de": "Auf die aktuelle Eingabe anwendbar", "hi": "मौजूदा इनपुट पर लागू"
+  },
+  "Needs preprocessing": {
+    "ja": "前処理が必要", "zh": "需要预处理", "tw": "需要前處理",
+    "ko": "전처리 필요", "de": "Vorverarbeitung erforderlich", "hi": "पूर्व-प्रसंस्करण आवश्यक"
+  },
+  "Other": {
+    "ja": "その他", "zh": "其他", "tw": "其他", "ko": "기타", "de": "Weitere", "hi": "अन्य"
+  },
+  "Try on current data": {
+    "ja": "今のデータで試す", "zh": "用当前数据试用", "tw": "用目前資料試用",
+    "ko": "현재 데이터로 시험", "de": "Mit aktuellen Daten testen", "hi": "मौजूदा डेटा पर आज़माएँ"
+  },
+  "Help": {
+    "ja": "説明", "zh": "说明", "tw": "說明", "ko": "도움말", "de": "Hilfe", "hi": "सहायता"
+  },
+  "No exact results. Try a nearby term:": {
+    "ja": "一致する結果がありません。近い語を試してください:", "zh": "没有完全匹配的结果。请尝试相近词语:",
+    "tw": "沒有完全相符的結果。請嘗試相近詞語:", "ko": "일치하는 결과가 없습니다. 비슷한 용어를 시도하세요:",
+    "de": "Keine genauen Treffer. Versuchen Sie einen ähnlichen Begriff:", "hi": "सटीक परिणाम नहीं मिला। मिलता-जुलता शब्द आज़माएँ:"
+  },
+  "Missing optional extra: %s": {
+    "ja": "追加機能がありません: %s", "zh": "缺少可选组件: %s", "tw": "缺少選用元件: %s",
+    "ko": "선택 구성 요소 없음: %s", "de": "Optionale Komponente fehlt: %s", "hi": "वैकल्पिक घटक अनुपलब्ध: %s"
+  },
+  "Detailed log": {
+    "ja": "詳細ログ", "zh": "详细日志", "tw": "詳細記錄", "ko": "상세 로그", "de": "Detailliertes Protokoll", "hi": "विस्तृत लॉग"
+  },
  "_note": "Fullseye Studio localisation data. Loaded at runtime by studio.py (edit here, not in code). Add a NEW language by (1) adding it to 'languages' below, (2) adding its code to each 'tooltips' entry, (3) adding a 'guide' string, and optionally (4) dropping op-help files named <op>.<code>.html under op_help/. No code change is needed. 'en' is always the base/fallback.",
  "languages": {
   "en": "English",

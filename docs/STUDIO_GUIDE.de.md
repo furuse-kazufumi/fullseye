@@ -1,5 +1,7 @@
-<!-- i18n-source-sha: 4c1b60607e06 -->
+<!-- i18n-source-sha: bb3d9080f4fc -->
 # Vollständiger Leitfaden zu Fullseye Studio
+
+Die Suche nach einem Verarbeitungsziel gruppiert Treffer danach, ob sie zur aktuellen Eingabe passen, eine Vorverarbeitung benötigen oder anderweitig einzuordnen sind. Ein Treffer lässt sich einmal testen, ohne eine Stufe hinzuzufügen. Bei einem Fehler zeigt der Problembereich Ursache, Ort und konkrete nächste Schritte zum erneuten Auswählen, Vergleichen, Öffnen des Protokolls, Bearbeiten eines Reglers oder Suchen einer vorgeschlagenen Stufe.
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
