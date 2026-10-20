@@ -99,9 +99,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
   exact behavior remains the default where the faster path can change rounding.
 - `motion` の動き領域集計、モデル展開、イベント検出を高速化し、動きエネルギー列の全フレーム保持を不要にした。支配的動き推定には既定の丸め順を保つ経路に加え、複数右辺を一括処理する選択式の高速経路を追加した。
-- Added selectable low-allocation paths for mesh smoothing, curve resampling,
-  eager video reads, and phase-video reconstruction, plus a composite point-cloud
-  curvature API; exact evaluation order remains the no-argument default.
+- Added selectable low-allocation paths for mesh smoothing, eager video reads, and
+  phase-video reconstruction, plus a composite point-cloud curvature API; exact
+  evaluation order remains the no-argument default. The selectable curve-resampling
+  variant was withdrawn: it was 1.75x slower for 500→800 points and 1.66x slower for
+  2.5M→2.8M points than the exact path.
 
 ### Changed — 性能改善 第22便
 
