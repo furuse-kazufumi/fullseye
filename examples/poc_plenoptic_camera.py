@@ -39,13 +39,26 @@ def prescription(object_mm=1000.0, aperture_mm=5.0):
 
 
 def inspection_texture(n=256):
-    """Textured inspection part with bars, a diagonal scratch and a point."""
-    y, x = np.indices((n, n)); im = np.full((n, n), 0.18)
-    im += 0.22 * ((x // 12 + y // 12) % 2)
-    im[(x > n*.08) & (x < n*.43) & (y > n*.12) & (y < n*.34)] = \
-        0.15 + 0.75 * ((x[(x > n*.08) & (x < n*.43) & (y > n*.12) & (y < n*.34)] // 3) % 2)
-    im[np.abs(y - (0.78*n - 0.35*x)) < 1.3] = 0.02
-    im[(x-n*.78)**2 + (y-n*.22)**2 < (n*.018)**2] = 1.0
+    """Recognisable machined coupon: label, ruled edge, highlight and scratch."""
+    y, x = np.indices((n, n), dtype=float)
+    radial = np.hypot((x-.52*n)/(.48*n), (y-.50*n)/(.43*n))
+    im = .20 + .34*np.clip(1-radial, 0, 1) + .10*x/n
+    im[radial > 1] = .035
+    # Printed label and fiducial edge pattern.
+    pil = Image.fromarray(np.uint8(np.clip(im, 0, 1)*255), "L")
+    draw = ImageDraw.Draw(pil)
+    draw.rectangle((.12*n, .14*n, .62*n, .34*n), fill=205, outline=28, width=max(1, n//100))
+    draw.text((.17*n, .19*n), "QC 17", fill=20, stroke_width=max(0, n//180))
+    draw.line((.10*n, .78*n, .90*n, .78*n), fill=225, width=max(1, n//90))
+    for k in range(17):
+        xx = (.10+.05*k)*n
+        h = (.10 if k % 2 == 0 else .055)*n
+        draw.line((xx, .78*n, xx, (.78-h)*n), fill=230, width=max(1, n//140))
+    im = np.asarray(pil, dtype=float)/255
+    # A real defect crosses both smooth metal and the printed label.
+    scratch = np.abs(y-(.70*n-.43*x+7*np.sin(x/n*9))) < max(1.0, n/220)
+    im[scratch] = .01
+    im[(x-.79*n)**2+(y-.23*n)**2 < (n*.018)**2] = .98
     return np.clip(im, 0, 1)
 
 
@@ -119,7 +132,7 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
                    ncols=3, gray=True, caption="F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.")
     c = raw.shape[0]//2; z = raw[c-30:c+30, c-30:c+30]
     z = np.repeat(np.repeat(z, 8, axis=0), 8, axis=1)
-    figs.save_grid("raw_microimages", [raw, z], ["480 x 480 raw frame", "4 x 4 microimage zoom"],
+    figs.save_grid("raw_microimages", [raw, z], ["480 x 480 traced raw frame", "8x nearest-neighbour disc zoom"],
                    ncols=2, gray=True, caption="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages.")
     epi = lf[:, lf.shape[1]//2, lf.shape[2]//2, :]
     views = [lf[lf.shape[0]//2, i] for i in (1, lf.shape[1]//2, lf.shape[1]-2)]
@@ -183,7 +196,8 @@ def main():
     lens = prescription(); para = RT.paraxial_trace(lens)
     n_main = abs(float(para["efl"])) / (2*float(para["xp_radius"]))
     pitch_mm = 0.15; pixel_um = pitch_mm/cfg["pitch_px"]*1000
-    mla = P.mla_surface(pitch_mm, 0.75, (cfg["lenslets"], cfg["lenslets"]), f_number=n_main)
+    mla = P.mla_surface(pitch_mm, 0.75, (cfg["lenslets"], cfg["lenslets"]),
+                        f_number=n_main, shape="hex")
     system = P.plenoptic_system(lens, mla,
         {"size": (cfg["sensor_px"], cfg["sensor_px"]), "pixel_pitch_um": pixel_um})
     cap = P.plenoptic_capture(system, inspection_scene(), pupil_samples=1)
@@ -194,7 +208,8 @@ def main():
     white = ndimage.gaussian_filter(white, 1.4)
     P.plenoptic_mla_calibrate(white, cfg["pitch_px"], max_residual_px=.3)
     lf, truth_slopes, masks = synthetic_lightfield(cfg["lenslets"], cfg["angular"])
-    raw = LF.lf_to_mla(lf)
+    raw = cap["raw"]
+    raw = np.clip(raw/(np.percentile(raw[raw > 0], 99.5)+1e-15), 0, 1)
     slopes = np.linspace(-1.4, 1.4, 25)
     stack = np.stack([LF.lf_refocus(lf, s, interp="cubic") for s in slopes])
     focus = np.array([[np.var(ndimage.laplace(im)[m]) for m in masks] for im in stack])
