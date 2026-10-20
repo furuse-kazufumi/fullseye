@@ -30,9 +30,21 @@ It traces a prescription, microlens array and sensor, then decodes the raw frame
 ## 最初の 1 本
 
 ```python
-decoded = plenoptic_decode(raw, calibration, angular=(15, 15))
+import numpy as np
+import lightfield
+import plenoptic
+
+truth, _ = lightfield.lf_synthesize((0.5,), (5, 5), (16, 20), seed=17,
+                                     occlusion=False)
+raw = lightfield.lf_to_mla(truth)
+calibration = {"origin_px": np.array([2.0, 2.0]),
+               "basis_px": np.array([[5.0, 0.0], [0.0, 5.0]]),
+               "white_image": np.ones_like(raw)}
+decoded = plenoptic.plenoptic_decode(raw, calibration, angular=(5, 5))
 image = lightfield.lf_refocus(decoded, slope=0.5)
+sweep = np.linspace(-1.0, 1.0, 9)
 slopes, confidence = lightfield.lf_depth_from_focus(decoded, sweep)
+print(image.shape, slopes.shape, confidence.shape)
 ```
 
 ## 推奨パイプライン

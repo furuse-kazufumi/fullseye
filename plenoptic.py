@@ -192,7 +192,7 @@ def plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None,
     if int(pupil_samples) != 1:
         raise ValueError("plenoptic_capture: each pixel is one pupil sample; pupil_samples must be 1")
     LR._check_scene(scene, "plenoptic_capture")
-    _real(exposure_s, "exposure_s", True)
+    exposure = _real(exposure_s, "exposure_s", True)
     if wavelengths is None:
         wavelengths = [system["main_lens"]["wavelength_um"]]
     wls = np.asarray(wavelengths, dtype=float).reshape(-1)
@@ -232,7 +232,8 @@ def plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None,
                           * tr[good] * aperture_weight[good])
     H, W = system["sensor_size"]
     scale = 1.0 / len(wls)
-    return {"raw": (raw*scale).reshape(H, W), "white_image": (white*scale).reshape(H, W),
+    return {"raw": (raw*scale*exposure).reshape(H, W),
+            "white_image": (white*scale*exposure).reshape(H, W),
             "lenslet_index": hit["lenslet_index"].reshape(H, W, 2),
             "pupil_uv": traced_uv.reshape(H, W, 2), "valid": valid.reshape(H, W),
             "boundary_count": hit["boundary_count"], "vignetted_count": int((~valid).sum()),
@@ -278,12 +279,14 @@ def plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25
     A=np.column_stack([np.ones(len(pts)),ij[:,0],ij[:,1]])
     coef=np.linalg.lstsq(A,pts,rcond=None)[0]; fit=A@coef
     residual=float(np.sqrt(np.mean(np.sum((pts-fit)**2,axis=1))))
-    if residual > _real(max_residual_px,"max_residual_px",True):
+    max_residual = _real(max_residual_px, "max_residual_px", True)
+    if residual > max_residual:
         raise ValueError(f"MLA lattice residual {residual:.4g} px exceeds {max_residual_px:.4g} px")
     b0,b1=coef[1],coef[2]; pitch_fit=(np.linalg.norm(b0)+np.linalg.norm(b1))/2
     rotation=math.degrees(math.atan2(b0[1],b0[0]))
     return {"centres": fit, "observed_centres": pts, "pitch_px": float(pitch_fit),
-            "rotation_deg": rotation, "residual_px": residual, "origin_px": coef[0],
+            "rotation_deg": rotation, "residual_px": residual,
+            "max_residual_px": max_residual, "origin_px": coef[0],
             "basis_px": np.stack([b0,b1]), "white_image": im.copy()}
 
 
@@ -325,7 +328,8 @@ def plenoptic_refocus_depth(lf, system, slope):
     lens conjugate and maps to its configured object distance.
     """
     a=np.asarray(lf)
-    if a.ndim!=4: raise ValueError("lf must have shape (V,U,H,W)")
+    if a.ndim != 4 or any(n == 0 for n in a.shape):
+        raise ValueError("lf must have non-empty shape (V,U,H,W)")
     if not isinstance(system,dict) or system.get("kind")!="plenoptic_system":
         raise ValueError("system must be returned by plenoptic_system")
     s=np.asarray(slope,dtype=float)

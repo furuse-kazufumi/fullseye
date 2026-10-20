@@ -6826,6 +6826,10 @@ def _plenoptic_white_calibration():
     import plenoptic
     white = np.zeros((32, 32), dtype=float)
     white[4:29:6, 4:29:6] = 1.0
+    # 1 点だけ 1 px ずらし、max_residual_px の半減・倍増で拒否/受理が
+    # 分かれる実測残差（約 0.196 px）を持たせる。
+    white[16, 16] = 0.0
+    white[16, 17] = 1.0
     white = ndimage.gaussian_filter(white, 0.8)
     calibration = plenoptic.plenoptic_mla_calibrate(
         white, 6.0, max_residual_px=0.3)
