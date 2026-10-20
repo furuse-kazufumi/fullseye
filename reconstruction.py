@@ -191,14 +191,20 @@ def depth_from_focus(images, focus_positions=None):
     from scipy.ndimage import laplace, uniform_filter
     stack = np.stack([np.asarray(im, float) for im in images], axis=0)
     K = stack.shape[0]
-    sml = np.stack([uniform_filter(np.abs(laplace(stack[k])), 5) for k in range(K)], axis=0)
-    best = np.argmax(sml, axis=0)
+    sharpness = uniform_filter(np.abs(laplace(stack[0])), 5)
+    best = np.zeros(sharpness.shape, dtype=np.intp)
+    for k in range(1, K):
+        candidate = uniform_filter(np.abs(laplace(stack[k])), 5)
+        # np.argmax は最初の NaN を選び、同値なら最初の番号を保つ。
+        update = ~np.isnan(sharpness) & (np.isnan(candidate) | (candidate > sharpness))
+        sharpness[update] = candidate[update]
+        best[update] = k
     if focus_positions is not None:
         fp = np.asarray(focus_positions, float)
         depth = fp[best]
     else:
         depth = best.astype(float)
-    return {"depth": depth, "index": best, "sharpness": sml.max(axis=0)}
+    return {"depth": depth, "index": best, "sharpness": sharpness}
 
 
 # ── 相対姿勢 / 三角測量 ──────────────────────────────────────────────────────── #
@@ -334,7 +340,10 @@ def gen_binocular_proj_rectification(F, shape):
 def select_grayvalues_from_channels(image_stack, index_image):
     """index 画像に従い多チャネルスタックから画素ごとにグレー値を選ぶ
     (select_grayvalues_from_channels)。焦点スタックからの合成に。"""
-    stack = np.stack([np.asarray(im, float) for im in image_stack], axis=0)
+    if isinstance(image_stack, np.ndarray):
+        stack = np.asarray(image_stack, dtype=float)
+    else:
+        stack = np.stack([np.asarray(im, float) for im in image_stack], axis=0)
     idx = np.clip(np.asarray(index_image, int), 0, stack.shape[0] - 1)
     H, W = idx.shape
     rr, cc = np.mgrid[0:H, 0:W]
