@@ -5,9 +5,12 @@ Reference helpers intentionally preserve the pre-optimisation arithmetic.
 
 import numpy as np
 from scipy import ndimage
+from scipy import fft
 
 import occupancy
 import varmodel
+import mathnumerics
+import mathspectral
 
 
 def _inflate_reference(occ, radius, voxel_size=1.0):
@@ -65,6 +68,40 @@ def _query_distance_reference(esdf_grid, bounds, res, query_points):
     return out
 
 
+def _lomb_scargle_reference(t, y, freqs):
+    f = np.asarray(freqs, np.float64)
+    yc = y - np.mean(y)
+    w = 2.0 * np.pi * f[:, None]
+    tau = (np.arctan2(np.sum(np.sin(2 * w * t), axis=1),
+                      np.sum(np.cos(2 * w * t), axis=1))[:, None] / (2 * w))
+    arg = w * (t[None, :] - tau)
+    c, s = np.cos(arg), np.sin(arg)
+    cc, ss = np.sum(c * c, axis=1), np.sum(s * s, axis=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return 0.5 * (np.where(cc > 0, (c @ yc) ** 2 / cc, 0.0)
+                      + np.where(ss > 0, (s @ yc) ** 2 / ss, 0.0))
+
+
+def _chebyshev_coeffs_reference(values):
+    coeffs = values[tuple(slice(None, None, -1) for _ in values.shape)]
+    for axis, n in enumerate(values.shape):
+        coeffs = fft.dct(coeffs, type=1, axis=axis) / (n - 1)
+        for end in (0, n - 1):
+            index = [slice(None)] * values.ndim
+            index[axis] = end
+            coeffs[tuple(index)] *= 0.5
+    return coeffs
+
+
+def _chebyshev_eval_reference(coeffs, points):
+    bases = [np.cos(np.arange(coeffs.shape[axis])[None, :]
+                    * np.arccos(points[:, axis])[:, None])
+             for axis in range(coeffs.ndim)]
+    letters = "abcdefgh"[:coeffs.ndim]
+    spec = letters + "," + ",".join("m" + x for x in letters) + "->m"
+    return np.einsum(spec, coeffs, *bases, optimize=True)
+
+
 def test_269_inflate_matches_two_edt_reference(monkeypatch):
     rng = np.random.default_rng(269)
     fixtures = [np.zeros((9, 8, 7), bool), np.ones((9, 8, 7), bool),
@@ -117,6 +154,40 @@ def test_273_occupancy_grid_chunked_matches_reference():
     expected = _occupancy_grid_reference(points, bounds, (23, 19, 17))
     got = occupancy.occupancy_grid(points, bounds, (23, 19, 17), chunk=127)
     assert np.array_equal(got, expected)
+
+
+def test_281_chebyshev_decay_matches_original_reductions():
+    rng = np.random.default_rng(281)
+    values = rng.normal(size=(9, 8, 7))
+    got = mathnumerics.chebyshev_coeffs_nd(values)
+    coeffs = got["coeffs"]
+    expected = [np.abs(np.moveaxis(coeffs, axis, 0))
+                .reshape(coeffs.shape[axis], -1).max(axis=1)
+                for axis in range(coeffs.ndim)]
+    for actual, reference in zip(got["decay"], expected):
+        assert np.array_equal(actual, reference)
+
+
+def test_279_280_chebyshev_fast_variants_match_references():
+    rng = np.random.default_rng(280)
+    values = rng.normal(size=(11, 10, 9, 8))
+    exact_coeffs = _chebyshev_coeffs_reference(values)
+    fast = mathnumerics.chebyshev_coeffs_nd(values, method="fast")["coeffs"]
+    np.testing.assert_allclose(fast, exact_coeffs, rtol=0.0, atol=1e-12)
+    points = rng.uniform(-1.0, 1.0, size=(1003, values.ndim))
+    expected = _chebyshev_eval_reference(exact_coeffs, points)
+    got = mathnumerics.chebyshev_eval_nd(exact_coeffs, points, method="fast")
+    np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
+
+
+def test_282_lomb_scargle_chunked_matches_reference():
+    rng = np.random.default_rng(282)
+    t = np.sort(rng.uniform(1e8, 1e8 + 100.0, 301))
+    y = rng.normal(size=len(t))
+    freq = np.linspace(0.001, 2.0, 1003)
+    expected = _lomb_scargle_reference(t, y, freq)
+    got = mathspectral.lomb_scargle(t, y, freq, chunk=37)["power"]
+    np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
 
 
 def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch):
