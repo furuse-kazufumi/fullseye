@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-88 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+90 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -164,6 +164,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - स्रोत × वस्तु × sensor की spectral श्रृंखला (Planck, CIE A, LED, filter, Si QE): [explanation](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · examples [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI line scan और line-scan lens (stages और SNR, synchronisation error का MTF, image height के अनुसार illumination और MTF): [explanation](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · examples [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - spectral reflectometry से thin film की मोटाई (transfer matrix → interference colour → FFT और model fit → thickness map): [explanation](../../capabilities/thin-film-reflectometry.md) _(ja)_ · examples [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
+- निरीक्षण चित्रों में पानी कैसा दिखता है (पूल के तल की caustic, बोतल का पार्श्व दृश्य और तरल-सतह, गीली सतह, पानी के भीतर पतवार): [explanation](../../capabilities/water-inspection-images.md) _(ja)_ · examples [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
 - पानी और पारदर्शी माध्यम (ocean waves, सतह पर Fresnel और refraction, पानी के भीतर रंग और scattering, लेंस के रूप में बोतल): [explanation](../../capabilities/water-transparent-media.md) _(ja)_ · examples [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **Waves और signals**
@@ -202,6 +203,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - Photo को एक ही line में बदलना (stipple → tour → घूमते circles): [explanation](../../capabilities/one-stroke-drawing.md) _(ja)_ · examples [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
 - optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में): [explanation](../../capabilities/optics-drawings.md) _(ja)_ · examples [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
+- वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts): [explanation](../../capabilities/photograph-through-prescription.md) _(ja)_ · examples [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - आँख को धोखा देने वाली तस्वीरें बनाकर measurement को अंक देना (illusions, endless drawing, loops): [explanation](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · examples [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
 - Theorems तस्वीरों के रूप में (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves): [explanation](../../capabilities/theorems-as-pictures.md) _(ja)_ · examples [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
@@ -211,7 +213,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-267 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+269 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -386,7 +388,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality और restoration</b> (20)</summary>
+<details class="vall"><summary><b>Image quality और restoration</b> (22)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="धारियों की ओर बढ़ती मक्खी की आँख" width="200" height="200"><b>&#9654;</b><span>धारियों की ओर बढ़ती मक्खी की आँख</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -407,6 +409,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph segmentation" width="200" height="200"><b>&#9654;</b><span>Graph segmentation</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="pixel shift (false colour, aliasing)" width="200" height="200"><b>&#9654;</b><span>pixel shift (false colour, aliasing)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="पानी और पारदर्शी माध्यम: ocean waves, pool में refraction, पानी के भीतर का रंग, बोतल की caustic" width="200" height="200"><span>पानी और पारदर्शी माध्यम: ocean waves, pool में refraction, पानी के भीतर का रंग, बोतल की caustic</span></a>
+<a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts" width="200" height="200"><span>वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts</span></a>
+<a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार" width="200" height="200"><span>निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="pixel shift के offset और aperture का calibration (undetermined map)" width="200" height="200"><span>pixel shift के offset और aperture का calibration (undetermined map)</span></a>
 </div>
 </details>

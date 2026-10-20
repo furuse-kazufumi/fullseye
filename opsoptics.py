@@ -143,8 +143,10 @@ import lensfile
 import lensconfig
 import lockin
 import watermedia
+import watervision
 import lensglobal
 import lensmerit
+import lensrender
 import lenssolve
 import filmoptics
 import moirealign
@@ -157,7 +159,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "lensglobal": lensglobal, "lensmerit": lensmerit, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -678,6 +680,29 @@ _CATALOG = {
         ("phase_function_hg", "watermedia", [], "table"),
         ("scattering_phase_petzold", "watermedia", [], "table"),
         ("cylinder_lens_caustic", "watermedia", [], "table"),
+    ],
+    "lensrender": [  # 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender、2026-10-20): 像面側から射出瞳を標本化して物体空間へ逆向きに追跡する
+        # Kolb, Mitchell & Hanrahan (1995)。幾何光学のみ(回折なし)。★fail-closed: 射出瞳が無限遠の系・非有限の入力・範囲外の波長/照明の表・
+        # 軸対称でない系への点光源(前方追跡で回す)は ValueError。ケラレ/全反射の光線は NaN と vignetted = True で返す。
+        ("lens_scene", "lensrender", [], "table"),
+        ("exit_pupil_samples", "lensrender", ["table"], "table"),
+        ("trace_sensor_rays", "lensrender", ["table"], "table"),
+        ("scene_radiance", "lensrender", [], "table"),
+        ("render_scene_through_lens", "lensrender", ["table"], "table"),
+        ("bokeh_shape", "lensrender", ["table"], "table"),
+        ("render_ghost_overlay", "lensrender", ["table"], "table"),
+        ("render_compare_prescriptions", "lensrender", [], "table"),
+    ],
+    "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
+        # ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。
+        #   濡れ面は Lekner & Dorf(1988)、水中画像は watermedia(Akkaynak & Treibitz 2018)、瓶は 2 次元の断面の光線追跡。
+        ("caustic_irradiance", "watervision", ["image2d"], "table"),
+        ("bottle_image", "watervision", [], "table"),
+        ("fill_level_from_image", "watervision", ["image2d"], "table"),
+        ("wet_surface_appearance", "watervision", [], "table"),
+        ("wet_dry_inspection_pair", "watervision", ["image2d", "image2d"], "table"),
+        ("underwater_inspection_image", "watervision", ["rgbimage", "image2d"], "table"),
+        ("caustic_floor_segmentation", "watervision", ["image2d"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗

@@ -77,6 +77,7 @@
 | [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point) | 見つける | `validated-public-real-data` | 12/12 | `poc_patch_anomaly` real → tests/test_poc_scripts_run.py<br>`anomaly_eval_metrics` synthetic → tests/test_example_scripts_run.py |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | Periodic defects in a 1-D signal | 波と信号 | `verified-synthetic` | 5/5 | `poc_web_roll_periodicity` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py<br>`poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry) | 測る | `verified-synthetic` | 6/6 | `poc_phase_measuring_deflectometry` synthetic → tests/test_poc_scripts_run.py |
+| [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts) | 描く | `verified-synthetic` | 8/8 | `poc_photograph_through_prescription` synthetic → tests/test_poc_scripts_run.py |
 | [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md) | Pictures that carry their own ground truth (illusions, endless drawing, seamless loops) | 描く | `verified-synthetic` | 14/16 | `poc_illusions_and_perpetual_drawing` synthetic → tests/test_poc_scripts_run.py |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks) | 光と色 | `verified-synthetic` | 6/6 | `poc_pixel_shift` synthetic → tests/test_poc_scripts_run.py |
 | [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md) | Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells) | 見つける | `validated-public-real-data` | 4/4 | `poc_si_wafer_pl_defect_visibility` real → tests/test_poc_scripts_run.py |
@@ -113,6 +114,7 @@
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width | 測る | `verified-synthetic` | 9/9 | `poc_virtual_sem_kv_cd_bse` synthetic → tests/test_poc_scripts_run.py |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | Carve a solid out of silhouettes (visual hull) | 形にする | `verified-synthetic` | 4/4 | `space_carving` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_livestock_body_volume` synthetic → tests/test_poc_scripts_run.py |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | Turn a 3-D scan into a volume | 測る | `verified-synthetic` | 4/4 | `poc_stockpile_volume` synthetic → tests/test_poc_scripts_run.py<br>`poc_lidar_terrain_change` synthetic → tests/test_poc_scripts_run.py |
+| [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md) | How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water) | 光と色 | `verified-synthetic` | 7/7 | `poc_water_inspection_images` synthetic → tests/test_poc_scripts_run.py |
 | [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md) | Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens) | 光と色 | `verified-synthetic` | 10/10 | `poc_water_transparent_media` synthetic → tests/test_poc_scripts_run.py |
 | [絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)](capabilities/what-a-picture-cannot-check.md) | What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces) | 測る | `verified-synthetic` | 11/11 | `poc_what_a_picture_cannot_check` synthetic → tests/test_poc_scripts_run.py |
 | [型付きの検査結果を Excel(.xlsx)レポートに書き出す](capabilities/xlsx-report.md) | Write typed inspection results to an Excel (.xlsx) report | 組み立てる | `verified-synthetic` | 4/4 | `xlsx_report` synthetic → tests/test_example_scripts_run.py |
@@ -126,8 +128,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 415 |
-| `tests/test_poc_scripts_run.py` が走らせる | 267 |
+| 2-D 台帳の例 | 417 |
+| `tests/test_poc_scripts_run.py` が走らせる | 269 |
 | `tests/test_example_scripts_run.py` が走らせる | 148 |
 | **どの門も走らせていない** | **0** |
 

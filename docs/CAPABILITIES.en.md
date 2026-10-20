@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 88 capabilities**
+**Currently 90 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -55,6 +55,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
@@ -79,6 +80,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [Carve a solid out of silhouettes (visual hull)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [Turn a 3-D scan into a volume](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
+| [How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)](capabilities/water-inspection-images.md) | `caustic_irradiance` → `caustic_floor_segmentation` | `poc_water_inspection_images` |
 | [Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)](capabilities/water-transparent-media.md) | `ocean_height_field` → `refracted_view` → `water_attenuation` → `underwater_image` | `poc_water_transparent_media` |
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
@@ -589,7 +591,7 @@ Alternatives: [`carve`](ops/3d/space_carving/carve.md), [`carve_look_at`](ops/3d
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (20)
+## Light and colour (21)
 
 ### [Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness)](capabilities/chromatic-confocal-sensor.md)
 
@@ -799,6 +801,18 @@ Alternatives: [`thin_film_reflectance`](ops/optics/appearance/thin_film_reflecta
 
 Runnable: `poc_thin_film_reflectometry`
 
+### [How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)](capabilities/water-inspection-images.md)
+
+Seven ops in `watervision` (category `watervision` of `opsoptics`) turn the water physics of `watermedia` into the pictures an inspection camera records. `caustic_irradiance` gives the irradiance a collimated light leaves on a floor below a wavy surface by a photon count (vector Snell refraction, bilinear splatting, energy conserved) or by the Jacobian of the surface-to-floor map (inf and a flag at the folds); `caustic_floor_segmentation` cuts the bright web out of it so that a crack detector is not fooled. `bottle_image` ray-casts the horizontal section of every image row of a bottle (glass wall, liquid with a meniscus, bubbles; Snell, Fresnel, total internal reflection) backlit or frontlit, and `fill_level_from_image` reads the fill line back. `wet_surface_appearance` is the Lekner and Dorf (1988) model of why a wet surface is darker (trapped light: a (1 - R_s)(1 - r) / (1 - a r)) and glossier; `wet_dry_inspection_pair` renders one textured plate dry and wet and returns the defect contrast; `underwater_inspection_image` is a lamp-at-the-camera hull view with the backscatter veil and the per-pixel SNR.
+
+Operators: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
+
+Pipeline: [`caustic_irradiance`](ops/optics/watervision/caustic_irradiance.md) → [`caustic_floor_segmentation`](ops/optics/watervision/caustic_floor_segmentation.md)
+
+Alternatives: [`bottle_image`](ops/optics/watervision/bottle_image.md), [`fill_level_from_image`](ops/optics/watervision/fill_level_from_image.md), [`wet_surface_appearance`](ops/optics/watervision/wet_surface_appearance.md), [`wet_dry_inspection_pair`](ops/optics/watervision/wet_dry_inspection_pair.md), [`underwater_inspection_image`](ops/optics/watervision/underwater_inspection_image.md)
+
+Runnable: `poc_water_inspection_images`
+
 ### [Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)](capabilities/water-transparent-media.md)
 
 Ten ops in `watermedia` (category `watermedia` of `opsoptics`): the wave spectrum of a wind sea (Pierson-Moskowitz, JONSWAP) and a Tessendorf FFT sea with slopes, normals, choppiness and finite depth; Fresnel reflectance and transmittance of the air-water interface with the dispersive index of the material table; Snell's window and the apparent depth; the apparent position of an underwater point as a stationary point of the optical path (bisection on a flat surface, Newton iteration with the vector Snell law verified on a wavy one); pure-water absorption (Pope & Fry 1997), scattering (Smith & Baker 1981) and the diffuse attenuation of the Jerlov water types (Solonenko & Mobley 2015); underwater image formation (Akkaynak & Treibitz 2018); the Henyey-Greenstein and Petzold phase functions; and the paraxial focus and real-ray caustic of a cylinder. Inputs outside a table, unknown water types, |g| >= 1 and n <= 1 are refused; a path that does not satisfy Snell's law is returned as NaN.
@@ -985,7 +999,7 @@ Alternatives: [`text_box`](ops/annotate/text/text_box.md), [`annotate_panel_labe
 
 Runnable: `annotate_paper_tour`
 
-## Draw (4)
+## Draw (5)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -1006,6 +1020,18 @@ Pipeline: [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md) �
 Alternatives: [`vision_setup_drawing`](ops/optics/drawing/vision_setup_drawing.md), [`lens_element_drawing`](ops/optics/drawing/lens_element_drawing.md), [`drawing_raster`](ops/optics/drawing/drawing_raster.md), [`paraxial_trace`](ops/optics/design/paraxial_trace.md), [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md)
 
 Runnable: `poc_optics_drawings`
+
+### [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md)
+
+Eight ops in `lensrender` (category `lensrender` of `opsoptics`) photograph a 3-D scene through a `raytrace.lens_system` prescription by sensor-side ray tracing (Kolb, Mitchell & Hanrahan 1995): the exit pupil is sampled for every sensor point, each ray is traced backwards through every surface (Snell's law with dispersion, conics and aspheres, mirrors, semi-diameters as stops, total internal reflection) into object space, the scene is shaded there (textured planes, spheres, triangle meshes, Lambertian plus a Blinn-Phong lobe, shadows, point sources splatted by forward tracing) and the radiance is summed with the weight cos^2(theta)/d^2 of the pupil sample. The irradiance becomes electrons (E dlambda A t (lambda/hc) QE) and goes through shot noise, dark electrons, read noise and the quantiser. `bokeh_shape` gives the out-of-focus footprint (the cat's eye), `render_ghost_overlay` adds the two-reflection ghosts of a bright point and `render_compare_prescriptions` renders one scene through several prescriptions and tabulates RMS spots, corner illumination, distortion, lateral colour and the edge rise and MTF50. Geometric optics only: no diffraction.
+
+Operators: `lens_scene`, `exit_pupil_samples`, `trace_sensor_rays`, `scene_radiance`, `render_scene_through_lens`, `bokeh_shape`, `render_ghost_overlay`, `render_compare_prescriptions`
+
+Pipeline: [`lens_system`](ops/optics/design/lens_system.md) → [`lens_scene`](ops/optics/lensrender/lens_scene.md) → [`render_scene_through_lens`](ops/optics/lensrender/render_scene_through_lens.md) → [`render_compare_prescriptions`](ops/optics/lensrender/render_compare_prescriptions.md)
+
+Alternatives: [`exit_pupil_samples`](ops/optics/lensrender/exit_pupil_samples.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md), [`scene_radiance`](ops/optics/lensrender/scene_radiance.md), [`bokeh_shape`](ops/optics/lensrender/bokeh_shape.md), [`render_ghost_overlay`](ops/optics/lensrender/render_ghost_overlay.md), [`render_through_lens`](ops/optics/imaging_sim/render_through_lens.md), [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md)
+
+Runnable: `poc_photograph_through_prescription`
 
 ### [Pictures that carry their own ground truth (illusions, endless drawing, seamless loops)](capabilities/pictures-that-carry-their-own-truth.md)
 

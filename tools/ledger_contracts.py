@@ -338,6 +338,14 @@ def _lens(name="singlet"):
     return raytrace.example_system(name)
 
 
+def _lr_scene():
+    """lensrender の探針用のシーン: 1.5 m の平面 + 照明 + 点光源 1 つ。"""
+    import lensrender
+    return lensrender.lens_scene([{"type": "plane", "z_mm": -1500.0, "albedo": 0.5, "size_mm": (300.0, 300.0)}],
+                                 [{"type": "directional", "to_light": (0.0, 0.0, 1.0), "irradiance_W_m2_nm": 1.0}],
+                                 sources=[{"position_mm": (0.0, 5.0, -1500.0), "intensity_W_sr_nm": 1e-3}])
+
+
 def _ls():
     import linescan
     return linescan
@@ -522,6 +530,17 @@ def _optics_builders():
         "merit_default": lens_first(rings=2),
         "merit_boundary_operands": lens_first(),
         "merit_contributions": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        # lensrender(2026-10-20): 処方 + 小さなセンサ。点光源つきのシーンで、どの引数も出力に効く最小の呼び方で探る
+        "exit_pupil_samples": lens_first(n=7),
+        "trace_sensor_rays": lens_first(),
+        "render_scene_through_lens": lambda pool, rng: ([_lens(), _lr_scene()], {"sensor": {"size": (6, 8), "pixel_pitch_um": 25.0},
+                                                                              "pupil_samples": 4, "wavelengths": [0.55]}),
+        "bokeh_shape": lens_first(pupil_samples=40),
+        # ゴーストは面の対の数(貼り合わせ 3 面 = 3 対)より少ない max_ghosts で、数を変えると出力が変わるようにする
+        "render_ghost_overlay": lambda pool, rng: ([_lens("doublet")], {"light_xy_mm": (0.0, 0.5), "rings": 3, "max_ghosts": 2,
+                                                                      "sensor": {"size": (6, 8), "pixel_pitch_um": 25.0}}),
+        "render_compare_prescriptions": lambda pool, rng: ([], {"sensor": {"size": (6, 8), "pixel_pitch_um": 25.0},
+                                                              "pupil_samples": 4, "wavelengths": [0.55]}),
         # 効かないノブの門: 止める条件(iterations / tolerance)、連続変数の下限(min_thickness / min_radius)、硝材の外側ループ
         # (glass_iterations / outer_iterations)は、それぞれが出力を変える入力でないと「効かない」と判定される。
         # 開始の厚み 0.3 は min_thickness 0.5 に当たり、R = 1.5 は min_radius 2 に当たる。互いに引き合う行(TOTR / ETGT / CTLT)で
@@ -929,6 +948,14 @@ def _batch2_builders():
         "phase_function_hg": lambda pool, rng: ([2.0 * rng.random(7) - 1.0, 1.8 * rng.random() - 0.9], {}),
         "scattering_phase_petzold": lambda pool, rng: ([0.1 + 179.0 * rng.random(5)], {}),
         "cylinder_lens_caustic": lambda pool, rng: ([10.0 + 20.0 * rng.random(), 1.4 + 0.2 * rng.random(), 1.333, 1.0], {}),
+        # watervision(2026-10-20): 波は小さく(波頭より底が深い)、瓶は粗い画素で、濡れ面の角度は [0, 90)、欠陥マスクは両クラスを含める
+        "caustic_irradiance": lambda pool, rng: ([0.01 * rng.standard_normal((16, 16)), 2.0 + 2.0 * rng.random(), 1.0 + rng.random(), [60.0 * rng.random(), 360.0 * rng.random()]], {"ray_density": 1}),
+        "bottle_image": lambda pool, rng: ([20.0 + 20.0 * rng.random(), 2.0, 80.0, rng.random(), 1.45 + 0.15 * rng.random(), 1.333], {"pixel_pitch_um": 1000.0}),
+        "fill_level_from_image": lambda pool, rng: ([np.where(np.arange(40)[:, None] < 10 + int(rng.integers(0, 20)), 0.9, 0.5) + 0.01 * rng.random((40, 12)), 100.0], {}),
+        "wet_surface_appearance": lambda pool, rng: ([0.05 + 0.9 * rng.random(), rng.random(), 30.0 * rng.random(), 80.0 * rng.random(), 80.0 * rng.random()], {}),
+        "wet_dry_inspection_pair": lambda pool, rng: ([0.2 + 0.7 * rng.random((16, 16)), np.arange(16)[:, None] < 4 + np.zeros((1, 16), dtype=bool), 0.2, 10.0 * rng.random(), 60.0 * rng.random(), 60.0 * rng.random()], {}),
+        "underwater_inspection_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 1.0 + 5.0 * rng.random((6, 6)), "jerlov_II"], {"light": "both"}),
+        "caustic_floor_segmentation": lambda pool, rng: ([1.0 + 0.3 * rng.random((16, 16))], {}),
         # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
         #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
         #   max_peaks のノブが効かない入力になる)。

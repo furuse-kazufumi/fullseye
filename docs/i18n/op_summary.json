@@ -31257,6 +31257,69 @@
    "de": "Paraxialer Fokus und Realstrahl-Kaustik eines Zylinders (Stab oder Flasche) im parallelen Strahl -> dict.",
    "hi": "समानांतर किरण-पुंज में बेलन (छड़ या बोतल) का पैराएक्सियल फोकस और वास्तविक किरणों की caustic -> dict।"
   },
+  "optics/caustic_irradiance": {
+   "fp": "374a216ca47b",
+   "ja": "波打つ水面の下の平らな床に、平行光が作る照度 -> dict。",
+   "zh": "平行光在波动水面下方平坦底面上形成的照度 -> 字典。",
+   "tw": "平行光在波動水面下方平坦底面上形成的照度 -> 字典。",
+   "ko": "평행광이 물결치는 수면 아래의 평평한 바닥에 만드는 조도 -> dict.",
+   "de": "Die Beleuchtungsstärke, die ein paralleles Lichtbündel auf einem ebenen Boden unter einer welligen Wasseroberfläche erzeugt -> dict.",
+   "hi": "लहरदार जल-सतह के नीचे समतल तल पर समानांतर प्रकाश से बनने वाली दीप्ति (irradiance) -> dict।"
+  },
+  "optics/bottle_image": {
+   "fp": "358209a9e1f7",
+   "ja": "液体を途中まで入れた円筒形の瓶の側面像を、行ごとに光線追跡したもの -> dict。",
+   "zh": "部分装有液体的圆柱形瓶子的侧视图,逐行进行光线追迹 -> 字典。",
+   "tw": "部分裝有液體的圓柱形瓶子的側視圖,逐行進行光線追跡 -> 字典。",
+   "ko": "액체가 일부 채워진 원통형 병의 측면 이미지를 행 단위로 광선 추적한 결과 -> dict.",
+   "de": "Seitenansicht einer teilweise mit Flüssigkeit gefüllten zylindrischen Flasche, zeilenweise per Strahlverfolgung berechnet -> dict.",
+   "hi": "तरल से आंशिक रूप से भरी बेलनाकार बोतल का पार्श्व दृश्य, पंक्ति-दर-पंक्ति ray tracing से -> dict।"
+  },
+  "optics/fill_level_from_image": {
+   "fp": "37315d98c269",
+   "ja": "側面から見た瓶の画像から測った液面 -> dict(最下行からの水準 mm、行、確信度)。",
+   "zh": "从瓶子侧视图像中测得的液面 -> 字典(距最下行的液位 mm、行号、置信度)。",
+   "tw": "從瓶子側視影像中測得的液面 -> 字典(距最下行的液位 mm、列號、信賴度)。",
+   "ko": "병의 측면 이미지에서 측정한 액면 -> dict(맨 아래 행 위의 높이 mm, 행, 신뢰도).",
+   "de": "Aus einem Seitenansichtsbild der Flasche gemessene Füllhöhe -> dict (Pegel in mm über der untersten Zeile, Zeile, Konfidenz).",
+   "hi": "बोतल के पार्श्व-दृश्य चित्र से मापी गई तरल-सतह -> dict (सबसे निचली पंक्ति से ऊपर स्तर mm में, पंक्ति, विश्वसनीयता)।"
+  },
+  "optics/wet_surface_appearance": {
+   "fp": "0a7b3abba1ab",
+   "ja": "薄い水膜の下の面の暗化と光沢(Lekner & Dorf 1988、Twomey ほか 1986)-> dict。",
+   "zh": "薄水膜下表面的变暗与光泽(Lekner & Dorf 1988;Twomey 等 1986)-> 字典。",
+   "tw": "薄水膜下表面的變暗與光澤(Lekner & Dorf 1988;Twomey 等 1986)-> 字典。",
+   "ko": "얇은 물막 아래 표면이 어두워지고 광택이 나는 정도(Lekner & Dorf 1988; Twomey 외 1986) -> dict.",
+   "de": "Abdunkelung und Glanz einer Oberfläche unter einem dünnen Wasserfilm (Lekner & Dorf 1988; Twomey et al. 1986) -> dict.",
+   "hi": "पतली जल-परत के नीचे सतह का काला पड़ना और चमक (Lekner & Dorf 1988; Twomey et al. 1986) -> dict।"
+  },
+  "optics/wet_dry_inspection_pair": {
+   "fp": "c47fa21d4237",
+   "ja": "同じテクスチャの板を乾いた状態と濡れた状態で描き、それぞれの欠陥のコントラストを返す -> dict。",
+   "zh": "分别渲染同一块有纹理的板的干燥与湿润状态,并给出各自缺陷的对比度 -> 字典。",
+   "tw": "分別渲染同一塊有紋理的板的乾燥與濕潤狀態,並給出各自缺陷的對比度 -> 字典。",
+   "ko": "같은 질감의 판을 건조한 상태와 젖은 상태로 렌더링하고 각각의 결함 대비를 구한다 -> dict.",
+   "de": "Dieselbe texturierte Platte trocken und nass gerendert, mit dem Kontrast ihres Defekts in beiden Fällen -> dict.",
+   "hi": "एक ही बनावट वाली प्लेट को सूखी और गीली दशा में रेंडर करना, और दोनों में उसके दोष का contrast -> dict।"
+  },
+  "optics/underwater_inspection_image": {
+   "fp": "03711f8a91f4",
+   "ja": "船体や配管の検査画像: カメラの位置のランプが水を通して壁を照らす -> dict(画像、画素ごとの SNR)。",
+   "zh": "船体或管道检测图像:位于相机处的灯穿过水照亮墙面 -> 字典(图像、逐像素信噪比)。",
+   "tw": "船體或管道檢測影像:位於相機處的燈穿過水照亮牆面 -> 字典(影像、逐像素信噪比)。",
+   "ko": "선체나 배관 검사 이미지: 카메라 위치의 램프가 물을 통해 벽을 비춘다 -> dict(이미지, 화소별 SNR).",
+   "de": "Inspektionsbild eines Schiffsrumpfs oder Rohrs: eine Lampe an der Kamera beleuchtet eine Wand durch das Wasser -> dict (Bild, SNR pro Pixel).",
+   "hi": "पोत-पतवार या पाइप का निरीक्षण चित्र: कैमरे पर लगा लैंप पानी के आर-पार दीवार को रोशन करता है -> dict (चित्र, प्रति-पिक्सेल SNR)।"
+  },
+  "optics/caustic_floor_segmentation": {
+   "fp": "a61dc0134a2b",
+   "ja": "床の照度画像からコースティクスの線を切り出す -> dict(マスク、しきい値、線の周期)。",
+   "zh": "从地面照度图像中分割出焦散线 -> 字典(掩码、阈值、线的周期)。",
+   "tw": "從地面照度影像中分割出焦散線 -> 字典(遮罩、閾值、線的週期)。",
+   "ko": "바닥 조도 이미지에서 코스틱 선을 분할한다 -> dict(마스크, 임곗값, 선의 주기).",
+   "de": "Segmentiert die Kaustiklinien eines Boden-Beleuchtungsstärkebilds -> dict (Maske, Schwelle, Linienperiode).",
+   "hi": "फर्श की irradiance छवि से caustic रेखाओं को अलग करना -> dict (mask, threshold, रेखा की अवधि)।"
+  },
   "optics/lens_apply_solves": {
    "fp": "ec89668e4391",
    "en": "Return a copy of the prescription with every solve resolved: the rules stay, R / t become the solved values (``table``).",
@@ -31337,6 +31400,78 @@
    "ko": "솔브(solve)를 ``.zmx``에 쓰고 다시 읽어 한 번 더 쓴다: 고정점이 되는지 확인한다(``table``).",
    "de": "Schreibt die Solves in eine ``.zmx``, liest sie zurück und schreibt erneut: prüft, ob das ein Fixpunkt ist (``table``).",
    "hi": "solve को ``.zmx`` में लिखता है, वापस पढ़ता है और फिर लिखता है: जाँचता है कि यह fixed point है या नहीं (``table``)।"
+  },
+  "optics/lens_scene": {
+   "fp": "80a7ef063bc7",
+   "ja": "render_scene_through_lens 用の簡単な 3 次元のシーン(平面・球・メッシュ・光源)を作って検証する -> dict(``scene`` の表)。",
+   "zh": "构建并校验供 render_scene_through_lens 使用的简单三维场景(平面、球、网格、光源)-> 字典(``scene`` 表)。",
+   "tw": "建構並驗證供 render_scene_through_lens 使用的簡單三維場景(平面、球、網格、光源)-> 字典(``scene`` 表)。",
+   "ko": "render_scene_through_lens 용 간단한 3차원 장면(평면·구·메시·광원)을 만들고 검증한다 -> dict(``scene`` 표).",
+   "de": "Eine einfache 3-D-Szene (Ebenen, Kugeln, Netze, Lichter) für render_scene_through_lens aufbauen und prüfen -> dict (die ``scene``-Tabelle).",
+   "hi": "render_scene_through_lens के लिए एक सरल 3-D दृश्य (planes, spheres, meshes, lights) बनाना और जाँचना -> dict (``scene`` table)।"
+  },
+  "optics/exit_pupil_samples": {
+   "fp": "a3033b6fe491",
+   "ja": "*system* の射出瞳の標本点(位置と半径は近軸光線追跡から)-> dict。",
+   "zh": "在 *system* 的出瞳上取样点(位置与半径来自近轴追迹)-> 字典。",
+   "tw": "在 *system* 的出瞳上取樣點(位置與半徑來自近軸追跡)-> 字典。",
+   "ko": "*system* 의 사출동 위의 표본점(위치와 반지름은 근축 추적에서) -> dict.",
+   "de": "Stichprobenpunkte auf der Austrittspupille von *system* (Lage und Radius aus der paraxialen Rechnung) -> dict.",
+   "hi": "*system* की exit pupil पर नमूना बिंदु (स्थिति और त्रिज्या paraxial trace से) -> dict।"
+  },
+  "optics/trace_sensor_rays": {
+   "fp": "77bb3e98952f",
+   "ja": "センサ上の点から射出瞳の点を通る光線を、物体空間へ**逆向きに**追跡する -> dict。",
+   "zh": "从传感器上的点经出瞳上的点,把光线**逆向**追迹到物空间 -> 字典。",
+   "tw": "從感測器上的點經出瞳上的點,把光線**逆向**追跡到物空間 -> 字典。",
+   "ko": "센서 위의 점에서 사출동의 점을 지나는 광선을 물체 공간까지 **거꾸로** 추적한다 -> dict.",
+   "de": "Strahlen von Sensorpunkten durch Punkte der Austrittspupille **rückwärts** in den Objektraum verfolgen -> dict.",
+   "hi": "sensor के बिंदुओं से exit pupil के बिंदुओं से होकर किरणों को object space तक **उल्टी दिशा में** trace करना -> dict।"
+  },
+  "optics/scene_radiance": {
+   "fp": "75517c0d9ef5",
+   "ja": "物体空間の光線が ``lens_scene`` に当たったときに運ぶ放射輝度 -> dict。",
+   "zh": "物空间光线击中 ``lens_scene`` 时所带的辐亮度 -> 字典。",
+   "tw": "物空間光線擊中 ``lens_scene`` 時所帶的輻射亮度 -> 字典。",
+   "ko": "물체 공간의 광선이 ``lens_scene`` 에 닿을 때 실어 나르는 복사휘도 -> dict.",
+   "de": "Strahldichte entlang von Objektraumstrahlen, die auf eine ``lens_scene`` treffen -> dict.",
+   "hi": "object space की किरणों के ``lens_scene`` से टकराने पर radiance -> dict।"
+  },
+  "optics/render_scene_through_lens": {
+   "fp": "08762f698fac",
+   "ja": "``lens_scene`` を処方 *system* のレンズ越しに撮る: センサ側からの光線追跡 -> dict。",
+   "zh": "透过处方 *system* 的镜头拍摄 ``lens_scene``:从传感器一侧的光线追迹 -> 字典。",
+   "tw": "透過處方 *system* 的鏡頭拍攝 ``lens_scene``:從感測器一側的光線追跡 -> 字典。",
+   "ko": "처방 *system* 의 렌즈를 통해 ``lens_scene`` 을 촬영한다: 센서 쪽에서의 광선 추적 -> dict.",
+   "de": "Eine ``lens_scene`` durch das Objektiv der Verschreibung *system* aufnehmen: Strahlverfolgung von der Sensorseite -> dict.",
+   "hi": "किसी ``lens_scene`` को prescription *system* के लेंस से होकर photograph करना: sensor की ओर से ray tracing -> dict।"
+  },
+  "optics/bokeh_shape": {
+   "fp": "ef490d6f1d6a",
+   "ja": "点光源のピントはずれの像(ボケ)の形 ―― 瞳の像の重なり、猫の目 -> dict。",
+   "zh": "点光源失焦像(虚化)的形状——光瞳像的交集,即猫眼形 -> 字典。",
+   "tw": "點光源失焦像(虛化)的形狀——光瞳像的交集,即貓眼形 -> 字典。",
+   "ko": "점광원의 초점 벗어난 상(보케)의 모양 — 동공 상들의 교집합, 고양이 눈 -> dict.",
+   "de": "Der unscharfe Fußabdruck einer Punktquelle – der Schnitt der Pupillenbilder, das Katzenauge -> dict.",
+   "hi": "बिंदु स्रोत का out-of-focus footprint — pupil images का प्रतिच्छेदन, यानी cat's eye -> dict।"
+  },
+  "optics/render_ghost_overlay": {
+   "fp": "81d3f3f49bba",
+   "ja": "明るい点光源の 2 回反射のゴーストを、センサ上の電子数として求める -> dict。",
+   "zh": "明亮点光源的二次反射鬼像,以传感器上的电子数表示 -> 字典。",
+   "tw": "明亮點光源的二次反射鬼影,以感測器上的電子數表示 -> 字典。",
+   "ko": "밝은 점광원의 2회 반사 고스트를 센서 위의 전자 수로 구한다 -> dict.",
+   "de": "Die Doppelreflexions-Geisterbilder einer hellen Punktquelle als Elektronen auf dem Sensor -> dict.",
+   "hi": "किसी चमकीले बिंदु के दो-परावर्तन वाले ghost images, sensor पर इलेक्ट्रॉनों के रूप में -> dict।"
+  },
+  "optics/render_compare_prescriptions": {
+   "fp": "7b7eb7d5ad18",
+   "ja": "同じ場面を 2 本以上の処方で撮り、絵ごとの品質を表にする -> dict。",
+   "zh": "用两个或更多处方拍摄同一场景,并把每张图像的质量列成表 -> 字典。",
+   "tw": "用兩個或更多處方拍攝同一場景,並把每張影像的品質列成表 -> 字典。",
+   "ko": "같은 장면을 둘 이상의 처방으로 촬영하고 사진마다의 품질을 표로 정리한다 -> dict.",
+   "de": "Dieselbe Szene durch zwei oder mehr Verschreibungen aufnehmen und die Qualität jedes Bildes tabellieren -> dict.",
+   "hi": "एक ही दृश्य को दो या अधिक prescriptions से render करना और हर तस्वीर की गुणवत्ता को तालिका में देना -> dict।"
   }
  }
 }
