@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 from scipy import ndimage
 from PIL import Image, ImageDraw
+from matplotlib import colormaps
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
@@ -117,7 +118,53 @@ def camera_section_image(system):
         pts = [(10, sy), (105, 180), (570, yc), (790, yc + (k-2)*16)]
         d.line(pts, fill=colors[k], width=3)
     d.text((250, 328), f"traced bundle; F/{system['main_f_number']:.2f}; MLA pitch 0.15 mm", fill="black")
-    return np.asarray(im)
+    return np.asarray(im.resize((1200, 480), Image.Resampling.LANCZOS))
+
+
+def textbook_raw_pair(scene, pitch=15, cells=24):
+    """Make the textbook 1.0 pupil discs and focused 2.0 scene fragments."""
+    n = pitch*cells
+    src = np.asarray(Image.fromarray(np.uint8(scene*255)).resize((n, n),
+                     Image.Resampling.BICUBIC), float)/255
+    yy, xx = np.indices((pitch, pitch), dtype=float)
+    qx = xx-(pitch-1)/2; qy = yy-(pitch-1)/2
+    r = np.hypot(qx, qy); disc = r <= pitch/2
+    pupil = np.clip(1-(r/(pitch/2))**6, 0, 1)*disc
+    raw10 = np.zeros((n, n)); raw20 = np.zeros((n, n))
+    for j in range(cells):
+        for i in range(cells):
+            ys = slice(j*pitch, (j+1)*pitch); xs = slice(i*pitch, (i+1)*pitch)
+            envelope = .25+.75*src[j*pitch+pitch//2, i*pitch+pitch//2]
+            raw10[ys, xs] = pupil*envelope
+            # A focused lenslet forms an inverted local scene image, displaced
+            # slightly with field angle rather than an image of the pupil.
+            cy = j*pitch+pitch//2 + int(round((i-cells/2)*.10))
+            cx = i*pitch+pitch//2 + int(round((j-cells/2)*.10))
+            sy = np.clip(cy-qy.astype(int), 0, n-1)
+            sx = np.clip(cx-qx.astype(int), 0, n-1)
+            raw20[ys, xs] = src[sy, sx]*disc
+    return raw10, raw20
+
+
+def ensure_figure_widths(min_width=1200):
+    """Keep every static exhibit legible in the article and at full size."""
+    directory = figs.target_dir()
+    if directory is None:
+        return
+    for path in directory.glob("*.png"):
+        with Image.open(path) as image:
+            if image.width >= min_width:
+                continue
+            scale = min_width/image.width
+            resized = image.resize((min_width, int(round(image.height*scale))),
+                                   Image.Resampling.NEAREST)
+            resized.save(path)
+
+
+def pseudocolour(values, lo, hi, cmap):
+    """Colour a quantitative panel with one explicitly shared scale."""
+    q = np.clip((np.asarray(values, float)-lo)/(hi-lo), 0, 1)
+    return np.uint8(colormaps[cmap](q)[..., :3]*255)
 
 
 def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp):
@@ -128,7 +175,8 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
     yy, xx = np.indices((90, 90)); rr = np.hypot(xx-44.5, yy-44.5)
     for ratio in (.75, 1.0, 1.5):
         cases.append((rr <= 30*ratio).astype(float))
-    figs.save_grid("f_number_matching", cases, ["gap: 0.75x", "matched: 1.00x", "overlap: 1.50x"],
+    figs.save_grid("f_number_matching", cases,
+                   ["0.75x: gap 25%", "1.00x: gap 0%, overlap 0%", "1.50x: overlap 50%"],
                    ncols=3, gray=True, caption="F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.")
     c = raw.shape[0]//2; z = raw[c-30:c+30, c-30:c+30]
     z = np.repeat(np.repeat(z, 8, axis=0), 8, axis=1)
@@ -145,15 +193,22 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
                    ["0.6 m", "1.0 m", "1.8 m", "focus measure vs slope"], ncols=2, gray=True,
                    caption="The 0.6, 1.0 and 1.8 m planes peak at slopes -1.05, 0.00 and 1.05.")
     err_mm = (depth_est-depth_truth)*1000
-    colour_bar = np.repeat(np.linspace(-1, 1, depth_truth.shape[0])[:, None], 6, axis=1)
-    figs.save_grid("depth_map", [depth_truth*1000, depth_est*1000, err_mm, colour_bar],
-                   ["truth (mm)", "estimate (mm)", "error (mm)", "colour bar"], ncols=4,
-                   signed=[False, False, True, True], gray=False,
+    depth_lo, depth_hi = 600., 1800.
+    err_lim = max(1., float(np.max(np.abs(err_mm))))
+    colour_bar = np.repeat(np.linspace(depth_hi, depth_lo, 128)[:, None], 20, axis=1)
+    panels = [pseudocolour(depth_truth*1000, depth_lo, depth_hi, "turbo"),
+              pseudocolour(depth_est*1000, depth_lo, depth_hi, "turbo"),
+              pseudocolour(err_mm, -err_lim, err_lim, "RdBu_r"),
+              pseudocolour(colour_bar, depth_lo, depth_hi, "turbo")]
+    figs.save_grid("depth_map", panels,
+                   ["truth depth (mm)", "estimated depth (mm)", "signed error (mm)", "colour bar (mm)"], ncols=4,
+                   signed=False, gray=False,
                    caption="Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.")
-    bars = inspection_texture(192)
-    p10 = ndimage.gaussian_filter(bars, 2.2); p20 = ndimage.gaussian_filter(bars, .8)
-    figs.save_grid("plenoptic_1_vs_2", [p10, p20], ["1.0: 8 line pairs", "2.0: 13 line pairs"],
-                   ncols=2, gray=True, caption="Same MLA: plenoptic 1.0 resolves 8 line pairs; 2.0 resolves 13.")
+    p10, p20 = textbook_raw_pair(inspection_texture(256))
+    figs.save_grid("plenoptic_1_vs_2", [p10, p20],
+                   ["1.0 raw: pupil images", "2.0 raw: inverted scene fragments"],
+                   ncols=2, gray=True,
+                   caption="Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.")
     detuned = ndimage.gaussian_filter(stack[pick[1]], 2.0)
     small_raw = raw.reshape(lf.shape[2], raw.shape[0]//lf.shape[2], lf.shape[3],
                             raw.shape[1]//lf.shape[3]).mean((1, 3))
@@ -225,6 +280,7 @@ def main():
                "focus_peaks": peaks.tolist(), "truth_slopes": truth_slopes.tolist()}
     if figs.target_dir() is not None and not cfg["ci"]:
         make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp)
+        ensure_figure_widths()
         metrics.update(make_video(lf))
         cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
         metrics["cpu_s"] = cpu; metrics["wall_s"] = wall
