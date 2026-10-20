@@ -55,6 +55,7 @@ _MAX_FEATURES = 1 << 26                # stored model feature values
 _EPS = 1e-12
 _LBP_BINS = 10
 _FOURIER_BANDS = 3
+_KNN_BANK_BLOCK = 8192               # cap one query distance slab at about 16 MiB
 
 
 # ----------------------------------------------------------------------------- validation
@@ -575,11 +576,31 @@ def _knn_dist(q, bank, k, chunk=256):
     out = np.empty(q.shape[0])
     for a in range(0, q.shape[0], chunk):
         qq = q[a:a + chunk]
-        d2 = np.maximum((qq ** 2).sum(axis=1)[:, None] + b2[None, :] - 2.0 * (qq @ bank.T), 0.0)
+        if bank.shape[0] > _KNN_BANK_BLOCK:
+            top = np.full((len(qq), k), np.inf)
+            q2 = (qq ** 2).sum(axis=1)[:, None]
+            for j in range(0, bank.shape[0], _KNN_BANK_BLOCK):
+                stop = min(j + _KNN_BANK_BLOCK, bank.shape[0])
+                slab = qq @ bank[j:stop].T
+                slab *= -2.0
+                slab += q2
+                slab += b2[None, j:stop]
+                np.maximum(slab, 0.0, out=slab)
+                merged = np.concatenate((top, slab), axis=1)
+                merged.partition(k - 1, axis=1)
+                top = merged[:, :k]
+            out[a:a + chunk] = np.sqrt(top).mean(axis=1)
+            continue
+        d2 = qq @ bank.T
+        d2 *= -2.0
+        d2 += (qq ** 2).sum(axis=1)[:, None]
+        d2 += b2[None, :]
+        np.maximum(d2, 0.0, out=d2)
         if k == 1:
             out[a:a + chunk] = np.sqrt(d2.min(axis=1))
         else:
-            out[a:a + chunk] = np.sqrt(np.partition(d2, k - 1, axis=1)[:, :k]).mean(axis=1)
+            d2.partition(k - 1, axis=1)
+            out[a:a + chunk] = np.sqrt(d2[:, :k]).mean(axis=1)
     return out
 
 
