@@ -618,21 +618,18 @@ def signal_features(x, rate=1.0):
     if x.size == 0:
         return {k: 0.0 for k in ("rms", "peak", "crest_factor", "zcr",
                                  "spectral_centroid", "peak_freq", "bandwidth")}
-    r = float(np.sqrt(np.mean(x * x)))
+    r = rms(x)
     peak = float(np.max(np.abs(x)))
     freqs, mag = spectrum(x, rate)
     msum = float(mag.sum()) + 1e-12
     centroid = float((freqs * mag).sum() / msum)
     peak_freq = float(freqs[int(np.argmax(mag))])
     bandwidth = float(np.sqrt(((freqs - centroid) ** 2 * mag).sum() / msum))
-    nz = x[x != 0.0]
     return {
         "rms": round(r, 6),
         "peak": round(peak, 6),
         "crest_factor": round(peak / (r + 1e-12), 4),
-        "zcr": round(float(np.count_nonzero(
-            np.signbit(nz[:-1]) != np.signbit(nz[1:])))
-            / max(1, x.size - 1), 6),
+        "zcr": round(zero_crossing_rate(x), 6),
         "spectral_centroid": round(centroid, 3),
         "peak_freq": round(peak_freq, 3),
         "bandwidth": round(bandwidth, 3),

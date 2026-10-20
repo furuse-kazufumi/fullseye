@@ -51,6 +51,41 @@ def test_389_zcr_matches_original_with_zeros():
         assert dsp.zero_crossing_rate(x) == _zcr_reference(x)
 
 
+def test_386_387_point_spectrum_memory_variant_matches_exact():
+    rng = np.random.default_rng(386)
+    for n, n_freq, weighted in ((31, 17, False), (1000, 64, True)):
+        positions = np.sort(rng.random(n) * 20.0)
+        weights = rng.random(n) if weighted else None
+        exact = dsp.point_spectrum(positions, n_freq=n_freq, weights=weights)
+        bounded = dsp.point_spectrum(
+            positions, n_freq=n_freq, weights=weights,
+            memory_budget=16 * n * 3,
+        )
+        np.testing.assert_array_equal(bounded["freq"], exact["freq"])
+        np.testing.assert_allclose(bounded["power"], exact["power"], rtol=0, atol=1e-12)
+
+
+def test_388_signal_features_matches_original_composition():
+    rng = np.random.default_rng(388)
+    for x, rate in ((rng.normal(size=127), 1.0),
+                    (rng.choice([-1.0, 0.0, 2.0], 2048), 48000.0)):
+        r = dsp.rms(x)
+        peak = float(np.max(np.abs(x)))
+        freqs, mag = dsp.spectrum(x, rate)
+        msum = float(mag.sum()) + 1e-12
+        centroid = float((freqs * mag).sum() / msum)
+        expected = {
+            "rms": round(r, 6), "peak": round(peak, 6),
+            "crest_factor": round(peak / (r + 1e-12), 4),
+            "zcr": round(dsp.zero_crossing_rate(x), 6),
+            "spectral_centroid": round(centroid, 3),
+            "peak_freq": round(float(freqs[int(np.argmax(mag))]), 3),
+            "bandwidth": round(float(np.sqrt(
+                ((freqs - centroid) ** 2 * mag).sum() / msum)), 3),
+        }
+        assert dsp.signal_features(x, rate) == expected
+
+
 def test_392_395_funct1d_identity_and_batch_lookup():
     rng = np.random.default_rng(392)
     y = rng.normal(size=10000)
