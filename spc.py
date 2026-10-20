@@ -276,11 +276,11 @@ def spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None):
         if sd <= 0:
             raise ValueError("%s: sigma must be > 0, got %r" % (op, sd))
     tgt = float(target)
-    z = np.empty(x.size, dtype=np.float64)
-    prev = tgt
-    for i in range(x.size):
-        prev = lam * x[i] + (1.0 - lam) * prev
-        z[i] = prev
+    from scipy.signal import lfilter
+    # y[0] = lam*x[0] + zi[0] なので、zi=(1-lam)*target とすれば
+    # 文書の再帰式にある初期値 z_0=target を厳密に与えられる。
+    z, _ = lfilter([lam], [1.0, -(1.0 - lam)], x,
+                   zi=[(1.0 - lam) * tgt])
     i1 = np.arange(1, x.size + 1, dtype=np.float64)
     var = sd * sd * (lam / (2.0 - lam)) * (1.0 - (1.0 - lam) ** (2.0 * i1))
     half = L * np.sqrt(var)
