@@ -129,10 +129,11 @@ def bandpass(y, low=0.1, high=0.4):
     a = _as_1d(y, "y")
     if not (0.0 <= low < high <= 1.0):
         raise ValueError(f"0<=low<high<=1 required (got: low={low}, high={high})")
-    return _apply_gain(a, _gauss_lp_gain(a.size, high)) - _apply_gain(a, _gauss_lp_gain(a.size, low))
+    gain = _gauss_lp_gain(a.size, high) - _gauss_lp_gain(a.size, low)
+    return _apply_gain(a, gain)
 
 
-def smooth(y, window=5):
+def smooth(y, window=5, method="exact"):
     """移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。"""
     a = _as_1d(y, "y")
     w = int(window)
@@ -140,6 +141,11 @@ def smooth(y, window=5):
         raise ValueError(f"window must be >= 1 (got: {window})")
     if w % 2 == 0:
         w += 1
+    if method == "fast":
+        from scipy.ndimage import uniform_filter1d
+        return uniform_filter1d(a, size=w, mode="nearest")
+    if method != "exact":
+        raise ValueError("method must be 'exact' or 'fast'")
     pad = w // 2
     ap = np.pad(a, pad, mode="edge")
     kern = np.ones(w) / w
@@ -162,8 +168,11 @@ def spline_fit(x, y, smooth=0.0):
     ya = _as_1d(y, "y")
     if xa.shape != ya.shape:
         raise ValueError(f"x and y have mismatched lengths ({xa.shape} vs {ya.shape})")
-    order = np.argsort(xa)
-    xs, ys = xa[order], ya[order]
+    if np.all(np.diff(xa) > 0):
+        xs, ys = xa, ya
+    else:
+        order = np.argsort(xa)
+        xs, ys = xa[order], ya[order]
     if np.any(np.diff(xs) <= 0):
         raise ValueError("x has duplicate values and cannot be interpolated (cannot sort to strictly increasing)")
     s = float(smooth)
