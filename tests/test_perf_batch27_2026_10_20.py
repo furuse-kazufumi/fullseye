@@ -10,6 +10,7 @@ import pytest
 from scipy import ndimage
 
 import volxform as vx
+import quatimage as qi
 
 
 def _old_resize(v, shape, order=1, mode="nearest", cval=0.0):
@@ -132,3 +133,120 @@ def test_365_output_array_matches_allocating_path_and_refuses_overlap():
     assert np.array_equal(got, expected)
     with pytest.raises(ValueError, match="overlap"):
         vx.vol_affine(v, np.eye(3), output=v)
+
+
+def _old_quat_correlate(a, b):
+    fa = [np.fft.fft2(a[..., i]) for i in range(4)]
+    fb = [np.fft.fft2(b[..., i]) for i in range(4)]
+
+    def xc(i, j):
+        return np.real(np.fft.ifft2(np.conj(fa[i]) * fb[j]))
+
+    return np.stack([
+        xc(0, 0) + xc(1, 1) + xc(2, 2) + xc(3, 3),
+        xc(0, 1) - xc(1, 0) - xc(2, 3) + xc(3, 2),
+        xc(0, 2) + xc(1, 3) - xc(2, 0) - xc(3, 1),
+        xc(0, 3) - xc(1, 2) + xc(2, 1) - xc(3, 0),
+    ], axis=-1)
+
+
+@pytest.mark.parametrize("shape", [(16, 18), (15, 17), (8, 9)])
+def test_319_quaternion_correlation_four_inverse_transforms(shape):
+    rng = np.random.default_rng(sum(shape))
+    a = rng.normal(size=shape + (4,))
+    b = rng.normal(size=shape + (4,))
+    ref = _old_quat_correlate(a, b)
+    got = qi.quat_correlate(a, b)
+    assert np.max(np.abs(got - ref)) <= 1e-10
+    assert np.unravel_index(np.argmax(got[..., 0]), shape) == np.unravel_index(
+        np.argmax(ref[..., 0]), shape)
+
+
+def test_319_peak_location_is_bit_identical_on_shifted_fixture():
+    rng = np.random.default_rng(319)
+    a = rng.normal(size=(31, 29, 4))
+    b = np.roll(a, (7, -4), axis=(0, 1))
+    ref = _old_quat_correlate(a, b)
+    got = qi.quat_correlate(a, b)
+    assert np.unravel_index(np.argmax(got[..., 0]), got.shape[:2]) == (7, 25)
+    assert np.unravel_index(np.argmax(ref[..., 0]), ref.shape[:2]) == (7, 25)
+
+
+def test_322_public_qft_is_bit_identical_to_reference_path():
+    rng = np.random.default_rng(322)
+    q = rng.normal(size=(15, 17, 4))
+    for side in ("left", "right"):
+        m, n, lam = qi._mu_basis(None, "test")
+        A, B = qi._to_symplectic(q, m, n, lam)
+        FA = np.fft.fft2(A)
+        FB = np.fft.fft2(B) if side == "left" else np.conj(np.fft.fft2(np.conj(B)))
+        ref = qi._from_symplectic(np.fft.fftshift(FA), np.fft.fftshift(FB), m, n, lam)
+        assert np.array_equal(qi.qft2(q, side), ref)
+
+
+def test_324_combined_monogenic_metrics_match_three_calls(monkeypatch):
+    q = qi.monogenic_signal(np.random.default_rng(324).normal(size=(31, 29)))
+    calls = 0
+    old = qi._require_monogenic
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return old(*args, **kwargs)
+
+    monkeypatch.setattr(qi, "_require_monogenic", counted)
+    got = qi.monogenic_metrics(q)
+    assert calls == 1
+    monkeypatch.setattr(qi, "_require_monogenic", old)
+    ref = (qi.monogenic_amplitude(q), qi.monogenic_phase(q),
+           qi.monogenic_orientation(q))
+    for actual, expected in zip(got, ref):
+        assert np.allclose(actual, expected, rtol=0.0, atol=1e-12)
+
+
+def _old_from_symplectic(A, B, m, n, lam):
+    out = np.empty(A.shape + (4,), np.float64)
+    out[..., 0] = np.real(A)
+    out[..., 1:] = (np.imag(A)[..., None] * m[None, None, :]
+                    + np.real(B)[..., None] * n[None, None, :]
+                    + np.imag(B)[..., None] * lam[None, None, :])
+    return out
+
+
+def test_323_fused_symplectic_reconstruction_is_identical():
+    rng = np.random.default_rng(323)
+    A = rng.normal(size=(71, 69)) + 1j * rng.normal(size=(71, 69))
+    B = rng.normal(size=(71, 69)) + 1j * rng.normal(size=(71, 69))
+    m, n, lam = qi._mu_basis(None, "test")
+    got = qi._from_symplectic(A, B, m, n, lam)
+    ref = _old_from_symplectic(A, B, m, n, lam)
+    assert np.array_equal(got, ref)
+
+
+def _old_identity_magnification(video, scales):
+    spec = np.fft.fft2(video, axes=(1, 2))
+    bank = qi._radial_bank(video.shape[1], video.shape[2], scales)
+    out = np.zeros_like(video, dtype=np.float64)
+    for G in bank["bands"]:
+        out += qi._band_monogenic(spec, G, bank)[0]
+    out += np.real(np.fft.ifft2(spec * bank["lowpass"][None], axes=(1, 2)))
+    out += np.real(np.fft.ifft2(spec * bank["highpass"][None], axes=(1, 2)))
+    return out
+
+
+def test_325_326_identity_gain_skips_riesz_and_matches_old(monkeypatch):
+    rng = np.random.default_rng(326)
+    video = rng.normal(size=(16, 31, 29))
+    ref = _old_identity_magnification(video, 3)
+    calls = 0
+    old = qi._band_monogenic
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return old(*args, **kwargs)
+
+    monkeypatch.setattr(qi, "_band_monogenic", counted)
+    got = qi.riesz_motion_magnify(video, 1.0, 1.0, 3.0, 16.0, scales=3)
+    assert calls == 0
+    assert np.max(np.abs(got["video"] - ref)) <= 1e-12

@@ -944,9 +944,9 @@ def _from_symplectic(A: np.ndarray, B: np.ndarray, m, n, lam) -> np.ndarray:
     """Inverse of :func:`_to_symplectic`."""
     out = np.empty(A.shape + (4,), np.float64)
     out[..., 0] = np.real(A)
-    out[..., 1:] = (np.imag(A)[..., None] * m[None, None, :]
-                    + np.real(B)[..., None] * n[None, None, :]
-                    + np.imag(B)[..., None] * lam[None, None, :])
+    ai, br, bi = np.imag(A), np.real(B), np.imag(B)
+    for j in range(3):
+        out[..., j + 1] = ai * m[j] + br * n[j] + bi * lam[j]
     return out
 
 
@@ -1132,15 +1132,15 @@ def quat_correlate(qimage, template) -> np.ndarray:
     Fa = [np.fft.fft2(a[..., i]) for i in range(4)]
     Fb = [np.fft.fft2(b[..., i]) for i in range(4)]
 
-    def xc(i, j):
-        """Circular cross-correlation ``sum_s a_i(s) b_j(s+t)``."""
-        return np.real(np.fft.ifft2(np.conj(Fa[i]) * Fb[j]))
-
-    # conj(a) = (a0, -a1, -a2, -a3); expand the Hamilton product term by term.
-    c0 = xc(0, 0) + xc(1, 1) + xc(2, 2) + xc(3, 3)
-    c1 = xc(0, 1) - xc(1, 0) - xc(2, 3) + xc(3, 2)
-    c2 = xc(0, 2) + xc(1, 3) - xc(2, 0) - xc(3, 1)
-    c3 = xc(0, 3) - xc(1, 2) + xc(2, 1) - xc(3, 0)
+    ca = [np.conj(x) for x in Fa]
+    c0 = np.real(np.fft.ifft2(ca[0] * Fb[0] + ca[1] * Fb[1]
+                              + ca[2] * Fb[2] + ca[3] * Fb[3]))
+    c1 = np.real(np.fft.ifft2(ca[0] * Fb[1] - ca[1] * Fb[0]
+                              - ca[2] * Fb[3] + ca[3] * Fb[2]))
+    c2 = np.real(np.fft.ifft2(ca[0] * Fb[2] + ca[1] * Fb[3]
+                              - ca[2] * Fb[0] - ca[3] * Fb[1]))
+    c3 = np.real(np.fft.ifft2(ca[0] * Fb[3] - ca[1] * Fb[2]
+                              + ca[2] * Fb[1] - ca[3] * Fb[0]))
     return np.stack([c0, c1, c2, c3], axis=-1)
 
 
@@ -1407,6 +1407,20 @@ def monogenic_orientation(qimage, display: bool = False) -> np.ndarray:
     return th / np.pi if display else th
 
 
+def monogenic_metrics(qimage):
+    """Return amplitude, phase, and orientation after one validation.
+
+    The three arrays are numerically identical within 1e-12 to calling the
+    individual metric functions.  Use this entry when all three are needed.
+    """
+    q = _require_monogenic(qimage, "qimage", "monogenic_metrics")
+    rmag = np.sqrt(q[..., 1] ** 2 + q[..., 2] ** 2)
+    amplitude = np.sqrt(q[..., 0] ** 2 + rmag ** 2)
+    phase = np.arctan2(rmag, q[..., 0])
+    orientation = np.mod(np.arctan2(q[..., 2], q[..., 1]), np.pi)
+    return amplitude, phase, orientation
+
+
 # --------------------------------------------------------------------------- #
 # the radial (Riesz pyramid) bank                                              #
 # --------------------------------------------------------------------------- #
@@ -1598,14 +1612,15 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
     w_total = 0.0
     coh_num = 0.0
     coh_den = 0.0
-    for G in bank["bands"]:
+    vid_peak = float(np.abs(vid).max())
+    if gain == 0.0:
+        total_filter = np.sum(bank["bands"], axis=0) + bank["lowpass"] + bank["highpass"]
+        out = np.real(np.fft.ifft2(spec * total_filter[None], axes=(1, 2)))
+    for G in (() if gain == 0.0 else bank["bands"]):
         I, R1, R2 = _band_monogenic(spec, G, bank)
-        if gain == 0.0:
-            out += I
-            continue
         _nx, _ny, zbar, z, live, amp, amp_max, _Ib, _R1b, _R2b, _rm = \
             _band_reference(I, R1, R2)
-        if amp_max <= _AMP_FLOOR * max(float(np.abs(vid).max()), 1.0):
+        if amp_max <= _AMP_FLOOR * max(vid_peak, 1.0):
             out += I                       # contrast-free band: nothing to shift
             continue
         dphi = np.angle(z * np.conj(zbar)[None])
@@ -1623,9 +1638,9 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
         coh_den += float((ewgt * mabs).sum())
         rproj = np.imag(z)
         out += I * np.cos(shift) - rproj * np.sin(shift)
-    lp = np.real(np.fft.ifft2(spec * bank["lowpass"][None], axes=(1, 2)))
-    hp = np.real(np.fft.ifft2(spec * bank["highpass"][None], axes=(1, 2)))
-    out += lp + hp
+    if gain != 0.0:
+        residual = bank["lowpass"] + bank["highpass"]
+        out += np.real(np.fft.ifft2(spec * residual[None], axes=(1, 2)))
     if not np.isfinite(out).all():
         raise ValueError("%s: the reconstruction produced non-finite samples — "
                          "this is a bug in the filter bank, not in the input "
