@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 90 項目**
+**収録 91 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -63,6 +63,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -84,7 +85,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (31)
+## 測る (32)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -341,6 +342,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 使う op: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 動く例: `poc_sem_wafer_defect_edge_bias`
+
+### [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md)
+
+`examples/poc_sem_tem_same_particle.py` は、20〜80 nmの球形・ファセット粒子14個を一つの真値台帳で持ち、同じ位置・径・材料から走査像と透過像を作ります。ISO 13322-1型の面積相当径、最大傾斜の縁、距離変換と`watersheds_marker`による接触粒子分離を同じ真値に照合します。
+
+使う op: `sem_render`, `sem_image`, `tem_projected_potential`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `watersheds_marker`, `radon_transform`, `filtered_backprojection`
+
+推奨パイプライン: [`sem_render`](ops/generative/sem/sem_render.md) → [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md)
+
+代替: [`sem_image`](ops/generative/sem/sem_image.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`watersheds_marker`](ops/segmentation/watershed/watersheds_marker.md), [`radon_transform`](ops/tomography/forward/radon_transform.md), [`filtered_backprojection`](ops/tomography/reconstruct/filtered_backprojection.md)
+
+限界: 二次電子像は内部構造を示さず、透過像には薄い支持膜が要る。厚い粒子では弱位相近似が崩れ、限定角再構成は欠落角方向へ伸びる。
+
+実寸校正: 画素寸法を既知寸法試料で校正し、走査像はビーム幅、透過像は電子波長と焦点外れを記録する。PoCは既知のnm格子なので追加較正0。
+
+動く例: `poc_sem_tem_same_particle`
 
 ### [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md)
 

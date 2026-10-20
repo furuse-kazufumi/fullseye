@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_same_specimen_sem_tem.png",
+  "name": "same_specimen_sem_tem",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "02_diameter_bias.png",
+  "name": "diameter_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_touching_watershed.png",
+  "name": "touching_watershed",
+  "caption": "",
+  "shape": [
+   349,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "04_missing_wedge.png",
+  "name": "missing_wedge",
+  "caption": "",
+  "shape": [
+   282,
+   408,
+   3
+  ]
+ },
+ {
+  "file": "05_limits.png",
+  "name": "limits",
+  "caption": "",
+  "shape": [
+   176,
+   498,
+   3
+  ],
+  "csv": "05_limits.csv",
+  "tsv": "05_limits.tsv"
+ },
+ {
+  "file": "06_tem_focus_sweep.gif",
+  "name": "tem_focus_sweep",
+  "caption": "24 defocus frames; the first frame is already away from focus",
+  "shape": [
+   258,
+   258,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0,
+  "video": "06_tem_focus_sweep.mp4",
+  "video_frames": 24,
+  "video_fps": 8.0,
+  "video_shape": [
+   258,
+   258,
+   3
+  ]
+ }
+]

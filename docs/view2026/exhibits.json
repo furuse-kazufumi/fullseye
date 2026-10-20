@@ -6608,6 +6608,23 @@
    }
   },
   {
+   "id": "poc_sem_tem_same_particle",
+   "group": "wing_metrology",
+   "media": "06_tem_focus_sweep.gif",
+   "motion": true,
+   "thumb_src": "01_same_specimen_sem_tem.png",
+   "label": {
+    "ja": "同じ粒子を走査像と透過像で測る",
+    "en": "The same particles in scanning and transmission images",
+    "zh": "在扫描像和透射像中测量同一批粒子",
+    "tw": "在掃描像與穿透像中量測同一批粒子",
+    "ko": "같은 입자를 주사 영상과 투과 영상으로 측정",
+    "de": "Dieselben Partikel in Raster- und Transmissionsbildern",
+    "hi": "एक ही कणों को scanning और transmission images में मापना",
+    "fr": "Les mêmes particules en imagerie à balayage et en transmission"
+   }
+  },
+  {
    "id": "poc_zmx_public_verify",
    "group": "wing_color",
    "media": "01_independent_verification.png",
@@ -6885,7 +6902,15 @@
     "ko": "SEM의 밝은 가장자리가 치수를 얼마나 부풀리는지 참값과 함께 측정",
     "de": "Messen, wie stark die helle SEM-Kante eine Abmessung aufbläht (mit Grundwahrheit)",
     "hi": "SEM की bright edge किसी dimension को कितना बढ़ाती है, ground truth के साथ मापना",
-    "fr": "Mesurer, avec vérité terrain, de combien le bord brillant d'un SEM grossit les dimensions"
+   "fr": "Mesurer, avec vérité terrain, de combien le bord brillant d'un SEM grossit les dimensions"
+   },
+   "sem-tem-same-particle": {
+    "zh": "测量同一批粒子的扫描像和透射像并比较两种尺寸偏差",
+    "tw": "量測同一批粒子的掃描像與穿透像並比較兩種尺寸偏差",
+    "ko": "같은 입자를 주사 영상과 투과 영상으로 측정해 두 치수 편향을 비교",
+    "de": "Dieselben Partikel in Raster- und Transmissionsbildern messen und beide Größenabweichungen vergleichen",
+    "hi": "एक ही कणों को scanning और transmission images में मापकर दोनों size biases की तुलना",
+    "fr": "Mesurer les mêmes particules en imagerie à balayage et en transmission et comparer les deux biais de taille"
    },
    "align-and-stack": {
     "zh": "对齐并叠加",
