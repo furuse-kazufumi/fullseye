@@ -206,6 +206,7 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
     converged = False
     gx = None
     res0 = None
+    n_states = 0
     for k in range(max_iter + 1):
         if keep_iterates:
             iterates.append(x.reshape(shape).copy() if not scalar else float(x[0]))
@@ -218,6 +219,10 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
         res.append(rn)
         xs.append(x.copy())
         gs.append(gx.copy())
+        n_states += 1
+        if len(xs) > 20:
+            xs.pop(0)
+            gs.pop(0)
         if res0 is None:
             res0 = max(rn, 1e-300)
         if rn <= tol + rtol * float(np.linalg.norm(x)):
@@ -226,7 +231,7 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
         if rn > DIVERGENCE_FACTOR * res0:
             reason = "diverged: the residual grew from %.3g to %.3g (factor > %.3g)" % (res0, rn, DIVERGENCE_FACTOR)
             break
-        if len(xs) >= 14:
+        if n_states >= 14:
             d1 = float(np.linalg.norm(xs[-1] - xs[-2]))
             d2 = float(np.linalg.norm(xs[-1] - xs[-3]))
             d3 = float(np.linalg.norm(xs[-2] - xs[-4]))
@@ -277,7 +282,9 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
                     x = gx
                 else:
                     gamma = np.linalg.solve(R, Q.T @ f)
-                    x = gx - np.column_stack(dG) @ gamma
+                    x = gx.copy()
+                    for column, coefficient in zip(dG, gamma):
+                        x -= column * coefficient
             if not np.isfinite(x).all():
                 reason = "diverged: the Anderson step produced NaN or inf at iteration %d" % k
                 break
