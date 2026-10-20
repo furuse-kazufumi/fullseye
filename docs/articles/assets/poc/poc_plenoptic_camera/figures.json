@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_camera_section.png",
+  "name": "camera_section",
+  "caption": "主レンズ、周期 MLA、センサを通る逆追跡の模式断面。",
+  "shape": [
+   140,
+   320
+  ]
+ },
+ {
+  "file": "02_f_number_matching.png",
+  "name": "f_number_matching",
+  "caption": "F ナンバーの不足、一致、過剰による重なりと隙間。",
+  "shape": [
+   45,
+   135
+  ]
+ },
+ {
+  "file": "03_raw_microimages.png",
+  "name": "raw_microimages",
+  "caption": "処方と MLA を逆追跡して得た生センサ像。",
+  "shape": [
+   75,
+   75
+  ]
+ },
+ {
+  "file": "04_subaperture_epi.png",
+  "name": "subaperture_epi",
+  "caption": "左・中央・右のサブアパーチャ像。",
+  "shape": [
+   48,
+   144
+  ]
+ },
+ {
+  "file": "05_refocus_sweep.png",
+  "name": "refocus_sweep",
+  "caption": "撮影後の再合焦。",
+  "shape": [
+   48,
+   144
+  ]
+ },
+ {
+  "file": "06_depth_and_limit.png",
+  "name": "depth_and_limit",
+  "caption": "既知 3 面の深度真値と、基準面からの差。",
+  "shape": [
+   48,
+   96
+  ]
+ },
+ {
+  "file": "07_refocus.gif",
+  "name": "refocus",
+  "caption": "24 段階の再合焦。上の一本線が焦点距離を示す。",
+  "shape": [
+   48,
+   48,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0,
+  "video": "07_refocus.mp4",
+  "video_frames": 24,
+  "video_fps": 8.0,
+  "video_shape": [
+   48,
+   48,
+   3
+  ]
+ }
+]

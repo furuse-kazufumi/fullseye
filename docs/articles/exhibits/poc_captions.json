@@ -3319,6 +3319,18 @@
    "run": "py -3.11 examples/poc_water_inspection_images.py"
   },
   {
+   "id": "poc_plenoptic_camera",
+   "wing": "wing_imaging",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "raw_microimages",
+   "title_ja": "処方から撮るプレノプティックカメラ",
+   "title_en": "A Prescription-Based Plenoptic Camera",
+   "caption_ja": "主レンズ、周期球面 MLA、センサを逆追跡し、一回の撮影から生のマイクロ像、サブアパーチャ像、再合焦像と距離を得る合成 PoC。境界光線と校正残差は fail-closed に拒否する。",
+   "caption_en": "A synthetic prescription-based camera traces a main lens, periodic spherical MLA and sensor backwards. One exposure yields raw microimages, sub-aperture views, refocusing and metric distance. Boundary rays and excessive calibration residuals fail closed.",
+   "run": "py -3.11 examples/poc_plenoptic_camera.py"
+  },
+  {
    "id": "poc_photograph_through_prescription",
    "wing": "wing_imaging",
    "added": "2026-10-20",

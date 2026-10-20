@@ -31464,6 +31464,24 @@
    "de": "Die Doppelreflexions-Geisterbilder einer hellen Punktquelle als Elektronen auf dem Sensor -> dict.",
    "hi": "किसी चमकीले बिंदु के दो-परावर्तन वाले ghost images, sensor पर इलेक्ट्रॉनों के रूप में -> dict।"
   },
+  "optics/mla_surface": {
+   "fp": "d0eebb81b305", "ja": "周期的な球面キャップのマイクロレンズアレイ面を記述する。", "zh": "描述周期球冠微透镜阵列表面。", "tw": "描述週期球冠微透鏡陣列表面。", "ko": "주기적 구면 캡 마이크로렌즈 배열 면을 기술한다.", "de": "Eine periodische Mikrolinsenarray-Fläche aus Kugelkappen beschreiben.", "hi": "आवर्ती गोलाकार-कैप माइक्रोलेंस ऐरे सतह का वर्णन करें।"
+  },
+  "optics/plenoptic_system": {
+   "fp": "4de626cc52b1", "ja": "主レンズ、MLA、センサを組み立て、F ナンバー整合を報告する。", "zh": "组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。", "tw": "組裝主鏡頭、微透鏡陣列和感測器，並報告 F 數匹配。", "ko": "주 렌즈, MLA, 센서를 조립하고 F 번호 정합을 보고한다.", "de": "Hauptobjektiv, MLA und Sensor zusammensetzen und die F-Zahl-Anpassung berichten.", "hi": "मुख्य लेंस, MLA और सेंसर को जोड़कर F-number मिलान रिपोर्ट करें।"
+  },
+  "optics/plenoptic_capture": {
+   "fp": "4254954e736d", "ja": "プレノプティック生フレームと白色校正画像を追跡して生成する。", "zh": "追迹生成光场原始帧及其白场校准图像。", "tw": "追跡產生光場原始幀及其白場校正影像。", "ko": "플렌옵틱 원시 프레임과 백색 보정 영상을 추적해 생성한다.", "de": "Ein plenoptisches Rohbild und sein Weißbild zur Kalibrierung nachverfolgen.", "hi": "प्लेनॉप्टिक raw frame और उसकी white calibration image को trace करें।"
+  },
+  "optics/plenoptic_mla_calibrate": {
+   "fp": "9bb6f03bef51", "ja": "白色画像のピークへ回転した長方格子を当てはめ、MLA を校正する。", "zh": "对白场图像峰值拟合旋转矩形晶格以校准微透镜阵列。", "tw": "對白場影像峰值擬合旋轉矩形晶格以校正微透鏡陣列。", "ko": "백색 영상의 피크에 회전 직사각 격자를 맞춰 MLA를 보정한다.", "de": "Ein gedrehtes rechteckiges Linsengitter an die Spitzen eines Weißbildes anpassen.", "hi": "white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।"
+  },
+  "optics/plenoptic_decode": {
+   "fp": "2f38b9ae1d67", "ja": "校正済み生フレームを整流し、光線場 L[v,u,y,x] を返す。", "zh": "校正并重采样原始帧，返回光场 L[v,u,y,x]。", "tw": "校正並重取樣原始幀，回傳光場 L[v,u,y,x]。", "ko": "보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.", "de": "Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.", "hi": "calibrated raw frame को rectify करके light field L[v,u,y,x] लौटाएँ।"
+  },
+  "optics/plenoptic_refocus_depth": {
+   "fp": "ddd177c30e78", "ja": "光線場の再合焦スロープをメートル単位の物体距離へ変換する。", "zh": "将光场重聚焦斜率转换为以米为单位的物距。", "tw": "將光場重聚焦斜率轉換為以公尺為單位的物距。", "ko": "광선장 재초점 기울기를 미터 단위 물체 거리로 변환한다.", "de": "Die Lichtfeld-Refokus-Steigung in eine Objektentfernung in Metern umrechnen.", "hi": "light-field refocus slope को मीटर में object distance में बदलें।"
+  },
   "optics/render_compare_prescriptions": {
    "fp": "7b7eb7d5ad18",
    "ja": "同じ場面を 2 本以上の処方で撮り、絵ごとの品質を表にする -> dict。",

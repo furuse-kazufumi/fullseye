@@ -213,7 +213,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-270 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+271 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -388,7 +388,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality और restoration</b> (22)</summary>
+<details class="vall"><summary><b>Image quality और restoration</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="धारियों की ओर बढ़ती मक्खी की आँख" width="200" height="200"><b>&#9654;</b><span>धारियों की ओर बढ़ती मक्खी की आँख</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -409,6 +409,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph segmentation" width="200" height="200"><b>&#9654;</b><span>Graph segmentation</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="pixel shift (false colour, aliasing)" width="200" height="200"><b>&#9654;</b><span>pixel shift (false colour, aliasing)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="पानी और पारदर्शी माध्यम: ocean waves, pool में refraction, पानी के भीतर का रंग, बोतल की caustic" width="200" height="200"><span>पानी और पारदर्शी माध्यम: ocean waves, pool में refraction, पानी के भीतर का रंग, बोतल की caustic</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक" width="200" height="200"><b>&#9654;</b><span>prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts" width="200" height="200"><span>वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार" width="200" height="200"><span>निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="pixel shift के offset और aperture का calibration (undetermined map)" width="200" height="200"><span>pixel shift के offset और aperture का calibration (undetermined map)</span></a>

@@ -213,7 +213,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-270 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+271 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -388,7 +388,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (22)</summary>
+<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="Ein Fliegenauge nähert sich Streifen" width="200" height="200"><b>&#9654;</b><span>Ein Fliegenauge nähert sich Streifen</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Verwacklung entfernen" width="200" height="200"><b>&#9654;</b><span>Verwacklung entfernen</span></a>
@@ -409,6 +409,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph-Segmentierung" width="200" height="200"><b>&#9654;</b><span>Graph-Segmentierung</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Pixel-Shift (Falschfarben, Aliasing)" width="200" height="200"><b>&#9654;</b><span>Pixel-Shift (Falschfarben, Aliasing)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="Wasser und transparente Medien: Meereswellen, Brechung im Becken, Farbe unter Wasser, Brennlinie einer Flasche" width="200" height="200"><span>Wasser und transparente Medien: Meereswellen, Brechung im Becken, Farbe unter Wasser, Brennlinie einer Flasche</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="Eine rezeptbasierte plenoptische Kamera: von Roh-Mikrobildern zu Refokussierung und Entfernung" width="200" height="200"><b>&#9654;</b><span>Eine rezeptbasierte plenoptische Kamera: von Roh-Mikrobildern zu Refokussierung und Entfernung</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen: Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder" width="200" height="200"><span>Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen: Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="Wie Wasser in Prüfbildern aussieht: Kaustiken auf dem Beckenboden, eine Flasche von der Seite, eine nasse Platte, ein Rumpf unter Wasser" width="200" height="200"><span>Wie Wasser in Prüfbildern aussieht: Kaustiken auf dem Beckenboden, eine Flasche von der Seite, eine nasse Platte, ein Rumpf unter Wasser</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)" width="200" height="200"><span>Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)</span></a>

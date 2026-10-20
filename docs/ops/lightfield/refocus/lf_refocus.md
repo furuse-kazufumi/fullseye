@@ -4,7 +4,7 @@ dim: lightfield
 category: refocus
 in: lightfield
 out: image2d
-examples: [lightfield_depth, poc_lightfield_depth]
+examples: [lightfield_depth, poc_lightfield_depth, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ over-large *slope* (:data:`MAX_ABS_SLOPE`), unknown *interp* / *edge*.
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
 - [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
+- [poc_plenoptic_camera](../../../../examples/poc_plenoptic_camera.py) — `py -3.11 examples/poc_plenoptic_camera.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -4,7 +4,7 @@ dim: lightfield
 category: synthesis
 in: 
 out: lightfield
-examples: [lightfield_depth, poc_compound_eye]
+examples: [lightfield_depth, poc_compound_eye, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -82,6 +82,7 @@ so large the smoothed texture's dynamic range falls below
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
 - [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`
+- [poc_plenoptic_camera](../../../../examples/poc_plenoptic_camera.py) — `py -3.11 examples/poc_plenoptic_camera.py`
 
 ## 型が繋がる次の op(`lightfield` を入力に取れる)
 

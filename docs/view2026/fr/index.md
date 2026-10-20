@@ -213,7 +213,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-270 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+271 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -388,7 +388,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Qualité d'image et restauration</b> (22)</summary>
+<details class="vall"><summary><b>Qualité d'image et restauration</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="L'œil de la mouche face à des rayures" width="200" height="200"><b>&#9654;</b><span>L'œil de la mouche face à des rayures</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Correction du flou de bougé" width="200" height="200"><b>&#9654;</b><span>Correction du flou de bougé</span></a>
@@ -409,6 +409,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Segmentation par graphe" width="200" height="200"><b>&#9654;</b><span>Segmentation par graphe</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Décalage de pixels (fausses couleurs et repliement)" width="200" height="200"><b>&#9654;</b><span>Décalage de pixels (fausses couleurs et repliement)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille" width="200" height="200"><span>L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="Une caméra plénoptique fondée sur une prescription : des micro-images brutes à la refocalisation et à la distance" width="200" height="200"><b>&#9654;</b><span>Une caméra plénoptique fondée sur une prescription : des micro-images brutes à la refocalisation et à la distance</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="Photographier une scène 3-D à travers la prescription réelle de l'objectif : profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes" width="200" height="200"><span>Photographier une scène 3-D à travers la prescription réelle de l'objectif : profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="L'eau dans les images d'inspection : caustiques au fond d'un bassin, une bouteille vue de côté, une plaque mouillée, une coque sous l'eau" width="200" height="200"><span>L'eau dans les images d'inspection : caustiques au fond d'un bassin, une bouteille vue de côté, une plaque mouillée, une coque sous l'eau</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)" width="200" height="200"><span>Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)</span></a>

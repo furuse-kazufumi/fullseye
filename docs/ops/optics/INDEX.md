@@ -1,4 +1,4 @@
-# OPTICS operator help — 423 ops in 48 categories
+# OPTICS operator help — 429 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -153,6 +153,10 @@
 ### pixelshift (6)
 
 [false_color_metric](pixelshift/false_color_metric.md) · [pixel_shift_capture](pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](pixelshift/pixel_shift_motion_mask.md) · [pixel_shift_pattern](pixelshift/pixel_shift_pattern.md) · [pixel_shift_resolution_budget](pixelshift/pixel_shift_resolution_budget.md)
+
+### plenoptic (6)
+
+[mla_surface](plenoptic/mla_surface.md) · [plenoptic_capture](plenoptic/plenoptic_capture.md) · [plenoptic_decode](plenoptic/plenoptic_decode.md) · [plenoptic_mla_calibrate](plenoptic/plenoptic_mla_calibrate.md) · [plenoptic_refocus_depth](plenoptic/plenoptic_refocus_depth.md) · [plenoptic_system](plenoptic/plenoptic_system.md)
 
 ### polarization (10)
 
