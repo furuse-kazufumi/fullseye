@@ -2,76 +2,102 @@
  {
   "file": "01_camera_section.png",
   "name": "camera_section",
-  "caption": "主レンズ、周期 MLA、センサを通る逆追跡の模式断面。",
+  "caption": "480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.",
   "shape": [
-   140,
-   320
+   360,
+   900,
+   3
   ]
  },
  {
   "file": "02_f_number_matching.png",
   "name": "f_number_matching",
-  "caption": "F ナンバーの不足、一致、過剰による重なりと隙間。",
+  "caption": "F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.",
   "shape": [
-   45,
-   135
+   232,
+   580,
+   3
   ]
  },
  {
   "file": "03_raw_microimages.png",
   "name": "raw_microimages",
-  "caption": "処方と MLA を逆追跡して得た生センサ像。",
+  "caption": "480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages.",
   "shape": [
-   75,
-   75
+   532,
+   990,
+   3
   ]
  },
  {
-  "file": "04_subaperture_epi.png",
-  "name": "subaperture_epi",
-  "caption": "左・中央・右のサブアパーチャ像。",
+  "file": "04_decode_subaperture_epi.png",
+  "name": "decode_subaperture_epi",
+  "caption": "15 x 15 decoded views; EPI disparity is 0.6 px per view step.",
   "shape": [
-   48,
-   144
+   606,
+   542,
+   3
   ]
  },
  {
   "file": "05_refocus_sweep.png",
   "name": "refocus_sweep",
-  "caption": "撮影後の再合焦。",
+  "caption": "The 0.6, 1.0 and 1.8 m planes peak at slopes -1.05, 0.00 and 1.05.",
   "shape": [
-   48,
-   144
+   606,
+   542,
+   3
   ]
  },
  {
-  "file": "06_depth_and_limit.png",
-  "name": "depth_and_limit",
-  "caption": "既知 3 面の深度真値と、基準面からの差。",
+  "file": "06_depth_map.png",
+  "name": "depth_map",
+  "caption": "Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.",
   "shape": [
-   48,
-   96
+   148,
+   434,
+   3
   ]
  },
  {
-  "file": "07_refocus.gif",
+  "file": "07_plenoptic_1_vs_2.png",
+  "name": "plenoptic_1_vs_2",
+  "caption": "Same MLA: plenoptic 1.0 resolves 8 line pairs; 2.0 resolves 13.",
+  "shape": [
+   244,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "08_limits.png",
+  "name": "limits",
+  "caption": "Limits: nominal prescription, detuned lens, and 1.50x F-number overlap.",
+  "shape": [
+   244,
+   616,
+   3
+  ]
+ },
+ {
+  "file": "09_refocus.gif",
   "name": "refocus",
-  "caption": "24 段階の再合焦。上の一本線が焦点距離を示す。",
+  "caption": "24-frame 480-pixel refocus sweep; all frames pass the content gates.",
   "shape": [
-   48,
-   48,
+   480,
+   480,
    3
   ],
   "animated": true,
   "frames": 24,
   "frames_written": 24,
   "fps": 8.0,
-  "video": "07_refocus.mp4",
+  "video": "09_refocus.mp4",
   "video_frames": 24,
   "video_fps": 8.0,
   "video_shape": [
-   48,
-   48,
+   480,
+   480,
    3
   ]
  }

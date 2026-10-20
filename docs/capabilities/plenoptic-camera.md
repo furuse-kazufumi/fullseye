@@ -9,16 +9,44 @@ version: 0.7.0
 inputs: [table, image2d, lightfield]
 pipeline: [mla_surface, plenoptic_system, plenoptic_capture, plenoptic_mla_calibrate, plenoptic_decode, plenoptic_refocus_depth]
 alternatives: [lf_from_mla, lf_refocus, lf_depth_from_focus, trace_sensor_rays]
-limits: 幾何光学のみで回折と画素間クロストークは扱わない。六角格子は面のサグと法線まで対応し、現行の復号器は長方格子だけを校正する。距離換算は主レンズの近軸量を使う。
-calibration: 一様な白色場を撮り、マイクロ像のピークをサブピクセルで検出して格子のピッチ・回転・残差を求める。残差が上限を超えた校正は拒否する。
+limits: 幾何光学のみで回折と画素間クロストークは扱わない。
+calibration: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
 ---
 
 # 処方から撮るプレノプティックカメラ
 
-主レンズの逐次処方、周期球面のマイクロレンズアレイ、センサを組み合わせ、一回の撮影から生のマイクロ像と 4-D 光線場を作ります。各センサ画素は一つのレンズレットと主レンズの射出瞳上の一点に対応し、その光線を `lensrender` が物体空間へ逆追跡します。
+## できること
 
-`mla_surface` は正方または六角配列のサグ、法線、レンズレット番号を定義します。境界上では法線が一意に決まらないため、件数を報告して拒否します。`plenoptic_system` は主レンズと MLA の F ナンバー、マイクロ像径、重なりまたは隙間を閉形式で報告します。
+主レンズ処方、マイクロレンズアレイ、センサを組み合わせ、一回の撮影から生のマイクロ画像と四次元ライトフィールドを作る。出力は既存のライトフィールド処理へ直接渡せる。
 
-`plenoptic_capture` は生画像、白画像、画素ごとのレンズレット番号、主レンズ瞳の真値座標を返します。`plenoptic_mla_calibrate` は白画像から格子を推定し、`plenoptic_decode` は白画像で周辺減光を正規化しながら `L[v,u,y,x]` へ整流します。`plenoptic_refocus_depth` は再合焦スロープを主レンズの近軸共役からメートル単位の距離と一スロープ刻みの深度分解能へ変換します。
+## What it does
 
-実行例は `py -3.11 examples/poc_plenoptic_camera.py` です。PoC は外部データを使わず、収蔵番号 2026.272 の合成場面を生成します。
+It traces a prescription, microlens array and sensor, then decodes the raw frame to the repository's `(V,U,H,W)` light-field array for direct refocus and depth processing.
+
+## 向くところ / 向かないところ
+
+再合焦、三次元検査、F ナンバー整合の設計検討に向く。回折限界、センサの電気的クロストーク、実機固有の迷光評価には向かない。
+
+## 最初の 1 本
+
+```python
+decoded = plenoptic_decode(raw, calibration, angular=(15, 15))
+image = lightfield.lf_refocus(decoded, slope=0.5)
+slopes, confidence = lightfield.lf_depth_from_focus(decoded, sweep)
+```
+
+## 推奨パイプライン
+
+`mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth`。
+
+## 代替
+
+既存の生画像には `lf_from_mla`、再合焦には `lf_refocus`、焦点深度には `lf_depth_from_focus` を使う。
+
+## 限界
+
+幾何光学モデルであり、回折と画素間クロストークは扱わない。
+
+## 実寸校正
+
+一様な白色面から MLA のピッチ、回転、原点を校正し、距離既知の三平面でスロープからメートルへの変換を確認する。

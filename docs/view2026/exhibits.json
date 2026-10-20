@@ -6728,6 +6728,14 @@
    }
   ],
   "titles": {
+   "plenoptic-camera": {
+    "zh": "基于镜头处方的光场相机",
+    "tw": "基於鏡頭處方的光場相機",
+    "ko": "렌즈 처방 기반 라이트필드 카메라",
+    "de": "Lichtfeldkamera auf Basis einer Linsenrezeptur",
+    "hi": "लेंस विन्यास पर आधारित प्रकाश-क्षेत्र कैमरा",
+    "fr": "Caméra plénoptique fondée sur une prescription optique"
+   },
    "inner-diameter-in-mm": {
     "zh": "测量圆形零件的内径,直到毫米",
     "tw": "量測圓形零件的內徑,直到毫米",

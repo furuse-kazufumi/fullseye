@@ -1339,6 +1339,27 @@
    ]
   },
   {
+   "id": "plenoptic-camera",
+   "title": "処方から撮るプレノプティックカメラ",
+   "title_en": "Prescription-based plenoptic camera",
+   "category": "描く",
+   "note": "docs/capabilities/plenoptic-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_plenoptic_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "point-cloud-to-picture",
    "title": "点群をそのまま色の絵にする",
    "title_en": "Draw a point cloud as a colour picture",
@@ -2272,9 +2293,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 419,
+  "examples2d_total": 421,
   "run_by_the_poc_gate": 271,
-  "run_by_the_example_gate": 148,
+  "run_by_the_example_gate": 150,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

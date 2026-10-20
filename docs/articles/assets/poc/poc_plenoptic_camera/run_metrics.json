@@ -1,0 +1,24 @@
+{
+  "sensor_px": 480,
+  "lenslets": 32,
+  "pitch_px": 15,
+  "angular": 15,
+  "rays": 230400,
+  "cpu_s": 4.15625,
+  "wall_s": 4.293030600005295,
+  "focus_peaks": [
+    -1.0499999999999998,
+    0.0,
+    1.0499999999999998
+  ],
+  "truth_slopes": [
+    -1.0,
+    0.0,
+    1.0
+  ],
+  "video_frames": 24,
+  "video_short_side_px": 480,
+  "content_fraction_min": 0.5836588541666666,
+  "content_fraction_max": 0.850859375,
+  "mean_frame_difference": 17.156112432065218
+}

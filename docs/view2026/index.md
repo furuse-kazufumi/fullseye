@@ -104,7 +104,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-90 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+91 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -220,11 +220,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で): [説明](../capabilities/optics-drawings.md) · 例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト): [説明](../capabilities/photograph-through-prescription.md) · 例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画): [説明](../capabilities/pictures-that-carry-their-own-truth.md) · 例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 処方から撮るプレノプティックカメラ: [説明](../capabilities/plenoptic-camera.md) · 例 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線): [説明](../capabilities/theorems-as-pictures.md) · 例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[PoC 以外の使用例 151 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 153 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 

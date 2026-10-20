@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-90 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+91 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -205,11 +205,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में): [explanation](../../capabilities/optics-drawings.md) _(ja)_ · examples [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts): [explanation](../../capabilities/photograph-through-prescription.md) _(ja)_ · examples [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - आँख को धोखा देने वाली तस्वीरें बनाकर measurement को अंक देना (illusions, endless drawing, loops): [explanation](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · examples [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- लेंस विन्यास पर आधारित प्रकाश-क्षेत्र कैमरा: [explanation](../../capabilities/plenoptic-camera.md) _(ja)_ · examples [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - Theorems तस्वीरों के रूप में (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves): [explanation](../../capabilities/theorems-as-pictures.md) _(ja)_ · examples [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[PoC के अलावा 151 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 153 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 

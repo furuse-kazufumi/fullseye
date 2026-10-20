@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3489,
- "n_notes": 3495,
+ "n_ops": 3495,
+ "n_notes": 3501,
  "notes": {
   "vol_dilate": [
    {
@@ -29528,6 +29528,65 @@
     "category": "pixelshift",
     "out": "table",
     "path": "docs/ops/optics/pixelshift/pixel_shift_resolution_budget.md"
+   }
+  ],
+  "mla_surface": [
+   {
+    "op": "mla_surface",
+    "dim": "optics",
+    "category": "plenoptic",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/mla_surface.md"
+   }
+  ],
+  "plenoptic_capture": [
+   {
+    "op": "plenoptic_capture",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_capture.md"
+   }
+  ],
+  "plenoptic_decode": [
+   {
+    "op": "plenoptic_decode",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d × table",
+    "out": "lightfield",
+    "path": "docs/ops/optics/plenoptic/plenoptic_decode.md"
+   }
+  ],
+  "plenoptic_mla_calibrate": [
+   {
+    "op": "plenoptic_mla_calibrate",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_mla_calibrate.md"
+   }
+  ],
+  "plenoptic_refocus_depth": [
+   {
+    "op": "plenoptic_refocus_depth",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "lightfield × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_refocus_depth.md"
+   }
+  ],
+  "plenoptic_system": [
+   {
+    "op": "plenoptic_system",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_system.md"
    }
   ],
   "jones_apply": [

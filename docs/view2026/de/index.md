@@ -89,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-90 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+91 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -205,11 +205,12 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Optische Zeichnungen (Linsenschnitte, Aufbauzeichnungen und Einzellinsen-Fertigungszeichnungen nach ISO 10110 als SVG / DXF): [Erklärung](../../capabilities/optics-drawings.md) _(ja)_ · Beispiele [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen (Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder): [Erklärung](../../capabilities/photograph-through-prescription.md) _(ja)_ · Beispiele [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - Bilder, die das Auge täuschen, um das Messen zu benoten (Illusionen, endloses Zeichnen, Endlosschleifen): [Erklärung](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · Beispiele [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- Lichtfeldkamera auf Basis einer Linsenrezeptur: [Erklärung](../../capabilities/plenoptic-camera.md) _(ja)_ · Beispiele [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - Sätze als Bilder (Apollonisch, Ford, geodätische Kuppel, Phyllotaxis, IFS, raumfüllende Kurven): [Erklärung](../../capabilities/theorems-as-pictures.md) _(ja)_ · Beispiele [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[Alle 151 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 153 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 

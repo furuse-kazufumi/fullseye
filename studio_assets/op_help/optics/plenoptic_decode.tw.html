@@ -1,9 +1,11 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_decode — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>(要直接呼叫實作,<code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>校正並重取樣原始幀，回傳光場 L[v,u,y,x]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>The result is the repository&#x27;s existing <code style="color:#22d3bf">lightfield</code> type: a plain <code style="color:#22d3bf">(V,U,H,W)</code> array that composes directly with light-field operators.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
@@ -20,9 +22,9 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_plenoptic_camera">poc_plenoptic_camera</a> — <code style="color:#22d3bf">py -3.11 examples/poc_plenoptic_camera.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
-<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:plenoptic_decode_pipeline">plenoptic_decode_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/plenoptic_decode_pipeline.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">lightfield</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plenoptic</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mla_surface">mla_surface</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_system">plenoptic_system</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_capture">plenoptic_capture</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_mla_calibrate">plenoptic_mla_calibrate</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

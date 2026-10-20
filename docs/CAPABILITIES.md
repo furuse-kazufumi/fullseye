@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 90 項目**
+**収録 91 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -57,6 +57,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | `mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth` | `poc_plenoptic_camera` |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
@@ -1218,7 +1219,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 動く例: `annotate_paper_tour`
 
-## 描く (5)
+## 描く (6)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -1267,6 +1268,22 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 使う op: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
 
 動く例: `poc_illusions_and_perpetual_drawing`
+
+### [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md)
+
+主レンズ処方、マイクロレンズアレイ、センサを組み合わせ、一回の撮影から生のマイクロ画像と四次元ライトフィールドを作る。出力は既存のライトフィールド処理へ直接渡せる。
+
+使う op: `mla_surface`, `plenoptic_system`, `plenoptic_capture`, `plenoptic_mla_calibrate`, `plenoptic_decode`, `plenoptic_refocus_depth`
+
+推奨パイプライン: [`mla_surface`](ops/optics/plenoptic/mla_surface.md) → [`plenoptic_system`](ops/optics/plenoptic/plenoptic_system.md) → [`plenoptic_capture`](ops/optics/plenoptic/plenoptic_capture.md) → [`plenoptic_mla_calibrate`](ops/optics/plenoptic/plenoptic_mla_calibrate.md) → [`plenoptic_decode`](ops/optics/plenoptic/plenoptic_decode.md) → [`plenoptic_refocus_depth`](ops/optics/plenoptic/plenoptic_refocus_depth.md)
+
+代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
+
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+
+実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+
+動く例: `poc_plenoptic_camera`
 
 ### [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md)
 

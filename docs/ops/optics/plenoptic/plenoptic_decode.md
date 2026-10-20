@@ -3,8 +3,8 @@ op: plenoptic_decode
 dim: optics
 category: plenoptic
 in: image2d × table
-out: table
-examples: [poc_plenoptic_camera]
+out: lightfield
+examples: [plenoptic_decode_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -12,12 +12,15 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 # plenoptic_decode — OPTICS `plenoptic` op
 
-- **データ種**: `image2d × table` → `table`
+- **データ種**: `image2d × table` → `lightfield`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))` (実装を直接呼ぶなら `import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))`、台帳から引くなら `opsoptics.get("plenoptic_decode")`)
 
 ## 使い方
 
 Rectify a calibrated raw frame and return ``L[v,u,y,x]``.
+
+The result is the repository's existing ``lightfield`` type: a plain
+``(V,U,H,W)`` array that composes directly with light-field operators.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -43,11 +46,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [poc_plenoptic_camera](../../../../examples/poc_plenoptic_camera.py) — `py -3.11 examples/poc_plenoptic_camera.py`
+- [plenoptic_decode_pipeline](../../../../examples/plenoptic_decode_pipeline.py) — `py -3.11 examples/plenoptic_decode_pipeline.py`
 
-## 型が繋がる次の op(`table` を入力に取れる)
+## 型が繋がる次の op(`lightfield` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [sfr_from_edge](../imaging/sfr_from_edge.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md)
+[plenoptic_refocus_depth](plenoptic_refocus_depth.md)
 
 ## 同カテゴリ(`plenoptic`)
 

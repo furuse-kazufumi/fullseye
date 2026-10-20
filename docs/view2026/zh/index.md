@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 90 项,每项都有说明页(用法与限制)和可运行的示例。
+共 91 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -205,11 +205,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光学系统的图纸(以 SVG / DXF 输出透镜截面图、成像系统布置图和单透镜制造图): [说明](../../capabilities/optics-drawings.md) _(ja)_ · 示例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 按处方参数透过镜头拍摄三维场景(景深、猫眼虚化、边角照度、色差、鬼像): [说明](../../capabilities/photograph-through-prescription.md) _(ja)_ · 示例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 制作会骗眼睛的图来给测量方打分(错觉、无限绘制、循环动画): [说明](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 示例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 基于镜头处方的光场相机: [说明](../../capabilities/plenoptic-camera.md) _(ja)_ · 示例 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 定理即检验门的图(阿波罗尼奥斯、福特圆、测地穹顶、叶序、IFS、空间填充曲线): [说明](../../capabilities/theorems-as-pictures.md) _(ja)_ · 示例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[其他 151 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 153 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

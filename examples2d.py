@@ -38,6 +38,12 @@ DIR = os.path.join(_ROOT, "examples")
 # id -> metadata. `name`/`summary` are plain-language (what real problem it solves);
 # `task` groups the gallery; `data` is the provenance. Every id maps to examples/<id>.py.
 EXAMPLES = [
+    {"id": "plenoptic_decode_pipeline", "task": "optics_sensing", "data": "synthetic",
+     "name": "生のマイクロ画像から再合焦と深度へつなぐ",
+     "summary": "plenoptic_decode の (V,U,H,W) 配列を lf_refocus と lf_depth_from_focus へ直接渡す。"},
+    {"id": "plenoptic_capture_pipeline", "task": "optics_sensing", "data": "synthetic",
+     "name": "既存のレンズと場面からプレノプティック撮影へつなぐ",
+     "summary": "lens_system と lens_scene の出力を plenoptic_capture の入力として使う。"},
     # -- morphing / warping ------------------------------------------------------ #
     {"id": "image_morph", "task": "morphing", "data": "synthetic",
      "name": "2人の顔の中間を作る(対応点駆動モーフ)",

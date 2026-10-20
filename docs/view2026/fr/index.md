@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-90 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+91 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -205,11 +205,12 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Dessins de systèmes optiques (coupes de lentilles, schémas d'implantation de systèmes d'imagerie et dessins de fabrication de lentilles simples en SVG / DXF): [explication](../../capabilities/optics-drawings.md) _(ja)_ · exemples [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - Photographier une scène 3-D à travers la prescription réelle de l'objectif (profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes): [explication](../../capabilities/photograph-through-prescription.md) _(ja)_ · exemples [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - Créer des images qui trompent l'œil et noter le système de mesure (illusions d'optique, dessin infini, vidéos en boucle): [explication](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · exemples [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- Caméra plénoptique fondée sur une prescription optique: [explication](../../capabilities/plenoptic-camera.md) _(ja)_ · exemples [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - Des figures où un théorème fait barrière (Apollonius, Ford, dôme géodésique, phyllotaxie, IFS, courbes remplissant l'espace): [explication](../../capabilities/theorems-as-pictures.md) _(ja)_ · exemples [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[Liste des 151 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 153 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

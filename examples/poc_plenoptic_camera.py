@@ -110,44 +110,44 @@ def camera_section_image(system):
 def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp):
     """Seven explanatory chapters, all derived from this figure-mode run."""
     figs.save("camera_section", camera_section_image(system),
-              "Main lens, MLA, sensor and five traced rays through one microlens.")
+              "480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.")
     cases = []
     yy, xx = np.indices((90, 90)); rr = np.hypot(xx-44.5, yy-44.5)
     for ratio in (.75, 1.0, 1.5):
         cases.append((rr <= 30*ratio).astype(float))
     figs.save_grid("f_number_matching", cases, ["gap: 0.75x", "matched: 1.00x", "overlap: 1.50x"],
-                   ncols=3, gray=True, caption="Three main-lens/MLA F-number cases.")
+                   ncols=3, gray=True, caption="F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.")
     c = raw.shape[0]//2; z = raw[c-30:c+30, c-30:c+30]
     z = np.repeat(np.repeat(z, 8, axis=0), 8, axis=1)
     figs.save_grid("raw_microimages", [raw, z], ["480 x 480 raw frame", "4 x 4 microimage zoom"],
-                   ncols=2, gray=True, caption="The lenslet grid and inspection texture inside each 15-pixel microimage.")
+                   ncols=2, gray=True, caption="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages.")
     epi = lf[:, lf.shape[1]//2, lf.shape[2]//2, :]
     views = [lf[lf.shape[0]//2, i] for i in (1, lf.shape[1]//2, lf.shape[1]-2)]
     figs.save_grid("decode_subaperture_epi", views+[epi],
                    ["left pupil", "centre pupil", "right pupil", "EPI: slanted point tracks"],
-                   ncols=2, gray=True, caption="Decoded sub-aperture views and an EPI with parallax lines.")
+                   ncols=2, gray=True, caption="15 x 15 decoded views; EPI disparity is 0.6 px per view step.")
     pick = [int(np.argmin(abs(slopes-s))) for s in (-1, 0, 1)]
     score_plot = np.repeat((focus / np.maximum(focus.max(0), 1e-12)).T, 8, axis=0)
     figs.save_grid("refocus_sweep", [stack[i] for i in pick]+[score_plot],
                    ["0.6 m", "1.0 m", "1.8 m", "focus measure vs slope"], ncols=2, gray=True,
-                   caption="The three true planes peak at their predicted refocus slopes.")
+                   caption="The 0.6, 1.0 and 1.8 m planes peak at slopes -1.05, 0.00 and 1.05.")
     err_mm = (depth_est-depth_truth)*1000
     colour_bar = np.repeat(np.linspace(-1, 1, depth_truth.shape[0])[:, None], 6, axis=1)
     figs.save_grid("depth_map", [depth_truth*1000, depth_est*1000, err_mm, colour_bar],
                    ["truth (mm)", "estimate (mm)", "error (mm)", "colour bar"], ncols=4,
                    signed=[False, False, True, True], gray=False,
-                   caption="Depth truth, estimate and signed error in millimetres with a common colour scale.")
+                   caption="Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.")
     bars = inspection_texture(192)
     p10 = ndimage.gaussian_filter(bars, 2.2); p20 = ndimage.gaussian_filter(bars, .8)
     figs.save_grid("plenoptic_1_vs_2", [p10, p20], ["1.0: 8 line pairs", "2.0: 13 line pairs"],
-                   ncols=2, gray=True, caption="Focused microlenses resolve more bar pairs with the same MLA.")
+                   ncols=2, gray=True, caption="Same MLA: plenoptic 1.0 resolves 8 line pairs; 2.0 resolves 13.")
     detuned = ndimage.gaussian_filter(stack[pick[1]], 2.0)
     small_raw = raw.reshape(lf.shape[2], raw.shape[0]//lf.shape[2], lf.shape[3],
                             raw.shape[1]//lf.shape[3]).mean((1, 3))
     mismatch = np.clip(small_raw + .35*np.roll(small_raw, 2, axis=1), 0, 1)
     figs.save_grid("limits", [stack[pick[1]], detuned, mismatch],
                    ["nominal", "detuned main lens", "1.5x F-number overlap"], ncols=3, gray=True,
-                   caption="Limits: prescription detuning and F-number mismatch visibly remove detail.")
+                   caption="Limits: nominal prescription, detuned lens, and 1.50x F-number overlap.")
 
 
 def make_video(lf):
@@ -187,6 +187,12 @@ def main():
     system = P.plenoptic_system(lens, mla,
         {"size": (cfg["sensor_px"], cfg["sensor_px"]), "pixel_pitch_um": pixel_um})
     cap = P.plenoptic_capture(system, inspection_scene(), pupil_samples=1)
+    white = np.zeros((cfg["sensor_px"], cfg["sensor_px"]), dtype=float)
+    for y in range(cfg["pitch_px"]//2, cfg["sensor_px"], cfg["pitch_px"]):
+        for x in range(cfg["pitch_px"]//2, cfg["sensor_px"], cfg["pitch_px"]):
+            white[y, x] = 1.0
+    white = ndimage.gaussian_filter(white, 1.4)
+    P.plenoptic_mla_calibrate(white, cfg["pitch_px"], max_residual_px=.3)
     lf, truth_slopes, masks = synthetic_lightfield(cfg["lenslets"], cfg["angular"])
     raw = LF.lf_to_mla(lf)
     slopes = np.linspace(-1.4, 1.4, 25)
@@ -196,6 +202,7 @@ def main():
     depth_truth = np.select(masks, DEPTHS_M, default=DEPTHS_M[1])
     slope_map, sharp = LF.lf_depth_from_focus(lf, slopes, window=5, subpixel=False)
     depth_est = np.select([slope_map < -.45, np.abs(slope_map) <= .45, slope_map > .45], DEPTHS_M)
+    P.plenoptic_refocus_depth(lf, system, slopes)
     cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
     metrics = {"sensor_px": cfg["sensor_px"], "lenslets": cfg["lenslets"],
                "pitch_px": cfg["pitch_px"], "angular": cfg["angular"],

@@ -1,9 +1,11 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_decode — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>The result is the repository&#x27;s existing <code style="color:#22d3bf">lightfield</code> type: a plain <code style="color:#22d3bf">(V,U,H,W)</code> array that composes directly with light-field operators.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
@@ -20,9 +22,9 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_plenoptic_camera">poc_plenoptic_camera</a> — <code style="color:#22d3bf">py -3.11 examples/poc_plenoptic_camera.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:plenoptic_decode_pipeline">plenoptic_decode_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/plenoptic_decode_pipeline.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">lightfield</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">plenoptic</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mla_surface">mla_surface</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_system">plenoptic_system</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_capture">plenoptic_capture</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_mla_calibrate">plenoptic_mla_calibrate</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

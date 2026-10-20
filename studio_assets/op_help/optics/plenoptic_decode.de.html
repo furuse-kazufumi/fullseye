@@ -1,9 +1,11 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_decode — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code> (die Implementierung direkt: <code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The result is the repository&#x27;s existing <code style="color:#22d3bf">lightfield</code> type: a plain <code style="color:#22d3bf">(V,U,H,W)</code> array that composes directly with light-field operators.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
@@ -20,9 +22,9 @@
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_plenoptic_camera">poc_plenoptic_camera</a> — <code style="color:#22d3bf">py -3.11 examples/poc_plenoptic_camera.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
-<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:plenoptic_decode_pipeline">plenoptic_decode_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/plenoptic_decode_pipeline.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">lightfield</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plenoptic</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:mla_surface">mla_surface</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_system">plenoptic_system</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_capture">plenoptic_capture</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_mla_calibrate">plenoptic_mla_calibrate</a> · <a style="color:#22d3bf" href="opoptics:plenoptic_refocus_depth">plenoptic_refocus_depth</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

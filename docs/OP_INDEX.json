@@ -21027,7 +21027,7 @@
    "name": "plenoptic_decode",
    "halcon": "",
    "in_sort": "image2d",
-   "out_sort": "table",
+   "out_sort": "lightfield",
    "category": "plenoptic",
    "tier": "ledger",
    "ledger": "opsoptics",
