@@ -466,13 +466,15 @@ def laplace_inverse_func(F, t, *, M: int = 32) -> np.ndarray:
 # 既存の xsp_dct / xmh_haar は「画像 → 見せるための画像」で、係数も逆変換も Parseval の門も無かった。
 # ここは係数そのものを返し、逆変換で丸め誤差まで戻ることを門にする。2-D 画像・3-D ボリュームにそのまま効く。
 
-def dct_transform(x, *, axes=None, inverse: bool = False) -> dict:
+def dct_transform(x, *, axes=None, inverse: bool = False, diagnostics: str = "full"):
     """正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
 
     Args:
         x: 任意次元の実配列(信号・画像・ボリューム)。
         axes: 変換する軸(省略で全軸)。
         inverse: True なら係数から元に戻す。
+        diagnostics: ``"full"`` は従来どおり全診断、``"energy"`` は係数とエネルギー、
+            ``"none"`` は係数だけを返す。逆変換は互換性のため常に従来の辞書を返す。
 
     Returns:
         ``coeffs``(同じ形)、``energy``(Σx²、正規直交なので変換の前後で同じ = Parseval)、
@@ -486,6 +488,12 @@ def dct_transform(x, *, axes=None, inverse: bool = False) -> dict:
         raise ValueError("dct_transform: 有限値の 1 次元以上の配列")
     ax = tuple(range(a.ndim)) if axes is None else tuple(int(i) for i in np.atleast_1d(axes))
     y = (_fft.idctn if inverse else _fft.dctn)(a, type=2, axes=ax, norm="ortho")
+    if diagnostics not in ("full", "energy", "none"):
+        raise ValueError("dct_transform: diagnostics は 'full' / 'energy' / 'none'")
+    if not inverse and diagnostics == "none":
+        return y
+    if not inverse and diagnostics == "energy":
+        return {"coeffs": y, "energy": float(np.sum(y * y))}
     e = np.sort((y * y).ravel())[::-1]
     tot = float(e.sum())
     comp = np.cumsum(e) / tot if tot > 0 else np.ones_like(e)
