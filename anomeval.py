@@ -349,7 +349,17 @@ def anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95):
         raise ValueError("%s: recall >= %g at confidence %g cannot be guaranteed with %d defective images "
                          "(at least %d are needed, even if all are detected)" % (op, rec, conf, pos, n_req))
     ds = np.sort(s[y])[::-1]                                         # defect scores, highest first
-    k = next(kk for kk in range(1, pos + 1) if _cp_lower(kk, pos, alpha) >= rec)
+    # For fixed n and alpha the exact lower limit is monotone in k.  ``pos``
+    # is known to be feasible from the sample-size check above, so find the
+    # first feasible count without evaluating every preceding count.
+    low, high = 1, pos
+    while low < high:
+        mid = (low + high) // 2
+        if _cp_lower(mid, pos, alpha) >= rec:
+            high = mid
+        else:
+            low = mid + 1
+    k = low
     thr = float(ds[k - 1])
     detected = int((ds >= thr).sum())
     fa = int((s[~y] >= thr).sum())
