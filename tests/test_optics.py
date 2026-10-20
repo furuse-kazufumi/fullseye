@@ -918,8 +918,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 水の検査画像(watervision)7 op(408 → 415)。
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
     # 2026-10-21: 全方位画像・ODS・立体表示(omni360)23 op(423 → 446)。
-    assert len(opsoptics.OPSOPTICS) == 446
-    assert len(opsoptics.list_ops("omni360")) == 23
+    assert len(opsoptics.OPSOPTICS) == 447
+    assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7

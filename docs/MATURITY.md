@@ -128,9 +128,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 419 |
+| 2-D 台帳の例 | 420 |
 | `tests/test_poc_scripts_run.py` が走らせる | 271 |
-| `tests/test_example_scripts_run.py` が走らせる | 148 |
+| `tests/test_example_scripts_run.py` が走らせる | 149 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり
