@@ -289,7 +289,8 @@ def esdf(occupancy, voxel_size=1.0):
         return np.full(occ.shape, -np.inf, np.float64)
     d_out = ndimage.distance_transform_edt(~occ, sampling=samp)   # 自由セル: 最近占有まで(>0)
     d_in = ndimage.distance_transform_edt(occ, sampling=samp)     # 占有セル: 最近自由まで(>0)
-    return d_out - d_in                         # 外 +, 内 -
+    d_out -= d_in                              # reuse the output; input is untouched
+    return d_out                               # 外 +, 内 -
 
 
 def inflate(occupancy, radius, voxel_size=1.0):
@@ -315,7 +316,10 @@ def inflate(occupancy, radius, voxel_size=1.0):
         raise ValueError("radius must be non-negative")
     if r == 0.0 or not occ.any():
         return occ.copy()                       # 膨張なし / 障害物なし
-    return esdf(occ, voxel_size) <= r
+    # Inflation only needs free-cell distance to the nearest occupied cell.
+    return ndimage.distance_transform_edt(
+        ~occ, sampling=_sampling(voxel_size)
+    ) <= r
 
 
 def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear"):
