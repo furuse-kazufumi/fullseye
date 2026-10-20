@@ -184,10 +184,14 @@ def test_155_zero_specular_keeps_validation_and_diffuse_result():
         ID.solid_angle_render(normals, light, f0=0, diffuse_albedo=2)
 
 
+def _tem_power_spectrum_old(image, tile=64, overlap=.5):
+    spectra = TEM._tile_spectra(image, tile, overlap)
+    return np.fft.fftshift(np.mean(spectra, axis=0))
+
+
 def test_156_streamed_power_spectrum_matches_stacked_mean():
     image = np.random.default_rng(156).normal(size=(192, 192))
-    spectra = TEM._tile_spectra(image, 64, .5)
-    old = np.fft.fftshift(np.mean(spectra, axis=0))
+    old = _tem_power_spectrum_old(image)
     np.testing.assert_allclose(TEM.tem_power_spectrum(image, tile=64), old, rtol=0, atol=1e-12)
 
 
@@ -203,4 +207,21 @@ def test_164_element_groups_keep_projected_potential():
     atoms = np.array([[1.2, 2.3], [4.5, 3.2], [7.1, 8.2], [5.4, 6.3]])
     elements = ["C", "O", "C", "Si"]
     got = TEM.tem_projected_potential(atoms, elements, shape=32, pixel_A=.8)
-    assert got.shape == (32, 32) and np.isfinite(got).all()
+    old = _tem_projected_potential_old(atoms, elements, shape=32, pixel_A=.8)
+    np.testing.assert_allclose(got, old, rtol=0, atol=1e-12)
+
+
+def _tem_projected_potential_old(atoms, elements, shape=256, pixel_A=.5):
+    xy = np.asarray(atoms, dtype=np.float64)
+    ny, nx = (shape, shape) if np.isscalar(shape) else shape
+    px = float(pixel_A)
+    el = [elements] * len(xy) if isinstance(elements, str) else list(elements)
+    kx, ky = TEM._freq(ny, nx, px)
+    q = np.hypot(kx, ky)
+    transfer = np.sinc(kx * px) ** 2 * np.sinc(ky * px) ** 2
+    out = np.zeros((ny, nx), dtype=np.complex128)
+    for name in sorted(set(el)):
+        idx = np.array([element == name for element in el])
+        form = TEM._electron_form_factor(name, q / 2.)
+        out += np.fft.fft2(TEM._splat(xy[idx], ny, nx, px)) * form / transfer
+    return TEM.POTENTIAL_CONST * np.fft.ifft2(out).real / (px * px)
