@@ -60,7 +60,8 @@ def _homography_dlt(src, dst):
     for (x, y), (u, v) in zip(src, dst):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
-    _, _, Vt = np.linalg.svd(np.asarray(A))
+    A = np.asarray(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     H = Vt[-1].reshape(3, 3)
     return H / H[2, 2]
 
@@ -172,7 +173,7 @@ def camera_calibration(object_points, image_points_list):
         V.append(_vij(H, 0, 1))
         V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
     V = np.asarray(V)
-    _, sv, Vt = np.linalg.svd(V)
+    _, sv, Vt = np.linalg.svd(V, full_matrices=V.shape[0] < V.shape[1])
     # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)。
     #
     # ★ この門が**実カメラでは発火しない**ことを 2026-09-06 に実測した。歪みの
