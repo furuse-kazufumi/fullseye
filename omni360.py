@@ -9,6 +9,8 @@ from __future__ import annotations
 import math
 import numpy as np
 from scipy.ndimage import gaussian_filter, map_coordinates
+from scipy.optimize import least_squares
+from scipy.spatial.transform import Rotation
 
 
 def _unit(d):
@@ -265,6 +267,64 @@ def equirect_filter_gaussian(image,sigma_deg):
         row=gaussian_filter(im, (0,sx) if im.ndim==2 else (0,sx,0), mode=("nearest","wrap") if im.ndim==2 else ("nearest","wrap","nearest"))[y]
         out[y]=row
     return gaussian_filter(out,(sy,0) if im.ndim==2 else (sy,0,0),mode="nearest")
+
+
+def equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48)):
+    """Estimate and remove camera rotations from an equirectangular sequence.
+
+    Each frame is registered to the first one by minimising a cosine-latitude
+    weighted photometric residual on the sphere.  The returned rotations map
+    each input frame back to the reference.  ``removable`` is false when the
+    remaining normalised RMS exceeds ``residual_limit``; callers must inspect
+    it rather than silently treating translational/parallax motion as rotation.
+    """
+    fs = np.asarray(frames, float)
+    if fs.ndim not in (3, 4) or len(fs) < 1 or not np.all(np.isfinite(fs)):
+        raise ValueError("frames must be a finite (N,H,W[,C]) array")
+    sh, sw = map(int, sample_shape)
+    if sh < 8 or sw < 16 or residual_limit <= 0:
+        raise ValueError("sample grid or residual limit is invalid")
+    yy, xx = np.mgrid[0:sh, 0:sw]
+    dirs = equirect_to_dir(sh, sw).reshape(-1, 3)
+    uv0 = dir_to_equirect(dirs, *fs.shape[1:3])
+    ref = _sample(fs[0], uv0, True)
+    if ref.ndim == 1:
+        ref = ref[..., None]
+    weights = np.sqrt(equirect_weight_map(sh, sw)).reshape(-1, 1)
+    scale = max(float(np.ptp(ref)), 1e-12)
+    rotations = [np.eye(3)]
+    residuals = [0.0]
+    stable = [fs[0].copy()]
+    previous = np.zeros(3)
+    for frame in fs[1:]:
+        # Global yaw seed avoids the discontinuity at the -180/180-degree wrap.
+        gray_ref = ref.mean(-1).reshape(sh, sw)
+        gray = _sample(frame, uv0, True)
+        if gray.ndim == 2:
+            gray = gray.mean(-1)
+        gray = gray.reshape(sh, sw)
+        score_weights = weights.reshape(sh, sw)
+        scores = [np.sum(score_weights * gray_ref * np.roll(gray, k, axis=1)) for k in range(sw)]
+        yaw = -2 * np.pi * int(np.argmax(scores)) / sw
+        seed = previous.copy()
+        seed[1] = yaw
+
+        def fun(rotvec):
+            r = Rotation.from_rotvec(rotvec).as_matrix()
+            got = _sample(frame, dir_to_equirect(dirs @ r, *frame.shape[:2]), True)
+            if got.ndim == 1:
+                got = got[..., None]
+            return ((got - ref) * weights / scale).ravel()
+
+        fit = least_squares(fun, seed, method="trf", max_nfev=80,
+                            xtol=1e-11, ftol=1e-11, gtol=1e-11)
+        r = Rotation.from_rotvec(fit.x).as_matrix()
+        rms = float(np.sqrt(np.mean(fun(fit.x) ** 2)))
+        rotations.append(r); residuals.append(rms); previous = fit.x
+        stable.append(equirect_rotate(frame, r))
+    residuals = np.asarray(residuals)
+    return {"frames": np.stack(stable), "rotations": np.stack(rotations),
+            "residual": residuals, "removable": residuals <= residual_limit}
 
 
 def ods_depth_to_disparity(depth_m,ipd_m,w):
