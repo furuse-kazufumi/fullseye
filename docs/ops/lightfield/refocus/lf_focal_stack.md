@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # lf_focal_stack — LIGHTFIELD `refocus` op
 
 - **データ種**: `lightfield` → `images`
-- **呼び出し**: `import fullseye as fs; fs.ledger.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest')`、台帳から引くなら `opslightfield.get("lf_focal_stack")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest', prefilter='exact')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest', prefilter='exact')`、台帳から引くなら `opslightfield.get("lf_focal_stack")`)
 
 ## 使い方
 
@@ -23,6 +23,12 @@ Returns a ``list`` of ``(H, W)`` images (the ``images`` type), in the order
 given, so :mod:`focus_stack`'s fusion and any multi-image operator applies
 unchanged. The physical camera equivalent is racking the focus N times; here
 it costs one exposure and ``len(slopes) * V * U`` image shifts.
+
+With cubic interpolation, ``prefilter="reuse"`` computes each view's spline
+coefficients once.  It is faster for a multi-plane stack but changes edge
+samples because coefficient preparation and interpolation no longer share
+the implicit padding step; measured worst-case absolute error is below 0.10
+for inputs in ``[0, 1]``.  The default ``"exact"`` preserves prior results.
 
 **Raises** ``ValueError``: *lf* not a valid light field, *slopes* empty or
 longer than :data:`MAX_STACK_SLICES`, any slope non-finite or over

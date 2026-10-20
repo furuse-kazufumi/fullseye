@@ -83,6 +83,7 @@ def test_cubic_focal_stack_reuses_coefficients_for_each_boundary_mode():
         reused = lightfield.lf_focal_stack(
             lf, slopes, interp="cubic", edge=edge, prefilter="reuse"
         )
+        assert len(exact) == len(reused) == len(expected) == len(slopes)
         for got, fast, want in zip(exact, reused, expected):
             assert np.array_equal(got, want)
             assert np.max(np.abs(fast - want)) < 0.10
