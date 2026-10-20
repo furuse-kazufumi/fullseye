@@ -1,5 +1,7 @@
 import numpy as np
+import pytest
 
+import geometry2d
 import image_gen
 
 
@@ -24,3 +26,27 @@ def test_reproduced_h02_domain_results_can_be_chained_and_cropped():
     cropped_rel = image_gen.crop_domain_rel(first, r2, top=1, left=1, bottom=1, right=1)
     np.testing.assert_array_equal(cropped_rel["image"], first["image"][3:5, 1:3])
     np.testing.assert_array_equal(cropped_rel["domain"], r1[3:5, 1:3])
+
+
+def test_reproduced_h03_rectangle_intersection_defaults_to_exact_and_grid_converges():
+    cases = [
+        (0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0),
+        (0.0, 0.0, np.pi / 4, 1.0, 1.0, 0.0, 0.0, np.pi / 4, 1.0, 1.0),
+        (1e5, -1e5, np.pi / 3, 3.0, 0.02, 1e5, -1e5, np.pi / 3, 3.0, 0.02),
+    ]
+    for args in cases:
+        expected = 4.0 * args[3] * args[4]
+        assert geometry2d.area_intersection_rectangle2(*args) == pytest.approx(expected, abs=2e-10)
+
+    square = cases[1]
+    exact = geometry2d.area_intersection_rectangle2(*square)
+    error_60 = abs(geometry2d.area_intersection_rectangle2(*square, n=60, method="grid") - exact)
+    error_600 = abs(geometry2d.area_intersection_rectangle2(*square, n=600, method="grid") - exact)
+    assert error_600 < error_60 < 0.2
+
+    containment = (0, 0, 0.2, 3, 2, 0, 0, 0.2, 1, 0.5)
+    assert geometry2d.area_intersection_rectangle2(*containment) == pytest.approx(2.0)
+    assert geometry2d.area_intersection_rectangle2(0, 0, 0, 1, 1, 0, 5, 0, 1, 1) == 0.0
+    assert geometry2d.area_intersection_rectangle2(0, 0, 0, 1, 1, 0, 2, 0, 1, 1) == 0.0
+    shifted = tuple(v + 1e5 if i in {0, 1, 5, 6} else v for i, v in enumerate(containment))
+    assert geometry2d.area_intersection_rectangle2(*shifted) == pytest.approx(2.0, abs=1e-8)
