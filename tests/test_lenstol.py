@@ -239,3 +239,25 @@ def test_uniform_back_focus_rms_matches_legacy_2000_trials():
     got, old = modern["criteria"]["rms_spot"]["std"], legacy["rms_spot"]["std"]
     assert got == pytest.approx(old, rel=0.03)
     assert got > 1e-6 and old > 1e-6
+
+
+def test_empty_report_and_zmx_inputs_are_typed_refusals():
+    system = RT.example_system("singlet")
+    with pytest.raises(ValueError, match="non-empty"):
+        LT.tolerance_report({})
+    with pytest.raises(ValueError, match="at least one"):
+        LT.tolerance_table_zmx([])
+    with pytest.raises(ValueError):
+        LT.tolerance_table_from_zmx({}, "")
+
+
+def test_monte_carlo_histogram_bins_is_exact_and_validated():
+    system = RT.example_system("singlet")
+    table = LT.tolerance_table(system, defaults={"radius_pct": 0.01})
+    criteria = LT.tolerance_criteria(efl={"max": 200.0})
+    a = LT.tolerance_monte_carlo(system, table, criteria, trials=4, histogram_bins=2)
+    b = LT.tolerance_monte_carlo(system, table, criteria, trials=4, histogram_bins=8)
+    assert len(a["criteria"]["efl"]["histogram"]["counts"]) == 2
+    assert len(b["criteria"]["efl"]["histogram"]["counts"]) == 8
+    with pytest.raises(ValueError, match="histogram_bins"):
+        LT.tolerance_monte_carlo(system, table, criteria, trials=1, histogram_bins=0)

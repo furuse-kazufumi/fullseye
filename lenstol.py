@@ -453,7 +453,7 @@ def _stats(a, histogram_bins=20):
     if a.size == 0:
         return {"mean": INF, "std": INF, "percentiles": {str(p): INF for p in PERCENTILES},
                 "worst": INF, "histogram": {"edges": [], "counts": []}}
-    counts, edges = np.histogram(a, bins=min(histogram_bins, max(1, int(math.sqrt(a.size)))))
+    counts, edges = np.histogram(a, bins=histogram_bins)
     return {"mean": float(a.mean()), "std": float(a.std()),
             "percentiles": {str(p): float(np.percentile(a, p)) for p in PERCENTILES},
             "worst": float(a.max()),
@@ -467,7 +467,11 @@ def _inside(values, specs):
 
 def tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100, seed=0,
                           histogram_bins=20, _return_draws=False):
-    """Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds."""
+    """Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds.
+
+    ``histogram_bins`` is the exact number of bins used for every non-empty sample set.
+    Raises: ValueError if ``histogram_bins`` is not an integer in 1..10000.
+    """
     RT._check_system(system)
     system = RT._freeze_solves(system)
     rows = [_normalise_row(system, r, i) for i, r in enumerate(table)]
@@ -476,6 +480,11 @@ def tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100
     if isinstance(trials, bool) or not 1 <= int(trials) <= 1_000_000:
         raise ValueError("trials must be 1..1000000")
     trials = int(trials)
+    if isinstance(histogram_bins, bool) or not isinstance(histogram_bins, (int, np.integer)):
+        raise ValueError("histogram_bins must be an integer in 1..10000")
+    if not 1 <= int(histogram_bins) <= 10_000:
+        raise ValueError("histogram_bins must be an integer in 1..10000")
+    histogram_bins = int(histogram_bins)
     nominal = _evaluate(system, criteria)
     drawmap = {r["id"]: _draws(r, trials, seed) for r in rows}
     samples = {k: [] for k in criteria["criteria"]}
@@ -556,7 +565,17 @@ def tolerance_sensitivity(system, table, criteria, compensators=None, allowed_de
 
 
 def tolerance_report(result, sensitivity=None, as_dict=False):
-    """Create a compact assembly report as a dict or plain text."""
+    """Create a compact assembly report as a dict or plain text.
+
+    Raises: ValueError if ``result`` is empty or lacks required Monte Carlo fields.
+    """
+    required = ("nominal", "criteria", "yield", "yield_wilson95", "failed_trials",
+                "compensator_travel")
+    if not isinstance(result, dict) or not result:
+        raise ValueError("result must be a non-empty tolerance Monte Carlo result")
+    missing = [name for name in required if name not in result]
+    if missing:
+        raise ValueError("result is missing required fields: " + ", ".join(missing))
     data = {"nominal": result["nominal"], "criteria": result["criteria"], "yield": result["yield"],
             "yield_wilson95": result["yield_wilson95"], "failed_trials": result["failed_trials"],
             "top_contributors": [] if sensitivity is None else sensitivity["drivers"][:5],
@@ -578,12 +597,21 @@ def tolerance_report(result, sensitivity=None, as_dict=False):
 
 
 def tolerance_table_zmx(table):
-    """Serialise rows as NOTE lines; public native TOL syntax was not assumed."""
+    """Serialise rows as NOTE lines; public native TOL syntax was not assumed.
+
+    Raises: ValueError if ``table`` is empty.
+    """
+    if not table:
+        raise ValueError("table must contain at least one tolerance row")
     return "\n".join("NOTE TOLERANCE_ROW " + json.dumps(r, sort_keys=True, separators=(",", ":")) for r in table)
 
 
 def tolerance_table_from_zmx(system, text):
-    """Read tolerance NOTE lines written by :func:`tolerance_table_zmx`."""
+    """Read tolerance NOTE lines written by :func:`tolerance_table_zmx`.
+
+    Raises: ValueError if ``system`` is invalid or no tolerance row is present.
+    """
+    RT._check_system(system)
     rows = []
     prefix = "NOTE TOLERANCE_ROW "
     for line in str(text).splitlines():
