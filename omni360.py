@@ -170,7 +170,8 @@ def equirect_from_fisheye_pair(images, rotations, out_shape, model="equidistant"
         theta=np.arccos(np.clip(local[...,2],-1,1)); valid=theta<=np.deg2rad(fov_deg/2)
         fp=float(f_px[i] if np.ndim(f_px) else (f_px if f_px is not None else min(im.shape[:2])*.45))
         cen=(centres[i] if centres is not None else (im.shape[1]/2,im.shape[0]/2))
-        uv=fisheye_project(np.where(valid[...,None],local,np.array([0.,0.,1.])),model,fp,cen,fov_deg)
+        uv=fisheye_project(np.where(valid[...,None],local,np.array([0.,0.,1.])),
+                           model=model, f_px=fp, centre=cen, fov_deg=fov_deg)
         inside=valid&(uv[...,0]>=.5)&(uv[...,0]<im.shape[1]-.5)&(uv[...,1]>=.5)&(uv[...,1]<im.shape[0]-.5)
         edge=np.deg2rad(fov_deg/2)-theta; weight=np.clip(edge/max(np.deg2rad(feather_deg),1e-12),0,1)*inside
         samples.append(_sample(im,uv)); weights.append(weight)
