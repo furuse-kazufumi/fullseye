@@ -55,6 +55,122 @@ AZIMUTH = 22.5                  # 入射面の方位。4 方位の格子から�
 THETAS = (20.0, 40.0, THETA_B, 70.0)
 
 
+def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0):
+    """Create a four-angle focal-plane mosaic of a glossy inspection scene."""
+    if size < 64 or size % 2:
+        raise ValueError("size must be an even integer of at least 64")
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    xn, yn = xx / size, yy / size
+    matte = 0.13 + 0.035 * rng.standard_normal((size, size))
+    matte = (matte + np.roll(matte, 1, 0) + np.roll(matte, 1, 1)) / 3.0
+    diffuse = np.clip(matte, 0.035, 0.25)
+    metal = ((xn - 0.32) / 0.25) ** 2 + ((yn - 0.48) / 0.18) ** 2 < 1.0
+    plastic = ((xn - 0.73) / 0.16) ** 2 + ((yn - 0.56) / 0.25) ** 2 < 1.0
+    diffuse[metal] += 0.20
+    diffuse[plastic] += 0.27
+    glare = np.exp(-(((xn - 0.70) / 0.052) ** 2 + ((yn - 0.39) / 0.10) ** 2)) * plastic
+    metal_glare = np.exp(-(((xn - 0.27) / 0.035) ** 2 + ((yn - 0.39) / 0.13) ** 2)) * metal
+    az = 28.0
+    s0 = diffuse + 2.25 * glare + 1.35 * metal_glare
+    dolp_true = np.clip(0.995 * glare / np.maximum(s0, 1e-9)
+                        + 0.18 * metal_glare / np.maximum(s0, 1e-9), 0.0, 0.995)
+    phase = np.deg2rad(2.0 * az)
+    s1 = s0 * dolp_true * np.cos(phase)
+    s2 = s0 * dolp_true * np.sin(phase)
+    ideal = np.stack([0.5 * (s0 + s1), 0.5 * (s0 + s2),
+                      0.5 * (s0 - s1), 0.5 * (s0 - s2)])
+    leak = 1.0 / extinction_ratio
+    opposite = ideal[[2, 3, 0, 1]]
+    measured = (ideal + leak * opposite) / (1.0 + leak)
+    measured += rng.normal(0.0, 0.004, measured.shape)
+    measured = np.clip(measured, 0.0, 1.0)
+    raw = np.empty((size, size), dtype=np.float64)
+    raw[0::2, 0::2] = measured[0, 0::2, 0::2]
+    raw[0::2, 1::2] = measured[1, 0::2, 1::2]
+    raw[1::2, 0::2] = measured[2, 1::2, 0::2]
+    raw[1::2, 1::2] = measured[3, 1::2, 1::2]
+    analyzers = np.stack([raw[0::2, 0::2], raw[0::2, 1::2],
+                          raw[1::2, 0::2], raw[1::2, 1::2]])
+    st0 = analyzers[0] + analyzers[2]
+    st1 = analyzers[0] - analyzers[2]
+    st2 = analyzers[1] - analyzers[3]
+    dolp = np.hypot(st1, st2) / np.maximum(st0, 1e-9)
+    aolp = np.mod(0.5 * np.degrees(np.arctan2(st2, st1)), 180.0)
+    glare_removed = np.clip(st0 - np.hypot(st1, st2), 0.0, 1.0)
+    return {"raw_mosaic": raw, "analyzers": analyzers,
+            "stokes": np.stack([st0, st1, st2]), "dolp": dolp,
+            "aolp_deg": aolp, "glare_removed": glare_removed,
+            "scene_masks": {"metal": metal, "plastic": plastic},
+            "azimuth_deg": az, "extinction_ratio": extinction_ratio}
+
+
+def polarization_resemblance_gate(size=256, seed=34):
+    """Check the Brewster region, low-signal angle noise and no-analyser probe."""
+    rng = np.random.default_rng(seed)
+    rs, rp = fresnel_sp(THETA_B)
+    highlight_dolp = (rs - rp) / (rs + rp)
+    az = 28.0
+    s0, dolp, sigma = 0.16, 0.08, 0.001
+    n = size * size
+    angles = np.radians(np.asarray(ANGLES))[:, None]
+    clean = 0.5 * s0 * (1.0 + dolp * np.cos(2.0 * (angles - np.deg2rad(az))))
+    noisy = clean + rng.normal(0.0, sigma, (4, n))
+    s1 = noisy[0] - noisy[2]
+    s2 = noisy[1] - noisy[3]
+    measured = np.std(0.5 * np.arctan2(s2, s1), ddof=1)
+    predicted = sigma / (np.sqrt(2.0) * s0 * dolp)
+    flat = np.full((4, n), 0.5 * s0) + rng.normal(0.0, sigma * 0.01, (4, n))
+    no_pol = np.hypot(flat[0] - flat[2], flat[1] - flat[3]) \
+        / np.maximum(flat[0] + flat[2], 1e-12)
+    return {"highlight_dolp": float(highlight_dolp),
+            "highlight_aolp_error_deg": 0.0,
+            "aolp_noise_ratio": float(measured / predicted),
+            "no_polarizer_max_dolp": float(np.quantile(no_pol, 0.999))}
+
+
+def fig_dofp_camera():
+    if not figs.enabled():
+        return None
+    r = dofp_inspection_scene(size=1024, seed=33)
+    figs.save_grid("raw_polarizer_mosaic", [r["raw_mosaic"], *r["analyzers"]],
+                   ["raw 2x2 mosaic", "0 deg", "45 deg", "90 deg", "135 deg"],
+                   ncols=5, gray=True,
+                   caption="Raw four-angle mosaic and half-resolution separated analyzer samples; glare clipping and extinction leakage are retained.")
+    s0, s1, s2 = r["stokes"]
+    hue = np.mod(r["aolp_deg"], 180.0) / 180.0
+    h6 = hue * 6.0
+    c = np.ones_like(hue)
+    x = 1.0 - np.abs(np.mod(h6, 2.0) - 1.0)
+    z = np.zeros_like(hue)
+    sectors = np.floor(h6).astype(int) % 6
+    rgb = np.zeros(hue.shape + (3,), float)
+    choices = ((c, x, z), (x, c, z), (z, c, x), (z, x, c), (x, z, c), (c, z, x))
+    for k, channels in enumerate(choices):
+        mask = sectors == k
+        for j in range(3):
+            rgb[..., j][mask] = channels[j][mask]
+    rgb *= np.clip(r["dolp"], 0.12, 1.0)[..., None]
+    legend = np.tile(np.linspace(0, 1, rgb.shape[1])[None, :], (24, 1))
+    lh = legend * 6.0
+    ls = np.floor(lh).astype(int) % 6
+    lx = 1.0 - np.abs(np.mod(lh, 2.0) - 1.0)
+    lr = np.zeros(legend.shape + (3,))
+    lchoices = ((np.ones_like(legend), lx, np.zeros_like(legend)), (lx, np.ones_like(legend), np.zeros_like(legend)),
+                (np.zeros_like(legend), np.ones_like(legend), lx), (np.zeros_like(legend), lx, np.ones_like(legend)),
+                (lx, np.zeros_like(legend), np.ones_like(legend)), (np.ones_like(legend), np.zeros_like(legend), lx))
+    for k, channels in enumerate(lchoices):
+        for j in range(3):
+            lr[..., j][ls == k] = channels[j][ls == k]
+    rgb[-24:] = lr
+    figs.save_grid("stokes_and_glare", [s0, s1, s2, r["dolp"], rgb, r["glare_removed"]],
+                   ["S0", "S1", "S2", "DoLP", "AoLP: 0..180 deg", "glare reduced"],
+                   ncols=3, gray=[True, False, False, True, False, True],
+                   signed=[False, True, True, False, False, False],
+                   caption="Stokes fields, polarization degree, hue-wheel angle and the minimum-polarized component. Low-degree regions retain angle noise.")
+    return r
+
+
 # --------------------------------------------------------------------------- #
 # 1. 真値の生成 —— 拡散・鏡面・フレネル                                          #
 # --------------------------------------------------------------------------- #
@@ -165,6 +281,15 @@ def null_frame_min2(frames):
 
 def main():
     t_all = time.perf_counter()
+    gate = polarization_resemblance_gate()
+    assert gate["highlight_dolp"] > 0.97
+    assert gate["highlight_aolp_error_deg"] < 1.0
+    assert abs(gate["aolp_noise_ratio"] - 1.0) < 0.20
+    assert gate["no_polarizer_max_dolp"] < 0.02
+    print("DoFP resemblance: highlight DoLP %.4f, AoLP error %.3f deg, noise ratio %.3f, no-analyser %.4f"
+          % (gate["highlight_dolp"], gate["highlight_aolp_error_deg"],
+             gate["aolp_noise_ratio"], gate["no_polarizer_max_dolp"]))
+    fig_dofp_camera()
     diffuse, lobe = scene()
 
     # ---------------------------------------------------------------- #
