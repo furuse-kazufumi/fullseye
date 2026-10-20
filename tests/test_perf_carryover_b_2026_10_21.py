@@ -8,6 +8,7 @@ import opassist
 import tomography
 import lightfield
 import profileops
+import tsdf_fusion
 
 
 def _original_sart(sinogram, angles_deg, *, size, n_iter=1, relaxation=0.15):
@@ -119,3 +120,45 @@ def test_polyline_bvh_is_bit_identical_including_first_segment_ties():
         expected = _original_signed_distance(points, normals, poly)
         actual = profileops._signed_distance_to_polyline(points, normals, poly)
         assert np.array_equal(actual, expected)
+
+
+def _original_tsdf_integrate(tsdf, weight, depth, K, R, t, trunc, bounds):
+    d = np.asarray(depth, dtype=np.float64)
+    fx, fy, cx, cy = tsdf_fusion._as_K(K)
+    centers = tsdf_fusion._voxel_centers(tsdf.shape, bounds)
+    pc = centers @ np.asarray(R, np.float64).T + np.asarray(t, np.float64)
+    z = pc[:, 2]
+    zc = np.where(z > 0, z, 1.0)
+    ui = np.rint(fx * pc[:, 0] / zc + cx).astype(np.int64)
+    vi = np.rint(fy * pc[:, 1] / zc + cy).astype(np.int64)
+    h, w = d.shape
+    inside = (z > 0) & (ui >= 0) & (ui < w) & (vi >= 0) & (vi < h)
+    measured = np.zeros(len(z), np.float64)
+    measured[inside] = d[vi[inside], ui[inside]]
+    delta = measured - z
+    valid = inside & (measured > 0) & np.isfinite(measured) & (delta >= -trunc)
+    sdf = np.minimum(1.0, delta / trunc).reshape(tsdf.shape)
+    valid = valid.reshape(tsdf.shape)
+    old = weight[valid].astype(np.float64)
+    tsdf[valid] = ((old * tsdf[valid] + sdf[valid]) / (old + 1)).astype(tsdf.dtype)
+    weight[valid] = (old + 1).astype(weight.dtype)
+
+
+def test_tsdf_block_frustum_is_bit_identical_at_edge_and_in_free_space():
+    rng = np.random.default_rng(4)
+    depth = np.full((25, 31), 4.0)
+    depth[3, 4] = np.nan
+    K = np.array([[18., 0., 15.], [0., 17., 12.], [0., 0., 1.]])
+    bounds_cases = [
+        ((-5., 5.), (-4., 4.), (0.2, 6.0)),
+        ((-1.0, 3.5), (-2., 2.), (0.5, 3.5)),  # edge-touching and free-space blocks
+        ((-8., -1.), (-3., 3.), (0.1, 5.0)),
+    ]
+    for bounds in bounds_cases:
+        a = rng.random((33, 34, 35), dtype=np.float32)
+        wa = rng.integers(0, 3, a.shape).astype(np.float32)
+        b, wb = a.copy(), wa.copy()
+        _original_tsdf_integrate(a, wa, depth, K, np.eye(3), np.zeros(3), .4, bounds)
+        tsdf_fusion.integrate(b, wb, depth, K, np.eye(3), np.zeros(3), .4, bounds)
+        assert np.array_equal(b, a)
+        assert np.array_equal(wb, wa)
