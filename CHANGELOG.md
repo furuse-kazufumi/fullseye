@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - 一次元関数の長系列照合、ゼロ交差、複数位置の値取得を高速化した。
+- グラフの rich-club 曲線と複数グラフの重み集計を高速化し、一時配列を削減した。
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。

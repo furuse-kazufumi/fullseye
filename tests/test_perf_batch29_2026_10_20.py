@@ -237,12 +237,13 @@ def test_397_sparse_cycle_and_399_rich_club_match_original():
 
 def test_403_404_consensus_aggregation_identity():
     rng=np.random.default_rng(403)
-    mats=[rng.integers(0,4,(40,40)) for _ in range(5)]
-    for m in mats: np.fill_diagonal(m,0)
-    got=graphinv.graph_edge_consensus(mats)
-    p=np.stack([m>0 for m in mats]); occ=p.sum(0); s=np.stack(mats).sum(0)
-    ref=[float(s[occ==c].sum()/s.sum()) if c else 0.0 for c in range(6)]
-    np.testing.assert_allclose(got["synapse_share"], ref, rtol=0, atol=1e-15)
+    for count, shape, high in ((2, (7, 7), 2), (5, (40, 40), 4)):
+        mats=[rng.integers(0,high,shape) for _ in range(count)]
+        for m in mats: np.fill_diagonal(m,0)
+        got=graphinv.graph_edge_consensus(mats)
+        p=np.stack([m>0 for m in mats]); occ=p.sum(0); s=np.stack(mats).sum(0)
+        ref=[float(s[occ==c].sum()/s.sum()) if c else 0.0 for c in range(count+1)]
+        np.testing.assert_allclose(got["synapse_share"], ref, rtol=0, atol=1e-15)
 
 
 def test_408_min_dist_matches_reference_including_duplicates():
