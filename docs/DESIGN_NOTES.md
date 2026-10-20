@@ -1888,7 +1888,7 @@
 
 ## `pcseg.py`
 
-- **L448** — ★ ``full_matrices=True``(既定)は (N, N) の U を確保して**捨てる**。 2026-09-06 実測: 20000 点で 3.73 s / 3.2 GB、``full_matrices=False`` なら 0.876 ms(**4263 倍**)で Vt はビット一致。10 万点なら 80 GB で落ちる。 同型が pcseg.fit_plane / measure / ops / camera / pnp3d にもあった (すべて U を捨てている)。静的な門は tests/test_svd_full_matrices.py。
+- **L489** — ★ ``full_matrices=True``(既定)は (N, N) の U を確保して**捨てる**。 2026-09-06 実測: 20000 点で 3.73 s / 3.2 GB、``full_matrices=False`` なら 0.876 ms(**4263 倍**)で Vt はビット一致。10 万点なら 80 GB で落ちる。 同型が pcseg.fit_plane / measure / ops / camera / pnp3d にもあった (すべて U を捨てている)。静的な門は tests/test_svd_full_matrices.py。
 
 ## `perpetual.py`
 

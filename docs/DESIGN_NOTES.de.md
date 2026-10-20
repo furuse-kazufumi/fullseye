@@ -1890,7 +1890,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `pcseg.py`
 
-- **L448** — ★ ``full_matrices=True`` (Standard) allokiert das (N, N) U und **wirft es weg**. Gemessen 2026-09-06: für 20000 Punkte 3.73 s / 3.2 GB, während ``full_matrices=False`` 0.876 ms (**4263x**) mit bitidentischem Vt ist. Bei 100k Punkten stirbt es bei 80 GB. Dasselbe Muster war in pcseg.fit_plane / measure / ops / camera / pnp3d (alle werfen U weg). Das statische Gate ist tests/test_svd_full_matrices.py.
+- **L489** — ★ ``full_matrices=True`` (Standard) allokiert das (N, N) U und **wirft es weg**. Gemessen 2026-09-06: für 20000 Punkte 3.73 s / 3.2 GB, während ``full_matrices=False`` 0.876 ms (**4263x**) mit bitidentischem Vt ist. Bei 100k Punkten stirbt es bei 80 GB. Dasselbe Muster war in pcseg.fit_plane / measure / ops / camera / pnp3d (alle werfen U weg). Das statische Gate ist tests/test_svd_full_matrices.py.
 
 ## `perpetual.py`
 
