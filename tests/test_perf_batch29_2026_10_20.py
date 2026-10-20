@@ -292,6 +292,29 @@ def test_414_strided_accessor_owned_and_identical():
     assert got.flags.c_contiguous
 
 
+def test_415_gltf_accessors_are_decoded_once(monkeypatch, tmp_path):
+    from types import SimpleNamespace as NS
+    path = tmp_path / "shared.gltf"; path.write_text("{}")
+    prim = NS(attributes=NS(POSITION=0), indices=1, mode=4)
+    gltf = NS(meshes=[NS(name="shared", primitives=[prim])])
+    monkeypatch.setattr(meshio_opt, "_need", lambda *a: NS(GLTF2=lambda: NS(load=lambda p: gltf)))
+    monkeypatch.setattr(meshio_opt, "_gltf_buffers", lambda *a: [])
+    nodes = [(NS(name="a"), 0, np.eye(4)), (NS(name="b"), 0, np.eye(4))]
+    monkeypatch.setattr(meshio_opt, "_iter_mesh_nodes", lambda *a: iter(nodes))
+    calls = []
+    values = {0: np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]]),
+              1: np.array([0, 1, 2], dtype=np.uint16)}
+    def decode(g, buffers, ai, src):
+        calls.append(ai); return values[ai].copy()
+    monkeypatch.setattr(meshio_opt, "_read_accessor", decode)
+    scene = meshio_opt.read_gltf(path)
+    assert calls == [0, 1]
+    assert len(scene) == 2
+    for item in scene:
+        np.testing.assert_array_equal(item["V"], values[0])
+        np.testing.assert_array_equal(item["F"], [[0, 1, 2]])
+
+
 def test_410_lhs_early_rejection_preserves_design_and_rng_state(monkeypatch):
     expect, md, state = _lhs_reference(90, 4, 410, 20)
     calls = {"pairs": 0}
