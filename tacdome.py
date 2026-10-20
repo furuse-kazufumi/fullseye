@@ -549,16 +549,21 @@ def contact_patch_radius(img, pitch: float, ring_px: float = 4.0) -> dict:
     rp = float(ring_px)
     if cy - r_t - 2 * rp < 0 or cx - r_t - 2 * rp < 0 or cy + r_t + 2 * rp > H - 1 or cx + r_t + 2 * rp > W - 1:
         raise ValueError("contact_patch_radius: contact patch touches the window border")
-    Y, X = np.mgrid[0:H, 0:W]
+    # 半径判定に必要なのは接触周辺だけ。窓全体の Y/X/R を保持しない。
+    reach = r_t + 2 * rp
+    y0, y1 = max(0, int(math.floor(cy - reach))), min(H, int(math.ceil(cy + reach)) + 1)
+    x0, x1 = max(0, int(math.floor(cx - reach))), min(W, int(math.ceil(cx + reach)) + 1)
+    Y, X = np.mgrid[y0:y1, x0:x1]
+    local = im[y0:y1, x0:x1]
     R = np.hypot(Y - cy, X - cx)
     inner = R < max(r_t - rp, 1.5)
     ring = (R > r_t + rp) & (R < r_t + 2 * rp)
     assert int(inner.sum()) >= 1 and int(ring.sum()) >= 8
-    fg, bg = float(np.median(im[inner])), float(np.median(im[ring]))
+    fg, bg = float(np.median(local[inner])), float(np.median(local[ring]))
     if not (fg > bg):
         raise ValueError("contact_patch_radius: patch is not brighter than its surroundings")
     sel = R < r_t + rp
-    cov = (im[sel] - bg) / (fg - bg)
+    cov = (local[sel] - bg) / (fg - bg)
     s = float(cov.sum())
     if not (s > 0):
         raise ValueError("contact_patch_radius: non-positive covered area")
