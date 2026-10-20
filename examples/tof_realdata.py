@@ -12,7 +12,9 @@ from pathlib import Path
 import numpy as np
 
 C = 299_792_458.0
-DATA_ROOT = Path(os.environ.get("FULLSEYE_ITOF_DATA", r"C:\dev\data\itof"))
+#: 実データの置き場は環境変数でだけ受ける(配布物に手元のパスを書かない)。未設定なら None で、読み口はすべて None を返す。
+_ENV_ROOT = os.environ.get("FULLSEYE_ITOF_DATA", "").strip()
+DATA_ROOT = Path(_ENV_ROOT) if _ENV_ROOT else None
 
 
 def _h5py():
@@ -37,6 +39,8 @@ def unpack_11bit(raw, frames=10, height=424, width=512):
 def read_raw_phase_frame(index=0):
     """Read ten packed raw phase images from the ECCV 2016 HDF5 log."""
     h5py = _h5py()
+    if DATA_ROOT is None:  # 実データの置き場が未設定なら「無い」と同じ扱い
+        return None
     path = DATA_ROOT / "liu_kinect2_kde" / "library.h5"
     if h5py is None or not path.exists():
         return None
@@ -47,6 +51,8 @@ def read_raw_phase_frame(index=0):
 def read_wall_capture(path=None):
     """Read amplitude, phase, and ten repeats from a wall/mesh capture."""
     h5py = _h5py()
+    if DATA_ROOT is None:  # 実データの置き場が未設定なら「無い」と同じ扱い
+        return None
     folder = DATA_ROOT / "zhaw_mpi_mesh" / "20221207_Mesh2m"
     files = sorted(folder.glob("*wall*.h5"))
     if h5py is None or not files:
@@ -60,6 +66,8 @@ def amplitude_spread_statistics(synthetic_amplitude):
     """Wasserstein gate against real scenes, normalized by each median."""
     from scipy.stats import wasserstein_distance
     h5py = _h5py()
+    if DATA_ROOT is None:  # 実データの置き場が未設定なら「無い」と同じ扱い
+        return None
     folder = DATA_ROOT / "zhaw_mpi_mesh" / "20221207_Mesh2m"
     files = sorted(folder.glob("*.h5"))
     if h5py is None or len(files) < 2:
@@ -179,6 +187,8 @@ def read_rgbe(path):
 
 def rendered_mpi_statistic():
     """Decode a rendered four-phase frame and compare it with ground truth."""
+    if DATA_ROOT is None:  # 実データの置き場が未設定なら「無い」と同じ扱い
+        return None
     folder = DATA_ROOT / "radu_cornellbox"
     paths = [folder / f"000_render_20MHz_phase{k}.hdr" for k in range(4)]
     truth_path = folder / "000_render_depth.hdr"
