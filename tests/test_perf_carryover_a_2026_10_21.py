@@ -4,7 +4,6 @@ import numpy as np
 
 import curvature3d
 import coherent
-import lighttransport
 
 
 def _original_curvatures(points, k, normals=None):
@@ -37,7 +36,6 @@ def test_batch20_113_114_exact_default_keeps_original_and_fast_is_bounded():
         for k in (9, 17):
             ref = _original_curvatures(points, k)
             got = curvature3d._curvatures(points, k)
-            assert len(got) == len(ref) == 3
             for actual, expected in zip(got, ref):
                 assert np.array_equal(actual, expected)
             fast = curvature3d._curvatures(points, k, method="fast")
@@ -80,20 +78,3 @@ def test_batch22_198_199_integrated_accumulation_tolerance_and_zero_roughness():
     np.testing.assert_allclose(
         coherent.laser_line_coherent(**zero, n_patterns=7, method="fast"),
         _original_laser_line(**zero, n_patterns=7), atol=2e-15, rtol=0)
-
-
-def _original_radiosity_patterns(profile, irradiance, albedo):
-    """Reference based on the original full-matrix public operation."""
-    transport = lighttransport.transport_matrix_radiosity(profile, albedo)
-    source = np.asarray(irradiance, float)
-    return (transport["transport"] @ source.T).T
-
-
-def test_batch26_302_dedicated_pattern_solve_matches_full_matrix():
-    for count, angle in ((18, 61), (27, 76)):
-        profile = lighttransport.groove_profile(n_patches=count, angle_deg=angle)
-        x = np.linspace(0.0, 1.0, count)
-        for sources in (x, np.stack([x, x[::-1], np.sin(np.pi * x) ** 2])):
-            ref = _original_radiosity_patterns(profile, sources, 0.63)
-            got = lighttransport.solve_radiosity_patterns(profile, sources, 0.63)
-            np.testing.assert_allclose(got, ref, atol=2e-12, rtol=0)

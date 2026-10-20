@@ -4,7 +4,7 @@ dim: optics
 category: light_transport
 in: 
 out: table
-examples: [converge_tour, poc_interreflection_fringe_error, poc_itof_multifreq, radiosity_patterns]
+examples: [converge_tour, poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -78,7 +78,6 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [converge_tour](../../../../examples/converge_tour.py) — `py -3.11 examples/converge_tour.py`
 - [poc_interreflection_fringe_error](../../../../examples/poc_interreflection_fringe_error.py) — `py -3.11 examples/poc_interreflection_fringe_error.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
-- [radiosity_patterns](../../../../examples/radiosity_patterns.py) — `py -3.11 examples/radiosity_patterns.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -86,7 +85,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`light_transport`)
 
-[form_factors_2d](form_factors_2d.md) · [transport_matrix_radiosity](transport_matrix_radiosity.md) · [solve_radiosity_patterns](solve_radiosity_patterns.md) · [high_frequency_patterns](high_frequency_patterns.md) · [render_transport](render_transport.md) · [separate_direct_global](separate_direct_global.md) · [fringe_multipath_phase_error](fringe_multipath_phase_error.md) · [predict_fringe_phase_error](predict_fringe_phase_error.md)
+[form_factors_2d](form_factors_2d.md) · [transport_matrix_radiosity](transport_matrix_radiosity.md) · [high_frequency_patterns](high_frequency_patterns.md) · [render_transport](render_transport.md) · [separate_direct_global](separate_direct_global.md) · [fringe_multipath_phase_error](fringe_multipath_phase_error.md) · [predict_fringe_phase_error](predict_fringe_phase_error.md) · [micro_phase_decode](micro_phase_decode.md)
 
 ---
 *Provenance: lighttransport.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

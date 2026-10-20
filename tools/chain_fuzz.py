@@ -4896,12 +4896,6 @@ def _b_transport_matrix_radiosity(pool, rng):
     return (_lt_groove(rng)[0],), {"albedo": float(rng.uniform(0.3, 0.9)), "n_bounces": 3}
 
 
-def _b_solve_radiosity_patterns(pool, rng):
-    profile = _lt_groove(rng)[0]
-    row = np.linspace(0.0, 1.0, len(profile["lengths"]))
-    return (profile, np.stack([row, row[::-1]])), {"albedo": 0.7}
-
-
 def _b_high_frequency_patterns(pool, rng):
     return (), {"shape": (4, 48), "period": 8, "fill": 0.25, "n_shifts": 4}
 
@@ -6838,7 +6832,6 @@ OP_ARG_BUILDERS = {
     "groove_profile": _b_groove_profile,
     "form_factors_2d": _b_form_factors_2d,
     "transport_matrix_radiosity": _b_transport_matrix_radiosity,
-    "solve_radiosity_patterns": _b_solve_radiosity_patterns,
     "high_frequency_patterns": _b_high_frequency_patterns,
     "render_transport": _b_render_transport,
     "separate_direct_global": _b_separate_direct_global,

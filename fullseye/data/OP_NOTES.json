@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3491,
- "n_notes": 3497,
+ "n_ops": 3490,
+ "n_notes": 3496,
  "notes": {
   "vol_dilate": [
    {
@@ -28685,16 +28685,6 @@
     "in": "images",
     "out": "table",
     "path": "docs/ops/optics/light_transport/separate_direct_global.md"
-   }
-  ],
-  "solve_radiosity_patterns": [
-   {
-    "op": "solve_radiosity_patterns",
-    "dim": "optics",
-    "category": "light_transport",
-    "in": "table × matrix",
-    "out": "matrix",
-    "path": "docs/ops/optics/light_transport/solve_radiosity_patterns.md"
    }
   ],
   "tof_multipath_phase": [

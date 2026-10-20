@@ -29169,15 +29169,6 @@
    "de": "Formfaktoren zwischen den Patches eines konkaven 2-D-Querschnitts (extrudierte Form) in geschlossener Form nach Hottels Crossed-Strings-Regel (``matrix``).",
    "hi": "Hottel के crossed-strings नियम के बंद रूप से अवतल 2-D (extruded) अनुप्रस्थ-काट के patches के बीच form factors (``matrix``)।"
   },
-  "optics/solve_radiosity_patterns": {
-   "fp": "6351493f5894",
-   "ja": "指定した照明パターンの右辺だけを解きます。",
-   "zh": "仅求解指定照明图案的右端项。",
-   "tw": "僅求解指定照明圖樣的右端項。",
-   "ko": "지정한 조명 패턴의 우변만 풉니다.",
-   "de": "Löst nur die angeforderten Beleuchtungsvektoren.",
-   "hi": "केवल दिए गए प्रकाश-पैटर्न के दाएँ पक्ष हल करता है।"
-  },
   "optics/transport_matrix_radiosity": {
    "fp": "137c3f41b1a8",
    "ja": "Lambert の凹んだ断面の光輸送行列: ラジオシティ B = T E、T = (I − diag(ρ)F)^-1 diag(ρ)(``table``)。",
