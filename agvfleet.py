@@ -225,6 +225,8 @@ def _st_astar(g, start, goal, dist, vcons, econs, horizon, reserved_goal_from=No
                 continue
             if w in rsv and nt >= rsv[w]:
                 continue
+            if nt + dist[w] > horizon:
+                continue
             key = (w, nt)
             nc = nconf + clash(w, nt)
             if key in closed or nc >= best.get(key, 1 << 30):
