@@ -215,13 +215,17 @@ def save_camera_figures(depth_map, d_hat):
                                       vmin=-1, vmax=1))[:, 0]
     panels = [_display_rgb(np.asarray(fs.apply_cmap(a, "turbo", vmin=lo, vmax=hi)))
               for a in (dep, truth)]
-    panels = [np.asarray(ann.color_bar(p.astype(np.float64) / 255.0,
-                                       turbo_lut, (410, 54, 14, 360),
+    def _bar_margin(panel, width=112):
+        """カラーバー用の白い余白を右に足す(データの上にバーを描かない)。"""
+        return np.pad(np.asarray(panel), ((0, 0), (0, width), (0, 0)), constant_values=255)
+
+    panels = [np.asarray(ann.color_bar(_bar_margin(p).astype(np.float64) / 255.0,
+                                       turbo_lut, (522, 54, 14, 360),
                                        vmin=lo, vmax=hi, unit="mm")) for p in panels]
     error_panel = _display_rgb(np.asarray(fs.apply_cmap(dep - truth, "coolwarm",
                                                         vmin=-0.6, vmax=0.6)))
-    panels.append(np.asarray(ann.color_bar(error_panel.astype(np.float64) / 255.0,
-                                           div_lut, (410, 54, 14, 360),
+    panels.append(np.asarray(ann.color_bar(_bar_margin(error_panel).astype(np.float64) / 255.0,
+                                           div_lut, (522, 54, 14, 360),
                                            vmin=-0.6, vmax=0.6, unit="mm")))
     figs.save_grid("depth_truth_error", panels,
                    ["TSR depth [mm]", "truth [mm]", "error [mm]"], ncols=3,
