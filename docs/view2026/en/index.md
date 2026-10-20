@@ -213,7 +213,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## See everything
 
-269 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+270 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 

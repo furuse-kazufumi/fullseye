@@ -228,7 +228,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 269 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 

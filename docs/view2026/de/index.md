@@ -213,7 +213,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-269 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+270 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 

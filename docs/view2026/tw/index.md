@@ -213,7 +213,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 269 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 

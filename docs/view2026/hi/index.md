@@ -213,7 +213,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-269 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+270 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 

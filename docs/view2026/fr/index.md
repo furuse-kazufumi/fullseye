@@ -213,7 +213,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-269 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+270 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 

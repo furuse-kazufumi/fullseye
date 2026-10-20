@@ -213,7 +213,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 269 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 270 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
