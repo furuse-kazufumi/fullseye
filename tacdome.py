@@ -356,8 +356,11 @@ def large_deformation_inverse(a: float, L: float, lin: dict, reading: str = "der
             raise ValueError("large_deformation_inverse: punch contact radius must exceed a0=%.4g (got %.4g)" % (a0, a))
         d = 1.0 - (a0 / a) ** 2
     else:
+        up = _U ** p
+
         def a_of(dd):
-            return float(largedef_radius_ratio(dd, p)) * lin["D"] * (dd * L) ** (1.0 / p)
+            ratio = float(np.sum(_WU * np.sqrt(1.0 - dd * up))) / math.sqrt(1.0 - dd)
+            return ratio * lin["D"] * (dd * L) ** (1.0 / p)
         lo, hi = 0.0, 1.0 - 1e-9
         if a_of(hi) < a:
             raise ValueError("large_deformation_inverse: a=%.4g is beyond d → 1 (max %.4g)" % (a, a_of(hi)))

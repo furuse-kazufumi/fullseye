@@ -7,6 +7,7 @@ from scipy.ndimage import binary_dilation
 
 import regions_setops as rs
 import reconstruction as reconstruction
+import tacdome
 
 
 def _old_bbox(region):
@@ -74,7 +75,9 @@ def _masks():
 
 
 def test_221_bbox_matches_old_on_random_structured_and_empty_masks():
-    for mask in _masks():
+    masks = _masks()
+    assert masks
+    for mask in masks:
         assert rs._bbox(mask) == _old_bbox(mask)
 
 
@@ -95,13 +98,16 @@ def test_223_neighbors_match_old_for_special_and_positive_iterations():
 
 def test_224_subset_matches_old_on_random_structured_and_empty_masks():
     masks = _masks()
+    assert masks
     for left in masks:
         for right in masks:
             assert rs.test_subset_region(left, right) is _old_subset(left, right)
 
 
 def test_225_runs_match_old_including_many_transitions():
-    for mask in _masks():
+    masks = _masks()
+    assert masks
+    for mask in masks:
         assert rs.get_region_runs(mask) == _old_runs(mask)
 
 
@@ -155,3 +161,42 @@ def test_210_grayvalue_gather_matches_old_for_array_and_list(monkeypatch):
     assert calls == 0
     assert np.array_equal(reconstruction.select_grayvalues_from_channels(list(stack), index), expected)
     assert calls == 1
+
+
+def _old_inverse_root(a, length, linear, tol=1e-14):
+    p = linear["p"]
+    low, high = 0.0, 1.0 - 1e-9
+
+    def radius(d):
+        return float(tacdome.largedef_radius_ratio(d, p)) * linear["D"] * (d * length) ** (1.0 / p)
+
+    iterations = 0
+    while high - low > tol * max(high, 1e-300) and iterations < 200:
+        middle = 0.5 * (low + high)
+        if radius(middle) < a:
+            low = middle
+        else:
+            high = middle
+        iterations += 1
+    return 0.5 * (low + high), iterations
+
+
+def test_215_inverse_scalar_evaluator_preserves_root_and_skips_public_array_path(monkeypatch):
+    linear = tacdome.powerlaw_linear_contact("sphere", 8e-3, 4e5)
+    for d in (1e-6, 0.03, 0.3, 0.8):
+        radius = tacdome.large_deformation_contact(d * 8e-3, 8e-3, linear)["a"]
+        expected_d, expected_iterations = _old_inverse_root(radius, 8e-3, linear)
+        calls = 0
+        original = tacdome.largedef_radius_ratio
+
+        def counted(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            return original(*args, **kwargs)
+
+        monkeypatch.setattr(tacdome, "largedef_radius_ratio", counted)
+        actual = tacdome.large_deformation_inverse(radius, 8e-3, linear)
+        monkeypatch.setattr(tacdome, "largedef_radius_ratio", original)
+        assert actual["d"] == expected_d
+        assert actual["iterations"] == expected_iterations
+        assert calls == 1  # 最終結果の構築だけ。二分法の反復からは呼ばない。
