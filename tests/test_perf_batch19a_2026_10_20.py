@@ -136,7 +136,9 @@ def test_67_rl_overlap_add_and_even_psf_crop():
 def test_69_70_rl_default_exact_and_zero_avoids_convolution(monkeypatch):
     rng = np.random.default_rng(6919)
     vol = rng.random((9, 10, 11)); psf = rng.random((3, 3, 3))
-    assert np.array_equal(volrestore.vol_richardson_lucy(vol, psf, 4), _old_rl(vol, psf, 4))
+    # 統合(2026-10-21): 既定経路は第 3 便の核スペクトル再利用(FFT 形が旧 fftconvolve と違う)なので
+    # bit 一致ではなく丸めの範囲で比べる(統合枝で実測した差は 1e-15 台)。
+    assert np.allclose(volrestore.vol_richardson_lucy(vol, psf, 4), _old_rl(vol, psf, 4), rtol=1e-12, atol=0)
     calls = 0
     def forbidden(*args, **kwargs):
         nonlocal calls; calls += 1
