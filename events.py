@@ -175,6 +175,18 @@ def warp_frame(frame, dy, dx):
     return np.clip(ndimage.shift(x, (float(dy), float(dx)), order=1, mode="reflect"), 0.0, 1.0)
 
 
+def _integer_shift_zero(a, dy, dx):
+    """整数移動を行い、画像外をゼロにする。"""
+    dy, dx = int(dy), int(dx)
+    out = np.zeros_like(a)
+    h, w = a.shape
+    src_r0, src_r1 = max(0, -dy), min(h, h - dy)
+    src_c0, src_c1 = max(0, -dx), min(w, w - dx)
+    if src_r1 > src_r0 and src_c1 > src_c0:
+        out[src_r0 + dy:src_r1 + dy, src_c0 + dx:src_c1 + dx] = a[src_r0:src_r1, src_c0:src_c1]
+    return out
+
+
 def contrast_maximization(frames, max_v=4, thr=0.1, eps=_EPS):
     """Estimate the global optic flow by CONTRAST MAXIMISATION (Gallego et al. 2018).
 
@@ -204,7 +216,7 @@ def contrast_maximization(frames, max_v=4, thr=0.1, eps=_EPS):
     def _iwe(vy, vx):
         acc = np.zeros((H, W), np.float64)
         for t, e in ev:
-            acc += ndimage.shift(e, (-t * vy, -t * vx), order=1, mode="constant", cval=0.0)
+            acc += _integer_shift_zero(e, -t * vy, -t * vx)
         return acc
 
     best = {"vy": 0.0, "vx": 0.0, "contrast": -1.0}
