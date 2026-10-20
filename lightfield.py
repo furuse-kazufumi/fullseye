@@ -830,19 +830,13 @@ def lf_refocus(lf, slope=0.0, *, interp="linear", edge="nearest"):
 
 
 def lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *,
-                   interp="linear", edge="nearest", prefilter="exact"):
+                   interp="linear", edge="nearest"):
     """Refocus at every slope in *slopes* — a focal stack from one exposure.
 
     Returns a ``list`` of ``(H, W)`` images (the ``images`` type), in the order
     given, so :mod:`focus_stack`'s fusion and any multi-image operator applies
     unchanged. The physical camera equivalent is racking the focus N times; here
     it costs one exposure and ``len(slopes) * V * U`` image shifts.
-
-    With cubic interpolation, ``prefilter="reuse"`` computes each view's spline
-    coefficients once.  It is faster for a multi-plane stack but changes edge
-    samples because coefficient preparation and interpolation no longer share
-    the implicit padding step; measured worst-case absolute error is below 0.10
-    for inputs in ``[0, 1]``.  The default ``"exact"`` preserves prior results.
 
     **Raises** ``ValueError``: *lf* not a valid light field, *slopes* empty or
     longer than :data:`MAX_STACK_SLICES`, any slope non-finite or over
@@ -854,34 +848,13 @@ def lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *,
     sl = _check_slopes(slopes, arr.shape[2] * arr.shape[3], op)
     order = INTERP_ORDERS[_choice(interp, "interp", INTERP_ORDERS, op)]
     mode = EDGE_MODES[_choice(edge, "edge", EDGE_MODES, op)]
-    pf = _choice(prefilter, "prefilter", ("exact", "reuse"), op)
-    shifted_input = arr
-    prefilter = order > 1
-    if order == 3 and pf == "reuse":
-        # The spline coefficients depend on the view and boundary mode, not on
-        # the requested focal plane.  Preparing them once avoids repeating the
-        # recursive filter for every slope.
-        shifted_input = np.empty_like(arr, dtype=np.float64)
-        for v in range(arr.shape[0]):
-            for u in range(arr.shape[1]):
-                shifted_input[v, u] = _ndi.spline_filter(
-                    arr[v, u], order=order, mode=mode
-                )
-        prefilter = False
     out = []
     for s in sl:
         acc = np.zeros(arr.shape[2:], dtype=np.float64)
         n = 0
-        V, U = shifted_input.shape[:2]
-        vc, uc = _angular_centers(V, U)
-        for v in range(V):
-            for u in range(U):
-                acc += _ndi.shift(
-                    shifted_input[v, u],
-                    (-s * (v - vc), -s * (u - uc)),
-                    order=order, mode=mode, prefilter=prefilter,
-                )
-                n += 1
+        for _, _, img in _shifted_views(arr, s, order, mode):
+            acc += img
+            n += 1
         out.append(acc / float(n))
     return out
 

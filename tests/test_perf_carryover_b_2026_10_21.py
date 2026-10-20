@@ -6,7 +6,6 @@ import numpy as np
 
 import opassist
 import tomography
-import lightfield
 import profileops
 import tsdf_fusion
 import flow
@@ -63,36 +62,6 @@ def test_op_search_reference_has_stable_order_for_name_and_doc_queries():
         first = _original_find(query, limit)
         second = _original_find(query, limit)
         assert second == first
-
-
-def _original_focal_stack(lf, slopes, edge):
-    """The per-shift cubic prefilter path retained as a reference."""
-    mode = lightfield.EDGE_MODES[edge]
-    out = []
-    for slope in slopes:
-        acc = np.zeros(lf.shape[2:], dtype=np.float64)
-        for _, _, image in lightfield._shifted_views(lf, slope, 3, mode):
-            acc += image
-        out.append(acc / (lf.shape[0] * lf.shape[1]))
-    return out
-
-
-def test_cubic_focal_stack_reuses_coefficients_for_each_boundary_mode():
-    rng = np.random.default_rng(41)
-    for shape, edge, slopes in (
-        ((2, 3, 9, 11), "nearest", (-0.75, 0.25)),
-        ((3, 2, 8, 10), "wrap", (-1.0, 0.5, 1.25)),
-    ):
-        lf = rng.random(shape)
-        expected = _original_focal_stack(lf, slopes, edge)
-        exact = lightfield.lf_focal_stack(lf, slopes, interp="cubic", edge=edge)
-        reused = lightfield.lf_focal_stack(
-            lf, slopes, interp="cubic", edge=edge, prefilter="reuse"
-        )
-        assert len(exact) == len(reused) == len(expected) == len(slopes)
-        for got, fast, want in zip(exact, reused, expected):
-            assert np.array_equal(got, want)
-            assert np.max(np.abs(fast - want)) < 0.10
 
 
 def _original_signed_distance(points, normals, poly):
