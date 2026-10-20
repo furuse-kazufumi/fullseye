@@ -34,3 +34,13 @@ def test_event_stream_moving_edges_and_polarity_balance():
     assert len(ev) > 1000
     assert gates["edge_fraction"] >= 0.90
     assert abs(gates["on_off_ratio"] - 1.0) <= 0.10
+
+
+def test_dtof_light_front_has_delivery_shape_and_content():
+    mod = _load("poc_dtof_ranging")
+    truth, refl, _ = mod.make_indoor_scene(48, 64)
+    frames = mod.light_front_frames(truth, refl)
+    gate = mod.light_front_content_gate(frames)
+    assert len(frames) == 48
+    assert frames[0].shape == (432, 576, 3) and frames[0].dtype == np.uint8
+    assert gate["pass"], gate

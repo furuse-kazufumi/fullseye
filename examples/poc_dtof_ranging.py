@@ -221,6 +221,35 @@ def simulate_dtof_frame(*, seed=16):
     return truth, out, amp, conf, samples, masks
 
 
+def light_front_frames(truth, amplitude, *, count=48, height=432, width=576):
+    """Return a display-only sweep of the emitted light front as uint8 RGB frames."""
+    from PIL import Image
+
+    if count != 48 or (height, width) != (432, 576):
+        raise ValueError("light-front exhibit is fixed at 48 frames of 576x432")
+    lo, hi = float(np.percentile(truth, 1)), float(np.percentile(truth, 99))
+    base = np.sqrt(np.maximum(amplitude, 0.0) / max(float(amplitude.max()), 1e-12))
+    frames = []
+    for front in np.linspace(lo - 0.18, hi + 0.18, count):
+        # The amplitude image remains at 20 %; only the narrow round-trip front lights up.
+        pulse = np.exp(-0.5 * ((truth - front) / 0.055) ** 2)
+        rgb = np.stack((0.20 * base + 0.12 * pulse,
+                        0.20 * base + 0.72 * pulse,
+                        0.20 * base + 1.00 * pulse), axis=-1)
+        rgb = np.uint8(np.clip(rgb, 0.0, 1.0) * 255.0 + 0.5)
+        frames.append(np.asarray(Image.fromarray(rgb).resize((width, height), Image.BICUBIC)))
+    return frames
+
+
+def light_front_content_gate(frames):
+    """Fail closed if a nominal video is static, dark, or has the wrong delivery shape."""
+    a = np.asarray(frames)
+    motion = float(np.mean(np.abs(np.diff(a.astype(np.int16), axis=0)))) if len(a) > 1 else 0.0
+    lit = float(np.mean(a[..., 2].astype(np.int16) > a[..., 0].astype(np.int16) + 24))
+    ok = a.shape == (48, 432, 576, 3) and a.dtype == np.uint8 and motion > 0.45 and lit > 0.01
+    return {"motion_l1": motion, "lit_fraction": lit, "pass": bool(ok)}
+
+
 def dtof_resemblance_gate(truth, measured, amplitude):
     """Fit depth-noise scaling against photon amplitude; empty bins fail closed."""
     qs = np.quantile(amplitude, np.linspace(0.05, 0.95, 8))
@@ -243,6 +272,38 @@ def _device_figures():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    frames = light_front_frames(truth, amp)
+    video_gate = light_front_content_gate(frames)
+    figs.save_video("light_front", frames, fps=24.0, gif_every=2, gif_width=576,
+                    caption=("往復光の前線を48フレームで走査。反射振幅像を20 %%で残し、"
+                             "青い帯が同じ距離の面を横切る。576×432、uint8、"
+                             "フレーム差 %.2f、発光率 %.1f %%（内容門 %s）。" %
+                             (video_gate["motion_l1"], 100 * video_gate["lit_fraction"],
+                              "PASS" if video_gate["pass"] else "FAIL")))
+
+    # Three device-like failure modes, labelled at a readable 8x crop scale.
+    edge = np.abs(np.diff(truth, axis=1, prepend=truth[:, :1])) > 0.20
+    flying = depth.copy()
+    flying[edge] = 0.55 * truth[edge] + 0.45 * np.roll(truth, 2, axis=1)[edge]
+    fig, ax = plt.subplots(1, 3, figsize=(18, 6), dpi=100)
+    yy, xx = np.mgrid[:depth.shape[0], :depth.shape[1]]
+    bow_mm = 60.0 * (((xx - depth.shape[1] / 2) / depth.shape[1]) ** 2
+                     + ((yy - depth.shape[0] / 2) / depth.shape[0]) ** 2)
+    crops = ((slice(78, 134), slice(137, 193)),
+             (slice(0, 160), slice(160, 320)),
+             (slice(117, 190), slice(187, 275)))
+    titles = ("flying pixels — 8x zoom", "corner bowing", "dark-object noise")
+    shown = (flying, bow_mm, depth - truth)
+    cmaps = ("turbo", "coolwarm", "coolwarm")
+    for a, crop, title, image, cmap in zip(ax, crops, titles, shown, cmaps):
+        view = image[crop]
+        a.imshow(view, cmap=cmap, interpolation="nearest")
+        a.set_title(title); a.axis("off")
+    fig.tight_layout(); fig.canvas.draw()
+    artefacts = np.asarray(fig.canvas.buffer_rgba())[..., :3].copy() / 255.0
+    plt.close(fig)
+    figs.save("labelled_artefacts", artefacts,
+              caption="飛び画素（8倍拡大）、壁隅の系統的な湾曲、低反射物体の距離雑音を同じ尺度で示す。")
     fig, ax = plt.subplots(1, 3, figsize=(18, 6), dpi=100)
     for a in ax: a.axis("off")
     im = ax[0].imshow(depth, cmap="turbo", vmin=1.5, vmax=4.2, interpolation="bicubic")
@@ -259,6 +320,9 @@ def _device_figures():
     figs.save_plot("pixel_histograms", [(k, x, v) for k, v in samples.items()],
                    xlabel="round-trip time [ps]", ylabel="counts", title="三画素の到来時刻ヒストグラム",
                    caption="平面、角、暗い物体。角画素には二次反射の肩が現れる。")
+    gate.update({"video_motion_l1": video_gate["motion_l1"],
+                 "video_lit_fraction": video_gate["lit_fraction"],
+                 "video_pass": video_gate["pass"]})
     return gate
 
 
@@ -272,6 +336,9 @@ def main():
         gate_frame = _device_figures()
         print("frame resemblance: exponent %.3f (%s)" %
               (gate_frame["exponent"], "PASS" if gate_frame["pass"] else "FAIL"))
+        print("light-front content: motion %.2f, lit %.1f %% (%s)" %
+              (gate_frame["video_motion_l1"], 100 * gate_frame["video_lit_fraction"],
+               "PASS" if gate_frame["video_pass"] else "FAIL"))
     print("=== 1. 装置と真値 —— 何を測っているのか ===")
     print(f"  ビン {BINS} x {BIN_PS:.0f} ps  →  一意に測れる距離 "
           f"{C * BINS * BIN_PS * 1e-12 / 2:.3f} m / ビン分解能 {1e3 * BIN_M:.2f} mm")
