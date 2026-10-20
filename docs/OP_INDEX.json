@@ -1,8 +1,8 @@
 {
- "n_ops": 3482,
+ "n_ops": 3489,
  "tiers": {
   "color": 12,
-  "ledger": 2526,
+  "ledger": 2533,
   "nary": 17,
   "registry": 927
  },
@@ -2466,6 +2466,17 @@
    ]
   },
   {
+   "name": "bottle_image",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "bounce",
    "halcon": "",
    "in_sort": "table",
@@ -3301,6 +3312,32 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "caustic_floor_segmentation",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "caustic_irradiance",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -8782,6 +8819,19 @@
     "matrix",
     "signal",
     "any"
+   ]
+  },
+  {
+   "name": "fill_level_from_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -30914,6 +30964,20 @@
    ]
   },
   {
+   "name": "underwater_inspection_image",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "image2d"
+   ]
+  },
+  {
    "name": "unexplained_peaks",
    "halcon": "",
    "in_sort": "table",
@@ -32783,6 +32847,31 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "wet_dry_inspection_pair",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "wet_surface_appearance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "wetness",

@@ -4,7 +4,7 @@ dim: optics
 category: watermedia
 in: 
 out: table
-examples: [poc_water_transparent_media]
+examples: [poc_water_inspection_images, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_water_inspection_images](../../../../examples/poc_water_inspection_images.py) — `py -3.11 examples/poc_water_inspection_images.py`
 - [poc_water_transparent_media](../../../../examples/poc_water_transparent_media.py) — `py -3.11 examples/poc_water_transparent_media.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

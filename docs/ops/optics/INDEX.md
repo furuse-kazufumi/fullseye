@@ -1,4 +1,4 @@
-# OPTICS operator help — 416 ops in 47 categories
+# OPTICS operator help — 423 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -201,6 +201,10 @@
 ### watermedia (10)
 
 [cylinder_lens_caustic](watermedia/cylinder_lens_caustic.md) · [fresnel_water_air](watermedia/fresnel_water_air.md) · [ocean_height_field](watermedia/ocean_height_field.md) · [ocean_spectrum](watermedia/ocean_spectrum.md) · [phase_function_hg](watermedia/phase_function_hg.md) · [refracted_view](watermedia/refracted_view.md) · [scattering_phase_petzold](watermedia/scattering_phase_petzold.md) · [snell_window](watermedia/snell_window.md) · [underwater_image](watermedia/underwater_image.md) · [water_attenuation](watermedia/water_attenuation.md)
+
+### watervision (7)
+
+[bottle_image](watervision/bottle_image.md) · [caustic_floor_segmentation](watervision/caustic_floor_segmentation.md) · [caustic_irradiance](watervision/caustic_irradiance.md) · [fill_level_from_image](watervision/fill_level_from_image.md) · [underwater_inspection_image](watervision/underwater_inspection_image.md) · [wet_dry_inspection_pair](watervision/wet_dry_inspection_pair.md) · [wet_surface_appearance](watervision/wet_surface_appearance.md)
 
 ### wave (9)
 

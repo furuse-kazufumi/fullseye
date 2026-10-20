@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3482,
- "n_notes": 3488,
+ "n_ops": 3489,
+ "n_notes": 3495,
  "notes": {
   "vol_dilate": [
    {
@@ -30905,6 +30905,74 @@
     "category": "watermedia",
     "out": "table",
     "path": "docs/ops/optics/watermedia/water_attenuation.md"
+   }
+  ],
+  "bottle_image": [
+   {
+    "op": "bottle_image",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/bottle_image.md"
+   }
+  ],
+  "caustic_floor_segmentation": [
+   {
+    "op": "caustic_floor_segmentation",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/caustic_floor_segmentation.md"
+   }
+  ],
+  "caustic_irradiance": [
+   {
+    "op": "caustic_irradiance",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/caustic_irradiance.md"
+   }
+  ],
+  "fill_level_from_image": [
+   {
+    "op": "fill_level_from_image",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/fill_level_from_image.md"
+   }
+  ],
+  "underwater_inspection_image": [
+   {
+    "op": "underwater_inspection_image",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "rgbimage × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/underwater_inspection_image.md"
+   }
+  ],
+  "wet_dry_inspection_pair": [
+   {
+    "op": "wet_dry_inspection_pair",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/wet_dry_inspection_pair.md"
+   }
+  ],
+  "wet_surface_appearance": [
+   {
+    "op": "wet_surface_appearance",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/wet_surface_appearance.md"
    }
   ],
   "airy_pattern": [
