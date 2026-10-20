@@ -127,9 +127,37 @@ def test_293_sparse_fill_is_exact_jacobi_on_worst_case_holes():
         d = rng.normal(size=(31, 33))
         for p in holes:
             d[p] = np.nan
-        ref = depth_bilateral.fill_holes(d, 3, invalid=None, max_iter=31, rel_tol=0)
-        got = depth_bilateral.fill_holes(d, 3, invalid=None, max_iter=31, rel_tol=0, method="fast")
+        # Pre-fast-default implementation, kept as the result oracle.
+        ref = _fill_holes_dense_reference(d, 3, max_iter=31)
+        got = depth_bilateral.fill_holes(d, 3, invalid=None, max_iter=31, rel_tol=0)
         np.testing.assert_array_equal(got, ref)
+
+
+def _fill_holes_dense_reference(depth, max_radius, max_iter):
+    from scipy import ndimage
+
+    d = np.asarray(depth, dtype=float)
+    valid = np.isfinite(d)
+    out = d.copy()
+    holes = ~valid
+    dist, (iy, ix) = ndimage.distance_transform_edt(holes, return_indices=True)
+    fillable = holes & (dist <= max_radius)
+    out[holes] = 0.0
+    out[fillable] = d[iy[fillable], ix[fillable]]
+    part = valid | fillable
+    pp = np.pad(part.astype(float), 1, mode="constant")
+    ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
+    safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
+    for _ in range(max_iter):
+        vp = np.pad(out, 1, mode="edge")
+        nsum = (vp[:-2, 1:-1] * pp[:-2, 1:-1]
+                + vp[2:, 1:-1] * pp[2:, 1:-1]
+                + vp[1:-1, :-2] * pp[1:-1, :-2]
+                + vp[1:-1, 2:] * pp[1:-1, 2:])
+        new = np.where(ncnt > 0.0, nsum / safe_ncnt, out)
+        out[fillable] = new[fillable]
+    out[holes & ~fillable] = np.nan
+    return out
 
 
 def test_297_candidate_label_lookup_matches_old_loop():

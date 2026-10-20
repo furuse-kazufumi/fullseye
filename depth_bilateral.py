@@ -191,7 +191,6 @@ def fill_holes(
     invalid: float | None = 0.0,
     max_iter: int | None = None,
     rel_tol: float = 1e-6,
-    method: str = "exact",
 ) -> np.ndarray:
     """無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。
 
@@ -208,8 +207,6 @@ def fill_holes(
     if d.ndim != 2:
         raise ValueError(f"fill_holes expects a 2D depth image, got shape {d.shape}")
     r = float(max_radius)
-    if method not in {"exact", "fast"}:
-        raise ValueError("method must be 'exact' or 'fast'")
     if not np.isfinite(r) or r <= 0.0:
         raise ValueError(f"max_radius must be a positive finite number, got {max_radius!r}")
 
@@ -247,7 +244,7 @@ def fill_holes(
         pp = np.pad(part.astype(float), 1, mode="constant")
         ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
         safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
-        sparse = method == "fast" and np.count_nonzero(fillable) * 8 < out.size
+        sparse = np.count_nonzero(fillable) * 8 < out.size
         fy, fx = np.nonzero(fillable) if sparse else (None, None)
         for _ in range(max_iter):
             vp = np.pad(out, 1, mode="edge")
