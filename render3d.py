@@ -628,6 +628,23 @@ def voxelize_solid(V, F, pitch: float, fill_axis: int = 2):
     return occ, lo.astype(np.float64)
 
 
+def _query_sdf_grid(tree, xc, yc, zc):
+    """Query grid centres in bounded z slabs, returning ``(z, y, x)`` distances."""
+    nx, ny, nz = len(xc), len(yc), len(zc)
+    dist = np.empty((nz, ny, nx), np.float64)
+    YY, XX = np.meshgrid(yc, xc, indexing="ij")
+    xy = np.stack([XX, YY], axis=-1).reshape(-1, 2)
+    slab = max(1, min(nz, 1_000_000 // max(nx * ny, 1)))
+    for z0 in range(0, nz, slab):
+        zs = zc[z0:z0 + slab]
+        centers = np.empty((zs.size, xy.shape[0], 3), np.float64)
+        centers[..., :2] = xy[None]
+        centers[..., 2] = zs[:, None]
+        dist[z0:z0 + slab] = tree.query(centers.reshape(-1, 3))[0].reshape(
+            zs.size, ny, nx)
+    return dist
+
+
 def mesh_to_sdf(V, F, pitch=None, grid=None, pad: float = 0.1, samples=None):
     """Signed-distance field of a watertight mesh -> ``(sdf, origin)``.
 
@@ -681,14 +698,12 @@ def mesh_to_sdf(V, F, pitch=None, grid=None, pad: float = 0.1, samples=None):
     xc = lo_p[0] + (np.arange(nx) + 0.5) * pitch
     yc = lo_p[1] + (np.arange(ny) + 0.5) * pitch
     zc = lo_p[2] + (np.arange(nz) + 0.5) * pitch
-    ZZ, YY, XX = np.meshgrid(zc, yc, xc, indexing="ij")     # (nz, ny, nx) = (D, H, W)
-    centers = np.stack([XX, YY, ZZ], axis=-1).reshape(-1, 3)
-    dist, _ = tree.query(centers)
-    dist = dist.reshape(nz, ny, nx)
+    dist = _query_sdf_grid(tree, xc, yc, zc)
 
     inside_world = _interior_mask(A, B, C, lo_p, dims, pitch, 0)   # +X parity
     inside = inside_world.transpose(2, 1, 0)                       # -> (D, H, W)
-    sdf = np.where(inside, -dist, dist).astype(np.float64)
+    dist[inside] *= -1.0
+    sdf = dist
     return sdf, lo_p.astype(np.float64)
 
 

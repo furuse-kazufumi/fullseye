@@ -12,6 +12,8 @@ from scipy import ndimage
 import volxform as vx
 import quatimage as qi
 import residue as residue_mod
+import render3d as render3d_mod
+from scipy.spatial import cKDTree
 
 
 def _old_resize(v, shape, order=1, mode="nearest", cval=0.0):
@@ -371,3 +373,30 @@ def test_334_335_shared_band_kernel_is_bit_identical():
     got = residue_mod._band_measure(a, b, (5.0, 7.0, 11.0), 12.0, 1)
     for actual, expected in zip(got, old):
         assert np.array_equal(actual, expected)
+
+
+def _old_query_sdf_grid(tree, xc, yc, zc):
+    """Pre-slice full-grid nearest-surface query."""
+    zz, yy, xx = np.meshgrid(zc, yc, xc, indexing="ij")
+    centers = np.stack([xx, yy, zz], axis=-1).reshape(-1, 3)
+    return tree.query(centers)[0].reshape(len(zc), len(yc), len(xc))
+
+
+def test_349_sdf_slab_query_is_bit_identical():
+    rng = np.random.default_rng(349)
+    tree = cKDTree(rng.normal(size=(200, 3)))
+    xc = np.linspace(-2.0, 2.0, 47)
+    yc = np.linspace(-1.5, 1.5, 43)
+    zc = np.linspace(-1.0, 1.0, 53)
+    old = _old_query_sdf_grid(tree, xc, yc, zc)
+    got = render3d_mod._query_sdf_grid(tree, xc, yc, zc)
+    assert np.array_equal(got, old)
+
+
+def test_353_sdf_in_place_sign_matches_where_bit_identically():
+    rng = np.random.default_rng(353)
+    dist = rng.random((17, 15, 13))
+    inside = rng.random(dist.shape) > 0.5
+    old = np.where(inside, -dist, dist).astype(np.float64)
+    got = dist.copy(); got[inside] *= -1.0
+    assert np.array_equal(got, old)
