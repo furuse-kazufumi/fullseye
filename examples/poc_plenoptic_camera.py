@@ -150,6 +150,34 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
                    caption="Limits: prescription detuning and F-number mismatch visibly remove detail.")
 
 
+def make_video(lf):
+    """Write a 24-frame, 480-pixel refocus sweep and enforce content gates."""
+    video_slopes = np.linspace(-1.4, 1.4, 24)
+    frames = []
+    for slope in video_slopes:
+        a = LF.lf_refocus(lf, slope, interp="cubic")
+        a = np.clip((a-a.min())/(np.ptp(a)+1e-12)*255, 0, 255).astype(np.uint8)
+        rgb = np.repeat(a[..., None], 3, axis=2)
+        rgb = np.asarray(Image.fromarray(rgb).resize((480, 480), Image.Resampling.BICUBIC))
+        frames.append(rgb.astype(np.uint8, copy=False))
+    fractions = []
+    for fr in frames:
+        gray = fr[..., 0]; modal = np.bincount(gray.ravel(), minlength=256).argmax()
+        fractions.append(float((np.abs(gray.astype(int)-modal) > 10).mean()))
+    mean_delta = float(np.mean([np.abs(a.astype(float)-b.astype(float)).mean()
+                                for a, b in zip(frames[:-1], frames[1:])]))
+    assert all(.05 <= f <= .98 for f in fractions)
+    assert mean_delta >= .5
+    figs.save_video("refocus", frames, "24-frame 480-pixel refocus sweep; all frames pass the content gates.", fps=8)
+    sheet_dir = Path(r"C:\Users\puruy\AppData\Local\Temp\claude\plenoptic\frames_pass2")
+    sheet_dir.mkdir(parents=True, exist_ok=True)
+    sheet = np.concatenate([frames[0], frames[len(frames)//2], frames[-1]], axis=1)
+    Image.fromarray(sheet).save(sheet_dir/"contact_sheet.png")
+    return {"video_frames": 24, "video_short_side_px": 480,
+            "content_fraction_min": min(fractions), "content_fraction_max": max(fractions),
+            "mean_frame_difference": mean_delta}
+
+
 def main():
     cpu0 = time.process_time(); wall0 = time.perf_counter(); cfg = config()
     lens = prescription(); para = RT.paraxial_trace(lens)
@@ -175,6 +203,7 @@ def main():
                "focus_peaks": peaks.tolist(), "truth_slopes": truth_slopes.tolist()}
     if figs.target_dir() is not None and not cfg["ci"]:
         make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_est, sharp)
+        metrics.update(make_video(lf))
         cpu = time.process_time()-cpu0; wall = time.perf_counter()-wall0
         metrics["cpu_s"] = cpu; metrics["wall_s"] = wall
     out_name = os.environ.get("FULLSEYE_FIGURE_DIR")
