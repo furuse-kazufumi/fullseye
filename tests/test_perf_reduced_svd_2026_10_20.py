@@ -1,6 +1,6 @@
 """性能レビュー第10便の回帰門。
 
-SVD監査表（レビュー時点で既定の完全SVDだった57箇所）::
+SVD監査表（レビューで数えた57箇所。末尾に補助コード3箇所も併記）::
 
   file:line                                  shape/use                action
   balltrack.py:288                           design/null              left-for-slice
@@ -36,9 +36,10 @@ SVD監査表（レビュー時点で既定の完全SVDだった57箇所）::
   examples/poc_panorama_drift.py:293         square,U,Vt              leave
   examples/poc_reproducible_icp.py:123       square,U,Vt              leave
   examples/poc_worm_core_persists.py:201      square,U,Vt              leave
-  examples_3d/nonrigid_deform.py:75           square,U,Vt              leave
-  examples_3d/two_view_pose.py:66             singular-values-only     compute_uv=False
-  tools/gen_backmatter_figs.py:154            square,U,Vt              leave
+  -- review scope: 57 sites above --
+  examples_3d/nonrigid_deform.py:75           square,U,Vt              leave (extra)
+  examples_3d/two_view_pose.py:66             singular-values-only     compute_uv=False (extra)
+  tools/gen_backmatter_figs.py:154            square,U,Vt              leave (extra)
 """
 from __future__ import annotations
 
