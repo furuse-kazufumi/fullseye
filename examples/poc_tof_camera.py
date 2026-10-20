@@ -56,7 +56,7 @@ def refused(fn):
     return False
 
 
-def make_scene(h=96, w=144):
+def make_scene(h=240, w=320):
     """解析的なピンホール光線と平面群から、最初の面と二つの返りを作る。"""
     u = np.linspace(-0.48, 0.48, w)
     v = np.linspace(-0.32, 0.32, h)
@@ -320,7 +320,7 @@ def make_figures(scene, itof_map, fly, dtof_cube, dtof_map, volumes):
 def main():
     t0, c0 = time.time(), time.process_time()
     print("PoC 2026.274 同じ3次元場面の間接/直接 ToF (予算 %s)" % ("reduced" if REDUCED else "full"))
-    scene = make_scene(48, 72) if REDUCED else make_scene()
+    scene = make_scene(48, 72) if REDUCED else make_scene(240, 320)
     chapter_scene(scene)
     chapter_itof(scene)
     chapter_multipath(scene)
