@@ -430,3 +430,64 @@ def test_353_sdf_in_place_sign_matches_where_bit_identically():
     old = np.where(inside, -dist, dist).astype(np.float64)
     got = dist.copy(); got[inside] *= -1.0
     assert np.array_equal(got, old)
+
+
+def _old_line_crossings(A, B, C, o, axis):
+    d = np.zeros(3, np.float64); d[axis] = 1.0
+    e1, e2 = B - A, C - A
+    hvec = np.cross(d, e2)
+    det = np.einsum("ij,ij->i", e1, hvec)
+    nonpar = np.abs(det) > render3d_mod._DET_EPS
+    inv = np.zeros_like(det); inv[nonpar] = 1.0 / det[nonpar]
+    s = o[None, :] - A
+    u = np.einsum("ij,ij->i", s, hvec) * inv
+    q = np.cross(s, e1)
+    v = q[:, axis] * inv
+    t = np.einsum("ij,ij->i", e2, q) * inv
+    valid = (nonpar & (u >= -render3d_mod._BARY_EPS)
+             & (u <= 1.0 + render3d_mod._BARY_EPS)
+             & (v >= -render3d_mod._BARY_EPS)
+             & (u + v <= 1.0 + render3d_mod._BARY_EPS))
+    coords = o[axis] + t[valid]
+    coords = coords[np.isfinite(coords)]; coords.sort()
+    return coords
+
+
+def test_350_prepared_line_crossings_are_bit_identical():
+    rng = np.random.default_rng(350)
+    A = rng.normal(size=(503, 3)); B = rng.normal(size=(503, 3)); C = rng.normal(size=(503, 3))
+    prepared = render3d_mod._prepare_line_crossings(A, B, C, 2)
+    O = rng.normal(size=(11, 3))
+    assert len(O) == 11
+    for o in O:
+        ref = _old_line_crossings(A, B, C, o, 2)
+        got = render3d_mod._line_crossings_prepared(A, o, 2, prepared)
+        assert np.array_equal(got, ref)
+
+
+def test_359_subdivision_reuses_edges_bit_identically():
+    rng = np.random.default_rng(359)
+    V = rng.normal(size=(90, 3))
+    F = np.arange(90, dtype=np.int64).reshape(-1, 3)
+    E, fe = render3d_mod._unique_edges(F)
+    split = np.ones(E.shape[0], bool)
+    ref = render3d_mod._subdivide_once(V, F, split)
+    got = render3d_mod._subdivide_once(V, F, split, (E, fe))
+    assert np.array_equal(got[0], ref[0])
+    assert np.array_equal(got[1], ref[1])
+
+
+def test_344_single_large_triangle_obeys_pair_chunk_and_is_bit_identical(monkeypatch):
+    V = np.array([[-1.0, -1.0, 0.0], [2.0, -1.0, 0.0], [-1.0, 2.0, 0.0]])
+    F = np.array([[0, 1, 2]], np.int64)
+    pose = np.eye(4); pose[2, 3] = -3.0
+    K = render3d_mod.intrinsics_from_fov(45.0, 96, 96)
+    ref = render3d_mod.render_mesh(V, F, pose=pose, intrinsics=K, width=96, height=96,
+                                   attributes=True)
+    monkeypatch.setattr(render3d_mod, "_RASTER_PAIR_CHUNK", 257)
+    got = render3d_mod.render_mesh(V, F, pose=pose, intrinsics=K, width=96, height=96,
+                                   attributes=True)
+    assert got
+    assert got.keys() == ref.keys()
+    for key in got:
+        assert np.array_equal(got[key], ref[key], equal_nan=True)

@@ -443,27 +443,23 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
     inv_all[ids] = 1.0 / denom[ids]
     d0, d1, d2 = d[:, 0], d[:, 1], d[:, 2]
 
-    start = 0
-    n_ok = ids.size
-    while start < n_ok:
-        base = cum[start - 1] if start > 0 else 0
-        end = int(np.searchsorted(cum, base + _RASTER_PAIR_CHUNK, side="right"))
-        end = max(end, start + 1)                      # at least one triangle per chunk
-        end = min(end, n_ok)
-        sel = ids[start:end]
-        cnt = npx[start:end]
-        total = int(cnt.sum())
-        tri = np.repeat(sel, cnt)
-        offs = np.repeat(np.cumsum(cnt) - cnt, cnt)
-        k = np.arange(total, dtype=np.int64) - offs
-        bw_r = np.repeat(bw[start:end], cnt)
+    total_pairs = int(cum[-1])
+    base = 0
+    while base < total_pairs:
+        stop = min(base + _RASTER_PAIR_CHUNK, total_pairs)
+        pair = np.arange(base, stop, dtype=np.int64)
+        pos = np.searchsorted(cum, pair, side="right")
+        tri = ids[pos]
+        prev = np.where(pos > 0, cum[np.maximum(pos - 1, 0)], 0)
+        k = pair - prev
+        bw_r = bw[pos]
         # Pixel-centre convention (see the module docstring): the centre of pixel
         # ``(row=r, col=c)`` IS the continuous coordinate ``(u, v) = (c, r)`` —
         # integer, matching :func:`camera.depth_to_points`'s ``np.mgrid[0:H, 0:W]``.
         # Do NOT add 0.5 here: that is the OpenGL "pixel corners are integers"
         # convention and mixing the two silently shifts depth by half a pixel.
-        pr = np.repeat(rmin[sel], cnt) + k // bw_r
-        pc = np.repeat(cmin[sel], cnt) + k % bw_r
+        pr = rmin[tri] + k // bw_r
+        pc = cmin[tri] + k % bw_r
         px = pc.astype(np.float64)
         py = pr.astype(np.float64)
         inv = inv_all[tri]
@@ -479,7 +475,7 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
             zpix = 1.0 / inv_d
         keep = inside & np.isfinite(zpix)
         if not keep.any():
-            start = end
+            base = stop
             continue
         tri, pr, pc, zpix = tri[keep], pr[keep], pc[keep], zpix[keep]
         l0, l1, l2 = l0[keep], l1[keep], l2[keep]
@@ -510,7 +506,7 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
                 bary[r_w, c_w] = np.stack(
                     [l0[win] * zw / td0[win], l1[win] * zw / td1[win],
                      l2[win] * zw / td2[win]], axis=-1)
-        start = end
+        base = stop
 
 
 # --------------------------------------------------------------------------- #
@@ -521,15 +517,26 @@ def _line_crossings(A, B, C, o, axis: int) -> np.ndarray:
     parallel to *axis* crosses the triangles ``(A, B, C)``. Vectorised
     Möller-Trumbore; both sides of *o* are returned (it is a line, not a ray) so a
     caller can count crossings on either side for an even/odd parity test."""
+    prepared = _prepare_line_crossings(A, B, C, axis)
+    return _line_crossings_prepared(A, o, axis, prepared)
+
+
+def _prepare_line_crossings(A, B, C, axis: int):
+    """Terms that are invariant across parallel parity-test lines."""
     d = np.zeros(3, np.float64)
     d[axis] = 1.0
-    e1 = B - A                                      # (M, 3)
+    e1 = B - A
     e2 = C - A
-    hvec = np.cross(d, e2)                          # (M, 3)
+    hvec = np.cross(d, e2)
     det = np.einsum("ij,ij->i", e1, hvec)
     nonpar = np.abs(det) > _DET_EPS
     inv = np.zeros_like(det)
     inv[nonpar] = 1.0 / det[nonpar]
+    return e1, e2, hvec, nonpar, inv
+
+
+def _line_crossings_prepared(A, o, axis: int, prepared) -> np.ndarray:
+    e1, e2, hvec, nonpar, inv = prepared
     s = o[None, :] - A
     u = np.einsum("ij,ij->i", s, hvec) * inv
     q = np.cross(s, e1)
@@ -556,13 +563,14 @@ def _interior_mask(A, B, C, origin, dims, pitch: float, axis: int) -> np.ndarray
     a = int(axis)
     p, q = [ax for ax in (0, 1, 2) if ax != a]
     centers_a = origin[a] + (np.arange(n[a]) + 0.5) * pitch
+    prepared = _prepare_line_crossings(A, B, C, a)
     for ip in range(n[p]):
         cp = origin[p] + (ip + 0.5) * pitch + _EPS_P * pitch
         for iq in range(n[q]):
             cq = origin[q] + (iq + 0.5) * pitch + _EPS_Q * pitch
             o = np.zeros(3, np.float64)
             o[p], o[q] = cp, cq
-            cross = _line_crossings(A, B, C, o, a)
+            cross = _line_crossings_prepared(A, o, a, prepared)
             if cross.size == 0:
                 continue
             cnt = np.searchsorted(cross, centers_a, side="left")
@@ -1260,10 +1268,10 @@ def mesh_edge_lengths(V, F, *, per: str = "vertex") -> np.ndarray:
     return out
 
 
-def _subdivide_once(Vv, Ff, split_edge):
+def _subdivide_once(Vv, Ff, split_edge, edges=None):
     """One conforming midpoint pass: edges flagged in ``split_edge`` (E,) get a midpoint;
     faces are split by their 1 / 2 / 3-edge pattern (2 / 3 / 4 triangles, winding kept)."""
-    E, fe = _unique_edges(Ff)
+    E, fe = _unique_edges(Ff) if edges is None else edges
     if split_edge.shape[0] != E.shape[0]:
         raise ValueError("split mask does not match the edge count")
     n0 = Vv.shape[0]
@@ -1569,8 +1577,8 @@ def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
         for _ in range(lv):
             if Ff.shape[0] * 4 > mf:
                 raise ValueError("uniform subdivision would exceed max_faces=%d" % mf)
-            E, _fe = _unique_edges(Ff)
-            Vv, Ff = _subdivide_once(Vv, Ff, np.ones(E.shape[0], bool))
+            E, fe = _unique_edges(Ff)
+            Vv, Ff = _subdivide_once(Vv, Ff, np.ones(E.shape[0], bool), (E, fe))
         return Vv, Ff
     te = float(target_edge)
     if not np.isfinite(te) or te <= 0.0:
