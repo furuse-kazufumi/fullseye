@@ -750,7 +750,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `lowpass(y, cutoff=0.2)` — 点列 y をローパス(高周波=ノイズ/細部を落として平滑化)。cutoff=ナイキスト割合。
 - `highpass(y, cutoff=0.2)` — 点列 y をハイパス(トレンド=低周波を除き、細部・エッジ・変動だけ残す)。
 - `bandpass(y, low=0.1, high=0.4)` — 点列 y のバンドパス(low..high の中間帯だけ通す)。low<high(ナイキスト割合)。
-- `smooth(y, window=5)` — 移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。
+- `smooth(y, window=5, method='exact')` — 移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。
 - `spline_fit(x, y, smooth=0.0)` — 点列 (x, y) を3次スプラインで補間/平滑化し、評価可能な spline object を返す。
 - `spline_eval(spline, x)` — spline object を点 x で評価する。
 - `spline_resample(x, y, n, smooth=0.0)` — 点列を n 点に等間隔で滑らかに再サンプルし ``(x_new, y_new)`` を返す。

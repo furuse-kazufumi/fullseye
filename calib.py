@@ -86,16 +86,12 @@ def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
     """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。"""
     K = _K(cam_par); pose = np.asarray(pose, float)
     R = pose[:3, :3]; t = pose[:3, 3]
-    Kinv = np.linalg.inv(K)
+    ray_transform = R.T @ np.linalg.inv(K)
+    o = -R.T @ t
     p = np.asarray(image_points, float).reshape(-1, 2)
-    out = []
-    for row, col in p:
-        d = R.T @ (Kinv @ np.array([col, row, 1.0]))       # 視線(world)
-        o = -R.T @ t                                       # カメラ中心(world)
-        lam = -o[2] / d[2]                                 # z=0 との交点
-        w = o + lam * d
-        out.append(w[:2] * scale)
-    return np.asarray(out)
+    rays = np.column_stack((p[:, 1], p[:, 0], np.ones(len(p)))) @ ray_transform.T
+    lam = -o[2] / rays[:, 2]
+    return (o[None, :2] + lam[:, None] * rays[:, :2]) * scale
 
 
 def contour_to_world_plane_xld(contour, homography):

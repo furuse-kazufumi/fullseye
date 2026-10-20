@@ -91,6 +91,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### Changed — 光学・電子顕微鏡・経路探索の省計算
 - ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算の省メモリ経路は `memory_budget` 指定時に選べ、既定経路の速度は維持する。
 
+- Reduced temporary allocations and repeated transforms in mesh repair, curve analysis,
+  signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
+  exact behavior remains the default where the faster path can change rounding.
+- `motion` の動き領域集計、モデル展開、イベント検出を高速化し、動きエネルギー列の全フレーム保持を不要にした。支配的動き推定には既定の丸め順を保つ経路に加え、複数右辺を一括処理する選択式の高速経路を追加した。
+- Added selectable low-allocation paths for mesh smoothing, curve resampling,
+  eager video reads, and phase-video reconstruction, plus a composite point-cloud
+  curvature API; exact evaluation order remains the no-argument default.
+
 ### Added — 実行中の設定と結果を世代で結び付ける
 - 重い処理を画面スレッドから分離し、段ごとの進捗と協調停止を表示する。実行ごとに入力と設定を固定し、遅れて終わった古い世代は表示へ反映しない。実行中に設定が変わった場合は、旧設定の結果を見るか現在設定で再実行するかを選べる。
 
