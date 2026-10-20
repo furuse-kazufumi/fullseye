@@ -1065,7 +1065,7 @@ def iqft2(spectrum, side, mu=None) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # quaternion correlation                                                        #
 # --------------------------------------------------------------------------- #
-def quat_correlate(qimage, template) -> np.ndarray:
+def quat_correlate(qimage, template, *, method="exact") -> np.ndarray:
     """Quaternion cross-correlation ``sum_s conj(a(s)) * b(s+t)``. → (H, W, 4).
 
     Colour template matching that keeps the **colour geometry**, not just the
@@ -1119,7 +1119,9 @@ def quat_correlate(qimage, template) -> np.ndarray:
     a padding origin would move the peak.
 
     **Raises** ``ValueError``: either input is not a valid ``(H, W, 4)`` field,
-    or the two shapes differ."""
+    or the two shapes differ. ``method="exact"`` retains the full-spectrum
+    calculation; ``method="fast"`` uses a real-input half spectrum and can differ
+    by floating-point roundoff."""
     op = "quat_correlate"
     a = _require_qimage(qimage, "qimage", op)
     b = _require_qimage(template, "template", op)
@@ -1129,6 +1131,18 @@ def quat_correlate(qimage, template) -> np.ndarray:
                          "because choosing the padding origin here would move the "
                          "correlation peak without saying so"
                          % (op, tuple(a.shape), tuple(b.shape)))
+    if method not in ("exact", "fast"):
+        raise ValueError("%s: method must be 'exact' or 'fast', got %r" % (op, method))
+    if method == "fast":
+        Fa = [np.fft.rfft2(a[..., i]) for i in range(4)]
+        Fb = [np.fft.rfft2(b[..., i]) for i in range(4)]
+        ca = [np.conj(x) for x in Fa]
+        shape = a.shape[:2]
+        terms = [ca[0] * Fb[0] + ca[1] * Fb[1] + ca[2] * Fb[2] + ca[3] * Fb[3],
+                 ca[0] * Fb[1] - ca[1] * Fb[0] - ca[2] * Fb[3] + ca[3] * Fb[2],
+                 ca[0] * Fb[2] + ca[1] * Fb[3] - ca[2] * Fb[0] - ca[3] * Fb[1],
+                 ca[0] * Fb[3] - ca[1] * Fb[2] + ca[2] * Fb[1] - ca[3] * Fb[0]]
+        return np.stack([np.fft.irfft2(x, s=shape) for x in terms], axis=-1)
     Fa = [np.fft.fft2(a[..., i]) for i in range(4)]
     Fb = [np.fft.fft2(b[..., i]) for i in range(4)]
 
@@ -1176,7 +1190,7 @@ def _riesz_kernels(h: int, w: int):
     return -1j * fu * inv, -1j * fv * inv, r
 
 
-def riesz_transform(image) -> np.ndarray:
+def riesz_transform(image, *, method="exact") -> np.ndarray:
     """The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4).
 
     The isotropic generalisation of the Hilbert transform: a *pair* of filters
@@ -1205,11 +1219,21 @@ def riesz_transform(image) -> np.ndarray:
     keeps the band-pass image in the scalar slot.
 
     **Raises** ``ValueError``: *image* is not a finite real ``(H, W)`` array with
-    ``H, W >= 2``, or exceeds :data:`MAX_PIXELS`."""
+    ``H, W >= 2``, or exceeds :data:`MAX_PIXELS`. ``method="fast"`` uses a
+    half-spectrum transform on odd-sized images and otherwise falls back to the
+    exact path, avoiding Nyquist-row ambiguity."""
     op = "riesz_transform"
     img = _require_image(image, "image", op)
     h, w = img.shape
     H1, H2, _r = _riesz_kernels(h, w)
+    if method not in ("exact", "fast"):
+        raise ValueError("%s: method must be 'exact' or 'fast', got %r" % (op, method))
+    if method == "fast" and h % 2 == 1 and w % 2 == 1:
+        F = np.fft.rfft2(img)
+        out = np.zeros((h, w, 4), np.float64)
+        out[..., 1] = np.fft.irfft2(F * H1[:, :F.shape[1]], s=img.shape)
+        out[..., 2] = np.fft.irfft2(F * H2[:, :F.shape[1]], s=img.shape)
+        return out
     F = np.fft.fft2(img)
     out = np.zeros((h, w, 4), np.float64)
     out[..., 1] = np.real(np.fft.ifft2(F * H1))

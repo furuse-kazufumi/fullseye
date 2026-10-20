@@ -175,6 +175,34 @@ def test_319_peak_location_is_bit_identical_on_shifted_fixture():
     assert np.unravel_index(np.argmax(ref[..., 0]), ref.shape[:2]) == (7, 25)
 
 
+@pytest.mark.parametrize("shape", [(128, 130), (127, 129)])
+def test_320_real_half_spectrum_correlation_matches_reference(shape):
+    rng = np.random.default_rng(sum(shape) + 320)
+    a = rng.normal(size=shape + (4,)); b = rng.normal(size=shape + (4,))
+    ref = _old_quat_correlate(a, b)
+    got = qi.quat_correlate(a, b, method="fast")
+    assert np.max(np.abs(got - ref)) <= 1e-10
+    assert np.unravel_index(np.argmax(got[..., 0]), shape) == np.unravel_index(
+        np.argmax(ref[..., 0]), shape)
+
+
+def _old_riesz_transform(image):
+    h1, h2, _ = qi._riesz_kernels(*image.shape)
+    spec = np.fft.fft2(image)
+    out = np.zeros(image.shape + (4,), np.float64)
+    out[..., 1] = np.real(np.fft.ifft2(spec * h1))
+    out[..., 2] = np.real(np.fft.ifft2(spec * h2))
+    return out
+
+
+@pytest.mark.parametrize("shape", [(128, 130), (127, 129)])
+def test_328_real_half_spectrum_riesz_matches_reference(shape):
+    image = np.random.default_rng(sum(shape) + 328).normal(size=shape)
+    ref = _old_riesz_transform(image)
+    got = qi.riesz_transform(image, method="fast")
+    assert np.max(np.abs(got - ref)) <= 1e-12
+
+
 def test_322_public_qft_is_bit_identical_to_reference_path():
     rng = np.random.default_rng(322)
     q = rng.normal(size=(15, 17, 4))
