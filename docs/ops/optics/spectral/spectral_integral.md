@@ -54,7 +54,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`spectral`)
 
-[blackbody_spectrum](blackbody_spectrum.md) · [cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [silicon_photodiode_qe](silicon_photodiode_qe.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_stats](spectral_stats.md)
+[blackbody_spectrum](blackbody_spectrum.md) · [cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [silicon_photodiode_qe](silicon_photodiode_qe.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral_table](spectral_integral_table.md)
 
 ---
 *Provenance: spectralrad.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

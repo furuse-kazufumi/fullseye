@@ -136,17 +136,17 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,495 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **67 family guides**. Entry points by dimension:
+**3,496 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **67 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 939/939, typed ledger 2535/2547, one-line facade `fullseye.<name>` 703/1465 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 939/939, typed ledger 2536/2548, one-line facade `fullseye.<name>` 703/1465 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3495 notes, **3484** link at least one runnable example (11 have none) and **3330** have a usage section of 120+ characters (165 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3495.
+**Measured substance**: of 3496 notes, **3485** link at least one runnable example (11 have none) and **3331** have a usage section of 120+ characters (165 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3496.
 
 | dimension | ops | entry |
 |---|---:|---|
 | `2d` | 956 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 423 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 424 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -295,7 +295,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 286
 
-The complete map, so that **no document is unreachable from this index** (the 3,495 per-op notes and 67 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,496 per-op notes and 67 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

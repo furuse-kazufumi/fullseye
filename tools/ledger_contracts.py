@@ -915,6 +915,7 @@ def _batch2_builders():
         # (汎用の pairs の種は x が昇順でなく、波長の検査で全部拒否される)。
         "energy_to_photons": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
+        "spectral_integral_table": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
         # filmoptics(2026-10-15): 膜厚の逆問題は**本物の反射スペクトル**(Si 上の SiO₂、昇順の波長)と、既定の 6 帯域に

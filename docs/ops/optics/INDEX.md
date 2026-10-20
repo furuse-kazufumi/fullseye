@@ -1,4 +1,4 @@
-# OPTICS operator help — 423 ops in 48 categories
+# OPTICS operator help — 424 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -178,9 +178,9 @@
 
 [aolp_to_azimuth](shape_from_polarization/aolp_to_azimuth.md) · [dolp_to_zenith](shape_from_polarization/dolp_to_zenith.md) · [sfp_disambiguate](shape_from_polarization/sfp_disambiguate.md) · [sfp_dolp_model](shape_from_polarization/sfp_dolp_model.md) · [sfp_estimate_index](shape_from_polarization/sfp_estimate_index.md) · [sfp_height](shape_from_polarization/sfp_height.md) · [sfp_normals](shape_from_polarization/sfp_normals.md) · [sfp_render](shape_from_polarization/sfp_render.md)
 
-### spectral (14)
+### spectral (15)
 
-[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
+[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_integral_table](spectral/spectral_integral_table.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
 
 ### spectrometer (5)
 

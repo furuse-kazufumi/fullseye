@@ -194,7 +194,7 @@ def eval_bspline_surface(tck, x, y, grid=False):
     - 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。
     - 典型: ``fit_bspline_surface`` → 本 op(再サンプリング・可視化)。残差評価は ``surface_residual`` がこれを内部で呼ぶ。
     """
-    from scipy.interpolate import bisplev
+    from scipy.interpolate import BSpline, bisplev
 
     _check_tck(tck, 5, "eval_bspline_surface")
     if grid:
@@ -219,8 +219,15 @@ def eval_bspline_surface(tck, x, y, grid=False):
         )
     xf = xa.ravel()
     yf = ya.ravel()
-    # bisplev はスカラー入力で 0 次元を返す。点毎に評価して元 shape へ復元。
-    z = np.array([float(bisplev(float(xi), float(yi), tck)) for xi, yi in zip(xf, yf)])
+    tx, ty, coeff, kx, ky = tck
+    # FITPACK's scalar bisplev clamps outside the base knot interval.
+    xc = np.clip(xf, tx[kx], tx[-kx - 1])
+    yc = np.clip(yf, ty[ky], ty[-ky - 1])
+    bx = BSpline.design_matrix(xc, tx, kx, extrapolate=False)
+    by = BSpline.design_matrix(yc, ty, ky, extrapolate=False)
+    coef = np.asarray(coeff).reshape(len(tx) - kx - 1, len(ty) - ky - 1)
+    z = np.asarray(bx @ coef)
+    z = np.sum(z * by.toarray(), axis=1)
     return z.reshape(xa.shape)
 
 

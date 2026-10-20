@@ -14616,6 +14616,15 @@
    "de": "Wellenlängenintegral einer Kurve ∫ s(λ) dλ (Trapezregel, λ in nm). Mit Intervall nur darin (Enden linear interpoliert).",
    "hi": "curve का तरंगदैर्घ्य integral ∫ s(λ) dλ (trapezoid नियम, λ nm में)। अंतराल देने पर केवल उसके भीतर (सिरे रैखिक interpolation)।"
   },
+  "optics/spectral_integral_table": {
+   "fp": "3f440afae3b9",
+   "ja": "帯域積分を繰り返すための、再利用できる累積台形積分表を作る。",
+   "zh": "为重复的波段积分构建可复用的累积梯形积分表。",
+   "tw": "為重複的波段積分建立可重用的累積梯形積分表。",
+   "ko": "반복적인 대역 적분을 위한 재사용 가능한 누적 사다리꼴 적분표를 만든다.",
+   "de": "Erstellt eine wiederverwendbare kumulative Trapeztabelle für wiederholte Bandintegrale.",
+   "hi": "बार-बार band integral निकालने के लिए पुन: उपयोग योग्य संचयी trapezoid table बनाता है।"
+  },
   "optics/spectral_stats": {
    "fp": "94b60c9895d7",
    "en": "Summary of a curve: peak wavelength and value, centroid wavelength, full width at half maximum (crossings by linear interpolation), integral.",
