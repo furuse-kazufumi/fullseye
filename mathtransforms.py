@@ -147,7 +147,11 @@ def abel_inverse_image(image, dr: float = 1.0, *, center: float | None = None, m
     left = np.stack([np.interp(c - xs, cols, row) for row in a])
     half = 0.5 * (left + right)
     asym = float(np.abs(left - right).mean() / max(np.abs(half).mean(), 1e-300))
-    sl = np.stack([abel_inverse(row, dr, method=method) for row in half])
+    if method == "onion":
+        M = _onion_matrix(half.shape[1], dr)
+        sl = linalg.solve_triangular(M, half.T, lower=False).T
+    else:
+        sl = np.stack([abel_inverse(row, dr, method=method) for row in half])
     return {"slice": sl, "center": c, "asymmetry": asym}
 
 
