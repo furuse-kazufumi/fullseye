@@ -13102,6 +13102,15 @@
     "path": "docs/ops/3d/sdf_csg/cylinder_sdf.md"
    }
   ],
+  "grid_axes": [
+   {
+    "op": "grid_axes",
+    "dim": "3d",
+    "category": "sdf_csg",
+    "out": "coordgrid",
+    "path": "docs/ops/3d/sdf_csg/grid_axes.md"
+   }
+  ],
   "grid_coords": [
    {
     "op": "grid_coords",

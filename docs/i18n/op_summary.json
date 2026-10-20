@@ -9387,6 +9387,15 @@
    "de": "Eine Serie von Gray-Code-Bitbildern → eine ganzzahlige Streifenordnungskarte (die absolute Ordnung).",
    "hi": "Gray code bit image series → integer fringe order map (absolute order)।"
   },
+  "3d/grid_axes": {
+   "fp": "00513190ecaf",
+   "ja": "省メモリのプリミティブ評価用に、ボクセル中心を表す3本の1次元座標軸を返す。",
+   "zh": "返回三条表示体素中心的一维坐标轴，用于节省内存的基本体求值。",
+   "tw": "回傳三條表示體素中心的一維座標軸，用於節省記憶體的基本體求值。",
+   "ko": "메모리 효율적인 프리미티브 평가를 위해 복셀 중심을 나타내는 세 개의 1차원 좌표축을 반환합니다.",
+   "de": "Gibt drei eindimensionale Achsen der Voxelzentren für eine speichersparende Primitivauswertung zurück.",
+   "hi": "कम memory में primitive evaluation के लिए voxel-centre की तीन 1-D coordinate axes लौटाता है।"
+  },
   "3d/grid_coords": {
    "fp": "cf272d068ae1",
    "en": "Build the grid of voxel-centre coordinates for CSG evaluation (the same lattice convention as occupancy).",
@@ -25210,13 +25219,13 @@
    "hi": "Texture की जटिलता मापने वाला Minkowski-Bouligand (box counting) fractal dimension।"
   },
   "2d/tb_plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "2d/tb_cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25588,13 +25597,13 @@
    "hi": "``carve`` / ``synthesize_silhouette`` को दिया जा सकने वाला camera pose ``(R, t)`` बनाता है।"
   },
   "3d/plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "3d/cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25750,13 +25759,13 @@
    "hi": "rational function F(s) = num(s)/den(s) का numerical inverse Laplace transform (fixed Talbot method)।"
   },
   "math/hankel_image": {
-   "fp": "8cc7f68e1d59",
-   "en": "Obtains the 2-dimensional Fourier transform of an axisymmetric image (a round aperture, a Gaussian blob, diffraction rings) with 1 radial Hankel transform.",
-   "zh": "用沿径向的 1 次 Hankel 变换求轴对称图像(圆形孔径、高斯团块、衍射环)的 2 维傅里叶变换。",
-   "tw": "以沿徑向的 1 次 Hankel 轉換求軸對稱影像(圓形孔徑、高斯團塊、繞射環)的 2 維傅立葉轉換。",
-   "ko": "축대칭 영상(둥근 개구·가우스 덩어리·회절 고리)의 2차원 푸리에 변환을 동경 방향 1개의 Hankel 변환으로 구한다.",
-   "de": "Bestimmt die 2-dimensionale Fourier-Transformation eines achsensymmetrischen Bildes (runde Apertur, Gauß-Fleck, Beugungsringe) mit 1 radialen Hankel-Transformation.",
-   "hi": "axisymmetric image (गोल aperture, Gaussian blob, diffraction rings) का 2-dimensional Fourier transform, radial दिशा के 1 Hankel transform से निकालता है।"
+   "fp": "154f403e459a",
+   "en": "Computes an axisymmetric image's 2-D Fourier transform with a radial Hankel transform. ``memory_budget`` selects a low-memory path measured within 1e-10.",
+   "zh": "用径向 Hankel 变换求轴对称图像的二维傅里叶变换。``memory_budget`` 选择实测差在 1e-10 内的省内存路径。",
+   "tw": "以徑向 Hankel 轉換求軸對稱影像的二維傅立葉轉換。``memory_budget`` 選擇實測差在 1e-10 內的省記憶體路徑。",
+   "ko": "동경 Hankel 변환으로 축대칭 영상의 2차원 푸리에 변환을 구한다. ``memory_budget`` 는 측정 차이가 1e-10 이하인 저메모리 경로를 선택한다.",
+   "de": "Berechnet die 2-D-Fourier-Transformation eines achsensymmetrischen Bildes per radialer Hankel-Transformation. ``memory_budget`` wählt einen speichersparenden Pfad mit gemessener Abweichung unter 1e-10.",
+   "hi": "radial Hankel transform से axisymmetric image का 2-D Fourier transform निकालता है। ``memory_budget`` measured difference 1e-10 के भीतर वाला low-memory path चुनता है।"
   },
   "math/dct_transform": {
    "fp": "b9a4bea869a8",

@@ -11397,6 +11397,17 @@
    ]
   },
   {
+   "name": "grid_axes",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "coordgrid",
+   "category": "sdf_csg",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
+  },
+  {
    "name": "grid_coords",
    "halcon": "",
    "in_sort": null,

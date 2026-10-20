@@ -781,6 +781,7 @@ _CATALOG = {
         #   いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと
         #   (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
         ("grid_coords", "sdf_ops", [], "coordgrid", False),
+        ("grid_axes", "sdf_ops", [], "coordgrid", False),
         ("sphere_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         ("box_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         # 2026-09-07 追加。機械部品は円筒穴・面取り・フィレットでできているのに

@@ -29,7 +29,7 @@
 
 Keine dieser Zahlen ist von Hand geschrieben: `tools/gen_trust_block.py` erzeugt diesen Abschnitt aus Messdateien in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), und `tests/test_trust_block.py` schlägt fehl, wenn er davon abweicht. Jede Zahl trägt Version und Datum ihrer Messung.
 
-**21,185 Regressionstests** — in 0.7.2 enthalten, Commit `2f045f623d`, am 2026-10-20 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
+**20,795 Regressionstests** — in 0.7.1 enthalten, Commit `fbe838d6f4`, am 2026-10-19 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
 
 ### Was einen neu hinzugefügten Operator prüft
 
@@ -53,7 +53,7 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 90 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.2) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 90 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.7.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
@@ -78,7 +78,7 @@ Von 418 Beispielen werden 418 tatsächlich von einem Gate ausgeführt.
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
-| 0.7.2 | 2026-10-20 | 3,449 | 2,493 | 982 | 264 | 21,185 |
+| 0.7.1 | 2026-10-19 | 3,449 | 2,493 | 982 | 264 | 20,795 |
 
 - Der HALCON-Wert 323 für 0.1.0–0.1.8 ist der damals festgehaltene Wert; ab 0.1.9 beträgt er nach geänderter Zählung 979 (keine 656 neuen Implementierungen).
 - 0.2.0 ist die erste Version, deren Index das typisierte Register enthält: 918 → 1,942 ist eine Änderung der Zählweise, keine neue Implementierung (das Register gab es ab 0.1.6, aber außerhalb des Index).
@@ -140,14 +140,14 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **Gemessene Abdeckung**: evolvierbare Ops 939/939, typisiertes Ledger 2536/2548, Fassade `fullseye.<name>` 703/1465 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3496 Notizen verweisen **3485** auf mindestens ein lauffähiges Beispiel (11 ohne), **3331** haben einen Nutzungsabschnitt ab 120 Zeichen (165 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3496.
+**Gemessener Inhalt**: von 3496 Notizen verweisen **3484** auf mindestens ein lauffähiges Beispiel (12 ohne), **3330** haben einen Nutzungsabschnitt ab 120 Zeichen (166 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3496.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 956 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 424 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
+| `optics` | 423 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `3d` | 374 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
