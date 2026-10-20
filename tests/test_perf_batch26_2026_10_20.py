@@ -282,11 +282,11 @@ def test_317_near_cocircular_probe_keeps_exact_incircle_decision():
     assert got == (False, [(0, 4)])
 
 
-def test_318_sorted_edge_variant_preserves_degenerate_nonmanifold_order():
+def test_318_default_preserves_degenerate_nonmanifold_order():
     cases = [
         np.array([[8, 8, 2], [2, 8, 3], [8, 2, 4]]),
         np.array([[5, 1, 9], [1, 5, 8], [5, 1, 7], [20, 21, 22]]),
         np.array([[10, 2, 4], [4, 2, 8], [9, 10, 4]]),
     ]
-    for faces in cases:
-        assert geompred.mesh_orientation_consistent(faces, method="fast") == geompred.mesh_orientation_consistent(faces)
+    expected = [(False, [(2, 8)]), (False, [(1, 5)]), (True, [])]
+    assert [geompred.mesh_orientation_consistent(faces) for faces in cases] == expected
