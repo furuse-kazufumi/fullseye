@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-88개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+89개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -164,6 +164,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 광원 × 대상 × 센서의 분광 사슬(플랑크・CIE A・LED・필터・Si의 QE): [설명](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · 예제 [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI 라인 스캔과 라인 스캔용 렌즈(단수와 SNR, 동기 오차의 MTF, 상고별 조도와 MTF): [설명](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · 예제 [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - 분광 반사율로 박막 두께 측정(전달 행렬 → 간섭색 → FFT와 모델 맞춤 → 두께 지도): [설명](../../capabilities/thin-film-reflectometry.md) _(ja)_ · 예제 [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
+- 물이 검사 이미지에 어떻게 보이는가(수영장 바닥의 코스틱, 병의 측면 이미지와 액면, 젖은 표면, 수중의 선체): [설명](../../capabilities/water-inspection-images.md) _(ja)_ · 예제 [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
 - 물과 투명 매질(바다 파도, 수면의 프레넬과 굴절, 수중의 색과 산란, 병의 렌즈 작용): [설명](../../capabilities/water-transparent-media.md) _(ja)_ · 예제 [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **파동과 신호**
@@ -211,7 +212,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 267개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 268개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -386,7 +387,7 @@ PoC 267개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>촬상 품질·복원</b> (20)</summary>
+<details class="vall"><summary><b>촬상 품질·복원</b> (21)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="줄무늬에 다가가는 파리의 눈" width="200" height="200"><b>&#9654;</b><span>줄무늬에 다가가는 파리의 눈</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="손떨림 복원" width="200" height="200"><b>&#9654;</b><span>손떨림 복원</span></a>
@@ -407,6 +408,7 @@ PoC 267개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="그래프 분할" width="200" height="200"><b>&#9654;</b><span>그래프 분할</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="픽셀 시프트(위색과 에일리어싱)" width="200" height="200"><b>&#9654;</b><span>픽셀 시프트(위색과 에일리어싱)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="물과 투명 매질: 바다 파도, 수영장 굴절, 수중의 색, 병의 초점선" width="200" height="200"><span>물과 투명 매질: 바다 파도, 수영장 굴절, 수중의 색, 병의 초점선</span></a>
+<a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체" width="200" height="200"><span>물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)" width="200" height="200"><span>픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)</span></a>
 </div>
 </details>

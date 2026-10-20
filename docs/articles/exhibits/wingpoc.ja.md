@@ -4938,7 +4938,7 @@ py -3.11 examples/poc_weed_rice_ratio.py
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 22 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 23 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -5723,6 +5723,42 @@ py -3.11 examples/poc_water_transparent_media.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_transparent_media)
 
 使用 op(ノートへ): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/glassbody/beer_lambert_transmittance.html) · [`cylinder_lens_caustic`](https://furuse.work/ops/optics/watermedia/cylinder_lens_caustic.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`ocean_spectrum`](https://furuse.work/ops/optics/watermedia/ocean_spectrum.html) · [`phase_function_hg`](https://furuse.work/ops/optics/watermedia/phase_function_hg.html) · [`refract_rays`](https://furuse.work/ops/optics/glassbody/refract_rays.html) · [`refracted_view`](https://furuse.work/ops/optics/watermedia/refracted_view.html) · [`scattering_phase_petzold`](https://furuse.work/ops/optics/watermedia/scattering_phase_petzold.html) · [`snell_window`](https://furuse.work/ops/optics/watermedia/snell_window.html) · [`underwater_image`](https://furuse.work/ops/optics/watermedia/underwater_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html)
+
+## No.2026.268 —— 水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点
+
+[![水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles.png)
+
+*↑ **水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点** ―― 水は検査カメラの映像を 4 通りに変える。波のある水面は底の模様に明るい網(コースティクス)を載せ、液体の入った瓶は円柱レンズになり、濡れた面は暗くてかり、濁った水ではカメラの横のランプが霧のベールを作る。新 op 7 本(`watervision`、`opsoptics` の `watervision`): `caustic_irradiance`(光子の数え上げとヤコビアンの 2 方法で水底の照度)/ `bottle_image`(円柱の断面を行ごとに追跡した瓶の側面像、背面光と前面光、気泡・メニスカス)/ `fill_level_from_image`(液面を画像から測る)/ `wet_surface_appearance`(Lekner & Dorf の濡れた面)/ `wet_dry_inspection_pair`(同じ板を乾湿で描き欠陥のコントラストを返す)/ `underwater_inspection_image`(ランプがカメラの横の船体の画像と画素ごとの SNR)/ `caustic_floor_segmentation`(コースティクスの線の分割)。(1) プールの底: 平らな水面は一様に cos θ · T(1e-9)、光子の総量は入射 × 平均透過率に 1e-6(周期境界)、光子とヤコビアンは滑らかな面で相対 RMS 0.30 %、折り目(波高 0.2 m の面で 66 画素)では波面法が inf と旗を出し、光子は全体平均の 5.0 倍の有限値を数える。光線密度を 2 倍にして 0.85 %。ひび割れ検出器(レジストリの `canny`)は、風速 3 m/s の底でコースティクスの縁を拾って適合率 0.05(影の無い板では 1.00)に落ち、分割で縁を除くと 1.00(再現率 1.00 → 0.45)。6 m/s では相対しきい値が縁の勾配に負けて再現率 0.15、分割で除いても戻らず(0.00)、照度で割ると 1.00 / 1.00。(2) 瓶(R = 30 mm、n = 1.52、水 1.333): 液面の上下の行は空・満の断面と bit 一致、中央の明るさの比 1.0816 は 4 界面のフレネル透過率の積の比に 1e-9、満の断面の明るい帯の半幅は 9.50 mm(近軸焦点 62.13 mm からの予測 9.91 mm、−4.1 %)、液面は 5 充填 × 2 照明で 1 画素以内(差 0)、気泡の暗い輪の外径は 54 画素(近軸の 2 × 2 行列の倍率 1.333 から 53.3 画素)。(3) 濡れた面: 膜 0 で反照率は不変、閉形式は独立の数値積分に 1.1e-16、a = 0.5 で濡れ / 乾 = 0.673、傷の拡散コントラストは 0.411 → 0.494(予測 0.494)、全体は 0.449 → 0.558、てかり画素は 361 → 127。(4) 船体(1・3・6 m、ジャーロフ I と 3C): SNR は距離で単調に落ち、純水で距離 → 0 は澄んだ水の場合に 2.7e-11、中央のベールは隅の約 5 倍。(5) 限界: 瓶は断面ごとの追跡なので縦の傾きを無視し、傾き 40 度では帯の半幅が 29 % 動く(垂直な円柱は実効屈折率で厳密、肩は扱えない)。学習 0、較正 0、門 39 件。*
+
+[![照度の最大 3.0 倍(3 m/s)・7.7 倍(6 m/s)。分割は床の 29 %・21 %。傾きの RMS は手で 0.06・0.10 に合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics.png)
+
+*↑ 測定の図 ―― 照度の最大 3.0 倍(3 m/s)・7.7 倍(6 m/s)。分割は床の 29 %・21 %。傾きの RMS は手で 0.06・0.10 に合わせた。*
+
+[![上: 3 m/s は分割で縁を除くと適合率が戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector.png)
+
+*↑ 上: 3 m/s は分割で縁を除くと適合率が戻る。*
+
+[![空の瓶は縁近くまで明るい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band.png)
+
+*↑ 空の瓶は縁近くまで明るい。*
+
+[![全体のコントラスト 0.449 → 0.558。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate.png)
+
+*↑ 全体のコントラスト 0.449 → 0.558。*
+
+[![内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_ratio.png)
+
+*↑ 内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。*
+
+```
+py -3.11 examples/poc_water_inspection_images.py
+```
+
+ソース: [examples/poc_water_inspection_images.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_inspection_images)
+
+使用 op(ノートへ): [`bottle_image`](https://furuse.work/ops/optics/watervision/bottle_image.html) · [`canny`](https://furuse.work/ops/2d/segmentation/canny.html) · [`caustic_floor_segmentation`](https://furuse.work/ops/optics/watervision/caustic_floor_segmentation.html) · [`caustic_irradiance`](https://furuse.work/ops/optics/watervision/caustic_irradiance.html) · [`fill_level_from_image`](https://furuse.work/ops/optics/watervision/fill_level_from_image.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`underwater_inspection_image`](https://furuse.work/ops/optics/watervision/underwater_inspection_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html) · [`wet_dry_inspection_pair`](https://furuse.work/ops/optics/watervision/wet_dry_inspection_pair.html) · [`wet_surface_appearance`](https://furuse.work/ops/optics/watervision/wet_surface_appearance.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
