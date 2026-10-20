@@ -841,7 +841,7 @@ def debye_ring_image(phases, weight_fractions, geometry, shape=(512, 512), size=
 # 方位積分
 # ----------------------------------------------------------------------------------------------
 def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True,
-                        polarization=None, chi_range=None, supersample=2):
+                        polarization=None, chi_range=None, supersample=2, memory_budget=None):
     """2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。
 
     各画素を ``supersample``² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに **平均**
@@ -874,45 +874,103 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
     H, W = im.shape
     rr, cc = np.mgrid[0:H, 0:W].astype(np.float64)
     off = (np.arange(ss) + 0.5) / ss - 0.5
-    vals, tths, wts, cors = [], [], [], []
-    for dy in off:
-        for dx in off:
-            tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
-            corr = np.ones_like(tth)
-            if solid_angle:
-                corr = corr * om
-            if pol is not None:
-                corr = corr * _polarization(tth, chi, pol)
-            sel = valid.copy()
-            if chi_range is not None:
-                c0, c1 = (_num(c, "chi_range") for c in chi_range)
-                sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
-            vals.append((im / corr)[sel])
-            cors.append(corr[sel])
-            tths.append(tth[sel])
-            wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
-    val = np.concatenate(vals)
-    tt = np.concatenate(tths)
-    wt = np.concatenate(wts)
-    cr = np.concatenate(cors)
-    if tt.size == 0:
-        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
+    if memory_budget is None:
+        vals, tths, wts, cors = [], [], [], []
+        for dy in off:
+            for dx in off:
+                tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
+                corr = np.ones_like(tth)
+                if solid_angle:
+                    corr *= om
+                if pol is not None:
+                    corr *= _polarization(tth, chi, pol)
+                sel = valid.copy()
+                if chi_range is not None:
+                    c0, c1 = (_num(c, "chi_range") for c in chi_range)
+                    sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
+                vals.append((im / corr)[sel])
+                cors.append(corr[sel])
+                tths.append(tth[sel])
+                wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
+        val, tt = np.concatenate(vals), np.concatenate(tths)
+        wt, cr = np.concatenate(wts), np.concatenate(cors)
+        if tt.size == 0:
+            raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
+        if two_theta_range is None:
+            lo, hi = float(tt.min()), float(tt.max())
+        else:
+            lo, hi = (_num(v_, "two_theta_range") for v_ in two_theta_range)
+        if not hi > lo:
+            raise ValueError("two_theta_range is empty: %r" % ((lo, hi),))
+        if nb is None:
+            nb = max(8, int(math.ceil((hi - lo) / (0.5 * math.degrees(g["pixel"] / g["distance"])))))
+        edges = np.linspace(lo, hi, nb + 1)
+        idx = np.searchsorted(edges, tt, side="right") - 1
+        ok = (idx >= 0) & (idx < nb)
+        s_w = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
+        s_v = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
+        s_va = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            mean = s_v / s_w
+            sig = np.sqrt(s_va) / s_w
+        mean[s_w == 0] = np.nan
+        sig[s_w == 0] = np.nan
+        return {"two_theta": 0.5 * (edges[1:] + edges[:-1]), "intensity": mean, "count": s_w, "sigma": sig}
+    memory_budget = int(_num(memory_budget, "memory_budget", positive=True))
+    if chi_range is not None:
+        c0, c1 = (_num(c, "chi_range") for c in chi_range)
+
+    def geometry_samples():
+        for dy in off:
+            for dx in off:
+                tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
+                corr = np.ones_like(tth)
+                if solid_angle:
+                    corr *= om
+                if pol is not None:
+                    corr *= _polarization(tth, chi, pol)
+                sel = valid.copy()
+                if chi_range is not None:
+                    sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
+                yield tth[sel], corr[sel], (im / corr)[sel]
+
+    # 自動範囲だけは幾何を先に走査する。副画素の値・角度・補正を全てリストに
+    # 保持せず、範囲が決まった後は各副画素群を直ちに bin へ加える。
     if two_theta_range is None:
-        lo, hi = float(tt.min()), float(tt.max())
+        lo, hi, n_selected = math.inf, -math.inf, 0
+        for tt, _cr, _val in geometry_samples():
+            if tt.size:
+                lo, hi = min(lo, float(tt.min())), max(hi, float(tt.max()))
+                n_selected += tt.size
     else:
         lo, hi = (_num(v_, "two_theta_range") for v_ in two_theta_range)
+        n_selected = -1
+    if n_selected == 0:
+        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
     if not hi > lo:
         raise ValueError("two_theta_range is empty: %r" % ((lo, hi),))
     if nb is None:
         # 既定: ビンの幅 = 画素 1 個がビームの中心で張る角の半分(細かすぎると隣のビンが同じ画素を分け合い相関する)
         nb = max(8, int(math.ceil((hi - lo) / (0.5 * math.degrees(g["pixel"] / g["distance"])))))
     edges = np.linspace(lo, hi, nb + 1)
-    idx = np.searchsorted(edges, tt, side="right") - 1
-    ok = (idx >= 0) & (idx < nb)
-    s_w = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
-    s_v = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
+    s_w = np.zeros(nb)
+    s_v = np.zeros(nb)
+    s_va = np.zeros(nb)
+    wt = 1.0 / ss ** 2
+    accumulated = 0
+    for tt, cr, val in geometry_samples():
+        accumulated += tt.size
+        idx = np.searchsorted(edges, tt, side="right") - 1
+        ok = (idx >= 0) & (idx < nb)
+        ids = idx[ok]
+        values = val[ok]
+        corrections = cr[ok]
+        s_w += np.bincount(ids, weights=np.full(ids.size, wt), minlength=nb)
+        s_v += np.bincount(ids, weights=values * wt, minlength=nb)
+        s_va += np.bincount(ids, weights=np.abs(values) / corrections * wt, minlength=nb)
+    if accumulated == 0:
+        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
     # ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
-    s_va = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
     with np.errstate(invalid="ignore", divide="ignore"):
         mean = s_v / s_w
         # Poisson: 画素の分散 ≈ 値。1 画素の副画素の重みの和は 1 なので、平均の分散 ≈ Σ w |v| / (Σ w)²

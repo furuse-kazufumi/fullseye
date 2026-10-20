@@ -4,13 +4,154 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.ndimage import binary_dilation
+from scipy.signal import fftconvolve
 
 import regions_setops as rs
 import coherent
+import pxrd
 import recon3d
 import reconstruction as reconstruction
 import tacsim
 import tacdome
+
+
+def _old_azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True,
+                              polarization=None, chi_range=None, supersample=2):
+    """Item 188 reference: the pre-slice list-and-concatenate implementation."""
+    im = pxrd._image(image)
+    g = pxrd._geometry(geometry)
+    nb = None if n_bins is None else int(pxrd._num(n_bins, "n_bins", positive=True))
+    ss = int(pxrd._num(supersample, "supersample", positive=True))
+    valid = np.ones(im.shape, dtype=bool) if mask is None else ~np.asarray(mask)
+    pol = None if polarization is None else pxrd._num(polarization, "polarization")
+    rr, cc = np.mgrid[0:im.shape[0], 0:im.shape[1]].astype(np.float64)
+    off = (np.arange(ss) + 0.5) / ss - 0.5
+    vals, tths, wts, cors = [], [], [], []
+    for dy in off:
+        for dx in off:
+            tth, chi, om = pxrd._tth_chi(rr + dy, cc + dx, g)
+            corr = np.ones_like(tth)
+            if solid_angle:
+                corr *= om
+            if pol is not None:
+                corr *= pxrd._polarization(tth, chi, pol)
+            sel = valid.copy()
+            if chi_range is not None:
+                c0, c1 = chi_range
+                sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
+            vals.append((im / corr)[sel]); cors.append(corr[sel]); tths.append(tth[sel])
+            wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
+    val, tt, wt, cr = map(np.concatenate, (vals, tths, wts, cors))
+    lo, hi = (float(tt.min()), float(tt.max())) if two_theta_range is None else two_theta_range
+    if nb is None:
+        nb = max(8, int(np.ceil((hi - lo) / (0.5 * np.degrees(g["pixel"] / g["distance"])))))
+    edges = np.linspace(lo, hi, nb + 1)
+    idx = np.searchsorted(edges, tt, side="right") - 1
+    ok = (idx >= 0) & (idx < nb)
+    sw = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
+    sv = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
+    sva = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mean, sig = sv / sw, np.sqrt(sva) / sw
+    mean[sw == 0] = np.nan; sig[sw == 0] = np.nan
+    return {"two_theta": (edges[1:] + edges[:-1]) * 0.5, "intensity": mean, "count": sw, "sigma": sig}
+
+
+def test_188_streaming_azimuthal_integral_matches_original():
+    rng = np.random.default_rng(188)
+    image = rng.poisson(20, (97, 113)).astype(float)
+    geometry = {"cx": 55.2, "cy": 48.7, "distance": 100.0, "pixel": 0.2, "wavelength": 1.54}
+    kw = dict(n_bins=80, two_theta_range=(0.0, 20.0), polarization=0.4,
+              chi_range=(-140.0, 120.0), supersample=3)
+    expected = _old_azimuthal_integrate(image, geometry, **kw)
+    actual = pxrd.azimuthal_integrate(image, geometry, memory_budget=32 << 20, **kw)
+    for key in ("two_theta", "intensity", "count", "sigma"):
+        assert np.allclose(actual[key], expected[key], rtol=1e-12, atol=1e-12, equal_nan=True)
+
+
+def _old_photometric_stereo(images, light_dirs):
+    I = np.stack([np.asarray(im, float) for im in images], axis=0)
+    K, H, W = I.shape
+    G = np.linalg.lstsq(np.asarray(light_dirs, float), I.reshape(K, -1), rcond=None)[0]
+    albedo = np.linalg.norm(G, axis=0)
+    return {"normals": (G / (albedo + 1e-12)).T.reshape(H, W, 3), "albedo": albedo.reshape(H, W)}
+
+
+def _old_uncalibrated_photometric_stereo(images):
+    I = np.stack([np.asarray(im, float) for im in images], axis=0)
+    K, H, W = I.shape
+    _U, S, Vt = np.linalg.svd(I.reshape(K, -1), full_matrices=False)
+    B = np.diag(S[:3]) @ Vt[:3]
+    albedo = np.linalg.norm(B, axis=0)
+    return {"normals": (B / (albedo + 1e-12)).T.reshape(H, W, 3), "albedo": albedo.reshape(H, W)}
+
+
+def test_207_208_reconstruction_default_and_variants_keep_exact_default():
+    rng = np.random.default_rng(207)
+    images = rng.random((12, 71, 67))
+    lights = rng.normal(size=(12, 3))
+    expected = _old_photometric_stereo(images, lights)
+    for actual in (reconstruction.photometric_stereo(images, lights),
+                   reconstruction.photometric_stereo(images, lights, chunk=257)):
+        assert np.allclose(actual["normals"], expected["normals"], rtol=1e-12, atol=1e-12)
+        assert np.allclose(actual["albedo"], expected["albedo"], rtol=1e-12, atol=1e-12)
+    exact = reconstruction.uncalibrated_photometric_stereo(images)
+    old = _old_uncalibrated_photometric_stereo(images)
+    assert np.array_equal(exact["normals"], old["normals"])
+    assert np.array_equal(exact["albedo"], old["albedo"])
+    fast = reconstruction.uncalibrated_photometric_stereo(images, method="fast")
+    assert np.allclose(fast["albedo"], old["albedo"], rtol=1e-10, atol=1e-10)
+
+
+def _old_circumradii(P, simplices):
+    T = P[simplices]
+    p0 = T[:, 0]
+    A = 2.0 * (T[:, 1:] - p0[:, None, :])
+    rhs = (T[:, 1:] ** 2).sum(2) - (p0 ** 2).sum(1)[:, None]
+    det = np.linalg.det(A)
+    denom = np.prod(np.linalg.norm(A, axis=2), axis=1)
+    rel = np.divide(np.abs(det), denom, out=np.zeros_like(det), where=denom > 0)
+    radii = np.full(len(T), np.inf)
+    good = rel > 1e-9
+    radii[good] = np.linalg.norm(np.linalg.solve(A[good], rhs[good][..., None])[..., 0] - p0[good], axis=1)
+    return radii
+
+
+def test_204_blocked_circumradii_matches_original():
+    rng = np.random.default_rng(204)
+    points = rng.normal(size=(5000, 3))
+    simplices = rng.integers(0, len(points), size=(70000, 4))
+    expected = _old_circumradii(points, simplices)
+    actual = recon3d._circumradii(points, simplices)
+    assert np.allclose(actual, expected, rtol=1e-12, atol=1e-12, equal_nan=True)
+
+
+def _old_radial_slope_profile(normals, X, Y, centre_xy, pitch):
+    import photometric
+    p, q = photometric.normals_to_gradients(normals)
+    dx, dy = X - centre_xy[0], Y - centre_xy[1]
+    r = np.hypot(dx, dy)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        sr = np.where(r > 1e-12, (p * dx + q * dy) / np.maximum(r, 1e-15), 0.0)
+    cx, cy = centre_xy
+    rmax = float(min(cx - X.min(), X.max() - cx, cy - Y.min(), Y.max() - cy))
+    nb = int(rmax / pitch)
+    idx = np.clip((r / (rmax / nb)).astype(int), 0, nb)
+    prof, cnt = np.zeros(nb + 1), np.zeros(nb + 1)
+    np.add.at(prof, idx.ravel(), sr.ravel()); np.add.at(cnt, idx.ravel(), 1.0)
+    prof, cnt = prof[:nb], cnt[:nb]
+    prof = np.where(cnt > 0, prof / np.maximum(cnt, 1), 0.0)
+    return (np.arange(nb) + 0.5) * (rmax / nb), prof, cnt
+
+
+def test_213_bincount_profile_preserves_original_summation_result():
+    axis = np.linspace(-0.01, 0.01, 301)
+    X, Y = np.meshgrid(axis, axis)
+    normals = np.dstack((-0.2 * X, -0.2 * Y, np.ones_like(X)))
+    old = _old_radial_slope_profile(normals, X, Y, (0.0, 0.0), axis[1] - axis[0])
+    new = tacsim._radial_slope_profile(normals, X, Y, (0.0, 0.0), axis[1] - axis[0])
+    for got, want in zip(new, old):
+        assert np.array_equal(got, want)
 
 
 def _old_bbox(region):
