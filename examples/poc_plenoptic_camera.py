@@ -237,10 +237,12 @@ def make_video(lf):
     assert all(.05 <= f <= .98 for f in fractions)
     assert mean_delta >= .5
     figs.save_video("refocus", frames, "24-frame 480-pixel refocus sweep; all frames pass the content gates.", fps=8)
-    sheet_dir = Path(r"C:\Users\puruy\AppData\Local\Temp\claude\plenoptic\frames_pass3")
-    sheet_dir.mkdir(parents=True, exist_ok=True)
-    sheet = np.concatenate([frames[0], frames[len(frames)//2], frames[-1]], axis=1)
-    Image.fromarray(sheet).save(sheet_dir/"contact_sheet.png")
+    sheet_dir_env = os.environ.get("FULLSEYE_PLENOPTIC_SHEET_DIR")
+    if sheet_dir_env:
+        sheet_dir = Path(sheet_dir_env)
+        sheet_dir.mkdir(parents=True, exist_ok=True)
+        sheet = np.concatenate([frames[0], frames[len(frames)//2], frames[-1]], axis=1)
+        Image.fromarray(sheet).save(sheet_dir/"contact_sheet.png")
     return {"video_frames": 24, "video_short_side_px": 480,
             "content_fraction_min": min(fractions), "content_fraction_max": max(fractions),
             "mean_frame_difference": mean_delta}
