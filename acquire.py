@@ -431,7 +431,13 @@ NOT_CARRIED = {
 }
 
 
-def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
+def _byte_view(buf):
+    if isinstance(buf, (bytes, bytearray, memoryview)):
+        return np.frombuffer(buf, dtype=np.uint8)
+    return np.asarray(buf, dtype=np.uint8).ravel()
+
+
+def unpack_lsb(buf, bits: int, count: int, method="exact") -> np.ndarray:
     """lsb-packed bit stream -> one ``uint16`` per pixel (PFNC 2.4 6.3.1).
 
     Args:
@@ -445,15 +451,30 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
             a short buffer is a dropped packet, never a reason to return a
             half-filled image.
     """
-    raw = (np.frombuffer(buf, dtype=np.uint8) if isinstance(buf, (bytes, bytearray, memoryview))
-           else np.asarray(buf, dtype=np.uint8).ravel())
-    b = np.unpackbits(raw, bitorder="little")
-    need = int(bits) * int(count)
-    if b.size < need:
+    bits = int(bits)
+    count = int(count)
+    if not 1 <= bits <= 16 or count < 0:
+        raise ValueError("unpack_lsb: bits must be 1..16 and count must be non-negative")
+    a = _byte_view(buf)
+    need = bits * count
+    need_bytes = (need + 7) // 8
+    if a.size < need_bytes:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
-                         % (count, bits, need, b.size))
-    w = b[:need].reshape(int(count), int(bits))
-    return (w * (1 << np.arange(int(bits), dtype=np.uint32))).sum(axis=1).astype(np.uint16)
+                         % (count, bits, need, a.size * 8))
+    if method == "exact":
+        unpacked = np.unpackbits(a, bitorder="little")
+        words = unpacked[:need].reshape(count, bits)
+        return (words * (1 << np.arange(bits, dtype=np.uint32))).sum(axis=1).astype(np.uint16)
+    if method == "low_memory":
+        # Each value spans at most three bytes.  Decode those bytes directly instead
+        # of expanding every input byte into eight temporary uint8 values.
+        src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
+        bit = np.arange(count, dtype=np.uint64) * bits
+        byte = (bit >> 3).astype(np.intp)
+        shift = (bit & 7).astype(np.uint32)
+        word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
+        return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
+    raise ValueError("unpack_lsb: method must be 'exact' or 'low_memory'")
 
 
 def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
@@ -476,8 +497,7 @@ def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
         raise ValueError("unpack_grouped: %d-bit grouped layout is not defined here"
                          % bits)
     low = bits - 8
-    a = (np.frombuffer(buf, dtype=np.uint8) if isinstance(buf, (bytes, bytearray, memoryview))
-         else np.asarray(buf, dtype=np.uint8).ravel())
+    a = _byte_view(buf)
     pairs = (int(count) + 1) // 2
     if a.size < pairs * 3:
         raise ValueError("unpack_grouped: %d pixels need %d bytes, buffer has %d"

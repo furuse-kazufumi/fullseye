@@ -607,9 +607,10 @@ def _peak_ratio(corr, pi, pj, top):
     n = corr.shape[0]
     y0, y1 = max(0, pi - 1), min(n, pi + 2)
     x0, x1 = max(0, pj - 1), min(n, pj + 2)
-    masked = np.array(corr, dtype=np.float64, copy=True)
-    masked[y0:y1, x0:x1] = -np.inf
-    second = float(np.max(masked))
+    a = np.asarray(corr)
+    regions = (a[:y0, :], a[y1:, :], a[y0:y1, :x0], a[y0:y1, x1:])
+    maxima = [np.max(region) for region in regions if region.size]
+    second = float(np.max(maxima)) if maxima else -np.inf
     if not np.isfinite(second) or second <= 0:
         return np.inf
     return float(top / second)
@@ -738,6 +739,14 @@ def piv_replace_outliers(flow, mask, method="median"):
     work[:, m] = np.nan
     _, h, w = f.shape
     pad = np.pad(work, ((0, 0), (1, 1), (1, 1)), mode="edge")
+    if np.count_nonzero(m) < m.size // 20:
+        for r, c in np.argwhere(m):
+            vals = pad[:, r:r + 3, c:c + 3].reshape(2, 9)
+            vals = np.delete(vals, 4, axis=1)
+            with np.errstate(invalid="ignore"):
+                v = np.nanmedian(vals, axis=1) if method == "median" else np.nanmean(vals, axis=1)
+            f[:, r, c] = np.where(np.isfinite(v), v, 0.0)
+        return f
     neigh = [pad[:, 1 + dy:1 + dy + h, 1 + dx:1 + dx + w]
              for dy in (-1, 0, 1) for dx in (-1, 0, 1) if (dy, dx) != (0, 0)]
     nb = np.stack(neigh)
@@ -745,6 +754,21 @@ def piv_replace_outliers(flow, mask, method="median"):
         fill = np.nanmedian(nb, axis=0) if method == "median" else np.nanmean(nb, axis=0)
     f[:, m] = np.where(np.isfinite(fill[:, m]), fill[:, m], 0.0)
     return f
+
+
+def piv_outlier_mask_stream(flow, threshold=2.0, epsilon=0.1, chunk=128):
+    """Memory-bounded outlier mask; ``chunk`` is the number of output rows."""
+    f = _flow(flow)
+    rows = int(chunk)
+    if rows < 1:
+        raise ValueError("chunk must be >= 1")
+    out = np.empty(f.shape[1:], dtype=bool)
+    for r0 in range(0, f.shape[1], rows):
+        r1 = min(f.shape[1], r0 + rows)
+        e0, e1 = max(0, r0 - 1), min(f.shape[1], r1 + 1)
+        part = piv_outlier_mask(f[:, e0:e1], threshold, epsilon)
+        out[r0:r1] = part[r0 - e0:r1 - e0]
+    return out
 
 
 # =========================================================================
