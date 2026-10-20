@@ -453,7 +453,8 @@ def vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81):
     if a0 <= 0.0:
         raise ValueError("%s: no ray reaches the image on axis" % op)
     out = np.empty((k, 2))
-    for i, h in enumerate(hs):
+    out[0] = (0.0, 1.0)
+    for i, h in enumerate(hs[1:], start=1):
         try:
             _, a, _ = _bundle(system, float(h), 0.0, m)
         except ValueError:
