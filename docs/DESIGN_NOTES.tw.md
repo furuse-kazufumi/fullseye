@@ -1735,8 +1735,8 @@
 - **L666** — ★2026-09-08 追加。此前用於雕刻的位姿輔助(visualhull.look_at)從任何公開層都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就會**無一例外地得到空的 hull**(poc_livestock_body_volume)。
 - **L687** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
 - **L777** — ★曾擱置的理由(a)「points 候選清單變短而悄悄改寫既有 champion」,已隨 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 摺疊而消失:2-D 橋的 tb_sphere_sdf / tb_box_sdf 帶有 INPUT_ADAPTERS._points_to_grid,**確實會從點雲生成座標場**,所以那邊的 "points" 宣告並非謊言(實測:傳入 (64,3) 會回傳 (16,16,16) = 是活的)。撒謊的只是 3-D 台帳那一側。
-- **L939** — ★axis=1。`pairs` 的正典是 **(N,2)**(實測:消費側 6 個 op 明確拒絕 (2,N))。當謂詞還是 `lambda v: True` 時,這裡生成的是 (2,n),把「任何消費側都無法接收的形狀」當作宣告型別來自稱
-- **L977** — ★position 的正典是 **[z, y, x] 的 3 個分量**。不是靠多數表決,而是**執行消費側**來定的:refine_translation_lk / refine_lm 在傳入 4 個分量時,會以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(實測)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 回傳 **[score, d, h, w] 的 4 個分量**,若宣告 out 仍為 "position" 就放行,後段的精化 op 會全軍覆沒 = 型別的謊言。由於 score 本身是誠實資訊,**函數一側不刪**(get() 保持 4 分量),而在自稱台帳型別的 call() 一側只取出座標(與 project_points 同樣處理)。
+- **L938** — ★axis=1。`pairs` 的正典是 **(N,2)**(實測:消費側 6 個 op 明確拒絕 (2,N))。當謂詞還是 `lambda v: True` 時,這裡生成的是 (2,n),把「任何消費側都無法接收的形狀」當作宣告型別來自稱
+- **L976** — ★position 的正典是 **[z, y, x] 的 3 個分量**。不是靠多數表決,而是**執行消費側**來定的:refine_translation_lk / refine_lm 在傳入 4 個分量時,會以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(實測)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 回傳 **[score, d, h, w] 的 4 個分量**,若宣告 out 仍為 "position" 就放行,後段的精化 op 會全軍覆沒 = 型別的謊言。由於 score 本身是誠實資訊,**函數一側不刪**(get() 保持 4 分量),而在自稱台帳型別的 call() 一側只取出座標(與 project_points 同樣處理)。
 
 ## `opsacoustics.py`
 
@@ -2034,7 +2034,7 @@
 
 ## `sdf_ops.py`
 
-- **L342** — ★ 加入的理由基於實測：`poc_dfm_thickness_overhang` 與 `poc_cad_scan_deviation` 報告稱 # 「機械部件由圓柱孔、倒角、圓角構成，但基元只有球與 # 長方體，故無法用 CSG 拼裝」，兩者都各自手寫了逐面的解析式。此處的 4 個**全部為閉式且嚴格**（外側為到最近表面的 # 歐氏距離，內側為到最近面的負值），故此後可僅用 CSG 拼出帶真值的合成部件。 # --------------------------------------------------------------------------- #
+- **L346** — ★ 加入的理由基於實測：`poc_dfm_thickness_overhang` 與 `poc_cad_scan_deviation` 報告稱 # 「機械部件由圓柱孔、倒角、圓角構成，但基元只有球與 # 長方體，故無法用 CSG 拼裝」，兩者都各自手寫了逐面的解析式。此處的 4 個**全部為閉式且嚴格**（外側為到最近表面的 # 歐氏距離，內側為到最近面的負值），故此後可僅用 CSG 拼出帶真值的合成部件。 # --------------------------------------------------------------------------- #
 
 ## `segcompare.py`
 

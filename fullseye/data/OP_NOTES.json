@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3491,
- "n_notes": 3497,
+ "n_ops": 3490,
+ "n_notes": 3496,
  "notes": {
   "vol_dilate": [
    {
@@ -13100,15 +13100,6 @@
     "in": "coordgrid",
     "out": "sdf",
     "path": "docs/ops/3d/sdf_csg/cylinder_sdf.md"
-   }
-  ],
-  "grid_axes": [
-   {
-    "op": "grid_axes",
-    "dim": "3d",
-    "category": "sdf_csg",
-    "out": "coordgrid",
-    "path": "docs/ops/3d/sdf_csg/grid_axes.md"
    }
   ],
   "grid_coords": [

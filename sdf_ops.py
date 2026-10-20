@@ -323,7 +323,11 @@ def grid_coords(bounds, res):
 
 
 def grid_axes(bounds, res):
-    """Return three 1-D voxel-centre axes for memory-efficient primitive evaluation."""
+    """Return three 1-D voxel-centre axes for memory-efficient primitive evaluation.
+
+    ★台帳には載せない(2026-10-21): 返りは ``coordgrid``(密な (nx, ny, nz, 3))ではなく軸 3 本で、
+    軸入力を受けるのは sphere_sdf / box_sdf / plane_sdf だけ。語彙 ``coordaxes`` を整備するまで補助関数。
+    """
     b = np.asarray(bounds, np.float64)
     if b.shape != (3, 2) or not np.all(b[:, 1] > b[:, 0]):
         raise ValueError("bounds must contain three increasing (min, max) pairs")

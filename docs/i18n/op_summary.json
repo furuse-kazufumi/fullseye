@@ -9387,15 +9387,6 @@
    "de": "Eine Serie von Gray-Code-Bitbildern → eine ganzzahlige Streifenordnungskarte (die absolute Ordnung).",
    "hi": "Gray code bit image series → integer fringe order map (absolute order)।"
   },
-  "3d/grid_axes": {
-   "fp": "00513190ecaf",
-   "ja": "省メモリのプリミティブ評価用に、ボクセル中心を表す3本の1次元座標軸を返す。",
-   "zh": "返回三条表示体素中心的一维坐标轴，用于节省内存的基本体求值。",
-   "tw": "回傳三條表示體素中心的一維座標軸，用於節省記憶體的基本體求值。",
-   "ko": "메모리 효율적인 프리미티브 평가를 위해 복셀 중심을 나타내는 세 개의 1차원 좌표축을 반환합니다.",
-   "de": "Gibt drei eindimensionale Achsen der Voxelzentren für eine speichersparende Primitivauswertung zurück.",
-   "hi": "कम memory में primitive evaluation के लिए voxel-centre की तीन 1-D coordinate axes लौटाता है।"
-  },
   "3d/grid_coords": {
    "fp": "cf272d068ae1",
    "en": "Build the grid of voxel-centre coordinates for CSG evaluation (the same lattice convention as occupancy).",

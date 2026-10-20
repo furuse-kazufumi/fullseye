@@ -760,9 +760,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3497 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 374 · **math** 114 · **optics** 424 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 424 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(956 ops / 49 categories)
 
@@ -1822,7 +1822,7 @@ _計 3497 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(374 ops / 68 categories)
+### 3d(373 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -2232,11 +2232,10 @@ _計 3497 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `rigid_flow` `points × points → pose` — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
 - `smooth_flow` `points × points → flow_scattered` — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
-#### 3d / sdf_csg(13)
+#### 3d / sdf_csg(12)
 - `box_sdf` `coordgrid → sdf` — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `capsule_sdf` `coordgrid → sdf` — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: `procedural_hand`, `sdf_csg`
 - `cylinder_sdf` `coordgrid → sdf` — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
-- `grid_axes` `入力なし → coordgrid` — Return three 1-D voxel-centre axes for memory-efficient primitive evaluation. · 例: なし
 - `grid_coords` `入力なし → coordgrid` — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
 - `plane_sdf` `coordgrid → sdf` — 半空間の厳密な符号付き距離場。``fast`` は1e6で相対差1.5e-10の選択式経路、既定は ``exact``。 · 例: `sdf_csg`
 - `sdf_intersect` `sdf × sdf → sdf` — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
