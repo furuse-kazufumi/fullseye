@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import os
 import wave
+from functools import lru_cache
 
 import numpy as np
 
@@ -247,19 +248,31 @@ def spectrogram(x, rate=1.0, win=256, hop=None):
     if len(x) < win:
         x = np.pad(x, (0, win - len(x)))
     window = np.hanning(win)
-    starts = range(0, len(x) - win + 1, hop)
-    cols = [np.abs(np.fft.rfft(x[s:s + win] * window)) for s in starts]
-    S = np.stack(cols, axis=1) if cols else np.zeros((win // 2 + 1, 0))
+    starts = np.arange(0, len(x) - win + 1, hop, dtype=np.int64)
+    S = np.empty((win // 2 + 1, starts.size), dtype=np.float64)
+    frames = np.lib.stride_tricks.sliding_window_view(x, win)[::hop]
+    for first in range(0, starts.size, 256):
+        last = min(first + 256, starts.size)
+        S[:, first:last] = np.abs(
+            np.fft.rfft(frames[first:last] * window, axis=1)).T
     freqs = np.fft.rfftfreq(win, d=1.0 / float(rate))
-    times = np.array([s / float(rate) for s in starts])
+    times = starts / float(rate)
     return freqs, times, S
 
 
 # --------------------------------------------------------------------------- #
 # filters
 # --------------------------------------------------------------------------- #
+@lru_cache(maxsize=64)
+def _butter_coefficients(rate, cutoff, order, btype):
+    from scipy.signal import butter
+    cut = np.asarray(cutoff, np.float64)
+    wn = cut / (0.5 * rate)
+    return butter(order, wn if wn.size > 1 else wn[0], btype=btype)
+
+
 def _butter(x, rate, cutoff, btype, order=4):
-    from scipy.signal import butter, filtfilt
+    from scipy.signal import filtfilt
     rate = float(rate)
     if not np.isfinite(rate) or rate <= 0.0:
         raise ValueError("rate must be a positive finite sample rate, got %r" % (rate,))
@@ -270,8 +283,8 @@ def _butter(x, rate, cutoff, btype, order=4):
             "cutoff %s Hz must lie inside (0, %g) Hz — the Nyquist limit for "
             "rate=%g Hz; an out-of-band cutoff cannot be filtered, it would only "
             "return the signal essentially unchanged" % (cut.tolist(), nyq, rate))
-    wn = cut / nyq
-    b, a = butter(order, wn if wn.size > 1 else wn[0], btype=btype)
+    key_cutoff = tuple(float(v) for v in cut)
+    b, a = _butter_coefficients(rate, key_cutoff, int(order), str(btype))
     x = _require_finite(x)
     pad = 3 * max(len(a), len(b))                    # scipy filtfilt's default padlen
     if len(x) <= pad:                                # filtfilt needs enough samples
