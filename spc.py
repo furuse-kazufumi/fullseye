@@ -1229,7 +1229,7 @@ def _mc_samples(table, correlation, n, seed, distribution="dist"):
 
 def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
                     level=0.95, correlation=None, distribution=None,
-                    value=None, power=None):
+                    value=None, power=None, stream=False):
     """GUM 補遺 1(JCGM 101)のモンテカルロ伝播(``table``)。
 
     各入力量を分布から引いて ``y = sum_i c_i x_i`` を作り、標本から標準不確かさと
@@ -1290,8 +1290,6 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
         if bad:
             raise ValueError("%s: unknown distribution(s) %s" % (op, bad))
 
-    z = _mc_standardised(kinds, correlation, n, seed, op)
-
     xs = np.zeros(m, dtype=np.float64)
     if value is not None:
         xs = _numeric(_cols(table, op, (value,))[value], value, op)
@@ -1301,9 +1299,18 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
         if (ps <= 0).any() or not np.allclose(ps, np.round(ps)):
             raise ValueError("%s: power must be a positive whole number per component "
                              "(fractional powers of a negative sample are undefined)" % op)
-    if value is None and power is None:
+    if stream and correlation is None and value is None and power is None:
+        rng = np.random.default_rng(int(seed))
+        y = np.zeros(n, dtype=np.float64)
+        for kind, weight in zip(kinds, cc * uu):
+            normal = kind == "normal" or kind.startswith("normal_")
+            draw = rng.standard_normal(n) if normal else _legacy_draw(rng, kind, n)
+            y += draw * weight
+    elif value is None and power is None:
+        z = _mc_standardised(kinds, correlation, n, seed, op)
         y = z @ (cc * uu)                    # 線形(既定)—— 従来と同じ経路
     else:
+        z = _mc_standardised(kinds, correlation, n, seed, op)
         y = ((xs + z * uu) ** ps) @ cc
 
     u_mc = float(y.std(ddof=1))
