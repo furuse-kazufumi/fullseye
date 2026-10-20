@@ -27,7 +27,9 @@ def test_search_is_grouped_for_region_and_image_and_has_bridge(monkeypatch):
     ui = win._search_ui
     ui["search_now"]("小さい領域を消す")
     rows = ui["rows"]()
-    assert any(r["name"] == "remove_small" for r in rows["applicable"])
+    applicable = rows["applicable"]
+    assert applicable
+    assert any(r["name"] == "remove_small" for r in applicable)
     bridge = [r for r in rows["needs_preprocessing"] if r["name"] == "sk_area_opening"]
     assert len(bridge) == 1 and "→" in bridge[0]["text"]
     model.set_image(studio.demo_image(48))
@@ -58,7 +60,9 @@ def test_search_debounce_zero_recovery_try_once_and_unavailable(monkeypatch):
     _app().processEvents()
     ui["timer"].timeout.emit()
     assert calls
-    assert len(calls) <= 2 and all(c[1].get("k", 20) <= 40 for c in calls)
+    limits = [c[1].get("k", 20) for c in calls]
+    assert limits
+    assert len(calls) <= 2 and max(limits) <= 40
     ui["search_now"]("zzzzzz-no-result")
     assert len(ui["chips"]()) >= 1
     before = len(calls)
