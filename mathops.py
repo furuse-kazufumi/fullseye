@@ -930,14 +930,13 @@ def poly_fit(x, y, degree):
         raise ValueError("poly_fit: degree %d needs at least %d point(s), got %d "
                          "— an under-determined fit is refused" % (d, d + 1, xs.size))
     V = np.vander(xs, d + 1)               # columns x^d ... x^0
-    sv = np.linalg.svd(V, compute_uv=False)
+    coeffs, _, _, sv = np.linalg.lstsq(V, ys, rcond=None)
     cond = float("inf") if float(sv[-1]) <= 0.0 else float(sv[0] / sv[-1])
     if cond > POLY_COND_WARN:
         warnings.warn("poly_fit: Vandermonde condition number %.3g exceeds %g — "
                       "coefficients are numerically unreliable (centre/scale x, "
                       "or lower the degree)" % (cond, POLY_COND_WARN),
                       RuntimeWarning, stacklevel=2)
-    coeffs, _, _, _ = np.linalg.lstsq(V, ys, rcond=None)
     resid = ys - V @ coeffs
     return {
         "coeffs": np.ascontiguousarray(coeffs, dtype=np.float64),
