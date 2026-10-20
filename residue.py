@@ -318,11 +318,15 @@ def _crt_core(r, p, w, lo, hi, ref, edge=0.0):
     ph = 2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None]
     score = (w[:, None] * np.cos(ph)).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = (np.take_along_axis(score, order[1:2], 0)[0] if score.shape[0] > 1
-          else np.full(shp, -np.inf))
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    if score.shape[0] > 1:
+        runner = score.copy()
+        np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+        s2 = runner.max(axis=0)
+    else:
+        s2 = np.full(shp, -np.inf)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2                       # equal phase noise -> variance ~ period^2
     ivs = iv.sum(0)
@@ -584,10 +588,12 @@ def _crt_core_var(r, pb, w, lo, hi):
     inside = (cand >= lo) & (cand < hi)
     score = (w[:, None] * np.cos(2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None])).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = np.take_along_axis(score, order[1:2], 0)[0]
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    runner = score.copy()
+    np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+    s2 = runner.max(axis=0)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2
     ivs = iv.sum(0)

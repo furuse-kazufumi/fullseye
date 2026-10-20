@@ -11,6 +11,7 @@ from scipy import ndimage
 
 import volxform as vx
 import quatimage as qi
+import residue as residue_mod
 
 
 def _old_resize(v, shape, order=1, mode="nearest", cval=0.0):
@@ -250,3 +251,56 @@ def test_325_326_identity_gain_skips_riesz_and_matches_old(monkeypatch):
     got = qi.riesz_motion_magnify(video, 1.0, 1.0, 3.0, 16.0, scales=3)
     assert calls == 0
     assert np.max(np.abs(got["video"] - ref)) <= 1e-12
+
+
+def _old_crt_core(r, p, w, lo, hi, ref, edge=0.0):
+    """The current pre-slice implementation, kept as the result oracle."""
+    n = r.shape[0]
+    shp = r.shape[1:]
+    pb = p.reshape((n,) + (1,) * len(shp))
+    ref = np.broadcast_to(np.asarray(ref), shp)
+    pr = p[ref]
+    rr = np.take_along_axis(r, ref[None], 0)[0]
+    ks = residue_mod._candidate_ks(p, lo - edge, hi + edge)
+    cand = rr[None] + ks.reshape((-1,) + (1,) * len(shp)) * pr[None]
+    inside = (cand >= lo - edge) & (cand < hi + edge)
+    ph = 2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None]
+    score = (w[:, None] * np.cos(ph)).sum(0)
+    score = np.where(inside, score, -np.inf)
+    order = np.argsort(-score, axis=0, kind="stable")
+    best = np.take_along_axis(cand, order[:1], 0)[0]
+    s1 = np.take_along_axis(score, order[:1], 0)[0]
+    s2 = np.take_along_axis(score, order[1:2], 0)[0]
+    e = residue_mod._wrap_signed(r - best[None], pb)
+    iv = w / pb ** 2
+    ivs = iv.sum(0)
+    val = best + np.where(ivs > 0, (iv * e).sum(0) / np.where(ivs > 0, ivs, 1.0), 0.0)
+    resid = residue_mod._wrap_signed(r - val[None], pb)
+    wsum = w.sum(0)
+    safe = np.where(wsum > 0, wsum, 1.0)
+    with np.errstate(invalid="ignore"):
+        margin = np.where(np.isfinite(s2), (s1 - s2) / safe, 2.0)
+    return val, np.where(wsum > 0, s1 / safe, 0.0), np.where(wsum > 0, margin, 0.0), resid
+
+
+def test_329_top_two_matches_stable_sort_including_ties():
+    p = np.array([5.0, 7.0, 9.0])
+    r = np.zeros((3, 6, 5))
+    w = np.ones_like(r)
+    ref = np.zeros((6, 5), dtype=np.int64)
+    old = _old_crt_core(r, p, w, -20.0, 20.0, ref)
+    new = residue_mod._crt_core(r, p, w, -20.0, 20.0, ref)
+    for got, expected in zip(new[:4], old):
+        assert np.array_equal(got, expected, equal_nan=True)
+
+
+def test_329_random_candidates_match_stable_sort_bit_for_bit():
+    rng = np.random.default_rng(329)
+    p = np.array([7.0, 9.0, 11.0, 13.0])
+    r = rng.uniform(0.0, p[:, None, None], size=(4, 23, 19))
+    w = rng.random(r.shape)
+    ref = rng.integers(0, 4, size=r.shape[1:])
+    old = _old_crt_core(r, p, w, -100.0, 100.0, ref)
+    new = residue_mod._crt_core(r, p, w, -100.0, 100.0, ref)
+    for got, expected in zip(new[:4], old):
+        assert np.array_equal(got, expected, equal_nan=True)
