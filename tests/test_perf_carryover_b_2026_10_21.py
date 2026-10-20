@@ -9,6 +9,8 @@ import tomography
 import lightfield
 import profileops
 import tsdf_fusion
+import flow
+from scipy import ndimage
 
 
 def _original_sart(sinogram, angles_deg, *, size, n_iter=1, relaxation=0.15):
@@ -162,3 +164,33 @@ def test_tsdf_block_frustum_is_bit_identical_at_edge_and_in_free_space():
         tsdf_fusion.integrate(b, wb, depth, K, np.eye(3), np.zeros(3), .4, bounds)
         assert np.array_equal(b, a)
         assert np.array_equal(wb, wa)
+
+
+def _original_track_points(prev, nxt, points, **kwargs):
+    u, v = flow.optical_flow_lk(prev, nxt, **kwargs)
+    pts = np.asarray(points, np.float64).reshape(-1, 2)
+    du = ndimage.map_coordinates(u, [pts[:, 1], pts[:, 0]], order=1, mode="nearest")
+    dv = ndimage.map_coordinates(v, [pts[:, 1], pts[:, 0]], order=1, mode="nearest")
+    tracked = pts + np.stack([du, dv], axis=1)
+    h, w = np.asarray(prev).shape[:2]
+    ok = ((tracked[:, 0] >= 0) & (tracked[:, 0] <= w - 1)
+          & (tracked[:, 1] >= 0) & (tracked[:, 1] <= h - 1))
+    return tracked, ok
+
+
+def test_sparse_point_tracker_is_gated_against_dense_reference():
+    rng = np.random.default_rng(80)
+    for shape, shift, levels in (((96, 128), (3, -2), 3),
+                                 ((111, 143), (-4, 2), 3),
+                                 ((80, 120), (1, 1), 2)):
+        prev = ndimage.gaussian_filter(rng.random(shape), 1.2)
+        nxt = ndimage.shift(prev, (shift[1], shift[0]), order=1, mode="nearest")
+        pts = np.array([[35., 35.], [60., 50.], [80., 65.]])
+        expected, expected_ok = _original_track_points(prev, nxt, pts, levels=levels, iters=5)
+        dense, dense_ok = flow.track_points(prev, nxt, pts, levels=levels, iters=5)
+        sparse, sparse_ok = flow.track_points(prev, nxt, pts, method="sparse",
+                                              levels=levels)
+        assert np.array_equal(dense, expected)
+        assert np.array_equal(dense_ok, expected_ok)
+        assert dense_ok.all() and sparse_ok.all()
+        assert np.max(np.abs(sparse - dense)) <= 1.0
