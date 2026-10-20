@@ -210,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 151 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 153 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
@@ -431,7 +431,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना" width="200" height="200"><span>zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="glass substitution और multi-start global search" width="200" height="200"><span>glass substitution और multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)" width="200" height="200"><span>आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)</span></a>
-<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, yield और compensator travel से lens tolerances तय करना" width="200" height="200"><b>&#9654;</b><span>MTF, yield और compensator travel से lens tolerances तय करना</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, yield और compensator travel से lens tolerances तय करना" width="200" height="200"><b>&#9654;</b><span>MTF, yield और compensator travel से lens tolerances तय करना</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)" width="200" height="200"><span>design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन" width="200" height="200"><span>सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन</span></a>
 </div>

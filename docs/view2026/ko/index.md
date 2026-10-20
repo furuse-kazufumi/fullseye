@@ -210,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 151개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 153개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
@@ -431,7 +431,7 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="줌 렌즈(다중 구성)를 하나의 처방의 차분으로 보관" width="200" height="200"><span>줌 렌즈(다중 구성)를 하나의 처방의 차분으로 보관</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="유리 대체와 다중 시작 전역 탐색" width="200" height="200"><span>유리 대체와 다중 시작 전역 탐색</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="요구 사항 표로 트리플렛 설계(가장자리 두께 경계와 변수로서의 유리)" width="200" height="200"><span>요구 사항 표로 트리플렛 설계(가장자리 두께 경계와 변수로서의 유리)</span></a>
-<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분" width="200" height="200"><b>&#9654;</b><span>MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분" width="200" height="200"><b>&#9654;</b><span>MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="설계의 관계를 솔브로 유지하기(조리개를 따라가는 F/#, afocal, 곡면 상면, 홀수차 비구면)" width="200" height="200"><span>설계의 관계를 솔브로 유지하기(조리개를 따라가는 F/#, afocal, 곡면 상면, 홀수차 비구면)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="공개 .zmx 처방의 독립 검증과 검사 평가" width="200" height="200"><span>공개 .zmx 처방의 독립 검증과 검사 평가</span></a>
 </div>

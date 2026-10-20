@@ -1,83 +1,83 @@
 [
  {
-  "file": "01_01_sensitivity.png",
-  "name": "01_sensitivity",
+  "file": "01_sensitivity.png",
+  "name": "sensitivity",
   "caption": "感度上位 10 行。首位は radius_pct:0:y。",
   "shape": [
-   420,
-   760,
+   680,
+   1280,
    3
   ]
  },
  {
-  "file": "02_02_histograms.png",
-  "name": "02_histograms",
+  "file": "02_histograms.png",
+  "name": "histograms",
   "caption": "同じ試行から得た MTF と RMS spot。赤線は合否限界。",
   "shape": [
-   340,
-   1040,
+   430,
+   1280,
    3
   ]
  },
  {
-  "file": "03_03_compensation.png",
-  "name": "03_compensation",
-  "caption": "同じ公差表で補償変数だけを追加。",
+  "file": "03_compensation.png",
+  "name": "compensation",
+  "caption": "像面だけの場合と内部間隔を加えた場合を比較。",
   "shape": [
-   360,
-   677,
+   430,
+   1280,
    3
   ]
  },
  {
-  "file": "04_04_distributions.png",
-  "name": "04_distributions",
+  "file": "04_distributions.png",
+  "name": "distributions",
   "caption": "一様・正規・±公差で切った正規分布の歩留まり。",
   "shape": [
-   360,
-   780,
+   430,
+   1440,
    3
   ]
  },
  {
-  "file": "05_05_rebudget.png",
-  "name": "05_rebudget",
-  "caption": "締めた行: radius_pct:0:y。",
+  "file": "05_rebudget.png",
+  "name": "rebudget",
+  "caption": "線形予測と Monte-Carlo 実測を明示。締めた行: radius_pct:0:y。",
   "shape": [
-   360,
-   560,
+   430,
+   1280,
    3
   ]
  },
  {
-  "file": "06_06_wedge_probe.png",
-  "name": "06_wedge_probe",
+  "file": "06_wedge_probe.png",
+  "name": "wedge_probe",
   "caption": "同じ処方の基準像と、1 arcmin のくさびを入れた像。",
   "shape": [
-   360,
-   760,
+   480,
+   1280,
    3
   ]
  },
  {
-  "file": "07_07_tolerance_sweep.gif",
-  "name": "07_tolerance_sweep",
+  "file": "07_tolerance_sweep.gif",
+  "name": "tolerance_sweep",
   "caption": "感度首行を -tol から +tol へ掃引した点像。",
   "shape": [
-   400,
-   480,
+   600,
+   1200,
    3
   ],
   "animated": true,
   "frames": 12,
   "frames_written": 12,
   "fps": 6.0,
-  "video": "07_07_tolerance_sweep.mp4",
+  "video": "07_tolerance_sweep.mp4",
   "video_frames": 24,
   "video_fps": 12.0,
   "video_shape": [
-   400,
-   480,
+   600,
+   1200,
    3
   ]
  }

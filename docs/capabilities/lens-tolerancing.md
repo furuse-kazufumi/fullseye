@@ -59,3 +59,23 @@ print(lenstol.tolerance_report(result))
 ```
 
 動く例: `poc_lens_tolerancing`
+
+## RAG recipes
+
+```yaml
+name: lens-file tolerance to worst-trial MTF
+inputs: [lens-file]
+pipeline: [lens_file_read, lens_file_system, tolerance_table, tolerance_monte_carlo, through_focus_mtf]
+alternatives: [tolerance_sensitivity, render_scene_through_lens]
+limits: the worst trial is the worst among the requested finite samples, not a global bound
+sample: examples/lensfile_tolerance_worst_mtf.py
+```
+
+```yaml
+name: optimised prescription to tolerance sensitivity
+inputs: [table]
+pipeline: [optimize_lens_operands, tolerance_table, tolerance_sensitivity]
+alternatives: [merit_evaluate, tolerance_monte_carlo]
+limits: central-difference sensitivity is local; use Monte Carlo outside the linear regime
+sample: examples/optimized_lens_tolerance_sensitivity.py
+```

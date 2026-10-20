@@ -2626,31 +2626,31 @@ py -3.11 examples/poc_lens_merit_operands.py
 
 ## No.2026.271 —— レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする
 
-[![レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png)
+[![レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png)
 
 *↑ **レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする** ―― 公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本は分布、中央差分感度、Monte Carlo、Wilson 95 % 歩留まり区間、複数の補償変数と組立ストロークを一つの報告にする。薄いくさびの像移動は閉形式 f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。*
 
-[![同じ試行から得た MTF と RMS spot。赤線は合否限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_02_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_02_histograms.png)
+[![同じ試行から得た MTF と RMS spot。赤線は合否限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms.png)
 
 *↑ 測定の図 ―― 同じ試行から得た MTF と RMS spot。赤線は合否限界。*
 
-[![同じ公差表で補償変数だけを追加。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_03_compensation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_03_compensation.png)
+[![像面だけの場合と内部間隔を加えた場合を比較。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_compensation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_compensation.png)
 
-*↑ 同じ公差表で補償変数だけを追加。*
+*↑ 像面だけの場合と内部間隔を加えた場合を比較。*
 
-[![一様・正規・±公差で切った正規分布の歩留まり。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_04_distributions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_04_distributions.png)
+[![一様・正規・±公差で切った正規分布の歩留まり。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_distributions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_distributions.png)
 
 *↑ 一様・正規・±公差で切った正規分布の歩留まり。*
 
-[![締めた行: radius_pct:0:y。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_05_rebudget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_05_rebudget.png)
+[![線形予測と Monte-Carlo 実測を明示。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_rebudget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_rebudget.png)
 
-*↑ 締めた行: radius_pct:0:y。*
+*↑ 線形予測と Monte-Carlo 実測を明示。*
 
-[![同じ処方の基準像と、1 arcmin のくさびを入れた像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_06_wedge_probe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_06_wedge_probe.png)
+[![同じ処方の基準像と、1 arcmin のくさびを入れた像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_wedge_probe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_wedge_probe.png)
 
 *↑ 同じ処方の基準像と、1 arcmin のくさびを入れた像。*
 
-[![感度首行を -tol から +tol へ掃引した点像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_07_tolerance_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_07_tolerance_sweep.gif)
+[![感度首行を -tol から +tol へ掃引した点像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_tolerance_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_tolerance_sweep.gif)
 
 *↑ 動く図 ―― 感度首行を -tol から +tol へ掃引した点像。*
 

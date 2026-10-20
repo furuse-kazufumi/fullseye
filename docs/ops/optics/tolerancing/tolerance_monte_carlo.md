@@ -4,7 +4,7 @@ dim: optics
 category: tolerancing
 in: table × table × table
 out: table
-examples: [poc_lens_tolerancing]
+examples: [lensfile_tolerance_worst_mtf, poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lensfile_tolerance_worst_mtf](../../../../examples/lensfile_tolerance_worst_mtf.py) — `py -3.11 examples/lensfile_tolerance_worst_mtf.py`
 - [poc_lens_tolerancing](../../../../examples/poc_lens_tolerancing.py) — `py -3.11 examples/poc_lens_tolerancing.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

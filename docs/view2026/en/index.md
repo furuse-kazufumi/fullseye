@@ -210,7 +210,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 151 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 153 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
@@ -431,7 +431,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Zoom lenses as differences of one prescription (multi-configuration)" width="200" height="200"><span>Zoom lenses as differences of one prescription (multi-configuration)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glass substitution and multi-start global search" width="200" height="200"><span>Glass substitution and multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Designing a triplet from a table of requirements (edge bounds and glass as a variable)" width="200" height="200"><span>Designing a triplet from a table of requirements (edge bounds and glass as a variable)</span></a>
-<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Budget lens manufacturing tolerances by MTF, yield, and compensator travel" width="200" height="200"><b>&#9654;</b><span>Budget lens manufacturing tolerances by MTF, yield, and compensator travel</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Budget lens manufacturing tolerances by MTF, yield, and compensator travel" width="200" height="200"><b>&#9654;</b><span>Budget lens manufacturing tolerances by MTF, yield, and compensator travel</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)" width="200" height="200"><span>Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Independent verification and inspection scoring of public .zmx prescriptions" width="200" height="200"><span>Independent verification and inspection scoring of public .zmx prescriptions</span></a>
 </div>

@@ -6406,9 +6406,9 @@
   {
    "id": "poc_lens_tolerancing",
    "group": "wing_color",
-   "media": "01_01_sensitivity.png",
+   "media": "01_sensitivity.png",
    "motion": true,
-   "thumb_src": "01_01_sensitivity.png",
+   "thumb_src": "01_sensitivity.png",
    "label": {
     "ja": "レンズの製造公差を MTF・歩留まり・補償ストロークで配分",
     "en": "Budget lens manufacturing tolerances by MTF, yield, and compensator travel",

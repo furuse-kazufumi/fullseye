@@ -1916,6 +1916,10 @@ EXAMPLES = [
 # honest reason. test_examples2d enforces: registry ∪ EXCLUDED == files on disk,
 # and the two sets are disjoint, so a new script cannot slip in unlisted.
 EXCLUDED = {
+    "lensfile_tolerance_worst_mtf": "runnable composability sample covered by the lens-tolerancing exhibit; "
+                                    "cannot be numbered again without creating a duplicate exhibit",
+    "optimized_lens_tolerance_sensitivity": "runnable composability sample covered by the lens-tolerancing exhibit; "
+                                             "cannot be numbered again without creating a duplicate exhibit",
     "g1_policy_staged": "needs a trained G1 walking checkpoint (REF) + MuJoCo; "
                         "no checkpoint ships with the repo, so it cannot self-run",
     "hand_tracking_demo": "needs a photo/webcam argument plus the optional "

@@ -2,7 +2,7 @@
 op: compensators
 dim: optics
 category: tolerancing
-in:
+in: 
 out: table
 examples: [poc_lens_tolerancing]
 author: Kazufumi Furuse

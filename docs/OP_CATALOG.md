@@ -2517,7 +2517,7 @@ _計 3503 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### optics / design(22)
 - `chief_ray` `table → table` — Trace the chief ray (through the stop centre) at one field (``table``). · 例: `lens_optimize_demo`, `poc_lens_solves_afocal`, `poc_lens_tolerancing`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_telecentric_metrology`
 - `chromatic_shift` `table → table` — Focal shift, image-height shift and spot size versus wavelength (``table``). · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
-- `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
+- `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optimized_lens_tolerance_sensitivity`
 - `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_lens_global_search`, `poc_material_optical_library`, `poc_optics_drawings`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
 - `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lens_tolerancing`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zoom_configurations`
@@ -2630,7 +2630,7 @@ _計 3503 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `distortion_map` `table → table` — Real chief-ray height versus the paraxial one, and the remap grid (``table``). · 例: `lens_defect_dataset_demo`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
 - `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`, `optical_design_metrics`, `poc_zmx_public_verify`
 - `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`, `poc_zmx_public_verify`
-- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `optical_design_metrics`
+- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `lensfile_tolerance_worst_mtf`, `optical_design_metrics`
 
 #### optics / interface(4)
 - `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`
@@ -2656,7 +2656,7 @@ _計 3503 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lens_with_configuration` `table → table` — 多構成の処方の k 番目(0 始まり)の構成を解決した ``lens_system`` を返す(``table``)。 · 例: `poc_zoom_configurations`
 
 #### optics / lensfile(4)
-- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `optical_design_metrics`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zmx_public_verify`, `poc_zoom_configurations`
+- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `lensfile_tolerance_worst_mtf`, `optical_design_metrics`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zmx_public_verify`, `poc_zoom_configurations`
 - `lens_file_report` `入力なし → table` — ``.zmx`` を読み込まずに分類する —— 何を読み / 無視し / 拒否するか(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_system` `table → table` — 読み込んだ処方を、視野 1 つ・波長 1 つの ``raytrace.lens_system`` にする(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_write` `table → table` — 処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。 · 例: `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zoom_configurations`
@@ -2669,10 +2669,10 @@ _計 3503 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### optics / lensmerit(6)
 - `merit_boundary_operands` `table → table` — 製造上の境界を表の行にする: 各ガラスの縁厚・中心厚の範囲・空気間隔の範囲(``table``)。 · 例: `poc_lens_merit_operands`
 - `merit_contributions` `table → table` — どの行がメリット関数を支配しているか: 寄与の大きい順のパーセント表(``table``)。 · 例: `poc_lens_merit_operands`
-- `merit_default` `table → table` — 既定のメリット関数をオペランド表として組む: 瞳全体の光線行 + EFL の保持(``table``)。 · 例: `poc_lens_merit_operands`
+- `merit_default` `table → table` — 既定のメリット関数をオペランド表として組む: 瞳全体の光線行 + EFL の保持(``table``)。 · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_merit_operands`
 - `merit_evaluate` `table → table` — オペランド表を処方に当てて、各行の値・目標・重み・寄与とその割合を返す(``table``)。 · 例: `poc_lens_merit_operands`
 - `merit_operands_list` `入力なし → table` — メリット関数の操作子(オペランド)の一覧: 名前・意味・単位・引数(``table``)。 · 例: `poc_lens_merit_operands`
-- `optimize_lens_operands` `table → table` — オペランド表のメリット関数を LM で最小化する。硝材も変数にできる(``table``)。 · 例: `poc_lens_merit_operands`
+- `optimize_lens_operands` `table → table` — オペランド表のメリット関数を LM で最小化する。硝材も変数にできる(``table``)。 · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_merit_operands`
 
 #### optics / lensrender(8)
 - `bokeh_shape` `table → table` — The out-of-focus footprint of a point source - the intersection of the pupil images, the cat's eye -> dict. · 例: `poc_photograph_through_prescription`
@@ -2971,11 +2971,11 @@ _計 3503 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / tolerancing(8)
 - `compensators` `入力なし → table` — Describe deterministic bounded re-optimisation variables in lensopt grammar. · 例: `poc_lens_tolerancing`
-- `tolerance_criteria` `入力なし → table` — Validate performance criteria and their optional ``min``/``max`` limits. · 例: `poc_lens_tolerancing`
-- `tolerance_monte_carlo` `table × table × table → table` — Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds. · 例: `poc_lens_tolerancing`
+- `tolerance_criteria` `入力なし → table` — Validate performance criteria and their optional ``min``/``max`` limits. · 例: `lensfile_tolerance_worst_mtf`, `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
+- `tolerance_monte_carlo` `table × table × table → table` — Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds. · 例: `lensfile_tolerance_worst_mtf`, `poc_lens_tolerancing`
 - `tolerance_report` `table → text` — Create a compact assembly report as a dict or plain text. · 例: `poc_lens_tolerancing`
-- `tolerance_sensitivity` `table × table × table → table` — Central differences, distribution-aware linear RSS, and inverse tolerances. · 例: `poc_lens_tolerancing`
-- `tolerance_table` `table → table` — Build validated tolerance rows, one independent manufacturing variable per row. · 例: `poc_lens_tolerancing`
+- `tolerance_sensitivity` `table × table × table → table` — Central differences, distribution-aware linear RSS, and inverse tolerances. · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
+- `tolerance_table` `table → table` — Build validated tolerance rows, one independent manufacturing variable per row. · 例: `lensfile_tolerance_worst_mtf`, `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
 - `tolerance_table_from_zmx` `table × text → table` — Read tolerance NOTE lines written by :func:`tolerance_table_zmx`. · 例: `poc_lens_tolerancing`
 - `tolerance_table_zmx` `table → text` — Serialise rows as NOTE lines; public native TOL syntax was not assumed. · 例: `poc_lens_tolerancing`
 

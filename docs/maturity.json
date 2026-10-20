@@ -880,11 +880,9 @@
    "note": "docs/capabilities/lens-tolerancing.md",
    "status": "verified-synthetic",
    "ops_total": 8,
-   "ops_named_in_tests": 3,
+   "ops_named_in_tests": 5,
    "ops_not_named_in_tests": [
-    "compensators",
     "tolerance_report",
-    "tolerance_sensitivity",
     "tolerance_table_from_zmx",
     "tolerance_table_zmx"
    ],

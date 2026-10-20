@@ -210,7 +210,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 151 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 153 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
@@ -431,7 +431,7 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="以同一处方的差分持有变焦镜头(多构型)" width="200" height="200"><span>以同一处方的差分持有变焦镜头(多构型)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="玻璃替换与多起点全局搜索" width="200" height="200"><span>玻璃替换与多起点全局搜索</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="用要求表设计三片式镜头(边缘厚度边界与玻璃作为变量)" width="200" height="200"><span>用要求表设计三片式镜头(边缘厚度边界与玻璃作为变量)</span></a>
-<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="以 MTF、良率和补偿行程分配镜头制造公差" width="200" height="200"><b>&#9654;</b><span>以 MTF、良率和补偿行程分配镜头制造公差</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="以 MTF、良率和补偿行程分配镜头制造公差" width="200" height="200"><b>&#9654;</b><span>以 MTF、良率和补偿行程分配镜头制造公差</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)" width="200" height="200"><span>用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="公开 .zmx 处方的独立验证与检测评分" width="200" height="200"><span>公开 .zmx 处方的独立验证与检测评分</span></a>
 </div>

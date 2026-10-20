@@ -225,7 +225,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 151 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 153 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -446,7 +446,7 @@ PoC 271 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zoom_configurations.jpg" alt="ズームレンズ(多構成)を 1 つの処方の差分で持つ" width="200" height="200"><span>ズームレンズ(多構成)を 1 つの処方の差分で持つ</span></a>
 <a href="../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_global_search.jpg" alt="硝材の置き換えと大域探索(多始点の局所最適化)" width="200" height="200"><span>硝材の置き換えと大域探索(多始点の局所最適化)</span></a>
 <a href="../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_merit_operands.jpg" alt="要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)" width="200" height="200"><span>要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)</span></a>
-<a href="../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_tolerancing.jpg" alt="レンズの製造公差を MTF・歩留まり・補償ストロークで配分" width="200" height="200"><b>&#9654;</b><span>レンズの製造公差を MTF・歩留まり・補償ストロークで配分</span></a>
+<a href="../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_tolerancing.jpg" alt="レンズの製造公差を MTF・歩留まり・補償ストロークで配分" width="200" height="200"><b>&#9654;</b><span>レンズの製造公差を MTF・歩留まり・補償ストロークで配分</span></a>
 <a href="../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_solves_afocal.jpg" alt="設計の関係を「解」で持つ(絞りに追従する F/#、afocal、曲面の像面、奇数次非球面)" width="200" height="200"><span>設計の関係を「解」で持つ(絞りに追従する F/#、afocal、曲面の像面、奇数次非球面)</span></a>
 <a href="../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zmx_public_verify.jpg" alt="公開 .zmx 処方の独立照合と検査レンズ採点" width="200" height="200"><span>公開 .zmx 処方の独立照合と検査レンズ採点</span></a>
 </div>

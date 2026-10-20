@@ -109,3 +109,133 @@ def test_irregularity_real_ray_opd_matches_zernike_closed_form():
     closed = (1.5 - 1.0) / (2.0 * math.sqrt(6.0))
     assert actual == pytest.approx(closed, rel=0.02)
     assert actual != pytest.approx((1.5 - 1.0) / 2.0, rel=0.02)
+
+
+def test_irregularity_fringes_double_the_transmitted_opd():
+    s = RT.lens_system([{"R": math.inf, "t": 3.0, "n": 1.5, "ap": 5.0},
+                        {"R": math.inf, "t": 20.0, "n": 1.0, "ap": 5.0}], image_mm=20.0)
+    row = LT._normalise_row(s, {"kind": "irregularity_fringes", "surface": 0,
+                                "tolerance": 2.0}, 0)
+    base = RT.opd_samples(s, size=65)
+    one = RT.opd_samples(LT._apply_row(s, row, 1.0), size=65)
+    two = RT.opd_samples(LT._apply_row(s, row, 2.0), size=65)
+    valid = base[3] & one[3] & two[3]
+    opd1 = np.std(one[2][valid] - base[2][valid])
+    opd2 = np.std(two[2][valid] - base[2][valid])
+    assert opd2 == pytest.approx(2.0 * opd1, rel=2e-3)
+    assert opd2 != pytest.approx(opd1, rel=0.1)
+
+
+def test_tilted_parallel_plate_lateral_shift_closed_form():
+    t, n, angle = 5.0, 1.5, 0.1
+    s = RT.lens_system([{"R": math.inf, "t": t, "n": n, "ap": 20.0},
+                        {"R": math.inf, "t": 20.0, "n": 1.0, "ap": 20.0}], image_mm=20.0)
+    surfaces = [dict(q) for q in s["surfaces"]]
+    for q in surfaces:
+        q["tilt"] = (angle, 0.0)
+    tilted = RT.lens_system(surfaces, image_mm=20.0)
+    actual = abs(RT.chief_ray(tilted, 0.0)["image_y"])
+    a = math.radians(angle)
+    closed = t * math.sin(a) * (1.0 - math.cos(a) / math.sqrt(n * n - math.sin(a) ** 2))
+    assert actual == pytest.approx(closed, abs=1e-6)
+    assert actual != pytest.approx(t * (n - 1.0) * a, abs=1e-6)
+
+
+def test_finite_conjugate_decenter_moves_centroid_but_not_spot():
+    delta = 0.01
+    s = RT.lens_system([{"f": 50.0, "t": 100.0, "n": 1.0, "ap": 20.0}],
+                       object_mm=100.0, image_mm=100.0)
+    row = LT._normalise_row(s, {"kind": "decenter_mm", "surface": 0,
+                                "tolerance": delta}, 0)
+    p = LT._apply_row(s, row, delta)
+    b0 = RT.ray_bundle(s, field=0.0, rings=4, pupil_fill=0.8)
+    b1 = RT.ray_bundle(p, field=0.0, rings=4, pupil_fill=0.8)
+    assert np.all(b0["valid"]) and np.all(b1["valid"])
+    m = RT.paraxial_trace(s)["magnification"]
+    shift = float(b1["image_xy"][:, 1].mean() - b0["image_xy"][:, 1].mean())
+    assert shift == pytest.approx(delta * (1.0 - m), abs=1e-4)
+    c0 = b0["image_xy"] - b0["image_xy"].mean(axis=0)
+    c1 = b1["image_xy"] - b1["image_xy"].mean(axis=0)
+    assert np.sqrt(np.mean(np.sum((c1 - c0) ** 2, axis=1))) < 1e-9
+    assert abs(shift) > 1000 * 1e-9
+
+
+def test_linear_regime_10000_trials_and_distribution_standard_deviations():
+    s = RT.example_system("singlet")
+    table = LT.tolerance_table(s, defaults={"radius_pct": 0.01,
+                                            "thickness_mm": 0.005, "index": 0.001})
+    crit = LT.tolerance_criteria(efl={}, back_focus={})
+    sensitivity = LT.tolerance_sensitivity(s, table, crit)
+    run = LT.tolerance_monte_carlo(s, table, crit, trials=10_000, seed=123)
+    assert len(sensitivity["rss_std"]) == 2
+    for name, predicted in sensitivity["rss_std"].items():
+        assert run["criteria"][name]["std"] == pytest.approx(predicted, rel=0.05)
+        assert run["criteria"][name]["std"] > 0.01
+    for distribution in ("uniform", "normal", "truncated_normal"):
+        row = {"id": distribution, "kind": "radius_pct", "surface": 0,
+               "tolerance": 0.01, "distribution": distribution, "sigma": None}
+        row = LT._normalise_row(s, row, 0)
+        measured = float(LT._draws(row, 10_000, 0).std())
+        closed = math.sqrt(LT._distribution_variance(distribution, 0.01, None))
+        assert measured == pytest.approx(closed, rel=0.01)
+    uniform = LT._normalise_row(s, {"kind": "radius_pct", "surface": 0,
+                                    "tolerance": 0.01}, 0)
+    assert LT._draws(uniform, 10_000, 0).std() == pytest.approx(0.01 / math.sqrt(3), rel=0.01)
+
+
+def test_yield_matches_erf_wilson_and_histogram_successes():
+    s = RT.example_system("singlet")
+    table = LT.tolerance_table(s, defaults={}, overrides=[
+        {"kind": "radius_pct", "surface": 0, "tolerance": 0.01, "distribution": "normal"}])
+    probe = LT.tolerance_criteria(efl={})
+    sensitivity = LT.tolerance_sensitivity(s, table, probe)
+    nominal = sensitivity["nominal"]["efl"]
+    deriv = abs(sensitivity["rows"][0]["derivative"]["efl"])
+    criteria = LT.tolerance_criteria(efl={"max": nominal + deriv * 0.01 / 3.0})
+    run = LT.tolerance_monte_carlo(s, table, criteria, trials=10_000, seed=71)
+    closed = 0.5 * (1.0 + math.erf(1.0 / math.sqrt(2.0)))
+    assert run["yield"] == pytest.approx(closed, abs=0.01)
+    assert run["yield_wilson95"][0] <= closed <= run["yield_wilson95"][1]
+    assert sum(run["criteria"]["efl"]["histogram"]["counts"]) == 10_000
+    assert run["passed"] != 0
+
+
+def test_pure_gap_compensation_travel_and_second_compensator_not_worse():
+    s = RT.lens_system([{"R": 40.0, "t": 4.0, "n": 1.52, "ap": 8.0},
+                        {"R": -30.0, "t": 1.5, "n": 1.0, "ap": 8.0},
+                        {"R": -45.0, "t": 3.0, "n": 1.62, "ap": 8.0,
+                         "decenter": (0.0, 0.02)},
+                        {"R": 60.0, "t": 55.0, "n": 1.0, "ap": 8.0}], image_mm=55.0)
+    criteria = LT.tolerance_criteria(rms_spot={})
+    gap = LT._normalise_row(s, {"kind": "thickness_mm", "surface": 1,
+                                "tolerance": 0.01}, 0)
+    perturbed = LT._apply_row(s, gap, 0.007)
+    nominal = LT._evaluate(s, criteria)
+    one = LT.compensators(["t3"], criterion="rms_spot", iterations=12)
+    two = LT.compensators(["t3", "t1"], criterion="rms_spot", iterations=12,
+                          bounds={"t3": [50.0, 60.0], "t1": [1.4, 1.6]})
+    p1, _ = LT._compensate(perturbed, nominal, criteria, one)
+    p2, _ = LT._compensate(perturbed, nominal, criteria, two)
+    assert LT._evaluate(p2, criteria)["rms_spot"] <= LT._evaluate(p1, criteria)["rms_spot"] + 1e-12
+    back = LT.tolerance_criteria(back_focus={})
+    pure, travel = LT._compensate(perturbed, LT._evaluate(s, back), back,
+                                  LT.compensators(["t1"], criterion="back_focus", iterations=8))
+    assert abs(travel["t1"]) == pytest.approx(0.007, abs=1e-6)
+    assert abs(LT._evaluate(pure, back)["back_focus"] - LT._evaluate(s, back)["back_focus"]) < 1e-9
+
+
+def test_uniform_back_focus_rms_matches_legacy_2000_trials():
+    s = RT.example_system("singlet")
+    tolerances = {"radius_pct": 0.01, "thickness_mm": 0.0, "index": 0.0,
+                  "decenter_mm": 0.0, "tilt_deg": 0.0}
+    legacy = RT.tolerance_analysis(s, tolerances=tolerances, trials=2_000, seed=19,
+                                   compensator="back_focus")
+    table = LT.tolerance_table(s, defaults={"radius_pct": 0.01})
+    criteria = LT.tolerance_criteria(rms_spot={}, rings=6)
+    modern = LT.tolerance_monte_carlo(
+        s, table, criteria,
+        compensators=LT.compensators("t1", criterion="rms_spot", iterations=8),
+        trials=2_000, seed=19)
+    got, old = modern["criteria"]["rms_spot"]["std"], legacy["rms_spot"]["std"]
+    assert got == pytest.approx(old, rel=0.03)
+    assert got > 1e-6 and old > 1e-6

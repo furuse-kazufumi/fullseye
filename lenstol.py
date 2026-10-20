@@ -5,8 +5,11 @@ unchanged.  A tolerance is an explicit row, and every Monte-Carlo row owns a
 random stream derived from its stable row id and the run seed.  Thus inserting
 an unrelated row cannot change existing draws.
 
-``irregularity_fringes`` uses one fringe as half a reference wavelength of
-peak-to-valley sag and a test-plate index difference of one.  The sag is the
+``irregularity_fringes`` uses one fringe as half the system test wavelength
+(``system["wavelength_um"]``) of peak-to-valley sag.  The quoted fringe is a
+surface-sag fringe (the test-plate convention has unit index difference), while
+the traced transmitted OPD is multiplied by the actual ``(n' - n)`` across the
+surface.  The sag is the
 unit-RMS pupil polynomial ``(x*x-y*y)/sqrt(1/6)`` scaled so its peak-to-valley
 is the requested sag.  Refraction therefore sees the perturbed surface, not a
 post-hoc score correction.
@@ -479,6 +482,8 @@ def tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100
     travels = {} if compensators is None else {str(v): [] for v in compensators["variables"]}
     passed = 0
     reasons = {}
+    worst_score = -INF
+    worst_trial = None
     for j in range(trials):
         try:
             cur = system
@@ -491,6 +496,18 @@ def tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100
             for k, v in travel.items():
                 travels[k].append(v)
             passed += int(_inside(vals, criteria["criteria"]))
+            scores = []
+            for k, v in vals.items():
+                spec = criteria["criteria"][k]
+                scores.append(v - spec["max"] if "max" in spec else
+                              spec["min"] - v if "min" in spec else
+                              abs(v - nominal[k]))
+            score = max(scores)
+            if score > worst_score:
+                worst_score = float(score)
+                worst_trial = {"index": j, "score": worst_score, "values": dict(vals),
+                               "prescription": copy.deepcopy(cur), "draws":
+                               {r["id"]: float(drawmap[r["id"]][j]) for r in rows}}
         except (ValueError, FloatingPointError, np.linalg.LinAlgError) as exc:
             reason = str(exc) or type(exc).__name__
             reasons[reason] = reasons.get(reason, 0) + 1
@@ -498,7 +515,8 @@ def tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100
               "yield": passed / trials, "yield_wilson95": _wilson(passed, trials),
               "passed": passed, "trials": trials, "failed_trials": trials - len(next(iter(samples.values()))),
               "failure_reasons": reasons, "seed": int(seed), "table": rows,
-              "compensator_travel": {k: _stats(v, histogram_bins) for k, v in travels.items()}}
+              "compensator_travel": {k: _stats(v, histogram_bins) for k, v in travels.items()},
+              "worst_trial": worst_trial}
     if _return_draws:
         result["draws"] = drawmap
     return result

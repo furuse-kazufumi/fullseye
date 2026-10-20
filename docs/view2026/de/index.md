@@ -210,7 +210,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 </div>
 
-[Alle 151 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 153 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 
@@ -431,7 +431,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Zoomobjektive als Differenzen einer Vorschrift (Mehrkonfiguration)" width="200" height="200"><span>Zoomobjektive als Differenzen einer Vorschrift (Mehrkonfiguration)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glasersatz und Mehrstart-Globalsuche" width="200" height="200"><span>Glasersatz und Mehrstart-Globalsuche</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)" width="200" height="200"><span>Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)</span></a>
-<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren" width="200" height="200"><b>&#9654;</b><span>Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren" width="200" height="200"><b>&#9654;</b><span>Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)" width="200" height="200"><span>Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Unabhängige Prüfung öffentlicher .zmx-Rezepte" width="200" height="200"><span>Unabhängige Prüfung öffentlicher .zmx-Rezepte</span></a>
 </div>

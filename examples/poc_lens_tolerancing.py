@@ -138,56 +138,63 @@ def distribution_and_rebudget(system, tab, crit, sens):
     return runs, rebudget, tight_id
 
 
-def _hist(stat, title, limit=None):
+def _hist(stat, title, units, limit=None):
     h = stat["histogram"]
     x = 0.5 * (np.asarray(h["edges"][:-1]) + np.asarray(h["edges"][1:]))
     series = [("試行", x, h["counts"])]
     if limit is not None:
         ymax = max(h["counts"] or [1])
         series.append(("限界", [limit, limit], [0, ymax]))
-    return figs.render_plot(series, title=title, size=(520, 340), kinds=["bar"] + (["line"] if limit is not None else []),
-                            colors=["reference", "wrong"], xlabel="性能値", ylabel="度数")
+    return figs.render_plot(series, title=title, size=(640, 430), kinds=["bar"] + (["line"] if limit is not None else []),
+                            colors=["reference", "wrong"], xlabel=units, ylabel="count")
 
 
 def figures(system, tab, crit, sens, base, after, distributions, rebudget, tight_id):
     drivers = sens["drivers"][:10]
-    x = np.arange(len(drivers), dtype=float)
     y = [q["std_contribution"]["mtf"] for q in drivers]
-    figs.save("01_sensitivity", figs.render_plot([("MTF 標準偏差への寄与", x, y)], title="50 cycles/mm を食べる公差",
-              size=(760, 420), kinds=["bar"], colors=["wrong"], xlabel="感度順位", ylabel="MTF の標準偏差"),
+    bars = [(q["id"], [0.0, v], [i, i]) for i, (q, v) in enumerate(zip(drivers, y))]
+    figs.save("sensitivity", figs.render_plot(bars, title="Sorted sensitivity | top %.3g MTF" % y[0],
+              size=(1280, 680), kinds=["line"] * len(bars), colors=["wrong"] + ["reference"] * (len(bars)-1),
+              xlabel="standard-deviation contribution [MTF at 50 cycles/mm]", ylabel="sorted tolerance row"),
               caption="感度上位 10 行。首位は %s。" % drivers[0]["id"])
-    figs.save("02_histograms", np.concatenate([_hist(base["criteria"]["mtf"], "MTF: yield %.1f %%" % (100 * base["yield"]), 0.08),
-                                                _hist(base["criteria"]["rms_spot"], "RMS spot", 0.055)], axis=1),
+    figs.save("histograms", np.concatenate([_hist(base["criteria"]["mtf"], "MTF | yield %.1f %%" % (100 * base["yield"]), "MTF at 50 cycles/mm", 0.08),
+                                                _hist(base["criteria"]["rms_spot"], "RMS spot | limit 0.055 mm", "RMS spot [mm]", 0.055)], axis=1),
               caption="同じ試行から得た MTF と RMS spot。赤線は合否限界。")
-    figs.save("03_compensation", figs.render_plot([("補償なし", [0], [base["yield"]]), ("2 変数補償", [1], [after["yield"]])],
-              title="内部間隔 + 像面の補償", size=(560, 360), kinds=["bar", "bar"], colors=["wrong", "right"],
-              xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="歩留まり"), caption="同じ公差表で補償変数だけを追加。")
+    cy = figs.render_plot([("none", [0], [base["yield"]]), ("two", [1], [after["yield"]])],
+              title="Yield | %.1f%% -> %.1f%%" % (100*base["yield"], 100*after["yield"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="yield")
+    cs = figs.render_plot([("none", [0], [base["criteria"]["rms_spot"]["std"]]), ("two", [1], [after["criteria"]["rms_spot"]["std"]])],
+              title="RMS-spot std | %.3g -> %.3g mm" % (base["criteria"]["rms_spot"]["std"], after["criteria"]["rms_spot"]["std"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylabel="RMS spot std [mm]")
+    figs.save("compensation", np.concatenate([cy, cs], axis=1), caption="像面だけの場合と内部間隔を加えた場合を比較。")
     names = ["uniform", "normal", "truncated_normal"]
-    figs.save("04_distributions", figs.render_plot([(n, [i], [distributions[n]["yield"]]) for i, n in enumerate(names)],
-              title="同じ ±公差、違う分布", size=(620, 360), kinds=["bar"] * 3,
-              colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylim=(0, 1), ylabel="歩留まり"),
+    dy = figs.render_plot([(n, [i], [distributions[n]["yield"]]) for i, n in enumerate(names)],
+              title="Yield | %.2f / %.2f / %.2f" % tuple(distributions[n]["yield"] for n in names), size=(640, 430), kinds=["bar"] * 3, colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylim=(0, 1), ylabel="yield")
+    ds = figs.render_plot([(n, [i], [distributions[n]["criteria"]["rms_spot"]["std"]]) for i, n in enumerate(names)],
+              title="RMS-spot distribution width [mm]", size=(640, 430), kinds=["bar"] * 3, colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylabel="standard deviation [mm]")
+    figs.save("distributions", np.concatenate([dy, ds], axis=1),
               caption="一様・正規・±公差で切った正規分布の歩留まり。")
-    figs.save("05_rebudget", figs.render_plot([("元", [0], [base["yield"]]), ("再配分", [1], [rebudget["yield"]])],
-              title="高感度を締め、低感度を緩める", size=(560, 360), kinds=["bar", "bar"], colors=["wrong", "right"],
-              xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="歩留まり"), caption="締めた行: %s。" % tight_id)
+    pred, actual = sens["rss_std"]["rms_spot"], base["criteria"]["rms_spot"]["std"]
+    rp = figs.render_plot([("linear prediction", [0], [pred]), ("Monte-Carlo actual", [1], [actual])], title="Linear prediction %.3g vs Monte-Carlo actual %.3g mm" % (pred, actual), size=(640, 430), kinds=["bar", "bar"], colors=["reference", "wrong"], xlim=(-0.5, 1.5), ylabel="RMS spot std [mm]")
+    ra = figs.render_plot([("before", [0], [base["yield"]]), ("rebudget", [1], [rebudget["yield"]])], title="Rebudget actual | %.1f%% -> %.1f%%" % (100*base["yield"], 100*rebudget["yield"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="yield")
+    figs.save("rebudget", np.concatenate([rp, ra], axis=1), caption="線形予測と Monte-Carlo 実測を明示。締めた行: %s。" % tight_id)
     row = LT._normalise_row(system, {"kind": "wedge_arcmin", "surface": 1, "tolerance": 1.0}, 0)
     pert = LT._apply_row(system, row, 1.0)
     panels = []
     for s, name in ((system, "基準"), (pert, "くさび 1 arcmin")):
         b = RT.ray_bundle(s, field=0, rings=5)
         xy = b["image_xy"][b["valid"]] * 1e3
-        panels.append(figs.render_plot([(name, xy[:, 0], xy[:, 1])], title=name, size=(380, 360), kinds=["scatter"],
+        panels.append(figs.render_plot([(name, xy[:, 0], xy[:, 1])], title=name, size=(640, 480), kinds=["scatter"],
                                        colors=["reference"], xlabel="x [um]", ylabel="y [um]", aspect="equal"))
-    figs.save("06_wedge_probe", np.concatenate(panels, axis=1), caption="同じ処方の基準像と、1 arcmin のくさびを入れた像。")
+    figs.save("wedge_probe", np.concatenate(panels, axis=1), caption="同じ処方の基準像と、1 arcmin のくさびを入れた像。")
     frames = []
     for v in np.linspace(-tab[0]["tolerance"], tab[0]["tolerance"], 24):
         p = LT._apply_row(system, tab[0], float(v))
         b = RT.ray_bundle(p, field=0, rings=4)
         xy = b["image_xy"][b["valid"]] * 1e3
         frames.append(figs.render_plot([("spot", xy[:, 0], xy[:, 1])], title="%s = %+.4g" % (tab[0]["id"], v),
-                                       size=(480, 400), kinds=["scatter"], colors=["emphasis"],
+                                       size=(1200, 600), kinds=["scatter"], colors=["emphasis"],
                                        xlabel="x [um]", ylabel="y [um]", aspect="equal"))
-    figs.save_video("07_tolerance_sweep", frames, caption="感度首行を -tol から +tol へ掃引した点像。", fps=12, gif_every=2)
+    figs.save_video("tolerance_sweep", frames, caption="感度首行を -tol から +tol へ掃引した点像。", fps=12, gif_every=2,
+                    gif_width=1200)
 
 
 def main():
