@@ -309,3 +309,20 @@ def test_430_peak_ratio_matches_copying_reference():
         got = pivops._peak_ratio(corr, pi, pj, corr[pi, pj])
         expect = _peak_ratio_reference(corr, pi, pj, corr[pi, pj])
         assert got == expect
+
+
+def test_429_sparse_replace_matches_dense_reference():
+    rng=np.random.default_rng(429); f=rng.normal(size=(2,80,90)); m=np.zeros((80,90),bool)
+    m[10,10]=m[40,70]=True
+    got=pivops.piv_replace_outliers(f,m)
+    work=f.copy(); work[:,m]=np.nan; pad=np.pad(work,((0,0),(1,1),(1,1)),mode="edge")
+    nb=np.stack([pad[:,1+dy:81+dy,1+dx:91+dx] for dy in (-1,0,1) for dx in (-1,0,1) if (dy,dx)!=(0,0)])
+    fill=np.nanmedian(nb,axis=0); ref=f.copy(); ref[:,m]=fill[:,m]
+    np.testing.assert_array_equal(got,ref)
+
+
+def test_428_stream_outlier_mask_is_identical():
+    rng=np.random.default_rng(428); f=rng.normal(size=(2,301,400)); f[:,100,200]=np.nan
+    ref=pivops.piv_outlier_mask(f)
+    for chunk in (1,17,128,500):
+        np.testing.assert_array_equal(pivops.piv_outlier_mask_stream(f,chunk=chunk),ref)
