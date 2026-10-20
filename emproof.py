@@ -188,11 +188,15 @@ def seg_membrane_chord_score(labels, membrane, tau: float = 0.2, band: int = 4, 
     if not isinstance(ignore_zero, (bool, np.bool_)):
         raise ValueError(f"{op}: ignore_zero must be a bool, got {ignore_zero!r}")
     rows = []
+    positive_ids = np.unique(L[L != 0])
+    label_ids = np.concatenate(([0], positive_ids))
+    dense = np.searchsorted(label_ids, L)
     eight = np.ones((3, 3), bool)
-    for lid, sl in enumerate(ndi.find_objects(L), start=1):
+    for dense_id, sl in enumerate(ndi.find_objects(dense), start=1):
+        lid = int(label_ids[dense_id])
         if sl is None or (ignore_zero and lid == 0):
             continue
-        sub = L[sl] == lid
+        sub = dense[sl] == dense_id
         if int(sub.sum()) < ma:
             continue
         comps, n = ndi.label(sub)
@@ -305,10 +309,11 @@ def seg_inject_merge(labels, n: int = 1, seed: int = 0, min_area: int = 3000, ig
     ma = _count(min_area, op, "min_area", lo=1)
     if not isinstance(ignore_zero, (bool, np.bool_)):
         raise ValueError(f"{op}: ignore_zero must be a bool, got {ignore_zero!r}")
-    sizes = np.bincount(L.ravel())
+    ids, inv = np.unique(L, return_inverse=True)
+    counts = np.bincount(inv.ravel())
     P, _ = _adjacent_pairs(L, None, ignore_zero)
     P = np.unique(P, axis=0) if len(P) else P
-    big = set(np.nonzero(sizes >= ma)[0].tolist())
+    big = set(ids[counts >= ma].tolist())
     if ignore_zero:
         big.discard(0)
     adj: dict[int, list[int]] = {}
@@ -358,8 +363,9 @@ def seg_inject_split(labels, n: int = 1, seed: int = 0, min_area: int = 4000, ax
         raise ValueError(f"{op}: axis must be one of {SPLIT_AXES}, got {axis!r}")
     if not isinstance(ignore_zero, (bool, np.bool_)):
         raise ValueError(f"{op}: ignore_zero must be a bool, got {ignore_zero!r}")
-    sizes = np.bincount(L.ravel())
-    cand = np.nonzero(sizes >= ma)[0]
+    ids, inv = np.unique(L, return_inverse=True)
+    counts = np.bincount(inv.ravel())
+    cand = ids[counts >= ma]
     if ignore_zero:
         cand = cand[cand != 0]
     rng = np.random.default_rng(sd)
