@@ -427,6 +427,11 @@ def _error_panel(raw, ideal, kind, defocus_nm=0.0):
                                   text_color=(1, 1, 1), box_color=(0, 0, 0)))
 
 
+def _panel_title(panel, title):
+    return np.asarray(fs.text_box(panel, title, (16, 16), anchor="lt", font_size=20,
+                                  text_color=(1, 1, 1), box_color=(0, 0, 0)))
+
+
 def _truth_panel(height):
     h = _continuous_field(height)
     lut = np.asarray(fs.colorize_depth(np.linspace(0, 1, 256)[None, :]))[0]
@@ -447,15 +452,21 @@ def make_figures(s, sem, tem, seg, tomo, limits):
     tem_under = tem_micrograph(s, 12000.0)
     figs.save("truth_height", _truth_panel(s["height"]),
               "Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin.")
-    sem_panels = [instrument_frame("SEM", sem_raw["raw"]),
-                  _measurement_overlay(sem_raw["raw"], s, 2, "SEM"),
-                  _error_panel(sem_raw["raw"], sem_raw["ideal"], "SEM")]
+    sem_panels = [_panel_title(instrument_frame("SEM", sem_raw["raw"]), "raw output"),
+                  _panel_title(_measurement_overlay(sem_raw["raw"], s, 2, "SEM"),
+                               "derived overlay: white threshold / dark dashed max slope"),
+                  _panel_title(_error_panel(sem_raw["raw"], sem_raw["ideal"], "SEM"),
+                               "error / confidence")]
     figs.save("sem_raw_overlay_error", np.concatenate(sem_panels, axis=1),
               "Secondary-electron output | threshold and maximum-slope diameters | absolute residual.")
-    tem_panels = [instrument_frame("TEM", tem_focus["raw"], defocus_nm=0),
-                  instrument_frame("TEM", tem_under["raw"], defocus_nm=12000),
-                  _measurement_overlay(tem_under["raw"], s, 1, "TEM", defocus_nm=12000),
-                  _error_panel(tem_under["raw"], tem_under["ideal"], "TEM", defocus_nm=12000)]
+    tem_panels = [_panel_title(instrument_frame("TEM", tem_focus["raw"], defocus_nm=0),
+                               "raw output: in focus"),
+                  _panel_title(instrument_frame("TEM", tem_under["raw"], defocus_nm=12000),
+                               "raw output: under focus"),
+                  _panel_title(_measurement_overlay(tem_under["raw"], s, 1, "TEM", defocus_nm=12000),
+                               "derived overlay: white threshold / dark dashed max slope"),
+                  _panel_title(_error_panel(tem_under["raw"], tem_under["ideal"], "TEM", defocus_nm=12000),
+                               "error / confidence")]
     figs.save("tem_raw_overlay_error", np.concatenate(tem_panels, axis=1),
               "Bright-field in-focus and under-focus output | derived diameters | absolute residual.")
     figs.save_plot("diameter_bias", [("SEM threshold", [1.2,1.8,2.4,3.0],
@@ -466,7 +477,7 @@ def make_figures(s, sem, tem, seg, tomo, limits):
     figs.save_grid("touching_watershed", [seg["sem_labels"], seg["tem_labels"]],
                    ["SEM labels", "TEM labels"], title="Touching pairs separated")
     figs.save_grid("missing_wedge", [tomo["limited"], tomo["full"]],
-                   ["-60..60 degrees", "full tilt"], title="Missing-wedge elongation")
+                   ["-60..60 degrees", "full tilt"], title="Missing-wedge elongation", gray=True)
     figs.save_table("limits", ["view", "question", "answer", "number"], limits,
                     title="What each microscope cannot tell")
     frames = []
