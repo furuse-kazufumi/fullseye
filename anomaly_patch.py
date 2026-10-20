@@ -218,19 +218,23 @@ def _pixel_channels(img, spec):
 
 def _pool(chans, patch, stride):
     """Box mean of every channel over patch x patch windows at the given stride -> (gh, gw, K)."""
-    c = np.stack(chans, axis=-1)
-    h, w, _ = c.shape
+    h, w = np.asarray(chans[0]).shape
     gh = (h - patch) // stride + 1
     gw = (w - patch) // stride + 1
-    ii = np.zeros((h + 1, w + 1, c.shape[-1]))
-    ii[1:, 1:] = c.cumsum(axis=0).cumsum(axis=1)
+    out = np.empty((gh, gw, len(chans)), dtype=np.float64)
+    ii = np.empty((h + 1, w + 1), dtype=np.float64)
     r0 = np.arange(gh) * stride
     c0 = np.arange(gw) * stride
-    a = ii[r0[:, None] + patch, c0[None, :] + patch]
-    b = ii[r0[:, None], c0[None, :] + patch]
-    d = ii[r0[:, None] + patch, c0[None, :]]
-    e = ii[r0[:, None], c0[None, :]]
-    return (a - b - d + e) / float(patch * patch)
+    for k, channel in enumerate(chans):
+        ii.fill(0.0)
+        np.cumsum(channel, axis=0, out=ii[1:, 1:])
+        np.cumsum(ii[1:, 1:], axis=1, out=ii[1:, 1:])
+        a = ii[r0[:, None] + patch, c0[None, :] + patch]
+        b = ii[r0[:, None], c0[None, :] + patch]
+        d = ii[r0[:, None] + patch, c0[None, :]]
+        e = ii[r0[:, None], c0[None, :]]
+        out[..., k] = (a - b - d + e) / float(patch * patch)
+    return out
 
 
 def _fourier_bands(gray, patch, stride):
