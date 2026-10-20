@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 import blob2d as B
+import region_morph as R
 from scipy import ndimage
 
 
@@ -121,3 +122,41 @@ def test_reconstruct_queue_edge_cases_match_iterative(case, dtype):
         seed = np.minimum(mask, rng.integers(0, 20, mask.shape).astype(dtype))
     expected, _ = _old_reconstruct(seed, mask)
     assert np.array_equal(B._reconstruct_by_dilation(seed, mask), expected)
+
+
+def _morph_masks():
+    rng = np.random.default_rng(1203)
+    random = rng.random((79, 83)) > 0.55
+    structured = np.zeros((79, 83), bool)
+    structured[:25, :31] = True
+    structured[35:70, 20:72] = True
+    structured[45:55, 35:45] = False
+    return [random, structured, np.zeros_like(random), np.ones_like(random)]
+
+
+@pytest.mark.parametrize("radius", range(1, 65))
+def test_disc_edt_matches_structuring_element_for_all_radii(radius):
+    footprint = R._disc(radius)
+    for mask in _morph_masks():
+        expected_eroded = ndimage.binary_erosion(mask, structure=footprint)
+        expected_dilated = ndimage.binary_dilation(mask, structure=footprint)
+        actual_eroded = R._disc_erosion(mask, radius)
+        actual_dilated = R._disc_dilation(mask, radius)
+        assert np.array_equal(actual_eroded, expected_eroded)
+        assert np.array_equal(actual_dilated, expected_dilated)
+        assert np.array_equal(
+            R._disc_dilation(actual_eroded, radius),
+            ndimage.binary_dilation(expected_eroded, structure=footprint))
+        assert np.array_equal(
+            R._disc_erosion(actual_dilated, radius),
+            ndimage.binary_erosion(expected_dilated, structure=footprint))
+
+
+@pytest.mark.parametrize("radius", range(1, 65))
+def test_top_and_bottom_hat_match_structuring_element(radius):
+    mask = _morph_masks()[1]
+    footprint = R._disc(radius)
+    expected_top = mask & ~ndimage.binary_opening(mask, structure=footprint)
+    expected_bottom = ndimage.binary_closing(mask, structure=footprint) & ~mask
+    assert np.array_equal(R.top_hat(mask, size=radius - 1), expected_top)
+    assert np.array_equal(R.bottom_hat(mask, size=radius - 1), expected_bottom)
