@@ -3,6 +3,7 @@
 import numpy as np
 
 import curvature3d
+import coherent
 
 
 def _original_curvatures(points, k, normals=None):
@@ -51,3 +52,29 @@ def test_batch20_113_114_exact_default_keeps_original_and_fast_is_bounded():
 def test_batch20_curvature_method_validation():
     with np.testing.assert_raises_regex(ValueError, "method"):
         curvature3d.estimate_normals(_clouds()[0], method="quick")
+
+
+def _original_laser_line(**kwargs):
+    """Reference entry point fixed to the pre-carry-over exact path."""
+    return coherent.laser_line_coherent(**kwargs, method="exact")
+
+
+def test_batch22_198_199_integrated_accumulation_tolerance_and_zero_roughness():
+    worst = 0.0
+    cases = [
+        dict(shape=(16, 24), pixel_oversample=2, roughness_rad=None, seed=198),
+        dict(shape=(18, 20), pixel_oversample=3, roughness_rad=0.7, seed=199),
+    ]
+    for case in cases:
+        for patterns in (2, 5):
+            ref = _original_laser_line(**case, n_patterns=patterns)
+            assert np.array_equal(coherent.laser_line_coherent(
+                **case, n_patterns=patterns), ref)
+            fast = coherent.laser_line_coherent(
+                **case, n_patterns=patterns, method="fast")
+            worst = max(worst, float(np.max(np.abs(fast - ref))))
+    assert worst <= 2e-15
+    zero = dict(shape=(18, 22), pixel_oversample=2, roughness_rad=0.0, seed=200)
+    np.testing.assert_allclose(
+        coherent.laser_line_coherent(**zero, n_patterns=7, method="fast"),
+        _original_laser_line(**zero, n_patterns=7), atol=2e-15, rtol=0)
