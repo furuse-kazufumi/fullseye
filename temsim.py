@@ -447,7 +447,8 @@ def tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=
     return I
 
 
-def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=2.0 / 3.0):
+def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=2.0 / 3.0,
+                   memory_budget=None):
     """簡易のマルチスライス(Cowley–Moodie、Kirkland の形): 出射波を返す(表)。
 
     ``slices`` = (n_slices, ny, nx) の各スライスの投影ポテンシャル [V Å] (2-D なら 1 枚)。
@@ -466,6 +467,10 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
                          % (op, S.dtype, S.shape))
     if not np.isfinite(S).all():
         raise ValueError("%s: slices has non-finite values" % op)
+    if memory_budget is None:
+        S = S.astype(np.float64)
+    else:
+        _num(memory_budget, "memory_budget", op, lo=0.0, lo_open=True)
     px = _num(pixel_A, "pixel_A", op, lo=0.01, hi=100.0)
     kv = _num(kv, "kv", op, lo=0.0, hi=5000.0, lo_open=True)
     dz = _num(slice_thickness_A, "slice_thickness_A", op, lo=0.0, hi=1e5)
@@ -478,10 +483,11 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
     mask = (k2 <= kmax * kmax).astype(np.float64)
     P = np.exp(-1j * math.pi * lam * dz * k2) * mask
     psi = np.ones((ny, nx), dtype=np.complex128)
-    projected = np.zeros((ny, nx), dtype=np.float64)
+    projected = S.sum(axis=0) if memory_budget is None else np.zeros((ny, nx), dtype=np.float64)
     for v in S:
         v = np.asarray(v, dtype=np.float64)
-        projected += v
+        if memory_budget is not None:
+            projected += v
         t = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * v)) * mask)
         psi = np.fft.ifft2(np.fft.fft2(t * psi) * P)
     proj = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * projected)) * mask)
