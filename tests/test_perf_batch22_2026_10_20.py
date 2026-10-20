@@ -63,6 +63,7 @@ def test_186_187_powder_enumeration_and_atom_sum_order_match_original():
     phase = pxrd.cubic_prototype("diamond", 5.431, ["Si"], name="phase")
     expected = _old_powder_reflections(phase, 0.5, 140.0)
     actual = pxrd.powder_reflections(phase, 0.5, 140.0)
+    assert expected["hkl"].size and actual["hkl"].size
     for key in ("hkl", "d", "two_theta", "multiplicity", "F2", "intensity"):
         assert np.array_equal(actual[key], expected[key])  # F2 equality is the 0-ulp atom-order gate.
 
