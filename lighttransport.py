@@ -840,15 +840,18 @@ def tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20e6, n_b
     cos_i = (geo["normals"] * to_cam).sum(axis=1) / r
     if (cos_i <= 1e-9).any():
         raise ValueError("%s: patch %d faces away from the camera" % (op, int(np.argmin(cos_i))))
-    F, _ = _crossed_strings(geo)
     k = 2.0 * np.pi * f / C_LIGHT
-    R = _dist(c, c)
-    Kc = rho[:, None] * F * np.exp(1j * k * R)
     E = cos_i / r * np.exp(1j * k * r)
     direct = rho * E
+    if n_bounces == 0:
+        B = direct
+    else:
+        F, _ = _crossed_strings(geo)
+        R = _dist(c, c)
+        Kc = rho[:, None] * F * np.exp(1j * k * R)
     if n_bounces is None:
         B = np.linalg.solve(np.eye(geo["n"]) - Kc, direct)
-    else:
+    elif n_bounces != 0:
         B = direct.copy()
         term = direct
         for _ in range(n_bounces):
