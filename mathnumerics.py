@@ -139,11 +139,15 @@ def gauss_cubature(n: int, dim: int = 2, a=-1.0, b=1.0) -> dict:
     x, w = np.polynomial.legendre.leggauss(n)
     axes = [0.5 * (hi[d] - lo[d]) * x + 0.5 * (hi[d] + lo[d]) for d in range(dim)]
     wts = [0.5 * (hi[d] - lo[d]) * w for d in range(dim)]
-    grids = np.meshgrid(*axes, indexing="ij")
-    W = np.ones_like(grids[0])
+    count = n ** dim
+    nodes = np.empty((count, dim), dtype=np.float64)
+    W = 1.0
     for d in range(dim):
-        W = W * np.meshgrid(*[wts[k] if k == d else np.ones(n) for k in range(dim)], indexing="ij")[d]
-    return {"nodes": np.stack([g_.ravel() for g_ in grids], axis=1), "weights": W.ravel(),
+        nodes[:, d] = np.tile(np.repeat(axes[d], n ** (dim - d - 1)), n ** d)
+        shape = [1] * dim
+        shape[d] = n
+        W = W * wts[d].reshape(shape)
+    return {"nodes": nodes, "weights": np.broadcast_to(W, (n,) * dim).ravel(),
             "exact_degree_per_axis": 2 * n - 1}
 
 
@@ -220,7 +224,7 @@ def chebyshev_nodes(n: int, a: float = -1.0, b: float = 1.0, kind: int = 2) -> n
     return np.sort(0.5 * (float(b) - float(a)) * t + 0.5 * (float(b) + float(a)))
 
 
-def interp_barycentric(xk, yk, x) -> np.ndarray:
+def interp_barycentric(xk, yk, x, *, nodes: str | None = None) -> np.ndarray:
     """点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。
 
     係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では
