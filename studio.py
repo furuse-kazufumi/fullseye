@@ -7266,7 +7266,8 @@ def build_window(model=None):
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
-    def report_error(title, text, *, op_name=None, stage_index=None, inputs=None):
+    def report_error(title, text, *, op_name=None, stage_index=None, inputs=None,
+                     show_modal=True):
         """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
 
         Also appended to ``state['errors']`` so a headless test can assert on it
@@ -7284,10 +7285,12 @@ def build_window(model=None):
             refresh_problems(model.cached_step_states())
         except NameError:                         # only possible during early window construction
             pass
-        try:
-            ERROR_HOOK(win, title, studio_errors.format_failure(info, _UI_LANG.get("code", "en")))
-        except Exception:                 # a stubbed/absent dialog must never crash us
-            pass
+        if show_modal:
+            try:
+                ERROR_HOOK(win, title, studio_errors.format_failure(
+                    info, _UI_LANG.get("code", "en")))
+            except Exception:             # a stubbed/absent dialog must never crash us
+                pass
     win._report_error = report_error
 
     def confirm_discard(title, what="the current pipeline"):
@@ -13552,7 +13555,10 @@ def build_window(model=None):
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
                 st["error"] = "%s: %s" % (type(e).__name__, e)
                 info.setPlainText(st["error"]); pic.clear()
-                report_error("Run ledger op", e, op_name=st["op"], inputs=locals().get("data"))
+                # The runner already shows this error in its own window.  Keep the
+                # structured Problems entry, but do not open a second modal dialog.
+                report_error("Run ledger op", e, op_name=st["op"],
+                             inputs=locals().get("data"), show_modal=False)
                 return None
             st["result"], st["error"] = out, None
             st["history"].append(st["script"])

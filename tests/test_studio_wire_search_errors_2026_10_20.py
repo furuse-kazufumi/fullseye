@@ -57,8 +57,10 @@ def test_search_debounce_zero_recovery_try_once_and_unavailable(monkeypatch):
     monkeypatch.setattr(studio, "search_grouped", counted)
     for text in ("g", "ga", "gau", "gaus", "gauss", "gaussi", "gaussian", "gaussian ", "gaussian b", "gaussian bl"):
         ui["edit"].setText(text)
-    _app().processEvents()
+    assert ui["timer"].isActive()
+    ui["timer"].stop()
     ui["timer"].timeout.emit()
+    assert not ui["timer"].isActive()
     assert calls
     limits = [c[1].get("k", 20) for c in calls]
     assert limits
