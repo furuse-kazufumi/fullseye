@@ -168,11 +168,8 @@ def spline_fit(x, y, smooth=0.0):
     ya = _as_1d(y, "y")
     if xa.shape != ya.shape:
         raise ValueError(f"x and y have mismatched lengths ({xa.shape} vs {ya.shape})")
-    if np.all(np.diff(xa) > 0):
-        xs, ys = xa, ya
-    else:
-        order = np.argsort(xa)
-        xs, ys = xa[order], ya[order]
+    order = np.argsort(xa)
+    xs, ys = xa[order], ya[order]
     if np.any(np.diff(xs) <= 0):
         raise ValueError("x has duplicate values and cannot be interpolated (cannot sort to strictly increasing)")
     s = float(smooth)
