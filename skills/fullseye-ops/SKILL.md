@@ -105,6 +105,16 @@ back to the grep recipes below.
 
 ## Calling conventions
 
+### Plenoptic composition recipes
+
+- Raw sensor to depth: retrieve `plenoptic_mla_calibrate` -> `plenoptic_decode`
+  (`lightfield`) -> `lf_depth_from_focus` -> `lf_disparity_to_depth` (`depth`),
+  and use `lf_refocus` for a human-checkable image from the same decoded array.
+- Scene to refocusable capture: retrieve `lens_system` + `mla_surface` +
+  `plenoptic_system`, feed an existing `lens_scene` table to
+  `plenoptic_capture`, then calibrate/decode its `raw` image before using the
+  light-field family. Keep depth in metres and arrays in `(V,U,H,W)` order.
+
 ```python
 import fullseye, numpy as np
 out = fullseye.apply(img, "gaussian", 0.5, 0.5)        # 2 knobs in [0,1]

@@ -273,7 +273,11 @@ def plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25
 
 
 def plenoptic_decode(raw, calibration, *, angular=(5, 5)):
-    """Rectify a calibrated raw frame and return ``L[v,u,y,x]``."""
+    """Rectify a calibrated raw frame and return ``L[v,u,y,x]``.
+
+    The result is the repository's existing ``lightfield`` type: a plain
+    ``(V,U,H,W)`` array that composes directly with light-field operators.
+    """
     im=np.asarray(raw,dtype=float)
     V,U=_pair(angular,"angular",True)
     if im.ndim!=2 or not np.isfinite(im).all():
@@ -295,8 +299,7 @@ def plenoptic_decode(raw, calibration, *, angular=(5, 5)):
     wr=_ndi.map_coordinates(white,[xy[...,1],xy[...,0]],order=1,mode="constant",cval=0.0)
     good=wr>max(np.max(wr)*1e-6,1e-15)
     out=np.divide(rect,wr,out=np.zeros_like(rect),where=good)
-    return {"lightfield":out,"rectified_raw":LF.lf_to_mla(out),"valid":good,
-            "recovered_fraction":float(good.mean()),"angular":(V,U)}
+    return out
 
 
 def plenoptic_refocus_depth(lf, system, slope):

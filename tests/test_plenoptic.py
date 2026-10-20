@@ -67,9 +67,21 @@ def test_decode_exact_aligned_matches_existing_decode():
     # Centres are at block centres, basis vectors are one microimage pitch.
     cal={"origin_px":np.array([2.,2.]), "basis_px":np.array([[5.,0.],[0.,5.]]),
          "white_image":np.ones_like(raw)}
-    got=P.plenoptic_decode(raw,cal,angular=(5,5))["lightfield"]
+    got=P.plenoptic_decode(raw,cal,angular=(5,5))
     assert got.shape == lf.shape
     assert np.max(np.abs(got-lf)) < 1e-12
+
+
+def test_decode_hands_lightfield_directly_to_refocus():
+    lf, _ = LF.lf_synthesize((.5,), (5, 5), (20, 24), seed=8, occlusion=False)
+    raw = LF.lf_to_mla(lf)
+    cal = {"origin_px": np.array([2., 2.]), "basis_px": np.array([[5., 0.], [0., 5.]]),
+           "white_image": np.ones_like(raw)}
+    decoded = P.plenoptic_decode(raw, cal, angular=(5, 5))
+    image = LF.lf_refocus(decoded, .5)
+    assert decoded.shape == (5, 5, 20, 24)
+    assert image.shape == (20, 24)
+    assert np.isfinite(image).all()
 
 
 def test_calibration_recovers_rotation_and_rejects_wrong_pitch_probe():

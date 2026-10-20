@@ -699,7 +699,7 @@ _CATALOG = {
         ("plenoptic_system", "plenoptic", ["table", "table", "table"], "table"),
         ("plenoptic_capture", "plenoptic", ["table", "table"], "table"),
         ("plenoptic_mla_calibrate", "plenoptic", ["image2d"], "table"),
-        ("plenoptic_decode", "plenoptic", ["image2d", "table"], "table"),
+        ("plenoptic_decode", "plenoptic", ["image2d", "table"], "lightfield"),
         ("plenoptic_refocus_depth", "plenoptic", ["lightfield", "table"], "table"),
     ],
     "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
