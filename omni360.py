@@ -271,7 +271,11 @@ def ods_from_cubemap_pair(left_cube,right_cube,out_shape):
 
 
 def equirect_defect_unwrap_pipe(equi, axis="horizontal", radius_m=None, length_m=None):
-    """Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial."""
+    """Unwrap the cylindrical wall; longitude is circumference and latitude is axial.
+
+    Empty input (``equi`` has zero elements) returns an empty image (reason: an
+    empty upstream inspection has no cylindrical samples to unwrap).
+    """
     im=np.asarray(equi,float)
     if axis not in ("horizontal","vertical"): raise ValueError("axis must be horizontal or vertical")
     strip=im.copy() if axis=="horizontal" else np.swapaxes(im,0,1)
@@ -306,7 +310,10 @@ def equirect_weight_map(h,w,solid_angle=False):
 
 
 def ws_psnr(a,b,data_range=1.0):
-    """Compute cosine-latitude weighted spherical PSNR."""
+    """Compute cosine-latitude weighted spherical PSNR.
+
+    Identical inputs return ``inf``, the PSNR of zero mean-squared error.
+    """
     a=np.asarray(a,float); b=np.asarray(b,float); w=equirect_weight_map(a.shape[0],a.shape[1]);
     if a.ndim==3: w=w[...,None]
     mse=np.sum(w*(a-b)**2)/(np.sum(w)*(a.shape[2] if a.ndim==3 else 1))
@@ -314,7 +321,10 @@ def ws_psnr(a,b,data_range=1.0):
 
 
 def s_psnr(a,b,n=10000,data_range=1.0):
-    """Compute PSNR at deterministic near-uniform sphere samples."""
+    """Compute PSNR at deterministic near-uniform sphere samples.
+
+    Identical inputs return ``inf``, the PSNR of zero mean-squared error.
+    """
     i=np.arange(n); y=1-2*(i+.5)/n; lon=(np.pi*(3-np.sqrt(5))*i+np.pi)%(2*np.pi)-np.pi
     d=np.stack((np.sqrt(1-y*y)*np.sin(lon),y,np.sqrt(1-y*y)*np.cos(lon)),axis=-1)
     aa=_sample(a,dir_to_equirect(d,*a.shape[:2]),True); bb=_sample(b,dir_to_equirect(d,*b.shape[:2]),True); mse=np.mean((aa-bb)**2)
@@ -486,7 +496,11 @@ def video360_viewport_track(frames,yaw,pitch,fov=90,size=(256,256)):
 
 
 def video360_tile_coverage(view_path,tiles=(8,4),fov_deg=90):
-    """Report which longitude-latitude streaming tiles a view path touches."""
+    """Report which longitude-latitude streaming tiles a view path touches.
+
+    Empty input (``view_path`` has zero elements) returns an empty coverage mask
+    (reason: a path with no views requests no streaming tiles).
+    """
     path=np.asarray(view_path,float); nx,ny=tiles; seen=np.zeros((ny,nx),bool)
     hy=fov_deg/2
     for yaw,pitch in path:
