@@ -211,7 +211,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 267 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 268 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -411,7 +411,7 @@ PoC 267 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>颜色与分离</b> (14)</summary>
+<details class="vall"><summary><b>颜色与分离</b> (15)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纤与光导(模式、色散、模场直径)" width="200" height="200"><span>光纤与光导(模式、色散、模场直径)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="用光谱反射率测薄膜厚度(用公开实测数据评分、晶圆干涉色)" width="200" height="200"><b>&#9654;</b><span>用光谱反射率测薄膜厚度(用公开实测数据评分、晶圆干涉色)</span></a>
@@ -427,6 +427,7 @@ PoC 267 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="玻璃替换与多起点全局搜索" width="200" height="200"><span>玻璃替换与多起点全局搜索</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="用要求表设计三片式镜头(边缘厚度边界与玻璃作为变量)" width="200" height="200"><span>用要求表设计三片式镜头(边缘厚度边界与玻璃作为变量)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)" width="200" height="200"><span>用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)</span></a>
+<a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="公开 .zmx 处方的独立验证与检测评分" width="200" height="200"><span>公开 .zmx 处方的独立验证与检测评分</span></a>
 </div>
 </details>
 
