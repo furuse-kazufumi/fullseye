@@ -324,6 +324,11 @@ def rms(x, frame=None, hop=None):
         return float(np.sqrt(np.mean(x * x))) if x.size else 0.0
     frame = int(frame)
     hop = frame // 2 if hop is None else int(hop)
+    if hop == frame:
+        n = max(1, (len(x) - frame) // hop + 1)
+        if len(x) >= frame:
+            blocks = x[:n * frame].reshape(n, frame)
+            return np.sqrt(np.mean(blocks * blocks, axis=1))
     return np.array([np.sqrt(np.mean(x[s:s + frame] ** 2))
                      for s in range(0, max(1, len(x) - frame + 1), hop)])
 
@@ -344,11 +349,10 @@ def zero_crossing_rate(x):
     x = _require_finite(x)
     if x.size < 2:
         return 0.0
-    s = np.sign(x)
-    nz = s[s != 0.0]
+    nz = x[x != 0.0]
     if nz.size < 2:
         return 0.0
-    return float(np.count_nonzero(np.diff(nz) != 0.0)) / float(x.size - 1)
+    return float(np.count_nonzero(np.signbit(nz[:-1]) != np.signbit(nz[1:]))) / float(x.size - 1)
 
 
 def find_peaks(x, height=None, distance=None):
@@ -550,8 +554,13 @@ def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
         wsum = float(w.sum())
         # exp(-2 pi i f x) summed over events, minus what a uniform process of
         # the same rate would give: that difference is the periodic structure.
-        ph = np.exp(-2j * np.pi * np.outer(freq, x))
-        raw = ph @ w
+        # Keep the temporary phase matrix bounded for large event lists.  The
+        # arithmetic within each requested frequency is unchanged.
+        block = max(1, 1_048_576 // max(1, x.size))
+        raw = np.empty(freq.size, dtype=np.complex128)
+        for start in range(0, freq.size, block):
+            fs = freq[start:start + block]
+            raw[start:start + block] = np.exp(-2j * np.pi * fs[:, None] * x) @ w
         u = np.where(freq != 0.0,
                      (1.0 - np.exp(-2j * np.pi * freq * span))
                      / (2j * np.pi * np.where(freq == 0.0, 1.0, freq)),
@@ -602,18 +611,21 @@ def signal_features(x, rate=1.0):
     if x.size == 0:
         return {k: 0.0 for k in ("rms", "peak", "crest_factor", "zcr",
                                  "spectral_centroid", "peak_freq", "bandwidth")}
-    r = rms(x)
+    r = float(np.sqrt(np.mean(x * x)))
     peak = float(np.max(np.abs(x)))
     freqs, mag = spectrum(x, rate)
     msum = float(mag.sum()) + 1e-12
     centroid = float((freqs * mag).sum() / msum)
     peak_freq = float(freqs[int(np.argmax(mag))])
     bandwidth = float(np.sqrt(((freqs - centroid) ** 2 * mag).sum() / msum))
+    nz = x[x != 0.0]
     return {
         "rms": round(r, 6),
         "peak": round(peak, 6),
         "crest_factor": round(peak / (r + 1e-12), 4),
-        "zcr": round(zero_crossing_rate(x), 6),
+        "zcr": round(float(np.count_nonzero(
+            np.signbit(nz[:-1]) != np.signbit(nz[1:])))
+            / max(1, x.size - 1), 6),
         "spectral_centroid": round(centroid, 3),
         "peak_freq": round(peak_freq, 3),
         "bandwidth": round(bandwidth, 3),
