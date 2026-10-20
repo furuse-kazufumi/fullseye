@@ -10,7 +10,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 信号解析の非重複 RMS とゼロ交差を高速化し、点事象スペクトルにメモリ上限付き経路を加えた。
 - 一次元関数の長系列照合、ゼロ交差、変換、逆関数、複数位置の値取得を高速化した。
 - 疎グラフの三角閉路計算を軽量化した。
-- packed pixel 展開を 1〜16 bit の直接抽出へ広げ、raw buffer と uint8 配列で同じ結果を返すようにした。
+- packed pixel 展開は raw buffer と uint8 配列で同じ結果を返し、1〜16 bit の省メモリ経路を選択できるようにした。
 - PIV の外れ値検査に行 chunk 版を加え、少数外れ値の置換では対象近傍だけを集計するようにした。
 
 ### Changed — 性能改善 第29便

@@ -437,7 +437,7 @@ def _byte_view(buf):
     return np.asarray(buf, dtype=np.uint8).ravel()
 
 
-def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
+def unpack_lsb(buf, bits: int, count: int, method="exact") -> np.ndarray:
     """lsb-packed bit stream -> one ``uint16`` per pixel (PFNC 2.4 6.3.1).
 
     Args:
@@ -461,7 +461,11 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
     if a.size < need_bytes:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
                          % (count, bits, need, a.size * 8))
-    if bits <= 16:
+    if method == "exact":
+        unpacked = np.unpackbits(a, bitorder="little")
+        words = unpacked[:need].reshape(count, bits)
+        return (words * (1 << np.arange(bits, dtype=np.uint32))).sum(axis=1).astype(np.uint16)
+    if method == "low_memory":
         # Each value spans at most three bytes.  Decode those bytes directly instead
         # of expanding every input byte into eight temporary uint8 values.
         src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
@@ -470,7 +474,7 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
         shift = (bit & 7).astype(np.uint32)
         word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
         return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
-    raise AssertionError("unreachable")
+    raise ValueError("unpack_lsb: method must be 'exact' or 'low_memory'")
 
 
 def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:

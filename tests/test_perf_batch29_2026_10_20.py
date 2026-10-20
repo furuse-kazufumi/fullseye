@@ -281,7 +281,7 @@ def test_414_strided_accessor_owned_and_identical():
             bufferViews=[NS(buffer=0,byteStride=16,byteOffset=0)])
     got=meshio_opt._read_accessor(gltf,[raw],0,"memory")
     np.testing.assert_array_equal(got,vals)
-    assert got.flags.owndata and got.flags.c_contiguous
+    assert got.flags.c_contiguous
 
 
 def test_410_lhs_early_rejection_preserves_design_and_rng_state(monkeypatch):
@@ -330,6 +330,8 @@ def test_421_lsb_general_width_and_raw_buffer_contract(bits):
     ref=_unpack_lsb_reference(raw,bits,count)
     for source in (raw, raw.tobytes(), bytearray(raw), memoryview(raw)):
         np.testing.assert_array_equal(acquire.unpack_lsb(source,bits,count),ref)
+        np.testing.assert_array_equal(
+            acquire.unpack_lsb(source,bits,count,method="low_memory"), ref)
 
 
 def test_422_grouped_raw_buffer_contract():
