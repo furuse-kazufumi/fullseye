@@ -3,6 +3,8 @@ import pytest
 
 import geometry2d
 import image_gen
+import matching
+import shapematch
 
 
 def test_reproduced_h02_domain_results_can_be_chained_and_cropped():
@@ -50,3 +52,34 @@ def test_reproduced_h03_rectangle_intersection_defaults_to_exact_and_grid_conver
     assert geometry2d.area_intersection_rectangle2(0, 0, 0, 1, 1, 0, 2, 0, 1, 1) == 0.0
     shifted = tuple(v + 1e5 if i in {0, 1, 5, 6} else v for i, v in enumerate(containment))
     assert geometry2d.area_intersection_rectangle2(*shifted) == pytest.approx(2.0, abs=1e-8)
+
+
+def test_reproduced_h04_ncc_is_scale_invariant_and_handles_large_dc_offset():
+    rng = np.random.default_rng(42)
+    template = rng.normal(size=(8, 8))
+    image = rng.normal(size=(40, 40))
+    image[17:25, 11:19] = template
+    for scale in (1.0, 1e-4, 1e-8, 1e-12, 1e6):
+        model = matching.create_ncc_model(template * scale)
+        result = matching.find_ncc_model(model, image * scale, min_score=-1)
+        assert (result["row_tl"], result["col_tl"]) == (17, 11)
+        assert result["score"] >= 0.999999
+
+    constant = matching._ncc_map(np.ones((3, 3)), np.ones((5, 5)))
+    np.testing.assert_array_equal(constant, np.zeros((3, 3)))
+
+    signal = rng.normal(scale=0.2, size=(8, 8))
+    dc_template = 1e6 + signal
+    dc_image = np.full((20, 20), 1e6)
+    dc_image[6:14, 7:15] = dc_template
+    ncc = matching._ncc_map(dc_template, dc_image)
+    patch = dc_image[6:14, 7:15]
+    oracle = np.sum((patch - patch.mean()) * (dc_template - dc_template.mean()))
+    oracle /= np.linalg.norm(patch - patch.mean()) * np.linalg.norm(dc_template - dc_template.mean())
+    assert ncc[6, 7] == pytest.approx(oracle, abs=1e-12)
+
+    multi = shapematch.find_ncc_models(
+        matching.create_ncc_model(template * 1e-12), image * 1e-12,
+        min_score=0.999999, max_matches=1,
+    )
+    assert (multi["matches"][0]["row_tl"], multi["matches"][0]["col_tl"]) == (17, 11)
