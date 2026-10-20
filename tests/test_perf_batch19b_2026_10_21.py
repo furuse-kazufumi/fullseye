@@ -4,6 +4,7 @@ import numpy as np
 
 import regionprops3d
 import backends_measure1d
+import pcl_filter
 from scipy.ndimage import map_coordinates
 
 
@@ -63,3 +64,17 @@ def test_100_banded_sample_batches_offsets_bit_identically():
         expected = _original_sample(image, angle, offset, band)
         got = backends_measure1d._sample(image, angle, offset, band)["prof"]
         assert np.array_equal(got, expected, equal_nan=True)
+
+
+def test_101_order_zero_direct_mean_matches_exact_and_handles_degenerate_input():
+    rng = np.random.default_rng(101)
+    for points, radius, chunk in [
+        (np.c_[rng.normal(size=(80, 2)), rng.normal(scale=.02, size=80)], .8, None),
+        (rng.normal(size=(45, 3)), 1.5, 7),
+    ]:
+        expected = pcl_filter.mls_smooth(points, radius, order=0, chunk=chunk)
+        got = pcl_filter.mls_smooth(points, radius, order=0, chunk=chunk, method="mean")
+        np.testing.assert_allclose(got, expected, rtol=1e-12, atol=1e-14)
+    repeated = np.ones((12, 3))
+    got = pcl_filter.mls_smooth(repeated, 1.0, order=0, method="mean")
+    assert np.array_equal(got, repeated, equal_nan=True)

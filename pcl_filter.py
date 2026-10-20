@@ -199,7 +199,14 @@ def _n_poly_terms(order: int) -> int:
     return (order + 1) * (order + 2) // 2
 
 
-def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None):
+def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None,
+               method: str = "exact"):
+    """Moving least-squares smoothing.
+
+    ``method="mean"`` with ``order=0`` computes the weighted constant term
+    directly. It agrees with the default ``"exact"`` path to ``rtol=1e-12,
+    atol=1e-14``; the no-argument default remains unchanged.
+    """
     """各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。
 
     点ごとに半径 ``radius`` 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の
@@ -241,6 +248,10 @@ def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None):
         return P.copy()
 
     order = int(max(0, order))
+    if method not in ("exact", "mean"):
+        raise ValueError("method must be 'exact' or 'mean'")
+    if method == "mean" and order != 0:
+        raise ValueError("method='mean' is available only when order=0")
     n_terms = _n_poly_terms(order)
     r = float(radius)
     sigma2 = (r * 0.5) ** 2 + 1e-30      # ガウス重みの帯域(半径の半分を目安)
@@ -276,10 +287,16 @@ def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None):
         v = c @ t2
         h = c @ normal                         # 接平面からの高さ(注目点は h=0)
 
-        A = _poly_terms(u, v, order)
-        sw = np.sqrt(w)
+        if method == "mean":
+            h0 = float(np.dot(w, h) / wsum)
+            if np.isfinite(h0):
+                out[i] = P[i] + h0 * normal
+            continue
+        else:
+            A = _poly_terms(u, v, order)
+            sw = np.sqrt(w)
         # 重み付き最小二乗 (sqrt-weight で両辺を掛ける)。lstsq は縮退に頑健。
-        coef, *_ = np.linalg.lstsq(A * sw[:, None], h * sw, rcond=None)
+            coef, *_ = np.linalg.lstsq(A * sw[:, None], h * sw, rcond=None)
         h0 = float(coef[0])                    # 曲面の (u,v)=(0,0) での高さ = 射影量
         if not np.isfinite(h0):
             continue

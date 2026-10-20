@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - `regionprops3d` の 6 近傍表面積を、同一結果の隣接スライス比較へ変更（430³、0.1751 秒→0.0790 秒、0.45 倍、ピーク 161.1 MB→79.3 MB）。
+- `mls_smooth(order=0)` に重み付き平均を直接使う `method="mean"` を追加（従来既定は維持、許容差 `rtol=1e-12, atol=1e-14`、7000点で 0.2191→0.1502秒、0.69倍）。
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。
