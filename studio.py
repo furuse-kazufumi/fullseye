@@ -6333,12 +6333,21 @@ def build_window(model=None):
 
         ``close_guard`` is installed below; it returns False to veto the close."""
         close_guard = None
+        quiesce = None     # 実行ワーカーの QThread を止めて待つ(閉じる前に必ず)
 
         def closeEvent(self, ev):
             guard = self.close_guard
             if guard is not None and not guard():
                 ev.ignore()
                 return
+            # ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が
+            # 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+            q = self.quiesce
+            if q is not None:
+                try:
+                    q()
+                except Exception as e:
+                    _log_soft_failure("could not stop run workers before close", e)
             try:                              # remember window position + panel layout
                 if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
                     s = _settings()
@@ -7442,7 +7451,7 @@ def build_window(model=None):
         # Count unsaved Python-Editor tabs too — the app-quit path must not
         # silently discard them (only per-tab close prompted before this fix).
         ed_dirty = 0
-        pe = getattr(win, "_pyedit", None)
+        pe = state.get("pyedit")            # QObject の動的 getattr は閉じる途中に呼ばない
         if pe is not None:
             tabs = pe.get("tabs")
             if tabs is not None:
@@ -7869,6 +7878,19 @@ def build_window(model=None):
     run_stop.clicked.connect(request_stop)
     run_show.clicked.connect(show_completed_result)
     run_current.clicked.connect(start_run_async)
+    def quiesce_run_workers(timeout_ms=5000):
+        """停止を要求し、生きている QThread をすべて quit + wait する(閉じる前・テストの後始末)。"""
+        for event in list(run_stop_events.values()):
+            event.set()
+        for thread, _worker in list(run_ctl.threads.values()):
+            thread.quit()
+            thread.wait(timeout_ms)
+        for thread in list(run_ctl.retired_threads):
+            thread.wait(timeout_ms)
+        QtWidgets.QApplication.processEvents()
+
+    win.quiesce = quiesce_run_workers
+    run_ctl.quiesce = quiesce_run_workers
     win._run_controller = run_ctl
     win._start_run_async = start_run_async
 
@@ -10327,6 +10349,7 @@ def build_window(model=None):
                        "status": status, "run": run_code, "stop": stop_code,
                        "open_tab": open_tab, "close_tab": close_tab, "save_to": save_to,
                        "open_path": open_path, "new": new_file}
+        state["pyedit"] = win._pyedit
         if code_text is not None:
             open_tab(code_text, name_hint)
         else:
