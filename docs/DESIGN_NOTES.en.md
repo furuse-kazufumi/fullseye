@@ -2004,9 +2004,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `residue.py`
 
-- **L339** _(ja)_ — ★2026-10-07: [lo, hi) に候補が 1 つも無い標本は範囲外の値・score -inf・margin 2.0(最大の確信)を 返していた → 値と score は NaN、margin 0(residue_fault_locate の「決められない = NaN」と同じ約束)。
-- **L599** _(ja)_ — ★2026-10-07: 範囲内に候補が無い画素は margin 0(= valid にしない)。値は warp 用に有限のまま残す。
-- **L683** _(ja)_ — ★2026-10-07: refine 後に |d| が探索範囲 max_disp を越えた画素は黙って切らず valid=False にする。
+- **L331** _(ja)_ — ★2026-10-07: [lo, hi) に候補が 1 つも無い標本は範囲外の値・score -inf・margin 2.0(最大の確信)を 返していた → 値と score は NaN、margin 0(residue_fault_locate の「決められない = NaN」と同じ約束)。
+- **L591** _(ja)_ — ★2026-10-07: 範囲内に候補が無い画素は margin 0(= valid にしない)。値は warp 用に有限のまま残す。
+- **L675** _(ja)_ — ★2026-10-07: refine 後に |d| が探索範囲 max_disp を越えた画素は黙って切らず valid=False にする。
 
 ## `roughness.py`
 

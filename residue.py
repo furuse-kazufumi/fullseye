@@ -225,22 +225,14 @@ def residue_integer_crt(residues, moduli) -> dict:
                                  "solution would not be unique" % (op, m[i], m[j], gcd(m[i], m[j])))
     r = [x % mi for x, mi in zip(r, m)]
     digits = []
-    for k in range(len(m)):
-        v = r[k]
-        # subtract the contribution of earlier digits, divide by the earlier moduli
-        acc = 0
-        place = 1
-        for j in range(k):
-            acc += digits[j] * place
-            place *= m[j]
-        v = ((r[k] - acc) * pow(place % m[k], -1, m[k])) % m[k] if k else r[0]
-        digits.append(v)
-    value = 0
+    acc = 0
     place = 1
-    for d, mi in zip(digits, m):
-        value += d * place
-        place *= mi
-    return {"value": int(value), "modulus": int(place), "mixed_radix": digits}
+    for k in range(len(m)):
+        digit = ((r[k] - acc) * pow(place % m[k], -1, m[k])) % m[k] if k else r[0]
+        digits.append(digit)
+        acc += digit * place
+        place *= m[k]
+    return {"value": int(acc), "modulus": int(place), "mixed_radix": digits}
 
 
 # --------------------------------------------------------------------------- #
