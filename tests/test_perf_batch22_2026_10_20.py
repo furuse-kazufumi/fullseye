@@ -15,6 +15,55 @@ import tacsim
 import tacdome
 
 
+def _old_powder_reflections(phase, wavelength, two_theta_max=90.0):
+    """Items 186/187 reference: full mesh and full reflection-by-atom matrices."""
+    import math
+    ph = pxrd._check_phase(phase)
+    a, b, c, al, be, ga = ph["cell"]
+    G, volume = pxrd._cell_metric((a, b, c, al, be, ga))
+    Gs = np.linalg.inv(G)
+    qmax = (2 * math.sin(math.radians(two_theta_max / 2)) / wavelength) ** 2
+    hmax = [int(math.floor(math.sqrt(qmax * G[i, i]))) + 1 for i in range(3)]
+    ranges = [np.arange(-m, m + 1) for m in hmax]
+    H = np.stack(np.meshgrid(*ranges, indexing="ij"), -1).reshape(-1, 3)
+    H = H[np.any(H != 0, axis=1)]
+    q = np.einsum("ni,ij,nj->n", H, Gs, H)
+    keep = q <= qmax * (1 + 1e-12)
+    H, q = H[keep], q[keep]
+    d = 1 / np.sqrt(q); s = 0.5 / d
+    X = np.array([atom["xyz"] for atom in ph["atoms"]])
+    occ = np.array([atom["occ"] for atom in ph["atoms"]])
+    Bs = np.array([atom["B"] for atom in ph["atoms"]])
+    types = [atom["type"] for atom in ph["atoms"]]
+    cache = {element: pxrd._f0(element, s) for element in set(types)}
+    fj = np.stack([cache[element] for element in types], 1) * occ[None, :] * np.exp(-np.outer(s ** 2, Bs))
+    F = np.sum(fj * np.exp(2j * np.pi * (H @ X.T)), axis=1)
+    F2 = np.abs(F) ** 2
+    kd, kf = np.round(d, 9), np.round(F2 / max(F2.max(), 1e-300), 9)
+    order = np.lexsort((kf, -kd)); groups = {}
+    for i in order:
+        groups.setdefault((kd[i], kf[i]), []).append(i)
+    rows = []
+    for indices in groups.values():
+        hk = H[indices]
+        rep = max((tuple(int(v) for v in row) for row in hk), key=lambda row: (sum(v >= 0 for v in row), row))
+        rows.append((float(d[indices[0]]), rep, len(indices), float(F2[indices[0]])))
+    rows.sort(key=lambda row: -row[0])
+    dd = np.array([row[0] for row in rows]); f2 = np.array([row[3] for row in rows]); mult = np.array([row[2] for row in rows])
+    tt = pxrd._two_theta_deg(dd, wavelength)
+    return {"hkl": np.array([row[1] for row in rows]), "d": dd, "two_theta": tt,
+            "multiplicity": mult, "F2": f2, "intensity": mult * f2 * pxrd._lorentz(tt, "powder"),
+            "volume": volume}
+
+
+def test_186_187_powder_enumeration_and_atom_sum_order_match_original():
+    phase = pxrd.cubic_prototype("diamond", 5.431, ["Si"], name="phase")
+    expected = _old_powder_reflections(phase, 0.5, 140.0)
+    actual = pxrd.powder_reflections(phase, 0.5, 140.0)
+    for key in ("hkl", "d", "two_theta", "multiplicity", "F2", "intensity"):
+        assert np.array_equal(actual[key], expected[key])  # F2 equality is the 0-ulp atom-order gate.
+
+
 def _old_azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True,
                               polarization=None, chi_range=None, supersample=2):
     """Item 188 reference: the pre-slice list-and-concatenate implementation."""
