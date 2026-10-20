@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 import anomeval
+import mathspectral
 import seggraph
 
 
@@ -204,3 +205,55 @@ def test_max_tree_implicit_grid_matches_neighbour_lists(connectivity, shape):
             np.testing.assert_array_equal(actual[key], expected[key])
         else:
             assert actual[key] == expected[key]
+
+
+def _old_mdl_from_values(values, snapshots):
+    values = np.clip(np.asarray(values)[::-1], 1e-300, None)
+    m = values.size
+    mdl = []
+    for k in range(m):
+        tail = values[k:]
+        ratio = math.exp(np.mean(np.log(tail))) / np.mean(tail)
+        mdl.append(-snapshots * (m-k) * math.log(max(ratio, 1e-300))
+                   + 0.5*k*(2*m-k)*math.log(snapshots))
+    return np.asarray(mdl)
+
+
+@pytest.mark.parametrize("m", [4, 16, 64])
+@pytest.mark.parametrize("spectrum", ["near", "flat", "wide"])
+def test_mdl_reverse_cumulative_matches_tail_reference(m, spectrum):
+    if spectrum == "near":
+        eigenvalues = 1.0 + np.arange(m) * 1e-13
+    elif spectrum == "flat":
+        eigenvalues = np.full(m, 0.75)
+    else:
+        eigenvalues = np.geomspace(1e-16, 1.0, m)
+    x = np.diag(np.sqrt(eigenvalues * (m + 3))).astype(complex)
+    x = np.pad(x, ((0, 0), (0, 3)))
+    actual = mathspectral.n_sources_mdl(x)
+    raw = np.linalg.eigvalsh(x @ x.conj().T / x.shape[1])
+    expected = _old_mdl_from_values(raw, x.shape[1])
+    # At a mathematically zero MDL value, the two summation orders may differ
+    # by a couple of ulps; nonzero values retain the requested relative gate.
+    np.testing.assert_allclose(actual["mdl"], expected, rtol=1e-12, atol=2e-12)
+    assert actual["n_sources"] == int(np.argmin(expected[:m-1]))
+
+
+def test_cov_subspace_auto_uses_one_eigendecomposition(monkeypatch):
+    x = mathspectral.ula_snapshots(n_elements=8, n_snapshots=200, seed=805)
+    original = np.linalg.eigh
+    calls = 0
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(np.linalg, "eigh", counted)
+    _r, _values, vectors, n, _m = mathspectral._cov_subspace(x, None)
+    assert calls == 1
+    reference_values, reference_vectors = original(x @ x.conj().T / x.shape[1])
+    reference = reference_vectors[:, ::-1][:, :n]
+    singular = np.linalg.svd(reference.conj().T @ vectors[:, :n], compute_uv=False)
+    angles = np.arccos(np.clip(singular, 0, 1))
+    assert angles.max(initial=0.0) < 1e-8
