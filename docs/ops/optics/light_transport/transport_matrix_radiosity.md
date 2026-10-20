@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # transport_matrix_radiosity — OPTICS `light_transport` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)`、台帳から引くなら `opsoptics.get("transport_matrix_radiosity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)`、台帳から引くなら `opsoptics.get("transport_matrix_radiosity")`)
 
 ## 使い方
 
