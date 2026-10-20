@@ -7,6 +7,7 @@ import backends_measure1d
 import backends_color
 import pcl_filter
 import fringe
+import fit_primitives_ext
 from scipy.ndimage import map_coordinates
 
 
@@ -121,3 +122,21 @@ def test_102_cropped_phase_unwrap_matches_full_canvas_and_island_offsets():
         expected = fringe.unwrap_phase_2d(wrapped, mask=valid)
         got = fringe.unwrap_phase_2d(wrapped, mask=valid, crop_valid=True)
         assert np.array_equal(got, expected, equal_nan=True)
+
+
+def _ellipsoid_points(n=300, radii=(2.0, 1.0, .7), seed=103):
+    directions = np.random.default_rng(seed).normal(size=(n, 3))
+    directions /= np.linalg.norm(directions, axis=1)[:, None]
+    return directions * np.asarray(radii)
+
+
+def test_103_ellipsoid_candidate_reference_nan_inf_and_near_tie_probe():
+    for points, chunk in [(_ellipsoid_points(), None),
+                          (_ellipsoid_points(radii=(1, 1, .999999), seed=4), 37)]:
+        result = fit_primitives_ext.fit_ellipsoid(points, chunk=chunk)
+        assert np.isfinite(result["residual"])
+    for bad in (np.nan, np.inf):
+        points = _ellipsoid_points()
+        points[0, 0] = bad
+        with np.testing.assert_raises(ValueError):
+            fit_primitives_ext.fit_ellipsoid(points)
