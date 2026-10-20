@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - `fill_holes`: 孤立・細長・境界の穴で結果がビット一致する稀疎更新を既定化し、1200² で 1114.5 ms から 175.9 ms (6.34倍)に高速化。
+- `bilateral_filter_depth`: 完全一致する64行分割を既定化し、401×517 で 792.9 ms から 198.5 ms (3.99倍)、ピーク割当を19.2 MBから10.5 MBに削減。
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。

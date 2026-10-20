@@ -141,7 +141,7 @@ def bilateral_filter_depth(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。
 
@@ -149,6 +149,8 @@ def bilateral_filter_depth(
     中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
     range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
     ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
+    ``chunk`` limits peak memory by processing row tiles; 64 is the measured
+    speed-preserving default, while callers may tune it or pass ``None``.
     """
     d = np.asarray(depth, dtype=float)
     if d.ndim != 2:
