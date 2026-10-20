@@ -4,6 +4,7 @@ import numpy as np
 
 import regionprops3d
 import backends_measure1d
+import backends_color
 import pcl_filter
 from scipy.ndimage import map_coordinates
 
@@ -78,3 +79,27 @@ def test_101_order_zero_direct_mean_matches_exact_and_handles_degenerate_input()
     repeated = np.ones((12, 3))
     got = pcl_filter.mls_smooth(repeated, 1.0, order=0, method="mean")
     assert np.array_equal(got, repeated, equal_nan=True)
+
+
+def _original_colour_pca(image):
+    x = image.reshape(-1, 3)
+    centered = x - x.mean(0)
+    values, vectors = np.linalg.eigh(np.cov(centered.T))
+    projected = centered @ vectors[:, np.argsort(values)[::-1]]
+    return ((projected - projected.min(0)) /
+            (np.ptp(projected, axis=0) + 1e-8)).reshape(image.shape)
+
+
+def test_98_colour_pca_reference_and_offset_elision_probe():
+    for shape, knob in [((7, 11, 3), 0.0), ((19, 5, 3), 1.0)]:
+        image = np.random.default_rng(sum(shape)).random(shape)
+        got = backends_color._principal_comp(image, knob, .3)
+        expected = _original_colour_pca(image)
+        assert np.array_equal(got, expected, equal_nan=True)
+        x = image.reshape(-1, 3)
+        centered = x - x.mean(0)
+        _, vectors = np.linalg.eigh(np.cov(centered.T))
+        direct = x @ vectors[:, ::-1]
+        direct = ((direct - direct.min(0)) /
+                  (np.ptp(direct, axis=0) + 1e-8)).reshape(shape)
+        np.testing.assert_allclose(direct, expected, rtol=0, atol=4e-16)
