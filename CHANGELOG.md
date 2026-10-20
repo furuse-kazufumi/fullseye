@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- Reduced temporary allocations and repeated transforms in mesh repair, curve analysis,
+  signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
+  exact behavior remains the default where the faster path can change rounding.
 - `motion` の動き領域集計、モデル展開、イベント検出を高速化し、動きエネルギー列の全フレーム保持を不要にした。支配的動き推定には既定の丸め順を保つ経路に加え、複数右辺を一括処理する選択式の高速経路を追加した。
 
 ### Added — 実行中の設定と結果を世代で結び付ける

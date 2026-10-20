@@ -7,6 +7,55 @@ from scipy import ndimage
 import motion
 
 
+def test_106_110_mesh_paths_match_reference_results():
+    import meshrepair
+    import mesh_smooth
+    v = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.],
+                  [4., 0., 0.], [5., 0., 0.], [4., 1., 0.]])
+    f = np.array([[0, 1, 2], [3, 4, 5]])
+    parts = meshrepair.components(v, f)
+    assert len(parts) == 2
+    np.testing.assert_array_equal(parts[0][1], [[0, 1, 2]])
+    w, has = mesh_smooth._umbrella_operator(f, len(v))
+    block = np.array([[0, .5, .5], [.5, 0, .5], [.5, .5, 0]])
+    expected = np.zeros((6, 6))
+    expected[:3, :3] = expected[3:, 3:] = block
+    np.testing.assert_array_equal(w.toarray(), expected)
+    assert has.all()
+
+
+def test_111_normals_match_old_curvature_path():
+    import curvature3d
+    rng = np.random.default_rng(111)
+    p = rng.normal(size=(120, 3))
+    old = curvature3d._curvatures(p, 18)[2]
+    np.testing.assert_allclose(curvature3d.estimate_normals(p, 18), old, atol=1e-12, rtol=0)
+
+
+def test_119_bandpass_matches_two_inverse_transforms():
+    import signal1d
+    y = np.random.default_rng(119).normal(size=2048)
+    high = signal1d._apply_gain(y, signal1d._gauss_lp_gain(y.size, .4))
+    low = signal1d._apply_gain(y, signal1d._gauss_lp_gain(y.size, .1))
+    np.testing.assert_allclose(signal1d.bandpass(y), high - low, atol=1e-10, rtol=0)
+
+
+def test_124_125_phase_paths_match_reference_contract():
+    import complexops
+    x = np.linspace(0, 12 * np.pi, 1000)[None]
+    wrapped = (x + np.pi) % (2 * np.pi) - np.pi
+    np.testing.assert_array_equal(complexops.phase_unwrap(wrapped), np.unwrap(wrapped, axis=1))
+
+
+def test_126_real_transform_variant_matches_exact():
+    import motionmag
+    x = np.random.default_rng(126).normal(size=(32, 9, 11))
+    expected = motionmag.temporal_bandpass(x, 2, 6, 32)
+    np.testing.assert_allclose(
+        motionmag.temporal_bandpass(x, 2, 6, 32, method="fast"), expected,
+        atol=1e-10, rtol=0)
+
+
 def _dominant_motion_old(u, v, robust=True, trim=0.25, iters=3):
     u = np.asarray(u, np.float64)
     v = np.asarray(v, np.float64)
