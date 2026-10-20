@@ -3335,11 +3335,11 @@
    "wing": "wing_imaging",
    "added": "2026-10-20",
    "numbers_source": "log",
-   "figure": "scene_truth",
+   "figure": "scene_viewer",
    "title_ja": "同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差",
    "title_en": "Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error",
-   "caption_ja": "箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を閉形式で採点し、箱体積まで比較する。新しいopは追加しない。学習0、較正0、門27件。",
-   "caption_en": "Boxes, a corner, a transparent pane, a glossy part, a thin pole and a dark/bright checker share one analytic ray truth. Four-phase indirect ranging at 20/80/100 MHz and direct photon-arrival histograms are scored against closed forms through box volume. No new op, no learning, no calibration, 27 gates.",
+   "caption_ja": "320×240画素の同じ場面を、IR振幅、1.5–6.0 mの色距離、点群で見比べる。合成と実測の振幅分布のW1距離は0.145（門0.594）。続く図は物理効果を順に加えた深度、振幅と距離雑音（対数傾きは実測 -0.878、合成 -1.027）、壁接合部の湾曲（実測 -551 mm、合成 +75 mm。プロファイルの向きを揃えると同符号）、透明板の1.35 m離れた二返り、細い柱の混合画素、直接方式の時間ヒストグラム、三つの箱の体積（誤差 +0.16 / +0.47 / +0.29 %）を示す。最後は48枚、576×432画素、8 fpsで1.4–6.2 mを進む光前線。実フレームは再配布せず、曲線と集計値だけを載せる。新しいop 0、学習0、較正0、門13件。",
+   "caption_en": "The same 320 by 240 scene is shown as IR amplitude, colour-coded distance over 1.5–6.0 m, and a point cloud. The amplitude-distribution W1 distance between synthesis and measurement is 0.145 (gate 0.594). The remaining figures add physical effects one at a time; compare amplitude with range noise (log slope -0.878 in measurements and -1.027 in synthesis); reproduce wall-junction bowing (-551 mm measured and +75 mm synthetic, with matching signs after aligning profile direction); separate transparent-pane returns 1.35 m apart; expose mixed pixels around a thin pole; show direct time-of-flight histograms and decoded depth; and tabulate three box-volume errors (+0.16, +0.47 and +0.29 percent). The final animation is a 48-frame, 576 by 432, 8 fps light front moving from 1.4 to 6.2 m. Real frames are not redistributed: only curves and aggregate measurements are shown. No new ops, no learning, no calibration, 13 gates.",
    "run": "py -3.11 examples/poc_tof_camera.py"
   }
  ]

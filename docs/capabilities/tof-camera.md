@@ -23,6 +23,12 @@ calibration: 間接方式は変調周波数・位相段・電子数・背景光�
 
 The runnable example compares phase-based continuous-wave ranging and photon-arrival histograms on one analytic inspection scene. It scores ambiguity, noise, harmonic wiggling, multipath, mixed edge pixels, time-bin resolution, pile-up, reflectivity and box-volume errors against closed forms.
 
+## 展示図
+
+`01_scene_viewer` は同じ320×240画素をIR振幅、1.5–6.0 mの色距離、斜めから見た点群で示します。合成と実測の振幅分布のW1距離は0.145で、実測シーン間0.396の1.5倍（0.594）を門とします。`02_effects_added` は理想像に減光、3×3サブ光線による混合と雑音、多経路を順に加えます。`03_noise_vs_amplitude` は距離雑音の対数傾きが実測 -0.878、合成 -1.027であることを示し、`04_corner_bow` は壁接合部の実測偏り -551 mmに対して合成 +75 mm（プロファイルの向きを揃えると同符号）を重ねます。実フレームは再配布せず、曲線と集計値だけを掲載します。
+
+`05_glass_two_returns` は1.35 m離れた透明板の二返り、`06_pole_flying_pixels` は細い柱の輪郭で前景と背景が混ざる画素、`07_dtof_histograms_depth` は直接方式の光子到着ヒストグラムと復号距離です。`08_volume_and_limits` は既存の `bilateral_filter_depth` → `depth_to_points` 連鎖で三つの箱を測り、誤差が8 %未満であることと、遮蔽面の奥・鏡面・散乱が対象外であることを表にします。`09_dtof_light_front` は48枚、576×432画素、8 fpsで1.4–6.2 mを進む光前線です。13件の門を通し、新しいop、学習、較正はいずれも追加しません。
+
 ## 向くところ / 向かないところ
 
 **向く**: 変調周波数や時間ビンの選定、コーナー・透明体・細線の誤差の説明、体積測定方式の比較。

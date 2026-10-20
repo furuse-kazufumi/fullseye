@@ -4,6 +4,13 @@
 320×240 のピンホールカメラから、床・二面壁・荷台・箱・細い柱・透明板・
 光沢板・暗明市松を 3×3 サブ画素で光線追跡する。公開図には合成フレームだけを
 載せ、再配布条件が明記されていない実データは集計値と曲線だけを使う。
+
+展示は、IR 振幅・色距離・点群を並べたビューアから始まり、物理効果を順に
+加えた深度、振幅と距離雑音、壁接合部の湾曲、透明板の二返り、細い柱の
+混合画素、直接方式の時間ヒストグラム、三つの箱の体積表、48 枚の光前線へ
+進む。実測との照合値は振幅分布 W1=0.145（門0.594）、雑音の対数傾き
+-0.878、壁接合部 -551 mm。合成側は雑音傾き約 -1、接合部は同じ桁で、
+体積誤差は8 %未満に収まる。門13件、学習0、新しい op 0。
 """
 from __future__ import annotations
 
@@ -215,7 +222,8 @@ def make_figures(scene, stages, cube, dtof_depth, filtered, points):
             for i,(t,m,e) in enumerate(zip(NUMBERS["volume_truth"], NUMBERS["volume_measured"], NUMBERS["volume_error"]))]
     rows += [["限界", "遮蔽面の奥", "鏡面・散乱", "未モデル化"]]
     figs.save_table("volume_and_limits", ["対象", "真値 m3", "連鎖 m3", "誤差"], rows,
-                    title="深度から箱体積まで", caption="既存 op の連鎖。透明板と遮蔽面の奥は体積対象外。")
+                    title="深度から箱体積まで", caption="既存 op の連鎖。透明板と遮蔽面の奥は体積対象外。",
+                    col_w=294, row_h=60)
 
     # 48 distinct uint8 frames, 576x432.  Each is a gamma-toned moving light
     # front over a 20% grey amplitude view; normalization is per-frame p99.

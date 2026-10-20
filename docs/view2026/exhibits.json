@@ -6372,9 +6372,8 @@
   {
    "id": "poc_tof_camera",
    "group": "wing_imaging",
-   "media": "01_scene_truth.png",
-   "motion": true,
-   "thumb_src": "01_scene_truth.png",
+   "media": "01_scene_viewer.png",
+   "thumb_src": "01_scene_viewer.png",
    "label": {
     "ja": "同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差",
     "en": "Indirect and direct time of flight on one 3-D scene: multipath, mixed pixels, pile-up and volume error",
