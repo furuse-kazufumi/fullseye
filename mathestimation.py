@@ -315,8 +315,13 @@ def se3_exp(xi) -> np.ndarray:
     v, w = xi[:3], xi[3:]
     th = float(np.linalg.norm(w))
     W = _hat(w)
-    if th < 1e-8:
-        A, B, Cc = 1.0 - th ** 2 / 6, 0.5 - th ** 2 / 24, 1.0 / 6 - th ** 2 / 120
+    if th <= 1e-3:
+        # Taylor series in q=theta^2.  The first omitted terms are below
+        # 1e-32 here, comfortably below binary64 relative precision.
+        q = th * th
+        A = 1.0 + q * (-1.0 / 6.0 + q * (1.0 / 120.0 - q / 5040.0))
+        B = 0.5 + q * (-1.0 / 24.0 + q * (1.0 / 720.0 - q / 40320.0))
+        Cc = 1.0 / 6.0 + q * (-1.0 / 120.0 + q * (1.0 / 5040.0 - q / 362880.0))
     else:
         A, B, Cc = math.sin(th) / th, (1 - math.cos(th)) / th ** 2, (th - math.sin(th)) / th ** 3
     R = np.eye(3) + A * W + B * W @ W
@@ -340,10 +345,8 @@ def se3_log(T) -> np.ndarray:
     s = float(np.linalg.norm(sv))
     c = float((np.trace(R) - 1) / 2)
     th = math.atan2(s, c)
-    if th < 1e-8:
-        w = sv
-    elif th < math.pi - 0.1:
-        w = (th / s) * sv
+    if th < math.pi - 0.1:
+        w = np.zeros(3) if s == 0.0 else (th / s) * sv
     else:
         if s < 1e-12:                       # θ = π(丸めの範囲): ω と −ω の区別が付かない(定義域は θ < π)
             raise ValueError("se3_log: 回転角が π に近く軸の向きが定まらない")
@@ -356,8 +359,11 @@ def se3_log(T) -> np.ndarray:
         w = th * a
     W = _hat(w)
     th = float(np.linalg.norm(w))
-    if th < 1e-8:
-        Vinv = np.eye(3) - 0.5 * W
+    if th <= 1e-3:
+        # Bernoulli series: D=1/12+q/720+q^2/30240+q^3/1209600.
+        q = th * th
+        D = 1.0 / 12.0 + q * (1.0 / 720.0 + q * (1.0 / 30240.0 + q / 1209600.0))
+        Vinv = np.eye(3) - 0.5 * W + D * W @ W
     else:
         Vinv = np.eye(3) - 0.5 * W + (1 / th ** 2) * (1 - th * math.sin(th) / (2 * (1 - math.cos(th)))) * W @ W
     return np.concatenate([Vinv @ t, w])
