@@ -1390,10 +1390,8 @@ def illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=Non
         px = np.broadcast_to(Xf[:, None], (W * H, k))
         py = np.broadcast_to(Yf[:, None], (W * H, k))
         alive = np.ones((W * H, k), bool)
-        gx = list(_back(els, px, U))
-        gy = list(_back(els, py, V))
         sx = sy = None
-        for (e, yx), (_, yy) in zip(gx, gy):
+        for (e, yx), (_, yy) in zip(_back(els, px, U), _back(els, py, V)):
             if e["type"] == "stop":
                 alive &= (yx * yx + yy * yy) <= e["radius_mm"] ** 2
             elif e["type"] == "source":
@@ -1404,12 +1402,19 @@ def illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=Non
         else:
             r = src["radius_mm"]
             n0, n1 = Lmap.shape
-            fx = np.clip((sx + r) / (2.0 * r) * (n1 - 1), 0.0, n1 - 1.0)
-            fy = np.clip((r - sy) / (2.0 * r) * (n0 - 1), 0.0, n0 - 1.0)
+            sparse = alive.mean() < 0.5
+            use = alive if sparse else np.ones_like(alive)
+            fx = np.clip((sx[use] + r) / (2.0 * r) * (n1 - 1), 0.0, n1 - 1.0)
+            fy = np.clip((r - sy[use]) / (2.0 * r) * (n0 - 1), 0.0, n0 - 1.0)
             ix, iy = np.minimum(fx.astype(np.int64), n1 - 2), np.minimum(fy.astype(np.int64), n0 - 2)
             tx, ty = fx - ix, fy - iy
-            val = ((1 - tx) * (1 - ty) * Lmap[iy, ix] + tx * (1 - ty) * Lmap[iy, ix + 1]
-                   + (1 - tx) * ty * Lmap[iy + 1, ix] + tx * ty * Lmap[iy + 1, ix + 1]) * alive
+            sample = ((1 - tx) * (1 - ty) * Lmap[iy, ix] + tx * (1 - ty) * Lmap[iy, ix + 1]
+                      + (1 - tx) * ty * Lmap[iy + 1, ix] + tx * ty * Lmap[iy + 1, ix + 1])
+            if sparse:
+                val = np.zeros_like(sx)
+                val[use] = sample
+            else:
+                val = sample * alive
         out += val.sum(axis=1) * du
     img = out.reshape(H, W)
     if not np.any(img > 0):
