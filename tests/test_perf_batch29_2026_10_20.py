@@ -208,6 +208,26 @@ def test_408_min_dist_matches_reference_including_duplicates():
         assert doe._min_dist(u) == pytest.approx(_min_dist_reference(u), rel=0, abs=1e-15)
     u = np.array([[0.0, 0.0], [1.0, 1.0], [0.0, 0.0]])
     assert doe._min_dist(u) == 0.0
+    u = rng.random((700, 5))
+    assert doe._min_dist(u) == pytest.approx(_min_dist_reference(u), rel=0, abs=1e-15)
+
+
+def test_412_oa_strength_matches_original_counts():
+    rng=np.random.default_rng(412)
+    for shape in ((40,8),(81,12)):
+        table=rng.integers(1,4,shape)
+        def ref(t):
+            n=t.shape[0]
+            for a in range(t.shape[1]):
+                for b in range(a+1,t.shape[1]):
+                    sa,sb=np.unique(t[:,a]),np.unique(t[:,b])
+                    if n%(sa.size*sb.size): return False
+                    want=n//(sa.size*sb.size)
+                    for x in sa:
+                        for y in sb:
+                            if int(np.sum((t[:,a]==x)&(t[:,b]==y))) != want: return False
+            return True
+        assert doe._oa_strength2_ok(table) is ref(table)
 
 
 def test_410_lhs_early_rejection_preserves_design_and_rng_state(monkeypatch):
