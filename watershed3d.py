@@ -154,10 +154,19 @@ def _markers_from_peaks(dist: np.ndarray, min_distance: float) -> tuple[np.ndarr
         return markers, []
     order = np.argsort(vals)[::-1]                    # 芯の太い(=確からしい)順
     accepted: list[tuple[int, int, int]] = []
+    cells: dict[tuple[int, int, int], list[tuple[int, int, int]]] = {}
     for i in order:
         p = coords[i].astype(np.float64)
-        if all(np.linalg.norm(p - np.asarray(a, dtype=np.float64)) >= md for a in accepted):
-            accepted.append(tuple(int(v) for v in coords[i]))
+        point = tuple(int(v) for v in coords[i])
+        if md == 0.0:
+            accepted.append(point)
+            continue
+        cell = tuple(int(np.floor(v / md)) for v in p)
+        nearby = (a for dz in (-1, 0, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+                  for a in cells.get((cell[0] + dz, cell[1] + dy, cell[2] + dx), ()))
+        if all(np.linalg.norm(p - np.asarray(a, dtype=np.float64)) >= md for a in nearby):
+            accepted.append(point)
+            cells.setdefault(cell, []).append(point)
     for k, (z, y, x) in enumerate(accepted, start=1):
         markers[z, y, x] = k
     return markers, accepted

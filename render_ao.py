@@ -124,20 +124,28 @@ def _rays_hit_any(o: np.ndarray, D: np.ndarray, A: np.ndarray,
                   tmin: float, tmax: float) -> np.ndarray:
     """原点 ``o`` から方向 ``D`` (K,3) の各レイが、いずれかの三角形
     ``(A, e1=B-A, e2=C-A)`` (M,3) に ``t∈(tmin,tmax)`` で当たるか ``(K,)`` bool。"""
-    pvec = np.cross(D[:, None, :], e2[None, :, :])           # (K,M,3)
-    det = np.einsum("md,kmd->km", e1, pvec)                  # (K,M)
-    nz = np.abs(det) > _DET_EPS
-    inv = np.zeros_like(det)
-    inv[nz] = 1.0 / det[nz]
-    tvec = o[None, :] - A                                    # (M,3)
-    u = np.einsum("md,kmd->km", tvec, pvec) * inv
-    qvec = np.cross(tvec, e1)                                # (M,3)
-    v = np.einsum("kd,md->km", D, qvec) * inv
-    t = (np.einsum("md,md->m", e2, qvec))[None, :] * inv     # (K,M)
-    hit = (nz & (u >= -_BARY_EPS) & (u <= 1.0 + _BARY_EPS)
-           & (v >= -_BARY_EPS) & (u + v <= 1.0 + _BARY_EPS)
-           & (t > tmin) & (t < tmax))
-    return hit.any(axis=1)
+    result = np.zeros(len(D), dtype=bool)
+    for start in range(0, len(A), 256):
+        active = np.flatnonzero(~result)
+        if active.size == 0:
+            break
+        Db = D[active]
+        Ab, e1b, e2b = A[start:start + 256], e1[start:start + 256], e2[start:start + 256]
+        pvec = np.cross(Db[:, None, :], e2b[None, :, :])
+        det = np.einsum("md,kmd->km", e1b, pvec)
+        nz = np.abs(det) > _DET_EPS
+        inv = np.zeros_like(det)
+        inv[nz] = 1.0 / det[nz]
+        tvec = o[None, :] - Ab
+        u = np.einsum("md,kmd->km", tvec, pvec) * inv
+        qvec = np.cross(tvec, e1b)
+        v = np.einsum("kd,md->km", Db, qvec) * inv
+        t = np.einsum("md,md->m", e2b, qvec)[None, :] * inv
+        hit = (nz & (u >= -_BARY_EPS) & (u <= 1.0 + _BARY_EPS)
+               & (v >= -_BARY_EPS) & (u + v <= 1.0 + _BARY_EPS)
+               & (t > tmin) & (t < tmax))
+        result[active] = hit.any(axis=1)
+    return result
 
 
 # --------------------------------------------------------------------------- #
