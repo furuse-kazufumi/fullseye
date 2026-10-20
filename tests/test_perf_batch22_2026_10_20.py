@@ -44,10 +44,13 @@ def _old_powder_reflections(phase, wavelength, two_theta_max=90.0):
     for i in order:
         groups.setdefault((kd[i], kf[i]), []).append(i)
     rows = []
+    fmax = F2.max()
     for indices in groups.values():
         hk = H[indices]
         rep = max((tuple(int(v) for v in row) for row in hk), key=lambda row: (sum(v >= 0 for v in row), row))
-        rows.append((float(d[indices[0]]), rep, len(indices), float(F2[indices[0]])))
+        f2_value = float(F2[indices[0]])
+        if f2_value >= 1e-10 * fmax:
+            rows.append((float(d[indices[0]]), rep, len(indices), f2_value))
     rows.sort(key=lambda row: -row[0])
     dd = np.array([row[0] for row in rows]); f2 = np.array([row[3] for row in rows]); mult = np.array([row[2] for row in rows])
     tt = pxrd._two_theta_deg(dd, wavelength)
