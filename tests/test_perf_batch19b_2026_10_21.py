@@ -3,6 +3,8 @@
 import numpy as np
 
 import regionprops3d
+import backends_measure1d
+from scipy.ndimage import map_coordinates
 
 
 def _original_surface_area(mask):
@@ -31,3 +33,33 @@ def test_99_surface_area_is_exact_six_neighbour_count():
                             or not mask[tuple(neighbour)]):
                         exposed += 1
         assert got == exposed
+
+
+def _original_sample(img, a, offset01, band):
+    height, width = img.shape
+    theta = float(np.clip(a, 0.0, 1.0)) * np.pi
+    direction = np.array([np.sin(theta), np.cos(theta)])
+    normal = np.array([-np.cos(theta), np.sin(theta)])
+    center = np.array([(height - 1) / 2, (width - 1) / 2])
+    center += (float(np.clip(offset01, 0, 1)) - .5) * min(height - 1, width - 1) * normal
+    clipped = backends_measure1d._clip_line(center, direction, height, width)
+    tmin, tmax = clipped
+    count = max(2, int(round(tmax - tmin)) + 1)
+    ts = tmin + np.linspace(0.0, tmax - tmin, count)
+    offsets = np.linspace(-band, band, 2 * max(1, int(round(band))) + 1)
+    acc = np.zeros(count)
+    for offset in offsets:
+        shifted = center + offset * normal
+        acc += map_coordinates(img, [shifted[0] + ts * direction[0],
+                                     shifted[1] + ts * direction[1]], order=1, mode="nearest")
+    return acc / len(offsets)
+
+
+def test_100_banded_sample_batches_offsets_bit_identically():
+    for shape, angle, offset, band in [((31, 47), .13, .5, 1.0),
+                                        ((48, 29), .81, .17, 3.4),
+                                        ((9, 7), .5, 1.0, 12.0)]:
+        image = np.random.default_rng(sum(shape)).normal(size=shape)
+        expected = _original_sample(image, angle, offset, band)
+        got = backends_measure1d._sample(image, angle, offset, band)["prof"]
+        assert np.array_equal(got, expected, equal_nan=True)
