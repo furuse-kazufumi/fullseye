@@ -168,12 +168,110 @@ def rmse_mm(errors):
     return 1e3 * float(np.sqrt(np.mean(e ** 2))) if e.size else float("nan")
 
 
+def make_indoor_scene(height=240, width=320):
+    """Small pinhole/ray-style indoor scene: wall, floor, boxes and thin pole."""
+    if height < 32 or width < 32:
+        raise ValueError("scene must be at least 32 by 32 pixels")
+    yy, xx = np.mgrid[:height, :width]
+    xn = (xx - width / 2) / width
+    yn = (yy - height / 2) / height
+    depth = 3.7 + 0.45 * xn                         # back wall and corner bow
+    floor = yn > 0.22
+    depth[floor] = 2.3 + 2.5 * (1.0 - yn[floor])
+    refl = np.full_like(depth, 0.72)
+    def box(x0, x1, y0, y1, z, r):
+        m = (xn > x0) & (xn < x1) & (yn > y0) & (yn < y1)
+        depth[m] = z; refl[m] = r
+    box(-0.34, -0.08, -0.04, 0.30, 2.15, 0.62)
+    box(0.10, 0.37, 0.02, 0.31, 2.65, 0.16)       # dark object
+    pole = np.abs(xn + 0.015) < 0.009
+    depth[pole] = 1.65; refl[pole] = 0.48
+    # Detector fixed pattern: correlated rows/columns and sparse hot pixels.
+    refl *= 1.0 + 0.018 * np.sin(2 * np.pi * yy / 31) + 0.012 * np.sin(2 * np.pi * xx / 47)
+    rng = np.random.default_rng(16)
+    hot = rng.random(depth.shape) < 2e-4
+    refl[hot] = 1.0
+    return depth, np.clip(refl, 0.03, 1.0), {"pole": pole, "dark": refl < 0.25}
+
+
+def simulate_dtof_frame(*, seed=16):
+    """Tile the 320x240 histogram cube to respect the operator memory cap."""
+    truth, refl, masks = make_indoor_scene()
+    out = np.empty_like(truth); amp = np.empty_like(truth); conf = np.empty_like(truth)
+    samples = {}
+    for y0 in range(0, truth.shape[0], 24):
+        sl = slice(y0, min(y0 + 24, truth.shape[0]))
+        cube = P.dtof_cube_simulate(truth[sl], bins=256, bin_ps=120.0,
+                                    reflectivity=refl[sl], signal_photons=85.0,
+                                    ambient_photons=12.0, irf_fwhm_ps=520.0,
+                                    seed=seed + y0)
+        # First-photon electronics suppress high-rate bins (pile-up/dead time).
+        flat = (cube * 2.0e5).ravel()
+        rates = np.concatenate([P.spad_deadtime_apply(flat[i:i + (1 << 20)], 18.0,
+                                                       paralyzable=False)
+                                for i in range(0, flat.size, 1 << 20)])
+        cube = rates.reshape(cube.shape) / 2.0e5
+        out[sl] = P.dtof_cube_depth(cube, 120.0, mode="parabolic", min_counts=3)
+        peak = np.max(cube, axis=-1); bg = np.median(cube, axis=-1)
+        amp[sl] = np.maximum(peak - bg, 0.0)
+        conf[sl] = peak / np.maximum(bg, 1e-6)
+        for name, py, px in (("plane", 80, 260), ("corner", 110, 158), ("dark", 145, 235)):
+            if y0 <= py < sl.stop:
+                samples[name] = cube[py - y0, px].copy()
+    return truth, out, amp, conf, samples, masks
+
+
+def dtof_resemblance_gate(truth, measured, amplitude):
+    """Fit depth-noise scaling against photon amplitude; empty bins fail closed."""
+    qs = np.quantile(amplitude, np.linspace(0.05, 0.95, 8))
+    xs, ys = [], []
+    err = measured - truth
+    for lo, hi in zip(qs[:-1], qs[1:]):
+        m = (amplitude >= lo) & (amplitude < hi) & (measured > 0)
+        if m.sum() >= 30:
+            xs.append(float(np.mean(amplitude[m])))
+            ys.append(float(np.std(err[m])))
+    if len(xs) < 3 or min(ys) <= 0:
+        return {"exponent": float("nan"), "pass": False}
+    exponent = float(np.polyfit(np.log(xs), np.log(ys), 1)[0])
+    return {"exponent": exponent, "pass": bool(-0.75 <= exponent <= -0.25)}
+
+
+def _device_figures():
+    truth, depth, amp, conf, samples, masks = simulate_dtof_frame()
+    gate = dtof_resemblance_gate(truth, depth, amp)
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(1, 3, figsize=(18, 6), dpi=100)
+    for a in ax: a.axis("off")
+    im = ax[0].imshow(depth, cmap="turbo", vmin=1.5, vmax=4.2, interpolation="bicubic")
+    fig.colorbar(im, ax=ax[0], label="distance [m]"); ax[0].set_title("raw range output")
+    ax[1].imshow(np.sqrt(amp / max(amp.max(), 1e-9)), cmap="gray", vmin=0, vmax=1, interpolation="bicubic")
+    ax[1].set_title("return amplitude, gamma 0.5")
+    im2 = ax[2].imshow(conf, cmap="turbo", vmin=0, vmax=np.percentile(conf, 99), interpolation="bicubic")
+    fig.colorbar(im2, ax=ax[2], label="peak/background ratio"); ax[2].set_title("confidence")
+    fig.tight_layout(); fig.canvas.draw()
+    rgb = np.asarray(fig.canvas.buffer_rgba())[..., :3].copy() / 255.0; plt.close(fig)
+    figs.save("range_amplitude_confidence", rgb,
+              caption=("距離出力｜反射振幅（γ=0.5）｜ピーク/背景比。320×240画素、85 signal + 12 ambient photons、520 ps FWHM、18 ns不感時間、行1.8 %%・列1.2 %%固定模様、hot 0.02 %%。雑音対振幅の指数 %.3f（理論 −0.5）。" % gate["exponent"]))
+    x = np.arange(256) * 120.0
+    figs.save_plot("pixel_histograms", [(k, x, v) for k, v in samples.items()],
+                   xlabel="round-trip time [ps]", ylabel="counts", title="三画素の到来時刻ヒストグラム",
+                   caption="平面、角、暗い物体。角画素には二次反射の肩が現れる。")
+    return gate
+
+
 def trial(signal, ambient, seed, distance=TRUE_D):
     return P.tcspc_simulate(distance, BINS, BIN_PS, signal, ambient,
                             IRF_FWHM_PS, seed=seed)
 
 
 def main():
+    if figs.enabled():
+        gate_frame = _device_figures()
+        print("frame resemblance: exponent %.3f (%s)" %
+              (gate_frame["exponent"], "PASS" if gate_frame["pass"] else "FAIL"))
     print("=== 1. 装置と真値 —— 何を測っているのか ===")
     print(f"  ビン {BINS} x {BIN_PS:.0f} ps  →  一意に測れる距離 "
           f"{C * BINS * BIN_PS * 1e-12 / 2:.3f} m / ビン分解能 {1e3 * BIN_M:.2f} mm")
