@@ -214,7 +214,13 @@ def rel_pose_to_fundamental_matrix(R, t, K1, K2=None):
 def triangulate_points(P1, P2, pts1, pts2):
     """2 台のカメラ行列 (3x4) と対応点から 3D 点を DLT 三角測量(triangulate_points)。"""
     P1 = np.asarray(P1, float); P2 = np.asarray(P2, float)
-    pts1 = np.asarray(pts1, float).reshape(-1, 2); pts2 = np.asarray(pts2, float).reshape(-1, 2)
+    pts1 = np.asarray(pts1, float); pts2 = np.asarray(pts2, float)
+    if pts1.ndim != 2 or pts1.shape[1] != 2 or pts2.ndim != 2 or pts2.shape[1] != 2:
+        raise ValueError("triangulate_points: pts1 and pts2 must both have shape (N, 2)")
+    if len(pts1) != len(pts2):
+        raise ValueError("triangulate_points: pts1 and pts2 must contain the same number of points")
+    if len(pts1) == 0:
+        return np.empty((0, 3), dtype=float)
     out = []
     for (x1, y1), (x2, y2) in zip(pts1, pts2):
         A = np.vstack([x1 * P1[2] - P1[0], y1 * P1[2] - P1[1],
@@ -238,6 +244,11 @@ def reconstruct_points_stereo(pts_left, pts_right, focal=500.0, baseline=0.1, cx
 
 def reconst3d_from_fundamental_matrix(pts1, pts2, K):
     """基礎行列経由で相対姿勢を分解し対応点を三角測量(reconst3d_from_fundamental_matrix)。"""
+    pts1 = np.asarray(pts1, float); pts2 = np.asarray(pts2, float)
+    if pts1.ndim != 2 or pts1.shape[1] != 2 or pts2.ndim != 2 or pts2.shape[1] != 2:
+        raise ValueError("reconst3d_from_fundamental_matrix: point arrays must have shape (N, 2)")
+    if len(pts1) != len(pts2):
+        raise ValueError("reconst3d_from_fundamental_matrix: point counts must match")
     K = np.asarray(K, float)
     r = match_fundamental_matrix_ransac(pts1, pts2)
     F = r["F"]; E = K.T @ F @ K
@@ -248,7 +259,7 @@ def reconst3d_from_fundamental_matrix(pts1, pts2, K):
     R = U @ W @ Vt; t = U[:, 2]
     P1 = K @ np.hstack([np.eye(3), np.zeros((3, 1))])
     P2 = K @ np.hstack([R, t.reshape(3, 1)])
-    X = triangulate_points(P1, P2, np.asarray(pts1).reshape(-1, 2), np.asarray(pts2).reshape(-1, 2))
+    X = triangulate_points(P1, P2, pts1, pts2)
     return {"points_3d": X, "R": R, "t": t, "F": F}
 
 
