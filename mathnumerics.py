@@ -238,14 +238,24 @@ def interp_barycentric(xk, yk, x, *, nodes: str | None = None) -> np.ndarray:
         raise ValueError("interp_barycentric: xk と yk は同じ長さ(1 以上)")
     if np.unique(xk).size != xk.size:
         raise ValueError("interp_barycentric: xk に重複がある")
-    d = xk[:, None] - xk[None, :]
-    np.fill_diagonal(d, 1.0)
+    if nodes not in (None, "chebyshev2"):
+        raise ValueError("interp_barycentric: nodes は None か 'chebyshev2'")
+    if nodes == "chebyshev2":
+        expected = chebyshev_nodes(xk.size, float(xk[0]), float(xk[-1]), kind=2)
+        if not np.all(np.abs(xk - expected) <= 1e-12):
+            raise ValueError("interp_barycentric: xk は指定された Chebyshev 第2種点ではない")
+        w = np.ones(xk.size)
+        w[1::2] = -1.0
+        w[[0, -1]] *= 0.5
+    else:
+        d = xk[:, None] - xk[None, :]
+        np.fill_diagonal(d, 1.0)
     # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
     # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
     # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-    logabs = np.sum(np.log(np.abs(d)), axis=1)
-    sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
-    w = sign * np.exp(np.min(logabs) - logabs)
+        logabs = np.sum(np.log(np.abs(d)), axis=1)
+        sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
+        w = sign * np.exp(np.min(logabs) - logabs)
     xs = x.ravel()
     diff = xs[:, None] - xk[None, :]
     exact = diff == 0
