@@ -481,6 +481,10 @@
    "accessioned": "2026-10-20",
    "no": "2026.267"
   },
+  "poc_lens_tolerancing": {
+   "accessioned": "2026-10-20",
+   "no": "2026.271"
+  },
   "poc_lidar_terrain_change": {
    "accessioned": "2026-09-07",
    "no": "2026.070"

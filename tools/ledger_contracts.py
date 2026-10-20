@@ -472,6 +472,26 @@ def _optics_builders():
         "paraxial_trace": lens_first(), "seidel_coefficients": lens_first(),
         "spot_stats": lens_first(rings=3), "spot_diagram": lens_first(rings=3),
         "tolerance_analysis": lens_first(trials=4, rings=3),
+        "tolerance_table": lens_first(defaults={"radius_pct": 0.1}),
+        "tolerance_criteria": lambda pool, rng: ([], {"rms_spot": {"max": 1.0}}),
+        "compensators": lambda pool, rng: ([], {"variables": "t1"}),
+        "tolerance_monte_carlo": lambda pool, rng: (
+            [__import__("raytrace").example_system(),
+             __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+             __import__("lenstol").tolerance_criteria(efl={"max": 200.0})], {"trials": 2}),
+        "tolerance_sensitivity": lambda pool, rng: (
+            [__import__("raytrace").example_system(),
+             __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+             __import__("lenstol").tolerance_criteria(efl={"max": 200.0})], {}),
+        "tolerance_report": lambda pool, rng: ([__import__("lenstol").tolerance_monte_carlo(
+            __import__("raytrace").example_system(),
+            __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+            __import__("lenstol").tolerance_criteria(efl={"max": 200.0}), trials=2)], {}),
+        "tolerance_table_zmx": lambda pool, rng: ([__import__("lenstol").tolerance_table(
+            __import__("raytrace").example_system(), {"radius_pct": 0.01})], {}),
+        "tolerance_table_from_zmx": lambda pool, rng: (
+            [__import__("raytrace").example_system(), __import__("lenstol").tolerance_table_zmx(
+                __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}))], {}),
         "wavefront_from_opd": lens_first(size=16), "ray_fan": lens_first(n=9),
         "opd_map": lens_first(size=16), "chromatic_shift": lens_first(rings=3),
         # telecentric(2026-10-15): 有限物体の処方が要る(example_system は無限遠の物体なので拒否される)

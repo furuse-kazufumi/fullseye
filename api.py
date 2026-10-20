@@ -1052,6 +1052,11 @@ from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the pa
     tolerance_analysis, glass_catalog, sellmeier, chromatic_shift, chief_ray,
     with_wavelength, with_aiming, ray_aiming, set_vignetting,
 )
+import lenstol  # noqa: E402  (manufacturing tolerances, compensation, and yield)
+from lenstol import (  # noqa: E402,F401
+    tolerance_table, tolerance_criteria, compensators, tolerance_monte_carlo,
+    tolerance_sensitivity, tolerance_report, tolerance_table_zmx, tolerance_table_from_zmx,
+)
 import lensopt  # noqa: E402  (damped-least-squares lens optimisation)
 from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
 import sensorchar  # noqa: E402  (EMVA 1288 camera characterisation)

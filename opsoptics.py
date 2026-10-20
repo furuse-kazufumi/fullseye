@@ -147,6 +147,7 @@ import watervision
 import lensglobal
 import lensmerit
 import lensrender
+import lenstol
 import lenssolve
 import filmoptics
 import moirealign
@@ -159,7 +160,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -692,6 +693,16 @@ _CATALOG = {
         ("bokeh_shape", "lensrender", ["table"], "table"),
         ("render_ghost_overlay", "lensrender", ["table"], "table"),
         ("render_compare_prescriptions", "lensrender", [], "table"),
+    ],
+    "tolerancing": [  # 製造公差: 行ごとの分布、補償、歩留まり、感度と組立レポート
+        ("tolerance_table", "lenstol", ["table"], "table"),
+        ("tolerance_criteria", "lenstol", [], "table"),
+        ("compensators", "lenstol", [], "table"),
+        ("tolerance_monte_carlo", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_sensitivity", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_report", "lenstol", ["table"], "text"),
+        ("tolerance_table_zmx", "lenstol", ["table"], "text"),
+        ("tolerance_table_from_zmx", "lenstol", ["table", "text"], "table"),
     ],
     "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
         # ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。

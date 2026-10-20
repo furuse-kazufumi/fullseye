@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-90 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+91 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -187,6 +187,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Comparer à une image de référence (golden), mesurer les défauts et juger lot par lot: [explication](../../capabilities/golden-compare.md) _(ja)_ · exemples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Valider une recette d'inspection et une spécification sur des jeux connus de pièces bonnes et défectueuses avant le déploiement, et mesurer les marges: [explication](../../capabilities/inspection-fixture.md) _(ja)_ · exemples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Inspecter un dossier en une seule fois, juger selon une spécification, puis produire agrégation, SPC, rapport et journal d'audit: [explication](../../capabilities/inspection-workflow.md) _(ja)_ · exemples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement: [explication](../../capabilities/lens-tolerancing.md) _(ja)_ · exemples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Écrire en JSON les valeurs de retour typées d'un op et les relire à l'identique bit à bit: [explication](../../capabilities/typed-results-as-json.md) _(ja)_ · exemples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Rendre lisibles en Markdown les valeurs de retour typées d'un op, en y intégrant du JSON pour la relecture: [explication](../../capabilities/typed-results-as-markdown.md) _(ja)_ · exemples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Exporter des résultats d'inspection typés dans un rapport Excel (.xlsx): [explication](../../capabilities/xlsx-report.md) _(ja)_ · exemples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -213,7 +214,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-270 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+271 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -415,7 +416,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Couleur et séparation</b> (15)</summary>
+<details class="vall"><summary><b>Couleur et séparation</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)" width="200" height="200"><span>Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)" width="200" height="200"><b>&#9654;</b><span>Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)</span></a>
@@ -430,6 +431,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Objectifs zoom comme différences d'une même prescription (multi-configuration)" width="200" height="200"><span>Objectifs zoom comme différences d'une même prescription (multi-configuration)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Substitution de verre et recherche globale multi-départ" width="200" height="200"><span>Substitution de verre et recherche globale multi-départ</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Concevoir un triplet à partir d'un tableau d'exigences (bornes d'épaisseur de bord, verre comme variable)" width="200" height="200"><span>Concevoir un triplet à partir d'un tableau d'exigences (bornes d'épaisseur de bord, verre comme variable)</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Budgéter les tolérances selon la FTM, le rendement et la course de compensation" width="200" height="200"><b>&#9654;</b><span>Budgéter les tolérances selon la FTM, le rendement et la course de compensation</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Garder les relations d'une conception sous forme de solves (F/# qui suit le diaphragme, afocal, image courbe, asphères impaires)" width="200" height="200"><span>Garder les relations d'une conception sous forme de solves (F/# qui suit le diaphragme, afocal, image courbe, asphères impaires)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Vérification indépendante de prescriptions .zmx publiques" width="200" height="200"><span>Vérification indépendante de prescriptions .zmx publiques</span></a>
 </div>

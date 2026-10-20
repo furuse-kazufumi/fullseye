@@ -873,6 +873,33 @@
    ]
   },
   {
+   "id": "lens-tolerancing",
+   "title": "レンズの製造公差を、MTF と歩留まりで決める",
+   "title_en": "Budget lens manufacturing tolerances by MTF and yield",
+   "category": "組み立てる",
+   "note": "docs/capabilities/lens-tolerancing.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [
+    "compensators",
+    "tolerance_report",
+    "tolerance_sensitivity",
+    "tolerance_table_from_zmx",
+    "tolerance_table_zmx"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lens_tolerancing",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "light-transport",
    "title": "凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)",
    "title_en": "Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting)",
@@ -2272,8 +2299,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 418,
-  "run_by_the_poc_gate": 270,
+  "examples2d_total": 419,
+  "run_by_the_poc_gate": 271,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [
