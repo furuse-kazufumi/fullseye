@@ -144,6 +144,7 @@ import lensconfig
 import lockin
 import watermedia
 import watervision
+import omni360
 import lensglobal
 import lensmerit
 import lensrender
@@ -159,7 +160,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -703,6 +704,31 @@ _CATALOG = {
         ("wet_dry_inspection_pair", "watervision", ["image2d", "image2d"], "table"),
         ("underwater_inspection_image", "watervision", ["rgbimage", "image2d"], "table"),
         ("caustic_floor_segmentation", "watervision", ["image2d"], "table"),
+    ],
+    "omni360": [
+        ("cubemap_from_equirect", "omni360", ["rgbimage"], "images"),
+        ("equirect_from_cubemap", "omni360", ["images"], "rgbimage"),
+        ("viewport_from_equirect", "omni360", ["rgbimage"], "rgbimage"),
+        ("equirect_rotate", "omni360", ["rgbimage", "matrix"], "rgbimage"),
+        ("equirect_weight_map", "omni360", [], "image2d"),
+        ("ws_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("s_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("equirect_filter_gaussian", "omni360", ["image2d"], "image2d"),
+        ("equirect_from_fisheye_pair", "omni360", ["images"], "table"),
+        ("equirect_from_perspectives", "omni360", ["images"], "table"),
+        ("equirect_defect_unwrap_pipe", "omni360", ["image2d"], "table"),
+        ("ods_render", "omni360", [], "table"),
+        ("ods_depth_to_disparity", "omni360", ["image2d"], "image2d"),
+        ("ods_disparity_to_depth", "omni360", ["image2d"], "image2d"),
+        ("stereo360_sbs", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("stereo360_top_bottom", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_crosstalk", "omni360", ["rgbimage", "rgbimage"], "table"),
+        ("stereo_parallax_budget", "omni360", [], "table"),
+        ("stereo_pack", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_from_ods", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("video360_viewport_track", "omni360", ["images"], "images"),
+        ("video360_tile_coverage", "omni360", ["pairs"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
         # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗
