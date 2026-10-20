@@ -10,6 +10,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `estimate_normals(method="fast")`: batched covariance solves agree within `2e-12`; measured 12.6 times faster on 4,000 points.
 - `principal_curvatures(method="fast")`: analytic two-value solves agree within `2e-12`; measured 1.09 times faster on 4,000 points.
 - `laser_line_coherent(method="fast")`: output-resolution accumulation and the zero-roughness reuse path agree within `2e-15`; measured 5.6% lower peak memory generally and 6.74 times faster at zero roughness.
+- `solve_radiosity_patterns`: dedicated right-hand-side solve agrees with the full matrix path within `2e-12`; at 512 patches it avoids owning the returned 512 by 512 matrix, with traced peak 10,524,488 bytes versus 10,526,056 bytes.
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。

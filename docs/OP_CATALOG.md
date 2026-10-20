@@ -760,9 +760,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3497 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 424 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 425 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(956 ops / 49 categories)
 
@@ -2477,7 +2477,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(424 ops / 48 categories)
+### optics(425 ops / 48 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2694,15 +2694,16 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lens_solves_list` `table → table` — 付いている解(solve)の一覧: 規則・解いた値・達成した量と誤差(``table``)。 · 例: `poc_lens_solves_afocal`
 - `lens_zmx_solves_roundtrip` `table → table` — 解(solve)を ``.zmx`` に書き、読み戻し、もう一度書く: 不動点になるかを調べる(``table``)。 · 例: `poc_lens_solves_afocal`
 
-#### optics / light_transport(11)
+#### optics / light_transport(12)
 - `form_factors_2d` `table → matrix` — Patch-to-patch form factors of a concave 2-D (extruded) cross-section by Hottel's crossed-strings rule. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `fringe_multipath_phase_error` `入力なし → table` — Phase measured when a direct fringe phasor and a global phasor add: arg(a1 e^{iφ1} + a2 e^{iφ2}), its bias against φ1, and the worst case asin(a2/a1). · 例: `poc_interreflection_fringe_error`
-- `groove_profile` `入力なし → table` — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each. · 例: `converge_tour`, `poc_interreflection_fringe_error`, `poc_itof_multifreq`
+- `groove_profile` `入力なし → table` — Split a concave cross-section (V-groove, circular trough, fillet or any concave polyline) into patches, one camera pixel column each. · 例: `converge_tour`, `poc_interreflection_fringe_error`, `poc_itof_multifreq`, `radiosity_patterns`
 - `high_frequency_patterns` `入力なし → images` — Shifted high-frequency projector patterns: binary stripes with fill ratio α, a checkerboard, or phase-shifted sinusoids (one or several periods). · 例: `poc_interreflection_fringe_error`
 - `micro_phase_decode` `images → table` — Decode a narrow-band high-frequency fringe set (micro phase shifting, Gupta & Nayar 2012) into an absolute projector coordinate, ordering the fringes by the beat of the first two periods. · 例: `poc_interreflection_fringe_error`
 - `predict_fringe_phase_error` `table → table` — Predict, per camera pixel, the fringe-phase bias and height error that interreflection causes in phase-shifting profilometry, from the light-transport matrix. · 例: `poc_interreflection_fringe_error`
 - `render_transport` `table × images → images` — Render camera images of a concave Lambertian cross-section under projector patterns, through the light-transport matrix (direct + interreflection). · 例: `poc_interreflection_fringe_error`
 - `separate_direct_global` `images → table` — Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006). · 例: `poc_interreflection_fringe_error`
+- `solve_radiosity_patterns` `table × matrix → matrix` — Solve only the requested illumination right-hand sides. · 例: `radiosity_patterns`
 - `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `tof_transport_depth` `table → table` — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`

@@ -889,6 +889,7 @@ _CATALOG = {
         ("groove_profile", "lighttransport", [], "table"),
         ("form_factors_2d", "lighttransport", ["table"], "matrix"),
         ("transport_matrix_radiosity", "lighttransport", ["table"], "table"),
+        ("solve_radiosity_patterns", "lighttransport", ["table", "matrix"], "matrix"),
         ("high_frequency_patterns", "lighttransport", [], "images"),
         ("render_transport", "lighttransport", ["table", "images"], "images"),
         ("separate_direct_global", "lighttransport", ["images"], "table"),

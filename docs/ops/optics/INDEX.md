@@ -1,4 +1,4 @@
-# OPTICS operator help — 424 ops in 48 categories
+# OPTICS operator help — 425 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -110,9 +110,9 @@
 
 [afocal_system](lenssolve/afocal_system.md) · [lens_afocal_report](lenssolve/lens_afocal_report.md) · [lens_apply_solves](lenssolve/lens_apply_solves.md) · [lens_image_surface](lenssolve/lens_image_surface.md) · [lens_petzval_radius](lenssolve/lens_petzval_radius.md) · [lens_solve_clear](lenssolve/lens_solve_clear.md) · [lens_solve_set](lenssolve/lens_solve_set.md) · [lens_solves_list](lenssolve/lens_solves_list.md) · [lens_zmx_solves_roundtrip](lenssolve/lens_zmx_solves_roundtrip.md)
 
-### light_transport (11)
+### light_transport (12)
 
-[form_factors_2d](light_transport/form_factors_2d.md) · [fringe_multipath_phase_error](light_transport/fringe_multipath_phase_error.md) · [groove_profile](light_transport/groove_profile.md) · [high_frequency_patterns](light_transport/high_frequency_patterns.md) · [micro_phase_decode](light_transport/micro_phase_decode.md) · [predict_fringe_phase_error](light_transport/predict_fringe_phase_error.md) · [render_transport](light_transport/render_transport.md) · [separate_direct_global](light_transport/separate_direct_global.md) · [tof_multipath_phase](light_transport/tof_multipath_phase.md) · [tof_transport_depth](light_transport/tof_transport_depth.md) · [transport_matrix_radiosity](light_transport/transport_matrix_radiosity.md)
+[form_factors_2d](light_transport/form_factors_2d.md) · [fringe_multipath_phase_error](light_transport/fringe_multipath_phase_error.md) · [groove_profile](light_transport/groove_profile.md) · [high_frequency_patterns](light_transport/high_frequency_patterns.md) · [micro_phase_decode](light_transport/micro_phase_decode.md) · [predict_fringe_phase_error](light_transport/predict_fringe_phase_error.md) · [render_transport](light_transport/render_transport.md) · [separate_direct_global](light_transport/separate_direct_global.md) · [solve_radiosity_patterns](light_transport/solve_radiosity_patterns.md) · [tof_multipath_phase](light_transport/tof_multipath_phase.md) · [tof_transport_depth](light_transport/tof_transport_depth.md) · [transport_matrix_radiosity](light_transport/transport_matrix_radiosity.md)
 
 ### linescan (6)
 

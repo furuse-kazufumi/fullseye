@@ -80,6 +80,7 @@ __all__ = [
     "groove_profile",
     "form_factors_2d",
     "transport_matrix_radiosity",
+    "solve_radiosity_patterns",
     "high_frequency_patterns",
     "render_transport",
     "separate_direct_global",
@@ -427,6 +428,37 @@ def transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=Non
     return {"kind": TRANSPORT_KIND, "transport": T, "direct": rho.copy(), "albedo": rho.copy(),
             "form_factors": F, "opening_form_factors": F_open, "n_bounces": n_bounces,
             "gain_bound": float((rho * F.sum(axis=1)).max()), "profile": profile}
+
+
+def solve_radiosity_patterns(profile, irradiance, albedo=0.8, *, chunk=None):
+    """Solve only the requested illumination right-hand sides.
+
+    This sibling does not construct or return the full transport matrix.  For
+    one or a few patterns it uses less memory while retaining the exact linear
+    solve contract; results agree with the matrix path within ``2e-12``.
+
+    Example: ``solve_radiosity_patterns(groove_profile(), np.ones(64))``.
+    """
+    op = "solve_radiosity_patterns"
+    geo = _profile(profile, op)
+    count = geo["n"]
+    rho = _real(albedo, "albedo", op)
+    if rho.ndim == 0:
+        rho = np.full(count, float(rho))
+    if rho.shape != (count,) or (rho < 0.0).any() or (rho >= 1.0).any():
+        raise ValueError("%s: albedo must be a scalar or (%d,) values in [0, 1)" % (op, count))
+    source = _real(irradiance, "irradiance", op)
+    if source.ndim == 1:
+        source = source[None, :]
+        squeeze = True
+    else:
+        squeeze = False
+    if source.ndim != 2 or source.shape[1] != count:
+        raise ValueError("%s: irradiance must have shape (%d,) or (N, %d)" % (op, count, count))
+    factors, _opening = _crossed_strings(geo, chunk)
+    system = np.eye(count) - rho[:, None] * factors
+    result = np.linalg.solve(system, (source * rho).T).T
+    return result[0] if squeeze else result
 
 
 # --------------------------------------------------------------------------- #

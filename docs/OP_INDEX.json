@@ -1,8 +1,8 @@
 {
- "n_ops": 3490,
+ "n_ops": 3491,
  "tiers": {
   "color": 12,
-  "ledger": 2534,
+  "ledger": 2535,
   "nary": 17,
   "registry": 927
  },
@@ -27183,6 +27183,20 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "solve_radiosity_patterns",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "light_transport",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
   },
   {
    "name": "space_filling_curve",
