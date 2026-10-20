@@ -105,12 +105,6 @@ def _axial_radial(P: np.ndarray, v: np.ndarray, d: np.ndarray):
 # 1. 円錐(cone)
 # ═══════════════════════════════════════════════════════════════════════════
 def fit_cone(points, method: str = "exact") -> dict:
-    """Fit a cone, optionally profiling out its bounded half-angle.
-
-    ``eliminate_angle`` checks both bounds and both quadratic stationary
-    points. Its residual agrees with the unchanged default to ``rtol=1e-8,
-    atol=1e-10``.
-    """
     """点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
 
     子午面での点-母線直交距離 ``a·sinα − ρ·cosα``(``a``=軸成分, ``ρ``=半径,
@@ -213,15 +207,14 @@ def fit_cone(points, method: str = "exact") -> dict:
             "residual": residual}
 
 
+fit_cone.__doc__ += ("\n\n``method='eliminate_angle'`` は半角の上下限と停留点を調べる。"
+                     "既定値は変更せず、残差許容差は rtol=1e-8, atol=1e-10。")
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
 def fit_torus(points, method: str = "exact") -> dict:
-    """Fit a torus; ``eliminate_r`` profiles out the tube radius.
-
-    The default ``exact`` optimizer is unchanged. The selectable result is
-    expected to agree in final residual to ``rtol=1e-10, atol=1e-12``.
-    """
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
@@ -293,6 +286,10 @@ def fit_torus(points, method: str = "exact") -> dict:
     residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
             "residual": residual}
+
+
+fit_torus.__doc__ += ("\n\n``method='eliminate_r'`` は管半径を平均距離として消去する。"
+                      "既定値は変更せず、残差許容差は rtol=1e-10, atol=1e-12。")
 
 
 # ═══════════════════════════════════════════════════════════════════════════

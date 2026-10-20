@@ -201,12 +201,6 @@ def _n_poly_terms(order: int) -> int:
 
 def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None,
                method: str = "exact"):
-    """Moving least-squares smoothing.
-
-    ``method="mean"`` with ``order=0`` computes the weighted constant term
-    directly. It agrees with the default ``"exact"`` path to ``rtol=1e-12,
-    atol=1e-14``; the no-argument default remains unchanged.
-    """
     """各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。
 
     点ごとに半径 ``radius`` 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の
@@ -302,6 +296,10 @@ def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None,
             continue
         out[i] = P[i] + h0 * normal
     return out
+
+
+mls_smooth.__doc__ += ("\n\n``order=0, method='mean'`` は定数項を重み付き平均で直接求める。"
+                       "既定値は変更せず、許容差は rtol=1e-12, atol=1e-14。")
 
 
 def estimate_resolution(points) -> float:
