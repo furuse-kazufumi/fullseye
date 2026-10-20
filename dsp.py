@@ -466,7 +466,8 @@ def peak_subbin(x, idx=None, mode="parabola"):
 
 
 def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
-                   method="direct", weights=None, bins_per_period=8):
+                   method="direct", weights=None, bins_per_period=8,
+                   memory_budget=None):
     """Periodogram of **event positions** — defects, impacts, counts, arrivals.
 
     :func:`spectrum` needs an evenly sampled signal, but a great deal of
@@ -556,11 +557,17 @@ def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
         # the same rate would give: that difference is the periodic structure.
         # Keep the temporary phase matrix bounded for large event lists.  The
         # arithmetic within each requested frequency is unchanged.
-        block = max(1, 1_048_576 // max(1, x.size))
-        raw = np.empty(freq.size, dtype=np.complex128)
-        for start in range(0, freq.size, block):
-            fs = freq[start:start + block]
-            raw[start:start + block] = np.exp(-2j * np.pi * fs[:, None] * x) @ w
+        if memory_budget is None:
+            raw = np.exp(-2j * np.pi * np.outer(freq, x)) @ w
+        else:
+            budget = int(memory_budget)
+            if budget < 16 * max(1, x.size):
+                raise ValueError("memory_budget is too small for one frequency row")
+            block = max(1, budget // (16 * max(1, x.size)))
+            raw = np.empty(freq.size, dtype=np.complex128)
+            for start in range(0, freq.size, block):
+                fs = freq[start:start + block]
+                raw[start:start + block] = np.exp(-2j * np.pi * fs[:, None] * x) @ w
         u = np.where(freq != 0.0,
                      (1.0 - np.exp(-2j * np.pi * freq * span))
                      / (2j * np.pi * np.where(freq == 0.0, 1.0, freq)),

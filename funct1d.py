@@ -491,10 +491,8 @@ def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):
     ax = _finite_scalar(add_x, "add_x")
     my = _finite_scalar(mult_y, "mult_y")
     ay = _finite_scalar(add_y, "add_y")
-    out = np.empty((len(arr), 2), dtype=float)
-    out[:, 0] = mx * np.arange(len(arr), dtype=float) + ax
-    out[:, 1] = my * arr + ay
-    return out
+    x = np.arange(len(arr), dtype=float)
+    return np.column_stack([mx * x + ax, my * arr + ay])
 
 
 def x_range_funct_1d(y):
