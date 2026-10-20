@@ -97,6 +97,23 @@ def test_true_anaglyph_ideal_filters_have_zero_crosstalk():
     assert seen["ghosting_left"] == 0 and seen["ghosting_right"] == 0
 
 
+def test_dubois_red_cyan_matrices_match_published_coefficients():
+    """External truth: Eric Dubois (2001), least-squares red/cyan matrices."""
+    published_left = np.array([
+        [.456100, -.040082, -.015216],
+        [.500484, -.037824, -.020597],
+        [.176381, -.015759, -.005469],
+    ])
+    published_right = np.array([
+        [-.043471, .378476, -.072153],
+        [-.087939, .733640, -.112961],
+        [-.001555, -.018450, 1.226400],
+    ])
+    assert published_left.shape == (3, 3) and published_right.shape == (3, 3)
+    assert np.max(np.abs(O._DUBOIS_L - published_left)) < 1e-6
+    assert np.max(np.abs(O._DUBOIS_R - published_right)) < 1e-6
+
+
 def _rotation_angle(a, b):
     q = a @ b.T
     return np.rad2deg(np.arccos(np.clip((np.trace(q) - 1) / 2, -1, 1)))
