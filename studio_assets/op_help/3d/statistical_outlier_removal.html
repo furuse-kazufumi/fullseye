@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code>、または <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
@@ -14,6 +14,8 @@
 <p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
 <p>std_ratio : float</p>
 <p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>chunk : int or None</p>
+<p>指定時は近傍照会をこの点数ずつ行う。既定 <code style="color:#22d3bf">None</code> は従来経路。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>生き残った点(元の順序を保持)。</p>

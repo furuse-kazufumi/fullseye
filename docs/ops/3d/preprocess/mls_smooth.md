@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # mls_smooth — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2)`、台帳から引くなら `ops3d.get("mls_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)`、台帳から引くなら `ops3d.get("mls_smooth")`)
 
 ## 使い方
 
@@ -33,6 +33,8 @@ radius : float
     近傍球の半径(> 0)。局所曲面のサポート。
 order : int
     局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
+chunk : int or None
+    指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
 
 Returns
 -------
