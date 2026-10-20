@@ -34,6 +34,27 @@ def test_309_history_compaction_preserves_public_iteration_accounting():
     assert rec["n_iter"] == len(rec["residual_history"]) - 1
 
 
+def test_312_aitken_does_not_reuse_user_owned_input():
+    x0 = np.array([.2, .4, .8])
+    original = x0.copy()
+    seen = []
+    def mapping(x):
+        seen.append(x)
+        return np.cos(x)
+    converge.iterate_fixed_point(mapping, x0, method="aitken", max_iter=4)
+    np.testing.assert_array_equal(x0, original)
+    assert all(a is not b for a, b in zip(seen, seen[1:]))
+
+
+def test_313_thinned_history_preserves_mc_result_and_final_record():
+    exact = converge.mc_sequential_mean(tol=.002, batch=1000, seed=313)
+    thin = converge.mc_sequential_mean(tol=.002, batch=1000, seed=313, history_stride=7)
+    for key in ("mean", "se", "half_width", "n_samples"):
+        assert thin[key] == exact[key]
+    assert thin["history"][-1] == exact["history"][-1]
+    assert len(thin["history"]) < len(exact["history"])
+
+
 def test_311_anderson_linear_combination_and_314_box_mean_gates():
     A = np.array([[.2, .1], [-.05, .3]])
     b = np.array([1., -2.])

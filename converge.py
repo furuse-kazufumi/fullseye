@@ -556,7 +556,7 @@ class _Moments:
         return np.sqrt(self.m2 / (self.n - 1) / self.n)
 
 
-def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op):
+def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op, history_stride=1):
     """Add batches from ``draw(b) -> (n, k)`` until z * se <= tol + rel_tol * |mean| in every column."""
     mom = _Moments(k)
     hist = []
@@ -574,15 +574,18 @@ def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op)
         mom.add(X)
         b += 1
         se = mom.se()
-        hist.append((int(mom.n), mom.mean.copy(), se.copy()))
+        if history_stride and b % history_stride == 0:
+            hist.append((int(mom.n), mom.mean.copy(), se.copy()))
         if mom.n >= n_min and np.all(z * se <= tol + rel_tol * np.abs(mom.mean)):
             converged = True
             break
+    if (not hist or hist[-1][0] != mom.n) and history_stride != 1:
+        hist.append((int(mom.n), mom.mean.copy(), mom.se().copy()))
     return mom, hist, converged
 
 
 def mc_sequential_mean(sampler="pi", tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096,
-                       max_samples=4_000_000, seed=0, on_fail="raise") -> dict:
+                       max_samples=4_000_000, seed=0, on_fail="raise", history_stride=1) -> dict:
     """Sequential Monte Carlo mean: add samples until the confidence interval is narrower than the tolerance.
 
     ``sampler(rng, n)`` returns n i.i.d. samples (a 1-D array) — or the built-in ``"pi"``
@@ -619,12 +622,16 @@ def mc_sequential_mean(sampler="pi", tol=0.01, rel_tol=0.0, confidence=0.95, bat
         raise ValueError("%s: batch, max_samples and seed must be integers" % op) from None
     if batch < 2 or not 2 <= max_samples <= MAX_SAMPLES_CAP:
         raise ValueError("%s: need batch >= 2 and 2 <= max_samples <= %d" % (op, MAX_SAMPLES_CAP))
+    history_stride = int(history_stride)
+    if history_stride < 0:
+        raise ValueError("history_stride must be >= 0")
     n_min = 2 * batch
 
     def draw(b, n):
         return np.asarray(sampler(np.random.default_rng((seed, b)), n), dtype=np.float64).reshape(-1)
 
-    mom, hist, converged = _sequential_columns(draw, 1, tol, rel_tol, z, batch, n_min, max_samples, op)
+    mom, hist, converged = _sequential_columns(
+        draw, 1, tol, rel_tol, z, batch, n_min, max_samples, op, history_stride)
     mean = float(mom.mean[0])
     se = float(mom.se()[0])
     rec = {"op": op, "converged": bool(converged), "n_samples": int(mom.n), "confidence": float(confidence),
