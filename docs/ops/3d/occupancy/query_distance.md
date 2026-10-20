@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # query_distance — 3D `occupancy` op
 
 - **データ種**: `sdf × points` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')` (実装を直接呼ぶなら `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')`、台帳から引くなら `ops3d.get("query_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear', *, chunk=262144)` (実装を直接呼ぶなら `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear', *, chunk=262144)`、台帳から引くなら `ops3d.get("query_distance")`)
 
 ## 使い方
 

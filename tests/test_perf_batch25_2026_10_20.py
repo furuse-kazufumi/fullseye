@@ -32,6 +32,39 @@ def _esdf_reference(occ, voxel_size=1.0):
             - ndimage.distance_transform_edt(occ, sampling=voxel_size))
 
 
+def _occupancy_grid_reference(points, bounds, res):
+    points = np.asarray(points, np.float64)
+    bounds = np.asarray(bounds, np.float64)
+    res = np.broadcast_to(np.asarray(res, np.int64), (3,))
+    frac = (points - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+    frac = frac[np.all((frac >= 0.0) & (frac <= 1.0), axis=1)]
+    idx = np.minimum((frac * res).astype(np.int64), res - 1)
+    grid = np.zeros(tuple(res), bool)
+    grid[idx[:, 0], idx[:, 1], idx[:, 2]] = True
+    return grid
+
+
+def _query_distance_reference(esdf_grid, bounds, res, query_points):
+    bounds = np.asarray(bounds, np.float64)
+    res = np.broadcast_to(np.asarray(res, np.int64), (3,))
+    c = ((query_points - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+         * res - 0.5)
+    c0 = np.floor(c).astype(np.int64)
+    t = c - c0
+    out = np.zeros(len(query_points), np.float64)
+    for dx in (0, 1):
+        wx = t[:, 0] if dx else 1.0 - t[:, 0]
+        i = np.clip(c0[:, 0] + dx, 0, res[0] - 1)
+        for dy in (0, 1):
+            wy = t[:, 1] if dy else 1.0 - t[:, 1]
+            j = np.clip(c0[:, 1] + dy, 0, res[1] - 1)
+            for dz in (0, 1):
+                wz = t[:, 2] if dz else 1.0 - t[:, 2]
+                k = np.clip(c0[:, 2] + dz, 0, res[2] - 1)
+                out += wx * wy * wz * esdf_grid[i, j, k]
+    return out
+
+
 def test_269_inflate_matches_two_edt_reference(monkeypatch):
     rng = np.random.default_rng(269)
     fixtures = [np.zeros((9, 8, 7), bool), np.ones((9, 8, 7), bool),
@@ -64,6 +97,26 @@ def test_270_esdf_matches_reference_and_preserves_input():
     got = occupancy.esdf(occ, (0.5, 1.0, 2.0))
     assert np.array_equal(got, _esdf_reference(occ, (0.5, 1.0, 2.0)))
     assert np.array_equal(occ, before)
+
+
+def test_271_272_query_distance_chunked_matches_reference():
+    rng = np.random.default_rng(271)
+    grid = rng.normal(size=(19, 17, 13))
+    points = rng.uniform(-2.0, 3.0, size=(10003, 3))
+    bounds = ((-1.0, 2.0), (-0.5, 1.5), (0.0, 1.0))
+    expected = _query_distance_reference(grid, bounds, grid.shape, points)
+    got = occupancy.query_distance(grid, bounds, grid.shape, points, chunk=127)
+    assert np.array_equal(got, expected)
+
+
+def test_273_occupancy_grid_chunked_matches_reference():
+    rng = np.random.default_rng(273)
+    points = rng.uniform(-0.2, 1.2, size=(10003, 3))
+    points[:2] = (0.0, 1.0, 0.5), (1.0, 0.0, 1.0)
+    bounds = ((0.0, 1.0),) * 3
+    expected = _occupancy_grid_reference(points, bounds, (23, 19, 17))
+    got = occupancy.occupancy_grid(points, bounds, (23, 19, 17), chunk=127)
+    assert np.array_equal(got, expected)
 
 
 def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch):
