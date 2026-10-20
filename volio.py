@@ -434,8 +434,19 @@ def _read_npy(path: str):
         raise ValueError("%s: .npy holds a %d-D array; a volume must be 3-D (D, H, W)"
                          % (p, arr.ndim))
     _check_voxel_budget(int(arr.size), p)
-    vol = _to_finite_f64(np.array(arr), p)
-    return vol, VolumeMeta(dtype=str(arr.dtype), source_format="npy")
+    dtype = str(arr.dtype)
+    try:
+        # A dtype conversion already allocates an owning array.  A float64 memmap
+        # needs the explicit copy so no caller can retain the file mapping.
+        vol = np.asarray(arr, dtype=np.float64)
+        if not vol.flags.owndata:
+            vol = vol.copy()
+        vol = _to_finite_f64(vol, p)
+    finally:
+        mmap = getattr(arr, "_mmap", None)
+        if mmap is not None:
+            mmap.close()
+    return vol, VolumeMeta(dtype=dtype, source_format="npy")
 
 
 def _read_npz(path: str, key):
