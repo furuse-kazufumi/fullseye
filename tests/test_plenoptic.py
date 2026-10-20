@@ -143,13 +143,15 @@ def test_point_microimage_disparity_paraxial_closed_form():
 
 def test_depth_truth_three_planes_and_wrong_pitch_probe():
     true_depth = np.array([0.6, 1.0, 1.8])
-    focal_px, baseline_m = 180.0, 0.004
-    disparity = focal_px * baseline_m / true_depth
-    estimate = focal_px * baseline_m / disparity
+    # Paraxial slope-to-depth relation around the main-lens conjugate.
+    intercept, pitch = 5.0, 1.0
+    disparity = (intercept - 1/true_depth) / pitch
+    estimate = 1 / (intercept - pitch*disparity)
     rel = np.abs(estimate - true_depth) / true_depth
     assert np.all(rel < 0.03)
-    wrong = focal_px * (baseline_m * 1.01) / disparity
-    assert np.all(np.abs(wrong - true_depth) / true_depth >= 0.01 - 1e-12)
+    wrong = 1 / (intercept - pitch*1.01*disparity)
+    wrong_rel = np.abs(wrong - true_depth) / true_depth
+    assert np.median(wrong_rel) > .03  # 1% pitch error turns the 3% gate red
 
 
 def test_focused_trace_magnification_and_resolution_advantage():
