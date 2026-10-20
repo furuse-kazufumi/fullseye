@@ -273,6 +273,11 @@ def test_412_oa_strength_matches_original_counts():
                             if int(np.sum((t[:,a]==x)&(t[:,b]==y))) != want: return False
             return True
         assert doe._oa_strength2_ok(table) is ref(table)
+    x, y = np.meshgrid(np.arange(3), np.arange(3), indexing="ij")
+    valid = np.stack([x.ravel(), y.ravel(), ((x + y) % 3).ravel()], axis=1)
+    assert doe._oa_strength2_ok(valid) is ref(valid) is True
+    invalid = valid.copy(); invalid[0, 0] = 2
+    assert doe._oa_strength2_ok(invalid) is ref(invalid) is False
 
 
 def test_414_strided_accessor_owned_and_identical():
