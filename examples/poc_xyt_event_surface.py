@@ -216,7 +216,9 @@ def _event_camera_figures():
         return np.array([yy.mean(), xx.mean()]) if yy.size else np.array([np.nan, np.nan])
     centroid_separation = float(np.linalg.norm(centroid(recent_on) - centroid(recent_off)))
     panel_pass = (0.01 <= event_fraction <= 0.20 and on_fraction >= 0.005
-                  and off_fraction >= 0.005 and thinness >= 0.45
+                  # 細さ比 = 事象画素 / 5×5 で膨らませた画素。縁の帯(幅 ≤ 6 px 程度)なら 0.65 以下、
+                  # 塗り潰し(第 3 パスの「全区間の最終極性」の面)なら 0.9 を超える。上限で縛る。
+                  and off_fraction >= 0.005 and thinness <= 0.65
                   and centroid_separation >= 2.0)
     assert panel_pass, {"event_fraction": event_fraction, "on_fraction": on_fraction,
                         "off_fraction": off_fraction, "thinness": thinness,
