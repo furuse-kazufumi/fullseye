@@ -64,7 +64,7 @@ def _fund_8pt(p1, p2):
     A = np.column_stack([q2[:, 0] * q1[:, 0], q2[:, 0] * q1[:, 1], q2[:, 0],
                          q2[:, 1] * q1[:, 0], q2[:, 1] * q1[:, 1], q2[:, 1],
                          q1[:, 0], q1[:, 1], np.ones(len(q1))])
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     F = Vt[-1].reshape(3, 3)
     U, S, Vt2 = np.linalg.svd(F); S[2] = 0
     F = U @ np.diag(S) @ Vt2

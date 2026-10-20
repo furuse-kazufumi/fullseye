@@ -321,7 +321,7 @@ def _pnp_dlt(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
         A[2 * i, 8:12] = -m[i, 0] * Xh[i]
         A[2 * i + 1, 4:8] = Xh[i]
         A[2 * i + 1, 8:12] = -m[i, 1] * Xh[i]
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=False)
     M = Vt[-1].reshape(3, 4)
 
     def extract(Mm):
@@ -379,7 +379,7 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
         u, v = m[i]
         A[2 * i] = [-x, -y, -1, 0, 0, 0, u * x, u * y, u]
         A[2 * i + 1] = [0, 0, 0, -x, -y, -1, v * x, v * y, v]
-    _, _, Vt2 = np.linalg.svd(A)
+    _, _, Vt2 = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     H = Vt2[-1].reshape(3, 3)
     best = None
     for s in (1.0, -1.0):
@@ -497,7 +497,7 @@ def fundamental_matrix(uv1, uv2) -> np.ndarray:
     u1, v1 = ah[:, 0], ah[:, 1]
     u2, v2 = bh[:, 0], bh[:, 1]
     A = np.stack([u2 * u1, u2 * v1, u2, v2 * u1, v2 * v1, v2, u1, v1, np.ones_like(u1)], 1)
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     F = Vt[-1].reshape(3, 3)
     U, S, Vt2 = np.linalg.svd(F)                # enforce rank 2
     S[2] = 0.0
@@ -527,7 +527,7 @@ def essential_matrix(uv1, uv2, K, K2=None) -> np.ndarray:
     u1, v1 = ah[:, 0], ah[:, 1]
     u2, v2 = bh[:, 0], bh[:, 1]
     A = np.stack([u2 * u1, u2 * v1, u2, v2 * u1, v2 * v1, v2, u1, v1, np.ones_like(u1)], 1)
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     E = Vt[-1].reshape(3, 3)
     E = T2.T @ E @ T1
     U, S, Vt2 = np.linalg.svd(E)
