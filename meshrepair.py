@@ -393,15 +393,15 @@ def fill_holes(V, F, max_boundary_len=None):
 # --------------------------------------------------------------------------- #
 # smoothing                                                                   #
 # --------------------------------------------------------------------------- #
-def _laplacian_step(P: np.ndarray, edges: np.ndarray, factor: float) -> np.ndarray:
+def _laplacian_step(P: np.ndarray, edges: np.ndarray, factor: float,
+                    deg: np.ndarray | None = None) -> np.ndarray:
     nv = P.shape[0]
     nsum = np.zeros_like(P)
-    deg = np.zeros(nv)
+    if deg is None:
+        deg = np.bincount(edges.ravel(), minlength=nv).astype(np.float64)
     i, j = edges[:, 0], edges[:, 1]
     np.add.at(nsum, i, P[j])
     np.add.at(nsum, j, P[i])
-    np.add.at(deg, i, 1.0)
-    np.add.at(deg, j, 1.0)
     mask = deg > 0
     out = P.copy()
     delta = nsum[mask] / deg[mask][:, None] - P[mask]      # uniform-weight Laplacian
@@ -425,12 +425,13 @@ def smooth_taubin(V, F, iterations=10, lamb=0.5, mu=-0.53) -> np.ndarray:
         raise ValueError("iterations must be >= 0, got %r" % (iterations,))
     lamb, mu = float(lamb), float(mu)
     edges = _unique_edges(F)
+    deg = np.bincount(edges.ravel(), minlength=V.shape[0]).astype(np.float64)
     P = V.copy()
     if edges.shape[0] == 0:
         return P
     for _ in range(iterations):
-        P = _laplacian_step(P, edges, lamb)
-        P = _laplacian_step(P, edges, mu)
+        P = _laplacian_step(P, edges, lamb, deg)
+        P = _laplacian_step(P, edges, mu, deg)
     return np.ascontiguousarray(P, np.float64)
 
 
@@ -717,6 +718,7 @@ def components(V, F) -> list:
         return []
     nv = V.shape[0]
     parent = np.arange(nv)
+    size = np.ones(nv, dtype=np.int64)
 
     def find(x):
         root = x
@@ -728,8 +730,13 @@ def components(V, F) -> list:
 
     for a, b, c in F:
         ra, rb, rc = find(int(a)), find(int(b)), find(int(c))
-        parent[rb] = ra
-        parent[rc] = ra
+        for other in (rb, rc):
+            ra, other = find(ra), find(other)
+            if ra != other:
+                if size[ra] < size[other]:
+                    ra, other = other, ra
+                parent[other] = ra
+                size[ra] += size[other]
 
     groups = defaultdict(list)
     for fi in range(F.shape[0]):
@@ -739,10 +746,8 @@ def components(V, F) -> list:
     for _, flist in groups.items():
         fsel = F[flist]
         used = np.unique(fsel)
-        remap = -np.ones(nv, np.int64)
-        remap[used] = np.arange(used.size)
         out.append((int(used.min()),
                     np.ascontiguousarray(V[used], np.float64),
-                    np.ascontiguousarray(remap[fsel], np.int64)))
+                    np.ascontiguousarray(np.searchsorted(used, fsel), np.int64)))
     out.sort(key=lambda t: t[0])
     return [(v, f) for _, v, f in out]
