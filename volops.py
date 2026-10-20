@@ -449,8 +449,12 @@ def vol_nearest_seed_vector(vol_binary, spacing=None):
         raise ValueError("vol_nearest_seed_vector: the volume has no seed (non-zero) voxel — every voxel would be at infinity")
     sp = _spacing_tuple(spacing)
     idx = ndimage.distance_transform_edt(~m, sampling=sp, return_distances=False, return_indices=True)
-    grid = np.indices(m.shape, dtype=np.int64)
-    return np.ascontiguousarray(idx.astype(np.int64) - grid, dtype=np.float64)
+    out = idx.astype(np.float64)
+    for axis, size in enumerate(m.shape):
+        shape = [1, 1, 1]
+        shape[axis] = size
+        out[axis] -= np.arange(size).reshape(shape)
+    return np.ascontiguousarray(out)
 
 
 def vol_nearest_label(vol_labels, spacing=None):
