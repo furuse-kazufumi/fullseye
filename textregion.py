@@ -176,9 +176,10 @@ def text_candidates(swt, min_area: int = 8, max_var_ratio: float = 0.5,
         boxes.append((sl[0].start, sl[1].start, sl[0].stop, sl[1].stop))
         widths.append(float(np.median(vals)))
         keep_ids.append(i)
-    out_lab = np.zeros_like(lab)
-    for k, i in enumerate(keep_ids, start=1):
-        out_lab[lab == i] = k
+    label_map = np.zeros(n + 1, dtype=lab.dtype)
+    if keep_ids:
+        label_map[np.asarray(keep_ids)] = np.arange(1, len(keep_ids) + 1)
+    out_lab = label_map[lab]
     return {"boxes": np.array(boxes, dtype=int).reshape(-1, 4), "labels": out_lab,
             "stroke_width": np.array(widths), "n_components": int(n)}
 
