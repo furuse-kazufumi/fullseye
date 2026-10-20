@@ -267,11 +267,15 @@ def _herraez_reliability(phi: np.ndarray) -> np.ndarray:
     g = _wrap
     R = np.zeros_like(phi)
     c = phi[1:-1, 1:-1]
-    H = g(phi[1:-1, :-2] - c) - g(c - phi[1:-1, 2:])
-    V = g(phi[:-2, 1:-1] - c) - g(c - phi[2:, 1:-1])
-    D1 = g(phi[:-2, :-2] - c) - g(c - phi[2:, 2:])
-    D2 = g(phi[:-2, 2:] - c) - g(c - phi[2:, :-2])
-    D = np.sqrt(H * H + V * V + D1 * D1 + D2 * D2)
+    term = g(phi[1:-1, :-2] - c) - g(c - phi[1:-1, 2:])
+    energy = term * term
+    term = g(phi[:-2, 1:-1] - c) - g(c - phi[2:, 1:-1])
+    energy += term * term
+    term = g(phi[:-2, :-2] - c) - g(c - phi[2:, 2:])
+    energy += term * term
+    term = g(phi[:-2, 2:] - c) - g(c - phi[2:, :-2])
+    energy += term * term
+    D = np.sqrt(energy)
     R[1:-1, 1:-1] = 1.0 / np.maximum(D, 1e-12)        # floor D so a flat region stays finite
     return R
 
@@ -392,11 +396,11 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
 
     # Build the edge list: each interior/boundary 4-connected edge, with a
     # reliability = sum of its two endpoint reliabilities (Herraez).
-    idx = np.arange(N).reshape(Hh, Ww)
-    h_a = idx[:, :-1].ravel()                          # horizontal edges (j)-(j+1)
-    h_b = idx[:, 1:].ravel()
-    v_a = idx[:-1, :].ravel()                          # vertical edges (i)-(i+1)
-    v_b = idx[1:, :].ravel()
+    linear = np.arange(N, dtype=np.int64)
+    h_a = linear.reshape(Hh, Ww)[:, :-1].ravel()       # horizontal edges (j)-(j+1)
+    h_b = h_a + 1
+    v_a = linear[:-Ww]                                 # vertical edges (i)-(i+1)
+    v_b = v_a + Ww
     edge_a = np.concatenate([h_a, v_a])
     edge_b = np.concatenate([h_b, v_b])
     edge_rel = Rf[edge_a] + Rf[edge_b]
