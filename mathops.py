@@ -3600,8 +3600,14 @@ def dynsys_lyapunov_spectrum(system="lorenz", params=None, x0=None, t_end=200.0,
 
     Returns a ``signal``: the exponents, descending.
 
+    The burn-in uses ``round(burn_in / dt)`` steps, and the measured window uses
+    ``round((t_end - burn_in) / dt)`` steps. Thus their actual integrated times
+    are those step counts multiplied by ``dt``; a measured window rounding to
+    zero steps is rejected rather than extended past the requested time.
+
     **Raises** ``ValueError``: unknown system; non-finite input; ``burn_in`` not
-    shorter than ``t_end``; a trajectory that left float range.
+    shorter than ``t_end``; a measured window shorter than one rounded step; a
+    trajectory that left float range.
 
     Limits: the exponents converge like ``1/sqrt(T)`` — a short window gives a
     plausible but wrong spectrum. The trace identity converges much faster and is
@@ -3630,23 +3636,36 @@ def dynsys_lyapunov_spectrum(system="lorenz", params=None, x0=None, t_end=200.0,
         k4 = _dyn_derivative(system, p, state + h * k3)
         return state + (h / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
 
-    for _ in range(int(round(float(burn_in) / h))):
+    burn_steps = int(round(float(burn_in) / h))
+    steps = int(round((float(t_end) - float(burn_in)) / h))
+    if steps < 1:
+        raise ValueError(
+            "%s: t_end=%r and burn_in=%r with dt=%r give %d integration steps; "
+            "the measured window must contain at least 1 step"
+            % (op, t_end, burn_in, dt, steps))
+
+    for _ in range(burn_steps):
         x = step(x)
         if not np.all(np.isfinite(x)):
             raise ValueError("%s: the trajectory left float range during burn-in" % op)
 
     Q = np.eye(n)
     total = np.zeros(n)
-    steps = int(round((float(t_end) - float(burn_in)) / h))
     for _ in range(steps):
-        J = _dyn_jacobian(system, p, x)
         # 接方程式も同じ 4 次で進める(状態と次数を揃える)
-        y1 = J @ Q
-        y2 = _dyn_jacobian(system, p, step(x) if False else x) @ (Q + 0.5 * h * y1)
-        y3 = _dyn_jacobian(system, p, x) @ (Q + 0.5 * h * y2)
-        y4 = _dyn_jacobian(system, p, x) @ (Q + h * y3)
+        k1 = _dyn_derivative(system, p, x)
+        y1 = _dyn_jacobian(system, p, x) @ Q
+        x2 = x + 0.5 * h * k1
+        k2 = _dyn_derivative(system, p, x2)
+        y2 = _dyn_jacobian(system, p, x2) @ (Q + 0.5 * h * y1)
+        x3 = x + 0.5 * h * k2
+        k3 = _dyn_derivative(system, p, x3)
+        y3 = _dyn_jacobian(system, p, x3) @ (Q + 0.5 * h * y2)
+        x4 = x + h * k3
+        k4 = _dyn_derivative(system, p, x4)
+        y4 = _dyn_jacobian(system, p, x4) @ (Q + h * y3)
         Y = Q + (h / 6.0) * (y1 + 2.0 * y2 + 2.0 * y3 + y4)
-        x = step(x)
+        x = x + (h / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
         Q, R = np.linalg.qr(Y)
         d = np.diag(R).copy()
         sgn = np.sign(d)
