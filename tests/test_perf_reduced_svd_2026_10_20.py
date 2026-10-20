@@ -141,6 +141,13 @@ def test_reduced_svd_preserves_tall_and_wide_nullspace_probe():
     A = rng.normal(size=(8, 9)); full = np.linalg.svd(A)[2]; reduced = np.linalg.svd(A, full_matrices=False)[2]
     assert full.shape == (9, 9) and reduced.shape == (8, 9)
     assert np.linalg.norm(A @ full[-1]) < 1e-12 and np.linalg.norm(A @ reduced[-1]) > 1e-3
+    # 2,000点PnPの設計行列は4,000x12。完全Uを作る旧経路とのpeak比を固定する。
+    A = rng.normal(size=(4000, 12))
+    tracemalloc.start(); np.linalg.svd(A); old_peak = tracemalloc.get_traced_memory()[1]
+    tracemalloc.stop(); tracemalloc.start()
+    np.linalg.svd(A, full_matrices=False); new_peak = tracemalloc.get_traced_memory()[1]
+    tracemalloc.stop()
+    assert new_peak <= old_peak * 0.5
 
 
 def test_camera_estimates_stable_for_correspondence_counts(monkeypatch):
