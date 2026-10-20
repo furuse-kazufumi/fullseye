@@ -310,11 +310,15 @@ def _crt_core(r, p, w, lo, hi, ref, edge=0.0):
     ph = 2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None]
     score = (w[:, None] * np.cos(ph)).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = (np.take_along_axis(score, order[1:2], 0)[0] if score.shape[0] > 1
-          else np.full(shp, -np.inf))
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    if score.shape[0] > 1:
+        runner = score.copy()
+        np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+        s2 = runner.max(axis=0)
+    else:
+        s2 = np.full(shp, -np.inf)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2                       # equal phase noise -> variance ~ period^2
     ivs = iv.sum(0)
@@ -483,25 +487,29 @@ def residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0
     hi_eff = float(lo) + full["unambiguous_range"] if hi is None else float(hi)
     pb = p.reshape((p.size,) + (1,) * (r.ndim - 1))
     ok_all = (np.abs(full["residual"]) <= tol * pb).all(0)
-    worst, vals, outl = [], [], []
+    shp = r.shape[1:]
+    best_worst = np.full(shp, np.inf)
+    second_worst = np.full(shp, np.inf)
+    best_value = np.full(shp, np.nan)
+    best_outlier = np.zeros(shp)
+    best_index = np.zeros(shp, dtype=np.int64)
     for j in range(p.size):
         keep = [i for i in range(p.size) if i != j]
         sub = residue_crt(r[keep], p[keep], w[keep], lo, hi_eff,   # refuses if N-1 cannot resolve
                           on_outside="flag")
-        worst.append((np.abs(sub["residual"]) / pb[keep]).max(0))
-        vals.append(sub["value"])
-        outl.append(np.abs(_wrap_signed(r[j] - sub["value"], p[j])) / p[j])
-    worst = np.stack(worst)
-    vals = np.stack(vals)
-    outl = np.stack(outl)
-    j = np.argmin(worst, 0)
-    wj = np.take_along_axis(worst, j[None], 0)[0]
-    oj = np.take_along_axis(outl, j[None], 0)[0]
-    runner = np.sort(worst, 0)[1]
+        current = (np.abs(sub["residual"]) / pb[keep]).max(0)
+        current_outlier = np.abs(_wrap_signed(r[j] - sub["value"], p[j])) / p[j]
+        better = current < best_worst
+        second_worst = np.where(better, best_worst, np.minimum(second_worst, current))
+        best_worst = np.where(better, current, best_worst)
+        best_value = np.where(better, sub["value"], best_value)
+        best_outlier = np.where(better, current_outlier, best_outlier)
+        best_index = np.where(better, j, best_index)
+    j, wj, oj, runner = best_index, best_worst, best_outlier, second_worst
     good = (wj <= tol) & (oj > tol) & (runner > tol)
     faulty = np.where(ok_all, -1, np.where(good, j, -2)).astype(np.int64)
     value = np.where(ok_all, full["value"],
-                     np.where(good, np.take_along_axis(vals, j[None], 0)[0], np.nan))
+                     np.where(good, best_value, np.nan))
     return {"value": value, "faulty": faulty, "consistent_all": ok_all,
             "worst_leave_one_out": wj}
 
@@ -519,17 +527,20 @@ def _image(a, name: str, op: str) -> np.ndarray:
     return arr
 
 
-def _band(spec, shape, period, sigma_px, axis):
+def _band(spec, shape, period, sigma_px, axis, kernel=None):
     """Analytic band at wavelength ``period`` -> (z, k_local [rad/px along axis])."""
-    fu = np.fft.fftfreq(shape[1])[None, :]
-    fv = np.fft.fftfreq(shape[0])[:, None]
-    sf = 1.0 / (2.0 * np.pi * sigma_px)
-    if axis == 1:
-        g = np.exp(-((fu - 1.0 / period) ** 2 + fv ** 2) / (2.0 * sf * sf))
-        dgrid = fu
+    if kernel is None:
+        fu = np.fft.fftfreq(shape[1])[None, :]
+        fv = np.fft.fftfreq(shape[0])[:, None]
+        sf = 1.0 / (2.0 * np.pi * sigma_px)
+        if axis == 1:
+            g = np.exp(-((fu - 1.0 / period) ** 2 + fv ** 2) / (2.0 * sf * sf))
+            dgrid = fu
+        else:
+            g = np.exp(-(fu ** 2 + (fv - 1.0 / period) ** 2) / (2.0 * sf * sf))
+            dgrid = fv
     else:
-        g = np.exp(-(fu ** 2 + (fv - 1.0 / period) ** 2) / (2.0 * sf * sf))
-        dgrid = fv
+        g, dgrid = kernel
     zs = spec * g
     z = np.fft.ifft2(zs)
     dz = np.fft.ifft2(zs * (2j * np.pi * dgrid))
@@ -553,8 +564,17 @@ def _band_measure(img0, img1, periods, sigma_px, axis):
     s1 = np.fft.fft2(img1)
     res, per, wts = [], [], []
     for p in periods:
-        z0, k0 = _band(s0, img0.shape, p, sigma_px, axis)
-        z1, k1 = _band(s1, img1.shape, p, sigma_px, axis)
+        fu = np.fft.fftfreq(img0.shape[1])[None, :]
+        fv = np.fft.fftfreq(img0.shape[0])[:, None]
+        sf = 1.0 / (2.0 * np.pi * sigma_px)
+        if axis == 1:
+            g = np.exp(-((fu - 1.0 / p) ** 2 + fv ** 2) / (2.0 * sf * sf))
+            kernel = (g, fu)
+        else:
+            g = np.exp(-(fu ** 2 + (fv - 1.0 / p) ** 2) / (2.0 * sf * sf))
+            kernel = (g, fv)
+        z0, k0 = _band(s0, img0.shape, p, sigma_px, axis, kernel)
+        z1, k1 = _band(s1, img1.shape, p, sigma_px, axis, kernel)
         k = 0.5 * (k0 + k1)
         knom = 2.0 * np.pi / p
         k = np.where((k > knom / 3.0) & (k < 3.0 * knom), k, knom)
@@ -576,10 +596,12 @@ def _crt_core_var(r, pb, w, lo, hi):
     inside = (cand >= lo) & (cand < hi)
     score = (w[:, None] * np.cos(2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None])).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = np.take_along_axis(score, order[1:2], 0)[0]
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    runner = score.copy()
+    np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+    s2 = runner.max(axis=0)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2
     ivs = iv.sum(0)
