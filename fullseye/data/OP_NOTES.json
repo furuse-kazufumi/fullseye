@@ -30816,13 +30816,13 @@
     "path": "docs/ops/optics/tem/tem_wavelength.md"
    }
   ],
-  "compensators": [
+  "tolerance_compensators": [
    {
-    "op": "compensators",
+    "op": "tolerance_compensators",
     "dim": "optics",
     "category": "tolerancing",
     "out": "table",
-    "path": "docs/ops/optics/tolerancing/compensators.md"
+    "path": "docs/ops/optics/tolerancing/tolerance_compensators.md"
    }
   ],
   "tolerance_criteria": [

@@ -19,6 +19,9 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds.
 
+``histogram_bins`` is the exact number of bins used for every non-empty sample set.
+Raises: ValueError if ``histogram_bins`` is not an integer in 1..10000.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

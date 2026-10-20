@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tolerance_table_from_zmx(system, text)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lenstol; lenstol.tolerance_table_from_zmx(system, text)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_table_from_zmx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लिखी NOTE lines से tolerance table पढ़ें -&gt; dict।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Raises: ValueError if <code style="color:#22d3bf">system</code> is invalid or no tolerance row is present.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

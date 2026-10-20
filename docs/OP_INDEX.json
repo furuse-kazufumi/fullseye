@@ -4075,17 +4075,6 @@
    ]
   },
   {
-   "name": "compensators",
-   "halcon": "",
-   "in_sort": null,
-   "out_sort": "table",
-   "category": "tolerancing",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": []
-  },
-  {
    "name": "complex_steerable_decompose",
    "halcon": "",
    "in_sort": "image2d",
@@ -30245,6 +30234,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "tolerance_compensators",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "tolerance_criteria",

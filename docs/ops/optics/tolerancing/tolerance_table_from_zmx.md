@@ -19,6 +19,8 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Read tolerance NOTE lines written by :func:`tolerance_table_zmx`.
 
+Raises: ValueError if ``system`` is invalid or no tolerance row is present.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):
