@@ -679,7 +679,7 @@ Der Fokus-Stacking-PoC läuft etwa 20 Sekunden und gibt seine Zahlen gegen Groun
 - **Titel**: Fullseye：型付き演算子と物理シミュレーションに基づく画像検査・三次元計測基盤 _(ja)_ (eine Plattform für Bildprüfung und 3-D-Messung auf Basis typisierter Operatoren und Physiksimulation)
 - **Autor**: Kazufumi Furuse (unabhängiger Forscher)
 - **Veranstaltung**: ViEW2026, Workshop zur praktischen Anwendung von Bildverarbeitung
-- **Paper-PDF**: ab 2026-11-26 verfügbar
+- **Paper-PDF**: [English](../paper/101_en.pdf) · [简体中文](../paper/101_zh.pdf)(日本語: ab 2026-11-26 verfügbar)
 
 **Zusammenfassung (aus dem Japanischen übersetzt)**: Wir stellen Fullseye vor, eine Open-Source-Plattform, die Verarbeitungen für Bildprüfung und 3-D-Messung als Ketten von Operatoren mit deklarierten Ein- und Ausgabedatentypen aufbaut, sie quantitativ gegen eine durch Physik- und Abbildungssimulation erzeugte Ground Truth bewertet und Ablauf, Bewertung und Fehlerbedingungen zur Wiederverwendung festhält. Sie besteht aus rund 3,000 typisierten Operatoren, einer Prüfung, die Typfehler vor der Ausführung ablehnt, einer mehrsprachigen Operatorsuche (RAG) und über 200 Machbarkeitsprogrammen mit Ground Truth. Berichtet werden die quantitative Bewertung repräsentativer Beispiele und die Unterscheidung zwischen synthetischer, gemessener und Hardware-Validierung.
 

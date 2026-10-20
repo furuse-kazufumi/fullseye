@@ -679,7 +679,7 @@ Le PoC de fusion de mise au point s'exécute en environ 20 secondes et affiche s
 - **Titre**: Fullseye：型付き演算子と物理シミュレーションに基づく画像検査・三次元計測基盤 _(ja)_ (une base pour l'inspection d'images et la mesure 3D, construite sur des opérateurs typés et la simulation physique)
 - **Auteur**: Kazufumi Furuse (chercheur indépendant)
 - **Publication**: ViEW2026, atelier sur l'utilisation pratique des technologies de vision
-- **PDF de l'article**: disponible à partir du 2026-11-26
+- **PDF de l'article**: [English](../paper/101_en.pdf) · [简体中文](../paper/101_zh.pdf)(日本語: disponible à partir du 2026-11-26)
 
 **Résumé**: Nous proposons Fullseye, une base open source qui assemble les traitements d'inspection d'images et de mesure 3D sous forme de chaînes d'opérateurs dont les types de données d'entrée et de sortie sont déclarés, les évalue quantitativement par rapport à une vérité terrain produite par simulation physique et d'imagerie, et enregistre la procédure de traitement, l'évaluation et les conditions d'échec afin de les réutiliser. Elle comprend environ 3,000 opérateurs typés, une vérification qui rejette les incohérences de types avant l'exécution, une recherche d'opérateurs multilingue (RAG) et plus de 200 programmes de démonstration dotés d'une vérité terrain ; nous présentons l'évaluation quantitative d'exemples représentatifs ainsi que la distinction entre les étapes de validation synthétique, mesurée et sur matériel réel.
 
