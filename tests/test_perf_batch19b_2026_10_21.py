@@ -202,3 +202,15 @@ def test_104_torus_eliminated_radius_matches_three_noisy_fits():
         np.testing.assert_allclose(got["residual"], expected["residual"],
                                    rtol=1e-10, atol=1e-12)
         np.testing.assert_allclose(got["r"], expected["r"], rtol=1e-8, atol=1e-10)
+
+
+def test_105_cone_eliminated_angle_matches_noisy_fits_and_bounds():
+    rng = np.random.default_rng(105)
+    for index, angle in enumerate((.08, .4, 1.3)):
+        points = _cone_points(500, angle, index)
+        points += rng.normal(0, .002, points.shape)
+        expected = fit_primitives_ext.fit_cone(points)
+        got = fit_primitives_ext.fit_cone(points, method="eliminate_angle")
+        np.testing.assert_allclose(got["residual"], expected["residual"],
+                                   rtol=1e-8, atol=1e-10)
+        assert 1e-3 <= got["half_angle"] <= np.pi/2 - 1e-3
