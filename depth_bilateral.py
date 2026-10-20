@@ -168,13 +168,15 @@ def joint_bilateral(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。
 
     深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
     **guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
     同一形状必須(fail-closed)。
+    ``chunk`` limits peak memory by processing row tiles; 64 is the measured
+    speed-preserving default, while callers may tune it or pass ``None``.
     """
     d = np.asarray(depth, dtype=float)
     g = np.asarray(guide, dtype=float)
