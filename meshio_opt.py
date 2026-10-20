@@ -271,10 +271,9 @@ def _read_accessor(gltf, buffers, ai: int, src: str) -> np.ndarray:
     if start < 0 or span > len(data):
         raise ValueError("%s: accessor %d needs bytes [%d, %d) but its buffer holds %d"
                          % (src, ai, start, span, len(data)))
-    raw = np.frombuffer(data, np.uint8, count=stride * (count - 1) + elem, offset=start)
-    view = np.lib.stride_tricks.as_strided(raw, shape=(count, elem),
-                                           strides=(stride, 1))
-    return np.ascontiguousarray(view).view(comp).reshape(count, ncomp)
+    view = np.ndarray((count, ncomp), dtype=comp, buffer=data, offset=start,
+                      strides=(stride, comp.itemsize))
+    return np.array(view, copy=True, order="C")
 
 
 def _triangulate_indices(idx: np.ndarray, mode, src: str) -> np.ndarray:
@@ -377,6 +376,12 @@ def read_gltf(path: str) -> list:
     buffers = _gltf_buffers(gltf, os.path.dirname(os.path.abspath(src)), src)
     meshes = getattr(gltf, "meshes", None) or []
     scene = []
+    accessor_cache = {}
+
+    def accessor(ai):
+        if ai not in accessor_cache:
+            accessor_cache[ai] = _read_accessor(gltf, buffers, ai, src)
+        return accessor_cache[ai]
     for node, mi, world in _iter_mesh_nodes(gltf, src):
         if mi < 0 or mi >= len(meshes):
             raise ValueError("%s: node references missing mesh %d" % (src, mi))
@@ -387,11 +392,11 @@ def read_gltf(path: str) -> list:
             pos_ai = getattr(attrs, "POSITION", None) if attrs is not None else None
             if pos_ai is None:
                 continue                                # nothing to place (e.g. pure morph target)
-            V = _finite_points(_read_accessor(gltf, buffers, int(pos_ai), src)
+            V = _finite_points(accessor(int(pos_ai))
                                .astype(np.float64), "vertices", src)
             idx_ai = getattr(prim, "indices", None)
             if idx_ai is not None:
-                idx = _read_accessor(gltf, buffers, int(idx_ai), src).astype(np.int64).ravel()
+                idx = accessor(int(idx_ai)).astype(np.int64).ravel()
             else:
                 idx = np.arange(V.shape[0], dtype=np.int64)
             F = _triangulate_indices(idx, getattr(prim, "mode", None), src)
@@ -431,8 +436,13 @@ def read_gltf_merged(path: str, apply_transforms: bool = True):
         off += V.shape[0]
     if not Vs:
         return np.zeros((0, 3), np.float64), np.zeros((0, 3), np.int64)
-    V = _finite_points(np.concatenate(Vs, axis=0), "vertices", str(path))
-    F = np.concatenate(Fs, axis=0).astype(np.int64)
+    V = np.empty((sum(v.shape[0] for v in Vs), 3), np.float64)
+    F = np.empty((sum(f.shape[0] for f in Fs), 3), np.int64)
+    vi = fi = 0
+    for v, f in zip(Vs, Fs):
+        V[vi:vi + len(v)] = v; vi += len(v)
+        F[fi:fi + len(f)] = f; fi += len(f)
+    V = _finite_points(V, "vertices", str(path))
     return V, F
 
 
@@ -484,9 +494,9 @@ def read_las(path: str):
         raise ValueError("%s: not a valid LAS/LAZ file (%s: %s)"
                          % (src, type(e).__name__, e)) from None
 
-    P = _finite_points(np.column_stack([np.asarray(las.x, np.float64),
-                                        np.asarray(las.y, np.float64),
-                                        np.asarray(las.z, np.float64)]), "points", src)
+    P = np.empty((n, 3), np.float64)
+    P[:, 0] = las.x; P[:, 1] = las.y; P[:, 2] = las.z
+    P = _finite_points(P, "points", src)
     dims = set(las.point_format.dimension_names)
     attrs: dict = {}
     if "intensity" in dims:
@@ -523,6 +533,15 @@ def read_pcd(path: str):
     """
     src = str(path)
     _stat_or_raise(src)
+    with open(src, "rb") as header_file:
+        header = header_file.read(min(os.path.getsize(src), 65536))
+    marker = header.find(b"DATA ")
+    if marker >= 0:
+        head = header[:marker].decode("ascii", "ignore").splitlines()
+        declared = next((line.split(None, 1)[1] for line in head
+                         if line.upper().startswith("POINTS ")), None)
+        if declared is not None:
+            _check_count(int(declared), "points", MAX_POINTS, "MAX_POINTS", src)
     _need("pypcd4", "read_pcd", "pypcd4")
     from pypcd4 import PointCloud
 

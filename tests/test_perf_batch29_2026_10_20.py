@@ -12,6 +12,7 @@ import dsp
 import funct1d
 import doe
 import graphinv
+import meshio_opt
 import pivops
 
 
@@ -228,6 +229,18 @@ def test_412_oa_strength_matches_original_counts():
                             if int(np.sum((t[:,a]==x)&(t[:,b]==y))) != want: return False
             return True
         assert doe._oa_strength2_ok(table) is ref(table)
+
+
+def test_414_strided_accessor_owned_and_identical():
+    from types import SimpleNamespace as NS
+    raw=bytearray(5*16)
+    vals=np.arange(15,dtype="<f4").reshape(5,3)
+    for i,row in enumerate(vals): raw[i*16:i*16+12]=row.tobytes()
+    gltf=NS(accessors=[NS(sparse=None,bufferView=0,componentType=5126,type="VEC3",count=5,byteOffset=0)],
+            bufferViews=[NS(buffer=0,byteStride=16,byteOffset=0)])
+    got=meshio_opt._read_accessor(gltf,[raw],0,"memory")
+    np.testing.assert_array_equal(got,vals)
+    assert got.flags.owndata and got.flags.c_contiguous
 
 
 def test_410_lhs_early_rejection_preserves_design_and_rng_state(monkeypatch):
