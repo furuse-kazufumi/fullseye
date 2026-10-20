@@ -542,7 +542,8 @@ def _figures(rig, X, XX, YY, h, p, q, photo, ph, pm, qm, k_map, z, row, lifts, c
     figs.save_grid("sample", [h * um, k_map],
                    ["仕込んだ高さ [µm](真値)", "測った平均曲率 [1/mm](±2.5e-3)"],
                    title="塗装パネルに仕込んだもの: 凹み 3 µm と 1 µm、うねり 0.8 µm、研磨ムラ 0.12 µm",
-                   ncols=2, signed=[True, True], vrange=[None, (-2.5e-3, 2.5e-3)],
+                    ncols=2, signed=[True, True], vrange=[None, (-2.5e-3, 2.5e-3)],
+                    kind=["height", None], unit=["µm", "1/mm"], colorbar=[True, True], cmap=["turbo", "turbo"],
                    caption="左が真値の高さ(視野 40 mm、青 = 高い・橙 = 低い)。左上が凹み A(3 µm)、右下が凹み B(1 µm)、"
                            "右上の斑が研磨ムラ、全体の斜めの縞がうねり。右は縞の鏡像から測った平均曲率(青 = 凹み)。")
     wx = ph["wx"]
@@ -602,7 +603,8 @@ def _figures(rig, X, XX, YY, h, p, q, photo, ph, pm, qm, k_map, z, row, lifts, c
     figs.save_grid("ambiguity_map", [dzm * um, (dzm - plane) * um],
                    ["0.3 mm 浮かせたときの、積分した高さの狂い [µm]", "そこから平面を引いた残り [µm]"],
                    title="浮かせた平らな板は、傾いて曲がった板に見える(凹みは変わらない)",
-                   ncols=2, signed=True,
+                    ncols=2, signed=True,
+                    kind="height", unit="µm",
                    caption="平らな板を 0.3 mm 浮かせただけで、測った高さは 40 mm で約 14 µm 傾く(左、視野の中心で 3.4e-4 rad)。"
                            "傾きの狂いは視野の中で一様でない(画素ごとに入射角と距離が違う)ので、平面を引いても半径 %.0f m の椀に"
                            "相当する曲がりが残る(右)。凹みの位置に残る小さな濃淡が局所の影響で、深さは 1 %% 未満しか変わらない。"
