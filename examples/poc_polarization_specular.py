@@ -133,10 +133,11 @@ def fig_dofp_camera():
     if not figs.enabled():
         return None
     r = dofp_inspection_scene(size=1024, seed=33)
-    figs.save_grid("raw_polarizer_mosaic", [r["raw_mosaic"], *r["analyzers"]],
-                   ["raw 2x2 mosaic", "0 deg", "45 deg", "90 deg", "135 deg"],
-                   ncols=5, gray=True,
-                   caption="Raw four-angle mosaic and half-resolution separated analyzer samples; glare clipping and extinction leakage are retained.")
+    figs.save("raw_polarizer_mosaic", r["raw_mosaic"], gray=True,
+              caption="Raw four-angle 2x2 mosaic at sensor resolution; glare clipping and extinction leakage are retained.")
+    figs.save_grid("analyzer_samples", list(r["analyzers"]),
+                   ["0 deg", "45 deg", "90 deg", "135 deg"], ncols=4, gray=True,
+                   caption="Half-resolution analyzer samples separated from the mosaic (one quarter of the pixels each).")
     s0, s1, s2 = r["stokes"]
     hue = np.mod(r["aolp_deg"], 180.0) / 180.0
     h6 = hue * 6.0

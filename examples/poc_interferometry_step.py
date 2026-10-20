@@ -157,9 +157,10 @@ def fig_surface_csi():
     lo, hi = float(np.nanmin(r["truth_um"])), float(np.nanmax(r["truth_um"]))
 
     def coloured(a, vmin, vmax, unit):
-        rgb = np.asarray(fs.colorize_depth(np.nan_to_num(a, nan=vmin), vmin=vmin, vmax=vmax), float)[..., :3]
-        lut = np.asarray(fs.colorize_depth(np.linspace(vmin, vmax, 256)[None], vmin=vmin, vmax=vmax))[0, :, :3]
-        return np.asarray(AN.color_bar(rgb, lut, (420, 36, 18, 434), vmin=vmin, vmax=vmax, unit=unit), float)
+        rgb = np.asarray(fs.colorize_depth(np.nan_to_num(a, nan=vmin), name="turbo", vmin=vmin, vmax=vmax), float)[..., :3]
+        lut = np.asarray(fs.colorize_depth(np.linspace(vmin, vmax, 256)[None], name="turbo", vmin=vmin, vmax=vmax))[0, :, :3]
+        rgb = np.pad(rgb, ((0, 0), (0, 112), (0, 0)), constant_values=1.0)  # バーは右の白い余白へ
+        return np.asarray(AN.color_bar(rgb, lut, (522, 36, 18, 434), vmin=vmin, vmax=vmax, unit=unit), float)
 
     err_nm = (r["height_um"] - r["truth_um"]) * 1000.0
     panels = [coloured(r["truth_um"], lo, hi, "um"),

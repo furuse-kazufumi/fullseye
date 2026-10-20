@@ -736,10 +736,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_interferometry_step.py`
 
-- **L400** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
-- **L443** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
-- **L515** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
-- **L555** — ★A small spread is no evidence of correctness
+- **L401** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L444** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L516** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L556** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_interreflection_fringe_error.py`
 
