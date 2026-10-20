@@ -60,6 +60,16 @@ def _peak_ratio_reference(corr, pi, pj, top):
     return np.inf if not np.isfinite(second) or second <= 0 else float(top / second)
 
 
+def _swap_reference(adj, pairs):
+    b = graphinv._as_binary_adjacency(adj, "adj", "graph_swap_symmetry")
+    np.fill_diagonal(b, 0)
+    perm = np.arange(len(b))
+    for i, j in pairs:
+        perm[i], perm[j] = j, i
+    bm = b[np.ix_(perm, perm)]
+    return int(((b == 1) & (bm == 1)).sum()), int(((b == 1) | (bm == 1)).sum())
+
+
 def test_396_cycle3_matches_reference_random_and_overflow_guard():
     rng = np.random.default_rng(396)
     for n in (1, 3, 17, 80):
@@ -70,6 +80,16 @@ def test_396_cycle3_matches_reference_random_and_overflow_guard():
     a = np.ones((300, 300), dtype=np.uint8)
     np.fill_diagonal(a, 0)
     assert graphinv.graph_cycle3(a)["cycles3"] == _cycle3_reference(a)
+
+
+def test_400_swap_symmetry_shared_and_union_match_reference():
+    rng = np.random.default_rng(400)
+    pairs = [(i, i + 1) for i in range(0, 40, 2)]
+    for density in (0.01, 0.24, 0.25, 0.8):
+        a = (rng.random((80, 80)) < density).astype(np.uint8)
+        shared, union = _swap_reference(a, pairs)
+        got = graphinv.graph_swap_symmetry(a, pairs)
+        assert (got["shared"], got["union"]) == (shared, union)
 
 
 def test_408_min_dist_matches_reference_including_duplicates():

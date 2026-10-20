@@ -290,12 +290,20 @@ def graph_swap_symmetry(adj, pairs):
             raise ValueError("%s: node %d or %d appears in more than one pair" % (op, i, j))
         seen.add(i); seen.add(j)
         perm[i], perm[j] = j, i
-    Bm = B[np.ix_(perm, perm)]
-    shared = int(((B == 1) & (Bm == 1)).sum())
-    union = int(((B == 1) | (Bm == 1)).sum())
+    edges = int(B.sum())
+    # Below 25% density, checking only existing edges avoids constructing and
+    # comparing two full matrices.  Dense inputs retain the vectorized path.
+    if edges < B.size // 4:
+        row, col = np.nonzero(B)
+        shared = int(B[perm[row], perm[col]].sum())
+        union = 2 * edges - shared
+    else:
+        Bm = B[np.ix_(perm, perm)]
+        shared = int(((B == 1) & (Bm == 1)).sum())
+        union = int(((B == 1) | (Bm == 1)).sum())
     return {
         "jaccard": shared / union if union else 1.0,
-        "shared": shared, "union": union, "edges": int(B.sum()),
+        "shared": shared, "union": union, "edges": edges,
         "n_pairs": len(seen) // 2,
     }
 
