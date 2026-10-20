@@ -7,6 +7,7 @@ import numpy as np
 from scipy import ndimage
 
 import occupancy
+import varmodel
 
 
 def _inflate_reference(occ, radius, voxel_size=1.0):
@@ -63,3 +64,29 @@ def test_270_esdf_matches_reference_and_preserves_input():
     got = occupancy.esdf(occ, (0.5, 1.0, 2.0))
     assert np.array_equal(got, _esdf_reference(occ, (0.5, 1.0, 2.0)))
     assert np.array_equal(occ, before)
+
+
+def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch):
+    rng = np.random.default_rng(256)
+    center = rng.normal(size=(48, 52))
+    model = {
+        "center": center, "spread": np.full(center.shape, 0.7),
+        "valid": np.ones(center.shape, bool), "k": 2.5, "far": 0.01,
+        "spread_kind": "std", "n": 20,
+        "alignment": {"observable": False, "max_misalign_px": 0.5},
+    }
+    image = center + rng.normal(scale=0.3, size=center.shape)
+    full = varmodel.varmodel_score(image, model, align="translate")
+    z, valid = varmodel._calibration_z_valid(image, model)
+    assert np.array_equal(z, full["z"])
+    assert np.array_equal(valid, full["valid"])
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("calibration executed explanation work")
+
+    monkeypatch.setattr(varmodel._stats(), "binom", forbidden)
+    monkeypatch.setattr(varmodel.ndimage if hasattr(varmodel, "ndimage") else ndimage,
+                        "label", forbidden)
+    # Enough pixels for the far-tail gate; a zero offset avoids unrelated FFT work.
+    out = varmodel.varmodel_calibrate(model, np.stack([image] * 5), far=0.01)
+    assert out["calibration_n_pixels"] == image.size * 5

@@ -706,6 +706,47 @@ def varmodel_score(image, model, mask=None, align="check"):
             "max_abs_z": float(np.abs(z).max()) if nv else 0.0}
 
 
+def _calibration_z_valid(image, model):
+    """Return the translate-mode z map and validity mask without explanations."""
+    img = _image(image, "image", "varmodel_calibrate")
+    center = np.asarray(model["center"], dtype=np.float64)
+    spread = np.asarray(model["spread"], dtype=np.float64)
+    use = np.asarray(model["valid"], dtype=bool) & (spread > 0)
+    al = model.get("alignment") or {}
+    if al.get("observable", True):
+        rr0, cc0, _psr = _offset(center, img)
+    else:
+        rr0 = cc0 = 0.0
+    mag = max(abs(rr0), abs(cc0))
+    h, w = img.shape
+    if mag > min(h, w) / 4.0:
+        raise ValueError("varmodel_score: the image is displaced by %.1f px (> a quarter of the image)" % mag)
+    work = _fourier_shift(img, -rr0, -cc0)
+    ir, ic = int(round(rr0)), int(round(cc0))
+    b = int(math.ceil(mag)) + 1
+    if mag > 0:
+        use = use.copy()
+        use[:b, :] = False
+        use[-b:, :] = False
+        use[:, :b] = False
+        use[:, -b:] = False
+    z = np.zeros_like(img)
+    z[use] = (work[use] - center[use]) / spread[use]
+    if ir or ic:
+        z = np.roll(z, (ir, ic), axis=(0, 1))
+        use = np.roll(use, (ir, ic), axis=(0, 1))
+        if ir > 0:
+            use[:ir, :] = False
+        elif ir < 0:
+            use[h + ir:, :] = False
+        if ic > 0:
+            use[:, :ic] = False
+        elif ic < 0:
+            use[:, w + ic:] = False
+        z = np.where(use, z, 0.0)
+    return z, use
+
+
 def varmodel_calibrate(model, good_images, far=None):
     """Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``).
 
@@ -736,8 +777,8 @@ def varmodel_calibrate(model, good_images, far=None):
     f = _far(model["far"] if far is None else far, op, "std")
     zs = []
     for i in range(g.shape[0]):
-        r = varmodel_score(g[i], model, align="translate")
-        zs.append(np.abs(r["z"][r["valid"]]))
+        z_map, valid_map = _calibration_z_valid(g[i], model)
+        zs.append(np.abs(z_map[valid_map]))
     z = np.concatenate(zs) if zs else np.zeros(0)
     if z.size < 10.0 / f:
         raise ValueError("%s: %d calibration pixels are too few for far=%g (need >= %d)"
