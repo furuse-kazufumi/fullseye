@@ -444,26 +444,60 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
     keep = _search_mask(win, lim_frac)
     flow = np.zeros((2, rows.size, cols.size))
     ratio = np.zeros((rows.size, cols.size))
-    for i, r in enumerate(rows):
-        for j, c in enumerate(cols):
-            wa = A[r:r + win, c:c + win]
-            if pred is None:
-                sr = sc = 0
-            else:
+
+    def store(corr, i, j, sr=0, sc=0):
+        search = corr if keep is None else np.where(keep, corr, -np.inf)
+        k = int(np.argmax(search))
+        pi, pj = divmod(k, win)
+        top = corr[pi, pj]
+        if not np.isfinite(top) or top <= 0:
+            dy = dx = pr = np.nan
+        else:
+            c0 = win // 2
+            dy = (pi - c0) + _subpixel(corr, pi, pj, 0, peak)
+            dx = (pj - c0) + _subpixel(corr, pi, pj, 1, peak)
+            pr = _peak_ratio(search, pi, pj, top)
+        flow[0, i, j] = dy + sr
+        flow[1, i, j] = dx + sc
+        ratio[i, j] = pr
+
+    if pred is None:
+        positions = [(i, j, int(r), int(c)) for i, r in enumerate(rows)
+                     for j, c in enumerate(cols)]
+        # 128 windows bounds the real and complex FFT work arrays.
+        for first in range(0, len(positions), 128):
+            batch = positions[first:first + 128]
+            xa = np.stack([A[r:r + win, c:c + win] for _, _, r, c in batch])
+            xb = np.stack([B[r:r + win, c:c + win] for _, _, r, c in batch])
+            if subtract_mean:
+                xa = xa - xa.mean(axis=(1, 2), keepdims=True)
+                xb = xb - xb.mean(axis=(1, 2), keepdims=True)
+            if taper is not None:
+                xa = xa * taper
+                xb = xb * taper
+            corr = np.fft.fftshift(np.fft.irfft2(
+                np.conj(np.fft.rfft2(xa, axes=(-2, -1)))
+                * np.fft.rfft2(xb, axes=(-2, -1)), s=(win, win), axes=(-2, -1)),
+                axes=(-2, -1))
+            if weight is not None:
+                corr = corr / weight
+            for plane, (i, j, _, _) in zip(corr, batch):
+                store(plane, i, j)
+    else:
+        for i, r in enumerate(rows):
+            for j, c in enumerate(cols):
+                wa = A[r:r + win, c:c + win]
                 sr, sc = int(pred[0, i, j]), int(pred[1, i, j])
+                r2 = min(max(r + sr, 0), h - win)
+                c2 = min(max(c + sc, 0), w - win)
+                sr, sc = r2 - r, c2 - c
+                wb = B[r2:r2 + win, c2:c2 + win]
+                corr = _corr_map(wa, wb, taper, subtract_mean, weight)
+                store(corr, i, j, sr, sc)
             # 予測が画像の外を指したら**切り詰める**(nan にしない)。切り詰めた
             # ぶんは残差として測り直されるので測定は成立する。縁の窓を丸ごと
             # 欠測にすると、渦度・発散が縁から内側へ nan で伝播して**場全体が
             # 消える**(実測でそうなった)。
-            r2 = min(max(r + sr, 0), h - win)
-            c2 = min(max(c + sc, 0), w - win)
-            sr, sc = r2 - r, c2 - c
-            wb = B[r2:r2 + win, c2:c2 + win]
-            dy, dx, pr = _correlate_window(wa, wb, taper, subtract_mean, peak,
-                                           weight, keep)
-            flow[0, i, j] = dy + sr
-            flow[1, i, j] = dx + sc
-            ratio[i, j] = pr
 
     info = {"rows": rows + (win - 1) / 2.0, "cols": cols + (win - 1) / 2.0,
             "peak_ratio": ratio, "window": win, "overlap": ov, "peak": peak,
@@ -1228,11 +1262,19 @@ def piv_ensemble_correlate(images, window=32, overlap=0.5, peak="gauss3",
     ratio = np.zeros((rows.size, cols.size))
     for i, r in enumerate(rows):
         for j, c in enumerate(cols):
-            acc = np.zeros((win, win))
-            for k in range(len(frames) - 1):
-                acc += _corr_map(frames[k][r:r + win, c:c + win],
-                                 frames[k + 1][r:r + win, c:c + win],
-                                 taper, True, weight)
+            spectra = []
+            for frame in frames:
+                x = frame[r:r + win, c:c + win]
+                x = x - x.mean()
+                if taper is not None:
+                    x = x * taper
+                spectra.append(np.fft.rfft2(x))
+            cross = np.zeros_like(spectra[0])
+            for k in range(len(spectra) - 1):
+                cross += np.conj(spectra[k]) * spectra[k + 1]
+            acc = np.fft.fftshift(np.fft.irfft2(cross, s=(win, win)))
+            if weight is not None:
+                acc = acc / weight
             search = acc if keep is None else np.where(keep, acc, -np.inf)
             idx = int(np.argmax(search))
             pi, pj = divmod(idx, win)
