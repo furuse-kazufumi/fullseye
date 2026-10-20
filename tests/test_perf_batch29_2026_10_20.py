@@ -400,3 +400,24 @@ def test_428_stream_outlier_mask_is_identical():
     ref=pivops.piv_outlier_mask(f)
     for chunk in (1,17,128,500):
         np.testing.assert_array_equal(pivops.piv_outlier_mask_stream(f,chunk=chunk),ref)
+
+
+@pytest.mark.parametrize("shape,overlap", [((2, 3), 0.0), ((5, 7), 0.25)])
+def test_426_time_statistics_stream_matches_stacked_with_missing(monkeypatch, shape, overlap):
+    rng = np.random.default_rng(426 + shape[0])
+    flows = [rng.normal(size=(2, *shape)) for _ in range(7)]
+    flows[1][0, 0, 0] = np.nan
+    flows[2][1, 0, 0] = np.nan
+    flows[3][:, -1, -1] = np.nan
+    stack = np.stack(flows)
+    mean = np.nanmean(stack, axis=0)
+    fluct = stack - mean
+    expected_rms = np.sqrt(np.nanmean(fluct ** 2, axis=0))
+    expected_reynolds = np.nanmean(fluct[:, 0] * fluct[:, 1], axis=0)
+    info = {"rows": np.arange(shape[0]), "cols": np.arange(shape[1]), "step": 1}
+    items = iter(flows)
+    monkeypatch.setattr(pivops, "piv_cross_correlate", lambda *a, **k: (next(items), info))
+    got = pivops.piv_time_statistics([np.zeros((2, 2))] * 8, window=2, overlap=overlap)
+    np.testing.assert_allclose(got["mean"], mean, rtol=0, atol=1e-12, equal_nan=True)
+    np.testing.assert_allclose(got["rms"], expected_rms, rtol=0, atol=1e-12, equal_nan=True)
+    np.testing.assert_allclose(got["reynolds"], expected_reynolds, rtol=0, atol=1e-12, equal_nan=True)
