@@ -93,7 +93,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 光学フローの固定係数とワープ座標を再利用し、ボクセル集約・円錐/トーラス/楕円体当てはめの不要な再計算を除いた。
 
 ### Changed — 光学・電子顕微鏡・経路探索の省計算
-- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算の省メモリ経路は `memory_budget` 指定時に選べ、既定経路の速度は維持する。
+- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算は完全一致する逐次加算を既定化し、512×513×20 で 0.667 秒から 0.675 秒（1.01 倍）のまま入力全体の変換コピーを除いた。
 
 - Reduced temporary allocations and repeated transforms in mesh repair, curve analysis,
   signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
