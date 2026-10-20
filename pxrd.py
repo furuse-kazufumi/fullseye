@@ -850,8 +850,6 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
     = (χ₀, χ₁) [deg] で扇形だけを積分(χ は ``atan2`` の (−180, 180])。非有限の画素は mask に入っていなければ拒否する。
 
     ``n_bins`` の既定は画素 1 個の角の半分の幅になる数(``0.5·pixel/distance`` [rad])。
-    ``memory_budget`` を正のバイト数にすると、副画素を逐次集計してピークメモリを抑える。自動角度範囲では幾何を事前走査するため、
-    速度優先の既定経路より遅くなり得る。現在は値の大小によらず、省メモリ経路を選ぶ指定として扱う。
     返り値(dict): ``two_theta``(ビンの中心 [deg])・``intensity``(平均)・``count``(副画素の重みの和、0 のビンは
     ``intensity`` が nan —— 埋めない)・``sigma``(Poisson を仮定した平均の標準誤差)。
 

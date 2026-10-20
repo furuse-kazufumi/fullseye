@@ -203,6 +203,7 @@ def test_213_bincount_profile_preserves_original_summation_result():
     normals = np.dstack((-0.2 * X, -0.2 * Y, np.ones_like(X)))
     old = _old_radial_slope_profile(normals, X, Y, (0.0, 0.0), axis[1] - axis[0])
     new = tacsim._radial_slope_profile(normals, X, Y, (0.0, 0.0), axis[1] - axis[0])
+    assert len(old) == len(new) > 0
     for got, want in zip(new, old):
         assert np.array_equal(got, want)
 
