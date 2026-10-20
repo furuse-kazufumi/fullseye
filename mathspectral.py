@@ -75,6 +75,21 @@ def ula_snapshots(angles_deg=(10.0, 16.0), n_elements: int = 8, n_snapshots: int
     return X
 
 
+def _mdl_from_eigenvalues(vals, snapshots: int) -> np.ndarray:
+    """Evaluate all MDL candidates from descending covariance eigenvalues."""
+    vals = np.clip(np.asarray(vals, dtype=np.float64), 1e-300, None)
+    M = vals.size
+    sums = np.cumsum(vals[::-1])[::-1]
+    log_sums = np.cumsum(np.log(vals)[::-1])[::-1]
+    mdl = np.empty(M, dtype=np.float64)
+    for k in range(M):
+        count = M - k
+        ratio = math.exp(float(log_sums[k] / count)) / float(sums[k] / count)
+        mdl[k] = (-snapshots * count * math.log(max(ratio, 1e-300))
+                  + 0.5 * k * (2 * M - k) * math.log(snapshots))
+    return mdl
+
+
 def n_sources_mdl(X) -> dict:
     """スナップショットから波源の数を MDL 基準で推定する(Wax & Kailath 1985)。
 
@@ -87,12 +102,8 @@ def n_sources_mdl(X) -> dict:
         raise ValueError("n_sources_mdl: スナップショットは有限な (M >= 2, K) の 2-D")
     M, K = X.shape
     vals = np.clip(np.linalg.eigvalsh(X @ X.conj().T / K)[::-1], 1e-300, None)
-    mdl = []
-    for k in range(M):
-        tail = vals[k:]
-        ratio = math.exp(np.mean(np.log(tail))) / np.mean(tail)
-        mdl.append(-K * (M - k) * math.log(max(ratio, 1e-300)) + 0.5 * k * (2 * M - k) * math.log(K))
-    return {"n_sources": int(np.argmin(mdl[:M - 1])), "mdl": np.asarray(mdl), "eigenvalues": vals}
+    mdl = _mdl_from_eigenvalues(vals, K)
+    return {"n_sources": int(np.argmin(mdl[:M - 1])), "mdl": mdl, "eigenvalues": vals}
 
 
 def _cov_subspace(X, n_sources):
@@ -101,13 +112,18 @@ def _cov_subspace(X, n_sources):
         raise ValueError("到来方向推定: スナップショットは (素子数 M >= 2, K) の 2-D")
     if not np.all(np.isfinite(X)):
         raise ValueError("到来方向推定: NaN/inf がある")
-    M = X.shape[0]
-    n = n_sources_mdl(X)["n_sources"] if n_sources is None else int(n_sources)
+    M, K = X.shape
+    R = X @ X.conj().T / K
+    vals, vecs = np.linalg.eigh(R)
+    vals, vecs = vals[::-1], vecs[:, ::-1]
+    if n_sources is None:
+        mdl = _mdl_from_eigenvalues(vals, K)
+        n = int(np.argmin(mdl[:M - 1]))
+    else:
+        n = int(n_sources)
     if not 1 <= n < M:
         raise ValueError("到来方向推定: 1 <= 波源の数 < 素子の数(%d)" % M)
-    R = X @ X.conj().T / X.shape[1]
-    vals, vecs = np.linalg.eigh(R)                    # 昇順
-    return R, vals[::-1], vecs[:, ::-1], n, M
+    return R, vals, vecs, n, M
 
 
 def _spacing(spacing, who: str) -> float:

@@ -174,7 +174,17 @@ def anomaly_pro(scores, masks, fpr_max=0.3):
     w = np.zeros(nreg + 1)
     w[1:] = 1.0 / (areas * float(nreg))
     flat = s.ravel()
-    order = np.argsort(-flat, kind="mergesort")
+    good = flat[~mk.ravel()]
+    # The first good-pixel group beyond the requested FPR is sufficient for
+    # interpolation.  Keep its ties intact and retain every defect pixel so
+    # that defect-only score groups before that point cannot disappear.
+    n_good_needed = int(math.floor(fm * nneg)) + 1
+    if fm == 1.0 or n_good_needed >= nneg:
+        selected = np.arange(flat.size)
+    else:
+        boundary = np.partition(good, nneg - n_good_needed)[nneg - n_good_needed]
+        selected = np.flatnonzero(mk.ravel() | (flat >= boundary))
+    order = selected[np.argsort(-flat[selected], kind="mergesort")]
     sv = flat[order]
     cp = np.cumsum(w[labs.ravel()[order]])
     cn = np.cumsum((~mk.ravel()[order]).astype(np.float64)) / nneg
@@ -349,7 +359,17 @@ def anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95):
         raise ValueError("%s: recall >= %g at confidence %g cannot be guaranteed with %d defective images "
                          "(at least %d are needed, even if all are detected)" % (op, rec, conf, pos, n_req))
     ds = np.sort(s[y])[::-1]                                         # defect scores, highest first
-    k = next(kk for kk in range(1, pos + 1) if _cp_lower(kk, pos, alpha) >= rec)
+    # For fixed n and alpha the exact lower limit is monotone in k.  ``pos``
+    # is known to be feasible from the sample-size check above, so find the
+    # first feasible count without evaluating every preceding count.
+    low, high = 1, pos
+    while low < high:
+        mid = (low + high) // 2
+        if _cp_lower(mid, pos, alpha) >= rec:
+            high = mid
+        else:
+            low = mid + 1
+    k = low
     thr = float(ds[k - 1])
     detected = int((ds >= thr).sum())
     fa = int((s[~y] >= thr).sum())
