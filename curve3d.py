@@ -101,7 +101,8 @@ def curvature_torsion(curve):
     """
     r1, r2, r3 = _d(curve)
     cross = np.cross(r1, r2)
-    cross_norm = np.linalg.norm(cross, axis=1)
+    cross_sq = np.sum(cross * cross, axis=1)
+    cross_norm = np.sqrt(cross_sq)
     r1_norm = np.linalg.norm(r1, axis=1)
     # 代表スケール L(典型 ‖r'‖, index param)。座標スケール s に線形に伴走する。
     L = float(np.median(r1_norm))
@@ -111,7 +112,7 @@ def curvature_torsion(curve):
     eps_t = 1e-12 * L ** 4   # cross_norm² と同次元(~s⁴)
     kappa = cross_norm / (r1_norm ** 3 + eps_k)
     triple = np.sum(cross * r3, axis=1)
-    tau = triple / (cross_norm ** 2 + eps_t)
+    tau = triple / (cross_sq + eps_t)
     return kappa, tau
 
 
@@ -129,7 +130,7 @@ def total_curvature(curve):
     return float(np.sum(kappa * ds))
 
 
-def resample_uniform(curve, n):
+def resample_uniform(curve, n, method="exact"):
     """弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。
 
     ``arc_length`` の累積弧長をパラメータとして ``np.linspace(0, total, n)`` の位置を
@@ -157,6 +158,16 @@ def resample_uniform(curve, n):
     if total < 1e-12:
         return np.repeat(c[:1], n, axis=0)
     targets = np.linspace(0.0, total, n)
+    if method not in ("exact", "fast"):
+        raise ValueError("method must be 'exact' or 'fast'")
+    if method == "fast":
+        right = np.searchsorted(cum, targets, side="right")
+        right = np.clip(right, 1, len(cum) - 1)
+        left = right - 1
+        span = cum[right] - cum[left]
+        weight = np.divide(targets - cum[left], span,
+                           out=np.zeros_like(targets), where=span != 0.0)
+        return c[left] + weight[:, None] * (c[right] - c[left])
     out = np.empty((n, 3))
     for j in range(3):
         out[:, j] = np.interp(targets, cum, c[:, j])
