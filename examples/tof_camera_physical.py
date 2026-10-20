@@ -80,7 +80,10 @@ def render_scene(h=240, w=320, supersample=3, seed=274, noisy=True,
     # Co-located illumination: Lambertian cosine, lens cos^4 vignetting and
     # inverse-square spreading.  A dark offset is kept separate from contrast.
     incidence = np.clip(dz, 0, 1)
-    signal = 2.6e5 * rho
+    # The slightly super-linear material response represents modulation
+    # contrast loss on very dark targets and reproduces the long amplitude
+    # tail measured between dark and retro-bright surfaces.
+    signal = 2.6e5 * rho ** 1.30
     if falloff:
         signal *= incidence ** 5 / np.maximum(dist * dist, .1)
     signal = np.clip(signal, 2, None)
@@ -104,12 +107,13 @@ def render_scene(h=240, w=320, supersample=3, seed=274, noisy=True,
     truth = bin3(dist)
     edge_mix = 1 - np.abs(clean_phasor) / np.maximum(bin3(np.abs(phasor)), 1e-9)
     dark_level = 120.0
+    background_electrons = 18000.0
     read_noise = 6.0
     rng = np.random.default_rng(seed)
     measured = clean_phasor.copy()
     if noisy:
         # Quadrature variance from shot noise, background/dark and read noise.
-        sigma_q = np.sqrt(np.maximum(clean_signal + dark_level, 1) / 2 + read_noise ** 2)
+        sigma_q = np.sqrt(np.maximum(clean_signal + background_electrons + dark_level, 1) / 2 + read_noise ** 2)
         measured += rng.normal(0, sigma_q) + 1j * rng.normal(0, sigma_q)
     amplitude = np.abs(measured)
     wrapped = np.mod(np.angle(measured), 2 * np.pi) * C / (4 * np.pi * frequency_hz)
@@ -120,7 +124,8 @@ def render_scene(h=240, w=320, supersample=3, seed=274, noisy=True,
         "edge_mix": edge_mix, "mpi_ratio": bin3(mpi_ratio),
         "ray_x": bin3(dx / dz), "ray_y": bin3(dy / dz),
         "signal": clean_signal, "dark_level": dark_level,
-        "read_noise": read_noise, "frequency_hz": frequency_hz,
+        "read_noise": read_noise, "background_electrons": background_electrons,
+        "frequency_hz": frequency_hz,
     }
 
 
