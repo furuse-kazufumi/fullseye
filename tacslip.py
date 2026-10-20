@@ -517,6 +517,17 @@ def _model_unit_field(model: dict, pts_px, c_over_a: float):
     return p0_per_P * (g1x - c_over_a ** 2 * g2x), p0_per_P * (g1y - c_over_a ** 2 * g2y)
 
 
+def _scalar_lstsq(f, obs):
+    """一列の最小二乗。数値的に零の列は従来どおり係数 0 を返す。"""
+    scale = float(np.max(np.abs(f)))
+    if scale == 0.0:
+        return 0.0
+    if scale < np.sqrt(np.finfo(np.float64).tiny):
+        return float(np.linalg.lstsq(f[:, None], obs, rcond=None)[0][0])
+    fs = f / scale
+    return float((np.dot(fs, obs) / np.dot(fs, fs)) / scale)
+
+
 def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41, rigid: bool = False) -> dict:
     """マーカー位置 pts_px (M, 2) [px] と変位 u_m (M, 2) [m] に (c/a, μP) を当てる: c/a を粗く走査 → 最良の周りを細かく、μP は各 c で
     線形最小二乗。返り ``c_over_a``・``q_ratio`` = 1 − (c/a)³・``muP``・``Q``・``mu``(= μP/P)・``rms_m``・``shift_m``。
@@ -538,9 +549,14 @@ def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41,
     def cost(ca):
         fx, fy = _model_unit_field(model, pts_px, ca)
         f = np.concatenate([fx, fy])
-        A = np.column_stack([f, ones_x, ones_y]) if rigid else f[:, None]
-        sol, *_ = np.linalg.lstsq(A, obs, rcond=None)
-        return float(np.sqrt(np.mean((obs - A @ sol) ** 2))), sol
+        if rigid:
+            A = np.column_stack([f, ones_x, ones_y])
+            sol, *_ = np.linalg.lstsq(A, obs, rcond=None)
+            residual = obs - A @ sol
+        else:
+            sol = np.array([_scalar_lstsq(f, obs)])
+            residual = obs - f * sol[0]
+        return float(np.sqrt(np.mean(residual ** 2))), sol
     grid = np.linspace(0.0, 1.0, int(n_coarse))
     costs = [cost(ca) for ca in grid]
     k = int(np.argmin([c_[0] for c_ in costs]))
