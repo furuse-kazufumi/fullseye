@@ -529,6 +529,9 @@ OP_PARAM_HINTS = {
     ("extract_surface_points", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("grid_coords", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("grid_coords", "res"): lambda rng: 16,
+    # 第 24 便(2026-10-21)の grid_axes は grid_coords と同じ bounds / res(軸を 3 本返す)
+    ("grid_axes", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("grid_axes", "res"): lambda rng: 16,
     ("integrate", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("query_distance", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("fuse", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
