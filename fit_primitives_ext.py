@@ -192,7 +192,12 @@ def fit_cone(points) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_torus(points) -> dict:
+def fit_torus(points, method: str = "exact") -> dict:
+    """Fit a torus; ``eliminate_r`` profiles out the tube radius.
+
+    The default ``exact`` optimizer is unchanged. The selectable result is
+    expected to agree in final residual to ``rtol=1e-10, atol=1e-12``.
+    """
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
@@ -210,6 +215,8 @@ def fit_torus(points) -> dict:
         ValueError: 形状不正/点数不足 fail-closed。
     """
     P = _as_points(points, 7, "fit_torus")
+    if method not in ("exact", "eliminate_r"):
+        raise ValueError("method must be 'exact' or 'eliminate_r'")
     center0 = P.mean(0)
     Q = P - center0
     diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
@@ -230,16 +237,31 @@ def fit_torus(points) -> dict:
         aa, rr = _axial_radial(P, c, n)
         return np.sqrt((rr - R) ** 2 + aa ** 2) - r
 
+    def resid_eliminated(p):
+        c = p[0:3]
+        n = _unit(p[3:6])
+        aa, rr = _axial_radial(P, c, n)
+        distances = np.sqrt((rr - p[6]) ** 2 + aa ** 2)
+        return distances - distances.mean()
+
     p0 = np.concatenate([center0, n0, [R0, r0]])
     lb = np.array([-np.inf] * 6 + [1e-9, 1e-9])
     ub = np.array([np.inf] * 8)
-    sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
-                        xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    if method == "eliminate_r":
+        sol = least_squares(resid_eliminated, p0[:-1], bounds=(lb[:-1], ub[:-1]),
+                            method="trf", xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    else:
+        sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
 
     center = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
     R = float(sol.x[6])
-    r = float(sol.x[7])
+    if method == "eliminate_r":
+        aa, rr = _axial_radial(P, center, axis)
+        r = float(np.mean(np.sqrt((rr - R) ** 2 + aa ** 2)))
+    else:
+        r = float(sol.x[7])
     residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
             "residual": residual}

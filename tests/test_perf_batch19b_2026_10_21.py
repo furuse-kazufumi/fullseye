@@ -183,3 +183,22 @@ def test_96_cone_reference_axis_normalisation_and_axis_points():
     points = np.vstack([_cone_points(), [[0, 0, .7], [0, 0, 1.4]]])
     result = fit_primitives_ext.fit_cone(points)
     assert np.isfinite(result["residual"])
+
+
+def _torus_points(seed, n=500):
+    rng = np.random.default_rng(seed)
+    major, minor = rng.uniform(1.5, 2.5), rng.uniform(.3, .7)
+    u, v = rng.uniform(0, 2*np.pi, (2, n))
+    points = np.c_[(major + minor*np.cos(v))*np.cos(u),
+                   (major + minor*np.cos(v))*np.sin(u), minor*np.sin(v)]
+    return points + rng.normal(0, .01, points.shape)
+
+
+def test_104_torus_eliminated_radius_matches_three_noisy_fits():
+    for seed in range(3):
+        points = _torus_points(seed)
+        expected = fit_primitives_ext.fit_torus(points)
+        got = fit_primitives_ext.fit_torus(points, method="eliminate_r")
+        np.testing.assert_allclose(got["residual"], expected["residual"],
+                                   rtol=1e-10, atol=1e-12)
+        np.testing.assert_allclose(got["r"], expected["r"], rtol=1e-8, atol=1e-10)
