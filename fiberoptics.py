@@ -178,6 +178,8 @@ def fiber_lp_modes(v_number=6.0, max_modes=None):
                 continue
             for _ in range(80):
                 mid = 0.5 * (lo + hi)
+                if mid == lo or mid == hi:
+                    break
                 fm = _lp_eq(l, V, mid)
                 if flo * fm <= 0:
                     hi, fhi = mid, fm
