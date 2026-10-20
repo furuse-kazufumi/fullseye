@@ -304,7 +304,10 @@ def tf_impulse_response(num, den, t) -> np.ndarray:
     t = np.asarray(t, dtype=np.float64).ravel()
     if A.size == 0:
         return np.zeros_like(t)
-    return np.array([(C @ linalg.expm(A * ti) @ B).item() for ti in t])
+    if not _uniform_expm_ok(A, t):
+        return np.array([(C @ linalg.expm(A * ti) @ B).item() for ti in t])
+    states = _uniform_expm_states(A, B, t)
+    return (states @ C.ravel()).astype(np.float64, copy=False)
 
 
 def tf_step_response(num, den, t) -> np.ndarray:
@@ -325,10 +328,45 @@ def tf_step_response(num, den, t) -> np.ndarray:
     M = np.zeros((n + 1, n + 1))
     M[:n, :n] = A
     M[:n, n:] = B
-    out = np.empty_like(t)
+    if not _uniform_expm_ok(M, t):
+        out = np.empty_like(t)
+        for k, ti in enumerate(t):
+            E = linalg.expm(M * ti)
+            out[k] = (C @ E[:n, n:]).item() + D
+        return out
+    seed = np.zeros((n + 1, 1))
+    seed[-1, 0] = 1.0
+    states = _uniform_expm_states(M, seed, t)
+    return states[:, :n] @ C.ravel() + D
+
+
+_EXPM_RESTART = 256
+_EXPM_STEP_NORM_LIMIT = 50.0
+
+
+def _uniform_expm_ok(A, t):
+    """等間隔で、1 ステップの指数が過大でない場合だけ反復経路を許す。"""
+    if t.size < 2:
+        return False
+    dt = float(t[1] - t[0])
+    if not np.isfinite(dt) or dt == 0.0:
+        return False
+    if not np.all(np.abs(np.diff(t) - dt) <= 1e-12 * abs(dt)):
+        return False
+    return float(linalg.norm(A * dt, 1)) <= _EXPM_STEP_NORM_LIMIT
+
+
+def _uniform_expm_states(A, seed, t):
+    """F=exp(A dt) で進め、丸めの蓄積を抑えるため 256 点ごとに絶対時刻から再初期化する。"""
+    F = linalg.expm(A * float(t[1] - t[0]))
+    out = np.empty((t.size, A.shape[0]), dtype=np.float64)
+    state = None
     for k, ti in enumerate(t):
-        E = linalg.expm(M * ti)
-        out[k] = (C @ E[:n, n:]).item() + D
+        if k % _EXPM_RESTART == 0:
+            state = linalg.expm(A * ti) @ seed
+        else:
+            state = F @ state
+        out[k] = state.ravel()
     return out
 
 
