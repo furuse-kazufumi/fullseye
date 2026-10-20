@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # vol_affine — 3D `geom_transform` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import fullseye as fs; fs.ledger.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0)` (実装を直接呼ぶなら `import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0)`、台帳から引くなら `ops3d.get("vol_affine")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0, output=None, method='exact')` (実装を直接呼ぶなら `import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0, output=None, method='exact')`、台帳から引くなら `ops3d.get("vol_affine")`)
 
 ## 使い方
 
@@ -44,7 +44,12 @@ against ``MAX_VOXELS`` before allocation. *order* is the spline degree
 (exact integer 0..5). Voxels whose source coordinate falls outside the
 input are filled per *mode*/*cval*.
 
-Returns a float64 volume of *output_shape*.
+Returns a float64 volume of *output_shape*.  *output* may be a writable,
+C-contiguous float64 array of that shape; it must not overlap *vol*.
+``method="exact"`` preserves the established matrix path.  On an exactly
+diagonal matrix, ``method="fast"`` uses the lower-memory diagonal form;
+its measured maximum difference is below 1e-12 on ordinary data and
+below 1e-9 for a 1e6 offset with 1e-8 variation.
 
 Empty input (``vol`` with 0 elements) raises ``ValueError``.
 
