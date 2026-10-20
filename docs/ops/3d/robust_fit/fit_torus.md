@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # fit_torus — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fit_torus(points) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_torus(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_torus")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_torus(points, axis_parameterization='cartesian') -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_torus(points, axis_parameterization='cartesian') -> 'dict'`、台帳から引くなら `ops3d.get("fit_torus")`)
 
 ## 使い方
 

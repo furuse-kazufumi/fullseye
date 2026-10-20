@@ -199,11 +199,6 @@ def fit_torus(points, axis_parameterization="cartesian") -> dict:
     ``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
     初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
 
-    ``axis_parameterization="tangent"`` uses two local axis coordinates.  It
-    can change convergence; measured centre/radii and sign-invariant axis
-    differences on full noisy tori are below 1e-9.  The default
-    ``"cartesian"`` path is unchanged.
-
     Args:
         points: (N,3) 点群(最低 7 点)。
 
@@ -243,6 +238,7 @@ def fit_torus(points, axis_parameterization="cartesian") -> dict:
         e2 = np.cross(n0, e1)
 
         def tangent_resid(p):
+            """Two-axis-coordinate mode; measured geometric delta is below 1e-9."""
             n = _unit(n0 + p[3] * e1 + p[4] * e2)
             aa, rr = _axial_radial(P, p[0:3], n)
             return np.sqrt((rr - p[5]) ** 2 + aa ** 2) - p[6]
