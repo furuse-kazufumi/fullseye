@@ -1,27 +1,30 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">points</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जिन points की k neighbours से औसत दूरी global रूप से अलग है उन्हें हटाता है (statistical outlier removal)।</p>
-<p>हर point के लिए &quot;सबसे पास के k points (ख़ुद को छोड़कर) तक की औसत दूरी&quot; मापता है, और सभी points के उस distribution के <code style="color:#22d3bf">mean + std_ratio*std</code> से ज़्यादा वाले points को outlier मानकर हटा देता है। बिखरे हुए outliers की सफ़ाई में उपयोगी, और घनी surface के points बने रहते हैं।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>input point cloud।</p>
+<p>入力点群。</p>
 <p>k : int</p>
-<p>neighbours की संख्या (default 16)। points कम हों तो अंदर <code style="color:#22d3bf">n-1</code> तक घटा दिया जाता है।</p>
+<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
 <p>std_ratio : float</p>
-<p>threshold कितना ढीला है। जितना बड़ा, points उतनी आसानी से बचते हैं (हटाना ढीला)।</p>
+<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>chunk : int or None</p>
+<p>指定時は近傍照会をこの点数ずつ行う。既定 <code style="color:#22d3bf">None</code> は従来経路。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>बचे हुए points (मूल क्रम बना रहता है)।</p>
+<p>生き残った点(元の順序を保持)。</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>हर input point रखना है या नहीं (True=रखें)। <code style="color:#22d3bf">points[keep_mask]</code> <code style="color:#22d3bf">filtered</code> के बराबर है।</p>
+<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>points &lt; 3 होने पर statistics नहीं बनती, इसलिए सभी points रखे जाते हैं (graceful)।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: पॉइंट क्लाउड का विरलन, आउटलायर हटाना और ड्रॉपआउट खाली परिणाम दे सकते हैं; खाली क्लाउड एक वैध मान है और शृंखला का अगला चरण उस पर नहीं रुकना चाहिए)।</p>
+<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
