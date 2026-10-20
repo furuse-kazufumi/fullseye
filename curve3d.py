@@ -11,12 +11,12 @@ match3d.fit_line_3d / fit_circle_3d は直線・円だが、ここは**一般の
 import numpy as np
 
 
-def _d(curve):
+def _d(curve, order=3):
     """順序付き曲線 (N,3) の 1〜3 階数値微分(index パラメータ)。→ (r1, r2, r3)。"""
     c = np.asarray(curve, float)
     r1 = np.gradient(c, axis=0)
     r2 = np.gradient(r1, axis=0)
-    r3 = np.gradient(r2, axis=0)
+    r3 = np.gradient(r2, axis=0) if order >= 3 else None
     return r1, r2, r3
 
 
@@ -66,7 +66,7 @@ def frenet_frame(curve):
 
     曲率・捩率の数値そのものは ``curvature_torsion``、弧長は ``arc_length``。
     """
-    r1, r2, _ = _d(curve)
+    r1, r2, _ = _d(curve, order=2)
     T = r1 / (np.linalg.norm(r1, axis=1, keepdims=True) + 1e-12)
     # 主法線 = 接線変化方向(r2 の T 直交成分)
     proj = np.sum(r2 * T, axis=1, keepdims=True) * T
@@ -117,7 +117,13 @@ def curvature_torsion(curve):
 
 def total_curvature(curve):
     """全曲率 ∫κ ds(曲線の総曲がり量)。→ scalar。"""
-    kappa, _ = curvature_torsion(curve)
+    r1, r2, _ = _d(curve, order=2)
+    cross_norm = np.linalg.norm(np.cross(r1, r2), axis=1)
+    r1_norm = np.linalg.norm(r1, axis=1)
+    L = float(np.median(r1_norm))
+    if not np.isfinite(L) or L <= 0.0:
+        raise ValueError("degenerate curve: all points coincide/overlap so ||r'||=0, cannot compute kappa/tau")
+    kappa = cross_norm / (r1_norm ** 3 + 1e-12 * L ** 3)
     cum, _ = arc_length(curve)
     ds = np.gradient(cum)
     return float(np.sum(kappa * ds))
