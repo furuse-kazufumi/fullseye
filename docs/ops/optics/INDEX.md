@@ -1,4 +1,4 @@
-# OPTICS operator help — 423 ops in 48 categories
+# OPTICS operator help — 447 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -145,6 +145,10 @@
 ### oct (13)
 
 [oct_ascan](oct/oct_ascan.md) · [oct_bscan](oct/oct_bscan.md) · [oct_bscan_boundaries](oct/oct_bscan_boundaries.md) · [oct_bscan_flatten](oct/oct_bscan_flatten.md) · [oct_bscan_simulate](oct/oct_bscan_simulate.md) · [oct_design](oct/oct_design.md) · [oct_dispersion_broadening](oct/oct_dispersion_broadening.md) · [oct_dispersion_compensate](oct/oct_dispersion_compensate.md) · [oct_dispersion_estimate](oct/oct_dispersion_estimate.md) · [oct_from_spectra](oct/oct_from_spectra.md) · [oct_interferogram](oct/oct_interferogram.md) · [oct_k_linearize](oct/oct_k_linearize.md) · [oct_layer_thickness](oct/oct_layer_thickness.md)
+
+### omni360 (24)
+
+[anaglyph](omni360/anaglyph.md) · [anaglyph_crosstalk](omni360/anaglyph_crosstalk.md) · [anaglyph_from_ods](omni360/anaglyph_from_ods.md) · [cubemap_from_equirect](omni360/cubemap_from_equirect.md) · [equirect_defect_unwrap_pipe](omni360/equirect_defect_unwrap_pipe.md) · [equirect_filter_gaussian](omni360/equirect_filter_gaussian.md) · [equirect_from_cubemap](omni360/equirect_from_cubemap.md) · [equirect_from_fisheye_pair](omni360/equirect_from_fisheye_pair.md) · [equirect_from_perspectives](omni360/equirect_from_perspectives.md) · [equirect_rotate](omni360/equirect_rotate.md) · [equirect_stabilise](omni360/equirect_stabilise.md) · [equirect_weight_map](omni360/equirect_weight_map.md) · [ods_depth_to_disparity](omni360/ods_depth_to_disparity.md) · [ods_disparity_to_depth](omni360/ods_disparity_to_depth.md) · [ods_render](omni360/ods_render.md) · [s_psnr](omni360/s_psnr.md) · [stereo360_sbs](omni360/stereo360_sbs.md) · [stereo360_top_bottom](omni360/stereo360_top_bottom.md) · [stereo_pack](omni360/stereo_pack.md) · [stereo_parallax_budget](omni360/stereo_parallax_budget.md) · [video360_tile_coverage](omni360/video360_tile_coverage.md) · [video360_viewport_track](omni360/video360_viewport_track.md) · [viewport_from_equirect](omni360/viewport_from_equirect.md) · [ws_psnr](omni360/ws_psnr.md)
 
 ### optimization (3)
 

@@ -73,7 +73,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[film_thickness_map](../film/film_thickness_map.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md) · [render_transport](render_transport.md) · [separate_direct_global](separate_direct_global.md) · [micro_phase_decode](micro_phase_decode.md)
+[film_thickness_map](../film/film_thickness_map.md) · [equirect_from_cubemap](../omni360/equirect_from_cubemap.md) · [equirect_stabilise](../omni360/equirect_stabilise.md) · [equirect_from_fisheye_pair](../omni360/equirect_from_fisheye_pair.md) · [equirect_from_perspectives](../omni360/equirect_from_perspectives.md) · [video360_viewport_track](../omni360/video360_viewport_track.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md)
 
 ## 同カテゴリ(`light_transport`)
 

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(418 例)
+### 2-D 画像/信号/幾何(419 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -457,6 +457,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点** — メリット関数を、行ごとに目標・重み・片側の境界を持つオペランド表にする。新 op 6 本(`lensmerit`、`opsoptics` の `lensmerit`): `merit_operands_list` / `merit_evaluate`(行ごとの値・寄与・割合)/ `merit_default`(瞳全体の光線行 + EFL の保持)/ `merit_boundary_operands`(縁厚・中心厚・空気間隔)/ `optimize_lens_operands`(lensopt の LM に、硝材 g<i> を選ぶ離散の外側ループを足す)/ `merit_contributions`。薄肉色消しの閉形式・平凸の縁厚・Snell の式・理想レンズの F ナンバーと、独立実装の記録値で採点し、縁の薄い三枚玉を最適化して支配する行が EFL の保持から波面へ移るのを示し、負レンズの硝材を間違えた出発点で硝材を変数にすると軸上色が 1/17 に落ちる。 `py -3.11 examples/poc_lens_merit_operands.py`
 - **処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点** — レンズ設計の画面はスポットダイアグラムや MTF の数字までは出すが、「この処方で 1 m 先の資料を撮ると絵はどう写るか」は見せない。センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけ、光子・ショットノイズ・読み出しノイズ・量子化まで通す。新 op 8 本(`lensrender`、`opsoptics` の `lensrender`): `lens_scene`(平面・球・メッシュ・光源の場面の検証)/ `exit_pupil_samples` / `trace_sensor_rays`(センサ → 瞳 → 全面を逆向きに、ケラレと全反射は NaN と印)/ `scene_radiance`(ランバート + ブリン・フォン + 影)/ `render_scene_through_lens`(放射照度 → 電子数 → ノイズ → 画像)/ `bokeh_shape`(猫の目)/ `render_ghost_overlay`(2 回反射のゴースト)/ `render_compare_prescriptions`(処方ごとの品質の表)。(1) 逆向きの追跡は `ray_bundle` の逆(入射点 8.7e-15 mm、方向 4.2e-16)、理想レンズ越しの白い面は π L sin²α に相対 2e-6、点光源は画素 1 つに入り光子数が I Ω t QE λ/hc に 1e-6、市松の刃 15 本は `distortion_map` に 0.096 px(歪みは外縁で 5.2 px)、0.7 視野の横色収差は `chromatic_shift` に 0.08 px。(2) 同じ EFL・同じ F ナンバーの三枚玉 2 本(片方は半径を 7〜10 % の 1.5 倍ずらした)で解像チャートを 1 m で撮ると、RMS スポット(軸上)は 10.7 と 53.4 µm(5.0 倍)、刃の 10–90 % は 4.6 と 15.4 px、MTF50 は 0.116 と 0.053 cyc/px で、順は `spot_stats` と一致する。(3) 理想レンズの 0.5 m の点光源のボケは薄肉レンズの錯乱円に 0.31 %、F/8 は F/2.8 の 0.349 倍(2.8/8 = 0.350)。理想レンズの 20 mm 後ろの丸い遮光板では猫の目の面積比が 2 つの円の重なりの閉形式 0.635 に 1.6 % 以内(凸包 0.625・描いた絵 0.639・瞳の通過率 0.636)、子午面に 3.6e-15 mm で対称。三枚玉の隅は像面湾曲でボケの円そのものが 1.3 倍になり、面積比は通過率と一致しない(そう書く)。(4) 白い面の相対照度は `lensimage` に 0.7 視野まで 1.61 %、8.7° で 3.2 %(物体側と像側の cos⁴ の差)。絞りを前に置いた単玉の格子は隅で −6.6 % の樽型。(5) ゴースト 15 本のエネルギー比は閉形式 r² (1−r)^(2(j−i)−2) に 4.4e-16、重心は `ghost_analysis` に 8e-4 px、反射率 0 で重ねは厳密に 0。(6) 0.2 mm の傷(センサ上 10.4 µm)の対比は良い方 0.547・ずらした方 0.261(48 %)で、前向きに追跡したスポットを線に畳み込んだ独立の予測 0.542 と 0.261 に合う。(7) ★正直な限界: 幾何光学のみで回折が無く、F/11 に絞った良いレンズの点像は Airy 円盤の 0.32 倍に描かれる(F/6.25 は収差が支配で 2.7 倍)。(8) 壊して確かめる探針(屈折率の向きを逆にする・絞りの半径を 10 % 違える・合焦を 1.5 m にずらす)は門が赤になる。学習 0、較正 0、門 30 件。 `py -3.11 examples/poc_photograph_through_prescription.py`
 - **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** — 4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。 `py -3.11 examples/poc_zmx_public_verify.py`
+- **全天球の検査撮影と立体表示を一つの測定工程として確かめる** — 合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。 `py -3.11 examples/poc_omni360_inspection.py`
 - **水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点** — 水は上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタ。新 op 10 本(`watermedia`、`opsoptics` の `watermedia`): `ocean_spectrum`(Pierson–Moskowitz と JONSWAP の S(ω)、有義波高・周期)/ `ocean_height_field`(Tessendorf の FFT の海: 高さ・傾き・法線・荒れ・水深)/ `fresnel_water_air`(水の屈折率は材料表の実部で分散込み、全反射の旗つき)/ `snell_window`(窓の半径と見かけの深さ)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で。平面は二分法、波面はニュートン法でベクトルのスネルの式を検算し、外れた点は NaN)/ `water_attenuation`(Pope & Fry の純水の吸収、Smith & Baker の散乱、Solonenko & Mobley のジャーロフ型の a・b・Kd)/ `underwater_image`(Akkaynak & Treibitz の画像形成: 直接光 + 後方散乱)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold の体積散乱関数)/ `cylinder_lens_caustic`(円柱の近軸焦点と実光線の焦線)。(1) 風速 8 m/s の PM の海: 有義波高 1.3656 m(0.21 U²/g = 1.3705 m、0.36 %)、ピーク 1.0753 rad/s(0.877 g/U = 1.0751、2e-4)、JONSWAP(γ = 1)は PM と 1e-9 で一致、高さは実数(虚部 3.5e-16)、空間の分散はスペクトルの積分に 0.02 %(8 種)、単一モードの周期は 2π/ω に 2.8e-16。傾きの分散は Cox & Munk(0.003 + 0.00512 U)と比べると、格子で解ける波だけでは 5 m/s で 11 %、10 m/s で 16 %(PM は毛管波を持たない)。飽和域を毛管波数 370 /m まで延ばすと 5 m/s は 98 %(−2.5 %)だが 10 m/s は 61 %(−38.7 %)で、PM の α は風速で増えない限界として門に残す。(2) 2 m のプールの底の市松模様: 真上の見かけの深さは d/n に 0、見つけた経路はスネルの式を 7.8e-16、平面の屈折点は 4 次方程式に 1e-15・光路長の直接最小化に 2.8e-8、波面では屈折点から画像を作る逆向きの光線追跡で同じ底の点に 9.6e-9 m で戻る。水中から見上げた魚眼で全反射が始まる角は臨界角 48.59° の直後の 1 画素(1.5°)以内。(3) 水を入れた瓶(R = 30 mm、n = 1.52、壁 1.5 mm、水 1.333): 近軸焦点 61.24 mm、周縁光線 40.01 mm(球面収差 21.23 mm)、棒の近軸焦点は n R / (2 (n − 1)) に一致し、実光線の焦点は弦の三角関数と 3.6e-14。屈折力は水入り 0.01633 /mm、空 −0.00120 /mm(比 13.6)で、背後 50 mm の面の強度は水のある所の中心が入射の 4.88 倍(最大 13.97 倍)、空の所は 0.94 倍。(4) 色票を深さ 1・5・15 m で: Pope & Fry の吸収は 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m(表の値)、Beer–Lambert は glassmirror と 1.1e-16、光子 20 万個の数え上げが指数則に 0.2σ、Kd(500 nm)は 0.029 < 0.064 < 0.109 < 0.120(I < II < III < 1C)、I 型で赤は青の 12.2 倍の速さで減衰(10 m で透過率 赤 0.074・緑 0.557・青 0.807)、15 m の赤の票の R は 0.010。(5) 限界: 平らな水の見かけの深さ d/n は斜めに見るほど外れる(30° で 7 %、60° で 52 % の過大評価)。壊して確かめる探針(屈折率 1.4、α を 10 % 変える、スネルの式の向きを逆にする)は門が赤になる。学習 0、較正 0、門 43 件。 `py -3.11 examples/poc_water_transparent_media.py`
 - **水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点** — 水は検査カメラの映像を 4 通りに変える。新 op 7 本(`watervision`、`opsoptics` の `watervision`): `caustic_irradiance`(光子の数え上げとヤコビアンの 2 方法で水底の照度)/ `bottle_image`(円柱の断面を行ごとに追跡した瓶の側面像)/ `fill_level_from_image` / `wet_surface_appearance`(Lekner & Dorf)/ `wet_dry_inspection_pair` / `underwater_inspection_image`(ランプがカメラの横の船体と SNR)/ `caustic_floor_segmentation`。平らな水面は一様に cos θ · T(1e-9)、光子の総量は入射 × 平均透過率に 1e-6、光子とヤコビアンは滑らかな面で 0.30 %、折り目では波面法が inf と旗を出す。ひび割れ検出器(`canny`)はコースティクスの縁を拾って適合率 0.05、分割で縁を除くと 1.00(再現率 1.00 → 0.45)、強い波では照度で割って戻す。瓶は液面の上下が空・満の断面と bit 一致、明るい帯の半幅 9.50 mm(近軸焦点からの予測 9.91 mm)、液面は 1 画素以内、気泡の輪の外径は近軸の倍率 1.333 に ± 1 画素。濡れた面は a = 0.5 で 0.673 倍(閉形式に 1.1e-16)、傷のコントラストは 0.411 → 0.494。船体の SNR は距離で単調に落ちる。限界として、縦の傾き 40 度で帯の半幅が 29 % 動く。 `py -3.11 examples/poc_water_inspection_images.py`
 - **設計の関係を「解」で持つ ―― 絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面** — 設計の関係を規則(解)として面に持たせ、絞りや硝材を変えると残りが解き直される。新 op 9 本(`lenssolve`、`opsoptics` の `lenssolve`): `lens_apply_solves` / `lens_solve_set` / `lens_solve_clear` / `lens_solves_list` / `afocal_system` / `lens_afocal_report` / `lens_image_surface` / `lens_petzval_radius` / `lens_zmx_solves_roundtrip`。解は主光線・周辺光線の高さと角度、近軸の像、F/#、同心、アプラナティック、ピックアップ(曲率・厚み・非球面係数)。二重ガウス型で絞りを 5.0 → 7.6 mm と動かしても F/# は 5 のまま(8.9e-16)、像距離は近軸の焦点に追従し、数字を固めた版は F/# が 6.34 → 4.17 に流れる。F/# の解は根が 2 本。afocal: ケプラー・ガリレオ望遠鏡の角倍率は ∓4 に厳密で角度の収差 0、実ガラスの望遠鏡は 0〜1° で 0.60〜2.55 分角。曲面の像面: ペッツバール半径の像面は 0.7 視野の RMS を平らな像面の 1.94 µm から 0.226 µm に縮める(像面湾曲の項 1/42)。奇数次の非球面(`odd`)と r² の項(`a2`): 円錐面の板の軸との交点は Snell の閉形式と 7e-14、球面収差の補正板は r⁴ が 1/467、r³ が 1/7。`.zmx` はピックアップ 3 種と規則が不動点で往復する。学習 0、較正 0、門 35 件。 `py -3.11 examples/poc_lens_solves_afocal.py`
@@ -760,11 +761,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3520 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 423 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 957 · **3d** 373 · **math** 114 · **optics** 447 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
-### 2d(956 ops / 49 categories)
+### 2d(957 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -1648,7 +1649,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xmh_daubechies` `image → image` — Daubechies ウェーブレット変換(``mahotas.daubechies``)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。 · 例: `gallery2d_geometry`
 - `xmh_haar` `image → image` — Haar ウェーブレット変換(``mahotas.haar``)。画像を偶数サイズに切り詰めてから変換し、結果の係数配列(近似/水平/垂直/対角の各サブバンドが元画像と同じ大きさの配列に詰め込まれた、Matlab 風の in-place レイアウト)をそのまま min-max 正規化して画像として見せる。 · 例: `gallery2d_geometry`
 
-#### 2d / typed(160)
+#### 2d / typed(161)
 - `tb_abs_funct_1d` `signal → signal` — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: なし
 - `tb_alpha_shape_boundary` `points → signal` — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: なし
@@ -1804,6 +1805,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tb_temporal_median_window` `video → video` — Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``). · 例: なし
 - `tb_three_frame_difference` `video → video` — Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``). · 例: なし
 - `tb_torus_sdf` `points → volume` — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_viewport_from_equirect` `rgbimage → rgbimage` — Extract a rectilinear viewer viewport from an equirectangular image. · 例: なし
 - `tb_voxel_grid_downsample` `points → points` — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: なし
 - `tb_weighting_response` `signal → signal` — The A / C / Z frequency-weighting curve, in dB, at the given frequencies. · 例: なし
 - `tb_wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: なし
@@ -2477,7 +2479,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(423 ops / 48 categories)
+### optics(447 ops / 49 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2799,6 +2801,32 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `oct_interferogram` `入力なし → table` — 層の並び(``sample``)を OCT で 1 本測った**干渉スペクトル**(``table``)。 · 例: `poc_industrial_oct`
 - `oct_k_linearize` `table → table` — 干渉スペクトルを **k 等間隔**に並べ直す(``table`` → ``table``)。 · 例: `poc_industrial_oct`
 - `oct_layer_thickness` `table → table` — A スキャンの界面のピーク → **層の光学厚と物理厚**(``table``)。分離できない・見えないときは拒否する。 · 例: `poc_industrial_oct`
+
+#### optics / omni360(24)
+- `anaglyph` `rgbimage × rgbimage → rgbimage` — Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper. · 例: `poc_omni360_inspection`
+- `anaglyph_crosstalk` `rgbimage × rgbimage → table` — Return previews and wrong-eye/right-eye energy ratios. · 例: `poc_omni360_inspection`
+- `anaglyph_from_ods` `rgbimage × rgbimage → rgbimage` — Extract an ODS viewport pair and compose a colour-filter view.
+- `cubemap_from_equirect` `rgbimage → images` — Resample an equirectangular image into six cubemap faces. · 例: `omni360_roundtrip`
+- `equirect_defect_unwrap_pipe` `image2d → table` — Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial. · 例: `poc_omni360_inspection`
+- `equirect_filter_gaussian` `image2d → image2d` — Gaussian-filter a panorama with longitude scale adapted to latitude. · 例: `poc_omni360_inspection`
+- `equirect_from_cubemap` `images → rgbimage` — Resample six cubemap faces into an equirectangular image. · 例: `omni360_roundtrip`
+- `equirect_from_fisheye_pair` `images → table` — Stitch two calibrated fisheyes and report overlap, seam error and blind spots. · 例: `poc_omni360_inspection`
+- `equirect_from_perspectives` `images → table` — Blend a calibrated perspective rig into an equirectangular image.
+- `equirect_rotate` `rgbimage × matrix → rgbimage` — Apply a proper three-dimensional rotation to a panorama. · 例: `poc_omni360_inspection`
+- `equirect_stabilise` `images → table` — Estimate and remove camera rotations from an equirectangular sequence. · 例: `poc_omni360_inspection`
+- `equirect_weight_map` `入力なし → image2d` — Return cosine-latitude weights, optionally normalised to four pi. · 例: `poc_omni360_inspection`
+- `ods_depth_to_disparity` `image2d → image2d` — Convert radial depth to ODS horizontal pixel disparity. · 例: `poc_omni360_inspection`
+- `ods_disparity_to_depth` `image2d → image2d` — Convert ODS horizontal pixel disparity to radial depth. · 例: `poc_omni360_inspection`
+- `ods_render` `入力なし → table` — Render ODS rays using ``scene_fn(origins, directions)``.
+- `s_psnr` `image2d × image2d → measurement` — Compute PSNR at deterministic near-uniform sphere samples.
+- `stereo360_sbs` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair side by side.
+- `stereo360_top_bottom` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair top and bottom.
+- `stereo_pack` `rgbimage × rgbimage → rgbimage` — Pack two eye images in a named display layout.
+- `stereo_parallax_budget` `入力なし → table` — Report physical parallax and the common one- and three-percent limits. · 例: `poc_omni360_inspection`
+- `video360_tile_coverage` `pairs → table` — Report which longitude-latitude streaming tiles a view path touches. · 例: `poc_omni360_inspection`
+- `video360_viewport_track` `images → images` — Extract a moving viewport from an equirectangular frame sequence. · 例: `poc_omni360_inspection`
+- `viewport_from_equirect` `rgbimage → rgbimage` — Extract a rectilinear viewer viewport from an equirectangular image. · 例: `omni360_roundtrip`, `poc_omni360_inspection`
+- `ws_psnr` `image2d × image2d → measurement` — Compute cosine-latitude weighted spherical PSNR. · 例: `omni360_roundtrip`, `poc_omni360_inspection`
 
 #### optics / optimization(3)
 - `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
@@ -4452,7 +4480,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 ### gfx2d(44 ops / 9 categories)
 
 #### gfx2d / camera(1)
-- `viewport` `rgb → rgb` — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``. · 例: `gfx2d_scene`
+- `viewport` `rgb → rgb` — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``. · 例: `gfx2d_scene`, `omni360_roundtrip`
 
 #### gfx2d / colorspace(2)
 - `linear_to_srgb` `rgb → rgb` — Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`. · 例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_pigment_unmixing`, `poc_white_balance`

@@ -714,6 +714,7 @@ _CATALOG = {
         ("ws_psnr", "omni360", ["image2d", "image2d"], "measurement"),
         ("s_psnr", "omni360", ["image2d", "image2d"], "measurement"),
         ("equirect_filter_gaussian", "omni360", ["image2d"], "image2d"),
+        ("equirect_stabilise", "omni360", ["images"], "table"),
         ("equirect_from_fisheye_pair", "omni360", ["images"], "table"),
         ("equirect_from_perspectives", "omni360", ["images"], "table"),
         ("equirect_defect_unwrap_pipe", "omni360", ["image2d"], "table"),
