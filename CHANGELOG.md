@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - `car_hybrid_astar`: the optional `method="fast"` skips collision checks for branches already dominated in the same search cell.
+- `car_hybrid_astar`: the optional `method="fast"` reuses up to eight analytic-shot candidates from its heuristic.
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。

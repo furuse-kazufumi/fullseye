@@ -60,7 +60,7 @@ def test_original_planner_reference_scenes_are_result_identical():
         assert observed == _ORIGINAL[name]
 
 
-def test_178_fast_dominance_keeps_cost_and_feasibility():
+def test_177_178_fast_mode_keeps_cost_and_feasibility():
     for _name, occupancy, poses, kwargs in _scenes():
         exact = C.car_hybrid_astar(occupancy, poses, **kwargs)
         fast = C.car_hybrid_astar(occupancy, poses, method="fast", **kwargs)

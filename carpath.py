@@ -549,7 +549,8 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     Reeds–Shepp (Dubins) length exactly; with obstacles the result is never below it (``lower_bound``).
     Cell pruning makes Hybrid A* an approximation of the optimum among all feasible paths, as in the paper.
     ``method="exact"`` (default) preserves the original expansion order. ``method="fast"`` uses a
-    platform-stable priority rounded to 1e-9 and rejects dominated branches before collision checking;
+    platform-stable priority rounded to 1e-9, rejects dominated branches before collision checking, and
+    reuses at most eight analytic candidates computed by the heuristic;
     it may return different waypoints with the same cost.
 
     Returns ``points`` ``(N, 3)`` poses along the path (start, tree part, analytic shot to the goal),
@@ -597,9 +598,10 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     def key(p):
         return (int(math.floor(p[0] / cell)), int(math.floor(p[1] / cell)), int(_mod2pi(p[2]) / dtheta) % n_theta)
 
-    def heuristic(p):
+    def heuristic(p, keep_candidates=False):
         ok, _ = analytic(p, goal, rho)
-        return ok[0][0] * rho if ok else math.inf
+        h = ok[0][0] * rho if ok else math.inf
+        return (h, ok[:8]) if keep_candidates else h
 
     def shot_cost(word, lens, prev_gear, prev_steer):
         """解析的な一撃の費用(同じ費用モデル)。(length, cost, gear_last, steer_last)。"""
@@ -625,7 +627,10 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     if allow_reverse:
         prims += [("L", -1), ("S", -1), ("R", -1)]
     n_sub = max(2, int(math.ceil(step / (0.5 * cell))))
-    lower_bound = heuristic(start)
+    if method == "fast":
+        lower_bound, start_candidates = heuristic(start, True)
+    else:
+        lower_bound, start_candidates = heuristic(start), None
     if not np.isfinite(lower_bound):
         raise ValueError("%s: no analytic path between start and goal" % op)
 
@@ -637,6 +642,7 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     priority = lambda value: round(value, 9) if method == "fast" else value
     heap = [(priority(lower_bound), counter, 0)]
     h_of = {0: lower_bound}
+    analytic_of = {0: start_candidates} if method == "fast" else {}
     n_expanded = n_generated = 0
     goal_key = key(goal)
     final = None  # (node_id, shot_word, shot_lens)
@@ -653,9 +659,13 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
             raise ValueError("%s: exceeded max_expansions=%d without reaching the goal" % (op, max_expansions))
         # 解析的な一撃(最短候補だけ。目標に近いほど頻繫に)
         h_node = h_of.pop(nid, 0.0)
+        cached_candidates = analytic_of.pop(nid, None)
         every = shot_every if shot_every is not None else max(1, int(math.ceil(h_node / step)))
         if n_expanded == 1 or (n_expanded - 1) % every == 0:
-            ok, _ = analytic(pose, goal, rho)
+            if cached_candidates is None:
+                ok, _ = analytic(pose, goal, rho)
+            else:
+                ok = cached_candidates
             if ok:
                 _L, w, l = ok[0]
                 if not coll.blocked(_sample(w, l, pose, rho, 0.5 * cell)):
@@ -663,7 +673,10 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
                     break
         if k0 == goal_key:
             # 目標セルに来た(一撃で正確な姿勢へ寄せる)
-            ok, _ = analytic(pose, goal, rho)
+            if cached_candidates is None:
+                ok, _ = analytic(pose, goal, rho)
+            else:
+                ok = cached_candidates
             for _L, w, l in ok:
                 pts = _sample(w, l, pose, rho, 0.5 * cell)
                 if not coll.blocked(pts):
@@ -700,7 +713,11 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
             best_g[kc] = gc
             nodes.append((child, gc, nid, k, gr, step))
             n_generated += 1
-            h = heuristic(child)
+            if method == "fast":
+                h, candidates = heuristic(child, True)
+                analytic_of[len(nodes) - 1] = candidates
+            else:
+                h = heuristic(child)
             counter += 1
             h_of[len(nodes) - 1] = h
             heapq.heappush(heap, (priority(gc + h), counter, len(nodes) - 1))
