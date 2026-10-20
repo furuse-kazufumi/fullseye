@@ -19,6 +19,8 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Convert ODS horizontal pixel disparity to radial depth.
 
+**Raises** ``ValueError``: ``disp_px`` is empty or outside the valid angular range.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):
