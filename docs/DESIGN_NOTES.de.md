@@ -174,7 +174,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `blob2d.py`
 
 - **L289** — ★Auf das Vorzeichen achten: Die Eckpunkte sind als (row, col) geordnet, daher ist die von ``_monotone_chain`` zurückgegebene Orientierung (row als x betrachtet) gegen den Uhrzeigersinn = auf dem Bildschirm im Uhrzeigersinn. Das Innere ist die Seite, auf der das Kreuzprodukt **nicht negativ** ist (mit ``<= 0`` geschrieben ergab sich für alle Objekte solidity 0).
-- **L589** — ★Erosion allein **liefert nur eine Seite**. Ein Objekt mit kleinerer Nummer bleibt, selbst wenn ein Objekt mit größerer Nummer benachbart ist, selbst das Minimum der Nachbarschaft und wird als "Inneres" beurteilt (2026-09-06 gemessen: in der Spalte, in der 1 und 2 sich berühren, verschwand die Kontur auf der Seite von 1). Betrachtet man Erosion und Dilatation zusammen, ergibt sich das symmetrische Urteil "in der Nachbarschaft gibt es eine andere Nummer als die eigene".
+- **L621** — ★Erosion allein **liefert nur eine Seite**. Ein Objekt mit kleinerer Nummer bleibt, selbst wenn ein Objekt mit größerer Nummer benachbart ist, selbst das Minimum der Nachbarschaft und wird als "Inneres" beurteilt (2026-09-06 gemessen: in der Spalte, in der 1 und 2 sich berühren, verschwand die Kontur auf der Seite von 1). Betrachtet man Erosion und Dilatation zusammen, ergibt sich das symmetrische Urteil "in der Nachbarschaft gibt es eine andere Nummer als die eigene".
 
 ## `calib.py`
 

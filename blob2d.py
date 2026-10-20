@@ -652,13 +652,62 @@ def blob_distance(region: Any, spacing: float = 1.0) -> np.ndarray:
 
 def _reconstruct_by_dilation(seed: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """測地膨張による再構成(seed <= mask)。``mask`` の外へは広がらない。"""
-    fp = np.ones((3, 3), bool)
-    prev = seed
-    while True:
-        cur = np.minimum(ndimage.grey_dilation(prev, footprint=fp), mask)
-        if np.array_equal(cur, prev):
-            return cur
-        prev = cur
+    from collections import deque
+
+    out = np.minimum(seed, mask).copy()
+    h, w = out.shape
+    before = ((-1, -1), (-1, 0), (-1, 1), (0, -1))
+    after = ((0, 1), (1, -1), (1, 0), (1, 1))
+
+    # Hybrid reconstruction: the two raster scans perform the cheap directed
+    # propagation first. The FIFO then visits only pixels on a still-growing
+    # front instead of dilating and comparing the complete image each round.
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+    for row in range(h - 1, -1, -1):
+        for col in range(w - 1, -1, -1):
+            value = out[row, col]
+            for dr, dc in after:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+
+    queued = np.zeros((h, w), bool)
+    queue = deque()
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before + after:
+                rr, cc = row + dr, col + dc
+                if (0 <= rr < h and 0 <= cc < w
+                        and out[rr, cc] < value and out[rr, cc] < mask[rr, cc]):
+                    queue.append((row, col))
+                    queued[row, col] = True
+                    break
+    while queue:
+        row, col = queue.popleft()
+        queued[row, col] = False
+        value = out[row, col]
+        for dr, dc in before + after:
+            rr, cc = row + dr, col + dc
+            if not (0 <= rr < h and 0 <= cc < w):
+                continue
+            grown = min(value, mask[rr, cc])
+            if grown > out[rr, cc]:
+                out[rr, cc] = grown
+                if not queued[rr, cc]:
+                    queue.append((rr, cc))
+                    queued[rr, cc] = True
+    return out
 
 
 def blob_seeds(distance: Any, h: float, connectivity: int = 8) -> np.ndarray:

@@ -174,7 +174,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `blob2d.py`
 
 - **L289** — ★Mind the sign: vertices are ordered as (row, col), so the orientation returned by ``_monotone_chain`` is counter-clockwise (viewing row as x) = clockwise on screen. The inside is the side where the cross product is **non-negative** (writing ``<= 0`` produced solidity 0 for all objects).
-- **L589** — ★Erosion alone **produces only one side**. An object with a smaller label, even when a larger-labelled object is adjacent, keeps itself as the neighbourhood minimum and is judged "interior" (2026-09-06 measured: at the column where 1 and 2 touch, the contour on the 1 side disappeared). Looking at both erosion and dilation gives the symmetric judgment of "there is a different label in the neighbourhood".
+- **L621** — ★Erosion alone **produces only one side**. An object with a smaller label, even when a larger-labelled object is adjacent, keeps itself as the neighbourhood minimum and is judged "interior" (2026-09-06 measured: at the column where 1 and 2 touch, the contour on the 1 side disappeared). Looking at both erosion and dilation gives the symmetric judgment of "there is a different label in the neighbourhood".
 
 ## `calib.py`
 
