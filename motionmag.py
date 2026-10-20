@@ -898,7 +898,7 @@ def band_snr(video, f_lo, f_hi, fps) -> dict:
 # Magnification                                                                 #
 # --------------------------------------------------------------------------- #
 def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
-                   orientations: int = 4) -> dict:
+                   orientations: int = 4, method: str = "exact") -> dict:
     """Scale the in-band motion of a clip by *alpha* -> ``dict``.
 
     For every oriented sub-band of every frame the local phase is taken relative
@@ -1015,6 +1015,8 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     ns = _count(scales, "scales", 1, MAX_SCALES)
     no = _count(orientations, "orientations", 1, MAX_ORIENTATIONS)
     bank = _filter_bank(h, w, ns, no)
+    if method not in ("exact", "fast"):
+        raise ValueError("method must be 'exact' or 'fast'")
 
     gain = a - 1.0
     scale = float(np.abs(vid).max())
@@ -1026,6 +1028,9 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     coh_num = 0.0           # contrast-weighted reference coherence |z_mean|/mean|z|
     coh_den = 0.0
     for j, filt in enumerate(bank["filters"]):
+        if method == "fast" and (bank["kinds"][j] != _ORIENTED or gain == 0.0):
+            acc += spec * (filt * filt)[None]
+            continue
         sub = np.fft.ifft2(spec * filt[None], axes=(1, 2))
         if bank["kinds"][j] == _ORIENTED and gain != 0.0:
             ref = sub.mean(axis=0)
