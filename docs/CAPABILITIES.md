@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 90 項目**
+**収録 91 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -74,6 +74,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
+| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_tof_camera` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
@@ -84,7 +85,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (31)
+## 測る (32)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -445,6 +446,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 実寸校正: `cell_size` [m] を渡す —— 傾斜は高さと格子間隔の**比**なので、単位が揃っていないと角度が全部ずれる。
 
 動く例: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md)
+
+`poc_tof_camera` は箱を積んだ荷台、二面コーナー、光沢面、透明板、細い柱、暗明市松を一つの解析的な距離場に置きます。最初の面と二つの光路を真値として保持し、20/80/100 MHz・4相の連続波方式と、光子到着ヒストグラム方式を同じ画素で比較します。
+
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`
+
+推奨パイプライン: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md)
+
+代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md)
+
+限界: 解析的な平面場面。間接方式は位相折返し・多経路・混合画素、直接方式は時間ビン・pile-up・光子欠乏を受ける。遮蔽面の奥は両方式とも測れない。
+
+実寸校正: 間接方式は変調周波数・位相段・電子数・背景光、直接方式は時間ビン・応答幅・光子数・デッドタイムを実測値に合わせる。
+
+動く例: `poc_tof_camera`
 
 ### [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md)
 

@@ -89,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-90 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+91 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -139,6 +139,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Telezentrische Objektive für die Maßprüfung (Hauptstrahlwinkel, Abbildungsmaßstab über der Höhe, Vignettierung und Unschärfe): [Erklärung](../../capabilities/telecentric-metrology.md) _(ja)_ · Beispiele [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - Ein virtuelles Transmissionselektronenmikroskop (Elektronenwellenlänge, CTF, Phasenkontrastbilder, Defokus aus Thon-Ringen, Korrektur): [Erklärung](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · Beispiele [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- Dieselbe 3-D-Szene mit indirekter und direkter Laufzeitmessung erfassen: [Erklärung](../../capabilities/tof-camera.md) _(ja)_ · Beispiele [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - Ein virtuelles REM — Elektron-Festkörper-Wechselwirkung per Monte Carlo lösen und, an Messdaten bewertet, sehen, wie Spannung, Detektor und Aufladung Bild und gemessene Linienbreite verändern: [Erklärung](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · Beispiele [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - Volumen und Erdmassen aus einem 3-D-Scan: [Erklärung](../../capabilities/volume-from-3d-scan.md) _(ja)_ · Beispiele [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - Was ein Bild nicht prüfen kann (Integratorordnung, Lyapunov-Spektrum, Bifurkationen, Korrelationsdimension, Minimalflächen): [Erklärung](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · Beispiele [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -213,7 +214,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-270 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+271 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -388,7 +389,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (22)</summary>
+<details class="vall"><summary><b>Bildqualität und Restaurierung</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="Ein Fliegenauge nähert sich Streifen" width="200" height="200"><b>&#9654;</b><span>Ein Fliegenauge nähert sich Streifen</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Verwacklung entfernen" width="200" height="200"><b>&#9654;</b><span>Verwacklung entfernen</span></a>
@@ -411,6 +412,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="Wasser und transparente Medien: Meereswellen, Brechung im Becken, Farbe unter Wasser, Brennlinie einer Flasche" width="200" height="200"><span>Wasser und transparente Medien: Meereswellen, Brechung im Becken, Farbe unter Wasser, Brennlinie einer Flasche</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen: Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder" width="200" height="200"><span>Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen: Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="Wie Wasser in Prüfbildern aussieht: Kaustiken auf dem Beckenboden, eine Flasche von der Seite, eine nasse Platte, ein Rumpf unter Wasser" width="200" height="200"><span>Wie Wasser in Prüfbildern aussieht: Kaustiken auf dem Beckenboden, eine Flasche von der Seite, eine nasse Platte, ein Rumpf unter Wasser</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_truth.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="Indirekte und direkte Laufzeitmessung derselben 3-D-Szene: Mehrwege, Mischpixel, Pile-up und Volumenfehler" width="200" height="200"><b>&#9654;</b><span>Indirekte und direkte Laufzeitmessung derselben 3-D-Szene: Mehrwege, Mischpixel, Pile-up und Volumenfehler</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)" width="200" height="200"><span>Kalibrierung von Pixel-Shift-Versatz und Apertur (Karte des Unbestimmten)</span></a>
 </div>
 </details>

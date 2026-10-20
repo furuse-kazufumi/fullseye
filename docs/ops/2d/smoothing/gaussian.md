@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_tof_camera, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -84,6 +84,7 @@ gaussian 0.35 0.50
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_solar_limb_darkening](../../../../examples/poc_solar_limb_darkening.py) — `py -3.11 examples/poc_solar_limb_darkening.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
+- [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [typed_results_json](../../../../examples/typed_results_json.py) — `py -3.11 examples/typed_results_json.py`

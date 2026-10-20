@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-90 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+91 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -139,6 +139,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Objectifs télécentriques et mesure dimensionnelle (inclinaison du rayon principal → grandissement variable avec la hauteur → vignetage et flou): [explication](../../capabilities/telecentric-metrology.md) _(ja)_ · exemples [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - Un microscope électronique en transmission virtuel (longueur d'onde des électrons, CTF, images en contraste de phase, défocalisation à partir des anneaux de Thon, correction): [explication](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · exemples [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - Mesurer la pente, l'écoulement de l'eau et la visibilité sur un terrain: [explication](../../capabilities/terrain-and-visibility.md) _(ja)_ · exemples [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- Mesurer une même scène 3-D par temps de vol indirect et direct: [explication](../../capabilities/tof-camera.md) _(ja)_ · exemples [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - Un MEB virtuel — résoudre l'interaction électron-solide par Monte Carlo et, noté sur des mesures, voir comment la tension, le détecteur et la charge modifient l'image et la largeur de ligne mesurée: [explication](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · exemples [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - Calculer un volume ou un volume de terrassement à partir d'un scan 3-D: [explication](../../capabilities/volume-from-3d-scan.md) _(ja)_ · exemples [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - Ce qu'une image ne permet pas de vérifier (ordre d'un intégrateur, exposants de Lyapunov, bifurcations, dimension de corrélation, surfaces minimales): [explication](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · exemples [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -213,7 +214,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-270 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+271 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -388,7 +389,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Qualité d'image et restauration</b> (22)</summary>
+<details class="vall"><summary><b>Qualité d'image et restauration</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="L'œil de la mouche face à des rayures" width="200" height="200"><b>&#9654;</b><span>L'œil de la mouche face à des rayures</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Correction du flou de bougé" width="200" height="200"><b>&#9654;</b><span>Correction du flou de bougé</span></a>
@@ -411,6 +412,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille" width="200" height="200"><span>L'eau et les milieux transparents : vagues, réfraction dans un bassin, couleur sous l'eau, caustique d'une bouteille</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="Photographier une scène 3-D à travers la prescription réelle de l'objectif : profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes" width="200" height="200"><span>Photographier une scène 3-D à travers la prescription réelle de l'objectif : profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="L'eau dans les images d'inspection : caustiques au fond d'un bassin, une bouteille vue de côté, une plaque mouillée, une coque sous l'eau" width="200" height="200"><span>L'eau dans les images d'inspection : caustiques au fond d'un bassin, une bouteille vue de côté, une plaque mouillée, une coque sous l'eau</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_truth.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="Temps de vol indirect et direct sur une même scène 3-D : trajets multiples, pixels mixtes, pile-up et erreur de volume" width="200" height="200"><b>&#9654;</b><span>Temps de vol indirect et direct sur une même scène 3-D : trajets multiples, pixels mixtes, pile-up et erreur de volume</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)" width="200" height="200"><span>Étalonner les décalages du pixel-shift et l'ouverture (carte de l'indéterminé)</span></a>
 </div>
 </details>

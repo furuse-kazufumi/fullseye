@@ -107,6 +107,7 @@
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | Put text and tables exactly where you want them on an image | 見せる | `verified-synthetic` | 6/6 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md) | Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves) | 描く | `verified-synthetic` | 9/9 | `poc_theorems_as_pictures` synthetic → tests/test_poc_scripts_run.py |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps) | 光と色 | `validated-public-real-data` | 5/5 | `poc_thin_film_reflectometry` real → tests/test_poc_scripts_run.py |
+| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | Measuring one 3-D scene with indirect and direct time of flight | 測る | `verified-synthetic` | 12/12 | `poc_tof_camera` synthetic → tests/test_poc_scripts_run.py |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | Reconstruct slices from projections (CT) | 形にする | `verified-synthetic` | 3/4 | `poc_ct_fidelity` synthetic → tests/test_poc_scripts_run.py<br>`poc_ct_void_morphology` synthetic → tests/test_poc_scripts_run.py |
 | [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md) | Write typed op results as JSON and read them back bit-for-bit | 組み立てる | `verified-synthetic` | 11/11 | `typed_results_json` synthetic → tests/test_example_scripts_run.py |
 | [op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す](capabilities/typed-results-as-markdown.md) | Render typed op results as Markdown, with an exact JSON block to read back | 組み立てる | `verified-synthetic` | 4/4 | `typed_results_markdown` synthetic → tests/test_example_scripts_run.py |
@@ -128,8 +129,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 418 |
-| `tests/test_poc_scripts_run.py` が走らせる | 270 |
+| 2-D 台帳の例 | 419 |
+| `tests/test_poc_scripts_run.py` が走らせる | 271 |
 | `tests/test_example_scripts_run.py` が走らせる | 148 |
 | **どの門も走らせていない** | **0** |
 

@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 90 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 91 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -139,6 +139,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 遠心鏡頭與尺寸量測(主光線傾角 → 隨高度變化的放大率 → 漸暈與模糊): [說明](../../capabilities/telecentric-metrology.md) _(ja)_ · 範例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 虛擬穿透式電子顯微鏡(電子波長 → CTF → 相位對比像 → 由 Thon 環估計欠焦 → 校正): [說明](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · 範例 [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - 量測地形的坡度、水流與通視: [說明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 範例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 用間接和直接飛行時間測量同一三維場景: [說明](../../capabilities/tof-camera.md) _(ja)_ · 範例 [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - 虛擬 SEM —— 用蒙地卡羅求解電子與固體的交互作用,對照實測值評分,觀察加速電壓、偵測器與帶電如何改變影像與量得的線寬: [說明](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 範例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 從 3-D 掃描求體積與土方量: [說明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 範例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 圖無法驗證的東西(積分器階數、李雅普諾夫指數、分岔、關聯維度、極小曲面): [說明](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 範例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -213,7 +214,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 271 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -388,7 +389,7 @@ PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (22)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (23)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
@@ -411,6 +412,7 @@ PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線" width="200" height="200"><span>水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線</span></a>
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影" width="200" height="200"><span>依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體" width="200" height="200"><span>水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_truth.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差" width="200" height="200"><b>&#9654;</b><span>同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="像素位移的偏移與開口校準(無法確定的地圖)" width="200" height="200"><span>像素位移的偏移與開口校準(無法確定的地圖)</span></a>
 </div>
 </details>

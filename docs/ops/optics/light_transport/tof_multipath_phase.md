@@ -4,7 +4,7 @@ dim: optics
 category: light_transport
 in: 
 out: table
-examples: [poc_interreflection_fringe_error, poc_itof_multifreq]
+examples: [poc_interreflection_fringe_error, poc_itof_multifreq, poc_tof_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [poc_interreflection_fringe_error](../../../../examples/poc_interreflection_fringe_error.py) — `py -3.11 examples/poc_interreflection_fringe_error.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
+- [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
