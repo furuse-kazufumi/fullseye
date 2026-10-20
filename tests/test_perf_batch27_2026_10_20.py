@@ -307,3 +307,67 @@ def test_329_random_candidates_match_stable_sort_bit_for_bit():
     assert len(new[:4]) == len(old) == 4
     for got, expected in zip(new[:4], old):
         assert np.array_equal(got, expected, equal_nan=True)
+
+
+def _old_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05):
+    p = residue_mod._periods(periods, "test")
+    r = residue_mod._residues(residues, p.size, "test")
+    w = residue_mod._weights(weights, r.shape, "test")
+    full = residue_mod.residue_crt(r, p, w, lo, hi, on_outside="flag")
+    hi_eff = float(lo) + full["unambiguous_range"] if hi is None else float(hi)
+    pb = p.reshape((p.size,) + (1,) * (r.ndim - 1))
+    ok_all = (np.abs(full["residual"]) <= tol * pb).all(0)
+    worst, vals, outl = [], [], []
+    for j in range(p.size):
+        keep = [i for i in range(p.size) if i != j]
+        sub = residue_mod.residue_crt(r[keep], p[keep], w[keep], lo, hi_eff,
+                                      on_outside="flag")
+        worst.append((np.abs(sub["residual"]) / pb[keep]).max(0))
+        vals.append(sub["value"])
+        outl.append(np.abs(residue_mod._wrap_signed(r[j] - sub["value"], p[j])) / p[j])
+    worst, vals, outl = np.stack(worst), np.stack(vals), np.stack(outl)
+    j = np.argmin(worst, 0)
+    wj = np.take_along_axis(worst, j[None], 0)[0]
+    oj = np.take_along_axis(outl, j[None], 0)[0]
+    good = (wj <= tol) & (oj > tol) & (np.sort(worst, 0)[1] > tol)
+    return {"value": np.where(ok_all, full["value"],
+                              np.where(good, np.take_along_axis(vals, j[None], 0)[0], np.nan)),
+            "faulty": np.where(ok_all, -1, np.where(good, j, -2)).astype(np.int64),
+            "consistent_all": ok_all, "worst_leave_one_out": wj}
+
+
+def test_333_fault_localisation_streaming_is_bit_identical():
+    rng = np.random.default_rng(333)
+    p = np.array([5.0, 7.0, 9.0, 11.0])
+    values = rng.uniform(-20.0, 20.0, (31, 27))
+    r = np.mod(values[None], p[:, None, None])
+    r[2, 4:20, 3:19] = np.mod(r[2, 4:20, 3:19] + 2.0, p[2])
+    old = _old_fault_locate(r, p, lo=-30.0, hi=30.0)
+    got = residue_mod.residue_fault_locate(r, p, lo=-30.0, hi=30.0)
+    for key in old:
+        assert np.array_equal(got[key], old[key], equal_nan=True)
+
+
+def _old_band_measure(img0, img1, periods, sigma_px, axis):
+    s0, s1 = np.fft.fft2(img0), np.fft.fft2(img1)
+    res, per, wts = [], [], []
+    for p in periods:
+        z0, k0 = residue_mod._band(s0, img0.shape, p, sigma_px, axis)
+        z1, k1 = residue_mod._band(s1, img1.shape, p, sigma_px, axis)
+        k = 0.5 * (k0 + k1)
+        knom = 2.0 * np.pi / p
+        k = np.where((k > knom / 3.0) & (k < 3.0 * knom), k, knom)
+        pl = 2.0 * np.pi / k
+        dphi = np.angle(z1 * np.conj(z0))
+        res.append(np.mod(-dphi / k, pl)); per.append(pl)
+        wts.append(np.abs(z0) * np.abs(z1))
+    return np.stack(res), np.stack(per), np.stack(wts)
+
+
+def test_334_335_shared_band_kernel_is_bit_identical():
+    rng = np.random.default_rng(334)
+    a = rng.normal(size=(65, 67)); b = np.roll(a, 7, axis=1)
+    old = _old_band_measure(a, b, (5.0, 7.0, 11.0), 12.0, 1)
+    got = residue_mod._band_measure(a, b, (5.0, 7.0, 11.0), 12.0, 1)
+    for actual, expected in zip(got, old):
+        assert np.array_equal(actual, expected)
