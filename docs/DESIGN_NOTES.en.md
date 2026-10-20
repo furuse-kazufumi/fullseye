@@ -1921,7 +1921,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `pivops.py`
 
-- **L472** — ★ A window where the correlation peak does not stand (no texture, uniform everywhere) returns nan —— we do not return 0 so as not to mix "not moving" with "unknown". But **what fraction is nan can only be known from the return value**, and the form was such that you only notice when ``flow.mean()`` becomes nan (2026-09-06). We count it here. Measured: an image with only a 16x16 square on a uniform background has only 16 of 98 windows finite (0.163). Full texture gives 1.000.
+- **L506** — ★ A window where the correlation peak does not stand (no texture, uniform everywhere) returns nan —— we do not return 0 so as not to mix "not moving" with "unknown". But **what fraction is nan can only be known from the return value**, and the form was such that you only notice when ``flow.mean()`` becomes nan (2026-09-06). We count it here. Measured: an image with only a 16x16 square on a uniform background has only 16 of 98 windows finite (0.163). Full texture gives 1.000.
 
 ## `pnp3d.py`
 
@@ -2956,10 +2956,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `volops.py`
 
-- **L1180** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1193** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1292** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1312** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1197** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1210** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1309** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1329** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

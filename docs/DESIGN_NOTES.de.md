@@ -1921,7 +1921,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `pivops.py`
 
-- **L472** — ★ Ein Fenster, in dem der Korrelationspeak nicht steht (keine Textur, überall gleichförmig), gibt nan zurück —— wir geben nicht 0 zurück, um "bewegt sich nicht" nicht mit "unbekannt" zu vermischen. Aber **welcher Anteil nan ist, lässt sich nur aus dem Rückgabewert erkennen**, und die Form war so, dass man es erst bemerkt, wenn ``flow.mean()`` zu nan wird (2026-09-06). Hier zählen wir es. Gemessen: ein Bild mit nur einem 16x16-Quadrat auf gleichförmigem Hintergrund hat nur 16 von 98 Fenstern endlich (0.163). Volle Textur ergibt 1.000.
+- **L506** — ★ Ein Fenster, in dem der Korrelationspeak nicht steht (keine Textur, überall gleichförmig), gibt nan zurück —— wir geben nicht 0 zurück, um "bewegt sich nicht" nicht mit "unbekannt" zu vermischen. Aber **welcher Anteil nan ist, lässt sich nur aus dem Rückgabewert erkennen**, und die Form war so, dass man es erst bemerkt, wenn ``flow.mean()`` zu nan wird (2026-09-06). Hier zählen wir es. Gemessen: ein Bild mit nur einem 16x16-Quadrat auf gleichförmigem Hintergrund hat nur 16 von 98 Fenstern endlich (0.163). Volle Textur ergibt 1.000.
 
 ## `pnp3d.py`
 
@@ -2956,10 +2956,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `volops.py`
 
-- **L1180** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1193** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1292** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1312** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1197** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1210** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1309** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1329** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 
