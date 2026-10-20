@@ -241,10 +241,12 @@ def graycode_decode(bit_images, thresh=0.5) -> np.ndarray:
     for i in range(k):
         gray |= binimg[i] << (k - 1 - i)
 
-    # Gray → binary: XOR of gray>>0, gray>>1, ..., gray>>(k-1)
+    # Gray → binary: 並列 prefix XOR。各段で確定済みの幅を倍にする。
     binary = gray.copy()
-    for shift in range(1, k):
-        binary ^= (gray >> shift)
+    shift = 1
+    while shift < k:
+        binary ^= binary >> shift
+        shift <<= 1
     return binary
 
 
