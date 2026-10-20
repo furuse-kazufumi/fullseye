@@ -38,6 +38,7 @@ The runnable example compares phase-based continuous-wave ranging and photon-arr
 ## 推奨パイプライン
 
 間接方式は `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq`、直接方式は `dtof_cube_simulate` → `dtof_cube_depth`。多経路は `tof_multipath_phase` と `itof_multipath_separate`、混合画素は `itof_flying_pixel_mask` で診断します。
+能力台帳の既定連鎖は `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` → `bilateral_filter_depth` → `depth_to_points` です。
 
 距離を寸法へつなぐときは `bilateral_filter_depth` → `depth_to_points`。PoC はこの連鎖を facade から型変換なしで呼び、三つの箱の体積まで測ります。
 

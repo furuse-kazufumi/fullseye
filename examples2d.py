@@ -1922,6 +1922,10 @@ EXCLUDED = {
                           "mediapipe extra and a downloaded hand_landmarker.task model",
     "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at "
                          "external MuJoCo Menagerie assets (not shipped)",
+    "tof_camera_physical": "support module required by poc_tof_camera; it cannot run as a "
+                           "standalone gallery example",
+    "tof_realdata": "support module required by poc_tof_camera; it needs optional external "
+                    "validation data and cannot run as a standalone gallery example",
 }
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
