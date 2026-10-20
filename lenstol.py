@@ -220,7 +220,7 @@ def tolerance_criteria(rms_spot=None, wavefront_rms=None, efl=None, mtf=None, di
             "reference": reference, "psf_size": psf_size}
 
 
-def compensators(variables="t1", criterion="rms_spot", bounds=None, iterations=8):
+def tolerance_compensators(variables="t1", criterion="rms_spot", bounds=None, iterations=8):
     """Describe deterministic bounded re-optimisation variables in lensopt grammar."""
     variables = [variables] if isinstance(variables, str) else list(variables)
     if not variables:
@@ -594,5 +594,5 @@ def tolerance_table_from_zmx(system, text):
     return [_normalise_row(system, r, i) for i, r in enumerate(rows)]
 
 
-__all__ = ["tolerance_table", "tolerance_criteria", "compensators", "tolerance_monte_carlo",
+__all__ = ["tolerance_table", "tolerance_criteria", "tolerance_compensators", "tolerance_monte_carlo",
            "tolerance_sensitivity", "tolerance_report", "tolerance_table_zmx", "tolerance_table_from_zmx"]

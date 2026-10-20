@@ -1125,7 +1125,7 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 
 `lenstol` は、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・レンズ群の偏心と傾きを、面または群ごとの行にします。一様分布、正規分布、±公差で切った正規分布を選べます。
 
-使う op: `tolerance_table`, `tolerance_criteria`, `compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+使う op: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
 
 推奨パイプライン: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
 

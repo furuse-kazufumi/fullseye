@@ -211,15 +211,15 @@ def test_pure_gap_compensation_travel_and_second_compensator_not_worse():
                                 "tolerance": 0.01}, 0)
     perturbed = LT._apply_row(s, gap, 0.007)
     nominal = LT._evaluate(s, criteria)
-    one = LT.compensators(["t3"], criterion="rms_spot", iterations=12)
-    two = LT.compensators(["t3", "t1"], criterion="rms_spot", iterations=12,
+    one = LT.tolerance_compensators(["t3"], criterion="rms_spot", iterations=12)
+    two = LT.tolerance_compensators(["t3", "t1"], criterion="rms_spot", iterations=12,
                           bounds={"t3": [50.0, 60.0], "t1": [1.4, 1.6]})
     p1, _ = LT._compensate(perturbed, nominal, criteria, one)
     p2, _ = LT._compensate(perturbed, nominal, criteria, two)
     assert LT._evaluate(p2, criteria)["rms_spot"] <= LT._evaluate(p1, criteria)["rms_spot"] + 1e-12
     back = LT.tolerance_criteria(back_focus={})
     pure, travel = LT._compensate(perturbed, LT._evaluate(s, back), back,
-                                  LT.compensators(["t1"], criterion="back_focus", iterations=8))
+                                  LT.tolerance_compensators(["t1"], criterion="back_focus", iterations=8))
     assert abs(travel["t1"]) == pytest.approx(0.007, abs=1e-6)
     assert abs(LT._evaluate(pure, back)["back_focus"] - LT._evaluate(s, back)["back_focus"]) < 1e-9
 
@@ -234,7 +234,7 @@ def test_uniform_back_focus_rms_matches_legacy_2000_trials():
     criteria = LT.tolerance_criteria(rms_spot={}, rings=6)
     modern = LT.tolerance_monte_carlo(
         s, table, criteria,
-        compensators=LT.compensators("t1", criterion="rms_spot", iterations=8),
+        compensators=LT.tolerance_compensators("t1", criterion="rms_spot", iterations=8),
         trials=2_000, seed=19)
     got, old = modern["criteria"]["rms_spot"]["std"], legacy["rms_spot"]["std"]
     assert got == pytest.approx(old, rel=0.03)

@@ -474,7 +474,7 @@ def _optics_builders():
         "tolerance_analysis": lens_first(trials=4, rings=3),
         "tolerance_table": lens_first(defaults={"radius_pct": 0.1}),
         "tolerance_criteria": lambda pool, rng: ([], {"rms_spot": {"max": 1.0}}),
-        "compensators": lambda pool, rng: ([], {"variables": "t1"}),
+        "tolerance_compensators": lambda pool, rng: ([], {"variables": "t1"}),
         "tolerance_monte_carlo": lambda pool, rng: (
             [__import__("raytrace").example_system(),
              __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),

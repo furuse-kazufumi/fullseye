@@ -1,5 +1,5 @@
 ---
-op: compensators
+op: tolerance_compensators
 dim: optics
 category: tolerancing
 in: 
@@ -10,10 +10,10 @@ license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
-# compensators — OPTICS `tolerancing` op
+# tolerance_compensators — OPTICS `tolerancing` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.compensators(variables='t1', criterion='rms_spot', bounds=None, iterations=8)` (実装を直接呼ぶなら `import lenstol; lenstol.compensators(variables='t1', criterion='rms_spot', bounds=None, iterations=8)`、台帳から引くなら `opsoptics.get("compensators")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_compensators(variables='t1', criterion='rms_spot', bounds=None, iterations=8)` (実装を直接呼ぶなら `import lenstol; lenstol.tolerance_compensators(variables='t1', criterion='rms_spot', bounds=None, iterations=8)`、台帳から引くなら `opsoptics.get("tolerance_compensators")`)
 
 ## 使い方
 

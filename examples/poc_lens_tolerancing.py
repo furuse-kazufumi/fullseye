@@ -106,7 +106,7 @@ def run_analysis(system):
     sens = LT.tolerance_sensitivity(system, tab, crit, allowed_degradation={"mtf": 0.02})
     n = 16 if CI else 160
     base = LT.tolerance_monte_carlo(system, tab, crit, trials=n, seed=271)
-    comp = LT.compensators(["t5", "t3"], criterion="rms_spot", iterations=3)
+    comp = LT.tolerance_compensators(["t5", "t3"], criterion="rms_spot", iterations=3)
     after = LT.tolerance_monte_carlo(system, tab, crit, compensators=comp, trials=8 if CI else 60, seed=271)
     print(LT.tolerance_report(base, sens))
     print("   内部間隔と像面の補償: yield %.3f -> %.3f" % (base["yield"], after["yield"]))

@@ -53,7 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`tolerancing`)
 
-[tolerance_table](tolerance_table.md) · [compensators](compensators.md) · [tolerance_monte_carlo](tolerance_monte_carlo.md) · [tolerance_sensitivity](tolerance_sensitivity.md) · [tolerance_report](tolerance_report.md) · [tolerance_table_zmx](tolerance_table_zmx.md) · [tolerance_table_from_zmx](tolerance_table_from_zmx.md)
+[tolerance_table](tolerance_table.md) · [tolerance_compensators](tolerance_compensators.md) · [tolerance_monte_carlo](tolerance_monte_carlo.md) · [tolerance_sensitivity](tolerance_sensitivity.md) · [tolerance_report](tolerance_report.md) · [tolerance_table_zmx](tolerance_table_zmx.md) · [tolerance_table_from_zmx](tolerance_table_from_zmx.md)
 
 ---
 *Provenance: lenstol.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

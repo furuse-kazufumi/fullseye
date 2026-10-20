@@ -697,7 +697,7 @@ _CATALOG = {
     "tolerancing": [  # 製造公差: 行ごとの分布、補償、歩留まり、感度と組立レポート
         ("tolerance_table", "lenstol", ["table"], "table"),
         ("tolerance_criteria", "lenstol", [], "table"),
-        ("compensators", "lenstol", [], "table"),
+        ("tolerance_compensators", "lenstol", [], "table"),
         ("tolerance_monte_carlo", "lenstol", ["table", "table", "table"], "table"),
         ("tolerance_sensitivity", "lenstol", ["table", "table", "table"], "table"),
         ("tolerance_report", "lenstol", ["table"], "text"),

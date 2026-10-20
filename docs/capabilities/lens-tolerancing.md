@@ -3,7 +3,7 @@ id: lens-tolerancing
 title: レンズの製造公差を、MTF と歩留まりで決める
 title_en: Budget lens manufacturing tolerances by MTF and yield
 category: 組み立てる
-ops: [tolerance_table, tolerance_criteria, compensators, tolerance_monte_carlo, tolerance_sensitivity, tolerance_report, tolerance_table_zmx, tolerance_table_from_zmx]
+ops: [tolerance_table, tolerance_criteria, tolerance_compensators, tolerance_monte_carlo, tolerance_sensitivity, tolerance_report, tolerance_table_zmx, tolerance_table_from_zmx]
 examples: [poc_lens_tolerancing]
 version: 0.7.0
 inputs: [table]
@@ -29,7 +29,7 @@ It turns per-surface and group manufacturing errors into sensitivity, compensate
 
 ## 推奨パイプライン
 
-使う op: `tolerance_table`, `tolerance_criteria`, `compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+使う op: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
 
 推奨パイプライン: `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report`
 

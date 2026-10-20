@@ -922,7 +922,7 @@ Runnable: `inspection_workflow`
 
 It turns per-surface and group manufacturing errors into sensitivity, compensated Monte Carlo, yield, histograms, and assembly travel.
 
-Operators: `tolerance_table`, `tolerance_criteria`, `compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+Operators: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
 
 Pipeline: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
 
