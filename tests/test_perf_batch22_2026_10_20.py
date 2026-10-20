@@ -6,7 +6,10 @@ import numpy as np
 from scipy.ndimage import binary_dilation
 
 import regions_setops as rs
+import coherent
+import recon3d
 import reconstruction as reconstruction
+import tacsim
 import tacdome
 
 
@@ -200,3 +203,85 @@ def test_215_inverse_scalar_evaluator_preserves_root_and_skips_public_array_path
         assert actual["d"] == expected_d
         assert actual["iterations"] == expected_iterations
         assert calls == 1  # 最終結果の構築だけ。二分法の反復からは呼ばない。
+
+
+def _old_acf_cuts(img, up):
+    d = img - img.mean()
+    spectrum = np.abs(np.fft.fft2(d)) ** 2
+    out = []
+    for axis in (0, 1):
+        s1 = spectrum.sum(axis=1 - axis)
+        n, m = s1.size, s1.size * up
+        pad = np.zeros(m, dtype=np.complex128)
+        half = n // 2
+        pad[:half] = s1[:half]
+        pad[m - (n - half):] = s1[half:]
+        if n % 2 == 0:
+            pad[half] = pad[m - half] = 0.5 * s1[half]
+        cut = np.fft.ifft(pad).real
+        out.append(cut / cut[0])
+    return out
+
+
+def test_196_acf_axis_fft_matches_old_2d_spectrum():
+    image = np.random.default_rng(196).normal(size=(31, 28))
+    old = _old_acf_cuts(image, 4)
+    new = coherent._acf_cuts(image, 4)
+    assert np.allclose(new[0], old[0], rtol=2e-14, atol=2e-14)
+    assert np.allclose(new[1], old[1], rtol=2e-14, atol=2e-14)
+
+
+def _old_alpha_boundary(P, alpha):
+    from scipy.spatial import Delaunay
+    simp = Delaunay(P).simplices
+    keep = recon3d._circumradii(P, simp) < 1.0 / alpha
+    kept = simp[keep]
+    faces = np.concatenate([kept[:, [0, 1, 2]], kept[:, [0, 1, 3]],
+                            kept[:, [0, 2, 3]], kept[:, [1, 2, 3]]])
+    uniq, counts = np.unique(np.sort(faces, axis=1), axis=0, return_counts=True)
+    return uniq[counts == 1]
+
+
+def test_203_delaunay_neighbors_match_old_face_counting():
+    points = np.random.default_rng(203).normal(size=(80, 3))
+    assert np.array_equal(recon3d._alpha_boundary_faces(points, 0.7), _old_alpha_boundary(points, 0.7))
+
+
+def _old_triangulate(P1, P2, pts1, pts2):
+    out = []
+    for (x1, y1), (x2, y2) in zip(pts1, pts2):
+        A = np.vstack([x1 * P1[2] - P1[0], y1 * P1[2] - P1[1],
+                       x2 * P2[2] - P2[0], y2 * P2[2] - P2[1]])
+        X = np.linalg.svd(A)[2][-1]
+        out.append(X[:3] / X[3])
+    return np.asarray(out)
+
+
+def test_209_batched_triangulation_matches_old_loop():
+    P1 = np.c_[np.eye(3), np.zeros(3)]
+    P2 = np.c_[np.eye(3), np.array([-0.2, 0.0, 0.0])]
+    p1 = np.random.default_rng(209).normal(size=(64, 2))
+    p2 = p1 - np.array([0.1, 0.0])
+    assert np.allclose(reconstruction.triangulate_points(P1, P2, p1, p2),
+                       _old_triangulate(P1, P2, p1, p2), rtol=1e-12, atol=1e-12)
+
+
+def _old_render(normals, lights, albedo, ambient):
+    import photometric
+    return np.stack([np.asarray(photometric.render_lambertian(normals, albedo, light, ambient), float)
+                     for light in lights], axis=-1)
+
+
+def test_211_vector_light_render_matches_old_three_calls():
+    rng = np.random.default_rng(211)
+    normals = rng.normal(size=(23, 19, 3))
+    lights = tacsim.membrane_lights()
+    assert np.array_equal(tacsim.membrane_render_rgb(normals, lights, 0.8, 0.03),
+                          _old_render(normals, lights, 0.8, 0.03))
+
+
+def test_216_217_fast_radius_ratio_agrees_with_exact_path():
+    d = np.r_[0.0, np.geomspace(1e-12, 0.8, 200)]
+    for p in (1.0, 2.0, 1.7):
+        assert np.allclose(tacdome.largedef_radius_ratio(d, p, method="fast"),
+                           tacdome.largedef_radius_ratio(d, p), rtol=2e-13, atol=2e-13)

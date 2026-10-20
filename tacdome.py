@@ -265,13 +265,40 @@ def largedef_radius_ratio(d, p: float, method: str = "quadrature"):
     **Raises** ``ValueError``: d が [0, 1) の外、p が範囲外、method の綴り違い。"""
     arr, scalar = _as_d(d)
     p = _check_p(p)
-    if method not in ("quadrature", "beta"):
-        raise ValueError("largedef_radius_ratio: method must be 'quadrature' or 'beta', got %r" % method)
+    if method not in ("quadrature", "beta", "fast"):
+        raise ValueError("largedef_radius_ratio: method must be 'quadrature', 'beta' or 'fast', got %r" % method)
     if math.isinf(p):
         return _out(1.0 / np.sqrt(1.0 - arr), scalar)
     if method == "quadrature":
         up = _U ** p
         val = np.array([float(np.sum(_WU * np.sqrt(1.0 - di * up))) for di in arr]) / np.sqrt(1.0 - arr)
+        return _out(val, scalar)
+    if method == "fast":
+        # 結果の丸めが異なり得るため明示選択。p=1,2 は閉形式、それ以外は
+        # d×求積点を小ブロックにして Python ループを減らす。
+        if p == 1.0:
+            val = np.empty_like(arr)
+            small = arr < 1e-6
+            d0 = arr[small]
+            val[small] = 1.0 + d0 / 4.0 + 7.0 * d0 * d0 / 32.0
+            d1 = arr[~small]
+            val[~small] = (2.0 / (3.0 * d1)) * (-np.expm1(1.5 * np.log1p(-d1))) / np.sqrt(1.0 - d1)
+            return _out(val, scalar)
+        if p == 2.0:
+            val = np.empty_like(arr)
+            small = arr < 1e-6
+            d0 = arr[small]
+            val[small] = 1.0 + d0 / 3.0 + 4.0 * d0 * d0 / 15.0
+            d1 = arr[~small]
+            root = np.sqrt(1.0 - d1)
+            val[~small] = (0.5 * root + np.arctan2(np.sqrt(d1), root) / (2.0 * np.sqrt(d1))) / root
+            return _out(val, scalar)
+        up = _U ** p
+        val = np.empty_like(arr)
+        for start in range(0, arr.size, 4096):
+            ds = arr[start:start + 4096]
+            val[start:start + 4096] = np.sqrt(1.0 - ds[:, None] * up) @ _WU
+        val /= np.sqrt(1.0 - arr)
         return _out(val, scalar)
     out = np.empty_like(arr)
     for i, di in enumerate(arr):
@@ -507,7 +534,7 @@ def contact_patch_radius(img, pitch: float, ring_px: float = 4.0) -> dict:
         raise ValueError("contact_patch_radius: img must be a 2-D image of at least 16×16")
     if not np.all(np.isfinite(im)):
         raise ValueError("contact_patch_radius: img has non-finite pixels")
-    lo, hi = np.percentile(im, 1.0), np.percentile(im, 99.9)
+    lo, hi = np.percentile(im, (1.0, 99.9))
     if not (hi > lo):
         raise ValueError("contact_patch_radius: no contrast (flat image)")
     t = 0.5 * (lo + hi)
