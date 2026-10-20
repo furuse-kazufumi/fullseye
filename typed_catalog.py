@@ -207,6 +207,23 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # omni360: scalar geometry stays small; structured rigs are built in chain_fuzz.
+    ("cubemap_from_equirect", "face_size"): lambda rng: 16,
+    ("equirect_filter_gaussian", "sigma_deg"): lambda rng: 4.0,
+    ("equirect_weight_map", "h"): lambda rng: 16,
+    ("equirect_weight_map", "w"): lambda rng: 32,
+    ("ods_depth_to_disparity", "ipd_m"): lambda rng: 0.064,
+    ("ods_depth_to_disparity", "w"): lambda rng: 32,
+    ("ods_disparity_to_depth", "ipd_m"): lambda rng: 0.064,
+    ("ods_disparity_to_depth", "w"): lambda rng: 32,
+    ("stereo_parallax_budget", "disparity_px"): lambda rng: 2.0,
+    ("stereo_parallax_budget", "width_px"): lambda rng: 1920,
+    ("stereo_parallax_budget", "viewing_distance_m"): lambda rng: 2.0,
+    ("stereo_parallax_budget", "screen_width_m"): lambda rng: 0.7,
+    ("stereo_parallax_budget", "ipd_m"): lambda rng: 0.064,
+    ("equirect_rotate", "R"): lambda rng: np.array(
+        [[np.cos(0.1), 0.0, np.sin(0.1)], [0.0, 1.0, 0.0],
+         [-np.sin(0.1), 0.0, np.cos(0.1)]]),
     # 複素平面の面(2026-09-22)。既定の 256x256 はファザーには重いので、
     # op ごとに小さい窓を渡す(名前ヒントにすると他の族の "shape" を巻き込む)。
     ("cplx_plane_grid", "shape"): lambda rng: (24, 24),

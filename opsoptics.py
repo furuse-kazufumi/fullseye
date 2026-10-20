@@ -706,8 +706,8 @@ _CATALOG = {
         ("caustic_floor_segmentation", "watervision", ["image2d"], "table"),
     ],
     "omni360": [
-        ("cubemap_from_equirect", "omni360", ["rgbimage"], "images"),
-        ("equirect_from_cubemap", "omni360", ["images"], "rgbimage"),
+        ("cubemap_from_equirect", "omni360", ["rgbimage"], "rgbvideo"),
+        ("equirect_from_cubemap", "omni360", ["rgbvideo"], "rgbimage"),
         ("viewport_from_equirect", "omni360", ["rgbimage"], "rgbimage"),
         ("equirect_rotate", "omni360", ["rgbimage", "matrix"], "rgbimage"),
         ("equirect_weight_map", "omni360", [], "image2d"),
@@ -718,7 +718,7 @@ _CATALOG = {
         ("equirect_from_fisheye_pair", "omni360", ["images"], "table"),
         ("equirect_from_perspectives", "omni360", ["images"], "table"),
         ("equirect_defect_unwrap_pipe", "omni360", ["image2d"], "table"),
-        ("ods_render", "omni360", [], "table"),
+        ("ods_render", "omni360", [], "images"),
         ("ods_depth_to_disparity", "omni360", ["image2d"], "image2d"),
         ("ods_disparity_to_depth", "omni360", ["image2d"], "image2d"),
         ("stereo360_sbs", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
@@ -728,7 +728,7 @@ _CATALOG = {
         ("stereo_parallax_budget", "omni360", [], "table"),
         ("stereo_pack", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
         ("anaglyph_from_ods", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
-        ("video360_viewport_track", "omni360", ["images"], "images"),
+        ("video360_viewport_track", "omni360", ["rgbvideo"], "rgbvideo"),
         ("video360_tile_coverage", "omni360", ["pairs"], "table"),
     ],
     "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
