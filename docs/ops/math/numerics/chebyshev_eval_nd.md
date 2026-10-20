@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # chebyshev_eval_nd — MATH `numerics` op
 
 - **データ種**: `table × matrix` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("chebyshev_eval_nd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None, *, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None, *, method='exact') -> 'np.ndarray'`、台帳から引くなら `opsmath.get("chebyshev_eval_nd")`)
 
 ## 使い方
 

@@ -1616,8 +1616,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `mathnumerics.py`
 
 - **L239** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-- **L390** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
-- **L406** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
+- **L395** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
+- **L411** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
 
 ## `mathops.py`
 
@@ -1667,7 +1667,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `occupancy.py`
 
 - **L228** — ★2026-09-07: ``res`` so gemacht, dass es **pro Achse** Werte annimmt (Laenge 3 ebenfalls erlaubt). Auf wuerfelfoermig beschraenkt wird bei einem flachen Volumen wie einem Vogelperspektive-Gitter (duennes z x breites xy) auch auf der nicht benoetigten Achse dieselbe Schrittweite erzwungen (`poc_bev_sensor_fusion` gemessen: von 4,096 Millionen Voxeln werden nur 8.1 % genutzt). Das `grid_coords` derselben Familie nahm von Anfang an per-Achse-res an -- die Diskrepanz, bei der **die Breite des Vertrags an Eingang und Ausgang unterschiedlich ist**, wurde angeglichen. Bestehende Aufrufer, die einen Skalar uebergeben, bleiben unberuehrt.
-- **L332** — ★2026-09-07: ``res`` so gemacht, dass es **pro Achse** Werte annimmt (Laenge 3 ebenfalls erlaubt). Zuvor erlaubte ``int(res)`` nur ein wuerfelfoermiges Gitter, und waehrend ``esdf`` ein laengen-3-anisotropes ``voxel_size`` annimmt, war diese Seite -- die dessen Ausgabe in world-Koordinaten subtrahiert -- auf wuerfelfoermig beschraenkt, ein **nur auf einer Seite enger Vertrag**. Sie klemmt direkt bei einem Gitter wie CTs duenner Verbindungsschicht (30,180,180) (gemessen in `poc_ct_void_morphology`). Bestehende Aufrufer, die einen Skalar uebergeben, bleiben unberuehrt.
+- **L338** — ★2026-09-07: ``res`` so gemacht, dass es **pro Achse** Werte annimmt (Laenge 3 ebenfalls erlaubt). Zuvor erlaubte ``int(res)`` nur ein wuerfelfoermiges Gitter, und waehrend ``esdf`` ein laengen-3-anisotropes ``voxel_size`` annimmt, war diese Seite -- die dessen Ausgabe in world-Koordinaten subtrahiert -- auf wuerfelfoermig beschraenkt, ein **nur auf einer Seite enger Vertrag**. Sie klemmt direkt bei einem Gitter wie CTs duenner Verbindungsschicht (30,180,180) (gemessen in `poc_ct_void_morphology`). Bestehende Aufrufer, die einen Skalar uebergeben, bleiben unberuehrt.
 
 ## `octscan.py`
 

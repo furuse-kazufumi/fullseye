@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">occupancy_grid — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res, *, chunk=262144)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res, *, chunk=262144)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → 3-D 점유 복셀 격자, bool(점이 들어간 복셀을 점유로 표시).</p>
 <p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 가 격자가 펼치는 체적, <code style="color:#22d3bf">res</code> 는 각 축의복셀 수(스칼라 = 입방 res³, 또는 길이 3 의 축별). 복셀은 반개구간 [lo+i/res*span, lo+(i+1)/res*span) 이며, 상단 (frac==1) 의 점은 마지막 복셀에 포함한다. <b>bounds 밖의 점은 버린다</b>(끝 셀로 clamp 하면 경계에 환상의 장애물이 쌓이기 때문). match3d.points_to_voxel 이 밀도(float) 를 만드는 데 비해, 이것은 planning 용의 점유(bool)를 만드는 점이 고유하다.</p>

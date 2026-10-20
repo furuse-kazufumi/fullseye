@@ -22,7 +22,7 @@ import numpy as np
 __all__ = ["esprit_doa", "hilbert_analytic", "lomb_scargle", "music_doa", "n_sources_mdl", "ula_snapshots"]
 
 
-def lomb_scargle(t, y, freqs) -> dict:
+def lomb_scargle(t, y, freqs, *, chunk=None) -> dict:
     """不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。
 
     P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、
@@ -40,14 +40,24 @@ def lomb_scargle(t, y, freqs) -> dict:
         raise ValueError("lomb_scargle: NaN/inf がある")
     if np.any(f <= 0):
         raise ValueError("lomb_scargle: 周波数は正(f = 0 では τ が定まらない)")
+    chunk = len(f) if chunk is None else int(chunk)
+    if chunk <= 0:
+        raise ValueError("lomb_scargle: chunk must be positive")
     yc = y - y.mean()
-    w = 2.0 * math.pi * f[:, None]
-    tau = np.arctan2(np.sum(np.sin(2 * w * t), axis=1), np.sum(np.cos(2 * w * t), axis=1))[:, None] / (2 * w)
-    arg = w * (t[None, :] - tau)
-    c, s = np.cos(arg), np.sin(arg)
-    cc, ss = np.sum(c * c, axis=1), np.sum(s * s, axis=1)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        p = 0.5 * (np.where(cc > 0, (c @ yc) ** 2 / cc, 0.0) + np.where(ss > 0, (s @ yc) ** 2 / ss, 0.0))
+    p = np.empty(len(f), dtype=np.float64)
+    for start in range(0, len(f), chunk):
+        stop = min(start + chunk, len(f))
+        w = 2.0 * math.pi * f[start:stop, None]
+        tau = (np.arctan2(np.sum(np.sin(2 * w * t), axis=1),
+                          np.sum(np.cos(2 * w * t), axis=1))[:, None]
+               / (2 * w))
+        arg = w * (t[None, :] - tau)
+        c, s = np.cos(arg), np.sin(arg)
+        cc, ss = np.sum(c * c, axis=1), np.sum(s * s, axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            p[start:stop] = 0.5 * (
+                np.where(cc > 0, (c @ yc) ** 2 / cc, 0.0)
+                + np.where(ss > 0, (s @ yc) ** 2 / ss, 0.0))
     return {"freq": f, "power": p, "peak_freq": float(f[int(np.argmax(p))])}
 
 

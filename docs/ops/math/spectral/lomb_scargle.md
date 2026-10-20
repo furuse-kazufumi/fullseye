@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # lomb_scargle — MATH `spectral` op
 
 - **データ種**: `signal × signal × signal` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs) -> 'dict'` (実装を直接呼ぶなら `import mathspectral; mathspectral.lomb_scargle(t, y, freqs) -> 'dict'`、台帳から引くなら `opsmath.get("lomb_scargle")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs, *, chunk=None) -> 'dict'` (実装を直接呼ぶなら `import mathspectral; mathspectral.lomb_scargle(t, y, freqs, *, chunk=None) -> 'dict'`、台帳から引くなら `opsmath.get("lomb_scargle")`)
 
 ## 使い方
 

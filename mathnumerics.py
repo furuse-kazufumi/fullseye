@@ -377,7 +377,7 @@ def _box(box, d):
     return B
 
 
-def chebyshev_coeffs_nd(values, box=None) -> dict:
+def chebyshev_coeffs_nd(values, box=None, *, method="exact") -> dict:
     """テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。
 
     Args:
@@ -400,9 +400,14 @@ def chebyshev_coeffs_nd(values, box=None) -> dict:
     d = V.ndim
     B = _box(box, d)
     C = V[tuple(slice(None, None, -1) for _ in range(d))]          # 昇順 → cos(jπ/(n−1)) の降順
+    if method == "fast":
+        C = _fft.dctn(C, type=1) / np.prod(np.asarray(C.shape) - 1)
+    elif method != "exact":
+        raise ValueError("chebyshev_coeffs_nd: method must be 'exact' or 'fast'")
     for ax in range(d):
         n = C.shape[ax]
-        C = _fft.dct(C, type=1, axis=ax) / (n - 1)
+        if method == "exact":
+            C = _fft.dct(C, type=1, axis=ax) / (n - 1)
         idx = [slice(None)] * d
         for k in (0, n - 1):
             idx[ax] = k
@@ -412,7 +417,7 @@ def chebyshev_coeffs_nd(values, box=None) -> dict:
     return {"coeffs": C, "box": B, "decay": decay, "tail": tail}
 
 
-def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
+def chebyshev_eval_nd(coeffs, points, box=None, *, method="exact") -> np.ndarray:
     """``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
 
     ``points`` が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。
@@ -450,6 +455,34 @@ def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
         P = P[:, None]
     if P.ndim != 2 or P.shape[1] != d:
         raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})(軸ごとの格子なら 1-D 配列 {d} 本の tuple)")
+    if method == "fast":
+        work = C
+        for ax in range(d):
+            x = ((2.0 * P[:, ax] - (B[ax, 0] + B[ax, 1]))
+                 / (B[ax, 1] - B[ax, 0]))
+            if np.any(np.abs(x) > 1 + 1e-12):
+                raise ValueError("chebyshev_eval_nd: 点が box の外(外挿はしない)")
+            x = np.clip(x, -1, 1)
+            if ax == 0:
+                shape = (len(P),) + work.shape[1:]
+                b1 = np.zeros(shape, np.float64)
+                b2 = np.zeros_like(b1)
+                scale = x.reshape((len(P),) + (1,) * (work.ndim - 1))
+                for k in range(work.shape[0] - 1, 0, -1):
+                    b0 = 2 * scale * b1 - b2 + work[k]
+                    b2, b1 = b1, b0
+                work = scale * b1 - b2 + work[0]
+            else:
+                b1 = np.zeros((len(P),) + work.shape[2:], np.float64)
+                b2 = np.zeros_like(b1)
+                scale = x.reshape((len(P),) + (1,) * (work.ndim - 2))
+                for k in range(work.shape[1] - 1, 0, -1):
+                    b0 = 2 * scale * b1 - b2 + work[:, k]
+                    b2, b1 = b1, b0
+                work = scale * b1 - b2 + work[:, 0]
+        return work
+    if method != "exact":
+        raise ValueError("chebyshev_eval_nd: method must be 'exact' or 'fast'")
     ks = _LETTERS[:d]
     spec = ks + "," + ",".join("m" + k for k in ks) + "->m"
     return np.einsum(spec, C, *[_T(P[:, ax], ax) for ax in range(d)], optimize=True)

@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # occupancy_grid — 3D `occupancy` op
 
 - **データ種**: `points` → `voxel`
-- **呼び出し**: `import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res)` (実装を直接呼ぶなら `import occupancy; occupancy.occupancy_grid(points, bounds, res)`、台帳から引くなら `ops3d.get("occupancy_grid")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res, *, chunk=262144)` (実装を直接呼ぶなら `import occupancy; occupancy.occupancy_grid(points, bounds, res, *, chunk=262144)`、台帳から引くなら `ops3d.get("occupancy_grid")`)
 
 ## 使い方
 
