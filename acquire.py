@@ -445,11 +445,24 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
             a short buffer is a dropped packet, never a reason to return a
             half-filled image.
     """
-    b = np.unpackbits(np.asarray(buf, dtype=np.uint8).ravel(), bitorder="little")
-    need = int(bits) * int(count)
-    if b.size < need:
+    bits = int(bits)
+    count = int(count)
+    a = np.asarray(buf, dtype=np.uint8).ravel()
+    need = bits * count
+    need_bytes = (need + 7) // 8
+    if a.size < need_bytes:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
-                         % (count, bits, need, b.size))
+                         % (count, bits, need, a.size * 8))
+    if bits in (10, 12):
+        # Each value spans at most three bytes.  Decode those bytes directly instead
+        # of expanding every input byte into eight temporary uint8 values.
+        src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
+        bit = np.arange(count, dtype=np.uint64) * bits
+        byte = (bit >> 3).astype(np.intp)
+        shift = (bit & 7).astype(np.uint32)
+        word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
+        return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
+    b = np.unpackbits(a[:need_bytes], bitorder="little")
     w = b[:need].reshape(int(count), int(bits))
     return (w * (1 << np.arange(int(bits), dtype=np.uint32))).sum(axis=1).astype(np.uint16)
 
