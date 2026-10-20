@@ -783,9 +783,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** — 2b. ★ Gap (d): the docstring says 0-d but it is actually (1,)
-- **L610** — 6. ★ Gap (a): the default linear pulls 1.15 toward 1.0, cubic does not
-- **L634** — 10. ★ Gap (e) was closed on 2026-09-06. It has been rewritten toward **pinning the closed state** (previously it asserted that 'a warning is raised').
+- **L701** — 2b. ★ Gap (d): the docstring says 0-d but it is actually (1,)
+- **L717** — 6. ★ Gap (a): the default linear pulls 1.15 toward 1.0, cubic does not
+- **L741** — 10. ★ Gap (e) was closed on 2026-09-06. It has been rewritten toward **pinning the closed state** (previously it asserted that 'a warning is raised').
 
 ## `examples/poc_livestock_body_volume.py`
 
@@ -966,9 +966,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_pv_thermal_survey.py`
 
 - **L381** — ★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a "fault" under the whole-average criterion.
-- **L482** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
-- **L711** — ★The cost of the module median —— blind to a whole-module anomaly
-- **L1169** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
+- **L582** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
+- **L811** — ★The cost of the module median —— blind to a whole-module anomaly
+- **L1269** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
 
 ## `examples/poc_pxrd_phase_peel.py`
 
@@ -1182,21 +1182,21 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L61** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
 - **L126** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
-- **L142** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
-- **L177** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
-- **L235** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
-- **L249** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
-- **L267** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
-- **L302** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
-- **L332** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
-- **L362** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
-- **L409** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
-- **L419** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
-- **L440** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
-- **L528** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
-- **L575** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
-- **L602** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
-- **L683** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
+- **L230** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
+- **L265** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
+- **L323** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
+- **L337** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
+- **L355** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
+- **L390** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
+- **L420** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
+- **L450** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
+- **L497** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
+- **L507** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
+- **L528** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
+- **L616** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
+- **L663** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
+- **L690** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
+- **L771** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
 
 ## `examples/poc_thin_film_reflectometry.py`
 

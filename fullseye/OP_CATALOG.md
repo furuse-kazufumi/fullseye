@@ -3005,7 +3005,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### lightfield / decode(3)
 - `lf_from_mla` `image2d → lightfield` — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field. · 例: `lightfield_depth`
 - `lf_stats` `lightfield → table` — Describe a light field: shape, angular centre, and the slope range it can carry. · 例: `lightfield_depth`
-- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`
+- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `poc_lightfield_depth`
 
 #### lightfield / depth(5)
 - `lf_all_in_focus` `lightfield × image2d → image2d` — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`
@@ -4388,7 +4388,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `zoom_inset` `image2d → image2d` — 拡大の差し込み ―― 元図に**枠**と**引き出し線**を付ける。 · 例: `annotate_gallery`, `poc_diabolo_model_and_vision`, `poc_food_cutting_measure`
 
 #### annotate / furniture(3)
-- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_simcal_thin_film`, `poc_stockpile_volume`
+- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_lidar_terrain_change`, `poc_lightfield_depth`, `poc_multibeam_bathymetry`, `poc_pv_thermal_survey`, `poc_simcal_thin_film`, `poc_stockpile_volume`, `poc_thermography_ndt`
 - `legend_box` `image2d × entries → image2d` — 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。 · 例: `annotate_gallery`, `poc_driving_decisions`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`
 - `scale_bar` `image2d → image2d` — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。 · 例: `annotate_gallery`
 
