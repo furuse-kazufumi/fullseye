@@ -266,9 +266,32 @@ def _require_video(video, name: str, op: str, max_elements: int,
     Accepts a 3-D array-like or a list/tuple of equal-shape 2-D frames — the same
     contract :mod:`videops` documents — and adds the size caps and the
     complex/masked refusals this module needs."""
+    def validate_shape(shape):
+        if len(shape) != 3:
+            raise ValueError("%s: %s must be a (T, H, W) clip, got a %d-D array of shape %r"
+                             % (op, name, len(shape), tuple(shape)))
+        t, h, w = shape
+        if t > MAX_FRAMES:
+            raise ValueError("%s: %s has T=%d frames, over the %d cap (motionmag.MAX_FRAMES)"
+                             % (op, name, t, MAX_FRAMES))
+        if h * w > MAX_FRAME_PIXELS:
+            raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
+                             "(motionmag.MAX_FRAME_PIXELS)"
+                             % (op, name, h, w, h * w, MAX_FRAME_PIXELS))
+        if t * h * w > max_elements:
+            raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d cap"
+                             % (op, name, t * h * w, tuple(shape), max_elements))
+
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
+        raw_shapes = [np.shape(f) for f in video]
+        if any(len(shape) != 2 for shape in raw_shapes):
+            raise ValueError("%s: every %s frame must be 2-D" % (op, name))
+        if len(set(raw_shapes)) != 1:
+            raise ValueError("%s: %s frames have differing shapes: %r"
+                             % (op, name, sorted(set(raw_shapes))))
+        validate_shape((len(video),) + raw_shapes[0])
         frames = []
         for i, f in enumerate(video):
             if np.ma.is_masked(f):
@@ -290,6 +313,7 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, sorted(shapes)))
         vid = np.stack(frames, axis=0)
     else:
+        validate_shape(np.shape(video))
         if np.ma.is_masked(video):
             raise ValueError("%s: %s is a masked array with masked entries — "
                              "fill or drop them explicitly" % (op, name))
@@ -679,6 +703,14 @@ def complex_steerable_decompose(image, scales: int = 4,
     References: Freeman & Adelson, IEEE PAMI 1991; Simoncelli & Freeman,
     ICIP 1995; Portilla & Simoncelli, IJCV 2000."""
     op = "complex_steerable_decompose"
+    raw_shape = np.shape(image)
+    if len(raw_shape) != 2:
+        raise ValueError("%s: image must be 2-D (H, W), got shape %r"
+                         % (op, tuple(raw_shape)))
+    h, w = raw_shape
+    if h * w > MAX_FRAME_PIXELS:
+        raise ValueError("%s: image is %dx%d = %d pixels, over the %d cap"
+                         % (op, h, w, h * w, MAX_FRAME_PIXELS))
     if np.ma.is_masked(image):
         raise ValueError("%s: image is a masked array with masked entries — fill "
                          "or drop them explicitly" % (op,))
@@ -750,6 +782,9 @@ def complex_steerable_reconstruct(decomposition) -> np.ndarray:
                          % (op, len(bands), ns, no, expected))
     acc = np.zeros((h, w), np.complex128)
     for j, band in enumerate(bands):
+        if np.shape(band) != (h, w):
+            raise ValueError("%s: band %d has shape %r, expected %r"
+                             % (op, j, np.shape(band), (h, w)))
         arr = np.ascontiguousarray(band, dtype=np.complex128)
         if arr.shape != (h, w):
             raise ValueError("%s: band %d has shape %r, expected %r"

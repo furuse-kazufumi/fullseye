@@ -79,6 +79,8 @@ def inflate_obstacles(occ, radius_cells: float):
     rounded correctly (not a square dilation). Returns a boolean grid."""
     occ = np.asarray(occ, bool)
     r = float(radius_cells)
+    if not np.isfinite(r):
+        raise ValueError("radius_cells must be finite")
     if r <= 0 or not occ.any():
         return occ.copy()                           # no obstacles -> nothing to inflate
     # distance from every free cell to the nearest obstacle; inflate where <= r
@@ -311,8 +313,8 @@ def inflate(occupancy, radius, voxel_size=1.0):
     occ = np.asarray(occupancy, bool)
     _sampling(voxel_size)                        # fail-closed on voxel_size<=0 before any short-circuit
     r = float(radius)
-    if r < 0:                                   # fail-closed
-        raise ValueError("radius must be non-negative")
+    if not np.isfinite(r) or r < 0:             # fail-closed
+        raise ValueError("radius must be finite and non-negative")
     if r == 0.0 or not occ.any():
         return occ.copy()                       # 膨張なし / 障害物なし
     return esdf(occ, voxel_size) <= r

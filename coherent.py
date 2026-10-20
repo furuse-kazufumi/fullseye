@@ -303,6 +303,10 @@ def _acf_cuts(img, up):
         # 断面 = パワースペクトルを他方の軸で足して 1-D の逆変換(Wiener–Khinchin の 1-D 版)
         s1 = S.sum(axis=1 - axis)
         n = s1.size
+        if up == 1:
+            r = np.fft.ifft(s1).real
+            out.append(r / r[0])
+            continue
         m = n * up
         pad = np.zeros(m, dtype=np.complex128)
         h = n // 2

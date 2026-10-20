@@ -111,6 +111,8 @@ def gauss_quadrature(n: int, kind: str = "legendre", a: float | None = None, b: 
     if kind == "legendre" and (a is not None or b is not None):
         a = -1.0 if a is None else float(a)
         b = 1.0 if b is None else float(b)
+        if not (np.isfinite(a) and np.isfinite(b)):
+            raise ValueError("gauss_quadrature: Legendre interval bounds must be finite; use a different rule for infinite intervals")
         if not b > a:
             raise ValueError("gauss_quadrature: b > a が要る")
         x = 0.5 * (b - a) * x + 0.5 * (b + a)
@@ -134,6 +136,8 @@ def gauss_cubature(n: int, dim: int = 2, a=-1.0, b=1.0) -> dict:
         raise ValueError("gauss_cubature: 1 <= dim <= 6、n^dim <= 2e6")
     lo = np.broadcast_to(np.asarray(a, dtype=np.float64), (dim,))
     hi = np.broadcast_to(np.asarray(b, dtype=np.float64), (dim,))
+    if not (np.all(np.isfinite(lo)) and np.all(np.isfinite(hi))):
+        raise ValueError("gauss_cubature: Legendre box bounds must be finite")
     if np.any(hi <= lo):
         raise ValueError("gauss_cubature: 各軸で b > a")
     x, w = np.polynomial.legendre.leggauss(n)
