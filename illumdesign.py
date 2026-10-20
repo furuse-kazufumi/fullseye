@@ -254,9 +254,8 @@ def _irradiance_at(points, normals, E, D, I0, m):
         d2 = np.sum(V * V, axis=2)
         d = np.sqrt(d2)
         with np.errstate(invalid="ignore", divide="ignore"):
-            U = V / d[:, :, None]
-        cos_e = np.sum(U * D[None, :, :], axis=2)                    # angle off the emitter axis
-        cos_s = -np.sum(U * Nn[:, None, :], axis=2)                  # angle at the surface
+            cos_e = np.sum(V * D[None, :, :], axis=2) / d            # angle off the emitter axis
+            cos_s = -np.sum(V * Nn[:, None, :], axis=2) / d         # angle at the surface
         cos_e = np.clip(cos_e, 0.0, None)
         cos_s = np.clip(cos_s, 0.0, None)
         with np.errstate(divide="ignore", invalid="ignore"):
@@ -298,7 +297,7 @@ def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z
     X, Y = np.meshgrid(xs, ys)
     if height is None:
         Z = np.full((H, W), z0)
-        Nn = np.tile([0.0, 0.0, 1.0], (H * W, 1))
+        Nn = np.broadcast_to([0.0, 0.0, 1.0], (H * W, 3))
     else:
         hz = np.asarray(height, dtype=np.float64)
         if hz.shape != (H, W) or not np.all(np.isfinite(hz)):
@@ -1094,20 +1093,23 @@ def solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, d
     if rg.shape != (H, W) or not np.all(np.isfinite(rg)) or np.any(rg < 0) or np.any(rg > 30.0):
         raise ValueError("roughness_deg must be a scalar or an (H, W) map of finite values in [0, 30]")
     axis = _cone_axis(psi, az)
-    G = np.random.default_rng(int(seed)).standard_normal((k, 2))
     flatN = N.reshape(-1, 3)
     flatR = np.radians(rg.reshape(-1))
     out = np.zeros(H * W)
     step = max(1, (1 << 20) // k)
     s2a = math.sin(math.radians(alpha)) ** 2
-    for a0 in range(0, len(flatN), step):
-        n0 = flatN[a0:a0 + step]
-        sg = flatR[a0:a0 + step]
-        Nn = n0[:, None, :] + np.concatenate([sg[:, None, None] * G[None, :, :], np.zeros((len(n0), k, 1))], 2)
-        Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=2, keepdims=True), 1e-12)
-        share = _specular_share(Nn, alpha, float(view_na), axis, k)
-        cg = np.clip(n0 @ axis, 0.0, None)
-        out[a0:a0 + step] = F * share + rho * s2a * cg
+    if F == 0.0:
+        out = rho * s2a * np.clip(flatN @ axis, 0.0, None)
+    else:
+        G = np.random.default_rng(int(seed)).standard_normal((k, 2))
+        for a0 in range(0, len(flatN), step):
+            n0 = flatN[a0:a0 + step]
+            sg = flatR[a0:a0 + step]
+            Nn = n0[:, None, :] + np.concatenate([sg[:, None, None] * G[None, :, :], np.zeros((len(n0), k, 1))], 2)
+            Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=2, keepdims=True), 1e-12)
+            share = _specular_share(Nn, alpha, float(view_na), axis, k)
+            cg = np.clip(n0 @ axis, 0.0, None)
+            out[a0:a0 + step] = F * share + rho * s2a * cg
     img = (out * L).reshape(H, W)
     return img * mask
 
