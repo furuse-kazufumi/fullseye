@@ -1,17 +1,19 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_cone — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud पर infinite cone fit करता है और <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code> लौटाता है।</p>
-<p>meridian plane में point-से-generatrix की orthogonal distance <code style="color:#22d3bf">a·sinα − ρ·cosα</code> (<code style="color:#22d3bf">a</code> = axial component, <code style="color:#22d3bf">ρ</code> = radius, <code style="color:#22d3bf">α</code> = half-angle) को <code style="color:#22d3bf">scipy.optimize.least_squares</code> से minimise किया जाता है। प्रारंभिक मान के लिए PCA के 3 principal axes में से हर एक को axis candidate माना जाता है और axial component t के सापेक्ष radius ρ का linear regression <code style="color:#22d3bf">ρ = m·t + b</code> लिया जाता है (half-angle = <code style="color:#22d3bf">atan(m)</code>, apex = axis पर वह point जहाँ ρ 0 होता है, <code style="color:#22d3bf">t = -b/m</code>)। सबसे छोटे residual वाला candidate रखा जाता है। axis की दिशा को इस तरह normalise किया जाता है कि &quot;apex से दूर जाने पर ρ बढ़े (+ दिशा में खुले)&quot;।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA の 3 主軸をそれぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 <code style="color:#22d3bf">ρ = m·t + b</code> から取る(半角 = <code style="color:#22d3bf">atan(m)</code>、頂点 = ρ が 0 になる軸上の点 <code style="color:#22d3bf">t = -b/m</code>)。残差最小の候補を採る。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
 <p>Args:</p>
-<p>points: (N,3) point cloud (कम से कम 6 points)।</p>
+<p>points: (N,3) 点群(最低 6 点)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>।</p>
-<p><code style="color:#22d3bf">axis</code> unit axis (खुलने की दिशा) है, <code style="color:#22d3bf">half_angle</code> half-angle [rad], और <code style="color:#22d3bf">residual</code> point-surface distance का RMS।</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axis</code> は単位軸(開く向き)、<code style="color:#22d3bf">half_angle</code> は半角 [rad]、<code style="color:#22d3bf">residual</code> は点-面距離の RMS。</p>
 <p>Raises:</p>
-<p>ValueError: गलत shape / कम points / half-angle ~0 (cylinder में degenerate) आदि पर fail-closed।</p>
+<p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
+<p><code style="color:#22d3bf">method=&#x27;eliminate_angle&#x27;</code> は半角の上下限と停留点を調べる。既定値は変更せず、残差許容差は rtol=1e-8, atol=1e-10。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

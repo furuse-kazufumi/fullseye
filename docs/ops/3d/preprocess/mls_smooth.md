@@ -13,40 +13,43 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # mls_smooth — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)`、台帳から引くなら `ops3d.get("mls_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')`、台帳から引くなら `ops3d.get("mls_smooth")`)
 
 ## 使い方
 
 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。
 
 点ごとに半径 ``radius`` 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の
-2 軸)を推定し、近傍の「接平面上座標 (u,v) → 法線方向の高さ h」に order 次の
-多項式曲面をガウス重み付き最小二乗で当てはめる。注目点自身は局所座標の原点 (0,0)
-にあたるので、当てはめた曲面の (0,0) での高さ(= 定数項)ぶんだけ法線方向へ動かして
-曲面上へ射影する。面の形は保ったままセンサノイズだけを均せる。
+    2 軸)を推定し、近傍の「接平面上座標 (u,v) → 法線方向の高さ h」に order 次の
+    多項式曲面をガウス重み付き最小二乗で当てはめる。注目点自身は局所座標の原点 (0,0)
+    にあたるので、当てはめた曲面の (0,0) での高さ(= 定数項)ぶんだけ法線方向へ動かして
+    曲面上へ射影する。面の形は保ったままセンサノイズだけを均せる。
 
-Parameters
-----------
-points : array_like, shape (N, 3)
-    入力点群。
-radius : float
-    近傍球の半径(> 0)。局所曲面のサポート。
-order : int
-    局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
-chunk : int or None
-    指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
+    Parameters
+    ----------
+    points : array_like, shape (N, 3)
+        入力点群。
+    radius : float
+        近傍球の半径(> 0)。局所曲面のサポート。
+    order : int
+        局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
+    chunk : int or None
+        指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
 
-Returns
--------
-ndarray, shape (N, 3)
-    平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。
+    Returns
+    -------
+    ndarray, shape (N, 3)
+        平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。
 
-Notes
------
-近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する
-(穴や境界で暴れないための安全策)。``radius <= 0`` は ValueError、空入力は空を返す。
+    Notes
+    -----
+    近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する
+    (穴や境界で暴れないための安全策)。``radius <= 0`` は ValueError、空入力は空を返す。
 
-空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    
+
+``order=0, method='mean'`` は定数項を重み付き平均で直接求める。既定値は変更せず、許容差は rtol=1e-12, atol=1e-14。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

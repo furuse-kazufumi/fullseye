@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_torus — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群にトーラスを当てはめ <code style="color:#22d3bf">{center, axis, R, r, residual}</code> を返す。</p>
 <p>点-トーラス距離 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=軸からの半径, <code style="color:#22d3bf">R</code>=主半径, <code style="color:#22d3bf">r</code>=管半径)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸(仲間外れ固有ベクトル)+ <code style="color:#22d3bf">R0=mean(ρ)</code>・<code style="color:#22d3bf">r0</code>(管中心円までの距離の平均)。</p>
@@ -12,6 +12,7 @@
 <p><code style="color:#22d3bf">axis</code> は単位軸、<code style="color:#22d3bf">R</code> は主半径、<code style="color:#22d3bf">r</code> は管半径、<code style="color:#22d3bf">residual</code> は点-面距離の RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足 fail-closed。</p>
+<p><code style="color:#22d3bf">method=&#x27;eliminate_r&#x27;</code> は管半径を平均距離として消去する。既定値は変更せず、残差許容差は rtol=1e-10, atol=1e-12。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

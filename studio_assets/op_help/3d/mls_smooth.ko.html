@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점을 국소 다항 곡면으로 사영해 잡음을 떨굽니다(Moving Least Squares 평활).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -21,6 +21,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する(穴や境界で暴れないための安全策)。<code style="color:#22d3bf">radius &lt;= 0</code> は ValueError、空入力は空を返す。</p>
 <p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。</p>
+<p><code style="color:#22d3bf">order=0, method=&#x27;mean&#x27;</code> は定数項を重み付き平均で直接求める。既定値は変更せず、許容差は rtol=1e-12, atol=1e-14。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
