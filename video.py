@@ -268,7 +268,8 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
 
 def read_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
-                max_frames=None, dtype: str = "float64", gray_backend: str = "auto") -> np.ndarray:
+                max_frames=None, dtype: str = "float64", gray_backend: str = "auto",
+                method: str = "exact") -> np.ndarray:
     """Read a clip into a single array: ``(T, H, W)`` gray or ``(T, H, W, 3)`` RGB.
 
     A thin eager wrapper over :func:`iter_frames` (same arguments, including
@@ -277,8 +278,32 @@ def read_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     Raises ``ValueError`` if the clip decodes to zero frames or the frames are
     not all the same shape.
     """
-    frames = list(iter_frames(path, gray=gray, step=step, start=start,
-                              max_frames=max_frames, dtype=dtype, gray_backend=gray_backend))
+    if method not in ("exact", "preallocate"):
+        raise ValueError("method must be 'exact' or 'preallocate'")
+    iterator = iter_frames(path, gray=gray, step=step, start=start,
+                           max_frames=max_frames, dtype=dtype, gray_backend=gray_backend)
+    if method == "preallocate":
+        count = _count_stored_frames(os.fspath(path))
+        if count is not None:
+            available = max(0, count - max(0, int(start)))
+            expected = (available + max(1, int(step)) - 1) // max(1, int(step))
+            if max_frames is not None:
+                expected = min(expected, max(0, int(max_frames)))
+            first = next(iterator, None)
+            if first is None:
+                raise ValueError("no frames read from %s" % path)
+            out = np.empty((max(1, expected),) + first.shape, dtype=first.dtype)
+            out[0] = first
+            used = 1
+            for frame in iterator:
+                if frame.shape != first.shape:
+                    raise ValueError("frames have differing shapes")
+                if used == len(out):
+                    out = np.resize(out, (max(used + 1, used * 2),) + first.shape)
+                out[used] = frame
+                used += 1
+            return out[:used]
+    frames = list(iterator)
     if not frames:
         raise ValueError("no frames read from %s" % path)
     shapes = {f.shape for f in frames}
