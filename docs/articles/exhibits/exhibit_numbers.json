@@ -625,6 +625,10 @@
    "accessioned": "2026-09-06",
    "no": "2026.031"
   },
+  "poc_photograph_through_prescription": {
+   "accessioned": "2026-10-20",
+   "no": "2026.269"
+  },
   "poc_physarum_maze": {
    "accessioned": "2026-09-28",
    "no": "2026.163"
@@ -1078,10 +1082,5 @@
    "no": "2026.261"
   }
  },
- "retired": {
-  "parallel_slice_269": {
-   "no": "2026.269",
-   "reason": "別の並行作業に予約済み"
-  }
- }
+ "retired": {}
 }

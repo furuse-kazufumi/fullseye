@@ -6336,6 +6336,23 @@
    }
   },
   {
+   "id": "poc_photograph_through_prescription",
+   "group": "wing_imaging",
+   "media": "01_chart_good_vs_detuned.png",
+   "motion": false,
+   "thumb_src": "01_chart_good_vs_detuned.png",
+   "label": {
+    "ja": "処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト",
+    "en": "Photographing a 3-D scene through the actual lens prescription: depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts",
+    "zh": "按处方参数透过镜头拍摄三维场景:景深、猫眼虚化、边角照度、色差、鬼像",
+    "tw": "依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影",
+    "ko": "처방 그대로의 렌즈를 통해 3차원 장면을 촬영: 피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트",
+    "de": "Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen: Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder",
+    "hi": "वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts",
+    "fr": "Photographier une scène 3-D à travers la prescription réelle de l'objectif : profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes"
+   }
+  },
+  {
    "id": "poc_water_inspection_images",
    "group": "wing_imaging",
    "media": "04_bottles.png",
@@ -7405,6 +7422,14 @@
     "de": "Wie Wasser in Prüfbildern aussieht (Kaustiken auf dem Beckenboden, eine Flasche von der Seite mit Füllstand, eine nasse Oberfläche, ein Rumpf unter Wasser)",
     "hi": "निरीक्षण चित्रों में पानी कैसा दिखता है (पूल के तल की caustic, बोतल का पार्श्व दृश्य और तरल-सतह, गीली सतह, पानी के भीतर पतवार)",
     "fr": "L'eau dans les images d'inspection (caustiques au fond d'un bassin, une bouteille vue de côté avec son niveau, une surface mouillée, une coque sous l'eau)"
+   },
+   "photograph-through-prescription": {
+    "zh": "按处方参数透过镜头拍摄三维场景(景深、猫眼虚化、边角照度、色差、鬼像)",
+    "tw": "依處方參數透過鏡頭拍攝三維場景(景深、貓眼虛化、邊角照度、色差、鬼影)",
+    "ko": "처방 그대로의 렌즈를 통해 3차원 장면을 촬영(피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트)",
+    "de": "Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen (Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder)",
+    "hi": "वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts)",
+    "fr": "Photographier une scène 3-D à travers la prescription réelle de l'objectif (profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes)"
    }
   }
  },

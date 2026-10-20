@@ -1,5 +1,7 @@
-<!-- i18n-source-sha: 4c1b60607e06 -->
+<!-- i18n-source-sha: bb3d9080f4fc -->
 # Fullseye Studio 완전 가이드
+
+처리 목적을 검색하면 후보가 현재 입력에 적용 가능, 전처리 필요, 기타의 세 그룹으로 나뉩니다. 단계를 추가하지 않고 후보를 한 번 실행해 볼 수 있습니다. 실행에 실패하면 Problems 창에 원인, 위치, 다음 작업이 표시되며 입력 재선택, 나란히 비교, 상세 로그 열기, 매개변수 편집, 제안 단계 검색으로 이동할 수 있습니다.
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 

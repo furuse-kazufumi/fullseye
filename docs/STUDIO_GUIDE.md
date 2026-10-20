@@ -1,5 +1,7 @@
 # Fullseye Studio 完全ガイド
 
+目的を検索すると、候補は現在の入力に使えるもの、前処理が必要なもの、その他に分かれます。候補は処理列へ追加せず一度だけ試せます。実行に失敗したときはProblems欄に原因・場所・次の操作が表示され、入力の選び直し、前後比較、詳細ログ、つまみ編集、候補段の検索へ進めます。
+
 **Fullseye Studio** は、HDevelop 風のビジュアル・パイプライン・ワークベンチです。オペレータを検索して並べ、2 つのつまみをスライダーで回し、途中結果をズーム/パンで見ながら 1 段ずつ実行し、組み上がったパイプラインを `--ops` 文字列 / Python / JSON として書き出せます。実体は `fullseye` API の薄い GUI フロントで、パイプラインのロジック（`PipelineModel`）・Inspector（`inspect_result`）・サンプル集（`recipes`）はいずれも Qt 非依存で単体テストされています。
 
 このガイドは `studio.py`（`build_window`）を実コードに突き合わせて機能を列挙したものです。UX/デザインの意図は [STUDIO_UX.md](STUDIO_UX.md) に、v14 の知覚パネルの背景は [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) にあります。

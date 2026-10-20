@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 89 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 90 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -203,6 +203,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 - 把照片變成一條線(點描 → 巡迴路徑 → 旋轉的圓): [說明](../../capabilities/one-stroke-drawing.md) _(ja)_ · 範例 [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
 - 光學系統的圖面(以 SVG / DXF 輸出透鏡截面圖、成像系統配置圖與單透鏡製造圖): [說明](../../capabilities/optics-drawings.md) _(ja)_ · 範例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
+- 依處方參數透過鏡頭拍攝三維場景(景深、貓眼虛化、邊角照度、色差、鬼影): [說明](../../capabilities/photograph-through-prescription.md) _(ja)_ · 範例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 製作會騙眼睛的圖來替量測方評分(錯覺、無限繪製、循環動畫): [說明](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 範例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
 - 定理即檢驗門的圖(阿波羅尼奧斯、福特圓、測地穹頂、葉序、IFS、空間填充曲線): [說明](../../capabilities/theorems-as-pictures.md) _(ja)_ · 範例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
@@ -387,7 +388,7 @@ PoC 269 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像品質與復原</b> (21)</summary>
+<details class="vall"><summary><b>成像品質與復原</b> (22)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近條紋的蠅眼" width="200" height="200"><b>&#9654;</b><span>逼近條紋的蠅眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手震去模糊" width="200" height="200"><b>&#9654;</b><span>手震去模糊</span></a>
@@ -408,6 +409,7 @@ PoC 269 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="圖分割" width="200" height="200"><b>&#9654;</b><span>圖分割</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="像素位移(偽色與混疊)" width="200" height="200"><b>&#9654;</b><span>像素位移(偽色與混疊)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線" width="200" height="200"><span>水與透明介質:海浪、泳池折射、水下顏色、瓶子的焦散線</span></a>
+<a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影" width="200" height="200"><span>依處方參數透過鏡頭拍攝三維場景:景深、貓眼虛化、邊角照度、色差、鬼影</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體" width="200" height="200"><span>水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="像素位移的偏移與開口校準(無法確定的地圖)" width="200" height="200"><span>像素位移的偏移與開口校準(無法確定的地圖)</span></a>
 </div>
