@@ -2042,8 +2042,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `sensitivity.py`
 
-- **L397** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
-- **L419** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
+- **L396** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
+- **L418** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
 
 ## `shapestats.py`
 
