@@ -1,4 +1,43 @@
 {
+  "Run in progress %d/%d stages: %s": {
+    "ja": "実行中 %d/%d 段: %s", "zh": "正在运行第 %d/%d 阶段: %s", "tw": "正在執行第 %d/%d 階段: %s",
+    "ko": "실행 중 %d/%d단계: %s", "de": "Ausführung %d/%d Stufen: %s", "hi": "चरण %d/%d चल रहा है: %s"
+  },
+  "Request stop": {
+    "ja": "停止要求", "zh": "请求停止", "tw": "要求停止", "ko": "중지 요청", "de": "Stopp anfordern", "hi": "रोकने का अनुरोध"
+  },
+  "Stop requested": {
+    "ja": "停止要求済み", "zh": "已请求停止", "tw": "已要求停止", "ko": "중지 요청됨", "de": "Stopp angefordert", "hi": "रोकने का अनुरोध किया गया"
+  },
+  "Stop requested (the current stage cannot be interrupted)": {
+    "ja": "停止要求済み（現在の段は途中で停止できません）", "zh": "已请求停止（当前阶段无法中断）", "tw": "已要求停止（目前階段無法中斷）",
+    "ko": "중지 요청됨(현재 단계는 중간에 중지할 수 없음)", "de": "Stopp angefordert (die aktuelle Stufe ist nicht unterbrechbar)", "hi": "रोकने का अनुरोध किया गया (वर्तमान चरण बीच में नहीं रुक सकता)"
+  },
+  "Stopped (%d/%d stages completed)": {
+    "ja": "停止しました（%d/%d 段完了）", "zh": "已停止（完成 %d/%d 阶段）", "tw": "已停止（完成 %d/%d 階段）",
+    "ko": "중지됨(%d/%d단계 완료)", "de": "Gestoppt (%d/%d Stufen abgeschlossen)", "hi": "रुका (%d/%d चरण पूर्ण)"
+  },
+  "Current settings: unchanged / displayed result: generation %d": {
+    "ja": "現在の設定: 変更なし / 表示中の結果: 世代 %d", "zh": "当前设置: 未更改 / 显示结果: 第 %d 代", "tw": "目前設定: 未變更 / 顯示結果: 第 %d 代",
+    "ko": "현재 설정: 변경 없음 / 표시 결과: 세대 %d", "de": "Aktuelle Einstellungen: unverändert / angezeigtes Ergebnis: Generation %d", "hi": "वर्तमान सेटिंग: अपरिवर्तित / दिखाया परिणाम: पीढ़ी %d"
+  },
+  "Current settings: changed / displayed result: generation %d": {
+    "ja": "現在の設定: 変更あり / 表示中の結果: 世代 %d", "zh": "当前设置: 已更改 / 显示结果: 第 %d 代", "tw": "目前設定: 已變更 / 顯示結果: 第 %d 代",
+    "ko": "현재 설정: 변경 있음 / 표시 결과: 세대 %d", "de": "Aktuelle Einstellungen: geändert / angezeigtes Ergebnis: Generation %d", "hi": "वर्तमान सेटिंग: बदली हुई / दिखाया परिणाम: पीढ़ी %d"
+  },
+  "The completed result used settings from before the change": {
+    "ja": "完了した結果は変更前の設定による", "zh": "完成的结果使用了更改前的设置", "tw": "完成的結果使用了變更前的設定",
+    "ko": "완료된 결과는 변경 전 설정을 사용함", "de": "Das fertige Ergebnis verwendet die Einstellungen vor der Änderung", "hi": "पूर्ण परिणाम बदलाव से पहले की सेटिंग पर आधारित है"
+  },
+  "Show that result": {
+    "ja": "その結果を見る", "zh": "查看该结果", "tw": "查看該結果", "ko": "그 결과 보기", "de": "Dieses Ergebnis zeigen", "hi": "वह परिणाम दिखाएँ"
+  },
+  "Run with current settings": {
+    "ja": "現在の設定で実行", "zh": "使用当前设置运行", "tw": "使用目前設定執行", "ko": "현재 설정으로 실행", "de": "Mit aktuellen Einstellungen ausführen", "hi": "वर्तमान सेटिंग से चलाएँ"
+  },
+  "Generation %d": {
+    "ja": "世代 %d", "zh": "第 %d 代", "tw": "第 %d 代", "ko": "세대 %d", "de": "Generation %d", "hi": "पीढ़ी %d"
+  },
   "Applicable to the current input": {
     "ja": "現在の入力に適用できる", "zh": "适用于当前输入", "tw": "適用於目前輸入",
     "ko": "현재 입력에 적용 가능", "de": "Auf die aktuelle Eingabe anwendbar", "hi": "मौजूदा इनपुट पर लागू"
