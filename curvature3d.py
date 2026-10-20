@@ -219,5 +219,15 @@ def estimate_normals(points, k=25):
     - 返り値は float64 (N,3)。``k`` 既定 25。決定論的。
     - 内部は ``principal_curvatures`` と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。
     """
-    _, _, NRM = _curvatures(points, k)
-    return NRM
+    p = np.asarray(points, float)
+    idx = _knn_idx(p, k)
+    local = p[idx] - p[:, None, :]
+    cov = np.einsum("nki,nkj->nij", local, local)
+    _values, vectors = np.linalg.eigh(cov)
+    normals = vectors[:, :, 0]
+    centroids = local.mean(axis=1)
+    flip = np.einsum("ij,ij->i", centroids, normals) > 0.0
+    normals[flip] *= -1.0
+    if local.shape[1] < 5:
+        normals[:] = (0.0, 0.0, 1.0)
+    return normals
