@@ -151,6 +151,25 @@ def test_303_zero_bounce_does_not_build_pair_matrices(monkeypatch):
         raise AssertionError("transport consistency validation was bypassed")
 
 
+def test_299_chunked_crossed_strings_and_300_reuse_are_identical(monkeypatch):
+    profile = lighttransport.groove_profile(width=3, angle_deg=73, n_patches=51)
+    ref = lighttransport.transport_matrix_radiosity(profile, albedo=.63)
+    got = lighttransport.transport_matrix_radiosity(profile, albedo=.63, chunk=7)
+    np.testing.assert_array_equal(got["form_factors"], ref["form_factors"])
+    monkeypatch.setattr(lighttransport, "_crossed_strings", lambda *_: (_ for _ in ()).throw(AssertionError()))
+    assert np.isfinite(lighttransport.tof_transport_depth(ref, n_bounces=3)["depth"]).all()
+
+
+def test_301_zero_reflectance_reduction_matches_full_reference_solve():
+    profile = lighttransport.groove_profile(width=2, angle_deg=61, n_patches=32)
+    rho = np.linspace(0, .8, 32)
+    rho[[0, 3, 9, 17, 31]] = 0
+    got = lighttransport.transport_matrix_radiosity(profile, rho)
+    F = got["form_factors"]
+    ref = np.linalg.solve(np.eye(32) - rho[:, None] * F, np.diag(rho))
+    np.testing.assert_allclose(got["transport"], ref, rtol=0, atol=1e-12)
+
+
 def test_308_press_diagonal_matches_full_hat_without_n_by_n_allocation():
     rng = np.random.default_rng(308)
     n = 5000
