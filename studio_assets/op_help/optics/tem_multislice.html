@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_multislice — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_multislice&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_multislice&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>簡易のマルチスライス(Cowley–Moodie、Kirkland の形): 出射波を返す(表)。</p>
 <p><code style="color:#22d3bf">slices</code> = (n_slices, ny, nx) の各スライスの投影ポテンシャル [V Å] (2-D なら 1 枚)。ψ_{n+1} = F⁻¹[ P(k) F[ t_n ψ_n ] ]、t_n = exp(iσ v_n)、P = exp(−iπ λ Δz k²)(Fresnel の伝播)、透過関数と伝播関数は <code style="color:#22d3bf">bandlimit</code> × Nyquist で切る(2/3 = 掛け算のエイリアスを避ける Kirkland の規則)。</p>
