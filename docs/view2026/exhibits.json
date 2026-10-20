@@ -6336,6 +6336,23 @@
    }
   },
   {
+   "id": "poc_water_inspection_images",
+   "group": "wing_imaging",
+   "media": "04_bottles.png",
+   "motion": false,
+   "thumb_src": "04_bottles.png",
+   "label": {
+    "ja": "水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像",
+    "en": "How water looks in inspection images: pool-floor caustics, a bottle from the side, a wet plate, a hull under water",
+    "zh": "水在检测图像中的样子:泳池底的焦散、瓶子的侧视图、湿润的板、水下的船体",
+    "tw": "水在檢測影像中的樣子:泳池底的焦散、瓶子的側視圖、濕潤的板、水下的船體",
+    "ko": "물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체",
+    "de": "Wie Wasser in Prüfbildern aussieht: Kaustiken auf dem Beckenboden, eine Flasche von der Seite, eine nasse Platte, ein Rumpf unter Wasser",
+    "hi": "निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार",
+    "fr": "L'eau dans les images d'inspection : caustiques au fond d'un bassin, une bouteille vue de côté, une plaque mouillée, une coque sous l'eau"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",
@@ -7380,6 +7397,14 @@
     "de": "Wasser und transparente Medien (Meereswellen, Fresnel und Brechung an der Oberfläche, Farbe und Streuung unter Wasser, eine Flasche als Linse)",
     "hi": "पानी और पारदर्शी माध्यम (ocean waves, सतह पर Fresnel और refraction, पानी के भीतर रंग और scattering, लेंस के रूप में बोतल)",
     "fr": "L'eau et les milieux transparents (vagues, Fresnel et réfraction à la surface, couleur et diffusion sous l'eau, une bouteille comme lentille)"
+   },
+   "water-inspection-images": {
+    "zh": "水在检测图像中的样子(泳池底的焦散、瓶子的侧视图与液面、湿润的表面、水下的船体)",
+    "tw": "水在檢測影像中的樣子(泳池底的焦散、瓶子的側視圖與液面、濕潤的表面、水下的船體)",
+    "ko": "물이 검사 이미지에 어떻게 보이는가(수영장 바닥의 코스틱, 병의 측면 이미지와 액면, 젖은 표면, 수중의 선체)",
+    "de": "Wie Wasser in Prüfbildern aussieht (Kaustiken auf dem Beckenboden, eine Flasche von der Seite mit Füllstand, eine nasse Oberfläche, ein Rumpf unter Wasser)",
+    "hi": "निरीक्षण चित्रों में पानी कैसा दिखता है (पूल के तल की caustic, बोतल का पार्श्व दृश्य और तरल-सतह, गीली सतह, पानी के भीतर पतवार)",
+    "fr": "L'eau dans les images d'inspection (caustiques au fond d'un bassin, une bouteille vue de côté avec son niveau, une surface mouillée, une coque sous l'eau)"
    }
   }
  },

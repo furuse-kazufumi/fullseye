@@ -2166,6 +2166,27 @@
    ]
   },
   {
+   "id": "water-inspection-images",
+   "title": "水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)",
+   "title_en": "How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)",
+   "category": "光と色",
+   "note": "docs/capabilities/water-inspection-images.md",
+   "status": "verified-synthetic",
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_water_inspection_images",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "water-transparent-media",
    "title": "水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)",
    "title_en": "Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)",
@@ -2230,8 +2251,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 416,
-  "run_by_the_poc_gate": 268,
+  "examples2d_total": 417,
+  "run_by_the_poc_gate": 269,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [

@@ -89,7 +89,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## What it can do
 
-88 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+89 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -164,6 +164,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - The spectral chain source × object × sensor (Planck, CIE A, LEDs, filters, Si QE, curve products and integrals): [explanation](../../capabilities/spectral-radiometry-chain.md) _(ja)_ · examples [poc_nir_silicon_transmission](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_nir_silicon_transmission.py)
 - TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height): [explanation](../../capabilities/tdi-linescan-and-lens.md) _(ja)_ · examples [poc_tdi_linescan](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tdi_linescan.py)
 - Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps): [explanation](../../capabilities/thin-film-reflectometry.md) _(ja)_ · examples [poc_thin_film_reflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thin_film_reflectometry.py)
+- How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water): [explanation](../../capabilities/water-inspection-images.md) _(ja)_ · examples [poc_water_inspection_images](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
 - Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens): [explanation](../../capabilities/water-transparent-media.md) _(ja)_ · examples [poc_water_transparent_media](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
 **Waves and signals**
@@ -211,7 +212,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## See everything
 
-268 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+269 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -386,7 +387,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality and restoration</b> (20)</summary>
+<details class="vall"><summary><b>Image quality and restoration</b> (21)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="A fly's eye closing in on stripes" width="200" height="200"><b>&#9654;</b><span>A fly's eye closing in on stripes</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -407,6 +408,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="Graph segmentation" width="200" height="200"><b>&#9654;</b><span>Graph segmentation</span></a>
 <a href="../../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pixel_shift.jpg" alt="Pixel shift (false colour, aliasing)" width="200" height="200"><b>&#9654;</b><span>Pixel shift (false colour, aliasing)</span></a>
 <a href="../../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_transparent_media.jpg" alt="Water and transparent media: ocean waves, pool refraction, colour under water, a bottle's caustic" width="200" height="200"><span>Water and transparent media: ocean waves, pool refraction, colour under water, a bottle's caustic</span></a>
+<a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="How water looks in inspection images: pool-floor caustics, a bottle from the side, a wet plate, a hull under water" width="200" height="200"><span>How water looks in inspection images: pool-floor caustics, a bottle from the side, a wet plate, a hull under water</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Calibrating pixel-shift offsets and aperture (undetermined map)" width="200" height="200"><span>Calibrating pixel-shift offsets and aperture (undetermined map)</span></a>
 </div>
 </details>
