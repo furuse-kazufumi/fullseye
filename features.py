@@ -28,6 +28,20 @@ from scipy import ndimage
 __all__ = ["harris_corners", "fast_corners", "describe_patches",
            "match_descriptors", "match_keypoints"]
 
+_FAST_RUN_TABLES = {}
+
+
+def _fast_run_table(n_contig):
+    table = _FAST_RUN_TABLES.get(n_contig)
+    if table is None:
+        patterns = np.arange(65536, dtype=np.uint32)
+        doubled = patterns | (patterns << 16)
+        table = np.zeros(65536, dtype=bool)
+        for shift in range(16):
+            table |= ((doubled >> shift) & ((1 << n_contig) - 1)) == ((1 << n_contig) - 1)
+        _FAST_RUN_TABLES[n_contig] = table
+    return table
+
 
 def _gray(img):
     a = np.asarray(img, np.float64)
@@ -85,28 +99,27 @@ def fast_corners(img, thresh: float = 0.05, min_distance: int = 5,
     centre-thresh. The corner score (used for NMS ordering) is the summed absolute
     contrast over the ring. Returns (N, 2) ``(row, col)``."""
     g = _gray(img)
+    if not 9 <= int(n_contig) <= 16:
+        raise ValueError("n_contig must be between 9 and 16")
     # the 16 offsets of the radius-3 FAST ring, clockwise from top
     ring = [(-3, 0), (-3, 1), (-2, 2), (-1, 3), (0, 3), (1, 3), (2, 2), (3, 1),
             (3, 0), (3, -1), (2, -2), (1, -3), (0, -3), (-1, -3), (-2, -2), (-3, -1)]
     H, W = g.shape
-    vals = np.stack([np.roll(np.roll(g, -dy, 0), -dx, 1) for dy, dx in ring])  # (16,H,W)
-    bright = vals > (g + thresh)
-    dark = vals < (g - thresh)
-
-    def contig(mask):
-        # is there a run of >= n_contig True around the 16-ring (circular)?
-        m2 = np.concatenate([mask, mask[:n_contig - 1]], 0)          # wrap
-        run = np.zeros_like(g)
-        cur = np.zeros_like(g)
-        for i in range(m2.shape[0]):
-            cur = np.where(m2[i], cur + 1, 0.0)
-            run = np.maximum(run, cur)
-        return run >= n_contig
-
-    is_corner = contig(bright) | contig(dark)
-    score = np.abs(vals - g).sum(0) * is_corner
-    score[:3] = score[-3:] = 0.0                      # ring undefined at the border
-    score[:, :3] = score[:, -3:] = 0.0
+    score = np.zeros_like(g)
+    if H < 7 or W < 7:
+        return np.empty((0, 2), int)
+    centre = g[3:-3, 3:-3]
+    bright = np.zeros(centre.shape, np.uint16)
+    dark = np.zeros(centre.shape, np.uint16)
+    inner_score = np.zeros_like(centre)
+    for bit, (dy, dx) in enumerate(ring):
+        sample = g[3 + dy:H - 3 + dy, 3 + dx:W - 3 + dx]
+        bright |= ((sample > centre + thresh).astype(np.uint16) << bit)
+        dark |= ((sample < centre - thresh).astype(np.uint16) << bit)
+        inner_score += np.abs(sample - centre)
+    table = _fast_run_table(int(n_contig))
+    is_corner = table[bright] | table[dark]
+    score[3:-3, 3:-3] = inner_score * is_corner
     if score.max() <= 0:
         return np.empty((0, 2), int)
     return _nms_peaks(score, min_distance, 1e-9, max_n)
