@@ -808,15 +808,17 @@ def msa_bias_linearity(table, reference="reference", measured="measured"):
 
 def _cohen_kappa(a, b):
     """2 人分の評価から Cohen のカッパ。``(p_o - p_e)/(1 - p_e)``。"""
-    cats = np.unique(np.concatenate([a, b]))
-    k = len(cats)
-    idx = {v: i for i, v in enumerate(cats)}
-    m = np.zeros((k, k), dtype=np.float64)
-    for x, y in zip(a, b):
-        m[idx[x], idx[y]] += 1.0
-    n = m.sum()
-    p_o = float(np.trace(m) / n)
-    p_e = float((m.sum(axis=1) @ m.sum(axis=0)) / (n * n))
+    aa = np.asarray(a)
+    bb = np.asarray(b)
+    n = min(aa.size, bb.size)
+    _, mapped = np.unique(np.concatenate([aa, bb]), return_inverse=True)
+    ids_a = mapped[:aa.size][:n]
+    ids_b = mapped[aa.size:][:n]
+    k = int(mapped.max()) + 1 if mapped.size else 0
+    count_a = np.bincount(ids_a, minlength=k).astype(np.float64, copy=False)
+    count_b = np.bincount(ids_b, minlength=k).astype(np.float64, copy=False)
+    p_o = float(np.mean(aa[:n] == bb[:n]))
+    p_e = float((count_a @ count_b) / (np.float64(n) * np.float64(n)))
     if p_e >= 1.0:                               # 全員が同じ 1 カテゴリしか使っていない
         return (1.0 if p_o >= 1.0 else float("nan")), p_o, p_e
     return (p_o - p_e) / (1.0 - p_e), p_o, p_e
