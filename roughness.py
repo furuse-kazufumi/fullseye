@@ -1183,7 +1183,15 @@ def robust_spline_profile(z, dx, lambda_c, c=ROBUST_C, robust=True, max_iter=Non
                              "undetermined, refusing to return a value")
         ab = band.copy()
         ab[2] += w
-        out = linalg.solve_banded((2, 2), ab, w * a)
+        # Positive weights make diag(w) + beta D.T D positive definite.  Its
+        # upper half can use the symmetric Cholesky band solver.  IRLS may set
+        # weights exactly to zero, in which case retain the general solver.
+        if np.all(w > 0.0):
+            out = linalg.solveh_banded(ab[:3], w * a, lower=False,
+                                       check_finite=False)
+        else:
+            out = linalg.solve_banded((2, 2), ab, w * a,
+                                      check_finite=False)
         if not np.all(np.isfinite(out)):
             raise ValueError(f"{op}: the banded solve returned a non-finite mean line")
         return out
