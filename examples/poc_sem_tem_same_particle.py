@@ -162,6 +162,23 @@ def chapter2(s):
                        detector="inlens", seed=9)
     gate("device output to image measurement", se_scene.shape == s["height"].shape and mc.shape == crop.shape,
          "sem_render %s; sem_image crop %s" % (se_scene.shape, mc.shape))
+    # Public resemblance statistics: an emitting edge is brighter than a flat top,
+    # and independent counting noise falls as the inverse square root of dwell time.
+    se10 = sem_micrograph(s, 10.0, seed=610)
+    se5 = sem_micrograph(s, 5.0, seed=610)
+    hh = np.maximum(_continuous_field(s["height"]), 0.0)
+    gy, gx = np.gradient(hh, MICRO_PX_NM)
+    sl = np.hypot(gx, gy); facing = -gx/np.sqrt(1+gx*gx+gy*gy); particle = hh > .1
+    edge = particle & (sl > np.percentile(sl[particle], 70)) & (facing > 0)
+    top = particle & (sl < np.percentile(sl[particle], 30))
+    edge_ratio = float(se10["ideal"][edge].mean()/se10["ideal"][top].mean())
+    bg = hh < .01
+    noise_ratio = float(np.std((se5["raw"]-se5["ideal"])[bg]) /
+                        np.std((se10["raw"]-se10["ideal"])[bg]))
+    gate("SEM resemblance statistics", 1.15 < edge_ratio < 1.45 and
+         abs(noise_ratio-math.sqrt(2))/math.sqrt(2) < .12,
+         "facing-edge/top %.3f; noise 5/10 us %.3f (sqrt(2)=%.3f)" %
+         (edge_ratio, noise_ratio, math.sqrt(2)))
     return {"image": se_scene, "truth": truth, "bias": float(b1), "fit": fit}
 
 
@@ -306,6 +323,16 @@ def chapter3(s):
     phase = TEM.tem_image_weak_phase(pot, 1.0, 300.0, 2.7, 8000.0)
     gate("generator to TEM device input", phase.shape == (128, 128) and np.isfinite(phase).all(),
          "projected potential -> weak-phase image")
+    fringe_ratio = positions[2]/positions[1]
+    tex = _powerlaw_texture(512, -2.2, seed=811)
+    power = np.abs(np.fft.rfft2(tex))**2
+    fy = np.fft.fftfreq(512)[:, None]; fx = np.fft.rfftfreq(512)[None, :]
+    freq = np.hypot(fx, fy); band = (freq > .01) & (freq < .20)
+    support_slope = float(np.polyfit(np.log(freq[band]), np.log(power[band]), 1)[0])
+    gate("TEM resemblance statistics", abs(fringe_ratio-math.sqrt(2)) < .10 and
+         -2.45 < support_slope < -1.95,
+         "fringe 12/6 um %.3f (sqrt(2)=%.3f); support PSD slope %.3f" %
+         (fringe_ratio, math.sqrt(2), support_slope))
     scene_focus = np.exp(-s["height"] / MFP_NM)
     outside = ndi.distance_transform_edt(s["height"] <= 0) * PX_NM
     scene_under = scene_focus - .16*np.exp(-.5*((outside-closed[2])/.75)**2)*(s["height"] <= 0)
