@@ -647,8 +647,7 @@ def rsm_fit(design=None, y=None, model="quadratic") -> dict:
             f_lof = (ss_lof / df_lof) / (ss_pe / df_pe)
             lof.update(testable=True, ss_lof=ss_lof, df_lof=df_lof, ss_pe=ss_pe, df_pe=df_pe,
                        f=float(f_lof), p=float(st.f.sf(f_lof, df_lof, df_pe)))
-    H = M @ XtX_inv @ M.T
-    h = np.clip(np.diag(H), 0.0, 1.0 - 1e-12)
+    h = np.clip(np.sum((M @ XtX_inv) * M, axis=1), 0.0, 1.0 - 1e-12)
     press = float(((resid / (1.0 - h)) ** 2).sum())
     out = {"model": model, "terms": [t for t, _ in terms], "coef": b, "se": se, "t": tval, "p": pval,
            "anova": {"ss_model": ss_mod, "df_model": df_mod, "ss_resid": ss_res, "df_resid": df_res,
