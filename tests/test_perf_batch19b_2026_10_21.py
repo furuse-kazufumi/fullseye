@@ -166,3 +166,20 @@ def test_97_harmonic_reference_periodic_boundary_and_fixed_pixels():
         got = filters_freq.harmonic_interpolation(image, region)
         assert np.array_equal(got, expected, equal_nan=True)
         assert np.array_equal(got[~region], image[~region], equal_nan=True)
+
+
+def _cone_points(n=180, angle=.4, seed=96):
+    rng = np.random.default_rng(seed)
+    axial = rng.uniform(.5, 3, n)
+    azimuth = rng.uniform(-np.pi, np.pi, n)
+    radius = axial * np.tan(angle)
+    return np.c_[radius * np.cos(azimuth), radius * np.sin(azimuth), axial]
+
+
+def test_96_cone_reference_axis_normalisation_and_axis_points():
+    for points in (_cone_points(), _cone_points(angle=.7, seed=8) + [2, -1, .5]):
+        result = fit_primitives_ext.fit_cone(points)
+        np.testing.assert_allclose(np.linalg.norm(result["axis"]), 1.0, atol=1e-14)
+    points = np.vstack([_cone_points(), [[0, 0, .7], [0, 0, 1.4]]])
+    result = fit_primitives_ext.fit_cone(points)
+    assert np.isfinite(result["residual"])
