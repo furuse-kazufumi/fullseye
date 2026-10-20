@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # fit_ellipsoid — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fit_ellipsoid(points) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_ellipsoid")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_ellipsoid(points, chunk: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points, chunk: 'int | None' = None) -> 'dict'`、台帳から引くなら `ops3d.get("fit_ellipsoid")`)
 
 ## 使い方
 
@@ -28,6 +28,8 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Args:
     points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
+    chunk: 指定時は設計行列をこの点数ずつ 10x10 散布行列へ加算する省メモリ経路。
+        集計順の違いにより既定経路との差は 1e-10 以下。既定 ``None`` は従来経路。
 
 Returns:
     dict: ``{"center": (3,), "axes": (3, 3), "radii": (3,), "residual": float}``。
