@@ -179,7 +179,10 @@ def low_discrepancy(n: int, dim: int = 2, kind: str = "halton", *, skip: int = 0
         raise ValueError("low_discrepancy: 1 <= n <= 1e7、1 <= dim <= %d" % len(_PRIMES))
     if kind == "halton":
         i = np.arange(int(skip), int(skip) + n, dtype=np.int64)
-        return np.stack([_radical_inverse(i, _PRIMES[d]) for d in range(dim)], axis=1)
+        out = np.empty((n, dim), dtype=np.float64)
+        for d in range(dim):
+            out[:, d] = _radical_inverse(i, _PRIMES[d])
+        return out
     if kind == "sobol":
         from scipy.stats import qmc
         eng = qmc.Sobol(d=dim, scramble=seed is not None, seed=seed)
@@ -234,22 +237,31 @@ def interp_barycentric(xk, yk, x) -> np.ndarray:
         raise ValueError("interp_barycentric: xk と yk は同じ長さ(1 以上)")
     if np.unique(xk).size != xk.size:
         raise ValueError("interp_barycentric: xk に重複がある")
-    d = xk[:, None] - xk[None, :]
-    np.fill_diagonal(d, 1.0)
     # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
     # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
     # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-    logabs = np.sum(np.log(np.abs(d)), axis=1)
-    sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
+    logabs = np.empty(xk.size)
+    sign = np.empty(xk.size)
+    for start in range(0, xk.size, 256):
+        stop = min(start + 256, xk.size)
+        d = xk[start:stop, None] - xk[None, :]
+        d[np.arange(stop - start), np.arange(start, stop)] = 1.0
+        logabs[start:stop] = np.sum(np.log(np.abs(d)), axis=1)
+        sign[start:stop] = np.where(
+            np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
     w = sign * np.exp(np.min(logabs) - logabs)
     xs = x.ravel()
-    diff = xs[:, None] - xk[None, :]
-    exact = diff == 0
-    with np.errstate(divide="ignore", invalid="ignore"):
-        c = w[None, :] / diff
-        val = (c @ yk) / c.sum(axis=1)
-    hit = exact.any(axis=1)
-    val[hit] = yk[np.argmax(exact[hit], axis=1)]
+    val = np.empty(xs.size)
+    for start in range(0, xs.size, 1024):
+        stop = min(start + 1024, xs.size)
+        diff = xs[start:stop, None] - xk[None, :]
+        exact = diff == 0
+        with np.errstate(divide="ignore", invalid="ignore"):
+            c = w[None, :] / diff
+            block = (c @ yk) / c.sum(axis=1)
+        hit = exact.any(axis=1)
+        block[hit] = yk[np.argmax(exact[hit], axis=1)]
+        val[start:stop] = block
     return val.reshape(x.shape)
 
 
