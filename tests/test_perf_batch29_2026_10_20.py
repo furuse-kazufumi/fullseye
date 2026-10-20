@@ -95,6 +95,16 @@ def test_392_395_funct1d_identity_and_batch_lookup():
     np.testing.assert_array_equal(inv["y"], np.arange(y.size, dtype=float)[order])
     expect = np.column_stack([2.5 * np.arange(y.size) - 3, -2 * y + 4])
     np.testing.assert_array_equal(funct1d.transform_funct_1d(y, 2.5, -3, -2, 4), expect)
+    for xs in (np.array([-2.0, 0.5, 18.25, 1e6]),
+               np.array([[0.0, 3.4], [9999.0, 20000.0]])):
+        np.testing.assert_array_equal(
+            funct1d.get_y_value_funct_1d(y, xs),
+            np.array([np.interp(x, np.arange(y.size), y) for x in xs.ravel()]).reshape(xs.shape),
+        )
+        np.testing.assert_array_equal(
+            funct1d.get_y_value_funct_1d(y, xs, interpolate=False),
+            y[np.clip(np.round(xs), 0, y.size - 1).astype(np.intp)],
+        )
 
 
 def test_394_zero_crossings_matches_product_reference():
