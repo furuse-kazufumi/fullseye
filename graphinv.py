@@ -150,7 +150,9 @@ def graph_cycle3(adj):
     B = _as_binary_adjacency(adj, "adj", op)
     np.fill_diagonal(B, 0)
     M = B.astype(np.int64)
-    c3 = int(np.trace(M @ M @ M)) // 3
+    # trace((M @ M) @ M) == sum((M @ M) * M.T).  Keeping int64 preserves
+    # the old overflow boundary while avoiding the second dense matrix product.
+    c3 = int(np.sum((M @ M) * M.T, dtype=np.int64)) // 3
     return {"cycles3": c3, "n": int(B.shape[0])}
 
 
