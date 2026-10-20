@@ -1725,7 +1725,7 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
     perm = np.tile(rng.permutation(256), 2)
     disp = np.zeros(Vv.shape[0], np.float64)
     for k in range(lam.size):
-        if amp[k] == 0.0:
+        if amp[k] == 0.0 or not np.any(gate[k]):
             continue
         disp += amp[k] * gate[k] * _octave_noise(Vv, lam[k], perm, k)
     vn = _vertex_normals(Vv, Ff)

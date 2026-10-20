@@ -491,3 +491,28 @@ def test_344_single_large_triangle_obeys_pair_chunk_and_is_bit_identical(monkeyp
     assert got.keys() == ref.keys()
     for key in got:
         assert np.array_equal(got[key], ref[key], equal_nan=True)
+
+
+def _old_zero_gate_displace(V, F):
+    """Original arithmetic when every band gate is zero."""
+    disp = np.zeros(V.shape[0], np.float64)
+    vn = render3d_mod._vertex_normals(V, F)
+    return V + vn * disp[:, None], F.copy()
+
+
+def test_355_zero_gate_skips_noise_and_is_bit_identical(monkeypatch):
+    V, F = render3d_mod._unit_ellipsoid(2)
+    wavelengths = (1e-6, 2e-6)
+    ref = _old_zero_gate_displace(V, F)
+    calls = 0
+
+    def forbidden(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        raise AssertionError("zero-gated octave evaluated noise")
+
+    monkeypatch.setattr(render3d_mod, "_octave_noise", forbidden)
+    got = render3d_mod.mesh_displace_spectrum(V, F, wavelengths, (0.1, 0.2))
+    assert calls == 0
+    assert np.array_equal(got[0], ref[0])
+    assert np.array_equal(got[1], ref[1])
