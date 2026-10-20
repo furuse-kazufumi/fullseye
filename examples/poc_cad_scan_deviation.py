@@ -705,6 +705,8 @@ def section_align(ref: CadRef) -> dict:
              "推定 - 真値(同じ目盛り)", "公差 ±%.2f mm を外れた領域" % TOL],
             title="上面の偏差地図(だいだい = 足りない / 青 = 余る)", ncols=2,
             signed=True,
+            kind=["displacement", "displacement", "displacement", "displacement"],
+            unit=["mm", "mm", "mm", ""],
             caption="3 枚目が一様に色づくのが第 6 章の主張 —— 位置合わせが"
                     "反りの平均を吸って、部品全体が下へずれて読める。")
     return {"scan": sc, "keep": keep, "a_true": a_true, "rows": rows,

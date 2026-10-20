@@ -347,7 +347,8 @@ def section3_depth_table(masks, d_hat):
                     title="TSR の推定深さ(括弧は誤差)",
                     caption="右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。")
     figs.save_grid("depth_map", [d_hat * 1e3],
-                   ["TSR 推定深さ [mm]"], title="深さマップ", ncols=1,
+                    ["TSR 推定深さ [mm]"], title="深さマップ", ncols=1,
+                    kind="depth", unit="mm",
                    caption="欠陥 16 個。直径 2 mm の列(いちばん左)が壊れているのが見える。")
     print("  → 直径が深さの 4 倍以上あるところ(右下三角)は数 % で当たる。")
     print("     左上へ行くほど**深く見えすぎる**: 横から健全部の熱が回り込み、")

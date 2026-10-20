@@ -213,7 +213,7 @@ def chapter_apollonian():
               str(e)[:70])
 
     if figs.enabled():
-        figs.save("apollonian",
+        figs.save("apollonian",  # gray-ok: depth は円充填の再帰段数であり深度場ではない
                   _raster_circles(x, y, r, keep=(np.abs(k) < 240.0)),
                   caption="アポロニウスの窓(種 (-1, 2, 2, 3)、depth 4 = %d 円)。"
                           "接している 4 円 %d 組すべてでデカルトの円定理が成り立ち"
@@ -267,7 +267,7 @@ def chapter_ford():
     check(np.allclose(r, 0.5 / q ** 2.0, rtol=1e-12), "半径が 1/(2q²)")
 
     if figs.enabled():
-        figs.save("ford", _raster_circles(x, y, r, shape=(320, 900), pad=0.02),
+        figs.save("ford", _raster_circles(x, y, r, shape=(320, 900), pad=0.02),  # gray-ok: 高さは円の幾何であり計測高さ場ではない
                   caption="フォードの円(分母 12 まで、%d 円)。接しているのは %d 組で、"
                           "それは |p·s − q·r| = 1 を満たす組と**完全に一致**した"
                           "(不一致 %d 組)。円は (p/q, 1/(2q²)) に載るので、接触の判定は"
@@ -477,7 +477,7 @@ def chapter_curves():
           "番号差 2 以上の全部で")
 
     if figs.enabled():
-        figs.save_grid("curves",
+        figs.save_grid("curves",  # gray-ok: depth は空間充填曲線の反復段数であり深度場ではない
                        [_raster_polyline(fs.ledger.space_filling_curve(k1, 4)
                                          .astype(float), width=1.2) for k1 in kinds],
                        captions=list(kinds), ncols=4,
