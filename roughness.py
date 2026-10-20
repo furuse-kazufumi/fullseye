@@ -594,9 +594,38 @@ def _form_basis(ny: int, nx: int, fx: float, fy: float, order: int):
 def _fit_form(a: np.ndarray, fx: float, fy: float, order: int):
     """最小二乗で形状を当てはめる。``(residual, coeffs_physical)``。"""
     ny, nx = a.shape
-    A, scale = _form_basis(ny, nx, fx, fy, order)
-    c, *_ = np.linalg.lstsq(A, a.ravel(), rcond=None)
-    resid = a - (A @ c).reshape(ny, nx)
+    # A complete rectangular grid has a separable, symmetric coordinate basis.
+    # Project onto its orthogonal degree <= 2 polynomials so the large (N, 6)
+    # design matrix is never materialised.  Missing data is rejected by the
+    # public validator before this path is reached.
+    xx = (np.arange(nx, dtype=np.float64) - 0.5 * (nx - 1)) * fx
+    yy = (np.arange(ny, dtype=np.float64) - 0.5 * (ny - 1)) * fy
+    hx = max(abs(xx[0]), abs(xx[-1]), fx)
+    hy = max(abs(yy[0]), abs(yy[-1]), fy)
+    u = xx / hx
+    v = yy / hy
+    c0 = float(np.mean(a))
+    cu = float(np.sum(a * u[None, :]) / (ny * np.dot(u, u)))
+    cv = float(np.sum(a * v[:, None]) / (nx * np.dot(v, v)))
+    if order == 1:
+        c = np.array([c0, cu, cv])
+        fitted = c0 + cu * u[None, :] + cv * v[:, None]
+        scale = np.array([1.0, 1.0 / hx, 1.0 / hy])
+    else:
+        qu = u * u - np.mean(u * u)
+        qv = v * v - np.mean(v * v)
+        cuu = float(np.sum(a * qu[None, :]) / (ny * np.dot(qu, qu)))
+        cvv = float(np.sum(a * qv[:, None]) / (nx * np.dot(qv, qv)))
+        cuv = float(np.sum(a * (v[:, None] * u[None, :])) /
+                    (np.dot(u, u) * np.dot(v, v)))
+        c = np.array([c0 - cuu * np.mean(u * u) - cvv * np.mean(v * v),
+                      cu, cv, cuu, cuv, cvv])
+        fitted = (c[0] + cu * u[None, :] + cv * v[:, None] +
+                  cuu * u[None, :] ** 2 + cuv * v[:, None] * u[None, :] +
+                  cvv * v[:, None] ** 2)
+        scale = np.array([1.0, 1.0 / hx, 1.0 / hy, 1.0 / hx ** 2,
+                          1.0 / (hx * hy), 1.0 / hy ** 2])
+    resid = a - fitted
     return resid, c * scale
 
 
