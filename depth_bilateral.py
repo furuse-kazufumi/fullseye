@@ -63,13 +63,15 @@ def _bilateral_core(
     val_valid: np.ndarray,
     edge_valid: np.ndarray,
     truncate: float,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """bilateral の共通核: values を平均し range 重みは edge の差で作る(無効画素は重み 0 で除外)。
 
     近傍が寄与する条件 = その画素で values も edge も有効。中心画素が処理される条件も同じで、
     満たさない中心画素(穴・ガイド欠損)は元値のまま残す(値を捏造しない = fail-closed)。
     """
+    # ``chunk`` controls peak memory without changing arithmetic or output.
+    # 64 rows is the measured speed-preserving default; None requests one tile.
     values = np.asarray(values, dtype=float)
     edge = np.asarray(edge, dtype=float)
     H, W = values.shape
