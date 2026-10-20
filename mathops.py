@@ -2554,7 +2554,7 @@ def phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5):
     return np.stack([r * np.cos(th), r * np.sin(th)], axis=1)
 
 
-def neighbour_index_gaps(points, k=6):
+def neighbour_index_gaps(points, k=6, chunk=65536):
     """How far apart *in index* are a point's nearest neighbours — parastichy as a number.
 
     In a phyllotactic pattern the visible spirals (**parastichies**) are not drawn
@@ -2589,6 +2589,9 @@ def neighbour_index_gaps(points, k=6):
     is degenerate, so the histogram has a low-index tail that carries no
     parastichy information. Compare *peaks*, not the raw tail.
 
+    Equal-distance neighbours retain the spatial tree query's native index order;
+    chunking does not sort or otherwise change that tie rule.
+
     HALCON: no operator.
     """
     op = "neighbour_index_gaps"
@@ -2604,9 +2607,15 @@ def neighbour_index_gaps(points, k=6):
         raise ValueError("%s: need at least k + 1 = %d points, got %d"
                          % (op, kk + 1, p.shape[0]))
     from scipy.spatial import cKDTree
-    _, idx = cKDTree(p).query(p, k=kk + 1)
-    gaps = np.abs(idx[:, 1:] - np.arange(p.shape[0])[:, None]).ravel()
-    return np.bincount(gaps).astype(np.int64)
+    tree = cKDTree(p)
+    counts = np.zeros(p.shape[0], dtype=np.int64)
+    step = max(1, int(chunk))
+    for first in range(0, p.shape[0], step):
+        last = min(first + step, p.shape[0])
+        _, idx = tree.query(p[first:last], k=kk + 1)
+        gaps = np.abs(idx[:, 1:] - np.arange(first, last)[:, None]).ravel()
+        counts += np.bincount(gaps, minlength=counts.size)[:counts.size]
+    return np.trim_zeros(counts, "b")
 
 
 def ifs_fractal(preset="sierpinski", maps=None, n_points=60000, seed=0, burn_in=32):
@@ -3213,7 +3222,7 @@ def wave_fringe_period(image, axis=1):
     if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("wave_fringe_period: image is empty — pass at least one element")
     op = "wave_fringe_period"
-    im = np.asarray(image, dtype=np.float64)
+    im = np.asarray(image)
     if im.ndim != 2:
         raise ValueError("%s: image must be 2-D, got %s" % (op, (im.shape,)))
     if not np.all(np.isfinite(im)):
@@ -3221,7 +3230,7 @@ def wave_fringe_period(image, axis=1):
     a = int(axis)
     if a not in (0, 1):
         raise ValueError("%s: axis must be 0 or 1, got %r" % (op, axis))
-    prof = im.mean(axis=0 if a == 1 else 1)
+    prof = im.mean(axis=0 if a == 1 else 1, dtype=np.float64)
     if prof.size < 8:
         raise ValueError("%s: need at least 8 samples along the axis, got %d"
                          % (op, prof.size))
@@ -3549,7 +3558,28 @@ def dynsys_poincare_section(states, axis=2, value=None, direction=1):
         if not cols:
             raise ValueError("%s: the table has no x0, x1, ... columns — pass the "
                              "output of ode_flow_states" % op)
-        x = np.stack([np.asarray(states[c], dtype=np.float64) for c in cols], axis=1)
+        arrays = [np.asarray(states[c], dtype=np.float64) for c in cols]
+        if any(v.ndim != 1 or v.shape != arrays[0].shape for v in arrays):
+            raise ValueError("%s: all state columns must be 1-D with the same shape" % op)
+        if arrays[0].size < 2 or any(not np.all(np.isfinite(v)) for v in arrays):
+            raise ValueError("%s: states contain a non-finite value or fewer than two rows" % op)
+        a = int(axis)
+        if not 0 <= a < len(arrays):
+            raise ValueError("%s: axis %d outside 0..%d" % (op, a, len(arrays) - 1))
+        if direction not in (-1, 0, 1):
+            raise ValueError("%s: direction must be -1, 0 or +1, got %r" % (op, direction))
+        xa = arrays[a]
+        v = float(np.mean(xa)) if value is None else float(value)
+        s = xa - v; lo, hi = s[:-1], s[1:]
+        up, dn = (lo < 0) & (hi >= 0), (lo > 0) & (hi <= 0)
+        idx = np.flatnonzero(up if direction == 1 else (dn if direction == -1 else (up | dn)))
+        if idx.size == 0:
+            raise ValueError("%s: the trajectory never crosses the requested plane" % op)
+        t = lo[idx] / (lo[idx] - hi[idx])
+        keep = [k for k in range(len(arrays)) if k != a][:2]
+        out = [arrays[k][idx] + (arrays[k][idx + 1] - arrays[k][idx]) * t for k in keep]
+        if len(out) == 1: out.append(np.zeros_like(out[0]))
+        return np.stack(out, axis=1)
     else:
         x = np.asarray(states, dtype=np.float64)
     if x.ndim != 2 or x.shape[0] < 2:
@@ -3710,7 +3740,7 @@ def dynsys_bifurcation_map(kind="logistic", r_lo=2.5, r_hi=4.0, n_r=800,
         out[:, j, 0] = r
         out[:, j, 1] = s
     pts = out.reshape(-1, 2)
-    return pts[np.isfinite(pts).all(axis=1)]
+    return pts if np.isfinite(pts).all() else pts[np.isfinite(pts).all(axis=1)]
 
 def dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None,
                                  max_points=4000, seed=0):
@@ -3821,8 +3851,9 @@ def mat_lu(a, pivoting="partial"):
     else:
         raise ValueError("mat_lu: pivoting must be 'partial' or 'none'")
     scale = max(float(np.abs(A).max()), np.finfo(float).tiny)
+    PA = A if mode == "none" else A[np.argmax(P, axis=1)]
     return {"P": P, "L": L, "U": U, "growth": float(np.abs(U).max()) / scale,
-            "residual": float(np.abs(P @ A - L @ U).max()) / scale}
+            "residual": float(np.abs(PA - L @ U).max()) / scale}
 
 
 def mat_qr(a, method="householder"):
