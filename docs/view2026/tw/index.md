@@ -209,11 +209,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 151 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 152 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 271 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -415,7 +415,7 @@ PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>顏色與分離</b> (15)</summary>
+<details class="vall"><summary><b>顏色與分離</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纖與光導(模態、色散、模場直徑)" width="200" height="200"><span>光纖與光導(模態、色散、模場直徑)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)" width="200" height="200"><b>&#9654;</b><span>以光譜反射率量測薄膜厚度(以公開實測資料評分、晶圓干涉色)</span></a>
@@ -431,6 +431,7 @@ PoC 270 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="玻璃替換與多起點全域搜尋" width="200" height="200"><span>玻璃替換與多起點全域搜尋</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="用要求表設計三片式鏡頭(邊緣厚度邊界與玻璃作為變數)" width="200" height="200"><span>用要求表設計三片式鏡頭(邊緣厚度邊界與玻璃作為變數)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="用「解(solve)」保持設計關係(隨光闌變化的 F 數、afocal、曲面像面、奇次非球面)" width="200" height="200"><span>用「解(solve)」保持設計關係(隨光闌變化的 F 數、afocal、曲面像面、奇次非球面)</span></a>
+<a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="全景檢測與立體顯示" width="200" height="200"><span>全景檢測與立體顯示</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="公開 .zmx 處方的獨立驗證與檢測評分" width="200" height="200"><span>公開 .zmx 處方的獨立驗證與檢測評分</span></a>
 </div>
 </details>

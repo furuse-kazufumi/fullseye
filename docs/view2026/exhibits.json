@@ -6608,6 +6608,23 @@
    }
   },
   {
+   "id": "poc_omni360_inspection",
+   "group": "wing_color",
+   "media": "08_anaglyph_and_limits.png",
+   "motion": false,
+   "thumb_src": "01_world.png",
+   "label": {
+    "ja": "全天球の検査撮影と立体表示",
+    "en": "Omnidirectional inspection and stereo display",
+    "zh": "全景检测与立体显示",
+    "tw": "全景檢測與立體顯示",
+    "ko": "전방위 검사와 입체 표시",
+    "de": "Rundumbildprüfung und Stereodarstellung",
+    "hi": "सर्वदिशीय निरीक्षण और त्रिविम प्रदर्शन",
+    "fr": "Inspection omnidirectionnelle et affichage stéréoscopique"
+   }
+  },
+  {
    "id": "poc_zmx_public_verify",
    "group": "wing_color",
    "media": "01_independent_verification.png",

@@ -209,11 +209,11 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 151 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 152 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 
-270 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+271 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -415,7 +415,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Couleur et séparation</b> (15)</summary>
+<details class="vall"><summary><b>Couleur et séparation</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)" width="200" height="200"><span>Fibres optiques et guides de lumière (modes, dispersion, diamètre de mode)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)" width="200" height="200"><b>&#9654;</b><span>Épaisseur de couche mince par réflectométrie spectrale (évaluée sur des données mesurées publiques, couleurs d'interférence des wafers)</span></a>
@@ -431,6 +431,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Substitution de verre et recherche globale multi-départ" width="200" height="200"><span>Substitution de verre et recherche globale multi-départ</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Concevoir un triplet à partir d'un tableau d'exigences (bornes d'épaisseur de bord, verre comme variable)" width="200" height="200"><span>Concevoir un triplet à partir d'un tableau d'exigences (bornes d'épaisseur de bord, verre comme variable)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Garder les relations d'une conception sous forme de solves (F/# qui suit le diaphragme, afocal, image courbe, asphères impaires)" width="200" height="200"><span>Garder les relations d'une conception sous forme de solves (F/# qui suit le diaphragme, afocal, image courbe, asphères impaires)</span></a>
+<a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="Inspection omnidirectionnelle et affichage stéréoscopique" width="200" height="200"><span>Inspection omnidirectionnelle et affichage stéréoscopique</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Vérification indépendante de prescriptions .zmx publiques" width="200" height="200"><span>Vérification indépendante de prescriptions .zmx publiques</span></a>
 </div>
 </details>

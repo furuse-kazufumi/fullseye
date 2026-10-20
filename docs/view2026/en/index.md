@@ -209,11 +209,11 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 151 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 152 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
-270 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+271 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -415,7 +415,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour and separation</b> (15)</summary>
+<details class="vall"><summary><b>Colour and separation</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Optical fibres and light guides (modes, dispersion, mode field)" width="200" height="200"><span>Optical fibres and light guides (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)" width="200" height="200"><b>&#9654;</b><span>Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)</span></a>
@@ -431,6 +431,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glass substitution and multi-start global search" width="200" height="200"><span>Glass substitution and multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Designing a triplet from a table of requirements (edge bounds and glass as a variable)" width="200" height="200"><span>Designing a triplet from a table of requirements (edge bounds and glass as a variable)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)" width="200" height="200"><span>Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)</span></a>
+<a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="Omnidirectional inspection and stereo display" width="200" height="200"><span>Omnidirectional inspection and stereo display</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Independent verification and inspection scoring of public .zmx prescriptions" width="200" height="200"><span>Independent verification and inspection scoring of public .zmx prescriptions</span></a>
 </div>
 </details>
