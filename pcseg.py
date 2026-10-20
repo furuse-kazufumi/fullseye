@@ -324,32 +324,36 @@ def euclidean_clusters(points, tol: float = 0.05, min_size: int = 10,
     the ground/table has been removed. Clusters smaller than *min_size* (noise) or
     larger than *max_size* are dropped."""
     from scipy.spatial import cKDTree
-    from scipy.sparse import csr_matrix
-    from scipy.sparse.csgraph import connected_components
+    from collections import deque
 
     P = _pts3(points)
     n = P.shape[0]
     if n == 0:
         return []
     tree = cKDTree(P)
-    pairs = tree.query_pairs(r=float(tol), output_type="ndarray")
-    if pairs.size == 0:
-        rows = cols = np.zeros(0, int)
-    else:
-        rows = np.concatenate([pairs[:, 0], pairs[:, 1]])
-        cols = np.concatenate([pairs[:, 1], pairs[:, 0]])
-    graph = csr_matrix((np.ones(rows.size), (rows, cols)), shape=(n, n))
-    ncomp, labels = connected_components(graph, directed=False)
-    out = []
-    for c in range(ncomp):
-        idx = np.where(labels == c)[0]
-        if idx.size < min_size:
+    labels = np.full(n, -1, dtype=int)
+    component = 0
+    radius = float(tol)
+    for seed in range(n):
+        if labels[seed] != -1:
             continue
-        if max_size is not None and idx.size > max_size:
-            continue
-        out.append(idx)
-    out.sort(key=lambda a: -a.size)
-    return out
+        labels[seed] = component
+        queue = deque([seed])
+        while queue:
+            point = queue.popleft()
+            for neighbour in tree.query_ball_point(P[point], r=radius):
+                if labels[neighbour] == -1:
+                    labels[neighbour] = component
+                    queue.append(neighbour)
+        component += 1
+    sizes = np.bincount(labels, minlength=component)
+    keep = ((sizes >= int(min_size))
+            & ((max_size is None) | (sizes <= (n if max_size is None else int(max_size)))))
+    order = np.argsort(labels, kind="stable")
+    starts = np.r_[0, np.cumsum(sizes)]
+    components = [c for c in range(component) if keep[c]]
+    components.sort(key=lambda c: -sizes[c])
+    return [order[starts[c]:starts[c + 1]] for c in components]
 
 
 def region_growing(points, normals=None, angle_deg: float = 15.0,

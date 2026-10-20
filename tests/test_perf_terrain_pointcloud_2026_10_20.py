@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 import image_gray
+import pcseg
 
 
 def _old_gen_cooc_matrix(image, region=None, ldgray=8, direction=0):
@@ -51,3 +52,51 @@ def test_gen_cooc_matrix_matches_old_across_row_blocks_and_empty_pairs():
     isolated[1, 1] = True
     assert np.array_equal(image_gray.gen_cooc_matrix(image[:3, :3], isolated, 4, 0),
                           _old_gen_cooc_matrix(image[:3, :3], isolated, 4, 0))
+
+
+def _old_euclidean_clusters(points, tol=.05, min_size=10, max_size=None):
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.csgraph import connected_components
+    from scipy.spatial import cKDTree
+    points = np.asarray(points, np.float64)
+    n = len(points)
+    if not n:
+        return []
+    pairs = cKDTree(points).query_pairs(r=float(tol), output_type="ndarray")
+    if pairs.size:
+        rows = np.concatenate([pairs[:, 0], pairs[:, 1]])
+        cols = np.concatenate([pairs[:, 1], pairs[:, 0]])
+    else:
+        rows = cols = np.zeros(0, int)
+    graph = csr_matrix((np.ones(rows.size), (rows, cols)), shape=(n, n))
+    ncomp, labels = connected_components(graph, directed=False)
+    out = []
+    for component in range(ncomp):
+        idx = np.where(labels == component)[0]
+        if idx.size >= min_size and (max_size is None or idx.size <= max_size):
+            out.append(idx)
+    out.sort(key=lambda a: -a.size)
+    return out
+
+
+def _assert_same_clusters(points, **kwargs):
+    expected = _old_euclidean_clusters(points, **kwargs)
+    got = pcseg.euclidean_clusters(points, **kwargs)
+    assert len(got) == len(expected)
+    assert all(np.array_equal(a, b) for a, b in zip(got, expected))
+
+
+def test_euclidean_clusters_matches_old_order_boundary_and_filters():
+    points = np.array([[0, 0, 0], [1, 0, 0], [10, 0, 0], [11, 0, 0],
+                       [30, 0, 0], [30.5, 0, 0], [31, 0, 0]], float)
+    _assert_same_clusters(points, tol=1.0, min_size=2)
+    _assert_same_clusters(points, tol=1.0, min_size=2, max_size=2)
+    _assert_same_clusters(points[:0], tol=1.0, min_size=1)
+
+
+def test_euclidean_clusters_matches_old_with_many_tiny_noise_components():
+    rng = np.random.default_rng(1302)
+    blobs = [rng.normal((i * 3., 0, 0), .02, (80 + i % 3, 3)) for i in range(12)]
+    noise = np.column_stack([np.arange(400) * 3. + 100., np.zeros(400), np.zeros(400)])
+    points = np.vstack([*blobs, noise])
+    _assert_same_clusters(points, tol=.1, min_size=20)
