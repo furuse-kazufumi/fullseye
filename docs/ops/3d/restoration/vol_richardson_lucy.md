@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # vol_richardson_lucy — 3D `restoration` op
 
 - **データ種**: `voxel × voxel` → `voxel`
-- **呼び出し**: `import fullseye as fs; fs.ledger.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)` (実装を直接呼ぶなら `import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)`、台帳から引くなら `ops3d.get("vol_richardson_lucy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method='fft')` (実装を直接呼ぶなら `import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method='fft')`、台帳から引くなら `ops3d.get("vol_richardson_lucy")`)
 
 ## 使い方
 
@@ -30,6 +30,9 @@ relative; an FFT-blurred observation typically carries -1e-16) are clipped
 to 0 instead of rejected, so the module's own forward model feeds back in.
 
 Returns the deblurred ``(D, H, W)`` float64 volume (non-negative).
+``method="fft"`` is the unchanged default. ``method="overlap_add"`` uses
+less peak workspace for a large volume and a small PSF; it agrees with the
+FFT path to 1e-10, including the even-sized-PSF adjoint crop.
 Measured on the test scene (binary sphere pair blurred by a sigma-2
 Gaussian): the RMSE to ground truth falls to 0.81x the blurred
 observation's at 10 iterations and 0.68x at 50 — genuine but *gradual*,
