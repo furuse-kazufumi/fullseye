@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 import anomeval
+import seggraph
 
 
 def _old_operating_point(scores, labels, recall=0.95, confidence=0.95):
@@ -132,3 +133,74 @@ def test_anomaly_pro_sorts_only_needed_range(monkeypatch):
     monkeypatch.setattr(np, "argsort", counted)
     anomeval.anomaly_pro(scores, masks, 0.05)
     assert sizes == [596]
+
+
+def _old_max_tree(image, connectivity):
+    """Per-pixel-neighbour-list reference from the old implementation."""
+    img = np.asarray(image, dtype=float)
+    h, w = img.shape
+    f = img.ravel()
+    n = f.size
+    order = np.argsort(f, kind="stable")
+    ei, ej, _ = seggraph._grid_edges(h, w, connectivity)
+    nbr = [[] for _ in range(n)]
+    for a, b in zip(ei.tolist(), ej.tolist()):
+        nbr[a].append(b)
+        nbr[b].append(a)
+    parent = list(range(n))
+    zpar = [-1] * n
+    ordl = order.tolist()
+    for p in reversed(ordl):
+        parent[p] = zpar[p] = p
+        for q in nbr[p]:
+            if zpar[q] < 0:
+                continue
+            r = q
+            while zpar[r] != r:
+                r = zpar[r]
+            x = q
+            while zpar[x] != r:
+                zpar[x], x = r, zpar[x]
+            if r != p:
+                parent[r] = zpar[r] = p
+    fl = f.tolist()
+    for p in ordl:
+        q = parent[p]
+        if fl[parent[q]] == fl[q]:
+            parent[p] = parent[q]
+    par = np.array(parent, dtype=np.int64)
+    root = ordl[0]
+    canon = (f[par] != f) | (np.arange(n) == root)
+    area = np.ones(n, np.int64)
+    hmax = f.copy()
+    rr, cc = np.divmod(np.arange(n), w)
+    r0, r1, c0, c1 = rr.copy(), rr.copy(), cc.copy(), cc.copy()
+    for p in reversed(ordl):
+        if p == root:
+            continue
+        q = parent[p]
+        area[q] += area[p]
+        hmax[q] = max(hmax[q], hmax[p])
+        r0[q], r1[q] = min(r0[q], r0[p]), max(r1[q], r1[p])
+        c0[q], c1[q] = min(c0[q], c0[p]), max(c1[q], c1[p])
+    return {"parent": par.reshape(h, w), "order": order,
+            "canonical": canon.reshape(h, w), "area": area.reshape(h, w),
+            "height": (hmax - f).reshape(h, w),
+            "diameter": np.maximum(r1-r0+1, c1-c0+1).reshape(h, w),
+            "n_nodes": int(np.count_nonzero(canon)), "root": int(root),
+            "connectivity": connectivity}
+
+
+@pytest.mark.parametrize("connectivity", [4, 8])
+@pytest.mark.parametrize("shape", [(33, 41), (1, 57), (57, 1)])
+def test_max_tree_implicit_grid_matches_neighbour_lists(connectivity, shape):
+    rng = np.random.default_rng(803)
+    image = rng.integers(0, 4, shape)  # large plateaus
+    expected = _old_max_tree(image, connectivity)
+    actual = seggraph.max_tree(image, connectivity=connectivity)
+    assert actual.keys() == expected.keys()
+    for key in actual:
+        if isinstance(actual[key], np.ndarray):
+            np.testing.assert_array_equal(actual[key], expected[key])
+        else:
+            assert actual[key] == expected[key]
