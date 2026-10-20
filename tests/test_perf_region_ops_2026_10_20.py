@@ -6,6 +6,7 @@ import pytest
 
 import blob2d as B
 import region_morph as R
+import volgray as V
 from scipy import ndimage
 
 
@@ -160,3 +161,56 @@ def test_top_and_bottom_hat_match_structuring_element(radius):
     expected_bottom = ndimage.binary_closing(mask, structure=footprint) & ~mask
     assert np.array_equal(R.top_hat(mask, size=radius - 1), expected_top)
     assert np.array_equal(R.bottom_hat(mask, size=radius - 1), expected_bottom)
+
+
+def _old_vol_equalize(volume, nbins=256, mask=None):
+    value = V._require_volume(volume)
+    selected = None
+    if mask is not None:
+        domain = V._require_volume(mask, "mask") > 0.5
+        selected = value[domain]
+    vmin, vmax = float(value.min()), float(value.max())
+    if vmax <= vmin:
+        return value.copy()
+    if selected is None:
+        selected = value.ravel()
+    scale = nbins / (vmax - vmin)
+    selected_index = ((selected - vmin) * scale).astype(np.int64)
+    np.clip(selected_index, 0, nbins - 1, out=selected_index)
+    histogram = np.bincount(selected_index, minlength=nbins)
+    lut = np.cumsum(histogram, dtype=np.float64) / histogram.sum()
+    index = ((value - vmin) * scale).astype(np.int64)
+    np.clip(index, 0, nbins - 1, out=index)
+    return lut[index]
+
+
+@pytest.mark.parametrize("masked", [False, True])
+def test_vol_equalize_shared_bins_matches_two_bin_array_reference(masked):
+    rng = np.random.default_rng(1204)
+    volume = rng.normal(1.0e6, 1.0e-6, (32, 35, 37))
+    mask = rng.random(volume.shape) > 0.35 if masked else None
+    expected = _old_vol_equalize(volume, 257, mask)
+    actual = V.vol_equalize(volume, 257, mask)
+    assert np.array_equal(actual, expected)
+
+
+def test_vol_equalize_shared_bins_peak_is_at_most_seventy_percent():
+    import gc
+    import tracemalloc
+
+    volume = np.linspace(-3.0, 7.0, 256 ** 3, dtype=np.float64).reshape((256,) * 3)
+
+    def peak(function):
+        gc.collect()
+        tracemalloc.start()
+        result = function(volume)
+        _, measured = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        assert result.shape == volume.shape
+        del result
+        return measured
+
+    old_peak = peak(_old_vol_equalize)
+    new_peak = peak(V.vol_equalize)
+    assert old_peak > 200_000_000
+    assert new_peak <= 0.7 * old_peak, (old_peak, new_peak)
