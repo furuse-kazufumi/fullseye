@@ -188,3 +188,23 @@ def test_308_press_diagonal_matches_full_hat_without_n_by_n_allocation():
     expected = np.sum((got["residuals"] / (1 - h)) ** 2)
     np.testing.assert_allclose(got["press"], expected, rtol=0, atol=1e-12)
     assert peak < 40 * 1024 * 1024
+
+
+def test_304_streaming_parallel_mean_preserves_rng_and_reference():
+    rng = np.random.default_rng(304)
+    X = rng.normal(size=(71, 13))
+    exact = multivar.mv_pca(X, n_parallel=37, seed=991, parallel_stat="mean")
+    stream = multivar.mv_pca(X, n_parallel=37, seed=991, parallel_stat="mean", memory_budget=1)
+    np.testing.assert_allclose(stream["parallel_reference"], exact["parallel_reference"], rtol=0, atol=1e-12)
+    assert stream["n_components"] == exact["n_components"]
+
+
+def test_306_307_component_prefixes_match_independent_refits():
+    rng = np.random.default_rng(306)
+    X = rng.normal(size=(80, 9))
+    Y = X[:, :2] @ np.array([[1.2], [-.7]]) + rng.normal(scale=.1, size=(80, 1))
+    for fit in (multivar._pls_simpls, multivar._pls_nipals):
+        full = fit(X, Y, 5)
+        for a in range(1, 6):
+            one = fit(X, Y, a)
+            np.testing.assert_allclose(full["W"][:, :a], one["W"], rtol=0, atol=1e-12)

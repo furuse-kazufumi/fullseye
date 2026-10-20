@@ -252,7 +252,7 @@ def feat_image_vector(images=None, features=DEFAULT_FEATURES, data_range=None, u
 # PCA                                                                         #
 # --------------------------------------------------------------------------- #
 def mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200,
-           parallel_stat="mean", seed=0) -> dict:
+           parallel_stat="mean", seed=0, memory_budget=None) -> dict:
     """Principal components of a table (samples x variables) and how many of them the data support.
 
     PCA is the SVD of the centred (by default also unit-variance) matrix
@@ -305,15 +305,22 @@ def mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_paralle
     ref = None
     if n_parallel:
         rng = np.random.default_rng(seed)
-        sims = np.empty((n_parallel, eig.size))
+        stream_mean = (parallel_stat == "mean" and memory_budget is not None
+                       and n_parallel * eig.size * 8 > int(memory_budget))
+        sims = np.zeros(eig.size) if stream_mean else np.empty((n_parallel, eig.size))
         for b in range(n_parallel):
             R = rng.normal(size=(n, p))
             Rc, _m, _s = _standardise(R, ["r"] * p, op, bool(standardize))
-            sims[b] = np.linalg.svd(Rc, compute_uv=False)[: eig.size] ** 2 / (n - 1)
+            sim = np.linalg.svd(Rc, compute_uv=False)[: eig.size] ** 2 / (n - 1)
+            if stream_mean:
+                sims += sim
+            else:
+                sims[b] = sim
         if not standardize:
             # raw data: compare against noise of the same total variance per column
             sims *= total / p
-        ref = sims.mean(axis=0) if parallel_stat == "mean" else np.percentile(sims, 95, axis=0)
+        ref = sims / n_parallel if stream_mean else (
+            sims.mean(axis=0) if parallel_stat == "mean" else np.percentile(sims, 95, axis=0))
         above = eig > ref
         k_par = int(np.argmin(above)) if not above.all() else int(eig.size)
     k_mdl = None
