@@ -56,14 +56,11 @@ def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
 def _homography_dlt(src, dst):
     """4+ 点対応から DLT でホモグラフィ H (dst = H src) を推定。"""
     src = np.asarray(src, float).reshape(-1, 2); dst = np.asarray(dst, float).reshape(-1, 2)
-    n = len(src)
-    A = np.zeros((2 * n, 9), dtype=np.float64)
-    x, y = src.T; u, v = dst.T
-    A[0::2, :3] = np.column_stack((-x, -y, -np.ones(n)))
-    A[0::2, 6:] = np.column_stack((u * x, u * y, u))
-    A[1::2, 3:6] = np.column_stack((-x, -y, -np.ones(n)))
-    A[1::2, 6:] = np.column_stack((v * x, v * y, v))
-    _, _, Vt = np.linalg.svd(A)
+    A = []
+    for (x, y), (u, v) in zip(src, dst):
+        A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
+        A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
+    _, _, Vt = np.linalg.svd(np.asarray(A))
     H = Vt[-1].reshape(3, 3)
     return H / H[2, 2]
 
