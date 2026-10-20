@@ -1,5 +1,7 @@
-<!-- i18n-source-sha: 4c1b60607e06 -->
+<!-- i18n-source-sha: bb3d9080f4fc -->
 # Fullseye Studio 完全指南
+
+按处理目的搜索时，候选项会分为适用于当前输入、需要预处理和其他三组。候选项可在不添加处理阶段的情况下试运行一次。运行失败时，Problems 面板会显示原因、位置和下一步操作，可重新选择输入、并排比较、查看详细日志、编辑参数或搜索建议的处理阶段。
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 

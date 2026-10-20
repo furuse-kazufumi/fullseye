@@ -1,5 +1,7 @@
-<!-- i18n-source-sha: 4c1b60607e06 -->
+<!-- i18n-source-sha: bb3d9080f4fc -->
 # Fullseye Studio 完全指南
+
+依處理目的搜尋時，候選項會分為適用於目前輸入、需要前處理和其他三組。候選項可在不新增處理階段的情況下試跑一次。執行失敗時，Problems 面板會顯示原因、位置與下一步操作，可重新選擇輸入、並排比較、查看詳細記錄、編輯參數或搜尋建議的處理階段。
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 

@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — Studio slice 4（目的検索と直せるエラー）
+- 目的によるop検索を現在値の型に合わせて3群に分け、正式名・入出力型・一致理由・前処理列を表示する。250 msの入力待ち、0件時の再検索候補、処理列を変えない一時試行を追加。
+- 実行失敗を原因・場所・入力の事実・次の操作に分けてProblems欄へ表示し、入力の選び直し、前後比較、詳細ログ、つまみ編集、候補段の検索を実操作へ接続。入力を黙って変換する修復は行わない。
+
 ### Added — 水と透明媒質(海の波・水面の屈折・水中の色と散乱・瓶のレンズ作用): `watermedia` 10 op
 - `ocean_spectrum`(Pierson–Moskowitz 1964 と JONSWAP 1973 の S(ω)、有義波高・周期。PM の有義波高は閉形式 0.21 U²/g に 0.4 %、JONSWAP は γ = 1 で PM に 1e-9)と `ocean_height_field`(Tessendorf 2001 の FFT の海: エルミート対称で実数、方向分布 cos² / cos2s、水深の分散関係、荒れによる水平変位、単一モード。空間の分散はスペクトルの積分に 0.02 %、傾きの分散は Cox & Munk と比べて格子で解ける波は 1〜2 割 ―― PM は毛管波を持たない。飽和域を毛管波数まで延ばすと 5 m/s で 98 %、10 m/s で 61 %)。
 - `fresnel_water_air`(水の屈折率は材料表の実部で分散込み。Brewster 角 53.12°・臨界角 48.6°・R(0)・R + T = 1 を閉形式と glassmirror に照合、全反射の旗)/ `snell_window`(窓の半径・見かけの深さ。d/n は 60° で 52 % 外れる)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で: 平面は二分法で 4 次方程式と光路長の直接最小化に一致、波面は双 3 次の高さのニュートン法でベクトルのスネルの式を検算し、外れた点は NaN と `converged = False`)。

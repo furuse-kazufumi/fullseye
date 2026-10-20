@@ -215,10 +215,9 @@ Ranked by usability payoff; each is a self-contained, testable increment:
     of the data (parts, operators, missing, repeats), remember the mapping, and stop before
     running on an unsupported shape.
 
-## ロジック層: studio_search / studio_errors、UI への配線は次の片
+## ① 目的検索 / ⑦ 直せるエラー（Studio slice 4、配線済み）
 
-Studio の UX 案のうち ①(目的検索)と ⑦(直せるエラー)の**論理だけ**を、Qt を使わない 2 つの
-モジュールに先に置いた。`studio.py` はまだ触っていない(配線は次の片で、数行で済む形にしてある)。
+Studio の UX 案のうち ①(目的検索)と ⑦(直せるエラー)を、Qt を使わない論理層から画面まで配線した。
 
 - `studio_search.search_grouped(query, current_value, current_sort, k, lang)` — `fullseye.opsearch.search_ops`
   の順位のまま、結果を `applicable`(今の入力の型で適用できる: 宣言どおり、または `opassist.accepted_sorts`
@@ -233,10 +232,11 @@ Studio の UX 案のうち ①(目的検索)と ⑦(直せるエラー)の**論�
   `edit_knob` / `insert_stage` の 5 つだけで、**自動の修復(大きさを合わせて再実行など)は種類として存在しない**。
   `format_failure(info, lang)` が Problems 欄の複数行(原因 / 場所 / 次にできること + 入力の表)にする。
 
-*配線の見取り図(次の片):* 検索欄の Enter で `search_grouped(text, current_value=model の現在の結果)` を呼んで 3 群を
-一覧にし、`report_error` / `_fail_stage` の `except` で `explain_failure(exc, op_name=, stage_index=, inputs=)` →
-`format_failure` を Problems に出す。行動の実行(選び直し・並べて表示・ログ・つまみへの移動・段の挿入)は UI 側の仕事で、
-論理層は提案を返すだけ。
+検索欄は250 ms待って現在値を渡し、「適用できる / 前処理が必要 / その他」の折り畳み群を表示する。
+各候補は正式名、入出力型、理由、必要な前処理を示し、段を増やさず一度だけ試すこともできる。0件なら近い語を
+再検索できる。実行失敗はProblems欄で原因・場所・次の行動に分け、入力の選び直し、前後比較、詳細ログ、つまみ編集、
+候補段の検索へ移れる。入力の大きさや型を黙って変更する処理はない。残るバックログは上の15、16と、複数入力の割当、
+重い検索・実行のワーカースレッド化である。
 
 
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
