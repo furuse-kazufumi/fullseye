@@ -201,6 +201,7 @@ def test_324_combined_monogenic_metrics_match_three_calls(monkeypatch):
     monkeypatch.setattr(qi, "_require_monogenic", old)
     ref = (qi.monogenic_amplitude(q), qi.monogenic_phase(q),
            qi.monogenic_orientation(q))
+    assert len(got) == len(ref) == 3
     for actual, expected in zip(got, ref):
         assert np.allclose(actual, expected, rtol=0.0, atol=1e-12)
 
@@ -290,6 +291,7 @@ def test_329_top_two_matches_stable_sort_including_ties():
     ref = np.zeros((6, 5), dtype=np.int64)
     old = _old_crt_core(r, p, w, -20.0, 20.0, ref)
     new = residue_mod._crt_core(r, p, w, -20.0, 20.0, ref)
+    assert len(new[:4]) == len(old) == 4
     for got, expected in zip(new[:4], old):
         assert np.array_equal(got, expected, equal_nan=True)
 
@@ -302,5 +304,6 @@ def test_329_random_candidates_match_stable_sort_bit_for_bit():
     ref = rng.integers(0, 4, size=r.shape[1:])
     old = _old_crt_core(r, p, w, -100.0, 100.0, ref)
     new = residue_mod._crt_core(r, p, w, -100.0, 100.0, ref)
+    assert len(new[:4]) == len(old) == 4
     for got, expected in zip(new[:4], old):
         assert np.array_equal(got, expected, equal_nan=True)
