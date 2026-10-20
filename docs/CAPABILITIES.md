@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 88 項目**
+**収録 89 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -54,6 +54,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
@@ -1200,7 +1201,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 動く例: `annotate_paper_tour`
 
-## 描く (4)
+## 描く (5)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -1225,6 +1226,22 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 実寸校正: 図は計算値そのものを実寸の mm で描くので、尺度の校正は要らない。SVG は紙の大きさ = 図 × 縮尺(100 % 表示・印刷で縮尺どおり)、DXF はモデル空間の 1 単位 = 1 mm。
 
 動く例: `poc_optics_drawings`
+
+### [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md)
+
+レンズ設計の画面は、スポットダイアグラムや MTF の数字までは出してくれますが、「この処方で 1 m 先の資料を撮ると、絵は実際どう写るのか」までは見せてくれません。`lensrender` の 8 本は、センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけて、光子・ショットノイズ・読み出しノイズ・量子化まで通します。
+
+使う op: `lens_scene`, `exit_pupil_samples`, `trace_sensor_rays`, `scene_radiance`, `render_scene_through_lens`, `bokeh_shape`, `render_ghost_overlay`, `render_compare_prescriptions`
+
+推奨パイプライン: [`lens_system`](ops/optics/design/lens_system.md) → [`lens_scene`](ops/optics/lensrender/lens_scene.md) → [`render_scene_through_lens`](ops/optics/lensrender/render_scene_through_lens.md) → [`render_compare_prescriptions`](ops/optics/lensrender/render_compare_prescriptions.md)
+
+代替: [`exit_pupil_samples`](ops/optics/lensrender/exit_pupil_samples.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md), [`scene_radiance`](ops/optics/lensrender/scene_radiance.md), [`bokeh_shape`](ops/optics/lensrender/bokeh_shape.md), [`render_ghost_overlay`](ops/optics/lensrender/render_ghost_overlay.md), [`render_through_lens`](ops/optics/imaging_sim/render_through_lens.md), [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md)
+
+限界: 幾何光学のみ(回折が無いので、絞った良いレンズの点像は Airy より小さく描かれる。F/11 の三枚玉で Airy の 0.32 倍)。射出瞳は近軸の位置と大きさで標本化する(瞳収差で実際の瞳がはみ出すレンズはその分の光を取りこぼす)。透過率はフレネル損失なし(fresnel=True で非偏光のフレネル損失、コーティングとガラスの吸収は無し)。ゴーストは 2 回反射だけ。点光源は前向きの追跡で重ねるので遮られず影を作らない。非軸対称の系(偏心・傾き)の点光源とボケの形は未対応(拒否)。
+
+実寸校正: センサは画素ピッチ・QE・フルウェル・読み出しノイズ・暗電子・ビット数の実測値で与える(EMVA 1288 の値)。光源の強さは分光放射照度(W/m²/nm)か分光強度(W/sr/nm)、露光は秒で、電子数は E dλ A t (λ/hc) QE の閉形式に 1e-3 以内で合う。処方は raytrace.lens_system(.zmx の読み込みは lensfile)。
+
+動く例: `poc_photograph_through_prescription`
 
 ### [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md)
 

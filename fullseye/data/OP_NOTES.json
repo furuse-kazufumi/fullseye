@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3465,
- "n_notes": 3471,
+ "n_ops": 3473,
+ "n_notes": 3479,
  "notes": {
   "vol_dilate": [
    {
@@ -28441,6 +28441,83 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lensmerit/optimize_lens_operands.md"
+   }
+  ],
+  "bokeh_shape": [
+   {
+    "op": "bokeh_shape",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/bokeh_shape.md"
+   }
+  ],
+  "exit_pupil_samples": [
+   {
+    "op": "exit_pupil_samples",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/exit_pupil_samples.md"
+   }
+  ],
+  "lens_scene": [
+   {
+    "op": "lens_scene",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/lens_scene.md"
+   }
+  ],
+  "render_compare_prescriptions": [
+   {
+    "op": "render_compare_prescriptions",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_compare_prescriptions.md"
+   }
+  ],
+  "render_ghost_overlay": [
+   {
+    "op": "render_ghost_overlay",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_ghost_overlay.md"
+   }
+  ],
+  "render_scene_through_lens": [
+   {
+    "op": "render_scene_through_lens",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_scene_through_lens.md"
+   }
+  ],
+  "scene_radiance": [
+   {
+    "op": "scene_radiance",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/scene_radiance.md"
+   }
+  ],
+  "trace_sensor_rays": [
+   {
+    "op": "trace_sensor_rays",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/trace_sensor_rays.md"
    }
   ],
   "form_factors_2d": [

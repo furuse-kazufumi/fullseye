@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [lens_optimize_demo, poc_optics_drawings, poc_telecentric_metrology]
+examples: [lens_optimize_demo, poc_optics_drawings, poc_photograph_through_prescription, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
+- [poc_photograph_through_prescription](../../../../examples/poc_photograph_through_prescription.py) — `py -3.11 examples/poc_photograph_through_prescription.py`
 - [poc_telecentric_metrology](../../../../examples/poc_telecentric_metrology.py) — `py -3.11 examples/poc_telecentric_metrology.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

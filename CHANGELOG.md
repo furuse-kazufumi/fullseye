@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Added — 3 次元の場面を処方どおりのレンズ越しに撮る: `lensrender` 8 op(像の側から追跡する描画)
+- `exit_pupil_samples`(近軸の射出瞳の位置と半径から、hexapolar と Halton の標本点と面積の重み。重みの和は π R² で厳密、Halton の円 / 外接の正方形 = π/4 に 1 %)と `trace_sensor_rays`(センサの点 → 射出瞳の点 → 全面を**逆向きに**: スネルの式と分散・円錐と非球面・鏡・口径・全反射。ケラレた光線は NaN と印、`fresnel=True` で非偏光のフレネル損失。`ray_bundle` の逆と入射点 1e-9 mm・方向 1e-12 で一致(実測 8.7e-15 mm・4.2e-16)し、屈折率の向きを逆にすると門が 1.1 mm で赤になる。射出瞳が無限遠の系は拒否)。
+- `lens_scene`(テクスチャつきの平面・球・三角形のメッシュ(Möller–Trumbore)・平行光と点光源・点光源の像、分光アルベド(RGB は 0.61 / 0.54 / 0.465 µm の代表波長)、影。未知のキー・縮退した三角形・負のアルベド・表の外の波長は拒否)と `scene_radiance`(ランバート面は E ρ/π を 1e-12 で超えない、正規化したブリン・フォンの反射 ks (s+8)/(8π)、影の光線、点光源の逆 2 乗)。
+- `render_scene_through_lens`(画素 × 瞳の点 × 波長で E = ∫ L cosθ dΩ を cos²θ/d² の重みで足して放射照度にし、E dλ A t (λ/hc) QE の電子数から `lensimage._sensor` のショット・暗・読み出しノイズと量子化へ。瞳の標本は画素ごとに固定の角で回すので、ノイズ無しの絵は seed に依らない。センサの窓は `center_mm` で大きなセンサの一部へ動かせる)。点光源は前向きの追跡で重ねる(センサ側からは点を拾えない)。理想レンズ越しの白い面は π L sin²α に相対 2e-6(電子数)、点光源は画素 1 つで光子数が I Ω t QE λ/hc に 1e-6。
+- `bokeh_shape`(ピントのはずれた点の凸包・軸上の円との面積比・瞳の通過率・子午面の対称性 1e-9 mm)、`render_ghost_overlay`(`raytrace3d.ghost_analysis` の 2 回反射 + `ghost_path` の実光線を電子数で重ねる。反射率 0 で厳密に 0、エネルギー比は閉形式 r² (1−r)^(2(j−i)−2) に 4.4e-16)、`render_compare_prescriptions`(RMS スポット・隅の光量・歪み・横色収差・刃の 10–90 % と MTF50 の表。順は `spot_stats` と一致)。
+- 門 `tests/test_lensrender.py`(36 件): 逆向きの追跡 = `ray_bundle` の逆、理想レンズのピンホール(1e-9)、市松の刃 15 本が `lensimage.distortion_map` に 0.096 px(歪みは外縁で 5.2 px)、横色収差が `chromatic_shift` に 0.08 px、白い面の相対照度が `lensimage` に 0.7 視野まで 1.61 %(8.7° では 3.2 % ―― 物体側と像側の cos⁴)、円盤ぼけの刃の応答の閉形式、猫の目は 2 つの円の重なりの閉形式 0.635 に 1.6 %、別実装のスカラーの描画器(20 画素 × 200 瞳の点)と放射照度が 1e-9 で一致、拒否と壊して確かめる探針。
+- PoC `poc_photograph_through_prescription`(収蔵番号 2026.269、門 30 件、CPU 52 s で図つき、CI では 21 s): 同じ EFL・同じ F ナンバーの三枚玉 2 本で解像チャートを 1 m で撮る(軸上の RMS スポット 10.7 / 53.4 µm、刃の 10–90 % 4.6 / 15.4 px)、被写界深度(理想レンズの錯乱円に 0.31 %)、猫の目、隅の光量と樽型の格子、ゴースト、0.2 mm の傷の対比(0.547 / 0.261、独立の予測 0.542 / 0.261)。★限界: 幾何光学のみで、F/11 に絞った良いレンズの点像は Airy 円盤の 0.32 倍に描かれる(回折が無い)。
+- 手書きの件数を打ち直す: 光学の op 407(+8)、索引 3,465 → 3,473、型付き台帳 2,509 → 2,517、ノート 3,471 → 3,479。能力ノート `docs/capabilities/photograph-through-prescription.md`、op 要約(ja zh tw ko de hi)、ViEW2026 の一覧(8 言語の題)。
+
 ### Added — 水と透明媒質(海の波・水面の屈折・水中の色と散乱・瓶のレンズ作用): `watermedia` 10 op
 - `ocean_spectrum`(Pierson–Moskowitz 1964 と JONSWAP 1973 の S(ω)、有義波高・周期。PM の有義波高は閉形式 0.21 U²/g に 0.4 %、JONSWAP は γ = 1 で PM に 1e-9)と `ocean_height_field`(Tessendorf 2001 の FFT の海: エルミート対称で実数、方向分布 cos² / cos2s、水深の分散関係、荒れによる水平変位、単一モード。空間の分散はスペクトルの積分に 0.02 %、傾きの分散は Cox & Munk と比べて格子で解ける波は 1〜2 割 ―― PM は毛管波を持たない。飽和域を毛管波数まで延ばすと 5 m/s で 98 %、10 m/s で 61 %)。
 - `fresnel_water_air`(水の屈折率は材料表の実部で分散込み。Brewster 角 53.12°・臨界角 48.6°・R(0)・R + T = 1 を閉形式と glassmirror に照合、全反射の旗)/ `snell_window`(窓の半径・見かけの深さ。d/n は 60° で 52 % 外れる)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で: 平面は二分法で 4 次方程式と光路長の直接最小化に一致、波面は双 3 次の高さのニュートン法でベクトルのスネルの式を検算し、外れた点は NaN と `converged = False`)。

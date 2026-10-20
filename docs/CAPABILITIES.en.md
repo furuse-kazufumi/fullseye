@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 88 capabilities**
+**Currently 89 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -55,6 +55,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
 | [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
@@ -985,7 +986,7 @@ Alternatives: [`text_box`](ops/annotate/text/text_box.md), [`annotate_panel_labe
 
 Runnable: `annotate_paper_tour`
 
-## Draw (4)
+## Draw (5)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -1006,6 +1007,18 @@ Pipeline: [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md) �
 Alternatives: [`vision_setup_drawing`](ops/optics/drawing/vision_setup_drawing.md), [`lens_element_drawing`](ops/optics/drawing/lens_element_drawing.md), [`drawing_raster`](ops/optics/drawing/drawing_raster.md), [`paraxial_trace`](ops/optics/design/paraxial_trace.md), [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md)
 
 Runnable: `poc_optics_drawings`
+
+### [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md)
+
+Eight ops in `lensrender` (category `lensrender` of `opsoptics`) photograph a 3-D scene through a `raytrace.lens_system` prescription by sensor-side ray tracing (Kolb, Mitchell & Hanrahan 1995): the exit pupil is sampled for every sensor point, each ray is traced backwards through every surface (Snell's law with dispersion, conics and aspheres, mirrors, semi-diameters as stops, total internal reflection) into object space, the scene is shaded there (textured planes, spheres, triangle meshes, Lambertian plus a Blinn-Phong lobe, shadows, point sources splatted by forward tracing) and the radiance is summed with the weight cos^2(theta)/d^2 of the pupil sample. The irradiance becomes electrons (E dlambda A t (lambda/hc) QE) and goes through shot noise, dark electrons, read noise and the quantiser. `bokeh_shape` gives the out-of-focus footprint (the cat's eye), `render_ghost_overlay` adds the two-reflection ghosts of a bright point and `render_compare_prescriptions` renders one scene through several prescriptions and tabulates RMS spots, corner illumination, distortion, lateral colour and the edge rise and MTF50. Geometric optics only: no diffraction.
+
+Operators: `lens_scene`, `exit_pupil_samples`, `trace_sensor_rays`, `scene_radiance`, `render_scene_through_lens`, `bokeh_shape`, `render_ghost_overlay`, `render_compare_prescriptions`
+
+Pipeline: [`lens_system`](ops/optics/design/lens_system.md) → [`lens_scene`](ops/optics/lensrender/lens_scene.md) → [`render_scene_through_lens`](ops/optics/lensrender/render_scene_through_lens.md) → [`render_compare_prescriptions`](ops/optics/lensrender/render_compare_prescriptions.md)
+
+Alternatives: [`exit_pupil_samples`](ops/optics/lensrender/exit_pupil_samples.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md), [`scene_radiance`](ops/optics/lensrender/scene_radiance.md), [`bokeh_shape`](ops/optics/lensrender/bokeh_shape.md), [`render_ghost_overlay`](ops/optics/lensrender/render_ghost_overlay.md), [`render_through_lens`](ops/optics/imaging_sim/render_through_lens.md), [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md)
+
+Runnable: `poc_photograph_through_prescription`
 
 ### [Pictures that carry their own ground truth (illusions, endless drawing, seamless loops)](capabilities/pictures-that-carry-their-own-truth.md)
 

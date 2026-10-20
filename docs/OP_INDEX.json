@@ -1,8 +1,8 @@
 {
- "n_ops": 3465,
+ "n_ops": 3473,
  "tiers": {
   "color": 12,
-  "ledger": 2509,
+  "ledger": 2517,
   "nary": 17,
   "registry": 927
  },
@@ -2437,6 +2437,19 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "bokeh_shape",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -8425,6 +8438,19 @@
    "in_sorts": []
   },
   {
+   "name": "exit_pupil_samples",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "exit_room_check",
    "halcon": "",
    "in_sort": "any",
@@ -14403,6 +14429,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "lens_scene",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "lens_section_drawing",
@@ -23526,6 +23563,30 @@
    ]
   },
   {
+   "name": "render_compare_prescriptions",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "render_ghost_overlay",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "render_lambertian",
    "halcon": "",
    "in_sort": "normalmap",
@@ -23592,6 +23653,19 @@
    "dim": "3d",
    "in_sorts": [
     "mesh"
+   ]
+  },
+  {
+   "name": "render_scene_through_lens",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -24846,6 +24920,17 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "scene",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "scene_radiance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -30268,6 +30353,19 @@
     "table",
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "trace_sensor_rays",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {

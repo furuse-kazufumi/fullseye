@@ -31256,6 +31256,78 @@
    "ko": "평행광 속의 원기둥(막대나 병)의 근축 초점과 실제 광선의 초점선 -> dict.",
    "de": "Paraxialer Fokus und Realstrahl-Kaustik eines Zylinders (Stab oder Flasche) im parallelen Strahl -> dict.",
    "hi": "समानांतर किरण-पुंज में बेलन (छड़ या बोतल) का पैराएक्सियल फोकस और वास्तविक किरणों की caustic -> dict।"
+  },
+  "optics/lens_scene": {
+   "fp": "80a7ef063bc7",
+   "ja": "render_scene_through_lens 用の簡単な 3 次元のシーン(平面・球・メッシュ・光源)を作って検証する -> dict(``scene`` の表)。",
+   "zh": "构建并校验供 render_scene_through_lens 使用的简单三维场景(平面、球、网格、光源)-> 字典(``scene`` 表)。",
+   "tw": "建構並驗證供 render_scene_through_lens 使用的簡單三維場景(平面、球、網格、光源)-> 字典(``scene`` 表)。",
+   "ko": "render_scene_through_lens 용 간단한 3차원 장면(평면·구·메시·광원)을 만들고 검증한다 -> dict(``scene`` 표).",
+   "de": "Eine einfache 3-D-Szene (Ebenen, Kugeln, Netze, Lichter) für render_scene_through_lens aufbauen und prüfen -> dict (die ``scene``-Tabelle).",
+   "hi": "render_scene_through_lens के लिए एक सरल 3-D दृश्य (planes, spheres, meshes, lights) बनाना और जाँचना -> dict (``scene`` table)।"
+  },
+  "optics/exit_pupil_samples": {
+   "fp": "a3033b6fe491",
+   "ja": "*system* の射出瞳の標本点(位置と半径は近軸光線追跡から)-> dict。",
+   "zh": "在 *system* 的出瞳上取样点(位置与半径来自近轴追迹)-> 字典。",
+   "tw": "在 *system* 的出瞳上取樣點(位置與半徑來自近軸追跡)-> 字典。",
+   "ko": "*system* 의 사출동 위의 표본점(위치와 반지름은 근축 추적에서) -> dict.",
+   "de": "Stichprobenpunkte auf der Austrittspupille von *system* (Lage und Radius aus der paraxialen Rechnung) -> dict.",
+   "hi": "*system* की exit pupil पर नमूना बिंदु (स्थिति और त्रिज्या paraxial trace से) -> dict।"
+  },
+  "optics/trace_sensor_rays": {
+   "fp": "77bb3e98952f",
+   "ja": "センサ上の点から射出瞳の点を通る光線を、物体空間へ**逆向きに**追跡する -> dict。",
+   "zh": "从传感器上的点经出瞳上的点,把光线**逆向**追迹到物空间 -> 字典。",
+   "tw": "從感測器上的點經出瞳上的點,把光線**逆向**追跡到物空間 -> 字典。",
+   "ko": "센서 위의 점에서 사출동의 점을 지나는 광선을 물체 공간까지 **거꾸로** 추적한다 -> dict.",
+   "de": "Strahlen von Sensorpunkten durch Punkte der Austrittspupille **rückwärts** in den Objektraum verfolgen -> dict.",
+   "hi": "sensor के बिंदुओं से exit pupil के बिंदुओं से होकर किरणों को object space तक **उल्टी दिशा में** trace करना -> dict।"
+  },
+  "optics/scene_radiance": {
+   "fp": "75517c0d9ef5",
+   "ja": "物体空間の光線が ``lens_scene`` に当たったときに運ぶ放射輝度 -> dict。",
+   "zh": "物空间光线击中 ``lens_scene`` 时所带的辐亮度 -> 字典。",
+   "tw": "物空間光線擊中 ``lens_scene`` 時所帶的輻射亮度 -> 字典。",
+   "ko": "물체 공간의 광선이 ``lens_scene`` 에 닿을 때 실어 나르는 복사휘도 -> dict.",
+   "de": "Strahldichte entlang von Objektraumstrahlen, die auf eine ``lens_scene`` treffen -> dict.",
+   "hi": "object space की किरणों के ``lens_scene`` से टकराने पर radiance -> dict।"
+  },
+  "optics/render_scene_through_lens": {
+   "fp": "08762f698fac",
+   "ja": "``lens_scene`` を処方 *system* のレンズ越しに撮る: センサ側からの光線追跡 -> dict。",
+   "zh": "透过处方 *system* 的镜头拍摄 ``lens_scene``:从传感器一侧的光线追迹 -> 字典。",
+   "tw": "透過處方 *system* 的鏡頭拍攝 ``lens_scene``:從感測器一側的光線追跡 -> 字典。",
+   "ko": "처방 *system* 의 렌즈를 통해 ``lens_scene`` 을 촬영한다: 센서 쪽에서의 광선 추적 -> dict.",
+   "de": "Eine ``lens_scene`` durch das Objektiv der Verschreibung *system* aufnehmen: Strahlverfolgung von der Sensorseite -> dict.",
+   "hi": "किसी ``lens_scene`` को prescription *system* के लेंस से होकर photograph करना: sensor की ओर से ray tracing -> dict।"
+  },
+  "optics/bokeh_shape": {
+   "fp": "ef490d6f1d6a",
+   "ja": "点光源のピントはずれの像(ボケ)の形 ―― 瞳の像の重なり、猫の目 -> dict。",
+   "zh": "点光源失焦像(虚化)的形状——光瞳像的交集,即猫眼形 -> 字典。",
+   "tw": "點光源失焦像(虛化)的形狀——光瞳像的交集,即貓眼形 -> 字典。",
+   "ko": "점광원의 초점 벗어난 상(보케)의 모양 — 동공 상들의 교집합, 고양이 눈 -> dict.",
+   "de": "Der unscharfe Fußabdruck einer Punktquelle – der Schnitt der Pupillenbilder, das Katzenauge -> dict.",
+   "hi": "बिंदु स्रोत का out-of-focus footprint — pupil images का प्रतिच्छेदन, यानी cat's eye -> dict।"
+  },
+  "optics/render_ghost_overlay": {
+   "fp": "81d3f3f49bba",
+   "ja": "明るい点光源の 2 回反射のゴーストを、センサ上の電子数として求める -> dict。",
+   "zh": "明亮点光源的二次反射鬼像,以传感器上的电子数表示 -> 字典。",
+   "tw": "明亮點光源的二次反射鬼影,以感測器上的電子數表示 -> 字典。",
+   "ko": "밝은 점광원의 2회 반사 고스트를 센서 위의 전자 수로 구한다 -> dict.",
+   "de": "Die Doppelreflexions-Geisterbilder einer hellen Punktquelle als Elektronen auf dem Sensor -> dict.",
+   "hi": "किसी चमकीले बिंदु के दो-परावर्तन वाले ghost images, sensor पर इलेक्ट्रॉनों के रूप में -> dict।"
+  },
+  "optics/render_compare_prescriptions": {
+   "fp": "7b7eb7d5ad18",
+   "ja": "同じ場面を 2 本以上の処方で撮り、絵ごとの品質を表にする -> dict。",
+   "zh": "用两个或更多处方拍摄同一场景,并把每张图像的质量列成表 -> 字典。",
+   "tw": "用兩個或更多處方拍攝同一場景,並把每張影像的品質列成表 -> 字典。",
+   "ko": "같은 장면을 둘 이상의 처방으로 촬영하고 사진마다의 품질을 표로 정리한다 -> dict.",
+   "de": "Dieselbe Szene durch zwei oder mehr Verschreibungen aufnehmen und die Qualität jedes Bildes tabellieren -> dict.",
+   "hi": "एक ही दृश्य को दो या अधिक prescriptions से render करना और हर तस्वीर की गुणवत्ता को तालिका में देना -> dict।"
   }
  }
 }

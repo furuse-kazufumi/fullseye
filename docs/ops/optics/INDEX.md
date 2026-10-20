@@ -1,4 +1,4 @@
-# OPTICS operator help — 399 ops in 45 categories
+# OPTICS operator help — 407 ops in 46 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -101,6 +101,10 @@
 ### lensmerit (6)
 
 [merit_boundary_operands](lensmerit/merit_boundary_operands.md) · [merit_contributions](lensmerit/merit_contributions.md) · [merit_default](lensmerit/merit_default.md) · [merit_evaluate](lensmerit/merit_evaluate.md) · [merit_operands_list](lensmerit/merit_operands_list.md) · [optimize_lens_operands](lensmerit/optimize_lens_operands.md)
+
+### lensrender (8)
+
+[bokeh_shape](lensrender/bokeh_shape.md) · [exit_pupil_samples](lensrender/exit_pupil_samples.md) · [lens_scene](lensrender/lens_scene.md) · [render_compare_prescriptions](lensrender/render_compare_prescriptions.md) · [render_ghost_overlay](lensrender/render_ghost_overlay.md) · [render_scene_through_lens](lensrender/render_scene_through_lens.md) · [scene_radiance](lensrender/scene_radiance.md) · [trace_sensor_rays](lensrender/trace_sensor_rays.md)
 
 ### light_transport (11)
 
