@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_normals — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_normals(points, k=25)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_normals(points, k=25, *, method=&#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25, *, method=&#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>바깥쪽(이웃 무게중심에서 멀어지는 쪽)으로 통일한 점군 법선. → (N,3).</p>
 <p>절차(각 점, Python 루프): <code style="color:#22d3bf">cKDTree</code> 로 자신을 포함한 k+1 근방(k 는 N-1 로 잘림)을 취하고, 질의점을 원점으로 한 근방 좌표의 산포 행렬 <code style="color:#22d3bf">local.T @ local</code> 의 최소 고유벡터를 법선으로 한다(단위 길이). 방향은 &quot;근방 무게중심과의 내적이 양이면 반전&quot; = 근방 무게중심에서 멀어지는 쪽으로 맞춘다.</p>
