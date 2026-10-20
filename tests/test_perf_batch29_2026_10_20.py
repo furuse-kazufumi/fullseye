@@ -8,9 +8,88 @@ import numpy as np
 import pytest
 
 import acquire
+import dsp
+import funct1d
 import doe
 import graphinv
 import pivops
+
+
+def _rms_reference(x, frame=None, hop=None):
+    x = dsp._require_finite(x)
+    if frame is None:
+        return float(np.sqrt(np.mean(x * x)))
+    frame = int(frame)
+    hop = frame // 2 if hop is None else int(hop)
+    return np.array([np.sqrt(np.mean(x[s:s + frame] ** 2))
+                     for s in range(0, max(1, len(x) - frame + 1), hop)])
+
+
+def _zcr_reference(x):
+    x = dsp._require_finite(x)
+    if x.size < 2:
+        return 0.0
+    s = np.sign(x)
+    nz = s[s != 0.0]
+    if nz.size < 2:
+        return 0.0
+    return float(np.count_nonzero(np.diff(nz) != 0.0)) / float(x.size - 1)
+
+
+def test_384_385_rms_matches_original():
+    rng = np.random.default_rng(384)
+    x = rng.normal(1e6, 3.0, 24000)
+    for frame, hop in ((None, None), (64, 64), (63, 63), (64, 17)):
+        np.testing.assert_allclose(dsp.rms(x, frame, hop),
+                                   _rms_reference(x, frame, hop), rtol=0, atol=1e-12)
+
+
+def test_389_zcr_matches_original_with_zeros():
+    rng = np.random.default_rng(389)
+    for x in ([1, 0, -1], [0, 0], rng.choice([-1.0, 0.0, 1.0], 10000)):
+        assert dsp.zero_crossing_rate(x) == _zcr_reference(x)
+
+
+def test_392_395_funct1d_identity_and_batch_lookup():
+    rng = np.random.default_rng(392)
+    y = rng.normal(size=10000)
+    order = np.argsort(y, kind="stable")
+    inv = funct1d.invert_funct_1d(y)
+    np.testing.assert_array_equal(inv["x"], y[order])
+    np.testing.assert_array_equal(inv["y"], np.arange(y.size, dtype=float)[order])
+    expect = np.column_stack([2.5 * np.arange(y.size) - 3, -2 * y + 4])
+    np.testing.assert_array_equal(funct1d.transform_funct_1d(y, 2.5, -3, -2, 4), expect)
+    xs = np.array([-2.0, 0.5, 18.25, 1e6])
+    np.testing.assert_array_equal(funct1d.get_y_value_funct_1d(y, xs),
+                                  np.array([np.interp(x, np.arange(y.size), y) for x in xs]))
+
+
+def test_394_zero_crossings_matches_product_reference():
+    rng = np.random.default_rng(394)
+    y = rng.choice([-2.0, 0.0, 3.0], 50000)
+    expect = np.nonzero((np.sign(y[:-1]) * np.sign(y[1:])) < 0)[0]
+    np.testing.assert_array_equal(funct1d.zero_crossings_funct_1d(y), expect)
+
+
+def test_390_391_match_fft_within_gate():
+    rng = np.random.default_rng(390)
+    a = rng.normal(size=5000); b = rng.normal(size=4200)
+    ac, bc = a - a.mean(), b - b.mean()
+    got_lags, got = funct1d._match_scores(ac, bc)
+    # Force the original direct correlation for the reference formula.
+    old = np.correlate(ac, bc, mode="full")
+    n1, n2 = ac.size, bc.size; lags = np.arange(-(n2 - 1), n1)
+    head = np.clip(lags, 0, n1); tail = np.clip(lags + n2, 0, n1)
+    j0 = np.clip(head-lags, 0, n2); j1 = np.clip(tail-lags, 0, n2)
+    sa=np.r_[0.,np.cumsum(ac)]; sa2=np.r_[0.,np.cumsum(ac*ac)]
+    sb=np.r_[0.,np.cumsum(bc)]; sb2=np.r_[0.,np.cumsum(bc*bc)]
+    sv=head*bc[0]+sb[j1]-sb[j0]+(n1-tail)*bc[-1]
+    svv=head*bc[0]**2+sb2[j1]-sb2[j0]+(n1-tail)*bc[-1]**2
+    num=bc[0]*sa[head]+old+bc[-1]*(sa[n1]-sa[tail])-sa[n1]*sv/n1
+    va=sa2[n1]-sa[n1]**2/n1; vv=svv-sv**2/n1
+    ref=np.zeros(lags.size); live=(va>0)&(vv>1e-12*np.abs(svv)); ref[live]=num[live]/np.sqrt(va*vv[live])
+    np.testing.assert_array_equal(got_lags, lags)
+    np.testing.assert_allclose(got, np.clip(ref,-1,1), rtol=0, atol=1e-12)
 
 
 def _cycle3_reference(adj):

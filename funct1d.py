@@ -262,8 +262,8 @@ def zero_crossings_funct_1d(y):
     Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
-    s = np.sign(arr)
-    return np.nonzero((s[:-1] * s[1:]) < 0)[0]
+    return np.nonzero((arr[:-1] != 0.0) & (arr[1:] != 0.0)
+                      & (np.signbit(arr[:-1]) != np.signbit(arr[1:])))[0]
 
 
 def local_min_max_funct_1d(y):
@@ -468,9 +468,8 @@ def invert_funct_1d(y):
     Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
-    x = np.arange(len(arr), dtype=float)
     order = np.argsort(arr, kind="stable")
-    return {"x": arr[order], "y": x[order]}
+    return {"x": arr[order], "y": order.astype(float)}
 
 
 def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):
@@ -492,8 +491,10 @@ def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):
     ax = _finite_scalar(add_x, "add_x")
     my = _finite_scalar(mult_y, "mult_y")
     ay = _finite_scalar(add_y, "add_y")
-    x = np.arange(len(arr), dtype=float)
-    return np.column_stack([mx * x + ax, my * arr + ay])
+    out = np.empty((len(arr), 2), dtype=float)
+    out[:, 0] = mx * np.arange(len(arr), dtype=float) + ax
+    out[:, 1] = my * arr + ay
+    return out
 
 
 def x_range_funct_1d(y):
@@ -534,6 +535,14 @@ def get_y_value_funct_1d(y, x, interpolate=True):
     :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.
     """
     arr = _f1d(y, "y", min_len=1)
+    xa = np.asarray(x)
+    if xa.ndim:
+        if not np.issubdtype(xa.dtype, np.number) or not np.all(np.isfinite(xa)):
+            raise ValueError("x must contain only finite numeric values")
+        xf = xa.astype(float, copy=False)
+        if interpolate:
+            return np.interp(xf, np.arange(len(arr)), arr)
+        return arr[np.clip(np.round(xf), 0, len(arr) - 1).astype(np.intp)]
     xf = _finite_scalar(x, "x")
     if interpolate:
         return float(np.interp(xf, np.arange(len(arr)), arr))
@@ -633,7 +642,12 @@ def _match_scores(ac, bc):
     s_v = head * bc[0] + (sb[j1] - sb[j0]) + n_tail * bc[-1]
     s_vv = head * bc[0] ** 2 + (sb2[j1] - sb2[j0]) + n_tail * bc[-1] ** 2
     # The middle term is exactly the plain full cross-correlation at that lag.
-    s_av = bc[0] * sa[head] + np.correlate(ac, bc, mode="full") \
+    if max(n1, n2) >= 4096:
+        from scipy.signal import correlate
+        cross = correlate(ac, bc, mode="full", method="fft")
+    else:
+        cross = np.correlate(ac, bc, mode="full")
+    s_av = bc[0] * sa[head] + cross \
         + bc[-1] * (sa[n1] - sa[tail0])
 
     var_a = float(sa2[n1] - sa[n1] ** 2 / n1)
