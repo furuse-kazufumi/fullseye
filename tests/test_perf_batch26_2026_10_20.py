@@ -110,6 +110,28 @@ def test_297_candidate_label_lookup_matches_old_loop():
     assert got["boxes"].tolist() == [[1, 2, 5, 8], [10, 3, 18, 15]]
 
 
+def test_295_flat_ray_history_preserves_second_pass_scan_order():
+    image = np.ones((81, 121))
+    image[5:76, 8:12] = 0
+    image[5:76, 31:38] = 0
+    image[18:64, 61:93] = 0
+    got = textregion.swt_map(image, sigma=0, max_width=70)
+    # Repeated execution probes overlap between rays and therefore second-pass order.
+    again = textregion.swt_map(image.copy(), sigma=0, max_width=70)
+    np.testing.assert_array_equal(got["swt"], again["swt"])
+    assert got["n_hits"] == again["n_hits"]
+
+
+def test_298_negative_threshold_path_keeps_pair_contract():
+    boxes = np.array([[0, 0, 10, 8], [30, 9, 40, 17], [2, 20, 12, 28]])
+    sw = np.array([1.0, 100.0, 1.0])
+    for overlap in (-4.0, 0.5):
+        got = textregion.text_lines(boxes, sw, overlap_ratio=overlap)
+        again = textregion.text_lines(boxes.copy(), sw.copy(), overlap_ratio=overlap)
+        np.testing.assert_array_equal(got["lines"], again["lines"])
+        assert got["members"] == again["members"]
+
+
 def test_303_zero_bounce_does_not_build_pair_matrices(monkeypatch):
     profile = lighttransport.groove_profile(width=2, angle_deg=70, n_patches=24)
     transport = lighttransport.transport_matrix_radiosity(profile, albedo=0.5)
