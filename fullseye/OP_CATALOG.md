@@ -3016,7 +3016,7 @@ _計 3501 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### lightfield / decode(3)
 - `lf_from_mla` `image2d → lightfield` — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field. · 例: `lightfield_depth`
 - `lf_stats` `lightfield → table` — Describe a light field: shape, angular centre, and the slope range it can carry. · 例: `lightfield_depth`
-- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_plenoptic_camera`
+- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`
 
 #### lightfield / depth(5)
 - `lf_all_in_focus` `lightfield × image2d → image2d` — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`

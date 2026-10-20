@@ -196,9 +196,9 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
     depth_lo, depth_hi = 600., 1800.
     err_lim = max(1., float(np.max(np.abs(err_mm))))
     colour_bar = np.repeat(np.linspace(depth_hi, depth_lo, 128)[:, None], 20, axis=1)
-    panels = [pseudocolour(depth_truth*1000, depth_lo, depth_hi, "turbo"),
-              pseudocolour(depth_est*1000, depth_lo, depth_hi, "turbo"),
-              pseudocolour(err_mm, -err_lim, err_lim, "RdBu_r"),
+    panels = [pseudocolour(ndimage.zoom(depth_truth*1000, 4, order=0), depth_lo, depth_hi, "turbo"),
+              pseudocolour(ndimage.zoom(depth_est*1000, 4, order=0), depth_lo, depth_hi, "turbo"),
+              pseudocolour(ndimage.zoom(err_mm, 4, order=0), -err_lim, err_lim, "RdBu_r"),
               pseudocolour(colour_bar, depth_lo, depth_hi, "turbo")]
     figs.save_grid("depth_map", panels,
                    ["truth depth (mm)", "estimated depth (mm)", "signed error (mm)", "colour bar (mm)"], ncols=4,
@@ -237,7 +237,7 @@ def make_video(lf):
     assert all(.05 <= f <= .98 for f in fractions)
     assert mean_delta >= .5
     figs.save_video("refocus", frames, "24-frame 480-pixel refocus sweep; all frames pass the content gates.", fps=8)
-    sheet_dir = Path(r"C:\Users\puruy\AppData\Local\Temp\claude\plenoptic\frames_pass2")
+    sheet_dir = Path(r"C:\Users\puruy\AppData\Local\Temp\claude\plenoptic\frames_pass3")
     sheet_dir.mkdir(parents=True, exist_ok=True)
     sheet = np.concatenate([frames[0], frames[len(frames)//2], frames[-1]], axis=1)
     Image.fromarray(sheet).save(sheet_dir/"contact_sheet.png")

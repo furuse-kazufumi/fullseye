@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>描述週期球冠微透鏡陣列表面。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">radius_mm</code> is signed.  The clear lenslet aperture is one pitch for a square lattice and the inscribed circular aperture for a hexagonal lattice. If <code style="color:#22d3bf">f_number</code> is supplied it is checked against <code style="color:#22d3bf">abs(radius)/(n-1)/pitch</code> using the paraxial focal length stored as <code style="color:#22d3bf">focal_mm</code>.</p>
+<p><code style="color:#22d3bf">radius_mm</code> is signed.  Each lenslet has a circular clear aperture with diameter equal to one pitch.  Thus a square lattice has opaque cell corners; <code style="color:#22d3bf">shape=&#x27;hex&#x27;</code> changes the centre lattice, not the circular lens boundary. If <code style="color:#22d3bf">f_number</code> is supplied it is checked against <code style="color:#22d3bf">abs(radius)/(n-1)/pitch</code> using the paraxial focal length stored as <code style="color:#22d3bf">focal_mm</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

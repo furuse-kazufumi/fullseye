@@ -4,8 +4,8 @@
   "name": "camera_section",
   "caption": "480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.",
   "shape": [
-   360,
-   900,
+   480,
+   1200,
    3
   ]
  },
@@ -14,8 +14,8 @@
   "name": "f_number_matching",
   "caption": "F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.",
   "shape": [
-   232,
-   580,
+   322,
+   850,
    3
   ]
  },
@@ -54,18 +54,18 @@
   "name": "depth_map",
   "caption": "Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.",
   "shape": [
-   148,
-   434,
+   180,
+   562,
    3
   ]
  },
  {
   "file": "07_plenoptic_1_vs_2.png",
   "name": "plenoptic_1_vs_2",
-  "caption": "Same MLA: plenoptic 1.0 resolves 8 line pairs; 2.0 resolves 13.",
+  "caption": "Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.",
   "shape": [
-   244,
-   414,
+   412,
+   750,
    3
   ]
  },

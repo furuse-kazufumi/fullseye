@@ -19,8 +19,9 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Describe a periodic spherical-cap microlens array surface.
 
-``radius_mm`` is signed.  The clear lenslet aperture is one pitch for a
-square lattice and the inscribed circular aperture for a hexagonal lattice.
+``radius_mm`` is signed.  Each lenslet has a circular clear aperture with
+diameter equal to one pitch.  Thus a square lattice has opaque cell corners;
+``shape='hex'`` changes the centre lattice, not the circular lens boundary.
 If ``f_number`` is supplied it is checked against ``abs(radius)/(n-1)/pitch``
 using the paraxial focal length stored as ``focal_mm``.
 
