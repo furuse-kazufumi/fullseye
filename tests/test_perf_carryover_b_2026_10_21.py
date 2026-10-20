@@ -7,6 +7,7 @@ import numpy as np
 import opassist
 import tomography
 import lightfield
+import profileops
 
 
 def _original_sart(sinogram, angles_deg, *, size, n_iter=1, relaxation=0.15):
@@ -87,3 +88,34 @@ def test_cubic_focal_stack_reuses_coefficients_for_each_boundary_mode():
         for got, fast, want in zip(exact, reused, expected):
             assert np.array_equal(got, want)
             assert np.max(np.abs(fast - want)) < 0.10
+
+
+def _original_signed_distance(points, normals, poly):
+    seg0 = poly
+    d = np.roll(poly, -1, axis=0) - seg0
+    ll = np.einsum("ij,ij->i", d, d)
+    ll = np.where(ll < profileops._EPS, 1.0, ll)
+    rel = points[:, None, :] - seg0[None, :, :]
+    t = np.clip(np.einsum("nmj,mj->nm", rel, d) / ll, 0.0, 1.0)
+    diff = seg0[None, :, :] + t[:, :, None] * d[None, :, :] - points[:, None, :]
+    dist2 = np.einsum("nmj,nmj->nm", diff, diff)
+    k = np.argmin(dist2, axis=1)
+    return np.einsum("ij,ij->i", diff[np.arange(len(points)), k], normals)
+
+
+def test_polyline_bvh_is_bit_identical_including_first_segment_ties():
+    rng = np.random.default_rng(80)
+    cases = []
+    for n, m in ((7, 31), (19, 64), (33, 129)):
+        poly = np.cumsum(rng.normal(size=(m, 2)), axis=0)
+        points = rng.normal(size=(n, 2))
+        normals = rng.normal(size=(n, 2))
+        cases.append((points, normals, poly))
+    # The origin is equally close to all four square segments.  Segment zero's
+    # displacement has a different signed projection from segment one.
+    square = np.array([[-1., -1.], [1., -1.], [1., 1.], [-1., 1.]])
+    cases.append((np.array([[0., 0.]]), np.array([[0., 1.]]), square))
+    for points, normals, poly in cases:
+        expected = _original_signed_distance(points, normals, poly)
+        actual = profileops._signed_distance_to_polyline(points, normals, poly)
+        assert np.array_equal(actual, expected)

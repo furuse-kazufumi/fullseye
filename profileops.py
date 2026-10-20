@@ -671,13 +671,62 @@ def _signed_distance_to_polyline(points, normals, poly):
     d = seg1 - seg0                                   # (m, 2)
     ll = np.einsum("ij,ij->i", d, d)
     ll = np.where(ll < _EPS, 1.0, ll)
-    rel = points[:, None, :] - seg0[None, :, :]       # (n, m, 2)
-    t = np.clip(np.einsum("nmj,mj->nm", rel, d) / ll, 0.0, 1.0)
-    close = seg0[None, :, :] + t[:, :, None] * d[None, :, :]
-    diff = close - points[:, None, :]
-    dist2 = np.einsum("nmj,nmj->nm", diff, diff)
-    k = np.argmin(dist2, axis=1)
-    best = diff[np.arange(len(points)), k]
+    # A median-split AABB tree avoids materialising the N x M pair matrix.  A
+    # leaf still uses the original projection arithmetic, in increasing segment
+    # order.  Equal distances therefore retain np.argmin's first-index rule.
+    lo = np.minimum(seg0, seg1)
+    hi = np.maximum(seg0, seg1)
+
+    def build(idx):
+        blo, bhi = lo[idx].min(0), hi[idx].max(0)
+        if len(idx) <= 16:
+            return (blo, bhi, int(idx.min()), np.sort(idx), None, None)
+        axis = int(np.argmax(bhi - blo))
+        order = np.argsort((lo[idx, axis] + hi[idx, axis]) * 0.5,
+                           kind="stable")
+        mid = len(idx) // 2
+        left = build(idx[order[:mid]])
+        right = build(idx[order[mid:]])
+        return (blo, bhi, min(left[2], right[2]), None, left, right)
+
+    root = build(np.arange(len(seg0), dtype=np.int64))
+    best = np.empty_like(points, dtype=np.float64)
+    import heapq
+    for row, point in enumerate(points):
+        best_d2 = np.inf
+        best_k = len(seg0)
+        best_diff = None
+
+        def lower(node):
+            delta = np.maximum(np.maximum(node[0] - point, point - node[1]), 0.0)
+            value = float(delta @ delta)
+            # Keep the bound conservative after floating-point rounding; an
+            # upward-rounded box distance must never hide an equal endpoint.
+            return max(0.0, value - 8.0 * np.spacing(max(1.0, value)))
+
+        heap = [(lower(root), root[2], root)]
+        while heap:
+            bound, first, node = heapq.heappop(heap)
+            if bound > best_d2 or (bound == best_d2 and first >= best_k):
+                continue
+            idx = node[3]
+            if idx is None:
+                for child in (node[4], node[5]):
+                    cb = lower(child)
+                    if cb < best_d2 or (cb == best_d2 and child[2] < best_k):
+                        heapq.heappush(heap, (cb, child[2], child))
+                continue
+            rel = point[None, None, :] - seg0[None, idx, :]
+            tt = np.clip(np.einsum("nmj,mj->nm", rel, d[idx]) / ll[idx], 0.0, 1.0)
+            diff = (seg0[None, idx, :] + tt[:, :, None] * d[None, idx, :]
+                    - point[None, None, :])
+            dist2 = np.einsum("nmj,nmj->nm", diff, diff)[0]
+            local = int(np.argmin(dist2))
+            candidate_k = int(idx[local])
+            candidate_d2 = float(dist2[local])
+            if candidate_d2 < best_d2 or (candidate_d2 == best_d2 and candidate_k < best_k):
+                best_d2, best_k, best_diff = candidate_d2, candidate_k, diff[0, local]
+        best[row] = best_diff
     return np.einsum("ij,ij->i", best, normals)
 
 
