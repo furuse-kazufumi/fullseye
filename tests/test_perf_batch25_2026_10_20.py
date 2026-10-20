@@ -13,6 +13,7 @@ import mathnumerics
 import mathspectral
 import deconvstop
 import tacscalib
+import specularity
 
 
 def _inflate_reference(occ, radius, voxel_size=1.0):
@@ -405,3 +406,65 @@ def test_254_model_reference_cache_reuses_and_invalidates(monkeypatch):
     model["center"] = center + 1.0
     varmodel.varmodel_score(center + 1.0, model)
     assert calls == 2
+
+
+def test_284_combined_polarization_matches_three_original_entries(monkeypatch):
+    rng = np.random.default_rng(284)
+    diffuse = rng.uniform(0.2, 1.0, size=(81, 79))
+    polarized = rng.uniform(0.0, 0.2, size=diffuse.shape)
+    frames = specularity.polarization_render(diffuse, polarized)
+    expected_d, expected_s = specularity.polarization_separate(frames)
+    expected_p = specularity.polarization_dolp_map(frames)
+    expected_stokes = specularity.polarization_stokes(frames)
+    calls = 0
+    original = specularity._polar_fit
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(specularity, "_polar_fit", counted)
+    got = specularity.polarization_analyze(frames)
+    assert calls == 1
+    assert np.array_equal(got["diffuse"], expected_d)
+    assert np.array_equal(got["specular"], expected_s)
+    assert np.array_equal(got["dolp"], expected_p)
+    assert np.array_equal(got["stokes"], expected_stokes)
+
+
+def test_288_grouped_material_pixels_match_boolean_reference(monkeypatch):
+    rng = np.random.default_rng(288)
+    labels = np.repeat(np.arange(4), 200).reshape(20, 40)
+    illuminant = np.array([0.4, 0.5, 0.7])
+    illuminant /= np.linalg.norm(illuminant)
+    bodies = rng.uniform(0.1, 1.0, size=(4, 3))
+    image = np.empty(labels.shape + (3,))
+    for label in range(4):
+        count = np.sum(labels == label)
+        image[labels == label] = (
+            rng.uniform(0.2, 1.0, count)[:, None] * bodies[label]
+            + rng.uniform(0.0, 0.8, count)[:, None] * illuminant)
+    expected = specularity.illuminant_from_dichromatic_planes(image, labels)
+    perm = rng.permutation(labels.size)
+    got = specularity.illuminant_from_dichromatic_planes(
+        image.reshape(-1, 3)[perm].reshape(image.shape),
+        labels.ravel()[perm].reshape(labels.shape))
+    np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
+
+
+def test_286_robust_stereo_chunk_variant_matches_exact():
+    rng = np.random.default_rng(286)
+    lights = rng.normal(size=(7, 3))
+    lights /= np.linalg.norm(lights, axis=1, keepdims=True)
+    normals = rng.normal(size=(31, 29, 3))
+    normals /= np.linalg.norm(normals, axis=2, keepdims=True)
+    images = np.einsum("nk,hwk->nhw", lights, normals)
+    images[0, 3:20, 4:22] += 2.0
+    exact = specularity.photometric_stereo_robust(images, lights)
+    split = specularity.photometric_stereo_robust(images, lights, chunk=37)
+    np.testing.assert_allclose(split[0], exact[0], rtol=0.0, atol=1e-6,
+                               equal_nan=True)
+    np.testing.assert_allclose(split[1], exact[1], rtol=0.0, atol=1e-6,
+                               equal_nan=True)
+    assert np.array_equal(split[2], exact[2])
