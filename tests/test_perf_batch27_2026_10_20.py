@@ -374,6 +374,7 @@ def test_333_fault_localisation_streaming_is_bit_identical():
     r[2, 4:20, 3:19] = np.mod(r[2, 4:20, 3:19] + 2.0, p[2])
     old = _old_fault_locate(r, p, lo=-30.0, hi=30.0)
     got = residue_mod.residue_fault_locate(r, p, lo=-30.0, hi=30.0)
+    assert len(old) == len(got) == 4
     for key in old:
         assert np.array_equal(got[key], old[key], equal_nan=True)
 
@@ -399,6 +400,7 @@ def test_334_335_shared_band_kernel_is_bit_identical():
     a = rng.normal(size=(65, 67)); b = np.roll(a, 7, axis=1)
     old = _old_band_measure(a, b, (5.0, 7.0, 11.0), 12.0, 1)
     got = residue_mod._band_measure(a, b, (5.0, 7.0, 11.0), 12.0, 1)
+    assert len(got) == len(old) == 3
     for actual, expected in zip(got, old):
         assert np.array_equal(actual, expected)
 
