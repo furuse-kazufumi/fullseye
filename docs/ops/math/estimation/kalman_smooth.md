@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # kalman_smooth — MATH `estimation` op
 
 - **データ種**: `matrix × matrix × matrix × matrix × matrix × signal × matrix` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0) -> 'dict'` (実装を直接呼ぶなら `import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0) -> 'dict'`、台帳から引くなら `opsmath.get("kalman_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: 'bool' = True, method: 'str' = 'exact') -> 'dict'` (実装を直接呼ぶなら `import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: 'bool' = True, method: 'str' = 'exact') -> 'dict'`、台帳から引くなら `opsmath.get("kalman_smooth")`)
 
 ## 使い方
 
@@ -22,6 +22,12 @@ Kalman フィルタ(前向き)と Rauch–Tung–Striebel 平滑化(後ろ向き
 
 ``z`` は (T, m) の観測(NaN の行は欠測として更新を飛ばす)。返り値 ``{"x_filt", "P_filt", "x_smooth", "P_smooth", "nll"}``。
 門: 平滑化の結果は、全観測と事前分布を一度に使う最小二乗(一括の MAP)と厳密に一致する。
+``store_predictions=False`` recomputes each one-step prediction during the
+backward pass, reducing peak memory while preserving the return contract.
+The default retains prediction histories and is unchanged.
+``method="cholesky"`` shares one factorization between the gain and
+likelihood. On a measured 100,000-step case it preserved states and changed
+accumulated NLL by 1.75e-10. ``"exact"`` retains the original arithmetic.
 
 ## ファミリ共通の入力契約(fail-closed)
 
