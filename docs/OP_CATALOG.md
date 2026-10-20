@@ -750,7 +750,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `lowpass(y, cutoff=0.2)` — 点列 y をローパス(高周波=ノイズ/細部を落として平滑化)。cutoff=ナイキスト割合。
 - `highpass(y, cutoff=0.2)` — 点列 y をハイパス(トレンド=低周波を除き、細部・エッジ・変動だけ残す)。
 - `bandpass(y, low=0.1, high=0.4)` — 点列 y のバンドパス(low..high の中間帯だけ通す)。low<high(ナイキスト割合)。
-- `smooth(y, window=5)` — 移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。
+- `smooth(y, window=5, method='exact')` — 移動平均による平滑化(window は奇数の窓幅、端はエッジ複製)。
 - `spline_fit(x, y, smooth=0.0)` — 点列 (x, y) を3次スプラインで補間/平滑化し、評価可能な spline object を返す。
 - `spline_eval(spline, x)` — spline object を点 x で評価する。
 - `spline_resample(x, y, n, smooth=0.0)` — 点列を n 点に等間隔で滑らかに再サンプルし ``(x_new, y_new)`` を返す。
@@ -760,9 +760,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3497 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 374 · **math** 114 · **optics** 423 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 956 · **3d** 374 · **math** 114 · **optics** 424 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(956 ops / 49 categories)
 
@@ -2478,7 +2478,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(423 ops / 48 categories)
+### optics(424 ops / 48 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2917,7 +2917,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sfp_normals` `polsweep → table` — From a polariser sweep to the explicit set of candidate surface normals per pixel — 2 for the diffuse model, 4 for the specular model (2 zeniths x 2 azimuths). · 例: `poc_shape_from_polarization`
 - `sfp_render` `normalmap → polsweep` — Render the images a 4-direction polarisation camera records of a dielectric surface with the given normal map (the forward model of shape from polarisation). · 例: `poc_shape_from_polarization`
 
-#### optics / spectral(14)
+#### optics / spectral(15)
 - `bandpass_spectrum` `入力なし → pairs` — 帯域通過フィルタの透過率(超 Gauss)。 · 例: `poc_nir_silicon_transmission`
 - `blackbody_spectrum` `入力なし → pairs` — 黒体の分光放射輝度 L(λ, T)、単位 W m⁻² sr⁻¹ nm⁻¹(Planck の式、SI 2019 の定数)。 · 例: `poc_nir_silicon_transmission`, `poc_simcal_thin_film`, `poc_thin_film_reflectometry`
 - `cie_illuminant_a` `入力なし → pairs` — CIE 標準イルミナント A の相対分光分布(CIE 15:2004 の定義式、560 nm で 100)。 · 例: `poc_nir_silicon_transmission`
@@ -2929,6 +2929,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `led_spectrum` `入力なし → pairs` — LED の相対分光分布(ピークで 1)。 · 例: `poc_chromatic_confocal`, `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
 - `silicon_photodiode_qe` `入力なし → pairs` — Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
 - `spectral_integral` `pairs → measurement` — 曲線の波長積分 ∫ s(λ) dλ(台形則、λ は nm)。区間を与えればその中だけ(端は線形補間)。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `spectral_integral_table` `pairs → table` — Build a reusable cumulative trapezoid table for repeated band integrals. · 例: `poc_nir_silicon_transmission`
 - `spectral_product` `pairs × pairs → pairs` — 2 本の曲線の積を *a* の波長で(*b* は線形補間)。光源 × 透過率 × QE を 1 本ずつ掛ける。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
 - `spectral_reflectance_from_material` `入力なし → pairs` — 材料表の近赤外の吸収帯から、粒(破片)の拡散反射率スペクトルを作る(観察対象の側)。 · 例: `poc_hyperspectral_foreign_matter`
 - `spectral_stats` `pairs → table` — 曲線の要約: ピーク波長と値、重心波長、半値全幅(線形補間で交点を取る)、積分。 · 例: `poc_nir_silicon_transmission`

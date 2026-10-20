@@ -7,7 +7,7 @@ out: coordgrid
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # grid_axes — 3D `sdf_csg` op
