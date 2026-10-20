@@ -17,7 +17,7 @@
 
 ■ 構造的に到達不能 (0) ― 不動点で閉じても届かない
 
-■ 専用ビルダで到達している op (349) ― 型プールだけでは届かない
+■ 専用ビルダで到達している op (352) ― 型プールだけでは届かない
    acoustic_interface_coefficients
    adg_build
    adg_execute
@@ -226,6 +226,9 @@
    phase_peel
    plan_conflicts
    plane_topview
+   plenoptic_capture
+   plenoptic_refocus_depth
+   plenoptic_system
    plot_series
    pod_ahat_fit
    pod_decision_tradeoff
