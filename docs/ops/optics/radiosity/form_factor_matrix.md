@@ -13,7 +13,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 # form_factor_matrix — OPTICS `radiosity` op
 
 - **データ種**: `table` → `matrix`
-- **呼び出し**: `import fullseye as fs; fs.ledger.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0)`、台帳から引くなら `opsoptics.get("form_factor_matrix")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)`、台帳から引くなら `opsoptics.get("form_factor_matrix")`)
 
 ## 使い方
 
@@ -27,13 +27,24 @@ larger patch's diagonal use the receiver's centroid alone (the sender is still
 exact); ``far_ratio=None`` integrates every pair fully. ``symmetric=True`` (default) enforces
 reciprocity exactly by averaging ``A_i F_ij`` and ``A_j F_ji`` (the raw values agree
 to the quadrature accuracy) — the progressive solver's ``F_ij A_i / A_j`` is then
-exactly ``F_ji``.
+  exactly ``F_ji``.
+
+Candidate pairs use the former, faster all-at-once calculation while its largest
+temporary fits *memory_budget_mb*, and 256-patch blocks otherwise.  The default
+256 MB keeps the former path for a 384-patch closed box but blocks 4,096 patches,
+whose candidate expression alone needs 1.00 GiB.  On the 2026-10-21 development
+machine, whole-call CPU time / ``tracemalloc`` peak were 0.234 s / 115 MiB
+(original), 0.219 s / 60 MiB (default), and 0.234 s / 60 MiB (forced blocks) for
+384 patches; the isolated 4,096-patch candidate case measured 0.547 s / 1,152 MiB,
+1.500 s / 195 MiB, and 1.516 s / 195 MiB respectively.  Pass 0 to always block,
+or a sufficiently large value to never block.
 
 Returns the ``(N, N)`` matrix (``matrix``), zero diagonal. In a closed enclosure
 each row sums to 1 (to the quadrature accuracy); an opening shows as a row sum < 1.
 
 **Raises** ``ValueError``: an empty or unmarked table (not ``radiosity_patches``);
-*n_quad* not an integer in ``[1, 16]``; *far_ratio* below 1.
+  *n_quad* not an integer in ``[1, 16]``; *far_ratio* below 1; or a negative or
+  non-finite *memory_budget_mb*.
 
 ## ファミリ共通の入力契約(fail-closed)
 

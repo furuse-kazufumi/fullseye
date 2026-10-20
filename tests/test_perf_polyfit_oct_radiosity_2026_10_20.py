@@ -1,4 +1,6 @@
 """Performance slice 16: exactness gates against the former implementations."""
+import time
+import tracemalloc
 import warnings
 
 import numpy as np
@@ -127,3 +129,85 @@ def _old_ff_matrix(p, candidates):
     eps = 1e-12 * max(1.0, float(np.abs(polys).max()))
     F[I, J] = R._ff_pairs(xq[I], normals[I], wq[I], areas[I], polys[J], centers[J], normals[J], None, eps)
     return F
+
+
+def _closed_cube(n):
+    """Inward unit cube split into 6*n*n patches (n=8 gives 384)."""
+    out = []
+    edge = np.linspace(0.0, 1.0, n + 1)
+    for axis in range(3):
+        u, v = [k for k in range(3) if k != axis]
+        for value, sign in ((0.0, 1.0), (1.0, -1.0)):
+            for i in range(n):
+                for j in range(n):
+                    q = np.zeros((4, 3))
+                    for p, (a, b) in zip(q, ((edge[i], edge[j]), (edge[i + 1], edge[j]),
+                                                (edge[i + 1], edge[j + 1]), (edge[i], edge[j + 1]))):
+                        p[axis], p[u], p[v] = value, a, b
+                    normal = np.cross(q[1] - q[0], q[2] - q[1])
+                    out.append(q if normal[axis] * sign > 0 else q[::-1])
+    return np.asarray(out)
+
+
+def _timed_cpu(fn, repeats=5):
+    samples = []
+    value = None
+    for _ in range(repeats):
+        started = time.process_time()
+        value = fn()
+        samples.append(time.process_time() - started)
+    return value, float(np.median(samples))
+
+
+def test_radiosity_384_default_keeps_fast_original_and_force_block_is_exact(monkeypatch):
+    patches = R.radiosity_patches(polygons=_closed_cube(8))
+    candidates = R._candidates(patches["polygons"], patches["normals"], 1e-12)
+    expected, old_time = _timed_cpu(lambda: _old_ff_matrix(patches, candidates))
+
+    calls = 0
+    original = R._candidates
+
+    def counted(*args):
+        nonlocal calls
+        calls += 1
+        return original(*args)
+
+    monkeypatch.setattr(R, "_candidates", counted)
+    actual, default_time = _timed_cpu(
+        lambda: R.form_factor_matrix(patches, n_quad=2, symmetric=False, far_ratio=None))
+    assert calls == 5, "384 patches must retain the all-at-once candidate path"
+    np.testing.assert_array_equal(actual, expected)
+    assert default_time <= old_time * 1.10
+
+    calls = 0
+    blocked = R.form_factor_matrix(patches, n_quad=2, symmetric=False, far_ratio=None,
+                                   memory_budget_mb=0)
+    assert calls == 0, "memory_budget_mb=0 must force blocks"
+    np.testing.assert_array_equal(blocked, expected)
+
+
+def test_radiosity_4096_automatically_blocks_with_bounded_peak(monkeypatch):
+    # Coplanar patches isolate the candidate stage: no pair reaches the expensive kernel.
+    q = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], float)
+    patches = R.radiosity_patches(polygons=np.repeat(q[None], 4096, axis=0))
+    original = R._candidates
+    called = False
+
+    def counted(*args):
+        nonlocal called
+        called = True
+        return original(*args)
+
+    monkeypatch.setattr(R, "_candidates", counted)
+    tracemalloc.start()
+    actual = R.form_factor_matrix(patches, n_quad=1, symmetric=False, far_ratio=None)
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    assert not called, "4096 patches must cross the default 256 MB candidate budget"
+    assert peak <= 256 * 1024 ** 2 * 1.10
+
+    # A huge budget selects the original full-array reference path.
+    expected = R.form_factor_matrix(patches, n_quad=1, symmetric=False, far_ratio=None,
+                                    memory_budget_mb=2048)
+    assert called
+    np.testing.assert_array_equal(actual, expected)
