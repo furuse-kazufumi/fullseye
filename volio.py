@@ -82,6 +82,7 @@ names the path — never a partially decoded volume.
 from __future__ import annotations
 
 import os
+import zipfile
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -452,11 +453,12 @@ def _read_npy(path: str):
 def _read_npz(path: str, key):
     p = str(path)
     try:
-        npz = np.load(p, allow_pickle=False)
+        zf = zipfile.ZipFile(p, "r")
     except Exception as e:
         raise _bad_read(p, e) from None
     try:
-        keys = list(npz.files)
+        members = [name for name in zf.namelist() if name.endswith(".npy")]
+        keys = [name[:-4] for name in members]
         if not keys:
             raise ValueError("%s: .npz contains no arrays" % p)
         if key is None:
@@ -466,13 +468,26 @@ def _read_npz(path: str, key):
             key = keys[0]
         elif key not in keys:
             raise ValueError("%s: key %r not in .npz (have %s)" % (p, key, ", ".join(keys)))
-        arr = np.asarray(npz[key])
+        member = members[keys.index(key)]
+        with zf.open(member, "r") as stream:
+            version = np.lib.format.read_magic(stream)
+            if version == (1, 0):
+                shape, _fortran, dtype = np.lib.format.read_array_header_1_0(stream)
+            elif version in ((2, 0), (3, 0)):
+                shape, _fortran, dtype = np.lib.format.read_array_header_2_0(stream)
+            else:
+                raise ValueError("unsupported .npy format version %r" % (version,))
+        if len(shape) != 3:
+            raise ValueError("%s: array %r in .npz is %d-D; a volume must be 3-D (D, H, W)"
+                             % (p, key, len(shape)))
+        _check_voxel_budget(int(np.prod(shape, dtype=np.int64)), p)
+        with zf.open(member, "r") as stream:
+            arr = np.lib.format.read_array(stream, allow_pickle=False)
     finally:
-        npz.close()
+        zf.close()
     if arr.ndim != 3:
         raise ValueError("%s: array %r in .npz is %d-D; a volume must be 3-D (D, H, W)"
                          % (p, key, arr.ndim))
-    _check_voxel_budget(int(arr.size), p)
     vol = _to_finite_f64(arr, p)
     return vol, VolumeMeta(dtype=str(arr.dtype), source_format="npz")
 
