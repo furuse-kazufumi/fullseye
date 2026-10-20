@@ -383,6 +383,8 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
     # long axis. Returning the wrapped input here was a bug (2026-09-02 audit).
     if N <= 1:
         return phi.copy()
+    if Hh == 1 or Ww == 1:
+        return np.unwrap(phi, axis=1 if Hh == 1 else 0)
 
     R = _herraez_reliability(phi)
     flat_phi = phi.ravel()
@@ -407,11 +409,11 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
     offset = np.zeros(N, dtype=np.int64)               # 2*pi increments node -> parent
     size = np.ones(N, dtype=np.int64)
 
-    ea = edge_a.tolist()                               # python ints: fastest for the DSU loop
-    eb = edge_b.tolist()
     fp = flat_phi
     inv_two_pi = 1.0 / _TWO_PI
-    for a_i, b_i in zip(ea, eb):
+    merges = 0
+    for a_i, b_i in zip(edge_a, edge_b):
+        a_i, b_i = int(a_i), int(b_i)
         ra, oa = _find(parent, offset, a_i)
         rb, ob = _find(parent, offset, b_i)
         if ra == rb:
@@ -426,6 +428,9 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
             parent[ra] = rb
             offset[ra] = ob - oa + M
             size[rb] += size[ra]
+        merges += 1
+        if merges == N - 1:
+            break
 
     # Read back each pixel's total 2*pi increment relative to its group root.
     inc = np.empty(N, dtype=np.int64)
