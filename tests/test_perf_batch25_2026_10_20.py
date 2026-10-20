@@ -12,6 +12,7 @@ import varmodel
 import mathnumerics
 import mathspectral
 import deconvstop
+import tacscalib
 
 
 def _inflate_reference(occ, radius, voxel_size=1.0):
@@ -215,6 +216,66 @@ def test_274_276_rl_compact_path_matches_history_reference(monkeypatch):
     assert got["n_iter"] == reference["n_iter"]
     assert got["discrepancy"] == reference["discrepancy"]
     assert np.array_equal(got["last_iterate"], reference["last_iterate"])
+
+
+def test_259_lights_fit_reuses_lstsq_singular_values(monkeypatch):
+    rng = np.random.default_rng(259)
+    normals = rng.normal(size=(40, 41, 3))
+    normals /= np.linalg.norm(normals, axis=2, keepdims=True)
+    mask = np.ones(normals.shape[:2], bool)
+    ambient = np.array([0.1, 0.2, 0.3])
+    lights = rng.normal(size=(3, 3))
+    image = ambient + np.einsum("hwk,ck->hwc", normals, lights)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("separate condition-number SVD was executed")
+
+    monkeypatch.setattr(tacscalib.np.linalg, "svd", forbidden)
+    got = tacscalib.lights_fit_from_sphere(image, normals, mask)
+    np.testing.assert_allclose(got["L"], lights, rtol=0.0, atol=1e-12)
+    np.testing.assert_allclose(got["ambient"], ambient, rtol=0.0, atol=1e-12)
+
+
+def test_261_membrane_prediction_chunked_matches_original():
+    rng = np.random.default_rng(261)
+    normals = rng.normal(size=(73, 67, 3))
+    coef = rng.normal(size=(4, 6, 3))
+    ys, xs = np.mgrid[:normals.shape[0], :normals.shape[1]]
+    basis = tacscalib._pos_basis(ys.ravel(), xs.ravel(), "unit", normals.shape[:2])
+    field = np.einsum("pk,fkc->pfc", basis, coef)
+    flat = normals.reshape(-1, 3)
+    expected = (field[:, 0] + np.einsum("pk,pkc->pc", flat, field[:, 1:]))
+    fit = {"L": np.zeros((3, 3)), "order": 2, "coef": coef,
+           "image_shape": normals.shape[:2]}
+    got = tacscalib.membrane_predict_rgb(normals, fit, chunk=113)
+    assert np.array_equal(got, expected.reshape(got.shape))
+
+
+def test_262_265_lut_chunks_match_original_results():
+    rng = np.random.default_rng(262)
+    count = 20000
+    normals = rng.normal(size=(count, 3))
+    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    rgb = rng.normal(size=(count, 3))
+    pos = rng.uniform((0, 0), (79, 80), size=(count, 2))
+    one = tacscalib.gradient_lut_build(
+        rgb, normals, 24, positions=pos, image_shape=(80, 81), chunk=count)
+    split = tacscalib.gradient_lut_build(
+        rgb, normals, 24, positions=pos, image_shape=(80, 81), chunk=127)
+    for key in ("mean_rgb", "count", "coef"):
+        assert np.array_equal(one[key], split[key], equal_nan=True)
+    image = rng.normal(size=(80, 81, 3))
+    a = tacscalib.gradient_lut_invert(image, one, method="coarse", chunk=100000)
+    b = tacscalib.gradient_lut_invert(image, one, method="coarse", chunk=37)
+    assert np.array_equal(a, b)
+    tree = tacscalib.gradient_lut_build(
+        rgb, normals, 24, positions=pos, image_shape=(80, 81), chunk=127,
+        pool_method="tree")
+    tree_again = tacscalib.gradient_lut_build(
+        rgb, normals, 24, positions=pos, image_shape=(80, 81), chunk=127,
+        pool_method="tree")
+    assert np.array_equal(tree["coef"], tree_again["coef"], equal_nan=True)
+    assert np.all(np.isfinite(tree["coef"]))
 
 
 def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch):
