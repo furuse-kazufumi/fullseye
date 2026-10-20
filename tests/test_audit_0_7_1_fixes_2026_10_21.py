@@ -122,3 +122,10 @@ class TestB07AllocationGuardOrdering:
                           side_effect=AssertionError("conversion preceded size validation")):
             with pytest.raises(ValueError):
                 motionmag.motion_magnify(view, 2.0, 3.0, 5.0, 32.0)
+
+    def test_oversized_image_is_rejected_before_conversion(self):
+        view = np.lib.stride_tricks.as_strided(np.zeros(1), (4097, 4097), (0, 0))
+        with patch.object(motionmag.np, "ascontiguousarray",
+                          side_effect=AssertionError("conversion preceded size validation")):
+            with pytest.raises(ValueError):
+                motionmag.complex_steerable_decompose(view)

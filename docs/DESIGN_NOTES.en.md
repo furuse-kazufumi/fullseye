@@ -33,11 +33,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L196** — ★``unit`` carries **only what the standard states in prose**. Where UVC does not state a unit (``PU_GAIN_CONTROL`` says merely "the setting for the attribute of the addressed Gain control") the entry is ``None`` -- inventing ``dB`` there would be a claim the standard does not make.
 - **L254** — ★UVC 1.5 defines ``dwExposureTimeAbsolute`` as "1: 0.0001 sec ... 100000: 10 sec", i.e. **100 us per step**, while SFNC gives ``ExposureTime`` in **us**. The same number 5000 therefore means 5 ms under SFNC and 0.5 s under UVC -- a factor of 100 that raises no exception and only moves the picture.
 - **L362** — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
-- **L1031** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
-- **L1408** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
-- **L1433** _(ja)_ — ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま 返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
-- **L1442** _(ja)_ — ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。 CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、 文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
-- **L1454** _(ja)_ — ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ―― 必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
+- **L1034** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
+- **L1411** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
+- **L1436** _(ja)_ — ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま 返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
+- **L1445** _(ja)_ — ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。 CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、 文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
+- **L1457** _(ja)_ — ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ―― 必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
 
 ## `annotate.py`
 
@@ -1604,7 +1604,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L90** _(ja)_ — ★床(eps)は q が**ちょうど 0** の所だけに掛ける。最初は q 全体を np.maximum(q, eps) で床上げしていて、 1e-49 のような小さな q が 1e-12 に持ち上がり p より大きくなって、KL(p‖p) が −3e-10(負!)になった (KL ≥ 0 の門で 2026-10-03 に捕まえた)。
 - **L247** _(ja)_ — ★2026-10-07: ±inf は欠測(NaN)と区別する。以前は黙って欠測扱いで更新を飛ばしていた。
-- **L337** _(ja)_ — ★2026-10-07: acos は π の近くで桁落ち(π−1.5e-6 で ω の誤差 4e-4 rad)→ 角は atan2(sinθ, cosθ)、 π の近くの軸は対称部 (R+Rᵀ)/2 = cosθ I + (1−cosθ) a aᵀ の最大対角の列から、符号は歪対称部から取る。
+- **L342** _(ja)_ — ★2026-10-07: acos は π の近くで桁落ち(π−1.5e-6 で ω の誤差 4e-4 rad)→ 角は atan2(sinθ, cosθ)、 π の近くの軸は対称部 (R+Rᵀ)/2 = cosθ I + (1−cosθ) a aᵀ の最大対角の列から、符号は歪対称部から取る。
 
 ## `mathgeometry.py`
 
@@ -1615,9 +1615,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `mathnumerics.py`
 
-- **L239** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-- **L390** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
-- **L406** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
+- **L243** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
+- **L394** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
+- **L410** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
 
 ## `mathops.py`
 
@@ -1666,8 +1666,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `occupancy.py`
 
-- **L228** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Restricted to cubic, a flat volume like a bird's-eye grid (thin z x wide xy) is forced to use the same spacing even on the unneeded axis (`poc_bev_sensor_fusion` measured: of 4.096 million voxels only 8.1 % are used). The same-family `grid_coords` had accepted per-axis res from the start -- the mismatch where **the contract's breadth differs at the entrance and the exit** was aligned. Existing callers passing a scalar are unaffected.
-- **L332** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Previously ``int(res)`` allowed only a cubic grid, and while ``esdf`` accepts a length-3 anisotropic ``voxel_size``, this side -- which subtracts its output in world coordinates -- was restricted to cubic, a **contract narrow on only one side**. It jams outright on a grid like CT's thin junction layer (30,180,180) (measured in `poc_ct_void_morphology`). Existing callers passing a scalar are unaffected.
+- **L230** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Restricted to cubic, a flat volume like a bird's-eye grid (thin z x wide xy) is forced to use the same spacing even on the unneeded axis (`poc_bev_sensor_fusion` measured: of 4.096 million voxels only 8.1 % are used). The same-family `grid_coords` had accepted per-axis res from the start -- the mismatch where **the contract's breadth differs at the entrance and the exit** was aligned. Existing callers passing a scalar are unaffected.
+- **L334** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Previously ``int(res)`` allowed only a cubic grid, and while ``esdf`` accepts a length-3 anisotropic ``voxel_size``, this side -- which subtracts its output in world coordinates -- was restricted to cubic, a **contract narrow on only one side**. It jams outright on a grid like CT's thin junction layer (30,180,180) (measured in `poc_ct_void_morphology`). Existing callers passing a scalar are unaffected.
 
 ## `octscan.py`
 
