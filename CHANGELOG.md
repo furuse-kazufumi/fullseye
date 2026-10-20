@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - `sart_reconstruct`: 投影と逆投影の幾何を角度ごとに再利用し、既定動作とビット単位で同じ結果のまま、96×96・72方向・2反復で 1.77 倍高速化しました。
+- `lf_focal_stack(prefilter="reuse")`: 三次補間係数を焦点面間で再利用する選択モードを追加しました。入力範囲 `[0, 1]` で最大絶対差 0.10 未満、5×5視点・128×128・21面で 1.31 倍高速です。
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。
