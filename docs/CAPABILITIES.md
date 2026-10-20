@@ -74,7 +74,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
-| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_tof_camera` |
+| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` → `bilateral_filter_depth` → `depth_to_points` | `poc_tof_camera` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
@@ -449,11 +449,11 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 ### [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md)
 
-`poc_tof_camera` は箱を積んだ荷台、二面コーナー、光沢面、透明板、細い柱、暗明市松を一つの解析的な距離場に置きます。最初の面と二つの光路を真値として保持し、20/80/100 MHz・4相の連続波方式と、光子到着ヒストグラム方式を同じ画素で比較します。
+`poc_tof_camera` は床、二面コーナー、箱を積んだ荷台、光沢面、透明板、細い柱、暗明市松を 70°×55° のピンホールカメラから 320×240 画素で撮ります。各画素を 3×3 本の光線で積分し、Lambert 反射、逆二乗、レンズ減光、ショット雑音、読み出し雑音、暗電位、多経路を加えます。実データは Lawin・Forssén・Ovrén (ECCV 2016) の生フレーム、壁・メッシュの反復実測、無雑音の4相 MPI レンダリングを数値だけで照合します。README に再配布許諾が明記されていないため、実フレーム自体は公開図へ転載しません。
 
-使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`, `bilateral_filter_depth`, `depth_to_points`
 
-推奨パイプライン: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md)
+推奨パイプライン: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md) → [`bilateral_filter_depth`](ops/3d/depth_denoise/bilateral_filter_depth.md) → [`depth_to_points`](ops/3d/transform/depth_to_points.md)
 
 代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md)
 

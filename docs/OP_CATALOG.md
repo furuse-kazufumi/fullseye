@@ -1513,7 +1513,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -1551,7 +1551,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` — Return one level of the image's Gauss pyramid, down-sampled by 2 ``level`` times (blur + decimate) and then up-sampled back to the original HxW so the result is a band-limited (low-pass) version at reduced resolution. ``a`` selects the level (1..4); ``b`` is ignored. · 例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` — ガウシアンぼかし(``scipy.ndimage.gaussian_filter``、シグマ ``0.3+2.7*a``) による平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核 の scipy 実装で、近似ではあるが結果は非常に近い。 · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vanishing_detail_and_morphing_area`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` — 実装は ``gauss_filter`` と同一(同じ ``kind: "gauss"`` 分岐、シグマ ``0.3+2.7*a`` のガウシアンぼかし)。HALCON では ``gauss_filter``(離散近似) と ``gauss_image``(周波数領域/連続ガウス)は別演算子だが、この代役では 区別せず同じ関数を指す。HALCON の ``gauss_image``（Smooth an image using discrete Gaussian functions.）の代役。 · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
-- `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_tof_camera`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` — 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_chromatic_confocal`, `poc_dtof_ranging`, `poc_flybrain_pointcloud`, `poc_interferometry_step`, `poc_itof_multifreq`, `poc_leaf_disease_area`, `poc_nir_silicon_transmission`, `poc_nuclei_ploidy`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `guided_filter` (halcon: `guided_filter`) `image → image` — 実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化) とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで 代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は 一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.） の代役。 · 例: `gallery2d_smoothing_rank`
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `kuwahara` `image → image` — Kuwahara フィルタ(1976)。4 つの重なる窓のうち分散が最小の窓の平均を出す、縁を保つ平滑化。 · 例: `gallery2d_smoothing_rank`
@@ -2518,7 +2518,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `chief_ray` `table → table` — Trace the chief ray (through the stop centre) at one field (``table``). · 例: `lens_optimize_demo`, `poc_lens_solves_afocal`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_telecentric_metrology`
 - `chromatic_shift` `table → table` — Focal shift, image-height shift and spot size versus wavelength (``table``). · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
 - `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
-- `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_lens_global_search`, `poc_material_optical_library`, `poc_optics_drawings`, `poc_tof_camera`
+- `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_lens_global_search`, `poc_material_optical_library`, `poc_optics_drawings`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
 - `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zoom_configurations`
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
@@ -2639,14 +2639,14 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `fresnel_dielectric` `signal → signal` — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`, `poc_phase_measuring_deflectometry`, `poc_pv_thermal_survey`, `poc_shape_from_polarization`
 
 #### optics / itof(8)
-- `itof_capture` `depth → table` — 距離の図 → 間接 ToF の生信号(周波数ごとに K 段のバケット、電子数)。``table``(``dict``)を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_flying_pixel_mask` `depth → image2d` — 距離の図 → フライングピクセル(前景と背景の**間に浮いた**画素)の印 ``(H, W)``(1.0 = 浮いている)。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_multipath_separate` `table → table` — 等間隔の多周波で測ったフェーザ → 経路ごとの距離と強さ(行列ペンシル)。``table`` を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_noise_budget` `入力なし → table` — 間接 ToF の距離の雑音の閉形式(1 画素・1 周波数・等間隔 K 段)。``table`` を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_phase_amplitude` `table → table` — K 段の生信号 → 位相・振幅・オフセット・折り返した距離・画素ごとの距離の雑音の見積もり(``table``)。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_unwrap_error_rate` `入力なし → table` — 多周波アンラップ(最尤の復号)で次数(何周目か)を誤る確率の見積もり。``table`` を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_unwrap_multifreq` `table → table` — 複数の周波数の位相 → 距離(多周波アンラップ)。``table`` を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
-- `itof_wiggling_correct` `table → table` — 高調波による周期誤差(wiggling)を補正した位相と距離。``table`` を返す。 · 例: `poc_itof_multifreq`, `poc_tof_camera`
+- `itof_capture` `depth → table` — 距離の図 → 間接 ToF の生信号(周波数ごとに K 段のバケット、電子数)。``table``(``dict``)を返す。 · 例: `poc_itof_multifreq`
+- `itof_flying_pixel_mask` `depth → image2d` — 距離の図 → フライングピクセル(前景と背景の**間に浮いた**画素)の印 ``(H, W)``(1.0 = 浮いている)。 · 例: `poc_itof_multifreq`, `tof_realdata`
+- `itof_multipath_separate` `table → table` — 等間隔の多周波で測ったフェーザ → 経路ごとの距離と強さ(行列ペンシル)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_noise_budget` `入力なし → table` — 間接 ToF の距離の雑音の閉形式(1 画素・1 周波数・等間隔 K 段)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_phase_amplitude` `table → table` — K 段の生信号 → 位相・振幅・オフセット・折り返した距離・画素ごとの距離の雑音の見積もり(``table``)。 · 例: `poc_itof_multifreq`
+- `itof_unwrap_error_rate` `入力なし → table` — 多周波アンラップ(最尤の復号)で次数(何周目か)を誤る確率の見積もり。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_unwrap_multifreq` `table → table` — 複数の周波数の位相 → 距離(多周波アンラップ)。``table`` を返す。 · 例: `poc_itof_multifreq`
+- `itof_wiggling_correct` `table → table` — 高調波による周期誤差(wiggling)を補正した位相と距離。``table`` を返す。 · 例: `poc_itof_multifreq`
 
 #### optics / lensconfig(5)
 - `lens_add_configuration` `table → table` — Return a copy of *system* with one more configuration appended (``table``). · 例: `poc_zoom_configurations`
@@ -2704,7 +2704,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `predict_fringe_phase_error` `table → table` — Predict, per camera pixel, the fringe-phase bias and height error that interreflection causes in phase-shifting profilometry, from the light-transport matrix. · 例: `poc_interreflection_fringe_error`
 - `render_transport` `table × images → images` — Render camera images of a concave Lambertian cross-section under projector patterns, through the light-transport matrix (direct + interreflection). · 例: `poc_interreflection_fringe_error`
 - `separate_direct_global` `images → table` — Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006). · 例: `poc_interreflection_fringe_error`
-- `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`, `poc_tof_camera`
+- `tof_multipath_phase` `入力なし → table` — Continuous-wave time-of-flight depth when several light paths reach one pixel: the phase of the phasor sum, and its bias against the direct path. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `tof_transport_depth` `table → table` — AMCW time-of-flight depth of a concave Lambertian cross-section (a room corner) with every interreflection delayed by its path length: complex radiosity, per-pixel depth bias. · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 - `transport_matrix_radiosity` `table → table` — Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ). · 例: `poc_interreflection_fringe_error`, `poc_itof_multifreq`
 
@@ -3040,21 +3040,21 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### photon / dtof(3)
 - `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`, `poc_tof_camera`
 - `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`, `poc_tof_camera`
-- `dtof_depth` `counts → measurement` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_tof_camera`
+- `dtof_depth` `counts → measurement` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
 #### photon / lifetime(2)
 - `lifetime_fit` `counts → table` — Mono-exponential fluorescence lifetime from a TCSPC decay histogram. · 例: `photon_timeresolved`
 - `lifetime_phasor` `counts → table` — Phasor (frequency-domain) representation of a decay — the fit-free view. · 例: `photon_timeresolved`
 
 #### photon / spad(3)
-- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`, `poc_tof_camera`
+- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`
 - `spad_deadtime_correct` `countrate → countrate` — Recover the true photon rate from a dead-time-distorted measured rate. · 例: `photon_timeresolved`
 - `tcspc_coates_correct` `counts → counts` — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
 #### photon / tcspc(4)
 - `tcspc_background_subtract` `counts → counts` — Remove the ambient-light / dark-count floor from an arrival-time histogram. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 - `tcspc_irf_convolve` `counts → counts` — Blur an arrival-time histogram by the instrument response (timing jitter). · 例: `photon_timeresolved`
-- `tcspc_simulate` `入力なし → counts` — Synthesise a single-pixel photon arrival-time histogram with a known answer. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_tof_camera`
+- `tcspc_simulate` `入力なし → counts` — Synthesise a single-pixel photon arrival-time histogram with a known answer. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 - `tcspc_stats` `counts → table` — Descriptors of an arrival-time histogram: peak, centroid, width, background. · 例: `photon_timeresolved`
 
 #### photon / transform(2)

@@ -4,7 +4,7 @@ dim: photon
 category: dtof
 in: counts
 out: measurement
-examples: [photon_timeresolved, poc_dtof_ranging, poc_tof_camera]
+examples: [photon_timeresolved, poc_dtof_ranging]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -75,7 +75,6 @@ an *offset_ps* larger than the measured arrival time.
 
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
-- [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

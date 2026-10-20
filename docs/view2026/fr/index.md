@@ -210,7 +210,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 151 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 153 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 
