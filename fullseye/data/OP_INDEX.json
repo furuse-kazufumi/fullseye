@@ -1,8 +1,8 @@
 {
- "n_ops": 3473,
+ "n_ops": 3482,
  "tiers": {
   "color": 12,
-  "ledger": 2517,
+  "ledger": 2526,
   "nary": 17,
   "registry": 927
  },
@@ -668,6 +668,19 @@
    "in_sorts": [
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "afocal_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -14270,6 +14283,32 @@
    ]
   },
   {
+   "name": "lens_afocal_report",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_apply_solves",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_area",
    "halcon": "",
    "in_sort": null,
@@ -14431,6 +14470,32 @@
    ]
   },
   {
+   "name": "lens_image_surface",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_petzval_radius",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_scene",
    "halcon": "",
    "in_sort": null,
@@ -14482,6 +14547,45 @@
    ]
   },
   {
+   "name": "lens_solve_clear",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_solve_set",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_solves_list",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_spec",
    "halcon": "",
    "in_sort": null,
@@ -14522,6 +14626,19 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_zmx_solves_roundtrip",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

@@ -516,6 +516,15 @@ def _optics_builders():
         "lens_substitute_glasses": lambda pool, rng: ([__import__("lensglobal")._example_doublet()], {}),
         "lens_global_search": lambda pool, rng: ([__import__("lensglobal")._example_doublet()],
                                                  {"variables": ["c0", "c1"], "n_starts": 3, "iterations": 3, "spread": 0.001}),
+        # lenssolve(2026-10-20): 処方は印のある lens_system の dict。解を外す op は解の付いた処方、afocal の報告は afocal の処方、
+        #   afocal_system / lens_zmx_solves_roundtrip は処方を取らず既定の系を作る(None)。像面の曲率は有限の R で探る
+        "lens_apply_solves": lens_first(), "lens_solve_set": lens_first(), "lens_solves_list": lens_first(),
+        "lens_petzval_radius": lens_first(),
+        "lens_solve_clear": lambda pool, rng: ([__import__("lenssolve")._example_doublet()], {}),
+        "afocal_system": lambda pool, rng: ([None], {}),
+        "lens_afocal_report": lambda pool, rng: ([__import__("lenssolve").afocal_system()], {"rings": 2}),
+        "lens_image_surface": lens_first(R=-200.0),
+        "lens_zmx_solves_roundtrip": lambda pool, rng: ([None], {}),
         # lensmerit(2026-10-19): オペランド表は処方 + 行のリスト。行の添字が処方の面数を超えない最小の表で探る
         "merit_evaluate": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
         "merit_default": lens_first(rings=2),

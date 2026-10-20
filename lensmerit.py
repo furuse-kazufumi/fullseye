@@ -31,6 +31,7 @@ pupil coordinates)::
     RSCE  RMS spot about the centroid            RSCH  RMS spot about the chief ray
     WFNO  working F-number (real marginal ray)   PMAG  paraxial magnification
     DIMX  largest |distortion| over the fields   WFRMS RMS wavefront (waves, piston removed)
+    ANGM  angular magnification (afocal)         RSAN  RMS angular spot about the chief ray (afocal, arcmin)
     TRAN  transverse ray aberrations of a whole hexapolar pupil  (a group row: one residual per ray and axis)
     OPDW  OPD of a whole hexapolar pupil (waves)                  (a group row: one residual per ray)
 
@@ -120,7 +121,7 @@ def _clear_semi(system, i, para=None):
 
 def _sag_at(s, h):
     c = 0.0 if s["R"] == INF else 1.0 / s["R"]
-    z = float(RT._sag(np.array([h * h]), c, s["k"], s["asph"])[0])
+    z = float(RT._sag(np.array([h * h]), c, s["k"], s["asph"], RT._xtra(s))[0])
     if not math.isfinite(z):
         raise ValueError("the semi-diameter %.6g is outside the conic of a surface (R=%r, k=%r)" % (h, s["R"], s["k"]))
     return z
@@ -163,6 +164,9 @@ def _opd_points(system, field, wl, px, py):
     tr = RT.trace_rays(system, P, D, wavelength_um=wl)
     if not bool(tr["valid"][-1]):
         raise ValueError("the chief ray does not reach the image plane at field %r" % field)
+    if system.get("afocal"):                                   # collimated exit beam: a plane-wave reference
+        w, valid = RT._plane_wave_opd(tr, opl0, wl)
+        return w[:-1], valid[:-1]
     pts, dirs = tr["points"], tr["dirs"]
     n_img = tr["n_image"]
     chief_img = pts[-1, -1]
@@ -345,7 +349,7 @@ def _op_raid(ctx, a):
     Dl = tr["dirs"][0, i][None, :] @ Rm
     Ql = (tr["points"][0, i + 1] - off)[None, :] @ Rm
     c = 0.0 if s["R"] == INF else 1.0 / s["R"]
-    nrm = RT._surface_normal(Ql, c, s["k"], s["asph"])
+    nrm = RT._surface_normal(Ql, c, s["k"], s["asph"], RT._xtra(s))
     cos_i = abs(float(np.sum(nrm * Dl)))
     return math.degrees(math.acos(min(1.0, cos_i))), None, {}
 
@@ -409,6 +413,23 @@ def _op_wfno(ctx, a):
 
 def _op_pmag(ctx, a):
     return float(ctx.para()["magnification"]), None, {}
+
+
+def _op_angm(ctx, a):
+    p = ctx.para()
+    if "angular_magnification" not in p:
+        raise ValueError("ANGM needs an afocal system (lenssolve.afocal_system or lens_system(afocal=True))")
+    return float(p["angular_magnification"]), None, {}
+
+
+def _op_rsan(ctx, a):
+    if not ctx.system.get("afocal"):
+        raise ValueError("RSAN needs an afocal system (lenssolve.afocal_system or lens_system(afocal=True))")
+    b, xy = _spot_xy(ctx, a)
+    if not np.isfinite(b["chief_xy"]).all():
+        raise ValueError("the chief ray does not leave the system at field %d" % a["field"])
+    d = xy - b["chief_xy"]
+    return float(np.sqrt(np.mean(d[:, 0] ** 2 + d[:, 1] ** 2))), None, {}
 
 
 def _op_dimx(ctx, a):
@@ -534,6 +555,9 @@ _reg("RSCH", _op_rsch, "RMS spot radius about the chief ray, hexapolar pupil.", 
      optional=dict([_FIELD, _WAVE], rings=4, pupil_fill=1.0))
 _reg("WFNO", _op_wfno, "Working F-number 1/(2 n' sin(theta')) of the on-axis real marginal ray.", "")
 _reg("PMAG", _op_pmag, "Paraxial (transverse) magnification; 0 for an object at infinity.", "")
+_reg("ANGM", _op_angm, "Angular magnification of an afocal system (image-space over object-space chief-ray slope).", "")
+_reg("RSAN", _op_rsan, "RMS angular spot about the chief ray of an afocal system, hexapolar pupil (the exit angle in arcminutes).",
+     "arcmin", optional=dict([_FIELD, _WAVE], rings=4, pupil_fill=1.0))
 _reg("DIMX", _op_dimx, "Largest absolute distortion of the chief ray over the off-axis fields, against the paraxial image height.",
      "percent")
 _reg("WFRMS", _op_wfrms, "RMS wavefront error (piston removed) over a square pupil grid, no Zernike fit.", "waves",
@@ -925,7 +949,8 @@ def _with_glass(system, i, medium):
     return RT.lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                           wavelength_um=system["wavelength_um"], index_object=system["index_object"],
                           image_mm=system["image_mm"], field=system["field"],
-                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"))
+                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"),
+                          **RT._system_extras(system))
 
 
 def _split_variables(system, variables):

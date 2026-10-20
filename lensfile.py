@@ -28,8 +28,9 @@ surface and the keyword. A few items have an honest approximation; they are
 imported only with ``allow_partial=True`` and the result then carries
 ``approximate=True`` and lists each approximation. Nothing is dropped silently.
 
-Supported (exact): surface types ``STANDARD`` (sphere / conic) and ``EVENASPH``
-(``PARM 2..9`` = r⁴ … r¹⁸; a non-zero r² term ``PARM 1`` is refused), mirrors
+Supported (exact): surface types ``STANDARD`` (sphere / conic), ``EVENASPH``
+(``PARM 1..9`` = r² … r¹⁸; the r² term is the surface key ``a2``, so a file without it parses exactly as before) and
+``ODDASPH`` (``PARM 1..8`` = the coefficient of rⁱ, i = 1..8, surface key ``odd``; not with coordinate breaks), mirrors
 (``GLAS MIRROR``; the signed thicknesses after a mirror become the positive
 travel distances ``raytrace`` expects), the stop, units ``MM / CM / IN / METER``
 (converted to mm, aspheric coefficients by their own power of the scale), the
@@ -44,20 +45,29 @@ paraxial chief ray), up to 12 fields with weights, wavelengths (``WAVM`` /
 table or your ``.agf`` files — the file's own n_d is checked against the
 catalogue to 5e-4, so a same-named glass from another maker is refused), model
 glasses (``___BLANK``: n_d, V_d), six-digit glass codes and constant indices.
-Curvature and thickness pickups are verified against their source surface and
-kept; other solves are kept as the values the file stores (the geometry at save
-time) and listed in ``solves``.
+Curvature pickups (``CURV c 4 source scale offset``), thickness pickups (``PZUP source scale offset column``) and
+aspheric-parameter pickups (``PPAR parameter source scale offset column`` on an ``EVENASPH`` surface) are verified
+against their source surface and **followed**: they become ``solve`` rules of the surface (``lenssolve``; one rule per
+surface, the first of curvature / thickness / parameter; a prescription with a mirror or a coordinate break keeps them
+as verified values only), so an edit of the source moves the picked-up surface, and a write puts the same lines back.
+The other solve types of the format have no form in the files this module has seen (the digits of the solve type
+are known only for the pickup), so they are kept as the values the file stores (the geometry at save time) and
+listed in ``solves``. The solves of ``lenssolve`` that have no line in the format (marginal / chief ray height or angle,
+paraxial image, F/#, concentric, aplanatic) are written as ``NOTE 0 FULLSEYE-SOLVE {json}`` lines beside the solved
+numbers, which other programs ignore; an afocal system is marked ``NOTE 0 FULLSEYE-AFOCAL 1`` (the format's own afocal
+flag line is not documented in any file checked, so it is not invented). A curved image surface is its ``CURV`` (and
+``CONI``).
 
 Approximations allowed only with ``allow_partial=True``: a glass name found in
 no catalogue (falls back to the file's n_d, V_d model), object-space NA
 (``OBNA``, converted paraxially), real-image-height fields (``FTYP 3``,
-converted paraxially), a curved image surface (treated as flat), non-circular or decentred apertures
+converted paraxially), a curved image surface in a file with coordinate breaks (treated as flat), non-circular or decentred apertures
 (ignored), non-standard temperature / pressure (``ENVD``), a multi-configuration
 file with coordinate breaks (configuration 1 only), multi-configuration operands other than the ones
 listed below, and unknown surface-level keywords.
 
 Refused always: ideal (paraxial) surfaces and every other surface type, an r²
-aspheric term, sequential-mode off (``MODE`` not ``SEQ``), a negative travel
+or odd aspheric term in a file with coordinate breaks, sequential-mode off (``MODE`` not ``SEQ``), a negative travel
 distance (a surface placed behind the light), telecentric object space, an
 inconsistent pickup, an infinite thickness after the object, surface tilt /
 decentre data in ``SCBD`` (its layout is not documented in the sources checked).
@@ -134,6 +144,7 @@ from __future__ import annotations
 
 import copy
 import io
+import json
 import math
 import os
 import re
@@ -335,6 +346,30 @@ class _Report:
 # --------------------------------------------------------------------------- #
 # parsing (text -> file-level model, lengths in mm)
 # --------------------------------------------------------------------------- #
+def _split_fullseye_notes(notes, op):
+    """Pull the ``FULLSEYE-*`` marker notes (solve rules, afocal flag) out of the NOTE lines."""
+    keep, rules, afocal = [], [], False
+    for nt in notes:
+        if nt.startswith("FULLSEYE-SOLVE "):
+            try:
+                d = json.loads(nt[len("FULLSEYE-SOLVE "):])
+                j, rule = int(d["surface"]), d["rule"]
+                if not isinstance(rule, dict):
+                    raise TypeError("rule is not a dict")
+            except (ValueError, KeyError, TypeError) as e:
+                raise ValueError("%s: a FULLSEYE-SOLVE note is not valid (%s): %r" % (op, e, nt[:80])) from None
+            rules.append((j, rule))
+        elif nt.startswith("FULLSEYE-AFOCAL"):
+            if nt.strip() != "FULLSEYE-AFOCAL 1":
+                raise ValueError("%s: the afocal marker must read 'FULLSEYE-AFOCAL 1', got %r" % (op, nt[:40]))
+            afocal = True
+        elif nt.startswith("FULLSEYE-"):
+            raise ValueError("%s: unknown Fullseye marker note %r" % (op, nt[:40]))
+        else:
+            keep.append(nt)
+    return keep, rules, afocal
+
+
 def _new_surface(idx):
     return {"index": idx, "type": "STANDARD", "curv": 0.0, "disz": 0.0, "glass": None, "conic": 0.0,
             "parm": {}, "diam": 0.0, "diam_type": 0, "stop": False, "comment": "", "aperture": None,
@@ -779,10 +814,11 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
             ppar_solves.append({"surface": sf["index"], "what": "PARM %d" % pn, "kind": "pickup", "source": src,
                                 "scale": scale, "status": "verified"})
     # ---- surface types and unit scaling -------------------------------------
+    has_cb = any(sf["type"] == "COORDBRK" for sf in surfs)
     for sf in surfs:
         where = "surface %d" % sf["index"]
         t = sf["type"]
-        if t not in ("STANDARD", "EVENASPH", "COORDBRK"):
+        if t not in ("STANDARD", "EVENASPH", "ODDASPH", "COORDBRK"):
             hint = {"PARAXIAL": " (an ideal thin lens has no real-ray model here)"}.get(t, "")
             rep.u(where, "TYPE", "surface type %s is not supported%s" % (t, hint))
         sf["curv"] = sf["curv"] / s
@@ -805,14 +841,22 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
             sf["parm"] = {k: (v * s if k in (1, 2) else v) for k, v in sf["parm"].items()}
         elif t == "EVENASPH":
             p1 = sf["parm"].get(1, 0.0)
-            if p1 != 0.0:
-                rep.u(where, "PARM", "even-asphere r^2 term (PARM 1 = %g) is not representable; refit it into "
-                      "the curvature first" % p1)
+            if p1 != 0.0 and has_cb:
+                rep.u(where, "PARM", "even-asphere r^2 term (PARM 1 = %g) is not supported in a file with coordinate "
+                      "breaks (the non-coaxial tracer has no such term); refit it into the curvature first" % p1)
             bad = sorted(k for k in sf["parm"] if k < 1 or k > 9)
             if bad:
                 rep.u(where, "PARM", "even-asphere parameter(s) %s outside 1..9" % bad)
             # coefficient of r^(2k) in file units -> mm: a * s^(1-2k)
             sf["parm"] = {k: v * s ** (1 - 2 * k) for k, v in sf["parm"].items()}
+        elif t == "ODDASPH":
+            if has_cb:
+                rep.u(where, "TYPE", "an odd asphere (ODDASPH) is not supported in a file with coordinate breaks")
+            bad = sorted(k for k in sf["parm"] if k < 1 or k > 8)
+            if bad:
+                rep.u(where, "PARM", "odd-asphere parameter(s) %s outside 1..8" % bad)
+            # coefficient of r^i in file units -> mm: a * s^(1-i)
+            sf["parm"] = {k: v * s ** (1 - k) for k, v in sf["parm"].items()}
         elif sf["parm"] and any(v != 0.0 for v in sf["parm"].values()) and t == "STANDARD":
             rep.notes.append("%s: PARM values on a STANDARD surface have no effect and were not used" % where)
     # ---- environment / configurations / vignetting -------------------------
@@ -833,9 +877,9 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
                   "vignetting factors of an off-meridian field point (x != 0) are applied without rotating the "
                   "pupil to the field's azimuth (fields are folded onto +y)", approximable=True)
     img = surfs[-1]
-    if img["curv"] != 0.0:
-        rep.u("surface %d" % img["index"], "CURV", "curved image surface (R = %g mm) is treated as a plane" %
-              (1.0 / img["curv"]), approximable=True)
+    if img["curv"] != 0.0 and has_cb:
+        rep.u("surface %d" % img["index"], "CURV", "curved image surface (R = %g mm) is treated as a plane in a file "
+              "with coordinate breaks" % (1.0 / img["curv"]), approximable=True)
     # ---- the glasses ---------------------------------------------------------
     media = []                                            # medium after each surface (None for a mirror)
     mirrors = []
@@ -852,8 +896,13 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         mirrors.append(mir)
     # ---- pickups ---------------------------------------------------------------
     solves = list(ppar_solves)
+    rules = {}                                            # lens-surface index -> solve rule the system follows
+    n_lens = len(surfs) - 2
+    followable = not any(mirrors) and not has_cb
     for sf in surfs:
         where = "surface %d" % sf["index"]
+        jl = sf["index"] - 1
+        in_lens = 1 <= sf["index"] <= n_lens
         if sf["curv_solve"]:
             st = int(_num(sf["curv_solve"][0], "%s CURV solve" % where, op))
             if st == 4:
@@ -862,13 +911,21 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
                 off = _num(sf["curv_solve"][3], "%s pickup offset" % where, op) if len(sf["curv_solve"]) > 3 else 0.0
                 if not 0 <= src < len(surfs):
                     raise ValueError("%s: %s: curvature pickup from surface %d which does not exist" % (op, where, src))
-                want = scale * surfs[src]["curv"] + off / 1.0
-                if abs(want - sf["curv"]) > 1e-9 * max(1.0, abs(sf["curv"])) and \
-                        abs(scale * surfs[src]["curv"] - sf["curv"]) > 1e-9 * max(1.0, abs(sf["curv"])):
+                tol = 1e-9 * max(1.0, abs(sf["curv"]))
+                if abs(scale * surfs[src]["curv"] + off / s - sf["curv"]) <= tol:
+                    off_mm = off / s
+                elif abs(scale * surfs[src]["curv"] - sf["curv"]) <= tol:
+                    off_mm = 0.0
+                else:
                     raise ValueError("%s: %s: curvature pickup from surface %d (scale %g) gives %.10g but the file "
-                                     "stores %.10g — stale or corrupted file" % (op, where, src, scale, want, sf["curv"]))
+                                     "stores %.10g — stale or corrupted file" % (
+                                         op, where, src, scale, scale * surfs[src]["curv"] + off / s, sf["curv"]))
+                follow = followable and in_lens and 1 <= src <= n_lens and src != sf["index"] and jl not in rules
+                if follow:
+                    rules[jl] = {"kind": "pickup", "source": src - 1, "quantity": "c", "scale": scale,
+                                 "offset": off_mm}
                 solves.append({"surface": sf["index"], "what": "curvature", "kind": "pickup", "source": src,
-                               "scale": scale, "status": "verified"})
+                               "scale": scale, "status": "verified", "followed": follow})
             else:
                 solves.append({"surface": sf["index"], "what": "curvature", "kind": "solve type %d" % st,
                                "status": "frozen at the stored value"})
@@ -882,8 +939,27 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
             if abs(want - sf["disz"]) > 1e-9 * max(1.0, abs(sf["disz"])):
                 raise ValueError("%s: %s: thickness pickup from surface %d gives %.10g but the file stores %.10g — "
                                  "stale or corrupted file" % (op, where, src, want, sf["disz"]))
+            follow = followable and in_lens and 1 <= src <= n_lens and src != sf["index"] and jl not in rules
+            if follow:
+                rules[jl] = {"kind": "pickup", "source": src - 1, "quantity": "t", "scale": scale, "offset": off}
             solves.append({"surface": sf["index"], "what": "thickness", "kind": "pickup", "source": src,
-                           "scale": scale, "status": "verified"})
+                           "scale": scale, "status": "verified", "followed": follow})
+        if sf["type"] == "EVENASPH" and followable and in_lens and sf["ppar"] and jl not in rules:
+            pn, src, scale, off = sf["ppar"][0]
+            if 1 <= pn <= 9 and 1 <= src <= n_lens and src != sf["index"] and surfs[src]["type"] in ("STANDARD", "EVENASPH"):
+                rules[jl] = {"kind": "pickup", "source": src - 1, "quantity": "A%d" % (2 * pn), "scale": scale,
+                             "offset": off * s ** (1 - 2 * pn)}
+                for x in solves:
+                    if x["surface"] == sf["index"] and x["what"] == "PARM %d" % pn:
+                        x["followed"] = True
+    for (jl, rule) in top.get("fs_rules", []):
+        if not 0 <= jl < n_lens:
+            raise ValueError("%s: a FULLSEYE-SOLVE note names surface %d, but the lens has surfaces 0..%d" %
+                             (op, jl, n_lens - 1))
+        if jl in rules:
+            raise ValueError("%s: surface %d carries both a native pickup line and a FULLSEYE-SOLVE note; a surface "
+                             "has one solve" % (op, jl + 1))
+        rules[jl] = rule
     # ---- refuse now if anything unsupported is not approximable -------------
     hard = [u for u in rep.unsupported if not u["approximable"]]
     soft = [u for u in rep.unsupported if u["approximable"]]
@@ -937,6 +1013,14 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
                 asph.pop()
             if asph:
                 rec["asph"] = tuple(asph)
+            if sf["parm"].get(1, 0.0) != 0.0:
+                rec["a2"] = sf["parm"][1]
+        elif sf["type"] == "ODDASPH":
+            odd = [sf["parm"].get(k, 0.0) for k in range(1, 9)]
+            while odd and odd[-1] == 0.0:
+                odd.pop()
+            if odd:
+                rec["odd"] = tuple(odd)
         if sf["aperture"] is not None and sf["aperture"]["r"] > 0.0:
             rec["ap"] = sf["aperture"]["r"]
         lens.append(rec)
@@ -974,6 +1058,8 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         raise ValueError("%s: the prescription cannot be built: %s" % (op, e)) from None
     p1 = RT.paraxial_trace(sys1)
     kind, val, sub = ap
+    if top.get("fs_afocal") and kind != "ENPD":
+        raise ValueError("%s: an afocal system has no F/# or object-space NA; its aperture is given as ENPD" % op)
     if kind == "ENPD":
         if not val > 0.0:
             raise ValueError("%s: ENPD must be > 0" % op)
@@ -1011,7 +1097,37 @@ def _build(top, surfs, rep, op, allow_partial, glass_dir):
         rep.notes.append("the stop's own aperture (%.6g mm) is replaced by the system aperture (%.6g mm)" %
                          (stop_given, stop_r))
     lens[stop]["ap"] = float(stop_r)
-    system = RT.lens_system(lens, stop=stop, object_mm=object_mm, wavelength_um=wl0, index_object=index_object)
+    stored = [(rec["R"], rec["t"], rec.get("asph", ()), rec.get("a2", 0.0)) for rec in lens]
+    final = [dict(rec, solve=rules[j]) if j in rules else rec for j, rec in enumerate(lens)]
+    ikw = {}
+    if img["curv"] != 0.0 and not has_cb:
+        ikw["image_R"] = 1.0 / img["curv"]
+        if img["conic"] != 0.0:
+            ikw["image_k"] = img["conic"]
+    if top.get("fs_afocal"):
+        ikw["afocal"] = True
+    try:
+        system = RT.lens_system(final, stop=stop, object_mm=object_mm, wavelength_um=wl0, index_object=index_object,
+                                **ikw)
+    except ValueError as e:
+        raise ValueError("%s: the prescription cannot be built: %s" % (op, e)) from None
+    for j, rule in rules.items():                         # the numbers in the file must be what the rule gives
+        got = system["surfaces"][j]
+        rule = got["solve"]
+        R0, t0, a0, q0 = stored[j]
+        c_got, c_old = (0.0 if got["R"] == INF else 1.0 / got["R"]), (0.0 if R0 == INF else 1.0 / R0)
+        bad = None
+        if rule["target"] == "c" and abs(c_got - c_old) > 1e-9 + 1e-7 * abs(c_old):
+            bad = "curvature %.10g (the file stores %.10g)" % (c_got, c_old)
+        elif rule["target"] == "t" and abs(got["t"] - t0) > 1e-7 * max(1.0, abs(t0)):
+            bad = "thickness %.10g (the file stores %.10g)" % (got["t"], t0)
+        elif rule["target"] == "A" and (abs(got.get("a2", 0.0) - q0) > 1e-7 * max(1e-12, abs(q0)) + 1e-12
+                                         or any(abs(x - y) > 1e-7 * max(1e-12, abs(y)) + 1e-12
+                                                for x, y in zip(got["asph"] + (0.0,) * 8, a0 + (0.0,) * 8))):
+            bad = "aspheric parameters differ from the file's"
+        if bad:
+            raise ValueError("%s: surface %d: its solve %r gives %s — stale or corrupted file" %
+                             (op, j + 1, rule["kind"], bad))
     para = RT.paraxial_trace(system)
     for f in fields:
         f["field"] = _radial_field(fields_type, f, para["efl"], para["magnification"], object_mm == INF)
@@ -1379,6 +1495,7 @@ def lens_file_read(source=None, allow_partial: bool = False, glass_dir=None) -> 
     top, surfs, rep = _parse(text, op)
     if not surfs:
         raise ValueError("%s: no SURF record — not a sequential prescription" % op)
+    top["notes"], top["fs_rules"], top["fs_afocal"] = _split_fullseye_notes(top["notes"], op)
     configs = None
     if top["mce_ok"]:
         _mce_check(top, len(surfs), op)
@@ -1427,7 +1544,8 @@ def _same(a, b, tol=0.0):
     return a == b
 
 
-_DIFF_SURFACE = ("R", "t", "n", "k", "ap", "asph", "mirror", "f")
+_DIFF_SURFACE = ("R", "t", "n", "k", "ap", "asph", "a2", "odd", "mirror", "f")
+_DIFF_DEFAULT = {"a2": 0.0, "odd": ()}
 _DIFF_SYSTEM = ("wavelength_um", "field", "stop", "object_mm", "image_mm", "aim")
 
 
@@ -1439,7 +1557,8 @@ def _config_diff(base, other, name, number, op):
                                                                len(base["surfaces"])))
     surf = {}
     for i, (a, b) in enumerate(zip(base["surfaces"], other["surfaces"])):
-        d = {k: copy.deepcopy(b[k]) for k in _DIFF_SURFACE if not _same(a.get(k), b.get(k))}
+        d = {k: copy.deepcopy(b.get(k, _DIFF_DEFAULT.get(k))) for k in _DIFF_SURFACE
+             if not _same(a.get(k, _DIFF_DEFAULT.get(k)), b.get(k, _DIFF_DEFAULT.get(k)))}
         if d:
             surf[i] = d
     sysf = {k: copy.deepcopy(other[k]) for k in _DIFF_SYSTEM if not _same(base.get(k), other.get(k))}
@@ -1492,7 +1611,7 @@ def lens_file_system(prescription=None, field_index: int = 0, wavelength_index=N
     out = RT.lens_system([dict(x) for x in s["surfaces"]], stop=s["stop"], object_mm=s["object_mm"],
                          wavelength_um=p["wavelengths"][int(wi)]["um"], index_object=s["index_object"],
                          image_mm=s["image_mm"], field=p["fields"][int(field_index)]["field"],
-                         aim=s.get("aim", "paraxial"), vignetting=s.get("vignetting"))
+                         aim=s.get("aim", "paraxial"), vignetting=s.get("vignetting"), **RT._system_extras(s))
     if s.get("configurations"):
         out["configurations"] = copy.deepcopy(s["configurations"])           # resolve with lensconfig
     return out
@@ -1687,11 +1806,55 @@ def _is_nc(system):
     return isinstance(system, dict) and system.get("kind") == "noncoaxial_system"
 
 
+def _native_rule(system, j):
+    """True when the rule on lens surface *j* has a line in the file format (a pickup this module reads) here."""
+    rule = system["surfaces"][j].get("solve")
+    if not rule or rule["kind"] != "pickup" or any(s["mirror"] for s in system["surfaces"]):
+        return False
+    n = len(system["surfaces"])
+    if not 0 <= rule["source"] < n:
+        return False
+    q = rule["quantity"]
+    if q in ("c", "t"):
+        return True
+    s = system["surfaces"][j]
+    return not s.get("odd") and system["surfaces"][rule["source"]].get("odd") in (None, ())
+
+
+def _fs_note_lines(system):
+    """NOTE texts for the rules that have no native line, and the afocal marker."""
+    out = []
+    for j, s in enumerate(system["surfaces"]):
+        r_ = s.get("solve")
+        if r_ and not _native_rule(system, j):
+            out.append("FULLSEYE-SOLVE " + json.dumps({"surface": j, "rule": r_}, sort_keys=True,
+                                                         separators=(",", ":")))
+    if system.get("afocal"):
+        out.append("FULLSEYE-AFOCAL 1")
+    return out
+
+
+def _prescription_from_system(system):
+    """A minimal prescription header for a bare ``lens_system`` (ENPD aperture, one field, one wavelength)."""
+    RT._check_system(system)
+    system = RT._solved(system)
+    inf = system["object_mm"] == INF
+    para = RT.paraxial_trace(system)
+    f = float(system["field"])
+    return {"format": "zmx", "name": "", "notes": [], "unit": "MM",
+            "aperture": {"type": "ENPD", "value": 2.0 * para["ep_radius"], "kind": 0},
+            "field_type": "angle" if inf else "object_height",
+            "fields": [{"x": 0.0, "y": f, "weight": 1.0, "field": f}],
+            "wavelengths": [{"um": system["wavelength_um"], "weight": 1.0}], "primary": 0,
+            "surfaces": None, "system": system, "solves": [], "approximate": False, "noncoaxial": False}
+
+
 def _surfaces_from_system(system, template, op):
     """Geometry of an (edited) lens_system -> file-level surfaces, keeping the template's extras."""
     if _is_nc(system):
         return _surfaces_from_nc(system, template, op)
     RT._check_system(system)
+    system = RT._solved(system)
     lens = system["surfaces"]
     tpl = template if (template is not None and len(template) == len(lens) + 2) else None
     out = []
@@ -1718,13 +1881,29 @@ def _surfaces_from_system(system, template, op):
         if s["decenter"] != (0.0, 0.0) or s["tilt"] != (0.0, 0.0):
             raise ValueError("%s: %s: tilted / decentred surfaces cannot be written as a coaxial prescription" %
                              (op, where))
+        if s.get("f") is not None:
+            raise ValueError("%s: %s: an ideal (paraxial) lens has no line in a sequential prescription; replace it by "
+                             "real surfaces before writing" % (op, where))
         t = s["t"]
         if t is None:
             t = RT.paraxial_trace(system)["bfl"] if system["image_mm"] is None else system["image_mm"]
         asph = list(s["asph"])
-        typ = "EVENASPH" if asph or base.get("type") == "EVENASPH" else "STANDARD"
-        parm = {1: 0.0} if typ == "EVENASPH" else {}
-        parm.update({k + 2: float(a) for k, a in enumerate(asph)})
+        a2 = float(s.get("a2", 0.0))
+        odd = list(s.get("odd", ()))
+        if odd:
+            if any(abs(a) > 0.0 for a in asph[3:]):
+                raise ValueError("%s: %s: an odd asphere (ODDASPH) holds powers up to r^8; the even terms A10 and above "
+                                 "cannot be written beside the odd terms" % (op, where))
+            typ = "ODDASPH"
+            parm = {k + 1: float(b) for k, b in enumerate(odd)}
+            parm.update({2: parm.get(2, 0.0) + a2})
+            for k, a in enumerate(asph):
+                parm[2 * k + 4] = parm.get(2 * k + 4, 0.0) + float(a)
+            parm = {k: v for k, v in parm.items() if v != 0.0 or k in (1,)} or {1: 0.0}
+        else:
+            typ = "EVENASPH" if asph or a2 != 0.0 or base.get("type") == "EVENASPH" else "STANDARD"
+            parm = {1: a2} if typ == "EVENASPH" else {}
+            parm.update({k + 2: float(a) for k, a in enumerate(asph)})
         ap = base.get("aperture")
         if i == system["stop"]:
             ap = None                                            # the system aperture sets the stop
@@ -1740,12 +1919,28 @@ def _surfaces_from_system(system, template, op):
         disz = float(t) * direction
         if pz is not None and disz != base.get("disz"):
             pz = None
+        pp = [list(x) for x in base.get("ppar") or []]
+        if pp and parm != base.get("parm"):
+            pp = []
+        rule = s.get("solve")
+        if rule and _native_rule(system, i):                    # the solve is a pickup the format has a line for
+            q = rule["quantity"]
+            if q == "c":
+                cs = ["4", str(rule["source"] + 1), _g(rule["scale"]), _g(rule["offset"])]
+            elif q == "t":
+                pz = [str(rule["source"] + 1), _g(rule["scale"]), _g(rule["offset"]), "0"]
+            else:
+                pn = int(q[1:]) // 2
+                pp = [[pn, rule["source"] + 1, rule["scale"], rule["offset"]]]
         out.append(dict(base, index=i + 1, type=typ, curv=curv, disz=disz, conic=float(s["k"]), parm=parm,
-                        glass=glass, stop=(i == system["stop"]), aperture=ap, curv_solve=cs, pzup=pz))
+                        glass=glass, stop=(i == system["stop"]), aperture=ap, curv_solve=cs, pzup=pz, ppar=pp))
     img = dict(tpl[-1]) if tpl else {"index": len(lens) + 1, "type": "STANDARD", "curv": 0.0, "disz": 0.0,
                                       "conic": 0.0, "diam": 0.0, "diam_type": 0, "stop": False, "comment": "",
                                       "parm": {}, "aperture": None, "curv_solve": None, "pzup": None, "glass": None}
     img["index"] = len(lens) + 1
+    ri = system.get("image_R", INF)
+    img["curv"] = 0.0 if ri == INF else 1.0 / ri
+    img["conic"] = float(system.get("image_k", 0.0)) if ri != INF else 0.0
     out.append(img)
     return out
 
@@ -1784,6 +1979,13 @@ def _write_multi(p, sysd, path, encoding, op):
                for a in (p["surfaces"] or []) for w, key in (("curvature solve", "curv_solve"),
                                                             ("thickness pickup", "pzup"),
                                                             ("parameter pickup", "ppar")) if a.get(key)]
+    seen = {(d["surface"], d["what"]) for d in dropped}
+    for j, sj in enumerate(resolved[0]["surfaces"]):                 # solve rules are frozen at the written values
+        if sj.get("solve") and (j + 1, "solve") not in seen:
+            dropped.append({"surface": j + 1, "what": "%s solve" % sj["solve"]["kind"]})
+            seen.add((j + 1, "solve"))
+    resolved = [dict(r_, surfaces=[{k: v for k, v in s_.items() if k != "solve"} for s_ in r_["surfaces"]])
+                for r_ in resolved]
     p0 = dict(p, surfaces=frozen)
     for k, r in enumerate(resolved[1:], 2):
         for key in ("wavelength_um", "field", "aim", "vignetting"):
@@ -1959,6 +2161,9 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
         lines.append("NAME " + p["name"])
     for nt in p.get("notes", []):
         lines.append("NOTE 0 " + nt)
+    if not nc:
+        for nt in _fs_note_lines(sysd):
+            lines.append("NOTE 0 " + nt)
     lines.append("UNIT MM X W X CM MR CPMM")
     if ap["type"] == "FLOA":
         lines.append("FLOA")
@@ -1996,7 +2201,7 @@ def lens_file_write(prescription=None, system=None, path=None, encoding: str = "
             lines.append("  COMM %s" % sf["comment"])
         cs = sf.get("curv_solve")
         lines.append("  CURV %s %s \"\"" % (_g(sf["curv"]), " ".join(cs + ["0"] * (4 - len(cs))) if cs else "0 0 0 0"))
-        if sf["type"] == "EVENASPH":
+        if sf["type"] in ("EVENASPH", "ODDASPH"):
             for k in sorted(sf["parm"]):
                 lines.append("  PARM %d %s" % (k, _g(sf["parm"][k])))
         elif sf["type"] == "COORDBRK":

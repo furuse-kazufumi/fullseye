@@ -1,4 +1,4 @@
-# OPTICS operator help — 407 ops in 46 categories
+# OPTICS operator help — 416 ops in 47 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -105,6 +105,10 @@
 ### lensrender (8)
 
 [bokeh_shape](lensrender/bokeh_shape.md) · [exit_pupil_samples](lensrender/exit_pupil_samples.md) · [lens_scene](lensrender/lens_scene.md) · [render_compare_prescriptions](lensrender/render_compare_prescriptions.md) · [render_ghost_overlay](lensrender/render_ghost_overlay.md) · [render_scene_through_lens](lensrender/render_scene_through_lens.md) · [scene_radiance](lensrender/scene_radiance.md) · [trace_sensor_rays](lensrender/trace_sensor_rays.md)
+
+### lenssolve (9)
+
+[afocal_system](lenssolve/afocal_system.md) · [lens_afocal_report](lenssolve/lens_afocal_report.md) · [lens_apply_solves](lenssolve/lens_apply_solves.md) · [lens_image_surface](lenssolve/lens_image_surface.md) · [lens_petzval_radius](lenssolve/lens_petzval_radius.md) · [lens_solve_clear](lenssolve/lens_solve_clear.md) · [lens_solve_set](lenssolve/lens_solve_set.md) · [lens_solves_list](lenssolve/lens_solves_list.md) · [lens_zmx_solves_roundtrip](lenssolve/lens_zmx_solves_roundtrip.md)
 
 ### light_transport (11)
 

@@ -71,7 +71,7 @@ def test_the_catalogue_lists_every_required_operand_with_meaning_unit_and_argume
     names = [o["name"] for o in cat["operands"]]
     assert cat["n_operands"] == len(names) == len(set(names)) and cat["names"] == names
     assert set(REQUIRED) <= set(names) and {"TRAN", "OPDW"} <= set(names)
-    assert len(cat["operands"]) == 30
+    assert len(cat["operands"]) == 32          # + ANGM, RSAN (afocal, 2026-10-20)
     for o in cat["operands"]:
         assert o["description"].strip() and isinstance(o["unit"], str) and isinstance(o["required"], list)
         assert o["kind"] in ("scalar", "group") and o["sense"] in ("eq", "ge", "le")
@@ -310,7 +310,7 @@ def test_every_operand_evaluates_to_a_finite_number_on_a_real_prescription():
             {"op": "RSCH", "field": 1}, {"op": "WFNO"}, {"op": "PMAG"}, {"op": "DIMX"}, {"op": "WFRMS", "field": 1, "size": 9},
             {"op": "TRAN", "field": 1, "rings": 2}, {"op": "OPDW", "field": 1, "rings": 2}]
     seen = {r["op"] for r in rows}
-    assert seen == set(LM.merit_operands_list()["names"])
+    assert seen == set(LM.merit_operands_list()["names"]) - {"ANGM", "RSAN"}     # the afocal rows: tests/test_lenssolve.py
     for row in rows:
         ev = LM.merit_evaluate(s, [dict(row, target=0.0)], fields=FIELDS3)["table"][0]
         assert math.isfinite(ev["value"]), row

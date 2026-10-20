@@ -200,7 +200,8 @@ def lens_substitute_glasses(system=None, catalog=None, k: int = 1, metric: str =
         out = RT.lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                              wavelength_um=system["wavelength_um"], index_object=system["index_object"],
                              image_mm=system["image_mm"], field=system["field"],
-                             aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"))
+                             aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"),
+                             **RT._system_extras(system))
     except ValueError as e:
         raise ValueError("%s: the substituted system cannot be built: %s" % (op, e)) from None
     for key, val in system.items():

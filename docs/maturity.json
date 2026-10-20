@@ -1638,8 +1638,8 @@
    "category": "測る",
    "note": "docs/capabilities/sequential-lens-design-metrics.md",
    "status": "verified-synthetic",
-   "ops_total": 23,
-   "ops_named_in_tests": 23,
+   "ops_total": 32,
+   "ops_named_in_tests": 32,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
@@ -1666,6 +1666,13 @@
     },
     {
      "id": "poc_lens_merit_operands",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_lens_solves_afocal",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -2244,8 +2251,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 415,
-  "run_by_the_poc_gate": 267,
+  "examples2d_total": 416,
+  "run_by_the_poc_gate": 268,
   "run_by_the_example_gate": 148,
   "not_run_by_any_gate": 0,
   "gates": [

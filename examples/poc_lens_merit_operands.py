@@ -142,8 +142,9 @@ def chapter_closed_forms():
     print("   オペランド %d 個(スカラー %d、群 %d)、片側の既定: %s" % (
         cat["n_operands"], sum(o["kind"] == "scalar" for o in cat["operands"]), sum(o["kind"] == "group" for o in cat["operands"]),
         " ".join(one_sided)))
-    gate("オペランドの一覧は 30 個(スカラー 28 + 群 2)で、全部に意味・単位・引数があり、片側は CTGT/CTLT/ETGT/ETLT/MNCG/MXCG/MNCA/MXCA の 8 個",
-         cat["n_operands"] == 30 and all(o["description"] and isinstance(o["unit"], str) for o in cat["operands"])
+    gate("オペランドの一覧は 32 個(スカラー 30 + 群 2。2026-10-20 に afocal の ANGM / RSAN を足した)で、全部に意味・単位・引数があり、"
+         "片側は CTGT/CTLT/ETGT/ETLT/MNCG/MXCG/MNCA/MXCA の 8 個",
+         cat["n_operands"] == 32 and all(o["description"] and isinstance(o["unit"], str) for o in cat["operands"])
          and sorted(one_sided) == sorted(["CTGT", "CTLT", "ETGT", "ETLT", "MNCG", "MXCG", "MNCA", "MXCA"]))
 
 
