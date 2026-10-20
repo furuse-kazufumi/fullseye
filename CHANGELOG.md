@@ -12,6 +12,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 疎グラフの三角閉路、複数グラフの集計、rich-club 曲線、コア履歴の計算量と一時領域を削減した。
 - 実験計画の最小点間距離と直交表の強度検査で、全距離行列と反復マスクを避けた。
 - 三次元データ読込の stride、共有 accessor、結合、座標格納を軽量化し、点数上限を本体読込前に検査するようにした。
+- packed pixel 展開を 1〜16 bit の直接抽出へ広げ、raw buffer と uint8 配列で同じ結果を返すようにした。
 
 ### Changed — 性能改善 第29便
 - 三角閉路数の計算で二回目の密行列積を省き、整数の結果を維持した。

@@ -282,6 +282,22 @@ def test_425_unpack_lsb_rejects_shortfall_before_unpackbits(monkeypatch):
         acquire.unpack_lsb(np.array([0], dtype=np.uint8), 12, 10**12)
 
 
+@pytest.mark.parametrize("bits", [1, 3, 7, 8, 9, 10, 12, 15, 16])
+def test_421_lsb_general_width_and_raw_buffer_contract(bits):
+    rng=np.random.default_rng(421+bits); count=257
+    raw=rng.integers(0,256,(bits*count+7)//8,dtype=np.uint8)
+    ref=_unpack_lsb_reference(raw,bits,count)
+    for source in (raw, raw.tobytes(), bytearray(raw), memoryview(raw)):
+        np.testing.assert_array_equal(acquire.unpack_lsb(source,bits,count),ref)
+
+
+def test_422_grouped_raw_buffer_contract():
+    rng=np.random.default_rng(422); raw=rng.integers(0,256,300,dtype=np.uint8)
+    for bits in (10,12):
+        ref=acquire.unpack_grouped(raw,bits,199)
+        np.testing.assert_array_equal(acquire.unpack_grouped(raw.tobytes(),bits,199),ref)
+
+
 def test_430_peak_ratio_matches_copying_reference():
     rng = np.random.default_rng(430)
     cases = [np.empty((0, 0)), np.full((5, 5), np.nan), np.zeros((5, 5))]

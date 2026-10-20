@@ -431,6 +431,12 @@ NOT_CARRIED = {
 }
 
 
+def _byte_view(buf):
+    if isinstance(buf, (bytes, bytearray, memoryview)):
+        return np.frombuffer(buf, dtype=np.uint8)
+    return np.asarray(buf, dtype=np.uint8).ravel()
+
+
 def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
     """lsb-packed bit stream -> one ``uint16`` per pixel (PFNC 2.4 6.3.1).
 
@@ -447,13 +453,15 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
     """
     bits = int(bits)
     count = int(count)
-    a = np.asarray(buf, dtype=np.uint8).ravel()
+    if not 1 <= bits <= 16 or count < 0:
+        raise ValueError("unpack_lsb: bits must be 1..16 and count must be non-negative")
+    a = _byte_view(buf)
     need = bits * count
     need_bytes = (need + 7) // 8
     if a.size < need_bytes:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
                          % (count, bits, need, a.size * 8))
-    if bits in (10, 12):
+    if bits <= 16:
         # Each value spans at most three bytes.  Decode those bytes directly instead
         # of expanding every input byte into eight temporary uint8 values.
         src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
@@ -462,9 +470,7 @@ def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
         shift = (bit & 7).astype(np.uint32)
         word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
         return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
-    b = np.unpackbits(a[:need_bytes], bitorder="little")
-    w = b[:need].reshape(int(count), int(bits))
-    return (w * (1 << np.arange(int(bits), dtype=np.uint32))).sum(axis=1).astype(np.uint16)
+    raise AssertionError("unreachable")
 
 
 def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
@@ -487,16 +493,16 @@ def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
         raise ValueError("unpack_grouped: %d-bit grouped layout is not defined here"
                          % bits)
     low = bits - 8
-    a = np.asarray(buf, dtype=np.uint8).ravel()
+    a = _byte_view(buf)
     pairs = (int(count) + 1) // 2
     if a.size < pairs * 3:
         raise ValueError("unpack_grouped: %d pixels need %d bytes, buffer has %d"
                          % (count, pairs * 3, a.size))
-    a = a[:pairs * 3].reshape(pairs, 3).astype(np.uint16)
-    mid = a[:, 1]
+    a = a[:pairs * 3].reshape(pairs, 3)
+    mid = a[:, 1].astype(np.uint16)
     out = np.empty(pairs * 2, dtype=np.uint16)
-    out[0::2] = (a[:, 0] << low) | (mid & ((1 << low) - 1))
-    out[1::2] = (a[:, 2] << low) | ((mid >> 4) & ((1 << low) - 1))
+    out[0::2] = (a[:, 0].astype(np.uint16) << low) | (mid & ((1 << low) - 1))
+    out[1::2] = (a[:, 2].astype(np.uint16) << low) | ((mid >> 4) & ((1 << low) - 1))
     return out[:int(count)]
 
 
