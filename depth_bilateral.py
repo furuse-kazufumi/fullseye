@@ -75,14 +75,15 @@ def _bilateral_core(
     contrib = val_valid & edge_valid  # 近傍として使える画素
 
     # 無効画素は有限のプレースホルダに置換(重み 0 で寄与しないが NaN 伝播を防ぐため)。
+    same_guide = edge is values and edge_valid is val_valid
     v_safe = np.where(val_valid, values, 0.0)
-    e_safe = np.where(edge_valid, edge, 0.0)
+    e_safe = v_safe if same_guide else np.where(edge_valid, edge, 0.0)
 
     radius = max(int(np.ceil(float(truncate) * spatial_sigma)), 1)
     # reflect パディング(scipy.ndimage 既定と同じ境界規約)。
     vp = np.pad(v_safe, radius, mode="reflect")
-    ep = np.pad(e_safe, radius, mode="reflect")
-    cp = np.pad(contrib.astype(float), radius, mode="reflect")
+    ep = vp if same_guide else np.pad(e_safe, radius, mode="reflect")
+    cp = np.pad(contrib, radius, mode="reflect")
 
     inv2s2 = 1.0 / (2.0 * spatial_sigma * spatial_sigma)
     inv2r2 = 1.0 / (2.0 * range_sigma * range_sigma)
@@ -216,17 +217,18 @@ def fill_holes(
             # 半径 r の穴の Jacobi 収束は O(r^2) 反復で足りる(小穴なら十分収束)。
             max_iter = int(min(4000, max(64, np.ceil(8.0 * (r + 1.0) ** 2))))
 
+        pp = np.pad(part.astype(float), 1, mode="constant")
+        ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
+        safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
         for _ in range(max_iter):
             vp = np.pad(out, 1, mode="edge")
-            pp = np.pad(part.astype(float), 1, mode="constant")
             nsum = (
                 vp[:-2, 1:-1] * pp[:-2, 1:-1]
                 + vp[2:, 1:-1] * pp[2:, 1:-1]
                 + vp[1:-1, :-2] * pp[1:-1, :-2]
                 + vp[1:-1, 2:] * pp[1:-1, 2:]
             )
-            ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
-            new = np.where(ncnt > 0.0, nsum / np.where(ncnt > 0.0, ncnt, 1.0), out)
+            new = np.where(ncnt > 0.0, nsum / safe_ncnt, out)
             delta = np.max(np.abs(new[fillable] - out[fillable])) if fillable.any() else 0.0
             out[fillable] = new[fillable]
             if delta < tol:
