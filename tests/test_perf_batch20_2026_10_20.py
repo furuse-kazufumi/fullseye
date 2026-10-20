@@ -8,6 +8,75 @@ from scipy.sparse import coo_matrix, diags
 import motion
 
 
+def _phase_unwrap_original(wrapped):
+    # origin/master Herraez edge construction and complete DSU scan.
+    import complexops
+    phi = np.asarray(wrapped, dtype=np.float64)
+    if phi.ndim == 1:
+        phi = phi[None, :]
+    h, w = phi.shape
+    n = h * w
+    if n <= 1:
+        return phi.copy()
+    r = complexops._herraez_reliability(phi)
+    flat = phi.ravel()
+    idx = np.arange(n).reshape(h, w)
+    ha, hb = idx[:, :-1].ravel(), idx[:, 1:].ravel()
+    va, vb = idx[:-1, :].ravel(), idx[1:, :].ravel()
+    edge_a, edge_b = np.concatenate([ha, va]), np.concatenate([hb, vb])
+    order = np.argsort(-(r.ravel()[edge_a] + r.ravel()[edge_b]), kind="stable")
+    edge_a, edge_b = edge_a[order].tolist(), edge_b[order].tolist()
+    parent = np.arange(n, dtype=np.int64)
+    offset = np.zeros(n, dtype=np.int64)
+    size = np.ones(n, dtype=np.int64)
+    for a_i, b_i in zip(edge_a, edge_b):
+        ra, oa = complexops._find(parent, offset, a_i)
+        rb, ob = complexops._find(parent, offset, b_i)
+        if ra == rb:
+            continue
+        shift = int(round((flat[b_i] - flat[a_i]) / (2.0 * np.pi)))
+        if size[ra] >= size[rb]:
+            parent[rb], offset[rb] = ra, oa - ob - shift
+            size[ra] += size[rb]
+        else:
+            parent[ra], offset[ra] = rb, ob - oa + shift
+            size[rb] += size[ra]
+    inc = np.empty(n, dtype=np.int64)
+    for i in range(n):
+        _, inc[i] = complexops._find(parent, offset, i)
+    return (flat + 2.0 * np.pi * inc).reshape(h, w)
+
+
+def _phase_displacement_solve_original(a00, a01, a11, b0, b1, alive, rank2,
+                                       vx, vy, lam1):
+    # origin/master allocation-heavy final 2x2/rank-1 solve.
+    det = a00 * a11 - a01 * a01
+    safe_det = np.where(rank2, det, 1.0)
+    dx_full = (a11[None] * b0 - a01[None] * b1) / safe_det[None]
+    dy_full = (a00[None] * b1 - a01[None] * b0) / safe_det[None]
+    safe_lam1 = np.where(alive, lam1, 1.0)
+    proj = (vx[None] * b0 + vy[None] * b1) / safe_lam1[None]
+    dx_rank1, dy_rank1 = proj * vx[None], proj * vy[None]
+    return (np.where(rank2[None], dx_full, np.where(alive[None], dx_rank1, 0.0)),
+            np.where(rank2[None], dy_full, np.where(alive[None], dy_rank1, 0.0)))
+
+
+def _phase_displacement_solve_current(a00, a01, a11, b0, b1, alive, rank2,
+                                      vx, vy, lam1):
+    det = a00 * a11 - a01 * a01
+    safe_det = np.where(rank2, det, 1.0)
+    dx, dy = np.zeros_like(b0), np.zeros_like(b1)
+    dx[:, rank2] = ((a11[rank2][None] * b0[:, rank2]
+                     - a01[rank2][None] * b1[:, rank2]) / safe_det[rank2][None])
+    dy[:, rank2] = ((a00[rank2][None] * b1[:, rank2]
+                     - a01[rank2][None] * b0[:, rank2]) / safe_det[rank2][None])
+    safe_lam1 = np.where(alive, lam1, 1.0)
+    proj = (vx[None] * b0 + vy[None] * b1) / safe_lam1[None]
+    rank1 = alive & ~rank2
+    dx[:, rank1], dy[:, rank1] = proj[:, rank1] * vx[rank1], proj[:, rank1] * vy[rank1]
+    return dx, dy
+
+
 def _components_original(vertices, faces):
     from collections import defaultdict
     parent = np.arange(len(vertices))
@@ -226,6 +295,65 @@ def test_124_125_phase_paths_match_reference_contract():
     x = np.linspace(0, 12 * np.pi, 1000)[None]
     wrapped = (x + np.pi) % (2 * np.pi) - np.pi
     np.testing.assert_array_equal(complexops.phase_unwrap(wrapped), np.unwrap(wrapped, axis=1))
+
+
+def test_121_123_phase_unwrap_matches_original_edge_path_bit_for_bit():
+    import complexops
+    rng = np.random.default_rng(121)
+    wrapped = np.angle(np.exp(1j * rng.normal(size=(37, 43)).cumsum(axis=1)))
+    expected = _phase_unwrap_original(wrapped)
+    assert np.ptp(expected) > 2.0 * np.pi  # non-vacuous: unwrapping changed branches
+    np.testing.assert_array_equal(complexops.phase_unwrap(wrapped), expected)
+
+
+def test_129_masked_phase_displacement_solve_matches_original_exactly():
+    rng = np.random.default_rng(129)
+    shape = (19, 23)
+    q = rng.normal(size=shape + (2, 2))
+    normal = np.einsum("...ji,...jk->...ik", q, q)
+    a00, a01, a11 = normal[..., 0, 0], normal[..., 0, 1], normal[..., 1, 1]
+    half = .5 * (a00 + a11)
+    disc = np.sqrt(.25 * (a00 - a11) ** 2 + a01 * a01)
+    lam1, lam2 = half + disc, half - disc
+    alive = lam1 > 1e-12 * lam1.max()
+    rank2 = alive & (lam2 > 1e-8 * np.where(alive, lam1, 1.0))
+    alive[::7, ::5] = False
+    rank2 &= alive
+    vx, vy = a01.copy(), lam1 - a00
+    norm = np.hypot(vx, vy)
+    degenerate = norm <= 0
+    vx = np.where(degenerate, 1.0, vx / np.where(degenerate, 1.0, norm))
+    vy = np.where(degenerate, 0.0, vy / np.where(degenerate, 1.0, norm))
+    b0, b1 = rng.normal(size=(11,) + shape), rng.normal(size=(11,) + shape)
+    expected = _phase_displacement_solve_original(
+        a00, a01, a11, b0, b1, alive, rank2, vx, vy, lam1)
+    actual = _phase_displacement_solve_current(
+        a00, a01, a11, b0, b1, alive, rank2, vx, vy, lam1)
+    assert alive.any() and rank2.any() and (~alive).any()
+    for got, want in zip(actual, expected):
+        np.testing.assert_array_equal(got, want)
+
+
+def test_136_138_139_video_paths_keep_original_contracts(tmp_path, monkeypatch):
+    import video
+    rng = np.random.default_rng(139)
+    frames = rng.integers(0, 256, size=(12, 32, 38, 3), dtype=np.uint8)
+    path = tmp_path / "batch20.mp4"
+    video.write_video(path, frames, fps=12, verify=False)
+    # Item 136: streaming write preserves every stored frame.
+    assert video._count_stored_frames(str(path)) == len(frames)
+    # Item 138 was reverted: the fallback again decodes then skips from frame 0.
+    monkeypatch.setattr(video, "_imageio", lambda: None)
+    expected = np.stack([video._coerce(frame, False, "uint8", "auto")
+                         for i, frame in enumerate(video._iter_cv2(path)) if 4 <= i < 10])
+    np.testing.assert_array_equal(
+        video.read_frames(path, gray=False, start=4, max_frames=6, dtype="uint8"), expected)
+    # Item 139 is an approximate selectable path: at most half a uint8 LSB.
+    default = video.read_frames(path, gray=True, gray_backend="numpy")
+    integer = video.read_frames(path, gray=True, gray_backend="integer")
+    assert np.max(np.abs(default - integer)) > 0.0
+    np.testing.assert_allclose(integer, default, rtol=0,
+                               atol=.5 / 255 + np.finfo(np.float64).eps)
 
 
 def test_126_real_transform_variant_matches_exact():
