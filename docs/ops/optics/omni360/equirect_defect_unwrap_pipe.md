@@ -19,6 +19,9 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial.
 
+Empty input (``equi`` has zero elements) returns an empty image (reason: an
+empty upstream inspection has no cylindrical samples to unwrap).
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

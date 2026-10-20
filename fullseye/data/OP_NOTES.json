@@ -29489,7 +29489,7 @@
     "dim": "optics",
     "category": "omni360",
     "in": "rgbimage",
-    "out": "images",
+    "out": "rgbvideo",
     "path": "docs/ops/optics/omni360/cubemap_from_equirect.md"
    }
   ],
@@ -29518,7 +29518,7 @@
     "op": "equirect_from_cubemap",
     "dim": "optics",
     "category": "omni360",
-    "in": "images",
+    "in": "rgbvideo",
     "out": "rgbimage",
     "path": "docs/ops/optics/omni360/equirect_from_cubemap.md"
    }
@@ -29597,7 +29597,7 @@
     "op": "ods_render",
     "dim": "optics",
     "category": "omni360",
-    "out": "table",
+    "out": "images",
     "path": "docs/ops/optics/omni360/ods_render.md"
    }
   ],
@@ -29665,8 +29665,8 @@
     "op": "video360_viewport_track",
     "dim": "optics",
     "category": "omni360",
-    "in": "images",
-    "out": "images",
+    "in": "rgbvideo",
+    "out": "rgbvideo",
     "path": "docs/ops/optics/omni360/video360_viewport_track.md"
    }
   ],

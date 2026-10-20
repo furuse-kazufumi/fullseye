@@ -3,7 +3,7 @@ op: cubemap_from_equirect
 dim: optics
 category: omni360
 in: rgbimage
-out: images
+out: rgbvideo
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 # cubemap_from_equirect — OPTICS `omni360` op
 
-- **データ種**: `rgbimage` → `images`
+- **データ種**: `rgbimage` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cubemap_from_equirect(equi, face_size)` (実装を直接呼ぶなら `import omni360; omni360.cubemap_from_equirect(equi, face_size)`、台帳から引くなら `opsoptics.get("cubemap_from_equirect")`)
 
 ## 使い方
@@ -45,9 +45,9 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [omni360_roundtrip](../../../../examples/omni360_roundtrip.py) — `py -3.11 examples/omni360_roundtrip.py`
 
-## 型が繋がる次の op(`images` を入力に取れる)
+## 型が繋がる次の op(`rgbvideo` を入力に取れる)
 
-[film_thickness_map](../film/film_thickness_map.md) · [equirect_from_cubemap](equirect_from_cubemap.md) · [equirect_stabilise](equirect_stabilise.md) · [equirect_from_fisheye_pair](equirect_from_fisheye_pair.md) · [equirect_from_perspectives](equirect_from_perspectives.md) · [video360_viewport_track](video360_viewport_track.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md)
+[equirect_from_cubemap](equirect_from_cubemap.md) · [video360_viewport_track](video360_viewport_track.md)
 
 ## 同カテゴリ(`omni360`)
 

@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video360_tile_coverage(view_path, tiles=(8, 4), fov_deg=90)</code> (to call the implementation directly, <code style="color:#22d3bf">import omni360; omni360.video360_tile_coverage(view_path, tiles=(8, 4), fov_deg=90)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;video360_tile_coverage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Report which longitude-latitude streaming tiles a view path touches.</p>
+<p>Empty input (<code style="color:#22d3bf">view_path</code> has zero elements) returns an empty coverage mask (reason: a path with no views requests no streaming tiles).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

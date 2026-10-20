@@ -2,8 +2,8 @@
 op: video360_viewport_track
 dim: optics
 category: omni360
-in: images
-out: images
+in: rgbvideo
+out: rgbvideo
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 # video360_viewport_track — OPTICS `omni360` op
 
-- **データ種**: `images` → `images`
+- **データ種**: `rgbvideo` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))` (実装を直接呼ぶなら `import omni360; omni360.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))`、台帳から引くなら `opsoptics.get("video360_viewport_track")`)
 
 ## 使い方
@@ -45,9 +45,9 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [poc_omni360_inspection](../../../../examples/poc_omni360_inspection.py) — `py -3.11 examples/poc_omni360_inspection.py`
 
-## 型が繋がる次の op(`images` を入力に取れる)
+## 型が繋がる次の op(`rgbvideo` を入力に取れる)
 
-[film_thickness_map](../film/film_thickness_map.md) · [equirect_from_cubemap](equirect_from_cubemap.md) · [equirect_stabilise](equirect_stabilise.md) · [equirect_from_fisheye_pair](equirect_from_fisheye_pair.md) · [equirect_from_perspectives](equirect_from_perspectives.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md) · [render_transport](../light_transport/render_transport.md)
+[equirect_from_cubemap](equirect_from_cubemap.md)
 
 ## 同カテゴリ(`omni360`)
 

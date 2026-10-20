@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_defect_unwrap_pipe(equi, axis=&#x27;horizontal&#x27;, radius_m=None, length_m=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import omni360; omni360.equirect_defect_unwrap_pipe(equi, axis=&#x27;horizontal&#x27;, radius_m=None, length_m=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;equirect_defect_unwrap_pipe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円筒壁を平面の検査帯へ展開する。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Empty input (<code style="color:#22d3bf">equi</code> has zero elements) returns an empty image (reason: an empty upstream inspection has no cylindrical samples to unwrap).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

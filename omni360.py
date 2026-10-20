@@ -271,7 +271,7 @@ def ods_from_cubemap_pair(left_cube,right_cube,out_shape):
 
 
 def equirect_defect_unwrap_pipe(equi, axis="horizontal", radius_m=None, length_m=None):
-    """Unwrap the cylindrical wall; longitude is circumference and latitude is axial.
+    """Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial.
 
     Empty input (``equi`` has zero elements) returns an empty image (reason: an
     empty upstream inspection has no cylindrical samples to unwrap).

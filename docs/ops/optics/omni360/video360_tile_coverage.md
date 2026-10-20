@@ -19,6 +19,9 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 Report which longitude-latitude streaming tiles a view path touches.
 
+Empty input (``view_path`` has zero elements) returns an empty coverage mask
+(reason: a path with no views requests no streaming tiles).
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">video360_viewport_track — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">rgbvideo</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import omni360; omni360.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;video360_viewport_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전방위 프레임열에서 움직이는 시야를 추출한다.</p>
@@ -21,8 +21,8 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_omni360_inspection">poc_omni360_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_omni360_inspection.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">images</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a> · <a style="color:#22d3bf" href="opoptics:equirect_stabilise">equirect_stabilise</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_fisheye_pair">equirect_from_fisheye_pair</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_perspectives">equirect_from_perspectives</a> · <a style="color:#22d3bf" href="opoptics:grating_three_image_retrieve">grating_three_image_retrieve</a> · <a style="color:#22d3bf" href="opoptics:grating_step_period_estimate">grating_step_period_estimate</a> · <a style="color:#22d3bf" href="opoptics:render_transport">render_transport</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">rgbvideo</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">omni360</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:cubemap_from_equirect">cubemap_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a> · <a style="color:#22d3bf" href="opoptics:viewport_from_equirect">viewport_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:equirect_rotate">equirect_rotate</a> · <a style="color:#22d3bf" href="opoptics:equirect_weight_map">equirect_weight_map</a> · <a style="color:#22d3bf" href="opoptics:ws_psnr">ws_psnr</a> · <a style="color:#22d3bf" href="opoptics:s_psnr">s_psnr</a> · <a style="color:#22d3bf" href="opoptics:equirect_filter_gaussian">equirect_filter_gaussian</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

@@ -3,7 +3,7 @@ op: ods_render
 dim: optics
 category: omni360
 in: 
-out: table
+out: images
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 # ods_render — OPTICS `omni360` op
 
-- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
+- **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ods_render(scene_fn, ipd_m, h, w)` (実装を直接呼ぶなら `import omni360; omni360.ods_render(scene_fn, ipd_m, h, w)`、台帳から引くなら `opsoptics.get("ods_render")`)
 
 ## 使い方
@@ -45,9 +45,9 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [omni360_roundtrip](../../../../examples/omni360_roundtrip.py) — `py -3.11 examples/omni360_roundtrip.py`
 
-## 型が繋がる次の op(`table` を入力に取れる)
+## 型が繋がる次の op(`images` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [sfr_from_edge](../imaging/sfr_from_edge.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md)
+[film_thickness_map](../film/film_thickness_map.md) · [equirect_stabilise](equirect_stabilise.md) · [equirect_from_fisheye_pair](equirect_from_fisheye_pair.md) · [equirect_from_perspectives](equirect_from_perspectives.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md) · [render_transport](../light_transport/render_transport.md) · [separate_direct_global](../light_transport/separate_direct_global.md)
 
 ## 同カテゴリ(`omni360`)
 

@@ -2670,21 +2670,21 @@
 - **L938** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
 - **L1290** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
 - **L6720** — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
-- **L7618** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7740** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L7872** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
-- **L8081** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L8083** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L8085** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L8088** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L8095** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L8097** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L8100** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L8102** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L8104** — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L8106** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L8129** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L8253** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L7697** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7819** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L7951** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L8160** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L8162** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L8164** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L8167** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L8174** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L8176** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L8179** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L8181** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L8183** — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L8185** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L8208** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L8332** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2928,13 +2928,13 @@
 
 ## `typed_catalog.py`
 
-- **L222** — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
-- **L232** — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
-- **L303** — ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、 docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは 検査を通すためであって、遅さを隠すためではない。 fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。 サブピクセル計測。測定線の生成 op は入力を取らないので全引数にヒントが要る。
-- **L368** — ★ここを入れないと surface_params は毎回 fail-closed で拒否され、 カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
-- **L541** — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
-- **L558** — ★法線は**軸に平行にしない**。軸平行だと距離場が 1 軸にしか変化せず、 図の生成器が作る「スライスを並べた GIF」が 1 コマに潰れる(2026-09-08 実測)。 傾けた法線なら全スライスが変わる。長さは効かない(op が正規化する)ので、 正規化していないベクトルを渡してその仕様も見せる。
-- **L630** — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
+- **L239** — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
+- **L249** — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
+- **L320** — ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、 docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは 検査を通すためであって、遅さを隠すためではない。 fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。 サブピクセル計測。測定線の生成 op は入力を取らないので全引数にヒントが要る。
+- **L385** — ★ここを入れないと surface_params は毎回 fail-closed で拒否され、 カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
+- **L558** — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L575** — ★法線は**軸に平行にしない**。軸平行だと距離場が 1 軸にしか変化せず、 図の生成器が作る「スライスを並べた GIF」が 1 コマに潰れる(2026-09-08 実測)。 傾けた法線なら全スライスが変わる。長さは効かない(op が正規化する)ので、 正規化していないベクトルを渡してその仕様も見せる。
+- **L647** — ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋 (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
 
 ## `unified.py`
 

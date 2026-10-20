@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cubemap_from_equirect — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbvideo</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubemap_from_equirect(equi, face_size)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import omni360; omni360.cubemap_from_equirect(equi, face_size)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;cubemap_from_equirect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Resample an equirectangular image into six cubemap faces.</p>
@@ -21,8 +21,8 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:omni360_roundtrip">omni360_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/omni360_roundtrip.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">images</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a> · <a style="color:#22d3bf" href="opoptics:equirect_stabilise">equirect_stabilise</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_fisheye_pair">equirect_from_fisheye_pair</a> · <a style="color:#22d3bf" href="opoptics:equirect_from_perspectives">equirect_from_perspectives</a> · <a style="color:#22d3bf" href="opoptics:video360_viewport_track">video360_viewport_track</a> · <a style="color:#22d3bf" href="opoptics:grating_three_image_retrieve">grating_three_image_retrieve</a> · <a style="color:#22d3bf" href="opoptics:grating_step_period_estimate">grating_step_period_estimate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbvideo</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a> · <a style="color:#22d3bf" href="opoptics:video360_viewport_track">video360_viewport_track</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">omni360</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:equirect_from_cubemap">equirect_from_cubemap</a> · <a style="color:#22d3bf" href="opoptics:viewport_from_equirect">viewport_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:equirect_rotate">equirect_rotate</a> · <a style="color:#22d3bf" href="opoptics:equirect_weight_map">equirect_weight_map</a> · <a style="color:#22d3bf" href="opoptics:ws_psnr">ws_psnr</a> · <a style="color:#22d3bf" href="opoptics:s_psnr">s_psnr</a> · <a style="color:#22d3bf" href="opoptics:equirect_filter_gaussian">equirect_filter_gaussian</a> · <a style="color:#22d3bf" href="opoptics:equirect_stabilise">equirect_stabilise</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

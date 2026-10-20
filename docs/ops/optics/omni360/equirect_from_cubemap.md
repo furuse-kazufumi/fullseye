@@ -2,7 +2,7 @@
 op: equirect_from_cubemap
 dim: optics
 category: omni360
-in: images
+in: rgbvideo
 out: rgbimage
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.7.1  # fullseye lib version this note was generated for
 
 # equirect_from_cubemap — OPTICS `omni360` op
 
-- **データ種**: `images` → `rgbimage`
+- **データ種**: `rgbvideo` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.equirect_from_cubemap(cube, out_shape)` (実装を直接呼ぶなら `import omni360; omni360.equirect_from_cubemap(cube, out_shape)`、台帳から引くなら `opsoptics.get("equirect_from_cubemap")`)
 
 ## 使い方

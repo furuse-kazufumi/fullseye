@@ -5446,7 +5446,7 @@
    "name": "cubemap_from_equirect",
    "halcon": "",
    "in_sort": "rgbimage",
-   "out_sort": "images",
+   "out_sort": "rgbvideo",
    "category": "omni360",
    "tier": "ledger",
    "ledger": "opsoptics",
@@ -8289,14 +8289,14 @@
   {
    "name": "equirect_from_cubemap",
    "halcon": "",
-   "in_sort": "images",
+   "in_sort": "rgbvideo",
    "out_sort": "rgbimage",
    "category": "omni360",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": [
-    "images"
+    "rgbvideo"
    ]
   },
   {
@@ -18963,7 +18963,7 @@
    "name": "ods_render",
    "halcon": "",
    "in_sort": null,
-   "out_sort": "table",
+   "out_sort": "images",
    "category": "omni360",
    "tier": "ledger",
    "ledger": "opsoptics",
@@ -31493,14 +31493,14 @@
   {
    "name": "video360_viewport_track",
    "halcon": "",
-   "in_sort": "images",
-   "out_sort": "images",
+   "in_sort": "rgbvideo",
+   "out_sort": "rgbvideo",
    "category": "omni360",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": [
-    "images"
+    "rgbvideo"
    ]
   },
   {
