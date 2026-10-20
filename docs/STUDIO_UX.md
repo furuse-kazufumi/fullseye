@@ -139,8 +139,11 @@ Ranked by usability payoff; each is a self-contained, testable increment:
    the small arrays are kept (well under 1 MB for a 2048×2048, 5-stage pipeline).
 4. **Recent files / recent pipelines** menu (`QSettings`), and remember window
    geometry + splitter sizes between sessions.
-5. **Non-blocking apply** for slow ops (`QThreadPool`) with a busy indicator, so
-   knob dragging stays responsive on large images.
+5. ~~**Non-blocking apply** for slow ops~~ **(done, Studio slice 5, 2026-10-20)** —
+   GUI runs use a frozen input/settings snapshot in a worker thread. Monotonic
+   generations prevent late older runs from replacing a newer result; progress,
+   cooperative stage-boundary stop, result attribution and changed-settings actions
+   stay visible. Program and ledger runners retain their synchronous path.
 6. ~~**Empty/So-what states**~~ **(done this pass)** — a scalar-feature, contour,
    or no-image result now shows a centred message in the image area (via
    `ImageView.set_message`) instead of a blank view.
