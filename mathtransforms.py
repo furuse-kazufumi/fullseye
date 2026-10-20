@@ -23,6 +23,7 @@ Abel・Hankel も無いことが分かった(全 2,590 op + facade 3,274 名を�
 from __future__ import annotations
 
 import math
+from functools import lru_cache
 
 import numpy as np
 from scipy import interpolate, linalg, special
@@ -171,7 +172,37 @@ def abel_revolve(slice_rows, dr: float = 1.0) -> np.ndarray:
 # ---------------------------------------------------------------------------- #
 # Hankel(quasi-discrete、Guizar-Sicairos & Gutiérrez-Vega 2004)
 # ---------------------------------------------------------------------------- #
-def hankel_transform(r, f, *, r_max: float | None = None, order: int = 0, n: int = 256) -> dict:
+class HankelPlan:
+    """Reusable quasi-discrete Hankel kernel for one ``(order, n)`` pair."""
+    constructions = 0
+
+    def __new__(cls, order: int = 0, n: int = 256):
+        return _hankel_plan(int(order), int(n))
+
+
+class _PreparedHankelPlan:
+    def __init__(self, order, n):
+        HankelPlan.constructions += 1
+        self.order, self.n = order, n
+        j = special.jn_zeros(order, n + 1)
+        self.S, self.jk = j[-1], j[:-1]
+        self.Jp1 = np.abs(special.jv(order + 1, self.jk))
+        self.T = 2.0 * special.jv(order, np.outer(self.jk, self.jk) / self.S) / (
+            np.outer(self.Jp1, self.Jp1) * self.S)
+        self.T_involution_error = float(np.abs(self.T @ self.T - np.eye(n)).max())
+
+
+@lru_cache(maxsize=32)
+def _hankel_plan(order, n):
+    if order < 0:
+        raise ValueError("hankel_transform: order must be non-negative")
+    if n < 8:
+        raise ValueError("hankel_transform: n must be at least 8")
+    return _PreparedHankelPlan(order, n)
+
+
+def hankel_transform(r, f, *, r_max: float | None = None, order: int = 0, n: int = 256,
+                     plan: HankelPlan | None = None) -> dict:
     """p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。
 
     ``(r, f)`` は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、``r_max``(既定 = r の最大値)の外は 0。
@@ -196,9 +227,10 @@ def hankel_transform(r, f, *, r_max: float | None = None, order: int = 0, n: int
     R = float(r_max)
     if not R > 0:
         raise ValueError("hankel_transform: r_max は正")
-    j = special.jn_zeros(p, n + 1)
-    S = j[-1]
-    jk = j[:-1]
+    plan = HankelPlan(p, n) if plan is None else plan
+    if plan.order != p or plan.n != n:
+        raise ValueError("hankel_transform: plan does not match order and n")
+    S, jk = plan.S, plan.jk
     rin = r
     r = jk * R / S
     nu = jk / (2.0 * math.pi * R)
@@ -213,12 +245,11 @@ def hankel_transform(r, f, *, r_max: float | None = None, order: int = 0, n: int
         fr = np.interp(r, rr, ff, right=0.0)
     if fr.shape != r.shape or not np.all(np.isfinite(fr)):
         raise ValueError("hankel_transform: f(r) が標本点で有限な実数配列にならない")
-    Jp1 = np.abs(special.jv(p + 1, jk))
-    T = 2.0 * special.jv(p, np.outer(jk, jk) / S) / (np.outer(Jp1, Jp1) * S)
+    Jp1, T = plan.Jp1, plan.T
     F1 = fr / Jp1 * R
     F2 = T @ F1
     F = F2 * Jp1 / V
-    inv_err = float(np.abs(T @ T - np.eye(n)).max())
+    inv_err = plan.T_involution_error
     return {"r": r, "f": fr, "nu": nu, "F": F, "T_involution_error": inv_err}
 
 
@@ -490,9 +521,14 @@ def _analysis_axis(a, h, g, axis):
     n = a.shape[-1]
     if n % 2:
         raise ValueError("dwt_transform: 各段で変換する軸の長さは偶数(2^levels の倍数)")
-    idx = (2 * np.arange(n // 2)[:, None] + np.arange(h.size)[None, :]) % n   # 周期境界 → 厳密に直交
-    seg = a[..., idx]
-    lo, hi = seg @ h, seg @ g
+    m = n // 2
+    lo = np.zeros(a.shape[:-1] + (m,), dtype=np.result_type(a, h))
+    hi = np.zeros_like(lo)
+    base = 2 * np.arange(m)
+    for j in range(h.size):
+        v = a[..., (base + j) % n]
+        lo += v * h[j]
+        hi += v * g[j]
     return np.moveaxis(lo, -1, axis), np.moveaxis(hi, -1, axis)
 
 
@@ -571,8 +607,9 @@ def dwt_inverse(coeffs: dict) -> np.ndarray:
     return cur
 
 
-def hankel_image(image, *, center=None, spacing: float = 1.0, n: int = 256, r_max: float | None = None) -> dict:
-    """軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
+def hankel_image(image, *, center=None, spacing: float = 1.0, n: int = 256,
+                 r_max: float | None = None, memory_budget: int | None = None) -> dict:
+    """軸対称な画像の2次元フーリエ変換を動径のHankel変換で求める。``memory_budget`` は実測差1e-10以下の省メモリ経路。
 
     画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、``hankel_transform``(0 次)にかける。
     軸対称なら 2 次元の変換が**1 本の積分**で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称から
@@ -599,6 +636,37 @@ def hankel_image(image, *, center=None, spacing: float = 1.0, n: int = 256, r_ma
     if not (h > 0 and math.isfinite(h)):
         raise ValueError("hankel_image: spacing は正の有限値")
     H, W = img.shape
+    if memory_budget is not None:
+        if center is None:
+            tot = img.sum()
+            if not tot > 0:
+                raise ValueError("hankel_image: positive total brightness is required")
+            cy = float(np.dot(np.arange(H), img.sum(axis=1)) / tot)
+            cx = float(np.dot(np.arange(W), img.sum(axis=0)) / tot)
+        else:
+            cy, cx = (float(v) for v in center)
+        lim = min(cy, cx, H-1-cy, W-1-cx) if r_max is None else float(r_max)/h
+        if lim < 4: raise ValueError("hankel_image: radius must be at least 4 pixels")
+        nb = int(lim) + 1
+        cnt = np.zeros(nb); s1 = np.zeros(nb); sr = np.zeros(nb)
+        rows = max(1, int(memory_budget) // max(1, W * 32))
+        x = np.arange(W, dtype=np.float64)[None, :]
+        for y0 in range(0, H, rows):
+            y = np.arange(y0, min(H, y0+rows), dtype=np.float64)[:, None]
+            rr0 = np.hypot(y-cy, x-cx); k0 = np.rint(rr0).astype(int); sel0 = k0 < nb
+            cnt += np.bincount(k0[sel0], minlength=nb); s1 += np.bincount(k0[sel0], img[y0:y0+rows][sel0], minlength=nb)
+            sr += np.bincount(k0[sel0], rr0[sel0], minlength=nb)
+        ok = cnt > 0; prof = s1[ok]/cnt[ok]; r = sr[ok]/cnt[ok]*h
+        num2 = den2 = 0.0
+        for y0 in range(0, H, rows):
+            band = img[y0:y0+rows]; y = np.arange(y0, y0+band.shape[0], dtype=np.float64)[:,None]
+            rr0 = np.hypot(y-cy, x-cx); k0 = np.rint(rr0).astype(int); sel0 = k0 < nb
+            delta = band[sel0] - np.interp(rr0[sel0]*h, r, prof)
+            num2 += float(np.dot(delta, delta)); den2 += float(np.dot(band[sel0], band[sel0]))
+        asym = math.sqrt(num2 / max(den2, np.finfo(float).tiny))
+        ht = hankel_transform(r, prof, r_max=float(r[-1]), order=0, n=int(n))
+        return {"nu": ht["nu"], "F": ht["F"], "r": r, "profile": prof,
+                "center": (cy,cx), "asymmetry": asym}
     yy, xx = np.indices(img.shape, dtype=np.float64)
     if center is None:
         tot = img.sum()
