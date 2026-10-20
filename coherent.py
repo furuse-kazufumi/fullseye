@@ -297,11 +297,12 @@ def _acf_cuts(img, up):
     """正規化した強度の自己共分散(周期境界)の x・y 断面を、フーリエ補間で up 倍に細かく。"""
     d = img - img.mean()
     ny, nx = d.shape
-    S = np.abs(np.fft.fft2(d)) ** 2
     out = []
     for axis in (0, 1):
         # 断面 = パワースペクトルを他方の軸で足して 1-D の逆変換(Wiener–Khinchin の 1-D 版)
-        s1 = S.sum(axis=1 - axis)
+        # 2-D 複素スペクトルを保持せず、その軸だけの FFT と Parseval で得る。
+        f1 = np.fft.fft(d, axis=axis)
+        s1 = np.sum(f1.real * f1.real + f1.imag * f1.imag, axis=1 - axis)
         n = s1.size
         m = n * up
         pad = np.zeros(m, dtype=np.complex128)
