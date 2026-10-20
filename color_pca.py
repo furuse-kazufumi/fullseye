@@ -120,7 +120,8 @@ def gen_principal_comp_trans(images):
     D = F.shape[-1]
     X = F.reshape(-1, D)
     mu = X.mean(0)
-    cov = np.cov((X - mu).T)
+    Xc = X - mu
+    cov = Xc.T @ Xc / (Xc.shape[0] - 1)
     w, V = np.linalg.eigh(cov)
     order = np.argsort(w)[::-1]
     return {"mean": mu, "eigenvectors": V[:, order], "eigenvalues": w[order]}
@@ -132,10 +133,19 @@ def principal_comp(images):
     if isinstance(F, (list, tuple)):
         F = np.stack([_img(f) for f in F], axis=-1)
     F = _img(F); H, W, D = F.shape
-    pc = gen_principal_comp_trans(F)
-    X = F.reshape(-1, D) - pc["mean"]
-    proj = X @ pc["eigenvectors"]
-    return proj.reshape(H, W, D)
+    X = F.reshape(-1, D)
+    mu = X.mean(0)
+    Xc = X - mu
+    cov = Xc.T @ Xc / (Xc.shape[0] - 1)
+    w, V = np.linalg.eigh(cov)
+    order = np.argsort(w)[::-1]
+    # Xc はこの関数だけの配列なので、射影結果で上書きして同じ大配列を再利用する。
+    # 全画素ぶんの右辺を同時に作らず、作業配列が画像と同じ大きさにならないよう分割する。
+    basis = V[:, order]
+    for start in range(0, Xc.shape[0], 65536):
+        stop = min(start + 65536, Xc.shape[0])
+        Xc[start:stop] = Xc[start:stop] @ basis
+    return Xc.reshape(H, W, D)
 
 
 def gen_canonical_variates_trans(images, labels):
@@ -157,11 +167,16 @@ def gen_canonical_variates_trans(images, labels):
 
 
 def inpainting_ced(image, region, iterations=300, sigma=1.0):
-    """コヒーレンス強調拡散(構造テンソル方向へ拡散)でインペイント(inpainting_ced)。"""
+    """コヒーレンス強調拡散(構造テンソル方向へ拡散)でインペイント(inpainting_ced)。
+
+    現在のコヒーレンス項は平滑化勾配を使わない。``sigma`` は入力検証のために残す。
+    """
     from scipy.ndimage import gaussian_filter
-    im = _img(image).copy(); m = np.asarray(region, bool)
-    for _ in range(int(iterations)):
-        gy, gx = np.gradient(gaussian_filter(im, sigma))
+    im = _img(image).copy(); m = np.asarray(region, bool); count = int(iterations)
+    if count:
+        # 空配列なら畳み込みを行わず、従来と同じ sigma の正規化・検証だけを通せる。
+        gaussian_filter(np.empty((0,) * im.ndim), sigma)
+    for _ in range(count):
         # 勾配に直交する方向へ優先拡散(等値線方向)
         lap_perp = (np.roll(im, 1, 0) + np.roll(im, -1, 0) + np.roll(im, 1, 1) + np.roll(im, -1, 1)
                     - 4 * im)
