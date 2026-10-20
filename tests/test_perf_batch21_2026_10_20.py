@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import heapq
+import hashlib
 import itertools
 import math
 
@@ -10,6 +11,7 @@ import pytest
 from scipy.special import j0, j1
 
 import agvfleet as AF
+import carpath as CP
 import cavityoptics as CO
 import fiberoptics as FO
 import illumdesign as ID
@@ -225,3 +227,29 @@ def _tem_projected_potential_old(atoms, elements, shape=256, pixel_A=.5):
         form = TEM._electron_form_factor(name, q / 2.)
         out += np.fft.fft2(TEM._splat(xy[idx], ny, nx, px)) * form / transfer
     return TEM.POTENTIAL_CONST * np.fft.ifft2(out).real / (px * px)
+
+
+def test_176_180_hybrid_astar_random_maps_keep_path_and_expansion_sequence():
+    expected = [
+        (13, "24a0465142cacde2", "996ebd98ce7a9a6f"), (123, "86577c002c41278f", "e7d660f26fc100a9"),
+        (13, "36d21aac7b1afc14", "c2010acd2903aaf4"), (27, "79512c2429f292e5", "14f5c8151fd51097"),
+        (15, "a511b6b737393c6b", "6244ad65c7abe87d"), (1, "bd66f9a34ae53532", "c318351838478b00"),
+        (31, "3bc29dc9e19f8d7c", "c12186100ec65825"), (5, "0e256e568f7b578e", "5ccf6328cdfec492"),
+        (39, "52b6a0670397d5e9", "a713579791b37e64"), (15, "e72bf889a8151246", "34c6fefba181d8d9"),
+        (135, "08123c2876743787", "4bd0902f62c0bb12"), (153, "39804dc10afb035c", "60c746353fb90cb2"),
+        (1, "bd66f9a34ae53532", "c318351838478b00"), (1, "bd66f9a34ae53532", "c318351838478b00"),
+        (5, "b56a1e087b39672c", "152aabc369bcd971"), (31, "07d11c63fd638ece", "e2b5bf6c4e3383ed"),
+        (5, "82681fd7ec9dc682", "ffaf02eba3952d82"), (33, "7593ec5cba0d719f", "14ff34002eba6f57"),
+        (13, "e47a70b53e68881f", "7fcca667d029c921"), (13, "4e739b8f7e036f60", "a623f03e0dfade20"),
+    ]
+    rng = np.random.default_rng(21176)
+    poses = np.array([[1.5, 1.5, .15], [16.5, 16.5, -.2]])
+    for want in expected:
+        occupancy = rng.random((18, 18)) < .08
+        occupancy[1:4, 1:4] = False
+        occupancy[-4:-1, -4:-1] = False
+        got = CP.car_hybrid_astar(occupancy, poses, radius=2., cell=1., shot_every=2,
+                                  max_expansions=20_000, return_tree=True)
+        path_hash = hashlib.sha256(np.asarray(got["points"]).tobytes()).hexdigest()[:16]
+        tree_hash = hashlib.sha256(np.asarray(got["tree"]).tobytes()).hexdigest()[:16]
+        assert (got["n_expanded"], path_hash, tree_hash) == want
