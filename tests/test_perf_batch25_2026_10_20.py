@@ -11,6 +11,7 @@ import occupancy
 import varmodel
 import mathnumerics
 import mathspectral
+import deconvstop
 
 
 def _inflate_reference(occ, radius, voxel_size=1.0):
@@ -188,6 +189,32 @@ def test_282_lomb_scargle_chunked_matches_reference():
     expected = _lomb_scargle_reference(t, y, freq)
     got = mathspectral.lomb_scargle(t, y, freq, chunk=37)["power"]
     np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
+
+
+def test_274_276_rl_compact_path_matches_history_reference(monkeypatch):
+    rng = np.random.default_rng(274)
+    image = rng.poisson(20.0, size=(32, 33)).astype(np.float64)
+    kwargs = {"tau": 1e-12, "max_iter": 12, "plateau_window": 20,
+              "plateau_rtol": 1e-300}
+    reference = deconvstop.iv_richardson_lucy_until(
+        image, keep_history=True, **kwargs)
+    calls = 0
+    original_conj = deconvstop.np.conj
+
+    def counted_conj(value):
+        nonlocal calls
+        calls += 1
+        return original_conj(value)
+
+    monkeypatch.setattr(deconvstop.np, "conj", counted_conj)
+    got = deconvstop.iv_richardson_lucy_until(
+        image, keep_history=False, **kwargs)
+    assert calls == 1
+    assert "discrepancy_history" not in got
+    assert got["status"] == reference["status"]
+    assert got["n_iter"] == reference["n_iter"]
+    assert got["discrepancy"] == reference["discrepancy"]
+    assert np.array_equal(got["last_iterate"], reference["last_iterate"])
 
 
 def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch):
