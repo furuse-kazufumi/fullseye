@@ -50,3 +50,15 @@ slopes, confidence = lightfield.lf_depth_from_focus(decoded, sweep)
 ## 実寸校正
 
 一様な白色面から MLA のピッチ、回転、原点を校正し、距離既知の三平面でスロープからメートルへの変換を確認する。
+
+## 生画像が実機らしく見える条件
+
+プレノプティック生画像には、円盤状マイクロ像の格子、円盤間の暗い隅、各円盤内で反転・移動する場面断片が現れ、復号後の EPI には視差に応じた斜線が現れる。この PoC の白色面では暗い隅が 21.33 %（正方格子の閉形式 `1 - π/4` は 21.46 %）、円盤端の輝度比が `9.92e-6`、最強の非直流ピークが `1/15 = 0.06667 cycle/pixel` だった。EPI の点像移動は 1 view あたり 0.6 px である。開口を除く探針では暗い隅が 0 % となり、この門を通らない。
+
+The raw-frame resemblance is measured rather than asserted: a lattice of
+microimage discs has dark inter-disc corners and shifted, inverted scene
+fragments inside the discs, while decoding produces slanted disparity lines in
+the EPI.  The white-frame measurements are 21.33% dark corners (closed form
+`1 - pi/4 = 21.46%`), a `9.92e-6` rim/core intensity ratio, and the strongest
+off-centre spectral peak at `1/15 = 0.06667 cycle/pixel`; the EPI track moves
+0.6 px per view.  Removing the aperture gives 0% dark corners and fails the gate.
