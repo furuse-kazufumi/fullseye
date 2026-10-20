@@ -19,6 +19,7 @@ import os
 import tempfile
 import re
 import sys
+import traceback
 
 import numpy as np
 
@@ -32,6 +33,8 @@ import flow          # v14 perception panel
 import motion
 import stereo
 import terrain
+from studio_search import search_grouped, search_zero_results_help
+import studio_errors
 
 
 # --------------------------------------------------------------------------- #
@@ -6578,8 +6581,82 @@ def build_window(model=None):
     olay.addLayout(oprow); olay.addWidget(op_hint)
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
+    search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
+                    "chips": [], "groups": {}}
+
+    def _search_current_value():
+        try:
+            i = stage_list.currentRow()
+        except NameError:
+            i = -1
+        if 0 <= i < len(model.stages):
+            try:
+                return model.result_upto(i)
+            except Exception:
+                return None
+        return model.image
+
+    def _add_search_row(group, row):
+        bridge = "" if group != "needs_preprocessing" else "".join(" → " + n for n in row.get("bridge", []))
+        text_ = "%s  (%s)\n入力: %s → 出力: %s%s" % (
+            row.get("label") or row["name"], row["name"], row.get("in_sort") or "?",
+            row.get("out_sort") or "?", bridge)
+        it = QtWidgets.QListWidgetItem(text_); it.setData(QtCore.Qt.UserRole, row["name"])
+        it.setData(QtCore.Qt.UserRole + 3, group)
+        tip = ", ".join(row.get("why") or [])
+        if row.get("tier") == "unavailable":
+            tip = (tip + "\n" if tip else "") + tr("Missing optional extra: %s") % row["name"].split("_")[0]
+            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(MUTED))
+        it.setToolTip(tip); op_list.addItem(it)
+        box = QtWidgets.QWidget(); h = QtWidgets.QHBoxLayout(box); h.setContentsMargins(2, 1, 2, 1)
+        label = QtWidgets.QLabel(text_); label.setWordWrap(True); h.addWidget(label, 1)
+        run = QtWidgets.QPushButton(tr("Try on current data")); help_ = QtWidgets.QPushButton(tr("Help"))
+        enabled = row.get("tier") != "unavailable"; run.setEnabled(enabled); help_.setEnabled(enabled)
+        run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
+        help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
+        h.addWidget(run); h.addWidget(help_); it.setSizeHint(box.sizeHint()); op_list.setItemWidget(it, box)
+        search_state["rows"][group].append(dict(row, text=text_, item=it, try_button=run, help_button=help_))
+
+    def grouped_search(query=None):
+        q = search.text().strip() if query is None else str(query)
+        if query is not None and search.text() != q:
+            search.blockSignals(True); search.setText(q); search.blockSignals(False)
+        op_list.clear(); search_state["chips"] = []; search_state["groups"] = {}
+        search_state["rows"] = {g: [] for g in ("applicable", "needs_preprocessing", "other")}
+        result = search_grouped(q, current_value=_search_current_value(), k=40,
+                                lang=_UI_LANG.get("code", "en"))
+        headers = {"applicable": tr("Applicable to the current input"),
+                   "needs_preprocessing": tr("Needs preprocessing"), "other": tr("Other")}
+        count = sum(len(result[g]) for g in headers)
+        if count:
+            for group, title_ in headers.items():
+                head = QtWidgets.QListWidgetItem("▾ " + title_)
+                head.setData(QtCore.Qt.UserRole + 4, group); head.setFlags(QtCore.Qt.ItemIsEnabled)
+                op_list.addItem(head); search_state["groups"][group] = head
+                for row in result[group]:
+                    _add_search_row(group, row)
+        else:
+            help_data = search_zero_results_help(q, lang=_UI_LANG.get("code", "en"))
+            terms = list(help_data.get("nearest_ops") or help_data.get("nearest_terms") or [])
+            terms += list(help_data.get("categories") or []) + list(help_data.get("sorts") or [])
+            if not terms:
+                terms = [q[:-1] or "image"]
+            note = QtWidgets.QListWidgetItem(tr("No exact results. Try a nearby term:"))
+            note.setFlags(QtCore.Qt.NoItemFlags); op_list.addItem(note)
+            chiprow = QtWidgets.QWidget(); h = QtWidgets.QHBoxLayout(chiprow); h.setContentsMargins(2, 2, 2, 2)
+            for term in terms[:8]:
+                b = QtWidgets.QPushButton(str(term)); b.clicked.connect(
+                    lambda _=False, t=str(term): grouped_search(t))
+                h.addWidget(b); search_state["chips"].append(b)
+            h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
+            chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
+        return result
+
     def refill_ops():
         kw = search.text().lower(); c = cat.currentText()
+        if kw:
+            grouped_search(kw)
+            return
         op_list.clear()
         ranked = []
         for r in all_ops:
@@ -7146,7 +7223,7 @@ def build_window(model=None):
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
-             "program_error": None, "stage_lines": None,
+             "program_error": None, "structured_errors": [], "stage_lines": None,
              "renders": 0, "image_path": None, "pipe_path": None,
              "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
@@ -7189,17 +7266,29 @@ def build_window(model=None):
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
-    def report_error(title, text):
+    def report_error(title, text, *, op_name=None, stage_index=None, inputs=None):
         """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
 
         Also appended to ``state['errors']`` so a headless test can assert on it
         without stubbing the dialog."""
         state["errors"].append((title, str(text)))
-        flash("%s: %s" % (title, truncate(text, 120)))
+        exc = text if isinstance(text, BaseException) else RuntimeError(str(text))
+        info = studio_errors.explain_failure(
+            exc, op_name=op_name, stage_index=stage_index, inputs=inputs)
+        info["_traceback"] = ("".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+                              if isinstance(text, BaseException) else str(text))
+        info["_source_title"] = title
+        state["structured_errors"].append(info)
+        flash(studio_errors.localize(info["title"], _UI_LANG.get("code", "en")))
         try:
-            ERROR_HOOK(win, title, str(text))
+            refresh_problems(model.cached_step_states())
+        except NameError:                         # only possible during early window construction
+            pass
+        try:
+            ERROR_HOOK(win, title, studio_errors.format_failure(info, _UI_LANG.get("code", "en")))
         except Exception:                 # a stubbed/absent dialog must never crash us
             pass
+    win._report_error = report_error
 
     def confirm_discard(title, what="the current pipeline"):
         """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
@@ -7423,11 +7512,69 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, -1)
             it.setForeground(QtGui.QColor("#c9a227"))
             problems_list.addItem(it)
-        if not probs and not perr and not rerr and not notes and not pin_bad:
+        # Structured runtime failures keep the full cause/place/next-action text and
+        # put the proposed actions beside it.  Nothing here mutates input data.
+        for info_ in state.get("structured_errors", []):
+            text_ = studio_errors.format_failure(info_, _UI_LANG.get("code", "en"))
+            it = QtWidgets.QListWidgetItem(text_)
+            idx_ = info_.get("place", {}).get("stage")
+            it.setData(QtCore.Qt.UserRole, idx_ if idx_ is not None else -1)
+            it.setData(QtCore.Qt.UserRole + 10, info_)
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+            box = QtWidgets.QWidget()
+            lay = QtWidgets.QVBoxLayout(box); lay.setContentsMargins(3, 3, 3, 3)
+            label = QtWidgets.QLabel(text_); label.setWordWrap(True); lay.addWidget(label)
+            actions = QtWidgets.QHBoxLayout(); lay.addLayout(actions)
+            for action in info_.get("actions", []):
+                kind = action.get("kind")
+                if kind not in studio_errors.ACTION_KINDS:
+                    continue
+                button = QtWidgets.QPushButton(studio_errors.localize(
+                    action.get("label"), _UI_LANG.get("code", "en")))
+                button.setProperty("action_kind", kind)
+                button.clicked.connect(lambda _=False, k=kind, a=action, inf=info_:
+                                       _run_problem_action(k, a, inf))
+                actions.addWidget(button)
+            actions.addStretch(1)
+            box.adjustSize()
+            it.setSizeHint(box.sizeHint())
+            problems_list.setItemWidget(it, box)
+        if not probs and not perr and not rerr and not notes and not pin_bad \
+                and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
             problems_list.addItem(hint)
+
+    def _run_problem_action(kind, action, info):
+        idx = info.get("place", {}).get("stage")
+        if kind == "reselect_input":
+            load_image()
+        elif kind == "show_inputs_side_by_side":
+            if isinstance(idx, int) and 0 <= idx < len(model.stages):
+                stage_list.setCurrentRow(idx)
+            win._docks["compare"].show()
+            update_stage_compare()
+        elif kind == "open_log":
+            dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Detailed log")); dlg.setModal(False)
+            lay = QtWidgets.QVBoxLayout(dlg)
+            edit = QtWidgets.QPlainTextEdit(); edit.setReadOnly(True)
+            edit.setPlainText(info.get("_traceback") or info.get("raw", "")); lay.addWidget(edit)
+            dlg.resize(680, 360); dlg.show()
+            win._last_error_log = edit; win._last_error_log_dialog = dlg
+        elif kind == "edit_knob":
+            if isinstance(idx, int) and 0 <= idx < len(model.stages):
+                stage_list.setCurrentRow(idx); krow_a.typed.setFocus()
+        elif kind == "insert_stage":
+            candidates = action.get("candidates") or []
+            search.setText(candidates[0] if candidates else info.get("place", {}).get("op") or "")
+            search.setFocus()
+
+    def _problem_buttons(item):
+        box = problems_list.itemWidget(item)
+        return box.findChildren(QtWidgets.QPushButton) if box is not None else []
+    win._problem_buttons = _problem_buttons
 
     def on_rows_moved(*_):
         """A drag-reorder inside the stage list -> permute model.stages to match."""
@@ -8186,6 +8333,8 @@ def build_window(model=None):
 
     def add_op(item):
         name = item.data(QtCore.Qt.UserRole)
+        if not name:
+            return
         row = _op_row(name)
         if row and row.get("backend") == "general":     # double-click on a read-only general op
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
@@ -8272,20 +8421,21 @@ def build_window(model=None):
     win._insert_program_line = _insert_program_line
     win._place_program_cursor = _place_program_cursor
 
-    def run_op_once():
+    def run_op_once(name=None, base=None):
         """HDevelop single-step: apply the selected operator ONCE with the a, b from
         the operator panel to the loaded image, and show the result in a graphics
         window. The pipeline is NOT modified (a scratch preview)."""
         cur = op_list.currentItem()
-        if cur is None:
-            return
-        name = cur.data(QtCore.Qt.UserRole)
+        if name is None:
+            if cur is None:
+                return
+            name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         if row and row.get("backend") == "general":
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
                   "imgevolve.py algo run %s" % (name, name))
             return
-        base = model.image
+        base = _search_current_value() if base is None else base
         if base is None:
             flash("load an image first (File ▸ Open image / Synthetic demo)")
             return
@@ -8294,7 +8444,7 @@ def build_window(model=None):
         try:
             out = api.apply(base, name, a, b)
         except Exception as e:
-            report_error("Run once", e)
+            report_error("Run once", e, op_name=name, inputs=[base])
             return
         # ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を
         # Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか
@@ -10027,7 +10177,10 @@ def build_window(model=None):
         dlg.exec()
 
     # operator browser filters
-    search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
+    search_timer = QtCore.QTimer(win); search_timer.setSingleShot(True); search_timer.setInterval(250)
+    search_timer.timeout.connect(refill_ops)
+    search.textChanged.connect(lambda _=None: search_timer.start())
+    cat.currentIndexChanged.connect(refill_ops)
 
     # HDevelop-style autocomplete: typing shows op-name candidates in a popup; picking
     # one clears the category filter, filters the list to it, and selects it.
@@ -10109,20 +10262,41 @@ def build_window(model=None):
                          or ("(unused by %s)" % name if b_unused else "argument b"))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
+    def _toggle_search_group(item):
+        group = item.data(QtCore.Qt.UserRole + 4)
+        if not group:
+            return
+        rows = search_state["rows"].get(group, [])
+        collapsed = any(not r["item"].isHidden() for r in rows)
+        for r in rows:
+            r["item"].setHidden(collapsed)
+        item.setText(("▸ " if collapsed else "▾ ") + item.text()[2:])
+    op_list.itemClicked.connect(_toggle_search_group)
     win._op_arg_labels = (lbl_a, lbl_b)
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
-    b_run_once.clicked.connect(run_op_once)
+    b_run_once.clicked.connect(lambda _=False: run_op_once())
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
     op_list.itemActivated.connect(add_op)
 
     def _insert_searched_op():
         """Enter in the search box inserts the highlighted (or first) filtered op."""
-        it = op_list.currentItem() or (op_list.item(0) if op_list.count() else None)
+        if search.text().strip():
+            search_timer.stop()
+            grouped_search(search.text().strip())
+        it = op_list.currentItem()
+        if it is None or not it.data(QtCore.Qt.UserRole):
+            it = next((op_list.item(i) for i in range(op_list.count())
+                       if op_list.item(i).data(QtCore.Qt.UserRole)), None)
         if it is not None:
             add_op(it)
     search.returnPressed.connect(_insert_searched_op)
+    win._search_ui = {
+        "edit": search, "list": op_list, "timer": search_timer, "search_now": grouped_search,
+        "rows": lambda: search_state["rows"], "chips": lambda: search_state["chips"],
+        "try": lambda name: run_op_once(name, _search_current_value()),
+    }
 
     def jump_to_problem(item):
         idx = item.data(QtCore.Qt.UserRole)
@@ -10261,13 +10435,16 @@ def build_window(model=None):
     def _set_stage_lines(lines):
         state["stage_lines"] = list(lines) if lines is not None else None
 
-    def _fail_stage(i, name, exc, timings, what):
+    def _fail_stage(i, name, exc, timings, what, inputs=None):
         """A stage raised inside the program runner: stop THERE, put the cursor on its
         line, name it in the status + Problems (F4 review finding)."""
         ln = _stage_line(i)
         msg = "✕ %s: stage %d (%s) on line %d failed: %s" % (what, i + 1, name, ln, truncate(exc, 140))
         code_status.setText(msg)
-        state["program_error"] = (i, name, str(exc))
+        info = studio_errors.explain_failure(exc, op_name=name, stage_index=i, inputs=inputs)
+        info["_traceback"] = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        state["structured_errors"].append(info)
+        state["program_error"] = (i, name, studio_errors.format_failure(info, _UI_LANG.get("code", "en")))
         if state["dev_update"]["time"]:
             code_edit.set_timings(timings)
         if state["dev_update"]["pc"]:
@@ -10377,7 +10554,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:             # unknown op (KeyError) or the op raised
-                _fail_stage(i, name, e, timings, "run"); return
+                _fail_stage(i, name, e, timings, "run", [v]); return
             ln = _stage_line(i)
             timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
@@ -10415,7 +10592,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:
-                _fail_stage(i, name, e, tmap, "step"); return
+                _fail_stage(i, name, e, tmap, "step", [v]); return
             if i == nxt - 1:
                 tmap[_stage_line(i)] = (_time.perf_counter() - t0) * 1000.0
         if state["dev_update"]["time"]:
@@ -10448,7 +10625,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:
-                _fail_stage(i, name, e, timings, "continue"); return
+                _fail_stage(i, name, e, timings, "continue", [v]); return
             ln = _stage_line(i)
             timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
@@ -13375,6 +13552,7 @@ def build_window(model=None):
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
                 st["error"] = "%s: %s" % (type(e).__name__, e)
                 info.setPlainText(st["error"]); pic.clear()
+                report_error("Run ledger op", e, op_name=st["op"], inputs=locals().get("data"))
                 return None
             st["result"], st["error"] = out, None
             st["history"].append(st["script"])
