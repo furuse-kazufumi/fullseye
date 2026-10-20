@@ -6,6 +6,11 @@ All distances are millimetres except the metric depth returned by
 sensor sample selects a point of the main-lens exit pupil through one spherical
 microlens, then :mod:`lensrender` traces that ray through the complete main-lens
 prescription.  Diffraction and sensor cross-talk are intentionally absent.
+
+The unfocused (``1.0``) geometry follows Ng et al., *Light Field Photography
+with a Hand-Held Plenoptic Camera*, Stanford Tech Report CSTR 2005-02.  The
+focused (``2.0``) geometry follows Lumsdaine and Georgiev, *The Focused
+Plenoptic Camera*, ICCP 2009.
 """
 from __future__ import annotations
 
@@ -51,8 +56,9 @@ def mla_surface(pitch_mm, radius_mm, n_lenslets=(1, 1), f_number=None,
                 offset_mm=(0, 0), shape="square"):
     """Describe a periodic spherical-cap microlens array surface.
 
-    ``radius_mm`` is signed.  The clear lenslet aperture is one pitch for a
-    square lattice and the inscribed circular aperture for a hexagonal lattice.
+    ``radius_mm`` is signed.  Each lenslet has a circular clear aperture with
+    diameter equal to one pitch.  Thus a square lattice has opaque cell corners;
+    ``shape='hex'`` changes the centre lattice, not the circular lens boundary.
     If ``f_number`` is supplied it is checked against ``abs(radius)/(n-1)/pitch``
     using the paraxial focal length stored as ``focal_mm``.
     """
@@ -202,6 +208,14 @@ def plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None,
     # At the MLA focal plane, local pixel position is a pupil coordinate.
     uv = local / (system["microimage_diameter_mm"] / 2)
     valid = hit["valid"] & (np.sum(uv*uv, axis=1) <= 1.0 + 1e-12)
+    # A finite sensor pixel straddles the circular clear-aperture edge.  Model
+    # its covered area with a short edge ramp instead of turning the last pixel
+    # into a fully illuminated square.  This produces the measured cat's-eye
+    # fall-off while leaving the interior radiometrically flat.
+    rho = np.linalg.norm(local, axis=1)
+    aperture_radius = system["mla"]["pitch_mm"] / 2
+    edge_width = system["pixel_pitch_mm"] * 1.5
+    aperture_weight = np.clip((aperture_radius-rho) / edge_width, 0.0, 1.0) ** 6
     raw = np.zeros(len(flat)); white = np.zeros(len(flat)); traced_uv = uv.copy()
     for wl in wls:
         geo = LR._geometry(system["main_lens"], float(wl), op="plenoptic_capture")
@@ -212,9 +226,10 @@ def plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None,
         D = U-S; D /= np.linalg.norm(D, axis=1, keepdims=True)
         o, d, tr, ok, _ = LR._trace_back(system["main_lens"], geo, S, D)
         good = valid & ok
-        white += np.where(good, tr, 0.0)
+        white += np.where(good, tr * aperture_weight, 0.0)
         if np.any(good):
-            raw[good] += LR._radiance(scene, o[good], d[good], [float(wl)], np.ones(1))[0][:, 0] * tr[good]
+            raw[good] += (LR._radiance(scene, o[good], d[good], [float(wl)], np.ones(1))[0][:, 0]
+                          * tr[good] * aperture_weight[good])
     H, W = system["sensor_size"]
     scale = 1.0 / len(wls)
     return {"raw": (raw*scale).reshape(H, W), "white_image": (white*scale).reshape(H, W),

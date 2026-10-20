@@ -61,6 +61,43 @@ def test_capture_records_pixel_to_pupil_truth():
     assert np.all(np.isfinite(cap["pupil_uv"]))
 
 
+def _white_microimage_gates(white, pitch):
+    """Return physical raw-frame measurements without trusting model metadata."""
+    tile = white[:pitch, :pitch]
+    yy, xx = np.indices(tile.shape, dtype=float)
+    cy = cx = (pitch - 1) / 2
+    radius = pitch / 2
+    rr = np.hypot(xx-cx, yy-cy)
+    dark_corner_fraction = float((tile <= np.finfo(float).eps * tile.max()).mean())
+    core = tile[rr <= radius-1.5]
+    rim = tile[(rr > radius-.5) & (rr <= radius+.5)]
+    radial_rim_ratio = float(np.median(rim) / np.median(core))
+    power = np.abs(np.fft.fftshift(np.fft.fft2(white-white.mean())))**2
+    c = np.array(power.shape)//2
+    power[c[0]-1:c[0]+2, c[1]-1:c[1]+2] = 0
+    iy, ix = np.unravel_index(np.argmax(power), power.shape)
+    peak_frequency = float(np.hypot(iy-c[0], ix-c[1]) / white.shape[0])
+    return dark_corner_fraction, radial_rim_ratio, peak_frequency
+
+
+def test_white_frame_is_periodic_vignetted_microimage_discs_and_probe_is_red():
+    pitch = 15
+    sys = _system(size=(pitch*9, pitch*9))
+    scene = LR.lens_scene([{"type":"plane", "z_mm":-1000, "albedo":1.0}],
+                          [{"type":"directional", "to_light":(0,0,1),
+                            "irradiance_W_m2_nm":1}])
+    white = P.plenoptic_capture(sys, scene)["white_image"]
+    corner, rim, frequency = _white_microimage_gates(white, pitch)
+    assert corner == pytest.approx(1-math.pi/4, abs=.05)
+    assert rim < .10
+    assert frequency == pytest.approx(1/pitch, abs=1/white.shape[0])
+
+    # Broken probe: removing the lenslet aperture fills the opaque corners.
+    no_aperture = np.ones_like(white) * white.max()
+    broken_corner, _, _ = _white_microimage_gates(no_aperture, pitch)
+    assert abs(broken_corner-(1-math.pi/4)) > .05
+
+
 def test_decode_exact_aligned_matches_existing_decode():
     rng=np.random.default_rng(2)
     lf=rng.random((5,5,4,4)); raw=LF.lf_to_mla(lf)
