@@ -76,6 +76,20 @@ def test_311_anderson_linear_combination_and_314_box_mean_gates():
             np.testing.assert_allclose(got, old, rtol=0, atol=1e-12)
 
 
+def test_316_sparse_and_dense_shading_match_full_reference():
+    rng = np.random.default_rng(316)
+    for fraction in (.01, .8):
+        normals = rng.normal(size=(101, 131, 3)).astype(np.float32)
+        sil = (rng.random((101, 131)) < fraction).astype(np.float32)
+        light = np.array([.2, -.4, .9])
+        got = render_ssaa._default_shade({"normals": normals, "silhouette": sil}, light, .17)
+        n = np.asarray(normals, np.float64)
+        L = light / np.linalg.norm(light)
+        ndl = np.clip(n[..., 0] * L[0] + n[..., 1] * L[1] + n[..., 2] * L[2], 0, 1)
+        ref = (.17 + .83 * ndl) * sil
+        np.testing.assert_array_equal(got, ref)
+
+
 def test_292_fill_holes_matches_reference_neighbour_recomputation(monkeypatch):
     d = np.arange(63, dtype=float).reshape(7, 9)
     d[1:6, 2:7] = np.nan
