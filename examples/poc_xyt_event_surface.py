@@ -194,6 +194,33 @@ def _event_camera_figures():
     on = np.zeros((h, w), np.float64); off = np.zeros_like(on)
     np.add.at(on, (ev["y"][ev["polarity"] > 0], ev["x"][ev["polarity"] > 0]), 1)
     np.add.at(off, (ev["y"][ev["polarity"] < 0], ev["x"][ev["polarity"] < 0]), 1)
+    # Display one 1 ms acquisition window ending at 3 ms.  At this point the
+    # workpiece travels 5.9 px, so the raster shows sparse leading/trailing
+    # edge events instead of a whole-clip, last-polarity segmentation map.
+    display_end_s = 3.0e-3
+    display_window_s = 1.0e-3
+    recent = ev[(ev["t"] >= display_end_s - display_window_s) & (ev["t"] < display_end_s)]
+    recent_on = np.zeros((h, w), bool)
+    recent_off = np.zeros((h, w), bool)
+    recent_on[recent["y"][recent["polarity"] > 0], recent["x"][recent["polarity"] > 0]] = True
+    recent_off[recent["y"][recent["polarity"] < 0], recent["x"][recent["polarity"] < 0]] = True
+    event_mask = recent_on | recent_off
+    from scipy import ndimage as ndi
+    dilated = ndi.binary_dilation(event_mask, structure=np.ones((5, 5)))
+    event_fraction = float(np.mean(event_mask))
+    on_fraction = float(np.mean(recent_on))
+    off_fraction = float(np.mean(recent_off))
+    thinness = float(event_mask.sum() / max(1, dilated.sum()))
+    def centroid(mask):
+        yy, xx = np.nonzero(mask)
+        return np.array([yy.mean(), xx.mean()]) if yy.size else np.array([np.nan, np.nan])
+    centroid_separation = float(np.linalg.norm(centroid(recent_on) - centroid(recent_off)))
+    panel_pass = (0.01 <= event_fraction <= 0.20 and on_fraction >= 0.005
+                  and off_fraction >= 0.005 and thinness >= 0.45
+                  and centroid_separation >= 2.0)
+    assert panel_pass, {"event_fraction": event_fraction, "on_fraction": on_fraction,
+                        "off_fraction": off_fraction, "thinness": thinness,
+                        "centroid_separation": centroid_separation}
     last = np.full((h, w), -np.inf)
     last_polarity = np.zeros((h, w), np.int8)
     for e in ev:
@@ -201,8 +228,8 @@ def _event_camera_figures():
         last_polarity[e["y"], e["x"]] = e["polarity"]
     on_colour = np.array([0.98, 0.48, 0.05])
     off_colour = np.array([0.05, 0.72, 0.92])
-    raster[last_polarity > 0] = on_colour
-    raster[last_polarity < 0] = off_colour
+    raster[recent_on] = on_colour
+    raster[recent_off] = off_colour
     # In-panel key; coloured swatches remain machine-checkable and the text is
     # rendered with the same bitmap pipeline as the exhibit.
     from PIL import Image, ImageDraw
@@ -215,11 +242,9 @@ def _event_camera_figures():
     draw.rectangle((158, 8, 181, 25), fill=(148, 148, 148))
     draw.text((187, 9), "no event", fill=(20, 20, 20))
     raster = np.asarray(key, dtype=np.float64) / 255.0
-    polarity_fraction = {"on": float(np.mean(last_polarity > 0)),
-                         "off": float(np.mean(last_polarity < 0))}
-    distinct_polarity_hues = int(np.any(last_polarity > 0)) + int(np.any(last_polarity < 0))
+    polarity_fraction = {"on": on_fraction, "off": off_fraction}
+    distinct_polarity_hues = int(np.any(recent_on)) + int(np.any(recent_off))
     assert distinct_polarity_hues >= 2, distinct_polarity_hues
-    assert polarity_fraction["on"] >= 0.02 and polarity_fraction["off"] >= 0.02, polarity_fraction
     age = frames.shape[0] * dt_s - last
     surface = np.exp(-np.minimum(age, 0.020) / 0.006)
     surface[~np.isfinite(age)] = 0.0
@@ -228,7 +253,7 @@ def _event_camera_figures():
     triptych = np.concatenate([raster, colormaps["turbo"](surface)[..., :3],
                                np.repeat(density[..., None], 3, axis=2)], axis=1)
     figs.save("event_output", triptych,
-              caption=("装置出力（左、ON=橙・OFF=水色・無イベント=灰色）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。"
+              caption=("装置出力（左、3 ms時点までの直近1 ms、移動量5.9 px。ON=橙・OFF=水色・無イベント=灰色）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。"
                        "コントラスト閾値 0.50、不応期 0.2 ms、時刻揺らぎ 0.02 ms、背景活動 0.001 event/(pixel s)。"
                        "移動輝度境界から 2 px 以内 %.1f %%、ON/OFF 比 %.3f。" %
                        (100 * gates["edge_fraction"], gates["on_off_ratio"])))
@@ -239,7 +264,11 @@ def _event_camera_figures():
                    caption="方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。")
     gates.update({"distinct_polarity_hues": distinct_polarity_hues,
                   "on_panel_fraction": polarity_fraction["on"],
-                  "off_panel_fraction": polarity_fraction["off"]})
+                  "off_panel_fraction": polarity_fraction["off"],
+                  "event_panel_fraction": event_fraction,
+                  "event_panel_thinness": thinness,
+                  "polarity_centroid_separation_px": centroid_separation,
+                  "event_panel_pass": panel_pass})
     return gates
 
 # --- 場面の諸元 -------------------------------------------------------------- #
@@ -961,8 +990,11 @@ def main() -> None:
     print()
     gates = _event_camera_figures() if figs.enabled() else None
     if gates is not None:
-        print("event gates: edge %.3f / ON:OFF %.3f" %
-              (gates["edge_fraction"], gates["on_off_ratio"]))
+        print("event gates: edge %.3f / ON:OFF %.3f / panel %.3f / ON %.3f / OFF %.3f / thin %.3f / centroids %.2f px (%s)" %
+              (gates["edge_fraction"], gates["on_off_ratio"], gates["event_panel_fraction"],
+               gates["on_panel_fraction"], gates["off_panel_fraction"], gates["event_panel_thinness"],
+               gates["polarity_centroid_separation_px"],
+               "PASS" if gates["event_panel_pass"] else "FAIL"))
     truth = section1_scene()
     state = section2_zero_point(truth)
     section3_dt_sweep(truth)

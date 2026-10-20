@@ -5116,7 +5116,7 @@ py -3.11 examples/poc_dehazing.py
 
 [![光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
-*↑ **光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか** ―― 主図は48フレーム、576×432の光前線動画で、反射振幅像を35 %残しながら擬似色のゲート応答が近距離から遠距離まで横切る。別図は飛び画素の8倍拡大、壁隅の湾曲、低反射物体の雑音を示す。*
+*↑ **光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか** ―― 主図は48フレーム、576×432の光前線動画。反射振幅を1–99.5 %で伸張してγ=0.7を適用した灰色像へ、奥行き範囲の7 %に広げた表示窓の琥珀色の光帯が近距離から遠距離まで重なる。別図は飛び画素の8倍拡大、壁隅の湾曲、低反射物体の雑音を示す。*
 
 [![飛び画素（8倍拡大）、壁隅の系統的な湾曲、低反射物体の距離雑音を同じ尺度で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts.png)
 
@@ -6180,7 +6180,7 @@ py -3.11 examples/poc_warehouse_flow.py
 
 [![到達時刻面を (x, y, t) の等値面として取り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
-*↑ **到達時刻面を (x, y, t) の等値面として取り出す** ―― 主図はONイベントを橙、OFFイベントを水色、無イベントを灰色で分け、移動縁の90 %以上にイベントが乗ることを示す。到達時刻動画は171フレーム、624×586、20 fps。*
+*↑ **到達時刻面を (x, y, t) の等値面として取り出す** ―― 主図の左は3 ms時点までの直近1 ms（移動量5.9 px）だけを表示し、移動縁の疎なONイベントを橙、OFFイベントを水色、無イベントを灰色で分ける。中央は時刻面、右は全期間の累積数。到達時刻動画は171フレーム、624×586、20 fps。*
 
 [![方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate.png)
 

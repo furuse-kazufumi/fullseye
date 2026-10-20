@@ -38,9 +38,16 @@ def test_event_stream_moving_edges_and_polarity_balance():
 
 def test_dtof_light_front_has_delivery_shape_and_content():
     mod = _load("poc_dtof_ranging")
-    truth, refl, _ = mod.make_indoor_scene(48, 64)
+    truth, refl, masks = mod.make_indoor_scene(48, 64)
     frames = mod.light_front_frames(truth, refl)
-    gate = mod.light_front_content_gate(frames)
+    gate = mod.light_front_content_gate(frames, masks)
     assert len(frames) == 48
     assert frames[0].shape == (432, 576, 3) and frames[0].dtype == np.uint8
+    assert gate["background_contrast"] >= 0.10
+    assert gate["object_floor_difference"] >= 0.08
+    assert gate["lit_fraction_min"] >= 0.005
+    assert gate["lit_fraction_max"] <= 0.35
+    assert gate["thinness_min"] >= 0.25
+    assert gate["centroid_monotone"] and gate["centroid_span"] >= 0.70
+    assert gate["motion_l1"] >= 1.0
     assert gate["pass"], gate

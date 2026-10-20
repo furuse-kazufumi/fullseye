@@ -179,19 +179,25 @@ def make_indoor_scene(height=240, width=320):
     floor = yn > 0.22
     depth[floor] = 2.3 + 2.5 * (1.0 - yn[floor])
     refl = np.full_like(depth, 0.72)
+    object_mask = np.zeros_like(depth, dtype=bool)
     def box(x0, x1, y0, y1, z, r):
         m = (xn > x0) & (xn < x1) & (yn > y0) & (yn < y1)
-        depth[m] = z; refl[m] = r
+        depth[m] = z + 0.10 * xn[m] + 0.06 * yn[m]
+        refl[m] = r
+        object_mask[m] = True
     box(-0.34, -0.08, -0.04, 0.30, 2.15, 0.62)
     box(0.10, 0.37, 0.02, 0.31, 2.65, 0.16)       # dark object
-    pole = np.abs(xn + 0.015) < 0.009
-    depth[pole] = 1.65; refl[pole] = 0.48
+    pole = np.abs(xn + 0.015) < 0.016
+    depth[pole] = 1.65 + 0.45 * (yn[pole] + 0.5); refl[pole] = 0.48
+    object_mask[pole] = True
     # Detector fixed pattern: correlated rows/columns and sparse hot pixels.
     refl *= 1.0 + 0.018 * np.sin(2 * np.pi * yy / 31) + 0.012 * np.sin(2 * np.pi * xx / 47)
     rng = np.random.default_rng(16)
     hot = rng.random(depth.shape) < 2e-4
     refl[hot] = 1.0
-    return depth, np.clip(refl, 0.03, 1.0), {"pole": pole, "dark": refl < 0.25}
+    return depth, np.clip(refl, 0.03, 1.0), {
+        "pole": pole, "dark": refl < 0.25, "objects": object_mask, "floor": floor,
+    }
 
 
 def simulate_dtof_frame(*, seed=16):
@@ -231,46 +237,67 @@ def light_front_frames(truth, amplitude, *, count=48, height=432, width=576):
 
     if count != 48 or (height, width) != (432, 576):
         raise ValueError("light-front exhibit is fixed at 48 frames of 576x432")
-    lo, hi = float(np.percentile(truth, 1)), float(np.percentile(truth, 99))
-    base = np.sqrt(np.maximum(amplitude, 0.0) / max(float(amplitude.max()), 1e-12))
-    # A gated sensor still exposes the returned-amplitude scene.  Keep that
-    # scene readable while the false-colour time gate selects one depth shell.
-    background = np.repeat((0.22 + 0.35 * base)[..., None], 3, axis=2)
-    from matplotlib import colormaps
-    turbo = colormaps["turbo"]
-    fronts = np.linspace(float(np.min(truth)) - 0.015, float(np.max(truth)) + 0.015, count)
+    p1, p995 = np.percentile(amplitude, (1.0, 99.5))
+    base = np.clip((amplitude - p1) / max(float(p995 - p1), 1e-12), 0.0, 1.0) ** 0.7
+    # Keep the returned-amplitude scene readable in every frame.  The display
+    # window is wider than the modelled response: its visible (alpha > 0.2)
+    # width is 7 % of the scene depth span, while its Gaussian shape remains.
+    background_gray = 0.12 + 0.56 * base
+    background = np.repeat(background_gray[..., None], 3, axis=2)
+    warm = np.array([1.0, 0.78, 0.28])
+    depth_span = float(np.max(truth) - np.min(truth))
+    display_width = 0.07 * depth_span
+    display_sigma = display_width / (2.0 * np.sqrt(2.0 * np.log(5.0)))
+    # Depth quantiles keep some surface in the gate on every frame even where
+    # the scene itself has no geometry at an intermediate metric depth.
+    fronts = np.quantile(truth, np.linspace(0.0, 1.0, count))
     frames = LightFrontFrames()
     frames.front_depths = fronts
-    frames.scene_depth_span = float(np.max(truth) - np.min(truth))
+    frames.scene_depth_span = depth_span
+    frames.background_gray = background_gray
+    frames.display_width = display_width
+    frames.gate_responses = []
+    frames.truth = truth
     for front in fronts:
-        # Preserve the modelled narrow Gaussian pulse; colour and alpha encode
-        # its gate response rather than replacing the recognisable scene.
-        pulse = np.exp(-0.5 * ((truth - front) / 0.055) ** 2)
-        colour = turbo(np.clip(0.12 + 0.78 * pulse, 0.0, 1.0))[..., :3]
-        # Display compression reveals the low shoulders of the physical pulse,
-        # as an amplitude-scaled time-gated viewer would do.
-        alpha = (0.92 * np.power(pulse, 0.20))[..., None]
-        rgb = background * (1.0 - alpha) + colour * alpha
+        alpha = np.exp(-0.5 * ((truth - front) / display_sigma) ** 2)
+        frames.gate_responses.append(alpha)
+        rgb = background * (1.0 - alpha[..., None]) + warm * alpha[..., None]
         rgb = np.uint8(np.clip(rgb, 0.0, 1.0) * 255.0 + 0.5)
         frames.append(np.asarray(Image.fromarray(rgb).resize((width, height), Image.BICUBIC)))
     return frames
 
 
-def light_front_content_gate(frames):
-    """Check visibility, changing gate coverage, and a full-width front sweep."""
+def light_front_content_gate(frames, masks):
+    """Check scene readability and the geometry of every displayed light front."""
+    from scipy import ndimage as ndi
+
     a = np.asarray(frames)
     motion = float(np.mean(np.abs(np.diff(a.astype(np.int16), axis=0)))) if len(a) > 1 else 0.0
-    chroma = a.max(axis=-1).astype(np.int16) - a.min(axis=-1).astype(np.int16)
-    foreground = chroma > 28
-    fractions = foreground.mean(axis=(1, 2))
-    sample = np.array([0, 12, 24, 36, 47])
-    centroids = np.asarray(getattr(frames, "front_depths", []), dtype=np.float64)[sample]
+    gray = np.asarray(frames.background_gray)
+    contrast = float(np.std(gray))
+    object_floor_difference = float(abs(np.mean(gray[masks["objects"]]) - np.mean(gray[masks["floor"]])))
+    responses = np.asarray(frames.gate_responses)
+    lit = responses > 0.2
+    fractions = lit.mean(axis=(1, 2))
+    from PIL import Image
+    lit_display = [np.asarray(Image.fromarray(m).resize((a.shape[2], a.shape[1]), Image.Resampling.NEAREST))
+                   for m in lit]
+    thinness = np.asarray([m.sum() / max(1, ndi.binary_dilation(m, structure=np.ones((5, 5))).sum())
+                           for m in lit_display])
+    sample = np.array([0, 8, 16, 24, 32, 40, 47])
+    truth = np.asarray(frames.truth)
+    centroids = np.asarray([np.mean(truth[m]) if np.any(m) else np.nan for m in lit[sample]])
     depth_span = float(getattr(frames, "scene_depth_span", 0.0))
     spread = float((centroids[-1] - centroids[0]) / max(1e-12, depth_span))
-    monotone = bool(np.all(np.diff(centroids) > 0))
+    monotone = bool(np.all(np.isfinite(centroids)) and np.all(np.diff(centroids) >= 0))
     ok = (a.shape == (48, 432, 576, 3) and a.dtype == np.uint8 and motion >= 1.0
-          and float(fractions.mean()) >= 0.15 and monotone and spread >= 0.70)
-    return {"motion_l1": motion, "non_background_fraction": float(fractions.mean()),
+          and contrast >= 0.10 and object_floor_difference >= 0.08
+          and bool(np.all((fractions >= 0.005) & (fractions <= 0.35)))
+          and bool(np.all(thinness >= 0.25)) and monotone and spread >= 0.70)
+    return {"motion_l1": motion, "background_contrast": contrast,
+            "object_floor_difference": object_floor_difference,
+            "lit_fraction_min": float(fractions.min()), "lit_fraction_max": float(fractions.max()),
+            "thinness_min": float(thinness.min()),
             "centroid_depths_m": centroids.tolist(), "centroid_span": spread,
             "centroid_monotone": monotone, "pass": bool(ok)}
 
@@ -298,12 +325,14 @@ def _device_figures():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     frames = light_front_frames(truth, amp)
-    video_gate = light_front_content_gate(frames)
+    video_gate = light_front_content_gate(frames, masks)
+    assert video_gate["pass"], video_gate
     figs.save_video("light_front", frames, fps=24.0, gif_every=2, gif_width=576,
-                    caption=("往復光の前線を48フレームで走査。反射振幅像を35 %%で残し、"
-                             "擬似色のゲート応答が同じ距離の面を横切る。576×432、uint8、"
-                             "フレーム差 %.2f、前線率 %.1f %%（内容門 %s）。" %
-                             (video_gate["motion_l1"], 100 * video_gate["non_background_fraction"],
+                    caption=("往復光の前線を48フレームで走査。反射振幅像を1–99.5 %%で伸張しγ=0.7で表示。"
+                             "物理応答の形を保ちつつ、表示窓（応答0.2超）を奥行き範囲の7 %%に広げ、"
+                             "琥珀色の光帯を重ねた。576×432、uint8、フレーム差 %.2f、発光率 %.1f–%.1f %%（内容門 %s）。" %
+                             (video_gate["motion_l1"], 100 * video_gate["lit_fraction_min"],
+                              100 * video_gate["lit_fraction_max"],
                               "PASS" if video_gate["pass"] else "FAIL")))
 
     # Three device-like failure modes, labelled at a readable 8x crop scale.
@@ -346,7 +375,11 @@ def _device_figures():
                    xlabel="round-trip time [ps]", ylabel="counts", title="三画素の到来時刻ヒストグラム",
                    caption="平面、角、暗い物体。角画素には二次反射の肩が現れる。")
     gate.update({"video_motion_l1": video_gate["motion_l1"],
-                 "video_non_background_fraction": video_gate["non_background_fraction"],
+                 "video_background_contrast": video_gate["background_contrast"],
+                 "video_object_floor_difference": video_gate["object_floor_difference"],
+                 "video_lit_fraction_min": video_gate["lit_fraction_min"],
+                 "video_lit_fraction_max": video_gate["lit_fraction_max"],
+                 "video_thinness_min": video_gate["thinness_min"],
                  "video_centroid_depths_m": video_gate["centroid_depths_m"],
                  "video_centroid_span": video_gate["centroid_span"],
                  "video_pass": video_gate["pass"]})
@@ -363,8 +396,10 @@ def main():
         gate_frame = _device_figures()
         print("frame resemblance: exponent %.3f (%s)" %
               (gate_frame["exponent"], "PASS" if gate_frame["pass"] else "FAIL"))
-        print("light-front content: motion %.2f, lit %.1f %% (%s)" %
-              (gate_frame["video_motion_l1"], 100 * gate_frame["video_non_background_fraction"],
+        print("light-front content: motion %.2f, lit %.1f–%.1f %%, thin %.3f, background %.3f, object-floor %.3f (%s)" %
+              (gate_frame["video_motion_l1"], 100 * gate_frame["video_lit_fraction_min"],
+               100 * gate_frame["video_lit_fraction_max"], gate_frame["video_thinness_min"],
+               gate_frame["video_background_contrast"], gate_frame["video_object_floor_difference"],
                "PASS" if gate_frame["video_pass"] else "FAIL"))
     print("=== 1. 装置と真値 —— 何を測っているのか ===")
     print(f"  ビン {BINS} x {BIN_PS:.0f} ps  →  一意に測れる距離 "
