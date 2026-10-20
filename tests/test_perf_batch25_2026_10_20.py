@@ -302,3 +302,106 @@ def test_256_calibration_map_matches_full_score_without_explanations(monkeypatch
     # Enough pixels for the far-tail gate; a zero offset avoids unrelated FFT work.
     out = varmodel.varmodel_calibrate(model, np.stack([image] * 5), far=0.01)
     assert out["calibration_n_pixels"] == image.size * 5
+
+
+def test_249_mad_chunks_match_original_full_stack(monkeypatch):
+    rng = np.random.default_rng(249)
+    stack = rng.normal(size=(9, 48, 51))
+    center = np.median(stack, axis=0)
+    spread = np.median(np.abs(stack - center), axis=0) * varmodel._MAD_TO_SIGMA
+    monkeypatch.setattr(varmodel, "_alignment", lambda a, tol: (
+        np.zeros((len(a), 2)), np.zeros(len(a)), np.ones(len(a)), 0.0, False))
+    got = varmodel.varmodel_fit(
+        stack, spread="mad", spread_floor=1e-9, chunk=113)
+    assert np.array_equal(got["center"], center)
+    assert np.array_equal(got["spread"], spread)
+
+
+def test_253_separable_fourier_phase_matches_original():
+    rng = np.random.default_rng(253)
+    image = rng.normal(size=(71, 67))
+    dr, dc = 2.35, -1.7
+    p = int(np.ceil(max(abs(dr), abs(dc)))) + 16
+    big = np.pad(image, p, mode="symmetric")
+    fr = np.fft.fftfreq(big.shape[0])[:, None]
+    fc = np.fft.fftfreq(big.shape[1])[None, :]
+    phase = np.exp(-2j * np.pi * (fr * dr + fc * dc))
+    expected = np.fft.ifft2(np.fft.fft2(big) * phase).real[
+        p:p + image.shape[0], p:p + image.shape[1]]
+    got = varmodel._fourier_shift(image, dr, dc)
+    np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
+
+
+def test_255_translate_maps_matches_roll_then_clear():
+    rng = np.random.default_rng(255)
+    z = rng.normal(size=(31, 29))
+    valid = rng.random(z.shape) > 0.2
+    for ir, ic in ((3, -2), (-4, 5), (0, 7)):
+        expected_z = np.roll(z, (ir, ic), axis=(0, 1))
+        expected_valid = np.roll(valid, (ir, ic), axis=(0, 1))
+        if ir > 0:
+            expected_valid[:ir] = False
+        elif ir < 0:
+            expected_valid[ir:] = False
+        if ic > 0:
+            expected_valid[:, :ic] = False
+        elif ic < 0:
+            expected_valid[:, ic:] = False
+        expected_z = np.where(expected_valid, expected_z, 0.0)
+        got_z, got_valid = varmodel._translate_maps(z, valid, ir, ic)
+        assert np.array_equal(got_z, expected_z)
+        assert np.array_equal(got_valid, expected_valid)
+
+
+def test_257_calibration_preallocation_matches_concatenated_reference():
+    rng = np.random.default_rng(257)
+    center = rng.normal(size=(48, 52))
+    model = {"center": center, "spread": np.ones(center.shape),
+             "valid": np.ones(center.shape, bool), "k": 3.0, "far": 0.01,
+             "spread_kind": "std", "n": 20,
+             "alignment": {"observable": False}}
+    images = rng.normal(size=(5,) + center.shape)
+    reference = np.concatenate([
+        np.abs(varmodel._calibration_z_valid(image, model)[0]).ravel()
+        for image in images])
+    out = varmodel.varmodel_calibrate(
+        model, images, far=0.01)
+    assert out["calibration_n_pixels"] == 5 * center.size
+    assert out["k"] == np.quantile(reference, 0.99)
+
+
+def test_258_only_first_offset_iteration_requests_psr(monkeypatch):
+    calls = []
+
+    def fake(win, spectrum, image, need_psr=True):
+        calls.append(need_psr)
+        return (0.2, -0.1, 7.0) if len(calls) < 3 else (0.0, 0.0, 0.0)
+
+    monkeypatch.setattr(varmodel, "_offset_once", fake)
+    monkeypatch.setattr(varmodel, "_fourier_shift", lambda image, dr, dc: image)
+    got = varmodel._offset(np.ones((8, 8)), np.ones((8, 8)))
+    assert calls == [True, False, False]
+    assert got == (0.4, -0.2, 7.0)
+
+
+def test_254_model_reference_cache_reuses_and_invalidates(monkeypatch):
+    center = np.arange(256, dtype=np.float64).reshape(16, 16)
+    model = {"center": center, "spread": np.ones(center.shape),
+             "valid": np.ones(center.shape, bool), "k": 3.0, "far": 0.01,
+             "spread_kind": "std", "n": 20,
+             "alignment": {"observable": True, "max_misalign_px": 1.0}}
+    calls = 0
+    original = varmodel._ref_spec
+
+    def counted(image):
+        nonlocal calls
+        calls += 1
+        return original(image)
+
+    monkeypatch.setattr(varmodel, "_ref_spec", counted)
+    varmodel.varmodel_score(center, model)
+    varmodel.varmodel_score(center, model)
+    assert calls == 1
+    model["center"] = center + 1.0
+    varmodel.varmodel_score(center + 1.0, model)
+    assert calls == 2

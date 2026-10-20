@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">varmodel_fit — SPC <code style="color:#22d3bf">variation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.varmodel_fit(stack, spread=&#x27;moderated&#x27;, far=0.001, align=&#x27;check&#x27;, max_misalign_px=0.5, spread_floor=0.0, mask=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import varmodel; varmodel.varmodel_fit(stack, spread=&#x27;moderated&#x27;, far=0.001, align=&#x27;check&#x27;, max_misalign_px=0.5, spread_floor=0.0, mask=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;varmodel_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.varmodel_fit(stack, spread=&#x27;moderated&#x27;, far=0.001, align=&#x27;check&#x27;, max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)</code>(要直接呼叫實作,<code style="color:#22d3bf">import varmodel; varmodel.varmodel_fit(stack, spread=&#x27;moderated&#x27;, far=0.001, align=&#x27;check&#x27;, max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;varmodel_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由良品影像堆疊學習逐像素的變動模型(中心、離散度、容許帶半寬 k)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

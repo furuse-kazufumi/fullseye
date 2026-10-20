@@ -173,7 +173,7 @@ def _offset(ref, img, spec=None):
     psr = 0.0
     work = img
     for it in range(3):
-        r, c, p = _offset_once(win, fa, work)
+        r, c, p = _offset_once(win, fa, work, need_psr=it == 0)
         if it == 0:
             psr = p
         tr += r
@@ -184,7 +184,7 @@ def _offset(ref, img, spec=None):
     return tr, tc, psr
 
 
-def _offset_once(win, fa, img):
+def _offset_once(win, fa, img, need_psr=True):
     h, w = img.shape
     fb = np.fft.fft2((img - img.mean()) * win)
     R0 = fa * np.conj(fb)
@@ -193,8 +193,11 @@ def _offset_once(win, fa, img):
     pk = np.unravel_index(int(np.argmax(c)), c.shape)
     dr0 = pk[0] - (h if pk[0] > h // 2 else 0)
     dc0 = pk[1] - (w if pk[1] > w // 2 else 0)
-    sd = float(c.std())
-    psr = float((c[pk] - c.mean()) / sd) if sd > 0 else 0.0
+    if need_psr:
+        sd = float(c.std())
+        psr = float((c[pk] - c.mean()) / sd) if sd > 0 else 0.0
+    else:
+        psr = 0.0
     span = int(math.ceil(0.75 * _UPSAMPLE))
     steps = np.arange(-span, span + 1) / _UPSAMPLE
     rs = dr0 + steps
@@ -219,10 +222,12 @@ def _fourier_shift(img, dr, dc):
     p = int(math.ceil(max(abs(dr), abs(dc)))) + 16
     big = np.pad(img, p, mode="symmetric")
     H, W = big.shape
-    fr = np.fft.fftfreq(H)[:, None]
-    fc = np.fft.fftfreq(W)[None, :]
-    ph = np.exp(-2j * np.pi * (fr * dr + fc * dc))
-    return np.fft.ifft2(np.fft.fft2(big) * ph).real[p:p + h, p:p + w]
+    phr = np.exp(-2j * np.pi * np.fft.fftfreq(H) * dr)
+    phc = np.exp(-2j * np.pi * np.fft.fftfreq(W) * dc)
+    spectrum = np.fft.fft2(big)
+    spectrum *= phr[:, None]
+    spectrum *= phc[None, :]
+    return np.fft.ifft2(spectrum).real[p:p + h, p:p + w]
 
 
 def _offsets_against(ref, a):
@@ -448,7 +453,7 @@ def _moderate(s2, d, use):
 
 
 def varmodel_fit(stack, spread="moderated", far=1e-3, align="check", max_misalign_px=0.5,
-                 spread_floor=0.0, mask=None):
+                 spread_floor=0.0, mask=None, *, chunk=262144):
     """Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``).
 
     ``stack`` is (n, H, W) or a list of equal 2-D images, all good. ``spread`` chooses the
@@ -538,8 +543,20 @@ def varmodel_fit(stack, spread="moderated", far=1e-3, align="check", max_misalig
     d0 = s02 = 0.0                          # std / mad: 事前分布なし(自由度 0)
     df_prior = None
     if sp == "mad":
-        center = np.median(a, axis=0)
-        spread_map = np.median(np.abs(a - center[None]), axis=0) * _MAD_TO_SIGMA
+        chunk = int(chunk)
+        if chunk <= 0:
+            raise ValueError("varmodel_fit: chunk must be positive")
+        flat = a.reshape(n, -1)
+        center_flat = np.empty(flat.shape[1], np.float64)
+        spread_flat = np.empty_like(center_flat)
+        for start in range(0, flat.shape[1], chunk):
+            block = flat[:, start:start + chunk]
+            med = np.median(block, axis=0)
+            center_flat[start:start + chunk] = med
+            spread_flat[start:start + chunk] = (
+                np.median(np.abs(block - med[None]), axis=0) * _MAD_TO_SIGMA)
+        center = center_flat.reshape(h, w)
+        spread_map = spread_flat.reshape(h, w)
     else:
         center = a.mean(axis=0)
         s2 = a.var(axis=0, ddof=1)
@@ -586,6 +603,30 @@ def varmodel_fit(stack, spread="moderated", far=1e-3, align="check", max_misalig
 _MODEL_KEYS = ("center", "spread", "k", "far", "valid", "spread_kind", "n")
 
 
+def _model_ref_spec(model, center):
+    cache = model.get("_score_reference")
+    if (cache is None or cache[0].shape != center.shape
+            or not np.array_equal(cache[0], center)):
+        cache = (center.copy(), _ref_spec(center))
+        model["_score_reference"] = cache
+    return cache[1]
+
+
+def _translate_maps(z, valid, ir, ic):
+    """Translate maps without allocating rolled copies of wrapped regions."""
+    h, w = z.shape
+    out_z = np.zeros_like(z)
+    out_valid = np.zeros_like(valid)
+    dr = slice(max(ir, 0), h + min(ir, 0))
+    sr = slice(max(-ir, 0), h - max(ir, 0))
+    dc = slice(max(ic, 0), w + min(ic, 0))
+    sc = slice(max(-ic, 0), w - max(ic, 0))
+    out_z[dr, dc] = z[sr, sc]
+    out_valid[dr, dc] = valid[sr, sc]
+    out_z[~out_valid] = 0.0
+    return out_z, out_valid
+
+
 def varmodel_score(image, model, mask=None, align="check"):
     """Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``).
 
@@ -628,7 +669,7 @@ def varmodel_score(image, model, mask=None, align="check"):
     tol = float((model.get("alignment") or {}).get("max_misalign_px", 0.5))
     al = model.get("alignment") or {}
     if al.get("observable", True):
-        rr0, cc0, _psr = _offset(center, img)
+        rr0, cc0, _psr = _offset(center, img, _model_ref_spec(model, center))
     else:                                                 # 構造の無い模型: 並進は測れず、効きもしない
         rr0 = cc0 = 0.0
     off = (rr0, cc0)
@@ -657,17 +698,7 @@ def varmodel_score(image, model, mask=None, align="check"):
     z = np.zeros_like(img)
     z[use] = (work[use] - center[use]) / spread[use]
     if ir or ic:                                          # 模型の座標 → 画像の座標(整数の並進)
-        z = np.roll(z, (ir, ic), axis=(0, 1))
-        use = np.roll(use, (ir, ic), axis=(0, 1))
-        if ir > 0:
-            use[:ir, :] = False
-        elif ir < 0:
-            use[h + ir:, :] = False
-        if ic > 0:
-            use[:, :ic] = False
-        elif ic < 0:
-            use[:, w + ic:] = False
-        z = np.where(use, z, 0.0)
+        z, use = _translate_maps(z, use, ir, ic)
     if mask is not None:
         mm = np.asarray(mask)
         if mm.shape != img.shape:
@@ -714,7 +745,7 @@ def _calibration_z_valid(image, model):
     use = np.asarray(model["valid"], dtype=bool) & (spread > 0)
     al = model.get("alignment") or {}
     if al.get("observable", True):
-        rr0, cc0, _psr = _offset(center, img)
+        rr0, cc0, _psr = _offset(center, img, _model_ref_spec(model, center))
     else:
         rr0 = cc0 = 0.0
     mag = max(abs(rr0), abs(cc0))
@@ -733,17 +764,7 @@ def _calibration_z_valid(image, model):
     z = np.zeros_like(img)
     z[use] = (work[use] - center[use]) / spread[use]
     if ir or ic:
-        z = np.roll(z, (ir, ic), axis=(0, 1))
-        use = np.roll(use, (ir, ic), axis=(0, 1))
-        if ir > 0:
-            use[:ir, :] = False
-        elif ir < 0:
-            use[h + ir:, :] = False
-        if ic > 0:
-            use[:, :ic] = False
-        elif ic < 0:
-            use[:, w + ic:] = False
-        z = np.where(use, z, 0.0)
+        z, use = _translate_maps(z, use, ir, ic)
     return z, use
 
 
@@ -775,11 +796,14 @@ def varmodel_calibrate(model, good_images, far=None):
         raise ValueError("%s: good_images %s and model %s differ in shape"
                          % (op, g.shape[1:], np.asarray(model["center"]).shape))
     f = _far(model["far"] if far is None else far, op, "std")
-    zs = []
+    z = np.empty(g.size, np.float64)
+    used = 0
     for i in range(g.shape[0]):
         z_map, valid_map = _calibration_z_valid(g[i], model)
-        zs.append(np.abs(z_map[valid_map]))
-    z = np.concatenate(zs) if zs else np.zeros(0)
+        values = np.abs(z_map[valid_map])
+        z[used:used + len(values)] = values
+        used += len(values)
+    z = z[:used]
     if z.size < 10.0 / f:
         raise ValueError("%s: %d calibration pixels are too few for far=%g (need >= %d)"
                          % (op, z.size, f, int(math.ceil(10.0 / f))))
