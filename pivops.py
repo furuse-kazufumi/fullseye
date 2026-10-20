@@ -573,9 +573,10 @@ def _peak_ratio(corr, pi, pj, top):
     n = corr.shape[0]
     y0, y1 = max(0, pi - 1), min(n, pi + 2)
     x0, x1 = max(0, pj - 1), min(n, pj + 2)
-    masked = np.array(corr, dtype=np.float64, copy=True)
-    masked[y0:y1, x0:x1] = -np.inf
-    second = float(np.max(masked))
+    a = np.asarray(corr)
+    regions = (a[:y0, :], a[y1:, :], a[y0:y1, :x0], a[y0:y1, x1:])
+    maxima = [np.max(region) for region in regions if region.size]
+    second = float(np.max(maxima)) if maxima else -np.inf
     if not np.isfinite(second) or second <= 0:
         return np.inf
     return float(top / second)
