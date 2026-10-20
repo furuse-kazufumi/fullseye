@@ -143,11 +143,15 @@ def gauss_cubature(n: int, dim: int = 2, a=-1.0, b=1.0) -> dict:
     x, w = np.polynomial.legendre.leggauss(n)
     axes = [0.5 * (hi[d] - lo[d]) * x + 0.5 * (hi[d] + lo[d]) for d in range(dim)]
     wts = [0.5 * (hi[d] - lo[d]) * w for d in range(dim)]
-    grids = np.meshgrid(*axes, indexing="ij")
-    W = np.ones_like(grids[0])
+    count = n ** dim
+    nodes = np.empty((count, dim), dtype=np.float64)
+    W = 1.0
     for d in range(dim):
-        W = W * np.meshgrid(*[wts[k] if k == d else np.ones(n) for k in range(dim)], indexing="ij")[d]
-    return {"nodes": np.stack([g_.ravel() for g_ in grids], axis=1), "weights": W.ravel(),
+        nodes[:, d] = np.tile(np.repeat(axes[d], n ** (dim - d - 1)), n ** d)
+        shape = [1] * dim
+        shape[d] = n
+        W = W * wts[d].reshape(shape)
+    return {"nodes": nodes, "weights": np.broadcast_to(W, (n,) * dim).ravel(),
             "exact_degree_per_axis": 2 * n - 1}
 
 
@@ -224,7 +228,7 @@ def chebyshev_nodes(n: int, a: float = -1.0, b: float = 1.0, kind: int = 2) -> n
     return np.sort(0.5 * (float(b) - float(a)) * t + 0.5 * (float(b) + float(a)))
 
 
-def interp_barycentric(xk, yk, x) -> np.ndarray:
+def interp_barycentric(xk, yk, x, *, nodes: str | None = None) -> np.ndarray:
     """点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。
 
     係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では
@@ -238,14 +242,24 @@ def interp_barycentric(xk, yk, x) -> np.ndarray:
         raise ValueError("interp_barycentric: xk と yk は同じ長さ(1 以上)")
     if np.unique(xk).size != xk.size:
         raise ValueError("interp_barycentric: xk に重複がある")
-    d = xk[:, None] - xk[None, :]
-    np.fill_diagonal(d, 1.0)
+    if nodes not in (None, "chebyshev2"):
+        raise ValueError("interp_barycentric: nodes は None か 'chebyshev2'")
+    if nodes == "chebyshev2":
+        expected = chebyshev_nodes(xk.size, float(xk[0]), float(xk[-1]), kind=2)
+        if not np.all(np.abs(xk - expected) <= 1e-12):
+            raise ValueError("interp_barycentric: xk は指定された Chebyshev 第2種点ではない")
+        w = np.ones(xk.size)
+        w[1::2] = -1.0
+        w[[0, -1]] *= 0.5
+    else:
+        d = xk[:, None] - xk[None, :]
+        np.fill_diagonal(d, 1.0)
     # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
     # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
     # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-    logabs = np.sum(np.log(np.abs(d)), axis=1)
-    sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
-    w = sign * np.exp(np.min(logabs) - logabs)
+        logabs = np.sum(np.log(np.abs(d)), axis=1)
+        sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
+        w = sign * np.exp(np.min(logabs) - logabs)
     xs = x.ravel()
     diff = xs[:, None] - xk[None, :]
     exact = diff == 0

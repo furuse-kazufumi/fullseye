@@ -147,7 +147,11 @@ def abel_inverse_image(image, dr: float = 1.0, *, center: float | None = None, m
     left = np.stack([np.interp(c - xs, cols, row) for row in a])
     half = 0.5 * (left + right)
     asym = float(np.abs(left - right).mean() / max(np.abs(half).mean(), 1e-300))
-    sl = np.stack([abel_inverse(row, dr, method=method) for row in half])
+    if method == "onion":
+        M = _onion_matrix(half.shape[1], dr)
+        sl = linalg.solve_triangular(M, half.T, lower=False).T
+    else:
+        sl = np.stack([abel_inverse(row, dr, method=method) for row in half])
     return {"slice": sl, "center": c, "asymmetry": asym}
 
 
@@ -304,7 +308,10 @@ def tf_impulse_response(num, den, t) -> np.ndarray:
     t = np.asarray(t, dtype=np.float64).ravel()
     if A.size == 0:
         return np.zeros_like(t)
-    return np.array([(C @ linalg.expm(A * ti) @ B).item() for ti in t])
+    if not _uniform_expm_ok(A, t):
+        return np.array([(C @ linalg.expm(A * ti) @ B).item() for ti in t])
+    states = _uniform_expm_states(A, B, t)
+    return (states @ C.ravel()).astype(np.float64, copy=False)
 
 
 def tf_step_response(num, den, t) -> np.ndarray:
@@ -325,10 +332,45 @@ def tf_step_response(num, den, t) -> np.ndarray:
     M = np.zeros((n + 1, n + 1))
     M[:n, :n] = A
     M[:n, n:] = B
-    out = np.empty_like(t)
+    if not _uniform_expm_ok(M, t):
+        out = np.empty_like(t)
+        for k, ti in enumerate(t):
+            E = linalg.expm(M * ti)
+            out[k] = (C @ E[:n, n:]).item() + D
+        return out
+    seed = np.zeros((n + 1, 1))
+    seed[-1, 0] = 1.0
+    states = _uniform_expm_states(M, seed, t)
+    return states[:, :n] @ C.ravel() + D
+
+
+_EXPM_RESTART = 256
+_EXPM_STEP_NORM_LIMIT = 50.0
+
+
+def _uniform_expm_ok(A, t):
+    """等間隔で、1 ステップの指数が過大でない場合だけ反復経路を許す。"""
+    if t.size < 2:
+        return False
+    dt = float(t[1] - t[0])
+    if not np.isfinite(dt) or dt == 0.0:
+        return False
+    if not np.all(np.abs(np.diff(t) - dt) <= 1e-12 * abs(dt)):
+        return False
+    return float(linalg.norm(A * dt, 1)) <= _EXPM_STEP_NORM_LIMIT
+
+
+def _uniform_expm_states(A, seed, t):
+    """F=exp(A dt) で進め、丸めの蓄積を抑えるため 256 点ごとに絶対時刻から再初期化する。"""
+    F = linalg.expm(A * float(t[1] - t[0]))
+    out = np.empty((t.size, A.shape[0]), dtype=np.float64)
+    state = None
     for k, ti in enumerate(t):
-        E = linalg.expm(M * ti)
-        out[k] = (C @ E[:n, n:]).item() + D
+        if k % _EXPM_RESTART == 0:
+            state = linalg.expm(A * ti) @ seed
+        else:
+            state = F @ state
+        out[k] = state.ravel()
     return out
 
 
@@ -424,13 +466,15 @@ def laplace_inverse_func(F, t, *, M: int = 32) -> np.ndarray:
 # 既存の xsp_dct / xmh_haar は「画像 → 見せるための画像」で、係数も逆変換も Parseval の門も無かった。
 # ここは係数そのものを返し、逆変換で丸め誤差まで戻ることを門にする。2-D 画像・3-D ボリュームにそのまま効く。
 
-def dct_transform(x, *, axes=None, inverse: bool = False) -> dict:
+def dct_transform(x, *, axes=None, inverse: bool = False, diagnostics: str = "full"):
     """正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
 
     Args:
         x: 任意次元の実配列(信号・画像・ボリューム)。
         axes: 変換する軸(省略で全軸)。
         inverse: True なら係数から元に戻す。
+        diagnostics: ``"full"`` は従来どおり全診断、``"energy"`` は係数とエネルギー、
+            ``"none"`` は係数だけを返す。逆変換は互換性のため常に従来の辞書を返す。
 
     Returns:
         ``coeffs``(同じ形)、``energy``(Σx²、正規直交なので変換の前後で同じ = Parseval)、
@@ -444,6 +488,12 @@ def dct_transform(x, *, axes=None, inverse: bool = False) -> dict:
         raise ValueError("dct_transform: 有限値の 1 次元以上の配列")
     ax = tuple(range(a.ndim)) if axes is None else tuple(int(i) for i in np.atleast_1d(axes))
     y = (_fft.idctn if inverse else _fft.dctn)(a, type=2, axes=ax, norm="ortho")
+    if diagnostics not in ("full", "energy", "none"):
+        raise ValueError("dct_transform: diagnostics は 'full' / 'energy' / 'none'")
+    if not inverse and diagnostics == "none":
+        return y
+    if not inverse and diagnostics == "energy":
+        return {"coeffs": y, "energy": float(np.sum(y * y))}
     e = np.sort((y * y).ravel())[::-1]
     tot = float(e.sum())
     comp = np.cumsum(e) / tot if tot > 0 else np.ones_like(e)

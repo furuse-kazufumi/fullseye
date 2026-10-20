@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # interp_barycentric — MATH `numerics` op
 
 - **データ種**: `signal × signal × signal` → `signal`
-- **呼び出し**: `import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("interp_barycentric")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x, *, nodes: 'str | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x, *, nodes: 'str | None' = None) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("interp_barycentric")`)
 
 ## 使い方
 
