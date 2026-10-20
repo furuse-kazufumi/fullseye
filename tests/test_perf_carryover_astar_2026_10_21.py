@@ -53,7 +53,9 @@ def _digest(a):
 
 
 def test_original_planner_reference_scenes_are_result_identical():
-    for name, occupancy, poses, kwargs in _scenes():
+    scenes = _scenes()
+    assert len(scenes) == 4
+    for name, occupancy, poses, kwargs in scenes:
         got = C.car_hybrid_astar(occupancy, poses, **kwargs)
         observed = (got["cost"], got["n_expanded"], got["n_generated"],
                     _digest(got["points"]), _digest(got["tree"]))
@@ -61,7 +63,9 @@ def test_original_planner_reference_scenes_are_result_identical():
 
 
 def test_177_178_fast_mode_keeps_cost_and_feasibility():
-    for _name, occupancy, poses, kwargs in _scenes():
+    scenes = _scenes()
+    assert len(scenes) == 4
+    for _name, occupancy, poses, kwargs in scenes:
         exact = C.car_hybrid_astar(occupancy, poses, **kwargs)
         fast = C.car_hybrid_astar(occupancy, poses, method="fast", **kwargs)
         assert abs(fast["cost"] - exact["cost"]) <= 1e-9
