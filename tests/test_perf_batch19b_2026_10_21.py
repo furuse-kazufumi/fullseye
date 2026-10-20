@@ -8,6 +8,7 @@ import backends_color
 import pcl_filter
 import fringe
 import fit_primitives_ext
+import filters_freq
 from scipy.ndimage import map_coordinates
 
 
@@ -140,3 +141,28 @@ def test_103_ellipsoid_candidate_reference_nan_inf_and_near_tie_probe():
         points[0, 0] = bad
         with np.testing.assert_raises(ValueError):
             fit_primitives_ext.fit_ellipsoid(points)
+
+
+def _original_harmonic(image, region):
+    out = np.asarray(image, dtype=float).copy()
+    for _ in range(500):
+        average = .25 * (np.roll(out, 1, 0) + np.roll(out, -1, 0)
+                         + np.roll(out, 1, 1) + np.roll(out, -1, 1))
+        new = np.where(region, average, out)
+        if np.abs(new - out)[region].max() < 1e-6:
+            out = new
+            break
+        out = new
+    return out
+
+
+def test_97_harmonic_reference_periodic_boundary_and_fixed_pixels():
+    rng = np.random.default_rng(97)
+    for shape, width in [((17, 23), 3), ((31, 19), 7)]:
+        image = rng.normal(size=shape)
+        region = np.zeros(shape, bool)
+        region[:width, :width + 1] = True
+        expected = _original_harmonic(image, region)
+        got = filters_freq.harmonic_interpolation(image, region)
+        assert np.array_equal(got, expected, equal_nan=True)
+        assert np.array_equal(got[~region], image[~region], equal_nan=True)
