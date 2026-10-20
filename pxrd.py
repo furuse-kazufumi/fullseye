@@ -537,12 +537,21 @@ def powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz="powder", 
     q_max = (2.0 * math.sin(math.radians(tmax / 2.0)) / lam) ** 2       # 1/d² の上限
     # 各軸の最大指数: h = d*·a なので |h| <= |d*| |a| = sqrt(q_max) sqrt(G[0,0])(k, l も同じ)
     hmax = [int(math.floor(math.sqrt(q_max * G[i, i]))) + 1 for i in range(3)]
-    rng = [np.arange(-m, m + 1) for m in hmax]
-    H = np.stack(np.meshgrid(*rng, indexing="ij"), -1).reshape(-1, 3)
-    H = H[np.any(H != 0, axis=1)]
-    q = np.einsum("ni,ij,nj->n", H, Gs, H)
-    keep = q <= q_max * (1 + 1e-12)
-    H, q = H[keep], q[keep]
+    # h 軸ごとに作り、範囲外の指数を直ちに捨てる。meshgrid の全直方体と
+    # q/keep を同時に保持しないため、斜方格子で上限箱が緩い場合ほど軽い。
+    kr, lr = np.arange(-hmax[1], hmax[1] + 1), np.arange(-hmax[2], hmax[2] + 1)
+    kl = np.stack(np.meshgrid(kr, lr, indexing="ij"), -1).reshape(-1, 2)
+    h_parts, q_parts = [], []
+    for hv in range(-hmax[0], hmax[0] + 1):
+        block = np.empty((kl.shape[0], 3), dtype=np.int64)
+        block[:, 0], block[:, 1:] = hv, kl
+        qb = np.einsum("ni,ij,nj->n", block, Gs, block)
+        keep = (qb <= q_max * (1 + 1e-12)) & np.any(block != 0, axis=1)
+        if keep.any():
+            h_parts.append(block[keep])
+            q_parts.append(qb[keep])
+    H = np.concatenate(h_parts) if h_parts else np.empty((0, 3), dtype=np.int64)
+    q = np.concatenate(q_parts) if q_parts else np.empty(0, dtype=np.float64)
     if H.size == 0:
         raise ValueError("no reflection below two_theta_max=%g at wavelength %g" % (tmax, lam))
     d = 1.0 / np.sqrt(q)
@@ -552,9 +561,17 @@ def powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz="powder", 
     Bs = np.array([at["B"] for at in ph["atoms"]])
     types = [at["type"] for at in ph["atoms"]]
     fcache = {t: _f0(t, s) for t in set(types)}
-    fj = np.stack([fcache[t] for t in types], 1) * occ[None, :] * np.exp(-np.outer(s ** 2, Bs))
-    phase_arg = 2 * np.pi * (H @ X.T)
-    F = np.sum(fj * np.exp(1j * phase_arg), axis=1)
+    # 反射をブロック化する。各行の原子方向は従来どおり np.sum が同じ順で
+    # 加えるため、結果を変えずに巨大な複素 (反射, 原子) 配列を避ける。
+    F = np.empty(H.shape[0], dtype=np.complex128)
+    block_size = max(1, min(H.shape[0], 8_388_608 // max(1, len(types))))
+    for start in range(0, H.shape[0], block_size):
+        stop = min(start + block_size, H.shape[0])
+        sb = s[start:stop]
+        fj = np.stack([fcache[t][start:stop] for t in types], 1)
+        fj *= occ[None, :] * np.exp(-np.outer(sb ** 2, Bs))
+        phase_arg = 2 * np.pi * (H[start:stop] @ X.T)
+        F[start:stop] = np.sum(fj * np.exp(1j * phase_arg), axis=1)
     F2 = np.abs(F) ** 2
     # 同じ d・同じ |F|² をまとめる
     kd = np.round(d, 9)
@@ -1475,10 +1492,15 @@ def phase_fractions(two_theta, intensity, dictionary, background_order=4, sigma=
                 ph = dic["phases"][i]
 
                 def f(sc, j=j, ph=ph):
-                    Mx = M.copy()
-                    Mx[j] = _phase_profile(ph, x, pr["wavelength"], pr["size"], pr["K"], pr["instrumental_fwhm"],
-                                           pr["lorentz"], sc, pr["eta"])[0]
-                    return chi2(Mx)[0], Mx[j]
+                    old = M[j].copy()
+                    row = _phase_profile(ph, x, pr["wavelength"], pr["size"], pr["K"], pr["instrumental_fwhm"],
+                                         pr["lorentz"], sc, pr["eta"])[0]
+                    M[j] = row
+                    try:
+                        score = chi2(M)[0]
+                    finally:
+                        M[j] = old
+                    return score, row
 
                 a_, b_ = 1 - tol, 1 + tol
                 c_, d_ = b_ - gr * (b_ - a_), a_ + gr * (b_ - a_)
