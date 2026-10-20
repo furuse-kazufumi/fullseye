@@ -258,11 +258,25 @@ def _eigvalsh_sym3(a, b, c, d, e, f):
 
 
 def _abs_sorted_eigs(e1, e2, e3):
-    """Re-order per-voxel eigenvalues by magnitude: ``|l1| <= |l2| <= |l3|``."""
-    E = np.stack([e1, e2, e3], axis=-1)
-    order = np.argsort(np.abs(E), axis=-1)
-    Es = np.take_along_axis(E, order, axis=-1)
-    return Es[..., 0], Es[..., 1], Es[..., 2]
+    """Order eigenvalues by magnitude: ``|l1| <= |l2| <= |l3|``.
+
+    Equal magnitudes retain argument order (``e1`` before ``e2`` before ``e3``).
+    Non-finite magnitudes sort last; infinities retain argument order and NaNs
+    follow infinities. This stable three-item network avoids general sorting.
+    """
+    a, b, c = np.asarray(e1), np.asarray(e2), np.asarray(e3)
+
+    def after(x, y):
+        ax, ay = np.abs(x), np.abs(y)
+        return np.isnan(ax) | ((~np.isnan(ay)) & (ax > ay))
+
+    swap = after(a, b)
+    a, b = np.where(swap, b, a), np.where(swap, a, b)
+    swap = after(b, c)
+    b, c = np.where(swap, c, b), np.where(swap, b, c)
+    swap = after(a, b)
+    a, b = np.where(swap, b, a), np.where(swap, a, b)
+    return a, b, c
 
 
 def _iter_scales(scales, name="scales"):
@@ -600,7 +614,10 @@ def vol_region_props(labels, spacing=None, surface="auto"):
         if cnt == 0:
             continue
         offset = np.array([s.start for s in sl], dtype=np.float64)
-        centroid = tuple(float(x) for x in (np.argwhere(sub).mean(axis=0) + offset))
+        centroid = tuple(float(offset[axis] + np.dot(
+            np.arange(sub.shape[axis], dtype=np.float64),
+            sub.sum(axis=tuple(a for a in range(3) if a != axis), dtype=np.int64),
+        ) / cnt) for axis in range(3))
         area = _surface_area(sub, sp, surface)
         volume = cnt * voxvol
         props.append({
