@@ -350,6 +350,7 @@ def test_332_zero_weight_bands_match_original_core(shape, zero_bands):
     ref_band = rng.integers(0, len(p), size=shape)
     old = _old_crt_core(r, p, w, -80.0, 80.0, ref_band)
     got = residue_mod._crt_core(r, p, w, -80.0, 80.0, ref_band)
+    assert len(got[:4]) == len(old) == 4
     for actual, expected in zip(got[:4], old):
         assert np.array_equal(actual, expected, equal_nan=True)
 
