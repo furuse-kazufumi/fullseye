@@ -174,7 +174,17 @@ def anomaly_pro(scores, masks, fpr_max=0.3):
     w = np.zeros(nreg + 1)
     w[1:] = 1.0 / (areas * float(nreg))
     flat = s.ravel()
-    order = np.argsort(-flat, kind="mergesort")
+    good = flat[~mk.ravel()]
+    # The first good-pixel group beyond the requested FPR is sufficient for
+    # interpolation.  Keep its ties intact and retain every defect pixel so
+    # that defect-only score groups before that point cannot disappear.
+    n_good_needed = int(math.floor(fm * nneg)) + 1
+    if fm == 1.0 or n_good_needed >= nneg:
+        selected = np.arange(flat.size)
+    else:
+        boundary = np.partition(good, nneg - n_good_needed)[nneg - n_good_needed]
+        selected = np.flatnonzero(mk.ravel() | (flat >= boundary))
+    order = selected[np.argsort(-flat[selected], kind="mergesort")]
     sv = flat[order]
     cp = np.cumsum(w[labs.ravel()[order]])
     cn = np.cumsum((~mk.ravel()[order]).astype(np.float64)) / nneg

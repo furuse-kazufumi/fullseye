@@ -67,3 +67,68 @@ def test_operating_point_bound_calls_are_logarithmic(monkeypatch):
     monkeypatch.setattr(anomeval, "_cp_lower", counted)
     anomeval.anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95)
     assert calls <= math.ceil(math.log2(n)) + 2
+
+
+def _old_anomaly_pro(scores, masks, fpr_max):
+    """Full-sort reference kept from the pre-optimisation implementation."""
+    s = np.asarray(scores, dtype=np.float64)
+    if s.ndim == 2:
+        s = s[None]
+    mk = np.asarray(masks, dtype=bool)
+    if mk.ndim == 2:
+        mk = mk[None]
+    labs, areas, nreg = anomeval._regions(mk)
+    nneg = int((~mk).sum())
+    w = np.zeros(nreg + 1)
+    w[1:] = 1.0 / (areas * float(nreg))
+    flat = s.ravel()
+    order = np.argsort(-flat, kind="mergesort")
+    sv = flat[order]
+    cp = np.cumsum(w[labs.ravel()[order]])
+    cn = np.cumsum((~mk.ravel()[order]).astype(np.float64)) / nneg
+    last = np.r_[np.nonzero(np.diff(sv) != 0)[0], sv.size - 1]
+    fpr = np.r_[0.0, cn[last]]
+    pro = np.r_[0.0, cp[last]]
+    cut = int(np.searchsorted(fpr, fpr_max, side="right"))
+    fx, py = fpr[:cut], pro[:cut]
+    if cut < fpr.size and fx[-1] < fpr_max:
+        x0, x1, y0, y1 = fpr[cut - 1], fpr[cut], pro[cut - 1], pro[cut]
+        yi = y0 + (y1 - y0) * (fpr_max - x0) / (x1 - x0) if x1 > x0 else y1
+        fx, py = np.r_[fx, fpr_max], np.r_[py, yi]
+    area = float(np.sum((fx[1:] - fx[:-1]) * (py[1:] + py[:-1]) * 0.5))
+    return area / fpr_max, fx, py
+
+
+@pytest.mark.parametrize("fpr_max", [0.05, 0.3, 1.0])
+@pytest.mark.parametrize("quantised", [False, True])
+def test_anomaly_pro_partial_sort_matches_full_sort(fpr_max, quantised):
+    rng = np.random.default_rng(802)
+    scores = rng.random((3, 37, 41))
+    if quantised:
+        scores = (scores * 8).astype(np.uint8)  # massive tied score groups
+    masks = np.zeros(scores.shape, bool)
+    masks[0, 2:12, 3:15] = True
+    masks[1, 20:34, 10:35] = True
+    masks[2, 5:30, 20:22] = True
+    scores[masks] = np.min(scores)  # defects may all have the lowest score
+    expected = _old_anomaly_pro(scores, masks, fpr_max)
+    actual = anomeval.anomaly_pro(scores, masks, fpr_max)
+    assert actual["aupro"] == pytest.approx(expected[0], abs=1e-12)
+    np.testing.assert_allclose(actual["fpr"], expected[1], atol=1e-12, rtol=0)
+    np.testing.assert_allclose(actual["pro"], expected[2], atol=1e-12, rtol=0)
+
+
+def test_anomaly_pro_sorts_only_needed_range(monkeypatch):
+    scores = np.arange(10_000, dtype=float).reshape(100, 100)
+    masks = np.zeros_like(scores, bool)
+    masks[:10, :10] = True
+    sizes = []
+    original = np.argsort
+
+    def counted(a, *args, **kwargs):
+        sizes.append(np.asarray(a).size)
+        return original(a, *args, **kwargs)
+
+    monkeypatch.setattr(np, "argsort", counted)
+    anomeval.anomaly_pro(scores, masks, 0.05)
+    assert sizes == [596]
