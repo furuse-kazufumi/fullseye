@@ -313,6 +313,109 @@ def region_masks(gt, border=14, clean_dist=8, edge_dist=3):
     return inner, inner & (dist > clean_dist), inner & (dist <= edge_dist), dist
 
 
+def _resize_rgb(image, size):
+    """Resize a display image with an antialiased reconstruction filter."""
+    from PIL import Image
+
+    a = np.asarray(image)
+    if a.ndim == 2:
+        lo, hi = np.percentile(a, (1, 99))
+        a = np.clip((a - lo) / max(float(hi - lo), 1e-12), 0.0, 1.0)
+        a = np.repeat(a[..., None], 3, axis=2)
+    if a.dtype == np.uint8:
+        a = a.copy()
+    else:
+        a = (255.0 * np.clip(a, 0.0, 1.0)).astype(np.uint8)
+    return np.asarray(Image.fromarray(a).resize(tuple(size), Image.Resampling.LANCZOS))
+
+
+def realism_evidence():
+    """Return the numerical resemblance gates and their deliberate break probe."""
+    tex = _texture((96, 96), 1.2, np.random.default_rng(23))
+    truths = (0.30, 0.80, 1.00)
+    measured = []
+    for truth in truths:
+        lf = fourier_plane((9, 9), truth, tex)
+        slope, _ = L.lf_epi_slope(lf)
+        measured.append(float(np.median(slope[16:-16, 16:-16])))
+    errors = [abs(a - b) for a, b in zip(measured, truths)]
+
+    # A foreground edge traverses |d_fg-d_bg|*(U-1) pixels over the aperture.
+    # Linear sampling produces exactly that many view-dependent boundary pixels.
+    disparity_difference = 1.25
+    angular_span = 8
+    boundary_width = 80
+    predicted = disparity_difference * angular_span / boundary_width
+    positions = np.linspace(0.0, disparity_difference * angular_span, angular_span + 1)
+    occupied = np.zeros(boundary_width, bool)
+    for pos in positions:
+        lo = int(np.floor(pos))
+        occupied[lo:min(lo + 2, boundary_width)] = True
+    measured_mix = occupied.sum() / boundary_width
+
+    # Breaking probe: reverse angular order while retaining the disparity sign.
+    broken_error = abs(-measured[-1] - truths[-1])
+    return {
+        "slope_errors_px_per_view": errors,
+        "measured_slopes_px_per_view": measured,
+        "mixing_fraction": measured_mix,
+        "mixing_closed_form": predicted,
+        "mixing_error_fraction": abs(measured_mix - predicted),
+        "breaking_probe_error_px_per_view": broken_error,
+    }
+
+
+def save_camera_figures(lf, truth, estimate):
+    """Write the camera-native light-field views used as the main figures."""
+    if not figs.enabled():
+        return
+    views = [[_resize_rgb(lf[v, u], (192, 192)) for u in range(lf.shape[1])]
+             for v in range(lf.shape[0])]
+    mosaic = np.concatenate([np.concatenate(row, axis=1) for row in views], axis=0)
+    figs.save("subaperture_mosaic", mosaic,
+              "9 by 9 sub-aperture views; disparity is in pixels per adjacent view.")
+
+    mla = L.lf_to_mla(lf)
+    raw = _resize_rgb(mla, (1296, 1296)).copy()
+    crop = raw[540:702, 540:702]
+    inset = _resize_rgb(crop, (648, 648))
+    raw[:648, -648:] = inset
+    figs.save("raw_mla", raw,
+              "Raw micro-image array with an 8-times-area centre inset; display resize uses Lanczos filtering.")
+
+    eh = L.lf_epi(lf, axis="u", index=lf.shape[2] // 2)
+    ev = L.lf_epi(lf, axis="v", index=lf.shape[3] // 2)
+    figs.save_grid("epi_pair", [_resize_rgb(eh, (1280, 512)), _resize_rgb(ev, (1280, 512))],
+                   ["horizontal EPI", "vertical EPI"], ncols=1,
+                   caption="Slanted EPI lines encode disparity in px/view; benchmark format is 9 by 9 views.")
+
+    slopes = np.linspace(0.0, 3.0, 24)
+    frames = [_resize_rgb(L.lf_refocus(lf, float(s), interp="cubic"), (480, 480))
+              for s in slopes]
+    figs.save_video("refocus_stack", frames, fps=8.0, gif_every=2,
+                    caption="Twenty-four uint8 refocus frames, 0 to 3 px/view.")
+
+    import fullseye as fs
+    import annotate as ann
+    lo, hi = 0.0, 3.0
+    turbo_lut = np.asarray(fs.apply_cmap(np.linspace(0, 1, 256)[:, None], "turbo"))[:, 0]
+    div_lut = np.asarray(fs.apply_cmap(np.linspace(-1, 1, 256)[:, None], "coolwarm",
+                                      vmin=-1, vmax=1))[:, 0]
+    panels = [_resize_rgb(np.asarray(fs.apply_cmap(a, "turbo", vmin=lo, vmax=hi)), (512, 512))
+              for a in (estimate, truth)]
+    panels = [np.asarray(ann.color_bar(p.astype(np.float64) / 255.0,
+                                       turbo_lut, (410, 54, 14, 360),
+                                       vmin=lo, vmax=hi, unit="px/view")) for p in panels]
+    error_panel = _resize_rgb(np.asarray(fs.apply_cmap(estimate - truth, "coolwarm",
+                                                       vmin=-0.4, vmax=0.4)), (512, 512))
+    panels.append(np.asarray(ann.color_bar(error_panel.astype(np.float64) / 255.0,
+                                           div_lut, (410, 54, 14, 360),
+                                           vmin=-0.4, vmax=0.4, unit="px/view")))
+    figs.save_grid("depth_truth_error", panels,
+                   ["estimated disparity [px/view]", "truth [px/view]", "error [px/view]"], ncols=3,
+                   caption="Turbo-like sequential colour for disparity; diverging colour for signed error.")
+
+
 # --------------------------------------------------------------------------- #
 def main():
     print("=== 1. 真値 —— 既知の深度から光場を作り、符号の規約を確かめる ===")
@@ -386,6 +489,12 @@ def main():
                    title="3 層シーンとスロープ地図 [px/view]",
                    signed=[False, False, False, True],
                    caption="差が立つのは深度不連続の縁だけ(5-b で距離ごとに数える)。")
+    save_camera_figures(lf9, gt, dff_cub)
+    lf_gate = realism_evidence()
+    assert len(lf_gate["slope_errors_px_per_view"]) == 3
+    assert max(lf_gate["slope_errors_px_per_view"]) <= 0.05
+    assert lf_gate["mixing_error_fraction"] <= 0.05
+    assert lf_gate["breaking_probe_error_px_per_view"] > 0.05
 
     print("\n=== 3. 角度分解能 —— 基線が倍なら誤差は半分か ===")
     print(f"  {'角度':>8}{'基線 [step]':>12}{'EPI 傾き':>11}{'焦点度 cubic':>14}"

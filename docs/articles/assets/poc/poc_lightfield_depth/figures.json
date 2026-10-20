@@ -10,7 +10,69 @@
   ]
  },
  {
-  "file": "02_focus_snapping.png",
+  "file": "02_subaperture_mosaic.png",
+  "name": "subaperture_mosaic",
+  "caption": "9 by 9 sub-aperture views; disparity is in pixels per adjacent view.",
+  "shape": [
+   1728,
+   1728,
+   3
+  ]
+ },
+ {
+  "file": "03_raw_mla.png",
+  "name": "raw_mla",
+  "caption": "Raw micro-image array with an 8-times-area centre inset; display resize uses Lanczos filtering.",
+  "shape": [
+   1296,
+   1296,
+   3
+  ]
+ },
+ {
+  "file": "04_epi_pair.png",
+  "name": "epi_pair",
+  "caption": "Slanted EPI lines encode disparity in px/view; benchmark format is 9 by 9 views.",
+  "shape": [
+   1118,
+   1300,
+   3
+  ]
+ },
+ {
+  "file": "05_refocus_stack.gif",
+  "name": "refocus_stack",
+  "caption": "Twenty-four uint8 refocus frames, 0 to 3 px/view.",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 4.0,
+  "video": "05_refocus_stack.mp4",
+  "video_frames": 24,
+  "video_fps": 8.0,
+  "video_shape": [
+   480,
+   480,
+   3
+  ]
+ },
+ {
+  "file": "06_depth_truth_error.png",
+  "name": "depth_truth_error",
+  "caption": "Turbo-like sequential colour for disparity; diverging colour for signed error.",
+  "shape": [
+   564,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "07_focus_snapping.png",
   "name": "focus_snapping",
   "caption": "linear は 1.08/1.15 を 1.0 へ、1.85 を 2.0 側へ引く。cubic は恒等線に乗る。生成側の補間はゼロ(Fourier シフト)。",
   "shape": [
@@ -20,7 +82,7 @@
   ]
  },
  {
-  "file": "03_texture_breakdown.png",
+  "file": "08_texture_breakdown.png",
   "name": "texture_breakdown",
   "caption": "EPI は SNR 20 で既に -35 %。焦点度は SNR 20 まで持ちこたえ、そこから整数 1.0 / 2.0 へ落ちる。",
   "shape": [
@@ -28,11 +90,11 @@
    347,
    3
   ],
-  "csv": "03_texture_breakdown.csv",
-  "tsv": "03_texture_breakdown.tsv"
+  "csv": "08_texture_breakdown.csv",
+  "tsv": "08_texture_breakdown.tsv"
  },
  {
-  "file": "04_occlusion_bands.png",
+  "file": "09_occlusion_bands.png",
   "name": "occlusion_bands",
   "caption": "境界から 5 px 離れれば内側の水準に戻る。影響半径は開口の見込み視差(最大 7.5 px)と同じ桁。",
   "shape": [
