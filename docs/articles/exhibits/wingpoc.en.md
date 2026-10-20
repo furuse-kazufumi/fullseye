@@ -5116,7 +5116,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 [![Ranging by Counting Photons — How Many for How Many Millimetres?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
-*↑ **Ranging by Counting Photons — How Many for How Many Millimetres?** ―― The lead figure is a 48-frame, 576 x 432 light-front video over a 20 % return-amplitude image. A second figure labels an 8x flying-pixel crop, corner bowing and dark-object noise.*
+*↑ **Ranging by Counting Photons — How Many for How Many Millimetres?** ―― The lead figure is a 48-frame, 576 x 432 light-front video: a false-colour gate response crosses from near to far over a 35 % return-amplitude image. A second figure labels an 8x flying-pixel crop, corner bowing and dark-object noise.*
 
 [![飛び画素（8倍拡大）、壁隅の系統的な湾曲、低反射物体の距離雑音を同じ尺度で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts.png)
 
@@ -6180,7 +6180,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 [![The Arrival-Time Surface as an Isosurface in (x, y, t)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
-*↑ **The Arrival-Time Surface as an Isosurface in (x, y, t)** ―― The lead figure overlays positive and negative events in blue and red, with at least 90 % on moving edges. The arrival video has 171 frames at 624 x 586 and 20 fps.*
+*↑ **The Arrival-Time Surface as an Isosurface in (x, y, t)** ―― The lead image separates ON events in orange, OFF events in cyan, and no-event pixels in grey, with at least 90 % on moving edges. The arrival video has 171 frames at 624 x 586 and 20 fps.*
 
 [![方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate.png)
 

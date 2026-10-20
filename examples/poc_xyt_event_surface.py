@@ -190,15 +190,36 @@ def _event_camera_figures():
                                timestamp_jitter_s=2e-5, seed=53)
     gates = event_resemblance_gates(frames, ev, dt_s=dt_s, edge_truth=edges)
     h, w = frames.shape[1:]
-    raster = np.zeros((h, w, 3), np.float64)
+    raster = np.full((h, w, 3), 0.58, np.float64)
     on = np.zeros((h, w), np.float64); off = np.zeros_like(on)
     np.add.at(on, (ev["y"][ev["polarity"] > 0], ev["x"][ev["polarity"] > 0]), 1)
     np.add.at(off, (ev["y"][ev["polarity"] < 0], ev["x"][ev["polarity"] < 0]), 1)
-    raster[..., 0] = np.clip(on / max(1.0, np.percentile(on[on > 0], 98) if np.any(on) else 1), 0, 1)
-    raster[..., 2] = np.clip(off / max(1.0, np.percentile(off[off > 0], 98) if np.any(off) else 1), 0, 1)
     last = np.full((h, w), -np.inf)
+    last_polarity = np.zeros((h, w), np.int8)
     for e in ev:
         last[e["y"], e["x"]] = e["t"]
+        last_polarity[e["y"], e["x"]] = e["polarity"]
+    on_colour = np.array([0.98, 0.48, 0.05])
+    off_colour = np.array([0.05, 0.72, 0.92])
+    raster[last_polarity > 0] = on_colour
+    raster[last_polarity < 0] = off_colour
+    # In-panel key; coloured swatches remain machine-checkable and the text is
+    # rendered with the same bitmap pipeline as the exhibit.
+    from PIL import Image, ImageDraw
+    key = Image.fromarray(np.uint8(raster * 255 + 0.5))
+    draw = ImageDraw.Draw(key)
+    draw.rectangle((8, 8, 31, 25), fill=tuple(np.uint8(on_colour * 255)))
+    draw.text((37, 9), "ON", fill=(20, 20, 20))
+    draw.rectangle((76, 8, 99, 25), fill=tuple(np.uint8(off_colour * 255)))
+    draw.text((105, 9), "OFF", fill=(20, 20, 20))
+    draw.rectangle((158, 8, 181, 25), fill=(148, 148, 148))
+    draw.text((187, 9), "no event", fill=(20, 20, 20))
+    raster = np.asarray(key, dtype=np.float64) / 255.0
+    polarity_fraction = {"on": float(np.mean(last_polarity > 0)),
+                         "off": float(np.mean(last_polarity < 0))}
+    distinct_polarity_hues = int(np.any(last_polarity > 0)) + int(np.any(last_polarity < 0))
+    assert distinct_polarity_hues >= 2, distinct_polarity_hues
+    assert polarity_fraction["on"] >= 0.02 and polarity_fraction["off"] >= 0.02, polarity_fraction
     age = frames.shape[0] * dt_s - last
     surface = np.exp(-np.minimum(age, 0.020) / 0.006)
     surface[~np.isfinite(age)] = 0.0
@@ -207,7 +228,7 @@ def _event_camera_figures():
     triptych = np.concatenate([raster, colormaps["turbo"](surface)[..., :3],
                                np.repeat(density[..., None], 3, axis=2)], axis=1)
     figs.save("event_output", triptych,
-              caption=("装置出力（左、ON=赤・OFF=青）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。"
+              caption=("装置出力（左、ON=橙・OFF=水色・無イベント=灰色）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。"
                        "コントラスト閾値 0.50、不応期 0.2 ms、時刻揺らぎ 0.02 ms、背景活動 0.001 event/(pixel s)。"
                        "移動輝度境界から 2 px 以内 %.1f %%、ON/OFF 比 %.3f。" %
                        (100 * gates["edge_fraction"], gates["on_off_ratio"])))
@@ -216,6 +237,9 @@ def _event_camera_figures():
     figs.save_plot("event_rate", [("イベント率", t, rate)], xlabel="時刻 [ms]",
                    ylabel="events / ms", title="往復運動のイベント率",
                    caption="方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。")
+    gates.update({"distinct_polarity_hues": distinct_polarity_hues,
+                  "on_panel_fraction": polarity_fraction["on"],
+                  "off_panel_fraction": polarity_fraction["off"]})
     return gates
 
 # --- 場面の諸元 -------------------------------------------------------------- #

@@ -221,6 +221,10 @@ def simulate_dtof_frame(*, seed=16):
     return truth, out, amp, conf, samples, masks
 
 
+class LightFrontFrames(list):
+    """Frames plus the physical gate positions used to render them."""
+
+
 def light_front_frames(truth, amplitude, *, count=48, height=432, width=576):
     """Return a display-only sweep of the emitted light front as uint8 RGB frames."""
     from PIL import Image
@@ -229,25 +233,46 @@ def light_front_frames(truth, amplitude, *, count=48, height=432, width=576):
         raise ValueError("light-front exhibit is fixed at 48 frames of 576x432")
     lo, hi = float(np.percentile(truth, 1)), float(np.percentile(truth, 99))
     base = np.sqrt(np.maximum(amplitude, 0.0) / max(float(amplitude.max()), 1e-12))
-    frames = []
-    for front in np.linspace(lo - 0.18, hi + 0.18, count):
-        # The amplitude image remains at 20 %; only the narrow round-trip front lights up.
+    # A gated sensor still exposes the returned-amplitude scene.  Keep that
+    # scene readable while the false-colour time gate selects one depth shell.
+    background = np.repeat((0.22 + 0.35 * base)[..., None], 3, axis=2)
+    from matplotlib import colormaps
+    turbo = colormaps["turbo"]
+    fronts = np.linspace(float(np.min(truth)) - 0.015, float(np.max(truth)) + 0.015, count)
+    frames = LightFrontFrames()
+    frames.front_depths = fronts
+    frames.scene_depth_span = float(np.max(truth) - np.min(truth))
+    for front in fronts:
+        # Preserve the modelled narrow Gaussian pulse; colour and alpha encode
+        # its gate response rather than replacing the recognisable scene.
         pulse = np.exp(-0.5 * ((truth - front) / 0.055) ** 2)
-        rgb = np.stack((0.20 * base + 0.12 * pulse,
-                        0.20 * base + 0.72 * pulse,
-                        0.20 * base + 1.00 * pulse), axis=-1)
+        colour = turbo(np.clip(0.12 + 0.78 * pulse, 0.0, 1.0))[..., :3]
+        # Display compression reveals the low shoulders of the physical pulse,
+        # as an amplitude-scaled time-gated viewer would do.
+        alpha = (0.92 * np.power(pulse, 0.20))[..., None]
+        rgb = background * (1.0 - alpha) + colour * alpha
         rgb = np.uint8(np.clip(rgb, 0.0, 1.0) * 255.0 + 0.5)
         frames.append(np.asarray(Image.fromarray(rgb).resize((width, height), Image.BICUBIC)))
     return frames
 
 
 def light_front_content_gate(frames):
-    """Fail closed if a nominal video is static, dark, or has the wrong delivery shape."""
+    """Check visibility, changing gate coverage, and a full-width front sweep."""
     a = np.asarray(frames)
     motion = float(np.mean(np.abs(np.diff(a.astype(np.int16), axis=0)))) if len(a) > 1 else 0.0
-    lit = float(np.mean(a[..., 2].astype(np.int16) > a[..., 0].astype(np.int16) + 24))
-    ok = a.shape == (48, 432, 576, 3) and a.dtype == np.uint8 and motion > 0.45 and lit > 0.01
-    return {"motion_l1": motion, "lit_fraction": lit, "pass": bool(ok)}
+    chroma = a.max(axis=-1).astype(np.int16) - a.min(axis=-1).astype(np.int16)
+    foreground = chroma > 28
+    fractions = foreground.mean(axis=(1, 2))
+    sample = np.array([0, 12, 24, 36, 47])
+    centroids = np.asarray(getattr(frames, "front_depths", []), dtype=np.float64)[sample]
+    depth_span = float(getattr(frames, "scene_depth_span", 0.0))
+    spread = float((centroids[-1] - centroids[0]) / max(1e-12, depth_span))
+    monotone = bool(np.all(np.diff(centroids) > 0))
+    ok = (a.shape == (48, 432, 576, 3) and a.dtype == np.uint8 and motion >= 1.0
+          and float(fractions.mean()) >= 0.15 and monotone and spread >= 0.70)
+    return {"motion_l1": motion, "non_background_fraction": float(fractions.mean()),
+            "centroid_depths_m": centroids.tolist(), "centroid_span": spread,
+            "centroid_monotone": monotone, "pass": bool(ok)}
 
 
 def dtof_resemblance_gate(truth, measured, amplitude):
@@ -275,10 +300,10 @@ def _device_figures():
     frames = light_front_frames(truth, amp)
     video_gate = light_front_content_gate(frames)
     figs.save_video("light_front", frames, fps=24.0, gif_every=2, gif_width=576,
-                    caption=("往復光の前線を48フレームで走査。反射振幅像を20 %%で残し、"
-                             "青い帯が同じ距離の面を横切る。576×432、uint8、"
-                             "フレーム差 %.2f、発光率 %.1f %%（内容門 %s）。" %
-                             (video_gate["motion_l1"], 100 * video_gate["lit_fraction"],
+                    caption=("往復光の前線を48フレームで走査。反射振幅像を35 %%で残し、"
+                             "擬似色のゲート応答が同じ距離の面を横切る。576×432、uint8、"
+                             "フレーム差 %.2f、前線率 %.1f %%（内容門 %s）。" %
+                             (video_gate["motion_l1"], 100 * video_gate["non_background_fraction"],
                               "PASS" if video_gate["pass"] else "FAIL")))
 
     # Three device-like failure modes, labelled at a readable 8x crop scale.
@@ -321,7 +346,9 @@ def _device_figures():
                    xlabel="round-trip time [ps]", ylabel="counts", title="三画素の到来時刻ヒストグラム",
                    caption="平面、角、暗い物体。角画素には二次反射の肩が現れる。")
     gate.update({"video_motion_l1": video_gate["motion_l1"],
-                 "video_lit_fraction": video_gate["lit_fraction"],
+                 "video_non_background_fraction": video_gate["non_background_fraction"],
+                 "video_centroid_depths_m": video_gate["centroid_depths_m"],
+                 "video_centroid_span": video_gate["centroid_span"],
                  "video_pass": video_gate["pass"]})
     return gate
 
@@ -337,7 +364,7 @@ def main():
         print("frame resemblance: exponent %.3f (%s)" %
               (gate_frame["exponent"], "PASS" if gate_frame["pass"] else "FAIL"))
         print("light-front content: motion %.2f, lit %.1f %% (%s)" %
-              (gate_frame["video_motion_l1"], 100 * gate_frame["video_lit_fraction"],
+              (gate_frame["video_motion_l1"], 100 * gate_frame["video_non_background_fraction"],
                "PASS" if gate_frame["video_pass"] else "FAIL"))
     print("=== 1. 装置と真値 —— 何を測っているのか ===")
     print(f"  ビン {BINS} x {BIN_PS:.0f} ps  →  一意に測れる距離 "

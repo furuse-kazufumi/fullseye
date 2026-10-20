@@ -2,7 +2,7 @@
  {
   "file": "01_light_front.gif",
   "name": "light_front",
-  "caption": "往復光の前線を48フレームで走査。反射振幅像を20 %で残し、青い帯が同じ距離の面を横切る。576×432、uint8、フレーム差 6.04、発光率 7.6 %（内容門 PASS）。",
+  "caption": "往復光の前線を48フレームで走査。反射振幅像を35 %で残し、擬似色のゲート応答が同じ距離の面を横切る。576×432、uint8、フレーム差 9.55、前線率 16.2 %（内容門 PASS）。",
   "shape": [
    432,
    576,
@@ -10,7 +10,7 @@
   ],
   "animated": true,
   "frames": 24,
-  "frames_written": 22,
+  "frames_written": 24,
   "fps": 12.0,
   "video": "01_light_front.mp4",
   "video_frames": 48,
