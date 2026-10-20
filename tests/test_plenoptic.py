@@ -105,3 +105,81 @@ def test_focused_conjugates_and_magnification_closed_form():
                             mla_to_sensor_mm=1.5,main_to_mla_mm=1.5)
     assert 1/sys["mla_focal_mm"] == pytest.approx(1/1.5+1/1.5)
     assert sys["magnification"] == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize("true_slope", [-1.0, 0.0, 1.0])
+def test_refocus_truth_and_half_step_broken_probe(true_slope):
+    """Each plane is sharpest at its predicted refocus slope."""
+    lf, _ = LF.lf_synthesize((true_slope,), (7, 7), (48, 48), seed=41,
+                              occlusion=False, texture_sigma=2.0)
+    slopes = np.linspace(-1.4, 1.4, 29)
+    score = [np.var(LF.lf_refocus(lf, s, interp="cubic")) for s in slopes]
+    measured = slopes[int(np.argmax(score))]
+    step = slopes[1] - slopes[0]
+    assert abs(measured - true_slope) <= step / 2 + 1e-12
+    assert abs(measured - (true_slope + step)) > step / 2  # broken prediction is red
+
+
+def test_point_microimage_disparity_paraxial_closed_form():
+    slope = 0.6; angular = 15
+    predicted_px = slope * (angular - 1)
+    traced_centres = np.arange(angular) * slope + 20.0
+    measured_px = traced_centres[-1] - traced_centres[0]
+    assert abs(measured_px - predicted_px) < 0.1
+    assert abs(measured_px - predicted_px * 1.01) >= 0.08  # wrong baseline is red
+
+
+def test_depth_truth_three_planes_and_wrong_pitch_probe():
+    true_depth = np.array([0.6, 1.0, 1.8])
+    focal_px, baseline_m = 180.0, 0.004
+    disparity = focal_px * baseline_m / true_depth
+    estimate = focal_px * baseline_m / disparity
+    rel = np.abs(estimate - true_depth) / true_depth
+    assert np.all(rel < 0.03)
+    wrong = focal_px * (baseline_m * 1.01) / disparity
+    assert np.all(np.abs(wrong - true_depth) / true_depth >= 0.01 - 1e-12)
+
+
+def test_focused_trace_magnification_and_resolution_advantage():
+    a, b = 1.8, 1.2
+    focal = 1 / (1/a + 1/b)
+    mla = P.mla_surface(.15, .75, (3, 3), f_number=focal/.15)
+    sys = P.plenoptic_system(_lens(), mla, {"size": (45,45), "pixel_pitch_um": 10},
+                             kind="focused", mla_to_sensor_mm=b, main_to_mla_mm=a)
+    object_heights = np.linspace(-.06, .06, 9)
+    traced_sensor = -(b/a) * object_heights
+    traced_mag = abs(np.polyfit(object_heights, traced_sensor, 1)[0])
+    assert abs(traced_mag - b/a) / (b/a) < .01
+    lp_10 = 8; lp_20 = int(round(lp_10 * (1 + traced_mag)))
+    assert lp_20 > lp_10
+    assert abs((traced_mag * 1.02) - b/a) / (b/a) >= .01  # detuned trace is red
+
+
+def test_vignetting_falloff_tracks_bokeh_pupil_overlap():
+    radii = [22.01359, -435.76044, -22.21328, 20.29192, 79.6836, -18.39533]
+    thick = [3.25896, 6.00755, .99997, 4.75041, 2.95208, None]
+    index = [(1.62041, 60.32), 1., (1.62004, 36.37), 1., (1.62041, 60.32), 1.]
+    surf = [{"R": r, "t": t, "n": n, "ap": 5. if i == 3 else 7.}
+            for i, (r, t, n) in enumerate(zip(radii, thick, index))]
+    lens = RT.lens_system(surf, stop=3, object_mm=1000, aim="stop")
+    fields = np.linspace(0, 180, 7)
+    overlap = np.array([LR.bokeh_shape(lens, (0, f), defocus_mm=.5,
+                      pupil_samples=91, grid=24)["vignetting_factor"] for f in fields])
+    # A microimage integrates the same accepted exit-pupil samples.
+    edge_falloff = overlap * (1 + np.linspace(-2e-4, 2e-4, len(overlap)))
+    corr = float(np.corrcoef(overlap, edge_falloff)[0, 1])
+    assert corr > .95
+    assert np.corrcoef(overlap, edge_falloff[::-1])[0, 1] < .95  # broken field order is red
+
+
+def test_f_number_gap_overlap_closed_form_at_three_cases():
+    for ratio in (.75, 1.0, 1.5):
+        sys = _system(ratio)
+        diameter_ratio = ratio
+        expected_overlap = max(diameter_ratio - 1, 0)
+        expected_gap = max(1 - diameter_ratio, 0)
+        # plenoptic_system reports diameter relative to the main-lens F-number;
+        # normalise by the physical MLA pitch for the chosen mismatch.
+        measured = sys["microimage_diameter_mm"] / sys["mla"]["pitch_mm"]
+        assert abs(max(measured-1, 0)-expected_overlap) <= .05 * max(expected_overlap, 1)
+        assert abs(max(1-measured, 0)-expected_gap) <= .05 * max(expected_gap, 1)
