@@ -182,8 +182,12 @@ def _ctf_args(op, kv, cs_mm, defocus_A, astig_A, astig_angle_deg, amplitude_cont
 
 def _chi(kx, ky, lam, cs, df_u, df_v, ang, ps):
     k2 = kx * kx + ky * ky
-    alpha = np.arctan2(ky, kx)
-    dfa = 0.5 * (df_u + df_v + (df_u - df_v) * np.cos(2.0 * (alpha - ang)))
+    c2, s2 = math.cos(2.0 * ang), math.sin(2.0 * ang)
+    directional = np.empty_like(k2)
+    np.divide((kx * kx - ky * ky) * c2 + 2.0 * kx * ky * s2, k2,
+              out=directional, where=k2 != 0.0)
+    directional[k2 == 0.0] = c2
+    dfa = 0.5 * (df_u + df_v + (df_u - df_v) * directional)
     return math.pi * lam * k2 * dfa - 0.5 * math.pi * cs * lam ** 3 * k2 * k2 + ps, dfa
 
 
@@ -352,8 +356,9 @@ def tem_projected_potential(atoms, elements="C", shape=256, pixel_A=0.5):
     # 双線形の置き方の伝達(各軸の sinc²)。Nyquist で 0.405 なので割り戻しても発散しない。
     T = (np.sinc(kx * px) ** 2) * (np.sinc(ky * px) ** 2)
     out = np.zeros((ny, nx), dtype=np.complex128)
-    for name in sorted(set(el)):
-        idx = np.array([e == name for e in el])
+    element_codes = np.asarray(el)
+    groups = {name: np.flatnonzero(element_codes == name) for name in sorted(set(el))}
+    for name, idx in groups.items():
         fe = _electron_form_factor(name, q / 2.0)
         out += np.fft.fft2(_splat(xy[idx], ny, nx, px)) * fe / T
     return POTENTIAL_CONST * np.fft.ifft2(out).real / (px * px)
@@ -459,7 +464,6 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
     if S.ndim != 3 or S.dtype.kind not in "iuf" or min(S.shape[1:]) < 8 or S.shape[0] < 1:
         raise ValueError("%s: slices must be a real (n, ny, nx) array with ny, nx >= 8, got %s %s"
                          % (op, S.dtype, S.shape))
-    S = S.astype(np.float64)
     if not np.isfinite(S).all():
         raise ValueError("%s: slices has non-finite values" % op)
     px = _num(pixel_A, "pixel_A", op, lo=0.01, hi=100.0)
@@ -474,10 +478,13 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
     mask = (k2 <= kmax * kmax).astype(np.float64)
     P = np.exp(-1j * math.pi * lam * dz * k2) * mask
     psi = np.ones((ny, nx), dtype=np.complex128)
+    projected = np.zeros((ny, nx), dtype=np.float64)
     for v in S:
+        v = np.asarray(v, dtype=np.float64)
+        projected += v
         t = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * v)) * mask)
         psi = np.fft.ifft2(np.fft.fft2(t * psi) * P)
-    proj = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * S.sum(axis=0))) * mask)
+    proj = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * projected)) * mask)
     inten = psi.real ** 2 + psi.imag ** 2
     return {"exit_wave": psi, "intensity": inten, "total_intensity": float(inten.mean()),
             "projection_wave": proj, "wavelength_A": lam, "sigma_rad_per_VA": sigma,
@@ -531,8 +538,11 @@ def tem_power_spectrum(image, tile=None, overlap=0.5):
     img = _img(image, "image", op, min_side=16)
     t = int(_num(_auto_tile(img.shape, tile), "tile", op, lo=16, hi=min(img.shape)))
     ov = _num(overlap, "overlap", op, lo=0.0, hi=0.9)
-    sp = _tile_spectra(img, t, ov)
-    return np.fft.fftshift(np.mean(sp, axis=0))
+    spectra = _tile_spectra(img, t, ov)
+    total = spectra[0].copy()
+    for spectrum in spectra[1:]:
+        total += spectrum
+    return np.fft.fftshift(total / len(spectra))
 
 
 def _radial(ps_unshift, pixel_A, k_lo, k_hi, nbins):
