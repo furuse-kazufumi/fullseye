@@ -337,10 +337,19 @@ def _gauss_fit(feats, shrinkage, ridge, op):
                          "an identical stack gives no model of what varies" % op)
     ident = np.eye(d)
     if shrinkage == "auto":
-        lam = np.empty((gh, gw))
-        for i in range(gh):
-            for j in range(gw):
-                lam[i, j] = _lw_intensity(xc[:, i, j, :], s[i, j])
+        lam = np.empty(gh * gw)
+        xflat = xc.reshape(n, -1, d)
+        sflat = s.reshape(-1, d, d)
+        for a in range(0, gh * gw, 256):
+            xb = xflat[:, a:a + 256, :]
+            sb = sflat[a:a + 256]
+            mb = np.trace(sb, axis1=1, axis2=2) / d
+            d2 = ((sb - mb[:, None, None] * ident) ** 2).sum((1, 2)) / d
+            b2 = ((np.sum(xb * xb, axis=2) ** 2).sum(axis=0)
+                  - n * (sb ** 2).sum((1, 2))) / (n * n * d)
+            lam[a:a + len(sb)] = np.where(d2 <= 0.0, 1.0,
+                                           np.minimum(np.maximum(b2, 0.0) / d2, 1.0))
+        lam = lam.reshape(gh, gw)
     elif shrinkage == "none":
         lam = np.zeros((gh, gw))
     else:
