@@ -19,11 +19,11 @@
    3
   ],
   "animated": true,
-  "frames": 16,
-  "frames_written": 16,
+  "frames": 12,
+  "frames_written": 12,
   "fps": 5.0,
   "video": "02_prescription_detune_morph.mp4",
-  "video_frames": 32,
+  "video_frames": 24,
   "video_fps": 10.0,
   "video_shape": [
    540,

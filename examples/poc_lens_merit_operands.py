@@ -421,13 +421,18 @@ def make_figure(r, spots, margins, wrong, rc, rg):
     a, b = spots["before"][2], spots["after"][2]
     frames = []
     merits = np.geomspace(r["merit_initial"], r["merit_final"], 32)
+    lim = 1.1 * float(np.abs(a).max())
+    yy, xx = np.ogrid[:240, :240]
     for i, merit in enumerate(merits):
         u = i / (len(merits) - 1)
         d = (1.0 - u) * a + u * b
-        frames.append(figs.video_frame(_spot(d, "", lim=1.1 * 1e3 * np.abs(a).max()),
-                                      "merit %.4g" % merit))
+        canvas = np.zeros((240, 240))
+        q = np.clip(((d / (2.2 * lim) + 0.5) * 239).astype(int), 0, 239)
+        for x, y in q:
+            canvas[(yy - y) ** 2 + (xx - x) ** 2 <= 9 ** 2] = 1.0
+        frames.append(figs.video_frame(canvas, "merit %.4g" % merit, gray=True))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("merit_spot_optimization", frames,
                     caption="最適化に伴い12度視野のスポットが収束する。", fps=10.0,
                     gif_every=2, gif_fps=5.0, gif_width=480)

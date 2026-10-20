@@ -396,13 +396,17 @@ def make_figures(ring, daylight, thermo):
     phases = [np.degrees(LK.lockin_demodulate(wave[:k], 1.0, 20.0)["phase"])
               for k in (20, 40, 60, 80)]
     frames = []
-    for x in np.linspace(0.0, 3.0, 32):
+    for i, x in enumerate(np.linspace(0.0, 3.0, 32)):
         j = min(int(x), 2); u = x - j
         phase = (1.0 - u) * phases[j] + u * phases[j + 1]
+        phase = phase.copy()
+        cursor = int(round(i * (phase.shape[1] - 1) / 31.0))
+        cursor = max(2, min(phase.shape[1] - 3, cursor))
+        phase[:, cursor - 2:cursor + 3] = -90.0
         frames.append(figs.video_frame(phase, "復調に使った周期 %.2f / 4" % (x + 1.0),
                                       vrange=(-90.0, -43.0)))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("thermal_phase_convergence", frames,
                     caption="周期加熱のコマを順に加えると、深さごとの位相像が収束する。",
                     fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)

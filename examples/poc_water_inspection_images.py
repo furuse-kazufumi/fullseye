@@ -524,10 +524,13 @@ def make_figures(pool, bot, wet, hull, tilt, bottle_small):
     for angle in np.linspace(20.0, 60.0, 32):
         p = WV.wet_dry_inspection_pair(tex, scr, 0.25, 20.0, float(angle), 40.0,
                                        normal_sigma_px=10.0)
-        frames.append(figs.video_frame(p["specular_wet"], "照明角 %.1f°" % angle,
+        specular = p["specular_wet"]
+        shown = np.maximum.reduce([np.roll(specular, (dy, dx), axis=(0, 1))
+                                   for dy in range(-4, 5) for dx in range(-4, 5)])
+        frames.append(figs.video_frame(shown, "照明角 %.1f°" % angle,
                                       gray=True, vrange=(0.0, 2.0)))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("wet_highlight_sweep", frames,
                     caption="照明角を動かすと濡れた板のてかりが移動する。", fps=10.0,
                     gif_every=2, gif_fps=5.0, gif_width=480)

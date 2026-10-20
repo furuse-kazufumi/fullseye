@@ -541,7 +541,7 @@ def make_figures(ocean, pool, bottle, diver, limits):
         frames.append(figs.video_frame(f["height"], "時刻 %.1f s" % (i * 0.1), signed=True,
                                       vrange=(-float(abs(hh).max()), float(abs(hh).max()))))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("ocean_surface_motion", frames, caption="同じFFT海面の時刻を進めると波面が風下へ動く。",
                     fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
     jn8 = WM.ocean_spectrum(8.0, kind="jonswap")

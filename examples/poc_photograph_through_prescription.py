@@ -696,11 +696,11 @@ def make_figures(chart, dof, corner, ghost, scratch, limit):
                                t[1]["rms_spot_um"][0] / t[0]["rms_spot_um"][0], t[0]["rms_spot_um"][0], t[1]["rms_spot_um"][0], PITCH))
     good_rgb, bad_rgb = to_rgb(sg, scale=scale), to_rgb(sb_, scale=scale)
     frames = []
-    for u in np.linspace(0.0, 1.0, 32):
+    for u in np.linspace(0.0, 1.0, 24):
         frames.append(figs.video_frame((1.0 - u) * good_rgb + u * bad_rgb,
                                       "処方ずれ %.0f %%" % (100 * u), size=(960, 540)))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("prescription_detune_morph", frames,
                     caption="同じチャートを良好な処方からずらした処方へ連続的に比較する。",
                     fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)

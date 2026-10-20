@@ -321,7 +321,7 @@ def stage2_worlds():
         rgb[hit] = 0.25 * rgb[hit] + 0.75 * np.array([1.0, 0.12, 0.05])
         frames.append(figs.video_frame(rgb, "異常閾値 %.3g" % th))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("anomaly_threshold_sweep", frames,
                     caption="記憶バンクの異常度閾値を下げると欠陥領域が現れる。",
                     fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)

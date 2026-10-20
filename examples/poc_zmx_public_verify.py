@@ -101,10 +101,12 @@ def spot_figure(items):
         xy -= xy.mean(0)
         canvas = np.zeros((240, 240))
         q = np.clip(((xy / 0.04 + 0.5) * 239).astype(int), 0, 239)
-        canvas[q[:, 1], q[:, 0]] = 1.0
+        yy, xx = np.ogrid[:240, :240]
+        for y, x in q:
+            canvas[(yy - y) ** 2 + (xx - x) ** 2 <= 7 ** 2] = 1.0
         frames.append(figs.video_frame(canvas, "視野角 %.1f°" % field, gray=True))
     assert len(frames) >= 24
-    assert np.ptp(np.stack(frames).astype(np.int16), axis=0).max() > 0
+    figs._assert_video_frames_meaningful(frames)
     figs.save_video("spot_field_sweep", frames, caption="同じ処方のスポットを軸上から最大視野まで掃引する。",
                     fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
 
