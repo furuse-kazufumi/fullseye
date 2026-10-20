@@ -157,9 +157,18 @@ def time_surface(frames, tau=2.0, thr=0.1, eps=_EPS):
         raise ValueError("time_surface needs a (T,H,W) stack with T>=2")
     T, H, W = f.shape
     last = np.full((H, W), -np.inf, np.float64)   # last event time per pixel
-    for t in range(1, T):
-        fired = simulate_events(f[t - 1], f[t], thr, eps) != 0.0
+    unresolved = np.ones((H, W), dtype=bool)
+    threshold = _thr(thr)
+    next_log = _log(_img(f[-1]), eps)
+    for t in range(T - 1, 0, -1):
+        prev_log = _log(_img(f[t - 1]), eps)
+        delta = next_log - prev_log
+        fired = unresolved & ((delta >= threshold) | (delta <= -threshold))
         last[fired] = float(t)
+        unresolved[fired] = False
+        if not unresolved.any():
+            break
+        next_log = prev_log
     age = float(T - 1) - last                       # frames since last event
     sae = np.where(np.isfinite(last), np.exp(-age / max(tau, 1e-6)), 0.0)
     return np.clip(sae, 0.0, 1.0)
@@ -173,6 +182,18 @@ def warp_frame(frame, dy, dx):
     primitive. Positive dy/dx move content down/right."""
     x = _img(frame)
     return np.clip(ndimage.shift(x, (float(dy), float(dx)), order=1, mode="reflect"), 0.0, 1.0)
+
+
+def _integer_shift_zero(a, dy, dx):
+    """整数移動を行い、画像外をゼロにする。"""
+    dy, dx = int(dy), int(dx)
+    out = np.zeros_like(a)
+    h, w = a.shape
+    src_r0, src_r1 = max(0, -dy), min(h, h - dy)
+    src_c0, src_c1 = max(0, -dx), min(w, w - dx)
+    if src_r1 > src_r0 and src_c1 > src_c0:
+        out[src_r0 + dy:src_r1 + dy, src_c0 + dx:src_c1 + dx] = a[src_r0:src_r1, src_c0:src_c1]
+    return out
 
 
 def contrast_maximization(frames, max_v=4, thr=0.1, eps=_EPS):
@@ -204,7 +225,7 @@ def contrast_maximization(frames, max_v=4, thr=0.1, eps=_EPS):
     def _iwe(vy, vx):
         acc = np.zeros((H, W), np.float64)
         for t, e in ev:
-            acc += ndimage.shift(e, (-t * vy, -t * vx), order=1, mode="constant", cval=0.0)
+            acc += _integer_shift_zero(e, -t * vy, -t * vx)
         return acc
 
     best = {"vy": 0.0, "vx": 0.0, "contrast": -1.0}

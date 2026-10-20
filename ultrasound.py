@@ -348,7 +348,14 @@ def _stack_reflection(s, f):
     f = np.asarray(f, dtype=np.float64)
     p = np.full(f.shape, s["substrate"]["Z"], dtype=np.complex128)
     v = np.ones(f.shape, dtype=np.complex128)
-    for m in reversed(s["layers"]):
+    layers = []
+    keys = ("Z", "c", "alpha0", "alpha_n")
+    for m in s["layers"]:
+        if layers and all(m[k] == layers[-1][k] for k in keys):
+            layers[-1] = dict(layers[-1], thickness=layers[-1]["thickness"] + m["thickness"])
+        else:
+            layers.append(m)
+    for m in reversed(layers):
         k = 2.0 * np.pi * f / m["c"] - 1j * _alpha(m, f)
         kd = k * m["thickness"]
         c_, s_ = np.cos(kd), np.sin(kd)
