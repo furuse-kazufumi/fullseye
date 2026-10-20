@@ -157,11 +157,16 @@ def gen_canonical_variates_trans(images, labels):
 
 
 def inpainting_ced(image, region, iterations=300, sigma=1.0):
-    """コヒーレンス強調拡散(構造テンソル方向へ拡散)でインペイント(inpainting_ced)。"""
+    """コヒーレンス強調拡散(構造テンソル方向へ拡散)でインペイント(inpainting_ced)。
+
+    現在のコヒーレンス項は平滑化勾配を使わない。``sigma`` は入力検証のために残す。
+    """
     from scipy.ndimage import gaussian_filter
-    im = _img(image).copy(); m = np.asarray(region, bool)
-    for _ in range(int(iterations)):
-        gy, gx = np.gradient(gaussian_filter(im, sigma))
+    im = _img(image).copy(); m = np.asarray(region, bool); count = int(iterations)
+    if count:
+        # 空配列なら畳み込みを行わず、従来と同じ sigma の正規化・検証だけを通せる。
+        gaussian_filter(np.empty((0,) * im.ndim), sigma)
+    for _ in range(count):
         # 勾配に直交する方向へ優先拡散(等値線方向)
         lap_perp = (np.roll(im, 1, 0) + np.roll(im, -1, 0) + np.roll(im, 1, 1) + np.roll(im, -1, 1)
                     - 4 * im)
