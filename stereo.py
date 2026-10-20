@@ -315,6 +315,28 @@ def _aggregate_dir(C: np.ndarray, sy: int, sx: int, P1: float, P2: float) -> np.
     return L
 
 
+def _aggregate_dir_into(C: np.ndarray, S: np.ndarray, sy: int, sx: int,
+                        P1: float, P2: float) -> None:
+    """Aggregate one direction using only its previous row/column and add to ``S``."""
+    H, W, _ = C.shape
+    if sx != 0:
+        prev = C[:, 0 if sx > 0 else W - 1, :].copy()
+        S[:, 0 if sx > 0 else W - 1, :] += prev
+        xs = range(1, W) if sx > 0 else range(W - 2, -1, -1)
+        for x in xs:
+            cur = C[:, x, :] + _sgm_penalty(prev, P1, P2)
+            S[:, x, :] += cur
+            prev = cur
+    else:
+        prev = C[0 if sy > 0 else H - 1, :, :].copy()
+        S[0 if sy > 0 else H - 1, :, :] += prev
+        ys = range(1, H) if sy > 0 else range(H - 2, -1, -1)
+        for y in ys:
+            cur = C[y, :, :] + _sgm_penalty(prev, P1, P2)
+            S[y, :, :] += cur
+            prev = cur
+
+
 def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
                   P1: float = 5.0, P2: float = 50.0, paths: int = 4) -> np.ndarray:
     """Semi-Global Matching disparity (Hirschmüller, CVPR 2005 / PAMI 2008).
@@ -348,11 +370,11 @@ def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
     D = int(max_disp)
     vol = _census_cost_volume(census_transform(L, window),
                               census_transform(R, window), D)
-    C = np.moveaxis(vol, 0, -1)                    # (H, W, D)
+    C = np.ascontiguousarray(np.moveaxis(vol, 0, -1))  # (H, W, D), disparity contiguous
     dirs = [(0, 1), (0, -1)] + ([(1, 0), (-1, 0)] if paths == 4 else [])
     S = np.zeros_like(C)
     for sy, sx in dirs:
-        S += _aggregate_dir(C, sy, sx, float(P1), float(P2))
+        _aggregate_dir_into(C, S, sy, sx, float(P1), float(P2))
     out = S.argmin(-1).astype(np.float64)
     out[bad] = np.nan                  # 入力が非有限だった画素は無効(NaN)
     return out
