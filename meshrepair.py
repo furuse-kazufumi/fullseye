@@ -739,7 +739,6 @@ def components(V, F) -> list:
         return []
     nv = V.shape[0]
     parent = np.arange(nv)
-    size = np.ones(nv, dtype=np.int64)
 
     def find(x):
         root = x
@@ -751,13 +750,8 @@ def components(V, F) -> list:
 
     for a, b, c in F:
         ra, rb, rc = find(int(a)), find(int(b)), find(int(c))
-        for other in (rb, rc):
-            ra, other = find(ra), find(other)
-            if ra != other:
-                if size[ra] < size[other]:
-                    ra, other = other, ra
-                parent[other] = ra
-                size[ra] += size[other]
+        parent[rb] = ra
+        parent[rc] = ra
 
     groups = defaultdict(list)
     for fi in range(F.shape[0]):
@@ -767,8 +761,10 @@ def components(V, F) -> list:
     for _, flist in groups.items():
         fsel = F[flist]
         used = np.unique(fsel)
+        remap = -np.ones(nv, np.int64)
+        remap[used] = np.arange(used.size)
         out.append((int(used.min()),
                     np.ascontiguousarray(V[used], np.float64),
-                    np.ascontiguousarray(np.searchsorted(used, fsel), np.int64)))
+                    np.ascontiguousarray(remap[fsel], np.int64)))
     out.sort(key=lambda t: t[0])
     return [(v, f) for _, v, f in out]
