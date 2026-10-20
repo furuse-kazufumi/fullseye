@@ -100,3 +100,45 @@ def test_euclidean_clusters_matches_old_with_many_tiny_noise_components():
     noise = np.column_stack([np.arange(400) * 3. + 100., np.zeros(400), np.zeros(400)])
     points = np.vstack([*blobs, noise])
     _assert_same_clusters(points, tol=.1, min_size=20)
+
+
+def _old_farthest_point_sampling(points, k, seed=0):
+    points = np.asarray(points, np.float64)
+    n = len(points)
+    k = int(k)
+    if k <= 0:
+        raise ValueError("k must be > 0")
+    if k >= n:
+        return np.arange(n)
+    rng = np.random.default_rng(seed)
+    chosen = np.empty(k, int)
+    chosen[0] = rng.integers(n)
+    distance = np.linalg.norm(points - points[chosen[0]], axis=1)
+    distance = np.nan_to_num(distance, nan=-1.0)
+    distance[chosen[0]] = -1.0
+    for i in range(1, k):
+        j = int(np.argmax(distance))
+        chosen[i] = j
+        update = np.nan_to_num(np.linalg.norm(points - points[j], axis=1), nan=-1.0)
+        distance = np.minimum(distance, update)
+        distance[chosen[:i + 1]] = -1.0
+    return chosen
+
+
+@pytest.mark.parametrize("k", [10, 100, 1000])
+def test_farthest_point_sampling_matches_old_on_random_clouds(k):
+    points = np.random.default_rng(1304).normal(size=(1200, 3))
+    assert np.array_equal(pcseg.farthest_point_sampling(points, k, seed=7),
+                          _old_farthest_point_sampling(points, k, seed=7))
+
+
+def test_farthest_point_sampling_matches_old_on_lattice_ties_and_large_offset():
+    grid = np.stack(np.meshgrid(np.arange(8), np.arange(7), np.arange(6)), -1).reshape(-1, 3)
+    grid = np.vstack([grid, grid[:4]])
+    assert np.array_equal(pcseg.farthest_point_sampling(grid, 200, seed=13),
+                          _old_farthest_point_sampling(grid, 200, seed=13))
+    huge = grid[:80].astype(float) * 1e154
+    with np.errstate(over="ignore"):
+        expected = _old_farthest_point_sampling(huge, 40, seed=3)
+        got = pcseg.farthest_point_sampling(huge, 40, seed=3)
+    assert np.array_equal(got, expected)

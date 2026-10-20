@@ -1890,7 +1890,7 @@
 
 ## `pcseg.py`
 
-- **L448** — ★ ``full_matrices=True``（預設）會分配 (N, N) 的 U 並**丟棄**。2026-09-06 實測：20000 點為 3.73 s / 3.2 GB，而 ``full_matrices=False`` 為 0.876 ms（**4263 倍**），且 Vt 逐位一致。10 萬點則會因 80 GB 而崩。同型也存在於 pcseg.fit_plane / measure / ops / camera / pnp3d（都在丟棄 U）。靜態門是 tests/test_svd_full_matrices.py。
+- **L452** — ★ ``full_matrices=True``（預設）會分配 (N, N) 的 U 並**丟棄**。2026-09-06 實測：20000 點為 3.73 s / 3.2 GB，而 ``full_matrices=False`` 為 0.876 ms（**4263 倍**），且 Vt 逐位一致。10 萬點則會因 80 GB 而崩。同型也存在於 pcseg.fit_plane / measure / ops / camera / pnp3d（都在丟棄 U）。靜態門是 tests/test_svd_full_matrices.py。
 
 ## `perpetual.py`
 

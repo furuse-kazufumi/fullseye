@@ -1890,7 +1890,7 @@
 
 ## `pcseg.py`
 
-- **L448** — ★ ``full_matrices=True``(기본값)는 (N, N)의 U를 확보하고 **버린다**. 2026-09-06 실측: 20000 점에서 3.73 s / 3.2 GB, ``full_matrices=False``라면 0.876 ms(**4263배**)이며 Vt는 비트 일치. 10만 점이면 80 GB로 죽는다. 같은 형태가 pcseg.fit_plane / measure / ops / camera / pnp3d에도 있었다(모두 U를 버리고 있다). 정적 게이트는 tests/test_svd_full_matrices.py.
+- **L452** — ★ ``full_matrices=True``(기본값)는 (N, N)의 U를 확보하고 **버린다**. 2026-09-06 실측: 20000 점에서 3.73 s / 3.2 GB, ``full_matrices=False``라면 0.876 ms(**4263배**)이며 Vt는 비트 일치. 10만 점이면 80 GB로 죽는다. 같은 형태가 pcseg.fit_plane / measure / ops / camera / pnp3d에도 있었다(모두 U를 버리고 있다). 정적 게이트는 tests/test_svd_full_matrices.py.
 
 ## `perpetual.py`
 

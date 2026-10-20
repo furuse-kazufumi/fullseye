@@ -501,17 +501,47 @@ def farthest_point_sampling(points, k: int, seed: int = 0) -> np.ndarray:
         raise ValueError("k must be > 0")
     if k >= n:
         return np.arange(n)
+    # Squaring a coordinate difference above this limit may overflow. Preserve
+    # the former norm path (and therefore all of its tie rounding) in that case.
+    finite = np.abs(P[np.isfinite(P)])
+    if finite.size and finite.max() > np.sqrt(np.finfo(np.float64).max) / 2.0:
+        return _farthest_point_sampling_norm(P, k, seed)
     rng = np.random.default_rng(seed)
     chosen = np.empty(k, int)
     chosen[0] = rng.integers(n)
-    d = np.linalg.norm(P - P[chosen[0]], axis=1)
-    d = np.nan_to_num(d, nan=-1.0)                 # NaN points are not valid samples
+    delta = P - P[chosen[0]]
+    d = np.einsum("ij,ij->i", delta, delta)
+    d = np.nan_to_num(d, nan=-1.0)
+    d[chosen[0]] = -1.0
+    for i in range(1, k):
+        maximum = d.max()
+        near = np.flatnonzero(d >= maximum - np.spacing(maximum))
+        if near.size > 1:
+            j = int(near[np.argmax(np.sqrt(d[near]))])
+        else:
+            j = int(np.argmax(d))
+        chosen[i] = j
+        delta = P - P[j]
+        update = np.nan_to_num(np.einsum("ij,ij->i", delta, delta), nan=-1.0)
+        np.minimum(d, update, out=d)
+        d[j] = -1.0
+    return chosen
+
+
+def _farthest_point_sampling_norm(P, k, seed):
+    """Overflow-safe preservation of the original norm-based implementation."""
+    n = P.shape[0]
+    rng = np.random.default_rng(seed)
+    chosen = np.empty(k, int)
+    chosen[0] = rng.integers(n)
+    d = np.nan_to_num(np.linalg.norm(P - P[chosen[0]], axis=1), nan=-1.0)
     d[chosen[0]] = -1.0
     for i in range(1, k):
         j = int(np.argmax(d))
         chosen[i] = j
-        d = np.minimum(d, np.nan_to_num(np.linalg.norm(P - P[j], axis=1), nan=-1.0))
-        d[chosen[:i + 1]] = -1.0                    # never re-pick an already-chosen point
+        update = np.nan_to_num(np.linalg.norm(P - P[j], axis=1), nan=-1.0)
+        np.minimum(d, update, out=d)
+        d[j] = -1.0
     return chosen
 
 
