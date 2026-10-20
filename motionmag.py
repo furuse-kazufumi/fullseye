@@ -764,7 +764,7 @@ def complex_steerable_reconstruct(decomposition) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # Temporal band selection                                                       #
 # --------------------------------------------------------------------------- #
-def temporal_bandpass(video, f_lo, f_hi, fps) -> np.ndarray:
+def temporal_bandpass(video, f_lo, f_hi, fps, method="exact") -> np.ndarray:
     """Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``.
 
     Each pixel is transformed along time, every DFT bin whose frequency lies
@@ -786,6 +786,15 @@ def temporal_bandpass(video, f_lo, f_hi, fps) -> np.ndarray:
     op = "temporal_bandpass"
     vid = _require_video(video, "video", op, MAX_VIDEO_ELEMENTS)
     _lo, _hi, _fs, mask, _freq = _require_band(f_lo, f_hi, fps, vid.shape[0], op)
+    if method == "fast":
+        freq = np.fft.rfftfreq(vid.shape[0], d=1.0 / _fs)
+        keep = (freq >= _lo) & (freq <= _hi)
+        keep[0] = False
+        spec = np.fft.rfft(vid, axis=0)
+        spec[~keep] = 0.0
+        return np.fft.irfft(spec, n=vid.shape[0], axis=0)
+    if method != "exact":
+        raise ValueError("method must be 'exact' or 'fast'")
     spec = np.fft.fft(vid, axis=0)
     spec[~mask] = 0.0
     return np.real(np.fft.ifft(spec, axis=0))
@@ -1250,14 +1259,17 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     # Full-rank branch: the ordinary 2x2 inverse.
     det = a00 * a11 - a01 * a01
     s_det = np.where(rank2, det, 1.0)
-    dx_full = (a11[None] * b0 - a01[None] * b1) / s_det[None]
-    dy_full = (a00[None] * b1 - a01[None] * b0) / s_det[None]
+    dx = np.zeros_like(b0)
+    dy = np.zeros_like(b1)
+    dx[:, rank2] = ((a11[rank2][None] * b0[:, rank2]
+                     - a01[rank2][None] * b1[:, rank2]) / s_det[rank2][None])
+    dy[:, rank2] = ((a00[rank2][None] * b1[:, rank2]
+                     - a01[rank2][None] * b0[:, rank2]) / s_det[rank2][None])
     # Rank-1 branch: project the right-hand side onto the observable direction.
     proj = (vx[None] * b0 + vy[None] * b1) / s_lam1[None]
-    dx_rank1 = proj * vx[None]
-    dy_rank1 = proj * vy[None]
-    dx = np.where(rank2[None], dx_full, np.where(alive[None], dx_rank1, 0.0))
-    dy = np.where(rank2[None], dy_full, np.where(alive[None], dy_rank1, 0.0))
+    rank1 = alive & ~rank2
+    dx[:, rank1] = proj[:, rank1] * vx[rank1][None]
+    dy[:, rank1] = proj[:, rank1] * vy[rank1][None]
     if not (np.isfinite(dx).all() and np.isfinite(dy).all()):
         raise ValueError("%s: the least-squares solve produced non-finite "
                          "displacements — this is a bug in the rank guard, not "
