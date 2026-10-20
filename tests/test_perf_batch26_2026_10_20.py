@@ -73,6 +73,29 @@ def test_292_fill_holes_matches_reference_neighbour_recomputation(monkeypatch):
     assert counts["part"] == 1
 
 
+def test_291_tiled_bilateral_preserves_true_reflect_border():
+    rng = np.random.default_rng(291)
+    for shape in ((3, 41), (41, 3), (29, 31)):
+        d = rng.normal(size=shape)
+        d[0, 0] = np.nan
+        guide = rng.normal(size=shape)
+        for chunk in (1, 2, 7, 19):
+            ref = depth_bilateral.joint_bilateral(d, guide, 1.7, .8, invalid=None)
+            got = depth_bilateral.joint_bilateral(d, guide, 1.7, .8, invalid=None, chunk=chunk)
+            np.testing.assert_array_equal(got, ref)
+
+
+def test_293_sparse_fill_is_exact_jacobi_on_worst_case_holes():
+    rng = np.random.default_rng(293)
+    for holes in (((1, 1), (15, 20), (28, 3)), tuple((14, x) for x in range(2, 29))):
+        d = rng.normal(size=(31, 33))
+        for p in holes:
+            d[p] = np.nan
+        ref = depth_bilateral.fill_holes(d, 3, invalid=None, max_iter=31, rel_tol=0)
+        got = depth_bilateral.fill_holes(d, 3, invalid=None, max_iter=31, rel_tol=0, method="fast")
+        np.testing.assert_array_equal(got, ref)
+
+
 def test_297_candidate_label_lookup_matches_old_loop():
     s = np.zeros((30, 40))
     s[1:5, 2:8] = 2

@@ -63,6 +63,7 @@ def _bilateral_core(
     val_valid: np.ndarray,
     edge_valid: np.ndarray,
     truncate: float,
+    chunk: int | None = None,
 ) -> np.ndarray:
     """bilateral の共通核: values を平均し range 重みは edge の差で作る(無効画素は重み 0 で除外)。
 
@@ -80,6 +81,27 @@ def _bilateral_core(
     e_safe = v_safe if same_guide else np.where(edge_valid, edge, 0.0)
 
     radius = max(int(np.ceil(float(truncate) * spatial_sigma)), 1)
+    if chunk is not None:
+        chunk = int(chunk)
+        if chunk < 1:
+            raise ValueError("chunk must be >= 1")
+        if H > chunk:
+            # Reflect once at the true image boundary.  Each subproblem includes
+            # a full halo, so its own padding is never observed by the crop.
+            pv = np.pad(values, radius, mode="reflect")
+            pe = pv if same_guide else np.pad(edge, radius, mode="reflect")
+            pvv = np.pad(val_valid, radius, mode="reflect")
+            pev = pvv if same_guide else np.pad(edge_valid, radius, mode="reflect")
+            out = np.empty_like(values)
+            for y0 in range(0, H, chunk):
+                y1 = min(y0 + chunk, H)
+                tile = _bilateral_core(
+                    pv[y0:y1 + 2 * radius], pe[y0:y1 + 2 * radius],
+                    spatial_sigma, range_sigma, pvv[y0:y1 + 2 * radius],
+                    pev[y0:y1 + 2 * radius], truncate, None,
+                )
+                out[y0:y1] = tile[radius:radius + y1 - y0, radius:radius + W]
+            return out
     # reflect パディング(scipy.ndimage 既定と同じ境界規約)。
     vp = np.pad(v_safe, radius, mode="reflect")
     ep = vp if same_guide else np.pad(e_safe, radius, mode="reflect")
@@ -117,6 +139,7 @@ def bilateral_filter_depth(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
+    chunk: int | None = None,
 ) -> np.ndarray:
     """深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。
 
@@ -130,7 +153,7 @@ def bilateral_filter_depth(
         raise ValueError(f"bilateral_filter_depth expects a 2D depth image, got shape {d.shape}")
     ss, sr = _check_sigmas(spatial_sigma, range_sigma)
     valid = _valid_mask(d, invalid)
-    return _bilateral_core(d, d, ss, sr, valid, valid, truncate)
+    return _bilateral_core(d, d, ss, sr, valid, valid, truncate, chunk)
 
 
 def joint_bilateral(
@@ -141,6 +164,7 @@ def joint_bilateral(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
+    chunk: int | None = None,
 ) -> np.ndarray:
     """joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。
 
@@ -157,7 +181,7 @@ def joint_bilateral(
     ss, sr = _check_sigmas(spatial_sigma, range_sigma)
     valid = _valid_mask(d, invalid)
     gvalid = np.isfinite(g)
-    return _bilateral_core(d, g, ss, sr, valid, gvalid, truncate)
+    return _bilateral_core(d, g, ss, sr, valid, gvalid, truncate, chunk)
 
 
 def fill_holes(
@@ -167,6 +191,7 @@ def fill_holes(
     invalid: float | None = 0.0,
     max_iter: int | None = None,
     rel_tol: float = 1e-6,
+    method: str = "exact",
 ) -> np.ndarray:
     """無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。
 
@@ -183,6 +208,8 @@ def fill_holes(
     if d.ndim != 2:
         raise ValueError(f"fill_holes expects a 2D depth image, got shape {d.shape}")
     r = float(max_radius)
+    if method not in {"exact", "fast"}:
+        raise ValueError("method must be 'exact' or 'fast'")
     if not np.isfinite(r) or r <= 0.0:
         raise ValueError(f"max_radius must be a positive finite number, got {max_radius!r}")
 
@@ -220,8 +247,24 @@ def fill_holes(
         pp = np.pad(part.astype(float), 1, mode="constant")
         ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
         safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
+        sparse = method == "fast" and np.count_nonzero(fillable) * 8 < out.size
+        fy, fx = np.nonzero(fillable) if sparse else (None, None)
         for _ in range(max_iter):
             vp = np.pad(out, 1, mode="edge")
+            if sparse:
+                # Preserve the reference top, bottom, left, right summation order.
+                yy, xx = fy + 1, fx + 1
+                vals = (
+                    vp[yy - 1, xx] * pp[yy - 1, xx]
+                    + vp[yy + 1, xx] * pp[yy + 1, xx]
+                    + vp[yy, xx - 1] * pp[yy, xx - 1]
+                    + vp[yy, xx + 1] * pp[yy, xx + 1]
+                ) / safe_ncnt[fy, fx]
+                delta = np.max(np.abs(vals - out[fy, fx])) if fy.size else 0.0
+                out[fy, fx] = vals
+                if delta < tol:
+                    break
+                continue
             nsum = (
                 vp[:-2, 1:-1] * pp[:-2, 1:-1]
                 + vp[2:, 1:-1] * pp[2:, 1:-1]
