@@ -152,8 +152,14 @@ def cubemap_from_equirect(equi, face_size):
 
 
 def equirect_from_cubemap(cube, out_shape):
-    """Resample six cubemap faces into an equirectangular image."""
-    cube=np.asarray(cube,float); h,w=out_shape; d=equirect_to_dir(h,w); face,uv=dir_to_cubemap(d,cube.shape[1]); out=np.empty((h,w)+cube.shape[3:],float)
+    """Resample six cubemap faces into an equirectangular image.
+
+    **Raises** ``ValueError``: ``cube`` is empty or does not contain six faces.
+    """
+    cube=np.asarray(cube,float)
+    if cube.size == 0 or cube.ndim not in (3, 4) or cube.shape[0] != 6:
+        raise ValueError("cube must contain six non-empty faces")
+    h,w=out_shape; d=equirect_to_dir(h,w); face,uv=dir_to_cubemap(d,cube.shape[1]); out=np.empty((h,w)+cube.shape[3:],float)
     for f in range(6):
         m=face==f; out[m]=_sample(cube[f],uv)[m]
     return out
@@ -183,7 +189,12 @@ def equirect_from_fisheye_pair(images, rotations, out_shape, model="equidistant"
 
 
 def equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feather=0.05):
-    """Blend a calibrated perspective rig into an equirectangular image."""
+    """Blend a calibrated perspective rig into an equirectangular image.
+
+    **Raises** ``ValueError``: ``images`` is empty.
+    """
+    if len(images) == 0:
+        raise ValueError("images must not be empty")
     h,w=out_shape; world=equirect_to_dir(h,w); num=None; den=np.zeros((h,w))
     for im,R,K in zip(images,extrinsics,intrinsics):
         im=np.asarray(im,float); local=world@np.asarray(R,float); z=local[...,2]
@@ -332,8 +343,14 @@ def s_psnr(a,b,n=10000,data_range=1.0):
 
 
 def equirect_filter_gaussian(image,sigma_deg):
-    """Gaussian-filter a panorama with longitude scale adapted to latitude."""
-    im=np.asarray(image,float); h,w=im.shape[:2]; sy=sigma_deg*h/180; out=np.empty_like(im)
+    """Gaussian-filter a panorama with longitude scale adapted to latitude.
+
+    **Raises** ``ValueError``: ``image`` is empty.
+    """
+    im=np.asarray(image,float)
+    if im.size == 0:
+        raise ValueError("image must not be empty")
+    h,w=im.shape[:2]; sy=sigma_deg*h/180; out=np.empty_like(im)
     for y in range(h):
         lat=np.pi/2-(y+.5)*np.pi/h; sx=min(sigma_deg*w/(360*max(np.cos(lat),1e-3)),w/4)
         row=gaussian_filter(im, (0,sx) if im.ndim==2 else (0,sx,0), mode=("nearest","wrap") if im.ndim==2 else ("nearest","wrap","nearest"))[y]
@@ -400,16 +417,22 @@ def equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48)):
 
 
 def ods_depth_to_disparity(depth_m,ipd_m,w):
-    """Convert radial depth to ODS horizontal pixel disparity."""
+    """Convert radial depth to ODS horizontal pixel disparity.
+
+    **Raises** ``ValueError``: ``depth_m`` is empty or inside the eye circle.
+    """
     d=np.asarray(depth_m,float)
-    if np.any(d<ipd_m/2): raise ValueError("depth is inside the eye circle")
+    if d.size == 0 or np.any(d<ipd_m/2): raise ValueError("depth is empty or inside the eye circle")
     return 2*np.arcsin(ipd_m/(2*d))*w/(2*np.pi)
 
 
 def ods_disparity_to_depth(disp_px,ipd_m,w):
-    """Convert ODS horizontal pixel disparity to radial depth."""
+    """Convert ODS horizontal pixel disparity to radial depth.
+
+    **Raises** ``ValueError``: ``disp_px`` is empty or outside the valid angular range.
+    """
     a=np.asarray(disp_px,float)*2*np.pi/w
-    if np.any(a<=0) or np.any(a>=np.pi): raise ValueError("disparity must subtend an angle in (0,pi)")
+    if a.size == 0 or np.any(a<=0) or np.any(a>=np.pi): raise ValueError("disparity must be non-empty and subtend an angle in (0,pi)")
     return ipd_m/(2*np.sin(a/2))
 
 
