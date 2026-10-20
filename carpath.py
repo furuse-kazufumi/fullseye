@@ -527,7 +527,8 @@ class _Collision:
 
 def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True,
                      footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0,
-                     steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False):
+                     steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False,
+                     method="exact"):
     """Hybrid A* (Dolgov, Thrun, Montemerlo and Diebel 2010): a car's path through an occupancy grid.
 
     ``occupancy`` is a 2-D grid (``> 0.5`` = obstacle); cell ``(row, col)`` covers metres
@@ -547,6 +548,9 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     when that shot is free. On an obstacle-free grid the first shot succeeds and the result equals the
     Reeds–Shepp (Dubins) length exactly; with obstacles the result is never below it (``lower_bound``).
     Cell pruning makes Hybrid A* an approximation of the optimum among all feasible paths, as in the paper.
+    ``method="exact"`` (default) preserves the original expansion order. ``method="fast"`` uses a
+    platform-stable priority rounded to 1e-9 and rejects dominated branches before collision checking;
+    it may return different waypoints with the same cost.
 
     Returns ``points`` ``(N, 3)`` poses along the path (start, tree part, analytic shot to the goal),
     ``length`` (metres), ``cost``, ``lower_bound`` (Reeds–Shepp/Dubins length start→goal),
@@ -560,6 +564,8 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     unreachable (open set exhausted) or ``max_expansions`` was hit (reported, never a partial path).
     """
     op = "car_hybrid_astar"
+    if method not in ("exact", "fast"):
+        raise ValueError("%s: method must be 'exact' or 'fast', got %r" % (op, method))
     occ = np.asarray(occupancy)
     if occ.ndim != 2 or occ.size == 0:
         raise ValueError("%s: occupancy must be a non-empty 2-D grid, got shape %s" % (op, occ.shape))
@@ -628,14 +634,15 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
     best_g = {key(start): 0.0}
     closed = set()
     counter = 0
-    heap = [(lower_bound, counter, 0)]
+    priority = lambda value: round(value, 9) if method == "fast" else value
+    heap = [(priority(lower_bound), counter, 0)]
     h_of = {0: lower_bound}
     n_expanded = n_generated = 0
     goal_key = key(goal)
     final = None  # (node_id, shot_word, shot_lens)
 
     while heap:
-        f, _, nid = heapq.heappop(heap)
+        _f, _, nid = heapq.heappop(heap)
         pose, g, parent, kind, gear, _seg = nodes[nid]
         k0 = key(pose)
         if k0 in closed:
@@ -672,7 +679,7 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
             for i in range(1, n_sub + 1):
                 sub[i - 1] = _step_segment(pose[0] / rho, pose[1] / rho, pose[2], k, l_units * i / n_sub)
             sub[:, :2] *= rho
-            if coll.blocked(sub):
+            if method == "exact" and coll.blocked(sub):
                 continue
             child = (float(sub[-1, 0]), float(sub[-1, 1]), float(_wrap(sub[-1, 2])))
             kc = key(child)
@@ -686,13 +693,17 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
                 gc += steer_penalty
             if kc in best_g and best_g[kc] <= gc:
                 continue
+            # In fast mode every best_g entry has passed collision checking, so
+            # a no-cheaper route to that state can never be expanded.
+            if method == "fast" and coll.blocked(sub):
+                continue
             best_g[kc] = gc
             nodes.append((child, gc, nid, k, gr, step))
             n_generated += 1
             h = heuristic(child)
             counter += 1
             h_of[len(nodes) - 1] = h
-            heapq.heappush(heap, (gc + h, counter, len(nodes) - 1))
+            heapq.heappush(heap, (priority(gc + h), counter, len(nodes) - 1))
 
     if final is None:
         raise ValueError("%s: goal unreachable (open set exhausted after %d expansions)" % (op, n_expanded))

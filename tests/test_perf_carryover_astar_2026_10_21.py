@@ -59,3 +59,11 @@ def test_original_planner_reference_scenes_are_result_identical():
                     _digest(got["points"]), _digest(got["tree"]))
         assert observed == _ORIGINAL[name]
 
+
+def test_178_fast_dominance_keeps_cost_and_feasibility():
+    for _name, occupancy, poses, kwargs in _scenes():
+        exact = C.car_hybrid_astar(occupancy, poses, **kwargs)
+        fast = C.car_hybrid_astar(occupancy, poses, method="fast", **kwargs)
+        assert abs(fast["cost"] - exact["cost"]) <= 1e-9
+        assert not C._Collision(occupancy, kwargs["cell"], 0.0,
+                                kwargs.get("footprint")).blocked(fast["points"])
