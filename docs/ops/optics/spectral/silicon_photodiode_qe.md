@@ -58,11 +58,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_integral_table](spectral_integral_table.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md)
 
 ## 同カテゴリ(`spectral`)
 
-[blackbody_spectrum](blackbody_spectrum.md) · [cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md)
+[blackbody_spectrum](blackbody_spectrum.md) · [cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_integral_table](spectral_integral_table.md)
 
 ---
 *Provenance: spectralrad.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

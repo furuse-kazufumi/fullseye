@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3489,
- "n_notes": 3495,
+ "n_ops": 3490,
+ "n_notes": 3496,
  "notes": {
   "vol_dilate": [
    {
@@ -30518,6 +30518,16 @@
     "in": "pairs",
     "out": "measurement",
     "path": "docs/ops/optics/spectral/spectral_integral.md"
+   }
+  ],
+  "spectral_integral_table": [
+   {
+    "op": "spectral_integral_table",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/spectral/spectral_integral_table.md"
    }
   ],
   "spectral_product": [
