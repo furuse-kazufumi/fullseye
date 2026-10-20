@@ -155,10 +155,18 @@ def main():
     items = systems()
     independent_differences(items); spot_figure(items); inspection(items); opd_limit(items)
     print("\n門")
-    gate("4 処方を読み、図を 5 枚作る", len(items) == 4 and len(figs.manifest()) == 5)
+    figures_enabled = figs.enabled()
+    figure_count = len(figs.manifest())
+    gate("4 処方を読み、図を 5 枚作る",
+         len(items) == 4 and (not figures_enabled or figure_count == 5),
+         "図 %s" % (figure_count if figures_enabled else "出力なし"))
     print("\n%d/%d PASS" % (sum(GATES), len(GATES)))
-    if not all(GATES):
+    figure_errors = figs.errors()
+    if figure_errors:
+        print("図の書き出しで失敗:", "; ".join(figure_errors))
+    if not all(GATES) or figure_errors:
         raise SystemExit(1)
+    print("PASS")
 
 
 if __name__ == "__main__":

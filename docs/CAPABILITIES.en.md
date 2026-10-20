@@ -299,7 +299,7 @@ Runnable: `poc_sem_wafer_defect_edge_bias`
 
 ### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
 
-### 公開 `.zmx` 処方の独立照合 (2026-10-20)
+### Independent verification of public `.zmx` prescriptions (2026-10-20)
 
 Operators: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`, `with_aiming`, `ray_aiming`, `set_vignetting`, `lens_configurations`, `lens_with_configuration`, `lens_configuration_table`, `lens_configuration_metrics`, `lens_add_configuration`, `glass_nearest`, `lens_substitute_glasses`, `lens_global_search`, `merit_operands_list`, `merit_evaluate`, `merit_default`, `merit_boundary_operands`, `optimize_lens_operands`, `merit_contributions`, `lens_apply_solves`, `lens_solve_set`, `lens_solve_clear`, `lens_solves_list`, `afocal_system`, `lens_afocal_report`, `lens_image_surface`, `lens_petzval_radius`, `lens_zmx_solves_roundtrip`
 

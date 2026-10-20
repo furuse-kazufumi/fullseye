@@ -67,7 +67,7 @@ calibration: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pi
 
 ## What it does
 
-### 公開 `.zmx` 処方の独立照合 (2026-10-20)
+### Independent verification of public `.zmx` prescriptions (2026-10-20)
 
 `tests/data/lensfile/` の同軸処方 4 本を、それぞれ別の `.zmx` 読取器と光線追跡器で再計算した。`asphere_singlet.zmx`、`double_gauss_const.zmx`、`triplet_catalog.zmx`、`triplet_const.zmx` について、EFL/BFL の最大相対差は 3.5e-16、同じ入射光線を再生した像面座標と重心まわり RMS スポットの差は 1e-6 mm 未満だった。記録値は `tests/data/zmx_public_ref.json` に置き、任意の外部実装が無い CI でも毎回照合する。
 
