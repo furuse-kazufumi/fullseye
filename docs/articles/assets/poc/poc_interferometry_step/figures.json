@@ -1,6 +1,48 @@
 [
  {
-  "file": "01_interferogram.png",
+  "file": "01_surface_interferograms.png",
+  "name": "surface_interferograms",
+  "caption": "Raw coherence-scan frames. Tilt changes fringe density; the rough patch loses modulation.",
+  "shape": [
+   564,
+   2098,
+   3
+  ]
+ },
+ {
+  "file": "02_surface_height.png",
+  "name": "surface_height",
+  "caption": "Truth, recovered height, error and low-modulation dropout map; pseudo-colour bars carry units.",
+  "shape": [
+   564,
+   2098,
+   3
+  ]
+ },
+ {
+  "file": "03_surface_z_scan.gif",
+  "name": "surface_z_scan",
+  "caption": "48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.",
+  "shape": [
+   512,
+   512,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 6.0,
+  "video": "03_surface_z_scan.mp4",
+  "video_frames": 48,
+  "video_fps": 12.0,
+  "video_shape": [
+   512,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "04_interferogram.png",
   "name": "interferogram",
   "caption": "包絡線の中心が段差ぶんずれる。包絡線には周期が無いので巻き戻る対象が無い(7 節)。",
   "shape": [
@@ -10,7 +52,7 @@
   ]
  },
  {
-  "file": "02_zstep_sweep.png",
+  "file": "05_zstep_sweep.png",
   "name": "zstep_sweep",
   "caption": "0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。",
   "shape": [
@@ -20,7 +62,7 @@
   ]
  },
  {
-  "file": "03_noise_sweep.png",
+  "file": "06_noise_sweep.png",
   "name": "noise_sweep",
   "caption": "centroid は散らばりが gaussian の 1/3〜1/5 なのに総合誤差では上に来る。差の正体は段差を縮めるゲイン誤差(下の表)。",
   "shape": [
@@ -30,7 +72,7 @@
   ]
  },
  {
-  "file": "04_centroid_gain.png",
+  "file": "07_centroid_gain.png",
   "name": "centroid_gain",
   "caption": "4 種の段差でゲインが揃う = オフセットではなく倍率の誤差。再現性を精度と読み替えるとここで嘘をつく。",
   "shape": [
@@ -38,11 +80,11 @@
    542,
    3
   ],
-  "csv": "04_centroid_gain.csv",
-  "tsv": "04_centroid_gain.tsv"
+  "csv": "07_centroid_gain.csv",
+  "tsv": "07_centroid_gain.tsv"
  },
  {
-  "file": "05_step_sweep.gif",
+  "file": "08_step_sweep.gif",
   "name": "step_sweep",
   "caption": "動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、誤差は最大 8.5e-11 nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は段差 0.153 µm(λ/4 = 0.150 µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。",
   "shape": [
@@ -54,7 +96,7 @@
   "frames": 74,
   "frames_written": 69,
   "fps": 6.0,
-  "video": "05_step_sweep.mp4",
+  "video": "08_step_sweep.mp4",
   "video_frames": 148,
   "video_fps": 12.0,
   "video_shape": [
