@@ -119,37 +119,38 @@ def _spfh(P, N, idx, bins):
     out = np.zeros((M, 3 * bins))
     ea = np.linspace(-1.0, 1.0, bins + 1)
     et = np.linspace(-np.pi, np.pi, bins + 1)
-    for i in range(M):
-        neigh = idx[i, 1:]
-        if neigh.size == 0:
+    for start in range(0, M, 256):
+        stop = min(start + 256, M)
+        neigh = idx[start:stop, 1:]
+        if neigh.shape[1] == 0:
             continue
-        d = P[neigh] - P[i]
-        dist = np.linalg.norm(d, axis=1)
-        m = dist > 1e-12
-        if not m.any():
-            continue
-        d = d[m] / dist[m, None]
-        nq = N[neigh][m]
-        u = N[i]
-        v = np.cross(d, u)                       # Darboux frame (Rusu 2009)
-        vn = np.linalg.norm(v, axis=1)
-        m2 = vn > 1e-12
-        if not m2.any():
-            continue
-        d, nq, v = d[m2], nq[m2], v[m2] / vn[m2, None]
+        d = P[neigh] - P[start:stop, None, :]
+        dist = np.linalg.norm(d, axis=2)
+        valid = dist > 1e-12
+        safe_dist = np.where(valid, dist, 1.0)
+        d = d / safe_dist[:, :, None]
+        u = N[start:stop, None, :]
+        nq = N[neigh]
+        v = np.cross(d, u)
+        vn = np.linalg.norm(v, axis=2)
+        valid &= vn > 1e-12
+        v = v / np.where(vn > 1e-12, vn, 1.0)[:, :, None]
         w = np.cross(np.broadcast_to(u, v.shape), v)
-        alpha = (v * nq).sum(1)                  # in [-1, 1]
-        phi = (d * u).sum(1)                      # in [-1, 1]
-        theta = np.arctan2((w * nq).sum(1), (u * nq).sum(1))   # in (-pi, pi]
-        ha = np.histogram(alpha, bins=ea)[0]
-        hp = np.histogram(phi, bins=ea)[0]
-        ht = np.histogram(theta, bins=et)[0]
-        seg = np.concatenate([ha, hp, ht]).astype(np.float64)
-        for s in range(3):                        # normalise each sub-histogram to sum 100
-            tot = seg[s * bins:(s + 1) * bins].sum()
-            if tot > 0:
-                seg[s * bins:(s + 1) * bins] *= 100.0 / tot
-        out[i] = seg
+        features = (
+            np.sum(v * nq, axis=2),
+            np.sum(d * u, axis=2),
+            np.arctan2(np.sum(w * nq, axis=2), np.sum(u * nq, axis=2)),
+        )
+        rows = np.broadcast_to(np.arange(start, stop)[:, None], neigh.shape)[valid]
+        for segment, (values, edges) in enumerate(zip(features, (ea, ea, et))):
+            selected = values[valid]
+            columns = np.searchsorted(edges, selected, side="right") - 1
+            columns[selected == edges[-1]] = bins - 1
+            inside = (columns >= 0) & (columns < bins)
+            np.add.at(out, (rows[inside], segment * bins + columns[inside]), 1.0)
+    shaped = out.reshape(M, 3, bins)
+    totals = shaped.sum(axis=2, keepdims=True)
+    np.divide(shaped * 100.0, totals, out=shaped, where=totals > 0.0)
     return out
 
 
