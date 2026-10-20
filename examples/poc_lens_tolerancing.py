@@ -162,18 +162,19 @@ def figures(system, tab, crit, sens, base, after, distributions, rebudget, tight
               caption="同じ試行から得た MTF と RMS spot。赤線は合否限界。")
     cy = figs.render_plot([("none", [0], [base["yield"]]), ("two", [1], [after["yield"]])],
               title="Yield | %.1f%% -> %.1f%%" % (100*base["yield"], 100*after["yield"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="yield")
+    # ★2026-10-21: 棒の縦軸は 0 から(自動範囲は最小値の少し下から始まり、差を 10 倍に見せていた)。
     cs = figs.render_plot([("none", [0], [base["criteria"]["rms_spot"]["std"]]), ("two", [1], [after["criteria"]["rms_spot"]["std"]])],
-              title="RMS-spot std | %.3g -> %.3g mm" % (base["criteria"]["rms_spot"]["std"], after["criteria"]["rms_spot"]["std"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylabel="RMS spot std [mm]")
+              title="RMS-spot std | %.3g -> %.3g mm" % (base["criteria"]["rms_spot"]["std"], after["criteria"]["rms_spot"]["std"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylim=(0, 1.15 * max(base["criteria"]["rms_spot"]["std"], after["criteria"]["rms_spot"]["std"])), ylabel="RMS spot std [mm]")
     figs.save("compensation", np.concatenate([cy, cs], axis=1), caption="像面だけの場合と内部間隔を加えた場合を比較。")
     names = ["uniform", "normal", "truncated_normal"]
     dy = figs.render_plot([(n, [i], [distributions[n]["yield"]]) for i, n in enumerate(names)],
               title="Yield | %.2f / %.2f / %.2f" % tuple(distributions[n]["yield"] for n in names), size=(640, 430), kinds=["bar"] * 3, colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylim=(0, 1), ylabel="yield")
     ds = figs.render_plot([(n, [i], [distributions[n]["criteria"]["rms_spot"]["std"]]) for i, n in enumerate(names)],
-              title="RMS-spot distribution width [mm]", size=(640, 430), kinds=["bar"] * 3, colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylabel="standard deviation [mm]")
+              title="RMS-spot distribution width [mm]", size=(640, 430), kinds=["bar"] * 3, colors=["reference", "wrong", "right"], xlim=(-0.5, 2.5), ylim=(0, 1.15 * max(distributions[n]["criteria"]["rms_spot"]["std"] for n in names)), ylabel="standard deviation [mm]")
     figs.save("distributions", np.concatenate([dy, ds], axis=1),
               caption="一様・正規・±公差で切った正規分布の歩留まり。")
     pred, actual = sens["rss_std"]["rms_spot"], base["criteria"]["rms_spot"]["std"]
-    rp = figs.render_plot([("linear prediction", [0], [pred]), ("Monte-Carlo actual", [1], [actual])], title="Linear prediction %.3g vs Monte-Carlo actual %.3g mm" % (pred, actual), size=(640, 430), kinds=["bar", "bar"], colors=["reference", "wrong"], xlim=(-0.5, 1.5), ylabel="RMS spot std [mm]")
+    rp = figs.render_plot([("linear prediction", [0], [pred]), ("Monte-Carlo actual", [1], [actual])], title="Linear prediction %.3g vs Monte-Carlo actual %.3g mm" % (pred, actual), size=(640, 430), kinds=["bar", "bar"], colors=["reference", "wrong"], xlim=(-0.5, 1.5), ylim=(0, 1.15 * max(pred, actual)), ylabel="RMS spot std [mm]")
     ra = figs.render_plot([("before", [0], [base["yield"]]), ("rebudget", [1], [rebudget["yield"]])], title="Rebudget actual | %.1f%% -> %.1f%%" % (100*base["yield"], 100*rebudget["yield"]), size=(640, 430), kinds=["bar", "bar"], colors=["wrong", "right"], xlim=(-0.5, 1.5), ylim=(0, 1), ylabel="yield")
     figs.save("rebudget", np.concatenate([rp, ra], axis=1), caption="線形予測と Monte-Carlo 実測を明示。締めた行: %s。" % tight_id)
     row = LT._normalise_row(system, {"kind": "wedge_arcmin", "surface": 1, "tolerance": 1.0}, 0)
