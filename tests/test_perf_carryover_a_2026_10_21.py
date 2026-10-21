@@ -36,6 +36,7 @@ def test_batch20_113_114_exact_default_keeps_original_and_fast_is_bounded():
         for k in (9, 17):
             ref = _original_curvatures(points, k)
             got = curvature3d._curvatures(points, k)
+            assert len(got) == len(ref) == 3      # 3 つ組(k1, k2, 法線)。zip が空なら下の表明は無条件に通る
             for actual, expected in zip(got, ref):
                 assert np.array_equal(actual, expected)
             fast = curvature3d._curvatures(points, k, method="fast")
