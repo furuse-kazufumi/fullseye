@@ -3319,18 +3319,6 @@
    "run": "py -3.11 examples/poc_water_inspection_images.py"
   },
   {
-   "id": "poc_omni360_inspection",
-   "wing": "wing_imaging",
-   "added": "2026-10-21",
-   "numbers_source": "log",
-   "figure": "anaglyph_and_limits",
-   "title_ja": "全天球の検査撮影と立体表示を一つの測定工程として確かめる",
-   "title_en": "Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports",
-   "caption_ja": "半径3 mの合成トンネルを魚眼2面から全天球へ戻し、継ぎ目誤差0.01569、死角0.000 %を測った。球面重み、視野移動、32枚中16枚のタイル範囲、3 mの距離を3.000000 mへ戻す立体視、回転補正によるWS-PSNR 20.13 dBから33.51 dB、円筒展開、赤シアン表示を同じ場面で確かめた。理想フィルターの漏れは0、10 %漏れでは左右0.0693/0.0014。画面上視差は1.80 mm。8章、静止画8枚、30フレームの動画。学習0、校正0。",
-   "caption_en": "A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.",
-   "run": "py -3.11 examples/poc_omni360_inspection.py"
-  },
-  {
    "id": "poc_photograph_through_prescription",
    "wing": "wing_imaging",
    "added": "2026-10-20",
@@ -3343,6 +3331,42 @@
    "run": "py -3.11 examples/poc_photograph_through_prescription.py"
   },
   {
+   "id": "poc_lens_tolerancing",
+   "wing": "wing_color",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "sensitivity",
+   "title_ja": "レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする",
+   "title_en": "Budgeting Lens Manufacturing Tolerances through MTF, Yield, and Compensator Travel",
+   "caption_ja": "公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本は分布、中央差分感度、Monte Carlo、Wilson 95 % 歩留まり区間、複数の補償変数と組立ストロークを一つの報告にする。薄いくさびの像移動は閉形式 f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。",
+   "caption_en": "A public triplet prescription receives explicit rows for curvature, thickness, refractive index, Abbe number, decentre, tilt, astigmatic surface irregularity, wedge, and group decentre. Eight new operations combine distributions, central-difference sensitivity, Monte Carlo, a Wilson 95% yield interval, multiple compensators, and assembly travel. The weak-wedge image shift agrees with f(n-1)alpha to 6e-8; the real-ray OPD RMS of one fringe of astigmatic irregularity agrees with the closed form to 1.3%. In the 16-trial CI run yield is 0.688 and becomes 1.000 with inner-gap and image-plane compensation. Uniform, normal, and truncated-normal distributions at the same plus/minus tolerance yield 0.750 / 1.000 / 1.000; tightening the leading row while loosening low-sensitivity rows gives 0.833. Learning 0, calibration 0.",
+   "run": "py -3.11 examples/poc_lens_tolerancing.py"
+  },
+  {
+   "id": "poc_plenoptic_camera",
+   "wing": "wing_imaging",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "raw_microimages",
+   "title_ja": "処方から撮るプレノプティックカメラ",
+   "title_en": "A Prescription-Based Plenoptic Camera",
+   "caption_ja": "主レンズ、周期球面 MLA、センサを逆追跡する合成 PoC。生画像には円盤状マイクロ像の格子、円盤間の暗い隅、円盤内の場面断片が現れ、EPI には視差の斜線が現れる。白色面の暗い隅は 21.33 %（閉形式 21.46 %）、円盤端/中心の輝度比は 9.92e-6、格子ピークは 0.06667 cycle/pixel、EPI は 0.6 px/view。開口を外すと暗い隅が 0 % になり門が赤になる。境界光線と校正残差も fail-closed に拒否する。",
+   "caption_en": "A synthetic prescription-based camera traces a main lens, periodic spherical MLA and sensor backwards. Its raw frame shows the three physical signatures: a lattice of microimage discs, dark inter-disc corners, and shifted scene fragments inside each disc; decoding adds slanted disparity lines in the EPI. The white-frame gates measure 21.33% dark corners (closed form 21.46%), a 9.92e-6 rim/core intensity ratio, a 0.06667 cycle/pixel lattice peak, and 0.6 px/view EPI motion. Removing the aperture gives 0% dark corners and fails the gate; boundary rays and excessive calibration residuals also fail closed.",
+   "run": "py -3.11 examples/poc_plenoptic_camera.py"
+  },
+  {
+   "id": "poc_sem_tem_same_particle",
+   "wing": "wing_imaging",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "same_specimen_sem_tem",
+   "title_ja": "同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか",
+   "title_en": "Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?",
+   "caption_ja": "同じ球形・ファセット粒子14個の台帳から二つの像を作り、面積相当径、最大傾斜、接触対の分水嶺、傾斜像の高さ、限定角再構成を共通の真値で採点する。52 nm粒子では走査像のしきい値径は+4.16 nm、透過像は正焦点で-0.18 nm、焦点外れ12000 nmで+9.82 nm。走査像の偏りはガウス縁の閉形式2 sqrt(2 ln 2) sigmaに一致し、透過像の暗い縁はsqrt(lambda defocus)に10%以内。反射信号の材料比は公表された反射係数、立体計測は平行投影の閉形式と完全角再構成で検算する。新opなし、学習0、較正0。",
+   "caption_en": "One ledger of fourteen spherical and faceted particles drives both images. Area-equivalent diameter, maximum slope, watershed splitting of touching pairs, stereo height and limited-angle reconstruction are scored against the shared truth. For a 52 nm particle the scanning-image threshold is +4.16 nm, the transmission image is -0.18 nm at focus and +9.82 nm at 12000 nm defocus. The scanning bias follows the closed-form Gaussian rim width 2 sqrt(2 ln 2) sigma, while the dark transmission fringe follows sqrt(lambda defocus) within ten per cent. Material contrast is checked against published backscatter coefficients; 3-D measurements are checked against parallel-projection geometry and a full-angle reconstruction. No new operators, no learning and no calibration.",
+   "run": "py -3.11 examples/poc_sem_tem_same_particle.py"
+  },
+  {
    "id": "poc_tof_camera",
    "wing": "wing_imaging",
    "added": "2026-10-20",
@@ -3353,6 +3377,18 @@
    "caption_ja": "320×240画素の同じ場面を、IR振幅、1.5–6.0 mの色距離、点群で見比べる。合成と実測の振幅分布のW1距離は0.145（門0.594）。続く図は物理効果を順に加えた深度、振幅と距離雑音（対数傾きは実測 -0.878、合成 -1.027）、壁接合部の湾曲（実測 -551 mm、合成 +75 mm。プロファイルの向きを揃えると同符号）、透明板の1.35 m離れた二返り、細い柱の混合画素、直接方式の時間ヒストグラム、三つの箱の体積（誤差 +0.16 / +0.47 / +0.29 %）を示す。最後は48枚、576×432画素、8 fpsで1.4–6.2 mを進む光前線。実フレームは再配布せず、曲線と集計値だけを載せる。新しいop 0、学習0、較正0、門13件。",
    "caption_en": "The same 320 by 240 scene is shown as IR amplitude, colour-coded distance over 1.5–6.0 m, and a point cloud. The amplitude-distribution W1 distance between synthesis and measurement is 0.145 (gate 0.594). The remaining figures add physical effects one at a time; compare amplitude with range noise (log slope -0.878 in measurements and -1.027 in synthesis); reproduce wall-junction bowing (-551 mm measured and +75 mm synthetic, with matching signs after aligning profile direction); separate transparent-pane returns 1.35 m apart; expose mixed pixels around a thin pole; show direct time-of-flight histograms and decoded depth; and tabulate three box-volume errors (+0.16, +0.47 and +0.29 percent). The final animation is a 48-frame, 576 by 432, 8 fps light front moving from 1.4 to 6.2 m. Real frames are not redistributed: only curves and aggregate measurements are shown. No new ops, no learning, no calibration, 13 gates.",
    "run": "py -3.11 examples/poc_tof_camera.py"
+  },
+  {
+   "id": "poc_omni360_inspection",
+   "wing": "wing_imaging",
+   "added": "2026-10-21",
+   "numbers_source": "log",
+   "figure": "anaglyph_and_limits",
+   "title_ja": "全天球の検査撮影と立体表示を一つの測定工程として確かめる",
+   "title_en": "Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports",
+   "caption_ja": "半径3 mの合成トンネルを魚眼2面から全天球へ戻し、継ぎ目誤差0.01569、死角0.000 %を測った。球面重み、視野移動、32枚中16枚のタイル範囲、3 mの距離を3.000000 mへ戻す立体視、回転補正によるWS-PSNR 20.13 dBから33.51 dB、円筒展開、赤シアン表示を同じ場面で確かめた。理想フィルターの漏れは0、10 %漏れでは左右0.0693/0.0014。画面上視差は1.80 mm。8章、静止画8枚、30フレームの動画。学習0、校正0。",
+   "caption_en": "A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.",
+   "run": "py -3.11 examples/poc_omni360_inspection.py"
   }
  ]
 }

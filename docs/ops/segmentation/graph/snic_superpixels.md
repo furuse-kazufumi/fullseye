@@ -7,7 +7,7 @@ out: table
 examples: [poc_graph_hierarchy_segmentation, poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # snic_superpixels — SEGMENTATION `graph` op

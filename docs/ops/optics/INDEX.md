@@ -1,4 +1,4 @@
-# OPTICS operator help — 447 ops in 49 categories
+# OPTICS operator help — 461 ops in 51 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -158,6 +158,10 @@
 
 [false_color_metric](pixelshift/false_color_metric.md) · [pixel_shift_capture](pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](pixelshift/pixel_shift_motion_mask.md) · [pixel_shift_pattern](pixelshift/pixel_shift_pattern.md) · [pixel_shift_resolution_budget](pixelshift/pixel_shift_resolution_budget.md)
 
+### plenoptic (6)
+
+[mla_surface](plenoptic/mla_surface.md) · [plenoptic_capture](plenoptic/plenoptic_capture.md) · [plenoptic_decode](plenoptic/plenoptic_decode.md) · [plenoptic_mla_calibrate](plenoptic/plenoptic_mla_calibrate.md) · [plenoptic_refocus_depth](plenoptic/plenoptic_refocus_depth.md) · [plenoptic_system](plenoptic/plenoptic_system.md)
+
 ### polarization (10)
 
 [jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_checks](polarization/mueller_checks.md) · [mueller_element](polarization/mueller_element.md) · [mueller_from_intensities](polarization/mueller_from_intensities.md) · [polarization_demosaic](polarization/polarization_demosaic.md) · [polarization_demosaic_color](polarization/polarization_demosaic_color.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
@@ -201,6 +205,10 @@
 ### tem (11)
 
 [tem_amorphous_film](tem/tem_amorphous_film.md) · [tem_ctf](tem/tem_ctf.md) · [tem_ctf_correct](tem/tem_ctf_correct.md) · [tem_ctf_estimate](tem/tem_ctf_estimate.md) · [tem_ctf_profile](tem/tem_ctf_profile.md) · [tem_image_weak_phase](tem/tem_image_weak_phase.md) · [tem_multislice](tem/tem_multislice.md) · [tem_power_spectrum](tem/tem_power_spectrum.md) · [tem_projected_potential](tem/tem_projected_potential.md) · [tem_scherzer](tem/tem_scherzer.md) · [tem_wavelength](tem/tem_wavelength.md)
+
+### tolerancing (8)
+
+[tolerance_compensators](tolerancing/tolerance_compensators.md) · [tolerance_criteria](tolerancing/tolerance_criteria.md) · [tolerance_monte_carlo](tolerancing/tolerance_monte_carlo.md) · [tolerance_report](tolerancing/tolerance_report.md) · [tolerance_sensitivity](tolerancing/tolerance_sensitivity.md) · [tolerance_table](tolerancing/tolerance_table.md) · [tolerance_table_from_zmx](tolerancing/tolerance_table_from_zmx.md) · [tolerance_table_zmx](tolerancing/tolerance_table_zmx.md)
 
 ### watermedia (10)
 

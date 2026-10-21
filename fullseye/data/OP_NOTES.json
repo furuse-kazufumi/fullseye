@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3514,
- "n_notes": 3520,
+ "n_ops": 3528,
+ "n_notes": 3534,
  "notes": {
   "vol_dilate": [
    {
@@ -29777,6 +29777,65 @@
     "path": "docs/ops/optics/pixelshift/pixel_shift_resolution_budget.md"
    }
   ],
+  "mla_surface": [
+   {
+    "op": "mla_surface",
+    "dim": "optics",
+    "category": "plenoptic",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/mla_surface.md"
+   }
+  ],
+  "plenoptic_capture": [
+   {
+    "op": "plenoptic_capture",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_capture.md"
+   }
+  ],
+  "plenoptic_decode": [
+   {
+    "op": "plenoptic_decode",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d × table",
+    "out": "lightfield",
+    "path": "docs/ops/optics/plenoptic/plenoptic_decode.md"
+   }
+  ],
+  "plenoptic_mla_calibrate": [
+   {
+    "op": "plenoptic_mla_calibrate",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_mla_calibrate.md"
+   }
+  ],
+  "plenoptic_refocus_depth": [
+   {
+    "op": "plenoptic_refocus_depth",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "lightfield × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_refocus_depth.md"
+   }
+  ],
+  "plenoptic_system": [
+   {
+    "op": "plenoptic_system",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_system.md"
+   }
+  ],
   "jones_apply": [
    {
     "op": "jones_apply",
@@ -31061,6 +31120,84 @@
     "category": "tem",
     "out": "table",
     "path": "docs/ops/optics/tem/tem_wavelength.md"
+   }
+  ],
+  "tolerance_compensators": [
+   {
+    "op": "tolerance_compensators",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_compensators.md"
+   }
+  ],
+  "tolerance_criteria": [
+   {
+    "op": "tolerance_criteria",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_criteria.md"
+   }
+  ],
+  "tolerance_monte_carlo": [
+   {
+    "op": "tolerance_monte_carlo",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_monte_carlo.md"
+   }
+  ],
+  "tolerance_report": [
+   {
+    "op": "tolerance_report",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_report.md"
+   }
+  ],
+  "tolerance_sensitivity": [
+   {
+    "op": "tolerance_sensitivity",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_sensitivity.md"
+   }
+  ],
+  "tolerance_table": [
+   {
+    "op": "tolerance_table",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table.md"
+   }
+  ],
+  "tolerance_table_from_zmx": [
+   {
+    "op": "tolerance_table_from_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × text",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_from_zmx.md"
+   }
+  ],
+  "tolerance_table_zmx": [
+   {
+    "op": "tolerance_table_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_zmx.md"
    }
   ],
   "cylinder_lens_caustic": [

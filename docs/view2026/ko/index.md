@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 할 수 있는 것
 
-90개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
+94개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 흠집과 돌기에 끌려가지 않는 평균선(로버스트 가우스 회귀·스플라인 필터, 단면과 면): [설명](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · 예제 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - 미세한 스크래치를 찾아 폭 재기: [설명](../../capabilities/scratch-detection-and-width.md) _(ja)_ · 예제 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - SEM의 밝은 가장자리가 치수를 얼마나 부풀리는지 참값과 함께 측정: [설명](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 예제 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- 같은 입자를 주사 영상과 투과 영상으로 측정해 두 치수 편향을 비교: [설명](../../capabilities/sem-tem-same-particle.md) _(ja)_ · 예제 [poc_sem_tem_same_particle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
 - 순차 광학 설계의 지표(이상 렌즈면, 포위 에너지, 자오와 구결 MTF, 스루포커스 MTF): [설명](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 예제 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py) · [poc_lens_merit_operands](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py) · [poc_lens_solves_afocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 - 편광으로 흑색 광택 부품과 유리의 형상을 잰다(편광 기반 형상 복원, 모호성 집합, 굴절률 추정): [설명](../../capabilities/shape-from-polarization.md) _(ja)_ · 예제 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 실물 영상으로 물리 모형의 계수를 맞춘다(sim-to-real 보정) —— 영상이 정하지 못하는 계수에는 수를 내지 않고, 정해지는 조합과 이유를 돌려준다: [설명](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 예제 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
@@ -139,6 +140,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 텔레센트릭 렌즈와 치수 측정(주광선 기울기 → 높이에 따른 배율 → 비네팅과 흐림): [설명](../../capabilities/telecentric-metrology.md) _(ja)_ · 예제 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 가상 투과전자현미경(전자 파장 → CTF → 위상 콘트라스트 상 → Thon 링으로 디포커스 추정 → 보정): [설명](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · 예제 [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - 지형의 경사·물 흐름·가시선 측정: [설명](../../capabilities/terrain-and-visibility.md) _(ja)_ · 예제 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 하나의 3차원 장면을 간접 및 직접 비행시간으로 측정: [설명](../../capabilities/tof-camera.md) _(ja)_ · 예제 [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - 가상 SEM —— 전자와 고체의 상호작용을 몬테카를로로 풀고, 실측값으로 채점하면서 가속 전압·검출기·대전이 영상과 측정 선폭을 어떻게 바꾸는지 본다: [설명](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 예제 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 3-D 스캔에서 부피·토량 구하기: [설명](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 예제 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 그림으로는 확인할 수 없는 것(적분기 차수·리아푸노프 지수·분기·상관 차원·극소 곡면): [설명](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 예제 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -187,6 +189,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 기준 이미지(골든)와 비교해 결함을 재고 로트 단위로 판정: [설명](../../capabilities/golden-compare.md) _(ja)_ · 예제 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 알려진 양품/불량품 세트로 배치 전에 검사 레시피와 사양을 검정하고 여유를 측정: [설명](../../capabilities/inspection-fixture.md) _(ja)_ · 예제 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - 폴더를 한 번에 검사(일괄·사양 판정·집계·SPC·보고서·감사 로그): [설명](../../capabilities/inspection-workflow.md) _(ja)_ · 예제 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- MTF와 수율로 렌즈 제조 공차 배분: [설명](../../capabilities/lens-tolerancing.md) _(ja)_ · 예제 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - op 반환값(타입 포함)을 JSON으로 쓰고 비트 그대로 되읽기: [설명](../../capabilities/typed-results-as-json.md) _(ja)_ · 예제 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - op 반환값(타입 포함)을 읽기 쉬운 Markdown으로, JSON을 넣어 되읽기: [설명](../../capabilities/typed-results-as-markdown.md) _(ja)_ · 예제 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 타입이 있는 검사 결과를 Excel(.xlsx) 보고서로: [설명](../../capabilities/xlsx-report.md) _(ja)_ · 예제 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -205,15 +208,16 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 광학계 도면(렌즈 단면도·촬상계 설치도·단렌즈 제작도를 SVG / DXF로): [설명](../../capabilities/optics-drawings.md) _(ja)_ · 예제 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 처방 그대로의 렌즈를 통해 3차원 장면을 촬영(피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트): [설명](../../capabilities/photograph-through-prescription.md) _(ja)_ · 예제 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 눈을 속이는 그림을 만들어 측정 쪽을 채점(착시·무한 그리기·순환 동영상): [설명](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 예제 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 렌즈 처방 기반 라이트필드 카메라: [설명](../../capabilities/plenoptic-camera.md) _(ja)_ · 예제 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 정리가 검사 문이 되는 그림(아폴로니우스·포드·측지 돔·잎차례·IFS·공간 채움 곡선): [설명](../../capabilities/theorems-as-pictures.md) _(ja)_ · 예제 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[PoC가 아닌 사용 예 152개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 158개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
-PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 275개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -282,7 +286,7 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (54)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (55)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI·CT 대응" width="200" height="200"><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="준공 벽면 편차" width="200" height="200"><span>준공 벽면 편차</span></a>
@@ -338,6 +342,7 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="분광기와 조명계(대역폭과 광원의 무늬)" width="200" height="200"><span>분광기와 조명계(대역폭과 광원의 무늬)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="텔레센트릭 실사 이미지로 촬상 모델 보정" width="200" height="200"><span>텔레센트릭 실사 이미지로 촬상 모델 보정</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점" width="200" height="200"><span>흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점</span></a>
+<a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="같은 입자를 주사 영상과 투과 영상으로 측정" width="200" height="200"><b>&#9654;</b><span>같은 입자를 주사 영상과 투과 영상으로 측정</span></a>
 </div>
 </details>
 
@@ -388,7 +393,7 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>촬상 품질·복원</b> (22)</summary>
+<details class="vall"><summary><b>촬상 품질·복원</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="줄무늬에 다가가는 파리의 눈" width="200" height="200"><b>&#9654;</b><span>줄무늬에 다가가는 파리의 눈</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="손떨림 복원" width="200" height="200"><b>&#9654;</b><span>손떨림 복원</span></a>
@@ -412,10 +417,12 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="처방 그대로의 렌즈를 통해 3차원 장면을 촬영: 피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트" width="200" height="200"><span>처방 그대로의 렌즈를 통해 3차원 장면을 촬영: 피사계 심도, 고양이 눈 보케, 모서리 조도, 색수차, 고스트</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체" width="200" height="200"><span>물이 검사 이미지에 어떻게 보이는가: 수영장 바닥의 코스틱, 병의 측면, 젖은 판, 수중의 선체</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)" width="200" height="200"><span>픽셀 시프트 어긋남과 개구 보정(결정되지 않는 지도)</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="처방 기반 플렌옵틱 카메라: 원시 마이크로영상에서 재초점과 거리까지" width="200" height="200"><b>&#9654;</b><span>처방 기반 플렌옵틱 카메라: 원시 마이크로영상에서 재초점과 거리까지</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="하나의 3차원 장면에서 간접 및 직접 비행시간: 다중 경로, 혼합 화소, pile-up, 부피 오차" width="200" height="200"><span>하나의 3차원 장면에서 간접 및 직접 비행시간: 다중 경로, 혼합 화소, pile-up, 부피 오차</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>색·분리</b> (16)</summary>
+<details class="vall"><summary><b>색·분리</b> (17)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="광파이버와 라이트 가이드(모드, 분산, 모드 필드)" width="200" height="200"><span>광파이버와 라이트 가이드(모드, 분산, 모드 필드)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)" width="200" height="200"><b>&#9654;</b><span>분광 반사율로 박막 두께 측정(공개 실측 데이터로 채점, 웨이퍼 간섭색)</span></a>
@@ -433,6 +440,7 @@ PoC 271개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="설계의 관계를 솔브로 유지하기(조리개를 따라가는 F/#, afocal, 곡면 상면, 홀수차 비구면)" width="200" height="200"><span>설계의 관계를 솔브로 유지하기(조리개를 따라가는 F/#, afocal, 곡면 상면, 홀수차 비구면)</span></a>
 <a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="전방위 검사와 입체 표시" width="200" height="200"><span>전방위 검사와 입체 표시</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="공개 .zmx 처방의 독립 검증과 검사 평가" width="200" height="200"><span>공개 .zmx 처방의 독립 검증과 검사 평가</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분" width="200" height="200"><b>&#9654;</b><span>MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분</span></a>
 </div>
 </details>
 

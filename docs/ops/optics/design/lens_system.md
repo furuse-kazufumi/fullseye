@@ -4,10 +4,10 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, plenoptic_capture_pipeline, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
+examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, plenoptic_capture_pipeline, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # lens_system — OPTICS `design` op
@@ -126,6 +126,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [poc_lens_global_search](../../../../examples/poc_lens_global_search.py) — `py -3.11 examples/poc_lens_global_search.py`
 - [poc_lens_merit_operands](../../../../examples/poc_lens_merit_operands.py) — `py -3.11 examples/poc_lens_merit_operands.py`
 - [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
+- [poc_lens_tolerancing](../../../../examples/poc_lens_tolerancing.py) — `py -3.11 examples/poc_lens_tolerancing.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`

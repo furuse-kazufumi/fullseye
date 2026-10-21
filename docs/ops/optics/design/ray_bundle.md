@@ -7,7 +7,7 @@ out: table
 examples: [poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # ray_bundle — OPTICS `design` op

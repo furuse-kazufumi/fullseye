@@ -7,7 +7,7 @@ out: table
 examples: [lensfile_tolerance_worst_mtf, optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # through_focus_mtf — OPTICS `imaging_sim` op

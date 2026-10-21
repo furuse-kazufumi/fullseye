@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**102 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**106 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 25 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 28 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -832,46 +832,6 @@ This run produced **12 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bottle_image.html) · [`canny`](https://furuse.work/ops/2d/segmentation/canny.html) · [`caustic_floor_segmentation`](https://furuse.work/ops/optics/watervision/caustic_floor_segmentation.html) · [`caustic_irradiance`](https://furuse.work/ops/optics/watervision/caustic_irradiance.html) · [`fill_level_from_image`](https://furuse.work/ops/optics/watervision/fill_level_from_image.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`underwater_inspection_image`](https://furuse.work/ops/optics/watervision/underwater_inspection_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html) · [`wet_dry_inspection_pair`](https://furuse.work/ops/optics/watervision/wet_dry_inspection_pair.html) · [`wet_surface_appearance`](https://furuse.work/ops/optics/watervision/wet_surface_appearance.html)
 
-## No.2026.275 —— Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
-
-[![Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png)
-
-*↑ **Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports** ―― A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.*
-
-[![Seed 275; tunnel radius 3.00 m; crack angular width 3.00 deg.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/01_world_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/01_world.png)
-
-*↑ The measurement ―― Seed 275; tunnel radius 3.00 m; crack angular width 3.00 deg. (figure labels are in Japanese; the numbers are the same)*
-
-[![Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/02_fisheye_stitch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/02_fisheye_stitch.png)
-
-*↑ Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).*
-
-[![Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing.png)
-
-*↑ Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr.*
-
-[![At 3.00 m: disparity 3.477 px and inverted depth 3.000000 m.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/05_ods_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/05_ods_depth.png)
-
-*↑ At 3.00 m: disparity 3.477 px and inverted depth 3.000000 m.*
-
-[![WS-PSNR improved from 20.13 to 33.51 dB; residual 0.0078.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/06_stabilisation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/06_stabilisation.png)
-
-*↑ WS-PSNR improved from 20.13 to 33.51 dB; residual 0.0078.*
-
-[![Thirty differing frames; the first frame is already moving.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/09_viewport_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/09_viewport_flight.gif)
-
-*↑ The animation ―― Thirty differing frames; the first frame is already moving.*
-
-```
-py -3.11 examples/poc_omni360_inspection.py
-```
-
-Source: [examples/poc_omni360_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_omni360_inspection.py)
-
-This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_omni360_inspection)
-
-Ops used (notes): [`anaglyph`](https://furuse.work/ops/optics/omni360/anaglyph.html) · [`anaglyph_crosstalk`](https://furuse.work/ops/optics/omni360/anaglyph_crosstalk.html) · [`equirect_defect_unwrap_pipe`](https://furuse.work/ops/optics/omni360/equirect_defect_unwrap_pipe.html) · [`equirect_filter_gaussian`](https://furuse.work/ops/optics/omni360/equirect_filter_gaussian.html) · [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/omni360/equirect_from_fisheye_pair.html) · [`equirect_rotate`](https://furuse.work/ops/optics/omni360/equirect_rotate.html) · [`equirect_stabilise`](https://furuse.work/ops/optics/omni360/equirect_stabilise.html) · [`equirect_weight_map`](https://furuse.work/ops/optics/omni360/equirect_weight_map.html) · [`ods_depth_to_disparity`](https://furuse.work/ops/optics/omni360/ods_depth_to_disparity.html) · [`ods_disparity_to_depth`](https://furuse.work/ops/optics/omni360/ods_disparity_to_depth.html) · [`stereo_parallax_budget`](https://furuse.work/ops/optics/omni360/stereo_parallax_budget.html) · [`video360_tile_coverage`](https://furuse.work/ops/optics/omni360/video360_tile_coverage.html) · [`video360_viewport_track`](https://furuse.work/ops/optics/omni360/video360_viewport_track.html) · [`viewport_from_equirect`](https://furuse.work/ops/optics/omni360/viewport_from_equirect.html) · [`ws_psnr`](https://furuse.work/ops/optics/omni360/ws_psnr.html)
-
 ## No.2026.269 —— Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
 
 [![Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png)
@@ -907,6 +867,86 @@ Source: [examples/poc_photograph_through_prescription.py](https://github.com/fur
 This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photograph_through_prescription)
 
 Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/bokeh_shape.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`depth_of_field`](https://furuse.work/ops/optics/geometric/depth_of_field.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`exit_pupil_samples`](https://furuse.work/ops/optics/lensrender/exit_pupil_samples.html) · [`ghost_analysis`](https://furuse.work/ops/optics/noncoaxial/ghost_analysis.html) · [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`render_compare_prescriptions`](https://furuse.work/ops/optics/lensrender/render_compare_prescriptions.html) · [`render_ghost_overlay`](https://furuse.work/ops/optics/lensrender/render_ghost_overlay.html) · [`render_scene_through_lens`](https://furuse.work/ops/optics/lensrender/render_scene_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`trace_sensor_rays`](https://furuse.work/ops/optics/lensrender/trace_sensor_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
+
+## No.2026.272 —— A Prescription-Based Plenoptic Camera
+
+[![A Prescription-Based Plenoptic Camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
+
+*↑ **A Prescription-Based Plenoptic Camera** ―― A synthetic prescription-based camera traces a main lens, periodic spherical MLA and sensor backwards. Its raw frame shows the three physical signatures: a lattice of microimage discs, dark inter-disc corners, and shifted scene fragments inside each disc; decoding adds slanted disparity lines in the EPI. The white-frame gates measure 21.33% dark corners (closed form 21.46%), a 9.92e-6 rim/core intensity ratio, a 0.06667 cycle/pixel lattice peak, and 0.6 px/view EPI motion. Removing the aperture gives 0% dark corners and fails the gate; boundary rays and excessive calibration residuals also fail closed.*
+
+[![480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
+
+*↑ The measurement ―― 480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays. (figure labels are in Japanese; the numbers are the same)*
+
+[![F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/02_f_number_matching.png)
+
+*↑ F-number ratios 0.75, 1.00 and 1.50; matched diameter/pitch = 1.000.*
+
+[![15 x 15 decoded views; EPI disparity is 0.6 px per view step.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/04_decode_subaperture_epi.png)
+
+*↑ 15 x 15 decoded views; EPI disparity is 0.6 px per view step.*
+
+[![Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/06_depth_map.png)
+
+*↑ Truth and estimate at 600, 1000 and 1800 mm; signed error and colour bar.*
+
+[![Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/07_plenoptic_1_vs_2.png)
+
+*↑ Same MLA: plenoptic 1.0 images the pupil; focused 2.0 images scene fragments.*
+
+[![24-frame 480-pixel refocus sweep; all frames pass the content gates.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/09_refocus.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/09_refocus.gif)
+
+*↑ The animation ―― 24-frame 480-pixel refocus sweep; all frames pass the content gates.*
+
+```
+py -3.11 examples/poc_plenoptic_camera.py
+```
+
+Source: [examples/poc_plenoptic_camera.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plenoptic_camera)
+
+Ops used (notes): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
+
+## No.2026.273 —— Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?
+
+[![Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png)
+
+*↑ **Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?** ―― One ledger of fourteen spherical and faceted particles drives both images. Area-equivalent diameter, maximum slope, watershed splitting of touching pairs, stereo height and limited-angle reconstruction are scored against the shared truth. For a 52 nm particle the scanning-image threshold is +4.16 nm, the transmission image is -0.18 nm at focus and +9.82 nm at 12000 nm defocus. The scanning bias follows the closed-form Gaussian rim width 2 sqrt(2 ln 2) sigma, while the dark transmission fringe follows sqrt(lambda defocus) within ten per cent. Material contrast is checked against published backscatter coefficients; 3-D measurements are checked against parallel-projection geometry and a full-angle reconstruction. No new operators, no learning and no calibration.*
+
+[![Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/01_truth_height_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/01_truth_height.png)
+
+*↑ The measurement ―― Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin. (figure labels are in Japanese; the numbers are the same)*
+
+[![Bright-field in-focus and under-focus output | derived diameters | absolute residual.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/03_tem_raw_overlay_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/03_tem_raw_overlay_error.png)
+
+*↑ Bright-field in-focus and under-focus output | derived diameters | absolute residual.*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/04_diameter_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/04_diameter_bias.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/05_touching_watershed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/05_touching_watershed.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/06_missing_wedge_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/06_missing_wedge.png)
+
+*↑ この回の図*
+
+[![24 greyscale bright-field frames with data bar; first and last defocus differ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif)
+
+*↑ The animation ―― 24 greyscale bright-field frames with data bar; first and last defocus differ*
+
+```
+py -3.11 examples/poc_sem_tem_same_particle.py
+```
+
+Source: [examples/poc_sem_tem_same_particle.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_tem_same_particle)
+
+Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`filtered_backprojection`](https://furuse.work/ops/tomography/reconstruct/filtered_backprojection.html) · [`radon_transform`](https://furuse.work/ops/tomography/forward/radon_transform.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`scale_bar`](https://furuse.work/ops/annotate/furniture/scale_bar.html) · [`sem_electron_mc`](https://furuse.work/ops/generative/sem/sem_electron_mc.html) · [`sem_image`](https://furuse.work/ops/generative/sem/sem_image.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html) · [`tem_image_weak_phase`](https://furuse.work/ops/optics/tem/tem_image_weak_phase.html) · [`tem_multislice`](https://furuse.work/ops/optics/tem/tem_multislice.html) · [`tem_projected_potential`](https://furuse.work/ops/optics/tem/tem_projected_potential.html) · [`tem_wavelength`](https://furuse.work/ops/optics/tem/tem_wavelength.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`watersheds_marker`](https://furuse.work/ops/segmentation/watershed/watersheds_marker.html)
 
 ## No.2026.274 —— Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error
 
@@ -947,6 +987,46 @@ Source: [examples/poc_tof_camera.py](https://github.com/furuse-kazufumi/fullseye
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tof_camera)
 
 Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_denoise/bilateral_filter_depth.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_cube_depth.html) · [`dtof_cube_simulate`](https://furuse.work/ops/photon/dtof/dtof_cube_simulate.html) · [`points_render`](https://furuse.work/ops/3d/render/points_render.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.275 —— Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
+
+[![Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png)
+
+*↑ **Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports** ―― A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.*
+
+[![Seed 275; tunnel radius 3.00 m; crack angular width 3.00 deg.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/01_world_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/01_world.png)
+
+*↑ The measurement ―― Seed 275; tunnel radius 3.00 m; crack angular width 3.00 deg. (figure labels are in Japanese; the numbers are the same)*
+
+[![Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/02_fisheye_stitch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/02_fisheye_stitch.png)
+
+*↑ Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).*
+
+[![Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/03_latitude_processing.png)
+
+*↑ Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr.*
+
+[![At 3.00 m: disparity 3.477 px and inverted depth 3.000000 m.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/05_ods_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/05_ods_depth.png)
+
+*↑ At 3.00 m: disparity 3.477 px and inverted depth 3.000000 m.*
+
+[![WS-PSNR improved from 20.13 to 33.51 dB; residual 0.0078.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/06_stabilisation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/06_stabilisation.png)
+
+*↑ WS-PSNR improved from 20.13 to 33.51 dB; residual 0.0078.*
+
+[![Thirty differing frames; the first frame is already moving.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/09_viewport_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/09_viewport_flight.gif)
+
+*↑ The animation ―― Thirty differing frames; the first frame is already moving.*
+
+```
+py -3.11 examples/poc_omni360_inspection.py
+```
+
+Source: [examples/poc_omni360_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_omni360_inspection.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_omni360_inspection)
+
+Ops used (notes): [`anaglyph`](https://furuse.work/ops/optics/omni360/anaglyph.html) · [`anaglyph_crosstalk`](https://furuse.work/ops/optics/omni360/anaglyph_crosstalk.html) · [`equirect_defect_unwrap_pipe`](https://furuse.work/ops/optics/omni360/equirect_defect_unwrap_pipe.html) · [`equirect_filter_gaussian`](https://furuse.work/ops/optics/omni360/equirect_filter_gaussian.html) · [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/omni360/equirect_from_fisheye_pair.html) · [`equirect_rotate`](https://furuse.work/ops/optics/omni360/equirect_rotate.html) · [`equirect_stabilise`](https://furuse.work/ops/optics/omni360/equirect_stabilise.html) · [`equirect_weight_map`](https://furuse.work/ops/optics/omni360/equirect_weight_map.html) · [`ods_depth_to_disparity`](https://furuse.work/ops/optics/omni360/ods_depth_to_disparity.html) · [`ods_disparity_to_depth`](https://furuse.work/ops/optics/omni360/ods_disparity_to_depth.html) · [`stereo_parallax_budget`](https://furuse.work/ops/optics/omni360/stereo_parallax_budget.html) · [`video360_tile_coverage`](https://furuse.work/ops/optics/omni360/video360_tile_coverage.html) · [`video360_viewport_track`](https://furuse.work/ops/optics/omni360/video360_viewport_track.html) · [`viewport_from_equirect`](https://furuse.work/ops/optics/omni360/viewport_from_equirect.html) · [`ws_psnr`](https://furuse.work/ops/optics/omni360/ws_psnr.html)
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
@@ -2390,7 +2470,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
-Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 15 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
+Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 16 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
 
 The conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.
 
@@ -2831,6 +2911,46 @@ Source: [examples/poc_zmx_public_verify.py](https://github.com/furuse-kazufumi/f
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zmx_public_verify)
 
 Ops used (notes): [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_from_opd`](https://furuse.work/ops/optics/imaging_sim/psf_from_opd.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`render_through_lens`](https://furuse.work/ops/optics/imaging_sim/render_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html)
+
+## No.2026.271 —— Budgeting Lens Manufacturing Tolerances through MTF, Yield, and Compensator Travel
+
+[![Budgeting Lens Manufacturing Tolerances through MTF, Yield, and Compensator Travel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png)
+
+*↑ **Budgeting Lens Manufacturing Tolerances through MTF, Yield, and Compensator Travel** ―― A public triplet prescription receives explicit rows for curvature, thickness, refractive index, Abbe number, decentre, tilt, astigmatic surface irregularity, wedge, and group decentre. Eight new operations combine distributions, central-difference sensitivity, Monte Carlo, a Wilson 95% yield interval, multiple compensators, and assembly travel. The weak-wedge image shift agrees with f(n-1)alpha to 6e-8; the real-ray OPD RMS of one fringe of astigmatic irregularity agrees with the closed form to 1.3%. In the 16-trial CI run yield is 0.688 and becomes 1.000 with inner-gap and image-plane compensation. Uniform, normal, and truncated-normal distributions at the same plus/minus tolerance yield 0.750 / 1.000 / 1.000; tightening the leading row while loosening low-sensitivity rows gives 0.833. Learning 0, calibration 0.*
+
+[![同じ試行から得た MTF と RMS spot。赤線は合否限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/02_histograms.png)
+
+*↑ The measurement ―― 同じ試行から得た MTF と RMS spot。赤線は合否限界。 (figure labels are in Japanese; the numbers are the same)*
+
+[![像面だけの場合と内部間隔を加えた場合を比較。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_compensation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/03_compensation.png)
+
+*↑ 像面だけの場合と内部間隔を加えた場合を比較。*
+
+[![一様・正規・±公差で切った正規分布の歩留まり。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_distributions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/04_distributions.png)
+
+*↑ 一様・正規・±公差で切った正規分布の歩留まり。*
+
+[![線形予測と Monte-Carlo 実測を明示。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_rebudget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/05_rebudget.png)
+
+*↑ 線形予測と Monte-Carlo 実測を明示。*
+
+[![同じ処方の基準像と、1 arcmin のくさびを入れた像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_wedge_probe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/06_wedge_probe.png)
+
+*↑ 同じ処方の基準像と、1 arcmin のくさびを入れた像。*
+
+[![感度首行を -tol から +tol へ掃引した点像。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_tolerance_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/07_tolerance_sweep.gif)
+
+*↑ The animation ―― 感度首行を -tol から +tol へ掃引した点像。*
+
+```
+py -3.11 examples/poc_lens_tolerancing.py
+```
+
+Source: [examples/poc_lens_tolerancing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_tolerancing)
+
+Ops used (notes): [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`opd_samples`](https://furuse.work/ops/optics/design/opd_samples.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`tolerance_compensators`](https://furuse.work/ops/optics/tolerancing/tolerance_compensators.html) · [`tolerance_criteria`](https://furuse.work/ops/optics/tolerancing/tolerance_criteria.html) · [`tolerance_monte_carlo`](https://furuse.work/ops/optics/tolerancing/tolerance_monte_carlo.html) · [`tolerance_report`](https://furuse.work/ops/optics/tolerancing/tolerance_report.html) · [`tolerance_sensitivity`](https://furuse.work/ops/optics/tolerancing/tolerance_sensitivity.html) · [`tolerance_table`](https://furuse.work/ops/optics/tolerancing/tolerance_table.html) · [`tolerance_table_from_zmx`](https://furuse.work/ops/optics/tolerancing/tolerance_table_from_zmx.html) · [`tolerance_table_zmx`](https://furuse.work/ops/optics/tolerancing/tolerance_table_zmx.html)
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 

@@ -7,7 +7,7 @@ out: table
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # two_view_volume — DRIVE `scoop` op

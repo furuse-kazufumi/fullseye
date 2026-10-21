@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 90 项,每项都有说明页(用法与限制)和可运行的示例。
+共 94 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 不被划痕和突起拖动的平均线(稳健高斯回归与样条滤波,截面与曲面): [说明](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · 示例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - 找出细微划痕并测量宽度: [说明](../../capabilities/scratch-detection-and-width.md) _(ja)_ · 示例 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - 测量 SEM 明亮边缘把尺寸放大了多少（带真值）: [说明](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · 示例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- 测量同一批粒子的扫描像和透射像并比较两种尺寸偏差: [说明](../../capabilities/sem-tem-same-particle.md) _(ja)_ · 示例 [poc_sem_tem_same_particle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
 - 顺序光学设计的指标(理想透镜面、环围能量、子午与弧矢 MTF、离焦 MTF): [说明](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · 示例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py) · [poc_lens_merit_operands](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py) · [poc_lens_solves_afocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 - 用偏振测量黑色光泽件与玻璃的形状(偏振形状恢复、模糊解集、折射率估计): [说明](../../capabilities/shape-from-polarization.md) _(ja)_ · 示例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 用实物图像拟合物理模型的系数(sim-to-real 标定)—— 图像无法确定的系数不给数值,而是返回能确定的组合与理由: [说明](../../capabilities/sim-to-real-calibration.md) _(ja)_ · 示例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
@@ -139,6 +140,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 远心镜头与尺寸测量(主光线倾角 → 随高度变化的放大率 → 渐晕与模糊): [说明](../../capabilities/telecentric-metrology.md) _(ja)_ · 示例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 虚拟透射电子显微镜(电子波长 → CTF → 相位衬度像 → 由 Thon 环估计欠焦 → 校正): [说明](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · 示例 [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - 测量地形的坡度、水流与通视: [说明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 示例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 用间接和直接飞行时间测量同一三维场景: [说明](../../capabilities/tof-camera.md) _(ja)_ · 示例 [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - 虚拟 SEM —— 用蒙特卡罗求解电子与固体的相互作用,对照实测值评分,观察加速电压、探测器和带电如何改变图像与测得的线宽: [说明](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · 示例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 从 3-D 扫描求体积与土方量: [说明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 示例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 图无法验证的东西(积分器阶数、李雅普诺夫指数、分岔、关联维数、极小曲面): [说明](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 示例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -187,6 +189,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 与基准图像(黄金样本)比较、测缺陷、按批判定: [说明](../../capabilities/golden-compare.md) _(ja)_ · 示例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 用已知良品/不良品集在部署前检定检测配方与规格,并测量余量: [说明](../../capabilities/inspection-fixture.md) _(ja)_ · 示例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - 一次调用检测整个文件夹(批处理、按规格判定、汇总、SPC、报告、审计日志): [说明](../../capabilities/inspection-workflow.md) _(ja)_ · 示例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- 以 MTF 与良率分配镜头制造公差: [说明](../../capabilities/lens-tolerancing.md) _(ja)_ · 示例 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - 把 op 的返回值(带类型)写成 JSON,并逐位还原: [说明](../../capabilities/typed-results-as-json.md) _(ja)_ · 示例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - 把 op 的返回值(带类型)做成可读的 Markdown,并内嵌 JSON 以便还原: [说明](../../capabilities/typed-results-as-markdown.md) _(ja)_ · 示例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 把带类型的检测结果写入 Excel(.xlsx)报告: [说明](../../capabilities/xlsx-report.md) _(ja)_ · 示例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -205,15 +208,16 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光学系统的图纸(以 SVG / DXF 输出透镜截面图、成像系统布置图和单透镜制造图): [说明](../../capabilities/optics-drawings.md) _(ja)_ · 示例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 按处方参数透过镜头拍摄三维场景(景深、猫眼虚化、边角照度、色差、鬼像): [说明](../../capabilities/photograph-through-prescription.md) _(ja)_ · 示例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 制作会骗眼睛的图来给测量方打分(错觉、无限绘制、循环动画): [说明](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 示例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 基于镜头处方的光场相机: [说明](../../capabilities/plenoptic-camera.md) _(ja)_ · 示例 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 定理即检验门的图(阿波罗尼奥斯、福特圆、测地穹顶、叶序、IFS、空间填充曲线): [说明](../../capabilities/theorems-as-pictures.md) _(ja)_ · 示例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[其他 152 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 158 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 275 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -282,7 +286,7 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (54)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (55)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI 与 CT 对应" width="200" height="200"><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工墙面偏差" width="200" height="200"><span>竣工墙面偏差</span></a>
@@ -338,6 +342,7 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="光谱仪与照明系统(带宽与光源的纹样)" width="200" height="200"><span>光谱仪与照明系统(带宽与光源的纹样)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="用远心实拍图像校准成像模型" width="200" height="200"><span>用远心实拍图像校准成像模型</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="划痕把平均线压凹多少,以及稳健滤波的失效点" width="200" height="200"><span>划痕把平均线压凹多少,以及稳健滤波的失效点</span></a>
+<a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="在扫描像和透射像中测量同一批粒子" width="200" height="200"><b>&#9654;</b><span>在扫描像和透射像中测量同一批粒子</span></a>
 </div>
 </details>
 
@@ -388,7 +393,7 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>成像质量与复原</b> (22)</summary>
+<details class="vall"><summary><b>成像质量与复原</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="逼近条纹的蝇眼" width="200" height="200"><b>&#9654;</b><span>逼近条纹的蝇眼</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="手抖去模糊" width="200" height="200"><b>&#9654;</b><span>手抖去模糊</span></a>
@@ -412,10 +417,12 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="按处方参数透过镜头拍摄三维场景:景深、猫眼虚化、边角照度、色差、鬼像" width="200" height="200"><span>按处方参数透过镜头拍摄三维场景:景深、猫眼虚化、边角照度、色差、鬼像</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="水在检测图像中的样子:泳池底的焦散、瓶子的侧视图、湿润的板、水下的船体" width="200" height="200"><span>水在检测图像中的样子:泳池底的焦散、瓶子的侧视图、湿润的板、水下的船体</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="像素位移的偏移与开口校准(无法确定的地图)" width="200" height="200"><span>像素位移的偏移与开口校准(无法确定的地图)</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="基于处方的光场相机:从原始微图像到重聚焦与距离" width="200" height="200"><b>&#9654;</b><span>基于处方的光场相机:从原始微图像到重聚焦与距离</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="同一三维场景的间接与直接飞行时间:多径、混合像素、堆积和体积误差" width="200" height="200"><span>同一三维场景的间接与直接飞行时间:多径、混合像素、堆积和体积误差</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>颜色与分离</b> (16)</summary>
+<details class="vall"><summary><b>颜色与分离</b> (17)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="光纤与光导(模式、色散、模场直径)" width="200" height="200"><span>光纤与光导(模式、色散、模场直径)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="用光谱反射率测薄膜厚度(用公开实测数据评分、晶圆干涉色)" width="200" height="200"><b>&#9654;</b><span>用光谱反射率测薄膜厚度(用公开实测数据评分、晶圆干涉色)</span></a>
@@ -433,6 +440,7 @@ PoC 271 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)" width="200" height="200"><span>用“解(solve)”保持设计关系(随光阑变化的 F 数、afocal、曲面像面、奇次非球面)</span></a>
 <a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="全景检测与立体显示" width="200" height="200"><span>全景检测与立体显示</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="公开 .zmx 处方的独立验证与检测评分" width="200" height="200"><span>公开 .zmx 处方的独立验证与检测评分</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="以 MTF、良率和补偿行程分配镜头制造公差" width="200" height="200"><b>&#9654;</b><span>以 MTF、良率和补偿行程分配镜头制造公差</span></a>
 </div>
 </details>
 

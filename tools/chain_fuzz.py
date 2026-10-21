@@ -7582,7 +7582,12 @@ OP_ARG_BUILDERS = {
 #: depth_of_field は過焦点距離以遠で far/depth = inf(それが過焦点距離の定義)、
 #: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
-NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
+NONFINITE_BY_CONTRACT_OPTICS = {
+    "depth_of_field",
+    "gaussian_beam",
+    # worst_trial preserves physical infinite planes/object distance.
+    "tolerance_monte_carlo",
+}
 
 #: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
 #: 契約**で、最寄りの面へ丸めないための設計そのもの(丸めると「背景に載っていた

@@ -7,7 +7,7 @@ out: rgbimage
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # wetness — OPTICS `material` op
@@ -59,7 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](clearcoat_shade.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [underwater_inspection_image](../watervision/underwater_inspection_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md)
+[clearcoat_shade](clearcoat_shade.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md) · [equirect_rotate](../omni360/equirect_rotate.md)
 
 ## 同カテゴリ(`material`)
 

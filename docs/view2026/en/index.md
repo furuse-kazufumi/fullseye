@@ -89,7 +89,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## What it can do
 
-90 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+94 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces): [explanation](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · examples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - Detect fine scratches and measure their width: [explanation](../../capabilities/scratch-detection-and-width.md) _(ja)_ · examples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - Measure how much the bright SEM edge inflates a dimension, with ground truth: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- Measure the same particles in scanning and transmission images and compare both size biases: [explanation](../../capabilities/sem-tem-same-particle.md) _(ja)_ · examples [poc_sem_tem_same_particle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
 - Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py) · [poc_lens_merit_operands](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py) · [poc_lens_solves_afocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 - Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead: [explanation](../../capabilities/sim-to-real-calibration.md) _(ja)_ · examples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
@@ -139,6 +140,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Telecentric lenses for dimensional metrology (chief-ray angle, magnification versus height, vignetting and blur): [explanation](../../capabilities/telecentric-metrology.md) _(ja)_ · examples [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction): [explanation](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · examples [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - Slope, flow and line of sight on a terrain: [explanation](../../capabilities/terrain-and-visibility.md) _(ja)_ · examples [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- Measuring one 3-D scene with indirect and direct time of flight: [explanation](../../capabilities/tof-camera.md) _(ja)_ · examples [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width: [explanation](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · examples [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - Turn a 3-D scan into a volume: [explanation](../../capabilities/volume-from-3d-scan.md) _(ja)_ · examples [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces): [explanation](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · examples [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -187,6 +189,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Compare against a golden image — align, diff, count defects, judge the lot: [explanation](../../capabilities/golden-compare.md) _(ja)_ · examples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Validate a recipe and spec on known good/bad sets before deployment, and measure the margins: [explanation](../../capabilities/inspection-fixture.md) _(ja)_ · examples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log: [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- Budget lens manufacturing tolerances by MTF and yield: [explanation](../../capabilities/lens-tolerancing.md) _(ja)_ · examples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Write typed op results as JSON and read them back bit-for-bit: [explanation](../../capabilities/typed-results-as-json.md) _(ja)_ · examples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Render typed op results as Markdown, with an exact JSON block to read back: [explanation](../../capabilities/typed-results-as-markdown.md) _(ja)_ · examples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Write typed inspection results to an Excel (.xlsx) report: [explanation](../../capabilities/xlsx-report.md) _(ja)_ · examples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -205,15 +208,16 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Optical drawings (lens layouts, vision-setup drawings and ISO 10110 element drawings as SVG / DXF): [explanation](../../capabilities/optics-drawings.md) _(ja)_ · examples [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts): [explanation](../../capabilities/photograph-through-prescription.md) _(ja)_ · examples [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - Pictures that carry their own ground truth (illusions, endless drawing, seamless loops): [explanation](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · examples [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- Prescription-based plenoptic camera: [explanation](../../capabilities/plenoptic-camera.md) _(ja)_ · examples [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves): [explanation](../../capabilities/theorems-as-pictures.md) _(ja)_ · examples [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[All 152 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 158 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
-271 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+275 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -282,7 +286,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (54)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (55)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -338,6 +342,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="Spectrometer and illumination (bandwidth and lamp structure)" width="200" height="200"><span>Spectrometer and illumination (bandwidth and lamp structure)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Calibrating an imaging model on a real telecentric image" width="200" height="200"><span>Calibrating an imaging model on a real telecentric image</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="How far a scratch dents the mean line, and where robust filters break" width="200" height="200"><span>How far a scratch dents the mean line, and where robust filters break</span></a>
+<a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="The same particles in scanning and transmission images" width="200" height="200"><b>&#9654;</b><span>The same particles in scanning and transmission images</span></a>
 </div>
 </details>
 
@@ -388,7 +393,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality and restoration</b> (22)</summary>
+<details class="vall"><summary><b>Image quality and restoration</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="A fly's eye closing in on stripes" width="200" height="200"><b>&#9654;</b><span>A fly's eye closing in on stripes</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -412,10 +417,12 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="Photographing a 3-D scene through the actual lens prescription: depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts" width="200" height="200"><span>Photographing a 3-D scene through the actual lens prescription: depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="How water looks in inspection images: pool-floor caustics, a bottle from the side, a wet plate, a hull under water" width="200" height="200"><span>How water looks in inspection images: pool-floor caustics, a bottle from the side, a wet plate, a hull under water</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="Calibrating pixel-shift offsets and aperture (undetermined map)" width="200" height="200"><span>Calibrating pixel-shift offsets and aperture (undetermined map)</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="A prescription-based plenoptic camera: raw microimages to refocusing and distance" width="200" height="200"><b>&#9654;</b><span>A prescription-based plenoptic camera: raw microimages to refocusing and distance</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="Indirect and direct time of flight on one 3-D scene: multipath, mixed pixels, pile-up and volume error" width="200" height="200"><span>Indirect and direct time of flight on one 3-D scene: multipath, mixed pixels, pile-up and volume error</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour and separation</b> (16)</summary>
+<details class="vall"><summary><b>Colour and separation</b> (17)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Optical fibres and light guides (modes, dispersion, mode field)" width="200" height="200"><span>Optical fibres and light guides (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)" width="200" height="200"><b>&#9654;</b><span>Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)</span></a>
@@ -433,6 +440,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)" width="200" height="200"><span>Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)</span></a>
 <a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="Omnidirectional inspection and stereo display" width="200" height="200"><span>Omnidirectional inspection and stereo display</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Independent verification and inspection scoring of public .zmx prescriptions" width="200" height="200"><span>Independent verification and inspection scoring of public .zmx prescriptions</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Budget lens manufacturing tolerances by MTF, yield, and compensator travel" width="200" height="200"><b>&#9654;</b><span>Budget lens manufacturing tolerances by MTF, yield, and compensator travel</span></a>
 </div>
 </details>
 

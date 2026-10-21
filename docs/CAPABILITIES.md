@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 91 項目**
+**収録 94 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -88,7 +88,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (32)
+## 測る (33)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 

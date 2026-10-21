@@ -873,6 +873,27 @@
    ]
   },
   {
+   "id": "lens-tolerancing",
+   "title": "レンズの製造公差を、MTF と歩留まりで決める",
+   "title_en": "Budget lens manufacturing tolerances by MTF and yield",
+   "category": "組み立てる",
+   "note": "docs/capabilities/lens-tolerancing.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lens_tolerancing",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "light-transport",
    "title": "凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)",
    "title_en": "Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting)",
@@ -1339,6 +1360,27 @@
    ]
   },
   {
+   "id": "plenoptic-camera",
+   "title": "処方から撮るプレノプティックカメラ",
+   "title_en": "Prescription-based plenoptic camera",
+   "category": "描く",
+   "note": "docs/capabilities/plenoptic-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_plenoptic_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "point-cloud-to-picture",
    "title": "点群をそのまま色の絵にする",
    "title_en": "Draw a point cloud as a colour picture",
@@ -1625,6 +1667,27 @@
     {
      "id": "poc_sem_wafer_defect_edge_bias",
      "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "sem-tem-same-particle",
+   "title": "同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる",
+   "title_en": "Measure the same particles in scanning and transmission images and compare both size biases",
+   "category": "測る",
+   "note": "docs/capabilities/sem-tem-same-particle.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_sem_tem_same_particle",
+     "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
@@ -2010,6 +2073,27 @@
    ]
   },
   {
+   "id": "tof-camera",
+   "title": "同じ3次元場面を間接ToFと直接ToFで測る",
+   "title_en": "Measuring one 3-D scene with indirect and direct time of flight",
+   "category": "測る",
+   "note": "docs/capabilities/tof-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tof_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "tomography-reconstruction",
    "title": "投影から断面を再構成する(CT)",
    "title_en": "Reconstruct slices from projections (CT)",
@@ -2272,8 +2356,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 420,
-  "run_by_the_poc_gate": 271,
+  "examples2d_total": 424,
+  "run_by_the_poc_gate": 275,
   "run_by_the_example_gate": 149,
   "not_run_by_any_gate": 0,
   "gates": [
