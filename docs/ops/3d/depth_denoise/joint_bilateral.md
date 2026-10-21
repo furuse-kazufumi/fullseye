@@ -22,8 +22,8 @@ joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で
 深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
 **guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
 同一形状必須(fail-closed)。
-``chunk`` limits peak memory by processing row tiles; 64 is the measured
-speed-preserving default, while callers may tune it or pass ``None``.
+``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

@@ -23,8 +23,8 @@ range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=
 中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
 range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
 ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
-``chunk`` limits peak memory by processing row tiles; 64 is the measured
-speed-preserving default, while callers may tune it or pass ``None``.
+``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
