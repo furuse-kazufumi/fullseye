@@ -22,7 +22,29 @@
   ]
  },
  {
-  "file": "03_inspection_scores.png",
+  "file": "03_spot_field_sweep.gif",
+  "name": "spot_field_sweep",
+  "caption": "同じ処方のスポットを軸上から最大視野まで掃引する。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "03_spot_field_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "04_inspection_scores.png",
   "name": "inspection_scores",
   "caption": "合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。",
   "shape": [
@@ -30,11 +52,11 @@
    1120,
    3
   ],
-  "csv": "03_inspection_scores.csv",
-  "tsv": "03_inspection_scores.tsv"
+  "csv": "04_inspection_scores.csv",
+  "tsv": "04_inspection_scores.tsv"
  },
  {
-  "file": "04_scratch_visibility.png",
+  "file": "05_scratch_visibility.png",
   "name": "scratch_visibility",
   "caption": "出力から測った傷 contrast は -0.424〜-0.397。",
   "shape": [
@@ -44,7 +66,7 @@
   ]
  },
  {
-  "file": "05_opd_convention_limit.png",
+  "file": "06_opd_convention_limit.png",
   "name": "opd_convention_limit",
   "caption": "光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。規約差を精度とは数えない。",
   "shape": [
