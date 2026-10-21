@@ -7,6 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- Studio の型付き `table` 入力で CSV の実列を役割へ割り当て、ヘッダー形式ごとに再利用し、不均衡なゲージ R&R データを該当組つきで実行前に拒否できるようにした。
 - PoC の深度・高さ・視差・変位図に、実測器に近い虹色疑似カラーと単位付きカラーバーを追加した。
 
 ### Added — 実行中の設定と結果を世代で結び付ける
