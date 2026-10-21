@@ -831,7 +831,7 @@
   {
    "id": "poc_interferometry_step",
    "category": "optics",
-   "media": "05_step_sweep.mp4",
+   "media": "03_surface_z_scan.mp4",
    "motion": true,
    "label": {
     "ja": "白色干渉の段差",
@@ -867,7 +867,7 @@
   {
    "id": "poc_polarization_specular",
    "category": "optics",
-   "media": "03_separation.png",
+   "media": "01_raw_polarizer_mosaic.png",
    "motion": false,
    "label": {
     "ja": "偏光で鏡面除去",
@@ -2598,9 +2598,9 @@
   {
    "id": "poc_aoi_ct_traceability",
    "group": "wing_metrology",
-   "media": "01_aoi_and_ct.png",
+   "media": "01_inspection_and_reconstructed_ct.png",
    "motion": false,
-   "thumb_src": "01_aoi_and_ct_720.jpg",
+   "thumb_src": "01_inspection_and_reconstructed_ct_720.jpg",
    "label": {
     "ja": "AOI と CT の対応",
     "en": "AOI-to-CT matching",
@@ -2751,9 +2751,9 @@
   {
    "id": "poc_interferometry_step",
    "group": "wing_metrology",
-   "media": "05_step_sweep.mp4",
+   "media": "03_surface_z_scan.mp4",
    "motion": true,
-   "thumb_src": "05_step_sweep.gif",
+   "thumb_src": "03_surface_z_scan.gif",
    "label": {
     "ja": "白色干渉の段差",
     "en": "White-light steps",
@@ -4502,9 +4502,9 @@
   {
    "id": "poc_polarization_specular",
    "group": "wing_color",
-   "media": "01_fresnel.png",
+   "media": "01_raw_polarizer_mosaic.png",
    "motion": false,
-   "thumb_src": "01_fresnel_720.jpg",
+   "thumb_src": "01_raw_polarizer_mosaic_720.jpg",
    "label": {
     "ja": "偏光で鏡面除去",
     "en": "Polarization",
