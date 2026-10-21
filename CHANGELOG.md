@@ -7,10 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- Studio now shuts down overlapping run-worker QThreads deterministically, preventing a late older generation from causing a native crash during window cleanup.
+
 ### 修正
 - 正規化相互相関の固定絶対値を除き、微小・巨大スケールと大きな直流成分でも同じ相関値を返すよう修正した。
 - 回転矩形の交差面積を厳密計算する方式を既定とし、格子近似の範囲が回転後の頂点を含むよう修正した。
 - domain 付き画像を処理領域の取得・縮小・変更・切り出しへ連鎖でき、縮小時に既存領域との積を取るよう修正した。
+
+- README と RAG ガイドの実装由来の件数を `regen_all` で更新し、数値だけが変わった翻訳の鮮度指紋も安全に追従するようにした。
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、`round((t_end - burn_in) / dt)` が 0 のとき警告と NaN を返していた不具合を修正。要求時間を超えて 1 刻みに切り上げず、引数と算出刻み数を含む `ValueError` を返す。
 
