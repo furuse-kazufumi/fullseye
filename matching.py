@@ -13,16 +13,23 @@ def _f(a):
     return np.asarray(a, dtype=np.float64)
 
 
-def _ncc_map(t, img):
+def _ncc_map(t_or_model, img):
     """Return a valid Pearson NCC map with values in ``[-1, 1]``.
 
     Scores are invariant to positive scaling.  A constant template or a
     truly constant image window has no defined correlation and scores 0.
     """
-    t = _f(t)
+    if isinstance(t_or_model, dict):
+        t = t_or_model["template"]
+        t0 = t_or_model["t0n"]
+        tn = float(t_or_model["norm"])
+    else:
+        t = _f(t_or_model)
+        t0 = t - t.mean()
+        tn = np.linalg.norm(t0)
+        if tn > np.finfo(np.float64).tiny:
+            t0 = t0 / tn
     img = _f(img)
-    t0 = t - t.mean()
-    tn = np.linalg.norm(t0)
     H, W = img.shape
     h, w = t.shape
     shape = (max(H - h + 1, 0), max(W - w + 1, 0))
@@ -32,7 +39,6 @@ def _ncc_map(t, img):
     if tn <= np.finfo(np.float64).tiny:
         out.fill(0.0)
         return out
-    t0 = t0 / tn
     # Direct correlation wins for small kernels; beyond 15x15 FFT avoids the
     # quadratic template-size cost.  Local moments come from integral images.
     method = "direct" if h * w <= 225 else "fft"
@@ -63,15 +69,38 @@ def _ncc_map(t, img):
 
 
 def create_ncc_model(template) -> dict:
-    """NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。"""
-    t = _f(template)
-    return {"template": t, "mean": float(t.mean()), "shape": t.shape}
+    """NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。
+
+    呼び出し元の配列とは独立した float64 コピーと、探索で再利用する中心化・
+    単位ノルム化済みテンプレートを保持する。
+    """
+    source = np.asarray(template)
+    t = np.array(source, dtype=np.float64, copy=True)
+    mean = float(t.mean())
+    t0 = t - mean
+    norm = float(np.linalg.norm(t0))
+    t0n = t0 / norm if norm > np.finfo(np.float64).tiny else np.zeros_like(t0)
+    try:
+        from fullseye import __version__
+        version = __version__
+    except (ImportError, AttributeError):
+        version = "0"
+    return {
+        "template": t,
+        "t0n": t0n,
+        "norm": norm,
+        "mean": mean,
+        "shape": t.shape,
+        "origin": (t.shape[0] // 2, t.shape[1] // 2),
+        "dtype": source.dtype,
+        "version": version,
+    }
 
 
 def find_ncc_model(model, image, min_score: float = 0.5) -> dict:
     """NCC モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_ncc_model)。"""
     t = model["template"] if isinstance(model, dict) else _f(model)
-    m = _ncc_map(t, image)
+    m = _ncc_map(model if isinstance(model, dict) else t, image)
     if m.size == 0:
         return {"row": -1, "col": -1, "column": -1, "score": 0.0, "found": False}
     idx = np.unravel_index(int(np.argmax(m)), m.shape)

@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- `create_ncc_model` は入力と独立した float64 コピー、正規化済みテンプレート、ノルム、形状、原点、入力 dtype、版を保持し、準備済み経路と生テンプレート経路の NCC map はビット一致する。
+
 ### 追加
 - 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。
 
