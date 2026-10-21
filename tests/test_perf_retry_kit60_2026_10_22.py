@@ -43,6 +43,13 @@ class TestP013:
         with pytest.raises(ValueError):
             mesh_props.vertex_normals((v, f), "unknown")
 
+    def test_p013_degenerate_vertex_set_matches(self):
+        v = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+        f = np.array([[0, 1, 2], [0, 2, 1]])
+        for method in ("exact", "fast"):
+            with pytest.raises(ValueError, match="3 vertex"):
+                mesh_props.vertex_normals((v, f), method)
+
 
 class TestP044:
     @pytest.mark.parametrize("dtype", [np.uint8, np.uint16])
