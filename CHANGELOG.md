@@ -8,6 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## Unreleased
 
 - `reduce_domain` / `change_domain` に、HALCON と同様に定義域外の画素行列を保持する `keep_pixels=True` を追加しました。既定のゼロ化動作は変わりません。
+- 正規化しない絶対画素距離を返す `dist_transform_abs` を追加しました。
 
 ### 追加
 - 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。

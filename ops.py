@@ -1547,6 +1547,25 @@ def _dist_transform(v, a, b):
     return _norm(ndimage.distance_transform_edt(_bin(v)))
 
 
+def _dist_transform_abs(v, a, b):
+    """Return absolute pixel distances without per-image normalisation.
+
+    ``a`` selects Euclidean (``a < 1/3``), city-block/L1
+    (``1/3 <= a < 2/3``), or chessboard/L-infinity distance. ``b < 0.5``
+    measures foreground pixels to background; otherwise it measures background
+    pixels to foreground. Example: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``.
+
+    The HALCON reference operator returns ``int4`` approximations. This op
+    deliberately returns exact ``float64`` distances and is not a compatibility
+    API.
+    """
+    mask = _bin(v) if b < 0.5 else ~_bin(v)
+    if a < (1.0 / 3.0):
+        return ndimage.distance_transform_edt(mask).astype(np.float64)
+    metric = "taxicab" if a < (2.0 / 3.0) else "chessboard"
+    return ndimage.distance_transform_cdt(mask, metric=metric).astype(np.float64)
+
+
 def _region_boundary(v, a, b):
     """領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。
 
@@ -2317,6 +2336,7 @@ _DEFS = [
     ("local_max", "segmentation", "local_max_sub_pix", IMAGE, REGION, _local_max),
     # extra region ops
     ("dist_transform", "region", "distance_transform", REGION, IMAGE, _dist_transform),
+    ("dist_transform_abs", "region", "distance_transform", REGION, IMAGE, _dist_transform_abs),
     ("region_boundary", "region", "boundary", REGION, REGION, _region_boundary),
     ("convex_fill", "region", "shape_trans", REGION, REGION, _convex_fill),
     # image -> contour (XLD)
