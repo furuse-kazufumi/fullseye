@@ -1,5 +1,5 @@
 ---
-op: anaglyph
+op: omni_anaglyph_compose
 dim: optics
 category: omni360
 in: rgbimage × rgbimage
@@ -10,10 +10,10 @@ license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
-# anaglyph — OPTICS `omni360` op
+# omni_anaglyph_compose — OPTICS `omni360` op
 
 - **データ種**: `rgbimage × rgbimage` → `rgbimage`
-- **呼び出し**: `import fullseye as fs; fs.ledger.anaglyph(left, right, method='dubois')` (実装を直接呼ぶなら `import omni360; omni360.anaglyph(left, right, method='dubois')`、台帳から引くなら `opsoptics.get("anaglyph")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.omni_anaglyph_compose(left, right, method='dubois')` (実装を直接呼ぶなら `import omni360; omni360.omni_anaglyph_compose(left, right, method='dubois')`、台帳から引くなら `opsoptics.get("omni_anaglyph_compose")`)
 
 ## 使い方
 

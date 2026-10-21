@@ -448,6 +448,12 @@ with warnings.catch_warnings():
         psf_from_opd, psf_field_grid, through_focus_mtf, distortion_map, render_through_lens, defect_dataset,
         calibration_views,
     )
+    # Public coordinate/projection utilities that complement the typed omni360 ledger ops.
+    from omni360 import (  # noqa: E402,F401
+        anaglyph_preview, cubemap_to_dir, dir_to_cubemap, dir_to_equirect,
+        equirect_to_dir, fisheye_project, fisheye_unproject, ods_from_cubemap_pair,
+        panorama_scene, perspective_project, perspective_unproject, stereo_unpack,
+    )
     # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
     #   どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。
     #   門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
@@ -1196,6 +1202,9 @@ __all__ = [
     "illumination_train", "illumination_field", "coaxial_illumination",
     "lensimage", "psf_from_opd", "psf_field_grid", "through_focus_mtf", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
+    "anaglyph_preview", "cubemap_to_dir", "dir_to_cubemap", "dir_to_equirect",
+    "equirect_to_dir", "fisheye_project", "fisheye_unproject", "ods_from_cubemap_pair",
+    "panorama_scene", "perspective_project", "perspective_unproject", "stereo_unpack",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
     # ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので
     #   ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。

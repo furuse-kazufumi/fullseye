@@ -1,5 +1,5 @@
 ---
-op: equirect_stabilise
+op: equirect_stabilize
 dim: optics
 category: omni360
 in: images
@@ -10,10 +10,10 @@ license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
-# equirect_stabilise — OPTICS `omni360` op
+# equirect_stabilize — OPTICS `omni360` op
 
 - **データ種**: `images` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48))` (実装を直接呼ぶなら `import omni360; omni360.equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48))`、台帳から引くなら `opsoptics.get("equirect_stabilise")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48))` (実装を直接呼ぶなら `import omni360; omni360.equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48))`、台帳から引くなら `opsoptics.get("equirect_stabilize")`)
 
 ## 使い方
 

@@ -53,7 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`omni360`)
 
-[cubemap_from_equirect](cubemap_from_equirect.md) · [equirect_from_cubemap](equirect_from_cubemap.md) · [viewport_from_equirect](viewport_from_equirect.md) · [equirect_rotate](equirect_rotate.md) · [equirect_weight_map](equirect_weight_map.md) · [ws_psnr](ws_psnr.md) · [equirect_filter_gaussian](equirect_filter_gaussian.md) · [equirect_stabilise](equirect_stabilise.md)
+[cubemap_from_equirect](cubemap_from_equirect.md) · [equirect_from_cubemap](equirect_from_cubemap.md) · [viewport_from_equirect](viewport_from_equirect.md) · [equirect_rotate](equirect_rotate.md) · [equirect_weight_map](equirect_weight_map.md) · [ws_psnr](ws_psnr.md) · [equirect_filter_gaussian](equirect_filter_gaussian.md) · [equirect_stabilize](equirect_stabilize.md)
 
 ---
 *Provenance: omni360.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

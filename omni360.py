@@ -358,7 +358,7 @@ def equirect_filter_gaussian(image,sigma_deg):
     return gaussian_filter(out,(sy,0) if im.ndim==2 else (sy,0,0),mode="nearest")
 
 
-def equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48)):
+def equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48)):
     """Estimate and remove camera rotations from an equirectangular sequence.
 
     Each frame is registered to the first one by minimising a cosine-latitude
@@ -450,7 +450,7 @@ _DUBOIS_L=np.array([[.456100,-.040082,-.015216],[.500484,-.037824,-.020597],[.17
 _DUBOIS_R=np.array([[-.043471,.378476,-.072153],[-.087939,.733640,-.112961],[-.001555,-.018450,1.226400]])
 
 
-def anaglyph(left,right,method="dubois"):
+def omni_anaglyph_compose(left,right,method="dubois"):
     """Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper."""
     l=np.asarray(left,float); r=np.asarray(right,float)
     if l.shape!=r.shape: raise ValueError("eye images must have equal shape")
@@ -461,14 +461,14 @@ def anaglyph(left,right,method="dubois"):
     elif method=="color": out=np.stack((l[...,0],r[...,1],r[...,2]),axis=-1)
     elif method=="half_color": out=np.stack((l.mean(-1),r[...,1],r[...,2]),axis=-1)
     elif method=="optimized": out=np.stack((.7*l[...,1]+.3*l[...,2],r[...,1],r[...,2]),axis=-1)
-    else: raise ValueError("unknown anaglyph method")
+    else: raise ValueError("unknown omni_anaglyph_compose method")
     return np.clip(out,0,1)
 
 
 def anaglyph_crosstalk(left,right,glasses_transmission=None,method="dubois"):
     """Return previews and wrong-eye/right-eye energy ratios."""
     if glasses_transmission is None: glasses_transmission=((1,0,0),(0,1,1))
-    tl,tr=(np.asarray(x,float) for x in glasses_transmission); a=anaglyph(left,right,method)
+    tl,tr=(np.asarray(x,float) for x in glasses_transmission); a=omni_anaglyph_compose(left,right,method)
     ls=a*tl; rs=a*tr
     wrong_l=np.sum((a*np.array([0,1,1])*tl)**2); right_l=np.sum((a*np.array([1,0,0])*tl)**2)
     wrong_r=np.sum((a*np.array([1,0,0])*tr)**2); right_r=np.sum((a*np.array([0,1,1])*tr)**2)
@@ -494,7 +494,7 @@ def stereo_pack(left,right,layout="sbs"):
     if layout=="tb": return np.concatenate((a,b),axis=0)
     if layout=="interlaced":
         out=np.empty((a.shape[0]*2,)+a.shape[1:],a.dtype); out[0::2]=a; out[1::2]=b; return out
-    if layout=="anaglyph": return anaglyph(a,b)
+    if layout=="omni_anaglyph_compose": return omni_anaglyph_compose(a,b)
     raise ValueError("unknown stereo layout")
 
 
@@ -508,7 +508,7 @@ def stereo_unpack(packed,layout="sbs"):
 
 def anaglyph_from_ods(left,right,yaw=0,pitch=0,fov=90,size=(256,256),method="dubois"):
     """Extract an ODS viewport pair and compose a colour-filter view."""
-    return anaglyph(viewport_from_equirect(left,yaw,pitch,0,fov,size),viewport_from_equirect(right,yaw,pitch,0,fov,size),method)
+    return omni_anaglyph_compose(viewport_from_equirect(left,yaw,pitch,0,fov,size),viewport_from_equirect(right,yaw,pitch,0,fov,size),method)
 
 
 def video360_viewport_track(frames,yaw,pitch,fov=90,size=(256,256)):

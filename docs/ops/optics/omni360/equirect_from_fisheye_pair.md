@@ -4,7 +4,7 @@ dim: optics
 category: omni360
 in: images
 out: table
-examples: [poc_omni360_inspection]
+examples: [poc_allsky_cloud_cover, poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_allsky_cloud_cover](../../../../examples/poc_allsky_cloud_cover.py) — `py -3.11 examples/poc_allsky_cloud_cover.py`
 - [poc_omni360_inspection](../../../../examples/poc_omni360_inspection.py) — `py -3.11 examples/poc_omni360_inspection.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

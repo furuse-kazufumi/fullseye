@@ -91,7 +91,7 @@ def test_pack_roundtrip_and_parallax_budget():
 
 def test_true_anaglyph_ideal_filters_have_zero_crosstalk():
     left = np.full((8, 9, 3), .25); right = np.full((8, 9, 3), .75)
-    ana = O.anaglyph(left, right, "true")
+    ana = O.omni_anaglyph_compose(left, right, "true")
     seen = O.anaglyph_crosstalk(left, right, method="true")
     assert np.allclose(ana[..., 0], .25) and np.allclose(ana[..., 1:], .75)
     assert seen["ghosting_left"] == 0 and seen["ghosting_right"] == 0
@@ -128,7 +128,7 @@ def test_stabilisation_recovers_known_rotation_and_wrap():
     # The second yaw is deliberately next to the 180-degree longitude wrap.
     shakes = [O._ypr(13.2, -4.1, 2.8), O._ypr(179.6, 1.7, -1.3)]
     frames = np.stack([reference] + [O.equirect_rotate(reference, r) for r in shakes])
-    result = O.equirect_stabilise(frames, residual_limit=.08, sample_shape=(32, 64))
+    result = O.equirect_stabilize(frames, residual_limit=.08, sample_shape=(32, 64))
     errors = [_rotation_angle(result["rotations"][i], shakes[i-1].T)
               for i in range(1, 3)]
     assert len(errors) == 2
@@ -142,7 +142,7 @@ def test_stabilisation_reports_non_rotational_motion():
     reference = .5 + .3*d[..., 0] + .15*d[..., 1]*d[..., 2]
     translated = reference.copy()
     translated[:, :w//2] = np.roll(translated[:, :w//2], 9, axis=0)
-    result = O.equirect_stabilise([reference, translated], residual_limit=.025)
+    result = O.equirect_stabilize([reference, translated], residual_limit=.025)
     assert result["residual"].shape == (2,)
     assert not result["removable"][1]
 

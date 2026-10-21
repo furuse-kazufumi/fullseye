@@ -2808,21 +2808,21 @@ _計 3534 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `oct_layer_thickness` `table → table` — A スキャンの界面のピーク → **層の光学厚と物理厚**(``table``)。分離できない・見えないときは拒否する。 · 例: `poc_industrial_oct`
 
 #### optics / omni360(24)
-- `anaglyph` `rgbimage × rgbimage → rgbimage` — Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper. · 例: `poc_omni360_inspection`
 - `anaglyph_crosstalk` `rgbimage × rgbimage → table` — Return previews and wrong-eye/right-eye energy ratios. · 例: `poc_omni360_inspection`
 - `anaglyph_from_ods` `rgbimage × rgbimage → rgbimage` — Extract an ODS viewport pair and compose a colour-filter view. · 例: `omni360_roundtrip`
 - `cubemap_from_equirect` `rgbimage → rgbvideo` — Resample an equirectangular image into six cubemap faces. · 例: `omni360_roundtrip`
 - `equirect_defect_unwrap_pipe` `image2d → table` — Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial. · 例: `poc_omni360_inspection`
 - `equirect_filter_gaussian` `image2d → image2d` — Gaussian-filter a panorama with longitude scale adapted to latitude. · 例: `poc_omni360_inspection`
 - `equirect_from_cubemap` `rgbvideo → rgbimage` — Resample six cubemap faces into an equirectangular image. · 例: `omni360_roundtrip`
-- `equirect_from_fisheye_pair` `images → table` — Stitch two calibrated fisheyes and report overlap, seam error and blind spots. · 例: `poc_omni360_inspection`
+- `equirect_from_fisheye_pair` `images → table` — Stitch two calibrated fisheyes and report overlap, seam error and blind spots. · 例: `poc_allsky_cloud_cover`, `poc_omni360_inspection`
 - `equirect_from_perspectives` `images → table` — Blend a calibrated perspective rig into an equirectangular image. · 例: `omni360_roundtrip`
 - `equirect_rotate` `rgbimage × matrix → rgbimage` — Apply a proper three-dimensional rotation to a panorama. · 例: `poc_omni360_inspection`
-- `equirect_stabilise` `images → table` — Estimate and remove camera rotations from an equirectangular sequence. · 例: `poc_omni360_inspection`
+- `equirect_stabilize` `images → table` — Estimate and remove camera rotations from an equirectangular sequence. · 例: `poc_omni360_inspection`
 - `equirect_weight_map` `入力なし → image2d` — Return cosine-latitude weights, optionally normalised to four pi. · 例: `poc_omni360_inspection`
 - `ods_depth_to_disparity` `image2d → image2d` — Convert radial depth to ODS horizontal pixel disparity. · 例: `poc_omni360_inspection`
 - `ods_disparity_to_depth` `image2d → image2d` — Convert ODS horizontal pixel disparity to radial depth. · 例: `poc_omni360_inspection`
 - `ods_render` `入力なし → images` — Render ODS rays using ``scene_fn(origins, directions)``. · 例: `omni360_roundtrip`
+- `omni_anaglyph_compose` `rgbimage × rgbimage → rgbimage` — Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper. · 例: `poc_omni360_inspection`
 - `s_psnr` `image2d × image2d → measurement` — Compute PSNR at deterministic near-uniform sphere samples. · 例: `omni360_roundtrip`
 - `stereo360_sbs` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair side by side. · 例: `omni360_roundtrip`
 - `stereo360_top_bottom` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair top and bottom. · 例: `omni360_roundtrip`
