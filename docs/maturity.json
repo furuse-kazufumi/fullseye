@@ -1632,27 +1632,6 @@
    ]
   },
   {
-   "id": "sem-tem-same-particle",
-   "title": "同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる",
-   "title_en": "Measure the same particles in scanning and transmission images and compare both size biases",
-   "category": "測る",
-   "note": "docs/capabilities/sem-tem-same-particle.md",
-   "status": "verified-synthetic",
-   "ops_total": 9,
-   "ops_named_in_tests": 9,
-   "ops_not_named_in_tests": [],
-   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
-   "examples": [
-    {
-     "id": "poc_sem_tem_same_particle",
-     "data": "synthetic",
-     "gate": "tests/test_poc_scripts_run.py",
-     "executed": true,
-     "registry": "examples2d"
-    }
-   ]
-  },
-  {
    "id": "sequential-lens-design-metrics",
    "title": "逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)",
    "title_en": "Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
@@ -2031,27 +2010,6 @@
    ]
   },
   {
-   "id": "tof-camera",
-   "title": "同じ3次元場面を間接ToFと直接ToFで測る",
-   "title_en": "Measuring one 3-D scene with indirect and direct time of flight",
-   "category": "測る",
-   "note": "docs/capabilities/tof-camera.md",
-   "status": "verified-synthetic",
-   "ops_total": 14,
-   "ops_named_in_tests": 14,
-   "ops_not_named_in_tests": [],
-   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
-   "examples": [
-    {
-     "id": "poc_tof_camera",
-     "data": "synthetic",
-     "gate": "tests/test_poc_scripts_run.py",
-     "executed": true,
-     "registry": "examples2d"
-    }
-   ]
-  },
-  {
    "id": "tomography-reconstruction",
    "title": "投影から断面を再構成する(CT)",
    "title_en": "Reconstruct slices from projections (CT)",
@@ -2314,9 +2272,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 419,
+  "examples2d_total": 420,
   "run_by_the_poc_gate": 271,
-  "run_by_the_example_gate": 148,
+  "run_by_the_example_gate": 149,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

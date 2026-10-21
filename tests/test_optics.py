@@ -918,8 +918,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 水の検査画像(watervision)7 op(408 → 415)。
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
     # 2026-10-20: 製造公差・補償・歩留まり(lenstol)8 op(423 → 431)。
-    assert len(opsoptics.OPSOPTICS) == 437
+    assert len(opsoptics.OPSOPTICS) == 461
     assert len(opsoptics.list_ops("tolerancing")) == 8
+    assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
@@ -947,7 +948,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
-        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
+        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "omni360", "optimization",
             "pixelshift", "plenoptic", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "tolerancing", "watermedia", "watervision", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が

@@ -93,7 +93,6 @@
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
-| [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | Measure the same particles in scanning and transmission images and compare both size biases | 測る | `verified-synthetic` | 9/9 | `poc_sem_tem_same_particle` synthetic → tests/test_poc_scripts_run.py |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF) | 測る | `verified-synthetic` | 32/32 | `optical_design_metrics` synthetic → tests/test_example_scripts_run.py<br>`poc_zoom_configurations` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_global_search` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_merit_operands` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_solves_afocal` synthetic → tests/test_poc_scripts_run.py |
 | [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md) | Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index) | 測る | `verified-synthetic` | 8/8 | `poc_shape_from_polarization` synthetic → tests/test_poc_scripts_run.py |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead | 測る | `verified-synthetic` | 10/10 | `simcal_tour` synthetic → tests/test_example_scripts_run.py<br>`simcal_checks_tour` synthetic → tests/test_example_scripts_run.py |
@@ -108,7 +107,6 @@
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | Put text and tables exactly where you want them on an image | 見せる | `verified-synthetic` | 6/6 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md) | Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves) | 描く | `verified-synthetic` | 9/9 | `poc_theorems_as_pictures` synthetic → tests/test_poc_scripts_run.py |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps) | 光と色 | `validated-public-real-data` | 5/5 | `poc_thin_film_reflectometry` real → tests/test_poc_scripts_run.py |
-| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | Measuring one 3-D scene with indirect and direct time of flight | 測る | `verified-synthetic` | 14/14 | `poc_tof_camera` synthetic → tests/test_poc_scripts_run.py |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | Reconstruct slices from projections (CT) | 形にする | `verified-synthetic` | 3/4 | `poc_ct_fidelity` synthetic → tests/test_poc_scripts_run.py<br>`poc_ct_void_morphology` synthetic → tests/test_poc_scripts_run.py |
 | [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md) | Write typed op results as JSON and read them back bit-for-bit | 組み立てる | `verified-synthetic` | 11/11 | `typed_results_json` synthetic → tests/test_example_scripts_run.py |
 | [op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す](capabilities/typed-results-as-markdown.md) | Render typed op results as Markdown, with an exact JSON block to read back | 組み立てる | `verified-synthetic` | 4/4 | `typed_results_markdown` synthetic → tests/test_example_scripts_run.py |
@@ -130,9 +128,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 419 |
+| 2-D 台帳の例 | 420 |
 | `tests/test_poc_scripts_run.py` が走らせる | 271 |
-| `tests/test_example_scripts_run.py` が走らせる | 148 |
+| `tests/test_example_scripts_run.py` が走らせる | 149 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

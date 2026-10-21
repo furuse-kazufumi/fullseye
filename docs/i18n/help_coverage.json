@@ -2,57 +2,57 @@
  "_": "Studio op ヘルプの多言語被覆(生成物 —— tools/opdocs.py coverage が書く)。frame_strings = 枠の対訳表の訳済み件数(枠は全言語そろっている)、languages.* = 本文側の実測(要約が訳されているか・かなの残る頁)。tests/test_help_rendering.py が後退(訳済み比率の低下・未訳の増加)を落とす。",
  "languages": {
   "ja": {
-   "pages": 3498,
-   "pages_with_example": 3487,
-   "pages_ja_summary_of_english_source": 865
+   "pages": 3517,
+   "pages_with_example": 3506,
+   "pages_ja_summary_of_english_source": 884
   },
   "en": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   },
   "zh": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   },
   "tw": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   },
   "ko": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   },
   "de": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   },
   "hi": {
-   "pages": 3498,
-   "pages_with_example": 3487,
+   "pages": 3517,
+   "pages_with_example": 3506,
    "pages_with_kana": 213,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.9391
+   "kana_free_share": 0.9394
   }
  },
  "frame_strings": {

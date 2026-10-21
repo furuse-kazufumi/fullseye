@@ -144,6 +144,7 @@ import lensconfig
 import lockin
 import watermedia
 import watervision
+import omni360
 import lensglobal
 import lensmerit
 import lensrender
@@ -161,7 +162,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,

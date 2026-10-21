@@ -3319,6 +3319,18 @@
    "run": "py -3.11 examples/poc_water_inspection_images.py"
   },
   {
+   "id": "poc_omni360_inspection",
+   "wing": "wing_imaging",
+   "added": "2026-10-21",
+   "numbers_source": "log",
+   "figure": "anaglyph_and_limits",
+   "title_ja": "全天球の検査撮影と立体表示を一つの測定工程として確かめる",
+   "title_en": "Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports",
+   "caption_ja": "半径3 mの合成トンネルを魚眼2面から全天球へ戻し、継ぎ目誤差0.01569、死角0.000 %を測った。球面重み、視野移動、32枚中16枚のタイル範囲、3 mの距離を3.000000 mへ戻す立体視、回転補正によるWS-PSNR 20.13 dBから33.51 dB、円筒展開、赤シアン表示を同じ場面で確かめた。理想フィルターの漏れは0、10 %漏れでは左右0.0693/0.0014。画面上視差は1.80 mm。8章、静止画8枚、30フレームの動画。学習0、校正0。",
+   "caption_en": "A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.",
+   "run": "py -3.11 examples/poc_omni360_inspection.py"
+  },
+  {
    "id": "poc_photograph_through_prescription",
    "wing": "wing_imaging",
    "added": "2026-10-20",

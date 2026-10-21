@@ -6813,7 +6813,6 @@ def _b_plenoptic_system(pool, rng):
 
 
 def _b_plenoptic_capture(pool, rng):
-    """捕捉器には plenoptic_system と lens_scene の正規出力を渡す。"""
     import lensrender
     import plenoptic
     args, kwargs = _b_plenoptic_system(pool, rng)
@@ -6826,8 +6825,6 @@ def _plenoptic_white_calibration():
     import plenoptic
     white = np.zeros((32, 32), dtype=float)
     white[4:29:6, 4:29:6] = 1.0
-    # 1 点だけ 1 px ずらし、max_residual_px の半減・倍増で拒否/受理が
-    # 分かれる実測残差（約 0.196 px）を持たせる。
     white[16, 16] = 0.0
     white[16, 17] = 1.0
     white = ndimage.gaussian_filter(white, 0.8)
@@ -6837,32 +6834,106 @@ def _plenoptic_white_calibration():
 
 
 def _b_plenoptic_mla_calibrate(pool, rng):
-    """校正器が確実に格子を検出できる、小さい白色画像を作る。"""
     white, _ = _plenoptic_white_calibration()
     return ([white, 6.0], {"max_residual_px": 0.3})
 
 
 def _b_plenoptic_decode(pool, rng):
-    """復号器には実際の MLA 校正器が返した格子表を渡す。"""
     white, calibration = _plenoptic_white_calibration()
     return ([white, calibration], {"angular": (3, 3)})
 
 
 def _b_plenoptic_refocus_depth(pool, rng):
-    """深度換算にも有限物体距離の正規 plenoptic_system を渡す。"""
     import plenoptic
     args, kwargs = _b_plenoptic_system(pool, rng)
     system = plenoptic.plenoptic_system(*args, **kwargs)
     return ([np.zeros((3, 3, 5, 5)), system, 0.2], {})
 
 
+def _omni_image(h=16, w=32):
+    yy, xx = np.mgrid[0:h, 0:w]
+    return (0.25 + 0.35 * np.sin(2 * np.pi * xx / w)
+            + 0.2 * np.cos(np.pi * (yy + 0.5) / h))
+
+
+def _omni_rgb(h=16, w=32):
+    image = _omni_image(h, w)
+    return np.stack((image, np.roll(image, 2, axis=1), 0.8 * image + 0.1), axis=-1)
+
+
+def _b_omni_cubemap(pool, rng):
+    import omni360
+    return (omni360.cubemap_from_equirect(_omni_rgb(), 16), (16, 32)), {}
+
+
+def _b_omni_fisheye_pair(pool, rng):
+    images = np.stack((_omni_image(32, 32), _omni_image(32, 32) + 0.01))
+    import omni360
+    rotations = np.stack((np.eye(3), omni360._ypr(180, 0, 0)))
+    return (images, rotations, (16, 32)), {"f_px": 4.0, "fov_deg": 360.0}
+
+
+def _b_omni_perspectives(pool, rng):
+    import omni360
+    rotations = [omni360._ypr(yaw, pitch, 0) for yaw, pitch in
+                 ((0, 0), (90, 0), (180, 0), (-90, 0), (0, 90), (0, -90))]
+    images = np.stack([_omni_image(24, 24) + i * 0.01 for i in range(6)])
+    intrinsics = [{"fx": 7.0, "fy": 7.0, "cx": 12.0, "cy": 12.0}
+                  for _ in rotations]
+    return (images, rotations, intrinsics, (16, 32)), {}
+
+
+def _b_omni_ods_render(pool, rng):
+    def scene(origins, directions):
+        return 0.5 + 0.2 * directions[..., 0] + 0.1 * origins[..., 2]
+    return (scene, 0.064, 16, 32), {}
+
+
+def _b_omni_viewport_track(pool, rng):
+    frames = np.stack((_omni_rgb(), np.roll(_omni_rgb(), 2, axis=1)))
+    return (frames, np.array([0.0, 8.0]), np.array([0.0, 2.0])), {"size": (16, 16)}
+
+
+def _b_omni_rotate(pool, rng):
+    import omni360
+    return (_omni_rgb(), omni360._ypr(6, -3, 1)), {}
+
+
+def _b_omni_depth_to_disparity(pool, rng):
+    depth = 0.5 + 3.0 * (_omni_image() - _omni_image().min())
+    return (depth, 0.064, 32), {}
+
+
+def _b_omni_psnr(pool, rng):
+    a = _omni_image()
+    yy, xx = np.mgrid[:a.shape[0], :a.shape[1]]
+    b = a + 0.02 + 0.08 * ((xx > a.shape[1] // 2) & (yy > a.shape[0] // 3))
+    return (a, b), {}
+
+
+def _b_omni_stabilise(pool, rng):
+    ref = _omni_image()
+    changed = ref.copy()
+    changed[3:10, 5:15] += 0.25
+    return (np.stack((ref, changed)),), {"sample_shape": (12, 24)}
+
+
 OP_ARG_BUILDERS = {
-    # --- プレノプティックカメラ（汎用 table では生成 API の来歴を満たせない） --- #
     "plenoptic_system": _b_plenoptic_system,
     "plenoptic_capture": _b_plenoptic_capture,
     "plenoptic_mla_calibrate": _b_plenoptic_mla_calibrate,
     "plenoptic_decode": _b_plenoptic_decode,
     "plenoptic_refocus_depth": _b_plenoptic_refocus_depth,
+    "equirect_from_cubemap": _b_omni_cubemap,
+    "equirect_from_fisheye_pair": _b_omni_fisheye_pair,
+    "equirect_from_perspectives": _b_omni_perspectives,
+    "ods_render": _b_omni_ods_render,
+    "video360_viewport_track": _b_omni_viewport_track,
+    "equirect_rotate": _b_omni_rotate,
+    "ods_depth_to_disparity": _b_omni_depth_to_disparity,
+    "s_psnr": _b_omni_psnr,
+    "ws_psnr": _b_omni_psnr,
+    "equirect_stabilise": _b_omni_stabilise,
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
     "perpetual_render": _b_perpetual_state,
@@ -7511,8 +7582,7 @@ OP_ARG_BUILDERS = {
 #: depth_of_field は過焦点距離以遠で far/depth = inf(それが過焦点距離の定義)、
 #: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
-NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam",
-                                "tolerance_monte_carlo"}  # worst_trial prescription preserves physical infinite planes/object distance
+NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
 
 #: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
 #: 契約**で、最寄りの面へ丸めないための設計そのもの(丸めると「背景に載っていた
@@ -7546,6 +7616,7 @@ NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
 #: になる ―― 網羅パス(``--cover-all``)で初めて実行されて挙がった(metrics 型と
 #: image2d 2 枚が同時に要るため、ランダム歩行では一度も踏まれていなかった)。
 NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images", "measure_with"}
+NONFINITE_BY_CONTRACT_OMNI360 = {"s_psnr", "ws_psnr"}  # identical inputs: zero MSE means infinite PSNR
 
 #: 文書化済みの非有限を返す op(astrostack / imgforensics)。**「答えられない」を
 #: NaN で言うのが契約**で、0 で埋めると「測れた」に化ける。2026-09-02 に台帳を
@@ -8252,7 +8323,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "underwater_image",     # RGB でない画像では red_to_blue_kd_ratio が NaN(docstring どおり)
                          "lockin_ring_normals",  # 影が出る画素(A/DC >= 1/2)と DC <= 0 の画素は全マップが NaN で valid = False(docstring どおり、モデルの外)
                          "plant_color_index",   # 暗い画素(明るさ < dark_floor)は色度が決まらず index が NaN で valid = False(docstring どおり)
-                         } | NONFINITE_BY_CONTRACT_METRICS \
+                         } | NONFINITE_BY_CONTRACT_METRICS | NONFINITE_BY_CONTRACT_OMNI360 \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \

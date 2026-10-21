@@ -60,6 +60,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-10-21 — No.2026.275 Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
 - 2026-10-20 — No.2026.267 Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres
 - 2026-10-20 — No.2026.270 Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
 - 2026-10-20 — No.2026.268 How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
