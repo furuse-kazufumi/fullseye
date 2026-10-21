@@ -117,7 +117,7 @@ Runnable: `poc_zebra_stripes_fly_eye`
 
 ### [Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General)](capabilities/emva1288-camera-datasheets.md)
 
-The EMVA 1288 Release 4.0 procedure behind camera datasheet numbers, as operators: the Linear model (photon transfer, responsivity, dark noise, dark current, column/row/pixel nonuniformity, defect-pixel histograms, the section 8.1 highpass filter, the section 8.6 spectrograms, total SNR, the inverse SNR, photon counts and the equation 51 linearity check) and the General model for non-linear cameras (a cubic B-spline of the characteristic curve whose slope refers output noise back to the input, giving input SNR, sensitivity threshold, dynamic range, dark noise in photons, DSNU / PRNU and relative quantum efficiency, while reporting η and K as not measurable). Closed forms predict how linear in-camera processing (digital gain, denoising, sharpening, recursive temporal filtering) moves the Linear numbers, and a whiteness check tests assumption 3 directly; the check is this library's, not a number defined by the standard.
+The PoC's lead figure places 640 x 480 dark, flat and saturated frames at native scale, making the 1 DN row, 1.5 DN column and 4 DN pixel fixed pattern—and nine planted defective pixels—visible before reporting aggregate metrics.
 
 Operators: `emva_pair_statistics`, `emva_photon_transfer`, `emva_quantum_efficiency`, `emva_spatial_nonuniformity`, `emva_highpass`, `emva_spectrogram`, `emva_ptc_linearity_check`, `emva_bspline_regression`, `emva_noise_whiteness`, `emva_filter_distortion`, `emva_general_sensitivity`, `emva_general_nonuniformity`, `emva_general_relative_qe`
 

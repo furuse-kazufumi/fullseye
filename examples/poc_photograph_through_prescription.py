@@ -694,6 +694,16 @@ def make_figures(chart, dof, corner, ghost, scratch, limit):
                    caption="左は市松 1 mm・傾いた刃 2 本・シーメンススター(24 本)が読める。右は RMS スポットが %.1f 倍(軸上 %.0f → %.0f µm)で、市松のコントラストは落ち、"
                            "スターは中心から先にぼけ、刃の縁に色が付く。1 画素 %.0f µm、ショットノイズ・読み出しノイズ・12 bit の量子化つき。" % (
                                t[1]["rms_spot_um"][0] / t[0]["rms_spot_um"][0], t[0]["rms_spot_um"][0], t[1]["rms_spot_um"][0], PITCH))
+    good_rgb, bad_rgb = to_rgb(sg, scale=scale), to_rgb(sb_, scale=scale)
+    frames = []
+    for u in np.linspace(0.0, 1.0, 24):
+        frames.append(figs.video_frame((1.0 - u) * good_rgb + u * bad_rgb,
+                                      "処方ずれ %.0f %%" % (100 * u), size=(960, 540)))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("prescription_detune_morph", frames,
+                    caption="同じチャートを良好な処方からずらした処方へ連続的に比較する。",
+                    fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
     rows = []
     for r in t:
         rows.append([r["label"], "%.2f / %.2f" % (r["efl_mm"], r["fno"]), " / ".join("%.1f" % v for v in r["rms_spot_um"]), "%.3f" % r["relative_illumination_corner"],

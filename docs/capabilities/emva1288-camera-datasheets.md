@@ -16,6 +16,8 @@ version: 0.6.1
 EMVA 1288 Release 4.0 の手順で測った数です。ここではその手順を op にし、**値を仕込んだ合成センサ**で手順そのものを確かめます。
 式は Release 4.0 Linear / General(2021-06-16、無償で公開されている本文)から写し、docstring に節と式の番号を書いてあります。
 
+PoC の主図は 640 × 480 の暗画像・平坦画像・飽和像を等倍で並べます。行 1 DN・列 1.5 DN・画素 4 DN の固定模様と、仕込んだ 9 個の欠陥画素を、集計値だけでなく画像上でも確認できます。
+
 - **Linear**(`sensorchar`、19 op): 同じ露光の 2 枚から平均と時間分散(式 16・18)、photon transfer の傾きで K(式 50)、応答の傾きで
   η(式 49・52)、暗画像から σ_d(式 53)、暗電流(7.1 節)、列・行・画素の空間分散と DSNU・PRNU(式 33〜42・65〜67)、
   欠陥画素のヒストグラム(式 73〜81)。8.1 節の**高域フィルタ**(照明のむらを除く)、8.6 節の**スペクトログラム**(式 70〜72)、
@@ -32,6 +34,8 @@ EMVA 1288 Release 4.0 の手順で測った数です。ここではその手順�
   (規格は前提を書くが、確かめ方の数を決めていない)。
 
 ## What it does
+
+The PoC's lead figure places 640 x 480 dark, flat and saturated frames at native scale, making the 1 DN row, 1.5 DN column and 4 DN pixel fixed pattern—and nine planted defective pixels—visible before reporting aggregate metrics.
 
 The EMVA 1288 Release 4.0 procedure behind camera datasheet numbers, as operators: the Linear model (photon transfer, responsivity,
 dark noise, dark current, column/row/pixel nonuniformity, defect-pixel histograms, the section 8.1 highpass filter, the section 8.6
