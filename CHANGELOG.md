@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- StudioでエクスポートしたPythonを隔離プロセスで再実行し、全段のshape・dtype・有限値・NaN位置・数値許容誤差をGUI結果と照合して、最初の不一致段をProblemsへ示せるようにした。
+
 - PoC 2026.022 / 2026.033 / 2026.120 の主図を装置の生出力へ改めた。面走査干渉の48面スタック・高さ・品質、4方向偏光モザイク・Stokes・DoLP・AoLP、表面カラー検査と投影再構成した断層像を追加し、旧グラフは検証節へ移した。帯域半減、偏光子なし、水等価ファントムの破壊探針で類似性の門も固定した。
 
 ### 改善 — 撮像装置らしさを検証できる三つの PoC

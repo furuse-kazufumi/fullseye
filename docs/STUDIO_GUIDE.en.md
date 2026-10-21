@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bb5f3e736657 -->
+<!-- i18n-source-sha: 71c18c518f4c -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -389,3 +389,4 @@ the JSON. For the side that receives and executes the JSON, see [ENGINE.md](ENGI
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — what's inside the perception panel (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — execute the pipeline you exported
 - [GETTING_STARTED.md](GETTING_STARTED.md) — get going in 5 minutes
+- **Verify exported Python (Run ▸ Verify exported Python / Ctrl+Shift+R)**: runs the editable export in an isolated Python process and compares every intermediate stage with the GUI. Choose absolute/relative tolerances and whether NaNs must occupy the same positions, are ignored, or are forbidden. Shape and dtype must always match. A failure is added to Problems and points to the first differing stage; Studio reports it without changing values.

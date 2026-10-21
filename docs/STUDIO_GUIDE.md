@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: 18a15e4f1562 -->
 # Fullseye Studio 完全ガイド
 
 目的を検索すると、候補は現在の入力に使えるもの、前処理が必要なもの、その他に分かれます。候補は処理列へ追加せず一度だけ試せます。実行に失敗したときはProblems欄に原因・場所・次の操作が表示され、入力の選び直し、前後比較、詳細ログ、つまみ編集、候補段の検索へ進めます。
@@ -323,3 +324,4 @@ Studio で組んだパイプラインは 3 つの形で持ち出せます。
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 知覚パネルの中身（flow / stereo / terrain）
 - [ENGINE.md](ENGINE.md) — 書き出したパイプラインを実行する
 - [GETTING_STARTED.md](GETTING_STARTED.md) — 5 分ではじめる
+- **エクスポートしたPythonを検証（Run ▸ Verify exported Python / Ctrl+Shift+R）**: 編集可能なエクスポートを隔離したPythonプロセスで実行し、全段の中間結果をGUIと比較します。絶対・相対許容誤差と、NaNを同じ位置に限定するか、無視するか、禁止するかを選べます。shapeとdtypeは常に一致が必要です。不一致はProblemsに追加され、最初に異なる段へ移動できます。Studioは値を変更せず報告だけを行います。
