@@ -454,6 +454,7 @@ with warnings.catch_warnings():
         equirect_to_dir, fisheye_project, fisheye_unproject, ods_from_cubemap_pair,
         panorama_scene, perspective_project, perspective_unproject, stereo_unpack,
     )
+    from plenoptic import mla_sag_normal  # noqa: E402,F401
     # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
     #   どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。
     #   門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
@@ -1026,7 +1027,7 @@ __all__ = [
     "lf_subaperture", "lf_center_view", "lf_views", "lf_epi",
     "lf_refocus", "lf_focal_stack", "lf_aperture_mask", "lf_synthetic_aperture",
     "lf_depth_from_focus", "lf_epi_slope", "lf_disparity_to_depth",
-    "lf_all_in_focus", "lf_plenoptic_design",
+    "lf_all_in_focus", "lf_plenoptic_design", "mla_sag_normal",
     "photoncount", "photon_sample", "photon_statistics", "photon_uncertainty",
     "anscombe_transform", "anscombe_inverse",
     "spad_deadtime_apply", "spad_deadtime_correct", "tcspc_coates_correct",

@@ -184,7 +184,7 @@ def make_figures(system, cap, raw, lf, stack, slopes, focus, depth_truth, depth_
                    ncols=2, gray=True, caption="480 x 480 raw frame; 32 x 32 lenslets and 15-pixel microimages.")
     epi = lf[:, lf.shape[1]//2, lf.shape[2]//2, :]
     views = [lf[lf.shape[0]//2, i] for i in (1, lf.shape[1]//2, lf.shape[1]-2)]
-    figs.save_grid("decode_subaperture_epi", views+[epi],
+    figs.save_grid("decode_subaperture_epi", views+[epi],  # gray-ok: EPI の傾斜軌跡を示す輝度像であり深度場ではない
                    ["left pupil", "centre pupil", "right pupil", "EPI: slanted point tracks"],
                    ncols=2, gray=True, caption="15 x 15 decoded views; EPI disparity is 0.6 px per view step.")
     pick = [int(np.argmin(abs(slopes-s))) for s in (-1, 0, 1)]

@@ -123,6 +123,7 @@ def fisheye_unproject(uv, model="equidistant", f_px=1, centre=(0,0), k=(1,), fov
 
 
 def perspective_project(dirs, fov_deg, size):
+    """Project forward-facing unit directions onto a perspective image."""
     d=_unit(dirs); h,w=(size,size) if np.isscalar(size) else size
     if np.any(d[...,2] <= 0): raise ValueError("point is behind the pinhole")
     f=.5*w/np.tan(np.deg2rad(fov_deg)/2)
@@ -130,6 +131,7 @@ def perspective_project(dirs, fov_deg, size):
 
 
 def perspective_unproject(uv, fov_deg, size):
+    """Convert perspective-image pixel coordinates to unit directions."""
     uv=np.asarray(uv,float); h,w=(size,size) if np.isscalar(size) else size; f=.5*w/np.tan(np.deg2rad(fov_deg)/2)
     return _unit(np.stack(((uv[...,0]-w/2)/f,-(uv[...,1]-h/2)/f,np.ones(uv.shape[:-1])),axis=-1))
 
@@ -278,6 +280,7 @@ def ods_render(scene_fn, ipd_m, h, w):
 
 
 def ods_from_cubemap_pair(left_cube,right_cube,out_shape):
+    """Convert a left/right cubemap pair to an ODS equirectangular pair."""
     return equirect_from_cubemap(left_cube,out_shape),equirect_from_cubemap(right_cube,out_shape)
 
 
@@ -476,6 +479,7 @@ def anaglyph_crosstalk(left,right,glasses_transmission=None,method="dubois"):
 
 
 def anaglyph_preview(left,right,**kwargs):
+    """Return the simulated left- and right-eye views of an anaglyph."""
     q=anaglyph_crosstalk(left,right,**kwargs); return q["left_view"],q["right_view"]
 
 
@@ -499,6 +503,7 @@ def stereo_pack(left,right,layout="sbs"):
 
 
 def stereo_unpack(packed,layout="sbs"):
+    """Split a reversibly packed stereo image into its two eye images."""
     p=np.asarray(packed)
     if layout=="sbs": n=p.shape[1]//2; return p[:,:n],p[:,n:]
     if layout=="tb": n=p.shape[0]//2; return p[:n],p[n:]
