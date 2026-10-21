@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, perf_pointcloud_descriptors, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ gaussian 0.35 0.50
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [inspection_workflow](../../../../examples/inspection_workflow.py) — `py -3.11 examples/inspection_workflow.py`
+- [perf_pointcloud_descriptors](../../../../examples/perf_pointcloud_descriptors.py) — `py -3.11 examples/perf_pointcloud_descriptors.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`

@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加
+- 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。
+
 ### CI
 - 全数スイートを 6 片に分け、実測時間(`.test_durations`: 手元の実測 3,900 件 + 平均で初期化した 17,310 件。Linux の artifact で更新する)で均す。pip をキャッシュし、文書だけの変更は文書の門だけ走らせる。PR の片は py3.11 のみ(#79)。
 

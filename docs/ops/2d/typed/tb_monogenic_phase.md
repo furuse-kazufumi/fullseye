@@ -77,6 +77,7 @@ tb_monogenic_phase 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `monogenic_phase` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [perf_monogenic_metrics](../../../../examples/perf_monogenic_metrics.py) — `py -3.11 examples/perf_monogenic_metrics.py`
 - [quaternion_monogenic](../../../../examples/quaternion_monogenic.py) — `py -3.11 examples/quaternion_monogenic.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

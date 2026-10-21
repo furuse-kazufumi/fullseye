@@ -4,7 +4,7 @@ dim: math
 category: transform
 in: signal × signal
 out: table
-examples: [transforms_tour]
+examples: [perf_hankel_plan_and_piv_stream, transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [perf_hankel_plan_and_piv_stream](../../../../examples/perf_hankel_plan_and_piv_stream.py) — `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
 - [transforms_tour](../../../../examples/transforms_tour.py) — `py -3.11 examples/transforms_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

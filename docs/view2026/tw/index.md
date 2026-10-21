@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 94 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 95 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -190,6 +190,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 用已知良品/不良品集在部署前檢定檢測配方與規格,並量測餘裕: [說明](../../capabilities/inspection-fixture.md) _(ja)_ · 範例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - 一次呼叫檢測整個資料夾(批次、依規格判定、彙總、SPC、報告、稽核日誌): [說明](../../capabilities/inspection-workflow.md) _(ja)_ · 範例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - 以 MTF 與良率分配鏡頭製造公差: [說明](../../capabilities/lens-tolerancing.md) _(ja)_ · 範例 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
+- 同一輸入的驗證、鄰域搜尋與轉換核心只計算一次: [說明](../../capabilities/reuse-computation-results.md) _(ja)_ · 範例 [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
 - 把 op 的回傳值(帶型別)寫成 JSON,並逐位元還原: [說明](../../capabilities/typed-results-as-json.md) _(ja)_ · 範例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - 把 op 的回傳值(帶型別)做成可讀的 Markdown,並內嵌 JSON 以便還原: [說明](../../capabilities/typed-results-as-markdown.md) _(ja)_ · 範例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 把帶型別的檢測結果寫入 Excel(.xlsx)報告: [說明](../../capabilities/xlsx-report.md) _(ja)_ · 範例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -213,7 +214,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 158 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 163 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

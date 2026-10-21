@@ -1544,6 +1544,55 @@
    ]
   },
   {
+   "id": "reuse-computation-results",
+   "title": "同じ入力の検証・近傍探索・変換核を一度だけ計算する",
+   "title_en": "Reuse validation, neighbourhoods and transform kernels",
+   "category": "組み立てる",
+   "note": "docs/capabilities/reuse-computation-results.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "perf_pointcloud_descriptors",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_monogenic_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_prepared_volume_probe",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_polarization_analyze",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_hankel_plan_and_piv_stream",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "robust-code-matching",
    "title": "照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)",
    "title_en": "Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)",
@@ -2356,9 +2405,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 426,
+  "examples2d_total": 431,
   "run_by_the_poc_gate": 275,
-  "run_by_the_example_gate": 151,
+  "run_by_the_example_gate": 156,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

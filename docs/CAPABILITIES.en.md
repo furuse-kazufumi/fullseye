@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 94 capabilities**
+**Currently 95 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -63,6 +63,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [Reuse validation, neighbourhoods and transform kernels](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
@@ -907,7 +908,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (8)
+## Compose (9)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -956,6 +957,18 @@ Pipeline: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`t
 Alternatives: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
 
 Runnable: `poc_lens_tolerancing`
+
+### [Reuse validation, neighbourhoods and transform kernels](capabilities/reuse-computation-results.md)
+
+Avoid repeated work when several results share validation, fitting, neighbourhood search, interpolation coefficients, or a transform kernel. Composite calls return numerically equivalent results from one shared pass; prepared objects reuse immutable state; streaming and low-memory variants bound temporary allocations.
+
+Operators: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `PreparedVolProbe`, `prepare_vol_probe`, `unpack_lsb`
+
+Pipeline: [`polarization_separate`](ops/specular/polarization/polarization_separate.md)
+
+Alternatives: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
+
+Runnable: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
 
 ### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
 

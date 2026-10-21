@@ -4,7 +4,7 @@ dim: specular
 category: polarization
 in: polsweep
 out: image2d
-examples: [poc_polarization_specular, specular_photometric]
+examples: [perf_polarization_analyze, poc_polarization_specular, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -88,6 +88,7 @@ rank-deficient (two angles equal modulo 180); more than
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [perf_polarization_analyze](../../../../examples/perf_polarization_analyze.py) — `py -3.11 examples/perf_polarization_analyze.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
