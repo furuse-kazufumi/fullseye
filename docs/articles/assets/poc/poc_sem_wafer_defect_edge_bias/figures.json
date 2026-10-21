@@ -1,6 +1,36 @@
 [
  {
-  "file": "01_sem_edge_inflation.png",
+  "file": "01_sem_se_bse_bias.png",
+  "name": "sem_se_bse_bias",
+  "caption": "二次電子像（左、45 e⁻/pixel、PSF σ=4.4 nm、帯電勾配 0.018）｜反射電子像（中央）｜寸法測定重ね合わせ（右、緑=真値、赤=閾値輪郭）。等価半径の偏り +6.0 nm。",
+  "shape": [
+   512,
+   3072,
+   3
+  ]
+ },
+ {
+  "file": "02_sem_edge_rim_zoom.png",
+  "name": "sem_edge_rim_zoom",
+  "caption": "0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "03_sem_dose_series.png",
+  "name": "sem_dose_series",
+  "caption": "低照射量ほど粒状のショット雑音が増える。",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "04_sem_edge_inflation.png",
   "name": "sem_edge_inflation",
   "caption": "合成 SEM 像(半径 22 px の円錐欠陥、PSF σ=3)。緑 = 真の縁、赤 = しきい値で測った縁。明るい縁ごと拾うので赤が緑の外に出る = 面積の太り。形(Dice)は高いまま、寸法だけが系統的に太る。",
   "shape": [
@@ -10,7 +40,7 @@
   ]
  },
  {
-  "file": "02_sem_area_bias_vs_size.png",
+  "file": "05_sem_area_bias_vs_size.png",
   "name": "sem_area_bias_vs_size",
   "caption": "面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。",
   "shape": [

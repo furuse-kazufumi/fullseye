@@ -70,5 +70,35 @@
    546,
    3
   ]
+ },
+ {
+  "file": "08_raw_aerial_thermal.png",
+  "name": "raw_aerial_thermal",
+  "caption": "Oblique 640 by 512 raw thermal frame; iron-like palette, 314-338 K; PSF, NETD, NUC and motion blur included.",
+  "shape": [
+   1024,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "09_orthorectified_detection.png",
+  "name": "orthorectified_detection",
+  "caption": "Module-level correction preserves the detection chapters and their thresholds.",
+  "shape": [
+   564,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "10_hot_cell_zoom.png",
+  "name": "hot_cell_zoom",
+  "caption": "Hot-cell neighbourhood; cell edges and busbar-scale cooling remain visible after the camera PSF.",
+  "shape": [
+   560,
+   640,
+   3
+  ]
  }
 ]

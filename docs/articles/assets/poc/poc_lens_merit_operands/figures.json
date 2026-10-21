@@ -8,5 +8,27 @@
    1320,
    3
   ]
+ },
+ {
+  "file": "02_merit_spot_optimization.gif",
+  "name": "merit_spot_optimization",
+  "caption": "最適化に伴い12度視野のスポットが収束する。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "02_merit_spot_optimization.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
  }
 ]

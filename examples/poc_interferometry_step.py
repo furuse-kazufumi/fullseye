@@ -64,6 +64,120 @@ PH, PW = 12, 12     # 段差の左右パッチ(12×12 画素ずつ、合計 12×
 STEPS = (0.050, 0.100, 0.200, 0.500)     # µm  仕込む段差
 N_TRIAL = 40        # 繰り返し測定の回数(seed を変える)
 
+
+def surface_csi_measurement(size=512, n_planes=48, seed=22):
+    """Simulate a scanned two-dimensional stepped surface and recover its height."""
+    if size < 32 or n_planes < 32:
+        raise ValueError("surface and scan must contain at least 32 samples")
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    xn = xx / (size - 1) - 0.5
+    yn = yy / (size - 1) - 0.5
+    truth = 1.75 + 0.42 * xn + 0.22 * yn + 0.65 * (xx >= size // 2)
+    rough = (xn + 0.24) ** 2 + (yn - 0.18) ** 2 < 0.105 ** 2
+    rng = np.random.default_rng(seed)
+    texture = rng.normal(0.0, 0.035, truth.shape)
+    texture = (texture + np.roll(texture, 1, 0) + np.roll(texture, 1, 1)) / 3.0
+    truth = truth + rough * texture
+    z_step = 3.8 / (n_planes - 1)
+    design = I.csi_design(wavelength_um=LAM, bandwidth_um=DLAM,
+                          z_range_um=3.8, width_px=size, height_px=size)
+    sim_kw = dict(envelope_fwhm_um=design["envelope_fwhm_um"], noise=0.0015)
+    if n_planes * size * size <= I.MAX_STACK_ELEMENTS:
+        stack = I.csi_stack_simulate(truth, 0.0, z_step, n_planes, LAM,
+                                     seed=seed, **sim_kw)
+    else:
+        # The op deliberately caps one allocation; tile the field without changing
+        # the optical model or reducing the saved 512-pixel field.
+        mid = size // 2
+        left = I.csi_stack_simulate(truth[:, :mid], 0.0, z_step, n_planes, LAM,
+                                    seed=seed, **sim_kw)
+        right = I.csi_stack_simulate(truth[:, mid:], 0.0, z_step, n_planes, LAM,
+                                     seed=seed + 1, **sim_kw)
+        stack = np.concatenate([left, right], axis=2)
+    stack[:, rough] = 0.5 + 0.28 * (stack[:, rough] - 0.5)
+    dropout = rough & (((xx.astype(int) * 7 + yy.astype(int) * 11) % 23) < 5)
+    stack[:, dropout] = 0.5 + 0.025 * (stack[:, dropout] - 0.5)
+    if stack.size <= I.MAX_STACK_ELEMENTS:
+        quality = I.csi_contrast_map(stack)
+        height = I.csi_height_map(stack, z_step, 0.0, LAM,
+                                  mode="gaussian", on_invalid="fill")
+    else:
+        mid = size // 2
+        quality = np.concatenate([I.csi_contrast_map(stack[:, :, :mid]),
+                                  I.csi_contrast_map(stack[:, :, mid:])], axis=1)
+        height = np.concatenate([
+            I.csi_height_map(stack[:, :, :mid], z_step, 0.0, LAM,
+                             mode="gaussian", on_invalid="fill"),
+            I.csi_height_map(stack[:, :, mid:], z_step, 0.0, LAM,
+                             mode="gaussian", on_invalid="fill")], axis=1)
+    threshold = float(np.quantile(quality, 0.08))
+    height = np.asarray(height, dtype=np.float64)
+    height[quality <= threshold] = np.nan
+    return {"truth_um": truth, "stack": stack, "height_um": height,
+            "quality": quality, "quality_threshold": threshold,
+            "rough_mask": rough, "dropout_mask": dropout,
+            "z_um": np.arange(n_planes) * z_step}
+
+
+def csi_resemblance_gate(size=96):
+    """Return closed-form CSI checks and the half-bandwidth breaking probe."""
+    d = I.csi_design(wavelength_um=LAM, bandwidth_um=DLAM,
+                     z_range_um=4.0, width_px=size, height_px=size)
+    d_half = I.csi_design(wavelength_um=LAM, bandwidth_um=DLAM / 2.0,
+                          z_range_um=4.0, width_px=size, height_px=size)
+    closed_width = 0.44 * LAM ** 2 / DLAM
+    z = np.linspace(0.0, 2.0 * LAM, 24001)
+    signal = np.cos(4.0 * np.pi * z / LAM)
+    peaks = z[1:-1][(signal[1:-1] > signal[:-2]) & (signal[1:-1] >= signal[2:])]
+    period = float(np.median(np.diff(peaks)))
+    estimates = []
+    for seed in range(6):
+        r = surface_csi_measurement(size=max(48, size), n_planes=64, seed=seed)
+        h = r["height_um"]
+        xmid = h.shape[1] // 2
+        estimates.append(float(np.nanmedian(h[:, xmid + 5:]) - np.nanmedian(h[:, :xmid - 5])))
+    return {"envelope_relative_error": abs(d["envelope_fwhm_um"] - closed_width) / closed_width,
+            "fringe_period_relative_error": abs(period - LAM / 2.0) / (LAM / 2.0),
+            "step_repeatability_nm": float(np.std(estimates, ddof=1) * 1000.0),
+            "half_bandwidth_width_ratio": d_half["envelope_fwhm_um"] / d["envelope_fwhm_um"]}
+
+
+def fig_surface_csi():
+    if not figs.enabled():
+        return None
+    import annotate as AN
+    import fullseye as fs
+
+    r = surface_csi_measurement(size=512, n_planes=48, seed=22)
+    picks = (9, 19, 29, 39)
+    figs.save_grid("surface_interferograms", [r["stack"][k] for k in picks],
+                   ["z = %.2f um" % r["z_um"][k] for k in picks], ncols=4,
+                   gray=True,
+                   caption="Raw coherence-scan frames. Tilt changes fringe density; the rough patch loses modulation.")
+    lo, hi = float(np.nanmin(r["truth_um"])), float(np.nanmax(r["truth_um"]))
+
+    def coloured(a, vmin, vmax, unit):
+        rgb = np.asarray(fs.colorize_depth(np.nan_to_num(a, nan=vmin), name="turbo", vmin=vmin, vmax=vmax), float)[..., :3]
+        lut = np.asarray(fs.colorize_depth(np.linspace(vmin, vmax, 256)[None], name="turbo", vmin=vmin, vmax=vmax))[0, :, :3]
+        rgb = np.pad(rgb, ((0, 0), (0, 112), (0, 0)), constant_values=1.0)  # バーは右の白い余白へ
+        return np.asarray(AN.color_bar(rgb, lut, (522, 36, 18, 434), vmin=vmin, vmax=vmax, unit=unit), float)
+
+    err_nm = (r["height_um"] - r["truth_um"]) * 1000.0
+    panels = [coloured(r["truth_um"], lo, hi, "um"),
+              coloured(r["height_um"], lo, hi, "um"),
+              coloured(err_nm, -20.0, 20.0, "nm"), r["quality"]]
+    figs.save_grid("surface_height", panels,
+                   ["truth", "recovered", "error", "modulation quality"], ncols=4,
+                   gray=[False, False, False, True],
+                   caption="Truth, recovered height, error and low-modulation dropout map; pseudo-colour bars carry units.")
+    frames = []
+    for k in range(48):
+        q = np.clip(r["stack"][k], 0.0, 1.0)
+        frames.append((np.repeat(q[..., None], 3, axis=2) * 255).astype(np.uint8))
+    figs.save_video("surface_z_scan", frames, fps=12.0, gif_every=2, gif_width=512,
+                    caption="48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.")
+    return r
+
 # 包絡線幅は設計から取る(設計値と前方モデルを一致させておく。
 # ここを手打ちの定数にすると「設計を無視した数字」になってしまう)
 DESIGN = I.csi_design(wavelength_um=LAM, bandwidth_um=DLAM, z_range_um=Z_RANGE,
@@ -242,6 +356,15 @@ def fig_step_sweep_video(n_steps=136, s_max=0.90, n_hold=12, fps=12.0):
 
 def main():
     t_all = time.perf_counter()
+    gate = csi_resemblance_gate()
+    assert gate["envelope_relative_error"] < 0.02
+    assert gate["fringe_period_relative_error"] < 1e-3
+    assert gate["step_repeatability_nm"] <= 10.0
+    assert abs(gate["half_bandwidth_width_ratio"] - 2.0) < 0.02
+    print("CSI resemblance: envelope %.3f%%, fringe %.3g, repeatability %.2f nm, half-bandwidth %.3fx"
+          % (100 * gate["envelope_relative_error"], gate["fringe_period_relative_error"],
+             gate["step_repeatability_nm"], gate["half_bandwidth_width_ratio"]))
+    fig_surface_csi()
 
     # ------------------------------------------------------------------ #
     # 1) 設計 — 測る前に決まってしまう限界                                  #
