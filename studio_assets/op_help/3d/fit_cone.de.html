@@ -1,19 +1,17 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_cone — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt einen unendlichen Kegel an eine Punktmenge an und liefert <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA の 3 主軸をそれぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 <code style="color:#22d3bf">ρ = m·t + b</code> から取る(半角 = <code style="color:#22d3bf">atan(m)</code>、頂点 = ρ が 0 になる軸上の点 <code style="color:#22d3bf">t = -b/m</code>)。残差最小の候補を採る。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
+<p>Minimiert den orthogonalen Punkt-Mantellinie-Abstand in der Meridianebene, <code style="color:#22d3bf">a·sinα − ρ·cosα</code> (<code style="color:#22d3bf">a</code> = Axialkomponente, <code style="color:#22d3bf">ρ</code> = Radius, <code style="color:#22d3bf">α</code> = halber Öffnungswinkel), mit <code style="color:#22d3bf">scipy.optimize.least_squares</code>. Als Startwert dient jede der 3 PCA-Hauptachsen als Achsenkandidat, dazu eine lineare Regression <code style="color:#22d3bf">ρ = m·t + b</code> des Radius ρ über die Axialkomponente t (halber Öffnungswinkel = <code style="color:#22d3bf">atan(m)</code>, Spitze = der Achsenpunkt mit ρ = 0, <code style="color:#22d3bf">t = -b/m</code>). Der Kandidat mit dem kleinsten Residuum wird genommen. Die Achsrichtung wird so normiert, dass &quot;ρ mit dem Abstand von der Spitze wächst (öffnet sich in +-Richtung)&quot;.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群(最低 6 点)。</p>
+<p>points: (N,3) Punktwolke (mindestens 6 Punkte).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>。</p>
-<p><code style="color:#22d3bf">axis</code> は単位軸(開く向き)、<code style="color:#22d3bf">half_angle</code> は半角 [rad]、<code style="color:#22d3bf">residual</code> は点-面距離の RMS。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>.</p>
+<p><code style="color:#22d3bf">axis</code> ist die Einheitsachse (Öffnungsrichtung), <code style="color:#22d3bf">half_angle</code> der halbe Öffnungswinkel [rad], <code style="color:#22d3bf">residual</code> das RMS des Punkt-Fläche-Abstands.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
-<p><code style="color:#22d3bf">method=&#x27;eliminate_angle&#x27;</code> は半角の上下限と停留点を調べる。既定値は変更せず、残差許容差は rtol=1e-8, atol=1e-10。</p>
+<p>ValueError: fail-closed bei ungültiger Form / zu wenigen Punkten / halbem Öffnungswinkel ~0 (Entartung zum Zylinder) usw.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

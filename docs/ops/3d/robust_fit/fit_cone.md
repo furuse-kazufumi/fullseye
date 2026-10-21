@@ -13,30 +13,27 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # fit_cone — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fit_cone(points, method: 'str' = 'exact') -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_cone(points, method: 'str' = 'exact') -> 'dict'`、台帳から引くなら `ops3d.get("fit_cone")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_cone(points) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_cone")`)
 
 ## 使い方
 
 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
 
 子午面での点-母線直交距離 ``a·sinα − ρ·cosα``(``a``=軸成分, ``ρ``=半径,
-    ``α``=半角)を ``scipy.optimize.least_squares`` で最小化する。初期値は PCA の 3 主軸を
-    それぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 ``ρ = m·t + b`` から取る
-    (半角 = ``atan(m)``、頂点 = ρ が 0 になる軸上の点 ``t = -b/m``)。残差最小の候補を採る。
-    軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。
+``α``=半角)を ``scipy.optimize.least_squares`` で最小化する。初期値は PCA の 3 主軸を
+それぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 ``ρ = m·t + b`` から取る
+(半角 = ``atan(m)``、頂点 = ρ が 0 になる軸上の点 ``t = -b/m``)。残差最小の候補を採る。
+軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。
 
-    Args:
-        points: (N,3) 点群(最低 6 点)。
+Args:
+    points: (N,3) 点群(最低 6 点)。
 
-    Returns:
-        dict: ``{"apex": (3,), "axis": (3,), "half_angle": float, "residual": float}``。
-        ``axis`` は単位軸(開く向き)、``half_angle`` は半角 [rad]、``residual`` は点-面距離の RMS。
+Returns:
+    dict: ``{"apex": (3,), "axis": (3,), "half_angle": float, "residual": float}``。
+    ``axis`` は単位軸(開く向き)、``half_angle`` は半角 [rad]、``residual`` は点-面距離の RMS。
 
-    Raises:
-        ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。
-    
-
-``method='eliminate_angle'`` は半角の上下限と停留点を調べる。既定値は変更せず、残差許容差は rtol=1e-8, atol=1e-10。
+Raises:
+    ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
