@@ -226,6 +226,52 @@ def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None, cmap=None):
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
+def video_frame(v, label: str, size=(720, 720), signed: bool = False,
+                gray: bool = False, vrange=None):
+    """動画用の単一画像を全面に拡大し、上端へ1行だけ注記する。"""
+    from PIL import Image
+    import fullseye as fs
+
+    rgb = _to_rgb8(v, signed=signed, gray=gray, vrange=vrange)
+    w, h = (int(size[0]), int(size[1]))
+    rgb = np.asarray(Image.fromarray(rgb).resize((w, h), Image.Resampling.BILINEAR))
+    out = fs.text_box(rgb.astype(np.float64) / 255.0, label, (w // 2, 18), anchor="ct", font_size=24,
+                      text_color=(1.0, 1.0, 1.0), box_color=(0.0, 0.0, 0.0))
+    return (np.clip(np.asarray(out, np.float64), 0.0, 1.0) * 255.0 + 0.5).astype(np.uint8)
+
+
+def _assert_video_frames_meaningful(frames, label_rows: int = 48):
+    """注記でなく画像本体が十分な面積を持ち、時間変化することを検査する。"""
+    seq = np.stack([np.asarray(frame) for frame in frames])
+    if seq.ndim != 4 or seq.shape[-1] != 3 or seq.shape[0] < 2:
+        raise AssertionError("動画内容: 2 枚以上の RGB コマが必要 (shape=%r)" % (seq.shape,))
+    if not 0 <= label_rows < seq.shape[1]:
+        raise AssertionError("動画内容: label_rows=%d は高さ %d の範囲外" % (label_rows, seq.shape[1]))
+    pic = seq[:, label_rows:].astype(np.float64)
+    fractions = []
+    for frame in pic.astype(np.uint8):
+        colours, counts = np.unique(frame.reshape(-1, 3), axis=0, return_counts=True)
+        modal = colours[int(np.argmax(counts))]
+        fractions.append(float(np.mean(np.max(np.abs(frame.astype(np.int16) - modal), axis=2) > 10)))
+    pair_diffs = np.mean(np.abs(np.diff(pic, axis=0)), axis=(1, 2, 3))
+    means = np.mean(pic, axis=(1, 2, 3))
+    moving_fraction = float(np.mean(pair_diffs > 0.0))
+    mean_pair_diff = float(np.mean(pair_diffs))
+    ok = (min(fractions) >= 0.05 and max(fractions) <= 0.98
+          and mean_pair_diff >= 0.5 and moving_fraction >= 0.8
+          and not np.all(means > 245.0) and not np.all(means < 10.0))
+    if not ok:
+        raise AssertionError(
+            "動画内容が不足: modal差>10の割合 %.4f..%.4f (要0.05..0.98), "
+            "連続差平均 %.4f (要>=0.5), 変化組割合 %.4f (要>=0.8), "
+            "コマ平均 %.2f..%.2f (全コマ<10/>245は不可)"
+            % (min(fractions), max(fractions), mean_pair_diff, moving_fraction,
+               float(min(means)), float(max(means))))
+    return {"content_fraction_min": min(fractions), "content_fraction_max": max(fractions),
+            "mean_pair_difference": mean_pair_diff, "moving_pair_fraction": moving_fraction,
+            "frame_mean_min": float(min(means)), "frame_mean_max": float(max(means))}
+
+
 _MAP_KINDS = frozenset(("depth", "height", "disparity", "displacement"))
 
 
@@ -730,6 +776,22 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     # 役名は annotate の配色表にあるものだけ("accent" は無い)。
     colours = ("reference", "emphasis", "right", "wrong", "neutral")
     legend = []
+    # ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか
+    #   なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の
+    #   歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの
+    #   間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+    rw_ = rect[2]
+    bar_x = [np.asarray(x, float).ravel() for k, (_, x, _) in enumerate(series)
+             if (kinds[k] if kinds else "line") == "bar"]
+    bar_x = np.unique(np.concatenate(bar_x)) if bar_x else np.empty(0)
+    bar_x = bar_x[np.isfinite(bar_x)]
+    if bar_x.size >= 2:
+        bar_step = float(np.min(np.diff(bar_x)))
+    elif len(xt) >= 2:
+        bar_step = float(np.min(np.diff(np.asarray(xt, float))))
+    else:
+        bar_step = float(xl[1] - xl[0])
+    single_bar_width = min(1.0, max(1.0 / rw_, 0.7 * bar_step / (xl[1] - xl[0])))
     for k, (label, x, y) in enumerate(series):
         c = colors[k] if colors and colors[k] is not None else colours[k % len(colours)]
         kind = (kinds[k] if kinds else "line")
@@ -738,6 +800,8 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         if ls:
             import imagedraw
             extra = {"style": {"style": imagedraw.DrawStyle(line_style=ls)}}
+        if kind == "bar" and np.asarray(x, float).ravel().size == 1:
+            extra["bar_width"] = single_bar_width
         img = np.asarray(fs.plot_series(img, ax, np.asarray(x, float),
                                         np.asarray(y, float), kind=kind,
                                         color=c, width=2, marker_size=3, **extra))

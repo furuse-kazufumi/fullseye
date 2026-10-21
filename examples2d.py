@@ -51,21 +51,22 @@ EXAMPLES = [
                 "上限は短辺で決まることまで含めて、速さを assert せず印字する。"},
     # -- PoC series(真値つきで実問題を解く。領域ごとの実証)------------------- #
     {"id": "poc_aoi_ct_traceability", "task": "metrology", "data": "synthetic",
-     "name": "全数の 2-D 検査と抜き取りの 3-D 検査を対応づける(格子は自分に重なる)",
-     "summary": "規則正しく並んだ接合部は点の配置だけでは装置間で一対一に対応づかない"
-                "(6x5 の格子は 30 点すべての距離署名が縮退し、署名は 9 種類しかない)。"
-                "3 辺が異なる基準マークを入れると対応が厳密に決まる。そのうえで AOI の"
-                "見かけのボイド率は CT の体積率と相関 0.973、悪い順 5 個も 5/5 一致するのに、"
-                "寿命に効く界面接触ボイド 27 個のうちその 5 個で拾えるのは 19 % だけ —— "
-                "順位が合うことは危ない個体を拾えることを意味しない。"},
+     "name": "全数の表面像と抜き取り断層像を同じ接合部へ結ぶ",
+     "summary": "緑の基板、配線、部品、環状照明を映す接合材、欠品・立ち・橋絡を 512 px の表面像にし、"
+                "同じ領域を投影から再構成した 3 高さの断層像と縦断面に対応づける。中央接合部の空隙、"
+                "金属による筋、検出器むらによる輪は再構成結果にだけ現れる。水等価ファントムは筋が 3σ 未満、"
+                "金属入りは 4σ 超。環状照明の反射方向は閉形式と 2°以内。樹脂・銅・接合材の減弱順と比は "
+                "Hubbell & Seltzer, *NIST SRD 126*（米国政府資料、public domain）の表から 5 %以内。"
+                "従来の面積率・体積率・順位は検証図に残す。"},
     {"id": "poc_dem_terrain", "task": "terrain", "data": "synthetic",
      "name": "地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)",
      "summary": "平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。"},
     {"id": "poc_interferometry_step", "task": "metrology", "data": "synthetic",
-     "name": "白色干渉によるナノメートルの段差計測(どこまで測れるか)",
-     "summary": "既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。"
-                "偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。"
-                "最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。"},
+     "name": "面を走査する白色干渉計",
+     "summary": "512×512 の段差・傾き・粗面を 48 面の干渉縞で走査し、4 枚の生フレーム、動画、復元高さ、"
+                "誤差、低変調の品質像を主図にする。包絡幅は光源帯域の閉形式と 0.29 %、縞周期は λ/2 と 2e-16、"
+                "滑らかな段差の繰返しは 2.2 nm（装置の語彙は ISO 25178-604）。帯域を半分にする破壊探針で"
+                "包絡幅は 2.000 倍になる。従来の 1-D 段差・走査刻み・雑音検証は後段へ残す。"},
     {"id": "poc_astro_photometry", "task": "photometry", "data": "synthetic",
      "name": "天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)",
      "summary": "合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で"
@@ -566,11 +567,12 @@ EXAMPLES = [
                 "雑音 1e-4 で誤差 5e-4)。★偏光板だけの設計は階数 9 で断る(擬似逆行列を返さない)。"
                 "回復した行列の物理性(Cloude 固有値)・純粋性・脱偏光指数・受動性を一度に確かめる。"},
     {"id": "poc_polarization_specular", "task": "separation", "data": "synthetic",
-     "name": "偏光による鏡面分離(分けた「拡散」は本当に拡散か)",
-     "summary": "拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。"
-                "返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 "
-                "(差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、"
-                "**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。"},
+     "name": "4 方向の画素モザイクから鏡面を分ける",
+     "summary": "光沢金属、光沢樹脂、つや消し背景を 1024 px の 2×2 偏光子モザイクとして撮り、"
+                "半解像度の 4 方向像、S0/S1/S2、DoLP、色相環付き AoLP、鏡面低減像を示す。"
+                "消光比 120:1 の漏れ、白飛び、低 DoLP 部の角度雑音を残す。ブリュースター領域は DoLP 1、"
+                "AoLP 誤差 0°。角度雑音の実測/閉形式は 1.00±20 %、消光比 1 の破壊探針では DoLP が 0.02 未満になる。"
+                "従来のフレネル曲線と分離の偏りは検証図に残す。"},
     {"id": "poc_motion_magnification", "task": "vibration", "data": "synthetic",
      "name": "モーション拡大の振幅精度(拡大は測るための道具か)",
      "summary": "既知の振幅 0.02-0.5 px を拡大して測り返す。拡大率は α=200 まで厳密"
@@ -1550,12 +1552,33 @@ EXAMPLES = [
     {"id": "poc_lens_merit_operands", "task": "optics_sensing", "data": "synthetic",
      "name": "要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点",
      "summary": "メリット関数を、行ごとに目標・重み・片側の境界を持つオペランド表にする。新 op 6 本(`lensmerit`、`opsoptics` の `lensmerit`): `merit_operands_list` / `merit_evaluate`(行ごとの値・寄与・割合)/ `merit_default`(瞳全体の光線行 + EFL の保持)/ `merit_boundary_operands`(縁厚・中心厚・空気間隔)/ `optimize_lens_operands`(lensopt の LM に、硝材 g<i> を選ぶ離散の外側ループを足す)/ `merit_contributions`。薄肉色消しの閉形式・平凸の縁厚・Snell の式・理想レンズの F ナンバーと、独立実装の記録値で採点し、縁の薄い三枚玉を最適化して支配する行が EFL の保持から波面へ移るのを示し、負レンズの硝材を間違えた出発点で硝材を変数にすると軸上色が 1/17 に落ちる。"},
+    {"id": "poc_lens_tolerancing", "task": "optics_sensing", "data": "synthetic",
+     "name": "レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする",
+     "summary": "公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本(`lenstol`、`opsoptics` の `tolerancing`): `tolerance_table` / `tolerance_criteria` / `tolerance_compensators` / `tolerance_monte_carlo` / `tolerance_sensitivity` / `tolerance_report` / `tolerance_table_zmx` / `tolerance_table_from_zmx`。一様・正規・切断正規の分布、行ごとに独立した乱数、MTF と RMS spot の限界、Wilson 95 % 区間、失敗光線、複数の間隔補償と移動量、中央差分と解析分散による RSS を同じ報告にする。薄いくさびの像移動は f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は Zernike の閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。"},
+    {"id": "poc_plenoptic_camera", "task": "optics_sensing", "data": "synthetic",
+     "name": "処方から撮るプレノプティックカメラ",
+     "summary": "主レンズ、周期球面 MLA、センサを逆追跡し、一回の撮影から生のマイクロ像、サブアパーチャ像、再合焦像と距離を得る。"},
+    {"id": "plenoptic_capture_pipeline", "task": "optics_sensing", "data": "synthetic",
+     "name": "処方と場面からプレノプティック生画像を生成する",
+     "summary": "主レンズ、マイクロレンズアレイ、撮像面を組み合わせ、既知の場面から生のマイクロ像を生成して寸法と有限値を検証する。"},
+    {"id": "plenoptic_decode_pipeline", "task": "optics_sensing", "data": "synthetic",
+     "name": "プレノプティック生画像を復号して再合焦と深度を得る",
+     "summary": "合成した生画像を光線場へ復号し、再合焦像と焦点系列からの深度推定までを一続きで検証する。"},
     {"id": "poc_photograph_through_prescription", "task": "optics_sensing", "data": "synthetic",
      "name": "処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点",
      "summary": "レンズ設計の画面はスポットダイアグラムや MTF の数字までは出すが、「この処方で 1 m 先の資料を撮ると絵はどう写るか」は見せない。センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけ、光子・ショットノイズ・読み出しノイズ・量子化まで通す。新 op 8 本(`lensrender`、`opsoptics` の `lensrender`): `lens_scene`(平面・球・メッシュ・光源の場面の検証)/ `exit_pupil_samples` / `trace_sensor_rays`(センサ → 瞳 → 全面を逆向きに、ケラレと全反射は NaN と印)/ `scene_radiance`(ランバート + ブリン・フォン + 影)/ `render_scene_through_lens`(放射照度 → 電子数 → ノイズ → 画像)/ `bokeh_shape`(猫の目)/ `render_ghost_overlay`(2 回反射のゴースト)/ `render_compare_prescriptions`(処方ごとの品質の表)。(1) 逆向きの追跡は `ray_bundle` の逆(入射点 8.7e-15 mm、方向 4.2e-16)、理想レンズ越しの白い面は π L sin²α に相対 2e-6、点光源は画素 1 つに入り光子数が I Ω t QE λ/hc に 1e-6、市松の刃 15 本は `distortion_map` に 0.096 px(歪みは外縁で 5.2 px)、0.7 視野の横色収差は `chromatic_shift` に 0.08 px。(2) 同じ EFL・同じ F ナンバーの三枚玉 2 本(片方は半径を 7〜10 % の 1.5 倍ずらした)で解像チャートを 1 m で撮ると、RMS スポット(軸上)は 10.7 と 53.4 µm(5.0 倍)、刃の 10–90 % は 4.6 と 15.4 px、MTF50 は 0.116 と 0.053 cyc/px で、順は `spot_stats` と一致する。(3) 理想レンズの 0.5 m の点光源のボケは薄肉レンズの錯乱円に 0.31 %、F/8 は F/2.8 の 0.349 倍(2.8/8 = 0.350)。理想レンズの 20 mm 後ろの丸い遮光板では猫の目の面積比が 2 つの円の重なりの閉形式 0.635 に 1.6 % 以内(凸包 0.625・描いた絵 0.639・瞳の通過率 0.636)、子午面に 3.6e-15 mm で対称。三枚玉の隅は像面湾曲でボケの円そのものが 1.3 倍になり、面積比は通過率と一致しない(そう書く)。(4) 白い面の相対照度は `lensimage` に 0.7 視野まで 1.61 %、8.7° で 3.2 %(物体側と像側の cos⁴ の差)。絞りを前に置いた単玉の格子は隅で −6.6 % の樽型。(5) ゴースト 15 本のエネルギー比は閉形式 r² (1−r)^(2(j−i)−2) に 4.4e-16、重心は `ghost_analysis` に 8e-4 px、反射率 0 で重ねは厳密に 0。(6) 0.2 mm の傷(センサ上 10.4 µm)の対比は良い方 0.547・ずらした方 0.261(48 %)で、前向きに追跡したスポットを線に畳み込んだ独立の予測 0.542 と 0.261 に合う。(7) ★正直な限界: 幾何光学のみで回折が無く、F/11 に絞った良いレンズの点像は Airy 円盤の 0.32 倍に描かれる(F/6.25 は収差が支配で 2.7 倍)。(8) 壊して確かめる探針(屈折率の向きを逆にする・絞りの半径を 10 % 違える・合焦を 1.5 m にずらす)は門が赤になる。学習 0、較正 0、門 30 件。"},
+    {"id": "poc_tof_camera", "task": "optics_sensing", "data": "synthetic",
+     "name": "同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差",
+     "summary": "箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。"},
     {"id": "poc_zmx_public_verify", "task": "optics_sensing", "data": "synthetic",
      "name": "公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する",
      "summary": "4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。"},
+    {"id": "poc_omni360_inspection", "task": "optics_sensing", "data": "synthetic",
+     "name": "全天球の検査撮影と立体表示を一つの測定工程として確かめる",
+     "summary": "合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。"},
+    {"id": "omni360_roundtrip", "task": "optics_sensing", "data": "synthetic",
+     "name": "全天球画像と既存の画像処理を双方向につなぐ最小例",
+     "summary": "全天球像から通常視野を切り出して刃を検出し、通常画像を立方体面経由で全天球へ戻す。立体配置と複数視点の合成例も同じ場面で実行する。"},
     {"id": "poc_water_transparent_media", "task": "optics_sensing", "data": "synthetic",
      "name": '水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点',
      "summary": '水は上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタ。新 op 10 本(`watermedia`、`opsoptics` の `watermedia`): `ocean_spectrum`(Pierson–Moskowitz と JONSWAP の S(ω)、有義波高・周期)/ `ocean_height_field`(Tessendorf の FFT の海: 高さ・傾き・法線・荒れ・水深)/ `fresnel_water_air`(水の屈折率は材料表の実部で分散込み、全反射の旗つき)/ `snell_window`(窓の半径と見かけの深さ)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で。平面は二分法、波面はニュートン法でベクトルのスネルの式を検算し、外れた点は NaN)/ `water_attenuation`(Pope & Fry の純水の吸収、Smith & Baker の散乱、Solonenko & Mobley のジャーロフ型の a・b・Kd)/ `underwater_image`(Akkaynak & Treibitz の画像形成: 直接光 + 後方散乱)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold の体積散乱関数)/ `cylinder_lens_caustic`(円柱の近軸焦点と実光線の焦線)。(1) 風速 8 m/s の PM の海: 有義波高 1.3656 m(0.21 U²/g = 1.3705 m、0.36 %)、ピーク 1.0753 rad/s(0.877 g/U = 1.0751、2e-4)、JONSWAP(γ = 1)は PM と 1e-9 で一致、高さは実数(虚部 3.5e-16)、空間の分散はスペクトルの積分に 0.02 %(8 種)、単一モードの周期は 2π/ω に 2.8e-16。傾きの分散は Cox & Munk(0.003 + 0.00512 U)と比べると、格子で解ける波だけでは 5 m/s で 11 %、10 m/s で 16 %(PM は毛管波を持たない)。飽和域を毛管波数 370 /m まで延ばすと 5 m/s は 98 %(−2.5 %)だが 10 m/s は 61 %(−38.7 %)で、PM の α は風速で増えない限界として門に残す。(2) 2 m のプールの底の市松模様: 真上の見かけの深さは d/n に 0、見つけた経路はスネルの式を 7.8e-16、平面の屈折点は 4 次方程式に 1e-15・光路長の直接最小化に 2.8e-8、波面では屈折点から画像を作る逆向きの光線追跡で同じ底の点に 9.6e-9 m で戻る。水中から見上げた魚眼で全反射が始まる角は臨界角 48.59° の直後の 1 画素(1.5°)以内。(3) 水を入れた瓶(R = 30 mm、n = 1.52、壁 1.5 mm、水 1.333): 近軸焦点 61.24 mm、周縁光線 40.01 mm(球面収差 21.23 mm)、棒の近軸焦点は n R / (2 (n − 1)) に一致し、実光線の焦点は弦の三角関数と 3.6e-14。屈折力は水入り 0.01633 /mm、空 −0.00120 /mm(比 13.6)で、背後 50 mm の面の強度は水のある所の中心が入射の 4.88 倍(最大 13.97 倍)、空の所は 0.94 倍。(4) 色票を深さ 1・5・15 m で: Pope & Fry の吸収は 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m(表の値)、Beer–Lambert は glassmirror と 1.1e-16、光子 20 万個の数え上げが指数則に 0.2σ、Kd(500 nm)は 0.029 < 0.064 < 0.109 < 0.120(I < II < III < 1C)、I 型で赤は青の 12.2 倍の速さで減衰(10 m で透過率 赤 0.074・緑 0.557・青 0.807)、15 m の赤の票の R は 0.010。(5) 限界: 平らな水の見かけの深さ d/n は斜めに見るほど外れる(30° で 7 %、60° で 52 % の過大評価)。壊して確かめる探針(屈折率 1.4、α を 10 % 変える、スネルの式の向きを逆にする)は門が赤になる。学習 0、較正 0、門 43 件。'},
@@ -1645,6 +1668,9 @@ EXAMPLES = [
     {"id": "poc_virtual_sem_kv_cd_bse", "task": "metrology", "data": "synthetic",
      "name": "仮想 SEM: 加速電圧で像も測れる線幅も変わる(電子と固体のモンテカルロ、実測値で採点)",
      "summary": "SEM の像は表面の写真ではなく、固体の中で散乱する一次電子の相互作用の体積から何が出てきたかの集計。一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱 + Browning 1994 の Mott 近似 + Joy-Luo の阻止能)の新 op 8 本と材料表の `material_electron_properties` で、各段を外の実測値で採点する多段 PoC。★η(Z, E) は 7 元素 × 5〜30 keV が Joy のデータベースの実測の幅 ± 0.04 に入る(遮蔽ラザフォードは W・Au で外れる)。到達深さは Kanaya-Okayama の 0.83〜1.04 倍。SE の形は C〜Ag で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076(W・Au は裾が厚く未解決)。★★Si の上の W: 段差の無い W を 1 kV で見ると SE +5 % / 反射電子 +96 %(SE では消える)。5 kV では SE も +80 %(SE2 が Z を運ぶ)。深さ 150 nm の W は 20 kV でないと見えない。★CD-SEM: 側壁 88 度の線は 1 kV 39.1 nm / 20 kV 39.9 nm(低加速は側壁の上寄りを測る)。側壁 80 度では差が小さく向きも逆。★帯電: 0.5 kV は正に溜まって暗くなり η + δ·F(V*) = 1 の電位で止まる(二分法と 2e-15 V)、20 kV は負に溜まって明るくなる。途中で材料の境界を素通りする欠陥を見つけて直した(0.01 nm のキャップで η が 0.425 → 0.329 に跳んでいた)。実画像の章は未実施。CI は縮小(図なしで CPU 約 30 秒)。"},
+    {"id": "poc_sem_tem_same_particle", "task": "metrology", "data": "synthetic",
+     "name": "同じ粒子を走査像と透過像で測り、二つの寸法偏りを共通真値で比べる",
+     "summary": "20〜80 nmの球・六角ファセット粒子14個を同じ台帳から描き、面積相当径・最大傾斜・接触対の分水嶺・立体計測を比較する。52 nm粒子は走査像のしきい値で+4.16 nm、透過像は正焦点で-0.18 nm、焦点外れ12000 nmで+9.82 nm。走査像の偏りはガウス縁の閉形式、透過像の縁はsqrt(lambda defocus)、高さは±5°の視差、限定角再構成は完全角の第2実装で採点する。"},
     {"id": "poc_good_sample_variation_model", "task": "detection", "data": "real",
      "name": "良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき、公開 VisA で採点)",
      "summary": "位置をそろえた良品群から画素ごとの中心とばらつきを覚え、帯の外を欠陥とする古典の変動モデルを、帯の幅を**宣言した誤検出率から**決める新 op 5 本(varmodel_alignment / band_k / fit / calibrate / score)にした。★合成の良品では 4 種のばらつき(標準偏差・共通の分散・経験ベイズの縮小・中央値と MAD)とも、数えた誤検出率が宣言の二項 4σ の帯に入る。良品 5 枚で帯の幅は 9.4σ → 縮小で 5.0σ、5σ の傷の検出率 0.13 → 0.52。★★1〜2 px ずれた良品群は拒否、無理に通すと縁の帯が 22 倍に太り縁の傷を全部見逃す。Fourier シフトで合わせると 1.07 倍。汚れた良品群(3/20 枚に同じ傷)で std は見逃し、MAD は 0.98 で見つける。★公開実データ VisA pcb1(CC BY 4.0)で、合わせた帯は画素 AUROC 0.808・AUPRO 0.678、合わせない帯は 0.705・0.460、ゴールデン比較は 0.826・0.519(画素では上、欠陥を 1 つずつ数えると下)。宣言 1e-3 の誤検出率は実画像で 3.8 %、持ち出しの良品で較正しても 2.4 %(並進で取れない撮影の違い)。確率的なテクスチャ(DAGM 2007)は位置合わせが「測れない」と報告され、検出は偶然並み。実データ段は FULLSEYE_VISA_DATA / FULLSEYE_DAGM_DATA があるときだけ走り、CI は合成のみ(図なし数秒)。"},
@@ -1913,12 +1939,20 @@ EXAMPLES = [
 # honest reason. test_examples2d enforces: registry ∪ EXCLUDED == files on disk,
 # and the two sets are disjoint, so a new script cannot slip in unlisted.
 EXCLUDED = {
+    "lensfile_tolerance_worst_mtf": "runnable composability sample covered by the lens-tolerancing exhibit; "
+                                    "cannot be numbered again without creating a duplicate exhibit",
+    "optimized_lens_tolerance_sensitivity": "runnable composability sample covered by the lens-tolerancing exhibit; "
+                                             "cannot be numbered again without creating a duplicate exhibit",
     "g1_policy_staged": "needs a trained G1 walking checkpoint (REF) + MuJoCo; "
                         "no checkpoint ships with the repo, so it cannot self-run",
     "hand_tracking_demo": "needs a photo/webcam argument plus the optional "
                           "mediapipe extra and a downloaded hand_landmarker.task model",
     "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at "
                          "external MuJoCo Menagerie assets (not shipped)",
+    "tof_camera_physical": "support module required by poc_tof_camera; it cannot run as a "
+                           "standalone gallery example",
+    "tof_realdata": "support module required by poc_tof_camera; it needs optional external "
+                    "validation data and cannot run as a standalone gallery example",
 }
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}

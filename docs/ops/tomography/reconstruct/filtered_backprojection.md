@@ -4,7 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
-examples: [ct_reconstruction, poc_ct_fidelity]
+examples: [ct_reconstruction, poc_aoi_ct_traceability, poc_ct_fidelity, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -97,7 +97,9 @@ the sharpest and the noisiest; ``"shepp-logan"``, ``"cosine"``, ``"hann"`` and
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
+- [poc_aoi_ct_traceability](../../../../examples/poc_aoi_ct_traceability.py) — `py -3.11 examples/poc_aoi_ct_traceability.py`
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
+- [poc_sem_tem_same_particle](../../../../examples/poc_sem_tem_same_particle.py) — `py -3.11 examples/poc_sem_tem_same_particle.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

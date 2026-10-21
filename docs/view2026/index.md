@@ -69,8 +69,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_stockpile_volume/07_scan_orbit.mp4"><img src="thumbs/poc_stockpile_volume.jpg" alt="堆積物の体積" loading="lazy" width="320" height="320"><b>&#9654;</b><span>堆積物の体積</span></a>
 <a href="../articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png"><img src="thumbs/poc_ct_fidelity.jpg" alt="CT 再構成" loading="lazy" width="320" height="320"><span>CT 再構成</span></a>
 <a href="../articles/assets/poc/poc_ct_void_morphology/13_section_sweep.mp4"><img src="thumbs/poc_ct_void_morphology.jpg" alt="CT のボイド" loading="lazy" width="320" height="320"><b>&#9654;</b><span>CT のボイド</span></a>
-<a href="../articles/assets/poc/poc_interferometry_step/05_step_sweep.mp4"><img src="thumbs/poc_interferometry_step.jpg" alt="白色干渉の段差" loading="lazy" width="320" height="320"><b>&#9654;</b><span>白色干渉の段差</span></a>
-<a href="../articles/assets/poc/poc_polarization_specular/03_separation.png"><img src="thumbs/poc_polarization_specular.jpg" alt="偏光で鏡面除去" loading="lazy" width="320" height="320"><span>偏光で鏡面除去</span></a>
+<a href="../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4"><img src="thumbs/poc_interferometry_step.jpg" alt="白色干渉の段差" loading="lazy" width="320" height="320"><b>&#9654;</b><span>白色干渉の段差</span></a>
+<a href="../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png"><img src="thumbs/poc_polarization_specular.jpg" alt="偏光で鏡面除去" loading="lazy" width="320" height="320"><span>偏光で鏡面除去</span></a>
 <a href="../articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.mp4"><img src="thumbs/poc_photoelasticity.jpg" alt="光弾性の応力" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光弾性の応力</span></a>
 <a href="../articles/assets/poc/poc_thermography_ndt/02_depth_map.png"><img src="thumbs/poc_thermography_ndt.jpg" alt="熱画像の欠陥深さ" loading="lazy" width="320" height="320"><span>熱画像の欠陥深さ</span></a>
 <a href="../articles/assets/poc/poc_motion_magnification/05_magnify_video.mp4"><img src="thumbs/poc_motion_magnification.jpg" alt="微小振動の拡大" loading="lazy" width="320" height="320"><b>&#9654;</b><span>微小振動の拡大</span></a>
@@ -104,7 +104,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-90 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+94 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -147,6 +147,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面): [説明](../capabilities/robust-gaussian-spline-profile-filter.md) · 例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - 微細スクラッチを見つけて、幅を測る: [説明](../capabilities/scratch-detection-and-width.md) · 例 [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る: [説明](../capabilities/sem-edge-effect-metrology.md) · 例 [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- 同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる: [説明](../capabilities/sem-tem-same-particle.md) · 例 [poc_sem_tem_same_particle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
 - 逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF): [説明](../capabilities/sequential-lens-design-metrics.md) · 例 [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py) · [poc_lens_merit_operands](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py) · [poc_lens_solves_afocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 - 黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定): [説明](../capabilities/shape-from-polarization.md) · 例 [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - 実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す: [説明](../capabilities/sim-to-real-calibration.md) · 例 [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
@@ -154,6 +155,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ): [説明](../capabilities/telecentric-metrology.md) · 例 [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - 仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正): [説明](../capabilities/tem-phase-contrast-and-ctf.md) · 例 [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - 地形の傾き・水の流れ・見通しを測る: [説明](../capabilities/terrain-and-visibility.md) · 例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 同じ3次元場面を間接ToFと直接ToFで測る: [説明](../capabilities/tof-camera.md) · 例 [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - 仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る: [説明](../capabilities/virtual-sem-monte-carlo.md) · 例 [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 3-D スキャンから体積・土量を出す: [説明](../capabilities/volume-from-3d-scan.md) · 例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - 絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面): [説明](../capabilities/what-a-picture-cannot-check.md) · 例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -202,6 +204,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する: [説明](../capabilities/golden-compare.md) · 例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - 既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る: [説明](../capabilities/inspection-fixture.md) · 例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す: [説明](../capabilities/inspection-workflow.md) · 例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- レンズの製造公差を、MTF と歩留まりで決める: [説明](../capabilities/lens-tolerancing.md) · 例 [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - op の返り値(型付き)を JSON に出し、bit そのままで戻す: [説明](../capabilities/typed-results-as-json.md) · 例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す: [説明](../capabilities/typed-results-as-markdown.md) · 例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - 型付きの検査結果を Excel(.xlsx)レポートに書き出す: [説明](../capabilities/xlsx-report.md) · 例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -220,15 +223,16 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で): [説明](../capabilities/optics-drawings.md) · 例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト): [説明](../capabilities/photograph-through-prescription.md) · 例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画): [説明](../capabilities/pictures-that-carry-their-own-truth.md) · 例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 処方から撮るプレノプティックカメラ: [説明](../capabilities/plenoptic-camera.md) · 例 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線): [説明](../capabilities/theorems-as-pictures.md) · 例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[PoC 以外の使用例 151 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 158 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
-PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 275 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -272,7 +276,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_thermal_radiometry/01_floor.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_thermal_radiometry.jpg" alt="熱画像と温度" width="200" height="200"><span>熱画像と温度</span></a>
 <a href="../articles/assets/poc/poc_thermography_ndt/01_depth_table.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_thermography_ndt.jpg" alt="熱画像の欠陥深さ" width="200" height="200"><span>熱画像の欠陥深さ</span></a>
 <a href="../articles/assets/poc/poc_veiling_glare/01_verdict.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_veiling_glare.jpg" alt="迷光とコントラスト" width="200" height="200"><span>迷光とコントラスト</span></a>
-<a href="../articles/assets/poc/poc_emva1288_sensor/01_photon_transfer.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_emva1288_sensor.jpg" alt="EMVA 1288 測定" width="200" height="200"><b>&#9654;</b><span>EMVA 1288 測定</span></a>
+<a href="../articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_emva1288_sensor.jpg" alt="EMVA 1288 測定" width="200" height="200"><span>EMVA 1288 測定</span></a>
 <a href="../articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_emva1288_in_camera_processing.jpg" alt="前処理がデータシートを嘘にする" width="200" height="200"><span>前処理がデータシートを嘘にする</span></a>
 <a href="../articles/assets/poc/poc_web_roll_periodicity/01_scene_web.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_web_roll_periodicity.jpg" alt="搬送ロールの傷" width="200" height="200"><span>搬送ロールの傷</span></a>
 <a href="../articles/assets/poc/poc_weld_bead_profile/01_laser_images.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_weld_bead_profile.jpg" alt="溶接ビード断面" width="200" height="200"><span>溶接ビード断面</span></a>
@@ -297,9 +301,9 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (54)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (55)</summary>
 <div class="vg vs">
-<a href="../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
+<a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI と CT の対応" width="200" height="200"><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="竣工した壁の歪み" width="200" height="200"><span>竣工した壁の歪み</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_breathing/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_breathing.jpg" alt="電極の呼吸" width="200" height="200"><span>電極の呼吸</span></a>
 <a href="../articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bilateral_asymmetry.jpg" alt="左右非対称性" width="200" height="200"><span>左右非対称性</span></a>
@@ -308,7 +312,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_dimensional_inspection/01_slot_bias.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dimensional_inspection.jpg" alt="部品の寸法検査" width="200" height="200"><span>部品の寸法検査</span></a>
 <a href="../articles/assets/poc/poc_fiber_orientation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_orientation.jpg" alt="繊維の配向" width="200" height="200"><span>繊維の配向</span></a>
 <a href="../articles/assets/poc/poc_gear_tooth_metrology/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_gear_tooth_metrology.jpg" alt="歯車の歯形" width="200" height="200"><span>歯車の歯形</span></a>
-<a href="../articles/assets/poc/poc_interferometry_step/05_step_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_interferometry_step.jpg" alt="白色干渉の段差" width="200" height="200"><b>&#9654;</b><span>白色干渉の段差</span></a>
+<a href="../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_interferometry_step.jpg" alt="白色干渉の段差" width="200" height="200"><b>&#9654;</b><span>白色干渉の段差</span></a>
 <a href="../articles/assets/poc/poc_metal_grain_size/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_metal_grain_size.jpg" alt="結晶粒度" width="200" height="200"><span>結晶粒度</span></a>
 <a href="../articles/assets/poc/poc_multibeam_bathymetry/17_survey.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multibeam_bathymetry.jpg" alt="多ビーム測深" width="200" height="200"><b>&#9654;</b><span>多ビーム測深</span></a>
 <a href="../articles/assets/poc/poc_particle_sizing/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_particle_sizing.jpg" alt="粒度分布" width="200" height="200"><span>粒度分布</span></a>
@@ -340,7 +344,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zernike_aberrations.jpg" alt="ゼルニケ収差" width="200" height="200"><b>&#9654;</b><span>ゼルニケ収差</span></a>
 <a href="../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_attention_identities.jpg" alt="注意機構の恒等式" width="200" height="200"><span>注意機構の恒等式</span></a>
 <a href="../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_residue_crt.jpg" alt="剰余定理で位相" width="200" height="200"><b>&#9654;</b><span>剰余定理で位相</span></a>
-<a href="../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM の縁の太り" width="200" height="200"><span>SEM の縁の太り</span></a>
+<a href="../articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sem_wafer_defect_edge_bias.jpg" alt="SEM の縁の太り" width="200" height="200"><span>SEM の縁の太り</span></a>
 <a href="../articles/assets/poc/poc_chromatic_confocal/04_spectrum_vs_height.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_chromatic_confocal.jpg" alt="クロマティック共焦点(色で高さを読む)" width="200" height="200"><b>&#9654;</b><span>クロマティック共焦点(色で高さを読む)</span></a>
 <a href="../articles/assets/poc/poc_moire_alignment/03_fringe_flow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_moire_alignment.jpg" alt="モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)" width="200" height="200"><b>&#9654;</b><span>モアレで位置合わせ(見えない格子 2 枚で 1 nm を読む)</span></a>
 <a href="../articles/assets/poc/poc_telecentric_metrology/04_work_up_down.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_telecentric_metrology.jpg" alt="テレセントリックレンズと寸法計測" width="200" height="200"><b>&#9654;</b><span>テレセントリックレンズと寸法計測</span></a>
@@ -353,6 +357,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_spectrometer_illumination.jpg" alt="分光器と照明系(帯域の幅と光源の模様)" width="200" height="200"><span>分光器と照明系(帯域の幅と光源の模様)</span></a>
 <a href="../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_simcal_telecentric.jpg" alt="テレセンの実画像で撮像模型を較正" width="200" height="200"><span>テレセンの実画像で撮像模型を較正</span></a>
 <a href="../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_robust_profile_filter.jpg" alt="深い傷が平均線を凹ませる量と、ロバスト化の破綻点" width="200" height="200"><span>深い傷が平均線を凹ませる量と、ロバスト化の破綻点</span></a>
+<a href="../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sem_tem_same_particle.jpg" alt="同じ粒子を走査像と透過像で測る" width="200" height="200"><b>&#9654;</b><span>同じ粒子を走査像と透過像で測る</span></a>
 </div>
 </details>
 
@@ -403,7 +408,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>撮像品質・復元</b> (22)</summary>
+<details class="vall"><summary><b>撮像品質・復元</b> (24)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="縞に近づくハエの眼" width="200" height="200"><b>&#9654;</b><span>縞に近づくハエの眼</span></a>
 <a href="../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_shake_deblur.jpg" alt="手ブレ補正" width="200" height="200"><b>&#9654;</b><span>手ブレ補正</span></a>
@@ -411,7 +416,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_compound_eye.jpg" alt="ハエの複眼" width="200" height="200"><span>ハエの複眼</span></a>
 <a href="../articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_ct_fidelity.jpg" alt="CT 再構成の限界" width="200" height="200"><span>CT 再構成の限界</span></a>
 <a href="../articles/assets/poc/poc_dehazing/05_haze_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dehazing.jpg" alt="霞を剥がす" width="200" height="200"><b>&#9654;</b><span>霞を剥がす</span></a>
-<a href="../articles/assets/poc/poc_dtof_ranging/01_histograms.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dtof_ranging.jpg" alt="光子で測距" width="200" height="200"><span>光子で測距</span></a>
+<a href="../articles/assets/poc/poc_dtof_ranging/01_light_front.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dtof_ranging.jpg" alt="光子で測距" width="200" height="200"><b>&#9654;</b><span>光子で測距</span></a>
 <a href="../articles/assets/poc/poc_focus_stacking/05_focus_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_focus_stacking.jpg" alt="焦点合成" width="200" height="200"><b>&#9654;</b><span>焦点合成</span></a>
 <a href="../articles/assets/poc/poc_lightfield_depth/01_scene_and_depth.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lightfield_depth.jpg" alt="光場から深度" width="200" height="200"><span>光場から深度</span></a>
 <a href="../articles/assets/poc/poc_real_deblur_honesty/01_restore.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_real_deblur_honesty.jpg" alt="実写のブレ補正" width="200" height="200"><span>実写のブレ補正</span></a>
@@ -427,10 +432,12 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_photograph_through_prescription.jpg" alt="処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト" width="200" height="200"><span>処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト</span></a>
 <a href="../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_water_inspection_images.jpg" alt="水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像" width="200" height="200"><span>水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像</span></a>
 <a href="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_simcal_pixel_shift.jpg" alt="ピクセルシフトのずれと開口の較正(決まらない地図)" width="200" height="200"><span>ピクセルシフトのずれと開口の較正(決まらない地図)</span></a>
+<a href="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plenoptic_camera.jpg" alt="処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ" width="200" height="200"><b>&#9654;</b><span>処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ</span></a>
+<a href="../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tof_camera.jpg" alt="同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差" width="200" height="200"><span>同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>色・分離</b> (15)</summary>
+<details class="vall"><summary><b>色・分離</b> (17)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_light_guide.jpg" alt="光ファイバとライトガイド(モード・分散・モード径)" width="200" height="200"><span>光ファイバとライトガイド(モード・分散・モード径)</span></a>
 <a href="../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_thin_film_reflectometry.jpg" alt="分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)" width="200" height="200"><b>&#9654;</b><span>分光反射率で薄膜の膜厚(公開の実測データで採点、ウェハの干渉色)</span></a>
@@ -438,7 +445,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_nir_silicon_transmission.jpg" alt="Si ウェハ越しの近赤外透過(LED の波長を選ぶ)" width="200" height="200"><b>&#9654;</b><span>Si ウェハ越しの近赤外透過(LED の波長を選ぶ)</span></a>
 <a href="../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_material_optical_library.jpg" alt="材料の光学物性ライブラリ(86 種が同じ表から)" width="200" height="200"><b>&#9654;</b><span>材料の光学物性ライブラリ(86 種が同じ表から)</span></a>
 <a href="../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pigment_unmixing.jpg" alt="顔料の層を分離" width="200" height="200"><span>顔料の層を分離</span></a>
-<a href="../articles/assets/poc/poc_polarization_specular/01_fresnel.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_polarization_specular.jpg" alt="偏光で鏡面除去" width="200" height="200"><span>偏光で鏡面除去</span></a>
+<a href="../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_polarization_specular.jpg" alt="偏光で鏡面除去" width="200" height="200"><span>偏光で鏡面除去</span></a>
 <a href="../articles/assets/poc/poc_real_stain_unmix/01_separation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_real_stain_unmix.jpg" alt="実写の染色分離" width="200" height="200"><span>実写の染色分離</span></a>
 <a href="../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_white_balance.jpg" alt="ホワイトバランス" width="200" height="200"><span>ホワイトバランス</span></a>
 <a href="../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_file_roundtrip.jpg" alt="光学設計ファイル(.zmx)の読み書き(別の 2 実装と照合)" width="200" height="200"><span>光学設計ファイル(.zmx)の読み書き(別の 2 実装と照合)</span></a>
@@ -446,7 +453,9 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_global_search.jpg" alt="硝材の置き換えと大域探索(多始点の局所最適化)" width="200" height="200"><span>硝材の置き換えと大域探索(多始点の局所最適化)</span></a>
 <a href="../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_merit_operands.jpg" alt="要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)" width="200" height="200"><span>要求の表で三枚玉を設計(縁厚・中心厚の境界と、硝材を変数に)</span></a>
 <a href="../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_solves_afocal.jpg" alt="設計の関係を「解」で持つ(絞りに追従する F/#、afocal、曲面の像面、奇数次非球面)" width="200" height="200"><span>設計の関係を「解」で持つ(絞りに追従する F/#、afocal、曲面の像面、奇数次非球面)</span></a>
+<a href="../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_omni360_inspection.jpg" alt="全天球の検査撮影と立体表示" width="200" height="200"><span>全天球の検査撮影と立体表示</span></a>
 <a href="../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zmx_public_verify.jpg" alt="公開 .zmx 処方の独立照合と検査レンズ採点" width="200" height="200"><span>公開 .zmx 処方の独立照合と検査レンズ採点</span></a>
+<a href="../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_tolerancing.jpg" alt="レンズの製造公差を MTF・歩留まり・補償ストロークで配分" width="200" height="200"><b>&#9654;</b><span>レンズの製造公差を MTF・歩留まり・補償ストロークで配分</span></a>
 </div>
 </details>
 
@@ -462,7 +471,7 @@ PoC 270 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_timelapse_growth/05_growth_merge.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_timelapse_growth.jpg" alt="成長のタイムラプス" width="200" height="200"><b>&#9654;</b><span>成長のタイムラプス</span></a>
 <a href="../articles/assets/poc/poc_traffic_counting/05_counting_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_traffic_counting.jpg" alt="交通量の計数" width="200" height="200"><b>&#9654;</b><span>交通量の計数</span></a>
 <a href="../articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_warehouse_flow.jpg" alt="庫内の滞留" width="200" height="200"><span>庫内の滞留</span></a>
-<a href="../articles/assets/poc/poc_xyt_event_surface/05_arrival_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_xyt_event_surface.jpg" alt="到達時刻面" width="200" height="200"><b>&#9654;</b><span>到達時刻面</span></a>
+<a href="../articles/assets/poc/poc_xyt_event_surface/07_arrival_video.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_xyt_event_surface.jpg" alt="到達時刻面" width="200" height="200"><b>&#9654;</b><span>到達時刻面</span></a>
 <a href="../articles/assets/poc/poc_video_cube/02_cube_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_video_cube.jpg" alt="動画の時空立方体" width="200" height="200"><b>&#9654;</b><span>動画の時空立方体</span></a>
 <a href="../articles/assets/poc/poc_live4d/01_beating_orbit.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_live4d.jpg" alt="生体の 3D+t" width="200" height="200"><b>&#9654;</b><span>生体の 3D+t</span></a>
 <a href="../articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_diabolo_model_and_vision.jpg" alt="ディアボロ" width="200" height="200"><b>&#9654;</b><span>ディアボロ</span></a>
@@ -618,8 +627,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **光学・干渉・偏光**
 
-- [白色干渉の段差](../articles/assets/poc/poc_interferometry_step/05_step_sweep.mp4) (動画): 仕込む段差を 0 → 0.90 µm に増やし、包絡線法と位相シフト法で測る。 **雑音 1 % で偏り 2.4 nm 以内(段差 50〜500 nm)。位相シフト法は 0.153 µm で λ/2 跳ぶ。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interferometry_step.py)
-- [偏光で鏡面除去](../articles/assets/poc/poc_polarization_specular/03_separation.png) (図): 偏光で鏡面反射を剥がした結果と、残った誤差の形。 **拡散成分の誤差は閉形式 R_p·E と一致し、ブリュースター角 56.31 度で 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
+- [白色干渉の段差](../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4) (動画): 仕込む段差を 0 → 0.90 µm に増やし、包絡線法と位相シフト法で測る。 **雑音 1 % で偏り 2.4 nm 以内(段差 50〜500 nm)。位相シフト法は 0.153 µm で λ/2 跳ぶ。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interferometry_step.py)
+- [偏光で鏡面除去](../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png) (図): 偏光で鏡面反射を剥がした結果と、残った誤差の形。 **拡散成分の誤差は閉形式 R_p·E と一致し、ブリュースター角 56.31 度で 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - [光弾性の応力](../articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.mp4) (動画): 円板に荷重をかけると縞が湧き出し、偏光子を回すと等傾線が動く。 **中心の縞次数 2.38(閉形式どおり)。op の偏光系は教科書の式と最大差 2.2e-16。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
 
 **熱・音響・時系列**
@@ -694,7 +703,7 @@ python examples/poc_focus_stacking.py
 - **題目**: Fullseye：型付き演算子と物理シミュレーションに基づく画像検査・三次元計測基盤
 - **著者**: 古瀬 和文(個人研究者)
 - **発表**: ViEW2026 ビジョン技術の実利用ワークショップ
-- **論文 PDF**: 2026-11-26 以降に掲載
+- **論文 PDF**: [English](paper/101_en.pdf) · [简体中文](paper/101_zh.pdf)(日本語: 2026-11-26 以降に掲載)
 
 **概要**: 画像検査・三次元計測の処理を，入出力のデータ型を宣言した演算子の連鎖として組み立て，物理・撮像シミュレーションで作った真値に対して定量評価し，処理手順・評価・失敗条件を記録して再利用できるオープンソース基盤Fullseyeを提案する．約3,000の型付き演算子，型の不整合を実行前に退ける検査，多言語の演算子検索（RAG），真値つきの200本超の実証プログラムからなり，代表例の定量評価と，合成・実測・実機の検証段階の区別について報告する．
 

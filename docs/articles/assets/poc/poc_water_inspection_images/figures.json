@@ -90,7 +90,29 @@
   ]
  },
  {
-  "file": "10_wet_ratio.png",
+  "file": "10_wet_highlight_sweep.gif",
+  "name": "wet_highlight_sweep",
+  "caption": "照明角を動かすと濡れた板のてかりが移動する。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "10_wet_highlight_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "11_wet_ratio.png",
   "name": "wet_ratio",
   "caption": "内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。",
   "shape": [
@@ -100,7 +122,7 @@
   ]
  },
  {
-  "file": "11_hull_images.png",
+  "file": "12_hull_images.png",
   "name": "hull_images",
   "caption": "各コマは最大を 1 にして見やすくした(露出は固定でなく、絶対の明るさは題に)。外洋は青に寄り、沿岸(3C)は黄緑に寄って、距離とともに霧のベールが乗る(6 m の沿岸はほぼベールだけ)。",
   "shape": [
@@ -110,7 +132,7 @@
   ]
  },
  {
-  "file": "12_hull_snr.png",
+  "file": "13_hull_snr.png",
   "name": "hull_snr",
   "caption": "SNR = √N · 直接光 / √(直接光 + ベール + 1e-12)。ランプの後方散乱の体積はカメラの視野の中央で最も重なる。",
   "shape": [

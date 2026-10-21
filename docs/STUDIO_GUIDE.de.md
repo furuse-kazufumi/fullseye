@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22a23b2ff066 -->
+<!-- i18n-source-sha: bb5f3e736657 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
@@ -331,6 +331,13 @@ zum Typ jedes Arguments** ausführt. Links Namen oder Wörter suchen, eine Op w�
 Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pro Op: am 2026-10-03 liefen 27 von 60
 Stichproben-Ops so). Dass das Fenster selbst keine Fehler hinzufügt, prüft ein Gate: Es muss mit der direkten Übergabe
 des Beispiels an die Op übereinstimmen.
+
+### CSV-Spalten einem Tabellen-Operator zuordnen
+
+Bei einem typisierten Eingang `table` wählt man im bestehenden Ledger-Runner **CSV-Datei…**. Rollen werden nur aus
+tatsächlichen Spalten gewählt. Für Gauge R&R sind dies `part / Teile-ID`, `operator / Prüfer` und `value / Messwert`.
+Die Prüfung nennt Zeilen, eindeutige Schlüssel, fehlende Werte und Wiederholungen. Ungleiche Gruppen werden vor dem Lauf
+namentlich abgelehnt, nie repariert. Zuordnungen gelten je Operation und Kopfzeilensignatur. Die CSV bleibt unverändert.
 
 ### Wie die Ergebnisansicht darstellt
 

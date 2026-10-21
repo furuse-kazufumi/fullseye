@@ -537,6 +537,11 @@
    "de": "Wir stellen Fullseye vor, eine Open-Source-Plattform, die Verarbeitungen für Bildprüfung und 3-D-Messung als Ketten von Operatoren mit deklarierten Ein- und Ausgabedatentypen aufbaut, sie quantitativ gegen eine durch Physik- und Abbildungssimulation erzeugte Ground Truth bewertet und Ablauf, Bewertung und Fehlerbedingungen zur Wiederverwendung festhält. Sie besteht aus rund 3,000 typisierten Operatoren, einer Prüfung, die Typfehler vor der Ausführung ablehnt, einer mehrsprachigen Operatorsuche (RAG) und über 200 Machbarkeitsprogrammen mit Ground Truth. Berichtet werden die quantitative Bewertung repräsentativer Beispiele und die Unterscheidung zwischen synthetischer, gemessener und Hardware-Validierung.",
    "hi": "हम Fullseye प्रस्तुत करते हैं: एक open-source foundation जो image inspection और 3-D measurement processing को घोषित input/output data types वाले operators की chain के रूप में बनाता है, physics और imaging simulation से बने ground truth के सापेक्ष उसका quantitative evaluation करता है, और processing procedure, evaluation तथा failure conditions को दोबारा उपयोग के लिए दर्ज करता है। इसमें लगभग 3,000 typed operators, execution से पहले type mismatch को अस्वीकार करने वाला check, multilingual operator search (RAG), और ground truth वाले 200 से अधिक proof-of-concept programs हैं। हम प्रतिनिधि उदाहरणों का quantitative evaluation और synthetic, measured और real-hardware validation stages के अंतर पर रिपोर्ट करते हैं।",
    "fr": "Nous proposons Fullseye, une base open source qui assemble les traitements d'inspection d'images et de mesure 3D sous forme de chaînes d'opérateurs dont les types de données d'entrée et de sortie sont déclarés, les évalue quantitativement par rapport à une vérité terrain produite par simulation physique et d'imagerie, et enregistre la procédure de traitement, l'évaluation et les conditions d'échec afin de les réutiliser. Elle comprend environ 3,000 opérateurs typés, une vérification qui rejette les incohérences de types avant l'exécution, une recherche d'opérateurs multilingue (RAG) et plus de 200 programmes de démonstration dotés d'une vérité terrain ; nous présentons l'évaluation quantitative d'exemples représentatifs ainsi que la distinction entre les étapes de validation synthétique, mesurée et sur matériel réel."
+  },
+  "files": {
+   "ja": "paper/101.pdf",
+   "en": "paper/101_en.pdf",
+   "zh": "paper/101_zh.pdf"
   }
  },
  "exhibits": [
@@ -831,7 +836,7 @@
   {
    "id": "poc_interferometry_step",
    "category": "optics",
-   "media": "05_step_sweep.mp4",
+   "media": "03_surface_z_scan.mp4",
    "motion": true,
    "label": {
     "ja": "白色干渉の段差",
@@ -867,7 +872,7 @@
   {
    "id": "poc_polarization_specular",
    "category": "optics",
-   "media": "03_separation.png",
+   "media": "01_raw_polarizer_mosaic.png",
    "motion": false,
    "label": {
     "ja": "偏光で鏡面除去",
@@ -2428,9 +2433,9 @@
   {
    "id": "poc_emva1288_sensor",
    "group": "wing_industrial",
-   "media": "01_photon_transfer.mp4",
-   "motion": true,
-   "thumb_src": "01_photon_transfer.gif",
+   "media": "01_raw_dark_flat_saturation.png",
+   "motion": false,
+   "thumb_src": "01_raw_dark_flat_saturation_720.jpg",
    "label": {
     "ja": "EMVA 1288 測定",
     "en": "EMVA 1288 sensor",
@@ -2598,9 +2603,9 @@
   {
    "id": "poc_aoi_ct_traceability",
    "group": "wing_metrology",
-   "media": "01_aoi_and_ct.png",
+   "media": "01_inspection_and_reconstructed_ct.png",
    "motion": false,
-   "thumb_src": "01_aoi_and_ct_720.jpg",
+   "thumb_src": "01_inspection_and_reconstructed_ct_720.jpg",
    "label": {
     "ja": "AOI と CT の対応",
     "en": "AOI-to-CT matching",
@@ -2751,9 +2756,9 @@
   {
    "id": "poc_interferometry_step",
    "group": "wing_metrology",
-   "media": "05_step_sweep.mp4",
+   "media": "03_surface_z_scan.mp4",
    "motion": true,
-   "thumb_src": "05_step_sweep.gif",
+   "thumb_src": "03_surface_z_scan.gif",
    "label": {
     "ja": "白色干渉の段差",
     "en": "White-light steps",
@@ -3312,9 +3317,9 @@
   {
    "id": "poc_sem_wafer_defect_edge_bias",
    "group": "wing_metrology",
-   "media": "01_sem_edge_inflation.png",
+   "media": "01_sem_se_bse_bias.png",
    "motion": false,
-   "thumb_src": "01_sem_edge_inflation.png",
+   "thumb_src": "01_sem_se_bse_bias_720.jpg",
    "label": {
     "ja": "SEM の縁の太り",
     "en": "SEM edge inflation",
@@ -4264,9 +4269,9 @@
   {
    "id": "poc_dtof_ranging",
    "group": "wing_imaging",
-   "media": "01_histograms.png",
-   "motion": false,
-   "thumb_src": "01_histograms_720.jpg",
+   "media": "01_light_front.mp4",
+   "motion": true,
+   "thumb_src": "01_light_front.gif",
    "label": {
     "ja": "光子で測距",
     "en": "Photon ranging",
@@ -4502,9 +4507,9 @@
   {
    "id": "poc_polarization_specular",
    "group": "wing_color",
-   "media": "01_fresnel.png",
+   "media": "01_raw_polarizer_mosaic.png",
    "motion": false,
-   "thumb_src": "01_fresnel_720.jpg",
+   "thumb_src": "01_raw_polarizer_mosaic_720.jpg",
    "label": {
     "ja": "偏光で鏡面除去",
     "en": "Polarization",
@@ -4723,9 +4728,9 @@
   {
    "id": "poc_xyt_event_surface",
    "group": "wing_xyt",
-   "media": "05_arrival_video.mp4",
+   "media": "07_arrival_video.mp4",
    "motion": true,
-   "thumb_src": "05_arrival_video.gif",
+   "thumb_src": "07_arrival_video.gif",
    "label": {
     "ja": "到達時刻面",
     "en": "Arrival-time surface",
@@ -6608,6 +6613,23 @@
    }
   },
   {
+   "id": "poc_omni360_inspection",
+   "group": "wing_color",
+   "media": "08_anaglyph_and_limits.png",
+   "motion": false,
+   "thumb_src": "01_world.png",
+   "label": {
+    "ja": "全天球の検査撮影と立体表示",
+    "en": "Omnidirectional inspection and stereo display",
+    "zh": "全景检测与立体显示",
+    "tw": "全景檢測與立體顯示",
+    "ko": "전방위 검사와 입체 표시",
+    "de": "Rundumbildprüfung und Stereodarstellung",
+    "hi": "सर्वदिशीय निरीक्षण और त्रिविम प्रदर्शन",
+    "fr": "Inspection omnidirectionnelle et affichage stéréoscopique"
+   }
+  },
+  {
    "id": "poc_zmx_public_verify",
    "group": "wing_color",
    "media": "01_independent_verification.png",
@@ -6622,6 +6644,74 @@
     "de": "Unabhängige Prüfung öffentlicher .zmx-Rezepte",
     "hi": "सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन",
     "fr": "Vérification indépendante de prescriptions .zmx publiques"
+   }
+  },
+  {
+   "id": "poc_lens_tolerancing",
+   "group": "wing_color",
+   "media": "01_sensitivity.png",
+   "motion": true,
+   "thumb_src": "01_sensitivity.png",
+   "label": {
+    "ja": "レンズの製造公差を MTF・歩留まり・補償ストロークで配分",
+    "en": "Budget lens manufacturing tolerances by MTF, yield, and compensator travel",
+    "zh": "以 MTF、良率和补偿行程分配镜头制造公差",
+    "tw": "以 MTF、良率與補償行程分配鏡頭製造公差",
+    "ko": "MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분",
+    "de": "Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren",
+    "hi": "MTF, yield और compensator travel से lens tolerances तय करना",
+    "fr": "Budgéter les tolérances selon la FTM, le rendement et la course de compensation"
+   }
+  },
+  {
+   "id": "poc_plenoptic_camera",
+   "group": "wing_imaging",
+   "media": "03_raw_microimages.png",
+   "motion": true,
+   "thumb_src": "03_raw_microimages.png",
+   "label": {
+    "ja": "処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ",
+    "en": "A prescription-based plenoptic camera: raw microimages to refocusing and distance",
+    "zh": "基于处方的光场相机:从原始微图像到重聚焦与距离",
+    "tw": "基於處方的光場相機:從原始微影像到重聚焦與距離",
+    "ko": "처방 기반 플렌옵틱 카메라: 원시 마이크로영상에서 재초점과 거리까지",
+    "de": "Eine rezeptbasierte plenoptische Kamera: von Roh-Mikrobildern zu Refokussierung und Entfernung",
+    "hi": "prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक",
+    "fr": "Une caméra plénoptique fondée sur une prescription : des micro-images brutes à la refocalisation et à la distance"
+   }
+  },
+  {
+   "id": "poc_sem_tem_same_particle",
+   "group": "wing_metrology",
+   "media": "08_tem_focus_sweep.gif",
+   "motion": true,
+   "thumb_src": "02_same_specimen_sem_tem.png",
+   "label": {
+    "ja": "同じ粒子を走査像と透過像で測る",
+    "en": "The same particles in scanning and transmission images",
+    "zh": "在扫描像和透射像中测量同一批粒子",
+    "tw": "在掃描像與穿透像中量測同一批粒子",
+    "ko": "같은 입자를 주사 영상과 투과 영상으로 측정",
+    "de": "Dieselben Partikel in Raster- und Transmissionsbildern",
+    "hi": "एक ही कणों को scanning और transmission images में मापना",
+    "fr": "Les mêmes particules en imagerie à balayage et en transmission"
+   }
+  },
+  {
+   "id": "poc_tof_camera",
+   "group": "wing_imaging",
+   "media": "01_scene_viewer.png",
+   "motion": false,
+   "thumb_src": "01_scene_viewer.png",
+   "label": {
+    "ja": "同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差",
+    "en": "Indirect and direct time of flight on one 3-D scene: multipath, mixed pixels, pile-up and volume error",
+    "zh": "同一三维场景的间接与直接飞行时间:多径、混合像素、堆积和体积误差",
+    "tw": "同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差",
+    "ko": "하나의 3차원 장면에서 간접 및 직접 비행시간: 다중 경로, 혼합 화소, pile-up, 부피 오차",
+    "de": "Indirekte und direkte Laufzeitmessung derselben 3-D-Szene: Mehrwege, Mischpixel, Pile-up und Volumenfehler",
+    "hi": "एक ही 3-D दृश्य पर indirect और direct time of flight: multipath, mixed pixels, pile-up और volume error",
+    "fr": "Temps de vol indirect et direct sur une même scène 3-D : trajets multiples, pixels mixtes, pile-up et erreur de volume"
    }
   }
  ],
@@ -7430,6 +7520,38 @@
     "de": "Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen (Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder)",
     "hi": "वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts)",
     "fr": "Photographier une scène 3-D à travers la prescription réelle de l'objectif (profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes)"
+   },
+   "lens-tolerancing": {
+    "zh": "以 MTF 与良率分配镜头制造公差",
+    "tw": "以 MTF 與良率分配鏡頭製造公差",
+    "ko": "MTF와 수율로 렌즈 제조 공차 배분",
+    "de": "Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren",
+    "hi": "MTF और yield से lens manufacturing tolerances तय करना",
+    "fr": "Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement"
+   },
+   "plenoptic-camera": {
+    "zh": "基于镜头处方的光场相机",
+    "tw": "基於鏡頭處方的光場相機",
+    "ko": "렌즈 처방 기반 라이트필드 카메라",
+    "de": "Lichtfeldkamera auf Basis einer Linsenrezeptur",
+    "hi": "लेंस विन्यास पर आधारित प्रकाश-क्षेत्र कैमरा",
+    "fr": "Caméra plénoptique fondée sur une prescription optique"
+   },
+   "sem-tem-same-particle": {
+    "zh": "测量同一批粒子的扫描像和透射像并比较两种尺寸偏差",
+    "tw": "量測同一批粒子的掃描像與穿透像並比較兩種尺寸偏差",
+    "ko": "같은 입자를 주사 영상과 투과 영상으로 측정해 두 치수 편향을 비교",
+    "de": "Dieselben Partikel in Raster- und Transmissionsbildern messen und beide Größenabweichungen vergleichen",
+    "hi": "एक ही कणों को scanning और transmission images में मापकर दोनों size biases की तुलना",
+    "fr": "Mesurer les mêmes particules en imagerie à balayage et en transmission et comparer les deux biais de taille"
+   },
+   "tof-camera": {
+    "zh": "用间接和直接飞行时间测量同一三维场景",
+    "tw": "用間接和直接飛行時間測量同一三維場景",
+    "ko": "하나의 3차원 장면을 간접 및 직접 비행시간으로 측정",
+    "de": "Dieselbe 3-D-Szene mit indirekter und direkter Laufzeitmessung erfassen",
+    "hi": "एक ही 3-D दृश्य को indirect और direct time of flight से मापना",
+    "fr": "Mesurer une même scène 3-D par temps de vol indirect et direct"
    }
   }
  },
