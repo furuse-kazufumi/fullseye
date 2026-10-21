@@ -105,7 +105,9 @@ def test_98_colour_pca_reference_and_offset_elision_probe():
         direct = x @ vectors[:, ::-1]
         direct = ((direct - direct.min(0)) /
                   (np.ptp(direct, axis=0) + 1e-8)).reshape(shape)
-        np.testing.assert_allclose(direct, expected, rtol=0, atol=4e-16)
+        # 参照式そのものの検算。matmul と eigh の積算順は BLAS ごとに違い、Linux の CI では
+        # 1 ulp(4.4e-16)ずれた(2026-10-21)。本命の門は上の array_equal で、ここは式の形の確認。
+        np.testing.assert_allclose(direct, expected, rtol=0, atol=4e-15)
 
 
 def test_102_cropped_phase_unwrap_matches_full_canvas_and_island_offsets():
