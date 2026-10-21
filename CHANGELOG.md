@@ -39,6 +39,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - StudioでエクスポートしたPythonを隔離プロセスで再実行し、全段のshape・dtype・有限値・NaN位置・数値許容誤差をGUI結果と照合して、最初の不一致段をProblemsへ示せるようにした。
 
 ### 性能
+- 次数保存グラフの帰無標本でも、三角閉路数の二回目の密行列積を省きました。
 - 向き付き点群の巻数場に、周波数領域で三成分を合算する選択式の ``method="fast"`` を追加しました。
 - 動画の整数 RGB フレームを三チャンネルの float64 配列なしで輝度化する ``gray_backend="float_direct"`` を追加しました。
 - 頂点法線に、面法線を成分別に集約する選択式の ``method="fast"`` を追加しました。

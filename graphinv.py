@@ -229,7 +229,7 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
         raise ValueError("%s: need at least 2 edges to swap, got %d" % (op, E))
     kin, kout = B.sum(axis=0), B.sum(axis=1)
     M = B.astype(np.int64)
-    c3 = int(np.trace(M @ M @ M)) // 3
+    c3 = int(np.sum((M @ M) * M.T)) // 3
     rec = int((B * B.T).sum()) // 2
     rng = np.random.default_rng(seed)
     null_c3, null_rec, accepted = [], [], []
@@ -241,7 +241,7 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
             raise ValueError("%s: a null sample changed the degree sequence — the "
                              "rewiring is broken, refusing to report ratios" % op)
         RM = R.astype(np.int64)
-        null_c3.append(int(np.trace(RM @ RM @ RM)) // 3)
+        null_c3.append(int(np.sum((RM @ RM) * RM.T)) // 3)
         null_rec.append(int((R * R.T).sum()) // 2)
     c3m, c3s = float(np.mean(null_c3)), float(np.std(null_c3, ddof=1))
     rm, rs = float(np.mean(null_rec)), float(np.std(null_rec, ddof=1))
