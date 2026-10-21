@@ -125,12 +125,12 @@ def _old_rl(vol, psf, iterations=3, clip_tiny=1e-12):
     return np.ascontiguousarray(est)
 
 
-def test_67_rl_overlap_add_and_even_psf_crop():
+def test_67_rl_default_and_even_psf_crop():
     rng = np.random.default_rng(6719)
     vol = rng.random((12, 13, 14)); psf = rng.random((2, 3, 4))
     ref = _old_rl(vol, psf)
-    ola = volrestore.vol_richardson_lucy(vol, psf, 3, method="overlap_add")
-    np.testing.assert_allclose(ola, ref, rtol=1e-10, atol=1e-10)
+    got = volrestore.vol_richardson_lucy(vol, psf, 3)
+    np.testing.assert_allclose(got, ref, rtol=1e-10, atol=1e-10)
 
 
 def test_69_70_rl_default_exact_and_zero_avoids_convolution(monkeypatch):

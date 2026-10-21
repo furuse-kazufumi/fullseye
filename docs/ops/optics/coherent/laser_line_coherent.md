@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # laser_line_coherent — OPTICS `coherent` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None)` (実装を直接呼ぶなら `import coherent; coherent.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None)`、台帳から引くなら `opsoptics.get("laser_line_coherent")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method='exact')` (実装を直接呼ぶなら `import coherent; coherent.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method='exact')`、台帳から引くなら `opsoptics.get("laser_line_coherent")`)
 
 ## 使い方
 
