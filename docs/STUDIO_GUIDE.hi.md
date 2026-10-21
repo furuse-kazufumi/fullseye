@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bb5f3e736657 -->
+<!-- i18n-source-sha: 71c18c518f4c -->
 # Fullseye Studio की पूरी गाइड
 
 भारी प्रक्रिया के दौरान विंडो चलती रहती है। नीचे सक्रिय चरण और प्रगति दिखती है; रोकने का अनुरोध अगले चरण की सीमा पर स्वीकार होता है। चलाते समय सेटिंग बदलने पर दिखाए गए परिणाम की पीढ़ी स्पष्ट रहती है और पुराने परिणाम को देखने या वर्तमान सेटिंग से फिर चलाने का विकल्प मिलता है।
@@ -388,3 +388,4 @@ JSON के ज़रिए होता है। JSON लेकर execute क
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — perception panel के अंदर क्या है (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — export की गई pipeline execute करें
 - [GETTING_STARTED.md](GETTING_STARTED.md) — 5 मिनट में शुरू करें
+- **निर्यातित Python जाँचें (Run ▸ Verify exported Python / Ctrl+Shift+R)**: संपादन योग्य निर्यात को अलग Python प्रक्रिया में चलाकर हर मध्यवर्ती चरण की GUI से तुलना करता है। absolute/relative tolerance और NaN के लिए समान स्थान, ignore या strict नीति चुन सकते हैं। shape और dtype हमेशा समान होने चाहिए। अंतर Problems में जुड़ता है और पहले अलग चरण पर ले जाता है; Studio केवल रिपोर्ट करता है, मान नहीं बदलता।

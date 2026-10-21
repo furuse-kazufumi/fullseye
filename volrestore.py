@@ -125,7 +125,7 @@ def vol_gaussian_psf(sigma, truncate=4.0):
     return k / k.sum()
 
 
-def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method="fft"):
+def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12):
     """Richardson–Lucy deconvolution of a non-negative volume by a known PSF.
 
     *psf* is a 3-D non-negative kernel (any odd/even size smaller than the
@@ -139,9 +139,6 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method="fft"):
     to 0 instead of rejected, so the module's own forward model feeds back in.
 
     Returns the deblurred ``(D, H, W)`` float64 volume (non-negative).
-    ``method="fft"`` is the unchanged default. ``method="overlap_add"`` uses
-    less peak workspace for a large volume and a small PSF; it agrees with the
-    FFT path to 1e-10, including the even-sized-PSF adjoint crop.
     Measured on the test scene (binary sphere pair blurred by a sigma-2
     Gaussian): the RMSE to ground truth falls to 0.81x the blurred
     observation's at 10 iterations and 0.68x at 50 — genuine but *gradual*,
@@ -182,8 +179,6 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method="fft"):
         raise ValueError("clip_tiny must be a small positive finite number "
                          "(it floors the RL denominator against 0/0 = NaN), "
                          "got %r" % (clip_tiny,))
-    if method not in ("fft", "overlap_add"):
-        raise ValueError("method must be 'fft' or 'overlap_add'")
     k = k / k.sum()
     k_mirror = k[::-1, ::-1, ::-1]
     from scipy.fft import irfftn, next_fast_len, rfftn
@@ -211,23 +206,11 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12, method="fft"):
         full = full[tuple(slice(0, size) for size in full_shape)]
         return full[crop]
 
-    if method == "overlap_add":
-        from scipy.signal import oaconvolve
-
     est = np.full(v.shape, max(float(v.mean()), ct))
-    ratio = np.empty_like(v)
     for _ in range(n):
-        if method == "fft":
-            # 核のスペクトルを 1 回だけ作り(第 3 便)、同じ FFT 形で畳み込む。
-            denom = convolve_crop(est, spectrum, same_crop)
-            ratio = v / np.maximum(denom, ct)
-            est = est * convolve_crop(ratio, mirror_spectrum, adj_crop)
-        else:
-            # overlap-add(第 19 便の選択式): 大きな体積で作業領域を抑える。
-            denom = oaconvolve(est, k, mode="same")
-            np.maximum(denom, ct, out=denom)
-            np.divide(v, denom, out=ratio)
-            correction = oaconvolve(ratio, k_mirror, mode="full")[adj_crop]
-            np.multiply(est, correction, out=est)
+        # 核のスペクトルを 1 回だけ作り(第 3 便)、同じ FFT 形で畳み込む。
+        denom = convolve_crop(est, spectrum, same_crop)
+        ratio = v / np.maximum(denom, ct)
+        est = est * convolve_crop(ratio, mirror_spectrum, adj_crop)
         np.maximum(est, 0.0, out=est)
     return np.ascontiguousarray(est, dtype=np.float64)

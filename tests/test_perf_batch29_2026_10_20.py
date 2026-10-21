@@ -361,8 +361,6 @@ def test_421_lsb_general_width_and_raw_buffer_contract(bits):
     ref=_unpack_lsb_reference(raw,bits,count)
     for source in (raw, raw.tobytes(), bytearray(raw), memoryview(raw)):
         np.testing.assert_array_equal(acquire.unpack_lsb(source,bits,count),ref)
-        np.testing.assert_array_equal(
-            acquire.unpack_lsb(source,bits,count,method="low_memory"), ref)
 
 
 def test_422_grouped_raw_buffer_contract():

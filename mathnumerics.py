@@ -417,7 +417,7 @@ def chebyshev_coeffs_nd(values, box=None, *, method="exact") -> dict:
     return {"coeffs": C, "box": B, "decay": decay, "tail": tail}
 
 
-def chebyshev_eval_nd(coeffs, points, box=None, *, method="exact") -> np.ndarray:
+def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
     """``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
 
     ``points`` が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。
@@ -455,34 +455,6 @@ def chebyshev_eval_nd(coeffs, points, box=None, *, method="exact") -> np.ndarray
         P = P[:, None]
     if P.ndim != 2 or P.shape[1] != d:
         raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})(軸ごとの格子なら 1-D 配列 {d} 本の tuple)")
-    if method == "fast":
-        work = C
-        for ax in range(d):
-            x = ((2.0 * P[:, ax] - (B[ax, 0] + B[ax, 1]))
-                 / (B[ax, 1] - B[ax, 0]))
-            if np.any(np.abs(x) > 1 + 1e-12):
-                raise ValueError("chebyshev_eval_nd: 点が box の外(外挿はしない)")
-            x = np.clip(x, -1, 1)
-            if ax == 0:
-                shape = (len(P),) + work.shape[1:]
-                b1 = np.zeros(shape, np.float64)
-                b2 = np.zeros_like(b1)
-                scale = x.reshape((len(P),) + (1,) * (work.ndim - 1))
-                for k in range(work.shape[0] - 1, 0, -1):
-                    b0 = 2 * scale * b1 - b2 + work[k]
-                    b2, b1 = b1, b0
-                work = scale * b1 - b2 + work[0]
-            else:
-                b1 = np.zeros((len(P),) + work.shape[2:], np.float64)
-                b2 = np.zeros_like(b1)
-                scale = x.reshape((len(P),) + (1,) * (work.ndim - 2))
-                for k in range(work.shape[1] - 1, 0, -1):
-                    b0 = 2 * scale * b1 - b2 + work[:, k]
-                    b2, b1 = b1, b0
-                work = scale * b1 - b2 + work[:, 0]
-        return work
-    if method != "exact":
-        raise ValueError("chebyshev_eval_nd: method must be 'exact' or 'fast'")
     ks = _LETTERS[:d]
     spec = ks + "," + ",".join("m" + k for k in ks) + "->m"
     return np.einsum(spec, C, *[_T(P[:, ax], ax) for ax in range(d)], optimize=True)

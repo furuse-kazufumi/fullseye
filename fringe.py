@@ -140,12 +140,14 @@ def modulation(images) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 3. 2D 位相アンラップ(skimage ラッパ / NaN・マスク対応)                        #
 # --------------------------------------------------------------------------- #
-def unwrap_phase_2d(wrapped, mask=None) -> np.ndarray:
+def unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> np.ndarray:
     """wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。
 
     wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。
     mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。
              NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。
+    crop_valid: 省略可(既定 False = 全面処理)。True なら有効画素の外接矩形だけを skimage に渡し、
+             外側は NaN のまま返す(無効画素が多い枠つき画像で速い別経路。結果は全面処理と完全一致)。
 
     返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。
 
@@ -194,6 +196,20 @@ def unwrap_phase_2d(wrapped, mask=None) -> np.ndarray:
 
     if invalid.all():
         raise ValueError("no valid pixels (all pixels are NaN/masked)")
+
+    if crop_valid:
+        rows, cols = np.nonzero(~invalid)
+        row_slice = slice(rows.min(), rows.max() + 1)
+        col_slice = slice(cols.min(), cols.max() + 1)
+        sub_invalid = invalid[row_slice, col_slice]
+        sub = np.ma.array(np.where(sub_invalid, 0.0, arr[row_slice, col_slice]),
+                          mask=sub_invalid)
+        unwrapped = _sk_unwrap_phase(sub)
+        out = np.full(arr.shape, np.nan, dtype=np.float64)
+        data = np.asarray(np.ma.getdata(unwrapped), dtype=np.float64)
+        data[sub_invalid] = np.nan
+        out[row_slice, col_slice] = data
+        return out
 
     # 無効画素を masked array で除外してアンラップ(skimage が対応)。
     filled = np.where(invalid, 0.0, arr)

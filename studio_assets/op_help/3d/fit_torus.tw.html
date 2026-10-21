@@ -1,12 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_torus — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points, axis_parameterization=&#x27;cartesian&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points, axis_parameterization=&#x27;cartesian&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對點群擬合圓環面,回傳 <code style="color:#22d3bf">{center, axis, R, r, residual}</code>。</p>
 <p>以 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化點-環面距離 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=軸向分量, <code style="color:#22d3bf">ρ</code>=到軸的半徑, <code style="color:#22d3bf">R</code>=主半徑, <code style="color:#22d3bf">r</code>=管半徑)。初值為 PCA 軸(與眾不同的那個特徵向量)+ <code style="color:#22d3bf">R0=mean(ρ)</code>、<code style="color:#22d3bf">r0</code>(到管中心圓距離的平均)。</p>
 <p>Args:</p>
 <p>points: (N,3) 點雲(至少 7 點)。</p>
+<p>method: <code style="color:#22d3bf">&#x27;exact&#x27;</code>(預設)一次最小化全部 8 個參數。<code style="color:#22d3bf">&#x27;eliminate_r&#x27;</code> 將管半徑 <code style="color:#22d3bf">r</code> 消去為各點到管中心圓距離的平均值,只對 7 個參數最小化(較快的替代方式;預設值不變,殘差容差 rtol=1e-10, atol=1e-12)。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,), &quot;R&quot;: float, &quot;r&quot;: float, &quot;residual&quot;: float}</code>。</p>
 <p><code style="color:#22d3bf">axis</code> 為單位軸，<code style="color:#22d3bf">R</code> 為主半徑，<code style="color:#22d3bf">r</code> 為管半徑，<code style="color:#22d3bf">residual</code> 為點-面距離的 RMS。</p>

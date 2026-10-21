@@ -24,6 +24,9 @@
 <p>局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。</p>
 <p>chunk : int or None</p>
 <p>指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>既定 <code style="color:#22d3bf">&#x27;exact&#x27;</code> は多項式曲面の最小二乗。<code style="color:#22d3bf">&#x27;mean&#x27;</code> は <code style="color:#22d3bf">order=0</code> 専用で、定数項を</p>
+<p>重み付き平均で直接求める(同じ値を lstsq を経ずに出す速い経路。許容差 rtol=1e-12, atol=1e-14)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。</p>
