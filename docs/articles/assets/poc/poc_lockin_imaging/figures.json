@@ -38,5 +38,27 @@
    560,
    3
   ]
+ },
+ {
+  "file": "05_thermal_phase_convergence.gif",
+  "name": "thermal_phase_convergence",
+  "caption": "周期加熱のコマを順に加えると、深さごとの位相像が収束する。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "05_thermal_phase_convergence.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
  }
 ]

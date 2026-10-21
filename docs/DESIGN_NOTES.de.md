@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 614 von 1541. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 614 von 1544. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -260,13 +260,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examplefig.py`
 
 - **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
-- **L217** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L256** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L295** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L360** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L505** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
-- **L622** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L648** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L220** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
+- **L378** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L417** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L482** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L650** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
+- **L767** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L793** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -425,12 +425,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_cad_scan_deviation.py`
 
 - **L434** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
-- **L893** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
-- **L1099** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
-- **L1252** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
-- **L1263** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
-- **L1353** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
-- **L1375** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L897** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
+- **L1103** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
+- **L1256** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
+- **L1267** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
+- **L1357** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1379** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -643,7 +643,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_focus_stacking.py`
 
 - **L176** _(ja)_ — 絞り。★2026-10-14: defocus_blur のぼけが 2 倍広かった(σ = 錯乱円の直径/2、正しくは /4)のを直したら、F 5.6 では 被写界深度が 2 倍深くなり、0.42 mm 間隔の像で奥行きが区別できなくなった(テクスチャ有の RMS 0.47 → 0.91 mm)。 旧版の結果は「F 5.6 と書いて実質 F 2.8 のぼけ」の上に立っていた —— 書いた値と効いていた値を揃えて F 2.8 にする。
-- **L600** — 1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB).
+- **L601** — 1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -736,10 +736,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_interferometry_step.py`
 
-- **L278** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
-- **L321** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
-- **L393** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
-- **L433** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
+- **L401** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
+- **L444** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
+- **L516** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
+- **L556** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
 
 ## `examples/poc_interreflection_fringe_error.py`
 
@@ -779,13 +779,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L842** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
 - **L845** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
 - **L965** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
-- **L1327** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1329** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** — 2b. ★ Lücke (d): der docstring sagt 0-d, tatsächlich ist es (1,)
-- **L610** — 6. ★ Lücke (a): das voreingestellte linear zieht 1.15 in Richtung 1.0, cubic nicht
-- **L634** — 10. ★ Lücke (e) wurde am 2026-09-06 geschlossen. Sie wurde auf die Seite umgeschrieben, die **den geschlossenen Zustand festhält** (zuvor wurde per assert geprüft, dass 'eine Warnung ausgegeben wird').
+- **L707** — 2b. ★ Lücke (d): der docstring sagt 0-d, tatsächlich ist es (1,)
+- **L723** — 6. ★ Lücke (a): das voreingestellte linear zieht 1.15 in Richtung 1.0, cubic nicht
+- **L747** — 10. ★ Lücke (e) wurde am 2026-09-06 geschlossen. Sie wurde auf die Seite umgeschrieben, die **den geschlossenen Zustand festhält** (zuvor wurde per assert geprüft, dass 'eine Warnung ausgegeben wird').
 
 ## `examples/poc_livestock_body_volume.py`
 
@@ -961,14 +961,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_print_warpage_risk.py`
 
 - **L364** — ★Eine neu entstehende Schicht wird "auf die zu diesem Zeitpunkt bereits verwölbte Fläche" gelegt (die Elementgeburt erfolgt in der verformten Konfiguration). Vergisst man, dies zu initialisieren, bleiben nur die später gewachsenen Schichten bei null Verschiebung und **die per Spaltenmittel gemessene Verwölbung wird 1/4** (am 2026-09-07 hineingetreten). Die Mechanik (K und f) liegt auf dem nominalen Gitter, ist also unverändert.
-- **L808** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
+- **L806** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
 
 ## `examples/poc_pv_thermal_survey.py`
 
 - **L381** — ★MOD_SHELTER ist ein Modul, das **intakt ist, aber keinem Wind ausgesetzt** wird. In Abschnitt 3 verwandelt es sich unter dem Gesamtmittel-Kriterium in einen "Defekt".
-- **L482** — ★Die Modulnummer **pro Nummer über den Flächenanteil** bestimmen. Rundet man den Mittelwert der Nummern, werden Randpixel zu einer Nachbarnummer (oder 0) und die modulweise Verarbeitung bricht.
-- **L711** — ★Der Preis des Modulmedians —— blind für eine Anomalie eines ganzen Moduls
-- **L1169** — ★``apply_cmap`` normiert nach **min/max dieses Arrays**, wenn vmin/vmax nicht übergeben werden (wodurch sich die Bedeutung der Farbe je Bedingung ändert), also stets übergeben.
+- **L583** — ★Die Modulnummer **pro Nummer über den Flächenanteil** bestimmen. Rundet man den Mittelwert der Nummern, werden Randpixel zu einer Nachbarnummer (oder 0) und die modulweise Verarbeitung bricht.
+- **L812** — ★Der Preis des Modulmedians —— blind für eine Anomalie eines ganzen Moduls
+- **L1270** — ★``apply_cmap`` normiert nach **min/max dieses Arrays**, wenn vmin/vmax nicht übergeben werden (wodurch sich die Bedeutung der Farbe je Bedingung ändert), also stets übergeben.
 
 ## `examples/poc_pxrd_phase_peel.py`
 
@@ -1182,21 +1182,21 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L61** — ★Die Beobachtungszeit **lang genug — über das t\* (6.8 s) des gesunden Bereichs hinaus** wählen. Zu kurz, und das Knie des gesunden Bereichs rutscht aus dem Fenster, und TSR beantwortet den gesunden Bereich als "Tiefe am Fensterrand" (in der Messung blieb es bei 2.82 mm kleben).
 - **L126** — ★Nur diese Stelle ist eine Näherung. Da die 1-D-Lösung keine laterale Diffusion enthält, verschmieren wir zu jedem Zeitpunkt in der Ebene mit einer Gauß-Funktion der Diffusionslänge σ(t)=√(2αt). Das physikalische Skalierungsgesetz ist korrekt, aber die Massenerhaltung am Rand wird nicht erfüllt.
-- **L142** — Der Bereich, in dem TSR nach t* sucht. ★Das Ausschließen der Ränder ist keine Zierde —— die 2. Ableitung eines Polynoms hoher Ordnung explodiert an den Rändern zwangsläufig (Runge). Ohne dies klebt das argmax am ersten oder letzten Frame, und die Tiefe klebt an den 2 Werten an den Fensterrändern (gemessen, 2026-09-06). Wir haben die Grade 4–11 durchlaufen und uns für 8 entschieden (bei 4–5 kleben Tiefen jenseits von 1.5 mm an den Rändern; ab 8 dieselbe Antwort wie 9/11).
-- **L177** — ★Das Runden von t* auf die Gitterschrittweite quantisiert die Tiefe treppenförmig (bei 64 Punkten 5 %-Schritte). Wir passen eine Parabel an 3 Punkte an, um die Sub-Gitter-Position von ln t zu ermitteln.
-- **L235** — ★Den Befund festhalten. Dies ist eine **Nahe-Null-Kontrollrechnung**, bricht sie zusammen, ist die Implementierung kaputt.
-- **L249** — ★Der Bias des Schätzers selbst. **Ganz ohne ein Bild zu durchlaufen** wenden wir `tsr_depth` auf eine exakte 1-D-Kurve an. Der hier auftretende Fehler ist der "Boden der Polynomanpassung", und nur was nach dessen Abzug von den Abweichungen ab Abschnitt 3 übrig bleibt, ist der Beitrag von Querdiffusion und Rauschen.
-- **L267** — ★Den Befund festhalten: der Boden ist **nicht null, aber klein**. Wir grenzen ihn beidseitig ein —— würde er null, hielte die Umdeutung in Abschnitt 3 ("selbst eine Kurve, die kein Bild durchläuft, weicht um einige % ab"; ±5 % entspricht etwa dem Boden) nicht mehr, und würde er groß, könnten wir die Abweichungen ab Abschnitt 3 nicht mehr der Querdiffusion zuschreiben.
-- **L302** — ★Den Befund festhalten. Dass diese 2 Zeilen gleichzeitig gelten, ist genau die Aussage dieses Abschnitts. (1) Fasst man die 16 zu einem einzigen Mittelwert zusammen, unterliegt TSR der Null-Basislinie, die "immer 1.50 mm antwortet".
-- **L332** — ★Den Befund festhalten. (1) Das untere rechte Dreieck, wo der Durchmesser mindestens das 4-fache der Tiefe beträgt, wird auf wenige % genau getroffen (etwa gleich dem Boden aus Abschnitt 1).
-- **L362** — ★Kontrollgruppe: dieselbe Szene mit **abgeschalteter Querdiffusion**. Damit lässt sich "Schuld der Querdiffusion" von "Schuld zu weniger Pixel / einer nicht extrahierbaren Maske" trennen. Nur eine Seite zu betrachten und die Physik zu beschuldigen ist der häufigste Fehler bei dieser Art von Experiment.
-- **L409** — ★Den Befund der Kontrollgruppe festhalten: **mit abgeschalteter Querdiffusion fallen alle 16 innerhalb ±8 %**. Diese eine Zeile ist der Beleg dafür, dass "die einzige Ursache des Versagens die Querdiffusion ist, weder die Pixelgrobheit noch die Art der Maskengewinnung". Lockert man sie, kehrt die Schlussfolgerung von Abschnitt 3 zur Fehldeutung zurück, dass 'eine höhere Auflösung es behebt'.
-- **L419** — ★Wenn die obige Überlegung (die Diffusionslänge am Ende des Fensters wirkt) korrekt ist, dann **behebt das Abschneiden des Fensters es**. Wenn du eine Hypothese aufstellst, platziere stets ein Experiment, das sie widerlegen könnte. ------------------------------------------------------------------ #
-- **L440** — ★Den schwersten Befund dieses PoC festhalten —— die "Seitenverhältnis-Grenze" war keine Physik, sondern **die Wahl des Anpassungs-Zeitfensters**. (1) Mit einem 4-Sekunden-Fenster fallen alle 8 kleinen innerhalb ±20 % (gemessener schlimmster Fall -14 %).
-- **L528** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
-- **L575** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
-- **L602** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
-- **L683** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
+- **L236** — Der Bereich, in dem TSR nach t* sucht. ★Das Ausschließen der Ränder ist keine Zierde —— die 2. Ableitung eines Polynoms hoher Ordnung explodiert an den Rändern zwangsläufig (Runge). Ohne dies klebt das argmax am ersten oder letzten Frame, und die Tiefe klebt an den 2 Werten an den Fensterrändern (gemessen, 2026-09-06). Wir haben die Grade 4–11 durchlaufen und uns für 8 entschieden (bei 4–5 kleben Tiefen jenseits von 1.5 mm an den Rändern; ab 8 dieselbe Antwort wie 9/11).
+- **L271** — ★Das Runden von t* auf die Gitterschrittweite quantisiert die Tiefe treppenförmig (bei 64 Punkten 5 %-Schritte). Wir passen eine Parabel an 3 Punkte an, um die Sub-Gitter-Position von ln t zu ermitteln.
+- **L329** — ★Den Befund festhalten. Dies ist eine **Nahe-Null-Kontrollrechnung**, bricht sie zusammen, ist die Implementierung kaputt.
+- **L343** — ★Der Bias des Schätzers selbst. **Ganz ohne ein Bild zu durchlaufen** wenden wir `tsr_depth` auf eine exakte 1-D-Kurve an. Der hier auftretende Fehler ist der "Boden der Polynomanpassung", und nur was nach dessen Abzug von den Abweichungen ab Abschnitt 3 übrig bleibt, ist der Beitrag von Querdiffusion und Rauschen.
+- **L361** — ★Den Befund festhalten: der Boden ist **nicht null, aber klein**. Wir grenzen ihn beidseitig ein —— würde er null, hielte die Umdeutung in Abschnitt 3 ("selbst eine Kurve, die kein Bild durchläuft, weicht um einige % ab"; ±5 % entspricht etwa dem Boden) nicht mehr, und würde er groß, könnten wir die Abweichungen ab Abschnitt 3 nicht mehr der Querdiffusion zuschreiben.
+- **L396** — ★Den Befund festhalten. Dass diese 2 Zeilen gleichzeitig gelten, ist genau die Aussage dieses Abschnitts. (1) Fasst man die 16 zu einem einzigen Mittelwert zusammen, unterliegt TSR der Null-Basislinie, die "immer 1.50 mm antwortet".
+- **L426** — ★Den Befund festhalten. (1) Das untere rechte Dreieck, wo der Durchmesser mindestens das 4-fache der Tiefe beträgt, wird auf wenige % genau getroffen (etwa gleich dem Boden aus Abschnitt 1).
+- **L457** — ★Kontrollgruppe: dieselbe Szene mit **abgeschalteter Querdiffusion**. Damit lässt sich "Schuld der Querdiffusion" von "Schuld zu weniger Pixel / einer nicht extrahierbaren Maske" trennen. Nur eine Seite zu betrachten und die Physik zu beschuldigen ist der häufigste Fehler bei dieser Art von Experiment.
+- **L504** — ★Den Befund der Kontrollgruppe festhalten: **mit abgeschalteter Querdiffusion fallen alle 16 innerhalb ±8 %**. Diese eine Zeile ist der Beleg dafür, dass "die einzige Ursache des Versagens die Querdiffusion ist, weder die Pixelgrobheit noch die Art der Maskengewinnung". Lockert man sie, kehrt die Schlussfolgerung von Abschnitt 3 zur Fehldeutung zurück, dass 'eine höhere Auflösung es behebt'.
+- **L514** — ★Wenn die obige Überlegung (die Diffusionslänge am Ende des Fensters wirkt) korrekt ist, dann **behebt das Abschneiden des Fensters es**. Wenn du eine Hypothese aufstellst, platziere stets ein Experiment, das sie widerlegen könnte. ------------------------------------------------------------------ #
+- **L535** — ★Den schwersten Befund dieses PoC festhalten —— die "Seitenverhältnis-Grenze" war keine Physik, sondern **die Wahl des Anpassungs-Zeitfensters**. (1) Mit einem 4-Sekunden-Fenster fallen alle 8 kleinen innerhalb ±20 % (gemessener schlimmster Fall -14 %).
+- **L623** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
+- **L670** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
+- **L697** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
+- **L778** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
@@ -2080,25 +2080,26 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `studio.py`
 
-- **L343** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L352** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L1552** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
-- **L1571** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1581** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1604** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1615** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2147** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6822** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L8756** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L9606** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L9762** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L10634** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L11531** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L11604** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L11607** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L13096** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L13115** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L14031** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L345** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L354** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
+- **L1554** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
+- **L1573** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1583** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1606** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1617** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2210** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6406** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6894** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L8841** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L9691** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L9847** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L10720** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L11617** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L11690** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L11693** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L13182** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L13201** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L14200** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `superquadric.py`
 
@@ -2256,12 +2257,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L42** — ★Die op-Menge ändert sich mit der Umgebung (Linux-CI fehlen torch/kornia/mahotas/xfeatures2d und hat 859 ops; lokal 885). Eine Prüfung, die die lokal erzeugten Dokumente gegen das **lebende Register** vergleicht, ist nur in einer vollen Umgebung sinnvoll —— gleiche Konvention wie test_opdocs: skip, wenn nicht vollständig (der fehlende Backend-Name erscheint im Grund). Im CI vom 2026-09-07 fielen hier 22 Einträge durch. Umgebungsunabhängige Prüfungen (Datei-Existenz, Inhaltsmenge, Abbildungs-Existenz) laufen weiterhin.
 - **L80** — ★Nur die Markdown-Syntax anzusehen reicht nicht. `docs/GALLERY.md` verwendet `<img src="...">` an 14 Stellen innerhalb von Tabellen, und ein naiver Scan nach `](` sieht keine davon (in Codex' adversarialem Review gefunden, 2026-09-06). Auch das rohe HTML ansehen.
-- **L189** — ★Doppelte Marker zuzulassen bedeutet, dass eine alte Tabelle stehen bleibt und trotzdem grün wird. Der Generator schreibt nur das erste start–end um, sodass das zweite für immer alt bleibt und weiter veröffentlicht wird (Codex' adversariales Review, 2026-09-06).
-- **L210** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
-- **L249** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
-- **L312** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
-- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
-- **L467** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
+- **L133** _(ja)_ — ★2026-10-21(ユーザー指示): docs/view2026/ は論文の QR コードが入口で、発表(12/3-4)まで 他の頁からリンクを張らない(目立たせない)。地図(_DOCMAP_SKIP)からも外してある。 発表後にここと _DOCMAP_SKIP の両方から外して地図に戻す。
+- **L193** — ★Doppelte Marker zuzulassen bedeutet, dass eine alte Tabelle stehen bleibt und trotzdem grün wird. Der Generator schreibt nur das erste start–end um, sodass das zweite für immer alt bleibt und weiter veröffentlicht wird (Codex' adversariales Review, 2026-09-06).
+- **L214** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
+- **L253** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
+- **L316** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
+- **L404** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L471** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
 
 ## `tests/test_docs_no_local_paths.py`
 
@@ -2731,8 +2733,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L48** — ★Die Übersetzungstabelle liegt in **einer anderen Datei als die Operatordokumentation**. Mit `opdocs.T` landete jeder abgefragte Originaltext in `opdocs.SEEN_STRINGS`, und das bestehende Tor „Löcher in den Rahmenübersetzungen“ würde alle 604 als Löcher zählen und die CI rot färben — jenes Tor sorgt dafür, dass Rahmentexte in allen fünf Sprachen vollständig sind, während dies hier eine nach und nach gefüllte Sammlung ist. **In einer gemeinsamen Tabelle zerstört die eine Disziplin die andere.**
 - **L82** — ★Ein Block = eine Folge von `#`-Kommentarzeilen, die von einer Zeile mit ★ ausgeht und mit derselben Einrueckung fortfaehrt. Auch Kommentare im Sphinx-Stil `#:` werden aufgenommen. Streift man nur `#` und Leerraum ab, bleibt vorne ein `:`
 - **L84** — uebrig, und im Artefakt erscheint "‎: ★…" (ist tatsaechlich passiert). Streife `:` hier ebenfalls ab.
-- **L108** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
-- **L200** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
+- **L128** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
+- **L220** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
 
 ## `tools/gen_docs_index_ops.py`
 
@@ -2743,7 +2745,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L498** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
 - **L518** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
 - **L529** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L690** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L550** _(ja)_ — ★2026-10-21(ユーザー指示): view2026/ は論文の QR の行き先。会場で配るまで他の頁からリンクを張らない (地図に載せると docs/README* から辿れてしまう)。robots.txt でも Disallow にしてある。
+- **L692** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 
@@ -2844,13 +2847,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L50** _(ja)_ — 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ―― 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
 - **L144** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
-- **L338** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
-- **L361** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
-- **L387** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
-- **L412** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
-- **L461** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
-- **L467** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
-- **L573** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+- **L341** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+- **L365** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+- **L391** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
+- **L416** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+- **L465** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+- **L471** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+- **L577** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
 
 ## `tools/gen_wingstudio_gallery.py`
 
@@ -2886,9 +2889,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1778** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
 - **L1789** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
 - **L1798** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
-- **L1946** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2115** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2817** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L1956** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2125** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2827** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

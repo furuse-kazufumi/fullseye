@@ -22,7 +22,49 @@
   ]
  },
  {
-  "file": "03_tsr_curves.png",
+  "file": "03_thermal_frames.png",
+  "name": "thermal_frames",
+  "caption": "Viewer-gamma grayscale; NETD 0.02 K, low-frequency NUC residual 0.08 K RMS, four dead pixels.",
+  "shape": [
+   564,
+   2098,
+   3
+  ]
+ },
+ {
+  "file": "04_cooling.gif",
+  "name": "cooling",
+  "caption": "Forty-eight uint8 cooling frames after a non-uniform flash.",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 3.0,
+  "video": "04_cooling.mp4",
+  "video_frames": 48,
+  "video_fps": 12.0,
+  "video_shape": [
+   512,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "05_depth_truth_error.png",
+  "name": "depth_truth_error",
+  "caption": "Sequential turbo-like depth scale in millimetres; signed error at right.",
+  "shape": [
+   564,
+   1912,
+   3
+  ]
+ },
+ {
+  "file": "06_tsr_curves.png",
   "name": "tsr_curves",
   "caption": "早期の勾配は -1/2。膝の位置 t* が深さを決める。",
   "shape": [
