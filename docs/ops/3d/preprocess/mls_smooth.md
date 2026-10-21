@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # mls_smooth — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None)`、台帳から引くなら `ops3d.get("mls_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')`、台帳から引くなら `ops3d.get("mls_smooth")`)
 
 ## 使い方
 
@@ -35,6 +35,9 @@ order : int
     局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
 chunk : int or None
     指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
+method : {'exact', 'mean'}
+    既定 ``'exact'`` は多項式曲面の最小二乗。``'mean'`` は ``order=0`` 専用で、定数項を
+    重み付き平均で直接求める(同じ値を lstsq を経ずに出す速い経路。許容差 rtol=1e-12, atol=1e-14)。
 
 Returns
 -------

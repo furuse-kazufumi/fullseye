@@ -244,8 +244,15 @@ def test_109_112_115_117_118_selectable_paths_keep_contracts():
     np.testing.assert_array_equal(combined["k2"], k2)
     np.testing.assert_array_equal(combined["normals"], normals)
     curve = rng.normal(size=(500, 3)).cumsum(axis=0)
-    np.testing.assert_allclose(curve3d.resample_uniform(curve, 800, method="fast"),
-                               curve3d.resample_uniform(curve, 800), atol=1e-12, rtol=0)
+    expected = np.column_stack([
+        np.interp(
+            np.linspace(0.0, curve3d.arc_length(curve)[1], 800),
+            curve3d.arc_length(curve)[0],
+            curve[:, axis],
+        )
+        for axis in range(3)
+    ])
+    np.testing.assert_array_equal(curve3d.resample_uniform(curve, 800), expected)
     rows, cols = np.mgrid[:10, :12]
     vertices = np.column_stack((cols.ravel(), rows.ravel(), rng.normal(size=rows.size)))
     faces = []

@@ -53,6 +53,9 @@ order : int
     局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
 chunk : int or None
     指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
+method : {'exact', 'mean'}
+    既定 ``'exact'`` は多項式曲面の最小二乗。``'mean'`` は ``order=0`` 専用で、定数項を
+    重み付き平均で直接求める(同じ値を lstsq を経ずに出す速い経路。許容差 rtol=1e-12, atol=1e-14)。
 
 Returns
 -------

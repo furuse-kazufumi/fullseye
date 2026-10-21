@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # bilateral_filter_depth — 3D `depth_denoise` op
 
 - **データ種**: `depth` → `depth`
-- **呼び出し**: `import fullseye as fs; fs.ledger.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("bilateral_filter_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("bilateral_filter_depth")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=
 中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
 range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
 ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
+``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

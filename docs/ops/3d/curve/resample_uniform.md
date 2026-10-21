@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # resample_uniform — 3D `curve` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import fullseye as fs; fs.ledger.resample_uniform(curve, n, method='exact')` (実装を直接呼ぶなら `import curve3d; curve3d.resample_uniform(curve, n, method='exact')`、台帳から引くなら `ops3d.get("resample_uniform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.resample_uniform(curve, n)` (実装を直接呼ぶなら `import curve3d; curve3d.resample_uniform(curve, n)`、台帳から引くなら `ops3d.get("resample_uniform")`)
 
 ## 使い方
 

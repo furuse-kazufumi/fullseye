@@ -23,6 +23,8 @@
 <p>국소 다항식의 차수(기본값 2). 항 수는 (order+1)(order+2)/2.</p>
 <p>chunk : int or None</p>
 <p>지정하면 근방 목록을 이 점 수만큼 가져와 폐기한다. 기본값은 기존 경로를 사용한다.</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>기본 <code style="color:#22d3bf">&#x27;exact&#x27;</code>는 다항식 곡면의 최소제곱 적합. <code style="color:#22d3bf">&#x27;mean&#x27;</code>은 <code style="color:#22d3bf">order=0</code> 전용으로 상수항을 가중 평균으로 직접 구한다(lstsq를 거치지 않고 같은 값을 내는 빠른 경로. 허용차 rtol=1e-12, atol=1e-14).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>평활 후의 점군(순서·점 수는 유지). 근방이 다항식의 항 수에 못 미치는 점은 원위치 그대로.</p>

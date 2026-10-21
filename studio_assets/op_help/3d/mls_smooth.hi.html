@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point को local polynomial surface पर project करके noise हटाता है (Moving Least Squares smoothing)।</p>
 <p>हर point के लिए radius <code style="color:#22d3bf">radius</code> के अंदर के neighbours इकट्ठा करता है, weighted PCA से local plane (normal n और tangent plane की 2 axes) का अनुमान लगाता है, और neighbours के &quot;tangent plane पर coordinate (u,v) → normal दिशा में height h&quot; पर order degree की polynomial surface को Gaussian-weighted least squares से fit करता है। target point ख़ुद local coordinates के origin (0,0) पर होता है, इसलिए fit की गई surface की (0,0) पर height (= constant term) जितना normal की दिशा में खिसकाकर उसे surface पर project किया जाता है। surface का आकार बनाए रखते हुए सिर्फ़ sensor noise को smooth किया जा सकता है।</p>
@@ -14,6 +14,8 @@
 <p>local polynomial की degree (default 2)। terms की संख्या (order+1)(order+2)/2 है।</p>
 <p>chunk : int or None</p>
 <p>दिए जाने पर neighbour lists इतने points के batches में लेकर छोड़ दी जाती हैं। Default में पुराना path उपयोग होता है।</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>डिफ़ॉल्ट <code style="color:#22d3bf">&#x27;exact&#x27;</code> बहुपद सतह का न्यूनतम-वर्ग फ़िट है। <code style="color:#22d3bf">&#x27;mean&#x27;</code> केवल <code style="color:#22d3bf">order=0</code> के लिए है और अचर पद को सीधे भारित माध्य के रूप में लेता है (lstsq के बिना वही मान देने वाला तेज़ पथ; सहनशीलता rtol=1e-12, atol=1e-14)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>smoothing के बाद का point cloud (क्रम और points की संख्या बनी रहती है)। जिन points के neighbours polynomial के terms से कम हैं वे अपनी जगह रहते हैं।</p>
