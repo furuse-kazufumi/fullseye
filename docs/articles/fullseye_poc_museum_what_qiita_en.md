@@ -678,9 +678,21 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 *↑ The measurement ―― 右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![早期の勾配は -1/2。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/03_tsr_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/03_tsr_curves.png)
+[![Viewer-gamma grayscale; NETD 0.02 K, low-frequency NUC residual 0.08 K RMS, four dead pixels.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/03_thermal_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/03_thermal_frames.png)
+
+*↑ Viewer-gamma grayscale; NETD 0.02 K, low-frequency NUC residual 0.08 K RMS, four dead pixels.*
+
+[![Sequential turbo-like depth scale in millimetres; signed error at right.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/05_depth_truth_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/05_depth_truth_error.png)
+
+*↑ Sequential turbo-like depth scale in millimetres; signed error at right.*
+
+[![早期の勾配は -1/2。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/06_tsr_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/06_tsr_curves.png)
 
 *↑ 早期の勾配は -1/2。*
+
+[![Forty-eight uint8 cooling frames after a non-uniform flash.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/04_cooling.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/04_cooling.gif)
+
+*↑ The animation ―― Forty-eight uint8 cooling frames after a non-uniform flash.*
 
 ```
 py -3.11 examples/poc_thermography_ndt.py
@@ -688,9 +700,9 @@ py -3.11 examples/poc_thermography_ndt.py
 
 Source: [examples/poc_thermography_ndt.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermography_ndt.py)
 
-This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
 
-
+Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html)
 
 ## No.2026.047 —— Veiling Glare Breaks Contrast Measurement — MTF Passes While Black Level Fails
 
@@ -722,29 +734,33 @@ Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_patt
 
 ## No.2026.178 —— Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure
 
-[![Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_photon_transfer.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_photon_transfer.gif)
+[![Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation.png)
 
-*↑ **Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure** ―― The quantum efficiency η, system gain K, dark noise σ_d, saturation, SNR, dynamic range, DSNU and PRNU on a camera datasheet are numbers produced by the procedure of EMVA 1288 Release 4.0 Linear. This exhibit **synthesises a sensor from a physical model** (Poisson photons → electrons → dark noise and dark current → gain K → quantisation and saturation, with column, row and pixel DSNU and a PRNU pattern) and recovers the planted values with **the standard's estimators**, the new op family sensorchar (10 ops). Synthesis and estimation use different equations. Gates: recovery — from the photon transfer (eq. 50) of mean and temporal variance of image pairs at equal exposure (eqs. 16, 18) K to -0.66 %, from dark images σ_d to +0.13 % (eq. 53), from the response slope η to +0.67 % (eq. 52), dark current to +0.6 %, the column/row/pixel spatial variances (eq. 42) and DSNU +0.6 %, PRNU -0.1 % / identities — SNR(μ_p.min) = 1 (eqs. 26 and 21 are written independently) and the ideal sensor = √μ_p (eq. 23) to machine precision, slope 1 → 1/2 (eq. 22) / validity — below a dark variance of 0.24 DN² σ_d is not estimated (eqs. 53, 54), and for a flat sensor that is where the estimate really breaks / published values — on manufacturers' published EMVA 1288 data for 38 models the maximum SNR = √μ_e.sat (eq. 55) holds within 0.49 dB for all / linearity — the closed form of the linearity error (eqs. 58–63) matches an independent weighted least-squares fit to 3.9e-13 / defect pixels — the 9 planted ones are counted back. Found on the way: taking σ_d from the photon-transfer **intercept** is off by +53.5 % (the standard measures it directly from dark images). A DSNU pattern dithers the quantiser, so even at K = 0.10, which the standard calls unmeasurable, σ_d comes out within 0.7 % (flat: 29.8 %) — the standard's limit is conservative. Ledger entry no. 8 gives a DR of 68.9 dB from its 21.0 ke⁻ saturation and 7 e⁻ dark noise, but lists 74 dB — one of the two columns seems to come from other conditions (not checked; the ledger is left as is and the gate names it). The rest of the standard (added 2026-10-13): on the simulated camera described in section 5 of the standard (640 x 480, two 1.5 DN sinusoids in the DSNU, illumination falling 3 % towards the corners) the PRNU reads 0.831 % without the section 8.1 highpass filter (planted 0.5 %, +66 %) and 0.497 % with it (lower by the filter's white gain 0.9885); the DSNU drops from 21.25 to 18.83 e- because the 25-pixel sinusoid passes at 38 %, as the transfer function predicts; the section 8.6 spectrogram recovers the sinusoid amplitudes as 1.46 / 1.50 DN with equation 72; the factor 0.92 printed in equation 86 of appendix C.5 disagrees with the measured 0.960 (Parseval, 1 - 1/25). The equation 51 linearity check (mean relative deviation of the local slope < 3 %) needs pixels: a linear 128 x 160 sensor failed it once in six runs, a 512 x 640 one never. Honestly: a synthetic sensor, uniform illumination in sections 1-7, and the published values are rounded integers without K, so the DR check treats the quantisation noise as zero. How in-camera processing moves the numbers is the sequel poc_emva1288_in_camera_processing. 14 gates, about 4 s.*
+*↑ **Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure** ―― The lead figure places 640 x 480 dark, flat and saturated frames at native scale, exposing 1 DN row, 1.5 DN column and 4 DN pixel fixed pattern plus nine planted defective pixels.*
 
-[![SNR は暗い側で傾き 1(暗雑音が支配)、明るい側で傾き 1/2(光子雑音が支配)。SNR = 1 になる露光が絶対感度しきい値 μ_p.min = 6.8 光子。量子化雑音の分だけ μ_e.min = 4.20 e⁻ は暗雑音 3.4 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_snr_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_snr_curve.png)
+[![平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/02_temporal_spatial_defects.png)
 
-*↑ The measurement ―― SNR は暗い側で傾き 1(暗雑音が支配)、明るい側で傾き 1/2(光子雑音が支配)。SNR = 1 になる露光が絶対感度しきい値 μ_p.min = 6.8 光子。量子化雑音の分だけ μ_e.min = 4.20 e⁻ は暗雑音 3.4 e⁻ より大きい。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/03_validity_boundary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/03_validity_boundary.png)
+[![規格の模擬カメラ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/03_highpass_prnu_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/03_highpass_prnu.png)
 
-*↑ 暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。*
+*↑ 規格の模擬カメラ。*
 
-[![メーカーが公表した EMVA 1288 データ 38 型番の飽和容量・暗雑音・量子効率から式 (28) で DR を出し直す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/04_datasheet_dynamic_range_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/04_datasheet_dynamic_range.png)
-
-*↑ メーカーが公表した EMVA 1288 データ 38 型番の飽和容量・暗雑音・量子効率から式 (28) で DR を出し直す。*
-
-[![白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_spectrogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_spectrogram.png)
+[![白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/04_spectrogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/04_spectrogram.png)
 
 *↑ 白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。*
 
-[![Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_highpass_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_highpass_transfer.png)
+[![線形なセンサを乱数を変えて撮り、式 51(局所の傾きの相対偏差の平均)を出す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_eq51_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/06_eq51_pixels.png)
 
-*↑ Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。*
+*↑ 線形なセンサを乱数を変えて撮り、式 51(局所の傾きの相対偏差の平均)を出す。*
+
+[![暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/09_validity_boundary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/09_validity_boundary.png)
+
+*↑ 暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。*
+
+[![露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/07_photon_transfer.gif)
+
+*↑ The animation ―― 露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 % の点だけで当てる。*
 
 ```
 py -3.11 examples/poc_emva1288_sensor.py
@@ -752,7 +768,7 @@ py -3.11 examples/poc_emva1288_sensor.py
 
 Source: [examples/poc_emva1288_sensor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_emva1288_sensor.py)
 
-This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_emva1288_sensor)
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_emva1288_sensor)
 
 Ops used (notes): [`emva_dark_current`](https://furuse.work/ops/optics/sensorchar/emva_dark_current.html) · [`emva_defect_pixels`](https://furuse.work/ops/optics/sensorchar/emva_defect_pixels.html) · [`emva_dynamic_range`](https://furuse.work/ops/optics/sensorchar/emva_dynamic_range.html) · [`emva_exposure_for_snr`](https://furuse.work/ops/optics/sensorchar/emva_exposure_for_snr.html) · [`emva_highpass`](https://furuse.work/ops/optics/sensorchar/emva_highpass.html) · [`emva_linearity_error`](https://furuse.work/ops/optics/sensorchar/emva_linearity_error.html) · [`emva_pair_statistics`](https://furuse.work/ops/optics/sensorchar/emva_pair_statistics.html) · [`emva_photon_exposure`](https://furuse.work/ops/optics/sensorchar/emva_photon_exposure.html) · [`emva_photon_transfer`](https://furuse.work/ops/optics/sensorchar/emva_photon_transfer.html) · [`emva_ptc_linearity_check`](https://furuse.work/ops/optics/sensorchar/emva_ptc_linearity_check.html) · [`emva_quantum_efficiency`](https://furuse.work/ops/optics/sensorchar/emva_quantum_efficiency.html) · [`emva_sensitivity_threshold`](https://furuse.work/ops/optics/sensorchar/emva_sensitivity_threshold.html) · [`emva_snr_curve`](https://furuse.work/ops/optics/sensorchar/emva_snr_curve.html) · [`emva_spatial_nonuniformity`](https://furuse.work/ops/optics/sensorchar/emva_spatial_nonuniformity.html) · [`emva_spectrogram`](https://furuse.work/ops/optics/sensorchar/emva_spectrogram.html) · [`emva_total_snr`](https://furuse.work/ops/optics/sensorchar/emva_total_snr.html) · [`spectrogram`](https://furuse.work/ops/oned/signal/spectrogram.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
@@ -1410,25 +1426,25 @@ Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_ev
 
 *↑ **Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold** ―― The most common family in inspection research, learning the features of good samples and flagging patches that leave them, built with classical features (multi-resolution gradients, Gabor, rotation-invariant LBP, spectral bands, colour) instead of a deep network, with the variants compared on one yard-stick (pixel AUROC, AUPRO, image AUROC, F1 max). Eight new ops: patch_features, patchdist_fit / patchdist_score, patchbank_fit / patchbank_score, and the evaluation additions anomaly_pixel_f1_max, anomaly_image_f1_max and anomaly_operating_point. On a synthetic stochastic texture (smooth random fields with planted spots and thin scratches) the per-position normal distribution scores an AUPRO of 0.375 with 20 good images and loses to the pooled distribution (0.559) and a 10 % memory bank (0.603), in the same order at 5, 20 and 80 good images: it estimates 51 dimensions from few samples per position. Where n <= D makes the covariance singular the shrinkage is declared (intensity 0.374 at 5 good images, 0.067 at 80) and an undeclared one is refused. The existing variation model scores a pixel AUROC of 0.785 on the texture (the memory bank 0.881) and is refused on a weave whose phase differs every time. A logical anomaly, a vertical bar moved by 24 px, is missed by a memory that ignores position (anomaly score 0.9 times that of good images) and found when a position weight is added (3.9 times). Thinning the memory to 10 % keeps AUPRO at 0.638 against 0.684 and cuts the scoring CPU time from 12.55 s to 0.84 s. The operating point that guarantees recall 0.8 at confidence 0.9 keeps its promise in 0.957 of 300 repetitions of the calibrate-on-30-defects procedure, against 0.503 for simply taking the 80 % point of the calibration defects, at the price of more false alarms (0.369 against 0.211). On the public DAGM 2007 Class1 data (a stochastic texture, CC BY 4.0) the variation model scores a pixel AUROC of 0.436, below chance; a gradient-only memory bank reaches 0.768 (AUPRO 0.474) but its per-image AUROC is 0.53, and growing the feature to 51 dimensions drops it to 0.623. On VisA pcb1 (CC BY 4.0, 20 good images) the 10 % memory bank reaches pixel AUROC 0.990, AUPRO 0.875 and image AUROC 0.935 (the variation model: 0.808 and 0.678), and adding the position weight lowers it to 0.969 and 0.790; candle scores 0.895 and 0.734.*
 
-[![確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_pro_curves.png)
+[![記憶バンクの異常度閾値を下げると欠陥領域が現れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_anomaly_threshold_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/02_anomaly_threshold_sweep.gif)
 
-*↑ The measurement ―― 確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 記憶バンクの異常度閾値を下げると欠陥領域が現れる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![確率場の試験画像での AUPRO。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_sample_count_curve.png)
+[![確率場・良品 20 枚の PRO 曲線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_pro_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/03_pro_curves.png)
+
+*↑ 確率場・良品 20 枚の PRO 曲線。*
+
+[![確率場の試験画像での AUPRO。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_sample_count_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_sample_count_curve.png)
 
 *↑ 確率場の試験画像での AUPRO。*
 
-[![良品では縦の棒は左(x = 20)にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/04_logical_anomaly.png)
+[![良品では縦の棒は左(x = 20)にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_logical_anomaly_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_logical_anomaly.png)
 
 *↑ 良品では縦の棒は左(x = 20)にある。*
 
-[![欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/05_recall_guarantee.png)
+[![欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_recall_guarantee_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_recall_guarantee.png)
 
 *↑ 欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。*
-
-[![DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/06_dagm_maps.png)
-
-*↑ DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。*
 
 ```
 py -3.11 examples/poc_patch_anomaly.py
@@ -1436,7 +1452,7 @@ py -3.11 examples/poc_patch_anomaly.py
 
 Source: [examples/poc_patch_anomaly.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_patch_anomaly.py)
 
-This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_patch_anomaly)
+This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_patch_anomaly)
 
 Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_operating_point`](https://furuse.work/ops/spc/anomaly_eval/anomaly_operating_point.html) · [`anomaly_pixel_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_auroc.html) · [`anomaly_pixel_f1_max`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pixel_f1_max.html) · [`anomaly_pro`](https://furuse.work/ops/spc/anomaly_eval/anomaly_pro.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`gabor`](https://furuse.work/ops/2d/texture/gabor.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`patch_features`](https://furuse.work/ops/spc/anomaly_patch/patch_features.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`patchdist_fit`](https://furuse.work/ops/spc/anomaly_patch/patchdist_fit.html) · [`varmodel_fit`](https://furuse.work/ops/spc/variation/varmodel_fit.html) · [`varmodel_score`](https://furuse.work/ops/spc/variation/varmodel_score.html)
 
@@ -1490,19 +1506,27 @@ The recurring finding is that a number without its definition cannot be compared
 
 ## No.2026.120 —— Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself
 
-[![Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png)
+[![Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png)
 
 *↑ **Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself** ―― The real line has two stages: AOI images every unit from above, X-ray CT samples a few and images the inside. What the floor wants to know is how far the CT numbers follow from the AOI numbers — which is not a question about one instrument's accuracy but about whether two instruments' indices point at the same joint. A regular array does not match one-to-one on point positions alone: all 30 pads of a 6x5 grid have degenerate distance signatures (9 distinct ones), because the grid maps onto itself and the orientation cannot be read. Fiducials with three distinct side lengths (3600/5200/6325 um) pin rotation and reflection uniquely, and the correspondence is recovered exactly under translation, rotation and re-indexing. With that closed, AOI's apparent void fraction correlates 0.973 with CT volume fraction and the worst five agree 5/5 — yet of the 27 parts carrying an interface-touching void (the kind that shortens life), those five catch only 19 %. Agreeing on the ranking does not mean catching the dangerous ones. The failed first attempt (Kabsch alone) is kept.*
 
-[![直線は「面積率に比例する」という素朴な仮定。点はそこから両側へ離れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/02_area_vs_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/02_area_vs_volume.png)
+[![Matched crop of one joint: surface appearance and internal reconstructed void at the same coordinates.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/02_defect_traceability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/02_defect_traceability.png)
 
-*↑ The measurement ―― 直線は「面積率に比例する」という素朴な仮定。点はそこから両側へ離れる。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― Matched crop of one joint: surface appearance and internal reconstructed void at the same coordinates. (figure labels are in Japanese; the numbers are the same)*
 
-[![AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/03_interface_voids_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/03_interface_voids.png)
+[![AOI は全数・2-D、CT は抜き取り・3-D。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/03_aoi_and_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/03_aoi_and_ct.png)
+
+*↑ AOI は全数・2-D、CT は抜き取り・3-D。*
+
+[![直線は「面積率に比例する」という素朴な仮定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/04_area_vs_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/04_area_vs_volume.png)
+
+*↑ 直線は「面積率に比例する」という素朴な仮定。*
+
+[![AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/05_interface_voids_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/05_interface_voids.png)
 
 *↑ AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。*
 
-[![同じロットを同じ「悪い順」で並べても、順位は一致しない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/04_worst_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/04_worst_first.png)
+[![同じロットを同じ「悪い順」で並べても、順位は一致しない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/06_worst_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/06_worst_first.png)
 
 *↑ 同じロットを同じ「悪い順」で並べても、順位は一致しない。*
 
@@ -1512,9 +1536,9 @@ py -3.11 examples/poc_aoi_ct_traceability.py
 
 Source: [examples/poc_aoi_ct_traceability.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_aoi_ct_traceability.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_aoi_ct_traceability)
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_aoi_ct_traceability)
 
-Ops used (notes): [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html)
+Ops used (notes): [`filtered_backprojection`](https://furuse.work/ops/tomography/reconstruct/filtered_backprojection.html) · [`radon_transform`](https://furuse.work/ops/tomography/forward/radon_transform.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html)
 
 ## No.2026.091 —— As-built wall deviation — the bounding box measures the room's heading, not its size
 
@@ -1782,23 +1806,35 @@ Ops used (notes): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_
 
 ## No.2026.022 —— How Accurately a White-Light Interferometer Measures a Nanometre Step
 
-[![How Accurately a White-Light Interferometer Measures a Nanometre Step](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_interferogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_interferogram.png)
+[![How Accurately a White-Light Interferometer Measures a Nanometre Step](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 
 *↑ **How Accurately a White-Light Interferometer Measures a Nanometre Step** ―― A synthesised coherence-scanning stack with steps of 50 to 500 nm measured back. At 1 % noise the bias stays within 2.4 nm and the standard deviation within 14.1 nm, almost independent of step height. The null (envelope's maximum sample) errs by exactly half the scan step, and at 0.14 µm, just inside the Nyquist ceiling of 0.15 µm, the noise-free error is already +14.1 nm.*
 
-[![0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_zstep_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_zstep_sweep.png)
+[![Truth, recovered height, error and low-modulation dropout map; pseudo-colour bars carry units.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_surface_height_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_surface_height.png)
 
-*↑ The measurement ―― 0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― Truth, recovered height, error and low-modulation dropout map; pseudo-colour bars carry units. (figure labels are in Japanese; the numbers are the same)*
 
-[![centroid は散らばりが gaussian の 1/3〜1/5 なのに総合誤差では上に来る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/03_noise_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/03_noise_sweep.png)
+[![包絡線の中心が段差ぶんずれる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/04_interferogram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/04_interferogram.png)
+
+*↑ 包絡線の中心が段差ぶんずれる。*
+
+[![0.02〜0.12 µm は 0.05 nm 以内で平ら。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/05_zstep_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/05_zstep_sweep.png)
+
+*↑ 0.02〜0.12 µm は 0.05 nm 以内で平ら。*
+
+[![centroid は散らばりが gaussian の 1/3〜1/5 なのに総合誤差では上に来る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/06_noise_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/06_noise_sweep.png)
 
 *↑ centroid は散らばりが gaussian の 1/3〜1/5 なのに総合誤差では上に来る。*
 
-[![4 種の段差でゲインが揃う = オフセットではなく倍率の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/04_centroid_gain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/04_centroid_gain.png)
+[![4 種の段差でゲインが揃う = オフセットではなく倍率の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/07_centroid_gain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/07_centroid_gain.png)
 
 *↑ 4 種の段差でゲインが揃う = オフセットではなく倍率の誤差。*
 
-[![動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/05_step_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/05_step_sweep.gif)
+[![48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/03_surface_z_scan.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/03_surface_z_scan.gif)
+
+*↑ The animation ―― 48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.*
+
+[![動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/08_step_sweep.gif)
 
 *↑ The animation ―― 動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、誤差は最大 8.5e-11 nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は段差 0.153 µm(λ/4 = 0.150 µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。*
 
@@ -1808,9 +1844,9 @@ py -3.11 examples/poc_interferometry_step.py
 
 Source: [examples/poc_interferometry_step.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interferometry_step.py)
 
-This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_interferometry_step)
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_interferometry_step)
 
-Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`csi_design`](https://furuse.work/ops/interferometry/design/csi_design.html) · [`csi_height_map`](https://furuse.work/ops/interferometry/surface/csi_height_map.html) · [`csi_stack_simulate`](https://furuse.work/ops/interferometry/simulate/csi_stack_simulate.html) · [`decode_fringe`](https://furuse.work/ops/3d/structured_light/decode_fringe.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`synthesize_fringes`](https://furuse.work/ops/3d/structured_light/synthesize_fringes.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`csi_contrast_map`](https://furuse.work/ops/interferometry/surface/csi_contrast_map.html) · [`csi_design`](https://furuse.work/ops/interferometry/design/csi_design.html) · [`csi_height_map`](https://furuse.work/ops/interferometry/surface/csi_height_map.html) · [`csi_stack_simulate`](https://furuse.work/ops/interferometry/simulate/csi_stack_simulate.html) · [`decode_fringe`](https://furuse.work/ops/3d/structured_light/decode_fringe.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`synthesize_fringes`](https://furuse.work/ops/3d/structured_light/synthesize_fringes.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.073 —— Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs
 
@@ -2906,13 +2942,25 @@ Ops used (notes): [`crt_displacement`](https://furuse.work/ops/residue/image/crt
 
 ## No.2026.225 —— How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows
 
-[![How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_edge_inflation.png)
+[![How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias.png)
 
-*↑ **How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows** ―― In SEM images secondary electrons are emitted more on slopes (yield proportional to sec theta), so step edges are rimmed bright and the finite beam (PSF) widens that rim. The new op `sem_render` builds this image with closed-form ground truth: flat surfaces render uniform, a uniform slope is exactly sec theta brighter (error 0e+00), and the bright-edge width equals the PSF width. On synthetic data (exact true area), threshold to connected components to features shows the shape agrees (median Dice 0.885) while the area is systematically inflated (ratio 1.09 to 1.70). The inflation follows the closed form area excess roughly perimeter times effective edge width (effective width over PSF median 1.01), and subtracting the known beam PSF width removes the bias (0.261 to 0.008). A textbook case where pass and fail cannot be folded into one number: count shape agreement and dimensional bias separately. Scored on public wafer-defect data (Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427; 6 classes with expert masks, 4591 images, class 5 has 4), the stage-0 mask-convention check finds the gradient peak sits inside the mask boundary (cm about -1.3 px: the expert masks include the bright edge), with per-class median Dice 0.51 / 0.70 / 0.79. The real defects are dark pits, opposite in polarity to the synthetic bright mounds, which the run prints honestly. An embedded-defect POD yields a90/95. The real-data stage runs only when the environment variable is set; no data is bundled in the repo.*
+*↑ **How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows** ―― The lead figure puts two electron-image contrasts side by side and overlays truth, detections and edge bias. Ten times the dose gives 3.16x SNR; edge-area bias grows toward small defects.*
 
-[![面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_area_bias_vs_size.png)
+[![0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/02_sem_edge_rim_zoom.png)
 
-*↑ The measurement ―― 面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を引くと、どの大きさでも 1.0 に戻る。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。 (figure labels are in Japanese; the numbers are the same)*
+
+[![低照射量ほど粒状のショット雑音が増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/03_sem_dose_series_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/03_sem_dose_series.png)
+
+*↑ 低照射量ほど粒状のショット雑音が増える。*
+
+[![合成 SEM 像(半径 22 px の円錐欠陥、PSF σ=3)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/04_sem_edge_inflation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/04_sem_edge_inflation.png)
+
+*↑ 合成 SEM 像(半径 22 px の円錐欠陥、PSF σ=3)。*
+
+[![面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/05_sem_area_bias_vs_size_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/05_sem_area_bias_vs_size.png)
+
+*↑ 面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。*
 
 ```
 py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
@@ -2920,9 +2968,9 @@ py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
 
 Source: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
 
-This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
 
-Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
+Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_image`](https://furuse.work/ops/generative/sem/sem_image.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
 
 ## No.2026.232 —— Moiré Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase
 
@@ -3374,13 +3422,17 @@ Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/
 
 *↑ 周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。*
 
+[![周期加熱のコマを順に加えると、深さごとの位相像が収束する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/05_thermal_phase_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/05_thermal_phase_convergence.gif)
+
+*↑ The animation ―― 周期加熱のコマを順に加えると、深さごとの位相像が収束する。*
+
 ```
 py -3.11 examples/poc_lockin_imaging.py
 ```
 
 Source: [examples/poc_lockin_imaging.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lockin_imaging.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
 
 Ops used (notes): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
 
@@ -4450,17 +4502,17 @@ Ops used (notes): [`access_channel`](https://furuse.work/ops/2d/color/access_cha
 
 *↑ U(v) = 1.75·(5.7 + 3.8v + h_rad)。*
 
-[![半径 30 mm の熱源。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/03_gsd_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/03_gsd_sweep.png)
-
-*↑ 半径 30 mm の熱源。*
-
 [![ε(θ) は Fresnel(等価屈折率 1.8)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/04_angle_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/04_angle_sweep.png)
 
 *↑ ε(θ) は Fresnel(等価屈折率 1.8)。*
 
-[![風速 1.0 m/s、モジュールごとの中央値を基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/05_netd_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/05_netd_sweep.png)
+[![上段の塊はすべて偽か非故障の温度差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/07_false_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/07_false_map.png)
 
-*↑ 風速 1.0 m/s、モジュールごとの中央値を基準。*
+*↑ 上段の塊はすべて偽か非故障の温度差。*
+
+[![Module-level correction preserves the detection chapters and their thresholds.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/09_orthorectified_detection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/09_orthorectified_detection.png)
+
+*↑ Module-level correction preserves the detection chapters and their thresholds.*
 
 ```
 py -3.11 examples/poc_pv_thermal_survey.py
@@ -4468,9 +4520,9 @@ py -3.11 examples/poc_pv_thermal_survey.py
 
 Source: [examples/poc_pv_thermal_survey.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pv_thermal_survey.py)
 
-This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pv_thermal_survey)
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pv_thermal_survey)
 
-Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/glassbody/beer_lambert_transmittance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`overlay_mask`](https://furuse.work/ops/annotate/overlay/overlay_mask.html) · [`surface_form_remove`](https://furuse.work/ops/roughness/prepare/surface_form_remove.html) · [`volume_downsample`](https://furuse.work/ops/3d/preprocess/volume_downsample.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html) · [`zoom_image_factor`](https://furuse.work/ops/2d/geometry/zoom_image_factor.html)
+Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/glassbody/beer_lambert_transmittance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`overlay_mask`](https://furuse.work/ops/annotate/overlay/overlay_mask.html) · [`surface_form_remove`](https://furuse.work/ops/roughness/prepare/surface_form_remove.html) · [`volume_downsample`](https://furuse.work/ops/3d/preprocess/volume_downsample.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html) · [`zoom_image_factor`](https://furuse.work/ops/2d/geometry/zoom_image_factor.html)
 
 ## No.2026.106 —— Planting Known Stars in a Real Deep Field — Contamination Lies About the Measurement and the Confidence in the Same Direction
 

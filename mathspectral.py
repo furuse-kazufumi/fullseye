@@ -117,6 +117,12 @@ def n_sources_mdl(X) -> dict:
 
 
 def _cov_subspace(X, n_sources):
+    """Return one covariance eigendecomposition and the selected source count.
+
+    The automatic and explicit-count paths share this decomposition. Eigenvectors
+    are not bit-identical across linear-algebra implementations; equivalent signal
+    subspaces may differ by a principal angle of up to ``1e-7`` radians.
+    """
     X = np.asarray(X)
     if X.ndim != 2 or X.shape[0] < 2:
         raise ValueError("到来方向推定: スナップショットは (素子数 M >= 2, K) の 2-D")
