@@ -4,7 +4,7 @@ dim: annotate
 category: furniture
 in: image2d × lut
 out: image2d
-examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_lidar_terrain_change, poc_multibeam_bathymetry, poc_simcal_thin_film, poc_stockpile_volume]
+examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_interferometry_step, poc_lidar_terrain_change, poc_lightfield_depth, poc_multibeam_bathymetry, poc_pv_thermal_survey, poc_simcal_thin_film, poc_stockpile_volume, poc_thermography_ndt]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -59,10 +59,14 @@ ValueError
 - [poc_cad_scan_deviation](../../../../examples/poc_cad_scan_deviation.py) — `py -3.11 examples/poc_cad_scan_deviation.py`
 - [poc_ct_void_morphology](../../../../examples/poc_ct_void_morphology.py) — `py -3.11 examples/poc_ct_void_morphology.py`
 - [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
+- [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 - [poc_lidar_terrain_change](../../../../examples/poc_lidar_terrain_change.py) — `py -3.11 examples/poc_lidar_terrain_change.py`
+- [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 - [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
+- [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 - [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
+- [poc_thermography_ndt](../../../../examples/poc_thermography_ndt.py) — `py -3.11 examples/poc_thermography_ndt.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -736,10 +736,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_interferometry_step.py`
 
-- **L278** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
-- **L321** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
-- **L393** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
-- **L433** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
+- **L401** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
+- **L444** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
+- **L516** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
+- **L556** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
 
 ## `examples/poc_interreflection_fringe_error.py`
 
@@ -783,9 +783,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** — 2b. ★ Lücke (d): der docstring sagt 0-d, tatsächlich ist es (1,)
-- **L610** — 6. ★ Lücke (a): das voreingestellte linear zieht 1.15 in Richtung 1.0, cubic nicht
-- **L634** — 10. ★ Lücke (e) wurde am 2026-09-06 geschlossen. Sie wurde auf die Seite umgeschrieben, die **den geschlossenen Zustand festhält** (zuvor wurde per assert geprüft, dass 'eine Warnung ausgegeben wird').
+- **L707** — 2b. ★ Lücke (d): der docstring sagt 0-d, tatsächlich ist es (1,)
+- **L723** — 6. ★ Lücke (a): das voreingestellte linear zieht 1.15 in Richtung 1.0, cubic nicht
+- **L747** — 10. ★ Lücke (e) wurde am 2026-09-06 geschlossen. Sie wurde auf die Seite umgeschrieben, die **den geschlossenen Zustand festhält** (zuvor wurde per assert geprüft, dass 'eine Warnung ausgegeben wird').
 
 ## `examples/poc_livestock_body_volume.py`
 
@@ -966,9 +966,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_pv_thermal_survey.py`
 
 - **L381** — ★MOD_SHELTER ist ein Modul, das **intakt ist, aber keinem Wind ausgesetzt** wird. In Abschnitt 3 verwandelt es sich unter dem Gesamtmittel-Kriterium in einen "Defekt".
-- **L482** — ★Die Modulnummer **pro Nummer über den Flächenanteil** bestimmen. Rundet man den Mittelwert der Nummern, werden Randpixel zu einer Nachbarnummer (oder 0) und die modulweise Verarbeitung bricht.
-- **L711** — ★Der Preis des Modulmedians —— blind für eine Anomalie eines ganzen Moduls
-- **L1169** — ★``apply_cmap`` normiert nach **min/max dieses Arrays**, wenn vmin/vmax nicht übergeben werden (wodurch sich die Bedeutung der Farbe je Bedingung ändert), also stets übergeben.
+- **L583** — ★Die Modulnummer **pro Nummer über den Flächenanteil** bestimmen. Rundet man den Mittelwert der Nummern, werden Randpixel zu einer Nachbarnummer (oder 0) und die modulweise Verarbeitung bricht.
+- **L812** — ★Der Preis des Modulmedians —— blind für eine Anomalie eines ganzen Moduls
+- **L1270** — ★``apply_cmap`` normiert nach **min/max dieses Arrays**, wenn vmin/vmax nicht übergeben werden (wodurch sich die Bedeutung der Farbe je Bedingung ändert), also stets übergeben.
 
 ## `examples/poc_pxrd_phase_peel.py`
 
@@ -1182,21 +1182,21 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L61** — ★Die Beobachtungszeit **lang genug — über das t\* (6.8 s) des gesunden Bereichs hinaus** wählen. Zu kurz, und das Knie des gesunden Bereichs rutscht aus dem Fenster, und TSR beantwortet den gesunden Bereich als "Tiefe am Fensterrand" (in der Messung blieb es bei 2.82 mm kleben).
 - **L126** — ★Nur diese Stelle ist eine Näherung. Da die 1-D-Lösung keine laterale Diffusion enthält, verschmieren wir zu jedem Zeitpunkt in der Ebene mit einer Gauß-Funktion der Diffusionslänge σ(t)=√(2αt). Das physikalische Skalierungsgesetz ist korrekt, aber die Massenerhaltung am Rand wird nicht erfüllt.
-- **L142** — Der Bereich, in dem TSR nach t* sucht. ★Das Ausschließen der Ränder ist keine Zierde —— die 2. Ableitung eines Polynoms hoher Ordnung explodiert an den Rändern zwangsläufig (Runge). Ohne dies klebt das argmax am ersten oder letzten Frame, und die Tiefe klebt an den 2 Werten an den Fensterrändern (gemessen, 2026-09-06). Wir haben die Grade 4–11 durchlaufen und uns für 8 entschieden (bei 4–5 kleben Tiefen jenseits von 1.5 mm an den Rändern; ab 8 dieselbe Antwort wie 9/11).
-- **L177** — ★Das Runden von t* auf die Gitterschrittweite quantisiert die Tiefe treppenförmig (bei 64 Punkten 5 %-Schritte). Wir passen eine Parabel an 3 Punkte an, um die Sub-Gitter-Position von ln t zu ermitteln.
-- **L235** — ★Den Befund festhalten. Dies ist eine **Nahe-Null-Kontrollrechnung**, bricht sie zusammen, ist die Implementierung kaputt.
-- **L249** — ★Der Bias des Schätzers selbst. **Ganz ohne ein Bild zu durchlaufen** wenden wir `tsr_depth` auf eine exakte 1-D-Kurve an. Der hier auftretende Fehler ist der "Boden der Polynomanpassung", und nur was nach dessen Abzug von den Abweichungen ab Abschnitt 3 übrig bleibt, ist der Beitrag von Querdiffusion und Rauschen.
-- **L267** — ★Den Befund festhalten: der Boden ist **nicht null, aber klein**. Wir grenzen ihn beidseitig ein —— würde er null, hielte die Umdeutung in Abschnitt 3 ("selbst eine Kurve, die kein Bild durchläuft, weicht um einige % ab"; ±5 % entspricht etwa dem Boden) nicht mehr, und würde er groß, könnten wir die Abweichungen ab Abschnitt 3 nicht mehr der Querdiffusion zuschreiben.
-- **L302** — ★Den Befund festhalten. Dass diese 2 Zeilen gleichzeitig gelten, ist genau die Aussage dieses Abschnitts. (1) Fasst man die 16 zu einem einzigen Mittelwert zusammen, unterliegt TSR der Null-Basislinie, die "immer 1.50 mm antwortet".
-- **L332** — ★Den Befund festhalten. (1) Das untere rechte Dreieck, wo der Durchmesser mindestens das 4-fache der Tiefe beträgt, wird auf wenige % genau getroffen (etwa gleich dem Boden aus Abschnitt 1).
-- **L363** — ★Kontrollgruppe: dieselbe Szene mit **abgeschalteter Querdiffusion**. Damit lässt sich "Schuld der Querdiffusion" von "Schuld zu weniger Pixel / einer nicht extrahierbaren Maske" trennen. Nur eine Seite zu betrachten und die Physik zu beschuldigen ist der häufigste Fehler bei dieser Art von Experiment.
-- **L410** — ★Den Befund der Kontrollgruppe festhalten: **mit abgeschalteter Querdiffusion fallen alle 16 innerhalb ±8 %**. Diese eine Zeile ist der Beleg dafür, dass "die einzige Ursache des Versagens die Querdiffusion ist, weder die Pixelgrobheit noch die Art der Maskengewinnung". Lockert man sie, kehrt die Schlussfolgerung von Abschnitt 3 zur Fehldeutung zurück, dass 'eine höhere Auflösung es behebt'.
-- **L420** — ★Wenn die obige Überlegung (die Diffusionslänge am Ende des Fensters wirkt) korrekt ist, dann **behebt das Abschneiden des Fensters es**. Wenn du eine Hypothese aufstellst, platziere stets ein Experiment, das sie widerlegen könnte. ------------------------------------------------------------------ #
-- **L441** — ★Den schwersten Befund dieses PoC festhalten —— die "Seitenverhältnis-Grenze" war keine Physik, sondern **die Wahl des Anpassungs-Zeitfensters**. (1) Mit einem 4-Sekunden-Fenster fallen alle 8 kleinen innerhalb ±20 % (gemessener schlimmster Fall -14 %).
-- **L529** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
-- **L576** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
-- **L603** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
-- **L684** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
+- **L236** — Der Bereich, in dem TSR nach t* sucht. ★Das Ausschließen der Ränder ist keine Zierde —— die 2. Ableitung eines Polynoms hoher Ordnung explodiert an den Rändern zwangsläufig (Runge). Ohne dies klebt das argmax am ersten oder letzten Frame, und die Tiefe klebt an den 2 Werten an den Fensterrändern (gemessen, 2026-09-06). Wir haben die Grade 4–11 durchlaufen und uns für 8 entschieden (bei 4–5 kleben Tiefen jenseits von 1.5 mm an den Rändern; ab 8 dieselbe Antwort wie 9/11).
+- **L271** — ★Das Runden von t* auf die Gitterschrittweite quantisiert die Tiefe treppenförmig (bei 64 Punkten 5 %-Schritte). Wir passen eine Parabel an 3 Punkte an, um die Sub-Gitter-Position von ln t zu ermitteln.
+- **L329** — ★Den Befund festhalten. Dies ist eine **Nahe-Null-Kontrollrechnung**, bricht sie zusammen, ist die Implementierung kaputt.
+- **L343** — ★Der Bias des Schätzers selbst. **Ganz ohne ein Bild zu durchlaufen** wenden wir `tsr_depth` auf eine exakte 1-D-Kurve an. Der hier auftretende Fehler ist der "Boden der Polynomanpassung", und nur was nach dessen Abzug von den Abweichungen ab Abschnitt 3 übrig bleibt, ist der Beitrag von Querdiffusion und Rauschen.
+- **L361** — ★Den Befund festhalten: der Boden ist **nicht null, aber klein**. Wir grenzen ihn beidseitig ein —— würde er null, hielte die Umdeutung in Abschnitt 3 ("selbst eine Kurve, die kein Bild durchläuft, weicht um einige % ab"; ±5 % entspricht etwa dem Boden) nicht mehr, und würde er groß, könnten wir die Abweichungen ab Abschnitt 3 nicht mehr der Querdiffusion zuschreiben.
+- **L396** — ★Den Befund festhalten. Dass diese 2 Zeilen gleichzeitig gelten, ist genau die Aussage dieses Abschnitts. (1) Fasst man die 16 zu einem einzigen Mittelwert zusammen, unterliegt TSR der Null-Basislinie, die "immer 1.50 mm antwortet".
+- **L426** — ★Den Befund festhalten. (1) Das untere rechte Dreieck, wo der Durchmesser mindestens das 4-fache der Tiefe beträgt, wird auf wenige % genau getroffen (etwa gleich dem Boden aus Abschnitt 1).
+- **L457** — ★Kontrollgruppe: dieselbe Szene mit **abgeschalteter Querdiffusion**. Damit lässt sich "Schuld der Querdiffusion" von "Schuld zu weniger Pixel / einer nicht extrahierbaren Maske" trennen. Nur eine Seite zu betrachten und die Physik zu beschuldigen ist der häufigste Fehler bei dieser Art von Experiment.
+- **L504** — ★Den Befund der Kontrollgruppe festhalten: **mit abgeschalteter Querdiffusion fallen alle 16 innerhalb ±8 %**. Diese eine Zeile ist der Beleg dafür, dass "die einzige Ursache des Versagens die Querdiffusion ist, weder die Pixelgrobheit noch die Art der Maskengewinnung". Lockert man sie, kehrt die Schlussfolgerung von Abschnitt 3 zur Fehldeutung zurück, dass 'eine höhere Auflösung es behebt'.
+- **L514** — ★Wenn die obige Überlegung (die Diffusionslänge am Ende des Fensters wirkt) korrekt ist, dann **behebt das Abschneiden des Fensters es**. Wenn du eine Hypothese aufstellst, platziere stets ein Experiment, das sie widerlegen könnte. ------------------------------------------------------------------ #
+- **L535** — ★Den schwersten Befund dieses PoC festhalten —— die "Seitenverhältnis-Grenze" war keine Physik, sondern **die Wahl des Anpassungs-Zeitfensters**. (1) Mit einem 4-Sekunden-Fenster fallen alle 8 kleinen innerhalb ±20 % (gemessener schlimmster Fall -14 %).
+- **L623** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
+- **L670** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
+- **L697** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
+- **L778** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
