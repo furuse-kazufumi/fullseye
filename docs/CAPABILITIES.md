@@ -1183,7 +1183,7 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 
 代替: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
 
-限界: 合成結果を返す op は単独結果より保持量が増える。stream と low_memory はピークメモリを抑えるが、入力自体はメモリ上に必要。
+限界: 合成結果を返す op は単独結果より保持量が増える。stream と low_memory は一時配列を抑えるが入力と出力はメモリ上に必要で、速度・ピーク値は入力形状と実行環境に依存する。
 
 実寸校正: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
 
