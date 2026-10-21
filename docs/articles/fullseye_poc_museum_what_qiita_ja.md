@@ -4246,7 +4246,7 @@ py -3.11 examples/poc_allsky_cloud_cover.py
 
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_allsky_cloud_cover)
 
-使用 op(ノートへ): [`polar_trans_image`](https://furuse.work/ops/2d/geometry/polar_trans_image.html)
+使用 op(ノートへ): [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/omni360/equirect_from_fisheye_pair.html) · [`polar_trans_image`](https://furuse.work/ops/2d/geometry/polar_trans_image.html)
 
 ## No.2026.002 —— 何枚重ねると、星の明るさは何 % の精度で測れるか
 

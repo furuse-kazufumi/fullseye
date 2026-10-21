@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(418 例)
+### 2-D 画像/信号/幾何(426 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -77,6 +77,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **仮想の透過電子顕微鏡 ―― 焦点を振ると Thon リングが動き、細部が反転し、実写の写真から焦点外れを当てる** — 透過電子顕微鏡は薄い試料を透けた電子の位相を、球面収差 Cs と焦点外れ Δf で強度に変える。その変え方 CTF = −sin(χ + arcsin w) は周波数ごとに符号が入れ替わり、パワースペクトルに零点の同心円(Thon リング)を描く。新 op 11 本(`temsim`、`opsoptics` の `tem`): `tem_wavelength` / `tem_scherzer` / `tem_ctf` / `tem_ctf_profile` / `tem_projected_potential` / `tem_amorphous_film` / `tem_image_weak_phase` / `tem_multislice` / `tem_power_spectrum` / `tem_ctf_estimate` / `tem_ctf_correct`。結像は `coherent_image` に瞳 e^{iχ} を渡し、電子の散乱因子は `pxrd` の X 線の因子から Mott–Bethe で作り、リングの周期の初期値は k² について不等間隔の標本に `lomb_scargle`、フレームの位置合わせは `phase_correlation_fft`(どれも既存の op)。波長は公表値と 5 桁(300 kV で 1.9687 pm、補正なしは 13.7 % 長い)、零点は閉形式と 1.7e-12 Å⁻¹、Scherzer 焦点の最初の零点は 0.6580 Cs^¼ λ^¾、正弦位相格子の回折は J_n(φ₀)² と 1.6e-13。Si の平均内部ポテンシャルは中性原子の値 13.71 V に対して 13.83 V(実測 12.48 V より高いのは結合の分)。★Cu の f_e(0) は 10.5 % 小さい(X 線の当てはめの限界)。像が投影ポテンシャルに最もよく似る焦点は 900 Å で Scherzer 842 Å の 7 % 以内、正焦点では細部が反転する(相関 −0.30)。合成の写真 4 枚で Δf を 13 Å 以内、非点収差を 50 Å・5.2° 以内で回収し、jackknife の σ が誤差を覆う。雑音だけ・線量不足・正焦点の近く・タイルが 9 枚しかなく別の谷に落ちた当てはめ、の 4 例はすべて拒否。画素寸法を 2 % 間違えると Δf は 1.039 倍(閉形式 1.0404)。ドリフトした 10 枚は和にするとリングが消え(当てはまりの分解能 15.6 Å)、合わせると戻る(5.3 Å)。位相反転で投影ポテンシャルとの相関は 0.09 → 0.84、ウィーナーで 0.87、Δf を 10 % 間違えると 0.10。★実写(EMPIAR-10028、CC0)3 枚で、著者の CTFFIND3 の値と −55 / +65 / −0.5 Å(0.2 % 以内)。学習 0、較正 0、門 36 件。 `py -3.11 examples/poc_tem_ctf_thon_rings.py`
 - **SEM の明るい縁が寸法をどれだけ太らせるか(公開ウェハ欠陥データで採点)** — SEM 像では二次電子が斜面でよけいに出る(放出 ∝ sec θ)ので段差の縁が明るく縁取られ、その明るい縁ごとしきい値を超えて拾うと寸法・面積が系統的に太る。この太りを**真値つき**で切り分ける多段 PoC。新 op `sem_render`(二次電子の縁効果 sec θ + ビーム PSF + ポアソン雑音 + 帯電)は 3 本の閉形式の門をもつ: 平面で一様 / 斜面で平面比 = sec θ(誤差 0e+00)/ 段差の明るい縁の幅 = PSF 幅。★★合成(真値の面積が厳密)では **Dice は高い(中央 0.885 = 形はよく合う)のに面積は系統的に太り(比 1.09〜1.70)**、太りは閉形式 **ΔA ≈ 周囲長 × 有効縁幅**(有効縁幅/PSF の中央 1.01)でよく説明できる。★既知のビーム PSF 幅で面積を引くと偏りは 0.261 → 0.008 に消える(物理による補正)。埋め込み POD(`pod_hitmiss_fit`)で a90/95 が出る。★実データ(Carinthia-S, CC BY 4.0, DOI 10.5281/zenodo.16895427)で採点すると: 段 0 のマスク規約検査で勾配の峰はマスク境界の cm = -1.3 px(**専門家マスクは明るい縁まで含む**)、クラス別 Dice 中央は 0.51 / 0.70 / 0.79(クラス 3/4/5、クラス 5 は全 4 枚)、面積比 1.70 / 1.22 / 1.42。★実データの欠陥は背景より 0.13 暗い穴で、合成の明るい塊と**極性が逆**であることも正直に印字する。実データ段は環境変数 FULLSEYE_CARINTHIA_DATA があるときだけ走り、無ければ合成のみ(CI は合成のみ、図なし既定で 60 秒未満)。 `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
 - **仮想 SEM: 加速電圧で像も測れる線幅も変わる(電子と固体のモンテカルロ、実測値で採点)** — SEM の像は表面の写真ではなく、固体の中で散乱する一次電子の相互作用の体積から何が出てきたかの集計。一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱 + Browning 1994 の Mott 近似 + Joy-Luo の阻止能)の新 op 8 本と材料表の `material_electron_properties` で、各段を外の実測値で採点する多段 PoC。★η(Z, E) は 7 元素 × 5〜30 keV が Joy のデータベースの実測の幅 ± 0.04 に入る(遮蔽ラザフォードは W・Au で外れる)。到達深さは Kanaya-Okayama の 0.83〜1.04 倍。SE の形は C〜Ag で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076(W・Au は裾が厚く未解決)。★★Si の上の W: 段差の無い W を 1 kV で見ると SE +5 % / 反射電子 +96 %(SE では消える)。5 kV では SE も +80 %(SE2 が Z を運ぶ)。深さ 150 nm の W は 20 kV でないと見えない。★CD-SEM: 側壁 88 度の線は 1 kV 39.1 nm / 20 kV 39.9 nm(低加速は側壁の上寄りを測る)。側壁 80 度では差が小さく向きも逆。★帯電: 0.5 kV は正に溜まって暗くなり η + δ·F(V*) = 1 の電位で止まる(二分法と 2e-15 V)、20 kV は負に溜まって明るくなる。途中で材料の境界を素通りする欠陥を見つけて直した(0.01 nm のキャップで η が 0.425 → 0.329 に跳んでいた)。実画像の章は未実施。CI は縮小(図なしで CPU 約 30 秒)。 `py -3.11 examples/poc_virtual_sem_kv_cd_bse.py`
+- **同じ粒子を走査像と透過像で測り、二つの寸法偏りを共通真値で比べる** — 20〜80 nmの球・六角ファセット粒子14個を同じ台帳から描き、面積相当径・最大傾斜・接触対の分水嶺・立体計測を比較する。52 nm粒子は走査像のしきい値で+4.16 nm、透過像は正焦点で-0.18 nm、焦点外れ12000 nmで+9.82 nm。走査像の偏りはガウス縁の閉形式、透過像の縁はsqrt(lambda defocus)、高さは±5°の視差、限定角再構成は完全角の第2実装で採点する。 `py -3.11 examples/poc_sem_tem_same_particle.py`
 - **結晶粒度 G(面積法と切片法は別の崖で落ちる)** — Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。 `py -3.11 examples/poc_metal_grain_size.py`
 - **ねじのピッチ・フランク角・有効径(傾きは左右フランクに逆符号)** — ★列幅の FFT はピッチを**半分**と答える(単条ねじの上下輪郭は P/2 ずれる)。★★軸の傾き 3 度で左右フランク角は 33.18 / 26.74 度 ―― 半和が真のフランク角、半差が傾き。片側フランクのピッチは 1 次で ±3 % 狂い、頂点間隔は 2 次(-0.12 %)。★ぼけ σ=4 px で壊れるのは d2(-0.06 %)でなく α(-0.57 度)。★標本化の崖は α(8 px/山)→ d2(4 px/山)→ FFT の P(2 px/山 まで当たり、1.5 px/山 は 3.0 px に折り返す)の順。 `py -3.11 examples/poc_screw_thread_metrology.py`
 - **骨梁の厚さ Tb.Th・間隔 Tb.Sp・骨体積率(平板モデル vs 直接法)** — ★真値が複数ある: 幅の長さ加重平均 104.8 µm、面積加重 113.9、最大内接円の定義 121.6、平板モデル 118.4 µm ―― どれと比べるかで 9〜16 % 動く。★★解像度の崖は平均でなく分布に来る(60 µm 画素で重なり 0.83 → 0.09。平均は量子化 -29.5 % と大津の太り +26.6 % が打ち消す)。★★雑音は斑点(σ 0.10 から)と途切れ(σ 0.15 から)で Tb.Sp を逆向きに引き、opening r=1 は細い骨梁ごと切る(途切れ 5 → 16 本)が面積オープニングは斑点だけ消す。★カップ状バイアス β=0.6 は全体の BV/TV -0.9 % なのに中心/縁の Tb.Th が 83/112 µm ―― 場所で壊れる。log 域のまま大津を取ると +18.9 % 太る。 `py -3.11 examples/poc_bone_trabecular_thickness.py`
@@ -455,8 +456,15 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点** — 画素ごとの直交復調(ロックイン)を画像列に対する汎用の op にして、時間相関イメージセンサの 3 つの使い方を同じ関数の変種で示す。新 op 9 本(`lockin`、`opsoptics` の `lockin`): `lockin_demodulate`(振幅・位相・直流・同相・直交と窓の漏れの表)/ `lockin_amplitude` / `lockin_phase` / `lockin_noise_floor`(SN 比から振幅・位相の雑音を閉形式で)/ `lockin_walsh_codes` / `lockin_separate`(符号化した灯を最小二乗で分離)/ `lockin_ring_synthesize` / `lockin_ring_normals`(多重極変調リングの基本波応答から法線)/ `lockin_thermal_wave`(周期加熱した板の表面温度の厳密解)。振幅 2.5・位相 0.7 rad・直流 1.5 の正弦は 6.6e-15 以内で返り、参照の周波数をずらすと振幅は sinc で落ちる(Δf·T = 0.6033 で 0.4977、1.0 で 0)。周期が整数でない長さは矩形窓では拒否し、hann を宣言すると漏れ(3.75 周期で振幅誤差 0.0156、宣言した上限 0.0157)を表で返す。白色雑音の下の位相の標準偏差は、成分の SN 比 45・11・1.7 で実測 0.0220・0.0888・0.7244 rad、Rice の位相分布の閉形式 0.0221・0.0887・0.7306 と 0.9 % 以内(小雑音近似は SN 比 1.7 で 19 % 外れる)。(a) 8 灯の輪の光の位相を方位角と一緒に 1 周させると、基本波の応答から反射率が消えて法線が出る: 反射率の縞のある面(傾き最大 28.8°)で角度誤差 1.0e-13°、真の傾きとの相関は平均の像 −0.035 に対してリングの法線 1.000000。四重極は朗伯面で 0(3.5e-16)。雑音 σ = 0.004 の勾配の誤差は予測 0.0069 と実測 0.0069(法線の角度 RMS 0.56°)。影の限界を超える斜面は法線を作らず無効にする。(b) Walsh 符号で断続する 3 灯は、昼間の光が灯の 2.6〜4.2 倍あっても 1.9e-15 で分離でき、最良の 2 コマの差は誤差 0.94(灯の像の最大と同じ)。ちらつきとゆっくりした増加の下では灯 1 の誤差 0.053 → 増加の列を足して 0.031、ちらつきは残差の画像に出る。(c) CFRP 板 3 mm を 0.2 Hz で加熱すると(熱拡散長 0.818 mm)、位相は厳密解 −45° + arg coth((1+j)L/μ) と 1.0e-15 で一致し、加熱ムラは振幅を変えるが位相には入らない(差 5.6e-16)。雑音下の健全部の位相の標準偏差は実測 0.0213 rad、予測 0.0214 rad。深さ 0.3 / 0.6 / 1.0 / 1.5 mm の欠陥を位相から 0.30 / 0.60 / 1.00 / 1.54 mm と読む(位相の最大は L/μ = 1.963 で、それより深いと位相から一意に読めない)。参照を 10 % ずらす・天頂角を間違える・窓を宣言しない・符号が従属、は門が赤になるか拒否される。学習 0、較正 0、門 25 件。 `py -3.11 examples/poc_lockin_imaging.py`
 - **硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点** — モデル硝材 (n_d, V_d) をカタログ硝材に置き換え、局所最適化を違う始点から何度も回して局所解を集める。新 op 3 本(`lensglobal`、`opsoptics` の `lensglobal`): `glass_nearest`(Abbe 面の距離で最近傍のカタログ硝材 k 個。距離は nd_vd か、P_g,F の項を足した partial_dispersion)/ `lens_substitute_glasses`(系のモデル硝材を k 番目に近いカタログ硝材へ。許容距離の外は ValueError で、部分的には置き換えない)/ `lens_global_search`(多始点。局所最適化は `lensopt.optimize_lens` をそのまま使い、merit を再実装しない。merit 順に全局所解を返し、同じ解は重複の印、同じ seed は同じ結果)。カタログ硝材 8 種は自分自身が最近傍で距離 0、モデル硝材にしてから置き換えると元の名前に戻る。薄肉色消し 2 枚(クラウン 1.5168 / 64.17、フリント 1.6200 / 36.37)の屈折力は閉形式 φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2) で色消しが 1e-12 以内になり、硝材を置き換えると F−C の屈折力差は φ1'/V1' + φ2'/V2' に変わる(最近傍どうしで Φ に対し +5.9e-5、k = 2 で −4.5e-3)。光線追跡の値と手計算が相対 4e-11 以内。大域探索の真値は 3 つ。(a) 単レンズの曲げ: 開口 5 / 3 mm の最良の形状係数 0.7374 / 0.7383 を ap² で外挿すると 0.7388 で、3 次の解 q* = 2(n²−1)/(n+2) = 0.7397 と 1e-3 以内。(b) 色消し 2 枚: 8 始点すべてが閉形式の屈折力に相対 9.8e-9 で着き、1 つの解にまとまる。(c) 3 曲率の色消し 2 枚: 浅い解(merit 1.18e-5)に 20 始点中 19 本がはまり、深い解(5.04e-6)には 1 本だけ届く。1 始点では浅い解のまま。★局所最適化の既定の EFL の重みは開口の小さい系で硬すぎて収束が進まない(merit 5e-10 で止まる)ので、(b) は efl_weight = 1 で回した。学習 0、較正 0、門 10 件。 `py -3.11 examples/poc_lens_global_search.py`
 - **要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点** — メリット関数を、行ごとに目標・重み・片側の境界を持つオペランド表にする。新 op 6 本(`lensmerit`、`opsoptics` の `lensmerit`): `merit_operands_list` / `merit_evaluate`(行ごとの値・寄与・割合)/ `merit_default`(瞳全体の光線行 + EFL の保持)/ `merit_boundary_operands`(縁厚・中心厚・空気間隔)/ `optimize_lens_operands`(lensopt の LM に、硝材 g<i> を選ぶ離散の外側ループを足す)/ `merit_contributions`。薄肉色消しの閉形式・平凸の縁厚・Snell の式・理想レンズの F ナンバーと、独立実装の記録値で採点し、縁の薄い三枚玉を最適化して支配する行が EFL の保持から波面へ移るのを示し、負レンズの硝材を間違えた出発点で硝材を変数にすると軸上色が 1/17 に落ちる。 `py -3.11 examples/poc_lens_merit_operands.py`
+- **レンズの製造公差を、MTF・歩留まり・補償ストロークまで一枚の予算にする** — 公開処方の三枚玉に、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・群偏心を行ごとに割り当てる。新 op 8 本(`lenstol`、`opsoptics` の `tolerancing`): `tolerance_table` / `tolerance_criteria` / `tolerance_compensators` / `tolerance_monte_carlo` / `tolerance_sensitivity` / `tolerance_report` / `tolerance_table_zmx` / `tolerance_table_from_zmx`。一様・正規・切断正規の分布、行ごとに独立した乱数、MTF と RMS spot の限界、Wilson 95 % 区間、失敗光線、複数の間隔補償と移動量、中央差分と解析分散による RSS を同じ報告にする。薄いくさびの像移動は f(n−1)α に 6e-8、1 fringe の非点不整の実光線 OPD RMS は Zernike の閉形式に 1.3 %。CI の 16 試行では歩留まり 0.688、内部間隔と像面の補償を足すと 1.000。一様・正規・切断正規は同じ ±公差でも 0.750 / 1.000 / 1.000、首位の公差を締めて低感度を緩めた再配分は 0.833。学習 0、較正 0。 `py -3.11 examples/poc_lens_tolerancing.py`
+- **処方から撮るプレノプティックカメラ** — 主レンズ、周期球面 MLA、センサを逆追跡し、一回の撮影から生のマイクロ像、サブアパーチャ像、再合焦像と距離を得る。 `py -3.11 examples/poc_plenoptic_camera.py`
+- **処方と場面からプレノプティック生画像を生成する** — 主レンズ、マイクロレンズアレイ、撮像面を組み合わせ、既知の場面から生のマイクロ像を生成して寸法と有限値を検証する。 `py -3.11 examples/plenoptic_capture_pipeline.py`
+- **プレノプティック生画像を復号して再合焦と深度を得る** — 合成した生画像を光線場へ復号し、再合焦像と焦点系列からの深度推定までを一続きで検証する。 `py -3.11 examples/plenoptic_decode_pipeline.py`
 - **処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点** — レンズ設計の画面はスポットダイアグラムや MTF の数字までは出すが、「この処方で 1 m 先の資料を撮ると絵はどう写るか」は見せない。センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけ、光子・ショットノイズ・読み出しノイズ・量子化まで通す。新 op 8 本(`lensrender`、`opsoptics` の `lensrender`): `lens_scene`(平面・球・メッシュ・光源の場面の検証)/ `exit_pupil_samples` / `trace_sensor_rays`(センサ → 瞳 → 全面を逆向きに、ケラレと全反射は NaN と印)/ `scene_radiance`(ランバート + ブリン・フォン + 影)/ `render_scene_through_lens`(放射照度 → 電子数 → ノイズ → 画像)/ `bokeh_shape`(猫の目)/ `render_ghost_overlay`(2 回反射のゴースト)/ `render_compare_prescriptions`(処方ごとの品質の表)。(1) 逆向きの追跡は `ray_bundle` の逆(入射点 8.7e-15 mm、方向 4.2e-16)、理想レンズ越しの白い面は π L sin²α に相対 2e-6、点光源は画素 1 つに入り光子数が I Ω t QE λ/hc に 1e-6、市松の刃 15 本は `distortion_map` に 0.096 px(歪みは外縁で 5.2 px)、0.7 視野の横色収差は `chromatic_shift` に 0.08 px。(2) 同じ EFL・同じ F ナンバーの三枚玉 2 本(片方は半径を 7〜10 % の 1.5 倍ずらした)で解像チャートを 1 m で撮ると、RMS スポット(軸上)は 10.7 と 53.4 µm(5.0 倍)、刃の 10–90 % は 4.6 と 15.4 px、MTF50 は 0.116 と 0.053 cyc/px で、順は `spot_stats` と一致する。(3) 理想レンズの 0.5 m の点光源のボケは薄肉レンズの錯乱円に 0.31 %、F/8 は F/2.8 の 0.349 倍(2.8/8 = 0.350)。理想レンズの 20 mm 後ろの丸い遮光板では猫の目の面積比が 2 つの円の重なりの閉形式 0.635 に 1.6 % 以内(凸包 0.625・描いた絵 0.639・瞳の通過率 0.636)、子午面に 3.6e-15 mm で対称。三枚玉の隅は像面湾曲でボケの円そのものが 1.3 倍になり、面積比は通過率と一致しない(そう書く)。(4) 白い面の相対照度は `lensimage` に 0.7 視野まで 1.61 %、8.7° で 3.2 %(物体側と像側の cos⁴ の差)。絞りを前に置いた単玉の格子は隅で −6.6 % の樽型。(5) ゴースト 15 本のエネルギー比は閉形式 r² (1−r)^(2(j−i)−2) に 4.4e-16、重心は `ghost_analysis` に 8e-4 px、反射率 0 で重ねは厳密に 0。(6) 0.2 mm の傷(センサ上 10.4 µm)の対比は良い方 0.547・ずらした方 0.261(48 %)で、前向きに追跡したスポットを線に畳み込んだ独立の予測 0.542 と 0.261 に合う。(7) ★正直な限界: 幾何光学のみで回折が無く、F/11 に絞った良いレンズの点像は Airy 円盤の 0.32 倍に描かれる(F/6.25 は収差が支配で 2.7 倍)。(8) 壊して確かめる探針(屈折率の向きを逆にする・絞りの半径を 10 % 違える・合焦を 1.5 m にずらす)は門が赤になる。学習 0、較正 0、門 30 件。 `py -3.11 examples/poc_photograph_through_prescription.py`
+- **同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差** — 箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。 `py -3.11 examples/poc_tof_camera.py`
 - **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** — 4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。 `py -3.11 examples/poc_zmx_public_verify.py`
+- **全天球の検査撮影と立体表示を一つの測定工程として確かめる** — 合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。 `py -3.11 examples/poc_omni360_inspection.py`
+- **全天球画像と既存の画像処理を双方向につなぐ最小例** — 全天球像から通常視野を切り出して刃を検出し、通常画像を立方体面経由で全天球へ戻す。立体配置と複数視点の合成例も同じ場面で実行する。 `py -3.11 examples/omni360_roundtrip.py`
 - **水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点** — 水は上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタ。新 op 10 本(`watermedia`、`opsoptics` の `watermedia`): `ocean_spectrum`(Pierson–Moskowitz と JONSWAP の S(ω)、有義波高・周期)/ `ocean_height_field`(Tessendorf の FFT の海: 高さ・傾き・法線・荒れ・水深)/ `fresnel_water_air`(水の屈折率は材料表の実部で分散込み、全反射の旗つき)/ `snell_window`(窓の半径と見かけの深さ)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で。平面は二分法、波面はニュートン法でベクトルのスネルの式を検算し、外れた点は NaN)/ `water_attenuation`(Pope & Fry の純水の吸収、Smith & Baker の散乱、Solonenko & Mobley のジャーロフ型の a・b・Kd)/ `underwater_image`(Akkaynak & Treibitz の画像形成: 直接光 + 後方散乱)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold の体積散乱関数)/ `cylinder_lens_caustic`(円柱の近軸焦点と実光線の焦線)。(1) 風速 8 m/s の PM の海: 有義波高 1.3656 m(0.21 U²/g = 1.3705 m、0.36 %)、ピーク 1.0753 rad/s(0.877 g/U = 1.0751、2e-4)、JONSWAP(γ = 1)は PM と 1e-9 で一致、高さは実数(虚部 3.5e-16)、空間の分散はスペクトルの積分に 0.02 %(8 種)、単一モードの周期は 2π/ω に 2.8e-16。傾きの分散は Cox & Munk(0.003 + 0.00512 U)と比べると、格子で解ける波だけでは 5 m/s で 11 %、10 m/s で 16 %(PM は毛管波を持たない)。飽和域を毛管波数 370 /m まで延ばすと 5 m/s は 98 %(−2.5 %)だが 10 m/s は 61 %(−38.7 %)で、PM の α は風速で増えない限界として門に残す。(2) 2 m のプールの底の市松模様: 真上の見かけの深さは d/n に 0、見つけた経路はスネルの式を 7.8e-16、平面の屈折点は 4 次方程式に 1e-15・光路長の直接最小化に 2.8e-8、波面では屈折点から画像を作る逆向きの光線追跡で同じ底の点に 9.6e-9 m で戻る。水中から見上げた魚眼で全反射が始まる角は臨界角 48.59° の直後の 1 画素(1.5°)以内。(3) 水を入れた瓶(R = 30 mm、n = 1.52、壁 1.5 mm、水 1.333): 近軸焦点 61.24 mm、周縁光線 40.01 mm(球面収差 21.23 mm)、棒の近軸焦点は n R / (2 (n − 1)) に一致し、実光線の焦点は弦の三角関数と 3.6e-14。屈折力は水入り 0.01633 /mm、空 −0.00120 /mm(比 13.6)で、背後 50 mm の面の強度は水のある所の中心が入射の 4.88 倍(最大 13.97 倍)、空の所は 0.94 倍。(4) 色票を深さ 1・5・15 m で: Pope & Fry の吸収は 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m(表の値)、Beer–Lambert は glassmirror と 1.1e-16、光子 20 万個の数え上げが指数則に 0.2σ、Kd(500 nm)は 0.029 < 0.064 < 0.109 < 0.120(I < II < III < 1C)、I 型で赤は青の 12.2 倍の速さで減衰(10 m で透過率 赤 0.074・緑 0.557・青 0.807)、15 m の赤の票の R は 0.010。(5) 限界: 平らな水の見かけの深さ d/n は斜めに見るほど外れる(30° で 7 %、60° で 52 % の過大評価)。壊して確かめる探針(屈折率 1.4、α を 10 % 変える、スネルの式の向きを逆にする)は門が赤になる。学習 0、較正 0、門 43 件。 `py -3.11 examples/poc_water_transparent_media.py`
 - **水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点** — 水は検査カメラの映像を 4 通りに変える。新 op 7 本(`watervision`、`opsoptics` の `watervision`): `caustic_irradiance`(光子の数え上げとヤコビアンの 2 方法で水底の照度)/ `bottle_image`(円柱の断面を行ごとに追跡した瓶の側面像)/ `fill_level_from_image` / `wet_surface_appearance`(Lekner & Dorf)/ `wet_dry_inspection_pair` / `underwater_inspection_image`(ランプがカメラの横の船体と SNR)/ `caustic_floor_segmentation`。平らな水面は一様に cos θ · T(1e-9)、光子の総量は入射 × 平均透過率に 1e-6、光子とヤコビアンは滑らかな面で 0.30 %、折り目では波面法が inf と旗を出す。ひび割れ検出器(`canny`)はコースティクスの縁を拾って適合率 0.05、分割で縁を除くと 1.00(再現率 1.00 → 0.45)、強い波では照度で割って戻す。瓶は液面の上下が空・満の断面と bit 一致、明るい帯の半幅 9.50 mm(近軸焦点からの予測 9.91 mm)、液面は 1 画素以内、気泡の輪の外径は近軸の倍率 1.333 に ± 1 画素。濡れた面は a = 0.5 で 0.673 倍(閉形式に 1.1e-16)、傷のコントラストは 0.411 → 0.494。船体の SNR は距離で単調に落ちる。限界として、縦の傾き 40 度で帯の半幅が 29 % 動く。 `py -3.11 examples/poc_water_inspection_images.py`
 - **設計の関係を「解」で持つ ―― 絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面** — 設計の関係を規則(解)として面に持たせ、絞りや硝材を変えると残りが解き直される。新 op 9 本(`lenssolve`、`opsoptics` の `lenssolve`): `lens_apply_solves` / `lens_solve_set` / `lens_solve_clear` / `lens_solves_list` / `afocal_system` / `lens_afocal_report` / `lens_image_surface` / `lens_petzval_radius` / `lens_zmx_solves_roundtrip`。解は主光線・周辺光線の高さと角度、近軸の像、F/#、同心、アプラナティック、ピックアップ(曲率・厚み・非球面係数)。二重ガウス型で絞りを 5.0 → 7.6 mm と動かしても F/# は 5 のまま(8.9e-16)、像距離は近軸の焦点に追従し、数字を固めた版は F/# が 6.34 → 4.17 に流れる。F/# の解は根が 2 本。afocal: ケプラー・ガリレオ望遠鏡の角倍率は ∓4 に厳密で角度の収差 0、実ガラスの望遠鏡は 0〜1° で 0.60〜2.55 分角。曲面の像面: ペッツバール半径の像面は 0.7 視野の RMS を平らな像面の 1.94 µm から 0.226 µm に縮める(像面湾曲の項 1/42)。奇数次の非球面(`odd`)と r² の項(`a2`): 円錐面の板の軸との交点は Snell の閉形式と 7e-14、球面収差の補正板は r⁴ が 1/467、r³ が 1/7。`.zmx` はピックアップ 3 種と規則が不動点で往復する。学習 0、較正 0、門 35 件。 `py -3.11 examples/poc_lens_solves_afocal.py`
@@ -760,11 +768,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 956 · **3d** 373 · **math** 114 · **optics** 424 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 957 · **3d** 373 · **math** 114 · **optics** 462 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
-### 2d(956 ops / 49 categories)
+### 2d(957 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -1512,7 +1520,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -1648,7 +1656,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xmh_daubechies` `image → image` — Daubechies ウェーブレット変換(``mahotas.daubechies``)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。 · 例: `gallery2d_geometry`
 - `xmh_haar` `image → image` — Haar ウェーブレット変換(``mahotas.haar``)。画像を偶数サイズに切り詰めてから変換し、結果の係数配列(近似/水平/垂直/対角の各サブバンドが元画像と同じ大きさの配列に詰め込まれた、Matlab 風の in-place レイアウト)をそのまま min-max 正規化して画像として見せる。 · 例: `gallery2d_geometry`
 
-#### 2d / typed(160)
+#### 2d / typed(161)
 - `tb_abs_funct_1d` `signal → signal` — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: なし
 - `tb_alpha_shape_boundary` `points → signal` — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` — Exact scalar free-space propagation of a complex field (angular spectrum). · 例: なし
@@ -1804,6 +1812,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tb_temporal_median_window` `video → video` — Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``). · 例: なし
 - `tb_three_frame_difference` `video → video` — Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``). · 例: なし
 - `tb_torus_sdf` `points → volume` — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: なし
+- `tb_viewport_from_equirect` `rgbimage → rgbimage` — Extract a rectilinear viewer viewport from an equirectangular image. · 例: なし
 - `tb_voxel_grid_downsample` `points → points` — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: なし
 - `tb_weighting_response` `signal → signal` — The A / C / Z frequency-weighting curve, in dB, at the given frequencies. · 例: なし
 - `tb_wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: なし
@@ -2477,7 +2486,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(424 ops / 48 categories)
+### optics(462 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2514,17 +2523,17 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `confocal_axial_response` `入力なし → pairs` — 共焦点顕微鏡の軸方向の応答 I(z)(焦点からのずれ z [µm] に対する検出強度)を pairs で返す。 · 例: `poc_chromatic_confocal`
 
 #### optics / design(22)
-- `chief_ray` `table → table` — Trace the chief ray (through the stop centre) at one field (``table``). · 例: `lens_optimize_demo`, `poc_lens_solves_afocal`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_telecentric_metrology`
+- `chief_ray` `table → table` — Trace the chief ray (through the stop centre) at one field (``table``). · 例: `lens_optimize_demo`, `poc_lens_solves_afocal`, `poc_lens_tolerancing`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_telecentric_metrology`
 - `chromatic_shift` `table → table` — Focal shift, image-height shift and spot size versus wavelength (``table``). · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
-- `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`
+- `example_system` `入力なし → table` — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"`` (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical), ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4), ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optimized_lens_tolerance_sensitivity`
 - `glass` `入力なし → table` — A dispersive medium from its d-line index *nd* and Abbe number *vd*. · 例: `lens_design_demo`, `lens_optimize_demo`, `poc_industrial_oct`, `poc_lens_global_search`, `poc_material_optical_library`, `poc_optics_drawings`
 - `glass_catalog` `入力なし → table` — A catalogue glass by name (``table``), or the list of names when *name* is None. · 例: `lens_optimize_demo`, `poc_material_optical_library`, `poc_telecentric_metrology`
-- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zoom_configurations`
+- `lens_system` `入力なし → table` — Build a validated sequential prescription (the ``table`` every other op consumes). · 例: `lens_calibration_loop_demo`, `lens_defect_dataset_demo`, `lens_design_demo`, `lens_optimize_demo`, `optical_design_metrics`, `plenoptic_capture_pipeline`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lens_tolerancing`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_plenoptic_camera`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zoom_configurations`
 - `opd_map` `table → image2d` — Optical path difference over the exit pupil, in waves (``image2d``). · 例: `lens_design_demo`
-- `opd_samples` `table → table` — OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``. · 例: `poc_noncoaxial_optics`
-- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zmx_public_verify`, `poc_zoom_configurations`
+- `opd_samples` `table → table` — OPD (waves) at grid pupil samples: returns ``(px, py, opd, valid)``. · 例: `poc_lens_tolerancing`, `poc_noncoaxial_optics`
+- `paraxial_trace` `table → table` — First-order properties of the prescription: focal lengths, pupils, image. · 例: `lens_defect_dataset_demo`, `lens_design_demo`, `optical_design_metrics`, `poc_chromatic_confocal`, `poc_lens_file_roundtrip`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_material_optical_library`, `poc_noncoaxial_optics`, `poc_optics_drawings`, `poc_photograph_through_prescription`, `poc_plenoptic_camera`, `poc_tdi_linescan`, `poc_telecentric_metrology`, `poc_zmx_public_verify`, `poc_zoom_configurations`
 - `ray_aiming` `table → table` — How well the pupil rays reach the stop at one field: counts, residual and pupil extent (``table``). · 例: `optical_design_metrics`
-- `ray_bundle` `table → table` — Trace a pupil-filling bundle at one field; returns the raw trace plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised coordinates and ``opl0`` (start-of-ray optical path offsets). · 例: `poc_lens_file_roundtrip`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_noncoaxial_optics`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
+- `ray_bundle` `table → table` — Trace a pupil-filling bundle at one field; returns the raw trace plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised coordinates and ``opl0`` (start-of-ray optical path offsets). · 例: `poc_lens_file_roundtrip`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lens_tolerancing`, `poc_noncoaxial_optics`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
 - `ray_fan` `table → pairs` — Transverse ray aberration along one pupil diameter (``pairs``). · 例: `lens_design_demo`
 - `seidel_coefficients` `table → table` — Third-order (Seidel) aberration sums per surface and total (``table``). · 例: `lens_design_demo`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`
 - `sellmeier` `入力なし → table` — A dispersive medium from three-term Sellmeier constants (``table``). · 例: `lens_optimize_demo`
@@ -2629,7 +2638,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `distortion_map` `table → table` — Real chief-ray height versus the paraxial one, and the remap grid (``table``). · 例: `lens_defect_dataset_demo`, `poc_photograph_through_prescription`, `poc_zmx_public_verify`
 - `psf_from_opd` `table → image2d` — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1). · 例: `lens_defect_dataset_demo`, `optical_design_metrics`, `poc_zmx_public_verify`
 - `render_through_lens` `image2d × table → image2d` — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``). · 例: `lens_defect_dataset_demo`, `poc_zmx_public_verify`
-- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `optical_design_metrics`
+- `through_focus_mtf` `table → table` — Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``). · 例: `lensfile_tolerance_worst_mtf`, `optical_design_metrics`
 
 #### optics / interface(4)
 - `brewster_angle_deg` `入力なし → measurement` — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。 · 例: `example_polarization_metal`, `glass_and_mirror_optics`
@@ -2639,7 +2648,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### optics / itof(8)
 - `itof_capture` `depth → table` — 距離の図 → 間接 ToF の生信号(周波数ごとに K 段のバケット、電子数)。``table``(``dict``)を返す。 · 例: `poc_itof_multifreq`
-- `itof_flying_pixel_mask` `depth → image2d` — 距離の図 → フライングピクセル(前景と背景の**間に浮いた**画素)の印 ``(H, W)``(1.0 = 浮いている)。 · 例: `poc_itof_multifreq`
+- `itof_flying_pixel_mask` `depth → image2d` — 距離の図 → フライングピクセル(前景と背景の**間に浮いた**画素)の印 ``(H, W)``(1.0 = 浮いている)。 · 例: `poc_itof_multifreq`, `tof_realdata`
 - `itof_multipath_separate` `table → table` — 等間隔の多周波で測ったフェーザ → 経路ごとの距離と強さ(行列ペンシル)。``table`` を返す。 · 例: `poc_itof_multifreq`
 - `itof_noise_budget` `入力なし → table` — 間接 ToF の距離の雑音の閉形式(1 画素・1 周波数・等間隔 K 段)。``table`` を返す。 · 例: `poc_itof_multifreq`
 - `itof_phase_amplitude` `table → table` — K 段の生信号 → 位相・振幅・オフセット・折り返した距離・画素ごとの距離の雑音の見積もり(``table``)。 · 例: `poc_itof_multifreq`
@@ -2655,7 +2664,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lens_with_configuration` `table → table` — 多構成の処方の k 番目(0 始まり)の構成を解決した ``lens_system`` を返す(``table``)。 · 例: `poc_zoom_configurations`
 
 #### optics / lensfile(4)
-- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `optical_design_metrics`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zmx_public_verify`, `poc_zoom_configurations`
+- `lens_file_read` `入力なし → table` — ``.zmx`` の逐次レンズ処方を Fullseye の処方として読む(``table``)。 · 例: `lensfile_tolerance_worst_mtf`, `optical_design_metrics`, `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zmx_public_verify`, `poc_zoom_configurations`
 - `lens_file_report` `入力なし → table` — ``.zmx`` を読み込まずに分類する —— 何を読み / 無視し / 拒否するか(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_system` `table → table` — 読み込んだ処方を、視野 1 つ・波長 1 つの ``raytrace.lens_system`` にする(``table``)。 · 例: `poc_lens_file_roundtrip`
 - `lens_file_write` `table → table` — 処方を、:func:`lens_file_read` と設計ソフトが読める ``.zmx`` のテキストに書く(``table``)。 · 例: `poc_lens_file_roundtrip`, `poc_lens_solves_afocal`, `poc_zoom_configurations`
@@ -2668,15 +2677,15 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### optics / lensmerit(6)
 - `merit_boundary_operands` `table → table` — 製造上の境界を表の行にする: 各ガラスの縁厚・中心厚の範囲・空気間隔の範囲(``table``)。 · 例: `poc_lens_merit_operands`
 - `merit_contributions` `table → table` — どの行がメリット関数を支配しているか: 寄与の大きい順のパーセント表(``table``)。 · 例: `poc_lens_merit_operands`
-- `merit_default` `table → table` — 既定のメリット関数をオペランド表として組む: 瞳全体の光線行 + EFL の保持(``table``)。 · 例: `poc_lens_merit_operands`
+- `merit_default` `table → table` — 既定のメリット関数をオペランド表として組む: 瞳全体の光線行 + EFL の保持(``table``)。 · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_merit_operands`
 - `merit_evaluate` `table → table` — オペランド表を処方に当てて、各行の値・目標・重み・寄与とその割合を返す(``table``)。 · 例: `poc_lens_merit_operands`
 - `merit_operands_list` `入力なし → table` — メリット関数の操作子(オペランド)の一覧: 名前・意味・単位・引数(``table``)。 · 例: `poc_lens_merit_operands`
-- `optimize_lens_operands` `table → table` — オペランド表のメリット関数を LM で最小化する。硝材も変数にできる(``table``)。 · 例: `poc_lens_merit_operands`
+- `optimize_lens_operands` `table → table` — オペランド表のメリット関数を LM で最小化する。硝材も変数にできる(``table``)。 · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_merit_operands`
 
 #### optics / lensrender(8)
 - `bokeh_shape` `table → table` — The out-of-focus footprint of a point source - the intersection of the pupil images, the cat's eye -> dict. · 例: `poc_photograph_through_prescription`
 - `exit_pupil_samples` `table → table` — Sample points on the exit pupil of *system* (position and radius from the paraxial trace) -> dict. · 例: `poc_photograph_through_prescription`
-- `lens_scene` `入力なし → table` — Build and validate a simple 3-D scene for :func:`render_scene_through_lens` -> dict (the ``scene`` table). · 例: `poc_photograph_through_prescription`
+- `lens_scene` `入力なし → table` — Build and validate a simple 3-D scene for :func:`render_scene_through_lens` -> dict (the ``scene`` table). · 例: `plenoptic_capture_pipeline`, `poc_photograph_through_prescription`, `poc_plenoptic_camera`
 - `render_compare_prescriptions` `入力なし → table` — Render the same scene through two or more prescriptions and tabulate how good each picture is -> dict. · 例: `poc_photograph_through_prescription`
 - `render_ghost_overlay` `table → table` — The two-reflection ghosts of a bright point, as electrons on the sensor -> dict. · 例: `poc_photograph_through_prescription`
 - `render_scene_through_lens` `table → table` — Photograph a :func:`lens_scene` through the prescription *system*: sensor-side ray tracing -> dict. · 例: `poc_photograph_through_prescription`
@@ -2800,6 +2809,32 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `oct_k_linearize` `table → table` — 干渉スペクトルを **k 等間隔**に並べ直す(``table`` → ``table``)。 · 例: `poc_industrial_oct`
 - `oct_layer_thickness` `table → table` — A スキャンの界面のピーク → **層の光学厚と物理厚**(``table``)。分離できない・見えないときは拒否する。 · 例: `poc_industrial_oct`
 
+#### optics / omni360(24)
+- `anaglyph_crosstalk` `rgbimage × rgbimage → table` — Return previews and wrong-eye/right-eye energy ratios. · 例: `poc_omni360_inspection`
+- `anaglyph_from_ods` `rgbimage × rgbimage → rgbimage` — Extract an ODS viewport pair and compose a colour-filter view. · 例: `omni360_roundtrip`
+- `cubemap_from_equirect` `rgbimage → rgbvideo` — Resample an equirectangular image into six cubemap faces. · 例: `omni360_roundtrip`
+- `equirect_defect_unwrap_pipe` `image2d → table` — Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial. · 例: `poc_omni360_inspection`
+- `equirect_filter_gaussian` `image2d → image2d` — Gaussian-filter a panorama with longitude scale adapted to latitude. · 例: `poc_omni360_inspection`
+- `equirect_from_cubemap` `rgbvideo → rgbimage` — Resample six cubemap faces into an equirectangular image. · 例: `omni360_roundtrip`
+- `equirect_from_fisheye_pair` `images → table` — Stitch two calibrated fisheyes and report overlap, seam error and blind spots. · 例: `poc_allsky_cloud_cover`, `poc_omni360_inspection`
+- `equirect_from_perspectives` `images → table` — Blend a calibrated perspective rig into an equirectangular image. · 例: `omni360_roundtrip`
+- `equirect_rotate` `rgbimage × matrix → rgbimage` — Apply a proper three-dimensional rotation to a panorama. · 例: `poc_omni360_inspection`
+- `equirect_stabilize` `images → table` — Estimate and remove camera rotations from an equirectangular sequence. · 例: `poc_omni360_inspection`
+- `equirect_weight_map` `入力なし → image2d` — Return cosine-latitude weights, optionally normalised to four pi. · 例: `poc_omni360_inspection`
+- `ods_depth_to_disparity` `image2d → image2d` — Convert radial depth to ODS horizontal pixel disparity. · 例: `poc_omni360_inspection`
+- `ods_disparity_to_depth` `image2d → image2d` — Convert ODS horizontal pixel disparity to radial depth. · 例: `poc_omni360_inspection`
+- `ods_render` `入力なし → images` — Render ODS rays using ``scene_fn(origins, directions)``. · 例: `omni360_roundtrip`
+- `omni_anaglyph_compose` `rgbimage × rgbimage → rgbimage` — Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper. · 例: `poc_omni360_inspection`
+- `s_psnr` `image2d × image2d → measurement` — Compute PSNR at deterministic near-uniform sphere samples. · 例: `omni360_roundtrip`
+- `stereo360_sbs` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair side by side. · 例: `omni360_roundtrip`
+- `stereo360_top_bottom` `rgbimage × rgbimage → rgbimage` — Pack a panorama pair top and bottom. · 例: `omni360_roundtrip`
+- `stereo_pack` `rgbimage × rgbimage → rgbimage` — Pack two eye images in a named display layout. · 例: `omni360_roundtrip`
+- `stereo_parallax_budget` `入力なし → table` — Report physical parallax and the common one- and three-percent limits. · 例: `poc_omni360_inspection`
+- `video360_tile_coverage` `pairs → table` — Report which longitude-latitude streaming tiles a view path touches. · 例: `poc_omni360_inspection`
+- `video360_viewport_track` `rgbvideo → rgbvideo` — Extract a moving viewport from an equirectangular frame sequence. · 例: `poc_omni360_inspection`
+- `viewport_from_equirect` `rgbimage → rgbimage` — Extract a rectilinear viewer viewport from an equirectangular image. · 例: `omni360_roundtrip`, `poc_omni360_inspection`
+- `ws_psnr` `image2d × image2d → measurement` — Compute cosine-latitude weighted spherical PSNR. · 例: `omni360_roundtrip`, `poc_omni360_inspection`
+
 #### optics / optimization(3)
 - `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
 - `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`, `poc_lens_merit_operands`
@@ -2812,6 +2847,14 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `pixel_shift_motion_mask` `video × matrix → image2d` — 動いた画素の地図 ``(H·scale, W·scale)``(1.0 = 動いた、0.0 = 静止 / 判定できない)。 · 例: `poc_pixel_shift`
 - `pixel_shift_pattern` `入力なし → matrix` — ピクセルシフトの公称のシフト列 ``(N, 2)``(dr, dc)[センサ画素]に、アクチュエータの誤差を足して返す。 · 例: `poc_pixel_shift`
 - `pixel_shift_resolution_budget` `入力なし → table` — ピクセルシフトで解像が上がるかの閉形式の予算(レンズ律速か画素律速か)。 · 例: `poc_pixel_shift`, `poc_simcal_pixel_shift`
+
+#### optics / plenoptic(6)
+- `mla_surface` `入力なし → table` — Describe a periodic spherical-cap microlens array surface. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
+- `plenoptic_capture` `table × table → table` — Trace a raw plenoptic frame and its white calibration image. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
+- `plenoptic_decode` `image2d × table → lightfield` — Rectify a calibrated raw frame and return ``L[v,u,y,x]``. · 例: `plenoptic_decode_pipeline`
+- `plenoptic_mla_calibrate` `image2d → table` — Fit a rotated rectangular lenslet lattice to peaks of a white frame. · 例: `poc_plenoptic_camera`
+- `plenoptic_refocus_depth` `lightfield × table → table` — Convert light-field refocus slope(s) to object distance in metres. · 例: `poc_plenoptic_camera`
+- `plenoptic_system` `table × table × table → table` — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 
 #### optics / polarization(10)
 - `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
@@ -2962,12 +3005,22 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tem_ctf_correct` `image2d → image2d` — CTF の補正(``image2d``)。``method="phase_flip"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (位相反転、振幅はそのまま)/ ``"wiener"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]。 · 例: `poc_tem_ctf_thon_rings`
 - `tem_ctf_estimate` `image2d → table` — 顕微鏡写真のパワースペクトルの Thon リングから焦点外れ(と非点収差)を推定する(表)。 · 例: `poc_tem_ctf_thon_rings`
 - `tem_ctf_profile` `入力なし → table` — 1-D の動径の CTF 曲線(包絡つき)と零点の表。 · 例: `poc_tem_ctf_thon_rings`
-- `tem_image_weak_phase` `image2d → image2d` — 投影ポテンシャル v_z [V Å] から TEM の明視野像(平均 1 の強度、``image2d``)。 · 例: `poc_tem_ctf_thon_rings`
-- `tem_multislice` `image2d → table` — 簡易のマルチスライス(Cowley–Moodie、Kirkland の形): 出射波を返す(表)。 · 例: `poc_tem_ctf_thon_rings`
+- `tem_image_weak_phase` `image2d → image2d` — 投影ポテンシャル v_z [V Å] から TEM の明視野像(平均 1 の強度、``image2d``)。 · 例: `poc_sem_tem_same_particle`, `poc_tem_ctf_thon_rings`
+- `tem_multislice` `image2d → table` — 簡易のマルチスライス(Cowley–Moodie、Kirkland の形): 出射波を返す(表)。 · 例: `poc_sem_tem_same_particle`, `poc_tem_ctf_thon_rings`
 - `tem_power_spectrum` `image2d → image2d` — タイルに切った periodogram の平均(Welch、Hann 窓)を ``fftshift`` 順の 2-D で返す(``image2d``)。 · 例: `poc_tem_ctf_thon_rings`
-- `tem_projected_potential` `入力なし → image2d` — 原子の座標 → z 方向に投影したポテンシャル v_z(x, y) [V Å] (周期境界、``image2d``)。 · 例: `poc_tem_ctf_thon_rings`
+- `tem_projected_potential` `入力なし → image2d` — 原子の座標 → z 方向に投影したポテンシャル v_z(x, y) [V Å] (周期境界、``image2d``)。 · 例: `poc_sem_tem_same_particle`, `poc_tem_ctf_thon_rings`
 - `tem_scherzer` `入力なし → table` — Scherzer 焦点と点分解能(表)。 · 例: `poc_tem_ctf_thon_rings`
-- `tem_wavelength` `入力なし → table` — 加速電圧 ``kv`` [kV] の電子の波長(相対論補正つき)と相互作用定数を表で返す。 · 例: `poc_tem_ctf_thon_rings`
+- `tem_wavelength` `入力なし → table` — 加速電圧 ``kv`` [kV] の電子の波長(相対論補正つき)と相互作用定数を表で返す。 · 例: `poc_sem_tem_same_particle`, `poc_tem_ctf_thon_rings`
+
+#### optics / tolerancing(8)
+- `tolerance_compensators` `入力なし → table` — Describe deterministic bounded re-optimisation variables in lensopt grammar. · 例: `poc_lens_tolerancing`
+- `tolerance_criteria` `入力なし → table` — Validate performance criteria and their optional ``min``/``max`` limits. · 例: `lensfile_tolerance_worst_mtf`, `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
+- `tolerance_monte_carlo` `table × table × table → table` — Run deterministic fail-closed Monte Carlo and report yield with Wilson 95 % bounds. · 例: `lensfile_tolerance_worst_mtf`, `poc_lens_tolerancing`
+- `tolerance_report` `table → text` — Create a compact assembly report as a dict or plain text. · 例: `poc_lens_tolerancing`
+- `tolerance_sensitivity` `table × table × table → table` — Central differences, distribution-aware linear RSS, and inverse tolerances. · 例: `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
+- `tolerance_table` `table → table` — Build validated tolerance rows, one independent manufacturing variable per row. · 例: `lensfile_tolerance_worst_mtf`, `optimized_lens_tolerance_sensitivity`, `poc_lens_tolerancing`
+- `tolerance_table_from_zmx` `table × text → table` — Read tolerance NOTE lines written by :func:`tolerance_table_zmx`. · 例: `poc_lens_tolerancing`
+- `tolerance_table_zmx` `table → text` — Serialise rows as NOTE lines; public native TOL syntax was not assumed. · 例: `poc_lens_tolerancing`
 
 #### optics / watermedia(10)
 - `cylinder_lens_caustic` `入力なし → table` — The paraxial focus and the real-ray caustic of a cylinder (a rod or a bottle) in a collimated beam -> dict. · 例: `poc_water_transparent_media`
@@ -3006,11 +3059,11 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### lightfield / decode(3)
 - `lf_from_mla` `image2d → lightfield` — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field. · 例: `lightfield_depth`
 - `lf_stats` `lightfield → table` — Describe a light field: shape, angular centre, and the slope range it can carry. · 例: `lightfield_depth`
-- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_lightfield_depth`
 
 #### lightfield / depth(5)
 - `lf_all_in_focus` `lightfield × image2d → image2d` — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`
-- `lf_depth_from_focus` `lightfield → image2d` — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: `lightfield_depth`, `poc_compound_eye`, `poc_lightfield_depth`
+- `lf_depth_from_focus` `lightfield → image2d` — Per-pixel slope from the **sharpness peak** across the refocus sweep. · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_compound_eye`, `poc_lightfield_depth`, `poc_plenoptic_camera`
 - `lf_disparity_to_depth` `image2d → depth` — Slope (px per angular step) -> metric depth, the camera-array model. · 例: `lightfield_depth`, `poc_lightfield_depth`
 - `lf_epi_slope` `lightfield → image2d` — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass). · 例: `lightfield_depth`, `poc_lightfield_depth`
 - `lf_plenoptic_design` `入力なし → table` — Size a plenoptic camera: what angular/spatial resolution and depth range you buy. · 例: `lightfield_depth`, `poc_compound_eye`
@@ -3018,11 +3071,11 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### lightfield / refocus(4)
 - `lf_aperture_mask` `入力なし → image2d` — Angular weighting mask — the synthetic aperture you stop down or shape. · 例: `lightfield_depth`, `poc_compound_eye`
 - `lf_focal_stack` `lightfield → images` — Refocus at every slope in *slopes* — a focal stack from one exposure. · 例: `lightfield_depth`
-- `lf_refocus` `lightfield → image2d` — Shift-and-add refocus: the synthetic-aperture image focused at *slope*. · 例: `lightfield_depth`, `poc_lightfield_depth`
+- `lf_refocus` `lightfield → image2d` — Shift-and-add refocus: the synthetic-aperture image focused at *slope*. · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_lightfield_depth`, `poc_plenoptic_camera`
 - `lf_synthetic_aperture` `lightfield → image2d` — Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders. · 例: `lightfield_depth`, `poc_compound_eye`
 
 #### lightfield / synthesis(1)
-- `lf_synthesize` `入力なし → lightfield` — Build a light field of textured layers at **known** slopes (the test bed). · 例: `lightfield_depth`, `poc_compound_eye`
+- `lf_synthesize` `入力なし → lightfield` — Build a light field of textured layers at **known** slopes (the test bed). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_compound_eye`
 
 #### lightfield / views(4)
 - `lf_center_view` `lightfield → image2d` — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives. · 例: `lightfield_depth`
@@ -3038,8 +3091,8 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photon_uncertainty` `image2d → image2d` — Per-pixel Poisson error bar of a photon-count frame. · 例: `photon_timeresolved`, `poc_thermal_radiometry`
 
 #### photon / dtof(3)
-- `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`
-- `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`
+- `dtof_cube_depth` `histcube → depth` — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`, `poc_tof_camera`
+- `dtof_cube_simulate` `depth → histcube` — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces. · 例: `photon_timeresolved`, `poc_dtof_ranging`, `poc_itof_multifreq`, `poc_tof_camera`
 - `dtof_depth` `counts → measurement` — Distance from a photon arrival-time histogram: ``d = c*t/2``. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
 #### photon / lifetime(2)
@@ -4241,7 +4294,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### tomography / forward(3)
 - `ellipse_phantom` `入力なし → image2d` — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `ellipse_sinogram` `入力なし → sinogram` — The **closed-form** Radon transform of a sum of uniform ellipses. · 例: `ct_reconstruction`, `poc_ct_fidelity`
-- `radon_transform` `image2d → sinogram` — Forward parallel-beam projection: a slice in, a **sinogram** out. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`
+- `radon_transform` `image2d → sinogram` — Forward parallel-beam projection: a slice in, a **sinogram** out. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
 
 #### tomography / geometry(2)
 - `sinogram_center_of_rotation` `sinogram → measurement` — Where the axis of rotation actually is, in detector bins from the centre. · 例: `ct_reconstruction`
@@ -4253,7 +4306,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### tomography / reconstruct(3)
 - `backproject_sinogram` `sinogram → image2d` — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
-- `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`
+- `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
 - `sart_reconstruct` `sinogram → image2d` — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
 #### tomography / spectral_xray(14)
@@ -4389,9 +4442,9 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `zoom_inset` `image2d → image2d` — 拡大の差し込み ―― 元図に**枠**と**引き出し線**を付ける。 · 例: `annotate_gallery`, `poc_diabolo_model_and_vision`, `poc_food_cutting_measure`
 
 #### annotate / furniture(3)
-- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_interferometry_step`, `poc_lidar_terrain_change`, `poc_lightfield_depth`, `poc_multibeam_bathymetry`, `poc_pv_thermal_survey`, `poc_simcal_thin_film`, `poc_stockpile_volume`, `poc_thermography_ndt`
+- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_interferometry_step`, `poc_lidar_terrain_change`, `poc_lightfield_depth`, `poc_multibeam_bathymetry`, `poc_pv_thermal_survey`, `poc_sem_tem_same_particle`, `poc_simcal_thin_film`, `poc_stockpile_volume`, `poc_thermography_ndt`
 - `legend_box` `image2d × entries → image2d` — 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。 · 例: `annotate_gallery`, `poc_driving_decisions`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`
-- `scale_bar` `image2d → image2d` — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。 · 例: `annotate_gallery`
+- `scale_bar` `image2d → image2d` — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。 · 例: `annotate_gallery`, `poc_sem_tem_same_particle`
 
 #### annotate / overlay(5)
 - `annotate_invert` `image2d × mask → image2d` — 領域(region)を**反転色**で塗る/縁取る。 · 例: `annotate_paper_tour`
@@ -4441,19 +4494,19 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `leader_line` `image2d × text → image2d` — 引き出し線 —— 注記の位置(``anchor_xy``)から対象(``target_xy``)へ。 · 例: `annotate_gallery`, `poc_kendama`
 
 #### annotate / shape(4)
-- `arc` `image2d → image2d` — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
+- `arc` `image2d → image2d` — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
 - `ellipse` `image2d → image2d` — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_public_camera_heading_real`
 - `filled_polygon` `image2d × pairs → image2d` — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
 #### annotate / text(2)
 - `measure_text` `text → table` — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`
-- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_sem_tem_same_particle`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
 
 ### gfx2d(44 ops / 9 categories)
 
 #### gfx2d / camera(1)
-- `viewport` `rgb → rgb` — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``. · 例: `gfx2d_scene`
+- `viewport` `rgb → rgb` — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``. · 例: `gfx2d_scene`, `omni360_roundtrip`
 
 #### gfx2d / colorspace(2)
 - `linear_to_srgb` `rgb → rgb` — Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`. · 例: `gfx2d_scene`, `poc_leaf_disease_area`, `poc_pigment_unmixing`, `poc_white_balance`
@@ -4639,10 +4692,10 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### generative / sem(9)
 - `sem_cd_measure` `pairs → table` — 線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_charging_series` `image2d → video` — 絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
-- `sem_electron_mc` `入力なし → table` — 平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。 · 例: `poc_virtual_sem_kv_cd_bse`
-- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_sem_wafer_defect_edge_bias`, `poc_virtual_sem_kv_cd_bse`
+- `sem_electron_mc` `入力なし → table` — 平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。 · 例: `poc_sem_tem_same_particle`, `poc_virtual_sem_kv_cd_bse`
+- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_sem_tem_same_particle`, `poc_sem_wafer_defect_edge_bias`, `poc_virtual_sem_kv_cd_bse`
 - `sem_line_profile` `入力なし → table` — 1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。 · 例: `poc_virtual_sem_kv_cd_bse`
-- `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_wafer_defect_edge_bias`
+- `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_tem_same_particle`, `poc_sem_wafer_defect_edge_bias`
 - `sem_se_escape_fraction` `入力なし → signal` — 正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_se_universal_curve` `入力なし → signal` — 二次電子収率の普遍曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_yield_curve` `入力なし → table` — 加速電圧を振って η(E) と δ(E) を MC で出し、δ の形を普遍曲線と比べる。 · 例: `poc_virtual_sem_kv_cd_bse`
@@ -5363,7 +5416,7 @@ _計 3496 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `threshold_triangle` `image2d → table` — 三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの (b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: ``threshold``(そのビンの中心)、 ``mask`` = image > threshold、``bin``、``distance``(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は skimage / ImageJ と同じ規約(原典は要確認)。 · 例: `poc_graph_hierarchy_segmentation`
 
 #### segmentation / watershed(1)
-- `watersheds_marker` `image2d × labels2d → labels2d` — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`
+- `watersheds_marker` `image2d × labels2d → labels2d` — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`, `poc_sem_tem_same_particle`
 
 #### segmentation / watershed3d(3)
 - `distance_peaks` `voxel → labels` — 前景距離変換の局所極大を ``min_distance`` NMS で間引いた int マーカ配列を返す。 · 例: `watershed3d_tour`
