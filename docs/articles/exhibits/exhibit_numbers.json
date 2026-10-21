@@ -481,6 +481,10 @@
    "accessioned": "2026-10-20",
    "no": "2026.267"
   },
+  "poc_lens_tolerancing": {
+   "accessioned": "2026-10-20",
+   "no": "2026.271"
+  },
   "poc_lidar_terrain_change": {
    "accessioned": "2026-09-07",
    "no": "2026.070"
@@ -569,6 +573,10 @@
    "accessioned": "2026-09-06",
    "no": "2026.027"
   },
+  "poc_omni360_inspection": {
+   "accessioned": "2026-10-21",
+   "no": "2026.275"
+  },
   "poc_one_stroke_epicycles": {
    "accessioned": "2026-09-22",
    "no": "2026.137"
@@ -648,6 +656,10 @@
   "poc_pixel_shift": {
    "accessioned": "2026-10-15",
    "no": "2026.236"
+  },
+  "poc_plenoptic_camera": {
+   "accessioned": "2026-10-20",
+   "no": "2026.272"
   },
   "poc_pocket_interreflection": {
    "accessioned": "2026-10-15",
@@ -796,6 +808,10 @@
   "poc_segmentation_gauntlet": {
    "accessioned": "2026-10-02",
    "no": "2026.184"
+  },
+  "poc_sem_tem_same_particle": {
+   "accessioned": "2026-10-20",
+   "no": "2026.273"
   },
   "poc_sem_wafer_defect_edge_bias": {
    "accessioned": "2026-10-13",
@@ -960,6 +976,10 @@
   "poc_timelapse_growth": {
    "accessioned": "2026-09-06",
    "no": "2026.044"
+  },
+  "poc_tof_camera": {
+   "accessioned": "2026-10-20",
+   "no": "2026.274"
   },
   "poc_traffic_counting": {
    "accessioned": "2026-09-06",

@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-90 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+94 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -132,6 +132,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - ऐसी mean line जिसे scratches और spikes खींच न सकें (robust Gaussian regression और spline filter, profile और surface): [explanation](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · examples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
 - बारीक खरोंच ढूँढना और उनकी चौड़ाई मापना: [explanation](../../capabilities/scratch-detection-and-width.md) _(ja)_ · examples [example_scratch_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_scratch_width.py) · [poc_crack_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crack_width.py) · [poc_solar_el_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_solar_el_inspection.py)
 - SEM की bright edge किसी dimension को कितना बढ़ाती है, ground truth के साथ मापना: [explanation](../../capabilities/sem-edge-effect-metrology.md) _(ja)_ · examples [poc_sem_wafer_defect_edge_bias](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_wafer_defect_edge_bias.py)
+- एक ही कणों को scanning और transmission images में मापकर दोनों size biases की तुलना: [explanation](../../capabilities/sem-tem-same-particle.md) _(ja)_ · examples [poc_sem_tem_same_particle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sem_tem_same_particle.py)
 - sequential lens design के metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF): [explanation](../../capabilities/sequential-lens-design-metrics.md) _(ja)_ · examples [optical_design_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/optical_design_metrics.py) · [poc_zoom_configurations](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zoom_configurations.py) · [poc_lens_global_search](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_global_search.py) · [poc_lens_merit_operands](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py) · [poc_lens_solves_afocal](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 - polarisation से काले चमकदार और काँच के हिस्सों का आकार मापना (shape from polarisation, अस्पष्टता समुच्चय, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
 - असली images से physical model के coefficients fit करना (sim-to-real calibration) — जिन coefficients को images तय नहीं करतीं उनके लिए कोई संख्या नहीं, बल्कि तय होने वाला संयोजन और कारण: [explanation](../../capabilities/sim-to-real-calibration.md) _(ja)_ · examples [simcal_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_tour.py) · [simcal_checks_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/simcal_checks_tour.py)
@@ -139,6 +140,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - dimensional metrology के लिए telecentric lens (chief ray angle → ऊँचाई के साथ magnification → vignetting और blur): [explanation](../../capabilities/telecentric-metrology.md) _(ja)_ · examples [poc_telecentric_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_telecentric_metrology.py)
 - virtual transmission electron microscope (electron wavelength → CTF → phase-contrast छवि → Thon rings से defocus → सुधार): [explanation](../../capabilities/tem-phase-contrast-and-ctf.md) _(ja)_ · examples [poc_tem_ctf_thon_rings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tem_ctf_thon_rings.py)
 - Terrain पर slope, flow और line of sight: [explanation](../../capabilities/terrain-and-visibility.md) _(ja)_ · examples [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- एक ही 3-D दृश्य को indirect और direct time of flight से मापना: [explanation](../../capabilities/tof-camera.md) _(ja)_ · examples [poc_tof_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tof_camera.py)
 - Virtual SEM — electron-solid interaction को Monte Carlo से हल करना और मापे गए आँकड़ों से जाँचते हुए देखना कि voltage, detector और charging image और मापी गई line width को कैसे बदलते हैं: [explanation](../../capabilities/virtual-sem-monte-carlo.md) _(ja)_ · examples [poc_virtual_sem_kv_cd_bse](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_sem_kv_cd_bse.py)
 - 3-D scan से volume निकालना: [explanation](../../capabilities/volume-from-3d-scan.md) _(ja)_ · examples [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 - जो तस्वीर से जाँचा नहीं जा सकता (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces): [explanation](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · examples [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
@@ -187,6 +189,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Golden image से तुलना, defects मापना, lot का निर्णय: [explanation](../../capabilities/golden-compare.md) _(ja)_ · examples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Deploy से पहले known good/bad sets पर recipe और spec जाँचना, margins मापना: [explanation](../../capabilities/inspection-fixture.md) _(ja)_ · examples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - एक call में पूरा folder inspect करना (batch, spec, aggregate, SPC, report, audit log): [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- MTF और yield से lens manufacturing tolerances तय करना: [explanation](../../capabilities/lens-tolerancing.md) _(ja)_ · examples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Typed op results को JSON में लिखना और bit-for-bit वापस पढ़ना: [explanation](../../capabilities/typed-results-as-json.md) _(ja)_ · examples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typed op results को Markdown में दिखाना, वापस पढ़ने के लिए JSON block के साथ: [explanation](../../capabilities/typed-results-as-markdown.md) _(ja)_ · examples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typed inspection results को Excel (.xlsx) report में लिखना: [explanation](../../capabilities/xlsx-report.md) _(ja)_ · examples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -205,15 +208,16 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - optical drawings (lens layout, vision setup और ISO 10110 lens element drawing — SVG / DXF में): [explanation](../../capabilities/optics-drawings.md) _(ja)_ · examples [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts): [explanation](../../capabilities/photograph-through-prescription.md) _(ja)_ · examples [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - आँख को धोखा देने वाली तस्वीरें बनाकर measurement को अंक देना (illusions, endless drawing, loops): [explanation](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · examples [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- लेंस विन्यास पर आधारित प्रकाश-क्षेत्र कैमरा: [explanation](../../capabilities/plenoptic-camera.md) _(ja)_ · examples [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - Theorems तस्वीरों के रूप में (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves): [explanation](../../capabilities/theorems-as-pictures.md) _(ja)_ · examples [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
 
-[PoC के अलावा 151 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 158 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
-270 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+275 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -282,7 +286,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (54)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (55)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-CT matching" width="200" height="200"><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built दीवारें" width="200" height="200"><span>As-built दीवारें</span></a>
@@ -338,6 +342,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_spectrometer_illumination.jpg" alt="spectrometer और illumination (bandwidth और lamp की संरचना)" width="200" height="200"><span>spectrometer और illumination (bandwidth और lamp की संरचना)</span></a>
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="real telecentric image पर imaging model का calibration" width="200" height="200"><span>real telecentric image पर imaging model का calibration</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं" width="200" height="200"><span>scratch mean line को कितना दबाता है, और robust filter कहाँ टूटते हैं</span></a>
+<a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="एक ही कणों को scanning और transmission images में मापना" width="200" height="200"><b>&#9654;</b><span>एक ही कणों को scanning और transmission images में मापना</span></a>
 </div>
 </details>
 
@@ -388,7 +393,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Image quality और restoration</b> (22)</summary>
+<details class="vall"><summary><b>Image quality और restoration</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="धारियों की ओर बढ़ती मक्खी की आँख" width="200" height="200"><b>&#9654;</b><span>धारियों की ओर बढ़ती मक्खी की आँख</span></a>
 <a href="../../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_shake_deblur.jpg" alt="Shake deblurring" width="200" height="200"><b>&#9654;</b><span>Shake deblurring</span></a>
@@ -412,10 +417,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_photograph_through_prescription.jpg" alt="वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts" width="200" height="200"><span>वास्तविक lens prescription से होकर 3-D दृश्य photograph करना: depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts</span></a>
 <a href="../../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_water_inspection_images.jpg" alt="निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार" width="200" height="200"><span>निरीक्षण चित्रों में पानी कैसा दिखता है: पूल के तल की caustic, बोतल का पार्श्व दृश्य, गीली प्लेट, पानी के भीतर पतवार</span></a>
 <a href="../../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_pixel_shift.jpg" alt="pixel shift के offset और aperture का calibration (undetermined map)" width="200" height="200"><span>pixel shift के offset और aperture का calibration (undetermined map)</span></a>
+<a href="../../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plenoptic_camera.jpg" alt="prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक" width="200" height="200"><b>&#9654;</b><span>prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक</span></a>
+<a href="../../articles/assets/poc/poc_tof_camera/01_scene_viewer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_tof_camera.jpg" alt="एक ही 3-D दृश्य पर indirect और direct time of flight: multipath, mixed pixels, pile-up और volume error" width="200" height="200"><span>एक ही 3-D दृश्य पर indirect और direct time of flight: multipath, mixed pixels, pile-up और volume error</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour और separation</b> (15)</summary>
+<details class="vall"><summary><b>Colour और separation</b> (17)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="optical fibre और light guide (modes, dispersion, mode field)" width="200" height="200"><span>optical fibre और light guide (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)" width="200" height="200"><b>&#9654;</b><span>spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)</span></a>
@@ -431,7 +438,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="glass substitution और multi-start global search" width="200" height="200"><span>glass substitution और multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)" width="200" height="200"><span>आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)" width="200" height="200"><span>design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)</span></a>
+<a href="../../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_omni360_inspection.jpg" alt="सर्वदिशीय निरीक्षण और त्रिविम प्रदर्शन" width="200" height="200"><span>सर्वदिशीय निरीक्षण और त्रिविम प्रदर्शन</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन" width="200" height="200"><span>सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, yield और compensator travel से lens tolerances तय करना" width="200" height="200"><b>&#9654;</b><span>MTF, yield और compensator travel से lens tolerances तय करना</span></a>
 </div>
 </details>
 
