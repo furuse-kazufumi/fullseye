@@ -307,6 +307,18 @@ def test_every_exhibit_belongs_to_exactly_one_part(cap):
     _check_parts(c)
 
 
+def test_museum_has_three_generated_parts_and_a_device_wing(cap):
+    """展示館の生成記事は what / how / device の 3 部で、装置展示は重複しない。"""
+    c, _byid = cap
+    generated = [p for p in c["meta"]["parts"] if p["kind"] == "generated"]
+    assert [p["slug"] for p in generated] == ["what", "how", "device"]
+    device = next(p for p in generated if p["slug"] == "device")
+    assert device["wings"] == ["wing_device"]
+    device_exhibits = [e["id"] for e in c["exhibits"] if e["wing"] == "wing_device"]
+    assert len(device_exhibits) == 14
+    assert len(device_exhibits) == len(set(device_exhibits))
+
+
 def test_the_part_gate_catches_a_wing_in_two_parts(cap):
     """★破壊試験: 同じ翼を 2 つの棟に入れたら落ちること。"""
     c, _byid = cap

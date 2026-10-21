@@ -82,6 +82,16 @@
     "title_en": "A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)"
    },
    {
+    "id": "wingset_device",
+    "kind": "generated",
+    "slug": "device",
+    "wings": [
+     "wing_device"
+    ],
+    "title_ja": "紙面の計測館 —— 装置の棟(センサーと計測器を物理から再現する)",
+    "title_en": "A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)"
+   },
+   {
     "id": "lane_math_article",
     "kind": "external",
     "slug": null,
@@ -267,6 +277,14 @@
    "placard_en": "Work on point clouds and meshes differs from 2-D work in one decisive way: a pose-alignment step comes before the measurement. That step rotates the shape into whatever orientation makes the discrepancy smallest, so the larger the defect, the more of it the alignment absorbs, leaving a small residual and a part that looks in tolerance. The exhibits in this room try to count what the alignment ate.\n\nEvery ground truth here is written as a formula. Solids are built from analytic surfaces combined with boolean operations, chosen so that volume, surface area, wall thickness and curvature are known in closed form. Deformations are known fields (a local dent, a warp, a constant wear along the surface normal), poses are known rotations and translations, and the scan is a uniform sample of the surface with a known density, noise level and occlusion pattern. That is what makes it possible to hold the alignment error and the shape error apart.\n\nThe pitfalls specific to 3-D also get counted separately here. A nearest-neighbour distance is biased upward whenever there is noise, because it only ever counts one side. Normal signs are decided by whatever helper computed them. Changing the point density changes the scale of the distance itself. A symmetric shape has no unique pose. Each of these disappears the moment the numbers are folded into one."
   },
   {
+   "id": "wing_device",
+   "order": 110,
+   "title_ja": "装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する",
+   "title_en": "The Instrument Wing — From Raw Output to Instrument-Specific Failure",
+   "placard_ja": "計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の {n} 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。\n\n同じ距離でも iToF と dToF では多重反射と pile-up の現れ方が違い、同じ粒子でも SEM と TEM では直径が違って読めます。TDI は段数を増やせば暗い欠陥が見える一方、同期ずれを段数ぶん積み重ねます。装置名が同じでも、物理を省いた模型では壊れる場所を再現できません。\n\n各展示は閉形式、公開実測値、独立実装のいずれかを門にしています。狙いは実機の完全な代用品を名乗ることではなく、どの物理を入れ、何をまだ入れていないかを明示したうえで、測定値がいつ信用できなくなるかを実機に触れる前に確かめることです。",
+   "placard_en": "It is easy to borrow an instrument's name and produce a convenient image. The {n} exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.\n\nThe same range fails differently in iToF and dToF through multipath and pile-up; the same particles read at different diameters in SEM and TEM. More TDI stages reveal dark defects while accumulating each synchronisation error across all stages. A model that omits the instrument physics cannot reproduce where the instrument breaks.\n\nEvery exhibit is gated by a closed form, public measurement or independent implementation. The aim is not to claim a complete substitute for hardware. It is to state which physics is present and which is still absent, then find when the reported measurement stops being trustworthy before touching the instrument."
+  },
+  {
    "id": "lane_drive",
    "order": 98,
    "title_ja": "自動運転 ―― 定理と第 2 実装が門になる回(別記事)",
@@ -297,7 +315,7 @@
   },
   {
    "id": "poc_aoi_ct_traceability",
-   "wing": "wing_metrology",
+   "wing": "wing_device",
    "added": "2026-09-14",
    "numbers_source": "log",
    "title_ja": "全数の 2-D 検査と抜き取りの 3-D 検査を対応づける ―― 格子は自分自身に重なる",
@@ -790,7 +808,7 @@
   },
   {
    "id": "poc_interferometry_step",
-   "wing": "wing_metrology",
+   "wing": "wing_device",
    "added": "2026-09-06",
    "numbers_source": "log",
    "title_ja": "白色干渉計でナノメートルの段差をどこまで正確に測れるか",
@@ -834,7 +852,7 @@
   },
   {
    "id": "poc_lightfield_depth",
-   "wing": "wing_imaging",
+   "wing": "wing_device",
    "added": "2026-09-06",
    "numbers_source": "log",
    "title_ja": "ライトフィールドから深度を出す ―― 既知の深度で作った光場に、ゼロ点を並べて突きつける",
@@ -1031,7 +1049,7 @@
   },
   {
    "id": "poc_polarization_specular",
-   "wing": "wing_color",
+   "wing": "wing_device",
    "added": "2026-09-06",
    "numbers_source": "log",
    "title_ja": "偏光で鏡面反射を剥がす ―― フレネルの式で真値を作り、分離結果を突き合わせる",
@@ -1495,7 +1513,7 @@
   },
   {
    "id": "poc_thermography_ndt",
-   "wing": "wing_industrial",
+   "wing": "wing_device",
    "added": "2026-09-06",
    "numbers_source": "log",
    "title_ja": "パルスサーモグラフィで内部欠陥の深さを測る",
@@ -1561,7 +1579,7 @@
   },
   {
    "id": "poc_emva1288_sensor",
-   "wing": "wing_industrial",
+   "wing": "wing_device",
    "added": "2026-10-01",
    "numbers_source": "log",
    "title_ja": "カメラを買わずにカメラを測る ―― EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す",
@@ -1682,7 +1700,7 @@
   },
   {
    "id": "poc_xyt_event_surface",
-   "wing": "wing_xyt",
+   "wing": "wing_device",
    "added": "2026-09-06",
    "numbers_source": "log",
    "title_ja": "到達時刻面を (x, y, t) の等値面として取り出す",
@@ -2961,7 +2979,7 @@
   },
   {
    "id": "poc_phase_measuring_deflectometry",
-   "wing": "wing_metrology",
+   "wing": "wing_device",
    "added": "2026-10-15",
    "numbers_source": "log",
    "figure": "photo_vs_pmd",
@@ -2973,7 +2991,7 @@
   },
   {
    "id": "poc_tdi_linescan",
-   "wing": "wing_industrial",
+   "wing": "wing_device",
    "added": "2026-10-15",
    "numbers_source": "log",
    "figure": "tdi_stages_defects",
@@ -3009,7 +3027,7 @@
   },
   {
    "id": "poc_industrial_oct",
-   "wing": "wing_industrial",
+   "wing": "wing_device",
    "added": "2026-10-15",
    "numbers_source": "log",
    "figure": "real_paint_bscans",
@@ -3152,7 +3170,7 @@
   },
   {
    "id": "poc_dual_energy_xray",
-   "wing": "wing_industrial",
+   "wing": "wing_device",
    "added": "2026-10-18",
    "numbers_source": "log",
    "figure": "tray_single_vs_basis",
@@ -3332,7 +3350,7 @@
   },
   {
    "id": "poc_lens_tolerancing",
-   "wing": "wing_color",
+   "wing": "wing_device",
    "added": "2026-10-20",
    "numbers_source": "log",
    "figure": "sensitivity",
@@ -3356,7 +3374,7 @@
   },
   {
    "id": "poc_sem_tem_same_particle",
-   "wing": "wing_imaging",
+   "wing": "wing_device",
    "added": "2026-10-20",
    "numbers_source": "log",
    "figure": "same_specimen_sem_tem",
@@ -3368,7 +3386,7 @@
   },
   {
    "id": "poc_tof_camera",
-   "wing": "wing_imaging",
+   "wing": "wing_device",
    "added": "2026-10-20",
    "numbers_source": "log",
    "figure": "scene_viewer",
