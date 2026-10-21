@@ -1,6 +1,58 @@
 [
  {
-  "file": "01_histograms.png",
+  "file": "01_light_front.gif",
+  "name": "light_front",
+  "caption": "往復光の前線を48フレームで走査。反射振幅像を1–99.5 %で伸張しγ=0.7で表示。物理応答の形を保ちつつ、表示窓（応答0.2超）を奥行き範囲の7 %に広げ、琥珀色の光帯を重ねた。576×432、uint8、フレーム差 3.59、発光率 0.6–30.9 %（内容門 PASS）。",
+  "shape": [
+   432,
+   576,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 12.0,
+  "video": "01_light_front.mp4",
+  "video_frames": 48,
+  "video_fps": 24.0,
+  "video_shape": [
+   432,
+   576,
+   3
+  ]
+ },
+ {
+  "file": "02_labelled_artefacts.png",
+  "name": "labelled_artefacts",
+  "caption": "飛び画素（8倍拡大）、壁隅の系統的な湾曲、低反射物体の距離雑音を同じ尺度で示す。",
+  "shape": [
+   600,
+   1800,
+   3
+  ]
+ },
+ {
+  "file": "03_range_amplitude_confidence.png",
+  "name": "range_amplitude_confidence",
+  "caption": "距離出力｜反射振幅（γ=0.5）｜ピーク/背景比。320×240画素、85 signal + 12 ambient photons、520 ps FWHM、18 ns不感時間、行1.8 %・列1.2 %固定模様、hot 0.02 %。雑音対振幅の指数 -0.600（理論 −0.5）。",
+  "shape": [
+   600,
+   1800,
+   3
+  ]
+ },
+ {
+  "file": "04_pixel_histograms.png",
+  "name": "pixel_histograms",
+  "caption": "平面、角、暗い物体。角画素には二次反射の肩が現れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_histograms.png",
   "name": "histograms",
   "caption": "背景は 256 ビン全体に一様に乗るので、総量では信号の山に勝つ。窓全体の重心が窓の中心へ引かれるのがこれ。ゲートは山の周り ±7 ビンだけを残す。",
   "shape": [
@@ -10,7 +62,7 @@
   ]
  },
  {
-  "file": "02_methods.png",
+  "file": "06_methods.png",
   "name": "methods",
   "caption": "背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。",
   "shape": [
@@ -18,11 +70,11 @@
    618,
    3
   ],
-  "csv": "02_methods.csv",
-  "tsv": "02_methods.tsv"
+  "csv": "06_methods.csv",
+  "tsv": "06_methods.tsv"
  },
  {
-  "file": "03_crb_scaling.png",
+  "file": "07_crb_scaling.png",
   "name": "crb_scaling",
   "caption": "ゲート重心は CRB に寄り添って落ちる。ピーク位置は 5.6 mm で床に当たる(ビン量子化バイアス)。",
   "shape": [
@@ -32,7 +84,7 @@
   ]
  },
  {
-  "file": "04_pileup.png",
+  "file": "08_pileup.png",
   "name": "pileup",
   "caption": "素の推定は μ にほぼ比例して手前へずれる(5 光子/サイクルで -34.5 mm)。Coates は残差 -0.024 mm まで戻す。",
   "shape": [

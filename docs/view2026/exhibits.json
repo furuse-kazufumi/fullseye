@@ -2428,9 +2428,9 @@
   {
    "id": "poc_emva1288_sensor",
    "group": "wing_industrial",
-   "media": "01_photon_transfer.mp4",
-   "motion": true,
-   "thumb_src": "01_photon_transfer.gif",
+   "media": "01_raw_dark_flat_saturation.png",
+   "motion": false,
+   "thumb_src": "01_raw_dark_flat_saturation_720.jpg",
    "label": {
     "ja": "EMVA 1288 測定",
     "en": "EMVA 1288 sensor",
@@ -3312,9 +3312,9 @@
   {
    "id": "poc_sem_wafer_defect_edge_bias",
    "group": "wing_metrology",
-   "media": "01_sem_edge_inflation.png",
+   "media": "01_sem_se_bse_bias.png",
    "motion": false,
-   "thumb_src": "01_sem_edge_inflation.png",
+   "thumb_src": "01_sem_se_bse_bias_720.jpg",
    "label": {
     "ja": "SEM の縁の太り",
     "en": "SEM edge inflation",
@@ -4264,9 +4264,9 @@
   {
    "id": "poc_dtof_ranging",
    "group": "wing_imaging",
-   "media": "01_histograms.png",
-   "motion": false,
-   "thumb_src": "01_histograms_720.jpg",
+   "media": "01_light_front.mp4",
+   "motion": true,
+   "thumb_src": "01_light_front.gif",
    "label": {
     "ja": "光子で測距",
     "en": "Photon ranging",
@@ -4723,9 +4723,9 @@
   {
    "id": "poc_xyt_event_surface",
    "group": "wing_xyt",
-   "media": "05_arrival_video.mp4",
+   "media": "07_arrival_video.mp4",
    "motion": true,
-   "thumb_src": "05_arrival_video.gif",
+   "thumb_src": "07_arrival_video.gif",
    "label": {
     "ja": "到達時刻面",
     "en": "Arrival-time surface",
