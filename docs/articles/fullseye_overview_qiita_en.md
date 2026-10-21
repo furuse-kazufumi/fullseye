@@ -865,7 +865,7 @@ The star throughout is **the processing**. Each caption names the ops used, so y
 
 [![A dragon that pops out with red-blue glasses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph.png)
 
-*↑ **A dragon that pops out with red-blue glasses** — the real Stanford dragon scan rendered from 2 viewpoints and overlaid in red-cyan as an anaglyph. Put on red-blue glasses and it floats. Ops used: `read_mesh`, `look_at`, `render_mesh`.*
+*↑ **A dragon that pops out with red-blue glasses** — the real Stanford dragon scan rendered from 2 viewpoints and overlaid in red-cyan as an omni_anaglyph_compose. Put on red-blue glasses and it floats. Ops used: `read_mesh`, `look_at`, `render_mesh`.*
 
 [![The Triceratops mountain range](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain.png)
 

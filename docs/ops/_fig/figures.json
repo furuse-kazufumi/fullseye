@@ -1,5 +1,5 @@
 {
- "generated_for": 939,
+ "generated_for": 940,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -17559,6 +17559,32 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_viewport_from_equirect": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_viewport_from_equirect.a.jpg",
+    "chain": "tb_viewport_from_equirect.chain.jpg",
+    "inputs": "tb_viewport_from_equirect.inputs.jpg"
+   },
+   "fig": "tb_viewport_from_equirect.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_rgb 0.50 0.50\ntb_viewport_from_equirect 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_voxel_grid_downsample": {
    "color_ok": false,
    "extra": {
@@ -21992,10 +22018,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 934,
+  "ok": 935,
   "unreachable": 0,
-  "with_chain": 380,
+  "with_chain": 381,
   "with_gif": 40,
-  "with_sweep": 583
+  "with_sweep": 584
  }
 }
