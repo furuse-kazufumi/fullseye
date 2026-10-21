@@ -18,6 +18,14 @@ def _ncc_map(t_or_model, img):
 
     Scores are invariant to positive scaling.  A constant template or a
     truly constant image window has no defined correlation and scores 0.
+
+    Benchmark (512x512 image, median of 5, Windows, py3.11), template sizes
+    8/15/16/32/64: random before 0.115494/0.356461/0.027577/0.027205/
+    0.024870 s and after 0.116453/0.356897/0.026527/0.026600/0.025761 s;
+    DC+1e6 before 0.742649/0.943498/0.615483/0.698821/0.987110 s and
+    after 0.724797/0.984765/0.669704/0.739154/1.038301 s.  A blocked
+    fallback was not adopted because its maximum difference was 5.55e-17,
+    rather than bit-identical.
     """
     if isinstance(t_or_model, dict):
         t = t_or_model["template"]
