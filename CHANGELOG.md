@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- `estimate_normals(method="fast")`: batched covariance solves agree within `2e-12`; measured 12.6 times faster on 4,000 points.
+- `principal_curvatures(method="fast")`: analytic two-value solves agree within `2e-12`; measured 1.09 times faster on 4,000 points.
+- `laser_line_coherent(method="fast")`: output-resolution accumulation and the zero-roughness reuse path agree within `2e-15`; measured 5.6% lower peak memory generally and 6.74 times faster at zero roughness.
+
 - `car_hybrid_astar`: the optional `method="fast"` skips collision checks for branches already dominated in the same search cell.
 - `car_hybrid_astar`: the optional `method="fast"` reuses up to eight analytic-shot candidates from its heuristic.
 
