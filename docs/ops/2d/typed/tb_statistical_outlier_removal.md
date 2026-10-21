@@ -7,7 +7,7 @@ out: points
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tb_statistical_outlier_removal — 2D `typed` op
@@ -51,6 +51,8 @@ k : int
     近傍数(既定 16)。点数が少なければ内部で ``n-1`` に丸める。
 std_ratio : float
     しきい値の緩さ。大きいほど残りやすい(除去が緩い)。
+chunk : int or None
+    指定時は近傍照会をこの点数ずつ行う。既定 ``None`` は従来経路。
 
 Returns
 -------

@@ -4,10 +4,10 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [poc_noncoaxial_optics]
+examples: [poc_lens_tolerancing, poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # opd_samples — OPTICS `design` op
@@ -56,6 +56,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_lens_tolerancing](../../../../examples/poc_lens_tolerancing.py) — `py -3.11 examples/poc_lens_tolerancing.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

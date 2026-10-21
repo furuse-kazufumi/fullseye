@@ -38,13 +38,14 @@ def fractal_dimension(v, a, b):
     sizes: list[int] = []
     counts: list[int] = []
     s = 1
+    occupied = mask
     while s <= n // 2:
-        ph, pw = (-h) % s, (-w) % s
-        padded = np.pad(mask, ((0, ph), (0, pw)))
-        hs, ws = padded.shape
-        boxes = padded.reshape(hs // s, s, ws // s, s).any(axis=(1, 3))
         sizes.append(s)
-        counts.append(int(boxes.sum()))
+        counts.append(int(occupied.sum()))
+        ph, pw = (-occupied.shape[0]) % 2, (-occupied.shape[1]) % 2
+        padded = np.pad(occupied, ((0, ph), (0, pw)), constant_values=False)
+        occupied = padded.reshape(padded.shape[0] // 2, 2,
+                                  padded.shape[1] // 2, 2).any(axis=(1, 3))
         s *= 2
     sz = np.asarray(sizes, np.float64)
     ct = np.asarray(counts, np.float64)

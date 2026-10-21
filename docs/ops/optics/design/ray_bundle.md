@@ -4,10 +4,10 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
+examples: [poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # ray_bundle — OPTICS `design` op
@@ -62,6 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_lens_merit_operands](../../../../examples/poc_lens_merit_operands.py) — `py -3.11 examples/poc_lens_merit_operands.py`
 - [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
+- [poc_lens_tolerancing](../../../../examples/poc_lens_tolerancing.py) — `py -3.11 examples/poc_lens_tolerancing.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 - [poc_photograph_through_prescription](../../../../examples/poc_photograph_through_prescription.py) — `py -3.11 examples/poc_photograph_through_prescription.py`
 - [poc_zmx_public_verify](../../../../examples/poc_zmx_public_verify.py) — `py -3.11 examples/poc_zmx_public_verify.py`

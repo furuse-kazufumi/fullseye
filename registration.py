@@ -178,15 +178,17 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         if keep_n < P0.shape[0]:
             sel = np.argpartition(dist, keep_n - 1)[:keep_n]
         else:
-            sel = np.arange(P0.shape[0])
+            sel = slice(None)
         p, q, n = cur[sel], Q[idx[sel]], N[idx[sel]]
         # linearised (small-angle) point-to-plane: [cross(p,n) | n] · [r | t] = -(p-q)·n
-        A = np.concatenate([np.cross(p, n), n], axis=1)
-        b = -rowdot(p - q, n)
         if reproducible:
+            A = np.concatenate([np.cross(p, n), n], axis=1)
+            b = -rowdot(p - q, n)
             x = np.linalg.solve(ozakimm._matmul_repro_any(A.T, A) + 1e-12 * np.eye(6),
                                 ozakimm._matmul_repro_any(A.T, b[:, None])[:, 0])
         else:
+            A = np.concatenate([np.cross(p, n), n], axis=1)
+            b = -rowdot(p - q, n)
             x, *_ = np.linalg.lstsq(A, b, rcond=None)
         R_inc = Rotation.from_rotvec(x[:3]).as_matrix()
         t_inc = x[3:]
@@ -201,7 +203,7 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     # when max_iter=0, where the loop never runs, instead of leaving rmse = inf).
     dist, idx = tree.query(cur)
     sel = (np.argpartition(dist, keep_n - 1)[:keep_n]
-           if keep_n < P0.shape[0] else np.arange(P0.shape[0]))
+           if keep_n < P0.shape[0] else slice(None))
     rmse = rms(rowdot(cur[sel] - Q[idx[sel]], N[idx[sel]]))
     return R_tot, t_tot, cur, rmse
 

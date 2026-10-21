@@ -7,7 +7,7 @@ out: table
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # sam_frequency_tradeoff — ACOUSTICS `ultrasonic` op

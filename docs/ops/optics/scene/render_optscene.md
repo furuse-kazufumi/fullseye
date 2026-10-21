@@ -7,7 +7,7 @@ out: rgbimage
 examples: [poc_nir_silicon_transmission, poc_pocket_interreflection, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # render_optscene — OPTICS `scene` op
@@ -96,7 +96,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](defocus_blur.md) · [diffraction_blur](diffraction_blur.md) · [sensor_capture](sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [underwater_inspection_image](../watervision/underwater_inspection_image.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md)
+[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](defocus_blur.md) · [diffraction_blur](diffraction_blur.md) · [sensor_capture](sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md)
 
 ## 同カテゴリ(`scene`)
 

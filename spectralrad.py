@@ -35,6 +35,7 @@ __all__ = [
     "PLANCK_H", "LIGHT_C", "BOLTZMANN_K",
     "blackbody_spectrum", "cie_illuminant_a", "led_spectrum", "bandpass_spectrum",
     "silicon_photodiode_qe", "energy_to_photons", "spectral_product", "spectral_integral",
+    "spectral_integral_table",
     "spectral_stats",
     "ingaas_photodiode_qe", "kubelka_munk_reflectance", "spectral_reflectance_from_material",
     "hyperspectral_band_weights", "hyperspectral_capture", "hyperspectral_capture_cube", "DEFAULT_BAND_CENTERS_NM",
@@ -286,6 +287,40 @@ def spectral_integral(spectrum, wl_min_nm=None, wl_max_nm=None):
     x = np.concatenate([[lo], inner[:, 0], [hi]])
     y = np.concatenate([[np.interp(lo, a[:, 0], a[:, 1])], inner[:, 1], [np.interp(hi, a[:, 0], a[:, 1])]])
     return float(np.sum(0.5 * (y[1:] + y[:-1]) * np.diff(x)))
+
+
+def spectral_integral_table(spectrum):
+    """Build a reusable cumulative trapezoid table for repeated band integrals.
+
+    The returned callable ``integrate(lo, hi)`` has the same interval validation
+    and endpoint interpolation as :func:`spectral_integral`.
+    """
+    op = "spectral_integral_table"
+    a = _curve(spectrum, "spectrum", op)
+    x, y = a[:, 0], a[:, 1]
+    cumulative = np.r_[0.0, np.cumsum(0.5 * (y[1:] + y[:-1]) * np.diff(x))]
+
+    def primitive(q):
+        if q <= x[0]:
+            return float((q - x[0]) * y[0])
+        if q >= x[-1]:
+            return float(cumulative[-1] + (q - x[-1]) * y[-1])
+        i = int(np.searchsorted(x, q, side="right") - 1)
+        dx = q - x[i]
+        yq = y[i] + dx * (y[i + 1] - y[i]) / (x[i + 1] - x[i])
+        return float(cumulative[i] + 0.5 * (y[i] + yq) * dx)
+
+    def integrate(wl_min_nm=None, wl_max_nm=None):
+        lo = x[0] if wl_min_nm is None else float(wl_min_nm)
+        hi = x[-1] if wl_max_nm is None else float(wl_max_nm)
+        if not (math.isfinite(lo) and math.isfinite(hi)) or hi <= lo:
+            raise ValueError("%s: need wl_min_nm < wl_max_nm, got %r, %r" % (op, wl_min_nm, wl_max_nm))
+        if lo < x[0] - 1e-9 or hi > x[-1] + 1e-9:
+            raise ValueError("%s: the interval %.6g-%.6g nm is outside the curve (%.6g-%.6g nm)"
+                             % (op, lo, hi, x[0], x[-1]))
+        return primitive(hi) - primitive(lo)
+
+    return {"wavelength_nm": x.copy(), "cumulative": cumulative, "integrate": integrate}
 
 
 def spectral_stats(spectrum):

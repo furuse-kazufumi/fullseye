@@ -4,10 +4,10 @@ dim: optics
 category: lensfile
 in: 
 out: table
-examples: [optical_design_metrics, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zmx_public_verify, poc_zoom_configurations]
+examples: [lensfile_tolerance_worst_mtf, optical_design_metrics, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zmx_public_verify, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # lens_file_read — OPTICS `lensfile` op
@@ -84,6 +84,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lensfile_tolerance_worst_mtf](../../../../examples/lensfile_tolerance_worst_mtf.py) — `py -3.11 examples/lensfile_tolerance_worst_mtf.py`
 - [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`

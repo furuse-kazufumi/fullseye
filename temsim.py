@@ -182,8 +182,12 @@ def _ctf_args(op, kv, cs_mm, defocus_A, astig_A, astig_angle_deg, amplitude_cont
 
 def _chi(kx, ky, lam, cs, df_u, df_v, ang, ps):
     k2 = kx * kx + ky * ky
-    alpha = np.arctan2(ky, kx)
-    dfa = 0.5 * (df_u + df_v + (df_u - df_v) * np.cos(2.0 * (alpha - ang)))
+    c2, s2 = math.cos(2.0 * ang), math.sin(2.0 * ang)
+    directional = np.empty_like(k2)
+    np.divide((kx * kx - ky * ky) * c2 + 2.0 * kx * ky * s2, k2,
+              out=directional, where=k2 != 0.0)
+    directional[k2 == 0.0] = c2
+    dfa = 0.5 * (df_u + df_v + (df_u - df_v) * directional)
     return math.pi * lam * k2 * dfa - 0.5 * math.pi * cs * lam ** 3 * k2 * k2 + ps, dfa
 
 
@@ -352,8 +356,9 @@ def tem_projected_potential(atoms, elements="C", shape=256, pixel_A=0.5):
     # 双線形の置き方の伝達(各軸の sinc²)。Nyquist で 0.405 なので割り戻しても発散しない。
     T = (np.sinc(kx * px) ** 2) * (np.sinc(ky * px) ** 2)
     out = np.zeros((ny, nx), dtype=np.complex128)
-    for name in sorted(set(el)):
-        idx = np.array([e == name for e in el])
+    element_codes = np.asarray(el)
+    groups = {name: np.flatnonzero(element_codes == name) for name in sorted(set(el))}
+    for name, idx in groups.items():
         fe = _electron_form_factor(name, q / 2.0)
         out += np.fft.fft2(_splat(xy[idx], ny, nx, px)) * fe / T
     return POTENTIAL_CONST * np.fft.ifft2(out).real / (px * px)
@@ -442,7 +447,8 @@ def tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=
     return I
 
 
-def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=2.0 / 3.0):
+def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=2.0 / 3.0,
+                   memory_budget=None):
     """簡易のマルチスライス(Cowley–Moodie、Kirkland の形): 出射波を返す(表)。
 
     ``slices`` = (n_slices, ny, nx) の各スライスの投影ポテンシャル [V Å] (2-D なら 1 枚)。
@@ -459,9 +465,12 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
     if S.ndim != 3 or S.dtype.kind not in "iuf" or min(S.shape[1:]) < 8 or S.shape[0] < 1:
         raise ValueError("%s: slices must be a real (n, ny, nx) array with ny, nx >= 8, got %s %s"
                          % (op, S.dtype, S.shape))
-    S = S.astype(np.float64)
     if not np.isfinite(S).all():
         raise ValueError("%s: slices has non-finite values" % op)
+    if memory_budget is None:
+        S = S.astype(np.float64)
+    else:
+        _num(memory_budget, "memory_budget", op, lo=0.0, lo_open=True)
     px = _num(pixel_A, "pixel_A", op, lo=0.01, hi=100.0)
     kv = _num(kv, "kv", op, lo=0.0, hi=5000.0, lo_open=True)
     dz = _num(slice_thickness_A, "slice_thickness_A", op, lo=0.0, hi=1e5)
@@ -474,10 +483,14 @@ def tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlim
     mask = (k2 <= kmax * kmax).astype(np.float64)
     P = np.exp(-1j * math.pi * lam * dz * k2) * mask
     psi = np.ones((ny, nx), dtype=np.complex128)
+    projected = S.sum(axis=0) if memory_budget is None else np.zeros((ny, nx), dtype=np.float64)
     for v in S:
+        v = np.asarray(v, dtype=np.float64)
+        if memory_budget is not None:
+            projected += v
         t = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * v)) * mask)
         psi = np.fft.ifft2(np.fft.fft2(t * psi) * P)
-    proj = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * S.sum(axis=0))) * mask)
+    proj = np.fft.ifft2(np.fft.fft2(np.exp(1j * sigma * projected)) * mask)
     inten = psi.real ** 2 + psi.imag ** 2
     return {"exit_wave": psi, "intensity": inten, "total_intensity": float(inten.mean()),
             "projection_wave": proj, "wavelength_A": lam, "sigma_rad_per_VA": sigma,
@@ -495,15 +508,17 @@ def _tiles(img, tile, overlap):
     return [(y, x) for y in ys for x in xs]
 
 
-def _tile_spectra(img, tile, overlap):
+def _iter_tile_spectra(img, tile, overlap):
     win = np.outer(np.hanning(tile), np.hanning(tile))
-    out = []
     for (y, x) in _tiles(img, tile, overlap):
         t = img[y:y + tile, x:x + tile]
         t = (t - t.mean()) * win
         F = np.fft.fft2(t)
-        out.append(F.real ** 2 + F.imag ** 2)
-    return out
+        yield F.real ** 2 + F.imag ** 2
+
+
+def _tile_spectra(img, tile, overlap):
+    return list(_iter_tile_spectra(img, tile, overlap))
 
 
 def _auto_tile(shape, tile):
@@ -531,8 +546,12 @@ def tem_power_spectrum(image, tile=None, overlap=0.5):
     img = _img(image, "image", op, min_side=16)
     t = int(_num(_auto_tile(img.shape, tile), "tile", op, lo=16, hi=min(img.shape)))
     ov = _num(overlap, "overlap", op, lo=0.0, hi=0.9)
-    sp = _tile_spectra(img, t, ov)
-    return np.fft.fftshift(np.mean(sp, axis=0))
+    total = None
+    count = 0
+    for spectrum in _iter_tile_spectra(img, t, ov):
+        total = spectrum.copy() if total is None else total + spectrum
+        count += 1
+    return np.fft.fftshift(total / count)
 
 
 def _radial(ps_unshift, pixel_A, k_lo, k_hi, nbins):
@@ -608,11 +627,20 @@ def _lomb_guess(k, amp, lam, cs, df_lo, df_hi):
 def _fit_1d(k, flat, lam, cs, w, ps, df_lo, df_hi, k_max):
     step = 1.0 / (8.0 * lam * k_max * k_max)
     grid = np.arange(df_lo, df_hi + step, step)
-    scores = np.array([_ncc(flat, _model_1d(k, lam, cs, d, w, ps)) for d in grid])
+    observed = flat - flat.mean()
+    observed_norm = float(np.dot(observed, observed))
+
+    def score(d):
+        model = _model_1d(k, lam, cs, d, w, ps)
+        model -= model.mean()
+        den = math.sqrt(observed_norm * float(np.dot(model, model)))
+        return float(np.dot(observed, model) / den) if den > 0 else 0.0
+
+    scores = np.array([score(d) for d in grid])
     i = int(np.argmax(np.round(scores, 12)))
     from scipy.optimize import minimize_scalar
     lo, hi = grid[max(0, i - 2)], grid[min(grid.size - 1, i + 2)]
-    r = minimize_scalar(lambda d: -_ncc(flat, _model_1d(k, lam, cs, d, w, ps)), bounds=(lo, hi), method="bounded",
+    r = minimize_scalar(lambda d: -score(d), bounds=(lo, hi), method="bounded",
                         options={"xatol": 0.05})
     return float(r.x), float(-r.fun), grid, scores
 
@@ -674,8 +702,17 @@ def tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast
     ov = _num(overlap, "overlap", op, lo=0.0, hi=0.9)
     lam = _lam_sigma(kv)[0]
 
-    spectra = _tile_spectra(img, t, ov)
-    amp2d = np.sqrt(np.mean(spectra, axis=0))
+    group_sums = [None] * 8
+    group_counts = np.zeros(8, dtype=np.int64)
+    total = None
+    n_spectra = 0
+    for spectrum in _iter_tile_spectra(img, t, ov):
+        total = spectrum.copy() if total is None else total + spectrum
+        g = n_spectra % 8
+        group_sums[g] = spectrum.copy() if group_sums[g] is None else group_sums[g] + spectrum
+        group_counts[g] += 1
+        n_spectra += 1
+    amp2d = np.sqrt(total / n_spectra)
     k_req = khi
     for _round in range(2):
         nb = max(32, int((khi - klo) * t * px * 2))
@@ -776,13 +813,11 @@ def tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast
 
     # 不確かさ: タイルを 8 組に分けた jackknife(1 組を抜いた平均スペクトルで当てはめ直す)
     sig = sig_ast = float("nan")
-    G = min(8, len(spectra))
+    G = min(8, n_spectra)
     if G >= 2 and not reasons:
-        total = np.sum(spectra, axis=0)
         est = []
         for g in range(G):
-            grp = spectra[g::G]
-            a_g = np.sqrt((total - np.sum(grp, axis=0)) / (len(spectra) - len(grp)))
+            a_g = np.sqrt((total - group_sums[g]) / (n_spectra - group_counts[g]))
             o_g = observe(a_g)
             if astigmatism:
                 mg, hg, _, _ = refine(o_g, [(mean, ang)], max(half, h0))
@@ -802,7 +837,7 @@ def tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast
            "defocus_1d_A": df1, "defocus_sigma_A": sig, "astig_sigma_A": sig_ast, "score": s2, "score_1d": s1,
            "peak_z": peak_z, "peak_z_1d": z1,
            "n_rings": len(zeros), "fit_resolution_A": fit_res, "k_max_used": khi, "k_max_requested": k_req, "initial_lomb_A": df0, "tile": t,
-           "n_tiles": len(spectra), "k": k, "flat": flat, "model": _model_1d(k, lam, cs, df1, w, ps),
+           "n_tiles": n_spectra, "k": k, "flat": flat, "model": _model_1d(k, lam, cs, df1, w, ps),
            "defocus_grid_A": grid, "defocus_scores": scores, "wavelength_A": lam}
     if not accepted and on_fail == "raise":
         raise ValueError("%s: refused — %s" % (op, out["reason"]))

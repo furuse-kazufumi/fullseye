@@ -246,7 +246,22 @@ def pose_invert(p):
 
     ``pose_compose(p, pose_invert(p))`` は恒等(丸め誤差まで)。規約は :func:`pose_compose` と同じ。
     """
-    return hom_mat3d_to_pose_local(np.linalg.inv(pose_to_hom_mat3d_local(p)))
+    raw = np.asarray(p, dtype=float)
+    if raw.shape == (4, 4):
+        R = raw[:3, :3]
+        rigid = (np.allclose(R.T @ R, np.eye(3), rtol=0.0, atol=1e-9)
+                 and abs(float(np.linalg.det(R)) - 1.0) <= 1e-9
+                 and np.allclose(raw[3], [0, 0, 0, 1], rtol=0.0, atol=1e-9))
+        if not rigid:
+            return hom_mat3d_to_pose_local(np.linalg.inv(raw))
+        H = raw
+    else:
+        H = pose_to_hom_mat3d_local(p)
+        R = H[:3, :3]
+    inv = np.eye(4)
+    inv[:3, :3] = R.T
+    inv[:3, 3] = -(R.T @ H[:3, 3])
+    return hom_mat3d_to_pose_local(inv)
 
 
 def pose_to_quat(pose):

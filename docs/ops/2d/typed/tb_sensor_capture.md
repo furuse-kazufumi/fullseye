@@ -7,7 +7,7 @@ out: rgbimage
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tb_sensor_capture — 2D `typed` op
@@ -70,7 +70,7 @@ tb_sensor_capture 0.50 0.50
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_wetness](tb_wetness.md) · [tb_specular_diffuse_split](tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](tb_specular_coefficient_map.md) · [tb_specular_free_transform](tb_specular_free_transform.md) · [tb_rgb_to_quaternion](tb_rgb_to_quaternion.md)
+[identity](../misc/identity.md) · [tb_wetness](tb_wetness.md) · [tb_viewport_from_equirect](tb_viewport_from_equirect.md) · [tb_specular_diffuse_split](tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](tb_specular_coefficient_map.md) · [tb_specular_free_transform](tb_specular_free_transform.md) · [tb_rgb_to_quaternion](tb_rgb_to_quaternion.md)
 
 ## 同カテゴリ(`typed`)
 

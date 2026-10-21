@@ -7,17 +7,17 @@ out: table
 examples: [transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # hankel_image — MATH `transform` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_image")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None, memory_budget: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None, memory_budget: 'int | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_image")`)
 
 ## 使い方
 
-軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
+軸対称な画像の2次元フーリエ変換を動径のHankel変換で求める。``memory_budget`` は実測差1e-10以下の省メモリ経路。
 
 画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、``hankel_transform``(0 次)にかける。
 軸対称なら 2 次元の変換が**1 本の積分**で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称から

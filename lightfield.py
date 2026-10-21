@@ -1301,10 +1301,14 @@ def lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16,
         lv = _check_slopes(want, H * W, op)
     else:
         lv = _check_slopes(levels, H * W, op)
-    stack = np.stack(lf_focal_stack(arr, lv, interp=interp, edge=edge), axis=0)
     lv_arr = np.asarray(lv, dtype=np.float64)
     pick = np.abs(sm[None, :, :] - lv_arr[:, None, None]).argmin(axis=0)
-    return np.take_along_axis(stack, pick[None], axis=0)[0]
+    out = np.empty((H, W), dtype=np.float64)
+    for index in np.unique(pick):
+        plane = lf_refocus(arr, lv[int(index)], interp=interp, edge=edge)
+        selected = pick == index
+        out[selected] = plane[selected]
+    return out
 
 
 # --------------------------------------------------------------------------- #

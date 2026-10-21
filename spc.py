@@ -276,11 +276,11 @@ def spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None):
         if sd <= 0:
             raise ValueError("%s: sigma must be > 0, got %r" % (op, sd))
     tgt = float(target)
-    z = np.empty(x.size, dtype=np.float64)
-    prev = tgt
-    for i in range(x.size):
-        prev = lam * x[i] + (1.0 - lam) * prev
-        z[i] = prev
+    from scipy.signal import lfilter
+    # y[0] = lam*x[0] + zi[0] なので、zi=(1-lam)*target とすれば
+    # 文書の再帰式にある初期値 z_0=target を厳密に与えられる。
+    z, _ = lfilter([lam], [1.0, -(1.0 - lam)], x,
+                   zi=[(1.0 - lam) * tgt])
     i1 = np.arange(1, x.size + 1, dtype=np.float64)
     var = sd * sd * (lam / (2.0 - lam)) * (1.0 - (1.0 - lam) ** (2.0 * i1))
     half = L * np.sqrt(var)
@@ -808,15 +808,17 @@ def msa_bias_linearity(table, reference="reference", measured="measured"):
 
 def _cohen_kappa(a, b):
     """2 人分の評価から Cohen のカッパ。``(p_o - p_e)/(1 - p_e)``。"""
-    cats = np.unique(np.concatenate([a, b]))
-    k = len(cats)
-    idx = {v: i for i, v in enumerate(cats)}
-    m = np.zeros((k, k), dtype=np.float64)
-    for x, y in zip(a, b):
-        m[idx[x], idx[y]] += 1.0
-    n = m.sum()
-    p_o = float(np.trace(m) / n)
-    p_e = float((m.sum(axis=1) @ m.sum(axis=0)) / (n * n))
+    aa = np.asarray(a)
+    bb = np.asarray(b)
+    n = min(aa.size, bb.size)
+    _, mapped = np.unique(np.concatenate([aa, bb]), return_inverse=True)
+    ids_a = mapped[:aa.size][:n]
+    ids_b = mapped[aa.size:][:n]
+    k = int(mapped.max()) + 1 if mapped.size else 0
+    count_a = np.bincount(ids_a, minlength=k).astype(np.float64, copy=False)
+    count_b = np.bincount(ids_b, minlength=k).astype(np.float64, copy=False)
+    p_o = float(np.mean(aa[:n] == bb[:n]))
+    p_e = float((count_a @ count_b) / (np.float64(n) * np.float64(n)))
     if p_e >= 1.0:                               # 全員が同じ 1 カテゴリしか使っていない
         return (1.0 if p_o >= 1.0 else float("nan")), p_o, p_e
     return (p_o - p_e) / (1.0 - p_e), p_o, p_e
@@ -1229,7 +1231,7 @@ def _mc_samples(table, correlation, n, seed, distribution="dist"):
 
 def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
                     level=0.95, correlation=None, distribution=None,
-                    value=None, power=None):
+                    value=None, power=None, stream=False):
     """GUM 補遺 1(JCGM 101)のモンテカルロ伝播(``table``)。
 
     各入力量を分布から引いて ``y = sum_i c_i x_i`` を作り、標本から標準不確かさと
@@ -1290,8 +1292,6 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
         if bad:
             raise ValueError("%s: unknown distribution(s) %s" % (op, bad))
 
-    z = _mc_standardised(kinds, correlation, n, seed, op)
-
     xs = np.zeros(m, dtype=np.float64)
     if value is not None:
         xs = _numeric(_cols(table, op, (value,))[value], value, op)
@@ -1301,9 +1301,18 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
         if (ps <= 0).any() or not np.allclose(ps, np.round(ps)):
             raise ValueError("%s: power must be a positive whole number per component "
                              "(fractional powers of a negative sample are undefined)" % op)
-    if value is None and power is None:
+    if stream and correlation is None and value is None and power is None:
+        rng = np.random.default_rng(int(seed))
+        y = np.zeros(n, dtype=np.float64)
+        for kind, weight in zip(kinds, cc * uu):
+            normal = kind == "normal" or kind.startswith("normal_")
+            draw = rng.standard_normal(n) if normal else _legacy_draw(rng, kind, n)
+            y += draw * weight
+    elif value is None and power is None:
+        z = _mc_standardised(kinds, correlation, n, seed, op)
         y = z @ (cc * uu)                    # 線形(既定)—— 従来と同じ経路
     else:
+        z = _mc_standardised(kinds, correlation, n, seed, op)
         y = ((xs + z * uu) ** ps) @ cc
 
     u_mc = float(y.std(ddof=1))

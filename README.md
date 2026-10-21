@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,489
-operators in the machine-readable index, `docs/OP_INDEX.json`: 939 single-input 2-D operators +
-17 n-ary + 2,533 in the typed ledgers, each with a per-operator note), the family guides, and the
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,529
+operators in the machine-readable index, `docs/OP_INDEX.json`: 940 single-input 2-D operators +
+17 n-ary + 2,572 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
@@ -66,7 +66,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them from measurement files in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), and `tests/test_trust_block.py` fails if this section drifts from them. Every number carries the version and date it was measured at.
 
-**20,795 regression tests** — included in 0.7.1, commit `fbe838d6f4`, counted with `pytest --collect-only` on 2026-10-19 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
+**21,185 regression tests** — included in 0.7.2, commit `2f045f623d`, counted with `pytest --collect-only` on 2026-10-20 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
 
 ### If you add one operator, what checks it
 
@@ -90,16 +90,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 90 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 94 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.2); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 72 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 76 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 418 examples, 418 are actually run by a gate.
+Of 426 examples, 426 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -115,7 +115,7 @@ Of 418 examples, 418 are actually run by a gate.
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
-| 0.7.1 | 2026-10-19 | 3,449 | 2,493 | 982 | 264 | 20,795 |
+| 0.7.2 | 2026-10-20 | 3,449 | 2,493 | 982 | 264 | 21,185 |
 
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).
@@ -145,7 +145,7 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 | Door | For | Run this first | Status |
 |---|---|---|---|
 | **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 9 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (939 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 1,049 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (940 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 2,572 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -189,7 +189,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,489 typed operators** (956 2-D in the registry, 17 of them n-ary, + 2,533 in the typed ledgers,
+**3,529 typed operators** (957 2-D in the registry, 17 of them n-ary, + 2,572 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -319,7 +319,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
-| Look up any of the 3,489 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,529 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

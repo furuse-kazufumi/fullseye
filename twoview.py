@@ -78,7 +78,7 @@ def fundamental_8point(pts1, pts2):
     A = np.stack([x2 * x1, x2 * y1, x2,
                   y2 * x1, y2 * y1, y2,
                   x1, y1, np.ones_like(x1)], axis=1)
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     F = Vt[-1].reshape(3, 3)
     # rank-2 強制(基礎行列の性質: det F = 0)
     U, S, Vt2 = np.linalg.svd(F)
@@ -233,7 +233,8 @@ def _homography_dlt(pts1, pts2):
     for (x, y), (u, v) in zip(n1, n2):
         rows.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
         rows.append([x, y, 1, 0, 0, 0, -u * x, -u * y, -u])
-    _, _, Vt = np.linalg.svd(np.asarray(rows, float))
+    rows = np.asarray(rows, float)
+    _, _, Vt = np.linalg.svd(rows, full_matrices=rows.shape[0] < rows.shape[1])
     H = Vt[-1].reshape(3, 3)
     H = np.linalg.inv(T2) @ H @ T1     # 逆正規化
     denom = H[2, 2] if abs(H[2, 2]) > 1e-12 else (np.linalg.norm(H) + 1e-12)

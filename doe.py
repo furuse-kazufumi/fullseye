@@ -223,6 +223,22 @@ def _min_dist(u: np.ndarray) -> float:
     return float(d.min())
 
 
+def _min_dist_bounded(u: np.ndarray, upper: float, return_pairs: bool = False):
+    """Minimum distance, stopping once the candidate cannot beat ``upper``."""
+    best = np.inf
+    pairs = 0
+    for i in range(u.shape[0] - 1):
+        d = np.sqrt(((u[i + 1:] - u[i]) ** 2).sum(axis=1))
+        pairs += d.size
+        row = float(d.min())
+        if row < best:
+            best = row
+        if best <= upper:
+            return (best, pairs) if return_pairs else best
+    value = float(best)
+    return (value, pairs) if return_pairs else value
+
+
 def doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> dict:
     """Latin hypercube design (McKay, Beckman & Conover 1979) -> ``design``.
 
@@ -267,7 +283,7 @@ def doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> dict:
         best, md = None, -1.0
         for _ in range(maximin):
             cand = one()
-            d = _min_dist(cand)
+            d = _min_dist_bounded(cand, md)
             if d > md:
                 best, md = cand, d
         u = best

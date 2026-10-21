@@ -9,6 +9,31 @@
   "hi"
  ],
  "summaries": {
+  "2d/tb_viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
+  "optics/omni_anaglyph_compose": {"fp":"e8aef366b701","ja":"左右像を色フィルター式の立体画像に合成する。","zh":"将左右图像合成为彩色滤镜立体图。","tw":"將左右影像合成為彩色濾鏡立體圖。","ko":"좌우 영상을 색 필터 입체 영상으로 합성한다.","de":"Setzt linkes und rechtes Bild zu einem Farbfilter-Stereobild zusammen.","hi":"बाएँ और दाएँ चित्र को रंग-फ़िल्टर त्रिविम चित्र में मिलाता है।"},
+  "optics/anaglyph_crosstalk": {"fp":"630258bbee1c","ja":"左右の見え方と誤像漏れのエネルギー比を返す。","zh":"返回双眼预览和串扰能量比。","tw":"回傳雙眼預覽與串擾能量比。","ko":"양안 미리보기와 누설 에너지 비를 반환한다.","de":"Liefert Augenansichten und das Energieverhältnis der Übersprechbilder.","hi":"दोनों आँखों के दृश्य और रिसाव ऊर्जा अनुपात देता है।"},
+  "optics/anaglyph_from_ods": {"fp":"a6d2a5dc912f","ja":"全方位立体像から視野を切り出して色フィルター像にする。","zh":"从全景立体对中提取视口并生成彩色滤镜图。","tw":"從全景立體對擷取視口並產生彩色濾鏡圖。","ko":"전방위 입체 쌍에서 시야를 추출해 색 필터 영상으로 만든다.","de":"Extrahiert Ansichten aus einem Rundum-Stereopaar und erzeugt ein Farbfilterbild.","hi":"सर्वदिशीय त्रिविम जोड़ी से दृश्य निकालकर रंग-फ़िल्टर चित्र बनाता है।"},
+  "optics/cubemap_from_equirect": {"fp":"f2bd33b61fd7","ja":"正距円筒画像を6面のキューブ面へ再標本化する。","zh":"将等距柱状图重采样为六个立方体面。","tw":"將等距柱狀圖重取樣為六個立方體面。","ko":"등거리 원통 영상을 여섯 정육면체 면으로 재표본화한다.","de":"Tastet ein Rechteckpanorama auf sechs Würfelflächen um.","hi":"समदूरी बेलनाकार चित्र को छह घन फलकों पर पुनः नमूना करता है।"},
+  "optics/equirect_defect_unwrap_pipe": {"fp":"acad0a376d95","ja":"円筒壁を平面の検査帯へ展開する。","zh":"将圆柱壁展开为平面检测条带。","tw":"將圓柱壁展開為平面檢測帶。","ko":"원통 벽을 평면 검사 띠로 펼친다.","de":"Wickelt eine Zylinderwand zu einem flachen Prüfstreifen ab.","hi":"बेलनाकार दीवार को समतल निरीक्षण पट्टी में खोलता है।"},
+  "optics/equirect_filter_gaussian": {"fp":"33fcb78ed5d4","ja":"緯度に合わせた尺度で全天球像をガウス平滑化する。","zh":"按纬度调整尺度，对全景图进行高斯滤波。","tw":"依緯度調整尺度，對全景圖進行高斯濾波。","ko":"위도에 맞춘 척도로 전방위 영상을 가우시안 필터링한다.","de":"Glättet ein Rundumbild mit einer breitenabhängigen Gauß-Skala.","hi":"अक्षांश-अनुकूल पैमाने से सर्वदिशीय चित्र का गाउस फ़िल्टर करता है।"},
+  "optics/equirect_from_cubemap": {"fp":"364147dfd7e7","ja":"6面のキューブ面を正距円筒画像へ再標本化する。","zh":"将六个立方体面重采样为等距柱状图。","tw":"將六個立方體面重取樣為等距柱狀圖。","ko":"여섯 정육면체 면을 등거리 원통 영상으로 재표본화한다.","de":"Tastet sechs Würfelflächen zu einem Rechteckpanorama um.","hi":"छह घन फलकों को समदूरी बेलनाकार चित्र में पुनः नमूना करता है।"},
+  "optics/equirect_from_fisheye_pair": {"fp":"fd85e422f4d7","ja":"校正済み魚眼2面を接合し、重なり、継ぎ目誤差、死角を報告する。","zh":"拼接两个已标定鱼眼图并报告重叠、接缝误差和盲区。","tw":"拼接兩個已校正魚眼圖並回報重疊、接縫誤差與盲區。","ko":"보정된 어안 두 장을 접합하고 겹침, 이음 오차, 사각을 보고한다.","de":"Fügt zwei kalibrierte Fischaugenbilder zusammen und meldet Überlappung, Nahtfehler und Blindstellen.","hi":"दो अंशांकित मत्स्यनेत्र चित्र जोड़कर अतिव्यापन, जोड़ त्रुटि और अंध क्षेत्र बताता है।"},
+  "optics/equirect_from_perspectives": {"fp":"d74362f6e181","ja":"校正済み透視画像群を全天球像へ混合する。","zh":"将已标定透视图组混合为全景图。","tw":"將已校正透視圖組混合為全景圖。","ko":"보정된 원근 영상들을 전방위 영상으로 혼합한다.","de":"Mischt kalibrierte Perspektivbilder zu einem Rundumbild.","hi":"अंशांकित परिप्रेक्ष्य चित्रों को सर्वदिशीय चित्र में मिलाता है।"},
+  "optics/equirect_rotate": {"fp":"edb1aac99ac2","ja":"全天球画像へ正しい3次元回転を適用する。","zh":"对全景图应用正规三维旋转。","tw":"對全景圖套用正規三維旋轉。","ko":"전방위 영상에 올바른 3차원 회전을 적용한다.","de":"Wendet eine echte dreidimensionale Drehung auf ein Rundumbild an.","hi":"सर्वदिशीय चित्र पर उचित त्रिविम घूर्णन लागू करता है।"},
+  "optics/equirect_stabilize": {"fp":"ab76886ed141","ja":"全天球系列のカメラ回転を推定して除く。","zh":"估计并消除全景序列的相机旋转。","tw":"估計並消除全景序列的相機旋轉。","ko":"전방위 연속 영상의 카메라 회전을 추정해 제거한다.","de":"Schätzt und entfernt Kameradrehungen aus einer Rundumbildfolge.","hi":"सर्वदिशीय क्रम से कैमरा घूर्णन का अनुमान लगाकर हटाता है।"},
+  "optics/equirect_weight_map": {"fp":"a74bcdc94482","ja":"余弦緯度の重み画像を返す。","zh":"返回余弦纬度权重图。","tw":"回傳餘弦緯度權重圖。","ko":"코사인 위도 가중치 영상을 반환한다.","de":"Liefert eine Gewichtskarte mit dem Kosinus der Breite.","hi":"अक्षांश के कोसाइन का भार मानचित्र देता है।"},
+  "optics/ods_depth_to_disparity": {"fp":"4eec61f70f88","ja":"半径方向距離を全方位立体の水平視差へ変換する。","zh":"将径向深度转换为全景立体水平视差。","tw":"將徑向深度轉換為全景立體水平視差。","ko":"방사 깊이를 전방위 입체 수평 시차로 변환한다.","de":"Wandelt radiale Tiefe in horizontale Rundum-Stereodisparität um.","hi":"त्रिज्यीय गहराई को सर्वदिशीय क्षैतिज त्रिविम विस्थापन में बदलता है।"},
+  "optics/ods_disparity_to_depth": {"fp":"032e90d4a997","ja":"全方位立体の水平視差を半径方向距離へ変換する。","zh":"将全景立体水平视差转换为径向深度。","tw":"將全景立體水平視差轉換為徑向深度。","ko":"전방위 입체 수평 시차를 방사 깊이로 변환한다.","de":"Wandelt horizontale Rundum-Stereodisparität in radiale Tiefe um.","hi":"सर्वदिशीय क्षैतिज त्रिविम विस्थापन को त्रिज्यीय गहराई में बदलता है।"},
+  "optics/ods_render": {"fp":"caa8ad7432d9","ja":"場面コールバックから全方位立体光線を描画する。","zh":"通过场景回调渲染全景立体射线。","tw":"透過場景回呼渲染全景立體射線。","ko":"장면 콜백으로 전방위 입체 광선을 렌더링한다.","de":"Rendert Rundum-Stereostrahlen über eine Szenenfunktion.","hi":"दृश्य फ़ंक्शन से सर्वदिशीय त्रिविम किरणें रेंडर करता है।"},
+  "optics/s_psnr": {"fp":"385d212eebb8","ja":"球面上の決定的な準一様標本でPSNRを計算する。","zh":"在球面确定性近均匀采样点上计算PSNR。","tw":"在球面確定性近均勻取樣點上計算PSNR。","ko":"구면의 결정적 준균일 표본에서 PSNR을 계산한다.","de":"Berechnet PSNR an deterministischen, nahezu gleichverteilten Kugelproben.","hi":"गोले पर नियत लगभग-समान नमूनों से PSNR गणना करता है।"},
+  "optics/stereo360_sbs": {"fp":"79bf3d05e547","ja":"全天球の左右像を横並びに詰める。","zh":"将全景左右图并排打包。","tw":"將全景左右圖並排封裝。","ko":"전방위 좌우 영상을 나란히 묶는다.","de":"Packt ein Rundum-Stereopaar nebeneinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को अगल-बगल रखता है।"},
+  "optics/stereo360_top_bottom": {"fp":"948339a08e8a","ja":"全天球の左右像を上下に詰める。","zh":"将全景左右图上下打包。","tw":"將全景左右圖上下封裝。","ko":"전방위 좌우 영상을 위아래로 묶는다.","de":"Packt ein Rundum-Stereopaar übereinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को ऊपर-नीचे रखता है।"},
+  "optics/stereo_pack": {"fp":"b4def7cb6684","ja":"左右像を指定した表示配置に詰める。","zh":"按指定显示布局打包左右图。","tw":"依指定顯示配置封裝左右圖。","ko":"좌우 영상을 지정한 표시 배치로 묶는다.","de":"Packt zwei Augenbilder in die angegebene Anzeigeanordnung.","hi":"दोनों आँखों के चित्र निर्दिष्ट प्रदर्शन विन्यास में रखता है।"},
+  "optics/stereo_parallax_budget": {"fp":"a26062b4e190","ja":"物理視差と画面幅の1 %・3 %限界を報告する。","zh":"报告物理视差及屏宽1%和3%限值。","tw":"回報物理視差及螢幕寬1%與3%限值。","ko":"물리 시차와 화면 너비 1%, 3% 한계를 보고한다.","de":"Meldet physische Parallaxe sowie Ein- und Drei-Prozent-Grenzen der Bildschirmbreite.","hi":"भौतिक विस्थापन और स्क्रीन चौड़ाई की एक व तीन प्रतिशत सीमाएँ बताता है।"},
+  "optics/video360_tile_coverage": {"fp":"fde6de48c5f3","ja":"視線経路が触れる経度緯度タイルを報告する。","zh":"报告视线路径触及的经纬度分块。","tw":"回報視線路徑觸及的經緯度分塊。","ko":"시선 경로가 닿는 경위도 타일을 보고한다.","de":"Meldet die von einem Blickpfad berührten Längen-Breiten-Kacheln.","hi":"दृष्टि पथ से छुए गए देशांतर-अक्षांश टाइल बताता है।"},
+  "optics/video360_viewport_track": {"fp":"eb54e9aa1cf6","ja":"全天球フレーム列から動く視野を切り出す。","zh":"从全景帧序列提取移动视口。","tw":"從全景影格序列擷取移動視口。","ko":"전방위 프레임열에서 움직이는 시야를 추출한다.","de":"Extrahiert ein bewegtes Sichtfenster aus einer Rundumbildfolge.","hi":"सर्वदिशीय फ़्रेम क्रम से चलता दृश्य क्षेत्र निकालता है।"},
+  "optics/viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
+  "optics/ws_psnr": {"fp":"fa7426b404cc","ja":"余弦緯度で重み付けした球面PSNRを計算する。","zh":"计算余弦纬度加权的球面PSNR。","tw":"計算餘弦緯度加權的球面PSNR。","ko":"코사인 위도로 가중한 구면 PSNR을 계산한다.","de":"Berechnet kugelflächengewichtetes PSNR mit Kosinus-Breitengewichten.","hi":"अक्षांश-कोसाइन भारित गोलकीय PSNR गणना करता है।"},
   "simcal/simcal_identifiability": {
    "fp": "a33c94d233ab",
    "ja": "合わせた各つまみの Fisher 情報・Cramér-Rao 下界・相関・共線性・プロファイル尤度。",
@@ -14616,6 +14641,15 @@
    "de": "Wellenlängenintegral einer Kurve ∫ s(λ) dλ (Trapezregel, λ in nm). Mit Intervall nur darin (Enden linear interpoliert).",
    "hi": "curve का तरंगदैर्घ्य integral ∫ s(λ) dλ (trapezoid नियम, λ nm में)। अंतराल देने पर केवल उसके भीतर (सिरे रैखिक interpolation)।"
   },
+  "optics/spectral_integral_table": {
+   "fp": "3f440afae3b9",
+   "ja": "帯域積分を繰り返すための、再利用できる累積台形積分表を作る。",
+   "zh": "为重复的波段积分构建可复用的累积梯形积分表。",
+   "tw": "為重複的波段積分建立可重用的累積梯形積分表。",
+   "ko": "반복적인 대역 적분을 위한 재사용 가능한 누적 사다리꼴 적분표를 만든다.",
+   "de": "Erstellt eine wiederverwendbare kumulative Trapeztabelle für wiederholte Bandintegrale.",
+   "hi": "बार-बार band integral निकालने के लिए पुन: उपयोग योग्य संचयी trapezoid table बनाता है।"
+  },
   "optics/spectral_stats": {
    "fp": "94b60c9895d7",
    "en": "Summary of a curve: peak wavelength and value, centroid wavelength, full width at half maximum (crossings by linear interpolation), integral.",
@@ -25201,13 +25235,13 @@
    "hi": "Texture की जटिलता मापने वाला Minkowski-Bouligand (box counting) fractal dimension।"
   },
   "2d/tb_plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "2d/tb_cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25579,13 +25613,13 @@
    "hi": "``carve`` / ``synthesize_silhouette`` को दिया जा सकने वाला camera pose ``(R, t)`` बनाता है।"
   },
   "3d/plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "3d/cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25741,13 +25775,13 @@
    "hi": "rational function F(s) = num(s)/den(s) का numerical inverse Laplace transform (fixed Talbot method)।"
   },
   "math/hankel_image": {
-   "fp": "8cc7f68e1d59",
-   "en": "Obtains the 2-dimensional Fourier transform of an axisymmetric image (a round aperture, a Gaussian blob, diffraction rings) with 1 radial Hankel transform.",
-   "zh": "用沿径向的 1 次 Hankel 变换求轴对称图像(圆形孔径、高斯团块、衍射环)的 2 维傅里叶变换。",
-   "tw": "以沿徑向的 1 次 Hankel 轉換求軸對稱影像(圓形孔徑、高斯團塊、繞射環)的 2 維傅立葉轉換。",
-   "ko": "축대칭 영상(둥근 개구·가우스 덩어리·회절 고리)의 2차원 푸리에 변환을 동경 방향 1개의 Hankel 변환으로 구한다.",
-   "de": "Bestimmt die 2-dimensionale Fourier-Transformation eines achsensymmetrischen Bildes (runde Apertur, Gauß-Fleck, Beugungsringe) mit 1 radialen Hankel-Transformation.",
-   "hi": "axisymmetric image (गोल aperture, Gaussian blob, diffraction rings) का 2-dimensional Fourier transform, radial दिशा के 1 Hankel transform से निकालता है।"
+   "fp": "154f403e459a",
+   "en": "Computes an axisymmetric image's 2-D Fourier transform with a radial Hankel transform. ``memory_budget`` selects a low-memory path measured within 1e-10.",
+   "zh": "用径向 Hankel 变换求轴对称图像的二维傅里叶变换。``memory_budget`` 选择实测差在 1e-10 内的省内存路径。",
+   "tw": "以徑向 Hankel 轉換求軸對稱影像的二維傅立葉轉換。``memory_budget`` 選擇實測差在 1e-10 內的省記憶體路徑。",
+   "ko": "동경 Hankel 변환으로 축대칭 영상의 2차원 푸리에 변환을 구한다. ``memory_budget`` 는 측정 차이가 1e-10 이하인 저메모리 경로를 선택한다.",
+   "de": "Berechnet die 2-D-Fourier-Transformation eines achsensymmetrischen Bildes per radialer Hankel-Transformation. ``memory_budget`` wählt einen speichersparenden Pfad mit gemessener Abweichung unter 1e-10.",
+   "hi": "radial Hankel transform से axisymmetric image का 2-D Fourier transform निकालता है। ``memory_budget`` measured difference 1e-10 के भीतर वाला low-memory path चुनता है।"
   },
   "math/dct_transform": {
    "fp": "b9a4bea869a8",
@@ -31472,6 +31506,20 @@
    "ko": "같은 장면을 둘 이상의 처방으로 촬영하고 사진마다의 품질을 표로 정리한다 -> dict.",
    "de": "Dieselbe Szene durch zwei oder mehr Verschreibungen aufnehmen und die Qualität jedes Bildes tabellieren -> dict.",
    "hi": "एक ही दृश्य को दो या अधिक prescriptions से render करना और हर तस्वीर की गुणवत्ता को तालिका में देना -> dict।"
-  }
+  },
+  "optics/mla_surface": {"fp":"d0eebb81b305","ja":"周期的な球面キャップのマイクロレンズアレイ面を記述する。","zh":"描述周期球冠微透镜阵列表面。","tw":"描述週期球冠微透鏡陣列表面。","ko":"주기적 구면 캡 마이크로렌즈 배열 면을 기술한다.","de":"Eine periodische Mikrolinsenarray-Fläche aus Kugelkappen beschreiben.","hi":"आवर्ती गोलाकार-कैप माइक्रोलेंस ऐरे सतह का वर्णन करें।"},
+  "optics/plenoptic_system": {"fp":"4de626cc52b1","ja":"主レンズ、MLA、センサを組み立て、F ナンバー整合を報告する。","zh":"组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。","tw":"組裝主鏡頭、微透鏡陣列和感測器，並報告 F 數匹配。","ko":"주 렌즈, MLA, 센서를 조립하고 F 번호 정합을 보고한다.","de":"Hauptobjektiv, MLA und Sensor zusammensetzen und die F-Zahl-Anpassung berichten.","hi":"मुख्य लेंस, MLA और सेंसर को जोड़कर F-number मिलान रिपोर्ट करें।"},
+  "optics/plenoptic_capture": {"fp":"4254954e736d","ja":"プレノプティック生フレームと白色校正画像を追跡して生成する。","zh":"追迹生成光场原始帧及其白场校准图像。","tw":"追跡產生光場原始幀及其白場校正影像。","ko":"플렌옵틱 원시 프레임과 백색 보정 영상을 추적해 생성한다.","de":"Ein plenoptisches Rohbild und sein Weißbild zur Kalibrierung nachverfolgen.","hi":"प्लेनॉप्टिक raw frame और उसकी white calibration image को trace करें।"},
+  "optics/plenoptic_mla_calibrate": {"fp":"9bb6f03bef51","ja":"白色画像のピークへ回転した長方格子を当てはめ、MLA を校正する。","zh":"对白场图像峰值拟合旋转矩形晶格以校准微透镜阵列。","tw":"對白場影像峰值擬合旋轉矩形晶格以校正微透鏡陣列。","ko":"백색 영상의 피크에 회전 직사각 격자를 맞춰 MLA를 보정한다.","de":"Ein gedrehtes rechteckiges Linsengitter an die Spitzen eines Weißbildes anpassen.","hi":"white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।"},
+  "optics/plenoptic_decode": {"fp":"2f38b9ae1d67","ja":"校正済み生フレームを整流し、光線場 L[v,u,y,x] を返す。","zh":"校正并重采样原始帧，返回光场 L[v,u,y,x]。","tw":"校正並重取樣原始幀，回傳光場 L[v,u,y,x]。","ko":"보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.","de":"Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.","hi":"calibrated raw frame को rectify करके light field L[v,u,y,x] लौटाएँ।"},
+  "optics/plenoptic_refocus_depth": {"fp":"ddd177c30e78","ja":"光線場の再合焦スロープをメートル単位の物体距離へ変換する。","zh":"将光场重聚焦斜率转换为以米为单位的物距。","tw":"將光場重聚焦斜率轉換為以公尺為單位的物距。","ko":"광선장 재초점 기울기를 미터 단위 물체 거리로 변환한다.","de":"Die Lichtfeld-Refokus-Steigung in eine Objektentfernung in Metern umrechnen.","hi":"light-field refocus slope को मीटर में object distance में बदलें।"},
+  "optics/tolerance_table": {"fp":"d24d251fde5a","ja":"製造変数ごとに独立した、検証済みの公差行を作る -> dict。","zh":"为每个独立制造变量建立并验证公差行 -> 字典。","tw":"為每個獨立製造變數建立並驗證公差列 -> 字典。","ko":"독립 제조 변수마다 검증된 공차 행을 만든다 -> dict.","de":"Validierte Toleranzzeilen je unabhängiger Fertigungsvariable erstellen -> dict.","hi":"हर स्वतंत्र निर्माण चर के लिए सत्यापित tolerance row बनाएँ -> dict।"},
+  "optics/tolerance_criteria": {"fp":"a6a6d02f847d","ja":"性能基準と任意の上限・下限を検証する -> dict。","zh":"验证性能准则及可选上下限 -> 字典。","tw":"驗證性能準則及可選上下限 -> 字典。","ko":"성능 기준과 선택적 상하한을 검증한다 -> dict.","de":"Leistungskriterien und optionale Grenzwerte prüfen -> dict.","hi":"performance criteria और वैकल्पिक सीमाएँ जाँचें -> dict।"},
+  "optics/tolerance_compensators": {"fp":"216967038329","ja":"決定的で境界つきの再最適化変数を記述する -> dict。","zh":"描述确定且有界的再优化变量 -> 字典。","tw":"描述確定且有界的再最佳化變數 -> 字典。","ko":"결정적이고 경계가 있는 재최적화 변수를 기술한다 -> dict.","de":"Deterministische begrenzte Nachoptimierungsvariablen beschreiben -> dict.","hi":"नियत और सीमाबद्ध पुनः-अनुकूलन चर बताएँ -> dict।"},
+  "optics/tolerance_monte_carlo": {"fp":"2d650fdd7d4f","ja":"決定的で失敗を隠さない Monte Carlo と Wilson 95 % 歩留まり区間 -> dict。","zh":"运行确定且失败封闭的蒙特卡洛并报告 Wilson 95% 良率区间 -> 字典。","tw":"執行確定且失敗封閉的蒙地卡羅並報告 Wilson 95% 良率區間 -> 字典。","ko":"결정적 fail-closed Monte Carlo와 Wilson 95% 수율 구간을 보고한다 -> dict.","de":"Deterministische fehlersichere Monte-Carlo-Analyse mit Wilson-95-%-Ausbeuteintervall -> dict.","hi":"नियत fail-closed Monte Carlo और Wilson 95% yield interval दें -> dict।"},
+  "optics/tolerance_sensitivity": {"fp":"79ab71d117fe","ja":"中央差分、分布を反映した線形 RSS、逆公差を求める -> dict。","zh":"计算中心差分、考虑分布的线性 RSS 和反向公差 -> 字典。","tw":"計算中央差分、考慮分布的線性 RSS 與反向公差 -> 字典。","ko":"중앙 차분, 분포를 반영한 선형 RSS와 역공차를 구한다 -> dict.","de":"Zentrale Differenzen, verteilungsabhängiges lineares RSS und inverse Toleranzen -> dict.","hi":"central difference, distribution-aware linear RSS और inverse tolerance निकालें -> dict।"},
+  "optics/tolerance_report": {"fp":"f50a26a71a70","ja":"簡潔な組立報告を辞書または平文で作る -> dict。","zh":"以字典或纯文本生成简洁装配报告 -> 字典。","tw":"以字典或純文字產生簡潔組裝報告 -> 字典。","ko":"간결한 조립 보고서를 dict 또는 일반 텍스트로 만든다 -> dict.","de":"Kompakten Montagebericht als Dict oder Klartext erzeugen -> dict.","hi":"संक्षिप्त assembly report dict या plain text में बनाएँ -> dict।"},
+  "optics/tolerance_table_zmx": {"fp":"724cd2c0e5da","ja":"公差行を NOTE 行として直列化する -> text。","zh":"将公差行序列化为 NOTE 行 -> 文本。","tw":"將公差列序列化為 NOTE 行 -> 文字。","ko":"공차 행을 NOTE 행으로 직렬화한다 -> text.","de":"Toleranzzeilen als NOTE-Zeilen serialisieren -> Text.","hi":"tolerance rows को NOTE lines में serialize करें -> text।"},
+  "optics/tolerance_table_from_zmx": {"fp":"d21bbad026b5","ja":"書き出した NOTE 行から公差表を読む -> dict。","zh":"从写出的 NOTE 行读取公差表 -> 字典。","tw":"從寫出的 NOTE 行讀取公差表 -> 字典。","ko":"기록한 NOTE 행에서 공차표를 읽는다 -> dict.","de":"Toleranztabelle aus geschriebenen NOTE-Zeilen lesen -> dict.","hi":"लिखी NOTE lines से tolerance table पढ़ें -> dict।"}
  }
 }

@@ -4,10 +4,10 @@ dim: generative
 category: sem
 in: image2d
 out: image2d
-examples: [poc_sem_wafer_defect_edge_bias]
+examples: [poc_sem_tem_same_particle, poc_sem_wafer_defect_edge_bias]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # sem_render — GENERATIVE `sem` op
@@ -77,6 +77,7 @@ True
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_sem_tem_same_particle](../../../../examples/poc_sem_tem_same_particle.py) — `py -3.11 examples/poc_sem_tem_same_particle.py`
 - [poc_sem_wafer_defect_edge_bias](../../../../examples/poc_sem_wafer_defect_edge_bias.py) — `py -3.11 examples/poc_sem_wafer_defect_edge_bias.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

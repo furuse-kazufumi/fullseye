@@ -7,7 +7,7 @@ out: pairs
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # ingaas_photodiode_qe — OPTICS `spectral` op
@@ -64,7 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_integral_table](spectral_integral_table.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md)
 
 ## 同カテゴリ(`spectral`)
 

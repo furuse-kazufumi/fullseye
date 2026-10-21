@@ -106,6 +106,41 @@ def _curvatures(points, k, normals=None):
     return K1, K2, NRM
 
 
+def curvature_descriptors(points, k=25, normals=None, *, include_normals=False):
+    """Compute related point-cloud curvature measures in one neighbourhood pass.
+
+    The returned mapping contains ``k1``, ``k2``, ``mean``, ``gaussian``,
+    ``shape_index`` and ``curvedness``.  Set ``include_normals=True`` to retain
+    the fitted normals as well.  This composite entry point avoids repeating
+    neighbour lookup and surface fitting when several descriptors are needed.
+    """
+    k1, k2, fitted_normals = _curvatures(points, k, normals)
+    curve = np.sqrt((k1 * k1 + k2 * k2) / 2.0)
+    scale = float(np.median(curve))
+    shape = np.zeros_like(k1)
+    if scale > 0.0:
+        flat = curve < 1e-3 * scale
+        total = k1 + k2
+        difference = k1 - k2
+        magnitude = np.abs(k1) + np.abs(k2)
+        umbilic = (difference < 1e-2 * magnitude) & (magnitude > 0.0) & ~flat
+        shape[umbilic] = np.sign(total[umbilic])
+        general = ~umbilic & ~flat
+        shape[general] = (2.0 / np.pi) * np.arctan(
+            total[general] / difference[general])
+    result = {
+        "k1": k1,
+        "k2": k2,
+        "mean": (k1 + k2) / 2.0,
+        "gaussian": k1 * k2,
+        "shape_index": shape,
+        "curvedness": curve,
+    }
+    if include_normals:
+        result["normals"] = fitted_normals
+    return result
+
+
 def principal_curvatures(points, k=25, normals=None):
     """各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。
 
@@ -219,5 +254,15 @@ def estimate_normals(points, k=25):
     - 返り値は float64 (N,3)。``k`` 既定 25。決定論的。
     - 内部は ``principal_curvatures`` と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。
     """
-    _, _, NRM = _curvatures(points, k)
-    return NRM
+    p = np.asarray(points, float)
+    idx = _knn_idx(p, k)
+    local = p[idx] - p[:, None, :]
+    cov = np.einsum("nki,nkj->nij", local, local)
+    _values, vectors = np.linalg.eigh(cov)
+    normals = vectors[:, :, 0]
+    centroids = local.mean(axis=1)
+    flip = np.einsum("ij,ij->i", centroids, normals) > 0.0
+    normals[flip] *= -1.0
+    if local.shape[1] < 5:
+        normals[:] = (0.0, 0.0, 1.0)
+    return normals

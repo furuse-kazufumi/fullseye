@@ -1921,6 +1921,8 @@ def skill_corpus_map() -> str:
 def cmd_skill():
     """Rewrite the generated corpus map inside the RAG skill (and its wheel template)."""
     block = skill_corpus_map()
+    fams = corpus_families()
+    total = sum(f[1] for f in fams)
     with open(_SKILL_MD, encoding="utf-8") as f:
         md = f.read()
     if _SKILL_BEGIN not in md or _SKILL_END not in md:
@@ -1930,12 +1932,20 @@ def cmd_skill():
     head, rest = md.split(_SKILL_BEGIN, 1)
     _old, tail = rest.split(_SKILL_END, 1)
     out = head + block + tail
+    out, replacements = re.subn(
+        r"(?<=with )\d+(?= notes the\n  thing you need usually exists\.)",
+        str(total), out,
+    )
+    if replacements != 1:
+        raise SystemExit(
+            "skill corpus summary count was not found exactly once "
+            "(fail-closed: refusing to leave a hand-written count stale)"
+        )
     for path in (_SKILL_MD, _SKILL_TEMPLATE_MD):
         with open(path, "w", encoding="utf-8", newline="\n") as f:
             f.write(out)
-    fams = corpus_families()
     print("opdocs skill: wrote corpus map (%d notes / %d families) to skill + wheel template"
-          % (sum(f[1] for f in fams), len(fams)))
+          % (total, len(fams)))
 
 
 # ------------------------------------------------------------------ #

@@ -320,8 +320,24 @@ def _dist(p, q):
     return np.hypot(p[:, None, 0] - q[None, :, 0], p[:, None, 1] - q[None, :, 1])
 
 
-def _crossed_strings(geo):
+def _crossed_strings(geo, chunk=None):
     a, b, L = geo["a"], geo["b"], geo["lengths"]
+    if chunk is not None:
+        chunk = int(chunk)
+        if chunk < 1:
+            raise ValueError("chunk must be >= 1")
+        G = np.empty((L.size, L.size))
+        for i in range(0, L.size, chunk):
+            sl = slice(i, min(i + chunk, L.size))
+            crossed = _dist(a[sl], a) + _dist(b[sl], b)
+            uncrossed = _dist(a[sl], b) + _dist(b[sl], a)
+            G[sl] = np.maximum(crossed - uncrossed, 0.0)
+        np.fill_diagonal(G, 0.0)
+        F = G / (2.0 * L[:, None])
+        A, B = geo["vertices"][-1], geo["vertices"][0]
+        da_A, db_B = np.hypot(*(a - A).T), np.hypot(*(b - B).T)
+        da_B, db_A = np.hypot(*(a - B).T), np.hypot(*(b - A).T)
+        return F, np.maximum((da_A + db_B) - (da_B + db_A), 0.0) / (2.0 * L)
     crossed = _dist(a, a) + _dist(b, b)
     uncrossed = _dist(a, b) + _dist(b, a)
     G = np.maximum(crossed - uncrossed, 0.0)       # 同一直線上のパッチの丸め屑(±1e-16)を 0 に
@@ -356,7 +372,7 @@ def form_factors_2d(profile):
     return F
 
 
-def transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None):
+def transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None):
     """Light-transport matrix of a Lambertian concave cross-section: radiosity B = T E with T = (I − diag(ρ)F)^-1 diag(ρ).
 
     The radiosity equation ``B = ρ E + ρ F B`` (``E`` = irradiance from the
@@ -392,10 +408,16 @@ def transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None):
                          "only through its opening), got range [%g, %g]" % (op, rho.min(), rho.max()))
     if n_bounces is not None:
         n_bounces = _int(n_bounces, "n_bounces", op, 0, 10000)
-    F, F_open = _crossed_strings(geo)
+    F, F_open = _crossed_strings(geo, chunk)
     K = rho[:, None] * F
     if n_bounces is None:
-        T = np.linalg.solve(np.eye(P) - K, np.diag(rho))
+        positive = rho > 0
+        if positive.all():
+            T = np.linalg.solve(np.eye(P) - K, np.diag(rho))
+        else:
+            T = np.zeros((P, P))
+            T[np.ix_(positive, positive)] = np.linalg.solve(
+                np.eye(positive.sum()) - K[np.ix_(positive, positive)], np.diag(rho[positive]))
     else:
         T = np.diag(rho)
         term = T
@@ -840,15 +862,18 @@ def tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20e6, n_b
     cos_i = (geo["normals"] * to_cam).sum(axis=1) / r
     if (cos_i <= 1e-9).any():
         raise ValueError("%s: patch %d faces away from the camera" % (op, int(np.argmin(cos_i))))
-    F, _ = _crossed_strings(geo)
     k = 2.0 * np.pi * f / C_LIGHT
-    R = _dist(c, c)
-    Kc = rho[:, None] * F * np.exp(1j * k * R)
     E = cos_i / r * np.exp(1j * k * r)
     direct = rho * E
+    if n_bounces == 0:
+        B = direct
+    else:
+        F = np.asarray(transport["form_factors"], dtype=float)
+        R = _dist(c, c)
+        Kc = rho[:, None] * F * np.exp(1j * k * R)
     if n_bounces is None:
         B = np.linalg.solve(np.eye(geo["n"]) - Kc, direct)
-    else:
+    elif n_bounces != 0:
         B = direct.copy()
         term = direct
         for _ in range(n_bounces):

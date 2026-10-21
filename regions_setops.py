@@ -60,20 +60,31 @@ def hamming_distance_norm(region1, region2):
 # ── 空間関係 ─────────────────────────────────────────────────────────────────── #
 def _bbox(region):
     r = _r(region)
-    if not r.any():
+    rows = np.flatnonzero(r.any(axis=1))
+    if rows.size == 0:
         return None
-    rs, cs = np.where(r)
-    return rs.min(), cs.min(), rs.max(), cs.max()
+    cols = np.flatnonzero(r.any(axis=0))
+    return rows[0], cols[0], rows[-1], cols[-1]
 
 
 def find_neighbors(regions, max_distance=1):
     """領域リストの隣接ペア index を返す(膨張して交差判定)(find_neighbors)。"""
     from scipy.ndimage import binary_dilation
     masks = [_r(x) for x in regions]
-    dil = [binary_dilation(m, iterations=int(max_distance)) for m in masks]
+    distance = int(max_distance)
+    dil = [binary_dilation(m, iterations=distance) for m in masks]
+    boxes = [_bbox(m) for m in masks]
     out = []
     for i in range(len(masks)):
         for j in range(i + 1, len(masks)):
+            # scipy の iterations <= 0 は安定するまで膨張する特殊指定なので絞らない。
+            if distance > 0:
+                bi, bj = boxes[i], boxes[j]
+                if bi is None or bj is None:
+                    continue
+                if (bi[2] + distance < bj[0] or bj[2] < bi[0] - distance or
+                        bi[3] + distance < bj[1] or bj[3] < bi[1] - distance):
+                    continue
             if (dil[i] & masks[j]).any():
                 out.append((i, j))
     return out
@@ -97,10 +108,22 @@ def spatial_relation(region1, region2):
 
 def select_region_spatial(regions, ref_region, relation="above"):
     """基準領域に対し指定空間関係を満たす領域を選ぶ(select_region_spatial)。"""
+    ref = _r(ref_region)
+    ref_rows, ref_cols = np.nonzero(ref)
+    if ref_rows.size == 0:
+        return []
+    ref_row, ref_col = ref_rows.mean(), ref_cols.mean()
     out = []
     for reg in regions:
-        sr = spatial_relation(ref_region, reg)
-        if sr and relation in sr["relations"]:
+        rows, cols = np.nonzero(_r(reg))
+        if rows.size == 0:
+            continue
+        row, col = rows.mean(), cols.mean()
+        matches = ((relation == "above" and ref_row < row) or
+                   (relation == "below" and ref_row > row) or
+                   (relation == "left" and ref_col < col) or
+                   (relation == "right" and ref_col > col))
+        if matches:
             out.append(reg)
     return out
 

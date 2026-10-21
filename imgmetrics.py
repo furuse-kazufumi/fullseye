@@ -1039,13 +1039,30 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
         ``ms=True`` なら ``ms_ssim`` も(成立しない大きさなら ``ValueError``)。
         カラー画像で ``channel_axis`` を渡すと ``delta_e_2000_mean`` も入る。
     """
+    # The report path deliberately shares the expensive primitives.  The
+    # individual public metrics remain independent operations.
+    fa, fb = _as_float_pair(a, b)
     dr = data_range_of(a, b, data_range=data_range)
+    err = float(np.mean((fa - fb) ** 2))
+    if not isinstance(bins, (int, np.integer)) or bins < 2:
+        raise MetricContractError(f"bins must be an integer >= 2, got {bins!r}")
+    lo = min(float(fa.min()), float(fb.min()))
+    hist, _, _ = np.histogram2d(fa.ravel(), fb.ravel(), bins=int(bins),
+                                range=[(lo, lo + dr), (lo, lo + dr)])
+    total = hist.sum()
+    if total == 0:
+        raise MetricContractError("no samples fell inside the data range; check data_range")
+    pab = hist / total
+    ha = _entropy(pab.sum(axis=1))
+    hb = _entropy(pab.sum(axis=0))
+    hab = _entropy(pab)
+    mi = ha + hb - hab
     out = {
-        "mse": mse(a, b),
-        "rmse": rmse(a, b),
-        "psnr": psnr(a, b, data_range=dr),
+        "mse": err,
+        "rmse": float(np.sqrt(err)),
+        "psnr": float("inf") if err == 0.0 else float(10.0 * np.log10(dr ** 2 / err)),
         "ssim": ssim(a, b, data_range=dr, channel_axis=channel_axis),
-        "mutual_information": mutual_information(a, b, bins=bins, data_range=dr),
+        "mutual_information": mi,
         # float は 256 段に量子化してから測る(生の float では、よく似た 2 枚でも
         # バイト列の共通部分が消えて「無関係」と読める値が出る ―― ncd の注記)。
         "ncd": ncd(np.asarray(a), np.asarray(b),
@@ -1053,8 +1070,9 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
                    data_range=dr if np.issubdtype(np.asarray(a).dtype, np.floating) else None),
     }
     try:
-        out["normalized_mutual_information"] = normalized_mutual_information(
-            a, b, bins=bins, data_range=dr)
+        if ha + hb == 0.0:
+            raise ValueError("normalized mutual information is undefined for two constant images")
+        out["normalized_mutual_information"] = float(2.0 * mi / (ha + hb))
     except ValueError:
         out["normalized_mutual_information"] = None      # 両方一様: 上限が 0
     if ms:

@@ -36,7 +36,7 @@ import numpy as np
 
 __all__ = [
     "sdf_union", "sdf_intersect", "sdf_subtract", "sdf_smooth_union", "sdf_offset",
-    "sphere_sdf", "box_sdf", "grid_coords",
+    "sphere_sdf", "box_sdf", "grid_coords", "grid_axes",
     "plane_sdf", "cylinder_sdf", "torus_sdf", "capsule_sdf",
 ]
 
@@ -198,6 +198,16 @@ def _as_coords(grid) -> np.ndarray:
     return g
 
 
+def _coord_components(grid):
+    """Return broadcastable x/y/z components, or ``None`` for a dense grid."""
+    if isinstance(grid, tuple) and len(grid) == 3:
+        x, y, z = (np.asarray(v, np.float64) for v in grid)
+        if x.ndim != 1 or y.ndim != 1 or z.ndim != 1 or min(x.size, y.size, z.size) < 1:
+            raise ValueError("coordinate axes must be three non-empty 1-D arrays")
+        return x[:, None, None], y[None, :, None], z[None, None, :]
+    return None
+
+
 def sphere_sdf(grid, center, R):
     """球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。
 
@@ -230,7 +240,6 @@ def sphere_sdf(grid, center, R):
     """
     if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("sphere_sdf: grid is empty — pass at least one element")
-    g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
     try:                                        # R は**半径のスカラ**(回転行列ではない)
         R = float(R)
@@ -240,6 +249,11 @@ def sphere_sdf(grid, center, R):
             "radius, not a rotation matrix" % (type(R).__name__,)) from exc
     if R < 0:                                   # fail-closed: 負半径は無意味
         raise ValueError("R must be non-negative")
+    axes = _coord_components(grid)
+    if axes is not None:
+        x, y, z = axes
+        return np.sqrt((x-c[0])**2 + (y-c[1])**2 + (z-c[2])**2) - R
+    g = _as_coords(grid)
     return np.linalg.norm(g - c, axis=-1) - R
 
 
@@ -259,11 +273,17 @@ def box_sdf(grid, center, half_extents):
     """
     if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("box_sdf: grid is empty — pass at least one element")
-    g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
     he = np.asarray(half_extents, np.float64).reshape(3)
     if np.any(he < 0):                          # fail-closed: 負の半辺は無意味
         raise ValueError("half_extents must be non-negative")
+    axes = _coord_components(grid)
+    if axes is not None:
+        qx, qy, qz = (np.abs(v - c[i]) - he[i] for i, v in enumerate(axes))
+        outside = np.sqrt(np.maximum(qx, 0.0)**2 + np.maximum(qy, 0.0)**2 + np.maximum(qz, 0.0)**2)
+        inside = np.minimum(np.maximum(np.maximum(qx, qy), qz), 0.0)
+        return outside + inside
+    g = _as_coords(grid)
     q = np.abs(g - c) - he                      # (..., 3)
     outside = np.linalg.norm(np.maximum(q, 0.0), axis=-1)
     inside = np.minimum(np.max(q, axis=-1), 0.0)
@@ -302,6 +322,24 @@ def grid_coords(bounds, res):
     return coords, extent
 
 
+def grid_axes(bounds, res):
+    """Return three 1-D voxel-centre axes for memory-efficient primitive evaluation.
+
+    ★台帳には載せない(2026-10-21): 返りは ``coordgrid``(密な (nx, ny, nz, 3))ではなく軸 3 本で、
+    軸入力を受けるのは sphere_sdf / box_sdf / plane_sdf だけ。語彙 ``coordaxes`` を整備するまで補助関数。
+    """
+    b = np.asarray(bounds, np.float64)
+    if b.shape != (3, 2) or not np.all(b[:, 1] > b[:, 0]):
+        raise ValueError("bounds must contain three increasing (min, max) pairs")
+    r = np.atleast_1d(np.asarray(res, np.int64))
+    if r.size == 1: r = np.repeat(r, 3)
+    if r.size != 3 or np.any(r <= 0):
+        raise ValueError("res must be a positive int or length-3 sequence")
+    axes = tuple(b[d, 0] + (np.arange(r[d]) + .5) / r[d] * (b[d, 1] - b[d, 0]) for d in range(3))
+    extent = tuple(float(v) for v in (b[0,0], b[0,1], b[1,0], b[1,1], b[2,0], b[2,1]))
+    return axes, extent
+
+
 # --------------------------------------------------------------------------- #
 # 追加のプリミティブ(2026-09-07)                                              #
 #                                                                             #
@@ -331,8 +369,8 @@ def _split_axial_radial(g, center, axis):
     return t, np.linalg.norm(perp, axis=-1)
 
 
-def plane_sdf(grid, point, normal):
-    """半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。
+def plane_sdf(grid, point, normal, method="exact"):
+    """半空間の厳密な符号付き距離場。``fast`` は1e6で相対差1.5e-10の選択式経路、既定は ``exact``。
 
     ``sdf(p) = (p - point) · n̂``。法線 ``n̂`` の**指す側が外側(正)**で、反対側が内側。
     面取り(chamfer)・切断・「基板から上だけ」のような**片側だけを残す**演算に使う。
@@ -359,10 +397,21 @@ def plane_sdf(grid, point, normal):
     """
     if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("plane_sdf: grid is empty — pass at least one element")
-    g = _as_coords(grid)
     p0 = np.asarray(point, np.float64).reshape(3)
     n = _axis_frame(normal)
-    return (g - p0) @ n
+    axes = _coord_components(grid)
+    if axes is not None:
+        x, y, z = axes
+        if method == "fast":
+            return x*n[0] + y*n[1] + z*n[2] - np.dot(p0, n)
+        if method != "exact": raise ValueError("plane_sdf: method must be 'exact' or 'fast'")
+        return (x-p0[0])*n[0] + (y-p0[1])*n[1] + (z-p0[2])*n[2]
+    g = _as_coords(grid)
+    if method == "exact":
+        return (g - p0) @ n
+    if method == "fast":
+        return g @ n - np.dot(p0, n)
+    raise ValueError("plane_sdf: method must be 'exact' or 'fast'")
 
 
 def cylinder_sdf(grid, center, axis, radius, height):

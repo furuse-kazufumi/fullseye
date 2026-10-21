@@ -12,8 +12,11 @@ def affine_trans_point_3d(points, H=None) -> np.ndarray:
     """3D 点に 4x4 同次アフィン変換を適用(affine_trans_point_3d)。"""
     p = np.asarray(points, dtype=np.float64).reshape(-1, 3)
     H = np.eye(4) if H is None else np.asarray(H, dtype=np.float64)
-    hom = np.column_stack([p, np.ones(len(p))]) @ H.T
-    return hom[:, :3]
+    # 従来どおり射影変換の最終行と w 除算は扱わない。
+    out = np.empty((len(p), 3), dtype=np.result_type(p, H))
+    np.matmul(p, H[:3, :3].T, out=out)
+    out += H[:3, 3]
+    return out
 
 
 def cam_par_pose_to_hom_mat3d(pose) -> np.ndarray:

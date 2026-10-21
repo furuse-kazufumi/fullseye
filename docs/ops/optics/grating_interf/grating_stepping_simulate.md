@@ -7,7 +7,7 @@ out: images
 examples: [grating_interferometry, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # grating_stepping_simulate — OPTICS `grating_interf` op
@@ -62,7 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[film_thickness_map](../film/film_thickness_map.md) · [grating_three_image_retrieve](grating_three_image_retrieve.md) · [grating_step_period_estimate](grating_step_period_estimate.md) · [render_transport](../light_transport/render_transport.md) · [separate_direct_global](../light_transport/separate_direct_global.md) · [micro_phase_decode](../light_transport/micro_phase_decode.md)
+[film_thickness_map](../film/film_thickness_map.md) · [equirect_stabilize](../omni360/equirect_stabilize.md) · [equirect_from_fisheye_pair](../omni360/equirect_from_fisheye_pair.md) · [equirect_from_perspectives](../omni360/equirect_from_perspectives.md) · [grating_three_image_retrieve](grating_three_image_retrieve.md) · [grating_step_period_estimate](grating_step_period_estimate.md) · [render_transport](../light_transport/render_transport.md) · [separate_direct_global](../light_transport/separate_direct_global.md)
 
 ## 同カテゴリ(`grating_interf`)
 

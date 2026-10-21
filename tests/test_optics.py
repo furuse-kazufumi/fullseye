@@ -917,7 +917,11 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 逐次光学設計の第 7 弾(解・ピックアップ・afocal・曲面の像面: lenssolve)9 op(399 → 408)。
     # 2026-10-20: 水の検査画像(watervision)7 op(408 → 415)。
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
-    assert len(opsoptics.OPSOPTICS) == 423
+    # 2026-10-20: 製造公差・補償・歩留まり(lenstol)8 op(423 → 431)。
+    # 2026-10-20: spectral_integral_table 1 op を追加。
+    assert len(opsoptics.OPSOPTICS) == 462
+    assert len(opsoptics.list_ops("tolerancing")) == 8
+    assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
     assert len(opsoptics.list_ops("noncoaxial")) == 13
     assert len(opsoptics.list_ops("radiosity")) == 7
@@ -935,7 +939,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("pixelshift")) == 6
     assert len(opsoptics.list_ops("itof")) == 8
     assert len(opsoptics.list_ops("matprop")) == 20      # + 電子線の物性 1 op(2026-10-15)
-    assert len(opsoptics.list_ops("spectral")) == 14
+    assert len(opsoptics.list_ops("spectral")) == 15
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
@@ -945,8 +949,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
-        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "optimization",
-        "pixelshift", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "watermedia", "watervision", "wave"]
+        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "omni360", "optimization",
+            "pixelshift", "plenoptic", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "tolerancing", "watermedia", "watervision", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、

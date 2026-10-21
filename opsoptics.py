@@ -144,9 +144,12 @@ import lensconfig
 import lockin
 import watermedia
 import watervision
+import omni360
 import lensglobal
 import lensmerit
 import lensrender
+import lenstol
+import plenoptic
 import lenssolve
 import filmoptics
 import moirealign
@@ -159,7 +162,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -564,6 +567,7 @@ _CATALOG = {
         ("energy_to_photons", "spectralrad", ["pairs"], "pairs"),
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
+        ("spectral_integral_table", "spectralrad", ["pairs"], "table"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
         # 2026-10-15 近赤外の分光撮像(ハイパースペクトル): InGaAs の QE、散乱層の反射(Kubelka–Munk)、
         #   材料表 → 反射率、反射率 → 帯域ごとの電子数(ハロゲン × ガラス × 帯域 × QE)。画像(キューブ)は
@@ -692,6 +696,50 @@ _CATALOG = {
         ("bokeh_shape", "lensrender", ["table"], "table"),
         ("render_ghost_overlay", "lensrender", ["table"], "table"),
         ("render_compare_prescriptions", "lensrender", [], "table"),
+    ],
+    "tolerancing": [  # 製造公差: 行ごとの分布、補償、歩留まり、感度と組立レポート
+        ("tolerance_table", "lenstol", ["table"], "table"),
+        ("tolerance_criteria", "lenstol", [], "table"),
+        ("tolerance_compensators", "lenstol", [], "table"),
+        ("tolerance_monte_carlo", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_sensitivity", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_report", "lenstol", ["table"], "text"),
+        ("tolerance_table_zmx", "lenstol", ["table"], "text"),
+        ("tolerance_table_from_zmx", "lenstol", ["table", "text"], "table"),
+    ],
+    "plenoptic": [
+        ("mla_surface", "plenoptic", [], "table"),
+        ("plenoptic_system", "plenoptic", ["table", "table", "table"], "table"),
+        ("plenoptic_capture", "plenoptic", ["table", "table"], "table"),
+        ("plenoptic_mla_calibrate", "plenoptic", ["image2d"], "table"),
+        ("plenoptic_decode", "plenoptic", ["image2d", "table"], "lightfield"),
+        ("plenoptic_refocus_depth", "plenoptic", ["lightfield", "table"], "table"),
+    ],
+    "omni360": [
+        ("cubemap_from_equirect", "omni360", ["rgbimage"], "rgbvideo"),
+        ("equirect_from_cubemap", "omni360", ["rgbvideo"], "rgbimage"),
+        ("viewport_from_equirect", "omni360", ["rgbimage"], "rgbimage"),
+        ("equirect_rotate", "omni360", ["rgbimage", "matrix"], "rgbimage"),
+        ("equirect_weight_map", "omni360", [], "image2d"),
+        ("ws_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("s_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("equirect_filter_gaussian", "omni360", ["image2d"], "image2d"),
+        ("equirect_stabilize", "omni360", ["images"], "table"),
+        ("equirect_from_fisheye_pair", "omni360", ["images"], "table"),
+        ("equirect_from_perspectives", "omni360", ["images"], "table"),
+        ("equirect_defect_unwrap_pipe", "omni360", ["image2d"], "table"),
+        ("ods_render", "omni360", [], "images"),
+        ("ods_depth_to_disparity", "omni360", ["image2d"], "image2d"),
+        ("ods_disparity_to_depth", "omni360", ["image2d"], "image2d"),
+        ("stereo360_sbs", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("stereo360_top_bottom", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("omni_anaglyph_compose", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_crosstalk", "omni360", ["rgbimage", "rgbimage"], "table"),
+        ("stereo_parallax_budget", "omni360", [], "table"),
+        ("stereo_pack", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_from_ods", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("video360_viewport_track", "omni360", ["rgbvideo"], "rgbvideo"),
+        ("video360_tile_coverage", "omni360", ["pairs"], "table"),
     ],
     "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
         # ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。

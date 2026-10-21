@@ -7,7 +7,7 @@ out: matrix
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # emva_snr_curve — OPTICS `sensorchar` op
@@ -53,7 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[abcd_trace](../geometric/abcd_trace.md) · [emva_filter_distortion](emva_filter_distortion.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](../pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](../pixelshift/pixel_shift_motion_mask.md) · [oct_from_spectra](../oct/oct_from_spectra.md)
+[abcd_trace](../geometric/abcd_trace.md) · [emva_filter_distortion](emva_filter_distortion.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md) · [equirect_rotate](../omni360/equirect_rotate.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](../pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](../pixelshift/pixel_shift_motion_mask.md)
 
 ## 同カテゴリ(`sensorchar`)
 
