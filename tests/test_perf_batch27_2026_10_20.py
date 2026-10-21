@@ -339,6 +339,22 @@ def test_329_random_candidates_match_stable_sort_bit_for_bit():
         assert np.array_equal(got, expected, equal_nan=True)
 
 
+@pytest.mark.parametrize("shape", [(19, 17), (7, 11)])
+@pytest.mark.parametrize("zero_bands", [(1, 3), (0, 2, 4)])
+def test_332_zero_weight_bands_match_original_core(shape, zero_bands):
+    rng = np.random.default_rng(sum(shape) + len(zero_bands))
+    p = np.array([5.0, 7.0, 9.0, 11.0, 13.0])
+    r = rng.uniform(0.0, p[:, None, None], size=(len(p),) + shape)
+    w = rng.random(r.shape)
+    w[list(zero_bands)] = 0.0
+    ref_band = rng.integers(0, len(p), size=shape)
+    old = _old_crt_core(r, p, w, -80.0, 80.0, ref_band)
+    got = residue_mod._crt_core(r, p, w, -80.0, 80.0, ref_band)
+    assert len(got[:4]) == len(old) == 4
+    for actual, expected in zip(got[:4], old):
+        assert np.array_equal(actual, expected, equal_nan=True)
+
+
 def _old_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05):
     p = residue_mod._periods(periods, "test")
     r = residue_mod._residues(residues, p.size, "test")
@@ -516,3 +532,37 @@ def test_355_zero_gate_skips_noise_and_is_bit_identical(monkeypatch):
     assert calls == 0
     assert np.array_equal(got[0], ref[0])
     assert np.array_equal(got[1], ref[1])
+
+
+@pytest.mark.parametrize("subdiv", [0, 2])
+@pytest.mark.parametrize("weighted", [False, True])
+def test_354_zero_displacement_skips_normals_bit_identically(monkeypatch, subdiv, weighted):
+    V, F = render3d_mod._unit_ellipsoid(subdiv)
+    ref = _old_zero_gate_displace(V, F)
+    weights = np.zeros(V.shape[0]) if weighted else None
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("zero displacement evaluated vertex normals")
+
+    monkeypatch.setattr(render3d_mod, "_vertex_normals", forbidden)
+    got = render3d_mod.mesh_displace_spectrum(
+        V, F, (0.1, 0.05), (0.0, 0.2), weights=weights)
+    assert np.array_equal(got[0], ref[0])
+    assert np.array_equal(got[1], ref[1])
+
+
+def _old_scan_travel(tau, eps):
+    travel = np.concatenate([[0.0], np.cumsum(1.0 + eps)])
+    j = np.clip(np.floor(tau).astype(int), 0, len(eps) - 1)
+    return travel[j] + (tau - j) * (1.0 + eps[j])
+
+
+@pytest.mark.parametrize("shape", [(31, 23), (9, 7)])
+@pytest.mark.parametrize("error", [0.0, -0.125])
+def test_341_constant_scan_clock_direct_formula_is_bit_identical(shape, error):
+    lines, stages = shape
+    tau = np.arange(lines, dtype=np.float64)[:, None] + np.linspace(0.0, stages, 7)
+    eps = np.full(lines + stages + 1, error)
+    old = _old_scan_travel(tau, eps)
+    direct = (1.0 + eps[0]) * tau
+    assert np.max(np.abs(direct - old)) <= 1e-12

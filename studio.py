@@ -441,7 +441,7 @@ class _RunControllerState:
         self.generation = 0
         self.latest_generation = 0
         self.threads = {}
-        self.retired_threads = []
+        self.finish_bridges = {}
         self.history = []
         self.status_history = []
         self.request_stop = lambda: None
@@ -7843,10 +7843,9 @@ def build_window(model=None):
         run_completed[gen] = i + 1
         run_progress.setValue(i + 1)
 
-    def _thread_finished(gen):
-        pair = run_ctl.threads.pop(gen, None)
-        if pair is not None:
-            run_ctl.retired_threads.append(pair[0])
+    def _thread_finished(gen, thread):
+        """Retire a worker on the GUI thread, never from QThread.finished's emitter."""
+        run_ctl.threads.pop(gen, None)
         run_stop_events.pop(gen, None)
 
     def _worker_done(gen, stopped):
@@ -7893,6 +7892,28 @@ def build_window(model=None):
 
     run_bridge = _RunBridge(win)
 
+    class _ThreadFinishBridge(QtCore.QObject):
+        """Carry thread identity into a receiver with explicit GUI affinity."""
+
+        def __init__(self, generation, thread, worker):
+            super().__init__(run_bridge)
+            self.generation = generation
+            self.thread = thread
+            # Keep both Python wrappers alive until Qt confirms worker deletion.
+            self.worker = worker
+
+        @QtCore.Slot()
+        def finished(self):
+            # finished() is emitted before QThread has necessarily completed all
+            # thread-local cleanup.  wait() is the synchronization point that
+            # makes releasing the worker's Python wrapper safe.
+            self.thread.wait()
+            _thread_finished(self.generation, self.thread)
+            run_ctl.finish_bridges.pop(self.generation, None)
+            self.worker = None
+            self.thread = None
+            self.deleteLater()
+
     def start_run_async():
         import threading
         run_ctl.generation += 1
@@ -7902,14 +7923,22 @@ def build_window(model=None):
         run_snapshots[gen] = snap
         run_completed[gen] = 0
         stop_event = threading.Event(); run_stop_events[gen] = stop_event
-        thread = QtCore.QThread(win)
+        # The window must not own a running QThread: QObject parent teardown can
+        # otherwise destroy it while a queued completion is still in flight.
+        thread = QtCore.QThread()
         worker = RunWorker(snap, stop_event); worker.moveToThread(thread)
         worker.started.connect(run_bridge.started, QtCore.Qt.QueuedConnection)
         worker.finished.connect(run_bridge.finished, QtCore.Qt.QueuedConnection)
         worker.run_done.connect(run_bridge.done, QtCore.Qt.QueuedConnection)
-        worker.run_done.connect(worker.deleteLater)
         thread.started.connect(worker.run)
-        thread.finished.connect(lambda g=gen: _thread_finished(g))
+        # QObject cleanup belongs to the worker thread.  Controller cleanup belongs
+        # to the GUI thread; a context-free Python lambda here can run in the
+        # emitting worker thread and drop the final wrappers there.
+        thread.finished.connect(worker.deleteLater)
+        finish_bridge = _ThreadFinishBridge(gen, thread, worker)
+        run_ctl.finish_bridges[gen] = finish_bridge
+        thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
+        thread.finished.connect(thread.deleteLater)
         run_ctl.threads[gen] = (thread, worker)
         text = tr("Run in progress %d/%d stages: %s") % (
             1, max(len(snap["stages"]), 1), snap["stages"][0][0] if snap["stages"] else "")
@@ -7947,8 +7976,6 @@ def build_window(model=None):
             event.set()
         for thread, _worker in list(run_ctl.threads.values()):
             thread.quit()
-            thread.wait(timeout_ms)
-        for thread in list(run_ctl.retired_threads):
             thread.wait(timeout_ms)
         QtWidgets.QApplication.processEvents()
 

@@ -289,11 +289,17 @@ def linescan_acquire(web=None, stages=8, photons_per_stage=200.0, eta=0.6, sigma
             eps = np.concatenate([se[:n_t], np.full(max(0, n_t - se.size), se[-1])])
         else:
             raise ValueError("%s: sync_error must be a scalar or 1-D" % op)
-    travel = np.concatenate([[0.0], np.cumsum(1.0 + eps)])  # T(j) = j 周期ぶんの進み [行]
+    if np.all(eps == eps[0]):
+        speed = 1.0 + eps[0]
 
-    def T(tau):
-        j = np.clip(np.floor(tau).astype(int), 0, n_t - 1)
-        return travel[j] + (tau - j) * (1.0 + eps[j])
+        def T(tau):
+            return speed * tau
+    else:
+        travel = np.concatenate([[0.0], np.cumsum(1.0 + eps)])  # T(j) = j 周期ぶんの進み [行]
+
+        def T(tau):
+            j = np.clip(np.floor(tau).astype(int), 0, n_t - 1)
+            return travel[j] + (tau - j) * (1.0 + eps[j])
 
     # 光学: 列ごとの照度とぼけ(センサの列 = 像高)。web の幅方向に対応させるため、センサの列を web の列へ写す
     cx = (Wweb - 1) / 2.0                                 # web の列の中央 [web 画素]
