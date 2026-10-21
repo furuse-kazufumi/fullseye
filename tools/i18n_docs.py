@@ -26,6 +26,7 @@ import glob
 import hashlib
 import os
 import re
+import subprocess
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _DOCS = os.path.join(_ROOT, "docs")
@@ -110,6 +111,37 @@ def stamp(path: str) -> None:
     print("stamped %s <- %s (%s)" % (os.path.basename(path), stem + ".md", ja_sha))
 
 
+_NUMBER_RE = re.compile(r"(?<![A-Za-z0-9_])\d+(?:[,.]\d+)*(?![A-Za-z0-9_])")
+
+
+def _head_text(path: str) -> str:
+    """Git の直前版を読む。未追跡なら安全側に倒して自動 stamp しない。"""
+    rel = os.path.relpath(os.path.abspath(path), _ROOT).replace(os.sep, "/")
+    r = subprocess.run(["git", "show", "HEAD:" + rel], cwd=_ROOT,
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    if r.returncode:
+        raise RuntimeError("直前版を読めないため数値だけとは確認できない: %s" % rel)
+    return r.stdout
+
+
+def _without_stamp_and_numbers(text: str) -> str:
+    text = _SHA_RE.sub("", text, count=1)
+    return _NUMBER_RE.sub("<N>", text)
+
+
+def stamp_if_numeric_only(path: str) -> None:
+    """正本と訳の双方が HEAD から数値しか変わっていない場合だけ指紋を更新する。"""
+    name = os.path.basename(path)[:-3]
+    stem = name.split(".")[0]
+    ja = os.path.join(_DOCS, stem + ".md")
+    pairs = ((ja, _head_text(ja)), (path, _head_text(path)))
+    for current_path, old in pairs:
+        current = open(current_path, encoding="utf-8", errors="replace").read()
+        if _without_stamp_and_numbers(current) != _without_stamp_and_numbers(old):
+            raise RuntimeError("数値以外も変わったため自動 stamp しない: %s" % current_path)
+    stamp(path)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -117,11 +149,17 @@ def main(argv=None) -> int:
                     help="stale / no-stamp があれば exit 1(missing は数えるが止めない)")
     ap.add_argument("--stamp", metavar="FILE", nargs="+", action="extend",
                     help="訳ファイルの指紋を打ち直す(複数可: --stamp A B / --stamp A --stamp B。以前は最後の 1 つしか効かなかった)")
+    ap.add_argument("--stamp-if-numeric-only", metavar="FILE", nargs="+", action="extend",
+                    help="正本と訳の HEAD からの差が数値だけなら指紋を打ち直す")
     a = ap.parse_args(argv)
 
     if a.stamp:
         for path in a.stamp:
             stamp(path)
+        return 0
+    if a.stamp_if_numeric_only:
+        for path in a.stamp_if_numeric_only:
+            stamp_if_numeric_only(path)
         return 0
 
     rows, fresh, stale, missing = status()
