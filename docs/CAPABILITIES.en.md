@@ -66,6 +66,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -87,7 +88,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (31)
+## Measure (32)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -300,6 +301,18 @@ Render a ground-truth SEM image from a height field with `sem_render` (secondary
 Operators: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 Runnable: `poc_sem_wafer_defect_edge_bias`
+
+### [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md)
+
+One truth ledger of fourteen 20–80 nm spherical and faceted particles drives both scanning and transmission images. Area-equivalent diameter, maximum-slope edges, distance-transform watershed splitting, stereo height and limited-angle reconstruction are compared against that shared truth.
+
+Operators: `sem_render`, `sem_image`, `tem_projected_potential`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `watersheds_marker`, `radon_transform`, `filtered_backprojection`
+
+Pipeline: [`sem_render`](ops/generative/sem/sem_render.md) → [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md)
+
+Alternatives: [`sem_image`](ops/generative/sem/sem_image.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`watersheds_marker`](ops/segmentation/watershed/watersheds_marker.md), [`radon_transform`](ops/tomography/forward/radon_transform.md), [`filtered_backprojection`](ops/tomography/reconstruct/filtered_backprojection.md)
+
+Runnable: `poc_sem_tem_same_particle`
 
 ### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
 

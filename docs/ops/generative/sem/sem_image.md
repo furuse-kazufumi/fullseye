@@ -4,7 +4,7 @@ dim: generative
 category: sem
 in: image2d
 out: image2d
-examples: [poc_virtual_sem_kv_cd_bse]
+examples: [poc_sem_tem_same_particle, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
@@ -76,6 +76,7 @@ Examples
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_sem_tem_same_particle](../../../../examples/poc_sem_tem_same_particle.py) — `py -3.11 examples/poc_sem_tem_same_particle.py`
 - [poc_virtual_sem_kv_cd_bse](../../../../examples/poc_virtual_sem_kv_cd_bse.py) — `py -3.11 examples/poc_virtual_sem_kv_cd_bse.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

@@ -66,6 +66,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-10-20 — No.2026.268 How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
 - 2026-10-20 — No.2026.272 A Prescription-Based Plenoptic Camera
 - 2026-10-20 — No.2026.269 Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
+- 2026-10-20 — No.2026.273 Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?
 - 2026-10-19 — No.2026.261 A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table
 - 2026-10-19 — No.2026.262 Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending
 - 2026-10-19 — No.2026.265 Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation

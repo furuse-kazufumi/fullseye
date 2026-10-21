@@ -82,7 +82,6 @@
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks) | 光と色 | `verified-synthetic` | 6/6 | `poc_pixel_shift` synthetic → tests/test_poc_scripts_run.py |
 | [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md) | Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells) | 見つける | `validated-public-real-data` | 4/4 | `poc_si_wafer_pl_defect_visibility` real → tests/test_poc_scripts_run.py |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | Flatness of a surface from a 3-D point cloud | 測る | `verified-synthetic` | 4/4 | `geometry_metrology` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_scan_to_bim_asbuilt` synthetic → tests/test_poc_scripts_run.py |
-| [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | Prescription-based plenoptic camera | 描く | `verified-synthetic` | 6/6 | `poc_plenoptic_camera` synthetic → tests/test_poc_scripts_run.py |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | Draw a point cloud as a colour picture | 見せる | `validated-public-real-data` | 3/3 | `points_render_basics` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_flybrain_pointcloud` real → tests/test_poc_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals) | 光と色 | `verified-synthetic` | 4/4 | `example_polarization_metal` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py<br>`specular_photometric` synthetic → tests/test_example_scripts_run.py |
@@ -94,6 +93,7 @@
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
+| [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | Measure the same particles in scanning and transmission images and compare both size biases | 測る | `verified-synthetic` | 9/9 | `poc_sem_tem_same_particle` synthetic → tests/test_poc_scripts_run.py |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF) | 測る | `verified-synthetic` | 32/32 | `optical_design_metrics` synthetic → tests/test_example_scripts_run.py<br>`poc_zoom_configurations` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_global_search` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_merit_operands` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_solves_afocal` synthetic → tests/test_poc_scripts_run.py |
 | [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md) | Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index) | 測る | `verified-synthetic` | 8/8 | `poc_shape_from_polarization` synthetic → tests/test_poc_scripts_run.py |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead | 測る | `verified-synthetic` | 10/10 | `simcal_tour` synthetic → tests/test_example_scripts_run.py<br>`simcal_checks_tour` synthetic → tests/test_example_scripts_run.py |
@@ -129,9 +129,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 421 |
+| 2-D 台帳の例 | 419 |
 | `tests/test_poc_scripts_run.py` が走らせる | 271 |
-| `tests/test_example_scripts_run.py` が走らせる | 150 |
+| `tests/test_example_scripts_run.py` が走らせる | 148 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり
