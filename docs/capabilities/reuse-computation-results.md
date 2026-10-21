@@ -9,7 +9,7 @@ version: 0.7.2
 inputs: [points, polsweep, volumes, flow, packed_bytes]
 pipeline: [polarization_separate]
 alternatives: [curvature_descriptors, HankelPlan, piv_outlier_mask_stream, monogenic_metrics, grid_axes, polarization_analyze, prepare_vol_probe, unpack_lsb]
-limits: 合成結果を返す op は単独結果より保持量が増える。stream と low_memory は一時配列を抑えるが入力と出力はメモリ上に必要で、速度・ピーク値は入力形状と実行環境に依存する。
+limits: 合成結果を返す op は単独結果より保持量が増える。stream と `unpack_lsb` の省メモリ展開は一時配列を抑えるが入力と出力はメモリ上に必要で、速度・ピーク値は入力形状と実行環境に依存する。
 calibration: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
 ---
 
@@ -19,7 +19,7 @@ calibration: 数値の単位や較正は元の op と同じ。曲率は点群の
 
 同じ入力から複数の量を得るとき、共通する高価な処理を一度にまとめます。`curvature_descriptors` は一度の近傍探索と曲面当てはめから主曲率・平均曲率・Gauss 曲率・shape index・curvedness を返します。`monogenic_metrics` と `polarization_analyze` は入力検証や正弦波当てはめを共有します。`HankelPlan` と `PreparedVolProbe` は変換核や spline 係数を複数回の呼び出しで再利用します。
 
-メモリが制約になる場合は、`piv_outlier_mask_stream` が halo を含む行ブロックだけを処理し、`unpack_lsb(..., method="low_memory")` が bit 配列への8倍展開を避けます。`grid_axes` は密な `(nx, ny, nz, 3)` 座標格子を作らず、voxel 中心の1-D軸3本を返します。
+メモリが制約になる場合は、`piv_outlier_mask_stream` が halo を含む行ブロックだけを処理し、`unpack_lsb` が bit 配列への8倍展開を避けます(0.7.2 で省メモリ版が唯一の経路になり、引数は要りません)。`grid_axes` は密な `(nx, ny, nz, 3)` 座標格子を作らず、voxel 中心の1-D軸3本を返します。
 
 ## What it does
 
@@ -53,13 +53,13 @@ print(float(np.median(d["curvedness"])))
 
 ## 代替
 
-反復する Hankel 変換には `HankelPlan`、大きな流れ場には `piv_outlier_mask_stream`、monogenic の三量には `monogenic_metrics`、密な座標格子を避けるには `grid_axes`、偏光の四結果には `polarization_analyze`、反復する体積プローブには `prepare_vol_probe`、packed pixel の一時配列を抑えるには `unpack_lsb` の `low_memory` を使います。
+反復する Hankel 変換には `HankelPlan`、大きな流れ場には `piv_outlier_mask_stream`、monogenic の三量には `monogenic_metrics`、密な座標格子を避けるには `grid_axes`、偏光の四結果には `polarization_analyze`、反復する体積プローブには `prepare_vol_probe`、packed pixel の一時配列を抑えるには `unpack_lsb`(省メモリ展開が既定)を使います。
 
 ## 限界
 
 合成 op は返した全配列を呼び出し側が保持します。一つの量しか使わない場合は個別 op の方が保持量は少なくなります。例の実測（Python 3.11、3回の中央値）では、20,000点の平均曲率・Gauss曲率・shape indexを個別に呼ぶ場合に対して `curvature_descriptors` は約3.0倍、4×1024²画素の偏光三処理に対して `polarization_analyze` は約2.7倍でした。これは性能保証ではなく、この例を実行した機械で再測定するための規模と結果です。
 
-`piv_outlier_mask_stream` の `chunk` は出力行数で、境界を正しく計算するため上下1行の halo を内部で足します。1024²の2成分PIV場を `chunk=4` で処理した例では、`tracemalloc` のピークが一括処理の約720 MiBから約5.5 MiBになりました。16 Mbitの10-bit packed列では `unpack_lsb(method="low_memory")` が約88.6 MiBから約62.6 MiBでした。入力・出力配列はどちらの方式にも必要なので、データが小さい場合や出力が支配的な場合には削減率が小さくなります。`low_memory` は PFNCのLSB-packed 1〜16 bit整数向けで、grouped、符号付き、色・3-D形式を解釈しません。`PreparedVolProbe` のspline係数はorderごとに体積より大きなpadded配列を保持するため、繰り返しが少ない場合には不利です。
+`piv_outlier_mask_stream` の `chunk` は出力行数で、境界を正しく計算するため上下1行の halo を内部で足します。1024²の2成分PIV場を `chunk=4` で処理した例では、`tracemalloc` のピークが一括処理の約720 MiBから約5.5 MiBになりました。16 Mbitの10-bit packed列では、全バイトを8ビットに広げる素朴な展開の約88.6 MiBに対して `unpack_lsb` は約62.6 MiBでした。入力・出力配列はどちらの方式にも必要なので、データが小さい場合や出力が支配的な場合には削減率が小さくなります。`unpack_lsb` は PFNCのLSB-packed 1〜16 bit整数向けで、grouped、符号付き、色・3-D形式を解釈しません。`PreparedVolProbe` のspline係数はorderごとに体積より大きなpadded配列を保持するため、繰り返しが少ない場合には不利です。
 
 ## 実寸校正
 
