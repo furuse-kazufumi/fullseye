@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22a23b2ff066 -->
+<!-- i18n-source-sha: bb5f3e736657 -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -334,6 +334,14 @@ on the right.
 Some ops do not run on their sample (a limit of how each op's sample is built: on 2026-10-03, 27 of 60 sampled ops ran
 as is). That the window adds no failures of its own is checked by a gate: it must agree with passing the sample to the
 op directly.
+
+### Assigning CSV columns to a table operation
+
+For a typed `table` input, choose **CSV file…** in the existing ledger runner. Each role is selected from actual headers,
+never free text; gauge R&R shows `part / part ID`, `operator / operator`, and `value / measured value`. The check reports
+rows, distinct keys, missing values and repeats. Unequal repeats are refused before execution with the groups named; no
+unsupported design is repaired. Mappings are remembered by operation and header signature (sorted names plus count), so
+only the same format reuses them. The CSV is never modified or renamed.
 
 ### How the result view shows things
 
