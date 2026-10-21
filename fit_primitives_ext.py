@@ -189,10 +189,11 @@ def fit_cone(points) -> dict:
             "residual": residual}
 
 
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_torus(points) -> dict:
+def fit_torus(points, method: str = "exact") -> dict:
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
@@ -201,6 +202,9 @@ def fit_torus(points) -> dict:
 
     Args:
         points: (N,3) 点群(最低 7 点)。
+        method: ``'exact'``(既定)は 8 パラメータを一括最小化。``'eliminate_r'`` は管半径 ``r`` を
+            各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。
+            既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。
 
     Returns:
         dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
@@ -210,6 +214,8 @@ def fit_torus(points) -> dict:
         ValueError: 形状不正/点数不足 fail-closed。
     """
     P = _as_points(points, 7, "fit_torus")
+    if method not in ("exact", "eliminate_r"):
+        raise ValueError("method must be 'exact' or 'eliminate_r'")
     center0 = P.mean(0)
     Q = P - center0
     diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
@@ -230,16 +236,31 @@ def fit_torus(points) -> dict:
         aa, rr = _axial_radial(P, c, n)
         return np.sqrt((rr - R) ** 2 + aa ** 2) - r
 
+    def resid_eliminated(p):
+        c = p[0:3]
+        n = _unit(p[3:6])
+        aa, rr = _axial_radial(P, c, n)
+        distances = np.sqrt((rr - p[6]) ** 2 + aa ** 2)
+        return distances - distances.mean()
+
     p0 = np.concatenate([center0, n0, [R0, r0]])
     lb = np.array([-np.inf] * 6 + [1e-9, 1e-9])
     ub = np.array([np.inf] * 8)
-    sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
-                        xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    if method == "eliminate_r":
+        sol = least_squares(resid_eliminated, p0[:-1], bounds=(lb[:-1], ub[:-1]),
+                            method="trf", xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    else:
+        sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
 
     center = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
     R = float(sol.x[6])
-    r = float(sol.x[7])
+    if method == "eliminate_r":
+        aa, rr = _axial_radial(P, center, axis)
+        r = float(np.mean(np.sqrt((rr - R) ** 2 + aa ** 2)))
+    else:
+        r = float(sol.x[7])
     residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
             "residual": residual}
