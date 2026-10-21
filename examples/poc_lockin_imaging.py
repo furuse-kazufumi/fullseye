@@ -390,6 +390,26 @@ def make_figures(ring, daylight, thermo):
                    xlabel="層の厚さ L / 熱拡散長 μ", ylabel="位相 [度]", styles=[None, "dashed"], colors=["emphasis", "reference"],
                    title="位相は L/μ = 1.96 まで単調 ―― それより深い欠陥は位相から一意に読めない",
                    caption="周期加熱の熱波が、厚さ L の層の底(断熱面)で反射して表面に戻る遅れ。")
+    wave = LK.lockin_thermal_wave(depth, ALPHA, F_HEAT, 20, 4,
+                                  nonuniformity=np.ones_like(depth))
+    wave = wave + np.random.default_rng(5).normal(0.0, 0.12, wave.shape)
+    phases = [np.degrees(LK.lockin_demodulate(wave[:k], 1.0, 20.0)["phase"])
+              for k in (20, 40, 60, 80)]
+    frames = []
+    for i, x in enumerate(np.linspace(0.0, 3.0, 32)):
+        j = min(int(x), 2); u = x - j
+        phase = (1.0 - u) * phases[j] + u * phases[j + 1]
+        phase = phase.copy()
+        cursor = int(round(i * (phase.shape[1] - 1) / 31.0))
+        cursor = max(2, min(phase.shape[1] - 3, cursor))
+        phase[:, cursor - 2:cursor + 3] = -90.0
+        frames.append(figs.video_frame(phase, "復調に使った周期 %.2f / 4" % (x + 1.0),
+                                      vrange=(-90.0, -43.0)))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("thermal_phase_convergence", frames,
+                    caption="周期加熱のコマを順に加えると、深さごとの位相像が収束する。",
+                    fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
 
 
 def main():

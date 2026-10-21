@@ -311,6 +311,20 @@ def stage2_worlds():
                    caption="確率場(1 枚ごとに模様が違う)の試験 3 枚。左端: 試験画像と真の欠陥の輪郭(黄)。右へ、位置ごとの正規分布・"
                            "全位置まとめた正規分布・記憶バンク(10 %)の異常地図。色の幅は方法ごとに、3 枚で共通(1〜99.8 パーセンタイル)。"
                            "位置ごとの分布は良品 20 枚では標本が足りず、欠陥でない所の自然な模様の変動も同じくらい明るくなる。")
+    score = keep["記憶バンク(10 %)"][pick[0]]
+    base = (tests[pick[0]] - tests[pick[0]].min()) / (np.ptp(tests[pick[0]]) + 1e-12)
+    lo, hi = np.percentile(score, (45, 99.5))
+    frames = []
+    for th in np.linspace(hi, lo, 32):
+        rgb = np.repeat(base[..., None], 3, axis=2)
+        hit = score >= th
+        rgb[hit] = 0.25 * rgb[hit] + 0.75 * np.array([1.0, 0.12, 0.05])
+        frames.append(figs.video_frame(rgb, "異常閾値 %.3g" % th))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("anomaly_threshold_sweep", frames,
+                    caption="記憶バンクの異常度閾値を下げると欠陥領域が現れる。",
+                    fps=10.0, gif_every=2, gif_fps=5.0, gif_width=480)
     # 図: PRO 曲線(変種ごと)
     series = []
     for name in ("プリミティブ(勾配のみ・1 解像度)", "多重解像度(勾配・Gabor・LBP)", "全位置まとめた正規分布",
