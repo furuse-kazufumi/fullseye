@@ -89,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-94 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+95 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -190,6 +190,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Rezept und Spezifikation vor dem Einsatz an bekannten Gut-/Schlecht-Sets prüfen und Reserven messen: [Erklärung](../../capabilities/inspection-fixture.md) _(ja)_ · Beispiele [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Einen Ordner in einem Aufruf prüfen (Batch, Spezifikation, Aggregation, SPC, Bericht, Audit-Log): [Erklärung](../../capabilities/inspection-workflow.md) _(ja)_ · Beispiele [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren: [Erklärung](../../capabilities/lens-tolerancing.md) _(ja)_ · Beispiele [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
+- Validierung, Nachbarschaftssuche und Transformationskerne nur einmal berechnen: [Erklärung](../../capabilities/reuse-computation-results.md) _(ja)_ · Beispiele [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
 - Typisierte Op-Ergebnisse als JSON schreiben und bitgenau zurücklesen: [Erklärung](../../capabilities/typed-results-as-json.md) _(ja)_ · Beispiele [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typisierte Op-Ergebnisse als Markdown darstellen, mit eingebettetem JSON zum Zurücklesen: [Erklärung](../../capabilities/typed-results-as-markdown.md) _(ja)_ · Beispiele [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben: [Erklärung](../../capabilities/xlsx-report.md) _(ja)_ · Beispiele [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -213,7 +214,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 </div>
 
-[Alle 158 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 163 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 

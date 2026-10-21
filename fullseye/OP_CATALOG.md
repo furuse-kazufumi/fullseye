@@ -13,13 +13,18 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(426 例)
+### 2-D 画像/信号/幾何(431 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
 
 **math**
 - **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
+- **点群の曲率記述子を一度の近傍探索でまとめて得る** — 放物面点群から主曲率・平均曲率・Gauss 曲率・shape index・curvedness・法線をまとめて計算し、個別計算と一致することを確かめる。 `py -3.11 examples/perf_pointcloud_descriptors.py`
+- **monogenic の振幅・位相・向きを一度の検証で読む** — 合成正弦格子の Riesz/monogenic 場を作り、まとめて得た三量が個別の公開関数と数値一致することを確かめる。 `py -3.11 examples/perf_monogenic_metrics.py`
+- **体積の spline 係数を複数の線プローブで再利用する** — 検証済みの読み取り専用体積と cubic spline 係数を準備し、異なる線プローブが通常計算と同じ値を返すことを確かめる。 `py -3.11 examples/perf_prepared_volume_probe.py`
+- **偏光の分離・DoLP・Stokes を一度の当てはめで得る** — 既知の偏光スイープを合成し、一括解析の diffuse・specular・DoLP・Stokes が個別の公開関数と一致することを確かめる。 `py -3.11 examples/perf_polarization_analyze.py`
+- **変換核の再利用と省メモリ処理を一緒に確かめる** — Hankel 核のキャッシュ、PIV 外れ値マスクの行分割、packed 10-bit pixel の low-memory 復号が各基準結果と一致することを確かめる。 `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
 - **離散幾何と位相を画像・メッシュ・点群で —— 壁のある部屋の歩く距離・球面の測地線・トーラスの Gauss–Bonnet・Delaunay** — 棚卸し(2026-10-03)で op として無かった 6 本を 2-D/3-D で: 壁のすき間を回り込む距離を画像の格子で熱法により求め、8 近傍の Dijkstra は等距離線が八角形に歪んで誤差が細かくしても消えない(10.8 倍)/ 球面では辺の Dijkstra が 7.7% で止まり熱法は 0.8% まで減る / トーラスの角欠損は外側が正・内側が負で総和は歪めても 0、球は 4π / Delaunay の三角形の数は 2n−h−2 で外接円・3-D の外接球は空。 `py -3.11 examples/geometry_tour.py`
 - **推定と統計の古典を素朴なやり方と並べる —— 割当・Kalman 平滑化・Cramér–Rao 下界・帰無仮説の p 値・姿勢の補間** — 棚卸し(2026-10-03)で op として無かった 12 本: 貪欲な対応付けは総距離 4.90 で全点を取り違え Hungarian は 2.65、観測が途切れても Kalman 平滑化は前後から軌跡を戻し(RMS 0.38 → 0.15、一括最小二乗と厳密に一致)、直線の当てはめの精度は Cramér–Rao 下界にぴったり乗り、差の無い 2 群を 2000 回比べると 5% 前後が偶然「有意」、4×4 行列を直線で混ぜた姿勢の補間は途中で体積が 0.07 倍に縮み se3 の exp/log なら剛体のまま。 `py -3.11 examples/estimation_tour.py`
 - **FFT では足りないスペクトル推定 —— 6° 離れた 2 つの電波を MUSIC で割る・時刻がばらばらな観測の周期を Lomb–Scargle で** — 棚卸し(2026-10-03)で 0 本だった部分空間法と不等間隔の周期図: 8 素子のアンテナ列(ビーム幅 12.7°)で 6° 離れた 2 波は遅延和では 1 つの山に融け、MUSIC は 2 本の峰、ESPRIT は格子なしで角度を解き、波源の数は MDL で当てる。同じ信号の反射(相関した 2 波)では MUSIC も割れない。時刻を無視して並び順のまま FFT すると周期の峰がずれ、Lomb–Scargle は観測時刻のまま真の周波数に峰を立てる(等間隔なら周期図と恒等的に一致)。 `py -3.11 examples/spectral_tour.py`
@@ -2469,7 +2474,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dwt_inverse` `table → image2d` — ``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。 · 例: `transforms_tour`
 - `dwt_transform` `image2d → table` — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。 · 例: `transforms_tour`
 - `hankel_image` `image2d → table` — 軸対称な画像の2次元フーリエ変換を動径のHankel変換で求める。``memory_budget`` は実測差1e-10以下の省メモリ経路。 · 例: `transforms_tour`
-- `hankel_transform` `signal × signal → table` — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。 · 例: `transforms_tour`
+- `hankel_transform` `signal × signal → table` — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。 · 例: `perf_hankel_plan_and_piv_stream`, `transforms_tour`
 - `laplace_inverse_talbot` `signal × signal × signal → signal` — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。 · 例: `transforms_tour`
 - `tf_bilinear` `signal × signal → table` — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。 · 例: `gallery_math_numerics_filters`
 - `tf_freq_response` `signal × signal × signal → table` — 周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。 · 例: `transforms_tour`
@@ -3135,10 +3140,10 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
 
 #### specular / polarization(4)
-- `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 - `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `example_polarization_metal`, `poc_polarization_specular`, `specular_photometric`
-- `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `poc_polarization_specular`, `specular_photometric`
-- `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `specular_photometric`
+- `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 
 #### specular / reflectance(3)
 - `brdf_blinn_phong` `normalmap → image2d` — Blinn's half-vector specular lobe. → (H, W) in [0, 1]. · 例: `poc_shape_from_polarization`, `specular_photometric`
@@ -3195,10 +3200,10 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `riesz_motion_magnify` `video → table` — Scale a clip's in-band motion by *alpha*, by the Riesz route. → dict. · 例: `quaternion_monogenic`
 
 #### quat / riesz(5)
-- `monogenic_amplitude` `qimage → image2d` — Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
-- `monogenic_orientation` `qimage → image2d` — Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
-- `monogenic_phase` `qimage → image2d` — Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W). · 例: `quaternion_monogenic`
-- `monogenic_signal` `image2d → qimage` — The monogenic signal of an image at one scale. → (H, W, 4). · 例: `quaternion_monogenic`
+- `monogenic_amplitude` `qimage → image2d` — Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W). · 例: `perf_monogenic_metrics`, `quaternion_monogenic`
+- `monogenic_orientation` `qimage → image2d` — Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W). · 例: `perf_monogenic_metrics`, `quaternion_monogenic`
+- `monogenic_phase` `qimage → image2d` — Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W). · 例: `perf_monogenic_metrics`, `quaternion_monogenic`
+- `monogenic_signal` `image2d → qimage` — The monogenic signal of an image at one scale. → (H, W, 4). · 例: `perf_monogenic_metrics`, `quaternion_monogenic`
 - `riesz_transform` `image2d → qimage` — The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4). · 例: `quaternion_monogenic`
 
 ### rangedoppler(8 ops / 4 categories)
@@ -5092,7 +5097,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `piv_synth_sequence` `入力なし → images` — 同じ粒子を繰り返し動かした画像列。返りは ``(frames, truth)``。 · 例: `piv_field_analysis_tour`
 
 #### piv / validate(2)
-- `piv_outlier_mask` `flow2d → mask` — 正規化中央値検定(Westerweel & Scarano 2005)で外れベクトルを見つける。 · 例: `piv_flow_from_particles`, `poc_change_detection_misreg`, `poc_river_surface_velocity`
+- `piv_outlier_mask` `flow2d → mask` — 正規化中央値検定(Westerweel & Scarano 2005)で外れベクトルを見つける。 · 例: `perf_hankel_plan_and_piv_stream`, `piv_flow_from_particles`, `poc_change_detection_misreg`, `poc_river_surface_velocity`
 - `piv_replace_outliers` `flow2d × mask → flow2d` — 外れ値を近傍で埋める。``method="nan"`` なら**埋めずに欠測にする**。 · 例: `piv_flow_from_particles`, `poc_river_surface_velocity`
 
 #### piv / visualise(5)

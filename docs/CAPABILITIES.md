@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 94 項目**
+**収録 95 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -62,6 +62,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
@@ -1114,7 +1115,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (8)
+## 組み立てる (9)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -1171,6 +1172,22 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 実寸校正: 長さは mm、傾きは degree または arcminute、MTF は cycles/mm、波面 RMS は waves です。歩留まりには Wilson 95 % 区間を付けます。
 
 動く例: `poc_lens_tolerancing`
+
+### [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md)
+
+同じ入力から複数の量を得るとき、共通する高価な処理を一度にまとめます。`curvature_descriptors` は一度の近傍探索と曲面当てはめから主曲率・平均曲率・Gauss 曲率・shape index・curvedness を返します。`monogenic_metrics` と `polarization_analyze` は入力検証や正弦波当てはめを共有します。`HankelPlan` と `PreparedVolProbe` は変換核や spline 係数を複数回の呼び出しで再利用します。
+
+使う op: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `PreparedVolProbe`, `prepare_vol_probe`, `unpack_lsb`
+
+推奨パイプライン: [`polarization_separate`](ops/specular/polarization/polarization_separate.md)
+
+代替: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
+
+限界: 合成結果を返す op は単独結果より保持量が増える。stream と low_memory はピークメモリを抑えるが、入力自体はメモリ上に必要。
+
+実寸校正: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
+
+動く例: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
 
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 

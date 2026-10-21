@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加
+- 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。
+
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、`round((t_end - burn_in) / dt)` が 0 のとき警告と NaN を返していた不具合を修正。要求時間を超えて 1 刻みに切り上げず、引数と算出刻み数を含む `ValueError` を返す。

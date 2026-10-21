@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-94 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+95 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -190,6 +190,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Valider une recette d'inspection et une spécification sur des jeux connus de pièces bonnes et défectueuses avant le déploiement, et mesurer les marges: [explication](../../capabilities/inspection-fixture.md) _(ja)_ · exemples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Inspecter un dossier en une seule fois, juger selon une spécification, puis produire agrégation, SPC, rapport et journal d'audit: [explication](../../capabilities/inspection-workflow.md) _(ja)_ · exemples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
 - Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement: [explication](../../capabilities/lens-tolerancing.md) _(ja)_ · exemples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
+- Ne calculer qu'une fois la validation, les voisinages et les noyaux de transformation: [explication](../../capabilities/reuse-computation-results.md) _(ja)_ · exemples [perf_pointcloud_descriptors](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_pointcloud_descriptors.py) · [perf_monogenic_metrics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_monogenic_metrics.py) · [perf_prepared_volume_probe](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_prepared_volume_probe.py) · [perf_polarization_analyze](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_polarization_analyze.py) · [perf_hankel_plan_and_piv_stream](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/perf_hankel_plan_and_piv_stream.py)
 - Écrire en JSON les valeurs de retour typées d'un op et les relire à l'identique bit à bit: [explication](../../capabilities/typed-results-as-json.md) _(ja)_ · exemples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Rendre lisibles en Markdown les valeurs de retour typées d'un op, en y intégrant du JSON pour la relecture: [explication](../../capabilities/typed-results-as-markdown.md) _(ja)_ · exemples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Exporter des résultats d'inspection typés dans un rapport Excel (.xlsx): [explication](../../capabilities/xlsx-report.md) _(ja)_ · exemples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -213,7 +214,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 158 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 163 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

@@ -49,6 +49,21 @@ EXAMPLES = [
      "summary": "多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、"
                 "op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、"
                 "上限は短辺で決まることまで含めて、速さを assert せず印字する。"},
+    {"id": "perf_pointcloud_descriptors", "task": "math", "data": "synthetic",
+     "name": "点群の曲率記述子を一度の近傍探索でまとめて得る",
+     "summary": "放物面点群から主曲率・平均曲率・Gauss 曲率・shape index・curvedness・法線をまとめて計算し、個別計算と一致することを確かめる。"},
+    {"id": "perf_monogenic_metrics", "task": "math", "data": "synthetic",
+     "name": "monogenic の振幅・位相・向きを一度の検証で読む",
+     "summary": "合成正弦格子の Riesz/monogenic 場を作り、まとめて得た三量が個別の公開関数と数値一致することを確かめる。"},
+    {"id": "perf_prepared_volume_probe", "task": "math", "data": "synthetic",
+     "name": "体積の spline 係数を複数の線プローブで再利用する",
+     "summary": "検証済みの読み取り専用体積と cubic spline 係数を準備し、異なる線プローブが通常計算と同じ値を返すことを確かめる。"},
+    {"id": "perf_polarization_analyze", "task": "math", "data": "synthetic",
+     "name": "偏光の分離・DoLP・Stokes を一度の当てはめで得る",
+     "summary": "既知の偏光スイープを合成し、一括解析の diffuse・specular・DoLP・Stokes が個別の公開関数と一致することを確かめる。"},
+    {"id": "perf_hankel_plan_and_piv_stream", "task": "math", "data": "synthetic",
+     "name": "変換核の再利用と省メモリ処理を一緒に確かめる",
+     "summary": "Hankel 核のキャッシュ、PIV 外れ値マスクの行分割、packed 10-bit pixel の low-memory 復号が各基準結果と一致することを確かめる。"},
     # -- PoC series(真値つきで実問題を解く。領域ごとの実証)------------------- #
     {"id": "poc_aoi_ct_traceability", "task": "metrology", "data": "synthetic",
      "name": "全数の 2-D 検査と抜き取りの 3-D 検査を対応づける(格子は自分に重なる)",

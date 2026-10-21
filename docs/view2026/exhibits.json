@@ -6796,6 +6796,14 @@
    }
   ],
   "titles": {
+   "reuse-computation-results": {
+    "zh": "同一输入的验证、邻域搜索与变换核只计算一次",
+    "tw": "同一輸入的驗證、鄰域搜尋與轉換核心只計算一次",
+    "ko": "같은 입력의 검증·이웃 탐색·변환 커널을 한 번만 계산",
+    "de": "Validierung, Nachbarschaftssuche und Transformationskerne nur einmal berechnen",
+    "hi": "एक ही input की validation, neighbourhood search और transform kernel केवल एक बार गणना करना",
+    "fr": "Ne calculer qu'une fois la validation, les voisinages et les noyaux de transformation"
+   },
    "inner-diameter-in-mm": {
     "zh": "测量圆形零件的内径,直到毫米",
     "tw": "量測圓形零件的內徑,直到毫米",
