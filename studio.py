@@ -1775,12 +1775,14 @@ def gauge_rr_data_check(table, mapping):
     chosen = {p: mapping.get(p) for p in ("part", "operator", "value")}
     absent = [p for p, c in chosen.items() if not c or c not in table]
     if absent:
-        raise ValueError("column assignment missing for: %s" % ", ".join(absent))
+        raise ValueError("[gauge_rr:column_assignment_missing] %s" %
+                         (tr("Column assignment missing for: %s") % ", ".join(absent)))
     cols = {p: np.asarray(table[c], dtype=object).reshape(-1) for p, c in chosen.items()}
     missing = {p: int(sum(str(v).strip() == "" for v in a)) for p, a in cols.items()}
     bad = ["%s=%d" % (p, n) for p, n in missing.items() if n]
     if bad:
-        raise ValueError("missing values: %s" % ", ".join(bad))
+        raise ValueError("[gauge_rr:missing_values] %s" %
+                         (tr("Missing values: %s") % ", ".join(bad)))
     counts = {}
     for part, operator in zip(cols["part"], cols["operator"]):
         key = (str(part), str(operator)); counts[key] = counts.get(key, 0) + 1
@@ -1788,10 +1790,11 @@ def gauge_rr_data_check(table, mapping):
     unequal = [(p, o, n) for (p, o), n in sorted(counts.items()) if n != expected]
     if unequal:
         groups = ", ".join("part=%s / operator=%s (%d)" % x for x in unequal)
-        raise ValueError("unequal repeats per part x operator group; expected %d: %s"
-                         % (expected, groups))
-    return ("%d rows; part: %d distinct; operator: %d distinct; value: 0 missing; "
-            "%d repeats per part x operator group"
+        raise ValueError("[gauge_rr:unequal_repeats] %s" %
+                         (tr("Unequal repeats per part x operator group; expected %d: %s")
+                          % (expected, groups)))
+    return (tr("%d rows; part: %d distinct; operator: %d distinct; value: 0 missing; "
+               "%d repeats per part x operator group")
             % (len(cols["part"]), len(set(cols["part"])), len(set(cols["operator"])), expected))
 
 
@@ -13783,11 +13786,8 @@ def build_window(model=None):
               "prefer_image": bool(prefer_image), "csv": {}, "column_widgets": {},
               "data_check": None}
 
-        column_labels = {
-            "part": {"ja": "部品 ID", "en": "part ID"},
-            "operator": {"ja": "測定者", "en": "operator"},
-            "value": {"ja": "測定値", "en": "measured value"},
-        }
+        column_labels = {"part": "part ID", "operator": "operator",
+                         "value": "measured value"}
 
         def mapping_key(signature):
             return "input_assign/%s/%s" % (st["op"], signature)
@@ -13935,8 +13935,7 @@ def build_window(model=None):
                         form.removeRow(old)
                     w = QtWidgets.QComboBox(); w.currentIndexChanged.connect(lambda _=0: update_data_check())
                     st["widgets"][p] = w; st["column_widgets"][p] = w
-                    lang = "ja" if win._lang == "ja" else "en"
-                    form.addRow("%s / %s" % (p, column_labels[p][lang]), w)
+                    form.addRow("%s / %s" % (p, tr(column_labels[p])), w)
                 check = QtWidgets.QLabel(); check.setWordWrap(True); st["data_check"] = check
                 form.addRow(tr("Data check"), check)
             # 必須の引数は見本の値で埋めておく(空欄のまま押すと TypeError しか出ない)
