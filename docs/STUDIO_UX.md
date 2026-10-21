@@ -213,10 +213,14 @@ Ranked by usability payoff; each is a self-contained, testable increment:
 15. **Work modes** (idea ⑭, still open) — "build the pipeline / compare results / inspect
     numbers / write code" as presets of which panels are big and which are folded, without
     losing the input or the results; a temporary "image only, large" view.
-16. **Column wizard for typed ops** (idea ②, still open) — open a CSV, map the file's real
+16. ~~**Column wizard for typed ops**~~ **(done, Studio slice 6; ideas 033 / 034 / 036)** — open a CSV, map the file's real
     columns to the op's inputs (part id / operator / measured value), show the checked shape
     of the data (parts, operators, missing, repeats), remember the mapping, and stop before
-    running on an unsupported shape.
+    running on an unsupported shape. The existing ledger runner now reads declared `table`
+    inputs, offers only actual CSV headers for the gauge R&R roles, and stores JSON mappings
+    under the op plus a signature of sorted headers and their count. Unequal repeats are refused
+    before calling the op with the groups named. No input is repaired, modified or renamed.
+    Still open: declarative column-role/check metadata for table ops other than gauge R&R.
 
 ## ① 目的検索 / ⑦ 直せるエラー（Studio slice 4、配線済み）
 

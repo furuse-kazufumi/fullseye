@@ -1,6 +1,26 @@
 [
  {
-  "file": "01_aoi_and_ct.png",
+  "file": "01_inspection_and_reconstructed_ct.png",
+  "name": "inspection_and_reconstructed_ct",
+  "caption": "One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction.",
+  "shape": [
+   564,
+   2620,
+   3
+  ]
+ },
+ {
+  "file": "02_defect_traceability.png",
+  "name": "defect_traceability",
+  "caption": "Matched crop of one joint: surface appearance and internal reconstructed void at the same coordinates.",
+  "shape": [
+   356,
+   638,
+   3
+  ]
+ },
+ {
+  "file": "03_aoi_and_ct.png",
   "name": "aoi_and_ct",
   "caption": "AOI は全数・2-D、CT は抜き取り・3-D。番号も座標系も装置ごとに違う。",
   "shape": [
@@ -10,7 +30,7 @@
   ]
  },
  {
-  "file": "02_area_vs_volume.png",
+  "file": "04_area_vs_volume.png",
   "name": "area_vs_volume",
   "caption": "直線は「面積率に比例する」という素朴な仮定。点はそこから両側へ離れる。",
   "shape": [
@@ -20,7 +40,7 @@
   ]
  },
  {
-  "file": "03_interface_voids.png",
+  "file": "05_interface_voids.png",
   "name": "interface_voids",
   "caption": "AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。",
   "shape": [
@@ -30,7 +50,7 @@
   ]
  },
  {
-  "file": "04_worst_first.png",
+  "file": "06_worst_first.png",
   "name": "worst_first",
   "caption": "同じロットを同じ「悪い順」で並べても、順位は一致しない。",
   "shape": [
@@ -38,7 +58,7 @@
    413,
    3
   ],
-  "csv": "04_worst_first.csv",
-  "tsv": "04_worst_first.tsv"
+  "csv": "06_worst_first.csv",
+  "tsv": "06_worst_first.tsv"
  }
 ]

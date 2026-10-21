@@ -146,6 +146,16 @@ def _moving_dot(n=24, h=45, w=61):
     return out
 
 
+def test_video_frame_returns_rgb8_without_losing_the_picture():
+    ramp = np.tile(np.linspace(0.0, 1.0, 128), (96, 1))
+    frame = figs.video_frame(ramp, "ramp", size=(256, 192), gray=True)
+    assert frame.dtype == np.uint8 and frame.shape == (192, 256, 3)
+    assert np.ptp(frame[48:]) >= 100
+    assert np.unique(frame[48:, :, 0]).size >= 100
+    assert np.any(np.all(frame[:48] == 0, axis=2))
+    assert np.any(np.all(frame[:48] == 255, axis=2))
+
+
 def test_save_video_writes_a_gif_row_that_points_to_the_mp4(_fresh):
     """figures.json には GIF の 1 行だけが載り、"video" が同じ番号の MP4 を指す(MP4 自体は行を持たない)。奇数の辺でも書ける。"""
     pytest.importorskip("imageio_ffmpeg")

@@ -1,6 +1,26 @@
 [
  {
-  "file": "01_dt_sweep.png",
+  "file": "01_event_output.png",
+  "name": "event_output",
+  "caption": "装置出力（左、3 ms時点までの直近1 ms、移動量5.9 px。ON=橙・OFF=水色・無イベント=灰色）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。コントラスト閾値 0.50、不応期 0.2 ms、時刻揺らぎ 0.02 ms、背景活動 0.001 event/(pixel s)。移動輝度境界から 2 px 以内 99.2 %、ON/OFF 比 0.994。",
+  "shape": [
+   512,
+   1920,
+   3
+  ]
+ },
+ {
+  "file": "02_event_rate.png",
+  "name": "event_rate",
+  "caption": "方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_dt_sweep.png",
   "name": "dt_sweep",
   "caption": "両対数。傾きがゼロ点 1.0 / 線形 2.3 / 放物線 2.7。放物線は傾きが急でも切片が悪く、Δt≧0.75 ms では線形に負ける。",
   "shape": [
@@ -10,7 +30,7 @@
   ]
  },
  {
-  "file": "02_threshold_crossover.png",
+  "file": "04_threshold_crossover.png",
   "name": "threshold_crossover",
   "caption": "変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。交点は θ≈0.35 と θ≈0.75。",
   "shape": [
@@ -20,7 +40,7 @@
   ]
  },
  {
-  "file": "03_merge_line_speed.png",
+  "file": "05_merge_line_speed.png",
   "name": "merge_line_speed",
   "caption": "各帯の中央値。最も内側の帯(0-2 px)では最大 1e12 px/msまで飛ぶので、図は中央値だけを描いている。",
   "shape": [
@@ -30,7 +50,7 @@
   ]
  },
  {
-  "file": "04_arrival_surface.png",
+  "file": "06_arrival_surface.png",
   "name": "arrival_surface",
   "caption": "差は上下 99 % 分位(±0.0327 ms)で切った。同心円の縞は**フレーム格子に同期した系統誤差**(サブピクセルのpeak locking と同じ型)。",
   "shape": [
@@ -40,7 +60,7 @@
   ]
  },
  {
-  "file": "05_arrival_video.gif",
+  "file": "07_arrival_video.gif",
   "name": "arrival_video",
   "caption": "動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x) を1 つの体積とみなしたときの等値面が、こうして 1 枚の面になる。点線は撮る前に閉形式で予測した合流線。下段は行 72 の断面で、白 = 真値、橙 = ゼロ点(初めてしきい値を超えたコマの時刻、1 ms の階段)、青 = 線形補間。最後に全画素の誤差: ゼロ点 RMS 0.568 ms(偏り +0.489)、線形補間 RMS 0.0209 ms(27 倍)。",
   "shape": [
@@ -52,7 +72,7 @@
   "frames": 86,
   "frames_written": 72,
   "fps": 10.0,
-  "video": "05_arrival_video.mp4",
+  "video": "07_arrival_video.mp4",
   "video_frames": 171,
   "video_fps": 20.0,
   "video_shape": [

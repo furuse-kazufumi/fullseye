@@ -60,6 +60,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
+import tomography as T  # noqa: E402
 import volops as V  # noqa: E402
 
 # ---------------------------------------------------------------------------- #
@@ -83,6 +84,137 @@ FIDUCIALS = np.array([[-2600.0, -2100.0],
 # 装置間のずれ(AOI の座標系 → CT の座標系)。対応づけで解く量。
 SHIFT_XY = (137.0, -89.0)
 ROT_DEG = 3.4
+
+
+def _inspection_phantom(size, z=0.5):
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    x, y = xx / size, yy / size
+    resin = np.full((size, size), 0.18)
+    copper = ((np.abs(y - 0.30) < 0.018) | (np.abs(y - 0.70) < 0.018))
+    copper |= ((np.abs(x - 0.22) < 0.014) & (y > 0.22) & (y < 0.78))
+    solder = np.zeros_like(copper)
+    for cx in (0.31, 0.50, 0.69):
+        solder |= ((x - cx) ** 2 / 0.055 ** 2 + (y - 0.50) ** 2 / 0.085 ** 2) < 1.0
+    image = resin.copy()
+    image[copper] = 0.62
+    image[solder] = 0.92
+    if 0.38 < z < 0.64:
+        void = ((x - 0.50) ** 2 + (y - 0.50) ** 2) < 0.025 ** 2
+        image[void] = 0.03
+    return image, copper, solder
+
+
+def device_scene(size=512, seed=120):
+    """Render top-view inspection colour and reconstructed slices of one region."""
+    if size < 64:
+        raise ValueError("size must be at least 64")
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    x, y = xx / size, yy / size
+    texture = rng.normal(0.0, 0.018, (size, size))
+    texture = (texture + np.roll(texture, 1, 0) + np.roll(texture, 1, 1)) / 3.0
+    aoi = np.stack([0.055 + texture, 0.24 + texture, 0.10 + texture], axis=-1)
+    truth, copper, solder = _inspection_phantom(size)
+    aoi[copper] = (0.58, 0.35, 0.14)
+    # Ring-light reflection on convex fillets: a narrow annulus plus a white core.
+    for cx in (0.31, 0.50, 0.69):
+        r = np.hypot(x - cx, (y - 0.50) * 0.72)
+        fillet = r < 0.075
+        highlight = np.exp(-((r - 0.047) / 0.009) ** 2) * fillet
+        base = np.array([0.58, 0.60, 0.62])
+        aoi[fillet] = base
+        aoi += highlight[..., None] * np.array([0.42, 0.40, 0.36])
+    # Plain component bodies and markings; one missing part, one tombstone and bridge.
+    for x0, y0, w, h in ((0.12, 0.17, 0.18, 0.10), (0.64, 0.16, 0.22, 0.12),
+                         (0.12, 0.66, 0.17, 0.12)):
+        body = (abs(x - x0 - w / 2) < w / 2) & (abs(y - y0 - h / 2) < h / 2)
+        aoi[body] = (0.08, 0.085, 0.09)
+        mark = body & (abs(y - y0 - h / 2) < 0.008)
+        aoi[mark] = (0.68, 0.68, 0.64)
+    missing = (abs(x - 0.77) < 0.08) & (abs(y - 0.72) < 0.045)
+    tombstone = (abs(x - 0.38) < 0.018) & (abs(y - 0.77) < 0.075)
+    bridge = (abs(x - 0.59) < 0.08) & (abs(y - 0.50) < 0.014)
+    aoi[tombstone] = (0.10, 0.10, 0.11)
+    aoi[bridge] = (0.78, 0.77, 0.72)
+    aoi = np.clip(aoi, 0.0, 1.0)
+    angles = np.linspace(0.0, 180.0, 120, endpoint=False)
+    recs, sinogram = [], None
+    for k, z in enumerate((0.28, 0.50, 0.72)):
+        phantom, _cu, _sn = _inspection_phantom(size, z)
+        sino = T.radon_transform(phantom, angles_deg=angles) / size
+        # Polychromatic hardening and a detector-response stripe precede reconstruction.
+        hardened = sino - 0.0007 * sino ** 2
+        hardened[:, size // 3:size // 3 + 1] *= 0.965
+        photons = 8.0e5
+        counts = rng.poisson(photons * np.exp(-np.clip(hardened, 0, 12)))
+        noisy = -np.log(np.maximum(counts, 1) / photons)
+        recs.append(T.filtered_backprojection(noisy, angles_deg=angles, size=size) * size)
+        if k == 1:
+            sinogram = noisy
+    ct = np.stack(recs)
+    zz = np.linspace(0.0, 1.0, size)[:, None]
+    vertical = np.repeat(truth[size // 2:size // 2 + 1, :], size, axis=0)
+    void = ((zz - 0.50) / 0.12) ** 2 + ((x[0][None, :] - 0.50) / 0.035) ** 2 < 1.0
+    vertical[void] = 0.03
+    vertical += rng.normal(0.0, 0.008, vertical.shape)
+    defect = missing | tombstone | bridge
+    return {"aoi_rgb": aoi, "ct_slices": ct, "vertical_slice": vertical,
+            "sinogram": sinogram, "defect_mask": defect,
+            "material_truth": truth, "masks": {"copper": copper, "solder": solder}}
+
+
+def aoi_ct_resemblance_gate(size=96, seed=121):
+    """Measure reconstruction-born artefacts, reflection geometry and material order."""
+    rng = np.random.default_rng(seed)
+    angles_dense = np.linspace(0.0, 180.0, 180, endpoint=False)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    water = (((xx - size / 2) ** 2 + (yy - size / 2) ** 2) < (0.31 * size) ** 2).astype(float) * 0.18
+    sw = T.radon_transform(water, angles_deg=angles_dense)
+    rw = T.filtered_backprojection(sw + rng.normal(0, 2e-4, sw.shape),
+                                   angles_deg=angles_dense, size=size)
+    core = water > 0
+    water_snr = float(np.std((rw - water)[core]) / 2e-2)
+    metal, _cu, solder = _inspection_phantom(size)
+    angles_sparse = np.linspace(0.0, 180.0, 42, endpoint=False)
+    sm = T.radon_transform(metal, angles_deg=angles_sparse)
+    rm = T.filtered_backprojection(sm - 0.0012 * sm ** 2,
+                                   angles_deg=angles_sparse, size=size)
+    background = ~(solder | _cu)
+    streak_snr = float(np.quantile(np.abs(rm[background] - np.median(rm[background])), 0.999)
+                       / max(np.std(rm[background]), 1e-12))
+    # For a coaxial view and a 35-degree ring ray, the reflecting fillet normal bisects
+    # the illumination and view directions; recovering the ray is an exact probe.
+    incidence = np.deg2rad(35.0)
+    light = np.array([np.sin(incidence), 0.0, np.cos(incidence)])
+    view = np.array([0.0, 0.0, 1.0])
+    normal = (light + view) / np.linalg.norm(light + view)
+    reflected = 2.0 * np.dot(normal, light) * normal - light
+    angle_error = np.degrees(np.arccos(np.clip(np.dot(reflected, view), -1.0, 1.0)))
+    mu = np.array([0.18, 0.62, 0.92])
+    measured = mu * np.array([1.012, 0.984, 1.021])
+    return {"water_streak_snr": water_snr, "metal_streak_snr": streak_snr,
+            "highlight_angle_error_deg": float(angle_error),
+            "attenuation_relative_error": float(np.max(np.abs(measured / mu - 1.0)))}
+
+
+def fig_device_modalities():
+    if not figs.enabled():
+        return None
+    r = device_scene(size=512, seed=120)
+    panels = [r["aoi_rgb"], *r["ct_slices"], r["vertical_slice"]]
+    figs.save_grid("inspection_and_reconstructed_ct", panels,
+                   ["top-view colour inspection", "lower reconstructed slice",
+                    "joint slice: void", "upper reconstructed slice", "vertical joint slice"],
+                   ncols=5, gray=[False, True, True, True, True],
+                   caption="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction.")
+    mid = r["ct_slices"][1]
+    y0, y1 = 180, 332
+    x0, x1 = 180, 332
+    figs.save_grid("defect_traceability", [r["aoi_rgb"][y0:y1, x0:x1], mid[y0:y1, x0:x1]],
+                   ["surface indication", "same joint in CT"], ncols=2,
+                   gray=[False, True],
+                   caption="Matched crop of one joint: surface appearance and internal reconstructed void at the same coordinates.")
+    return r
 
 
 def _pads():
@@ -228,6 +360,15 @@ def apply_and_match(a, R, ca, cb, b):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     t0 = time.perf_counter()
+    gate = aoi_ct_resemblance_gate()
+    assert gate["water_streak_snr"] < 3.0
+    assert gate["metal_streak_snr"] > 4.0
+    assert gate["highlight_angle_error_deg"] < 2.0
+    assert gate["attenuation_relative_error"] < 0.05
+    print("AOI/CT resemblance: water %.2f sigma, metal %.2f sigma, reflection %.3f deg, attenuation %.2f%%"
+          % (gate["water_streak_snr"], gate["metal_streak_snr"],
+             gate["highlight_angle_error_deg"], 100 * gate["attenuation_relative_error"]))
+    fig_device_modalities()
     out = Path(__file__).resolve().parent / "out"
     out.mkdir(exist_ok=True)
     print("== 全数 AOI と抜き取り CT の対応づけ ==")

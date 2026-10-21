@@ -27,6 +27,26 @@ def _wait(predicate, timeout=5000):
     assert predicate(), "condition was not reached before timeout"
 
 
+_OPEN = []
+
+
+@pytest.fixture(autouse=True)
+def _close_windows():
+    """各テストの後に窓を閉じて消す(ワーカーの QThread を待ってから)。閉じ忘れた窓が
+    インタプリタ終了まで残ると、Linux の CI で終了時 abort(exit 134)になった(2026-10-21)。"""
+    yield
+    while _OPEN:
+        win = _OPEN.pop()
+        try:
+            win.quiesce()
+            win.close_guard = None
+            win.close()
+            win.deleteLater()
+        except RuntimeError:        # already gone
+            pass
+    _app().processEvents()
+
+
 def _window(stages=2):
     _app()
     studio.ERROR_HOOK = lambda *_args: None
@@ -36,6 +56,7 @@ def _window(stages=2):
     win, built_model = studio.build_window(model)
     assert built_model is model
     studio._UI_LANG["code"] = "ja"
+    _OPEN.append(win)
     return win, model
 
 

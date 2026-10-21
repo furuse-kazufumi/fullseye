@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import inspect
 import json
+import csv
+import hashlib
 import math
 import shutil
 import os
@@ -1747,7 +1749,58 @@ _IMAGE_SORTS = frozenset({"image2d", "image", "gray", "depth", "mask", "region",
 SAMPLE_TOKEN = "<sample>"
 
 #: データ入力の入手元(表示名は tr で訳す)
-LEDGER_SOURCES = ("sample (synthetic)", "current image", "last result")
+LEDGER_SOURCES = ("sample (synthetic)", "current image", "last result", "CSV file…")
+
+
+def csv_table(path):
+    """Read a CSV as the ledger table representation, without changing the file."""
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames or any(not str(x).strip() for x in reader.fieldnames):
+            raise ValueError("CSV needs a non-empty header row")
+        if len(set(reader.fieldnames)) != len(reader.fieldnames):
+            raise ValueError("CSV column names must be unique")
+        rows = list(reader)
+    if not rows:
+        raise ValueError("CSV contains no data rows")
+    return {name: np.asarray([row[name] for row in rows], dtype=object)
+            for name in reader.fieldnames}
+
+
+def csv_header_signature(columns):
+    """Stable signature: column count plus sorted names (row values/path are excluded)."""
+    names = sorted(str(x) for x in columns)
+    raw = json.dumps({"count": len(names), "columns": names}, ensure_ascii=False,
+                     separators=(",", ":"))
+    return "%d:%s" % (len(names), hashlib.sha256(raw.encode("utf-8")).hexdigest())
+
+
+def gauge_rr_data_check(table, mapping):
+    """Return a human check summary; reject missing/unbalanced gauge R&R data."""
+    chosen = {p: mapping.get(p) for p in ("part", "operator", "value")}
+    absent = [p for p, c in chosen.items() if not c or c not in table]
+    if absent:
+        raise ValueError("[gauge_rr:column_assignment_missing] %s" %
+                         (tr("Column assignment missing for: %s") % ", ".join(absent)))
+    cols = {p: np.asarray(table[c], dtype=object).reshape(-1) for p, c in chosen.items()}
+    missing = {p: int(sum(str(v).strip() == "" for v in a)) for p, a in cols.items()}
+    bad = ["%s=%d" % (p, n) for p, n in missing.items() if n]
+    if bad:
+        raise ValueError("[gauge_rr:missing_values] %s" %
+                         (tr("Missing values: %s") % ", ".join(bad)))
+    counts = {}
+    for part, operator in zip(cols["part"], cols["operator"]):
+        key = (str(part), str(operator)); counts[key] = counts.get(key, 0) + 1
+    expected = max(set(counts.values()), key=lambda n: (list(counts.values()).count(n), n))
+    unequal = [(p, o, n) for (p, o), n in sorted(counts.items()) if n != expected]
+    if unequal:
+        groups = ", ".join("part=%s / operator=%s (%d)" % x for x in unequal)
+        raise ValueError("[gauge_rr:unequal_repeats] %s" %
+                         (tr("Unequal repeats per part x operator group; expected %d: %s")
+                          % (expected, groups)))
+    return (tr("%d rows; part: %d distinct; operator: %d distinct; value: 0 missing; "
+               "%d repeats per part x operator group")
+            % (len(cols["part"]), len(set(cols["part"])), len(set(cols["operator"])), expected))
 
 
 def ledger_op_names():
@@ -1815,7 +1868,7 @@ def run_ledger_op(op, data, kwargs):
     return out, _time.perf_counter() - t0
 
 
-def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
+def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None, csv_path=None):
     """窓で走らせた 1 回を、**そのまま走るスクリプト**にする(エディタへ差し込む・コピーする用)。
 
     ``inputs`` はデータ入力ごとの ``(名前, 入手元)``。入手元は ``"sample"``(合成の見本。
@@ -1828,7 +1881,9 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
     """
     sample_kw = set(sample_kw)
     need_sample = any(src == "sample" for _, src in inputs) or bool(sample_kw)
-    head = ["import fullseye as fs"] + (["import opassist"] if need_sample else [])
+    need_csv = any(src == "csv" for _, src in inputs)
+    head = (["import csv"] if need_csv else []) + ["import fullseye as fs"] \
+        + (["import opassist"] if need_sample else [])
     body = []
     if need_sample:
         body.append("_data, _kw = opassist.sample_input(%r)   # synthetic sample: replace with your data" % op)
@@ -1841,6 +1896,14 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
             path = image_path or "your_image.png"
             body.append("img = fs.read_image(%r)" % path.replace("\\", "/"))
             names.append("img")
+        elif src == "csv":
+            path = (csv_path or "your_table.csv").replace("\\", "/")
+            body.extend([
+                "with open(%r, encoding='utf-8-sig', newline='') as _f:" % path,
+                "    _rows = list(csv.DictReader(_f))",
+                "table = {name: [row[name] for row in _rows] for name in _rows[0]}",
+            ])
+            names.append("table")
         else:
             names.append("result")
     args = names + [("%s=_kw[%r]" % (k, k)) if k in sample_kw else ("%s=%r" % (k, v))
@@ -6333,12 +6396,21 @@ def build_window(model=None):
 
         ``close_guard`` is installed below; it returns False to veto the close."""
         close_guard = None
+        quiesce = None     # 実行ワーカーの QThread を止めて待つ(閉じる前に必ず)
 
         def closeEvent(self, ev):
             guard = self.close_guard
             if guard is not None and not guard():
                 ev.ignore()
                 return
+            # ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が
+            # 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+            q = self.quiesce
+            if q is not None:
+                try:
+                    q()
+                except Exception as e:
+                    _log_soft_failure("could not stop run workers before close", e)
             try:                              # remember window position + panel layout
                 if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
                     s = _settings()
@@ -7442,7 +7514,7 @@ def build_window(model=None):
         # Count unsaved Python-Editor tabs too — the app-quit path must not
         # silently discard them (only per-tab close prompted before this fix).
         ed_dirty = 0
-        pe = getattr(win, "_pyedit", None)
+        pe = state.get("pyedit")            # QObject の動的 getattr は閉じる途中に呼ばない
         if pe is not None:
             tabs = pe.get("tabs")
             if tabs is not None:
@@ -7869,6 +7941,19 @@ def build_window(model=None):
     run_stop.clicked.connect(request_stop)
     run_show.clicked.connect(show_completed_result)
     run_current.clicked.connect(start_run_async)
+    def quiesce_run_workers(timeout_ms=5000):
+        """停止を要求し、生きている QThread をすべて quit + wait する(閉じる前・テストの後始末)。"""
+        for event in list(run_stop_events.values()):
+            event.set()
+        for thread, _worker in list(run_ctl.threads.values()):
+            thread.quit()
+            thread.wait(timeout_ms)
+        for thread in list(run_ctl.retired_threads):
+            thread.wait(timeout_ms)
+        QtWidgets.QApplication.processEvents()
+
+    win.quiesce = quiesce_run_workers
+    run_ctl.quiesce = quiesce_run_workers
     win._run_controller = run_ctl
     win._start_run_async = start_run_async
 
@@ -10327,6 +10412,7 @@ def build_window(model=None):
                        "status": status, "run": run_code, "stop": stop_code,
                        "open_tab": open_tab, "close_tab": close_tab, "save_to": save_to,
                        "open_path": open_path, "new": new_file}
+        state["pyedit"] = win._pyedit
         if code_text is not None:
             open_tab(code_text, name_hint)
         else:
@@ -13702,7 +13788,58 @@ def build_window(model=None):
         timer = QtCore.QTimer(dlg); timer.setSingleShot(True); timer.setInterval(250)
         st = {"op": None, "specs": [], "widgets": {}, "sources": {}, "result": None,
               "sample": None, "error": None, "image": None, "history": [], "script": "",
-              "prefer_image": bool(prefer_image)}
+              "prefer_image": bool(prefer_image), "csv": {}, "column_widgets": {},
+              "data_check": None}
+
+        column_labels = {"part": "part ID", "operator": "operator",
+                         "value": "measured value"}
+
+        def mapping_key(signature):
+            return "input_assign/%s/%s" % (st["op"], signature)
+
+        def update_data_check():
+            if st["op"] != "msa_gauge_rr" or not st["csv"]:
+                return ""
+            mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
+            try:
+                text_ = gauge_rr_data_check(st["csv"]["table"], mapping)
+            except ValueError as e:
+                text_ = str(e)
+            st["data_check"].setText(text_)
+            return text_
+
+        def load_csv(path, input_name="table"):
+            table = csv_table(path)
+            signature = csv_header_signature(table)
+            saved = _settings().value(mapping_key(signature), "")
+            try:
+                saved = json.loads(saved) if saved else {}
+            except (TypeError, ValueError):
+                saved = {}
+            st["csv"] = {"path": os.path.abspath(path), "name": os.path.basename(path),
+                         "table": table, "signature": signature, "input": input_name}
+            source = st["sources"].get(input_name)
+            if source is not None:
+                source.blockSignals(True)
+                source.setCurrentIndex(LEDGER_SOURCES.index("CSV file…"))
+                source.blockSignals(False)
+            for p, w in st["column_widgets"].items():
+                w.blockSignals(True); w.clear(); w.addItems(list(table))
+                choice = saved.get(p) if saved.get(p) in table else (p if p in table else None)
+                if choice is not None:
+                    w.setCurrentText(choice)
+                w.blockSignals(False)
+            label = st.get("csv_label")
+            if label is not None:
+                label.setText("%s — %d rows" % (os.path.basename(path), len(next(iter(table.values())))))
+            update_data_check()
+            return table
+
+        def choose_csv(input_name):
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, tr("Open CSV table"), "",
+                                                            "CSV (*.csv)")
+            if path:
+                load_csv(path, input_name)
 
         def fill_list():
             q = search.text().strip()
@@ -13765,7 +13902,7 @@ def build_window(model=None):
                 form.removeRow(0)
             # 直前の結果は消さない —— 別の op の入力に「直前の結果」として渡せる(op を繋ぐ)
             st.update(op=name, specs=opassist.param_spec(name), widgets={}, sources={},
-                      sample=None, error=None)
+                      sample=None, error=None, csv={}, column_widgets={}, data_check=None)
             try:
                 first = opassist._note_first_line(name)
             except Exception:                           # noqa: BLE001
@@ -13775,10 +13912,15 @@ def build_window(model=None):
                 if spec.get("kind") == "data":
                     srcs = QtWidgets.QComboBox()
                     for s_ in LEDGER_SOURCES:
+                        if s_ == "CSV file…" and spec.get("sort") != "table":
+                            continue
                         srcs.addItem(tr(s_), s_)
                     if st["prefer_image"] and spec.get("sort") in _IMAGE_SORTS:
                         srcs.setCurrentIndex(LEDGER_SOURCES.index("current image"))   # 結果 → op
                     srcs.currentIndexChanged.connect(lambda _=0: changed())
+                    srcs.currentIndexChanged.connect(
+                        lambda _=0, s=spec, w=srcs: choose_csv(s["name"])
+                        if w.currentData() == "CSV file…" else None)
                     st["sources"][spec["name"]] = srcs
                     form.addRow("%s  [%s]" % (spec["name"], spec.get("sort")), srcs)
                 else:
@@ -13787,6 +13929,20 @@ def build_window(model=None):
                         w.setToolTip(spec["doc"])
                     st["widgets"][spec["name"]] = w
                     form.addRow(spec["name"] + (" *" if spec.get("required") else ""), w)
+            table_input = next((s for s in st["specs"]
+                                if s.get("kind") == "data" and s.get("sort") == "table"), None)
+            if table_input and name == "msa_gauge_rr":
+                csv_label = QtWidgets.QLabel(tr("No CSV selected")); st["csv_label"] = csv_label
+                form.addRow(tr("Input table"), csv_label)
+                for p in ("part", "operator", "value"):
+                    old = st["widgets"].get(p)
+                    if old is not None:
+                        form.removeRow(old)
+                    w = QtWidgets.QComboBox(); w.currentIndexChanged.connect(lambda _=0: update_data_check())
+                    st["widgets"][p] = w; st["column_widgets"][p] = w
+                    form.addRow("%s / %s" % (p, tr(column_labels[p])), w)
+                check = QtWidgets.QLabel(); check.setWordWrap(True); st["data_check"] = check
+                form.addRow(tr("Data check"), check)
             # 必須の引数は見本の値で埋めておく(空欄のまま押すと TypeError しか出ない)
             try:
                 st["sample"] = opassist.sample_input(name)
@@ -13819,7 +13975,12 @@ def build_window(model=None):
             for spec in st["specs"]:
                 if spec.get("kind") == "data":
                     src = st["sources"][spec["name"]].currentData()
-                    if src == "current image":
+                    if src == "CSV file…":
+                        if not st["csv"] or st["csv"].get("input") != spec["name"]:
+                            raise ValueError("%s: select a CSV file" % spec["name"])
+                        v = st["csv"]["table"]
+                        data.append(v); dnames.append("table"); prov.append((spec["name"], "csv"))
+                    elif src == "current image":
                         v = state.get("raw")
                         if not isinstance(v, np.ndarray):
                             raise ValueError(tr("No current image — open one or use the sample"))
@@ -13841,7 +14002,7 @@ def build_window(model=None):
                     di += 1
                     continue
                 w = st["widgets"][spec["name"]]
-                v = value_of(spec, w)
+                v = w.currentText() if spec["name"] in st["column_widgets"] else value_of(spec, w)
                 if spec.get("required") and v is None:
                     raise ValueError("%s: %s" % (spec["name"], tr("required")))
                 if isinstance(w, QtWidgets.QLineEdit) and w.text().strip() == SAMPLE_TOKEN:
@@ -13861,9 +14022,16 @@ def build_window(model=None):
             if not st["op"]:
                 return None
             try:
+                if st["csv"] and st["op"] == "msa_gauge_rr":
+                    mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
+                    check_text = gauge_rr_data_check(st["csv"]["table"], mapping)
+                    st["data_check"].setText(check_text)
+                    _settings().setValue(mapping_key(st["csv"]["signature"]),
+                                         json.dumps(mapping, ensure_ascii=False, sort_keys=True))
                 data, dnames, kwargs, prov, from_sample = gather()
                 st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
-                                             image_path=state.get("image_path"))
+                                             image_path=state.get("image_path"),
+                                             csv_path=st["csv"].get("path") if st["csv"] else None)
                 code.setPlainText(st["script"])
                 out, sec = run_ledger_op(st["op"], data, kwargs)
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
@@ -13945,6 +14113,7 @@ def build_window(model=None):
         dlg._state = st; dlg._select = select; dlg._run = run; dlg._search = search
         dlg._op_list = op_list; dlg._auto = auto; dlg._code = code; dlg._info = info; dlg._pic = pic
         dlg._timer = timer
+        dlg._load_csv = load_csv; dlg._update_data_check = update_data_check
         dlg._insert = insert_into_editor; dlg._session_script = session_script
         dlg.resize(1100, 760); dlg.show()
         win._last_ledger_runner = dlg

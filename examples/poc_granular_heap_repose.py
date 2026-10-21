@@ -599,6 +599,7 @@ def _figures_mujoco(out: dict) -> None:
                       "この方位で φ = %.2f 度。4 方位 %s。" % (s0["phi_deg"], ", ".join("%.1f" % v for v in out["mj_phis"])))
     # 14 高さ図
     figs.save("granular_mujoco_heightmap", np.kron(out["mj_hm"] * 1e3, np.ones((3, 3))),
+               kind="height", unit="mm",
               caption="同じ山の高さ図(単位 mm、球面の最大高さ、1.5 mm/セルを 3 倍の最近傍で表示)。2 粒径で平滑してから dem_slope: 中央値 %.2f 度"
                       "(平滑なしの最頻 %.1f 度 = 球の縁)。" % (out["mj_h"]["phi_median_deg"], out["mj_h_raw"]["phi_deg"]))
     # 15 排出の質量の列

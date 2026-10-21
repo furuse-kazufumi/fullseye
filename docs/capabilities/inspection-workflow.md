@@ -46,6 +46,10 @@ io = fs.open_driver("io-memory")                       # PLC 出口(名簿は fs
 fs.signal_verdict(io, fs.as_verdict(out["rows"][0]))   # one-hot コイルへ
 ```
 
+## 撮像モデルを使う検査例
+
+2026.023、2026.043、2026.078 の例は、推定結果だけでなく raw 出力、派生画像、誤差を同じ実行で保存する。固定パターン、画素応答むら、低周波補正残差、欠陥画素、帯状雑音を空間相関つきで加え、外部の物理則に対する一致と、仮定を一つ外した破壊探針を一組にした。表示用の拡大には再構成フィルタを使い、データ解像度の保存や最近傍拡大は行わない。
+
 ## 裏づけ
 
 - 実装: `fullseye/judge.py`(`judge`: 4 規則・fail-closed)/ `fullseye/inspect_batch.py`(`inspect_batch`, `as_verdict`: 列挙・hash・recipe・計測・判定・series・EWMA・3 系統レポート・監査ログ)
