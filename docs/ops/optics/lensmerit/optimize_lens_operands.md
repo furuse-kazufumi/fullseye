@@ -4,7 +4,7 @@ dim: optics
 category: lensmerit
 in: table
 out: table
-examples: [poc_lens_merit_operands]
+examples: [optimized_lens_tolerance_sensitivity, poc_lens_merit_operands]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [optimized_lens_tolerance_sensitivity](../../../../examples/optimized_lens_tolerance_sensitivity.py) — `py -3.11 examples/optimized_lens_tolerance_sensitivity.py`
 - [poc_lens_merit_operands](../../../../examples/poc_lens_merit_operands.py) — `py -3.11 examples/poc_lens_merit_operands.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
