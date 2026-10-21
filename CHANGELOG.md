@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 一次元関数の長系列照合、ゼロ交差、複数位置の値取得を高速化した。
+- グラフの rich-club 曲線と複数グラフの重み集計を高速化し、一時配列を削減した。
+- 実験計画の点間最小距離と直交表の強度検査を高速化し、一時配列を削減した。
+- 三次元シーン読込で複数ノードが共有するアクセサーのデコード結果を再利用するようにした。
+- grouped packed pixel の展開で全入力を 16 bit 化する一時配列を省いた。
+- PIV の時系列統計を欠測値の標本集合を保った逐次集計へ変更し、速度場履歴の保持を省いた。
+
 - Studio now shuts down overlapping run-worker QThreads deterministically, preventing a late older generation from causing a native crash during window cleanup.
 
 ### 修正

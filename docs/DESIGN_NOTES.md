@@ -1530,7 +1530,7 @@
 
 ## `graphinv.py`
 
-- **L787** — ★2026-10-07: kmax = 0 の個体(辺 0 本など)は「0-core = 全員」を最内殻にして全ノードを数えていた (三角形 2 個体 + 空 1 個体で appearances [3,3,3,1,1])。殻が無い個体は誰も含まない。
+- **L793** — ★2026-10-07: kmax = 0 の個体(辺 0 本など)は「0-core = 全員」を最内殻にして全ノードを数えていた (三角形 2 個体 + 空 1 個体で appearances [3,3,3,1,1])。殻が無い個体は誰も含まない。
 
 ## `halcon_coverage.py`
 
@@ -1656,7 +1656,7 @@
 
 ## `meshio_opt.py`
 
-- **L446** — ONCE from all three. ★ Per-channel, a 16-bit orange scene whose blue stays <= 255 (in 16-bit units) had blue divided by 255 -> 0.78 instead of 0.003.
+- **L452** — ONCE from all three. ★ Per-channel, a 16-bit orange scene whose blue stays <= 255 (in 16-bit units) had blue divided by 255 -> 0.78 instead of 0.003.
 
 ## `metrics3d.py`
 
