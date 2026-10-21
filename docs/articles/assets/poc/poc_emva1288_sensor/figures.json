@@ -1,6 +1,66 @@
 [
  {
-  "file": "01_photon_transfer.gif",
+  "file": "01_raw_dark_flat_saturation.png",
+  "name": "raw_dark_flat_saturation",
+  "caption": "暗画像｜平坦画像｜飽和段。12 bit、量子効率 50 %、変換係数 0.1 DN/e⁻、暗雑音 30 e⁻、PRNU 0.5 %、DSNU 1.5 DN。行列固定模様と欠陥画素を等倍で確認できる入力画像。",
+  "shape": [
+   512,
+   1920,
+   3
+  ]
+ },
+ {
+  "file": "02_temporal_spatial_defects.png",
+  "name": "temporal_spatial_defects",
+  "caption": "平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。",
+  "shape": [
+   512,
+   1920,
+   3
+  ]
+ },
+ {
+  "file": "03_highpass_prnu.png",
+  "name": "highpass_prnu",
+  "caption": "規格の模擬カメラ。高域フィルタなしの PRNU は 0.831 %(仕込み 0.5 %)、フィルタの後は 0.497 %。",
+  "shape": [
+   573,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "04_spectrogram.png",
+  "name": "spectrogram",
+  "caption": "白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。式 72 で山の帯を足すと振幅 1.46 / 1.50 DN(仕込み 1.5)。高域フィルタの後は波長 25 画素の山が伝達関数どおりに低くなる。周波数 0 の升(行・列の平均 = もう一方の向きの模様が入る)は描いていない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_highpass_transfer.png",
+  "name": "highpass_transfer",
+  "caption": "Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。旧版の 5 × 5 の箱は 0.80〜1.25 で揺れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_eq51_pixels.png",
+  "name": "eq51_pixels",
+  "caption": "線形なセンサを乱数を変えて撮り、式 51(局所の傾きの相対偏差の平均)を出す。小さい画像では 2 枚の差の分散の揺れが局所の傾きを揺らし、線形なのに 3 % を越えることがある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_photon_transfer.gif",
   "name": "photon_transfer",
   "caption": "露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 % の点だけで当てる。",
   "shape": [
@@ -12,7 +72,7 @@
   "frames": 44,
   "frames_written": 32,
   "fps": 6.0,
-  "video": "01_photon_transfer.mp4",
+  "video": "07_photon_transfer.mp4",
   "video_frames": 44,
   "video_fps": 6.0,
   "video_shape": [
@@ -22,7 +82,7 @@
   ]
  },
  {
-  "file": "02_snr_curve.png",
+  "file": "08_snr_curve.png",
   "name": "snr_curve",
   "caption": "SNR は暗い側で傾き 1(暗雑音が支配)、明るい側で傾き 1/2(光子雑音が支配)。SNR = 1 になる露光が絶対感度しきい値 μ_p.min = 6.8 光子。量子化雑音の分だけ μ_e.min = 4.20 e⁻ は暗雑音 3.4 e⁻ より大きい。",
   "shape": [
@@ -32,7 +92,7 @@
   ]
  },
  {
-  "file": "03_validity_boundary.png",
+  "file": "09_validity_boundary.png",
   "name": "validity_boundary",
   "caption": "暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。平らなセンサではそこから下で推定が崩れる。DSNU の模様があると画素ごとのずれが量子化のディザになり、境界の外でも当たる —— 規格の境界は保守側。(分散がちょうど 0 になった K = 0.03 は対数の軸に載らないので省いた)",
   "shape": [
@@ -42,49 +102,9 @@
   ]
  },
  {
-  "file": "04_datasheet_dynamic_range.png",
+  "file": "10_datasheet_dynamic_range.png",
   "name": "datasheet_dynamic_range",
   "caption": "メーカーが公表した EMVA 1288 データ 38 型番の飽和容量・暗雑音・量子効率から式 (28) で DR を出し直す。37 型番は 3 dB 以内(暗雑音が整数に丸めてあるぶん)、台帳の 8 番目 だけが外れる —— 暗雑音か DR の欄のどちらかが別条件の値と見られる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "05_highpass_prnu.png",
-  "name": "highpass_prnu",
-  "caption": "規格の模擬カメラ。高域フィルタなしの PRNU は 0.831 %(仕込み 0.5 %)、フィルタの後は 0.497 %。",
-  "shape": [
-   573,
-   1310,
-   3
-  ]
- },
- {
-  "file": "06_spectrogram.png",
-  "name": "spectrogram",
-  "caption": "白い DSNU は平らな床(高さ = 標準偏差 1.5 DN)、正弦は鋭い山(横 0.04・縦 0.2 c/px)。式 72 で山の帯を足すと振幅 1.46 / 1.50 DN(仕込み 1.5)。高域フィルタの後は波長 25 画素の山が伝達関数どおりに低くなる。周波数 0 の升(行・列の平均 = もう一方の向きの模様が入る)は描いていない。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "07_highpass_transfer.png",
-  "name": "highpass_transfer",
-  "caption": "Release 4.0 のフィルタは高域でほぼ 1(付録 E.3)。旧版の 5 × 5 の箱は 0.80〜1.25 で揺れる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "08_eq51_pixels.png",
-  "name": "eq51_pixels",
-  "caption": "線形なセンサを乱数を変えて撮り、式 51(局所の傾きの相対偏差の平均)を出す。小さい画像では 2 枚の差の分散の揺れが局所の傾きを揺らし、線形なのに 3 % を越えることがある。",
   "shape": [
    360,
    560,

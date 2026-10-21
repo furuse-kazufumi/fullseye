@@ -520,6 +520,20 @@ def make_figures(pool, bot, wet, hull, tilt, bottle_small):
     figs.save_grid("highlight_moves", [pairs[la]["specular_wet"] for la in (20.0, 40.0, 60.0)], gray=True, ncols=3, vrange=(0.0, 2.0),
                    captions=["照明 20°(視線 40°)", "照明 40°(鏡面)", "照明 60°"], title="濡れた板のてかり(鏡面成分): 照明角を変えると光る小面が入れ替わる",
                    caption="粗さ 0.25・なだらかな法線(10 画素)の板。局所の法線が照明と視線の二等分線に合った小面だけが光り、照明角とともに光る場所が移る(光る画素 %d・%d・%d)。" % tuple(int((pairs[la]["specular_wet"] > 0.5).sum()) for la in (20.0, 40.0, 60.0)))
+    frames = []
+    for angle in np.linspace(20.0, 60.0, 32):
+        p = WV.wet_dry_inspection_pair(tex, scr, 0.25, 20.0, float(angle), 40.0,
+                                       normal_sigma_px=10.0)
+        specular = p["specular_wet"]
+        shown = np.maximum.reduce([np.roll(specular, (dy, dx), axis=(0, 1))
+                                   for dy in range(-4, 5) for dx in range(-4, 5)])
+        frames.append(figs.video_frame(shown, "照明角 %.1f°" % angle,
+                                      gray=True, vrange=(0.0, 2.0)))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("wet_highlight_sweep", frames,
+                    caption="照明角を動かすと濡れた板のてかりが移動する。", fps=10.0,
+                    gif_every=2, gif_fps=5.0, gif_width=480)
     a, wetr = wet["a"], wet["wet"]
     figs.save_plot("wet_ratio", [("濡れ / 乾(Lekner & Dorf)", a, wetr["ratio"]), ("膜なし = 1", a, np.ones_like(a))], xlabel="乾いた反照率 a", ylabel="濡れた反照率 / 乾いた反照率",
                    colors=["emphasis", "reference"], styles=[None, "dashed"], size=(640, 360), title="濡れるとなぜ暗いか: 暗い面ほど大きく暗くなる(a = 0.5 で %.2f)" % NUMBERS["ratio_half"],
