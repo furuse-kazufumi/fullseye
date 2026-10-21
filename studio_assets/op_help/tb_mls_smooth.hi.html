@@ -23,6 +23,8 @@
 <p>local polynomial की degree (default 2)। terms की संख्या (order+1)(order+2)/2 है।</p>
 <p>chunk : int or None</p>
 <p>दिए जाने पर neighbour lists इतने points के batches में लेकर छोड़ दी जाती हैं। Default में पुराना path उपयोग होता है।</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>डिफ़ॉल्ट <code style="color:#22d3bf">&#x27;exact&#x27;</code> बहुपद सतह का न्यूनतम-वर्ग फ़िट है। <code style="color:#22d3bf">&#x27;mean&#x27;</code> केवल <code style="color:#22d3bf">order=0</code> के लिए है और अचर पद को सीधे भारित माध्य के रूप में लेता है (lstsq के बिना वही मान देने वाला तेज़ पथ; सहनशीलता rtol=1e-12, atol=1e-14)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>smoothing के बाद का point cloud (क्रम और points की संख्या बनी रहती है)। जिन points के neighbours polynomial के terms से कम हैं, वे अपनी जगह पर रहते हैं।</p>

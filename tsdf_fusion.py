@@ -102,6 +102,50 @@ def new_volume(bounds: Bounds, res: int) -> Tuple[np.ndarray, np.ndarray]:
     return tsdf, weight
 
 
+def _integrate_visible_blocks(tsdf, weight, d, fx, fy, cx, cy, Rm, tv, trunc, bounds):
+    H, W = d.shape
+    (xs, ys, zs), _ = _axis_coords(tsdf.shape, bounds)
+    for i0 in range(0, len(xs), 16):
+        i1 = min(i0 + 16, len(xs))
+        for j0 in range(0, len(ys), 16):
+            j1 = min(j0 + 16, len(ys))
+            for k0 in range(0, len(zs), 16):
+                k1 = min(k0 + 16, len(zs))
+                corners = np.array([[x, y, z] for x in (xs[i0], xs[i1 - 1])
+                                    for y in (ys[j0], ys[j1 - 1])
+                                    for z in (zs[k0], zs[k1 - 1])])
+                cc = corners @ Rm.T + tv
+                cz = cc[:, 2]
+                if (np.max(cz) <= 0.0
+                        or np.max(fx * cc[:, 0] + (cx + 1.0) * cz) < 0.0
+                        or np.max(-fx * cc[:, 0] + (W - cx) * cz) < 0.0
+                        or np.max(fy * cc[:, 1] + (cy + 1.0) * cz) < 0.0
+                        or np.max(-fy * cc[:, 1] + (H - cy) * cz) < 0.0):
+                    continue
+                X, Y, Z = np.meshgrid(xs[i0:i1], ys[j0:j1], zs[k0:k1], indexing="ij")
+                centers = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)
+                Pc = centers @ Rm.T + tv
+                z = Pc[:, 2]
+                zc = np.where(z > 0, z, 1.0)
+                ui = np.rint(fx * Pc[:, 0] / zc + cx).astype(np.int64)
+                vi = np.rint(fy * Pc[:, 1] / zc + cy).astype(np.int64)
+                in_img = (z > 0) & (ui >= 0) & (ui < W) & (vi >= 0) & (vi < H)
+                d_meas = np.zeros(len(centers), dtype=np.float64)
+                d_meas[in_img] = d[vi[in_img], ui[in_img]]
+                diff = d_meas - z
+                valid = in_img & (d_meas > 0) & np.isfinite(d_meas) & (diff >= -trunc)
+                if not np.any(valid):
+                    continue
+                shape = (i1 - i0, j1 - j0, k1 - k0)
+                sdf = np.minimum(1.0, diff / trunc).reshape(shape)
+                valid = valid.reshape(shape)
+                tb = tsdf[i0:i1, j0:j1, k0:k1]
+                wb = weight[i0:i1, j0:j1, k0:k1]
+                w_old = wb[valid].astype(np.float64)
+                tb[valid] = ((w_old * tb[valid] + sdf[valid]) / (w_old + 1.0)).astype(tb.dtype)
+                wb[valid] = (w_old + 1.0).astype(wb.dtype)
+
+
 def integrate(tsdf: np.ndarray, weight: np.ndarray, depth: np.ndarray,
               K, R, t, trunc: float, bounds: Optional[Bounds] = None) -> None:
     """深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。
@@ -134,6 +178,9 @@ def integrate(tsdf: np.ndarray, weight: np.ndarray, depth: np.ndarray,
     tv = np.asarray(t, dtype=np.float64).ravel()
     if Rm.shape != (3, 3) or tv.shape != (3,):
         raise ValueError("R must be 3x3 and t length-3")
+
+    _integrate_visible_blocks(tsdf, weight, d, fx, fy, cx, cy, Rm, tv, trunc, bounds)
+    return
 
     centers = _voxel_centers(tsdf.shape, bounds)              # (Nv,3) world (or grid) 座標
     Pc = centers @ Rm.T + tv                                  # camera 座標 (Nv,3)

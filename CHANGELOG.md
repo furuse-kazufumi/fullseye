@@ -9,6 +9,33 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 追加
 - 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。
+
+### CI
+- 全数スイートを 6 片に分け、実測時間(`.test_durations`: 手元の実測 3,900 件 + 平均で初期化した 17,310 件。Linux の artifact で更新する)で均す。pip をキャッシュし、文書だけの変更は文書の門だけ走らせる。PR の片は py3.11 のみ(#79)。
+
+- CI の全数テストを実測時間に基づく6分割へ変更した。分割ごとの時間をartifactへ保存して統合できるようにし、pipキャッシュとドキュメントだけの変更に対する専用検査を追加した。
+
+- `estimate_normals(method="fast")`: batched covariance solves agree within `2e-12`; measured 12.6 times faster on 4,000 points.
+- `principal_curvatures(method="fast")`: analytic two-value solves agree within `2e-12`; measured 1.09 times faster on 4,000 points.
+- `laser_line_coherent(method="fast")`: output-resolution accumulation and the zero-roughness reuse path agree within `2e-15`; measured 5.6% lower peak memory generally and 6.74 times faster at zero roughness.
+
+- `car_hybrid_astar`: the optional `method="fast"` skips collision checks for branches already dominated in the same search cell.
+- `car_hybrid_astar`: the optional `method="fast"` reuses up to eight analytic-shot candidates from its heuristic.
+
+- `fit_torus(axis_parameterization="tangent")`: 軸を接平面の2自由度で更新する選択モードを追加しました。中心・半径・符号を除いた軸差は試験した全面点群で 1e-9 未満、120,000点で 4.59 倍高速です。既定の3成分軸経路は変更していません。
+- `track_points(method="sparse")`: 少数点向けに局所窓だけを探索する選択モードを追加しました。整数平行移動では既定経路との差を 1 pixel 以下とし、768×1,024 画像の3点で 41.26 倍高速、ピークメモリは 192.7 MB から 0.02 MB です。
+- `integrate`: 視錐台と交差しない voxel block を保守的に除外する既定経路へ変更しました。視錐台端と表面手前の空き空間を含め TSDF と重みは完全一致し、144³ voxel で 9.48 倍高速、ピークメモリは 340.4 MB から 24.7 MB です。
+- `_signed_distance_to_polyline`: 区間の包囲箱木で候補を厳密に除外する既定経路へ変更しました。同距離では従来どおり最初の区間を選び、結果は完全一致します。1,000 点と 6,000 区間で 3.06 倍高速、ピークメモリは 384.2 MB から 1.0 MB です。
+- `sart_reconstruct`: 投影と逆投影の幾何を角度ごとに再利用し、既定動作とビット単位で同じ結果のまま、96×96・72方向・2反復で 1.77 倍高速化しました。
+- `regionprops3d` の 6 近傍表面積を、同一結果の隣接スライス比較へ変更（430³、0.1751 秒→0.0790 秒、0.45 倍、ピーク 161.1 MB→79.3 MB）。
+- `mls_smooth(order=0)` に重み付き平均を直接使う `method="mean"` を追加（従来既定は維持、許容差 `rtol=1e-12, atol=1e-14`、7000点で 0.2191→0.1502秒、0.69倍）。
+- `unwrap_phase_2d` に有効領域だけを処理する `crop_valid=True` を追加（既定の全面処理は維持、結果は完全一致、1600²疎マスクで 0.1057→0.0099秒、0.094倍）。
+- `fit_torus` に管半径を平均距離として消去する `method="eliminate_r"` を追加（既定は維持、残差許容差 `rtol=1e-10, atol=1e-12`、30000点で 0.2723→0.2032秒、0.75倍）。
+
+- `fill_holes`: 孤立・細長・境界の穴で結果がビット一致する稀疎更新を既定化し、1200² で 1114.5 ms から 175.9 ms (6.34倍)に高速化。
+- `bilateral_filter_depth`: 完全一致する64行分割を既定化し、401×517 で 792.9 ms から 198.5 ms (3.99倍)、ピーク割当を19.2 MBから10.5 MBに削減。
+- `joint_bilateral`: 完全一致する64行分割を既定化し、401×517 で 771.5 ms から209.5 ms (3.68倍)、ピーク割当を22.8 MBから14.8 MBに削減。
+
 - StudioでエクスポートしたPythonを隔離プロセスで再実行し、全段のshape・dtype・有限値・NaN位置・数値許容誤差をGUI結果と照合して、最初の不一致段をProblemsへ示せるようにした。
 
 ### 性能
@@ -112,19 +139,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### Changed — 3D 復元・周波数処理・点群・形状当てはめの省メモリ化
 - 位相復号と構造化光三角測量の中間配列を減らし、4 枚位相シフトの専用モードを追加した。点群近傍照会と楕円体散布行列には、既定結果を変えない選択式のブロック処理を追加した。
-- 3D 周波数フィルタの Gaussian 伝達関数を軸ごとの因子で計算し、復元には選択式の overlap-add 畳み込みと全ゼロ観測の早期終了を追加した。
+- 3D 周波数フィルタの Gaussian 伝達関数を軸ごとの因子で計算し、復元には全ゼロ観測の早期終了を追加した。選択式の分割畳み込みは撤回した。12×13×14・2×3×4核・3反復で既定経路の4.13倍、128×129×130・7立方核・3反復で2.56倍の時間を要し、省メモリ効果に見合わなかったためである。
 - 光学フローの固定係数とワープ座標を再利用し、ボクセル集約・円錐/トーラス/楕円体当てはめの不要な再計算を除いた。
 
 ### Changed — 光学・電子顕微鏡・経路探索の省計算
-- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算の省メモリ経路は `memory_budget` 指定時に選べ、既定経路の速度は維持する。
+- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算は完全一致する逐次加算を既定化し、512×513×20 で 0.667 秒から 0.675 秒（1.01 倍）のまま入力全体の変換コピーを除いた。
 
 - Reduced temporary allocations and repeated transforms in mesh repair, curve analysis,
   signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
   exact behavior remains the default where the faster path can change rounding.
 - `motion` の動き領域集計、モデル展開、イベント検出を高速化し、動きエネルギー列の全フレーム保持を不要にした。支配的動き推定には既定の丸め順を保つ経路に加え、複数右辺を一括処理する選択式の高速経路を追加した。
-- Added selectable low-allocation paths for mesh smoothing, curve resampling,
-  eager video reads, and phase-video reconstruction, plus a composite point-cloud
-  curvature API; exact evaluation order remains the no-argument default.
+- Added selectable low-allocation paths for mesh smoothing, eager video reads, and
+  phase-video reconstruction, plus a composite point-cloud curvature API; exact
+  evaluation order remains the no-argument default. The selectable curve-resampling
+  variant was withdrawn: it was 1.75x slower for 500→800 points and 1.66x slower for
+  2.5M→2.8M points than the exact path.
 
 ### Changed — 性能改善 第22便
 
@@ -148,7 +177,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - ばらつきモデルのMAD・位相移動・採点キャッシュ・校正値収集を省メモリ化し、反復位置合わせの不要な統計を省略。
 - 触覚校正の重複分解を除き、位置依存予測・LUT構築・逆引きに分割処理と近傍木方式を追加。
 - 停止判定付き反復復元で随伴スペクトルと観測値抽出を再利用し、履歴不要時の保持量を制限。
-- Chebyshev係数・評価に高速方式を追加し、不等間隔周期図に周波数分割方式を追加。
+- Chebyshev係数に高速方式を追加し、不等間隔周期図に周波数分割方式を追加。評価の選択式高速方式は撤回した。11×10×9×8係数・1,003点で既定経路の1.26倍、18×17×16係数・25,000点で2.37倍の時間を要したためである。
 - 3次元占有格子の構築と距離問い合わせを分割処理し、大規模な点群で一時メモリを削減。
 
 - ばらつきモデルの校正では、校正に不要な領域解析と確率計算を省略し、同一の標準化値からしきい値を求めるよう改善。
@@ -160,7 +189,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 主成分の平行分析で、メモリ上限を指定した逐次集計を選べるようにしました。
 - 逐次標本平均で、履歴を間引く間隔または最終値だけを選べるようにしました。
 - 前景が疎な陰影画像では、前景の法線だけを高精度化して計算するようにしました。
-- 三角形面の向き検証に、辺配列を整列して集計する省メモリ経路を追加しました。
+- 三角形面の向き検証で辺配列を整列して集計する選択経路は撤回しました。退化・非多様体の3小例で既定経路の4.86倍、250,000面の鎖状メッシュで1.86倍の時間を要し、省メモリ効果に見合わなかったためです。
 
 - 深度補間、文字領域、光輸送、応答曲面、固定点反復、画像縮小で、結果の互換性を保ったまま一時配列と重複計算を削減しました。
 
@@ -179,7 +208,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 信号解析の非重複 RMS とゼロ交差を高速化し、点事象スペクトルにメモリ上限付き経路を加えた。
 - 一次元関数の逆関数処理を軽量化した。
 - 疎グラフの三角閉路計算を軽量化した。
-- packed pixel 展開は raw buffer と uint8 配列で同じ結果を返し、1〜16 bit の省メモリ経路を選択できるようにした。
+- packed pixel 展開は raw buffer と uint8 配列で同じ結果を返し、1〜16 bit の完全一致する省メモリ経路を既定化した（800万画素・12 bit の中央値で 242.1 ms から 236.8 ms、1.02倍）。
 - PIV の外れ値検査に行 chunk 版を加え、少数外れ値の置換では対象近傍だけを集計するようにした。
 
 ### Changed — 性能改善 第29便

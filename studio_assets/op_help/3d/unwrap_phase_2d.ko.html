@@ -1,12 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">unwrap_phase_2d — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감긴 위상을 skimage.restoration.unwrap_phase 로 연속 위상으로 펼칩니다.</p>
 <p>wrapped: wrapped_phase의 출력(2D). NaN을 포함해도 된다(무효 화소로 취급).</p>
 <p>mask:    생략 가능. True = 유효 화소(numpy masked array의 관례와는 반대인 직관적인 방향).</p>
 <p>NaN 화소와 mask=False 화소는 무효로 보아 언랩에서 제외하고, 출력에서는 NaN을 반환한다.</p>
+<p>crop_valid: 생략 가능(기본 False = 전체 처리). True이면 유효 화소의 외접 직사각형만 skimage에 넘기고 바깥은 NaN 그대로 돌려준다(무효 화소가 많은 테두리 있는 영상에서 더 빠른 대안 경로. 결과는 전체 처리와 완전히 일치).</p>
 <p>반환값: 연속 위상(2D float). 무효 화소는 NaN. 대역 오프셋(+2πm)의 부정성은 남는다.</p>
 <p>절차: 무효 화소(<code style="color:#22d3bf">wrapped</code>의 비유한 ∪ <code style="color:#22d3bf">mask == False</code>)가 없으면 <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code>를 그대로 호출한다. 있으면 무효 화소를 0으로채운 <code style="color:#22d3bf">numpy.ma</code>의 masked array로 넘기고(skimage는 masked 화소를 언랩에서제외한다), 출력의 무효 화소를 NaN으로 되돌린다.</p>
 <p>검증: scikit-image를 import할 수 없는 환경에서는 <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> 가 아님). <code style="color:#22d3bf">wrapped</code>가 2-D가 아님, <code style="color:#22d3bf">mask</code>의 형상이 다름, <b>모든 화소가 무효</b> (언랩할 화소가 없음)은 <code style="color:#22d3bf">ValueError</code>.</p>

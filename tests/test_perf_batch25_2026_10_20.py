@@ -172,7 +172,7 @@ def test_281_chebyshev_decay_matches_original_reductions():
         assert np.array_equal(actual, reference)
 
 
-def test_279_280_chebyshev_fast_variants_match_references():
+def test_279_280_chebyshev_fast_coeffs_and_default_eval_match_references():
     rng = np.random.default_rng(280)
     values = rng.normal(size=(11, 10, 9, 8))
     exact_coeffs = _chebyshev_coeffs_reference(values)
@@ -180,7 +180,7 @@ def test_279_280_chebyshev_fast_variants_match_references():
     np.testing.assert_allclose(fast, exact_coeffs, rtol=0.0, atol=1e-12)
     points = rng.uniform(-1.0, 1.0, size=(1003, values.ndim))
     expected = _chebyshev_eval_reference(exact_coeffs, points)
-    got = mathnumerics.chebyshev_eval_nd(exact_coeffs, points, method="fast")
+    got = mathnumerics.chebyshev_eval_nd(exact_coeffs, points)
     np.testing.assert_allclose(got, expected, rtol=0.0, atol=1e-12)
 
 

@@ -33,11 +33,11 @@
 - **L196** _(ja)_ — ★``unit`` carries **only what the standard states in prose**. Where UVC does not state a unit (``PU_GAIN_CONTROL`` says merely "the setting for the attribute of the addressed Gain control") the entry is ``None`` -- inventing ``dB`` there would be a claim the standard does not make.
 - **L254** _(ja)_ — ★UVC 1.5 defines ``dwExposureTimeAbsolute`` as "1: 0.0001 sec ... 100000: 10 sec", i.e. **100 us per step**, while SFNC gives ``ExposureTime`` in **us**. The same number 5000 therefore means 5 ms under SFNC and 0.5 s under UVC -- a factor of 100 that raises no exception and only moves the picture.
 - **L362** _(ja)_ — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
-- **L1054** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
-- **L1431** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
-- **L1456** _(ja)_ — ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま 返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
-- **L1465** _(ja)_ — ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。 CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、 文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
-- **L1477** _(ja)_ — ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ―― 必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
+- **L1048** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
+- **L1425** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
+- **L1450** _(ja)_ — ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま 返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
+- **L1459** _(ja)_ — ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。 CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、 文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
+- **L1471** _(ja)_ — ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ―― 必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
 
 ## `annotate.py`
 
@@ -2924,8 +2924,8 @@
 - **L94** — ★2026-10-15: `--md` 가 없어 **아무것도 쓰지 않았다**(요약을 표준 출력에 낼 뿐). docs/CONVERSION_MATRIX.md 는 2026-09-02 의 "타입 59 / 변환 쌍 164" 그대로 낡았고, --check 는 "쓰지 않는 단계"를 drift 로 볼 수 없어 6주 동안 통과했다. 이제 `trace_problems()` 가 "선언한 출력에 손도 대지 않는 단계"를 거부한다.
 - **L101** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L259** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
-- **L489** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L545** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
+- **L491** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L547** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
 
 ## `torch_lazy.py`
 

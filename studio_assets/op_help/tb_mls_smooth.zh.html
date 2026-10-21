@@ -23,6 +23,8 @@
 <p>局部多项式的次数(默认 2)。项数为 (order+1)(order+2)/2。</p>
 <p>chunk : int or None</p>
 <p>指定时，邻域列表按该点数分批获取并丢弃。默认使用原有路径。</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>默认 <code style="color:#22d3bf">&#x27;exact&#x27;</code> 是多项式曲面的最小二乘拟合。<code style="color:#22d3bf">&#x27;mean&#x27;</code> 仅用于 <code style="color:#22d3bf">order=0</code>,把常数项直接取为加权平均(不经过 lstsq 得到相同值的更快路径;容差 rtol=1e-12, atol=1e-14)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>平滑后的点云(保持顺序、点数)。邻域少于多项式项数的点保持原位。</p>

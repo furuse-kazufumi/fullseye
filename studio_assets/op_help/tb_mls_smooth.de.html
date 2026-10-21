@@ -23,6 +23,8 @@
 <p>Grad des lokalen Polynoms (Standard 2). Die Zahl der Terme ist (order+1)(order+2)/2.</p>
 <p>chunk : int or None</p>
 <p>Falls angegeben, werden Nachbarschaftslisten in Blöcken dieser Punktzahl abgerufen und verworfen. Standardmäßig wird der bisherige Pfad verwendet.</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>Der Standard <code style="color:#22d3bf">&#x27;exact&#x27;</code> ist die Kleinste-Quadrate-Anpassung der Polynomfläche. <code style="color:#22d3bf">&#x27;mean&#x27;</code> gilt nur für <code style="color:#22d3bf">order=0</code> und nimmt den konstanten Term direkt als gewichteten Mittelwert (schnellerer Pfad mit demselben Wert ohne lstsq; Toleranzen rtol=1e-12, atol=1e-14).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>Geglättete Punktwolke (Reihenfolge und Punktzahl bleiben erhalten). Punkte mit weniger Nachbarn als Polynomtermen bleiben an Ort und Stelle.</p>
