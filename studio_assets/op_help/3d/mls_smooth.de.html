@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Reduziert Rauschen, indem jeder Punkt auf eine lokale Polynomfläche projiziert wird (Moving-Least-Squares-Glättung).</p>
 <p>Sammelt für jeden Punkt die Nachbarn im Radius <code style="color:#22d3bf">radius</code>, schätzt per gewichteter PCA eine lokale Ebene (Normale n und die 2 Achsen der Tangentialebene) und passt an die Nachbarn &quot;Koordinate (u,v) in der Tangentialebene → Höhe h in Normalenrichtung&quot; eine Polynomfläche vom Grad order per gaußgewichteter kleinster Quadrate an. Der betrachtete Punkt selbst liegt im Ursprung (0,0) der lokalen Koordinaten, daher wird er um die Höhe der angepassten Fläche bei (0,0) (= konstanter Term) in Normalenrichtung verschoben und so auf die Fläche projiziert. Die Form der Fläche bleibt erhalten, nur das Sensorrauschen wird geglättet.</p>
@@ -14,6 +14,8 @@
 <p>Grad des lokalen Polynoms (Standard 2). Die Anzahl der Terme ist (order+1)(order+2)/2.</p>
 <p>chunk : int or None</p>
 <p>Falls angegeben, werden Nachbarschaftslisten in Blöcken dieser Punktzahl abgerufen und verworfen. Standardmäßig wird der bisherige Pfad verwendet.</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>Der Standard <code style="color:#22d3bf">&#x27;exact&#x27;</code> ist die Kleinste-Quadrate-Anpassung der Polynomfläche. <code style="color:#22d3bf">&#x27;mean&#x27;</code> gilt nur für <code style="color:#22d3bf">order=0</code> und nimmt den konstanten Term direkt als gewichteten Mittelwert (schnellerer Pfad mit demselben Wert ohne lstsq; Toleranzen rtol=1e-12, atol=1e-14).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>Die geglättete Punktwolke (Reihenfolge und Punktzahl erhalten). Punkte mit weniger Nachbarn als Polynomterme bleiben an ihrer Position.</p>
