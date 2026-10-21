@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- StudioでエクスポートしたPythonを隔離プロセスで再実行し、全段のshape・dtype・有限値・NaN位置・数値許容誤差をGUI結果と照合して、最初の不一致段をProblemsへ示せるようにした。
+
 ### 性能
 - 地形変位が全点でゼロになる場合は、結果に影響しない頂点法線の計算を省きます。
 - 剰余候補の採点では、全標本で重みがゼロの帯域を計算から除きます。

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bb5f3e736657 -->
+<!-- i18n-source-sha: 71c18c518f4c -->
 # Fullseye Studio 완전 가이드
 
 무거운 처리는 창을 멈추지 않고 실행됩니다. 아래 영역에는 현재 단계와 진행률이 표시되며, 중지 요청은 다음 단계 경계에서 확인됩니다. 실행 중 설정이 바뀌면 표시 결과의 세대를 밝히고, 이전 설정의 완료 결과를 보거나 현재 설정으로 다시 실행할 수 있습니다.
@@ -326,3 +326,4 @@ Studio에서 구성한 파이프라인은 3가지 형태로 가지고 나갈 수
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 지각 패널의 내용(flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — 내보낸 파이프라인 실행하기
 - [GETTING_STARTED.md](GETTING_STARTED.md) — 5분 만에 시작하기
+- **내보낸 Python 검증(Run ▸ Verify exported Python / Ctrl+Shift+R)**: 편집 가능한 내보내기 코드를 격리된 Python 프로세스에서 실행하고 모든 중간 단계를 GUI 결과와 비교합니다. 절대·상대 허용 오차와 NaN을 같은 위치로 제한할지, 무시할지, 금지할지를 선택할 수 있습니다. shape와 dtype은 항상 같아야 합니다. 불일치는 Problems에 추가되어 처음 다른 단계로 이동할 수 있으며 Studio는 값을 바꾸지 않고 보고만 합니다.

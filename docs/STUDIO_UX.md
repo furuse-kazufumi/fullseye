@@ -249,3 +249,12 @@ Studio の UX 案のうち ①(目的検索)と ⑦(直せるエラー)を、Qt 
 *Method for each:* keep the logic in a Qt-free helper (like `PipelineModel` /
 `PerceptionModel` / `op_detail`), unit-test the helper, and let the widget be a
 thin wiring layer — the pattern that makes this file testable head­lessly.
+# Studio slice 7 — exported Python round-trip
+
+Run ▸ Verify exported Python executes the generated `run(input)` in an isolated
+Python process (`sys.executable -I`). Arrays cross the process boundary only as
+`.npy`/`.npz`; Studio never imports the generated program into the GUI process.
+Every stage is compared in order for shape, dtype, infinities, NaN handling and
+numeric tolerance. The result reports the first mismatching stage in Problems
+and offers direct navigation to that stage and the editable exported program.
+The check only reports differences: it never rewrites an operator or its data.
