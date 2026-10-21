@@ -34,7 +34,7 @@ from __future__ import annotations
 from typing import Sequence, Tuple
 
 import numpy as np
-from scipy.sparse import coo_matrix, diags
+from scipy.sparse import coo_matrix
 
 __all__ = ["laplacian_smooth", "taubin_smooth"]
 
@@ -87,8 +87,8 @@ def _umbrella_operator(faces: np.ndarray, n: int):
     has_nb = deg > 0
     inv = np.zeros(n, dtype=np.float64)
     inv[has_nb] = 1.0 / deg[has_nb]
-    W = diags(inv) @ A                               # 行正規化 = 隣接平均作用素
-    return W.tocsr(), has_nb
+    A.data *= np.repeat(inv, np.diff(A.indptr))
+    return A, has_nb
 
 
 def _smooth_pass(V: np.ndarray, W, has_nb: np.ndarray, factor: float) -> np.ndarray:

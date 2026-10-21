@@ -4,16 +4,16 @@ dim: optics
 category: tem
 in: image2d
 out: table
-examples: [poc_tem_ctf_thon_rings]
+examples: [poc_sem_tem_same_particle, poc_tem_ctf_thon_rings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tem_multislice — OPTICS `tem` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)` (実装を直接呼ぶなら `import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)`、台帳から引くなら `opsoptics.get("tem_multislice")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)` (実装を直接呼ぶなら `import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)`、台帳から引くなら `opsoptics.get("tem_multislice")`)
 
 ## 使い方
 
@@ -50,6 +50,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_sem_tem_same_particle](../../../../examples/poc_sem_tem_same_particle.py) — `py -3.11 examples/poc_sem_tem_same_particle.py`
 - [poc_tem_ctf_thon_rings](../../../../examples/poc_tem_ctf_thon_rings.py) — `py -3.11 examples/poc_tem_ctf_thon_rings.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">neighbour_index_gaps — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.neighbour_index_gaps(points, k=6)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;neighbour_index_gaps&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6, chunk=65536)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.neighbour_index_gaps(points, k=6, chunk=65536)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;neighbour_index_gaps&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wie weit liegen nächste Nachbarn *im Index* auseinander — Parastichen als Zahl.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
@@ -16,6 +16,7 @@
 <p>Returns a <code style="color:#22d3bf">signal</code>: <code style="color:#22d3bf">counts[g]</code> = number of neighbour pairs whose index difference is <code style="color:#22d3bf">g</code> (<code style="color:#22d3bf">counts[0]</code> is always 0 — a point is not its own neighbour).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not an (N, 2) array; fewer than <code style="color:#22d3bf">k + 1</code> points; <code style="color:#22d3bf">k</code> below 1; non-finite coordinates.</p>
 <p>Limits: the first points of a spiral sit near the centre where the packing is degenerate, so the histogram has a low-index tail that carries no parastichy information. Compare *peaks*, not the raw tail.</p>
+<p>Equal-distance neighbours retain the spatial tree query&#x27;s native index order; chunking does not sort or otherwise change that tie rule.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

@@ -163,7 +163,8 @@ def residual_flow(pts0, pts1, R, t) -> np.ndarray:
     return P1[idx] - warped
 
 
-def smooth_flow(pts0, pts1, k: int = 10, n_iter: int = 5) -> np.ndarray:
+def smooth_flow(pts0, pts1, k: int = 10, n_iter: int = 5,
+                method: str = "exact") -> np.ndarray:
     """最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。
 
     :func:`nearest_neighbor_flow` の生フロー(最近傍対応ゆえノイズが乗る)を、
@@ -177,6 +178,7 @@ def smooth_flow(pts0, pts1, k: int = 10, n_iter: int = 5) -> np.ndarray:
         pts1: (M, 3) 時刻 1 の点群。
         k: 平均に使う近傍数(自身含む)。
         n_iter: 平滑化反復回数。
+        method: ``"exact"`` は従来の gather、``"sparse"`` は同じ重みの疎行列積。
     Returns:
         (N, 3) 平滑化変位ベクトル場。
     Raises:
@@ -194,6 +196,16 @@ def smooth_flow(pts0, pts1, k: int = 10, n_iter: int = 5) -> np.ndarray:
     kk = int(min(max(1, k), n))
     _, idx = cKDTree(P0).query(P0, k=kk)
     idx = np.asarray(idx, dtype=np.intp).reshape(n, kk)   # (N, kk) 自身を含む
-    for _ in range(int(n_iter)):
-        flow = flow[idx].mean(axis=1)
+    if method == "exact":
+        for _ in range(int(n_iter)):
+            flow = flow[idx].mean(axis=1)
+    elif method == "sparse":
+        from scipy.sparse import csr_matrix
+        rows = np.repeat(np.arange(n), kk)
+        averaging = csr_matrix((np.full(n * kk, 1.0 / kk), (rows, idx.ravel())),
+                               shape=(n, n))
+        for _ in range(int(n_iter)):
+            flow = averaging @ flow
+    else:
+        raise ValueError("method must be 'exact' or 'sparse'")
     return flow

@@ -7,13 +7,13 @@ out: table
 examples: [transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # dct_transform — MATH `transform` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: 'bool' = False) -> 'dict'`、台帳から引くなら `opsmath.get("dct_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: 'bool' = False, diagnostics: 'str' = 'full')` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: 'bool' = False, diagnostics: 'str' = 'full')`、台帳から引くなら `opsmath.get("dct_transform")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ Args:
     x: 任意次元の実配列(信号・画像・ボリューム)。
     axes: 変換する軸(省略で全軸)。
     inverse: True なら係数から元に戻す。
+    diagnostics: ``"full"`` は従来どおり全診断、``"energy"`` は係数とエネルギー、
+        ``"none"`` は係数だけを返す。逆変換は互換性のため常に従来の辞書を返す。
 
 Returns:
     ``coeffs``(同じ形)、``energy``(Σx²、正規直交なので変換の前後で同じ = Parseval)、

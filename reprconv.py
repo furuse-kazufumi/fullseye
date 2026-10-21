@@ -1186,9 +1186,14 @@ def gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0),
         zz = (np.arange(lo[0], hi[0]) - idx[i, 0]) * sp[0]
         yy = (np.arange(lo[1], hi[1]) - idx[i, 1]) * sp[1]
         xx = (np.arange(lo[2], hi[2]) - idx[i, 2]) * sp[2]
-        r2 = (zz[:, None, None] ** 2 + yy[None, :, None] ** 2 + xx[None, None, :] ** 2)
         amp = w[i] / ((2.0 * np.pi) ** 1.5 * sigma[i] ** 3) * cell
-        out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] += amp * np.exp(-r2 / (2.0 * sigma[i] ** 2))
+        den = 2.0 * sigma[i] ** 2
+        ez = np.exp(-(zz ** 2) / den)
+        ey = np.exp(-(yy ** 2) / den)
+        ex = np.exp(-(xx ** 2) / den)
+        out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] += amp * (
+            ez[:, None, None] * ey[None, :, None] * ex[None, None, :]
+        )
     return out
 
 

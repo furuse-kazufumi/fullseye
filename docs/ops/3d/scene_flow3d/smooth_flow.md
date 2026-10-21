@@ -7,13 +7,13 @@ out: flow_scattered
 examples: [scene_flow_rigid]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # smooth_flow — 3D `scene_flow3d` op
 
 - **データ種**: `points × points` → `flow_scattered`
-- **呼び出し**: `import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("smooth_flow")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5, method: 'str' = 'exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5, method: 'str' = 'exact') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("smooth_flow")`)
 
 ## 使い方
 
@@ -30,6 +30,7 @@ Args:
     pts1: (M, 3) 時刻 1 の点群。
     k: 平均に使う近傍数(自身含む)。
     n_iter: 平滑化反復回数。
+    method: ``"exact"`` は従来の gather、``"sparse"`` は同じ重みの疎行列積。
 Returns:
     (N, 3) 平滑化変位ベクトル場。
 Raises:

@@ -468,9 +468,8 @@ def invert_funct_1d(y):
     Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
-    x = np.arange(len(arr), dtype=float)
     order = np.argsort(arr, kind="stable")
-    return {"x": arr[order], "y": x[order]}
+    return {"x": arr[order], "y": order.astype(float)}
 
 
 def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):

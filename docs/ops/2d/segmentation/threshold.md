@@ -5,10 +5,10 @@ category: segmentation
 in: image
 out: region
 halcon: threshold
-examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_screw_thread_metrology, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, video_streaming]
+examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # threshold — 2D `segmentation` op
@@ -66,9 +66,11 @@ threshold 0.50 0.50
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
+- [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
 - [poc_virtual_sem_kv_cd_bse](../../../../examples/poc_virtual_sem_kv_cd_bse.py) — `py -3.11 examples/poc_virtual_sem_kv_cd_bse.py`
 - [poc_water_level](../../../../examples/poc_water_level.py) — `py -3.11 examples/poc_water_level.py`
+- [tof_realdata](../../../../examples/tof_realdata.py) — `py -3.11 examples/tof_realdata.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

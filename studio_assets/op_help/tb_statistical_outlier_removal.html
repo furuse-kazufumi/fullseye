@@ -22,6 +22,8 @@
 <p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
 <p>std_ratio : float</p>
 <p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>chunk : int or None</p>
+<p>指定時は近傍照会をこの点数ずつ行う。既定 <code style="color:#22d3bf">None</code> は従来経路。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>生き残った点(元の順序を保持)。</p>

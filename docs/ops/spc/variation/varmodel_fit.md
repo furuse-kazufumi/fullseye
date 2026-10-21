@@ -7,13 +7,13 @@ out: table
 examples: [poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # varmodel_fit — SPC `variation` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None)` (実装を直接呼ぶなら `import varmodel; varmodel.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None)`、台帳から引くなら `opsspc.get("varmodel_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)` (実装を直接呼ぶなら `import varmodel; varmodel.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)`、台帳から引くなら `opsspc.get("varmodel_fit")`)
 
 ## 使い方
 

@@ -7,7 +7,7 @@ out: text
 examples: [poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # drawing_dxf — OPTICS `drawing` op
@@ -53,7 +53,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`text` を入力に取れる)
 
-[svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+[tolerance_table_from_zmx](../tolerancing/tolerance_table_from_zmx.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
 
 ## 同カテゴリ(`drawing`)
 

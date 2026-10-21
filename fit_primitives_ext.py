@@ -150,10 +150,10 @@ def fit_cone(points) -> dict:
         t = Q @ d0
         rho = np.linalg.norm(Q - np.outer(t, d0), axis=1)
         m, b = np.polyfit(t, rho, 1)           # ρ ≈ m t + b
-        if m < 0:                               # 開く向きが逆 → 軸反転して再フィット
+        if m < 0:                               # 開く向きが逆 → 軸と傾きの符号だけ反転
             d0 = -d0
             t = -t
-            m, b = np.polyfit(t, rho, 1)
+            m = -m
         if abs(m) < 1e-6:
             continue                            # この軸では広がりが見えない → 次の候補
         t_apex = -b / m
@@ -184,8 +184,7 @@ def fit_cone(points) -> dict:
     if float(np.mean(a)) < 0.0:
         axis = -axis                            # 幾何は同一(頂点は不変、向きだけ反転)
 
-    r = resid(sol.x)
-    residual = float(np.sqrt(np.mean(r ** 2)))
+    residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"apex": apex, "axis": axis, "half_angle": half_angle,
             "residual": residual}
 
@@ -241,7 +240,7 @@ def fit_torus(points) -> dict:
     axis = _unit(sol.x[3:6])
     R = float(sol.x[6])
     r = float(sol.x[7])
-    residual = float(np.sqrt(np.mean(resid(sol.x) ** 2)))
+    residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
             "residual": residual}
 
@@ -313,7 +312,7 @@ def _ellipsoid_from_coeffs(v, centroid, scale):
     return {"center": center, "axes": axes, "radii": radii}
 
 
-def fit_ellipsoid(points) -> dict:
+def fit_ellipsoid(points, chunk: int | None = None) -> dict:
     """点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。
 
     一般二次曲面 ``xᵀA x + b·x + c = 0`` を、楕円体を保証する拘束 ``4J − I² = 1`` の下で
@@ -325,6 +324,8 @@ def fit_ellipsoid(points) -> dict:
 
     Args:
         points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
+        chunk: 指定時は設計行列をこの点数ずつ 10x10 散布行列へ加算する省メモリ経路。
+            集計順の違いにより既定経路との差は 1e-10 以下。既定 ``None`` は従来経路。
 
     Returns:
         dict: ``{"center": (3,), "axes": (3, 3), "radii": (3,), "residual": float}``。
@@ -351,17 +352,31 @@ def fit_ellipsoid(points) -> dict:
     Pn = d / scale
     x, y, z = Pn[:, 0], Pn[:, 1], Pn[:, 2]
     # 設計行列 D(列 = χ = [x²,y²,z²,2yz,2xz,2xy,2x,2y,2z,1])
-    D = np.column_stack([x * x, y * y, z * z, 2 * y * z, 2 * x * z, 2 * x * y,
-                         2 * x, 2 * y, 2 * z, np.ones_like(x)])
-    S = D.T @ D
+    def design(lo, hi):
+        return np.column_stack([x[lo:hi] * x[lo:hi], y[lo:hi] * y[lo:hi],
+                                z[lo:hi] * z[lo:hi], 2 * y[lo:hi] * z[lo:hi],
+                                2 * x[lo:hi] * z[lo:hi], 2 * x[lo:hi] * y[lo:hi],
+                                2 * x[lo:hi], 2 * y[lo:hi], 2 * z[lo:hi],
+                                np.ones(hi - lo)])
+    if chunk is None:
+        D = design(0, len(Pn))
+        S = D.T @ D
+    else:
+        block = int(chunk)
+        if block < 1:
+            raise ValueError("fit_ellipsoid: chunk must be >= 1 or None")
+        S = np.zeros((10, 10), dtype=np.float64)
+        for lo in range(0, len(Pn), block):
+            Db = design(lo, min(lo + block, len(Pn)))
+            S += Db.T @ Db
     S11 = S[0:6, 0:6]
     S12 = S[0:6, 6:10]
     S22 = S[6:10, 6:10]
     try:
-        S22inv = np.linalg.inv(S22)
+        eliminated = np.linalg.solve(S22, S12.T)
     except np.linalg.LinAlgError:
-        S22inv = np.linalg.pinv(S22)
-    Sr = S11 - S12 @ S22inv @ S12.T             # 一次/定数を消去した縮約 6x6
+        eliminated = np.linalg.pinv(S22) @ S12.T
+    Sr = S11 - S12 @ eliminated                  # 一次/定数を消去した縮約 6x6
 
     try:
         evals, evecs = sla.eig(Sr, _ELLIPSOID_C)
@@ -380,7 +395,7 @@ def fit_ellipsoid(points) -> dict:
         v1 = np.real(evecs[:, i])
         if not np.all(np.isfinite(v1)) or np.linalg.norm(v1) < 1e-12:
             continue
-        v2 = -S22inv @ (S12.T @ v1)
+        v2 = -(eliminated @ v1)
         v = np.concatenate([v1, v2])
         params = _ellipsoid_from_coeffs(v, centroid, scale)
         if params is None:

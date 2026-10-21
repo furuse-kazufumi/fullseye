@@ -7,7 +7,7 @@ out: image
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tb_lf_to_mla — 2D `typed` op
@@ -65,6 +65,7 @@ tb_lf_to_mla 0.50 0.50
 
 次の例は元の台帳 op `lf_to_mla` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [plenoptic_decode_pipeline](../../../../examples/plenoptic_decode_pipeline.py) — `py -3.11 examples/plenoptic_decode_pipeline.py`
 - [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

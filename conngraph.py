@@ -629,8 +629,14 @@ def ridge_readout(X: Any, Y: Any, alpha: float = 1e-3) -> np.ndarray:
     if not np.isfinite(alpha) or alpha < 0.0:
         raise ValueError(f"{op}: alpha must be a finite number >= 0, got {alpha}")
     Xb = np.hstack([X, np.ones((X.shape[0], 1))])
-    G = Xb.T @ Xb + alpha * np.eye(Xb.shape[1])
     try:
+        # The existing formulation regularises every coefficient, including the
+        # bias.  In the wide case the equivalent dual system avoids forming the
+        # much larger (d + 1) square Gram matrix.
+        if alpha > 0.0 and Xb.shape[0] < Xb.shape[1]:
+            dual = np.linalg.solve(Xb @ Xb.T + alpha * np.eye(Xb.shape[0]), Y)
+            return Xb.T @ dual
+        G = Xb.T @ Xb + alpha * np.eye(Xb.shape[1])
         return np.linalg.solve(G, Xb.T @ Y)
     except np.linalg.LinAlgError as exc:
         raise ValueError(f"{op}: XᵀX + αI is singular (alpha=0 with collinear columns) — raise alpha") from exc
@@ -1099,10 +1105,19 @@ def states_participation_ratio(X: Any) -> float:
     op = "states_participation_ratio"
     A = _as_matrix(X, op, "X")
     Xc = A - A.mean(axis=0, keepdims=True)
-    G = Xc @ Xc.T if Xc.shape[0] < Xc.shape[1] else Xc.T @ Xc
-    lam = np.clip(np.linalg.eigvalsh(G), 0.0, None)
-    s = float(lam.sum())
-    return float(s * s / float((lam ** 2).sum())) if s > 0.0 else 0.0
+    scale = float(np.max(np.abs(Xc)))
+    if scale == 0.0:
+        return 0.0
+    Xs = Xc / scale
+    G = Xs @ Xs.T if Xs.shape[0] < Xs.shape[1] else Xs.T @ Xs
+    trace = float(np.trace(G))
+    if trace <= 0.0:
+        return 0.0
+    Gn = G / trace
+    denominator = float(np.sum(Gn * Gn))
+    if not np.isfinite(denominator) or denominator <= 0.0:
+        raise ValueError(f"{op}: could not compute a finite participation ratio")
+    return float(1.0 / denominator)
 
 
 def states_layer_dimension(X: Any, labels: Any) -> dict[str, np.ndarray]:
@@ -1177,7 +1192,29 @@ def graph_conductance_states(W: Any, drive: Any, dt_s: float = 0.001, tau_s: flo
     非正の ``dt_s`` / ``tau_s``、負の ``gain``、未知の ``release``、長さの合わない ``v0``。
     """
     op = "graph_conductance_states"
-    A = _as_graph(W, op)
+    from scipy import sparse
+
+    if sparse.issparse(W):
+        if W.dtype.kind == "b":
+            raise TypeError(f"{op}: W is boolean — pass numeric weights")
+        if W.dtype.kind == "c":
+            raise ValueError(f"{op}: W is complex — coercion would discard its imaginary part")
+        A = sparse.csr_matrix(W, dtype=np.float64)
+        if A.ndim != 2 or A.shape[0] != A.shape[1]:
+            raise ValueError(f"{op}: W must be a square (n, n) adjacency matrix, got shape {A.shape}")
+        if A.shape[0] < 1 or A.shape[0] > MAX_NODES:
+            raise ValueError(f"{op}: W has unsupported node count {A.shape[0]}")
+        if not np.isfinite(A.data).all():
+            raise ValueError(f"{op}: W has non-finite values (nan/inf)")
+        A.eliminate_zeros()
+        use_sparse = True
+    else:
+        A = _as_graph(W, op)
+        # Sparse multiplication wins only for genuinely sparse graphs; keeping
+        # the dense path below five percent avoids overhead on small/dense data.
+        use_sparse = np.count_nonzero(A) < 0.05 * A.size
+        if use_sparse:
+            A = sparse.csr_matrix(A)
     n = A.shape[0]
     D = _as_matrix(drive, op, "drive")
     if D.shape[1] != n:
@@ -1208,8 +1245,16 @@ def graph_conductance_states(W: Any, drive: Any, dt_s: float = 0.001, tau_s: flo
         if V.size != n:
             raise ValueError(f"{op}: v0 has {V.size} entries but the graph has {n} nodes")
         V = V.astype(np.float64, copy=True)
-    Wp = np.maximum(A, 0.0)
-    Wn = np.maximum(-A, 0.0)
+    if use_sparse:
+        Wp = A.copy()
+        Wp.data = np.maximum(Wp.data, 0.0)
+        Wp.eliminate_zeros()
+        Wn = A.copy()
+        Wn.data = np.maximum(-Wn.data, 0.0)
+        Wn.eliminate_zeros()
+    else:
+        Wp = np.maximum(A, 0.0)
+        Wn = np.maximum(-A, 0.0)
     out = np.empty((D.shape[0], n), dtype=np.float64)
     for t in range(D.shape[0]):
         if release == "relu":

@@ -1,13 +1,15 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dct_transform — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dct_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False, diagnostics: &#x27;str&#x27; = &#x27;full&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False, diagnostics: &#x27;str&#x27; = &#x27;full&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dct_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規直交 DCT-II(<code style="color:#22d3bf">inverse=True</code> で DCT-III = 逆変換)を N 次元で。</p>
 <p>Args:</p>
 <p>x: 任意次元の実配列(信号・画像・ボリューム)。</p>
 <p>axes: 変換する軸(省略で全軸)。</p>
 <p>inverse: True なら係数から元に戻す。</p>
+<p>diagnostics: <code style="color:#22d3bf">&quot;full&quot;</code> は従来どおり全診断、<code style="color:#22d3bf">&quot;energy&quot;</code> は係数とエネルギー、</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> は係数だけを返す。逆変換は互換性のため常に従来の辞書を返す。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">coeffs</code>(同じ形)、<code style="color:#22d3bf">energy</code>(Σx²、正規直交なので変換の前後で同じ = Parseval)、<code style="color:#22d3bf">compaction</code> = 大きい順に並べた係数のエネルギーの累積割合(先頭 1% で何割を持つか、が JPEG の理由)。</p>
 <p>門は定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) の行列と一致すること・逆変換で 1e-12 で戻ること。</p>

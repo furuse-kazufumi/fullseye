@@ -83,7 +83,8 @@ def stationary_camera_self_calibration(homographies):
         for (i, j) in upper:                                   # 各 H から 6 個の線形拘束
             row = [((H @ B @ H.T) - B)[i, j] for B in basis]
             A.append(row)
-    _, _, Vt = np.linalg.svd(np.asarray(A))
+    A = np.asarray(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     w = Vt[-1]
     Ws = np.array([[w[0], w[1], w[2]], [w[1], w[3], w[4]], [w[2], w[4], w[5]]])
     if Ws[2, 2] < 0:

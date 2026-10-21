@@ -537,12 +537,21 @@ def powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz="powder", 
     q_max = (2.0 * math.sin(math.radians(tmax / 2.0)) / lam) ** 2       # 1/d² の上限
     # 各軸の最大指数: h = d*·a なので |h| <= |d*| |a| = sqrt(q_max) sqrt(G[0,0])(k, l も同じ)
     hmax = [int(math.floor(math.sqrt(q_max * G[i, i]))) + 1 for i in range(3)]
-    rng = [np.arange(-m, m + 1) for m in hmax]
-    H = np.stack(np.meshgrid(*rng, indexing="ij"), -1).reshape(-1, 3)
-    H = H[np.any(H != 0, axis=1)]
-    q = np.einsum("ni,ij,nj->n", H, Gs, H)
-    keep = q <= q_max * (1 + 1e-12)
-    H, q = H[keep], q[keep]
+    # h 軸ごとに作り、範囲外の指数を直ちに捨てる。meshgrid の全直方体と
+    # q/keep を同時に保持しないため、斜方格子で上限箱が緩い場合ほど軽い。
+    kr, lr = np.arange(-hmax[1], hmax[1] + 1), np.arange(-hmax[2], hmax[2] + 1)
+    kl = np.stack(np.meshgrid(kr, lr, indexing="ij"), -1).reshape(-1, 2)
+    h_parts, q_parts = [], []
+    for hv in range(-hmax[0], hmax[0] + 1):
+        block = np.empty((kl.shape[0], 3), dtype=np.int64)
+        block[:, 0], block[:, 1:] = hv, kl
+        qb = np.einsum("ni,ij,nj->n", block, Gs, block)
+        keep = (qb <= q_max * (1 + 1e-12)) & np.any(block != 0, axis=1)
+        if keep.any():
+            h_parts.append(block[keep])
+            q_parts.append(qb[keep])
+    H = np.concatenate(h_parts) if h_parts else np.empty((0, 3), dtype=np.int64)
+    q = np.concatenate(q_parts) if q_parts else np.empty(0, dtype=np.float64)
     if H.size == 0:
         raise ValueError("no reflection below two_theta_max=%g at wavelength %g" % (tmax, lam))
     d = 1.0 / np.sqrt(q)
@@ -552,9 +561,17 @@ def powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz="powder", 
     Bs = np.array([at["B"] for at in ph["atoms"]])
     types = [at["type"] for at in ph["atoms"]]
     fcache = {t: _f0(t, s) for t in set(types)}
-    fj = np.stack([fcache[t] for t in types], 1) * occ[None, :] * np.exp(-np.outer(s ** 2, Bs))
-    phase_arg = 2 * np.pi * (H @ X.T)
-    F = np.sum(fj * np.exp(1j * phase_arg), axis=1)
+    # 反射をブロック化する。各行の原子方向は従来どおり np.sum が同じ順で
+    # 加えるため、結果を変えずに巨大な複素 (反射, 原子) 配列を避ける。
+    F = np.empty(H.shape[0], dtype=np.complex128)
+    block_size = max(1, min(H.shape[0], 8_388_608 // max(1, len(types))))
+    for start in range(0, H.shape[0], block_size):
+        stop = min(start + block_size, H.shape[0])
+        sb = s[start:stop]
+        fj = np.stack([fcache[t][start:stop] for t in types], 1)
+        fj *= occ[None, :] * np.exp(-np.outer(sb ** 2, Bs))
+        phase_arg = 2 * np.pi * (H[start:stop] @ X.T)
+        F[start:stop] = np.sum(fj * np.exp(1j * phase_arg), axis=1)
     F2 = np.abs(F) ** 2
     # 同じ d・同じ |F|² をまとめる
     kd = np.round(d, 9)
@@ -824,7 +841,7 @@ def debye_ring_image(phases, weight_fractions, geometry, shape=(512, 512), size=
 # 方位積分
 # ----------------------------------------------------------------------------------------------
 def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True,
-                        polarization=None, chi_range=None, supersample=2):
+                        polarization=None, chi_range=None, supersample=2, memory_budget=None):
     """2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。
 
     各画素を ``supersample``² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに **平均**
@@ -857,45 +874,103 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
     H, W = im.shape
     rr, cc = np.mgrid[0:H, 0:W].astype(np.float64)
     off = (np.arange(ss) + 0.5) / ss - 0.5
-    vals, tths, wts, cors = [], [], [], []
-    for dy in off:
-        for dx in off:
-            tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
-            corr = np.ones_like(tth)
-            if solid_angle:
-                corr = corr * om
-            if pol is not None:
-                corr = corr * _polarization(tth, chi, pol)
-            sel = valid.copy()
-            if chi_range is not None:
-                c0, c1 = (_num(c, "chi_range") for c in chi_range)
-                sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
-            vals.append((im / corr)[sel])
-            cors.append(corr[sel])
-            tths.append(tth[sel])
-            wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
-    val = np.concatenate(vals)
-    tt = np.concatenate(tths)
-    wt = np.concatenate(wts)
-    cr = np.concatenate(cors)
-    if tt.size == 0:
-        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
+    if memory_budget is None:
+        vals, tths, wts, cors = [], [], [], []
+        for dy in off:
+            for dx in off:
+                tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
+                corr = np.ones_like(tth)
+                if solid_angle:
+                    corr *= om
+                if pol is not None:
+                    corr *= _polarization(tth, chi, pol)
+                sel = valid.copy()
+                if chi_range is not None:
+                    c0, c1 = (_num(c, "chi_range") for c in chi_range)
+                    sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
+                vals.append((im / corr)[sel])
+                cors.append(corr[sel])
+                tths.append(tth[sel])
+                wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
+        val, tt = np.concatenate(vals), np.concatenate(tths)
+        wt, cr = np.concatenate(wts), np.concatenate(cors)
+        if tt.size == 0:
+            raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
+        if two_theta_range is None:
+            lo, hi = float(tt.min()), float(tt.max())
+        else:
+            lo, hi = (_num(v_, "two_theta_range") for v_ in two_theta_range)
+        if not hi > lo:
+            raise ValueError("two_theta_range is empty: %r" % ((lo, hi),))
+        if nb is None:
+            nb = max(8, int(math.ceil((hi - lo) / (0.5 * math.degrees(g["pixel"] / g["distance"])))))
+        edges = np.linspace(lo, hi, nb + 1)
+        idx = np.searchsorted(edges, tt, side="right") - 1
+        ok = (idx >= 0) & (idx < nb)
+        s_w = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
+        s_v = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
+        s_va = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            mean = s_v / s_w
+            sig = np.sqrt(s_va) / s_w
+        mean[s_w == 0] = np.nan
+        sig[s_w == 0] = np.nan
+        return {"two_theta": 0.5 * (edges[1:] + edges[:-1]), "intensity": mean, "count": s_w, "sigma": sig}
+    memory_budget = int(_num(memory_budget, "memory_budget", positive=True))
+    if chi_range is not None:
+        c0, c1 = (_num(c, "chi_range") for c in chi_range)
+
+    def geometry_samples():
+        for dy in off:
+            for dx in off:
+                tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
+                corr = np.ones_like(tth)
+                if solid_angle:
+                    corr *= om
+                if pol is not None:
+                    corr *= _polarization(tth, chi, pol)
+                sel = valid.copy()
+                if chi_range is not None:
+                    sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
+                yield tth[sel], corr[sel], (im / corr)[sel]
+
+    # 自動範囲だけは幾何を先に走査する。副画素の値・角度・補正を全てリストに
+    # 保持せず、範囲が決まった後は各副画素群を直ちに bin へ加える。
     if two_theta_range is None:
-        lo, hi = float(tt.min()), float(tt.max())
+        lo, hi, n_selected = math.inf, -math.inf, 0
+        for tt, _cr, _val in geometry_samples():
+            if tt.size:
+                lo, hi = min(lo, float(tt.min())), max(hi, float(tt.max()))
+                n_selected += tt.size
     else:
         lo, hi = (_num(v_, "two_theta_range") for v_ in two_theta_range)
+        n_selected = -1
+    if n_selected == 0:
+        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
     if not hi > lo:
         raise ValueError("two_theta_range is empty: %r" % ((lo, hi),))
     if nb is None:
         # 既定: ビンの幅 = 画素 1 個がビームの中心で張る角の半分(細かすぎると隣のビンが同じ画素を分け合い相関する)
         nb = max(8, int(math.ceil((hi - lo) / (0.5 * math.degrees(g["pixel"] / g["distance"])))))
     edges = np.linspace(lo, hi, nb + 1)
-    idx = np.searchsorted(edges, tt, side="right") - 1
-    ok = (idx >= 0) & (idx < nb)
-    s_w = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
-    s_v = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
+    s_w = np.zeros(nb)
+    s_v = np.zeros(nb)
+    s_va = np.zeros(nb)
+    wt = 1.0 / ss ** 2
+    accumulated = 0
+    for tt, cr, val in geometry_samples():
+        accumulated += tt.size
+        idx = np.searchsorted(edges, tt, side="right") - 1
+        ok = (idx >= 0) & (idx < nb)
+        ids = idx[ok]
+        values = val[ok]
+        corrections = cr[ok]
+        s_w += np.bincount(ids, weights=np.full(ids.size, wt), minlength=nb)
+        s_v += np.bincount(ids, weights=values * wt, minlength=nb)
+        s_va += np.bincount(ids, weights=np.abs(values) / corrections * wt, minlength=nb)
+    if accumulated == 0:
+        raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
     # ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
-    s_va = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
     with np.errstate(invalid="ignore", divide="ignore"):
         mean = s_v / s_w
         # Poisson: 画素の分散 ≈ 値。1 画素の副画素の重みの和は 1 なので、平均の分散 ≈ Σ w |v| / (Σ w)²
@@ -1475,10 +1550,15 @@ def phase_fractions(two_theta, intensity, dictionary, background_order=4, sigma=
                 ph = dic["phases"][i]
 
                 def f(sc, j=j, ph=ph):
-                    Mx = M.copy()
-                    Mx[j] = _phase_profile(ph, x, pr["wavelength"], pr["size"], pr["K"], pr["instrumental_fwhm"],
-                                           pr["lorentz"], sc, pr["eta"])[0]
-                    return chi2(Mx)[0], Mx[j]
+                    old = M[j].copy()
+                    row = _phase_profile(ph, x, pr["wavelength"], pr["size"], pr["K"], pr["instrumental_fwhm"],
+                                         pr["lorentz"], sc, pr["eta"])[0]
+                    M[j] = row
+                    try:
+                        score = chi2(M)[0]
+                    finally:
+                        M[j] = old
+                    return score, row
 
                 a_, b_ = 1 - tol, 1 + tol
                 c_, d_ = b_ - gr * (b_ - a_), a_ + gr * (b_ - a_)

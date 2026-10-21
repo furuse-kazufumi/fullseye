@@ -7,7 +7,7 @@ out: rgbimage
 examples: [gallery2d_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # img_to_rgb — 2D `bridge` op
@@ -83,7 +83,7 @@ img_to_rgb 0.50 0.50
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_wetness](../typed/tb_wetness.md) · [tb_sensor_capture](../typed/tb_sensor_capture.md) · [tb_specular_diffuse_split](../typed/tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](../typed/tb_specular_coefficient_map.md) · [tb_specular_free_transform](../typed/tb_specular_free_transform.md) · [tb_rgb_to_quaternion](../typed/tb_rgb_to_quaternion.md)
+[identity](../misc/identity.md) · [tb_wetness](../typed/tb_wetness.md) · [tb_sensor_capture](../typed/tb_sensor_capture.md) · [tb_viewport_from_equirect](../typed/tb_viewport_from_equirect.md) · [tb_specular_diffuse_split](../typed/tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](../typed/tb_specular_coefficient_map.md) · [tb_specular_free_transform](../typed/tb_specular_free_transform.md) · [tb_rgb_to_quaternion](../typed/tb_rgb_to_quaternion.md)
 
 ## 同カテゴリ(`bridge`)
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">chebyshev_eval_nd — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_eval_nd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None, *, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None, *, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_eval_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">chebyshev_coeffs_nd</code> の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。</p>
 <p><code style="color:#22d3bf">points</code> が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。</p>

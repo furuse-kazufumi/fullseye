@@ -4246,7 +4246,7 @@ Source: [examples/poc_allsky_cloud_cover.py](https://github.com/furuse-kazufumi/
 
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_allsky_cloud_cover)
 
-Ops used (notes): [`polar_trans_image`](https://furuse.work/ops/2d/geometry/polar_trans_image.html)
+Ops used (notes): [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/omni360/equirect_from_fisheye_pair.html) · [`polar_trans_image`](https://furuse.work/ops/2d/geometry/polar_trans_image.html)
 
 ## No.2026.002 —— How Many Frames for What Photometric Precision?
 

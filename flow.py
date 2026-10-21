@@ -105,10 +105,15 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
         Ixx = Ixx0 + lam
         Iyy = Iyy0 + lam
         det = Ixx * Iyy - Ixy * Ixy
+        inv_xx = Iyy / det
+        inv_xy = Ixy / det
+        inv_yy = Ixx / det
         prev_res = np.inf
-        u_prev, v_prev = u.copy(), v.copy()
+        u_prev, v_prev = u, v
         for _ in range(max(1, int(iters))):
-            warped = _remap(n, xx + u, yy + v)   # align nxt onto prev with current flow
+            mapx = xx + u
+            mapy = yy + v
+            warped = _remap(n, mapx, mapy)   # align nxt onto prev with current flow
             It = warped - p
             # monotonic-residual guard: the fixed-template iteration is not
             # globally contractive, so stop (and undo the last step) once the
@@ -118,15 +123,15 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
                 u, v = u_prev, v_prev
                 break
             prev_res = res
-            u_prev, v_prev = u.copy(), v.copy()
+            u_prev, v_prev = u, v
             Ixt = _box(Ix * It, k)
             Iyt = _box(Iy * It, k)
             # solve [[Ixx,Ixy],[Ixy,Iyy]] [du,dv]^T = [-Ixt,-Iyt]
-            du = (-Iyy * Ixt + Ixy * Iyt) / det
-            dv = (Ixy * Ixt - Ixx * Iyt) / det
+            du = -inv_xx * Ixt + inv_xy * Iyt
+            dv = inv_xy * Ixt - inv_yy * Iyt
             # freeze pixels whose sample already left the frame: there the warp is
             # edge-clamped so dIt/dflow = 0 and the solve would push them out forever.
-            inb = (xx + u >= 0) & (xx + u <= W - 1) & (yy + v >= 0) & (yy + v <= H - 1)
+            inb = (mapx >= 0) & (mapx <= W - 1) & (mapy >= 0) & (mapy <= H - 1)
             du = np.where(inb, du, 0.0)
             dv = np.where(inb, dv, 0.0)
             # clamp the per-step magnitude so a single high-gradient pixel cannot

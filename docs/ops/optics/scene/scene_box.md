@@ -7,7 +7,7 @@ out: table
 examples: [poc_nir_silicon_transmission, poc_optics_drawings, poc_pocket_interreflection, studio_raytrace_scene, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # scene_box — OPTICS `scene` op

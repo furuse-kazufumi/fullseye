@@ -100,7 +100,8 @@ def _dlt_normalized(src, dst):
     for (x, y, _), (u, v, _) in zip(sh, dh):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
-    _, _, Vt = np.linalg.svd(np.asarray(A))
+    A = np.asarray(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     Hn = Vt[-1].reshape(3, 3)
     H = np.linalg.inv(Td) @ Hn @ Ts
     return H / H[2, 2]

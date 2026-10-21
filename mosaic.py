@@ -14,7 +14,8 @@ def _homography_dlt(src, dst):
     for (y, x), (v, u) in zip(src, dst):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
-    _, _, Vt = np.linalg.svd(np.asarray(A))
+    A = np.asarray(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     H = Vt[-1].reshape(3, 3)
     return H / H[2, 2]
 

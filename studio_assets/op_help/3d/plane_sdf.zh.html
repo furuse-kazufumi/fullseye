@@ -1,9 +1,9 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal, method=&#x27;exact&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal, method=&#x27;exact&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>半空间(被平面切出的一侧)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
+<p>半空间的精确有符号距离场。<code style="color:#22d3bf">fast</code> 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 <code style="color:#22d3bf">exact</code>。</p>
 <p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法线 <code style="color:#22d3bf">n̂</code> <b>所指的一侧为外侧（正）</b>，相反一侧为内侧。用于倒角、切割、“只保留基板以上部分”这类<b>只保留一侧</b>的运算。叠加 <code style="color:#22d3bf">sdf_intersect</code> 可构造任意凸多面体。但 <b>用 max 求交在角的外侧并不严格</b>:用 6 个平面构造长方体时，占用(<code style="color:#22d3bf">&lt;= 0</code>)和内侧的值与 <code style="color:#22d3bf">box_sdf</code> 完全一致，但外侧在角附近最多会<b>低估</b> 2.1（半边长 2 的盒子、网格 0.25 实测）—— 这是 CSG 的标准性质，如果需要距离本身，请使用 <code style="color:#22d3bf">box_sdf</code>。</p>
 <p>严格性：平面在全空间梯度范数为 1，因此该值<b>在任何地方都是真正的有符号距离</b> （不需要像 <code style="color:#22d3bf">box_sdf</code> 那样在角处切换的分情况处理）。</p>
 <p>参数与校验(<code style="color:#22d3bf">ValueError</code>)：</p>

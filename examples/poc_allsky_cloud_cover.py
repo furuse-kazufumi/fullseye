@@ -487,12 +487,12 @@ def section7_gaps():
     print("7) 道具の穴 —— fullseye に無かったもの / 使いにくかったもの")
     print("=" * 78)
     print("""
-  (a) ★★**魚眼(等距離射影)の口が 3 層のどこにも無い**。`distort_points` /
+  (a) ★★**魚眼(等距離射影)の口が追加された**。`fisheye_project` /
+      `fisheye_unproject` は r = f·θ を直接扱い、`equirect_from_fisheye_pair` は
+      2 眼を正距円筒像へつなぐ。従来の `distort_points` /
       `undistort_points` は Brown の半径・接線歪み(ピンホールの周りの補正)で、
       **r = f·tanθ を前提にしている**。魚眼は r = f·θ で、θ→90 度で tanθ が
-      発散するため**原理的に表せない**。`op_find("fisheye")` も
-      `op_find("equidistant")` も 0 件。全天カメラ・広角レンズ・360 度カメラは
-      どれもこの射影なので、1 本の関数が欠けているだけで族ごと入れない。
+      発散するため**原理的に表せない**。両者を同じ歪みモデルとして扱わないこと。
 
   (b) ★★**立体角の重み map を作る口が無い**。この PoC の主役 `sinθ/θ` は
       3 行で書けるが、**書けることと在ることは別**。射影の種類(等距離 /
@@ -517,17 +517,14 @@ def section7_gaps():
       取り違えだった。`blob_features` の `spacing` のように、**面積の単位を
       値と一緒に運ぶ**仕組みが、球面の量にも要る。
 """)
-    for name in ("fisheye_project", "fisheye_unproject", "equidistant_project",
-                 "solid_angle_map", "sky_view_weights", "red_blue_ratio", "cloud_cover"):
+    for name in ("equidistant_project", "solid_angle_map", "sky_view_weights",
+                 "red_blue_ratio", "cloud_cover"):
         assert not hasattr(fs, name), "%s が生えた(良い変化。この節を書き換えること)" % name
         assert not hasattr(fs.ledger, name), "%s が台帳に出た(良い変化)" % name
-    # ★2026-09-08: "equidistant" は 1-D の `create_funct_1d_array`(等間隔の標本
-    #   から関数を作る)に当たるようになった —— ops1d を op_find から引けるように
-    #   した副作用で、**投影モデルとは無関係**。語が同じだけで穴は埋まっていない
-    #   ので、「投影の族に無いこと」を見る形に直した(語の一致で判定しない)。
+    assert hasattr(fs, "fisheye_project") and hasattr(fs, "fisheye_unproject")
     hits = fs.op_find("fisheye") + fs.op_find("equidistant")
     proj = [h for h in hits if h.get("ledger") != "ops1d" and h.get("match") != "doc"]   # 説明文の語では「在る」と言わない
-    assert not proj, "魚眼・等距離投影の op が生えた(この節を書き換えること): %s" % proj
+    assert any(h["op"] == "equirect_from_fisheye_pair" for h in proj), proj
     # (a) Brown 歪みは 90 度を表せない —— 実測で固定する
     k = np.array([[F_PX, 0, CTR], [0, F_PX, CTR], [0, 0, 1.0]])
     th = np.deg2rad(88.0)

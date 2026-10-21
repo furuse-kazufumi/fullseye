@@ -389,6 +389,44 @@ def trace_sensor_rays(system, pixel_xy_mm=None, pupil_xy_mm=None, wavelength_um=
             "fresnel": bool(fresnel)}
 
 
+def _intersect_mla_surface(surface, ray_origins, ray_dirs, *, reject_boundary=True):
+    """Intersect rays with a periodic spherical-cap ``kind='mla'`` surface.
+
+    The surface vertex plane is local ``z=0``.  Newton iteration uses the sag
+    and normal of the selected lenslet; the selected ``lenslet_index`` is part
+    of the result.  A hit on a Voronoi boundary is rejected by default because
+    two surface normals exist there.
+    """
+    from plenoptic import mla_sag_normal
+    P = _array(ray_origins, "ray_origins", "_intersect_mla_surface", shape_tail=(3,), ndim=2)
+    D = _array(ray_dirs, "ray_dirs", "_intersect_mla_surface", shape_tail=(3,), ndim=2)
+    if P.shape != D.shape:
+        raise ValueError("intersect_mla_surface: ray_origins and ray_dirs must have the same shape")
+    norm = np.linalg.norm(D, axis=1)
+    if np.any(norm <= 0):
+        raise ValueError("intersect_mla_surface: ray_dirs contains a zero vector")
+    D = D / norm[:, None]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        t = -P[:, 2] / D[:, 2]
+    for _ in range(20):
+        Q = P + t[:, None] * D
+        h = mla_sag_normal(surface, Q[:, :2], reject_boundary=False)
+        f = Q[:, 2] - h["sag_mm"]
+        df = np.sum(h["normal"] * D, axis=1) / h["normal"][:, 2]
+        step = np.divide(f, df, out=np.full_like(f, np.nan), where=np.abs(df) > 1e-15)
+        t -= step
+        if np.nanmax(np.abs(step)) < 1e-12:
+            break
+    Q = P + t[:, None] * D
+    hit = mla_sag_normal(surface, Q[:, :2], reject_boundary=False)
+    valid = np.isfinite(t) & (t >= -1e-9) & hit["valid"]
+    if reject_boundary and hit["boundary_count"]:
+        raise ValueError("intersect_mla_surface: %d ray(s) hit a lenslet boundary" % hit["boundary_count"])
+    return {"distance_mm": np.where(valid, t, np.nan), "point_mm": np.where(valid[:, None], Q, np.nan),
+            "normal": hit["normal"], "lenslet_index": hit["lenslet_index"], "valid": valid,
+            "boundary": hit["boundary"], "boundary_count": hit["boundary_count"]}
+
+
 # --------------------------------------------------------------------------- the scene
 _OBJ_KEYS = {"plane": {"type", "point_mm", "z_mm", "normal", "up", "size_mm", "albedo", "specular", "shininess", "emission", "name"},
              "sphere": {"type", "center_mm", "radius_mm", "albedo", "specular", "shininess", "emission", "name"},

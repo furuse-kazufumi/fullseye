@@ -167,7 +167,7 @@ def _dlt_init(X, m):
         A[2 * i, 8:12] = v * Xi
         A[2 * i + 1, 0:4] = Xi
         A[2 * i + 1, 8:12] = -u * Xi
-    _, _, Vt = np.linalg.svd(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     Pn = Vt[-1].reshape(3, 4)
     M = np.linalg.inv(T2) @ Pn @ T3         # 正規化を戻す: m ≅ T2⁻¹ Pn T3 X
     return _pose_from_M(M, X)
@@ -196,7 +196,7 @@ def _planar_init(X, m):
         u, v = mn[i]
         A[2 * i] = [-x, -y, -1, 0, 0, 0, u * x, u * y, u]
         A[2 * i + 1] = [0, 0, 0, -x, -y, -1, v * x, v * y, v]
-    _, _, Vt2 = np.linalg.svd(A)
+    _, _, Vt2 = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     H = np.linalg.inv(Tm) @ Vt2[-1].reshape(3, 3) @ Tp
     best = None
     for s in (1.0, -1.0):

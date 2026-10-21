@@ -446,6 +446,26 @@
    "halcon": 982,
    "poc": 264,
    "tests": 20795
+  },
+  {
+   "version": "0.7.2",
+   "tag": "v0.7.2",
+   "date": "2026-10-20",
+   "registry": 927,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2493,
+   "ledger_families": 51,
+   "index": 3449,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 264,
+   "tests": 21185
   }
  ]
 }

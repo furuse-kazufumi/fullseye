@@ -4,10 +4,10 @@ dim: optics
 category: imaging_sim
 in: table
 out: table
-examples: [optical_design_metrics]
+examples: [lensfile_tolerance_worst_mtf, optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # through_focus_mtf — OPTICS `imaging_sim` op
@@ -83,6 +83,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lensfile_tolerance_worst_mtf](../../../../examples/lensfile_tolerance_worst_mtf.py) — `py -3.11 examples/lensfile_tolerance_worst_mtf.py`
 - [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

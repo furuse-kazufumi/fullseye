@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 90 capabilities**
+**Currently 94 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -45,6 +45,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Lens design files (read, write and triage sequential .zmx prescriptions)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [Budget lens manufacturing tolerances by MTF and yield](capabilities/lens-tolerancing.md) | `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report` | `poc_lens_tolerancing` |
 | [Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
@@ -58,12 +59,14 @@ Every operator exists in the registry and the types connect from one step to the
 | [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [Prescription-based plenoptic camera](capabilities/plenoptic-camera.md) | `mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth` | `poc_plenoptic_camera` |
 | [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [Detect fine scratches and measure their width](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -75,6 +78,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
 | [Thin-film thickness by spectral reflectometry (transfer matrix, interference colour, FFT, model fit, thickness maps)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
+| [Measuring one 3-D scene with indirect and direct time of flight](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` → `bilateral_filter_depth` → `depth_to_points` | `poc_tof_camera` |
 | [Reconstruct slices from projections (CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [Diagnose faults from vibration and sound](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
@@ -85,7 +89,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (31)
+## Measure (33)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -299,6 +303,18 @@ Operators: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg
 
 Runnable: `poc_sem_wafer_defect_edge_bias`
 
+### [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md)
+
+One truth ledger of fourteen 20–80 nm spherical and faceted particles drives both scanning and transmission images. Area-equivalent diameter, maximum-slope edges, distance-transform watershed splitting, stereo height and limited-angle reconstruction are compared against that shared truth.
+
+Operators: `sem_render`, `sem_image`, `tem_projected_potential`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `watersheds_marker`, `radon_transform`, `filtered_backprojection`
+
+Pipeline: [`sem_render`](ops/generative/sem/sem_render.md) → [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md)
+
+Alternatives: [`sem_image`](ops/generative/sem/sem_image.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`watersheds_marker`](ops/segmentation/watershed/watersheds_marker.md), [`radon_transform`](ops/tomography/forward/radon_transform.md), [`filtered_backprojection`](ops/tomography/reconstruct/filtered_backprojection.md)
+
+Runnable: `poc_sem_tem_same_particle`
+
 ### [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md)
 
 ### Independent verification of public `.zmx` prescriptions (2026-10-20)
@@ -378,6 +394,18 @@ Pipeline: [`dem_fill_sinks`](ops/dem/hydrology/dem_fill_sinks.md) → [`dem_slop
 Alternatives: [`dem_hillshade`](ops/dem/shading/dem_hillshade.md), [`dem_flow_accumulation`](ops/dem/hydrology/dem_flow_accumulation.md), [`dem_geodetic_slope`](ops/dem/geodesy/dem_geodetic_slope.md)
 
 Runnable: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [Measuring one 3-D scene with indirect and direct time of flight](capabilities/tof-camera.md)
+
+The runnable example compares phase-based continuous-wave ranging and photon-arrival histograms on one analytic inspection scene. It scores ambiguity, noise, harmonic wiggling, multipath, mixed edge pixels, time-bin resolution, pile-up, reflectivity and box-volume errors against closed forms.
+
+Operators: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`, `bilateral_filter_depth`, `depth_to_points`
+
+Pipeline: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md) → [`bilateral_filter_depth`](ops/3d/depth_denoise/bilateral_filter_depth.md) → [`depth_to_points`](ops/3d/transform/depth_to_points.md)
+
+Alternatives: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md)
+
+Runnable: `poc_tof_camera`
 
 ### [A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width](capabilities/virtual-sem-monte-carlo.md)
 
@@ -879,7 +907,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (7)
+## Compose (8)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -916,6 +944,18 @@ Runnable: `inspection_fixture`
 Operators: `inspect_batch`, `judge`, `as_verdict`, `run_pipeline`, `spc_ewma`, `save_xlsx_report`, `report`, `to_json_lines`
 
 Runnable: `inspection_workflow`
+
+### [Budget lens manufacturing tolerances by MTF and yield](capabilities/lens-tolerancing.md)
+
+It turns per-surface and group manufacturing errors into sensitivity, compensated Monte Carlo, yield, histograms, and assembly travel.
+
+Operators: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+
+Pipeline: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
+
+Alternatives: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
+
+Runnable: `poc_lens_tolerancing`
 
 ### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
 
@@ -999,7 +1039,7 @@ Alternatives: [`text_box`](ops/annotate/text/text_box.md), [`annotate_panel_labe
 
 Runnable: `annotate_paper_tour`
 
-## Draw (5)
+## Draw (6)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -1040,6 +1080,18 @@ Generates pictures that ship with their own ground truth: optical illusions whos
 Operators: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
 
 Runnable: `poc_illusions_and_perpetual_drawing`
+
+### [Prescription-based plenoptic camera](capabilities/plenoptic-camera.md)
+
+It traces a prescription, microlens array and sensor, then decodes the raw frame to the repository's `(V,U,H,W)` light-field array for direct refocus and depth processing.
+
+Operators: `mla_surface`, `plenoptic_system`, `plenoptic_capture`, `plenoptic_mla_calibrate`, `plenoptic_decode`, `plenoptic_refocus_depth`
+
+Pipeline: [`mla_surface`](ops/optics/plenoptic/mla_surface.md) → [`plenoptic_system`](ops/optics/plenoptic/plenoptic_system.md) → [`plenoptic_capture`](ops/optics/plenoptic/plenoptic_capture.md) → [`plenoptic_mla_calibrate`](ops/optics/plenoptic/plenoptic_mla_calibrate.md) → [`plenoptic_decode`](ops/optics/plenoptic/plenoptic_decode.md) → [`plenoptic_refocus_depth`](ops/optics/plenoptic/plenoptic_refocus_depth.md)
+
+Alternatives: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
+
+Runnable: `poc_plenoptic_camera`
 
 ### [Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)](capabilities/theorems-as-pictures.md)
 

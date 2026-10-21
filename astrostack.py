@@ -94,6 +94,7 @@ from __future__ import annotations
 import warnings
 
 import numpy as np
+from scipy import sparse
 from scipy import ndimage
 from scipy.optimize import least_squares
 from scipy.special import erf
@@ -467,17 +468,25 @@ def _moffat_star(h, w, r0, c0, flux, alpha, beta, supersample=5):
     cols = (np.arange(w, dtype=np.float64)[:, None] + off[None, :]).ravel()
     dr = (rows - r0) ** 2
     dc = (cols - c0) ** 2
-    rr = dr[:, None] + dc[None, :]
     peak = flux * (beta - 1.0) / (np.pi * alpha * alpha)
-    fine = peak * (1.0 + rr / (alpha * alpha)) ** (-beta)
-    return fine.reshape(h, s, w, s).mean(axis=(1, 3))
+    out = np.empty((h, w), dtype=np.float64)
+    # Bound the temporary fine grid while retaining vectorised rows.  A band
+    # ends on a source-pixel boundary so its reduction is identical to the
+    # corresponding slice of the former full-grid calculation.
+    band_rows = max(1, min(h, 64))
+    for start in range(0, h, band_rows):
+        stop = min(start + band_rows, h)
+        rr = dr[start * s:stop * s, None] + dc[None, :]
+        fine = peak * (1.0 + rr / (alpha * alpha)) ** (-beta)
+        out[start:stop] = fine.reshape(stop - start, s, w, s).mean(axis=(1, 3))
+    return out
 
 
 def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.0,
                     fwhm_px=3.2, psf="gaussian", moffat_beta=2.5, sky=60.0,
                     read_sigma=6.0, shift_row=0.0, shift_col=0.0,
                     n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0,
-                    seed=0, field_seed=None, noise=True):
+                    seed=0, field_seed=None, noise=True, truncate_flux=None):
     """既知の星野を 1 枚合成する —— **この族の正解の供給源**。
 
     星は ``flux_min``〜``flux_max`` の対数一様分布から総フラックス(電子)を引き、
@@ -554,6 +563,12 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
     ncr = _count(n_cosmic, "n_cosmic", 0)
     cflux = _num(cosmic_flux, "cosmic_flux", sign="non_negative")
     margin = _num(margin_px, "margin_px", sign="non_negative")
+    if truncate_flux is not None:
+        trunc = _num(truncate_flux, "truncate_flux", sign="non_negative")
+        if not 0.0 < trunc < 1.0:
+            raise ValueError("%s: truncate_flux must be between 0 and 1" % op)
+    else:
+        trunc = None
     s = _seed(seed)
     fs = s if field_seed is None else _count(field_seed, "field_seed", 0)
     if 2.0 * margin >= min(h, w) - 1.0:
@@ -576,10 +591,26 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
 
     expected = np.full((h, w), sky_e, dtype=np.float64)
     for r0, c0, f in zip(rows, cols, fluxes):
-        if psf == "gaussian":
-            expected += _gaussian_star_exact(h, w, r0, c0, f, sigma, sigma)
+        if trunc is None:
+            if psf == "gaussian":
+                expected += _gaussian_star_exact(h, w, r0, c0, f, sigma, sigma)
+            else:
+                expected += _moffat_star(h, w, r0, c0, f, alpha, beta)
         else:
-            expected += _moffat_star(h, w, r0, c0, f, alpha, beta)
+            radius = (sigma * np.sqrt(-2.0 * np.log(trunc)) if psf == "gaussian" else
+                      alpha * np.sqrt(trunc ** (1.0 / (1.0 - beta)) - 1.0))
+            rlo = max(0, int(np.floor(r0 - radius - 0.5)))
+            rhi = min(h, int(np.ceil(r0 + radius + 0.5)) + 1)
+            clo = max(0, int(np.floor(c0 - radius - 0.5)))
+            chi = min(w, int(np.ceil(c0 + radius + 0.5)) + 1)
+            if rlo < rhi and clo < chi:
+                if psf == "gaussian":
+                    star = _gaussian_star_exact(rhi - rlo, chi - clo, r0 - rlo, c0 - clo,
+                                                f, sigma, sigma)
+                else:
+                    star = _moffat_star(rhi - rlo, chi - clo, r0 - rlo, c0 - clo,
+                                        f, alpha, beta)
+                expected[rlo:rhi, clo:chi] += star
     noiseless = expected.copy()
 
     if noise:
@@ -616,6 +647,8 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
         "noiseless": np.ascontiguousarray(noiseless),
         "shape": (h, w), "seed": int(s), "field_seed": int(fs),
     }
+    if trunc is not None:
+        truth["truncate_flux"] = trunc
     return np.ascontiguousarray(frame), truth
 
 
@@ -807,6 +840,26 @@ def _psf_residual_moffat(p, rr, cc, vals):
     return model - vals
 
 
+def _psf_jac_gaussian(p, rr, cc, vals):
+    amp, r0, c0, sr, sc, bkg = p
+    dr, dc = rr - r0, cc - c0
+    e = np.exp(-0.5 * ((dr / sr) ** 2 + (dc / sc) ** 2))
+    return np.column_stack((e, amp * e * dr / sr**2, amp * e * dc / sc**2,
+                            amp * e * dr**2 / sr**3, amp * e * dc**2 / sc**3,
+                            np.ones_like(e)))
+
+
+def _psf_jac_moffat(p, rr, cc, vals):
+    amp, r0, c0, alpha, beta, bkg = p
+    dr, dc = rr - r0, cc - c0
+    rad2 = dr**2 + dc**2
+    t = 1.0 + rad2 / alpha**2
+    q = t**(-beta)
+    common = amp * q * 2.0 * beta / t
+    return np.column_stack((q, common * dr / alpha**2, common * dc / alpha**2,
+                            common * rad2 / alpha**3, -amp * q * np.log(t), np.ones_like(q)))
+
+
 def psf_fit(image, centers, model="gaussian", box=11, max_iter=200):
     """星像に PSF を当てはめて中心と FWHM を出す。
 
@@ -896,6 +949,7 @@ def psf_fit(image, centers, model="gaussian", box=11, max_iter=200):
             lo = [0.0, -half, -half, 0.05, 0.05, -np.inf]
             hi = [np.inf, half, half, b * 2.0, b * 2.0, np.inf]
             fn = _psf_residual_gaussian
+            jac = _psf_jac_gaussian
         else:
             beta0 = 2.5
             alpha0 = np.sqrt(0.5 * (vr + vc) * 2.0 * (beta0 - 1.0))
@@ -903,8 +957,9 @@ def psf_fit(image, centers, model="gaussian", box=11, max_iter=200):
             lo = [0.0, -half, -half, 0.05, 1.05, -np.inf]
             hi = [np.inf, half, half, b * 4.0, 20.0, np.inf]
             fn = _psf_residual_moffat
+            jac = _psf_jac_moffat
         try:
-            res = least_squares(fn, p0, bounds=(lo, hi), args=(rr, cc, vals),
+            res = least_squares(fn, p0, jac=jac, bounds=(lo, hi), args=(rr, cc, vals),
                                 max_nfev=int(max_iter) * 10, method="trf")
         except Exception as exc:                    # honest: 失敗を隠さない
             rec["reason"] = "least_squares failed: %s" % exc
@@ -957,9 +1012,31 @@ def _circle_weights(h, w, r0, c0, radius, supersample):
     return wgt, (i0, i1, j0, j1)
 
 
+def _circle_weights_patch(h, w, r0, c0, radius, supersample):
+    """円開口の候補帯だけを返す省メモリ変種。"""
+    s = int(supersample)
+    off = (np.arange(s, dtype=np.float64) + 0.5) / s - 0.5
+    i0 = max(0, int(np.floor(r0 - radius - 1)))
+    i1 = min(h, int(np.ceil(r0 + radius + 2)))
+    j0 = max(0, int(np.floor(c0 - radius - 1)))
+    j1 = min(w, int(np.ceil(c0 + radius + 2)))
+    if i1 <= i0 or j1 <= j0:
+        return np.zeros((0, 0)), (0, 0, 0, 0)
+    rows = (np.arange(i0, i1, dtype=np.float64)[:, None] + off[None, :]).ravel()
+    cols = (np.arange(j0, j1, dtype=np.float64)[:, None] + off[None, :]).ravel()
+    inside = ((rows - r0)[:, None] ** 2 + (cols - c0)[None, :] ** 2) <= radius * radius
+    patch = inside.reshape(i1 - i0, s, j1 - j0, s).mean(axis=(1, 3))
+    return patch, (i0, i1, j0, j1)
+
+
 def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
-                        r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8):
+                        r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8,
+                        method="exact"):
     """円形開口 + 環状背景の測光(古典的な CCD 測光)。
+
+    ``method="patch"`` は開口付近だけを確保する省メモリ変種である。2048 角画像、
+    半径 8.2、8 倍標本化ではピーク 33.6 MB から 0.34 MB。加算順が変わるため大きな
+    直流成分を持つ画像では最終ビットが異なり得る。既定の ``"exact"`` は従来どおり。
 
     開口内の画素は**副画素で重み付け**する(``supersample^2`` 点の標本化)ので、
     半径が整数でなくても面積が階段状に飛ばない。背景は ``r_inner``〜``r_outer``
@@ -1017,6 +1094,8 @@ def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
     rsig = _num(read_sigma, "read_sigma", sign="non_negative")
     g = _num(gain, "gain")
     ss = _count(supersample, "supersample", 1, 32)
+    if method not in ("exact", "patch"):
+        raise ValueError("aperture_photometry: method must be 'exact' or 'patch'")
     if not (ra <= ri < ro):
         raise ValueError("%s: radii must satisfy 0 < r_aperture (%g) <= "
                          "r_inner (%g) < r_outer (%g)" % (op, ra, ri, ro))
@@ -1033,7 +1112,9 @@ def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
                              % (op, r0, c0, h, w))
     out = []
     for r0, c0 in ctr:
-        wgt, _ = _circle_weights(h, w, r0, c0, ra, ss)
+        weight_fn = _circle_weights if method == "exact" else _circle_weights_patch
+        wgt, bounds = weight_fn(h, w, r0, c0, ra, ss)
+        i0, i1, j0, j1 = bounds
         area = float(wgt.sum())
         truncated = bool(r0 - ra < -0.5 or r0 + ra > h - 0.5
                          or c0 - ra < -0.5 or c0 + ra > w - 0.5)
@@ -1041,7 +1122,8 @@ def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
         ann = (rad2 >= ri * ri) & (rad2 <= ro * ro)
         n_ann = int(ann.sum())
         bkg = float(np.median(img[ann])) if n_ann > 0 else 0.0
-        flux = float((wgt * (img - bkg)).sum())
+        flux = (float((wgt * (img - bkg)).sum()) if method == "exact" else
+                float((wgt * (img[i0:i1, j0:j1] - bkg)).sum()))
         var = max(0.0, flux) / g + area * (max(0.0, bkg) / g + rsig * rsig)
         err = float(np.sqrt(var)) if var > 0 else 0.0
         snr = float(flux / err) if err > 0 else float("inf")
@@ -1447,12 +1529,14 @@ def drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0):
     drop_area = pf * pf
     out_area = 1.0 / (sc * sc)
     for i in range(n):
-        wr = _drop_overlap(h, ho, -sh[i, 0], sc, pf)
-        wc = _drop_overlap(w, wo, -sh[i, 1], sc, pf)
+        wr = sparse.csr_matrix(_drop_overlap(h, ho, -sh[i, 0], sc, pf))
+        wc = sparse.csr_matrix(_drop_overlap(w, wo, -sh[i, 1], sc, pf))
         # フラックスの配分: 重なり面積 / しずく面積(内側なら和は厳密に 1)
-        num += wr.T @ cube[i] @ wc / drop_area
+        num += np.asarray((wr.T @ cube[i]) @ wc).reshape(ho, wo) / drop_area
         # 被覆: 重なり面積 / 出力画素面積
-        den += (wr.sum(axis=0)[:, None] * wc.sum(axis=0)[None, :]) / out_area
+        wr_sum = np.asarray(wr.sum(axis=0)).ravel()
+        wc_sum = np.asarray(wc.sum(axis=0)).ravel()
+        den += (wr_sum[:, None] * wc_sum[None, :]) / out_area
     return np.ascontiguousarray(num / n), np.ascontiguousarray(den / n)
 
 

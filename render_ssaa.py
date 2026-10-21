@@ -80,13 +80,21 @@ def _default_shade(view: dict, light, ambient: float) -> np.ndarray:
     ``match3d.render_shaded`` と同じ Lambertian だが、法線ゼロの背景を ``silhouette`` で
     0 に落とす(``render_shaded`` は背景に ``ambient`` を残すので、それだと縮小時に
     背景が灰色になりエッジ被覆の中間輝度と混ざる)。光源はカメラ空間で与える。"""
-    n = np.asarray(view["normals"], np.float64)          # (H, W, 3)
     sil = np.asarray(view["silhouette"], np.float64)     # (H, W)
     L = np.asarray(light, np.float64).reshape(3)
     ln = np.linalg.norm(L)
     if not np.isfinite(ln) or ln < 1e-12:
         raise ValueError("light direction must be a non-zero finite vector")
     L = L / ln
+    raw_n = np.asarray(view["normals"])
+    foreground = sil != 0
+    if np.count_nonzero(foreground) * 2 < sil.size:
+        n = np.asarray(raw_n[foreground], np.float64)
+        ndl = np.clip(n[:, 0] * L[0] + n[:, 1] * L[1] + n[:, 2] * L[2], 0.0, 1.0)
+        img = np.zeros_like(sil)
+        img[foreground] = (ambient + (1.0 - ambient) * ndl) * sil[foreground]
+        return img
+    n = np.asarray(raw_n, np.float64)                    # (H, W, 3)
     ndl = np.clip(n[..., 0] * L[0] + n[..., 1] * L[1] + n[..., 2] * L[2], 0.0, 1.0)
     img = ambient + (1.0 - ambient) * ndl
     return img * sil
@@ -137,9 +145,13 @@ def antialias(hi_res_image, ss, filter: str = "box") -> np.ndarray:
 
     if a.ndim == 2:
         blk = a.reshape(h, s, w, s)
+        if filter == "box":
+            return blk.mean(axis=(1, 3))
         return np.einsum("i,j,aibj->ab", wy, wx, blk, optimize=True)
     c = a.shape[2]
     blk = a.reshape(h, s, w, s, c)
+    if filter == "box":
+        return blk.mean(axis=(1, 3))
     return np.einsum("i,j,aibjk->abk", wy, wx, blk, optimize=True)
 
 

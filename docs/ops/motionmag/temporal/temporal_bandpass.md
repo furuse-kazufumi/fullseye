@@ -7,13 +7,13 @@ out: video
 examples: [motion_magnification, poc_beam_modal_video, poc_motion_magnification]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # temporal_bandpass — MOTIONMAG `temporal` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_bandpass(video, f_lo, f_hi, fps) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("temporal_bandpass")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_bandpass(video, f_lo, f_hi, fps, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps, method='exact') -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("temporal_bandpass")`)
 
 ## 使い方
 
