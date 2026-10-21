@@ -47,3 +47,14 @@ def test_reproduced_h05_absolute_distance_is_not_normalized():
     assert fn(mask, 0.4, 0.6)[0, 0] == 4.0
     assert fn(mask, 0.8, 0.6)[0, 0] == 2.0
     assert ops._BY_NAME["dist_transform"].fn(np.ones((9, 9)), 0, 0).max() == 1.0
+
+
+def test_reproduced_h06_mean_width_height_are_independent_and_odd():
+    image = np.arange(63, dtype=np.float64).reshape(7, 9)
+    fn = ops._BY_NAME["mean_box_wh"].fn
+    expected = ops._BY_NAME["mean_box"].fn(image, 0.0, 0.0)
+    actual = fn(image, 0.125, 0.125)  # both map to 3
+    np.testing.assert_array_equal(actual, expected)
+    horizontal = fn(image, 0.26, 0.01)  # width 5, height 1
+    vertical = fn(image, 0.01, 0.26)  # width 1, height 5
+    assert not np.array_equal(horizontal, vertical)

@@ -201,6 +201,19 @@ def _mean_box(v, a, b):
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。"""
     return ndimage.uniform_filter(v, size=_k(a), mode=_border(b))
+
+
+def _mean_box_wh(v, a, b):
+    """Average with independently selected width and height.
+
+    Each knob maps to the odd sizes 1, 3, ..., 15 by
+    ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))``; this is equivalent to
+    rounding an even integer width or height up to the next odd value. Borders
+    always use ``reflect``. Example: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``.
+    """
+    width = 1 + 2 * min(7, int(8 * np.clip(a, 0.0, 1.0)))
+    height = 1 + 2 * min(7, int(8 * np.clip(b, 0.0, 1.0)))
+    return ndimage.uniform_filter(v, size=(height, width), mode="reflect")
 def _median(v, a, b):
     """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
 
@@ -2266,6 +2279,7 @@ _DEFS = [
     # image -> image
     ("gaussian", "smoothing", "gauss_filter", IMAGE, IMAGE, _gaussian),
     ("mean_box", "smoothing", "mean_image", IMAGE, IMAGE, _mean_box),
+    ("mean_box_wh", "smoothing", "mean_image", IMAGE, IMAGE, _mean_box_wh),
     ("bilateral", "smoothing", "bilateral_filter", IMAGE, IMAGE, _bilateral),
     ("kuwahara", "smoothing", None, IMAGE, IMAGE, _kuwahara),
     ("unsharp", "smoothing", "emphasize", IMAGE, IMAGE, _unsharp),
