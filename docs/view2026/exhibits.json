@@ -6387,6 +6387,23 @@
    }
   },
   {
+   "id": "poc_tof_camera",
+   "group": "wing_imaging",
+   "media": "01_scene_viewer.png",
+   "motion": false,
+   "thumb_src": "01_scene_viewer.png",
+   "label": {
+    "ja": "同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差",
+    "en": "Indirect and direct time of flight on one 3-D scene: multipath, mixed pixels, pile-up and volume error",
+    "zh": "同一三维场景的间接与直接飞行时间:多径、混合像素、堆积和体积误差",
+    "tw": "同一三維場景的間接與直接飛行時間:多路徑、混合像素、堆積和體積誤差",
+    "ko": "하나의 3차원 장면에서 간접 및 직접 비행시간: 다중 경로, 혼합 화소, pile-up, 부피 오차",
+    "de": "Indirekte und direkte Laufzeitmessung derselben 3-D-Szene: Mehrwege, Mischpixel, Pile-up und Volumenfehler",
+    "hi": "एक ही 3-D दृश्य पर indirect और direct time of flight: multipath, mixed pixels, pile-up और volume error",
+    "fr": "Temps de vol indirect et direct sur une même scène 3-D : trajets multiples, pixels mixtes, pile-up et erreur de volume"
+   }
+  },
+  {
    "id": "poc_lens_global_search",
    "group": "wing_color",
    "media": "01_lens_global_search.png",
@@ -7505,6 +7522,14 @@
     "de": "Eine 3-D-Szene durch die tatsächliche Objektivverschreibung aufnehmen (Schärfentiefe, Katzenaugen-Bokeh, Eckhelligkeit, Farbsäume, Geisterbilder)",
     "hi": "वास्तविक lens prescription से होकर 3-D दृश्य photograph करना (depth of field, cat's-eye bokeh, कोनों की illumination, colour fringes, ghosts)",
     "fr": "Photographier une scène 3-D à travers la prescription réelle de l'objectif (profondeur de champ, bokeh en œil de chat, éclairement des coins, franges colorées, images fantômes)"
+   },
+   "tof-camera": {
+    "zh": "用间接和直接飞行时间测量同一三维场景",
+    "tw": "用間接和直接飛行時間測量同一三維場景",
+    "ko": "하나의 3차원 장면을 간접 및 직접 비행시간으로 측정",
+    "de": "Dieselbe 3-D-Szene mit indirekter und direkter Laufzeitmessung erfassen",
+    "hi": "एक ही 3-D दृश्य को indirect और direct time of flight से मापना",
+    "fr": "Mesurer une même scène 3-D par temps de vol indirect et direct"
    }
   }
  },

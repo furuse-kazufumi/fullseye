@@ -2031,6 +2031,27 @@
    ]
   },
   {
+   "id": "tof-camera",
+   "title": "同じ3次元場面を間接ToFと直接ToFで測る",
+   "title_en": "Measuring one 3-D scene with indirect and direct time of flight",
+   "category": "測る",
+   "note": "docs/capabilities/tof-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tof_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "tomography-reconstruction",
    "title": "投影から断面を再構成する(CT)",
    "title_en": "Reconstruct slices from projections (CT)",
