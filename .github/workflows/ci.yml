@@ -126,7 +126,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        # ★PR は py3.11 の 4 片だけ(2026-10-21): runner の同時枠 20 ジョブを 15 ジョブの run 3 本で
+        #   奪い合い、1 時間 queued が常態化した。py3.10/3.12 の差は master への push・nightly・
+        #   手動 dispatch のフルマトリクスで拾う(coverage は元から py3.11 だけ)。
+        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.11"]' || '["3.10", "3.11", "3.12"]') }}
         shard: [1, 2, 3, 4]
     env:
       QT_QPA_PLATFORM: offscreen
