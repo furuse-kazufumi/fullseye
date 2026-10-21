@@ -288,8 +288,8 @@ def main() -> int:
     if figs.enabled():
         print("== 11. 図と動画")
         t_f = time.time()
-        _figures(pairs, mp, mu, var, ptc, mu_sat, th, bnd, Ks, rows, bad_dr)
         _figures_r4(ex_bright, ex_dark, nu, sh, sv, shh, svh, hp_ref, res)
+        _figures(pairs, mp, mu, var, ptc, mu_sat, th, bnd, Ks, rows, bad_dr)
         print("  図と動画(%.1f s)" % (time.time() - t_f))
         if figs.errors():
             print("図の書き出しで失敗:", "; ".join(figs.errors()))
@@ -466,6 +466,34 @@ def _figures(pairs, mp, mu, var, ptc, mu_sat, th, bnd, Ks, rows, bad_dr):
 
 
 def _figures_r4(ex_bright, ex_dark, nu, sh, sv, shh, svh, hp_ref, res):
+    # What the measurement procedure actually receives: full-size raw frames.
+    rng_raw = np.random.default_rng(178)
+    capture = _standard_example_camera(rng_raw, H8=512, W8=640)
+    dark0, dark1 = capture(0.0), capture(0.0)
+    flat0, flat1 = capture(22000.0), capture(22000.0)
+    saturated = capture(120000.0)
+    hot_rng = np.random.default_rng(1288)
+    hot_y = hot_rng.integers(0, 512, 80); hot_x = hot_rng.integers(0, 640, 80)
+    for frame in (dark0, dark1, flat0, flat1, saturated):
+        frame[hot_y, hot_x] = MAXDN
+    def gray(a, gamma=1.0):
+        z = np.clip(a / MAXDN, 0, 1) ** gamma
+        return np.repeat(z[..., None], 3, axis=2)
+    raw_triptych = np.concatenate([gray(dark0, 0.5), gray(flat0, 0.5), gray(saturated, 0.5)], axis=1)
+    figs.save("raw_dark_flat_saturation", raw_triptych,
+              caption="暗画像｜平坦画像｜飽和段。12 bit、量子効率 50 %、変換係数 0.1 DN/e⁻、暗雑音 30 e⁻、PRNU 0.5 %、DSNU 1.5 DN。行列固定模様と欠陥画素を等倍で確認できる入力画像。")
+    temporal = flat0 - flat1
+    spatial = 0.5 * (flat0 + flat1) - 0.5 * (dark0 + dark1)
+    lim_t = max(1.0, np.percentile(np.abs(temporal), 99))
+    lim_s = max(1.0, np.percentile(np.abs(spatial - np.median(spatial)), 99))
+    tgray = np.clip(0.5 + temporal / (2 * lim_t), 0, 1)
+    sgray = np.clip(0.5 + (spatial - np.median(spatial)) / (2 * lim_s), 0, 1)
+    defects = np.abs(dark0 - np.median(dark0)) > 6 * np.std(dark0)
+    dmap = np.zeros((512, 640, 3)); dmap[defects] = (1.0, 0.15, 0.05)
+    figs.save("temporal_spatial_defects", np.concatenate([
+        np.repeat(tgray[..., None], 3, axis=2),
+        np.repeat(sgray[..., None], 3, axis=2), dmap], axis=1),
+        caption="平坦画像2枚の差（時間雑音）｜平坦平均−暗平均（空間雑音）｜6σ欠陥画素図。固定模様を無効化する検査では中央の空間模様が消え、ゲートは赤になる。")
     avg_b = ex_bright.mean(axis=0) - ex_dark.mean(axis=0)
     hp_b = SC.emva_highpass(avg_b)["image"]
     figs.save_grid("highpass_prnu", [avg_b, hp_b], captions=["PRNU 画像 = 明るい平均画像 − 暗い平均画像(照明が端へ 3 % 落ちる)",

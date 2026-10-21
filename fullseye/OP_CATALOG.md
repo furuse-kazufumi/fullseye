@@ -34,8 +34,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
 **metrology**
-- **全数の 2-D 検査と抜き取りの 3-D 検査を対応づける(格子は自分に重なる)** — 規則正しく並んだ接合部は点の配置だけでは装置間で一対一に対応づかない(6x5 の格子は 30 点すべての距離署名が縮退し、署名は 9 種類しかない)。3 辺が異なる基準マークを入れると対応が厳密に決まる。そのうえで AOI の見かけのボイド率は CT の体積率と相関 0.973、悪い順 5 個も 5/5 一致するのに、寿命に効く界面接触ボイド 27 個のうちその 5 個で拾えるのは 19 % だけ —— 順位が合うことは危ない個体を拾えることを意味しない。 `py -3.11 examples/poc_aoi_ct_traceability.py`
-- **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
+- **全数の表面像と抜き取り断層像を同じ接合部へ結ぶ** — 緑の基板、配線、部品、環状照明を映す接合材、欠品・立ち・橋絡を 512 px の表面像にし、同じ領域を投影から再構成した 3 高さの断層像と縦断面に対応づける。中央接合部の空隙、金属による筋、検出器むらによる輪は再構成結果にだけ現れる。水等価ファントムは筋が 3σ 未満、金属入りは 4σ 超。環状照明の反射方向は閉形式と 2°以内。樹脂・銅・接合材の減弱順と比は Hubbell & Seltzer, *NIST SRD 126*（米国政府資料、public domain）の表から 5 %以内。従来の面積率・体積率・順位は検証図に残す。 `py -3.11 examples/poc_aoi_ct_traceability.py`
+- **面を走査する白色干渉計** — 512×512 の段差・傾き・粗面を 48 面の干渉縞で走査し、4 枚の生フレーム、動画、復元高さ、誤差、低変調の品質像を主図にする。包絡幅は光源帯域の閉形式と 0.29 %、縞周期は λ/2 と 2e-16、滑らかな段差の繰返しは 2.2 nm（装置の語彙は ISO 25178-604）。帯域を半分にする破壊探針で包絡幅は 2.000 倍になる。従来の 1-D 段差・走査刻み・雑音検証は後段へ残す。 `py -3.11 examples/poc_interferometry_step.py`
 - **視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む —— Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に** — 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = 法線荷重)。真値は 2 系統: 閉形式(Johnson 1985: Cattaneo–Mindlin の部分滑り c/a = (1 − Q/μP)^{1/3}・q = q′ − q″・δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]・kt = 8Ga/(2−ν)、Hertz 形接線トラクションの円内解 3.91、法線荷重の半径変位 3.41b、Cerruti の点荷重解)と、有限要素の節点変位(有限厚ドーム状ゲル、Robo-Touch/Taxim 同梱 MIT、FULLSEYE_TAXIM_DATA があるとき)。自分で作ったのは接触円の外側(閉形式なし)を画素平均の Cerruti 核で FFT 畳み込み(円内の 3.91 と 0.02 %)、任意の固着半径の場を相似則 g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001)、変位で中心を移してから描くマーカー像。被験者 = 既存 op(blob2d の重心、pivops の窓相関、backends_subpix の副画素極値、tac_shear_field、measure.fit_circle)。新モジュール tacslip 20 op。門 20 本(FEM 2 本はデータがあるとき): ∫q dA = Q、kt、錨 70.5 µm、ūr の最大は 0.93a、固着円の一様性 0.006 %、遠方 1/r、重心の往復 0.003 px、追跡 RMS 0.01 px(961/961)、逆算 Q/μP 0.03・c/a 0.02・μ と Q の分離(μ は低 Q で 2c/(1−c²) 倍に増幅、0.75 以上で 3 %)、全滑りで核が消える、指数 0.34、エントロピー単調、tac_shear_field は分けない、密度・雑音、FEM の r½ = 2.3 mm と Cerruti の ν 0.49〜0.51。正直に: 半空間・小変形・Coulomb・準静的、FEM は点荷重状で荷重不明(形だけ)、相関と最近傍は |u| ≥ ピッチ/2 を測れない(対応は視野の縁が遠方場という前提)。踏んだ罠: 規則格子の PIV は 5 px を −3 px と読む(格子周期のエイリアス)、半径 2 px の円盤の重心は ±0.03 px の pixel-locking で格子共通モードになり c/a を 0.02 ずらす(半径 2.5 px + 反復ガウス重みで 3 分の 1、剛体シフト項は 1/r の尾と縮退して逆効果)、ūr の最大は縁でなく 0.93a、滑り環で隣のマーカーの縞が繋がる。 `py -3.11 examples/poc_tacsim_marker_shear.py`
 - **視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む —— Gauss の法則が半空間で恒等式になることを門に** — 物理シミュ × Fullseye 系列 第 2 弾の第 3 本(第 1 本 = 法線荷重、第 2 本 = 接線荷重)。再実装した方法 = Fuchioka & Hamaya, ICRA 2024, arXiv 2404.15626(学習なし: マーカー変位場の発散を電荷と見た双極子 p = (1/N) Σ r_i (∇·v)_i、原点は正負の重心の中点、トルクは双極子に直交、係数は力覚センサで較正。著者のコードは無ライセンスなので本文の式だけから)。真値 = Johnson 1985 の閉形式(平頭押し込み子の圧 3.34 + 傾きモーメントの反対称項、Boussinesq の点荷重解、Hertz 圧の表面変位 3.41b・3.42a、楕円 Hertz 圧 4.24、無滑りねじり Reissner–Sagoci)と、有限要素の節点変位(有限厚ドーム、Robo-Touch/Taxim 同梱 MIT、FULLSEYE_TAXIM_DATA があるとき)。自分で導いたのは 3 つ: Gauss の法則は半空間で恒等式 ∇·ū = −(1−2ν)p/(2G)(双極子 = 圧力の 1 次モーメント × 係数、押し込み子の形に依らない)、Cerruti 点荷重の場の発散 −(1−ν)Qx/(2πGr³)(純せん断が窓全体に偽の傾き (1−ν)/(1−2ν)·Q·R を作る → 窓を固着円に限る)、基線形式(|u| を電荷に)は対称な傾きで恒等的に 0(符号を知らない)。被験者 = 既存 op(tacslip.marker_track、cerruti_kernel の畳み込み、sceneflow の flow_divergence / flow_curl、pivops.piv_vorticity)。新モジュール tactorque 17 op。門 17 本(FEM 2 本はデータがあるとき): 平頭圧の格子積分 0.9 %、核 vs 3.41b 0.03 %、Gauss 恒等式 0.2 %、純法線で 1e-15、D ∝ M は R² = 1.000000 で係数は閉形式と 0.04 %、基線形式 3e-4、3 形状で係数 0.001 %、ねじりの β −0.5 %(平頭は q/(μp) の最大 0.24 で無滑りが厳密)、Hertz 接触のねじりの部分滑り(比 0.5 / 0.8)を既定の読みで ×0.999 / ×1.000(0.4.0 の無滑りの関係は ×1.33 / ×1.85 過大、2026-10-06 に直した)、分解(傾き 2.4 %・ねじり 0.5 %・並進 0.04 px)、純せん断の漏れ 0.001 N·mm(窓)/ 32 N·mm(全窓)、雑音 0.03 px → σ_M 0.11 N·mm、綴り壊し 11 本、散在最小二乗 = 中心差分、像から M1 0.7 %、FEM は膨らんで符号が逆・斜め荷重はせん断漏れの符号。正直に: 半空間の係数は実機(有限厚・ほぼ非圧縮)の大きさを与えない(1 N·mm が 0.06 px)、Johnson の式番号 3 つは本文で未確認(独立実装で数値検証)、Lubkin の部分滑りねじりの閉形式は未実装(部分滑りは cuttouch の数値解で直す)。 `py -3.11 examples/poc_tactile_dipole_torque.py`
 - **粉体の山を画像で測る —— 安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo** — 物理シミュ × Fullseye 系列(pegsim / tacsim / tacslip / tactorque / puck / pegfail に続く)。先行研究の粉体計量(Kadokawa, Hamaya, Tanaka, IROS 2023, doi 10.1109/iros55552.2023.10342463)は秤の質量だけを観測に使い、視覚は無い。ここは山の形(側面像・高さ図)から安息角・質量・流動性・排出率を読む側を、新モジュール granular(23 op + mujoco の facade 2)で学習なしに組む。真値は外から 4 系統: 閉形式(円錐 V = πR²H/3、H = R tan φ; Beverloo 1961 の排出則 W = C ρ_b √g (D₀ − k d)^{5/2}、C 0.58・k 1.4)、公表の表(USP <1174> Table 1、原典 Carr 1965、整数の度)、公表値(1 mm ガラス球の安息角 25.2 ± 0.8 度、Sunday ほか MNRAS 2020、arXiv 2009.10448 §5.4 —— 側面像の上縁に左右別々に直線を当て裾と頂を除く測り方も同論文)、第 2 実装 = MuJoCo の剛体球 1,200 個を平底ホッパの正方孔から流した山(--full)。側面像は縁の画素の被覆率をそのまま副画素の位置に読む(edge 法): 被覆率に一様雑音 ±0.1 で 0.0064 度、★列和法は [0, 1] に切った雑音で粉の平均値が 0.975 になり tan φ がその比で縮んで −0.63 度(罠を数で残す)。高さ図は demops.dem_slope の勾配ヒストグラムの最頻(雑音は勾配を上にしか動かさない: σ 0.05 px で +0.12 度)。★傾いた基準面 β = 5 度は安息角に足し算される: 左右の斜面 33.62 / 26.10 度 = 閉形式 atan(tan φ ± tan β)、左右差 7.52 度が警報(datum_tilt_check)、tan の引き算で 30.0000; 高さ図の最頻は 5.00 度 = 地面そのもの(既存の体積 PoC の罠を門に)。門 20 本(numpy、1.3 s)+ --full 5 本(MuJoCo、34 s): 円錐の往復 1.8e-16、高さ図の体積 3.5e-7、Beverloo の指数 n = 2.5074・C = 0.5894(高さ図の列 6 本、σ 0.5 mm)、裾の丸み −0.248 → 裾 15 % 除外で −0.001 度、頂の鈍り −0.554 → −0.004 度、分解能(山の幅 50 px で側面 0.20 度・高さ図 1.10 度、25 px で側面 0.62 度)、流動性区分の境界 16 点、綴り壊しと山が写っていない場合の ValueError、スプーンの規則 θ_c = φ − atan(2h₀/L)(自分の導出、L 50 mm・h₀ 5 mm で 18.69 度。2026-10-05 に小角の近似 tan φ − tan θ から厳密な tan(φ − θ) に直した)、容器の充填率 0.6300 / 傾き 3.000 度、動画からの質量 2.3e-6(配管の検査)、MJCF 文字列; --full: 山ができた(逃げ 0、高さ 38.4 mm = 4.8 粒径)、側面 4 方位の平均 22.17 度 vs 公表値 25.2 → −3.03 度、2 粒径で平滑した高さ図の中央値 25.74 度(平滑なしの最頻 65.5 度 = 球の縁)、排出率 0.906 kg/s vs Beverloo(等価直径 54.2 mm)0.911 kg/s。正直に: 合成の側面像は縁の模型が計測と同じなので雑音なしの往復 0.0000 度は配管の検査、独立な被験者は雑音と MuJoCo の球だけ。MuJoCo の山が公表値より 3 度低い理由(剛体・付着なし・転がり摩擦の模型が DEM と違う・山が 5 粒径しか無い・正方孔の異方性で方位により 18.9〜24.4 度)は切り分けていない。Beverloo との比 0.99 は良すぎるので信用せず桁の門に留める(別の構成では 1.02 / 1.14、D₀/d = 6.8 は詰まりの限界付近)。Al-Hashemi 2018 の材料別の表は取得できず未収録。mg 級の計量は画像では無理(g 級で成立)。踏んだ罠: 滑らかな台では 1,200 球が単層に広がり山にならない(転がり抵抗は滑り摩擦の限界 μ_s g で飽和する)→ 粗い台 μ 1.0、軟接触の時定数 < 2·timestep は発散、Newton 解法は密な山で止まる → CG + 楕円錐。 `py -3.11 examples/poc_granular_heap_repose.py`
@@ -273,7 +273,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い)** — 既知の反射率チャートに既知の光源を掛けて合成し、角度誤差で測る。白パッチ法は素のチャートで 1.06 度と最良だが、**一番明るい 1 枚を外すだけで 8.45 度(8 倍)**、飽和 43% で 13.61 度 = ゼロ点に厳密退化する。灰色世界は有彩色が 60% を占めると29.79 度でゼロ点に負ける。**最適な p は場面ごとに 1 から ∞ まで動く**。 `py -3.11 examples/poc_white_balance.py`
 
 **separation**
-- **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
+- **4 方向の画素モザイクから鏡面を分ける** — 光沢金属、光沢樹脂、つや消し背景を 1024 px の 2×2 偏光子モザイクとして撮り、半解像度の 4 方向像、S0/S1/S2、DoLP、色相環付き AoLP、鏡面低減像を示す。消光比 120:1 の漏れ、白飛び、低 DoLP 部の角度雑音を残す。ブリュースター領域は DoLP 1、AoLP 誤差 0°。角度雑音の実測/閉形式は 1.00±20 %、消光比 1 の破壊探針では DoLP が 0.02 未満になる。従来のフレネル曲線と分離の偏りは検証図に残す。 `py -3.11 examples/poc_polarization_specular.py`
 - **偏光 4 方向の鏡面除去は金属では効かない(残る量を閉形式で当てる)** — 鏡面の偏光度 p を `fresnel_dielectric` / `fresnel_conductor` の s/p 反射率から出し、部分偏光の掃引を `polarization_render(D + (1-p)S, pS)` で描いて `polarization_separate` に戻す。★誘電体 n=1.5 の Brewster 角 56.3° では p=1、残り 0(3e-16)。30° では p=0.39 で鏡面の 61 % が「拡散」に残る。★アルミ相当(n=1.2, k=7.3)は p=0.05 で **94.8 % が残る** —— 道具は閉形式と 3e-16 で一致し、外れているのは『鏡面 = 完全偏光』の仮定。DoLP 地図も pS/(D+S) と一致。 `py -3.11 examples/example_polarization_metal.py`
 - **多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)** — 層構造を Kubelka–Munk で合成して真値を握り、下絵検出・顔料存在量・褪色前の色の復元を 9 手法で比べる。**可視だけ 16 バンドに割っても RGB と同じ**(再現率 0.118 対 0.119)。近赤外 1 枚は面ごとには完璧(AUC 1.000)なのに全体では 1 本も閾値が引けない —— 絵具ごとの近赤外反射率の差が下絵の信号より大きいため。近赤外の差分は逆に**剥落部で盲目**(0.013)になる。★MNF が PCA に負けた: 雑音共分散を横隣との差で作るので、下絵の上での横差分エネルギー(他所の 3.9 倍)を雑音として白色化していた。 `py -3.11 examples/poc_pigment_unmixing.py`
 - **海氷密接度(混合画素をどう数えるかで答えが変わる)** — ★ゼロ点(1 本のしきい値で 2 値化)は密接度 0.35・相関長 3 セルで **-4.2 ポイント**外し、線形混合分解は +0.02。対照群(標本化そのものの誤差 +0.01)が効いていて、**偏りは標本化ではなく数え方**だと分かる。★★同じしきい値・同じ真値でも塊の大きさで偏りが変わり(-4.2 → -0.2 ポイント)、**周長率で説明がつく**(偏り = -0.80 × 周長率 + 0.015、R² = 0.984)。第 3 成分(薄氷)は必ず配分され、同じ数字が真値の定義で -4.4 / +2.7 ポイントに化ける。 `py -3.11 examples/poc_sea_ice_concentration.py`
@@ -3064,7 +3064,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### lightfield / decode(3)
 - `lf_from_mla` `image2d → lightfield` — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field. · 例: `lightfield_depth`
 - `lf_stats` `lightfield → table` — Describe a light field: shape, angular centre, and the slope range it can carry. · 例: `lightfield_depth`
-- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`
+- `lf_to_mla` `lightfield → image2d` — Re-interleave a light field into a microlens-array raw frame (exact inverse). · 例: `lightfield_depth`, `plenoptic_decode_pipeline`, `poc_lightfield_depth`
 
 #### lightfield / depth(5)
 - `lf_all_in_focus` `lightfield × image2d → image2d` — Composite one everywhere-sharp image by refocusing each pixel at its own slope. · 例: `lightfield_depth`, `poc_compound_eye`
@@ -3105,7 +3105,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lifetime_phasor` `counts → table` — Phasor (frequency-domain) representation of a decay — the fit-free view. · 例: `photon_timeresolved`
 
 #### photon / spad(3)
-- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`
+- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`, `poc_dtof_ranging`
 - `spad_deadtime_correct` `countrate → countrate` — Recover the true photon rate from a dead-time-distorted measured rate. · 例: `photon_timeresolved`
 - `tcspc_coates_correct` `counts → counts` — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
@@ -3287,7 +3287,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `csi_stack_simulate` `depth → zscan` — Synthesise the ``(Z, H, W)`` scan stack an interference microscope records. · 例: `coherence_scanning`, `poc_interferometry_step`
 
 #### interferometry / surface(2)
-- `csi_contrast_map` `zscan → image2d` — Peak fringe modulation per pixel — the contrast (and validity) map. · 例: `coherence_scanning`
+- `csi_contrast_map` `zscan → image2d` — Peak fringe modulation per pixel — the contrast (and validity) map. · 例: `coherence_scanning`, `poc_interferometry_step`
 - `csi_height_map` `zscan → depth` — Height map from a ``(Z, H, W)`` coherence-scanning stack — the CSI inversion. · 例: `coherence_scanning`, `poc_focus_stacking`, `poc_interferometry_step`
 
 ### flyvision(22 ops / 12 categories)
@@ -4299,7 +4299,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### tomography / forward(3)
 - `ellipse_phantom` `入力なし → image2d` — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `ellipse_sinogram` `入力なし → sinogram` — The **closed-form** Radon transform of a sum of uniform ellipses. · 例: `ct_reconstruction`, `poc_ct_fidelity`
-- `radon_transform` `image2d → sinogram` — Forward parallel-beam projection: a slice in, a **sinogram** out. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `radon_transform` `image2d → sinogram` — Forward parallel-beam projection: a slice in, a **sinogram** out. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
 
 #### tomography / geometry(2)
 - `sinogram_center_of_rotation` `sinogram → measurement` — Where the axis of rotation actually is, in detector bins from the centre. · 例: `ct_reconstruction`
@@ -4311,7 +4311,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### tomography / reconstruct(3)
 - `backproject_sinogram` `sinogram → image2d` — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
-- `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
 - `sart_reconstruct` `sinogram → image2d` — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
 #### tomography / spectral_xray(14)
@@ -4447,7 +4447,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `zoom_inset` `image2d → image2d` — 拡大の差し込み ―― 元図に**枠**と**引き出し線**を付ける。 · 例: `annotate_gallery`, `poc_diabolo_model_and_vision`, `poc_food_cutting_measure`
 
 #### annotate / furniture(3)
-- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_sem_tem_same_particle`, `poc_simcal_thin_film`, `poc_stockpile_volume`
+- `color_bar` `image2d × lut → image2d` — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。 · 例: `annotate_gallery`, `poc_cad_scan_deviation`, `poc_ct_void_morphology`, `poc_dem_terrain`, `poc_interferometry_step`, `poc_lidar_terrain_change`, `poc_lightfield_depth`, `poc_multibeam_bathymetry`, `poc_pv_thermal_survey`, `poc_sem_tem_same_particle`, `poc_simcal_thin_film`, `poc_stockpile_volume`, `poc_thermography_ndt`
 - `legend_box` `image2d × entries → image2d` — 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。 · 例: `annotate_gallery`, `poc_driving_decisions`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`
 - `scale_bar` `image2d → image2d` — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。 · 例: `annotate_gallery`, `poc_sem_tem_same_particle`
 
@@ -4698,7 +4698,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sem_cd_measure` `pairs → table` — 線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_charging_series` `image2d → video` — 絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_electron_mc` `入力なし → table` — 平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。 · 例: `poc_sem_tem_same_particle`, `poc_virtual_sem_kv_cd_bse`
-- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_sem_tem_same_particle`, `poc_virtual_sem_kv_cd_bse`
+- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_sem_tem_same_particle`, `poc_sem_wafer_defect_edge_bias`, `poc_virtual_sem_kv_cd_bse`
 - `sem_line_profile` `入力なし → table` — 1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_tem_same_particle`, `poc_sem_wafer_defect_edge_bias`
 - `sem_se_escape_fraction` `入力なし → signal` — 正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。 · 例: `poc_virtual_sem_kv_cd_bse`

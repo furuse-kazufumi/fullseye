@@ -203,7 +203,7 @@ READS = {
         "docs/literature/OSS_LANDSCAPE.md", "docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
         "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
         "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
-        "docs/literature/sensor_simulation.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/literature/sensor_simulation.md",
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",

@@ -10,7 +10,7 @@
 
 *六幕，全部是真實的運算子輸出：邊緣方向 / 連通域篩選 / 次像素量測 / SDF 轉網格 / 點雲分群 / 鏡頭離焦。*
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **939** 個（以 registry 計），其中 **981/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **940** 個（以 registry 計），其中 **981/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
 
 ★ **在影像處理函式庫中少見，Fullseye 還內建「虛擬光學設計」** —— 薄/厚透鏡、光線追蹤、Seidel 像差與 PSF/MTF，並以阻尼最小二乘（Levenberg–Marquardt）最佳化透鏡處方本身（`optimize_lens`）。可從**設計成像系統，到用上述運算子檢查其成像，一氣呵成** —— 在半導體與精密計量中是明確的差異化。
 
@@ -53,16 +53,16 @@
 
 ### 驗證階段
 
-95 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.2)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+94 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.2)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
 | `research-prototype` | 已實作,但測試或可執行的範例尚未齊全 | 0 |
-| `verified-synthetic` | 已用合成真值自動驗證 | 77 |
+| `verified-synthetic` | 已用合成真值自動驗證 | 76 |
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-431 個範例中,檢查實際執行的有 431 個。
+426 個範例中,檢查實際執行的有 426 個。
 
 ### 各版本的運算子數
 
@@ -138,7 +138,7 @@
 
 共有 **3,535 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **67 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 940/940、型別台帳 2574/2586、單行門面 `fullseye.<名稱>` 703/1479 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 940/940、型別台帳 2574/2586、單行門面 `fullseye.<名稱>` 703/1478 —— **門面側僅涵蓋一半**。
 
 **內容實測**: 3535 篇中，附有可執行範例的 **3524** 篇(11 篇沒有)，用法說明 120 字以上的 **3347** 篇(188 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3535 篇全有。
 
@@ -293,7 +293,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 291 篇
+## 文件地圖 — 共 282 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,535 篇運算子說明與 67 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -435,7 +435,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(208)
+**Other**(199)
 
 | 文件 | 內容 |
 |---|---|
@@ -570,7 +570,6 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
 | [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
 | [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
-| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | id: reuse-computation-results |
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
@@ -639,13 +638,5 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
-| [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
-| [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
-| [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
-| [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
-| [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
-| [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
-| [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
-| [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
 
 <!-- docmap:end -->

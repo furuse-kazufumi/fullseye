@@ -10,7 +10,7 @@
 
 *Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.*
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **939** operators (as counted in the registry), provides genuine implementations of **981/2313** actual HALCON operators, and spans 48 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **940** operators (as counted in the registry), provides genuine implementations of **981/2313** actual HALCON operators, and spans 48 categories.
 
 ★ **Rare for an image-processing library, Fullseye also includes virtual optical design** — thin/thick lenses, ray tracing, Seidel aberrations and PSF/MTF, plus damped-least-squares (Levenberg–Marquardt) optimisation of the lens prescription itself (`optimize_lens`). You can **design the imaging system and then inspect its image with the operators above, end to end** — a differentiator that matters for semiconductor and precision metrology.
 
@@ -53,16 +53,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 95 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.2); stage definitions in [MATURITY.md](MATURITY.md)).
+The 94 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.7.2); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 77 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 76 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 431 examples, 431 are actually run by a gate.
+Of 426 examples, 426 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -138,7 +138,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **3,535 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **67 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 940/940, typed ledger 2574/2586, one-line facade `fullseye.<name>` 703/1479 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 940/940, typed ledger 2574/2586, one-line facade `fullseye.<name>` 703/1478 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 3535 notes, **3524** link at least one runnable example (11 have none) and **3347** have a usage section of 120+ characters (188 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3535.
 
@@ -293,7 +293,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 291
+## Document map — all 282
 
 The complete map, so that **no document is unreachable from this index** (the 3,535 per-op notes and 67 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -435,7 +435,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(208)
+**Other**(199)
 
 | document | what it covers |
 |---|---|
@@ -570,7 +570,6 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
 | [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
 | [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
-| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | id: reuse-computation-results |
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
@@ -639,13 +638,5 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
-| [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
-| [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
-| [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
-| [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
-| [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
-| [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
-| [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
-| [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
 
 <!-- docmap:end -->

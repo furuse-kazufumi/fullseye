@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 635 of 1543. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 635 of 1545. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -261,13 +261,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
 - **L220** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
-- **L332** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
-- **L371** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
-- **L436** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
-- **L604** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
-- **L721** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L733** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L765** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L378** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L417** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L482** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L650** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
+- **L767** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L779** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L811** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -736,10 +736,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_interferometry_step.py`
 
-- **L278** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
-- **L321** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
-- **L393** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
-- **L433** — ★A small spread is no evidence of correctness
+- **L401** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L444** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L516** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L556** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_interreflection_fringe_error.py`
 
@@ -787,9 +787,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** — 2b. ★ Gap (d): the docstring says 0-d but it is actually (1,)
-- **L610** — 6. ★ Gap (a): the default linear pulls 1.15 toward 1.0, cubic does not
-- **L634** — 10. ★ Gap (e) was closed on 2026-09-06. It has been rewritten toward **pinning the closed state** (previously it asserted that 'a warning is raised').
+- **L707** — 2b. ★ Gap (d): the docstring says 0-d but it is actually (1,)
+- **L723** — 6. ★ Gap (a): the default linear pulls 1.15 toward 1.0, cubic does not
+- **L747** — 10. ★ Gap (e) was closed on 2026-09-06. It has been rewritten toward **pinning the closed state** (previously it asserted that 'a warning is raised').
 
 ## `examples/poc_livestock_body_volume.py`
 
@@ -970,9 +970,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_pv_thermal_survey.py`
 
 - **L381** — ★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a "fault" under the whole-average criterion.
-- **L482** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
-- **L711** — ★The cost of the module median —— blind to a whole-module anomaly
-- **L1169** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
+- **L583** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
+- **L812** — ★The cost of the module median —— blind to a whole-module anomaly
+- **L1270** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
 
 ## `examples/poc_pxrd_phase_peel.py`
 
@@ -1186,21 +1186,21 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L61** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
 - **L126** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
-- **L142** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
-- **L177** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
-- **L235** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
-- **L249** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
-- **L267** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
-- **L302** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
-- **L332** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
-- **L363** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
-- **L410** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
-- **L420** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
-- **L441** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
-- **L529** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
-- **L576** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
-- **L603** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
-- **L684** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
+- **L236** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
+- **L271** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
+- **L329** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
+- **L343** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
+- **L361** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
+- **L396** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
+- **L426** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
+- **L457** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
+- **L504** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
+- **L514** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
+- **L535** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
+- **L623** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
+- **L670** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
+- **L697** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
+- **L778** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
@@ -2084,26 +2084,26 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `studio.py`
 
-- **L343** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L352** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
-- **L1552** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
-- **L1571** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1581** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1604** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1615** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2147** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6343** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L6831** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L8778** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L9628** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L9784** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L10657** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L11554** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L11627** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L11630** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L13119** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L13138** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L14054** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L345** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L354** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
+- **L1554** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
+- **L1573** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1583** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1606** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1617** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2210** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L6406** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6894** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L8841** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L9691** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L9847** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L10720** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L11617** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L11690** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L11693** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L13182** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L13201** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L14200** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `superquadric.py`
 
@@ -2261,12 +2261,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L42** — ★The op set changes with the environment (Linux CI lacks torch/kornia/mahotas/xfeatures2d and has 859 ops; locally 885). A check comparing the locally generated docs against the **live registry** is only meaningful in a full environment —— same convention as test_opdocs: skip if not complete (the missing backend name appears in the reason). On the 2026-09-07 CI, 22 items failed on this. Environment-independent checks (file existence, content volume, figure existence) still run.
 - **L80** — ★Looking only at Markdown syntax falls short. `docs/GALLERY.md` uses `<img src="...">` in 14 places inside tables, and a naive scan for `](` sees none of them (found in Codex's adversarial review, 2026-09-06). Also look at raw HTML.
-- **L189** — ★Allowing duplicate markers lets an old table stay behind while still going green. The generator only rewrites the first start–end, so the second stays forever old and keeps getting published (Codex's adversarial review, 2026-09-06).
-- **L210** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
-- **L249** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
-- **L312** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
-- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
-- **L467** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
+- **L133** _(ja)_ — ★2026-10-21(ユーザー指示): docs/view2026/ は論文の QR コードが入口で、発表(12/3-4)まで 他の頁からリンクを張らない(目立たせない)。地図(_DOCMAP_SKIP)からも外してある。 発表後にここと _DOCMAP_SKIP の両方から外して地図に戻す。
+- **L193** — ★Allowing duplicate markers lets an old table stay behind while still going green. The generator only rewrites the first start–end, so the second stays forever old and keeps getting published (Codex's adversarial review, 2026-09-06).
+- **L214** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
+- **L253** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
+- **L316** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
+- **L404** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L471** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
 
 ## `tests/test_docs_no_local_paths.py`
 
@@ -2736,8 +2737,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L48** — ★The translation table lives in **a separate file from the op docs**. Using `opdocs.T` would register every source string in `opdocs.SEEN_STRINGS`, and the existing "holes in the frame translations" gate would count all 604 of them as holes and turn CI red — that gate exists to keep frame strings complete in all five languages, while this one is a fill-as-you-go collection. **Mixing them into one table lets one discipline break the other.**
 - **L82** — ★One block = a run of `#` comment lines that starts from a line containing ★ and continues at the same indentation. Sphinx-style `#:` comments are also picked up. Stripping only `#` and whitespace leaves a `:` at the front
 - **L84** — left behind, and "‎: ★…" appears in the output artifact (it actually did). Strip `:` here as well.
-- **L108** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
-- **L200** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
+- **L128** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
+- **L220** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
 
 ## `tools/gen_docs_index_ops.py`
 
@@ -2748,7 +2749,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L498** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
 - **L518** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
 - **L529** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L690** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L550** _(ja)_ — ★2026-10-21(ユーザー指示): view2026/ は論文の QR の行き先。会場で配るまで他の頁からリンクを張らない (地図に載せると docs/README* から辿れてしまう)。robots.txt でも Disallow にしてある。
+- **L692** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 
@@ -2849,13 +2851,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L50** _(ja)_ — 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ―― 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
 - **L144** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
-- **L338** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
-- **L361** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
-- **L387** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
-- **L412** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
-- **L461** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
-- **L467** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
-- **L573** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+- **L341** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+- **L365** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+- **L391** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
+- **L416** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+- **L465** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+- **L471** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+- **L577** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
 
 ## `tools/gen_wingstudio_gallery.py`
 
