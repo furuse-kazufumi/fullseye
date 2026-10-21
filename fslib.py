@@ -611,7 +611,7 @@ def _order_ids(lbl: np.ndarray, k: int) -> np.ndarray:
 
 
 @op("connection", "numpy")
-def _connection_numpy(reg: Region) -> ObjectSet:
+def _connection_numpy(reg: Region, neighborhood: int = 8) -> ObjectSet:
     # ★2026-09-14: ここは長らく `ndi.label(mask)` = **4 連結の既定**だった。
     #   cv2 backend は `connectedComponentsWithStats(..., 8, ...)` で 8 連結なので、
     #   **同じ op が backend によって違う物体数を返していた** —— 8x8 の市松模様で
@@ -619,12 +619,14 @@ def _connection_numpy(reg: Region) -> ObjectSet:
     #   変わるという、いちばん静かな壊れ方。C ABI を Rust で 2 度目に実装して
     #   突き合わせたときに見つかった(fullseye_abi.h の fs_connection に
     #   8 連結と明記した)。回帰は tests/test_fslib.py が backend 横断で見る。
-    lbl, k = ndi.label(reg._mask, structure=np.ones((3, 3), dtype=bool))
+    structure = (np.ones((3, 3), dtype=bool) if neighborhood == 8
+                 else ndi.generate_binary_structure(2, 1))
+    lbl, k = ndi.label(reg._mask, structure=structure)
     return ObjectSet(lbl.astype(np.int32), _order_ids(lbl, k))
 
 
 @op("connection", "cv2")
-def _connection_cv2(reg: Region) -> ObjectSet:
+def _connection_cv2(reg: Region, neighborhood: int = 8) -> ObjectSet:
     """One pass produces the labels *and* the stats — carry both."""
     import cv2
     # ★2026-09-14: ここは `(mask, 8, cv2.CV_32S)` と**位置引数**で書いてあった。
@@ -636,7 +638,7 @@ def _connection_cv2(reg: Region) -> ObjectSet:
     #   (差分ファジングの変異解析で 4 連結を注入したのに一切検出されず、掘ったら
     #    注入のほうが効いていなかった、という経路で見つかった。)
     k, lbl, stats, cents = cv2.connectedComponentsWithStats(
-        reg._mask.astype(np.uint8), connectivity=8, ltype=cv2.CV_32S)
+        reg._mask.astype(np.uint8), connectivity=neighborhood, ltype=cv2.CV_32S)
     return ObjectSet(lbl, _order_ids(lbl, k - 1),
                      {"_cc_stats": stats, "_cc_centroids": cents})
 
@@ -733,9 +735,29 @@ def threshold(img: FImage, lo: float, hi: float) -> Region:
     return _dispatch("threshold", img, lo, hi)
 
 
-def connection(reg: Region) -> ObjectSet:
+def connection(reg: Region, neighborhood: int = 8,
+               max_connection: int | None = None) -> ObjectSet:
+    """Split a region using 4- or 8-neighborhood connectivity.
+
+    ``max_connection`` fails closed when the resulting count exceeds the limit;
+    it never truncates. Example: ``connection(Region(np.eye(2, dtype=bool)),
+    neighborhood=4, max_connection=2)``.
+    """
     _require(reg, Region, "connection")
-    return _dispatch("connection", reg)
+    if isinstance(neighborhood, (bool, np.bool_)) or neighborhood not in (4, 8):
+        raise FsValueError("connection: neighborhood must be 4 or 8, got %r"
+                           % (neighborhood,))
+    if max_connection is not None:
+        if (isinstance(max_connection, (bool, np.bool_)) or
+                not isinstance(max_connection, (int, np.integer)) or
+                max_connection < 0):
+            raise FsValueError("connection: max_connection must be a non-negative int or None")
+    result = _dispatch("connection", reg, neighborhood)
+    count = len(result.ids)
+    if max_connection is not None and count > max_connection:
+        raise FsValueError("connection: component count %d exceeds max_connection limit %d"
+                           % (count, max_connection))
+    return result
 
 
 def select_shape(objs: ObjectSet, feature: str, vmin: float, vmax: float) -> ObjectSet:

@@ -2,6 +2,8 @@ import numpy as np
 
 import image_gen
 import ops
+import fslib
+import pytest
 
 
 def test_reproduced_h01_keep_pixels_preserves_matrix_and_tracks_domain():
@@ -58,3 +60,17 @@ def test_reproduced_h06_mean_width_height_are_independent_and_odd():
     horizontal = fn(image, 0.26, 0.01)  # width 5, height 1
     vertical = fn(image, 0.01, 0.26)  # width 1, height 5
     assert not np.array_equal(horizontal, vertical)
+
+
+def test_reproduced_h08_connection_neighborhood_and_limit():
+    mask = np.eye(2, dtype=bool)
+    reg = fslib.Region(mask)
+    for backend in fslib.backends_for("connection"):
+        profile_name = "reference" if backend == "numpy" else "industrial"
+        with fslib.profile(profile_name):
+            assert len(fslib.connection(reg).ids) == 1
+            assert len(fslib.connection(reg, neighborhood=4).ids) == 2
+            with pytest.raises(fslib.FsValueError, match="count 2.*limit 1"):
+                fslib.connection(reg, neighborhood=4, max_connection=1)
+    with pytest.raises(fslib.FsValueError):
+        fslib.connection(reg, neighborhood=6)
