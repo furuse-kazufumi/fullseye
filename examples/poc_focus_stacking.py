@@ -429,7 +429,8 @@ def main():
     figs.save_grid("depth_map", [depth, dmap, err],
                    ["真値の距離 [mm]", "融合が出した距離画像 [mm]", "誤差(推定 - 真値)"],
                    title="同じ融合が出したもう一つの答え —— 距離画像(深度地図)", ncols=3,
-                   signed=[False, False, True],
+                    signed=[False, False, True],
+                    kind=["depth", "depth", "displacement"], unit="mm",
                    caption="合焦点法は全焦点画像と同時に距離画像も出す。ただし左下の"
                            "無テクスチャの四角だけ、誤差が掃引全域にばらけた乱数になって"
                            "いる(段差帯のハローも見える)—— 絵ほど距離は当てにならない。")

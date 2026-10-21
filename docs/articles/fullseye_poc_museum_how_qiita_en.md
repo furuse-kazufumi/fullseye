@@ -170,21 +170,29 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.016 —— Ranging by Counting Photons — How Many for How Many Millimetres?
 
-[![Ranging by Counting Photons — How Many for How Many Millimetres?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_histograms.png)
+[![Ranging by Counting Photons — How Many for How Many Millimetres?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
-*↑ **Ranging by Counting Photons — How Many for How Many Millimetres?** ―― Range read from an arrival-time histogram built by bin-integrating a Gaussian at the round-trip time and drawing Poisson samples. With 200 photons the raw peak position errs by 11.02 mm and the gated centroid by 2.29 mm, riding the 31.83 mm/√N bound at 1.00 to 1.07x. With background the plain centroid collapses by two orders (564 mm at SBR 0.031), and the family's recommended Gaussian fit at 8.82 mm loses to a gated centroid a user can write in six lines.*
+*↑ **Ranging by Counting Photons — How Many for How Many Millimetres?** ―― The lead figure is a 48-frame, 576 x 432 light-front video. An amber light band from a display window widened to 7 % of the depth span crosses from near to far over a grey return-amplitude image stretched from the 1st to 99.5th percentiles with gamma 0.7. A second figure labels an 8x flying-pixel crop, corner bowing and dark-object noise.*
 
-[![背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_methods.png)
+[![飛び画素（8倍拡大）、壁隅の系統的な湾曲、低反射物体の距離雑音を同じ尺度で示す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_labelled_artefacts.png)
 
-*↑ The measurement ―― 背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― Flying pixels (8x crop), systematic corner bowing and dark-object range noise shown at a readable scale.*
 
-[![ゲート重心は CRB に寄り添って落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/03_crb_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/03_crb_scaling.png)
+[![距離出力｜反射振幅（γ=0.5）｜ピーク/背景比。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/03_range_amplitude_confidence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/03_range_amplitude_confidence.png)
+
+*↑ 距離出力｜反射振幅（γ=0.5）｜ピーク/背景比。*
+
+[![平面、角、暗い物体。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/04_pixel_histograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/04_pixel_histograms.png)
+
+*↑ 平面、角、暗い物体。*
+
+[![背景が無ければ素の重心で足りる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/06_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/06_methods.png)
+
+*↑ 背景が無ければ素の重心で足りる。*
+
+[![ゲート重心は CRB に寄り添って落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/07_crb_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/07_crb_scaling.png)
 
 *↑ ゲート重心は CRB に寄り添って落ちる。*
-
-[![素の推定は μ にほぼ比例して手前へずれる(5 光子/サイクルで -34.5 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/04_pileup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/04_pileup.png)
-
-*↑ 素の推定は μ にほぼ比例して手前へずれる(5 光子/サイクルで -34.5 mm)。*
 
 ```
 py -3.11 examples/poc_dtof_ranging.py
@@ -192,9 +200,9 @@ py -3.11 examples/poc_dtof_ranging.py
 
 Source: [examples/poc_dtof_ranging.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py)
 
-This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dtof_ranging)
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dtof_ranging)
 
-Ops used (notes): [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_cube_depth.html) · [`dtof_cube_simulate`](https://furuse.work/ops/photon/dtof/dtof_cube_simulate.html) · [`dtof_depth`](https://furuse.work/ops/photon/dtof/dtof_depth.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`tcspc_background_subtract`](https://furuse.work/ops/photon/tcspc/tcspc_background_subtract.html) · [`tcspc_coates_correct`](https://furuse.work/ops/photon/spad/tcspc_coates_correct.html) · [`tcspc_simulate`](https://furuse.work/ops/photon/tcspc/tcspc_simulate.html)
+Ops used (notes): [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_cube_depth.html) · [`dtof_cube_simulate`](https://furuse.work/ops/photon/dtof/dtof_cube_simulate.html) · [`dtof_depth`](https://furuse.work/ops/photon/dtof/dtof_depth.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`spad_deadtime_apply`](https://furuse.work/ops/photon/spad/spad_deadtime_apply.html) · [`tcspc_background_subtract`](https://furuse.work/ops/photon/tcspc/tcspc_background_subtract.html) · [`tcspc_coates_correct`](https://furuse.work/ops/photon/spad/tcspc_coates_correct.html) · [`tcspc_simulate`](https://furuse.work/ops/photon/tcspc/tcspc_simulate.html)
 
 ## No.2026.119 —— The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read
 
@@ -774,7 +782,7 @@ Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelsh
 
 ## No.2026.266 —— Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations
 
-[![Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/04_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/04_pool_views.png)
+[![Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views.png)
 
 *↑ **Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations** ―― Water is a moving lens seen from above and a colour filter that thickens with distance seen from below. Ten new ops (`watermedia`, category `watermedia` of `opsoptics`): `ocean_spectrum` (S(omega) of Pierson-Moskowitz and JONSWAP, significant height and period), `ocean_height_field` (a Tessendorf FFT sea: height, slopes, normals, choppiness, depth), `fresnel_water_air` (the index of water is the real part of the material table with dispersion; flags total internal reflection), `snell_window` (window radius and apparent depth), `refracted_view` (where an underwater point appears, as a stationary point of the optical path: bisection on a flat surface, Newton iteration on a wavy one with the vector Snell law verified and failures returned as NaN), `water_attenuation` (Pope & Fry pure-water absorption, Smith & Baker scattering, Solonenko & Mobley a, b and Kd of the Jerlov types), `underwater_image` (Akkaynak & Treibitz image formation: direct signal plus backscatter), `phase_function_hg` / `scattering_phase_petzold` (the Petzold volume scattering function) and `cylinder_lens_caustic` (paraxial focus and real-ray caustic of a cylinder). (1) A Pierson-Moskowitz sea at 8 m/s: significant height 1.3656 m (0.21 U^2/g = 1.3705 m, 0.36 %), peak 1.0753 rad/s (0.877 g/U = 1.0751, 2e-4), JONSWAP with gamma = 1 equals PM to 1e-9, the height is real (imaginary part 3.5e-16), the spatial variance is within 0.02 % of the integral of the spectrum (8 seeds) and a single mode has the period 2 pi / omega to 2.8e-16. Against Cox & Munk (0.003 + 0.00512 U) the slope variance of the resolved waves alone is 11 % at 5 m/s and 16 % at 10 m/s (PM has no capillary waves); carrying the saturation range to the capillary wave number 370 /m gives 98 % (-2.5 %) at 5 m/s but 61 % (-38.7 %) at 10 m/s, kept in the gates as the limit that the constant alpha of PM does not grow with the wind. (2) A checkerboard on the bottom of a 2 m pool: the apparent depth straight above is d / n to 0, the found path satisfies Snell's law to 7.8e-16, the flat refraction point agrees with the quartic to 1e-15 and with a direct minimisation of the optical path to 2.8e-8, and on a wavy surface the backward ray trace that builds the image returns to the same bottom point within 9.6e-9 m. In a fisheye looking up from under water the total internal reflection starts within one pixel (1.5 degrees) after the critical angle 48.59 degrees. (3) A water-filled bottle (R = 30 mm, n = 1.52, wall 1.5 mm, water 1.333): paraxial focus 61.24 mm, marginal ray 40.01 mm (spherical aberration 21.23 mm); the paraxial focus of a rod matches n R / (2 (n - 1)) and the real-ray focus matches the trigonometric chord to 3.6e-14. The power is 0.01633 /mm filled and -0.00120 /mm empty (ratio 13.6); on a screen 50 mm behind, the centre is 4.88 times the incident light where there is water (peak 13.97) and 0.94 times where the bottle is empty. (4) A colour chart at 1, 5 and 15 m: the Pope & Fry absorption has its minimum 0.00442 /m at 417.5 nm and 0.624 /m at 700 nm (table values), Beer-Lambert agrees with glassmirror to 1.1e-16, a count of 200,000 photons follows the exponential law to 0.2 sigma, Kd at 500 nm is 0.029 < 0.064 < 0.109 < 0.120 (I < II < III < 1C), red decays 12.2 times faster than blue in Jerlov I (transmission over 10 m: red 0.074, green 0.557, blue 0.807) and the R of the red patch at 15 m is 0.010. (5) Limits: the flat-surface apparent depth d / n is wrong the more obliquely one looks (7 % too deep at 30 degrees, 52 % at 60). The probes that break the answer on purpose (an index of 1.4, alpha changed by 10 %, Snell's law reversed) turn a gate red. No learning, no calibration, 43 gates.*
 
@@ -782,21 +790,25 @@ Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelsh
 
 *↑ The measurement ―― Tessendorf の FFT。有義波高 1.37 m、周期 5.8 s。波は +x(右)へ進む。 (figure labels are in Japanese; the numbers are the same)*
 
-[![JONSWAP はピークを γ 倍に尖らせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_spectrum.png)
+[![JONSWAP はピークを γ 倍に尖らせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum.png)
 
 *↑ JONSWAP はピークを γ 倍に尖らせる。*
 
-[![空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_bottle_caustic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_bottle_caustic.png)
+[![空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic.png)
 
 *↑ 空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。*
 
-[![上: 外洋(ジャーロフ I)、下: 沿岸(3C)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/07_diver_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/07_diver_chart.png)
+[![上: 外洋(ジャーロフ I)、下: 沿岸(3C)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart.png)
 
 *↑ 上: 外洋(ジャーロフ I)、下: 沿岸(3C)。*
 
-[![純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/09_water_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/09_water_spectra.png)
+[![純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra.png)
 
 *↑ 純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。*
+
+[![同じFFT海面の時刻を進めると波面が風下へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)
+
+*↑ The animation ―― 同じFFT海面の時刻を進めると波面が風下へ動く。*
 
 ```
 py -3.11 examples/poc_water_transparent_media.py
@@ -804,7 +816,7 @@ py -3.11 examples/poc_water_transparent_media.py
 
 Source: [examples/poc_water_transparent_media.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_transparent_media.py)
 
-This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_transparent_media)
+This run produced **20 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_transparent_media)
 
 Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/glassbody/beer_lambert_transmittance.html) · [`cylinder_lens_caustic`](https://furuse.work/ops/optics/watermedia/cylinder_lens_caustic.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`ocean_spectrum`](https://furuse.work/ops/optics/watermedia/ocean_spectrum.html) · [`phase_function_hg`](https://furuse.work/ops/optics/watermedia/phase_function_hg.html) · [`refract_rays`](https://furuse.work/ops/optics/glassbody/refract_rays.html) · [`refracted_view`](https://furuse.work/ops/optics/watermedia/refracted_view.html) · [`scattering_phase_petzold`](https://furuse.work/ops/optics/watermedia/scattering_phase_petzold.html) · [`snell_window`](https://furuse.work/ops/optics/watermedia/snell_window.html) · [`underwater_image`](https://furuse.work/ops/optics/watermedia/underwater_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html)
 
@@ -830,9 +842,13 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 *↑ 全体のコントラスト 0.449 → 0.558。*
 
-[![内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_ratio.png)
+[![内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio.png)
 
 *↑ 内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。*
+
+[![照明角を動かすと濡れた板のてかりが移動する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)
+
+*↑ The animation ―― 照明角を動かすと濡れた板のてかりが移動する。*
 
 ```
 py -3.11 examples/poc_water_inspection_images.py
@@ -840,7 +856,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 Source: [examples/poc_water_inspection_images.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_water_inspection_images.py)
 
-This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_inspection_images)
+This run produced **16 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_inspection_images)
 
 Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bottle_image.html) · [`canny`](https://furuse.work/ops/2d/segmentation/canny.html) · [`caustic_floor_segmentation`](https://furuse.work/ops/optics/watervision/caustic_floor_segmentation.html) · [`caustic_irradiance`](https://furuse.work/ops/optics/watervision/caustic_irradiance.html) · [`fill_level_from_image`](https://furuse.work/ops/optics/watervision/fill_level_from_image.html) · [`fresnel_water_air`](https://furuse.work/ops/optics/watermedia/fresnel_water_air.html) · [`ocean_height_field`](https://furuse.work/ops/optics/watermedia/ocean_height_field.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`underwater_inspection_image`](https://furuse.work/ops/optics/watervision/underwater_inspection_image.html) · [`water_attenuation`](https://furuse.work/ops/optics/watermedia/water_attenuation.html) · [`wet_dry_inspection_pair`](https://furuse.work/ops/optics/watervision/wet_dry_inspection_pair.html) · [`wet_surface_appearance`](https://furuse.work/ops/optics/watervision/wet_surface_appearance.html)
 
@@ -850,23 +866,23 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 *↑ **Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace** ―― A lens-design screen reports spot diagrams and MTF numbers but not what the prescription records when it photographs a document one metre away. The exit pupil is sampled from the sensor, every ray is traced backwards through the whole prescription (Kolb, Mitchell & Hanrahan 1995), the scene is shaded in object space, and photons, shot noise, read noise and quantisation follow. Eight new ops (`lensrender`, category `lensrender` of `opsoptics`): `lens_scene` (validated planes, spheres, meshes and lights), `exit_pupil_samples`, `trace_sensor_rays` (sensor, pupil, every surface backwards; vignetted and totally reflected rays are NaN and flagged), `scene_radiance` (Lambertian plus Blinn-Phong plus shadows), `render_scene_through_lens` (irradiance, electrons, noise, image), `bokeh_shape` (the cat's eye), `render_ghost_overlay` (two-reflection ghosts) and `render_compare_prescriptions` (a quality table per prescription). (1) The backward trace is the reverse of `ray_bundle` (entrance point 8.7e-15 mm, direction 4.2e-16); a white plane through an ideal lens gives pi L sin^2(alpha) to 2e-6 relative, a point source lands on one pixel with the photon count I Omega t QE lambda/hc to 1e-6, the 15 checkerboard edges follow `distortion_map` to 0.096 px (the distortion is 5.2 px at the outer edge) and the lateral colour at 0.7 field follows `chromatic_shift` to 0.08 px. (2) Two triplets of the same EFL and F-number (one with its radii detuned by 1.5 times 7 to 10 %) photograph a resolution chart at 1 m: the on-axis RMS spot is 10.7 and 53.4 um (5.0 times), the 10-90 % edge rise 4.6 and 15.4 px, MTF50 0.116 and 0.053 cyc/px, in the order of `spot_stats`. (3) The bokeh of a point at 0.5 m through an ideal lens is the thin-lens circle of confusion to 0.31 %, and F/8 is 0.349 times F/2.8 (2.8/8 = 0.350). With a round baffle 20 mm behind an ideal lens the cat's-eye area ratio agrees with the closed form for the overlap of two discs, 0.635, to 1.6 % (hull 0.625, rendered 0.639, pupil pass 0.636) and is symmetric about the meridional plane to 3.6e-15 mm. At the corner of the triplet field curvature makes the blur disc itself 1.3 times larger, so its area ratio does not equal the pupil pass (stated). (4) The relative illumination of a white plane follows `lensimage` to 1.61 % up to 0.7 field and differs by 3.2 % at 8.7 degrees (object-side against image-side cos^4); a singlet with the stop in front gives a -6.6 % barrel grid. (5) The energy ratios of 15 ghosts equal the closed form r^2 (1-r)^(2(j-i)-2) to 4.4e-16, the centroids agree with `ghost_analysis` to 8e-4 px and a reflectance of 0 gives an overlay of exactly 0. (6) The contrast of a 0.2 mm scratch (10.4 um on the sensor) is 0.547 through the good lens and 0.261 (48 %) through the detuned one, against 0.542 and 0.261 from an independent prediction (forward-traced spot convolved with the line). (7) Honest limit: geometric optics has no diffraction, so the point image of the good lens stopped down to F/11 is drawn at 0.32 times the Airy disc (at F/6.25, aberration-limited, it is 2.7 times). (8) Break-it probes (reversed index ratio, aperture radius off by 10 %, focus moved to 1.5 m) turn the gates red. Learning 0, calibration 0, 30 gates.*
 
-[![RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_quality_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_quality_table.png)
+[![同じチャートを良好な処方からずらした処方へ連続的に比較する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)
 
-*↑ The measurement ―― RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 同じチャートを良好な処方からずらした処方へ連続的に比較する。 (figure labels are in Japanese; the numbers are the same)*
 
-[![F/2.8 では 1 m の緑の球だけが締まり、手前の赤い球と奥の青い球、市松の背景(4 m)はぼける。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_depth_of_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_depth_of_field.png)
+[![RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table.png)
 
-*↑ F/2.8 では 1 m の緑の球だけが締まり、手前の赤い球と奥の青い球、市松の背景(4 m)はぼける。*
+*↑ RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。*
 
-[![像は点(収差ゼロ)なので、ボケは瞳と遮光板の像の重なり ―― 2 つの円の重なりの閉形式 0.635 に、凸包の面積比 0.633、瞳の通過率、描いた絵が 5 % 以内で一致する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye_ideal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye_ideal.png)
+[![遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye.png)
 
-*↑ 像は点(収差ゼロ)なので、ボケは瞳と遮光板の像の重なり ―― 2 つの円の重なりの閉形式 0.635 に、凸包の面積比 0.633、瞳の通過率、描いた絵が 5 % 以内で一致する。*
+*↑ 遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。*
 
-[![絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/07_distortion_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/07_distortion_grid.png)
+[![絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid.png)
 
 *↑ 絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。*
 
-[![良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/09_scratch_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/09_scratch_profile.png)
+[![良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile.png)
 
 *↑ 良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。*
 
@@ -876,7 +892,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 Source: [examples/poc_photograph_through_prescription.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 
-This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photograph_through_prescription)
+This run produced **22 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_photograph_through_prescription)
 
 Ops used (notes): [`bokeh_shape`](https://furuse.work/ops/optics/lensrender/bokeh_shape.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`depth_of_field`](https://furuse.work/ops/optics/geometric/depth_of_field.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`exit_pupil_samples`](https://furuse.work/ops/optics/lensrender/exit_pupil_samples.html) · [`ghost_analysis`](https://furuse.work/ops/optics/noncoaxial/ghost_analysis.html) · [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`noncoaxial_system`](https://furuse.work/ops/optics/noncoaxial/noncoaxial_system.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`relative_illumination`](https://furuse.work/ops/optics/geometric/relative_illumination.html) · [`render_compare_prescriptions`](https://furuse.work/ops/optics/lensrender/render_compare_prescriptions.html) · [`render_ghost_overlay`](https://furuse.work/ops/optics/lensrender/render_ghost_overlay.html) · [`render_scene_through_lens`](https://furuse.work/ops/optics/lensrender/render_scene_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`trace_sensor_rays`](https://furuse.work/ops/optics/lensrender/trace_sensor_rays.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
@@ -1238,23 +1254,31 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.053 —— The Arrival-Time Surface as an Isosurface in (x, y, t)
 
-[![The Arrival-Time Surface as an Isosurface in (x, y, t)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_dt_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_dt_sweep.png)
+[![The Arrival-Time Surface as an Isosurface in (x, y, t)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
-*↑ **The Arrival-Time Surface as an Isosurface in (x, y, t)** ―― The arrival-time surface of wavefronts spreading from point sources, extracted as an isosurface of the (x, y, t) volume. The null (first frame above threshold) is biased by Δt/2, which more frames cannot remove; linear sub-frame interpolation is 27x better (0.0209 ms). Parabolic interpolation loses to linear, and linear is at its best (a 3.8x margin) when the threshold sits at the Gaussian's inflection point θ = 0.6065.*
+*↑ **The Arrival-Time Surface as an Isosurface in (x, y, t)** ―― The left panel of the lead image shows only the last 1 ms at a display time of 3 ms (5.9 px of travel): sparse moving-edge ON events are orange, OFF events cyan, and no-event pixels grey. The middle panel is the time surface and the right panel keeps the whole-clip count. The arrival video has 171 frames at 624 x 586 and 20 fps.*
 
-[![変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。交点は θ≈0.35 と θ≈0.75。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_threshold_crossover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_threshold_crossover.png)
+[![方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate.png)
 
-*↑ The measurement ―― 変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。交点は θ≈0.35 と θ≈0.75。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![各帯の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_merge_line_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_merge_line_speed.png)
+[![両対数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep.png)
+
+*↑ 両対数。*
+
+[![変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover.png)
+
+*↑ 変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。*
+
+[![各帯の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed.png)
 
 *↑ 各帯の中央値。*
 
-[![差は上下 99 % 分位(±0.0327 ms)で切った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_arrival_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_arrival_surface.png)
+[![差は上下 99 % 分位(±0.0327 ms)で切った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface.png)
 
 *↑ 差は上下 99 % 分位(±0.0327 ms)で切った。*
 
-[![動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_arrival_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_arrival_video.gif)
+[![動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)
 
 *↑ The animation ―― 動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x) を1 つの体積とみなしたときの等値面が、こうして 1 枚の面になる。点線は撮る前に閉形式で予測した合流線。下段は行 72 の断面で、白 = 真値、橙 = ゼロ点(初めてしきい値を超えたコマの時刻、1 ms の階段)、青 = 線形補間。最後に全画素の誤差: ゼロ点 RMS 0.568 ms(偏り +0.489)、線形補間 RMS 0.0209 ms(27 倍)。*
 
@@ -1264,7 +1288,7 @@ py -3.11 examples/poc_xyt_event_surface.py
 
 Source: [examples/poc_xyt_event_surface.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_xyt_event_surface.py)
 
-This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_xyt_event_surface)
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_xyt_event_surface)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`vertex_normals`](https://furuse.work/ops/3d/mesh_process/vertex_normals.html) · [`vol_edge_probe`](https://furuse.work/ops/3d/probe/vol_edge_probe.html)
 
@@ -2626,13 +2650,17 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 *↑ **Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation** ―― A designer's merit function is a table of requirements: "edge thickness at least 1 mm here, EFL 50 mm, a small wavefront". Keep that table as rows, each with a target, a weight and, for a bound, a one-sided form, and say what pulls the optimiser as a percentage per row. Six new ops (`lensmerit`, category `lensmerit` of `opsoptics`): `merit_operands_list` (name, meaning, unit and arguments of 32 operands; the 7th slice added `ANGM` / `RSAN` for afocal systems) / `merit_evaluate` (per row value, target, weight, contribution (w (value - target))^2 and share; a bound row contributes 0 while it holds) / `merit_default` (whole-pupil ray rows plus the EFL hold; spot or wavefront, chief-ray or centroid reference) / `merit_boundary_operands` (edge thickness of every glass, centre-thickness and air-gap bounds) / `optimize_lens_operands` (the variables, damped least squares and step sizes of `lensopt` unchanged, plus an outer discrete loop that picks the glass of `g<i>` from a candidate list) / `merit_contributions` (which row dominates, as percentages). The edge thickness is t - sag_i(h_i) + sag_(i+1)(h_(i+1)) at the clear semi-diameters of both surfaces, conic and even aspheric terms included. Scored against closed forms: the thin-achromat power split phi1 = phi V1/(V1 - V2), phi2 = -phi V2/(V1 - V2) (an EFFL + AXCL = 0 optimisation lands on it to 1.7e-14 relative), the plano-convex edge thickness to 1.8e-15, the real ray height and angle of incidence after a refracting sphere against Snell's law to 1.1e-13, the working F-number of an ideal lens against f/2h to 1.2e-7. The default table (spot, chief-ray reference) equals `lensopt.merit_function` to 0.0 relative (the gate is 1e-9). Against the recorded numbers of an independent implementation (an MIT-licensed open-source library) the EFL agrees to 1.4e-14, the real ray positions at the image to 1.8e-14 mm and the on-axis OPD to 8.5e-11 waves; the off-axis OPD differs by 0.03 % of the peak at 14 deg and 0.25 % at 20 deg (a convention: the other implementation's reference sphere has the distance from the image point to the exit-pupil centre as its radius, `raytrace.opd_samples` the axial distance only). A Cooke-type triplet (the classic 40-degree radii moved by 7-10 %, thin edges, EFL 58 mm) is optimised with a table of wavefront (3 fields x F, d, C) + an EFL hold of 50 mm + bounds (edge thickness >= 1 mm, centre thickness 2-8 mm, air gap >= 0.5 mm): merit 1.03e5 -> 33.9 (1/3041), EFL 57.98 -> 50.0015 mm, edge thickness 1.83 / 2.38 / 0.10 -> 3.37 / 3.78 / 1.00 mm, RMS spot (on axis, 8.4 deg, 12 deg) 25 / 13 / 22 -> 5.8 / 8.4 / 12 um. The dominant row moves from the EFL hold (82 %) to the wavefront row at 12 deg (71 %). From a start whose negative lens has the wrong glass (a crown), with axial- and lateral-colour rows added, the continuous variables alone leave the axial colour at -1.02 mm (glass cannot be fixed by continuous variables). Letting `g2` choose among 6 model glasses picks a dense flint: AXCL -1.02 -> -0.059 mm (1/17), LACL at 12 deg -0.051 -> -3.3e-4 mm (1/154), merit 1.26e4 -> 47 (1/265). Honest notes: with bound weight 10 the centre thickness stopped 0.06 mm short, so 100 is used; the optimisation spends its 40 iterations at the active edge bound (1.001 mm); the reduced CI budget (one outer loop) ends at merit 45.6, AXCL 1/18 and LACL 1/167. Learning 0, calibration 0, 25 gates.*
 
+[![最適化に伴い12度視野のスポットが収束する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)
+
+*↑ The measurement ―― 最適化に伴い12度視野のスポットが収束する。 (figure labels are in Japanese; the numbers are the same)*
+
 ```
 py -3.11 examples/poc_lens_merit_operands.py
 ```
 
 Source: [examples/poc_lens_merit_operands.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_merit_operands.py)
 
-This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_merit_operands)
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_merit_operands)
 
 Ops used (notes): [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`merit_boundary_operands`](https://furuse.work/ops/optics/lensmerit/merit_boundary_operands.html) · [`merit_contributions`](https://furuse.work/ops/optics/lensmerit/merit_contributions.html) · [`merit_default`](https://furuse.work/ops/optics/lensmerit/merit_default.html) · [`merit_evaluate`](https://furuse.work/ops/optics/lensmerit/merit_evaluate.html) · [`merit_function`](https://furuse.work/ops/optics/optimization/merit_function.html) · [`merit_operands_list`](https://furuse.work/ops/optics/lensmerit/merit_operands_list.html) · [`optimize_lens_operands`](https://furuse.work/ops/optics/lensmerit/optimize_lens_operands.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`with_wavelength`](https://furuse.work/ops/optics/design/with_wavelength.html)
 
@@ -2642,13 +2670,17 @@ Ops used (notes): [`lens_system`](https://furuse.work/ops/optics/design/lens_sys
 
 *↑ **Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres** ―― A design is a bundle of relations, not a list of numbers. Keep "the image plane is the paraxial focus", "F/# is 5" and "this surface is concentric with the previous one" as rules on the surface, so that changing the stop radius or a glass lets the rest settle again. Nine new ops (`lenssolve`, category `lenssolve` of `opsoptics`): `lens_apply_solves` (a copy with every solve resolved) / `lens_solve_set` / `lens_solve_clear` / `lens_solves_list` (rule, solved value, achieved quantity and error) / `afocal_system` / `lens_afocal_report` (angular magnification, exit pupil and angular aberration per field in arcminutes) / `lens_image_surface` / `lens_petzval_radius` / `lens_zmx_solves_roundtrip`. A rule sits in `solve` of the surface dict (`R` / `t` next to it hold the solved value) and every `raytrace` trace resolves it first. `raytrace` gained an image-surface curvature `image_R`, `afocal`, and the aspheric terms `a2` (r^2) and `odd` (r^i, i = 1..8); `lensmerit` gained the angular magnification `ANGM` and the angular spot `RSAN`. Scored against closed forms: the chief-ray height and marginal-ray angle solves equal the hand solution of one linear equation (error 0), the F/# solve has two roots (positive and negative power) and matches both closed-form roots to 3e-17, the aplanatic surface images its object point exactly (spot RMS 3.4e-16 mm; an ordinary R = -3 mm surface 0.51 mm), a concentric ball does not bend a ray aimed at its centre (2.2e-16). A double-Gauss type (an F/# = 5 solve on the front curvature of the last element, a paraxial-image solve on the image distance) re-settles as the stop radius moves from 5.0 to 7.6 mm: the F/# stays 5 (error 8.9e-16) and the image distance follows the paraxial focus (4.4e-16); the last curvature moves R 79 -> 768 mm, the EFL 78.9 -> 119.9 mm, the image distance 47.5 -> 74.6 mm. The frozen-numbers version drifts from F/# 6.34 to 4.17. Honest limit: holding the F/# while the stop opens without redesigning the other surfaces, the RMS spot at 10 deg is 65.8 -> 25.6 um and worse in between (a solve keeps a relation, not the image quality). The F/# solve has two roots (curvature -0.046711 and +0.005637 /mm); the other is a diverging system of EFL -100 mm. Afocal: the ideal-lens Keplerian (f1 = 100, f2 = 25) and Galilean (f2 = -25) telescopes have angular magnification -4 / +4 exactly (EFL = inf does not raise) and angular aberration below 7.5e-13 arcmin. A real telescope of two achromatic doublets (separation 119.9076 mm, angular magnification -4.026, exit pupil of radius 2.48 mm at 30.4 mm) has angular spot RMS 0.60 / 0.71 / 1.05 / 1.63 / 2.55 arcmin at 0 / 0.25 / 0.5 / 0.75 / 1 deg, an on-axis wavefront of 0.041 waves (diffraction limited) and an angular-magnification distortion of 0.85 % at 1 deg. The afocal flag round-trips through a NOTE line of the `.zmx` (the format's own afocal line cannot be established from a real file, so none is invented). Curved image surface: for a thin meniscus (concave to the object, f = 99.8 mm) at zero Seidel astigmatism, the image surface of the Petzval radius -151.68 mm (equal to the thin-lens closed form -N f and to the Seidel sum) shrinks the RMS spot at 0.7 field from 1.94 um on the flat plane to 0.226 um (the best-plane floor is 0.222 um); the field-curvature term goes 1.93 -> 0.046 um (1/42). Odd aspheres: the sag matches the hand-written polynomial to 2.2e-16, the intersection satisfies the surface equation to 2.8e-16, and B = 0 is bit-identical to the even asphere. A conical (r^1) plate focuses rays onto a line 102 mm long instead of a point, and the axis crossings match the Snell closed form to 7.1e-14. One term added to a spherical-aberration corrector plate: r^4 takes the on-axis RMS 14.0 -> 0.030 um (1/467), r^3 to 1.97 um (1/7.1), r^1 to 8.3 um, r^2 to 11.5 um. `.zmx`: three pickups (`CURV c 4 source scale offset`, `PZUP`, `PPAR`) and three rules written as NOTE lines make write -> read -> write a fixed point (difference 1.4e-14); no solve is frozen and dropped. Limits: only the pickups have a form that real files show, so the other kinds (chief / marginal ray, F/#, concentric, aplanatic) round-trip through NOTE lines; odd terms (r^1 above all) are not smooth at the vertex, the r^1 term has no paraxial power, and the Seidel sums, the non-coaxial tracer and PSF / MTF refuse a2 / odd and afocal. Learning 0, calibration 0, 35 gates.*
 
+[![解いた曲面像面で視野角を掃引したスポット。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)
+
+*↑ The measurement ―― 解いた曲面像面で視野角を掃引したスポット。 (figure labels are in Japanese; the numbers are the same)*
+
 ```
 py -3.11 examples/poc_lens_solves_afocal.py
 ```
 
 Source: [examples/poc_lens_solves_afocal.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_solves_afocal.py)
 
-This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_solves_afocal)
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lens_solves_afocal)
 
 Ops used (notes): [`afocal_system`](https://furuse.work/ops/optics/lenssolve/afocal_system.html) · [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.html) · [`lens_afocal_report`](https://furuse.work/ops/optics/lenssolve/lens_afocal_report.html) · [`lens_apply_solves`](https://furuse.work/ops/optics/lenssolve/lens_apply_solves.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`lens_file_write`](https://furuse.work/ops/optics/lensfile/lens_file_write.html) · [`lens_image_surface`](https://furuse.work/ops/optics/lenssolve/lens_image_surface.html) · [`lens_petzval_radius`](https://furuse.work/ops/optics/lenssolve/lens_petzval_radius.html) · [`lens_solve_clear`](https://furuse.work/ops/optics/lenssolve/lens_solve_clear.html) · [`lens_solve_set`](https://furuse.work/ops/optics/lenssolve/lens_solve_set.html) · [`lens_solves_list`](https://furuse.work/ops/optics/lenssolve/lens_solves_list.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lens_zmx_solves_roundtrip`](https://furuse.work/ops/optics/lenssolve/lens_zmx_solves_roundtrip.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`seidel_coefficients`](https://furuse.work/ops/optics/design/seidel_coefficients.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`trace_rays`](https://furuse.work/ops/optics/scene/trace_rays.html)
 
@@ -2742,17 +2774,21 @@ Ops used (notes): [`carbon_black_absorption`](https://furuse.work/ops/optics/mat
 
 *↑ The measurement ―― 2 処方、3 視野。各パネルの RMS は同じ実光線から計算。 (figure labels are in Japanese; the numbers are the same)*
 
-[![合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_inspection_scores.png)
+[![合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores.png)
 
 *↑ 合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。*
 
-[![出力から測った傷 contrast は -0.424〜-0.397。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_scratch_visibility.png)
+[![出力から測った傷 contrast は -0.424〜-0.397。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility.png)
 
 *↑ 出力から測った傷 contrast は -0.424〜-0.397。*
 
-[![光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_opd_convention_limit.png)
+[![光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit.png)
 
 *↑ 光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。*
+
+[![同じ処方のスポットを軸上から最大視野まで掃引する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)
+
+*↑ The animation ―― 同じ処方のスポットを軸上から最大視野まで掃引する。*
 
 ```
 py -3.11 examples/poc_zmx_public_verify.py
@@ -2760,7 +2796,7 @@ py -3.11 examples/poc_zmx_public_verify.py
 
 Source: [examples/poc_zmx_public_verify.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_zmx_public_verify.py)
 
-This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zmx_public_verify)
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_zmx_public_verify)
 
 Ops used (notes): [`chromatic_shift`](https://furuse.work/ops/optics/design/chromatic_shift.html) · [`distortion_map`](https://furuse.work/ops/optics/imaging_sim/distortion_map.html) · [`lens_file_read`](https://furuse.work/ops/optics/lensfile/lens_file_read.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`psf_from_opd`](https://furuse.work/ops/optics/imaging_sim/psf_from_opd.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`ray_bundle`](https://furuse.work/ops/optics/design/ray_bundle.html) · [`render_through_lens`](https://furuse.work/ops/optics/imaging_sim/render_through_lens.html) · [`spot_stats`](https://furuse.work/ops/optics/design/spot_stats.html)
 

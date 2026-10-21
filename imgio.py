@@ -410,7 +410,7 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
     return rgb
 
 
-def colorize_depth(depth, name="viridis", **kw):
+def colorize_depth(depth, name="turbo", **kw):
     """Colourise a depth map; ``inf``/unknown -> black.
 
     ★2026-09-08: ``vmin`` / ``vmax`` / ``norm`` / ``levels`` / ``under`` / ``over``

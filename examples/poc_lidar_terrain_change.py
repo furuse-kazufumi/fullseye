@@ -1241,6 +1241,8 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
                    ["時期 1 の起伏 [m]", "真の鉛直変位 [m]",
                     "DoD の鉛直差 [m]", "M3C2 の法線距離 [m]"],
                    ncols=2, signed=[False, True, True, True],
+                   kind=["height", "displacement", "displacement", "displacement"],
+                   unit=["m", "m", "m", "m"],
                    title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)"
                          % (SLOPE, DENSITY),
                    caption="左上は平面を抜いた残差(%.2f m のうねり。この場面は遮蔽を"

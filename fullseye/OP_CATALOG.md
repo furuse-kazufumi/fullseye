@@ -3046,7 +3046,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lifetime_phasor` `counts → table` — Phasor (frequency-domain) representation of a decay — the fit-free view. · 例: `photon_timeresolved`
 
 #### photon / spad(3)
-- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`
+- `spad_deadtime_apply` `countrate → countrate` — Distort a true photon rate by the detector's dead time (counts lost). · 例: `photon_timeresolved`, `poc_dtof_ranging`
 - `spad_deadtime_correct` `countrate → countrate` — Recover the true photon rate from a dead-time-distorted measured rate. · 例: `photon_timeresolved`
 - `tcspc_coates_correct` `counts → counts` — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias. · 例: `photon_timeresolved`, `poc_dtof_ranging`
 
@@ -4639,7 +4639,7 @@ _計 3495 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sem_cd_measure` `pairs → table` — 線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_charging_series` `image2d → video` — 絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_electron_mc` `入力なし → table` — 平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。 · 例: `poc_virtual_sem_kv_cd_bse`
-- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_virtual_sem_kv_cd_bse`
+- `sem_image` `image2d → image2d` — 高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。 · 例: `poc_sem_wafer_defect_edge_bias`, `poc_virtual_sem_kv_cd_bse`
 - `sem_line_profile` `入力なし → table` — 1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `sem_render` `image2d → image2d` — 高さ場から SEM 像(二次電子の縁効果 + ビーム PSF + ショット雑音)を描く。 · 例: `poc_sem_wafer_defect_edge_bias`
 - `sem_se_escape_fraction` `入力なし → signal` — 正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。 · 例: `poc_virtual_sem_kv_cd_bse`
