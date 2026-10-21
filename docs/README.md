@@ -55,16 +55,16 @@
 
 ### 検証の段
 
-能力 94 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.2)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 95 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.7.2)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 76 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 77 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 426 本のうち、門が実際に走らせるもの 426 本。
+例 431 本のうち、門が実際に走らせるもの 431 本。
 
 ### 版ごとの op の数
 
@@ -140,7 +140,7 @@
 
 **3,535 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **67 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 940/940、型つき台帳 2574/2586、1 行ファサード `fullseye.<名前>` 703/1478。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 940/940、型つき台帳 2574/2586、1 行ファサード `fullseye.<名前>` 703/1479。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 3535 本のうち、実行できる例が付いているのは **3524 本**(11 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3347 本**(188 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3535 本すべてにある。
 
@@ -295,7 +295,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 282 本
+## ドキュメント地図 — 全 283 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,535 本と族ガイド 67 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -437,7 +437,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(199)
+**そのほか**(200)
 
 | 文書 | 内容 |
 |---|---|
@@ -572,6 +572,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
 | [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
 | [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
+| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | id: reuse-computation-results |
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |

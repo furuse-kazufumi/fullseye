@@ -53,16 +53,16 @@
 
 ### 검증 단계
 
-능력 94건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.7.2)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 95건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.7.2)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|
 | `research-prototype` | 구현은 있으나 테스트나 실행되는 예가 아직 갖춰지지 않음 | 0 |
-| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 76 |
+| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 77 |
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 18 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 426건 중 게이트가 실제로 실행하는 것은 426건.
+예 431건 중 게이트가 실제로 실행하는 것은 431건.
 
 ### 버전별 연산자 수
 
@@ -138,7 +138,7 @@
 
 **3,535개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **67개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 940/940, 타입 台帳 2574/2586, 한 줄 파사드 `fullseye.<이름>` 703/1478 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 940/940, 타입 台帳 2574/2586, 한 줄 파사드 `fullseye.<이름>` 703/1479 — **파사드는 아직 절반**.
 
 **내용 실측**: 3535건 중 실행 가능한 예제가 붙은 것은 **3524**건(11건은 없음), 사용법이 120자 이상인 것은 **3347**건(188건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3535건 모두.
 
@@ -293,7 +293,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 282건
+## 문서 지도 — 전 283건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,535건과 패밀리 가이드 67건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -435,7 +435,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(199)
+**Other**(200)
 
 | 문서 | 내용 |
 |---|---|
@@ -570,6 +570,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
 | [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
 | [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
+| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | id: reuse-computation-results |
 | [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
 | [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
 | [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
