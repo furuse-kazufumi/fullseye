@@ -6876,7 +6876,7 @@ OP_ARG_BUILDERS = {
     "ods_depth_to_disparity": _b_omni_depth_to_disparity,
     "s_psnr": _b_omni_psnr,
     "ws_psnr": _b_omni_psnr,
-    "equirect_stabilise": _b_omni_stabilise,
+    "equirect_stabilize": _b_omni_stabilise,
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
     "perpetual_render": _b_perpetual_state,

@@ -106,7 +106,7 @@ def main():
     # 6. Known shake and recovered stability.
     shakes = [np.eye(3)] + [O._ypr(4*np.sin(i*.7), 1.5*np.sin(i*.5), .8*np.sin(i*.4)) for i in range(1, 6)]
     shaky = np.stack([O.equirect_rotate(scene["equirect"], r) for r in shakes])
-    stabilised = O.equirect_stabilise(shaky, sample_shape=(24, 48))
+    stabilised = O.equirect_stabilize(shaky, sample_shape=(24, 48))
     before = O.ws_psnr(shaky[0], shaky[-1]); after = O.ws_psnr(stabilised["frames"][0], stabilised["frames"][-1])
     figs.save_grid("stabilisation", [shaky[0], shaky[-1], stabilised["frames"][-1]],
         ["reference", "shaky", "rotation corrected"], ncols=3, title="6. Rotation-only stabilisation",

@@ -91,7 +91,7 @@ def test_pack_roundtrip_and_parallax_budget():
 
 def test_true_anaglyph_ideal_filters_have_zero_crosstalk():
     left = np.full((8, 9, 3), .25); right = np.full((8, 9, 3), .75)
-    ana = O.anaglyph(left, right, "true")
+    ana = O.omni_anaglyph_compose(left, right, "true")
     seen = O.anaglyph_crosstalk(left, right, method="true")
     assert np.allclose(ana[..., 0], .25) and np.allclose(ana[..., 1:], .75)
     assert seen["ghosting_left"] == 0 and seen["ghosting_right"] == 0

@@ -358,7 +358,7 @@ def equirect_filter_gaussian(image,sigma_deg):
     return gaussian_filter(out,(sy,0) if im.ndim==2 else (sy,0,0),mode="nearest")
 
 
-def equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48)):
+def equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48)):
     """Estimate and remove camera rotations from an equirectangular sequence.
 
     Each frame is registered to the first one by minimising a cosine-latitude
