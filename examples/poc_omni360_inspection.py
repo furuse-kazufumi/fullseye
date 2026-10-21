@@ -127,7 +127,7 @@ def main():
     # 8. Display method, filter leakage, parallax, and limits.
     lv = O.viewport_from_equirect(left, 0, 0, 0, 90, (512, 512) if not small else (192, 192))
     rv = O.viewport_from_equirect(right, 0, 0, 0, 90, (512, 512) if not small else (192, 192))
-    ana = O.anaglyph(lv, rv, "dubois")
+    ana = O.omni_anaglyph_compose(lv, rv, "dubois")
     ideal = O.anaglyph_crosstalk(lv, rv, ((1, 0, 0), (0, 1, 1)), "dubois")
     leaky = O.anaglyph_crosstalk(lv, rv, ((1, .1, .1), (.1, 1, 1)), "dubois")
     preview = O.anaglyph_preview(lv, rv, glasses_transmission=((1, .1, .1), (.1, 1, 1)), method="dubois")
