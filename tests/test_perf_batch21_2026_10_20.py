@@ -198,7 +198,7 @@ def test_156_streamed_power_spectrum_matches_stacked_mean():
 def test_160_float32_multislice_matches_float64_stack():
     stack = np.random.default_rng(160).normal(size=(5, 32, 32)).astype(np.float32)
     new = TEM.tem_multislice(stack)
-    old = TEM.tem_multislice(stack.astype(np.float64))
+    old = TEM.tem_multislice(stack.astype(np.float64))  # materialized-input oracle
     for key in ("exit_wave", "intensity", "projection_wave"):
         np.testing.assert_array_equal(new[key], old[key])
 

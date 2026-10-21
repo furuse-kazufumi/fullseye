@@ -63,13 +63,15 @@ def _bilateral_core(
     val_valid: np.ndarray,
     edge_valid: np.ndarray,
     truncate: float,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """bilateral の共通核: values を平均し range 重みは edge の差で作る(無効画素は重み 0 で除外)。
 
     近傍が寄与する条件 = その画素で values も edge も有効。中心画素が処理される条件も同じで、
     満たさない中心画素(穴・ガイド欠損)は元値のまま残す(値を捏造しない = fail-closed)。
     """
+    # ``chunk`` controls peak memory without changing arithmetic or output.
+    # 64 rows is the measured speed-preserving default; None requests one tile.
     values = np.asarray(values, dtype=float)
     edge = np.asarray(edge, dtype=float)
     H, W = values.shape
@@ -139,7 +141,7 @@ def bilateral_filter_depth(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。
 
@@ -147,6 +149,8 @@ def bilateral_filter_depth(
     中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
     range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
     ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
+    ``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+    速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
     """
     d = np.asarray(depth, dtype=float)
     if d.ndim != 2:
@@ -164,13 +168,15 @@ def joint_bilateral(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
-    chunk: int | None = None,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。
 
     深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
     **guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
     同一形状必須(fail-closed)。
+    ``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+    速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
     """
     d = np.asarray(depth, dtype=float)
     g = np.asarray(guide, dtype=float)
@@ -191,7 +197,6 @@ def fill_holes(
     invalid: float | None = 0.0,
     max_iter: int | None = None,
     rel_tol: float = 1e-6,
-    method: str = "exact",
 ) -> np.ndarray:
     """無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。
 
@@ -208,8 +213,6 @@ def fill_holes(
     if d.ndim != 2:
         raise ValueError(f"fill_holes expects a 2D depth image, got shape {d.shape}")
     r = float(max_radius)
-    if method not in {"exact", "fast"}:
-        raise ValueError("method must be 'exact' or 'fast'")
     if not np.isfinite(r) or r <= 0.0:
         raise ValueError(f"max_radius must be a positive finite number, got {max_radius!r}")
 
@@ -247,7 +250,7 @@ def fill_holes(
         pp = np.pad(part.astype(float), 1, mode="constant")
         ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
         safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
-        sparse = method == "fast" and np.count_nonzero(fillable) * 8 < out.size
+        sparse = np.count_nonzero(fillable) * 8 < out.size
         fy, fx = np.nonzero(fillable) if sparse else (None, None)
         for _ in range(max_iter):
             vp = np.pad(out, 1, mode="edge")

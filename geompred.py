@@ -224,7 +224,7 @@ def is_delaunay_2d(points, triangles):
     return (len(violations) == 0, violations)
 
 
-def mesh_orientation_consistent(faces, *, method="exact"):
+def mesh_orientation_consistent(faces):
     """Check that a triangle mesh is consistently oriented: every interior edge is
     traversed in *opposite* directions by its two incident faces. Returns
     ``(ok, bad_edges)``; ``bad_edges`` lists ``(u, v)`` edges that are either
@@ -233,26 +233,6 @@ def mesh_orientation_consistent(faces, *, method="exact"):
     F = np.asarray(faces, dtype=np.int64)
     if F.ndim != 2 or F.shape[1] != 3:
         raise ValueError("faces must be (M,3) vertex indices")
-    if method not in {"exact", "fast"}:
-        raise ValueError("method must be 'exact' or 'fast'")
-    if method == "fast" and F.size:
-        u = F[:, [0, 1, 2]].ravel()
-        v = F[:, [1, 2, 0]].ravel()
-        lo, hi = np.minimum(u, v), np.maximum(u, v)
-        order = np.lexsort((hi, lo))
-        slo, shi = lo[order], hi[order]
-        starts = np.r_[0, 1 + np.nonzero((slo[1:] != slo[:-1]) | (shi[1:] != shi[:-1]))[0]]
-        ends = np.r_[starts[1:], order.size]
-        bad = []
-        for start, end in zip(starts, ends):
-            ids = order[start:end]
-            count = end - start
-            fwd = np.count_nonzero((u[ids] == lo[ids]) & (v[ids] == hi[ids]))
-            if count > 2 or fwd == 2 or count - fwd == 2:
-                bad.append((int(lo[ids[0]]), int(hi[ids[0]]), int(ids.min())))
-        bad.sort(key=lambda x: x[2])
-        edges = [(u, v) for u, v, _ in bad]
-        return (len(edges) == 0, edges)
     directed = {}                                      # (u,v) -> count
     for (i, j, k) in F:
         for u, v in ((int(i), int(j)), (int(j), int(k)), (int(k), int(i))):
