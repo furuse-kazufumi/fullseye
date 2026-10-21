@@ -173,7 +173,7 @@ def _note_unique(path, name: str) -> None:
         _written.setdefault(digest, name)
 
 
-def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
+def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None, cmap=None):
     """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。
 
     ``gray=True`` は (H,W) を**グレースケール**で塗る(疑似カラーにしない)。
@@ -211,18 +211,89 @@ def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
         return (np.repeat(g[..., None], 3, axis=2) * 255).astype(np.uint8)
     if signed:
         m = (max(abs(vlo), abs(vhi)) if vrange is not None else float(np.max(np.abs(a)))) or 1.0
+        if cmap is not None:
+            rgb = np.asarray(fs.apply_cmap(a, name=cmap, vmin=-m, vmax=m), np.float64)[..., :3]
+            return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
         lut = np.asarray(fs.diverging_lut(256))
         idx = np.clip(((a / m) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
         return (np.clip(lut[idx], 0, 1) * 255).astype(np.uint8)
     # ★`colorize_depth` は **float [0,1]** を返す。`np.asarray(..., np.uint8)` で
     #   受けると 0.x が全部 0 に切り捨てられて真っ黒になる(2026-09-06 に踏んだ)。
     kw = {"vmin": vlo, "vmax": vhi} if vrange is not None else {}
+    if cmap is not None:
+        kw["name"] = cmap
     rgb = np.asarray(fs.colorize_depth(a, **kw), np.float64)[..., :3]
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
+_MAP_KINDS = frozenset(("depth", "height", "disparity", "displacement"))
+
+
+def _map_options(kind, gray, colorbar, cmap):
+    """Resolve the profiler-map shorthand before output can be disabled."""
+    if kind is None:
+        return bool(colorbar), cmap
+    if kind not in _MAP_KINDS:
+        raise ValueError("examplefig: kind must be one of %s (got %r)" %
+                         (sorted(_MAP_KINDS), kind))
+    if gray:
+        raise ValueError("examplefig: kind=%r refuses gray=True; depth/height maps require pseudo-colour" % kind)
+    return True, "turbo"
+
+
+def _value_range(v, signed=False, vrange=None):
+    a = np.asarray(v, np.float64)
+    a = a[np.isfinite(a)]
+    lo, hi = ((float(vrange[0]), float(vrange[1])) if vrange is not None
+              else ((float(a.min()), float(a.max())) if a.size else (0.0, 1.0)))
+    if signed:
+        m = max(abs(lo), abs(hi)) or 1.0
+        return -m, m
+    if not hi > lo:
+        hi = lo + 1.0
+    return lo, hi
+
+
+def _fmt_tick(value):
+    return "%.4g" % float(value)
+
+
+def _append_colorbar(rgb, values, unit="", cmap="turbo", signed=False, vrange=None):
+    """Append a labelled vertical colour scale; never paint over ``rgb``."""
+    import fullseye as fs
+
+    image = np.asarray(rgb, np.float64)
+    h, w = image.shape[:2]
+    side = 112
+    canvas = np.ones((h, w + side, 3), np.float64)
+    canvas[:, :w] = image[..., :3]
+    lo, hi = _value_range(values, signed=signed, vrange=vrange)
+    y0, y1 = min(8, max(0, h - 1)), max(min(h - 8, h - 1), 0)
+    if y1 <= y0:
+        y0, y1 = 0, h - 1
+    bh = max(1, y1 - y0 + 1)
+    ramp = np.linspace(hi, lo, bh)[:, None]
+    bar = np.asarray(fs.apply_cmap(ramp, name=cmap or "turbo", vmin=lo, vmax=hi), np.float64)
+    bx, bw = w + 10, 14
+    canvas[y0:y0 + bh, bx:bx + bw] = bar[:, :1, :3]
+    text_h = 28  # fullseye's built-in bitmap text plate at font_size=10
+    labels = [(y0, _fmt_tick(hi)), (max(y0, h - text_h), _fmt_tick(lo))]
+    if signed and lo < 0 < hi:
+        yz = int(round(y0 + (hi / (hi - lo)) * (bh - 1)))
+        labels.append((max(y0, min(h - text_h, yz - text_h // 2)), "0"))
+    for yy, label in labels:
+        canvas = np.asarray(fs.text_box(canvas, label, (bx + bw + 5, yy),
+                                        anchor="lt", font_size=10))
+    if unit:
+        canvas = np.asarray(fs.text_box(canvas, str(unit), (bx + bw + 35,
+                                        max(0, min(h - text_h, h // 2 - text_h // 2))),
+                                        anchor="lt", font_size=10))
+    return canvas
+
+
 def save(name: str, image, caption: str = "", signed: bool = False,
-         gray: bool = False, source: str = "") -> Path | None:
+         gray: bool = False, source: str = "", colorbar: bool = False,
+         unit: str = "", cmap=None, vrange=None, kind=None) -> Path | None:
     """図を 1 枚書く。``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。
 
     ``source`` は他人の画像・データを使った図の出典(著者・題・誌・DOI/URL・ライセンス・改変の有無)。空でなければ
@@ -232,6 +303,7 @@ def save(name: str, image, caption: str = "", signed: bool = False,
     ``gray=True`` は疑似カラーにせずグレースケールで塗る(強度そのものを絵として
     見せる量。詳細は :func:`_to_rgb8`)。
     """
+    colorbar, cmap = _map_options(kind, gray, colorbar, cmap)
     d = target_dir()
     if d is None:
         return None
@@ -241,7 +313,11 @@ def save(name: str, image, caption: str = "", signed: bool = False,
     try:
         import fullseye as fs
 
-        rgb = _to_rgb8(image, signed, gray)
+        rgb = _to_rgb8(image, signed, gray, vrange, cmap)
+        if colorbar:
+            rgb = (_append_colorbar(rgb.astype(np.float64) / 255.0, image, unit=unit,
+                                    cmap=cmap or "turbo", signed=signed, vrange=vrange) * 255
+                   ).astype(np.uint8)
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
         fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
         _note_unique(path, name)
@@ -467,18 +543,23 @@ def reset() -> None:
 # --------------------------------------------------------------------------- #
 # 図の組み立て —— すべて fullseye の annotate 族で作る                          #
 # --------------------------------------------------------------------------- #
-def _panel(v, signed=False, title="", gray=False, vrange=None):
+def _panel(v, signed=False, title="", gray=False, vrange=None, colorbar=False,
+           unit="", cmap=None):
     """1 枚のパネル(uint8 RGB)。題を左上に置く。"""
     import fullseye as fs
 
-    rgb = _to_rgb8(v, signed, gray, vrange).astype(np.float64) / 255.0
+    rgb = _to_rgb8(v, signed, gray, vrange, cmap).astype(np.float64) / 255.0
+    if colorbar:
+        rgb = _append_colorbar(rgb, v, unit=unit, cmap=cmap or "turbo",
+                               signed=signed, vrange=vrange)
     if title:
         rgb = np.asarray(fs.text_box(rgb, title, (6, 6), anchor="lt", font_size=12))
     return rgb
 
 
 def save_grid(name: str, panels, captions=None, title=None, ncols=2,
-              signed=False, caption: str = "", gray=False, vrange=None) -> Path | None:
+              signed=False, caption: str = "", gray=False, vrange=None,
+              colorbar=False, unit="", cmap=None, kind=None) -> Path | None:
     """複数の画像を 1 枚の多パネル図に組んで書く(:func:`annotate_figure_grid`)。
 
     ``signed`` と ``gray`` は 1 個の bool でも、パネルごとの列でもよい。
@@ -486,21 +567,39 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
     を「絵」として見せる量に使う。詳細は :func:`_to_rgb8`)。
     ``vrange`` は ``(lo, hi)`` 1 つ(全パネル共通)か、パネルごとの列(``None`` = そのパネルは自動)。
     """
+    count = len(panels)
+    def per_panel(value, *, pair_is_scalar=False):
+        if pair_is_scalar and value is not None and len(value) == 2 and np.isscalar(value[0]):
+            return [value] * count
+        if isinstance(value, (list, tuple)) and not isinstance(value, str):
+            if len(value) != count:
+                raise ValueError("option list must match panels (%d != %d)" % (len(value), count))
+            return list(value)
+        return [value] * count
+
+    sg = per_panel(signed)
+    gr = per_panel(gray)
+    cb = per_panel(colorbar)
+    un = per_panel(unit)
+    cm = per_panel(cmap)
+    ki = per_panel(kind)
+    resolved = [_map_options(k, bool(g), c, m) for k, g, c, m in zip(ki, gr, cb, cm)]
+    cb = [x[0] for x in resolved]
+    cm = [x[1] for x in resolved]
     if target_dir() is None:
         return None
     try:
         import fullseye as fs
 
-        sg = signed if isinstance(signed, (list, tuple)) else [signed] * len(panels)
-        gr = gray if isinstance(gray, (list, tuple)) else [gray] * len(panels)
         if vrange is None or (len(vrange) == 2 and np.isscalar(vrange[0])):
             vr = [vrange] * len(panels)
         else:
             vr = list(vrange)
             if len(vr) != len(panels):
                 raise ValueError("vrange の列はパネルと同じ数(%d != %d)" % (len(vr), len(panels)))
-        imgs = [_panel(v, bool(s), gray=bool(g), vrange=r_)
-                for v, s, g, r_ in zip(panels, sg, gr, vr)]
+        imgs = [_panel(v, bool(s), gray=bool(g), vrange=r_, colorbar=bool(c),
+                       unit=u, cmap=m)
+                for v, s, g, r_, c, u, m in zip(panels, sg, gr, vr, cb, un, cm)]
         caps = list(captions or [])
         # ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が
         # (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や

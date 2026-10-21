@@ -194,7 +194,7 @@ def chapter_fringes():
           "画面に収まらない設定で「1 本の縞」を返すと誰も気づけない")
 
     if figs.enabled():
-        figs.save_grid("fringes", panels, caps, ncols=2, gray=True,
+        figs.save_grid("fringes", panels, caps, ncols=2, gray=True,  # gray-ok: 光強度の干渉縞であり距離場ではない
                        title="二重スリットの縞 —— 波長・分離・距離を振る",
                        caption="縞間隔は λD/d。波長を 550 → 450 nm にすると細かく、"
                                "分離を倍にすると細かく、距離を倍にすると粗くなる ——"
