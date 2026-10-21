@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- `find_ncc_model` に複数候補、テンプレート矩形のIoU抑制、放物線サブピクセル補間を追加し、旧 `find_ncc_models` も同じ検索核へ統合した。既存fixtureの最大差は0、順序差なし。
+
 - `create_ncc_model` は入力と独立した float64 コピー、正規化済みテンプレート、ノルム、形状、原点、入力 dtype、版を保持し、準備済み経路と生テンプレート経路の NCC map はビット一致する。
 
 ### 追加

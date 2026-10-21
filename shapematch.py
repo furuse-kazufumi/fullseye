@@ -702,16 +702,11 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
 
 
 def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
-    """NCC モデルの複数インスタンス検出(find_ncc_models)。"""
-    from matching import _ncc_map
-    t = np.asarray(model["template"], np.float64)
-    nccm = _ncc_map(t, np.asarray(image, np.float64))
-    # find_ncc_model と同じく **中心** を返す(_ncc_map の添字は左上)。
-    oh, ow = t.shape[0] // 2, t.shape[1] // 2
-    hits = _nms_from_map(nccm, min_score, max_matches, min_distance)
-    matches = [{"row": r + oh, "column": c + ow, "col": c + ow,
-                "row_tl": r, "col_tl": c, "score": s}
-               for s, r, c in hits]
+    """NCCモデルの複数検出。``min_distance``を共通検索核へ渡す旧入口。"""
+    from matching import find_ncc_model
+    result = find_ncc_model(model, image, min_score, num_matches=max_matches,
+                            min_distance=min_distance)
+    matches = result["matches"] if result["found"] else []
     return {"matches": matches, "num": len(matches)}
 
 
