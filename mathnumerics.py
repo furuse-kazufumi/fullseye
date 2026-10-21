@@ -111,6 +111,8 @@ def gauss_quadrature(n: int, kind: str = "legendre", a: float | None = None, b: 
     if kind == "legendre" and (a is not None or b is not None):
         a = -1.0 if a is None else float(a)
         b = 1.0 if b is None else float(b)
+        if not (np.isfinite(a) and np.isfinite(b)):
+            raise ValueError("gauss_quadrature: Legendre interval bounds must be finite; use a different rule for infinite intervals")
         if not b > a:
             raise ValueError("gauss_quadrature: b > a が要る")
         x = 0.5 * (b - a) * x + 0.5 * (b + a)
@@ -134,16 +136,22 @@ def gauss_cubature(n: int, dim: int = 2, a=-1.0, b=1.0) -> dict:
         raise ValueError("gauss_cubature: 1 <= dim <= 6、n^dim <= 2e6")
     lo = np.broadcast_to(np.asarray(a, dtype=np.float64), (dim,))
     hi = np.broadcast_to(np.asarray(b, dtype=np.float64), (dim,))
+    if not (np.all(np.isfinite(lo)) and np.all(np.isfinite(hi))):
+        raise ValueError("gauss_cubature: Legendre box bounds must be finite")
     if np.any(hi <= lo):
         raise ValueError("gauss_cubature: 各軸で b > a")
     x, w = np.polynomial.legendre.leggauss(n)
     axes = [0.5 * (hi[d] - lo[d]) * x + 0.5 * (hi[d] + lo[d]) for d in range(dim)]
     wts = [0.5 * (hi[d] - lo[d]) * w for d in range(dim)]
-    grids = np.meshgrid(*axes, indexing="ij")
-    W = np.ones_like(grids[0])
+    count = n ** dim
+    nodes = np.empty((count, dim), dtype=np.float64)
+    W = 1.0
     for d in range(dim):
-        W = W * np.meshgrid(*[wts[k] if k == d else np.ones(n) for k in range(dim)], indexing="ij")[d]
-    return {"nodes": np.stack([g_.ravel() for g_ in grids], axis=1), "weights": W.ravel(),
+        nodes[:, d] = np.tile(np.repeat(axes[d], n ** (dim - d - 1)), n ** d)
+        shape = [1] * dim
+        shape[d] = n
+        W = W * wts[d].reshape(shape)
+    return {"nodes": nodes, "weights": np.broadcast_to(W, (n,) * dim).ravel(),
             "exact_degree_per_axis": 2 * n - 1}
 
 
@@ -179,7 +187,10 @@ def low_discrepancy(n: int, dim: int = 2, kind: str = "halton", *, skip: int = 0
         raise ValueError("low_discrepancy: 1 <= n <= 1e7、1 <= dim <= %d" % len(_PRIMES))
     if kind == "halton":
         i = np.arange(int(skip), int(skip) + n, dtype=np.int64)
-        return np.stack([_radical_inverse(i, _PRIMES[d]) for d in range(dim)], axis=1)
+        out = np.empty((n, dim), dtype=np.float64)
+        for d in range(dim):
+            out[:, d] = _radical_inverse(i, _PRIMES[d])
+        return out
     if kind == "sobol":
         from scipy.stats import qmc
         eng = qmc.Sobol(d=dim, scramble=seed is not None, seed=seed)
@@ -220,7 +231,7 @@ def chebyshev_nodes(n: int, a: float = -1.0, b: float = 1.0, kind: int = 2) -> n
     return np.sort(0.5 * (float(b) - float(a)) * t + 0.5 * (float(b) + float(a)))
 
 
-def interp_barycentric(xk, yk, x) -> np.ndarray:
+def interp_barycentric(xk, yk, x, *, nodes: str | None = None) -> np.ndarray:
     """点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。
 
     係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では
@@ -234,22 +245,41 @@ def interp_barycentric(xk, yk, x) -> np.ndarray:
         raise ValueError("interp_barycentric: xk と yk は同じ長さ(1 以上)")
     if np.unique(xk).size != xk.size:
         raise ValueError("interp_barycentric: xk に重複がある")
-    d = xk[:, None] - xk[None, :]
-    np.fill_diagonal(d, 1.0)
-    # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
-    # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
-    # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-    logabs = np.sum(np.log(np.abs(d)), axis=1)
-    sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
-    w = sign * np.exp(np.min(logabs) - logabs)
+    if nodes not in (None, "chebyshev2"):
+        raise ValueError("interp_barycentric: nodes は None か 'chebyshev2'")
+    if nodes == "chebyshev2":
+        expected = chebyshev_nodes(xk.size, float(xk[0]), float(xk[-1]), kind=2)
+        if not np.all(np.abs(xk - expected) <= 1e-12):
+            raise ValueError("interp_barycentric: xk は指定された Chebyshev 第2種点ではない")
+        w = np.ones(xk.size)
+        w[1::2] = -1.0
+        w[[0, -1]] *= 0.5
+    else:
+        # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
+        # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
+        # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
+        logabs = np.empty(xk.size)
+        sign = np.empty(xk.size)
+        for start in range(0, xk.size, 256):
+            stop = min(start + 256, xk.size)
+            d = xk[start:stop, None] - xk[None, :]
+            d[np.arange(stop - start), np.arange(start, stop)] = 1.0
+            logabs[start:stop] = np.sum(np.log(np.abs(d)), axis=1)
+            sign[start:stop] = np.where(
+                np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
+        w = sign * np.exp(np.min(logabs) - logabs)
     xs = x.ravel()
-    diff = xs[:, None] - xk[None, :]
-    exact = diff == 0
-    with np.errstate(divide="ignore", invalid="ignore"):
-        c = w[None, :] / diff
-        val = (c @ yk) / c.sum(axis=1)
-    hit = exact.any(axis=1)
-    val[hit] = yk[np.argmax(exact[hit], axis=1)]
+    val = np.empty(xs.size)
+    for start in range(0, xs.size, 1024):
+        stop = min(start + 1024, xs.size)
+        diff = xs[start:stop, None] - xk[None, :]
+        exact = diff == 0
+        with np.errstate(divide="ignore", invalid="ignore"):
+            c = w[None, :] / diff
+            block = (c @ yk) / c.sum(axis=1)
+        hit = exact.any(axis=1)
+        block[hit] = yk[np.argmax(exact[hit], axis=1)]
+        val[start:stop] = block
     return val.reshape(x.shape)
 
 
@@ -347,7 +377,7 @@ def _box(box, d):
     return B
 
 
-def chebyshev_coeffs_nd(values, box=None) -> dict:
+def chebyshev_coeffs_nd(values, box=None, *, method="exact") -> dict:
     """テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。
 
     Args:
@@ -370,9 +400,14 @@ def chebyshev_coeffs_nd(values, box=None) -> dict:
     d = V.ndim
     B = _box(box, d)
     C = V[tuple(slice(None, None, -1) for _ in range(d))]          # 昇順 → cos(jπ/(n−1)) の降順
+    if method == "fast":
+        C = _fft.dctn(C, type=1) / np.prod(np.asarray(C.shape) - 1)
+    elif method != "exact":
+        raise ValueError("chebyshev_coeffs_nd: method must be 'exact' or 'fast'")
     for ax in range(d):
         n = C.shape[ax]
-        C = _fft.dct(C, type=1, axis=ax) / (n - 1)
+        if method == "exact":
+            C = _fft.dct(C, type=1, axis=ax) / (n - 1)
         idx = [slice(None)] * d
         for k in (0, n - 1):
             idx[ax] = k
@@ -382,7 +417,7 @@ def chebyshev_coeffs_nd(values, box=None) -> dict:
     return {"coeffs": C, "box": B, "decay": decay, "tail": tail}
 
 
-def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
+def chebyshev_eval_nd(coeffs, points, box=None, *, method="exact") -> np.ndarray:
     """``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
 
     ``points`` が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。
@@ -420,6 +455,34 @@ def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
         P = P[:, None]
     if P.ndim != 2 or P.shape[1] != d:
         raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})(軸ごとの格子なら 1-D 配列 {d} 本の tuple)")
+    if method == "fast":
+        work = C
+        for ax in range(d):
+            x = ((2.0 * P[:, ax] - (B[ax, 0] + B[ax, 1]))
+                 / (B[ax, 1] - B[ax, 0]))
+            if np.any(np.abs(x) > 1 + 1e-12):
+                raise ValueError("chebyshev_eval_nd: 点が box の外(外挿はしない)")
+            x = np.clip(x, -1, 1)
+            if ax == 0:
+                shape = (len(P),) + work.shape[1:]
+                b1 = np.zeros(shape, np.float64)
+                b2 = np.zeros_like(b1)
+                scale = x.reshape((len(P),) + (1,) * (work.ndim - 1))
+                for k in range(work.shape[0] - 1, 0, -1):
+                    b0 = 2 * scale * b1 - b2 + work[k]
+                    b2, b1 = b1, b0
+                work = scale * b1 - b2 + work[0]
+            else:
+                b1 = np.zeros((len(P),) + work.shape[2:], np.float64)
+                b2 = np.zeros_like(b1)
+                scale = x.reshape((len(P),) + (1,) * (work.ndim - 2))
+                for k in range(work.shape[1] - 1, 0, -1):
+                    b0 = 2 * scale * b1 - b2 + work[:, k]
+                    b2, b1 = b1, b0
+                work = scale * b1 - b2 + work[:, 0]
+        return work
+    if method != "exact":
+        raise ValueError("chebyshev_eval_nd: method must be 'exact' or 'fast'")
     ks = _LETTERS[:d]
     spec = ks + "," + ",".join("m" + k for k in ks) + "->m"
     return np.einsum(spec, C, *[_T(P[:, ax], ax) for ax in range(d)], optimize=True)

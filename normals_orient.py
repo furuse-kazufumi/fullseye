@@ -95,6 +95,10 @@ def estimate_normals(points, k: int = 20) -> np.ndarray:
     if n < k:
         raise ValueError(f"need at least k={k} points for normal estimation, got {n}")
     idx = _knn(P, k)
+    return _estimate_normals_from_idx(P, idx)
+
+
+def _estimate_normals_from_idx(P: np.ndarray, idx: np.ndarray) -> np.ndarray:
     nb = P[idx]                                   # (N, kq, 3)
     c = nb - nb.mean(1, keepdims=True)
     cov = np.einsum("nki,nkj->nij", c, c)         # 各点の近傍共分散 (N,3,3)
@@ -185,6 +189,12 @@ def orient_normals(points, normals, k: int = 20, seed_dir=None) -> np.ndarray:
     N = _as_normals(normals, n).copy()
 
     idx = _knn(P, k)
+    return _orient_normals_from_idx(P, N, idx, seed_dir)
+
+
+def _orient_normals_from_idx(P: np.ndarray, N: np.ndarray, idx: np.ndarray,
+                             seed_dir=None) -> np.ndarray:
+    n = len(P)
     neigh = idx[:, 1:]                            # 自身を除く近傍 (N, m)
     m = neigh.shape[1]
     if m == 0:                                    # 近傍が取れない(N==1 等)→ 種のみ
@@ -257,5 +267,9 @@ def estimate_oriented_normals(points, k: int = 20, seed_dir=None) -> np.ndarray:
     Returns:
         (N,3) の大域一貫・向き付き単位法線。
     """
-    N = estimate_normals(points, k=k)
-    return orient_normals(points, N, k=k, seed_dir=seed_dir)
+    P = _as_points(points)
+    if len(P) < k:
+        raise ValueError(f"need at least k={k} points for normal estimation, got {len(P)}")
+    idx = _knn(P, k)
+    N = _estimate_normals_from_idx(P, idx)
+    return _orient_normals_from_idx(P, _as_normals(N, len(P)).copy(), idx, seed_dir)

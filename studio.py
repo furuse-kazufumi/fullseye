@@ -1555,6 +1555,11 @@ def _is_binary(a):
     if a.dtype == bool:
         return True
     a = np.asarray(a, dtype=np.float64) if a.dtype.kind in "iu" else a
+    if a.size > 4096:
+        sample = a.reshape(-1)[:4096]
+        finite = sample[np.isfinite(sample)]
+        if np.unique(finite).size > 2:
+            return False
     u = np.unique(a[np.isfinite(a)]) if a.size else a
     return u.size <= 2 and set(np.round(u, 6).tolist()).issubset({0.0, 1.0})
 

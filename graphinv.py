@@ -150,7 +150,14 @@ def graph_cycle3(adj):
     B = _as_binary_adjacency(adj, "adj", op)
     np.fill_diagonal(B, 0)
     M = B.astype(np.int64)
-    c3 = int(np.trace(M @ M @ M)) // 3
+    # trace((M @ M) @ M) == sum((M @ M) * M.T).  Keeping int64 preserves
+    # the old overflow boundary while avoiding the second dense matrix product.
+    if np.count_nonzero(B) < B.size // 20 and B.shape[0] >= 128:
+        from scipy.sparse import csr_matrix
+        S = csr_matrix(M)
+        c3 = int(S.T.multiply(S @ S).sum()) // 3
+    else:
+        c3 = int(np.sum((M @ M) * M.T, dtype=np.int64)) // 3
     return {"cycles3": c3, "n": int(B.shape[0])}
 
 
@@ -288,12 +295,20 @@ def graph_swap_symmetry(adj, pairs):
             raise ValueError("%s: node %d or %d appears in more than one pair" % (op, i, j))
         seen.add(i); seen.add(j)
         perm[i], perm[j] = j, i
-    Bm = B[np.ix_(perm, perm)]
-    shared = int(((B == 1) & (Bm == 1)).sum())
-    union = int(((B == 1) | (Bm == 1)).sum())
+    edges = int(B.sum())
+    # Below 25% density, checking only existing edges avoids constructing and
+    # comparing two full matrices.  Dense inputs retain the vectorized path.
+    if edges < B.size // 4:
+        row, col = np.nonzero(B)
+        shared = int(B[perm[row], perm[col]].sum())
+        union = 2 * edges - shared
+    else:
+        Bm = B[np.ix_(perm, perm)]
+        shared = int(((B == 1) & (Bm == 1)).sum())
+        union = int(((B == 1) | (Bm == 1)).sum())
     return {
         "jaccard": shared / union if union else 1.0,
-        "shared": shared, "union": union, "edges": int(B.sum()),
+        "shared": shared, "union": union, "edges": edges,
         "n_pairs": len(seen) // 2,
     }
 

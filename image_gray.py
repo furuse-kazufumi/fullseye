@@ -106,16 +106,19 @@ def gen_cooc_matrix(image, region=None, ldgray=8, direction=0):
     L = int(ldgray)
     q = np.clip((im * (L - 1)).round().astype(int), 0, L - 1)
     dr, dc = {0: (0, 1), 45: (-1, 1), 90: (-1, 0), 135: (-1, -1)}[int(direction)]
-    P = np.zeros((L, L))
+    # Keep temporary pair arrays below roughly one million pixels per row block.
+    counts = np.zeros(L * L, dtype=np.int64)
     H, W = q.shape
-    for r in range(H):
-        r2 = r + dr
-        if not (0 <= r2 < H):
-            continue
-        for c in range(W):
-            c2 = c + dc
-            if 0 <= c2 < W and m[r, c] and m[r2, c2]:
-                P[q[r, c], q[r2, c2]] += 1
+    r0, r1 = max(0, -dr), min(H, H - dr)
+    c0, c1 = max(0, -dc), min(W, W - dc)
+    block_rows = max(1, 1_000_000 // max(1, c1 - c0))
+    for start in range(r0, r1, block_rows):
+        stop = min(r1, start + block_rows)
+        a = q[start:stop, c0:c1]
+        b = q[start + dr:stop + dr, c0 + dc:c1 + dc]
+        valid = m[start:stop, c0:c1] & m[start + dr:stop + dr, c0 + dc:c1 + dc]
+        counts += np.bincount(a[valid] * L + b[valid], minlength=L * L)
+    P = counts.reshape(L, L).astype(float)
     s = P.sum()
     return P / s if s > 0 else P
 

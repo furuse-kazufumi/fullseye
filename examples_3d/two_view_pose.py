@@ -63,7 +63,7 @@ print(f"[1] Sampson距離 max = {samp.max():.3e}  (エピポーラ拘束 x2^T F 
 
 # (2) K既知なので本質行列 E = K^T F K
 E = twoview.essential_from_fundamental(F, K)
-print(f"[2] 本質行列の特異値 = {np.round(np.linalg.svd(E)[1], 3)}  (理想は (1,1,0))")
+print(f"[2] 本質行列の特異値 = {np.round(np.linalg.svd(E, compute_uv=False), 3)}  (理想は (1,1,0))")
 
 # (3) recover_pose: E を分解し cheirality(全点が両カメラ前方)で一意な (R,t) を選ぶ
 R_est, t_est, X_rec = twoview.recover_pose(pts1, pts2, K)

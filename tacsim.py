@@ -302,8 +302,9 @@ def membrane_render_rgb(normals, lights, albedo: float = 1.0, ambient: float = 0
         raise ValueError("membrane_render_rgb: lights must be (3, 3) (one row per colour channel)")
     if float(noise) < 0.0:
         raise ValueError("membrane_render_rgb: noise must be >= 0")
-    rgb = np.stack([np.asarray(_ph.render_lambertian(nrm, float(albedo), L[k], ambient=float(ambient)), np.float64)
-                    for k in range(3)], axis=-1)
+    Ln = L / (np.linalg.norm(L, axis=1, keepdims=True) + 1e-12)
+    # 3 光源の内積を一括計算し、従来どおりチャネルごと float32 に丸めてから返す。
+    rgb = (float(albedo) * (np.clip(nrm @ Ln.T, 0.0, None) + float(ambient))).astype(np.float32).astype(np.float64)
     if float(noise) > 0.0:
         rgb = rgb + np.random.default_rng(int(seed)).normal(0.0, float(noise), rgb.shape)
     return rgb
@@ -392,7 +393,8 @@ def contact_radius_ring(h, pitch: float, n_az: int = 72, step_px: float = 0.25, 
     radii, pts = [], []
     for ph in phis:
         sy, sx = math.sin(ph), math.cos(ph)
-        prof = _bilinear(h, cy + (rs + 0.5) * sy, cx + (rs + 0.5) * sx) - _bilinear(h, cy + (rs - 0.5) * sy, cx + (rs - 0.5) * sx)
+        prof = (_bilinear(h, cy + (rs + 0.5) * sy, cx + (rs + 0.5) * sx)
+                - _bilinear(h, cy + (rs - 0.5) * sy, cx + (rs - 0.5) * sx))
         k = int(np.argmax(prof))
         rk = rs[k]
         if 0 < k < len(rs) - 1:
@@ -424,10 +426,8 @@ def _radial_slope_profile(normals, X, Y, centre_xy, pitch: float):
     if nb < 1:
         raise ValueError("centre (%g, %g) is outside the window or within one pitch of its edge" % (c_x, c_y))
     idx = np.clip((r / (rmax / nb)).astype(int), 0, nb)
-    prof = np.zeros(nb + 1)
-    cnt = np.zeros(nb + 1)
-    np.add.at(prof, idx.ravel(), s_r.ravel())
-    np.add.at(cnt, idx.ravel(), 1.0)
+    prof = np.bincount(idx.ravel(), weights=s_r.ravel(), minlength=nb + 1).astype(np.float64, copy=False)
+    cnt = np.bincount(idx.ravel(), minlength=nb + 1).astype(np.float64, copy=False)
     prof = prof[:nb]
     cnt = cnt[:nb]
     prof = np.where(cnt > 0, prof / np.maximum(cnt, 1), 0.0)

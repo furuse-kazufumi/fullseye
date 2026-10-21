@@ -8,7 +8,7 @@ halcon: add_image
 examples: [degenerate_inputs, gallery_nary_image_algebra, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # add_image — 2D `nary` op

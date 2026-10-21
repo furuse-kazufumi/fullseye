@@ -7,13 +7,13 @@ out: table
 examples: [poc_tem_ctf_thon_rings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tem_multislice — OPTICS `tem` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)` (実装を直接呼ぶなら `import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666)`、台帳から引くなら `opsoptics.get("tem_multislice")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)` (実装を直接呼ぶなら `import temsim; temsim.tem_multislice(slices, pixel_A=0.5, kv=300.0, slice_thickness_A=2.0, bandlimit=0.6666666666666666, memory_budget=None)`、台帳から引くなら `opsoptics.get("tem_multislice")`)
 
 ## 使い方
 

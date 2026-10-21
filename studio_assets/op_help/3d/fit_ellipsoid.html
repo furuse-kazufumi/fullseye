@@ -1,12 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_ellipsoid — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_ellipsoid(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_ellipsoid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_ellipsoid(points, chunk: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points, chunk: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_ellipsoid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群に任意姿勢の 3 軸楕円体を代数フィットし <code style="color:#22d3bf">{center, axes, radii, residual}</code> を返す。</p>
 <p>一般二次曲面 <code style="color:#22d3bf">xᵀA x + b·x + c = 0</code> を、楕円体を保証する拘束 <code style="color:#22d3bf">4J − I² = 1</code> の下で一般化固有問題 <code style="color:#22d3bf">Sr v1 = λ C v1</code>(<code style="color:#22d3bf">scipy.linalg.eig</code>)として解く(Li &amp; Griffiths 2004)。各実固有ベクトルを楕円体へ復元し、<b>正定値(= 実在する楕円体)へ復元でき残差 RMS が最小</b> のものを採用する(復元時の正定値検査そのものが厳密な楕円体判定)。初期値不要・決定論・大域解。数値安定化のため点群を重心と RMS 半径で無次元化してから解き、パラメータを world 座標へ戻す。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。</p>
+<p>chunk: 指定時は設計行列をこの点数ずつ 10x10 散布行列へ加算する省メモリ経路。</p>
+<p>集計順の違いにより既定経路との差は 1e-10 以下。既定 <code style="color:#22d3bf">None</code> は従来経路。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>。</p>
 <p><code style="color:#22d3bf">axes</code> の列が主軸(半径の降順)、<code style="color:#22d3bf">radii</code> は半径(降順)、<code style="color:#22d3bf">residual</code> は Taubin 近似の</p>

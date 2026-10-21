@@ -7,7 +7,7 @@ out: points
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tb_mls_smooth — 2D `typed` op
@@ -51,6 +51,8 @@ radius : float
     近傍球の半径(> 0)。局所曲面のサポート。
 order : int
     局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
+chunk : int or None
+    指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
 
 Returns
 -------

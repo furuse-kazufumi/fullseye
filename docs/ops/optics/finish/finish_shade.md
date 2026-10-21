@@ -7,7 +7,7 @@ out: rgbimage
 examples: [machined_metal_and_materials, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # finish_shade — OPTICS `finish` op

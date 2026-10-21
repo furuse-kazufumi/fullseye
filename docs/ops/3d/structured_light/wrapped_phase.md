@@ -7,13 +7,13 @@ out: image2d
 examples: [structured_light, structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # wrapped_phase — 3D `structured_light` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.wrapped_phase(images) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.wrapped_phase(images) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("wrapped_phase")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wrapped_phase(images, method='general') -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.wrapped_phase(images, method='general') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("wrapped_phase")`)
 
 ## 使い方
 

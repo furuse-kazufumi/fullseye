@@ -163,7 +163,12 @@ def _warp2d(img: np.ndarray, fx: np.ndarray, fy: np.ndarray) -> np.ndarray:
     """Backward-mapped bilinear warp of a clean 2-D image by a clean field."""
     H, W = img.shape
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
-    return ndimage.map_coordinates(img, [yy - fy, xx - fx], order=1, mode="nearest")
+    return _warp2d_coords(img, [yy - fy, xx - fx])
+
+
+def _warp2d_coords(img: np.ndarray, coords) -> np.ndarray:
+    """Backward-map a clean 2-D image through precomputed sample coordinates."""
+    return ndimage.map_coordinates(img, coords, order=1, mode="nearest")
 
 
 def _sanitize_image(out, ref):
@@ -209,12 +214,14 @@ def warp_by_field(img, fx, fy):
     shape = (a.shape[0], a.shape[1])
     FX = _field(fx, shape)
     FY = _field(fy, shape)
+    yy, xx = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float64)
+    coords = [yy - FY, xx - FX]
     if a.ndim >= 3:
         flat = a.reshape(shape[0], shape[1], -1)
-        out = np.stack([_warp2d(flat[..., c], FX, FY) for c in range(flat.shape[2])], axis=-1)
+        out = np.stack([_warp2d_coords(flat[..., c], coords) for c in range(flat.shape[2])], axis=-1)
         out = out.reshape(a.shape)
     else:
-        out = _warp2d(a, FX, FY)
+        out = _warp2d_coords(a, coords)
     return _sanitize_image(out, a)
 
 
@@ -279,9 +286,10 @@ def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
     fy = np.zeros(F.shape, np.float64)
     gy, gx = _grad(F)
     g2 = gx * gx + gy * gy
+    yy, xx = np.mgrid[0:F.shape[0], 0:F.shape[1]].astype(np.float64)
     try:
         for _ in range(n):
-            warped = _warp2d(M, fx, fy)
+            warped = _warp2d_coords(M, [yy - fy, xx - fx])
             diff = warped - F
             den = g2 + diff * diff + e
             vx = diff * gx / den
@@ -305,7 +313,7 @@ def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
         pass
     fx = np.nan_to_num(fx, nan=0.0, posinf=0.0, neginf=0.0)
     fy = np.nan_to_num(fy, nan=0.0, posinf=0.0, neginf=0.0)
-    warped = _sanitize_image(_warp2d(M, fx, fy), F)
+    warped = _sanitize_image(_warp2d_coords(M, [yy - fy, xx - fx]), F)
     return warped, fx, fy
 
 

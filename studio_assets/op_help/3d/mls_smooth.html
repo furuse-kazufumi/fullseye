@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。</p>
 <p>点ごとに半径 <code style="color:#22d3bf">radius</code> 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の 2 軸)を推定し、近傍の「接平面上座標 (u,v) → 法線方向の高さ h」に order 次の多項式曲面をガウス重み付き最小二乗で当てはめる。注目点自身は局所座標の原点 (0,0) にあたるので、当てはめた曲面の (0,0) での高さ(= 定数項)ぶんだけ法線方向へ動かして曲面上へ射影する。面の形は保ったままセンサノイズだけを均せる。</p>
@@ -12,6 +12,8 @@
 <p>近傍球の半径(&gt; 0)。局所曲面のサポート。</p>
 <p>order : int</p>
 <p>局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。</p>
+<p>chunk : int or None</p>
+<p>指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。</p>

@@ -347,6 +347,52 @@ def _nonuniformity_variances(d, b, highpass, fn):
     return out
 
 
+def _nonuniformity_variances_stream(dark_frames, bright_frames, highpass, fn):
+    """Streaming counterpart of :func:`_nonuniformity_variances` (``ddof=1``)."""
+    def consume(frames, name):
+        mean = m2 = None
+        count = 0
+        for frame in frames:
+            x = np.asarray(frame, dtype=np.float64)
+            if x.ndim != 2:
+                raise ValueError("%s: %s frames must be 2-D" % (fn, name))
+            if mean is None:
+                mean = x.copy()
+                m2 = np.zeros_like(x)
+            elif x.shape != mean.shape:
+                raise ValueError("%s: %s frames differ in shape" % (fn, name))
+            count += 1
+            delta = x - mean
+            mean += delta / count
+            m2 += delta * (x - mean)
+        if count < 2:
+            raise ValueError("%s: need at least 2 images per stack" % fn)
+        return mean, float((m2 / (count - 1)).mean()), count
+
+    out = {}
+    hp_info = None
+    shapes = []
+    counts = []
+    for nm, frames in (("dark", dark_frames), ("bright", bright_frames)):
+        avg, var_t, count = consume(frames, nm)
+        shapes.append(avg.shape); counts.append(count)
+        if highpass is None:
+            out[nm] = _split(avg, var_t, count)
+        else:
+            hp = emva_highpass(avg, method=highpass)
+            hp_info = {k: hp[k] for k in ("method", "border", "white_variance_gain",
+                                          "white_variance_gain_col", "white_variance_gain_row")}
+            gains = (hp["white_variance_gain"], hp["white_variance_gain_col"], hp["white_variance_gain_row"])
+            out[nm] = _split(hp["image"], var_t, count, gains)
+            out[nm]["mu"] = float(avg.mean())
+        out["var_temporal_" + nm] = var_t
+    if shapes[0] != shapes[1]:
+        raise ValueError("%s: dark %r and bright %r images differ in shape" % (fn, *shapes))
+    out["highpass"] = hp_info
+    out["L"] = tuple(counts)
+    return out
+
+
 def emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None):
     """DSNU と PRNU(式 33〜42・65〜67)。
 

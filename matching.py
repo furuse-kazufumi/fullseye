@@ -6,6 +6,7 @@ model は軽量 dict(create → find のペア)。画像は [0,1] の 2D float64
 from __future__ import annotations
 
 import numpy as np
+from scipy import signal
 
 
 def _f(a):
@@ -20,12 +21,28 @@ def _ncc_map(t, img):
     tn = np.sqrt((t0 ** 2).sum()) + 1e-12
     H, W = img.shape
     h, w = t.shape
-    out = np.full((max(H - h + 1, 0), max(W - w + 1, 0)), -1.0)
-    for i in range(out.shape[0]):
-        for j in range(out.shape[1]):
-            p = img[i:i + h, j:j + w]
-            p0 = p - p.mean()
-            out[i, j] = float((p0 * t0).sum() / (np.sqrt((p0 ** 2).sum()) * tn + 1e-12))
+    shape = (max(H - h + 1, 0), max(W - w + 1, 0))
+    out = np.full(shape, -1.0)
+    if not out.size:
+        return out
+    # Direct correlation wins for small kernels; beyond 15x15 FFT avoids the
+    # quadratic template-size cost.  Local moments come from integral images.
+    method = "direct" if h * w <= 225 else "fft"
+    cross = signal.correlate(img, t0, mode="valid", method=method)
+    integral = np.pad(np.cumsum(np.cumsum(img, axis=0), axis=1), ((1, 0), (1, 0)))
+    integral2 = np.pad(np.cumsum(np.cumsum(img * img, axis=0), axis=1), ((1, 0), (1, 0)))
+    sums = integral[h:, w:] - integral[:-h, w:] - integral[h:, :-w] + integral[:-h, :-w]
+    sums2 = integral2[h:, w:] - integral2[:-h, w:] - integral2[h:, :-w] + integral2[:-h, :-w]
+    variance = sums2 - sums * sums / (h * w)
+    variance = np.maximum(variance, 0.0)
+    out[:] = cross / (np.sqrt(variance) * tn + 1e-12)
+    # Cancellation in the moment identity is unreliable for nearly flat windows.
+    unstable = variance <= 1e-12
+    for i, j in np.argwhere(unstable):
+        p = img[i:i + h, j:j + w]
+        p0 = p - p.mean()
+        out[i, j] = float((p0 * t0).sum()
+                          / (np.sqrt((p0 ** 2).sum()) * tn + 1e-12))
     return out
 
 
@@ -60,14 +77,19 @@ def best_match(template, image) -> dict:
     img = _f(image)
     H, W = img.shape
     h, w = t.shape
-    best = None
-    for i in range(H - h + 1):
-        for j in range(W - w + 1):
-            d = float(((img[i:i + h, j:j + w] - t) ** 2).sum())
-            if best is None or d < best[0]:
-                best = (d, i, j)
-    if best is None:
+    oh, ow = H - h + 1, W - w + 1
+    if oh <= 0 or ow <= 0:
         return {"row": -1, "col": -1, "column": -1, "error": np.inf}
+    method = "direct" if h * w <= 225 else "fft"
+    cross = signal.correlate(img, t, mode="valid", method=method)
+    sq = img * img
+    integral = np.pad(np.cumsum(np.cumsum(sq, axis=0), axis=1), ((1, 0), (1, 0)))
+    patch_sq = integral[h:, w:] - integral[:-h, w:] - integral[h:, :-w] + integral[:-h, :-w]
+    errors = np.maximum(patch_sq - 2.0 * cross + float((t * t).sum()), 0.0)
+    i, j = np.unravel_index(int(np.argmin(errors)), errors.shape)
+    # Return the directly accumulated value, preserving the former public result.
+    d = float(((img[i:i + h, j:j + w] - t) ** 2).sum())
+    best = (d, int(i), int(j))
     # 基準点は find_ncc_model / find_shape_model と同じ **テンプレート中心**。
     r, c = best[1] + h // 2, best[2] + w // 2
     return {"row": r, "col": c, "column": c, "row_tl": best[1], "col_tl": best[2],

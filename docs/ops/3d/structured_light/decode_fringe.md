@@ -7,13 +7,13 @@ out: depth
 examples: [structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # decode_fringe — 3D `structured_light` op
 
 - **データ種**: `images` → `depth`
-- **呼び出し**: `import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("decode_fringe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None, method='general') -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None, method='general') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("decode_fringe")`)
 
 ## 使い方
 

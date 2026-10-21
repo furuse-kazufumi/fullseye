@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">interp_barycentric — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x, *, nodes: &#x27;str | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x, *, nodes: &#x27;str | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用重心公式在 x 处计算通过点 (xk, yk) 的多项式(次数 len−1)的值(Berrut &amp; Trefethen 2004)。</p>
 <p>不经由系数(不求解 Vandermonde 矩阵)，因此高次时数值上也稳定。等间距点上 <b>Runge 现象</b>(端部振荡)会原样出现 —— 那不是公式的缺陷，而是点的布置问题。</p>

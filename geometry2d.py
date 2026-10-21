@@ -168,8 +168,55 @@ def distance_rr_min(region1, region2) -> float:
 
 
 def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
-                                 row2, col2, phi2, l2a, l2b, n: int = 60) -> float:
-    """2 つの有向矩形の交差面積(モンテカルロ近似、area_intersection_rectangle2)。"""
+                                 row2, col2, phi2, l2a, l2b, n: int = 60,
+                                 method: str = "grid") -> float:
+    """2つの有向矩形の交差面積。
+
+    ``method="grid"`` は従来の固定格子近似、``"exact"`` は凸多角形
+    クリッピングを使う。接触、平行な重辺、半辺長ゼロの面積は0とする。
+    """
+    if method not in {"grid", "exact"}:
+        raise ValueError("method must be 'grid' or 'exact'")
+
+    if method == "exact":
+        if min(l1a, l1b, l2a, l2b) <= 0:
+            return 0.0
+
+        def vertices(r, c, phi, la, lb):
+            cp, sp = np.cos(phi), np.sin(phi)
+            # 反時計回りの (x=col, y=row)。
+            u, v = np.array([cp, sp]), np.array([-sp, cp])
+            centre = np.array([c, r])
+            return [centre + sx * la * u + sy * lb * v
+                    for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+
+        subject = vertices(row1, col1, phi1, l1a, l1b)
+        clip = vertices(row2, col2, phi2, l2a, l2b)
+        eps = np.finfo(float).eps * 64
+        for a, b in zip(clip, clip[1:] + clip[:1]):
+            edge = b - a
+            def side(p):
+                return edge[0] * (p[1] - a[1]) - edge[1] * (p[0] - a[0])
+            old, subject = subject, []
+            if not old:
+                break
+            prev, prev_side = old[-1], side(old[-1])
+            for cur in old:
+                cur_side = side(cur)
+                if cur_side >= -eps:
+                    if prev_side < -eps:
+                        subject.append(prev + (cur - prev) * prev_side / (prev_side - cur_side))
+                    subject.append(cur)
+                elif prev_side >= -eps:
+                    subject.append(prev + (cur - prev) * prev_side / (prev_side - cur_side))
+                prev, prev_side = cur, cur_side
+        if len(subject) < 3:
+            return 0.0
+        p = np.asarray(subject)
+        area = 0.5 * abs(np.dot(p[:, 0], np.roll(p[:, 1], -1)) -
+                         np.dot(p[:, 1], np.roll(p[:, 0], -1)))
+        return float(area if area > eps else 0.0)
+
     def inside(pts, r, c, phi, la, lb):
         d = pts - [r, c]
         cp, sp = np.cos(-phi), np.sin(-phi)

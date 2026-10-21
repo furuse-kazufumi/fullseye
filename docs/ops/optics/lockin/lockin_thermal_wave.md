@@ -7,7 +7,7 @@ out: video
 examples: [poc_lockin_imaging, poc_thermal_drift_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # lockin_thermal_wave — OPTICS `lockin` op

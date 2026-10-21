@@ -266,7 +266,13 @@ def _profile(coords_px, pixel_um, pm, cm, nm_, pw, cw, nw, xm_um, xw_um, drift_u
     f = fn[keep]
     a = amp[keep]
     x = coords_px * pixel_um - drift_um
-    prof = np.real(np.exp(2j * np.pi * np.outer(x, f)) @ a)
+    unique_f, inverse = np.unique(f, return_inverse=True)
+    if len(unique_f) < len(f):
+        grouped = np.zeros(len(unique_f), dtype=np.complex128)
+        np.add.at(grouped, inverse, a)
+        prof = np.real(np.exp(2j * np.pi * np.outer(x, unique_f)) @ grouped)
+    else:
+        prof = np.real(np.exp(2j * np.pi * np.outer(x, f)) @ a)
     return prof, f, np.abs(coef[keep] * np.sinc(fn[keep] * pixel_um) * np.exp(-2.0 * np.pi ** 2 * sigma_um ** 2 * fn[keep] ** 2))
 
 

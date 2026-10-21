@@ -7,13 +7,13 @@ out: table
 examples: [poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # gum_monte_carlo — SPC `uncertainty` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)` (実装を直接呼ぶなら `import spc; spc.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)`、台帳から引くなら `opsspc.get("gum_monte_carlo")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)` (実装を直接呼ぶなら `import spc; spc.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)`、台帳から引くなら `opsspc.get("gum_monte_carlo")`)
 
 ## 使い方
 
