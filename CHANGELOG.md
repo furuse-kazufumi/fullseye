@@ -12,6 +12,27 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `unwrap_phase_2d` に有効領域だけを処理する `crop_valid=True` を追加（既定の全面処理は維持、結果は完全一致、1600²疎マスクで 0.1057→0.0099秒、0.094倍）。
 - `fit_torus` に管半径を平均距離として消去する `method="eliminate_r"` を追加（既定は維持、残差許容差 `rtol=1e-10, atol=1e-12`、30000点で 0.2723→0.2032秒、0.75倍）。
 
+- `fill_holes`: 孤立・細長・境界の穴で結果がビット一致する稀疎更新を既定化し、1200² で 1114.5 ms から 175.9 ms (6.34倍)に高速化。
+- `bilateral_filter_depth`: 完全一致する64行分割を既定化し、401×517 で 792.9 ms から 198.5 ms (3.99倍)、ピーク割当を19.2 MBから10.5 MBに削減。
+- `joint_bilateral`: 完全一致する64行分割を既定化し、401×517 で 771.5 ms から209.5 ms (3.68倍)、ピーク割当を22.8 MBから14.8 MBに削減。
+
+- StudioでエクスポートしたPythonを隔離プロセスで再実行し、全段のshape・dtype・有限値・NaN位置・数値許容誤差をGUI結果と照合して、最初の不一致段をProblemsへ示せるようにした。
+
+### 性能
+- 地形変位が全点でゼロになる場合は、結果に影響しない頂点法線の計算を省きます。
+- 剰余候補の採点では、全標本で重みがゼロの帯域を計算から除きます。
+- ライン走査の同期誤差が一定の場合は、累積表を作らず直接位置を求めます。
+
+### ドキュメント
+- PoC 展示館を「何を測るか」「どう測るか」「装置」の 3 部構成にし、センサーと計測器の物理・生出力・固有の破綻を扱う 32 展示の装置棟を日英で追加。
+
+- 一次元関数の長系列照合、ゼロ交差、複数位置の値取得を高速化した。
+- グラフの rich-club 曲線と複数グラフの重み集計を高速化し、一時配列を削減した。
+- 実験計画の点間最小距離と直交表の強度検査を高速化し、一時配列を削減した。
+- 三次元シーン読込で複数ノードが共有するアクセサーのデコード結果を再利用するようにした。
+- grouped packed pixel の展開で全入力を 16 bit 化する一時配列を省いた。
+- PIV の時系列統計を欠測値の標本集合を保った逐次集計へ変更し、速度場履歴の保持を省いた。
+
 - Studio now shuts down overlapping run-worker QThreads deterministically, preventing a late older generation from causing a native crash during window cleanup.
 
 ### 修正
@@ -98,19 +119,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### Changed — 3D 復元・周波数処理・点群・形状当てはめの省メモリ化
 - 位相復号と構造化光三角測量の中間配列を減らし、4 枚位相シフトの専用モードを追加した。点群近傍照会と楕円体散布行列には、既定結果を変えない選択式のブロック処理を追加した。
-- 3D 周波数フィルタの Gaussian 伝達関数を軸ごとの因子で計算し、復元には選択式の overlap-add 畳み込みと全ゼロ観測の早期終了を追加した。
+- 3D 周波数フィルタの Gaussian 伝達関数を軸ごとの因子で計算し、復元には全ゼロ観測の早期終了を追加した。選択式の分割畳み込みは撤回した。12×13×14・2×3×4核・3反復で既定経路の4.13倍、128×129×130・7立方核・3反復で2.56倍の時間を要し、省メモリ効果に見合わなかったためである。
 - 光学フローの固定係数とワープ座標を再利用し、ボクセル集約・円錐/トーラス/楕円体当てはめの不要な再計算を除いた。
 
 ### Changed — 光学・電子顕微鏡・経路探索の省計算
-- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算の省メモリ経路は `memory_budget` 指定時に選べ、既定経路の速度は維持する。
+- ファイバーモードの二分法と零点計算、共振器の位相信号、照度計算、電子顕微鏡の波動計算と焦点推定、テレセントリック掃引、複数台の経路探索で、結果を保ったまま不要な反復・一時配列・再計算を減らした。マルチスライス計算は完全一致する逐次加算を既定化し、512×513×20 で 0.667 秒から 0.675 秒（1.01 倍）のまま入力全体の変換コピーを除いた。
 
 - Reduced temporary allocations and repeated transforms in mesh repair, curve analysis,
   signal filtering, phase unwrapping, calibration, video I/O, and motion measurement;
   exact behavior remains the default where the faster path can change rounding.
 - `motion` の動き領域集計、モデル展開、イベント検出を高速化し、動きエネルギー列の全フレーム保持を不要にした。支配的動き推定には既定の丸め順を保つ経路に加え、複数右辺を一括処理する選択式の高速経路を追加した。
-- Added selectable low-allocation paths for mesh smoothing, curve resampling,
-  eager video reads, and phase-video reconstruction, plus a composite point-cloud
-  curvature API; exact evaluation order remains the no-argument default.
+- Added selectable low-allocation paths for mesh smoothing, eager video reads, and
+  phase-video reconstruction, plus a composite point-cloud curvature API; exact
+  evaluation order remains the no-argument default. The selectable curve-resampling
+  variant was withdrawn: it was 1.75x slower for 500→800 points and 1.66x slower for
+  2.5M→2.8M points than the exact path.
 
 ### Changed — 性能改善 第22便
 
@@ -134,7 +157,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - ばらつきモデルのMAD・位相移動・採点キャッシュ・校正値収集を省メモリ化し、反復位置合わせの不要な統計を省略。
 - 触覚校正の重複分解を除き、位置依存予測・LUT構築・逆引きに分割処理と近傍木方式を追加。
 - 停止判定付き反復復元で随伴スペクトルと観測値抽出を再利用し、履歴不要時の保持量を制限。
-- Chebyshev係数・評価に高速方式を追加し、不等間隔周期図に周波数分割方式を追加。
+- Chebyshev係数に高速方式を追加し、不等間隔周期図に周波数分割方式を追加。評価の選択式高速方式は撤回した。11×10×9×8係数・1,003点で既定経路の1.26倍、18×17×16係数・25,000点で2.37倍の時間を要したためである。
 - 3次元占有格子の構築と距離問い合わせを分割処理し、大規模な点群で一時メモリを削減。
 
 - ばらつきモデルの校正では、校正に不要な領域解析と確率計算を省略し、同一の標準化値からしきい値を求めるよう改善。
@@ -146,7 +169,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 主成分の平行分析で、メモリ上限を指定した逐次集計を選べるようにしました。
 - 逐次標本平均で、履歴を間引く間隔または最終値だけを選べるようにしました。
 - 前景が疎な陰影画像では、前景の法線だけを高精度化して計算するようにしました。
-- 三角形面の向き検証に、辺配列を整列して集計する省メモリ経路を追加しました。
+- 三角形面の向き検証で辺配列を整列して集計する選択経路は撤回しました。退化・非多様体の3小例で既定経路の4.86倍、250,000面の鎖状メッシュで1.86倍の時間を要し、省メモリ効果に見合わなかったためです。
 
 - 深度補間、文字領域、光輸送、応答曲面、固定点反復、画像縮小で、結果の互換性を保ったまま一時配列と重複計算を削減しました。
 
@@ -165,7 +188,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 信号解析の非重複 RMS とゼロ交差を高速化し、点事象スペクトルにメモリ上限付き経路を加えた。
 - 一次元関数の逆関数処理を軽量化した。
 - 疎グラフの三角閉路計算を軽量化した。
-- packed pixel 展開は raw buffer と uint8 配列で同じ結果を返し、1〜16 bit の省メモリ経路を選択できるようにした。
+- packed pixel 展開は raw buffer と uint8 配列で同じ結果を返し、1〜16 bit の完全一致する省メモリ経路を既定化した（800万画素・12 bit の中央値で 242.1 ms から 236.8 ms、1.02倍）。
 - PIV の外れ値検査に行 chunk 版を加え、少数外れ値の置換では対象近傍だけを集計するようにした。
 
 ### Changed — 性能改善 第29便

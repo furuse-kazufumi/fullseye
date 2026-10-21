@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # joint_bilateral — 3D `depth_denoise` op
 
 - **データ種**: `depth × image2d` → `depth`
-- **呼び出し**: `import fullseye as fs; fs.ledger.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("joint_bilateral")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("joint_bilateral")`)
 
 ## 使い方
 
@@ -22,6 +22,8 @@ joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で
 深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
 **guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
 同一形状必須(fail-closed)。
+``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

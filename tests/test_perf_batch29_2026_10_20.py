@@ -95,6 +95,16 @@ def test_392_395_funct1d_identity_and_batch_lookup():
     np.testing.assert_array_equal(inv["y"], np.arange(y.size, dtype=float)[order])
     expect = np.column_stack([2.5 * np.arange(y.size) - 3, -2 * y + 4])
     np.testing.assert_array_equal(funct1d.transform_funct_1d(y, 2.5, -3, -2, 4), expect)
+    for xs in (np.array([-2.0, 0.5, 18.25, 1e6]),
+               np.array([[0.0, 3.4], [9999.0, 20000.0]])):
+        np.testing.assert_array_equal(
+            funct1d.get_y_value_funct_1d(y, xs),
+            np.array([np.interp(x, np.arange(y.size), y) for x in xs.ravel()]).reshape(xs.shape),
+        )
+        np.testing.assert_array_equal(
+            funct1d.get_y_value_funct_1d(y, xs, interpolate=False),
+            y[np.clip(np.round(xs), 0, y.size - 1).astype(np.intp)],
+        )
 
 
 def test_394_zero_crossings_matches_product_reference():
@@ -227,12 +237,13 @@ def test_397_sparse_cycle_and_399_rich_club_match_original():
 
 def test_403_404_consensus_aggregation_identity():
     rng=np.random.default_rng(403)
-    mats=[rng.integers(0,4,(40,40)) for _ in range(5)]
-    for m in mats: np.fill_diagonal(m,0)
-    got=graphinv.graph_edge_consensus(mats)
-    p=np.stack([m>0 for m in mats]); occ=p.sum(0); s=np.stack(mats).sum(0)
-    ref=[float(s[occ==c].sum()/s.sum()) if c else 0.0 for c in range(6)]
-    np.testing.assert_allclose(got["synapse_share"], ref, rtol=0, atol=1e-15)
+    for count, shape, high in ((2, (7, 7), 2), (5, (40, 40), 4)):
+        mats=[rng.integers(0,high,shape) for _ in range(count)]
+        for m in mats: np.fill_diagonal(m,0)
+        got=graphinv.graph_edge_consensus(mats)
+        p=np.stack([m>0 for m in mats]); occ=p.sum(0); s=np.stack(mats).sum(0)
+        ref=[float(s[occ==c].sum()/s.sum()) if c else 0.0 for c in range(count+1)]
+        np.testing.assert_allclose(got["synapse_share"], ref, rtol=0, atol=1e-15)
 
 
 def test_408_min_dist_matches_reference_including_duplicates():
@@ -262,6 +273,11 @@ def test_412_oa_strength_matches_original_counts():
                             if int(np.sum((t[:,a]==x)&(t[:,b]==y))) != want: return False
             return True
         assert doe._oa_strength2_ok(table) is ref(table)
+    x, y = np.meshgrid(np.arange(3), np.arange(3), indexing="ij")
+    valid = np.stack([x.ravel(), y.ravel(), ((x + y) % 3).ravel()], axis=1)
+    assert doe._oa_strength2_ok(valid) is ref(valid) is True
+    invalid = valid.copy(); invalid[0, 0] = 2
+    assert doe._oa_strength2_ok(invalid) is ref(invalid) is False
 
 
 def test_414_strided_accessor_owned_and_identical():
@@ -274,6 +290,29 @@ def test_414_strided_accessor_owned_and_identical():
     got=meshio_opt._read_accessor(gltf,[raw],0,"memory")
     np.testing.assert_array_equal(got,vals)
     assert got.flags.c_contiguous
+
+
+def test_415_gltf_accessors_are_decoded_once(monkeypatch, tmp_path):
+    from types import SimpleNamespace as NS
+    path = tmp_path / "shared.gltf"; path.write_text("{}")
+    prim = NS(attributes=NS(POSITION=0), indices=1, mode=4)
+    gltf = NS(meshes=[NS(name="shared", primitives=[prim])])
+    monkeypatch.setattr(meshio_opt, "_need", lambda *a: NS(GLTF2=lambda: NS(load=lambda p: gltf)))
+    monkeypatch.setattr(meshio_opt, "_gltf_buffers", lambda *a: [])
+    nodes = [(NS(name="a"), 0, np.eye(4)), (NS(name="b"), 0, np.eye(4))]
+    monkeypatch.setattr(meshio_opt, "_iter_mesh_nodes", lambda *a: iter(nodes))
+    calls = []
+    values = {0: np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]]),
+              1: np.array([0, 1, 2], dtype=np.uint16)}
+    def decode(g, buffers, ai, src):
+        calls.append(ai); return values[ai].copy()
+    monkeypatch.setattr(meshio_opt, "_read_accessor", decode)
+    scene = meshio_opt.read_gltf(path)
+    assert calls == [0, 1]
+    assert len(scene) == 2
+    for item in scene:
+        np.testing.assert_array_equal(item["V"], values[0])
+        np.testing.assert_array_equal(item["F"], [[0, 1, 2]])
 
 
 def test_410_lhs_early_rejection_preserves_design_and_rng_state(monkeypatch):
@@ -322,8 +361,6 @@ def test_421_lsb_general_width_and_raw_buffer_contract(bits):
     ref=_unpack_lsb_reference(raw,bits,count)
     for source in (raw, raw.tobytes(), bytearray(raw), memoryview(raw)):
         np.testing.assert_array_equal(acquire.unpack_lsb(source,bits,count),ref)
-        np.testing.assert_array_equal(
-            acquire.unpack_lsb(source,bits,count,method="low_memory"), ref)
 
 
 def test_422_grouped_raw_buffer_contract():
@@ -361,3 +398,24 @@ def test_428_stream_outlier_mask_is_identical():
     ref=pivops.piv_outlier_mask(f)
     for chunk in (1,17,128,500):
         np.testing.assert_array_equal(pivops.piv_outlier_mask_stream(f,chunk=chunk),ref)
+
+
+@pytest.mark.parametrize("shape,overlap", [((2, 3), 0.0), ((5, 7), 0.25)])
+def test_426_time_statistics_stream_matches_stacked_with_missing(monkeypatch, shape, overlap):
+    rng = np.random.default_rng(426 + shape[0])
+    flows = [rng.normal(size=(2, *shape)) for _ in range(7)]
+    flows[1][0, 0, 0] = np.nan
+    flows[2][1, 0, 0] = np.nan
+    flows[3][:, -1, -1] = np.nan
+    stack = np.stack(flows)
+    mean = np.nanmean(stack, axis=0)
+    fluct = stack - mean
+    expected_rms = np.sqrt(np.nanmean(fluct ** 2, axis=0))
+    expected_reynolds = np.nanmean(fluct[:, 0] * fluct[:, 1], axis=0)
+    info = {"rows": np.arange(shape[0]), "cols": np.arange(shape[1]), "step": 1}
+    items = iter(flows)
+    monkeypatch.setattr(pivops, "piv_cross_correlate", lambda *a, **k: (next(items), info))
+    got = pivops.piv_time_statistics([np.zeros((2, 2))] * 8, window=2, overlap=overlap)
+    np.testing.assert_allclose(got["mean"], mean, rtol=0, atol=1e-12, equal_nan=True)
+    np.testing.assert_allclose(got["rms"], expected_rms, rtol=0, atol=1e-12, equal_nan=True)
+    np.testing.assert_allclose(got["reynolds"], expected_reynolds, rtol=0, atol=1e-12, equal_nan=True)

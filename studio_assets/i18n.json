@@ -1,4 +1,12 @@
 {
+  "Verify exported Python": {
+    "ja": "エクスポートしたPythonを検証", "zh": "验证导出的 Python", "tw": "驗證匯出的 Python",
+    "ko": "내보낸 Python 검증", "de": "Exportiertes Python prüfen", "hi": "निर्यातित Python जाँचें"
+  },
+  "Ready to compare every stage.": {
+    "ja": "全段を比較できます。", "zh": "已准备好比较所有阶段。", "tw": "已準備好比較所有階段。",
+    "ko": "모든 단계를 비교할 준비가 되었습니다.", "de": "Alle Stufen können verglichen werden.", "hi": "सभी चरणों की तुलना के लिए तैयार。"
+  },
   "Run in progress %d/%d stages: %s": {
     "ja": "実行中 %d/%d 段: %s", "zh": "正在运行第 %d/%d 阶段: %s", "tw": "正在執行第 %d/%d 階段: %s",
     "ko": "실행 중 %d/%d단계: %s", "de": "Ausführung %d/%d Stufen: %s", "hi": "चरण %d/%d चल रहा है: %s"

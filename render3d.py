@@ -1728,6 +1728,8 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
         if amp[k] == 0.0 or not np.any(gate[k]):
             continue
         disp += amp[k] * gate[k] * _octave_noise(Vv, lam[k], perm, k)
+    if not np.any(disp):
+        return Vv.copy(), Ff.copy()
     vn = _vertex_normals(Vv, Ff)
     return Vv + vn * disp[:, None], Ff.copy()
 

@@ -437,7 +437,7 @@ def _byte_view(buf):
     return np.asarray(buf, dtype=np.uint8).ravel()
 
 
-def unpack_lsb(buf, bits: int, count: int, method="exact") -> np.ndarray:
+def unpack_lsb(buf, bits: int, count: int) -> np.ndarray:
     """lsb-packed bit stream -> one ``uint16`` per pixel (PFNC 2.4 6.3.1).
 
     Args:
@@ -461,20 +461,14 @@ def unpack_lsb(buf, bits: int, count: int, method="exact") -> np.ndarray:
     if a.size < need_bytes:
         raise ValueError("unpack_lsb: %d pixels x %d bits need %d bits, buffer has %d"
                          % (count, bits, need, a.size * 8))
-    if method == "exact":
-        unpacked = np.unpackbits(a, bitorder="little")
-        words = unpacked[:need].reshape(count, bits)
-        return (words * (1 << np.arange(bits, dtype=np.uint32))).sum(axis=1).astype(np.uint16)
-    if method == "low_memory":
-        # Each value spans at most three bytes.  Decode those bytes directly instead
-        # of expanding every input byte into eight temporary uint8 values.
-        src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
-        bit = np.arange(count, dtype=np.uint64) * bits
-        byte = (bit >> 3).astype(np.intp)
-        shift = (bit & 7).astype(np.uint32)
-        word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
-        return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
-    raise ValueError("unpack_lsb: method must be 'exact' or 'low_memory'")
+    # Each value spans at most three bytes.  Decode those bytes directly instead
+    # of expanding every input byte into eight temporary uint8 values.
+    src = np.pad(a[:need_bytes], (0, 2)).astype(np.uint32, copy=False)
+    bit = np.arange(count, dtype=np.uint64) * bits
+    byte = (bit >> 3).astype(np.intp)
+    shift = (bit & 7).astype(np.uint32)
+    word = src[byte] | (src[byte + 1] << 8) | (src[byte + 2] << 16)
+    return ((word >> shift) & ((1 << bits) - 1)).astype(np.uint16)
 
 
 def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
@@ -502,11 +496,11 @@ def unpack_grouped(buf, bits: int, count: int) -> np.ndarray:
     if a.size < pairs * 3:
         raise ValueError("unpack_grouped: %d pixels need %d bytes, buffer has %d"
                          % (count, pairs * 3, a.size))
-    a = a[:pairs * 3].reshape(pairs, 3).astype(np.uint16)
-    mid = a[:, 1]
+    a = a[:pairs * 3].reshape(pairs, 3)
+    mid = a[:, 1].astype(np.uint16)
     out = np.empty(pairs * 2, dtype=np.uint16)
-    out[0::2] = (a[:, 0] << low) | (mid & ((1 << low) - 1))
-    out[1::2] = (a[:, 2] << low) | ((mid >> 4) & ((1 << low) - 1))
+    out[0::2] = (a[:, 0].astype(np.uint16) << low) | (mid & ((1 << low) - 1))
+    out[1::2] = (a[:, 2].astype(np.uint16) << low) | ((mid >> 4) & ((1 << low) - 1))
     return out[:int(count)]
 
 
