@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-939 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+940 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -857,6 +857,7 @@
 | `tb_env_studio` | points->signal | typed |  | - | - | - |
 | `tb_env_lightbox` | points->signal | typed |  | - | - | - |
 | `tb_sensor_capture` | rgbimage | typed |  | - | - | - |
+| `tb_viewport_from_equirect` | rgbimage | typed |  | - | - | - |
 | `tb_lf_to_mla` | lightfield->image | typed |  | - | - | - |
 | `tb_lf_subaperture` | lightfield->image | typed |  | - | - | - |
 | `tb_lf_center_view` | lightfield->image | typed |  | - | - | - |
@@ -945,9 +946,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/939
-- skimage: 383/939
-- matlab: 259/939
+- opencv: 310/940
+- skimage: 383/940
+- matlab: 259/940
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

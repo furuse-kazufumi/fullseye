@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 939 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 940 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -857,6 +857,7 @@ Seminal references for the 939 operators (families collapse many variants). The 
 | `tb_env_studio` | typed | - |
 | `tb_env_lightbox` | typed | - |
 | `tb_sensor_capture` | typed | - |
+| `tb_viewport_from_equirect` | typed | - |
 | `tb_lf_to_mla` | typed | - |
 | `tb_lf_subaperture` | typed | - |
 | `tb_lf_center_view` | typed | - |
@@ -944,7 +945,7 @@ Seminal references for the 939 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 174/939 operators cite a seminal paper.**
+**Provenance coverage: 174/940 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

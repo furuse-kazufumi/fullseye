@@ -1,0 +1,106 @@
+[
+ {
+  "file": "01_scene_viewer.png",
+  "name": "scene_viewer",
+  "caption": "振幅の照明むら、色距離の段差、点群の床・壁・荷物が同じ画素からつながる。",
+  "shape": [
+   733,
+   2128,
+   3
+  ]
+ },
+ {
+  "file": "02_effects_added.png",
+  "name": "effects_added",
+  "caption": "全パネル同じ距離範囲。暗部の荒れと隅の湾曲が順に現れる。",
+  "shape": [
+   333,
+   1330,
+   3
+  ]
+ },
+ {
+  "file": "03_noise_vs_amplitude.png",
+  "name": "noise_vs_amplitude",
+  "caption": "対数傾きは実測 -0.878、合成 -1.027。",
+  "shape": [
+   700,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "04_corner_bow.png",
+  "name": "corner_bow",
+  "caption": "実測は曲線だけを掲載し、フレームを再配布しない。",
+  "shape": [
+   700,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "05_glass_two_returns.png",
+  "name": "glass_two_returns",
+  "caption": "二山の間隔 1.35 m。位相方式ではフェーザとして混ざる。",
+  "shape": [
+   700,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "06_pole_flying_pixels.png",
+  "name": "pole_flying_pixels",
+  "caption": "手描きマスクではなく3×3サブ光線のフェーザ和。",
+  "shape": [
+   1213,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "07_dtof_histograms_depth.png",
+  "name": "dtof_histograms_depth",
+  "caption": "強い画素では最初の光子が早い側へ偏る。",
+  "shape": [
+   543,
+   1230,
+   3
+  ]
+ },
+ {
+  "file": "08_volume_and_limits.png",
+  "name": "volume_and_limits",
+  "caption": "既存 op の連鎖。透明板と遮蔽面の奥は体積対象外。",
+  "shape": [
+   356,
+   1200,
+   3
+  ],
+  "csv": "08_volume_and_limits.csv",
+  "tsv": "08_volume_and_limits.tsv"
+ },
+ {
+  "file": "09_dtof_light_front.gif",
+  "name": "dtof_light_front",
+  "caption": "48枚、576×432。各時刻を99パーセンタイル・γ=0.5で階調化。",
+  "shape": [
+   432,
+   576,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 44,
+  "fps": 8.0,
+  "video": "09_dtof_light_front.mp4",
+  "video_frames": 48,
+  "video_fps": 8.0,
+  "video_shape": [
+   432,
+   576,
+   3
+  ]
+ }
+]

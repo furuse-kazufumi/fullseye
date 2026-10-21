@@ -12,6 +12,18 @@ def _img(a):
     return np.asarray(a, dtype=np.float64)
 
 
+def _as_image_domain(value):
+    """Return an image and its explicit domain, accepting either public form."""
+    if isinstance(value, dict):
+        im = _img(value["image"])
+        domain = np.asarray(value["domain"], dtype=bool)
+        if domain.shape != im.shape:
+            raise ValueError("image and domain must have the same shape")
+        return im, domain
+    im = _img(value)
+    return im, np.ones(im.shape, dtype=bool)
+
+
 def gen_image_const(width=64, height=64, value=0.0) -> np.ndarray:
     """定数値で満たした画像(gen_image_const)。"""
     return np.full((int(height), int(width)), float(value), dtype=np.float64)
@@ -48,14 +60,24 @@ def gen_image1_rect(image, row, col, width, height) -> np.ndarray:
 
 
 def change_domain(image, region):
-    """画像の domain(ROI)を region に変更(領域外を 0 マスク)(change_domain)。"""
-    im = _img(image); m = np.asarray(region, bool)
+    """Replace the domain with ``region`` and zero pixels outside it.
+
+    Unlike the HALCON reference operator, this implementation does not retain
+    pixel values outside the domain.  This also applies to dictionary inputs.
+    """
+    im, _ = _as_image_domain(image); m = np.asarray(region, bool)
     return {"image": np.where(m, im, 0.0), "domain": m}
 
 
 def reduce_domain(image, region):
-    """domain を region へ縮小(reduce_domain)。change_domain と同義の facade。"""
-    return change_domain(image, region)
+    """Intersect the existing domain with ``region`` and zero outside it.
+
+    Unlike the HALCON reference operator, pixels outside the resulting domain
+    are zeroed rather than retained.  Plain arrays start with a full domain.
+    """
+    im, domain = _as_image_domain(image)
+    m = domain & np.asarray(region, bool)
+    return {"image": np.where(m, im, 0.0), "domain": m}
 
 
 def get_domain(image):
@@ -64,28 +86,36 @@ def get_domain(image):
     (2026-10-02 訂正: 以前は「非ゼロ/全域」と書いていたが、実装は値によらず全面を返す。公開済みの
     ``hx_get_domain`` と同じ答え。非ゼロの画素が欲しいなら ``image != 0``。)
     """
-    im = _img(image)
-    return np.ones(im.shape, bool)
+    _, domain = _as_image_domain(image)
+    return domain.copy()
 
 
 def crop_domain(image, region):
     """domain の外接矩形で画像を切り出す(crop_domain)。"""
-    im = _img(image); m = np.asarray(region, bool)
+    is_domain_image = isinstance(image, dict)
+    im, domain = _as_image_domain(image); m = np.asarray(region, bool)
     if not m.any():
-        return im[:0, :0].copy()
+        cropped = im[:0, :0].copy()
+        return {"image": cropped, "domain": domain[:0, :0].copy()} if is_domain_image else cropped
     rs, cs = np.where(m)
-    return im[rs.min():rs.max() + 1, cs.min():cs.max() + 1].copy()
+    sl = (slice(rs.min(), rs.max() + 1), slice(cs.min(), cs.max() + 1))
+    cropped = im[sl].copy()
+    return {"image": cropped, "domain": domain[sl].copy()} if is_domain_image else cropped
 
 
 def crop_domain_rel(image, region, top=0, left=0, bottom=0, right=0):
     """domain 外接矩形を相対マージン付きで切り出す(crop_domain_rel)。"""
-    im = _img(image); m = np.asarray(region, bool)
+    is_domain_image = isinstance(image, dict)
+    im, domain = _as_image_domain(image); m = np.asarray(region, bool)
     if not m.any():
-        return im[:0, :0].copy()
+        cropped = im[:0, :0].copy()
+        return {"image": cropped, "domain": domain[:0, :0].copy()} if is_domain_image else cropped
     rs, cs = np.where(m)
     r0 = max(0, rs.min() + int(top)); r1 = min(im.shape[0], rs.max() + 1 - int(bottom))
     c0 = max(0, cs.min() + int(left)); c1 = min(im.shape[1], cs.max() + 1 - int(right))
-    return im[r0:r1, c0:c1].copy()
+    sl = (slice(r0, r1), slice(c0, c1))
+    cropped = im[sl].copy()
+    return {"image": cropped, "domain": domain[sl].copy()} if is_domain_image else cropped
 
 
 def crop_rectangle2(image, row, col, phi, length1, length2) -> np.ndarray:
