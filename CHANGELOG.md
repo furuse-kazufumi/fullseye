@@ -11,7 +11,6 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `mls_smooth(order=0)` に重み付き平均を直接使う `method="mean"` を追加（従来既定は維持、許容差 `rtol=1e-12, atol=1e-14`、7000点で 0.2191→0.1502秒、0.69倍）。
 - `unwrap_phase_2d` に有効領域だけを処理する `crop_valid=True` を追加（既定の全面処理は維持、結果は完全一致、1600²疎マスクで 0.1057→0.0099秒、0.094倍）。
 - `fit_torus` に管半径を平均距離として消去する `method="eliminate_r"` を追加（既定は維持、残差許容差 `rtol=1e-10, atol=1e-12`、30000点で 0.2723→0.2032秒、0.75倍）。
-- `fit_cone` に半角の有界二次形式を解く `method="eliminate_angle"` を追加（既定は維持、残差許容差 `rtol=1e-8, atol=1e-10`、10000点で 3.1353→3.0976秒、0.988倍）。
 
 ### 修正
 - `dynsys_lyapunov_spectrum`: 外部レビューで判明した、非線形系の接方程式が各段で同じ始点のヤコビ行列を使い、実質 1 次精度になっていた不具合を修正。状態と接行列を同じ中間状態で 4 次積分する。

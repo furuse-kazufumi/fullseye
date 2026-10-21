@@ -104,7 +104,7 @@ def _axial_radial(P: np.ndarray, v: np.ndarray, d: np.ndarray):
 # ═══════════════════════════════════════════════════════════════════════════
 # 1. 円錐(cone)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_cone(points, method: str = "exact") -> dict:
+def fit_cone(points) -> dict:
     """点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
 
     子午面での点-母線直交距離 ``a·sinα − ρ·cosα``(``a``=軸成分, ``ρ``=半径,
@@ -124,8 +124,6 @@ def fit_cone(points, method: str = "exact") -> dict:
         ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。
     """
     P = _as_points(points, 6, "fit_cone")
-    if method not in ("exact", "eliminate_angle"):
-        raise ValueError("method must be 'exact' or 'eliminate_angle'")
     centroid = P.mean(0)
     Q = P - centroid
 
@@ -135,20 +133,6 @@ def fit_cone(points, method: str = "exact") -> dict:
         d = _unit(p[3:6])
         alpha = p[6]
         a, r = _axial_radial(P, v, d)
-        return a * np.sin(alpha) - r * np.cos(alpha)
-
-    def angle_for(v, d):
-        a, r = _axial_radial(P, v, _unit(d))
-        aa, ar, rr = np.dot(a, a), np.dot(a, r), np.dot(r, r)
-        stationary = .5 * np.arctan2(2 * ar, aa - rr)
-        candidates = np.clip([1e-3, np.pi / 2 - 1e-3, stationary,
-                              stationary + np.pi / 2], 1e-3, np.pi / 2 - 1e-3)
-        costs = [np.sum((a*np.sin(x) - r*np.cos(x))**2) for x in candidates]
-        return float(candidates[int(np.argmin(costs))])
-
-    def resid_eliminated(p):
-        alpha = angle_for(p[:3], p[3:6])
-        a, r = _axial_radial(P, p[:3], _unit(p[3:6]))
         return a * np.sin(alpha) - r * np.cos(alpha)
 
     lb = np.array([-np.inf] * 6 + [1e-3])
@@ -186,8 +170,6 @@ def fit_cone(points, method: str = "exact") -> dict:
     if best is None:
         raise ValueError("fit_cone: cannot detect cone spread (half-angle ~0, degenerates to cylinder)")
     sol = best[1]
-    if method == "eliminate_angle":
-        sol.x = np.r_[sol.x, angle_for(sol.x[:3], sol.x[3:6])]
 
     apex = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
@@ -206,9 +188,6 @@ def fit_cone(points, method: str = "exact") -> dict:
     return {"apex": apex, "axis": axis, "half_angle": half_angle,
             "residual": residual}
 
-
-fit_cone.__doc__ += ("\n\n``method='eliminate_angle'`` は半角の上下限と停留点を調べる。"
-                     "既定値は変更せず、残差許容差は rtol=1e-8, atol=1e-10。")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -268,12 +247,8 @@ def fit_torus(points, method: str = "exact") -> dict:
         sol = least_squares(resid_eliminated, p0[:-1], bounds=(lb[:-1], ub[:-1]),
                             method="trf", xtol=1e-12, ftol=1e-12, max_nfev=8000)
     else:
-        if method == "eliminate_angle":
-            sol = least_squares(resid_eliminated, p0[:6], method="trf",
-                                xtol=1e-12, ftol=1e-12, max_nfev=8000)
-        else:
-            sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
-                                xtol=1e-12, ftol=1e-12, max_nfev=8000)
+        sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
 
     center = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
