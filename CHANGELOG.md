@@ -7,6 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 反り危険度の地図で、疑似カラー上の数値を背景に応じた読みやすい文字色で表示するようにした。
 - PoC の深度・高さ・視差・変位図に、実測器に近い虹色疑似カラーと単位付きカラーバーを追加した。
 
 ### Added — 実行中の設定と結果を世代で結び付ける
