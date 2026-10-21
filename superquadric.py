@@ -256,5 +256,6 @@ def fit_superquadric(points) -> dict:
     eps = np.clip(np.asarray(p[3:5], dtype=np.float64), 0.1, 2.0)
     R = Rotation.from_rotvec(p[5:8]).as_matrix()
     t = np.asarray(p[8:11], dtype=np.float64)
-    residual = superquadric_residual(P, a, eps, R, t)
+    residual = (float(np.mean(sol.fun ** 2)) if np.array_equal(eps, p[3:5])
+                else superquadric_residual(P, a, eps, R, t))
     return {"a": a, "eps": eps, "R": R, "t": t, "residual": residual}

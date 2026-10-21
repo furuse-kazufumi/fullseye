@@ -443,27 +443,23 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
     inv_all[ids] = 1.0 / denom[ids]
     d0, d1, d2 = d[:, 0], d[:, 1], d[:, 2]
 
-    start = 0
-    n_ok = ids.size
-    while start < n_ok:
-        base = cum[start - 1] if start > 0 else 0
-        end = int(np.searchsorted(cum, base + _RASTER_PAIR_CHUNK, side="right"))
-        end = max(end, start + 1)                      # at least one triangle per chunk
-        end = min(end, n_ok)
-        sel = ids[start:end]
-        cnt = npx[start:end]
-        total = int(cnt.sum())
-        tri = np.repeat(sel, cnt)
-        offs = np.repeat(np.cumsum(cnt) - cnt, cnt)
-        k = np.arange(total, dtype=np.int64) - offs
-        bw_r = np.repeat(bw[start:end], cnt)
+    total_pairs = int(cum[-1])
+    base = 0
+    while base < total_pairs:
+        stop = min(base + _RASTER_PAIR_CHUNK, total_pairs)
+        pair = np.arange(base, stop, dtype=np.int64)
+        pos = np.searchsorted(cum, pair, side="right")
+        tri = ids[pos]
+        prev = np.where(pos > 0, cum[np.maximum(pos - 1, 0)], 0)
+        k = pair - prev
+        bw_r = bw[pos]
         # Pixel-centre convention (see the module docstring): the centre of pixel
         # ``(row=r, col=c)`` IS the continuous coordinate ``(u, v) = (c, r)`` —
         # integer, matching :func:`camera.depth_to_points`'s ``np.mgrid[0:H, 0:W]``.
         # Do NOT add 0.5 here: that is the OpenGL "pixel corners are integers"
         # convention and mixing the two silently shifts depth by half a pixel.
-        pr = np.repeat(rmin[sel], cnt) + k // bw_r
-        pc = np.repeat(cmin[sel], cnt) + k % bw_r
+        pr = rmin[tri] + k // bw_r
+        pc = cmin[tri] + k % bw_r
         px = pc.astype(np.float64)
         py = pr.astype(np.float64)
         inv = inv_all[tri]
@@ -479,7 +475,7 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
             zpix = 1.0 / inv_d
         keep = inside & np.isfinite(zpix)
         if not keep.any():
-            start = end
+            base = stop
             continue
         tri, pr, pc, zpix = tri[keep], pr[keep], pc[keep], zpix[keep]
         l0, l1, l2 = l0[keep], l1[keep], l2[keep]
@@ -510,7 +506,7 @@ def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
                 bary[r_w, c_w] = np.stack(
                     [l0[win] * zw / td0[win], l1[win] * zw / td1[win],
                      l2[win] * zw / td2[win]], axis=-1)
-        start = end
+        base = stop
 
 
 # --------------------------------------------------------------------------- #
@@ -521,15 +517,26 @@ def _line_crossings(A, B, C, o, axis: int) -> np.ndarray:
     parallel to *axis* crosses the triangles ``(A, B, C)``. Vectorised
     Möller-Trumbore; both sides of *o* are returned (it is a line, not a ray) so a
     caller can count crossings on either side for an even/odd parity test."""
+    prepared = _prepare_line_crossings(A, B, C, axis)
+    return _line_crossings_prepared(A, o, axis, prepared)
+
+
+def _prepare_line_crossings(A, B, C, axis: int):
+    """Terms that are invariant across parallel parity-test lines."""
     d = np.zeros(3, np.float64)
     d[axis] = 1.0
-    e1 = B - A                                      # (M, 3)
+    e1 = B - A
     e2 = C - A
-    hvec = np.cross(d, e2)                          # (M, 3)
+    hvec = np.cross(d, e2)
     det = np.einsum("ij,ij->i", e1, hvec)
     nonpar = np.abs(det) > _DET_EPS
     inv = np.zeros_like(det)
     inv[nonpar] = 1.0 / det[nonpar]
+    return e1, e2, hvec, nonpar, inv
+
+
+def _line_crossings_prepared(A, o, axis: int, prepared) -> np.ndarray:
+    e1, e2, hvec, nonpar, inv = prepared
     s = o[None, :] - A
     u = np.einsum("ij,ij->i", s, hvec) * inv
     q = np.cross(s, e1)
@@ -556,13 +563,14 @@ def _interior_mask(A, B, C, origin, dims, pitch: float, axis: int) -> np.ndarray
     a = int(axis)
     p, q = [ax for ax in (0, 1, 2) if ax != a]
     centers_a = origin[a] + (np.arange(n[a]) + 0.5) * pitch
+    prepared = _prepare_line_crossings(A, B, C, a)
     for ip in range(n[p]):
         cp = origin[p] + (ip + 0.5) * pitch + _EPS_P * pitch
         for iq in range(n[q]):
             cq = origin[q] + (iq + 0.5) * pitch + _EPS_Q * pitch
             o = np.zeros(3, np.float64)
             o[p], o[q] = cp, cq
-            cross = _line_crossings(A, B, C, o, a)
+            cross = _line_crossings_prepared(A, o, a, prepared)
             if cross.size == 0:
                 continue
             cnt = np.searchsorted(cross, centers_a, side="left")
@@ -628,6 +636,23 @@ def voxelize_solid(V, F, pitch: float, fill_axis: int = 2):
     return occ, lo.astype(np.float64)
 
 
+def _query_sdf_grid(tree, xc, yc, zc):
+    """Query grid centres in bounded z slabs, returning ``(z, y, x)`` distances."""
+    nx, ny, nz = len(xc), len(yc), len(zc)
+    dist = np.empty((nz, ny, nx), np.float64)
+    YY, XX = np.meshgrid(yc, xc, indexing="ij")
+    xy = np.stack([XX, YY], axis=-1).reshape(-1, 2)
+    slab = max(1, min(nz, 1_000_000 // max(nx * ny, 1)))
+    for z0 in range(0, nz, slab):
+        zs = zc[z0:z0 + slab]
+        centers = np.empty((zs.size, xy.shape[0], 3), np.float64)
+        centers[..., :2] = xy[None]
+        centers[..., 2] = zs[:, None]
+        dist[z0:z0 + slab] = tree.query(centers.reshape(-1, 3))[0].reshape(
+            zs.size, ny, nx)
+    return dist
+
+
 def mesh_to_sdf(V, F, pitch=None, grid=None, pad: float = 0.1, samples=None):
     """Signed-distance field of a watertight mesh -> ``(sdf, origin)``.
 
@@ -681,14 +706,12 @@ def mesh_to_sdf(V, F, pitch=None, grid=None, pad: float = 0.1, samples=None):
     xc = lo_p[0] + (np.arange(nx) + 0.5) * pitch
     yc = lo_p[1] + (np.arange(ny) + 0.5) * pitch
     zc = lo_p[2] + (np.arange(nz) + 0.5) * pitch
-    ZZ, YY, XX = np.meshgrid(zc, yc, xc, indexing="ij")     # (nz, ny, nx) = (D, H, W)
-    centers = np.stack([XX, YY, ZZ], axis=-1).reshape(-1, 3)
-    dist, _ = tree.query(centers)
-    dist = dist.reshape(nz, ny, nx)
+    dist = _query_sdf_grid(tree, xc, yc, zc)
 
     inside_world = _interior_mask(A, B, C, lo_p, dims, pitch, 0)   # +X parity
     inside = inside_world.transpose(2, 1, 0)                       # -> (D, H, W)
-    sdf = np.where(inside, -dist, dist).astype(np.float64)
+    dist[inside] *= -1.0
+    sdf = dist
     return sdf, lo_p.astype(np.float64)
 
 
@@ -1245,10 +1268,10 @@ def mesh_edge_lengths(V, F, *, per: str = "vertex") -> np.ndarray:
     return out
 
 
-def _subdivide_once(Vv, Ff, split_edge):
+def _subdivide_once(Vv, Ff, split_edge, edges=None):
     """One conforming midpoint pass: edges flagged in ``split_edge`` (E,) get a midpoint;
     faces are split by their 1 / 2 / 3-edge pattern (2 / 3 / 4 triangles, winding kept)."""
-    E, fe = _unique_edges(Ff)
+    E, fe = _unique_edges(Ff) if edges is None else edges
     if split_edge.shape[0] != E.shape[0]:
         raise ValueError("split mask does not match the edge count")
     n0 = Vv.shape[0]
@@ -1554,8 +1577,8 @@ def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
         for _ in range(lv):
             if Ff.shape[0] * 4 > mf:
                 raise ValueError("uniform subdivision would exceed max_faces=%d" % mf)
-            E, _fe = _unique_edges(Ff)
-            Vv, Ff = _subdivide_once(Vv, Ff, np.ones(E.shape[0], bool))
+            E, fe = _unique_edges(Ff)
+            Vv, Ff = _subdivide_once(Vv, Ff, np.ones(E.shape[0], bool), (E, fe))
         return Vv, Ff
     te = float(target_edge)
     if not np.isfinite(te) or te <= 0.0:
@@ -1702,7 +1725,7 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
     perm = np.tile(rng.permutation(256), 2)
     disp = np.zeros(Vv.shape[0], np.float64)
     for k in range(lam.size):
-        if amp[k] == 0.0:
+        if amp[k] == 0.0 or not np.any(gate[k]):
             continue
         disp += amp[k] * gate[k] * _octave_noise(Vv, lam[k], perm, k)
     vn = _vertex_normals(Vv, Ff)

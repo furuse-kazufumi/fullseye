@@ -513,15 +513,32 @@ def torque_decompose(pts, u, area: float, G: float, nu: float, a: float | None =
 
 
 def dipole_torque_resolution(pts, u, sigma_px: float, pitch: float, coef: float, area: float, radius: float, trials: int = 100,
-                             window=None, seed: int = 0, form: str = "divergence") -> dict:
+                             window=None, seed: int = 0, form: str = "divergence", method: str = "monte_carlo") -> dict:
     """マーカー重心の雑音 σ [px] を変位に足して双極子を ``trials`` 回取り直し、トルク分解能 σ_M = σ_D/|coef| [N·m] を測る。
     返り ``sigma_D`` (2,)、``sigma_M`` (2,)、``D0``(雑音なし)、``snr`` = |D0|/σ_D、``trials``。σ_M ∝ σ(実測)。
     **Raises** ValueError: σ < 0、trials < 2、coef = 0。"""
-    if not (float(sigma_px) >= 0.0) or int(trials) < 2 or not (float(coef) != 0.0):
+    if method not in ("monte_carlo", "analytic"):
+        raise ValueError("dipole_torque_resolution: method must be 'monte_carlo' or 'analytic'")
+    if not (float(sigma_px) >= 0.0) or (method == "monte_carlo" and int(trials) < 2) or not (float(coef) != 0.0):
         raise ValueError("dipole_torque_resolution: need sigma_px >= 0, trials >= 2, coef != 0")
     rng = np.random.default_rng(int(seed))
     pts = np.asarray(pts, np.float64); u = np.asarray(u, np.float64)
     base = tactile_dipole_moment(pts, u, form, origin="centre", weight="area", area=area, window=window, radius=radius)["D"]
+    if method == "analytic":
+        # The divergence fit and dipole integral are linear in displacement.
+        # Evaluate their exact linear operator once, then propagate iid marker
+        # variance with Var(Ax) = sigma^2 diag(A A.T).
+        zero = np.zeros_like(u)
+        cols = []
+        for j in range(u.size):
+            basis = zero.copy()
+            basis.flat[j] = 1.0
+            cols.append(tactile_dipole_moment(pts, basis, form, origin="centre", weight="area",
+                                              area=area, window=window, radius=radius)["D"])
+        operator = np.asarray(cols).T
+        sD = float(sigma_px) * float(pitch) * np.sqrt(np.sum(operator * operator, axis=1))
+        return {"sigma_D": sD, "sigma_M": sD / abs(float(coef)), "D0": base,
+                "snr": np.abs(base) / np.maximum(sD, 1e-300), "trials": 0}
     Ds = []
     for _ in range(int(trials)):
         un = u + rng.normal(0.0, float(sigma_px) * float(pitch), size=u.shape)

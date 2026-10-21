@@ -576,19 +576,24 @@ def max_tree(image, *, connectivity: int = 4) -> Dict[str, object]:
     f = img.ravel()
     n = f.size
     order = np.argsort(f, kind="stable")
-    ei, ej, _ = _grid_edges(h, w, conn)
-    nbr: List[List[int]] = [[] for _ in range(n)]
-    for a_, b_ in zip(ei.tolist(), ej.tolist()):
-        nbr[a_].append(b_)
-        nbr[b_].append(a_)
     parent = list(range(n))
     zpar = [-1] * n
-    ordl = order.tolist()
+    ordl = order
+    offsets = ((0, -1), (0, 1), (-1, 0), (1, 0))
+    if conn == 8:
+        offsets += ((-1, -1), (1, 1), (-1, 1), (1, -1))
     assert len(ordl) > 0
     for p in reversed(ordl):
         parent[p] = p
         zpar[p] = p
-        for q in nbr[p]:
+        row, col = divmod(p, w)
+        # Same order as the former lists built from _grid_edges: horizontal,
+        # vertical, then the two diagonal edge families.
+        for dr, dc in offsets:
+            qr, qc = row + dr, col + dc
+            if not (0 <= qr < h and 0 <= qc < w):
+                continue
+            q = qr * w + qc
             if zpar[q] < 0:
                 continue
             r = q
@@ -600,13 +605,12 @@ def max_tree(image, *, connectivity: int = 4) -> Dict[str, object]:
             if r != p:
                 parent[r] = p
                 zpar[r] = p
-    fl = f.tolist()
     for p in ordl:
         qq = parent[p]
-        if fl[parent[qq]] == fl[qq]:
+        if f[parent[qq]] == f[qq]:
             parent[p] = parent[qq]
-    par = np.array(parent, dtype=np.int64)
-    root = ordl[0]
+    par = np.asarray(parent, dtype=np.int64)
+    root = int(ordl[0])
     canon = (f[par] != f) | (np.arange(n) == root)
     area = np.ones(n, np.int64)
     hmax = f.copy()

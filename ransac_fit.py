@@ -125,6 +125,22 @@ def _info(mask, iters, degenerate=False):
             "n_points": int(len(mask)), "degenerate": bool(degenerate)}
 
 
+def _score_hypothesis(n_points, best_n, thresh, distance, block=4096):
+    """Score in blocks, abandoning a hypothesis as soon as it cannot win."""
+    mask = np.zeros(n_points, dtype=bool)
+    count = 0
+    for start in range(0, n_points, block):
+        stop = min(start + block, n_points)
+        part = distance(start, stop) < thresh
+        mask[start:stop] = part
+        count += int(part.sum())
+        # Updates use ``>`` below, so a possible tie also cannot change the
+        # first winning hypothesis and is safe to abandon.
+        if count + n_points - stop <= best_n:
+            return None, count
+    return mask, count
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 1. 平面(3 点サンプル)
 # ═══════════════════════════════════════════════════════════════════════════
@@ -158,9 +174,11 @@ def ransac_plane(points, thresh, iters=500, seed=0):
         if ln < 1e-12:                       # 共線 → 縮退、スキップ
             continue
         n = n / ln
-        dist = np.abs((P - p0) @ n)
-        mask = dist < thresh
-        cnt = int(mask.sum())
+        mask, cnt = _score_hypothesis(
+            N, best_n, thresh, lambda a, b: np.abs((P[a:b] - p0) @ n)
+        )
+        if mask is None:
+            continue
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
@@ -213,9 +231,11 @@ def ransac_sphere(points, thresh, iters=500, seed=0):
         if fit is None:
             continue
         c, r = fit
-        dist = np.abs(np.linalg.norm(P - c, axis=1) - r)
-        mask = dist < thresh
-        cnt = int(mask.sum())
+        mask, cnt = _score_hypothesis(
+            N, best_n, thresh, lambda a, b: np.abs(np.linalg.norm(P[a:b] - c, axis=1) - r)
+        )
+        if mask is None:
+            continue
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
@@ -276,9 +296,12 @@ def ransac_line(points, thresh, iters=300, seed=0):
         if ld < 1e-12:                       # 同一点 → 縮退、スキップ
             continue
         d = d / ld
-        dist = np.linalg.norm(np.cross(P - p0, d), axis=1)
-        mask = dist < thresh
-        cnt = int(mask.sum())
+        mask, cnt = _score_hypothesis(
+            N, best_n, thresh,
+            lambda a, b: np.linalg.norm(np.cross(P[a:b] - p0, d), axis=1),
+        )
+        if mask is None:
+            continue
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
@@ -371,9 +394,12 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
         if not np.isfinite(r) or r <= 1e-9:
             continue
         q_all = np.stack([P @ e1, P @ e2], 1)
-        dist = np.abs(np.linalg.norm(q_all - center2d, axis=1) - r)
-        mask = dist < thresh
-        cnt = int(mask.sum())
+        mask, cnt = _score_hypothesis(
+            N, best_n, thresh,
+            lambda a, b: np.abs(np.linalg.norm(q_all[a:b] - center2d, axis=1) - r),
+        )
+        if mask is None:
+            continue
         if cnt > best_n:
             best_n, best_mask, best_axis = cnt, mask, axis
 

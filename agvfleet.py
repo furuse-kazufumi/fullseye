@@ -146,17 +146,25 @@ def plan_conflicts(paths):
                 seen[v] = i
         if t == 0:
             continue
-        for i, j in itertools.combinations(range(len(paths)), 2):
-            a0, a1 = _at(paths[i], t - 1), _at(paths[i], t)
-            b0, b1 = _at(paths[j], t - 1), _at(paths[j], t)
-            if a0 == b1 and a1 == b0 and a0 != a1:
-                out.append(("edge", i, j, t, (a0, a1)))
+        moves = [(_at(p, t - 1), _at(p, t)) for p in paths]
+        by_move = {}
+        for i, move in enumerate(moves):
+            by_move.setdefault(move, []).append(i)
+        swaps = set()
+        for i, (a0, a1) in enumerate(moves):
+            if a0 != a1:
+                swaps.update((min(i, j), max(i, j)) for j in by_move.get((a1, a0), ()) if j != i)
+        for i, j in sorted(swaps):
+            out.append(("edge", i, j, t, moves[i]))
+        previous = {}
+        for j, (b0, _b1) in enumerate(moves):
+            previous.setdefault(b0, []).append(j)
         for i in range(len(paths)):
-            a0, a1 = _at(paths[i], t - 1), _at(paths[i], t)
+            a0, a1 = moves[i]
             if a0 == a1:
                 continue
-            for j in range(len(paths)):
-                if j != i and _at(paths[j], t - 1) == a1 and _at(paths[j], t) != a1:
+            for j in previous.get(a1, ()):
+                if j != i and moves[j][1] != a1:
                     out.append(("follow", i, j, t, a1))     # j は t に出て、i が同じ t に入った
     return out
 
@@ -225,6 +233,8 @@ def _st_astar(g, start, goal, dist, vcons, econs, horizon, reserved_goal_from=No
                 continue
             if w in rsv and nt >= rsv[w]:
                 continue
+            if nt + dist[w] > horizon:
+                continue
             key = (w, nt)
             nc = nconf + clash(w, nt)
             if key in closed or nc >= best.get(key, 1 << 30):
@@ -257,12 +267,12 @@ def mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None):
             return {"paths": None, "cost": None, "nodes": 0, "solved": False}
         paths.append(p)
     tie = itertools.count()
-    openl = [(plan_cost(paths), len(plan_conflicts(paths)), next(tie), cons, paths)]
+    initial_conflicts = plan_conflicts(paths)
+    openl = [(plan_cost(paths), len(initial_conflicts), next(tie), cons, paths, initial_conflicts)]
     nodes = 0
     while openl and nodes < max_nodes:
-        cost, _nc, _, cons, paths = heapq.heappop(openl)
+        cost, _nc, _, cons, paths, conf = heapq.heappop(openl)
         nodes += 1
-        conf = plan_conflicts(paths)
         if not conf:
             return {"paths": paths, "cost": cost, "nodes": nodes, "solved": True}
         kind, i, j, t, v = min(conf, key=lambda c: c[3])          # いちばん早い衝突から分ける
@@ -284,7 +294,8 @@ def mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None):
             ncons[a] = (vc, ec)
             npaths = list(paths)
             npaths[a] = newp
-            heapq.heappush(openl, (plan_cost(npaths), len(plan_conflicts(npaths)), next(tie), ncons, npaths))
+            child_conflicts = plan_conflicts(npaths)
+            heapq.heappush(openl, (plan_cost(npaths), len(child_conflicts), next(tie), ncons, npaths, child_conflicts))
     return {"paths": None, "cost": None, "nodes": nodes, "solved": False}
 
 
@@ -314,8 +325,9 @@ def mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None):
 
     def push(cons, pths):
         nid = next(tie)
-        c, k = plan_cost(pths), len(plan_conflicts(pths))
-        nodes_store[nid] = (c, k, cons, pths)
+        conflicts = plan_conflicts(pths)
+        c, k = plan_cost(pths), len(conflicts)
+        nodes_store[nid] = (c, k, cons, pths, conflicts)
         heapq.heappush(open_h, (c, k, nid))
         return nid
 
@@ -338,10 +350,9 @@ def mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None):
         if not focal_h:
             break
         k, c, nid = heapq.heappop(focal_h)
-        cost, _k, cons, pths = nodes_store.pop(nid)
+        cost, _k, cons, pths, conf = nodes_store.pop(nid)
         in_focal.discard(nid)
         expanded += 1
-        conf = plan_conflicts(pths)
         if not conf:
             return {"paths": pths, "cost": cost, "nodes": expanded, "solved": True, "lower_bound": low, "w": w}
         kind, i, j, t, v = min(conf, key=lambda q: q[3])

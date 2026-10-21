@@ -55,6 +55,7 @@ _MAX_FEATURES = 1 << 26                # stored model feature values
 _EPS = 1e-12
 _LBP_BINS = 10
 _FOURIER_BANDS = 3
+_KNN_BANK_BLOCK = 8192               # cap one query distance slab at about 16 MiB
 
 
 # ----------------------------------------------------------------------------- validation
@@ -104,12 +105,21 @@ def _images(x, name, op, min_n=1):
     if isinstance(x, (list, tuple)):
         if len(x) == 0:
             raise ValueError("%s: %s is empty (0 images)" % (op, name))
-        arrs = [np.asarray(a, dtype=np.float64) for a in x]
+        raw = [np.asarray(item) for item in x]
+        total = sum(item.size for item in raw)
+        if total > _MAX_VALUES:
+            raise ValueError("%s: %s has %d values (> %d); downsample first" %
+                             (op, name, total, _MAX_VALUES))
+        arrs = [np.asarray(item, dtype=np.float64) for item in raw]
         if len({a.shape for a in arrs}) != 1:
             raise ValueError("%s: images in %s differ in shape: %s" % (op, name, sorted({a.shape for a in arrs})))
         a = np.stack(arrs, axis=0)
     else:
-        a = np.asarray(x, dtype=np.float64)
+        raw = np.asarray(x)
+        if raw.size > _MAX_VALUES:
+            raise ValueError("%s: %s has %d values (> %d); downsample first" %
+                             (op, name, raw.size, _MAX_VALUES))
+        a = np.asarray(raw, dtype=np.float64)
     if a.size == 0:
         raise ValueError("%s: %s is empty" % (op, name))
     if a.ndim == 2:
@@ -218,19 +228,23 @@ def _pixel_channels(img, spec):
 
 def _pool(chans, patch, stride):
     """Box mean of every channel over patch x patch windows at the given stride -> (gh, gw, K)."""
-    c = np.stack(chans, axis=-1)
-    h, w, _ = c.shape
+    h, w = np.asarray(chans[0]).shape
     gh = (h - patch) // stride + 1
     gw = (w - patch) // stride + 1
-    ii = np.zeros((h + 1, w + 1, c.shape[-1]))
-    ii[1:, 1:] = c.cumsum(axis=0).cumsum(axis=1)
+    out = np.empty((gh, gw, len(chans)), dtype=np.float64)
+    ii = np.empty((h + 1, w + 1), dtype=np.float64)
     r0 = np.arange(gh) * stride
     c0 = np.arange(gw) * stride
-    a = ii[r0[:, None] + patch, c0[None, :] + patch]
-    b = ii[r0[:, None], c0[None, :] + patch]
-    d = ii[r0[:, None] + patch, c0[None, :]]
-    e = ii[r0[:, None], c0[None, :]]
-    return (a - b - d + e) / float(patch * patch)
+    for k, channel in enumerate(chans):
+        ii.fill(0.0)
+        np.cumsum(channel, axis=0, out=ii[1:, 1:])
+        np.cumsum(ii[1:, 1:], axis=1, out=ii[1:, 1:])
+        a = ii[r0[:, None] + patch, c0[None, :] + patch]
+        b = ii[r0[:, None], c0[None, :] + patch]
+        d = ii[r0[:, None] + patch, c0[None, :]]
+        e = ii[r0[:, None], c0[None, :]]
+        out[..., k] = (a - b - d + e) / float(patch * patch)
+    return out
 
 
 def _fourier_bands(gray, patch, stride):
@@ -333,10 +347,19 @@ def _gauss_fit(feats, shrinkage, ridge, op):
                          "an identical stack gives no model of what varies" % op)
     ident = np.eye(d)
     if shrinkage == "auto":
-        lam = np.empty((gh, gw))
-        for i in range(gh):
-            for j in range(gw):
-                lam[i, j] = _lw_intensity(xc[:, i, j, :], s[i, j])
+        lam = np.empty(gh * gw)
+        xflat = xc.reshape(n, -1, d)
+        sflat = s.reshape(-1, d, d)
+        for a in range(0, gh * gw, 256):
+            xb = xflat[:, a:a + 256, :]
+            sb = sflat[a:a + 256]
+            mb = np.trace(sb, axis1=1, axis2=2) / d
+            d2 = ((sb - mb[:, None, None] * ident) ** 2).sum((1, 2)) / d
+            b2 = ((np.sum(xb * xb, axis=2) ** 2).sum(axis=0)
+                  - n * (sb ** 2).sum((1, 2))) / (n * n * d)
+            lam[a:a + len(sb)] = np.where(d2 <= 0.0, 1.0,
+                                           np.minimum(np.maximum(b2, 0.0) / d2, 1.0))
+        lam = lam.reshape(gh, gw)
     elif shrinkage == "none":
         lam = np.zeros((gh, gw))
     else:
@@ -562,11 +585,31 @@ def _knn_dist(q, bank, k, chunk=256):
     out = np.empty(q.shape[0])
     for a in range(0, q.shape[0], chunk):
         qq = q[a:a + chunk]
-        d2 = np.maximum((qq ** 2).sum(axis=1)[:, None] + b2[None, :] - 2.0 * (qq @ bank.T), 0.0)
+        if bank.shape[0] > _KNN_BANK_BLOCK:
+            top = np.full((len(qq), k), np.inf)
+            q2 = (qq ** 2).sum(axis=1)[:, None]
+            for j in range(0, bank.shape[0], _KNN_BANK_BLOCK):
+                stop = min(j + _KNN_BANK_BLOCK, bank.shape[0])
+                slab = qq @ bank[j:stop].T
+                slab *= -2.0
+                slab += q2
+                slab += b2[None, j:stop]
+                np.maximum(slab, 0.0, out=slab)
+                merged = np.concatenate((top, slab), axis=1)
+                merged.partition(k - 1, axis=1)
+                top = merged[:, :k]
+            out[a:a + chunk] = np.sqrt(top).mean(axis=1)
+            continue
+        d2 = qq @ bank.T
+        d2 *= -2.0
+        d2 += (qq ** 2).sum(axis=1)[:, None]
+        d2 += b2[None, :]
+        np.maximum(d2, 0.0, out=d2)
         if k == 1:
             out[a:a + chunk] = np.sqrt(d2.min(axis=1))
         else:
-            out[a:a + chunk] = np.sqrt(np.partition(d2, k - 1, axis=1)[:, :k]).mean(axis=1)
+            d2.partition(k - 1, axis=1)
+            out[a:a + chunk] = np.sqrt(d2[:, :k]).mean(axis=1)
     return out
 
 

@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # mv_pca — MULTIVAR `analysis` op
 
 - **データ種**: `matrix` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_pca")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_pca")`)
 
 ## 使い方
 

@@ -186,6 +186,15 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
     if not (xmax > xmin and ymax > ymin and zmax > zmin):
         raise ValueError("bounds must be non-degenerate (max > min per axis)")
 
+    # Validate every view before carving; an early empty hull must not hide a
+    # malformed later input.
+    views = []
+    for sil, K, R, t in zip(silhouettes, Ks, Rs, ts):
+        sil = np.asarray(sil, dtype=bool)
+        if sil.ndim != 2:
+            raise ValueError("each silhouette must be a 2D array")
+        views.append((sil, _as_K(K), _as_R(R), _as_t(t)))
+
     # voxel 中心(セル中心。境界に張り付かないよう +0.5 オフセット)
     xs = xmin + (np.arange(res) + 0.5) * (xmax - xmin) / res
     ys = ymin + (np.arange(res) + 0.5) * (ymax - ymin) / res
@@ -194,11 +203,13 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
     centers = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)   # (res^3, 3)
 
     occ = np.ones(centers.shape[0], dtype=bool)
-    for sil, K, R, t in zip(silhouettes, Ks, Rs, ts):
-        sil = np.asarray(sil, dtype=bool)
+    for sil, K, R, t in views:
         H, W = sil.shape
-        uv, depth = _project(centers, _as_K(K), _as_R(R), _as_t(t))
-        keep = np.zeros(centers.shape[0], dtype=bool)
+        live = np.flatnonzero(occ)
+        if live.size == 0:
+            break
+        uv, depth = _project(centers[live], K, R, t)
+        keep = np.zeros(live.size, dtype=bool)
         front = depth > 0                                  # カメラ後方は視錐外 -> 彫り取る
         if np.any(front):
             px = np.rint(uv[front]).astype(np.int64)
@@ -208,7 +219,7 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
             idx = np.nonzero(front)[0][inb]
             in_sil = sil[v[inb], u[inb]]
             keep[idx[in_sil]] = True
-        occ &= keep                                        # 視錐の共通部分(AND)
+        occ[live] = keep                                   # 視錐の共通部分(AND)
 
     return occ.reshape(res, res, res)
 

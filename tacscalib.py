@@ -239,11 +239,10 @@ def lights_fit_from_sphere(diffs, normals, masks, order: int = 0) -> dict:
     B = np.concatenate(B)
     if A.shape[0] < A.shape[1] * 3:
         raise ValueError("lights_fit_from_sphere: need >= %d pixels, got %d" % (A.shape[1] * 3, A.shape[0]))
-    sv = np.linalg.svd(A, compute_uv=False)
+    X, _residuals, _rank, sv = np.linalg.lstsq(A, B, rcond=None)
     cond = float(sv[0] / max(sv[-1], 1e-300))
     if not (sv[-1] > 1e-9 * sv[0]):
         raise ValueError("lights_fit_from_sphere: degenerate normals (cond %.3g)" % cond)
-    X, *_ = np.linalg.lstsq(A, B, rcond=None)
     res = B - A @ X
     out = {"order": int(order), "rms": np.sqrt(np.mean(res ** 2, axis=0)), "n_rows": int(A.shape[0]), "cond": cond}
     if order == 0:
@@ -255,7 +254,7 @@ def lights_fit_from_sphere(diffs, normals, masks, order: int = 0) -> dict:
     return out
 
 
-def membrane_predict_rgb(normals, fit: dict) -> np.ndarray:
+def membrane_predict_rgb(normals, fit: dict, *, chunk=262144) -> np.ndarray:
     """法線 (H, W, 3) + :func:`lights_fit_from_sphere` の結果 → 背景差分 RGB の予測 (H, W, 3)(線形、クリップしない)。
     order 2 の結果は画素ごとに a(x, y)・L(x, y) を作る(画像の大きさは較正時と同じであること)。
     **Raises** ``ValueError``: 法線の形 / order 2 で画像の大きさが違う。
@@ -274,11 +273,20 @@ def membrane_predict_rgb(normals, fit: dict) -> np.ndarray:
     if tuple(fit["image_shape"]) != n.shape[:2]:
         raise ValueError("membrane_predict_rgb: order-2 fit was made for %s, got %s" % (fit["image_shape"], n.shape[:2]))
     H, W = n.shape[:2]
-    ys, xs = np.mgrid[0:H, 0:W]
-    Pb = _pos_basis(ys.ravel(), xs.ravel(), "unit", (H, W))
-    C = np.einsum("pk,fkc->pfc", Pb, np.asarray(fit["coef"], np.float64))       # (p, 4, 3)
+    chunk = int(chunk)
+    if chunk <= 0:
+        raise ValueError("membrane_predict_rgb: chunk must be positive")
+    coef = np.asarray(fit["coef"], np.float64)
     nn = n.reshape(-1, 3)
-    return (C[:, 0, :] + np.einsum("pk,pkc->pc", nn, C[:, 1:, :])).reshape(H, W, 3)
+    out = np.empty((len(nn), 3), np.float64)
+    for start in range(0, len(nn), chunk):
+        stop = min(start + chunk, len(nn))
+        flat = np.arange(start, stop)
+        Pb = _pos_basis(flat // W, flat % W, "unit", (H, W))
+        C = np.einsum("pk,fkc->pfc", Pb, coef)
+        out[start:stop] = C[:, 0, :] + np.einsum(
+            "pk,pkc->pc", nn[start:stop], C[:, 1:, :])
+    return out.reshape(H, W, 3)
 
 
 def linear_invert(diff, fit: dict) -> np.ndarray:
@@ -292,7 +300,8 @@ def linear_invert(diff, fit: dict) -> np.ndarray:
 # ----------------------------------------------------------------------------------------------------------------------
 # 勾配 LUT(第 2 実装)
 def gradient_lut_build(rgb_rows, normal_rows, bins: int = 125, positions=None, image_shape=None, flat_rgb=None,
-                       flat_positions=None, min_rows_poly: int = 30, ridge: float = 1e-3, pool: bool = True) -> dict:
+                       flat_positions=None, min_rows_poly: int = 30, ridge: float = 1e-3, pool: bool = True,
+                       *, chunk=262144, pool_method="exact") -> dict:
     """example-based の勾配 LUT: 法線の(傾き θ, 向き φ)を bins × bins に切り、各ビンに落ちた画素の RGB の**平均**を入れる
     (``np.add.at`` で重複した添字も全部足す)。``rgb_rows`` (P, 3)、``normal_rows`` (P, 3)。
 
@@ -361,9 +370,16 @@ def gradient_lut_build(rgb_rows, normal_rows, bins: int = 125, positions=None, i
     AtA = np.zeros((bins, bins, 6, 6))
     Atb = np.zeros((bins, bins, 6, 3))
     sA = np.zeros((bins, bins, 6))
-    np.add.at(AtA, (ix, iy), A[:, :, None] * A[:, None, :])
-    np.add.at(Atb, (ix, iy), A[:, :, None] * rgb[:, None, :])
-    np.add.at(sA, (ix, iy), A)
+    chunk = int(chunk)
+    if chunk <= 0:
+        raise ValueError("gradient_lut_build: chunk must be positive")
+    for start in range(0, len(A), chunk):
+        stop = min(start + chunk, len(A))
+        key = (ix[start:stop], iy[start:stop])
+        block = A[start:stop]
+        np.add.at(AtA, key, block[:, :, None] * block[:, None, :])
+        np.add.at(Atb, key, block[:, :, None] * rgb[start:stop, None, :])
+        np.add.at(sA, key, block)
     coef = np.zeros((bins, bins, 6, 3))
     coef[..., 5, :] = np.nan_to_num(mean)
     use = c >= int(min_rows_poly)
@@ -377,10 +393,16 @@ def gradient_lut_build(rgb_rows, normal_rows, bins: int = 125, positions=None, i
         sidx = np.argwhere(small)
         cnp = cn[use]                                   # (Kp, 3)
         coefp = coef[use]                               # (Kp, 6, 3)
-        near = np.empty(len(sidx), np.int64)
-        for k in range(0, len(sidx), 1024):            # 最も近い多項式ビン(中心法線の内積が最大 = 角度が最小)
-            blk = cn[sidx[k:k + 1024, 0], sidx[k:k + 1024, 1]]
-            near[k:k + 1024] = np.argmax(blk @ cnp.T, axis=1)
+        if pool_method == "tree":
+            from scipy.spatial import cKDTree
+            near = cKDTree(cnp).query(cn[sidx[:, 0], sidx[:, 1]])[1]
+        elif pool_method == "exact":
+            near = np.empty(len(sidx), np.int64)
+            for k in range(0, len(sidx), 1024):        # 最大内積 = 単位球上の最短距離
+                blk = cn[sidx[k:k + 1024, 0], sidx[k:k + 1024, 1]]
+                near[k:k + 1024] = np.argmax(blk @ cnp.T, axis=1)
+        else:
+            raise ValueError("gradient_lut_build: pool_method must be 'exact' or 'tree'")
         c5 = coefp[near][:, :5, :]                      # (s, 5, 3)
         mA5 = sA[small][:, :5] / c[small][:, None]      # 自分の行の基底の平均
         const = mean[small] - np.einsum("sk,skc->sc", mA5, c5)
@@ -460,23 +482,37 @@ def _lut_search(vals, A, table, valid, method: str, coarse: int, chunk: int, top
     bins = int(table["bins"])
     vflat = valid.ravel()
     F = _bin_features(table)
-    G = _pixel_features(vals, A)
-    P = len(G)
+    P = len(vals)
     co = int(coarse)
     use_coarse = method == "coarse" and co >= 2 and bins >= 3 * co
     reps = _cell_representatives(valid, table["count"], co) if use_coarse else np.flatnonzero(vflat)
     Fr = F[reps]
     kk = max(1, min(int(topk), len(reps))) if use_coarse else 1
     top = np.empty((P, kk), np.int64)
+    if not use_coarse:
+        best = np.empty(P, np.int64)
+        for s in range(0, P, chunk):
+            stop = min(s + chunk, P)
+            G = _pixel_features(vals[s:stop], None if A is None else A[s:stop])
+            dbest = np.full(stop - s, np.inf)
+            ibest = np.zeros(stop - s, np.int64)
+            for q in range(0, len(reps), chunk):
+                d = G @ Fr[q:q + chunk].T
+                j = np.argmin(d, axis=1)
+                dm = d[np.arange(len(G)), j]
+                better = dm < dbest
+                dbest[better] = dm[better]
+                ibest[better] = q + j[better]
+            best[s:stop] = reps[ibest]
+        return best
     for s in range(0, P, chunk):                                              # 1 段目: 総当たり(exact)か粗い代表(coarse)
-        d = G[s:s + chunk] @ Fr.T
+        G = _pixel_features(vals[s:s + chunk], None if A is None else A[s:s + chunk])
+        d = G @ Fr.T
         rows = np.arange(len(d))
         for q in range(kk):                                                   # 上位 kk を argmin の繰り返しで(argpartition より速い)
             j = np.argmin(d, axis=1)
             top[s:s + chunk, q] = j
             d[rows, j] = np.inf
-    if not use_coarse:
-        return reps[top[:, 0]]
     # 2 段目: 色の近い上位 kk 区画それぞれについて、同じ区画を選んだ画素をまとめて周り 3 × 3 区画を細かく
     ncj = (bins + co - 1) // co
     best = np.full(P, -1, np.int64)
@@ -493,12 +529,15 @@ def _lut_search(vals, A, table, valid, method: str, coarse: int, chunk: int, top
             cand = w[vflat[w]]
             if len(cand) == 0:
                 continue
-            dd = G[idx] @ F[cand].T
-            j = np.argmin(dd, axis=1)
-            dm = dd[np.arange(len(idx)), j]
-            better = dm < dbest[idx]
-            dbest[idx[better]] = dm[better]
-            best[idx[better]] = cand[j[better]]
+            for start in range(0, len(idx), chunk):
+                ib = idx[start:start + chunk]
+                G = _pixel_features(vals[ib], None if A is None else A[ib])
+                dd = G @ F[cand].T
+                j = np.argmin(dd, axis=1)
+                dm = dd[np.arange(len(ib)), j]
+                better = dm < dbest[ib]
+                dbest[ib[better]] = dm[better]
+                best[ib[better]] = cand[j[better]]
     if np.any(best < 0):                     # 当たりの代表ビン自身が必ず窓に入るので起きないはず(起きたら黙って (0,0,1) にしない)
         raise RuntimeError("gradient_lut_invert: coarse-to-fine left %d pixels unassigned" % int(np.sum(best < 0)))
     return best

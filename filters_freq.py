@@ -124,9 +124,11 @@ def wiener_filter(image, psf, noise=0.01):
     """Wiener デコンボリューション(wiener_filter)。"""
     im = _img(image); h = _img(psf)
     H = np.fft.fft2(h, s=im.shape)
-    Hn = H * np.exp(-2j * np.pi * (
-        np.outer(np.fft.fftfreq(im.shape[0]), np.ones(im.shape[1])) * ((h.shape[0] - 1) / 2)
-        + np.outer(np.ones(im.shape[0]), np.fft.fftfreq(im.shape[1])) * ((h.shape[1] - 1) / 2)))
+    row_phase = np.exp(-2j * np.pi * np.fft.fftfreq(im.shape[0]) * ((h.shape[0] - 1) / 2))
+    col_phase = np.exp(-2j * np.pi * np.fft.fftfreq(im.shape[1]) * ((h.shape[1] - 1) / 2))
+    H *= row_phase[:, None]
+    H *= col_phase[None, :]
+    Hn = H
     G = np.fft.fft2(im)
     W = np.conj(Hn) / (np.abs(Hn) ** 2 + float(noise))
     return np.fft.ifft2(G * W).real

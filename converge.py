@@ -206,6 +206,7 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
     converged = False
     gx = None
     res0 = None
+    n_states = 0
     for k in range(max_iter + 1):
         if keep_iterates:
             iterates.append(x.reshape(shape).copy() if not scalar else float(x[0]))
@@ -218,6 +219,10 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
         res.append(rn)
         xs.append(x.copy())
         gs.append(gx.copy())
+        n_states += 1
+        if len(xs) > 20:
+            xs.pop(0)
+            gs.pop(0)
         if res0 is None:
             res0 = max(rn, 1e-300)
         if rn <= tol + rtol * float(np.linalg.norm(x)):
@@ -226,7 +231,7 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
         if rn > DIVERGENCE_FACTOR * res0:
             reason = "diverged: the residual grew from %.3g to %.3g (factor > %.3g)" % (res0, rn, DIVERGENCE_FACTOR)
             break
-        if len(xs) >= 14:
+        if n_states >= 14:
             d1 = float(np.linalg.norm(xs[-1] - xs[-2]))
             d2 = float(np.linalg.norm(xs[-1] - xs[-3]))
             d3 = float(np.linalg.norm(xs[-2] - xs[-4]))
@@ -277,7 +282,9 @@ def iterate_fixed_point(g="cos", x0=None, method="anderson", tol=1e-10, rtol=0.0
                     x = gx
                 else:
                     gamma = np.linalg.solve(R, Q.T @ f)
-                    x = gx - np.column_stack(dG) @ gamma
+                    x = gx.copy()
+                    for column, coefficient in zip(dG, gamma):
+                        x -= column * coefficient
             if not np.isfinite(x).all():
                 reason = "diverged: the Anderson step produced NaN or inf at iteration %d" % k
                 break
@@ -549,7 +556,7 @@ class _Moments:
         return np.sqrt(self.m2 / (self.n - 1) / self.n)
 
 
-def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op):
+def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op, history_stride=1):
     """Add batches from ``draw(b) -> (n, k)`` until z * se <= tol + rel_tol * |mean| in every column."""
     mom = _Moments(k)
     hist = []
@@ -567,15 +574,18 @@ def _sequential_columns(draw, k, tol, rel_tol, z, batch, n_min, max_samples, op)
         mom.add(X)
         b += 1
         se = mom.se()
-        hist.append((int(mom.n), mom.mean.copy(), se.copy()))
+        if history_stride and b % history_stride == 0:
+            hist.append((int(mom.n), mom.mean.copy(), se.copy()))
         if mom.n >= n_min and np.all(z * se <= tol + rel_tol * np.abs(mom.mean)):
             converged = True
             break
+    if (not hist or hist[-1][0] != mom.n) and history_stride != 1:
+        hist.append((int(mom.n), mom.mean.copy(), mom.se().copy()))
     return mom, hist, converged
 
 
 def mc_sequential_mean(sampler="pi", tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096,
-                       max_samples=4_000_000, seed=0, on_fail="raise") -> dict:
+                       max_samples=4_000_000, seed=0, on_fail="raise", history_stride=1) -> dict:
     """Sequential Monte Carlo mean: add samples until the confidence interval is narrower than the tolerance.
 
     ``sampler(rng, n)`` returns n i.i.d. samples (a 1-D array) — or the built-in ``"pi"``
@@ -612,12 +622,16 @@ def mc_sequential_mean(sampler="pi", tol=0.01, rel_tol=0.0, confidence=0.95, bat
         raise ValueError("%s: batch, max_samples and seed must be integers" % op) from None
     if batch < 2 or not 2 <= max_samples <= MAX_SAMPLES_CAP:
         raise ValueError("%s: need batch >= 2 and 2 <= max_samples <= %d" % (op, MAX_SAMPLES_CAP))
+    history_stride = int(history_stride)
+    if history_stride < 0:
+        raise ValueError("history_stride must be >= 0")
     n_min = 2 * batch
 
     def draw(b, n):
         return np.asarray(sampler(np.random.default_rng((seed, b)), n), dtype=np.float64).reshape(-1)
 
-    mom, hist, converged = _sequential_columns(draw, 1, tol, rel_tol, z, batch, n_min, max_samples, op)
+    mom, hist, converged = _sequential_columns(
+        draw, 1, tol, rel_tol, z, batch, n_min, max_samples, op, history_stride)
     mean = float(mom.mean[0])
     se = float(mom.se()[0])
     rec = {"op": op, "converged": bool(converged), "n_samples": int(mom.n), "confidence": float(confidence),

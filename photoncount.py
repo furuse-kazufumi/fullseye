@@ -1265,10 +1265,6 @@ def _fractional_peak(counts, mode, op):
     Returns ``(index, valid)``; ``valid`` is False where a sub-bin refinement was
     impossible (peak at an edge bin, flat neighbourhood, non-positive samples).
     """
-    k = np.argmax(counts, axis=-1)
-    kf = k.astype(np.float64)
-    if mode == "peak":
-        return kf, np.ones(kf.shape, dtype=bool)
     n = counts.shape[-1]
     if mode == "centroid":
         total = counts.sum(axis=-1)
@@ -1278,7 +1274,11 @@ def _fractional_peak(counts, mode, op):
                            (counts * idx).sum(axis=-1) / np.where(total > 0.0,
                                                                   total, 1.0),
                            0.0)
-        return cen, total > 0.0
+        return cen, total > 0.0, None
+    k = np.argmax(counts, axis=-1)
+    kf = k.astype(np.float64)
+    if mode == "peak":
+        return kf, np.ones(kf.shape, dtype=bool), k
     interior = (k > 0) & (k < n - 1)
     ki = np.clip(k, 1, n - 2)
     prev = np.take_along_axis(counts, ki[..., None] - 1, axis=-1)[..., 0]
@@ -1286,7 +1286,7 @@ def _fractional_peak(counts, mode, op):
     nxt = np.take_along_axis(counts, ki[..., None] + 1, axis=-1)[..., 0]
     delta, ok = _subbin_delta(prev, here, nxt, mode, mode == "gaussian")
     ok = ok & interior
-    return kf + np.where(ok, delta, 0.0), ok
+    return kf + np.where(ok, delta, 0.0), ok, k
 
 
 def dtof_depth(hist, bin_ps=100.0, mode="peak", offset_ps=0.0,
@@ -1362,10 +1362,10 @@ def dtof_depth(hist, bin_ps=100.0, mode="peak", offset_ps=0.0,
             "There is no detectable return here. (A uniform (D, H, W) voxel "
             "volume mistaken for a histogram lands exactly on this.)"
             % (float(work.max()), SPEED_OF_LIGHT_M_S * 0.5 * dt * 1e-12 / 2.0))
-    idx, ok = _fractional_peak(work, m, "dtof_depth")
+    idx, ok, peak = _fractional_peak(work, m, "dtof_depth")
     if not bool(ok):
         n = int(work.size)
-        k = int(np.argmax(work))
+        k = int(peak)
         if m in ("parabolic", "gaussian") and (k == 0 or k == n - 1):
             raise ValueError(
                 "dtof_depth: mode=%r needs a bin on each side of the peak, but "
@@ -1572,10 +1572,10 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
         # A pixel whose histogram is exactly flat has no peak; argmax would pick
         # bin 0 and report the first bin's depth for it. Mark it empty instead.
         valid = valid & (work.max(axis=-1) > work.min(axis=-1))
-    idx, ok = _fractional_peak(work, m, "dtof_cube_depth")
-    if m != "peak":
+    idx, ok, peak = _fractional_peak(work, m, "dtof_cube_depth")
+    if m in ("parabolic", "gaussian"):
         # documented per-pixel fallback to the bin-centre estimate
-        idx = np.where(ok, idx, np.argmax(work, axis=-1).astype(np.float64))
+        idx = np.where(ok, idx, peak.astype(np.float64))
     t_ps = (idx + 0.5) * dt - off
     bad = valid & (t_ps < 0.0)
     if bad.any():

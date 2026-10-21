@@ -37,8 +37,14 @@ check.
 
 Returns a ``signal``: the exponents, descending.
 
+The burn-in uses ``round(burn_in / dt)`` steps, and the measured window uses
+``round((t_end - burn_in) / dt)`` steps. Thus their actual integrated times
+are those step counts multiplied by ``dt``; a measured window rounding to
+zero steps is rejected rather than extended past the requested time.
+
 **Raises** ``ValueError``: unknown system; non-finite input; ``burn_in`` not
-shorter than ``t_end``; a trajectory that left float range.
+shorter than ``t_end``; a measured window shorter than one rounded step; a
+trajectory that left float range.
 
 Limits: the exponents converge like ``1/sqrt(T)`` — a short window gives a
 plausible but wrong spectrum. The trace identity converges much faster and is

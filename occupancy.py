@@ -79,6 +79,8 @@ def inflate_obstacles(occ, radius_cells: float):
     rounded correctly (not a square dilation). Returns a boolean grid."""
     occ = np.asarray(occ, bool)
     r = float(radius_cells)
+    if not np.isfinite(r):
+        raise ValueError("radius_cells must be finite")
     if r <= 0 or not occ.any():
         return occ.copy()                           # no obstacles -> nothing to inflate
     # distance from every free cell to the nearest obstacle; inflate where <= r
@@ -207,7 +209,7 @@ def _parse_bounds(bounds):
     return lo, span
 
 
-def occupancy_grid(points, bounds, res):
+def occupancy_grid(points, bounds, res, *, chunk=262144):
     """点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。
 
     ``bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))`` が格子の張る体積、``res`` は各軸の
@@ -240,14 +242,15 @@ def occupancy_grid(points, bounds, res):
     grid = np.zeros(tuple(int(x) for x in r), bool)
     if P.shape[0] == 0:
         return grid                             # 空雲 → 何も占有しない(honest: 幻を足さない)
-    frac = (P - lo) / span                      # in-bounds なら [0,1]
-    inb = np.all((frac >= 0.0) & (frac <= 1.0), axis=1)
-    if not np.any(inb):
-        return grid
-    fi = frac[inb]
-    # floor(frac*res); frac==1 は res になるので最終ボクセル res-1 にクランプ
-    idx = np.minimum((fi * r).astype(np.int64), r - 1)
-    grid[idx[:, 0], idx[:, 1], idx[:, 2]] = True
+    chunk = int(chunk)
+    if chunk <= 0:
+        raise ValueError("chunk must be positive")
+    for start in range(0, len(P), chunk):
+        frac = (P[start:start + chunk] - lo) / span
+        inb = np.all((frac >= 0.0) & (frac <= 1.0), axis=1)
+        fi = frac[inb]
+        idx = np.minimum((fi * r).astype(np.int64), r - 1)
+        grid[idx[:, 0], idx[:, 1], idx[:, 2]] = True
     return grid
 
 
@@ -289,7 +292,8 @@ def esdf(occupancy, voxel_size=1.0):
         return np.full(occ.shape, -np.inf, np.float64)
     d_out = ndimage.distance_transform_edt(~occ, sampling=samp)   # 自由セル: 最近占有まで(>0)
     d_in = ndimage.distance_transform_edt(occ, sampling=samp)     # 占有セル: 最近自由まで(>0)
-    return d_out - d_in                         # 外 +, 内 -
+    d_out -= d_in                              # reuse the output; input is untouched
+    return d_out                               # 外 +, 内 -
 
 
 def inflate(occupancy, radius, voxel_size=1.0):
@@ -311,14 +315,18 @@ def inflate(occupancy, radius, voxel_size=1.0):
     occ = np.asarray(occupancy, bool)
     _sampling(voxel_size)                        # fail-closed on voxel_size<=0 before any short-circuit
     r = float(radius)
-    if r < 0:                                   # fail-closed
-        raise ValueError("radius must be non-negative")
+    if not np.isfinite(r) or r < 0:             # fail-closed
+        raise ValueError("radius must be finite and non-negative")
     if r == 0.0 or not occ.any():
         return occ.copy()                       # 膨張なし / 障害物なし
-    return esdf(occ, voxel_size) <= r
+    # Inflation only needs free-cell distance to the nearest occupied cell.
+    return ndimage.distance_transform_edt(
+        ~occ, sampling=_sampling(voxel_size)
+    ) <= r
 
 
-def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear"):
+def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear", *,
+                   chunk=262144):
     """任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。
 
     ``bounds``/``res`` は ESDF を作った格子と同じもの(``res`` はスカラ = 立方、
@@ -347,24 +355,33 @@ def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear"):
     Q = np.asarray(query_points, np.float64)
     if Q.ndim != 2 or Q.shape[1] != 3:
         raise ValueError("query_points must be (M, 3)")
+    chunk = int(chunk)
+    if chunk <= 0:
+        raise ValueError("chunk must be positive")
     hi = r - 1                                  # 軸ごとの上限 index
-    c = (Q - lo) / span * r - 0.5               # voxel-center-aligned 連続座標
     if mode == "nearest":
-        idx = np.clip(np.round(c).astype(np.int64), 0, hi)
-        return E[idx[:, 0], idx[:, 1], idx[:, 2]]
+        out = np.empty(len(Q), np.float64)
+        for start in range(0, len(Q), chunk):
+            c = (Q[start:start + chunk] - lo) / span * r - 0.5
+            idx = np.clip(np.round(c).astype(np.int64), 0, hi)
+            out[start:start + chunk] = E[idx[:, 0], idx[:, 1], idx[:, 2]]
+        return out
     if mode != "trilinear":
         raise ValueError("mode must be 'trilinear' or 'nearest'")
-    c0 = np.floor(c).astype(np.int64)
-    t = c - c0                                  # 各軸の小数部 [0,1)
-    out = np.zeros(len(Q), np.float64)
-    for dx in (0, 1):
-        wx = t[:, 0] if dx else (1.0 - t[:, 0])
-        i = np.clip(c0[:, 0] + dx, 0, hi[0])
-        for dy in (0, 1):
-            wy = t[:, 1] if dy else (1.0 - t[:, 1])
-            j = np.clip(c0[:, 1] + dy, 0, hi[1])
-            for dz in (0, 1):
-                wz = t[:, 2] if dz else (1.0 - t[:, 2])
-                k = np.clip(c0[:, 2] + dz, 0, hi[2])
-                out += (wx * wy * wz) * E[i, j, k]
+    out = np.empty(len(Q), np.float64)
+    for start in range(0, len(Q), chunk):
+        stop = min(start + chunk, len(Q))
+        c = (Q[start:stop] - lo) / span * r - 0.5
+        c0 = np.floor(c).astype(np.int64)
+        t = c - c0
+        inds = [(np.clip(c0[:, axis], 0, hi[axis]),
+                 np.clip(c0[:, axis] + 1, 0, hi[axis])) for axis in range(3)]
+        weights = [(1.0 - t[:, axis], t[:, axis]) for axis in range(3)]
+        block = np.zeros(stop - start, np.float64)
+        for dx in (0, 1):
+            for dy in (0, 1):
+                for dz in (0, 1):
+                    block += (weights[0][dx] * weights[1][dy] * weights[2][dz]
+                              * E[inds[0][dx], inds[1][dy], inds[2][dz]])
+        out[start:stop] = block
     return out

@@ -1,4 +1,4 @@
-# OPTICS operator help — 461 ops in 51 categories
+# OPTICS operator help — 424 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -146,10 +146,6 @@
 
 [oct_ascan](oct/oct_ascan.md) · [oct_bscan](oct/oct_bscan.md) · [oct_bscan_boundaries](oct/oct_bscan_boundaries.md) · [oct_bscan_flatten](oct/oct_bscan_flatten.md) · [oct_bscan_simulate](oct/oct_bscan_simulate.md) · [oct_design](oct/oct_design.md) · [oct_dispersion_broadening](oct/oct_dispersion_broadening.md) · [oct_dispersion_compensate](oct/oct_dispersion_compensate.md) · [oct_dispersion_estimate](oct/oct_dispersion_estimate.md) · [oct_from_spectra](oct/oct_from_spectra.md) · [oct_interferogram](oct/oct_interferogram.md) · [oct_k_linearize](oct/oct_k_linearize.md) · [oct_layer_thickness](oct/oct_layer_thickness.md)
 
-### omni360 (24)
-
-[anaglyph_crosstalk](omni360/anaglyph_crosstalk.md) · [anaglyph_from_ods](omni360/anaglyph_from_ods.md) · [cubemap_from_equirect](omni360/cubemap_from_equirect.md) · [equirect_defect_unwrap_pipe](omni360/equirect_defect_unwrap_pipe.md) · [equirect_filter_gaussian](omni360/equirect_filter_gaussian.md) · [equirect_from_cubemap](omni360/equirect_from_cubemap.md) · [equirect_from_fisheye_pair](omni360/equirect_from_fisheye_pair.md) · [equirect_from_perspectives](omni360/equirect_from_perspectives.md) · [equirect_rotate](omni360/equirect_rotate.md) · [equirect_stabilize](omni360/equirect_stabilize.md) · [equirect_weight_map](omni360/equirect_weight_map.md) · [ods_depth_to_disparity](omni360/ods_depth_to_disparity.md) · [ods_disparity_to_depth](omni360/ods_disparity_to_depth.md) · [ods_render](omni360/ods_render.md) · [omni_anaglyph_compose](omni360/omni_anaglyph_compose.md) · [s_psnr](omni360/s_psnr.md) · [stereo360_sbs](omni360/stereo360_sbs.md) · [stereo360_top_bottom](omni360/stereo360_top_bottom.md) · [stereo_pack](omni360/stereo_pack.md) · [stereo_parallax_budget](omni360/stereo_parallax_budget.md) · [video360_tile_coverage](omni360/video360_tile_coverage.md) · [video360_viewport_track](omni360/video360_viewport_track.md) · [viewport_from_equirect](omni360/viewport_from_equirect.md) · [ws_psnr](omni360/ws_psnr.md)
-
 ### optimization (3)
 
 [bend_singlet](optimization/bend_singlet.md) · [merit_function](optimization/merit_function.md) · [optimize_lens](optimization/optimize_lens.md)
@@ -157,10 +153,6 @@
 ### pixelshift (6)
 
 [false_color_metric](pixelshift/false_color_metric.md) · [pixel_shift_capture](pixelshift/pixel_shift_capture.md) · [pixel_shift_merge](pixelshift/pixel_shift_merge.md) · [pixel_shift_motion_mask](pixelshift/pixel_shift_motion_mask.md) · [pixel_shift_pattern](pixelshift/pixel_shift_pattern.md) · [pixel_shift_resolution_budget](pixelshift/pixel_shift_resolution_budget.md)
-
-### plenoptic (6)
-
-[mla_surface](plenoptic/mla_surface.md) · [plenoptic_capture](plenoptic/plenoptic_capture.md) · [plenoptic_decode](plenoptic/plenoptic_decode.md) · [plenoptic_mla_calibrate](plenoptic/plenoptic_mla_calibrate.md) · [plenoptic_refocus_depth](plenoptic/plenoptic_refocus_depth.md) · [plenoptic_system](plenoptic/plenoptic_system.md)
 
 ### polarization (10)
 
@@ -186,9 +178,9 @@
 
 [aolp_to_azimuth](shape_from_polarization/aolp_to_azimuth.md) · [dolp_to_zenith](shape_from_polarization/dolp_to_zenith.md) · [sfp_disambiguate](shape_from_polarization/sfp_disambiguate.md) · [sfp_dolp_model](shape_from_polarization/sfp_dolp_model.md) · [sfp_estimate_index](shape_from_polarization/sfp_estimate_index.md) · [sfp_height](shape_from_polarization/sfp_height.md) · [sfp_normals](shape_from_polarization/sfp_normals.md) · [sfp_render](shape_from_polarization/sfp_render.md)
 
-### spectral (14)
+### spectral (15)
 
-[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
+[bandpass_spectrum](spectral/bandpass_spectrum.md) · [blackbody_spectrum](spectral/blackbody_spectrum.md) · [cie_illuminant_a](spectral/cie_illuminant_a.md) · [energy_to_photons](spectral/energy_to_photons.md) · [hyperspectral_band_weights](spectral/hyperspectral_band_weights.md) · [hyperspectral_capture](spectral/hyperspectral_capture.md) · [ingaas_photodiode_qe](spectral/ingaas_photodiode_qe.md) · [kubelka_munk_reflectance](spectral/kubelka_munk_reflectance.md) · [led_spectrum](spectral/led_spectrum.md) · [silicon_photodiode_qe](spectral/silicon_photodiode_qe.md) · [spectral_integral](spectral/spectral_integral.md) · [spectral_integral_table](spectral/spectral_integral_table.md) · [spectral_product](spectral/spectral_product.md) · [spectral_reflectance_from_material](spectral/spectral_reflectance_from_material.md) · [spectral_stats](spectral/spectral_stats.md)
 
 ### spectrometer (5)
 
@@ -205,10 +197,6 @@
 ### tem (11)
 
 [tem_amorphous_film](tem/tem_amorphous_film.md) · [tem_ctf](tem/tem_ctf.md) · [tem_ctf_correct](tem/tem_ctf_correct.md) · [tem_ctf_estimate](tem/tem_ctf_estimate.md) · [tem_ctf_profile](tem/tem_ctf_profile.md) · [tem_image_weak_phase](tem/tem_image_weak_phase.md) · [tem_multislice](tem/tem_multislice.md) · [tem_power_spectrum](tem/tem_power_spectrum.md) · [tem_projected_potential](tem/tem_projected_potential.md) · [tem_scherzer](tem/tem_scherzer.md) · [tem_wavelength](tem/tem_wavelength.md)
-
-### tolerancing (8)
-
-[tolerance_compensators](tolerancing/tolerance_compensators.md) · [tolerance_criteria](tolerancing/tolerance_criteria.md) · [tolerance_monte_carlo](tolerancing/tolerance_monte_carlo.md) · [tolerance_report](tolerancing/tolerance_report.md) · [tolerance_sensitivity](tolerancing/tolerance_sensitivity.md) · [tolerance_table](tolerancing/tolerance_table.md) · [tolerance_table_from_zmx](tolerancing/tolerance_table_from_zmx.md) · [tolerance_table_zmx](tolerancing/tolerance_table_zmx.md)
 
 ### watermedia (10)
 

@@ -24,6 +24,10 @@ Explicit Runge-Kutta on one of the named systems (``lorenz``, ``rossler``,
 ``method="euler"`` is there as a **control group** — the same picture comes out
 of both, and only the error tells them apart.
 
+For a linear system the classical RK4 polynomial update matrix is formed
+once and reused.  It is deliberately not the matrix exponential: the
+expected fifth-order one-step difference remains observable.
+
 ★**Why the field is a name, not a function**: the typed ledger registers inputs
 by sort and the chain fuzzer builds arguments from data, so a callable can
 never be reached from there. A name (or, for ``linear``, the matrix itself in

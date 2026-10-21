@@ -156,20 +156,24 @@ def fiber_lp_modes(v_number=6.0, max_modes=None):
     if V > 200.0:
         raise ValueError("%s: V = %.4g is beyond the solver's range (<= 200)" % (op, V))
     modes = []
+    n_roots = max(2, int(math.ceil(V / math.pi)) + 2)
+    previous_poles = None
     for l in range(0, 400):
         # 遮断: LP0m = 0 と J1 の零点、LP1m = J0 の零点、LPlm(l ≥ 2)= J_{l−1} の零点(0 を除く)
         if l == 0:
-            cutoffs = [0.0] + list(special.jn_zeros(1, 400))
+            cutoffs = [0.0] + list(special.jn_zeros(1, n_roots))
         elif l == 1:
-            cutoffs = list(special.jn_zeros(0, 400))
+            cutoffs = list(previous_poles)
         else:
-            cutoffs = list(special.jn_zeros(l - 1, 400))
+            cutoffs = list(previous_poles)
         cutoffs = [c for c in cutoffs if c < V]
         if not cutoffs:
             break
-        poles = list(special.jn_zeros(l, 400))               # u は (遮断, 次の J_l の零点) にちょうど 1 つ
+        poles = special.jn_zeros(l, n_roots)                 # u は (遮断, 次の J_l の零点) にちょうど 1 つ
+        previous_poles = poles
         for m, c in enumerate(cutoffs, start=1):
-            nxt = min([p for p in poles if p > c + 1e-12] + [V])
+            pole_i = int(np.searchsorted(poles, c + 1e-12, side="right"))
+            nxt = float(poles[pole_i]) if pole_i < poles.size else V
             lo, hi = c + 1e-12, min(nxt, V) - 1e-12
             if hi <= lo:
                 continue
@@ -178,6 +182,8 @@ def fiber_lp_modes(v_number=6.0, max_modes=None):
                 continue
             for _ in range(80):
                 mid = 0.5 * (lo + hi)
+                if mid == lo or mid == hi:
+                    break
                 fm = _lp_eq(l, V, mid)
                 if flo * fm <= 0:
                     hi, fhi = mid, fm

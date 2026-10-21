@@ -69,10 +69,20 @@ def _phase_sums(stack: np.ndarray):
     return s, c
 
 
+def _modulation_from_sums(stack: np.ndarray, s: np.ndarray, c: np.ndarray):
+    """既に求めた位相和から変調度を作る。"""
+    amp = (2.0 / stack.shape[0]) * np.hypot(s, c)
+    mean = stack.mean(axis=0)
+    gamma = np.zeros_like(amp)
+    valid = np.abs(mean) > 1e-12
+    gamma[valid] = amp[valid] / mean[valid]
+    return gamma
+
+
 # --------------------------------------------------------------------------- #
 # 1. wrapped phase                                                             #
 # --------------------------------------------------------------------------- #
-def wrapped_phase(images) -> np.ndarray:
+def wrapped_phase(images, method="general") -> np.ndarray:
     """N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。
 
     標準 N-step 公式 φ = atan2(Σ_n I_n sin(2πn/N), Σ_n I_n cos(2πn/N))。N >= 3 の等間隔位相シフトを
@@ -100,7 +110,15 @@ def wrapped_phase(images) -> np.ndarray:
     ``unwrap_phase_2d``(空間展開)か ``absolute_phase``(粗い絶対位相で次数確定)。
     """
     stack = _as_stack(images)
-    s, c = _phase_sums(stack)
+    if method == "general":
+        s, c = _phase_sums(stack)
+    elif method == "four_step":
+        if stack.shape[0] != 4:
+            raise ValueError("method='four_step' requires exactly 4 images")
+        s = stack[1] - stack[3]
+        c = stack[0] - stack[2]
+    else:
+        raise ValueError("method must be 'general' or 'four_step'")
     return np.arctan2(s, c)
 
 
@@ -115,14 +133,8 @@ def modulation(images) -> np.ndarray:
     平均が 0 の画素は γ=0(位相が定義できない)とする。
     """
     stack = _as_stack(images)
-    n = stack.shape[0]
     s, c = _phase_sums(stack)
-    amp = (2.0 / n) * np.hypot(s, c)
-    mean = stack.mean(axis=0)
-    gamma = np.zeros_like(amp)
-    valid = np.abs(mean) > 1e-12
-    gamma[valid] = amp[valid] / mean[valid]
-    return gamma
+    return _modulation_from_sums(stack, s, c)
 
 
 # --------------------------------------------------------------------------- #
@@ -241,10 +253,12 @@ def graycode_decode(bit_images, thresh=0.5) -> np.ndarray:
     for i in range(k):
         gray |= binimg[i] << (k - 1 - i)
 
-    # Gray → binary: XOR of gray>>0, gray>>1, ..., gray>>(k-1)
+    # Gray → binary: 並列 prefix XOR。各段で確定済みの幅を倍にする。
     binary = gray.copy()
-    for shift in range(1, k):
-        binary ^= (gray >> shift)
+    shift = 1
+    while shift < k:
+        binary ^= binary >> shift
+        shift <<= 1
     return binary
 
 
@@ -274,7 +288,7 @@ def phase_to_height(phase, ref_phase, k) -> np.ndarray:
 # 6. 便利関数: 位相シフト画像列 → 高さ                                           #
 # --------------------------------------------------------------------------- #
 def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
-                  mask=None, min_modulation=None) -> np.ndarray:
+                  mask=None, min_modulation=None, method="general") -> np.ndarray:
     """位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。
 
     phase_shift_images: N-step 位相シフト縞画像列((N,H,W) または長さ N のシーケンス)。
@@ -312,11 +326,19 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
     ``graycode_decode`` → ``absolute_phase`` → ``triangulate_column`` の経路。
     """
     stack = _as_stack(phase_shift_images)
-    wrapped = wrapped_phase(stack)
+    if method == "general":
+        s, c = _phase_sums(stack)
+    elif method == "four_step":
+        if stack.shape[0] != 4:
+            raise ValueError("method='four_step' requires exactly 4 images")
+        s, c = stack[1] - stack[3], stack[0] - stack[2]
+    else:
+        raise ValueError("method must be 'general' or 'four_step'")
+    wrapped = np.arctan2(s, c)
 
     reliab = None
     if min_modulation is not None:
-        reliab = modulation(stack) >= float(min_modulation)
+        reliab = _modulation_from_sums(stack, s, c) >= float(min_modulation)
     if mask is not None:
         m = np.asarray(mask, dtype=bool)
         reliab = m if reliab is None else (reliab & m)
@@ -499,13 +521,13 @@ def triangulate_column(column, k_cam, k_proj, rot, trans) -> np.ndarray:
 
     h, w = col.shape
     v_i, u_i = np.mgrid[0:h, 0:w].astype(np.float64)
-    pix = np.stack([u_i, v_i, np.ones_like(u_i)], axis=-1)          # (H, W, 3)
-    d = pix @ np.linalg.inv(kc).T                                    # カメラ視線方向(z=1)
-    rd = d @ R.T                                                     # 投影機系での視線方向
-
-    a = kp[0][None, None, :] - col[..., None] * kp[2][None, None, :]  # (H, W, 3)
-    denom = np.einsum("ijk,ijk->ij", a, rd)
-    num = -np.einsum("ijk,k->ij", a, t)
+    # M・b を一度だけ作ると、画素ごとの視線・平面ベクトル(H,W,3)が不要になる。
+    M = kp @ R @ np.linalg.inv(kc)
+    b = kp @ t
+    denom = ((M[0, 0] - col * M[2, 0]) * u_i
+             + (M[0, 1] - col * M[2, 1]) * v_i
+             + (M[0, 2] - col * M[2, 2]))
+    num = col * b[2] - b[0]
     with np.errstate(divide="ignore", invalid="ignore"):
         z = num / denom
     bad = ~np.isfinite(z) | (np.abs(denom) < 1e-12) | (z <= 0.0) | ~np.isfinite(col)

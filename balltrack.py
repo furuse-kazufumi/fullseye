@@ -67,20 +67,27 @@ def ball_detect(image, *, mode: str = "bright", thresh=None, color=None, color_t
     out = []
     if n == 0:
         return out
-    rr, cc = np.mgrid[0:mask.shape[0], 0:mask.shape[1]].astype(np.float64)
     rmin, rmax = radius_range
+    areas = np.bincount(lab.ravel(), minlength=n + 1)
+    boxes = ndimage.find_objects(lab)
     for k in range(1, n + 1):
-        m = lab == k
-        area = int(m.sum())
+        area = int(areas[k])
         r_eq = np.sqrt(area / np.pi)
         if not (rmin <= r_eq <= rmax):
             continue
-        w = weight[m]
+        sl = boxes[k - 1]
+        sub_lab = lab[sl]
+        m = sub_lab == k
+        sub_weight = weight[sl]
+        w = sub_weight[m]
         if w.sum() <= 0:
             w = np.ones(area)
-        col = float(np.sum(w * cc[m]) / w.sum())
-        row = float(np.sum(w * rr[m]) / w.sum())
-        rad = np.hypot(cc[m] - col, rr[m] - row).max() + 0.5
+        rr, cc = np.nonzero(m)
+        rr = rr.astype(np.float64) + sl[0].start
+        cc = cc.astype(np.float64) + sl[1].start
+        col = float(np.sum(w * cc) / w.sum())
+        row = float(np.sum(w * rr) / w.sum())
+        rad = np.hypot(cc - col, rr - row).max() + 0.5
         fill = float(area / (np.pi * rad * rad))
         out.append({"col": col, "row": row, "radius": float(r_eq), "area": area, "fill": fill,
                     "score": float(fill * np.sqrt(area))})

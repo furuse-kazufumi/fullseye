@@ -22,7 +22,7 @@ import numpy as np
 __all__ = ["esprit_doa", "hilbert_analytic", "lomb_scargle", "music_doa", "n_sources_mdl", "ula_snapshots"]
 
 
-def lomb_scargle(t, y, freqs) -> dict:
+def lomb_scargle(t, y, freqs, *, chunk=None) -> dict:
     """不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。
 
     P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、
@@ -40,14 +40,24 @@ def lomb_scargle(t, y, freqs) -> dict:
         raise ValueError("lomb_scargle: NaN/inf がある")
     if np.any(f <= 0):
         raise ValueError("lomb_scargle: 周波数は正(f = 0 では τ が定まらない)")
+    chunk = len(f) if chunk is None else int(chunk)
+    if chunk <= 0:
+        raise ValueError("lomb_scargle: chunk must be positive")
     yc = y - y.mean()
-    w = 2.0 * math.pi * f[:, None]
-    tau = np.arctan2(np.sum(np.sin(2 * w * t), axis=1), np.sum(np.cos(2 * w * t), axis=1))[:, None] / (2 * w)
-    arg = w * (t[None, :] - tau)
-    c, s = np.cos(arg), np.sin(arg)
-    cc, ss = np.sum(c * c, axis=1), np.sum(s * s, axis=1)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        p = 0.5 * (np.where(cc > 0, (c @ yc) ** 2 / cc, 0.0) + np.where(ss > 0, (s @ yc) ** 2 / ss, 0.0))
+    p = np.empty(len(f), dtype=np.float64)
+    for start in range(0, len(f), chunk):
+        stop = min(start + chunk, len(f))
+        w = 2.0 * math.pi * f[start:stop, None]
+        tau = (np.arctan2(np.sum(np.sin(2 * w * t), axis=1),
+                          np.sum(np.cos(2 * w * t), axis=1))[:, None]
+               / (2 * w))
+        arg = w * (t[None, :] - tau)
+        c, s = np.cos(arg), np.sin(arg)
+        cc, ss = np.sum(c * c, axis=1), np.sum(s * s, axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            p[start:stop] = 0.5 * (
+                np.where(cc > 0, (c @ yc) ** 2 / cc, 0.0)
+                + np.where(ss > 0, (s @ yc) ** 2 / ss, 0.0))
     return {"freq": f, "power": p, "peak_freq": float(f[int(np.argmax(p))])}
 
 
@@ -75,6 +85,21 @@ def ula_snapshots(angles_deg=(10.0, 16.0), n_elements: int = 8, n_snapshots: int
     return X
 
 
+def _mdl_from_eigenvalues(vals, snapshots: int) -> np.ndarray:
+    """Evaluate all MDL candidates from descending covariance eigenvalues."""
+    vals = np.clip(np.asarray(vals, dtype=np.float64), 1e-300, None)
+    M = vals.size
+    sums = np.cumsum(vals[::-1])[::-1]
+    log_sums = np.cumsum(np.log(vals)[::-1])[::-1]
+    mdl = np.empty(M, dtype=np.float64)
+    for k in range(M):
+        count = M - k
+        ratio = math.exp(float(log_sums[k] / count)) / float(sums[k] / count)
+        mdl[k] = (-snapshots * count * math.log(max(ratio, 1e-300))
+                  + 0.5 * k * (2 * M - k) * math.log(snapshots))
+    return mdl
+
+
 def n_sources_mdl(X) -> dict:
     """スナップショットから波源の数を MDL 基準で推定する(Wax & Kailath 1985)。
 
@@ -87,27 +112,34 @@ def n_sources_mdl(X) -> dict:
         raise ValueError("n_sources_mdl: スナップショットは有限な (M >= 2, K) の 2-D")
     M, K = X.shape
     vals = np.clip(np.linalg.eigvalsh(X @ X.conj().T / K)[::-1], 1e-300, None)
-    mdl = []
-    for k in range(M):
-        tail = vals[k:]
-        ratio = math.exp(np.mean(np.log(tail))) / np.mean(tail)
-        mdl.append(-K * (M - k) * math.log(max(ratio, 1e-300)) + 0.5 * k * (2 * M - k) * math.log(K))
-    return {"n_sources": int(np.argmin(mdl[:M - 1])), "mdl": np.asarray(mdl), "eigenvalues": vals}
+    mdl = _mdl_from_eigenvalues(vals, K)
+    return {"n_sources": int(np.argmin(mdl[:M - 1])), "mdl": mdl, "eigenvalues": vals}
 
 
 def _cov_subspace(X, n_sources):
+    """Return one covariance eigendecomposition and the selected source count.
+
+    The automatic and explicit-count paths share this decomposition. Eigenvectors
+    are not bit-identical across linear-algebra implementations; equivalent signal
+    subspaces may differ by a principal angle of up to ``1e-7`` radians.
+    """
     X = np.asarray(X)
     if X.ndim != 2 or X.shape[0] < 2:
         raise ValueError("到来方向推定: スナップショットは (素子数 M >= 2, K) の 2-D")
     if not np.all(np.isfinite(X)):
         raise ValueError("到来方向推定: NaN/inf がある")
-    M = X.shape[0]
-    n = n_sources_mdl(X)["n_sources"] if n_sources is None else int(n_sources)
+    M, K = X.shape
+    R = X @ X.conj().T / K
+    vals, vecs = np.linalg.eigh(R)
+    vals, vecs = vals[::-1], vecs[:, ::-1]
+    if n_sources is None:
+        mdl = _mdl_from_eigenvalues(vals, K)
+        n = int(np.argmin(mdl[:M - 1]))
+    else:
+        n = int(n_sources)
     if not 1 <= n < M:
         raise ValueError("到来方向推定: 1 <= 波源の数 < 素子の数(%d)" % M)
-    R = X @ X.conj().T / X.shape[1]
-    vals, vecs = np.linalg.eigh(R)                    # 昇順
-    return R, vals[::-1], vecs[:, ::-1], n, M
+    return R, vals, vecs, n, M
 
 
 def _spacing(spacing, who: str) -> float:

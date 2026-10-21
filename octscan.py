@@ -1311,6 +1311,36 @@ def _per_column(v, W, name, op):
     return a
 
 
+def _jump_min_linear(prev, max_jump, penalty):
+    """O(R) transition minimum; equal costs retain the largest source index."""
+    from collections import deque
+
+    n = len(prev)
+    left_val, right_val = np.empty(n), np.empty(n)
+    left_arg = np.empty(n, np.int32)
+    right_arg = np.empty(n, np.int32)
+    q = deque()
+    for i in range(n):
+        value = prev[i] - penalty * i
+        while q and q[-1][0] >= value:
+            q.pop()
+        q.append((value, i))
+        while q[0][1] < i - max_jump:
+            q.popleft()
+        left_val[i], left_arg[i] = penalty * i + q[0][0], q[0][1]
+    q.clear()
+    for i in range(n - 1, -1, -1):
+        value = prev[i] + penalty * i
+        while q and q[-1][0] > value:
+            q.pop()
+        q.append((value, i))
+        while q[0][1] > i + max_jump:
+            q.popleft()
+        right_val[i], right_arg[i] = -penalty * i + q[0][0], q[0][1]
+    use_right = right_val <= left_val
+    return np.where(use_right, right_val, left_val), np.where(use_right, right_arg, left_arg).astype(np.int32)
+
+
 def oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min_gap_px=4, max_jump_px=2,
                          jump_penalty=0.0, smooth_sigma=1.0, mode="peak", top_px=None, bottom_px=None,
                          reference_rows=None, offset_px=None):
@@ -1389,16 +1419,35 @@ def oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min
         back = np.zeros((nO, W), np.int32)
         idx = np.arange(nO)
         for c in range(1, W):
-            best = np.full(nO, np.inf)
-            arg = np.zeros(nO, np.int32)
-            for d in steps:
-                src = idx - d
-                ok = (src >= 0) & (src < nO)
-                v = np.full(nO, np.inf)
-                v[ok] = acc[src[ok]] + pen * abs(int(d))
-                better = v < best
-                best[better] = v[better]
-                arg[better] = src[better]
+            if J < 64:  # measured crossover: the vectorised exact loop wins below J=64
+                best = np.full(nO, np.inf)
+                arg = np.zeros(nO, np.int32)
+                for d in steps:
+                    src = idx - d
+                    ok = (src >= 0) & (src < nO)
+                    v = np.full(nO, np.inf)
+                    v[ok] = acc[src[ok]] + pen * abs(int(d))
+                    better = v < best
+                    best[better] = v[better]
+                    arg[better] = src[better]
+            else:
+                best, arg = _jump_min_linear(acc, J, pen)
+                # The transformed sums can round a mathematical tie differently
+                # from ``acc[j] + pen * abs(i-j)``.  Preserve the historical path
+                # on tie-heavy columns by using its iteration order there.
+                ordered = np.sort(acc)
+                tie_tol = np.finfo(float).eps * max(1.0, float(np.max(np.abs(acc)))) * (J + 1)
+                if np.any(np.diff(ordered) <= tie_tol):
+                    best = np.full(nO, np.inf)
+                    arg = np.zeros(nO, np.int32)
+                    for d in steps:
+                        src = idx - d
+                        ok = (src >= 0) & (src < nO)
+                        v = np.full(nO, np.inf)
+                        v[ok] = acc[src[ok]] + pen * abs(int(d))
+                        better = v < best
+                        best[better] = v[better]
+                        arg[better] = src[better]
             acc = best + cost[:, c]
             back[:, c] = arg
         o = int(np.argmin(acc))

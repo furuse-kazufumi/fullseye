@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 600
+  "dead_knob": 601
  },
  "debt": {
   "description": {},
@@ -226,6 +226,7 @@
    "fmcw_beat_simulate.chirp_period_s": "other",
    "fmcw_beat_simulate.wavelength_m": "other",
    "foe_from_flow.iters": "tolerance_or_iterations",
+   "form_factor_matrix.memory_budget_mb": "other",
    "foe_from_flow.angle_scale": "smoothing_or_threshold",
    "fourier_plane_filter.charge": "other",
    "fourier_plane_filter.radius_frac": "smoothing_or_threshold",

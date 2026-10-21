@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import os
 import wave
+from functools import lru_cache
 
 import numpy as np
 
@@ -247,19 +248,31 @@ def spectrogram(x, rate=1.0, win=256, hop=None):
     if len(x) < win:
         x = np.pad(x, (0, win - len(x)))
     window = np.hanning(win)
-    starts = range(0, len(x) - win + 1, hop)
-    cols = [np.abs(np.fft.rfft(x[s:s + win] * window)) for s in starts]
-    S = np.stack(cols, axis=1) if cols else np.zeros((win // 2 + 1, 0))
+    starts = np.arange(0, len(x) - win + 1, hop, dtype=np.int64)
+    S = np.empty((win // 2 + 1, starts.size), dtype=np.float64)
+    frames = np.lib.stride_tricks.sliding_window_view(x, win)[::hop]
+    for first in range(0, starts.size, 256):
+        last = min(first + 256, starts.size)
+        S[:, first:last] = np.abs(
+            np.fft.rfft(frames[first:last] * window, axis=1)).T
     freqs = np.fft.rfftfreq(win, d=1.0 / float(rate))
-    times = np.array([s / float(rate) for s in starts])
+    times = starts / float(rate)
     return freqs, times, S
 
 
 # --------------------------------------------------------------------------- #
 # filters
 # --------------------------------------------------------------------------- #
+@lru_cache(maxsize=64)
+def _butter_coefficients(rate, cutoff, order, btype):
+    from scipy.signal import butter
+    cut = np.asarray(cutoff, np.float64)
+    wn = cut / (0.5 * rate)
+    return butter(order, wn if wn.size > 1 else wn[0], btype=btype)
+
+
 def _butter(x, rate, cutoff, btype, order=4):
-    from scipy.signal import butter, filtfilt
+    from scipy.signal import filtfilt
     rate = float(rate)
     if not np.isfinite(rate) or rate <= 0.0:
         raise ValueError("rate must be a positive finite sample rate, got %r" % (rate,))
@@ -270,8 +283,8 @@ def _butter(x, rate, cutoff, btype, order=4):
             "cutoff %s Hz must lie inside (0, %g) Hz — the Nyquist limit for "
             "rate=%g Hz; an out-of-band cutoff cannot be filtered, it would only "
             "return the signal essentially unchanged" % (cut.tolist(), nyq, rate))
-    wn = cut / nyq
-    b, a = butter(order, wn if wn.size > 1 else wn[0], btype=btype)
+    key_cutoff = tuple(float(v) for v in cut)
+    b, a = _butter_coefficients(rate, key_cutoff, int(order), str(btype))
     x = _require_finite(x)
     pad = 3 * max(len(a), len(b))                    # scipy filtfilt's default padlen
     if len(x) <= pad:                                # filtfilt needs enough samples
@@ -324,6 +337,11 @@ def rms(x, frame=None, hop=None):
         return float(np.sqrt(np.mean(x * x))) if x.size else 0.0
     frame = int(frame)
     hop = frame // 2 if hop is None else int(hop)
+    if hop == frame:
+        n = max(1, (len(x) - frame) // hop + 1)
+        if len(x) >= frame:
+            blocks = x[:n * frame].reshape(n, frame)
+            return np.sqrt(np.mean(blocks * blocks, axis=1))
     return np.array([np.sqrt(np.mean(x[s:s + frame] ** 2))
                      for s in range(0, max(1, len(x) - frame + 1), hop)])
 
@@ -344,11 +362,10 @@ def zero_crossing_rate(x):
     x = _require_finite(x)
     if x.size < 2:
         return 0.0
-    s = np.sign(x)
-    nz = s[s != 0.0]
+    nz = x[x != 0.0]
     if nz.size < 2:
         return 0.0
-    return float(np.count_nonzero(np.diff(nz) != 0.0)) / float(x.size - 1)
+    return float(np.count_nonzero(np.signbit(nz[:-1]) != np.signbit(nz[1:]))) / float(x.size - 1)
 
 
 def find_peaks(x, height=None, distance=None):
@@ -462,7 +479,8 @@ def peak_subbin(x, idx=None, mode="parabola"):
 
 
 def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
-                   method="direct", weights=None, bins_per_period=8):
+                   method="direct", weights=None, bins_per_period=8,
+                   memory_budget=None):
     """Periodogram of **event positions** — defects, impacts, counts, arrivals.
 
     :func:`spectrum` needs an evenly sampled signal, but a great deal of
@@ -550,8 +568,19 @@ def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
         wsum = float(w.sum())
         # exp(-2 pi i f x) summed over events, minus what a uniform process of
         # the same rate would give: that difference is the periodic structure.
-        ph = np.exp(-2j * np.pi * np.outer(freq, x))
-        raw = ph @ w
+        # Keep the temporary phase matrix bounded for large event lists.  The
+        # arithmetic within each requested frequency is unchanged.
+        if memory_budget is None:
+            raw = np.exp(-2j * np.pi * np.outer(freq, x)) @ w
+        else:
+            budget = int(memory_budget)
+            if budget < 16 * max(1, x.size):
+                raise ValueError("memory_budget is too small for one frequency row")
+            block = max(1, budget // (16 * max(1, x.size)))
+            raw = np.empty(freq.size, dtype=np.complex128)
+            for start in range(0, freq.size, block):
+                fs = freq[start:start + block]
+                raw[start:start + block] = np.exp(-2j * np.pi * fs[:, None] * x) @ w
         u = np.where(freq != 0.0,
                      (1.0 - np.exp(-2j * np.pi * freq * span))
                      / (2j * np.pi * np.where(freq == 0.0, 1.0, freq)),

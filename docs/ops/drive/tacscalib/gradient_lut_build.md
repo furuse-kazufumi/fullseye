@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # gradient_lut_build — DRIVE `tacscalib` op
 
 - **データ種**: `matrix × matrix` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.gradient_lut_build(rgb_rows, normal_rows, bins: 'int' = 125, positions=None, image_shape=None, flat_rgb=None, flat_positions=None, min_rows_poly: 'int' = 30, ridge: 'float' = 0.001, pool: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import tacscalib; tacscalib.gradient_lut_build(rgb_rows, normal_rows, bins: 'int' = 125, positions=None, image_shape=None, flat_rgb=None, flat_positions=None, min_rows_poly: 'int' = 30, ridge: 'float' = 0.001, pool: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("gradient_lut_build")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gradient_lut_build(rgb_rows, normal_rows, bins: 'int' = 125, positions=None, image_shape=None, flat_rgb=None, flat_positions=None, min_rows_poly: 'int' = 30, ridge: 'float' = 0.001, pool: 'bool' = True, *, chunk=262144, pool_method='exact') -> 'dict'` (実装を直接呼ぶなら `import tacscalib; tacscalib.gradient_lut_build(rgb_rows, normal_rows, bins: 'int' = 125, positions=None, image_shape=None, flat_rgb=None, flat_positions=None, min_rows_poly: 'int' = 30, ridge: 'float' = 0.001, pool: 'bool' = True, *, chunk=262144, pool_method='exact') -> 'dict'`、台帳から引くなら `opsdrive.get("gradient_lut_build")`)
 
 ## 使い方
 

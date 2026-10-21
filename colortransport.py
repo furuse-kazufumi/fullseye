@@ -213,6 +213,32 @@ def histogram_match(src, ref, bins=None, ties="average"):
     """
     if ties not in ("average", "break"):
         raise MetricContractError(f"ties must be 'average' or 'break', got {ties!r}")
+    src_array = np.asarray(src)
+    ref_array = np.asarray(ref)
+    integer_exact = (
+        bins is None
+        and ties == "average"
+        and src_array.dtype in (np.dtype(np.uint8), np.dtype(np.uint16))
+        and ref_array.dtype in (np.dtype(np.uint8), np.dtype(np.uint16))
+    )
+    if integer_exact:
+        if src_array.size == 0 or ref_array.size == 0:
+            raise MetricContractError("both images must be non-empty")
+        flat_integer = src_array.ravel()
+        source_counts = np.bincount(flat_integer, minlength=np.iinfo(src_array.dtype).max + 1)
+        reference_counts = np.bincount(
+            ref_array.ravel(), minlength=np.iinfo(ref_array.dtype).max + 1
+        )
+        reference_sorted = np.repeat(np.arange(reference_counts.size), reference_counts)
+        starts = np.cumsum(source_counts, dtype=np.int64) - source_counts
+        lut = np.zeros(source_counts.size, dtype=np.float64)
+        n = flat_integer.size
+        m = ref_array.size
+        for value in np.flatnonzero(source_counts):
+            positions = np.arange(starts[value], starts[value] + source_counts[value], dtype=np.float64)
+            indices = np.minimum(((positions + 0.5) * m / n).astype(np.int64), m - 1)
+            lut[value] = float(reference_sorted[indices].mean())
+        return lut[flat_integer].reshape(src_array.shape)
     s = np.asarray(src, dtype=np.float64)
     r = np.asarray(ref, dtype=np.float64).ravel()
     if s.size == 0 or r.size == 0:

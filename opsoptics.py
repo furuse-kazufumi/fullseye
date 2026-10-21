@@ -567,6 +567,7 @@ _CATALOG = {
         ("energy_to_photons", "spectralrad", ["pairs"], "pairs"),
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
+        ("spectral_integral_table", "spectralrad", ["pairs"], "table"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
         # 2026-10-15 近赤外の分光撮像(ハイパースペクトル): InGaAs の QE、散乱層の反射(Kubelka–Munk)、
         #   材料表 → 反射率、反射率 → 帯域ごとの電子数(ハロゲン × ガラス × 帯域 × QE)。画像(キューブ)は
