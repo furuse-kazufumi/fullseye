@@ -261,12 +261,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
 - **L220** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L332** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L371** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L436** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L604** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
-- **L721** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L747** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L378** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L417** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L482** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L650** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
+- **L767** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L793** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -425,12 +425,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_cad_scan_deviation.py`
 
 - **L434** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
-- **L895** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
-- **L1101** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
-- **L1254** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
-- **L1265** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
-- **L1355** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
-- **L1377** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L897** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
+- **L1103** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
+- **L1256** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
+- **L1267** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
+- **L1357** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1379** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
