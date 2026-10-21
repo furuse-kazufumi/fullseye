@@ -1,11 +1,18 @@
 """Performance carry-over gates for the vehicle path planner.
 
-The hashes below were produced by the original ``c305eaf50f`` planner.  They
+The reference values were produced by the original ``c305eaf50f`` planner.  They
 pin the full sampled path and expansion tree, not merely the final cost.
+
+``_ORIGINAL`` keeps the Windows byte digests for the record; the gate itself compares
+the arrays in ``tests/data/perf_carryover_astar_reference.npz`` with a 1e-9 tolerance,
+because the sampled path differs by one ulp between libm implementations (the "ties"
+points digest did not match on the Linux CI, 2026-10-21, while cost, counts and the
+expansion tree were identical).
 """
 from __future__ import annotations
 
 import hashlib
+import os
 
 import numpy as np
 
@@ -52,14 +59,21 @@ def _digest(a):
     return hashlib.sha256(np.asarray(a).tobytes()).hexdigest()
 
 
+_REFERENCE = dict(np.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
+                                       "perf_carryover_astar_reference.npz")))
+
+
 def test_original_planner_reference_scenes_are_result_identical():
     scenes = _scenes()
     assert len(scenes) == 4
     for name, occupancy, poses, kwargs in scenes:
         got = C.car_hybrid_astar(occupancy, poses, **kwargs)
-        observed = (got["cost"], got["n_expanded"], got["n_generated"],
-                    _digest(got["points"]), _digest(got["tree"]))
-        assert observed == _ORIGINAL[name]
+        cost, n_expanded, n_generated, _points_digest, _tree_digest = _ORIGINAL[name]
+        assert (got["cost"], got["n_expanded"], got["n_generated"]) == (cost, n_expanded, n_generated), name
+        np.testing.assert_allclose(np.asarray(got["points"], dtype=np.float64),
+                                   _REFERENCE[name + "/points"], rtol=0, atol=1e-9, err_msg=name)
+        np.testing.assert_allclose(np.asarray(got["tree"], dtype=np.float64),
+                                   _REFERENCE[name + "/tree"], rtol=0, atol=1e-9, err_msg=name)
 
 
 def test_177_178_fast_mode_keeps_cost_and_feasibility():
