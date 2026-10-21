@@ -261,6 +261,7 @@ from volxform import (  # noqa: E402,F401
     vol_resize, vol_rotate, vol_affine,
 )
 from volprobe import (  # noqa: E402,F401
+    PreparedVolProbe, prepare_vol_probe,
     vol_profile_line, vol_edge_probe, vol_wall_thickness,
 )
 from volfreq import (  # noqa: E402,F401
@@ -384,6 +385,7 @@ from mathtransforms import (  # noqa: E402,F401
     abel_inverse,
     abel_inverse_image,
     abel_revolve,
+    HankelPlan,
     hankel_transform,
     tf_poles_zeros,
     tf_freq_response,
@@ -1000,13 +1002,20 @@ from rangedoppler import (  # noqa: E402,F401
 )
 import quatimage  # noqa: E402  (quaternion images / Riesz + monogenic signal)
 from quatimage import (  # noqa: E402,F401
-    iqft2, monogenic_amplitude, monogenic_orientation, monogenic_phase,
+    iqft2, monogenic_amplitude, monogenic_metrics, monogenic_orientation, monogenic_phase,
     monogenic_signal, qft2, quat_color_filter, quat_color_rotate,
     quat_conjugate_image, quat_correlate, quat_image_multiply, quat_norm,
     quat_normalize_image, quaternion_to_rgb, rgb_to_quaternion,
     riesz_displacement, riesz_displacement_series, riesz_motion_magnify,
     riesz_transform,
 )
+
+# Public helpers introduced by the performance batches.  Keep them reachable
+# through the same stable facade as the operators they prepare or accelerate.
+from acquire import unpack_lsb  # noqa: E402,F401
+from curvature3d import curvature_descriptors  # noqa: E402,F401
+from pivops import piv_outlier_mask_stream  # noqa: E402,F401
+from sdf_ops import grid_axes  # noqa: E402,F401
 import motionmag  # noqa: E402  (phase-based motion magnification / vibration measurement)
 from motionmag import (  # noqa: E402,F401
     band_snr, complex_steerable_decompose, complex_steerable_reconstruct,

@@ -57,7 +57,7 @@ with warnings.catch_warnings():
         pcseg, fit_plane, fit_plane_ransac, fit_sphere_ransac, fit_cylinder_ransac,
         plane_distance, height_above_plane, remove_ground,
         euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
-        farthest_point_sampling, curvature, centroid, principal_axes,
+        farthest_point_sampling, curvature, curvature_descriptors, centroid, principal_axes,
         pocviewer, write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab,
         viewer_points_tab, viewer_frames_tab, viewer_split_tab,
         mesh, read_mesh, read_points, write_mesh, write_points, sample_surface,
@@ -93,7 +93,8 @@ with warnings.catch_warnings():
         vol_rle_difference, vol_rle_components,
         volgray, vol_window_level, vol_equalize, vol_gamma, vol_stretch,
         volxform, vol_resize, vol_rotate, vol_affine,
-        volprobe, vol_profile_line, vol_edge_probe, vol_wall_thickness,
+        volprobe, PreparedVolProbe, prepare_vol_probe,
+        vol_profile_line, vol_edge_probe, vol_wall_thickness,
         volfreq, vol_fft_lowpass, vol_fft_highpass, vol_fft_bandpass,
         volrestore, vol_gaussian_psf, vol_richardson_lucy,
         handpose, hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
@@ -125,7 +126,7 @@ with warnings.catch_warnings():
         event_rate_map, time_surface, warp_frame, contrast_maximization,
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
-        orient2d, orient3d, incircle, insphere,
+        orient2d, orient3d, incircle, insphere, grid_axes,
         orient2d_exact, orient3d_exact, incircle_exact, insphere_exact,
         point_in_polygon, point_in_convex_polygon, is_convex_polygon,
         point_in_tetrahedron, point_in_convex_polytope,
@@ -190,6 +191,7 @@ with warnings.catch_warnings():
         abel_inverse,
         abel_inverse_image,
         abel_revolve,
+        HankelPlan,
         hankel_transform,
         tf_poles_zeros,
         tf_freq_response,
@@ -210,6 +212,7 @@ with warnings.catch_warnings():
         polish_scene_build, polish_stroke_run, polish_scene_close,   # 研削・研磨・拭き取り: 工具を手首のばねで押して動かす(mujoco が要るので台帳の外、2026-10-05)
         scoop_mujoco_fill, scoop_mujoco_pour,   # 粉体のすくい(椀の球の個数)と注ぎ(樋を傾ける)の MuJoCo の第 2 実装(mujoco が要るので台帳の外、2026-10-05)
         hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
+        unpack_lsb, piv_outlier_mask_stream, monogenic_metrics,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
         erfc,
