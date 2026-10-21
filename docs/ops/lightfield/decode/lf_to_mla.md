@@ -4,7 +4,7 @@ dim: lightfield
 category: decode
 in: lightfield
 out: image2d
-examples: [lightfield_depth, plenoptic_decode_pipeline]
+examples: [lightfield_depth, poc_lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -42,7 +42,7 @@ exceed ``MAX_SPATIAL * MAX_ANGULAR``.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
-- [plenoptic_decode_pipeline](../../../../examples/plenoptic_decode_pipeline.py) — `py -3.11 examples/plenoptic_decode_pipeline.py`
+- [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

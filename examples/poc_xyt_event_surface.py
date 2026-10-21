@@ -84,6 +84,195 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
+EVENT_DTYPE = np.dtype([("t", "f8"), ("y", "i4"), ("x", "i4"),
+                        ("polarity", "i1"), ("background", "?")])
+
+
+def make_event_scene(*, height=512, width=640, n_frames=49):
+    """Return a symmetric moving-part sequence and its moving-edge truth."""
+    if min(height, width, n_frames) < 8:
+        raise ValueError("height, width and n_frames must be at least 8")
+    yy, xx = np.mgrid[:height, :width]
+    frames = np.full((n_frames, height, width), 0.18, np.float64)
+    edges = np.zeros_like(frames, dtype=bool)
+    n_out = (n_frames + 1) // 2
+    outward = np.linspace(-0.5 * np.pi, 0.5 * np.pi, n_out)
+    phase = np.concatenate([outward, outward[-2::-1]])[:n_frames]
+    for k, ph in enumerate(phase):
+        cx = width * (0.5 + 0.22 * np.sin(ph))
+        cy = height * 0.50
+        # Textured rotating workpiece carried back and forth; the background is static.
+        xr = (xx - cx) * np.cos(ph) + (yy - cy) * np.sin(ph)
+        yr = -(xx - cx) * np.sin(ph) + (yy - cy) * np.cos(ph)
+        part = (np.abs(xr) < 0.13 * width) & (np.abs(yr) < 0.17 * height)
+        texture = 0.56 + 0.14 * np.sin(0.13 * xr) * np.cos(0.11 * yr)
+        frames[k][part] = texture[part]
+        # A dark circular bore supplies both leading and trailing contrast edges.
+        bore = (xx - cx) ** 2 + (yy - cy) ** 2 < (0.055 * min(height, width)) ** 2
+        frames[k][bore] = 0.27
+    # Truth is where a moving intensity edge changed log intensity enough to fire.
+    edges[:-1] = np.abs(np.diff(np.log(frames), axis=0)) >= 0.16
+    edges[-1] = edges[-2]
+    return frames, edges
+
+
+def simulate_event_stream(frames, *, dt_s, contrast=0.16,
+                          background_rate_hz=0.0, refractory_s=2e-4,
+                          timestamp_jitter_s=2e-5, seed=0):
+    """Simulate threshold-crossing log-intensity events with ON/OFF polarity."""
+    a = np.asarray(frames, dtype=np.float64)
+    if a.ndim != 3 or a.shape[0] < 2 or not np.isfinite(a).all() or np.any(a <= 0):
+        raise ValueError("frames must be finite positive (time, height, width) data")
+    if dt_s <= 0 or contrast <= 0 or background_rate_hz < 0 or refractory_s < 0:
+        raise ValueError("time and contrast must be positive; rates must be non-negative")
+    rng = np.random.default_rng(seed)
+    log_frames = np.log(a)
+    ref = log_frames[0].copy()
+    last = np.full(a.shape[1:], -np.inf)
+    records = []
+    for k in range(1, a.shape[0]):
+        delta = log_frames[k] - ref
+        crossings = np.floor(np.abs(delta) / contrast).astype(np.int32)
+        ys, xs = np.nonzero(crossings)
+        for y, x in zip(ys, xs):
+            pol = 1 if delta[y, x] > 0 else -1
+            count = int(crossings[y, x])
+            for j in range(count):
+                t = (k - 1 + (j + 1) / (count + 1)) * dt_s
+                t += rng.normal(0.0, timestamp_jitter_s)
+                if t - last[y, x] >= refractory_s:
+                    records.append((max(0.0, t), y, x, pol, False))
+                    last[y, x] = t
+            ref[y, x] += pol * count * contrast
+        lam = a.shape[1] * a.shape[2] * background_rate_hz * dt_s
+        for _ in range(rng.poisson(lam)):
+            y, x = int(rng.integers(a.shape[1])), int(rng.integers(a.shape[2]))
+            t = (k - rng.random()) * dt_s
+            if t - last[y, x] >= refractory_s:
+                records.append((t, y, x, 1 if rng.random() < 0.5 else -1, True))
+                last[y, x] = t
+    return np.array(sorted(records, key=lambda z: z[0]), dtype=EVENT_DTYPE)
+
+
+def event_resemblance_gates(frames, events, *, dt_s, edge_truth=None):
+    """Measure edge locality and polarity balance; empty streams fail closed."""
+    a = np.asarray(frames)
+    ev = np.asarray(events)
+    if ev.dtype != EVENT_DTYPE:
+        raise ValueError("events must use EVENT_DTYPE")
+    if edge_truth is None:
+        edge_fraction = 0.0
+    else:
+        from scipy import ndimage as ndi
+        edge = np.asarray(edge_truth, bool)
+        if edge.shape != a.shape:
+            raise ValueError("edge_truth must match frames")
+        near = np.stack([ndi.binary_dilation(e, iterations=2) for e in edge])
+        near[:-1] |= near[1:]
+        signal = ev[~ev["background"]]
+        if signal.size:
+            kk = np.clip((signal["t"] / dt_s).astype(int), 0, a.shape[0] - 1)
+            edge_fraction = float(np.mean(near[kk, signal["y"], signal["x"]]))
+        else:
+            edge_fraction = 0.0
+    on = int(np.sum(ev["polarity"] > 0)); off = int(np.sum(ev["polarity"] < 0))
+    ratio = on / off if off else float("inf")
+    return {"edge_fraction": edge_fraction, "on_off_ratio": ratio,
+            "on": on, "off": off, "count": int(ev.size)}
+
+
+def _event_camera_figures():
+    """Write device-native event views before the legacy verification figures."""
+    frames, edges = make_event_scene()
+    dt_s = 1e-3
+    ev = simulate_event_stream(frames, dt_s=dt_s, contrast=0.50,
+                               background_rate_hz=0.001, refractory_s=2e-4,
+                               timestamp_jitter_s=2e-5, seed=53)
+    gates = event_resemblance_gates(frames, ev, dt_s=dt_s, edge_truth=edges)
+    h, w = frames.shape[1:]
+    raster = np.full((h, w, 3), 0.58, np.float64)
+    on = np.zeros((h, w), np.float64); off = np.zeros_like(on)
+    np.add.at(on, (ev["y"][ev["polarity"] > 0], ev["x"][ev["polarity"] > 0]), 1)
+    np.add.at(off, (ev["y"][ev["polarity"] < 0], ev["x"][ev["polarity"] < 0]), 1)
+    # Display one 1 ms acquisition window ending at 3 ms.  At this point the
+    # workpiece travels 5.9 px, so the raster shows sparse leading/trailing
+    # edge events instead of a whole-clip, last-polarity segmentation map.
+    display_end_s = 3.0e-3
+    display_window_s = 1.0e-3
+    recent = ev[(ev["t"] >= display_end_s - display_window_s) & (ev["t"] < display_end_s)]
+    recent_on = np.zeros((h, w), bool)
+    recent_off = np.zeros((h, w), bool)
+    recent_on[recent["y"][recent["polarity"] > 0], recent["x"][recent["polarity"] > 0]] = True
+    recent_off[recent["y"][recent["polarity"] < 0], recent["x"][recent["polarity"] < 0]] = True
+    event_mask = recent_on | recent_off
+    from scipy import ndimage as ndi
+    dilated = ndi.binary_dilation(event_mask, structure=np.ones((5, 5)))
+    event_fraction = float(np.mean(event_mask))
+    on_fraction = float(np.mean(recent_on))
+    off_fraction = float(np.mean(recent_off))
+    thinness = float(event_mask.sum() / max(1, dilated.sum()))
+    def centroid(mask):
+        yy, xx = np.nonzero(mask)
+        return np.array([yy.mean(), xx.mean()]) if yy.size else np.array([np.nan, np.nan])
+    centroid_separation = float(np.linalg.norm(centroid(recent_on) - centroid(recent_off)))
+    panel_pass = (0.01 <= event_fraction <= 0.20 and on_fraction >= 0.005
+                  # 細さ比 = 事象画素 / 5×5 で膨らませた画素。縁の帯(幅 ≤ 6 px 程度)なら 0.65 以下、
+                  # 塗り潰し(第 3 パスの「全区間の最終極性」の面)なら 0.9 を超える。上限で縛る。
+                  and off_fraction >= 0.005 and thinness <= 0.65
+                  and centroid_separation >= 2.0)
+    assert panel_pass, {"event_fraction": event_fraction, "on_fraction": on_fraction,
+                        "off_fraction": off_fraction, "thinness": thinness,
+                        "centroid_separation": centroid_separation}
+    last = np.full((h, w), -np.inf)
+    last_polarity = np.zeros((h, w), np.int8)
+    for e in ev:
+        last[e["y"], e["x"]] = e["t"]
+        last_polarity[e["y"], e["x"]] = e["polarity"]
+    on_colour = np.array([0.98, 0.48, 0.05])
+    off_colour = np.array([0.05, 0.72, 0.92])
+    raster[recent_on] = on_colour
+    raster[recent_off] = off_colour
+    # In-panel key; coloured swatches remain machine-checkable and the text is
+    # rendered with the same bitmap pipeline as the exhibit.
+    from PIL import Image, ImageDraw
+    key = Image.fromarray(np.uint8(raster * 255 + 0.5))
+    draw = ImageDraw.Draw(key)
+    draw.rectangle((8, 8, 31, 25), fill=tuple(np.uint8(on_colour * 255)))
+    draw.text((37, 9), "ON", fill=(20, 20, 20))
+    draw.rectangle((76, 8, 99, 25), fill=tuple(np.uint8(off_colour * 255)))
+    draw.text((105, 9), "OFF", fill=(20, 20, 20))
+    draw.rectangle((158, 8, 181, 25), fill=(148, 148, 148))
+    draw.text((187, 9), "no event", fill=(20, 20, 20))
+    raster = np.asarray(key, dtype=np.float64) / 255.0
+    polarity_fraction = {"on": on_fraction, "off": off_fraction}
+    distinct_polarity_hues = int(np.any(recent_on)) + int(np.any(recent_off))
+    assert distinct_polarity_hues >= 2, distinct_polarity_hues
+    age = frames.shape[0] * dt_s - last
+    surface = np.exp(-np.minimum(age, 0.020) / 0.006)
+    surface[~np.isfinite(age)] = 0.0
+    density = np.log1p(on + off); density /= max(1e-9, density.max())
+    from matplotlib import colormaps
+    triptych = np.concatenate([raster, colormaps["turbo"](surface)[..., :3],
+                               np.repeat(density[..., None], 3, axis=2)], axis=1)
+    figs.save("event_output", triptych,
+              caption=("装置出力（左、3 ms時点までの直近1 ms、移動量5.9 px。ON=橙・OFF=水色・無イベント=灰色）｜指数減衰 6 ms の時刻面（中央）｜累積イベント密度（右）。"
+                       "コントラスト閾値 0.50、不応期 0.2 ms、時刻揺らぎ 0.02 ms、背景活動 0.001 event/(pixel s)。"
+                       "移動輝度境界から 2 px 以内 %.1f %%、ON/OFF 比 %.3f。" %
+                       (100 * gates["edge_fraction"], gates["on_off_ratio"])))
+    t = np.arange(frames.shape[0] - 1) * dt_s * 1e3
+    rate = np.histogram(ev["t"] * 1e3, bins=np.r_[t, t[-1] + 1.0])[0]
+    figs.save_plot("event_rate", [("イベント率", t, rate)], xlabel="時刻 [ms]",
+                   ylabel="events / ms", title="往復運動のイベント率",
+                   caption="方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。")
+    gates.update({"distinct_polarity_hues": distinct_polarity_hues,
+                  "on_panel_fraction": polarity_fraction["on"],
+                  "off_panel_fraction": polarity_fraction["off"],
+                  "event_panel_fraction": event_fraction,
+                  "event_panel_thinness": thinness,
+                  "polarity_centroid_separation_px": centroid_separation,
+                  "event_panel_pass": panel_pass})
+    return gates
+
 # --- 場面の諸元 -------------------------------------------------------------- #
 N = 144                    # 視野 [px]
 C_TRUE = 3.0               # 伝播速度 [px/ms]
@@ -801,6 +990,13 @@ def main() -> None:
     print("poc_xyt_event_surface — 到達時刻面を (x, y, t) の等値面として取り出す")
     print("(2-D の場面を時系列に変化させて 3-D にする。真値は閉形式)")
     print()
+    gates = _event_camera_figures() if figs.enabled() else None
+    if gates is not None:
+        print("event gates: edge %.3f / ON:OFF %.3f / panel %.3f / ON %.3f / OFF %.3f / thin %.3f / centroids %.2f px (%s)" %
+              (gates["edge_fraction"], gates["on_off_ratio"], gates["event_panel_fraction"],
+               gates["on_panel_fraction"], gates["off_panel_fraction"], gates["event_panel_thinness"],
+               gates["polarity_centroid_separation_px"],
+               "PASS" if gates["event_panel_pass"] else "FAIL"))
     truth = section1_scene()
     state = section2_zero_point(truth)
     section3_dt_sweep(truth)
