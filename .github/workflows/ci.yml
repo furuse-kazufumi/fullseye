@@ -273,6 +273,9 @@ jobs:
         run: >
           pytest -q -ra ${{ matrix.python-version == '3.11' && '--cov' || '' }}
           --splits 6 --group ${{ matrix.shard }} --splitting-algorithm least_duration
+          # ★.test_durations の出自(2026-10-21): 手元(Windows)の全数計測を 1 時間で打ち切った実測 3,900 件 +
+          #   残り 17,310 件は pytest-split と同じ平均値で初期化。本物の均しは Linux の artifact
+          #   (test-durations-py*-shard*)を tools/merge_test_durations.py で結合して commit してから。
           --durations-path .test_durations --store-durations
       - name: Name this shard's duration data
         if: always()
