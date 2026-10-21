@@ -6336,6 +6336,23 @@
    }
   },
   {
+   "id": "poc_plenoptic_camera",
+   "group": "wing_imaging",
+   "media": "03_raw_microimages.png",
+   "motion": true,
+   "thumb_src": "03_raw_microimages.png",
+   "label": {
+    "ja": "処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ",
+    "en": "A prescription-based plenoptic camera: raw microimages to refocusing and distance",
+    "zh": "基于处方的光场相机:从原始微图像到重聚焦与距离",
+    "tw": "基於處方的光場相機:從原始微影像到重聚焦與距離",
+    "ko": "처방 기반 플렌옵틱 카메라: 원시 마이크로영상에서 재초점과 거리까지",
+    "de": "Eine rezeptbasierte plenoptische Kamera: von Roh-Mikrobildern zu Refokussierung und Entfernung",
+    "hi": "prescription-आधारित plenoptic camera: raw microimages से refocusing और दूरी तक",
+    "fr": "Une caméra plénoptique fondée sur une prescription : des micro-images brutes à la refocalisation et à la distance"
+   }
+  },
+  {
    "id": "poc_photograph_through_prescription",
    "group": "wing_imaging",
    "media": "01_chart_good_vs_detuned.png",
@@ -6728,6 +6745,14 @@
    }
   ],
   "titles": {
+   "plenoptic-camera": {
+    "zh": "基于镜头处方的光场相机",
+    "tw": "基於鏡頭處方的光場相機",
+    "ko": "렌즈 처방 기반 라이트필드 카메라",
+    "de": "Lichtfeldkamera auf Basis einer Linsenrezeptur",
+    "hi": "लेंस विन्यास पर आधारित प्रकाश-क्षेत्र कैमरा",
+    "fr": "Caméra plénoptique fondée sur une prescription optique"
+   },
    "inner-diameter-in-mm": {
     "zh": "测量圆形零件的内径,直到毫米",
     "tw": "量測圓形零件的內徑,直到毫米",

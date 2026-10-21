@@ -221,6 +221,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で): [説明](../capabilities/optics-drawings.md) · 例 [poc_optics_drawings](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_optics_drawings.py)
 - 処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト): [説明](../capabilities/photograph-through-prescription.md) · 例 [poc_photograph_through_prescription](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photograph_through_prescription.py)
 - 目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画): [説明](../capabilities/pictures-that-carry-their-own-truth.md) · 例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 処方から撮るプレノプティックカメラ: [説明](../capabilities/plenoptic-camera.md) · 例 [poc_plenoptic_camera](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plenoptic_camera.py)
 - 定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線): [説明](../capabilities/theorems-as-pictures.md) · 例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
 
 </div>
@@ -404,7 +405,7 @@ PoC 271 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>撮像品質・復元</b> (22)</summary>
+<details class="vall"><summary><b>撮像品質・復元</b> (23)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_zebra_stripes_fly_eye.jpg" alt="縞に近づくハエの眼" width="200" height="200"><b>&#9654;</b><span>縞に近づくハエの眼</span></a>
 <a href="../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_shake_deblur.jpg" alt="手ブレ補正" width="200" height="200"><b>&#9654;</b><span>手ブレ補正</span></a>
@@ -425,6 +426,7 @@ PoC 271 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_graph_hierarchy_segmentation.jpg" alt="グラフ分割" width="200" height="200"><b>&#9654;</b><span>グラフ分割</span></a>
 <a href="../articles/assets/poc/poc_pixel_shift/12_four_shot_capture.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pixel_shift.jpg" alt="ピクセルシフト(偽色と折り返し)" width="200" height="200"><b>&#9654;</b><span>ピクセルシフト(偽色と折り返し)</span></a>
 <a href="../articles/assets/poc/poc_water_transparent_media/04_pool_views.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_water_transparent_media.jpg" alt="水と透明媒質: 海の波・プールの屈折・水中の色・瓶の焦線" width="200" height="200"><span>水と透明媒質: 海の波・プールの屈折・水中の色・瓶の焦線</span></a>
+<a href="../articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plenoptic_camera.jpg" alt="処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ" width="200" height="200"><b>&#9654;</b><span>処方から撮るプレノプティックカメラ: 生のマイクロ像から撮影後の再合焦と距離へ</span></a>
 <a href="../articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_photograph_through_prescription.jpg" alt="処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト" width="200" height="200"><span>処方どおりのレンズ越しに 3 次元の場面を撮る: 被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト</span></a>
 <a href="../articles/assets/poc/poc_water_inspection_images/04_bottles.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_water_inspection_images.jpg" alt="水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像" width="200" height="200"><span>水が検査画像にどう写るか: プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像</span></a>
 <a href="../articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_simcal_pixel_shift.jpg" alt="ピクセルシフトのずれと開口の較正(決まらない地図)" width="200" height="200"><span>ピクセルシフトのずれと開口の較正(決まらない地図)</span></a>

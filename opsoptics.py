@@ -148,6 +148,7 @@ import lensglobal
 import lensmerit
 import lensrender
 import lenstol
+import plenoptic
 import lenssolve
 import filmoptics
 import moirealign
@@ -160,7 +161,7 @@ import pixelshift
 import octscan
 import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
@@ -703,6 +704,14 @@ _CATALOG = {
         ("tolerance_report", "lenstol", ["table"], "text"),
         ("tolerance_table_zmx", "lenstol", ["table"], "text"),
         ("tolerance_table_from_zmx", "lenstol", ["table", "text"], "table"),
+    ],
+    "plenoptic": [
+        ("mla_surface", "plenoptic", [], "table"),
+        ("plenoptic_system", "plenoptic", ["table", "table", "table"], "table"),
+        ("plenoptic_capture", "plenoptic", ["table", "table"], "table"),
+        ("plenoptic_mla_calibrate", "plenoptic", ["image2d"], "table"),
+        ("plenoptic_decode", "plenoptic", ["image2d", "table"], "lightfield"),
+        ("plenoptic_refocus_depth", "plenoptic", ["lightfield", "table"], "table"),
     ],
     "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
         # ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。

@@ -3331,6 +3331,18 @@
    "run": "py -3.11 examples/poc_water_inspection_images.py"
   },
   {
+   "id": "poc_plenoptic_camera",
+   "wing": "wing_imaging",
+   "added": "2026-10-20",
+   "numbers_source": "log",
+   "figure": "raw_microimages",
+   "title_ja": "処方から撮るプレノプティックカメラ",
+   "title_en": "A Prescription-Based Plenoptic Camera",
+   "caption_ja": "主レンズ、周期球面 MLA、センサを逆追跡する合成 PoC。生画像には円盤状マイクロ像の格子、円盤間の暗い隅、円盤内の場面断片が現れ、EPI には視差の斜線が現れる。白色面の暗い隅は 21.33 %（閉形式 21.46 %）、円盤端/中心の輝度比は 9.92e-6、格子ピークは 0.06667 cycle/pixel、EPI は 0.6 px/view。開口を外すと暗い隅が 0 % になり門が赤になる。境界光線と校正残差も fail-closed に拒否する。",
+   "caption_en": "A synthetic prescription-based camera traces a main lens, periodic spherical MLA and sensor backwards. Its raw frame shows the three physical signatures: a lattice of microimage discs, dark inter-disc corners, and shifted scene fragments inside each disc; decoding adds slanted disparity lines in the EPI. The white-frame gates measure 21.33% dark corners (closed form 21.46%), a 9.92e-6 rim/core intensity ratio, a 0.06667 cycle/pixel lattice peak, and 0.6 px/view EPI motion. Removing the aperture gives 0% dark corners and fails the gate; boundary rays and excessive calibration residuals also fail closed.",
+   "run": "py -3.11 examples/poc_plenoptic_camera.py"
+  },
+  {
    "id": "poc_photograph_through_prescription",
    "wing": "wing_imaging",
    "added": "2026-10-20",

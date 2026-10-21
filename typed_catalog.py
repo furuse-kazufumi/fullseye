@@ -207,6 +207,10 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # プレノプティック MLA の生成元。どちらも必須引数で、名前だけでは他の
+    # 台帳族の半径・ピッチと区別できないため op 単位で小さい実寸値を渡す。
+    ("mla_surface", "pitch_mm"): lambda rng: 0.06,
+    ("mla_surface", "radius_mm"): lambda rng: 0.12,
     # 複素平面の面(2026-09-22)。既定の 256x256 はファザーには重いので、
     # op ごとに小さい窓を渡す(名前ヒントにすると他の族の "shape" を巻き込む)。
     ("cplx_plane_grid", "shape"): lambda rng: (24, 24),

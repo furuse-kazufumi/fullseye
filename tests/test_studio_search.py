@@ -376,3 +376,9 @@ def test_op_missing_in_this_environment_is_marked_unavailable_not_dropped(monkey
     others = [e for e in res["applicable"] if e["name"] != "remove_small"]
     assert len(others) >= 3                      # 他の行は落ちていない(CI の殻では他にも unavailable が混ざりうる)
     assert all(e["fit"] in ("declared", "measured") for e in others)
+
+
+def test_lightfield_selection_lists_plenoptic_op_as_applicable():
+    lf = np.zeros((5, 5, 12, 14), dtype=float)
+    res = ss.search_grouped("plenoptic_refocus_depth", lf, current_sort="lightfield", k=20, lang="en")
+    assert "plenoptic_refocus_depth" in _names(res, "applicable")

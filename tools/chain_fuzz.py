@@ -6798,7 +6798,71 @@ _CROPWEED_ENTRIES = {
 # --- /作物と雑草 ------------------------------------------------------------------------- #
 
 
+def _b_plenoptic_system(pool, rng):
+    """主レンズ・MLA・センサーを、各生成 API を通した実型で組む。"""
+    import plenoptic
+    import raytrace
+    lens = raytrace.lens_system([
+        {"R": 50.0, "t": 5.0, "n": (1.5, 50.0), "ap": 10.0},
+        {"R": -50.0, "t": None, "n": 1.0, "ap": 10.0},
+    ], object_mm=1000.0)
+    mla = plenoptic.mla_surface(0.06, 0.12, (5, 5))
+    sensor = {"size": (25, 25), "pixel_pitch_um": 12.0}
+    return ([lens, mla, sensor], {"kind": "focused", "mla_to_sensor_mm": 0.48,
+                                  "main_to_mla_mm": 0.48})
+
+
+def _b_plenoptic_capture(pool, rng):
+    """捕捉器には plenoptic_system と lens_scene の正規出力を渡す。"""
+    import lensrender
+    import plenoptic
+    args, kwargs = _b_plenoptic_system(pool, rng)
+    system = plenoptic.plenoptic_system(*args, **kwargs)
+    return ([system, lensrender.lens_scene()], {})
+
+
+def _plenoptic_white_calibration():
+    from scipy import ndimage
+    import plenoptic
+    white = np.zeros((32, 32), dtype=float)
+    white[4:29:6, 4:29:6] = 1.0
+    # 1 点だけ 1 px ずらし、max_residual_px の半減・倍増で拒否/受理が
+    # 分かれる実測残差（約 0.196 px）を持たせる。
+    white[16, 16] = 0.0
+    white[16, 17] = 1.0
+    white = ndimage.gaussian_filter(white, 0.8)
+    calibration = plenoptic.plenoptic_mla_calibrate(
+        white, 6.0, max_residual_px=0.3)
+    return white, calibration
+
+
+def _b_plenoptic_mla_calibrate(pool, rng):
+    """校正器が確実に格子を検出できる、小さい白色画像を作る。"""
+    white, _ = _plenoptic_white_calibration()
+    return ([white, 6.0], {"max_residual_px": 0.3})
+
+
+def _b_plenoptic_decode(pool, rng):
+    """復号器には実際の MLA 校正器が返した格子表を渡す。"""
+    white, calibration = _plenoptic_white_calibration()
+    return ([white, calibration], {"angular": (3, 3)})
+
+
+def _b_plenoptic_refocus_depth(pool, rng):
+    """深度換算にも有限物体距離の正規 plenoptic_system を渡す。"""
+    import plenoptic
+    args, kwargs = _b_plenoptic_system(pool, rng)
+    system = plenoptic.plenoptic_system(*args, **kwargs)
+    return ([np.zeros((3, 3, 5, 5)), system, 0.2], {})
+
+
 OP_ARG_BUILDERS = {
+    # --- プレノプティックカメラ（汎用 table では生成 API の来歴を満たせない） --- #
+    "plenoptic_system": _b_plenoptic_system,
+    "plenoptic_capture": _b_plenoptic_capture,
+    "plenoptic_mla_calibrate": _b_plenoptic_mla_calibrate,
+    "plenoptic_decode": _b_plenoptic_decode,
+    "plenoptic_refocus_depth": _b_plenoptic_refocus_depth,
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
     "perpetual_render": _b_perpetual_state,

@@ -59,6 +59,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [Prescription-based plenoptic camera](capabilities/plenoptic-camera.md) | `mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth` | `poc_plenoptic_camera` |
 | [Draw a point cloud as a colour picture](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
@@ -1012,7 +1013,7 @@ Alternatives: [`text_box`](ops/annotate/text/text_box.md), [`annotate_panel_labe
 
 Runnable: `annotate_paper_tour`
 
-## Draw (5)
+## Draw (6)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -1053,6 +1054,18 @@ Generates pictures that ship with their own ground truth: optical illusions whos
 Operators: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
 
 Runnable: `poc_illusions_and_perpetual_drawing`
+
+### [Prescription-based plenoptic camera](capabilities/plenoptic-camera.md)
+
+It traces a prescription, microlens array and sensor, then decodes the raw frame to the repository's `(V,U,H,W)` light-field array for direct refocus and depth processing.
+
+Operators: `mla_surface`, `plenoptic_system`, `plenoptic_capture`, `plenoptic_mla_calibrate`, `plenoptic_decode`, `plenoptic_refocus_depth`
+
+Pipeline: [`mla_surface`](ops/optics/plenoptic/mla_surface.md) → [`plenoptic_system`](ops/optics/plenoptic/plenoptic_system.md) → [`plenoptic_capture`](ops/optics/plenoptic/plenoptic_capture.md) → [`plenoptic_mla_calibrate`](ops/optics/plenoptic/plenoptic_mla_calibrate.md) → [`plenoptic_decode`](ops/optics/plenoptic/plenoptic_decode.md) → [`plenoptic_refocus_depth`](ops/optics/plenoptic/plenoptic_refocus_depth.md)
+
+Alternatives: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
+
+Runnable: `poc_plenoptic_camera`
 
 ### [Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)](capabilities/theorems-as-pictures.md)
 

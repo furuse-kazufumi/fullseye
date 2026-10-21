@@ -63,7 +63,6 @@
 | [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md) | Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty) | 測る | `verified-synthetic` | 6/6 | `poc_laser_line_speckle_floor` synthetic → tests/test_poc_scripts_run.py |
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
 | [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | Lens design files (read, write and triage sequential .zmx prescriptions) | 光と色 | `verified-synthetic` | 4/4 | `poc_lens_file_roundtrip` synthetic → tests/test_poc_scripts_run.py |
-| [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md) | Budget lens manufacturing tolerances by MTF and yield | 組み立てる | `verified-synthetic` | 8/8 | `poc_lens_tolerancing` synthetic → tests/test_poc_scripts_run.py |
 | [凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)](capabilities/light-transport.md) | Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting) | 測る | `verified-synthetic` | 11/11 | `poc_interreflection_fringe_error` synthetic → tests/test_poc_scripts_run.py |
 | [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves) | 測る | `verified-synthetic` | 9/9 | `poc_lockin_imaging` synthetic → tests/test_poc_scripts_run.py |
 | [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md) | One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer) | 光と色 | `validated-public-real-data` | 15/16 | `poc_material_optical_library` real → tests/test_poc_scripts_run.py |
@@ -83,6 +82,7 @@
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks) | 光と色 | `verified-synthetic` | 6/6 | `poc_pixel_shift` synthetic → tests/test_poc_scripts_run.py |
 | [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md) | Why a thin groove disappears in a PL image — the carrier-diffusion PSF and the kind of defect decide the visibility (PL/EL inspection of wafers and solar cells) | 見つける | `validated-public-real-data` | 4/4 | `poc_si_wafer_pl_defect_visibility` real → tests/test_poc_scripts_run.py |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | Flatness of a surface from a 3-D point cloud | 測る | `verified-synthetic` | 4/4 | `geometry_metrology` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_scan_to_bim_asbuilt` synthetic → tests/test_poc_scripts_run.py |
+| [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | Prescription-based plenoptic camera | 描く | `verified-synthetic` | 6/6 | `poc_plenoptic_camera` synthetic → tests/test_poc_scripts_run.py |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | Draw a point cloud as a colour picture | 見せる | `validated-public-real-data` | 3/3 | `points_render_basics` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_flybrain_pointcloud` real → tests/test_poc_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals) | 光と色 | `verified-synthetic` | 4/4 | `example_polarization_metal` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py<br>`specular_photometric` synthetic → tests/test_example_scripts_run.py |
@@ -129,9 +129,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 419 |
+| 2-D 台帳の例 | 421 |
 | `tests/test_poc_scripts_run.py` が走らせる | 271 |
-| `tests/test_example_scripts_run.py` が走らせる | 148 |
+| `tests/test_example_scripts_run.py` が走らせる | 150 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり
