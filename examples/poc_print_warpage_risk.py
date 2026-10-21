@@ -499,9 +499,7 @@ def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
             img = np.asarray(fs.text_box(
                 img, "%.2f" % g[a_, b_],
                 (pl + cell * b_ + cell // 2, pt + cell * a_ + cell // 2),
-                anchor="cm", font_size=10, box_alpha=0.0, border=0,
-                text_color=(0.0, 0.0, 0.0) if norm[a_, b_] > 0.55
-                else (1.0, 1.0, 1.0)))
+                anchor="cm", font_size=10, box_alpha=0.0, border=0))
     img = np.asarray(fs.text_box(img, row_title, (10, pt + h // 2), anchor="lm",
                                  font_size=11, box_alpha=0.0, border=0))
     img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 40),
