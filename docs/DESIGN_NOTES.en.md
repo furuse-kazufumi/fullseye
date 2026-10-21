@@ -961,7 +961,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_print_warpage_risk.py`
 
 - **L364** — ★A newly born layer is placed "on the surface that is already warped at that time" (element birth is done in the deformed configuration). Forget to initialize this, and only the later-grown layers stay at zero displacement, and **the warp measured by column average becomes 1/4** (stepped on it 2026-09-07). The mechanics (K and f) are on the nominal grid, so they are unchanged.
-- **L808** — ★The neck vanishes entirely. The part splits into two, so it must not be solved.
+- **L806** — ★The neck vanishes entirely. The part splits into two, so it must not be solved.
 
 ## `examples/poc_pv_thermal_survey.py`
 

@@ -961,7 +961,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_print_warpage_risk.py`
 
 - **L364** — ★Eine neu entstehende Schicht wird "auf die zu diesem Zeitpunkt bereits verwölbte Fläche" gelegt (die Elementgeburt erfolgt in der verformten Konfiguration). Vergisst man, dies zu initialisieren, bleiben nur die später gewachsenen Schichten bei null Verschiebung und **die per Spaltenmittel gemessene Verwölbung wird 1/4** (am 2026-09-07 hineingetreten). Die Mechanik (K und f) liegt auf dem nominalen Gitter, ist also unverändert.
-- **L808** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
+- **L806** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
 
 ## `examples/poc_pv_thermal_survey.py`
 
