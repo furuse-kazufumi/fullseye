@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bb5f3e736657 -->
+<!-- i18n-source-sha: 71c18c518f4c -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
@@ -383,3 +383,4 @@ Für die Seite, die das JSON entgegennimmt und ausführt, siehe [ENGINE.md](ENGI
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — Inhalt der Wahrnehmungspanels (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — exportierte Pipelines ausführen
 - [GETTING_STARTED.md](GETTING_STARTED.md) — in 5 Minuten loslegen
+- **Exportiertes Python prüfen (Run ▸ Verify exported Python / Ctrl+Shift+R)**: Führt den bearbeitbaren Export in einem isolierten Python-Prozess aus und vergleicht jede Zwischenstufe mit der GUI. Einstellbar sind absolute und relative Toleranz sowie gleiche NaN-Positionen, Ignorieren oder ein NaN-Verbot. Form und Datentyp müssen immer übereinstimmen. Eine Abweichung erscheint in Problems und führt zur ersten abweichenden Stufe; Studio meldet nur und verändert keine Werte.

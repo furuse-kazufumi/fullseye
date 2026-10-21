@@ -262,8 +262,8 @@ def zero_crossings_funct_1d(y):
     Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
-    s = np.sign(arr)
-    return np.nonzero((s[:-1] * s[1:]) < 0)[0]
+    return np.nonzero((arr[:-1] != 0.0) & (arr[1:] != 0.0)
+                      & (np.signbit(arr[:-1]) != np.signbit(arr[1:])))[0]
 
 
 def local_min_max_funct_1d(y):
@@ -533,6 +533,14 @@ def get_y_value_funct_1d(y, x, interpolate=True):
     :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.
     """
     arr = _f1d(y, "y", min_len=1)
+    xa = np.asarray(x)
+    if xa.ndim:
+        if not np.issubdtype(xa.dtype, np.number) or not np.all(np.isfinite(xa)):
+            raise ValueError("x must contain only finite numeric values")
+        xf = xa.astype(float, copy=False)
+        if interpolate:
+            return np.interp(xf, np.arange(len(arr)), arr)
+        return arr[np.clip(np.round(xf), 0, len(arr) - 1).astype(np.intp)]
     xf = _finite_scalar(x, "x")
     if interpolate:
         return float(np.interp(xf, np.arange(len(arr)), arr))
@@ -632,7 +640,12 @@ def _match_scores(ac, bc):
     s_v = head * bc[0] + (sb[j1] - sb[j0]) + n_tail * bc[-1]
     s_vv = head * bc[0] ** 2 + (sb2[j1] - sb2[j0]) + n_tail * bc[-1] ** 2
     # The middle term is exactly the plain full cross-correlation at that lag.
-    s_av = bc[0] * sa[head] + np.correlate(ac, bc, mode="full") \
+    if max(n1, n2) >= 4096:
+        from scipy.signal import correlate
+        cross = correlate(ac, bc, mode="full", method="fft")
+    else:
+        cross = np.correlate(ac, bc, mode="full")
+    s_av = bc[0] * sa[head] + cross \
         + bc[-1] * (sa[n1] - sa[tail0])
 
     var_a = float(sa2[n1] - sa[n1] ** 2 / n1)

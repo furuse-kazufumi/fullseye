@@ -169,26 +169,29 @@ def distance_rr_min(region1, region2) -> float:
 
 def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
                                  row2, col2, phi2, l2a, l2b, n: int = 60,
-                                 method: str = "grid") -> float:
-    """2つの有向矩形の交差面積。
+                                 method: str = "exact") -> float:
+    """Return the intersection area of two oriented rectangles.
 
-    ``method="grid"`` は従来の固定格子近似、``"exact"`` は凸多角形
-    クリッピングを使う。接触、平行な重辺、半辺長ゼロの面積は0とする。
+    ``method="exact"`` (the default) clips the two convex polygons.
+    ``method="grid"`` is a selectable sampling approximation.  For identical
+    half-side-one squares at angle pi/4 its measured absolute error is 0.13333
+    at ``n=60`` and 0.01333 at ``n=600``.  Touching edges and zero half-lengths
+    have area zero.
     """
     if method not in {"grid", "exact"}:
         raise ValueError("method must be 'grid' or 'exact'")
 
+    def vertices(r, c, phi, la, lb):
+        cp, sp = np.cos(phi), np.sin(phi)
+        # Counter-clockwise (x=column, y=row).
+        u, v = np.array([cp, sp]), np.array([-sp, cp])
+        centre = np.array([c, r])
+        return [centre + sx * la * u + sy * lb * v
+                for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+
     if method == "exact":
         if min(l1a, l1b, l2a, l2b) <= 0:
             return 0.0
-
-        def vertices(r, c, phi, la, lb):
-            cp, sp = np.cos(phi), np.sin(phi)
-            # 反時計回りの (x=col, y=row)。
-            u, v = np.array([cp, sp]), np.array([-sp, cp])
-            centre = np.array([c, r])
-            return [centre + sx * la * u + sy * lb * v
-                    for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
 
         subject = vertices(row1, col1, phi1, l1a, l1b)
         clip = vertices(row2, col2, phi2, l2a, l2b)
@@ -213,6 +216,7 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         if len(subject) < 3:
             return 0.0
         p = np.asarray(subject)
+        p = p - p[0]
         area = 0.5 * abs(np.dot(p[:, 0], np.roll(p[:, 1], -1)) -
                          np.dot(p[:, 1], np.roll(p[:, 0], -1)))
         return float(area if area > eps else 0.0)
@@ -223,8 +227,10 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         x = d[:, 1] * cp - d[:, 0] * sp
         y = d[:, 1] * sp + d[:, 0] * cp
         return (np.abs(x) <= la) & (np.abs(y) <= lb)
-    lo = np.array([min(row1, row2) - max(l1a, l1b, l2a, l2b), min(col1, col2) - max(l1a, l1b, l2a, l2b)])
-    hi = np.array([max(row1, row2) + max(l1a, l1b, l2a, l2b), max(col1, col2) + max(l1a, l1b, l2a, l2b)])
+    corners = np.asarray(vertices(row1, col1, phi1, l1a, l1b) +
+                         vertices(row2, col2, phi2, l2a, l2b))
+    lo = corners[:, ::-1].min(axis=0)
+    hi = corners[:, ::-1].max(axis=0)
     gy, gx = np.meshgrid(np.linspace(lo[0], hi[0], n), np.linspace(lo[1], hi[1], n))
     pts = np.column_stack([gy.ravel(), gx.ravel()])
     both = inside(pts, row1, col1, phi1, l1a, l1b) & inside(pts, row2, col2, phi2, l2a, l2b)

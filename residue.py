@@ -307,8 +307,9 @@ def _crt_core(r, p, w, lo, hi, ref, edge=0.0):
     ks = _candidate_ks(p, lo - edge, hi + edge)
     cand = rr[None] + ks.reshape((-1,) + (1,) * len(shp)) * pr[None]
     inside = (cand >= lo - edge) & (cand < hi + edge)
-    ph = 2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None]
-    score = (w[:, None] * np.cos(ph)).sum(0)
+    active = np.any(w != 0.0, axis=tuple(range(1, w.ndim)))
+    ph = 2.0 * np.pi * (cand[None] - r[active, None]) / pb[active, None]
+    score = (w[active, None] * np.cos(ph)).sum(0)
     score = np.where(inside, score, -np.inf)
     best_i = np.argmax(score, axis=0)
     best = np.take_along_axis(cand, best_i[None], 0)[0]
