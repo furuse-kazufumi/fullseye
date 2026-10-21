@@ -418,6 +418,24 @@ def make_figure(r, spots, margins, wrong, rc, rg):
               caption="上段: 左 開始・中 最適化後 = メリット関数への寄与の割合(波面は視野ごとに合算)、右 = 素子ごとの縁厚の余裕。"
                       "2・3 段: 開始と最適化後のスポット(3 視野)。下段: 負レンズの硝材を間違えた出発点を、連続変数だけで最適化した場合と "
                       "硝材 g2 を変数にした場合の焦点位置の波長依存と、12° の F・d・C のスポット。")
+    a, b = spots["before"][2], spots["after"][2]
+    frames = []
+    merits = np.geomspace(r["merit_initial"], r["merit_final"], 32)
+    lim = 1.1 * float(np.abs(a).max())
+    yy, xx = np.ogrid[:240, :240]
+    for i, merit in enumerate(merits):
+        u = i / (len(merits) - 1)
+        d = (1.0 - u) * a + u * b
+        canvas = np.zeros((240, 240))
+        q = np.clip(((d / (2.2 * lim) + 0.5) * 239).astype(int), 0, 239)
+        for x, y in q:
+            canvas[(yy - y) ** 2 + (xx - x) ** 2 <= 9 ** 2] = 1.0
+        frames.append(figs.video_frame(canvas, "merit %.4g" % merit, gray=True))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("merit_spot_optimization", frames,
+                    caption="最適化に伴い12度視野のスポットが収束する。", fps=10.0,
+                    gif_every=2, gif_fps=5.0, gif_width=480)
 
 
 def main():
