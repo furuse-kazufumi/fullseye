@@ -47,7 +47,7 @@ print(fs.mueller_checks(M, tol=1e-3))                   # physical / pure / depo
 ## 裏づけ
 
 - op: `polarization_demosaic` / `polarization_demosaic_color` / `mueller_from_intensities` / `mueller_checks`(2026-09-18、optics 台帳 `polarization`)、既存の `polarization_stokes` / `polarization_dolp_map` / `polarization_separate` / `stokes_analyze` / `mueller_element` / `mueller_apply`
-- 例: [`polarization_camera_pipeline`](../../examples/polarization_camera_pipeline.py)(合成の Stokes 場 → モザイク → 4 枚 → DoLP、Mueller の回復と階数の拒否、物理性)、[`poc_polarization_specular`](../../examples/poc_polarization_specular.py)(偏光で鏡面反射を分ける)
+- 例: [`polarization_camera_pipeline`](../../examples/polarization_camera_pipeline.py)(合成の Stokes 場 → モザイク → 4 枚 → DoLP、Mueller の回復と階数の拒否、物理性)、[`poc_polarization_specular`](../../examples/poc_polarization_specular.py)(1024 px の生モザイク、半解像度の4方向像、Stokes・DoLP・AoLP、消光比と飽和を含む鏡面分離)
 - 試験: `tests/test_optics.py`(1 次の場で厳密、配列の読み替え、sweep op との接続、既知 M の回復 1e-10、階数 9 の拒否、全素子の物理性、非物理と利得の判定)
 - 相互検証(2026-09-18、`tools/diff_polarization_external.py` / `tests/test_polarization_external_diff.py`、外部 3 本は任意依存で無ければ skip): 偏光板・リターダ・QWP/HWP の Mueller は pypolar / py-pol / polanalyser と **1e-16 で一致**、Mueller 最小二乗は polanalyser と 5e-16、DoLP 地図は 9e-16、demosaic の内側は 16 bit 量子化の範囲。差が出た所は全部**規約差**: 回転子は能動(+θ)で相手の受動 R(θ) = こちらの −θ / Jones は規約が library ごとに違うので Mueller に写して比較(fullseye の Stokes 写像経由で pypolar の Mueller 素子と 1e-15)/ 楕円率は偏光成分で正規化(pypolar は S0)/ demosaic の縁。不具合は見つからなかった。
 - 出典: 配列の規約と「4 枚の Bayer 面」の読みは Polanalyser(前田、MIT)、観測行列は Chipman *Handbook of Optics* ch. 15、物理性は Cloude (1986) / Gil (2007)、脱偏光指数は Gil & Bernabeu (1986)、判定の顔ぶれは py-pol(MIT)。いずれも定義から再実装(`docs/REFERENCES.md`)

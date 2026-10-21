@@ -416,10 +416,24 @@ def build(d: dict, lang: str) -> str:
             "- **%s**: %s" % (ui["f_title"], title),
             "- **%s**: %s" % (ui["f_author"], ui["author"]),
             "- **%s**: %s" % (ui["f_venue"], ui["venue"]),
-            "- **%s**: %s" % (ui["f_pdf"], ui["pdf_note"]),
+            _pdf_line(d, ui, lang),
             "", "**%s**: %s" % (ui["f_abstract"], d["paper"]["abstract"][lang]),
             "", "</details>", ""]
     return "\n".join(out)
+
+
+def _pdf_line(d, ui, lang):
+    """論文 PDF の行。exhibits.json の paper.files {lang: 相対パス} のうち実在するものを言語名で並べる。
+    日本語版は 2026-11-26 まで掲載しない(無ければ pdf_note の断り書き)。訳版(en/zh)は先に置ける。"""
+    files = d["paper"].get("files", {})
+    rel = "" if lang == "ja" else "../"
+    avail = [(l, f) for l, f in files.items() if (BASE / f).is_file()]
+    if not avail:
+        return "- **%s**: %s" % (ui["f_pdf"], ui["pdf_note"])
+    links = " · ".join("[%s](%s%s)" % (d["ui"]["lang_name"].get(l, l), rel, f) for l, f in avail)
+    if "ja" not in dict(avail):
+        links += "(%s: %s)" % (d["ui"]["lang_name"]["ja"], ui["pdf_note"])
+    return "- **%s**: %s" % (ui["f_pdf"], links)
 
 
 def page_path(lang: str) -> Path:

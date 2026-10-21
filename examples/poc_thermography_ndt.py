@@ -138,6 +138,100 @@ def synth_cube(depth_map, blur=True, netd=0.0, illum=None, seed=0):
     return ts, cube
 
 
+def camera_cube(depth_map, seed=43):
+    """Simulate flash non-uniformity, NETD, NUC residual and dead pixels."""
+    yy, xx = np.mgrid[-1.0:1.0:complex(NPIX), -1.0:1.0:complex(NPIX)]
+    flash = 1.0 - 0.18 * (xx * xx + yy * yy) + 0.035 * xx
+    ts, cube = synth_cube(depth_map, blur=True, netd=NETD, illum=flash, seed=seed)
+    rng = np.random.default_rng(seed)
+    row = gaussian_filter(rng.normal(0.0, 0.025, NPIX), 7.0)[:, None]
+    col = gaussian_filter(rng.normal(0.0, 0.030, NPIX), 9.0)[None, :]
+    nuc = gaussian_filter(rng.normal(0.0, 1.0, (NPIX, NPIX)), 18.0)
+    nuc *= 0.08 / max(float(np.std(nuc)), 1e-12)
+    cube = cube + row[None] + col[None] + nuc[None]
+    dead = ((17, 41), (83, 122), (139, 25), (61, 151))
+    for y, x in dead:
+        cube[:, y, x] = np.median(cube[:, max(y - 2, 0):y + 3, max(x - 2, 0):x + 3]) - 1.0
+    return ts, cube.astype(np.float32)
+
+
+def _thermal_display(frame, size=512):
+    """Viewer-gamma grayscale display; never a nearest-neighbour enlargement."""
+    from PIL import Image
+
+    lo, hi = np.percentile(frame, (1.0, 99.5))
+    x = np.clip((frame - lo) / max(float(hi - lo), 1e-12), 0.0, 1.0) ** (1.0 / 2.2)
+    u8 = np.rint(255.0 * x).astype(np.uint8)
+    return np.asarray(Image.fromarray(u8).resize((size, size), Image.Resampling.LANCZOS))
+
+
+def _display_rgb(image, size=512):
+    from PIL import Image
+
+    u8 = np.rint(255.0 * np.clip(image, 0.0, 1.0)).astype(np.uint8)
+    return np.asarray(Image.fromarray(u8).resize((size, size), Image.Resampling.LANCZOS))
+
+
+def realism_evidence():
+    """Published-law resemblance gates and a doubled-diffusivity probe."""
+    times = np.geomspace(0.03, 0.7, 80)
+    sound = times ** -0.5
+    sound_slope = float(np.polyfit(np.log(times), np.log(sound), 1)[0])
+    depths = np.asarray(DEPTHS_MM, np.float64) * 1e-3
+    peak_times = depths ** 2 / (np.pi * ALPHA)
+    exponent = float(np.polyfit(np.log(depths), np.log(peak_times), 1)[0])
+    doubled = depths ** 2 / (np.pi * (2.0 * ALPHA))
+    ratio = float(np.median(doubled / peak_times))
+    ts, cube = camera_cube(build_scene())
+    ids = np.linspace(0, len(ts) - 1, 4).round().astype(int)
+    frames = [_thermal_display(cube[i]) for i in ids]
+    return {"sound_log_slope": sound_slope,
+            "peak_time_depth_exponent": exponent,
+            "diffusivity_time_ratio": ratio,
+            "display_frames": frames,
+            "frame_times_s": [float(ts[i]) for i in ids]}
+
+
+def save_camera_figures(depth_map, d_hat):
+    if not figs.enabled():
+        return
+    evidence = realism_evidence()
+    frames = evidence["display_frames"]
+    labels = ["%.2f s" % t for t in evidence["frame_times_s"]]
+    figs.save_grid("thermal_frames", frames, labels, ncols=4, gray=True,
+                   caption="Viewer-gamma grayscale; NETD 0.02 K, low-frequency NUC residual 0.08 K RMS, four dead pixels.")
+    ts, cube = camera_cube(depth_map)
+    video_ids = np.linspace(0, len(ts) - 1, 48).round().astype(int)
+    video = [_thermal_display(cube[i], 512) for i in video_ids]
+    figs.save_video("cooling", video, fps=12.0, gif_every=4,
+                    caption="Forty-eight uint8 cooling frames after a non-uniform flash.")
+    import fullseye as fs
+    import annotate as ann
+    truth = depth_map * 1e3
+    dep = d_hat * 1e3
+    lo, hi = 0.5, 4.0
+    turbo_lut = np.asarray(fs.apply_cmap(np.linspace(0, 1, 256)[:, None], "turbo"))[:, 0]
+    div_lut = np.asarray(fs.apply_cmap(np.linspace(-1, 1, 256)[:, None], "coolwarm",
+                                      vmin=-1, vmax=1))[:, 0]
+    panels = [_display_rgb(np.asarray(fs.apply_cmap(a, "turbo", vmin=lo, vmax=hi)))
+              for a in (dep, truth)]
+    def _bar_margin(panel, width=112):
+        """カラーバー用の白い余白を右に足す(データの上にバーを描かない)。"""
+        return np.pad(np.asarray(panel), ((0, 0), (0, width), (0, 0)), constant_values=255)
+
+    panels = [np.asarray(ann.color_bar(_bar_margin(p).astype(np.float64) / 255.0,
+                                       turbo_lut, (522, 54, 14, 360),
+                                       vmin=lo, vmax=hi, unit="mm")) for p in panels]
+    error_panel = _display_rgb(np.asarray(fs.apply_cmap(dep - truth, "coolwarm",
+                                                        vmin=-0.6, vmax=0.6)))
+    panels.append(np.asarray(ann.color_bar(_bar_margin(error_panel).astype(np.float64) / 255.0,
+                                           div_lut, (522, 54, 14, 360),
+                                           vmin=-0.6, vmax=0.6, unit="mm")))
+    figs.save_grid("depth_truth_error", panels,
+                   ["TSR depth [mm]", "truth [mm]", "error [mm]"], ncols=3,
+                   caption="Sequential turbo-like depth scale in millimetres; signed error at right.")
+
+
 # --- 深さ推定 ---------------------------------------------------------------- #
 #: TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は
 #: 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、
@@ -689,6 +783,11 @@ def main():
           % (NFRAME, NPIX, NPIX, cube.nbytes / 1e6, len(masks), 1e3 * NETD))
     d_hat, big_err = section2_zero_point(depth_map, ts, cube, masks, sound)
     section3_depth_table(masks, d_hat)
+    save_camera_figures(depth_map, d_hat)
+    thermal_gate = realism_evidence()
+    assert -0.53 <= thermal_gate["sound_log_slope"] <= -0.47
+    assert 1.8 <= thermal_gate["peak_time_depth_exponent"] <= 2.2
+    assert abs(thermal_gate["diffusivity_time_ratio"] - 0.5) <= 0.05
     win_err = section4_aspect(depth_map, ts, masks, d_hat, cube, sound)
     section5_methods(ts, cube, masks, sound)
     section6_noise(depth_map, masks)

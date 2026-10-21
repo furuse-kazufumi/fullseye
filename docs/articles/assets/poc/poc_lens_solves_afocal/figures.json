@@ -8,5 +8,27 @@
    1320,
    3
   ]
+ },
+ {
+  "file": "02_solved_surface_field_sweep.gif",
+  "name": "solved_surface_field_sweep",
+  "caption": "解いた曲面像面で視野角を掃引したスポット。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "02_solved_surface_field_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
  }
 ]
