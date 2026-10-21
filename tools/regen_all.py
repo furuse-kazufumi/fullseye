@@ -106,6 +106,9 @@ CHAIN = [
     # docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
     (["tools/gen_literature_counts.py"], "docs/literature の件数(op ノートの枚数)を実ファイルから打ち直す"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
+    # 手書き部分にある実装由来の数だけを最後に更新する。RAG ガイドの訳は、正本・訳の
+    # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
+    (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
 ]
@@ -157,6 +160,8 @@ OUTPUTS = {
     "tools/conversion_matrix.py": ["docs/CONVERSION_MATRIX.md"],
     "tools/gen_design_notes.py": ["docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md", "docs/design_notes.json"],
     "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
+                                 "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
     "tools/gen_literature_counts.py": ["docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
@@ -207,9 +212,11 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
-        "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md"],
+        "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
+        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
@@ -220,11 +227,19 @@ _SHARED_README = ("README*.md は gen_trust_block(trust ブロック)と gen_doc
 _SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の診断**(この環境と同梱索引の差)に"
                  "だけ使い、docs/OP_INDEX.json の中身には入らない。複製を作る gen_mcp_data は"
                  "索引を読むので後ろでなければならず、ここは構造的に循環する。")
+_DOCMAP_COUNT = ("gen_docs_index_ops は文書地図に載せるため AI_RAG_GUIDE の題だけを読む。"
+                 "gen_doc_counts が後で変更するのは本文中の件数だけなので、地図の生成結果には影響しない。")
 ORDER_EXEMPT = {
     ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
     ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
     ("imgevolve.py", "fullseye/data/OP_INDEX.json"): _SHIPPED_DIAG,
     ("imgevolve.py", "fullseye/data/op_knob.json"): _SHIPPED_DIAG,
+    # gen_doc_counts は gen_docs_index_ops が自分のマーカー区間を更新した後、同じ
+    # README の手書き冒頭にある registry 件数だけを更新する。
+    ("tools/gen_docs_index_ops.py", "docs/README.md"): _SHARED_README,
+    ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
+    ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
+    ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
 }
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
