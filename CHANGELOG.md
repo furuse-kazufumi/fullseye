@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### CI
+- 全数スイートを 6 片に分け、実測時間(`.test_durations`: 手元の実測 3,900 件 + 平均で初期化した 17,310 件。Linux の artifact で更新する)で均す。pip をキャッシュし、文書だけの変更は文書の門だけ走らせる。PR の片は py3.11 のみ(#79)。
+
+- CI の全数テストを実測時間に基づく6分割へ変更した。分割ごとの時間をartifactへ保存して統合できるようにし、pipキャッシュとドキュメントだけの変更に対する専用検査を追加した。
+
 - `estimate_normals(method="fast")`: batched covariance solves agree within `2e-12`; measured 12.6 times faster on 4,000 points.
 - `principal_curvatures(method="fast")`: analytic two-value solves agree within `2e-12`; measured 1.09 times faster on 4,000 points.
 - `laser_line_coherent(method="fast")`: output-resolution accumulation and the zero-roughness reuse path agree within `2e-15`; measured 5.6% lower peak memory generally and 6.74 times faster at zero roughness.
