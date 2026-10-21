@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- `car_hybrid_astar`: the optional `method="fast"` skips collision checks for branches already dominated in the same search cell.
+- `car_hybrid_astar`: the optional `method="fast"` reuses up to eight analytic-shot candidates from its heuristic.
+
 - `fit_torus(axis_parameterization="tangent")`: 軸を接平面の2自由度で更新する選択モードを追加しました。中心・半径・符号を除いた軸差は試験した全面点群で 1e-9 未満、120,000点で 4.59 倍高速です。既定の3成分軸経路は変更していません。
 - `track_points(method="sparse")`: 少数点向けに局所窓だけを探索する選択モードを追加しました。整数平行移動では既定経路との差を 1 pixel 以下とし、768×1,024 画像の3点で 41.26 倍高速、ピークメモリは 192.7 MB から 0.02 MB です。
 - `integrate`: 視錐台と交差しない voxel block を保守的に除外する既定経路へ変更しました。視錐台端と表面手前の空き空間を含め TSDF と重みは完全一致し、144³ voxel で 9.48 倍高速、ピークメモリは 340.4 MB から 24.7 MB です。
