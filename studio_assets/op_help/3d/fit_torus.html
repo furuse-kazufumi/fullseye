@@ -7,12 +7,14 @@
 <p>点-トーラス距離 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=軸からの半径, <code style="color:#22d3bf">R</code>=主半径, <code style="color:#22d3bf">r</code>=管半径)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸(仲間外れ固有ベクトル)+ <code style="color:#22d3bf">R0=mean(ρ)</code>・<code style="color:#22d3bf">r0</code>(管中心円までの距離の平均)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群(最低 7 点)。</p>
+<p>method: <code style="color:#22d3bf">&#x27;exact&#x27;</code>(既定)は 8 パラメータを一括最小化。<code style="color:#22d3bf">&#x27;eliminate_r&#x27;</code> は管半径 <code style="color:#22d3bf">r</code> を</p>
+<p>各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。</p>
+<p>既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,), &quot;R&quot;: float, &quot;r&quot;: float, &quot;residual&quot;: float}</code>。</p>
 <p><code style="color:#22d3bf">axis</code> は単位軸、<code style="color:#22d3bf">R</code> は主半径、<code style="color:#22d3bf">r</code> は管半径、<code style="color:#22d3bf">residual</code> は点-面距離の RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足 fail-closed。</p>
-<p><code style="color:#22d3bf">method=&#x27;eliminate_r&#x27;</code> は管半径を平均距離として消去する。既定値は変更せず、残差許容差は rtol=1e-10, atol=1e-12。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

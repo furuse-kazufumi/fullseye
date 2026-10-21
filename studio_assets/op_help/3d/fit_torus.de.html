@@ -7,12 +7,12 @@
 <p>Minimiert den Punkt-Torus-Abstand <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code> (<code style="color:#22d3bf">a</code> = Axialkomponente, <code style="color:#22d3bf">ρ</code> = Radius zur Achse, <code style="color:#22d3bf">R</code> = Hauptradius, <code style="color:#22d3bf">r</code> = Rohrradius) mit <code style="color:#22d3bf">scipy.optimize.least_squares</code>. Startwert ist die PCA-Achse (der aus der Reihe fallende Eigenvektor) + <code style="color:#22d3bf">R0=mean(ρ)</code> und <code style="color:#22d3bf">r0</code> (mittlerer Abstand zum Rohrmittelkreis).</p>
 <p>Args:</p>
 <p>points: (N,3) Punktwolke (mindestens 7 Punkte).</p>
+<p>method: <code style="color:#22d3bf">&#x27;exact&#x27;</code> (Standard) minimiert alle 8 Parameter auf einmal. <code style="color:#22d3bf">&#x27;eliminate_r&#x27;</code> eliminiert den Rohrradius <code style="color:#22d3bf">r</code> als mittleren Abstand der Punkte zum Rohrmittenkreis und minimiert nur 7 Parameter (schnellere Alternative; der Standard bleibt unverändert, Residuentoleranzen rtol=1e-10, atol=1e-12).</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,), &quot;R&quot;: float, &quot;r&quot;: float, &quot;residual&quot;: float}</code>.</p>
 <p><code style="color:#22d3bf">axis</code> ist die Einheitsachse, <code style="color:#22d3bf">R</code> der Hauptradius, <code style="color:#22d3bf">r</code> der Rohrradius, <code style="color:#22d3bf">residual</code> das RMS des Punkt-Fläche-Abstands.</p>
 <p>Raises:</p>
 <p>ValueError: fail-closed bei ungültiger Form / zu wenigen Punkten.</p>
-<p><code style="color:#22d3bf">method=&#x27;eliminate_r&#x27;</code> eliminiert den Rohrradius, indem er als mittlerer Abstand angesetzt wird. Der Standardwert bleibt unverändert; die Residuentoleranzen sind rtol=1e-10, atol=1e-12.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

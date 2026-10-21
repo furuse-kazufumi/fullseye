@@ -20,21 +20,21 @@ version: 0.7.2  # fullseye lib version this note was generated for
 点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
 点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
-    ``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
-    初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
+``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
+初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
 
-    Args:
-        points: (N,3) 点群(最低 7 点)。
+Args:
+    points: (N,3) 点群(最低 7 点)。
+    method: ``'exact'``(既定)は 8 パラメータを一括最小化。``'eliminate_r'`` は管半径 ``r`` を
+        各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。
+        既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。
 
-    Returns:
-        dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
-        ``axis`` は単位軸、``R`` は主半径、``r`` は管半径、``residual`` は点-面距離の RMS。
+Returns:
+    dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
+    ``axis`` は単位軸、``R`` は主半径、``r`` は管半径、``residual`` は点-面距離の RMS。
 
-    Raises:
-        ValueError: 形状不正/点数不足 fail-closed。
-    
-
-``method='eliminate_r'`` は管半径を平均距離として消去する。既定値は変更せず、残差許容差は rtol=1e-10, atol=1e-12。
+Raises:
+    ValueError: 形状不正/点数不足 fail-closed。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
