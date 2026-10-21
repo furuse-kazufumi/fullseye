@@ -89,7 +89,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## What it can do
 
-90 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+91 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -187,6 +187,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - Compare against a golden image — align, diff, count defects, judge the lot: [explanation](../../capabilities/golden-compare.md) _(ja)_ · examples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Validate a recipe and spec on known good/bad sets before deployment, and measure the margins: [explanation](../../capabilities/inspection-fixture.md) _(ja)_ · examples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log: [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- Budget lens manufacturing tolerances by MTF and yield: [explanation](../../capabilities/lens-tolerancing.md) _(ja)_ · examples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Write typed op results as JSON and read them back bit-for-bit: [explanation](../../capabilities/typed-results-as-json.md) _(ja)_ · examples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Render typed op results as Markdown, with an exact JSON block to read back: [explanation](../../capabilities/typed-results-as-markdown.md) _(ja)_ · examples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Write typed inspection results to an Excel (.xlsx) report: [explanation](../../capabilities/xlsx-report.md) _(ja)_ · examples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -209,11 +210,11 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 151 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 153 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
-270 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+271 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -415,7 +416,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour and separation</b> (15)</summary>
+<details class="vall"><summary><b>Colour and separation</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Optical fibres and light guides (modes, dispersion, mode field)" width="200" height="200"><span>Optical fibres and light guides (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)" width="200" height="200"><b>&#9654;</b><span>Thin-film thickness by spectral reflectometry (scored on public measured data, wafer colours)</span></a>
@@ -430,6 +431,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Zoom lenses as differences of one prescription (multi-configuration)" width="200" height="200"><span>Zoom lenses as differences of one prescription (multi-configuration)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glass substitution and multi-start global search" width="200" height="200"><span>Glass substitution and multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Designing a triplet from a table of requirements (edge bounds and glass as a variable)" width="200" height="200"><span>Designing a triplet from a table of requirements (edge bounds and glass as a variable)</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Budget lens manufacturing tolerances by MTF, yield, and compensator travel" width="200" height="200"><b>&#9654;</b><span>Budget lens manufacturing tolerances by MTF, yield, and compensator travel</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)" width="200" height="200"><span>Keeping a design's relations as solves (F/# that follows the stop, afocal, curved image, odd aspheres)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Independent verification and inspection scoring of public .zmx prescriptions" width="200" height="200"><span>Independent verification and inspection scoring of public .zmx prescriptions</span></a>
 </div>

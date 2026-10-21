@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 90 capabilities**
+**Currently 91 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -45,6 +45,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [Lens design files (read, write and triage sequential .zmx prescriptions)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [Budget lens manufacturing tolerances by MTF and yield](capabilities/lens-tolerancing.md) | `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report` | `poc_lens_tolerancing` |
 | [Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [Moiré alignment (two gratings of slightly different pitch, fringe phase, nanometre shift, differential pairs and the Talbot gap)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [Sorting look-alike foreign matter with NIR hyperspectral imaging (material absorption bands, scattering-layer reflectance, InGaAs band electrons)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
@@ -879,7 +880,7 @@ Alternatives: [`signal_features`](ops/oned/signal/signal_features.md), [`octave_
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (7)
+## Compose (8)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -916,6 +917,18 @@ Runnable: `inspection_fixture`
 Operators: `inspect_batch`, `judge`, `as_verdict`, `run_pipeline`, `spc_ewma`, `save_xlsx_report`, `report`, `to_json_lines`
 
 Runnable: `inspection_workflow`
+
+### [Budget lens manufacturing tolerances by MTF and yield](capabilities/lens-tolerancing.md)
+
+It turns per-surface and group manufacturing errors into sensitivity, compensated Monte Carlo, yield, histograms, and assembly travel.
+
+Operators: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+
+Pipeline: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
+
+Alternatives: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
+
+Runnable: `poc_lens_tolerancing`
 
 ### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
 

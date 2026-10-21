@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3489,
- "n_notes": 3495,
+ "n_ops": 3497,
+ "n_notes": 3503,
  "notes": {
   "vol_dilate": [
    {
@@ -30814,6 +30814,84 @@
     "category": "tem",
     "out": "table",
     "path": "docs/ops/optics/tem/tem_wavelength.md"
+   }
+  ],
+  "tolerance_compensators": [
+   {
+    "op": "tolerance_compensators",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_compensators.md"
+   }
+  ],
+  "tolerance_criteria": [
+   {
+    "op": "tolerance_criteria",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_criteria.md"
+   }
+  ],
+  "tolerance_monte_carlo": [
+   {
+    "op": "tolerance_monte_carlo",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_monte_carlo.md"
+   }
+  ],
+  "tolerance_report": [
+   {
+    "op": "tolerance_report",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_report.md"
+   }
+  ],
+  "tolerance_sensitivity": [
+   {
+    "op": "tolerance_sensitivity",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_sensitivity.md"
+   }
+  ],
+  "tolerance_table": [
+   {
+    "op": "tolerance_table",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table.md"
+   }
+  ],
+  "tolerance_table_from_zmx": [
+   {
+    "op": "tolerance_table_from_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × text",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_from_zmx.md"
+   }
+  ],
+  "tolerance_table_zmx": [
+   {
+    "op": "tolerance_table_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_zmx.md"
    }
   ],
   "cylinder_lens_caustic": [

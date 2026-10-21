@@ -730,6 +730,22 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     # 役名は annotate の配色表にあるものだけ("accent" は無い)。
     colours = ("reference", "emphasis", "right", "wrong", "neutral")
     legend = []
+    # ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか
+    #   なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の
+    #   歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの
+    #   間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+    rw_ = rect[2]
+    bar_x = [np.asarray(x, float).ravel() for k, (_, x, _) in enumerate(series)
+             if (kinds[k] if kinds else "line") == "bar"]
+    bar_x = np.unique(np.concatenate(bar_x)) if bar_x else np.empty(0)
+    bar_x = bar_x[np.isfinite(bar_x)]
+    if bar_x.size >= 2:
+        bar_step = float(np.min(np.diff(bar_x)))
+    elif len(xt) >= 2:
+        bar_step = float(np.min(np.diff(np.asarray(xt, float))))
+    else:
+        bar_step = float(xl[1] - xl[0])
+    single_bar_width = min(1.0, max(1.0 / rw_, 0.7 * bar_step / (xl[1] - xl[0])))
     for k, (label, x, y) in enumerate(series):
         c = colors[k] if colors and colors[k] is not None else colours[k % len(colours)]
         kind = (kinds[k] if kinds else "line")
@@ -738,6 +754,8 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         if ls:
             import imagedraw
             extra = {"style": {"style": imagedraw.DrawStyle(line_style=ls)}}
+        if kind == "bar" and np.asarray(x, float).ravel().size == 1:
+            extra["bar_width"] = single_bar_width
         img = np.asarray(fs.plot_series(img, ax, np.asarray(x, float),
                                         np.asarray(y, float), kind=kind,
                                         color=c, width=2, marker_size=3, **extra))

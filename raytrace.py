@@ -364,7 +364,7 @@ def _index_offset(medium, delta):
 #: 面の dict が受ける鍵。後ろの 2 つ(n_value / dn)は lens_system 自身が書き足す値で、
 #: ``with_wavelength`` などが出力の面をそのまま入力に戻すので受ける(読み直して上書きする)。
 _SURFACE_KEYS = frozenset(("R", "t", "n", "k", "ap", "mirror", "decenter", "tilt", "asph", "n_value", "dn", "f",
-                           "a2", "odd", "solve"))
+                           "a2", "odd", "zernike_sag", "solve"))
 
 
 def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
@@ -531,6 +531,22 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
                 odd = odd[:-1]
         if (a2 != 0.0 or odd) and f_ideal is not None:
             raise ValueError("surface %d: an ideal lens (f) takes no a2 / odd terms" % i)
+        zernike_sag = s.get("zernike_sag", None)
+        if zernike_sag is None:
+            zernike_sag = ()
+        elif isinstance(zernike_sag, (int, float, bool, str)):
+            raise ValueError("surface %d: zernike_sag must be a sequence (astig_0, astig_45) in mm" % i)
+        else:
+            zernike_sag = tuple(_finite(v, "surface %d zernike_sag[%d]" % (i, j))
+                                 for j, v in enumerate(zernike_sag))
+            if len(zernike_sag) != 2:
+                raise ValueError("surface %d: zernike_sag must have two astigmatism coefficients" % i)
+            if ap is None:
+                raise ValueError("surface %d: zernike_sag needs a finite semi-aperture" % i)
+            if not any(zernike_sag):
+                zernike_sag = ()
+        if zernike_sag and f_ideal is not None:
+            raise ValueError("surface %d: an ideal lens takes no zernike_sag" % i)
         rec = {"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
                "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
                "dn": _dispersion(med), "f": f_ideal}
@@ -538,6 +554,8 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
             rec["a2"] = a2
         if odd:
             rec["odd"] = odd
+        if zernike_sag:
+            rec["zernike_sag"] = zernike_sag
         if rule is not None:
             rec["solve"] = rule
         out.append(rec)
@@ -977,7 +995,15 @@ def _dsag_dr2(r2, c, k, asph=(), extra=None):
     return s
 
 
-def _intersect_asphere(P, D, c, k, asph, t0, extra=None):
+def _astig_sag(x, y, astig):
+    """Astigmatic sag: coefficients multiply (x²-y²)/a² and 2xy/a²."""
+    if astig is None:
+        return np.zeros_like(x)
+    a0, a45, ap = astig
+    return (a0 * (x * x - y * y) + 2.0 * a45 * x * y) / (ap * ap)
+
+
+def _intersect_asphere(P, D, c, k, asph, t0, extra=None, astig=None):
     """Newton refinement of the conic intersection *t0* onto the aspheric surface."""
     x, y, z = P[:, 0], P[:, 1], P[:, 2]
     L, M, N = D[:, 0], D[:, 1], D[:, 2]
@@ -986,9 +1012,15 @@ def _intersect_asphere(P, D, c, k, asph, t0, extra=None):
     for _ in range(40):
         xx, yy, zz = x + t * L, y + t * M, z + t * N
         r2 = xx * xx + yy * yy
-        F = zz - _sag(r2, c, k, asph, extra)
+        F = zz - _sag(r2, c, k, asph, extra) - _astig_sag(xx, yy, astig)
         s = _dsag_dr2(r2, c, k, asph, extra)
-        dF = N - 2.0 * s * (xx * L + yy * M)
+        if astig is None:
+            dax = day = 0.0
+        else:
+            a0, a45, ap = astig
+            dax = (2.0 * a0 * xx + 2.0 * a45 * yy) / (ap * ap)
+            day = (-2.0 * a0 * yy + 2.0 * a45 * xx) / (ap * ap)
+        dF = N - 2.0 * s * (xx * L + yy * M) - dax * L - day * M
         with np.errstate(invalid="ignore", divide="ignore"):
             step = F / dF
         step = np.where(np.isfinite(step), step, np.nan)
@@ -997,23 +1029,29 @@ def _intersect_asphere(P, D, c, k, asph, t0, extra=None):
             break
     xx, yy, zz = x + t * L, y + t * M, z + t * N
     r2 = xx * xx + yy * yy
-    F = zz - _sag(r2, c, k, asph, extra)
+    F = zz - _sag(r2, c, k, asph, extra) - _astig_sag(xx, yy, astig)
     ok &= np.isfinite(t) & np.isfinite(F) & (np.abs(F) < 1e-8)
     return np.where(ok, t, np.nan)
 
 
-def _intersect_surface(P, D, c, k, asph=(), extra=None):
+def _intersect_surface(P, D, c, k, asph=(), extra=None, astig=None):
     t = _intersect_conic(P, D, c, k)
-    if asph or extra is not None:
-        t = _intersect_asphere(P, D, c, k, asph, t, extra)
+    if asph or extra is not None or astig is not None:
+        t = _intersect_asphere(P, D, c, k, asph, t, extra, astig)
     return t
 
 
-def _surface_normal(Q, c, k, asph=(), extra=None):
-    if asph or extra is not None:
+def _surface_normal(Q, c, k, asph=(), extra=None, astig=None):
+    if asph or extra is not None or astig is not None:
         r2 = Q[:, 0] ** 2 + Q[:, 1] ** 2
         s = _dsag_dr2(r2, c, k, asph, extra)
-        g = np.stack([-2.0 * s * Q[:, 0], -2.0 * s * Q[:, 1], np.ones(len(Q))], 1)
+        gx = -2.0 * s * Q[:, 0]
+        gy = -2.0 * s * Q[:, 1]
+        if astig is not None:
+            a0, a45, ap = astig
+            gx -= (2.0 * a0 * Q[:, 0] + 2.0 * a45 * Q[:, 1]) / (ap * ap)
+            gy -= (-2.0 * a0 * Q[:, 1] + 2.0 * a45 * Q[:, 0]) / (ap * ap)
+        g = np.stack([gx, gy, np.ones(len(Q))], 1)
         return g / np.linalg.norm(g, axis=1, keepdims=True)
     if c == 0.0:
         n = np.zeros_like(Q); n[:, 2] = -1.0
@@ -1106,11 +1144,12 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         Pl = (P - off) @ Rm                               # into the surface frame (R^T x)
         Dl = D @ Rm
         ideal = s.get("f") is not None
+        astig = None if "zernike_sag" not in s else (*s["zernike_sag"], s["ap"])
         if ideal:                                         # 理想レンズ: 頂点面(z=0)と交わる
             with np.errstate(divide="ignore", invalid="ignore"):
                 t = -Pl[:, 2] / Dl[:, 2]
         else:
-            t = _intersect_surface(Pl, Dl, c, k, s["asph"], _xtra(s))
+            t = _intersect_surface(Pl, Dl, c, k, s["asph"], _xtra(s), astig)
         # a ray must move forward along its travel direction to reach the surface
         # (allow a tiny negative tolerance for rays already on the vertex plane)
         bad = ~np.isfinite(t) | (t < -1e-9)
@@ -1119,7 +1158,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         if s["ap"] is not None:
             r = np.hypot(Q[:, 0], Q[:, 1])
             bad |= r > s["ap"] * (1.0 + 1e-12)
-        nrm = _surface_normal(Q, c, k, s["asph"], _xtra(s))
+        nrm = _surface_normal(Q, c, k, s["asph"], _xtra(s), astig)
         # orient the normal against the incoming ray
         flip = np.sum(nrm * Dl, axis=1) > 0
         nrm[flip] *= -1.0

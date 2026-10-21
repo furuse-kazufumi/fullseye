@@ -89,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-90 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+91 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -187,6 +187,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Mit einem Golden Image vergleichen, Defekte messen, das Los beurteilen: [Erklärung](../../capabilities/golden-compare.md) _(ja)_ · Beispiele [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Rezept und Spezifikation vor dem Einsatz an bekannten Gut-/Schlecht-Sets prüfen und Reserven messen: [Erklärung](../../capabilities/inspection-fixture.md) _(ja)_ · Beispiele [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - Einen Ordner in einem Aufruf prüfen (Batch, Spezifikation, Aggregation, SPC, Bericht, Audit-Log): [Erklärung](../../capabilities/inspection-workflow.md) _(ja)_ · Beispiele [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren: [Erklärung](../../capabilities/lens-tolerancing.md) _(ja)_ · Beispiele [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Typisierte Op-Ergebnisse als JSON schreiben und bitgenau zurücklesen: [Erklärung](../../capabilities/typed-results-as-json.md) _(ja)_ · Beispiele [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typisierte Op-Ergebnisse als Markdown darstellen, mit eingebettetem JSON zum Zurücklesen: [Erklärung](../../capabilities/typed-results-as-markdown.md) _(ja)_ · Beispiele [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben: [Erklärung](../../capabilities/xlsx-report.md) _(ja)_ · Beispiele [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -209,11 +210,11 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 </div>
 
-[Alle 151 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 153 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 
-270 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+271 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -415,7 +416,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>Farbe und Trennung</b> (15)</summary>
+<details class="vall"><summary><b>Farbe und Trennung</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)" width="200" height="200"><span>Lichtwellenleiter und Lichtleiter (Moden, Dispersion, Modenfeld)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)" width="200" height="200"><b>&#9654;</b><span>Schichtdicke durch spektrale Reflektometrie (an öffentlichen Messdaten bewertet, Waferfarben)</span></a>
@@ -430,6 +431,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="Zoomobjektive als Differenzen einer Vorschrift (Mehrkonfiguration)" width="200" height="200"><span>Zoomobjektive als Differenzen einer Vorschrift (Mehrkonfiguration)</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="Glasersatz und Mehrstart-Globalsuche" width="200" height="200"><span>Glasersatz und Mehrstart-Globalsuche</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)" width="200" height="200"><span>Ein Triplet aus einer Anforderungstabelle entwerfen (Randdickengrenzen, Glas als Variable)</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren" width="200" height="200"><b>&#9654;</b><span>Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)" width="200" height="200"><span>Konstruktionsbeziehungen als Solves halten (F/# folgt der Blende, afokal, gekrümmte Bildfläche, ungerade Asphären)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="Unabhängige Prüfung öffentlicher .zmx-Rezepte" width="200" height="200"><span>Unabhängige Prüfung öffentlicher .zmx-Rezepte</span></a>
 </div>

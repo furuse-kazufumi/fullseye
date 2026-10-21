@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-90 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+91 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -187,6 +187,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Golden image से तुलना, defects मापना, lot का निर्णय: [explanation](../../capabilities/golden-compare.md) _(ja)_ · examples [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
 - Deploy से पहले known good/bad sets पर recipe और spec जाँचना, margins मापना: [explanation](../../capabilities/inspection-fixture.md) _(ja)_ · examples [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
 - एक call में पूरा folder inspect करना (batch, spec, aggregate, SPC, report, audit log): [explanation](../../capabilities/inspection-workflow.md) _(ja)_ · examples [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- MTF और yield से lens manufacturing tolerances तय करना: [explanation](../../capabilities/lens-tolerancing.md) _(ja)_ · examples [poc_lens_tolerancing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lens_tolerancing.py)
 - Typed op results को JSON में लिखना और bit-for-bit वापस पढ़ना: [explanation](../../capabilities/typed-results-as-json.md) _(ja)_ · examples [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
 - Typed op results को Markdown में दिखाना, वापस पढ़ने के लिए JSON block के साथ: [explanation](../../capabilities/typed-results-as-markdown.md) _(ja)_ · examples [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
 - Typed inspection results को Excel (.xlsx) report में लिखना: [explanation](../../capabilities/xlsx-report.md) _(ja)_ · examples [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
@@ -209,11 +210,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 151 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 153 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
-270 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+271 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -415,7 +416,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Colour और separation</b> (15)</summary>
+<details class="vall"><summary><b>Colour और separation</b> (16)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fiber_light_guide.jpg" alt="optical fibre और light guide (modes, dispersion, mode field)" width="200" height="200"><span>optical fibre और light guide (modes, dispersion, mode field)</span></a>
 <a href="../../articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_thin_film_reflectometry.jpg" alt="spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)" width="200" height="200"><b>&#9654;</b><span>spectral reflectometry से thin film की मोटाई (public measured data पर जाँच, wafer के रंग)</span></a>
@@ -430,6 +431,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zoom_configurations.jpg" alt="zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना" width="200" height="200"><span>zoom lens (multi-configuration) को एक prescription के अंतर के रूप में रखना</span></a>
 <a href="../../articles/assets/poc/poc_lens_global_search/01_lens_global_search.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_global_search.jpg" alt="glass substitution और multi-start global search" width="200" height="200"><span>glass substitution और multi-start global search</span></a>
 <a href="../../articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_merit_operands.jpg" alt="आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)" width="200" height="200"><span>आवश्यकता table से triplet का design (edge thickness की सीमाएँ और glass को variable बनाना)</span></a>
+<a href="../../articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_tolerancing.jpg" alt="MTF, yield और compensator travel से lens tolerances तय करना" width="200" height="200"><b>&#9654;</b><span>MTF, yield और compensator travel से lens tolerances तय करना</span></a>
 <a href="../../articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_lens_solves_afocal.jpg" alt="design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)" width="200" height="200"><span>design के संबंधों को solve के रूप में रखना (aperture के साथ चलता F/#, afocal, curved image surface, odd asphere)</span></a>
 <a href="../../articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zmx_public_verify.jpg" alt="सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन" width="200" height="200"><span>सार्वजनिक .zmx नुस्खों का स्वतंत्र सत्यापन</span></a>
 </div>

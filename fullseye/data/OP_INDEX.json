@@ -1,8 +1,8 @@
 {
- "n_ops": 3489,
+ "n_ops": 3497,
  "tiers": {
   "color": 12,
-  "ledger": 2533,
+  "ledger": 2541,
   "nary": 17,
   "registry": 927
  },
@@ -30228,6 +30228,111 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_compensators",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tolerance_criteria",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tolerance_monte_carlo",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_report",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_sensitivity",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_table_from_zmx",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "text"
+   ]
+  },
+  {
+   "name": "tolerance_table_zmx",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "tolerancing",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

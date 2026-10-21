@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 90 項目**
+**収録 91 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -44,6 +44,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md) | `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report` | `poc_lens_tolerancing` |
 | [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
@@ -1078,7 +1079,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (7)
+## 組み立てる (8)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -1119,6 +1120,22 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 使う op: `inspect_batch`, `judge`, `as_verdict`, `run_pipeline`, `spc_ewma`, `save_xlsx_report`, `report`, `to_json_lines`
 
 動く例: `inspection_workflow`
+
+### [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md)
+
+`lenstol` は、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・レンズ群の偏心と傾きを、面または群ごとの行にします。一様分布、正規分布、±公差で切った正規分布を選べます。
+
+使う op: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+
+推奨パイプライン: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
+
+代替: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
+
+限界: 面の非点不整は二つの低次非点成分です。測定した面形状マップそのものは扱いません。設計ファイルとの往復は NOTE TOLERANCE_ROW 形式です。逆感度は線形近似です。
+
+実寸校正: 長さは mm、傾きは degree または arcminute、MTF は cycles/mm、波面 RMS は waves です。歩留まりには Wilson 95 % 区間を付けます。
+
+動く例: `poc_lens_tolerancing`
 
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 

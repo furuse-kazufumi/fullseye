@@ -1,4 +1,4 @@
-# OPTICS operator help — 423 ops in 48 categories
+# OPTICS operator help — 431 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -197,6 +197,10 @@
 ### tem (11)
 
 [tem_amorphous_film](tem/tem_amorphous_film.md) · [tem_ctf](tem/tem_ctf.md) · [tem_ctf_correct](tem/tem_ctf_correct.md) · [tem_ctf_estimate](tem/tem_ctf_estimate.md) · [tem_ctf_profile](tem/tem_ctf_profile.md) · [tem_image_weak_phase](tem/tem_image_weak_phase.md) · [tem_multislice](tem/tem_multislice.md) · [tem_power_spectrum](tem/tem_power_spectrum.md) · [tem_projected_potential](tem/tem_projected_potential.md) · [tem_scherzer](tem/tem_scherzer.md) · [tem_wavelength](tem/tem_wavelength.md)
+
+### tolerancing (8)
+
+[tolerance_compensators](tolerancing/tolerance_compensators.md) · [tolerance_criteria](tolerancing/tolerance_criteria.md) · [tolerance_monte_carlo](tolerancing/tolerance_monte_carlo.md) · [tolerance_report](tolerancing/tolerance_report.md) · [tolerance_sensitivity](tolerancing/tolerance_sensitivity.md) · [tolerance_table](tolerancing/tolerance_table.md) · [tolerance_table_from_zmx](tolerancing/tolerance_table_from_zmx.md) · [tolerance_table_zmx](tolerancing/tolerance_table_zmx.md)
 
 ### watermedia (10)
 

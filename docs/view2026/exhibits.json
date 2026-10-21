@@ -6404,6 +6404,23 @@
    }
   },
   {
+   "id": "poc_lens_tolerancing",
+   "group": "wing_color",
+   "media": "01_sensitivity.png",
+   "motion": true,
+   "thumb_src": "01_sensitivity.png",
+   "label": {
+    "ja": "レンズの製造公差を MTF・歩留まり・補償ストロークで配分",
+    "en": "Budget lens manufacturing tolerances by MTF, yield, and compensator travel",
+    "zh": "以 MTF、良率和补偿行程分配镜头制造公差",
+    "tw": "以 MTF、良率與補償行程分配鏡頭製造公差",
+    "ko": "MTF, 수율, 보정 이동량으로 렌즈 제조 공차 배분",
+    "de": "Fertigungstoleranzen nach MTF, Ausbeute und Kompensatorweg budgetieren",
+    "hi": "MTF, yield और compensator travel से lens tolerances तय करना",
+    "fr": "Budgéter les tolérances selon la FTM, le rendement et la course de compensation"
+   }
+  },
+  {
    "id": "poc_lens_solves_afocal",
    "group": "wing_color",
    "media": "01_lens_solves_afocal.png",
@@ -6798,6 +6815,14 @@
     "de": "Lichtwellenleiter und Lichtleiter (Glasdispersion, LP-Moden, Modenfelddurchmesser, Beleuchtungseffizienz)",
     "hi": "optical fibre और light guide (glass dispersion → LP modes → mode field diameter → illumination efficiency)",
     "fr": "Fibres optiques et guides de lumière (dispersion du verre → modes LP → diamètre de mode → efficacité de l'éclairage)"
+   },
+   "lens-tolerancing": {
+    "zh": "以 MTF 与良率分配镜头制造公差",
+    "tw": "以 MTF 與良率分配鏡頭製造公差",
+    "ko": "MTF와 수율로 렌즈 제조 공차 배분",
+    "de": "Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren",
+    "hi": "MTF और yield से lens manufacturing tolerances तय करना",
+    "fr": "Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement"
    },
    "optics-drawings": {
     "zh": "光学系统的图纸(以 SVG / DXF 输出透镜截面图、成像系统布置图和单透镜制造图)",
