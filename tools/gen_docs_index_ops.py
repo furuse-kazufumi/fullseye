@@ -546,7 +546,9 @@ _ORIGINAL = {"en": "original", "zh": "原文", "tw": "原文", "ko": "원문", "
 
 
 #: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。
-_DOCMAP_SKIP = ("ops", "articles")
+_DOCMAP_SKIP = ("ops", "articles", "view2026")
+# ★2026-10-21(ユーザー指示): view2026/ は論文の QR の行き先。会場で配るまで他の頁からリンクを張らない
+#   (地図に載せると docs/README* から辿れてしまう)。robots.txt でも Disallow にしてある。
 
 
 def _all_docs() -> list:
