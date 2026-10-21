@@ -10,7 +10,29 @@
   ]
  },
  {
-  "file": "02_pro_curves.png",
+  "file": "02_anomaly_threshold_sweep.gif",
+  "name": "anomaly_threshold_sweep",
+  "caption": "記憶バンクの異常度閾値を下げると欠陥領域が現れる。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "02_anomaly_threshold_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "03_pro_curves.png",
   "name": "pro_curves",
   "caption": "確率場・良品 20 枚の PRO 曲線。曲線の下の面積(0.3 で割る)が AUPRO。位置ごとの正規分布(赤)は偽陽性が増えても欠陥の領域をなかなか覆えず、記憶バンクとまとめた分布は早く立ち上がる。",
   "shape": [
@@ -20,7 +42,7 @@
   ]
  },
  {
-  "file": "03_sample_count_curve.png",
+  "file": "04_sample_count_curve.png",
   "name": "sample_count_curve",
   "caption": "確率場の試験画像での AUPRO。良品 5・20・80 枚のどれでも、位置ごとの正規分布(赤)は全位置まとめた分布・記憶バンクより下にある。順位は枚数で入れ替わらない。",
   "shape": [
@@ -30,7 +52,7 @@
   ]
  },
  {
-  "file": "04_logical_anomaly.png",
+  "file": "05_logical_anomaly.png",
   "name": "logical_anomaly",
   "caption": "良品では縦の棒は左(x = 20)にある。試験画像では右(x = 44)にある。棒の欠片そのものは記憶に在るので、位置を見ない記憶バンクの異常地図(中)はほぼ平ら。位置を足した記憶バンク(右)は、あるべき場所から棒が消えた所と、無いはずの場所に棒が現れた所を指す。",
   "shape": [
@@ -40,22 +62,12 @@
   ]
  },
  {
-  "file": "05_recall_guarantee.png",
+  "file": "06_recall_guarantee.png",
   "name": "recall_guarantee",
   "caption": "欠陥 400 枚のプールから較正に欠陥 30 枚を引いて閾値を決め、残りの欠陥で真の再現率を測った 300 回を小さい順に並べた。保証なし(較正の欠陥の 80 % が超える点)は約半数が目標を割る。保証つき(Clopper–Pearson の下限)は目標を割った回が 4.3 % で、宣言した信頼水準 0.9 を守る。",
   "shape": [
    400,
    760,
-   3
-  ]
- },
- {
-  "file": "06_dagm_maps.png",
-  "name": "dagm_maps",
-  "caption": "DAGM 2007 Class1(CC BY 4.0、2×2 の平均で縮小)。黄の輪郭は楕円の弱い注釈。欠陥は「細かい模様が消えた滑らかな斑」。勾配だけの記憶バンクと多重解像度の記憶バンクの異常地図(色の幅は方法ごとに、3 枚で共通)。欠陥の場所は周りよりわずかに明るい程度で、縁や角にも同じくらいの山があり、図の上では欠陥を指し切れていない(勾配だけの記憶バンクは画素 AUROC 0.768・AUPRO 0.474、画像ごとの AUROC は 0.53)。",
-  "shape": [
-   945,
-   808,
    3
   ]
  }

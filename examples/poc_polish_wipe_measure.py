@@ -492,7 +492,8 @@ def figures(out):
     za_f = RG.surface_form_remove(za, 1e-4, order=1)[0]
     figs.save_grid("polish_height_maps_depth_read", [zb_f * 1e9, za_f * 1e9, d * 1e9, (d - true) * 1e9],
                    captions=["before, plane removed [nm]", "after, plane removed [nm]", "depth read [nm]", "read - closed form [nm]"], ncols=4,
-                   signed=[False, False, False, True], gray=False,
+                    signed=[False, False, False, True], gray=False,
+                    kind=["height", "height", "depth", "displacement"], unit="nm",
                    caption="16 × 24 mm、画素 0.1 mm。磨く前と後の高さ図(粗さ Sq 20 nm、雑音 1 nm、後は載せ直しで傾きと高さが変わる。見せるために全体の平面を引いた)。軌跡から 1 mm 以上離れた帯で"
                            "平面を引くと、削れた深さ(最大 240 nm)が雑音の桁(rms 1.4 nm)で読める。右端 = 読みと閉形式の差。")
     # 5. 粗さの減り方
