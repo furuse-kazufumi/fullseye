@@ -45,6 +45,11 @@ def _close_windows():
         except RuntimeError:        # already gone
             pass
     _app().processEvents()
+    # processEvents() alone does not guarantee DeferredDelete delivery when
+    # pytest is driving Qt without QApplication.exec().
+    from PySide6 import QtCore
+    QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
+    _app().processEvents()
 
 
 def _window(stages=2):
