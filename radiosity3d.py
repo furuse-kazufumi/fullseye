@@ -641,30 +641,49 @@ def _candidates(polys, normals, eps):
     return cand
 
 
-def _ff_matrix(polys, normals, areas, centers, n_quad, occluders, chunk=60000, far_ratio=None):
+def _ff_matrix(polys, normals, areas, centers, n_quad, occluders, chunk=60000, far_ratio=None,
+               memory_budget_mb=256.0):
     P = polys.shape[0]
     scale = max(1.0, float(np.abs(polys).max()))
     eps = 1e-12 * scale
-    I, J = np.nonzero(_candidates(polys, normals, eps))
     F = np.zeros((P, P))
     xq, wq = _quad_points(polys, n_quad)
     # 遠い対(中心間の距離 > far_ratio x 大きい方のパッチの差し渡し)は受け側を重心 1 点で代表する。
     # 点 → 多角形は閉形式のままなので、落ちるのは受け側の面の上での変化だけ(距離の 2 乗で小さくなる)。
     diam = np.sqrt(2.0 * areas)
-    far = np.zeros(len(I), bool)
-    if far_ratio is not None:
-        dist = np.linalg.norm(centers[I] - centers[J], axis=-1)
-        far = dist > far_ratio * np.maximum(diam[I], diam[J])
-    for sel, xs, ws in ((~far, xq, wq), (far, centers[:, None, :], areas[:, None])):
-        Is, Js = I[sel], J[sel]
-        for s in range(0, len(Is), chunk):
-            ii, jj = Is[s:s + chunk], Js[s:s + chunk]
-            F[ii, jj] = _ff_pairs(xs[ii], normals[ii], ws[ii], areas[ii], polys[jj], centers[jj], normals[jj],
-                                  occluders, eps)
+    # _candidates の einsum と平面オフセットの減算は、ともに (P, P, 4) の
+    # float64 を生かす。式のピーク 2 * P * P * 4 * 8 byte を割当て前に判定する。
+    full_candidate_bytes = 64 * P * P
+    block_candidates = full_candidate_bytes > memory_budget_mb * 1024.0 ** 2
+    plane = (normals * polys[:, 0]).sum(-1)
+    candidate_ranges = range(0, P, 256) if block_candidates else (0,)
+    for first in candidate_ranges:
+        if not block_candidates:
+            I, J = np.nonzero(_candidates(polys, normals, eps))
+            stop = P
+        else:
+            stop = min(first + 256, P)
+            pb, nb = polys[first:stop], normals[first:stop]
+            front_j = (np.einsum("jkc,ic->ijk", polys, nb) - plane[first:stop, None, None] > eps * 10).any(-1)
+            front_i = (np.einsum("ikc,jc->ijk", pb, normals) - plane[None, :, None] > eps * 10).any(-1)
+            cand = front_j & front_i
+            cand[np.arange(stop - first), np.arange(first, stop)] = False
+            ib, J = np.nonzero(cand)
+            I = ib + first
+        far = np.zeros(len(I), bool)
+        if far_ratio is not None:
+            dist = np.linalg.norm(centers[I] - centers[J], axis=-1)
+            far = dist > far_ratio * np.maximum(diam[I], diam[J])
+        for sel, xs, ws in ((~far, xq, wq), (far, centers[:, None, :], areas[:, None])):
+            Is, Js = I[sel], J[sel]
+            for s in range(0, len(Is), chunk):
+                ii, jj = Is[s:s + chunk], Js[s:s + chunk]
+                F[ii, jj] = _ff_pairs(xs[ii], normals[ii], ws[ii], areas[ii], polys[jj], centers[jj], normals[jj],
+                                      occluders, eps)
     return F
 
 
-def form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0):
+def form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0):
     """All patch-to-patch view factors F_ij of a ``radiosity_patches`` set (occlusion by the scene's rays).
 
     Each pair is :func:`form_factor_polygons` (``n_quad × n_quad`` Gauss points on the
@@ -675,19 +694,32 @@ def form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0):
     exact); ``far_ratio=None`` integrates every pair fully. ``symmetric=True`` (default) enforces
     reciprocity exactly by averaging ``A_i F_ij`` and ``A_j F_ji`` (the raw values agree
     to the quadrature accuracy) — the progressive solver's ``F_ij A_i / A_j`` is then
-    exactly ``F_ji``.
+      exactly ``F_ji``.
+
+    Candidate pairs use the former, faster all-at-once calculation while its largest
+    temporary fits *memory_budget_mb*, and 256-patch blocks otherwise.  The default
+    256 MB keeps the former path for a 384-patch closed box but blocks 4,096 patches,
+    whose candidate expression alone needs 1.00 GiB.  On the 2026-10-21 development
+    machine, whole-call CPU time / ``tracemalloc`` peak were 0.234 s / 115 MiB
+    (original), 0.219 s / 60 MiB (default), and 0.234 s / 60 MiB (forced blocks) for
+    384 patches; the isolated 4,096-patch candidate case measured 0.547 s / 1,152 MiB,
+    1.500 s / 195 MiB, and 1.516 s / 195 MiB respectively.  Pass 0 to always block,
+    or a sufficiently large value to never block.
 
     Returns the ``(N, N)`` matrix (``matrix``), zero diagonal. In a closed enclosure
     each row sums to 1 (to the quadrature accuracy); an opening shows as a row sum < 1.
 
     **Raises** ``ValueError``: an empty or unmarked table (not ``radiosity_patches``);
-    *n_quad* not an integer in ``[1, 16]``; *far_ratio* below 1.
+      *n_quad* not an integer in ``[1, 16]``; *far_ratio* below 1; or a negative or
+      non-finite *memory_budget_mb*.
     """
     op = "form_factor_matrix"
     p = _check_patches(patches, op)
     nq = _int(n_quad, "n_quad", op, 1, 16)
     fr = None if far_ratio is None else _num(far_ratio, "far_ratio", op, lo=1.0)
-    F = _ff_matrix(p["polygons"], p["normals"], p["areas"], p["centers"], nq, p.get("occluders"), far_ratio=fr)
+    mb = _num(memory_budget_mb, "memory_budget_mb", op, lo=0.0)
+    F = _ff_matrix(p["polygons"], p["normals"], p["areas"], p["centers"], nq,
+                   p.get("occluders"), far_ratio=fr, memory_budget_mb=mb)
     if symmetric:
         S = p["areas"][:, None] * F
         S = 0.5 * (S + S.T)

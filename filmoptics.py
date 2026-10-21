@@ -565,19 +565,22 @@ def film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0
     for s in range(0, px.shape[0], ck):
         p = px[s:s + ck]
         sse = np.maximum(np.sum(p * p, axis=1)[:, None] - 2.0 * p @ lut.T + lut2[None, :], 0.0)  # (P, N)
-        rm = np.sqrt(sse / B)
-        j = np.argmin(rm, axis=1)
+        j = np.argmin(sse, axis=1)
         jj = np.clip(j, 1, grid.size - 2)
-        a, b, c = rm[np.arange(j.size), jj - 1], rm[np.arange(j.size), jj], rm[np.arange(j.size), jj + 1]
+        rows = np.arange(j.size)
+        a = np.sqrt(sse[rows, jj - 1] / B)
+        b = np.sqrt(sse[rows, jj] / B)
+        c = np.sqrt(sse[rows, jj + 1] / B)
         den = a - 2.0 * b + c
         off = np.where((den > 1e-300) & (j == jj), 0.5 * (a - c) / np.where(den > 1e-300, den, 1.0), 0.0)
         thick[s:s + ck] = grid[jj] + np.clip(off, -0.5, 0.5) * st if grid.size > 2 else grid[j]
         thick[s:s + ck] = np.where(j == jj, thick[s:s + ck], grid[j])
-        best = rm[np.arange(j.size), j]
+        best = np.sqrt(sse[rows, j] / B)
         rmse[s:s + ck] = best
-        left = np.concatenate([np.full((rm.shape[0], 1), np.inf), rm[:, :-1]], axis=1)
-        right = np.concatenate([rm[:, 1:], np.full((rm.shape[0], 1), np.inf)], axis=1)
-        is_min = (rm <= left) & (rm < right)
-        ncand[s:s + ck] = np.sum(is_min & (rm <= best[:, None] + tol), axis=1)
+        left = np.concatenate([np.full((sse.shape[0], 1), np.inf), sse[:, :-1]], axis=1)
+        right = np.concatenate([sse[:, 1:], np.full((sse.shape[0], 1), np.inf)], axis=1)
+        is_min = (sse <= left) & (sse < right)
+        threshold = B * (best + tol) ** 2
+        ncand[s:s + ck] = np.sum(is_min & (sse <= threshold[:, None]), axis=1)
     return {"thickness": thick.reshape(H, W), "rmse": rmse.reshape(H, W), "n_candidates": ncand.reshape(H, W),
             "lut_thickness_nm": grid}

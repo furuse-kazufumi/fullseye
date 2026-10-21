@@ -29,7 +29,7 @@
 
 這裡的數字都不是手寫的: `tools/gen_trust_block.py` 依據 `docs/` 中的量測資料(`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`)產生本節,若本節與資料不一致,`tests/test_trust_block.py` 就會失敗。每個數字都附有量測時的版本與日期。
 
-**回歸測試 20,795 個** — 包含在 0.7.1 中,commit `fbe838d6f4`,2026-10-19 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
+**回歸測試 21,185 個** — 包含在 0.7.2 中,commit `2f045f623d`,2026-10-20 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
 
 ### 新增一個運算子時,有哪些檢查會驗證它
 
@@ -53,7 +53,7 @@
 
 ### 驗證階段
 
-90 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.1)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+90 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 0.7.2)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
@@ -78,7 +78,7 @@
 | 0.5.0 | 2026-10-06 | 3,078 | 2,125 | 980 | 217 | 17,489 |
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
-| 0.7.1 | 2026-10-19 | 3,449 | 2,493 | 982 | 264 | 20,795 |
+| 0.7.2 | 2026-10-20 | 3,449 | 2,493 | 982 | 264 | 21,185 |
 
 - 0.1.0–0.1.8 的 HALCON 對應數 323 是當時的記錄值;自 0.1.9 起依修訂後的計數方式為 979(並非新增了 656 個實作)。
 - 0.2.0 首次將型別化台帳納入索引: 918 → 1,942 是計數口徑的變更,並非新的實作(台帳自 0.1.6 起就存在,但在索引之外)。
@@ -136,17 +136,17 @@
 
 ## 尋找運算子
 
-共有 **3,495 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **67 篇族群指南**。依維度的入口:
+共有 **3,496 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **67 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 939/939、型別台帳 2535/2547、單行門面 `fullseye.<名稱>` 703/1465 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 939/939、型別台帳 2536/2548、單行門面 `fullseye.<名稱>` 703/1465 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3495 篇中，附有可執行範例的 **3484** 篇(11 篇沒有)，用法說明 120 字以上的 **3330** 篇(165 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3495 篇全有。
+**內容實測**: 3496 篇中，附有可執行範例的 **3485** 篇(11 篇沒有)，用法說明 120 字以上的 **3331** 篇(165 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3496 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
 | `2d` | 956 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 423 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 424 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -295,7 +295,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 278 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,495 篇運算子說明與 67 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,496 篇運算子說明與 67 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

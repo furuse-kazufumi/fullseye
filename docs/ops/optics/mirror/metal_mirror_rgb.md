@@ -7,7 +7,7 @@ out: vector
 examples: [glass_and_mirror_optics, poc_illumination_cone_vs_na, poc_material_optical_library, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # metal_mirror_rgb — OPTICS `mirror` op

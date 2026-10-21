@@ -177,11 +177,9 @@ def _amplitudes(coeffs):
     位相合わせ)が第1高調波が円形のとき悪条件になる問題を避けられる。
     """
     coeffs = np.asarray(coeffs, dtype=np.float64)
-    out = np.empty((coeffs.shape[0], 2), dtype=np.float64)
-    for n in range(coeffs.shape[0]):
-        sv = np.linalg.svd(coeffs[n].reshape(2, 2), compute_uv=False)  # 降順
-        out[n] = sv
-    return out
+    if coeffs.shape[0] == 0:
+        return np.empty((0, 2), dtype=np.float64)
+    return np.linalg.svd(coeffs.reshape(-1, 2, 2), compute_uv=False)  # 降順
 
 
 def invariants(model, scale_invariant=True):

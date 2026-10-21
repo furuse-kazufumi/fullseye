@@ -249,10 +249,10 @@ def _trace_from(system, h, dz, slopes_x, slopes_y):
     return RT.trace_rays(system, P, D)
 
 
-def _chief_slope(system, h, dz):
+def _chief_slope(system, h, dz, prepared=None, initial=None):
     """絞りの中心を通る主光線の物体側の傾き dy/dz(Newton 法、口径なしの処方で)。"""
     stop = system["stop"]
-    so = _open(system)
+    so, para = prepared if prepared is not None else (_open(system), None)
 
     def y_stop(s):
         tr = _trace_from(so, h, dz, [0.0], [s])
@@ -260,9 +260,9 @@ def _chief_slope(system, h, dz):
 
     # 初期値: 近軸の主光線(入射瞳が有限ならその方向、無限遠なら 0)
     try:
-        para = RT.paraxial_trace(system)
+        para = RT.paraxial_trace(system) if para is None else para
         L = float(system["object_mm"]) + para["ep_position"] - dz
-        s = -h / L if math.isfinite(L) and abs(L) > 1e-9 else 0.0
+        s = float(initial) if initial is not None else (-h / L if math.isfinite(L) and abs(L) > 1e-9 else 0.0)
     except ValueError:
         s = 0.0
     r = y_stop(s)
@@ -276,7 +276,9 @@ def _chief_slope(system, h, dz):
         if abs(r) < 1e-13:
             break
         e = 1e-7
-        d = (y_stop(s + e) - y_stop(s - e)) / (2 * e)
+        tr_pm = _trace_from(so, h, dz, [0.0, 0.0], [s + e, s - e])
+        y_pm = tr_pm["points"][:, stop + 1, 1]
+        d = float(y_pm[0] - y_pm[1]) / (2 * e)
         if not math.isfinite(d) or abs(d) < 1e-15:
             raise ValueError("chief ray: the stop does not respond to the launch slope (degenerate layout)")
         step = -r / d
@@ -342,9 +344,15 @@ def magnification_vs_depth(system, field_mm=5.0, shift_min_mm=-2.0, shift_max_mm
     if zs[-1] >= float(system["object_mm"]):
         raise ValueError("%s: shift_max_mm reaches the first lens vertex" % op)
     out = np.empty((len(zs), 2))
+    prepared = (_open(system), RT.paraxial_trace(system))
+    previous = None
     for i, dz in enumerate(zs):
-        s, _, _ = _chief_slope(system, h, float(dz))
-        tr = _trace_from(_open(system), h, float(dz), [0.0], [s])
+        try:
+            s, _, _ = _chief_slope(system, h, float(dz), prepared, previous)
+        except ValueError:
+            s, _, _ = _chief_slope(system, h, float(dz), prepared)
+        previous = s
+        tr = _trace_from(prepared[0], h, float(dz), [0.0], [s])
         out[i] = (dz, tr["points"][0, -1, 1] / h)
     return out
 
@@ -383,9 +391,9 @@ def telecentricity_error(system, field_mm=5.0, step_height_mm=1.0):
 # --------------------------------------------------------------------------- #
 # 光線束(瞳を総当たりで埋める)
 # --------------------------------------------------------------------------- #
-def _bundle(system, h, dz, samples):
+def _bundle(system, h, dz, samples, prepared=None, initial=None):
     """物点から出て口径つきの処方を抜ける光線束(傾きの格子を 2 段で: 粗く当たりを付けてから細かく)。"""
-    s0, _, _ = _chief_slope(system, h, dz)
+    s0, _, _ = _chief_slope(system, h, dz, prepared, initial)
     obj = float(system["object_mm"]) - dz
     aps = [sf["ap"] for sf in system["surfaces"] if sf["ap"] is not None]
     reach = (max(aps) + abs(h)) / obj                    # どの面の口径の外へも出ない傾きの上限
@@ -424,8 +432,9 @@ def defocus_spot_vs_depth(system, field_mm=0.0, shift_min_mm=-1.0, shift_max_mm=
         raise ValueError("%s: shift_max_mm reaches the first lens vertex" % op)
     k = _int(samples, "samples", op, 11, _MAX_SAMPLES)
     out = np.empty((len(zs), 2))
+    prepared = (_open(system), RT.paraxial_trace(system))
     for i, dz in enumerate(zs):
-        pts, _, _ = _bundle(system, h, float(dz), k)
+        pts, _, _ = _bundle(system, h, float(dz), k, prepared)
         if len(pts) < 3:
             raise ValueError("%s: fewer than 3 rays reach the image at shift %.6g mm (vignetted)" % (op, dz))
         d = pts - pts.mean(0)
@@ -453,7 +462,8 @@ def vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81):
     if a0 <= 0.0:
         raise ValueError("%s: no ray reaches the image on axis" % op)
     out = np.empty((k, 2))
-    for i, h in enumerate(hs):
+    out[0] = (0.0, 1.0)
+    for i, h in enumerate(hs[1:], start=1):
         try:
             _, a, _ = _bundle(system, float(h), 0.0, m)
         except ValueError:

@@ -158,32 +158,36 @@ def iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise="poisson
             raise ValueError("%s: psf must be finite, non-negative and not all zero" % op)
         k = k / k.sum()
     otf = _otf(k, y.shape)
+    otf_adj = np.conj(otf)
     shape = y.shape
 
     def H(v):
         return np.fft.irfft2(np.fft.rfft2(v) * otf, s=shape)
 
     def Ht(v):
-        return np.fft.irfft2(np.fft.rfft2(v) * np.conj(otf), s=shape)
+        return np.fft.irfft2(np.fft.rfft2(v) * otf_adj, s=shape)
 
     N = y.size
     pos = y > 0
+    y_pos = y[pos]
 
     def disc(Hx):
         Hx = np.maximum(Hx, TINY)
         if noise == "poisson":
             t = Hx - y
-            t[pos] += y[pos] * np.log(y[pos] / Hx[pos])
+            t[pos] += y_pos * np.log(y_pos / Hx[pos])
             return float(2.0 / N * t.sum())
         return float(((Hx - y) ** 2).sum() / (N * sig2))
 
     x = np.full(shape, total / N)
     Hx = H(x)
-    D = [disc(Hx)]
+    first_disc = disc(Hx)
+    D = [first_disc] if keep_history else None
+    recent = [first_disc]
     mass_err = 0.0
     status = None
     kk = 0
-    if D[0] <= tau:
+    if first_disc <= tau:
         status = "stopped"
     else:
         for kk in range(1, max_iter + 1):
@@ -192,24 +196,29 @@ def iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise="poisson
             x = np.maximum(x, 0.0)
             Hx = H(x)
             mass_err = max(mass_err, abs(float(Hx.sum()) - total) / total)
-            D.append(disc(Hx))
+            current_disc = disc(Hx)
+            recent.append(current_disc)
+            if len(recent) > plateau_window + 1:
+                del recent[0]
+            if D is not None:
+                D.append(current_disc)
             if callback is not None:
-                callback(kk, x / gain, D[-1])
-            if not math.isfinite(D[-1]):
+                callback(kk, x / gain, current_disc)
+            if not math.isfinite(current_disc):
                 raise MetricContractError("%s: the discrepancy became NaN or inf at iteration %d" % (op, kk))
-            if D[-1] <= tau:
+            if current_disc <= tau:
                 status = "stopped"
                 break
             if kk >= plateau_window:
-                prev = D[-1 - plateau_window]
-                if prev - D[-1] < plateau_rtol * plateau_window * D[-1]:
+                prev = recent[-1 - plateau_window]
+                if prev - current_disc < plateau_rtol * plateau_window * current_disc:
                     status = "outside_model_range"
                     break
         if status is None:
             status = "max_iter"
     rec = {"op": op, "noise": noise, "tau": tau, "status": status, "stopped": status == "stopped",
            "k_stop": int(kk) if status == "stopped" else None, "n_iter": int(kk),
-           "discrepancy": D[-1], "mass_rel_error_max": mass_err,
+           "discrepancy": recent[-1], "mass_rel_error_max": mass_err,
            "criterion": ("Poisson discrepancy (2/N) sum[y ln(y/Hx) + Hx - y] <= tau (Benvenuto & Piana 2012 eq. 30; "
                          "Bertero et al. 2010)" if noise == "poisson" else
                          "Morozov ||Hx - y||^2 / (N sigma^2) <= tau (Benvenuto & Piana 2012 eq. 18)")}
@@ -221,10 +230,10 @@ def iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise="poisson
         rec["image"] = None
         rec["last_iterate"] = x / gain
         rec["reason"] = ("the discrepancy levelled off at %.4g > tau = %.4g: the data are outside the range of the "
-                         "model (wrong PSF, missing background or wrong noise level)" % (D[-1], tau)
+                         "model (wrong PSF, missing background or wrong noise level)" % (recent[-1], tau)
                          if status == "outside_model_range" else
                          "max_iter = %d reached while the discrepancy (%.4g) was still above tau = %.4g"
-                         % (max_iter, D[-1], tau))
+                         % (max_iter, recent[-1], tau))
     return rec
 
 

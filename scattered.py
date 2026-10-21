@@ -8,36 +8,55 @@ from __future__ import annotations
 import numpy as np
 
 
+def _materialize(points, values, method):
+    if method == "linear":
+        from scipy.interpolate import LinearNDInterpolator
+        return LinearNDInterpolator(points, values)
+    if method == "cubic":
+        from scipy.interpolate import CloughTocher2DInterpolator
+        return CloughTocher2DInterpolator(points, values)
+    if method == "nearest":
+        from scipy.spatial import cKDTree
+        return cKDTree(points)
+    raise ValueError(f"unknown interpolation method: {method!r}")
+
+
 def create_scattered_data_interpolator(points, values, method="linear"):
     """不規則点 (N,2) と値 (N,) から補間器を作る(create_scattered_data_interpolator)。"""
     pts = np.asarray(points, float).reshape(-1, 2)
     val = np.asarray(values, float).ravel()
-    return {"points": pts, "values": val, "method": method}
+    return {"points": pts, "values": val, "method": method,
+            "interpolator": _materialize(pts, val, method)}
 
 
 def interpolate_scattered_data(interp, query_points):
     """補間器を任意のクエリ点で評価(interpolate_scattered_data)。"""
-    from scipy.interpolate import griddata
     q = np.asarray(query_points, float).reshape(-1, 2)
-    out = griddata(interp["points"], interp["values"], q, method=interp["method"])
+    obj = interp.get("interpolator")
+    if obj is None:
+        obj = _materialize(interp["points"], interp["values"], interp["method"])
+        interp["interpolator"] = obj
+    if interp["method"] == "nearest":
+        _, index = obj.query(q, k=1)
+        return np.asarray(interp["values"])[index]
+    out = np.asarray(obj(q))
     if np.isnan(out).any():
-        nn = griddata(interp["points"], interp["values"], q, method="nearest")
-        out = np.where(np.isnan(out), nn, out)
+        missing = np.isnan(out)
+        from scipy.spatial import cKDTree
+        _, index = cKDTree(interp["points"]).query(q[missing], k=1)
+        out[missing] = np.asarray(interp["values"])[index]
     return out
 
 
 def interpolate_scattered_data_points_to_image(points, values, shape, method="linear"):
     """不規則点の値を密な格子画像へ補間(interpolate_scattered_data_points_to_image)。"""
-    from scipy.interpolate import griddata
     H, W = shape
     pts = np.asarray(points, float).reshape(-1, 2)
     val = np.asarray(values, float).ravel()
     rr, cc = np.mgrid[0:H, 0:W]
     grid = np.column_stack([rr.ravel(), cc.ravel()])
-    out = griddata(pts, val, grid, method=method)
-    nn = griddata(pts, val, grid, method="nearest")
-    out = np.where(np.isnan(out), nn, out)
-    return out.reshape(H, W)
+    interp = create_scattered_data_interpolator(pts, val, method)
+    return interpolate_scattered_data(interp, grid).reshape(H, W)
 
 
 def interpolate_scattered_data_image(image, region, method="linear"):

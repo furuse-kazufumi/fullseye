@@ -187,7 +187,7 @@ __all__ = [
     "specular_coefficient_map", "illuminant_from_dichromatic_planes",
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
     "photometric_stereo_robust", "photometric_residual",
-    "polarization_render", "polarization_separate", "polarization_dolp_map",
+    "polarization_render", "polarization_separate", "polarization_dolp_map", "polarization_analyze",
     "polarization_stokes",
     "SPECULARITY", "ROBUST_METHODS", "BRDF_MODELS",
     "MAX_PIXELS", "MAX_STACK_ELEMENTS", "MAX_LIGHTS", "MAX_ROBUST_PIXELS",
@@ -888,9 +888,15 @@ def illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16,
                          % (op, uniq.size, MAX_MATERIALS))
     P = I.reshape(-1, 3)
     flat = lab.reshape(-1)
+    keep = flat >= 0
+    order = np.argsort(flat[keep], kind="stable")
+    grouped_labels = flat[keep][order]
+    grouped_pixels = P[keep][order]
+    starts = np.searchsorted(grouped_labels, uniq, side="left")
+    stops = np.searchsorted(grouped_labels, uniq, side="right")
     normals, used, skipped = [], [], []
-    for k in uniq:
-        pts = P[flat == k]
+    for k, start, stop in zip(uniq, starts, stops):
+        pts = grouped_pixels[start:stop]
         if pts.shape[0] < min_pixels:
             skipped.append((int(k), "only %d pixel(s)" % pts.shape[0]))
             continue
@@ -1150,7 +1156,7 @@ def _light_subsets(n, max_subsets, seed):
 
 def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
                               max_subsets=512, normalize=True, seed=0,
-                              min_inliers=3):
+                              min_inliers=3, *, chunk=None):
     """Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers).
 
     Woodham's (1980) linear model ``I_n = albedo * max(n.L_n, 0)`` is exact only
@@ -1328,6 +1334,9 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
                          "every pixel would keep its 3-light subset solution"
                          % (op, min_inliers, N))
     P = H * W
+    chunk = P if chunk is None else int(chunk)
+    if chunk < 1:
+        raise ValueError("photometric_stereo_robust: chunk must be positive")
     if P > MAX_ROBUST_PIXELS:
         raise ValueError("%s: %d pixels (shape %r), over the %d cap "
                          "(specularity.MAX_ROBUST_PIXELS). The consensus refit "
@@ -1364,19 +1373,28 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
         if abs(float(np.linalg.det(Lt))) <= 1e-12:
             continue                                        # coplanar triple
         n_used += 1
-        g = np.linalg.solve(Lt, Iv[list(idx)])              # (3, P) exact
-        r = np.abs(L @ g - Iv)                              # (N, P)
-        if method == "median":
-            score = np.median(r, axis=0)
-            take = score < best_score
-            best_score = np.where(take, score, best_score)
-        else:
-            score = ((r <= tol[None, :]) & lit).sum(axis=0).astype(np.float64)
-            tie = np.median(r, axis=0)
-            take = (score > best_score) | ((score == best_score) & (tie < best_tie))
-            best_score = np.where(take, score, best_score)
-            best_tie = np.where(take, tie, best_tie)
-        best_g = np.where(take[None, :], g, best_g)
+        for start in range(0, P, chunk):
+            stop = min(start + chunk, P)
+            g = np.linalg.solve(Lt, Iv[list(idx), start:stop])
+            r = np.abs(L @ g - Iv[:, start:stop])
+            if method == "median":
+                score = np.median(r, axis=0)
+                take = score < best_score[start:stop]
+                best_score[start:stop] = np.where(
+                    take, score, best_score[start:stop])
+            else:
+                score = ((r <= tol[None, start:stop])
+                         & lit[:, start:stop]).sum(axis=0).astype(np.float64)
+                tie = np.median(r, axis=0)
+                take = ((score > best_score[start:stop])
+                        | ((score == best_score[start:stop])
+                           & (tie < best_tie[start:stop])))
+                best_score[start:stop] = np.where(
+                    take, score, best_score[start:stop])
+                best_tie[start:stop] = np.where(
+                    take, tie, best_tie[start:stop])
+            best_g[:, start:stop] = np.where(
+                take[None, :], g, best_g[:, start:stop])
     if n_used == 0:
         raise ValueError("%s: every 3-light subset is singular — the light "
                          "directions are coplanar through the origin, so the "
@@ -1666,6 +1684,30 @@ def polarization_separate(images, angles_deg=_DEFAULT_ANGLES,
                                                   max_violation_frac)
     i_max = a0 + amp
     return (2.0 * i_min).reshape(H, W), (i_max - i_min).reshape(H, W)
+
+
+def polarization_analyze(images, angles_deg=_DEFAULT_ANGLES,
+                         max_violation_frac=0.0):
+    """Derive separation, linear-polarisation degree and integrated Stokes data in one fit."""
+    op = "polarization_analyze"
+    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
+    if not (0.0 <= max_violation_frac <= 1.0):
+        raise ValueError("max_violation_frac must be in [0, 1], got %g"
+                         % max_violation_frac)
+    a0, a1, a2, amp, i_min, (H, W) = _polar_fit(
+        images, angles_deg, op, max_violation_frac)
+    dolp = np.zeros_like(a0)
+    np.divide(amp, a0, out=dolp, where=a0 > 0.0)
+    s0, s1, s2 = 2.0 * a0.mean(), 2.0 * a1.mean(), 2.0 * a2.mean()
+    pol = np.hypot(s1, s2)
+    if pol > s0 and pol > 0.0:
+        s1, s2 = s1 * s0 / pol, s2 * s0 / pol
+    return {
+        "diffuse": (2.0 * i_min).reshape(H, W),
+        "specular": ((a0 + amp) - i_min).reshape(H, W),
+        "dolp": np.clip(dolp, 0.0, 1.0).reshape(H, W),
+        "stokes": np.array([s0, s1, s2, 0.0]),
+    }
 
 
 def polarization_dolp_map(images, angles_deg=_DEFAULT_ANGLES,

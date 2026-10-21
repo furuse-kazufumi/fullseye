@@ -13,7 +13,7 @@
 <p><b>Motion</b> (GIF: frames / views / slices क्रम से। स्थिर figure ही पूरा रूप है, GIF सहायक है):</p>
 <p><img src="fig/tb_plane_sdf.gif" alt="tb_plane_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>half-space (plane से कटा हुआ हिस्सा) का <b>exact</b> signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।</p>
+<p>half-space का exact signed distance field। <code style="color:#22d3bf">fast</code> वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default <code style="color:#22d3bf">exact</code> है।</p>
 <p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>। normal <code style="color:#22d3bf">n̂</code> <b>जिस ओर इशारा करता है वह बाहर (धनात्मक) है</b>, और विपरीत ओर अंदर। chamfer, cutting, या &quot;substrate से केवल ऊपर&quot; जैसे <b>केवल एक ओर रखने वाले</b> operation में उपयोग होता है। <code style="color:#22d3bf">sdf_intersect</code> को जोड़ते जाने से कोई भी convex polyhedron बन सकता है। लेकिन <b>max से intersection corner के बाहर exact नहीं होता</b>: 6 plane से cuboid बनाने पर occupancy (<code style="color:#22d3bf">&lt;= 0</code>) और अंदर के मान <code style="color:#22d3bf">box_sdf</code> से पूरी तरह मेल खाते हैं, पर बाहर corner के पास अधिकतम 2.1 तक <b>कम आँकता है</b> (आधी भुजा 2 वाला box, grid 0.25 पर मापा गया) —— यह CSG का मानक गुण है; दूरी ही चाहिए तो <code style="color:#22d3bf">box_sdf</code> का उपयोग करें।</p>
 <p>exactness: plane का gradient norm पूरे space में 1 होता है, इसलिए यह मान <b>हर जगह सच्ची signed distance है</b> (<code style="color:#22d3bf">box_sdf</code> की तरह corner पर बदलने वाला case-split ज़रूरी नहीं)।</p>
 <p>argument और validation (<code style="color:#22d3bf">ValueError</code>):</p>

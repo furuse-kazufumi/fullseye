@@ -157,10 +157,24 @@ def vol_rle_encode(vol_binary) -> VolRLE:
         v = vf > 0.5
     D, H, W = v.shape
     flat = v.reshape(D * H, W)
-    pad = np.zeros((D * H, 1), bool)
-    edge = np.diff(np.hstack([pad, flat, pad]).astype(np.int8), axis=1)
-    rows, starts = np.nonzero(edge == 1)
-    rows2, ends = np.nonzero(edge == -1)
+    if flat.nbytes * 2 <= 32 * 1024 * 1024:
+        pad = np.zeros((D * H, 1), bool)
+        edge = np.diff(np.hstack([pad, flat, pad]).astype(np.int8), axis=1)
+        rows, starts = np.nonzero(edge == 1)
+        _rows2, ends = np.nonzero(edge == -1)
+    else:
+        row_parts, start_parts, end_parts = [], [], []
+        for first in range(0, D * H, 4096):
+            block = flat[first:first + 4096]
+            edge = np.diff(np.pad(block, ((0, 0), (1, 1))).astype(np.int8), axis=1)
+            rows, starts = np.nonzero(edge == 1)
+            _rows2, ends = np.nonzero(edge == -1)
+            row_parts.append(rows + first)
+            start_parts.append(starts)
+            end_parts.append(ends)
+        rows = np.concatenate(row_parts)
+        starts = np.concatenate(start_parts)
+        ends = np.concatenate(end_parts)
     # per-row the +1/-1 columns interleave strictly, so the row vectors agree
     return VolRLE(rows.astype(np.int32), starts.astype(np.int32),
                   ends.astype(np.int32), (D, H, W))
@@ -300,7 +314,7 @@ def _rle_boolean(a: "VolRLE", b: "VolRLE", keep) -> "VolRLE":
     A, B = _require_rle(a, "a"), _require_rle(b, "b")
     if A.shape != B.shape:
         raise ValueError("regions live in different volumes: %r vs %r"
-                         % (A.shape, B.shape))
+                          % (A.shape, B.shape))
     D, H, W = A.shape
     stride = W + 1
     ga = A.rows.astype(np.int64) * stride
@@ -427,14 +441,19 @@ def vol_rle_components(vol_binary, connectivity=26):
     D, H, W = whole.shape
     # dense labelling once (unavoidable: connectivity is a global property),
     # then read one label per run
-    dense = vol_rle_decode(whole) > 0.5
+    dense = np.zeros(whole.shape, dtype=bool)
+    flat = dense.reshape(D * H, W)
+    for row, start, end in zip(whole.rows, whole.starts, whole.ends):
+        flat[row, start:end] = True
     labels, n = ndimage.label(dense, structure=ndimage.generate_binary_structure(3, rank))
     z = whole.rows // H
     y = whole.rows % H
     run_label = labels[z, y, whole.starts]
+    order = np.argsort(run_label, kind="stable")
+    counts = np.bincount(run_label, minlength=n + 1)
+    cuts = np.cumsum(counts)
     out = []
     for lab in range(1, n + 1):
-        sel = run_label == lab
-        out.append(VolRLE(whole.rows[sel], whole.starts[sel], whole.ends[sel],
-                          whole.shape))
+        sel = order[cuts[lab - 1]:cuts[lab]]
+        out.append(VolRLE(whole.rows[sel], whole.starts[sel], whole.ends[sel], whole.shape))
     return out

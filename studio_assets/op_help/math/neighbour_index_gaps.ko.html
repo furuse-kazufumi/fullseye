@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">neighbour_index_gaps — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.neighbour_index_gaps(points, k=6)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;neighbour_index_gaps&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6, chunk=65536)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.neighbour_index_gaps(points, k=6, chunk=65536)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;neighbour_index_gaps&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>최근접 이웃들이 <b>번호상으로</b> 얼마나 떨어져 있는가 —— 사선열을 수로 만든다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -16,6 +16,7 @@
 <p>Returns a <code style="color:#22d3bf">signal</code>: <code style="color:#22d3bf">counts[g]</code> = number of neighbour pairs whose index difference is <code style="color:#22d3bf">g</code> (<code style="color:#22d3bf">counts[0]</code> is always 0 — a point is not its own neighbour).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not an (N, 2) array; fewer than <code style="color:#22d3bf">k + 1</code> points; <code style="color:#22d3bf">k</code> below 1; non-finite coordinates.</p>
 <p>Limits: the first points of a spiral sit near the centre where the packing is degenerate, so the histogram has a low-index tail that carries no parastichy information. Compare *peaks*, not the raw tail.</p>
+<p>Equal-distance neighbours retain the spatial tree query&#x27;s native index order; chunking does not sort or otherwise change that tie rule.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

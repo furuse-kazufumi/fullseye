@@ -159,19 +159,23 @@ def delaunay_triangulate(points) -> dict:
     return out
 
 
-def _cotan_laplacian(V, F):
+def _cotan_laplacian(V, F, *, return_cotangents=False):
     n = V.shape[0]
     I, J, W = [], [], []
+    cotangents = []
     for k in range(3):
         i, j, o = F[:, (k + 1) % 3], F[:, (k + 2) % 3], F[:, k]
         u, w = V[i] - V[o], V[j] - V[o]
         cot = np.einsum("ij,ij->i", u, w) / np.maximum(np.linalg.norm(np.cross(u, w), axis=1), 1e-300)
+        cotangents.append(cot)
         I += [i, j]
         J += [j, i]
         W += [0.5 * cot, 0.5 * cot]
     I, J, W = np.concatenate(I), np.concatenate(J), np.concatenate(W)
     L = sparse.coo_matrix((W, (I, J)), shape=(n, n)).tocsr()
     L = L - sparse.diags(np.asarray(L.sum(axis=1)).ravel())
+    if return_cotangents:
+        return L, np.asarray(cotangents)
     return L                                                     # 負半定値(−Δ の弱形式)
 
 
@@ -208,7 +212,7 @@ def geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: float | None = None
     if source is None:
         if not M.any():
             raise ValueError("geodesic_heat_grid: 通れる画素が 1 つも無い")
-        source = np.argwhere(M)[0]
+        source = np.unravel_index(int(np.flatnonzero(M)[0]), M.shape)
     src = np.atleast_2d(np.asarray(source, dtype=np.int64))
     if src.shape[1] != M.ndim:
         raise ValueError("geodesic_heat_grid: source は %d 次元の添字" % M.ndim)
@@ -251,7 +255,7 @@ def geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: float | None = None
     # 画素ごとの勾配(隣の辺の平均)で向きを正規化し、辺の成分に戻す
     gu = G @ u
     cell = np.zeros((n, M.ndim))
-    cnt = np.zeros((n, M.ndim))
+    cnt = np.zeros((n, M.ndim), dtype=np.uint8)
     off = 0
     for ax, i, j in eax:
         ge = gu[off:off + i.size]
@@ -267,7 +271,7 @@ def geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: float | None = None
     for ax, i, j in eax:
         Xe[off:off + i.size] = 0.5 * (Xc[i, ax] + Xc[j, ax])
         off += i.size
-    A = (G.T @ G + 1e-10 * sparse.eye(n)).tocsr()
+    A = (-L + 1e-10 * sparse.eye(n)).tocsr()
     phi_c = _spd_solve(A, G.T @ Xe)
     phi_c = phi_c - phi_c[idx[tuple(src.T)]].mean()
     D = np.full(M.shape, np.inf)
@@ -321,7 +325,7 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
         n = V.shape[0]
     M = np.zeros(n)
     np.add.at(M, F.ravel(), np.repeat(A / 3.0, 3))
-    L = _cotan_laplacian(V, F)
+    L, cotangents = _cotan_laplacian(V, F, return_cotangents=True)
     delta = np.zeros(n)
     delta[src] = 1.0
     u = splinalg.spsolve((sparse.diags(M) - t * L).tocsc(), delta)
@@ -338,11 +342,8 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
         i, j, l = F[:, k], F[:, (k + 1) % 3], F[:, (k + 2) % 3]
         e_ij, e_il = V[j] - V[i], V[l] - V[i]
 
-        def _cot(p, q, r):
-            u_, w_ = V[q] - V[p], V[r] - V[p]
-            return np.einsum("ij,ij->i", u_, w_) / np.maximum(np.linalg.norm(np.cross(u_, w_), axis=1), 1e-300)
-        cot_l = _cot(l, i, j)                                     # 頂点 l の角(辺 ij の対角)
-        cot_j = _cot(j, l, i)                                     # 頂点 j の角(辺 il の対角)
+        cot_l = cotangents[(k + 2) % 3]
+        cot_j = cotangents[(k + 1) % 3]
         np.add.at(div, i, 0.5 * (cot_l * np.einsum("ij,ij->i", e_ij, X) + cot_j * np.einsum("ij,ij->i", e_il, X)))
     Lr = (L + 1e-12 * sparse.eye(n)).tocsc()
     phi = splinalg.spsolve(Lr, div)
@@ -408,6 +409,28 @@ def _bspline_basis(U: np.ndarray, p: int, n_ctrl: int, u: np.ndarray) -> np.ndar
             Nk[:, i] = a + b
         N = Nk
     return N[:, :n_ctrl]
+
+
+def _bspline_basis_local(U: np.ndarray, p: int, n_ctrl: int, u: np.ndarray):
+    """Return indices and values of the ``p + 1`` locally supported bases."""
+    u = np.asarray(u, dtype=np.float64).ravel()
+    spans = np.searchsorted(U, u, side="right") - 1
+    spans = np.clip(spans, p, n_ctrl - 1)
+    values = np.ones((u.size, p + 1), dtype=np.float64)
+    left = np.empty(p + 1)
+    right = np.empty(p + 1)
+    for row, (value, span) in enumerate(zip(u, spans)):
+        for j in range(1, p + 1):
+            left[j] = value - U[span + 1 - j]
+            right[j] = U[span + j] - value
+            saved = 0.0
+            for r in range(j):
+                den = right[r + 1] + left[j - r]
+                term = values[row, r] / den if den else 0.0
+                values[row, r] = saved + right[r + 1] * term
+                saved = left[j - r] * term
+            values[row, j] = saved
+    return spans[:, None] - p + np.arange(p + 1), values
 
 
 def nurbs_curve(control_points, weights=None, *, degree: int = 3, knots=None, n: int = 200) -> dict:
@@ -497,10 +520,13 @@ def nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, kno
         raise ValueError("nurbs_surface: n は各方向 2 以上")
     u = np.linspace(Uu[p], Uu[mu], nu)
     v = np.linspace(Uv[q], Uv[mv], nv)
-    Nu = _bspline_basis(Uu, p, mu, u)                              # (nu, mu)
-    Nv = _bspline_basis(Uv, q, mv, v)                              # (nv, mv)
-    num = np.einsum("ai,bj,ij,ijk->abk", Nu, Nv, w, P)
-    den = np.einsum("ai,bj,ij->ab", Nu, Nv, w)
+    iu, Nu = _bspline_basis_local(Uu, p, mu, u)
+    iv, Nv = _bspline_basis_local(Uv, q, mv, v)
+    weighted = w[..., None] * P
+    num_u = np.einsum("ap,apjk->ajk", Nu, weighted[iu])
+    den_u = np.einsum("ap,apj->aj", Nu, w[iu])
+    num = np.einsum("bp,abpk->abk", Nv, num_u[:, iv, :])
+    den = np.einsum("bp,abp->ab", Nv, den_u[:, iv])
     S = num / den[..., None]
     ii, jj = np.meshgrid(np.arange(nu - 1), np.arange(nv - 1), indexing="ij")
     a = (ii * nv + jj).ravel()

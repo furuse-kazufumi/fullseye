@@ -374,7 +374,9 @@ def chapter_scene(best, photons_per_px):
     c = MT.material_optical_constants("SI", best[775.0])
     mr = 1.0 / (1.0 - c["reflectance_normal"] ** 2 * math.exp(-2.0 * c["alpha_per_cm"] * 775e-4))
     led = SR.energy_to_photons(SR.led_spectrum(best[775.0], LED_FWHM_NM, *GRID))
-    tail = 1.0 - SR.spectral_integral(led, best[775.0] - 1.5 * LED_FWHM_NM, best[775.0] + 1.5 * LED_FWHM_NM) / SR.spectral_integral(led)
+    integral_table = SR.spectral_integral_table(led)
+    tail = 1.0 - integral_table["integrate"](best[775.0] - 1.5 * LED_FWHM_NM,
+                                               best[775.0] + 1.5 * LED_FWHM_NM) / integral_table["integrate"]()
     NUMBERS.update({"multi_reflection": mr, "led_tail": tail})
     gate("第 3 章(多重反射込み・LED の全幅で光子数を規格化)と 4 %% 以内: レンダラ / 第 3 章 = %.3f。内訳 —— 板の中の往復(第 3 章だけ)"
          "×%.3f、LED の ±1.5 半値全幅の外の光子 %.1f %%(第 3 章だけが数える)、波長 %d 本の誤差 %+.1f %%"

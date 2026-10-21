@@ -238,7 +238,7 @@ def zhang_null_ratio(obj, obs) -> float:
         H = calib._homography_dlt(obj[:, :2], o)      # o は (x, y) —— 内部と同じ向き
         V.append(calib._vij(H, 0, 1))
         V.append(calib._vij(H, 0, 0) - calib._vij(H, 1, 1))
-    sv = np.linalg.svd(np.asarray(V))[1]
+    sv = np.linalg.svd(np.asarray(V), compute_uv=False)
     return float(sv[-2] / sv[0])
 
 

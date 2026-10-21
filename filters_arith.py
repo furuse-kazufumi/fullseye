@@ -108,7 +108,8 @@ def rank_n(images, rank=None):
     s = _stack(images)
     n = s.shape[0]
     r = n // 2 if rank is None else int(np.clip(rank, 0, n - 1))
-    return np.sort(s, axis=0)[r]
+    s.partition(r, axis=0)
+    return s[r]
 
 
 def rank_image(image, mask_size=3, rank=None):

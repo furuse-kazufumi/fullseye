@@ -7,7 +7,7 @@ out: feature
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.1  # fullseye lib version this note was generated for
+version: 0.7.2  # fullseye lib version this note was generated for
 ---
 
 # tb_dynsys_correlation_dimension — 2D `typed` op
@@ -37,6 +37,8 @@ Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``.
 set it grows like ``r**D``, and *D* is read off the straight part of the
 log-log plot (fitted on the middle 60 % of the radii, where the curve is free
 of the small-``r`` noise floor and the large-``r`` saturation).
+Pair distances use condensed storage and are sorted once; all strict
+``distance < radius`` counts then come from one binary-search operation.
 
 ★**Why this earns its place**: unlike box counting it needs no grid, and its
 answers are known for simple sets — a circle gives **1**, a filled square

@@ -465,6 +465,36 @@ def _renumber(lab: np.ndarray, keep) -> np.ndarray:
     return lut[lab]
 
 
+def _selection_feature(lab: np.ndarray, feature: str, spacing: float):
+    """Return present labels and a selection feature without unrelated work."""
+    counts = np.bincount(lab.ravel(), minlength=int(lab.max()) + 1)
+    labels = np.flatnonzero(counts[1:]) + 1
+    if feature == "area":
+        return labels, counts[labels].astype(np.float64) * spacing * spacing
+    if feature == "touches_border":
+        h, w = lab.shape
+        boxes = ndimage.find_objects(lab)
+        values = [
+            box[0].start == 0 or box[1].start == 0
+            or box[0].stop == h or box[1].stop == w
+            for label in labels
+            for box in (boxes[int(label) - 1],)
+        ]
+        return labels, np.asarray(values, bool)
+    if feature == "circularity":
+        boxes = ndimage.find_objects(lab)
+        values = []
+        for label in labels:
+            box = boxes[int(label) - 1]
+            perimeter = _perimeter(lab[box] == label)
+            area = float(counts[label])
+            values.append(4.0 * math.pi * area / (perimeter * perimeter)
+                          if perimeter > 0 else 0.0)
+        return labels, np.asarray(values, np.float64)
+    features = blob_features(lab, spacing)
+    return features["label"], np.asarray(features[feature])
+
+
 def blob_select(labels: Any, feature: str, vmin: Optional[float] = None,
                 vmax: Optional[float] = None, spacing: float = 1.0) -> np.ndarray:
     """特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。
@@ -498,16 +528,17 @@ def blob_select(labels: Any, feature: str, vmin: Optional[float] = None,
             "blob_select: give at least one of vmin / vmax - selecting with "
             "neither bound would silently return the input unchanged")
     lab = _as_labels(labels, "blob_select")
-    f = blob_features(lab, spacing)
-    if f["n"] == 0:
+    sp = _positive_float(spacing, "blob_select", "spacing")
+    labels_present, values = _selection_feature(lab, feature, sp)
+    if labels_present.size == 0:
         return np.zeros_like(lab)
-    v = np.asarray(f[feature], np.float64)
+    v = np.asarray(values, np.float64)
     ok = np.ones(v.shape, bool)
     if vmin is not None:
         ok &= v >= float(vmin)
     if vmax is not None:
         ok &= v <= float(vmax)
-    return _renumber(lab, f["label"][ok])
+    return _renumber(lab, labels_present[ok])
 
 
 def blob_select_largest(labels: Any, count: int = 1) -> np.ndarray:
@@ -522,11 +553,12 @@ def blob_select_largest(labels: Any, count: int = 1) -> np.ndarray:
     if c < 1:
         raise ValueError(f"blob_select_largest: count must be >= 1, got {count!r}")
     lab = _as_labels(labels, "blob_select_largest")
-    f = blob_features(lab)
-    if f["n"] == 0:
+    counts = np.bincount(lab.ravel(), minlength=int(lab.max()) + 1)
+    labels_present = np.flatnonzero(counts[1:]) + 1
+    if labels_present.size == 0:
         return np.zeros_like(lab)
-    order = np.argsort(-np.asarray(f["area"], np.float64), kind="stable")
-    return _renumber(lab, f["label"][order[:c]])
+    order = np.argsort(-counts[labels_present], kind="stable")
+    return _renumber(lab, labels_present[order[:c]])
 
 
 # --------------------------------------------------------------------------- #
@@ -620,13 +652,62 @@ def blob_distance(region: Any, spacing: float = 1.0) -> np.ndarray:
 
 def _reconstruct_by_dilation(seed: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """測地膨張による再構成(seed <= mask)。``mask`` の外へは広がらない。"""
-    fp = np.ones((3, 3), bool)
-    prev = seed
-    while True:
-        cur = np.minimum(ndimage.grey_dilation(prev, footprint=fp), mask)
-        if np.array_equal(cur, prev):
-            return cur
-        prev = cur
+    from collections import deque
+
+    out = np.minimum(seed, mask).copy()
+    h, w = out.shape
+    before = ((-1, -1), (-1, 0), (-1, 1), (0, -1))
+    after = ((0, 1), (1, -1), (1, 0), (1, 1))
+
+    # Hybrid reconstruction: the two raster scans perform the cheap directed
+    # propagation first. The FIFO then visits only pixels on a still-growing
+    # front instead of dilating and comparing the complete image each round.
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+    for row in range(h - 1, -1, -1):
+        for col in range(w - 1, -1, -1):
+            value = out[row, col]
+            for dr, dc in after:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+
+    queued = np.zeros((h, w), bool)
+    queue = deque()
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before + after:
+                rr, cc = row + dr, col + dc
+                if (0 <= rr < h and 0 <= cc < w
+                        and out[rr, cc] < value and out[rr, cc] < mask[rr, cc]):
+                    queue.append((row, col))
+                    queued[row, col] = True
+                    break
+    while queue:
+        row, col = queue.popleft()
+        queued[row, col] = False
+        value = out[row, col]
+        for dr, dc in before + after:
+            rr, cc = row + dr, col + dc
+            if not (0 <= rr < h and 0 <= cc < w):
+                continue
+            grown = min(value, mask[rr, cc])
+            if grown > out[rr, cc]:
+                out[rr, cc] = grown
+                if not queued[rr, cc]:
+                    queue.append((rr, cc))
+                    queued[rr, cc] = True
+    return out
 
 
 def blob_seeds(distance: Any, h: float, connectivity: int = 8) -> np.ndarray:

@@ -65,11 +65,16 @@ def _simulate(seed=0, throw=(2.2, 0.3, 7.2), n_steps=1100, substep=4):
     return (np.array(true_p), np.array(true_v), np.array(ts), dt)
 
 
-def _kalman(true_p, true_v, dt, *, pos_std=0.13, vel_std=0.10, vel_bias=0.11, seed=0):
+def _kalman(true_p, true_v, dt, *, pos_std=0.13, vel_std=0.10, vel_bias=0.11, seed=0,
+            method="exact"):
     """6-state constant-acceleration KF fusing a noisy **unbiased** position sensor
     with a low-noise but **biased** velocity sensor — the textbook reason fusion
     exists: an IMU drifts (bias integrates), an absolute sensor is noisy but doesn't.
-    Returns (measured_pos, deadreckon_pos, fused_pos)."""
+    Returns (measured_pos, deadreckon_pos, fused_pos).  ``method="steady_state"``
+    reuses the converged gain and is intended for long stationary records; unlike
+    the default it deliberately omits the initial covariance transient."""
+    if method not in ("exact", "steady_state"):
+        raise ValueError("method must be 'exact' or 'steady_state'")
     rng = np.random.default_rng(seed)
     N = len(true_p)
     meas_p = true_p + rng.normal(0, pos_std, true_p.shape)        # camera / GPS proxy (noisy, unbiased)
@@ -84,22 +89,43 @@ def _kalman(true_p, true_v, dt, *, pos_std=0.13, vel_std=0.10, vel_bias=0.11, se
     q = 0.05
     Q = np.eye(6) * q * dt
 
-    x = np.concatenate([meas_p[0], meas_v[0]])                    # init from first reading
-    P = np.eye(6) * 0.5
+    x = np.column_stack((meas_p[0], meas_v[0]))                   # one [position, velocity] state per axis
+    F2 = np.array([[1.0, dt], [0.0, 1.0]])
+    R2 = np.diag([pos_std**2, vel_std**2])
+    Q2 = np.eye(2) * q * dt
+    # This path is valid only for the demo's independent axes.  Keep the
+    # structural check beside the optimisation so later model changes fail.
+    axis_order = np.array([0, 3, 1, 4, 2, 5])
+    for matrix in (F, Q, R):
+        blocked = matrix[np.ix_(axis_order, axis_order)]
+        assert not np.any(blocked[~np.kron(np.eye(3, dtype=bool), np.ones((2, 2), bool))])
+    P = np.repeat((np.eye(2) * 0.5)[None], 3, axis=0)
+    steady_gain = None
+    if method == "steady_state":
+        ps = np.eye(2) * 0.5
+        for _ in range(10000):
+            pred = F2 @ ps @ F2.T + Q2
+            gain = pred @ np.linalg.inv(pred + R2)
+            nxt = (np.eye(2) - gain) @ pred
+            if np.array_equal(nxt, ps):
+                break
+            ps = nxt
+        steady_gain = gain
     fused = np.zeros((N, 3))
-    fused[0] = x[:3]
+    fused[0] = x[:, 0]
     # start at k=1: z[0] already seeded the state — reusing it as the first update would
     # count the same reading twice (and one predict step out of phase)
     for k in range(1, N):
-        x = F @ x + Bu                                            # predict
-        P = F @ P @ F.T + Q
-        z = np.concatenate([meas_p[k], meas_v[k]])
-        y = z - H @ x                                             # innovation
-        S = H @ P @ H.T + R
-        K = P @ H.T @ np.linalg.inv(S)
-        x = x + K @ y                                             # update
-        P = (np.eye(6) - K @ H) @ P
-        fused[k] = x[:3]
+        x = x @ F2.T + Bu.reshape(2, 3).T                          # predict
+        z = np.column_stack((meas_p[k], meas_v[k]))
+        if steady_gain is None:
+            P = F2 @ P @ F2.T + Q2
+            K = P @ np.linalg.inv(P + R2)
+            x = x + np.einsum("aij,aj->ai", K, z - x)
+            P = (np.eye(2) - K) @ P
+        else:
+            x = x + (z - x) @ steady_gain.T
+        fused[k] = x[:, 0]
 
     # dead-reckoning: integrate the noisy velocity from the true start (IMU only)
     dead = np.zeros((N, 3)); dead[0] = true_p[0]

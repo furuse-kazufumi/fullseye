@@ -67,10 +67,9 @@ def _morris_trajectory(k: int, p: int, delta: float, rng) -> tuple[np.ndarray, n
     J = np.ones((k + 1, k))
     grid_max = int(round((1.0 - delta) * (p - 1)))
     xstar = rng.integers(0, grid_max + 1, size=k) / (p - 1)
-    D = np.diag(rng.choice([-1.0, 1.0], size=k))
+    signs = rng.choice([-1.0, 1.0], size=k)
     perm = rng.permutation(k)
-    P = np.eye(k)[:, perm]
-    Bstar = (J * xstar[None, :] + 0.5 * delta * ((2 * B - J) @ D + J)) @ P
+    Bstar = (J * xstar[None, :] + 0.5 * delta * ((2 * B - J) * signs + J))[:, perm]
     diff = np.diff(Bstar, axis=0)
     changed = np.argmax(np.abs(diff), axis=1)
     sign = np.sign(diff[np.arange(k), changed])
@@ -518,7 +517,9 @@ def mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -> dict:
         rng = np.random.default_rng(seed)
         sims = np.empty((n_perm, s.size))
         for b in range(n_perm):
-            P = np.stack([A[rng.permutation(n), j] for j in range(p)], axis=1)
+            P = np.empty_like(A)
+            for j in range(p):
+                P[:, j] = A[rng.permutation(n), j]
             sims[b] = np.linalg.svd(P, compute_uv=False)
         thr = np.percentile(sims, 95, axis=0)
         mode = "permutation_parallel_analysis"

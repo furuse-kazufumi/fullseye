@@ -267,7 +267,8 @@ def vector_to_proj_hom_mat2d(src_points, dst_points):
     for (x, y), (u, v) in zip(src, dst):
         A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
         A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
-    _, _, Vt = np.linalg.svd(_m(A))
+    A = _m(A)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     H = Vt[-1].reshape(3, 3)
     return H / H[2, 2]
 

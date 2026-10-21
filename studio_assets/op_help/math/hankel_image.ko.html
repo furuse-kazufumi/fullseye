@@ -1,9 +1,9 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">hankel_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>축대칭 영상(둥근 개구·가우스 덩어리·회절 고리)의 2차원 푸리에 변환을 동경 방향 1개의 Hankel 변환으로 구한다.</p>
+<p>동경 Hankel 변환으로 축대칭 영상의 2차원 푸리에 변환을 구한다. <code style="color:#22d3bf">memory_budget</code> 는 측정 차이가 1e-10 이하인 저메모리 경로를 선택한다.</p>
 <p>영상을 중심으로부터의 거리로 1화소 폭의 고리로 나누어 평균하고(동경 분포), <code style="color:#22d3bf">hankel_transform</code>(0차)에 넣는다. 축대칭이면 2차원 변환이 <b>1개의 적분</b>으로 끝나며(고리로 평균하므로 잡음도 1/√(고리의 화소 수)로 줄어든다), 축대칭에서얼마나 벗어나 있는지(<code style="color:#22d3bf">asymmetry</code>)를 수치로 반환한다. 주파수 스텝은 2-D FFT와 마찬가지로 1/(2·반경) 정도이며, 더 세밀해지지 않는다.</p>
 <p>Args:</p>
 <p>image: 2-D 실수 영상.</p>

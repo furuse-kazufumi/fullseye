@@ -944,9 +944,9 @@ def _from_symplectic(A: np.ndarray, B: np.ndarray, m, n, lam) -> np.ndarray:
     """Inverse of :func:`_to_symplectic`."""
     out = np.empty(A.shape + (4,), np.float64)
     out[..., 0] = np.real(A)
-    out[..., 1:] = (np.imag(A)[..., None] * m[None, None, :]
-                    + np.real(B)[..., None] * n[None, None, :]
-                    + np.imag(B)[..., None] * lam[None, None, :])
+    ai, br, bi = np.imag(A), np.real(B), np.imag(B)
+    for j in range(3):
+        out[..., j + 1] = ai * m[j] + br * n[j] + bi * lam[j]
     return out
 
 
@@ -1065,7 +1065,7 @@ def iqft2(spectrum, side, mu=None) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # quaternion correlation                                                        #
 # --------------------------------------------------------------------------- #
-def quat_correlate(qimage, template) -> np.ndarray:
+def quat_correlate(qimage, template, *, method="exact") -> np.ndarray:
     """Quaternion cross-correlation ``sum_s conj(a(s)) * b(s+t)``. → (H, W, 4).
 
     Colour template matching that keeps the **colour geometry**, not just the
@@ -1119,7 +1119,9 @@ def quat_correlate(qimage, template) -> np.ndarray:
     a padding origin would move the peak.
 
     **Raises** ``ValueError``: either input is not a valid ``(H, W, 4)`` field,
-    or the two shapes differ."""
+    or the two shapes differ. ``method="exact"`` retains the full-spectrum
+    calculation; ``method="fast"`` uses a real-input half spectrum and can differ
+    by floating-point roundoff."""
     op = "quat_correlate"
     a = _require_qimage(qimage, "qimage", op)
     b = _require_qimage(template, "template", op)
@@ -1129,18 +1131,30 @@ def quat_correlate(qimage, template) -> np.ndarray:
                          "because choosing the padding origin here would move the "
                          "correlation peak without saying so"
                          % (op, tuple(a.shape), tuple(b.shape)))
+    if method not in ("exact", "fast"):
+        raise ValueError("%s: method must be 'exact' or 'fast', got %r" % (op, method))
+    if method == "fast":
+        Fa = [np.fft.rfft2(a[..., i]) for i in range(4)]
+        Fb = [np.fft.rfft2(b[..., i]) for i in range(4)]
+        ca = [np.conj(x) for x in Fa]
+        shape = a.shape[:2]
+        terms = [ca[0] * Fb[0] + ca[1] * Fb[1] + ca[2] * Fb[2] + ca[3] * Fb[3],
+                 ca[0] * Fb[1] - ca[1] * Fb[0] - ca[2] * Fb[3] + ca[3] * Fb[2],
+                 ca[0] * Fb[2] + ca[1] * Fb[3] - ca[2] * Fb[0] - ca[3] * Fb[1],
+                 ca[0] * Fb[3] - ca[1] * Fb[2] + ca[2] * Fb[1] - ca[3] * Fb[0]]
+        return np.stack([np.fft.irfft2(x, s=shape) for x in terms], axis=-1)
     Fa = [np.fft.fft2(a[..., i]) for i in range(4)]
     Fb = [np.fft.fft2(b[..., i]) for i in range(4)]
 
-    def xc(i, j):
-        """Circular cross-correlation ``sum_s a_i(s) b_j(s+t)``."""
-        return np.real(np.fft.ifft2(np.conj(Fa[i]) * Fb[j]))
-
-    # conj(a) = (a0, -a1, -a2, -a3); expand the Hamilton product term by term.
-    c0 = xc(0, 0) + xc(1, 1) + xc(2, 2) + xc(3, 3)
-    c1 = xc(0, 1) - xc(1, 0) - xc(2, 3) + xc(3, 2)
-    c2 = xc(0, 2) + xc(1, 3) - xc(2, 0) - xc(3, 1)
-    c3 = xc(0, 3) - xc(1, 2) + xc(2, 1) - xc(3, 0)
+    ca = [np.conj(x) for x in Fa]
+    c0 = np.real(np.fft.ifft2(ca[0] * Fb[0] + ca[1] * Fb[1]
+                              + ca[2] * Fb[2] + ca[3] * Fb[3]))
+    c1 = np.real(np.fft.ifft2(ca[0] * Fb[1] - ca[1] * Fb[0]
+                              - ca[2] * Fb[3] + ca[3] * Fb[2]))
+    c2 = np.real(np.fft.ifft2(ca[0] * Fb[2] + ca[1] * Fb[3]
+                              - ca[2] * Fb[0] - ca[3] * Fb[1]))
+    c3 = np.real(np.fft.ifft2(ca[0] * Fb[3] - ca[1] * Fb[2]
+                              + ca[2] * Fb[1] - ca[3] * Fb[0]))
     return np.stack([c0, c1, c2, c3], axis=-1)
 
 
@@ -1176,7 +1190,7 @@ def _riesz_kernels(h: int, w: int):
     return -1j * fu * inv, -1j * fv * inv, r
 
 
-def riesz_transform(image) -> np.ndarray:
+def riesz_transform(image, *, method="exact") -> np.ndarray:
     """The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4).
 
     The isotropic generalisation of the Hilbert transform: a *pair* of filters
@@ -1205,11 +1219,21 @@ def riesz_transform(image) -> np.ndarray:
     keeps the band-pass image in the scalar slot.
 
     **Raises** ``ValueError``: *image* is not a finite real ``(H, W)`` array with
-    ``H, W >= 2``, or exceeds :data:`MAX_PIXELS`."""
+    ``H, W >= 2``, or exceeds :data:`MAX_PIXELS`. ``method="fast"`` uses a
+    half-spectrum transform on odd-sized images and otherwise falls back to the
+    exact path, avoiding Nyquist-row ambiguity."""
     op = "riesz_transform"
     img = _require_image(image, "image", op)
     h, w = img.shape
     H1, H2, _r = _riesz_kernels(h, w)
+    if method not in ("exact", "fast"):
+        raise ValueError("%s: method must be 'exact' or 'fast', got %r" % (op, method))
+    if method == "fast" and h % 2 == 1 and w % 2 == 1:
+        F = np.fft.rfft2(img)
+        out = np.zeros((h, w, 4), np.float64)
+        out[..., 1] = np.fft.irfft2(F * H1[:, :F.shape[1]], s=img.shape)
+        out[..., 2] = np.fft.irfft2(F * H2[:, :F.shape[1]], s=img.shape)
+        return out
     F = np.fft.fft2(img)
     out = np.zeros((h, w, 4), np.float64)
     out[..., 1] = np.real(np.fft.ifft2(F * H1))
@@ -1407,6 +1431,20 @@ def monogenic_orientation(qimage, display: bool = False) -> np.ndarray:
     return th / np.pi if display else th
 
 
+def monogenic_metrics(qimage):
+    """Return amplitude, phase, and orientation after one validation.
+
+    The three arrays are numerically identical within 1e-12 to calling the
+    individual metric functions.  Use this entry when all three are needed.
+    """
+    q = _require_monogenic(qimage, "qimage", "monogenic_metrics")
+    rmag = np.sqrt(q[..., 1] ** 2 + q[..., 2] ** 2)
+    amplitude = np.sqrt(q[..., 0] ** 2 + rmag ** 2)
+    phase = np.arctan2(rmag, q[..., 0])
+    orientation = np.mod(np.arctan2(q[..., 2], q[..., 1]), np.pi)
+    return amplitude, phase, orientation
+
+
 # --------------------------------------------------------------------------- #
 # the radial (Riesz pyramid) bank                                              #
 # --------------------------------------------------------------------------- #
@@ -1598,14 +1636,15 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
     w_total = 0.0
     coh_num = 0.0
     coh_den = 0.0
-    for G in bank["bands"]:
+    vid_peak = float(np.abs(vid).max())
+    if gain == 0.0:
+        total_filter = np.sum(bank["bands"], axis=0) + bank["lowpass"] + bank["highpass"]
+        out = np.real(np.fft.ifft2(spec * total_filter[None], axes=(1, 2)))
+    for G in (() if gain == 0.0 else bank["bands"]):
         I, R1, R2 = _band_monogenic(spec, G, bank)
-        if gain == 0.0:
-            out += I
-            continue
         _nx, _ny, zbar, z, live, amp, amp_max, _Ib, _R1b, _R2b, _rm = \
             _band_reference(I, R1, R2)
-        if amp_max <= _AMP_FLOOR * max(float(np.abs(vid).max()), 1.0):
+        if amp_max <= _AMP_FLOOR * max(vid_peak, 1.0):
             out += I                       # contrast-free band: nothing to shift
             continue
         dphi = np.angle(z * np.conj(zbar)[None])
@@ -1623,9 +1662,9 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
         coh_den += float((ewgt * mabs).sum())
         rproj = np.imag(z)
         out += I * np.cos(shift) - rproj * np.sin(shift)
-    lp = np.real(np.fft.ifft2(spec * bank["lowpass"][None], axes=(1, 2)))
-    hp = np.real(np.fft.ifft2(spec * bank["highpass"][None], axes=(1, 2)))
-    out += lp + hp
+    if gain != 0.0:
+        residual = bank["lowpass"] + bank["highpass"]
+        out += np.real(np.fft.ifft2(spec * residual[None], axes=(1, 2)))
     if not np.isfinite(out).all():
         raise ValueError("%s: the reconstruction produced non-finite samples — "
                          "this is a bug in the filter bank, not in the input "
