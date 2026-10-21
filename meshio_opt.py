@@ -377,6 +377,12 @@ def read_gltf(path: str) -> list:
     buffers = _gltf_buffers(gltf, os.path.dirname(os.path.abspath(src)), src)
     meshes = getattr(gltf, "meshes", None) or []
     scene = []
+    accessor_cache = {}
+
+    def accessor(ai):
+        if ai not in accessor_cache:
+            accessor_cache[ai] = _read_accessor(gltf, buffers, ai, src)
+        return accessor_cache[ai]
     for node, mi, world in _iter_mesh_nodes(gltf, src):
         if mi < 0 or mi >= len(meshes):
             raise ValueError("%s: node references missing mesh %d" % (src, mi))
@@ -387,11 +393,11 @@ def read_gltf(path: str) -> list:
             pos_ai = getattr(attrs, "POSITION", None) if attrs is not None else None
             if pos_ai is None:
                 continue                                # nothing to place (e.g. pure morph target)
-            V = _finite_points(_read_accessor(gltf, buffers, int(pos_ai), src)
+            V = _finite_points(accessor(int(pos_ai))
                                .astype(np.float64), "vertices", src)
             idx_ai = getattr(prim, "indices", None)
             if idx_ai is not None:
-                idx = _read_accessor(gltf, buffers, int(idx_ai), src).astype(np.int64).ravel()
+                idx = accessor(int(idx_ai)).astype(np.int64).ravel()
             else:
                 idx = np.arange(V.shape[0], dtype=np.int64)
             F = _triangulate_indices(idx, getattr(prim, "mode", None), src)

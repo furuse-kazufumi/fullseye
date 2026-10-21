@@ -102,7 +102,7 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     fig, ax = plt.subplots(2, 2, figsize=(11, 9.4), facecolor=bg)
     for a in ax.ravel():
         a.axis("off")
-    # anaglyph-ish overlay of the pair to show the baseline shift
+    # omni_anaglyph_compose-ish overlay of the pair to show the baseline shift
     lr = np.zeros_like(left); lr[..., 0] = gl; lr[..., 1] = gr; lr[..., 2] = gr
     ax[0, 0].imshow(np.clip(lr, 0, 1)); ax[0, 0].set_title("stereo pair (L=red, R=cyan)", color=fgc)
     dd = np.where(valid, disp, np.nan)

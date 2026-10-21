@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 90 項目**
+**収録 94 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -44,6 +44,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
 | [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md) | `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report` | `poc_lens_tolerancing` |
 | [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
@@ -57,12 +58,14 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | `mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth` | `poc_plenoptic_camera` |
 | [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
@@ -74,6 +77,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
+| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` → `bilateral_filter_depth` → `depth_to_points` | `poc_tof_camera` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
 | [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
@@ -84,7 +88,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (31)
+## 測る (33)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -342,6 +346,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_sem_wafer_defect_edge_bias`
 
+### [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md)
+
+`examples/poc_sem_tem_same_particle.py` は、20〜80 nmの球形・ファセット粒子14個を一つの真値台帳で持ち、同じ位置・径・材料から走査像と透過像を作ります。ISO 13322-1型の面積相当径、最大傾斜の縁、距離変換と`watersheds_marker`による接触粒子分離を同じ真値に照合します。
+
+使う op: `sem_render`, `sem_image`, `tem_projected_potential`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `watersheds_marker`, `radon_transform`, `filtered_backprojection`
+
+推奨パイプライン: [`sem_render`](ops/generative/sem/sem_render.md) → [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md)
+
+代替: [`sem_image`](ops/generative/sem/sem_image.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`watersheds_marker`](ops/segmentation/watershed/watersheds_marker.md), [`radon_transform`](ops/tomography/forward/radon_transform.md), [`filtered_backprojection`](ops/tomography/reconstruct/filtered_backprojection.md)
+
+限界: 二次電子像は内部構造を示さず、透過像には薄い支持膜が要る。厚い粒子では弱位相近似が崩れ、限定角再構成は欠落角方向へ伸びる。
+
+実寸校正: 画素寸法を既知寸法試料で校正し、走査像はビーム幅、透過像は電子波長と焦点外れを記録する。PoCは既知のnm格子なので追加較正0。
+
+動く例: `poc_sem_tem_same_particle`
+
 ### [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md)
 
 商用の逐次光学設計ソフトで毎日使う 4 つの道具を、Fullseye の op として足しました。
@@ -445,6 +465,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 実寸校正: `cell_size` [m] を渡す —— 傾斜は高さと格子間隔の**比**なので、単位が揃っていないと角度が全部ずれる。
 
 動く例: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md)
+
+`poc_tof_camera` は床、二面コーナー、箱を積んだ荷台、光沢面、透明板、細い柱、暗明市松を 70°×55° のピンホールカメラから 320×240 画素で撮ります。各画素を 3×3 本の光線で積分し、Lambert 反射、逆二乗、レンズ減光、ショット雑音、読み出し雑音、暗電位、多経路を加えます。実データは Lawin・Forssén・Ovrén (ECCV 2016) の生フレーム、壁・メッシュの反復実測、無雑音の4相 MPI レンダリングを数値だけで照合します。README に再配布許諾が明記されていないため、実フレーム自体は公開図へ転載しません。
+
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`, `bilateral_filter_depth`, `depth_to_points`
+
+推奨パイプライン: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md) → [`bilateral_filter_depth`](ops/3d/depth_denoise/bilateral_filter_depth.md) → [`depth_to_points`](ops/3d/transform/depth_to_points.md)
+
+代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md)
+
+限界: 解析的な平面場面。間接方式は位相折返し・多経路・混合画素、直接方式は時間ビン・pile-up・光子欠乏を受ける。遮蔽面の奥は両方式とも測れない。
+
+実寸校正: 間接方式は変調周波数・位相段・電子数・背景光、直接方式は時間ビン・応答幅・光子数・デッドタイムを実測値に合わせる。
+
+動く例: `poc_tof_camera`
 
 ### [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md)
 
@@ -1078,7 +1114,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (7)
+## 組み立てる (8)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -1119,6 +1155,22 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 使う op: `inspect_batch`, `judge`, `as_verdict`, `run_pipeline`, `spc_ewma`, `save_xlsx_report`, `report`, `to_json_lines`
 
 動く例: `inspection_workflow`
+
+### [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md)
+
+`lenstol` は、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・レンズ群の偏心と傾きを、面または群ごとの行にします。一様分布、正規分布、±公差で切った正規分布を選べます。
+
+使う op: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+
+推奨パイプライン: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
+
+代替: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
+
+限界: 面の非点不整は二つの低次非点成分です。測定した面形状マップそのものは扱いません。設計ファイルとの往復は NOTE TOLERANCE_ROW 形式です。逆感度は線形近似です。
+
+実寸校正: 長さは mm、傾きは degree または arcminute、MTF は cycles/mm、波面 RMS は waves です。歩留まりには Wilson 95 % 区間を付けます。
+
+動く例: `poc_lens_tolerancing`
 
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 
@@ -1218,7 +1270,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 動く例: `annotate_paper_tour`
 
-## 描く (5)
+## 描く (6)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -1267,6 +1319,22 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 使う op: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
 
 動く例: `poc_illusions_and_perpetual_drawing`
+
+### [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md)
+
+主レンズ処方、マイクロレンズアレイ、センサを組み合わせ、一回の撮影から生のマイクロ画像と四次元ライトフィールドを作る。出力は既存のライトフィールド処理へ直接渡せる。
+
+使う op: `mla_surface`, `plenoptic_system`, `plenoptic_capture`, `plenoptic_mla_calibrate`, `plenoptic_decode`, `plenoptic_refocus_depth`
+
+推奨パイプライン: [`mla_surface`](ops/optics/plenoptic/mla_surface.md) → [`plenoptic_system`](ops/optics/plenoptic/plenoptic_system.md) → [`plenoptic_capture`](ops/optics/plenoptic/plenoptic_capture.md) → [`plenoptic_mla_calibrate`](ops/optics/plenoptic/plenoptic_mla_calibrate.md) → [`plenoptic_decode`](ops/optics/plenoptic/plenoptic_decode.md) → [`plenoptic_refocus_depth`](ops/optics/plenoptic/plenoptic_refocus_depth.md)
+
+代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
+
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+
+実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+
+動く例: `poc_plenoptic_camera`
 
 ### [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md)
 

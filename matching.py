@@ -14,17 +14,25 @@ def _f(a):
 
 
 def _ncc_map(t, img):
-    """正規化相互相関マップ(valid、[-1,1])を返す。"""
+    """Return a valid Pearson NCC map with values in ``[-1, 1]``.
+
+    Scores are invariant to positive scaling.  A constant template or a
+    truly constant image window has no defined correlation and scores 0.
+    """
     t = _f(t)
     img = _f(img)
     t0 = t - t.mean()
-    tn = np.sqrt((t0 ** 2).sum()) + 1e-12
+    tn = np.linalg.norm(t0)
     H, W = img.shape
     h, w = t.shape
     shape = (max(H - h + 1, 0), max(W - w + 1, 0))
     out = np.full(shape, -1.0)
     if not out.size:
         return out
+    if tn <= np.finfo(np.float64).tiny:
+        out.fill(0.0)
+        return out
+    t0 = t0 / tn
     # Direct correlation wins for small kernels; beyond 15x15 FFT avoids the
     # quadratic template-size cost.  Local moments come from integral images.
     method = "direct" if h * w <= 225 else "fft"
@@ -35,14 +43,22 @@ def _ncc_map(t, img):
     sums2 = integral2[h:, w:] - integral2[:-h, w:] - integral2[h:, :-w] + integral2[:-h, :-w]
     variance = sums2 - sums * sums / (h * w)
     variance = np.maximum(variance, 0.0)
-    out[:] = cross / (np.sqrt(variance) * tn + 1e-12)
-    # Cancellation in the moment identity is unreliable for nearly flat windows.
-    unstable = variance <= 1e-12
+    window_scale = np.maximum(np.abs(sums) / (h * w),
+                              np.sqrt(np.maximum(sums2, 0.0) / (h * w)))
+    threshold = (h * w) * (1e-6 * window_scale) ** 2
+    stable = variance > threshold
+    out.fill(0.0)
+    out[stable] = cross[stable] / np.sqrt(variance[stable])
+    # Recompute windows whose integral moments can lose their small variation
+    # beside a large offset.  The threshold is relative to each window.
+    unstable = ~stable
     for i, j in np.argwhere(unstable):
         p = img[i:i + h, j:j + w]
         p0 = p - p.mean()
-        out[i, j] = float((p0 * t0).sum()
-                          / (np.sqrt((p0 ** 2).sum()) * tn + 1e-12))
+        pn = np.linalg.norm(p0)
+        if pn > np.finfo(np.float64).tiny:
+            out[i, j] = float((p0 * t0).sum() / pn)
+    np.clip(out, -1.0, 1.0, out=out)
     return out
 
 
