@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1542. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1544. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2257,12 +2257,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L42** — ★The op set changes with the environment (Linux CI lacks torch/kornia/mahotas/xfeatures2d and has 859 ops; locally 885). A check comparing the locally generated docs against the **live registry** is only meaningful in a full environment —— same convention as test_opdocs: skip if not complete (the missing backend name appears in the reason). On the 2026-09-07 CI, 22 items failed on this. Environment-independent checks (file existence, content volume, figure existence) still run.
 - **L80** — ★Looking only at Markdown syntax falls short. `docs/GALLERY.md` uses `<img src="...">` in 14 places inside tables, and a naive scan for `](` sees none of them (found in Codex's adversarial review, 2026-09-06). Also look at raw HTML.
-- **L189** — ★Allowing duplicate markers lets an old table stay behind while still going green. The generator only rewrites the first start–end, so the second stays forever old and keeps getting published (Codex's adversarial review, 2026-09-06).
-- **L210** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
-- **L249** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
-- **L312** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
-- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
-- **L467** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
+- **L133** _(ja)_ — ★2026-10-21(ユーザー指示): docs/view2026/ は論文の QR コードが入口で、発表(12/3-4)まで 他の頁からリンクを張らない(目立たせない)。地図(_DOCMAP_SKIP)からも外してある。 発表後にここと _DOCMAP_SKIP の両方から外して地図に戻す。
+- **L193** — ★Allowing duplicate markers lets an old table stay behind while still going green. The generator only rewrites the first start–end, so the second stays forever old and keeps getting published (Codex's adversarial review, 2026-09-06).
+- **L214** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
+- **L253** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
+- **L316** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
+- **L404** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L471** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
 
 ## `tests/test_docs_no_local_paths.py`
 
@@ -2744,7 +2745,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L498** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
 - **L518** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
 - **L529** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L690** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L550** _(ja)_ — ★2026-10-21(ユーザー指示): view2026/ は論文の QR の行き先。会場で配るまで他の頁からリンクを張らない (地図に載せると docs/README* から辿れてしまう)。robots.txt でも Disallow にしてある。
+- **L692** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 

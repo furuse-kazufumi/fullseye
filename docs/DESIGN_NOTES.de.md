@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 614 von 1542. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 614 von 1544. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2257,12 +2257,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L42** — ★Die op-Menge ändert sich mit der Umgebung (Linux-CI fehlen torch/kornia/mahotas/xfeatures2d und hat 859 ops; lokal 885). Eine Prüfung, die die lokal erzeugten Dokumente gegen das **lebende Register** vergleicht, ist nur in einer vollen Umgebung sinnvoll —— gleiche Konvention wie test_opdocs: skip, wenn nicht vollständig (der fehlende Backend-Name erscheint im Grund). Im CI vom 2026-09-07 fielen hier 22 Einträge durch. Umgebungsunabhängige Prüfungen (Datei-Existenz, Inhaltsmenge, Abbildungs-Existenz) laufen weiterhin.
 - **L80** — ★Nur die Markdown-Syntax anzusehen reicht nicht. `docs/GALLERY.md` verwendet `<img src="...">` an 14 Stellen innerhalb von Tabellen, und ein naiver Scan nach `](` sieht keine davon (in Codex' adversarialem Review gefunden, 2026-09-06). Auch das rohe HTML ansehen.
-- **L189** — ★Doppelte Marker zuzulassen bedeutet, dass eine alte Tabelle stehen bleibt und trotzdem grün wird. Der Generator schreibt nur das erste start–end um, sodass das zweite für immer alt bleibt und weiter veröffentlicht wird (Codex' adversariales Review, 2026-09-06).
-- **L210** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
-- **L249** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
-- **L312** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
-- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
-- **L467** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
+- **L133** _(ja)_ — ★2026-10-21(ユーザー指示): docs/view2026/ は論文の QR コードが入口で、発表(12/3-4)まで 他の頁からリンクを張らない(目立たせない)。地図(_DOCMAP_SKIP)からも外してある。 発表後にここと _DOCMAP_SKIP の両方から外して地図に戻す。
+- **L193** — ★Doppelte Marker zuzulassen bedeutet, dass eine alte Tabelle stehen bleibt und trotzdem grün wird. Der Generator schreibt nur das erste start–end um, sodass das zweite für immer alt bleibt und weiter veröffentlicht wird (Codex' adversariales Review, 2026-09-06).
+- **L214** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
+- **L253** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
+- **L316** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
+- **L404** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L471** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
 
 ## `tests/test_docs_no_local_paths.py`
 
@@ -2744,7 +2745,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L498** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
 - **L518** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
 - **L529** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
-- **L690** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L550** _(ja)_ — ★2026-10-21(ユーザー指示): view2026/ は論文の QR の行き先。会場で配るまで他の頁からリンクを張らない (地図に載せると docs/README* から辿れてしまう)。robots.txt でも Disallow にしてある。
+- **L692** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 
