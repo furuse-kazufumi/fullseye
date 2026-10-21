@@ -425,12 +425,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_cad_scan_deviation.py`
 
 - **L434** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
-- **L895** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
-- **L1101** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
-- **L1254** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
-- **L1265** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
-- **L1355** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
-- **L1377** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L897** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
+- **L1103** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
+- **L1256** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
+- **L1267** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
+- **L1357** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1379** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -961,7 +961,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_print_warpage_risk.py`
 
 - **L364** — ★Eine neu entstehende Schicht wird "auf die zu diesem Zeitpunkt bereits verwölbte Fläche" gelegt (die Elementgeburt erfolgt in der verformten Konfiguration). Vergisst man, dies zu initialisieren, bleiben nur die später gewachsenen Schichten bei null Verschiebung und **die per Spaltenmittel gemessene Verwölbung wird 1/4** (am 2026-09-07 hineingetreten). Die Mechanik (K und f) liegt auf dem nominalen Gitter, ist also unverändert.
-- **L808** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
+- **L806** — ★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden.
 
 ## `examples/poc_pv_thermal_survey.py`
 
@@ -2732,8 +2732,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L48** — ★Die Übersetzungstabelle liegt in **einer anderen Datei als die Operatordokumentation**. Mit `opdocs.T` landete jeder abgefragte Originaltext in `opdocs.SEEN_STRINGS`, und das bestehende Tor „Löcher in den Rahmenübersetzungen“ würde alle 604 als Löcher zählen und die CI rot färben — jenes Tor sorgt dafür, dass Rahmentexte in allen fünf Sprachen vollständig sind, während dies hier eine nach und nach gefüllte Sammlung ist. **In einer gemeinsamen Tabelle zerstört die eine Disziplin die andere.**
 - **L82** — ★Ein Block = eine Folge von `#`-Kommentarzeilen, die von einer Zeile mit ★ ausgeht und mit derselben Einrueckung fortfaehrt. Auch Kommentare im Sphinx-Stil `#:` werden aufgenommen. Streift man nur `#` und Leerraum ab, bleibt vorne ein `:`
 - **L84** — uebrig, und im Artefakt erscheint "‎: ★…" (ist tatsaechlich passiert). Streife `:` hier ebenfalls ab.
-- **L108** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
-- **L200** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
+- **L128** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
+- **L220** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
 
 ## `tools/gen_docs_index_ops.py`
 

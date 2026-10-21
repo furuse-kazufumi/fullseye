@@ -425,12 +425,12 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_cad_scan_deviation.py`
 
 - **L434** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
-- **L895** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
-- **L1101** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
-- **L1254** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
-- **L1265** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
-- **L1355** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
-- **L1377** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L897** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
+- **L1103** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
+- **L1256** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
+- **L1267** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
+- **L1357** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1379** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -961,7 +961,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_print_warpage_risk.py`
 
 - **L364** — ★A newly born layer is placed "on the surface that is already warped at that time" (element birth is done in the deformed configuration). Forget to initialize this, and only the later-grown layers stay at zero displacement, and **the warp measured by column average becomes 1/4** (stepped on it 2026-09-07). The mechanics (K and f) are on the nominal grid, so they are unchanged.
-- **L808** — ★The neck vanishes entirely. The part splits into two, so it must not be solved.
+- **L806** — ★The neck vanishes entirely. The part splits into two, so it must not be solved.
 
 ## `examples/poc_pv_thermal_survey.py`
 
@@ -2732,8 +2732,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L48** — ★The translation table lives in **a separate file from the op docs**. Using `opdocs.T` would register every source string in `opdocs.SEEN_STRINGS`, and the existing "holes in the frame translations" gate would count all 604 of them as holes and turn CI red — that gate exists to keep frame strings complete in all five languages, while this one is a fill-as-you-go collection. **Mixing them into one table lets one discipline break the other.**
 - **L82** — ★One block = a run of `#` comment lines that starts from a line containing ★ and continues at the same indentation. Sphinx-style `#:` comments are also picked up. Stripping only `#` and whitespace leaves a `:` at the front
 - **L84** — left behind, and "‎: ★…" appears in the output artifact (it actually did). Strip `:` here as well.
-- **L108** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
-- **L200** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
+- **L128** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
+- **L220** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
 
 ## `tools/gen_docs_index_ops.py`
 
