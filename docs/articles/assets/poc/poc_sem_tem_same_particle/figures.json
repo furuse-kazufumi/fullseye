@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_truth_height.png",
+  "name": "truth_height",
+  "caption": "Truth height only: turbo-like pseudo-colour with a nanometre colour bar in the margin.",
+  "shape": [
+   1024,
+   1214,
+   3
+  ]
+ },
+ {
+  "file": "02_same_specimen_sem_tem.png",
+  "name": "same_specimen_sem_tem",
+  "caption": "Secondary-electron output | threshold and maximum-slope diameters | absolute residual.",
+  "shape": [
+   1100,
+   3072,
+   3
+  ]
+ },
+ {
+  "file": "03_tem_raw_overlay_error.png",
+  "name": "tem_raw_overlay_error",
+  "caption": "Bright-field in-focus and under-focus output | derived diameters | absolute residual.",
+  "shape": [
+   1100,
+   4096,
+   3
+  ]
+ },
+ {
+  "file": "04_diameter_bias.png",
+  "name": "diameter_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_touching_watershed.png",
+  "name": "touching_watershed",
+  "caption": "",
+  "shape": [
+   349,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "06_missing_wedge.png",
+  "name": "missing_wedge",
+  "caption": "",
+  "shape": [
+   282,
+   408,
+   3
+  ]
+ },
+ {
+  "file": "07_limits.png",
+  "name": "limits",
+  "caption": "",
+  "shape": [
+   176,
+   498,
+   3
+  ],
+  "csv": "07_limits.csv",
+  "tsv": "07_limits.tsv"
+ },
+ {
+  "file": "08_tem_focus_sweep.gif",
+  "name": "tem_focus_sweep",
+  "caption": "24 greyscale bright-field frames with data bar; first and last defocus differ",
+  "shape": [
+   516,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0,
+  "video": "08_tem_focus_sweep.mp4",
+  "video_frames": 24,
+  "video_fps": 8.0,
+  "video_shape": [
+   1100,
+   1024,
+   3
+  ]
+ }
+]
