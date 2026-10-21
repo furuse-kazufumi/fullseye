@@ -204,12 +204,12 @@ def _mean_box(v, a, b):
 
 
 def _mean_box_wh(v, a, b):
-    """Average with independently selected width and height.
+    """幅と高さを独立に選ぶ平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
 
-    Each knob maps to the odd sizes 1, 3, ..., 15 by
-    ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))``; this is equivalent to
-    rounding an even integer width or height up to the next odd value. Borders
-    always use ``reflect``. Example: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``.
+    ``a`` が窓の幅、``b`` が窓の高さで、各ノブは ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` で
+    奇数 1, 3, …, 15 に写す（偶数の幅・高さを次の奇数へ切り上げるのと同じ）。境界は常に
+    ``reflect``。幅と高さが同じなら、同じ窓・``reflect`` の ``mean_box`` とビット一致する。
+    例: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``。
     """
     width = 1 + 2 * min(7, int(8 * np.clip(a, 0.0, 1.0)))
     height = 1 + 2 * min(7, int(8 * np.clip(b, 0.0, 1.0)))
@@ -1561,16 +1561,16 @@ def _dist_transform(v, a, b):
 
 
 def _dist_transform_abs(v, a, b):
-    """Return absolute pixel distances without per-image normalisation.
+    """正規化しない絶対画素距離の距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。
 
-    ``a`` selects Euclidean (``a < 1/3``), city-block/L1
-    (``1/3 <= a < 2/3``), or chessboard/L-infinity distance. ``b < 0.5``
-    measures foreground pixels to background; otherwise it measures background
-    pixels to foreground. Example: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``.
+    ``a`` で距離の種類を選ぶ: ``a < 1/3`` はユークリッド、``1/3 <= a < 2/3`` は市街地（L1）、
+    それ以上はチェス盤（L∞）。``b < 0.5`` は各前景画素から最も近い背景画素までの距離、
+    ``b >= 0.5`` は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、
+    ``dist_transform`` と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心は
+    それぞれ 2 と 5）。例: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``。
 
-    The HALCON reference operator returns ``int4`` approximations. This op
-    deliberately returns exact ``float64`` distances and is not a compatibility
-    API.
+    HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
+    互換 API ではない。
     """
     mask = _bin(v) if b < 0.5 else ~_bin(v)
     if a < (1.0 / 3.0):

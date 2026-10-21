@@ -1,10 +1,10 @@
 {
- "n_ops": 3529,
+ "n_ops": 3531,
  "tiers": {
   "color": 12,
   "ledger": 2572,
   "nary": 17,
-  "registry": 928
+  "registry": 930
  },
  "sorts": [
   "angle",
@@ -35753,6 +35753,16 @@
    "requires": []
   },
   {
+   "name": "dist_transform_abs",
+   "halcon": "distance_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "distance_transform",
    "halcon": "distance_transform",
    "in_sort": "region",
@@ -38463,6 +38473,16 @@
   },
   {
    "name": "mean_box",
+   "halcon": "mean_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
+   "name": "mean_box_wh",
    "halcon": "mean_image",
    "in_sort": "image",
    "out_sort": "image",

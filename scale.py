@@ -49,7 +49,7 @@ _NOT_TILE_SAFE = frozenset({
     'anisotropic_diffusion', 'bothat', 'clahe', 'closest_point_transform', 'coherence_enhancing_diff', 'corner_response',
     'cv_blackhat', 'cv_clahe', 'cv_corner_harris', 'cv_dist', 'cv_gradient', 'cv_laplacian',
     'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
-    'diff_of_gauss', 'dist_transform', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
+    'diff_of_gauss', 'dist_transform', 'dist_transform_abs', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
     'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
     # ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、
     #   tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の

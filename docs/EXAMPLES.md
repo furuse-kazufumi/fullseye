@@ -1,6 +1,6 @@
 # imgevolve — sample code (cross-library recipes)
 
-Runnable style; `img` is a float64 HxW in [0,1]. imgevolve calls are exact; the OpenCV/scikit-image lines are the equivalent calls (args are illustrative). The full 940-op x 4-library API table is in `OPERATORS.md`.
+Runnable style; `img` is a float64 HxW in [0,1]. imgevolve calls are exact; the OpenCV/scikit-image lines are the equivalent calls (args are illustrative). The full 942-op x 4-library API table is in `OPERATORS.md`.
 
 ## End-to-end workflow (evolve -> codegen -> verify)
 
