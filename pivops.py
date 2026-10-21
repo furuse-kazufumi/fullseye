@@ -1332,20 +1332,36 @@ def piv_time_statistics(images, window=32, overlap=0.5, **kw):
     if len(seq) < 3:
         raise ValueError(
             f"images must hold at least 3 frames to define a fluctuation, got {len(seq)}")
-    flows, info = [], None
+    sums = sums2 = counts = None
+    sum_uv = sum_u_pair = sum_v_pair = count_pair = None
+    info = None
+    n_pairs = 0
     for k in range(len(seq) - 1):
         f, info = piv_cross_correlate(seq[k], seq[k + 1], window, overlap, **kw)
-        flows.append(f)
-    stack = np.stack(flows)                       # (n, 2, h, w)
-    mean = np.nanmean(stack, axis=0)
-    fluct = stack - mean
-    rms = np.sqrt(np.nanmean(fluct ** 2, axis=0))
-    reynolds = np.nanmean(fluct[:, 0] * fluct[:, 1], axis=0)
+        finite = np.isfinite(f)
+        clean = np.where(finite, f, 0.0)
+        if sums is None:
+            sums = np.zeros_like(f); sums2 = np.zeros_like(f)
+            counts = np.zeros(f.shape, dtype=np.int64)
+            sum_uv = np.zeros(f.shape[1:]); sum_u_pair = np.zeros(f.shape[1:])
+            sum_v_pair = np.zeros(f.shape[1:]); count_pair = np.zeros(f.shape[1:], np.int64)
+        sums += clean; sums2 += clean * clean; counts += finite
+        pair = finite[0] & finite[1]
+        sum_uv += np.where(pair, f[0] * f[1], 0.0)
+        sum_u_pair += np.where(pair, f[0], 0.0)
+        sum_v_pair += np.where(pair, f[1], 0.0)
+        count_pair += pair
+        n_pairs += 1
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mean = sums / counts
+        rms = np.sqrt(np.maximum(0.0, sums2 / counts - mean * mean))
+        reynolds = (sum_uv - mean[0] * sum_v_pair - mean[1] * sum_u_pair
+                    + count_pair * mean[0] * mean[1]) / count_pair
     speed = np.hypot(mean[0], mean[1])
     with np.errstate(invalid="ignore", divide="ignore"):
         ti = np.where(speed > _EPS, np.hypot(rms[0], rms[1]) / speed, np.nan)
     return {"mean": mean, "rms": rms, "reynolds": reynolds,
-            "turbulence_intensity": ti, "n_pairs": len(flows),
+            "turbulence_intensity": ti, "n_pairs": n_pairs,
             "rows": info["rows"], "cols": info["cols"], "step": info["step"]}
 
 

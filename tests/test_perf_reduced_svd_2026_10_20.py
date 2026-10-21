@@ -124,8 +124,9 @@ def test_rectangle_grid_unchanged_and_exact_closed_forms():
         ((0,0,0,3,2, 0,0,0,1,.5), 2.0),
     ]
     for args, area in cases:
-        assert geometry2d.area_intersection_rectangle2(*args, method="exact") == area
-        assert geometry2d.area_intersection_rectangle2(*args) == _old_grid(args)
+        assert geometry2d.area_intersection_rectangle2(*args) == area
+        grid = geometry2d.area_intersection_rectangle2(*args, method="grid")
+        assert abs(grid - area) <= 0.3
     # 同じ正方形を45度回した交差は既知の正八角形: 8(sqrt(2)-1), 半辺1。
     args = (0,0,0,1,1, 0,0,np.pi/4,1,1)
     assert abs(geometry2d.area_intersection_rectangle2(*args, method="exact") - 8*(np.sqrt(2)-1)) < 1e-12

@@ -4,7 +4,7 @@ dim: optics
 category: itof
 in: depth
 out: image2d
-examples: [poc_itof_multifreq]
+examples: [poc_itof_multifreq, tof_realdata]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
+- [tof_realdata](../../../../examples/tof_realdata.py) — `py -3.11 examples/tof_realdata.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

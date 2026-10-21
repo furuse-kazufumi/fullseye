@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bb5f3e736657 -->
+<!-- i18n-source-sha: 71c18c518f4c -->
 # Fullseye Studio 完全指南
 
 繁重处理不会冻结窗口。底部区域显示当前阶段和进度；停止请求会在下一个阶段边界得到确认。若运行期间设置发生变化，界面会标明显示结果的代次，并可选择查看旧设置的完成结果或用当前设置重新运行。
@@ -319,3 +319,4 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 感知面板的内容（flow / stereo / terrain）
 - [ENGINE.md](ENGINE.md) — 执行导出的流水线
 - [GETTING_STARTED.md](GETTING_STARTED.md) — 5 分钟入门
+- **验证导出的 Python（Run ▸ Verify exported Python / Ctrl+Shift+R）**：在隔离的 Python 进程中运行可编辑的导出代码，并逐阶段与 GUI 中间结果比较。可设置绝对、相对容差，以及 NaN 必须同位置、忽略或禁止。shape 和 dtype 始终必须一致。不一致会加入 Problems，并定位到首个不同阶段；Studio 只报告，不修改数值。

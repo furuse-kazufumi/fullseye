@@ -1,0 +1,104 @@
+[
+ {
+  "file": "01_world.png",
+  "name": "world",
+  "caption": "Seed 275; tunnel radius 3.00 m; crack angular width 3.00 deg.",
+  "shape": [
+   605,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "02_fisheye_stitch.png",
+  "name": "fisheye_stitch",
+  "caption": "Measured seam MAE 0.0157; blind pixels 0.000 % (reported, never filled silently).",
+  "shape": [
+   1159,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "03_latitude_processing.png",
+  "name": "latitude_processing",
+  "caption": "Horizontal half-height width ratio 0.314; defect solid angle 0.03687 sr versus unweighted 0.02399 sr.",
+  "shape": [
+   605,
+   3112,
+   3
+  ]
+ },
+ {
+  "file": "04_viewer_path.png",
+  "name": "viewer_path",
+  "caption": "The measured path requests 16/32 tiles (50.0 %).",
+  "shape": [
+   605,
+   2098,
+   3
+  ]
+ },
+ {
+  "file": "05_ods_depth.png",
+  "name": "ods_depth",
+  "caption": "At 3.00 m: disparity 3.477 px and inverted depth 3.000000 m.",
+  "shape": [
+   1159,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "06_stabilisation.png",
+  "name": "stabilisation",
+  "caption": "WS-PSNR improved from 20.13 to 33.51 dB; residual 0.0078.",
+  "shape": [
+   605,
+   3112,
+   3
+  ]
+ },
+ {
+  "file": "07_pipe_unwrap.png",
+  "name": "pipe_unwrap",
+  "caption": "Crack axial extent 1.371 m; scene truth 2.160 m (pixel quantisation applies).",
+  "shape": [
+   605,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "08_anaglyph_and_limits.png",
+  "name": "anaglyph_and_limits",
+  "caption": "Ideal ghosting 0.0000/0.0000; 10 % leakage 0.0693/0.0014; 24-inch-class screen parallax 1.80 mm; seam 0.0157; pole sampling shown in chapter 1.",
+  "shape": [
+   1159,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "09_viewport_flight.gif",
+  "name": "viewport_flight",
+  "caption": "Thirty differing frames; the first frame is already moving.",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 15,
+  "frames_written": 15,
+  "fps": 5.0,
+  "video": "09_viewport_flight.mp4",
+  "video_frames": 30,
+  "video_fps": 10.0,
+  "video_shape": [
+   512,
+   512,
+   3
+  ]
+ }
+]
