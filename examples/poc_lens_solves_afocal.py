@@ -614,6 +614,22 @@ def make_figure(tab, s2, tele_out, real, lens, curved, rows, asph):
                       "2 段目: 実ガラスの 2 つの色消し 2 枚の afocal 望遠鏡の角度のスポット RMS(分角)と角倍率の歪み、1° の射出角の散らばり。"
                       "3・4 段目: 非点収差を 0 にした薄いメニスカスの 0 / 5 / 7 / 10° のスポット、平らな像面(3 段目)とペッツバール半径の像面(4 段目)。"
                       "最下段: 左 円錐面(r¹)の板の光線が軸を横切る位置と閉形式、右 球面収差の補正板に足す項ごとの軸上スポット(板なし = 1)。")
+    frames = []
+    yy, xx = np.ogrid[:240, :240]
+    for field in np.linspace(0.0, 10.0, 32):
+        b = RT.ray_bundle(curved, field=float(field), rings=6)
+        d = (b["image_xy"] - b["chief_xy"])[b["valid"]]
+        lim = max(float(np.abs(d).max()), 1e-12)
+        canvas = np.zeros((240, 240))
+        q = np.clip(((d / (2.2 * lim) + 0.5) * 239).astype(int), 0, 239)
+        for x, y in q:
+            canvas[(yy - y) ** 2 + (xx - x) ** 2 <= 9 ** 2] = 1.0
+        frames.append(figs.video_frame(canvas, "視野角 %.1f°" % field, gray=True))
+    assert len(frames) >= 24
+    figs._assert_video_frames_meaningful(frames)
+    figs.save_video("solved_surface_field_sweep", frames,
+                    caption="解いた曲面像面で視野角を掃引したスポット。", fps=10.0,
+                    gif_every=2, gif_fps=5.0, gif_width=480)
 
 
 def main():

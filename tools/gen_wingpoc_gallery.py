@@ -329,7 +329,10 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
                 second: dict | None = None, thumb2: str | None = None,
                 extras: list | None = None, more: list | None = None) -> str:
     title = ex["title_" + lang]
-    cap = ex["caption_" + lang]
+    # A realism pass may replace the lead figure without replacing the long exhibit
+    # plaque.  Keep the detailed plaque, but let the canonical registry describe the
+    # new lead image precisely in each published language.
+    cap = ex.get("figure_caption_" + lang) or ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
@@ -349,12 +352,13 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         th2 = RAW + ex["id"] + "/" + thumb2
         # 図に説明が付いていなければ機械名(`auc_by_type` など)は出さない
         sub = (second.get("caption") or "").strip()
+        translated_sub = (ex.get("second_figure_caption_" + lang) or sub).strip()
         alt = (sub[:120] if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
         if lang == "ja":
-            cap_line = ("*↑ 測定の図 ―― %s*" % sub) if sub else "*↑ 測定の図*"
+            cap_line = ("*↑ 測定の図 ―― %s*" % translated_sub) if translated_sub else "*↑ 測定の図*"
         else:
-            tail = "(figure labels are in Japanese; the numbers are the same)"
-            cap_line = ("*↑ The measurement ―― %s %s*" % (sub, tail)) if sub else ("*↑ The measurement %s*" % tail)
+            tail = "" if ex.get("second_figure_caption_en") else " (figure labels are in Japanese; the numbers are the same)"
+            cap_line = ("*↑ The measurement ―― %s%s*" % (translated_sub, tail)) if translated_sub else ("*↑ The measurement%s*" % tail)
         lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
     # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
     # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。

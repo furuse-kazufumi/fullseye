@@ -56,6 +56,37 @@ def _ramp(n=48):
     return np.linspace(0.0, 1.0, n)[None, :] * np.ones((n, 1))
 
 
+def test_depth_kind_appends_turbo_colourbar(tmp_path, monkeypatch):
+    from PIL import Image
+
+    monkeypatch.setenv(examplefig.ENV_DIR, str(tmp_path))
+    src = np.linspace(-2.0, 3.0, 12000).reshape(100, 120)
+    path = examplefig.save("depth", src, kind="depth", unit="mm")
+    out = np.asarray(Image.open(path))
+    assert out.shape[0] == src.shape[0]
+    assert out.shape[1] > src.shape[1]
+    assert np.ptp(out[:, :src.shape[1], 0]) > 100
+    assert np.any(out[:, src.shape[1]:] < 80), "colour bar labels must be drawn"
+
+
+def test_depth_kind_refuses_gray_even_when_output_is_disabled(monkeypatch):
+    monkeypatch.delenv(examplefig.ENV_DIR, raising=False)
+    with pytest.raises(ValueError, match="kind=.*gray=True"):
+        examplefig.save("bad", np.zeros((4, 4)), kind="depth", gray=True)
+
+
+def test_grid_colourbar_options_are_per_panel(tmp_path, monkeypatch):
+    monkeypatch.setenv(examplefig.ENV_DIR, str(tmp_path))
+    a = np.arange(12000.0).reshape(100, 120)
+    path = examplefig.save_grid(
+        "maps", [a, -a], captions=["depth", "displacement"], ncols=2,
+        kind=["depth", "displacement"], unit=["mm", "mm"],
+        vrange=[(0, 11999), (-11999, 11999)],
+    )
+    assert path is not None
+    assert examplefig.errors() == []
+
+
 # --------------------------------------------------------------------------- #
 # 1. 既定では何もしない                                                         #
 # --------------------------------------------------------------------------- #
