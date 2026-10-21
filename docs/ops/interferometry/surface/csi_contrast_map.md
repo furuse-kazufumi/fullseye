@@ -4,7 +4,7 @@ dim: interferometry
 category: surface
 in: zscan
 out: image2d
-examples: [coherence_scanning]
+examples: [coherence_scanning, poc_interferometry_step]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.2  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ complex / masked stack, or a non-bool *remove_bias*.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [coherence_scanning](../../../../examples/coherence_scanning.py) — `py -3.11 examples/coherence_scanning.py`
+- [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

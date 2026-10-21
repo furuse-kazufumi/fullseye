@@ -85,13 +85,33 @@ _SKIP_DIRS = ("build/", "out/", ".venv/", ".git/", "studio_assets/")
 _COMMENT = re.compile(r"^(\s*)#:?\s?(.*)$")
 
 
+def _physical_lines(text: str) -> list[str]:
+    """Return editor-style physical lines after universal-newline decoding.
+
+    ``str.splitlines()`` also treats control characters and Unicode line
+    separators as boundaries. Source line numbers, like ``grep -n`` and
+    Python's tokenizer, advance only at decoded ``\n`` boundaries.
+    """
+    return text.split("\n")
+
+
+def _blocks_from_text(text: str, rel: str):
+    """Extract design-note blocks from already decoded source text."""
+    lines = _physical_lines(text)
+    return _blocks_from_lines(lines, rel)
+
+
 def _blocks_in(path: str, rel: str):
     """1 ファイルから ★ コメントの塊を取り出す。"""
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
-            lines = f.read().splitlines()
+            return _blocks_from_text(f.read(), rel)
     except OSError:
         return []
+
+
+def _blocks_from_lines(lines: list[str], rel: str):
+    """Extract design-note blocks from physical source lines."""
     out, i = [], 0
     while i < len(lines):
         m = _COMMENT.match(lines[i])

@@ -1178,6 +1178,102 @@
    "de": "letztes Ergebnis",
    "hi": "पिछला परिणाम"
   },
+  "CSV file…": {
+   "ja": "CSV ファイル…",
+   "zh": "CSV 文件…",
+   "tw": "CSV 檔案…",
+   "ko": "CSV 파일…",
+   "de": "CSV-Datei…",
+   "hi": "CSV फ़ाइल…"
+  },
+  "Open CSV table": {
+   "ja": "CSV 表を開く",
+   "zh": "打开 CSV 表",
+   "tw": "開啟 CSV 表格",
+   "ko": "CSV 표 열기",
+   "de": "CSV-Tabelle öffnen",
+   "hi": "CSV तालिका खोलें"
+  },
+  "No CSV selected": {
+   "ja": "CSV が選択されていません",
+   "zh": "未选择 CSV",
+   "tw": "尚未選取 CSV",
+   "ko": "CSV를 선택하지 않았습니다",
+   "de": "Keine CSV-Datei ausgewählt",
+   "hi": "कोई CSV चयनित नहीं है"
+  },
+  "Input table": {
+   "ja": "入力表",
+   "zh": "输入表",
+   "tw": "輸入表格",
+   "ko": "입력 표",
+   "de": "Eingabetabelle",
+   "hi": "इनपुट तालिका"
+  },
+  "Data check": {
+   "ja": "データ確認",
+   "zh": "数据检查",
+   "tw": "資料檢查",
+   "ko": "데이터 확인",
+   "de": "Datenprüfung",
+   "hi": "डेटा जाँच"
+  },
+  "part ID": {
+   "ja": "部品 ID",
+   "zh": "零件 ID",
+   "tw": "零件 ID",
+   "ko": "부품 ID",
+   "de": "Teile-ID",
+   "hi": "भाग ID"
+  },
+  "operator": {
+   "ja": "測定者",
+   "zh": "测量员",
+   "tw": "量測員",
+   "ko": "측정자",
+   "de": "Prüfperson",
+   "hi": "मापकर्ता"
+  },
+  "measured value": {
+   "ja": "測定値",
+   "zh": "测量值",
+   "tw": "量測值",
+   "ko": "측정값",
+   "de": "Messwert",
+   "hi": "मापा गया मान"
+  },
+  "Column assignment missing for: %s": {
+   "ja": "列の割り当てがありません: %s",
+   "zh": "缺少列分配：%s",
+   "tw": "缺少欄位指派：%s",
+   "ko": "열 할당이 없습니다: %s",
+   "de": "Spaltenzuordnung fehlt für: %s",
+   "hi": "इनके लिए स्तंभ असाइनमेंट नहीं है: %s"
+  },
+  "Missing values: %s": {
+   "ja": "欠損値があります: %s",
+   "zh": "存在缺失值：%s",
+   "tw": "有缺失值：%s",
+   "ko": "누락된 값이 있습니다: %s",
+   "de": "Fehlende Werte: %s",
+   "hi": "अनुपलब्ध मान: %s"
+  },
+  "Unequal repeats per part x operator group; expected %d: %s": {
+   "ja": "部品×測定者の組ごとの反復数が不均一です。期待値 %d: %s",
+   "zh": "每个零件×测量员组合的重复次数不一致；应为 %d：%s",
+   "tw": "每個零件×量測員組合的重複次數不一致；應為 %d：%s",
+   "ko": "부품×측정자 그룹별 반복 횟수가 같지 않습니다. 예상 횟수 %d: %s",
+   "de": "Ungleiche Wiederholungszahlen je Teile-/Prüfpersonengruppe; erwartet %d: %s",
+   "hi": "भाग×मापकर्ता समूहों में दोहराव की संख्या असमान है; अपेक्षित %d: %s"
+  },
+  "%d rows; part: %d distinct; operator: %d distinct; value: 0 missing; %d repeats per part x operator group": {
+   "ja": "%d 行、部品: %d 種類、測定者: %d 名、測定値: 欠損 0、部品×測定者の組ごとに %d 回反復",
+   "zh": "%d 行；零件：%d 种；测量员：%d 名；测量值：缺失 0；每个零件×测量员组合重复 %d 次",
+   "tw": "%d 列；零件：%d 種；量測員：%d 名；量測值：缺失 0；每個零件×量測員組合重複 %d 次",
+   "ko": "%d행; 부품: %d종; 측정자: %d명; 측정값: 누락 0; 부품×측정자 그룹마다 %d회 반복",
+   "de": "%d Zeilen; Teile: %d verschieden; Prüfpersonen: %d verschieden; Messwerte: 0 fehlend; %d Wiederholungen je Teile-/Prüfpersonengruppe",
+   "hi": "%d पंक्तियाँ; भाग: %d अलग; मापकर्ता: %d अलग; मान: 0 अनुपलब्ध; प्रत्येक भाग×मापकर्ता समूह में %d दोहराव"
+  },
   "sample value: ": {
    "ja": "見本の値: ",
    "zh": "样本值：",
