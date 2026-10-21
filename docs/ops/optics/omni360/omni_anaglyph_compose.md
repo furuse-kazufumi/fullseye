@@ -1,29 +1,23 @@
 ---
-op: equirect_stabilise
+op: omni_anaglyph_compose
 dim: optics
 category: omni360
-in: images
-out: table
+in: rgbimage × rgbimage
+out: rgbimage
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.7.1  # fullseye lib version this note was generated for
 ---
 
-# equirect_stabilise — OPTICS `omni360` op
+# omni_anaglyph_compose — OPTICS `omni360` op
 
-- **データ種**: `images` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48))` (実装を直接呼ぶなら `import omni360; omni360.equirect_stabilise(frames, residual_limit=0.08, sample_shape=(24, 48))`、台帳から引くなら `opsoptics.get("equirect_stabilise")`)
+- **データ種**: `rgbimage × rgbimage` → `rgbimage`
+- **呼び出し**: `import fullseye as fs; fs.ledger.omni_anaglyph_compose(left, right, method='dubois')` (実装を直接呼ぶなら `import omni360; omni360.omni_anaglyph_compose(left, right, method='dubois')`、台帳から引くなら `opsoptics.get("omni_anaglyph_compose")`)
 
 ## 使い方
 
-Estimate and remove camera rotations from an equirectangular sequence.
-
-Each frame is registered to the first one by minimising a cosine-latitude
-weighted photometric residual on the sphere.  The returned rotations map
-each input frame back to the reference.  ``removable`` is false when the
-remaining normalised RMS exceeds ``residual_limit``; callers must inspect
-it rather than silently treating translational/parallax motion as rotation.
+Compose a colour-filter stereo image; Dubois matrices follow the 2001 least-squares paper.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -51,9 +45,9 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [poc_omni360_inspection](../../../../examples/poc_omni360_inspection.py) — `py -3.11 examples/poc_omni360_inspection.py`
 
-## 型が繋がる次の op(`table` を入力に取れる)
+## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [sfr_from_edge](../imaging/sfr_from_edge.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md)
+[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [underwater_inspection_image](../watervision/underwater_inspection_image.md) · [cubemap_from_equirect](cubemap_from_equirect.md)
 
 ## 同カテゴリ(`omni360`)
 

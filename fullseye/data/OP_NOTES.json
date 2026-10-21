@@ -29453,16 +29453,6 @@
     "path": "docs/ops/optics/oct/oct_layer_thickness.md"
    }
   ],
-  "anaglyph": [
-   {
-    "op": "anaglyph",
-    "dim": "optics",
-    "category": "omni360",
-    "in": "rgbimage × rgbimage",
-    "out": "rgbimage",
-    "path": "docs/ops/optics/omni360/anaglyph.md"
-   }
-  ],
   "anaglyph_crosstalk": [
    {
     "op": "anaglyph_crosstalk",
@@ -29553,14 +29543,14 @@
     "path": "docs/ops/optics/omni360/equirect_rotate.md"
    }
   ],
-  "equirect_stabilise": [
+  "equirect_stabilize": [
    {
-    "op": "equirect_stabilise",
+    "op": "equirect_stabilize",
     "dim": "optics",
     "category": "omni360",
     "in": "images",
     "out": "table",
-    "path": "docs/ops/optics/omni360/equirect_stabilise.md"
+    "path": "docs/ops/optics/omni360/equirect_stabilize.md"
    }
   ],
   "equirect_weight_map": [
@@ -29599,6 +29589,16 @@
     "category": "omni360",
     "out": "images",
     "path": "docs/ops/optics/omni360/ods_render.md"
+   }
+  ],
+  "omni_anaglyph_compose": [
+   {
+    "op": "omni_anaglyph_compose",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/omni_anaglyph_compose.md"
    }
   ],
   "s_psnr": [

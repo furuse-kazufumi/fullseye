@@ -851,20 +851,6 @@
    ]
   },
   {
-   "name": "anaglyph",
-   "halcon": "",
-   "in_sort": "rgbimage",
-   "out_sort": "rgbimage",
-   "category": "omni360",
-   "tier": "ledger",
-   "ledger": "opsoptics",
-   "dim": "optics",
-   "in_sorts": [
-    "rgbimage",
-    "rgbimage"
-   ]
-  },
-  {
    "name": "anaglyph_crosstalk",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -8340,7 +8326,7 @@
    ]
   },
   {
-   "name": "equirect_stabilise",
+   "name": "equirect_stabilize",
    "halcon": "",
    "in_sort": "images",
    "out_sort": "table",
@@ -18980,6 +18966,20 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "omni_anaglyph_compose",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
   },
   {
    "name": "opd_map",

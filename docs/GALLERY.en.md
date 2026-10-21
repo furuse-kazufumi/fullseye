@@ -291,7 +291,7 @@ Thumbnails (720px-wide JPG) are the `*_thumb.jpg` in the same directory.
 | `science_edge_compass.png` | A neon image painting contour orientation with a hue wheel (sobel_dir, sobel_amp) |
 | `science_alife_worlds.png` | 6 panels of Rule 90 fractal / Rule 30 chaos / sandpile / DLA dendrite / Lenia / cyclic CA (iterated application of alife_*. Simulation images) |
 | `science_dino_xray.png` | A real scan of the Smithsonian Triceratops osteological specimen (CC0), voxelized → an X-ray look via vol_mip (voxelize, vol_gaussian, vol_mip) |
-| `science_dragon_anaglyph.png` | A red-cyan anaglyph of two-viewpoint renders of the Stanford dragon (read_mesh, look_at, render_mesh) |
+| `science_dragon_anaglyph.png` | A red-cyan omni_anaglyph_compose of two-viewpoint renders of the Stanford dragon (read_mesh, look_at, render_mesh) |
 | `science_dino_terrain.png` | A 600k-point cloud of the osteological specimen → elevation map → terrain-shading coloring. The spine becomes a mountain range (elevation_map, colorize_height) |
 | `science_morph_pulse.gif` | A 26-frame morphology animation: merging by dilation → thinning by erosion (dilation_circle, erosion_circle) |
 | `science_wobble_warp.png` | Before/after of spatial deformation in the 3 styles of TPS/FFD/MLS (deform_tps/ffd/mls) |
