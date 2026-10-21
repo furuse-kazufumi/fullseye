@@ -11,7 +11,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Studioで現在の処理をフォルダへ適用し、同じ設定のまま進捗・停止・同名ポリシー・失敗継続・画像と数値CSVの保存を扱えるバッチ実行を追加。
 - 性能改善 20〜29 便の公開 helper 9 個に、再計算・一時メモリを減らす使い分けの能力ノートと、従来結果との一致を自己検査する実行例 5 本を追加。
 
+### 修正
+- 例 `perf_hankel_plan_and_piv_stream.py` が、省メモリ版を唯一の経路にした `unpack_lsb` に消えた `method` 引数を渡していた(素朴な展開を参照にして比べる形に)。
+- `unwrap_phase_2d(crop_valid=True)` の一致の門は、島ごとの 2π の整数倍のオフセット(skimage 0.25/0.26 で変わる)を除いて比べる。docstring と本文訳 6 言語も「完全一致」から言い直した。
+
 ### CI
+- `tools/merge_test_durations.py --baseline`: 各片の durations は走らなかった試験の値を seed のまま含むので、seed と同じ値は観測として数えない(最初の run では seed の平均値が max で実測に勝ち 16,860 件が平均値のまま残った)。master の run 39678056044 の 18 片を合流した実測 22,053 件を `.test_durations` として commit。
 - 全数スイートを 6 片に分け、実測時間(`.test_durations`: 手元の実測 3,900 件 + 平均で初期化した 17,310 件。Linux の artifact で更新する)で均す。pip をキャッシュし、文書だけの変更は文書の門だけ走らせる。PR の片は py3.11 のみ(#79)。
 
 - CI の全数テストを実測時間に基づく6分割へ変更した。分割ごとの時間をartifactへ保存して統合できるようにし、pipキャッシュとドキュメントだけの変更に対する専用検査を追加した。
