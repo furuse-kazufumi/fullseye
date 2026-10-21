@@ -266,7 +266,7 @@ def _require_video(video, name: str, op: str, max_elements: int,
     Accepts a 3-D array-like or a list/tuple of equal-shape 2-D frames — the same
     contract :mod:`videops` documents — and adds the size caps and the
     complex/masked refusals this module needs."""
-    def validate_shape(shape):
+    def validate_shape(shape, dtype):
         if len(shape) != 3:
             raise ValueError("%s: %s must be a (T, H, W) clip, got a %d-D array of shape %r"
                              % (op, name, len(shape), tuple(shape)))
@@ -278,9 +278,17 @@ def _require_video(video, name: str, op: str, max_elements: int,
             raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
                              "(motionmag.MAX_FRAME_PIXELS)"
                              % (op, name, h, w, h * w, MAX_FRAME_PIXELS))
-        if t * h * w > max_elements:
-            raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d cap"
-                             % (op, name, t * h * w, tuple(shape), max_elements))
+        elements = int(t) * int(h) * int(w)
+        if elements > np.iinfo(np.int64).max:
+            raise ValueError("%s: %s shape %r overflows an int64 element count (dtype %s)"
+                             % (op, name, tuple(shape), np.dtype(dtype)))
+        estimated_bytes = elements * np.dtype(np.float64).itemsize
+        if elements > max_elements:
+            raise ValueError(
+                "%s: %s shape %r dtype %s has %d elements; estimated float64 copy "
+                "is %d bytes, over the %d-element cap"
+                % (op, name, tuple(shape), np.dtype(dtype), elements,
+                   estimated_bytes, max_elements))
 
     if isinstance(video, (list, tuple)):
         if not video:
@@ -291,7 +299,8 @@ def _require_video(video, name: str, op: str, max_elements: int,
         if len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames have differing shapes: %r"
                              % (op, name, sorted(set(raw_shapes))))
-        validate_shape((len(video),) + raw_shapes[0])
+        raw_dtype = np.result_type(*[np.asarray(f).dtype for f in video])
+        validate_shape((len(video),) + raw_shapes[0], raw_dtype)
         frames = []
         for i, f in enumerate(video):
             if np.ma.is_masked(f):
@@ -313,7 +322,7 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, sorted(shapes)))
         vid = np.stack(frames, axis=0)
     else:
-        validate_shape(np.shape(video))
+        validate_shape(np.shape(video), np.asarray(video).dtype)
         if np.ma.is_masked(video):
             raise ValueError("%s: %s is a masked array with masked entries — "
                              "fill or drop them explicitly" % (op, name))

@@ -4,6 +4,7 @@ import image_gen
 import ops
 import fslib
 import pytest
+import motionmag
 
 
 def test_reproduced_h01_keep_pixels_preserves_matrix_and_tracks_domain():
@@ -74,3 +75,19 @@ def test_reproduced_h08_connection_neighborhood_and_limit():
                 fslib.connection(reg, neighborhood=4, max_connection=1)
     with pytest.raises(fslib.FsValueError):
         fslib.connection(reg, neighborhood=6)
+
+
+def test_reproduced_h14_limit_precedes_stack_and_describes_allocation(monkeypatch):
+    frames = [np.zeros((4, 5), dtype=np.uint16) for _ in range(3)]
+
+    def forbidden_stack(*args, **kwargs):
+        raise AssertionError("np.stack must not run before the size gate")
+
+    monkeypatch.setattr(motionmag.np, "stack", forbidden_stack)
+    with pytest.raises(ValueError) as exc:
+        motionmag._require_video(frames, "video", "probe", max_elements=59)
+    message = str(exc.value)
+    assert "(3, 4, 5)" in message
+    assert "uint16" in message
+    assert "60 elements" in message
+    assert "480 bytes" in message
