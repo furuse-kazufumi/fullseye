@@ -147,7 +147,7 @@ def unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> np.ndarray:
     mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。
              NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。
     crop_valid: 省略可(既定 False = 全面処理)。True なら有効画素の外接矩形だけを skimage に渡し、
-             外側は NaN のまま返す(無効画素が多い枠つき画像で速い別経路。結果は全面処理と完全一致)。
+             外側は NaN のまま返す(無効画素が多い枠つき画像で速い別経路。有効画素の位相は全面処理と 2π の整数倍のオフセットを除いて一致する。島ごとのオフセットは skimage の版で変わりうる)。
 
     返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。
 
