@@ -45,6 +45,9 @@ def test_gauge_rr_csv_runs_like_the_direct_call(tmp_path, monkeypatch):
     assert actual is not None, dlg._state["error"]
     for key in expected:
         np.testing.assert_equal(actual[key], expected[key])
+    namespace = {}
+    exec(dlg._code.toPlainText(), namespace)
+    np.testing.assert_equal(namespace["result"]["sigma"], expected["sigma"])
     assert "90 rows" in dlg._state["data_check"].text()
     assert "3 repeats" in dlg._state["data_check"].text()
 

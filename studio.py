@@ -1860,7 +1860,7 @@ def run_ledger_op(op, data, kwargs):
     return out, _time.perf_counter() - t0
 
 
-def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
+def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None, csv_path=None):
     """窓で走らせた 1 回を、**そのまま走るスクリプト**にする(エディタへ差し込む・コピーする用)。
 
     ``inputs`` はデータ入力ごとの ``(名前, 入手元)``。入手元は ``"sample"``(合成の見本。
@@ -1873,7 +1873,9 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
     """
     sample_kw = set(sample_kw)
     need_sample = any(src == "sample" for _, src in inputs) or bool(sample_kw)
-    head = ["import fullseye as fs"] + (["import opassist"] if need_sample else [])
+    need_csv = any(src == "csv" for _, src in inputs)
+    head = (["import csv"] if need_csv else []) + ["import fullseye as fs"] \
+        + (["import opassist"] if need_sample else [])
     body = []
     if need_sample:
         body.append("_data, _kw = opassist.sample_input(%r)   # synthetic sample: replace with your data" % op)
@@ -1886,6 +1888,14 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
             path = image_path or "your_image.png"
             body.append("img = fs.read_image(%r)" % path.replace("\\", "/"))
             names.append("img")
+        elif src == "csv":
+            path = (csv_path or "your_table.csv").replace("\\", "/")
+            body.extend([
+                "with open(%r, encoding='utf-8-sig', newline='') as _f:" % path,
+                "    _rows = list(csv.DictReader(_f))",
+                "table = {name: [row[name] for row in _rows] for name in _rows[0]}",
+            ])
+            names.append("table")
         else:
             names.append("result")
     args = names + [("%s=_kw[%r]" % (k, k)) if k in sample_kw else ("%s=%r" % (k, v))
@@ -13897,6 +13907,8 @@ def build_window(model=None):
                 if spec.get("kind") == "data":
                     srcs = QtWidgets.QComboBox()
                     for s_ in LEDGER_SOURCES:
+                        if s_ == "CSV file…" and spec.get("sort") != "table":
+                            continue
                         srcs.addItem(tr(s_), s_)
                     if st["prefer_image"] and spec.get("sort") in _IMAGE_SORTS:
                         srcs.setCurrentIndex(LEDGER_SOURCES.index("current image"))   # 結果 → op
@@ -14014,7 +14026,8 @@ def build_window(model=None):
                                          json.dumps(mapping, ensure_ascii=False, sort_keys=True))
                 data, dnames, kwargs, prov, from_sample = gather()
                 st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
-                                             image_path=state.get("image_path"))
+                                             image_path=state.get("image_path"),
+                                             csv_path=st["csv"].get("path") if st["csv"] else None)
                 code.setPlainText(st["script"])
                 out, sec = run_ledger_op(st["op"], data, kwargs)
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
