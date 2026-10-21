@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # fit_torus — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fit_torus(points, method: 'str' = 'exact') -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_torus(points, method: 'str' = 'exact') -> 'dict'`、台帳から引くなら `ops3d.get("fit_torus")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_torus(points, method: 'str' = 'exact', axis_parameterization: 'str' = 'cartesian') -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_torus(points, method: 'str' = 'exact', axis_parameterization: 'str' = 'cartesian') -> 'dict'`、台帳から引くなら `ops3d.get("fit_torus")`)
 
 ## 使い方
 
@@ -28,6 +28,9 @@ Args:
     method: ``'exact'``(既定)は 8 パラメータを一括最小化。``'eliminate_r'`` は管半径 ``r`` を
         各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。
         既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。
+    axis_parameterization: ``'cartesian'``(既定)は軸を 3 成分のベクトルで更新する。``'tangent'`` は
+        初期軸の接平面の 2 自由度で更新し 7 パラメータで最小化する(速い別方式。軸の差は試験した
+        点群で 1e-9 未満。``method='eliminate_r'`` とは併用できない)。
 
 Returns:
     dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。

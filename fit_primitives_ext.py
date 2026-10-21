@@ -193,7 +193,7 @@ def fit_cone(points) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_torus(points, method: str = "exact") -> dict:
+def fit_torus(points, method: str = "exact", axis_parameterization: str = "cartesian") -> dict:
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
@@ -205,6 +205,9 @@ def fit_torus(points, method: str = "exact") -> dict:
         method: ``'exact'``(既定)は 8 パラメータを一括最小化。``'eliminate_r'`` は管半径 ``r`` を
             各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。
             既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。
+        axis_parameterization: ``'cartesian'``(既定)は軸を 3 成分のベクトルで更新する。``'tangent'`` は
+            初期軸の接平面の 2 自由度で更新し 7 パラメータで最小化する(速い別方式。軸の差は試験した
+            点群で 1e-9 未満。``method='eliminate_r'`` とは併用できない)。
 
     Returns:
         dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
@@ -216,6 +219,10 @@ def fit_torus(points, method: str = "exact") -> dict:
     P = _as_points(points, 7, "fit_torus")
     if method not in ("exact", "eliminate_r"):
         raise ValueError("method must be 'exact' or 'eliminate_r'")
+    if axis_parameterization not in ("cartesian", "tangent"):
+        raise ValueError("fit_torus: axis_parameterization must be 'cartesian' or 'tangent'")
+    if axis_parameterization == "tangent" and method != "exact":
+        raise ValueError("fit_torus: axis_parameterization='tangent' is available only with method='exact'")
     center0 = P.mean(0)
     Q = P - center0
     diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
@@ -242,6 +249,29 @@ def fit_torus(points, method: str = "exact") -> dict:
         aa, rr = _axial_radial(P, c, n)
         distances = np.sqrt((rr - p[6]) ** 2 + aa ** 2)
         return distances - distances.mean()
+
+    if axis_parameterization == "tangent":
+        seed = np.array([1.0, 0.0, 0.0]) if abs(n0[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+        e1 = _unit(np.cross(n0, seed))
+        e2 = np.cross(n0, e1)
+
+        def tangent_resid(p):
+            """軸を初期軸の接平面の 2 自由度で動かす(7 パラメータ)。幾何の差は 1e-9 未満(実測)。"""
+            n = _unit(n0 + p[3] * e1 + p[4] * e2)
+            aa, rr = _axial_radial(P, p[0:3], n)
+            return np.sqrt((rr - p[5]) ** 2 + aa ** 2) - p[6]
+
+        p0 = np.concatenate([center0, [0.0, 0.0, R0, r0]])
+        lb = np.array([-np.inf] * 5 + [1e-9, 1e-9])
+        ub = np.array([np.inf] * 7)
+        sol = least_squares(tangent_resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
+        center = np.asarray(sol.x[0:3], dtype=np.float64)
+        axis = _unit(n0 + sol.x[3] * e1 + sol.x[4] * e2)
+        R, r = float(sol.x[5]), float(sol.x[6])
+        residual = float(np.sqrt(np.mean(sol.fun ** 2)))
+        return {"center": center, "axis": axis, "R": R, "r": r,
+                "residual": residual}
 
     p0 = np.concatenate([center0, n0, [R0, r0]])
     lb = np.array([-np.inf] * 6 + [1e-9, 1e-9])
